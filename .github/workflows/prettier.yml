@@ -7,5 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: prettier check
+      - name: Install Prettier
+        run: npm install prettier
+      - name: Run Prettier check
         run: prettier --check .

@@ -7,6 +7,12 @@
             "options": {
                 "tabWidth": 2
             }
+        },
+        {
+            "files": ["*.md", "*.markdown"],
+            "options": {
+                "tabWidth": 2
+            }
         }
     ]
 }

@@ -9,10 +9,10 @@
 
         // Markdown
         "bierner.markdown-preview-github-styles",
-        "josa.markdown-table-formatter",
 
         // Formatting
-        "esbenp.prettier-vscode"
+        "esbenp.prettier-vscode",
+        "stkb.rewrap"
     ],
     // List of extensions recommended by VS Code that should not be recommended for users of this workspace.
     "unwantedRecommendations": []

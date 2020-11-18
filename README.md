@@ -48,3 +48,15 @@ This repository uses Prettier for auto-formatting and checks for both pushes and
 
 - The `Procfile` is used by Heroku to determine what services to run. We can add
   more microservices to it in future.
+
+## GitHub Actions Configuration (/Secrets)
+
+| Secret                       | Value                                                                     |
+| ---------------------------- | ------------------------------------------------------------------------- |
+| HASURA_ADMIN_SECRET          | The value of Hasura Cloud                                                 |
+| HASURA_ENDPOINT              | The GraphQL API URL from Hasura Cloud but without the `/v1/graphql` path. |
+| ACTION_BASE_URL              | As-per the Hasura Cloud environment variable.                             |
+| HASURA_PERSONAL_ACCESS_TOKEN | The value from Hasura Cloud                                               |
+| HASURA_PROJECT_ID            | The value from Hasura Cloud                                               |
+
+**_Note:_**: The `HASURA_ENDPOINT` changes when if rename your project inside Hasura Cloud.

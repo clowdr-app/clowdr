@@ -45,3 +45,11 @@ to Hasura Cloud and run migrations.
 | `.env.ci-test`    | Hasura Console connection to Hasura Cloud for managing the CI instance         |
 | `.env.staging`    | Hasura Console connection to Hasura Cloud for managing the staging instance    |
 | `.env.production` | Hasura Console connection to Hasura Cloud for managing the production instance |
+
+## Hasura Cloud Configuration
+
+| Env Var                     | Value                                              |
+| --------------------------- | -------------------------------------------------- |
+| HASURA_GRAPHQL_ADMIN_SECRET | A secure random value                              |
+| HASURA_GRAPHQL_DATABASE_URL | Allow Hasura to configure this                     |
+| ACTION_BASE_URL             | The Heroku Actions Service uri - no trailing slash |

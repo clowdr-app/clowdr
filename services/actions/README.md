@@ -47,3 +47,7 @@ Heroku deployment is a little tricky because this is a monorepo.
   - This is also necessary for the Heroku build
 - The `Procfile` is used by Heroku to start this service. It exists in the
   `clowdr` root directory points at the compiled `build/server.js`.
+
+## Heroku App Configuration
+
+Connect to Github for auto-deployment of a branch.

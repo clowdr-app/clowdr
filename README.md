@@ -6,6 +6,7 @@ Version 3 of Clowdr - this time it's scalable.
 
 | Folder           | Contents                                                         | ReadMe                                 |
 | ---------------- | ---------------------------------------------------------------- | -------------------------------------- |
+| frontend         | The frontend React web app                                       | [ReadMe here](frontend/README)         |
 | hasura           | The Hasura GraphQL configuration, actions and seed data.         | [ReadMe here](hasura/README)           |
 | services         | Micro-services                                                   |                                        |
 | services/actions | At the moment, a "general" service for handling any/all actions. | [ReadMe here](services/actions/README) |

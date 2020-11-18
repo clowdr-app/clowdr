@@ -79,12 +79,27 @@
             },
             "args": ["local", "web"]
         },
+        // Frontend -- Local Development
+        {
+            "label": "Frontend -- Local Development",
+            "type": "shell",
+            "command": "npm",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/frontend"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": ["start"]
+        },
         // Run All -- Local Development
         {
             "label": "Run All -- Local Development",
             "dependsOn": [
                 "Hasura Console -- Local Development",
-                "Actions Service -- Local Development"
+                "Actions Service -- Local Development",
+                "Frontend -- Local Development"
             ],
             "dependsOrder": "parallel",
             "isBackground": true,

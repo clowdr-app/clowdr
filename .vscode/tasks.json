@@ -1,0 +1,69 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        // Start Hasura Service -- Local Development
+        {
+            "label": "Start Hasura Service -- Local Development",
+            "type": "shell",
+            "group": "test",
+            "isBackground": true,
+            "command": "docker-compose",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/hasura"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": [
+                "--env-file",
+                ".env.local",
+                "up",
+                "-d"
+            ]
+        },
+        // Hasura Console -- Local Development
+        {
+            "label": "Hasura Console -- Local Development",
+            "type": "shell",
+            "dependsOn": "Start Hasura Service -- Local Development",
+            "group": "test",
+            "isBackground": true,
+            "command": "hasura",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/hasura"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": [
+                "console",
+                "--envfile",
+                ".env.local"
+            ]
+        },
+        // Hasura Console -- Staging
+        {
+            "label": "Hasura Console -- Staging",
+            "type": "shell",
+            "group": "test",
+            "isBackground": true,
+            "command": "hasura",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/hasura"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": [
+                "console",
+                "--envfile",
+                ".env.staging"
+            ]
+        }
+    ]
+}

@@ -12,7 +12,10 @@
 
         // Formatting
         "esbenp.prettier-vscode",
-        "stkb.rewrap"
+        "stkb.rewrap",
+
+        // GraphQL
+        "graphql.vscode-graphql"
     ],
     // List of extensions recommended by VS Code that should not be recommended for users of this workspace.
     "unwantedRecommendations": []

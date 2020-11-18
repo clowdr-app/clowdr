@@ -12,6 +12,7 @@ app.get("/", function (_req, res) {
 // Request Handler
 app.post("/echo", jsonParser, async (req: Request, res: Response) => {
     const params: echoArgs = req.body.input;
+    console.log(`Echoing "${params.input.message}"`);
     const result = echoHandler(params);
 
     /*

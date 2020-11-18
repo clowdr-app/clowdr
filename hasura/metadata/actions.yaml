@@ -1,6 +1,14 @@
-actions: []
+actions:
+  - name: echo
+    definition:
+      kind: ""
+      handler: "{{HASURA_GRAPHQL_ACTIONS_HANDLER_WEBHOOK_BASEURL}}/echo"
 custom_types:
   enums: []
-  input_objects: []
-  objects: []
+  input_objects:
+    - name: SampleInput
+    - name: EchoInput
+  objects:
+    - name: SampleOutput
+    - name: EchoOutput
   scalars: []

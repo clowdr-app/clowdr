@@ -72,6 +72,7 @@ typings/
 .env
 .env.local
 .env.test
+.env.ci-test
 .env.staging
 .env.production
 

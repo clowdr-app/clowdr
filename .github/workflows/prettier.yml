@@ -1,0 +1,11 @@
+name: Prettier
+
+on: [push, pull_request]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: prettier check
+        run: prettier --check .

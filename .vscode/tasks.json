@@ -7,7 +7,6 @@
         {
             "label": "Start Hasura Service -- Local Development",
             "type": "shell",
-            "group": "test",
             "isBackground": true,
             "command": "docker-compose",
             "problemMatcher": [],
@@ -17,19 +16,13 @@
             "runOptions": {
                 "instanceLimit": 1
             },
-            "args": [
-                "--env-file",
-                ".env.local",
-                "up",
-                "-d"
-            ]
+            "args": ["--env-file", ".env.local", "up", "-d"]
         },
         // Hasura Console -- Local Development
         {
             "label": "Hasura Console -- Local Development",
             "type": "shell",
             "dependsOn": "Start Hasura Service -- Local Development",
-            "group": "test",
             "isBackground": true,
             "command": "hasura",
             "problemMatcher": [],
@@ -39,17 +32,12 @@
             "runOptions": {
                 "instanceLimit": 1
             },
-            "args": [
-                "console",
-                "--envfile",
-                ".env.local"
-            ]
+            "args": ["console", "--envfile", ".env.local"]
         },
-        // Hasura Console -- Staging
+        // Hasura Console -- CI Testing
         {
-            "label": "Hasura Console -- Staging",
+            "label": "Hasura Console -- CI Testing",
             "type": "shell",
-            "group": "test",
             "isBackground": true,
             "command": "hasura",
             "problemMatcher": [],
@@ -59,11 +47,62 @@
             "runOptions": {
                 "instanceLimit": 1
             },
-            "args": [
-                "console",
-                "--envfile",
-                ".env.staging"
-            ]
+            "args": ["console", "--envfile", ".env.ci-test"]
+        },
+        // Action service -- Local Development
+        {
+            "label": "Actions Service -- Local Development",
+            "type": "shell",
+            "isBackground": true,
+            "command": "npm",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/services/actions"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": ["run", "dev"]
+        },
+        // Action service -- Heroku Local
+        {
+            "label": "Actions Service -- Heroku Local",
+            "type": "shell",
+            "isBackground": true,
+            "command": "heroku",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": ["local", "web"]
+        },
+        // Run All -- Local Development
+        {
+            "label": "Run All -- Local Development",
+            "dependsOn": [
+                "Hasura Console -- Local Development",
+                "Actions Service -- Local Development"
+            ],
+            "dependsOrder": "parallel",
+            "isBackground": true,
+            "problemMatcher": []
+        },
+        // Prettier
+        {
+            "label": "Prettier: Format code",
+            "type": "shell",
+            "command": "npx",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": ["prettier", "--write", "."]
         }
     ]
 }

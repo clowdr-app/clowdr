@@ -10,4 +10,4 @@ jobs:
       - name: Install Prettier
         run: npm install prettier
       - name: Run Prettier check
-        run: prettier --check .
+        run: npx prettier --check .

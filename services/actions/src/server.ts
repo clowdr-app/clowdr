@@ -1,9 +1,8 @@
 import bodyParser from "body-parser";
-import { Request, Response, default as express } from "express";
+import express, { Request, Response } from "express";
+import handlerEcho from "./handlers/echo";
 
-import echoHandler from "./handlers/echo";
-
-const app: express.Application = express();
+export const app: express.Application = express();
 const jsonParser = bodyParser.json();
 
 app.get("/", function (_req, res) {
@@ -14,7 +13,7 @@ app.get("/", function (_req, res) {
 app.post("/echo", jsonParser, async (req: Request, res: Response) => {
     const params: echoArgs = req.body.input;
     console.log(`Echoing "${params.input.message}"`);
-    const result = echoHandler(params);
+    const result = handlerEcho(params);
 
     /*
     // In case of errors:
@@ -27,6 +26,7 @@ app.post("/echo", jsonParser, async (req: Request, res: Response) => {
     return res.json(result);
 });
 
-app.listen(process.env.PORT || 3000, function () {
+const portNumber = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+export const server = app.listen(portNumber, function () {
     console.log(`App is listening on port ${process.env.PORT}!`);
 });

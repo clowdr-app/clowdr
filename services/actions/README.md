@@ -1,7 +1,7 @@
 # Clowdr: Actions Service
 
-Runs on Heroku and serves action calls from Hasura. Eventually this may be split
-into multiple microservices.
+Express server designed to run on Heroku and serves action calls from Hasura.
+Eventually this may be split into multiple microservices.
 
 ## Pre-requisities
 
@@ -17,6 +17,12 @@ See root ReadMe instructions for local development for which tasks to run.
 
 If the environment configuration changes, or for example, the `package.json`
 commands change, then you will need to restart tasks for this microservice.
+
+## Testing
+
+We use [Jest](https://jestjs.io/docs/en/getting-started) and
+[SuperTest](https://www.npmjs.com/package/supertest). SuperTest provides an easy
+way to test the express server functions.
 
 ## Remote Deployment
 

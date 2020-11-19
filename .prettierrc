@@ -1,4 +1,5 @@
 {
+    "plugins": ["prettier-plugin-organize-imports"],
     "tabWidth": 4,
     "useTabs": false,
     "overrides": [

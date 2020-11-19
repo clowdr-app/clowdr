@@ -1,5 +1,3 @@
-import "./index.css";
-
 import {
     ApolloClient,
     ApolloProvider,
@@ -11,8 +9,8 @@ import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
 import React from "react";
 import ReactDOM from "react-dom";
-
 import App from "./App";
+import "./index.css";
 
 const useSecureProtocols =
     import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API_SECURE_PROTOCOLS !== "false";

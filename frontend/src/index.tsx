@@ -14,7 +14,7 @@ import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
 
 const httpLink = new HttpLink({
-    uri: `http://${import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API}/v1/graphql`,
+    uri: `http${import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API}/v1/graphql`,
     // headers: {
     //     "x-hasura-admin-secret": "XXXXX"
     // }
@@ -22,7 +22,7 @@ const httpLink = new HttpLink({
 
 // Create a WebSocket link:
 const wsLink = new WebSocketLink({
-    uri: `ws://${import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API}/v1/graphql`, // use wss for a secure endpoint
+    uri: `ws${import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API}/v1/graphql`, // use wss for a secure endpoint
     options: {
         reconnect: true,
     },

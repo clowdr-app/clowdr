@@ -1,6 +1,7 @@
-import { default as express, Request, Response } from "express";
-import echoHandler from "./handlers/echo";
 import bodyParser from "body-parser";
+import { Request, Response, default as express } from "express";
+
+import echoHandler from "./handlers/echo";
 
 const app: express.Application = express();
 const jsonParser = bodyParser.json();

@@ -1,17 +1,18 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import App from "./App";
 import "./index.css";
 
 import {
     ApolloClient,
-    InMemoryCache,
     ApolloProvider,
     HttpLink,
+    InMemoryCache,
     split,
 } from "@apollo/client";
 import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
+import React from "react";
+import ReactDOM from "react-dom";
+
+import App from "./App";
 
 const httpLink = new HttpLink({
     uri: `http${import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API}/v1/graphql`,

@@ -1,5 +1,6 @@
-import React from "react";
 import { gql } from "@apollo/client";
+import React from "react";
+
 import { useEchoQueryQuery } from "../../generated/graphql";
 
 const echoQuery = gql`

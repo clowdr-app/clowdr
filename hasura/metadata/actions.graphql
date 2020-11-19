@@ -1,26 +1,20 @@
 type Query {
-  echo (
-    input: EchoInput!
-  ): EchoOutput
+    echo(input: EchoInput!): EchoOutput
 }
 
-
-
-
 input SampleInput {
-  username : String!
-  password : String!
+    username: String!
+    password: String!
 }
 
 input EchoInput {
-  message : String!
+    message: String!
 }
 
 type SampleOutput {
-  accessToken : String!
+    accessToken: String!
 }
 
 type EchoOutput {
-  message : String!
+    message: String!
 }
-

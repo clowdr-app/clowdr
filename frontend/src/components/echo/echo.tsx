@@ -13,19 +13,16 @@ const echoQuery = gql`
 export default function Echo() {
     const query = useEchoQueryQuery({
         variables: {
-            message: "Test echo message"
-        }
+            message: "Test echo message",
+        },
     });
     if (query.loading) {
         return <>Loading...</>;
-    }
-    else if (query.error) {
+    } else if (query.error) {
         return <>Query error! {query.error.message}</>;
-    }
-    else if (query.data) {
+    } else if (query.data) {
         return <>Hello, world! {query.data.echo?.message}.</>;
-    }
-    else {
+    } else {
         return <>Hello, world! No data?!.</>;
     }
 }

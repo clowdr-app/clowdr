@@ -57,3 +57,5 @@ declare module "*.png" {
 }
 
 /* CUSTOM: ADD YOUR OWN HERE */
+
+declare const axe: (e: Element, options?: RunOptions) => Promise<AxeResults>;

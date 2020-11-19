@@ -14,8 +14,15 @@ import ReactDOM from "react-dom";
 
 import App from "./App";
 
+const useSecureProtocols =
+    import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API_SECURE_PROTOCOLS !== "false";
+const httpProtocol = useSecureProtocols ? "https" : "http";
+const wsProtocol = useSecureProtocols ? "wss" : "ws";
+
 const httpLink = new HttpLink({
-    uri: `http${import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API}/v1/graphql`,
+    uri: `${httpProtocol}://${
+        import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN
+    }/v1/graphql`,
     // headers: {
     //     "x-hasura-admin-secret": "XXXXX"
     // }
@@ -23,7 +30,9 @@ const httpLink = new HttpLink({
 
 // Create a WebSocket link:
 const wsLink = new WebSocketLink({
-    uri: `ws${import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API}/v1/graphql`, // use wss for a secure endpoint
+    uri: `${wsProtocol}://${
+        import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN
+    }/v1/graphql`, // use wss for a secure endpoint
     options: {
         reconnect: true,
     },

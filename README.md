@@ -18,6 +18,7 @@ Version 3 of Clowdr - this time it's scalable.
 1. [Node.js](https://nodejs.org/en/) (and NPM)
 1. [Hasura pre-requisites](hasura/README#Pre-requisites)
 1. [Actions Service pre-requsities](services/actions/README#Pre-requisites)
+1. [Frontend pre-requsities](frontend/README#Pre-requisites)
 
 ## Setting Up
 
@@ -32,6 +33,7 @@ Version 3 of Clowdr - this time it's scalable.
 
 1. Follow the Hasura setup: [Clowdr Hasura ReadMe](hasura/README#Setting-up)
 1. Follow the Actions Service setup: [Clowdr Actions Service ReadMe](services/actions/README#Setting-up)
+1. Follow the Frontend setup: [Clowdr Frontend ReadMe](frontend/README#Setting-up)
 
 ## Local Development
 

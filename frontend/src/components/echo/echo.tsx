@@ -11,7 +11,7 @@ const echoQuery = gql`
     }
 `;
 
-export default function Echo() {
+export default function Echo(): JSX.Element {
     const query = useEchoQueryQuery({
         variables: {
             message: "Test echo message",

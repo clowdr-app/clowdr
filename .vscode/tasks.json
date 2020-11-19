@@ -105,6 +105,29 @@
             "isBackground": true,
             "problemMatcher": []
         },
+        // Frontend -- Production Build
+        {
+            "label": "Frontend -- Production Build",
+            "type": "shell",
+            "command": "npm",
+            "args": ["run", "build"],
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/frontend"
+            },
+            "group": "build"
+        },
+        // Frontend -- Serve Production Build
+        {
+            "label": "Frontend -- Serve Production Build",
+            "type": "shell",
+            "command": "serve",
+            "args": ["-s", "build"],
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/frontend"
+            }
+        },
         // Prettier
         {
             "label": "Prettier: Format code",

@@ -10,7 +10,18 @@ React web app that forms the main Clowdr frontend.
 
 ## Setting up
 
-Nothing to do here, at the moment!
+1. Copy and configure the `frontend/.env.example` to a new `frontend/.env` file
+
+## UI Components, Theming and Icons
+
+We use [Chakra UI](https://chakra-ui.com/) to build accessible, consistent UIs
+with [theming](@chakra-ui/theme-tools). Chakra also provides
+[icons](https://chakra-ui.com/docs/components/icon) and a system for [custom
+components](@chakra-ui/theme-tools).
+
+## GraphQL
+
+TODO: Document command to regenerate TS for GraphQL queries
 
 ## Local Development
 

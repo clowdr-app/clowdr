@@ -35,6 +35,10 @@ Version 3 of Clowdr - this time it's scalable.
 1. Follow the Actions Service setup: [Clowdr Actions Service ReadMe](services/actions/README#Setting-up)
 1. Follow the Frontend setup: [Clowdr Frontend ReadMe](frontend/README#Setting-up)
 
+### Auth0 Configuration
+
+TODO: Documentation: Auth0 apps + configuration + rules + ngrok usage
+
 ## Local Development
 
 1. Run the VSCode task "Run All -- Local Development"

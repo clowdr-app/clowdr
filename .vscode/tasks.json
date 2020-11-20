@@ -79,6 +79,20 @@
             },
             "args": ["local", "web"]
         },
+        // Fontend -- GraphQL Codegen
+        {
+            "label": "Frontend -- GraphQL Codegen",
+            "type": "shell",
+            "command": "npm",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/frontend"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": ["run", "graphql-codegen"]
+        },
         // Frontend -- Local Development
         {
             "label": "Frontend -- Local Development",

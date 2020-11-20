@@ -1,5 +1,5 @@
 type Query {
-    echo(input: EchoInput!): EchoOutput
+    echo(message: String!): EchoOutput
 }
 
 input SampleInput {
@@ -16,5 +16,9 @@ type SampleOutput {
 }
 
 type EchoOutput {
+    message: String!
+}
+
+type ProtectedEchoOutput {
     message: String!
 }

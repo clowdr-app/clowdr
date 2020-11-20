@@ -2,9 +2,10 @@ actions:
   - name: echo
     definition:
       kind: ""
-      handler: "{{ACTION_BASE_URL}}/echo"
+      handler: "{{HASURA_GRAPHQL_ACTIONS_HANDLER_WEBHOOK_BASEURL}}/echo"
     permissions:
       - role: unauthenticated
+      - role: user
 custom_types:
   enums: []
   input_objects:
@@ -13,4 +14,5 @@ custom_types:
   objects:
     - name: SampleOutput
     - name: EchoOutput
+    - name: ProtectedEchoOutput
   scalars: []

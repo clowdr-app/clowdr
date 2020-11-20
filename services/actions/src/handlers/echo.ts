@@ -1,5 +1,5 @@
-export default function echoHandler(args: echoArgs): EchoOutput {
+export default function echoHandler({ message }: echoArgs): EchoOutput {
     return {
-        message: args.input.message,
+        message,
     };
 }

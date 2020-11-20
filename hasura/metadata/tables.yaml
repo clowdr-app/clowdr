@@ -1,1 +1,26 @@
-[]
+- table:
+    schema: public
+    name: user
+  select_permissions:
+    - role: user
+      permission:
+        columns:
+          - created_at
+          - firstName
+          - id
+          - lastLoggedInAt
+          - lastName
+          - updated_at
+        filter:
+          id:
+            _eq: X-Hasura-User-Id
+  update_permissions:
+    - role: user
+      permission:
+        columns:
+          - firstName
+          - lastName
+        filter:
+          id:
+            _eq: X-Hasura-User-Id
+        check: null

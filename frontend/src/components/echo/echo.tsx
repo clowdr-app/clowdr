@@ -4,7 +4,7 @@ import { useEchoQueryQuery } from "../../generated/graphql";
 
 const echoQuery = gql`
     query EchoQuery($message: String!) {
-        echo(input: { message: $message }) {
+        echo(message: $message) {
             message
         }
     }

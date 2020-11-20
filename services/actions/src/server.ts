@@ -9,24 +9,14 @@ app.get("/", function (_req, res) {
     res.send("Hello World!");
 });
 
-// Request Handler
 app.post("/echo", jsonParser, async (req: Request, res: Response) => {
     const params: echoArgs = req.body.input;
-    console.log(`Echoing "${params.input.message}"`);
+    console.log(`Echoing "${params.message}"`);
     const result = handlerEcho(params);
-
-    /*
-    // In case of errors:
-    return res.status(400).json({
-      message: "error happened"
-    })
-    */
-
-    // success
     return res.json(result);
 });
 
-const portNumber = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+const portNumber = process.env.PORT ? parseInt(process.env.PORT, 10) : 4000;
 export const server = app.listen(portNumber, function () {
     console.log(`App is listening on port ${process.env.PORT}!`);
 });

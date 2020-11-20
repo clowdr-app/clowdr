@@ -1,63 +1,23 @@
-import {
-    ApolloClient,
-    ApolloProvider,
-    HttpLink,
-    InMemoryCache,
-    split,
-} from "@apollo/client";
-import { WebSocketLink } from "@apollo/client/link/ws";
-import { getMainDefinition } from "@apollo/client/utilities";
 import React from "react";
 import ReactDOM from "react-dom";
+import { BrowserRouter } from "react-router-dom";
 import App from "./App";
+import Auth0CustomProvider from "./components/auth0/Auth0CustomProvider";
+import ChakraCustomProvider from "./components/chakra/ChakraCustomProvider";
+import ApolloCustomProvider from "./components/gql/ApolloCustomProvider";
 import "./index.css";
-
-const useSecureProtocols =
-    import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API_SECURE_PROTOCOLS !== "false";
-const httpProtocol = useSecureProtocols ? "https" : "http";
-const wsProtocol = useSecureProtocols ? "wss" : "ws";
-
-const httpLink = new HttpLink({
-    uri: `${httpProtocol}://${
-        import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN
-    }/v1/graphql`,
-    // headers: {
-    //     "x-hasura-admin-secret": "XXXXX"
-    // }
-});
-
-// Create a WebSocket link:
-const wsLink = new WebSocketLink({
-    uri: `${wsProtocol}://${
-        import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN
-    }/v1/graphql`, // use wss for a secure endpoint
-    options: {
-        reconnect: true,
-    },
-});
-
-const link = split(
-    ({ query }) => {
-        const definition = getMainDefinition(query);
-        return (
-            definition.kind === "OperationDefinition" &&
-            definition.operation === "subscription"
-        );
-    },
-    wsLink,
-    httpLink
-);
-
-const client = new ApolloClient({
-    link,
-    cache: new InMemoryCache(),
-});
 
 ReactDOM.render(
     <React.StrictMode>
-        <ApolloProvider client={client}>
-            <App />
-        </ApolloProvider>
+        <BrowserRouter>
+            <ChakraCustomProvider>
+                <Auth0CustomProvider>
+                    <ApolloCustomProvider>
+                        <App />
+                    </ApolloCustomProvider>
+                </Auth0CustomProvider>
+            </ChakraCustomProvider>
+        </BrowserRouter>
     </React.StrictMode>,
     document.getElementById("root")
 );

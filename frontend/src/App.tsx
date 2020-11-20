@@ -1,44 +1,101 @@
-import React, { useEffect, useState } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
+import { Box, ButtonGroup, Center, Spinner } from "@chakra-ui/react";
+import React from "react";
+import { Redirect, Route, Switch } from "react-router-dom";
 import "./App.css";
-import Echo from "./components/echo/echo";
-import logo from "./logo.svg";
+import AuthenticationButton from "./components/auth0/AuthenticationButton";
+import ProtectedRoute from "./components/auth0/ProtectedRoute";
+import UserProfileInfo from "./components/auth0/UserProfileInfo";
+import LinkButton from "./components/chakra/LinkButton";
+import Echo from "./components/Echo/Echo";
+import FAIcon from "./components/fontawesome/FAIcon";
+import UsersList from "./components/UsersList/UsersList";
 
 interface AppProps {}
 
 function App(_props: AppProps): JSX.Element {
-    // Create the count state.
-    const [count, setCount] = useState(0);
-    // Create the counter (+1 every second).
-    useEffect(() => {
-        const timer = setTimeout(() => setCount(count + 1), 1000);
-        return () => clearTimeout(timer);
-    }, [count, setCount]);
-    // Return the App component.
+    const { isLoading, isAuthenticated } = useAuth0();
+
+    if (isLoading) {
+        return (
+            <Center w="100%" h="100%">
+                <Spinner />
+            </Center>
+        );
+    }
+
     return (
-        <div className="App">
-            <header className="App-header">
-                <img src={logo} className="App-logo" alt="logo" />
-                <p>
-                    Edit <code>src/App.tsx</code> and save to reload.
-                </p>
-                <p>
-                    <Echo />
-                </p>
-                <p>
-                    Page has been open for <code>{count}</code> seconds.
-                </p>
-                <p>
-                    <a
-                        className="App-link"
-                        href="https://reactjs.org"
-                        target="_blank"
-                        rel="noopener noreferrer"
+        <>
+            <ButtonGroup>
+                <AuthenticationButton />
+                <LinkButton
+                    aria-label="Home"
+                    leftIcon={<FAIcon iconStyle="s" icon="home" />}
+                    to={"/"}
+                >
+                    Home
+                </LinkButton>
+                <LinkButton
+                    aria-label="Echo"
+                    leftIcon={<FAIcon iconStyle="s" icon="comment-alt" />}
+                    to={"/echo"}
+                >
+                    Echo
+                </LinkButton>
+                {isAuthenticated ? (
+                    <LinkButton
+                        colorScheme="blue"
+                        aria-label="Profile"
+                        leftIcon={<FAIcon iconStyle="s" icon="user" />}
+                        to={"/profile"}
                     >
-                        Learn React
-                    </a>
-                </p>
-            </header>
-        </div>
+                        Profile
+                    </LinkButton>
+                ) : (
+                    <></>
+                )}
+                {isAuthenticated ? (
+                    <LinkButton
+                        colorScheme="green"
+                        aria-label="Users"
+                        leftIcon={<FAIcon iconStyle="s" icon="users" />}
+                        to={"/users"}
+                    >
+                        Users
+                    </LinkButton>
+                ) : (
+                    <></>
+                )}
+            </ButtonGroup>
+            <Box>
+                <Switch>
+                    <Route exact path="/auth0/logged-in">
+                        <Redirect to="/profile" />
+                    </Route>
+                    <Route exact path="/auth0/logged-in/stay-on-page">
+                        Staying on this page so you can debug.
+                    </Route>
+                    <Route exact path="/auth0/logged-out">
+                        <Redirect to="/logged-out" />
+                    </Route>
+                    <Route exact path="/logged-out">
+                        You have been logged out.
+                    </Route>
+                    <Route exact path="/echo">
+                        <Echo />
+                    </Route>
+                    <ProtectedRoute exact path="/users" component={UsersList} />
+                    <Route exact path="/">
+                        Home page
+                    </Route>
+                    <ProtectedRoute
+                        exact
+                        path="/profile"
+                        component={UserProfileInfo}
+                    />
+                </Switch>
+            </Box>
+        </>
     );
 }
 

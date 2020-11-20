@@ -4,6 +4,10 @@ type EchoOutput = {
     message: string;
 };
 
+type ProtectedEchoOutput = {
+    message: string;
+};
+
 type EchoInput = {
     message: string;
 };
@@ -13,5 +17,5 @@ type Query = {
 };
 
 type echoArgs = {
-    input: EchoInput;
+    message: string;
 };

@@ -7,18 +7,20 @@ import checkScopes from "./checkScopes";
 import handlerEcho from "./handlers/echo";
 import protectedEchoHandler from "./handlers/protectedEcho";
 
-assert(
-    process.env.AUTH0_API_DOMAIN,
-    "AUTH0_API_DOMAIN environment variable not provided."
-);
-assert(
-    process.env.AUTH0_AUDIENCE,
-    "AUTH0_AUDIENCE environment variable not provided."
-);
-assert(
-    process.env.AUTH0_ISSUER_DOMAIN,
-    "AUTH0_ISSUER_DOMAIN environment variable not provided."
-);
+if (process.env.NODE_ENV !== "test") {
+    assert(
+        process.env.AUTH0_API_DOMAIN,
+        "AUTH0_API_DOMAIN environment variable not provided."
+    );
+    assert(
+        process.env.AUTH0_AUDIENCE,
+        "AUTH0_AUDIENCE environment variable not provided."
+    );
+    assert(
+        process.env.AUTH0_ISSUER_DOMAIN,
+        "AUTH0_ISSUER_DOMAIN environment variable not provided."
+    );
+}
 
 // Authorization middleware. When used, the
 // Access Token must exist and be verified against

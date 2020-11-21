@@ -6,6 +6,13 @@ actions:
     permissions:
       - role: unauthenticated
       - role: user
+  - name: protectedEcho
+    definition:
+      kind: ""
+      handler: "{{ACTION_BASE_URL}}/protectedEcho"
+      forward_client_headers: true
+    permissions:
+      - role: user
 custom_types:
   enums: []
   input_objects:

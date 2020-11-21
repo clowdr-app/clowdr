@@ -9,7 +9,9 @@ Eventually this may be split into multiple microservices.
 
 ## Setting Up
 
-Nothing to do here, at the moment!
+1. Copy the `services/actions/.env.example` to `services/actions/.env`
+1. Configure your `.env` according to the [Actions Service
+   Configuration](#actions-service-configuration) table below
 
 ## Local Development
 
@@ -56,4 +58,13 @@ Heroku deployment is a little tricky because this is a monorepo.
 
 ## Heroku App Configuration
 
-Connect to Github for auto-deployment of a branch.
+Connect to Github for auto-deployment of a branch. Configure environment
+variables according to [the table below](#actions-service-configuration).
+
+## Actions Service Configuration
+
+| Key                 | Value                                  |
+| ------------------- | -------------------------------------- |
+| AUTH0_API_DOMAIN    | `<auth0-subdomain>.auth0.com`          |
+| AUTH0_AUDIENCE      | `hasura`                               |
+| AUTH0_ISSUER_DOMAIN | `https://<auth0-subdomain>.auth0.com/` |

@@ -1,19 +1,19 @@
 import { gql } from "@apollo/client";
 import React from "react";
-import { useEchoQuery } from "../../generated/graphql";
+import { useProtectedEchoQuery } from "../../generated/graphql";
 
 const echoQuery = gql`
-    query Echo($message: String!) {
-        echo(message: $message) {
+    query ProtectedEcho($message: String!) {
+        protectedEcho(message: $message) {
             message
         }
     }
 `;
 
-export default function Echo(): JSX.Element {
-    const query = useEchoQuery({
+export default function ProtectedEcho(): JSX.Element {
+    const query = useProtectedEchoQuery({
         variables: {
-            message: "Test unprotected echo message",
+            message: "Test protected echo message",
         },
     });
     if (query.loading) {
@@ -21,7 +21,7 @@ export default function Echo(): JSX.Element {
     } else if (query.error) {
         return <>Query error! {query.error.message}</>;
     } else if (query.data) {
-        return <>Hello, world! {query.data.echo?.message}.</>;
+        return <>Hello, world! {query.data.protectedEcho?.message}.</>;
     } else {
         return <>Hello, world! No data?!.</>;
     }

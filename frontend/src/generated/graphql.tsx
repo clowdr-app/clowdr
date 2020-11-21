@@ -144,6 +144,8 @@ export type Query_Root = {
     __typename?: "query_root";
     /** perform the action: "echo" */
     echo?: Maybe<EchoOutput>;
+    /** perform the action: "protectedEcho" */
+    protectedEcho?: Maybe<ProtectedEchoOutput>;
     /** fetch data from the table: "user" */
     user: Array<User>;
     /** fetch aggregated fields from the table: "user" */
@@ -154,6 +156,11 @@ export type Query_Root = {
 
 /** query root */
 export type Query_RootEchoArgs = {
+    message: Scalars["String"];
+};
+
+/** query root */
+export type Query_RootProtectedEchoArgs = {
     message: Scalars["String"];
 };
 
@@ -185,6 +192,8 @@ export type Subscription_Root = {
     __typename?: "subscription_root";
     /** perform the action: "echo" */
     echo?: Maybe<EchoOutput>;
+    /** perform the action: "protectedEcho" */
+    protectedEcho?: Maybe<ProtectedEchoOutput>;
     /** fetch data from the table: "user" */
     user: Array<User>;
     /** fetch aggregated fields from the table: "user" */
@@ -195,6 +204,11 @@ export type Subscription_Root = {
 
 /** subscription root */
 export type Subscription_RootEchoArgs = {
+    message: Scalars["String"];
+};
+
+/** subscription root */
+export type Subscription_RootProtectedEchoArgs = {
     message: Scalars["String"];
 };
 
@@ -429,14 +443,6 @@ export enum User_Update_Column {
     UpdatedAt = "updated_at",
 }
 
-export type EchoQueryQueryVariables = Exact<{
-    message: Scalars["String"];
-}>;
-
-export type EchoQueryQuery = { __typename?: "query_root" } & {
-    echo?: Maybe<{ __typename?: "EchoOutput" } & Pick<EchoOutput, "message">>;
-};
-
 export type UsersQueryVariables = Exact<{ [key: string]: never }>;
 
 export type UsersQuery = { __typename?: "query_root" } & {
@@ -448,60 +454,27 @@ export type UsersQuery = { __typename?: "query_root" } & {
     >;
 };
 
-export const EchoQueryDocument = gql`
-    query EchoQuery($message: String!) {
-        echo(message: $message) {
-            message
-        }
-    }
-`;
+export type EchoQueryVariables = Exact<{
+    message: Scalars["String"];
+}>;
 
-/**
- * __useEchoQueryQuery__
- *
- * To run a query within a React component, call `useEchoQueryQuery` and pass it any options that fit your needs.
- * When your component renders, `useEchoQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useEchoQueryQuery({
- *   variables: {
- *      message: // value for 'message'
- *   },
- * });
- */
-export function useEchoQueryQuery(
-    baseOptions: Apollo.QueryHookOptions<
-        EchoQueryQuery,
-        EchoQueryQueryVariables
-    >
-) {
-    return Apollo.useQuery<EchoQueryQuery, EchoQueryQueryVariables>(
-        EchoQueryDocument,
-        baseOptions
-    );
-}
-export function useEchoQueryLazyQuery(
-    baseOptions?: Apollo.LazyQueryHookOptions<
-        EchoQueryQuery,
-        EchoQueryQueryVariables
-    >
-) {
-    return Apollo.useLazyQuery<EchoQueryQuery, EchoQueryQueryVariables>(
-        EchoQueryDocument,
-        baseOptions
-    );
-}
-export type EchoQueryQueryHookResult = ReturnType<typeof useEchoQueryQuery>;
-export type EchoQueryLazyQueryHookResult = ReturnType<
-    typeof useEchoQueryLazyQuery
->;
-export type EchoQueryQueryResult = Apollo.QueryResult<
-    EchoQueryQuery,
-    EchoQueryQueryVariables
->;
+export type EchoQuery = { __typename?: "query_root" } & {
+    echo?: Maybe<{ __typename?: "EchoOutput" } & Pick<EchoOutput, "message">>;
+};
+
+export type ProtectedEchoQueryVariables = Exact<{
+    message: Scalars["String"];
+}>;
+
+export type ProtectedEchoQuery = { __typename?: "query_root" } & {
+    protectedEcho?: Maybe<
+        { __typename?: "ProtectedEchoOutput" } & Pick<
+            ProtectedEchoOutput,
+            "message"
+        >
+    >;
+};
+
 export const UsersDocument = gql`
     query Users {
         user {
@@ -549,4 +522,103 @@ export type UsersLazyQueryHookResult = ReturnType<typeof useUsersLazyQuery>;
 export type UsersQueryResult = Apollo.QueryResult<
     UsersQuery,
     UsersQueryVariables
+>;
+export const EchoDocument = gql`
+    query Echo($message: String!) {
+        echo(message: $message) {
+            message
+        }
+    }
+`;
+
+/**
+ * __useEchoQuery__
+ *
+ * To run a query within a React component, call `useEchoQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEchoQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useEchoQuery({
+ *   variables: {
+ *      message: // value for 'message'
+ *   },
+ * });
+ */
+export function useEchoQuery(
+    baseOptions: Apollo.QueryHookOptions<EchoQuery, EchoQueryVariables>
+) {
+    return Apollo.useQuery<EchoQuery, EchoQueryVariables>(
+        EchoDocument,
+        baseOptions
+    );
+}
+export function useEchoLazyQuery(
+    baseOptions?: Apollo.LazyQueryHookOptions<EchoQuery, EchoQueryVariables>
+) {
+    return Apollo.useLazyQuery<EchoQuery, EchoQueryVariables>(
+        EchoDocument,
+        baseOptions
+    );
+}
+export type EchoQueryHookResult = ReturnType<typeof useEchoQuery>;
+export type EchoLazyQueryHookResult = ReturnType<typeof useEchoLazyQuery>;
+export type EchoQueryResult = Apollo.QueryResult<EchoQuery, EchoQueryVariables>;
+export const ProtectedEchoDocument = gql`
+    query ProtectedEcho($message: String!) {
+        protectedEcho(message: $message) {
+            message
+        }
+    }
+`;
+
+/**
+ * __useProtectedEchoQuery__
+ *
+ * To run a query within a React component, call `useProtectedEchoQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProtectedEchoQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProtectedEchoQuery({
+ *   variables: {
+ *      message: // value for 'message'
+ *   },
+ * });
+ */
+export function useProtectedEchoQuery(
+    baseOptions: Apollo.QueryHookOptions<
+        ProtectedEchoQuery,
+        ProtectedEchoQueryVariables
+    >
+) {
+    return Apollo.useQuery<ProtectedEchoQuery, ProtectedEchoQueryVariables>(
+        ProtectedEchoDocument,
+        baseOptions
+    );
+}
+export function useProtectedEchoLazyQuery(
+    baseOptions?: Apollo.LazyQueryHookOptions<
+        ProtectedEchoQuery,
+        ProtectedEchoQueryVariables
+    >
+) {
+    return Apollo.useLazyQuery<ProtectedEchoQuery, ProtectedEchoQueryVariables>(
+        ProtectedEchoDocument,
+        baseOptions
+    );
+}
+export type ProtectedEchoQueryHookResult = ReturnType<
+    typeof useProtectedEchoQuery
+>;
+export type ProtectedEchoLazyQueryHookResult = ReturnType<
+    typeof useProtectedEchoLazyQuery
+>;
+export type ProtectedEchoQueryResult = Apollo.QueryResult<
+    ProtectedEchoQuery,
+    ProtectedEchoQueryVariables
 >;

@@ -2,6 +2,10 @@ type Query {
     echo(message: String!): EchoOutput
 }
 
+type Query {
+    protectedEcho(message: String!): ProtectedEchoOutput
+}
+
 input SampleInput {
     username: String!
     password: String!

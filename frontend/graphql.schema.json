@@ -780,6 +780,33 @@
                         "deprecationReason": null
                     },
                     {
+                        "name": "protectedEcho",
+                        "description": "perform the action: \"protectedEcho\"",
+                        "args": [
+                            {
+                                "name": "message",
+                                "description": null,
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "SCALAR",
+                                        "name": "String",
+                                        "ofType": null
+                                    }
+                                },
+                                "defaultValue": null
+                            }
+                        ],
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "ProtectedEchoOutput",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
                         "name": "user",
                         "description": "fetch data from the table: \"user\"",
                         "args": [
@@ -1023,6 +1050,33 @@
                         "type": {
                             "kind": "OBJECT",
                             "name": "EchoOutput",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "protectedEcho",
+                        "description": "perform the action: \"protectedEcho\"",
+                        "args": [
+                            {
+                                "name": "message",
+                                "description": null,
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "SCALAR",
+                                        "name": "String",
+                                        "ofType": null
+                                    }
+                                },
+                                "defaultValue": null
+                            }
+                        ],
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "ProtectedEchoOutput",
                             "ofType": null
                         },
                         "isDeprecated": false,

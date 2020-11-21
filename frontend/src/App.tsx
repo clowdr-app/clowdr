@@ -8,6 +8,7 @@ import ProtectedRoute from "./components/auth0/ProtectedRoute";
 import UserProfileInfo from "./components/auth0/UserProfileInfo";
 import LinkButton from "./components/chakra/LinkButton";
 import Echo from "./components/echo/echo";
+import ProtectedEcho from "./components/echo/protectedEcho";
 import FAIcon from "./components/fontawesome/FAIcon";
 import UsersList from "./components/UsersList/UsersList";
 
@@ -44,6 +45,18 @@ function App(_props: AppProps): JSX.Element {
                 </LinkButton>
                 {isAuthenticated ? (
                     <LinkButton
+                        colorScheme="red"
+                        aria-label="Protected echo"
+                        leftIcon={<FAIcon iconStyle="s" icon="comment-alt" />}
+                        to={"/protectedEcho"}
+                    >
+                        Protected echo
+                    </LinkButton>
+                ) : (
+                    <></>
+                )}
+                {isAuthenticated ? (
+                    <LinkButton
                         colorScheme="blue"
                         aria-label="Profile"
                         leftIcon={<FAIcon iconStyle="s" icon="user" />}
@@ -59,9 +72,9 @@ function App(_props: AppProps): JSX.Element {
                         colorScheme="green"
                         aria-label="Users"
                         leftIcon={<FAIcon iconStyle="s" icon="users" />}
-                        to={"/users"}
+                        to={"/user"}
                     >
-                        Users
+                        User
                     </LinkButton>
                 ) : (
                     <></>
@@ -84,10 +97,16 @@ function App(_props: AppProps): JSX.Element {
                     <Route exact path="/echo">
                         <Echo />
                     </Route>
-                    <ProtectedRoute exact path="/users" component={UsersList} />
                     <Route exact path="/">
                         Home page
                     </Route>
+
+                    <ProtectedRoute exact path="/user" component={UsersList} />
+                    <Route
+                        exact
+                        path="/protectedEcho"
+                        component={ProtectedEcho}
+                    />
                     <ProtectedRoute
                         exact
                         path="/profile"

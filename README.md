@@ -61,6 +61,8 @@ considered for merging._**
 
 #### 2. Configure Application
 
+Now, configure the application in the _Settings_ tab.
+
 1. Configure `Allowed Callback URLs` (comma-separated)
 
    For example, you should include `localhost` and your Netlify app url(s):
@@ -192,6 +194,7 @@ useful logs, uncomment `console.log` statements in the _Rules_ we created above.
 1. Copy your key into your local `.env` file
    - e.g. `HASURA_GRAPHQL_JWT_SECRET='your key goes in here'`
    - Don't forget the wrapping single quotes!
+1. Uncomment the `HASURA_GRAPHQL_JWT_SECRET: ${HASURA_GRAPHQL_JWT_SECRET}` line in `hasura/docker-compose.yaml`
 1. Copy your key into Hasura Cloud Environment configuration
    - No need for the wrapping single quotes - Hasura's UI will handle that for
      you.

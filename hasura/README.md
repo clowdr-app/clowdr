@@ -13,17 +13,19 @@ all of our backend services.
 1. Copy the `hasura/.env.example` to `hasura/.env.local`
 1. From your new `.env.local`, delete the "Hasura Cloud"-specific variables
    (which are labeled accordingly in the env's comments).
+   1. You won't be able to configure the `HASURA_GRAPHQL_JWT_SECRET` yet. Replace it with `XXXXX` for now.
+   1. In `hasura/docker-compose.yaml`, comment out the line `HASURA_GRAPHQL_JWT_SECRET: ${HASURA_GRAPHQL_JWT_SECRET}`. We'll re-enable it once we have a JWT secret.
 1. Run the `Hasura Console -- Local Development` task within VSCode
-1. Check that the Docker Compose task ran successful in the Task Output
-1. Check that the Hasrua Console task ran successful in the Task Output
-1. Your browser should have opened a tab to the Harusa console
+1. Check that the Docker Compose task ran successfully in the Task Output
+1. Check that the Hasura Console task ran successfully in the Task Output
+1. Your browser should have opened a tab to the Hasura console
 
 ## Local Development
 
 See root ReadMe instructions for local development for which tasks to run.
 
-If the environment configuration for Harusa/Postgres or the Docker Compose
-configuration changes, then the Harusa local-dev tasks need to be restarted
+If the environment configuration for Hasura/Postgres or the Docker Compose
+configuration changes, then the Hasura local-dev tasks need to be restarted
 (which will also apply the changes to Docker).
 
 ## Remote Deployment

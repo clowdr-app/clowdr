@@ -10,9 +10,13 @@ React web app that forms the main Clowdr frontend.
 
 ## Setting up
 
-1. Copy and configure the `frontend/.env.example` to a new `frontend/.env` file
-1. Create a Netlify account, then follow the root ReadMe instructions for
-   configuring Auth0. Then come back here.
+1. Create a Netlify account.
+1. In Netlify, create a new site from Git.
+
+- If you're not part of the core Clowdr team, create and use a fork of the `clowdr-app/clowdr` repository.
+
+1. Follow the root ReadMe instructions for configuring Auth0. Then come back here.
+1. Copy the `frontend/.env.example` to a new `frontend/.env` file.
 1. Configure your `.env` file according to the [Frontend Configuration](#frontend-configuration) section below.
 1. Build and test the system locally
 1. Follow the _[Deployment to Netlify](#deployment-to-netlify)_ instructions

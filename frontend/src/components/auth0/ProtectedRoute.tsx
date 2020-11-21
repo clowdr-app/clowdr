@@ -12,7 +12,7 @@ export default function ProtectedRoute<P extends object>({
     const { error } = useAuth0();
 
     if (error) {
-        return <Redirect to="/" />;
+        return <Route {...args} component={() => <Redirect to="/" />} />;
     }
 
     return (

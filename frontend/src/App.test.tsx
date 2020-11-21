@@ -1,5 +1,5 @@
 import * as React from "react";
-import Echo from "./components/Echo/Echo";
+import Echo from "./components/echo/echo";
 
 jest.mock("./components/echo/echo", () => {
     return jest.fn(() => <></>);

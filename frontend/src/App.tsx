@@ -7,7 +7,7 @@ import AuthenticationButton from "./components/auth0/AuthenticationButton";
 import ProtectedRoute from "./components/auth0/ProtectedRoute";
 import UserProfileInfo from "./components/auth0/UserProfileInfo";
 import LinkButton from "./components/chakra/LinkButton";
-import Echo from "./components/Echo/Echo";
+import Echo from "./components/echo/echo";
 import FAIcon from "./components/fontawesome/FAIcon";
 import UsersList from "./components/UsersList/UsersList";
 

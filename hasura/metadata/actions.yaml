@@ -2,7 +2,7 @@ actions:
   - name: echo
     definition:
       kind: ""
-      handler: "{{HASURA_GRAPHQL_ACTIONS_HANDLER_WEBHOOK_BASEURL}}/echo"
+      handler: "{{ACTION_BASE_URL}}/echo"
     permissions:
       - role: unauthenticated
       - role: user

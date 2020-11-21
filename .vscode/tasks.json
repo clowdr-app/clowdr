@@ -16,6 +16,9 @@
             "runOptions": {
                 "instanceLimit": 1
             },
+            // Use `"-p", "Hasura 3",` as the first arguments to use a different
+            // Docker project name
+            // Keywords: project_name, project-name, container name, container-name
             "args": ["--env-file", ".env.local", "up", "-d"]
         },
         // Hasura Console -- Local Development

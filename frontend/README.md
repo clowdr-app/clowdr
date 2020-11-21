@@ -10,18 +10,17 @@ React web app that forms the main Clowdr frontend.
 
 ## Setting up
 
-1. Create a Netlify account.
-1. In Netlify, create a new site from Git.
-
-- If you're not part of the core Clowdr team, create and use a fork of the `clowdr-app/clowdr` repository.
-
 1. Follow the root ReadMe instructions for configuring Auth0. Then come back here.
 1. Copy the `frontend/.env.example` to a new `frontend/.env` file.
 1. Configure your `.env` file according to the [Frontend Configuration](#frontend-configuration) section below.
-1. Build and test the system locally
-1. Follow the _[Deployment to Netlify](#deployment-to-netlify)_ instructions
-   below. (This is needed for the Auth0 configuration as part of the main Clowdr
-   setup).
+1. Build and test the system locally (see _[Local Development](#local-development)_).
+1. Once you have set up Hasura Cloud, create a Netlify account and follow the steps below.
+1. In Netlify, create a new site from Git.
+
+- If you're not part of the core Clowdr team, create and use a fork of this (`clowdr-app/clowdr`) repository.
+- See _[Deployment to Netlify](#deployment-to-netlify)_ for instructions.
+
+1. Go back to Auth0 and add the Netlify app url(s) to the application configuration (see instructions in root ReadMe)
 
 ## UI Components, Theming and Icons
 
@@ -38,7 +37,7 @@ need to regenerate the GraphQL code. You can do this using the VSCode Task
 
 ## Local Development
 
-See root ReadMe instructions for local development for which tasks to run.
+See root ReadMe _Local Development_ instructions for local development for which tasks to run.
 
 If the environment configuration changes, or for example, the `package.json`
 commands change, then you will need to restart tasks for this frontend.
@@ -102,6 +101,8 @@ The frontend can easily be deployed using Netlify:
 
 **_Note:_** Snowpack (the build tool we use) will only include environment
 variables in the build which start with `SNOWPACK_PUBLIC_`.
+
+**_Note:_** Pay attention to the _Netlify?_ column when configuring Netlify.
 
 | Env Var                                      | Value                                                    | Netlify? |
 | -------------------------------------------- | -------------------------------------------------------- | -------- |

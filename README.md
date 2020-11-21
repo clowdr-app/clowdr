@@ -65,7 +65,7 @@ Now, configure the application in the _Settings_ tab.
 
 1. Configure `Allowed Callback URLs` (comma-separated)
 
-   For example, you should include `localhost` and your Netlify app url(s):
+   For example, you should include `localhost` and optionally your Netlify app url(s), if you have set up Netlify:
 
    - `http://localhost:3000/auth0/logged-in`
    - `https://<netlify-subdomain>.netlify.app/auth0/logged-in`
@@ -191,11 +191,12 @@ useful logs, uncomment `console.log` statements in the _Rules_ we created above.
    https://hasura.io/jwt-config/](https://hasura.io/jwt-config/)
    - Select Auth0
    - Enter your Auth0 Domain
-1. Copy your key into your local `.env` file
+1. Copy your key into your local `hasura/.env.local` file
    - e.g. `HASURA_GRAPHQL_JWT_SECRET='your key goes in here'`
-   - Don't forget the wrapping single quotes!
+   - **Don't forget the wrapping single quotes!**
 1. Uncomment the `HASURA_GRAPHQL_JWT_SECRET: ${HASURA_GRAPHQL_JWT_SECRET}` line in `hasura/docker-compose.yaml`
-1. Copy your key into Hasura Cloud Environment configuration
+   - Don't forget to restart the `Hasura Console -- Local Development` task!
+1. Optionally: Copy your key into Hasura Cloud Environment configuration
    - No need for the wrapping single quotes - Hasura's UI will handle that for
      you.
 

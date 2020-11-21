@@ -11,6 +11,13 @@ React web app that forms the main Clowdr frontend.
 ## Setting up
 
 1. Copy and configure the `frontend/.env.example` to a new `frontend/.env` file
+1. Create a Netlify account, then follow the root ReadMe instructions for
+   configuring Auth0. Then come back here.
+1. Configure your `.env` file according to the [Frontend Configuration](#frontend-configuration) section below.
+1. Build and test the system locally
+1. Follow the _[Deployment to Netlify](#deployment-to-netlify)_ instructions
+   below. (This is needed for the Auth0 configuration as part of the main Clowdr
+   setup).
 
 ## UI Components, Theming and Icons
 
@@ -21,7 +28,9 @@ components](@chakra-ui/theme-tools).
 
 ## GraphQL
 
-TODO: Document command to regenerate TS for GraphQL queries
+After writing, modifying or delete a GraphQL query in the frontend, you will
+need to regenerate the GraphQL code. You can do this using the VSCode Task
+`Frontend -- GraphQL Codegen`.
 
 ## Local Development
 
@@ -75,7 +84,7 @@ Alternatively:
 1. To test: `frontend> serve -s build` Serves the static build locally for
    checking.
 
-## Deployment
+## Deployment to Netlify
 
 The frontend can easily be deployed using Netlify:
 
@@ -90,7 +99,14 @@ The frontend can easily be deployed using Netlify:
 **_Note:_** Snowpack (the build tool we use) will only include environment
 variables in the build which start with `SNOWPACK_PUBLIC_`.
 
-| Env Var                                      | Value                                                    |
-| -------------------------------------------- | -------------------------------------------------------- |
-| SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN           | The domain and port of the GraphQL server                |
-| SNOWPACK_PUBLIC_GRAPHQL_API_SECURE_PROTOCOLS | Boolean. Default: true. Whether to use https/wss or not. |
+| Env Var                                      | Value                                                    | Netlify? |
+| -------------------------------------------- | -------------------------------------------------------- | -------- |
+| HASURA_ADMIN_SECRET                          | Admin secret (used only for GraphQL Codegen)             | No       |
+| _GraphQL_                                    |                                                          |          |
+| SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN           | The domain and port of the GraphQL server                | Yes      |
+| SNOWPACK_PUBLIC_GRAPHQL_API_SECURE_PROTOCOLS | Boolean. Default: true. Whether to use https/wss or not. | Yes      |
+| _Auth0_                                      |                                                          |          |
+| SNOWPACK_PUBLIC_AUTH_LOGIN_CALLBACK_URL      | `http(s)://<frontend-url>/auth0/logged-in`               | Yes      |
+| SNOWPACK_PUBLIC_AUTH_LOGOUT_CALLBACK_URL     | `http(s)://<frontend-url>/auth0/logged-out`              | Yes      |
+| SNOWPACK_PUBLIC_AUTH_DOMAIN                  | <auth0-domain> e.g. `something.eu.auth0.com`             | Yes      |
+| SNOWPACK_PUBLIC_AUTH_CLIENT_ID               | <auth0-client-id> as shown in Auth0 Application          | Yes      |

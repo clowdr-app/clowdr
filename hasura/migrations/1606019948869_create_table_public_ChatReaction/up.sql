@@ -1,0 +1,2 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE TABLE "public"."ChatReaction"("id" uuid NOT NULL DEFAULT gen_random_uuid(), "messageId" uuid NOT NULL, "reactorId" text NOT NULL, "createdAt" timestamptz NOT NULL DEFAULT now(), "reaction" text NOT NULL, PRIMARY KEY ("id") , FOREIGN KEY ("messageId") REFERENCES "public"."ChatMessage"("id") ON UPDATE cascade ON DELETE cascade, FOREIGN KEY ("reactorId") REFERENCES "public"."user"("id") ON UPDATE cascade ON DELETE cascade, UNIQUE ("id"), UNIQUE ("messageId", "reactorId", "reaction"));

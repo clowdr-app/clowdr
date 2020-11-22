@@ -1,0 +1,2 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE TABLE "public"."Chat"("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" text NOT NULL, "description" text, "mode" text NOT NULL, "isAutoPin" boolean NOT NULL DEFAULT false, "isAutoNotify" boolean NOT NULL DEFAULT false, "lastMessageIndex" integer, "createdAt" timestamptz NOT NULL DEFAULT now(), "updatedAt" timestamptz NOT NULL DEFAULT now(), "creator" text NOT NULL, PRIMARY KEY ("id") , FOREIGN KEY ("creator") REFERENCES "public"."user"("id") ON UPDATE cascade ON DELETE restrict, UNIQUE ("id"));

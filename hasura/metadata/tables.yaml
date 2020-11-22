@@ -532,6 +532,77 @@
                   _eq: X-Hasura-User-Id
 - table:
     schema: public
+    name: ChatUnreadIndex
+  object_relationships:
+    - name: chat
+      using:
+        foreign_key_constraint_on: chatId
+    - name: user
+      using:
+        foreign_key_constraint_on: userId
+  insert_permissions:
+    - role: user
+      permission:
+        check:
+          chat:
+            _or:
+              - mode:
+                  _eq: publicGroup
+              - creatorId:
+                  _eq: X-Hasura-User-Id
+              - members:
+                  userId:
+                    _eq: X-Hasura-User-Id
+              - moderators:
+                  userId:
+                    _eq: X-Hasura-User-Id
+        set:
+          userId: x-hasura-User-Id
+        columns:
+          - chatId
+          - index
+        backend_only: false
+  select_permissions:
+    - role: user
+      permission:
+        columns:
+          - chatId
+          - id
+          - index
+          - userId
+        filter:
+          userId:
+            _eq: X-Hasura-User-Id
+  update_permissions:
+    - role: user
+      permission:
+        columns:
+          - index
+        filter:
+          userId:
+            _eq: X-Hasura-User-Id
+        check: null
+  delete_permissions:
+    - role: user
+      permission:
+        filter:
+          _or:
+            - chat:
+                _or:
+                  - mode:
+                      _eq: publicGroup
+                  - creatorId:
+                      _eq: X-Hasura-User-Id
+                  - members:
+                      userId:
+                        _eq: X-Hasura-User-Id
+                  - moderators:
+                      userId:
+                        _eq: X-Hasura-User-Id
+            - userId:
+                _eq: X-Hasura-User-Id
+- table:
+    schema: public
     name: ChatViewer
   object_relationships:
     - name: chat
@@ -814,6 +885,13 @@
           table:
             schema: public
             name: ChatTyper
+    - name: unreadIndices
+      using:
+        foreign_key_constraint_on:
+          column: userId
+          table:
+            schema: public
+            name: ChatUnreadIndex
     - name: viewingChats
       using:
         foreign_key_constraint_on:

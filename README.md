@@ -148,13 +148,15 @@ function (user, context, callback) {
   const userId = user.user_id;
   const given_name = user.given_name && user.given_name.length > 0 ? user.given_name : "<Unknown>";
   const family_name = user.family_name && user.family_name.length > 0 ? user.family_name : "<Unknown>";
+  const username = user.username || null;
+  const email = user.email;
   const url = configuration.HASURA_URL;
-  const upsertUserQuery = `mutation CreateUser($userId: String!, $firstName: String!, $lastName: String!) {
-  insert_user(objects: {id: $userId, firstName: $firstName, lastName: $lastName}, on_conflict: {constraint: user_pkey, update_columns: [firstName,lastName,lastLoggedInAt]}) {
+  const upsertUserQuery = `mutation CreateUser($userId: String!, $firstName: String!, $lastName: String!, $username: String, $email: String!) {
+  insert_user(objects: {id: $userId, firstName: $firstName, lastName: $lastName, username: $username, email: $email}, on_conflict: {constraint: user_pkey, update_columns: [firstName,lastName,username,email,lastLoggedInAt]}) {
     affected_rows
   }
 }`;
-  const graphqlReq = { "query": upsertUserQuery, "variables": { "userId": userId, "firstName": given_name, "lastName": family_name } };
+  const graphqlReq = { "query": upsertUserQuery, "variables": { "userId": userId, "firstName": given_name, "lastName": family_name, "username": username, "email": email } };
 
   // console.log("url", url);
   // console.log("graphqlReq", JSON.stringify(graphqlReq, null, 2));

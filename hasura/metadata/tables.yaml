@@ -825,22 +825,26 @@
     - role: user
       permission:
         columns:
-          - created_at
           - firstName
           - id
-          - lastLoggedInAt
           - lastName
-          - updated_at
-        filter:
-          id:
-            _eq: X-Hasura-User-Id
+          - username
+        filter: {}
   update_permissions:
     - role: user
       permission:
         columns:
+          - email
           - firstName
           - lastName
+          - username
         filter:
           id:
             _eq: X-Hasura-User-Id
         check: null
+  delete_permissions:
+    - role: user
+      permission:
+        filter:
+          id:
+            _eq: X-Hasura-User-Id

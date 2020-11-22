@@ -8,8 +8,8 @@ const echoQuery = gql`
         user {
             firstName
             id
-            lastLoggedInAt
             lastName
+            username
         }
     }
 `;

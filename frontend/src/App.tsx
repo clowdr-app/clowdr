@@ -72,9 +72,9 @@ function App(_props: AppProps): JSX.Element {
                         colorScheme="green"
                         aria-label="Users"
                         leftIcon={<FAIcon iconStyle="s" icon="users" />}
-                        to={"/user"}
+                        to={"/users"}
                     >
-                        User
+                        Users
                     </LinkButton>
                 ) : (
                     <></>
@@ -101,7 +101,7 @@ function App(_props: AppProps): JSX.Element {
                         Home page
                     </Route>
 
-                    <ProtectedRoute exact path="/user" component={UsersList} />
+                    <ProtectedRoute exact path="/users" component={UsersList} />
                     <Route
                         exact
                         path="/protectedEcho"

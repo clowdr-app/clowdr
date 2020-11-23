@@ -1,5 +1,6 @@
 import { HStack, StackDivider } from "@chakra-ui/react";
 import React, { useMemo } from "react";
+import ManageIsTyping from "../../hooks/Chats/ManageIsTyping";
 import ManageChat from "../../hooks/Chats/ManageChat";
 import useUserId from "../../hooks/useUserId";
 import ChatFrame from "../ChatFrame/ChatFrame";
@@ -8,9 +9,11 @@ import UsersList from "../UsersList/UsersList";
 
 function ChatFrameWrapper(props: { chatId: string }): JSX.Element {
     return (
-        <ManageChat chatId={props.chatId}>
-            <ChatFrame />
-        </ManageChat>
+        <ManageIsTyping>
+            <ManageChat chatId={props.chatId}>
+                <ChatFrame />
+            </ManageChat>
+        </ManageIsTyping>
     );
 }
 

@@ -5,16 +5,23 @@ import type {
 } from "../../generated/graphql";
 
 type ChatInfo = {
+    chatId: string;
     chat: SelectChatQuery | false | null;
     live: LiveChatSubscription | false | null;
     refetchChat: () => Promise<unknown>;
+    sendMessage: (content: any) => Promise<unknown>;
+    sendingMessage: boolean;
+    sendMessageError: string | false;
 };
 
 export const defaultChatContext: ChatInfo = {
+    chatId: "",
     chat: null,
     live: null,
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    refetchChat: async function (): Promise<void> {},
+    refetchChat: async function (): Promise<void> { return undefined; },
+    sendMessage: async function (_content): Promise<void> { return undefined; },
+    sendingMessage: false,
+    sendMessageError: false
 };
 
 export const ChatContext = React.createContext<ChatInfo>(defaultChatContext);

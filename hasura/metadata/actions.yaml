@@ -1,25 +1,25 @@
 actions:
-  - name: echo
-    definition:
-      kind: ""
-      handler: "{{ACTION_BASE_URL}}/echo"
-    permissions:
-      - role: unauthenticated
-      - role: user
-  - name: protectedEcho
-    definition:
-      kind: ""
-      handler: "{{ACTION_BASE_URL}}/protectedEcho"
-      forward_client_headers: true
-    permissions:
-      - role: user
+- name: echo
+  definition:
+    kind: ""
+    handler: '{{ACTION_BASE_URL}}/echo'
+  permissions:
+  - role: unauthenticated
+  - role: user
+- name: protectedEcho
+  definition:
+    kind: ""
+    handler: '{{ACTION_BASE_URL}}/protectedEcho'
+    forward_client_headers: true
+  permissions:
+  - role: user
 custom_types:
   enums: []
   input_objects:
-    - name: SampleInput
-    - name: EchoInput
+  - name: SampleInput
+  - name: EchoInput
   objects:
-    - name: SampleOutput
-    - name: EchoOutput
-    - name: ProtectedEchoOutput
+  - name: SampleOutput
+  - name: EchoOutput
+  - name: ProtectedEchoOutput
   scalars: []

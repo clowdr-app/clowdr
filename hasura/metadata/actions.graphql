@@ -1,28 +1,37 @@
 type Query {
-    echo(message: String!): EchoOutput
+  echo (
+    message: String!
+  ): EchoOutput
 }
+
 
 type Query {
-    protectedEcho(message: String!): ProtectedEchoOutput
+  protectedEcho (
+    message: String!
+  ): ProtectedEchoOutput
 }
 
+
+
+
 input SampleInput {
-    username: String!
-    password: String!
+  username : String!
+  password : String!
 }
 
 input EchoInput {
-    message: String!
+  message : String!
 }
 
 type SampleOutput {
-    accessToken: String!
+  accessToken : String!
 }
 
 type EchoOutput {
-    message: String!
+  message : String!
 }
 
 type ProtectedEchoOutput {
-    message: String!
+  message : String!
 }
+

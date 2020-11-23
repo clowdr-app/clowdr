@@ -1,7 +1,8 @@
 import { gql } from "@apollo/client";
 import { useAuth0 } from "@auth0/auth0-react";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
+    useInsertMessageMutation,
     useLiveChatSubscription,
     useSelectChatQuery,
 } from "../../generated/graphql";
@@ -40,10 +41,17 @@ const _chatQueries = gql`
         }
     }
 
+    mutation InsertMessage($chatId: uuid!, $content: jsonb!, $index: Int!) {
+        insert_ChatMessage(
+            objects: { chatId: $chatId, content: $content, index: $index }
+        ) {
+            affected_rows
+        }
+    }
+
     subscription LiveChat($chatId: uuid!, $limit: Int = 20, $offset: Int = 0) {
         Chat(where: { id: { _eq: $chatId } }) {
             id
-            lastMessageIndex
             typers {
                 id
                 userId
@@ -133,6 +141,11 @@ function ManagerChat_IsAuthenticated({
     });
     useQueryErrorToast(liveChatError);
 
+    const [
+        insertMessage,
+        { loading: insertMessageLoading, error: insertMessageError },
+    ] = useInsertMessageMutation();
+
     useEffect(() => {
         const intervalId = setInterval(() => {
             chatRefetch();
@@ -143,18 +156,38 @@ function ManagerChat_IsAuthenticated({
     }, [chatRefetch]);
 
     const chatValue = chatLoading ? null : chatError ? false : chatData ?? null;
-    const liveChatValue = liveChatLoading
+    const liveChatValue = chatLoading || liveChatLoading
         ? null
-        : liveChatError
+        : chatError || liveChatError
         ? false
-        : liveChatData ?? null;
+            : liveChatData ?? null;
+    
+    const sendMessage = useCallback(async (content: any) => {
+        if (liveChatValue) {
+            const prevIndex = liveChatValue.Chat[0].messages[0].index;
+            await insertMessage({
+                variables: {
+                    chatId,
+                    content,
+                    index: prevIndex + 1
+                }
+            });
+        }
+        else {
+            throw new Error("Chat not available at the moment");
+        }
+    }, [chatId, insertMessage, liveChatValue]);
 
     return (
         <ChatContext.Provider
             value={{
+                chatId,
                 chat: chatValue,
                 live: liveChatValue,
                 refetchChat: chatRefetch,
+                sendMessage,
+                sendingMessage: insertMessageLoading,
+                sendMessageError: insertMessageError ? insertMessageError.message : false
             }}
         >
             {children}

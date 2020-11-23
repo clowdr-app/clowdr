@@ -244,6 +244,7 @@ export default function ChatFrame(): JSX.Element {
                             onKeyDown={(ev) => {
                                 if (ev.key === "Enter" && !ev.shiftKey) {
                                     _chat.sendMessage(newMessageText);
+                                    isNotTyping();
                                     // TODO: Only reset if no error
                                     setNewMessageText("");
                                 }

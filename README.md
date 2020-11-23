@@ -150,7 +150,6 @@ function (user, context, callback) {
   const family_name = user.family_name && user.family_name.length > 0 ? user.family_name : "<Unknown>";
   const username = user.username || null;
   const email = user.email;
-  const url = configuration.HASURA_URL;
   const upsertUserQuery = `mutation CreateUser($userId: String!, $firstName: String!, $lastName: String!, $username: String, $email: String!) {
   insert_user(objects: {id: $userId, firstName: $firstName, lastName: $lastName, username: $username, email: $email}, on_conflict: {constraint: user_pkey, update_columns: [firstName,lastName,username,email,lastLoggedInAt]}) {
     affected_rows
@@ -161,14 +160,21 @@ function (user, context, callback) {
   // console.log("url", url);
   // console.log("graphqlReq", JSON.stringify(graphqlReq, null, 2));
 
-  request.post({
-      headers: {'content-type' : 'application/json', 'x-hasura-admin-secret': configuration.HASURA_ADMIN_SECRET},
-      url:   url,
-      body:  JSON.stringify(graphqlReq)
-  }, function(error, response, body){
-       console.log(body);
-       callback(null, user, context);
-  });
+  function sendRequest(url, adminSecret) {
+    request.post({
+        headers: {'content-type' : 'application/json', 'x-hasura-admin-secret': adminSecret},
+        url:   url,
+        body:  JSON.stringify(graphqlReq)
+    }, function(error, response, body){
+         console.log(body);
+         callback(null, user, context);
+    });
+  }
+
+  sendRequest(configuration.HASURA_URL, configuration.HASURA_ADMIN_SECRET);
+  if (configuration.HASURA_URL_LOCAL && configuration.HASURA_ADMIN_SECRET_LOCAL) {
+  	sendRequest(configuration.HASURA_URL_LOCAL, configuration.HASURA_ADMIN_SECRET_LOCAL);
+  }
 }
 ```
 
@@ -181,6 +187,9 @@ Under _Rule Settings_ add the following key-value pairs:
 | HASURA_NAMESPACE    | `https://hasura.io/jwt/claims`                                                              | For Hasura, this value must always be this URL.                                                                                                           |
 | HASURA_ADMIN_SECRET | The Hasura Admin Secret                                                                     | For local testing, see Hasura Environment Variables.                                                                                                      |
 | HASURA_URL          | The full URL to the Hasura GraphQL API. E.g. `http://<ngrok-subdomain>.ngrok.io/v1/graphql` | Use Ngrok to make a `localhost` server accessible by Auth0: command `ngrok http 8080`. Hint: The Hasura Service _not_ the Hasura Console URL/port number! |
+
+You can optionally use `HASURA_ADMIN_SECRET_LOCAL` and `HASURA_URL_LOCAL` in addition to the non-local versions to have
+user records pushed to both services simultaneously (useful in testing environments).
 
 #### 6. Turn on live logging
 

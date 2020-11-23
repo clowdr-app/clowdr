@@ -3,4 +3,5 @@ build
 coverage
 
 # Ignore certain source folders:
-./hasura
+hasura
+frontend/src/generated/

@@ -166,7 +166,7 @@ function ManagerChat_IsAuthenticated({
     const sendMessage = useCallback(
         async (content: any) => {
             if (liveChatValue) {
-                const prevIndex = liveChatValue.Chat[0].messages[0].index;
+                const prevIndex = liveChatValue.Chat[0].messages[0]?.index ?? 1;
                 await insertMessage({
                     variables: {
                         chatId,

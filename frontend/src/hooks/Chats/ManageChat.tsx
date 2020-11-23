@@ -156,27 +156,30 @@ function ManagerChat_IsAuthenticated({
     }, [chatRefetch]);
 
     const chatValue = chatLoading ? null : chatError ? false : chatData ?? null;
-    const liveChatValue = chatLoading || liveChatLoading
-        ? null
-        : chatError || liveChatError
-        ? false
+    const liveChatValue =
+        chatLoading || liveChatLoading
+            ? null
+            : chatError || liveChatError
+            ? false
             : liveChatData ?? null;
-    
-    const sendMessage = useCallback(async (content: any) => {
-        if (liveChatValue) {
-            const prevIndex = liveChatValue.Chat[0].messages[0].index;
-            await insertMessage({
-                variables: {
-                    chatId,
-                    content,
-                    index: prevIndex + 1
-                }
-            });
-        }
-        else {
-            throw new Error("Chat not available at the moment");
-        }
-    }, [chatId, insertMessage, liveChatValue]);
+
+    const sendMessage = useCallback(
+        async (content: any) => {
+            if (liveChatValue) {
+                const prevIndex = liveChatValue.Chat[0].messages[0].index;
+                await insertMessage({
+                    variables: {
+                        chatId,
+                        content,
+                        index: prevIndex + 1,
+                    },
+                });
+            } else {
+                throw new Error("Chat not available at the moment");
+            }
+        },
+        [chatId, insertMessage, liveChatValue]
+    );
 
     return (
         <ChatContext.Provider
@@ -187,7 +190,9 @@ function ManagerChat_IsAuthenticated({
                 refetchChat: chatRefetch,
                 sendMessage,
                 sendingMessage: insertMessageLoading,
-                sendMessageError: insertMessageError ? insertMessageError.message : false
+                sendMessageError: insertMessageError
+                    ? insertMessageError.message
+                    : false,
             }}
         >
             {children}

@@ -35,7 +35,10 @@ export default function useIsTyping(
     const _isTyping = upsertIsTypingInfo.isTyping;
     const _isNotTyping = upsertIsTypingInfo.isNotTyping;
     const isTyping = useCallback(() => _isTyping(chatId), [_isTyping, chatId]);
-    const isNotTyping = useCallback((altUserId?: string) => _isNotTyping(chatId, altUserId), [_isNotTyping, chatId]);
+    const isNotTyping = useCallback(
+        (altUserId?: string) => _isNotTyping(chatId, altUserId),
+        [_isNotTyping, chatId]
+    );
     return {
         isTyping,
         isNotTyping,

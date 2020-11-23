@@ -18,10 +18,14 @@ export const defaultChatContext: ChatInfo = {
     chatId: "",
     chat: null,
     live: null,
-    refetchChat: async function (): Promise<void> { return undefined; },
-    sendMessage: async function (_content): Promise<void> { return undefined; },
+    refetchChat: async function (): Promise<void> {
+        return undefined;
+    },
+    sendMessage: async function (_content): Promise<void> {
+        return undefined;
+    },
     sendingMessage: false,
-    sendMessageError: false
+    sendMessageError: false,
 };
 
 export const ChatContext = React.createContext<ChatInfo>(defaultChatContext);

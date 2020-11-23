@@ -100,13 +100,14 @@ function MessageList({
                 align="start"
                 divider={<StackDivider borderColor="gray.700" />}
             >
-                {users && messages.map((message) => (
-                    <Message
-                        key={message.index}
-                        message={message}
-                        users={users}
-                    />
-                ))}
+                {users &&
+                    messages.map((message) => (
+                        <Message
+                            key={message.index}
+                            message={message}
+                            users={users}
+                        />
+                    ))}
             </Stack>
         </Flex>
     );
@@ -190,9 +191,15 @@ export default function ChatFrame(): JSX.Element {
         [_chat.live, users]
     );
 
-    const messageListEl = useMemo(() =>
-        <MessageList messages={_chat.live ? _chat.live.Chat[0].messages : []} users={users ? users : undefined} />
-        , [_chat.live, users]);
+    const messageListEl = useMemo(
+        () => (
+            <MessageList
+                messages={_chat.live ? _chat.live.Chat[0].messages : []}
+                users={users ? users : undefined}
+            />
+        ),
+        [_chat.live, users]
+    );
 
     if (_chat.chat && _chat.live && users) {
         const chat = _chat.chat.Chat[0];
@@ -241,7 +248,9 @@ export default function ChatFrame(): JSX.Element {
                                     setNewMessageText("");
                                 }
                             }}
-                            disabled={!!_chat.sendMessageError || _chat.sendingMessage}
+                            disabled={
+                                !!_chat.sendMessageError || _chat.sendingMessage
+                            }
                         />
                         <Flex flexDirection="column">
                             <Button>

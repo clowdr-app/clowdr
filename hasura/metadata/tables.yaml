@@ -2,1048 +2,1048 @@
     schema: public
     name: Chat
   object_relationships:
-  - name: creator
-    using:
-      foreign_key_constraint_on: creatorId
+    - name: creator
+      using:
+        foreign_key_constraint_on: creatorId
   array_relationships:
-  - name: flaggedMessages
-    using:
-      foreign_key_constraint_on:
-        column: moderationChatId
-        table:
-          schema: public
-          name: FlaggedChatMessage
-  - name: members
-    using:
-      foreign_key_constraint_on:
-        column: chatId
-        table:
-          schema: public
-          name: ChatMember
-  - name: messages
-    using:
-      foreign_key_constraint_on:
-        column: chatId
-        table:
-          schema: public
-          name: ChatMessage
-  - name: moderators
-    using:
-      foreign_key_constraint_on:
-        column: chatId
-        table:
-          schema: public
-          name: ChatModerator
-  - name: typers
-    using:
-      foreign_key_constraint_on:
-        column: chatId
-        table:
-          schema: public
-          name: ChatTyper
-  - name: viewers
-    using:
-      foreign_key_constraint_on:
-        column: chatId
-        table:
-          schema: public
-          name: ChatViewer
+    - name: flaggedMessages
+      using:
+        foreign_key_constraint_on:
+          column: moderationChatId
+          table:
+            schema: public
+            name: FlaggedChatMessage
+    - name: members
+      using:
+        foreign_key_constraint_on:
+          column: chatId
+          table:
+            schema: public
+            name: ChatMember
+    - name: messages
+      using:
+        foreign_key_constraint_on:
+          column: chatId
+          table:
+            schema: public
+            name: ChatMessage
+    - name: moderators
+      using:
+        foreign_key_constraint_on:
+          column: chatId
+          table:
+            schema: public
+            name: ChatModerator
+    - name: typers
+      using:
+        foreign_key_constraint_on:
+          column: chatId
+          table:
+            schema: public
+            name: ChatTyper
+    - name: viewers
+      using:
+        foreign_key_constraint_on:
+          column: chatId
+          table:
+            schema: public
+            name: ChatViewer
   insert_permissions:
-  - role: user
-    permission:
-      check: {}
-      set:
-        mode: publicGroup
-        isAutoPin: "false"
-        isAutoNotify: "false"
-        creatorId: x-hasura-User-Id
-      columns:
-      - description
-      - name
-      backend_only: false
+    - role: user
+      permission:
+        check: {}
+        set:
+          mode: publicGroup
+          isAutoPin: "false"
+          isAutoNotify: "false"
+          creatorId: x-hasura-User-Id
+        columns:
+          - description
+          - name
+        backend_only: false
   select_permissions:
-  - role: user
-    permission:
-      columns:
-      - createdAt
-      - creatorId
-      - description
-      - id
-      - isAutoNotify
-      - isAutoPin
-      - mode
-      - name
-      - updatedAt
-      filter:
-        _or:
-        - creatorId:
-            _eq: X-Hasura-User-Id
-        - moderators:
-            userId:
-              _eq: X-Hasura-User-Id
-        - members:
-            userId:
-              _eq: X-Hasura-User-Id
-        - mode:
-            _eq: publicGroup
+    - role: user
+      permission:
+        columns:
+          - createdAt
+          - creatorId
+          - description
+          - id
+          - isAutoNotify
+          - isAutoPin
+          - mode
+          - name
+          - updatedAt
+        filter:
+          _or:
+            - creatorId:
+                _eq: X-Hasura-User-Id
+            - moderators:
+                userId:
+                  _eq: X-Hasura-User-Id
+            - members:
+                userId:
+                  _eq: X-Hasura-User-Id
+            - mode:
+                _eq: publicGroup
   update_permissions:
-  - role: user
-    permission:
-      columns:
-      - description
-      - isAutoNotify
-      - isAutoPin
-      - name
-      filter:
-        _or:
-        - creatorId:
-            _eq: X-Hasura-User-Id
-        - moderators:
-            userId:
-              _eq: X-Hasura-User-Id
-        - _and:
-          - mode:
-              _eq: DM
-          - members:
-              userId:
+    - role: user
+      permission:
+        columns:
+          - description
+          - isAutoNotify
+          - isAutoPin
+          - name
+        filter:
+          _or:
+            - creatorId:
                 _eq: X-Hasura-User-Id
-      check:
-        _and:
-        - _or:
-          - isAutoPin:
-              _eq: false
-          - moderators:
-              userId:
-                _eq: X-Hasura-User-Id
-        - _or:
-          - isAutoNotify:
-              _eq: false
-          - moderators:
-              userId:
-                _eq: X-Hasura-User-Id
+            - moderators:
+                userId:
+                  _eq: X-Hasura-User-Id
+            - _and:
+                - mode:
+                    _eq: DM
+                - members:
+                    userId:
+                      _eq: X-Hasura-User-Id
+        check:
+          _and:
+            - _or:
+                - isAutoPin:
+                    _eq: false
+                - moderators:
+                    userId:
+                      _eq: X-Hasura-User-Id
+            - _or:
+                - isAutoNotify:
+                    _eq: false
+                - moderators:
+                    userId:
+                      _eq: X-Hasura-User-Id
   delete_permissions:
-  - role: user
-    permission:
-      filter:
-        _or:
-        - creatorId:
-            _eq: X-Hasura-User-Id
-        - moderators:
-            userId:
-              _eq: X-Hasura-User-Id
-        - _and:
-          - mode:
-              _eq: DM
-          - members:
-              userId:
+    - role: user
+      permission:
+        filter:
+          _or:
+            - creatorId:
                 _eq: X-Hasura-User-Id
+            - moderators:
+                userId:
+                  _eq: X-Hasura-User-Id
+            - _and:
+                - mode:
+                    _eq: DM
+                - members:
+                    userId:
+                      _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: ChatMember
   object_relationships:
-  - name: chat
-    using:
-      foreign_key_constraint_on: chatId
-  - name: user
-    using:
-      foreign_key_constraint_on: userId
+    - name: chat
+      using:
+        foreign_key_constraint_on: chatId
+    - name: user
+      using:
+        foreign_key_constraint_on: userId
   insert_permissions:
-  - role: user
-    permission:
-      check:
-        _and:
-        - _or:
-          - chat:
-              mode:
-                _eq: privateGroup
-          - chat:
-              mode:
-                _eq: modhub
-          - chat:
-              mode:
-                _eq: mod
-          - chat:
-              mode:
-                _eq: modComplete
-        - _or:
-          - chat:
-              creatorId:
-                _eq: X-Hasura-User-Id
-          - chat:
-              moderators:
-                userId:
-                  _eq: X-Hasura-User-Id
-      columns:
-      - chatId
-      - userId
-      backend_only: false
+    - role: user
+      permission:
+        check:
+          _and:
+            - _or:
+                - chat:
+                    mode:
+                      _eq: privateGroup
+                - chat:
+                    mode:
+                      _eq: modhub
+                - chat:
+                    mode:
+                      _eq: mod
+                - chat:
+                    mode:
+                      _eq: modComplete
+            - _or:
+                - chat:
+                    creatorId:
+                      _eq: X-Hasura-User-Id
+                - chat:
+                    moderators:
+                      userId:
+                        _eq: X-Hasura-User-Id
+        columns:
+          - chatId
+          - userId
+        backend_only: false
   select_permissions:
-  - role: user
-    permission:
-      columns:
-      - chatId
-      - createdAt
-      - id
-      - invitationAcceptedAt
-      - updatedAt
-      - userId
-      filter:
-        _or:
-        - chat:
-            creatorId:
-              _eq: X-Hasura-User-Id
-        - chat:
-            moderators:
-              userId:
+    - role: user
+      permission:
+        columns:
+          - chatId
+          - createdAt
+          - id
+          - invitationAcceptedAt
+          - updatedAt
+          - userId
+        filter:
+          _or:
+            - chat:
+                creatorId:
+                  _eq: X-Hasura-User-Id
+            - chat:
+                moderators:
+                  userId:
+                    _eq: X-Hasura-User-Id
+            - userId:
                 _eq: X-Hasura-User-Id
-        - userId:
-            _eq: X-Hasura-User-Id
   update_permissions:
-  - role: user
-    permission:
-      columns:
-      - invitationAcceptedAt
-      - updatedAt
-      filter:
-        userId:
-          _eq: X-Hasura-User-Id
-      check: null
-  delete_permissions:
-  - role: user
-    permission:
-      filter:
-        _or:
-        - chat:
-            creatorId:
-              _eq: X-Hasura-User-Id
-        - chat:
-            moderators:
-              userId:
-                _eq: X-Hasura-User-Id
-        - userId:
+    - role: user
+      permission:
+        columns:
+          - invitationAcceptedAt
+          - updatedAt
+        filter:
+          userId:
             _eq: X-Hasura-User-Id
+        check: null
+  delete_permissions:
+    - role: user
+      permission:
+        filter:
+          _or:
+            - chat:
+                creatorId:
+                  _eq: X-Hasura-User-Id
+            - chat:
+                moderators:
+                  userId:
+                    _eq: X-Hasura-User-Id
+            - userId:
+                _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: ChatMessage
   object_relationships:
-  - name: chat
-    using:
-      foreign_key_constraint_on: chatId
-  - name: sender
-    using:
-      foreign_key_constraint_on: senderId
+    - name: chat
+      using:
+        foreign_key_constraint_on: chatId
+    - name: sender
+      using:
+        foreign_key_constraint_on: senderId
   array_relationships:
-  - name: flags
-    using:
-      foreign_key_constraint_on:
-        column: messageId
-        table:
-          schema: public
-          name: FlaggedChatMessage
-  - name: reactions
-    using:
-      foreign_key_constraint_on:
-        column: messageId
-        table:
-          schema: public
-          name: ChatReaction
+    - name: flags
+      using:
+        foreign_key_constraint_on:
+          column: messageId
+          table:
+            schema: public
+            name: FlaggedChatMessage
+    - name: reactions
+      using:
+        foreign_key_constraint_on:
+          column: messageId
+          table:
+            schema: public
+            name: ChatReaction
   insert_permissions:
-  - role: user
-    permission:
-      check:
-        _or:
-        - chat:
-            mode:
-              _eq: publicGroup
-        - chat:
-            members:
-              userId:
-                _eq: X-Hasura-User-Id
-        - chat:
-            moderators:
-              userId:
-                _eq: X-Hasura-User-Id
-      set:
-        senderId: x-hasura-User-Id
-      columns:
-      - chatId
-      - content
-      - index
-      backend_only: false
+    - role: user
+      permission:
+        check:
+          _or:
+            - chat:
+                mode:
+                  _eq: publicGroup
+            - chat:
+                members:
+                  userId:
+                    _eq: X-Hasura-User-Id
+            - chat:
+                moderators:
+                  userId:
+                    _eq: X-Hasura-User-Id
+        set:
+          senderId: x-hasura-User-Id
+        columns:
+          - chatId
+          - content
+          - index
+        backend_only: false
   select_permissions:
-  - role: user
-    permission:
-      columns:
-      - chatId
-      - content
-      - createdAt
-      - id
-      - index
-      - isHighlighted
-      - senderId
-      - updatedAt
-      filter:
-        _or:
-        - chat:
-            mode:
-              _eq: publicGroup
-        - chat:
-            members:
-              userId:
-                _eq: X-Hasura-User-Id
-        - chat:
-            moderators:
-              userId:
-                _eq: X-Hasura-User-Id
+    - role: user
+      permission:
+        columns:
+          - chatId
+          - content
+          - createdAt
+          - id
+          - index
+          - isHighlighted
+          - senderId
+          - updatedAt
+        filter:
+          _or:
+            - chat:
+                mode:
+                  _eq: publicGroup
+            - chat:
+                members:
+                  userId:
+                    _eq: X-Hasura-User-Id
+            - chat:
+                moderators:
+                  userId:
+                    _eq: X-Hasura-User-Id
   update_permissions:
-  - role: user
-    permission:
-      columns:
-      - content
-      - isHighlighted
-      - updatedAt
-      filter:
-        _or:
-        - senderId:
-            _eq: X-Hasura-User-Id
-        - chat:
-            moderators:
-              userId:
+    - role: user
+      permission:
+        columns:
+          - content
+          - isHighlighted
+          - updatedAt
+        filter:
+          _or:
+            - senderId:
                 _eq: X-Hasura-User-Id
-      check: null
+            - chat:
+                moderators:
+                  userId:
+                    _eq: X-Hasura-User-Id
+        check: null
   delete_permissions:
-  - role: user
-    permission:
-      filter:
-        _or:
-        - senderId:
-            _eq: X-Hasura-User-Id
-        - chat:
-            moderators:
-              userId:
+    - role: user
+      permission:
+        filter:
+          _or:
+            - senderId:
                 _eq: X-Hasura-User-Id
+            - chat:
+                moderators:
+                  userId:
+                    _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: ChatModerator
   object_relationships:
-  - name: chat
-    using:
-      foreign_key_constraint_on: chatId
-  - name: user
-    using:
-      foreign_key_constraint_on: userId
+    - name: chat
+      using:
+        foreign_key_constraint_on: chatId
+    - name: user
+      using:
+        foreign_key_constraint_on: userId
   insert_permissions:
-  - role: user
-    permission:
-      check:
-        _or:
-        - chat:
-            creatorId:
-              _eq: X-Hasura-User-Id
-        - chat:
-            moderators:
-              userId:
-                _eq: X-Hasura-User-Id
-      columns:
-      - chatId
-      - userId
-      backend_only: false
+    - role: user
+      permission:
+        check:
+          _or:
+            - chat:
+                creatorId:
+                  _eq: X-Hasura-User-Id
+            - chat:
+                moderators:
+                  userId:
+                    _eq: X-Hasura-User-Id
+        columns:
+          - chatId
+          - userId
+        backend_only: false
   select_permissions:
-  - role: user
-    permission:
-      columns:
-      - chatId
-      - createdAt
-      - id
-      - userId
-      filter:
-        _or:
-        - chat:
-            creatorId:
-              _eq: X-Hasura-User-Id
-        - chat:
+    - role: user
+      permission:
+        columns:
+          - chatId
+          - createdAt
+          - id
+          - userId
+        filter:
+          _or:
+            - chat:
+                creatorId:
+                  _eq: X-Hasura-User-Id
+            - chat:
+                moderators:
+                  userId:
+                    _eq: X-Hasura-User-Id
+            - chat:
+                members:
+                  userId:
+                    _eq: X-Hasura-User-Id
+            - chat:
+                mode:
+                  _eq: publicGroup
+            - userId:
+                _eq: X-Hasura-User-Id
+  delete_permissions:
+    - role: user
+      permission:
+        filter:
+          chat:
             moderators:
               userId:
                 _eq: X-Hasura-User-Id
-        - chat:
-            members:
-              userId:
-                _eq: X-Hasura-User-Id
-        - chat:
-            mode:
-              _eq: publicGroup
-        - userId:
-            _eq: X-Hasura-User-Id
-  delete_permissions:
-  - role: user
-    permission:
-      filter:
-        chat:
-          moderators:
-            userId:
-              _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: ChatReaction
   object_relationships:
-  - name: message
-    using:
-      foreign_key_constraint_on: messageId
-  - name: reactor
-    using:
-      foreign_key_constraint_on: reactorId
+    - name: message
+      using:
+        foreign_key_constraint_on: messageId
+    - name: reactor
+      using:
+        foreign_key_constraint_on: reactorId
   insert_permissions:
-  - role: user
-    permission:
-      check:
-        message:
-          chat:
-            _or:
-            - creatorId:
-                _eq: X-Hasura-User-Id
-            - moderators:
-                userId:
-                  _eq: X-Hasura-User-Id
-            - members:
-                userId:
-                  _eq: X-Hasura-User-Id
-            - mode:
-                _eq: publicGroup
-      set:
-        reactorId: x-hasura-User-Id
-      columns:
-      - messageId
-      - reaction
-      backend_only: false
-  select_permissions:
-  - role: user
-    permission:
-      columns:
-      - createdAt
-      - id
-      - messageId
-      - reaction
-      - reactorId
-      filter:
-        message:
-          chat:
-            _or:
-            - creatorId:
-                _eq: X-Hasura-User-Id
-            - moderators:
-                userId:
-                  _eq: X-Hasura-User-Id
-            - members:
-                userId:
-                  _eq: X-Hasura-User-Id
-            - mode:
-                _eq: publicGroup
-  delete_permissions:
-  - role: user
-    permission:
-      filter:
-        _or:
-        - reactorId:
-            _eq: X-Hasura-User-Id
-        - message:
+    - role: user
+      permission:
+        check:
+          message:
             chat:
               _or:
+                - creatorId:
+                    _eq: X-Hasura-User-Id
+                - moderators:
+                    userId:
+                      _eq: X-Hasura-User-Id
+                - members:
+                    userId:
+                      _eq: X-Hasura-User-Id
+                - mode:
+                    _eq: publicGroup
+        set:
+          reactorId: x-hasura-User-Id
+        columns:
+          - messageId
+          - reaction
+        backend_only: false
+  select_permissions:
+    - role: user
+      permission:
+        columns:
+          - createdAt
+          - id
+          - messageId
+          - reaction
+          - reactorId
+        filter:
+          message:
+            chat:
+              _or:
+                - creatorId:
+                    _eq: X-Hasura-User-Id
+                - moderators:
+                    userId:
+                      _eq: X-Hasura-User-Id
+                - members:
+                    userId:
+                      _eq: X-Hasura-User-Id
+                - mode:
+                    _eq: publicGroup
+  delete_permissions:
+    - role: user
+      permission:
+        filter:
+          _or:
+            - reactorId:
+                _eq: X-Hasura-User-Id
+            - message:
+                chat:
+                  _or:
+                    - creatorId:
+                        _eq: X-Hasura-User-Id
+                    - moderators:
+                        userId:
+                          _eq: X-Hasura-User-Id
+- table:
+    schema: public
+    name: ChatTyper
+  object_relationships:
+    - name: chat
+      using:
+        foreign_key_constraint_on: chatId
+    - name: user
+      using:
+        foreign_key_constraint_on: userId
+  insert_permissions:
+    - role: user
+      permission:
+        check:
+          chat:
+            _or:
+              - mode:
+                  _eq: publicGroup
+              - members:
+                  userId:
+                    _eq: X-Hasura-User-Id
+              - moderators:
+                  userId:
+                    _eq: X-Hasura-User-Id
               - creatorId:
                   _eq: X-Hasura-User-Id
+        set:
+          userId: x-hasura-User-Id
+        columns:
+          - chatId
+          - updatedAt
+        backend_only: false
+  select_permissions:
+    - role: user
+      permission:
+        columns:
+          - chatId
+          - id
+          - updatedAt
+          - userId
+        filter:
+          chat:
+            _or:
+              - mode:
+                  _eq: publicGroup
+              - members:
+                  userId:
+                    _eq: X-Hasura-User-Id
+              - moderators:
+                  userId:
+                    _eq: X-Hasura-User-Id
+              - creatorId:
+                  _eq: X-Hasura-User-Id
+  update_permissions:
+    - role: user
+      permission:
+        columns:
+          - updatedAt
+        filter:
+          chat:
+            _or:
+              - mode:
+                  _eq: publicGroup
+              - members:
+                  userId:
+                    _eq: X-Hasura-User-Id
+              - moderators:
+                  userId:
+                    _eq: X-Hasura-User-Id
+              - creatorId:
+                  _eq: X-Hasura-User-Id
+        check: null
+  delete_permissions:
+    - role: user
+      permission:
+        filter:
+          chat:
+            _or:
+              - mode:
+                  _eq: publicGroup
+              - members:
+                  userId:
+                    _eq: X-Hasura-User-Id
+              - moderators:
+                  userId:
+                    _eq: X-Hasura-User-Id
+              - creatorId:
+                  _eq: X-Hasura-User-Id
+- table:
+    schema: public
+    name: ChatUnreadIndex
+  object_relationships:
+    - name: chat
+      using:
+        foreign_key_constraint_on: chatId
+    - name: user
+      using:
+        foreign_key_constraint_on: userId
+  insert_permissions:
+    - role: user
+      permission:
+        check:
+          chat:
+            _or:
+              - mode:
+                  _eq: publicGroup
+              - creatorId:
+                  _eq: X-Hasura-User-Id
+              - members:
+                  userId:
+                    _eq: X-Hasura-User-Id
+              - moderators:
+                  userId:
+                    _eq: X-Hasura-User-Id
+        set:
+          userId: x-hasura-User-Id
+        columns:
+          - chatId
+          - index
+        backend_only: false
+  select_permissions:
+    - role: user
+      permission:
+        columns:
+          - chatId
+          - id
+          - index
+          - userId
+        filter:
+          userId:
+            _eq: X-Hasura-User-Id
+  update_permissions:
+    - role: user
+      permission:
+        columns:
+          - index
+        filter:
+          userId:
+            _eq: X-Hasura-User-Id
+        check: null
+  delete_permissions:
+    - role: user
+      permission:
+        filter:
+          _or:
+            - chat:
+                _or:
+                  - mode:
+                      _eq: publicGroup
+                  - creatorId:
+                      _eq: X-Hasura-User-Id
+                  - members:
+                      userId:
+                        _eq: X-Hasura-User-Id
+                  - moderators:
+                      userId:
+                        _eq: X-Hasura-User-Id
+            - userId:
+                _eq: X-Hasura-User-Id
+- table:
+    schema: public
+    name: ChatViewer
+  object_relationships:
+    - name: chat
+      using:
+        foreign_key_constraint_on: chatId
+    - name: user
+      using:
+        foreign_key_constraint_on: userId
+  insert_permissions:
+    - role: user
+      permission:
+        check:
+          chat:
+            _or:
+              - mode:
+                  _eq: publicGroup
+              - creatorId:
+                  _eq: X-Hasura-User-Id
+              - members:
+                  userId:
+                    _eq: X-Hasura-User-Id
+              - moderators:
+                  userId:
+                    _eq: X-Hasura-User-Id
+        set:
+          userId: x-hasura-User-Id
+        columns:
+          - chatId
+          - lastSeen
+        backend_only: false
+  select_permissions:
+    - role: user
+      permission:
+        columns:
+          - chatId
+          - id
+          - lastSeen
+          - userId
+        filter:
+          chat:
+            _or:
+              - mode:
+                  _eq: publicGroup
+              - creatorId:
+                  _eq: X-Hasura-User-Id
+              - members:
+                  userId:
+                    _eq: X-Hasura-User-Id
+              - moderators:
+                  userId:
+                    _eq: X-Hasura-User-Id
+  update_permissions:
+    - role: user
+      permission:
+        columns:
+          - lastSeen
+        filter:
+          chat:
+            _or:
+              - mode:
+                  _eq: publicGroup
+              - creatorId:
+                  _eq: X-Hasura-User-Id
+              - members:
+                  userId:
+                    _eq: X-Hasura-User-Id
+              - moderators:
+                  userId:
+                    _eq: X-Hasura-User-Id
+        check: null
+  delete_permissions:
+    - role: user
+      permission:
+        filter:
+          chat:
+            _or:
+              - mode:
+                  _eq: publicGroup
+              - creatorId:
+                  _eq: X-Hasura-User-Id
+              - members:
+                  userId:
+                    _eq: X-Hasura-User-Id
               - moderators:
                   userId:
                     _eq: X-Hasura-User-Id
 - table:
     schema: public
-    name: ChatTyper
-  object_relationships:
-  - name: chat
-    using:
-      foreign_key_constraint_on: chatId
-  - name: user
-    using:
-      foreign_key_constraint_on: userId
-  insert_permissions:
-  - role: user
-    permission:
-      check:
-        chat:
-          _or:
-          - mode:
-              _eq: publicGroup
-          - members:
-              userId:
-                _eq: X-Hasura-User-Id
-          - moderators:
-              userId:
-                _eq: X-Hasura-User-Id
-          - creatorId:
-              _eq: X-Hasura-User-Id
-      set:
-        userId: x-hasura-User-Id
-      columns:
-      - chatId
-      - updatedAt
-      backend_only: false
-  select_permissions:
-  - role: user
-    permission:
-      columns:
-      - chatId
-      - id
-      - updatedAt
-      - userId
-      filter:
-        chat:
-          _or:
-          - mode:
-              _eq: publicGroup
-          - members:
-              userId:
-                _eq: X-Hasura-User-Id
-          - moderators:
-              userId:
-                _eq: X-Hasura-User-Id
-          - creatorId:
-              _eq: X-Hasura-User-Id
-  update_permissions:
-  - role: user
-    permission:
-      columns:
-      - updatedAt
-      filter:
-        chat:
-          _or:
-          - mode:
-              _eq: publicGroup
-          - members:
-              userId:
-                _eq: X-Hasura-User-Id
-          - moderators:
-              userId:
-                _eq: X-Hasura-User-Id
-          - creatorId:
-              _eq: X-Hasura-User-Id
-      check: null
-  delete_permissions:
-  - role: user
-    permission:
-      filter:
-        chat:
-          _or:
-          - mode:
-              _eq: publicGroup
-          - members:
-              userId:
-                _eq: X-Hasura-User-Id
-          - moderators:
-              userId:
-                _eq: X-Hasura-User-Id
-          - creatorId:
-              _eq: X-Hasura-User-Id
-- table:
-    schema: public
-    name: ChatUnreadIndex
-  object_relationships:
-  - name: chat
-    using:
-      foreign_key_constraint_on: chatId
-  - name: user
-    using:
-      foreign_key_constraint_on: userId
-  insert_permissions:
-  - role: user
-    permission:
-      check:
-        chat:
-          _or:
-          - mode:
-              _eq: publicGroup
-          - creatorId:
-              _eq: X-Hasura-User-Id
-          - members:
-              userId:
-                _eq: X-Hasura-User-Id
-          - moderators:
-              userId:
-                _eq: X-Hasura-User-Id
-      set:
-        userId: x-hasura-User-Id
-      columns:
-      - chatId
-      - index
-      backend_only: false
-  select_permissions:
-  - role: user
-    permission:
-      columns:
-      - chatId
-      - id
-      - index
-      - userId
-      filter:
-        userId:
-          _eq: X-Hasura-User-Id
-  update_permissions:
-  - role: user
-    permission:
-      columns:
-      - index
-      filter:
-        userId:
-          _eq: X-Hasura-User-Id
-      check: null
-  delete_permissions:
-  - role: user
-    permission:
-      filter:
-        _or:
-        - chat:
-            _or:
-            - mode:
-                _eq: publicGroup
-            - creatorId:
-                _eq: X-Hasura-User-Id
-            - members:
-                userId:
-                  _eq: X-Hasura-User-Id
-            - moderators:
-                userId:
-                  _eq: X-Hasura-User-Id
-        - userId:
-            _eq: X-Hasura-User-Id
-- table:
-    schema: public
-    name: ChatViewer
-  object_relationships:
-  - name: chat
-    using:
-      foreign_key_constraint_on: chatId
-  - name: user
-    using:
-      foreign_key_constraint_on: userId
-  insert_permissions:
-  - role: user
-    permission:
-      check:
-        chat:
-          _or:
-          - mode:
-              _eq: publicGroup
-          - creatorId:
-              _eq: X-Hasura-User-Id
-          - members:
-              userId:
-                _eq: X-Hasura-User-Id
-          - moderators:
-              userId:
-                _eq: X-Hasura-User-Id
-      set:
-        userId: x-hasura-User-Id
-      columns:
-      - chatId
-      - lastSeen
-      backend_only: false
-  select_permissions:
-  - role: user
-    permission:
-      columns:
-      - chatId
-      - id
-      - lastSeen
-      - userId
-      filter:
-        chat:
-          _or:
-          - mode:
-              _eq: publicGroup
-          - creatorId:
-              _eq: X-Hasura-User-Id
-          - members:
-              userId:
-                _eq: X-Hasura-User-Id
-          - moderators:
-              userId:
-                _eq: X-Hasura-User-Id
-  update_permissions:
-  - role: user
-    permission:
-      columns:
-      - lastSeen
-      filter:
-        chat:
-          _or:
-          - mode:
-              _eq: publicGroup
-          - creatorId:
-              _eq: X-Hasura-User-Id
-          - members:
-              userId:
-                _eq: X-Hasura-User-Id
-          - moderators:
-              userId:
-                _eq: X-Hasura-User-Id
-      check: null
-  delete_permissions:
-  - role: user
-    permission:
-      filter:
-        chat:
-          _or:
-          - mode:
-              _eq: publicGroup
-          - creatorId:
-              _eq: X-Hasura-User-Id
-          - members:
-              userId:
-                _eq: X-Hasura-User-Id
-          - moderators:
-              userId:
-                _eq: X-Hasura-User-Id
-- table:
-    schema: public
     name: FlaggedChatMessage
   object_relationships:
-  - name: flaggedBy
-    using:
-      foreign_key_constraint_on: flaggedById
-  - name: message
-    using:
-      foreign_key_constraint_on: messageId
-  - name: moderationChat
-    using:
-      foreign_key_constraint_on: moderationChatId
+    - name: flaggedBy
+      using:
+        foreign_key_constraint_on: flaggedById
+    - name: message
+      using:
+        foreign_key_constraint_on: messageId
+    - name: moderationChat
+      using:
+        foreign_key_constraint_on: moderationChatId
   insert_permissions:
-  - role: user
-    permission:
-      check:
-        message:
-          senderId:
-            _ne: X-Hasura-User-Id
-      set:
-        flaggedById: x-hasura-User-Id
-      columns:
-      - messageId
-      backend_only: false
+    - role: user
+      permission:
+        check:
+          message:
+            senderId:
+              _ne: X-Hasura-User-Id
+        set:
+          flaggedById: x-hasura-User-Id
+        columns:
+          - messageId
+        backend_only: false
   select_permissions:
-  - role: user
-    permission:
-      columns:
-      - createdAt
-      - flaggedById
-      - id
-      - messageId
-      - moderationChatId
-      - notes
-      - resolutionAction
-      - resolvedAt
-      filter:
-        _or:
-        - flaggedById:
-            _eq: X-Hasura-User-Id
-        - moderationChat:
-            _or:
-            - members:
-                userId:
-                  _eq: X-Hasura-User-Id
-            - moderators:
-                userId:
-                  _eq: X-Hasura-User-Id
+    - role: user
+      permission:
+        columns:
+          - createdAt
+          - flaggedById
+          - id
+          - messageId
+          - moderationChatId
+          - notes
+          - resolutionAction
+          - resolvedAt
+        filter:
+          _or:
+            - flaggedById:
+                _eq: X-Hasura-User-Id
+            - moderationChat:
+                _or:
+                  - members:
+                      userId:
+                        _eq: X-Hasura-User-Id
+                  - moderators:
+                      userId:
+                        _eq: X-Hasura-User-Id
   update_permissions:
-  - role: user
-    permission:
-      columns:
-      - moderationChatId
-      - notes
-      - resolutionAction
-      - resolvedAt
-      filter:
-        _or:
-        - flaggedById:
-            _eq: X-Hasura-User-Id
-        - moderationChat:
-            _or:
-            - members:
-                userId:
-                  _eq: X-Hasura-User-Id
-            - moderators:
-                userId:
-                  _eq: X-Hasura-User-Id
-      check: null
+    - role: user
+      permission:
+        columns:
+          - moderationChatId
+          - notes
+          - resolutionAction
+          - resolvedAt
+        filter:
+          _or:
+            - flaggedById:
+                _eq: X-Hasura-User-Id
+            - moderationChat:
+                _or:
+                  - members:
+                      userId:
+                        _eq: X-Hasura-User-Id
+                  - moderators:
+                      userId:
+                        _eq: X-Hasura-User-Id
+        check: null
   delete_permissions:
-  - role: user
-    permission:
-      filter:
-        _or:
-        - flaggedById:
-            _eq: X-Hasura-User-Id
-        - moderationChat:
-            _or:
-            - members:
-                userId:
-                  _eq: X-Hasura-User-Id
-            - moderators:
-                userId:
-                  _eq: X-Hasura-User-Id
+    - role: user
+      permission:
+        filter:
+          _or:
+            - flaggedById:
+                _eq: X-Hasura-User-Id
+            - moderationChat:
+                _or:
+                  - members:
+                      userId:
+                        _eq: X-Hasura-User-Id
+                  - moderators:
+                      userId:
+                        _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: FollowedChat
   object_relationships:
-  - name: chat
-    using:
-      foreign_key_constraint_on: chatId
-  - name: user
-    using:
-      foreign_key_constraint_on: userId
+    - name: chat
+      using:
+        foreign_key_constraint_on: chatId
+    - name: user
+      using:
+        foreign_key_constraint_on: userId
   insert_permissions:
-  - role: user
-    permission:
-      check:
-        userId:
-          _eq: X-Hasura-User-Id
-      columns:
-      - chatId
-      - manual
-      - userId
-      backend_only: false
+    - role: user
+      permission:
+        check:
+          userId:
+            _eq: X-Hasura-User-Id
+        columns:
+          - chatId
+          - manual
+          - userId
+        backend_only: false
   select_permissions:
-  - role: user
-    permission:
-      columns:
-      - chatId
-      - id
-      - manual
-      - userId
-      filter:
-        userId:
-          _eq: X-Hasura-User-Id
+    - role: user
+      permission:
+        columns:
+          - chatId
+          - id
+          - manual
+          - userId
+        filter:
+          userId:
+            _eq: X-Hasura-User-Id
   update_permissions:
-  - role: user
-    permission:
-      columns:
-      - manual
-      filter:
-        userId:
-          _eq: X-Hasura-User-Id
-      check: null
+    - role: user
+      permission:
+        columns:
+          - manual
+        filter:
+          userId:
+            _eq: X-Hasura-User-Id
+        check: null
   delete_permissions:
-  - role: user
-    permission:
-      filter:
-        userId:
-          _eq: X-Hasura-User-Id
+    - role: user
+      permission:
+        filter:
+          userId:
+            _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: OnlineStatus
   object_relationships:
-  - name: user
-    using:
-      foreign_key_constraint_on: userId
+    - name: user
+      using:
+        foreign_key_constraint_on: userId
   insert_permissions:
-  - role: user
-    permission:
-      check:
-        userId:
-          _eq: X-Hasura-User-Id
-      columns:
-      - isIncognito
-      - lastSeen
-      - userId
-      backend_only: false
-  select_permissions:
-  - role: user
-    permission:
-      columns:
-      - id
-      - isIncognito
-      - lastSeen
-      - userId
-      filter:
-        _or:
-        - userId:
+    - role: user
+      permission:
+        check:
+          userId:
             _eq: X-Hasura-User-Id
-        - isIncognito:
-            _eq: false
+        columns:
+          - isIncognito
+          - lastSeen
+          - userId
+        backend_only: false
+  select_permissions:
+    - role: user
+      permission:
+        columns:
+          - id
+          - isIncognito
+          - lastSeen
+          - userId
+        filter:
+          _or:
+            - userId:
+                _eq: X-Hasura-User-Id
+            - isIncognito:
+                _eq: false
   update_permissions:
-  - role: user
-    permission:
-      columns:
-      - isIncognito
-      - lastSeen
-      - userId
-      filter:
-        userId:
-          _eq: X-Hasura-User-Id
-      check:
-        userId:
-          _eq: X-Hasura-User-Id
+    - role: user
+      permission:
+        columns:
+          - isIncognito
+          - lastSeen
+          - userId
+        filter:
+          userId:
+            _eq: X-Hasura-User-Id
+        check:
+          userId:
+            _eq: X-Hasura-User-Id
   delete_permissions:
-  - role: user
-    permission:
-      filter:
-        userId:
-          _eq: X-Hasura-User-Id
+    - role: user
+      permission:
+        filter:
+          userId:
+            _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: PinnedChat
   object_relationships:
-  - name: chat
-    using:
-      foreign_key_constraint_on: chatId
-  - name: user
-    using:
-      foreign_key_constraint_on: userId
+    - name: chat
+      using:
+        foreign_key_constraint_on: chatId
+    - name: user
+      using:
+        foreign_key_constraint_on: userId
   insert_permissions:
-  - role: user
-    permission:
-      check:
-        userId:
-          _eq: X-Hasura-User-Id
-      columns:
-      - chatId
-      - manual
-      - userId
-      backend_only: false
+    - role: user
+      permission:
+        check:
+          userId:
+            _eq: X-Hasura-User-Id
+        columns:
+          - chatId
+          - manual
+          - userId
+        backend_only: false
   select_permissions:
-  - role: user
-    permission:
-      columns:
-      - chatId
-      - id
-      - manual
-      - userId
-      filter:
-        userId:
-          _eq: X-Hasura-User-Id
+    - role: user
+      permission:
+        columns:
+          - chatId
+          - id
+          - manual
+          - userId
+        filter:
+          userId:
+            _eq: X-Hasura-User-Id
   update_permissions:
-  - role: user
-    permission:
-      columns:
-      - manual
-      filter:
-        userId:
-          _eq: X-Hasura-User-Id
-      check: null
+    - role: user
+      permission:
+        columns:
+          - manual
+        filter:
+          userId:
+            _eq: X-Hasura-User-Id
+        check: null
   delete_permissions:
-  - role: user
-    permission:
-      filter:
-        userId:
-          _eq: X-Hasura-User-Id
+    - role: user
+      permission:
+        filter:
+          userId:
+            _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: user
   object_relationships:
-  - name: onlineStatus
-    using:
-      manual_configuration:
-        remote_table:
-          schema: public
-          name: OnlineStatus
-        column_mapping:
-          id: userId
+    - name: onlineStatus
+      using:
+        manual_configuration:
+          remote_table:
+            schema: public
+            name: OnlineStatus
+          column_mapping:
+            id: userId
   array_relationships:
-  - name: chats
-    using:
-      foreign_key_constraint_on:
-        column: creatorId
-        table:
-          schema: public
-          name: Chat
-  - name: flaggedMessages
-    using:
-      foreign_key_constraint_on:
-        column: flaggedById
-        table:
-          schema: public
-          name: FlaggedChatMessage
-  - name: followedChats
-    using:
-      foreign_key_constraint_on:
-        column: userId
-        table:
-          schema: public
-          name: FollowedChat
-  - name: memberOfChats
-    using:
-      foreign_key_constraint_on:
-        column: userId
-        table:
-          schema: public
-          name: ChatMember
-  - name: moderatorOfChats
-    using:
-      foreign_key_constraint_on:
-        column: userId
-        table:
-          schema: public
-          name: ChatModerator
-  - name: pinnedChats
-    using:
-      foreign_key_constraint_on:
-        column: userId
-        table:
-          schema: public
-          name: PinnedChat
-  - name: reactions
-    using:
-      foreign_key_constraint_on:
-        column: reactorId
-        table:
-          schema: public
-          name: ChatReaction
-  - name: sentMessages
-    using:
-      foreign_key_constraint_on:
-        column: senderId
-        table:
-          schema: public
-          name: ChatMessage
-  - name: typingInChats
-    using:
-      foreign_key_constraint_on:
-        column: userId
-        table:
-          schema: public
-          name: ChatTyper
-  - name: unreadIndices
-    using:
-      foreign_key_constraint_on:
-        column: userId
-        table:
-          schema: public
-          name: ChatUnreadIndex
-  - name: viewingChats
-    using:
-      foreign_key_constraint_on:
-        column: userId
-        table:
-          schema: public
-          name: ChatViewer
+    - name: chats
+      using:
+        foreign_key_constraint_on:
+          column: creatorId
+          table:
+            schema: public
+            name: Chat
+    - name: flaggedMessages
+      using:
+        foreign_key_constraint_on:
+          column: flaggedById
+          table:
+            schema: public
+            name: FlaggedChatMessage
+    - name: followedChats
+      using:
+        foreign_key_constraint_on:
+          column: userId
+          table:
+            schema: public
+            name: FollowedChat
+    - name: memberOfChats
+      using:
+        foreign_key_constraint_on:
+          column: userId
+          table:
+            schema: public
+            name: ChatMember
+    - name: moderatorOfChats
+      using:
+        foreign_key_constraint_on:
+          column: userId
+          table:
+            schema: public
+            name: ChatModerator
+    - name: pinnedChats
+      using:
+        foreign_key_constraint_on:
+          column: userId
+          table:
+            schema: public
+            name: PinnedChat
+    - name: reactions
+      using:
+        foreign_key_constraint_on:
+          column: reactorId
+          table:
+            schema: public
+            name: ChatReaction
+    - name: sentMessages
+      using:
+        foreign_key_constraint_on:
+          column: senderId
+          table:
+            schema: public
+            name: ChatMessage
+    - name: typingInChats
+      using:
+        foreign_key_constraint_on:
+          column: userId
+          table:
+            schema: public
+            name: ChatTyper
+    - name: unreadIndices
+      using:
+        foreign_key_constraint_on:
+          column: userId
+          table:
+            schema: public
+            name: ChatUnreadIndex
+    - name: viewingChats
+      using:
+        foreign_key_constraint_on:
+          column: userId
+          table:
+            schema: public
+            name: ChatViewer
   select_permissions:
-  - role: user
-    permission:
-      columns:
-      - firstName
-      - id
-      - lastName
-      - username
-      filter: {}
+    - role: user
+      permission:
+        columns:
+          - firstName
+          - id
+          - lastName
+          - username
+        filter: {}
   update_permissions:
-  - role: user
-    permission:
-      columns:
-      - email
-      - firstName
-      - lastName
-      - username
-      filter:
-        id:
-          _eq: X-Hasura-User-Id
-      check: null
+    - role: user
+      permission:
+        columns:
+          - email
+          - firstName
+          - lastName
+          - username
+        filter:
+          id:
+            _eq: X-Hasura-User-Id
+        check: null
   delete_permissions:
-  - role: user
-    permission:
-      filter:
-        id:
-          _eq: X-Hasura-User-Id
+    - role: user
+      permission:
+        filter:
+          id:
+            _eq: X-Hasura-User-Id

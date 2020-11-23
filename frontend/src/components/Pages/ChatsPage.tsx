@@ -1,7 +1,7 @@
 import { HStack, StackDivider } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import ManageIsTyping from "../../hooks/Chats/ManageIsTyping";
 import ManageChat from "../../hooks/Chats/ManageChat";
+import ManageIsTyping from "../../hooks/Chats/ManageIsTyping";
 import useUserId from "../../hooks/useUserId";
 import ChatFrame from "../ChatFrame/ChatFrame";
 import ChatsList from "../ChatsList/ChatsList";

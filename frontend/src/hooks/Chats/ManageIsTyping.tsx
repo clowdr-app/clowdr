@@ -8,10 +8,7 @@ import useUserId from "../useUserId";
 import { defaultIsTypingContext, IsTypingContext } from "./useIsTyping";
 
 const _isTypingQueries = gql`
-    mutation UpsertIsTyping(
-        $chatId: uuid!
-        $updatedAt: timestamptz!
-    ) {
+    mutation UpsertIsTyping($chatId: uuid!, $updatedAt: timestamptz!) {
         insert_ChatTyper(
             objects: { chatId: $chatId, updatedAt: $updatedAt }
             on_conflict: {
@@ -78,23 +75,29 @@ function ManagerIsTyping_IsAuthenticated({
         { loading: deleteIsTypingLoading, error: deleteIsTypingError },
     ] = useDeleteIsTypingMutation();
 
-    const isTyping = useCallback(async (chatId) => {
-        await upsertIsTyping({
-            variables: {
-                chatId,
-                updatedAt: new Date().toUTCString(),
-            },
-        });
-    }, [upsertIsTyping]);
+    const isTyping = useCallback(
+        async (chatId) => {
+            await upsertIsTyping({
+                variables: {
+                    chatId,
+                    updatedAt: new Date().toUTCString(),
+                },
+            });
+        },
+        [upsertIsTyping]
+    );
 
-    const isNotTyping = useCallback(async (chatId: string, altUserId?: string) => {
-        await deleteIsTyping({
-            variables: {
-                chatId,
-                userId: altUserId ?? userId,
-            },
-        });
-    }, [deleteIsTyping, userId]);
+    const isNotTyping = useCallback(
+        async (chatId: string, altUserId?: string) => {
+            await deleteIsTyping({
+                variables: {
+                    chatId,
+                    userId: altUserId ?? userId,
+                },
+            });
+        },
+        [deleteIsTyping, userId]
+    );
 
     return (
         <IsTypingContext.Provider

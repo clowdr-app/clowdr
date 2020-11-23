@@ -10,6 +10,9 @@ const colors = {
 };
 
 const theme = extendTheme({
+    config: {
+        initialColorMode: "dark",
+    },
     colors,
     components: {
         Button: {

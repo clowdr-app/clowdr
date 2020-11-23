@@ -7,7 +7,7 @@ export default function Auth0CustomProvider({
     children,
 }: {
     children: JSX.Element | Array<JSX.Element>;
-}) {
+}): JSX.Element {
     const domain = import.meta.env.SNOWPACK_PUBLIC_AUTH_DOMAIN;
     const clientId = import.meta.env.SNOWPACK_PUBLIC_AUTH_CLIENT_ID;
     const redirectUri = import.meta.env.SNOWPACK_PUBLIC_AUTH_LOGIN_CALLBACK_URL;

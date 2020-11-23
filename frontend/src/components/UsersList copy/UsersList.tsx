@@ -1,24 +1,13 @@
 import { HStack, Spinner, Text } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import useCurrentUser from "../../hooks/Users/useCurrentUser";
 import useUsers from "../../hooks/Users/useUsers";
 import Column from "../Columns/Column";
 import FAIcon from "../fontawesome/FAIcon";
 
 export default function UsersList(): JSX.Element {
-    const { user: currentUser } = useCurrentUser();
-    const _users = useUsers();
+    const users = useUsers();
 
     const column = useMemo(() => {
-        const users =
-            (_users &&
-                currentUser && {
-                    user: _users?.user.filter(
-                        (x) => x.id !== currentUser.user[0].id
-                    ),
-                }) ||
-            _users;
-
         if (users === undefined) {
             return <Spinner />;
         }
@@ -70,7 +59,7 @@ export default function UsersList(): JSX.Element {
                 }}
             />
         );
-    }, [_users, currentUser]);
+    }, [users]);
 
     return column;
 }

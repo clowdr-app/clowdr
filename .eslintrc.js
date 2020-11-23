@@ -10,6 +10,7 @@ module.exports = {
         "eslint:recommended",
         "plugin:react/recommended",
         "plugin:@typescript-eslint/recommended",
+        "plugin:react-hooks/recommended",
     ],
     parser: "@typescript-eslint/parser",
     parserOptions: {
@@ -28,6 +29,7 @@ module.exports = {
         "jest/no-identical-title": "error",
         "jest/prefer-to-have-length": "warn",
         "jest/valid-expect": "error",
+        "@typescript-eslint/no-explicit-any": "off",
         "no-unused-vars": [
             "warn",
             {

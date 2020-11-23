@@ -7,12 +7,14 @@ export interface LinkButtonProps extends ButtonProps {
     isExternal?: boolean;
 }
 
-export default function LinkButton(props: LinkButtonProps) {
+export default function LinkButton(props: LinkButtonProps): JSX.Element {
     const { to, children, isExternal, ...remaining } = props;
 
     return (
-        <Link as={ReactLink} to={to}>
-            <Button {...remaining}>{children}</Button>
+        <Link as={ReactLink} to={to} isExternal={isExternal} tabIndex={-1}>
+            <Button {...remaining} width="100%">
+                {children}
+            </Button>
         </Link>
     );
 }

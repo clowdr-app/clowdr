@@ -6,5 +6,9 @@ export default function LogoutButton() {
     const { logout } = useAuth0();
     const returnTo = import.meta.env.SNOWPACK_PUBLIC_AUTH_LOGOUT_CALLBACK_URL;
 
-    return <Button onClick={() => logout({ returnTo })}>Log Out</Button>;
+    return (
+        <Button onClick={() => logout({ returnTo })} colorScheme="red">
+            Log Out
+        </Button>
+    );
 }

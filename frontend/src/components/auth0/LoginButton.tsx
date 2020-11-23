@@ -5,5 +5,9 @@ import React from "react";
 export default function LoginButton() {
     const { loginWithRedirect } = useAuth0();
 
-    return <Button onClick={() => loginWithRedirect()}>Log In</Button>;
+    return (
+        <Button onClick={() => loginWithRedirect()} colorScheme="blue">
+            Log In
+        </Button>
+    );
 }

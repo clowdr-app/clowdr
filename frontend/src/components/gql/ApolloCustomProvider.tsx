@@ -15,7 +15,7 @@ export default function ApolloCustomProvider({
     children,
 }: {
     children: string | JSX.Element | Array<JSX.Element>;
-}) {
+}): JSX.Element {
     const { isAuthenticated, getAccessTokenSilently } = useAuth0();
 
     const useSecureProtocols =
@@ -48,18 +48,17 @@ export default function ApolloCustomProvider({
         }/v1/graphql`, // use wss for a secure endpoint
         options: {
             reconnect: true,
-            // connectionParams: async () => {
-            //     if (isAuthenticated) {
-            //         return {
-            //             headers: {
-            //                 Authorization: await getAccessTokenSilently()
-            //             }
-            //         };
-            //     }
-            //     else {
-            //         return {};
-            //     }
-            // }
+            connectionParams: async () => {
+                if (isAuthenticated) {
+                    return {
+                        headers: {
+                            Authorization: `Bearer ${await getAccessTokenSilently()}`,
+                        },
+                    };
+                } else {
+                    return {};
+                }
+            },
         },
     });
 

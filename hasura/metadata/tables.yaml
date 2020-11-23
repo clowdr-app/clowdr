@@ -776,6 +776,53 @@
                         _eq: X-Hasura-User-Id
 - table:
     schema: public
+    name: FollowedChat
+  object_relationships:
+    - name: chat
+      using:
+        foreign_key_constraint_on: chatId
+    - name: user
+      using:
+        foreign_key_constraint_on: userId
+  insert_permissions:
+    - role: user
+      permission:
+        check:
+          userId:
+            _eq: X-Hasura-User-Id
+        columns:
+          - chatId
+          - manual
+          - userId
+        backend_only: false
+  select_permissions:
+    - role: user
+      permission:
+        columns:
+          - chatId
+          - id
+          - manual
+          - userId
+        filter:
+          userId:
+            _eq: X-Hasura-User-Id
+  update_permissions:
+    - role: user
+      permission:
+        columns:
+          - manual
+        filter:
+          userId:
+            _eq: X-Hasura-User-Id
+        check: null
+  delete_permissions:
+    - role: user
+      permission:
+        filter:
+          userId:
+            _eq: X-Hasura-User-Id
+- table:
+    schema: public
     name: OnlineStatus
   object_relationships:
     - name: user
@@ -797,6 +844,7 @@
       permission:
         columns:
           - id
+          - isIncognito
           - lastSeen
           - userId
         filter:
@@ -811,12 +859,60 @@
         columns:
           - isIncognito
           - lastSeen
+          - userId
         filter:
           userId:
             _eq: X-Hasura-User-Id
         check:
           userId:
             _eq: X-Hasura-User-Id
+  delete_permissions:
+    - role: user
+      permission:
+        filter:
+          userId:
+            _eq: X-Hasura-User-Id
+- table:
+    schema: public
+    name: PinnedChat
+  object_relationships:
+    - name: chat
+      using:
+        foreign_key_constraint_on: chatId
+    - name: user
+      using:
+        foreign_key_constraint_on: userId
+  insert_permissions:
+    - role: user
+      permission:
+        check:
+          userId:
+            _eq: X-Hasura-User-Id
+        columns:
+          - chatId
+          - manual
+          - userId
+        backend_only: false
+  select_permissions:
+    - role: user
+      permission:
+        columns:
+          - chatId
+          - id
+          - manual
+          - userId
+        filter:
+          userId:
+            _eq: X-Hasura-User-Id
+  update_permissions:
+    - role: user
+      permission:
+        columns:
+          - manual
+        filter:
+          userId:
+            _eq: X-Hasura-User-Id
+        check: null
   delete_permissions:
     - role: user
       permission:
@@ -850,6 +946,13 @@
           table:
             schema: public
             name: FlaggedChatMessage
+    - name: followedChats
+      using:
+        foreign_key_constraint_on:
+          column: userId
+          table:
+            schema: public
+            name: FollowedChat
     - name: memberOfChats
       using:
         foreign_key_constraint_on:
@@ -864,6 +967,13 @@
           table:
             schema: public
             name: ChatModerator
+    - name: pinnedChats
+      using:
+        foreign_key_constraint_on:
+          column: userId
+          table:
+            schema: public
+            name: PinnedChat
     - name: reactions
       using:
         foreign_key_constraint_on:

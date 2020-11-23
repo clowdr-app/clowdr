@@ -10,14 +10,16 @@ import * as React from "react";
 export interface IconProps extends ChakraProps, ChakraProps {
     iconStyle: "s" | "r";
     icon: string;
+    inline?: boolean;
 }
 
 export const FAIcon = forwardRef<IconProps, "i">(function Icon(props, ref) {
     const {
         iconStyle,
         icon,
+        inline,
         as: element,
-        color = "currentColor",
+        color,
         className,
         __css,
         ...rest
@@ -32,7 +34,7 @@ export const FAIcon = forwardRef<IconProps, "i">(function Icon(props, ref) {
         lineHeight: "1em",
         flexShrink: 0,
         color,
-        marginRight: "0.5em",
+        marginRight: inline ? "0.5em" : undefined,
         ...__css,
     };
 

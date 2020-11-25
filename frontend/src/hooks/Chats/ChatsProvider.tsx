@@ -52,9 +52,11 @@ function ChatsProvider_IsAuthenticated({
     children: string | JSX.Element | Array<JSX.Element>;
 }) {
     const { loading, error, data, refetch } = useSelectChatsQuery({
-        pollInterval: 1000 * 60,
+        pollInterval: 1000 * 120,
     });
     useQueryErrorToast(error);
+
+    // TODO: Live-subscribe to new chats
 
     const value = loading ? null : error ? false : data ?? null;
 

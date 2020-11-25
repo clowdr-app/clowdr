@@ -3,6 +3,7 @@ import type { SelectChatsQuery } from "../../generated/graphql";
 
 type ChatInfos = {
     chats: SelectChatsQuery | false | null;
+    // TODO: Shouldn't be necessary once the live subscribe to new chats is implemented
     refetchChats: () => Promise<unknown>;
 };
 

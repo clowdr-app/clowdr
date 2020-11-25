@@ -85,6 +85,7 @@ const _chatQueries = gql`
     }
 `;
 
+// TODO: Turn Chat Provider into an aggregate provider of the various subproviders
 export default function ChatProvider({
     children,
     chatId,
@@ -129,6 +130,9 @@ function ChatProvider_IsAuthenticated({
     });
     useQueryErrorToast(chatError);
 
+    // TODO: Split out subscriptions for typers and viewers
+    // TODO: Subscribe to messages using limit:1
+    // TODO: Split out the initial (paginated) fetch of messages
     const {
         data: liveChatData,
         loading: liveChatLoading,
@@ -142,6 +146,7 @@ function ChatProvider_IsAuthenticated({
     });
     useQueryErrorToast(liveChatError);
 
+    // TODO: Split sending a message into a different hook
     const [
         insertMessage,
         { loading: insertMessageLoading, error: insertMessageError },

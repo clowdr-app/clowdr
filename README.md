@@ -218,10 +218,15 @@ start ngrok (`ngrok http 8080`) and copy the URL
 (`http://<ngrok-subdomain>.ngrok.io/v1/graphql`) into the `HASURA_URL` Auth0
 _Rule Configuration_ as shown in step 5.
 
+#### 9. Configure "new UI experience"
+
+Under _Universal Login_ settings, set the _default look and feel_ to _**New**_.
+
 #### 9. (Optional) Customising the login page
 
-To customise what the Auth0 login page looks like, go to Universal Login and
-have fun.
+To customise what the Auth0 login page looks like, go to _Universal Login_ and
+have fun. (Note: Always use the _**New**_ 'look and feel' for Clowdr to work
+properly.)
 
 #### 10. Configure your environment
 

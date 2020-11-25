@@ -1,10 +1,10 @@
 import { Flex } from "@chakra-ui/react";
 import React from "react";
 import "./App.css";
-import MainMenu from "./components/Menu/MainMenu";
-import LastSeenProvider from "./components/OnlineStatus/LastSeenProvider";
-import Routing from "./components/Pages/Routing";
-import CurrentUserProvider from "./hooks/Users/CurrentUserProvider";
+import Routing from "./AppRouting";
+import MainMenu from "./aspects/Menu/MainMenu";
+import CurrentUserProvider from "./aspects/Users/CurrentUser/CurrentUserProvider";
+import LastSeenProvider from "./aspects/Users/CurrentUser/OnlineStatus/LastSeenProvider";
 
 interface AppProps {}
 

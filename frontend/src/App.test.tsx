@@ -1,11 +1,12 @@
 import * as React from "react";
-import Echo from "./components/echo/echo";
+import Echo from "./aspects/Echo/Echo";
 
-jest.mock("./components/echo/echo", () => {
+jest.mock("./aspects/Echo/Echo", () => {
     return jest.fn(() => <></>);
 });
 
 beforeEach(() => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     Echo.mockClear();
 });

@@ -36,7 +36,7 @@ const _isTypingQueries = gql`
     }
 `;
 
-export default function ManageIsTyping({
+export default function IsTypingProvider({
     children,
 }: {
     children: string | JSX.Element | Array<JSX.Element>;
@@ -45,9 +45,9 @@ export default function ManageIsTyping({
 
     if (userId) {
         return (
-            <ManagerIsTyping_IsAuthenticated userId={userId}>
+            <IsTypingProvider_IsAuthenticated userId={userId}>
                 {children}
-            </ManagerIsTyping_IsAuthenticated>
+            </IsTypingProvider_IsAuthenticated>
         );
     } else {
         return (
@@ -58,7 +58,7 @@ export default function ManageIsTyping({
     }
 }
 
-function ManagerIsTyping_IsAuthenticated({
+function IsTypingProvider_IsAuthenticated({
     children,
     userId,
 }: {

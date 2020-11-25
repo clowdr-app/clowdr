@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 import { useAuth0 } from "@auth0/auth0-react";
-import React, { useEffect } from "react";
+import React from "react";
 import { useSelectChatsQuery } from "../../generated/graphql";
 import useQueryErrorToast from "../useQueryErrorToast";
 import { ChatsContext, defaultChatsContext } from "./useChats";
@@ -24,7 +24,7 @@ const _chatsQueries = gql`
     }
 `;
 
-export default function ManageChats({
+export default function ChatsProvider({
     children,
 }: {
     children: string | JSX.Element | Array<JSX.Element>;
@@ -33,9 +33,9 @@ export default function ManageChats({
 
     if (isAuthenticated) {
         return (
-            <ManagerChats_IsAuthenticated>
+            <ChatsProvider_IsAuthenticated>
                 {children}
-            </ManagerChats_IsAuthenticated>
+            </ChatsProvider_IsAuthenticated>
         );
     } else {
         return (
@@ -46,23 +46,15 @@ export default function ManageChats({
     }
 }
 
-function ManagerChats_IsAuthenticated({
+function ChatsProvider_IsAuthenticated({
     children,
 }: {
     children: string | JSX.Element | Array<JSX.Element>;
 }) {
-    const { loading, error, data, refetch } = useSelectChatsQuery();
-
+    const { loading, error, data, refetch } = useSelectChatsQuery({
+        pollInterval: 1000 * 60,
+    });
     useQueryErrorToast(error);
-
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            refetch();
-        }, 1000 * 60);
-        return () => {
-            clearInterval(intervalId);
-        };
-    }, [refetch]);
 
     const value = loading ? null : error ? false : data ?? null;
 

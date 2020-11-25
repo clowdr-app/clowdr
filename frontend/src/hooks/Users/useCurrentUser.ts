@@ -1,21 +1,16 @@
+import assert from "assert";
 import React from "react";
 import type { SelectCurrentUserQuery } from "../../generated/graphql";
+import { CurrentUserContext } from "./useMaybeCurrentUser";
 
-type UserInfo = {
-    user: SelectCurrentUserQuery | false | undefined;
+export default function useCurrentUser(): {
+    user: SelectCurrentUserQuery;
     refetchUser: () => Promise<unknown>;
-};
-
-export const defaultCurrentUserContext: UserInfo = {
-    user: undefined,
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    refetchUser: async function (): Promise<void> {},
-};
-
-export const CurrentUserContext = React.createContext<UserInfo>(
-    defaultCurrentUserContext
-);
-
-export default function useCurrentUser(): UserInfo {
-    return React.useContext(CurrentUserContext);
+} {
+    const info = React.useContext(CurrentUserContext);
+    assert(info.user, "Current user not available");
+    return {
+        ...info,
+        user: info.user,
+    };
 }

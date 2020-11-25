@@ -5,6 +5,7 @@ import {
     useInsertCurrentUserOnlineStatusMutation,
     useUpdateCurrentUserLastSeenMutation,
 } from "../../generated/graphql";
+import usePolling from "../../hooks/usePolling";
 import useQueryErrorToast from "../../hooks/useQueryErrorToast";
 import useUserId from "../../hooks/useUserId";
 import { LastSeenContext } from "./useLastSeen";
@@ -44,7 +45,7 @@ const _currentUserLastSeenQueries = gql`
     }
 `;
 
-export default function ManageLastSeen({
+export default function LastSeenProvider({
     children,
 }: {
     children: string | JSX.Element | Array<JSX.Element>;
@@ -52,9 +53,9 @@ export default function ManageLastSeen({
     const userId = useUserId();
     if (userId) {
         return (
-            <ManageLastSeen_UserIdExists userId={userId}>
+            <LastSeenProvider_UserIdExists userId={userId}>
                 {children}
-            </ManageLastSeen_UserIdExists>
+            </LastSeenProvider_UserIdExists>
         );
     }
     return (
@@ -64,7 +65,7 @@ export default function ManageLastSeen({
     );
 }
 
-function ManageLastSeen_UserIdExists({
+function LastSeenProvider_UserIdExists({
     userId,
     children,
 }: {
@@ -120,23 +121,14 @@ function ManageLastSeen_UserIdExists({
         refetchGetLastSeen,
     ]);
 
-    useEffect(() => {
-        function doUpdate() {
-            updateCurrentUserLastSeenMutation({
-                variables: {
-                    userId,
-                    lastSeen: new Date().toUTCString(),
-                },
-            });
-        }
-
-        const intervalId = setInterval(doUpdate, 1000 * 60);
-        doUpdate();
-
-        return () => {
-            clearInterval(intervalId);
-        };
-    }, [updateCurrentUserLastSeenMutation, userId]);
+    usePolling(() => {
+        updateCurrentUserLastSeenMutation({
+            variables: {
+                userId,
+                lastSeen: new Date().toUTCString(),
+            },
+        });
+    }, 60 * 1000);
 
     const value = lastSeen && (loading ? undefined : new Date(lastSeen));
     return (

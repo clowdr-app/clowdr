@@ -1,12 +1,12 @@
 import { HStack, Spinner, Text } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import useCurrentUser from "../../hooks/Users/useCurrentUser";
+import useMaybeCurrentUser from "../../hooks/Users/useMaybeCurrentUser";
 import useUsers from "../../hooks/Users/useUsers";
 import Column from "../Columns/Column";
 import FAIcon from "../fontawesome/FAIcon";
 
 export default function UsersList(): JSX.Element {
-    const { user: currentUser } = useCurrentUser();
+    const { user: currentUser } = useMaybeCurrentUser();
     const _users = useUsers();
 
     const column = useMemo(() => {

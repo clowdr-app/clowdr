@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 import { useAuth0 } from "@auth0/auth0-react";
-import React, { useEffect } from "react";
+import React from "react";
 import { useSelectUsersQuery } from "../../generated/graphql";
 import useQueryErrorToast from "../useQueryErrorToast";
 import { UsersContext } from "./useUsers";
@@ -20,7 +20,7 @@ const _usersQueries = gql`
     }
 `;
 
-export default function ManageUsers({
+export default function UsersProvider({
     children,
 }: {
     children: string | JSX.Element | Array<JSX.Element>;
@@ -29,9 +29,9 @@ export default function ManageUsers({
 
     if (isAuthenticated) {
         return (
-            <ManagerUsers_IsAuthenticated>
+            <UsersProvider_IsAuthenticated>
                 {children}
-            </ManagerUsers_IsAuthenticated>
+            </UsersProvider_IsAuthenticated>
         );
     } else {
         return (
@@ -42,22 +42,15 @@ export default function ManageUsers({
     }
 }
 
-function ManagerUsers_IsAuthenticated({
+function UsersProvider_IsAuthenticated({
     children,
 }: {
     children: string | JSX.Element | Array<JSX.Element>;
 }) {
-    const { loading, error, data, refetch } = useSelectUsersQuery();
+    const { loading, error, data } = useSelectUsersQuery({
+        pollInterval: 60 * 1000,
+    });
     useQueryErrorToast(error);
-
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            refetch();
-        }, 1000 * 60);
-        return () => {
-            clearInterval(intervalId);
-        };
-    }, [refetch]);
 
     const value = loading ? undefined : error ? false : data;
 

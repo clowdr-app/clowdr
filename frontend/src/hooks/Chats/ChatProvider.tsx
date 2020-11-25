@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 import { useAuth0 } from "@auth0/auth0-react";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback } from "react";
 import {
     useInsertMessageMutation,
     useLiveChatSubscription,
@@ -85,7 +85,7 @@ const _chatQueries = gql`
     }
 `;
 
-export default function ManageChat({
+export default function ChatProvider({
     children,
     chatId,
 }: {
@@ -96,9 +96,9 @@ export default function ManageChat({
 
     if (isAuthenticated) {
         return (
-            <ManagerChat_IsAuthenticated chatId={chatId}>
+            <ChatProvider_IsAuthenticated chatId={chatId}>
                 {children}
-            </ManagerChat_IsAuthenticated>
+            </ChatProvider_IsAuthenticated>
         );
     } else {
         return (
@@ -109,7 +109,7 @@ export default function ManageChat({
     }
 }
 
-function ManagerChat_IsAuthenticated({
+function ChatProvider_IsAuthenticated({
     children,
     chatId,
 }: {
@@ -125,6 +125,7 @@ function ManagerChat_IsAuthenticated({
         variables: {
             chatId,
         },
+        pollInterval: 60 * 1000,
     });
     useQueryErrorToast(chatError);
 
@@ -145,15 +146,6 @@ function ManagerChat_IsAuthenticated({
         insertMessage,
         { loading: insertMessageLoading, error: insertMessageError },
     ] = useInsertMessageMutation();
-
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            chatRefetch();
-        }, 1000 * 60);
-        return () => {
-            clearInterval(intervalId);
-        };
-    }, [chatRefetch]);
 
     const chatValue = chatLoading ? null : chatError ? false : chatData ?? null;
     const liveChatValue =

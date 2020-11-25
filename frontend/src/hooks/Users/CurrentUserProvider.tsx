@@ -1,12 +1,12 @@
 import { gql } from "@apollo/client";
-import React, { useEffect } from "react";
+import React from "react";
 import { useSelectCurrentUserQuery } from "../../generated/graphql";
 import useQueryErrorToast from "../useQueryErrorToast";
 import useUserId from "../useUserId";
 import {
     CurrentUserContext,
     defaultCurrentUserContext,
-} from "./useCurrentUser";
+} from "./useMaybeCurrentUser";
 
 const _currentuserQueries = gql`
     query selectCurrentUser($userId: String!) {
@@ -36,7 +36,7 @@ const _currentuserQueries = gql`
     }
 `;
 
-export default function ManageCurrentUser({
+export default function CurrentUserProvider({
     children,
 }: {
     children: string | JSX.Element | Array<JSX.Element>;
@@ -45,9 +45,9 @@ export default function ManageCurrentUser({
 
     if (userId) {
         return (
-            <ManagerCurrentUser_IsAuthenticated userId={userId}>
+            <CurrentUserProvider_IsAuthenticated userId={userId}>
                 {children}
-            </ManagerCurrentUser_IsAuthenticated>
+            </CurrentUserProvider_IsAuthenticated>
         );
     } else {
         return (
@@ -58,7 +58,7 @@ export default function ManageCurrentUser({
     }
 }
 
-function ManagerCurrentUser_IsAuthenticated({
+function CurrentUserProvider_IsAuthenticated({
     children,
     userId,
 }: {
@@ -71,15 +71,6 @@ function ManagerCurrentUser_IsAuthenticated({
         },
     });
     useQueryErrorToast(error);
-
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            refetch();
-        }, 1000 * 60);
-        return () => {
-            clearInterval(intervalId);
-        };
-    }, [refetch]);
 
     const value = loading ? undefined : error ? false : data;
 

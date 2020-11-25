@@ -92,6 +92,13 @@ export default function ApolloCustomProvider({
             const client = new ApolloClient({
                 link,
                 cache,
+                defaultOptions: {
+                    query: {
+                        partialRefetch: true,
+                        // TODO: Remove cast to any when this Apollo Client issue is resolved:
+                        //       https://github.com/apollographql/apollo-client/issues/6177
+                    } as any,
+                },
             });
 
             setClient(client);

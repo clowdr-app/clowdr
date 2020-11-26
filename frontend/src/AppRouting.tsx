@@ -3,7 +3,7 @@ import { Redirect, Route, Switch } from "react-router-dom";
 import LoggedOutPage from "./aspects/Auth/LoggedOutPage";
 import ProtectedRoute from "./aspects/Auth/ProtectedRoute";
 import PageNotFound from "./aspects/Errors/PageNotFound";
-import PageNotImplemented from "./aspects/Errors/PageNotImplemented";
+import CurrentUserPage from "./aspects/Users/CurrentUser/CurrentUserPage";
 import ExistingUserLandingPage from "./aspects/Users/ExistingUser/LandingPage";
 import NewUserLandingPage from "./aspects/Users/NewUser/LandingPage";
 
@@ -33,9 +33,7 @@ export default function Routing(): JSX.Element {
                 component={ExistingUserLandingPage}
             />
 
-            <Route exact path="/user">
-                <PageNotImplemented />
-            </Route>
+            <ProtectedRoute exact path="/user" component={CurrentUserPage} />
 
             {/* 
             

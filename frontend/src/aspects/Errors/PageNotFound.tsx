@@ -1,11 +1,11 @@
-import { Heading, Link, Text, VStack } from "@chakra-ui/react";
+import { Heading, Link, Text } from "@chakra-ui/react";
 import React from "react";
 import LinkButton from "../Chakra/LinkButton";
 import FAIcon from "../Icons/FAIcon";
 
 export default function PageNotFound(): JSX.Element {
     return (
-        <VStack spacing={5}>
+        <>
             <FAIcon iconStyle="s" icon="cat" fontSize="6xl" />
             <Heading as="h1" fontSize="4xl" lineHeight="revert">
                 Sorry, we couldn&apos;t find that page.
@@ -19,6 +19,6 @@ export default function PageNotFound(): JSX.Element {
                 .
             </Text>
             <LinkButton to="/">Go to home page</LinkButton>
-        </VStack>
+        </>
     );
 }

@@ -702,6 +702,9 @@
                 _eq: X-Hasura-User-Id
 - table:
     schema: public
+    name: Conference
+- table:
+    schema: public
     name: FlaggedChatMessage
   object_relationships:
   - name: flaggedBy

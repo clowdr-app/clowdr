@@ -22,6 +22,7 @@
         "apollo-cache-inmemory": "^1.6.6",
         "apollo-link-http": "^1.5.17",
         "apollo3-cache-persist": "^0.8.0",
+        "formik": "^2.2.5",
         "framer-motion": "^2.9.4",
         "graphql": "^15.4.0",
         "graphql-tag": "^2.11.0",

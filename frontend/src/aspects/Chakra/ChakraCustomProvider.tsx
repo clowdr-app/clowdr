@@ -42,6 +42,11 @@ const theme = extendTheme({
                 margin: "0.3em",
             },
         },
+        Heading: {
+            baseStyle: {
+                textAlign: "center",
+            },
+        },
     },
 });
 

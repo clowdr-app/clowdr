@@ -1,4 +1,4 @@
-import { Flex } from "@chakra-ui/react";
+import { Flex, VStack } from "@chakra-ui/react";
 import React from "react";
 import "./App.css";
 import Routing from "./AppRouting";
@@ -25,7 +25,14 @@ function App(_props: AppProps): JSX.Element {
                     justifyContent="center"
                     alignItems="center"
                 >
-                    <Routing />
+                    <VStack
+                        spacing={5}
+                        overflow="auto"
+                        margin="auto"
+                        width="100%"
+                    >
+                        <Routing />
+                    </VStack>
                     <MainMenu />
                 </Flex>
             </LastSeenProvider>

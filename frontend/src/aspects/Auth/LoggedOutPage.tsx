@@ -1,11 +1,11 @@
-import { Heading, Link, Text, VStack } from "@chakra-ui/react";
+import { Heading, Link, Text } from "@chakra-ui/react";
 import React from "react";
 import LinkButton from "../Chakra/LinkButton";
 import FAIcon from "../Icons/FAIcon";
 
 export default function LoggedOutPage(): JSX.Element {
     return (
-        <VStack spacing={5}>
+        <>
             <FAIcon iconStyle="s" icon="door-open" fontSize="6xl" />
             <Heading as="h1" fontSize="4xl" lineHeight="revert">
                 You have been logged out.
@@ -18,6 +18,6 @@ export default function LoggedOutPage(): JSX.Element {
                 virtual conference software.
             </Text>
             <LinkButton to="/">Go to home page</LinkButton>
-        </VStack>
+        </>
     );
 }

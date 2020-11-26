@@ -1,10 +1,4 @@
-import {
-    ButtonGroup,
-    Divider,
-    FormControl,
-    Heading,
-    VStack,
-} from "@chakra-ui/react";
+import { ButtonGroup, Divider, FormControl, Heading } from "@chakra-ui/react";
 import React from "react";
 import LoginButton from "../../Auth/Buttons/LoginButton";
 import SignupButton from "../../Auth/Buttons/SignUpButton";
@@ -12,7 +6,7 @@ import InviteCodeInput from "./InviteCodeInput";
 
 export default function NewUserLandingPage(): JSX.Element {
     return (
-        <VStack spacing={0} overflow="auto" margin="auto">
+        <>
             <Heading
                 as="h1"
                 fontSize="4.25rem"
@@ -41,6 +35,6 @@ export default function NewUserLandingPage(): JSX.Element {
                     <LoginButton />
                 </ButtonGroup>
             </FormControl>
-        </VStack>
+        </>
     );
 }

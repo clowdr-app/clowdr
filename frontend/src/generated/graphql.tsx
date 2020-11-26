@@ -4586,6 +4586,7 @@ export type User = {
   sentMessages: Array<ChatMessage>;
   /** An aggregated array relationship */
   sentMessages_aggregate: ChatMessage_Aggregate;
+  status: Scalars['String'];
   /** An array relationship */
   typingInChats: Array<ChatTyper>;
   /** An aggregated array relationship */
@@ -4595,7 +4596,6 @@ export type User = {
   /** An aggregated array relationship */
   unreadIndices_aggregate: ChatUnreadIndex_Aggregate;
   updated_at?: Maybe<Scalars['timestamptz']>;
-  username?: Maybe<Scalars['String']>;
   /** An array relationship */
   viewingChats: Array<ChatViewer>;
   /** An aggregated array relationship */
@@ -4877,15 +4877,17 @@ export type User_Bool_Exp = {
   pinnedChats?: Maybe<PinnedChat_Bool_Exp>;
   reactions?: Maybe<ChatReaction_Bool_Exp>;
   sentMessages?: Maybe<ChatMessage_Bool_Exp>;
+  status?: Maybe<String_Comparison_Exp>;
   typingInChats?: Maybe<ChatTyper_Bool_Exp>;
   unreadIndices?: Maybe<ChatUnreadIndex_Bool_Exp>;
   updated_at?: Maybe<Timestamptz_Comparison_Exp>;
-  username?: Maybe<String_Comparison_Exp>;
   viewingChats?: Maybe<ChatViewer_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "user" */
 export enum User_Constraint {
+  /** unique or primary key constraint */
+  UserEmailKey = 'user_email_key',
   /** unique or primary key constraint */
   UserPkey = 'user_pkey'
 }
@@ -4907,10 +4909,10 @@ export type User_Insert_Input = {
   pinnedChats?: Maybe<PinnedChat_Arr_Rel_Insert_Input>;
   reactions?: Maybe<ChatReaction_Arr_Rel_Insert_Input>;
   sentMessages?: Maybe<ChatMessage_Arr_Rel_Insert_Input>;
+  status?: Maybe<Scalars['String']>;
   typingInChats?: Maybe<ChatTyper_Arr_Rel_Insert_Input>;
   unreadIndices?: Maybe<ChatUnreadIndex_Arr_Rel_Insert_Input>;
   updated_at?: Maybe<Scalars['timestamptz']>;
-  username?: Maybe<Scalars['String']>;
   viewingChats?: Maybe<ChatViewer_Arr_Rel_Insert_Input>;
 };
 
@@ -4923,8 +4925,8 @@ export type User_Max_Fields = {
   id?: Maybe<Scalars['String']>;
   lastLoggedInAt?: Maybe<Scalars['timestamptz']>;
   lastName?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
-  username?: Maybe<Scalars['String']>;
 };
 
 /** order by max() on columns of table "user" */
@@ -4935,8 +4937,8 @@ export type User_Max_Order_By = {
   id?: Maybe<Order_By>;
   lastLoggedInAt?: Maybe<Order_By>;
   lastName?: Maybe<Order_By>;
+  status?: Maybe<Order_By>;
   updated_at?: Maybe<Order_By>;
-  username?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
@@ -4948,8 +4950,8 @@ export type User_Min_Fields = {
   id?: Maybe<Scalars['String']>;
   lastLoggedInAt?: Maybe<Scalars['timestamptz']>;
   lastName?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
-  username?: Maybe<Scalars['String']>;
 };
 
 /** order by min() on columns of table "user" */
@@ -4960,8 +4962,8 @@ export type User_Min_Order_By = {
   id?: Maybe<Order_By>;
   lastLoggedInAt?: Maybe<Order_By>;
   lastName?: Maybe<Order_By>;
+  status?: Maybe<Order_By>;
   updated_at?: Maybe<Order_By>;
-  username?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "user" */
@@ -5003,10 +5005,10 @@ export type User_Order_By = {
   pinnedChats_aggregate?: Maybe<PinnedChat_Aggregate_Order_By>;
   reactions_aggregate?: Maybe<ChatReaction_Aggregate_Order_By>;
   sentMessages_aggregate?: Maybe<ChatMessage_Aggregate_Order_By>;
+  status?: Maybe<Order_By>;
   typingInChats_aggregate?: Maybe<ChatTyper_Aggregate_Order_By>;
   unreadIndices_aggregate?: Maybe<ChatUnreadIndex_Aggregate_Order_By>;
   updated_at?: Maybe<Order_By>;
-  username?: Maybe<Order_By>;
   viewingChats_aggregate?: Maybe<ChatViewer_Aggregate_Order_By>;
 };
 
@@ -5030,9 +5032,9 @@ export enum User_Select_Column {
   /** column name */
   LastName = 'lastName',
   /** column name */
-  UpdatedAt = 'updated_at',
+  Status = 'status',
   /** column name */
-  Username = 'username'
+  UpdatedAt = 'updated_at'
 }
 
 /** input type for updating data in table "user" */
@@ -5043,8 +5045,8 @@ export type User_Set_Input = {
   id?: Maybe<Scalars['String']>;
   lastLoggedInAt?: Maybe<Scalars['timestamptz']>;
   lastName?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
-  username?: Maybe<Scalars['String']>;
 };
 
 /** update columns of table "user" */
@@ -5062,9 +5064,9 @@ export enum User_Update_Column {
   /** column name */
   LastName = 'lastName',
   /** column name */
-  UpdatedAt = 'updated_at',
+  Status = 'status',
   /** column name */
-  Username = 'username'
+  UpdatedAt = 'updated_at'
 }
 
 
@@ -5094,6 +5096,192 @@ export type CreateChatMutation = (
     & { returning: Array<(
       { __typename?: 'Chat' }
       & Pick<Chat, 'id'>
+    )> }
+  )> }
+);
+
+export type SelectChatsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SelectChatsQuery = (
+  { __typename?: 'query_root' }
+  & { Chat: Array<(
+    { __typename?: 'Chat' }
+    & Pick<Chat, 'id' | 'name' | 'description' | 'mode'>
+    & { members: Array<(
+      { __typename?: 'ChatMember' }
+      & Pick<ChatMember, 'userId'>
+    )>, viewers: Array<(
+      { __typename?: 'ChatViewer' }
+      & Pick<ChatViewer, 'id' | 'lastSeen' | 'userId'>
+    )> }
+  )> }
+);
+
+export type SelectChatQueryVariables = Exact<{
+  chatId: Scalars['uuid'];
+}>;
+
+
+export type SelectChatQuery = (
+  { __typename?: 'query_root' }
+  & { Chat: Array<(
+    { __typename?: 'Chat' }
+    & Pick<Chat, 'description' | 'creatorId' | 'createdAt' | 'mode' | 'name' | 'isAutoNotify' | 'isAutoPin' | 'id' | 'updatedAt'>
+    & { moderators: Array<(
+      { __typename?: 'ChatModerator' }
+      & Pick<ChatModerator, 'id' | 'createdAt' | 'userId'>
+    )>, members: Array<(
+      { __typename?: 'ChatMember' }
+      & Pick<ChatMember, 'userId' | 'id' | 'invitationAcceptedAt' | 'updatedAt' | 'createdAt'>
+    )>, creator: (
+      { __typename?: 'user' }
+      & Pick<User, 'firstName' | 'lastName' | 'id'>
+    ) }
+  )> }
+);
+
+export type InsertMessageMutationVariables = Exact<{
+  chatId: Scalars['uuid'];
+  content: Scalars['jsonb'];
+  index: Scalars['Int'];
+}>;
+
+
+export type InsertMessageMutation = (
+  { __typename?: 'mutation_root' }
+  & { insert_ChatMessage?: Maybe<(
+    { __typename?: 'ChatMessage_mutation_response' }
+    & Pick<ChatMessage_Mutation_Response, 'affected_rows'>
+  )> }
+);
+
+export type LiveChatSubscriptionVariables = Exact<{
+  chatId: Scalars['uuid'];
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+}>;
+
+
+export type LiveChatSubscription = (
+  { __typename?: 'subscription_root' }
+  & { Chat: Array<(
+    { __typename?: 'Chat' }
+    & Pick<Chat, 'id'>
+    & { typers: Array<(
+      { __typename?: 'ChatTyper' }
+      & Pick<ChatTyper, 'id' | 'userId' | 'updatedAt'>
+    )>, messages: Array<(
+      { __typename?: 'ChatMessage' }
+      & Pick<ChatMessage, 'content' | 'createdAt' | 'id' | 'index' | 'isHighlighted' | 'senderId' | 'updatedAt'>
+      & { reactions: Array<(
+        { __typename?: 'ChatReaction' }
+        & Pick<ChatReaction, 'id' | 'createdAt' | 'reaction' | 'reactorId'>
+      )> }
+    )>, viewers: Array<(
+      { __typename?: 'ChatViewer' }
+      & Pick<ChatViewer, 'id' | 'lastSeen' | 'userId'>
+    )> }
+  )> }
+);
+
+export type UpsertIsTypingMutationVariables = Exact<{
+  chatId: Scalars['uuid'];
+  updatedAt: Scalars['timestamptz'];
+}>;
+
+
+export type UpsertIsTypingMutation = (
+  { __typename?: 'mutation_root' }
+  & { insert_ChatTyper?: Maybe<(
+    { __typename?: 'ChatTyper_mutation_response' }
+    & { returning: Array<(
+      { __typename?: 'ChatTyper' }
+      & Pick<ChatTyper, 'id' | 'updatedAt' | 'chatId' | 'userId'>
+    )> }
+  )> }
+);
+
+export type DeleteIsTypingMutationVariables = Exact<{
+  chatId: Scalars['uuid'];
+  userId: Scalars['String'];
+}>;
+
+
+export type DeleteIsTypingMutation = (
+  { __typename?: 'mutation_root' }
+  & { delete_ChatTyper?: Maybe<(
+    { __typename?: 'ChatTyper_mutation_response' }
+    & { returning: Array<(
+      { __typename?: 'ChatTyper' }
+      & Pick<ChatTyper, 'id'>
+    )> }
+  )> }
+);
+
+export type EchoQueryVariables = Exact<{
+  message: Scalars['String'];
+}>;
+
+
+export type EchoQuery = (
+  { __typename?: 'query_root' }
+  & { echo?: Maybe<(
+    { __typename?: 'EchoOutput' }
+    & Pick<EchoOutput, 'message'>
+  )> }
+);
+
+export type ProtectedEchoQueryVariables = Exact<{
+  message: Scalars['String'];
+}>;
+
+
+export type ProtectedEchoQuery = (
+  { __typename?: 'query_root' }
+  & { protectedEcho?: Maybe<(
+    { __typename?: 'ProtectedEchoOutput' }
+    & Pick<ProtectedEchoOutput, 'message'>
+  )> }
+);
+
+export type SelectUsersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SelectUsersQuery = (
+  { __typename?: 'query_root' }
+  & { user: Array<(
+    { __typename?: 'user' }
+    & Pick<User, 'id' | 'lastName' | 'firstName'>
+    & { onlineStatus?: Maybe<(
+      { __typename?: 'OnlineStatus' }
+      & Pick<OnlineStatus, 'id' | 'lastSeen' | 'isIncognito'>
+    )> }
+  )> }
+);
+
+export type SelectCurrentUserQueryVariables = Exact<{
+  userId: Scalars['String'];
+}>;
+
+
+export type SelectCurrentUserQuery = (
+  { __typename?: 'query_root' }
+  & { user: Array<(
+    { __typename?: 'user' }
+    & Pick<User, 'id' | 'lastName' | 'firstName'>
+    & { onlineStatus?: Maybe<(
+      { __typename?: 'OnlineStatus' }
+      & Pick<OnlineStatus, 'id' | 'lastSeen' | 'isIncognito'>
+    )>, pinnedChats: Array<(
+      { __typename?: 'PinnedChat' }
+      & Pick<PinnedChat, 'id' | 'chatId'>
+    )>, followedChats: Array<(
+      { __typename?: 'FollowedChat' }
+      & Pick<FollowedChat, 'id' | 'chatId'>
+    )>, unreadIndices: Array<(
+      { __typename?: 'ChatUnreadIndex' }
+      & Pick<ChatUnreadIndex, 'id' | 'chatId' | 'index'>
     )> }
   )> }
 );
@@ -5174,192 +5362,6 @@ export type UpdateCurrentUserLastSeenMutation = (
   )> }
 );
 
-export type EchoQueryVariables = Exact<{
-  message: Scalars['String'];
-}>;
-
-
-export type EchoQuery = (
-  { __typename?: 'query_root' }
-  & { echo?: Maybe<(
-    { __typename?: 'EchoOutput' }
-    & Pick<EchoOutput, 'message'>
-  )> }
-);
-
-export type ProtectedEchoQueryVariables = Exact<{
-  message: Scalars['String'];
-}>;
-
-
-export type ProtectedEchoQuery = (
-  { __typename?: 'query_root' }
-  & { protectedEcho?: Maybe<(
-    { __typename?: 'ProtectedEchoOutput' }
-    & Pick<ProtectedEchoOutput, 'message'>
-  )> }
-);
-
-export type SelectChatQueryVariables = Exact<{
-  chatId: Scalars['uuid'];
-}>;
-
-
-export type SelectChatQuery = (
-  { __typename?: 'query_root' }
-  & { Chat: Array<(
-    { __typename?: 'Chat' }
-    & Pick<Chat, 'description' | 'creatorId' | 'createdAt' | 'mode' | 'name' | 'isAutoNotify' | 'isAutoPin' | 'id' | 'updatedAt'>
-    & { moderators: Array<(
-      { __typename?: 'ChatModerator' }
-      & Pick<ChatModerator, 'id' | 'createdAt' | 'userId'>
-    )>, members: Array<(
-      { __typename?: 'ChatMember' }
-      & Pick<ChatMember, 'userId' | 'id' | 'invitationAcceptedAt' | 'updatedAt' | 'createdAt'>
-    )>, creator: (
-      { __typename?: 'user' }
-      & Pick<User, 'firstName' | 'lastName' | 'id'>
-    ) }
-  )> }
-);
-
-export type InsertMessageMutationVariables = Exact<{
-  chatId: Scalars['uuid'];
-  content: Scalars['jsonb'];
-  index: Scalars['Int'];
-}>;
-
-
-export type InsertMessageMutation = (
-  { __typename?: 'mutation_root' }
-  & { insert_ChatMessage?: Maybe<(
-    { __typename?: 'ChatMessage_mutation_response' }
-    & Pick<ChatMessage_Mutation_Response, 'affected_rows'>
-  )> }
-);
-
-export type LiveChatSubscriptionVariables = Exact<{
-  chatId: Scalars['uuid'];
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-}>;
-
-
-export type LiveChatSubscription = (
-  { __typename?: 'subscription_root' }
-  & { Chat: Array<(
-    { __typename?: 'Chat' }
-    & Pick<Chat, 'id'>
-    & { typers: Array<(
-      { __typename?: 'ChatTyper' }
-      & Pick<ChatTyper, 'id' | 'userId' | 'updatedAt'>
-    )>, messages: Array<(
-      { __typename?: 'ChatMessage' }
-      & Pick<ChatMessage, 'content' | 'createdAt' | 'id' | 'index' | 'isHighlighted' | 'senderId' | 'updatedAt'>
-      & { reactions: Array<(
-        { __typename?: 'ChatReaction' }
-        & Pick<ChatReaction, 'id' | 'createdAt' | 'reaction' | 'reactorId'>
-      )> }
-    )>, viewers: Array<(
-      { __typename?: 'ChatViewer' }
-      & Pick<ChatViewer, 'id' | 'lastSeen' | 'userId'>
-    )> }
-  )> }
-);
-
-export type SelectChatsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type SelectChatsQuery = (
-  { __typename?: 'query_root' }
-  & { Chat: Array<(
-    { __typename?: 'Chat' }
-    & Pick<Chat, 'id' | 'name' | 'description' | 'mode'>
-    & { members: Array<(
-      { __typename?: 'ChatMember' }
-      & Pick<ChatMember, 'userId'>
-    )>, viewers: Array<(
-      { __typename?: 'ChatViewer' }
-      & Pick<ChatViewer, 'id' | 'lastSeen' | 'userId'>
-    )> }
-  )> }
-);
-
-export type UpsertIsTypingMutationVariables = Exact<{
-  chatId: Scalars['uuid'];
-  updatedAt: Scalars['timestamptz'];
-}>;
-
-
-export type UpsertIsTypingMutation = (
-  { __typename?: 'mutation_root' }
-  & { insert_ChatTyper?: Maybe<(
-    { __typename?: 'ChatTyper_mutation_response' }
-    & { returning: Array<(
-      { __typename?: 'ChatTyper' }
-      & Pick<ChatTyper, 'id' | 'updatedAt' | 'chatId' | 'userId'>
-    )> }
-  )> }
-);
-
-export type DeleteIsTypingMutationVariables = Exact<{
-  chatId: Scalars['uuid'];
-  userId: Scalars['String'];
-}>;
-
-
-export type DeleteIsTypingMutation = (
-  { __typename?: 'mutation_root' }
-  & { delete_ChatTyper?: Maybe<(
-    { __typename?: 'ChatTyper_mutation_response' }
-    & { returning: Array<(
-      { __typename?: 'ChatTyper' }
-      & Pick<ChatTyper, 'id'>
-    )> }
-  )> }
-);
-
-export type SelectCurrentUserQueryVariables = Exact<{
-  userId: Scalars['String'];
-}>;
-
-
-export type SelectCurrentUserQuery = (
-  { __typename?: 'query_root' }
-  & { user: Array<(
-    { __typename?: 'user' }
-    & Pick<User, 'id' | 'lastName' | 'firstName'>
-    & { onlineStatus?: Maybe<(
-      { __typename?: 'OnlineStatus' }
-      & Pick<OnlineStatus, 'id' | 'lastSeen' | 'isIncognito'>
-    )>, pinnedChats: Array<(
-      { __typename?: 'PinnedChat' }
-      & Pick<PinnedChat, 'id' | 'chatId'>
-    )>, followedChats: Array<(
-      { __typename?: 'FollowedChat' }
-      & Pick<FollowedChat, 'id' | 'chatId'>
-    )>, unreadIndices: Array<(
-      { __typename?: 'ChatUnreadIndex' }
-      & Pick<ChatUnreadIndex, 'id' | 'chatId' | 'index'>
-    )> }
-  )> }
-);
-
-export type SelectUsersQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type SelectUsersQuery = (
-  { __typename?: 'query_root' }
-  & { user: Array<(
-    { __typename?: 'user' }
-    & Pick<User, 'id' | 'lastName' | 'firstName'>
-    & { onlineStatus?: Maybe<(
-      { __typename?: 'OnlineStatus' }
-      & Pick<OnlineStatus, 'id' | 'lastSeen' | 'isIncognito'>
-    )> }
-  )> }
-);
-
 
 export const CreateChatDocument = gql`
     mutation createChat($description: String!, $name: String!) {
@@ -5396,6 +5398,431 @@ export function useCreateChatMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreateChatMutationHookResult = ReturnType<typeof useCreateChatMutation>;
 export type CreateChatMutationResult = Apollo.MutationResult<CreateChatMutation>;
 export type CreateChatMutationOptions = Apollo.BaseMutationOptions<CreateChatMutation, CreateChatMutationVariables>;
+export const SelectChatsDocument = gql`
+    query selectChats {
+  Chat {
+    id
+    name
+    description
+    mode
+    members {
+      userId
+    }
+    viewers {
+      id
+      lastSeen
+      userId
+    }
+  }
+}
+    `;
+
+/**
+ * __useSelectChatsQuery__
+ *
+ * To run a query within a React component, call `useSelectChatsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectChatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectChatsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSelectChatsQuery(baseOptions?: Apollo.QueryHookOptions<SelectChatsQuery, SelectChatsQueryVariables>) {
+        return Apollo.useQuery<SelectChatsQuery, SelectChatsQueryVariables>(SelectChatsDocument, baseOptions);
+      }
+export function useSelectChatsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectChatsQuery, SelectChatsQueryVariables>) {
+          return Apollo.useLazyQuery<SelectChatsQuery, SelectChatsQueryVariables>(SelectChatsDocument, baseOptions);
+        }
+export type SelectChatsQueryHookResult = ReturnType<typeof useSelectChatsQuery>;
+export type SelectChatsLazyQueryHookResult = ReturnType<typeof useSelectChatsLazyQuery>;
+export type SelectChatsQueryResult = Apollo.QueryResult<SelectChatsQuery, SelectChatsQueryVariables>;
+export const SelectChatDocument = gql`
+    query SelectChat($chatId: uuid!) {
+  Chat(where: {id: {_eq: $chatId}}) {
+    description
+    creatorId
+    createdAt
+    mode
+    name
+    isAutoNotify
+    isAutoPin
+    id
+    updatedAt
+    moderators {
+      id
+      createdAt
+      userId
+    }
+    members {
+      userId
+      id
+      invitationAcceptedAt
+      updatedAt
+      createdAt
+    }
+    creator {
+      firstName
+      lastName
+      id
+    }
+  }
+}
+    `;
+
+/**
+ * __useSelectChatQuery__
+ *
+ * To run a query within a React component, call `useSelectChatQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectChatQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectChatQuery({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *   },
+ * });
+ */
+export function useSelectChatQuery(baseOptions: Apollo.QueryHookOptions<SelectChatQuery, SelectChatQueryVariables>) {
+        return Apollo.useQuery<SelectChatQuery, SelectChatQueryVariables>(SelectChatDocument, baseOptions);
+      }
+export function useSelectChatLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectChatQuery, SelectChatQueryVariables>) {
+          return Apollo.useLazyQuery<SelectChatQuery, SelectChatQueryVariables>(SelectChatDocument, baseOptions);
+        }
+export type SelectChatQueryHookResult = ReturnType<typeof useSelectChatQuery>;
+export type SelectChatLazyQueryHookResult = ReturnType<typeof useSelectChatLazyQuery>;
+export type SelectChatQueryResult = Apollo.QueryResult<SelectChatQuery, SelectChatQueryVariables>;
+export const InsertMessageDocument = gql`
+    mutation InsertMessage($chatId: uuid!, $content: jsonb!, $index: Int!) {
+  insert_ChatMessage(objects: {chatId: $chatId, content: $content, index: $index}) {
+    affected_rows
+  }
+}
+    `;
+export type InsertMessageMutationFn = Apollo.MutationFunction<InsertMessageMutation, InsertMessageMutationVariables>;
+
+/**
+ * __useInsertMessageMutation__
+ *
+ * To run a mutation, you first call `useInsertMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInsertMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [insertMessageMutation, { data, loading, error }] = useInsertMessageMutation({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *      content: // value for 'content'
+ *      index: // value for 'index'
+ *   },
+ * });
+ */
+export function useInsertMessageMutation(baseOptions?: Apollo.MutationHookOptions<InsertMessageMutation, InsertMessageMutationVariables>) {
+        return Apollo.useMutation<InsertMessageMutation, InsertMessageMutationVariables>(InsertMessageDocument, baseOptions);
+      }
+export type InsertMessageMutationHookResult = ReturnType<typeof useInsertMessageMutation>;
+export type InsertMessageMutationResult = Apollo.MutationResult<InsertMessageMutation>;
+export type InsertMessageMutationOptions = Apollo.BaseMutationOptions<InsertMessageMutation, InsertMessageMutationVariables>;
+export const LiveChatDocument = gql`
+    subscription LiveChat($chatId: uuid!, $limit: Int = 20, $offset: Int = 0) {
+  Chat(where: {id: {_eq: $chatId}}) {
+    id
+    typers {
+      id
+      userId
+      updatedAt
+    }
+    messages(order_by: {index: desc}, limit: $limit, offset: $offset) {
+      content
+      createdAt
+      id
+      index
+      isHighlighted
+      senderId
+      updatedAt
+      reactions {
+        id
+        createdAt
+        reaction
+        reactorId
+      }
+    }
+    viewers {
+      id
+      lastSeen
+      userId
+    }
+  }
+}
+    `;
+
+/**
+ * __useLiveChatSubscription__
+ *
+ * To run a query within a React component, call `useLiveChatSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useLiveChatSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLiveChatSubscription({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
+ *   },
+ * });
+ */
+export function useLiveChatSubscription(baseOptions: Apollo.SubscriptionHookOptions<LiveChatSubscription, LiveChatSubscriptionVariables>) {
+        return Apollo.useSubscription<LiveChatSubscription, LiveChatSubscriptionVariables>(LiveChatDocument, baseOptions);
+      }
+export type LiveChatSubscriptionHookResult = ReturnType<typeof useLiveChatSubscription>;
+export type LiveChatSubscriptionResult = Apollo.SubscriptionResult<LiveChatSubscription>;
+export const UpsertIsTypingDocument = gql`
+    mutation UpsertIsTyping($chatId: uuid!, $updatedAt: timestamptz!) {
+  insert_ChatTyper(
+    objects: {chatId: $chatId, updatedAt: $updatedAt}
+    on_conflict: {constraint: ChatTyper_chatId_userId_key, update_columns: updatedAt}
+  ) {
+    returning {
+      id
+      updatedAt
+      chatId
+      userId
+    }
+  }
+}
+    `;
+export type UpsertIsTypingMutationFn = Apollo.MutationFunction<UpsertIsTypingMutation, UpsertIsTypingMutationVariables>;
+
+/**
+ * __useUpsertIsTypingMutation__
+ *
+ * To run a mutation, you first call `useUpsertIsTypingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpsertIsTypingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [upsertIsTypingMutation, { data, loading, error }] = useUpsertIsTypingMutation({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *      updatedAt: // value for 'updatedAt'
+ *   },
+ * });
+ */
+export function useUpsertIsTypingMutation(baseOptions?: Apollo.MutationHookOptions<UpsertIsTypingMutation, UpsertIsTypingMutationVariables>) {
+        return Apollo.useMutation<UpsertIsTypingMutation, UpsertIsTypingMutationVariables>(UpsertIsTypingDocument, baseOptions);
+      }
+export type UpsertIsTypingMutationHookResult = ReturnType<typeof useUpsertIsTypingMutation>;
+export type UpsertIsTypingMutationResult = Apollo.MutationResult<UpsertIsTypingMutation>;
+export type UpsertIsTypingMutationOptions = Apollo.BaseMutationOptions<UpsertIsTypingMutation, UpsertIsTypingMutationVariables>;
+export const DeleteIsTypingDocument = gql`
+    mutation DeleteIsTyping($chatId: uuid!, $userId: String!) {
+  delete_ChatTyper(where: {chatId: {_eq: $chatId}, userId: {_eq: $userId}}) {
+    returning {
+      id
+    }
+  }
+}
+    `;
+export type DeleteIsTypingMutationFn = Apollo.MutationFunction<DeleteIsTypingMutation, DeleteIsTypingMutationVariables>;
+
+/**
+ * __useDeleteIsTypingMutation__
+ *
+ * To run a mutation, you first call `useDeleteIsTypingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteIsTypingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteIsTypingMutation, { data, loading, error }] = useDeleteIsTypingMutation({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useDeleteIsTypingMutation(baseOptions?: Apollo.MutationHookOptions<DeleteIsTypingMutation, DeleteIsTypingMutationVariables>) {
+        return Apollo.useMutation<DeleteIsTypingMutation, DeleteIsTypingMutationVariables>(DeleteIsTypingDocument, baseOptions);
+      }
+export type DeleteIsTypingMutationHookResult = ReturnType<typeof useDeleteIsTypingMutation>;
+export type DeleteIsTypingMutationResult = Apollo.MutationResult<DeleteIsTypingMutation>;
+export type DeleteIsTypingMutationOptions = Apollo.BaseMutationOptions<DeleteIsTypingMutation, DeleteIsTypingMutationVariables>;
+export const EchoDocument = gql`
+    query Echo($message: String!) {
+  echo(message: $message) {
+    message
+  }
+}
+    `;
+
+/**
+ * __useEchoQuery__
+ *
+ * To run a query within a React component, call `useEchoQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEchoQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useEchoQuery({
+ *   variables: {
+ *      message: // value for 'message'
+ *   },
+ * });
+ */
+export function useEchoQuery(baseOptions: Apollo.QueryHookOptions<EchoQuery, EchoQueryVariables>) {
+        return Apollo.useQuery<EchoQuery, EchoQueryVariables>(EchoDocument, baseOptions);
+      }
+export function useEchoLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EchoQuery, EchoQueryVariables>) {
+          return Apollo.useLazyQuery<EchoQuery, EchoQueryVariables>(EchoDocument, baseOptions);
+        }
+export type EchoQueryHookResult = ReturnType<typeof useEchoQuery>;
+export type EchoLazyQueryHookResult = ReturnType<typeof useEchoLazyQuery>;
+export type EchoQueryResult = Apollo.QueryResult<EchoQuery, EchoQueryVariables>;
+export const ProtectedEchoDocument = gql`
+    query ProtectedEcho($message: String!) {
+  protectedEcho(message: $message) {
+    message
+  }
+}
+    `;
+
+/**
+ * __useProtectedEchoQuery__
+ *
+ * To run a query within a React component, call `useProtectedEchoQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProtectedEchoQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProtectedEchoQuery({
+ *   variables: {
+ *      message: // value for 'message'
+ *   },
+ * });
+ */
+export function useProtectedEchoQuery(baseOptions: Apollo.QueryHookOptions<ProtectedEchoQuery, ProtectedEchoQueryVariables>) {
+        return Apollo.useQuery<ProtectedEchoQuery, ProtectedEchoQueryVariables>(ProtectedEchoDocument, baseOptions);
+      }
+export function useProtectedEchoLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProtectedEchoQuery, ProtectedEchoQueryVariables>) {
+          return Apollo.useLazyQuery<ProtectedEchoQuery, ProtectedEchoQueryVariables>(ProtectedEchoDocument, baseOptions);
+        }
+export type ProtectedEchoQueryHookResult = ReturnType<typeof useProtectedEchoQuery>;
+export type ProtectedEchoLazyQueryHookResult = ReturnType<typeof useProtectedEchoLazyQuery>;
+export type ProtectedEchoQueryResult = Apollo.QueryResult<ProtectedEchoQuery, ProtectedEchoQueryVariables>;
+export const SelectUsersDocument = gql`
+    query selectUsers {
+  user {
+    id
+    lastName
+    firstName
+    onlineStatus {
+      id
+      lastSeen
+      isIncognito
+    }
+  }
+}
+    `;
+
+/**
+ * __useSelectUsersQuery__
+ *
+ * To run a query within a React component, call `useSelectUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectUsersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSelectUsersQuery(baseOptions?: Apollo.QueryHookOptions<SelectUsersQuery, SelectUsersQueryVariables>) {
+        return Apollo.useQuery<SelectUsersQuery, SelectUsersQueryVariables>(SelectUsersDocument, baseOptions);
+      }
+export function useSelectUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectUsersQuery, SelectUsersQueryVariables>) {
+          return Apollo.useLazyQuery<SelectUsersQuery, SelectUsersQueryVariables>(SelectUsersDocument, baseOptions);
+        }
+export type SelectUsersQueryHookResult = ReturnType<typeof useSelectUsersQuery>;
+export type SelectUsersLazyQueryHookResult = ReturnType<typeof useSelectUsersLazyQuery>;
+export type SelectUsersQueryResult = Apollo.QueryResult<SelectUsersQuery, SelectUsersQueryVariables>;
+export const SelectCurrentUserDocument = gql`
+    query selectCurrentUser($userId: String!) {
+  user(where: {id: {_eq: $userId}}) {
+    id
+    lastName
+    firstName
+    onlineStatus {
+      id
+      lastSeen
+      isIncognito
+    }
+    pinnedChats {
+      id
+      chatId
+    }
+    followedChats {
+      id
+      chatId
+    }
+    unreadIndices {
+      id
+      chatId
+      index
+    }
+  }
+}
+    `;
+
+/**
+ * __useSelectCurrentUserQuery__
+ *
+ * To run a query within a React component, call `useSelectCurrentUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectCurrentUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectCurrentUserQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useSelectCurrentUserQuery(baseOptions: Apollo.QueryHookOptions<SelectCurrentUserQuery, SelectCurrentUserQueryVariables>) {
+        return Apollo.useQuery<SelectCurrentUserQuery, SelectCurrentUserQueryVariables>(SelectCurrentUserDocument, baseOptions);
+      }
+export function useSelectCurrentUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectCurrentUserQuery, SelectCurrentUserQueryVariables>) {
+          return Apollo.useLazyQuery<SelectCurrentUserQuery, SelectCurrentUserQueryVariables>(SelectCurrentUserDocument, baseOptions);
+        }
+export type SelectCurrentUserQueryHookResult = ReturnType<typeof useSelectCurrentUserQuery>;
+export type SelectCurrentUserLazyQueryHookResult = ReturnType<typeof useSelectCurrentUserLazyQuery>;
+export type SelectCurrentUserQueryResult = Apollo.QueryResult<SelectCurrentUserQuery, SelectCurrentUserQueryVariables>;
 export const GetCurrentUserIsIncognitoDocument = gql`
     query getCurrentUserIsIncognito($userId: String!) {
   OnlineStatus(where: {userId: {_eq: $userId}}) {
@@ -5579,428 +6006,3 @@ export function useUpdateCurrentUserLastSeenMutation(baseOptions?: Apollo.Mutati
 export type UpdateCurrentUserLastSeenMutationHookResult = ReturnType<typeof useUpdateCurrentUserLastSeenMutation>;
 export type UpdateCurrentUserLastSeenMutationResult = Apollo.MutationResult<UpdateCurrentUserLastSeenMutation>;
 export type UpdateCurrentUserLastSeenMutationOptions = Apollo.BaseMutationOptions<UpdateCurrentUserLastSeenMutation, UpdateCurrentUserLastSeenMutationVariables>;
-export const EchoDocument = gql`
-    query Echo($message: String!) {
-  echo(message: $message) {
-    message
-  }
-}
-    `;
-
-/**
- * __useEchoQuery__
- *
- * To run a query within a React component, call `useEchoQuery` and pass it any options that fit your needs.
- * When your component renders, `useEchoQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useEchoQuery({
- *   variables: {
- *      message: // value for 'message'
- *   },
- * });
- */
-export function useEchoQuery(baseOptions: Apollo.QueryHookOptions<EchoQuery, EchoQueryVariables>) {
-        return Apollo.useQuery<EchoQuery, EchoQueryVariables>(EchoDocument, baseOptions);
-      }
-export function useEchoLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EchoQuery, EchoQueryVariables>) {
-          return Apollo.useLazyQuery<EchoQuery, EchoQueryVariables>(EchoDocument, baseOptions);
-        }
-export type EchoQueryHookResult = ReturnType<typeof useEchoQuery>;
-export type EchoLazyQueryHookResult = ReturnType<typeof useEchoLazyQuery>;
-export type EchoQueryResult = Apollo.QueryResult<EchoQuery, EchoQueryVariables>;
-export const ProtectedEchoDocument = gql`
-    query ProtectedEcho($message: String!) {
-  protectedEcho(message: $message) {
-    message
-  }
-}
-    `;
-
-/**
- * __useProtectedEchoQuery__
- *
- * To run a query within a React component, call `useProtectedEchoQuery` and pass it any options that fit your needs.
- * When your component renders, `useProtectedEchoQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useProtectedEchoQuery({
- *   variables: {
- *      message: // value for 'message'
- *   },
- * });
- */
-export function useProtectedEchoQuery(baseOptions: Apollo.QueryHookOptions<ProtectedEchoQuery, ProtectedEchoQueryVariables>) {
-        return Apollo.useQuery<ProtectedEchoQuery, ProtectedEchoQueryVariables>(ProtectedEchoDocument, baseOptions);
-      }
-export function useProtectedEchoLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProtectedEchoQuery, ProtectedEchoQueryVariables>) {
-          return Apollo.useLazyQuery<ProtectedEchoQuery, ProtectedEchoQueryVariables>(ProtectedEchoDocument, baseOptions);
-        }
-export type ProtectedEchoQueryHookResult = ReturnType<typeof useProtectedEchoQuery>;
-export type ProtectedEchoLazyQueryHookResult = ReturnType<typeof useProtectedEchoLazyQuery>;
-export type ProtectedEchoQueryResult = Apollo.QueryResult<ProtectedEchoQuery, ProtectedEchoQueryVariables>;
-export const SelectChatDocument = gql`
-    query SelectChat($chatId: uuid!) {
-  Chat(where: {id: {_eq: $chatId}}) {
-    description
-    creatorId
-    createdAt
-    mode
-    name
-    isAutoNotify
-    isAutoPin
-    id
-    updatedAt
-    moderators {
-      id
-      createdAt
-      userId
-    }
-    members {
-      userId
-      id
-      invitationAcceptedAt
-      updatedAt
-      createdAt
-    }
-    creator {
-      firstName
-      lastName
-      id
-    }
-  }
-}
-    `;
-
-/**
- * __useSelectChatQuery__
- *
- * To run a query within a React component, call `useSelectChatQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectChatQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectChatQuery({
- *   variables: {
- *      chatId: // value for 'chatId'
- *   },
- * });
- */
-export function useSelectChatQuery(baseOptions: Apollo.QueryHookOptions<SelectChatQuery, SelectChatQueryVariables>) {
-        return Apollo.useQuery<SelectChatQuery, SelectChatQueryVariables>(SelectChatDocument, baseOptions);
-      }
-export function useSelectChatLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectChatQuery, SelectChatQueryVariables>) {
-          return Apollo.useLazyQuery<SelectChatQuery, SelectChatQueryVariables>(SelectChatDocument, baseOptions);
-        }
-export type SelectChatQueryHookResult = ReturnType<typeof useSelectChatQuery>;
-export type SelectChatLazyQueryHookResult = ReturnType<typeof useSelectChatLazyQuery>;
-export type SelectChatQueryResult = Apollo.QueryResult<SelectChatQuery, SelectChatQueryVariables>;
-export const InsertMessageDocument = gql`
-    mutation InsertMessage($chatId: uuid!, $content: jsonb!, $index: Int!) {
-  insert_ChatMessage(objects: {chatId: $chatId, content: $content, index: $index}) {
-    affected_rows
-  }
-}
-    `;
-export type InsertMessageMutationFn = Apollo.MutationFunction<InsertMessageMutation, InsertMessageMutationVariables>;
-
-/**
- * __useInsertMessageMutation__
- *
- * To run a mutation, you first call `useInsertMessageMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInsertMessageMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [insertMessageMutation, { data, loading, error }] = useInsertMessageMutation({
- *   variables: {
- *      chatId: // value for 'chatId'
- *      content: // value for 'content'
- *      index: // value for 'index'
- *   },
- * });
- */
-export function useInsertMessageMutation(baseOptions?: Apollo.MutationHookOptions<InsertMessageMutation, InsertMessageMutationVariables>) {
-        return Apollo.useMutation<InsertMessageMutation, InsertMessageMutationVariables>(InsertMessageDocument, baseOptions);
-      }
-export type InsertMessageMutationHookResult = ReturnType<typeof useInsertMessageMutation>;
-export type InsertMessageMutationResult = Apollo.MutationResult<InsertMessageMutation>;
-export type InsertMessageMutationOptions = Apollo.BaseMutationOptions<InsertMessageMutation, InsertMessageMutationVariables>;
-export const LiveChatDocument = gql`
-    subscription LiveChat($chatId: uuid!, $limit: Int = 20, $offset: Int = 0) {
-  Chat(where: {id: {_eq: $chatId}}) {
-    id
-    typers {
-      id
-      userId
-      updatedAt
-    }
-    messages(order_by: {index: desc}, limit: $limit, offset: $offset) {
-      content
-      createdAt
-      id
-      index
-      isHighlighted
-      senderId
-      updatedAt
-      reactions {
-        id
-        createdAt
-        reaction
-        reactorId
-      }
-    }
-    viewers {
-      id
-      lastSeen
-      userId
-    }
-  }
-}
-    `;
-
-/**
- * __useLiveChatSubscription__
- *
- * To run a query within a React component, call `useLiveChatSubscription` and pass it any options that fit your needs.
- * When your component renders, `useLiveChatSubscription` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useLiveChatSubscription({
- *   variables: {
- *      chatId: // value for 'chatId'
- *      limit: // value for 'limit'
- *      offset: // value for 'offset'
- *   },
- * });
- */
-export function useLiveChatSubscription(baseOptions: Apollo.SubscriptionHookOptions<LiveChatSubscription, LiveChatSubscriptionVariables>) {
-        return Apollo.useSubscription<LiveChatSubscription, LiveChatSubscriptionVariables>(LiveChatDocument, baseOptions);
-      }
-export type LiveChatSubscriptionHookResult = ReturnType<typeof useLiveChatSubscription>;
-export type LiveChatSubscriptionResult = Apollo.SubscriptionResult<LiveChatSubscription>;
-export const SelectChatsDocument = gql`
-    query selectChats {
-  Chat {
-    id
-    name
-    description
-    mode
-    members {
-      userId
-    }
-    viewers {
-      id
-      lastSeen
-      userId
-    }
-  }
-}
-    `;
-
-/**
- * __useSelectChatsQuery__
- *
- * To run a query within a React component, call `useSelectChatsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectChatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectChatsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useSelectChatsQuery(baseOptions?: Apollo.QueryHookOptions<SelectChatsQuery, SelectChatsQueryVariables>) {
-        return Apollo.useQuery<SelectChatsQuery, SelectChatsQueryVariables>(SelectChatsDocument, baseOptions);
-      }
-export function useSelectChatsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectChatsQuery, SelectChatsQueryVariables>) {
-          return Apollo.useLazyQuery<SelectChatsQuery, SelectChatsQueryVariables>(SelectChatsDocument, baseOptions);
-        }
-export type SelectChatsQueryHookResult = ReturnType<typeof useSelectChatsQuery>;
-export type SelectChatsLazyQueryHookResult = ReturnType<typeof useSelectChatsLazyQuery>;
-export type SelectChatsQueryResult = Apollo.QueryResult<SelectChatsQuery, SelectChatsQueryVariables>;
-export const UpsertIsTypingDocument = gql`
-    mutation UpsertIsTyping($chatId: uuid!, $updatedAt: timestamptz!) {
-  insert_ChatTyper(
-    objects: {chatId: $chatId, updatedAt: $updatedAt}
-    on_conflict: {constraint: ChatTyper_chatId_userId_key, update_columns: updatedAt}
-  ) {
-    returning {
-      id
-      updatedAt
-      chatId
-      userId
-    }
-  }
-}
-    `;
-export type UpsertIsTypingMutationFn = Apollo.MutationFunction<UpsertIsTypingMutation, UpsertIsTypingMutationVariables>;
-
-/**
- * __useUpsertIsTypingMutation__
- *
- * To run a mutation, you first call `useUpsertIsTypingMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpsertIsTypingMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [upsertIsTypingMutation, { data, loading, error }] = useUpsertIsTypingMutation({
- *   variables: {
- *      chatId: // value for 'chatId'
- *      updatedAt: // value for 'updatedAt'
- *   },
- * });
- */
-export function useUpsertIsTypingMutation(baseOptions?: Apollo.MutationHookOptions<UpsertIsTypingMutation, UpsertIsTypingMutationVariables>) {
-        return Apollo.useMutation<UpsertIsTypingMutation, UpsertIsTypingMutationVariables>(UpsertIsTypingDocument, baseOptions);
-      }
-export type UpsertIsTypingMutationHookResult = ReturnType<typeof useUpsertIsTypingMutation>;
-export type UpsertIsTypingMutationResult = Apollo.MutationResult<UpsertIsTypingMutation>;
-export type UpsertIsTypingMutationOptions = Apollo.BaseMutationOptions<UpsertIsTypingMutation, UpsertIsTypingMutationVariables>;
-export const DeleteIsTypingDocument = gql`
-    mutation DeleteIsTyping($chatId: uuid!, $userId: String!) {
-  delete_ChatTyper(where: {chatId: {_eq: $chatId}, userId: {_eq: $userId}}) {
-    returning {
-      id
-    }
-  }
-}
-    `;
-export type DeleteIsTypingMutationFn = Apollo.MutationFunction<DeleteIsTypingMutation, DeleteIsTypingMutationVariables>;
-
-/**
- * __useDeleteIsTypingMutation__
- *
- * To run a mutation, you first call `useDeleteIsTypingMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteIsTypingMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteIsTypingMutation, { data, loading, error }] = useDeleteIsTypingMutation({
- *   variables: {
- *      chatId: // value for 'chatId'
- *      userId: // value for 'userId'
- *   },
- * });
- */
-export function useDeleteIsTypingMutation(baseOptions?: Apollo.MutationHookOptions<DeleteIsTypingMutation, DeleteIsTypingMutationVariables>) {
-        return Apollo.useMutation<DeleteIsTypingMutation, DeleteIsTypingMutationVariables>(DeleteIsTypingDocument, baseOptions);
-      }
-export type DeleteIsTypingMutationHookResult = ReturnType<typeof useDeleteIsTypingMutation>;
-export type DeleteIsTypingMutationResult = Apollo.MutationResult<DeleteIsTypingMutation>;
-export type DeleteIsTypingMutationOptions = Apollo.BaseMutationOptions<DeleteIsTypingMutation, DeleteIsTypingMutationVariables>;
-export const SelectCurrentUserDocument = gql`
-    query selectCurrentUser($userId: String!) {
-  user(where: {id: {_eq: $userId}}) {
-    id
-    lastName
-    firstName
-    onlineStatus {
-      id
-      lastSeen
-      isIncognito
-    }
-    pinnedChats {
-      id
-      chatId
-    }
-    followedChats {
-      id
-      chatId
-    }
-    unreadIndices {
-      id
-      chatId
-      index
-    }
-  }
-}
-    `;
-
-/**
- * __useSelectCurrentUserQuery__
- *
- * To run a query within a React component, call `useSelectCurrentUserQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectCurrentUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectCurrentUserQuery({
- *   variables: {
- *      userId: // value for 'userId'
- *   },
- * });
- */
-export function useSelectCurrentUserQuery(baseOptions: Apollo.QueryHookOptions<SelectCurrentUserQuery, SelectCurrentUserQueryVariables>) {
-        return Apollo.useQuery<SelectCurrentUserQuery, SelectCurrentUserQueryVariables>(SelectCurrentUserDocument, baseOptions);
-      }
-export function useSelectCurrentUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectCurrentUserQuery, SelectCurrentUserQueryVariables>) {
-          return Apollo.useLazyQuery<SelectCurrentUserQuery, SelectCurrentUserQueryVariables>(SelectCurrentUserDocument, baseOptions);
-        }
-export type SelectCurrentUserQueryHookResult = ReturnType<typeof useSelectCurrentUserQuery>;
-export type SelectCurrentUserLazyQueryHookResult = ReturnType<typeof useSelectCurrentUserLazyQuery>;
-export type SelectCurrentUserQueryResult = Apollo.QueryResult<SelectCurrentUserQuery, SelectCurrentUserQueryVariables>;
-export const SelectUsersDocument = gql`
-    query selectUsers {
-  user {
-    id
-    lastName
-    firstName
-    onlineStatus {
-      id
-      lastSeen
-      isIncognito
-    }
-  }
-}
-    `;
-
-/**
- * __useSelectUsersQuery__
- *
- * To run a query within a React component, call `useSelectUsersQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectUsersQuery({
- *   variables: {
- *   },
- * });
- */
-export function useSelectUsersQuery(baseOptions?: Apollo.QueryHookOptions<SelectUsersQuery, SelectUsersQueryVariables>) {
-        return Apollo.useQuery<SelectUsersQuery, SelectUsersQueryVariables>(SelectUsersDocument, baseOptions);
-      }
-export function useSelectUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectUsersQuery, SelectUsersQueryVariables>) {
-          return Apollo.useLazyQuery<SelectUsersQuery, SelectUsersQueryVariables>(SelectUsersDocument, baseOptions);
-        }
-export type SelectUsersQueryHookResult = ReturnType<typeof useSelectUsersQuery>;
-export type SelectUsersLazyQueryHookResult = ReturnType<typeof useSelectUsersLazyQuery>;
-export type SelectUsersQueryResult = Apollo.QueryResult<SelectUsersQuery, SelectUsersQueryVariables>;

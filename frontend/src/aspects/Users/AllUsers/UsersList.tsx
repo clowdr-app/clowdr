@@ -10,14 +10,12 @@ export default function UsersList(): JSX.Element {
     const _users = useUsers();
 
     const column = useMemo(() => {
-        const users =
-            (_users &&
-                currentUser && {
-                    user: _users?.user.filter(
-                        (x) => x.id !== currentUser.user[0].id
-                    ),
-                }) ||
-            _users;
+        const users = _users &&
+            currentUser && {
+                User: _users?.User.filter(
+                    (x) => x.id !== currentUser.User[0].id
+                ),
+            };
 
         if (users === undefined) {
             return <Spinner />;
@@ -28,7 +26,7 @@ export default function UsersList(): JSX.Element {
         return (
             <Column
                 title="Users"
-                items={users.user}
+                items={users.User}
                 compareItems={(x, y) => {
                     const q = x.firstName.localeCompare(y.firstName);
                     if (q === 0) {

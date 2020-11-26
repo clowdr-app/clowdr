@@ -10,7 +10,7 @@ import {
 
 const _currentuserQueries = gql`
     query selectCurrentUser($userId: String!) {
-        user(where: { id: { _eq: $userId } }) {
+        User(where: { id: { _eq: $userId } }) {
             id
             lastName
             firstName

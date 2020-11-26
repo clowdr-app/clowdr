@@ -7,7 +7,7 @@ import { UsersContext } from "./useUsers";
 
 const _usersQueries = gql`
     query selectUsers {
-        user {
+        User {
             id
             lastName
             firstName

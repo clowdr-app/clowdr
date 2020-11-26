@@ -932,7 +932,7 @@
           _eq: X-Hasura-User-Id
 - table:
     schema: public
-    name: user
+    name: User
   object_relationships:
   - name: onlineStatus
     using:

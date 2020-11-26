@@ -48,7 +48,7 @@ function Message(props: {
     users: SelectUsersQuery;
 }): JSX.Element {
     const senderEl = useMemo(() => {
-        const sender = props.users.user.find(
+        const sender = props.users.User.find(
             (user) => user.id === props.message.senderId
         );
         if (sender) {
@@ -59,7 +59,7 @@ function Message(props: {
             );
         }
         return undefined;
-    }, [props.message.senderId, props.users.user]);
+    }, [props.message.senderId, props.users.User]);
 
     const sentAt = new Date(props.message.createdAt);
     return (
@@ -180,7 +180,7 @@ export function ChatFrameInner(): JSX.Element {
                               now - new Date(typer.updatedAt).getTime() <
                               20000
                           ) {
-                              const user = users.user.find(
+                              const user = users.User.find(
                                   (x) => x.id === typer.userId
                               );
                               if (user) {

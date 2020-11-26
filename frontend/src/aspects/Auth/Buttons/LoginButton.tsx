@@ -6,7 +6,7 @@ export default function LoginButton() {
     const { loginWithRedirect } = useAuth0();
 
     return (
-        <Button onClick={() => loginWithRedirect()} colorScheme="blue">
+        <Button onClick={() => loginWithRedirect()} colorScheme="green">
             Log In
         </Button>
     );

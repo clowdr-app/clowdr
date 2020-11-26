@@ -13,15 +13,20 @@ function App(_props: AppProps): JSX.Element {
         <CurrentUserProvider>
             <LastSeenProvider>
                 <Flex
+                    as="main"
                     height="100%"
                     width="100%"
                     minWidth="300px"
-                    direction="column"
-                    padding={["0em", "1em"]}
-                    gap={0}
+                    overflowY="auto"
+                    // Column-reverse allows us to put the menu last so screen
+                    // readers see the page content before the menu
+                    direction="column-reverse"
+                    padding={["0.4em", "1em"]}
+                    justifyContent="center"
+                    alignItems="center"
                 >
-                    <MainMenu />
                     <Routing />
+                    <MainMenu />
                 </Flex>
             </LastSeenProvider>
         </CurrentUserProvider>

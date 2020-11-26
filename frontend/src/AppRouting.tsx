@@ -1,16 +1,17 @@
 import React from "react";
-import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
+import { Redirect, Route, Switch } from "react-router-dom";
+import LoggedOutPage from "./aspects/Auth/LoggedOutPage";
 import ProtectedRoute from "./aspects/Auth/ProtectedRoute";
-import ChatsPage from "./aspects/Chat/ChatsPage";
-import Echo from "./aspects/Echo/Echo";
-import ProtectedEcho from "./aspects/Echo/ProtectedEcho";
-import UserProfileInfo from "./aspects/Users/CurrentUser/UserProfileInfo";
+import PageNotFound from "./aspects/Errors/PageNotFound";
+import PageNotImplemented from "./aspects/Errors/PageNotImplemented";
+import ExistingUserLandingPage from "./aspects/Users/ExistingUser/LandingPage";
+import NewUserLandingPage from "./aspects/Users/NewUser/LandingPage";
 
 export default function Routing(): JSX.Element {
     return (
         <Switch>
             <Route exact path="/auth0/logged-in">
-                <Redirect to="/profile" />
+                <Redirect to="/user" />
             </Route>
             <Route exact path="/auth0/logged-in/stay-on-page">
                 Staying on this page so you can debug.
@@ -19,8 +20,25 @@ export default function Routing(): JSX.Element {
                 <Redirect to="/logged-out" />
             </Route>
             <Route exact path="/logged-out">
-                You have been logged out.
+                <LoggedOutPage />
             </Route>
+            <ProtectedRoute
+                altIfNotAuthed={
+                    <Route exact path="/">
+                        <NewUserLandingPage />
+                    </Route>
+                }
+                exact
+                path="/"
+                component={ExistingUserLandingPage}
+            />
+
+            <Route exact path="/user">
+                <PageNotImplemented />
+            </Route>
+
+            {/* 
+            
             <Route exact path="/echo">
                 <Echo />
             </Route>
@@ -35,17 +53,12 @@ export default function Routing(): JSX.Element {
                     <ChatsPage chatId={p.match.params.chatId} />
                 )}
             />
-            <ProtectedRoute
-                altIfNotAuthed={
-                    <Route exact path="/">
-                        Home page
-                    </Route>
-                }
-                exact
-                path="/"
-                component={ChatsPage}
-            />
-            <ProtectedRoute exact path="/profile" component={UserProfileInfo} />
+            
+            <ProtectedRoute exact path="/profile" component={UserProfileInfo} /> */}
+
+            <Route path="/">
+                <PageNotFound />
+            </Route>
         </Switch>
     );
 }

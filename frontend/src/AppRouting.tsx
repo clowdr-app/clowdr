@@ -1,7 +1,8 @@
 import React from "react";
-import { Redirect, Route, Switch } from "react-router-dom";
+import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import LoggedOutPage from "./aspects/Auth/LoggedOutPage";
 import ProtectedRoute from "./aspects/Auth/ProtectedRoute";
+import ConferenceRoutes from "./aspects/Conference/ConferenceRoutes";
 import PageNotFound from "./aspects/Errors/PageNotFound";
 import CurrentUserPage from "./aspects/Users/CurrentUser/CurrentUserPage";
 import ExistingUserLandingPage from "./aspects/Users/ExistingUser/LandingPage";
@@ -34,6 +35,20 @@ export default function Routing(): JSX.Element {
             />
 
             <ProtectedRoute exact path="/user" component={CurrentUserPage} />
+
+            <Route
+                path="/conference/:confSlug"
+                component={(
+                    props: RouteComponentProps<{
+                        confSlug: string;
+                    }>
+                ) => (
+                    <ConferenceRoutes
+                        rootUrl={props.match.url}
+                        confSlug={props.match.params.confSlug}
+                    />
+                )}
+            />
 
             {/* 
             

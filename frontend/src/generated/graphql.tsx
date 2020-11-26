@@ -2082,6 +2082,221 @@ export enum Chat_Update_Column {
   UpdatedAt = 'updatedAt'
 }
 
+/** columns and relationships of "Conference" */
+export type Conference = {
+  __typename?: 'Conference';
+  createdAt: Scalars['timestamptz'];
+  createdBy: Scalars['String'];
+  id: Scalars['uuid'];
+  name: Scalars['String'];
+  shortName: Scalars['String'];
+  slug: Scalars['String'];
+  updatedAt: Scalars['timestamptz'];
+};
+
+/** aggregated selection of "Conference" */
+export type Conference_Aggregate = {
+  __typename?: 'Conference_aggregate';
+  aggregate?: Maybe<Conference_Aggregate_Fields>;
+  nodes: Array<Conference>;
+};
+
+/** aggregate fields of "Conference" */
+export type Conference_Aggregate_Fields = {
+  __typename?: 'Conference_aggregate_fields';
+  count?: Maybe<Scalars['Int']>;
+  max?: Maybe<Conference_Max_Fields>;
+  min?: Maybe<Conference_Min_Fields>;
+};
+
+
+/** aggregate fields of "Conference" */
+export type Conference_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<Array<Conference_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "Conference" */
+export type Conference_Aggregate_Order_By = {
+  count?: Maybe<Order_By>;
+  max?: Maybe<Conference_Max_Order_By>;
+  min?: Maybe<Conference_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "Conference" */
+export type Conference_Arr_Rel_Insert_Input = {
+  data: Array<Conference_Insert_Input>;
+  on_conflict?: Maybe<Conference_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "Conference". All fields are combined with a logical 'AND'. */
+export type Conference_Bool_Exp = {
+  _and?: Maybe<Array<Maybe<Conference_Bool_Exp>>>;
+  _not?: Maybe<Conference_Bool_Exp>;
+  _or?: Maybe<Array<Maybe<Conference_Bool_Exp>>>;
+  createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  createdBy?: Maybe<String_Comparison_Exp>;
+  id?: Maybe<Uuid_Comparison_Exp>;
+  name?: Maybe<String_Comparison_Exp>;
+  shortName?: Maybe<String_Comparison_Exp>;
+  slug?: Maybe<String_Comparison_Exp>;
+  updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "Conference" */
+export enum Conference_Constraint {
+  /** unique or primary key constraint */
+  ConferenceNameKey = 'Conference_name_key',
+  /** unique or primary key constraint */
+  ConferencePkey = 'Conference_pkey',
+  /** unique or primary key constraint */
+  ConferenceShortNameKey = 'Conference_shortName_key',
+  /** unique or primary key constraint */
+  ConferenceSlugKey = 'Conference_slug_key'
+}
+
+/** input type for inserting data into table "Conference" */
+export type Conference_Insert_Input = {
+  createdAt?: Maybe<Scalars['timestamptz']>;
+  createdBy?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['uuid']>;
+  name?: Maybe<Scalars['String']>;
+  shortName?: Maybe<Scalars['String']>;
+  slug?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Conference_Max_Fields = {
+  __typename?: 'Conference_max_fields';
+  createdAt?: Maybe<Scalars['timestamptz']>;
+  createdBy?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['uuid']>;
+  name?: Maybe<Scalars['String']>;
+  shortName?: Maybe<Scalars['String']>;
+  slug?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "Conference" */
+export type Conference_Max_Order_By = {
+  createdAt?: Maybe<Order_By>;
+  createdBy?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+  name?: Maybe<Order_By>;
+  shortName?: Maybe<Order_By>;
+  slug?: Maybe<Order_By>;
+  updatedAt?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Conference_Min_Fields = {
+  __typename?: 'Conference_min_fields';
+  createdAt?: Maybe<Scalars['timestamptz']>;
+  createdBy?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['uuid']>;
+  name?: Maybe<Scalars['String']>;
+  shortName?: Maybe<Scalars['String']>;
+  slug?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "Conference" */
+export type Conference_Min_Order_By = {
+  createdAt?: Maybe<Order_By>;
+  createdBy?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+  name?: Maybe<Order_By>;
+  shortName?: Maybe<Order_By>;
+  slug?: Maybe<Order_By>;
+  updatedAt?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "Conference" */
+export type Conference_Mutation_Response = {
+  __typename?: 'Conference_mutation_response';
+  /** number of affected rows by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  returning: Array<Conference>;
+};
+
+/** input type for inserting object relation for remote table "Conference" */
+export type Conference_Obj_Rel_Insert_Input = {
+  data: Conference_Insert_Input;
+  on_conflict?: Maybe<Conference_On_Conflict>;
+};
+
+/** on conflict condition type for table "Conference" */
+export type Conference_On_Conflict = {
+  constraint: Conference_Constraint;
+  update_columns: Array<Conference_Update_Column>;
+  where?: Maybe<Conference_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "Conference" */
+export type Conference_Order_By = {
+  createdAt?: Maybe<Order_By>;
+  createdBy?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+  name?: Maybe<Order_By>;
+  shortName?: Maybe<Order_By>;
+  slug?: Maybe<Order_By>;
+  updatedAt?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "Conference" */
+export type Conference_Pk_Columns_Input = {
+  id: Scalars['uuid'];
+};
+
+/** select columns of table "Conference" */
+export enum Conference_Select_Column {
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  CreatedBy = 'createdBy',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Name = 'name',
+  /** column name */
+  ShortName = 'shortName',
+  /** column name */
+  Slug = 'slug',
+  /** column name */
+  UpdatedAt = 'updatedAt'
+}
+
+/** input type for updating data in table "Conference" */
+export type Conference_Set_Input = {
+  createdAt?: Maybe<Scalars['timestamptz']>;
+  createdBy?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['uuid']>;
+  name?: Maybe<Scalars['String']>;
+  shortName?: Maybe<Scalars['String']>;
+  slug?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "Conference" */
+export enum Conference_Update_Column {
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  CreatedBy = 'createdBy',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Name = 'name',
+  /** column name */
+  ShortName = 'shortName',
+  /** column name */
+  Slug = 'slug',
+  /** column name */
+  UpdatedAt = 'updatedAt'
+}
+
 export type EchoInput = {
   message: Scalars['String'];
 };
@@ -3505,6 +3720,10 @@ export type Mutation_Root = {
   delete_ChatViewer_by_pk?: Maybe<ChatViewer>;
   /** delete single row from the table: "Chat" */
   delete_Chat_by_pk?: Maybe<Chat>;
+  /** delete data from the table: "Conference" */
+  delete_Conference?: Maybe<Conference_Mutation_Response>;
+  /** delete single row from the table: "Conference" */
+  delete_Conference_by_pk?: Maybe<Conference>;
   /** delete data from the table: "FlaggedChatMessage" */
   delete_FlaggedChatMessage?: Maybe<FlaggedChatMessage_Mutation_Response>;
   /** delete single row from the table: "FlaggedChatMessage" */
@@ -3557,6 +3776,10 @@ export type Mutation_Root = {
   insert_ChatViewer_one?: Maybe<ChatViewer>;
   /** insert a single row into the table: "Chat" */
   insert_Chat_one?: Maybe<Chat>;
+  /** insert data into the table: "Conference" */
+  insert_Conference?: Maybe<Conference_Mutation_Response>;
+  /** insert a single row into the table: "Conference" */
+  insert_Conference_one?: Maybe<Conference>;
   /** insert data into the table: "FlaggedChatMessage" */
   insert_FlaggedChatMessage?: Maybe<FlaggedChatMessage_Mutation_Response>;
   /** insert a single row into the table: "FlaggedChatMessage" */
@@ -3609,6 +3832,10 @@ export type Mutation_Root = {
   update_ChatViewer_by_pk?: Maybe<ChatViewer>;
   /** update single row of the table: "Chat" */
   update_Chat_by_pk?: Maybe<Chat>;
+  /** update data of the table: "Conference" */
+  update_Conference?: Maybe<Conference_Mutation_Response>;
+  /** update single row of the table: "Conference" */
+  update_Conference_by_pk?: Maybe<Conference>;
   /** update data of the table: "FlaggedChatMessage" */
   update_FlaggedChatMessage?: Maybe<FlaggedChatMessage_Mutation_Response>;
   /** update single row of the table: "FlaggedChatMessage" */
@@ -3724,6 +3951,18 @@ export type Mutation_RootDelete_ChatViewer_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Chat_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_ConferenceArgs = {
+  where: Conference_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Conference_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -3897,6 +4136,20 @@ export type Mutation_RootInsert_ChatViewer_OneArgs = {
 export type Mutation_RootInsert_Chat_OneArgs = {
   object: Chat_Insert_Input;
   on_conflict?: Maybe<Chat_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_ConferenceArgs = {
+  objects: Array<Conference_Insert_Input>;
+  on_conflict?: Maybe<Conference_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Conference_OneArgs = {
+  object: Conference_Insert_Input;
+  on_conflict?: Maybe<Conference_On_Conflict>;
 };
 
 
@@ -4097,6 +4350,20 @@ export type Mutation_RootUpdate_Chat_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_ConferenceArgs = {
+  _set?: Maybe<Conference_Set_Input>;
+  where: Conference_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Conference_By_PkArgs = {
+  _set?: Maybe<Conference_Set_Input>;
+  pk_columns: Conference_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_FlaggedChatMessageArgs = {
   _set?: Maybe<FlaggedChatMessage_Set_Input>;
   where: FlaggedChatMessage_Bool_Exp;
@@ -4232,6 +4499,12 @@ export type Query_Root = {
   Chat_aggregate: Chat_Aggregate;
   /** fetch data from the table: "Chat" using primary key columns */
   Chat_by_pk?: Maybe<Chat>;
+  /** fetch data from the table: "Conference" */
+  Conference: Array<Conference>;
+  /** fetch aggregated fields from the table: "Conference" */
+  Conference_aggregate: Conference_Aggregate;
+  /** fetch data from the table: "Conference" using primary key columns */
+  Conference_by_pk?: Maybe<Conference>;
   /** fetch data from the table: "FlaggedChatMessage" */
   FlaggedChatMessage: Array<FlaggedChatMessage>;
   /** fetch aggregated fields from the table: "FlaggedChatMessage" */
@@ -4478,6 +4751,32 @@ export type Query_RootChat_By_PkArgs = {
 
 
 /** query root */
+export type Query_RootConferenceArgs = {
+  distinct_on?: Maybe<Array<Conference_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Conference_Order_By>>;
+  where?: Maybe<Conference_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootConference_AggregateArgs = {
+  distinct_on?: Maybe<Array<Conference_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Conference_Order_By>>;
+  where?: Maybe<Conference_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootConference_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
 export type Query_RootFlaggedChatMessageArgs = {
   distinct_on?: Maybe<Array<FlaggedChatMessage_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -4669,6 +4968,12 @@ export type Subscription_Root = {
   Chat_aggregate: Chat_Aggregate;
   /** fetch data from the table: "Chat" using primary key columns */
   Chat_by_pk?: Maybe<Chat>;
+  /** fetch data from the table: "Conference" */
+  Conference: Array<Conference>;
+  /** fetch aggregated fields from the table: "Conference" */
+  Conference_aggregate: Conference_Aggregate;
+  /** fetch data from the table: "Conference" using primary key columns */
+  Conference_by_pk?: Maybe<Conference>;
   /** fetch data from the table: "FlaggedChatMessage" */
   FlaggedChatMessage: Array<FlaggedChatMessage>;
   /** fetch aggregated fields from the table: "FlaggedChatMessage" */
@@ -4910,6 +5215,32 @@ export type Subscription_RootChat_AggregateArgs = {
 
 /** subscription root */
 export type Subscription_RootChat_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
+export type Subscription_RootConferenceArgs = {
+  distinct_on?: Maybe<Array<Conference_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Conference_Order_By>>;
+  where?: Maybe<Conference_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootConference_AggregateArgs = {
+  distinct_on?: Maybe<Array<Conference_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Conference_Order_By>>;
+  where?: Maybe<Conference_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootConference_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -5215,6 +5546,39 @@ export type DeleteIsTypingMutation = (
     & { returning: Array<(
       { __typename?: 'ChatTyper' }
       & Pick<ChatTyper, 'id'>
+    )> }
+  )> }
+);
+
+export type ConferenceTakenQueryVariables = Exact<{
+  name: Scalars['String'];
+  shortName: Scalars['String'];
+  slug: Scalars['String'];
+}>;
+
+
+export type ConferenceTakenQuery = (
+  { __typename?: 'query_root' }
+  & { Conference: Array<(
+    { __typename?: 'Conference' }
+    & Pick<Conference, 'id' | 'name' | 'shortName' | 'slug'>
+  )> }
+);
+
+export type CreateConferenceMutationVariables = Exact<{
+  name: Scalars['String'];
+  shortName: Scalars['String'];
+  slug: Scalars['String'];
+}>;
+
+
+export type CreateConferenceMutation = (
+  { __typename?: 'mutation_root' }
+  & { insert_Conference?: Maybe<(
+    { __typename?: 'Conference_mutation_response' }
+    & { returning: Array<(
+      { __typename?: 'Conference' }
+      & Pick<Conference, 'id' | 'slug'>
     )> }
   )> }
 );
@@ -5665,6 +6029,84 @@ export function useDeleteIsTypingMutation(baseOptions?: Apollo.MutationHookOptio
 export type DeleteIsTypingMutationHookResult = ReturnType<typeof useDeleteIsTypingMutation>;
 export type DeleteIsTypingMutationResult = Apollo.MutationResult<DeleteIsTypingMutation>;
 export type DeleteIsTypingMutationOptions = Apollo.BaseMutationOptions<DeleteIsTypingMutation, DeleteIsTypingMutationVariables>;
+export const ConferenceTakenDocument = gql`
+    query ConferenceTaken($name: String!, $shortName: String!, $slug: String!) {
+  Conference(
+    where: {_or: [{name: {_eq: $name}}, {shortName: {_eq: $shortName}}, {slug: {_eq: $slug}}]}
+    limit: 1
+  ) {
+    id
+    name
+    shortName
+    slug
+  }
+}
+    `;
+
+/**
+ * __useConferenceTakenQuery__
+ *
+ * To run a query within a React component, call `useConferenceTakenQuery` and pass it any options that fit your needs.
+ * When your component renders, `useConferenceTakenQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useConferenceTakenQuery({
+ *   variables: {
+ *      name: // value for 'name'
+ *      shortName: // value for 'shortName'
+ *      slug: // value for 'slug'
+ *   },
+ * });
+ */
+export function useConferenceTakenQuery(baseOptions: Apollo.QueryHookOptions<ConferenceTakenQuery, ConferenceTakenQueryVariables>) {
+        return Apollo.useQuery<ConferenceTakenQuery, ConferenceTakenQueryVariables>(ConferenceTakenDocument, baseOptions);
+      }
+export function useConferenceTakenLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ConferenceTakenQuery, ConferenceTakenQueryVariables>) {
+          return Apollo.useLazyQuery<ConferenceTakenQuery, ConferenceTakenQueryVariables>(ConferenceTakenDocument, baseOptions);
+        }
+export type ConferenceTakenQueryHookResult = ReturnType<typeof useConferenceTakenQuery>;
+export type ConferenceTakenLazyQueryHookResult = ReturnType<typeof useConferenceTakenLazyQuery>;
+export type ConferenceTakenQueryResult = Apollo.QueryResult<ConferenceTakenQuery, ConferenceTakenQueryVariables>;
+export const CreateConferenceDocument = gql`
+    mutation CreateConference($name: String!, $shortName: String!, $slug: String!) {
+  insert_Conference(objects: [{name: $name, shortName: $shortName, slug: $slug}]) {
+    returning {
+      id
+      slug
+    }
+  }
+}
+    `;
+export type CreateConferenceMutationFn = Apollo.MutationFunction<CreateConferenceMutation, CreateConferenceMutationVariables>;
+
+/**
+ * __useCreateConferenceMutation__
+ *
+ * To run a mutation, you first call `useCreateConferenceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateConferenceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createConferenceMutation, { data, loading, error }] = useCreateConferenceMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *      shortName: // value for 'shortName'
+ *      slug: // value for 'slug'
+ *   },
+ * });
+ */
+export function useCreateConferenceMutation(baseOptions?: Apollo.MutationHookOptions<CreateConferenceMutation, CreateConferenceMutationVariables>) {
+        return Apollo.useMutation<CreateConferenceMutation, CreateConferenceMutationVariables>(CreateConferenceDocument, baseOptions);
+      }
+export type CreateConferenceMutationHookResult = ReturnType<typeof useCreateConferenceMutation>;
+export type CreateConferenceMutationResult = Apollo.MutationResult<CreateConferenceMutation>;
+export type CreateConferenceMutationOptions = Apollo.BaseMutationOptions<CreateConferenceMutation, CreateConferenceMutationVariables>;
 export const EchoDocument = gql`
     query Echo($message: String!) {
   echo(message: $message) {

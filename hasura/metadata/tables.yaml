@@ -703,6 +703,46 @@
 - table:
     schema: public
     name: Conference
+  insert_permissions:
+  - role: user
+    permission:
+      check: {}
+      set:
+        createdBy: x-hasura-User-Id
+      columns:
+      - name
+      - shortName
+      - slug
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - createdAt
+      - createdBy
+      - id
+      - name
+      - shortName
+      - slug
+      - updatedAt
+      filter: {}
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - name
+      - shortName
+      - slug
+      filter:
+        createdBy:
+          _eq: X-Hasura-User-Id
+      check: null
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        createdBy:
+          _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: FlaggedChatMessage

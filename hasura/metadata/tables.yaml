@@ -39,23 +39,26 @@
       - accessEnd
       filter:
         conference:
-          activeGroups:
-            _and:
-            - groupAttendees:
-                attendee:
-                  _and:
-                  - userId:
-                      _eq: X-Hasura-User-Id
-                  - statusName:
-                      _eq: ACTIVE
-            - groupRoles:
-                role:
-                  rolePermissions:
-                    _or:
-                    - permissionName:
-                        _eq: CONFERENCE_MANAGE_ROLES
-                    - permissionName:
-                        _eq: CONFERENCE_MANAGE_GROUPS
+          _or:
+          - createdBy:
+              _eq: X-Hasura-User-Id
+          - activeGroups:
+              _and:
+              - groupAttendees:
+                  attendee:
+                    _and:
+                    - userId:
+                        _eq: X-Hasura-User-Id
+                    - statusName:
+                        _eq: ACTIVE
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      _or:
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_ROLES
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_GROUPS
 - table:
     schema: public
     name: Attendee
@@ -77,6 +80,219 @@
         table:
           schema: public
           name: GroupAttendee
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        _or:
+        - conference:
+            createdBy:
+              _eq: X-Hasura-User-Id
+        - conference:
+            activeGroups:
+              _and:
+              - groupAttendees:
+                  attendee:
+                    userId:
+                      _eq: X-Hasura-User-Id
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      _or:
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_ROLES
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_GROUPS
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_ATTENDEES
+      set:
+        statusName: ACTIVE
+      columns:
+      - conferenceId
+      - displayName
+      - userId
+      backend_only: false
+  select_permissions:
+  - role: unauthenticated
+    permission:
+      columns:
+      - conferenceId
+      - displayName
+      - id
+      - statusName
+      filter:
+        _and:
+        - userId:
+            _is_null: false
+        - _or:
+          - _and:
+            - statusName:
+                _eq: ACTIVE
+            - conference:
+                activeGroups:
+                  _and:
+                  - includeUnauthenticated:
+                      _eq: true
+                  - groupRoles:
+                      role:
+                        rolePermissions:
+                          permissionName:
+                            _eq: CONFERENCE_VIEW_ACTIVE_ATTENDEES
+          - _and:
+            - statusName:
+                _eq: BANNED
+            - conference:
+                activeGroups:
+                  _and:
+                  - includeUnauthenticated:
+                      _eq: true
+                  - groupRoles:
+                      role:
+                        rolePermissions:
+                          permissionName:
+                            _eq: CONFERENCE_VIEW_BANNED_ATTENDEES
+  - role: user
+    permission:
+      columns:
+      - conferenceId
+      - displayName
+      - id
+      - statusName
+      - userId
+      filter:
+        _or:
+        - conference:
+            createdBy:
+              _eq: X-Hasura-User-Id
+        - userId:
+            _eq: X-Hasura-User-Id
+        - conference:
+            activeGroups:
+              _and:
+              - groupAttendees:
+                  attendee:
+                    userId:
+                      _eq: X-Hasura-User-Id
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      _or:
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_ROLES
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_GROUPS
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_ATTENDEES
+                      - permissionName:
+                          _eq: CONFERENCE_MODERATE_ATTENDEES
+        - _and:
+          - statusName:
+              _eq: ACTIVE
+          - conference:
+              activeGroups:
+                _and:
+                - _or:
+                  - includeUnauthenticated:
+                      _eq: true
+                  - groupAttendees:
+                      attendee:
+                        userId:
+                          _eq: X-Hasura-User-Id
+                - groupRoles:
+                    role:
+                      rolePermissions:
+                        permissionName:
+                          _eq: CONFERENCE_VIEW_ACTIVE_ATTENDEES
+          - userId:
+              _is_null: false
+        - _and:
+          - statusName:
+              _ne: BANNED
+          - conference:
+              activeGroups:
+                _and:
+                - _or:
+                  - includeUnauthenticated:
+                      _eq: true
+                  - groupAttendees:
+                      attendee:
+                        userId:
+                          _eq: X-Hasura-User-Id
+                - groupRoles:
+                    role:
+                      rolePermissions:
+                        permissionName:
+                          _eq: CONFERENCE_VIEW_BANNED_ATTENDEES
+          - userId:
+              _is_null: false
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - displayName
+      - statusName
+      filter:
+        _or:
+        - _and:
+          - userId:
+              _eq: X-Hasura-User-Id
+          - statusName:
+              _ne: BANNED
+        - conference:
+            createdBy:
+              _eq: X-Hasura-User-Id
+        - conference:
+            activeGroups:
+              _and:
+              - groupAttendees:
+                  attendee:
+                    userId:
+                      _eq: X-Hasura-User-Id
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      _or:
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_ROLES
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_GROUPS
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_ATTENDEES
+                      - permissionName:
+                          _eq: CONFERENCE_MODERATE_ATTENDEES
+      check: {}
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        _or:
+        - _and:
+          - userId:
+              _eq: X-Hasura-User-Id
+          - statusName:
+              _ne: BANNED
+        - conference:
+            createdBy:
+              _eq: X-Hasura-User-Id
+        - conference:
+            activeGroups:
+              _and:
+              - groupAttendees:
+                  attendee:
+                    userId:
+                      _eq: X-Hasura-User-Id
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      _or:
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_ROLES
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_GROUPS
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_ATTENDEES
+                      - permissionName:
+                          _eq: CONFERENCE_MODERATE_ATTENDEES
 - table:
     schema: public
     name: AttendeeStatus
@@ -839,6 +1055,25 @@
       - slug
       backend_only: false
   select_permissions:
+  - role: unauthenticated
+    permission:
+      columns:
+      - createdAt
+      - id
+      - name
+      - shortName
+      - slug
+      - updatedAt
+      filter:
+        activeGroups:
+          _and:
+          - includeUnauthenticated:
+              _eq: true
+          - groupRoles:
+              role:
+                rolePermissions:
+                  permissionName:
+                    _eq: CONFERENCE_VIEW
   - role: user
     permission:
       columns:
@@ -849,7 +1084,27 @@
       - shortName
       - slug
       - updatedAt
-      filter: {}
+      filter:
+        _or:
+        - createdBy:
+            _eq: X-Hasura-User-Id
+        - activeGroups:
+            _and:
+            - _or:
+              - includeUnauthenticated:
+                  _eq: true
+              - groupAttendees:
+                  attendee:
+                    _and:
+                    - userId:
+                        _eq: X-Hasura-User-Id
+                    - statusName:
+                        _eq: ACTIVE
+            - groupRoles:
+                role:
+                  rolePermissions:
+                    permissionName:
+                      _eq: CONFERENCE_VIEW
   update_permissions:
   - role: user
     permission:
@@ -858,8 +1113,23 @@
       - shortName
       - slug
       filter:
-        createdBy:
-          _eq: X-Hasura-User-Id
+        _or:
+        - createdBy:
+            _eq: X-Hasura-User-Id
+        - activeGroups:
+            _and:
+            - groupAttendees:
+                attendee:
+                  _and:
+                  - userId:
+                      _eq: X-Hasura-User-Id
+                  - statusName:
+                      _eq: ACTIVE
+            - groupRoles:
+                role:
+                  rolePermissions:
+                    permissionName:
+                      _eq: CONFERENCE_MANAGE_NAME
       check: null
   delete_permissions:
   - role: user
@@ -1026,23 +1296,26 @@
     permission:
       check:
         conference:
-          activeGroups:
-            _and:
-            - groupAttendees:
-                attendee:
-                  _and:
-                  - userId:
-                      _eq: X-Hasura-User-Id
-                  - statusName:
-                      _eq: ACTIVE
-            - groupRoles:
-                role:
-                  rolePermissions:
-                    _or:
-                    - permissionName:
-                        _eq: CONFERENCE_MANAGE_ROLES
-                    - permissionName:
-                        _eq: CONFERENCE_MANAGE_GROUPS
+          _or:
+          - createdBy:
+              _eq: X-Hasura-User-Id
+          - activeGroups:
+              _and:
+              - groupAttendees:
+                  attendee:
+                    _and:
+                    - userId:
+                        _eq: X-Hasura-User-Id
+                    - statusName:
+                        _eq: ACTIVE
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      _or:
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_ROLES
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_GROUPS
       columns:
       - accessEnd
       - accessStart
@@ -1062,23 +1335,26 @@
       - id
       filter:
         conference:
-          activeGroups:
-            _and:
-            - groupAttendees:
-                attendee:
-                  _and:
-                  - userId:
-                      _eq: X-Hasura-User-Id
-                  - statusName:
-                      _eq: ACTIVE
-            - groupRoles:
-                role:
-                  rolePermissions:
-                    _or:
-                    - permissionName:
-                        _eq: CONFERENCE_MANAGE_ROLES
-                    - permissionName:
-                        _eq: CONFERENCE_MANAGE_GROUPS
+          _or:
+          - createdBy:
+              _eq: X-Hasura-User-Id
+          - activeGroups:
+              _and:
+              - groupAttendees:
+                  attendee:
+                    _and:
+                    - userId:
+                        _eq: X-Hasura-User-Id
+                    - statusName:
+                        _eq: ACTIVE
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      _or:
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_ROLES
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_GROUPS
   update_permissions:
   - role: user
     permission:
@@ -1089,46 +1365,52 @@
       - name
       filter:
         conference:
-          activeGroups:
-            _and:
-            - groupAttendees:
-                attendee:
-                  _and:
-                  - userId:
-                      _eq: X-Hasura-User-Id
-                  - statusName:
-                      _eq: ACTIVE
-            - groupRoles:
-                role:
-                  rolePermissions:
-                    _or:
-                    - permissionName:
-                        _eq: CONFERENCE_MANAGE_ROLES
-                    - permissionName:
-                        _eq: CONFERENCE_MANAGE_GROUPS
+          _or:
+          - createdBy:
+              _eq: X-Hasura-User-Id
+          - activeGroups:
+              _and:
+              - groupAttendees:
+                  attendee:
+                    _and:
+                    - userId:
+                        _eq: X-Hasura-User-Id
+                    - statusName:
+                        _eq: ACTIVE
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      _or:
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_ROLES
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_GROUPS
       check: null
   delete_permissions:
   - role: user
     permission:
       filter:
         conference:
-          activeGroups:
-            _and:
-            - groupAttendees:
-                attendee:
-                  _and:
-                  - userId:
-                      _eq: X-Hasura-User-Id
-                  - statusName:
-                      _eq: ACTIVE
-            - groupRoles:
-                role:
-                  rolePermissions:
-                    _or:
-                    - permissionName:
-                        _eq: CONFERENCE_MANAGE_ROLES
-                    - permissionName:
-                        _eq: CONFERENCE_MANAGE_GROUPS
+          _or:
+          - createdBy:
+              _eq: X-Hasura-User-Id
+          - activeGroups:
+              _and:
+              - groupAttendees:
+                  attendee:
+                    _and:
+                    - userId:
+                        _eq: X-Hasura-User-Id
+                    - statusName:
+                        _eq: ACTIVE
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      _or:
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_ROLES
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_GROUPS
 - table:
     schema: public
     name: GroupAttendee
@@ -1162,6 +1444,8 @@
                           _eq: CONFERENCE_MANAGE_ROLES
                       - permissionName:
                           _eq: CONFERENCE_MANAGE_GROUPS
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_ATTENDEES
       columns:
       - attendeeId
       - groupId
@@ -1193,6 +1477,8 @@
                           _eq: CONFERENCE_MANAGE_ROLES
                       - permissionName:
                           _eq: CONFERENCE_MANAGE_GROUPS
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_ATTENDEES
   delete_permissions:
   - role: user
     permission:
@@ -1216,6 +1502,8 @@
                           _eq: CONFERENCE_MANAGE_ROLES
                       - permissionName:
                           _eq: CONFERENCE_MANAGE_GROUPS
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_ATTENDEES
 - table:
     schema: public
     name: GroupRole
@@ -1232,23 +1520,23 @@
       check:
         group:
           conference:
-            activeGroups:
-              _and:
-              - groupAttendees:
-                  attendee:
-                    _and:
-                    - userId:
-                        _eq: X-Hasura-User-Id
-                    - statusName:
-                        _eq: ACTIVE
-              - groupRoles:
-                  role:
-                    rolePermissions:
-                      _or:
-                      - permissionName:
+            _or:
+            - createdBy:
+                _eq: X-Hasura-User-Id
+            - activeGroups:
+                _and:
+                - groupAttendees:
+                    attendee:
+                      _and:
+                      - userId:
+                          _eq: X-Hasura-User-Id
+                      - statusName:
+                          _eq: ACTIVE
+                - groupRoles:
+                    role:
+                      rolePermissions:
+                        permissionName:
                           _eq: CONFERENCE_MANAGE_ROLES
-                      - permissionName:
-                          _eq: CONFERENCE_MANAGE_GROUPS
       columns:
       - groupId
       - roleId
@@ -1263,46 +1551,46 @@
       filter:
         group:
           conference:
-            activeGroups:
-              _and:
-              - groupAttendees:
-                  attendee:
-                    _and:
-                    - userId:
-                        _eq: X-Hasura-User-Id
-                    - statusName:
-                        _eq: ACTIVE
-              - groupRoles:
-                  role:
-                    rolePermissions:
-                      _or:
-                      - permissionName:
+            _or:
+            - createdBy:
+                _eq: X-Hasura-User-Id
+            - activeGroups:
+                _and:
+                - groupAttendees:
+                    attendee:
+                      _and:
+                      - userId:
+                          _eq: X-Hasura-User-Id
+                      - statusName:
+                          _eq: ACTIVE
+                - groupRoles:
+                    role:
+                      rolePermissions:
+                        permissionName:
                           _eq: CONFERENCE_MANAGE_ROLES
-                      - permissionName:
-                          _eq: CONFERENCE_MANAGE_GROUPS
   delete_permissions:
   - role: user
     permission:
       filter:
         group:
           conference:
-            activeGroups:
-              _and:
-              - groupAttendees:
-                  attendee:
-                    _and:
-                    - userId:
-                        _eq: X-Hasura-User-Id
-                    - statusName:
-                        _eq: ACTIVE
-              - groupRoles:
-                  role:
-                    rolePermissions:
-                      _or:
-                      - permissionName:
+            _or:
+            - createdBy:
+                _eq: X-Hasura-User-Id
+            - activeGroups:
+                _and:
+                - groupAttendees:
+                    attendee:
+                      _and:
+                      - userId:
+                          _eq: X-Hasura-User-Id
+                      - statusName:
+                          _eq: ACTIVE
+                - groupRoles:
+                    role:
+                      rolePermissions:
+                        permissionName:
                           _eq: CONFERENCE_MANAGE_ROLES
-                      - permissionName:
-                          _eq: CONFERENCE_MANAGE_GROUPS
 - table:
     schema: public
     name: OnlineStatus
@@ -1453,20 +1741,23 @@
     permission:
       check:
         conference:
-          activeGroups:
-            _and:
-            - groupAttendees:
-                attendee:
-                  _and:
-                  - userId:
-                      _eq: X-Hasura-User-Id
-                  - statusName:
-                      _eq: ACTIVE
-            - groupRoles:
-                role:
-                  rolePermissions:
-                    permissionName:
-                      _eq: CONFERENCE_MANAGE_ROLES
+          _or:
+          - createdBy:
+              _eq: X-Hasura-User-Id
+          - activeGroups:
+              _and:
+              - groupAttendees:
+                  attendee:
+                    _and:
+                    - userId:
+                        _eq: X-Hasura-User-Id
+                    - statusName:
+                        _eq: ACTIVE
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      permissionName:
+                        _eq: CONFERENCE_MANAGE_ROLES
       columns:
       - conferenceId
       - name
@@ -1480,20 +1771,23 @@
       - name
       filter:
         conference:
-          activeGroups:
-            _and:
-            - groupAttendees:
-                attendee:
-                  _and:
-                  - userId:
-                      _eq: X-Hasura-User-Id
-                  - statusName:
-                      _eq: ACTIVE
-            - groupRoles:
-                role:
-                  rolePermissions:
-                    permissionName:
-                      _eq: CONFERENCE_MANAGE_ROLES
+          _or:
+          - createdBy:
+              _eq: X-Hasura-User-Id
+          - activeGroups:
+              _and:
+              - groupAttendees:
+                  attendee:
+                    _and:
+                    - userId:
+                        _eq: X-Hasura-User-Id
+                    - statusName:
+                        _eq: ACTIVE
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      permissionName:
+                        _eq: CONFERENCE_MANAGE_ROLES
   update_permissions:
   - role: user
     permission:
@@ -1501,40 +1795,46 @@
       - name
       filter:
         conference:
-          activeGroups:
-            _and:
-            - groupAttendees:
-                attendee:
-                  _and:
-                  - userId:
-                      _eq: X-Hasura-User-Id
-                  - statusName:
-                      _eq: ACTIVE
-            - groupRoles:
-                role:
-                  rolePermissions:
-                    permissionName:
-                      _eq: CONFERENCE_MANAGE_ROLES
+          _or:
+          - createdBy:
+              _eq: X-Hasura-User-Id
+          - activeGroups:
+              _and:
+              - groupAttendees:
+                  attendee:
+                    _and:
+                    - userId:
+                        _eq: X-Hasura-User-Id
+                    - statusName:
+                        _eq: ACTIVE
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      permissionName:
+                        _eq: CONFERENCE_MANAGE_ROLES
       check: null
   delete_permissions:
   - role: user
     permission:
       filter:
         conference:
-          activeGroups:
-            _and:
-            - groupAttendees:
-                attendee:
-                  _and:
-                  - userId:
-                      _eq: X-Hasura-User-Id
-                  - statusName:
-                      _eq: ACTIVE
-            - groupRoles:
-                role:
-                  rolePermissions:
-                    permissionName:
-                      _eq: CONFERENCE_MANAGE_ROLES
+          _or:
+          - createdBy:
+              _eq: X-Hasura-User-Id
+          - activeGroups:
+              _and:
+              - groupAttendees:
+                  attendee:
+                    _and:
+                    - userId:
+                        _eq: X-Hasura-User-Id
+                    - statusName:
+                        _eq: ACTIVE
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      permissionName:
+                        _eq: CONFERENCE_MANAGE_ROLES
 - table:
     schema: public
     name: RolePermission
@@ -1551,20 +1851,23 @@
       check:
         role:
           conference:
-            activeGroups:
-              _and:
-              - groupAttendees:
-                  attendee:
-                    _and:
-                    - userId:
-                        _eq: X-Hasura-User-Id
-                    - statusName:
-                        _eq: ACTIVE
-              - groupRoles:
-                  role:
-                    rolePermissions:
-                      permissionName:
-                        _eq: CONFERENCE_MANAGE_ROLES
+            _or:
+            - createdBy:
+                _eq: X-Hasura-User-Id
+            - activeGroups:
+                _and:
+                - groupAttendees:
+                    attendee:
+                      _and:
+                      - userId:
+                          _eq: X-Hasura-User-Id
+                      - statusName:
+                          _eq: ACTIVE
+                - groupRoles:
+                    role:
+                      rolePermissions:
+                        permissionName:
+                          _eq: CONFERENCE_MANAGE_ROLES
       columns:
       - permissionName
       - roleId
@@ -1579,20 +1882,23 @@
       filter:
         role:
           conference:
-            activeGroups:
-              _and:
-              - groupAttendees:
-                  attendee:
-                    _and:
-                    - userId:
-                        _eq: X-Hasura-User-Id
-                    - statusName:
-                        _eq: ACTIVE
-              - groupRoles:
-                  role:
-                    rolePermissions:
-                      permissionName:
-                        _eq: CONFERENCE_MANAGE_ROLES
+            _or:
+            - createdBy:
+                _eq: X-Hasura-User-Id
+            - activeGroups:
+                _and:
+                - groupAttendees:
+                    attendee:
+                      _and:
+                      - userId:
+                          _eq: X-Hasura-User-Id
+                      - statusName:
+                          _eq: ACTIVE
+                - groupRoles:
+                    role:
+                      rolePermissions:
+                        permissionName:
+                          _eq: CONFERENCE_MANAGE_ROLES
   update_permissions:
   - role: user
     permission:
@@ -1601,20 +1907,23 @@
       filter:
         role:
           conference:
-            activeGroups:
-              _and:
-              - groupAttendees:
-                  attendee:
-                    _and:
-                    - userId:
-                        _eq: X-Hasura-User-Id
-                    - statusName:
-                        _eq: ACTIVE
-              - groupRoles:
-                  role:
-                    rolePermissions:
-                      permissionName:
-                        _eq: CONFERENCE_MANAGE_ROLES
+            _or:
+            - createdBy:
+                _eq: X-Hasura-User-Id
+            - activeGroups:
+                _and:
+                - groupAttendees:
+                    attendee:
+                      _and:
+                      - userId:
+                          _eq: X-Hasura-User-Id
+                      - statusName:
+                          _eq: ACTIVE
+                - groupRoles:
+                    role:
+                      rolePermissions:
+                        permissionName:
+                          _eq: CONFERENCE_MANAGE_ROLES
       check: null
   delete_permissions:
   - role: user
@@ -1622,20 +1931,23 @@
       filter:
         role:
           conference:
-            activeGroups:
-              _and:
-              - groupAttendees:
-                  attendee:
-                    _and:
-                    - userId:
-                        _eq: X-Hasura-User-Id
-                    - statusName:
-                        _eq: ACTIVE
-              - groupRoles:
-                  role:
-                    rolePermissions:
-                      permissionName:
-                        _eq: CONFERENCE_MANAGE_ROLES
+            _or:
+            - createdBy:
+                _eq: X-Hasura-User-Id
+            - activeGroups:
+                _and:
+                - groupAttendees:
+                    attendee:
+                      _and:
+                      - userId:
+                          _eq: X-Hasura-User-Id
+                      - statusName:
+                          _eq: ACTIVE
+                - groupRoles:
+                    role:
+                      rolePermissions:
+                        permissionName:
+                          _eq: CONFERENCE_MANAGE_ROLES
 - table:
     schema: public
     name: User
@@ -1744,10 +2056,17 @@
   - role: user
     permission:
       columns:
+      - created_at
+      - email
       - firstName
       - id
+      - lastLoggedInAt
       - lastName
-      filter: {}
+      - updated_at
+      filter:
+        id:
+          _eq: X-Hasura-User-Id
+      limit: 5000
   update_permissions:
   - role: user
     permission:

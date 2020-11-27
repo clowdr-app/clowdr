@@ -152,6 +152,9 @@ export default function NewConferenceForm(): JSX.Element {
                             !result.data.insert_Conference ||
                             !result.data.insert_Conference.returning.length
                         ) {
+                            // TODO: Creation could still fail if a private
+                            //       conference exists under the same name etc.
+                            //       How should we handle this?
                             failed = true;
                         } else {
                             failed = false;

@@ -15,6 +15,602 @@ export type Scalars = {
   uuid: any;
 };
 
+/** columns and relationships of "ActiveGroup" */
+export type ActiveGroup = {
+  __typename?: 'ActiveGroup';
+  accessEnd?: Maybe<Scalars['timestamptz']>;
+  accessStart?: Maybe<Scalars['timestamptz']>;
+  /** An object relationship */
+  conference?: Maybe<Conference>;
+  conferenceId?: Maybe<Scalars['uuid']>;
+  /** An array relationship */
+  groupAttendees: Array<GroupAttendee>;
+  /** An aggregated array relationship */
+  groupAttendees_aggregate: GroupAttendee_Aggregate;
+  /** An array relationship */
+  groupRoles: Array<GroupRole>;
+  /** An aggregated array relationship */
+  groupRoles_aggregate: GroupRole_Aggregate;
+  id?: Maybe<Scalars['uuid']>;
+  includeUnauthenticated?: Maybe<Scalars['Boolean']>;
+  name?: Maybe<Scalars['String']>;
+};
+
+
+/** columns and relationships of "ActiveGroup" */
+export type ActiveGroupGroupAttendeesArgs = {
+  distinct_on?: Maybe<Array<GroupAttendee_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<GroupAttendee_Order_By>>;
+  where?: Maybe<GroupAttendee_Bool_Exp>;
+};
+
+
+/** columns and relationships of "ActiveGroup" */
+export type ActiveGroupGroupAttendees_AggregateArgs = {
+  distinct_on?: Maybe<Array<GroupAttendee_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<GroupAttendee_Order_By>>;
+  where?: Maybe<GroupAttendee_Bool_Exp>;
+};
+
+
+/** columns and relationships of "ActiveGroup" */
+export type ActiveGroupGroupRolesArgs = {
+  distinct_on?: Maybe<Array<GroupRole_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<GroupRole_Order_By>>;
+  where?: Maybe<GroupRole_Bool_Exp>;
+};
+
+
+/** columns and relationships of "ActiveGroup" */
+export type ActiveGroupGroupRoles_AggregateArgs = {
+  distinct_on?: Maybe<Array<GroupRole_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<GroupRole_Order_By>>;
+  where?: Maybe<GroupRole_Bool_Exp>;
+};
+
+/** aggregated selection of "ActiveGroup" */
+export type ActiveGroup_Aggregate = {
+  __typename?: 'ActiveGroup_aggregate';
+  aggregate?: Maybe<ActiveGroup_Aggregate_Fields>;
+  nodes: Array<ActiveGroup>;
+};
+
+/** aggregate fields of "ActiveGroup" */
+export type ActiveGroup_Aggregate_Fields = {
+  __typename?: 'ActiveGroup_aggregate_fields';
+  count?: Maybe<Scalars['Int']>;
+  max?: Maybe<ActiveGroup_Max_Fields>;
+  min?: Maybe<ActiveGroup_Min_Fields>;
+};
+
+
+/** aggregate fields of "ActiveGroup" */
+export type ActiveGroup_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<Array<ActiveGroup_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "ActiveGroup" */
+export type ActiveGroup_Aggregate_Order_By = {
+  count?: Maybe<Order_By>;
+  max?: Maybe<ActiveGroup_Max_Order_By>;
+  min?: Maybe<ActiveGroup_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "ActiveGroup" */
+export type ActiveGroup_Arr_Rel_Insert_Input = {
+  data: Array<ActiveGroup_Insert_Input>;
+};
+
+/** Boolean expression to filter rows from the table "ActiveGroup". All fields are combined with a logical 'AND'. */
+export type ActiveGroup_Bool_Exp = {
+  _and?: Maybe<Array<Maybe<ActiveGroup_Bool_Exp>>>;
+  _not?: Maybe<ActiveGroup_Bool_Exp>;
+  _or?: Maybe<Array<Maybe<ActiveGroup_Bool_Exp>>>;
+  accessEnd?: Maybe<Timestamptz_Comparison_Exp>;
+  accessStart?: Maybe<Timestamptz_Comparison_Exp>;
+  conference?: Maybe<Conference_Bool_Exp>;
+  conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  groupAttendees?: Maybe<GroupAttendee_Bool_Exp>;
+  groupRoles?: Maybe<GroupRole_Bool_Exp>;
+  id?: Maybe<Uuid_Comparison_Exp>;
+  includeUnauthenticated?: Maybe<Boolean_Comparison_Exp>;
+  name?: Maybe<String_Comparison_Exp>;
+};
+
+/** input type for inserting data into table "ActiveGroup" */
+export type ActiveGroup_Insert_Input = {
+  accessEnd?: Maybe<Scalars['timestamptz']>;
+  accessStart?: Maybe<Scalars['timestamptz']>;
+  conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  conferenceId?: Maybe<Scalars['uuid']>;
+  groupAttendees?: Maybe<GroupAttendee_Arr_Rel_Insert_Input>;
+  groupRoles?: Maybe<GroupRole_Arr_Rel_Insert_Input>;
+  id?: Maybe<Scalars['uuid']>;
+  includeUnauthenticated?: Maybe<Scalars['Boolean']>;
+  name?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type ActiveGroup_Max_Fields = {
+  __typename?: 'ActiveGroup_max_fields';
+  accessEnd?: Maybe<Scalars['timestamptz']>;
+  accessStart?: Maybe<Scalars['timestamptz']>;
+  conferenceId?: Maybe<Scalars['uuid']>;
+  id?: Maybe<Scalars['uuid']>;
+  name?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "ActiveGroup" */
+export type ActiveGroup_Max_Order_By = {
+  accessEnd?: Maybe<Order_By>;
+  accessStart?: Maybe<Order_By>;
+  conferenceId?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+  name?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type ActiveGroup_Min_Fields = {
+  __typename?: 'ActiveGroup_min_fields';
+  accessEnd?: Maybe<Scalars['timestamptz']>;
+  accessStart?: Maybe<Scalars['timestamptz']>;
+  conferenceId?: Maybe<Scalars['uuid']>;
+  id?: Maybe<Scalars['uuid']>;
+  name?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "ActiveGroup" */
+export type ActiveGroup_Min_Order_By = {
+  accessEnd?: Maybe<Order_By>;
+  accessStart?: Maybe<Order_By>;
+  conferenceId?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+  name?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "ActiveGroup" */
+export type ActiveGroup_Mutation_Response = {
+  __typename?: 'ActiveGroup_mutation_response';
+  /** number of affected rows by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  returning: Array<ActiveGroup>;
+};
+
+/** input type for inserting object relation for remote table "ActiveGroup" */
+export type ActiveGroup_Obj_Rel_Insert_Input = {
+  data: ActiveGroup_Insert_Input;
+};
+
+/** ordering options when selecting data from "ActiveGroup" */
+export type ActiveGroup_Order_By = {
+  accessEnd?: Maybe<Order_By>;
+  accessStart?: Maybe<Order_By>;
+  conference?: Maybe<Conference_Order_By>;
+  conferenceId?: Maybe<Order_By>;
+  groupAttendees_aggregate?: Maybe<GroupAttendee_Aggregate_Order_By>;
+  groupRoles_aggregate?: Maybe<GroupRole_Aggregate_Order_By>;
+  id?: Maybe<Order_By>;
+  includeUnauthenticated?: Maybe<Order_By>;
+  name?: Maybe<Order_By>;
+};
+
+/** select columns of table "ActiveGroup" */
+export enum ActiveGroup_Select_Column {
+  /** column name */
+  AccessEnd = 'accessEnd',
+  /** column name */
+  AccessStart = 'accessStart',
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  IncludeUnauthenticated = 'includeUnauthenticated',
+  /** column name */
+  Name = 'name'
+}
+
+/** input type for updating data in table "ActiveGroup" */
+export type ActiveGroup_Set_Input = {
+  accessEnd?: Maybe<Scalars['timestamptz']>;
+  accessStart?: Maybe<Scalars['timestamptz']>;
+  conferenceId?: Maybe<Scalars['uuid']>;
+  id?: Maybe<Scalars['uuid']>;
+  includeUnauthenticated?: Maybe<Scalars['Boolean']>;
+  name?: Maybe<Scalars['String']>;
+};
+
+/** columns and relationships of "Attendee" */
+export type Attendee = {
+  __typename?: 'Attendee';
+  /** An object relationship */
+  conference: Conference;
+  conferenceId: Scalars['uuid'];
+  displayName: Scalars['String'];
+  /** An array relationship */
+  groupAttendees: Array<GroupAttendee>;
+  /** An aggregated array relationship */
+  groupAttendees_aggregate: GroupAttendee_Aggregate;
+  id: Scalars['uuid'];
+  /** An object relationship */
+  status: AttendeeStatus;
+  statusName: AttendeeStatus_Enum;
+  /** An object relationship */
+  user?: Maybe<User>;
+  userId?: Maybe<Scalars['String']>;
+};
+
+
+/** columns and relationships of "Attendee" */
+export type AttendeeGroupAttendeesArgs = {
+  distinct_on?: Maybe<Array<GroupAttendee_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<GroupAttendee_Order_By>>;
+  where?: Maybe<GroupAttendee_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Attendee" */
+export type AttendeeGroupAttendees_AggregateArgs = {
+  distinct_on?: Maybe<Array<GroupAttendee_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<GroupAttendee_Order_By>>;
+  where?: Maybe<GroupAttendee_Bool_Exp>;
+};
+
+/** columns and relationships of "AttendeeStatus" */
+export type AttendeeStatus = {
+  __typename?: 'AttendeeStatus';
+  description: Scalars['String'];
+  name: Scalars['String'];
+};
+
+/** aggregated selection of "AttendeeStatus" */
+export type AttendeeStatus_Aggregate = {
+  __typename?: 'AttendeeStatus_aggregate';
+  aggregate?: Maybe<AttendeeStatus_Aggregate_Fields>;
+  nodes: Array<AttendeeStatus>;
+};
+
+/** aggregate fields of "AttendeeStatus" */
+export type AttendeeStatus_Aggregate_Fields = {
+  __typename?: 'AttendeeStatus_aggregate_fields';
+  count?: Maybe<Scalars['Int']>;
+  max?: Maybe<AttendeeStatus_Max_Fields>;
+  min?: Maybe<AttendeeStatus_Min_Fields>;
+};
+
+
+/** aggregate fields of "AttendeeStatus" */
+export type AttendeeStatus_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<Array<AttendeeStatus_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "AttendeeStatus" */
+export type AttendeeStatus_Aggregate_Order_By = {
+  count?: Maybe<Order_By>;
+  max?: Maybe<AttendeeStatus_Max_Order_By>;
+  min?: Maybe<AttendeeStatus_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "AttendeeStatus" */
+export type AttendeeStatus_Arr_Rel_Insert_Input = {
+  data: Array<AttendeeStatus_Insert_Input>;
+  on_conflict?: Maybe<AttendeeStatus_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "AttendeeStatus". All fields are combined with a logical 'AND'. */
+export type AttendeeStatus_Bool_Exp = {
+  _and?: Maybe<Array<Maybe<AttendeeStatus_Bool_Exp>>>;
+  _not?: Maybe<AttendeeStatus_Bool_Exp>;
+  _or?: Maybe<Array<Maybe<AttendeeStatus_Bool_Exp>>>;
+  description?: Maybe<String_Comparison_Exp>;
+  name?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "AttendeeStatus" */
+export enum AttendeeStatus_Constraint {
+  /** unique or primary key constraint */
+  AttendeeStatusPkey = 'AttendeeStatus_pkey'
+}
+
+export enum AttendeeStatus_Enum {
+  /** Active attendee. */
+  Active = 'ACTIVE',
+  /** User has been banned from the conference. */
+  Banned = 'BANNED'
+}
+
+/** expression to compare columns of type AttendeeStatus_enum. All fields are combined with logical 'AND'. */
+export type AttendeeStatus_Enum_Comparison_Exp = {
+  _eq?: Maybe<AttendeeStatus_Enum>;
+  _in?: Maybe<Array<AttendeeStatus_Enum>>;
+  _is_null?: Maybe<Scalars['Boolean']>;
+  _neq?: Maybe<AttendeeStatus_Enum>;
+  _nin?: Maybe<Array<AttendeeStatus_Enum>>;
+};
+
+/** input type for inserting data into table "AttendeeStatus" */
+export type AttendeeStatus_Insert_Input = {
+  description?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type AttendeeStatus_Max_Fields = {
+  __typename?: 'AttendeeStatus_max_fields';
+  description?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "AttendeeStatus" */
+export type AttendeeStatus_Max_Order_By = {
+  description?: Maybe<Order_By>;
+  name?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type AttendeeStatus_Min_Fields = {
+  __typename?: 'AttendeeStatus_min_fields';
+  description?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "AttendeeStatus" */
+export type AttendeeStatus_Min_Order_By = {
+  description?: Maybe<Order_By>;
+  name?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "AttendeeStatus" */
+export type AttendeeStatus_Mutation_Response = {
+  __typename?: 'AttendeeStatus_mutation_response';
+  /** number of affected rows by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  returning: Array<AttendeeStatus>;
+};
+
+/** input type for inserting object relation for remote table "AttendeeStatus" */
+export type AttendeeStatus_Obj_Rel_Insert_Input = {
+  data: AttendeeStatus_Insert_Input;
+  on_conflict?: Maybe<AttendeeStatus_On_Conflict>;
+};
+
+/** on conflict condition type for table "AttendeeStatus" */
+export type AttendeeStatus_On_Conflict = {
+  constraint: AttendeeStatus_Constraint;
+  update_columns: Array<AttendeeStatus_Update_Column>;
+  where?: Maybe<AttendeeStatus_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "AttendeeStatus" */
+export type AttendeeStatus_Order_By = {
+  description?: Maybe<Order_By>;
+  name?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "AttendeeStatus" */
+export type AttendeeStatus_Pk_Columns_Input = {
+  name: Scalars['String'];
+};
+
+/** select columns of table "AttendeeStatus" */
+export enum AttendeeStatus_Select_Column {
+  /** column name */
+  Description = 'description',
+  /** column name */
+  Name = 'name'
+}
+
+/** input type for updating data in table "AttendeeStatus" */
+export type AttendeeStatus_Set_Input = {
+  description?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+};
+
+/** update columns of table "AttendeeStatus" */
+export enum AttendeeStatus_Update_Column {
+  /** column name */
+  Description = 'description',
+  /** column name */
+  Name = 'name'
+}
+
+/** aggregated selection of "Attendee" */
+export type Attendee_Aggregate = {
+  __typename?: 'Attendee_aggregate';
+  aggregate?: Maybe<Attendee_Aggregate_Fields>;
+  nodes: Array<Attendee>;
+};
+
+/** aggregate fields of "Attendee" */
+export type Attendee_Aggregate_Fields = {
+  __typename?: 'Attendee_aggregate_fields';
+  count?: Maybe<Scalars['Int']>;
+  max?: Maybe<Attendee_Max_Fields>;
+  min?: Maybe<Attendee_Min_Fields>;
+};
+
+
+/** aggregate fields of "Attendee" */
+export type Attendee_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<Array<Attendee_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "Attendee" */
+export type Attendee_Aggregate_Order_By = {
+  count?: Maybe<Order_By>;
+  max?: Maybe<Attendee_Max_Order_By>;
+  min?: Maybe<Attendee_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "Attendee" */
+export type Attendee_Arr_Rel_Insert_Input = {
+  data: Array<Attendee_Insert_Input>;
+  on_conflict?: Maybe<Attendee_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "Attendee". All fields are combined with a logical 'AND'. */
+export type Attendee_Bool_Exp = {
+  _and?: Maybe<Array<Maybe<Attendee_Bool_Exp>>>;
+  _not?: Maybe<Attendee_Bool_Exp>;
+  _or?: Maybe<Array<Maybe<Attendee_Bool_Exp>>>;
+  conference?: Maybe<Conference_Bool_Exp>;
+  conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  displayName?: Maybe<String_Comparison_Exp>;
+  groupAttendees?: Maybe<GroupAttendee_Bool_Exp>;
+  id?: Maybe<Uuid_Comparison_Exp>;
+  status?: Maybe<AttendeeStatus_Bool_Exp>;
+  statusName?: Maybe<AttendeeStatus_Enum_Comparison_Exp>;
+  user?: Maybe<User_Bool_Exp>;
+  userId?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "Attendee" */
+export enum Attendee_Constraint {
+  /** unique or primary key constraint */
+  AttendeePkey = 'Attendee_pkey'
+}
+
+/** input type for inserting data into table "Attendee" */
+export type Attendee_Insert_Input = {
+  conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  conferenceId?: Maybe<Scalars['uuid']>;
+  displayName?: Maybe<Scalars['String']>;
+  groupAttendees?: Maybe<GroupAttendee_Arr_Rel_Insert_Input>;
+  id?: Maybe<Scalars['uuid']>;
+  status?: Maybe<AttendeeStatus_Obj_Rel_Insert_Input>;
+  statusName?: Maybe<AttendeeStatus_Enum>;
+  user?: Maybe<User_Obj_Rel_Insert_Input>;
+  userId?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Attendee_Max_Fields = {
+  __typename?: 'Attendee_max_fields';
+  conferenceId?: Maybe<Scalars['uuid']>;
+  displayName?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['uuid']>;
+  userId?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "Attendee" */
+export type Attendee_Max_Order_By = {
+  conferenceId?: Maybe<Order_By>;
+  displayName?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+  userId?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Attendee_Min_Fields = {
+  __typename?: 'Attendee_min_fields';
+  conferenceId?: Maybe<Scalars['uuid']>;
+  displayName?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['uuid']>;
+  userId?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "Attendee" */
+export type Attendee_Min_Order_By = {
+  conferenceId?: Maybe<Order_By>;
+  displayName?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+  userId?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "Attendee" */
+export type Attendee_Mutation_Response = {
+  __typename?: 'Attendee_mutation_response';
+  /** number of affected rows by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  returning: Array<Attendee>;
+};
+
+/** input type for inserting object relation for remote table "Attendee" */
+export type Attendee_Obj_Rel_Insert_Input = {
+  data: Attendee_Insert_Input;
+  on_conflict?: Maybe<Attendee_On_Conflict>;
+};
+
+/** on conflict condition type for table "Attendee" */
+export type Attendee_On_Conflict = {
+  constraint: Attendee_Constraint;
+  update_columns: Array<Attendee_Update_Column>;
+  where?: Maybe<Attendee_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "Attendee" */
+export type Attendee_Order_By = {
+  conference?: Maybe<Conference_Order_By>;
+  conferenceId?: Maybe<Order_By>;
+  displayName?: Maybe<Order_By>;
+  groupAttendees_aggregate?: Maybe<GroupAttendee_Aggregate_Order_By>;
+  id?: Maybe<Order_By>;
+  status?: Maybe<AttendeeStatus_Order_By>;
+  statusName?: Maybe<Order_By>;
+  user?: Maybe<User_Order_By>;
+  userId?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "Attendee" */
+export type Attendee_Pk_Columns_Input = {
+  id: Scalars['uuid'];
+};
+
+/** select columns of table "Attendee" */
+export enum Attendee_Select_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  DisplayName = 'displayName',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  StatusName = 'statusName',
+  /** column name */
+  UserId = 'userId'
+}
+
+/** input type for updating data in table "Attendee" */
+export type Attendee_Set_Input = {
+  conferenceId?: Maybe<Scalars['uuid']>;
+  displayName?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['uuid']>;
+  statusName?: Maybe<AttendeeStatus_Enum>;
+  userId?: Maybe<Scalars['String']>;
+};
+
+/** update columns of table "Attendee" */
+export enum Attendee_Update_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  DisplayName = 'displayName',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  StatusName = 'statusName',
+  /** column name */
+  UserId = 'userId'
+}
+
 /** expression to compare columns of type Boolean. All fields are combined with logical 'AND'. */
 export type Boolean_Comparison_Exp = {
   _eq?: Maybe<Scalars['Boolean']>;
@@ -2085,13 +2681,111 @@ export enum Chat_Update_Column {
 /** columns and relationships of "Conference" */
 export type Conference = {
   __typename?: 'Conference';
+  /** An array relationship */
+  activeGroups: Array<ActiveGroup>;
+  /** An aggregated array relationship */
+  activeGroups_aggregate: ActiveGroup_Aggregate;
+  /** An array relationship */
+  attendees: Array<Attendee>;
+  /** An aggregated array relationship */
+  attendees_aggregate: Attendee_Aggregate;
   createdAt: Scalars['timestamptz'];
   createdBy: Scalars['String'];
+  /** An object relationship */
+  creator: User;
+  /** An array relationship */
+  groups: Array<Group>;
+  /** An aggregated array relationship */
+  groups_aggregate: Group_Aggregate;
   id: Scalars['uuid'];
   name: Scalars['String'];
+  /** An array relationship */
+  roles: Array<Role>;
+  /** An aggregated array relationship */
+  roles_aggregate: Role_Aggregate;
   shortName: Scalars['String'];
   slug: Scalars['String'];
   updatedAt: Scalars['timestamptz'];
+};
+
+
+/** columns and relationships of "Conference" */
+export type ConferenceActiveGroupsArgs = {
+  distinct_on?: Maybe<Array<ActiveGroup_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<ActiveGroup_Order_By>>;
+  where?: Maybe<ActiveGroup_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Conference" */
+export type ConferenceActiveGroups_AggregateArgs = {
+  distinct_on?: Maybe<Array<ActiveGroup_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<ActiveGroup_Order_By>>;
+  where?: Maybe<ActiveGroup_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Conference" */
+export type ConferenceAttendeesArgs = {
+  distinct_on?: Maybe<Array<Attendee_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Attendee_Order_By>>;
+  where?: Maybe<Attendee_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Conference" */
+export type ConferenceAttendees_AggregateArgs = {
+  distinct_on?: Maybe<Array<Attendee_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Attendee_Order_By>>;
+  where?: Maybe<Attendee_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Conference" */
+export type ConferenceGroupsArgs = {
+  distinct_on?: Maybe<Array<Group_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Group_Order_By>>;
+  where?: Maybe<Group_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Conference" */
+export type ConferenceGroups_AggregateArgs = {
+  distinct_on?: Maybe<Array<Group_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Group_Order_By>>;
+  where?: Maybe<Group_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Conference" */
+export type ConferenceRolesArgs = {
+  distinct_on?: Maybe<Array<Role_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Role_Order_By>>;
+  where?: Maybe<Role_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Conference" */
+export type ConferenceRoles_AggregateArgs = {
+  distinct_on?: Maybe<Array<Role_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Role_Order_By>>;
+  where?: Maybe<Role_Bool_Exp>;
 };
 
 /** aggregated selection of "Conference" */
@@ -2134,10 +2828,15 @@ export type Conference_Bool_Exp = {
   _and?: Maybe<Array<Maybe<Conference_Bool_Exp>>>;
   _not?: Maybe<Conference_Bool_Exp>;
   _or?: Maybe<Array<Maybe<Conference_Bool_Exp>>>;
+  activeGroups?: Maybe<ActiveGroup_Bool_Exp>;
+  attendees?: Maybe<Attendee_Bool_Exp>;
   createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   createdBy?: Maybe<String_Comparison_Exp>;
+  creator?: Maybe<User_Bool_Exp>;
+  groups?: Maybe<Group_Bool_Exp>;
   id?: Maybe<Uuid_Comparison_Exp>;
   name?: Maybe<String_Comparison_Exp>;
+  roles?: Maybe<Role_Bool_Exp>;
   shortName?: Maybe<String_Comparison_Exp>;
   slug?: Maybe<String_Comparison_Exp>;
   updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
@@ -2157,10 +2856,15 @@ export enum Conference_Constraint {
 
 /** input type for inserting data into table "Conference" */
 export type Conference_Insert_Input = {
+  activeGroups?: Maybe<ActiveGroup_Arr_Rel_Insert_Input>;
+  attendees?: Maybe<Attendee_Arr_Rel_Insert_Input>;
   createdAt?: Maybe<Scalars['timestamptz']>;
   createdBy?: Maybe<Scalars['String']>;
+  creator?: Maybe<User_Obj_Rel_Insert_Input>;
+  groups?: Maybe<Group_Arr_Rel_Insert_Input>;
   id?: Maybe<Scalars['uuid']>;
   name?: Maybe<Scalars['String']>;
+  roles?: Maybe<Role_Arr_Rel_Insert_Input>;
   shortName?: Maybe<Scalars['String']>;
   slug?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['timestamptz']>;
@@ -2236,10 +2940,15 @@ export type Conference_On_Conflict = {
 
 /** ordering options when selecting data from "Conference" */
 export type Conference_Order_By = {
+  activeGroups_aggregate?: Maybe<ActiveGroup_Aggregate_Order_By>;
+  attendees_aggregate?: Maybe<Attendee_Aggregate_Order_By>;
   createdAt?: Maybe<Order_By>;
   createdBy?: Maybe<Order_By>;
+  creator?: Maybe<User_Order_By>;
+  groups_aggregate?: Maybe<Group_Aggregate_Order_By>;
   id?: Maybe<Order_By>;
   name?: Maybe<Order_By>;
+  roles_aggregate?: Maybe<Role_Aggregate_Order_By>;
   shortName?: Maybe<Order_By>;
   slug?: Maybe<Order_By>;
   updatedAt?: Maybe<Order_By>;
@@ -2723,6 +3432,597 @@ export enum FollowedChat_Update_Column {
   UserId = 'userId'
 }
 
+/** columns and relationships of "Group" */
+export type Group = {
+  __typename?: 'Group';
+  accessEnd: Scalars['timestamptz'];
+  accessStart: Scalars['timestamptz'];
+  /** An object relationship */
+  conference: Conference;
+  conferenceId: Scalars['uuid'];
+  /** An array relationship */
+  groupAttendees: Array<GroupAttendee>;
+  /** An aggregated array relationship */
+  groupAttendees_aggregate: GroupAttendee_Aggregate;
+  /** An array relationship */
+  groupRoles: Array<GroupRole>;
+  /** An aggregated array relationship */
+  groupRoles_aggregate: GroupRole_Aggregate;
+  id: Scalars['uuid'];
+  includeUnauthenticated: Scalars['Boolean'];
+  name: Scalars['String'];
+};
+
+
+/** columns and relationships of "Group" */
+export type GroupGroupAttendeesArgs = {
+  distinct_on?: Maybe<Array<GroupAttendee_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<GroupAttendee_Order_By>>;
+  where?: Maybe<GroupAttendee_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Group" */
+export type GroupGroupAttendees_AggregateArgs = {
+  distinct_on?: Maybe<Array<GroupAttendee_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<GroupAttendee_Order_By>>;
+  where?: Maybe<GroupAttendee_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Group" */
+export type GroupGroupRolesArgs = {
+  distinct_on?: Maybe<Array<GroupRole_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<GroupRole_Order_By>>;
+  where?: Maybe<GroupRole_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Group" */
+export type GroupGroupRoles_AggregateArgs = {
+  distinct_on?: Maybe<Array<GroupRole_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<GroupRole_Order_By>>;
+  where?: Maybe<GroupRole_Bool_Exp>;
+};
+
+/** columns and relationships of "GroupAttendee" */
+export type GroupAttendee = {
+  __typename?: 'GroupAttendee';
+  /** An object relationship */
+  attendee: Attendee;
+  attendeeId: Scalars['uuid'];
+  /** An object relationship */
+  group: Group;
+  groupId: Scalars['uuid'];
+  id: Scalars['uuid'];
+};
+
+/** aggregated selection of "GroupAttendee" */
+export type GroupAttendee_Aggregate = {
+  __typename?: 'GroupAttendee_aggregate';
+  aggregate?: Maybe<GroupAttendee_Aggregate_Fields>;
+  nodes: Array<GroupAttendee>;
+};
+
+/** aggregate fields of "GroupAttendee" */
+export type GroupAttendee_Aggregate_Fields = {
+  __typename?: 'GroupAttendee_aggregate_fields';
+  count?: Maybe<Scalars['Int']>;
+  max?: Maybe<GroupAttendee_Max_Fields>;
+  min?: Maybe<GroupAttendee_Min_Fields>;
+};
+
+
+/** aggregate fields of "GroupAttendee" */
+export type GroupAttendee_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<Array<GroupAttendee_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "GroupAttendee" */
+export type GroupAttendee_Aggregate_Order_By = {
+  count?: Maybe<Order_By>;
+  max?: Maybe<GroupAttendee_Max_Order_By>;
+  min?: Maybe<GroupAttendee_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "GroupAttendee" */
+export type GroupAttendee_Arr_Rel_Insert_Input = {
+  data: Array<GroupAttendee_Insert_Input>;
+  on_conflict?: Maybe<GroupAttendee_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "GroupAttendee". All fields are combined with a logical 'AND'. */
+export type GroupAttendee_Bool_Exp = {
+  _and?: Maybe<Array<Maybe<GroupAttendee_Bool_Exp>>>;
+  _not?: Maybe<GroupAttendee_Bool_Exp>;
+  _or?: Maybe<Array<Maybe<GroupAttendee_Bool_Exp>>>;
+  attendee?: Maybe<Attendee_Bool_Exp>;
+  attendeeId?: Maybe<Uuid_Comparison_Exp>;
+  group?: Maybe<Group_Bool_Exp>;
+  groupId?: Maybe<Uuid_Comparison_Exp>;
+  id?: Maybe<Uuid_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "GroupAttendee" */
+export enum GroupAttendee_Constraint {
+  /** unique or primary key constraint */
+  GroupAttendeeGroupIdAttendeeIdKey = 'GroupAttendee_groupId_attendeeId_key',
+  /** unique or primary key constraint */
+  GroupAttendeePkey = 'GroupAttendee_pkey'
+}
+
+/** input type for inserting data into table "GroupAttendee" */
+export type GroupAttendee_Insert_Input = {
+  attendee?: Maybe<Attendee_Obj_Rel_Insert_Input>;
+  attendeeId?: Maybe<Scalars['uuid']>;
+  group?: Maybe<Group_Obj_Rel_Insert_Input>;
+  groupId?: Maybe<Scalars['uuid']>;
+  id?: Maybe<Scalars['uuid']>;
+};
+
+/** aggregate max on columns */
+export type GroupAttendee_Max_Fields = {
+  __typename?: 'GroupAttendee_max_fields';
+  attendeeId?: Maybe<Scalars['uuid']>;
+  groupId?: Maybe<Scalars['uuid']>;
+  id?: Maybe<Scalars['uuid']>;
+};
+
+/** order by max() on columns of table "GroupAttendee" */
+export type GroupAttendee_Max_Order_By = {
+  attendeeId?: Maybe<Order_By>;
+  groupId?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type GroupAttendee_Min_Fields = {
+  __typename?: 'GroupAttendee_min_fields';
+  attendeeId?: Maybe<Scalars['uuid']>;
+  groupId?: Maybe<Scalars['uuid']>;
+  id?: Maybe<Scalars['uuid']>;
+};
+
+/** order by min() on columns of table "GroupAttendee" */
+export type GroupAttendee_Min_Order_By = {
+  attendeeId?: Maybe<Order_By>;
+  groupId?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "GroupAttendee" */
+export type GroupAttendee_Mutation_Response = {
+  __typename?: 'GroupAttendee_mutation_response';
+  /** number of affected rows by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  returning: Array<GroupAttendee>;
+};
+
+/** input type for inserting object relation for remote table "GroupAttendee" */
+export type GroupAttendee_Obj_Rel_Insert_Input = {
+  data: GroupAttendee_Insert_Input;
+  on_conflict?: Maybe<GroupAttendee_On_Conflict>;
+};
+
+/** on conflict condition type for table "GroupAttendee" */
+export type GroupAttendee_On_Conflict = {
+  constraint: GroupAttendee_Constraint;
+  update_columns: Array<GroupAttendee_Update_Column>;
+  where?: Maybe<GroupAttendee_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "GroupAttendee" */
+export type GroupAttendee_Order_By = {
+  attendee?: Maybe<Attendee_Order_By>;
+  attendeeId?: Maybe<Order_By>;
+  group?: Maybe<Group_Order_By>;
+  groupId?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "GroupAttendee" */
+export type GroupAttendee_Pk_Columns_Input = {
+  id: Scalars['uuid'];
+};
+
+/** select columns of table "GroupAttendee" */
+export enum GroupAttendee_Select_Column {
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  GroupId = 'groupId',
+  /** column name */
+  Id = 'id'
+}
+
+/** input type for updating data in table "GroupAttendee" */
+export type GroupAttendee_Set_Input = {
+  attendeeId?: Maybe<Scalars['uuid']>;
+  groupId?: Maybe<Scalars['uuid']>;
+  id?: Maybe<Scalars['uuid']>;
+};
+
+/** update columns of table "GroupAttendee" */
+export enum GroupAttendee_Update_Column {
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  GroupId = 'groupId',
+  /** column name */
+  Id = 'id'
+}
+
+/** columns and relationships of "GroupRole" */
+export type GroupRole = {
+  __typename?: 'GroupRole';
+  /** An object relationship */
+  group: Group;
+  groupId: Scalars['uuid'];
+  id: Scalars['uuid'];
+  /** An object relationship */
+  role: Role;
+  roleId: Scalars['uuid'];
+};
+
+/** aggregated selection of "GroupRole" */
+export type GroupRole_Aggregate = {
+  __typename?: 'GroupRole_aggregate';
+  aggregate?: Maybe<GroupRole_Aggregate_Fields>;
+  nodes: Array<GroupRole>;
+};
+
+/** aggregate fields of "GroupRole" */
+export type GroupRole_Aggregate_Fields = {
+  __typename?: 'GroupRole_aggregate_fields';
+  count?: Maybe<Scalars['Int']>;
+  max?: Maybe<GroupRole_Max_Fields>;
+  min?: Maybe<GroupRole_Min_Fields>;
+};
+
+
+/** aggregate fields of "GroupRole" */
+export type GroupRole_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<Array<GroupRole_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "GroupRole" */
+export type GroupRole_Aggregate_Order_By = {
+  count?: Maybe<Order_By>;
+  max?: Maybe<GroupRole_Max_Order_By>;
+  min?: Maybe<GroupRole_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "GroupRole" */
+export type GroupRole_Arr_Rel_Insert_Input = {
+  data: Array<GroupRole_Insert_Input>;
+  on_conflict?: Maybe<GroupRole_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "GroupRole". All fields are combined with a logical 'AND'. */
+export type GroupRole_Bool_Exp = {
+  _and?: Maybe<Array<Maybe<GroupRole_Bool_Exp>>>;
+  _not?: Maybe<GroupRole_Bool_Exp>;
+  _or?: Maybe<Array<Maybe<GroupRole_Bool_Exp>>>;
+  group?: Maybe<Group_Bool_Exp>;
+  groupId?: Maybe<Uuid_Comparison_Exp>;
+  id?: Maybe<Uuid_Comparison_Exp>;
+  role?: Maybe<Role_Bool_Exp>;
+  roleId?: Maybe<Uuid_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "GroupRole" */
+export enum GroupRole_Constraint {
+  /** unique or primary key constraint */
+  GroupRoleGroupIdRoleIdKey = 'GroupRole_groupId_roleId_key',
+  /** unique or primary key constraint */
+  GroupRolePkey = 'GroupRole_pkey'
+}
+
+/** input type for inserting data into table "GroupRole" */
+export type GroupRole_Insert_Input = {
+  group?: Maybe<Group_Obj_Rel_Insert_Input>;
+  groupId?: Maybe<Scalars['uuid']>;
+  id?: Maybe<Scalars['uuid']>;
+  role?: Maybe<Role_Obj_Rel_Insert_Input>;
+  roleId?: Maybe<Scalars['uuid']>;
+};
+
+/** aggregate max on columns */
+export type GroupRole_Max_Fields = {
+  __typename?: 'GroupRole_max_fields';
+  groupId?: Maybe<Scalars['uuid']>;
+  id?: Maybe<Scalars['uuid']>;
+  roleId?: Maybe<Scalars['uuid']>;
+};
+
+/** order by max() on columns of table "GroupRole" */
+export type GroupRole_Max_Order_By = {
+  groupId?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+  roleId?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type GroupRole_Min_Fields = {
+  __typename?: 'GroupRole_min_fields';
+  groupId?: Maybe<Scalars['uuid']>;
+  id?: Maybe<Scalars['uuid']>;
+  roleId?: Maybe<Scalars['uuid']>;
+};
+
+/** order by min() on columns of table "GroupRole" */
+export type GroupRole_Min_Order_By = {
+  groupId?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+  roleId?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "GroupRole" */
+export type GroupRole_Mutation_Response = {
+  __typename?: 'GroupRole_mutation_response';
+  /** number of affected rows by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  returning: Array<GroupRole>;
+};
+
+/** input type for inserting object relation for remote table "GroupRole" */
+export type GroupRole_Obj_Rel_Insert_Input = {
+  data: GroupRole_Insert_Input;
+  on_conflict?: Maybe<GroupRole_On_Conflict>;
+};
+
+/** on conflict condition type for table "GroupRole" */
+export type GroupRole_On_Conflict = {
+  constraint: GroupRole_Constraint;
+  update_columns: Array<GroupRole_Update_Column>;
+  where?: Maybe<GroupRole_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "GroupRole" */
+export type GroupRole_Order_By = {
+  group?: Maybe<Group_Order_By>;
+  groupId?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+  role?: Maybe<Role_Order_By>;
+  roleId?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "GroupRole" */
+export type GroupRole_Pk_Columns_Input = {
+  id: Scalars['uuid'];
+};
+
+/** select columns of table "GroupRole" */
+export enum GroupRole_Select_Column {
+  /** column name */
+  GroupId = 'groupId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  RoleId = 'roleId'
+}
+
+/** input type for updating data in table "GroupRole" */
+export type GroupRole_Set_Input = {
+  groupId?: Maybe<Scalars['uuid']>;
+  id?: Maybe<Scalars['uuid']>;
+  roleId?: Maybe<Scalars['uuid']>;
+};
+
+/** update columns of table "GroupRole" */
+export enum GroupRole_Update_Column {
+  /** column name */
+  GroupId = 'groupId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  RoleId = 'roleId'
+}
+
+/** aggregated selection of "Group" */
+export type Group_Aggregate = {
+  __typename?: 'Group_aggregate';
+  aggregate?: Maybe<Group_Aggregate_Fields>;
+  nodes: Array<Group>;
+};
+
+/** aggregate fields of "Group" */
+export type Group_Aggregate_Fields = {
+  __typename?: 'Group_aggregate_fields';
+  count?: Maybe<Scalars['Int']>;
+  max?: Maybe<Group_Max_Fields>;
+  min?: Maybe<Group_Min_Fields>;
+};
+
+
+/** aggregate fields of "Group" */
+export type Group_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<Array<Group_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "Group" */
+export type Group_Aggregate_Order_By = {
+  count?: Maybe<Order_By>;
+  max?: Maybe<Group_Max_Order_By>;
+  min?: Maybe<Group_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "Group" */
+export type Group_Arr_Rel_Insert_Input = {
+  data: Array<Group_Insert_Input>;
+  on_conflict?: Maybe<Group_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "Group". All fields are combined with a logical 'AND'. */
+export type Group_Bool_Exp = {
+  _and?: Maybe<Array<Maybe<Group_Bool_Exp>>>;
+  _not?: Maybe<Group_Bool_Exp>;
+  _or?: Maybe<Array<Maybe<Group_Bool_Exp>>>;
+  accessEnd?: Maybe<Timestamptz_Comparison_Exp>;
+  accessStart?: Maybe<Timestamptz_Comparison_Exp>;
+  conference?: Maybe<Conference_Bool_Exp>;
+  conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  groupAttendees?: Maybe<GroupAttendee_Bool_Exp>;
+  groupRoles?: Maybe<GroupRole_Bool_Exp>;
+  id?: Maybe<Uuid_Comparison_Exp>;
+  includeUnauthenticated?: Maybe<Boolean_Comparison_Exp>;
+  name?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "Group" */
+export enum Group_Constraint {
+  /** unique or primary key constraint */
+  GroupConferenceIdNameKey = 'Group_conferenceId_name_key',
+  /** unique or primary key constraint */
+  GroupPkey = 'Group_pkey'
+}
+
+/** input type for inserting data into table "Group" */
+export type Group_Insert_Input = {
+  accessEnd?: Maybe<Scalars['timestamptz']>;
+  accessStart?: Maybe<Scalars['timestamptz']>;
+  conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  conferenceId?: Maybe<Scalars['uuid']>;
+  groupAttendees?: Maybe<GroupAttendee_Arr_Rel_Insert_Input>;
+  groupRoles?: Maybe<GroupRole_Arr_Rel_Insert_Input>;
+  id?: Maybe<Scalars['uuid']>;
+  includeUnauthenticated?: Maybe<Scalars['Boolean']>;
+  name?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Group_Max_Fields = {
+  __typename?: 'Group_max_fields';
+  accessEnd?: Maybe<Scalars['timestamptz']>;
+  accessStart?: Maybe<Scalars['timestamptz']>;
+  conferenceId?: Maybe<Scalars['uuid']>;
+  id?: Maybe<Scalars['uuid']>;
+  name?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "Group" */
+export type Group_Max_Order_By = {
+  accessEnd?: Maybe<Order_By>;
+  accessStart?: Maybe<Order_By>;
+  conferenceId?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+  name?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Group_Min_Fields = {
+  __typename?: 'Group_min_fields';
+  accessEnd?: Maybe<Scalars['timestamptz']>;
+  accessStart?: Maybe<Scalars['timestamptz']>;
+  conferenceId?: Maybe<Scalars['uuid']>;
+  id?: Maybe<Scalars['uuid']>;
+  name?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "Group" */
+export type Group_Min_Order_By = {
+  accessEnd?: Maybe<Order_By>;
+  accessStart?: Maybe<Order_By>;
+  conferenceId?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+  name?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "Group" */
+export type Group_Mutation_Response = {
+  __typename?: 'Group_mutation_response';
+  /** number of affected rows by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  returning: Array<Group>;
+};
+
+/** input type for inserting object relation for remote table "Group" */
+export type Group_Obj_Rel_Insert_Input = {
+  data: Group_Insert_Input;
+  on_conflict?: Maybe<Group_On_Conflict>;
+};
+
+/** on conflict condition type for table "Group" */
+export type Group_On_Conflict = {
+  constraint: Group_Constraint;
+  update_columns: Array<Group_Update_Column>;
+  where?: Maybe<Group_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "Group" */
+export type Group_Order_By = {
+  accessEnd?: Maybe<Order_By>;
+  accessStart?: Maybe<Order_By>;
+  conference?: Maybe<Conference_Order_By>;
+  conferenceId?: Maybe<Order_By>;
+  groupAttendees_aggregate?: Maybe<GroupAttendee_Aggregate_Order_By>;
+  groupRoles_aggregate?: Maybe<GroupRole_Aggregate_Order_By>;
+  id?: Maybe<Order_By>;
+  includeUnauthenticated?: Maybe<Order_By>;
+  name?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "Group" */
+export type Group_Pk_Columns_Input = {
+  id: Scalars['uuid'];
+};
+
+/** select columns of table "Group" */
+export enum Group_Select_Column {
+  /** column name */
+  AccessEnd = 'accessEnd',
+  /** column name */
+  AccessStart = 'accessStart',
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  IncludeUnauthenticated = 'includeUnauthenticated',
+  /** column name */
+  Name = 'name'
+}
+
+/** input type for updating data in table "Group" */
+export type Group_Set_Input = {
+  accessEnd?: Maybe<Scalars['timestamptz']>;
+  accessStart?: Maybe<Scalars['timestamptz']>;
+  conferenceId?: Maybe<Scalars['uuid']>;
+  id?: Maybe<Scalars['uuid']>;
+  includeUnauthenticated?: Maybe<Scalars['Boolean']>;
+  name?: Maybe<Scalars['String']>;
+};
+
+/** update columns of table "Group" */
+export enum Group_Update_Column {
+  /** column name */
+  AccessEnd = 'accessEnd',
+  /** column name */
+  AccessStart = 'accessStart',
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  IncludeUnauthenticated = 'includeUnauthenticated',
+  /** column name */
+  Name = 'name'
+}
+
 /** expression to compare columns of type Int. All fields are combined with logical 'AND'. */
 export type Int_Comparison_Exp = {
   _eq?: Maybe<Scalars['Int']>;
@@ -2909,6 +4209,205 @@ export enum OnlineStatus_Update_Column {
   UserId = 'userId'
 }
 
+/** columns and relationships of "Permission" */
+export type Permission = {
+  __typename?: 'Permission';
+  description: Scalars['String'];
+  name: Scalars['String'];
+  /** An array relationship */
+  rolePermissions: Array<RolePermission>;
+  /** An aggregated array relationship */
+  rolePermissions_aggregate: RolePermission_Aggregate;
+};
+
+
+/** columns and relationships of "Permission" */
+export type PermissionRolePermissionsArgs = {
+  distinct_on?: Maybe<Array<RolePermission_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<RolePermission_Order_By>>;
+  where?: Maybe<RolePermission_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Permission" */
+export type PermissionRolePermissions_AggregateArgs = {
+  distinct_on?: Maybe<Array<RolePermission_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<RolePermission_Order_By>>;
+  where?: Maybe<RolePermission_Bool_Exp>;
+};
+
+/** aggregated selection of "Permission" */
+export type Permission_Aggregate = {
+  __typename?: 'Permission_aggregate';
+  aggregate?: Maybe<Permission_Aggregate_Fields>;
+  nodes: Array<Permission>;
+};
+
+/** aggregate fields of "Permission" */
+export type Permission_Aggregate_Fields = {
+  __typename?: 'Permission_aggregate_fields';
+  count?: Maybe<Scalars['Int']>;
+  max?: Maybe<Permission_Max_Fields>;
+  min?: Maybe<Permission_Min_Fields>;
+};
+
+
+/** aggregate fields of "Permission" */
+export type Permission_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<Array<Permission_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "Permission" */
+export type Permission_Aggregate_Order_By = {
+  count?: Maybe<Order_By>;
+  max?: Maybe<Permission_Max_Order_By>;
+  min?: Maybe<Permission_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "Permission" */
+export type Permission_Arr_Rel_Insert_Input = {
+  data: Array<Permission_Insert_Input>;
+  on_conflict?: Maybe<Permission_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "Permission". All fields are combined with a logical 'AND'. */
+export type Permission_Bool_Exp = {
+  _and?: Maybe<Array<Maybe<Permission_Bool_Exp>>>;
+  _not?: Maybe<Permission_Bool_Exp>;
+  _or?: Maybe<Array<Maybe<Permission_Bool_Exp>>>;
+  description?: Maybe<String_Comparison_Exp>;
+  name?: Maybe<String_Comparison_Exp>;
+  rolePermissions?: Maybe<RolePermission_Bool_Exp>;
+};
+
+/** unique or primary key constraints on table "Permission" */
+export enum Permission_Constraint {
+  /** unique or primary key constraint */
+  PermissionPkey = 'Permission_pkey'
+}
+
+export enum Permission_Enum {
+  /** Manage a conference attendees. */
+  ConferenceManageAttendees = 'CONFERENCE_MANAGE_ATTENDEES',
+  /** Manage groups of a conference. */
+  ConferenceManageGroups = 'CONFERENCE_MANAGE_GROUPS',
+  /** Manage a conference name, short name and slug. */
+  ConferenceManageName = 'CONFERENCE_MANAGE_NAME',
+  /** Manage roles of a conference. */
+  ConferenceManageRoles = 'CONFERENCE_MANAGE_ROLES',
+  /** Moderate (update only) conference attendees. */
+  ConferenceModerateAttendees = 'CONFERENCE_MODERATE_ATTENDEES',
+  /** View the conference. */
+  ConferenceView = 'CONFERENCE_VIEW',
+  /** Access conference active attendees data. */
+  ConferenceViewActiveAttendees = 'CONFERENCE_VIEW_ACTIVE_ATTENDEES',
+  /** Access conference banned attendees data. */
+  ConferenceViewBannedAttendees = 'CONFERENCE_VIEW_BANNED_ATTENDEES'
+}
+
+/** expression to compare columns of type Permission_enum. All fields are combined with logical 'AND'. */
+export type Permission_Enum_Comparison_Exp = {
+  _eq?: Maybe<Permission_Enum>;
+  _in?: Maybe<Array<Permission_Enum>>;
+  _is_null?: Maybe<Scalars['Boolean']>;
+  _neq?: Maybe<Permission_Enum>;
+  _nin?: Maybe<Array<Permission_Enum>>;
+};
+
+/** input type for inserting data into table "Permission" */
+export type Permission_Insert_Input = {
+  description?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+  rolePermissions?: Maybe<RolePermission_Arr_Rel_Insert_Input>;
+};
+
+/** aggregate max on columns */
+export type Permission_Max_Fields = {
+  __typename?: 'Permission_max_fields';
+  description?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "Permission" */
+export type Permission_Max_Order_By = {
+  description?: Maybe<Order_By>;
+  name?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Permission_Min_Fields = {
+  __typename?: 'Permission_min_fields';
+  description?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "Permission" */
+export type Permission_Min_Order_By = {
+  description?: Maybe<Order_By>;
+  name?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "Permission" */
+export type Permission_Mutation_Response = {
+  __typename?: 'Permission_mutation_response';
+  /** number of affected rows by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  returning: Array<Permission>;
+};
+
+/** input type for inserting object relation for remote table "Permission" */
+export type Permission_Obj_Rel_Insert_Input = {
+  data: Permission_Insert_Input;
+  on_conflict?: Maybe<Permission_On_Conflict>;
+};
+
+/** on conflict condition type for table "Permission" */
+export type Permission_On_Conflict = {
+  constraint: Permission_Constraint;
+  update_columns: Array<Permission_Update_Column>;
+  where?: Maybe<Permission_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "Permission" */
+export type Permission_Order_By = {
+  description?: Maybe<Order_By>;
+  name?: Maybe<Order_By>;
+  rolePermissions_aggregate?: Maybe<RolePermission_Aggregate_Order_By>;
+};
+
+/** primary key columns input for table: "Permission" */
+export type Permission_Pk_Columns_Input = {
+  name: Scalars['String'];
+};
+
+/** select columns of table "Permission" */
+export enum Permission_Select_Column {
+  /** column name */
+  Description = 'description',
+  /** column name */
+  Name = 'name'
+}
+
+/** input type for updating data in table "Permission" */
+export type Permission_Set_Input = {
+  description?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+};
+
+/** update columns of table "Permission" */
+export enum Permission_Update_Column {
+  /** column name */
+  Description = 'description',
+  /** column name */
+  Name = 'name'
+}
+
 /** columns and relationships of "PinnedChat" */
 export type PinnedChat = {
   __typename?: 'PinnedChat';
@@ -3092,6 +4591,389 @@ export type ProtectedEchoOutput = {
   message: Scalars['String'];
 };
 
+/** columns and relationships of "Role" */
+export type Role = {
+  __typename?: 'Role';
+  /** An object relationship */
+  conference: Conference;
+  conferenceId: Scalars['uuid'];
+  /** An array relationship */
+  groupRoles: Array<GroupRole>;
+  /** An aggregated array relationship */
+  groupRoles_aggregate: GroupRole_Aggregate;
+  id: Scalars['uuid'];
+  name: Scalars['String'];
+  /** An array relationship */
+  rolePermissions: Array<RolePermission>;
+  /** An aggregated array relationship */
+  rolePermissions_aggregate: RolePermission_Aggregate;
+};
+
+
+/** columns and relationships of "Role" */
+export type RoleGroupRolesArgs = {
+  distinct_on?: Maybe<Array<GroupRole_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<GroupRole_Order_By>>;
+  where?: Maybe<GroupRole_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Role" */
+export type RoleGroupRoles_AggregateArgs = {
+  distinct_on?: Maybe<Array<GroupRole_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<GroupRole_Order_By>>;
+  where?: Maybe<GroupRole_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Role" */
+export type RoleRolePermissionsArgs = {
+  distinct_on?: Maybe<Array<RolePermission_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<RolePermission_Order_By>>;
+  where?: Maybe<RolePermission_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Role" */
+export type RoleRolePermissions_AggregateArgs = {
+  distinct_on?: Maybe<Array<RolePermission_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<RolePermission_Order_By>>;
+  where?: Maybe<RolePermission_Bool_Exp>;
+};
+
+/** columns and relationships of "RolePermission" */
+export type RolePermission = {
+  __typename?: 'RolePermission';
+  id: Scalars['uuid'];
+  /** An object relationship */
+  permission: Permission;
+  permissionName: Permission_Enum;
+  /** An object relationship */
+  role: Role;
+  roleId: Scalars['uuid'];
+};
+
+/** aggregated selection of "RolePermission" */
+export type RolePermission_Aggregate = {
+  __typename?: 'RolePermission_aggregate';
+  aggregate?: Maybe<RolePermission_Aggregate_Fields>;
+  nodes: Array<RolePermission>;
+};
+
+/** aggregate fields of "RolePermission" */
+export type RolePermission_Aggregate_Fields = {
+  __typename?: 'RolePermission_aggregate_fields';
+  count?: Maybe<Scalars['Int']>;
+  max?: Maybe<RolePermission_Max_Fields>;
+  min?: Maybe<RolePermission_Min_Fields>;
+};
+
+
+/** aggregate fields of "RolePermission" */
+export type RolePermission_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<Array<RolePermission_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "RolePermission" */
+export type RolePermission_Aggregate_Order_By = {
+  count?: Maybe<Order_By>;
+  max?: Maybe<RolePermission_Max_Order_By>;
+  min?: Maybe<RolePermission_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "RolePermission" */
+export type RolePermission_Arr_Rel_Insert_Input = {
+  data: Array<RolePermission_Insert_Input>;
+  on_conflict?: Maybe<RolePermission_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "RolePermission". All fields are combined with a logical 'AND'. */
+export type RolePermission_Bool_Exp = {
+  _and?: Maybe<Array<Maybe<RolePermission_Bool_Exp>>>;
+  _not?: Maybe<RolePermission_Bool_Exp>;
+  _or?: Maybe<Array<Maybe<RolePermission_Bool_Exp>>>;
+  id?: Maybe<Uuid_Comparison_Exp>;
+  permission?: Maybe<Permission_Bool_Exp>;
+  permissionName?: Maybe<Permission_Enum_Comparison_Exp>;
+  role?: Maybe<Role_Bool_Exp>;
+  roleId?: Maybe<Uuid_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "RolePermission" */
+export enum RolePermission_Constraint {
+  /** unique or primary key constraint */
+  RolePermissionPkey = 'RolePermission_pkey',
+  /** unique or primary key constraint */
+  RolePermissionRoleIdPermissionKey = 'RolePermission_roleId_permission_key'
+}
+
+/** input type for inserting data into table "RolePermission" */
+export type RolePermission_Insert_Input = {
+  id?: Maybe<Scalars['uuid']>;
+  permission?: Maybe<Permission_Obj_Rel_Insert_Input>;
+  permissionName?: Maybe<Permission_Enum>;
+  role?: Maybe<Role_Obj_Rel_Insert_Input>;
+  roleId?: Maybe<Scalars['uuid']>;
+};
+
+/** aggregate max on columns */
+export type RolePermission_Max_Fields = {
+  __typename?: 'RolePermission_max_fields';
+  id?: Maybe<Scalars['uuid']>;
+  roleId?: Maybe<Scalars['uuid']>;
+};
+
+/** order by max() on columns of table "RolePermission" */
+export type RolePermission_Max_Order_By = {
+  id?: Maybe<Order_By>;
+  roleId?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type RolePermission_Min_Fields = {
+  __typename?: 'RolePermission_min_fields';
+  id?: Maybe<Scalars['uuid']>;
+  roleId?: Maybe<Scalars['uuid']>;
+};
+
+/** order by min() on columns of table "RolePermission" */
+export type RolePermission_Min_Order_By = {
+  id?: Maybe<Order_By>;
+  roleId?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "RolePermission" */
+export type RolePermission_Mutation_Response = {
+  __typename?: 'RolePermission_mutation_response';
+  /** number of affected rows by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  returning: Array<RolePermission>;
+};
+
+/** input type for inserting object relation for remote table "RolePermission" */
+export type RolePermission_Obj_Rel_Insert_Input = {
+  data: RolePermission_Insert_Input;
+  on_conflict?: Maybe<RolePermission_On_Conflict>;
+};
+
+/** on conflict condition type for table "RolePermission" */
+export type RolePermission_On_Conflict = {
+  constraint: RolePermission_Constraint;
+  update_columns: Array<RolePermission_Update_Column>;
+  where?: Maybe<RolePermission_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "RolePermission" */
+export type RolePermission_Order_By = {
+  id?: Maybe<Order_By>;
+  permission?: Maybe<Permission_Order_By>;
+  permissionName?: Maybe<Order_By>;
+  role?: Maybe<Role_Order_By>;
+  roleId?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "RolePermission" */
+export type RolePermission_Pk_Columns_Input = {
+  id: Scalars['uuid'];
+};
+
+/** select columns of table "RolePermission" */
+export enum RolePermission_Select_Column {
+  /** column name */
+  Id = 'id',
+  /** column name */
+  PermissionName = 'permissionName',
+  /** column name */
+  RoleId = 'roleId'
+}
+
+/** input type for updating data in table "RolePermission" */
+export type RolePermission_Set_Input = {
+  id?: Maybe<Scalars['uuid']>;
+  permissionName?: Maybe<Permission_Enum>;
+  roleId?: Maybe<Scalars['uuid']>;
+};
+
+/** update columns of table "RolePermission" */
+export enum RolePermission_Update_Column {
+  /** column name */
+  Id = 'id',
+  /** column name */
+  PermissionName = 'permissionName',
+  /** column name */
+  RoleId = 'roleId'
+}
+
+/** aggregated selection of "Role" */
+export type Role_Aggregate = {
+  __typename?: 'Role_aggregate';
+  aggregate?: Maybe<Role_Aggregate_Fields>;
+  nodes: Array<Role>;
+};
+
+/** aggregate fields of "Role" */
+export type Role_Aggregate_Fields = {
+  __typename?: 'Role_aggregate_fields';
+  count?: Maybe<Scalars['Int']>;
+  max?: Maybe<Role_Max_Fields>;
+  min?: Maybe<Role_Min_Fields>;
+};
+
+
+/** aggregate fields of "Role" */
+export type Role_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<Array<Role_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "Role" */
+export type Role_Aggregate_Order_By = {
+  count?: Maybe<Order_By>;
+  max?: Maybe<Role_Max_Order_By>;
+  min?: Maybe<Role_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "Role" */
+export type Role_Arr_Rel_Insert_Input = {
+  data: Array<Role_Insert_Input>;
+  on_conflict?: Maybe<Role_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "Role". All fields are combined with a logical 'AND'. */
+export type Role_Bool_Exp = {
+  _and?: Maybe<Array<Maybe<Role_Bool_Exp>>>;
+  _not?: Maybe<Role_Bool_Exp>;
+  _or?: Maybe<Array<Maybe<Role_Bool_Exp>>>;
+  conference?: Maybe<Conference_Bool_Exp>;
+  conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  groupRoles?: Maybe<GroupRole_Bool_Exp>;
+  id?: Maybe<Uuid_Comparison_Exp>;
+  name?: Maybe<String_Comparison_Exp>;
+  rolePermissions?: Maybe<RolePermission_Bool_Exp>;
+};
+
+/** unique or primary key constraints on table "Role" */
+export enum Role_Constraint {
+  /** unique or primary key constraint */
+  RoleConferenceNameKey = 'Role_conference_name_key',
+  /** unique or primary key constraint */
+  RolePkey = 'Role_pkey'
+}
+
+/** input type for inserting data into table "Role" */
+export type Role_Insert_Input = {
+  conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  conferenceId?: Maybe<Scalars['uuid']>;
+  groupRoles?: Maybe<GroupRole_Arr_Rel_Insert_Input>;
+  id?: Maybe<Scalars['uuid']>;
+  name?: Maybe<Scalars['String']>;
+  rolePermissions?: Maybe<RolePermission_Arr_Rel_Insert_Input>;
+};
+
+/** aggregate max on columns */
+export type Role_Max_Fields = {
+  __typename?: 'Role_max_fields';
+  conferenceId?: Maybe<Scalars['uuid']>;
+  id?: Maybe<Scalars['uuid']>;
+  name?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "Role" */
+export type Role_Max_Order_By = {
+  conferenceId?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+  name?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Role_Min_Fields = {
+  __typename?: 'Role_min_fields';
+  conferenceId?: Maybe<Scalars['uuid']>;
+  id?: Maybe<Scalars['uuid']>;
+  name?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "Role" */
+export type Role_Min_Order_By = {
+  conferenceId?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+  name?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "Role" */
+export type Role_Mutation_Response = {
+  __typename?: 'Role_mutation_response';
+  /** number of affected rows by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  returning: Array<Role>;
+};
+
+/** input type for inserting object relation for remote table "Role" */
+export type Role_Obj_Rel_Insert_Input = {
+  data: Role_Insert_Input;
+  on_conflict?: Maybe<Role_On_Conflict>;
+};
+
+/** on conflict condition type for table "Role" */
+export type Role_On_Conflict = {
+  constraint: Role_Constraint;
+  update_columns: Array<Role_Update_Column>;
+  where?: Maybe<Role_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "Role" */
+export type Role_Order_By = {
+  conference?: Maybe<Conference_Order_By>;
+  conferenceId?: Maybe<Order_By>;
+  groupRoles_aggregate?: Maybe<GroupRole_Aggregate_Order_By>;
+  id?: Maybe<Order_By>;
+  name?: Maybe<Order_By>;
+  rolePermissions_aggregate?: Maybe<RolePermission_Aggregate_Order_By>;
+};
+
+/** primary key columns input for table: "Role" */
+export type Role_Pk_Columns_Input = {
+  id: Scalars['uuid'];
+};
+
+/** select columns of table "Role" */
+export enum Role_Select_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Name = 'name'
+}
+
+/** input type for updating data in table "Role" */
+export type Role_Set_Input = {
+  conferenceId?: Maybe<Scalars['uuid']>;
+  id?: Maybe<Scalars['uuid']>;
+  name?: Maybe<Scalars['String']>;
+};
+
+/** update columns of table "Role" */
+export enum Role_Update_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Name = 'name'
+}
+
 export type SampleInput = {
   password: Scalars['String'];
   username: Scalars['String'];
@@ -3125,9 +5007,17 @@ export type String_Comparison_Exp = {
 export type User = {
   __typename?: 'User';
   /** An array relationship */
+  attendees: Array<Attendee>;
+  /** An aggregated array relationship */
+  attendees_aggregate: Attendee_Aggregate;
+  /** An array relationship */
   chats: Array<Chat>;
   /** An aggregated array relationship */
   chats_aggregate: Chat_Aggregate;
+  /** An array relationship */
+  conferencesCreated: Array<Conference>;
+  /** An aggregated array relationship */
+  conferencesCreated_aggregate: Conference_Aggregate;
   created_at?: Maybe<Scalars['timestamptz']>;
   email?: Maybe<Scalars['String']>;
   firstName: Scalars['String'];
@@ -3164,7 +5054,6 @@ export type User = {
   sentMessages: Array<ChatMessage>;
   /** An aggregated array relationship */
   sentMessages_aggregate: ChatMessage_Aggregate;
-  status: Scalars['String'];
   /** An array relationship */
   typingInChats: Array<ChatTyper>;
   /** An aggregated array relationship */
@@ -3178,6 +5067,26 @@ export type User = {
   viewingChats: Array<ChatViewer>;
   /** An aggregated array relationship */
   viewingChats_aggregate: ChatViewer_Aggregate;
+};
+
+
+/** columns and relationships of "User" */
+export type UserAttendeesArgs = {
+  distinct_on?: Maybe<Array<Attendee_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Attendee_Order_By>>;
+  where?: Maybe<Attendee_Bool_Exp>;
+};
+
+
+/** columns and relationships of "User" */
+export type UserAttendees_AggregateArgs = {
+  distinct_on?: Maybe<Array<Attendee_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Attendee_Order_By>>;
+  where?: Maybe<Attendee_Bool_Exp>;
 };
 
 
@@ -3198,6 +5107,26 @@ export type UserChats_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<Array<Chat_Order_By>>;
   where?: Maybe<Chat_Bool_Exp>;
+};
+
+
+/** columns and relationships of "User" */
+export type UserConferencesCreatedArgs = {
+  distinct_on?: Maybe<Array<Conference_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Conference_Order_By>>;
+  where?: Maybe<Conference_Bool_Exp>;
+};
+
+
+/** columns and relationships of "User" */
+export type UserConferencesCreated_AggregateArgs = {
+  distinct_on?: Maybe<Array<Conference_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Conference_Order_By>>;
+  where?: Maybe<Conference_Bool_Exp>;
 };
 
 
@@ -3440,7 +5369,9 @@ export type User_Bool_Exp = {
   _and?: Maybe<Array<Maybe<User_Bool_Exp>>>;
   _not?: Maybe<User_Bool_Exp>;
   _or?: Maybe<Array<Maybe<User_Bool_Exp>>>;
+  attendees?: Maybe<Attendee_Bool_Exp>;
   chats?: Maybe<Chat_Bool_Exp>;
+  conferencesCreated?: Maybe<Conference_Bool_Exp>;
   created_at?: Maybe<Timestamptz_Comparison_Exp>;
   email?: Maybe<String_Comparison_Exp>;
   firstName?: Maybe<String_Comparison_Exp>;
@@ -3455,7 +5386,6 @@ export type User_Bool_Exp = {
   pinnedChats?: Maybe<PinnedChat_Bool_Exp>;
   reactions?: Maybe<ChatReaction_Bool_Exp>;
   sentMessages?: Maybe<ChatMessage_Bool_Exp>;
-  status?: Maybe<String_Comparison_Exp>;
   typingInChats?: Maybe<ChatTyper_Bool_Exp>;
   unreadIndices?: Maybe<ChatUnreadIndex_Bool_Exp>;
   updated_at?: Maybe<Timestamptz_Comparison_Exp>;
@@ -3472,7 +5402,9 @@ export enum User_Constraint {
 
 /** input type for inserting data into table "User" */
 export type User_Insert_Input = {
+  attendees?: Maybe<Attendee_Arr_Rel_Insert_Input>;
   chats?: Maybe<Chat_Arr_Rel_Insert_Input>;
+  conferencesCreated?: Maybe<Conference_Arr_Rel_Insert_Input>;
   created_at?: Maybe<Scalars['timestamptz']>;
   email?: Maybe<Scalars['String']>;
   firstName?: Maybe<Scalars['String']>;
@@ -3487,7 +5419,6 @@ export type User_Insert_Input = {
   pinnedChats?: Maybe<PinnedChat_Arr_Rel_Insert_Input>;
   reactions?: Maybe<ChatReaction_Arr_Rel_Insert_Input>;
   sentMessages?: Maybe<ChatMessage_Arr_Rel_Insert_Input>;
-  status?: Maybe<Scalars['String']>;
   typingInChats?: Maybe<ChatTyper_Arr_Rel_Insert_Input>;
   unreadIndices?: Maybe<ChatUnreadIndex_Arr_Rel_Insert_Input>;
   updated_at?: Maybe<Scalars['timestamptz']>;
@@ -3503,7 +5434,6 @@ export type User_Max_Fields = {
   id?: Maybe<Scalars['String']>;
   lastLoggedInAt?: Maybe<Scalars['timestamptz']>;
   lastName?: Maybe<Scalars['String']>;
-  status?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -3515,7 +5445,6 @@ export type User_Max_Order_By = {
   id?: Maybe<Order_By>;
   lastLoggedInAt?: Maybe<Order_By>;
   lastName?: Maybe<Order_By>;
-  status?: Maybe<Order_By>;
   updated_at?: Maybe<Order_By>;
 };
 
@@ -3528,7 +5457,6 @@ export type User_Min_Fields = {
   id?: Maybe<Scalars['String']>;
   lastLoggedInAt?: Maybe<Scalars['timestamptz']>;
   lastName?: Maybe<Scalars['String']>;
-  status?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -3540,7 +5468,6 @@ export type User_Min_Order_By = {
   id?: Maybe<Order_By>;
   lastLoggedInAt?: Maybe<Order_By>;
   lastName?: Maybe<Order_By>;
-  status?: Maybe<Order_By>;
   updated_at?: Maybe<Order_By>;
 };
 
@@ -3568,7 +5495,9 @@ export type User_On_Conflict = {
 
 /** ordering options when selecting data from "User" */
 export type User_Order_By = {
+  attendees_aggregate?: Maybe<Attendee_Aggregate_Order_By>;
   chats_aggregate?: Maybe<Chat_Aggregate_Order_By>;
+  conferencesCreated_aggregate?: Maybe<Conference_Aggregate_Order_By>;
   created_at?: Maybe<Order_By>;
   email?: Maybe<Order_By>;
   firstName?: Maybe<Order_By>;
@@ -3583,7 +5512,6 @@ export type User_Order_By = {
   pinnedChats_aggregate?: Maybe<PinnedChat_Aggregate_Order_By>;
   reactions_aggregate?: Maybe<ChatReaction_Aggregate_Order_By>;
   sentMessages_aggregate?: Maybe<ChatMessage_Aggregate_Order_By>;
-  status?: Maybe<Order_By>;
   typingInChats_aggregate?: Maybe<ChatTyper_Aggregate_Order_By>;
   unreadIndices_aggregate?: Maybe<ChatUnreadIndex_Aggregate_Order_By>;
   updated_at?: Maybe<Order_By>;
@@ -3610,8 +5538,6 @@ export enum User_Select_Column {
   /** column name */
   LastName = 'lastName',
   /** column name */
-  Status = 'status',
-  /** column name */
   UpdatedAt = 'updated_at'
 }
 
@@ -3623,7 +5549,6 @@ export type User_Set_Input = {
   id?: Maybe<Scalars['String']>;
   lastLoggedInAt?: Maybe<Scalars['timestamptz']>;
   lastName?: Maybe<Scalars['String']>;
-  status?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -3641,8 +5566,6 @@ export enum User_Update_Column {
   LastLoggedInAt = 'lastLoggedInAt',
   /** column name */
   LastName = 'lastName',
-  /** column name */
-  Status = 'status',
   /** column name */
   UpdatedAt = 'updated_at'
 }
@@ -3688,6 +5611,16 @@ export type Jsonb_Comparison_Exp = {
 /** mutation root */
 export type Mutation_Root = {
   __typename?: 'mutation_root';
+  /** delete data from the table: "ActiveGroup" */
+  delete_ActiveGroup?: Maybe<ActiveGroup_Mutation_Response>;
+  /** delete data from the table: "Attendee" */
+  delete_Attendee?: Maybe<Attendee_Mutation_Response>;
+  /** delete data from the table: "AttendeeStatus" */
+  delete_AttendeeStatus?: Maybe<AttendeeStatus_Mutation_Response>;
+  /** delete single row from the table: "AttendeeStatus" */
+  delete_AttendeeStatus_by_pk?: Maybe<AttendeeStatus>;
+  /** delete single row from the table: "Attendee" */
+  delete_Attendee_by_pk?: Maybe<Attendee>;
   /** delete data from the table: "Chat" */
   delete_Chat?: Maybe<Chat_Mutation_Response>;
   /** delete data from the table: "ChatMember" */
@@ -3732,18 +5665,54 @@ export type Mutation_Root = {
   delete_FollowedChat?: Maybe<FollowedChat_Mutation_Response>;
   /** delete single row from the table: "FollowedChat" */
   delete_FollowedChat_by_pk?: Maybe<FollowedChat>;
+  /** delete data from the table: "Group" */
+  delete_Group?: Maybe<Group_Mutation_Response>;
+  /** delete data from the table: "GroupAttendee" */
+  delete_GroupAttendee?: Maybe<GroupAttendee_Mutation_Response>;
+  /** delete single row from the table: "GroupAttendee" */
+  delete_GroupAttendee_by_pk?: Maybe<GroupAttendee>;
+  /** delete data from the table: "GroupRole" */
+  delete_GroupRole?: Maybe<GroupRole_Mutation_Response>;
+  /** delete single row from the table: "GroupRole" */
+  delete_GroupRole_by_pk?: Maybe<GroupRole>;
+  /** delete single row from the table: "Group" */
+  delete_Group_by_pk?: Maybe<Group>;
   /** delete data from the table: "OnlineStatus" */
   delete_OnlineStatus?: Maybe<OnlineStatus_Mutation_Response>;
   /** delete single row from the table: "OnlineStatus" */
   delete_OnlineStatus_by_pk?: Maybe<OnlineStatus>;
+  /** delete data from the table: "Permission" */
+  delete_Permission?: Maybe<Permission_Mutation_Response>;
+  /** delete single row from the table: "Permission" */
+  delete_Permission_by_pk?: Maybe<Permission>;
   /** delete data from the table: "PinnedChat" */
   delete_PinnedChat?: Maybe<PinnedChat_Mutation_Response>;
   /** delete single row from the table: "PinnedChat" */
   delete_PinnedChat_by_pk?: Maybe<PinnedChat>;
+  /** delete data from the table: "Role" */
+  delete_Role?: Maybe<Role_Mutation_Response>;
+  /** delete data from the table: "RolePermission" */
+  delete_RolePermission?: Maybe<RolePermission_Mutation_Response>;
+  /** delete single row from the table: "RolePermission" */
+  delete_RolePermission_by_pk?: Maybe<RolePermission>;
+  /** delete single row from the table: "Role" */
+  delete_Role_by_pk?: Maybe<Role>;
   /** delete data from the table: "User" */
   delete_User?: Maybe<User_Mutation_Response>;
   /** delete single row from the table: "User" */
   delete_User_by_pk?: Maybe<User>;
+  /** insert data into the table: "ActiveGroup" */
+  insert_ActiveGroup?: Maybe<ActiveGroup_Mutation_Response>;
+  /** insert a single row into the table: "ActiveGroup" */
+  insert_ActiveGroup_one?: Maybe<ActiveGroup>;
+  /** insert data into the table: "Attendee" */
+  insert_Attendee?: Maybe<Attendee_Mutation_Response>;
+  /** insert data into the table: "AttendeeStatus" */
+  insert_AttendeeStatus?: Maybe<AttendeeStatus_Mutation_Response>;
+  /** insert a single row into the table: "AttendeeStatus" */
+  insert_AttendeeStatus_one?: Maybe<AttendeeStatus>;
+  /** insert a single row into the table: "Attendee" */
+  insert_Attendee_one?: Maybe<Attendee>;
   /** insert data into the table: "Chat" */
   insert_Chat?: Maybe<Chat_Mutation_Response>;
   /** insert data into the table: "ChatMember" */
@@ -3788,18 +5757,52 @@ export type Mutation_Root = {
   insert_FollowedChat?: Maybe<FollowedChat_Mutation_Response>;
   /** insert a single row into the table: "FollowedChat" */
   insert_FollowedChat_one?: Maybe<FollowedChat>;
+  /** insert data into the table: "Group" */
+  insert_Group?: Maybe<Group_Mutation_Response>;
+  /** insert data into the table: "GroupAttendee" */
+  insert_GroupAttendee?: Maybe<GroupAttendee_Mutation_Response>;
+  /** insert a single row into the table: "GroupAttendee" */
+  insert_GroupAttendee_one?: Maybe<GroupAttendee>;
+  /** insert data into the table: "GroupRole" */
+  insert_GroupRole?: Maybe<GroupRole_Mutation_Response>;
+  /** insert a single row into the table: "GroupRole" */
+  insert_GroupRole_one?: Maybe<GroupRole>;
+  /** insert a single row into the table: "Group" */
+  insert_Group_one?: Maybe<Group>;
   /** insert data into the table: "OnlineStatus" */
   insert_OnlineStatus?: Maybe<OnlineStatus_Mutation_Response>;
   /** insert a single row into the table: "OnlineStatus" */
   insert_OnlineStatus_one?: Maybe<OnlineStatus>;
+  /** insert data into the table: "Permission" */
+  insert_Permission?: Maybe<Permission_Mutation_Response>;
+  /** insert a single row into the table: "Permission" */
+  insert_Permission_one?: Maybe<Permission>;
   /** insert data into the table: "PinnedChat" */
   insert_PinnedChat?: Maybe<PinnedChat_Mutation_Response>;
   /** insert a single row into the table: "PinnedChat" */
   insert_PinnedChat_one?: Maybe<PinnedChat>;
+  /** insert data into the table: "Role" */
+  insert_Role?: Maybe<Role_Mutation_Response>;
+  /** insert data into the table: "RolePermission" */
+  insert_RolePermission?: Maybe<RolePermission_Mutation_Response>;
+  /** insert a single row into the table: "RolePermission" */
+  insert_RolePermission_one?: Maybe<RolePermission>;
+  /** insert a single row into the table: "Role" */
+  insert_Role_one?: Maybe<Role>;
   /** insert data into the table: "User" */
   insert_User?: Maybe<User_Mutation_Response>;
   /** insert a single row into the table: "User" */
   insert_User_one?: Maybe<User>;
+  /** update data of the table: "ActiveGroup" */
+  update_ActiveGroup?: Maybe<ActiveGroup_Mutation_Response>;
+  /** update data of the table: "Attendee" */
+  update_Attendee?: Maybe<Attendee_Mutation_Response>;
+  /** update data of the table: "AttendeeStatus" */
+  update_AttendeeStatus?: Maybe<AttendeeStatus_Mutation_Response>;
+  /** update single row of the table: "AttendeeStatus" */
+  update_AttendeeStatus_by_pk?: Maybe<AttendeeStatus>;
+  /** update single row of the table: "Attendee" */
+  update_Attendee_by_pk?: Maybe<Attendee>;
   /** update data of the table: "Chat" */
   update_Chat?: Maybe<Chat_Mutation_Response>;
   /** update data of the table: "ChatMember" */
@@ -3844,18 +5847,72 @@ export type Mutation_Root = {
   update_FollowedChat?: Maybe<FollowedChat_Mutation_Response>;
   /** update single row of the table: "FollowedChat" */
   update_FollowedChat_by_pk?: Maybe<FollowedChat>;
+  /** update data of the table: "Group" */
+  update_Group?: Maybe<Group_Mutation_Response>;
+  /** update data of the table: "GroupAttendee" */
+  update_GroupAttendee?: Maybe<GroupAttendee_Mutation_Response>;
+  /** update single row of the table: "GroupAttendee" */
+  update_GroupAttendee_by_pk?: Maybe<GroupAttendee>;
+  /** update data of the table: "GroupRole" */
+  update_GroupRole?: Maybe<GroupRole_Mutation_Response>;
+  /** update single row of the table: "GroupRole" */
+  update_GroupRole_by_pk?: Maybe<GroupRole>;
+  /** update single row of the table: "Group" */
+  update_Group_by_pk?: Maybe<Group>;
   /** update data of the table: "OnlineStatus" */
   update_OnlineStatus?: Maybe<OnlineStatus_Mutation_Response>;
   /** update single row of the table: "OnlineStatus" */
   update_OnlineStatus_by_pk?: Maybe<OnlineStatus>;
+  /** update data of the table: "Permission" */
+  update_Permission?: Maybe<Permission_Mutation_Response>;
+  /** update single row of the table: "Permission" */
+  update_Permission_by_pk?: Maybe<Permission>;
   /** update data of the table: "PinnedChat" */
   update_PinnedChat?: Maybe<PinnedChat_Mutation_Response>;
   /** update single row of the table: "PinnedChat" */
   update_PinnedChat_by_pk?: Maybe<PinnedChat>;
+  /** update data of the table: "Role" */
+  update_Role?: Maybe<Role_Mutation_Response>;
+  /** update data of the table: "RolePermission" */
+  update_RolePermission?: Maybe<RolePermission_Mutation_Response>;
+  /** update single row of the table: "RolePermission" */
+  update_RolePermission_by_pk?: Maybe<RolePermission>;
+  /** update single row of the table: "Role" */
+  update_Role_by_pk?: Maybe<Role>;
   /** update data of the table: "User" */
   update_User?: Maybe<User_Mutation_Response>;
   /** update single row of the table: "User" */
   update_User_by_pk?: Maybe<User>;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_ActiveGroupArgs = {
+  where: ActiveGroup_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_AttendeeArgs = {
+  where: Attendee_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_AttendeeStatusArgs = {
+  where: AttendeeStatus_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_AttendeeStatus_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Attendee_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -3992,6 +6049,42 @@ export type Mutation_RootDelete_FollowedChat_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_GroupArgs = {
+  where: Group_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_GroupAttendeeArgs = {
+  where: GroupAttendee_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_GroupAttendee_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_GroupRoleArgs = {
+  where: GroupRole_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_GroupRole_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Group_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_OnlineStatusArgs = {
   where: OnlineStatus_Bool_Exp;
 };
@@ -4000,6 +6093,18 @@ export type Mutation_RootDelete_OnlineStatusArgs = {
 /** mutation root */
 export type Mutation_RootDelete_OnlineStatus_By_PkArgs = {
   id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_PermissionArgs = {
+  where: Permission_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Permission_By_PkArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -4016,6 +6121,30 @@ export type Mutation_RootDelete_PinnedChat_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_RoleArgs = {
+  where: Role_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_RolePermissionArgs = {
+  where: RolePermission_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_RolePermission_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Role_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_UserArgs = {
   where: User_Bool_Exp;
 };
@@ -4024,6 +6153,46 @@ export type Mutation_RootDelete_UserArgs = {
 /** mutation root */
 export type Mutation_RootDelete_User_By_PkArgs = {
   id: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_ActiveGroupArgs = {
+  objects: Array<ActiveGroup_Insert_Input>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_ActiveGroup_OneArgs = {
+  object: ActiveGroup_Insert_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_AttendeeArgs = {
+  objects: Array<Attendee_Insert_Input>;
+  on_conflict?: Maybe<Attendee_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_AttendeeStatusArgs = {
+  objects: Array<AttendeeStatus_Insert_Input>;
+  on_conflict?: Maybe<AttendeeStatus_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_AttendeeStatus_OneArgs = {
+  object: AttendeeStatus_Insert_Input;
+  on_conflict?: Maybe<AttendeeStatus_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Attendee_OneArgs = {
+  object: Attendee_Insert_Input;
+  on_conflict?: Maybe<Attendee_On_Conflict>;
 };
 
 
@@ -4182,6 +6351,48 @@ export type Mutation_RootInsert_FollowedChat_OneArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_GroupArgs = {
+  objects: Array<Group_Insert_Input>;
+  on_conflict?: Maybe<Group_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_GroupAttendeeArgs = {
+  objects: Array<GroupAttendee_Insert_Input>;
+  on_conflict?: Maybe<GroupAttendee_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_GroupAttendee_OneArgs = {
+  object: GroupAttendee_Insert_Input;
+  on_conflict?: Maybe<GroupAttendee_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_GroupRoleArgs = {
+  objects: Array<GroupRole_Insert_Input>;
+  on_conflict?: Maybe<GroupRole_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_GroupRole_OneArgs = {
+  object: GroupRole_Insert_Input;
+  on_conflict?: Maybe<GroupRole_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Group_OneArgs = {
+  object: Group_Insert_Input;
+  on_conflict?: Maybe<Group_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_OnlineStatusArgs = {
   objects: Array<OnlineStatus_Insert_Input>;
   on_conflict?: Maybe<OnlineStatus_On_Conflict>;
@@ -4192,6 +6403,20 @@ export type Mutation_RootInsert_OnlineStatusArgs = {
 export type Mutation_RootInsert_OnlineStatus_OneArgs = {
   object: OnlineStatus_Insert_Input;
   on_conflict?: Maybe<OnlineStatus_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_PermissionArgs = {
+  objects: Array<Permission_Insert_Input>;
+  on_conflict?: Maybe<Permission_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Permission_OneArgs = {
+  object: Permission_Insert_Input;
+  on_conflict?: Maybe<Permission_On_Conflict>;
 };
 
 
@@ -4210,6 +6435,34 @@ export type Mutation_RootInsert_PinnedChat_OneArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_RoleArgs = {
+  objects: Array<Role_Insert_Input>;
+  on_conflict?: Maybe<Role_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_RolePermissionArgs = {
+  objects: Array<RolePermission_Insert_Input>;
+  on_conflict?: Maybe<RolePermission_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_RolePermission_OneArgs = {
+  object: RolePermission_Insert_Input;
+  on_conflict?: Maybe<RolePermission_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Role_OneArgs = {
+  object: Role_Insert_Input;
+  on_conflict?: Maybe<Role_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_UserArgs = {
   objects: Array<User_Insert_Input>;
   on_conflict?: Maybe<User_On_Conflict>;
@@ -4220,6 +6473,41 @@ export type Mutation_RootInsert_UserArgs = {
 export type Mutation_RootInsert_User_OneArgs = {
   object: User_Insert_Input;
   on_conflict?: Maybe<User_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_ActiveGroupArgs = {
+  _set?: Maybe<ActiveGroup_Set_Input>;
+  where: ActiveGroup_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_AttendeeArgs = {
+  _set?: Maybe<Attendee_Set_Input>;
+  where: Attendee_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_AttendeeStatusArgs = {
+  _set?: Maybe<AttendeeStatus_Set_Input>;
+  where: AttendeeStatus_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_AttendeeStatus_By_PkArgs = {
+  _set?: Maybe<AttendeeStatus_Set_Input>;
+  pk_columns: AttendeeStatus_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Attendee_By_PkArgs = {
+  _set?: Maybe<Attendee_Set_Input>;
+  pk_columns: Attendee_Pk_Columns_Input;
 };
 
 
@@ -4392,6 +6680,48 @@ export type Mutation_RootUpdate_FollowedChat_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_GroupArgs = {
+  _set?: Maybe<Group_Set_Input>;
+  where: Group_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_GroupAttendeeArgs = {
+  _set?: Maybe<GroupAttendee_Set_Input>;
+  where: GroupAttendee_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_GroupAttendee_By_PkArgs = {
+  _set?: Maybe<GroupAttendee_Set_Input>;
+  pk_columns: GroupAttendee_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_GroupRoleArgs = {
+  _set?: Maybe<GroupRole_Set_Input>;
+  where: GroupRole_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_GroupRole_By_PkArgs = {
+  _set?: Maybe<GroupRole_Set_Input>;
+  pk_columns: GroupRole_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Group_By_PkArgs = {
+  _set?: Maybe<Group_Set_Input>;
+  pk_columns: Group_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_OnlineStatusArgs = {
   _set?: Maybe<OnlineStatus_Set_Input>;
   where: OnlineStatus_Bool_Exp;
@@ -4406,6 +6736,20 @@ export type Mutation_RootUpdate_OnlineStatus_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_PermissionArgs = {
+  _set?: Maybe<Permission_Set_Input>;
+  where: Permission_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Permission_By_PkArgs = {
+  _set?: Maybe<Permission_Set_Input>;
+  pk_columns: Permission_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_PinnedChatArgs = {
   _set?: Maybe<PinnedChat_Set_Input>;
   where: PinnedChat_Bool_Exp;
@@ -4416,6 +6760,34 @@ export type Mutation_RootUpdate_PinnedChatArgs = {
 export type Mutation_RootUpdate_PinnedChat_By_PkArgs = {
   _set?: Maybe<PinnedChat_Set_Input>;
   pk_columns: PinnedChat_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_RoleArgs = {
+  _set?: Maybe<Role_Set_Input>;
+  where: Role_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_RolePermissionArgs = {
+  _set?: Maybe<RolePermission_Set_Input>;
+  where: RolePermission_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_RolePermission_By_PkArgs = {
+  _set?: Maybe<RolePermission_Set_Input>;
+  pk_columns: RolePermission_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Role_By_PkArgs = {
+  _set?: Maybe<Role_Set_Input>;
+  pk_columns: Role_Pk_Columns_Input;
 };
 
 
@@ -4451,6 +6823,22 @@ export enum Order_By {
 /** query root */
 export type Query_Root = {
   __typename?: 'query_root';
+  /** fetch data from the table: "ActiveGroup" */
+  ActiveGroup: Array<ActiveGroup>;
+  /** fetch aggregated fields from the table: "ActiveGroup" */
+  ActiveGroup_aggregate: ActiveGroup_Aggregate;
+  /** fetch data from the table: "Attendee" */
+  Attendee: Array<Attendee>;
+  /** fetch data from the table: "AttendeeStatus" */
+  AttendeeStatus: Array<AttendeeStatus>;
+  /** fetch aggregated fields from the table: "AttendeeStatus" */
+  AttendeeStatus_aggregate: AttendeeStatus_Aggregate;
+  /** fetch data from the table: "AttendeeStatus" using primary key columns */
+  AttendeeStatus_by_pk?: Maybe<AttendeeStatus>;
+  /** fetch aggregated fields from the table: "Attendee" */
+  Attendee_aggregate: Attendee_Aggregate;
+  /** fetch data from the table: "Attendee" using primary key columns */
+  Attendee_by_pk?: Maybe<Attendee>;
   /** fetch data from the table: "Chat" */
   Chat: Array<Chat>;
   /** fetch data from the table: "ChatMember" */
@@ -4517,18 +6905,54 @@ export type Query_Root = {
   FollowedChat_aggregate: FollowedChat_Aggregate;
   /** fetch data from the table: "FollowedChat" using primary key columns */
   FollowedChat_by_pk?: Maybe<FollowedChat>;
+  /** fetch data from the table: "Group" */
+  Group: Array<Group>;
+  /** fetch data from the table: "GroupAttendee" */
+  GroupAttendee: Array<GroupAttendee>;
+  /** fetch aggregated fields from the table: "GroupAttendee" */
+  GroupAttendee_aggregate: GroupAttendee_Aggregate;
+  /** fetch data from the table: "GroupAttendee" using primary key columns */
+  GroupAttendee_by_pk?: Maybe<GroupAttendee>;
+  /** fetch data from the table: "GroupRole" */
+  GroupRole: Array<GroupRole>;
+  /** fetch aggregated fields from the table: "GroupRole" */
+  GroupRole_aggregate: GroupRole_Aggregate;
+  /** fetch data from the table: "GroupRole" using primary key columns */
+  GroupRole_by_pk?: Maybe<GroupRole>;
+  /** fetch aggregated fields from the table: "Group" */
+  Group_aggregate: Group_Aggregate;
+  /** fetch data from the table: "Group" using primary key columns */
+  Group_by_pk?: Maybe<Group>;
   /** fetch data from the table: "OnlineStatus" */
   OnlineStatus: Array<OnlineStatus>;
   /** fetch aggregated fields from the table: "OnlineStatus" */
   OnlineStatus_aggregate: OnlineStatus_Aggregate;
   /** fetch data from the table: "OnlineStatus" using primary key columns */
   OnlineStatus_by_pk?: Maybe<OnlineStatus>;
+  /** fetch data from the table: "Permission" */
+  Permission: Array<Permission>;
+  /** fetch aggregated fields from the table: "Permission" */
+  Permission_aggregate: Permission_Aggregate;
+  /** fetch data from the table: "Permission" using primary key columns */
+  Permission_by_pk?: Maybe<Permission>;
   /** fetch data from the table: "PinnedChat" */
   PinnedChat: Array<PinnedChat>;
   /** fetch aggregated fields from the table: "PinnedChat" */
   PinnedChat_aggregate: PinnedChat_Aggregate;
   /** fetch data from the table: "PinnedChat" using primary key columns */
   PinnedChat_by_pk?: Maybe<PinnedChat>;
+  /** fetch data from the table: "Role" */
+  Role: Array<Role>;
+  /** fetch data from the table: "RolePermission" */
+  RolePermission: Array<RolePermission>;
+  /** fetch aggregated fields from the table: "RolePermission" */
+  RolePermission_aggregate: RolePermission_Aggregate;
+  /** fetch data from the table: "RolePermission" using primary key columns */
+  RolePermission_by_pk?: Maybe<RolePermission>;
+  /** fetch aggregated fields from the table: "Role" */
+  Role_aggregate: Role_Aggregate;
+  /** fetch data from the table: "Role" using primary key columns */
+  Role_by_pk?: Maybe<Role>;
   /** fetch data from the table: "User" */
   User: Array<User>;
   /** fetch aggregated fields from the table: "User" */
@@ -4539,6 +6963,78 @@ export type Query_Root = {
   echo?: Maybe<EchoOutput>;
   /** perform the action: "protectedEcho" */
   protectedEcho?: Maybe<ProtectedEchoOutput>;
+};
+
+
+/** query root */
+export type Query_RootActiveGroupArgs = {
+  distinct_on?: Maybe<Array<ActiveGroup_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<ActiveGroup_Order_By>>;
+  where?: Maybe<ActiveGroup_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootActiveGroup_AggregateArgs = {
+  distinct_on?: Maybe<Array<ActiveGroup_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<ActiveGroup_Order_By>>;
+  where?: Maybe<ActiveGroup_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootAttendeeArgs = {
+  distinct_on?: Maybe<Array<Attendee_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Attendee_Order_By>>;
+  where?: Maybe<Attendee_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootAttendeeStatusArgs = {
+  distinct_on?: Maybe<Array<AttendeeStatus_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<AttendeeStatus_Order_By>>;
+  where?: Maybe<AttendeeStatus_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootAttendeeStatus_AggregateArgs = {
+  distinct_on?: Maybe<Array<AttendeeStatus_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<AttendeeStatus_Order_By>>;
+  where?: Maybe<AttendeeStatus_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootAttendeeStatus_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** query root */
+export type Query_RootAttendee_AggregateArgs = {
+  distinct_on?: Maybe<Array<Attendee_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Attendee_Order_By>>;
+  where?: Maybe<Attendee_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootAttendee_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -4829,6 +7325,84 @@ export type Query_RootFollowedChat_By_PkArgs = {
 
 
 /** query root */
+export type Query_RootGroupArgs = {
+  distinct_on?: Maybe<Array<Group_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Group_Order_By>>;
+  where?: Maybe<Group_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootGroupAttendeeArgs = {
+  distinct_on?: Maybe<Array<GroupAttendee_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<GroupAttendee_Order_By>>;
+  where?: Maybe<GroupAttendee_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootGroupAttendee_AggregateArgs = {
+  distinct_on?: Maybe<Array<GroupAttendee_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<GroupAttendee_Order_By>>;
+  where?: Maybe<GroupAttendee_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootGroupAttendee_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
+export type Query_RootGroupRoleArgs = {
+  distinct_on?: Maybe<Array<GroupRole_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<GroupRole_Order_By>>;
+  where?: Maybe<GroupRole_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootGroupRole_AggregateArgs = {
+  distinct_on?: Maybe<Array<GroupRole_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<GroupRole_Order_By>>;
+  where?: Maybe<GroupRole_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootGroupRole_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
+export type Query_RootGroup_AggregateArgs = {
+  distinct_on?: Maybe<Array<Group_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Group_Order_By>>;
+  where?: Maybe<Group_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootGroup_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
 export type Query_RootOnlineStatusArgs = {
   distinct_on?: Maybe<Array<OnlineStatus_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -4855,6 +7429,32 @@ export type Query_RootOnlineStatus_By_PkArgs = {
 
 
 /** query root */
+export type Query_RootPermissionArgs = {
+  distinct_on?: Maybe<Array<Permission_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Permission_Order_By>>;
+  where?: Maybe<Permission_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootPermission_AggregateArgs = {
+  distinct_on?: Maybe<Array<Permission_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Permission_Order_By>>;
+  where?: Maybe<Permission_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootPermission_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** query root */
 export type Query_RootPinnedChatArgs = {
   distinct_on?: Maybe<Array<PinnedChat_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -4876,6 +7476,58 @@ export type Query_RootPinnedChat_AggregateArgs = {
 
 /** query root */
 export type Query_RootPinnedChat_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
+export type Query_RootRoleArgs = {
+  distinct_on?: Maybe<Array<Role_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Role_Order_By>>;
+  where?: Maybe<Role_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootRolePermissionArgs = {
+  distinct_on?: Maybe<Array<RolePermission_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<RolePermission_Order_By>>;
+  where?: Maybe<RolePermission_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootRolePermission_AggregateArgs = {
+  distinct_on?: Maybe<Array<RolePermission_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<RolePermission_Order_By>>;
+  where?: Maybe<RolePermission_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootRolePermission_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
+export type Query_RootRole_AggregateArgs = {
+  distinct_on?: Maybe<Array<Role_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Role_Order_By>>;
+  where?: Maybe<Role_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootRole_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -4920,6 +7572,22 @@ export type Query_RootProtectedEchoArgs = {
 /** subscription root */
 export type Subscription_Root = {
   __typename?: 'subscription_root';
+  /** fetch data from the table: "ActiveGroup" */
+  ActiveGroup: Array<ActiveGroup>;
+  /** fetch aggregated fields from the table: "ActiveGroup" */
+  ActiveGroup_aggregate: ActiveGroup_Aggregate;
+  /** fetch data from the table: "Attendee" */
+  Attendee: Array<Attendee>;
+  /** fetch data from the table: "AttendeeStatus" */
+  AttendeeStatus: Array<AttendeeStatus>;
+  /** fetch aggregated fields from the table: "AttendeeStatus" */
+  AttendeeStatus_aggregate: AttendeeStatus_Aggregate;
+  /** fetch data from the table: "AttendeeStatus" using primary key columns */
+  AttendeeStatus_by_pk?: Maybe<AttendeeStatus>;
+  /** fetch aggregated fields from the table: "Attendee" */
+  Attendee_aggregate: Attendee_Aggregate;
+  /** fetch data from the table: "Attendee" using primary key columns */
+  Attendee_by_pk?: Maybe<Attendee>;
   /** fetch data from the table: "Chat" */
   Chat: Array<Chat>;
   /** fetch data from the table: "ChatMember" */
@@ -4986,18 +7654,54 @@ export type Subscription_Root = {
   FollowedChat_aggregate: FollowedChat_Aggregate;
   /** fetch data from the table: "FollowedChat" using primary key columns */
   FollowedChat_by_pk?: Maybe<FollowedChat>;
+  /** fetch data from the table: "Group" */
+  Group: Array<Group>;
+  /** fetch data from the table: "GroupAttendee" */
+  GroupAttendee: Array<GroupAttendee>;
+  /** fetch aggregated fields from the table: "GroupAttendee" */
+  GroupAttendee_aggregate: GroupAttendee_Aggregate;
+  /** fetch data from the table: "GroupAttendee" using primary key columns */
+  GroupAttendee_by_pk?: Maybe<GroupAttendee>;
+  /** fetch data from the table: "GroupRole" */
+  GroupRole: Array<GroupRole>;
+  /** fetch aggregated fields from the table: "GroupRole" */
+  GroupRole_aggregate: GroupRole_Aggregate;
+  /** fetch data from the table: "GroupRole" using primary key columns */
+  GroupRole_by_pk?: Maybe<GroupRole>;
+  /** fetch aggregated fields from the table: "Group" */
+  Group_aggregate: Group_Aggregate;
+  /** fetch data from the table: "Group" using primary key columns */
+  Group_by_pk?: Maybe<Group>;
   /** fetch data from the table: "OnlineStatus" */
   OnlineStatus: Array<OnlineStatus>;
   /** fetch aggregated fields from the table: "OnlineStatus" */
   OnlineStatus_aggregate: OnlineStatus_Aggregate;
   /** fetch data from the table: "OnlineStatus" using primary key columns */
   OnlineStatus_by_pk?: Maybe<OnlineStatus>;
+  /** fetch data from the table: "Permission" */
+  Permission: Array<Permission>;
+  /** fetch aggregated fields from the table: "Permission" */
+  Permission_aggregate: Permission_Aggregate;
+  /** fetch data from the table: "Permission" using primary key columns */
+  Permission_by_pk?: Maybe<Permission>;
   /** fetch data from the table: "PinnedChat" */
   PinnedChat: Array<PinnedChat>;
   /** fetch aggregated fields from the table: "PinnedChat" */
   PinnedChat_aggregate: PinnedChat_Aggregate;
   /** fetch data from the table: "PinnedChat" using primary key columns */
   PinnedChat_by_pk?: Maybe<PinnedChat>;
+  /** fetch data from the table: "Role" */
+  Role: Array<Role>;
+  /** fetch data from the table: "RolePermission" */
+  RolePermission: Array<RolePermission>;
+  /** fetch aggregated fields from the table: "RolePermission" */
+  RolePermission_aggregate: RolePermission_Aggregate;
+  /** fetch data from the table: "RolePermission" using primary key columns */
+  RolePermission_by_pk?: Maybe<RolePermission>;
+  /** fetch aggregated fields from the table: "Role" */
+  Role_aggregate: Role_Aggregate;
+  /** fetch data from the table: "Role" using primary key columns */
+  Role_by_pk?: Maybe<Role>;
   /** fetch data from the table: "User" */
   User: Array<User>;
   /** fetch aggregated fields from the table: "User" */
@@ -5008,6 +7712,78 @@ export type Subscription_Root = {
   echo?: Maybe<EchoOutput>;
   /** perform the action: "protectedEcho" */
   protectedEcho?: Maybe<ProtectedEchoOutput>;
+};
+
+
+/** subscription root */
+export type Subscription_RootActiveGroupArgs = {
+  distinct_on?: Maybe<Array<ActiveGroup_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<ActiveGroup_Order_By>>;
+  where?: Maybe<ActiveGroup_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootActiveGroup_AggregateArgs = {
+  distinct_on?: Maybe<Array<ActiveGroup_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<ActiveGroup_Order_By>>;
+  where?: Maybe<ActiveGroup_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootAttendeeArgs = {
+  distinct_on?: Maybe<Array<Attendee_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Attendee_Order_By>>;
+  where?: Maybe<Attendee_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootAttendeeStatusArgs = {
+  distinct_on?: Maybe<Array<AttendeeStatus_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<AttendeeStatus_Order_By>>;
+  where?: Maybe<AttendeeStatus_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootAttendeeStatus_AggregateArgs = {
+  distinct_on?: Maybe<Array<AttendeeStatus_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<AttendeeStatus_Order_By>>;
+  where?: Maybe<AttendeeStatus_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootAttendeeStatus_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** subscription root */
+export type Subscription_RootAttendee_AggregateArgs = {
+  distinct_on?: Maybe<Array<Attendee_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Attendee_Order_By>>;
+  where?: Maybe<Attendee_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootAttendee_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -5298,6 +8074,84 @@ export type Subscription_RootFollowedChat_By_PkArgs = {
 
 
 /** subscription root */
+export type Subscription_RootGroupArgs = {
+  distinct_on?: Maybe<Array<Group_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Group_Order_By>>;
+  where?: Maybe<Group_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootGroupAttendeeArgs = {
+  distinct_on?: Maybe<Array<GroupAttendee_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<GroupAttendee_Order_By>>;
+  where?: Maybe<GroupAttendee_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootGroupAttendee_AggregateArgs = {
+  distinct_on?: Maybe<Array<GroupAttendee_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<GroupAttendee_Order_By>>;
+  where?: Maybe<GroupAttendee_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootGroupAttendee_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
+export type Subscription_RootGroupRoleArgs = {
+  distinct_on?: Maybe<Array<GroupRole_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<GroupRole_Order_By>>;
+  where?: Maybe<GroupRole_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootGroupRole_AggregateArgs = {
+  distinct_on?: Maybe<Array<GroupRole_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<GroupRole_Order_By>>;
+  where?: Maybe<GroupRole_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootGroupRole_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
+export type Subscription_RootGroup_AggregateArgs = {
+  distinct_on?: Maybe<Array<Group_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Group_Order_By>>;
+  where?: Maybe<Group_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootGroup_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
 export type Subscription_RootOnlineStatusArgs = {
   distinct_on?: Maybe<Array<OnlineStatus_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -5324,6 +8178,32 @@ export type Subscription_RootOnlineStatus_By_PkArgs = {
 
 
 /** subscription root */
+export type Subscription_RootPermissionArgs = {
+  distinct_on?: Maybe<Array<Permission_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Permission_Order_By>>;
+  where?: Maybe<Permission_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootPermission_AggregateArgs = {
+  distinct_on?: Maybe<Array<Permission_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Permission_Order_By>>;
+  where?: Maybe<Permission_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootPermission_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** subscription root */
 export type Subscription_RootPinnedChatArgs = {
   distinct_on?: Maybe<Array<PinnedChat_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -5345,6 +8225,58 @@ export type Subscription_RootPinnedChat_AggregateArgs = {
 
 /** subscription root */
 export type Subscription_RootPinnedChat_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
+export type Subscription_RootRoleArgs = {
+  distinct_on?: Maybe<Array<Role_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Role_Order_By>>;
+  where?: Maybe<Role_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootRolePermissionArgs = {
+  distinct_on?: Maybe<Array<RolePermission_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<RolePermission_Order_By>>;
+  where?: Maybe<RolePermission_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootRolePermission_AggregateArgs = {
+  distinct_on?: Maybe<Array<RolePermission_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<RolePermission_Order_By>>;
+  where?: Maybe<RolePermission_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootRolePermission_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
+export type Subscription_RootRole_AggregateArgs = {
+  distinct_on?: Maybe<Array<Role_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Role_Order_By>>;
+  where?: Maybe<Role_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootRole_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -5547,6 +8479,19 @@ export type DeleteIsTypingMutation = (
       { __typename?: 'ChatTyper' }
       & Pick<ChatTyper, 'id'>
     )> }
+  )> }
+);
+
+export type ConferenceBySlugQueryVariables = Exact<{
+  slug: Scalars['String'];
+}>;
+
+
+export type ConferenceBySlugQuery = (
+  { __typename?: 'query_root' }
+  & { Conference: Array<(
+    { __typename?: 'Conference' }
+    & Pick<Conference, 'createdBy' | 'id' | 'name' | 'shortName' | 'slug' | 'updatedAt' | 'createdAt'>
   )> }
 );
 
@@ -6029,6 +8974,45 @@ export function useDeleteIsTypingMutation(baseOptions?: Apollo.MutationHookOptio
 export type DeleteIsTypingMutationHookResult = ReturnType<typeof useDeleteIsTypingMutation>;
 export type DeleteIsTypingMutationResult = Apollo.MutationResult<DeleteIsTypingMutation>;
 export type DeleteIsTypingMutationOptions = Apollo.BaseMutationOptions<DeleteIsTypingMutation, DeleteIsTypingMutationVariables>;
+export const ConferenceBySlugDocument = gql`
+    query ConferenceBySlug($slug: String!) {
+  Conference(where: {slug: {_eq: $slug}}, limit: 1) {
+    createdBy
+    id
+    name
+    shortName
+    slug
+    updatedAt
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useConferenceBySlugQuery__
+ *
+ * To run a query within a React component, call `useConferenceBySlugQuery` and pass it any options that fit your needs.
+ * When your component renders, `useConferenceBySlugQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useConferenceBySlugQuery({
+ *   variables: {
+ *      slug: // value for 'slug'
+ *   },
+ * });
+ */
+export function useConferenceBySlugQuery(baseOptions: Apollo.QueryHookOptions<ConferenceBySlugQuery, ConferenceBySlugQueryVariables>) {
+        return Apollo.useQuery<ConferenceBySlugQuery, ConferenceBySlugQueryVariables>(ConferenceBySlugDocument, baseOptions);
+      }
+export function useConferenceBySlugLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ConferenceBySlugQuery, ConferenceBySlugQueryVariables>) {
+          return Apollo.useLazyQuery<ConferenceBySlugQuery, ConferenceBySlugQueryVariables>(ConferenceBySlugDocument, baseOptions);
+        }
+export type ConferenceBySlugQueryHookResult = ReturnType<typeof useConferenceBySlugQuery>;
+export type ConferenceBySlugLazyQueryHookResult = ReturnType<typeof useConferenceBySlugLazyQuery>;
+export type ConferenceBySlugQueryResult = Apollo.QueryResult<ConferenceBySlugQuery, ConferenceBySlugQueryVariables>;
 export const ConferenceTakenDocument = gql`
     query ConferenceTaken($name: String!, $shortName: String!, $slug: String!) {
   Conference(

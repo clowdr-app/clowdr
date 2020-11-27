@@ -11,7 +11,18 @@ export default function ConferenceRoutes({
     return (
         <Switch>
             <Route exact path={`${rootUrl}/`}>
-                <>Conference: {confSlug}</>
+                <>Attend conference: {confSlug}</>
+            </Route>
+            <Route exact path={`${rootUrl}/manage`}>
+                <>
+                    Manage conference: {confSlug}
+                    <ol>
+                        <li>Somehow initialise the static Permissions table</li>
+                        <li>Manage roles page</li>
+                        <li>Manage groups page</li>
+                        <li>Manage attendees page</li>
+                    </ol>
+                </>
             </Route>
         </Switch>
     );

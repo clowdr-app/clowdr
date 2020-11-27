@@ -134,7 +134,7 @@ function (user, context, callback) {
     {
       'x-hasura-default-role': 'user',
       // TODO: Custom logic to decide allowed roles
-      'x-hasura-allowed-roles': ['user'],
+      'x-hasura-allowed-roles': ['user','moderator','organiser'],
       'x-hasura-user-id': user.user_id
     };
   callback(null, user, context);

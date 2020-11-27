@@ -1,0 +1,2 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE TABLE "public"."Group"("id" uuid NOT NULL DEFAULT gen_random_uuid(), "conferenceId" uuid NOT NULL, "name" text NOT NULL, "includeUnauthenticated" boolean NOT NULL DEFAULT false, "accessStart" timestamptz NOT NULL, "accessEnd" timestamptz NOT NULL, PRIMARY KEY ("id") , FOREIGN KEY ("conferenceId") REFERENCES "public"."Conference"("id") ON UPDATE cascade ON DELETE cascade, UNIQUE ("id"), UNIQUE ("conferenceId", "name"), CONSTRAINT "Access start before end" CHECK ("accessStart" < "accessEnd"));

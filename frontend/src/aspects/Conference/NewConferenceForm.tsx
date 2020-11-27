@@ -160,7 +160,7 @@ export default function NewConferenceForm(): JSX.Element {
                                 status: "success",
                             });
                             history.push(
-                                `/conference/${result.data.insert_Conference.returning[0].slug}`
+                                `/conference/${result.data.insert_Conference.returning[0].slug}/manage`
                             );
                         }
                     } else if (ok === false) {

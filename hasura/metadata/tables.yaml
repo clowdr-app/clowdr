@@ -93,8 +93,11 @@
               _and:
               - groupAttendees:
                   attendee:
-                    userId:
-                      _eq: X-Hasura-User-Id
+                    _and:
+                    - userId:
+                        _eq: X-Hasura-User-Id
+                    - statusName:
+                        _eq: ACTIVE
               - groupRoles:
                   role:
                     rolePermissions:
@@ -171,8 +174,11 @@
               _and:
               - groupAttendees:
                   attendee:
-                    userId:
-                      _eq: X-Hasura-User-Id
+                    _and:
+                    - userId:
+                        _eq: X-Hasura-User-Id
+                    - statusName:
+                        _eq: ACTIVE
               - groupRoles:
                   role:
                     rolePermissions:
@@ -196,8 +202,11 @@
                       _eq: true
                   - groupAttendees:
                       attendee:
-                        userId:
-                          _eq: X-Hasura-User-Id
+                        _and:
+                        - userId:
+                            _eq: X-Hasura-User-Id
+                        - statusName:
+                            _eq: ACTIVE
                 - groupRoles:
                     role:
                       rolePermissions:
@@ -216,8 +225,11 @@
                       _eq: true
                   - groupAttendees:
                       attendee:
-                        userId:
-                          _eq: X-Hasura-User-Id
+                        _and:
+                        - userId:
+                            _eq: X-Hasura-User-Id
+                        - statusName:
+                            _eq: ACTIVE
                 - groupRoles:
                     role:
                       rolePermissions:
@@ -237,7 +249,7 @@
           - userId:
               _eq: X-Hasura-User-Id
           - statusName:
-              _ne: BANNED
+              _eq: ACTIVE
         - conference:
             createdBy:
               _eq: X-Hasura-User-Id
@@ -246,8 +258,11 @@
               _and:
               - groupAttendees:
                   attendee:
-                    userId:
-                      _eq: X-Hasura-User-Id
+                    _and:
+                    - userId:
+                        _eq: X-Hasura-User-Id
+                    - statusName:
+                        _eq: ACTIVE
               - groupRoles:
                   role:
                     rolePermissions:
@@ -270,7 +285,7 @@
           - userId:
               _eq: X-Hasura-User-Id
           - statusName:
-              _ne: BANNED
+              _eq: ACTIVE
         - conference:
             createdBy:
               _eq: X-Hasura-User-Id
@@ -279,8 +294,11 @@
               _and:
               - groupAttendees:
                   attendee:
-                    userId:
-                      _eq: X-Hasura-User-Id
+                    _and:
+                    - userId:
+                        _eq: X-Hasura-User-Id
+                    - statusName:
+                        _eq: ACTIVE
               - groupRoles:
                   role:
                     rolePermissions:
@@ -298,6 +316,12 @@
     name: AttendeeStatus
   is_enum: true
   select_permissions:
+  - role: unauthenticated
+    permission:
+      columns:
+      - name
+      - description
+      filter: {}
   - role: user
     permission:
       columns:
@@ -1324,6 +1348,18 @@
       - name
       backend_only: false
   select_permissions:
+  - role: unauthenticated
+    permission:
+      columns:
+      - accessEnd
+      - accessStart
+      - conferenceId
+      - id
+      - includeUnauthenticated
+      - name
+      filter:
+        includeUnauthenticated:
+          _eq: true
   - role: user
     permission:
       columns:
@@ -1334,27 +1370,21 @@
       - conferenceId
       - id
       filter:
-        conference:
-          _or:
-          - createdBy:
-              _eq: X-Hasura-User-Id
-          - activeGroups:
-              _and:
-              - groupAttendees:
+        _or:
+        - conference:
+            _or:
+            - createdBy:
+                _eq: X-Hasura-User-Id
+            - groups:
+                groupAttendees:
                   attendee:
                     _and:
                     - userId:
                         _eq: X-Hasura-User-Id
                     - statusName:
                         _eq: ACTIVE
-              - groupRoles:
-                  role:
-                    rolePermissions:
-                      _or:
-                      - permissionName:
-                          _eq: CONFERENCE_MANAGE_ROLES
-                      - permissionName:
-                          _eq: CONFERENCE_MANAGE_GROUPS
+        - includeUnauthenticated:
+            _eq: true
   update_permissions:
   - role: user
     permission:

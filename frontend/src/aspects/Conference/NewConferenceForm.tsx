@@ -19,7 +19,9 @@ import {
     ConferenceTakenQuery,
     ConferenceTakenQueryVariables,
     useCreateConferenceMutation,
+    useCreateNewConferenceMetaStructureMutation,
 } from "../../generated/graphql";
+import useCurrentUser from "../Users/CurrentUser/useCurrentUser";
 import isValidUUID from "../Utils/isValidUUID";
 
 const _newConferenceQueries = gql`
@@ -70,14 +72,89 @@ const _newConferenceQueries = gql`
             affected_rows
         }
     }
+
+    mutation CreateNewConferenceMetaStructure(
+        $conferenceId: uuid!
+        $attendeeDisplayName: String!
+        $userId: String!
+        $accessStart: timestamptz!
+        $accessEnd: timestamptz!
+    ) {
+        insert_Attendee(
+            objects: [
+                {
+                    displayName: $attendeeDisplayName
+                    userId: $userId
+                    conferenceId: $conferenceId
+                    groupAttendees: {
+                        data: {
+                            group: {
+                                data: {
+                                    conferenceId: $conferenceId
+                                    accessStart: $accessStart
+                                    accessEnd: $accessEnd
+                                    includeUnauthenticated: false
+                                    name: "Organisers"
+                                    groupRoles: {
+                                        data: {
+                                            role: {
+                                                data: {
+                                                    conferenceId: $conferenceId
+                                                    name: "Organiser"
+                                                    rolePermissions: {
+                                                        data: [
+                                                            {
+                                                                permissionName: CONFERENCE_MANAGE_NAME
+                                                            }
+                                                            {
+                                                                permissionName: CONFERENCE_MANAGE_ATTENDEES
+                                                            }
+                                                            {
+                                                                permissionName: CONFERENCE_MODERATE_ATTENDEES
+                                                            }
+                                                            {
+                                                                permissionName: CONFERENCE_VIEW_ACTIVE_ATTENDEES
+                                                            }
+                                                            {
+                                                                permissionName: CONFERENCE_VIEW_BANNED_ATTENDEES
+                                                            }
+                                                            {
+                                                                permissionName: CONFERENCE_VIEW
+                                                            }
+                                                            {
+                                                                permissionName: CONFERENCE_MANAGE_ROLES
+                                                            }
+                                                            {
+                                                                permissionName: CONFERENCE_MANAGE_GROUPS
+                                                            }
+                                                        ]
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        ) {
+            affected_rows
+        }
+    }
 `;
 
 export default function NewConferenceForm(): JSX.Element {
     const toast = useToast();
     const apolloClient = useApolloClient();
     const history = useHistory();
+    const user = useCurrentUser();
 
     const [createConferenceMutation] = useCreateConferenceMutation();
+    const [
+        createNewConferenceMetaStructureMutation,
+    ] = useCreateNewConferenceMetaStructureMutation();
 
     function normaliseName(value: string, trim = true) {
         let result = value?.replace(/\s\s+/g, " ");
@@ -140,7 +217,7 @@ export default function NewConferenceForm(): JSX.Element {
                     demoCode: _values.new_conf_demo_code,
                 };
 
-                let failed = false;
+                let failed: false | string = false;
 
                 const takenResult = await apolloClient.query<
                     ConferenceTakenQuery,
@@ -167,7 +244,7 @@ export default function NewConferenceForm(): JSX.Element {
                                 ok = takenResult.data.Conference[0];
                             }
                         } else {
-                            ok = false;
+                            throw new Error("No 'name taken' data!");
                         }
                     }
 
@@ -190,6 +267,21 @@ export default function NewConferenceForm(): JSX.Element {
                             // failed = true;
                         } else {
                             failed = false;
+                            const conferenceId =
+                                result.data.insert_Conference.returning[0].id;
+
+                            await createNewConferenceMetaStructureMutation({
+                                variables: {
+                                    conferenceId,
+                                    attendeeDisplayName: `${user.user.User[0].firstName} ${user.user.User[0].lastName}`,
+                                    userId: user.user.User[0].id,
+                                    accessStart: new Date().toISOString(),
+                                    accessEnd: new Date(
+                                        "3000-01-01T00:00+00:00"
+                                    ).toISOString(),
+                                },
+                            });
+
                             toast({
                                 title: "Conference created",
                                 status: "success",
@@ -198,8 +290,6 @@ export default function NewConferenceForm(): JSX.Element {
                                 `/conference/${result.data.insert_Conference.returning[0].slug}/manage`
                             );
                         }
-                    } else if (ok === false) {
-                        failed = true;
                     } else {
                         const errors: FormikErrors<{
                             new_conf_name: string;
@@ -220,15 +310,25 @@ export default function NewConferenceForm(): JSX.Element {
                         actions.setErrors(errors);
                     }
                 } catch (e) {
-                    failed = true;
+                    failed = e.toString();
                 }
 
                 if (failed) {
                     toast({
                         title: "Failed to create conference",
                         description:
-                            "An error has occurred while trying to create your conference. Please try again later or contact our tech support.",
+                            `An error has occurred while trying to create your conference.
+Please contact our tech support to investigate the issue shown below: support@clowdr.org`,
                         status: "error",
+                        duration: null,
+                        isClosable: true
+                    });
+                    toast({
+                        title: "Error information",
+                        description: failed,
+                        status: "info",
+                        duration: null,
+                        isClosable: true
                     });
                 }
 

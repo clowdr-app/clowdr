@@ -80,7 +80,7 @@ function IsTypingProvider_IsAuthenticated({
             await upsertIsTyping({
                 variables: {
                     chatId,
-                    updatedAt: new Date().toUTCString(),
+                    updatedAt: new Date().toISOString(),
                 },
             });
         },

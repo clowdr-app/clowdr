@@ -8861,6 +8861,23 @@ export type CreateConferenceMutation = (
   )> }
 );
 
+export type CreateNewConferenceMetaStructureMutationVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  attendeeDisplayName: Scalars['String'];
+  userId: Scalars['String'];
+  accessStart: Scalars['timestamptz'];
+  accessEnd: Scalars['timestamptz'];
+}>;
+
+
+export type CreateNewConferenceMetaStructureMutation = (
+  { __typename?: 'mutation_root' }
+  & { insert_Attendee?: Maybe<(
+    { __typename?: 'Attendee_mutation_response' }
+    & Pick<Attendee_Mutation_Response, 'affected_rows'>
+  )> }
+);
+
 export type EchoQueryVariables = Exact<{
   message: Scalars['String'];
 }>;
@@ -9433,6 +9450,44 @@ export function useCreateConferenceMutation(baseOptions?: Apollo.MutationHookOpt
 export type CreateConferenceMutationHookResult = ReturnType<typeof useCreateConferenceMutation>;
 export type CreateConferenceMutationResult = Apollo.MutationResult<CreateConferenceMutation>;
 export type CreateConferenceMutationOptions = Apollo.BaseMutationOptions<CreateConferenceMutation, CreateConferenceMutationVariables>;
+export const CreateNewConferenceMetaStructureDocument = gql`
+    mutation CreateNewConferenceMetaStructure($conferenceId: uuid!, $attendeeDisplayName: String!, $userId: String!, $accessStart: timestamptz!, $accessEnd: timestamptz!) {
+  insert_Attendee(
+    objects: [{displayName: $attendeeDisplayName, userId: $userId, conferenceId: $conferenceId, groupAttendees: {data: {group: {data: {conferenceId: $conferenceId, accessStart: $accessStart, accessEnd: $accessEnd, includeUnauthenticated: false, name: "Organisers", groupRoles: {data: {role: {data: {conferenceId: $conferenceId, name: "Organiser", rolePermissions: {data: [{permissionName: CONFERENCE_MANAGE_NAME}, {permissionName: CONFERENCE_MANAGE_ATTENDEES}, {permissionName: CONFERENCE_MODERATE_ATTENDEES}, {permissionName: CONFERENCE_VIEW_ACTIVE_ATTENDEES}, {permissionName: CONFERENCE_VIEW_BANNED_ATTENDEES}, {permissionName: CONFERENCE_VIEW}, {permissionName: CONFERENCE_MANAGE_ROLES}, {permissionName: CONFERENCE_MANAGE_GROUPS}]}}}}}}}}}}]
+  ) {
+    affected_rows
+  }
+}
+    `;
+export type CreateNewConferenceMetaStructureMutationFn = Apollo.MutationFunction<CreateNewConferenceMetaStructureMutation, CreateNewConferenceMetaStructureMutationVariables>;
+
+/**
+ * __useCreateNewConferenceMetaStructureMutation__
+ *
+ * To run a mutation, you first call `useCreateNewConferenceMetaStructureMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateNewConferenceMetaStructureMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createNewConferenceMetaStructureMutation, { data, loading, error }] = useCreateNewConferenceMetaStructureMutation({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      attendeeDisplayName: // value for 'attendeeDisplayName'
+ *      userId: // value for 'userId'
+ *      accessStart: // value for 'accessStart'
+ *      accessEnd: // value for 'accessEnd'
+ *   },
+ * });
+ */
+export function useCreateNewConferenceMetaStructureMutation(baseOptions?: Apollo.MutationHookOptions<CreateNewConferenceMetaStructureMutation, CreateNewConferenceMetaStructureMutationVariables>) {
+        return Apollo.useMutation<CreateNewConferenceMetaStructureMutation, CreateNewConferenceMetaStructureMutationVariables>(CreateNewConferenceMetaStructureDocument, baseOptions);
+      }
+export type CreateNewConferenceMetaStructureMutationHookResult = ReturnType<typeof useCreateNewConferenceMetaStructureMutation>;
+export type CreateNewConferenceMetaStructureMutationResult = Apollo.MutationResult<CreateNewConferenceMetaStructureMutation>;
+export type CreateNewConferenceMetaStructureMutationOptions = Apollo.BaseMutationOptions<CreateNewConferenceMetaStructureMutation, CreateNewConferenceMetaStructureMutationVariables>;
 export const EchoDocument = gql`
     query Echo($message: String!) {
   echo(message: $message) {

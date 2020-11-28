@@ -125,7 +125,7 @@ function LastSeenProvider_UserIdExists({
         updateCurrentUserLastSeenMutation({
             variables: {
                 userId,
-                lastSeen: new Date().toUTCString(),
+                lastSeen: new Date().toISOString(),
             },
         });
     }, 60 * 1000);

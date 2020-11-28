@@ -316,19 +316,18 @@ export default function NewConferenceForm(): JSX.Element {
                 if (failed) {
                     toast({
                         title: "Failed to create conference",
-                        description:
-                            `An error has occurred while trying to create your conference.
+                        description: `An error has occurred while trying to create your conference.
 Please contact our tech support to investigate the issue shown below: support@clowdr.org`,
                         status: "error",
                         duration: null,
-                        isClosable: true
+                        isClosable: true,
                     });
                     toast({
                         title: "Error information",
                         description: failed,
                         status: "info",
                         duration: null,
-                        isClosable: true
+                        isClosable: true,
                     });
                 }
 

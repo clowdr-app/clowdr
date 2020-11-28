@@ -17,7 +17,7 @@ function App(_props: AppProps): JSX.Element {
                     height="100%"
                     width="100%"
                     minWidth="300px"
-                    overflowY="auto"
+                    overflow="hidden"
                     // Column-reverse allows us to put the menu last so screen
                     // readers see the page content before the menu
                     direction="column-reverse"
@@ -26,8 +26,9 @@ function App(_props: AppProps): JSX.Element {
                     alignItems="center"
                 >
                     <VStack
+                        overflowX="hidden"
+                        overflowY="auto"
                         spacing={5}
-                        overflow="auto"
                         margin="auto"
                         width="100%"
                     >

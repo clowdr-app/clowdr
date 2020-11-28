@@ -12,9 +12,7 @@ export default function AttendeeLandingPage(): JSX.Element {
     return (
         <>
             <Heading as="h1">Welcome to {conference.shortName}!</Heading>
-            <Text>
-                Welcome to {conference.name}.
-            </Text>
+            <Text>Welcome to {conference.name}.</Text>
         </>
     );
 }

@@ -11,14 +11,13 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import FAIcon from "../../Icons/FAIcon";
+import isValidUUID from "../../Utils/isValidUUID";
 import { setCachedInviteCode } from "./InviteCodeLocalStorage";
 
 export default function InviteCodeInput(props: any): JSX.Element {
     const [inviteCode, setInviteCode] = useState<string>("");
     const inviteCodeButtonRef = useRef<HTMLButtonElement>(null);
-    const isInviteCodeValid = !!inviteCode.match(
-        /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-    );
+    const isInviteCodeValid = isValidUUID(inviteCode);
     const history = useHistory();
 
     useEffect(() => {

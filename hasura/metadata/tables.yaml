@@ -1037,6 +1037,9 @@
   - name: creator
     using:
       foreign_key_constraint_on: createdBy
+  - name: demoCode
+    using:
+      foreign_key_constraint_on: demoCodeId
   array_relationships:
   - name: activeGroups
     using:
@@ -1070,10 +1073,14 @@
   insert_permissions:
   - role: user
     permission:
-      check: {}
+      check:
+        demoCode:
+          usedById:
+            _is_null: true
       set:
         createdBy: x-hasura-User-Id
       columns:
+      - demoCodeId
       - name
       - shortName
       - slug
@@ -1161,6 +1168,44 @@
       filter:
         createdBy:
           _eq: X-Hasura-User-Id
+- table:
+    schema: public
+    name: ConferenceDemoCode
+  object_relationships:
+  - name: conference
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Conference
+        column_mapping:
+          id: demoCodeId
+  - name: usedBy
+    using:
+      foreign_key_constraint_on: usedById
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - createdAt
+      - id
+      - note
+      - updatedAt
+      - usedById
+      filter:
+        usedById:
+          _eq: X-Hasura-User-Id
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - note
+      filter:
+        usedById:
+          _is_null: true
+      check: {}
+      set:
+        usedById: x-hasura-User-Id
 - table:
     schema: public
     name: FlaggedChatMessage

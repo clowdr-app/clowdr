@@ -5,6 +5,9 @@ import {
     FormErrorMessage,
     FormLabel,
     Input,
+    InputGroup,
+    InputRightAddon,
+    Tooltip,
     useToast,
 } from "@chakra-ui/react";
 import { Field, FieldProps, Form, Formik, FormikErrors } from "formik";
@@ -17,6 +20,7 @@ import {
     ConferenceTakenQueryVariables,
     useCreateConferenceMutation,
 } from "../../generated/graphql";
+import isValidUUID from "../Utils/isValidUUID";
 
 const _newConferenceQueries = gql`
     query ConferenceTaken($name: String!, $shortName: String!, $slug: String!) {
@@ -41,14 +45,29 @@ const _newConferenceQueries = gql`
         $name: String!
         $shortName: String!
         $slug: String!
+        $demoCode: uuid!
     ) {
         insert_Conference(
-            objects: [{ name: $name, shortName: $shortName, slug: $slug }]
+            objects: [
+                {
+                    name: $name
+                    shortName: $shortName
+                    slug: $slug
+                    demoCodeId: $demoCode
+                }
+            ]
         ) {
             returning {
                 id
                 slug
             }
+        }
+
+        update_ConferenceDemoCode(
+            where: { id: { _eq: $demoCode } }
+            _set: { note: "Code has been used." }
+        ) {
+            affected_rows
         }
     }
 `;
@@ -90,6 +109,14 @@ export default function NewConferenceForm(): JSX.Element {
         return error;
     }
 
+    function validateDemoCode(value: string | null | undefined) {
+        if (!!value && isValidUUID(value)) {
+            return undefined;
+        } else {
+            return "Not a valid demo code.";
+        }
+    }
+
     function generateSlug(value: string) {
         return value.replace(/\s/g, "").toLowerCase();
     }
@@ -101,6 +128,7 @@ export default function NewConferenceForm(): JSX.Element {
             initialValues={{
                 new_conf_name: "My Awesome Conference " + year,
                 new_conf_short_name: "MAC " + year,
+                new_conf_demo_code: "",
             }}
             onSubmit={async (_values, actions) => {
                 const values = {
@@ -109,6 +137,7 @@ export default function NewConferenceForm(): JSX.Element {
                     slug: generateSlug(
                         normaliseName(_values.new_conf_short_name)
                     ),
+                    demoCode: _values.new_conf_demo_code,
                 };
 
                 let failed = false;
@@ -152,10 +181,13 @@ export default function NewConferenceForm(): JSX.Element {
                             !result.data.insert_Conference ||
                             !result.data.insert_Conference.returning.length
                         ) {
-                            // TODO: Creation could still fail if a private
-                            //       conference exists under the same name etc.
-                            //       How should we handle this?
-                            failed = true;
+                            toast({
+                                title: "Could not create conference",
+                                description:
+                                    "The name or short name may already be taken or your demo code may have already been used.",
+                                status: "error",
+                            });
+                            // failed = true;
                         } else {
                             failed = false;
                             toast({
@@ -263,6 +295,40 @@ export default function NewConferenceForm(): JSX.Element {
                                 />
                                 <FormErrorMessage>
                                     {form.errors.new_conf_short_name}
+                                </FormErrorMessage>
+                            </FormControl>
+                        )}
+                    </Field>
+                    <Field
+                        name="new_conf_demo_code"
+                        validate={validateDemoCode}
+                    >
+                        {({ field, form }: FieldProps<string>) => (
+                            <FormControl
+                                isInvalid={
+                                    !!form.errors.new_conf_demo_code &&
+                                    !!form.touched.new_conf_demo_code
+                                }
+                                isRequired
+                                marginTop="1em"
+                            >
+                                <FormLabel htmlFor="new_conf_demo_code">
+                                    Demo code
+                                </FormLabel>
+                                <InputGroup>
+                                    <Input
+                                        {...field}
+                                        id="new_conf_demo_code"
+                                        placeholder="Demo code"
+                                    />
+                                    <InputRightAddon>
+                                        <Tooltip label="To create a conference, please contact us at demo@clowdr.org to receive your demo code.">
+                                            {"What's this?"}
+                                        </Tooltip>
+                                    </InputRightAddon>
+                                </InputGroup>
+                                <FormErrorMessage>
+                                    {form.errors.new_conf_demo_code}
                                 </FormErrorMessage>
                             </FormControl>
                         )}

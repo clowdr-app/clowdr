@@ -2693,6 +2693,9 @@ export type Conference = {
   createdBy: Scalars['String'];
   /** An object relationship */
   creator: User;
+  /** An object relationship */
+  demoCode: ConferenceDemoCode;
+  demoCodeId: Scalars['uuid'];
   /** An array relationship */
   groups: Array<Group>;
   /** An aggregated array relationship */
@@ -2788,6 +2791,199 @@ export type ConferenceRoles_AggregateArgs = {
   where?: Maybe<Role_Bool_Exp>;
 };
 
+/** columns and relationships of "ConferenceDemoCode" */
+export type ConferenceDemoCode = {
+  __typename?: 'ConferenceDemoCode';
+  /** An object relationship */
+  conference?: Maybe<Conference>;
+  createdAt: Scalars['timestamptz'];
+  id: Scalars['uuid'];
+  note?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['timestamptz'];
+  /** An object relationship */
+  usedBy?: Maybe<User>;
+  usedById?: Maybe<Scalars['String']>;
+};
+
+/** aggregated selection of "ConferenceDemoCode" */
+export type ConferenceDemoCode_Aggregate = {
+  __typename?: 'ConferenceDemoCode_aggregate';
+  aggregate?: Maybe<ConferenceDemoCode_Aggregate_Fields>;
+  nodes: Array<ConferenceDemoCode>;
+};
+
+/** aggregate fields of "ConferenceDemoCode" */
+export type ConferenceDemoCode_Aggregate_Fields = {
+  __typename?: 'ConferenceDemoCode_aggregate_fields';
+  count?: Maybe<Scalars['Int']>;
+  max?: Maybe<ConferenceDemoCode_Max_Fields>;
+  min?: Maybe<ConferenceDemoCode_Min_Fields>;
+};
+
+
+/** aggregate fields of "ConferenceDemoCode" */
+export type ConferenceDemoCode_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<Array<ConferenceDemoCode_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "ConferenceDemoCode" */
+export type ConferenceDemoCode_Aggregate_Order_By = {
+  count?: Maybe<Order_By>;
+  max?: Maybe<ConferenceDemoCode_Max_Order_By>;
+  min?: Maybe<ConferenceDemoCode_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "ConferenceDemoCode" */
+export type ConferenceDemoCode_Arr_Rel_Insert_Input = {
+  data: Array<ConferenceDemoCode_Insert_Input>;
+  on_conflict?: Maybe<ConferenceDemoCode_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "ConferenceDemoCode". All fields are combined with a logical 'AND'. */
+export type ConferenceDemoCode_Bool_Exp = {
+  _and?: Maybe<Array<Maybe<ConferenceDemoCode_Bool_Exp>>>;
+  _not?: Maybe<ConferenceDemoCode_Bool_Exp>;
+  _or?: Maybe<Array<Maybe<ConferenceDemoCode_Bool_Exp>>>;
+  conference?: Maybe<Conference_Bool_Exp>;
+  createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  id?: Maybe<Uuid_Comparison_Exp>;
+  note?: Maybe<String_Comparison_Exp>;
+  updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  usedBy?: Maybe<User_Bool_Exp>;
+  usedById?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "ConferenceDemoCode" */
+export enum ConferenceDemoCode_Constraint {
+  /** unique or primary key constraint */
+  ConferenceDemoCodesPkey = 'ConferenceDemoCodes_pkey'
+}
+
+/** input type for inserting data into table "ConferenceDemoCode" */
+export type ConferenceDemoCode_Insert_Input = {
+  conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  createdAt?: Maybe<Scalars['timestamptz']>;
+  id?: Maybe<Scalars['uuid']>;
+  note?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['timestamptz']>;
+  usedBy?: Maybe<User_Obj_Rel_Insert_Input>;
+  usedById?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type ConferenceDemoCode_Max_Fields = {
+  __typename?: 'ConferenceDemoCode_max_fields';
+  createdAt?: Maybe<Scalars['timestamptz']>;
+  id?: Maybe<Scalars['uuid']>;
+  note?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['timestamptz']>;
+  usedById?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "ConferenceDemoCode" */
+export type ConferenceDemoCode_Max_Order_By = {
+  createdAt?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+  note?: Maybe<Order_By>;
+  updatedAt?: Maybe<Order_By>;
+  usedById?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type ConferenceDemoCode_Min_Fields = {
+  __typename?: 'ConferenceDemoCode_min_fields';
+  createdAt?: Maybe<Scalars['timestamptz']>;
+  id?: Maybe<Scalars['uuid']>;
+  note?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['timestamptz']>;
+  usedById?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "ConferenceDemoCode" */
+export type ConferenceDemoCode_Min_Order_By = {
+  createdAt?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+  note?: Maybe<Order_By>;
+  updatedAt?: Maybe<Order_By>;
+  usedById?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "ConferenceDemoCode" */
+export type ConferenceDemoCode_Mutation_Response = {
+  __typename?: 'ConferenceDemoCode_mutation_response';
+  /** number of affected rows by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  returning: Array<ConferenceDemoCode>;
+};
+
+/** input type for inserting object relation for remote table "ConferenceDemoCode" */
+export type ConferenceDemoCode_Obj_Rel_Insert_Input = {
+  data: ConferenceDemoCode_Insert_Input;
+  on_conflict?: Maybe<ConferenceDemoCode_On_Conflict>;
+};
+
+/** on conflict condition type for table "ConferenceDemoCode" */
+export type ConferenceDemoCode_On_Conflict = {
+  constraint: ConferenceDemoCode_Constraint;
+  update_columns: Array<ConferenceDemoCode_Update_Column>;
+  where?: Maybe<ConferenceDemoCode_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "ConferenceDemoCode" */
+export type ConferenceDemoCode_Order_By = {
+  conference?: Maybe<Conference_Order_By>;
+  createdAt?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+  note?: Maybe<Order_By>;
+  updatedAt?: Maybe<Order_By>;
+  usedBy?: Maybe<User_Order_By>;
+  usedById?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "ConferenceDemoCode" */
+export type ConferenceDemoCode_Pk_Columns_Input = {
+  id: Scalars['uuid'];
+};
+
+/** select columns of table "ConferenceDemoCode" */
+export enum ConferenceDemoCode_Select_Column {
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Note = 'note',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  UsedById = 'usedById'
+}
+
+/** input type for updating data in table "ConferenceDemoCode" */
+export type ConferenceDemoCode_Set_Input = {
+  createdAt?: Maybe<Scalars['timestamptz']>;
+  id?: Maybe<Scalars['uuid']>;
+  note?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['timestamptz']>;
+  usedById?: Maybe<Scalars['String']>;
+};
+
+/** update columns of table "ConferenceDemoCode" */
+export enum ConferenceDemoCode_Update_Column {
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Note = 'note',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  UsedById = 'usedById'
+}
+
 /** aggregated selection of "Conference" */
 export type Conference_Aggregate = {
   __typename?: 'Conference_aggregate';
@@ -2833,6 +3029,8 @@ export type Conference_Bool_Exp = {
   createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   createdBy?: Maybe<String_Comparison_Exp>;
   creator?: Maybe<User_Bool_Exp>;
+  demoCode?: Maybe<ConferenceDemoCode_Bool_Exp>;
+  demoCodeId?: Maybe<Uuid_Comparison_Exp>;
   groups?: Maybe<Group_Bool_Exp>;
   id?: Maybe<Uuid_Comparison_Exp>;
   name?: Maybe<String_Comparison_Exp>;
@@ -2844,6 +3042,8 @@ export type Conference_Bool_Exp = {
 
 /** unique or primary key constraints on table "Conference" */
 export enum Conference_Constraint {
+  /** unique or primary key constraint */
+  ConferenceDemoCodeIdKey = 'Conference_demoCodeId_key',
   /** unique or primary key constraint */
   ConferenceNameKey = 'Conference_name_key',
   /** unique or primary key constraint */
@@ -2861,6 +3061,8 @@ export type Conference_Insert_Input = {
   createdAt?: Maybe<Scalars['timestamptz']>;
   createdBy?: Maybe<Scalars['String']>;
   creator?: Maybe<User_Obj_Rel_Insert_Input>;
+  demoCode?: Maybe<ConferenceDemoCode_Obj_Rel_Insert_Input>;
+  demoCodeId?: Maybe<Scalars['uuid']>;
   groups?: Maybe<Group_Arr_Rel_Insert_Input>;
   id?: Maybe<Scalars['uuid']>;
   name?: Maybe<Scalars['String']>;
@@ -2875,6 +3077,7 @@ export type Conference_Max_Fields = {
   __typename?: 'Conference_max_fields';
   createdAt?: Maybe<Scalars['timestamptz']>;
   createdBy?: Maybe<Scalars['String']>;
+  demoCodeId?: Maybe<Scalars['uuid']>;
   id?: Maybe<Scalars['uuid']>;
   name?: Maybe<Scalars['String']>;
   shortName?: Maybe<Scalars['String']>;
@@ -2886,6 +3089,7 @@ export type Conference_Max_Fields = {
 export type Conference_Max_Order_By = {
   createdAt?: Maybe<Order_By>;
   createdBy?: Maybe<Order_By>;
+  demoCodeId?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   name?: Maybe<Order_By>;
   shortName?: Maybe<Order_By>;
@@ -2898,6 +3102,7 @@ export type Conference_Min_Fields = {
   __typename?: 'Conference_min_fields';
   createdAt?: Maybe<Scalars['timestamptz']>;
   createdBy?: Maybe<Scalars['String']>;
+  demoCodeId?: Maybe<Scalars['uuid']>;
   id?: Maybe<Scalars['uuid']>;
   name?: Maybe<Scalars['String']>;
   shortName?: Maybe<Scalars['String']>;
@@ -2909,6 +3114,7 @@ export type Conference_Min_Fields = {
 export type Conference_Min_Order_By = {
   createdAt?: Maybe<Order_By>;
   createdBy?: Maybe<Order_By>;
+  demoCodeId?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   name?: Maybe<Order_By>;
   shortName?: Maybe<Order_By>;
@@ -2945,6 +3151,8 @@ export type Conference_Order_By = {
   createdAt?: Maybe<Order_By>;
   createdBy?: Maybe<Order_By>;
   creator?: Maybe<User_Order_By>;
+  demoCode?: Maybe<ConferenceDemoCode_Order_By>;
+  demoCodeId?: Maybe<Order_By>;
   groups_aggregate?: Maybe<Group_Aggregate_Order_By>;
   id?: Maybe<Order_By>;
   name?: Maybe<Order_By>;
@@ -2966,6 +3174,8 @@ export enum Conference_Select_Column {
   /** column name */
   CreatedBy = 'createdBy',
   /** column name */
+  DemoCodeId = 'demoCodeId',
+  /** column name */
   Id = 'id',
   /** column name */
   Name = 'name',
@@ -2981,6 +3191,7 @@ export enum Conference_Select_Column {
 export type Conference_Set_Input = {
   createdAt?: Maybe<Scalars['timestamptz']>;
   createdBy?: Maybe<Scalars['String']>;
+  demoCodeId?: Maybe<Scalars['uuid']>;
   id?: Maybe<Scalars['uuid']>;
   name?: Maybe<Scalars['String']>;
   shortName?: Maybe<Scalars['String']>;
@@ -2994,6 +3205,8 @@ export enum Conference_Update_Column {
   CreatedAt = 'createdAt',
   /** column name */
   CreatedBy = 'createdBy',
+  /** column name */
+  DemoCodeId = 'demoCodeId',
   /** column name */
   Id = 'id',
   /** column name */
@@ -5655,6 +5868,10 @@ export type Mutation_Root = {
   delete_Chat_by_pk?: Maybe<Chat>;
   /** delete data from the table: "Conference" */
   delete_Conference?: Maybe<Conference_Mutation_Response>;
+  /** delete data from the table: "ConferenceDemoCode" */
+  delete_ConferenceDemoCode?: Maybe<ConferenceDemoCode_Mutation_Response>;
+  /** delete single row from the table: "ConferenceDemoCode" */
+  delete_ConferenceDemoCode_by_pk?: Maybe<ConferenceDemoCode>;
   /** delete single row from the table: "Conference" */
   delete_Conference_by_pk?: Maybe<Conference>;
   /** delete data from the table: "FlaggedChatMessage" */
@@ -5747,6 +5964,10 @@ export type Mutation_Root = {
   insert_Chat_one?: Maybe<Chat>;
   /** insert data into the table: "Conference" */
   insert_Conference?: Maybe<Conference_Mutation_Response>;
+  /** insert data into the table: "ConferenceDemoCode" */
+  insert_ConferenceDemoCode?: Maybe<ConferenceDemoCode_Mutation_Response>;
+  /** insert a single row into the table: "ConferenceDemoCode" */
+  insert_ConferenceDemoCode_one?: Maybe<ConferenceDemoCode>;
   /** insert a single row into the table: "Conference" */
   insert_Conference_one?: Maybe<Conference>;
   /** insert data into the table: "FlaggedChatMessage" */
@@ -5837,6 +6058,10 @@ export type Mutation_Root = {
   update_Chat_by_pk?: Maybe<Chat>;
   /** update data of the table: "Conference" */
   update_Conference?: Maybe<Conference_Mutation_Response>;
+  /** update data of the table: "ConferenceDemoCode" */
+  update_ConferenceDemoCode?: Maybe<ConferenceDemoCode_Mutation_Response>;
+  /** update single row of the table: "ConferenceDemoCode" */
+  update_ConferenceDemoCode_by_pk?: Maybe<ConferenceDemoCode>;
   /** update single row of the table: "Conference" */
   update_Conference_by_pk?: Maybe<Conference>;
   /** update data of the table: "FlaggedChatMessage" */
@@ -6015,6 +6240,18 @@ export type Mutation_RootDelete_Chat_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootDelete_ConferenceArgs = {
   where: Conference_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_ConferenceDemoCodeArgs = {
+  where: ConferenceDemoCode_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_ConferenceDemoCode_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -6312,6 +6549,20 @@ export type Mutation_RootInsert_Chat_OneArgs = {
 export type Mutation_RootInsert_ConferenceArgs = {
   objects: Array<Conference_Insert_Input>;
   on_conflict?: Maybe<Conference_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_ConferenceDemoCodeArgs = {
+  objects: Array<ConferenceDemoCode_Insert_Input>;
+  on_conflict?: Maybe<ConferenceDemoCode_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_ConferenceDemoCode_OneArgs = {
+  object: ConferenceDemoCode_Insert_Input;
+  on_conflict?: Maybe<ConferenceDemoCode_On_Conflict>;
 };
 
 
@@ -6645,6 +6896,20 @@ export type Mutation_RootUpdate_ConferenceArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_ConferenceDemoCodeArgs = {
+  _set?: Maybe<ConferenceDemoCode_Set_Input>;
+  where: ConferenceDemoCode_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_ConferenceDemoCode_By_PkArgs = {
+  _set?: Maybe<ConferenceDemoCode_Set_Input>;
+  pk_columns: ConferenceDemoCode_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_Conference_By_PkArgs = {
   _set?: Maybe<Conference_Set_Input>;
   pk_columns: Conference_Pk_Columns_Input;
@@ -6889,6 +7154,12 @@ export type Query_Root = {
   Chat_by_pk?: Maybe<Chat>;
   /** fetch data from the table: "Conference" */
   Conference: Array<Conference>;
+  /** fetch data from the table: "ConferenceDemoCode" */
+  ConferenceDemoCode: Array<ConferenceDemoCode>;
+  /** fetch aggregated fields from the table: "ConferenceDemoCode" */
+  ConferenceDemoCode_aggregate: ConferenceDemoCode_Aggregate;
+  /** fetch data from the table: "ConferenceDemoCode" using primary key columns */
+  ConferenceDemoCode_by_pk?: Maybe<ConferenceDemoCode>;
   /** fetch aggregated fields from the table: "Conference" */
   Conference_aggregate: Conference_Aggregate;
   /** fetch data from the table: "Conference" using primary key columns */
@@ -7253,6 +7524,32 @@ export type Query_RootConferenceArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<Array<Conference_Order_By>>;
   where?: Maybe<Conference_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootConferenceDemoCodeArgs = {
+  distinct_on?: Maybe<Array<ConferenceDemoCode_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<ConferenceDemoCode_Order_By>>;
+  where?: Maybe<ConferenceDemoCode_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootConferenceDemoCode_AggregateArgs = {
+  distinct_on?: Maybe<Array<ConferenceDemoCode_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<ConferenceDemoCode_Order_By>>;
+  where?: Maybe<ConferenceDemoCode_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootConferenceDemoCode_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -7638,6 +7935,12 @@ export type Subscription_Root = {
   Chat_by_pk?: Maybe<Chat>;
   /** fetch data from the table: "Conference" */
   Conference: Array<Conference>;
+  /** fetch data from the table: "ConferenceDemoCode" */
+  ConferenceDemoCode: Array<ConferenceDemoCode>;
+  /** fetch aggregated fields from the table: "ConferenceDemoCode" */
+  ConferenceDemoCode_aggregate: ConferenceDemoCode_Aggregate;
+  /** fetch data from the table: "ConferenceDemoCode" using primary key columns */
+  ConferenceDemoCode_by_pk?: Maybe<ConferenceDemoCode>;
   /** fetch aggregated fields from the table: "Conference" */
   Conference_aggregate: Conference_Aggregate;
   /** fetch data from the table: "Conference" using primary key columns */
@@ -8002,6 +8305,32 @@ export type Subscription_RootConferenceArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<Array<Conference_Order_By>>;
   where?: Maybe<Conference_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootConferenceDemoCodeArgs = {
+  distinct_on?: Maybe<Array<ConferenceDemoCode_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<ConferenceDemoCode_Order_By>>;
+  where?: Maybe<ConferenceDemoCode_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootConferenceDemoCode_AggregateArgs = {
+  distinct_on?: Maybe<Array<ConferenceDemoCode_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<ConferenceDemoCode_Order_By>>;
+  where?: Maybe<ConferenceDemoCode_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootConferenceDemoCode_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -8514,6 +8843,7 @@ export type CreateConferenceMutationVariables = Exact<{
   name: Scalars['String'];
   shortName: Scalars['String'];
   slug: Scalars['String'];
+  demoCode: Scalars['uuid'];
 }>;
 
 
@@ -8525,6 +8855,9 @@ export type CreateConferenceMutation = (
       { __typename?: 'Conference' }
       & Pick<Conference, 'id' | 'slug'>
     )> }
+  )>, update_ConferenceDemoCode?: Maybe<(
+    { __typename?: 'ConferenceDemoCode_mutation_response' }
+    & Pick<ConferenceDemoCode_Mutation_Response, 'affected_rows'>
   )> }
 );
 
@@ -9055,12 +9388,20 @@ export type ConferenceTakenQueryHookResult = ReturnType<typeof useConferenceTake
 export type ConferenceTakenLazyQueryHookResult = ReturnType<typeof useConferenceTakenLazyQuery>;
 export type ConferenceTakenQueryResult = Apollo.QueryResult<ConferenceTakenQuery, ConferenceTakenQueryVariables>;
 export const CreateConferenceDocument = gql`
-    mutation CreateConference($name: String!, $shortName: String!, $slug: String!) {
-  insert_Conference(objects: [{name: $name, shortName: $shortName, slug: $slug}]) {
+    mutation CreateConference($name: String!, $shortName: String!, $slug: String!, $demoCode: uuid!) {
+  insert_Conference(
+    objects: [{name: $name, shortName: $shortName, slug: $slug, demoCodeId: $demoCode}]
+  ) {
     returning {
       id
       slug
     }
+  }
+  update_ConferenceDemoCode(
+    where: {id: {_eq: $demoCode}}
+    _set: {note: "Code has been used."}
+  ) {
+    affected_rows
   }
 }
     `;
@@ -9082,6 +9423,7 @@ export type CreateConferenceMutationFn = Apollo.MutationFunction<CreateConferenc
  *      name: // value for 'name'
  *      shortName: // value for 'shortName'
  *      slug: // value for 'slug'
+ *      demoCode: // value for 'demoCode'
  *   },
  * });
  */

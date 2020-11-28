@@ -11,13 +11,9 @@ export default function ManagerLandingPage(): JSX.Element {
     return (
         <>
             <Heading as="h1">Manage {conference.shortName}</Heading>
-            <Text>
-                Manage {conference.name}. Developer todo list:
-            </Text>
+            <Text>Manage {conference.name}. Developer todo list:</Text>
             <ol>
-                <li>
-                    Set up base roles/groups &amp; creator as an attendee
-                </li>
+                <li>Set up base roles/groups &amp; creator as an attendee</li>
                 <li>Manage roles page</li>
                 <li>Manage groups page</li>
                 <li>Manage attendees page</li>

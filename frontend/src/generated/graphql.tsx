@@ -3710,6 +3710,8 @@ export type GroupGroupRoles_AggregateArgs = {
 export type GroupAttendee = {
   __typename?: 'GroupAttendee';
   /** An object relationship */
+  activeGroup?: Maybe<ActiveGroup>;
+  /** An object relationship */
   attendee: Attendee;
   attendeeId: Scalars['uuid'];
   /** An object relationship */
@@ -3758,6 +3760,7 @@ export type GroupAttendee_Bool_Exp = {
   _and?: Maybe<Array<Maybe<GroupAttendee_Bool_Exp>>>;
   _not?: Maybe<GroupAttendee_Bool_Exp>;
   _or?: Maybe<Array<Maybe<GroupAttendee_Bool_Exp>>>;
+  activeGroup?: Maybe<ActiveGroup_Bool_Exp>;
   attendee?: Maybe<Attendee_Bool_Exp>;
   attendeeId?: Maybe<Uuid_Comparison_Exp>;
   group?: Maybe<Group_Bool_Exp>;
@@ -3775,6 +3778,7 @@ export enum GroupAttendee_Constraint {
 
 /** input type for inserting data into table "GroupAttendee" */
 export type GroupAttendee_Insert_Input = {
+  activeGroup?: Maybe<ActiveGroup_Obj_Rel_Insert_Input>;
   attendee?: Maybe<Attendee_Obj_Rel_Insert_Input>;
   attendeeId?: Maybe<Scalars['uuid']>;
   group?: Maybe<Group_Obj_Rel_Insert_Input>;
@@ -3836,6 +3840,7 @@ export type GroupAttendee_On_Conflict = {
 
 /** ordering options when selecting data from "GroupAttendee" */
 export type GroupAttendee_Order_By = {
+  activeGroup?: Maybe<ActiveGroup_Order_By>;
   attendee?: Maybe<Attendee_Order_By>;
   attendeeId?: Maybe<Order_By>;
   group?: Maybe<Group_Order_By>;
@@ -8824,6 +8829,25 @@ export type ConferenceBySlugQuery = (
   )> }
 );
 
+export type UpdateConferenceMutationVariables = Exact<{
+  id: Scalars['uuid'];
+  name?: Maybe<Scalars['String']>;
+  shortName?: Maybe<Scalars['String']>;
+  slug?: Maybe<Scalars['String']>;
+}>;
+
+
+export type UpdateConferenceMutation = (
+  { __typename?: 'mutation_root' }
+  & { update_Conference?: Maybe<(
+    { __typename?: 'Conference_mutation_response' }
+    & { returning: Array<(
+      { __typename?: 'Conference' }
+      & Pick<Conference, 'id' | 'name' | 'shortName' | 'slug'>
+    )> }
+  )> }
+);
+
 export type ConferenceTakenQueryVariables = Exact<{
   name: Scalars['String'];
   shortName: Scalars['String'];
@@ -9363,6 +9387,49 @@ export function useConferenceBySlugLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type ConferenceBySlugQueryHookResult = ReturnType<typeof useConferenceBySlugQuery>;
 export type ConferenceBySlugLazyQueryHookResult = ReturnType<typeof useConferenceBySlugLazyQuery>;
 export type ConferenceBySlugQueryResult = Apollo.QueryResult<ConferenceBySlugQuery, ConferenceBySlugQueryVariables>;
+export const UpdateConferenceDocument = gql`
+    mutation UpdateConference($id: uuid!, $name: String = "", $shortName: String = "", $slug: String = "") {
+  update_Conference(
+    where: {id: {_eq: $id}}
+    _set: {name: $name, shortName: $shortName, slug: $slug}
+  ) {
+    returning {
+      id
+      name
+      shortName
+      slug
+    }
+  }
+}
+    `;
+export type UpdateConferenceMutationFn = Apollo.MutationFunction<UpdateConferenceMutation, UpdateConferenceMutationVariables>;
+
+/**
+ * __useUpdateConferenceMutation__
+ *
+ * To run a mutation, you first call `useUpdateConferenceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateConferenceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateConferenceMutation, { data, loading, error }] = useUpdateConferenceMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      name: // value for 'name'
+ *      shortName: // value for 'shortName'
+ *      slug: // value for 'slug'
+ *   },
+ * });
+ */
+export function useUpdateConferenceMutation(baseOptions?: Apollo.MutationHookOptions<UpdateConferenceMutation, UpdateConferenceMutationVariables>) {
+        return Apollo.useMutation<UpdateConferenceMutation, UpdateConferenceMutationVariables>(UpdateConferenceDocument, baseOptions);
+      }
+export type UpdateConferenceMutationHookResult = ReturnType<typeof useUpdateConferenceMutation>;
+export type UpdateConferenceMutationResult = Apollo.MutationResult<UpdateConferenceMutation>;
+export type UpdateConferenceMutationOptions = Apollo.BaseMutationOptions<UpdateConferenceMutation, UpdateConferenceMutationVariables>;
 export const ConferenceTakenDocument = gql`
     query ConferenceTaken($name: String!, $shortName: String!, $slug: String!) {
   Conference(

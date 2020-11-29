@@ -2,8 +2,11 @@ import { Heading, Link, Text } from "@chakra-ui/react";
 import React from "react";
 import LinkButton from "../Chakra/LinkButton";
 import FAIcon from "../Icons/FAIcon";
+import { useNoPrimaryMenuButtons } from "../Menu/usePrimaryMenuButtons";
 
 export default function LoggedOutPage(): JSX.Element {
+    useNoPrimaryMenuButtons();
+
     return (
         <>
             <FAIcon iconStyle="s" icon="door-open" fontSize="6xl" />

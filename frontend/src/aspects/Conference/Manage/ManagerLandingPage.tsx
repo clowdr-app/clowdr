@@ -2,6 +2,10 @@ import { Flex, Heading, Text } from "@chakra-ui/react";
 import React from "react";
 import LinkButton from "../../Chakra/LinkButton";
 import FAIcon from "../../Icons/FAIcon";
+import {
+    useNoPrimaryMenuButtons,
+    usePrimaryMenuButton,
+} from "../../Menu/usePrimaryMenuButtons";
 import { useConference } from "../ConferenceProvider";
 
 export default function ManagerLandingPage(): JSX.Element {
@@ -33,6 +37,14 @@ export default function ManagerLandingPage(): JSX.Element {
             </LinkButton>
         );
     }
+
+    useNoPrimaryMenuButtons();
+    usePrimaryMenuButton({
+        key: `view-conference-${conference.slug}`,
+        action: `/conference/${conference.slug}`,
+        label: "View conference",
+        text: "View conference",
+    });
 
     // TODO: Check what permissions the user has and thus what management
     //       features to show them

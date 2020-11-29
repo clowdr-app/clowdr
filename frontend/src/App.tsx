@@ -3,6 +3,7 @@ import React from "react";
 import "./App.css";
 import Routing from "./AppRouting";
 import MainMenu from "./aspects/Menu/MainMenu";
+import { PrimaryMenuButtonsProvider } from "./aspects/Menu/usePrimaryMenuButtons";
 import CurrentUserProvider from "./aspects/Users/CurrentUser/CurrentUserProvider";
 import LastSeenProvider from "./aspects/Users/CurrentUser/OnlineStatus/LastSeenProvider";
 
@@ -26,16 +27,18 @@ function App(_props: AppProps): JSX.Element {
                     justifyContent="center"
                     alignItems="center"
                 >
-                    <VStack
-                        overflowX="hidden"
-                        overflowY="auto"
-                        spacing={5}
-                        margin="auto"
-                        width="100%"
-                    >
-                        <Routing />
-                    </VStack>
-                    <MainMenu />
+                    <PrimaryMenuButtonsProvider>
+                        <VStack
+                            overflowX="hidden"
+                            overflowY="auto"
+                            spacing={5}
+                            margin="auto"
+                            width="100%"
+                        >
+                            <Routing />
+                        </VStack>
+                        <MainMenu />
+                    </PrimaryMenuButtonsProvider>
                 </Flex>
             </LastSeenProvider>
         </CurrentUserProvider>

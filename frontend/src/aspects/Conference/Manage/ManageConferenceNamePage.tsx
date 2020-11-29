@@ -1,3 +1,4 @@
+import { gql } from "@apollo/client";
 import {
     Button,
     FormControl,
@@ -18,13 +19,38 @@ import {
     PopoverTrigger,
     Text,
     Tooltip,
+    useToast,
 } from "@chakra-ui/react";
 import { Field, FieldProps, Form, Formik } from "formik";
 import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
+import { useUpdateConferenceMutation } from "../../../generated/graphql";
 import FAIcon from "../../Icons/FAIcon";
 import UnsavedChangesWarning from "../../LeavingPageWarnings/UnsavedChangesWarning";
 import { useConference } from "../ConferenceProvider";
 import { validateName, validateShortName } from "../NewConferenceForm";
+import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
+
+const _updateConferenceQueries = gql`
+    mutation UpdateConference(
+        $id: uuid!
+        $name: String = ""
+        $shortName: String = ""
+        $slug: String = ""
+    ) {
+        update_Conference(
+            where: { id: { _eq: $id } }
+            _set: { name: $name, shortName: $shortName, slug: $slug }
+        ) {
+            returning {
+                id
+                name
+                shortName
+                slug
+            }
+        }
+    }
+`;
 
 export function normaliseSlug(
     value: string | null | undefined
@@ -52,6 +78,11 @@ export default function ManageConferenceNamePage(): JSX.Element {
     const [slugWarningAccepted, setSlugWarningAccepted] = useState<boolean>(
         false
     );
+    const [updateConferenceMutation] = useUpdateConferenceMutation();
+    const toast = useToast();
+    const history = useHistory();
+
+    useDashboardPrimaryMenuButtons();
 
     return (
         <>
@@ -73,9 +104,74 @@ export default function ManageConferenceNamePage(): JSX.Element {
                     slug: conference.slug,
                 }}
                 onSubmit={async (values) => {
-                    // TODO
-                    await new Promise((r) => setTimeout(r, 500));
-                    alert(JSON.stringify(values, null, 2));
+                    try {
+                        const variables = {
+                            id: conference.id,
+                            name: values.name,
+                            shortName: values.shortName,
+                            slug: slugWarningAccepted
+                                ? values.slug
+                                : conference.slug,
+                        };
+                        const result = await updateConferenceMutation({
+                            variables,
+                        });
+
+                        if (result.errors || !result.data) {
+                            throw new Error(JSON.stringify(result.errors));
+                        } else {
+                            toast({
+                                title: "Changes saved",
+                                status: "success",
+                            });
+
+                            if (conference.slug !== variables.slug) {
+                                history.push(
+                                    `/conference/${variables.slug}/manage/name`
+                                );
+                            }
+                        }
+                    } catch (e) {
+                        const msg = e.toString();
+                        let expectedError: false | string = false;
+                        if (msg.includes("Uniqueness violation")) {
+                            if (msg.includes("Conference_name_key")) {
+                                expectedError = "Name already taken.";
+                            } else if (
+                                msg.includes("Conference_shortName_key")
+                            ) {
+                                expectedError = "Short name already taken.";
+                            } else if (msg.includes("Conference_slug_key")) {
+                                expectedError = "URL slug already taken.";
+                            }
+                        }
+
+                        if (expectedError) {
+                            toast({
+                                title: "Failed to save changes",
+                                description: expectedError,
+                                status: "error",
+                                duration: 7000,
+                                isClosable: true,
+                            });
+                        } else {
+                            toast({
+                                title: "Failed to save changes",
+                                description: `An error has occurred while trying to save your changes.
+    Please contact our tech support to investigate the issue shown below: support@clowdr.org`,
+                                status: "error",
+                                duration: null,
+                                isClosable: true,
+                            });
+                            toast({
+                                title: "Error information",
+                                description: msg,
+                                status: "info",
+                                duration: null,
+                                isClosable: true,
+                            });
+                        }
+                    }
                 }}
             >
                 {({ dirty, ...props }) => (
@@ -256,7 +352,7 @@ export default function ManageConferenceNamePage(): JSX.Element {
                                 colorScheme="green"
                                 isLoading={props.isSubmitting}
                                 type="submit"
-                                isDisabled={!props.isValid}
+                                isDisabled={!props.isValid || !dirty}
                             >
                                 Save changes
                             </Button>

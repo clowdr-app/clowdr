@@ -7,6 +7,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import NewConferenceForm from "../../Conference/NewConferenceForm";
+import { useNoPrimaryMenuButtons } from "../../Menu/usePrimaryMenuButtons";
 import InviteCodeInput from "../NewUser/InviteCodeInput";
 
 function NoConferencesView(): JSX.Element {
@@ -56,6 +57,8 @@ function NoConferencesView(): JSX.Element {
 }
 
 export default function CurrentUserPage(): JSX.Element {
+    useNoPrimaryMenuButtons();
+
     // TODO: Choose between the "user has no conferences"
     //       and "user has at least one conference" views
     return <NoConferencesView />;

@@ -1,6 +1,7 @@
 import { HStack, StackDivider } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import useUserId from "../Auth/useUserId";
+import { useNoPrimaryMenuButtons } from "../Menu/usePrimaryMenuButtons";
 import UsersList from "../Users/AllUsers/UsersList";
 import UsersProvider from "../Users/AllUsers/UsersProvider";
 import ChatsList from "./AllChats/ChatsList";
@@ -11,6 +12,8 @@ export default function ChatsPage(props: { chatId?: string }): JSX.Element {
     const userId = useUserId();
     const usersListEl = useMemo(() => <UsersList />, []);
     const chatsListEl = useMemo(() => <ChatsList />, []);
+
+    useNoPrimaryMenuButtons();
 
     if (!userId) {
         return <>Please log in to view this page.</>;

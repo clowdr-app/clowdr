@@ -2,9 +2,12 @@ import { ButtonGroup, Divider, FormControl, Heading } from "@chakra-ui/react";
 import React from "react";
 import LoginButton from "../../Auth/Buttons/LoginButton";
 import SignupButton from "../../Auth/Buttons/SignUpButton";
+import { useNoPrimaryMenuButtons } from "../../Menu/usePrimaryMenuButtons";
 import InviteCodeInput from "./InviteCodeInput";
 
 export default function NewUserLandingPage(): JSX.Element {
+    useNoPrimaryMenuButtons();
+
     return (
         <>
             <Heading

@@ -23331,6 +23331,18 @@
                 "description": "columns and relationships of \"GroupAttendee\"",
                 "fields": [
                     {
+                        "name": "activeGroup",
+                        "description": "An object relationship",
+                        "args": [],
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "ActiveGroup",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
                         "name": "attendee",
                         "description": "An object relationship",
                         "args": [],
@@ -23668,6 +23680,16 @@
                         "defaultValue": null
                     },
                     {
+                        "name": "activeGroup",
+                        "description": null,
+                        "type": {
+                            "kind": "INPUT_OBJECT",
+                            "name": "ActiveGroup_bool_exp",
+                            "ofType": null
+                        },
+                        "defaultValue": null
+                    },
+                    {
                         "name": "attendee",
                         "description": null,
                         "type": {
@@ -23751,6 +23773,16 @@
                 "description": "input type for inserting data into table \"GroupAttendee\"",
                 "fields": null,
                 "inputFields": [
+                    {
+                        "name": "activeGroup",
+                        "description": null,
+                        "type": {
+                            "kind": "INPUT_OBJECT",
+                            "name": "ActiveGroup_obj_rel_insert_input",
+                            "ofType": null
+                        },
+                        "defaultValue": null
+                    },
                     {
                         "name": "attendee",
                         "description": null,
@@ -24131,6 +24163,16 @@
                 "description": "ordering options when selecting data from \"GroupAttendee\"",
                 "fields": null,
                 "inputFields": [
+                    {
+                        "name": "activeGroup",
+                        "description": null,
+                        "type": {
+                            "kind": "INPUT_OBJECT",
+                            "name": "ActiveGroup_order_by",
+                            "ofType": null
+                        },
+                        "defaultValue": null
+                    },
                     {
                         "name": "attendee",
                         "description": null,

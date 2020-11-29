@@ -1,9 +1,12 @@
 import { Heading, Text } from "@chakra-ui/react";
 import React from "react";
 import { useConference } from "../ConferenceProvider";
+import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
 export default function ManageConferencePeoplePage(): JSX.Element {
     const conference = useConference();
+
+    useDashboardPrimaryMenuButtons();
 
     return (
         <>

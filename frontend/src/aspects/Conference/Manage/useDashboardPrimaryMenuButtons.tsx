@@ -2,7 +2,7 @@ import {
     useNoPrimaryMenuButtons,
     usePrimaryMenuButton,
 } from "../../Menu/usePrimaryMenuButtons";
-import { useConference } from "../ConferenceProvider";
+import { useConference } from "../useConference";
 
 export default function useDashboardPrimaryMenuButtons(): void {
     const conference = useConference();

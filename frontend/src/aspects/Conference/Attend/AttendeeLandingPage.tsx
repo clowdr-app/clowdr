@@ -1,7 +1,7 @@
 import { Heading, Text } from "@chakra-ui/react";
 import React from "react";
 import { useNoPrimaryMenuButtons } from "../../Menu/usePrimaryMenuButtons";
-import { useConference } from "../ConferenceProvider";
+import { useConference } from "../useConference";
 
 export default function AttendeeLandingPage(): JSX.Element {
     const conference = useConference();

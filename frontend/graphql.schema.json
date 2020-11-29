@@ -3014,6 +3014,12 @@
                 "interfaces": null,
                 "enumValues": [
                     {
+                        "name": "Attendee_conferenceId_userId_key",
+                        "description": "unique or primary key constraint",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
                         "name": "Attendee_pkey",
                         "description": "unique or primary key constraint",
                         "isDeprecated": false,

@@ -24,6 +24,10 @@ module.exports = {
                 withHooks: true,
                 withHOC: false,
                 withComponent: false,
+                immutableTypes: true,
+                withResultType: true,
+                preResolveTypes: true,
+                addDocBlocks: true,
             },
         },
         "./graphql.schema.json": {

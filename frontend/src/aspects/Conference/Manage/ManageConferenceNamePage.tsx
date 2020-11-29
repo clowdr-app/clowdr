@@ -24,11 +24,16 @@ import {
 import { Field, FieldProps, Form, Formik } from "formik";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-import { useUpdateConferenceMutation } from "../../../generated/graphql";
+import {
+    Permission_Enum,
+    useUpdateConferenceMutation,
+} from "../../../generated/graphql";
+import PageNotFound from "../../Errors/PageNotFound";
 import FAIcon from "../../Icons/FAIcon";
 import UnsavedChangesWarning from "../../LeavingPageWarnings/UnsavedChangesWarning";
-import { useConference } from "../ConferenceProvider";
 import { validateName, validateShortName } from "../NewConferenceForm";
+import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
+import { useConference } from "../useConference";
 import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
 const _updateConferenceQueries = gql`
@@ -85,7 +90,10 @@ export default function ManageConferenceNamePage(): JSX.Element {
     useDashboardPrimaryMenuButtons();
 
     return (
-        <>
+        <RequireAtLeastOnePermissionWrapper
+            permissions={[Permission_Enum.ConferenceManageName]}
+            componentIfDenied={<PageNotFound />}
+        >
             <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
             </Heading>
@@ -360,6 +368,6 @@ export default function ManageConferenceNamePage(): JSX.Element {
                     </>
                 )}
             </Formik>
-        </>
+        </RequireAtLeastOnePermissionWrapper>
     );
 }

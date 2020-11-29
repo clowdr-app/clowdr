@@ -17,191 +17,191 @@ export type Scalars = {
 
 /** columns and relationships of "ActiveGroup" */
 export type ActiveGroup = {
-  __typename?: 'ActiveGroup';
-  accessEnd?: Maybe<Scalars['timestamptz']>;
-  accessStart?: Maybe<Scalars['timestamptz']>;
+  readonly __typename?: 'ActiveGroup';
+  readonly accessEnd?: Maybe<Scalars['timestamptz']>;
+  readonly accessStart?: Maybe<Scalars['timestamptz']>;
   /** An object relationship */
-  conference?: Maybe<Conference>;
-  conferenceId?: Maybe<Scalars['uuid']>;
+  readonly conference?: Maybe<Conference>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
   /** An array relationship */
-  groupAttendees: Array<GroupAttendee>;
+  readonly groupAttendees: ReadonlyArray<GroupAttendee>;
   /** An aggregated array relationship */
-  groupAttendees_aggregate: GroupAttendee_Aggregate;
+  readonly groupAttendees_aggregate: GroupAttendee_Aggregate;
   /** An array relationship */
-  groupRoles: Array<GroupRole>;
+  readonly groupRoles: ReadonlyArray<GroupRole>;
   /** An aggregated array relationship */
-  groupRoles_aggregate: GroupRole_Aggregate;
-  id?: Maybe<Scalars['uuid']>;
-  includeUnauthenticated?: Maybe<Scalars['Boolean']>;
-  name?: Maybe<Scalars['String']>;
+  readonly groupRoles_aggregate: GroupRole_Aggregate;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly includeUnauthenticated?: Maybe<Scalars['Boolean']>;
+  readonly name?: Maybe<Scalars['String']>;
 };
 
 
 /** columns and relationships of "ActiveGroup" */
 export type ActiveGroupGroupAttendeesArgs = {
-  distinct_on?: Maybe<Array<GroupAttendee_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<GroupAttendee_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<GroupAttendee_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<GroupAttendee_Order_By>>;
   where?: Maybe<GroupAttendee_Bool_Exp>;
 };
 
 
 /** columns and relationships of "ActiveGroup" */
 export type ActiveGroupGroupAttendees_AggregateArgs = {
-  distinct_on?: Maybe<Array<GroupAttendee_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<GroupAttendee_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<GroupAttendee_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<GroupAttendee_Order_By>>;
   where?: Maybe<GroupAttendee_Bool_Exp>;
 };
 
 
 /** columns and relationships of "ActiveGroup" */
 export type ActiveGroupGroupRolesArgs = {
-  distinct_on?: Maybe<Array<GroupRole_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<GroupRole_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<GroupRole_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<GroupRole_Order_By>>;
   where?: Maybe<GroupRole_Bool_Exp>;
 };
 
 
 /** columns and relationships of "ActiveGroup" */
 export type ActiveGroupGroupRoles_AggregateArgs = {
-  distinct_on?: Maybe<Array<GroupRole_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<GroupRole_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<GroupRole_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<GroupRole_Order_By>>;
   where?: Maybe<GroupRole_Bool_Exp>;
 };
 
 /** aggregated selection of "ActiveGroup" */
 export type ActiveGroup_Aggregate = {
-  __typename?: 'ActiveGroup_aggregate';
-  aggregate?: Maybe<ActiveGroup_Aggregate_Fields>;
-  nodes: Array<ActiveGroup>;
+  readonly __typename?: 'ActiveGroup_aggregate';
+  readonly aggregate?: Maybe<ActiveGroup_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<ActiveGroup>;
 };
 
 /** aggregate fields of "ActiveGroup" */
 export type ActiveGroup_Aggregate_Fields = {
-  __typename?: 'ActiveGroup_aggregate_fields';
-  count?: Maybe<Scalars['Int']>;
-  max?: Maybe<ActiveGroup_Max_Fields>;
-  min?: Maybe<ActiveGroup_Min_Fields>;
+  readonly __typename?: 'ActiveGroup_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<ActiveGroup_Max_Fields>;
+  readonly min?: Maybe<ActiveGroup_Min_Fields>;
 };
 
 
 /** aggregate fields of "ActiveGroup" */
 export type ActiveGroup_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<Array<ActiveGroup_Select_Column>>;
+  columns?: Maybe<ReadonlyArray<ActiveGroup_Select_Column>>;
   distinct?: Maybe<Scalars['Boolean']>;
 };
 
 /** order by aggregate values of table "ActiveGroup" */
 export type ActiveGroup_Aggregate_Order_By = {
-  count?: Maybe<Order_By>;
-  max?: Maybe<ActiveGroup_Max_Order_By>;
-  min?: Maybe<ActiveGroup_Min_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<ActiveGroup_Max_Order_By>;
+  readonly min?: Maybe<ActiveGroup_Min_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "ActiveGroup" */
 export type ActiveGroup_Arr_Rel_Insert_Input = {
-  data: Array<ActiveGroup_Insert_Input>;
+  readonly data: ReadonlyArray<ActiveGroup_Insert_Input>;
 };
 
 /** Boolean expression to filter rows from the table "ActiveGroup". All fields are combined with a logical 'AND'. */
 export type ActiveGroup_Bool_Exp = {
-  _and?: Maybe<Array<Maybe<ActiveGroup_Bool_Exp>>>;
-  _not?: Maybe<ActiveGroup_Bool_Exp>;
-  _or?: Maybe<Array<Maybe<ActiveGroup_Bool_Exp>>>;
-  accessEnd?: Maybe<Timestamptz_Comparison_Exp>;
-  accessStart?: Maybe<Timestamptz_Comparison_Exp>;
-  conference?: Maybe<Conference_Bool_Exp>;
-  conferenceId?: Maybe<Uuid_Comparison_Exp>;
-  groupAttendees?: Maybe<GroupAttendee_Bool_Exp>;
-  groupRoles?: Maybe<GroupRole_Bool_Exp>;
-  id?: Maybe<Uuid_Comparison_Exp>;
-  includeUnauthenticated?: Maybe<Boolean_Comparison_Exp>;
-  name?: Maybe<String_Comparison_Exp>;
+  readonly _and?: Maybe<ReadonlyArray<Maybe<ActiveGroup_Bool_Exp>>>;
+  readonly _not?: Maybe<ActiveGroup_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<ActiveGroup_Bool_Exp>>>;
+  readonly accessEnd?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly accessStart?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly groupAttendees?: Maybe<GroupAttendee_Bool_Exp>;
+  readonly groupRoles?: Maybe<GroupRole_Bool_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly includeUnauthenticated?: Maybe<Boolean_Comparison_Exp>;
+  readonly name?: Maybe<String_Comparison_Exp>;
 };
 
 /** input type for inserting data into table "ActiveGroup" */
 export type ActiveGroup_Insert_Input = {
-  accessEnd?: Maybe<Scalars['timestamptz']>;
-  accessStart?: Maybe<Scalars['timestamptz']>;
-  conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
-  conferenceId?: Maybe<Scalars['uuid']>;
-  groupAttendees?: Maybe<GroupAttendee_Arr_Rel_Insert_Input>;
-  groupRoles?: Maybe<GroupRole_Arr_Rel_Insert_Input>;
-  id?: Maybe<Scalars['uuid']>;
-  includeUnauthenticated?: Maybe<Scalars['Boolean']>;
-  name?: Maybe<Scalars['String']>;
+  readonly accessEnd?: Maybe<Scalars['timestamptz']>;
+  readonly accessStart?: Maybe<Scalars['timestamptz']>;
+  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly groupAttendees?: Maybe<GroupAttendee_Arr_Rel_Insert_Input>;
+  readonly groupRoles?: Maybe<GroupRole_Arr_Rel_Insert_Input>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly includeUnauthenticated?: Maybe<Scalars['Boolean']>;
+  readonly name?: Maybe<Scalars['String']>;
 };
 
 /** aggregate max on columns */
 export type ActiveGroup_Max_Fields = {
-  __typename?: 'ActiveGroup_max_fields';
-  accessEnd?: Maybe<Scalars['timestamptz']>;
-  accessStart?: Maybe<Scalars['timestamptz']>;
-  conferenceId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  name?: Maybe<Scalars['String']>;
+  readonly __typename?: 'ActiveGroup_max_fields';
+  readonly accessEnd?: Maybe<Scalars['timestamptz']>;
+  readonly accessStart?: Maybe<Scalars['timestamptz']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
 };
 
 /** order by max() on columns of table "ActiveGroup" */
 export type ActiveGroup_Max_Order_By = {
-  accessEnd?: Maybe<Order_By>;
-  accessStart?: Maybe<Order_By>;
-  conferenceId?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  name?: Maybe<Order_By>;
+  readonly accessEnd?: Maybe<Order_By>;
+  readonly accessStart?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type ActiveGroup_Min_Fields = {
-  __typename?: 'ActiveGroup_min_fields';
-  accessEnd?: Maybe<Scalars['timestamptz']>;
-  accessStart?: Maybe<Scalars['timestamptz']>;
-  conferenceId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  name?: Maybe<Scalars['String']>;
+  readonly __typename?: 'ActiveGroup_min_fields';
+  readonly accessEnd?: Maybe<Scalars['timestamptz']>;
+  readonly accessStart?: Maybe<Scalars['timestamptz']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
 };
 
 /** order by min() on columns of table "ActiveGroup" */
 export type ActiveGroup_Min_Order_By = {
-  accessEnd?: Maybe<Order_By>;
-  accessStart?: Maybe<Order_By>;
-  conferenceId?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  name?: Maybe<Order_By>;
+  readonly accessEnd?: Maybe<Order_By>;
+  readonly accessStart?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "ActiveGroup" */
 export type ActiveGroup_Mutation_Response = {
-  __typename?: 'ActiveGroup_mutation_response';
+  readonly __typename?: 'ActiveGroup_mutation_response';
   /** number of affected rows by the mutation */
-  affected_rows: Scalars['Int'];
+  readonly affected_rows: Scalars['Int'];
   /** data of the affected rows by the mutation */
-  returning: Array<ActiveGroup>;
+  readonly returning: ReadonlyArray<ActiveGroup>;
 };
 
 /** input type for inserting object relation for remote table "ActiveGroup" */
 export type ActiveGroup_Obj_Rel_Insert_Input = {
-  data: ActiveGroup_Insert_Input;
+  readonly data: ActiveGroup_Insert_Input;
 };
 
 /** ordering options when selecting data from "ActiveGroup" */
 export type ActiveGroup_Order_By = {
-  accessEnd?: Maybe<Order_By>;
-  accessStart?: Maybe<Order_By>;
-  conference?: Maybe<Conference_Order_By>;
-  conferenceId?: Maybe<Order_By>;
-  groupAttendees_aggregate?: Maybe<GroupAttendee_Aggregate_Order_By>;
-  groupRoles_aggregate?: Maybe<GroupRole_Aggregate_Order_By>;
-  id?: Maybe<Order_By>;
-  includeUnauthenticated?: Maybe<Order_By>;
-  name?: Maybe<Order_By>;
+  readonly accessEnd?: Maybe<Order_By>;
+  readonly accessStart?: Maybe<Order_By>;
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly groupAttendees_aggregate?: Maybe<GroupAttendee_Aggregate_Order_By>;
+  readonly groupRoles_aggregate?: Maybe<GroupRole_Aggregate_Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly includeUnauthenticated?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
 };
 
 /** select columns of table "ActiveGroup" */
@@ -222,103 +222,103 @@ export enum ActiveGroup_Select_Column {
 
 /** input type for updating data in table "ActiveGroup" */
 export type ActiveGroup_Set_Input = {
-  accessEnd?: Maybe<Scalars['timestamptz']>;
-  accessStart?: Maybe<Scalars['timestamptz']>;
-  conferenceId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  includeUnauthenticated?: Maybe<Scalars['Boolean']>;
-  name?: Maybe<Scalars['String']>;
+  readonly accessEnd?: Maybe<Scalars['timestamptz']>;
+  readonly accessStart?: Maybe<Scalars['timestamptz']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly includeUnauthenticated?: Maybe<Scalars['Boolean']>;
+  readonly name?: Maybe<Scalars['String']>;
 };
 
 /** columns and relationships of "Attendee" */
 export type Attendee = {
-  __typename?: 'Attendee';
+  readonly __typename?: 'Attendee';
   /** An object relationship */
-  conference: Conference;
-  conferenceId: Scalars['uuid'];
-  displayName: Scalars['String'];
+  readonly conference: Conference;
+  readonly conferenceId: Scalars['uuid'];
+  readonly displayName: Scalars['String'];
   /** An array relationship */
-  groupAttendees: Array<GroupAttendee>;
+  readonly groupAttendees: ReadonlyArray<GroupAttendee>;
   /** An aggregated array relationship */
-  groupAttendees_aggregate: GroupAttendee_Aggregate;
-  id: Scalars['uuid'];
+  readonly groupAttendees_aggregate: GroupAttendee_Aggregate;
+  readonly id: Scalars['uuid'];
   /** An object relationship */
-  status: AttendeeStatus;
-  statusName: AttendeeStatus_Enum;
+  readonly status: AttendeeStatus;
+  readonly statusName: AttendeeStatus_Enum;
   /** An object relationship */
-  user?: Maybe<User>;
-  userId?: Maybe<Scalars['String']>;
+  readonly user?: Maybe<User>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 
 /** columns and relationships of "Attendee" */
 export type AttendeeGroupAttendeesArgs = {
-  distinct_on?: Maybe<Array<GroupAttendee_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<GroupAttendee_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<GroupAttendee_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<GroupAttendee_Order_By>>;
   where?: Maybe<GroupAttendee_Bool_Exp>;
 };
 
 
 /** columns and relationships of "Attendee" */
 export type AttendeeGroupAttendees_AggregateArgs = {
-  distinct_on?: Maybe<Array<GroupAttendee_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<GroupAttendee_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<GroupAttendee_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<GroupAttendee_Order_By>>;
   where?: Maybe<GroupAttendee_Bool_Exp>;
 };
 
 /** columns and relationships of "AttendeeStatus" */
 export type AttendeeStatus = {
-  __typename?: 'AttendeeStatus';
-  description: Scalars['String'];
-  name: Scalars['String'];
+  readonly __typename?: 'AttendeeStatus';
+  readonly description: Scalars['String'];
+  readonly name: Scalars['String'];
 };
 
 /** aggregated selection of "AttendeeStatus" */
 export type AttendeeStatus_Aggregate = {
-  __typename?: 'AttendeeStatus_aggregate';
-  aggregate?: Maybe<AttendeeStatus_Aggregate_Fields>;
-  nodes: Array<AttendeeStatus>;
+  readonly __typename?: 'AttendeeStatus_aggregate';
+  readonly aggregate?: Maybe<AttendeeStatus_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<AttendeeStatus>;
 };
 
 /** aggregate fields of "AttendeeStatus" */
 export type AttendeeStatus_Aggregate_Fields = {
-  __typename?: 'AttendeeStatus_aggregate_fields';
-  count?: Maybe<Scalars['Int']>;
-  max?: Maybe<AttendeeStatus_Max_Fields>;
-  min?: Maybe<AttendeeStatus_Min_Fields>;
+  readonly __typename?: 'AttendeeStatus_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<AttendeeStatus_Max_Fields>;
+  readonly min?: Maybe<AttendeeStatus_Min_Fields>;
 };
 
 
 /** aggregate fields of "AttendeeStatus" */
 export type AttendeeStatus_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<Array<AttendeeStatus_Select_Column>>;
+  columns?: Maybe<ReadonlyArray<AttendeeStatus_Select_Column>>;
   distinct?: Maybe<Scalars['Boolean']>;
 };
 
 /** order by aggregate values of table "AttendeeStatus" */
 export type AttendeeStatus_Aggregate_Order_By = {
-  count?: Maybe<Order_By>;
-  max?: Maybe<AttendeeStatus_Max_Order_By>;
-  min?: Maybe<AttendeeStatus_Min_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<AttendeeStatus_Max_Order_By>;
+  readonly min?: Maybe<AttendeeStatus_Min_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "AttendeeStatus" */
 export type AttendeeStatus_Arr_Rel_Insert_Input = {
-  data: Array<AttendeeStatus_Insert_Input>;
-  on_conflict?: Maybe<AttendeeStatus_On_Conflict>;
+  readonly data: ReadonlyArray<AttendeeStatus_Insert_Input>;
+  readonly on_conflict?: Maybe<AttendeeStatus_On_Conflict>;
 };
 
 /** Boolean expression to filter rows from the table "AttendeeStatus". All fields are combined with a logical 'AND'. */
 export type AttendeeStatus_Bool_Exp = {
-  _and?: Maybe<Array<Maybe<AttendeeStatus_Bool_Exp>>>;
-  _not?: Maybe<AttendeeStatus_Bool_Exp>;
-  _or?: Maybe<Array<Maybe<AttendeeStatus_Bool_Exp>>>;
-  description?: Maybe<String_Comparison_Exp>;
-  name?: Maybe<String_Comparison_Exp>;
+  readonly _and?: Maybe<ReadonlyArray<Maybe<AttendeeStatus_Bool_Exp>>>;
+  readonly _not?: Maybe<AttendeeStatus_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<AttendeeStatus_Bool_Exp>>>;
+  readonly description?: Maybe<String_Comparison_Exp>;
+  readonly name?: Maybe<String_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "AttendeeStatus" */
@@ -336,76 +336,76 @@ export enum AttendeeStatus_Enum {
 
 /** expression to compare columns of type AttendeeStatus_enum. All fields are combined with logical 'AND'. */
 export type AttendeeStatus_Enum_Comparison_Exp = {
-  _eq?: Maybe<AttendeeStatus_Enum>;
-  _in?: Maybe<Array<AttendeeStatus_Enum>>;
-  _is_null?: Maybe<Scalars['Boolean']>;
-  _neq?: Maybe<AttendeeStatus_Enum>;
-  _nin?: Maybe<Array<AttendeeStatus_Enum>>;
+  readonly _eq?: Maybe<AttendeeStatus_Enum>;
+  readonly _in?: Maybe<ReadonlyArray<AttendeeStatus_Enum>>;
+  readonly _is_null?: Maybe<Scalars['Boolean']>;
+  readonly _neq?: Maybe<AttendeeStatus_Enum>;
+  readonly _nin?: Maybe<ReadonlyArray<AttendeeStatus_Enum>>;
 };
 
 /** input type for inserting data into table "AttendeeStatus" */
 export type AttendeeStatus_Insert_Input = {
-  description?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
 };
 
 /** aggregate max on columns */
 export type AttendeeStatus_Max_Fields = {
-  __typename?: 'AttendeeStatus_max_fields';
-  description?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
+  readonly __typename?: 'AttendeeStatus_max_fields';
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
 };
 
 /** order by max() on columns of table "AttendeeStatus" */
 export type AttendeeStatus_Max_Order_By = {
-  description?: Maybe<Order_By>;
-  name?: Maybe<Order_By>;
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type AttendeeStatus_Min_Fields = {
-  __typename?: 'AttendeeStatus_min_fields';
-  description?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
+  readonly __typename?: 'AttendeeStatus_min_fields';
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
 };
 
 /** order by min() on columns of table "AttendeeStatus" */
 export type AttendeeStatus_Min_Order_By = {
-  description?: Maybe<Order_By>;
-  name?: Maybe<Order_By>;
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "AttendeeStatus" */
 export type AttendeeStatus_Mutation_Response = {
-  __typename?: 'AttendeeStatus_mutation_response';
+  readonly __typename?: 'AttendeeStatus_mutation_response';
   /** number of affected rows by the mutation */
-  affected_rows: Scalars['Int'];
+  readonly affected_rows: Scalars['Int'];
   /** data of the affected rows by the mutation */
-  returning: Array<AttendeeStatus>;
+  readonly returning: ReadonlyArray<AttendeeStatus>;
 };
 
 /** input type for inserting object relation for remote table "AttendeeStatus" */
 export type AttendeeStatus_Obj_Rel_Insert_Input = {
-  data: AttendeeStatus_Insert_Input;
-  on_conflict?: Maybe<AttendeeStatus_On_Conflict>;
+  readonly data: AttendeeStatus_Insert_Input;
+  readonly on_conflict?: Maybe<AttendeeStatus_On_Conflict>;
 };
 
 /** on conflict condition type for table "AttendeeStatus" */
 export type AttendeeStatus_On_Conflict = {
-  constraint: AttendeeStatus_Constraint;
-  update_columns: Array<AttendeeStatus_Update_Column>;
-  where?: Maybe<AttendeeStatus_Bool_Exp>;
+  readonly constraint: AttendeeStatus_Constraint;
+  readonly update_columns: ReadonlyArray<AttendeeStatus_Update_Column>;
+  readonly where?: Maybe<AttendeeStatus_Bool_Exp>;
 };
 
 /** ordering options when selecting data from "AttendeeStatus" */
 export type AttendeeStatus_Order_By = {
-  description?: Maybe<Order_By>;
-  name?: Maybe<Order_By>;
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: "AttendeeStatus" */
 export type AttendeeStatus_Pk_Columns_Input = {
-  name: Scalars['String'];
+  readonly name: Scalars['String'];
 };
 
 /** select columns of table "AttendeeStatus" */
@@ -418,8 +418,8 @@ export enum AttendeeStatus_Select_Column {
 
 /** input type for updating data in table "AttendeeStatus" */
 export type AttendeeStatus_Set_Input = {
-  description?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
 };
 
 /** update columns of table "AttendeeStatus" */
@@ -432,146 +432,148 @@ export enum AttendeeStatus_Update_Column {
 
 /** aggregated selection of "Attendee" */
 export type Attendee_Aggregate = {
-  __typename?: 'Attendee_aggregate';
-  aggregate?: Maybe<Attendee_Aggregate_Fields>;
-  nodes: Array<Attendee>;
+  readonly __typename?: 'Attendee_aggregate';
+  readonly aggregate?: Maybe<Attendee_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Attendee>;
 };
 
 /** aggregate fields of "Attendee" */
 export type Attendee_Aggregate_Fields = {
-  __typename?: 'Attendee_aggregate_fields';
-  count?: Maybe<Scalars['Int']>;
-  max?: Maybe<Attendee_Max_Fields>;
-  min?: Maybe<Attendee_Min_Fields>;
+  readonly __typename?: 'Attendee_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Attendee_Max_Fields>;
+  readonly min?: Maybe<Attendee_Min_Fields>;
 };
 
 
 /** aggregate fields of "Attendee" */
 export type Attendee_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<Array<Attendee_Select_Column>>;
+  columns?: Maybe<ReadonlyArray<Attendee_Select_Column>>;
   distinct?: Maybe<Scalars['Boolean']>;
 };
 
 /** order by aggregate values of table "Attendee" */
 export type Attendee_Aggregate_Order_By = {
-  count?: Maybe<Order_By>;
-  max?: Maybe<Attendee_Max_Order_By>;
-  min?: Maybe<Attendee_Min_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Attendee_Max_Order_By>;
+  readonly min?: Maybe<Attendee_Min_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "Attendee" */
 export type Attendee_Arr_Rel_Insert_Input = {
-  data: Array<Attendee_Insert_Input>;
-  on_conflict?: Maybe<Attendee_On_Conflict>;
+  readonly data: ReadonlyArray<Attendee_Insert_Input>;
+  readonly on_conflict?: Maybe<Attendee_On_Conflict>;
 };
 
 /** Boolean expression to filter rows from the table "Attendee". All fields are combined with a logical 'AND'. */
 export type Attendee_Bool_Exp = {
-  _and?: Maybe<Array<Maybe<Attendee_Bool_Exp>>>;
-  _not?: Maybe<Attendee_Bool_Exp>;
-  _or?: Maybe<Array<Maybe<Attendee_Bool_Exp>>>;
-  conference?: Maybe<Conference_Bool_Exp>;
-  conferenceId?: Maybe<Uuid_Comparison_Exp>;
-  displayName?: Maybe<String_Comparison_Exp>;
-  groupAttendees?: Maybe<GroupAttendee_Bool_Exp>;
-  id?: Maybe<Uuid_Comparison_Exp>;
-  status?: Maybe<AttendeeStatus_Bool_Exp>;
-  statusName?: Maybe<AttendeeStatus_Enum_Comparison_Exp>;
-  user?: Maybe<User_Bool_Exp>;
-  userId?: Maybe<String_Comparison_Exp>;
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Attendee_Bool_Exp>>>;
+  readonly _not?: Maybe<Attendee_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Attendee_Bool_Exp>>>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly displayName?: Maybe<String_Comparison_Exp>;
+  readonly groupAttendees?: Maybe<GroupAttendee_Bool_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly status?: Maybe<AttendeeStatus_Bool_Exp>;
+  readonly statusName?: Maybe<AttendeeStatus_Enum_Comparison_Exp>;
+  readonly user?: Maybe<User_Bool_Exp>;
+  readonly userId?: Maybe<String_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "Attendee" */
 export enum Attendee_Constraint {
+  /** unique or primary key constraint */
+  AttendeeConferenceIdUserIdKey = 'Attendee_conferenceId_userId_key',
   /** unique or primary key constraint */
   AttendeePkey = 'Attendee_pkey'
 }
 
 /** input type for inserting data into table "Attendee" */
 export type Attendee_Insert_Input = {
-  conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
-  conferenceId?: Maybe<Scalars['uuid']>;
-  displayName?: Maybe<Scalars['String']>;
-  groupAttendees?: Maybe<GroupAttendee_Arr_Rel_Insert_Input>;
-  id?: Maybe<Scalars['uuid']>;
-  status?: Maybe<AttendeeStatus_Obj_Rel_Insert_Input>;
-  statusName?: Maybe<AttendeeStatus_Enum>;
-  user?: Maybe<User_Obj_Rel_Insert_Input>;
-  userId?: Maybe<Scalars['String']>;
+  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly displayName?: Maybe<Scalars['String']>;
+  readonly groupAttendees?: Maybe<GroupAttendee_Arr_Rel_Insert_Input>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly status?: Maybe<AttendeeStatus_Obj_Rel_Insert_Input>;
+  readonly statusName?: Maybe<AttendeeStatus_Enum>;
+  readonly user?: Maybe<User_Obj_Rel_Insert_Input>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** aggregate max on columns */
 export type Attendee_Max_Fields = {
-  __typename?: 'Attendee_max_fields';
-  conferenceId?: Maybe<Scalars['uuid']>;
-  displayName?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['uuid']>;
-  userId?: Maybe<Scalars['String']>;
+  readonly __typename?: 'Attendee_max_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly displayName?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** order by max() on columns of table "Attendee" */
 export type Attendee_Max_Order_By = {
-  conferenceId?: Maybe<Order_By>;
-  displayName?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  userId?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly displayName?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly userId?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type Attendee_Min_Fields = {
-  __typename?: 'Attendee_min_fields';
-  conferenceId?: Maybe<Scalars['uuid']>;
-  displayName?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['uuid']>;
-  userId?: Maybe<Scalars['String']>;
+  readonly __typename?: 'Attendee_min_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly displayName?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** order by min() on columns of table "Attendee" */
 export type Attendee_Min_Order_By = {
-  conferenceId?: Maybe<Order_By>;
-  displayName?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  userId?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly displayName?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly userId?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "Attendee" */
 export type Attendee_Mutation_Response = {
-  __typename?: 'Attendee_mutation_response';
+  readonly __typename?: 'Attendee_mutation_response';
   /** number of affected rows by the mutation */
-  affected_rows: Scalars['Int'];
+  readonly affected_rows: Scalars['Int'];
   /** data of the affected rows by the mutation */
-  returning: Array<Attendee>;
+  readonly returning: ReadonlyArray<Attendee>;
 };
 
 /** input type for inserting object relation for remote table "Attendee" */
 export type Attendee_Obj_Rel_Insert_Input = {
-  data: Attendee_Insert_Input;
-  on_conflict?: Maybe<Attendee_On_Conflict>;
+  readonly data: Attendee_Insert_Input;
+  readonly on_conflict?: Maybe<Attendee_On_Conflict>;
 };
 
 /** on conflict condition type for table "Attendee" */
 export type Attendee_On_Conflict = {
-  constraint: Attendee_Constraint;
-  update_columns: Array<Attendee_Update_Column>;
-  where?: Maybe<Attendee_Bool_Exp>;
+  readonly constraint: Attendee_Constraint;
+  readonly update_columns: ReadonlyArray<Attendee_Update_Column>;
+  readonly where?: Maybe<Attendee_Bool_Exp>;
 };
 
 /** ordering options when selecting data from "Attendee" */
 export type Attendee_Order_By = {
-  conference?: Maybe<Conference_Order_By>;
-  conferenceId?: Maybe<Order_By>;
-  displayName?: Maybe<Order_By>;
-  groupAttendees_aggregate?: Maybe<GroupAttendee_Aggregate_Order_By>;
-  id?: Maybe<Order_By>;
-  status?: Maybe<AttendeeStatus_Order_By>;
-  statusName?: Maybe<Order_By>;
-  user?: Maybe<User_Order_By>;
-  userId?: Maybe<Order_By>;
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly displayName?: Maybe<Order_By>;
+  readonly groupAttendees_aggregate?: Maybe<GroupAttendee_Aggregate_Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly status?: Maybe<AttendeeStatus_Order_By>;
+  readonly statusName?: Maybe<Order_By>;
+  readonly user?: Maybe<User_Order_By>;
+  readonly userId?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: "Attendee" */
 export type Attendee_Pk_Columns_Input = {
-  id: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
 };
 
 /** select columns of table "Attendee" */
@@ -590,11 +592,11 @@ export enum Attendee_Select_Column {
 
 /** input type for updating data in table "Attendee" */
 export type Attendee_Set_Input = {
-  conferenceId?: Maybe<Scalars['uuid']>;
-  displayName?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['uuid']>;
-  statusName?: Maybe<AttendeeStatus_Enum>;
-  userId?: Maybe<Scalars['String']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly displayName?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly statusName?: Maybe<AttendeeStatus_Enum>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** update columns of table "Attendee" */
@@ -613,240 +615,240 @@ export enum Attendee_Update_Column {
 
 /** expression to compare columns of type Boolean. All fields are combined with logical 'AND'. */
 export type Boolean_Comparison_Exp = {
-  _eq?: Maybe<Scalars['Boolean']>;
-  _gt?: Maybe<Scalars['Boolean']>;
-  _gte?: Maybe<Scalars['Boolean']>;
-  _in?: Maybe<Array<Scalars['Boolean']>>;
-  _is_null?: Maybe<Scalars['Boolean']>;
-  _lt?: Maybe<Scalars['Boolean']>;
-  _lte?: Maybe<Scalars['Boolean']>;
-  _neq?: Maybe<Scalars['Boolean']>;
-  _nin?: Maybe<Array<Scalars['Boolean']>>;
+  readonly _eq?: Maybe<Scalars['Boolean']>;
+  readonly _gt?: Maybe<Scalars['Boolean']>;
+  readonly _gte?: Maybe<Scalars['Boolean']>;
+  readonly _in?: Maybe<ReadonlyArray<Scalars['Boolean']>>;
+  readonly _is_null?: Maybe<Scalars['Boolean']>;
+  readonly _lt?: Maybe<Scalars['Boolean']>;
+  readonly _lte?: Maybe<Scalars['Boolean']>;
+  readonly _neq?: Maybe<Scalars['Boolean']>;
+  readonly _nin?: Maybe<ReadonlyArray<Scalars['Boolean']>>;
 };
 
 /** columns and relationships of "Chat" */
 export type Chat = {
-  __typename?: 'Chat';
-  createdAt: Scalars['timestamptz'];
+  readonly __typename?: 'Chat';
+  readonly createdAt: Scalars['timestamptz'];
   /** An object relationship */
-  creator: User;
-  creatorId: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
+  readonly creator: User;
+  readonly creatorId: Scalars['String'];
+  readonly description?: Maybe<Scalars['String']>;
   /** An array relationship */
-  flaggedMessages: Array<FlaggedChatMessage>;
+  readonly flaggedMessages: ReadonlyArray<FlaggedChatMessage>;
   /** An aggregated array relationship */
-  flaggedMessages_aggregate: FlaggedChatMessage_Aggregate;
-  id: Scalars['uuid'];
-  isAutoNotify: Scalars['Boolean'];
-  isAutoPin: Scalars['Boolean'];
+  readonly flaggedMessages_aggregate: FlaggedChatMessage_Aggregate;
+  readonly id: Scalars['uuid'];
+  readonly isAutoNotify: Scalars['Boolean'];
+  readonly isAutoPin: Scalars['Boolean'];
   /** An array relationship */
-  members: Array<ChatMember>;
+  readonly members: ReadonlyArray<ChatMember>;
   /** An aggregated array relationship */
-  members_aggregate: ChatMember_Aggregate;
+  readonly members_aggregate: ChatMember_Aggregate;
   /** An array relationship */
-  messages: Array<ChatMessage>;
+  readonly messages: ReadonlyArray<ChatMessage>;
   /** An aggregated array relationship */
-  messages_aggregate: ChatMessage_Aggregate;
-  mode: Scalars['String'];
+  readonly messages_aggregate: ChatMessage_Aggregate;
+  readonly mode: Scalars['String'];
   /** An array relationship */
-  moderators: Array<ChatModerator>;
+  readonly moderators: ReadonlyArray<ChatModerator>;
   /** An aggregated array relationship */
-  moderators_aggregate: ChatModerator_Aggregate;
-  name: Scalars['String'];
+  readonly moderators_aggregate: ChatModerator_Aggregate;
+  readonly name: Scalars['String'];
   /** An array relationship */
-  typers: Array<ChatTyper>;
+  readonly typers: ReadonlyArray<ChatTyper>;
   /** An aggregated array relationship */
-  typers_aggregate: ChatTyper_Aggregate;
-  updatedAt: Scalars['timestamptz'];
+  readonly typers_aggregate: ChatTyper_Aggregate;
+  readonly updatedAt: Scalars['timestamptz'];
   /** An array relationship */
-  viewers: Array<ChatViewer>;
+  readonly viewers: ReadonlyArray<ChatViewer>;
   /** An aggregated array relationship */
-  viewers_aggregate: ChatViewer_Aggregate;
+  readonly viewers_aggregate: ChatViewer_Aggregate;
 };
 
 
 /** columns and relationships of "Chat" */
 export type ChatFlaggedMessagesArgs = {
-  distinct_on?: Maybe<Array<FlaggedChatMessage_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<FlaggedChatMessage_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<FlaggedChatMessage_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<FlaggedChatMessage_Order_By>>;
   where?: Maybe<FlaggedChatMessage_Bool_Exp>;
 };
 
 
 /** columns and relationships of "Chat" */
 export type ChatFlaggedMessages_AggregateArgs = {
-  distinct_on?: Maybe<Array<FlaggedChatMessage_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<FlaggedChatMessage_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<FlaggedChatMessage_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<FlaggedChatMessage_Order_By>>;
   where?: Maybe<FlaggedChatMessage_Bool_Exp>;
 };
 
 
 /** columns and relationships of "Chat" */
 export type ChatMembersArgs = {
-  distinct_on?: Maybe<Array<ChatMember_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatMember_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatMember_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatMember_Order_By>>;
   where?: Maybe<ChatMember_Bool_Exp>;
 };
 
 
 /** columns and relationships of "Chat" */
 export type ChatMembers_AggregateArgs = {
-  distinct_on?: Maybe<Array<ChatMember_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatMember_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatMember_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatMember_Order_By>>;
   where?: Maybe<ChatMember_Bool_Exp>;
 };
 
 
 /** columns and relationships of "Chat" */
 export type ChatMessagesArgs = {
-  distinct_on?: Maybe<Array<ChatMessage_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatMessage_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatMessage_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatMessage_Order_By>>;
   where?: Maybe<ChatMessage_Bool_Exp>;
 };
 
 
 /** columns and relationships of "Chat" */
 export type ChatMessages_AggregateArgs = {
-  distinct_on?: Maybe<Array<ChatMessage_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatMessage_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatMessage_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatMessage_Order_By>>;
   where?: Maybe<ChatMessage_Bool_Exp>;
 };
 
 
 /** columns and relationships of "Chat" */
 export type ChatModeratorsArgs = {
-  distinct_on?: Maybe<Array<ChatModerator_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatModerator_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatModerator_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatModerator_Order_By>>;
   where?: Maybe<ChatModerator_Bool_Exp>;
 };
 
 
 /** columns and relationships of "Chat" */
 export type ChatModerators_AggregateArgs = {
-  distinct_on?: Maybe<Array<ChatModerator_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatModerator_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatModerator_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatModerator_Order_By>>;
   where?: Maybe<ChatModerator_Bool_Exp>;
 };
 
 
 /** columns and relationships of "Chat" */
 export type ChatTypersArgs = {
-  distinct_on?: Maybe<Array<ChatTyper_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatTyper_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatTyper_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatTyper_Order_By>>;
   where?: Maybe<ChatTyper_Bool_Exp>;
 };
 
 
 /** columns and relationships of "Chat" */
 export type ChatTypers_AggregateArgs = {
-  distinct_on?: Maybe<Array<ChatTyper_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatTyper_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatTyper_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatTyper_Order_By>>;
   where?: Maybe<ChatTyper_Bool_Exp>;
 };
 
 
 /** columns and relationships of "Chat" */
 export type ChatViewersArgs = {
-  distinct_on?: Maybe<Array<ChatViewer_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatViewer_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatViewer_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatViewer_Order_By>>;
   where?: Maybe<ChatViewer_Bool_Exp>;
 };
 
 
 /** columns and relationships of "Chat" */
 export type ChatViewers_AggregateArgs = {
-  distinct_on?: Maybe<Array<ChatViewer_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatViewer_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatViewer_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatViewer_Order_By>>;
   where?: Maybe<ChatViewer_Bool_Exp>;
 };
 
 /** columns and relationships of "ChatMember" */
 export type ChatMember = {
-  __typename?: 'ChatMember';
+  readonly __typename?: 'ChatMember';
   /** An object relationship */
-  chat: Chat;
-  chatId: Scalars['uuid'];
-  createdAt: Scalars['timestamptz'];
-  id: Scalars['uuid'];
-  invitationAcceptedAt?: Maybe<Scalars['timestamptz']>;
-  updatedAt: Scalars['timestamptz'];
+  readonly chat: Chat;
+  readonly chatId: Scalars['uuid'];
+  readonly createdAt: Scalars['timestamptz'];
+  readonly id: Scalars['uuid'];
+  readonly invitationAcceptedAt?: Maybe<Scalars['timestamptz']>;
+  readonly updatedAt: Scalars['timestamptz'];
   /** An object relationship */
-  user: User;
-  userId: Scalars['String'];
+  readonly user: User;
+  readonly userId: Scalars['String'];
 };
 
 /** aggregated selection of "ChatMember" */
 export type ChatMember_Aggregate = {
-  __typename?: 'ChatMember_aggregate';
-  aggregate?: Maybe<ChatMember_Aggregate_Fields>;
-  nodes: Array<ChatMember>;
+  readonly __typename?: 'ChatMember_aggregate';
+  readonly aggregate?: Maybe<ChatMember_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<ChatMember>;
 };
 
 /** aggregate fields of "ChatMember" */
 export type ChatMember_Aggregate_Fields = {
-  __typename?: 'ChatMember_aggregate_fields';
-  count?: Maybe<Scalars['Int']>;
-  max?: Maybe<ChatMember_Max_Fields>;
-  min?: Maybe<ChatMember_Min_Fields>;
+  readonly __typename?: 'ChatMember_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<ChatMember_Max_Fields>;
+  readonly min?: Maybe<ChatMember_Min_Fields>;
 };
 
 
 /** aggregate fields of "ChatMember" */
 export type ChatMember_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<Array<ChatMember_Select_Column>>;
+  columns?: Maybe<ReadonlyArray<ChatMember_Select_Column>>;
   distinct?: Maybe<Scalars['Boolean']>;
 };
 
 /** order by aggregate values of table "ChatMember" */
 export type ChatMember_Aggregate_Order_By = {
-  count?: Maybe<Order_By>;
-  max?: Maybe<ChatMember_Max_Order_By>;
-  min?: Maybe<ChatMember_Min_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<ChatMember_Max_Order_By>;
+  readonly min?: Maybe<ChatMember_Min_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "ChatMember" */
 export type ChatMember_Arr_Rel_Insert_Input = {
-  data: Array<ChatMember_Insert_Input>;
-  on_conflict?: Maybe<ChatMember_On_Conflict>;
+  readonly data: ReadonlyArray<ChatMember_Insert_Input>;
+  readonly on_conflict?: Maybe<ChatMember_On_Conflict>;
 };
 
 /** Boolean expression to filter rows from the table "ChatMember". All fields are combined with a logical 'AND'. */
 export type ChatMember_Bool_Exp = {
-  _and?: Maybe<Array<Maybe<ChatMember_Bool_Exp>>>;
-  _not?: Maybe<ChatMember_Bool_Exp>;
-  _or?: Maybe<Array<Maybe<ChatMember_Bool_Exp>>>;
-  chat?: Maybe<Chat_Bool_Exp>;
-  chatId?: Maybe<Uuid_Comparison_Exp>;
-  createdAt?: Maybe<Timestamptz_Comparison_Exp>;
-  id?: Maybe<Uuid_Comparison_Exp>;
-  invitationAcceptedAt?: Maybe<Timestamptz_Comparison_Exp>;
-  updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
-  user?: Maybe<User_Bool_Exp>;
-  userId?: Maybe<String_Comparison_Exp>;
+  readonly _and?: Maybe<ReadonlyArray<Maybe<ChatMember_Bool_Exp>>>;
+  readonly _not?: Maybe<ChatMember_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<ChatMember_Bool_Exp>>>;
+  readonly chat?: Maybe<Chat_Bool_Exp>;
+  readonly chatId?: Maybe<Uuid_Comparison_Exp>;
+  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly invitationAcceptedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly user?: Maybe<User_Bool_Exp>;
+  readonly userId?: Maybe<String_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "ChatMember" */
@@ -859,95 +861,95 @@ export enum ChatMember_Constraint {
 
 /** input type for inserting data into table "ChatMember" */
 export type ChatMember_Insert_Input = {
-  chat?: Maybe<Chat_Obj_Rel_Insert_Input>;
-  chatId?: Maybe<Scalars['uuid']>;
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  id?: Maybe<Scalars['uuid']>;
-  invitationAcceptedAt?: Maybe<Scalars['timestamptz']>;
-  updatedAt?: Maybe<Scalars['timestamptz']>;
-  user?: Maybe<User_Obj_Rel_Insert_Input>;
-  userId?: Maybe<Scalars['String']>;
+  readonly chat?: Maybe<Chat_Obj_Rel_Insert_Input>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly invitationAcceptedAt?: Maybe<Scalars['timestamptz']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly user?: Maybe<User_Obj_Rel_Insert_Input>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** aggregate max on columns */
 export type ChatMember_Max_Fields = {
-  __typename?: 'ChatMember_max_fields';
-  chatId?: Maybe<Scalars['uuid']>;
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  id?: Maybe<Scalars['uuid']>;
-  invitationAcceptedAt?: Maybe<Scalars['timestamptz']>;
-  updatedAt?: Maybe<Scalars['timestamptz']>;
-  userId?: Maybe<Scalars['String']>;
+  readonly __typename?: 'ChatMember_max_fields';
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly invitationAcceptedAt?: Maybe<Scalars['timestamptz']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** order by max() on columns of table "ChatMember" */
 export type ChatMember_Max_Order_By = {
-  chatId?: Maybe<Order_By>;
-  createdAt?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  invitationAcceptedAt?: Maybe<Order_By>;
-  updatedAt?: Maybe<Order_By>;
-  userId?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly invitationAcceptedAt?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly userId?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type ChatMember_Min_Fields = {
-  __typename?: 'ChatMember_min_fields';
-  chatId?: Maybe<Scalars['uuid']>;
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  id?: Maybe<Scalars['uuid']>;
-  invitationAcceptedAt?: Maybe<Scalars['timestamptz']>;
-  updatedAt?: Maybe<Scalars['timestamptz']>;
-  userId?: Maybe<Scalars['String']>;
+  readonly __typename?: 'ChatMember_min_fields';
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly invitationAcceptedAt?: Maybe<Scalars['timestamptz']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** order by min() on columns of table "ChatMember" */
 export type ChatMember_Min_Order_By = {
-  chatId?: Maybe<Order_By>;
-  createdAt?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  invitationAcceptedAt?: Maybe<Order_By>;
-  updatedAt?: Maybe<Order_By>;
-  userId?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly invitationAcceptedAt?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly userId?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "ChatMember" */
 export type ChatMember_Mutation_Response = {
-  __typename?: 'ChatMember_mutation_response';
+  readonly __typename?: 'ChatMember_mutation_response';
   /** number of affected rows by the mutation */
-  affected_rows: Scalars['Int'];
+  readonly affected_rows: Scalars['Int'];
   /** data of the affected rows by the mutation */
-  returning: Array<ChatMember>;
+  readonly returning: ReadonlyArray<ChatMember>;
 };
 
 /** input type for inserting object relation for remote table "ChatMember" */
 export type ChatMember_Obj_Rel_Insert_Input = {
-  data: ChatMember_Insert_Input;
-  on_conflict?: Maybe<ChatMember_On_Conflict>;
+  readonly data: ChatMember_Insert_Input;
+  readonly on_conflict?: Maybe<ChatMember_On_Conflict>;
 };
 
 /** on conflict condition type for table "ChatMember" */
 export type ChatMember_On_Conflict = {
-  constraint: ChatMember_Constraint;
-  update_columns: Array<ChatMember_Update_Column>;
-  where?: Maybe<ChatMember_Bool_Exp>;
+  readonly constraint: ChatMember_Constraint;
+  readonly update_columns: ReadonlyArray<ChatMember_Update_Column>;
+  readonly where?: Maybe<ChatMember_Bool_Exp>;
 };
 
 /** ordering options when selecting data from "ChatMember" */
 export type ChatMember_Order_By = {
-  chat?: Maybe<Chat_Order_By>;
-  chatId?: Maybe<Order_By>;
-  createdAt?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  invitationAcceptedAt?: Maybe<Order_By>;
-  updatedAt?: Maybe<Order_By>;
-  user?: Maybe<User_Order_By>;
-  userId?: Maybe<Order_By>;
+  readonly chat?: Maybe<Chat_Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly invitationAcceptedAt?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly user?: Maybe<User_Order_By>;
+  readonly userId?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: "ChatMember" */
 export type ChatMember_Pk_Columns_Input = {
-  id: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
 };
 
 /** select columns of table "ChatMember" */
@@ -968,12 +970,12 @@ export enum ChatMember_Select_Column {
 
 /** input type for updating data in table "ChatMember" */
 export type ChatMember_Set_Input = {
-  chatId?: Maybe<Scalars['uuid']>;
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  id?: Maybe<Scalars['uuid']>;
-  invitationAcceptedAt?: Maybe<Scalars['timestamptz']>;
-  updatedAt?: Maybe<Scalars['timestamptz']>;
-  userId?: Maybe<Scalars['String']>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly invitationAcceptedAt?: Maybe<Scalars['timestamptz']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** update columns of table "ChatMember" */
@@ -994,27 +996,27 @@ export enum ChatMember_Update_Column {
 
 /** columns and relationships of "ChatMessage" */
 export type ChatMessage = {
-  __typename?: 'ChatMessage';
+  readonly __typename?: 'ChatMessage';
   /** An object relationship */
-  chat: Chat;
-  chatId: Scalars['uuid'];
-  content: Scalars['jsonb'];
-  createdAt: Scalars['timestamptz'];
+  readonly chat: Chat;
+  readonly chatId: Scalars['uuid'];
+  readonly content: Scalars['jsonb'];
+  readonly createdAt: Scalars['timestamptz'];
   /** An array relationship */
-  flags: Array<FlaggedChatMessage>;
+  readonly flags: ReadonlyArray<FlaggedChatMessage>;
   /** An aggregated array relationship */
-  flags_aggregate: FlaggedChatMessage_Aggregate;
-  id: Scalars['uuid'];
-  index: Scalars['Int'];
-  isHighlighted: Scalars['Boolean'];
+  readonly flags_aggregate: FlaggedChatMessage_Aggregate;
+  readonly id: Scalars['uuid'];
+  readonly index: Scalars['Int'];
+  readonly isHighlighted: Scalars['Boolean'];
   /** An array relationship */
-  reactions: Array<ChatReaction>;
+  readonly reactions: ReadonlyArray<ChatReaction>;
   /** An aggregated array relationship */
-  reactions_aggregate: ChatReaction_Aggregate;
+  readonly reactions_aggregate: ChatReaction_Aggregate;
   /** An object relationship */
-  sender: User;
-  senderId: Scalars['String'];
-  updatedAt: Scalars['timestamptz'];
+  readonly sender: User;
+  readonly senderId: Scalars['String'];
+  readonly updatedAt: Scalars['timestamptz'];
 };
 
 
@@ -1026,127 +1028,127 @@ export type ChatMessageContentArgs = {
 
 /** columns and relationships of "ChatMessage" */
 export type ChatMessageFlagsArgs = {
-  distinct_on?: Maybe<Array<FlaggedChatMessage_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<FlaggedChatMessage_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<FlaggedChatMessage_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<FlaggedChatMessage_Order_By>>;
   where?: Maybe<FlaggedChatMessage_Bool_Exp>;
 };
 
 
 /** columns and relationships of "ChatMessage" */
 export type ChatMessageFlags_AggregateArgs = {
-  distinct_on?: Maybe<Array<FlaggedChatMessage_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<FlaggedChatMessage_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<FlaggedChatMessage_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<FlaggedChatMessage_Order_By>>;
   where?: Maybe<FlaggedChatMessage_Bool_Exp>;
 };
 
 
 /** columns and relationships of "ChatMessage" */
 export type ChatMessageReactionsArgs = {
-  distinct_on?: Maybe<Array<ChatReaction_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatReaction_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatReaction_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatReaction_Order_By>>;
   where?: Maybe<ChatReaction_Bool_Exp>;
 };
 
 
 /** columns and relationships of "ChatMessage" */
 export type ChatMessageReactions_AggregateArgs = {
-  distinct_on?: Maybe<Array<ChatReaction_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatReaction_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatReaction_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatReaction_Order_By>>;
   where?: Maybe<ChatReaction_Bool_Exp>;
 };
 
 /** aggregated selection of "ChatMessage" */
 export type ChatMessage_Aggregate = {
-  __typename?: 'ChatMessage_aggregate';
-  aggregate?: Maybe<ChatMessage_Aggregate_Fields>;
-  nodes: Array<ChatMessage>;
+  readonly __typename?: 'ChatMessage_aggregate';
+  readonly aggregate?: Maybe<ChatMessage_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<ChatMessage>;
 };
 
 /** aggregate fields of "ChatMessage" */
 export type ChatMessage_Aggregate_Fields = {
-  __typename?: 'ChatMessage_aggregate_fields';
-  avg?: Maybe<ChatMessage_Avg_Fields>;
-  count?: Maybe<Scalars['Int']>;
-  max?: Maybe<ChatMessage_Max_Fields>;
-  min?: Maybe<ChatMessage_Min_Fields>;
-  stddev?: Maybe<ChatMessage_Stddev_Fields>;
-  stddev_pop?: Maybe<ChatMessage_Stddev_Pop_Fields>;
-  stddev_samp?: Maybe<ChatMessage_Stddev_Samp_Fields>;
-  sum?: Maybe<ChatMessage_Sum_Fields>;
-  var_pop?: Maybe<ChatMessage_Var_Pop_Fields>;
-  var_samp?: Maybe<ChatMessage_Var_Samp_Fields>;
-  variance?: Maybe<ChatMessage_Variance_Fields>;
+  readonly __typename?: 'ChatMessage_aggregate_fields';
+  readonly avg?: Maybe<ChatMessage_Avg_Fields>;
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<ChatMessage_Max_Fields>;
+  readonly min?: Maybe<ChatMessage_Min_Fields>;
+  readonly stddev?: Maybe<ChatMessage_Stddev_Fields>;
+  readonly stddev_pop?: Maybe<ChatMessage_Stddev_Pop_Fields>;
+  readonly stddev_samp?: Maybe<ChatMessage_Stddev_Samp_Fields>;
+  readonly sum?: Maybe<ChatMessage_Sum_Fields>;
+  readonly var_pop?: Maybe<ChatMessage_Var_Pop_Fields>;
+  readonly var_samp?: Maybe<ChatMessage_Var_Samp_Fields>;
+  readonly variance?: Maybe<ChatMessage_Variance_Fields>;
 };
 
 
 /** aggregate fields of "ChatMessage" */
 export type ChatMessage_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<Array<ChatMessage_Select_Column>>;
+  columns?: Maybe<ReadonlyArray<ChatMessage_Select_Column>>;
   distinct?: Maybe<Scalars['Boolean']>;
 };
 
 /** order by aggregate values of table "ChatMessage" */
 export type ChatMessage_Aggregate_Order_By = {
-  avg?: Maybe<ChatMessage_Avg_Order_By>;
-  count?: Maybe<Order_By>;
-  max?: Maybe<ChatMessage_Max_Order_By>;
-  min?: Maybe<ChatMessage_Min_Order_By>;
-  stddev?: Maybe<ChatMessage_Stddev_Order_By>;
-  stddev_pop?: Maybe<ChatMessage_Stddev_Pop_Order_By>;
-  stddev_samp?: Maybe<ChatMessage_Stddev_Samp_Order_By>;
-  sum?: Maybe<ChatMessage_Sum_Order_By>;
-  var_pop?: Maybe<ChatMessage_Var_Pop_Order_By>;
-  var_samp?: Maybe<ChatMessage_Var_Samp_Order_By>;
-  variance?: Maybe<ChatMessage_Variance_Order_By>;
+  readonly avg?: Maybe<ChatMessage_Avg_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<ChatMessage_Max_Order_By>;
+  readonly min?: Maybe<ChatMessage_Min_Order_By>;
+  readonly stddev?: Maybe<ChatMessage_Stddev_Order_By>;
+  readonly stddev_pop?: Maybe<ChatMessage_Stddev_Pop_Order_By>;
+  readonly stddev_samp?: Maybe<ChatMessage_Stddev_Samp_Order_By>;
+  readonly sum?: Maybe<ChatMessage_Sum_Order_By>;
+  readonly var_pop?: Maybe<ChatMessage_Var_Pop_Order_By>;
+  readonly var_samp?: Maybe<ChatMessage_Var_Samp_Order_By>;
+  readonly variance?: Maybe<ChatMessage_Variance_Order_By>;
 };
 
 /** append existing jsonb value of filtered columns with new jsonb value */
 export type ChatMessage_Append_Input = {
-  content?: Maybe<Scalars['jsonb']>;
+  readonly content?: Maybe<Scalars['jsonb']>;
 };
 
 /** input type for inserting array relation for remote table "ChatMessage" */
 export type ChatMessage_Arr_Rel_Insert_Input = {
-  data: Array<ChatMessage_Insert_Input>;
-  on_conflict?: Maybe<ChatMessage_On_Conflict>;
+  readonly data: ReadonlyArray<ChatMessage_Insert_Input>;
+  readonly on_conflict?: Maybe<ChatMessage_On_Conflict>;
 };
 
 /** aggregate avg on columns */
 export type ChatMessage_Avg_Fields = {
-  __typename?: 'ChatMessage_avg_fields';
-  index?: Maybe<Scalars['Float']>;
+  readonly __typename?: 'ChatMessage_avg_fields';
+  readonly index?: Maybe<Scalars['Float']>;
 };
 
 /** order by avg() on columns of table "ChatMessage" */
 export type ChatMessage_Avg_Order_By = {
-  index?: Maybe<Order_By>;
+  readonly index?: Maybe<Order_By>;
 };
 
 /** Boolean expression to filter rows from the table "ChatMessage". All fields are combined with a logical 'AND'. */
 export type ChatMessage_Bool_Exp = {
-  _and?: Maybe<Array<Maybe<ChatMessage_Bool_Exp>>>;
-  _not?: Maybe<ChatMessage_Bool_Exp>;
-  _or?: Maybe<Array<Maybe<ChatMessage_Bool_Exp>>>;
-  chat?: Maybe<Chat_Bool_Exp>;
-  chatId?: Maybe<Uuid_Comparison_Exp>;
-  content?: Maybe<Jsonb_Comparison_Exp>;
-  createdAt?: Maybe<Timestamptz_Comparison_Exp>;
-  flags?: Maybe<FlaggedChatMessage_Bool_Exp>;
-  id?: Maybe<Uuid_Comparison_Exp>;
-  index?: Maybe<Int_Comparison_Exp>;
-  isHighlighted?: Maybe<Boolean_Comparison_Exp>;
-  reactions?: Maybe<ChatReaction_Bool_Exp>;
-  sender?: Maybe<User_Bool_Exp>;
-  senderId?: Maybe<String_Comparison_Exp>;
-  updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly _and?: Maybe<ReadonlyArray<Maybe<ChatMessage_Bool_Exp>>>;
+  readonly _not?: Maybe<ChatMessage_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<ChatMessage_Bool_Exp>>>;
+  readonly chat?: Maybe<Chat_Bool_Exp>;
+  readonly chatId?: Maybe<Uuid_Comparison_Exp>;
+  readonly content?: Maybe<Jsonb_Comparison_Exp>;
+  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly flags?: Maybe<FlaggedChatMessage_Bool_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly index?: Maybe<Int_Comparison_Exp>;
+  readonly isHighlighted?: Maybe<Boolean_Comparison_Exp>;
+  readonly reactions?: Maybe<ChatReaction_Bool_Exp>;
+  readonly sender?: Maybe<User_Bool_Exp>;
+  readonly senderId?: Maybe<String_Comparison_Exp>;
+  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "ChatMessage" */
@@ -1159,128 +1161,128 @@ export enum ChatMessage_Constraint {
 
 /** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
 export type ChatMessage_Delete_At_Path_Input = {
-  content?: Maybe<Array<Maybe<Scalars['String']>>>;
+  readonly content?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
 };
 
 /** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
 export type ChatMessage_Delete_Elem_Input = {
-  content?: Maybe<Scalars['Int']>;
+  readonly content?: Maybe<Scalars['Int']>;
 };
 
 /** delete key/value pair or string element. key/value pairs are matched based on their key value */
 export type ChatMessage_Delete_Key_Input = {
-  content?: Maybe<Scalars['String']>;
+  readonly content?: Maybe<Scalars['String']>;
 };
 
 /** input type for incrementing integer column in table "ChatMessage" */
 export type ChatMessage_Inc_Input = {
-  index?: Maybe<Scalars['Int']>;
+  readonly index?: Maybe<Scalars['Int']>;
 };
 
 /** input type for inserting data into table "ChatMessage" */
 export type ChatMessage_Insert_Input = {
-  chat?: Maybe<Chat_Obj_Rel_Insert_Input>;
-  chatId?: Maybe<Scalars['uuid']>;
-  content?: Maybe<Scalars['jsonb']>;
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  flags?: Maybe<FlaggedChatMessage_Arr_Rel_Insert_Input>;
-  id?: Maybe<Scalars['uuid']>;
-  index?: Maybe<Scalars['Int']>;
-  isHighlighted?: Maybe<Scalars['Boolean']>;
-  reactions?: Maybe<ChatReaction_Arr_Rel_Insert_Input>;
-  sender?: Maybe<User_Obj_Rel_Insert_Input>;
-  senderId?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly chat?: Maybe<Chat_Obj_Rel_Insert_Input>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly content?: Maybe<Scalars['jsonb']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly flags?: Maybe<FlaggedChatMessage_Arr_Rel_Insert_Input>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly index?: Maybe<Scalars['Int']>;
+  readonly isHighlighted?: Maybe<Scalars['Boolean']>;
+  readonly reactions?: Maybe<ChatReaction_Arr_Rel_Insert_Input>;
+  readonly sender?: Maybe<User_Obj_Rel_Insert_Input>;
+  readonly senderId?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
 /** aggregate max on columns */
 export type ChatMessage_Max_Fields = {
-  __typename?: 'ChatMessage_max_fields';
-  chatId?: Maybe<Scalars['uuid']>;
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  id?: Maybe<Scalars['uuid']>;
-  index?: Maybe<Scalars['Int']>;
-  senderId?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly __typename?: 'ChatMessage_max_fields';
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly index?: Maybe<Scalars['Int']>;
+  readonly senderId?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
 /** order by max() on columns of table "ChatMessage" */
 export type ChatMessage_Max_Order_By = {
-  chatId?: Maybe<Order_By>;
-  createdAt?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  index?: Maybe<Order_By>;
-  senderId?: Maybe<Order_By>;
-  updatedAt?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly index?: Maybe<Order_By>;
+  readonly senderId?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type ChatMessage_Min_Fields = {
-  __typename?: 'ChatMessage_min_fields';
-  chatId?: Maybe<Scalars['uuid']>;
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  id?: Maybe<Scalars['uuid']>;
-  index?: Maybe<Scalars['Int']>;
-  senderId?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly __typename?: 'ChatMessage_min_fields';
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly index?: Maybe<Scalars['Int']>;
+  readonly senderId?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
 /** order by min() on columns of table "ChatMessage" */
 export type ChatMessage_Min_Order_By = {
-  chatId?: Maybe<Order_By>;
-  createdAt?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  index?: Maybe<Order_By>;
-  senderId?: Maybe<Order_By>;
-  updatedAt?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly index?: Maybe<Order_By>;
+  readonly senderId?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "ChatMessage" */
 export type ChatMessage_Mutation_Response = {
-  __typename?: 'ChatMessage_mutation_response';
+  readonly __typename?: 'ChatMessage_mutation_response';
   /** number of affected rows by the mutation */
-  affected_rows: Scalars['Int'];
+  readonly affected_rows: Scalars['Int'];
   /** data of the affected rows by the mutation */
-  returning: Array<ChatMessage>;
+  readonly returning: ReadonlyArray<ChatMessage>;
 };
 
 /** input type for inserting object relation for remote table "ChatMessage" */
 export type ChatMessage_Obj_Rel_Insert_Input = {
-  data: ChatMessage_Insert_Input;
-  on_conflict?: Maybe<ChatMessage_On_Conflict>;
+  readonly data: ChatMessage_Insert_Input;
+  readonly on_conflict?: Maybe<ChatMessage_On_Conflict>;
 };
 
 /** on conflict condition type for table "ChatMessage" */
 export type ChatMessage_On_Conflict = {
-  constraint: ChatMessage_Constraint;
-  update_columns: Array<ChatMessage_Update_Column>;
-  where?: Maybe<ChatMessage_Bool_Exp>;
+  readonly constraint: ChatMessage_Constraint;
+  readonly update_columns: ReadonlyArray<ChatMessage_Update_Column>;
+  readonly where?: Maybe<ChatMessage_Bool_Exp>;
 };
 
 /** ordering options when selecting data from "ChatMessage" */
 export type ChatMessage_Order_By = {
-  chat?: Maybe<Chat_Order_By>;
-  chatId?: Maybe<Order_By>;
-  content?: Maybe<Order_By>;
-  createdAt?: Maybe<Order_By>;
-  flags_aggregate?: Maybe<FlaggedChatMessage_Aggregate_Order_By>;
-  id?: Maybe<Order_By>;
-  index?: Maybe<Order_By>;
-  isHighlighted?: Maybe<Order_By>;
-  reactions_aggregate?: Maybe<ChatReaction_Aggregate_Order_By>;
-  sender?: Maybe<User_Order_By>;
-  senderId?: Maybe<Order_By>;
-  updatedAt?: Maybe<Order_By>;
+  readonly chat?: Maybe<Chat_Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly content?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly flags_aggregate?: Maybe<FlaggedChatMessage_Aggregate_Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly index?: Maybe<Order_By>;
+  readonly isHighlighted?: Maybe<Order_By>;
+  readonly reactions_aggregate?: Maybe<ChatReaction_Aggregate_Order_By>;
+  readonly sender?: Maybe<User_Order_By>;
+  readonly senderId?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: "ChatMessage" */
 export type ChatMessage_Pk_Columns_Input = {
-  id: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
 };
 
 /** prepend existing jsonb value of filtered columns with new jsonb value */
 export type ChatMessage_Prepend_Input = {
-  content?: Maybe<Scalars['jsonb']>;
+  readonly content?: Maybe<Scalars['jsonb']>;
 };
 
 /** select columns of table "ChatMessage" */
@@ -1305,58 +1307,58 @@ export enum ChatMessage_Select_Column {
 
 /** input type for updating data in table "ChatMessage" */
 export type ChatMessage_Set_Input = {
-  chatId?: Maybe<Scalars['uuid']>;
-  content?: Maybe<Scalars['jsonb']>;
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  id?: Maybe<Scalars['uuid']>;
-  index?: Maybe<Scalars['Int']>;
-  isHighlighted?: Maybe<Scalars['Boolean']>;
-  senderId?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly content?: Maybe<Scalars['jsonb']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly index?: Maybe<Scalars['Int']>;
+  readonly isHighlighted?: Maybe<Scalars['Boolean']>;
+  readonly senderId?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
 /** aggregate stddev on columns */
 export type ChatMessage_Stddev_Fields = {
-  __typename?: 'ChatMessage_stddev_fields';
-  index?: Maybe<Scalars['Float']>;
+  readonly __typename?: 'ChatMessage_stddev_fields';
+  readonly index?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev() on columns of table "ChatMessage" */
 export type ChatMessage_Stddev_Order_By = {
-  index?: Maybe<Order_By>;
+  readonly index?: Maybe<Order_By>;
 };
 
 /** aggregate stddev_pop on columns */
 export type ChatMessage_Stddev_Pop_Fields = {
-  __typename?: 'ChatMessage_stddev_pop_fields';
-  index?: Maybe<Scalars['Float']>;
+  readonly __typename?: 'ChatMessage_stddev_pop_fields';
+  readonly index?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev_pop() on columns of table "ChatMessage" */
 export type ChatMessage_Stddev_Pop_Order_By = {
-  index?: Maybe<Order_By>;
+  readonly index?: Maybe<Order_By>;
 };
 
 /** aggregate stddev_samp on columns */
 export type ChatMessage_Stddev_Samp_Fields = {
-  __typename?: 'ChatMessage_stddev_samp_fields';
-  index?: Maybe<Scalars['Float']>;
+  readonly __typename?: 'ChatMessage_stddev_samp_fields';
+  readonly index?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev_samp() on columns of table "ChatMessage" */
 export type ChatMessage_Stddev_Samp_Order_By = {
-  index?: Maybe<Order_By>;
+  readonly index?: Maybe<Order_By>;
 };
 
 /** aggregate sum on columns */
 export type ChatMessage_Sum_Fields = {
-  __typename?: 'ChatMessage_sum_fields';
-  index?: Maybe<Scalars['Int']>;
+  readonly __typename?: 'ChatMessage_sum_fields';
+  readonly index?: Maybe<Scalars['Int']>;
 };
 
 /** order by sum() on columns of table "ChatMessage" */
 export type ChatMessage_Sum_Order_By = {
-  index?: Maybe<Order_By>;
+  readonly index?: Maybe<Order_By>;
 };
 
 /** update columns of table "ChatMessage" */
@@ -1381,96 +1383,96 @@ export enum ChatMessage_Update_Column {
 
 /** aggregate var_pop on columns */
 export type ChatMessage_Var_Pop_Fields = {
-  __typename?: 'ChatMessage_var_pop_fields';
-  index?: Maybe<Scalars['Float']>;
+  readonly __typename?: 'ChatMessage_var_pop_fields';
+  readonly index?: Maybe<Scalars['Float']>;
 };
 
 /** order by var_pop() on columns of table "ChatMessage" */
 export type ChatMessage_Var_Pop_Order_By = {
-  index?: Maybe<Order_By>;
+  readonly index?: Maybe<Order_By>;
 };
 
 /** aggregate var_samp on columns */
 export type ChatMessage_Var_Samp_Fields = {
-  __typename?: 'ChatMessage_var_samp_fields';
-  index?: Maybe<Scalars['Float']>;
+  readonly __typename?: 'ChatMessage_var_samp_fields';
+  readonly index?: Maybe<Scalars['Float']>;
 };
 
 /** order by var_samp() on columns of table "ChatMessage" */
 export type ChatMessage_Var_Samp_Order_By = {
-  index?: Maybe<Order_By>;
+  readonly index?: Maybe<Order_By>;
 };
 
 /** aggregate variance on columns */
 export type ChatMessage_Variance_Fields = {
-  __typename?: 'ChatMessage_variance_fields';
-  index?: Maybe<Scalars['Float']>;
+  readonly __typename?: 'ChatMessage_variance_fields';
+  readonly index?: Maybe<Scalars['Float']>;
 };
 
 /** order by variance() on columns of table "ChatMessage" */
 export type ChatMessage_Variance_Order_By = {
-  index?: Maybe<Order_By>;
+  readonly index?: Maybe<Order_By>;
 };
 
 /** columns and relationships of "ChatModerator" */
 export type ChatModerator = {
-  __typename?: 'ChatModerator';
+  readonly __typename?: 'ChatModerator';
   /** An object relationship */
-  chat: Chat;
-  chatId: Scalars['uuid'];
-  createdAt: Scalars['timestamptz'];
-  id: Scalars['uuid'];
+  readonly chat: Chat;
+  readonly chatId: Scalars['uuid'];
+  readonly createdAt: Scalars['timestamptz'];
+  readonly id: Scalars['uuid'];
   /** An object relationship */
-  user: User;
-  userId: Scalars['String'];
+  readonly user: User;
+  readonly userId: Scalars['String'];
 };
 
 /** aggregated selection of "ChatModerator" */
 export type ChatModerator_Aggregate = {
-  __typename?: 'ChatModerator_aggregate';
-  aggregate?: Maybe<ChatModerator_Aggregate_Fields>;
-  nodes: Array<ChatModerator>;
+  readonly __typename?: 'ChatModerator_aggregate';
+  readonly aggregate?: Maybe<ChatModerator_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<ChatModerator>;
 };
 
 /** aggregate fields of "ChatModerator" */
 export type ChatModerator_Aggregate_Fields = {
-  __typename?: 'ChatModerator_aggregate_fields';
-  count?: Maybe<Scalars['Int']>;
-  max?: Maybe<ChatModerator_Max_Fields>;
-  min?: Maybe<ChatModerator_Min_Fields>;
+  readonly __typename?: 'ChatModerator_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<ChatModerator_Max_Fields>;
+  readonly min?: Maybe<ChatModerator_Min_Fields>;
 };
 
 
 /** aggregate fields of "ChatModerator" */
 export type ChatModerator_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<Array<ChatModerator_Select_Column>>;
+  columns?: Maybe<ReadonlyArray<ChatModerator_Select_Column>>;
   distinct?: Maybe<Scalars['Boolean']>;
 };
 
 /** order by aggregate values of table "ChatModerator" */
 export type ChatModerator_Aggregate_Order_By = {
-  count?: Maybe<Order_By>;
-  max?: Maybe<ChatModerator_Max_Order_By>;
-  min?: Maybe<ChatModerator_Min_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<ChatModerator_Max_Order_By>;
+  readonly min?: Maybe<ChatModerator_Min_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "ChatModerator" */
 export type ChatModerator_Arr_Rel_Insert_Input = {
-  data: Array<ChatModerator_Insert_Input>;
-  on_conflict?: Maybe<ChatModerator_On_Conflict>;
+  readonly data: ReadonlyArray<ChatModerator_Insert_Input>;
+  readonly on_conflict?: Maybe<ChatModerator_On_Conflict>;
 };
 
 /** Boolean expression to filter rows from the table "ChatModerator". All fields are combined with a logical 'AND'. */
 export type ChatModerator_Bool_Exp = {
-  _and?: Maybe<Array<Maybe<ChatModerator_Bool_Exp>>>;
-  _not?: Maybe<ChatModerator_Bool_Exp>;
-  _or?: Maybe<Array<Maybe<ChatModerator_Bool_Exp>>>;
-  chat?: Maybe<Chat_Bool_Exp>;
-  chatId?: Maybe<Uuid_Comparison_Exp>;
-  createdAt?: Maybe<Timestamptz_Comparison_Exp>;
-  id?: Maybe<Uuid_Comparison_Exp>;
-  user?: Maybe<User_Bool_Exp>;
-  userId?: Maybe<String_Comparison_Exp>;
+  readonly _and?: Maybe<ReadonlyArray<Maybe<ChatModerator_Bool_Exp>>>;
+  readonly _not?: Maybe<ChatModerator_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<ChatModerator_Bool_Exp>>>;
+  readonly chat?: Maybe<Chat_Bool_Exp>;
+  readonly chatId?: Maybe<Uuid_Comparison_Exp>;
+  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly user?: Maybe<User_Bool_Exp>;
+  readonly userId?: Maybe<String_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "ChatModerator" */
@@ -1483,83 +1485,83 @@ export enum ChatModerator_Constraint {
 
 /** input type for inserting data into table "ChatModerator" */
 export type ChatModerator_Insert_Input = {
-  chat?: Maybe<Chat_Obj_Rel_Insert_Input>;
-  chatId?: Maybe<Scalars['uuid']>;
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  id?: Maybe<Scalars['uuid']>;
-  user?: Maybe<User_Obj_Rel_Insert_Input>;
-  userId?: Maybe<Scalars['String']>;
+  readonly chat?: Maybe<Chat_Obj_Rel_Insert_Input>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly user?: Maybe<User_Obj_Rel_Insert_Input>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** aggregate max on columns */
 export type ChatModerator_Max_Fields = {
-  __typename?: 'ChatModerator_max_fields';
-  chatId?: Maybe<Scalars['uuid']>;
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  id?: Maybe<Scalars['uuid']>;
-  userId?: Maybe<Scalars['String']>;
+  readonly __typename?: 'ChatModerator_max_fields';
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** order by max() on columns of table "ChatModerator" */
 export type ChatModerator_Max_Order_By = {
-  chatId?: Maybe<Order_By>;
-  createdAt?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  userId?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly userId?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type ChatModerator_Min_Fields = {
-  __typename?: 'ChatModerator_min_fields';
-  chatId?: Maybe<Scalars['uuid']>;
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  id?: Maybe<Scalars['uuid']>;
-  userId?: Maybe<Scalars['String']>;
+  readonly __typename?: 'ChatModerator_min_fields';
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** order by min() on columns of table "ChatModerator" */
 export type ChatModerator_Min_Order_By = {
-  chatId?: Maybe<Order_By>;
-  createdAt?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  userId?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly userId?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "ChatModerator" */
 export type ChatModerator_Mutation_Response = {
-  __typename?: 'ChatModerator_mutation_response';
+  readonly __typename?: 'ChatModerator_mutation_response';
   /** number of affected rows by the mutation */
-  affected_rows: Scalars['Int'];
+  readonly affected_rows: Scalars['Int'];
   /** data of the affected rows by the mutation */
-  returning: Array<ChatModerator>;
+  readonly returning: ReadonlyArray<ChatModerator>;
 };
 
 /** input type for inserting object relation for remote table "ChatModerator" */
 export type ChatModerator_Obj_Rel_Insert_Input = {
-  data: ChatModerator_Insert_Input;
-  on_conflict?: Maybe<ChatModerator_On_Conflict>;
+  readonly data: ChatModerator_Insert_Input;
+  readonly on_conflict?: Maybe<ChatModerator_On_Conflict>;
 };
 
 /** on conflict condition type for table "ChatModerator" */
 export type ChatModerator_On_Conflict = {
-  constraint: ChatModerator_Constraint;
-  update_columns: Array<ChatModerator_Update_Column>;
-  where?: Maybe<ChatModerator_Bool_Exp>;
+  readonly constraint: ChatModerator_Constraint;
+  readonly update_columns: ReadonlyArray<ChatModerator_Update_Column>;
+  readonly where?: Maybe<ChatModerator_Bool_Exp>;
 };
 
 /** ordering options when selecting data from "ChatModerator" */
 export type ChatModerator_Order_By = {
-  chat?: Maybe<Chat_Order_By>;
-  chatId?: Maybe<Order_By>;
-  createdAt?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  user?: Maybe<User_Order_By>;
-  userId?: Maybe<Order_By>;
+  readonly chat?: Maybe<Chat_Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly user?: Maybe<User_Order_By>;
+  readonly userId?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: "ChatModerator" */
 export type ChatModerator_Pk_Columns_Input = {
-  id: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
 };
 
 /** select columns of table "ChatModerator" */
@@ -1576,10 +1578,10 @@ export enum ChatModerator_Select_Column {
 
 /** input type for updating data in table "ChatModerator" */
 export type ChatModerator_Set_Input = {
-  chatId?: Maybe<Scalars['uuid']>;
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  id?: Maybe<Scalars['uuid']>;
-  userId?: Maybe<Scalars['String']>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** update columns of table "ChatModerator" */
@@ -1596,65 +1598,65 @@ export enum ChatModerator_Update_Column {
 
 /** columns and relationships of "ChatReaction" */
 export type ChatReaction = {
-  __typename?: 'ChatReaction';
-  createdAt: Scalars['timestamptz'];
-  id: Scalars['uuid'];
+  readonly __typename?: 'ChatReaction';
+  readonly createdAt: Scalars['timestamptz'];
+  readonly id: Scalars['uuid'];
   /** An object relationship */
-  message: ChatMessage;
-  messageId: Scalars['uuid'];
-  reaction: Scalars['String'];
+  readonly message: ChatMessage;
+  readonly messageId: Scalars['uuid'];
+  readonly reaction: Scalars['String'];
   /** An object relationship */
-  reactor: User;
-  reactorId: Scalars['String'];
+  readonly reactor: User;
+  readonly reactorId: Scalars['String'];
 };
 
 /** aggregated selection of "ChatReaction" */
 export type ChatReaction_Aggregate = {
-  __typename?: 'ChatReaction_aggregate';
-  aggregate?: Maybe<ChatReaction_Aggregate_Fields>;
-  nodes: Array<ChatReaction>;
+  readonly __typename?: 'ChatReaction_aggregate';
+  readonly aggregate?: Maybe<ChatReaction_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<ChatReaction>;
 };
 
 /** aggregate fields of "ChatReaction" */
 export type ChatReaction_Aggregate_Fields = {
-  __typename?: 'ChatReaction_aggregate_fields';
-  count?: Maybe<Scalars['Int']>;
-  max?: Maybe<ChatReaction_Max_Fields>;
-  min?: Maybe<ChatReaction_Min_Fields>;
+  readonly __typename?: 'ChatReaction_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<ChatReaction_Max_Fields>;
+  readonly min?: Maybe<ChatReaction_Min_Fields>;
 };
 
 
 /** aggregate fields of "ChatReaction" */
 export type ChatReaction_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<Array<ChatReaction_Select_Column>>;
+  columns?: Maybe<ReadonlyArray<ChatReaction_Select_Column>>;
   distinct?: Maybe<Scalars['Boolean']>;
 };
 
 /** order by aggregate values of table "ChatReaction" */
 export type ChatReaction_Aggregate_Order_By = {
-  count?: Maybe<Order_By>;
-  max?: Maybe<ChatReaction_Max_Order_By>;
-  min?: Maybe<ChatReaction_Min_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<ChatReaction_Max_Order_By>;
+  readonly min?: Maybe<ChatReaction_Min_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "ChatReaction" */
 export type ChatReaction_Arr_Rel_Insert_Input = {
-  data: Array<ChatReaction_Insert_Input>;
-  on_conflict?: Maybe<ChatReaction_On_Conflict>;
+  readonly data: ReadonlyArray<ChatReaction_Insert_Input>;
+  readonly on_conflict?: Maybe<ChatReaction_On_Conflict>;
 };
 
 /** Boolean expression to filter rows from the table "ChatReaction". All fields are combined with a logical 'AND'. */
 export type ChatReaction_Bool_Exp = {
-  _and?: Maybe<Array<Maybe<ChatReaction_Bool_Exp>>>;
-  _not?: Maybe<ChatReaction_Bool_Exp>;
-  _or?: Maybe<Array<Maybe<ChatReaction_Bool_Exp>>>;
-  createdAt?: Maybe<Timestamptz_Comparison_Exp>;
-  id?: Maybe<Uuid_Comparison_Exp>;
-  message?: Maybe<ChatMessage_Bool_Exp>;
-  messageId?: Maybe<Uuid_Comparison_Exp>;
-  reaction?: Maybe<String_Comparison_Exp>;
-  reactor?: Maybe<User_Bool_Exp>;
-  reactorId?: Maybe<String_Comparison_Exp>;
+  readonly _and?: Maybe<ReadonlyArray<Maybe<ChatReaction_Bool_Exp>>>;
+  readonly _not?: Maybe<ChatReaction_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<ChatReaction_Bool_Exp>>>;
+  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly message?: Maybe<ChatMessage_Bool_Exp>;
+  readonly messageId?: Maybe<Uuid_Comparison_Exp>;
+  readonly reaction?: Maybe<String_Comparison_Exp>;
+  readonly reactor?: Maybe<User_Bool_Exp>;
+  readonly reactorId?: Maybe<String_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "ChatReaction" */
@@ -1667,89 +1669,89 @@ export enum ChatReaction_Constraint {
 
 /** input type for inserting data into table "ChatReaction" */
 export type ChatReaction_Insert_Input = {
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  id?: Maybe<Scalars['uuid']>;
-  message?: Maybe<ChatMessage_Obj_Rel_Insert_Input>;
-  messageId?: Maybe<Scalars['uuid']>;
-  reaction?: Maybe<Scalars['String']>;
-  reactor?: Maybe<User_Obj_Rel_Insert_Input>;
-  reactorId?: Maybe<Scalars['String']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly message?: Maybe<ChatMessage_Obj_Rel_Insert_Input>;
+  readonly messageId?: Maybe<Scalars['uuid']>;
+  readonly reaction?: Maybe<Scalars['String']>;
+  readonly reactor?: Maybe<User_Obj_Rel_Insert_Input>;
+  readonly reactorId?: Maybe<Scalars['String']>;
 };
 
 /** aggregate max on columns */
 export type ChatReaction_Max_Fields = {
-  __typename?: 'ChatReaction_max_fields';
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  id?: Maybe<Scalars['uuid']>;
-  messageId?: Maybe<Scalars['uuid']>;
-  reaction?: Maybe<Scalars['String']>;
-  reactorId?: Maybe<Scalars['String']>;
+  readonly __typename?: 'ChatReaction_max_fields';
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly messageId?: Maybe<Scalars['uuid']>;
+  readonly reaction?: Maybe<Scalars['String']>;
+  readonly reactorId?: Maybe<Scalars['String']>;
 };
 
 /** order by max() on columns of table "ChatReaction" */
 export type ChatReaction_Max_Order_By = {
-  createdAt?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  messageId?: Maybe<Order_By>;
-  reaction?: Maybe<Order_By>;
-  reactorId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly messageId?: Maybe<Order_By>;
+  readonly reaction?: Maybe<Order_By>;
+  readonly reactorId?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type ChatReaction_Min_Fields = {
-  __typename?: 'ChatReaction_min_fields';
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  id?: Maybe<Scalars['uuid']>;
-  messageId?: Maybe<Scalars['uuid']>;
-  reaction?: Maybe<Scalars['String']>;
-  reactorId?: Maybe<Scalars['String']>;
+  readonly __typename?: 'ChatReaction_min_fields';
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly messageId?: Maybe<Scalars['uuid']>;
+  readonly reaction?: Maybe<Scalars['String']>;
+  readonly reactorId?: Maybe<Scalars['String']>;
 };
 
 /** order by min() on columns of table "ChatReaction" */
 export type ChatReaction_Min_Order_By = {
-  createdAt?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  messageId?: Maybe<Order_By>;
-  reaction?: Maybe<Order_By>;
-  reactorId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly messageId?: Maybe<Order_By>;
+  readonly reaction?: Maybe<Order_By>;
+  readonly reactorId?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "ChatReaction" */
 export type ChatReaction_Mutation_Response = {
-  __typename?: 'ChatReaction_mutation_response';
+  readonly __typename?: 'ChatReaction_mutation_response';
   /** number of affected rows by the mutation */
-  affected_rows: Scalars['Int'];
+  readonly affected_rows: Scalars['Int'];
   /** data of the affected rows by the mutation */
-  returning: Array<ChatReaction>;
+  readonly returning: ReadonlyArray<ChatReaction>;
 };
 
 /** input type for inserting object relation for remote table "ChatReaction" */
 export type ChatReaction_Obj_Rel_Insert_Input = {
-  data: ChatReaction_Insert_Input;
-  on_conflict?: Maybe<ChatReaction_On_Conflict>;
+  readonly data: ChatReaction_Insert_Input;
+  readonly on_conflict?: Maybe<ChatReaction_On_Conflict>;
 };
 
 /** on conflict condition type for table "ChatReaction" */
 export type ChatReaction_On_Conflict = {
-  constraint: ChatReaction_Constraint;
-  update_columns: Array<ChatReaction_Update_Column>;
-  where?: Maybe<ChatReaction_Bool_Exp>;
+  readonly constraint: ChatReaction_Constraint;
+  readonly update_columns: ReadonlyArray<ChatReaction_Update_Column>;
+  readonly where?: Maybe<ChatReaction_Bool_Exp>;
 };
 
 /** ordering options when selecting data from "ChatReaction" */
 export type ChatReaction_Order_By = {
-  createdAt?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  message?: Maybe<ChatMessage_Order_By>;
-  messageId?: Maybe<Order_By>;
-  reaction?: Maybe<Order_By>;
-  reactor?: Maybe<User_Order_By>;
-  reactorId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly message?: Maybe<ChatMessage_Order_By>;
+  readonly messageId?: Maybe<Order_By>;
+  readonly reaction?: Maybe<Order_By>;
+  readonly reactor?: Maybe<User_Order_By>;
+  readonly reactorId?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: "ChatReaction" */
 export type ChatReaction_Pk_Columns_Input = {
-  id: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
 };
 
 /** select columns of table "ChatReaction" */
@@ -1768,11 +1770,11 @@ export enum ChatReaction_Select_Column {
 
 /** input type for updating data in table "ChatReaction" */
 export type ChatReaction_Set_Input = {
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  id?: Maybe<Scalars['uuid']>;
-  messageId?: Maybe<Scalars['uuid']>;
-  reaction?: Maybe<Scalars['String']>;
-  reactorId?: Maybe<Scalars['String']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly messageId?: Maybe<Scalars['uuid']>;
+  readonly reaction?: Maybe<Scalars['String']>;
+  readonly reactorId?: Maybe<Scalars['String']>;
 };
 
 /** update columns of table "ChatReaction" */
@@ -1791,63 +1793,63 @@ export enum ChatReaction_Update_Column {
 
 /** columns and relationships of "ChatTyper" */
 export type ChatTyper = {
-  __typename?: 'ChatTyper';
+  readonly __typename?: 'ChatTyper';
   /** An object relationship */
-  chat: Chat;
-  chatId: Scalars['uuid'];
-  id: Scalars['uuid'];
-  updatedAt: Scalars['timestamptz'];
+  readonly chat: Chat;
+  readonly chatId: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
+  readonly updatedAt: Scalars['timestamptz'];
   /** An object relationship */
-  user: User;
-  userId: Scalars['String'];
+  readonly user: User;
+  readonly userId: Scalars['String'];
 };
 
 /** aggregated selection of "ChatTyper" */
 export type ChatTyper_Aggregate = {
-  __typename?: 'ChatTyper_aggregate';
-  aggregate?: Maybe<ChatTyper_Aggregate_Fields>;
-  nodes: Array<ChatTyper>;
+  readonly __typename?: 'ChatTyper_aggregate';
+  readonly aggregate?: Maybe<ChatTyper_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<ChatTyper>;
 };
 
 /** aggregate fields of "ChatTyper" */
 export type ChatTyper_Aggregate_Fields = {
-  __typename?: 'ChatTyper_aggregate_fields';
-  count?: Maybe<Scalars['Int']>;
-  max?: Maybe<ChatTyper_Max_Fields>;
-  min?: Maybe<ChatTyper_Min_Fields>;
+  readonly __typename?: 'ChatTyper_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<ChatTyper_Max_Fields>;
+  readonly min?: Maybe<ChatTyper_Min_Fields>;
 };
 
 
 /** aggregate fields of "ChatTyper" */
 export type ChatTyper_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<Array<ChatTyper_Select_Column>>;
+  columns?: Maybe<ReadonlyArray<ChatTyper_Select_Column>>;
   distinct?: Maybe<Scalars['Boolean']>;
 };
 
 /** order by aggregate values of table "ChatTyper" */
 export type ChatTyper_Aggregate_Order_By = {
-  count?: Maybe<Order_By>;
-  max?: Maybe<ChatTyper_Max_Order_By>;
-  min?: Maybe<ChatTyper_Min_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<ChatTyper_Max_Order_By>;
+  readonly min?: Maybe<ChatTyper_Min_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "ChatTyper" */
 export type ChatTyper_Arr_Rel_Insert_Input = {
-  data: Array<ChatTyper_Insert_Input>;
-  on_conflict?: Maybe<ChatTyper_On_Conflict>;
+  readonly data: ReadonlyArray<ChatTyper_Insert_Input>;
+  readonly on_conflict?: Maybe<ChatTyper_On_Conflict>;
 };
 
 /** Boolean expression to filter rows from the table "ChatTyper". All fields are combined with a logical 'AND'. */
 export type ChatTyper_Bool_Exp = {
-  _and?: Maybe<Array<Maybe<ChatTyper_Bool_Exp>>>;
-  _not?: Maybe<ChatTyper_Bool_Exp>;
-  _or?: Maybe<Array<Maybe<ChatTyper_Bool_Exp>>>;
-  chat?: Maybe<Chat_Bool_Exp>;
-  chatId?: Maybe<Uuid_Comparison_Exp>;
-  id?: Maybe<Uuid_Comparison_Exp>;
-  updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
-  user?: Maybe<User_Bool_Exp>;
-  userId?: Maybe<String_Comparison_Exp>;
+  readonly _and?: Maybe<ReadonlyArray<Maybe<ChatTyper_Bool_Exp>>>;
+  readonly _not?: Maybe<ChatTyper_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<ChatTyper_Bool_Exp>>>;
+  readonly chat?: Maybe<Chat_Bool_Exp>;
+  readonly chatId?: Maybe<Uuid_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly user?: Maybe<User_Bool_Exp>;
+  readonly userId?: Maybe<String_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "ChatTyper" */
@@ -1860,83 +1862,83 @@ export enum ChatTyper_Constraint {
 
 /** input type for inserting data into table "ChatTyper" */
 export type ChatTyper_Insert_Input = {
-  chat?: Maybe<Chat_Obj_Rel_Insert_Input>;
-  chatId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  updatedAt?: Maybe<Scalars['timestamptz']>;
-  user?: Maybe<User_Obj_Rel_Insert_Input>;
-  userId?: Maybe<Scalars['String']>;
+  readonly chat?: Maybe<Chat_Obj_Rel_Insert_Input>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly user?: Maybe<User_Obj_Rel_Insert_Input>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** aggregate max on columns */
 export type ChatTyper_Max_Fields = {
-  __typename?: 'ChatTyper_max_fields';
-  chatId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  updatedAt?: Maybe<Scalars['timestamptz']>;
-  userId?: Maybe<Scalars['String']>;
+  readonly __typename?: 'ChatTyper_max_fields';
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** order by max() on columns of table "ChatTyper" */
 export type ChatTyper_Max_Order_By = {
-  chatId?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  updatedAt?: Maybe<Order_By>;
-  userId?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly userId?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type ChatTyper_Min_Fields = {
-  __typename?: 'ChatTyper_min_fields';
-  chatId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  updatedAt?: Maybe<Scalars['timestamptz']>;
-  userId?: Maybe<Scalars['String']>;
+  readonly __typename?: 'ChatTyper_min_fields';
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** order by min() on columns of table "ChatTyper" */
 export type ChatTyper_Min_Order_By = {
-  chatId?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  updatedAt?: Maybe<Order_By>;
-  userId?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly userId?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "ChatTyper" */
 export type ChatTyper_Mutation_Response = {
-  __typename?: 'ChatTyper_mutation_response';
+  readonly __typename?: 'ChatTyper_mutation_response';
   /** number of affected rows by the mutation */
-  affected_rows: Scalars['Int'];
+  readonly affected_rows: Scalars['Int'];
   /** data of the affected rows by the mutation */
-  returning: Array<ChatTyper>;
+  readonly returning: ReadonlyArray<ChatTyper>;
 };
 
 /** input type for inserting object relation for remote table "ChatTyper" */
 export type ChatTyper_Obj_Rel_Insert_Input = {
-  data: ChatTyper_Insert_Input;
-  on_conflict?: Maybe<ChatTyper_On_Conflict>;
+  readonly data: ChatTyper_Insert_Input;
+  readonly on_conflict?: Maybe<ChatTyper_On_Conflict>;
 };
 
 /** on conflict condition type for table "ChatTyper" */
 export type ChatTyper_On_Conflict = {
-  constraint: ChatTyper_Constraint;
-  update_columns: Array<ChatTyper_Update_Column>;
-  where?: Maybe<ChatTyper_Bool_Exp>;
+  readonly constraint: ChatTyper_Constraint;
+  readonly update_columns: ReadonlyArray<ChatTyper_Update_Column>;
+  readonly where?: Maybe<ChatTyper_Bool_Exp>;
 };
 
 /** ordering options when selecting data from "ChatTyper" */
 export type ChatTyper_Order_By = {
-  chat?: Maybe<Chat_Order_By>;
-  chatId?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  updatedAt?: Maybe<Order_By>;
-  user?: Maybe<User_Order_By>;
-  userId?: Maybe<Order_By>;
+  readonly chat?: Maybe<Chat_Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly user?: Maybe<User_Order_By>;
+  readonly userId?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: "ChatTyper" */
 export type ChatTyper_Pk_Columns_Input = {
-  id: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
 };
 
 /** select columns of table "ChatTyper" */
@@ -1953,10 +1955,10 @@ export enum ChatTyper_Select_Column {
 
 /** input type for updating data in table "ChatTyper" */
 export type ChatTyper_Set_Input = {
-  chatId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  updatedAt?: Maybe<Scalars['timestamptz']>;
-  userId?: Maybe<Scalars['String']>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** update columns of table "ChatTyper" */
@@ -1973,90 +1975,90 @@ export enum ChatTyper_Update_Column {
 
 /** columns and relationships of "ChatUnreadIndex" */
 export type ChatUnreadIndex = {
-  __typename?: 'ChatUnreadIndex';
+  readonly __typename?: 'ChatUnreadIndex';
   /** An object relationship */
-  chat: Chat;
-  chatId: Scalars['uuid'];
-  id: Scalars['uuid'];
-  index?: Maybe<Scalars['Int']>;
+  readonly chat: Chat;
+  readonly chatId: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
+  readonly index?: Maybe<Scalars['Int']>;
   /** An object relationship */
-  user: User;
-  userId: Scalars['String'];
+  readonly user: User;
+  readonly userId: Scalars['String'];
 };
 
 /** aggregated selection of "ChatUnreadIndex" */
 export type ChatUnreadIndex_Aggregate = {
-  __typename?: 'ChatUnreadIndex_aggregate';
-  aggregate?: Maybe<ChatUnreadIndex_Aggregate_Fields>;
-  nodes: Array<ChatUnreadIndex>;
+  readonly __typename?: 'ChatUnreadIndex_aggregate';
+  readonly aggregate?: Maybe<ChatUnreadIndex_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<ChatUnreadIndex>;
 };
 
 /** aggregate fields of "ChatUnreadIndex" */
 export type ChatUnreadIndex_Aggregate_Fields = {
-  __typename?: 'ChatUnreadIndex_aggregate_fields';
-  avg?: Maybe<ChatUnreadIndex_Avg_Fields>;
-  count?: Maybe<Scalars['Int']>;
-  max?: Maybe<ChatUnreadIndex_Max_Fields>;
-  min?: Maybe<ChatUnreadIndex_Min_Fields>;
-  stddev?: Maybe<ChatUnreadIndex_Stddev_Fields>;
-  stddev_pop?: Maybe<ChatUnreadIndex_Stddev_Pop_Fields>;
-  stddev_samp?: Maybe<ChatUnreadIndex_Stddev_Samp_Fields>;
-  sum?: Maybe<ChatUnreadIndex_Sum_Fields>;
-  var_pop?: Maybe<ChatUnreadIndex_Var_Pop_Fields>;
-  var_samp?: Maybe<ChatUnreadIndex_Var_Samp_Fields>;
-  variance?: Maybe<ChatUnreadIndex_Variance_Fields>;
+  readonly __typename?: 'ChatUnreadIndex_aggregate_fields';
+  readonly avg?: Maybe<ChatUnreadIndex_Avg_Fields>;
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<ChatUnreadIndex_Max_Fields>;
+  readonly min?: Maybe<ChatUnreadIndex_Min_Fields>;
+  readonly stddev?: Maybe<ChatUnreadIndex_Stddev_Fields>;
+  readonly stddev_pop?: Maybe<ChatUnreadIndex_Stddev_Pop_Fields>;
+  readonly stddev_samp?: Maybe<ChatUnreadIndex_Stddev_Samp_Fields>;
+  readonly sum?: Maybe<ChatUnreadIndex_Sum_Fields>;
+  readonly var_pop?: Maybe<ChatUnreadIndex_Var_Pop_Fields>;
+  readonly var_samp?: Maybe<ChatUnreadIndex_Var_Samp_Fields>;
+  readonly variance?: Maybe<ChatUnreadIndex_Variance_Fields>;
 };
 
 
 /** aggregate fields of "ChatUnreadIndex" */
 export type ChatUnreadIndex_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<Array<ChatUnreadIndex_Select_Column>>;
+  columns?: Maybe<ReadonlyArray<ChatUnreadIndex_Select_Column>>;
   distinct?: Maybe<Scalars['Boolean']>;
 };
 
 /** order by aggregate values of table "ChatUnreadIndex" */
 export type ChatUnreadIndex_Aggregate_Order_By = {
-  avg?: Maybe<ChatUnreadIndex_Avg_Order_By>;
-  count?: Maybe<Order_By>;
-  max?: Maybe<ChatUnreadIndex_Max_Order_By>;
-  min?: Maybe<ChatUnreadIndex_Min_Order_By>;
-  stddev?: Maybe<ChatUnreadIndex_Stddev_Order_By>;
-  stddev_pop?: Maybe<ChatUnreadIndex_Stddev_Pop_Order_By>;
-  stddev_samp?: Maybe<ChatUnreadIndex_Stddev_Samp_Order_By>;
-  sum?: Maybe<ChatUnreadIndex_Sum_Order_By>;
-  var_pop?: Maybe<ChatUnreadIndex_Var_Pop_Order_By>;
-  var_samp?: Maybe<ChatUnreadIndex_Var_Samp_Order_By>;
-  variance?: Maybe<ChatUnreadIndex_Variance_Order_By>;
+  readonly avg?: Maybe<ChatUnreadIndex_Avg_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<ChatUnreadIndex_Max_Order_By>;
+  readonly min?: Maybe<ChatUnreadIndex_Min_Order_By>;
+  readonly stddev?: Maybe<ChatUnreadIndex_Stddev_Order_By>;
+  readonly stddev_pop?: Maybe<ChatUnreadIndex_Stddev_Pop_Order_By>;
+  readonly stddev_samp?: Maybe<ChatUnreadIndex_Stddev_Samp_Order_By>;
+  readonly sum?: Maybe<ChatUnreadIndex_Sum_Order_By>;
+  readonly var_pop?: Maybe<ChatUnreadIndex_Var_Pop_Order_By>;
+  readonly var_samp?: Maybe<ChatUnreadIndex_Var_Samp_Order_By>;
+  readonly variance?: Maybe<ChatUnreadIndex_Variance_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "ChatUnreadIndex" */
 export type ChatUnreadIndex_Arr_Rel_Insert_Input = {
-  data: Array<ChatUnreadIndex_Insert_Input>;
-  on_conflict?: Maybe<ChatUnreadIndex_On_Conflict>;
+  readonly data: ReadonlyArray<ChatUnreadIndex_Insert_Input>;
+  readonly on_conflict?: Maybe<ChatUnreadIndex_On_Conflict>;
 };
 
 /** aggregate avg on columns */
 export type ChatUnreadIndex_Avg_Fields = {
-  __typename?: 'ChatUnreadIndex_avg_fields';
-  index?: Maybe<Scalars['Float']>;
+  readonly __typename?: 'ChatUnreadIndex_avg_fields';
+  readonly index?: Maybe<Scalars['Float']>;
 };
 
 /** order by avg() on columns of table "ChatUnreadIndex" */
 export type ChatUnreadIndex_Avg_Order_By = {
-  index?: Maybe<Order_By>;
+  readonly index?: Maybe<Order_By>;
 };
 
 /** Boolean expression to filter rows from the table "ChatUnreadIndex". All fields are combined with a logical 'AND'. */
 export type ChatUnreadIndex_Bool_Exp = {
-  _and?: Maybe<Array<Maybe<ChatUnreadIndex_Bool_Exp>>>;
-  _not?: Maybe<ChatUnreadIndex_Bool_Exp>;
-  _or?: Maybe<Array<Maybe<ChatUnreadIndex_Bool_Exp>>>;
-  chat?: Maybe<Chat_Bool_Exp>;
-  chatId?: Maybe<Uuid_Comparison_Exp>;
-  id?: Maybe<Uuid_Comparison_Exp>;
-  index?: Maybe<Int_Comparison_Exp>;
-  user?: Maybe<User_Bool_Exp>;
-  userId?: Maybe<String_Comparison_Exp>;
+  readonly _and?: Maybe<ReadonlyArray<Maybe<ChatUnreadIndex_Bool_Exp>>>;
+  readonly _not?: Maybe<ChatUnreadIndex_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<ChatUnreadIndex_Bool_Exp>>>;
+  readonly chat?: Maybe<Chat_Bool_Exp>;
+  readonly chatId?: Maybe<Uuid_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly index?: Maybe<Int_Comparison_Exp>;
+  readonly user?: Maybe<User_Bool_Exp>;
+  readonly userId?: Maybe<String_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "ChatUnreadIndex" */
@@ -2069,88 +2071,88 @@ export enum ChatUnreadIndex_Constraint {
 
 /** input type for incrementing integer column in table "ChatUnreadIndex" */
 export type ChatUnreadIndex_Inc_Input = {
-  index?: Maybe<Scalars['Int']>;
+  readonly index?: Maybe<Scalars['Int']>;
 };
 
 /** input type for inserting data into table "ChatUnreadIndex" */
 export type ChatUnreadIndex_Insert_Input = {
-  chat?: Maybe<Chat_Obj_Rel_Insert_Input>;
-  chatId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  index?: Maybe<Scalars['Int']>;
-  user?: Maybe<User_Obj_Rel_Insert_Input>;
-  userId?: Maybe<Scalars['String']>;
+  readonly chat?: Maybe<Chat_Obj_Rel_Insert_Input>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly index?: Maybe<Scalars['Int']>;
+  readonly user?: Maybe<User_Obj_Rel_Insert_Input>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** aggregate max on columns */
 export type ChatUnreadIndex_Max_Fields = {
-  __typename?: 'ChatUnreadIndex_max_fields';
-  chatId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  index?: Maybe<Scalars['Int']>;
-  userId?: Maybe<Scalars['String']>;
+  readonly __typename?: 'ChatUnreadIndex_max_fields';
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly index?: Maybe<Scalars['Int']>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** order by max() on columns of table "ChatUnreadIndex" */
 export type ChatUnreadIndex_Max_Order_By = {
-  chatId?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  index?: Maybe<Order_By>;
-  userId?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly index?: Maybe<Order_By>;
+  readonly userId?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type ChatUnreadIndex_Min_Fields = {
-  __typename?: 'ChatUnreadIndex_min_fields';
-  chatId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  index?: Maybe<Scalars['Int']>;
-  userId?: Maybe<Scalars['String']>;
+  readonly __typename?: 'ChatUnreadIndex_min_fields';
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly index?: Maybe<Scalars['Int']>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** order by min() on columns of table "ChatUnreadIndex" */
 export type ChatUnreadIndex_Min_Order_By = {
-  chatId?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  index?: Maybe<Order_By>;
-  userId?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly index?: Maybe<Order_By>;
+  readonly userId?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "ChatUnreadIndex" */
 export type ChatUnreadIndex_Mutation_Response = {
-  __typename?: 'ChatUnreadIndex_mutation_response';
+  readonly __typename?: 'ChatUnreadIndex_mutation_response';
   /** number of affected rows by the mutation */
-  affected_rows: Scalars['Int'];
+  readonly affected_rows: Scalars['Int'];
   /** data of the affected rows by the mutation */
-  returning: Array<ChatUnreadIndex>;
+  readonly returning: ReadonlyArray<ChatUnreadIndex>;
 };
 
 /** input type for inserting object relation for remote table "ChatUnreadIndex" */
 export type ChatUnreadIndex_Obj_Rel_Insert_Input = {
-  data: ChatUnreadIndex_Insert_Input;
-  on_conflict?: Maybe<ChatUnreadIndex_On_Conflict>;
+  readonly data: ChatUnreadIndex_Insert_Input;
+  readonly on_conflict?: Maybe<ChatUnreadIndex_On_Conflict>;
 };
 
 /** on conflict condition type for table "ChatUnreadIndex" */
 export type ChatUnreadIndex_On_Conflict = {
-  constraint: ChatUnreadIndex_Constraint;
-  update_columns: Array<ChatUnreadIndex_Update_Column>;
-  where?: Maybe<ChatUnreadIndex_Bool_Exp>;
+  readonly constraint: ChatUnreadIndex_Constraint;
+  readonly update_columns: ReadonlyArray<ChatUnreadIndex_Update_Column>;
+  readonly where?: Maybe<ChatUnreadIndex_Bool_Exp>;
 };
 
 /** ordering options when selecting data from "ChatUnreadIndex" */
 export type ChatUnreadIndex_Order_By = {
-  chat?: Maybe<Chat_Order_By>;
-  chatId?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  index?: Maybe<Order_By>;
-  user?: Maybe<User_Order_By>;
-  userId?: Maybe<Order_By>;
+  readonly chat?: Maybe<Chat_Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly index?: Maybe<Order_By>;
+  readonly user?: Maybe<User_Order_By>;
+  readonly userId?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: "ChatUnreadIndex" */
 export type ChatUnreadIndex_Pk_Columns_Input = {
-  id: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
 };
 
 /** select columns of table "ChatUnreadIndex" */
@@ -2167,54 +2169,54 @@ export enum ChatUnreadIndex_Select_Column {
 
 /** input type for updating data in table "ChatUnreadIndex" */
 export type ChatUnreadIndex_Set_Input = {
-  chatId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  index?: Maybe<Scalars['Int']>;
-  userId?: Maybe<Scalars['String']>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly index?: Maybe<Scalars['Int']>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** aggregate stddev on columns */
 export type ChatUnreadIndex_Stddev_Fields = {
-  __typename?: 'ChatUnreadIndex_stddev_fields';
-  index?: Maybe<Scalars['Float']>;
+  readonly __typename?: 'ChatUnreadIndex_stddev_fields';
+  readonly index?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev() on columns of table "ChatUnreadIndex" */
 export type ChatUnreadIndex_Stddev_Order_By = {
-  index?: Maybe<Order_By>;
+  readonly index?: Maybe<Order_By>;
 };
 
 /** aggregate stddev_pop on columns */
 export type ChatUnreadIndex_Stddev_Pop_Fields = {
-  __typename?: 'ChatUnreadIndex_stddev_pop_fields';
-  index?: Maybe<Scalars['Float']>;
+  readonly __typename?: 'ChatUnreadIndex_stddev_pop_fields';
+  readonly index?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev_pop() on columns of table "ChatUnreadIndex" */
 export type ChatUnreadIndex_Stddev_Pop_Order_By = {
-  index?: Maybe<Order_By>;
+  readonly index?: Maybe<Order_By>;
 };
 
 /** aggregate stddev_samp on columns */
 export type ChatUnreadIndex_Stddev_Samp_Fields = {
-  __typename?: 'ChatUnreadIndex_stddev_samp_fields';
-  index?: Maybe<Scalars['Float']>;
+  readonly __typename?: 'ChatUnreadIndex_stddev_samp_fields';
+  readonly index?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev_samp() on columns of table "ChatUnreadIndex" */
 export type ChatUnreadIndex_Stddev_Samp_Order_By = {
-  index?: Maybe<Order_By>;
+  readonly index?: Maybe<Order_By>;
 };
 
 /** aggregate sum on columns */
 export type ChatUnreadIndex_Sum_Fields = {
-  __typename?: 'ChatUnreadIndex_sum_fields';
-  index?: Maybe<Scalars['Int']>;
+  readonly __typename?: 'ChatUnreadIndex_sum_fields';
+  readonly index?: Maybe<Scalars['Int']>;
 };
 
 /** order by sum() on columns of table "ChatUnreadIndex" */
 export type ChatUnreadIndex_Sum_Order_By = {
-  index?: Maybe<Order_By>;
+  readonly index?: Maybe<Order_By>;
 };
 
 /** update columns of table "ChatUnreadIndex" */
@@ -2231,96 +2233,96 @@ export enum ChatUnreadIndex_Update_Column {
 
 /** aggregate var_pop on columns */
 export type ChatUnreadIndex_Var_Pop_Fields = {
-  __typename?: 'ChatUnreadIndex_var_pop_fields';
-  index?: Maybe<Scalars['Float']>;
+  readonly __typename?: 'ChatUnreadIndex_var_pop_fields';
+  readonly index?: Maybe<Scalars['Float']>;
 };
 
 /** order by var_pop() on columns of table "ChatUnreadIndex" */
 export type ChatUnreadIndex_Var_Pop_Order_By = {
-  index?: Maybe<Order_By>;
+  readonly index?: Maybe<Order_By>;
 };
 
 /** aggregate var_samp on columns */
 export type ChatUnreadIndex_Var_Samp_Fields = {
-  __typename?: 'ChatUnreadIndex_var_samp_fields';
-  index?: Maybe<Scalars['Float']>;
+  readonly __typename?: 'ChatUnreadIndex_var_samp_fields';
+  readonly index?: Maybe<Scalars['Float']>;
 };
 
 /** order by var_samp() on columns of table "ChatUnreadIndex" */
 export type ChatUnreadIndex_Var_Samp_Order_By = {
-  index?: Maybe<Order_By>;
+  readonly index?: Maybe<Order_By>;
 };
 
 /** aggregate variance on columns */
 export type ChatUnreadIndex_Variance_Fields = {
-  __typename?: 'ChatUnreadIndex_variance_fields';
-  index?: Maybe<Scalars['Float']>;
+  readonly __typename?: 'ChatUnreadIndex_variance_fields';
+  readonly index?: Maybe<Scalars['Float']>;
 };
 
 /** order by variance() on columns of table "ChatUnreadIndex" */
 export type ChatUnreadIndex_Variance_Order_By = {
-  index?: Maybe<Order_By>;
+  readonly index?: Maybe<Order_By>;
 };
 
 /** columns and relationships of "ChatViewer" */
 export type ChatViewer = {
-  __typename?: 'ChatViewer';
+  readonly __typename?: 'ChatViewer';
   /** An object relationship */
-  chat: Chat;
-  chatId: Scalars['uuid'];
-  id: Scalars['uuid'];
-  lastSeen: Scalars['timestamptz'];
+  readonly chat: Chat;
+  readonly chatId: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
+  readonly lastSeen: Scalars['timestamptz'];
   /** An object relationship */
-  user: User;
-  userId: Scalars['String'];
+  readonly user: User;
+  readonly userId: Scalars['String'];
 };
 
 /** aggregated selection of "ChatViewer" */
 export type ChatViewer_Aggregate = {
-  __typename?: 'ChatViewer_aggregate';
-  aggregate?: Maybe<ChatViewer_Aggregate_Fields>;
-  nodes: Array<ChatViewer>;
+  readonly __typename?: 'ChatViewer_aggregate';
+  readonly aggregate?: Maybe<ChatViewer_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<ChatViewer>;
 };
 
 /** aggregate fields of "ChatViewer" */
 export type ChatViewer_Aggregate_Fields = {
-  __typename?: 'ChatViewer_aggregate_fields';
-  count?: Maybe<Scalars['Int']>;
-  max?: Maybe<ChatViewer_Max_Fields>;
-  min?: Maybe<ChatViewer_Min_Fields>;
+  readonly __typename?: 'ChatViewer_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<ChatViewer_Max_Fields>;
+  readonly min?: Maybe<ChatViewer_Min_Fields>;
 };
 
 
 /** aggregate fields of "ChatViewer" */
 export type ChatViewer_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<Array<ChatViewer_Select_Column>>;
+  columns?: Maybe<ReadonlyArray<ChatViewer_Select_Column>>;
   distinct?: Maybe<Scalars['Boolean']>;
 };
 
 /** order by aggregate values of table "ChatViewer" */
 export type ChatViewer_Aggregate_Order_By = {
-  count?: Maybe<Order_By>;
-  max?: Maybe<ChatViewer_Max_Order_By>;
-  min?: Maybe<ChatViewer_Min_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<ChatViewer_Max_Order_By>;
+  readonly min?: Maybe<ChatViewer_Min_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "ChatViewer" */
 export type ChatViewer_Arr_Rel_Insert_Input = {
-  data: Array<ChatViewer_Insert_Input>;
-  on_conflict?: Maybe<ChatViewer_On_Conflict>;
+  readonly data: ReadonlyArray<ChatViewer_Insert_Input>;
+  readonly on_conflict?: Maybe<ChatViewer_On_Conflict>;
 };
 
 /** Boolean expression to filter rows from the table "ChatViewer". All fields are combined with a logical 'AND'. */
 export type ChatViewer_Bool_Exp = {
-  _and?: Maybe<Array<Maybe<ChatViewer_Bool_Exp>>>;
-  _not?: Maybe<ChatViewer_Bool_Exp>;
-  _or?: Maybe<Array<Maybe<ChatViewer_Bool_Exp>>>;
-  chat?: Maybe<Chat_Bool_Exp>;
-  chatId?: Maybe<Uuid_Comparison_Exp>;
-  id?: Maybe<Uuid_Comparison_Exp>;
-  lastSeen?: Maybe<Timestamptz_Comparison_Exp>;
-  user?: Maybe<User_Bool_Exp>;
-  userId?: Maybe<String_Comparison_Exp>;
+  readonly _and?: Maybe<ReadonlyArray<Maybe<ChatViewer_Bool_Exp>>>;
+  readonly _not?: Maybe<ChatViewer_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<ChatViewer_Bool_Exp>>>;
+  readonly chat?: Maybe<Chat_Bool_Exp>;
+  readonly chatId?: Maybe<Uuid_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly lastSeen?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly user?: Maybe<User_Bool_Exp>;
+  readonly userId?: Maybe<String_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "ChatViewer" */
@@ -2333,83 +2335,83 @@ export enum ChatViewer_Constraint {
 
 /** input type for inserting data into table "ChatViewer" */
 export type ChatViewer_Insert_Input = {
-  chat?: Maybe<Chat_Obj_Rel_Insert_Input>;
-  chatId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  lastSeen?: Maybe<Scalars['timestamptz']>;
-  user?: Maybe<User_Obj_Rel_Insert_Input>;
-  userId?: Maybe<Scalars['String']>;
+  readonly chat?: Maybe<Chat_Obj_Rel_Insert_Input>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly lastSeen?: Maybe<Scalars['timestamptz']>;
+  readonly user?: Maybe<User_Obj_Rel_Insert_Input>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** aggregate max on columns */
 export type ChatViewer_Max_Fields = {
-  __typename?: 'ChatViewer_max_fields';
-  chatId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  lastSeen?: Maybe<Scalars['timestamptz']>;
-  userId?: Maybe<Scalars['String']>;
+  readonly __typename?: 'ChatViewer_max_fields';
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly lastSeen?: Maybe<Scalars['timestamptz']>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** order by max() on columns of table "ChatViewer" */
 export type ChatViewer_Max_Order_By = {
-  chatId?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  lastSeen?: Maybe<Order_By>;
-  userId?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly lastSeen?: Maybe<Order_By>;
+  readonly userId?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type ChatViewer_Min_Fields = {
-  __typename?: 'ChatViewer_min_fields';
-  chatId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  lastSeen?: Maybe<Scalars['timestamptz']>;
-  userId?: Maybe<Scalars['String']>;
+  readonly __typename?: 'ChatViewer_min_fields';
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly lastSeen?: Maybe<Scalars['timestamptz']>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** order by min() on columns of table "ChatViewer" */
 export type ChatViewer_Min_Order_By = {
-  chatId?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  lastSeen?: Maybe<Order_By>;
-  userId?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly lastSeen?: Maybe<Order_By>;
+  readonly userId?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "ChatViewer" */
 export type ChatViewer_Mutation_Response = {
-  __typename?: 'ChatViewer_mutation_response';
+  readonly __typename?: 'ChatViewer_mutation_response';
   /** number of affected rows by the mutation */
-  affected_rows: Scalars['Int'];
+  readonly affected_rows: Scalars['Int'];
   /** data of the affected rows by the mutation */
-  returning: Array<ChatViewer>;
+  readonly returning: ReadonlyArray<ChatViewer>;
 };
 
 /** input type for inserting object relation for remote table "ChatViewer" */
 export type ChatViewer_Obj_Rel_Insert_Input = {
-  data: ChatViewer_Insert_Input;
-  on_conflict?: Maybe<ChatViewer_On_Conflict>;
+  readonly data: ChatViewer_Insert_Input;
+  readonly on_conflict?: Maybe<ChatViewer_On_Conflict>;
 };
 
 /** on conflict condition type for table "ChatViewer" */
 export type ChatViewer_On_Conflict = {
-  constraint: ChatViewer_Constraint;
-  update_columns: Array<ChatViewer_Update_Column>;
-  where?: Maybe<ChatViewer_Bool_Exp>;
+  readonly constraint: ChatViewer_Constraint;
+  readonly update_columns: ReadonlyArray<ChatViewer_Update_Column>;
+  readonly where?: Maybe<ChatViewer_Bool_Exp>;
 };
 
 /** ordering options when selecting data from "ChatViewer" */
 export type ChatViewer_Order_By = {
-  chat?: Maybe<Chat_Order_By>;
-  chatId?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  lastSeen?: Maybe<Order_By>;
-  user?: Maybe<User_Order_By>;
-  userId?: Maybe<Order_By>;
+  readonly chat?: Maybe<Chat_Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly lastSeen?: Maybe<Order_By>;
+  readonly user?: Maybe<User_Order_By>;
+  readonly userId?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: "ChatViewer" */
 export type ChatViewer_Pk_Columns_Input = {
-  id: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
 };
 
 /** select columns of table "ChatViewer" */
@@ -2426,10 +2428,10 @@ export enum ChatViewer_Select_Column {
 
 /** input type for updating data in table "ChatViewer" */
 export type ChatViewer_Set_Input = {
-  chatId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  lastSeen?: Maybe<Scalars['timestamptz']>;
-  userId?: Maybe<Scalars['String']>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly lastSeen?: Maybe<Scalars['timestamptz']>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** update columns of table "ChatViewer" */
@@ -2446,60 +2448,60 @@ export enum ChatViewer_Update_Column {
 
 /** aggregated selection of "Chat" */
 export type Chat_Aggregate = {
-  __typename?: 'Chat_aggregate';
-  aggregate?: Maybe<Chat_Aggregate_Fields>;
-  nodes: Array<Chat>;
+  readonly __typename?: 'Chat_aggregate';
+  readonly aggregate?: Maybe<Chat_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Chat>;
 };
 
 /** aggregate fields of "Chat" */
 export type Chat_Aggregate_Fields = {
-  __typename?: 'Chat_aggregate_fields';
-  count?: Maybe<Scalars['Int']>;
-  max?: Maybe<Chat_Max_Fields>;
-  min?: Maybe<Chat_Min_Fields>;
+  readonly __typename?: 'Chat_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Chat_Max_Fields>;
+  readonly min?: Maybe<Chat_Min_Fields>;
 };
 
 
 /** aggregate fields of "Chat" */
 export type Chat_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<Array<Chat_Select_Column>>;
+  columns?: Maybe<ReadonlyArray<Chat_Select_Column>>;
   distinct?: Maybe<Scalars['Boolean']>;
 };
 
 /** order by aggregate values of table "Chat" */
 export type Chat_Aggregate_Order_By = {
-  count?: Maybe<Order_By>;
-  max?: Maybe<Chat_Max_Order_By>;
-  min?: Maybe<Chat_Min_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Chat_Max_Order_By>;
+  readonly min?: Maybe<Chat_Min_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "Chat" */
 export type Chat_Arr_Rel_Insert_Input = {
-  data: Array<Chat_Insert_Input>;
-  on_conflict?: Maybe<Chat_On_Conflict>;
+  readonly data: ReadonlyArray<Chat_Insert_Input>;
+  readonly on_conflict?: Maybe<Chat_On_Conflict>;
 };
 
 /** Boolean expression to filter rows from the table "Chat". All fields are combined with a logical 'AND'. */
 export type Chat_Bool_Exp = {
-  _and?: Maybe<Array<Maybe<Chat_Bool_Exp>>>;
-  _not?: Maybe<Chat_Bool_Exp>;
-  _or?: Maybe<Array<Maybe<Chat_Bool_Exp>>>;
-  createdAt?: Maybe<Timestamptz_Comparison_Exp>;
-  creator?: Maybe<User_Bool_Exp>;
-  creatorId?: Maybe<String_Comparison_Exp>;
-  description?: Maybe<String_Comparison_Exp>;
-  flaggedMessages?: Maybe<FlaggedChatMessage_Bool_Exp>;
-  id?: Maybe<Uuid_Comparison_Exp>;
-  isAutoNotify?: Maybe<Boolean_Comparison_Exp>;
-  isAutoPin?: Maybe<Boolean_Comparison_Exp>;
-  members?: Maybe<ChatMember_Bool_Exp>;
-  messages?: Maybe<ChatMessage_Bool_Exp>;
-  mode?: Maybe<String_Comparison_Exp>;
-  moderators?: Maybe<ChatModerator_Bool_Exp>;
-  name?: Maybe<String_Comparison_Exp>;
-  typers?: Maybe<ChatTyper_Bool_Exp>;
-  updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
-  viewers?: Maybe<ChatViewer_Bool_Exp>;
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Chat_Bool_Exp>>>;
+  readonly _not?: Maybe<Chat_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Chat_Bool_Exp>>>;
+  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly creator?: Maybe<User_Bool_Exp>;
+  readonly creatorId?: Maybe<String_Comparison_Exp>;
+  readonly description?: Maybe<String_Comparison_Exp>;
+  readonly flaggedMessages?: Maybe<FlaggedChatMessage_Bool_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly isAutoNotify?: Maybe<Boolean_Comparison_Exp>;
+  readonly isAutoPin?: Maybe<Boolean_Comparison_Exp>;
+  readonly members?: Maybe<ChatMember_Bool_Exp>;
+  readonly messages?: Maybe<ChatMessage_Bool_Exp>;
+  readonly mode?: Maybe<String_Comparison_Exp>;
+  readonly moderators?: Maybe<ChatModerator_Bool_Exp>;
+  readonly name?: Maybe<String_Comparison_Exp>;
+  readonly typers?: Maybe<ChatTyper_Bool_Exp>;
+  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly viewers?: Maybe<ChatViewer_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "Chat" */
@@ -2510,115 +2512,115 @@ export enum Chat_Constraint {
 
 /** input type for inserting data into table "Chat" */
 export type Chat_Insert_Input = {
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  creator?: Maybe<User_Obj_Rel_Insert_Input>;
-  creatorId?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  flaggedMessages?: Maybe<FlaggedChatMessage_Arr_Rel_Insert_Input>;
-  id?: Maybe<Scalars['uuid']>;
-  isAutoNotify?: Maybe<Scalars['Boolean']>;
-  isAutoPin?: Maybe<Scalars['Boolean']>;
-  members?: Maybe<ChatMember_Arr_Rel_Insert_Input>;
-  messages?: Maybe<ChatMessage_Arr_Rel_Insert_Input>;
-  mode?: Maybe<Scalars['String']>;
-  moderators?: Maybe<ChatModerator_Arr_Rel_Insert_Input>;
-  name?: Maybe<Scalars['String']>;
-  typers?: Maybe<ChatTyper_Arr_Rel_Insert_Input>;
-  updatedAt?: Maybe<Scalars['timestamptz']>;
-  viewers?: Maybe<ChatViewer_Arr_Rel_Insert_Input>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly creator?: Maybe<User_Obj_Rel_Insert_Input>;
+  readonly creatorId?: Maybe<Scalars['String']>;
+  readonly description?: Maybe<Scalars['String']>;
+  readonly flaggedMessages?: Maybe<FlaggedChatMessage_Arr_Rel_Insert_Input>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly isAutoNotify?: Maybe<Scalars['Boolean']>;
+  readonly isAutoPin?: Maybe<Scalars['Boolean']>;
+  readonly members?: Maybe<ChatMember_Arr_Rel_Insert_Input>;
+  readonly messages?: Maybe<ChatMessage_Arr_Rel_Insert_Input>;
+  readonly mode?: Maybe<Scalars['String']>;
+  readonly moderators?: Maybe<ChatModerator_Arr_Rel_Insert_Input>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly typers?: Maybe<ChatTyper_Arr_Rel_Insert_Input>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly viewers?: Maybe<ChatViewer_Arr_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
 export type Chat_Max_Fields = {
-  __typename?: 'Chat_max_fields';
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  creatorId?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['uuid']>;
-  mode?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly __typename?: 'Chat_max_fields';
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly creatorId?: Maybe<Scalars['String']>;
+  readonly description?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly mode?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
 /** order by max() on columns of table "Chat" */
 export type Chat_Max_Order_By = {
-  createdAt?: Maybe<Order_By>;
-  creatorId?: Maybe<Order_By>;
-  description?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  mode?: Maybe<Order_By>;
-  name?: Maybe<Order_By>;
-  updatedAt?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly creatorId?: Maybe<Order_By>;
+  readonly description?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly mode?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type Chat_Min_Fields = {
-  __typename?: 'Chat_min_fields';
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  creatorId?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['uuid']>;
-  mode?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly __typename?: 'Chat_min_fields';
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly creatorId?: Maybe<Scalars['String']>;
+  readonly description?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly mode?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
 /** order by min() on columns of table "Chat" */
 export type Chat_Min_Order_By = {
-  createdAt?: Maybe<Order_By>;
-  creatorId?: Maybe<Order_By>;
-  description?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  mode?: Maybe<Order_By>;
-  name?: Maybe<Order_By>;
-  updatedAt?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly creatorId?: Maybe<Order_By>;
+  readonly description?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly mode?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "Chat" */
 export type Chat_Mutation_Response = {
-  __typename?: 'Chat_mutation_response';
+  readonly __typename?: 'Chat_mutation_response';
   /** number of affected rows by the mutation */
-  affected_rows: Scalars['Int'];
+  readonly affected_rows: Scalars['Int'];
   /** data of the affected rows by the mutation */
-  returning: Array<Chat>;
+  readonly returning: ReadonlyArray<Chat>;
 };
 
 /** input type for inserting object relation for remote table "Chat" */
 export type Chat_Obj_Rel_Insert_Input = {
-  data: Chat_Insert_Input;
-  on_conflict?: Maybe<Chat_On_Conflict>;
+  readonly data: Chat_Insert_Input;
+  readonly on_conflict?: Maybe<Chat_On_Conflict>;
 };
 
 /** on conflict condition type for table "Chat" */
 export type Chat_On_Conflict = {
-  constraint: Chat_Constraint;
-  update_columns: Array<Chat_Update_Column>;
-  where?: Maybe<Chat_Bool_Exp>;
+  readonly constraint: Chat_Constraint;
+  readonly update_columns: ReadonlyArray<Chat_Update_Column>;
+  readonly where?: Maybe<Chat_Bool_Exp>;
 };
 
 /** ordering options when selecting data from "Chat" */
 export type Chat_Order_By = {
-  createdAt?: Maybe<Order_By>;
-  creator?: Maybe<User_Order_By>;
-  creatorId?: Maybe<Order_By>;
-  description?: Maybe<Order_By>;
-  flaggedMessages_aggregate?: Maybe<FlaggedChatMessage_Aggregate_Order_By>;
-  id?: Maybe<Order_By>;
-  isAutoNotify?: Maybe<Order_By>;
-  isAutoPin?: Maybe<Order_By>;
-  members_aggregate?: Maybe<ChatMember_Aggregate_Order_By>;
-  messages_aggregate?: Maybe<ChatMessage_Aggregate_Order_By>;
-  mode?: Maybe<Order_By>;
-  moderators_aggregate?: Maybe<ChatModerator_Aggregate_Order_By>;
-  name?: Maybe<Order_By>;
-  typers_aggregate?: Maybe<ChatTyper_Aggregate_Order_By>;
-  updatedAt?: Maybe<Order_By>;
-  viewers_aggregate?: Maybe<ChatViewer_Aggregate_Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly creator?: Maybe<User_Order_By>;
+  readonly creatorId?: Maybe<Order_By>;
+  readonly description?: Maybe<Order_By>;
+  readonly flaggedMessages_aggregate?: Maybe<FlaggedChatMessage_Aggregate_Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly isAutoNotify?: Maybe<Order_By>;
+  readonly isAutoPin?: Maybe<Order_By>;
+  readonly members_aggregate?: Maybe<ChatMember_Aggregate_Order_By>;
+  readonly messages_aggregate?: Maybe<ChatMessage_Aggregate_Order_By>;
+  readonly mode?: Maybe<Order_By>;
+  readonly moderators_aggregate?: Maybe<ChatModerator_Aggregate_Order_By>;
+  readonly name?: Maybe<Order_By>;
+  readonly typers_aggregate?: Maybe<ChatTyper_Aggregate_Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly viewers_aggregate?: Maybe<ChatViewer_Aggregate_Order_By>;
 };
 
 /** primary key columns input for table: "Chat" */
 export type Chat_Pk_Columns_Input = {
-  id: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
 };
 
 /** select columns of table "Chat" */
@@ -2645,15 +2647,15 @@ export enum Chat_Select_Column {
 
 /** input type for updating data in table "Chat" */
 export type Chat_Set_Input = {
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  creatorId?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['uuid']>;
-  isAutoNotify?: Maybe<Scalars['Boolean']>;
-  isAutoPin?: Maybe<Scalars['Boolean']>;
-  mode?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly creatorId?: Maybe<Scalars['String']>;
+  readonly description?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly isAutoNotify?: Maybe<Scalars['Boolean']>;
+  readonly isAutoPin?: Maybe<Scalars['Boolean']>;
+  readonly mode?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
 /** update columns of table "Chat" */
@@ -2680,178 +2682,178 @@ export enum Chat_Update_Column {
 
 /** columns and relationships of "Conference" */
 export type Conference = {
-  __typename?: 'Conference';
+  readonly __typename?: 'Conference';
   /** An array relationship */
-  activeGroups: Array<ActiveGroup>;
+  readonly activeGroups: ReadonlyArray<ActiveGroup>;
   /** An aggregated array relationship */
-  activeGroups_aggregate: ActiveGroup_Aggregate;
+  readonly activeGroups_aggregate: ActiveGroup_Aggregate;
   /** An array relationship */
-  attendees: Array<Attendee>;
+  readonly attendees: ReadonlyArray<Attendee>;
   /** An aggregated array relationship */
-  attendees_aggregate: Attendee_Aggregate;
-  createdAt: Scalars['timestamptz'];
-  createdBy: Scalars['String'];
+  readonly attendees_aggregate: Attendee_Aggregate;
+  readonly createdAt: Scalars['timestamptz'];
+  readonly createdBy: Scalars['String'];
   /** An object relationship */
-  creator: User;
+  readonly creator: User;
   /** An object relationship */
-  demoCode: ConferenceDemoCode;
-  demoCodeId: Scalars['uuid'];
+  readonly demoCode: ConferenceDemoCode;
+  readonly demoCodeId: Scalars['uuid'];
   /** An array relationship */
-  groups: Array<Group>;
+  readonly groups: ReadonlyArray<Group>;
   /** An aggregated array relationship */
-  groups_aggregate: Group_Aggregate;
-  id: Scalars['uuid'];
-  name: Scalars['String'];
+  readonly groups_aggregate: Group_Aggregate;
+  readonly id: Scalars['uuid'];
+  readonly name: Scalars['String'];
   /** An array relationship */
-  roles: Array<Role>;
+  readonly roles: ReadonlyArray<Role>;
   /** An aggregated array relationship */
-  roles_aggregate: Role_Aggregate;
-  shortName: Scalars['String'];
-  slug: Scalars['String'];
-  updatedAt: Scalars['timestamptz'];
+  readonly roles_aggregate: Role_Aggregate;
+  readonly shortName: Scalars['String'];
+  readonly slug: Scalars['String'];
+  readonly updatedAt: Scalars['timestamptz'];
 };
 
 
 /** columns and relationships of "Conference" */
 export type ConferenceActiveGroupsArgs = {
-  distinct_on?: Maybe<Array<ActiveGroup_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ActiveGroup_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ActiveGroup_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ActiveGroup_Order_By>>;
   where?: Maybe<ActiveGroup_Bool_Exp>;
 };
 
 
 /** columns and relationships of "Conference" */
 export type ConferenceActiveGroups_AggregateArgs = {
-  distinct_on?: Maybe<Array<ActiveGroup_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ActiveGroup_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ActiveGroup_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ActiveGroup_Order_By>>;
   where?: Maybe<ActiveGroup_Bool_Exp>;
 };
 
 
 /** columns and relationships of "Conference" */
 export type ConferenceAttendeesArgs = {
-  distinct_on?: Maybe<Array<Attendee_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Attendee_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Attendee_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Attendee_Order_By>>;
   where?: Maybe<Attendee_Bool_Exp>;
 };
 
 
 /** columns and relationships of "Conference" */
 export type ConferenceAttendees_AggregateArgs = {
-  distinct_on?: Maybe<Array<Attendee_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Attendee_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Attendee_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Attendee_Order_By>>;
   where?: Maybe<Attendee_Bool_Exp>;
 };
 
 
 /** columns and relationships of "Conference" */
 export type ConferenceGroupsArgs = {
-  distinct_on?: Maybe<Array<Group_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Group_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Group_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Group_Order_By>>;
   where?: Maybe<Group_Bool_Exp>;
 };
 
 
 /** columns and relationships of "Conference" */
 export type ConferenceGroups_AggregateArgs = {
-  distinct_on?: Maybe<Array<Group_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Group_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Group_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Group_Order_By>>;
   where?: Maybe<Group_Bool_Exp>;
 };
 
 
 /** columns and relationships of "Conference" */
 export type ConferenceRolesArgs = {
-  distinct_on?: Maybe<Array<Role_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Role_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Role_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Role_Order_By>>;
   where?: Maybe<Role_Bool_Exp>;
 };
 
 
 /** columns and relationships of "Conference" */
 export type ConferenceRoles_AggregateArgs = {
-  distinct_on?: Maybe<Array<Role_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Role_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Role_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Role_Order_By>>;
   where?: Maybe<Role_Bool_Exp>;
 };
 
 /** columns and relationships of "ConferenceDemoCode" */
 export type ConferenceDemoCode = {
-  __typename?: 'ConferenceDemoCode';
+  readonly __typename?: 'ConferenceDemoCode';
   /** An object relationship */
-  conference?: Maybe<Conference>;
-  createdAt: Scalars['timestamptz'];
-  id: Scalars['uuid'];
-  note?: Maybe<Scalars['String']>;
-  updatedAt: Scalars['timestamptz'];
+  readonly conference?: Maybe<Conference>;
+  readonly createdAt: Scalars['timestamptz'];
+  readonly id: Scalars['uuid'];
+  readonly note?: Maybe<Scalars['String']>;
+  readonly updatedAt: Scalars['timestamptz'];
   /** An object relationship */
-  usedBy?: Maybe<User>;
-  usedById?: Maybe<Scalars['String']>;
+  readonly usedBy?: Maybe<User>;
+  readonly usedById?: Maybe<Scalars['String']>;
 };
 
 /** aggregated selection of "ConferenceDemoCode" */
 export type ConferenceDemoCode_Aggregate = {
-  __typename?: 'ConferenceDemoCode_aggregate';
-  aggregate?: Maybe<ConferenceDemoCode_Aggregate_Fields>;
-  nodes: Array<ConferenceDemoCode>;
+  readonly __typename?: 'ConferenceDemoCode_aggregate';
+  readonly aggregate?: Maybe<ConferenceDemoCode_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<ConferenceDemoCode>;
 };
 
 /** aggregate fields of "ConferenceDemoCode" */
 export type ConferenceDemoCode_Aggregate_Fields = {
-  __typename?: 'ConferenceDemoCode_aggregate_fields';
-  count?: Maybe<Scalars['Int']>;
-  max?: Maybe<ConferenceDemoCode_Max_Fields>;
-  min?: Maybe<ConferenceDemoCode_Min_Fields>;
+  readonly __typename?: 'ConferenceDemoCode_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<ConferenceDemoCode_Max_Fields>;
+  readonly min?: Maybe<ConferenceDemoCode_Min_Fields>;
 };
 
 
 /** aggregate fields of "ConferenceDemoCode" */
 export type ConferenceDemoCode_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<Array<ConferenceDemoCode_Select_Column>>;
+  columns?: Maybe<ReadonlyArray<ConferenceDemoCode_Select_Column>>;
   distinct?: Maybe<Scalars['Boolean']>;
 };
 
 /** order by aggregate values of table "ConferenceDemoCode" */
 export type ConferenceDemoCode_Aggregate_Order_By = {
-  count?: Maybe<Order_By>;
-  max?: Maybe<ConferenceDemoCode_Max_Order_By>;
-  min?: Maybe<ConferenceDemoCode_Min_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<ConferenceDemoCode_Max_Order_By>;
+  readonly min?: Maybe<ConferenceDemoCode_Min_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "ConferenceDemoCode" */
 export type ConferenceDemoCode_Arr_Rel_Insert_Input = {
-  data: Array<ConferenceDemoCode_Insert_Input>;
-  on_conflict?: Maybe<ConferenceDemoCode_On_Conflict>;
+  readonly data: ReadonlyArray<ConferenceDemoCode_Insert_Input>;
+  readonly on_conflict?: Maybe<ConferenceDemoCode_On_Conflict>;
 };
 
 /** Boolean expression to filter rows from the table "ConferenceDemoCode". All fields are combined with a logical 'AND'. */
 export type ConferenceDemoCode_Bool_Exp = {
-  _and?: Maybe<Array<Maybe<ConferenceDemoCode_Bool_Exp>>>;
-  _not?: Maybe<ConferenceDemoCode_Bool_Exp>;
-  _or?: Maybe<Array<Maybe<ConferenceDemoCode_Bool_Exp>>>;
-  conference?: Maybe<Conference_Bool_Exp>;
-  createdAt?: Maybe<Timestamptz_Comparison_Exp>;
-  id?: Maybe<Uuid_Comparison_Exp>;
-  note?: Maybe<String_Comparison_Exp>;
-  updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
-  usedBy?: Maybe<User_Bool_Exp>;
-  usedById?: Maybe<String_Comparison_Exp>;
+  readonly _and?: Maybe<ReadonlyArray<Maybe<ConferenceDemoCode_Bool_Exp>>>;
+  readonly _not?: Maybe<ConferenceDemoCode_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<ConferenceDemoCode_Bool_Exp>>>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly note?: Maybe<String_Comparison_Exp>;
+  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly usedBy?: Maybe<User_Bool_Exp>;
+  readonly usedById?: Maybe<String_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "ConferenceDemoCode" */
@@ -2862,89 +2864,89 @@ export enum ConferenceDemoCode_Constraint {
 
 /** input type for inserting data into table "ConferenceDemoCode" */
 export type ConferenceDemoCode_Insert_Input = {
-  conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  id?: Maybe<Scalars['uuid']>;
-  note?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['timestamptz']>;
-  usedBy?: Maybe<User_Obj_Rel_Insert_Input>;
-  usedById?: Maybe<Scalars['String']>;
+  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly note?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly usedBy?: Maybe<User_Obj_Rel_Insert_Input>;
+  readonly usedById?: Maybe<Scalars['String']>;
 };
 
 /** aggregate max on columns */
 export type ConferenceDemoCode_Max_Fields = {
-  __typename?: 'ConferenceDemoCode_max_fields';
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  id?: Maybe<Scalars['uuid']>;
-  note?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['timestamptz']>;
-  usedById?: Maybe<Scalars['String']>;
+  readonly __typename?: 'ConferenceDemoCode_max_fields';
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly note?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly usedById?: Maybe<Scalars['String']>;
 };
 
 /** order by max() on columns of table "ConferenceDemoCode" */
 export type ConferenceDemoCode_Max_Order_By = {
-  createdAt?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  note?: Maybe<Order_By>;
-  updatedAt?: Maybe<Order_By>;
-  usedById?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly note?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly usedById?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type ConferenceDemoCode_Min_Fields = {
-  __typename?: 'ConferenceDemoCode_min_fields';
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  id?: Maybe<Scalars['uuid']>;
-  note?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['timestamptz']>;
-  usedById?: Maybe<Scalars['String']>;
+  readonly __typename?: 'ConferenceDemoCode_min_fields';
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly note?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly usedById?: Maybe<Scalars['String']>;
 };
 
 /** order by min() on columns of table "ConferenceDemoCode" */
 export type ConferenceDemoCode_Min_Order_By = {
-  createdAt?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  note?: Maybe<Order_By>;
-  updatedAt?: Maybe<Order_By>;
-  usedById?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly note?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly usedById?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "ConferenceDemoCode" */
 export type ConferenceDemoCode_Mutation_Response = {
-  __typename?: 'ConferenceDemoCode_mutation_response';
+  readonly __typename?: 'ConferenceDemoCode_mutation_response';
   /** number of affected rows by the mutation */
-  affected_rows: Scalars['Int'];
+  readonly affected_rows: Scalars['Int'];
   /** data of the affected rows by the mutation */
-  returning: Array<ConferenceDemoCode>;
+  readonly returning: ReadonlyArray<ConferenceDemoCode>;
 };
 
 /** input type for inserting object relation for remote table "ConferenceDemoCode" */
 export type ConferenceDemoCode_Obj_Rel_Insert_Input = {
-  data: ConferenceDemoCode_Insert_Input;
-  on_conflict?: Maybe<ConferenceDemoCode_On_Conflict>;
+  readonly data: ConferenceDemoCode_Insert_Input;
+  readonly on_conflict?: Maybe<ConferenceDemoCode_On_Conflict>;
 };
 
 /** on conflict condition type for table "ConferenceDemoCode" */
 export type ConferenceDemoCode_On_Conflict = {
-  constraint: ConferenceDemoCode_Constraint;
-  update_columns: Array<ConferenceDemoCode_Update_Column>;
-  where?: Maybe<ConferenceDemoCode_Bool_Exp>;
+  readonly constraint: ConferenceDemoCode_Constraint;
+  readonly update_columns: ReadonlyArray<ConferenceDemoCode_Update_Column>;
+  readonly where?: Maybe<ConferenceDemoCode_Bool_Exp>;
 };
 
 /** ordering options when selecting data from "ConferenceDemoCode" */
 export type ConferenceDemoCode_Order_By = {
-  conference?: Maybe<Conference_Order_By>;
-  createdAt?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  note?: Maybe<Order_By>;
-  updatedAt?: Maybe<Order_By>;
-  usedBy?: Maybe<User_Order_By>;
-  usedById?: Maybe<Order_By>;
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly note?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly usedBy?: Maybe<User_Order_By>;
+  readonly usedById?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: "ConferenceDemoCode" */
 export type ConferenceDemoCode_Pk_Columns_Input = {
-  id: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
 };
 
 /** select columns of table "ConferenceDemoCode" */
@@ -2963,11 +2965,11 @@ export enum ConferenceDemoCode_Select_Column {
 
 /** input type for updating data in table "ConferenceDemoCode" */
 export type ConferenceDemoCode_Set_Input = {
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  id?: Maybe<Scalars['uuid']>;
-  note?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['timestamptz']>;
-  usedById?: Maybe<Scalars['String']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly note?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly usedById?: Maybe<Scalars['String']>;
 };
 
 /** update columns of table "ConferenceDemoCode" */
@@ -2986,58 +2988,58 @@ export enum ConferenceDemoCode_Update_Column {
 
 /** aggregated selection of "Conference" */
 export type Conference_Aggregate = {
-  __typename?: 'Conference_aggregate';
-  aggregate?: Maybe<Conference_Aggregate_Fields>;
-  nodes: Array<Conference>;
+  readonly __typename?: 'Conference_aggregate';
+  readonly aggregate?: Maybe<Conference_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Conference>;
 };
 
 /** aggregate fields of "Conference" */
 export type Conference_Aggregate_Fields = {
-  __typename?: 'Conference_aggregate_fields';
-  count?: Maybe<Scalars['Int']>;
-  max?: Maybe<Conference_Max_Fields>;
-  min?: Maybe<Conference_Min_Fields>;
+  readonly __typename?: 'Conference_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Conference_Max_Fields>;
+  readonly min?: Maybe<Conference_Min_Fields>;
 };
 
 
 /** aggregate fields of "Conference" */
 export type Conference_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<Array<Conference_Select_Column>>;
+  columns?: Maybe<ReadonlyArray<Conference_Select_Column>>;
   distinct?: Maybe<Scalars['Boolean']>;
 };
 
 /** order by aggregate values of table "Conference" */
 export type Conference_Aggregate_Order_By = {
-  count?: Maybe<Order_By>;
-  max?: Maybe<Conference_Max_Order_By>;
-  min?: Maybe<Conference_Min_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Conference_Max_Order_By>;
+  readonly min?: Maybe<Conference_Min_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "Conference" */
 export type Conference_Arr_Rel_Insert_Input = {
-  data: Array<Conference_Insert_Input>;
-  on_conflict?: Maybe<Conference_On_Conflict>;
+  readonly data: ReadonlyArray<Conference_Insert_Input>;
+  readonly on_conflict?: Maybe<Conference_On_Conflict>;
 };
 
 /** Boolean expression to filter rows from the table "Conference". All fields are combined with a logical 'AND'. */
 export type Conference_Bool_Exp = {
-  _and?: Maybe<Array<Maybe<Conference_Bool_Exp>>>;
-  _not?: Maybe<Conference_Bool_Exp>;
-  _or?: Maybe<Array<Maybe<Conference_Bool_Exp>>>;
-  activeGroups?: Maybe<ActiveGroup_Bool_Exp>;
-  attendees?: Maybe<Attendee_Bool_Exp>;
-  createdAt?: Maybe<Timestamptz_Comparison_Exp>;
-  createdBy?: Maybe<String_Comparison_Exp>;
-  creator?: Maybe<User_Bool_Exp>;
-  demoCode?: Maybe<ConferenceDemoCode_Bool_Exp>;
-  demoCodeId?: Maybe<Uuid_Comparison_Exp>;
-  groups?: Maybe<Group_Bool_Exp>;
-  id?: Maybe<Uuid_Comparison_Exp>;
-  name?: Maybe<String_Comparison_Exp>;
-  roles?: Maybe<Role_Bool_Exp>;
-  shortName?: Maybe<String_Comparison_Exp>;
-  slug?: Maybe<String_Comparison_Exp>;
-  updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Conference_Bool_Exp>>>;
+  readonly _not?: Maybe<Conference_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Conference_Bool_Exp>>>;
+  readonly activeGroups?: Maybe<ActiveGroup_Bool_Exp>;
+  readonly attendees?: Maybe<Attendee_Bool_Exp>;
+  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly createdBy?: Maybe<String_Comparison_Exp>;
+  readonly creator?: Maybe<User_Bool_Exp>;
+  readonly demoCode?: Maybe<ConferenceDemoCode_Bool_Exp>;
+  readonly demoCodeId?: Maybe<Uuid_Comparison_Exp>;
+  readonly groups?: Maybe<Group_Bool_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly name?: Maybe<String_Comparison_Exp>;
+  readonly roles?: Maybe<Role_Bool_Exp>;
+  readonly shortName?: Maybe<String_Comparison_Exp>;
+  readonly slug?: Maybe<String_Comparison_Exp>;
+  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "Conference" */
@@ -3056,115 +3058,115 @@ export enum Conference_Constraint {
 
 /** input type for inserting data into table "Conference" */
 export type Conference_Insert_Input = {
-  activeGroups?: Maybe<ActiveGroup_Arr_Rel_Insert_Input>;
-  attendees?: Maybe<Attendee_Arr_Rel_Insert_Input>;
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  createdBy?: Maybe<Scalars['String']>;
-  creator?: Maybe<User_Obj_Rel_Insert_Input>;
-  demoCode?: Maybe<ConferenceDemoCode_Obj_Rel_Insert_Input>;
-  demoCodeId?: Maybe<Scalars['uuid']>;
-  groups?: Maybe<Group_Arr_Rel_Insert_Input>;
-  id?: Maybe<Scalars['uuid']>;
-  name?: Maybe<Scalars['String']>;
-  roles?: Maybe<Role_Arr_Rel_Insert_Input>;
-  shortName?: Maybe<Scalars['String']>;
-  slug?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly activeGroups?: Maybe<ActiveGroup_Arr_Rel_Insert_Input>;
+  readonly attendees?: Maybe<Attendee_Arr_Rel_Insert_Input>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly createdBy?: Maybe<Scalars['String']>;
+  readonly creator?: Maybe<User_Obj_Rel_Insert_Input>;
+  readonly demoCode?: Maybe<ConferenceDemoCode_Obj_Rel_Insert_Input>;
+  readonly demoCodeId?: Maybe<Scalars['uuid']>;
+  readonly groups?: Maybe<Group_Arr_Rel_Insert_Input>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly roles?: Maybe<Role_Arr_Rel_Insert_Input>;
+  readonly shortName?: Maybe<Scalars['String']>;
+  readonly slug?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
 /** aggregate max on columns */
 export type Conference_Max_Fields = {
-  __typename?: 'Conference_max_fields';
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  createdBy?: Maybe<Scalars['String']>;
-  demoCodeId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  name?: Maybe<Scalars['String']>;
-  shortName?: Maybe<Scalars['String']>;
-  slug?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly __typename?: 'Conference_max_fields';
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly createdBy?: Maybe<Scalars['String']>;
+  readonly demoCodeId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly shortName?: Maybe<Scalars['String']>;
+  readonly slug?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
 /** order by max() on columns of table "Conference" */
 export type Conference_Max_Order_By = {
-  createdAt?: Maybe<Order_By>;
-  createdBy?: Maybe<Order_By>;
-  demoCodeId?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  name?: Maybe<Order_By>;
-  shortName?: Maybe<Order_By>;
-  slug?: Maybe<Order_By>;
-  updatedAt?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly createdBy?: Maybe<Order_By>;
+  readonly demoCodeId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+  readonly shortName?: Maybe<Order_By>;
+  readonly slug?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type Conference_Min_Fields = {
-  __typename?: 'Conference_min_fields';
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  createdBy?: Maybe<Scalars['String']>;
-  demoCodeId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  name?: Maybe<Scalars['String']>;
-  shortName?: Maybe<Scalars['String']>;
-  slug?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly __typename?: 'Conference_min_fields';
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly createdBy?: Maybe<Scalars['String']>;
+  readonly demoCodeId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly shortName?: Maybe<Scalars['String']>;
+  readonly slug?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
 /** order by min() on columns of table "Conference" */
 export type Conference_Min_Order_By = {
-  createdAt?: Maybe<Order_By>;
-  createdBy?: Maybe<Order_By>;
-  demoCodeId?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  name?: Maybe<Order_By>;
-  shortName?: Maybe<Order_By>;
-  slug?: Maybe<Order_By>;
-  updatedAt?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly createdBy?: Maybe<Order_By>;
+  readonly demoCodeId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+  readonly shortName?: Maybe<Order_By>;
+  readonly slug?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "Conference" */
 export type Conference_Mutation_Response = {
-  __typename?: 'Conference_mutation_response';
+  readonly __typename?: 'Conference_mutation_response';
   /** number of affected rows by the mutation */
-  affected_rows: Scalars['Int'];
+  readonly affected_rows: Scalars['Int'];
   /** data of the affected rows by the mutation */
-  returning: Array<Conference>;
+  readonly returning: ReadonlyArray<Conference>;
 };
 
 /** input type for inserting object relation for remote table "Conference" */
 export type Conference_Obj_Rel_Insert_Input = {
-  data: Conference_Insert_Input;
-  on_conflict?: Maybe<Conference_On_Conflict>;
+  readonly data: Conference_Insert_Input;
+  readonly on_conflict?: Maybe<Conference_On_Conflict>;
 };
 
 /** on conflict condition type for table "Conference" */
 export type Conference_On_Conflict = {
-  constraint: Conference_Constraint;
-  update_columns: Array<Conference_Update_Column>;
-  where?: Maybe<Conference_Bool_Exp>;
+  readonly constraint: Conference_Constraint;
+  readonly update_columns: ReadonlyArray<Conference_Update_Column>;
+  readonly where?: Maybe<Conference_Bool_Exp>;
 };
 
 /** ordering options when selecting data from "Conference" */
 export type Conference_Order_By = {
-  activeGroups_aggregate?: Maybe<ActiveGroup_Aggregate_Order_By>;
-  attendees_aggregate?: Maybe<Attendee_Aggregate_Order_By>;
-  createdAt?: Maybe<Order_By>;
-  createdBy?: Maybe<Order_By>;
-  creator?: Maybe<User_Order_By>;
-  demoCode?: Maybe<ConferenceDemoCode_Order_By>;
-  demoCodeId?: Maybe<Order_By>;
-  groups_aggregate?: Maybe<Group_Aggregate_Order_By>;
-  id?: Maybe<Order_By>;
-  name?: Maybe<Order_By>;
-  roles_aggregate?: Maybe<Role_Aggregate_Order_By>;
-  shortName?: Maybe<Order_By>;
-  slug?: Maybe<Order_By>;
-  updatedAt?: Maybe<Order_By>;
+  readonly activeGroups_aggregate?: Maybe<ActiveGroup_Aggregate_Order_By>;
+  readonly attendees_aggregate?: Maybe<Attendee_Aggregate_Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly createdBy?: Maybe<Order_By>;
+  readonly creator?: Maybe<User_Order_By>;
+  readonly demoCode?: Maybe<ConferenceDemoCode_Order_By>;
+  readonly demoCodeId?: Maybe<Order_By>;
+  readonly groups_aggregate?: Maybe<Group_Aggregate_Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+  readonly roles_aggregate?: Maybe<Role_Aggregate_Order_By>;
+  readonly shortName?: Maybe<Order_By>;
+  readonly slug?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: "Conference" */
 export type Conference_Pk_Columns_Input = {
-  id: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
 };
 
 /** select columns of table "Conference" */
@@ -3189,14 +3191,14 @@ export enum Conference_Select_Column {
 
 /** input type for updating data in table "Conference" */
 export type Conference_Set_Input = {
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  createdBy?: Maybe<Scalars['String']>;
-  demoCodeId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  name?: Maybe<Scalars['String']>;
-  shortName?: Maybe<Scalars['String']>;
-  slug?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly createdBy?: Maybe<Scalars['String']>;
+  readonly demoCodeId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly shortName?: Maybe<Scalars['String']>;
+  readonly slug?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
 /** update columns of table "Conference" */
@@ -3220,84 +3222,84 @@ export enum Conference_Update_Column {
 }
 
 export type EchoInput = {
-  message: Scalars['String'];
+  readonly message: Scalars['String'];
 };
 
 export type EchoOutput = {
-  __typename?: 'EchoOutput';
-  message: Scalars['String'];
+  readonly __typename?: 'EchoOutput';
+  readonly message: Scalars['String'];
 };
 
 /** columns and relationships of "FlaggedChatMessage" */
 export type FlaggedChatMessage = {
-  __typename?: 'FlaggedChatMessage';
-  createdAt: Scalars['timestamptz'];
+  readonly __typename?: 'FlaggedChatMessage';
+  readonly createdAt: Scalars['timestamptz'];
   /** An object relationship */
-  flaggedBy: User;
-  flaggedById: Scalars['String'];
-  id: Scalars['uuid'];
+  readonly flaggedBy: User;
+  readonly flaggedById: Scalars['String'];
+  readonly id: Scalars['uuid'];
   /** An object relationship */
-  message: ChatMessage;
-  messageId: Scalars['uuid'];
+  readonly message: ChatMessage;
+  readonly messageId: Scalars['uuid'];
   /** An object relationship */
-  moderationChat?: Maybe<Chat>;
-  moderationChatId?: Maybe<Scalars['uuid']>;
-  notes?: Maybe<Scalars['String']>;
-  resolutionAction?: Maybe<Scalars['String']>;
-  resolvedAt?: Maybe<Scalars['timestamptz']>;
+  readonly moderationChat?: Maybe<Chat>;
+  readonly moderationChatId?: Maybe<Scalars['uuid']>;
+  readonly notes?: Maybe<Scalars['String']>;
+  readonly resolutionAction?: Maybe<Scalars['String']>;
+  readonly resolvedAt?: Maybe<Scalars['timestamptz']>;
 };
 
 /** aggregated selection of "FlaggedChatMessage" */
 export type FlaggedChatMessage_Aggregate = {
-  __typename?: 'FlaggedChatMessage_aggregate';
-  aggregate?: Maybe<FlaggedChatMessage_Aggregate_Fields>;
-  nodes: Array<FlaggedChatMessage>;
+  readonly __typename?: 'FlaggedChatMessage_aggregate';
+  readonly aggregate?: Maybe<FlaggedChatMessage_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<FlaggedChatMessage>;
 };
 
 /** aggregate fields of "FlaggedChatMessage" */
 export type FlaggedChatMessage_Aggregate_Fields = {
-  __typename?: 'FlaggedChatMessage_aggregate_fields';
-  count?: Maybe<Scalars['Int']>;
-  max?: Maybe<FlaggedChatMessage_Max_Fields>;
-  min?: Maybe<FlaggedChatMessage_Min_Fields>;
+  readonly __typename?: 'FlaggedChatMessage_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<FlaggedChatMessage_Max_Fields>;
+  readonly min?: Maybe<FlaggedChatMessage_Min_Fields>;
 };
 
 
 /** aggregate fields of "FlaggedChatMessage" */
 export type FlaggedChatMessage_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<Array<FlaggedChatMessage_Select_Column>>;
+  columns?: Maybe<ReadonlyArray<FlaggedChatMessage_Select_Column>>;
   distinct?: Maybe<Scalars['Boolean']>;
 };
 
 /** order by aggregate values of table "FlaggedChatMessage" */
 export type FlaggedChatMessage_Aggregate_Order_By = {
-  count?: Maybe<Order_By>;
-  max?: Maybe<FlaggedChatMessage_Max_Order_By>;
-  min?: Maybe<FlaggedChatMessage_Min_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<FlaggedChatMessage_Max_Order_By>;
+  readonly min?: Maybe<FlaggedChatMessage_Min_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "FlaggedChatMessage" */
 export type FlaggedChatMessage_Arr_Rel_Insert_Input = {
-  data: Array<FlaggedChatMessage_Insert_Input>;
-  on_conflict?: Maybe<FlaggedChatMessage_On_Conflict>;
+  readonly data: ReadonlyArray<FlaggedChatMessage_Insert_Input>;
+  readonly on_conflict?: Maybe<FlaggedChatMessage_On_Conflict>;
 };
 
 /** Boolean expression to filter rows from the table "FlaggedChatMessage". All fields are combined with a logical 'AND'. */
 export type FlaggedChatMessage_Bool_Exp = {
-  _and?: Maybe<Array<Maybe<FlaggedChatMessage_Bool_Exp>>>;
-  _not?: Maybe<FlaggedChatMessage_Bool_Exp>;
-  _or?: Maybe<Array<Maybe<FlaggedChatMessage_Bool_Exp>>>;
-  createdAt?: Maybe<Timestamptz_Comparison_Exp>;
-  flaggedBy?: Maybe<User_Bool_Exp>;
-  flaggedById?: Maybe<String_Comparison_Exp>;
-  id?: Maybe<Uuid_Comparison_Exp>;
-  message?: Maybe<ChatMessage_Bool_Exp>;
-  messageId?: Maybe<Uuid_Comparison_Exp>;
-  moderationChat?: Maybe<Chat_Bool_Exp>;
-  moderationChatId?: Maybe<Uuid_Comparison_Exp>;
-  notes?: Maybe<String_Comparison_Exp>;
-  resolutionAction?: Maybe<String_Comparison_Exp>;
-  resolvedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly _and?: Maybe<ReadonlyArray<Maybe<FlaggedChatMessage_Bool_Exp>>>;
+  readonly _not?: Maybe<FlaggedChatMessage_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<FlaggedChatMessage_Bool_Exp>>>;
+  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly flaggedBy?: Maybe<User_Bool_Exp>;
+  readonly flaggedById?: Maybe<String_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly message?: Maybe<ChatMessage_Bool_Exp>;
+  readonly messageId?: Maybe<Uuid_Comparison_Exp>;
+  readonly moderationChat?: Maybe<Chat_Bool_Exp>;
+  readonly moderationChatId?: Maybe<Uuid_Comparison_Exp>;
+  readonly notes?: Maybe<String_Comparison_Exp>;
+  readonly resolutionAction?: Maybe<String_Comparison_Exp>;
+  readonly resolvedAt?: Maybe<Timestamptz_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "FlaggedChatMessage" */
@@ -3310,109 +3312,109 @@ export enum FlaggedChatMessage_Constraint {
 
 /** input type for inserting data into table "FlaggedChatMessage" */
 export type FlaggedChatMessage_Insert_Input = {
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  flaggedBy?: Maybe<User_Obj_Rel_Insert_Input>;
-  flaggedById?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['uuid']>;
-  message?: Maybe<ChatMessage_Obj_Rel_Insert_Input>;
-  messageId?: Maybe<Scalars['uuid']>;
-  moderationChat?: Maybe<Chat_Obj_Rel_Insert_Input>;
-  moderationChatId?: Maybe<Scalars['uuid']>;
-  notes?: Maybe<Scalars['String']>;
-  resolutionAction?: Maybe<Scalars['String']>;
-  resolvedAt?: Maybe<Scalars['timestamptz']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly flaggedBy?: Maybe<User_Obj_Rel_Insert_Input>;
+  readonly flaggedById?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly message?: Maybe<ChatMessage_Obj_Rel_Insert_Input>;
+  readonly messageId?: Maybe<Scalars['uuid']>;
+  readonly moderationChat?: Maybe<Chat_Obj_Rel_Insert_Input>;
+  readonly moderationChatId?: Maybe<Scalars['uuid']>;
+  readonly notes?: Maybe<Scalars['String']>;
+  readonly resolutionAction?: Maybe<Scalars['String']>;
+  readonly resolvedAt?: Maybe<Scalars['timestamptz']>;
 };
 
 /** aggregate max on columns */
 export type FlaggedChatMessage_Max_Fields = {
-  __typename?: 'FlaggedChatMessage_max_fields';
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  flaggedById?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['uuid']>;
-  messageId?: Maybe<Scalars['uuid']>;
-  moderationChatId?: Maybe<Scalars['uuid']>;
-  notes?: Maybe<Scalars['String']>;
-  resolutionAction?: Maybe<Scalars['String']>;
-  resolvedAt?: Maybe<Scalars['timestamptz']>;
+  readonly __typename?: 'FlaggedChatMessage_max_fields';
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly flaggedById?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly messageId?: Maybe<Scalars['uuid']>;
+  readonly moderationChatId?: Maybe<Scalars['uuid']>;
+  readonly notes?: Maybe<Scalars['String']>;
+  readonly resolutionAction?: Maybe<Scalars['String']>;
+  readonly resolvedAt?: Maybe<Scalars['timestamptz']>;
 };
 
 /** order by max() on columns of table "FlaggedChatMessage" */
 export type FlaggedChatMessage_Max_Order_By = {
-  createdAt?: Maybe<Order_By>;
-  flaggedById?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  messageId?: Maybe<Order_By>;
-  moderationChatId?: Maybe<Order_By>;
-  notes?: Maybe<Order_By>;
-  resolutionAction?: Maybe<Order_By>;
-  resolvedAt?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly flaggedById?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly messageId?: Maybe<Order_By>;
+  readonly moderationChatId?: Maybe<Order_By>;
+  readonly notes?: Maybe<Order_By>;
+  readonly resolutionAction?: Maybe<Order_By>;
+  readonly resolvedAt?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type FlaggedChatMessage_Min_Fields = {
-  __typename?: 'FlaggedChatMessage_min_fields';
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  flaggedById?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['uuid']>;
-  messageId?: Maybe<Scalars['uuid']>;
-  moderationChatId?: Maybe<Scalars['uuid']>;
-  notes?: Maybe<Scalars['String']>;
-  resolutionAction?: Maybe<Scalars['String']>;
-  resolvedAt?: Maybe<Scalars['timestamptz']>;
+  readonly __typename?: 'FlaggedChatMessage_min_fields';
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly flaggedById?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly messageId?: Maybe<Scalars['uuid']>;
+  readonly moderationChatId?: Maybe<Scalars['uuid']>;
+  readonly notes?: Maybe<Scalars['String']>;
+  readonly resolutionAction?: Maybe<Scalars['String']>;
+  readonly resolvedAt?: Maybe<Scalars['timestamptz']>;
 };
 
 /** order by min() on columns of table "FlaggedChatMessage" */
 export type FlaggedChatMessage_Min_Order_By = {
-  createdAt?: Maybe<Order_By>;
-  flaggedById?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  messageId?: Maybe<Order_By>;
-  moderationChatId?: Maybe<Order_By>;
-  notes?: Maybe<Order_By>;
-  resolutionAction?: Maybe<Order_By>;
-  resolvedAt?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly flaggedById?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly messageId?: Maybe<Order_By>;
+  readonly moderationChatId?: Maybe<Order_By>;
+  readonly notes?: Maybe<Order_By>;
+  readonly resolutionAction?: Maybe<Order_By>;
+  readonly resolvedAt?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "FlaggedChatMessage" */
 export type FlaggedChatMessage_Mutation_Response = {
-  __typename?: 'FlaggedChatMessage_mutation_response';
+  readonly __typename?: 'FlaggedChatMessage_mutation_response';
   /** number of affected rows by the mutation */
-  affected_rows: Scalars['Int'];
+  readonly affected_rows: Scalars['Int'];
   /** data of the affected rows by the mutation */
-  returning: Array<FlaggedChatMessage>;
+  readonly returning: ReadonlyArray<FlaggedChatMessage>;
 };
 
 /** input type for inserting object relation for remote table "FlaggedChatMessage" */
 export type FlaggedChatMessage_Obj_Rel_Insert_Input = {
-  data: FlaggedChatMessage_Insert_Input;
-  on_conflict?: Maybe<FlaggedChatMessage_On_Conflict>;
+  readonly data: FlaggedChatMessage_Insert_Input;
+  readonly on_conflict?: Maybe<FlaggedChatMessage_On_Conflict>;
 };
 
 /** on conflict condition type for table "FlaggedChatMessage" */
 export type FlaggedChatMessage_On_Conflict = {
-  constraint: FlaggedChatMessage_Constraint;
-  update_columns: Array<FlaggedChatMessage_Update_Column>;
-  where?: Maybe<FlaggedChatMessage_Bool_Exp>;
+  readonly constraint: FlaggedChatMessage_Constraint;
+  readonly update_columns: ReadonlyArray<FlaggedChatMessage_Update_Column>;
+  readonly where?: Maybe<FlaggedChatMessage_Bool_Exp>;
 };
 
 /** ordering options when selecting data from "FlaggedChatMessage" */
 export type FlaggedChatMessage_Order_By = {
-  createdAt?: Maybe<Order_By>;
-  flaggedBy?: Maybe<User_Order_By>;
-  flaggedById?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  message?: Maybe<ChatMessage_Order_By>;
-  messageId?: Maybe<Order_By>;
-  moderationChat?: Maybe<Chat_Order_By>;
-  moderationChatId?: Maybe<Order_By>;
-  notes?: Maybe<Order_By>;
-  resolutionAction?: Maybe<Order_By>;
-  resolvedAt?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly flaggedBy?: Maybe<User_Order_By>;
+  readonly flaggedById?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly message?: Maybe<ChatMessage_Order_By>;
+  readonly messageId?: Maybe<Order_By>;
+  readonly moderationChat?: Maybe<Chat_Order_By>;
+  readonly moderationChatId?: Maybe<Order_By>;
+  readonly notes?: Maybe<Order_By>;
+  readonly resolutionAction?: Maybe<Order_By>;
+  readonly resolvedAt?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: "FlaggedChatMessage" */
 export type FlaggedChatMessage_Pk_Columns_Input = {
-  id: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
 };
 
 /** select columns of table "FlaggedChatMessage" */
@@ -3437,14 +3439,14 @@ export enum FlaggedChatMessage_Select_Column {
 
 /** input type for updating data in table "FlaggedChatMessage" */
 export type FlaggedChatMessage_Set_Input = {
-  createdAt?: Maybe<Scalars['timestamptz']>;
-  flaggedById?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['uuid']>;
-  messageId?: Maybe<Scalars['uuid']>;
-  moderationChatId?: Maybe<Scalars['uuid']>;
-  notes?: Maybe<Scalars['String']>;
-  resolutionAction?: Maybe<Scalars['String']>;
-  resolvedAt?: Maybe<Scalars['timestamptz']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly flaggedById?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly messageId?: Maybe<Scalars['uuid']>;
+  readonly moderationChatId?: Maybe<Scalars['uuid']>;
+  readonly notes?: Maybe<Scalars['String']>;
+  readonly resolutionAction?: Maybe<Scalars['String']>;
+  readonly resolvedAt?: Maybe<Scalars['timestamptz']>;
 };
 
 /** update columns of table "FlaggedChatMessage" */
@@ -3469,63 +3471,63 @@ export enum FlaggedChatMessage_Update_Column {
 
 /** columns and relationships of "FollowedChat" */
 export type FollowedChat = {
-  __typename?: 'FollowedChat';
+  readonly __typename?: 'FollowedChat';
   /** An object relationship */
-  chat: Chat;
-  chatId: Scalars['uuid'];
-  id: Scalars['uuid'];
-  manual: Scalars['Boolean'];
+  readonly chat: Chat;
+  readonly chatId: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
+  readonly manual: Scalars['Boolean'];
   /** An object relationship */
-  user: User;
-  userId: Scalars['String'];
+  readonly user: User;
+  readonly userId: Scalars['String'];
 };
 
 /** aggregated selection of "FollowedChat" */
 export type FollowedChat_Aggregate = {
-  __typename?: 'FollowedChat_aggregate';
-  aggregate?: Maybe<FollowedChat_Aggregate_Fields>;
-  nodes: Array<FollowedChat>;
+  readonly __typename?: 'FollowedChat_aggregate';
+  readonly aggregate?: Maybe<FollowedChat_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<FollowedChat>;
 };
 
 /** aggregate fields of "FollowedChat" */
 export type FollowedChat_Aggregate_Fields = {
-  __typename?: 'FollowedChat_aggregate_fields';
-  count?: Maybe<Scalars['Int']>;
-  max?: Maybe<FollowedChat_Max_Fields>;
-  min?: Maybe<FollowedChat_Min_Fields>;
+  readonly __typename?: 'FollowedChat_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<FollowedChat_Max_Fields>;
+  readonly min?: Maybe<FollowedChat_Min_Fields>;
 };
 
 
 /** aggregate fields of "FollowedChat" */
 export type FollowedChat_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<Array<FollowedChat_Select_Column>>;
+  columns?: Maybe<ReadonlyArray<FollowedChat_Select_Column>>;
   distinct?: Maybe<Scalars['Boolean']>;
 };
 
 /** order by aggregate values of table "FollowedChat" */
 export type FollowedChat_Aggregate_Order_By = {
-  count?: Maybe<Order_By>;
-  max?: Maybe<FollowedChat_Max_Order_By>;
-  min?: Maybe<FollowedChat_Min_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<FollowedChat_Max_Order_By>;
+  readonly min?: Maybe<FollowedChat_Min_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "FollowedChat" */
 export type FollowedChat_Arr_Rel_Insert_Input = {
-  data: Array<FollowedChat_Insert_Input>;
-  on_conflict?: Maybe<FollowedChat_On_Conflict>;
+  readonly data: ReadonlyArray<FollowedChat_Insert_Input>;
+  readonly on_conflict?: Maybe<FollowedChat_On_Conflict>;
 };
 
 /** Boolean expression to filter rows from the table "FollowedChat". All fields are combined with a logical 'AND'. */
 export type FollowedChat_Bool_Exp = {
-  _and?: Maybe<Array<Maybe<FollowedChat_Bool_Exp>>>;
-  _not?: Maybe<FollowedChat_Bool_Exp>;
-  _or?: Maybe<Array<Maybe<FollowedChat_Bool_Exp>>>;
-  chat?: Maybe<Chat_Bool_Exp>;
-  chatId?: Maybe<Uuid_Comparison_Exp>;
-  id?: Maybe<Uuid_Comparison_Exp>;
-  manual?: Maybe<Boolean_Comparison_Exp>;
-  user?: Maybe<User_Bool_Exp>;
-  userId?: Maybe<String_Comparison_Exp>;
+  readonly _and?: Maybe<ReadonlyArray<Maybe<FollowedChat_Bool_Exp>>>;
+  readonly _not?: Maybe<FollowedChat_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<FollowedChat_Bool_Exp>>>;
+  readonly chat?: Maybe<Chat_Bool_Exp>;
+  readonly chatId?: Maybe<Uuid_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly manual?: Maybe<Boolean_Comparison_Exp>;
+  readonly user?: Maybe<User_Bool_Exp>;
+  readonly userId?: Maybe<String_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "FollowedChat" */
@@ -3538,79 +3540,79 @@ export enum FollowedChat_Constraint {
 
 /** input type for inserting data into table "FollowedChat" */
 export type FollowedChat_Insert_Input = {
-  chat?: Maybe<Chat_Obj_Rel_Insert_Input>;
-  chatId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  manual?: Maybe<Scalars['Boolean']>;
-  user?: Maybe<User_Obj_Rel_Insert_Input>;
-  userId?: Maybe<Scalars['String']>;
+  readonly chat?: Maybe<Chat_Obj_Rel_Insert_Input>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly manual?: Maybe<Scalars['Boolean']>;
+  readonly user?: Maybe<User_Obj_Rel_Insert_Input>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** aggregate max on columns */
 export type FollowedChat_Max_Fields = {
-  __typename?: 'FollowedChat_max_fields';
-  chatId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  userId?: Maybe<Scalars['String']>;
+  readonly __typename?: 'FollowedChat_max_fields';
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** order by max() on columns of table "FollowedChat" */
 export type FollowedChat_Max_Order_By = {
-  chatId?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  userId?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly userId?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type FollowedChat_Min_Fields = {
-  __typename?: 'FollowedChat_min_fields';
-  chatId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  userId?: Maybe<Scalars['String']>;
+  readonly __typename?: 'FollowedChat_min_fields';
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** order by min() on columns of table "FollowedChat" */
 export type FollowedChat_Min_Order_By = {
-  chatId?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  userId?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly userId?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "FollowedChat" */
 export type FollowedChat_Mutation_Response = {
-  __typename?: 'FollowedChat_mutation_response';
+  readonly __typename?: 'FollowedChat_mutation_response';
   /** number of affected rows by the mutation */
-  affected_rows: Scalars['Int'];
+  readonly affected_rows: Scalars['Int'];
   /** data of the affected rows by the mutation */
-  returning: Array<FollowedChat>;
+  readonly returning: ReadonlyArray<FollowedChat>;
 };
 
 /** input type for inserting object relation for remote table "FollowedChat" */
 export type FollowedChat_Obj_Rel_Insert_Input = {
-  data: FollowedChat_Insert_Input;
-  on_conflict?: Maybe<FollowedChat_On_Conflict>;
+  readonly data: FollowedChat_Insert_Input;
+  readonly on_conflict?: Maybe<FollowedChat_On_Conflict>;
 };
 
 /** on conflict condition type for table "FollowedChat" */
 export type FollowedChat_On_Conflict = {
-  constraint: FollowedChat_Constraint;
-  update_columns: Array<FollowedChat_Update_Column>;
-  where?: Maybe<FollowedChat_Bool_Exp>;
+  readonly constraint: FollowedChat_Constraint;
+  readonly update_columns: ReadonlyArray<FollowedChat_Update_Column>;
+  readonly where?: Maybe<FollowedChat_Bool_Exp>;
 };
 
 /** ordering options when selecting data from "FollowedChat" */
 export type FollowedChat_Order_By = {
-  chat?: Maybe<Chat_Order_By>;
-  chatId?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  manual?: Maybe<Order_By>;
-  user?: Maybe<User_Order_By>;
-  userId?: Maybe<Order_By>;
+  readonly chat?: Maybe<Chat_Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly manual?: Maybe<Order_By>;
+  readonly user?: Maybe<User_Order_By>;
+  readonly userId?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: "FollowedChat" */
 export type FollowedChat_Pk_Columns_Input = {
-  id: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
 };
 
 /** select columns of table "FollowedChat" */
@@ -3627,10 +3629,10 @@ export enum FollowedChat_Select_Column {
 
 /** input type for updating data in table "FollowedChat" */
 export type FollowedChat_Set_Input = {
-  chatId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  manual?: Maybe<Scalars['Boolean']>;
-  userId?: Maybe<Scalars['String']>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly manual?: Maybe<Scalars['Boolean']>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** update columns of table "FollowedChat" */
@@ -3647,125 +3649,125 @@ export enum FollowedChat_Update_Column {
 
 /** columns and relationships of "Group" */
 export type Group = {
-  __typename?: 'Group';
-  accessEnd: Scalars['timestamptz'];
-  accessStart: Scalars['timestamptz'];
+  readonly __typename?: 'Group';
+  readonly accessEnd: Scalars['timestamptz'];
+  readonly accessStart: Scalars['timestamptz'];
   /** An object relationship */
-  conference: Conference;
-  conferenceId: Scalars['uuid'];
+  readonly conference: Conference;
+  readonly conferenceId: Scalars['uuid'];
   /** An array relationship */
-  groupAttendees: Array<GroupAttendee>;
+  readonly groupAttendees: ReadonlyArray<GroupAttendee>;
   /** An aggregated array relationship */
-  groupAttendees_aggregate: GroupAttendee_Aggregate;
+  readonly groupAttendees_aggregate: GroupAttendee_Aggregate;
   /** An array relationship */
-  groupRoles: Array<GroupRole>;
+  readonly groupRoles: ReadonlyArray<GroupRole>;
   /** An aggregated array relationship */
-  groupRoles_aggregate: GroupRole_Aggregate;
-  id: Scalars['uuid'];
-  includeUnauthenticated: Scalars['Boolean'];
-  name: Scalars['String'];
+  readonly groupRoles_aggregate: GroupRole_Aggregate;
+  readonly id: Scalars['uuid'];
+  readonly includeUnauthenticated: Scalars['Boolean'];
+  readonly name: Scalars['String'];
 };
 
 
 /** columns and relationships of "Group" */
 export type GroupGroupAttendeesArgs = {
-  distinct_on?: Maybe<Array<GroupAttendee_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<GroupAttendee_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<GroupAttendee_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<GroupAttendee_Order_By>>;
   where?: Maybe<GroupAttendee_Bool_Exp>;
 };
 
 
 /** columns and relationships of "Group" */
 export type GroupGroupAttendees_AggregateArgs = {
-  distinct_on?: Maybe<Array<GroupAttendee_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<GroupAttendee_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<GroupAttendee_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<GroupAttendee_Order_By>>;
   where?: Maybe<GroupAttendee_Bool_Exp>;
 };
 
 
 /** columns and relationships of "Group" */
 export type GroupGroupRolesArgs = {
-  distinct_on?: Maybe<Array<GroupRole_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<GroupRole_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<GroupRole_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<GroupRole_Order_By>>;
   where?: Maybe<GroupRole_Bool_Exp>;
 };
 
 
 /** columns and relationships of "Group" */
 export type GroupGroupRoles_AggregateArgs = {
-  distinct_on?: Maybe<Array<GroupRole_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<GroupRole_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<GroupRole_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<GroupRole_Order_By>>;
   where?: Maybe<GroupRole_Bool_Exp>;
 };
 
 /** columns and relationships of "GroupAttendee" */
 export type GroupAttendee = {
-  __typename?: 'GroupAttendee';
+  readonly __typename?: 'GroupAttendee';
   /** An object relationship */
-  activeGroup?: Maybe<ActiveGroup>;
+  readonly activeGroup?: Maybe<ActiveGroup>;
   /** An object relationship */
-  attendee: Attendee;
-  attendeeId: Scalars['uuid'];
+  readonly attendee: Attendee;
+  readonly attendeeId: Scalars['uuid'];
   /** An object relationship */
-  group: Group;
-  groupId: Scalars['uuid'];
-  id: Scalars['uuid'];
+  readonly group: Group;
+  readonly groupId: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
 };
 
 /** aggregated selection of "GroupAttendee" */
 export type GroupAttendee_Aggregate = {
-  __typename?: 'GroupAttendee_aggregate';
-  aggregate?: Maybe<GroupAttendee_Aggregate_Fields>;
-  nodes: Array<GroupAttendee>;
+  readonly __typename?: 'GroupAttendee_aggregate';
+  readonly aggregate?: Maybe<GroupAttendee_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<GroupAttendee>;
 };
 
 /** aggregate fields of "GroupAttendee" */
 export type GroupAttendee_Aggregate_Fields = {
-  __typename?: 'GroupAttendee_aggregate_fields';
-  count?: Maybe<Scalars['Int']>;
-  max?: Maybe<GroupAttendee_Max_Fields>;
-  min?: Maybe<GroupAttendee_Min_Fields>;
+  readonly __typename?: 'GroupAttendee_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<GroupAttendee_Max_Fields>;
+  readonly min?: Maybe<GroupAttendee_Min_Fields>;
 };
 
 
 /** aggregate fields of "GroupAttendee" */
 export type GroupAttendee_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<Array<GroupAttendee_Select_Column>>;
+  columns?: Maybe<ReadonlyArray<GroupAttendee_Select_Column>>;
   distinct?: Maybe<Scalars['Boolean']>;
 };
 
 /** order by aggregate values of table "GroupAttendee" */
 export type GroupAttendee_Aggregate_Order_By = {
-  count?: Maybe<Order_By>;
-  max?: Maybe<GroupAttendee_Max_Order_By>;
-  min?: Maybe<GroupAttendee_Min_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<GroupAttendee_Max_Order_By>;
+  readonly min?: Maybe<GroupAttendee_Min_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "GroupAttendee" */
 export type GroupAttendee_Arr_Rel_Insert_Input = {
-  data: Array<GroupAttendee_Insert_Input>;
-  on_conflict?: Maybe<GroupAttendee_On_Conflict>;
+  readonly data: ReadonlyArray<GroupAttendee_Insert_Input>;
+  readonly on_conflict?: Maybe<GroupAttendee_On_Conflict>;
 };
 
 /** Boolean expression to filter rows from the table "GroupAttendee". All fields are combined with a logical 'AND'. */
 export type GroupAttendee_Bool_Exp = {
-  _and?: Maybe<Array<Maybe<GroupAttendee_Bool_Exp>>>;
-  _not?: Maybe<GroupAttendee_Bool_Exp>;
-  _or?: Maybe<Array<Maybe<GroupAttendee_Bool_Exp>>>;
-  activeGroup?: Maybe<ActiveGroup_Bool_Exp>;
-  attendee?: Maybe<Attendee_Bool_Exp>;
-  attendeeId?: Maybe<Uuid_Comparison_Exp>;
-  group?: Maybe<Group_Bool_Exp>;
-  groupId?: Maybe<Uuid_Comparison_Exp>;
-  id?: Maybe<Uuid_Comparison_Exp>;
+  readonly _and?: Maybe<ReadonlyArray<Maybe<GroupAttendee_Bool_Exp>>>;
+  readonly _not?: Maybe<GroupAttendee_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<GroupAttendee_Bool_Exp>>>;
+  readonly activeGroup?: Maybe<ActiveGroup_Bool_Exp>;
+  readonly attendee?: Maybe<Attendee_Bool_Exp>;
+  readonly attendeeId?: Maybe<Uuid_Comparison_Exp>;
+  readonly group?: Maybe<Group_Bool_Exp>;
+  readonly groupId?: Maybe<Uuid_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "GroupAttendee" */
@@ -3778,79 +3780,79 @@ export enum GroupAttendee_Constraint {
 
 /** input type for inserting data into table "GroupAttendee" */
 export type GroupAttendee_Insert_Input = {
-  activeGroup?: Maybe<ActiveGroup_Obj_Rel_Insert_Input>;
-  attendee?: Maybe<Attendee_Obj_Rel_Insert_Input>;
-  attendeeId?: Maybe<Scalars['uuid']>;
-  group?: Maybe<Group_Obj_Rel_Insert_Input>;
-  groupId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
+  readonly activeGroup?: Maybe<ActiveGroup_Obj_Rel_Insert_Input>;
+  readonly attendee?: Maybe<Attendee_Obj_Rel_Insert_Input>;
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly group?: Maybe<Group_Obj_Rel_Insert_Input>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
 };
 
 /** aggregate max on columns */
 export type GroupAttendee_Max_Fields = {
-  __typename?: 'GroupAttendee_max_fields';
-  attendeeId?: Maybe<Scalars['uuid']>;
-  groupId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
+  readonly __typename?: 'GroupAttendee_max_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
 };
 
 /** order by max() on columns of table "GroupAttendee" */
 export type GroupAttendee_Max_Order_By = {
-  attendeeId?: Maybe<Order_By>;
-  groupId?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly groupId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type GroupAttendee_Min_Fields = {
-  __typename?: 'GroupAttendee_min_fields';
-  attendeeId?: Maybe<Scalars['uuid']>;
-  groupId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
+  readonly __typename?: 'GroupAttendee_min_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
 };
 
 /** order by min() on columns of table "GroupAttendee" */
 export type GroupAttendee_Min_Order_By = {
-  attendeeId?: Maybe<Order_By>;
-  groupId?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly groupId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "GroupAttendee" */
 export type GroupAttendee_Mutation_Response = {
-  __typename?: 'GroupAttendee_mutation_response';
+  readonly __typename?: 'GroupAttendee_mutation_response';
   /** number of affected rows by the mutation */
-  affected_rows: Scalars['Int'];
+  readonly affected_rows: Scalars['Int'];
   /** data of the affected rows by the mutation */
-  returning: Array<GroupAttendee>;
+  readonly returning: ReadonlyArray<GroupAttendee>;
 };
 
 /** input type for inserting object relation for remote table "GroupAttendee" */
 export type GroupAttendee_Obj_Rel_Insert_Input = {
-  data: GroupAttendee_Insert_Input;
-  on_conflict?: Maybe<GroupAttendee_On_Conflict>;
+  readonly data: GroupAttendee_Insert_Input;
+  readonly on_conflict?: Maybe<GroupAttendee_On_Conflict>;
 };
 
 /** on conflict condition type for table "GroupAttendee" */
 export type GroupAttendee_On_Conflict = {
-  constraint: GroupAttendee_Constraint;
-  update_columns: Array<GroupAttendee_Update_Column>;
-  where?: Maybe<GroupAttendee_Bool_Exp>;
+  readonly constraint: GroupAttendee_Constraint;
+  readonly update_columns: ReadonlyArray<GroupAttendee_Update_Column>;
+  readonly where?: Maybe<GroupAttendee_Bool_Exp>;
 };
 
 /** ordering options when selecting data from "GroupAttendee" */
 export type GroupAttendee_Order_By = {
-  activeGroup?: Maybe<ActiveGroup_Order_By>;
-  attendee?: Maybe<Attendee_Order_By>;
-  attendeeId?: Maybe<Order_By>;
-  group?: Maybe<Group_Order_By>;
-  groupId?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
+  readonly activeGroup?: Maybe<ActiveGroup_Order_By>;
+  readonly attendee?: Maybe<Attendee_Order_By>;
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly group?: Maybe<Group_Order_By>;
+  readonly groupId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: "GroupAttendee" */
 export type GroupAttendee_Pk_Columns_Input = {
-  id: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
 };
 
 /** select columns of table "GroupAttendee" */
@@ -3865,9 +3867,9 @@ export enum GroupAttendee_Select_Column {
 
 /** input type for updating data in table "GroupAttendee" */
 export type GroupAttendee_Set_Input = {
-  attendeeId?: Maybe<Scalars['uuid']>;
-  groupId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
 };
 
 /** update columns of table "GroupAttendee" */
@@ -3882,61 +3884,61 @@ export enum GroupAttendee_Update_Column {
 
 /** columns and relationships of "GroupRole" */
 export type GroupRole = {
-  __typename?: 'GroupRole';
+  readonly __typename?: 'GroupRole';
   /** An object relationship */
-  group: Group;
-  groupId: Scalars['uuid'];
-  id: Scalars['uuid'];
+  readonly group: Group;
+  readonly groupId: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
   /** An object relationship */
-  role: Role;
-  roleId: Scalars['uuid'];
+  readonly role: Role;
+  readonly roleId: Scalars['uuid'];
 };
 
 /** aggregated selection of "GroupRole" */
 export type GroupRole_Aggregate = {
-  __typename?: 'GroupRole_aggregate';
-  aggregate?: Maybe<GroupRole_Aggregate_Fields>;
-  nodes: Array<GroupRole>;
+  readonly __typename?: 'GroupRole_aggregate';
+  readonly aggregate?: Maybe<GroupRole_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<GroupRole>;
 };
 
 /** aggregate fields of "GroupRole" */
 export type GroupRole_Aggregate_Fields = {
-  __typename?: 'GroupRole_aggregate_fields';
-  count?: Maybe<Scalars['Int']>;
-  max?: Maybe<GroupRole_Max_Fields>;
-  min?: Maybe<GroupRole_Min_Fields>;
+  readonly __typename?: 'GroupRole_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<GroupRole_Max_Fields>;
+  readonly min?: Maybe<GroupRole_Min_Fields>;
 };
 
 
 /** aggregate fields of "GroupRole" */
 export type GroupRole_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<Array<GroupRole_Select_Column>>;
+  columns?: Maybe<ReadonlyArray<GroupRole_Select_Column>>;
   distinct?: Maybe<Scalars['Boolean']>;
 };
 
 /** order by aggregate values of table "GroupRole" */
 export type GroupRole_Aggregate_Order_By = {
-  count?: Maybe<Order_By>;
-  max?: Maybe<GroupRole_Max_Order_By>;
-  min?: Maybe<GroupRole_Min_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<GroupRole_Max_Order_By>;
+  readonly min?: Maybe<GroupRole_Min_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "GroupRole" */
 export type GroupRole_Arr_Rel_Insert_Input = {
-  data: Array<GroupRole_Insert_Input>;
-  on_conflict?: Maybe<GroupRole_On_Conflict>;
+  readonly data: ReadonlyArray<GroupRole_Insert_Input>;
+  readonly on_conflict?: Maybe<GroupRole_On_Conflict>;
 };
 
 /** Boolean expression to filter rows from the table "GroupRole". All fields are combined with a logical 'AND'. */
 export type GroupRole_Bool_Exp = {
-  _and?: Maybe<Array<Maybe<GroupRole_Bool_Exp>>>;
-  _not?: Maybe<GroupRole_Bool_Exp>;
-  _or?: Maybe<Array<Maybe<GroupRole_Bool_Exp>>>;
-  group?: Maybe<Group_Bool_Exp>;
-  groupId?: Maybe<Uuid_Comparison_Exp>;
-  id?: Maybe<Uuid_Comparison_Exp>;
-  role?: Maybe<Role_Bool_Exp>;
-  roleId?: Maybe<Uuid_Comparison_Exp>;
+  readonly _and?: Maybe<ReadonlyArray<Maybe<GroupRole_Bool_Exp>>>;
+  readonly _not?: Maybe<GroupRole_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<GroupRole_Bool_Exp>>>;
+  readonly group?: Maybe<Group_Bool_Exp>;
+  readonly groupId?: Maybe<Uuid_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly role?: Maybe<Role_Bool_Exp>;
+  readonly roleId?: Maybe<Uuid_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "GroupRole" */
@@ -3949,77 +3951,77 @@ export enum GroupRole_Constraint {
 
 /** input type for inserting data into table "GroupRole" */
 export type GroupRole_Insert_Input = {
-  group?: Maybe<Group_Obj_Rel_Insert_Input>;
-  groupId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  role?: Maybe<Role_Obj_Rel_Insert_Input>;
-  roleId?: Maybe<Scalars['uuid']>;
+  readonly group?: Maybe<Group_Obj_Rel_Insert_Input>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly role?: Maybe<Role_Obj_Rel_Insert_Input>;
+  readonly roleId?: Maybe<Scalars['uuid']>;
 };
 
 /** aggregate max on columns */
 export type GroupRole_Max_Fields = {
-  __typename?: 'GroupRole_max_fields';
-  groupId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  roleId?: Maybe<Scalars['uuid']>;
+  readonly __typename?: 'GroupRole_max_fields';
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly roleId?: Maybe<Scalars['uuid']>;
 };
 
 /** order by max() on columns of table "GroupRole" */
 export type GroupRole_Max_Order_By = {
-  groupId?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  roleId?: Maybe<Order_By>;
+  readonly groupId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly roleId?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type GroupRole_Min_Fields = {
-  __typename?: 'GroupRole_min_fields';
-  groupId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  roleId?: Maybe<Scalars['uuid']>;
+  readonly __typename?: 'GroupRole_min_fields';
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly roleId?: Maybe<Scalars['uuid']>;
 };
 
 /** order by min() on columns of table "GroupRole" */
 export type GroupRole_Min_Order_By = {
-  groupId?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  roleId?: Maybe<Order_By>;
+  readonly groupId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly roleId?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "GroupRole" */
 export type GroupRole_Mutation_Response = {
-  __typename?: 'GroupRole_mutation_response';
+  readonly __typename?: 'GroupRole_mutation_response';
   /** number of affected rows by the mutation */
-  affected_rows: Scalars['Int'];
+  readonly affected_rows: Scalars['Int'];
   /** data of the affected rows by the mutation */
-  returning: Array<GroupRole>;
+  readonly returning: ReadonlyArray<GroupRole>;
 };
 
 /** input type for inserting object relation for remote table "GroupRole" */
 export type GroupRole_Obj_Rel_Insert_Input = {
-  data: GroupRole_Insert_Input;
-  on_conflict?: Maybe<GroupRole_On_Conflict>;
+  readonly data: GroupRole_Insert_Input;
+  readonly on_conflict?: Maybe<GroupRole_On_Conflict>;
 };
 
 /** on conflict condition type for table "GroupRole" */
 export type GroupRole_On_Conflict = {
-  constraint: GroupRole_Constraint;
-  update_columns: Array<GroupRole_Update_Column>;
-  where?: Maybe<GroupRole_Bool_Exp>;
+  readonly constraint: GroupRole_Constraint;
+  readonly update_columns: ReadonlyArray<GroupRole_Update_Column>;
+  readonly where?: Maybe<GroupRole_Bool_Exp>;
 };
 
 /** ordering options when selecting data from "GroupRole" */
 export type GroupRole_Order_By = {
-  group?: Maybe<Group_Order_By>;
-  groupId?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  role?: Maybe<Role_Order_By>;
-  roleId?: Maybe<Order_By>;
+  readonly group?: Maybe<Group_Order_By>;
+  readonly groupId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly role?: Maybe<Role_Order_By>;
+  readonly roleId?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: "GroupRole" */
 export type GroupRole_Pk_Columns_Input = {
-  id: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
 };
 
 /** select columns of table "GroupRole" */
@@ -4034,9 +4036,9 @@ export enum GroupRole_Select_Column {
 
 /** input type for updating data in table "GroupRole" */
 export type GroupRole_Set_Input = {
-  groupId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  roleId?: Maybe<Scalars['uuid']>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly roleId?: Maybe<Scalars['uuid']>;
 };
 
 /** update columns of table "GroupRole" */
@@ -4051,53 +4053,53 @@ export enum GroupRole_Update_Column {
 
 /** aggregated selection of "Group" */
 export type Group_Aggregate = {
-  __typename?: 'Group_aggregate';
-  aggregate?: Maybe<Group_Aggregate_Fields>;
-  nodes: Array<Group>;
+  readonly __typename?: 'Group_aggregate';
+  readonly aggregate?: Maybe<Group_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Group>;
 };
 
 /** aggregate fields of "Group" */
 export type Group_Aggregate_Fields = {
-  __typename?: 'Group_aggregate_fields';
-  count?: Maybe<Scalars['Int']>;
-  max?: Maybe<Group_Max_Fields>;
-  min?: Maybe<Group_Min_Fields>;
+  readonly __typename?: 'Group_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Group_Max_Fields>;
+  readonly min?: Maybe<Group_Min_Fields>;
 };
 
 
 /** aggregate fields of "Group" */
 export type Group_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<Array<Group_Select_Column>>;
+  columns?: Maybe<ReadonlyArray<Group_Select_Column>>;
   distinct?: Maybe<Scalars['Boolean']>;
 };
 
 /** order by aggregate values of table "Group" */
 export type Group_Aggregate_Order_By = {
-  count?: Maybe<Order_By>;
-  max?: Maybe<Group_Max_Order_By>;
-  min?: Maybe<Group_Min_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Group_Max_Order_By>;
+  readonly min?: Maybe<Group_Min_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "Group" */
 export type Group_Arr_Rel_Insert_Input = {
-  data: Array<Group_Insert_Input>;
-  on_conflict?: Maybe<Group_On_Conflict>;
+  readonly data: ReadonlyArray<Group_Insert_Input>;
+  readonly on_conflict?: Maybe<Group_On_Conflict>;
 };
 
 /** Boolean expression to filter rows from the table "Group". All fields are combined with a logical 'AND'. */
 export type Group_Bool_Exp = {
-  _and?: Maybe<Array<Maybe<Group_Bool_Exp>>>;
-  _not?: Maybe<Group_Bool_Exp>;
-  _or?: Maybe<Array<Maybe<Group_Bool_Exp>>>;
-  accessEnd?: Maybe<Timestamptz_Comparison_Exp>;
-  accessStart?: Maybe<Timestamptz_Comparison_Exp>;
-  conference?: Maybe<Conference_Bool_Exp>;
-  conferenceId?: Maybe<Uuid_Comparison_Exp>;
-  groupAttendees?: Maybe<GroupAttendee_Bool_Exp>;
-  groupRoles?: Maybe<GroupRole_Bool_Exp>;
-  id?: Maybe<Uuid_Comparison_Exp>;
-  includeUnauthenticated?: Maybe<Boolean_Comparison_Exp>;
-  name?: Maybe<String_Comparison_Exp>;
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Group_Bool_Exp>>>;
+  readonly _not?: Maybe<Group_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Group_Bool_Exp>>>;
+  readonly accessEnd?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly accessStart?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly groupAttendees?: Maybe<GroupAttendee_Bool_Exp>;
+  readonly groupRoles?: Maybe<GroupRole_Bool_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly includeUnauthenticated?: Maybe<Boolean_Comparison_Exp>;
+  readonly name?: Maybe<String_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "Group" */
@@ -4110,93 +4112,93 @@ export enum Group_Constraint {
 
 /** input type for inserting data into table "Group" */
 export type Group_Insert_Input = {
-  accessEnd?: Maybe<Scalars['timestamptz']>;
-  accessStart?: Maybe<Scalars['timestamptz']>;
-  conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
-  conferenceId?: Maybe<Scalars['uuid']>;
-  groupAttendees?: Maybe<GroupAttendee_Arr_Rel_Insert_Input>;
-  groupRoles?: Maybe<GroupRole_Arr_Rel_Insert_Input>;
-  id?: Maybe<Scalars['uuid']>;
-  includeUnauthenticated?: Maybe<Scalars['Boolean']>;
-  name?: Maybe<Scalars['String']>;
+  readonly accessEnd?: Maybe<Scalars['timestamptz']>;
+  readonly accessStart?: Maybe<Scalars['timestamptz']>;
+  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly groupAttendees?: Maybe<GroupAttendee_Arr_Rel_Insert_Input>;
+  readonly groupRoles?: Maybe<GroupRole_Arr_Rel_Insert_Input>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly includeUnauthenticated?: Maybe<Scalars['Boolean']>;
+  readonly name?: Maybe<Scalars['String']>;
 };
 
 /** aggregate max on columns */
 export type Group_Max_Fields = {
-  __typename?: 'Group_max_fields';
-  accessEnd?: Maybe<Scalars['timestamptz']>;
-  accessStart?: Maybe<Scalars['timestamptz']>;
-  conferenceId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  name?: Maybe<Scalars['String']>;
+  readonly __typename?: 'Group_max_fields';
+  readonly accessEnd?: Maybe<Scalars['timestamptz']>;
+  readonly accessStart?: Maybe<Scalars['timestamptz']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
 };
 
 /** order by max() on columns of table "Group" */
 export type Group_Max_Order_By = {
-  accessEnd?: Maybe<Order_By>;
-  accessStart?: Maybe<Order_By>;
-  conferenceId?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  name?: Maybe<Order_By>;
+  readonly accessEnd?: Maybe<Order_By>;
+  readonly accessStart?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type Group_Min_Fields = {
-  __typename?: 'Group_min_fields';
-  accessEnd?: Maybe<Scalars['timestamptz']>;
-  accessStart?: Maybe<Scalars['timestamptz']>;
-  conferenceId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  name?: Maybe<Scalars['String']>;
+  readonly __typename?: 'Group_min_fields';
+  readonly accessEnd?: Maybe<Scalars['timestamptz']>;
+  readonly accessStart?: Maybe<Scalars['timestamptz']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
 };
 
 /** order by min() on columns of table "Group" */
 export type Group_Min_Order_By = {
-  accessEnd?: Maybe<Order_By>;
-  accessStart?: Maybe<Order_By>;
-  conferenceId?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  name?: Maybe<Order_By>;
+  readonly accessEnd?: Maybe<Order_By>;
+  readonly accessStart?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "Group" */
 export type Group_Mutation_Response = {
-  __typename?: 'Group_mutation_response';
+  readonly __typename?: 'Group_mutation_response';
   /** number of affected rows by the mutation */
-  affected_rows: Scalars['Int'];
+  readonly affected_rows: Scalars['Int'];
   /** data of the affected rows by the mutation */
-  returning: Array<Group>;
+  readonly returning: ReadonlyArray<Group>;
 };
 
 /** input type for inserting object relation for remote table "Group" */
 export type Group_Obj_Rel_Insert_Input = {
-  data: Group_Insert_Input;
-  on_conflict?: Maybe<Group_On_Conflict>;
+  readonly data: Group_Insert_Input;
+  readonly on_conflict?: Maybe<Group_On_Conflict>;
 };
 
 /** on conflict condition type for table "Group" */
 export type Group_On_Conflict = {
-  constraint: Group_Constraint;
-  update_columns: Array<Group_Update_Column>;
-  where?: Maybe<Group_Bool_Exp>;
+  readonly constraint: Group_Constraint;
+  readonly update_columns: ReadonlyArray<Group_Update_Column>;
+  readonly where?: Maybe<Group_Bool_Exp>;
 };
 
 /** ordering options when selecting data from "Group" */
 export type Group_Order_By = {
-  accessEnd?: Maybe<Order_By>;
-  accessStart?: Maybe<Order_By>;
-  conference?: Maybe<Conference_Order_By>;
-  conferenceId?: Maybe<Order_By>;
-  groupAttendees_aggregate?: Maybe<GroupAttendee_Aggregate_Order_By>;
-  groupRoles_aggregate?: Maybe<GroupRole_Aggregate_Order_By>;
-  id?: Maybe<Order_By>;
-  includeUnauthenticated?: Maybe<Order_By>;
-  name?: Maybe<Order_By>;
+  readonly accessEnd?: Maybe<Order_By>;
+  readonly accessStart?: Maybe<Order_By>;
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly groupAttendees_aggregate?: Maybe<GroupAttendee_Aggregate_Order_By>;
+  readonly groupRoles_aggregate?: Maybe<GroupRole_Aggregate_Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly includeUnauthenticated?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: "Group" */
 export type Group_Pk_Columns_Input = {
-  id: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
 };
 
 /** select columns of table "Group" */
@@ -4217,12 +4219,12 @@ export enum Group_Select_Column {
 
 /** input type for updating data in table "Group" */
 export type Group_Set_Input = {
-  accessEnd?: Maybe<Scalars['timestamptz']>;
-  accessStart?: Maybe<Scalars['timestamptz']>;
-  conferenceId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  includeUnauthenticated?: Maybe<Scalars['Boolean']>;
-  name?: Maybe<Scalars['String']>;
+  readonly accessEnd?: Maybe<Scalars['timestamptz']>;
+  readonly accessStart?: Maybe<Scalars['timestamptz']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly includeUnauthenticated?: Maybe<Scalars['Boolean']>;
+  readonly name?: Maybe<Scalars['String']>;
 };
 
 /** update columns of table "Group" */
@@ -4243,73 +4245,73 @@ export enum Group_Update_Column {
 
 /** expression to compare columns of type Int. All fields are combined with logical 'AND'. */
 export type Int_Comparison_Exp = {
-  _eq?: Maybe<Scalars['Int']>;
-  _gt?: Maybe<Scalars['Int']>;
-  _gte?: Maybe<Scalars['Int']>;
-  _in?: Maybe<Array<Scalars['Int']>>;
-  _is_null?: Maybe<Scalars['Boolean']>;
-  _lt?: Maybe<Scalars['Int']>;
-  _lte?: Maybe<Scalars['Int']>;
-  _neq?: Maybe<Scalars['Int']>;
-  _nin?: Maybe<Array<Scalars['Int']>>;
+  readonly _eq?: Maybe<Scalars['Int']>;
+  readonly _gt?: Maybe<Scalars['Int']>;
+  readonly _gte?: Maybe<Scalars['Int']>;
+  readonly _in?: Maybe<ReadonlyArray<Scalars['Int']>>;
+  readonly _is_null?: Maybe<Scalars['Boolean']>;
+  readonly _lt?: Maybe<Scalars['Int']>;
+  readonly _lte?: Maybe<Scalars['Int']>;
+  readonly _neq?: Maybe<Scalars['Int']>;
+  readonly _nin?: Maybe<ReadonlyArray<Scalars['Int']>>;
 };
 
 /** columns and relationships of "OnlineStatus" */
 export type OnlineStatus = {
-  __typename?: 'OnlineStatus';
-  id: Scalars['uuid'];
-  isIncognito: Scalars['Boolean'];
-  lastSeen: Scalars['timestamptz'];
+  readonly __typename?: 'OnlineStatus';
+  readonly id: Scalars['uuid'];
+  readonly isIncognito: Scalars['Boolean'];
+  readonly lastSeen: Scalars['timestamptz'];
   /** An object relationship */
-  user: User;
-  userId: Scalars['String'];
+  readonly user: User;
+  readonly userId: Scalars['String'];
 };
 
 /** aggregated selection of "OnlineStatus" */
 export type OnlineStatus_Aggregate = {
-  __typename?: 'OnlineStatus_aggregate';
-  aggregate?: Maybe<OnlineStatus_Aggregate_Fields>;
-  nodes: Array<OnlineStatus>;
+  readonly __typename?: 'OnlineStatus_aggregate';
+  readonly aggregate?: Maybe<OnlineStatus_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<OnlineStatus>;
 };
 
 /** aggregate fields of "OnlineStatus" */
 export type OnlineStatus_Aggregate_Fields = {
-  __typename?: 'OnlineStatus_aggregate_fields';
-  count?: Maybe<Scalars['Int']>;
-  max?: Maybe<OnlineStatus_Max_Fields>;
-  min?: Maybe<OnlineStatus_Min_Fields>;
+  readonly __typename?: 'OnlineStatus_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<OnlineStatus_Max_Fields>;
+  readonly min?: Maybe<OnlineStatus_Min_Fields>;
 };
 
 
 /** aggregate fields of "OnlineStatus" */
 export type OnlineStatus_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<Array<OnlineStatus_Select_Column>>;
+  columns?: Maybe<ReadonlyArray<OnlineStatus_Select_Column>>;
   distinct?: Maybe<Scalars['Boolean']>;
 };
 
 /** order by aggregate values of table "OnlineStatus" */
 export type OnlineStatus_Aggregate_Order_By = {
-  count?: Maybe<Order_By>;
-  max?: Maybe<OnlineStatus_Max_Order_By>;
-  min?: Maybe<OnlineStatus_Min_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<OnlineStatus_Max_Order_By>;
+  readonly min?: Maybe<OnlineStatus_Min_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "OnlineStatus" */
 export type OnlineStatus_Arr_Rel_Insert_Input = {
-  data: Array<OnlineStatus_Insert_Input>;
-  on_conflict?: Maybe<OnlineStatus_On_Conflict>;
+  readonly data: ReadonlyArray<OnlineStatus_Insert_Input>;
+  readonly on_conflict?: Maybe<OnlineStatus_On_Conflict>;
 };
 
 /** Boolean expression to filter rows from the table "OnlineStatus". All fields are combined with a logical 'AND'. */
 export type OnlineStatus_Bool_Exp = {
-  _and?: Maybe<Array<Maybe<OnlineStatus_Bool_Exp>>>;
-  _not?: Maybe<OnlineStatus_Bool_Exp>;
-  _or?: Maybe<Array<Maybe<OnlineStatus_Bool_Exp>>>;
-  id?: Maybe<Uuid_Comparison_Exp>;
-  isIncognito?: Maybe<Boolean_Comparison_Exp>;
-  lastSeen?: Maybe<Timestamptz_Comparison_Exp>;
-  user?: Maybe<User_Bool_Exp>;
-  userId?: Maybe<String_Comparison_Exp>;
+  readonly _and?: Maybe<ReadonlyArray<Maybe<OnlineStatus_Bool_Exp>>>;
+  readonly _not?: Maybe<OnlineStatus_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<OnlineStatus_Bool_Exp>>>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly isIncognito?: Maybe<Boolean_Comparison_Exp>;
+  readonly lastSeen?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly user?: Maybe<User_Bool_Exp>;
+  readonly userId?: Maybe<String_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "OnlineStatus" */
@@ -4322,77 +4324,77 @@ export enum OnlineStatus_Constraint {
 
 /** input type for inserting data into table "OnlineStatus" */
 export type OnlineStatus_Insert_Input = {
-  id?: Maybe<Scalars['uuid']>;
-  isIncognito?: Maybe<Scalars['Boolean']>;
-  lastSeen?: Maybe<Scalars['timestamptz']>;
-  user?: Maybe<User_Obj_Rel_Insert_Input>;
-  userId?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly isIncognito?: Maybe<Scalars['Boolean']>;
+  readonly lastSeen?: Maybe<Scalars['timestamptz']>;
+  readonly user?: Maybe<User_Obj_Rel_Insert_Input>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** aggregate max on columns */
 export type OnlineStatus_Max_Fields = {
-  __typename?: 'OnlineStatus_max_fields';
-  id?: Maybe<Scalars['uuid']>;
-  lastSeen?: Maybe<Scalars['timestamptz']>;
-  userId?: Maybe<Scalars['String']>;
+  readonly __typename?: 'OnlineStatus_max_fields';
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly lastSeen?: Maybe<Scalars['timestamptz']>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** order by max() on columns of table "OnlineStatus" */
 export type OnlineStatus_Max_Order_By = {
-  id?: Maybe<Order_By>;
-  lastSeen?: Maybe<Order_By>;
-  userId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly lastSeen?: Maybe<Order_By>;
+  readonly userId?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type OnlineStatus_Min_Fields = {
-  __typename?: 'OnlineStatus_min_fields';
-  id?: Maybe<Scalars['uuid']>;
-  lastSeen?: Maybe<Scalars['timestamptz']>;
-  userId?: Maybe<Scalars['String']>;
+  readonly __typename?: 'OnlineStatus_min_fields';
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly lastSeen?: Maybe<Scalars['timestamptz']>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** order by min() on columns of table "OnlineStatus" */
 export type OnlineStatus_Min_Order_By = {
-  id?: Maybe<Order_By>;
-  lastSeen?: Maybe<Order_By>;
-  userId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly lastSeen?: Maybe<Order_By>;
+  readonly userId?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "OnlineStatus" */
 export type OnlineStatus_Mutation_Response = {
-  __typename?: 'OnlineStatus_mutation_response';
+  readonly __typename?: 'OnlineStatus_mutation_response';
   /** number of affected rows by the mutation */
-  affected_rows: Scalars['Int'];
+  readonly affected_rows: Scalars['Int'];
   /** data of the affected rows by the mutation */
-  returning: Array<OnlineStatus>;
+  readonly returning: ReadonlyArray<OnlineStatus>;
 };
 
 /** input type for inserting object relation for remote table "OnlineStatus" */
 export type OnlineStatus_Obj_Rel_Insert_Input = {
-  data: OnlineStatus_Insert_Input;
-  on_conflict?: Maybe<OnlineStatus_On_Conflict>;
+  readonly data: OnlineStatus_Insert_Input;
+  readonly on_conflict?: Maybe<OnlineStatus_On_Conflict>;
 };
 
 /** on conflict condition type for table "OnlineStatus" */
 export type OnlineStatus_On_Conflict = {
-  constraint: OnlineStatus_Constraint;
-  update_columns: Array<OnlineStatus_Update_Column>;
-  where?: Maybe<OnlineStatus_Bool_Exp>;
+  readonly constraint: OnlineStatus_Constraint;
+  readonly update_columns: ReadonlyArray<OnlineStatus_Update_Column>;
+  readonly where?: Maybe<OnlineStatus_Bool_Exp>;
 };
 
 /** ordering options when selecting data from "OnlineStatus" */
 export type OnlineStatus_Order_By = {
-  id?: Maybe<Order_By>;
-  isIncognito?: Maybe<Order_By>;
-  lastSeen?: Maybe<Order_By>;
-  user?: Maybe<User_Order_By>;
-  userId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly isIncognito?: Maybe<Order_By>;
+  readonly lastSeen?: Maybe<Order_By>;
+  readonly user?: Maybe<User_Order_By>;
+  readonly userId?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: "OnlineStatus" */
 export type OnlineStatus_Pk_Columns_Input = {
-  id: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
 };
 
 /** select columns of table "OnlineStatus" */
@@ -4409,10 +4411,10 @@ export enum OnlineStatus_Select_Column {
 
 /** input type for updating data in table "OnlineStatus" */
 export type OnlineStatus_Set_Input = {
-  id?: Maybe<Scalars['uuid']>;
-  isIncognito?: Maybe<Scalars['Boolean']>;
-  lastSeen?: Maybe<Scalars['timestamptz']>;
-  userId?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly isIncognito?: Maybe<Scalars['Boolean']>;
+  readonly lastSeen?: Maybe<Scalars['timestamptz']>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** update columns of table "OnlineStatus" */
@@ -4429,78 +4431,78 @@ export enum OnlineStatus_Update_Column {
 
 /** columns and relationships of "Permission" */
 export type Permission = {
-  __typename?: 'Permission';
-  description: Scalars['String'];
-  name: Scalars['String'];
+  readonly __typename?: 'Permission';
+  readonly description: Scalars['String'];
+  readonly name: Scalars['String'];
   /** An array relationship */
-  rolePermissions: Array<RolePermission>;
+  readonly rolePermissions: ReadonlyArray<RolePermission>;
   /** An aggregated array relationship */
-  rolePermissions_aggregate: RolePermission_Aggregate;
+  readonly rolePermissions_aggregate: RolePermission_Aggregate;
 };
 
 
 /** columns and relationships of "Permission" */
 export type PermissionRolePermissionsArgs = {
-  distinct_on?: Maybe<Array<RolePermission_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<RolePermission_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<RolePermission_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<RolePermission_Order_By>>;
   where?: Maybe<RolePermission_Bool_Exp>;
 };
 
 
 /** columns and relationships of "Permission" */
 export type PermissionRolePermissions_AggregateArgs = {
-  distinct_on?: Maybe<Array<RolePermission_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<RolePermission_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<RolePermission_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<RolePermission_Order_By>>;
   where?: Maybe<RolePermission_Bool_Exp>;
 };
 
 /** aggregated selection of "Permission" */
 export type Permission_Aggregate = {
-  __typename?: 'Permission_aggregate';
-  aggregate?: Maybe<Permission_Aggregate_Fields>;
-  nodes: Array<Permission>;
+  readonly __typename?: 'Permission_aggregate';
+  readonly aggregate?: Maybe<Permission_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Permission>;
 };
 
 /** aggregate fields of "Permission" */
 export type Permission_Aggregate_Fields = {
-  __typename?: 'Permission_aggregate_fields';
-  count?: Maybe<Scalars['Int']>;
-  max?: Maybe<Permission_Max_Fields>;
-  min?: Maybe<Permission_Min_Fields>;
+  readonly __typename?: 'Permission_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Permission_Max_Fields>;
+  readonly min?: Maybe<Permission_Min_Fields>;
 };
 
 
 /** aggregate fields of "Permission" */
 export type Permission_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<Array<Permission_Select_Column>>;
+  columns?: Maybe<ReadonlyArray<Permission_Select_Column>>;
   distinct?: Maybe<Scalars['Boolean']>;
 };
 
 /** order by aggregate values of table "Permission" */
 export type Permission_Aggregate_Order_By = {
-  count?: Maybe<Order_By>;
-  max?: Maybe<Permission_Max_Order_By>;
-  min?: Maybe<Permission_Min_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Permission_Max_Order_By>;
+  readonly min?: Maybe<Permission_Min_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "Permission" */
 export type Permission_Arr_Rel_Insert_Input = {
-  data: Array<Permission_Insert_Input>;
-  on_conflict?: Maybe<Permission_On_Conflict>;
+  readonly data: ReadonlyArray<Permission_Insert_Input>;
+  readonly on_conflict?: Maybe<Permission_On_Conflict>;
 };
 
 /** Boolean expression to filter rows from the table "Permission". All fields are combined with a logical 'AND'. */
 export type Permission_Bool_Exp = {
-  _and?: Maybe<Array<Maybe<Permission_Bool_Exp>>>;
-  _not?: Maybe<Permission_Bool_Exp>;
-  _or?: Maybe<Array<Maybe<Permission_Bool_Exp>>>;
-  description?: Maybe<String_Comparison_Exp>;
-  name?: Maybe<String_Comparison_Exp>;
-  rolePermissions?: Maybe<RolePermission_Bool_Exp>;
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Permission_Bool_Exp>>>;
+  readonly _not?: Maybe<Permission_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Permission_Bool_Exp>>>;
+  readonly description?: Maybe<String_Comparison_Exp>;
+  readonly name?: Maybe<String_Comparison_Exp>;
+  readonly rolePermissions?: Maybe<RolePermission_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "Permission" */
@@ -4530,78 +4532,78 @@ export enum Permission_Enum {
 
 /** expression to compare columns of type Permission_enum. All fields are combined with logical 'AND'. */
 export type Permission_Enum_Comparison_Exp = {
-  _eq?: Maybe<Permission_Enum>;
-  _in?: Maybe<Array<Permission_Enum>>;
-  _is_null?: Maybe<Scalars['Boolean']>;
-  _neq?: Maybe<Permission_Enum>;
-  _nin?: Maybe<Array<Permission_Enum>>;
+  readonly _eq?: Maybe<Permission_Enum>;
+  readonly _in?: Maybe<ReadonlyArray<Permission_Enum>>;
+  readonly _is_null?: Maybe<Scalars['Boolean']>;
+  readonly _neq?: Maybe<Permission_Enum>;
+  readonly _nin?: Maybe<ReadonlyArray<Permission_Enum>>;
 };
 
 /** input type for inserting data into table "Permission" */
 export type Permission_Insert_Input = {
-  description?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  rolePermissions?: Maybe<RolePermission_Arr_Rel_Insert_Input>;
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly rolePermissions?: Maybe<RolePermission_Arr_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
 export type Permission_Max_Fields = {
-  __typename?: 'Permission_max_fields';
-  description?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
+  readonly __typename?: 'Permission_max_fields';
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
 };
 
 /** order by max() on columns of table "Permission" */
 export type Permission_Max_Order_By = {
-  description?: Maybe<Order_By>;
-  name?: Maybe<Order_By>;
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type Permission_Min_Fields = {
-  __typename?: 'Permission_min_fields';
-  description?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
+  readonly __typename?: 'Permission_min_fields';
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
 };
 
 /** order by min() on columns of table "Permission" */
 export type Permission_Min_Order_By = {
-  description?: Maybe<Order_By>;
-  name?: Maybe<Order_By>;
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "Permission" */
 export type Permission_Mutation_Response = {
-  __typename?: 'Permission_mutation_response';
+  readonly __typename?: 'Permission_mutation_response';
   /** number of affected rows by the mutation */
-  affected_rows: Scalars['Int'];
+  readonly affected_rows: Scalars['Int'];
   /** data of the affected rows by the mutation */
-  returning: Array<Permission>;
+  readonly returning: ReadonlyArray<Permission>;
 };
 
 /** input type for inserting object relation for remote table "Permission" */
 export type Permission_Obj_Rel_Insert_Input = {
-  data: Permission_Insert_Input;
-  on_conflict?: Maybe<Permission_On_Conflict>;
+  readonly data: Permission_Insert_Input;
+  readonly on_conflict?: Maybe<Permission_On_Conflict>;
 };
 
 /** on conflict condition type for table "Permission" */
 export type Permission_On_Conflict = {
-  constraint: Permission_Constraint;
-  update_columns: Array<Permission_Update_Column>;
-  where?: Maybe<Permission_Bool_Exp>;
+  readonly constraint: Permission_Constraint;
+  readonly update_columns: ReadonlyArray<Permission_Update_Column>;
+  readonly where?: Maybe<Permission_Bool_Exp>;
 };
 
 /** ordering options when selecting data from "Permission" */
 export type Permission_Order_By = {
-  description?: Maybe<Order_By>;
-  name?: Maybe<Order_By>;
-  rolePermissions_aggregate?: Maybe<RolePermission_Aggregate_Order_By>;
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+  readonly rolePermissions_aggregate?: Maybe<RolePermission_Aggregate_Order_By>;
 };
 
 /** primary key columns input for table: "Permission" */
 export type Permission_Pk_Columns_Input = {
-  name: Scalars['String'];
+  readonly name: Scalars['String'];
 };
 
 /** select columns of table "Permission" */
@@ -4614,8 +4616,8 @@ export enum Permission_Select_Column {
 
 /** input type for updating data in table "Permission" */
 export type Permission_Set_Input = {
-  description?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
 };
 
 /** update columns of table "Permission" */
@@ -4628,63 +4630,63 @@ export enum Permission_Update_Column {
 
 /** columns and relationships of "PinnedChat" */
 export type PinnedChat = {
-  __typename?: 'PinnedChat';
+  readonly __typename?: 'PinnedChat';
   /** An object relationship */
-  chat: Chat;
-  chatId: Scalars['uuid'];
-  id: Scalars['uuid'];
-  manual: Scalars['Boolean'];
+  readonly chat: Chat;
+  readonly chatId: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
+  readonly manual: Scalars['Boolean'];
   /** An object relationship */
-  user: User;
-  userId: Scalars['String'];
+  readonly user: User;
+  readonly userId: Scalars['String'];
 };
 
 /** aggregated selection of "PinnedChat" */
 export type PinnedChat_Aggregate = {
-  __typename?: 'PinnedChat_aggregate';
-  aggregate?: Maybe<PinnedChat_Aggregate_Fields>;
-  nodes: Array<PinnedChat>;
+  readonly __typename?: 'PinnedChat_aggregate';
+  readonly aggregate?: Maybe<PinnedChat_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<PinnedChat>;
 };
 
 /** aggregate fields of "PinnedChat" */
 export type PinnedChat_Aggregate_Fields = {
-  __typename?: 'PinnedChat_aggregate_fields';
-  count?: Maybe<Scalars['Int']>;
-  max?: Maybe<PinnedChat_Max_Fields>;
-  min?: Maybe<PinnedChat_Min_Fields>;
+  readonly __typename?: 'PinnedChat_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<PinnedChat_Max_Fields>;
+  readonly min?: Maybe<PinnedChat_Min_Fields>;
 };
 
 
 /** aggregate fields of "PinnedChat" */
 export type PinnedChat_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<Array<PinnedChat_Select_Column>>;
+  columns?: Maybe<ReadonlyArray<PinnedChat_Select_Column>>;
   distinct?: Maybe<Scalars['Boolean']>;
 };
 
 /** order by aggregate values of table "PinnedChat" */
 export type PinnedChat_Aggregate_Order_By = {
-  count?: Maybe<Order_By>;
-  max?: Maybe<PinnedChat_Max_Order_By>;
-  min?: Maybe<PinnedChat_Min_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<PinnedChat_Max_Order_By>;
+  readonly min?: Maybe<PinnedChat_Min_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "PinnedChat" */
 export type PinnedChat_Arr_Rel_Insert_Input = {
-  data: Array<PinnedChat_Insert_Input>;
-  on_conflict?: Maybe<PinnedChat_On_Conflict>;
+  readonly data: ReadonlyArray<PinnedChat_Insert_Input>;
+  readonly on_conflict?: Maybe<PinnedChat_On_Conflict>;
 };
 
 /** Boolean expression to filter rows from the table "PinnedChat". All fields are combined with a logical 'AND'. */
 export type PinnedChat_Bool_Exp = {
-  _and?: Maybe<Array<Maybe<PinnedChat_Bool_Exp>>>;
-  _not?: Maybe<PinnedChat_Bool_Exp>;
-  _or?: Maybe<Array<Maybe<PinnedChat_Bool_Exp>>>;
-  chat?: Maybe<Chat_Bool_Exp>;
-  chatId?: Maybe<Uuid_Comparison_Exp>;
-  id?: Maybe<Uuid_Comparison_Exp>;
-  manual?: Maybe<Boolean_Comparison_Exp>;
-  user?: Maybe<User_Bool_Exp>;
-  userId?: Maybe<String_Comparison_Exp>;
+  readonly _and?: Maybe<ReadonlyArray<Maybe<PinnedChat_Bool_Exp>>>;
+  readonly _not?: Maybe<PinnedChat_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<PinnedChat_Bool_Exp>>>;
+  readonly chat?: Maybe<Chat_Bool_Exp>;
+  readonly chatId?: Maybe<Uuid_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly manual?: Maybe<Boolean_Comparison_Exp>;
+  readonly user?: Maybe<User_Bool_Exp>;
+  readonly userId?: Maybe<String_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "PinnedChat" */
@@ -4697,79 +4699,79 @@ export enum PinnedChat_Constraint {
 
 /** input type for inserting data into table "PinnedChat" */
 export type PinnedChat_Insert_Input = {
-  chat?: Maybe<Chat_Obj_Rel_Insert_Input>;
-  chatId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  manual?: Maybe<Scalars['Boolean']>;
-  user?: Maybe<User_Obj_Rel_Insert_Input>;
-  userId?: Maybe<Scalars['String']>;
+  readonly chat?: Maybe<Chat_Obj_Rel_Insert_Input>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly manual?: Maybe<Scalars['Boolean']>;
+  readonly user?: Maybe<User_Obj_Rel_Insert_Input>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** aggregate max on columns */
 export type PinnedChat_Max_Fields = {
-  __typename?: 'PinnedChat_max_fields';
-  chatId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  userId?: Maybe<Scalars['String']>;
+  readonly __typename?: 'PinnedChat_max_fields';
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** order by max() on columns of table "PinnedChat" */
 export type PinnedChat_Max_Order_By = {
-  chatId?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  userId?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly userId?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type PinnedChat_Min_Fields = {
-  __typename?: 'PinnedChat_min_fields';
-  chatId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  userId?: Maybe<Scalars['String']>;
+  readonly __typename?: 'PinnedChat_min_fields';
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** order by min() on columns of table "PinnedChat" */
 export type PinnedChat_Min_Order_By = {
-  chatId?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  userId?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly userId?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "PinnedChat" */
 export type PinnedChat_Mutation_Response = {
-  __typename?: 'PinnedChat_mutation_response';
+  readonly __typename?: 'PinnedChat_mutation_response';
   /** number of affected rows by the mutation */
-  affected_rows: Scalars['Int'];
+  readonly affected_rows: Scalars['Int'];
   /** data of the affected rows by the mutation */
-  returning: Array<PinnedChat>;
+  readonly returning: ReadonlyArray<PinnedChat>;
 };
 
 /** input type for inserting object relation for remote table "PinnedChat" */
 export type PinnedChat_Obj_Rel_Insert_Input = {
-  data: PinnedChat_Insert_Input;
-  on_conflict?: Maybe<PinnedChat_On_Conflict>;
+  readonly data: PinnedChat_Insert_Input;
+  readonly on_conflict?: Maybe<PinnedChat_On_Conflict>;
 };
 
 /** on conflict condition type for table "PinnedChat" */
 export type PinnedChat_On_Conflict = {
-  constraint: PinnedChat_Constraint;
-  update_columns: Array<PinnedChat_Update_Column>;
-  where?: Maybe<PinnedChat_Bool_Exp>;
+  readonly constraint: PinnedChat_Constraint;
+  readonly update_columns: ReadonlyArray<PinnedChat_Update_Column>;
+  readonly where?: Maybe<PinnedChat_Bool_Exp>;
 };
 
 /** ordering options when selecting data from "PinnedChat" */
 export type PinnedChat_Order_By = {
-  chat?: Maybe<Chat_Order_By>;
-  chatId?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  manual?: Maybe<Order_By>;
-  user?: Maybe<User_Order_By>;
-  userId?: Maybe<Order_By>;
+  readonly chat?: Maybe<Chat_Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly manual?: Maybe<Order_By>;
+  readonly user?: Maybe<User_Order_By>;
+  readonly userId?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: "PinnedChat" */
 export type PinnedChat_Pk_Columns_Input = {
-  id: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
 };
 
 /** select columns of table "PinnedChat" */
@@ -4786,10 +4788,10 @@ export enum PinnedChat_Select_Column {
 
 /** input type for updating data in table "PinnedChat" */
 export type PinnedChat_Set_Input = {
-  chatId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  manual?: Maybe<Scalars['Boolean']>;
-  userId?: Maybe<Scalars['String']>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly manual?: Maybe<Scalars['Boolean']>;
+  readonly userId?: Maybe<Scalars['String']>;
 };
 
 /** update columns of table "PinnedChat" */
@@ -4805,125 +4807,125 @@ export enum PinnedChat_Update_Column {
 }
 
 export type ProtectedEchoOutput = {
-  __typename?: 'ProtectedEchoOutput';
-  message: Scalars['String'];
+  readonly __typename?: 'ProtectedEchoOutput';
+  readonly message: Scalars['String'];
 };
 
 /** columns and relationships of "Role" */
 export type Role = {
-  __typename?: 'Role';
+  readonly __typename?: 'Role';
   /** An object relationship */
-  conference: Conference;
-  conferenceId: Scalars['uuid'];
+  readonly conference: Conference;
+  readonly conferenceId: Scalars['uuid'];
   /** An array relationship */
-  groupRoles: Array<GroupRole>;
+  readonly groupRoles: ReadonlyArray<GroupRole>;
   /** An aggregated array relationship */
-  groupRoles_aggregate: GroupRole_Aggregate;
-  id: Scalars['uuid'];
-  name: Scalars['String'];
+  readonly groupRoles_aggregate: GroupRole_Aggregate;
+  readonly id: Scalars['uuid'];
+  readonly name: Scalars['String'];
   /** An array relationship */
-  rolePermissions: Array<RolePermission>;
+  readonly rolePermissions: ReadonlyArray<RolePermission>;
   /** An aggregated array relationship */
-  rolePermissions_aggregate: RolePermission_Aggregate;
+  readonly rolePermissions_aggregate: RolePermission_Aggregate;
 };
 
 
 /** columns and relationships of "Role" */
 export type RoleGroupRolesArgs = {
-  distinct_on?: Maybe<Array<GroupRole_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<GroupRole_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<GroupRole_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<GroupRole_Order_By>>;
   where?: Maybe<GroupRole_Bool_Exp>;
 };
 
 
 /** columns and relationships of "Role" */
 export type RoleGroupRoles_AggregateArgs = {
-  distinct_on?: Maybe<Array<GroupRole_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<GroupRole_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<GroupRole_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<GroupRole_Order_By>>;
   where?: Maybe<GroupRole_Bool_Exp>;
 };
 
 
 /** columns and relationships of "Role" */
 export type RoleRolePermissionsArgs = {
-  distinct_on?: Maybe<Array<RolePermission_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<RolePermission_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<RolePermission_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<RolePermission_Order_By>>;
   where?: Maybe<RolePermission_Bool_Exp>;
 };
 
 
 /** columns and relationships of "Role" */
 export type RoleRolePermissions_AggregateArgs = {
-  distinct_on?: Maybe<Array<RolePermission_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<RolePermission_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<RolePermission_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<RolePermission_Order_By>>;
   where?: Maybe<RolePermission_Bool_Exp>;
 };
 
 /** columns and relationships of "RolePermission" */
 export type RolePermission = {
-  __typename?: 'RolePermission';
-  id: Scalars['uuid'];
+  readonly __typename?: 'RolePermission';
+  readonly id: Scalars['uuid'];
   /** An object relationship */
-  permission: Permission;
-  permissionName: Permission_Enum;
+  readonly permission: Permission;
+  readonly permissionName: Permission_Enum;
   /** An object relationship */
-  role: Role;
-  roleId: Scalars['uuid'];
+  readonly role: Role;
+  readonly roleId: Scalars['uuid'];
 };
 
 /** aggregated selection of "RolePermission" */
 export type RolePermission_Aggregate = {
-  __typename?: 'RolePermission_aggregate';
-  aggregate?: Maybe<RolePermission_Aggregate_Fields>;
-  nodes: Array<RolePermission>;
+  readonly __typename?: 'RolePermission_aggregate';
+  readonly aggregate?: Maybe<RolePermission_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<RolePermission>;
 };
 
 /** aggregate fields of "RolePermission" */
 export type RolePermission_Aggregate_Fields = {
-  __typename?: 'RolePermission_aggregate_fields';
-  count?: Maybe<Scalars['Int']>;
-  max?: Maybe<RolePermission_Max_Fields>;
-  min?: Maybe<RolePermission_Min_Fields>;
+  readonly __typename?: 'RolePermission_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<RolePermission_Max_Fields>;
+  readonly min?: Maybe<RolePermission_Min_Fields>;
 };
 
 
 /** aggregate fields of "RolePermission" */
 export type RolePermission_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<Array<RolePermission_Select_Column>>;
+  columns?: Maybe<ReadonlyArray<RolePermission_Select_Column>>;
   distinct?: Maybe<Scalars['Boolean']>;
 };
 
 /** order by aggregate values of table "RolePermission" */
 export type RolePermission_Aggregate_Order_By = {
-  count?: Maybe<Order_By>;
-  max?: Maybe<RolePermission_Max_Order_By>;
-  min?: Maybe<RolePermission_Min_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<RolePermission_Max_Order_By>;
+  readonly min?: Maybe<RolePermission_Min_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "RolePermission" */
 export type RolePermission_Arr_Rel_Insert_Input = {
-  data: Array<RolePermission_Insert_Input>;
-  on_conflict?: Maybe<RolePermission_On_Conflict>;
+  readonly data: ReadonlyArray<RolePermission_Insert_Input>;
+  readonly on_conflict?: Maybe<RolePermission_On_Conflict>;
 };
 
 /** Boolean expression to filter rows from the table "RolePermission". All fields are combined with a logical 'AND'. */
 export type RolePermission_Bool_Exp = {
-  _and?: Maybe<Array<Maybe<RolePermission_Bool_Exp>>>;
-  _not?: Maybe<RolePermission_Bool_Exp>;
-  _or?: Maybe<Array<Maybe<RolePermission_Bool_Exp>>>;
-  id?: Maybe<Uuid_Comparison_Exp>;
-  permission?: Maybe<Permission_Bool_Exp>;
-  permissionName?: Maybe<Permission_Enum_Comparison_Exp>;
-  role?: Maybe<Role_Bool_Exp>;
-  roleId?: Maybe<Uuid_Comparison_Exp>;
+  readonly _and?: Maybe<ReadonlyArray<Maybe<RolePermission_Bool_Exp>>>;
+  readonly _not?: Maybe<RolePermission_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<RolePermission_Bool_Exp>>>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly permission?: Maybe<Permission_Bool_Exp>;
+  readonly permissionName?: Maybe<Permission_Enum_Comparison_Exp>;
+  readonly role?: Maybe<Role_Bool_Exp>;
+  readonly roleId?: Maybe<Uuid_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "RolePermission" */
@@ -4936,73 +4938,73 @@ export enum RolePermission_Constraint {
 
 /** input type for inserting data into table "RolePermission" */
 export type RolePermission_Insert_Input = {
-  id?: Maybe<Scalars['uuid']>;
-  permission?: Maybe<Permission_Obj_Rel_Insert_Input>;
-  permissionName?: Maybe<Permission_Enum>;
-  role?: Maybe<Role_Obj_Rel_Insert_Input>;
-  roleId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly permission?: Maybe<Permission_Obj_Rel_Insert_Input>;
+  readonly permissionName?: Maybe<Permission_Enum>;
+  readonly role?: Maybe<Role_Obj_Rel_Insert_Input>;
+  readonly roleId?: Maybe<Scalars['uuid']>;
 };
 
 /** aggregate max on columns */
 export type RolePermission_Max_Fields = {
-  __typename?: 'RolePermission_max_fields';
-  id?: Maybe<Scalars['uuid']>;
-  roleId?: Maybe<Scalars['uuid']>;
+  readonly __typename?: 'RolePermission_max_fields';
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly roleId?: Maybe<Scalars['uuid']>;
 };
 
 /** order by max() on columns of table "RolePermission" */
 export type RolePermission_Max_Order_By = {
-  id?: Maybe<Order_By>;
-  roleId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly roleId?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type RolePermission_Min_Fields = {
-  __typename?: 'RolePermission_min_fields';
-  id?: Maybe<Scalars['uuid']>;
-  roleId?: Maybe<Scalars['uuid']>;
+  readonly __typename?: 'RolePermission_min_fields';
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly roleId?: Maybe<Scalars['uuid']>;
 };
 
 /** order by min() on columns of table "RolePermission" */
 export type RolePermission_Min_Order_By = {
-  id?: Maybe<Order_By>;
-  roleId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly roleId?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "RolePermission" */
 export type RolePermission_Mutation_Response = {
-  __typename?: 'RolePermission_mutation_response';
+  readonly __typename?: 'RolePermission_mutation_response';
   /** number of affected rows by the mutation */
-  affected_rows: Scalars['Int'];
+  readonly affected_rows: Scalars['Int'];
   /** data of the affected rows by the mutation */
-  returning: Array<RolePermission>;
+  readonly returning: ReadonlyArray<RolePermission>;
 };
 
 /** input type for inserting object relation for remote table "RolePermission" */
 export type RolePermission_Obj_Rel_Insert_Input = {
-  data: RolePermission_Insert_Input;
-  on_conflict?: Maybe<RolePermission_On_Conflict>;
+  readonly data: RolePermission_Insert_Input;
+  readonly on_conflict?: Maybe<RolePermission_On_Conflict>;
 };
 
 /** on conflict condition type for table "RolePermission" */
 export type RolePermission_On_Conflict = {
-  constraint: RolePermission_Constraint;
-  update_columns: Array<RolePermission_Update_Column>;
-  where?: Maybe<RolePermission_Bool_Exp>;
+  readonly constraint: RolePermission_Constraint;
+  readonly update_columns: ReadonlyArray<RolePermission_Update_Column>;
+  readonly where?: Maybe<RolePermission_Bool_Exp>;
 };
 
 /** ordering options when selecting data from "RolePermission" */
 export type RolePermission_Order_By = {
-  id?: Maybe<Order_By>;
-  permission?: Maybe<Permission_Order_By>;
-  permissionName?: Maybe<Order_By>;
-  role?: Maybe<Role_Order_By>;
-  roleId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly permission?: Maybe<Permission_Order_By>;
+  readonly permissionName?: Maybe<Order_By>;
+  readonly role?: Maybe<Role_Order_By>;
+  readonly roleId?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: "RolePermission" */
 export type RolePermission_Pk_Columns_Input = {
-  id: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
 };
 
 /** select columns of table "RolePermission" */
@@ -5017,9 +5019,9 @@ export enum RolePermission_Select_Column {
 
 /** input type for updating data in table "RolePermission" */
 export type RolePermission_Set_Input = {
-  id?: Maybe<Scalars['uuid']>;
-  permissionName?: Maybe<Permission_Enum>;
-  roleId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly permissionName?: Maybe<Permission_Enum>;
+  readonly roleId?: Maybe<Scalars['uuid']>;
 };
 
 /** update columns of table "RolePermission" */
@@ -5034,50 +5036,50 @@ export enum RolePermission_Update_Column {
 
 /** aggregated selection of "Role" */
 export type Role_Aggregate = {
-  __typename?: 'Role_aggregate';
-  aggregate?: Maybe<Role_Aggregate_Fields>;
-  nodes: Array<Role>;
+  readonly __typename?: 'Role_aggregate';
+  readonly aggregate?: Maybe<Role_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Role>;
 };
 
 /** aggregate fields of "Role" */
 export type Role_Aggregate_Fields = {
-  __typename?: 'Role_aggregate_fields';
-  count?: Maybe<Scalars['Int']>;
-  max?: Maybe<Role_Max_Fields>;
-  min?: Maybe<Role_Min_Fields>;
+  readonly __typename?: 'Role_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Role_Max_Fields>;
+  readonly min?: Maybe<Role_Min_Fields>;
 };
 
 
 /** aggregate fields of "Role" */
 export type Role_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<Array<Role_Select_Column>>;
+  columns?: Maybe<ReadonlyArray<Role_Select_Column>>;
   distinct?: Maybe<Scalars['Boolean']>;
 };
 
 /** order by aggregate values of table "Role" */
 export type Role_Aggregate_Order_By = {
-  count?: Maybe<Order_By>;
-  max?: Maybe<Role_Max_Order_By>;
-  min?: Maybe<Role_Min_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Role_Max_Order_By>;
+  readonly min?: Maybe<Role_Min_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "Role" */
 export type Role_Arr_Rel_Insert_Input = {
-  data: Array<Role_Insert_Input>;
-  on_conflict?: Maybe<Role_On_Conflict>;
+  readonly data: ReadonlyArray<Role_Insert_Input>;
+  readonly on_conflict?: Maybe<Role_On_Conflict>;
 };
 
 /** Boolean expression to filter rows from the table "Role". All fields are combined with a logical 'AND'. */
 export type Role_Bool_Exp = {
-  _and?: Maybe<Array<Maybe<Role_Bool_Exp>>>;
-  _not?: Maybe<Role_Bool_Exp>;
-  _or?: Maybe<Array<Maybe<Role_Bool_Exp>>>;
-  conference?: Maybe<Conference_Bool_Exp>;
-  conferenceId?: Maybe<Uuid_Comparison_Exp>;
-  groupRoles?: Maybe<GroupRole_Bool_Exp>;
-  id?: Maybe<Uuid_Comparison_Exp>;
-  name?: Maybe<String_Comparison_Exp>;
-  rolePermissions?: Maybe<RolePermission_Bool_Exp>;
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Role_Bool_Exp>>>;
+  readonly _not?: Maybe<Role_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Role_Bool_Exp>>>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly groupRoles?: Maybe<GroupRole_Bool_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly name?: Maybe<String_Comparison_Exp>;
+  readonly rolePermissions?: Maybe<RolePermission_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "Role" */
@@ -5090,79 +5092,79 @@ export enum Role_Constraint {
 
 /** input type for inserting data into table "Role" */
 export type Role_Insert_Input = {
-  conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
-  conferenceId?: Maybe<Scalars['uuid']>;
-  groupRoles?: Maybe<GroupRole_Arr_Rel_Insert_Input>;
-  id?: Maybe<Scalars['uuid']>;
-  name?: Maybe<Scalars['String']>;
-  rolePermissions?: Maybe<RolePermission_Arr_Rel_Insert_Input>;
+  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly groupRoles?: Maybe<GroupRole_Arr_Rel_Insert_Input>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly rolePermissions?: Maybe<RolePermission_Arr_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
 export type Role_Max_Fields = {
-  __typename?: 'Role_max_fields';
-  conferenceId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  name?: Maybe<Scalars['String']>;
+  readonly __typename?: 'Role_max_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
 };
 
 /** order by max() on columns of table "Role" */
 export type Role_Max_Order_By = {
-  conferenceId?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  name?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type Role_Min_Fields = {
-  __typename?: 'Role_min_fields';
-  conferenceId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  name?: Maybe<Scalars['String']>;
+  readonly __typename?: 'Role_min_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
 };
 
 /** order by min() on columns of table "Role" */
 export type Role_Min_Order_By = {
-  conferenceId?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  name?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "Role" */
 export type Role_Mutation_Response = {
-  __typename?: 'Role_mutation_response';
+  readonly __typename?: 'Role_mutation_response';
   /** number of affected rows by the mutation */
-  affected_rows: Scalars['Int'];
+  readonly affected_rows: Scalars['Int'];
   /** data of the affected rows by the mutation */
-  returning: Array<Role>;
+  readonly returning: ReadonlyArray<Role>;
 };
 
 /** input type for inserting object relation for remote table "Role" */
 export type Role_Obj_Rel_Insert_Input = {
-  data: Role_Insert_Input;
-  on_conflict?: Maybe<Role_On_Conflict>;
+  readonly data: Role_Insert_Input;
+  readonly on_conflict?: Maybe<Role_On_Conflict>;
 };
 
 /** on conflict condition type for table "Role" */
 export type Role_On_Conflict = {
-  constraint: Role_Constraint;
-  update_columns: Array<Role_Update_Column>;
-  where?: Maybe<Role_Bool_Exp>;
+  readonly constraint: Role_Constraint;
+  readonly update_columns: ReadonlyArray<Role_Update_Column>;
+  readonly where?: Maybe<Role_Bool_Exp>;
 };
 
 /** ordering options when selecting data from "Role" */
 export type Role_Order_By = {
-  conference?: Maybe<Conference_Order_By>;
-  conferenceId?: Maybe<Order_By>;
-  groupRoles_aggregate?: Maybe<GroupRole_Aggregate_Order_By>;
-  id?: Maybe<Order_By>;
-  name?: Maybe<Order_By>;
-  rolePermissions_aggregate?: Maybe<RolePermission_Aggregate_Order_By>;
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly groupRoles_aggregate?: Maybe<GroupRole_Aggregate_Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+  readonly rolePermissions_aggregate?: Maybe<RolePermission_Aggregate_Order_By>;
 };
 
 /** primary key columns input for table: "Role" */
 export type Role_Pk_Columns_Input = {
-  id: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
 };
 
 /** select columns of table "Role" */
@@ -5177,9 +5179,9 @@ export enum Role_Select_Column {
 
 /** input type for updating data in table "Role" */
 export type Role_Set_Input = {
-  conferenceId?: Maybe<Scalars['uuid']>;
-  id?: Maybe<Scalars['uuid']>;
-  name?: Maybe<Scalars['String']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
 };
 
 /** update columns of table "Role" */
@@ -5193,421 +5195,421 @@ export enum Role_Update_Column {
 }
 
 export type SampleInput = {
-  password: Scalars['String'];
-  username: Scalars['String'];
+  readonly password: Scalars['String'];
+  readonly username: Scalars['String'];
 };
 
 export type SampleOutput = {
-  __typename?: 'SampleOutput';
-  accessToken: Scalars['String'];
+  readonly __typename?: 'SampleOutput';
+  readonly accessToken: Scalars['String'];
 };
 
 /** expression to compare columns of type String. All fields are combined with logical 'AND'. */
 export type String_Comparison_Exp = {
-  _eq?: Maybe<Scalars['String']>;
-  _gt?: Maybe<Scalars['String']>;
-  _gte?: Maybe<Scalars['String']>;
-  _ilike?: Maybe<Scalars['String']>;
-  _in?: Maybe<Array<Scalars['String']>>;
-  _is_null?: Maybe<Scalars['Boolean']>;
-  _like?: Maybe<Scalars['String']>;
-  _lt?: Maybe<Scalars['String']>;
-  _lte?: Maybe<Scalars['String']>;
-  _neq?: Maybe<Scalars['String']>;
-  _nilike?: Maybe<Scalars['String']>;
-  _nin?: Maybe<Array<Scalars['String']>>;
-  _nlike?: Maybe<Scalars['String']>;
-  _nsimilar?: Maybe<Scalars['String']>;
-  _similar?: Maybe<Scalars['String']>;
+  readonly _eq?: Maybe<Scalars['String']>;
+  readonly _gt?: Maybe<Scalars['String']>;
+  readonly _gte?: Maybe<Scalars['String']>;
+  readonly _ilike?: Maybe<Scalars['String']>;
+  readonly _in?: Maybe<ReadonlyArray<Scalars['String']>>;
+  readonly _is_null?: Maybe<Scalars['Boolean']>;
+  readonly _like?: Maybe<Scalars['String']>;
+  readonly _lt?: Maybe<Scalars['String']>;
+  readonly _lte?: Maybe<Scalars['String']>;
+  readonly _neq?: Maybe<Scalars['String']>;
+  readonly _nilike?: Maybe<Scalars['String']>;
+  readonly _nin?: Maybe<ReadonlyArray<Scalars['String']>>;
+  readonly _nlike?: Maybe<Scalars['String']>;
+  readonly _nsimilar?: Maybe<Scalars['String']>;
+  readonly _similar?: Maybe<Scalars['String']>;
 };
 
 /** columns and relationships of "User" */
 export type User = {
-  __typename?: 'User';
+  readonly __typename?: 'User';
   /** An array relationship */
-  attendees: Array<Attendee>;
+  readonly attendees: ReadonlyArray<Attendee>;
   /** An aggregated array relationship */
-  attendees_aggregate: Attendee_Aggregate;
+  readonly attendees_aggregate: Attendee_Aggregate;
   /** An array relationship */
-  chats: Array<Chat>;
+  readonly chats: ReadonlyArray<Chat>;
   /** An aggregated array relationship */
-  chats_aggregate: Chat_Aggregate;
+  readonly chats_aggregate: Chat_Aggregate;
   /** An array relationship */
-  conferencesCreated: Array<Conference>;
+  readonly conferencesCreated: ReadonlyArray<Conference>;
   /** An aggregated array relationship */
-  conferencesCreated_aggregate: Conference_Aggregate;
-  created_at?: Maybe<Scalars['timestamptz']>;
-  email?: Maybe<Scalars['String']>;
-  firstName: Scalars['String'];
+  readonly conferencesCreated_aggregate: Conference_Aggregate;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly email?: Maybe<Scalars['String']>;
+  readonly firstName: Scalars['String'];
   /** An array relationship */
-  flaggedMessages: Array<FlaggedChatMessage>;
+  readonly flaggedMessages: ReadonlyArray<FlaggedChatMessage>;
   /** An aggregated array relationship */
-  flaggedMessages_aggregate: FlaggedChatMessage_Aggregate;
+  readonly flaggedMessages_aggregate: FlaggedChatMessage_Aggregate;
   /** An array relationship */
-  followedChats: Array<FollowedChat>;
+  readonly followedChats: ReadonlyArray<FollowedChat>;
   /** An aggregated array relationship */
-  followedChats_aggregate: FollowedChat_Aggregate;
-  id: Scalars['String'];
-  lastLoggedInAt?: Maybe<Scalars['timestamptz']>;
-  lastName: Scalars['String'];
+  readonly followedChats_aggregate: FollowedChat_Aggregate;
+  readonly id: Scalars['String'];
+  readonly lastLoggedInAt?: Maybe<Scalars['timestamptz']>;
+  readonly lastName: Scalars['String'];
   /** An array relationship */
-  memberOfChats: Array<ChatMember>;
+  readonly memberOfChats: ReadonlyArray<ChatMember>;
   /** An aggregated array relationship */
-  memberOfChats_aggregate: ChatMember_Aggregate;
+  readonly memberOfChats_aggregate: ChatMember_Aggregate;
   /** An array relationship */
-  moderatorOfChats: Array<ChatModerator>;
+  readonly moderatorOfChats: ReadonlyArray<ChatModerator>;
   /** An aggregated array relationship */
-  moderatorOfChats_aggregate: ChatModerator_Aggregate;
+  readonly moderatorOfChats_aggregate: ChatModerator_Aggregate;
   /** An object relationship */
-  onlineStatus?: Maybe<OnlineStatus>;
+  readonly onlineStatus?: Maybe<OnlineStatus>;
   /** An array relationship */
-  pinnedChats: Array<PinnedChat>;
+  readonly pinnedChats: ReadonlyArray<PinnedChat>;
   /** An aggregated array relationship */
-  pinnedChats_aggregate: PinnedChat_Aggregate;
+  readonly pinnedChats_aggregate: PinnedChat_Aggregate;
   /** An array relationship */
-  reactions: Array<ChatReaction>;
+  readonly reactions: ReadonlyArray<ChatReaction>;
   /** An aggregated array relationship */
-  reactions_aggregate: ChatReaction_Aggregate;
+  readonly reactions_aggregate: ChatReaction_Aggregate;
   /** An array relationship */
-  sentMessages: Array<ChatMessage>;
+  readonly sentMessages: ReadonlyArray<ChatMessage>;
   /** An aggregated array relationship */
-  sentMessages_aggregate: ChatMessage_Aggregate;
+  readonly sentMessages_aggregate: ChatMessage_Aggregate;
   /** An array relationship */
-  typingInChats: Array<ChatTyper>;
+  readonly typingInChats: ReadonlyArray<ChatTyper>;
   /** An aggregated array relationship */
-  typingInChats_aggregate: ChatTyper_Aggregate;
+  readonly typingInChats_aggregate: ChatTyper_Aggregate;
   /** An array relationship */
-  unreadIndices: Array<ChatUnreadIndex>;
+  readonly unreadIndices: ReadonlyArray<ChatUnreadIndex>;
   /** An aggregated array relationship */
-  unreadIndices_aggregate: ChatUnreadIndex_Aggregate;
-  updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly unreadIndices_aggregate: ChatUnreadIndex_Aggregate;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
   /** An array relationship */
-  viewingChats: Array<ChatViewer>;
+  readonly viewingChats: ReadonlyArray<ChatViewer>;
   /** An aggregated array relationship */
-  viewingChats_aggregate: ChatViewer_Aggregate;
+  readonly viewingChats_aggregate: ChatViewer_Aggregate;
 };
 
 
 /** columns and relationships of "User" */
 export type UserAttendeesArgs = {
-  distinct_on?: Maybe<Array<Attendee_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Attendee_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Attendee_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Attendee_Order_By>>;
   where?: Maybe<Attendee_Bool_Exp>;
 };
 
 
 /** columns and relationships of "User" */
 export type UserAttendees_AggregateArgs = {
-  distinct_on?: Maybe<Array<Attendee_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Attendee_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Attendee_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Attendee_Order_By>>;
   where?: Maybe<Attendee_Bool_Exp>;
 };
 
 
 /** columns and relationships of "User" */
 export type UserChatsArgs = {
-  distinct_on?: Maybe<Array<Chat_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Chat_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Chat_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Chat_Order_By>>;
   where?: Maybe<Chat_Bool_Exp>;
 };
 
 
 /** columns and relationships of "User" */
 export type UserChats_AggregateArgs = {
-  distinct_on?: Maybe<Array<Chat_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Chat_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Chat_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Chat_Order_By>>;
   where?: Maybe<Chat_Bool_Exp>;
 };
 
 
 /** columns and relationships of "User" */
 export type UserConferencesCreatedArgs = {
-  distinct_on?: Maybe<Array<Conference_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Conference_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Conference_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Conference_Order_By>>;
   where?: Maybe<Conference_Bool_Exp>;
 };
 
 
 /** columns and relationships of "User" */
 export type UserConferencesCreated_AggregateArgs = {
-  distinct_on?: Maybe<Array<Conference_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Conference_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Conference_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Conference_Order_By>>;
   where?: Maybe<Conference_Bool_Exp>;
 };
 
 
 /** columns and relationships of "User" */
 export type UserFlaggedMessagesArgs = {
-  distinct_on?: Maybe<Array<FlaggedChatMessage_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<FlaggedChatMessage_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<FlaggedChatMessage_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<FlaggedChatMessage_Order_By>>;
   where?: Maybe<FlaggedChatMessage_Bool_Exp>;
 };
 
 
 /** columns and relationships of "User" */
 export type UserFlaggedMessages_AggregateArgs = {
-  distinct_on?: Maybe<Array<FlaggedChatMessage_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<FlaggedChatMessage_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<FlaggedChatMessage_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<FlaggedChatMessage_Order_By>>;
   where?: Maybe<FlaggedChatMessage_Bool_Exp>;
 };
 
 
 /** columns and relationships of "User" */
 export type UserFollowedChatsArgs = {
-  distinct_on?: Maybe<Array<FollowedChat_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<FollowedChat_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<FollowedChat_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<FollowedChat_Order_By>>;
   where?: Maybe<FollowedChat_Bool_Exp>;
 };
 
 
 /** columns and relationships of "User" */
 export type UserFollowedChats_AggregateArgs = {
-  distinct_on?: Maybe<Array<FollowedChat_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<FollowedChat_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<FollowedChat_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<FollowedChat_Order_By>>;
   where?: Maybe<FollowedChat_Bool_Exp>;
 };
 
 
 /** columns and relationships of "User" */
 export type UserMemberOfChatsArgs = {
-  distinct_on?: Maybe<Array<ChatMember_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatMember_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatMember_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatMember_Order_By>>;
   where?: Maybe<ChatMember_Bool_Exp>;
 };
 
 
 /** columns and relationships of "User" */
 export type UserMemberOfChats_AggregateArgs = {
-  distinct_on?: Maybe<Array<ChatMember_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatMember_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatMember_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatMember_Order_By>>;
   where?: Maybe<ChatMember_Bool_Exp>;
 };
 
 
 /** columns and relationships of "User" */
 export type UserModeratorOfChatsArgs = {
-  distinct_on?: Maybe<Array<ChatModerator_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatModerator_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatModerator_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatModerator_Order_By>>;
   where?: Maybe<ChatModerator_Bool_Exp>;
 };
 
 
 /** columns and relationships of "User" */
 export type UserModeratorOfChats_AggregateArgs = {
-  distinct_on?: Maybe<Array<ChatModerator_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatModerator_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatModerator_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatModerator_Order_By>>;
   where?: Maybe<ChatModerator_Bool_Exp>;
 };
 
 
 /** columns and relationships of "User" */
 export type UserPinnedChatsArgs = {
-  distinct_on?: Maybe<Array<PinnedChat_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<PinnedChat_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<PinnedChat_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<PinnedChat_Order_By>>;
   where?: Maybe<PinnedChat_Bool_Exp>;
 };
 
 
 /** columns and relationships of "User" */
 export type UserPinnedChats_AggregateArgs = {
-  distinct_on?: Maybe<Array<PinnedChat_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<PinnedChat_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<PinnedChat_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<PinnedChat_Order_By>>;
   where?: Maybe<PinnedChat_Bool_Exp>;
 };
 
 
 /** columns and relationships of "User" */
 export type UserReactionsArgs = {
-  distinct_on?: Maybe<Array<ChatReaction_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatReaction_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatReaction_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatReaction_Order_By>>;
   where?: Maybe<ChatReaction_Bool_Exp>;
 };
 
 
 /** columns and relationships of "User" */
 export type UserReactions_AggregateArgs = {
-  distinct_on?: Maybe<Array<ChatReaction_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatReaction_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatReaction_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatReaction_Order_By>>;
   where?: Maybe<ChatReaction_Bool_Exp>;
 };
 
 
 /** columns and relationships of "User" */
 export type UserSentMessagesArgs = {
-  distinct_on?: Maybe<Array<ChatMessage_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatMessage_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatMessage_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatMessage_Order_By>>;
   where?: Maybe<ChatMessage_Bool_Exp>;
 };
 
 
 /** columns and relationships of "User" */
 export type UserSentMessages_AggregateArgs = {
-  distinct_on?: Maybe<Array<ChatMessage_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatMessage_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatMessage_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatMessage_Order_By>>;
   where?: Maybe<ChatMessage_Bool_Exp>;
 };
 
 
 /** columns and relationships of "User" */
 export type UserTypingInChatsArgs = {
-  distinct_on?: Maybe<Array<ChatTyper_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatTyper_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatTyper_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatTyper_Order_By>>;
   where?: Maybe<ChatTyper_Bool_Exp>;
 };
 
 
 /** columns and relationships of "User" */
 export type UserTypingInChats_AggregateArgs = {
-  distinct_on?: Maybe<Array<ChatTyper_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatTyper_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatTyper_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatTyper_Order_By>>;
   where?: Maybe<ChatTyper_Bool_Exp>;
 };
 
 
 /** columns and relationships of "User" */
 export type UserUnreadIndicesArgs = {
-  distinct_on?: Maybe<Array<ChatUnreadIndex_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatUnreadIndex_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatUnreadIndex_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatUnreadIndex_Order_By>>;
   where?: Maybe<ChatUnreadIndex_Bool_Exp>;
 };
 
 
 /** columns and relationships of "User" */
 export type UserUnreadIndices_AggregateArgs = {
-  distinct_on?: Maybe<Array<ChatUnreadIndex_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatUnreadIndex_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatUnreadIndex_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatUnreadIndex_Order_By>>;
   where?: Maybe<ChatUnreadIndex_Bool_Exp>;
 };
 
 
 /** columns and relationships of "User" */
 export type UserViewingChatsArgs = {
-  distinct_on?: Maybe<Array<ChatViewer_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatViewer_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatViewer_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatViewer_Order_By>>;
   where?: Maybe<ChatViewer_Bool_Exp>;
 };
 
 
 /** columns and relationships of "User" */
 export type UserViewingChats_AggregateArgs = {
-  distinct_on?: Maybe<Array<ChatViewer_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatViewer_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatViewer_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatViewer_Order_By>>;
   where?: Maybe<ChatViewer_Bool_Exp>;
 };
 
 /** aggregated selection of "User" */
 export type User_Aggregate = {
-  __typename?: 'User_aggregate';
-  aggregate?: Maybe<User_Aggregate_Fields>;
-  nodes: Array<User>;
+  readonly __typename?: 'User_aggregate';
+  readonly aggregate?: Maybe<User_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<User>;
 };
 
 /** aggregate fields of "User" */
 export type User_Aggregate_Fields = {
-  __typename?: 'User_aggregate_fields';
-  count?: Maybe<Scalars['Int']>;
-  max?: Maybe<User_Max_Fields>;
-  min?: Maybe<User_Min_Fields>;
+  readonly __typename?: 'User_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<User_Max_Fields>;
+  readonly min?: Maybe<User_Min_Fields>;
 };
 
 
 /** aggregate fields of "User" */
 export type User_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<Array<User_Select_Column>>;
+  columns?: Maybe<ReadonlyArray<User_Select_Column>>;
   distinct?: Maybe<Scalars['Boolean']>;
 };
 
 /** order by aggregate values of table "User" */
 export type User_Aggregate_Order_By = {
-  count?: Maybe<Order_By>;
-  max?: Maybe<User_Max_Order_By>;
-  min?: Maybe<User_Min_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<User_Max_Order_By>;
+  readonly min?: Maybe<User_Min_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "User" */
 export type User_Arr_Rel_Insert_Input = {
-  data: Array<User_Insert_Input>;
-  on_conflict?: Maybe<User_On_Conflict>;
+  readonly data: ReadonlyArray<User_Insert_Input>;
+  readonly on_conflict?: Maybe<User_On_Conflict>;
 };
 
 /** Boolean expression to filter rows from the table "User". All fields are combined with a logical 'AND'. */
 export type User_Bool_Exp = {
-  _and?: Maybe<Array<Maybe<User_Bool_Exp>>>;
-  _not?: Maybe<User_Bool_Exp>;
-  _or?: Maybe<Array<Maybe<User_Bool_Exp>>>;
-  attendees?: Maybe<Attendee_Bool_Exp>;
-  chats?: Maybe<Chat_Bool_Exp>;
-  conferencesCreated?: Maybe<Conference_Bool_Exp>;
-  created_at?: Maybe<Timestamptz_Comparison_Exp>;
-  email?: Maybe<String_Comparison_Exp>;
-  firstName?: Maybe<String_Comparison_Exp>;
-  flaggedMessages?: Maybe<FlaggedChatMessage_Bool_Exp>;
-  followedChats?: Maybe<FollowedChat_Bool_Exp>;
-  id?: Maybe<String_Comparison_Exp>;
-  lastLoggedInAt?: Maybe<Timestamptz_Comparison_Exp>;
-  lastName?: Maybe<String_Comparison_Exp>;
-  memberOfChats?: Maybe<ChatMember_Bool_Exp>;
-  moderatorOfChats?: Maybe<ChatModerator_Bool_Exp>;
-  onlineStatus?: Maybe<OnlineStatus_Bool_Exp>;
-  pinnedChats?: Maybe<PinnedChat_Bool_Exp>;
-  reactions?: Maybe<ChatReaction_Bool_Exp>;
-  sentMessages?: Maybe<ChatMessage_Bool_Exp>;
-  typingInChats?: Maybe<ChatTyper_Bool_Exp>;
-  unreadIndices?: Maybe<ChatUnreadIndex_Bool_Exp>;
-  updated_at?: Maybe<Timestamptz_Comparison_Exp>;
-  viewingChats?: Maybe<ChatViewer_Bool_Exp>;
+  readonly _and?: Maybe<ReadonlyArray<Maybe<User_Bool_Exp>>>;
+  readonly _not?: Maybe<User_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<User_Bool_Exp>>>;
+  readonly attendees?: Maybe<Attendee_Bool_Exp>;
+  readonly chats?: Maybe<Chat_Bool_Exp>;
+  readonly conferencesCreated?: Maybe<Conference_Bool_Exp>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly email?: Maybe<String_Comparison_Exp>;
+  readonly firstName?: Maybe<String_Comparison_Exp>;
+  readonly flaggedMessages?: Maybe<FlaggedChatMessage_Bool_Exp>;
+  readonly followedChats?: Maybe<FollowedChat_Bool_Exp>;
+  readonly id?: Maybe<String_Comparison_Exp>;
+  readonly lastLoggedInAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly lastName?: Maybe<String_Comparison_Exp>;
+  readonly memberOfChats?: Maybe<ChatMember_Bool_Exp>;
+  readonly moderatorOfChats?: Maybe<ChatModerator_Bool_Exp>;
+  readonly onlineStatus?: Maybe<OnlineStatus_Bool_Exp>;
+  readonly pinnedChats?: Maybe<PinnedChat_Bool_Exp>;
+  readonly reactions?: Maybe<ChatReaction_Bool_Exp>;
+  readonly sentMessages?: Maybe<ChatMessage_Bool_Exp>;
+  readonly typingInChats?: Maybe<ChatTyper_Bool_Exp>;
+  readonly unreadIndices?: Maybe<ChatUnreadIndex_Bool_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly viewingChats?: Maybe<ChatViewer_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "User" */
@@ -5620,125 +5622,125 @@ export enum User_Constraint {
 
 /** input type for inserting data into table "User" */
 export type User_Insert_Input = {
-  attendees?: Maybe<Attendee_Arr_Rel_Insert_Input>;
-  chats?: Maybe<Chat_Arr_Rel_Insert_Input>;
-  conferencesCreated?: Maybe<Conference_Arr_Rel_Insert_Input>;
-  created_at?: Maybe<Scalars['timestamptz']>;
-  email?: Maybe<Scalars['String']>;
-  firstName?: Maybe<Scalars['String']>;
-  flaggedMessages?: Maybe<FlaggedChatMessage_Arr_Rel_Insert_Input>;
-  followedChats?: Maybe<FollowedChat_Arr_Rel_Insert_Input>;
-  id?: Maybe<Scalars['String']>;
-  lastLoggedInAt?: Maybe<Scalars['timestamptz']>;
-  lastName?: Maybe<Scalars['String']>;
-  memberOfChats?: Maybe<ChatMember_Arr_Rel_Insert_Input>;
-  moderatorOfChats?: Maybe<ChatModerator_Arr_Rel_Insert_Input>;
-  onlineStatus?: Maybe<OnlineStatus_Obj_Rel_Insert_Input>;
-  pinnedChats?: Maybe<PinnedChat_Arr_Rel_Insert_Input>;
-  reactions?: Maybe<ChatReaction_Arr_Rel_Insert_Input>;
-  sentMessages?: Maybe<ChatMessage_Arr_Rel_Insert_Input>;
-  typingInChats?: Maybe<ChatTyper_Arr_Rel_Insert_Input>;
-  unreadIndices?: Maybe<ChatUnreadIndex_Arr_Rel_Insert_Input>;
-  updated_at?: Maybe<Scalars['timestamptz']>;
-  viewingChats?: Maybe<ChatViewer_Arr_Rel_Insert_Input>;
+  readonly attendees?: Maybe<Attendee_Arr_Rel_Insert_Input>;
+  readonly chats?: Maybe<Chat_Arr_Rel_Insert_Input>;
+  readonly conferencesCreated?: Maybe<Conference_Arr_Rel_Insert_Input>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly email?: Maybe<Scalars['String']>;
+  readonly firstName?: Maybe<Scalars['String']>;
+  readonly flaggedMessages?: Maybe<FlaggedChatMessage_Arr_Rel_Insert_Input>;
+  readonly followedChats?: Maybe<FollowedChat_Arr_Rel_Insert_Input>;
+  readonly id?: Maybe<Scalars['String']>;
+  readonly lastLoggedInAt?: Maybe<Scalars['timestamptz']>;
+  readonly lastName?: Maybe<Scalars['String']>;
+  readonly memberOfChats?: Maybe<ChatMember_Arr_Rel_Insert_Input>;
+  readonly moderatorOfChats?: Maybe<ChatModerator_Arr_Rel_Insert_Input>;
+  readonly onlineStatus?: Maybe<OnlineStatus_Obj_Rel_Insert_Input>;
+  readonly pinnedChats?: Maybe<PinnedChat_Arr_Rel_Insert_Input>;
+  readonly reactions?: Maybe<ChatReaction_Arr_Rel_Insert_Input>;
+  readonly sentMessages?: Maybe<ChatMessage_Arr_Rel_Insert_Input>;
+  readonly typingInChats?: Maybe<ChatTyper_Arr_Rel_Insert_Input>;
+  readonly unreadIndices?: Maybe<ChatUnreadIndex_Arr_Rel_Insert_Input>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly viewingChats?: Maybe<ChatViewer_Arr_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
 export type User_Max_Fields = {
-  __typename?: 'User_max_fields';
-  created_at?: Maybe<Scalars['timestamptz']>;
-  email?: Maybe<Scalars['String']>;
-  firstName?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['String']>;
-  lastLoggedInAt?: Maybe<Scalars['timestamptz']>;
-  lastName?: Maybe<Scalars['String']>;
-  updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly __typename?: 'User_max_fields';
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly email?: Maybe<Scalars['String']>;
+  readonly firstName?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['String']>;
+  readonly lastLoggedInAt?: Maybe<Scalars['timestamptz']>;
+  readonly lastName?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
 /** order by max() on columns of table "User" */
 export type User_Max_Order_By = {
-  created_at?: Maybe<Order_By>;
-  email?: Maybe<Order_By>;
-  firstName?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  lastLoggedInAt?: Maybe<Order_By>;
-  lastName?: Maybe<Order_By>;
-  updated_at?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly email?: Maybe<Order_By>;
+  readonly firstName?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly lastLoggedInAt?: Maybe<Order_By>;
+  readonly lastName?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type User_Min_Fields = {
-  __typename?: 'User_min_fields';
-  created_at?: Maybe<Scalars['timestamptz']>;
-  email?: Maybe<Scalars['String']>;
-  firstName?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['String']>;
-  lastLoggedInAt?: Maybe<Scalars['timestamptz']>;
-  lastName?: Maybe<Scalars['String']>;
-  updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly __typename?: 'User_min_fields';
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly email?: Maybe<Scalars['String']>;
+  readonly firstName?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['String']>;
+  readonly lastLoggedInAt?: Maybe<Scalars['timestamptz']>;
+  readonly lastName?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
 /** order by min() on columns of table "User" */
 export type User_Min_Order_By = {
-  created_at?: Maybe<Order_By>;
-  email?: Maybe<Order_By>;
-  firstName?: Maybe<Order_By>;
-  id?: Maybe<Order_By>;
-  lastLoggedInAt?: Maybe<Order_By>;
-  lastName?: Maybe<Order_By>;
-  updated_at?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly email?: Maybe<Order_By>;
+  readonly firstName?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly lastLoggedInAt?: Maybe<Order_By>;
+  readonly lastName?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "User" */
 export type User_Mutation_Response = {
-  __typename?: 'User_mutation_response';
+  readonly __typename?: 'User_mutation_response';
   /** number of affected rows by the mutation */
-  affected_rows: Scalars['Int'];
+  readonly affected_rows: Scalars['Int'];
   /** data of the affected rows by the mutation */
-  returning: Array<User>;
+  readonly returning: ReadonlyArray<User>;
 };
 
 /** input type for inserting object relation for remote table "User" */
 export type User_Obj_Rel_Insert_Input = {
-  data: User_Insert_Input;
-  on_conflict?: Maybe<User_On_Conflict>;
+  readonly data: User_Insert_Input;
+  readonly on_conflict?: Maybe<User_On_Conflict>;
 };
 
 /** on conflict condition type for table "User" */
 export type User_On_Conflict = {
-  constraint: User_Constraint;
-  update_columns: Array<User_Update_Column>;
-  where?: Maybe<User_Bool_Exp>;
+  readonly constraint: User_Constraint;
+  readonly update_columns: ReadonlyArray<User_Update_Column>;
+  readonly where?: Maybe<User_Bool_Exp>;
 };
 
 /** ordering options when selecting data from "User" */
 export type User_Order_By = {
-  attendees_aggregate?: Maybe<Attendee_Aggregate_Order_By>;
-  chats_aggregate?: Maybe<Chat_Aggregate_Order_By>;
-  conferencesCreated_aggregate?: Maybe<Conference_Aggregate_Order_By>;
-  created_at?: Maybe<Order_By>;
-  email?: Maybe<Order_By>;
-  firstName?: Maybe<Order_By>;
-  flaggedMessages_aggregate?: Maybe<FlaggedChatMessage_Aggregate_Order_By>;
-  followedChats_aggregate?: Maybe<FollowedChat_Aggregate_Order_By>;
-  id?: Maybe<Order_By>;
-  lastLoggedInAt?: Maybe<Order_By>;
-  lastName?: Maybe<Order_By>;
-  memberOfChats_aggregate?: Maybe<ChatMember_Aggregate_Order_By>;
-  moderatorOfChats_aggregate?: Maybe<ChatModerator_Aggregate_Order_By>;
-  onlineStatus?: Maybe<OnlineStatus_Order_By>;
-  pinnedChats_aggregate?: Maybe<PinnedChat_Aggregate_Order_By>;
-  reactions_aggregate?: Maybe<ChatReaction_Aggregate_Order_By>;
-  sentMessages_aggregate?: Maybe<ChatMessage_Aggregate_Order_By>;
-  typingInChats_aggregate?: Maybe<ChatTyper_Aggregate_Order_By>;
-  unreadIndices_aggregate?: Maybe<ChatUnreadIndex_Aggregate_Order_By>;
-  updated_at?: Maybe<Order_By>;
-  viewingChats_aggregate?: Maybe<ChatViewer_Aggregate_Order_By>;
+  readonly attendees_aggregate?: Maybe<Attendee_Aggregate_Order_By>;
+  readonly chats_aggregate?: Maybe<Chat_Aggregate_Order_By>;
+  readonly conferencesCreated_aggregate?: Maybe<Conference_Aggregate_Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly email?: Maybe<Order_By>;
+  readonly firstName?: Maybe<Order_By>;
+  readonly flaggedMessages_aggregate?: Maybe<FlaggedChatMessage_Aggregate_Order_By>;
+  readonly followedChats_aggregate?: Maybe<FollowedChat_Aggregate_Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly lastLoggedInAt?: Maybe<Order_By>;
+  readonly lastName?: Maybe<Order_By>;
+  readonly memberOfChats_aggregate?: Maybe<ChatMember_Aggregate_Order_By>;
+  readonly moderatorOfChats_aggregate?: Maybe<ChatModerator_Aggregate_Order_By>;
+  readonly onlineStatus?: Maybe<OnlineStatus_Order_By>;
+  readonly pinnedChats_aggregate?: Maybe<PinnedChat_Aggregate_Order_By>;
+  readonly reactions_aggregate?: Maybe<ChatReaction_Aggregate_Order_By>;
+  readonly sentMessages_aggregate?: Maybe<ChatMessage_Aggregate_Order_By>;
+  readonly typingInChats_aggregate?: Maybe<ChatTyper_Aggregate_Order_By>;
+  readonly unreadIndices_aggregate?: Maybe<ChatUnreadIndex_Aggregate_Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+  readonly viewingChats_aggregate?: Maybe<ChatViewer_Aggregate_Order_By>;
 };
 
 /** primary key columns input for table: "User" */
 export type User_Pk_Columns_Input = {
-  id: Scalars['String'];
+  readonly id: Scalars['String'];
 };
 
 /** select columns of table "User" */
@@ -5761,13 +5763,13 @@ export enum User_Select_Column {
 
 /** input type for updating data in table "User" */
 export type User_Set_Input = {
-  created_at?: Maybe<Scalars['timestamptz']>;
-  email?: Maybe<Scalars['String']>;
-  firstName?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['String']>;
-  lastLoggedInAt?: Maybe<Scalars['timestamptz']>;
-  lastName?: Maybe<Scalars['String']>;
-  updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly email?: Maybe<Scalars['String']>;
+  readonly firstName?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['String']>;
+  readonly lastLoggedInAt?: Maybe<Scalars['timestamptz']>;
+  readonly lastName?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
 /** update columns of table "User" */
@@ -5791,328 +5793,328 @@ export enum User_Update_Column {
 
 /** expression to compare columns of type json. All fields are combined with logical 'AND'. */
 export type Json_Comparison_Exp = {
-  _eq?: Maybe<Scalars['json']>;
-  _gt?: Maybe<Scalars['json']>;
-  _gte?: Maybe<Scalars['json']>;
-  _in?: Maybe<Array<Scalars['json']>>;
-  _is_null?: Maybe<Scalars['Boolean']>;
-  _lt?: Maybe<Scalars['json']>;
-  _lte?: Maybe<Scalars['json']>;
-  _neq?: Maybe<Scalars['json']>;
-  _nin?: Maybe<Array<Scalars['json']>>;
+  readonly _eq?: Maybe<Scalars['json']>;
+  readonly _gt?: Maybe<Scalars['json']>;
+  readonly _gte?: Maybe<Scalars['json']>;
+  readonly _in?: Maybe<ReadonlyArray<Scalars['json']>>;
+  readonly _is_null?: Maybe<Scalars['Boolean']>;
+  readonly _lt?: Maybe<Scalars['json']>;
+  readonly _lte?: Maybe<Scalars['json']>;
+  readonly _neq?: Maybe<Scalars['json']>;
+  readonly _nin?: Maybe<ReadonlyArray<Scalars['json']>>;
 };
 
 
 /** expression to compare columns of type jsonb. All fields are combined with logical 'AND'. */
 export type Jsonb_Comparison_Exp = {
   /** is the column contained in the given json value */
-  _contained_in?: Maybe<Scalars['jsonb']>;
+  readonly _contained_in?: Maybe<Scalars['jsonb']>;
   /** does the column contain the given json value at the top level */
-  _contains?: Maybe<Scalars['jsonb']>;
-  _eq?: Maybe<Scalars['jsonb']>;
-  _gt?: Maybe<Scalars['jsonb']>;
-  _gte?: Maybe<Scalars['jsonb']>;
+  readonly _contains?: Maybe<Scalars['jsonb']>;
+  readonly _eq?: Maybe<Scalars['jsonb']>;
+  readonly _gt?: Maybe<Scalars['jsonb']>;
+  readonly _gte?: Maybe<Scalars['jsonb']>;
   /** does the string exist as a top-level key in the column */
-  _has_key?: Maybe<Scalars['String']>;
+  readonly _has_key?: Maybe<Scalars['String']>;
   /** do all of these strings exist as top-level keys in the column */
-  _has_keys_all?: Maybe<Array<Scalars['String']>>;
+  readonly _has_keys_all?: Maybe<ReadonlyArray<Scalars['String']>>;
   /** do any of these strings exist as top-level keys in the column */
-  _has_keys_any?: Maybe<Array<Scalars['String']>>;
-  _in?: Maybe<Array<Scalars['jsonb']>>;
-  _is_null?: Maybe<Scalars['Boolean']>;
-  _lt?: Maybe<Scalars['jsonb']>;
-  _lte?: Maybe<Scalars['jsonb']>;
-  _neq?: Maybe<Scalars['jsonb']>;
-  _nin?: Maybe<Array<Scalars['jsonb']>>;
+  readonly _has_keys_any?: Maybe<ReadonlyArray<Scalars['String']>>;
+  readonly _in?: Maybe<ReadonlyArray<Scalars['jsonb']>>;
+  readonly _is_null?: Maybe<Scalars['Boolean']>;
+  readonly _lt?: Maybe<Scalars['jsonb']>;
+  readonly _lte?: Maybe<Scalars['jsonb']>;
+  readonly _neq?: Maybe<Scalars['jsonb']>;
+  readonly _nin?: Maybe<ReadonlyArray<Scalars['jsonb']>>;
 };
 
 /** mutation root */
 export type Mutation_Root = {
-  __typename?: 'mutation_root';
+  readonly __typename?: 'mutation_root';
   /** delete data from the table: "ActiveGroup" */
-  delete_ActiveGroup?: Maybe<ActiveGroup_Mutation_Response>;
+  readonly delete_ActiveGroup?: Maybe<ActiveGroup_Mutation_Response>;
   /** delete data from the table: "Attendee" */
-  delete_Attendee?: Maybe<Attendee_Mutation_Response>;
+  readonly delete_Attendee?: Maybe<Attendee_Mutation_Response>;
   /** delete data from the table: "AttendeeStatus" */
-  delete_AttendeeStatus?: Maybe<AttendeeStatus_Mutation_Response>;
+  readonly delete_AttendeeStatus?: Maybe<AttendeeStatus_Mutation_Response>;
   /** delete single row from the table: "AttendeeStatus" */
-  delete_AttendeeStatus_by_pk?: Maybe<AttendeeStatus>;
+  readonly delete_AttendeeStatus_by_pk?: Maybe<AttendeeStatus>;
   /** delete single row from the table: "Attendee" */
-  delete_Attendee_by_pk?: Maybe<Attendee>;
+  readonly delete_Attendee_by_pk?: Maybe<Attendee>;
   /** delete data from the table: "Chat" */
-  delete_Chat?: Maybe<Chat_Mutation_Response>;
+  readonly delete_Chat?: Maybe<Chat_Mutation_Response>;
   /** delete data from the table: "ChatMember" */
-  delete_ChatMember?: Maybe<ChatMember_Mutation_Response>;
+  readonly delete_ChatMember?: Maybe<ChatMember_Mutation_Response>;
   /** delete single row from the table: "ChatMember" */
-  delete_ChatMember_by_pk?: Maybe<ChatMember>;
+  readonly delete_ChatMember_by_pk?: Maybe<ChatMember>;
   /** delete data from the table: "ChatMessage" */
-  delete_ChatMessage?: Maybe<ChatMessage_Mutation_Response>;
+  readonly delete_ChatMessage?: Maybe<ChatMessage_Mutation_Response>;
   /** delete single row from the table: "ChatMessage" */
-  delete_ChatMessage_by_pk?: Maybe<ChatMessage>;
+  readonly delete_ChatMessage_by_pk?: Maybe<ChatMessage>;
   /** delete data from the table: "ChatModerator" */
-  delete_ChatModerator?: Maybe<ChatModerator_Mutation_Response>;
+  readonly delete_ChatModerator?: Maybe<ChatModerator_Mutation_Response>;
   /** delete single row from the table: "ChatModerator" */
-  delete_ChatModerator_by_pk?: Maybe<ChatModerator>;
+  readonly delete_ChatModerator_by_pk?: Maybe<ChatModerator>;
   /** delete data from the table: "ChatReaction" */
-  delete_ChatReaction?: Maybe<ChatReaction_Mutation_Response>;
+  readonly delete_ChatReaction?: Maybe<ChatReaction_Mutation_Response>;
   /** delete single row from the table: "ChatReaction" */
-  delete_ChatReaction_by_pk?: Maybe<ChatReaction>;
+  readonly delete_ChatReaction_by_pk?: Maybe<ChatReaction>;
   /** delete data from the table: "ChatTyper" */
-  delete_ChatTyper?: Maybe<ChatTyper_Mutation_Response>;
+  readonly delete_ChatTyper?: Maybe<ChatTyper_Mutation_Response>;
   /** delete single row from the table: "ChatTyper" */
-  delete_ChatTyper_by_pk?: Maybe<ChatTyper>;
+  readonly delete_ChatTyper_by_pk?: Maybe<ChatTyper>;
   /** delete data from the table: "ChatUnreadIndex" */
-  delete_ChatUnreadIndex?: Maybe<ChatUnreadIndex_Mutation_Response>;
+  readonly delete_ChatUnreadIndex?: Maybe<ChatUnreadIndex_Mutation_Response>;
   /** delete single row from the table: "ChatUnreadIndex" */
-  delete_ChatUnreadIndex_by_pk?: Maybe<ChatUnreadIndex>;
+  readonly delete_ChatUnreadIndex_by_pk?: Maybe<ChatUnreadIndex>;
   /** delete data from the table: "ChatViewer" */
-  delete_ChatViewer?: Maybe<ChatViewer_Mutation_Response>;
+  readonly delete_ChatViewer?: Maybe<ChatViewer_Mutation_Response>;
   /** delete single row from the table: "ChatViewer" */
-  delete_ChatViewer_by_pk?: Maybe<ChatViewer>;
+  readonly delete_ChatViewer_by_pk?: Maybe<ChatViewer>;
   /** delete single row from the table: "Chat" */
-  delete_Chat_by_pk?: Maybe<Chat>;
+  readonly delete_Chat_by_pk?: Maybe<Chat>;
   /** delete data from the table: "Conference" */
-  delete_Conference?: Maybe<Conference_Mutation_Response>;
+  readonly delete_Conference?: Maybe<Conference_Mutation_Response>;
   /** delete data from the table: "ConferenceDemoCode" */
-  delete_ConferenceDemoCode?: Maybe<ConferenceDemoCode_Mutation_Response>;
+  readonly delete_ConferenceDemoCode?: Maybe<ConferenceDemoCode_Mutation_Response>;
   /** delete single row from the table: "ConferenceDemoCode" */
-  delete_ConferenceDemoCode_by_pk?: Maybe<ConferenceDemoCode>;
+  readonly delete_ConferenceDemoCode_by_pk?: Maybe<ConferenceDemoCode>;
   /** delete single row from the table: "Conference" */
-  delete_Conference_by_pk?: Maybe<Conference>;
+  readonly delete_Conference_by_pk?: Maybe<Conference>;
   /** delete data from the table: "FlaggedChatMessage" */
-  delete_FlaggedChatMessage?: Maybe<FlaggedChatMessage_Mutation_Response>;
+  readonly delete_FlaggedChatMessage?: Maybe<FlaggedChatMessage_Mutation_Response>;
   /** delete single row from the table: "FlaggedChatMessage" */
-  delete_FlaggedChatMessage_by_pk?: Maybe<FlaggedChatMessage>;
+  readonly delete_FlaggedChatMessage_by_pk?: Maybe<FlaggedChatMessage>;
   /** delete data from the table: "FollowedChat" */
-  delete_FollowedChat?: Maybe<FollowedChat_Mutation_Response>;
+  readonly delete_FollowedChat?: Maybe<FollowedChat_Mutation_Response>;
   /** delete single row from the table: "FollowedChat" */
-  delete_FollowedChat_by_pk?: Maybe<FollowedChat>;
+  readonly delete_FollowedChat_by_pk?: Maybe<FollowedChat>;
   /** delete data from the table: "Group" */
-  delete_Group?: Maybe<Group_Mutation_Response>;
+  readonly delete_Group?: Maybe<Group_Mutation_Response>;
   /** delete data from the table: "GroupAttendee" */
-  delete_GroupAttendee?: Maybe<GroupAttendee_Mutation_Response>;
+  readonly delete_GroupAttendee?: Maybe<GroupAttendee_Mutation_Response>;
   /** delete single row from the table: "GroupAttendee" */
-  delete_GroupAttendee_by_pk?: Maybe<GroupAttendee>;
+  readonly delete_GroupAttendee_by_pk?: Maybe<GroupAttendee>;
   /** delete data from the table: "GroupRole" */
-  delete_GroupRole?: Maybe<GroupRole_Mutation_Response>;
+  readonly delete_GroupRole?: Maybe<GroupRole_Mutation_Response>;
   /** delete single row from the table: "GroupRole" */
-  delete_GroupRole_by_pk?: Maybe<GroupRole>;
+  readonly delete_GroupRole_by_pk?: Maybe<GroupRole>;
   /** delete single row from the table: "Group" */
-  delete_Group_by_pk?: Maybe<Group>;
+  readonly delete_Group_by_pk?: Maybe<Group>;
   /** delete data from the table: "OnlineStatus" */
-  delete_OnlineStatus?: Maybe<OnlineStatus_Mutation_Response>;
+  readonly delete_OnlineStatus?: Maybe<OnlineStatus_Mutation_Response>;
   /** delete single row from the table: "OnlineStatus" */
-  delete_OnlineStatus_by_pk?: Maybe<OnlineStatus>;
+  readonly delete_OnlineStatus_by_pk?: Maybe<OnlineStatus>;
   /** delete data from the table: "Permission" */
-  delete_Permission?: Maybe<Permission_Mutation_Response>;
+  readonly delete_Permission?: Maybe<Permission_Mutation_Response>;
   /** delete single row from the table: "Permission" */
-  delete_Permission_by_pk?: Maybe<Permission>;
+  readonly delete_Permission_by_pk?: Maybe<Permission>;
   /** delete data from the table: "PinnedChat" */
-  delete_PinnedChat?: Maybe<PinnedChat_Mutation_Response>;
+  readonly delete_PinnedChat?: Maybe<PinnedChat_Mutation_Response>;
   /** delete single row from the table: "PinnedChat" */
-  delete_PinnedChat_by_pk?: Maybe<PinnedChat>;
+  readonly delete_PinnedChat_by_pk?: Maybe<PinnedChat>;
   /** delete data from the table: "Role" */
-  delete_Role?: Maybe<Role_Mutation_Response>;
+  readonly delete_Role?: Maybe<Role_Mutation_Response>;
   /** delete data from the table: "RolePermission" */
-  delete_RolePermission?: Maybe<RolePermission_Mutation_Response>;
+  readonly delete_RolePermission?: Maybe<RolePermission_Mutation_Response>;
   /** delete single row from the table: "RolePermission" */
-  delete_RolePermission_by_pk?: Maybe<RolePermission>;
+  readonly delete_RolePermission_by_pk?: Maybe<RolePermission>;
   /** delete single row from the table: "Role" */
-  delete_Role_by_pk?: Maybe<Role>;
+  readonly delete_Role_by_pk?: Maybe<Role>;
   /** delete data from the table: "User" */
-  delete_User?: Maybe<User_Mutation_Response>;
+  readonly delete_User?: Maybe<User_Mutation_Response>;
   /** delete single row from the table: "User" */
-  delete_User_by_pk?: Maybe<User>;
+  readonly delete_User_by_pk?: Maybe<User>;
   /** insert data into the table: "ActiveGroup" */
-  insert_ActiveGroup?: Maybe<ActiveGroup_Mutation_Response>;
+  readonly insert_ActiveGroup?: Maybe<ActiveGroup_Mutation_Response>;
   /** insert a single row into the table: "ActiveGroup" */
-  insert_ActiveGroup_one?: Maybe<ActiveGroup>;
+  readonly insert_ActiveGroup_one?: Maybe<ActiveGroup>;
   /** insert data into the table: "Attendee" */
-  insert_Attendee?: Maybe<Attendee_Mutation_Response>;
+  readonly insert_Attendee?: Maybe<Attendee_Mutation_Response>;
   /** insert data into the table: "AttendeeStatus" */
-  insert_AttendeeStatus?: Maybe<AttendeeStatus_Mutation_Response>;
+  readonly insert_AttendeeStatus?: Maybe<AttendeeStatus_Mutation_Response>;
   /** insert a single row into the table: "AttendeeStatus" */
-  insert_AttendeeStatus_one?: Maybe<AttendeeStatus>;
+  readonly insert_AttendeeStatus_one?: Maybe<AttendeeStatus>;
   /** insert a single row into the table: "Attendee" */
-  insert_Attendee_one?: Maybe<Attendee>;
+  readonly insert_Attendee_one?: Maybe<Attendee>;
   /** insert data into the table: "Chat" */
-  insert_Chat?: Maybe<Chat_Mutation_Response>;
+  readonly insert_Chat?: Maybe<Chat_Mutation_Response>;
   /** insert data into the table: "ChatMember" */
-  insert_ChatMember?: Maybe<ChatMember_Mutation_Response>;
+  readonly insert_ChatMember?: Maybe<ChatMember_Mutation_Response>;
   /** insert a single row into the table: "ChatMember" */
-  insert_ChatMember_one?: Maybe<ChatMember>;
+  readonly insert_ChatMember_one?: Maybe<ChatMember>;
   /** insert data into the table: "ChatMessage" */
-  insert_ChatMessage?: Maybe<ChatMessage_Mutation_Response>;
+  readonly insert_ChatMessage?: Maybe<ChatMessage_Mutation_Response>;
   /** insert a single row into the table: "ChatMessage" */
-  insert_ChatMessage_one?: Maybe<ChatMessage>;
+  readonly insert_ChatMessage_one?: Maybe<ChatMessage>;
   /** insert data into the table: "ChatModerator" */
-  insert_ChatModerator?: Maybe<ChatModerator_Mutation_Response>;
+  readonly insert_ChatModerator?: Maybe<ChatModerator_Mutation_Response>;
   /** insert a single row into the table: "ChatModerator" */
-  insert_ChatModerator_one?: Maybe<ChatModerator>;
+  readonly insert_ChatModerator_one?: Maybe<ChatModerator>;
   /** insert data into the table: "ChatReaction" */
-  insert_ChatReaction?: Maybe<ChatReaction_Mutation_Response>;
+  readonly insert_ChatReaction?: Maybe<ChatReaction_Mutation_Response>;
   /** insert a single row into the table: "ChatReaction" */
-  insert_ChatReaction_one?: Maybe<ChatReaction>;
+  readonly insert_ChatReaction_one?: Maybe<ChatReaction>;
   /** insert data into the table: "ChatTyper" */
-  insert_ChatTyper?: Maybe<ChatTyper_Mutation_Response>;
+  readonly insert_ChatTyper?: Maybe<ChatTyper_Mutation_Response>;
   /** insert a single row into the table: "ChatTyper" */
-  insert_ChatTyper_one?: Maybe<ChatTyper>;
+  readonly insert_ChatTyper_one?: Maybe<ChatTyper>;
   /** insert data into the table: "ChatUnreadIndex" */
-  insert_ChatUnreadIndex?: Maybe<ChatUnreadIndex_Mutation_Response>;
+  readonly insert_ChatUnreadIndex?: Maybe<ChatUnreadIndex_Mutation_Response>;
   /** insert a single row into the table: "ChatUnreadIndex" */
-  insert_ChatUnreadIndex_one?: Maybe<ChatUnreadIndex>;
+  readonly insert_ChatUnreadIndex_one?: Maybe<ChatUnreadIndex>;
   /** insert data into the table: "ChatViewer" */
-  insert_ChatViewer?: Maybe<ChatViewer_Mutation_Response>;
+  readonly insert_ChatViewer?: Maybe<ChatViewer_Mutation_Response>;
   /** insert a single row into the table: "ChatViewer" */
-  insert_ChatViewer_one?: Maybe<ChatViewer>;
+  readonly insert_ChatViewer_one?: Maybe<ChatViewer>;
   /** insert a single row into the table: "Chat" */
-  insert_Chat_one?: Maybe<Chat>;
+  readonly insert_Chat_one?: Maybe<Chat>;
   /** insert data into the table: "Conference" */
-  insert_Conference?: Maybe<Conference_Mutation_Response>;
+  readonly insert_Conference?: Maybe<Conference_Mutation_Response>;
   /** insert data into the table: "ConferenceDemoCode" */
-  insert_ConferenceDemoCode?: Maybe<ConferenceDemoCode_Mutation_Response>;
+  readonly insert_ConferenceDemoCode?: Maybe<ConferenceDemoCode_Mutation_Response>;
   /** insert a single row into the table: "ConferenceDemoCode" */
-  insert_ConferenceDemoCode_one?: Maybe<ConferenceDemoCode>;
+  readonly insert_ConferenceDemoCode_one?: Maybe<ConferenceDemoCode>;
   /** insert a single row into the table: "Conference" */
-  insert_Conference_one?: Maybe<Conference>;
+  readonly insert_Conference_one?: Maybe<Conference>;
   /** insert data into the table: "FlaggedChatMessage" */
-  insert_FlaggedChatMessage?: Maybe<FlaggedChatMessage_Mutation_Response>;
+  readonly insert_FlaggedChatMessage?: Maybe<FlaggedChatMessage_Mutation_Response>;
   /** insert a single row into the table: "FlaggedChatMessage" */
-  insert_FlaggedChatMessage_one?: Maybe<FlaggedChatMessage>;
+  readonly insert_FlaggedChatMessage_one?: Maybe<FlaggedChatMessage>;
   /** insert data into the table: "FollowedChat" */
-  insert_FollowedChat?: Maybe<FollowedChat_Mutation_Response>;
+  readonly insert_FollowedChat?: Maybe<FollowedChat_Mutation_Response>;
   /** insert a single row into the table: "FollowedChat" */
-  insert_FollowedChat_one?: Maybe<FollowedChat>;
+  readonly insert_FollowedChat_one?: Maybe<FollowedChat>;
   /** insert data into the table: "Group" */
-  insert_Group?: Maybe<Group_Mutation_Response>;
+  readonly insert_Group?: Maybe<Group_Mutation_Response>;
   /** insert data into the table: "GroupAttendee" */
-  insert_GroupAttendee?: Maybe<GroupAttendee_Mutation_Response>;
+  readonly insert_GroupAttendee?: Maybe<GroupAttendee_Mutation_Response>;
   /** insert a single row into the table: "GroupAttendee" */
-  insert_GroupAttendee_one?: Maybe<GroupAttendee>;
+  readonly insert_GroupAttendee_one?: Maybe<GroupAttendee>;
   /** insert data into the table: "GroupRole" */
-  insert_GroupRole?: Maybe<GroupRole_Mutation_Response>;
+  readonly insert_GroupRole?: Maybe<GroupRole_Mutation_Response>;
   /** insert a single row into the table: "GroupRole" */
-  insert_GroupRole_one?: Maybe<GroupRole>;
+  readonly insert_GroupRole_one?: Maybe<GroupRole>;
   /** insert a single row into the table: "Group" */
-  insert_Group_one?: Maybe<Group>;
+  readonly insert_Group_one?: Maybe<Group>;
   /** insert data into the table: "OnlineStatus" */
-  insert_OnlineStatus?: Maybe<OnlineStatus_Mutation_Response>;
+  readonly insert_OnlineStatus?: Maybe<OnlineStatus_Mutation_Response>;
   /** insert a single row into the table: "OnlineStatus" */
-  insert_OnlineStatus_one?: Maybe<OnlineStatus>;
+  readonly insert_OnlineStatus_one?: Maybe<OnlineStatus>;
   /** insert data into the table: "Permission" */
-  insert_Permission?: Maybe<Permission_Mutation_Response>;
+  readonly insert_Permission?: Maybe<Permission_Mutation_Response>;
   /** insert a single row into the table: "Permission" */
-  insert_Permission_one?: Maybe<Permission>;
+  readonly insert_Permission_one?: Maybe<Permission>;
   /** insert data into the table: "PinnedChat" */
-  insert_PinnedChat?: Maybe<PinnedChat_Mutation_Response>;
+  readonly insert_PinnedChat?: Maybe<PinnedChat_Mutation_Response>;
   /** insert a single row into the table: "PinnedChat" */
-  insert_PinnedChat_one?: Maybe<PinnedChat>;
+  readonly insert_PinnedChat_one?: Maybe<PinnedChat>;
   /** insert data into the table: "Role" */
-  insert_Role?: Maybe<Role_Mutation_Response>;
+  readonly insert_Role?: Maybe<Role_Mutation_Response>;
   /** insert data into the table: "RolePermission" */
-  insert_RolePermission?: Maybe<RolePermission_Mutation_Response>;
+  readonly insert_RolePermission?: Maybe<RolePermission_Mutation_Response>;
   /** insert a single row into the table: "RolePermission" */
-  insert_RolePermission_one?: Maybe<RolePermission>;
+  readonly insert_RolePermission_one?: Maybe<RolePermission>;
   /** insert a single row into the table: "Role" */
-  insert_Role_one?: Maybe<Role>;
+  readonly insert_Role_one?: Maybe<Role>;
   /** insert data into the table: "User" */
-  insert_User?: Maybe<User_Mutation_Response>;
+  readonly insert_User?: Maybe<User_Mutation_Response>;
   /** insert a single row into the table: "User" */
-  insert_User_one?: Maybe<User>;
+  readonly insert_User_one?: Maybe<User>;
   /** update data of the table: "ActiveGroup" */
-  update_ActiveGroup?: Maybe<ActiveGroup_Mutation_Response>;
+  readonly update_ActiveGroup?: Maybe<ActiveGroup_Mutation_Response>;
   /** update data of the table: "Attendee" */
-  update_Attendee?: Maybe<Attendee_Mutation_Response>;
+  readonly update_Attendee?: Maybe<Attendee_Mutation_Response>;
   /** update data of the table: "AttendeeStatus" */
-  update_AttendeeStatus?: Maybe<AttendeeStatus_Mutation_Response>;
+  readonly update_AttendeeStatus?: Maybe<AttendeeStatus_Mutation_Response>;
   /** update single row of the table: "AttendeeStatus" */
-  update_AttendeeStatus_by_pk?: Maybe<AttendeeStatus>;
+  readonly update_AttendeeStatus_by_pk?: Maybe<AttendeeStatus>;
   /** update single row of the table: "Attendee" */
-  update_Attendee_by_pk?: Maybe<Attendee>;
+  readonly update_Attendee_by_pk?: Maybe<Attendee>;
   /** update data of the table: "Chat" */
-  update_Chat?: Maybe<Chat_Mutation_Response>;
+  readonly update_Chat?: Maybe<Chat_Mutation_Response>;
   /** update data of the table: "ChatMember" */
-  update_ChatMember?: Maybe<ChatMember_Mutation_Response>;
+  readonly update_ChatMember?: Maybe<ChatMember_Mutation_Response>;
   /** update single row of the table: "ChatMember" */
-  update_ChatMember_by_pk?: Maybe<ChatMember>;
+  readonly update_ChatMember_by_pk?: Maybe<ChatMember>;
   /** update data of the table: "ChatMessage" */
-  update_ChatMessage?: Maybe<ChatMessage_Mutation_Response>;
+  readonly update_ChatMessage?: Maybe<ChatMessage_Mutation_Response>;
   /** update single row of the table: "ChatMessage" */
-  update_ChatMessage_by_pk?: Maybe<ChatMessage>;
+  readonly update_ChatMessage_by_pk?: Maybe<ChatMessage>;
   /** update data of the table: "ChatModerator" */
-  update_ChatModerator?: Maybe<ChatModerator_Mutation_Response>;
+  readonly update_ChatModerator?: Maybe<ChatModerator_Mutation_Response>;
   /** update single row of the table: "ChatModerator" */
-  update_ChatModerator_by_pk?: Maybe<ChatModerator>;
+  readonly update_ChatModerator_by_pk?: Maybe<ChatModerator>;
   /** update data of the table: "ChatReaction" */
-  update_ChatReaction?: Maybe<ChatReaction_Mutation_Response>;
+  readonly update_ChatReaction?: Maybe<ChatReaction_Mutation_Response>;
   /** update single row of the table: "ChatReaction" */
-  update_ChatReaction_by_pk?: Maybe<ChatReaction>;
+  readonly update_ChatReaction_by_pk?: Maybe<ChatReaction>;
   /** update data of the table: "ChatTyper" */
-  update_ChatTyper?: Maybe<ChatTyper_Mutation_Response>;
+  readonly update_ChatTyper?: Maybe<ChatTyper_Mutation_Response>;
   /** update single row of the table: "ChatTyper" */
-  update_ChatTyper_by_pk?: Maybe<ChatTyper>;
+  readonly update_ChatTyper_by_pk?: Maybe<ChatTyper>;
   /** update data of the table: "ChatUnreadIndex" */
-  update_ChatUnreadIndex?: Maybe<ChatUnreadIndex_Mutation_Response>;
+  readonly update_ChatUnreadIndex?: Maybe<ChatUnreadIndex_Mutation_Response>;
   /** update single row of the table: "ChatUnreadIndex" */
-  update_ChatUnreadIndex_by_pk?: Maybe<ChatUnreadIndex>;
+  readonly update_ChatUnreadIndex_by_pk?: Maybe<ChatUnreadIndex>;
   /** update data of the table: "ChatViewer" */
-  update_ChatViewer?: Maybe<ChatViewer_Mutation_Response>;
+  readonly update_ChatViewer?: Maybe<ChatViewer_Mutation_Response>;
   /** update single row of the table: "ChatViewer" */
-  update_ChatViewer_by_pk?: Maybe<ChatViewer>;
+  readonly update_ChatViewer_by_pk?: Maybe<ChatViewer>;
   /** update single row of the table: "Chat" */
-  update_Chat_by_pk?: Maybe<Chat>;
+  readonly update_Chat_by_pk?: Maybe<Chat>;
   /** update data of the table: "Conference" */
-  update_Conference?: Maybe<Conference_Mutation_Response>;
+  readonly update_Conference?: Maybe<Conference_Mutation_Response>;
   /** update data of the table: "ConferenceDemoCode" */
-  update_ConferenceDemoCode?: Maybe<ConferenceDemoCode_Mutation_Response>;
+  readonly update_ConferenceDemoCode?: Maybe<ConferenceDemoCode_Mutation_Response>;
   /** update single row of the table: "ConferenceDemoCode" */
-  update_ConferenceDemoCode_by_pk?: Maybe<ConferenceDemoCode>;
+  readonly update_ConferenceDemoCode_by_pk?: Maybe<ConferenceDemoCode>;
   /** update single row of the table: "Conference" */
-  update_Conference_by_pk?: Maybe<Conference>;
+  readonly update_Conference_by_pk?: Maybe<Conference>;
   /** update data of the table: "FlaggedChatMessage" */
-  update_FlaggedChatMessage?: Maybe<FlaggedChatMessage_Mutation_Response>;
+  readonly update_FlaggedChatMessage?: Maybe<FlaggedChatMessage_Mutation_Response>;
   /** update single row of the table: "FlaggedChatMessage" */
-  update_FlaggedChatMessage_by_pk?: Maybe<FlaggedChatMessage>;
+  readonly update_FlaggedChatMessage_by_pk?: Maybe<FlaggedChatMessage>;
   /** update data of the table: "FollowedChat" */
-  update_FollowedChat?: Maybe<FollowedChat_Mutation_Response>;
+  readonly update_FollowedChat?: Maybe<FollowedChat_Mutation_Response>;
   /** update single row of the table: "FollowedChat" */
-  update_FollowedChat_by_pk?: Maybe<FollowedChat>;
+  readonly update_FollowedChat_by_pk?: Maybe<FollowedChat>;
   /** update data of the table: "Group" */
-  update_Group?: Maybe<Group_Mutation_Response>;
+  readonly update_Group?: Maybe<Group_Mutation_Response>;
   /** update data of the table: "GroupAttendee" */
-  update_GroupAttendee?: Maybe<GroupAttendee_Mutation_Response>;
+  readonly update_GroupAttendee?: Maybe<GroupAttendee_Mutation_Response>;
   /** update single row of the table: "GroupAttendee" */
-  update_GroupAttendee_by_pk?: Maybe<GroupAttendee>;
+  readonly update_GroupAttendee_by_pk?: Maybe<GroupAttendee>;
   /** update data of the table: "GroupRole" */
-  update_GroupRole?: Maybe<GroupRole_Mutation_Response>;
+  readonly update_GroupRole?: Maybe<GroupRole_Mutation_Response>;
   /** update single row of the table: "GroupRole" */
-  update_GroupRole_by_pk?: Maybe<GroupRole>;
+  readonly update_GroupRole_by_pk?: Maybe<GroupRole>;
   /** update single row of the table: "Group" */
-  update_Group_by_pk?: Maybe<Group>;
+  readonly update_Group_by_pk?: Maybe<Group>;
   /** update data of the table: "OnlineStatus" */
-  update_OnlineStatus?: Maybe<OnlineStatus_Mutation_Response>;
+  readonly update_OnlineStatus?: Maybe<OnlineStatus_Mutation_Response>;
   /** update single row of the table: "OnlineStatus" */
-  update_OnlineStatus_by_pk?: Maybe<OnlineStatus>;
+  readonly update_OnlineStatus_by_pk?: Maybe<OnlineStatus>;
   /** update data of the table: "Permission" */
-  update_Permission?: Maybe<Permission_Mutation_Response>;
+  readonly update_Permission?: Maybe<Permission_Mutation_Response>;
   /** update single row of the table: "Permission" */
-  update_Permission_by_pk?: Maybe<Permission>;
+  readonly update_Permission_by_pk?: Maybe<Permission>;
   /** update data of the table: "PinnedChat" */
-  update_PinnedChat?: Maybe<PinnedChat_Mutation_Response>;
+  readonly update_PinnedChat?: Maybe<PinnedChat_Mutation_Response>;
   /** update single row of the table: "PinnedChat" */
-  update_PinnedChat_by_pk?: Maybe<PinnedChat>;
+  readonly update_PinnedChat_by_pk?: Maybe<PinnedChat>;
   /** update data of the table: "Role" */
-  update_Role?: Maybe<Role_Mutation_Response>;
+  readonly update_Role?: Maybe<Role_Mutation_Response>;
   /** update data of the table: "RolePermission" */
-  update_RolePermission?: Maybe<RolePermission_Mutation_Response>;
+  readonly update_RolePermission?: Maybe<RolePermission_Mutation_Response>;
   /** update single row of the table: "RolePermission" */
-  update_RolePermission_by_pk?: Maybe<RolePermission>;
+  readonly update_RolePermission_by_pk?: Maybe<RolePermission>;
   /** update single row of the table: "Role" */
-  update_Role_by_pk?: Maybe<Role>;
+  readonly update_Role_by_pk?: Maybe<Role>;
   /** update data of the table: "User" */
-  update_User?: Maybe<User_Mutation_Response>;
+  readonly update_User?: Maybe<User_Mutation_Response>;
   /** update single row of the table: "User" */
-  update_User_by_pk?: Maybe<User>;
+  readonly update_User_by_pk?: Maybe<User>;
 };
 
 
@@ -6400,7 +6402,7 @@ export type Mutation_RootDelete_User_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootInsert_ActiveGroupArgs = {
-  objects: Array<ActiveGroup_Insert_Input>;
+  objects: ReadonlyArray<ActiveGroup_Insert_Input>;
 };
 
 
@@ -6412,14 +6414,14 @@ export type Mutation_RootInsert_ActiveGroup_OneArgs = {
 
 /** mutation root */
 export type Mutation_RootInsert_AttendeeArgs = {
-  objects: Array<Attendee_Insert_Input>;
+  objects: ReadonlyArray<Attendee_Insert_Input>;
   on_conflict?: Maybe<Attendee_On_Conflict>;
 };
 
 
 /** mutation root */
 export type Mutation_RootInsert_AttendeeStatusArgs = {
-  objects: Array<AttendeeStatus_Insert_Input>;
+  objects: ReadonlyArray<AttendeeStatus_Insert_Input>;
   on_conflict?: Maybe<AttendeeStatus_On_Conflict>;
 };
 
@@ -6440,14 +6442,14 @@ export type Mutation_RootInsert_Attendee_OneArgs = {
 
 /** mutation root */
 export type Mutation_RootInsert_ChatArgs = {
-  objects: Array<Chat_Insert_Input>;
+  objects: ReadonlyArray<Chat_Insert_Input>;
   on_conflict?: Maybe<Chat_On_Conflict>;
 };
 
 
 /** mutation root */
 export type Mutation_RootInsert_ChatMemberArgs = {
-  objects: Array<ChatMember_Insert_Input>;
+  objects: ReadonlyArray<ChatMember_Insert_Input>;
   on_conflict?: Maybe<ChatMember_On_Conflict>;
 };
 
@@ -6461,7 +6463,7 @@ export type Mutation_RootInsert_ChatMember_OneArgs = {
 
 /** mutation root */
 export type Mutation_RootInsert_ChatMessageArgs = {
-  objects: Array<ChatMessage_Insert_Input>;
+  objects: ReadonlyArray<ChatMessage_Insert_Input>;
   on_conflict?: Maybe<ChatMessage_On_Conflict>;
 };
 
@@ -6475,7 +6477,7 @@ export type Mutation_RootInsert_ChatMessage_OneArgs = {
 
 /** mutation root */
 export type Mutation_RootInsert_ChatModeratorArgs = {
-  objects: Array<ChatModerator_Insert_Input>;
+  objects: ReadonlyArray<ChatModerator_Insert_Input>;
   on_conflict?: Maybe<ChatModerator_On_Conflict>;
 };
 
@@ -6489,7 +6491,7 @@ export type Mutation_RootInsert_ChatModerator_OneArgs = {
 
 /** mutation root */
 export type Mutation_RootInsert_ChatReactionArgs = {
-  objects: Array<ChatReaction_Insert_Input>;
+  objects: ReadonlyArray<ChatReaction_Insert_Input>;
   on_conflict?: Maybe<ChatReaction_On_Conflict>;
 };
 
@@ -6503,7 +6505,7 @@ export type Mutation_RootInsert_ChatReaction_OneArgs = {
 
 /** mutation root */
 export type Mutation_RootInsert_ChatTyperArgs = {
-  objects: Array<ChatTyper_Insert_Input>;
+  objects: ReadonlyArray<ChatTyper_Insert_Input>;
   on_conflict?: Maybe<ChatTyper_On_Conflict>;
 };
 
@@ -6517,7 +6519,7 @@ export type Mutation_RootInsert_ChatTyper_OneArgs = {
 
 /** mutation root */
 export type Mutation_RootInsert_ChatUnreadIndexArgs = {
-  objects: Array<ChatUnreadIndex_Insert_Input>;
+  objects: ReadonlyArray<ChatUnreadIndex_Insert_Input>;
   on_conflict?: Maybe<ChatUnreadIndex_On_Conflict>;
 };
 
@@ -6531,7 +6533,7 @@ export type Mutation_RootInsert_ChatUnreadIndex_OneArgs = {
 
 /** mutation root */
 export type Mutation_RootInsert_ChatViewerArgs = {
-  objects: Array<ChatViewer_Insert_Input>;
+  objects: ReadonlyArray<ChatViewer_Insert_Input>;
   on_conflict?: Maybe<ChatViewer_On_Conflict>;
 };
 
@@ -6552,14 +6554,14 @@ export type Mutation_RootInsert_Chat_OneArgs = {
 
 /** mutation root */
 export type Mutation_RootInsert_ConferenceArgs = {
-  objects: Array<Conference_Insert_Input>;
+  objects: ReadonlyArray<Conference_Insert_Input>;
   on_conflict?: Maybe<Conference_On_Conflict>;
 };
 
 
 /** mutation root */
 export type Mutation_RootInsert_ConferenceDemoCodeArgs = {
-  objects: Array<ConferenceDemoCode_Insert_Input>;
+  objects: ReadonlyArray<ConferenceDemoCode_Insert_Input>;
   on_conflict?: Maybe<ConferenceDemoCode_On_Conflict>;
 };
 
@@ -6580,7 +6582,7 @@ export type Mutation_RootInsert_Conference_OneArgs = {
 
 /** mutation root */
 export type Mutation_RootInsert_FlaggedChatMessageArgs = {
-  objects: Array<FlaggedChatMessage_Insert_Input>;
+  objects: ReadonlyArray<FlaggedChatMessage_Insert_Input>;
   on_conflict?: Maybe<FlaggedChatMessage_On_Conflict>;
 };
 
@@ -6594,7 +6596,7 @@ export type Mutation_RootInsert_FlaggedChatMessage_OneArgs = {
 
 /** mutation root */
 export type Mutation_RootInsert_FollowedChatArgs = {
-  objects: Array<FollowedChat_Insert_Input>;
+  objects: ReadonlyArray<FollowedChat_Insert_Input>;
   on_conflict?: Maybe<FollowedChat_On_Conflict>;
 };
 
@@ -6608,14 +6610,14 @@ export type Mutation_RootInsert_FollowedChat_OneArgs = {
 
 /** mutation root */
 export type Mutation_RootInsert_GroupArgs = {
-  objects: Array<Group_Insert_Input>;
+  objects: ReadonlyArray<Group_Insert_Input>;
   on_conflict?: Maybe<Group_On_Conflict>;
 };
 
 
 /** mutation root */
 export type Mutation_RootInsert_GroupAttendeeArgs = {
-  objects: Array<GroupAttendee_Insert_Input>;
+  objects: ReadonlyArray<GroupAttendee_Insert_Input>;
   on_conflict?: Maybe<GroupAttendee_On_Conflict>;
 };
 
@@ -6629,7 +6631,7 @@ export type Mutation_RootInsert_GroupAttendee_OneArgs = {
 
 /** mutation root */
 export type Mutation_RootInsert_GroupRoleArgs = {
-  objects: Array<GroupRole_Insert_Input>;
+  objects: ReadonlyArray<GroupRole_Insert_Input>;
   on_conflict?: Maybe<GroupRole_On_Conflict>;
 };
 
@@ -6650,7 +6652,7 @@ export type Mutation_RootInsert_Group_OneArgs = {
 
 /** mutation root */
 export type Mutation_RootInsert_OnlineStatusArgs = {
-  objects: Array<OnlineStatus_Insert_Input>;
+  objects: ReadonlyArray<OnlineStatus_Insert_Input>;
   on_conflict?: Maybe<OnlineStatus_On_Conflict>;
 };
 
@@ -6664,7 +6666,7 @@ export type Mutation_RootInsert_OnlineStatus_OneArgs = {
 
 /** mutation root */
 export type Mutation_RootInsert_PermissionArgs = {
-  objects: Array<Permission_Insert_Input>;
+  objects: ReadonlyArray<Permission_Insert_Input>;
   on_conflict?: Maybe<Permission_On_Conflict>;
 };
 
@@ -6678,7 +6680,7 @@ export type Mutation_RootInsert_Permission_OneArgs = {
 
 /** mutation root */
 export type Mutation_RootInsert_PinnedChatArgs = {
-  objects: Array<PinnedChat_Insert_Input>;
+  objects: ReadonlyArray<PinnedChat_Insert_Input>;
   on_conflict?: Maybe<PinnedChat_On_Conflict>;
 };
 
@@ -6692,14 +6694,14 @@ export type Mutation_RootInsert_PinnedChat_OneArgs = {
 
 /** mutation root */
 export type Mutation_RootInsert_RoleArgs = {
-  objects: Array<Role_Insert_Input>;
+  objects: ReadonlyArray<Role_Insert_Input>;
   on_conflict?: Maybe<Role_On_Conflict>;
 };
 
 
 /** mutation root */
 export type Mutation_RootInsert_RolePermissionArgs = {
-  objects: Array<RolePermission_Insert_Input>;
+  objects: ReadonlyArray<RolePermission_Insert_Input>;
   on_conflict?: Maybe<RolePermission_On_Conflict>;
 };
 
@@ -6720,7 +6722,7 @@ export type Mutation_RootInsert_Role_OneArgs = {
 
 /** mutation root */
 export type Mutation_RootInsert_UserArgs = {
-  objects: Array<User_Insert_Input>;
+  objects: ReadonlyArray<User_Insert_Input>;
   on_conflict?: Maybe<User_On_Conflict>;
 };
 
@@ -7092,202 +7094,202 @@ export enum Order_By {
 
 /** query root */
 export type Query_Root = {
-  __typename?: 'query_root';
+  readonly __typename?: 'query_root';
   /** fetch data from the table: "ActiveGroup" */
-  ActiveGroup: Array<ActiveGroup>;
+  readonly ActiveGroup: ReadonlyArray<ActiveGroup>;
   /** fetch aggregated fields from the table: "ActiveGroup" */
-  ActiveGroup_aggregate: ActiveGroup_Aggregate;
+  readonly ActiveGroup_aggregate: ActiveGroup_Aggregate;
   /** fetch data from the table: "Attendee" */
-  Attendee: Array<Attendee>;
+  readonly Attendee: ReadonlyArray<Attendee>;
   /** fetch data from the table: "AttendeeStatus" */
-  AttendeeStatus: Array<AttendeeStatus>;
+  readonly AttendeeStatus: ReadonlyArray<AttendeeStatus>;
   /** fetch aggregated fields from the table: "AttendeeStatus" */
-  AttendeeStatus_aggregate: AttendeeStatus_Aggregate;
+  readonly AttendeeStatus_aggregate: AttendeeStatus_Aggregate;
   /** fetch data from the table: "AttendeeStatus" using primary key columns */
-  AttendeeStatus_by_pk?: Maybe<AttendeeStatus>;
+  readonly AttendeeStatus_by_pk?: Maybe<AttendeeStatus>;
   /** fetch aggregated fields from the table: "Attendee" */
-  Attendee_aggregate: Attendee_Aggregate;
+  readonly Attendee_aggregate: Attendee_Aggregate;
   /** fetch data from the table: "Attendee" using primary key columns */
-  Attendee_by_pk?: Maybe<Attendee>;
+  readonly Attendee_by_pk?: Maybe<Attendee>;
   /** fetch data from the table: "Chat" */
-  Chat: Array<Chat>;
+  readonly Chat: ReadonlyArray<Chat>;
   /** fetch data from the table: "ChatMember" */
-  ChatMember: Array<ChatMember>;
+  readonly ChatMember: ReadonlyArray<ChatMember>;
   /** fetch aggregated fields from the table: "ChatMember" */
-  ChatMember_aggregate: ChatMember_Aggregate;
+  readonly ChatMember_aggregate: ChatMember_Aggregate;
   /** fetch data from the table: "ChatMember" using primary key columns */
-  ChatMember_by_pk?: Maybe<ChatMember>;
+  readonly ChatMember_by_pk?: Maybe<ChatMember>;
   /** fetch data from the table: "ChatMessage" */
-  ChatMessage: Array<ChatMessage>;
+  readonly ChatMessage: ReadonlyArray<ChatMessage>;
   /** fetch aggregated fields from the table: "ChatMessage" */
-  ChatMessage_aggregate: ChatMessage_Aggregate;
+  readonly ChatMessage_aggregate: ChatMessage_Aggregate;
   /** fetch data from the table: "ChatMessage" using primary key columns */
-  ChatMessage_by_pk?: Maybe<ChatMessage>;
+  readonly ChatMessage_by_pk?: Maybe<ChatMessage>;
   /** fetch data from the table: "ChatModerator" */
-  ChatModerator: Array<ChatModerator>;
+  readonly ChatModerator: ReadonlyArray<ChatModerator>;
   /** fetch aggregated fields from the table: "ChatModerator" */
-  ChatModerator_aggregate: ChatModerator_Aggregate;
+  readonly ChatModerator_aggregate: ChatModerator_Aggregate;
   /** fetch data from the table: "ChatModerator" using primary key columns */
-  ChatModerator_by_pk?: Maybe<ChatModerator>;
+  readonly ChatModerator_by_pk?: Maybe<ChatModerator>;
   /** fetch data from the table: "ChatReaction" */
-  ChatReaction: Array<ChatReaction>;
+  readonly ChatReaction: ReadonlyArray<ChatReaction>;
   /** fetch aggregated fields from the table: "ChatReaction" */
-  ChatReaction_aggregate: ChatReaction_Aggregate;
+  readonly ChatReaction_aggregate: ChatReaction_Aggregate;
   /** fetch data from the table: "ChatReaction" using primary key columns */
-  ChatReaction_by_pk?: Maybe<ChatReaction>;
+  readonly ChatReaction_by_pk?: Maybe<ChatReaction>;
   /** fetch data from the table: "ChatTyper" */
-  ChatTyper: Array<ChatTyper>;
+  readonly ChatTyper: ReadonlyArray<ChatTyper>;
   /** fetch aggregated fields from the table: "ChatTyper" */
-  ChatTyper_aggregate: ChatTyper_Aggregate;
+  readonly ChatTyper_aggregate: ChatTyper_Aggregate;
   /** fetch data from the table: "ChatTyper" using primary key columns */
-  ChatTyper_by_pk?: Maybe<ChatTyper>;
+  readonly ChatTyper_by_pk?: Maybe<ChatTyper>;
   /** fetch data from the table: "ChatUnreadIndex" */
-  ChatUnreadIndex: Array<ChatUnreadIndex>;
+  readonly ChatUnreadIndex: ReadonlyArray<ChatUnreadIndex>;
   /** fetch aggregated fields from the table: "ChatUnreadIndex" */
-  ChatUnreadIndex_aggregate: ChatUnreadIndex_Aggregate;
+  readonly ChatUnreadIndex_aggregate: ChatUnreadIndex_Aggregate;
   /** fetch data from the table: "ChatUnreadIndex" using primary key columns */
-  ChatUnreadIndex_by_pk?: Maybe<ChatUnreadIndex>;
+  readonly ChatUnreadIndex_by_pk?: Maybe<ChatUnreadIndex>;
   /** fetch data from the table: "ChatViewer" */
-  ChatViewer: Array<ChatViewer>;
+  readonly ChatViewer: ReadonlyArray<ChatViewer>;
   /** fetch aggregated fields from the table: "ChatViewer" */
-  ChatViewer_aggregate: ChatViewer_Aggregate;
+  readonly ChatViewer_aggregate: ChatViewer_Aggregate;
   /** fetch data from the table: "ChatViewer" using primary key columns */
-  ChatViewer_by_pk?: Maybe<ChatViewer>;
+  readonly ChatViewer_by_pk?: Maybe<ChatViewer>;
   /** fetch aggregated fields from the table: "Chat" */
-  Chat_aggregate: Chat_Aggregate;
+  readonly Chat_aggregate: Chat_Aggregate;
   /** fetch data from the table: "Chat" using primary key columns */
-  Chat_by_pk?: Maybe<Chat>;
+  readonly Chat_by_pk?: Maybe<Chat>;
   /** fetch data from the table: "Conference" */
-  Conference: Array<Conference>;
+  readonly Conference: ReadonlyArray<Conference>;
   /** fetch data from the table: "ConferenceDemoCode" */
-  ConferenceDemoCode: Array<ConferenceDemoCode>;
+  readonly ConferenceDemoCode: ReadonlyArray<ConferenceDemoCode>;
   /** fetch aggregated fields from the table: "ConferenceDemoCode" */
-  ConferenceDemoCode_aggregate: ConferenceDemoCode_Aggregate;
+  readonly ConferenceDemoCode_aggregate: ConferenceDemoCode_Aggregate;
   /** fetch data from the table: "ConferenceDemoCode" using primary key columns */
-  ConferenceDemoCode_by_pk?: Maybe<ConferenceDemoCode>;
+  readonly ConferenceDemoCode_by_pk?: Maybe<ConferenceDemoCode>;
   /** fetch aggregated fields from the table: "Conference" */
-  Conference_aggregate: Conference_Aggregate;
+  readonly Conference_aggregate: Conference_Aggregate;
   /** fetch data from the table: "Conference" using primary key columns */
-  Conference_by_pk?: Maybe<Conference>;
+  readonly Conference_by_pk?: Maybe<Conference>;
   /** fetch data from the table: "FlaggedChatMessage" */
-  FlaggedChatMessage: Array<FlaggedChatMessage>;
+  readonly FlaggedChatMessage: ReadonlyArray<FlaggedChatMessage>;
   /** fetch aggregated fields from the table: "FlaggedChatMessage" */
-  FlaggedChatMessage_aggregate: FlaggedChatMessage_Aggregate;
+  readonly FlaggedChatMessage_aggregate: FlaggedChatMessage_Aggregate;
   /** fetch data from the table: "FlaggedChatMessage" using primary key columns */
-  FlaggedChatMessage_by_pk?: Maybe<FlaggedChatMessage>;
+  readonly FlaggedChatMessage_by_pk?: Maybe<FlaggedChatMessage>;
   /** fetch data from the table: "FollowedChat" */
-  FollowedChat: Array<FollowedChat>;
+  readonly FollowedChat: ReadonlyArray<FollowedChat>;
   /** fetch aggregated fields from the table: "FollowedChat" */
-  FollowedChat_aggregate: FollowedChat_Aggregate;
+  readonly FollowedChat_aggregate: FollowedChat_Aggregate;
   /** fetch data from the table: "FollowedChat" using primary key columns */
-  FollowedChat_by_pk?: Maybe<FollowedChat>;
+  readonly FollowedChat_by_pk?: Maybe<FollowedChat>;
   /** fetch data from the table: "Group" */
-  Group: Array<Group>;
+  readonly Group: ReadonlyArray<Group>;
   /** fetch data from the table: "GroupAttendee" */
-  GroupAttendee: Array<GroupAttendee>;
+  readonly GroupAttendee: ReadonlyArray<GroupAttendee>;
   /** fetch aggregated fields from the table: "GroupAttendee" */
-  GroupAttendee_aggregate: GroupAttendee_Aggregate;
+  readonly GroupAttendee_aggregate: GroupAttendee_Aggregate;
   /** fetch data from the table: "GroupAttendee" using primary key columns */
-  GroupAttendee_by_pk?: Maybe<GroupAttendee>;
+  readonly GroupAttendee_by_pk?: Maybe<GroupAttendee>;
   /** fetch data from the table: "GroupRole" */
-  GroupRole: Array<GroupRole>;
+  readonly GroupRole: ReadonlyArray<GroupRole>;
   /** fetch aggregated fields from the table: "GroupRole" */
-  GroupRole_aggregate: GroupRole_Aggregate;
+  readonly GroupRole_aggregate: GroupRole_Aggregate;
   /** fetch data from the table: "GroupRole" using primary key columns */
-  GroupRole_by_pk?: Maybe<GroupRole>;
+  readonly GroupRole_by_pk?: Maybe<GroupRole>;
   /** fetch aggregated fields from the table: "Group" */
-  Group_aggregate: Group_Aggregate;
+  readonly Group_aggregate: Group_Aggregate;
   /** fetch data from the table: "Group" using primary key columns */
-  Group_by_pk?: Maybe<Group>;
+  readonly Group_by_pk?: Maybe<Group>;
   /** fetch data from the table: "OnlineStatus" */
-  OnlineStatus: Array<OnlineStatus>;
+  readonly OnlineStatus: ReadonlyArray<OnlineStatus>;
   /** fetch aggregated fields from the table: "OnlineStatus" */
-  OnlineStatus_aggregate: OnlineStatus_Aggregate;
+  readonly OnlineStatus_aggregate: OnlineStatus_Aggregate;
   /** fetch data from the table: "OnlineStatus" using primary key columns */
-  OnlineStatus_by_pk?: Maybe<OnlineStatus>;
+  readonly OnlineStatus_by_pk?: Maybe<OnlineStatus>;
   /** fetch data from the table: "Permission" */
-  Permission: Array<Permission>;
+  readonly Permission: ReadonlyArray<Permission>;
   /** fetch aggregated fields from the table: "Permission" */
-  Permission_aggregate: Permission_Aggregate;
+  readonly Permission_aggregate: Permission_Aggregate;
   /** fetch data from the table: "Permission" using primary key columns */
-  Permission_by_pk?: Maybe<Permission>;
+  readonly Permission_by_pk?: Maybe<Permission>;
   /** fetch data from the table: "PinnedChat" */
-  PinnedChat: Array<PinnedChat>;
+  readonly PinnedChat: ReadonlyArray<PinnedChat>;
   /** fetch aggregated fields from the table: "PinnedChat" */
-  PinnedChat_aggregate: PinnedChat_Aggregate;
+  readonly PinnedChat_aggregate: PinnedChat_Aggregate;
   /** fetch data from the table: "PinnedChat" using primary key columns */
-  PinnedChat_by_pk?: Maybe<PinnedChat>;
+  readonly PinnedChat_by_pk?: Maybe<PinnedChat>;
   /** fetch data from the table: "Role" */
-  Role: Array<Role>;
+  readonly Role: ReadonlyArray<Role>;
   /** fetch data from the table: "RolePermission" */
-  RolePermission: Array<RolePermission>;
+  readonly RolePermission: ReadonlyArray<RolePermission>;
   /** fetch aggregated fields from the table: "RolePermission" */
-  RolePermission_aggregate: RolePermission_Aggregate;
+  readonly RolePermission_aggregate: RolePermission_Aggregate;
   /** fetch data from the table: "RolePermission" using primary key columns */
-  RolePermission_by_pk?: Maybe<RolePermission>;
+  readonly RolePermission_by_pk?: Maybe<RolePermission>;
   /** fetch aggregated fields from the table: "Role" */
-  Role_aggregate: Role_Aggregate;
+  readonly Role_aggregate: Role_Aggregate;
   /** fetch data from the table: "Role" using primary key columns */
-  Role_by_pk?: Maybe<Role>;
+  readonly Role_by_pk?: Maybe<Role>;
   /** fetch data from the table: "User" */
-  User: Array<User>;
+  readonly User: ReadonlyArray<User>;
   /** fetch aggregated fields from the table: "User" */
-  User_aggregate: User_Aggregate;
+  readonly User_aggregate: User_Aggregate;
   /** fetch data from the table: "User" using primary key columns */
-  User_by_pk?: Maybe<User>;
+  readonly User_by_pk?: Maybe<User>;
   /** perform the action: "echo" */
-  echo?: Maybe<EchoOutput>;
+  readonly echo?: Maybe<EchoOutput>;
   /** perform the action: "protectedEcho" */
-  protectedEcho?: Maybe<ProtectedEchoOutput>;
+  readonly protectedEcho?: Maybe<ProtectedEchoOutput>;
 };
 
 
 /** query root */
 export type Query_RootActiveGroupArgs = {
-  distinct_on?: Maybe<Array<ActiveGroup_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ActiveGroup_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ActiveGroup_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ActiveGroup_Order_By>>;
   where?: Maybe<ActiveGroup_Bool_Exp>;
 };
 
 
 /** query root */
 export type Query_RootActiveGroup_AggregateArgs = {
-  distinct_on?: Maybe<Array<ActiveGroup_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ActiveGroup_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ActiveGroup_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ActiveGroup_Order_By>>;
   where?: Maybe<ActiveGroup_Bool_Exp>;
 };
 
 
 /** query root */
 export type Query_RootAttendeeArgs = {
-  distinct_on?: Maybe<Array<Attendee_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Attendee_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Attendee_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Attendee_Order_By>>;
   where?: Maybe<Attendee_Bool_Exp>;
 };
 
 
 /** query root */
 export type Query_RootAttendeeStatusArgs = {
-  distinct_on?: Maybe<Array<AttendeeStatus_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<AttendeeStatus_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<AttendeeStatus_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<AttendeeStatus_Order_By>>;
   where?: Maybe<AttendeeStatus_Bool_Exp>;
 };
 
 
 /** query root */
 export type Query_RootAttendeeStatus_AggregateArgs = {
-  distinct_on?: Maybe<Array<AttendeeStatus_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<AttendeeStatus_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<AttendeeStatus_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<AttendeeStatus_Order_By>>;
   where?: Maybe<AttendeeStatus_Bool_Exp>;
 };
 
@@ -7300,10 +7302,10 @@ export type Query_RootAttendeeStatus_By_PkArgs = {
 
 /** query root */
 export type Query_RootAttendee_AggregateArgs = {
-  distinct_on?: Maybe<Array<Attendee_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Attendee_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Attendee_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Attendee_Order_By>>;
   where?: Maybe<Attendee_Bool_Exp>;
 };
 
@@ -7316,30 +7318,30 @@ export type Query_RootAttendee_By_PkArgs = {
 
 /** query root */
 export type Query_RootChatArgs = {
-  distinct_on?: Maybe<Array<Chat_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Chat_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Chat_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Chat_Order_By>>;
   where?: Maybe<Chat_Bool_Exp>;
 };
 
 
 /** query root */
 export type Query_RootChatMemberArgs = {
-  distinct_on?: Maybe<Array<ChatMember_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatMember_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatMember_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatMember_Order_By>>;
   where?: Maybe<ChatMember_Bool_Exp>;
 };
 
 
 /** query root */
 export type Query_RootChatMember_AggregateArgs = {
-  distinct_on?: Maybe<Array<ChatMember_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatMember_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatMember_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatMember_Order_By>>;
   where?: Maybe<ChatMember_Bool_Exp>;
 };
 
@@ -7352,20 +7354,20 @@ export type Query_RootChatMember_By_PkArgs = {
 
 /** query root */
 export type Query_RootChatMessageArgs = {
-  distinct_on?: Maybe<Array<ChatMessage_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatMessage_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatMessage_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatMessage_Order_By>>;
   where?: Maybe<ChatMessage_Bool_Exp>;
 };
 
 
 /** query root */
 export type Query_RootChatMessage_AggregateArgs = {
-  distinct_on?: Maybe<Array<ChatMessage_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatMessage_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatMessage_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatMessage_Order_By>>;
   where?: Maybe<ChatMessage_Bool_Exp>;
 };
 
@@ -7378,20 +7380,20 @@ export type Query_RootChatMessage_By_PkArgs = {
 
 /** query root */
 export type Query_RootChatModeratorArgs = {
-  distinct_on?: Maybe<Array<ChatModerator_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatModerator_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatModerator_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatModerator_Order_By>>;
   where?: Maybe<ChatModerator_Bool_Exp>;
 };
 
 
 /** query root */
 export type Query_RootChatModerator_AggregateArgs = {
-  distinct_on?: Maybe<Array<ChatModerator_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatModerator_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatModerator_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatModerator_Order_By>>;
   where?: Maybe<ChatModerator_Bool_Exp>;
 };
 
@@ -7404,20 +7406,20 @@ export type Query_RootChatModerator_By_PkArgs = {
 
 /** query root */
 export type Query_RootChatReactionArgs = {
-  distinct_on?: Maybe<Array<ChatReaction_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatReaction_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatReaction_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatReaction_Order_By>>;
   where?: Maybe<ChatReaction_Bool_Exp>;
 };
 
 
 /** query root */
 export type Query_RootChatReaction_AggregateArgs = {
-  distinct_on?: Maybe<Array<ChatReaction_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatReaction_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatReaction_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatReaction_Order_By>>;
   where?: Maybe<ChatReaction_Bool_Exp>;
 };
 
@@ -7430,20 +7432,20 @@ export type Query_RootChatReaction_By_PkArgs = {
 
 /** query root */
 export type Query_RootChatTyperArgs = {
-  distinct_on?: Maybe<Array<ChatTyper_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatTyper_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatTyper_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatTyper_Order_By>>;
   where?: Maybe<ChatTyper_Bool_Exp>;
 };
 
 
 /** query root */
 export type Query_RootChatTyper_AggregateArgs = {
-  distinct_on?: Maybe<Array<ChatTyper_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatTyper_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatTyper_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatTyper_Order_By>>;
   where?: Maybe<ChatTyper_Bool_Exp>;
 };
 
@@ -7456,20 +7458,20 @@ export type Query_RootChatTyper_By_PkArgs = {
 
 /** query root */
 export type Query_RootChatUnreadIndexArgs = {
-  distinct_on?: Maybe<Array<ChatUnreadIndex_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatUnreadIndex_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatUnreadIndex_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatUnreadIndex_Order_By>>;
   where?: Maybe<ChatUnreadIndex_Bool_Exp>;
 };
 
 
 /** query root */
 export type Query_RootChatUnreadIndex_AggregateArgs = {
-  distinct_on?: Maybe<Array<ChatUnreadIndex_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatUnreadIndex_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatUnreadIndex_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatUnreadIndex_Order_By>>;
   where?: Maybe<ChatUnreadIndex_Bool_Exp>;
 };
 
@@ -7482,20 +7484,20 @@ export type Query_RootChatUnreadIndex_By_PkArgs = {
 
 /** query root */
 export type Query_RootChatViewerArgs = {
-  distinct_on?: Maybe<Array<ChatViewer_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatViewer_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatViewer_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatViewer_Order_By>>;
   where?: Maybe<ChatViewer_Bool_Exp>;
 };
 
 
 /** query root */
 export type Query_RootChatViewer_AggregateArgs = {
-  distinct_on?: Maybe<Array<ChatViewer_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatViewer_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatViewer_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatViewer_Order_By>>;
   where?: Maybe<ChatViewer_Bool_Exp>;
 };
 
@@ -7508,10 +7510,10 @@ export type Query_RootChatViewer_By_PkArgs = {
 
 /** query root */
 export type Query_RootChat_AggregateArgs = {
-  distinct_on?: Maybe<Array<Chat_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Chat_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Chat_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Chat_Order_By>>;
   where?: Maybe<Chat_Bool_Exp>;
 };
 
@@ -7524,30 +7526,30 @@ export type Query_RootChat_By_PkArgs = {
 
 /** query root */
 export type Query_RootConferenceArgs = {
-  distinct_on?: Maybe<Array<Conference_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Conference_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Conference_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Conference_Order_By>>;
   where?: Maybe<Conference_Bool_Exp>;
 };
 
 
 /** query root */
 export type Query_RootConferenceDemoCodeArgs = {
-  distinct_on?: Maybe<Array<ConferenceDemoCode_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ConferenceDemoCode_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ConferenceDemoCode_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ConferenceDemoCode_Order_By>>;
   where?: Maybe<ConferenceDemoCode_Bool_Exp>;
 };
 
 
 /** query root */
 export type Query_RootConferenceDemoCode_AggregateArgs = {
-  distinct_on?: Maybe<Array<ConferenceDemoCode_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ConferenceDemoCode_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ConferenceDemoCode_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ConferenceDemoCode_Order_By>>;
   where?: Maybe<ConferenceDemoCode_Bool_Exp>;
 };
 
@@ -7560,10 +7562,10 @@ export type Query_RootConferenceDemoCode_By_PkArgs = {
 
 /** query root */
 export type Query_RootConference_AggregateArgs = {
-  distinct_on?: Maybe<Array<Conference_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Conference_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Conference_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Conference_Order_By>>;
   where?: Maybe<Conference_Bool_Exp>;
 };
 
@@ -7576,20 +7578,20 @@ export type Query_RootConference_By_PkArgs = {
 
 /** query root */
 export type Query_RootFlaggedChatMessageArgs = {
-  distinct_on?: Maybe<Array<FlaggedChatMessage_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<FlaggedChatMessage_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<FlaggedChatMessage_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<FlaggedChatMessage_Order_By>>;
   where?: Maybe<FlaggedChatMessage_Bool_Exp>;
 };
 
 
 /** query root */
 export type Query_RootFlaggedChatMessage_AggregateArgs = {
-  distinct_on?: Maybe<Array<FlaggedChatMessage_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<FlaggedChatMessage_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<FlaggedChatMessage_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<FlaggedChatMessage_Order_By>>;
   where?: Maybe<FlaggedChatMessage_Bool_Exp>;
 };
 
@@ -7602,20 +7604,20 @@ export type Query_RootFlaggedChatMessage_By_PkArgs = {
 
 /** query root */
 export type Query_RootFollowedChatArgs = {
-  distinct_on?: Maybe<Array<FollowedChat_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<FollowedChat_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<FollowedChat_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<FollowedChat_Order_By>>;
   where?: Maybe<FollowedChat_Bool_Exp>;
 };
 
 
 /** query root */
 export type Query_RootFollowedChat_AggregateArgs = {
-  distinct_on?: Maybe<Array<FollowedChat_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<FollowedChat_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<FollowedChat_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<FollowedChat_Order_By>>;
   where?: Maybe<FollowedChat_Bool_Exp>;
 };
 
@@ -7628,30 +7630,30 @@ export type Query_RootFollowedChat_By_PkArgs = {
 
 /** query root */
 export type Query_RootGroupArgs = {
-  distinct_on?: Maybe<Array<Group_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Group_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Group_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Group_Order_By>>;
   where?: Maybe<Group_Bool_Exp>;
 };
 
 
 /** query root */
 export type Query_RootGroupAttendeeArgs = {
-  distinct_on?: Maybe<Array<GroupAttendee_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<GroupAttendee_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<GroupAttendee_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<GroupAttendee_Order_By>>;
   where?: Maybe<GroupAttendee_Bool_Exp>;
 };
 
 
 /** query root */
 export type Query_RootGroupAttendee_AggregateArgs = {
-  distinct_on?: Maybe<Array<GroupAttendee_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<GroupAttendee_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<GroupAttendee_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<GroupAttendee_Order_By>>;
   where?: Maybe<GroupAttendee_Bool_Exp>;
 };
 
@@ -7664,20 +7666,20 @@ export type Query_RootGroupAttendee_By_PkArgs = {
 
 /** query root */
 export type Query_RootGroupRoleArgs = {
-  distinct_on?: Maybe<Array<GroupRole_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<GroupRole_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<GroupRole_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<GroupRole_Order_By>>;
   where?: Maybe<GroupRole_Bool_Exp>;
 };
 
 
 /** query root */
 export type Query_RootGroupRole_AggregateArgs = {
-  distinct_on?: Maybe<Array<GroupRole_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<GroupRole_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<GroupRole_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<GroupRole_Order_By>>;
   where?: Maybe<GroupRole_Bool_Exp>;
 };
 
@@ -7690,10 +7692,10 @@ export type Query_RootGroupRole_By_PkArgs = {
 
 /** query root */
 export type Query_RootGroup_AggregateArgs = {
-  distinct_on?: Maybe<Array<Group_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Group_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Group_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Group_Order_By>>;
   where?: Maybe<Group_Bool_Exp>;
 };
 
@@ -7706,20 +7708,20 @@ export type Query_RootGroup_By_PkArgs = {
 
 /** query root */
 export type Query_RootOnlineStatusArgs = {
-  distinct_on?: Maybe<Array<OnlineStatus_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<OnlineStatus_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<OnlineStatus_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<OnlineStatus_Order_By>>;
   where?: Maybe<OnlineStatus_Bool_Exp>;
 };
 
 
 /** query root */
 export type Query_RootOnlineStatus_AggregateArgs = {
-  distinct_on?: Maybe<Array<OnlineStatus_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<OnlineStatus_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<OnlineStatus_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<OnlineStatus_Order_By>>;
   where?: Maybe<OnlineStatus_Bool_Exp>;
 };
 
@@ -7732,20 +7734,20 @@ export type Query_RootOnlineStatus_By_PkArgs = {
 
 /** query root */
 export type Query_RootPermissionArgs = {
-  distinct_on?: Maybe<Array<Permission_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Permission_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Permission_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Permission_Order_By>>;
   where?: Maybe<Permission_Bool_Exp>;
 };
 
 
 /** query root */
 export type Query_RootPermission_AggregateArgs = {
-  distinct_on?: Maybe<Array<Permission_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Permission_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Permission_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Permission_Order_By>>;
   where?: Maybe<Permission_Bool_Exp>;
 };
 
@@ -7758,20 +7760,20 @@ export type Query_RootPermission_By_PkArgs = {
 
 /** query root */
 export type Query_RootPinnedChatArgs = {
-  distinct_on?: Maybe<Array<PinnedChat_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<PinnedChat_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<PinnedChat_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<PinnedChat_Order_By>>;
   where?: Maybe<PinnedChat_Bool_Exp>;
 };
 
 
 /** query root */
 export type Query_RootPinnedChat_AggregateArgs = {
-  distinct_on?: Maybe<Array<PinnedChat_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<PinnedChat_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<PinnedChat_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<PinnedChat_Order_By>>;
   where?: Maybe<PinnedChat_Bool_Exp>;
 };
 
@@ -7784,30 +7786,30 @@ export type Query_RootPinnedChat_By_PkArgs = {
 
 /** query root */
 export type Query_RootRoleArgs = {
-  distinct_on?: Maybe<Array<Role_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Role_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Role_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Role_Order_By>>;
   where?: Maybe<Role_Bool_Exp>;
 };
 
 
 /** query root */
 export type Query_RootRolePermissionArgs = {
-  distinct_on?: Maybe<Array<RolePermission_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<RolePermission_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<RolePermission_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<RolePermission_Order_By>>;
   where?: Maybe<RolePermission_Bool_Exp>;
 };
 
 
 /** query root */
 export type Query_RootRolePermission_AggregateArgs = {
-  distinct_on?: Maybe<Array<RolePermission_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<RolePermission_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<RolePermission_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<RolePermission_Order_By>>;
   where?: Maybe<RolePermission_Bool_Exp>;
 };
 
@@ -7820,10 +7822,10 @@ export type Query_RootRolePermission_By_PkArgs = {
 
 /** query root */
 export type Query_RootRole_AggregateArgs = {
-  distinct_on?: Maybe<Array<Role_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Role_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Role_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Role_Order_By>>;
   where?: Maybe<Role_Bool_Exp>;
 };
 
@@ -7836,20 +7838,20 @@ export type Query_RootRole_By_PkArgs = {
 
 /** query root */
 export type Query_RootUserArgs = {
-  distinct_on?: Maybe<Array<User_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<User_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<User_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<User_Order_By>>;
   where?: Maybe<User_Bool_Exp>;
 };
 
 
 /** query root */
 export type Query_RootUser_AggregateArgs = {
-  distinct_on?: Maybe<Array<User_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<User_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<User_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<User_Order_By>>;
   where?: Maybe<User_Bool_Exp>;
 };
 
@@ -7873,202 +7875,202 @@ export type Query_RootProtectedEchoArgs = {
 
 /** subscription root */
 export type Subscription_Root = {
-  __typename?: 'subscription_root';
+  readonly __typename?: 'subscription_root';
   /** fetch data from the table: "ActiveGroup" */
-  ActiveGroup: Array<ActiveGroup>;
+  readonly ActiveGroup: ReadonlyArray<ActiveGroup>;
   /** fetch aggregated fields from the table: "ActiveGroup" */
-  ActiveGroup_aggregate: ActiveGroup_Aggregate;
+  readonly ActiveGroup_aggregate: ActiveGroup_Aggregate;
   /** fetch data from the table: "Attendee" */
-  Attendee: Array<Attendee>;
+  readonly Attendee: ReadonlyArray<Attendee>;
   /** fetch data from the table: "AttendeeStatus" */
-  AttendeeStatus: Array<AttendeeStatus>;
+  readonly AttendeeStatus: ReadonlyArray<AttendeeStatus>;
   /** fetch aggregated fields from the table: "AttendeeStatus" */
-  AttendeeStatus_aggregate: AttendeeStatus_Aggregate;
+  readonly AttendeeStatus_aggregate: AttendeeStatus_Aggregate;
   /** fetch data from the table: "AttendeeStatus" using primary key columns */
-  AttendeeStatus_by_pk?: Maybe<AttendeeStatus>;
+  readonly AttendeeStatus_by_pk?: Maybe<AttendeeStatus>;
   /** fetch aggregated fields from the table: "Attendee" */
-  Attendee_aggregate: Attendee_Aggregate;
+  readonly Attendee_aggregate: Attendee_Aggregate;
   /** fetch data from the table: "Attendee" using primary key columns */
-  Attendee_by_pk?: Maybe<Attendee>;
+  readonly Attendee_by_pk?: Maybe<Attendee>;
   /** fetch data from the table: "Chat" */
-  Chat: Array<Chat>;
+  readonly Chat: ReadonlyArray<Chat>;
   /** fetch data from the table: "ChatMember" */
-  ChatMember: Array<ChatMember>;
+  readonly ChatMember: ReadonlyArray<ChatMember>;
   /** fetch aggregated fields from the table: "ChatMember" */
-  ChatMember_aggregate: ChatMember_Aggregate;
+  readonly ChatMember_aggregate: ChatMember_Aggregate;
   /** fetch data from the table: "ChatMember" using primary key columns */
-  ChatMember_by_pk?: Maybe<ChatMember>;
+  readonly ChatMember_by_pk?: Maybe<ChatMember>;
   /** fetch data from the table: "ChatMessage" */
-  ChatMessage: Array<ChatMessage>;
+  readonly ChatMessage: ReadonlyArray<ChatMessage>;
   /** fetch aggregated fields from the table: "ChatMessage" */
-  ChatMessage_aggregate: ChatMessage_Aggregate;
+  readonly ChatMessage_aggregate: ChatMessage_Aggregate;
   /** fetch data from the table: "ChatMessage" using primary key columns */
-  ChatMessage_by_pk?: Maybe<ChatMessage>;
+  readonly ChatMessage_by_pk?: Maybe<ChatMessage>;
   /** fetch data from the table: "ChatModerator" */
-  ChatModerator: Array<ChatModerator>;
+  readonly ChatModerator: ReadonlyArray<ChatModerator>;
   /** fetch aggregated fields from the table: "ChatModerator" */
-  ChatModerator_aggregate: ChatModerator_Aggregate;
+  readonly ChatModerator_aggregate: ChatModerator_Aggregate;
   /** fetch data from the table: "ChatModerator" using primary key columns */
-  ChatModerator_by_pk?: Maybe<ChatModerator>;
+  readonly ChatModerator_by_pk?: Maybe<ChatModerator>;
   /** fetch data from the table: "ChatReaction" */
-  ChatReaction: Array<ChatReaction>;
+  readonly ChatReaction: ReadonlyArray<ChatReaction>;
   /** fetch aggregated fields from the table: "ChatReaction" */
-  ChatReaction_aggregate: ChatReaction_Aggregate;
+  readonly ChatReaction_aggregate: ChatReaction_Aggregate;
   /** fetch data from the table: "ChatReaction" using primary key columns */
-  ChatReaction_by_pk?: Maybe<ChatReaction>;
+  readonly ChatReaction_by_pk?: Maybe<ChatReaction>;
   /** fetch data from the table: "ChatTyper" */
-  ChatTyper: Array<ChatTyper>;
+  readonly ChatTyper: ReadonlyArray<ChatTyper>;
   /** fetch aggregated fields from the table: "ChatTyper" */
-  ChatTyper_aggregate: ChatTyper_Aggregate;
+  readonly ChatTyper_aggregate: ChatTyper_Aggregate;
   /** fetch data from the table: "ChatTyper" using primary key columns */
-  ChatTyper_by_pk?: Maybe<ChatTyper>;
+  readonly ChatTyper_by_pk?: Maybe<ChatTyper>;
   /** fetch data from the table: "ChatUnreadIndex" */
-  ChatUnreadIndex: Array<ChatUnreadIndex>;
+  readonly ChatUnreadIndex: ReadonlyArray<ChatUnreadIndex>;
   /** fetch aggregated fields from the table: "ChatUnreadIndex" */
-  ChatUnreadIndex_aggregate: ChatUnreadIndex_Aggregate;
+  readonly ChatUnreadIndex_aggregate: ChatUnreadIndex_Aggregate;
   /** fetch data from the table: "ChatUnreadIndex" using primary key columns */
-  ChatUnreadIndex_by_pk?: Maybe<ChatUnreadIndex>;
+  readonly ChatUnreadIndex_by_pk?: Maybe<ChatUnreadIndex>;
   /** fetch data from the table: "ChatViewer" */
-  ChatViewer: Array<ChatViewer>;
+  readonly ChatViewer: ReadonlyArray<ChatViewer>;
   /** fetch aggregated fields from the table: "ChatViewer" */
-  ChatViewer_aggregate: ChatViewer_Aggregate;
+  readonly ChatViewer_aggregate: ChatViewer_Aggregate;
   /** fetch data from the table: "ChatViewer" using primary key columns */
-  ChatViewer_by_pk?: Maybe<ChatViewer>;
+  readonly ChatViewer_by_pk?: Maybe<ChatViewer>;
   /** fetch aggregated fields from the table: "Chat" */
-  Chat_aggregate: Chat_Aggregate;
+  readonly Chat_aggregate: Chat_Aggregate;
   /** fetch data from the table: "Chat" using primary key columns */
-  Chat_by_pk?: Maybe<Chat>;
+  readonly Chat_by_pk?: Maybe<Chat>;
   /** fetch data from the table: "Conference" */
-  Conference: Array<Conference>;
+  readonly Conference: ReadonlyArray<Conference>;
   /** fetch data from the table: "ConferenceDemoCode" */
-  ConferenceDemoCode: Array<ConferenceDemoCode>;
+  readonly ConferenceDemoCode: ReadonlyArray<ConferenceDemoCode>;
   /** fetch aggregated fields from the table: "ConferenceDemoCode" */
-  ConferenceDemoCode_aggregate: ConferenceDemoCode_Aggregate;
+  readonly ConferenceDemoCode_aggregate: ConferenceDemoCode_Aggregate;
   /** fetch data from the table: "ConferenceDemoCode" using primary key columns */
-  ConferenceDemoCode_by_pk?: Maybe<ConferenceDemoCode>;
+  readonly ConferenceDemoCode_by_pk?: Maybe<ConferenceDemoCode>;
   /** fetch aggregated fields from the table: "Conference" */
-  Conference_aggregate: Conference_Aggregate;
+  readonly Conference_aggregate: Conference_Aggregate;
   /** fetch data from the table: "Conference" using primary key columns */
-  Conference_by_pk?: Maybe<Conference>;
+  readonly Conference_by_pk?: Maybe<Conference>;
   /** fetch data from the table: "FlaggedChatMessage" */
-  FlaggedChatMessage: Array<FlaggedChatMessage>;
+  readonly FlaggedChatMessage: ReadonlyArray<FlaggedChatMessage>;
   /** fetch aggregated fields from the table: "FlaggedChatMessage" */
-  FlaggedChatMessage_aggregate: FlaggedChatMessage_Aggregate;
+  readonly FlaggedChatMessage_aggregate: FlaggedChatMessage_Aggregate;
   /** fetch data from the table: "FlaggedChatMessage" using primary key columns */
-  FlaggedChatMessage_by_pk?: Maybe<FlaggedChatMessage>;
+  readonly FlaggedChatMessage_by_pk?: Maybe<FlaggedChatMessage>;
   /** fetch data from the table: "FollowedChat" */
-  FollowedChat: Array<FollowedChat>;
+  readonly FollowedChat: ReadonlyArray<FollowedChat>;
   /** fetch aggregated fields from the table: "FollowedChat" */
-  FollowedChat_aggregate: FollowedChat_Aggregate;
+  readonly FollowedChat_aggregate: FollowedChat_Aggregate;
   /** fetch data from the table: "FollowedChat" using primary key columns */
-  FollowedChat_by_pk?: Maybe<FollowedChat>;
+  readonly FollowedChat_by_pk?: Maybe<FollowedChat>;
   /** fetch data from the table: "Group" */
-  Group: Array<Group>;
+  readonly Group: ReadonlyArray<Group>;
   /** fetch data from the table: "GroupAttendee" */
-  GroupAttendee: Array<GroupAttendee>;
+  readonly GroupAttendee: ReadonlyArray<GroupAttendee>;
   /** fetch aggregated fields from the table: "GroupAttendee" */
-  GroupAttendee_aggregate: GroupAttendee_Aggregate;
+  readonly GroupAttendee_aggregate: GroupAttendee_Aggregate;
   /** fetch data from the table: "GroupAttendee" using primary key columns */
-  GroupAttendee_by_pk?: Maybe<GroupAttendee>;
+  readonly GroupAttendee_by_pk?: Maybe<GroupAttendee>;
   /** fetch data from the table: "GroupRole" */
-  GroupRole: Array<GroupRole>;
+  readonly GroupRole: ReadonlyArray<GroupRole>;
   /** fetch aggregated fields from the table: "GroupRole" */
-  GroupRole_aggregate: GroupRole_Aggregate;
+  readonly GroupRole_aggregate: GroupRole_Aggregate;
   /** fetch data from the table: "GroupRole" using primary key columns */
-  GroupRole_by_pk?: Maybe<GroupRole>;
+  readonly GroupRole_by_pk?: Maybe<GroupRole>;
   /** fetch aggregated fields from the table: "Group" */
-  Group_aggregate: Group_Aggregate;
+  readonly Group_aggregate: Group_Aggregate;
   /** fetch data from the table: "Group" using primary key columns */
-  Group_by_pk?: Maybe<Group>;
+  readonly Group_by_pk?: Maybe<Group>;
   /** fetch data from the table: "OnlineStatus" */
-  OnlineStatus: Array<OnlineStatus>;
+  readonly OnlineStatus: ReadonlyArray<OnlineStatus>;
   /** fetch aggregated fields from the table: "OnlineStatus" */
-  OnlineStatus_aggregate: OnlineStatus_Aggregate;
+  readonly OnlineStatus_aggregate: OnlineStatus_Aggregate;
   /** fetch data from the table: "OnlineStatus" using primary key columns */
-  OnlineStatus_by_pk?: Maybe<OnlineStatus>;
+  readonly OnlineStatus_by_pk?: Maybe<OnlineStatus>;
   /** fetch data from the table: "Permission" */
-  Permission: Array<Permission>;
+  readonly Permission: ReadonlyArray<Permission>;
   /** fetch aggregated fields from the table: "Permission" */
-  Permission_aggregate: Permission_Aggregate;
+  readonly Permission_aggregate: Permission_Aggregate;
   /** fetch data from the table: "Permission" using primary key columns */
-  Permission_by_pk?: Maybe<Permission>;
+  readonly Permission_by_pk?: Maybe<Permission>;
   /** fetch data from the table: "PinnedChat" */
-  PinnedChat: Array<PinnedChat>;
+  readonly PinnedChat: ReadonlyArray<PinnedChat>;
   /** fetch aggregated fields from the table: "PinnedChat" */
-  PinnedChat_aggregate: PinnedChat_Aggregate;
+  readonly PinnedChat_aggregate: PinnedChat_Aggregate;
   /** fetch data from the table: "PinnedChat" using primary key columns */
-  PinnedChat_by_pk?: Maybe<PinnedChat>;
+  readonly PinnedChat_by_pk?: Maybe<PinnedChat>;
   /** fetch data from the table: "Role" */
-  Role: Array<Role>;
+  readonly Role: ReadonlyArray<Role>;
   /** fetch data from the table: "RolePermission" */
-  RolePermission: Array<RolePermission>;
+  readonly RolePermission: ReadonlyArray<RolePermission>;
   /** fetch aggregated fields from the table: "RolePermission" */
-  RolePermission_aggregate: RolePermission_Aggregate;
+  readonly RolePermission_aggregate: RolePermission_Aggregate;
   /** fetch data from the table: "RolePermission" using primary key columns */
-  RolePermission_by_pk?: Maybe<RolePermission>;
+  readonly RolePermission_by_pk?: Maybe<RolePermission>;
   /** fetch aggregated fields from the table: "Role" */
-  Role_aggregate: Role_Aggregate;
+  readonly Role_aggregate: Role_Aggregate;
   /** fetch data from the table: "Role" using primary key columns */
-  Role_by_pk?: Maybe<Role>;
+  readonly Role_by_pk?: Maybe<Role>;
   /** fetch data from the table: "User" */
-  User: Array<User>;
+  readonly User: ReadonlyArray<User>;
   /** fetch aggregated fields from the table: "User" */
-  User_aggregate: User_Aggregate;
+  readonly User_aggregate: User_Aggregate;
   /** fetch data from the table: "User" using primary key columns */
-  User_by_pk?: Maybe<User>;
+  readonly User_by_pk?: Maybe<User>;
   /** perform the action: "echo" */
-  echo?: Maybe<EchoOutput>;
+  readonly echo?: Maybe<EchoOutput>;
   /** perform the action: "protectedEcho" */
-  protectedEcho?: Maybe<ProtectedEchoOutput>;
+  readonly protectedEcho?: Maybe<ProtectedEchoOutput>;
 };
 
 
 /** subscription root */
 export type Subscription_RootActiveGroupArgs = {
-  distinct_on?: Maybe<Array<ActiveGroup_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ActiveGroup_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ActiveGroup_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ActiveGroup_Order_By>>;
   where?: Maybe<ActiveGroup_Bool_Exp>;
 };
 
 
 /** subscription root */
 export type Subscription_RootActiveGroup_AggregateArgs = {
-  distinct_on?: Maybe<Array<ActiveGroup_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ActiveGroup_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ActiveGroup_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ActiveGroup_Order_By>>;
   where?: Maybe<ActiveGroup_Bool_Exp>;
 };
 
 
 /** subscription root */
 export type Subscription_RootAttendeeArgs = {
-  distinct_on?: Maybe<Array<Attendee_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Attendee_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Attendee_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Attendee_Order_By>>;
   where?: Maybe<Attendee_Bool_Exp>;
 };
 
 
 /** subscription root */
 export type Subscription_RootAttendeeStatusArgs = {
-  distinct_on?: Maybe<Array<AttendeeStatus_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<AttendeeStatus_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<AttendeeStatus_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<AttendeeStatus_Order_By>>;
   where?: Maybe<AttendeeStatus_Bool_Exp>;
 };
 
 
 /** subscription root */
 export type Subscription_RootAttendeeStatus_AggregateArgs = {
-  distinct_on?: Maybe<Array<AttendeeStatus_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<AttendeeStatus_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<AttendeeStatus_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<AttendeeStatus_Order_By>>;
   where?: Maybe<AttendeeStatus_Bool_Exp>;
 };
 
@@ -8081,10 +8083,10 @@ export type Subscription_RootAttendeeStatus_By_PkArgs = {
 
 /** subscription root */
 export type Subscription_RootAttendee_AggregateArgs = {
-  distinct_on?: Maybe<Array<Attendee_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Attendee_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Attendee_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Attendee_Order_By>>;
   where?: Maybe<Attendee_Bool_Exp>;
 };
 
@@ -8097,30 +8099,30 @@ export type Subscription_RootAttendee_By_PkArgs = {
 
 /** subscription root */
 export type Subscription_RootChatArgs = {
-  distinct_on?: Maybe<Array<Chat_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Chat_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Chat_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Chat_Order_By>>;
   where?: Maybe<Chat_Bool_Exp>;
 };
 
 
 /** subscription root */
 export type Subscription_RootChatMemberArgs = {
-  distinct_on?: Maybe<Array<ChatMember_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatMember_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatMember_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatMember_Order_By>>;
   where?: Maybe<ChatMember_Bool_Exp>;
 };
 
 
 /** subscription root */
 export type Subscription_RootChatMember_AggregateArgs = {
-  distinct_on?: Maybe<Array<ChatMember_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatMember_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatMember_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatMember_Order_By>>;
   where?: Maybe<ChatMember_Bool_Exp>;
 };
 
@@ -8133,20 +8135,20 @@ export type Subscription_RootChatMember_By_PkArgs = {
 
 /** subscription root */
 export type Subscription_RootChatMessageArgs = {
-  distinct_on?: Maybe<Array<ChatMessage_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatMessage_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatMessage_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatMessage_Order_By>>;
   where?: Maybe<ChatMessage_Bool_Exp>;
 };
 
 
 /** subscription root */
 export type Subscription_RootChatMessage_AggregateArgs = {
-  distinct_on?: Maybe<Array<ChatMessage_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatMessage_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatMessage_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatMessage_Order_By>>;
   where?: Maybe<ChatMessage_Bool_Exp>;
 };
 
@@ -8159,20 +8161,20 @@ export type Subscription_RootChatMessage_By_PkArgs = {
 
 /** subscription root */
 export type Subscription_RootChatModeratorArgs = {
-  distinct_on?: Maybe<Array<ChatModerator_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatModerator_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatModerator_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatModerator_Order_By>>;
   where?: Maybe<ChatModerator_Bool_Exp>;
 };
 
 
 /** subscription root */
 export type Subscription_RootChatModerator_AggregateArgs = {
-  distinct_on?: Maybe<Array<ChatModerator_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatModerator_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatModerator_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatModerator_Order_By>>;
   where?: Maybe<ChatModerator_Bool_Exp>;
 };
 
@@ -8185,20 +8187,20 @@ export type Subscription_RootChatModerator_By_PkArgs = {
 
 /** subscription root */
 export type Subscription_RootChatReactionArgs = {
-  distinct_on?: Maybe<Array<ChatReaction_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatReaction_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatReaction_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatReaction_Order_By>>;
   where?: Maybe<ChatReaction_Bool_Exp>;
 };
 
 
 /** subscription root */
 export type Subscription_RootChatReaction_AggregateArgs = {
-  distinct_on?: Maybe<Array<ChatReaction_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatReaction_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatReaction_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatReaction_Order_By>>;
   where?: Maybe<ChatReaction_Bool_Exp>;
 };
 
@@ -8211,20 +8213,20 @@ export type Subscription_RootChatReaction_By_PkArgs = {
 
 /** subscription root */
 export type Subscription_RootChatTyperArgs = {
-  distinct_on?: Maybe<Array<ChatTyper_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatTyper_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatTyper_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatTyper_Order_By>>;
   where?: Maybe<ChatTyper_Bool_Exp>;
 };
 
 
 /** subscription root */
 export type Subscription_RootChatTyper_AggregateArgs = {
-  distinct_on?: Maybe<Array<ChatTyper_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatTyper_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatTyper_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatTyper_Order_By>>;
   where?: Maybe<ChatTyper_Bool_Exp>;
 };
 
@@ -8237,20 +8239,20 @@ export type Subscription_RootChatTyper_By_PkArgs = {
 
 /** subscription root */
 export type Subscription_RootChatUnreadIndexArgs = {
-  distinct_on?: Maybe<Array<ChatUnreadIndex_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatUnreadIndex_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatUnreadIndex_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatUnreadIndex_Order_By>>;
   where?: Maybe<ChatUnreadIndex_Bool_Exp>;
 };
 
 
 /** subscription root */
 export type Subscription_RootChatUnreadIndex_AggregateArgs = {
-  distinct_on?: Maybe<Array<ChatUnreadIndex_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatUnreadIndex_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatUnreadIndex_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatUnreadIndex_Order_By>>;
   where?: Maybe<ChatUnreadIndex_Bool_Exp>;
 };
 
@@ -8263,20 +8265,20 @@ export type Subscription_RootChatUnreadIndex_By_PkArgs = {
 
 /** subscription root */
 export type Subscription_RootChatViewerArgs = {
-  distinct_on?: Maybe<Array<ChatViewer_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatViewer_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatViewer_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatViewer_Order_By>>;
   where?: Maybe<ChatViewer_Bool_Exp>;
 };
 
 
 /** subscription root */
 export type Subscription_RootChatViewer_AggregateArgs = {
-  distinct_on?: Maybe<Array<ChatViewer_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ChatViewer_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ChatViewer_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ChatViewer_Order_By>>;
   where?: Maybe<ChatViewer_Bool_Exp>;
 };
 
@@ -8289,10 +8291,10 @@ export type Subscription_RootChatViewer_By_PkArgs = {
 
 /** subscription root */
 export type Subscription_RootChat_AggregateArgs = {
-  distinct_on?: Maybe<Array<Chat_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Chat_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Chat_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Chat_Order_By>>;
   where?: Maybe<Chat_Bool_Exp>;
 };
 
@@ -8305,30 +8307,30 @@ export type Subscription_RootChat_By_PkArgs = {
 
 /** subscription root */
 export type Subscription_RootConferenceArgs = {
-  distinct_on?: Maybe<Array<Conference_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Conference_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Conference_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Conference_Order_By>>;
   where?: Maybe<Conference_Bool_Exp>;
 };
 
 
 /** subscription root */
 export type Subscription_RootConferenceDemoCodeArgs = {
-  distinct_on?: Maybe<Array<ConferenceDemoCode_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ConferenceDemoCode_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ConferenceDemoCode_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ConferenceDemoCode_Order_By>>;
   where?: Maybe<ConferenceDemoCode_Bool_Exp>;
 };
 
 
 /** subscription root */
 export type Subscription_RootConferenceDemoCode_AggregateArgs = {
-  distinct_on?: Maybe<Array<ConferenceDemoCode_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ConferenceDemoCode_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<ConferenceDemoCode_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<ConferenceDemoCode_Order_By>>;
   where?: Maybe<ConferenceDemoCode_Bool_Exp>;
 };
 
@@ -8341,10 +8343,10 @@ export type Subscription_RootConferenceDemoCode_By_PkArgs = {
 
 /** subscription root */
 export type Subscription_RootConference_AggregateArgs = {
-  distinct_on?: Maybe<Array<Conference_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Conference_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Conference_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Conference_Order_By>>;
   where?: Maybe<Conference_Bool_Exp>;
 };
 
@@ -8357,20 +8359,20 @@ export type Subscription_RootConference_By_PkArgs = {
 
 /** subscription root */
 export type Subscription_RootFlaggedChatMessageArgs = {
-  distinct_on?: Maybe<Array<FlaggedChatMessage_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<FlaggedChatMessage_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<FlaggedChatMessage_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<FlaggedChatMessage_Order_By>>;
   where?: Maybe<FlaggedChatMessage_Bool_Exp>;
 };
 
 
 /** subscription root */
 export type Subscription_RootFlaggedChatMessage_AggregateArgs = {
-  distinct_on?: Maybe<Array<FlaggedChatMessage_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<FlaggedChatMessage_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<FlaggedChatMessage_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<FlaggedChatMessage_Order_By>>;
   where?: Maybe<FlaggedChatMessage_Bool_Exp>;
 };
 
@@ -8383,20 +8385,20 @@ export type Subscription_RootFlaggedChatMessage_By_PkArgs = {
 
 /** subscription root */
 export type Subscription_RootFollowedChatArgs = {
-  distinct_on?: Maybe<Array<FollowedChat_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<FollowedChat_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<FollowedChat_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<FollowedChat_Order_By>>;
   where?: Maybe<FollowedChat_Bool_Exp>;
 };
 
 
 /** subscription root */
 export type Subscription_RootFollowedChat_AggregateArgs = {
-  distinct_on?: Maybe<Array<FollowedChat_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<FollowedChat_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<FollowedChat_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<FollowedChat_Order_By>>;
   where?: Maybe<FollowedChat_Bool_Exp>;
 };
 
@@ -8409,30 +8411,30 @@ export type Subscription_RootFollowedChat_By_PkArgs = {
 
 /** subscription root */
 export type Subscription_RootGroupArgs = {
-  distinct_on?: Maybe<Array<Group_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Group_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Group_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Group_Order_By>>;
   where?: Maybe<Group_Bool_Exp>;
 };
 
 
 /** subscription root */
 export type Subscription_RootGroupAttendeeArgs = {
-  distinct_on?: Maybe<Array<GroupAttendee_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<GroupAttendee_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<GroupAttendee_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<GroupAttendee_Order_By>>;
   where?: Maybe<GroupAttendee_Bool_Exp>;
 };
 
 
 /** subscription root */
 export type Subscription_RootGroupAttendee_AggregateArgs = {
-  distinct_on?: Maybe<Array<GroupAttendee_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<GroupAttendee_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<GroupAttendee_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<GroupAttendee_Order_By>>;
   where?: Maybe<GroupAttendee_Bool_Exp>;
 };
 
@@ -8445,20 +8447,20 @@ export type Subscription_RootGroupAttendee_By_PkArgs = {
 
 /** subscription root */
 export type Subscription_RootGroupRoleArgs = {
-  distinct_on?: Maybe<Array<GroupRole_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<GroupRole_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<GroupRole_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<GroupRole_Order_By>>;
   where?: Maybe<GroupRole_Bool_Exp>;
 };
 
 
 /** subscription root */
 export type Subscription_RootGroupRole_AggregateArgs = {
-  distinct_on?: Maybe<Array<GroupRole_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<GroupRole_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<GroupRole_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<GroupRole_Order_By>>;
   where?: Maybe<GroupRole_Bool_Exp>;
 };
 
@@ -8471,10 +8473,10 @@ export type Subscription_RootGroupRole_By_PkArgs = {
 
 /** subscription root */
 export type Subscription_RootGroup_AggregateArgs = {
-  distinct_on?: Maybe<Array<Group_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Group_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Group_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Group_Order_By>>;
   where?: Maybe<Group_Bool_Exp>;
 };
 
@@ -8487,20 +8489,20 @@ export type Subscription_RootGroup_By_PkArgs = {
 
 /** subscription root */
 export type Subscription_RootOnlineStatusArgs = {
-  distinct_on?: Maybe<Array<OnlineStatus_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<OnlineStatus_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<OnlineStatus_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<OnlineStatus_Order_By>>;
   where?: Maybe<OnlineStatus_Bool_Exp>;
 };
 
 
 /** subscription root */
 export type Subscription_RootOnlineStatus_AggregateArgs = {
-  distinct_on?: Maybe<Array<OnlineStatus_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<OnlineStatus_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<OnlineStatus_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<OnlineStatus_Order_By>>;
   where?: Maybe<OnlineStatus_Bool_Exp>;
 };
 
@@ -8513,20 +8515,20 @@ export type Subscription_RootOnlineStatus_By_PkArgs = {
 
 /** subscription root */
 export type Subscription_RootPermissionArgs = {
-  distinct_on?: Maybe<Array<Permission_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Permission_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Permission_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Permission_Order_By>>;
   where?: Maybe<Permission_Bool_Exp>;
 };
 
 
 /** subscription root */
 export type Subscription_RootPermission_AggregateArgs = {
-  distinct_on?: Maybe<Array<Permission_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Permission_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Permission_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Permission_Order_By>>;
   where?: Maybe<Permission_Bool_Exp>;
 };
 
@@ -8539,20 +8541,20 @@ export type Subscription_RootPermission_By_PkArgs = {
 
 /** subscription root */
 export type Subscription_RootPinnedChatArgs = {
-  distinct_on?: Maybe<Array<PinnedChat_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<PinnedChat_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<PinnedChat_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<PinnedChat_Order_By>>;
   where?: Maybe<PinnedChat_Bool_Exp>;
 };
 
 
 /** subscription root */
 export type Subscription_RootPinnedChat_AggregateArgs = {
-  distinct_on?: Maybe<Array<PinnedChat_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<PinnedChat_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<PinnedChat_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<PinnedChat_Order_By>>;
   where?: Maybe<PinnedChat_Bool_Exp>;
 };
 
@@ -8565,30 +8567,30 @@ export type Subscription_RootPinnedChat_By_PkArgs = {
 
 /** subscription root */
 export type Subscription_RootRoleArgs = {
-  distinct_on?: Maybe<Array<Role_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Role_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Role_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Role_Order_By>>;
   where?: Maybe<Role_Bool_Exp>;
 };
 
 
 /** subscription root */
 export type Subscription_RootRolePermissionArgs = {
-  distinct_on?: Maybe<Array<RolePermission_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<RolePermission_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<RolePermission_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<RolePermission_Order_By>>;
   where?: Maybe<RolePermission_Bool_Exp>;
 };
 
 
 /** subscription root */
 export type Subscription_RootRolePermission_AggregateArgs = {
-  distinct_on?: Maybe<Array<RolePermission_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<RolePermission_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<RolePermission_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<RolePermission_Order_By>>;
   where?: Maybe<RolePermission_Bool_Exp>;
 };
 
@@ -8601,10 +8603,10 @@ export type Subscription_RootRolePermission_By_PkArgs = {
 
 /** subscription root */
 export type Subscription_RootRole_AggregateArgs = {
-  distinct_on?: Maybe<Array<Role_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<Role_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<Role_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<Role_Order_By>>;
   where?: Maybe<Role_Bool_Exp>;
 };
 
@@ -8617,20 +8619,20 @@ export type Subscription_RootRole_By_PkArgs = {
 
 /** subscription root */
 export type Subscription_RootUserArgs = {
-  distinct_on?: Maybe<Array<User_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<User_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<User_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<User_Order_By>>;
   where?: Maybe<User_Bool_Exp>;
 };
 
 
 /** subscription root */
 export type Subscription_RootUser_AggregateArgs = {
-  distinct_on?: Maybe<Array<User_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<User_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<Array<User_Order_By>>;
+  order_by?: Maybe<ReadonlyArray<User_Order_By>>;
   where?: Maybe<User_Bool_Exp>;
 };
 
@@ -8655,29 +8657,29 @@ export type Subscription_RootProtectedEchoArgs = {
 
 /** expression to compare columns of type timestamptz. All fields are combined with logical 'AND'. */
 export type Timestamptz_Comparison_Exp = {
-  _eq?: Maybe<Scalars['timestamptz']>;
-  _gt?: Maybe<Scalars['timestamptz']>;
-  _gte?: Maybe<Scalars['timestamptz']>;
-  _in?: Maybe<Array<Scalars['timestamptz']>>;
-  _is_null?: Maybe<Scalars['Boolean']>;
-  _lt?: Maybe<Scalars['timestamptz']>;
-  _lte?: Maybe<Scalars['timestamptz']>;
-  _neq?: Maybe<Scalars['timestamptz']>;
-  _nin?: Maybe<Array<Scalars['timestamptz']>>;
+  readonly _eq?: Maybe<Scalars['timestamptz']>;
+  readonly _gt?: Maybe<Scalars['timestamptz']>;
+  readonly _gte?: Maybe<Scalars['timestamptz']>;
+  readonly _in?: Maybe<ReadonlyArray<Scalars['timestamptz']>>;
+  readonly _is_null?: Maybe<Scalars['Boolean']>;
+  readonly _lt?: Maybe<Scalars['timestamptz']>;
+  readonly _lte?: Maybe<Scalars['timestamptz']>;
+  readonly _neq?: Maybe<Scalars['timestamptz']>;
+  readonly _nin?: Maybe<ReadonlyArray<Scalars['timestamptz']>>;
 };
 
 
 /** expression to compare columns of type uuid. All fields are combined with logical 'AND'. */
 export type Uuid_Comparison_Exp = {
-  _eq?: Maybe<Scalars['uuid']>;
-  _gt?: Maybe<Scalars['uuid']>;
-  _gte?: Maybe<Scalars['uuid']>;
-  _in?: Maybe<Array<Scalars['uuid']>>;
-  _is_null?: Maybe<Scalars['Boolean']>;
-  _lt?: Maybe<Scalars['uuid']>;
-  _lte?: Maybe<Scalars['uuid']>;
-  _neq?: Maybe<Scalars['uuid']>;
-  _nin?: Maybe<Array<Scalars['uuid']>>;
+  readonly _eq?: Maybe<Scalars['uuid']>;
+  readonly _gt?: Maybe<Scalars['uuid']>;
+  readonly _gte?: Maybe<Scalars['uuid']>;
+  readonly _in?: Maybe<ReadonlyArray<Scalars['uuid']>>;
+  readonly _is_null?: Maybe<Scalars['Boolean']>;
+  readonly _lt?: Maybe<Scalars['uuid']>;
+  readonly _lte?: Maybe<Scalars['uuid']>;
+  readonly _neq?: Maybe<Scalars['uuid']>;
+  readonly _nin?: Maybe<ReadonlyArray<Scalars['uuid']>>;
 };
 
 export type CreateChatMutationVariables = Exact<{
@@ -8686,57 +8688,19 @@ export type CreateChatMutationVariables = Exact<{
 }>;
 
 
-export type CreateChatMutation = (
-  { __typename?: 'mutation_root' }
-  & { insert_Chat?: Maybe<(
-    { __typename?: 'Chat_mutation_response' }
-    & { returning: Array<(
-      { __typename?: 'Chat' }
-      & Pick<Chat, 'id'>
-    )> }
-  )> }
-);
+export type CreateChatMutation = { readonly __typename?: 'mutation_root', readonly insert_Chat?: Maybe<{ readonly __typename?: 'Chat_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Chat', readonly id: any }> }> };
 
 export type SelectChatsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SelectChatsQuery = (
-  { __typename?: 'query_root' }
-  & { Chat: Array<(
-    { __typename?: 'Chat' }
-    & Pick<Chat, 'id' | 'name' | 'description' | 'mode'>
-    & { members: Array<(
-      { __typename?: 'ChatMember' }
-      & Pick<ChatMember, 'userId'>
-    )>, viewers: Array<(
-      { __typename?: 'ChatViewer' }
-      & Pick<ChatViewer, 'id' | 'lastSeen' | 'userId'>
-    )> }
-  )> }
-);
+export type SelectChatsQuery = { readonly __typename?: 'query_root', readonly Chat: ReadonlyArray<{ readonly __typename?: 'Chat', readonly id: any, readonly name: string, readonly description?: Maybe<string>, readonly mode: string, readonly members: ReadonlyArray<{ readonly __typename?: 'ChatMember', readonly userId: string }>, readonly viewers: ReadonlyArray<{ readonly __typename?: 'ChatViewer', readonly id: any, readonly lastSeen: any, readonly userId: string }> }> };
 
 export type SelectChatQueryVariables = Exact<{
   chatId: Scalars['uuid'];
 }>;
 
 
-export type SelectChatQuery = (
-  { __typename?: 'query_root' }
-  & { Chat: Array<(
-    { __typename?: 'Chat' }
-    & Pick<Chat, 'description' | 'creatorId' | 'createdAt' | 'mode' | 'name' | 'isAutoNotify' | 'isAutoPin' | 'id' | 'updatedAt'>
-    & { moderators: Array<(
-      { __typename?: 'ChatModerator' }
-      & Pick<ChatModerator, 'id' | 'createdAt' | 'userId'>
-    )>, members: Array<(
-      { __typename?: 'ChatMember' }
-      & Pick<ChatMember, 'userId' | 'id' | 'invitationAcceptedAt' | 'updatedAt' | 'createdAt'>
-    )>, creator: (
-      { __typename?: 'User' }
-      & Pick<User, 'firstName' | 'lastName' | 'id'>
-    ) }
-  )> }
-);
+export type SelectChatQuery = { readonly __typename?: 'query_root', readonly Chat: ReadonlyArray<{ readonly __typename?: 'Chat', readonly description?: Maybe<string>, readonly creatorId: string, readonly createdAt: any, readonly mode: string, readonly name: string, readonly isAutoNotify: boolean, readonly isAutoPin: boolean, readonly id: any, readonly updatedAt: any, readonly moderators: ReadonlyArray<{ readonly __typename?: 'ChatModerator', readonly id: any, readonly createdAt: any, readonly userId: string }>, readonly members: ReadonlyArray<{ readonly __typename?: 'ChatMember', readonly userId: string, readonly id: any, readonly invitationAcceptedAt?: Maybe<any>, readonly updatedAt: any, readonly createdAt: any }>, readonly creator: { readonly __typename?: 'User', readonly firstName: string, readonly lastName: string, readonly id: string } }> };
 
 export type InsertMessageMutationVariables = Exact<{
   chatId: Scalars['uuid'];
@@ -8745,13 +8709,7 @@ export type InsertMessageMutationVariables = Exact<{
 }>;
 
 
-export type InsertMessageMutation = (
-  { __typename?: 'mutation_root' }
-  & { insert_ChatMessage?: Maybe<(
-    { __typename?: 'ChatMessage_mutation_response' }
-    & Pick<ChatMessage_Mutation_Response, 'affected_rows'>
-  )> }
-);
+export type InsertMessageMutation = { readonly __typename?: 'mutation_root', readonly insert_ChatMessage?: Maybe<{ readonly __typename?: 'ChatMessage_mutation_response', readonly affected_rows: number }> };
 
 export type LiveChatSubscriptionVariables = Exact<{
   chatId: Scalars['uuid'];
@@ -8760,27 +8718,7 @@ export type LiveChatSubscriptionVariables = Exact<{
 }>;
 
 
-export type LiveChatSubscription = (
-  { __typename?: 'subscription_root' }
-  & { Chat: Array<(
-    { __typename?: 'Chat' }
-    & Pick<Chat, 'id'>
-    & { typers: Array<(
-      { __typename?: 'ChatTyper' }
-      & Pick<ChatTyper, 'id' | 'userId' | 'updatedAt'>
-    )>, messages: Array<(
-      { __typename?: 'ChatMessage' }
-      & Pick<ChatMessage, 'content' | 'createdAt' | 'id' | 'index' | 'isHighlighted' | 'senderId' | 'updatedAt'>
-      & { reactions: Array<(
-        { __typename?: 'ChatReaction' }
-        & Pick<ChatReaction, 'id' | 'createdAt' | 'reaction' | 'reactorId'>
-      )> }
-    )>, viewers: Array<(
-      { __typename?: 'ChatViewer' }
-      & Pick<ChatViewer, 'id' | 'lastSeen' | 'userId'>
-    )> }
-  )> }
-);
+export type LiveChatSubscription = { readonly __typename?: 'subscription_root', readonly Chat: ReadonlyArray<{ readonly __typename?: 'Chat', readonly id: any, readonly typers: ReadonlyArray<{ readonly __typename?: 'ChatTyper', readonly id: any, readonly userId: string, readonly updatedAt: any }>, readonly messages: ReadonlyArray<{ readonly __typename?: 'ChatMessage', readonly content: any, readonly createdAt: any, readonly id: any, readonly index: number, readonly isHighlighted: boolean, readonly senderId: string, readonly updatedAt: any, readonly reactions: ReadonlyArray<{ readonly __typename?: 'ChatReaction', readonly id: any, readonly createdAt: any, readonly reaction: string, readonly reactorId: string }> }>, readonly viewers: ReadonlyArray<{ readonly __typename?: 'ChatViewer', readonly id: any, readonly lastSeen: any, readonly userId: string }> }> };
 
 export type UpsertIsTypingMutationVariables = Exact<{
   chatId: Scalars['uuid'];
@@ -8788,16 +8726,7 @@ export type UpsertIsTypingMutationVariables = Exact<{
 }>;
 
 
-export type UpsertIsTypingMutation = (
-  { __typename?: 'mutation_root' }
-  & { insert_ChatTyper?: Maybe<(
-    { __typename?: 'ChatTyper_mutation_response' }
-    & { returning: Array<(
-      { __typename?: 'ChatTyper' }
-      & Pick<ChatTyper, 'id' | 'updatedAt' | 'chatId' | 'userId'>
-    )> }
-  )> }
-);
+export type UpsertIsTypingMutation = { readonly __typename?: 'mutation_root', readonly insert_ChatTyper?: Maybe<{ readonly __typename?: 'ChatTyper_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ChatTyper', readonly id: any, readonly updatedAt: any, readonly chatId: any, readonly userId: string }> }> };
 
 export type DeleteIsTypingMutationVariables = Exact<{
   chatId: Scalars['uuid'];
@@ -8805,29 +8734,7 @@ export type DeleteIsTypingMutationVariables = Exact<{
 }>;
 
 
-export type DeleteIsTypingMutation = (
-  { __typename?: 'mutation_root' }
-  & { delete_ChatTyper?: Maybe<(
-    { __typename?: 'ChatTyper_mutation_response' }
-    & { returning: Array<(
-      { __typename?: 'ChatTyper' }
-      & Pick<ChatTyper, 'id'>
-    )> }
-  )> }
-);
-
-export type ConferenceBySlugQueryVariables = Exact<{
-  slug: Scalars['String'];
-}>;
-
-
-export type ConferenceBySlugQuery = (
-  { __typename?: 'query_root' }
-  & { Conference: Array<(
-    { __typename?: 'Conference' }
-    & Pick<Conference, 'createdBy' | 'id' | 'name' | 'shortName' | 'slug' | 'updatedAt' | 'createdAt'>
-  )> }
-);
+export type DeleteIsTypingMutation = { readonly __typename?: 'mutation_root', readonly delete_ChatTyper?: Maybe<{ readonly __typename?: 'ChatTyper_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ChatTyper', readonly id: any }> }> };
 
 export type UpdateConferenceMutationVariables = Exact<{
   id: Scalars['uuid'];
@@ -8837,16 +8744,7 @@ export type UpdateConferenceMutationVariables = Exact<{
 }>;
 
 
-export type UpdateConferenceMutation = (
-  { __typename?: 'mutation_root' }
-  & { update_Conference?: Maybe<(
-    { __typename?: 'Conference_mutation_response' }
-    & { returning: Array<(
-      { __typename?: 'Conference' }
-      & Pick<Conference, 'id' | 'name' | 'shortName' | 'slug'>
-    )> }
-  )> }
-);
+export type UpdateConferenceMutation = { readonly __typename?: 'mutation_root', readonly update_Conference?: Maybe<{ readonly __typename?: 'Conference_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string }> }> };
 
 export type ConferenceTakenQueryVariables = Exact<{
   name: Scalars['String'];
@@ -8855,13 +8753,7 @@ export type ConferenceTakenQueryVariables = Exact<{
 }>;
 
 
-export type ConferenceTakenQuery = (
-  { __typename?: 'query_root' }
-  & { Conference: Array<(
-    { __typename?: 'Conference' }
-    & Pick<Conference, 'id' | 'name' | 'shortName' | 'slug'>
-  )> }
-);
+export type ConferenceTakenQuery = { readonly __typename?: 'query_root', readonly Conference: ReadonlyArray<{ readonly __typename?: 'Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string }> };
 
 export type CreateConferenceMutationVariables = Exact<{
   name: Scalars['String'];
@@ -8871,19 +8763,7 @@ export type CreateConferenceMutationVariables = Exact<{
 }>;
 
 
-export type CreateConferenceMutation = (
-  { __typename?: 'mutation_root' }
-  & { insert_Conference?: Maybe<(
-    { __typename?: 'Conference_mutation_response' }
-    & { returning: Array<(
-      { __typename?: 'Conference' }
-      & Pick<Conference, 'id' | 'slug'>
-    )> }
-  )>, update_ConferenceDemoCode?: Maybe<(
-    { __typename?: 'ConferenceDemoCode_mutation_response' }
-    & Pick<ConferenceDemoCode_Mutation_Response, 'affected_rows'>
-  )> }
-);
+export type CreateConferenceMutation = { readonly __typename?: 'mutation_root', readonly insert_Conference?: Maybe<{ readonly __typename?: 'Conference_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Conference', readonly id: any, readonly slug: string }> }>, readonly update_ConferenceDemoCode?: Maybe<{ readonly __typename?: 'ConferenceDemoCode_mutation_response', readonly affected_rows: number }> };
 
 export type CreateNewConferenceMetaStructureMutationVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -8894,93 +8774,55 @@ export type CreateNewConferenceMetaStructureMutationVariables = Exact<{
 }>;
 
 
-export type CreateNewConferenceMetaStructureMutation = (
-  { __typename?: 'mutation_root' }
-  & { insert_Attendee?: Maybe<(
-    { __typename?: 'Attendee_mutation_response' }
-    & Pick<Attendee_Mutation_Response, 'affected_rows'>
-  )> }
-);
+export type CreateNewConferenceMetaStructureMutation = { readonly __typename?: 'mutation_root', readonly insert_Attendee?: Maybe<{ readonly __typename?: 'Attendee_mutation_response', readonly affected_rows: number }> };
+
+export type ConferenceBySlugQueryVariables = Exact<{
+  slug: Scalars['String'];
+}>;
+
+
+export type ConferenceBySlugQuery = { readonly __typename?: 'query_root', readonly Conference: ReadonlyArray<{ readonly __typename?: 'Conference', readonly createdBy: string, readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string, readonly updatedAt: any, readonly createdAt: any }> };
+
+export type CurrentUserGroupsRolesPermissionsQueryVariables = Exact<{
+  userId: Scalars['String'];
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type CurrentUserGroupsRolesPermissionsQuery = { readonly __typename?: 'query_root', readonly User: ReadonlyArray<{ readonly __typename?: 'User', readonly id: string, readonly attendees: ReadonlyArray<{ readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly conferenceId: any, readonly displayName: string, readonly groupAttendees: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly id: any, readonly groupId: any, readonly attendeeId: any, readonly group: { readonly __typename?: 'Group', readonly accessStart: any, readonly accessEnd: any, readonly id: any, readonly includeUnauthenticated: boolean, readonly name: string, readonly conferenceId: any, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any, readonly role: { readonly __typename?: 'Role', readonly id: any, readonly name: string, readonly conferenceId: any, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly permissionName: Permission_Enum, readonly id: any, readonly roleId: any }> } }> } }> }> }> };
 
 export type EchoQueryVariables = Exact<{
   message: Scalars['String'];
 }>;
 
 
-export type EchoQuery = (
-  { __typename?: 'query_root' }
-  & { echo?: Maybe<(
-    { __typename?: 'EchoOutput' }
-    & Pick<EchoOutput, 'message'>
-  )> }
-);
+export type EchoQuery = { readonly __typename?: 'query_root', readonly echo?: Maybe<{ readonly __typename?: 'EchoOutput', readonly message: string }> };
 
 export type ProtectedEchoQueryVariables = Exact<{
   message: Scalars['String'];
 }>;
 
 
-export type ProtectedEchoQuery = (
-  { __typename?: 'query_root' }
-  & { protectedEcho?: Maybe<(
-    { __typename?: 'ProtectedEchoOutput' }
-    & Pick<ProtectedEchoOutput, 'message'>
-  )> }
-);
+export type ProtectedEchoQuery = { readonly __typename?: 'query_root', readonly protectedEcho?: Maybe<{ readonly __typename?: 'ProtectedEchoOutput', readonly message: string }> };
 
 export type SelectUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SelectUsersQuery = (
-  { __typename?: 'query_root' }
-  & { User: Array<(
-    { __typename?: 'User' }
-    & Pick<User, 'id' | 'lastName' | 'firstName'>
-    & { onlineStatus?: Maybe<(
-      { __typename?: 'OnlineStatus' }
-      & Pick<OnlineStatus, 'id' | 'lastSeen' | 'isIncognito'>
-    )> }
-  )> }
-);
+export type SelectUsersQuery = { readonly __typename?: 'query_root', readonly User: ReadonlyArray<{ readonly __typename?: 'User', readonly id: string, readonly lastName: string, readonly firstName: string, readonly onlineStatus?: Maybe<{ readonly __typename?: 'OnlineStatus', readonly id: any, readonly lastSeen: any, readonly isIncognito: boolean }> }> };
 
 export type SelectCurrentUserQueryVariables = Exact<{
   userId: Scalars['String'];
 }>;
 
 
-export type SelectCurrentUserQuery = (
-  { __typename?: 'query_root' }
-  & { User: Array<(
-    { __typename?: 'User' }
-    & Pick<User, 'id' | 'lastName' | 'firstName'>
-    & { onlineStatus?: Maybe<(
-      { __typename?: 'OnlineStatus' }
-      & Pick<OnlineStatus, 'id' | 'lastSeen' | 'isIncognito'>
-    )>, pinnedChats: Array<(
-      { __typename?: 'PinnedChat' }
-      & Pick<PinnedChat, 'id' | 'chatId'>
-    )>, followedChats: Array<(
-      { __typename?: 'FollowedChat' }
-      & Pick<FollowedChat, 'id' | 'chatId'>
-    )>, unreadIndices: Array<(
-      { __typename?: 'ChatUnreadIndex' }
-      & Pick<ChatUnreadIndex, 'id' | 'chatId' | 'index'>
-    )> }
-  )> }
-);
+export type SelectCurrentUserQuery = { readonly __typename?: 'query_root', readonly User: ReadonlyArray<{ readonly __typename?: 'User', readonly id: string, readonly lastName: string, readonly firstName: string, readonly onlineStatus?: Maybe<{ readonly __typename?: 'OnlineStatus', readonly id: any, readonly lastSeen: any, readonly isIncognito: boolean }>, readonly pinnedChats: ReadonlyArray<{ readonly __typename?: 'PinnedChat', readonly id: any, readonly chatId: any }>, readonly followedChats: ReadonlyArray<{ readonly __typename?: 'FollowedChat', readonly id: any, readonly chatId: any }>, readonly unreadIndices: ReadonlyArray<{ readonly __typename?: 'ChatUnreadIndex', readonly id: any, readonly chatId: any, readonly index?: Maybe<number> }> }> };
 
 export type GetCurrentUserIsIncognitoQueryVariables = Exact<{
   userId: Scalars['String'];
 }>;
 
 
-export type GetCurrentUserIsIncognitoQuery = (
-  { __typename?: 'query_root' }
-  & { OnlineStatus: Array<(
-    { __typename?: 'OnlineStatus' }
-    & Pick<OnlineStatus, 'id' | 'isIncognito'>
-  )> }
-);
+export type GetCurrentUserIsIncognitoQuery = { readonly __typename?: 'query_root', readonly OnlineStatus: ReadonlyArray<{ readonly __typename?: 'OnlineStatus', readonly id: any, readonly isIncognito: boolean }> };
 
 export type UpdateCurrentUserIsIncognitoMutationVariables = Exact<{
   userId: Scalars['String'];
@@ -8988,45 +8830,21 @@ export type UpdateCurrentUserIsIncognitoMutationVariables = Exact<{
 }>;
 
 
-export type UpdateCurrentUserIsIncognitoMutation = (
-  { __typename?: 'mutation_root' }
-  & { update_OnlineStatus?: Maybe<(
-    { __typename?: 'OnlineStatus_mutation_response' }
-    & { returning: Array<(
-      { __typename?: 'OnlineStatus' }
-      & Pick<OnlineStatus, 'id' | 'isIncognito'>
-    )> }
-  )> }
-);
+export type UpdateCurrentUserIsIncognitoMutation = { readonly __typename?: 'mutation_root', readonly update_OnlineStatus?: Maybe<{ readonly __typename?: 'OnlineStatus_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'OnlineStatus', readonly id: any, readonly isIncognito: boolean }> }> };
 
 export type GetCurrentUserLastSeenQueryVariables = Exact<{
   userId: Scalars['String'];
 }>;
 
 
-export type GetCurrentUserLastSeenQuery = (
-  { __typename?: 'query_root' }
-  & { OnlineStatus: Array<(
-    { __typename?: 'OnlineStatus' }
-    & Pick<OnlineStatus, 'id' | 'lastSeen'>
-  )> }
-);
+export type GetCurrentUserLastSeenQuery = { readonly __typename?: 'query_root', readonly OnlineStatus: ReadonlyArray<{ readonly __typename?: 'OnlineStatus', readonly id: any, readonly lastSeen: any }> };
 
 export type InsertCurrentUserOnlineStatusMutationVariables = Exact<{
   userId: Scalars['String'];
 }>;
 
 
-export type InsertCurrentUserOnlineStatusMutation = (
-  { __typename?: 'mutation_root' }
-  & { insert_OnlineStatus?: Maybe<(
-    { __typename?: 'OnlineStatus_mutation_response' }
-    & { returning: Array<(
-      { __typename?: 'OnlineStatus' }
-      & Pick<OnlineStatus, 'id' | 'isIncognito' | 'lastSeen' | 'userId'>
-    )> }
-  )> }
-);
+export type InsertCurrentUserOnlineStatusMutation = { readonly __typename?: 'mutation_root', readonly insert_OnlineStatus?: Maybe<{ readonly __typename?: 'OnlineStatus_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'OnlineStatus', readonly id: any, readonly isIncognito: boolean, readonly lastSeen: any, readonly userId: string }> }> };
 
 export type UpdateCurrentUserLastSeenMutationVariables = Exact<{
   userId: Scalars['String'];
@@ -9034,16 +8852,7 @@ export type UpdateCurrentUserLastSeenMutationVariables = Exact<{
 }>;
 
 
-export type UpdateCurrentUserLastSeenMutation = (
-  { __typename?: 'mutation_root' }
-  & { update_OnlineStatus?: Maybe<(
-    { __typename?: 'OnlineStatus_mutation_response' }
-    & { returning: Array<(
-      { __typename?: 'OnlineStatus' }
-      & Pick<OnlineStatus, 'id' | 'lastSeen'>
-    )> }
-  )> }
-);
+export type UpdateCurrentUserLastSeenMutation = { readonly __typename?: 'mutation_root', readonly update_OnlineStatus?: Maybe<{ readonly __typename?: 'OnlineStatus_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'OnlineStatus', readonly id: any, readonly lastSeen: any }> }> };
 
 
 export const CreateChatDocument = gql`
@@ -9348,45 +9157,6 @@ export function useDeleteIsTypingMutation(baseOptions?: Apollo.MutationHookOptio
 export type DeleteIsTypingMutationHookResult = ReturnType<typeof useDeleteIsTypingMutation>;
 export type DeleteIsTypingMutationResult = Apollo.MutationResult<DeleteIsTypingMutation>;
 export type DeleteIsTypingMutationOptions = Apollo.BaseMutationOptions<DeleteIsTypingMutation, DeleteIsTypingMutationVariables>;
-export const ConferenceBySlugDocument = gql`
-    query ConferenceBySlug($slug: String!) {
-  Conference(where: {slug: {_eq: $slug}}, limit: 1) {
-    createdBy
-    id
-    name
-    shortName
-    slug
-    updatedAt
-    createdAt
-  }
-}
-    `;
-
-/**
- * __useConferenceBySlugQuery__
- *
- * To run a query within a React component, call `useConferenceBySlugQuery` and pass it any options that fit your needs.
- * When your component renders, `useConferenceBySlugQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useConferenceBySlugQuery({
- *   variables: {
- *      slug: // value for 'slug'
- *   },
- * });
- */
-export function useConferenceBySlugQuery(baseOptions: Apollo.QueryHookOptions<ConferenceBySlugQuery, ConferenceBySlugQueryVariables>) {
-        return Apollo.useQuery<ConferenceBySlugQuery, ConferenceBySlugQueryVariables>(ConferenceBySlugDocument, baseOptions);
-      }
-export function useConferenceBySlugLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ConferenceBySlugQuery, ConferenceBySlugQueryVariables>) {
-          return Apollo.useLazyQuery<ConferenceBySlugQuery, ConferenceBySlugQueryVariables>(ConferenceBySlugDocument, baseOptions);
-        }
-export type ConferenceBySlugQueryHookResult = ReturnType<typeof useConferenceBySlugQuery>;
-export type ConferenceBySlugLazyQueryHookResult = ReturnType<typeof useConferenceBySlugLazyQuery>;
-export type ConferenceBySlugQueryResult = Apollo.QueryResult<ConferenceBySlugQuery, ConferenceBySlugQueryVariables>;
 export const UpdateConferenceDocument = gql`
     mutation UpdateConference($id: uuid!, $name: String = "", $shortName: String = "", $slug: String = "") {
   update_Conference(
@@ -9555,6 +9325,113 @@ export function useCreateNewConferenceMetaStructureMutation(baseOptions?: Apollo
 export type CreateNewConferenceMetaStructureMutationHookResult = ReturnType<typeof useCreateNewConferenceMetaStructureMutation>;
 export type CreateNewConferenceMetaStructureMutationResult = Apollo.MutationResult<CreateNewConferenceMetaStructureMutation>;
 export type CreateNewConferenceMetaStructureMutationOptions = Apollo.BaseMutationOptions<CreateNewConferenceMetaStructureMutation, CreateNewConferenceMetaStructureMutationVariables>;
+export const ConferenceBySlugDocument = gql`
+    query ConferenceBySlug($slug: String!) {
+  Conference(where: {slug: {_eq: $slug}}, limit: 1) {
+    createdBy
+    id
+    name
+    shortName
+    slug
+    updatedAt
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useConferenceBySlugQuery__
+ *
+ * To run a query within a React component, call `useConferenceBySlugQuery` and pass it any options that fit your needs.
+ * When your component renders, `useConferenceBySlugQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useConferenceBySlugQuery({
+ *   variables: {
+ *      slug: // value for 'slug'
+ *   },
+ * });
+ */
+export function useConferenceBySlugQuery(baseOptions: Apollo.QueryHookOptions<ConferenceBySlugQuery, ConferenceBySlugQueryVariables>) {
+        return Apollo.useQuery<ConferenceBySlugQuery, ConferenceBySlugQueryVariables>(ConferenceBySlugDocument, baseOptions);
+      }
+export function useConferenceBySlugLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ConferenceBySlugQuery, ConferenceBySlugQueryVariables>) {
+          return Apollo.useLazyQuery<ConferenceBySlugQuery, ConferenceBySlugQueryVariables>(ConferenceBySlugDocument, baseOptions);
+        }
+export type ConferenceBySlugQueryHookResult = ReturnType<typeof useConferenceBySlugQuery>;
+export type ConferenceBySlugLazyQueryHookResult = ReturnType<typeof useConferenceBySlugLazyQuery>;
+export type ConferenceBySlugQueryResult = Apollo.QueryResult<ConferenceBySlugQuery, ConferenceBySlugQueryVariables>;
+export const CurrentUserGroupsRolesPermissionsDocument = gql`
+    query CurrentUserGroupsRolesPermissions($userId: String!, $conferenceId: uuid!) {
+  User(where: {id: {_eq: $userId}}) {
+    attendees(where: {conferenceId: {_eq: $conferenceId}}) {
+      groupAttendees {
+        group {
+          groupRoles {
+            role {
+              rolePermissions {
+                permissionName
+                id
+                roleId
+              }
+              id
+              name
+              conferenceId
+            }
+            id
+            roleId
+            groupId
+          }
+          accessStart
+          accessEnd
+          id
+          includeUnauthenticated
+          name
+          conferenceId
+        }
+        id
+        groupId
+        attendeeId
+      }
+      id
+      userId
+      conferenceId
+      displayName
+    }
+    id
+  }
+}
+    `;
+
+/**
+ * __useCurrentUserGroupsRolesPermissionsQuery__
+ *
+ * To run a query within a React component, call `useCurrentUserGroupsRolesPermissionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCurrentUserGroupsRolesPermissionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCurrentUserGroupsRolesPermissionsQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useCurrentUserGroupsRolesPermissionsQuery(baseOptions: Apollo.QueryHookOptions<CurrentUserGroupsRolesPermissionsQuery, CurrentUserGroupsRolesPermissionsQueryVariables>) {
+        return Apollo.useQuery<CurrentUserGroupsRolesPermissionsQuery, CurrentUserGroupsRolesPermissionsQueryVariables>(CurrentUserGroupsRolesPermissionsDocument, baseOptions);
+      }
+export function useCurrentUserGroupsRolesPermissionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CurrentUserGroupsRolesPermissionsQuery, CurrentUserGroupsRolesPermissionsQueryVariables>) {
+          return Apollo.useLazyQuery<CurrentUserGroupsRolesPermissionsQuery, CurrentUserGroupsRolesPermissionsQueryVariables>(CurrentUserGroupsRolesPermissionsDocument, baseOptions);
+        }
+export type CurrentUserGroupsRolesPermissionsQueryHookResult = ReturnType<typeof useCurrentUserGroupsRolesPermissionsQuery>;
+export type CurrentUserGroupsRolesPermissionsLazyQueryHookResult = ReturnType<typeof useCurrentUserGroupsRolesPermissionsLazyQuery>;
+export type CurrentUserGroupsRolesPermissionsQueryResult = Apollo.QueryResult<CurrentUserGroupsRolesPermissionsQuery, CurrentUserGroupsRolesPermissionsQueryVariables>;
 export const EchoDocument = gql`
     query Echo($message: String!) {
   echo(message: $message) {

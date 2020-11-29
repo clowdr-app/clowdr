@@ -324,21 +324,36 @@ export default function NewConferenceForm(): JSX.Element {
                 }
 
                 if (failed) {
-                    toast({
-                        title: "Failed to create conference",
-                        description: `An error has occurred while trying to create your conference.
+                    if (
+                        failed.includes(
+                            "Check constraint violation. insert check constraint failed"
+                        )
+                    ) {
+                        toast({
+                            title: "Failed to create conference",
+                            description:
+                                "We were unable to create your conference as the demo code has already been used.",
+                            status: "error",
+                            duration: 7000,
+                            isClosable: true,
+                        });
+                    } else {
+                        toast({
+                            title: "Failed to create conference",
+                            description: `An error has occurred while trying to create your conference.
 Please contact our tech support to investigate the issue shown below: support@clowdr.org`,
-                        status: "error",
-                        duration: null,
-                        isClosable: true,
-                    });
-                    toast({
-                        title: "Error information",
-                        description: failed,
-                        status: "info",
-                        duration: null,
-                        isClosable: true,
-                    });
+                            status: "error",
+                            duration: null,
+                            isClosable: true,
+                        });
+                        toast({
+                            title: "Error information",
+                            description: failed,
+                            status: "info",
+                            duration: null,
+                            isClosable: true,
+                        });
+                    }
                 }
 
                 actions.setSubmitting(false);

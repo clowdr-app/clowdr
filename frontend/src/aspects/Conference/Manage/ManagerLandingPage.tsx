@@ -1,23 +1,32 @@
 import { Flex, Heading, Text } from "@chakra-ui/react";
 import React from "react";
+import { Permission_Enum } from "../../../generated/graphql";
 import LinkButton from "../../Chakra/LinkButton";
 import FAIcon from "../../Icons/FAIcon";
 import {
     useNoPrimaryMenuButtons,
     usePrimaryMenuButton,
 } from "../../Menu/usePrimaryMenuButtons";
-import { useConference } from "../ConferenceProvider";
+import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
+import { useConference } from "../useConference";
 
-export default function ManagerLandingPage(): JSX.Element {
+function ManagementDashboardButton({
+    to,
+    name,
+    icon,
+    description,
+    permissions,
+}: {
+    to: string;
+    name: string;
+    icon: string;
+    description: string;
+    permissions: Permission_Enum[];
+}): JSX.Element | null {
     const conference = useConference();
 
-    function makeButton(
-        to: string,
-        name: string,
-        icon: string,
-        description: string
-    ): JSX.Element {
-        return (
+    return (
+        <RequireAtLeastOnePermissionWrapper permissions={permissions}>
             <LinkButton
                 to={`/conference/${conference.slug}/manage/${to}`}
                 padding={5}
@@ -35,8 +44,12 @@ export default function ManagerLandingPage(): JSX.Element {
                 </Heading>
                 <Text>{description}</Text>
             </LinkButton>
-        );
-    }
+        </RequireAtLeastOnePermissionWrapper>
+    );
+}
+
+export default function ManagerLandingPage(): JSX.Element {
+    const conference = useConference();
 
     useNoPrimaryMenuButtons();
     usePrimaryMenuButton({
@@ -45,9 +58,6 @@ export default function ManagerLandingPage(): JSX.Element {
         label: "View conference",
         text: "View conference",
     });
-
-    // TODO: Check what permissions the user has and thus what management
-    //       features to show them
 
     return (
         <>
@@ -59,30 +69,41 @@ export default function ManagerLandingPage(): JSX.Element {
                 alignItems="stretch"
                 justifyContent="center"
             >
-                {makeButton(
-                    "name",
-                    "Name",
-                    "signature",
-                    "Manage the name, short name and url of your conference."
-                )}
-                {makeButton(
-                    "roles",
-                    "Roles",
-                    "lock",
-                    "Manage the roles people at your conference can take on."
-                )}
-                {makeButton(
-                    "groups",
-                    "Groups",
-                    "user-cog",
-                    "Manage the groups of people at your conference and the times they can access the conference."
-                )}
-                {makeButton(
-                    "people",
-                    "People",
-                    "users",
-                    "Manage the people at your conference: attendees, moderators, authors, presenters, organisers and more."
-                )}
+                <ManagementDashboardButton
+                    to="name"
+                    name="Name"
+                    icon="signature"
+                    description="Manage the name, short name and url of your conference."
+                    permissions={[Permission_Enum.ConferenceManageName]}
+                />
+                <ManagementDashboardButton
+                    to="roles"
+                    name="Roles"
+                    icon="lock"
+                    description="Manage the roles people at your conference can take on."
+                    permissions={[Permission_Enum.ConferenceManageRoles]}
+                />
+                <ManagementDashboardButton
+                    to="groups"
+                    name="Groups"
+                    icon="user-cog"
+                    description="Manage the groups of people at your conference and the times they can access the conference."
+                    permissions={[
+                        Permission_Enum.ConferenceManageRoles,
+                        Permission_Enum.ConferenceManageGroups,
+                    ]}
+                />
+                <ManagementDashboardButton
+                    to="people"
+                    name="People"
+                    icon="users"
+                    description="Manage the people at your conference: attendees, moderators, authors, presenters, organisers and more."
+                    permissions={[
+                        Permission_Enum.ConferenceManageRoles,
+                        Permission_Enum.ConferenceManageGroups,
+                        Permission_Enum.ConferenceManageAttendees,
+                    ]}
+                />
             </Flex>
         </>
     );

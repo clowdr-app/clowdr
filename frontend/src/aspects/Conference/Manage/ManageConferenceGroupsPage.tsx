@@ -1,6 +1,9 @@
 import { Heading, Text } from "@chakra-ui/react";
 import React from "react";
-import { useConference } from "../ConferenceProvider";
+import { Permission_Enum } from "../../../generated/graphql";
+import PageNotFound from "../../Errors/PageNotFound";
+import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
+import { useConference } from "../useConference";
 import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
 export default function ManageConferenceGroupsPage(): JSX.Element {
@@ -9,7 +12,13 @@ export default function ManageConferenceGroupsPage(): JSX.Element {
     useDashboardPrimaryMenuButtons();
 
     return (
-        <>
+        <RequireAtLeastOnePermissionWrapper
+            permissions={[
+                Permission_Enum.ConferenceManageRoles,
+                Permission_Enum.ConferenceManageGroups,
+            ]}
+            componentIfDenied={<PageNotFound />}
+        >
             <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
             </Heading>
@@ -22,6 +31,6 @@ export default function ManageConferenceGroupsPage(): JSX.Element {
                 Groups
             </Heading>
             <Text>TODO</Text>
-        </>
+        </RequireAtLeastOnePermissionWrapper>
     );
 }

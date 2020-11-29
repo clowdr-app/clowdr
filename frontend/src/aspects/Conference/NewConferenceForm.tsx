@@ -145,6 +145,46 @@ const _newConferenceQueries = gql`
     }
 `;
 
+export function normaliseName(value: string, trim = true): string {
+    let result = value?.replace(/\s\s+/g, " ");
+    if (trim) {
+        result = result?.trim();
+    }
+    return result;
+}
+
+/**
+ * Returns error message or undefined if no errors.
+ */
+export function validateName(
+    inValue: string | null | undefined
+): string | undefined {
+    let error;
+    const value = inValue ? normaliseName(inValue) : undefined;
+    if (!value || value.length === 0) {
+        error = "Name is required";
+    } else if (value.length < 10) {
+        error = "Name must be at least 10 characters.";
+    }
+    return error;
+}
+
+/**
+ * Returns error message or undefined if no errors.
+ */
+export function validateShortName(
+    inValue: string | null | undefined
+): string | undefined {
+    let error;
+    const value = inValue ? normaliseName(inValue) : undefined;
+    if (!value || value.length === 0) {
+        error = "Short name is required";
+    } else if (value.length < 5) {
+        error = "Short name must be at least 5 characters.";
+    }
+    return error;
+}
+
 export default function NewConferenceForm(): JSX.Element {
     const toast = useToast();
     const apolloClient = useApolloClient();
@@ -155,36 +195,6 @@ export default function NewConferenceForm(): JSX.Element {
     const [
         createNewConferenceMetaStructureMutation,
     ] = useCreateNewConferenceMetaStructureMutation();
-
-    function normaliseName(value: string, trim = true) {
-        let result = value?.replace(/\s\s+/g, " ");
-        if (trim) {
-            result = result?.trim();
-        }
-        return result;
-    }
-
-    function validateName(inValue: string | null | undefined) {
-        let error;
-        const value = inValue ? normaliseName(inValue) : undefined;
-        if (!value || value.length === 0) {
-            error = "Name is required";
-        } else if (value.length < 10) {
-            error = "Name must be at least 10 characters.";
-        }
-        return error;
-    }
-
-    function validateShortName(inValue: string | null | undefined) {
-        let error;
-        const value = inValue ? normaliseName(inValue) : undefined;
-        if (!value || value.length === 0) {
-            error = "Short name is required";
-        } else if (value.length < 5) {
-            error = "Short name must be at least 5 characters.";
-        }
-        return error;
-    }
 
     function validateDemoCode(value: string | null | undefined) {
         if (!!value && isValidUUID(value)) {

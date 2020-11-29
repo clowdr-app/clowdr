@@ -1421,15 +1421,28 @@
             - createdBy:
                 _eq: X-Hasura-User-Id
             - groups:
-                groupAttendees:
-                  attendee:
-                    _and:
-                    - userId:
-                        _eq: X-Hasura-User-Id
-                    - statusName:
-                        _eq: ACTIVE
+                _and:
+                - groupAttendees:
+                    attendee:
+                      _and:
+                      - userId:
+                          _eq: X-Hasura-User-Id
+                      - statusName:
+                          _eq: ACTIVE
+                - groupRoles:
+                    role:
+                      rolePermissions:
+                        _or:
+                        - permissionName:
+                            _eq: CONFERENCE_MANAGE_GROUPS
+                        - permissionName:
+                            _eq: CONFERENCE_MANAGE_ROLES
         - includeUnauthenticated:
             _eq: true
+        - groupAttendees:
+            attendee:
+              userId:
+                _eq: X-Hasura-User-Id
   update_permissions:
   - role: user
     permission:
@@ -1544,30 +1557,34 @@
       - groupId
       - attendeeId
       filter:
-        group:
-          conference:
-            _or:
-            - createdBy:
-                _eq: X-Hasura-User-Id
-            - activeGroups:
-                _and:
-                - groupAttendees:
-                    attendee:
-                      _and:
-                      - userId:
-                          _eq: X-Hasura-User-Id
-                      - statusName:
-                          _eq: ACTIVE
-                - groupRoles:
-                    role:
-                      rolePermissions:
-                        _or:
-                        - permissionName:
-                            _eq: CONFERENCE_MANAGE_ROLES
-                        - permissionName:
-                            _eq: CONFERENCE_MANAGE_GROUPS
-                        - permissionName:
-                            _eq: CONFERENCE_MANAGE_ATTENDEES
+        _or:
+        - attendee:
+            userId:
+              _eq: X-Hasura-User-Id
+        - group:
+            conference:
+              _or:
+              - createdBy:
+                  _eq: X-Hasura-User-Id
+              - activeGroups:
+                  _and:
+                  - groupAttendees:
+                      attendee:
+                        _and:
+                        - userId:
+                            _eq: X-Hasura-User-Id
+                        - statusName:
+                            _eq: ACTIVE
+                  - groupRoles:
+                      role:
+                        rolePermissions:
+                          _or:
+                          - permissionName:
+                              _eq: CONFERENCE_MANAGE_ROLES
+                          - permissionName:
+                              _eq: CONFERENCE_MANAGE_GROUPS
+                          - permissionName:
+                              _eq: CONFERENCE_MANAGE_ATTENDEES
   delete_permissions:
   - role: user
     permission:
@@ -1642,24 +1659,29 @@
       - roleId
       filter:
         group:
-          conference:
-            _or:
-            - createdBy:
-                _eq: X-Hasura-User-Id
-            - activeGroups:
-                _and:
-                - groupAttendees:
-                    attendee:
-                      _and:
-                      - userId:
-                          _eq: X-Hasura-User-Id
-                      - statusName:
-                          _eq: ACTIVE
-                - groupRoles:
-                    role:
-                      rolePermissions:
-                        permissionName:
-                          _eq: CONFERENCE_MANAGE_ROLES
+          _or:
+          - groupAttendees:
+              attendee:
+                userId:
+                  _eq: X-Hasura-User-Id
+          - conference:
+              _or:
+              - createdBy:
+                  _eq: X-Hasura-User-Id
+              - activeGroups:
+                  _and:
+                  - groupAttendees:
+                      attendee:
+                        _and:
+                        - userId:
+                            _eq: X-Hasura-User-Id
+                        - statusName:
+                            _eq: ACTIVE
+                  - groupRoles:
+                      role:
+                        rolePermissions:
+                          permissionName:
+                            _eq: CONFERENCE_MANAGE_ROLES
   delete_permissions:
   - role: user
     permission:
@@ -1862,24 +1884,31 @@
       - id
       - name
       filter:
-        conference:
-          _or:
-          - createdBy:
-              _eq: X-Hasura-User-Id
-          - activeGroups:
-              _and:
-              - groupAttendees:
-                  attendee:
-                    _and:
-                    - userId:
-                        _eq: X-Hasura-User-Id
-                    - statusName:
-                        _eq: ACTIVE
-              - groupRoles:
-                  role:
-                    rolePermissions:
-                      permissionName:
-                        _eq: CONFERENCE_MANAGE_ROLES
+        _or:
+        - groupRoles:
+            group:
+              groupAttendees:
+                attendee:
+                  userId:
+                    _eq: X-Hasura-User-Id
+        - conference:
+            _or:
+            - createdBy:
+                _eq: X-Hasura-User-Id
+            - activeGroups:
+                _and:
+                - groupAttendees:
+                    attendee:
+                      _and:
+                      - userId:
+                          _eq: X-Hasura-User-Id
+                      - statusName:
+                          _eq: ACTIVE
+                - groupRoles:
+                    role:
+                      rolePermissions:
+                        permissionName:
+                          _eq: CONFERENCE_MANAGE_ROLES
   update_permissions:
   - role: user
     permission:
@@ -1973,24 +2002,31 @@
       - roleId
       filter:
         role:
-          conference:
-            _or:
-            - createdBy:
-                _eq: X-Hasura-User-Id
-            - activeGroups:
-                _and:
-                - groupAttendees:
-                    attendee:
-                      _and:
-                      - userId:
-                          _eq: X-Hasura-User-Id
-                      - statusName:
-                          _eq: ACTIVE
-                - groupRoles:
-                    role:
-                      rolePermissions:
-                        permissionName:
-                          _eq: CONFERENCE_MANAGE_ROLES
+          _or:
+          - groupRoles:
+              group:
+                groupAttendees:
+                  attendee:
+                    userId:
+                      _eq: X-Hasura-User-Id
+          - conference:
+              _or:
+              - createdBy:
+                  _eq: X-Hasura-User-Id
+              - activeGroups:
+                  _and:
+                  - groupAttendees:
+                      attendee:
+                        _and:
+                        - userId:
+                            _eq: X-Hasura-User-Id
+                        - statusName:
+                            _eq: ACTIVE
+                  - groupRoles:
+                      role:
+                        rolePermissions:
+                          permissionName:
+                            _eq: CONFERENCE_MANAGE_ROLES
   update_permissions:
   - role: user
     permission:

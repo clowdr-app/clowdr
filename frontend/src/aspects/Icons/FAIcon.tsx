@@ -28,10 +28,10 @@ export const FAIcon = forwardRef<IconProps, "i">(function Icon(props, ref) {
     const _className = cx("chakra-icon", className);
 
     const styles: SystemStyleObject = {
-        w: "1em",
-        h: "1em",
+        w: "auto",
+        h: "auto",
         display: "inline-block",
-        lineHeight: "1em",
+        lineHeight: "inherit",
         flexShrink: 0,
         color,
         marginRight: inline ? "0.5em" : undefined,

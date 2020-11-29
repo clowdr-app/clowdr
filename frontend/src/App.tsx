@@ -22,6 +22,7 @@ function App(_props: AppProps): JSX.Element {
                     // readers see the page content before the menu
                     direction="column-reverse"
                     padding={["0.4em", "1em"]}
+                    gridRowGap={["0.4em", "1em"]}
                     justifyContent="center"
                     alignItems="center"
                 >

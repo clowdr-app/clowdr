@@ -8746,6 +8746,13 @@ export type UpdateConferenceMutationVariables = Exact<{
 
 export type UpdateConferenceMutation = { readonly __typename?: 'mutation_root', readonly update_Conference?: Maybe<{ readonly __typename?: 'Conference_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string }> }> };
 
+export type SelectAllRolesQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type SelectAllRolesQuery = { readonly __typename?: 'query_root', readonly Role: ReadonlyArray<{ readonly __typename?: 'Role', readonly conferenceId: any, readonly id: any, readonly name: string, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly id: any, readonly permissionName: Permission_Enum, readonly roleId: any }> }> };
+
 export type ConferenceTakenQueryVariables = Exact<{
   name: Scalars['String'];
   shortName: Scalars['String'];
@@ -9200,6 +9207,46 @@ export function useUpdateConferenceMutation(baseOptions?: Apollo.MutationHookOpt
 export type UpdateConferenceMutationHookResult = ReturnType<typeof useUpdateConferenceMutation>;
 export type UpdateConferenceMutationResult = Apollo.MutationResult<UpdateConferenceMutation>;
 export type UpdateConferenceMutationOptions = Apollo.BaseMutationOptions<UpdateConferenceMutation, UpdateConferenceMutationVariables>;
+export const SelectAllRolesDocument = gql`
+    query SelectAllRoles($conferenceId: uuid!) {
+  Role(where: {conferenceId: {_eq: $conferenceId}}) {
+    conferenceId
+    id
+    name
+    rolePermissions {
+      id
+      permissionName
+      roleId
+    }
+  }
+}
+    `;
+
+/**
+ * __useSelectAllRolesQuery__
+ *
+ * To run a query within a React component, call `useSelectAllRolesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectAllRolesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectAllRolesQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useSelectAllRolesQuery(baseOptions: Apollo.QueryHookOptions<SelectAllRolesQuery, SelectAllRolesQueryVariables>) {
+        return Apollo.useQuery<SelectAllRolesQuery, SelectAllRolesQueryVariables>(SelectAllRolesDocument, baseOptions);
+      }
+export function useSelectAllRolesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectAllRolesQuery, SelectAllRolesQueryVariables>) {
+          return Apollo.useLazyQuery<SelectAllRolesQuery, SelectAllRolesQueryVariables>(SelectAllRolesDocument, baseOptions);
+        }
+export type SelectAllRolesQueryHookResult = ReturnType<typeof useSelectAllRolesQuery>;
+export type SelectAllRolesLazyQueryHookResult = ReturnType<typeof useSelectAllRolesLazyQuery>;
+export type SelectAllRolesQueryResult = Apollo.QueryResult<SelectAllRolesQuery, SelectAllRolesQueryVariables>;
 export const ConferenceTakenDocument = gql`
     query ConferenceTaken($name: String!, $shortName: String!, $slug: String!) {
   Conference(

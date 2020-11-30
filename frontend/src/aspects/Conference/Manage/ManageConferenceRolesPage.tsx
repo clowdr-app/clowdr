@@ -1,15 +1,74 @@
-import { Heading, Text } from "@chakra-ui/react";
-import React from "react";
-import { Permission_Enum } from "../../../generated/graphql";
+import { gql } from "@apollo/client";
+import { Heading, Spinner } from "@chakra-ui/react";
+import React, { useMemo } from "react";
+import {
+    Permission_Enum,
+    SelectAllRolesQuery,
+    useSelectAllRolesQuery,
+} from "../../../generated/graphql";
+import CRUDTable, { BooleanFieldFormat, BooleanFieldSpec, CRUDTableProps, FieldType } from "../../CRUDTable/CRDUTable";
 import PageNotFound from "../../Errors/PageNotFound";
+import useQueryErrorToast from "../../GQL/useQueryErrorToast";
+import isValidUUID from "../../Utils/isValidUUID";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
 import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
+
+const _manageRolesQueries = gql`
+    query SelectAllRoles($conferenceId: uuid!) {
+        Role(where: { conferenceId: { _eq: $conferenceId } }) {
+            conferenceId
+            id
+            name
+            rolePermissions {
+                id
+                permissionName
+                roleId
+            }
+        }
+    }
+`;
+
+const RolesCRUDTable = (
+    props: Readonly<CRUDTableProps<SelectAllRolesQuery["Role"][0], "id">>
+) => CRUDTable(props);
 
 export default function ManageConferenceRolesPage(): JSX.Element {
     const conference = useConference();
 
     useDashboardPrimaryMenuButtons();
+
+    const {
+        loading: loadingAllRoles,
+        error: errorAllRoles,
+        data: allRoles,
+    } = useSelectAllRolesQuery({
+        fetchPolicy: "network-only",
+        variables: {
+            conferenceId: conference.id,
+        },
+    });
+    useQueryErrorToast(errorAllRoles);
+
+    const allRolesMap = useMemo(() => {
+        if (!allRoles) {
+            return undefined;
+        }
+
+        const result = new Map<string, SelectAllRolesQuery["Role"][0]>();
+
+        for (const role of allRoles.Role) {
+            result.set(role.id, role);
+        }
+
+        return result;
+    }, [allRoles]);
+
+    const permissionFieldSpec: BooleanFieldSpec<boolean> = useMemo(() => ({
+        fieldType: FieldType.boolean,
+        convertToUI: (x: boolean) => x,
+        format: BooleanFieldFormat.checkbox
+    }), []);
 
     return (
         <RequireAtLeastOnePermissionWrapper
@@ -27,7 +86,60 @@ export default function ManageConferenceRolesPage(): JSX.Element {
             >
                 Roles
             </Heading>
-            <Text>TODO</Text>
+            {loadingAllRoles ? (
+                <Spinner />
+            ) : errorAllRoles || !allRolesMap ? (
+                <></>
+            ) : (
+                <RolesCRUDTable
+                    data={allRolesMap}
+                    primaryFields={{
+                        keyField: {
+                            heading: "Id",
+                            ariaLabel: "Unique identifier",
+                            description: "Unique identifier",
+                            isHidden: true,
+                            extract: (v) => v.id,
+                            spec: {
+                                fieldType: FieldType.string,
+                                convertToUI: (x) => x,
+                                disallowSpaces: true
+                            },
+                            validate: (v) => isValidUUID(v) || ["Invalid UUID"],
+                        },
+                        otherFields: {
+                            name: {
+                                heading: "Name",
+                                ariaLabel: "Name",
+                                description: "Role name",
+                                isHidden: false,
+                                extract: (v) => v.name,
+                                spec: {
+                                    fieldType: FieldType.string,
+                                    convertToUI: (x) => x
+                                },
+                                validate: (v) => v.length >= 10 || ["Name must be at least 10 characters"]
+                            },
+                            manageName: {
+                                heading: "Manage Name?",
+                                ariaLabel: "Manage Name Permission",
+                                description: "Permission to manage the conference name, short name and URL slug.",
+                                isHidden: false,
+                                extract: (v) => v.rolePermissions.map(x => x.permissionName).includes(Permission_Enum.ConferenceManageName),
+                                spec: permissionFieldSpec
+                            },
+                            manageRoles: {
+                                heading: "Manage Roles?",
+                                ariaLabel: "Manage Roles Permission",
+                                description: "Permission to manage the conference roles.",
+                                isHidden: false,
+                                extract: (v) => v.rolePermissions.map(x => x.permissionName).includes(Permission_Enum.ConferenceManageRoles),
+                                spec: permissionFieldSpec
+                            }
+                        }
+                    }}
+                />
+            )}
         </RequireAtLeastOnePermissionWrapper>
     );
 }

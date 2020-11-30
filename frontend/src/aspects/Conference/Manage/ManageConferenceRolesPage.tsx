@@ -6,7 +6,13 @@ import {
     SelectAllRolesQuery,
     useSelectAllRolesQuery,
 } from "../../../generated/graphql";
-import CRUDTable, { BooleanFieldFormat, BooleanFieldSpec, CRUDTableProps, FieldType } from "../../CRUDTable/CRDUTable";
+import CRUDTable, {
+    BooleanFieldFormat,
+    BooleanFieldSpec,
+    CRUDTableProps,
+    defaultStringFilter,
+    FieldType,
+} from "../../CRUDTable/CRDUTable";
 import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import isValidUUID from "../../Utils/isValidUUID";
@@ -64,11 +70,14 @@ export default function ManageConferenceRolesPage(): JSX.Element {
         return result;
     }, [allRoles]);
 
-    const permissionFieldSpec: BooleanFieldSpec<boolean> = useMemo(() => ({
-        fieldType: FieldType.boolean,
-        convertToUI: (x: boolean) => x,
-        format: BooleanFieldFormat.checkbox
-    }), []);
+    const permissionFieldSpec: BooleanFieldSpec<boolean> = useMemo(
+        () => ({
+            fieldType: FieldType.boolean,
+            convertToUI: (x: boolean) => x,
+            format: BooleanFieldFormat.checkbox,
+        }),
+        []
+    );
 
     return (
         <RequireAtLeastOnePermissionWrapper
@@ -103,7 +112,7 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                             spec: {
                                 fieldType: FieldType.string,
                                 convertToUI: (x) => x,
-                                disallowSpaces: true
+                                disallowSpaces: true,
                             },
                             validate: (v) => isValidUUID(v) || ["Invalid UUID"],
                         },
@@ -116,27 +125,44 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                                 extract: (v) => v.name,
                                 spec: {
                                     fieldType: FieldType.string,
-                                    convertToUI: (x) => x
+                                    convertToUI: (x) => x,
+                                    filter: defaultStringFilter,
                                 },
-                                validate: (v) => v.length >= 10 || ["Name must be at least 10 characters"]
+                                validate: (v) =>
+                                    v.length >= 10 || [
+                                        "Name must be at least 10 characters",
+                                    ],
                             },
+                            // TODO: Generate these directly from the DB Permissions enum using the Name and Description fields
                             manageName: {
                                 heading: "Manage Name?",
                                 ariaLabel: "Manage Name Permission",
-                                description: "Permission to manage the conference name, short name and URL slug.",
+                                description:
+                                    "Permission to manage the conference name, short name and URL slug.",
                                 isHidden: false,
-                                extract: (v) => v.rolePermissions.map(x => x.permissionName).includes(Permission_Enum.ConferenceManageName),
-                                spec: permissionFieldSpec
+                                extract: (v) =>
+                                    v.rolePermissions
+                                        .map((x) => x.permissionName)
+                                        .includes(
+                                            Permission_Enum.ConferenceManageName
+                                        ),
+                                spec: permissionFieldSpec,
                             },
                             manageRoles: {
                                 heading: "Manage Roles?",
                                 ariaLabel: "Manage Roles Permission",
-                                description: "Permission to manage the conference roles.",
+                                description:
+                                    "Permission to manage the conference roles.",
                                 isHidden: false,
-                                extract: (v) => v.rolePermissions.map(x => x.permissionName).includes(Permission_Enum.ConferenceManageRoles),
-                                spec: permissionFieldSpec
-                            }
-                        }
+                                extract: (v) =>
+                                    v.rolePermissions
+                                        .map((x) => x.permissionName)
+                                        .includes(
+                                            Permission_Enum.ConferenceManageRoles
+                                        ),
+                                spec: permissionFieldSpec,
+                            },
+                        },
                     }}
                 />
             )}

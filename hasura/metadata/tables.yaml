@@ -78,6 +78,20 @@
     using:
       foreign_key_constraint_on: userId
   array_relationships:
+  - name: contentPeople
+    using:
+      foreign_key_constraint_on:
+        column: attendeeId
+        table:
+          schema: public
+          name: ContentPerson
+  - name: eventPeople
+    using:
+      foreign_key_constraint_on:
+        column: attendeeId
+        table:
+          schema: public
+          name: EventPerson
   - name: groupAttendees
     using:
       foreign_key_constraint_on:
@@ -85,6 +99,13 @@
         table:
           schema: public
           name: GroupAttendee
+  - name: roomParticipants
+    using:
+      foreign_key_constraint_on:
+        column: attendeeId
+        table:
+          schema: public
+          name: RoomParticipant
   insert_permissions:
   - role: user
     permission:
@@ -333,6 +354,55 @@
       - description
       - name
       filter: {}
+- table:
+    schema: public
+    name: Broadcast
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
+  object_relationships:
+  - name: event
+    using:
+      foreign_key_constraint_on: eventId
+- table:
+    schema: public
+    name: BroadcastContentItem
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
+  object_relationships:
+  - name: contentItem
+    using:
+      foreign_key_constraint_on: contentItemId
+  - name: inputType
+    using:
+      foreign_key_constraint_on: inputTypeName
+  array_relationships:
+  - name: executedTransitions
+    using:
+      foreign_key_constraint_on:
+        column: broadcastContentId
+        table:
+          schema: public
+          name: ExecutedTransitions
+  - name: fallbackForTransitions
+    using:
+      foreign_key_constraint_on:
+        column: fallbackBroadcastContentId
+        table:
+          schema: public
+          name: Transitions
+  - name: transitions
+    using:
+      foreign_key_constraint_on:
+        column: broadcastContentId
+        table:
+          schema: public
+          name: Transitions
 - table:
     schema: public
     name: Chat
@@ -1066,6 +1136,20 @@
         table:
           schema: public
           name: Attendee
+  - name: contentGroups
+    using:
+      foreign_key_constraint_on:
+        column: conferenceId
+        table:
+          schema: public
+          name: ContentGroup
+  - name: contentPeople
+    using:
+      foreign_key_constraint_on:
+        column: conferenceId
+        table:
+          schema: public
+          name: ContentPerson
   - name: groups
     using:
       foreign_key_constraint_on:
@@ -1073,6 +1157,13 @@
         table:
           schema: public
           name: Group
+  - name: originatingDatas
+    using:
+      foreign_key_constraint_on:
+        column: conferenceId
+        table:
+          schema: public
+          name: OriginatingData
   - name: roles
     using:
       foreign_key_constraint_on:
@@ -1080,6 +1171,13 @@
         table:
           schema: public
           name: Role
+  - name: rooms
+    using:
+      foreign_key_constraint_on:
+        column: conferenceId
+        table:
+          schema: public
+          name: Room
   insert_permissions:
   - role: user
     permission:
@@ -1215,6 +1313,241 @@
       check: {}
       set:
         usedById: x-hasura-User-Id
+- table:
+    schema: public
+    name: ContentGroup
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
+  object_relationships:
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  - name: contentGroupType
+    using:
+      foreign_key_constraint_on: contentGroupTypeName
+  - name: originatingData
+    using:
+      foreign_key_constraint_on: originatingDataId
+  array_relationships:
+  - name: contentItems
+    using:
+      foreign_key_constraint_on:
+        column: contentGroupId
+        table:
+          schema: public
+          name: ContentItem
+  - name: events
+    using:
+      foreign_key_constraint_on:
+        column: contentGroupId
+        table:
+          schema: public
+          name: Event
+  - name: requiredContentItems
+    using:
+      foreign_key_constraint_on:
+        column: contentGroupId
+        table:
+          schema: public
+          name: RequiredContentItem
+- table:
+    schema: public
+    name: ContentGroupType
+  is_enum: true
+  array_relationships:
+  - name: contentGroups
+    using:
+      foreign_key_constraint_on:
+        column: contentGroupTypeName
+        table:
+          schema: public
+          name: ContentGroup
+- table:
+    schema: public
+    name: ContentItem
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
+  object_relationships:
+  - name: broadcastContentItem
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: BroadcastContentItem
+        column_mapping:
+          id: contentItemId
+  - name: contentGroup
+    using:
+      foreign_key_constraint_on: contentGroupId
+  - name: contentType
+    using:
+      foreign_key_constraint_on: contentTypeName
+  - name: originatingData
+    using:
+      foreign_key_constraint_on: originatingDataId
+  - name: requiredContentItem
+    using:
+      foreign_key_constraint_on: requiredContentId
+  array_relationships:
+  - name: contentItemPeople
+    using:
+      foreign_key_constraint_on:
+        column: itemId
+        table:
+          schema: public
+          name: ContentItemPerson
+- table:
+    schema: public
+    name: ContentItemPerson
+  object_relationships:
+  - name: item
+    using:
+      foreign_key_constraint_on: itemId
+  - name: person
+    using:
+      foreign_key_constraint_on: personId
+- table:
+    schema: public
+    name: ContentPerson
+  object_relationships:
+  - name: attendee
+    using:
+      foreign_key_constraint_on: attendeeId
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  - name: originatingData
+    using:
+      foreign_key_constraint_on: originatingDataId
+  array_relationships:
+  - name: contentItemPeople
+    using:
+      foreign_key_constraint_on:
+        column: personId
+        table:
+          schema: public
+          name: ContentItemPerson
+- table:
+    schema: public
+    name: ContentType
+  is_enum: true
+  array_relationships:
+  - name: contentItems
+    using:
+      foreign_key_constraint_on:
+        column: contentTypeName
+        table:
+          schema: public
+          name: ContentItem
+  - name: requiredContentItems
+    using:
+      foreign_key_constraint_on:
+        column: contentTypeName
+        table:
+          schema: public
+          name: RequiredContentItem
+- table:
+    schema: public
+    name: Event
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
+  object_relationships:
+  - name: contentGroup
+    using:
+      foreign_key_constraint_on: contentGroupId
+  - name: originatingData
+    using:
+      foreign_key_constraint_on: originatingDataId
+  - name: room
+    using:
+      foreign_key_constraint_on: roomId
+  - name: roomMode
+    using:
+      foreign_key_constraint_on: intendedRoomModeName
+  array_relationships:
+  - name: broadcasts
+    using:
+      foreign_key_constraint_on:
+        column: eventId
+        table:
+          schema: public
+          name: Broadcast
+  - name: eventPeople
+    using:
+      foreign_key_constraint_on:
+        column: eventId
+        table:
+          schema: public
+          name: EventPerson
+  - name: executedTransitions
+    using:
+      foreign_key_constraint_on:
+        column: eventId
+        table:
+          schema: public
+          name: ExecutedTransitions
+  - name: transitions
+    using:
+      foreign_key_constraint_on:
+        column: eventId
+        table:
+          schema: public
+          name: Transitions
+- table:
+    schema: public
+    name: EventPerson
+  object_relationships:
+  - name: attendee
+    using:
+      foreign_key_constraint_on: attendeeId
+  - name: event
+    using:
+      foreign_key_constraint_on: eventId
+  - name: eventPersonRole
+    using:
+      foreign_key_constraint_on: roleName
+  - name: originatingData
+    using:
+      foreign_key_constraint_on: originatingDataId
+- table:
+    schema: public
+    name: EventPersonRole
+  is_enum: true
+  array_relationships:
+  - name: eventPeople
+    using:
+      foreign_key_constraint_on:
+        column: roleName
+        table:
+          schema: public
+          name: EventPerson
+- table:
+    schema: public
+    name: ExecutedTransitions
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
+  object_relationships:
+  - name: broadcastContentItem
+    using:
+      foreign_key_constraint_on: broadcastContentId
+  - name: event
+    using:
+      foreign_key_constraint_on: eventId
+  - name: room
+    using:
+      foreign_key_constraint_on: roomId
 - table:
     schema: public
     name: FlaggedChatMessage
@@ -1731,6 +2064,18 @@
                           _eq: CONFERENCE_MANAGE_ROLES
 - table:
     schema: public
+    name: InputType
+  is_enum: true
+  array_relationships:
+  - name: broadcastContentItems
+    using:
+      foreign_key_constraint_on:
+        column: inputTypeName
+        table:
+          schema: public
+          name: BroadcastContentItem
+- table:
+    schema: public
     name: OnlineStatus
   configuration:
     custom_root_fields: {}
@@ -1785,6 +2130,68 @@
       filter:
         userId:
           _eq: X-Hasura-User-Id
+- table:
+    schema: public
+    name: OriginatingData
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
+  object_relationships:
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  array_relationships:
+  - name: contentGroups
+    using:
+      foreign_key_constraint_on:
+        column: originatingDataId
+        table:
+          schema: public
+          name: ContentGroup
+  - name: contentItems
+    using:
+      foreign_key_constraint_on:
+        column: originatingDataId
+        table:
+          schema: public
+          name: ContentItem
+  - name: contentPeople
+    using:
+      foreign_key_constraint_on:
+        column: originatingDataId
+        table:
+          schema: public
+          name: ContentPerson
+  - name: eventPeople
+    using:
+      foreign_key_constraint_on:
+        column: originatingDataId
+        table:
+          schema: public
+          name: EventPerson
+  - name: events
+    using:
+      foreign_key_constraint_on:
+        column: originatingDataId
+        table:
+          schema: public
+          name: Event
+  - name: requiredContentItems
+    using:
+      foreign_key_constraint_on:
+        column: originatingDataId
+        table:
+          schema: public
+          name: RequiredContentItem
+  - name: rooms
+    using:
+      foreign_key_constraint_on:
+        column: originatingDataId
+        table:
+          schema: public
+          name: Room
 - table:
     schema: public
     name: Permission
@@ -1857,6 +2264,40 @@
       filter:
         userId:
           _eq: X-Hasura-User-Id
+- table:
+    schema: public
+    name: RequiredContentItem
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
+  object_relationships:
+  - name: contentGroup
+    using:
+      foreign_key_constraint_on: contentGroupId
+  - name: contentItem
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: ContentItem
+        column_mapping:
+          id: requiredContentId
+  - name: contentType
+    using:
+      foreign_key_constraint_on: contentTypeName
+  - name: originatingData
+    using:
+      foreign_key_constraint_on: originatingDataId
+  array_relationships:
+  - name: uploaders
+    using:
+      foreign_key_constraint_on:
+        column: requiredContentItemId
+        table:
+          schema: public
+          name: Uploader
 - table:
     schema: public
     name: Role
@@ -2117,6 +2558,115 @@
                           _eq: CONFERENCE_MANAGE_ROLES
 - table:
     schema: public
+    name: Room
+  object_relationships:
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  - name: currentMode
+    using:
+      foreign_key_constraint_on: currentModeName
+  - name: originatingData
+    using:
+      foreign_key_constraint_on: originatingDataId
+  array_relationships:
+  - name: events
+    using:
+      foreign_key_constraint_on:
+        column: roomId
+        table:
+          schema: public
+          name: Event
+  - name: executedTransitions
+    using:
+      foreign_key_constraint_on:
+        column: roomId
+        table:
+          schema: public
+          name: ExecutedTransitions
+  - name: participants
+    using:
+      foreign_key_constraint_on:
+        column: roomId
+        table:
+          schema: public
+          name: RoomParticipant
+  - name: transitions
+    using:
+      foreign_key_constraint_on:
+        column: roomId
+        table:
+          schema: public
+          name: Transitions
+- table:
+    schema: public
+    name: RoomMode
+  is_enum: true
+  array_relationships:
+  - name: events
+    using:
+      foreign_key_constraint_on:
+        column: intendedRoomModeName
+        table:
+          schema: public
+          name: Event
+  - name: rooms
+    using:
+      foreign_key_constraint_on:
+        column: currentModeName
+        table:
+          schema: public
+          name: Room
+- table:
+    schema: public
+    name: RoomParticipant
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
+  object_relationships:
+  - name: attendee
+    using:
+      foreign_key_constraint_on: attendeeId
+  - name: room
+    using:
+      foreign_key_constraint_on: roomId
+- table:
+    schema: public
+    name: Transitions
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
+  object_relationships:
+  - name: broadcastContentItem
+    using:
+      foreign_key_constraint_on: broadcastContentId
+  - name: event
+    using:
+      foreign_key_constraint_on: eventId
+  - name: fallbackBroadcastContentItem
+    using:
+      foreign_key_constraint_on: fallbackBroadcastContentId
+  - name: room
+    using:
+      foreign_key_constraint_on: roomId
+- table:
+    schema: public
+    name: Uploader
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
+  object_relationships:
+  - name: requiredContentItem
+    using:
+      foreign_key_constraint_on: requiredContentItemId
+- table:
+    schema: public
     name: User
   configuration:
     custom_root_fields: {}
@@ -2147,6 +2697,13 @@
         table:
           schema: public
           name: Chat
+  - name: conferenceDemoCodes
+    using:
+      foreign_key_constraint_on:
+        column: usedById
+        table:
+          schema: public
+          name: ConferenceDemoCode
   - name: conferencesCreated
     using:
       foreign_key_constraint_on:

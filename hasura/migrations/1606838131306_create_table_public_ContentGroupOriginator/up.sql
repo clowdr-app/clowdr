@@ -1,0 +1,2 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE TABLE "public"."ContentGroupOriginator"("id" uuid NOT NULL DEFAULT gen_random_uuid(), "orignatingDataId" uuid NOT NULL, "contentGroupId" uuid NOT NULL, PRIMARY KEY ("id") , FOREIGN KEY ("contentGroupId") REFERENCES "public"."ContentGroup"("id") ON UPDATE cascade ON DELETE cascade, FOREIGN KEY ("orignatingDataId") REFERENCES "public"."OriginatingData"("id") ON UPDATE cascade ON DELETE restrict, UNIQUE ("id"), UNIQUE ("orignatingDataId", "contentGroupId"));

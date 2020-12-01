@@ -62,6 +62,11 @@
 - table:
     schema: public
     name: Attendee
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
   object_relationships:
   - name: conference
     using:
@@ -1033,6 +1038,11 @@
 - table:
     schema: public
     name: Conference
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
   object_relationships:
   - name: creator
     using:
@@ -1089,12 +1099,10 @@
   - role: unauthenticated
     permission:
       columns:
-      - createdAt
       - id
       - name
       - shortName
       - slug
-      - updatedAt
       filter:
         activeGroups:
           _and:
@@ -1108,13 +1116,11 @@
   - role: user
     permission:
       columns:
-      - createdAt
       - createdBy
       - id
       - name
       - shortName
       - slug
-      - updatedAt
       filter:
         _or:
         - createdBy:
@@ -1171,6 +1177,11 @@
 - table:
     schema: public
     name: ConferenceDemoCode
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
   object_relationships:
   - name: conference
     using:
@@ -1187,10 +1198,8 @@
   - role: user
     permission:
       columns:
-      - createdAt
       - id
       - note
-      - updatedAt
       - usedById
       filter:
         usedById:
@@ -1341,6 +1350,11 @@
 - table:
     schema: public
     name: Group
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
   object_relationships:
   - name: conference
     using:
@@ -1502,6 +1516,11 @@
 - table:
     schema: public
     name: GroupAttendee
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
   object_relationships:
   - name: activeGroup
     using:
@@ -1616,6 +1635,11 @@
 - table:
     schema: public
     name: GroupRole
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
   object_relationships:
   - name: group
     using:
@@ -1708,6 +1732,11 @@
 - table:
     schema: public
     name: OnlineStatus
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
   object_relationships:
   - name: user
     using:
@@ -1831,6 +1860,11 @@
 - table:
     schema: public
     name: Role
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
   object_relationships:
   - name: conference
     using:
@@ -1959,6 +1993,11 @@
 - table:
     schema: public
     name: RolePermission
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
   object_relationships:
   - name: permission
     using:
@@ -2079,6 +2118,11 @@
 - table:
     schema: public
     name: User
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
   object_relationships:
   - name: onlineStatus
     using:

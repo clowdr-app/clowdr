@@ -1,0 +1,1 @@
+DELETE FROM "Permission" where name = 'CONFERENCE_MANAGE_ROLES' or name = 'CONFERENCE_MANAGE_GROUPS';

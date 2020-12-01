@@ -1,2 +1,0 @@
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
-CREATE TABLE "public"."Attendee"("id" uuid NOT NULL DEFAULT gen_random_uuid(), "conferenceId" uuid NOT NULL, "userId" text, "status" text NOT NULL, "displayName" text NOT NULL, PRIMARY KEY ("id") , FOREIGN KEY ("conferenceId") REFERENCES "public"."Conference"("id") ON UPDATE cascade ON DELETE cascade, FOREIGN KEY ("userId") REFERENCES "public"."User"("id") ON UPDATE cascade ON DELETE set null, UNIQUE ("id"));

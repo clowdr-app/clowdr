@@ -1,2 +1,0 @@
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
-CREATE TABLE "public"."Conference"("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" text NOT NULL, "shortName" Text NOT NULL, "slug" text NOT NULL, "createdBy" text NOT NULL, "createdAt" timestamptz NOT NULL DEFAULT now(), "updatedAt" timestamptz NOT NULL DEFAULT now(), PRIMARY KEY ("id") , FOREIGN KEY ("createdBy") REFERENCES "public"."User"("id") ON UPDATE cascade ON DELETE restrict, UNIQUE ("id"), UNIQUE ("name"), UNIQUE ("shortName"), UNIQUE ("slug"));

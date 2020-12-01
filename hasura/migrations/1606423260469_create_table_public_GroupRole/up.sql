@@ -1,2 +1,0 @@
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
-CREATE TABLE "public"."GroupRole"("id" uuid NOT NULL DEFAULT gen_random_uuid(), "groupId" uuid NOT NULL, "roleId" uuid NOT NULL, PRIMARY KEY ("id") , FOREIGN KEY ("groupId") REFERENCES "public"."Group"("id") ON UPDATE cascade ON DELETE cascade, FOREIGN KEY ("roleId") REFERENCES "public"."Role"("id") ON UPDATE cascade ON DELETE cascade, UNIQUE ("id"), UNIQUE ("groupId", "roleId"));

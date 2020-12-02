@@ -150,7 +150,7 @@ function (user, context, callback) {
   const family_name = user.family_name && user.family_name.length > 0 ? user.family_name : "<Unknown>";
   const email = user.email;
   const upsertUserQuery = `mutation CreateUser($userId: String!, $firstName: String!, $lastName: String!, $email: String!) {
-  insert_user(objects: {id: $userId, firstName: $firstName, lastName: $lastName, email: $email}, on_conflict: {constraint: user_pkey, update_columns: [firstName,lastName,email,lastLoggedInAt]}) {
+  insert_User(objects: {id: $userId, firstName: $firstName, lastName: $lastName, email: $email}, on_conflict: {constraint: user_pkey, update_columns: [firstName,lastName,email,lastLoggedInAt]}) {
     affected_rows
   }
 }`;

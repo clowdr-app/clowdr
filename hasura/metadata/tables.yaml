@@ -1215,10 +1215,12 @@
     permission:
       columns:
       - createdBy
+      - created_at
       - id
       - name
       - shortName
       - slug
+      - updated_at
       filter:
         _or:
         - createdBy:

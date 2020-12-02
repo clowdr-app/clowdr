@@ -731,14 +731,18 @@ export default function CRUDTable<T, PK extends keyof T>({
                     isChecked={selectedKeys.has(keyV)}
                     onChange={(ev) => {
                         if (!ev.target.checked) {
-                            setSelectedKeys(oldSelectedKeys => {
-                                const newSelectedKeys = new Set(oldSelectedKeys);
+                            setSelectedKeys((oldSelectedKeys) => {
+                                const newSelectedKeys = new Set(
+                                    oldSelectedKeys
+                                );
                                 newSelectedKeys.delete(keyV);
                                 return newSelectedKeys;
-                            });                            
+                            });
                         } else {
-                            setSelectedKeys(oldSelectedKeys => {
-                                const newSelectedKeys = new Set(oldSelectedKeys);
+                            setSelectedKeys((oldSelectedKeys) => {
+                                const newSelectedKeys = new Set(
+                                    oldSelectedKeys
+                                );
                                 newSelectedKeys.add(keyV);
                                 return newSelectedKeys;
                             });

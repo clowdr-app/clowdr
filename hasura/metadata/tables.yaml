@@ -1136,6 +1136,13 @@
         table:
           schema: public
           name: Attendee
+  - name: configurations
+    using:
+      foreign_key_constraint_on:
+        column: conferenceId
+        table:
+          schema: public
+          name: ConferenceConfiguration
   - name: contentGroups
     using:
       foreign_key_constraint_on:
@@ -1274,6 +1281,18 @@
       filter:
         createdBy:
           _eq: X-Hasura-User-Id
+- table:
+    schema: public
+    name: ConferenceConfiguration
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
+  object_relationships:
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
 - table:
     schema: public
     name: ConferenceDemoCode

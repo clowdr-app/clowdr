@@ -8,7 +8,7 @@ import {
     defaultCurrentUserContext,
 } from "./useMaybeCurrentUser";
 
-const _currentuserQueries = gql`
+gql`
     query selectCurrentUser($userId: String!) {
         User(where: { id: { _eq: $userId } }) {
             id
@@ -18,19 +18,6 @@ const _currentuserQueries = gql`
                 id
                 lastSeen
                 isIncognito
-            }
-            pinnedChats {
-                id
-                chatId
-            }
-            followedChats {
-                id
-                chatId
-            }
-            unreadIndices {
-                id
-                chatId
-                index
             }
         }
     }

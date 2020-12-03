@@ -83,11 +83,13 @@ export default function ApolloCustomProvider({
             );
 
             const cache = new InMemoryCache();
-            await persistCache({
-                cache,
-                storage: window.localStorage,
-                maxSize: 1048576 * 50, // 50 MiB
-            });
+            if (import.meta.env.MODE !== "development") {
+                await persistCache({
+                    cache,
+                    storage: window.localStorage,
+                    maxSize: 1048576 * 50, // 50 MiB
+                });
+            }
 
             const client = new ApolloClient({
                 link,

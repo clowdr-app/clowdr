@@ -7,6 +7,7 @@ import {
     RouteComponentProps,
     RouteProps,
 } from "react-router-dom";
+import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 
 export default function ProtectedRoute({
     component,
@@ -17,6 +18,7 @@ export default function ProtectedRoute({
     component: RouteComponentProps<any> | ComponentType<any>;
 } & RouteProps): JSX.Element {
     const { isAuthenticated, error } = useAuth0();
+    const user = useMaybeCurrentUser();
 
     if (error) {
         return <Route {...args} component={() => <Redirect to="/" />} />;
@@ -24,6 +26,10 @@ export default function ProtectedRoute({
 
     if (altIfNotAuthed && !isAuthenticated) {
         return altIfNotAuthed;
+    }
+
+    if (isAuthenticated && !user.user) {
+        return <Spinner />;
     }
 
     return (

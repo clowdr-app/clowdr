@@ -76,7 +76,7 @@ app.post(
     async (req: Request, res: Response) => {
         const params: protectedEchoArgs = req.body.input;
         console.log(`Echoing (protected) "${params.message}"`);
-        const result = protectedEchoHandler(params);
+        const result = await protectedEchoHandler(params);
         return res.json(result);
     }
 );

@@ -82,7 +82,21 @@
             },
             "args": ["local", "web"]
         },
-        // Fontend -- GraphQL Codegen
+        // Actions service -- GraphQL Codegen
+        {
+            "label": "Actions service -- GraphQL Codegen",
+            "type": "shell",
+            "command": "npm",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/services/actions"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": ["run", "graphql-codegen"]
+        },
+        // Frontend -- GraphQL Codegen
         {
             "label": "Frontend -- GraphQL Codegen",
             "type": "shell",

@@ -63,8 +63,11 @@ variables according to [the table below](#actions-service-configuration).
 
 ## Actions Service Configuration
 
-| Key                 | Value                                  |
-| ------------------- | -------------------------------------- |
-| AUTH0_API_DOMAIN    | `<auth0-subdomain>.auth0.com`          |
-| AUTH0_AUDIENCE      | `hasura`                               |
-| AUTH0_ISSUER_DOMAIN | `https://<auth0-subdomain>.auth0.com/` |
+| Key                          | Value                                                    |
+| ---------------------------- | -------------------------------------------------------- |
+| AUTH0_API_DOMAIN             | `<auth0-subdomain>.auth0.com`                            |
+| AUTH0_AUDIENCE               | `hasura`                                                 |
+| AUTH0_ISSUER_DOMAIN          | `https://<auth0-subdomain>.auth0.com/`                   |
+| HASURA_ADMIN_SECRET          | Hasura admin secret (used for queries)                   |
+| GRAPHQL_API_SECURE_PROTOCOLS | Boolean. Default: true. Whether to use https/wss or not. |
+| GRAPHQL_API_DOMAIN           | The domain and port of the GraphQL server                |

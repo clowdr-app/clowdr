@@ -16788,7 +16788,7 @@ export type SelectCurrentUserQueryVariables = Exact<{
 }>;
 
 
-export type SelectCurrentUserQuery = { readonly __typename?: 'query_root', readonly User: ReadonlyArray<{ readonly __typename?: 'User', readonly id: string, readonly lastName: string, readonly firstName: string, readonly onlineStatus?: Maybe<{ readonly __typename?: 'OnlineStatus', readonly id: any, readonly lastSeen: any, readonly isIncognito: boolean }>, readonly pinnedChats: ReadonlyArray<{ readonly __typename?: 'PinnedChat', readonly id: any, readonly chatId: any }>, readonly followedChats: ReadonlyArray<{ readonly __typename?: 'FollowedChat', readonly id: any, readonly chatId: any }>, readonly unreadIndices: ReadonlyArray<{ readonly __typename?: 'ChatUnreadIndex', readonly id: any, readonly chatId: any, readonly index?: Maybe<number> }> }> };
+export type SelectCurrentUserQuery = { readonly __typename?: 'query_root', readonly User: ReadonlyArray<{ readonly __typename?: 'User', readonly id: string, readonly lastName: string, readonly firstName: string, readonly onlineStatus?: Maybe<{ readonly __typename?: 'OnlineStatus', readonly id: any, readonly lastSeen: any, readonly isIncognito: boolean }> }> };
 
 export type GetCurrentUserIsIncognitoQueryVariables = Exact<{
   userId: Scalars['String'];
@@ -17517,19 +17517,6 @@ export const SelectCurrentUserDocument = gql`
       id
       lastSeen
       isIncognito
-    }
-    pinnedChats {
-      id
-      chatId
-    }
-    followedChats {
-      id
-      chatId
-    }
-    unreadIndices {
-      id
-      chatId
-      index
     }
   }
 }

@@ -34,8 +34,7 @@ const _currentUserGroupsQueries = gql`
                             roleId
                             groupId
                         }
-                        accessStart
-                        accessEnd
+                        enabled
                         id
                         includeUnauthenticated
                         name

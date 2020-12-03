@@ -2,27 +2,15 @@
 
 Use these as templates for configuring Hasura row-select permissions (to be applied carefully and adapated appropriately).
 
-- Active attendee matching session user:
+Partial template so far (created for `Group:user:select` permission):
 
-  `{"conference":{"attendees":{"_and":[{"userId":{"_eq":"X-Hasura-User-Id"}},{"statusName":{"_eq":"ACTIVE"}}]}}}`
+```json
+{"_or":[{"_and":[{"enabled":{"_eq":true}},{"_or":[{"includeUnauthenticated":{"_eq":true}},{"groupAttendees":{"attendee":{"userId":{"_eq":"X-Hasura-User-Id"}}}}]}]},{"conference":{"_or":[{"createdBy":{"_eq":"X-Hasura-User-Id"}},{"groups":{"_and":[{"enabled":{"_eq":true}},{"groupRoles":{"role":{"rolePermissions":{"_or":[{"permissionName":{"_eq":"CONFERENCE_MANAGE_ROLES"}},{"permissionName":{"_eq":"CONFERENCE_MANAGE_GROUPS"}}]}}}},{"groupAttendees":{"attendee":{"userId":{"_eq":"X-Hasura-User-Id"}}}}]}}]}}]}
+```
 
-- Active attendee matching session user belonging to a group with the specified permission (e.g. `CONFERENCE_MANAGE_ROLES`):
 
-  `{"conference":{"activeGroups":{"_and":[{"groupAttendees":{"attendee":{"_and":[{"userId":{"_eq":"X-Hasura-User-Id"}},{"statusName":{"_eq":"ACTIVE"}}]}}},{"groupRoles":{"role":{"rolePermissions":{"permissionName":{"_eq":"CONFERENCE_MANAGE_ROLES"}}}}}]}}}`
 
-- Active attendee matching session user belonging to a group with one of several specified permissions (e.g. `CONFERENCE_MANAGE_ROLES` and/or `CONFERENCE_MANAGE_GROUPS`):
-
-  `{"conference":{"activeGroups":{"_and":[{"groupAttendees":{"attendee":{"_and":[{"userId":{"_eq":"X-Hasura-User-Id"}},{"statusName":{"_eq":"ACTIVE"}}]}}},{"groupRoles":{"role":{"rolePermissions":{"_or":[{"permissionName":{"_eq":"CONFERENCE_MANAGE_ROLES"}},{"permissionName":{"_eq":"CONFERENCE_MANAGE_GROUPS"}}]}}}}]}}}`
-
-- Active attendee matching session user and user is either the conference creator or belongs to a group with the specified permission (e.g. `CONFERENCE_MANAGE_ROLES`):
-
-  `{"conference":{"_or":[{"createdBy":{"_eq":"X-Hasura-User-Id"}},{"activeGroups":{"_and":[{"groupAttendees":{"attendee":{"_and":[{"userId":{"_eq":"X-Hasura-User-Id"}},{"statusName":{"_eq":"ACTIVE"}}]}}},{"groupRoles":{"role":{"rolePermissions":{"permissionName":{"_eq":"CONFERENCE_MANAGE_ROLES"}}}}}]}}]}}`
-
-- Active attendee matching session user and user is either the conference creator or belongs to a group with one of several specified permissions (e.g. `CONFERENCE_MANAGE_ROLES` and/or `CONFERENCE_MANAGE_GROUPS`):
-
-  `{"conference":{"_or":[{"createdBy":{"_eq":"X-Hasura-User-Id"}},{"activeGroups":{"_and":[{"groupAttendees":{"attendee":{"_and":[{"userId":{"_eq":"X-Hasura-User-Id"}},{"statusName":{"_eq":"ACTIVE"}}]}}},{"groupRoles":{"role":{"rolePermissions":{"_or":[{"permissionName":{"_eq":"CONFERENCE_MANAGE_ROLES"}},{"permissionName":{"_eq":"CONFERENCE_MANAGE_GROUPS"}}]}}}}]}}]}}`
-
-- Active attendee matching session user belonging to a group with the specified permission (e.g. `CONFERENCE_VIEW`)
-  OR there exists a group with unauthenticatedAccess allowed with the specified permission (e.g. `CONFERENCE_VIEW`):
-
-  `{"_or":[{"createdBy":{"_eq":"X-Hasura-User-Id"}},{"activeGroups":{"_and":[{"_or":[{"includeUnauthenticated":{"_eq":true}},{"groupAttendees":{"attendee":{"_and":[{"userId":{"_eq":"X-Hasura-User-Id"}},{"statusName":{"_eq":"ACTIVE"}}]}}}]},{"groupRoles":{"role":{"rolePermissions":{"permissionName":{"_eq":"CONFERENCE_VIEW"}}}}}]}}]}`
+WIP for Attendee select:
+```
+{"_or":[{"_and":[{"userId":{"_is_null":false}},{"conference":{"groups":{"_and":[{"enabled":{"_eq":true}},{"groupRoles":{"role":{"rolePermissions":{"_or":[{"permissionName":{"_eq":"CONFERENCE_VIEW_ATTENDEES"}},{"permissionName":{"_eq":"CONFERENCE_MANAGE_ATTENDEES"}},{"permissionName":{"_eq":"CONFERENCE_MANAGE_GROUPS"}},{"permissionName":{"_eq":"CONFERENCE_MANAGE_ROLES"}}]}}}},{"_or":[{"includeUnauthenticated":{"_eq":true}},{"groupAttendees":{"attendee":{"userId":{"_eq":"X-Hasura-User-Id"}}}}]}]}}}]}]}
+```

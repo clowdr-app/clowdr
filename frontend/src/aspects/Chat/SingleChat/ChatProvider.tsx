@@ -21,11 +21,6 @@ const _chatQueries = gql`
             isAutoPin
             id
             updatedAt
-            moderators {
-                id
-                createdAt
-                userId
-            }
             members {
                 userId
                 id

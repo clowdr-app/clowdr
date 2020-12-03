@@ -113,8 +113,7 @@ INSERT INTO "Permission" (name, description) VALUES
   ('CONFERENCE_MANAGE_NAME', 'Manage (update only) conference name, short name and slug.'),
   ('CONFERENCE_MANAGE_ATTENDEES', 'Manage (create/update/delete) conference attendees.'),
   ('CONFERENCE_MODERATE_ATTENDEES', 'Moderate (update only) conference attendees.'),
-  ('CONFERENCE_VIEW_ACTIVE_ATTENDEES', 'View conference active attendees.'),
-  ('CONFERENCE_VIEW_BANNED_ATTENDEES', 'View conference banned attendees.'),
+  ('CONFERENCE_VIEW_ATTENDEES', 'View conference attendees.'),
   ('CONFERENCE_VIEW', 'View the conference.');
 
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
@@ -362,7 +361,6 @@ COMMENT ON TRIGGER "set_public_GroupRole_updated_at" ON "public"."GroupRole"
 IS 'trigger to set value of column "updated_at" to current timestamp on row update';
 
 ALTER TABLE "public"."OnlineStatus" ADD COLUMN "created_at" timestamptz NOT NULL DEFAULT now();
-
 ALTER TABLE "public"."OnlineStatus" ADD COLUMN "updated_at" timestamptz NOT NULL DEFAULT now();
 
 CREATE OR REPLACE FUNCTION "public"."set_current_timestamp_updated_at"()

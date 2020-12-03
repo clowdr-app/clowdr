@@ -1,66 +1,5 @@
 - table:
     schema: public
-    name: ActiveGroup
-  object_relationships:
-  - name: conference
-    using:
-      manual_configuration:
-        remote_table:
-          schema: public
-          name: Conference
-        column_mapping:
-          conferenceId: id
-  array_relationships:
-  - name: groupAttendees
-    using:
-      manual_configuration:
-        remote_table:
-          schema: public
-          name: GroupAttendee
-        column_mapping:
-          id: groupId
-  - name: groupRoles
-    using:
-      manual_configuration:
-        remote_table:
-          schema: public
-          name: GroupRole
-        column_mapping:
-          id: groupId
-  select_permissions:
-  - role: user
-    permission:
-      columns:
-      - id
-      - conferenceId
-      - name
-      - includeUnauthenticated
-      - accessStart
-      - accessEnd
-      filter:
-        conference:
-          _or:
-          - createdBy:
-              _eq: X-Hasura-User-Id
-          - activeGroups:
-              _and:
-              - groupAttendees:
-                  attendee:
-                    _and:
-                    - userId:
-                        _eq: X-Hasura-User-Id
-                    - statusName:
-                        _eq: ACTIVE
-              - groupRoles:
-                  role:
-                    rolePermissions:
-                      _or:
-                      - permissionName:
-                          _eq: CONFERENCE_MANAGE_ROLES
-                      - permissionName:
-                          _eq: CONFERENCE_MANAGE_GROUPS
-- table:
-    schema: public
     name: Attendee
   configuration:
     custom_root_fields: {}
@@ -71,9 +10,6 @@
   - name: conference
     using:
       foreign_key_constraint_on: conferenceId
-  - name: status
-    using:
-      foreign_key_constraint_on: statusName
   - name: user
     using:
       foreign_key_constraint_on: userId
@@ -110,20 +46,14 @@
   - role: user
     permission:
       check:
-        _or:
-        - conference:
-            createdBy:
+        conference:
+          _or:
+          - createdBy:
               _eq: X-Hasura-User-Id
-        - conference:
-            activeGroups:
+          - groups:
               _and:
-              - groupAttendees:
-                  attendee:
-                    _and:
-                    - userId:
-                        _eq: X-Hasura-User-Id
-                    - statusName:
-                        _eq: ACTIVE
+              - enabled:
+                  _eq: true
               - groupRoles:
                   role:
                     rolePermissions:
@@ -134,8 +64,10 @@
                           _eq: CONFERENCE_MANAGE_GROUPS
                       - permissionName:
                           _eq: CONFERENCE_MANAGE_ATTENDEES
-      set:
-        statusName: ACTIVE
+              - groupAttendees:
+                  attendee:
+                    userId:
+                      _eq: X-Hasura-User-Id
       columns:
       - conferenceId
       - displayName
@@ -148,183 +80,110 @@
       - conferenceId
       - displayName
       - id
-      - statusName
+      - userId
       filter:
-        _and:
-        - userId:
-            _is_null: false
-        - _or:
-          - _and:
-            - statusName:
-                _eq: ACTIVE
-            - conference:
-                activeGroups:
-                  _and:
-                  - includeUnauthenticated:
-                      _eq: true
-                  - groupRoles:
-                      role:
-                        rolePermissions:
-                          permissionName:
-                            _eq: CONFERENCE_VIEW_ACTIVE_ATTENDEES
-          - _and:
-            - statusName:
-                _eq: BANNED
-            - conference:
-                activeGroups:
-                  _and:
-                  - includeUnauthenticated:
-                      _eq: true
-                  - groupRoles:
-                      role:
-                        rolePermissions:
-                          permissionName:
-                            _eq: CONFERENCE_VIEW_BANNED_ATTENDEES
+        _or:
+        - _and:
+          - userId:
+              _is_null: false
+          - conference:
+              groups:
+                _and:
+                - enabled:
+                    _eq: true
+                - groupRoles:
+                    role:
+                      rolePermissions:
+                        permissionName:
+                          _eq: CONFERENCE_VIEW_ATTENDEES
+                - includeUnauthenticated:
+                    _eq: true
   - role: user
     permission:
       columns:
       - conferenceId
       - displayName
       - id
-      - statusName
       - userId
       filter:
         _or:
-        - conference:
-            createdBy:
-              _eq: X-Hasura-User-Id
-        - userId:
-            _eq: X-Hasura-User-Id
-        - conference:
-            activeGroups:
-              _and:
-              - groupAttendees:
-                  attendee:
-                    _and:
-                    - userId:
-                        _eq: X-Hasura-User-Id
-                    - statusName:
-                        _eq: ACTIVE
-              - groupRoles:
-                  role:
-                    rolePermissions:
-                      _or:
-                      - permissionName:
-                          _eq: CONFERENCE_MANAGE_ROLES
-                      - permissionName:
-                          _eq: CONFERENCE_MANAGE_GROUPS
-                      - permissionName:
-                          _eq: CONFERENCE_MANAGE_ATTENDEES
-                      - permissionName:
-                          _eq: CONFERENCE_MODERATE_ATTENDEES
         - _and:
-          - statusName:
-              _eq: ACTIVE
+          - userId:
+              _is_null: false
           - conference:
-              activeGroups:
+              groups:
                 _and:
+                - enabled:
+                    _eq: true
+                - groupRoles:
+                    role:
+                      rolePermissions:
+                        _or:
+                        - permissionName:
+                            _eq: CONFERENCE_VIEW_ATTENDEES
+                        - permissionName:
+                            _eq: CONFERENCE_MANAGE_ATTENDEES
+                        - permissionName:
+                            _eq: CONFERENCE_MANAGE_GROUPS
+                        - permissionName:
+                            _eq: CONFERENCE_MANAGE_ROLES
                 - _or:
                   - includeUnauthenticated:
                       _eq: true
                   - groupAttendees:
                       attendee:
-                        _and:
-                        - userId:
-                            _eq: X-Hasura-User-Id
-                        - statusName:
-                            _eq: ACTIVE
-                - groupRoles:
-                    role:
-                      rolePermissions:
-                        permissionName:
-                          _eq: CONFERENCE_VIEW_ACTIVE_ATTENDEES
-          - userId:
-              _is_null: false
-        - _and:
-          - statusName:
-              _ne: BANNED
-          - conference:
-              activeGroups:
-                _and:
-                - _or:
-                  - includeUnauthenticated:
-                      _eq: true
-                  - groupAttendees:
-                      attendee:
-                        _and:
-                        - userId:
-                            _eq: X-Hasura-User-Id
-                        - statusName:
-                            _eq: ACTIVE
-                - groupRoles:
-                    role:
-                      rolePermissions:
-                        permissionName:
-                          _eq: CONFERENCE_VIEW_BANNED_ATTENDEES
-          - userId:
-              _is_null: false
+                        userId:
+                          _eq: X-Hasura-User-Id
   update_permissions:
   - role: user
     permission:
       columns:
       - displayName
-      - statusName
+      - userId
       filter:
         _or:
         - _and:
           - userId:
               _eq: X-Hasura-User-Id
-          - statusName:
-              _eq: ACTIVE
+          - groupAttendees:
+              group:
+                enabled:
+                  _eq: true
         - conference:
-            createdBy:
-              _eq: X-Hasura-User-Id
-        - conference:
-            activeGroups:
-              _and:
-              - groupAttendees:
-                  attendee:
-                    _and:
-                    - userId:
+            _or:
+            - createdBy:
+                _eq: X-Hasura-User-Id
+            - groups:
+                _and:
+                - enabled:
+                    _eq: true
+                - groupRoles:
+                    role:
+                      rolePermissions:
+                        _or:
+                        - permissionName:
+                            _eq: CONFERENCE_MANAGE_ROLES
+                        - permissionName:
+                            _eq: CONFERENCE_MANAGE_GROUPS
+                        - permissionName:
+                            _eq: CONFERENCE_MANAGE_ATTENDEES
+                - groupAttendees:
+                    attendee:
+                      userId:
                         _eq: X-Hasura-User-Id
-                    - statusName:
-                        _eq: ACTIVE
-              - groupRoles:
-                  role:
-                    rolePermissions:
-                      _or:
-                      - permissionName:
-                          _eq: CONFERENCE_MANAGE_ROLES
-                      - permissionName:
-                          _eq: CONFERENCE_MANAGE_GROUPS
-                      - permissionName:
-                          _eq: CONFERENCE_MANAGE_ATTENDEES
-                      - permissionName:
-                          _eq: CONFERENCE_MODERATE_ATTENDEES
-      check: {}
+      check: null
   delete_permissions:
   - role: user
     permission:
       filter:
-        _or:
-        - _and:
-          - userId:
+        conference:
+          _or:
+          - createdBy:
               _eq: X-Hasura-User-Id
-          - statusName:
-              _eq: ACTIVE
-        - conference:
-            createdBy:
-              _eq: X-Hasura-User-Id
-        - conference:
-            activeGroups:
+          - groups:
               _and:
-              - groupAttendees:
-                  attendee:
-                    _and:
-                    - userId:
-                        _eq: X-Hasura-User-Id
-                    - statusName:
-                        _eq: ACTIVE
+              - enabled:
+                  _eq: true
               - groupRoles:
                   role:
                     rolePermissions:
@@ -335,25 +194,10 @@
                           _eq: CONFERENCE_MANAGE_GROUPS
                       - permissionName:
                           _eq: CONFERENCE_MANAGE_ATTENDEES
-                      - permissionName:
-                          _eq: CONFERENCE_MODERATE_ATTENDEES
-- table:
-    schema: public
-    name: AttendeeStatus
-  is_enum: true
-  select_permissions:
-  - role: unauthenticated
-    permission:
-      columns:
-      - name
-      - description
-      filter: {}
-  - role: user
-    permission:
-      columns:
-      - description
-      - name
-      filter: {}
+              - groupAttendees:
+                  attendee:
+                    userId:
+                      _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: Broadcast
@@ -363,6 +207,9 @@
       updated_at: updatedAt
       created_at: createdAt
   object_relationships:
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
   - name: event
     using:
       foreign_key_constraint_on: eventId
@@ -375,6 +222,9 @@
       updated_at: updatedAt
       created_at: createdAt
   object_relationships:
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
   - name: contentItem
     using:
       foreign_key_constraint_on: contentItemId
@@ -432,13 +282,6 @@
         table:
           schema: public
           name: ChatMessage
-  - name: moderators
-    using:
-      foreign_key_constraint_on:
-        column: chatId
-        table:
-          schema: public
-          name: ChatModerator
   - name: typers
     using:
       foreign_key_constraint_on:
@@ -453,95 +296,6 @@
         table:
           schema: public
           name: ChatViewer
-  insert_permissions:
-  - role: user
-    permission:
-      check: {}
-      set:
-        mode: publicGroup
-        isAutoPin: "false"
-        isAutoNotify: "false"
-        creatorId: x-hasura-User-Id
-      columns:
-      - description
-      - name
-      backend_only: false
-  select_permissions:
-  - role: user
-    permission:
-      columns:
-      - createdAt
-      - creatorId
-      - description
-      - id
-      - isAutoNotify
-      - isAutoPin
-      - mode
-      - name
-      - updatedAt
-      filter:
-        _or:
-        - creatorId:
-            _eq: X-Hasura-User-Id
-        - moderators:
-            userId:
-              _eq: X-Hasura-User-Id
-        - members:
-            userId:
-              _eq: X-Hasura-User-Id
-        - mode:
-            _eq: publicGroup
-  update_permissions:
-  - role: user
-    permission:
-      columns:
-      - description
-      - isAutoNotify
-      - isAutoPin
-      - name
-      filter:
-        _or:
-        - creatorId:
-            _eq: X-Hasura-User-Id
-        - moderators:
-            userId:
-              _eq: X-Hasura-User-Id
-        - _and:
-          - mode:
-              _eq: DM
-          - members:
-              userId:
-                _eq: X-Hasura-User-Id
-      check:
-        _and:
-        - _or:
-          - isAutoPin:
-              _eq: false
-          - moderators:
-              userId:
-                _eq: X-Hasura-User-Id
-        - _or:
-          - isAutoNotify:
-              _eq: false
-          - moderators:
-              userId:
-                _eq: X-Hasura-User-Id
-  delete_permissions:
-  - role: user
-    permission:
-      filter:
-        _or:
-        - creatorId:
-            _eq: X-Hasura-User-Id
-        - moderators:
-            userId:
-              _eq: X-Hasura-User-Id
-        - _and:
-          - mode:
-              _eq: DM
-          - members:
-              userId:
-                _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: ChatMember
@@ -552,81 +306,6 @@
   - name: user
     using:
       foreign_key_constraint_on: userId
-  insert_permissions:
-  - role: user
-    permission:
-      check:
-        _and:
-        - _or:
-          - chat:
-              mode:
-                _eq: privateGroup
-          - chat:
-              mode:
-                _eq: modhub
-          - chat:
-              mode:
-                _eq: mod
-          - chat:
-              mode:
-                _eq: modComplete
-        - _or:
-          - chat:
-              creatorId:
-                _eq: X-Hasura-User-Id
-          - chat:
-              moderators:
-                userId:
-                  _eq: X-Hasura-User-Id
-      columns:
-      - chatId
-      - userId
-      backend_only: false
-  select_permissions:
-  - role: user
-    permission:
-      columns:
-      - chatId
-      - createdAt
-      - id
-      - invitationAcceptedAt
-      - updatedAt
-      - userId
-      filter:
-        _or:
-        - chat:
-            creatorId:
-              _eq: X-Hasura-User-Id
-        - chat:
-            moderators:
-              userId:
-                _eq: X-Hasura-User-Id
-        - userId:
-            _eq: X-Hasura-User-Id
-  update_permissions:
-  - role: user
-    permission:
-      columns:
-      - invitationAcceptedAt
-      - updatedAt
-      filter:
-        userId:
-          _eq: X-Hasura-User-Id
-      check: null
-  delete_permissions:
-  - role: user
-    permission:
-      filter:
-        _or:
-        - chat:
-            creatorId:
-              _eq: X-Hasura-User-Id
-        - chat:
-            moderators:
-              userId:
-                _eq: X-Hasura-User-Id
-        - userId:
-            _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: ChatMessage
@@ -652,141 +331,6 @@
         table:
           schema: public
           name: ChatReaction
-  insert_permissions:
-  - role: user
-    permission:
-      check:
-        _or:
-        - chat:
-            mode:
-              _eq: publicGroup
-        - chat:
-            members:
-              userId:
-                _eq: X-Hasura-User-Id
-        - chat:
-            moderators:
-              userId:
-                _eq: X-Hasura-User-Id
-      set:
-        senderId: x-hasura-User-Id
-      columns:
-      - chatId
-      - content
-      - index
-      backend_only: false
-  select_permissions:
-  - role: user
-    permission:
-      columns:
-      - chatId
-      - content
-      - createdAt
-      - id
-      - index
-      - isHighlighted
-      - senderId
-      - updatedAt
-      filter:
-        _or:
-        - chat:
-            mode:
-              _eq: publicGroup
-        - chat:
-            members:
-              userId:
-                _eq: X-Hasura-User-Id
-        - chat:
-            moderators:
-              userId:
-                _eq: X-Hasura-User-Id
-  update_permissions:
-  - role: user
-    permission:
-      columns:
-      - content
-      - isHighlighted
-      - updatedAt
-      filter:
-        _or:
-        - senderId:
-            _eq: X-Hasura-User-Id
-        - chat:
-            moderators:
-              userId:
-                _eq: X-Hasura-User-Id
-      check: null
-  delete_permissions:
-  - role: user
-    permission:
-      filter:
-        _or:
-        - senderId:
-            _eq: X-Hasura-User-Id
-        - chat:
-            moderators:
-              userId:
-                _eq: X-Hasura-User-Id
-- table:
-    schema: public
-    name: ChatModerator
-  object_relationships:
-  - name: chat
-    using:
-      foreign_key_constraint_on: chatId
-  - name: user
-    using:
-      foreign_key_constraint_on: userId
-  insert_permissions:
-  - role: user
-    permission:
-      check:
-        _or:
-        - chat:
-            creatorId:
-              _eq: X-Hasura-User-Id
-        - chat:
-            moderators:
-              userId:
-                _eq: X-Hasura-User-Id
-      columns:
-      - chatId
-      - userId
-      backend_only: false
-  select_permissions:
-  - role: user
-    permission:
-      columns:
-      - chatId
-      - createdAt
-      - id
-      - userId
-      filter:
-        _or:
-        - chat:
-            creatorId:
-              _eq: X-Hasura-User-Id
-        - chat:
-            moderators:
-              userId:
-                _eq: X-Hasura-User-Id
-        - chat:
-            members:
-              userId:
-                _eq: X-Hasura-User-Id
-        - chat:
-            mode:
-              _eq: publicGroup
-        - userId:
-            _eq: X-Hasura-User-Id
-  delete_permissions:
-  - role: user
-    permission:
-      filter:
-        chat:
-          moderators:
-            userId:
-              _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: ChatReaction
@@ -797,67 +341,6 @@
   - name: reactor
     using:
       foreign_key_constraint_on: reactorId
-  insert_permissions:
-  - role: user
-    permission:
-      check:
-        message:
-          chat:
-            _or:
-            - creatorId:
-                _eq: X-Hasura-User-Id
-            - moderators:
-                userId:
-                  _eq: X-Hasura-User-Id
-            - members:
-                userId:
-                  _eq: X-Hasura-User-Id
-            - mode:
-                _eq: publicGroup
-      set:
-        reactorId: x-hasura-User-Id
-      columns:
-      - messageId
-      - reaction
-      backend_only: false
-  select_permissions:
-  - role: user
-    permission:
-      columns:
-      - createdAt
-      - id
-      - messageId
-      - reaction
-      - reactorId
-      filter:
-        message:
-          chat:
-            _or:
-            - creatorId:
-                _eq: X-Hasura-User-Id
-            - moderators:
-                userId:
-                  _eq: X-Hasura-User-Id
-            - members:
-                userId:
-                  _eq: X-Hasura-User-Id
-            - mode:
-                _eq: publicGroup
-  delete_permissions:
-  - role: user
-    permission:
-      filter:
-        _or:
-        - reactorId:
-            _eq: X-Hasura-User-Id
-        - message:
-            chat:
-              _or:
-              - creatorId:
-                  _eq: X-Hasura-User-Id
-              - moderators:
-                  userId:
-                    _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: ChatTyper
@@ -868,84 +351,6 @@
   - name: user
     using:
       foreign_key_constraint_on: userId
-  insert_permissions:
-  - role: user
-    permission:
-      check:
-        chat:
-          _or:
-          - mode:
-              _eq: publicGroup
-          - members:
-              userId:
-                _eq: X-Hasura-User-Id
-          - moderators:
-              userId:
-                _eq: X-Hasura-User-Id
-          - creatorId:
-              _eq: X-Hasura-User-Id
-      set:
-        userId: x-hasura-User-Id
-      columns:
-      - chatId
-      - updatedAt
-      backend_only: false
-  select_permissions:
-  - role: user
-    permission:
-      columns:
-      - chatId
-      - id
-      - updatedAt
-      - userId
-      filter:
-        chat:
-          _or:
-          - mode:
-              _eq: publicGroup
-          - members:
-              userId:
-                _eq: X-Hasura-User-Id
-          - moderators:
-              userId:
-                _eq: X-Hasura-User-Id
-          - creatorId:
-              _eq: X-Hasura-User-Id
-  update_permissions:
-  - role: user
-    permission:
-      columns:
-      - updatedAt
-      filter:
-        chat:
-          _or:
-          - mode:
-              _eq: publicGroup
-          - members:
-              userId:
-                _eq: X-Hasura-User-Id
-          - moderators:
-              userId:
-                _eq: X-Hasura-User-Id
-          - creatorId:
-              _eq: X-Hasura-User-Id
-      check: null
-  delete_permissions:
-  - role: user
-    permission:
-      filter:
-        chat:
-          _or:
-          - mode:
-              _eq: publicGroup
-          - members:
-              userId:
-                _eq: X-Hasura-User-Id
-          - moderators:
-              userId:
-                _eq: X-Hasura-User-Id
-          - creatorId:
-              _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: ChatUnreadIndex
@@ -956,67 +361,6 @@
   - name: user
     using:
       foreign_key_constraint_on: userId
-  insert_permissions:
-  - role: user
-    permission:
-      check:
-        chat:
-          _or:
-          - mode:
-              _eq: publicGroup
-          - creatorId:
-              _eq: X-Hasura-User-Id
-          - members:
-              userId:
-                _eq: X-Hasura-User-Id
-          - moderators:
-              userId:
-                _eq: X-Hasura-User-Id
-      set:
-        userId: x-hasura-User-Id
-      columns:
-      - chatId
-      - index
-      backend_only: false
-  select_permissions:
-  - role: user
-    permission:
-      columns:
-      - chatId
-      - id
-      - index
-      - userId
-      filter:
-        userId:
-          _eq: X-Hasura-User-Id
-  update_permissions:
-  - role: user
-    permission:
-      columns:
-      - index
-      filter:
-        userId:
-          _eq: X-Hasura-User-Id
-      check: null
-  delete_permissions:
-  - role: user
-    permission:
-      filter:
-        _or:
-        - chat:
-            _or:
-            - mode:
-                _eq: publicGroup
-            - creatorId:
-                _eq: X-Hasura-User-Id
-            - members:
-                userId:
-                  _eq: X-Hasura-User-Id
-            - moderators:
-                userId:
-                  _eq: X-Hasura-User-Id
-        - userId:
-            _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: ChatViewer
@@ -1027,84 +371,6 @@
   - name: user
     using:
       foreign_key_constraint_on: userId
-  insert_permissions:
-  - role: user
-    permission:
-      check:
-        chat:
-          _or:
-          - mode:
-              _eq: publicGroup
-          - creatorId:
-              _eq: X-Hasura-User-Id
-          - members:
-              userId:
-                _eq: X-Hasura-User-Id
-          - moderators:
-              userId:
-                _eq: X-Hasura-User-Id
-      set:
-        userId: x-hasura-User-Id
-      columns:
-      - chatId
-      - lastSeen
-      backend_only: false
-  select_permissions:
-  - role: user
-    permission:
-      columns:
-      - chatId
-      - id
-      - lastSeen
-      - userId
-      filter:
-        chat:
-          _or:
-          - mode:
-              _eq: publicGroup
-          - creatorId:
-              _eq: X-Hasura-User-Id
-          - members:
-              userId:
-                _eq: X-Hasura-User-Id
-          - moderators:
-              userId:
-                _eq: X-Hasura-User-Id
-  update_permissions:
-  - role: user
-    permission:
-      columns:
-      - lastSeen
-      filter:
-        chat:
-          _or:
-          - mode:
-              _eq: publicGroup
-          - creatorId:
-              _eq: X-Hasura-User-Id
-          - members:
-              userId:
-                _eq: X-Hasura-User-Id
-          - moderators:
-              userId:
-                _eq: X-Hasura-User-Id
-      check: null
-  delete_permissions:
-  - role: user
-    permission:
-      filter:
-        chat:
-          _or:
-          - mode:
-              _eq: publicGroup
-          - creatorId:
-              _eq: X-Hasura-User-Id
-          - members:
-              userId:
-                _eq: X-Hasura-User-Id
-          - moderators:
-              userId:
-                _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: Conference
@@ -1121,14 +387,6 @@
     using:
       foreign_key_constraint_on: demoCodeId
   array_relationships:
-  - name: activeGroups
-    using:
-      manual_configuration:
-        remote_table:
-          schema: public
-          name: ActiveGroup
-        column_mapping:
-          id: conferenceId
   - name: attendees
     using:
       foreign_key_constraint_on:
@@ -1204,13 +462,18 @@
   - role: unauthenticated
     permission:
       columns:
+      - createdBy
+      - created_at
       - id
       - name
       - shortName
       - slug
+      - updated_at
       filter:
-        activeGroups:
+        groups:
           _and:
+          - enabled:
+              _eq: true
           - includeUnauthenticated:
               _eq: true
           - groupRoles:
@@ -1232,23 +495,25 @@
         _or:
         - createdBy:
             _eq: X-Hasura-User-Id
-        - activeGroups:
+        - groups:
             _and:
+            - enabled:
+                _eq: true
+            - groupRoles:
+                role:
+                  rolePermissions:
+                    _or:
+                    - permissionName:
+                        _eq: CONFERENCE_VIEW
+                    - permissionName:
+                        _eq: CONFERENCE_MANAGE_NAME
             - _or:
               - includeUnauthenticated:
                   _eq: true
               - groupAttendees:
                   attendee:
-                    _and:
-                    - userId:
-                        _eq: X-Hasura-User-Id
-                    - statusName:
-                        _eq: ACTIVE
-            - groupRoles:
-                role:
-                  rolePermissions:
-                    permissionName:
-                      _eq: CONFERENCE_VIEW
+                    userId:
+                      _eq: X-Hasura-User-Id
   update_permissions:
   - role: user
     permission:
@@ -1260,20 +525,19 @@
         _or:
         - createdBy:
             _eq: X-Hasura-User-Id
-        - activeGroups:
+        - groups:
             _and:
-            - groupAttendees:
-                attendee:
-                  _and:
-                  - userId:
-                      _eq: X-Hasura-User-Id
-                  - statusName:
-                      _eq: ACTIVE
+            - enabled:
+                _eq: true
             - groupRoles:
                 role:
                   rolePermissions:
                     permissionName:
                       _eq: CONFERENCE_MANAGE_NAME
+            - groupAttendees:
+                attendee:
+                  userId:
+                    _eq: X-Hasura-User-Id
       check: null
   delete_permissions:
   - role: user
@@ -1386,6 +650,19 @@
         table:
           schema: public
           name: ContentGroup
+  select_permissions:
+  - role: unauthenticated
+    permission:
+      columns:
+      - name
+      - description
+      filter: {}
+  - role: user
+    permission:
+      columns:
+      - description
+      - name
+      filter: {}
 - table:
     schema: public
     name: ContentItem
@@ -1403,6 +680,9 @@
           name: BroadcastContentItem
         column_mapping:
           id: contentItemId
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
   - name: contentGroup
     using:
       foreign_key_constraint_on: contentGroupId
@@ -1427,6 +707,9 @@
     schema: public
     name: ContentItemPerson
   object_relationships:
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
   - name: item
     using:
       foreign_key_constraint_on: itemId
@@ -1473,6 +756,19 @@
         table:
           schema: public
           name: RequiredContentItem
+  select_permissions:
+  - role: unauthenticated
+    permission:
+      columns:
+      - description
+      - name
+      filter: {}
+  - role: user
+    permission:
+      columns:
+      - description
+      - name
+      filter: {}
 - table:
     schema: public
     name: Event
@@ -1482,6 +778,9 @@
       updated_at: updatedAt
       created_at: createdAt
   object_relationships:
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
   - name: contentGroup
     using:
       foreign_key_constraint_on: contentGroupId
@@ -1530,6 +829,9 @@
   - name: attendee
     using:
       foreign_key_constraint_on: attendeeId
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
   - name: event
     using:
       foreign_key_constraint_on: eventId
@@ -1551,6 +853,19 @@
         table:
           schema: public
           name: EventPerson
+  select_permissions:
+  - role: unauthenticated
+    permission:
+      columns:
+      - name
+      - description
+      filter: {}
+  - role: user
+    permission:
+      columns:
+      - description
+      - name
+      filter: {}
 - table:
     schema: public
     name: ExecutedTransitions
@@ -1563,6 +878,9 @@
   - name: broadcastContentItem
     using:
       foreign_key_constraint_on: broadcastContentId
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
   - name: event
     using:
       foreign_key_constraint_on: eventId
@@ -1582,78 +900,6 @@
   - name: moderationChat
     using:
       foreign_key_constraint_on: moderationChatId
-  insert_permissions:
-  - role: user
-    permission:
-      check:
-        message:
-          senderId:
-            _ne: X-Hasura-User-Id
-      set:
-        flaggedById: x-hasura-User-Id
-      columns:
-      - messageId
-      backend_only: false
-  select_permissions:
-  - role: user
-    permission:
-      columns:
-      - createdAt
-      - flaggedById
-      - id
-      - messageId
-      - moderationChatId
-      - notes
-      - resolutionAction
-      - resolvedAt
-      filter:
-        _or:
-        - flaggedById:
-            _eq: X-Hasura-User-Id
-        - moderationChat:
-            _or:
-            - members:
-                userId:
-                  _eq: X-Hasura-User-Id
-            - moderators:
-                userId:
-                  _eq: X-Hasura-User-Id
-  update_permissions:
-  - role: user
-    permission:
-      columns:
-      - moderationChatId
-      - notes
-      - resolutionAction
-      - resolvedAt
-      filter:
-        _or:
-        - flaggedById:
-            _eq: X-Hasura-User-Id
-        - moderationChat:
-            _or:
-            - members:
-                userId:
-                  _eq: X-Hasura-User-Id
-            - moderators:
-                userId:
-                  _eq: X-Hasura-User-Id
-      check: null
-  delete_permissions:
-  - role: user
-    permission:
-      filter:
-        _or:
-        - flaggedById:
-            _eq: X-Hasura-User-Id
-        - moderationChat:
-            _or:
-            - members:
-                userId:
-                  _eq: X-Hasura-User-Id
-            - moderators:
-                userId:
-                  _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: FollowedChat
@@ -1664,43 +910,6 @@
   - name: user
     using:
       foreign_key_constraint_on: userId
-  insert_permissions:
-  - role: user
-    permission:
-      check:
-        userId:
-          _eq: X-Hasura-User-Id
-      columns:
-      - chatId
-      - manual
-      - userId
-      backend_only: false
-  select_permissions:
-  - role: user
-    permission:
-      columns:
-      - chatId
-      - id
-      - manual
-      - userId
-      filter:
-        userId:
-          _eq: X-Hasura-User-Id
-  update_permissions:
-  - role: user
-    permission:
-      columns:
-      - manual
-      filter:
-        userId:
-          _eq: X-Hasura-User-Id
-      check: null
-  delete_permissions:
-  - role: user
-    permission:
-      filter:
-        userId:
-          _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: Group
@@ -1736,15 +945,10 @@
           _or:
           - createdBy:
               _eq: X-Hasura-User-Id
-          - activeGroups:
+          - groups:
               _and:
-              - groupAttendees:
-                  attendee:
-                    _and:
-                    - userId:
-                        _eq: X-Hasura-User-Id
-                    - statusName:
-                        _eq: ACTIVE
+              - enabled:
+                  _eq: true
               - groupRoles:
                   role:
                     rolePermissions:
@@ -1753,10 +957,13 @@
                           _eq: CONFERENCE_MANAGE_ROLES
                       - permissionName:
                           _eq: CONFERENCE_MANAGE_GROUPS
+              - groupAttendees:
+                  attendee:
+                    userId:
+                      _eq: X-Hasura-User-Id
       columns:
-      - accessEnd
-      - accessStart
       - conferenceId
+      - enabled
       - includeUnauthenticated
       - name
       backend_only: false
@@ -1764,59 +971,62 @@
   - role: unauthenticated
     permission:
       columns:
-      - accessEnd
-      - accessStart
       - conferenceId
+      - enabled
       - id
       - includeUnauthenticated
       - name
       filter:
-        includeUnauthenticated:
-          _eq: true
+        _and:
+        - enabled:
+            _eq: true
+        - includeUnauthenticated:
+            _eq: true
   - role: user
     permission:
       columns:
+      - conferenceId
+      - enabled
+      - id
       - includeUnauthenticated
       - name
-      - accessEnd
-      - accessStart
-      - conferenceId
-      - id
       filter:
         _or:
+        - _and:
+          - enabled:
+              _eq: true
+          - _or:
+            - includeUnauthenticated:
+                _eq: true
+            - groupAttendees:
+                attendee:
+                  userId:
+                    _eq: X-Hasura-User-Id
         - conference:
             _or:
             - createdBy:
                 _eq: X-Hasura-User-Id
             - groups:
                 _and:
-                - groupAttendees:
-                    attendee:
-                      _and:
-                      - userId:
-                          _eq: X-Hasura-User-Id
-                      - statusName:
-                          _eq: ACTIVE
+                - enabled:
+                    _eq: true
                 - groupRoles:
                     role:
                       rolePermissions:
                         _or:
                         - permissionName:
-                            _eq: CONFERENCE_MANAGE_GROUPS
-                        - permissionName:
                             _eq: CONFERENCE_MANAGE_ROLES
-        - includeUnauthenticated:
-            _eq: true
-        - groupAttendees:
-            attendee:
-              userId:
-                _eq: X-Hasura-User-Id
+                        - permissionName:
+                            _eq: CONFERENCE_MANAGE_GROUPS
+                - groupAttendees:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
   update_permissions:
   - role: user
     permission:
       columns:
-      - accessEnd
-      - accessStart
+      - enabled
       - includeUnauthenticated
       - name
       filter:
@@ -1824,15 +1034,10 @@
           _or:
           - createdBy:
               _eq: X-Hasura-User-Id
-          - activeGroups:
+          - groups:
               _and:
-              - groupAttendees:
-                  attendee:
-                    _and:
-                    - userId:
-                        _eq: X-Hasura-User-Id
-                    - statusName:
-                        _eq: ACTIVE
+              - enabled:
+                  _eq: true
               - groupRoles:
                   role:
                     rolePermissions:
@@ -1841,6 +1046,10 @@
                           _eq: CONFERENCE_MANAGE_ROLES
                       - permissionName:
                           _eq: CONFERENCE_MANAGE_GROUPS
+              - groupAttendees:
+                  attendee:
+                    userId:
+                      _eq: X-Hasura-User-Id
       check: null
   delete_permissions:
   - role: user
@@ -1850,15 +1059,10 @@
           _or:
           - createdBy:
               _eq: X-Hasura-User-Id
-          - activeGroups:
+          - groups:
               _and:
-              - groupAttendees:
-                  attendee:
-                    _and:
-                    - userId:
-                        _eq: X-Hasura-User-Id
-                    - statusName:
-                        _eq: ACTIVE
+              - enabled:
+                  _eq: true
               - groupRoles:
                   role:
                     rolePermissions:
@@ -1867,6 +1071,10 @@
                           _eq: CONFERENCE_MANAGE_ROLES
                       - permissionName:
                           _eq: CONFERENCE_MANAGE_GROUPS
+              - groupAttendees:
+                  attendee:
+                    userId:
+                      _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: GroupAttendee
@@ -1876,14 +1084,6 @@
       updated_at: updatedAt
       created_at: createdAt
   object_relationships:
-  - name: activeGroup
-    using:
-      manual_configuration:
-        remote_table:
-          schema: public
-          name: ActiveGroup
-        column_mapping:
-          groupId: id
   - name: attendee
     using:
       foreign_key_constraint_on: attendeeId
@@ -1899,15 +1099,10 @@
             _or:
             - createdBy:
                 _eq: X-Hasura-User-Id
-            - activeGroups:
+            - groups:
                 _and:
-                - groupAttendees:
-                    attendee:
-                      _and:
-                      - userId:
-                          _eq: X-Hasura-User-Id
-                      - statusName:
-                          _eq: ACTIVE
+                - enabled:
+                    _eq: true
                 - groupRoles:
                     role:
                       rolePermissions:
@@ -1918,6 +1113,10 @@
                             _eq: CONFERENCE_MANAGE_GROUPS
                         - permissionName:
                             _eq: CONFERENCE_MANAGE_ATTENDEES
+                - groupAttendees:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
       columns:
       - attendeeId
       - groupId
@@ -1926,28 +1125,27 @@
   - role: user
     permission:
       columns:
-      - id
-      - groupId
       - attendeeId
+      - groupId
+      - id
       filter:
         _or:
-        - attendee:
-            userId:
-              _eq: X-Hasura-User-Id
+        - _and:
+          - group:
+              enabled:
+                _eq: true
+          - attendee:
+              userId:
+                _eq: X-Hasura-User-Id
         - group:
             conference:
               _or:
               - createdBy:
                   _eq: X-Hasura-User-Id
-              - activeGroups:
+              - groups:
                   _and:
-                  - groupAttendees:
-                      attendee:
-                        _and:
-                        - userId:
-                            _eq: X-Hasura-User-Id
-                        - statusName:
-                            _eq: ACTIVE
+                  - enabled:
+                      _eq: true
                   - groupRoles:
                       role:
                         rolePermissions:
@@ -1958,6 +1156,10 @@
                               _eq: CONFERENCE_MANAGE_GROUPS
                           - permissionName:
                               _eq: CONFERENCE_MANAGE_ATTENDEES
+                  - groupAttendees:
+                      attendee:
+                        userId:
+                          _eq: X-Hasura-User-Id
   delete_permissions:
   - role: user
     permission:
@@ -1967,15 +1169,10 @@
             _or:
             - createdBy:
                 _eq: X-Hasura-User-Id
-            - activeGroups:
+            - groups:
                 _and:
-                - groupAttendees:
-                    attendee:
-                      _and:
-                      - userId:
-                          _eq: X-Hasura-User-Id
-                      - statusName:
-                          _eq: ACTIVE
+                - enabled:
+                    _eq: true
                 - groupRoles:
                     role:
                       rolePermissions:
@@ -1986,6 +1183,10 @@
                             _eq: CONFERENCE_MANAGE_GROUPS
                         - permissionName:
                             _eq: CONFERENCE_MANAGE_ATTENDEES
+                - groupAttendees:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: GroupRole
@@ -2010,56 +1211,74 @@
             _or:
             - createdBy:
                 _eq: X-Hasura-User-Id
-            - activeGroups:
+            - groups:
                 _and:
-                - groupAttendees:
-                    attendee:
-                      _and:
-                      - userId:
-                          _eq: X-Hasura-User-Id
-                      - statusName:
-                          _eq: ACTIVE
+                - enabled:
+                    _eq: true
                 - groupRoles:
                     role:
                       rolePermissions:
                         permissionName:
                           _eq: CONFERENCE_MANAGE_ROLES
+                - groupAttendees:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
       columns:
       - groupId
       - roleId
       backend_only: false
   select_permissions:
-  - role: user
+  - role: unauthenticated
     permission:
       columns:
-      - id
       - groupId
+      - id
       - roleId
       filter:
         group:
-          _or:
-          - groupAttendees:
-              attendee:
-                userId:
-                  _eq: X-Hasura-User-Id
-          - conference:
+          _and:
+          - enabled:
+              _eq: true
+          - includeUnauthenticated:
+              _eq: true
+  - role: user
+    permission:
+      columns:
+      - groupId
+      - id
+      - roleId
+      filter:
+        _or:
+        - group:
+            _and:
+            - enabled:
+                _eq: true
+            - _or:
+              - includeUnauthenticated:
+                  _eq: true
+              - groupAttendees:
+                  attendee:
+                    userId:
+                      _eq: X-Hasura-User-Id
+        - group:
+            conference:
               _or:
               - createdBy:
                   _eq: X-Hasura-User-Id
-              - activeGroups:
+              - groups:
                   _and:
-                  - groupAttendees:
-                      attendee:
-                        _and:
-                        - userId:
-                            _eq: X-Hasura-User-Id
-                        - statusName:
-                            _eq: ACTIVE
+                  - enabled:
+                      _eq: true
                   - groupRoles:
                       role:
                         rolePermissions:
                           permissionName:
                             _eq: CONFERENCE_MANAGE_ROLES
+                  - groupAttendees:
+                      attendee:
+                        userId:
+                          _eq: X-Hasura-User-Id
   delete_permissions:
   - role: user
     permission:
@@ -2069,20 +1288,19 @@
             _or:
             - createdBy:
                 _eq: X-Hasura-User-Id
-            - activeGroups:
+            - groups:
                 _and:
-                - groupAttendees:
-                    attendee:
-                      _and:
-                      - userId:
-                          _eq: X-Hasura-User-Id
-                      - statusName:
-                          _eq: ACTIVE
+                - enabled:
+                    _eq: true
                 - groupRoles:
                     role:
                       rolePermissions:
                         permissionName:
                           _eq: CONFERENCE_MANAGE_ROLES
+                - groupAttendees:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: InputType
@@ -2095,6 +1313,13 @@
         table:
           schema: public
           name: BroadcastContentItem
+  select_permissions:
+  - role: unauthenticated
+    permission:
+      columns:
+      - name
+      - description
+      filter: {}
 - table:
     schema: public
     name: OnlineStatus
@@ -2248,43 +1473,6 @@
   - name: user
     using:
       foreign_key_constraint_on: userId
-  insert_permissions:
-  - role: user
-    permission:
-      check:
-        userId:
-          _eq: X-Hasura-User-Id
-      columns:
-      - chatId
-      - manual
-      - userId
-      backend_only: false
-  select_permissions:
-  - role: user
-    permission:
-      columns:
-      - chatId
-      - id
-      - manual
-      - userId
-      filter:
-        userId:
-          _eq: X-Hasura-User-Id
-  update_permissions:
-  - role: user
-    permission:
-      columns:
-      - manual
-      filter:
-        userId:
-          _eq: X-Hasura-User-Id
-      check: null
-  delete_permissions:
-  - role: user
-    permission:
-      filter:
-        userId:
-          _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: RequiredContentItem
@@ -2294,6 +1482,9 @@
       updated_at: updatedAt
       created_at: createdAt
   object_relationships:
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
   - name: contentGroup
     using:
       foreign_key_constraint_on: contentGroupId
@@ -2319,6 +1510,145 @@
         table:
           schema: public
           name: Uploader
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        conference:
+          groups:
+            _and:
+            - enabled:
+                _eq: true
+            - groupRoles:
+                role:
+                  rolePermissions:
+                    permissionName:
+                      _eq: CONFERENCE_MANAGE_CONTENT
+            - _or:
+              - includeUnauthenticated:
+                  _eq: true
+              - groupAttendees:
+                  attendee:
+                    userId:
+                      _eq: X-Hasura-User-Id
+      columns:
+      - accessToken
+      - conferenceId
+      - contentGroupId
+      - contentTypeName
+      - name
+      - originatingDataId
+      backend_only: false
+  select_permissions:
+  - role: unauthenticated
+    permission:
+      columns:
+      - conferenceId
+      - contentGroupId
+      - contentTypeName
+      - id
+      - name
+      - originatingDataId
+      - updated_at
+      filter:
+        _or:
+        - accessToken:
+            _eq: X-Hasura-Access-Token
+        - conference:
+            groups:
+              _and:
+              - enabled:
+                  _eq: true
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      permissionName:
+                        _eq: CONFERENCE_VIEW
+              - includeUnauthenticated:
+                  _eq: true
+  - role: user
+    permission:
+      columns:
+      - conferenceId
+      - contentGroupId
+      - contentTypeName
+      - id
+      - name
+      - originatingDataId
+      - updated_at
+      filter:
+        _or:
+        - accessToken:
+            _eq: X-Hasura-Access-Token
+        - conference:
+            groups:
+              _and:
+              - enabled:
+                  _eq: true
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      _or:
+                      - permissionName:
+                          _eq: CONFERENCE_VIEW
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_CONTENT
+              - _or:
+                - includeUnauthenticated:
+                    _eq: true
+                - groupAttendees:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - accessToken
+      - contentGroupId
+      - contentTypeName
+      - name
+      - originatingDataId
+      filter:
+        conference:
+          groups:
+            _and:
+            - enabled:
+                _eq: true
+            - groupRoles:
+                role:
+                  rolePermissions:
+                    permissionName:
+                      _eq: CONFERENCE_MANAGE_CONTENT
+            - _or:
+              - includeUnauthenticated:
+                  _eq: true
+              - groupAttendees:
+                  attendee:
+                    userId:
+                      _eq: X-Hasura-User-Id
+      check: null
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        conference:
+          groups:
+            _and:
+            - enabled:
+                _eq: true
+            - groupRoles:
+                role:
+                  rolePermissions:
+                    permissionName:
+                      _eq: CONFERENCE_MANAGE_CONTENT
+            - _or:
+              - includeUnauthenticated:
+                  _eq: true
+              - groupAttendees:
+                  attendee:
+                    userId:
+                      _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: Role
@@ -2354,25 +1684,38 @@
           _or:
           - createdBy:
               _eq: X-Hasura-User-Id
-          - activeGroups:
+          - groups:
               _and:
-              - groupAttendees:
-                  attendee:
-                    _and:
-                    - userId:
-                        _eq: X-Hasura-User-Id
-                    - statusName:
-                        _eq: ACTIVE
+              - enabled:
+                  _eq: true
               - groupRoles:
                   role:
                     rolePermissions:
                       permissionName:
                         _eq: CONFERENCE_MANAGE_ROLES
+              - groupAttendees:
+                  attendee:
+                    userId:
+                      _eq: X-Hasura-User-Id
       columns:
       - conferenceId
       - name
       backend_only: false
   select_permissions:
+  - role: unauthenticated
+    permission:
+      columns:
+      - conferenceId
+      - id
+      - name
+      filter:
+        groupRoles:
+          group:
+            _and:
+            - enabled:
+                _eq: true
+            - includeUnauthenticated:
+                _eq: true
   - role: user
     permission:
       columns:
@@ -2383,28 +1726,33 @@
         _or:
         - groupRoles:
             group:
-              groupAttendees:
-                attendee:
-                  userId:
-                    _eq: X-Hasura-User-Id
+              _and:
+              - enabled:
+                  _eq: true
+              - _or:
+                - includeUnauthenticated:
+                    _eq: true
+                - groupAttendees:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
         - conference:
             _or:
             - createdBy:
                 _eq: X-Hasura-User-Id
-            - activeGroups:
+            - groups:
                 _and:
-                - groupAttendees:
-                    attendee:
-                      _and:
-                      - userId:
-                          _eq: X-Hasura-User-Id
-                      - statusName:
-                          _eq: ACTIVE
+                - enabled:
+                    _eq: true
                 - groupRoles:
                     role:
                       rolePermissions:
                         permissionName:
                           _eq: CONFERENCE_MANAGE_ROLES
+                - groupAttendees:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
   update_permissions:
   - role: user
     permission:
@@ -2415,20 +1763,19 @@
           _or:
           - createdBy:
               _eq: X-Hasura-User-Id
-          - activeGroups:
+          - groups:
               _and:
-              - groupAttendees:
-                  attendee:
-                    _and:
-                    - userId:
-                        _eq: X-Hasura-User-Id
-                    - statusName:
-                        _eq: ACTIVE
+              - enabled:
+                  _eq: true
               - groupRoles:
                   role:
                     rolePermissions:
                       permissionName:
                         _eq: CONFERENCE_MANAGE_ROLES
+              - groupAttendees:
+                  attendee:
+                    userId:
+                      _eq: X-Hasura-User-Id
       check: null
   delete_permissions:
   - role: user
@@ -2438,20 +1785,19 @@
           _or:
           - createdBy:
               _eq: X-Hasura-User-Id
-          - activeGroups:
+          - groups:
               _and:
-              - groupAttendees:
-                  attendee:
-                    _and:
-                    - userId:
-                        _eq: X-Hasura-User-Id
-                    - statusName:
-                        _eq: ACTIVE
+              - enabled:
+                  _eq: true
               - groupRoles:
                   role:
                     rolePermissions:
                       permissionName:
                         _eq: CONFERENCE_MANAGE_ROLES
+              - groupAttendees:
+                  attendee:
+                    userId:
+                      _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: RolePermission
@@ -2476,26 +1822,25 @@
             _or:
             - createdBy:
                 _eq: X-Hasura-User-Id
-            - activeGroups:
+            - groups:
                 _and:
-                - groupAttendees:
-                    attendee:
-                      _and:
-                      - userId:
-                          _eq: X-Hasura-User-Id
-                      - statusName:
-                          _eq: ACTIVE
+                - enabled:
+                    _eq: true
                 - groupRoles:
                     role:
                       rolePermissions:
                         permissionName:
                           _eq: CONFERENCE_MANAGE_ROLES
+                - groupAttendees:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
       columns:
       - permissionName
       - roleId
       backend_only: false
   select_permissions:
-  - role: user
+  - role: unauthenticated
     permission:
       columns:
       - id
@@ -2503,57 +1848,53 @@
       - roleId
       filter:
         role:
+          groupRoles:
+            group:
+              _and:
+              - enabled:
+                  _eq: true
+              - includeUnauthenticated:
+                  _eq: true
+  - role: user
+    permission:
+      columns:
+      - created_at
+      - id
+      - permissionName
+      - roleId
+      - updated_at
+      filter:
+        role:
           _or:
           - groupRoles:
               group:
-                groupAttendees:
-                  attendee:
-                    userId:
-                      _eq: X-Hasura-User-Id
+                _and:
+                - enabled:
+                    _eq: true
+                - _or:
+                  - includeUnauthenticated:
+                      _eq: true
+                  - groupAttendees:
+                      attendee:
+                        userId:
+                          _eq: X-Hasura-User-Id
           - conference:
               _or:
               - createdBy:
                   _eq: X-Hasura-User-Id
-              - activeGroups:
+              - groups:
                   _and:
-                  - groupAttendees:
-                      attendee:
-                        _and:
-                        - userId:
-                            _eq: X-Hasura-User-Id
-                        - statusName:
-                            _eq: ACTIVE
+                  - enabled:
+                      _eq: true
                   - groupRoles:
                       role:
                         rolePermissions:
                           permissionName:
                             _eq: CONFERENCE_MANAGE_ROLES
-  update_permissions:
-  - role: user
-    permission:
-      columns:
-      - permissionName
-      filter:
-        role:
-          conference:
-            _or:
-            - createdBy:
-                _eq: X-Hasura-User-Id
-            - activeGroups:
-                _and:
-                - groupAttendees:
-                    attendee:
-                      _and:
-                      - userId:
+                  - groupAttendees:
+                      attendee:
+                        userId:
                           _eq: X-Hasura-User-Id
-                      - statusName:
-                          _eq: ACTIVE
-                - groupRoles:
-                    role:
-                      rolePermissions:
-                        permissionName:
-                          _eq: CONFERENCE_MANAGE_ROLES
-      check: null
   delete_permissions:
   - role: user
     permission:
@@ -2563,20 +1904,19 @@
             _or:
             - createdBy:
                 _eq: X-Hasura-User-Id
-            - activeGroups:
+            - groups:
                 _and:
-                - groupAttendees:
-                    attendee:
-                      _and:
-                      - userId:
-                          _eq: X-Hasura-User-Id
-                      - statusName:
-                          _eq: ACTIVE
+                - enabled:
+                    _eq: true
                 - groupRoles:
                     role:
                       rolePermissions:
                         permissionName:
                           _eq: CONFERENCE_MANAGE_ROLES
+                - groupAttendees:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: Room
@@ -2638,6 +1978,19 @@
         table:
           schema: public
           name: Room
+  select_permissions:
+  - role: unauthenticated
+    permission:
+      columns:
+      - name
+      - description
+      filter: {}
+  - role: user
+    permission:
+      columns:
+      - description
+      - name
+      filter: {}
 - table:
     schema: public
     name: RoomParticipant
@@ -2650,6 +2003,9 @@
   - name: attendee
     using:
       foreign_key_constraint_on: attendeeId
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
   - name: room
     using:
       foreign_key_constraint_on: roomId
@@ -2665,6 +2021,9 @@
   - name: broadcastContentItem
     using:
       foreign_key_constraint_on: broadcastContentId
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
   - name: event
     using:
       foreign_key_constraint_on: eventId
@@ -2683,9 +2042,117 @@
       updated_at: updatedAt
       created_at: createdAt
   object_relationships:
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
   - name: requiredContentItem
     using:
       foreign_key_constraint_on: requiredContentItemId
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        conference:
+          groups:
+            _and:
+            - enabled:
+                _eq: true
+            - groupRoles:
+                role:
+                  rolePermissions:
+                    permissionName:
+                      _eq: CONFERENCE_MANAGE_CONTENT
+            - _or:
+              - includeUnauthenticated:
+                  _eq: true
+              - groupAttendees:
+                  attendee:
+                    userId:
+                      _eq: X-Hasura-User-Id
+      columns:
+      - conferenceId
+      - email
+      - emailsSentCount
+      - name
+      - requiredContentItemId
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - conferenceId
+      - created_at
+      - email
+      - emailsSentCount
+      - id
+      - name
+      - requiredContentItemId
+      - updated_at
+      filter:
+        conference:
+          groups:
+            _and:
+            - enabled:
+                _eq: true
+            - groupRoles:
+                role:
+                  rolePermissions:
+                    permissionName:
+                      _eq: CONFERENCE_MANAGE_CONTENT
+            - _or:
+              - includeUnauthenticated:
+                  _eq: true
+              - groupAttendees:
+                  attendee:
+                    userId:
+                      _eq: X-Hasura-User-Id
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - email
+      - emailsSentCount
+      - name
+      filter:
+        conference:
+          groups:
+            _and:
+            - enabled:
+                _eq: true
+            - groupRoles:
+                role:
+                  rolePermissions:
+                    permissionName:
+                      _eq: CONFERENCE_MANAGE_CONTENT
+            - _or:
+              - includeUnauthenticated:
+                  _eq: true
+              - groupAttendees:
+                  attendee:
+                    userId:
+                      _eq: X-Hasura-User-Id
+      check: null
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        conference:
+          groups:
+            _and:
+            - enabled:
+                _eq: true
+            - groupRoles:
+                role:
+                  rolePermissions:
+                    permissionName:
+                      _eq: CONFERENCE_MANAGE_CONTENT
+            - _or:
+              - includeUnauthenticated:
+                  _eq: true
+              - groupAttendees:
+                  attendee:
+                    userId:
+                      _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: User
@@ -2753,13 +2220,6 @@
         table:
           schema: public
           name: ChatMember
-  - name: moderatorOfChats
-    using:
-      foreign_key_constraint_on:
-        column: userId
-        table:
-          schema: public
-          name: ChatModerator
   - name: pinnedChats
     using:
       foreign_key_constraint_on:

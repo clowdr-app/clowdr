@@ -27,15 +27,11 @@ export default function ConferenceCurrentUserActivePermissionsProvider({
 }): JSX.Element {
     const groups = useCurrentUserGroupsRolesPermissions();
     const value: Set<Permission_Enum> = useMemo(() => {
-        const now = new Date();
         return reduceToSet(groups.User[0].attendees, (acc, attendee) => {
             return reduceToSet(
                 attendee.groupAttendees,
                 (acc, groupAttendee) => {
-                    if (
-                        new Date(groupAttendee.group.accessStart) < now &&
-                        now < new Date(groupAttendee.group.accessEnd)
-                    ) {
+                    if (groupAttendee.group.enabled) {
                         return reduceToSet(
                             groupAttendee.group.groupRoles,
                             (acc, groupRole) => {

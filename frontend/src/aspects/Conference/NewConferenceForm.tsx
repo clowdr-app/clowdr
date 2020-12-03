@@ -24,7 +24,7 @@ import {
 import useCurrentUser from "../Users/CurrentUser/useCurrentUser";
 import isValidUUID from "../Utils/isValidUUID";
 
-const _newConferenceQueries = gql`
+gql`
     query ConferenceTaken($name: String!, $shortName: String!, $slug: String!) {
         Conference(
             where: {
@@ -77,8 +77,6 @@ const _newConferenceQueries = gql`
         $conferenceId: uuid!
         $attendeeDisplayName: String!
         $userId: String!
-        $accessStart: timestamptz!
-        $accessEnd: timestamptz!
     ) {
         insert_Attendee(
             objects: [
@@ -91,8 +89,6 @@ const _newConferenceQueries = gql`
                             group: {
                                 data: {
                                     conferenceId: $conferenceId
-                                    accessStart: $accessStart
-                                    accessEnd: $accessEnd
                                     includeUnauthenticated: false
                                     name: "Organisers"
                                     groupRoles: {
@@ -113,10 +109,7 @@ const _newConferenceQueries = gql`
                                                                 permissionName: CONFERENCE_MODERATE_ATTENDEES
                                                             }
                                                             {
-                                                                permissionName: CONFERENCE_VIEW_ACTIVE_ATTENDEES
-                                                            }
-                                                            {
-                                                                permissionName: CONFERENCE_VIEW_BANNED_ATTENDEES
+                                                                permissionName: CONFERENCE_VIEW_ATTENDEES
                                                             }
                                                             {
                                                                 permissionName: CONFERENCE_VIEW
@@ -126,6 +119,12 @@ const _newConferenceQueries = gql`
                                                             }
                                                             {
                                                                 permissionName: CONFERENCE_MANAGE_GROUPS
+                                                            }
+                                                            {
+                                                                permissionName: CONFERENCE_MANAGE_CONTENT
+                                                            }
+                                                            {
+                                                                permissionName: CONFERENCE_MANAGE_SCHEDULE
                                                             }
                                                         ]
                                                     }
@@ -285,10 +284,6 @@ export default function NewConferenceForm(): JSX.Element {
                                     conferenceId,
                                     attendeeDisplayName: `${user.user.User[0].firstName} ${user.user.User[0].lastName}`,
                                     userId: user.user.User[0].id,
-                                    accessStart: new Date().toISOString(),
-                                    accessEnd: new Date(
-                                        "3000-01-01T00:00+00:00"
-                                    ).toISOString(),
                                 },
                             });
 

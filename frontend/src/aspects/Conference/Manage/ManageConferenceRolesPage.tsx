@@ -65,6 +65,13 @@ export default function ManageConferenceRolesPage(): JSX.Element {
 
         for (const role of allRoles.Role) {
             result.set(role.id, role);
+            for (let i = 0; i < 100; i++) {
+                result.set(role.id + "-" + i, {
+                    ...role,
+                    id: role.id + "-" + i,
+                    name: role.name + "-" + i
+                });
+            }
         }
 
         return result;

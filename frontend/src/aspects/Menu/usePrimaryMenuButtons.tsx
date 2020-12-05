@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-//
-
 export interface PrimaryMenuButton {
     key: string;
     action: string | (() => void);

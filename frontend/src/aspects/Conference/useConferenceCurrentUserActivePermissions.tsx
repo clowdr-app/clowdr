@@ -2,8 +2,6 @@ import React, { useContext, useMemo } from "react";
 import type { Permission_Enum } from "../../generated/graphql";
 import { useCurrentUserGroupsRolesPermissions } from "./useConferenceCurrentUserGroups";
 
-//
-
 function reduceToSet<S, T>(
     array: ReadonlyArray<S>,
     reduce: (acc: Set<T>, i: S) => Set<T>,

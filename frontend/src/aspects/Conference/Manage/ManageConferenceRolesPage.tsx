@@ -69,7 +69,7 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                 result.set(role.id + "-" + i, {
                     ...role,
                     id: role.id + "-" + i,
-                    name: role.name + "-" + i
+                    name: role.name + "-" + i,
                 });
             }
         }

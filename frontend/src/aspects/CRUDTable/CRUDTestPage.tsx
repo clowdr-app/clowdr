@@ -1,13 +1,17 @@
 import { Heading } from "@chakra-ui/react";
 import React, { useMemo, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import isValidUUID from "../Utils/isValidUUID";
 import CRUDTable, {
+    BatchModeCUDCallbacks,
     BooleanFieldFormat,
     BooleanFieldSpec,
     CRUDTableProps,
     defaultStringFilter,
     FieldType,
+    InstantModeCUDCallbacks,
     StringFieldSpec,
+    UpdateResult,
 } from "./CRDUTable";
 
 type TestCRUDData = {
@@ -24,16 +28,19 @@ const TestCRUDTable = (props: Readonly<CRUDTableProps<TestCRUDData, "id">>) =>
 
 function generateInitialTestCRUDData(): Map<string, TestCRUDData> {
     const arr = new Array<[string, TestCRUDData]>();
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 10; i++) {
         const id = `id-${i}`;
-        arr.push([id, {
+        arr.push([
             id,
-            stringField1: `String ${i}`,
-            boolField1: i % 2 === 0,
-            intField1: i % 10,
-            multiLineField1: `String ${i}\nLine 2\nLine 3`,
-            selectField1: `Option ${i % 10}`
-        }]);
+            {
+                id,
+                stringField1: `String ${i}`,
+                boolField1: i % 2 === 0,
+                intField1: i % 10,
+                multiLineField1: `String ${i}\nLine 2\nLine 3`,
+                selectField1: `Option ${i % 10}`,
+            },
+        ]);
     }
     return new Map(arr);
 }
@@ -46,8 +53,9 @@ export default function CRUDTestPage(): JSX.Element {
     const stringFieldSpec: StringFieldSpec<string> = useMemo(
         () => ({
             fieldType: FieldType.string,
-            convertToUI: (x: string) => x,
-            filter: defaultStringFilter
+            convertToUI: (x) => x,
+            convertFromUI: (x) => x,
+            filter: defaultStringFilter,
         }),
         []
     );
@@ -55,11 +63,112 @@ export default function CRUDTestPage(): JSX.Element {
     const boolFieldSpec: BooleanFieldSpec<boolean> = useMemo(
         () => ({
             fieldType: FieldType.boolean,
-            convertToUI: (x: boolean) => x,
-            format: BooleanFieldFormat.checkbox,
+            convertToUI: (x) => x,
+            convertFromUI: (x) => x,
+            format: BooleanFieldFormat.switch,
+            // TODO: filter: defaultBooleanFilter,
         }),
         []
     );
+
+    const bacthCUDMode = true;
+    const syncCUDCallbacks: BatchModeCUDCallbacks<TestCRUDData, "id"> = {
+        generateTemporaryKey: () => {
+            return uuidv4();
+        },
+        create: (tempKey, item) => {
+            const newItem = { ...item, id: tempKey } as TestCRUDData;
+            setTestData((oldData) => {
+                const newData = new Map(oldData.entries());
+                newData.set(tempKey, newItem);
+                return newData;
+            });
+            return true;
+        },
+        update: (values) => {
+            const results: Map<string, UpdateResult> = new Map();
+            values.forEach((item, key) => {
+                results.set(key, true);
+            });
+
+            setTestData((oldData) => {
+                const newData = new Map(oldData.entries());
+                values.forEach((item, key) => {
+                    newData.set(key, item);
+                });
+                return newData;
+            });
+
+            return results;
+        },
+        delete: (keys) => {
+            const results: Map<string, boolean> = new Map();
+            keys.forEach((key) => {
+                results.set(key, true);
+            });
+
+            setTestData((oldData) => {
+                const newData = new Map(oldData.entries());
+                keys.forEach((key) => {
+                    newData.delete(key);
+                });
+                return newData;
+            });
+
+            return results;
+        },
+        save: async (keys) => {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    const results: Map<string, boolean> = new Map();
+                    keys.forEach((key) => {
+                        results.set(key, true);
+                    });
+                    resolve(results);
+                }, 500);
+            });
+        },
+    };
+
+    const asyncCUDCallbacks: InstantModeCUDCallbacks<TestCRUDData, "id"> = {
+        // TODO: Create
+        update: async (values) => {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    const results: Map<string, UpdateResult> = new Map();
+                    values.forEach((item, key) => {
+                        results.set(key, true);
+                    });
+                    setTestData((oldData) => {
+                        const newData = new Map(oldData.entries());
+                        values.forEach((item, key) => {
+                            newData.set(key, item);
+                        });
+                        return newData;
+                    });
+                    resolve(results);
+                }, 500);
+            });
+        },
+        delete: async (keys) => {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    const results: Map<string, boolean> = new Map();
+                    keys.forEach((key) => {
+                        results.set(key, true);
+                    });
+                    setTestData((oldData) => {
+                        const newData = new Map(oldData.entries());
+                        keys.forEach((key) => {
+                            newData.delete(key);
+                        });
+                        return newData;
+                    });
+                    resolve(results);
+                }, 500);
+            });
+        },
+    };
 
     return (
         <>
@@ -95,7 +204,12 @@ export default function CRUDTestPage(): JSX.Element {
                             heading: "Str1",
                             ariaLabel: "String field 1",
                             description: "String field 1",
+                            defaultValue: "Awesome string value",
                             isHidden: false,
+                            isEditable: true,
+                            insert: (item, value) => {
+                                return { ...item, stringField1: value };
+                            },
                             extract: (v) => v.stringField1,
                             spec: stringFieldSpec,
                             validate: (v) =>
@@ -103,36 +217,28 @@ export default function CRUDTestPage(): JSX.Element {
                                     "Must be at least 10 characters",
                                 ],
                         },
-                        // // TODO: Generate these directly from the DB Permissions enum using the Name and Description fields
-                        // manageName: {
-                        //     heading: "Manage Name?",
-                        //     ariaLabel: "Manage Name Permission",
-                        //     description:
-                        //         "Permission to manage the conference name, short name and URL slug.",
-                        //     isHidden: false,
-                        //     extract: (v) =>
-                        //         v.rolePermissions
-                        //             .map((x) => x.permissionName)
-                        //             .includes(
-                        //                 Permission_Enum.ConferenceManageName
-                        //             ),
-                        //     spec: boolFieldSpec,
-                        // },
-                        // manageRoles: {
-                        //     heading: "Manage Roles?",
-                        //     ariaLabel: "Manage Roles Permission",
-                        //     description:
-                        //         "Permission to manage the conference roles.",
-                        //     isHidden: false,
-                        //     extract: (v) =>
-                        //         v.rolePermissions
-                        //             .map((x) => x.permissionName)
-                        //             .includes(
-                        //                 Permission_Enum.ConferenceManageRoles
-                        //             ),
-                        //     spec: boolFieldSpec,
-                        // },
+                        bool1Field: {
+                            heading: "Bool1",
+                            ariaLabel: "Boolean field 1",
+                            description: "Boolean field 1",
+                            defaultValue: true,
+                            isHidden: false,
+                            isEditable: true,
+                            editorFalseLabel: "Deny",
+                            editorTrueLabel: "Allow",
+                            insert: (item, value) => {
+                                return { ...item, boolField1: value };
+                            },
+                            extract: (v) => v.boolField1,
+                            spec: boolFieldSpec,
+                            validate: (_v) => true,
+                        },
                     },
+                }}
+                csud={{
+                    cudCallbacks: bacthCUDMode
+                        ? syncCUDCallbacks
+                        : asyncCUDCallbacks,
                 }}
             />
         </>

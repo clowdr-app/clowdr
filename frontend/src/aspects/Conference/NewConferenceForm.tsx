@@ -225,6 +225,37 @@ gql`
                         ]
                     }
                 }
+                {
+                    conferenceId: $conferenceId
+                    enabled: false
+                    name: "Moderators"
+                    includeUnauthenticated: false
+                    groupRoles: {
+                        data: [
+                            {
+                                role: {
+                                    data: {
+                                        conferenceId: $conferenceId
+                                        name: "Moderator"
+                                        rolePermissions: {
+                                            data: [
+                                                {
+                                                    permissionName: CONFERENCE_MODERATE_ATTENDEES
+                                                }
+                                                {
+                                                    permissionName: CONFERENCE_VIEW_ATTENDEES
+                                                }
+                                                {
+                                                    permissionName: CONFERENCE_VIEW
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
             ]
         ) {
             returning {

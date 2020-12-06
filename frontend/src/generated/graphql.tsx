@@ -16711,6 +16711,26 @@ export type SelectAllGroupsQueryVariables = Exact<{
 
 export type SelectAllGroupsQuery = { readonly __typename?: 'query_root', readonly Group: ReadonlyArray<{ readonly __typename?: 'Group', readonly conferenceId: any, readonly enabled: boolean, readonly id: any, readonly includeUnauthenticated: boolean, readonly name: string, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any }> }> };
 
+export type CreateDeleteGroupsMutationVariables = Exact<{
+  deleteGroupIds?: Maybe<ReadonlyArray<Scalars['uuid']>>;
+  insertGroups: ReadonlyArray<Group_Insert_Input>;
+}>;
+
+
+export type CreateDeleteGroupsMutation = { readonly __typename?: 'mutation_root', readonly delete_Group?: Maybe<{ readonly __typename?: 'Group_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Group', readonly id: any }> }>, readonly insert_Group?: Maybe<{ readonly __typename?: 'Group_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Group', readonly id: any, readonly conferenceId: any, readonly name: string, readonly enabled: boolean, readonly includeUnauthenticated: boolean, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly groupId: any, readonly roleId: any }> }> }> };
+
+export type UpdateGroupMutationVariables = Exact<{
+  groupId: Scalars['uuid'];
+  groupName: Scalars['String'];
+  enabled: Scalars['Boolean'];
+  includeUnauthenticated: Scalars['Boolean'];
+  insertRoles: ReadonlyArray<GroupRole_Insert_Input>;
+  deleteRoleIds?: Maybe<ReadonlyArray<Scalars['uuid']>>;
+}>;
+
+
+export type UpdateGroupMutation = { readonly __typename?: 'mutation_root', readonly update_Group?: Maybe<{ readonly __typename?: 'Group_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Group', readonly id: any, readonly name: string, readonly conferenceId: any, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly groupId: any, readonly roleId: any }> }> }>, readonly insert_GroupRole?: Maybe<{ readonly __typename?: 'GroupRole_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly groupId: any, readonly roleId: any }> }>, readonly delete_GroupRole?: Maybe<{ readonly __typename?: 'GroupRole_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any }> }> };
+
 export type UpdateConferenceMutationVariables = Exact<{
   id: Scalars['uuid'];
   name?: Maybe<Scalars['String']>;
@@ -17162,6 +17182,116 @@ export function useSelectAllGroupsLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type SelectAllGroupsQueryHookResult = ReturnType<typeof useSelectAllGroupsQuery>;
 export type SelectAllGroupsLazyQueryHookResult = ReturnType<typeof useSelectAllGroupsLazyQuery>;
 export type SelectAllGroupsQueryResult = Apollo.QueryResult<SelectAllGroupsQuery, SelectAllGroupsQueryVariables>;
+export const CreateDeleteGroupsDocument = gql`
+    mutation CreateDeleteGroups($deleteGroupIds: [uuid!] = [], $insertGroups: [Group_insert_input!]!) {
+  delete_Group(where: {id: {_in: $deleteGroupIds}}) {
+    returning {
+      id
+    }
+  }
+  insert_Group(objects: $insertGroups) {
+    returning {
+      id
+      conferenceId
+      name
+      enabled
+      includeUnauthenticated
+      groupRoles {
+        id
+        groupId
+        roleId
+      }
+    }
+  }
+}
+    `;
+export type CreateDeleteGroupsMutationFn = Apollo.MutationFunction<CreateDeleteGroupsMutation, CreateDeleteGroupsMutationVariables>;
+
+/**
+ * __useCreateDeleteGroupsMutation__
+ *
+ * To run a mutation, you first call `useCreateDeleteGroupsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateDeleteGroupsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createDeleteGroupsMutation, { data, loading, error }] = useCreateDeleteGroupsMutation({
+ *   variables: {
+ *      deleteGroupIds: // value for 'deleteGroupIds'
+ *      insertGroups: // value for 'insertGroups'
+ *   },
+ * });
+ */
+export function useCreateDeleteGroupsMutation(baseOptions?: Apollo.MutationHookOptions<CreateDeleteGroupsMutation, CreateDeleteGroupsMutationVariables>) {
+        return Apollo.useMutation<CreateDeleteGroupsMutation, CreateDeleteGroupsMutationVariables>(CreateDeleteGroupsDocument, baseOptions);
+      }
+export type CreateDeleteGroupsMutationHookResult = ReturnType<typeof useCreateDeleteGroupsMutation>;
+export type CreateDeleteGroupsMutationResult = Apollo.MutationResult<CreateDeleteGroupsMutation>;
+export type CreateDeleteGroupsMutationOptions = Apollo.BaseMutationOptions<CreateDeleteGroupsMutation, CreateDeleteGroupsMutationVariables>;
+export const UpdateGroupDocument = gql`
+    mutation UpdateGroup($groupId: uuid!, $groupName: String!, $enabled: Boolean!, $includeUnauthenticated: Boolean!, $insertRoles: [GroupRole_insert_input!]!, $deleteRoleIds: [uuid!] = []) {
+  update_Group(
+    where: {id: {_eq: $groupId}}
+    _set: {name: $groupName, enabled: $enabled, includeUnauthenticated: $includeUnauthenticated}
+  ) {
+    returning {
+      id
+      name
+      groupRoles {
+        id
+        groupId
+        roleId
+      }
+      conferenceId
+    }
+  }
+  insert_GroupRole(objects: $insertRoles) {
+    returning {
+      id
+      groupId
+      roleId
+    }
+  }
+  delete_GroupRole(where: {roleId: {_in: $deleteRoleIds}}) {
+    returning {
+      id
+    }
+  }
+}
+    `;
+export type UpdateGroupMutationFn = Apollo.MutationFunction<UpdateGroupMutation, UpdateGroupMutationVariables>;
+
+/**
+ * __useUpdateGroupMutation__
+ *
+ * To run a mutation, you first call `useUpdateGroupMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateGroupMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateGroupMutation, { data, loading, error }] = useUpdateGroupMutation({
+ *   variables: {
+ *      groupId: // value for 'groupId'
+ *      groupName: // value for 'groupName'
+ *      enabled: // value for 'enabled'
+ *      includeUnauthenticated: // value for 'includeUnauthenticated'
+ *      insertRoles: // value for 'insertRoles'
+ *      deleteRoleIds: // value for 'deleteRoleIds'
+ *   },
+ * });
+ */
+export function useUpdateGroupMutation(baseOptions?: Apollo.MutationHookOptions<UpdateGroupMutation, UpdateGroupMutationVariables>) {
+        return Apollo.useMutation<UpdateGroupMutation, UpdateGroupMutationVariables>(UpdateGroupDocument, baseOptions);
+      }
+export type UpdateGroupMutationHookResult = ReturnType<typeof useUpdateGroupMutation>;
+export type UpdateGroupMutationResult = Apollo.MutationResult<UpdateGroupMutation>;
+export type UpdateGroupMutationOptions = Apollo.BaseMutationOptions<UpdateGroupMutation, UpdateGroupMutationVariables>;
 export const UpdateConferenceDocument = gql`
     mutation UpdateConference($id: uuid!, $name: String = "", $shortName: String = "", $slug: String = "") {
   update_Conference(
@@ -17476,7 +17606,7 @@ export const CreateNewConferenceMetaStructureDocument = gql`
     affected_rows
   }
   insert_Group(
-    objects: [{conferenceId: $conferenceId, enabled: false, name: "Attendees", includeUnauthenticated: false, groupRoles: {data: [{role: {data: {conferenceId: $conferenceId, name: "Attendee", rolePermissions: {data: [{permissionName: CONFERENCE_VIEW}, {permissionName: CONFERENCE_VIEW_ATTENDEES}]}}}}]}}, {conferenceId: $conferenceId, enabled: false, name: "Public", includeUnauthenticated: true, groupRoles: {data: [{role: {data: {conferenceId: $conferenceId, name: "Public", rolePermissions: {data: [{permissionName: CONFERENCE_VIEW}]}}}}]}}, {conferenceId: $conferenceId, enabled: false, name: "Registrars", includeUnauthenticated: true, groupRoles: {data: [{role: {data: {conferenceId: $conferenceId, name: "Registrar", rolePermissions: {data: [{permissionName: CONFERENCE_MANAGE_ATTENDEES}, {permissionName: CONFERENCE_VIEW_ATTENDEES}]}}}}]}}, {conferenceId: $conferenceId, enabled: false, name: "Moderators", includeUnauthenticated: false, groupRoles: {data: [{role: {data: {conferenceId: $conferenceId, name: "Moderator", rolePermissions: {data: [{permissionName: CONFERENCE_MODERATE_ATTENDEES}, {permissionName: CONFERENCE_VIEW_ATTENDEES}, {permissionName: CONFERENCE_VIEW}]}}}}]}}]
+    objects: [{conferenceId: $conferenceId, enabled: false, name: "Attendees", includeUnauthenticated: false, groupRoles: {data: [{role: {data: {conferenceId: $conferenceId, name: "Attendee", rolePermissions: {data: [{permissionName: CONFERENCE_VIEW}, {permissionName: CONFERENCE_VIEW_ATTENDEES}]}}}}]}}, {conferenceId: $conferenceId, enabled: false, name: "Public", includeUnauthenticated: true, groupRoles: {data: [{role: {data: {conferenceId: $conferenceId, name: "Public", rolePermissions: {data: [{permissionName: CONFERENCE_VIEW}]}}}}]}}, {conferenceId: $conferenceId, enabled: false, name: "Registrars", includeUnauthenticated: false, groupRoles: {data: [{role: {data: {conferenceId: $conferenceId, name: "Registrar", rolePermissions: {data: [{permissionName: CONFERENCE_MANAGE_ATTENDEES}, {permissionName: CONFERENCE_VIEW_ATTENDEES}]}}}}]}}, {conferenceId: $conferenceId, enabled: false, name: "Moderators", includeUnauthenticated: false, groupRoles: {data: [{role: {data: {conferenceId: $conferenceId, name: "Moderator", rolePermissions: {data: [{permissionName: CONFERENCE_MODERATE_ATTENDEES}, {permissionName: CONFERENCE_VIEW_ATTENDEES}, {permissionName: CONFERENCE_VIEW}]}}}}]}}]
   ) {
     returning {
       id

@@ -1053,8 +1053,16 @@ function CRUDCreateButton<T, PK extends keyof T>({
                                 falseLabel: field.editorFalseLabel,
                                 trueLabel: field.editorTrueLabel,
                                 format:
-                                    "format" in field.spec
+                                    field.spec.fieldType === FieldType.boolean
                                         ? field.spec.format
+                                        : undefined,
+                                options:
+                                    field.spec.fieldType === FieldType.select
+                                        ? field.spec.options()
+                                        : undefined,
+                                multiSelect:
+                                    field.spec.fieldType === FieldType.select
+                                        ? field.spec.multiSelect
                                         : undefined,
                             },
                             onChange: (value) => {

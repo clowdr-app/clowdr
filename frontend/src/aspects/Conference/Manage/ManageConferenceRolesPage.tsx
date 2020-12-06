@@ -373,6 +373,10 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                             const results: Map<string, boolean> = new Map();
 
                             keys.forEach((key) => {
+                                results.set(key, false);
+                            });
+
+                            keys.forEach((key) => {
                                 const item = allRolesMap.get(key);
                                 if (!item) {
                                     deletedKeys.add(key);
@@ -491,63 +495,99 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                                 };
                             }
                             if (createDeleteRolesResult.errors) {
-                                // TODO: Set new/deleted results to "error"
+                                newKeys.forEach((key) => {
+                                    results.set(key, false);
+                                });
+                                deletedKeys.forEach((key) => {
+                                    results.set(key, false);
+                                });
                             } else {
-                                // TODO: Set new/deleted results to "success"
+                                newKeys.forEach((key) => {
+                                    results.set(key, true);
+                                });
+                                deletedKeys.forEach((key) => {
+                                    results.set(key, true);
+                                });
                             }
                             console.log(
                                 "Created/deleted",
                                 createDeleteRolesResult
                             );
 
-                            let updatedResults: FetchResult<
-                                UpdateRoleMutation,
-                                Record<string, any>,
-                                Record<string, any>
-                            >[];
+                            let updatedResults: {
+                                key: string;
+                                result: FetchResult<
+                                    UpdateRoleMutation,
+                                    Record<string, any>,
+                                    Record<string, any>
+                                >;
+                            }[];
                             try {
                                 updatedResults = await Promise.all(
                                     Array.from(updatedKeys.entries()).map(
                                         async ([key, { added, deleted }]) => {
                                             const item = allRolesMap.get(key);
                                             assert(item);
-                                            return updateRoleMutation({
-                                                variables: {
-                                                    roleId: item.id,
-                                                    roleName: item.name,
-                                                    deletePermissionNames: Array.from(
-                                                        deleted.values()
-                                                    ),
-                                                    insertPermissions: Array.from(
-                                                        added.values()
-                                                    ).map(
-                                                        (
-                                                            permissionEnumValue
-                                                        ) => {
-                                                            return {
-                                                                roleId: item.id,
-                                                                permissionName: permissionEnumValue,
-                                                            };
-                                                        }
-                                                    ),
-                                                },
-                                            });
+                                            let result: FetchResult<
+                                                UpdateRoleMutation,
+                                                Record<string, any>,
+                                                Record<string, any>
+                                            >;
+                                            try {
+                                                result = await updateRoleMutation(
+                                                    {
+                                                        variables: {
+                                                            roleId: item.id,
+                                                            roleName: item.name,
+                                                            deletePermissionNames: Array.from(
+                                                                deleted.values()
+                                                            ),
+                                                            insertPermissions: Array.from(
+                                                                added.values()
+                                                            ).map(
+                                                                (
+                                                                    permissionEnumValue
+                                                                ) => {
+                                                                    return {
+                                                                        roleId:
+                                                                            item.id,
+                                                                        permissionName: permissionEnumValue,
+                                                                    };
+                                                                }
+                                                            ),
+                                                        },
+                                                    }
+                                                );
+                                            } catch (e) {
+                                                result = {
+                                                    errors: [e],
+                                                };
+                                            }
+                                            return {
+                                                key,
+                                                result,
+                                            };
                                         }
                                     )
                                 );
                             } catch (e) {
-                                updatedResults = [
-                                    {
-                                        errors: [e],
-                                    },
-                                ];
+                                updatedResults = [];
+                                updatedKeys.forEach((_item, key) => {
+                                    updatedResults.push({
+                                        key,
+                                        result: { errors: [e] },
+                                    });
+                                });
                             }
                             console.log("Updated", updatedResults);
 
-                            // TODO: Set updated results to error/succcess
-                            // keys.forEach((key) => {
-                            //     results.set(key, false);
-                            // });
+                            updatedResults.forEach((result) => {
+                                if (result.result.errors) {
+                                    results.set(result.key, false);
+                                } else {
+                                    results.set(result.key, true);
+                                }
+                            });
 
                             await refetchAllRoles();
 

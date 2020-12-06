@@ -1,12 +1,16 @@
-import { gql } from "@apollo/client";
+import { FetchResult, gql } from "@apollo/client";
 import { Heading, Spinner } from "@chakra-ui/react";
 import assert from "assert";
 import React, { useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
+    CreateDeleteGroupsMutation,
     Permission_Enum,
+    UpdateGroupMutation,
+    useCreateDeleteGroupsMutation,
     useSelectAllGroupsQuery,
     useSelectAllRolesQuery,
+    useUpdateGroupMutation,
 } from "../../../generated/graphql";
 import CRUDTable, {
     BooleanFieldFormat,
@@ -36,6 +40,72 @@ gql`
                 id
                 roleId
                 groupId
+            }
+        }
+    }
+
+    mutation CreateDeleteGroups(
+        $deleteGroupIds: [uuid!] = []
+        $insertGroups: [Group_insert_input!]!
+    ) {
+        delete_Group(where: { id: { _in: $deleteGroupIds } }) {
+            returning {
+                id
+            }
+        }
+        insert_Group(objects: $insertGroups) {
+            returning {
+                id
+                conferenceId
+                name
+                enabled
+                includeUnauthenticated
+                groupRoles {
+                    id
+                    groupId
+                    roleId
+                }
+            }
+        }
+    }
+
+    mutation UpdateGroup(
+        $groupId: uuid!
+        $groupName: String!
+        $enabled: Boolean!
+        $includeUnauthenticated: Boolean!
+        $insertRoles: [GroupRole_insert_input!]!
+        $deleteRoleIds: [uuid!] = []
+    ) {
+        update_Group(
+            where: { id: { _eq: $groupId } }
+            _set: {
+                name: $groupName
+                enabled: $enabled
+                includeUnauthenticated: $includeUnauthenticated
+            }
+        ) {
+            returning {
+                id
+                name
+                groupRoles {
+                    id
+                    groupId
+                    roleId
+                }
+                conferenceId
+            }
+        }
+        insert_GroupRole(objects: $insertRoles) {
+            returning {
+                id
+                groupId
+                roleId
+            }
+        }
+        delete_GroupRole(where: { roleId: { _in: $deleteRoleIds } }) {
+            returning {
+                id
             }
         }
     }
@@ -85,6 +155,9 @@ export default function ManageConferenceGroupsPage(): JSX.Element {
         },
     });
     useQueryErrorToast(errorAllGroups);
+
+    const [createDeleteGroupsMutation] = useCreateDeleteGroupsMutation();
+    const [updateGroupMutation] = useUpdateGroupMutation();
 
     const [allGroupsMap, setAllGroupsMap] = useState<
         Map<string, GroupDescriptor>
@@ -204,7 +277,7 @@ export default function ManageConferenceGroupsPage(): JSX.Element {
                 description: "The roles for members of this group.",
                 isHidden: false,
                 isEditable: true,
-                defaultValue: new Set(),
+                defaultValue: [],
                 insert: (item, v) => {
                     return {
                         ...item,
@@ -324,12 +397,216 @@ export default function ManageConferenceGroupsPage(): JSX.Element {
                         },
                         save: async (keys) => {
                             assert(allGroupsMap);
+                            assert(allRoles);
+
+                            const newKeys = new Set<string>();
+                            const updatedKeys = new Map<
+                                string,
+                                {
+                                    added: Set<string>;
+                                    deleted: Set<string>;
+                                }
+                            >();
+                            const deletedKeys = new Set<string>();
 
                             const results: Map<string, boolean> = new Map();
 
                             keys.forEach((key) => {
                                 results.set(key, false);
                             });
+
+                            keys.forEach((key) => {
+                                const item = allGroupsMap.get(key);
+                                if (!item) {
+                                    deletedKeys.add(key);
+                                } else {
+                                    if (item.isNew) {
+                                        newKeys.add(key);
+                                    } else {
+                                        const existing = parsedDBGroups?.get(
+                                            key
+                                        );
+                                        if (!existing) {
+                                            console.error(
+                                                "Not-new value was not found in the existing DB dataset."
+                                            );
+                                            results.set(key, false);
+                                            return;
+                                        }
+
+                                        let changed =
+                                            item.name !== existing.name ||
+                                            item.enabled !== existing.enabled ||
+                                            item.includeUnauthenticated !==
+                                                existing.includeUnauthenticated;
+                                        const roleIdsAdded = new Set<string>();
+                                        const roleIdsDeleted = new Set<
+                                            string
+                                        >();
+                                        for (const role of allRoles.Role) {
+                                            if (
+                                                item.roleIds.has(role.id) &&
+                                                !existing.roleIds.has(role.id)
+                                            ) {
+                                                changed = true;
+                                                roleIdsAdded.add(role.id);
+                                            } else if (
+                                                !item.roleIds.has(role.id) &&
+                                                existing.roleIds.has(role.id)
+                                            ) {
+                                                changed = true;
+                                                roleIdsDeleted.add(role.id);
+                                            }
+                                        }
+                                        if (changed) {
+                                            updatedKeys.set(key, {
+                                                added: roleIdsAdded,
+                                                deleted: roleIdsDeleted,
+                                            });
+                                        }
+                                    }
+                                }
+                            });
+
+                            let createDeleteGroupsResult: FetchResult<
+                                CreateDeleteGroupsMutation,
+                                Record<string, any>,
+                                Record<string, any>
+                            >;
+                            try {
+                                createDeleteGroupsResult = await createDeleteGroupsMutation(
+                                    {
+                                        variables: {
+                                            deleteGroupIds: Array.from(
+                                                deletedKeys.values()
+                                            ),
+                                            insertGroups: Array.from(
+                                                newKeys.values()
+                                            ).map((key) => {
+                                                const item = allGroupsMap.get(
+                                                    key
+                                                );
+                                                assert(item);
+                                                return {
+                                                    conferenceId: conference.id,
+                                                    name: item.name,
+                                                    enabled: item.enabled,
+                                                    includeUnauthenticated:
+                                                        item.includeUnauthenticated,
+                                                    groupRoles: {
+                                                        data: Array.from(
+                                                            item.roleIds.values()
+                                                        ).map((roleId) => ({
+                                                            roleId,
+                                                        })),
+                                                    },
+                                                };
+                                            }),
+                                        },
+                                    }
+                                );
+                            } catch (e) {
+                                createDeleteGroupsResult = {
+                                    errors: [e],
+                                };
+                            }
+                            if (createDeleteGroupsResult.errors) {
+                                newKeys.forEach((key) => {
+                                    results.set(key, false);
+                                });
+                                deletedKeys.forEach((key) => {
+                                    results.set(key, false);
+                                });
+                            } else {
+                                newKeys.forEach((key) => {
+                                    results.set(key, true);
+                                });
+                                deletedKeys.forEach((key) => {
+                                    results.set(key, true);
+                                });
+                            }
+                            console.log(
+                                "Created/deleted",
+                                createDeleteGroupsResult
+                            );
+
+                            let updatedResults: {
+                                key: string;
+                                result: FetchResult<
+                                    UpdateGroupMutation,
+                                    Record<string, any>,
+                                    Record<string, any>
+                                >;
+                            }[];
+                            try {
+                                updatedResults = await Promise.all(
+                                    Array.from(updatedKeys.entries()).map(
+                                        async ([key, { added, deleted }]) => {
+                                            const item = allGroupsMap.get(key);
+                                            assert(item);
+                                            let result: FetchResult<
+                                                UpdateGroupMutation,
+                                                Record<string, any>,
+                                                Record<string, any>
+                                            >;
+                                            try {
+                                                result = await updateGroupMutation(
+                                                    {
+                                                        variables: {
+                                                            groupId: item.id,
+                                                            groupName:
+                                                                item.name,
+                                                            enabled:
+                                                                item.enabled,
+                                                            includeUnauthenticated:
+                                                                item.includeUnauthenticated,
+                                                            deleteRoleIds: Array.from(
+                                                                deleted.values()
+                                                            ),
+                                                            insertRoles: Array.from(
+                                                                added.values()
+                                                            ).map((roleId) => {
+                                                                return {
+                                                                    groupId:
+                                                                        item.id,
+                                                                    roleId,
+                                                                };
+                                                            }),
+                                                        },
+                                                    }
+                                                );
+                                            } catch (e) {
+                                                result = {
+                                                    errors: [e],
+                                                };
+                                            }
+                                            return {
+                                                key,
+                                                result,
+                                            };
+                                        }
+                                    )
+                                );
+                            } catch (e) {
+                                updatedResults = [];
+                                updatedKeys.forEach((_item, key) => {
+                                    updatedResults.push({
+                                        key,
+                                        result: { errors: [e] },
+                                    });
+                                });
+                            }
+                            console.log("Updated", updatedResults);
+
+                            updatedResults.forEach((result) => {
+                                if (result.result.errors) {
+                                    results.set(result.key, false);
+                                } else {
+                                    results.set(result.key, true);
+                                }
+                            });
+
+                            await refetchAllGroups();
 
                             return results;
                         },

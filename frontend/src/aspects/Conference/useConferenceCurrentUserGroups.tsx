@@ -94,9 +94,10 @@ export default function CurrentUserGroupsRolesPermissionsProvider({
         !data ||
         data.User.length === 0 ||
         ((data.User[0].attendees.length === 0 ||
-        data.User[0].attendees[0].groupAttendees.length === 0 ||
-        data.User[0].attendees[0].groupAttendees[0].group.groupRoles.length ===
-            0) && data.User[0].conferencesCreated.length == 0)
+            data.User[0].attendees[0].groupAttendees.length === 0 ||
+            data.User[0].attendees[0].groupAttendees[0].group.groupRoles
+                .length === 0) &&
+            data.User[0].conferencesCreated.length == 0)
     ) {
         return <PageNotFound />;
     }

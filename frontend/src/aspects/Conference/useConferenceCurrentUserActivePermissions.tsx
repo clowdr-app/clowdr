@@ -30,8 +30,7 @@ export default function ConferenceCurrentUserActivePermissionsProvider({
     const value: Set<Permission_Enum> = useMemo(() => {
         if (groups.User[0].conferencesCreated.length > 0) {
             return new Set(Object.values(Permission_Enum));
-        }
-        else {
+        } else {
             return reduceToSet(groups.User[0].attendees, (acc, attendee) => {
                 return reduceToSet(
                     attendee.groupAttendees,
@@ -43,7 +42,9 @@ export default function ConferenceCurrentUserActivePermissionsProvider({
                                     return reduceToSet(
                                         groupRole.role.rolePermissions,
                                         (acc, rolePermission) => {
-                                            acc.add(rolePermission.permissionName);
+                                            acc.add(
+                                                rolePermission.permissionName
+                                            );
                                             return acc;
                                         },
                                         acc

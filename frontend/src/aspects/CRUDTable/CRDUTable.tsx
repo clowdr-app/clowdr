@@ -1517,7 +1517,11 @@ export default function CRUDTable<T, PK extends keyof T>(
                         />
                     ) : undefined}
                 </ButtonGroup>
-                <Grid width="100%" overflowX="auto" templateColumns={templateColumnsStr}>
+                <Grid
+                    width="100%"
+                    overflowX="auto"
+                    templateColumns={templateColumnsStr}
+                >
                     {includeSelectorColumn ? (
                         <CRUDCell
                             key={"heading-selection"}

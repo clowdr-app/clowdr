@@ -1,5 +1,5 @@
 import React, { useContext, useMemo } from "react";
-import type { Permission_Enum } from "../../generated/graphql";
+import { Permission_Enum } from "../../generated/graphql";
 import { useCurrentUserGroupsRolesPermissions } from "./useConferenceCurrentUserGroups";
 
 function reduceToSet<S, T>(
@@ -26,32 +26,38 @@ export default function ConferenceCurrentUserActivePermissionsProvider({
     children: string | JSX.Element | Array<JSX.Element>;
 }): JSX.Element {
     const groups = useCurrentUserGroupsRolesPermissions();
+
     const value: Set<Permission_Enum> = useMemo(() => {
-        return reduceToSet(groups.User[0].attendees, (acc, attendee) => {
-            return reduceToSet(
-                attendee.groupAttendees,
-                (acc, groupAttendee) => {
-                    if (groupAttendee.group.enabled) {
-                        return reduceToSet(
-                            groupAttendee.group.groupRoles,
-                            (acc, groupRole) => {
-                                return reduceToSet(
-                                    groupRole.role.rolePermissions,
-                                    (acc, rolePermission) => {
-                                        acc.add(rolePermission.permissionName);
-                                        return acc;
-                                    },
-                                    acc
-                                );
-                            },
-                            acc
-                        );
-                    }
-                    return acc;
-                },
-                acc
-            );
-        });
+        if (groups.User[0].conferencesCreated.length > 0) {
+            return new Set(Object.values(Permission_Enum));
+        }
+        else {
+            return reduceToSet(groups.User[0].attendees, (acc, attendee) => {
+                return reduceToSet(
+                    attendee.groupAttendees,
+                    (acc, groupAttendee) => {
+                        if (groupAttendee.group.enabled) {
+                            return reduceToSet(
+                                groupAttendee.group.groupRoles,
+                                (acc, groupRole) => {
+                                    return reduceToSet(
+                                        groupRole.role.rolePermissions,
+                                        (acc, rolePermission) => {
+                                            acc.add(rolePermission.permissionName);
+                                            return acc;
+                                        },
+                                        acc
+                                    );
+                                },
+                                acc
+                            );
+                        }
+                        return acc;
+                    },
+                    acc
+                );
+            });
+        }
     }, [groups.User]);
 
     return (

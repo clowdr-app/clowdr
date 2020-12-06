@@ -10,12 +10,15 @@ import PageNotFound from "../Errors/PageNotFound";
 import useCurrentUser from "../Users/CurrentUser/useCurrentUser";
 import { useConference } from "./useConference";
 
-const _currentUserGroupsQueries = gql`
+gql`
     query CurrentUserGroupsRolesPermissions(
         $userId: String!
         $conferenceId: uuid!
     ) {
         User(where: { id: { _eq: $userId } }) {
+            conferencesCreated(where: { id: { _eq: $conferenceId } }) {
+                id
+            }
             attendees(where: { conferenceId: { _eq: $conferenceId } }) {
                 groupAttendees {
                     group {
@@ -90,10 +93,10 @@ export default function CurrentUserGroupsRolesPermissionsProvider({
     if (
         !data ||
         data.User.length === 0 ||
-        data.User[0].attendees.length === 0 ||
+        ((data.User[0].attendees.length === 0 ||
         data.User[0].attendees[0].groupAttendees.length === 0 ||
         data.User[0].attendees[0].groupAttendees[0].group.groupRoles.length ===
-            0
+            0) && data.User[0].conferencesCreated.length == 0)
     ) {
         return <PageNotFound />;
     }

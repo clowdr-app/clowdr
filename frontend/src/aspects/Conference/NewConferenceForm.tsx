@@ -201,7 +201,7 @@ gql`
                     conferenceId: $conferenceId
                     enabled: false
                     name: "Registrars"
-                    includeUnauthenticated: true
+                    includeUnauthenticated: false
                     groupRoles: {
                         data: [
                             {

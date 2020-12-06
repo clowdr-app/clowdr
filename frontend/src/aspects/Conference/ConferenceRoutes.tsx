@@ -15,7 +15,7 @@ import CurrentUserGroupsRolesPermissionsProvider from "./useConferenceCurrentUse
 function AuthenticatedConferenceRoutes(rootUrl: string): JSX.Element {
     const user = useMaybeCurrentUser();
 
-    if (!user) {
+    if (!user.user) {
         return <></>;
     }
 

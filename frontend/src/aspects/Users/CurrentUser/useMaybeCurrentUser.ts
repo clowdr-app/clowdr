@@ -1,7 +1,7 @@
 import React from "react";
 import type { SelectCurrentUserQuery } from "../../../generated/graphql";
 
-type UserInfo = {
+export type UserInfo = {
     user: SelectCurrentUserQuery | false | undefined;
     refetchUser: () => Promise<unknown>;
 };

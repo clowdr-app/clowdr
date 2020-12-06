@@ -141,6 +141,114 @@ gql`
         ) {
             affected_rows
         }
+
+        insert_Group(
+            objects: [
+                {
+                    conferenceId: $conferenceId
+                    enabled: false
+                    name: "Attendees"
+                    includeUnauthenticated: false
+                    groupRoles: {
+                        data: [
+                            {
+                                role: {
+                                    data: {
+                                        conferenceId: $conferenceId
+                                        name: "Attendee"
+                                        rolePermissions: {
+                                            data: [
+                                                {
+                                                    permissionName: CONFERENCE_VIEW
+                                                }
+                                                {
+                                                    permissionName: CONFERENCE_VIEW_ATTENDEES
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+                {
+                    conferenceId: $conferenceId
+                    enabled: false
+                    name: "Public"
+                    includeUnauthenticated: true
+                    groupRoles: {
+                        data: [
+                            {
+                                role: {
+                                    data: {
+                                        conferenceId: $conferenceId
+                                        name: "Public"
+                                        rolePermissions: {
+                                            data: [
+                                                {
+                                                    permissionName: CONFERENCE_VIEW
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+                {
+                    conferenceId: $conferenceId
+                    enabled: false
+                    name: "Registrars"
+                    includeUnauthenticated: true
+                    groupRoles: {
+                        data: [
+                            {
+                                role: {
+                                    data: {
+                                        conferenceId: $conferenceId
+                                        name: "Registrar"
+                                        rolePermissions: {
+                                            data: [
+                                                {
+                                                    permissionName: CONFERENCE_MANAGE_ATTENDEES
+                                                }
+                                                {
+                                                    permissionName: CONFERENCE_VIEW_ATTENDEES
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        ) {
+            returning {
+                id
+                conferenceId
+                name
+                enabled
+                groupRoles {
+                    id
+                    roleId
+                    groupId
+                    role {
+                        id
+                        name
+                        conferenceId
+                        rolePermissions {
+                            id
+                            roleId
+                            permissionName
+                        }
+                    }
+                }
+            }
+        }
     }
 `;
 

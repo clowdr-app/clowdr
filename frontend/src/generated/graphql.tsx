@@ -16770,7 +16770,7 @@ export type CreateNewConferenceMetaStructureMutationVariables = Exact<{
 }>;
 
 
-export type CreateNewConferenceMetaStructureMutation = { readonly __typename?: 'mutation_root', readonly insert_Attendee?: Maybe<{ readonly __typename?: 'Attendee_mutation_response', readonly affected_rows: number }> };
+export type CreateNewConferenceMetaStructureMutation = { readonly __typename?: 'mutation_root', readonly insert_Attendee?: Maybe<{ readonly __typename?: 'Attendee_mutation_response', readonly affected_rows: number }>, readonly insert_Group?: Maybe<{ readonly __typename?: 'Group_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Group', readonly id: any, readonly conferenceId: any, readonly name: string, readonly enabled: boolean, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any, readonly role: { readonly __typename?: 'Role', readonly id: any, readonly name: string, readonly conferenceId: any, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly id: any, readonly roleId: any, readonly permissionName: Permission_Enum }> } }> }> }> };
 
 export type ConferenceBySlugQueryVariables = Exact<{
   slug: Scalars['String'];
@@ -17425,6 +17425,31 @@ export const CreateNewConferenceMetaStructureDocument = gql`
     objects: [{displayName: $attendeeDisplayName, userId: $userId, conferenceId: $conferenceId, groupAttendees: {data: {group: {data: {conferenceId: $conferenceId, includeUnauthenticated: false, name: "Organisers", groupRoles: {data: {role: {data: {conferenceId: $conferenceId, name: "Organiser", rolePermissions: {data: [{permissionName: CONFERENCE_MANAGE_NAME}, {permissionName: CONFERENCE_MANAGE_ATTENDEES}, {permissionName: CONFERENCE_MODERATE_ATTENDEES}, {permissionName: CONFERENCE_VIEW_ATTENDEES}, {permissionName: CONFERENCE_VIEW}, {permissionName: CONFERENCE_MANAGE_ROLES}, {permissionName: CONFERENCE_MANAGE_GROUPS}, {permissionName: CONFERENCE_MANAGE_CONTENT}, {permissionName: CONFERENCE_MANAGE_SCHEDULE}]}}}}}}}}}}]
   ) {
     affected_rows
+  }
+  insert_Group(
+    objects: [{conferenceId: $conferenceId, enabled: false, name: "Attendees", includeUnauthenticated: false, groupRoles: {data: [{role: {data: {conferenceId: $conferenceId, name: "Attendee", rolePermissions: {data: [{permissionName: CONFERENCE_VIEW}, {permissionName: CONFERENCE_VIEW_ATTENDEES}]}}}}]}}, {conferenceId: $conferenceId, enabled: false, name: "Public", includeUnauthenticated: true, groupRoles: {data: [{role: {data: {conferenceId: $conferenceId, name: "Public", rolePermissions: {data: [{permissionName: CONFERENCE_VIEW}]}}}}]}}, {conferenceId: $conferenceId, enabled: false, name: "Registrars", includeUnauthenticated: true, groupRoles: {data: [{role: {data: {conferenceId: $conferenceId, name: "Registrar", rolePermissions: {data: [{permissionName: CONFERENCE_MANAGE_ATTENDEES}, {permissionName: CONFERENCE_VIEW_ATTENDEES}]}}}}]}}]
+  ) {
+    returning {
+      id
+      conferenceId
+      name
+      enabled
+      groupRoles {
+        id
+        roleId
+        groupId
+        role {
+          id
+          name
+          conferenceId
+          rolePermissions {
+            id
+            roleId
+            permissionName
+          }
+        }
+      }
+    }
   }
 }
     `;

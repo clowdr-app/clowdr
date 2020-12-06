@@ -28,6 +28,7 @@ import {
 } from "@chakra-ui/react";
 import assert from "assert";
 import React, { useCallback, useMemo, useState } from "react";
+import Select from "react-select";
 import { v4 as uuidv4 } from "uuid";
 import FAIcon from "../Icons/FAIcon";
 import UnsavedChangesWarning from "../LeavingPageWarnings/UnsavedChangesWarning";
@@ -128,8 +129,8 @@ export function defaultSelectSorter(
     itemKeyY: string,
     options: Array<SelectOption>
 ): number {
-    const itemValueX = options.find((x) => x.key === itemKeyX)?.value;
-    const itemValueY = options.find((y) => y.key === itemKeyY)?.value;
+    const itemValueX = options.find((x) => x.value === itemKeyX)?.label;
+    const itemValueY = options.find((y) => y.value === itemKeyY)?.label;
 
     if (!itemValueX) {
         if (!itemValueY) {
@@ -144,8 +145,8 @@ export function defaultSelectSorter(
 }
 
 export interface SelectOption {
-    key: string;
     value: string;
+    label: string;
 }
 
 // TODO: Button field type
@@ -214,23 +215,23 @@ export type SelectFieldSpec<S> = {
     options: () => Array<SelectOption>;
 
     /** Return the key of the option to select. */
-    convertToUI: (v: S | Array<S>) => string | Array<string>;
+    convertToUI: (v: S | Array<S>) => SelectOption | Array<SelectOption>;
     /** Provides the key of the selected option. */
-    convertFromUI?: (v: string | Array<string>) => S | Array<S>;
+    convertFromUI?: (v: SelectOption | Array<SelectOption>) => S | Array<S>;
 
     filter?: (
-        itemKey: string | Array<string>,
-        searchKeys?: Array<string>
+        itemOptions: SelectOption | Array<SelectOption>,
+        searchValues?: Array<string>
     ) => boolean;
     sort?: (
-        itemKeyX: string | Array<string>,
-        itemKeyY: string | Array<string>,
+        itemKeyX: SelectOption | Array<SelectOption>,
+        itemKeyY: SelectOption | Array<SelectOption>,
         options: Array<SelectOption>
     ) => number;
 
     areEqual?: (
-        itemKeyX: string | Array<string>,
-        itemKeyY: string | Array<string>
+        itemKeyX: SelectOption | Array<SelectOption>,
+        itemKeyY: SelectOption | Array<SelectOption>
     ) => boolean;
 
     /** Intended to be used for a modal dialog to create new items. */
@@ -421,22 +422,94 @@ const defaultRenderers: {
         }
     },
     [FieldType.select]: function renderSelectField(
-        keys: string | Array<string>,
+        options: SelectOption | Array<SelectOption>,
         editMode
     ) {
-        // TODO: Select edit mode
         if (editMode) {
-            throw new Error("Select edit mode not implemented yet!");
-        }
-
-        if (keys instanceof Array) {
             return (
-                <span>
-                    {keys.reduce((acc, key) => `${acc}, ${key}`, "").substr(2)}
-                </span>
+                <Select
+                    aria-label={editMode.label}
+                    isDisabled={editMode.isDisabled}
+                    options={editMode.opts.options}
+                    isMulti={editMode.opts.multiSelect}
+                    closeMenuOnSelect={true}
+                    value={options}
+                    onChange={(value) => {
+                        editMode.onChange(value);
+                    }}
+                    styles={{
+                        container: (provided: any, _state: any) => ({
+                            ...provided,
+                            width: "100%",
+                            backgroundColor: "#322659",
+                            color: "white",
+                        }),
+                        control: (provided: any, _state: any) => ({
+                            ...provided,
+                            backgroundColor: "inherit",
+                            color: "inherit",
+                        }),
+                        menu: (provided: any, _state: any) => ({
+                            ...provided,
+                            backgroundColor: "inherit",
+                            color: "inherit",
+                        }),
+                        menuList: (provided: any, _state: any) => ({
+                            ...provided,
+                            maxHeight: "120px",
+                            scrollBehavior: "smooth",
+                        }),
+                        multiValue: (provided: any, _state: any) => ({
+                            ...provided,
+                            backgroundColor: "#f0edf7",
+                            color: "black",
+                        }),
+                        multiValueLabel: (provided: any, _state: any) => ({
+                            ...provided,
+                            color: "black",
+                        }),
+                        option: (
+                            styles: any,
+                            { isDisabled, isFocused, isSelected }: any
+                        ) => {
+                            return {
+                                ...styles,
+                                backgroundColor: isDisabled
+                                    ? null
+                                    : isSelected
+                                    ? "#322659"
+                                    : isFocused
+                                    ? "#47367d"
+                                    : null,
+                                color: isDisabled ? "#ccc" : "white",
+                                cursor: isDisabled ? "not-allowed" : "default",
+
+                                ":active": {
+                                    ...styles[":active"],
+                                    backgroundColor:
+                                        !isDisabled &&
+                                        (isSelected ? "#47367d" : "#47367d"),
+                                },
+                            };
+                        },
+                    }}
+                />
             );
         } else {
-            return <span>{keys}</span>;
+            if (options instanceof Array) {
+                return (
+                    <span>
+                        {options
+                            .reduce(
+                                (acc, option) => `${acc}, ${option.label}`,
+                                ""
+                            )
+                            .substr(2)}
+                    </span>
+                );
+            } else {
+                return <span>{options.label}</span>;
+            }
         }
     },
 };
@@ -577,8 +650,6 @@ function FilterInput({
 // - TODO: Apply integer editor limits
 // - TODO: Apply integer custom equality test or default equality test
 //
-// - TODO: Render select editor (inc. multi-select)
-// - TODO: Implement & test select editor (inc. multi-select)
 // - TODO: Implement & test select create option modal
 //
 // - TODO: Apply field validation to create/update
@@ -619,7 +690,6 @@ function FilterInput({
 // - TODO: Apply highlighting options to cells
 //
 // CSUD:
-// - TODO: Implement & test multi-select
 // - TODO: Implement async creation
 // - TODO: Implement sync multi-update via modal
 // - TODO: Implement async multi-update via modal
@@ -731,8 +801,19 @@ function CRUDRow<S, T, PK extends keyof S>({
                                       falseLabel: field.editorFalseLabel,
                                       trueLabel: field.editorTrueLabel,
                                       format:
-                                          "format" in field.spec
+                                          field.spec.fieldType ===
+                                          FieldType.boolean
                                               ? field.spec.format
+                                              : undefined,
+                                      options:
+                                          field.spec.fieldType ===
+                                          FieldType.select
+                                              ? field.spec.options()
+                                              : undefined,
+                                      multiSelect:
+                                          field.spec.fieldType ===
+                                          FieldType.select
+                                              ? field.spec.multiSelect
                                               : undefined,
                                   },
                                   onChange: async (value) => {

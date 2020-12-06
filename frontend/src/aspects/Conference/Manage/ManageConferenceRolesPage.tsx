@@ -198,7 +198,31 @@ export default function ManageConferenceRolesPage(): JSX.Element {
     const fields = useMemo(() => {
         const result: {
             [K: string]: Readonly<PrimaryField<RoleDescriptor, any>>;
-        } = {};
+        } = {
+            name: {
+                heading: "Name",
+                ariaLabel: "Name",
+                description: "Role name",
+                isHidden: false,
+                isEditable: true,
+                defaultValue: "New role name",
+                insert: (item, v) => {
+                    return {
+                        ...item,
+                        name: v,
+                    };
+                },
+                extract: (v) => v.name,
+                spec: {
+                    fieldType: FieldType.string,
+                    convertFromUI: (x) => x,
+                    convertToUI: (x) => x,
+                    filter: defaultStringFilter,
+                },
+                validate: (v) =>
+                    v.length >= 3 || ["Name must be at least 3 characters"],
+            },
+        };
         for (const permissionEnumKey in Permission_Enum) {
             const permissionEnumValue = (Permission_Enum as any)[
                 permissionEnumKey
@@ -551,34 +575,7 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                         },
                         validate: (v) => isValidUUID(v) || ["Invalid UUID"],
                     },
-                    otherFields: {
-                        name: {
-                            heading: "Name",
-                            ariaLabel: "Name",
-                            description: "Role name",
-                            isHidden: false,
-                            isEditable: true,
-                            defaultValue: "New role name",
-                            insert: (item, v) => {
-                                return {
-                                    ...item,
-                                    name: v,
-                                };
-                            },
-                            extract: (v) => v.name,
-                            spec: {
-                                fieldType: FieldType.string,
-                                convertFromUI: (x) => x,
-                                convertToUI: (x) => x,
-                                filter: defaultStringFilter,
-                            },
-                            validate: (v) =>
-                                v.length >= 3 || [
-                                    "Name must be at least 3 characters",
-                                ],
-                        },
-                        ...fields,
-                    },
+                    otherFields: fields,
                 }}
             />
         </RequireAtLeastOnePermissionWrapper>

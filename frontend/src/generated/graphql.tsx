@@ -16704,6 +16704,13 @@ export type DeleteIsTypingMutationVariables = Exact<{
 
 export type DeleteIsTypingMutation = { readonly __typename?: 'mutation_root', readonly delete_ChatTyper?: Maybe<{ readonly __typename?: 'ChatTyper_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ChatTyper', readonly id: any }> }> };
 
+export type SelectAllGroupsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type SelectAllGroupsQuery = { readonly __typename?: 'query_root', readonly Group: ReadonlyArray<{ readonly __typename?: 'Group', readonly conferenceId: any, readonly enabled: boolean, readonly id: any, readonly includeUnauthenticated: boolean, readonly name: string, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any }> }> };
+
 export type UpdateConferenceMutationVariables = Exact<{
   id: Scalars['uuid'];
   name?: Maybe<Scalars['String']>;
@@ -17113,6 +17120,48 @@ export function useDeleteIsTypingMutation(baseOptions?: Apollo.MutationHookOptio
 export type DeleteIsTypingMutationHookResult = ReturnType<typeof useDeleteIsTypingMutation>;
 export type DeleteIsTypingMutationResult = Apollo.MutationResult<DeleteIsTypingMutation>;
 export type DeleteIsTypingMutationOptions = Apollo.BaseMutationOptions<DeleteIsTypingMutation, DeleteIsTypingMutationVariables>;
+export const SelectAllGroupsDocument = gql`
+    query SelectAllGroups($conferenceId: uuid!) {
+  Group(where: {conferenceId: {_eq: $conferenceId}}) {
+    conferenceId
+    enabled
+    id
+    includeUnauthenticated
+    name
+    groupRoles {
+      id
+      roleId
+      groupId
+    }
+  }
+}
+    `;
+
+/**
+ * __useSelectAllGroupsQuery__
+ *
+ * To run a query within a React component, call `useSelectAllGroupsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectAllGroupsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectAllGroupsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useSelectAllGroupsQuery(baseOptions: Apollo.QueryHookOptions<SelectAllGroupsQuery, SelectAllGroupsQueryVariables>) {
+        return Apollo.useQuery<SelectAllGroupsQuery, SelectAllGroupsQueryVariables>(SelectAllGroupsDocument, baseOptions);
+      }
+export function useSelectAllGroupsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectAllGroupsQuery, SelectAllGroupsQueryVariables>) {
+          return Apollo.useLazyQuery<SelectAllGroupsQuery, SelectAllGroupsQueryVariables>(SelectAllGroupsDocument, baseOptions);
+        }
+export type SelectAllGroupsQueryHookResult = ReturnType<typeof useSelectAllGroupsQuery>;
+export type SelectAllGroupsLazyQueryHookResult = ReturnType<typeof useSelectAllGroupsLazyQuery>;
+export type SelectAllGroupsQueryResult = Apollo.QueryResult<SelectAllGroupsQuery, SelectAllGroupsQueryVariables>;
 export const UpdateConferenceDocument = gql`
     mutation UpdateConference($id: uuid!, $name: String = "", $shortName: String = "", $slug: String = "") {
   update_Conference(

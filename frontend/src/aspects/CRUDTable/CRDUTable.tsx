@@ -3,6 +3,7 @@ import {
     ButtonGroup,
     Checkbox,
     FormControl,
+    FormHelperText,
     FormLabel,
     Grid,
     GridItem,
@@ -984,6 +985,7 @@ function CRUDCreateButton<T, PK extends keyof T>({
                             },
                         }
                     )}
+                    <FormHelperText>{field.description}</FormHelperText>
                 </FormControl>
             )),
         [fieldValues, visibleFields]

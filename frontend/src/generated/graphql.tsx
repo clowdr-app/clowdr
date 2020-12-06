@@ -16714,12 +16714,35 @@ export type UpdateConferenceMutationVariables = Exact<{
 
 export type UpdateConferenceMutation = { readonly __typename?: 'mutation_root', readonly update_Conference?: Maybe<{ readonly __typename?: 'Conference_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string }> }> };
 
+export type SelectAllPermissionsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SelectAllPermissionsQuery = { readonly __typename?: 'query_root', readonly Permission: ReadonlyArray<{ readonly __typename?: 'Permission', readonly name: string, readonly description: string }> };
+
 export type SelectAllRolesQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
 export type SelectAllRolesQuery = { readonly __typename?: 'query_root', readonly Role: ReadonlyArray<{ readonly __typename?: 'Role', readonly conferenceId: any, readonly id: any, readonly name: string, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly id: any, readonly permissionName: Permission_Enum, readonly roleId: any }> }> };
+
+export type CreateDeleteRolesMutationVariables = Exact<{
+  deleteRoleIds?: Maybe<ReadonlyArray<Scalars['uuid']>>;
+  insertRoles: ReadonlyArray<Role_Insert_Input>;
+}>;
+
+
+export type CreateDeleteRolesMutation = { readonly __typename?: 'mutation_root', readonly delete_Role?: Maybe<{ readonly __typename?: 'Role_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Role', readonly id: any }> }>, readonly insert_Role?: Maybe<{ readonly __typename?: 'Role_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Role', readonly id: any, readonly conferenceId: any, readonly name: string, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly id: any, readonly permissionName: Permission_Enum, readonly roleId: any }> }> }> };
+
+export type UpdateRoleMutationVariables = Exact<{
+  roleId: Scalars['uuid'];
+  roleName: Scalars['String'];
+  insertPermissions: ReadonlyArray<RolePermission_Insert_Input>;
+  deletePermissionNames?: Maybe<ReadonlyArray<Permission_Enum>>;
+}>;
+
+
+export type UpdateRoleMutation = { readonly __typename?: 'mutation_root', readonly update_Role?: Maybe<{ readonly __typename?: 'Role_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Role', readonly id: any, readonly name: string, readonly conferenceId: any, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly id: any, readonly permissionName: Permission_Enum, readonly roleId: any }> }> }>, readonly insert_RolePermission?: Maybe<{ readonly __typename?: 'RolePermission_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly id: any, readonly permissionName: Permission_Enum, readonly roleId: any }> }>, readonly delete_RolePermission?: Maybe<{ readonly __typename?: 'RolePermission_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly id: any }> }> };
 
 export type ConferenceTakenQueryVariables = Exact<{
   name: Scalars['String'];
@@ -17133,6 +17156,39 @@ export function useUpdateConferenceMutation(baseOptions?: Apollo.MutationHookOpt
 export type UpdateConferenceMutationHookResult = ReturnType<typeof useUpdateConferenceMutation>;
 export type UpdateConferenceMutationResult = Apollo.MutationResult<UpdateConferenceMutation>;
 export type UpdateConferenceMutationOptions = Apollo.BaseMutationOptions<UpdateConferenceMutation, UpdateConferenceMutationVariables>;
+export const SelectAllPermissionsDocument = gql`
+    query SelectAllPermissions {
+  Permission {
+    name
+    description
+  }
+}
+    `;
+
+/**
+ * __useSelectAllPermissionsQuery__
+ *
+ * To run a query within a React component, call `useSelectAllPermissionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectAllPermissionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectAllPermissionsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSelectAllPermissionsQuery(baseOptions?: Apollo.QueryHookOptions<SelectAllPermissionsQuery, SelectAllPermissionsQueryVariables>) {
+        return Apollo.useQuery<SelectAllPermissionsQuery, SelectAllPermissionsQueryVariables>(SelectAllPermissionsDocument, baseOptions);
+      }
+export function useSelectAllPermissionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectAllPermissionsQuery, SelectAllPermissionsQueryVariables>) {
+          return Apollo.useLazyQuery<SelectAllPermissionsQuery, SelectAllPermissionsQueryVariables>(SelectAllPermissionsDocument, baseOptions);
+        }
+export type SelectAllPermissionsQueryHookResult = ReturnType<typeof useSelectAllPermissionsQuery>;
+export type SelectAllPermissionsLazyQueryHookResult = ReturnType<typeof useSelectAllPermissionsLazyQuery>;
+export type SelectAllPermissionsQueryResult = Apollo.QueryResult<SelectAllPermissionsQuery, SelectAllPermissionsQueryVariables>;
 export const SelectAllRolesDocument = gql`
     query SelectAllRoles($conferenceId: uuid!) {
   Role(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -17173,6 +17229,109 @@ export function useSelectAllRolesLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type SelectAllRolesQueryHookResult = ReturnType<typeof useSelectAllRolesQuery>;
 export type SelectAllRolesLazyQueryHookResult = ReturnType<typeof useSelectAllRolesLazyQuery>;
 export type SelectAllRolesQueryResult = Apollo.QueryResult<SelectAllRolesQuery, SelectAllRolesQueryVariables>;
+export const CreateDeleteRolesDocument = gql`
+    mutation CreateDeleteRoles($deleteRoleIds: [uuid!] = [], $insertRoles: [Role_insert_input!]!) {
+  delete_Role(where: {id: {_in: $deleteRoleIds}}) {
+    returning {
+      id
+    }
+  }
+  insert_Role(objects: $insertRoles) {
+    returning {
+      id
+      conferenceId
+      name
+      rolePermissions {
+        id
+        permissionName
+        roleId
+      }
+    }
+  }
+}
+    `;
+export type CreateDeleteRolesMutationFn = Apollo.MutationFunction<CreateDeleteRolesMutation, CreateDeleteRolesMutationVariables>;
+
+/**
+ * __useCreateDeleteRolesMutation__
+ *
+ * To run a mutation, you first call `useCreateDeleteRolesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateDeleteRolesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createDeleteRolesMutation, { data, loading, error }] = useCreateDeleteRolesMutation({
+ *   variables: {
+ *      deleteRoleIds: // value for 'deleteRoleIds'
+ *      insertRoles: // value for 'insertRoles'
+ *   },
+ * });
+ */
+export function useCreateDeleteRolesMutation(baseOptions?: Apollo.MutationHookOptions<CreateDeleteRolesMutation, CreateDeleteRolesMutationVariables>) {
+        return Apollo.useMutation<CreateDeleteRolesMutation, CreateDeleteRolesMutationVariables>(CreateDeleteRolesDocument, baseOptions);
+      }
+export type CreateDeleteRolesMutationHookResult = ReturnType<typeof useCreateDeleteRolesMutation>;
+export type CreateDeleteRolesMutationResult = Apollo.MutationResult<CreateDeleteRolesMutation>;
+export type CreateDeleteRolesMutationOptions = Apollo.BaseMutationOptions<CreateDeleteRolesMutation, CreateDeleteRolesMutationVariables>;
+export const UpdateRoleDocument = gql`
+    mutation UpdateRole($roleId: uuid!, $roleName: String!, $insertPermissions: [RolePermission_insert_input!]!, $deletePermissionNames: [Permission_enum!] = []) {
+  update_Role(where: {id: {_eq: $roleId}}, _set: {name: $roleName}) {
+    returning {
+      id
+      name
+      rolePermissions {
+        id
+        permissionName
+        roleId
+      }
+      conferenceId
+    }
+  }
+  insert_RolePermission(objects: $insertPermissions) {
+    returning {
+      id
+      permissionName
+      roleId
+    }
+  }
+  delete_RolePermission(where: {permissionName: {_in: $deletePermissionNames}}) {
+    returning {
+      id
+    }
+  }
+}
+    `;
+export type UpdateRoleMutationFn = Apollo.MutationFunction<UpdateRoleMutation, UpdateRoleMutationVariables>;
+
+/**
+ * __useUpdateRoleMutation__
+ *
+ * To run a mutation, you first call `useUpdateRoleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateRoleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateRoleMutation, { data, loading, error }] = useUpdateRoleMutation({
+ *   variables: {
+ *      roleId: // value for 'roleId'
+ *      roleName: // value for 'roleName'
+ *      insertPermissions: // value for 'insertPermissions'
+ *      deletePermissionNames: // value for 'deletePermissionNames'
+ *   },
+ * });
+ */
+export function useUpdateRoleMutation(baseOptions?: Apollo.MutationHookOptions<UpdateRoleMutation, UpdateRoleMutationVariables>) {
+        return Apollo.useMutation<UpdateRoleMutation, UpdateRoleMutationVariables>(UpdateRoleDocument, baseOptions);
+      }
+export type UpdateRoleMutationHookResult = ReturnType<typeof useUpdateRoleMutation>;
+export type UpdateRoleMutationResult = Apollo.MutationResult<UpdateRoleMutation>;
+export type UpdateRoleMutationOptions = Apollo.BaseMutationOptions<UpdateRoleMutation, UpdateRoleMutationVariables>;
 export const ConferenceTakenDocument = gql`
     query ConferenceTaken($name: String!, $shortName: String!, $slug: String!) {
   Conference(

@@ -30,16 +30,15 @@ export default function ApolloCustomProvider({
             const httpProtocol = useSecureProtocols ? "https" : "http";
             const wsProtocol = useSecureProtocols ? "wss" : "ws";
 
-            const authLink = setContext(async () => {
+            const authLink = setContext(async (_, { headers }) => {
+                const newHeaders: any = { ...headers };
                 if (isAuthenticated) {
                     const token = await getAccessTokenSilently();
-                    return {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    };
+                    newHeaders.Authorization = `Bearer ${token}`;
                 }
-                return {};
+                return {
+                    headers: newHeaders
+                };
             });
 
             const httpLink = new HttpLink({

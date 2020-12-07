@@ -207,6 +207,13 @@ export default function ManagerLandingPage(): JSX.Element {
                     icon="question-circle"
                     description="Learn about how to use Clowdr's management tools and best practices."
                 />
+                <ManagementDashboardButton
+                    to="content"
+                    name="Content"
+                    icon="bookmark"
+                    description="Manage the content being presented at your conference: papers, presentations, posters and more."
+                    permissions={[Permission_Enum.ConferenceManageContent]}
+                />
             </Flex>
         </>
     );

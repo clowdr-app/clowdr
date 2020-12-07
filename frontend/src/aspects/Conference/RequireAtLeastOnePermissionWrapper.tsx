@@ -8,12 +8,12 @@ export default function RequireAtLeastOnePermissionWrapper({
     componentIfDenied,
 }: {
     children: string | JSX.Element | Array<JSX.Element>;
-    permissions: Array<Permission_Enum>;
+    permissions?: Array<Permission_Enum>;
     componentIfDenied?: JSX.Element;
 }): JSX.Element | null {
     const activePermissions = useConferenceCurrentUserActivePermissions();
 
-    if (permissions.some((permission) => activePermissions.has(permission))) {
+    if (!permissions || permissions.some((permission) => activePermissions.has(permission))) {
         return <>{children}</>;
     }
 

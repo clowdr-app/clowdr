@@ -8500,7 +8500,7 @@ export enum Permission_Enum {
   ConferenceModerateAttendees = 'CONFERENCE_MODERATE_ATTENDEES',
   /** View the conference. */
   ConferenceView = 'CONFERENCE_VIEW',
-  /** View conference active attendees. */
+  /** View conference attendees. */
   ConferenceViewAttendees = 'CONFERENCE_VIEW_ATTENDEES'
 }
 
@@ -16704,6 +16704,13 @@ export type DeleteIsTypingMutationVariables = Exact<{
 
 export type DeleteIsTypingMutation = { readonly __typename?: 'mutation_root', readonly delete_ChatTyper?: Maybe<{ readonly __typename?: 'ChatTyper_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ChatTyper', readonly id: any }> }> };
 
+export type SelectAllRequiredContentQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type SelectAllRequiredContentQuery = { readonly __typename?: 'query_root', readonly RequiredContentItem: ReadonlyArray<{ readonly __typename?: 'RequiredContentItem', readonly conferenceId: any, readonly contentTypeName: ContentType_Enum, readonly id: any, readonly name: string, readonly contentGroup: { readonly __typename?: 'ContentGroup', readonly title: string }, readonly contentItem?: Maybe<{ readonly __typename?: 'ContentItem', readonly name: string }> }> };
+
 export type SelectAllGroupsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
@@ -17140,6 +17147,48 @@ export function useDeleteIsTypingMutation(baseOptions?: Apollo.MutationHookOptio
 export type DeleteIsTypingMutationHookResult = ReturnType<typeof useDeleteIsTypingMutation>;
 export type DeleteIsTypingMutationResult = Apollo.MutationResult<DeleteIsTypingMutation>;
 export type DeleteIsTypingMutationOptions = Apollo.BaseMutationOptions<DeleteIsTypingMutation, DeleteIsTypingMutationVariables>;
+export const SelectAllRequiredContentDocument = gql`
+    query SelectAllRequiredContent($conferenceId: uuid!) {
+  RequiredContentItem(where: {conferenceId: {_eq: $conferenceId}}) {
+    conferenceId
+    contentGroup {
+      title
+    }
+    contentTypeName
+    contentItem {
+      name
+    }
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useSelectAllRequiredContentQuery__
+ *
+ * To run a query within a React component, call `useSelectAllRequiredContentQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectAllRequiredContentQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectAllRequiredContentQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useSelectAllRequiredContentQuery(baseOptions: Apollo.QueryHookOptions<SelectAllRequiredContentQuery, SelectAllRequiredContentQueryVariables>) {
+        return Apollo.useQuery<SelectAllRequiredContentQuery, SelectAllRequiredContentQueryVariables>(SelectAllRequiredContentDocument, baseOptions);
+      }
+export function useSelectAllRequiredContentLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectAllRequiredContentQuery, SelectAllRequiredContentQueryVariables>) {
+          return Apollo.useLazyQuery<SelectAllRequiredContentQuery, SelectAllRequiredContentQueryVariables>(SelectAllRequiredContentDocument, baseOptions);
+        }
+export type SelectAllRequiredContentQueryHookResult = ReturnType<typeof useSelectAllRequiredContentQuery>;
+export type SelectAllRequiredContentLazyQueryHookResult = ReturnType<typeof useSelectAllRequiredContentLazyQuery>;
+export type SelectAllRequiredContentQueryResult = Apollo.QueryResult<SelectAllRequiredContentQuery, SelectAllRequiredContentQueryVariables>;
 export const SelectAllGroupsDocument = gql`
     query SelectAllGroups($conferenceId: uuid!) {
   Group(where: {conferenceId: {_eq: $conferenceId}}) {

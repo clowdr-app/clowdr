@@ -104,6 +104,13 @@ export default function ManagerLandingPage(): JSX.Element {
                         Permission_Enum.ConferenceManageAttendees,
                     ]}
                 />
+                <ManagementDashboardButton
+                    to="content"
+                    name="Content"
+                    icon="bookmark"
+                    description="Manage the content being presented at your conference: papers, presentations, posters and more."
+                    permissions={[Permission_Enum.ConferenceManageContent]}
+                />
             </Flex>
         </>
     );

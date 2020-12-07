@@ -1817,7 +1817,7 @@
       filter:
         _or:
         - accessToken:
-            _eq: X-Hasura-Access-Token
+            _eq: X-Hasura-Magic-Token
         - conference:
             groups:
               _and:
@@ -1863,7 +1863,7 @@
                       userId:
                         _eq: X-Hasura-User-Id
         - accessToken:
-            _eq: X-Hasura-Access-Token
+            _eq: X-Hasura-Magic-Token
   update_permissions:
   - role: user
     permission:

@@ -130,12 +130,14 @@ Now, configure the application in the _Settings_ tab.
 function (user, context, callback) {
   const namespace = configuration.HASURA_NAMESPACE;
   console.log(`Upgrading access token for ${user.user_id}`);
+  const magicToken = context.request && context.request.query && context.request.query["magic-token"];
   context.accessToken[namespace] =
     {
       'x-hasura-default-role': 'user',
-      // TODO: Custom logic to decide allowed roles
+      // do some custom logic to decide allowed roles
       'x-hasura-allowed-roles': ['user','moderator','organiser'],
-      'x-hasura-user-id': user.user_id
+      'x-hasura-user-id': user.user_id,
+    	'x-hasura-magic-token': magicToken
     };
   callback(null, user, context);
 }

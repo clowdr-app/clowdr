@@ -63,6 +63,11 @@ export default function ManageConferenceContentPage(): JSX.Element {
         variables: {
             conferenceId: conference.id,
         },
+        context: {
+            headers: {
+                "x-hasura-magic-token": "Some value",
+            },
+        },
     });
     useQueryErrorToast(errorAllRequiredContent);
 

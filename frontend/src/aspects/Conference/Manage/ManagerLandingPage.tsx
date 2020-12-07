@@ -1,4 +1,4 @@
-import { Flex, Heading, Text, useColorModeValue } from "@chakra-ui/react";
+import { Flex, Heading, Text } from "@chakra-ui/react";
 import React from "react";
 import { Permission_Enum } from "../../../generated/graphql";
 import LinkButton from "../../Chakra/LinkButton";
@@ -16,7 +16,7 @@ function ManagementDashboardButton({
     icon,
     description,
     permissions,
-    colorScheme
+    colorScheme,
 }: {
     to: string;
     name: string;
@@ -115,9 +115,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     name="Content"
                     icon="align-left"
                     description="Manage your program content: papers, posters, keynotes, etc."
-                    permissions={[
-                        Permission_Enum.ConferenceManageContent
-                    ]}
+                    permissions={[Permission_Enum.ConferenceManageContent]}
                     colorScheme="green"
                 />
                 <ManagementDashboardButton
@@ -125,9 +123,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     name="Schedule"
                     icon="calendar"
                     description="Manage your program schedule: events, sessions, rooms, etc."
-                    permissions={[
-                        Permission_Enum.ConferenceManageSchedule
-                    ]}
+                    permissions={[Permission_Enum.ConferenceManageSchedule]}
                     colorScheme="green"
                 />
                 <ManagementDashboardButton
@@ -137,7 +133,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     description="Import your content and schedule from Researchr or CSV, XML or JSON files."
                     permissions={[
                         Permission_Enum.ConferenceManageContent,
-                        Permission_Enum.ConferenceManageSchedule
+                        Permission_Enum.ConferenceManageSchedule,
                     ]}
                     colorScheme="green"
                 />
@@ -146,9 +142,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     name="Export"
                     icon="upload"
                     description="Export your conference data (events, public chats, analytics, etc)."
-                    permissions={[
-                        Permission_Enum.ConferenceManageContent
-                    ]}
+                    permissions={[Permission_Enum.ConferenceManageContent]}
                     colorScheme="green"
                 />
                 <ManagementDashboardButton
@@ -157,7 +151,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     icon="star"
                     description="Manage your sponsors and their representatives."
                     permissions={[
-                        Permission_Enum.ConferenceManageContent // TODO: Manage chats sponsors
+                        Permission_Enum.ConferenceManageContent, // TODO: Manage chats sponsors
                     ]}
                     colorScheme="purple"
                 />
@@ -167,7 +161,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     icon="comments"
                     description="Manage the conversations happening at your conference."
                     permissions={[
-                        Permission_Enum.ConferenceManageContent // TODO: Manage chats permission
+                        Permission_Enum.ConferenceManageContent, // TODO: Manage chats permission
                     ]}
                     colorScheme="yellow"
                 />
@@ -177,7 +171,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     icon="coffee"
                     description="Manage the breakout rooms happening at your conference."
                     permissions={[
-                        Permission_Enum.ConferenceManageContent // TODO: Manage rooms permission
+                        Permission_Enum.ConferenceManageContent, // TODO: Manage rooms permission
                     ]}
                     colorScheme="yellow"
                 />
@@ -187,7 +181,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     icon="video"
                     description="Manage your livestreams and broadcasts, including post-conference archiving."
                     permissions={[
-                        Permission_Enum.ConferenceManageContent // TODO: Manage broadcasts permission
+                        Permission_Enum.ConferenceManageContent, // TODO: Manage broadcasts permission
                     ]}
                     colorScheme="yellow"
                 />
@@ -197,7 +191,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     icon="chart-line"
                     description="View live and historic data about (anonymous) activity at your conference."
                     permissions={[
-                        Permission_Enum.ConferenceManageContent // TODO: View analytics permission
+                        Permission_Enum.ConferenceManageContent, // TODO: View analytics permission
                     ]}
                     colorScheme="yellow"
                 />

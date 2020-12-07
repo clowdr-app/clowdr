@@ -33,11 +33,31 @@ export default function ApolloCustomProvider({
             const authLink = setContext(async (_, { headers }) => {
                 const newHeaders: any = { ...headers };
                 if (isAuthenticated) {
-                    const token = await getAccessTokenSilently();
+                    const magicToken = headers
+                        ? headers["x-hasura-magic-token"]
+                        : undefined;
+                    delete newHeaders["x-hasura-magic-token"];
+
+                    const ignoreCache = !!magicToken;
+                    const token = await getAccessTokenSilently({
+                        ignoreCache,
+                        "magic-token": magicToken,
+                    });
+                    // Auth0 issues tokens a few seconds in the future
+                    // so we wait a brief period before using a definitely-fresh
+                    // token.
+                    // (The error may still occur if ignoreCache was false but a
+                    //  new token was required anyway. The `useQueryErrorResult`
+                    //  handles that case.)
+                    if (ignoreCache) {
+                        await new Promise((resolve) => {
+                            setTimeout(resolve, 3000);
+                        });
+                    }
                     newHeaders.Authorization = `Bearer ${token}`;
                 }
                 return {
-                    headers: newHeaders
+                    headers: newHeaders,
                 };
             });
 

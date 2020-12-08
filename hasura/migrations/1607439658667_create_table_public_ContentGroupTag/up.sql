@@ -1,0 +1,2 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE TABLE "public"."ContentGroupTag"("id" uuid NOT NULL DEFAULT gen_random_uuid(), "contentGroupId" uuid NOT NULL, "tagId" uuid NOT NULL, PRIMARY KEY ("id") , FOREIGN KEY ("contentGroupId") REFERENCES "public"."ContentGroup"("id") ON UPDATE cascade ON DELETE cascade, FOREIGN KEY ("tagId") REFERENCES "public"."Tag"("id") ON UPDATE cascade ON DELETE cascade, UNIQUE ("contentGroupId", "tagId"));

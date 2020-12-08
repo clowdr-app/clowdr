@@ -10,6 +10,14 @@
   - name: conference
     using:
       foreign_key_constraint_on: conferenceId
+  - name: invitation
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Invitation
+        column_mapping:
+          id: attendeeId
   - name: user
     using:
       foreign_key_constraint_on: userId
@@ -617,6 +625,13 @@
     using:
       foreign_key_constraint_on: originatingDataId
   array_relationships:
+  - name: contentGroupTags
+    using:
+      foreign_key_constraint_on:
+        column: contentGroupId
+        table:
+          schema: public
+          name: ContentGroupTag
   - name: contentItems
     using:
       foreign_key_constraint_on:
@@ -765,6 +780,16 @@
                   attendee:
                     userId:
                       _eq: X-Hasura-User-Id
+- table:
+    schema: public
+    name: ContentGroupTag
+  object_relationships:
+  - name: contentGroup
+    using:
+      foreign_key_constraint_on: contentGroupId
+  - name: tag
+    using:
+      foreign_key_constraint_on: tagId
 - table:
     schema: public
     name: ContentGroupType
@@ -1035,6 +1060,21 @@
       filter: {}
 - table:
     schema: public
+    name: Email
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
+  object_relationships:
+  - name: invitation
+    using:
+      foreign_key_constraint_on: invitationId
+  - name: user
+    using:
+      foreign_key_constraint_on: userId
+- table:
+    schema: public
     name: Event
   configuration:
     custom_root_fields: {}
@@ -1072,6 +1112,13 @@
         table:
           schema: public
           name: EventPerson
+  - name: eventTags
+    using:
+      foreign_key_constraint_on:
+        column: eventId
+        table:
+          schema: public
+          name: EventTag
   - name: executedTransitions
     using:
       foreign_key_constraint_on:
@@ -1130,6 +1177,16 @@
       - description
       - name
       filter: {}
+- table:
+    schema: public
+    name: EventTag
+  object_relationships:
+  - name: event
+    using:
+      foreign_key_constraint_on: eventId
+  - name: tag
+    using:
+      foreign_key_constraint_on: tagId
 - table:
     schema: public
     name: ExecutedTransitions
@@ -1584,6 +1641,29 @@
       - name
       - description
       filter: {}
+- table:
+    schema: public
+    name: Invitation
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
+  object_relationships:
+  - name: attendee
+    using:
+      foreign_key_constraint_on: attendeeId
+  - name: user
+    using:
+      foreign_key_constraint_on: linkToUserId
+  array_relationships:
+  - name: emails
+    using:
+      foreign_key_constraint_on:
+        column: invitationId
+        table:
+          schema: public
+          name: Email
 - table:
     schema: public
     name: OnlineStatus
@@ -2275,6 +2355,18 @@
       foreign_key_constraint_on: roomId
 - table:
     schema: public
+    name: Tag
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
+  object_relationships:
+  - name: originatingData
+    using:
+      foreign_key_constraint_on: originatingDataId
+- table:
+    schema: public
     name: Transitions
   configuration:
     custom_root_fields: {}
@@ -2463,6 +2555,13 @@
         table:
           schema: public
           name: Conference
+  - name: emails
+    using:
+      foreign_key_constraint_on:
+        column: userId
+        table:
+          schema: public
+          name: Email
   - name: flaggedMessages
     using:
       foreign_key_constraint_on:
@@ -2477,6 +2576,13 @@
         table:
           schema: public
           name: FollowedChat
+  - name: invitationsPendingConfirmation
+    using:
+      foreign_key_constraint_on:
+        column: linkToUserId
+        table:
+          schema: public
+          name: Invitation
   - name: memberOfChats
     using:
       foreign_key_constraint_on:

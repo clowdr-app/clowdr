@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "postinstall": "cd services/actions && npm install && cd ../../frontend && npm install",
-        "heroku-postbuild": "cd services/actions && npx tsc",
+        "heroku-postbuild": "cd services/actions && npx tsc && npm run-script copy-resources",
         "run-services-actions": "heroku local -p 3001 web"
     },
     "repository": {

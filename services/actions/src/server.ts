@@ -3,9 +3,12 @@ import bodyParser from "body-parser";
 import express, { Request, Response } from "express";
 import jwt from "express-jwt";
 import jwksRsa from "jwks-rsa";
+import { is } from "typescript-is";
 import checkScopes from "./checkScopes";
 import handlerEcho from "./handlers/echo";
+import { handleConferenceCreated } from "./handlers/event";
 import protectedEchoHandler from "./handlers/protectedEcho";
+import { ConferenceData, Payload } from "./types/event";
 
 if (process.env.NODE_ENV !== "test") {
     assert(
@@ -86,6 +89,28 @@ app.post("/echo", jsonParser, async (req: Request, res: Response) => {
     console.log(`Echoing "${params.message}"`);
     const result = handlerEcho(params);
     return res.json(result);
+});
+
+app.post("/event", jsonParser, async (req: Request, res: Response) => {
+    if (is<Payload>(req.body)) {
+        try {
+            if (
+                req.body.trigger.name === "ConferenceCreated" &&
+                is<Payload<ConferenceData>>(req.body)
+            ) {
+                await handleConferenceCreated(req.body);
+            } else {
+                console.log("Received unhandled payload");
+            }
+        } catch (e) {
+            res.status(500).json("Failure while handling event");
+            return;
+        }
+        res.status(200).json("OK");
+    } else {
+        console.log("Received incorrect payload");
+        res.status(500).json("Unexpected payload");
+    }
 });
 
 const portNumber = process.env.PORT ? parseInt(process.env.PORT, 10) : 4000;

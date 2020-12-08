@@ -6,7 +6,8 @@
     "scripts": {
         "build": "tsc",
         "start": "node build/server.js",
-        "dev": "nodenv -E ./.env -e \"tsc-watch --onSuccess \\\"npm run-script --prefix ../../ run-services-actions\\\"\"",
+        "dev": "nodenv -E ./.env -e \"tsc-watch --compiler \\\"ttypescript/bin/tsc\\\" --onCompilationComplete \\\"npm run-script copy-resources\\\" --onSuccess \\\"npm run-script --prefix ../../ run-services-actions\\\"\"",
+        "copy-resources": "node node_modules/rimraf/bin.js build/resources && node node_modules/cpy-cli/cli.js --cwd=src/resources **/* ../../build/resources --parents",
         "test": "jest --config jest.config.ts --forceExit",
         "graphql-codegen": "graphql-codegen --config codegen.js"
     },
@@ -25,13 +26,20 @@
     "homepage": "https://github.com/clowdr-app/clowdr#readme",
     "dependencies": {
         "@apollo/client": "^3.2.9",
+        "@aws-sdk/client-cloudformation": "^1.0.0-rc.8",
+        "@aws-sdk/client-iam": "^1.0.0-rc.8",
+        "@aws-sdk/region-provider": "0.1.0-preview.1",
         "express": "^4.17.1",
         "express-jwt": "^6.0.0",
         "graphql": "^15.4.0",
         "jest": "^26.6.3",
         "jwks-rsa": "^1.11.0",
+        "nanoid": "^3.1.20",
+        "p-retry": "^4.2.0",
+        "slugify": "^1.4.6",
         "supertest": "^6.0.1",
         "typescript": "^4.0.5",
+        "typescript-is": "^0.17.0",
         "uuid": "^8.3.1"
     },
     "engines": {
@@ -51,9 +59,12 @@
         "@types/supertest": "^2.0.10",
         "@types/uuid": "^8.3.0",
         "@types/ws": "^7.4.0",
+        "cpy-cli": "^3.1.1",
         "node-env-run": "^4.0.2",
+        "rimraf": "^3.0.2",
         "ts-jest": "^26.4.4",
         "ts-node": "^9.0.0",
-        "tsc-watch": "^4.2.9"
+        "tsc-watch": "^4.2.9",
+        "ttypescript": "^1.5.12"
     }
 }

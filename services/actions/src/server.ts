@@ -25,6 +25,11 @@ if (process.env.NODE_ENV !== "test") {
     );
 }
 
+assert(
+    process.env.EVENT_SECRET,
+    "EVENT_SECRET (x-hasura-event-secret custom session variable) environment variable not provided."
+);
+
 // Authorization middleware. When used, the
 // Access Token must exist and be verified against
 // the Auth0 JSON Web Key Set
@@ -65,6 +70,17 @@ const checkUserScopes = checkScopes(
 );
 
 export const app: express.Application = express();
+
+app.use(function (req, res, next) {
+    if (req.headers["x-hasura-event-secret"] !== process.env.EVENT_SECRET) {
+        res.status(401);
+        res.send({});
+        next(new Error("Event secret missing"));
+    } else {
+        next();
+    }
+});
+
 const jsonParser = bodyParser.json();
 
 app.get("/", function (_req, res) {
@@ -111,6 +127,13 @@ app.post("/event", jsonParser, async (req: Request, res: Response) => {
         console.log("Received incorrect payload");
         res.status(500).json("Unexpected payload");
     }
+});
+
+app.post("/emailCreated", jsonParser, async (req: Request, res: Response) => {
+    const params: echoArgs = req.body.input;
+    console.log("Email created", params);
+    // const result = handlerEcho(params);
+    return res.json({});
 });
 
 const portNumber = process.env.PORT ? parseInt(process.env.PORT, 10) : 4000;

@@ -7,7 +7,7 @@ import { ConferenceData, Payload } from "../types/event";
 
 export async function handleConferenceCreated(
     payload: Payload<ConferenceData>
-) {
+): Promise<void> {
     if (!payload.event.data.new) {
         throw new Error("No new conference data");
     }

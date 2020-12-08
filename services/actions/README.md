@@ -6,10 +6,15 @@ Eventually this may be split into multiple microservices.
 ## Pre-requisities
 
 1. [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
+1. [AWS](https://aws.amazon.com/)
 
 ## Setting Up
 
 1. Copy the `services/actions/.env.example` to `services/actions/.env`
+1. Create an AWS user with admin access. Generate a new access key for this user - you will need the access key ID and secret key in the next step.
+
+- TODO: limit permissions for this user
+
 1. Configure your `.env` according to the [Actions Service
    Configuration](#actions-service-configuration) table below
 
@@ -72,3 +77,6 @@ variables according to [the table below](#actions-service-configuration).
 | HASURA_ADMIN_SECRET          | Hasura admin secret (used for queries)                   |
 | GRAPHQL_API_SECURE_PROTOCOLS | Boolean. Default: true. Whether to use https/wss or not. |
 | GRAPHQL_API_DOMAIN           | The domain and port of the GraphQL server                |
+| AWS_ACCESS_KEY_ID            | The access key ID for your AWS user                      |
+| AWS_SECRET_ACCESS_KEY        | The secret access key for your AWS user                  |
+| AWS_REGION                   | The AWS region to operate in                             |

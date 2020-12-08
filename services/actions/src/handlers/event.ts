@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client/core";
+import { Output } from "@aws-sdk/client-cloudformation";
 import sgMail from "@sendgrid/mail";
 import assert from "assert";
 import fs from "fs/promises";
@@ -6,6 +7,7 @@ import pRetry, { AbortError } from "p-retry";
 import path from "path";
 import slugify from "slugify";
 import { CloudFormation, IAM, shortId } from "../aws/awsClient";
+import { SetConferenceConfigurationDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { ConferenceData, EmailData, Payload } from "../types/event";
 
@@ -92,7 +94,7 @@ export async function handleConferenceCreated(
         );
     }
 
-    await client.mutate({
+    await apolloClient.mutate({
         mutation: SetConferenceConfigurationDocument,
         variables: {
             conferenceId: conferenceId,
@@ -127,7 +129,7 @@ export async function handleConferenceCreated(
             return status.Stacks[0].Outputs;
         }
 
-        await client.mutate({
+        await apolloClient.mutate({
             mutation: SetConferenceConfigurationDocument,
             variables: {
                 conferenceId: conferenceId,
@@ -177,7 +179,7 @@ export async function handleConferenceCreated(
                 s3BucketRoleId: bucketRole,
             };
 
-            await client.mutate({
+            await apolloClient.mutate({
                 mutation: SetConferenceConfigurationDocument,
                 variables: {
                     conferenceId: conferenceId,

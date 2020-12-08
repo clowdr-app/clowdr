@@ -2,6 +2,13 @@ import {
     Button,
     ButtonGroup,
     Checkbox,
+    Drawer,
+    DrawerBody,
+    DrawerCloseButton,
+    DrawerContent,
+    DrawerFooter,
+    DrawerHeader,
+    DrawerOverlay,
     FormControl,
     FormHelperText,
     FormLabel,
@@ -27,7 +34,13 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import assert from "assert";
-import React, { useCallback, useMemo, useState } from "react";
+import React, {
+    Dispatch,
+    SetStateAction,
+    useCallback,
+    useMemo,
+    useState,
+} from "react";
 import Select from "react-select";
 import { v4 as uuidv4 } from "uuid";
 import FAIcon from "../Icons/FAIcon";
@@ -258,7 +271,6 @@ export interface Field<S, T, FieldSpecT extends FieldSpec<T> = FieldSpec<T>> {
 
     isHidden: boolean;
     isEditable?: boolean;
-    isMultiEditable?: boolean;
     // TODO: String editor input type (text, email, multiline, etc)
 
     editorFalseLabel?: string;
@@ -282,12 +294,6 @@ export interface PrimaryField<
     defaultSortPriority?: number;
 }
 
-export interface SecondaryField<
-    S,
-    T,
-    FieldSpecT extends FieldSpec<T> = FieldSpec<T>
-> extends Field<S, T, FieldSpecT> {}
-
 export type PrimaryKeyFieldSpec<S> =
     | StringFieldSpec<S>
     | IntegerFieldSpec<S>
@@ -298,19 +304,6 @@ export interface PrimaryFields<T, PK extends keyof T> {
 
     otherFields?: {
         [K in string]?: Readonly<PrimaryField<T, any>>;
-    };
-}
-
-export enum SecondaryFieldsMode {
-    hidden,
-    modal,
-    sidepanel,
-}
-
-export interface SecondaryFields<T> {
-    mode: SecondaryFieldsMode;
-    fields: {
-        [K in string]?: Readonly<SecondaryField<T, keyof T>>;
     };
 }
 
@@ -550,6 +543,24 @@ export interface CRUDTableRowProps<S, T, PK extends keyof S> {
     csud?: CUDCallbacks<S, PK>;
 }
 
+export type SecondaryEditorFooterButton =
+    | {
+          type: "close";
+      }
+    | {
+          colorScheme?: string;
+          type: "ordinary";
+          action: () => void;
+          children: JSX.Element;
+          label: string;
+      };
+
+export type SecondaryEditorComponents = {
+    includeCloseButton: boolean;
+    editorElement: JSX.Element;
+    footerButtons: SecondaryEditorFooterButton[];
+};
+
 export interface CRUDTableProps<T, PK extends keyof T> {
     /**
      * The source data
@@ -564,7 +575,16 @@ export interface CRUDTableProps<T, PK extends keyof T> {
     /**
      * Fields which are hidden or editable through a side-panel or popout.
      */
-    secondaryFields?: Readonly<SecondaryFields<Readonly<T>>>;
+    secondaryFields?: {
+        editSingle?: (
+            key: T[PK],
+            onClose: () => void
+        ) => SecondaryEditorComponents;
+        editMultiple?: (
+            keys: Set<T[PK]>,
+            onClose: () => void
+        ) => SecondaryEditorComponents;
+    };
 
     /**
      * Options for highlighting (without filtering) rows
@@ -655,34 +675,11 @@ function FilterInput({
 // - TODO: Apply field validation to create/update
 // - TODO: Apply field aria labels
 // - TODO: Apply field descriptions in more places
-// - TODO: Apply field isMultiEditable
 // - TODO: Apply default sorting priority
 //
-// Secondary Fields (+ primary ones in Create modal):
-// - TODO: Apply secondary field mode
-// - TODO: Render string editor
-// - TODO: Implement & test string editor
-// - TODO: Apply string editor limits
-// - TODO: Apply string custom equality test or default equality test
-//
-// - TODO: Render integer editor
-// - TODO: Implement & test integer editor
-// - TODO: Apply integer editor limits
-// - TODO: Apply integer custom equality test or default equality test
-//
-// - TODO: Render boolean editor inc. checkbox vs toggle format
-// - TODO: Implement & test boolean editor
-//
-// - TODO: Render select editor (inc. multi-select)
-// - TODO: Implement & test select editor (inc. multi-select)
-// - TODO: Implement & test select create option modal
-//
-// - TODO: Apply field validation to create/update
-// - TODO: Apply field aria labels
-// - TODO: Apply field descriptions in more places
-// - TODO: Apply field isEditable
-// - TODO: Apply field isMultiEditable
-// - TODO: Apply field default value
+// Secondary Fields:
+// - TODO: Apply secondary field mode to Create modal
+// - TODO: Apply secondary field mode as an Edit side-panel
 //
 // Highlighting:
 // - TODO: Render highlighting options dropdown menu
@@ -691,15 +688,12 @@ function FilterInput({
 //
 // CSUD:
 // - TODO: Implement async creation
-// - TODO: Implement sync multi-update via modal
-// - TODO: Implement async multi-update via modal
-//
 // - TODO: Implement sync multi-delete
 // - TODO: Implement async multi-delete
 //
 // Buttons:
 // - TODO: Multi-delete button
-// - TODO: Multi-update (aka multi-edit) button
+// - TODO: Multi-edit button
 // - TODO: Select all / deselect all button / clear selection (inc. hidden
 //   selections)
 // - TODO: Render & implement custom buttons
@@ -999,11 +993,14 @@ function CRUDCreateButton<T, PK extends keyof T>({
     },
     csud,
     addDirtyKey,
+    setSelectedKeys,
 }: Readonly<CRUDTableProps<T, PK>> & {
     isDisabled: boolean;
     addDirtyKey: (key: T[PK]) => void;
+    setSelectedKeys: React.Dispatch<React.SetStateAction<Set<T[PK]>>>;
 }): JSX.Element {
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const toast = useToast();
 
     const visibleFields = useMemo(
         () =>
@@ -1080,9 +1077,9 @@ function CRUDCreateButton<T, PK extends keyof T>({
         [fieldValues, visibleFields]
     );
 
-    // TODO: Secondary fields
-
     function onCreate() {
+        let ok = false;
+
         if (csud && csud.cudCallbacks && csud.cudCallbacks.create) {
             if ("generateTemporaryKey" in csud.cudCallbacks) {
                 const tempKey = csud.cudCallbacks.generateTemporaryKey();
@@ -1103,18 +1100,32 @@ function CRUDCreateButton<T, PK extends keyof T>({
                         }
                     });
                 }
-                csud.cudCallbacks.create(tempKey, newItem);
+                if (csud.cudCallbacks.create(tempKey, newItem)) {
+                    addDirtyKey(tempKey);
+                    setSelectedKeys((oldKeys) => {
+                        const newKeys = new Set(oldKeys);
+                        newKeys.add(tempKey);
+                        return newKeys;
+                    });
 
-                addDirtyKey(tempKey);
-
-                setFieldValues(defaultValues);
+                    setFieldValues(defaultValues);
+                    ok = true;
+                } else {
+                    toast({
+                        title: "Error! Unable to create new item",
+                        status: "error",
+                        isClosable: true,
+                    });
+                }
             } else {
                 // TODO: Async create
                 throw new Error("Async creation not implemented yet!");
             }
         }
 
-        onClose();
+        if (ok) {
+            onClose();
+        }
     }
 
     return (
@@ -1167,7 +1178,30 @@ export default function CRUDTable<T, PK extends keyof T>(
         // TODO: customButtons,
     } = props;
 
-    const [selectedKeys, setSelectedKeys] = useState<Set<T[PK]>>(new Set());
+    const [selectedKeys, _setSelectedKeys] = useState<Set<T[PK]>>(new Set());
+    const {
+        isOpen: isSecondaryPanelOpen,
+        onOpen: onSecondaryPanelOpen,
+        onClose: onSecondaryPanelClose,
+    } = useDisclosure();
+    const setSelectedKeys: Dispatch<SetStateAction<Set<T[PK]>>> = useCallback(
+        (f: Set<T[PK]> | ((keys: Set<T[PK]>) => Set<T[PK]>)) => {
+            let newKeys: Set<T[PK]>;
+            if (f instanceof Set) {
+                newKeys = f;
+            } else {
+                newKeys = f(selectedKeys);
+            }
+            _setSelectedKeys(newKeys);
+
+            if (secondaryFields?.editSingle) {
+                if (selectedKeys.size === 0 && newKeys.size === 1) {
+                    onSecondaryPanelOpen();
+                }
+            }
+        },
+        [onSecondaryPanelOpen, secondaryFields?.editSingle, selectedKeys]
+    );
     const [
         filterValues,
         debouncedFilterValues,
@@ -1510,7 +1544,22 @@ export default function CRUDTable<T, PK extends keyof T>(
         isFilterable,
         primaryKeyField,
         selectedKeys,
+        setSelectedKeys,
     ]);
+
+    const secondaryEditor = useMemo(() => {
+        if (selectedKeys.size === 1 && secondaryFields?.editSingle) {
+            const key = selectedKeys.values().next().value;
+            return secondaryFields.editSingle(key, onSecondaryPanelClose);
+        } else if (selectedKeys.size > 1 && secondaryFields?.editMultiple) {
+            return secondaryFields.editMultiple(
+                selectedKeys,
+                onSecondaryPanelClose
+            );
+        } else {
+            return undefined;
+        }
+    }, [onSecondaryPanelClose, secondaryFields, selectedKeys]);
 
     let templateColumnsStr = includeSelectorColumn ? "min-content" : "";
     for (let i = 0; i < visibleFields.length; i++) {
@@ -1603,8 +1652,10 @@ export default function CRUDTable<T, PK extends keyof T>(
                             {...props}
                             isDisabled={isDisabled}
                             addDirtyKey={addDirtyKey}
+                            setSelectedKeys={setSelectedKeys}
                         />
                     ) : undefined}
+                    {/* TODO: Edit multiple button using secondary view */}
                 </ButtonGroup>
                 <Grid
                     width="100%"
@@ -1649,6 +1700,55 @@ export default function CRUDTable<T, PK extends keyof T>(
                     {rowEls.reduce((acc, cells) => [...acc, ...cells], [])}
                 </Grid>
             </VStack>
+
+            <Drawer
+                isOpen={
+                    isSecondaryPanelOpen && !!secondaryEditor?.editorElement
+                }
+                placement="right"
+                onClose={onSecondaryPanelClose}
+                // finalFocusRef={btnRef}
+            >
+                <DrawerOverlay>
+                    <DrawerContent>
+                        {secondaryEditor?.includeCloseButton ? (
+                            <DrawerCloseButton />
+                        ) : undefined}
+                        <DrawerHeader>Edit</DrawerHeader>
+
+                        <DrawerBody>
+                            {secondaryEditor?.editorElement}
+                        </DrawerBody>
+
+                        {secondaryEditor?.footerButtons ? (
+                            <DrawerFooter>
+                                {secondaryEditor.footerButtons.map((button) => {
+                                    if (button.type === "close") {
+                                        return (
+                                            <Button
+                                                aria-label="Close editor"
+                                                onClick={onSecondaryPanelClose}
+                                            >
+                                                Close
+                                            </Button>
+                                        );
+                                    } else {
+                                        return (
+                                            <Button
+                                                colorScheme={button.colorScheme}
+                                                aria-label={button.label}
+                                                onClick={button.action}
+                                            >
+                                                {button.children}
+                                            </Button>
+                                        );
+                                    }
+                                })}
+                            </DrawerFooter>
+                        ) : undefined}
+                    </DrawerContent>
+                </DrawerOverlay>
+            </Drawer>
         </>
     );
 }

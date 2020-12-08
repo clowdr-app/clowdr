@@ -233,7 +233,6 @@ export default function ManageConferenceGroupsPage(): JSX.Element {
                     "Members do not have the group's permissions while the group is disabled. You can use this to manually schedule access to the conference on certain days.",
                 isHidden: false,
                 isEditable: true,
-                isMultiEditable: true,
                 defaultValue: true,
                 insert: (item, v) => {
                     return {

@@ -240,6 +240,26 @@ export default function CRUDTestPage(): JSX.Element {
                         ? syncCUDCallbacks
                         : asyncCUDCallbacks,
                 }}
+                secondaryFields={{
+                    editSingle: (key, onClose) => {
+                        return {
+                            includeCloseButton: false,
+                            editorElement: <>Test</>,
+                            footerButtons: [
+                                {
+                                    type: "ordinary",
+                                    colorScheme: "green",
+                                    action: () => {
+                                        alert("TODO");
+                                        onClose();
+                                    },
+                                    children: <>Save</>,
+                                    label: "Save",
+                                },
+                            ],
+                        };
+                    },
+                }}
             />
         </>
     );

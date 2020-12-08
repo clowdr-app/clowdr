@@ -1,3 +1,4 @@
+import sgMail from "@sendgrid/mail";
 import assert from "assert";
 import bodyParser from "body-parser";
 import express, { Request, Response } from "express";
@@ -6,9 +7,9 @@ import jwksRsa from "jwks-rsa";
 import { is } from "typescript-is";
 import checkScopes from "./checkScopes";
 import handlerEcho from "./handlers/echo";
-import { handleConferenceCreated } from "./handlers/event";
+import { handleConferenceCreated, handleEmailCreated } from "./handlers/event";
 import protectedEchoHandler from "./handlers/protectedEcho";
-import { ConferenceData, Payload } from "./types/event";
+import { ConferenceData, EmailData, Payload } from "./types/event";
 
 if (process.env.NODE_ENV !== "test") {
     assert(
@@ -23,6 +24,17 @@ if (process.env.NODE_ENV !== "test") {
         process.env.AUTH0_ISSUER_DOMAIN,
         "AUTH0_ISSUER_DOMAIN environment variable not provided."
     );
+
+    assert(
+        process.env.SENDGRID_API_KEY,
+        "SENDGRID_API_KEY environment variable not provided."
+    );
+    assert(
+        process.env.SENDGRID_SENDER,
+        "SENDGRID_SENDER environment variable not provided."
+    );
+
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 }
 
 assert(
@@ -130,10 +142,29 @@ app.post("/event", jsonParser, async (req: Request, res: Response) => {
 });
 
 app.post("/emailCreated", jsonParser, async (req: Request, res: Response) => {
-    const params: echoArgs = req.body.input;
-    console.log("Email created", params);
-    // const result = handlerEcho(params);
-    return res.json({});
+    if (is<Payload>(req.body)) {
+        try {
+            if (
+                req.body.trigger.name === "EmailCreated" &&
+                is<Payload<EmailData>>(req.body)
+            ) {
+                await handleEmailCreated(req.body);
+            } else {
+                console.log(
+                    `Received unhandled payload: ${req.body.trigger.name}`
+                );
+                res.status(400).json("Received unhandled payload");
+                return;
+            }
+        } catch (e) {
+            res.status(500).json("Failure while handling event");
+            return;
+        }
+        res.status(200).json("OK");
+    } else {
+        console.log("Received incorrect payload");
+        res.status(500).json("Unexpected payload");
+    }
 });
 
 const portNumber = process.env.PORT ? parseInt(process.env.PORT, 10) : 4000;

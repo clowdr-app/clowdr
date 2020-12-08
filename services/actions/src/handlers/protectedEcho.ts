@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client/core";
 import { EchoDocument } from "../generated/graphql";
-import { client } from "../graphqlClient";
+import { apolloClient } from "../graphqlClient";
 
 gql`
     query Echo($message: String!) {
@@ -13,7 +13,7 @@ gql`
 export default async function protectedEchoHandler(
     args: protectedEchoArgs
 ): Promise<ProtectedEchoOutput> {
-    const response = await client.query({
+    const response = await apolloClient.query({
         query: EchoDocument,
         variables: {
             message: args.message,

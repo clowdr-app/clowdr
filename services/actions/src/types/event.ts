@@ -35,3 +35,15 @@ export interface ConferenceData extends BaseData {
     shortName: string;
     slug: string;
 }
+
+export interface EmailData extends BaseData {
+    userId: string | null;
+    invitationId: string | null;
+    reason: string;
+    htmlContents: string;
+    emailAddress: string;
+    retriesCount: number;
+    plainTextContents: string;
+    sentAt: string | null;
+    subject: string;
+}

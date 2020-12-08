@@ -46,7 +46,7 @@ export async function handleConferenceCreated(
     const conferenceName = payload.event.data.new.name;
     const conferenceId = payload.event.data.new.id;
 
-    console.log(`Creating S3 bucket for new conference ${conferenceName}`);
+    console.log(`ConferenceCreated ${conferenceId}: creating S3 bucket`);
 
     const slug = `${shortId()}-${slugify(conferenceName, {
         lower: true,
@@ -59,12 +59,16 @@ export async function handleConferenceCreated(
     );
 
     if (!template) {
-        throw new Error("Could not load S3Bucket.yaml");
+        throw new Error(
+            `ConferenceCreated ${conferenceId}: could not load S3Bucket.yaml`
+        );
     }
 
     const currentUser = await IAM.getUser({});
     if (!currentUser.User) {
-        throw new Error("Could not determine current user");
+        throw new Error(
+            `ConferenceCreated ${conferenceId}: could not determine current AWS user`
+        );
     }
 
     const userArn = currentUser.User?.Arn;
@@ -84,7 +88,9 @@ export async function handleConferenceCreated(
     });
 
     if (!stackCreation.StackId) {
-        throw new Error("Could not create CloudFormation stack");
+        throw new Error(
+            `ConferenceCreated ${conferenceId}: could not create CloudFormation stack`
+        );
     }
 
     await client.mutate({
@@ -100,18 +106,24 @@ export async function handleConferenceCreated(
     });
 
     const checkStackStatus = async (): Promise<Output[]> => {
-        console.log(`Checking status of stack ${stackCreation.StackId}`);
+        console.log(
+            `ConferenceCreated ${conferenceId}: checking status of stack ${stackCreation.StackId}`
+        );
         const status = await CloudFormation.describeStacks({
             StackName: stackCreation.StackId,
         });
 
         if (!status.Stacks || status.Stacks.length < 1) {
-            throw new Error("No stacks found");
+            throw new Error(
+                `ConferenceCreated ${conferenceId}: no stacks found`
+            );
         }
 
         if (status.Stacks[0].StackStatus === "CREATE_COMPLETE") {
             if (!status.Stacks[0].Outputs) {
-                throw new AbortError("Stack does not have any outputs");
+                throw new AbortError(
+                    `ConferenceCreated ${conferenceId}: stack does not have any outputs`
+                );
             }
             return status.Stacks[0].Outputs;
         }
@@ -128,7 +140,9 @@ export async function handleConferenceCreated(
             },
         });
 
-        throw new Error("Stack not complete yet");
+        throw new Error(
+            `ConferenceCreated ${conferenceId}: stack not complete yet`
+        );
     };
 
     const bucket = pRetry(checkStackStatus, {
@@ -136,29 +150,52 @@ export async function handleConferenceCreated(
         minTimeout: 10000,
     })
         .then(async (outputs) => {
-            console.log("Created bucket");
+            console.log(
+                `ConferenceCreated ${conferenceId}: stack creation finished`
+            );
 
             const bucketId = outputs.find((o) => o.OutputKey === "Bucket")
                 ?.OutputValue;
 
-            assert(bucketId, "No bucket ID returned from stack");
+            assert(
+                bucketId,
+                `ConferenceCreated ${conferenceId}: no bucket ID returned from stack`
+            );
+
+            const bucketRole = outputs.find(
+                (o) => o.OutputKey === "BucketAdminRole"
+            )?.OutputValue;
+
+            assert(
+                bucketRole,
+                `ConferenceCreated ${conferenceId}: no bucket role returned from stack`
+            );
+
+            const config = {
+                stackId: stackCreation.StackId,
+                stackStatus: "CREATE_COMPLETE",
+                s3BucketId: bucketId,
+                s3BucketRoleId: bucketRole,
+            };
 
             await client.mutate({
                 mutation: SetConferenceConfigurationDocument,
                 variables: {
                     conferenceId: conferenceId,
                     key: "S3_BUCKET",
-                    value: {
-                        stackId: stackCreation.StackId,
-                        stackStatus: "CREATE_COMPLETE",
-                        s3BucketId: bucketId,
-                    },
+                    value: config,
                 },
             });
 
-            console.log("Recorded bucket ID");
+            console.log(
+                `ConferenceCreated ${conferenceId}: updated config`,
+                config
+            );
         })
         .catch((e) => {
-            console.error(`Failed to create bucket '${bucket}'`, e);
+            console.error(
+                `ConferenceCreated ${conferenceId}: failed to create bucket '${bucket}'`,
+                e
+            );
         });
 }

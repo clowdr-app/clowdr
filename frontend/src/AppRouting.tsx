@@ -5,6 +5,7 @@ import ProtectedRoute from "./aspects/Auth/ProtectedRoute";
 import ConferenceRoutes from "./aspects/Conference/ConferenceRoutes";
 import CRUDTestPage from "./aspects/CRUDTable/CRUDTestPage";
 import PageNotFound from "./aspects/Errors/PageNotFound";
+import AcceptInvitationPage from "./aspects/Invitation/AcceptInvitationPage";
 import CurrentUserPage from "./aspects/Users/CurrentUser/CurrentUserPage";
 import ExistingUserLandingPage from "./aspects/Users/ExistingUser/LandingPage";
 import NewUserLandingPage from "./aspects/Users/NewUser/LandingPage";
@@ -36,6 +37,25 @@ export default function Routing(): JSX.Element {
             />
 
             <ProtectedRoute exact path="/user" component={CurrentUserPage} />
+
+            <Route
+                exact
+                path="/invitation/accept/:inviteCode"
+                component={(
+                    props: RouteComponentProps<{
+                        inviteCode: string;
+                    }>
+                ) => (
+                    <AcceptInvitationPage
+                        inviteCode={props.match.params.inviteCode}
+                    />
+                )}
+            />
+            <Route
+                exact
+                path="/invitation/accept"
+                component={AcceptInvitationPage}
+            />
 
             <Route exact path="/crud/test" component={CRUDTestPage} />
 

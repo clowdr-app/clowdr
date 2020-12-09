@@ -12,6 +12,7 @@ gql`
     query selectCurrentUser($userId: String!) {
         User(where: { id: { _eq: $userId } }) {
             id
+            email
             lastName
             firstName
             onlineStatus {
@@ -38,7 +39,12 @@ export default function CurrentUserProvider({
         );
     } else {
         return (
-            <CurrentUserContext.Provider value={defaultCurrentUserContext}>
+            <CurrentUserContext.Provider
+                value={{
+                    ...defaultCurrentUserContext,
+                    loading: false,
+                }}
+            >
                 {children}
             </CurrentUserContext.Provider>
         );
@@ -68,6 +74,7 @@ function CurrentUserProvider_IsAuthenticated({
     return (
         <CurrentUserContext.Provider
             value={{
+                loading,
                 user: value,
                 refetchUser: refetch,
             }}

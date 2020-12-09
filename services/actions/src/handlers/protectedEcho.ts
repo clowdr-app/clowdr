@@ -11,6 +11,7 @@ gql`
 `;
 
 export default async function protectedEchoHandler(
+    userId: string,
     args: protectedEchoArgs
 ): Promise<ProtectedEchoOutput> {
     const response = await apolloClient.query({
@@ -25,6 +26,6 @@ export default async function protectedEchoHandler(
     }
 
     return {
-        message: response.data.echo.message,
+        message: userId + " sent: " + response.data.echo.message,
     };
 }

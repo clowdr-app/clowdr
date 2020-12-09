@@ -8,8 +8,16 @@ import { is } from "typescript-is";
 import checkScopes from "./checkScopes";
 import handlerEcho from "./handlers/echo";
 import { handleConferenceCreated, handleEmailCreated } from "./handlers/event";
+import {
+    invitationConfirmCurrentHandler,
+    invitationConfirmSendInitialEmailHandler,
+    invitationConfirmSendRepeatEmailHandler,
+    invitationConfirmWithCodeHandler,
+} from "./handlers/invitation";
 import protectedEchoHandler from "./handlers/protectedEcho";
 import { ConferenceData, EmailData, Payload } from "./types/event";
+
+type AuthenticatedRequest = Request & { userId: string };
 
 if (process.env.NODE_ENV !== "test") {
     assert(
@@ -35,6 +43,16 @@ if (process.env.NODE_ENV !== "test") {
     );
 
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+    assert(
+        process.env.FRONTEND_DOMAIN,
+        "FRONTEND_DOMAIN environment variable not provided."
+    );
+
+    assert(
+        process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS,
+        "STOP_EMAILS_CONTACT_EMAIL_ADDRESS environment variable not provided."
+    );
 }
 
 assert(
@@ -78,7 +96,8 @@ const checkUserScopes = checkScopes(
     ["user"],
     "auth",
     "https://hasura.io/jwt/claims",
-    "x-hasura-allowed-roles"
+    "x-hasura-allowed-roles",
+    "x-hasura-user-id"
 );
 
 export const app: express.Application = express();
@@ -104,10 +123,11 @@ app.post(
     jsonParser,
     checkJwt,
     checkUserScopes,
-    async (req: Request, res: Response) => {
+    async (_req: Request, res: Response) => {
+        const req = _req as AuthenticatedRequest;
         const params: protectedEchoArgs = req.body.input;
         console.log(`Echoing (protected) "${params.message}"`);
-        const result = await protectedEchoHandler(params);
+        const result = await protectedEchoHandler(req.userId, params);
         return res.json(result);
     }
 );
@@ -166,6 +186,74 @@ app.post("/emailCreated", jsonParser, async (req: Request, res: Response) => {
         res.status(500).json("Unexpected payload");
     }
 });
+
+app.post(
+    "/invitation/confirm/current",
+    jsonParser,
+    checkJwt,
+    checkUserScopes,
+    async (_req: Request, res: Response) => {
+        const req = _req as AuthenticatedRequest;
+        const params: invitationConfirmCurrentArgs = req.body.input;
+        console.log("Invitation/confirm/current", params);
+        const result = await invitationConfirmCurrentHandler(
+            params,
+            req.userId
+        );
+        return res.json(result);
+    }
+);
+
+app.post(
+    "/invitation/confirm/code",
+    jsonParser,
+    checkJwt,
+    checkUserScopes,
+    async (_req: Request, res: Response) => {
+        const req = _req as AuthenticatedRequest;
+        const params: invitationConfirmWithCodeArgs = req.body.input;
+        console.log("Invitation/confirm/code", params);
+        const result = await invitationConfirmWithCodeHandler(
+            params,
+            req.userId
+        );
+        return res.json(result);
+    }
+);
+
+app.post(
+    "/invitation/confirm/send/initial",
+    jsonParser,
+    checkJwt,
+    checkUserScopes,
+    async (_req: Request, res: Response) => {
+        const req = _req as AuthenticatedRequest;
+        const params: invitationConfirmSendInitialEmailArgs = req.body.input;
+        console.log("Invitation/confirm/send/initial", params);
+        const result = await invitationConfirmSendInitialEmailHandler(
+            params,
+            req.userId
+        );
+        return res.json(result);
+    }
+);
+
+app.post(
+    "/invitation/confirm/send/repeat",
+    jsonParser,
+    checkJwt,
+    checkUserScopes,
+    async (_req: Request, res: Response) => {
+        const req = _req as AuthenticatedRequest;
+        const params: invitationConfirmSendRepeatEmailArgs = req.body.input;
+        console.log("Invitation/confirm/send/repeat", params);
+        const result = await invitationConfirmSendRepeatEmailHandler(
+            params,
+            req.userId
+        );
+        return res.json(result);
+    }
+);
 
 const portNumber = process.env.PORT ? parseInt(process.env.PORT, 10) : 4000;
 export const server = app.listen(portNumber, function () {

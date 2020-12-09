@@ -2,11 +2,13 @@ import React from "react";
 import type { SelectCurrentUserQuery } from "../../../generated/graphql";
 
 export type UserInfo = {
+    loading: boolean;
     user: SelectCurrentUserQuery | false | undefined;
     refetchUser: () => Promise<unknown>;
 };
 
 export const defaultCurrentUserContext: UserInfo = {
+    loading: true,
     user: undefined,
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     refetchUser: async function (): Promise<void> {},

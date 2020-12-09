@@ -1692,6 +1692,158 @@
         table:
           schema: public
           name: Email
+  computed_fields:
+  - name: hash
+    definition:
+      function:
+        schema: public
+        name: invitationhash
+    comment: ""
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        attendee:
+          conference:
+            _or:
+            - createdBy:
+                _eq: X-Hasura-User-Id
+            - groups:
+                _and:
+                - enabled:
+                    _eq: true
+                - groupRoles:
+                    role:
+                      rolePermissions:
+                        _or:
+                        - permissionName:
+                            _eq: CONFERENCE_MANAGE_ROLES
+                        - permissionName:
+                            _eq: CONFERENCE_MANAGE_GROUPS
+                        - permissionName:
+                            _eq: CONFERENCE_MANAGE_ATTENDEES
+                - groupAttendees:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
+      columns:
+      - attendeeId
+      - invitedEmailAddress
+      backend_only: false
+  select_permissions:
+  - role: unauthenticated
+    permission:
+      columns:
+      - inviteCode
+      computed_fields:
+      - hash
+      filter:
+        inviteCode:
+          _eq: X-Hasura-Invite-Code
+      limit: 1
+  - role: user
+    permission:
+      columns:
+      - attendeeId
+      - confirmationCode
+      - created_at
+      - id
+      - inviteCode
+      - invitedEmailAddress
+      - linkToUserId
+      - updated_at
+      computed_fields:
+      - hash
+      filter:
+        attendee:
+          _or:
+          - _and:
+            - conference:
+                groups:
+                  _and:
+                  - enabled:
+                      _eq: true
+                  - groupRoles:
+                      role:
+                        rolePermissions:
+                          _or:
+                          - permissionName:
+                              _eq: CONFERENCE_MANAGE_ATTENDEES
+                          - permissionName:
+                              _eq: CONFERENCE_MANAGE_GROUPS
+                          - permissionName:
+                              _eq: CONFERENCE_MANAGE_ROLES
+                  - _or:
+                    - includeUnauthenticated:
+                        _eq: true
+                    - groupAttendees:
+                        attendee:
+                          userId:
+                            _eq: X-Hasura-User-Id
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - confirmationCode
+      - inviteCode
+      - invitedEmailAddress
+      - linkToUserId
+      filter:
+        attendee:
+          _or:
+          - _and:
+            - conference:
+                groups:
+                  _and:
+                  - enabled:
+                      _eq: true
+                  - groupRoles:
+                      role:
+                        rolePermissions:
+                          _or:
+                          - permissionName:
+                              _eq: CONFERENCE_MANAGE_ATTENDEES
+                          - permissionName:
+                              _eq: CONFERENCE_MANAGE_GROUPS
+                          - permissionName:
+                              _eq: CONFERENCE_MANAGE_ROLES
+                  - _or:
+                    - includeUnauthenticated:
+                        _eq: true
+                    - groupAttendees:
+                        attendee:
+                          userId:
+                            _eq: X-Hasura-User-Id
+      check: null
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        attendee:
+          _or:
+          - _and:
+            - conference:
+                groups:
+                  _and:
+                  - enabled:
+                      _eq: true
+                  - groupRoles:
+                      role:
+                        rolePermissions:
+                          _or:
+                          - permissionName:
+                              _eq: CONFERENCE_MANAGE_ATTENDEES
+                          - permissionName:
+                              _eq: CONFERENCE_MANAGE_GROUPS
+                          - permissionName:
+                              _eq: CONFERENCE_MANAGE_ROLES
+                  - _or:
+                    - includeUnauthenticated:
+                        _eq: true
+                    - groupAttendees:
+                        attendee:
+                          userId:
+                            _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: OnlineStatus

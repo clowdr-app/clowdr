@@ -32,10 +32,11 @@ export default function checkScopes(
     authKey: string,
     namespaceKey: string,
     scopeKey: string,
-    checkAllScopes: boolean = false,
-    failWithError: boolean = false
+    userIdKey: string,
+    checkAllScopes = false,
+    failWithError = false
 ) {
-    return (_req: Request, res: Response, next: NextFunction) => {
+    return (_req: Request, res: Response, next: NextFunction): void => {
         const req: any = _req;
 
         const error = (res: Response) => {
@@ -89,7 +90,12 @@ export default function checkScopes(
                 );
             }
 
-            return allowed ? next() : error(res);
+            if (allowed) {
+                req.userId = req[authKey][namespaceKey][userIdKey];
+                return next();
+            } else {
+                return error(res);
+            }
         }
 
         return error(res);

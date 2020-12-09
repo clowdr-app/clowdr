@@ -5,6 +5,34 @@ type Query {
 }
 
 
+type Mutation {
+  invitationConfirmCurrent (
+    inviteCode: uuid!
+  ): ConfirmInvitationOutput
+}
+
+
+type Mutation {
+  invitationConfirmSendInitialEmail (
+    inviteInput: InvitationConfirmationEmailInput!
+  ): InvitationConfirmationEmailOutput
+}
+
+
+type Mutation {
+  invitationConfirmSendRepeatEmail (
+    inviteInput: InvitationConfirmationEmailInput!
+  ): InvitationConfirmationEmailOutput
+}
+
+
+type Mutation {
+  invitationConfirmWithCode (
+    inviteInput: ConfirmInvitationInput!
+  ): ConfirmInvitationOutput
+}
+
+
 type Query {
   protectedEcho (
     message: String!
@@ -23,6 +51,15 @@ input EchoInput {
   message : String!
 }
 
+input ConfirmInvitationInput {
+  inviteCode : uuid!
+  confirmationCode : String!
+}
+
+input InvitationConfirmationEmailInput {
+  inviteCode : uuid!
+}
+
 type SampleOutput {
   accessToken : String!
 }
@@ -33,5 +70,14 @@ type EchoOutput {
 
 type ProtectedEchoOutput {
   message : String!
+}
+
+type ConfirmInvitationOutput {
+  ok : Boolean!
+  confSlug : String
+}
+
+type InvitationConfirmationEmailOutput {
+  sent : Boolean!
 }
 

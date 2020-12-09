@@ -68,15 +68,19 @@ variables according to [the table below](#actions-service-configuration).
 
 ## Actions Service Configuration
 
-| Key                          | Value                                                    |
-| ---------------------------- | -------------------------------------------------------- |
-| AUTH0_API_DOMAIN             | `<auth0-subdomain>.auth0.com`                            |
-| AUTH0_AUDIENCE               | `hasura`                                                 |
-| AUTH0_ISSUER_DOMAIN          | `https://<auth0-subdomain>.auth0.com/`                   |
-| EVENT_SECRET                 | Event trigger secret (used to verify Hasura events)      |
-| HASURA_ADMIN_SECRET          | Hasura admin secret (used for queries)                   |
-| GRAPHQL_API_SECURE_PROTOCOLS | Boolean. Default: true. Whether to use https/wss or not. |
-| GRAPHQL_API_DOMAIN           | The domain and port of the GraphQL server                |
-| AWS_ACCESS_KEY_ID            | The access key ID for your AWS user                      |
-| AWS_SECRET_ACCESS_KEY        | The secret access key for your AWS user                  |
-| AWS_REGION                   | The AWS region to operate in                             |
+| Key                               | Value                                                                                                        |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| AUTH0_API_DOMAIN                  | `<auth0-subdomain>.auth0.com`                                                                                |
+| AUTH0_AUDIENCE                    | `hasura`                                                                                                     |
+| AUTH0_ISSUER_DOMAIN               | `https://<auth0-subdomain>.auth0.com/`                                                                       |
+| HASURA_ADMIN_SECRET               | Hasura admin secret (used for queries/mutations to Hasura)                                                   |
+| EVENT_SECRET                      | Event trigger secret (used to verify Hasura events)                                                          |
+| FRONTEND_DOMAIN                   | The domain of the frontend website (e.g. `localhost:3000` or `app.clowdr.org`)                               |
+| STOP_EMAILS_CONTACT_EMAIL_ADDRESS | The email address users should contact when they received unexpected emails (e.g. `stop-emails@example.org`) |
+| GRAPHQL_API_SECURE_PROTOCOLS      | Boolean. Default: true. Whether to use https/wss or not.                                                     |
+| GRAPHQL_API_DOMAIN                | The domain and port of the GraphQL server                                                                    |
+| AWS_ACCESS_KEY_ID                 | The access key ID for your AWS user                                                                          |
+| AWS_SECRET_ACCESS_KEY             | The secret access key for your AWS user                                                                      |
+| AWS_REGION                        | The AWS region to operate in                                                                                 |
+| SENDGRID_API_KEY                  | Your SendGrid API Key                                                                                        |
+| SENDGRID_SENDER                   | Your SendGrid sender email address                                                                           |

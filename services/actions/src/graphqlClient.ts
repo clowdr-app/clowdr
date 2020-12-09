@@ -55,9 +55,8 @@ export const apolloClient = new ApolloClient({
     cache,
     defaultOptions: {
         query: {
+            fetchPolicy: "network-only",
             partialRefetch: true,
-            // TODO: Remove cast to any when this Apollo Client issue is resolved:
-            //       https://github.com/apollographql/apollo-client/issues/6177
-        } as any,
+        },
     },
 });

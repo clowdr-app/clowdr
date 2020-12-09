@@ -9,6 +9,46 @@ actions:
   permissions:
   - role: unauthenticated
   - role: user
+- name: invitationConfirmCurrent
+  definition:
+    kind: synchronous
+    handler: '{{ACTION_BASE_URL}}/invitation/confirm/current'
+    forward_client_headers: true
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+  permissions:
+  - role: user
+- name: invitationConfirmSendInitialEmail
+  definition:
+    kind: synchronous
+    handler: '{{ACTION_BASE_URL}}/invitation/confirm/send/initial'
+    forward_client_headers: true
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+  permissions:
+  - role: user
+- name: invitationConfirmSendRepeatEmail
+  definition:
+    kind: synchronous
+    handler: '{{ACTION_BASE_URL}}/invitation/confirm/send/repeat'
+    forward_client_headers: true
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+  permissions:
+  - role: user
+- name: invitationConfirmWithCode
+  definition:
+    kind: synchronous
+    handler: '{{ACTION_BASE_URL}}/invitation/confirm/code'
+    forward_client_headers: true
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+  permissions:
+  - role: user
 - name: protectedEcho
   definition:
     kind: ""
@@ -24,8 +64,12 @@ custom_types:
   input_objects:
   - name: SampleInput
   - name: EchoInput
+  - name: ConfirmInvitationInput
+  - name: InvitationConfirmationEmailInput
   objects:
   - name: SampleOutput
   - name: EchoOutput
   - name: ProtectedEchoOutput
+  - name: ConfirmInvitationOutput
+  - name: InvitationConfirmationEmailOutput
   scalars: []

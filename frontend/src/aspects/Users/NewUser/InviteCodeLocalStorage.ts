@@ -6,7 +6,7 @@ export function getCachedInviteCode(): string | null {
 
 export function setCachedInviteCode(value: string | null): void {
     if (!value) {
-        window.localStorage.clearItem(INVITE_CODE_KEY);
+        window.localStorage.removeItem(INVITE_CODE_KEY);
     } else {
         window.localStorage.setItem(INVITE_CODE_KEY, value);
     }

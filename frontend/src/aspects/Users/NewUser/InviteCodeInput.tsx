@@ -12,8 +12,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import FAIcon from "../../Icons/FAIcon";
 import isValidUUID from "../../Utils/isValidUUID";
-import { setCachedInviteCode } from "./InviteCodeLocalStorage";
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function InviteCodeInput(props: any): JSX.Element {
     const [inviteCode, setInviteCode] = useState<string>("");
     const inviteCodeButtonRef = useRef<HTMLButtonElement>(null);
@@ -33,8 +33,7 @@ export default function InviteCodeInput(props: any): JSX.Element {
                 ev.stopPropagation();
 
                 if (isInviteCodeValid) {
-                    setCachedInviteCode(inviteCode);
-                    history.push("/invitation/accept");
+                    history.push(`/invitation/accept/${inviteCode}`);
                 }
             }}
         >

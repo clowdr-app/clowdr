@@ -32,7 +32,13 @@ export default function ApolloCustomProvider({
 
             const authLink = setContext(async (_, { headers }) => {
                 const newHeaders: any = { ...headers };
-                if (isAuthenticated) {
+
+                const sendRequestUnauthenticated = headers
+                    ? headers["SEND-WITHOUT-AUTH"] === true
+                    : false;
+                delete newHeaders["SEND-WITHOUT-AUTH"];
+
+                if (isAuthenticated && !sendRequestUnauthenticated) {
                     const magicToken = headers
                         ? headers["x-hasura-magic-token"]
                         : undefined;
@@ -116,9 +122,7 @@ export default function ApolloCustomProvider({
                 defaultOptions: {
                     query: {
                         partialRefetch: true,
-                        // TODO: Remove cast to any when this Apollo Client issue is resolved:
-                        //       https://github.com/apollographql/apollo-client/issues/6177
-                    } as any,
+                    },
                 },
             });
 

@@ -6,9 +6,11 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React from "react";
+import { Redirect } from "react-router-dom";
 import NewConferenceForm from "../../Conference/NewConferenceForm";
 import { useNoPrimaryMenuButtons } from "../../Menu/usePrimaryMenuButtons";
 import InviteCodeInput from "../NewUser/InviteCodeInput";
+import { getCachedInviteCode } from "../NewUser/InviteCodeLocalStorage";
 
 function NoConferencesView(): JSX.Element {
     const useInviteEl = (
@@ -58,6 +60,12 @@ function NoConferencesView(): JSX.Element {
 
 export default function CurrentUserPage(): JSX.Element {
     useNoPrimaryMenuButtons();
+
+    const inviteCode = getCachedInviteCode();
+
+    if (inviteCode) {
+        return <Redirect to={`/invitation/accept/${inviteCode}`} />;
+    }
 
     // TODO: Choose between the "user has no conferences"
     //       and "user has at least one conference" views

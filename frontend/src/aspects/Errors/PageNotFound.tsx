@@ -1,24 +1,22 @@
-import { Heading, Link, Text } from "@chakra-ui/react";
+import { Link, Text } from "@chakra-ui/react";
 import React from "react";
 import LinkButton from "../Chakra/LinkButton";
-import FAIcon from "../Icons/FAIcon";
+import GenericErrorPage from "./GenericErrorPage";
 
 export default function PageNotFound(): JSX.Element {
     return (
-        <>
-            <FAIcon iconStyle="s" icon="cat" fontSize="6xl" />
-            <Heading as="h1" fontSize="4xl" lineHeight="revert">
-                Sorry, we couldn&apos;t find that page.
-            </Heading>
-            <Text fontSize="xl" lineHeight="revert" fontWeight="light">
-                Please double check the URL, and if this error persists, please
-                either contact your conference organiser or{" "}
-                <Link isExternal href="https://github.com/clowdr-app/">
-                    our technical team
-                </Link>
-                .
-            </Text>
-            <LinkButton to="/">Go to home page</LinkButton>
-        </>
+        <GenericErrorPage heading="Sorry, we couldn't find that page.">
+            <>
+                <Text fontSize="xl" lineHeight="revert" fontWeight="light">
+                    Please double check the URL, and if this error persists,
+                    please either contact your conference organiser or{" "}
+                    <Link isExternal href="https://github.com/clowdr-app/">
+                        our technical team
+                    </Link>
+                    .
+                </Text>
+                <LinkButton to="/">Go to home page</LinkButton>
+            </>
+        </GenericErrorPage>
     );
 }

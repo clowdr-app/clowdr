@@ -55,6 +55,5 @@ to Hasura Cloud and run migrations.
 | HASURA_GRAPHQL_ADMIN_SECRET      | A secure random value                              |
 | HASURA_GRAPHQL_DATABASE_URL      | Allow Hasura to configure this                     |
 | ACTION_BASE_URL                  | The Heroku Actions Service uri - no trailing slash |
-| EVENT_URL                        | The URL that handles event triggers                |
 | EVENT_SECRET                     | The secret to be sent for event trigger auth       |
 | HASURA_GRAPHQL_UNAUTHORIZED_ROLE | unauthenticated                                    |

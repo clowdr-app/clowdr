@@ -36,6 +36,8 @@ export type Attendee = {
   /** An aggregated array relationship */
   readonly groupAttendees_aggregate: GroupAttendee_Aggregate;
   readonly id: Scalars['uuid'];
+  /** An object relationship */
+  readonly invitation?: Maybe<Invitation>;
   /** An array relationship */
   readonly roomParticipants: ReadonlyArray<RoomParticipant>;
   /** An aggregated array relationship */
@@ -174,6 +176,7 @@ export type Attendee_Bool_Exp = {
   readonly eventPeople?: Maybe<EventPerson_Bool_Exp>;
   readonly groupAttendees?: Maybe<GroupAttendee_Bool_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly invitation?: Maybe<Invitation_Bool_Exp>;
   readonly roomParticipants?: Maybe<RoomParticipant_Bool_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly user?: Maybe<User_Bool_Exp>;
@@ -198,6 +201,7 @@ export type Attendee_Insert_Input = {
   readonly eventPeople?: Maybe<EventPerson_Arr_Rel_Insert_Input>;
   readonly groupAttendees?: Maybe<GroupAttendee_Arr_Rel_Insert_Input>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly invitation?: Maybe<Invitation_Obj_Rel_Insert_Input>;
   readonly roomParticipants?: Maybe<RoomParticipant_Arr_Rel_Insert_Input>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
   readonly user?: Maybe<User_Obj_Rel_Insert_Input>;
@@ -278,6 +282,7 @@ export type Attendee_Order_By = {
   readonly eventPeople_aggregate?: Maybe<EventPerson_Aggregate_Order_By>;
   readonly groupAttendees_aggregate?: Maybe<GroupAttendee_Aggregate_Order_By>;
   readonly id?: Maybe<Order_By>;
+  readonly invitation?: Maybe<Invitation_Order_By>;
   readonly roomParticipants_aggregate?: Maybe<RoomParticipant_Aggregate_Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
   readonly user?: Maybe<User_Order_By>;
@@ -3644,12 +3649,27 @@ export enum Conference_Update_Column {
   UpdatedAt = 'updatedAt'
 }
 
+export type ConfirmInvitationInput = {
+  readonly confirmationCode: Scalars['String'];
+  readonly inviteCode: Scalars['uuid'];
+};
+
+export type ConfirmInvitationOutput = {
+  readonly __typename?: 'ConfirmInvitationOutput';
+  readonly confSlug?: Maybe<Scalars['String']>;
+  readonly ok: Scalars['Boolean'];
+};
+
 /** columns and relationships of "ContentGroup" */
 export type ContentGroup = {
   readonly __typename?: 'ContentGroup';
   /** An object relationship */
   readonly conference: Conference;
   readonly conferenceId: Scalars['uuid'];
+  /** An array relationship */
+  readonly contentGroupTags: ReadonlyArray<ContentGroupTag>;
+  /** An aggregated array relationship */
+  readonly contentGroupTags_aggregate: ContentGroupTag_Aggregate;
   /** An object relationship */
   readonly contentGroupType: ContentGroupType;
   readonly contentGroupTypeName: ContentGroupType_Enum;
@@ -3673,6 +3693,26 @@ export type ContentGroup = {
   readonly shortTitle?: Maybe<Scalars['String']>;
   readonly title: Scalars['String'];
   readonly updatedAt: Scalars['timestamptz'];
+};
+
+
+/** columns and relationships of "ContentGroup" */
+export type ContentGroupContentGroupTagsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<ContentGroupTag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<ContentGroupTag_Order_By>>;
+  where?: Maybe<ContentGroupTag_Bool_Exp>;
+};
+
+
+/** columns and relationships of "ContentGroup" */
+export type ContentGroupContentGroupTags_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<ContentGroupTag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<ContentGroupTag_Order_By>>;
+  where?: Maybe<ContentGroupTag_Bool_Exp>;
 };
 
 
@@ -3734,6 +3774,175 @@ export type ContentGroupRequiredContentItems_AggregateArgs = {
   order_by?: Maybe<ReadonlyArray<RequiredContentItem_Order_By>>;
   where?: Maybe<RequiredContentItem_Bool_Exp>;
 };
+
+/** columns and relationships of "ContentGroupTag" */
+export type ContentGroupTag = {
+  readonly __typename?: 'ContentGroupTag';
+  /** An object relationship */
+  readonly contentGroup: ContentGroup;
+  readonly contentGroupId: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
+  /** An object relationship */
+  readonly tag: Tag;
+  readonly tagId: Scalars['uuid'];
+};
+
+/** aggregated selection of "ContentGroupTag" */
+export type ContentGroupTag_Aggregate = {
+  readonly __typename?: 'ContentGroupTag_aggregate';
+  readonly aggregate?: Maybe<ContentGroupTag_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<ContentGroupTag>;
+};
+
+/** aggregate fields of "ContentGroupTag" */
+export type ContentGroupTag_Aggregate_Fields = {
+  readonly __typename?: 'ContentGroupTag_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<ContentGroupTag_Max_Fields>;
+  readonly min?: Maybe<ContentGroupTag_Min_Fields>;
+};
+
+
+/** aggregate fields of "ContentGroupTag" */
+export type ContentGroupTag_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<ContentGroupTag_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "ContentGroupTag" */
+export type ContentGroupTag_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<ContentGroupTag_Max_Order_By>;
+  readonly min?: Maybe<ContentGroupTag_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "ContentGroupTag" */
+export type ContentGroupTag_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<ContentGroupTag_Insert_Input>;
+  readonly on_conflict?: Maybe<ContentGroupTag_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "ContentGroupTag". All fields are combined with a logical 'AND'. */
+export type ContentGroupTag_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<ContentGroupTag_Bool_Exp>>>;
+  readonly _not?: Maybe<ContentGroupTag_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<ContentGroupTag_Bool_Exp>>>;
+  readonly contentGroup?: Maybe<ContentGroup_Bool_Exp>;
+  readonly contentGroupId?: Maybe<Uuid_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly tag?: Maybe<Tag_Bool_Exp>;
+  readonly tagId?: Maybe<Uuid_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "ContentGroupTag" */
+export enum ContentGroupTag_Constraint {
+  /** unique or primary key constraint */
+  ContentGroupTagContentGroupIdTagIdKey = 'ContentGroupTag_contentGroupId_tagId_key',
+  /** unique or primary key constraint */
+  ContentGroupTagPkey = 'ContentGroupTag_pkey'
+}
+
+/** input type for inserting data into table "ContentGroupTag" */
+export type ContentGroupTag_Insert_Input = {
+  readonly contentGroup?: Maybe<ContentGroup_Obj_Rel_Insert_Input>;
+  readonly contentGroupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly tag?: Maybe<Tag_Obj_Rel_Insert_Input>;
+  readonly tagId?: Maybe<Scalars['uuid']>;
+};
+
+/** aggregate max on columns */
+export type ContentGroupTag_Max_Fields = {
+  readonly __typename?: 'ContentGroupTag_max_fields';
+  readonly contentGroupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly tagId?: Maybe<Scalars['uuid']>;
+};
+
+/** order by max() on columns of table "ContentGroupTag" */
+export type ContentGroupTag_Max_Order_By = {
+  readonly contentGroupId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly tagId?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type ContentGroupTag_Min_Fields = {
+  readonly __typename?: 'ContentGroupTag_min_fields';
+  readonly contentGroupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly tagId?: Maybe<Scalars['uuid']>;
+};
+
+/** order by min() on columns of table "ContentGroupTag" */
+export type ContentGroupTag_Min_Order_By = {
+  readonly contentGroupId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly tagId?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "ContentGroupTag" */
+export type ContentGroupTag_Mutation_Response = {
+  readonly __typename?: 'ContentGroupTag_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<ContentGroupTag>;
+};
+
+/** input type for inserting object relation for remote table "ContentGroupTag" */
+export type ContentGroupTag_Obj_Rel_Insert_Input = {
+  readonly data: ContentGroupTag_Insert_Input;
+  readonly on_conflict?: Maybe<ContentGroupTag_On_Conflict>;
+};
+
+/** on conflict condition type for table "ContentGroupTag" */
+export type ContentGroupTag_On_Conflict = {
+  readonly constraint: ContentGroupTag_Constraint;
+  readonly update_columns: ReadonlyArray<ContentGroupTag_Update_Column>;
+  readonly where?: Maybe<ContentGroupTag_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "ContentGroupTag" */
+export type ContentGroupTag_Order_By = {
+  readonly contentGroup?: Maybe<ContentGroup_Order_By>;
+  readonly contentGroupId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly tag?: Maybe<Tag_Order_By>;
+  readonly tagId?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "ContentGroupTag" */
+export type ContentGroupTag_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "ContentGroupTag" */
+export enum ContentGroupTag_Select_Column {
+  /** column name */
+  ContentGroupId = 'contentGroupId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  TagId = 'tagId'
+}
+
+/** input type for updating data in table "ContentGroupTag" */
+export type ContentGroupTag_Set_Input = {
+  readonly contentGroupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly tagId?: Maybe<Scalars['uuid']>;
+};
+
+/** update columns of table "ContentGroupTag" */
+export enum ContentGroupTag_Update_Column {
+  /** column name */
+  ContentGroupId = 'contentGroupId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  TagId = 'tagId'
+}
 
 /** columns and relationships of "ContentGroupType" */
 export type ContentGroupType = {
@@ -3974,6 +4183,7 @@ export type ContentGroup_Bool_Exp = {
   readonly _or?: Maybe<ReadonlyArray<Maybe<ContentGroup_Bool_Exp>>>;
   readonly conference?: Maybe<Conference_Bool_Exp>;
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly contentGroupTags?: Maybe<ContentGroupTag_Bool_Exp>;
   readonly contentGroupType?: Maybe<ContentGroupType_Bool_Exp>;
   readonly contentGroupTypeName?: Maybe<ContentGroupType_Enum_Comparison_Exp>;
   readonly contentItems?: Maybe<ContentItem_Bool_Exp>;
@@ -3998,6 +4208,7 @@ export enum ContentGroup_Constraint {
 export type ContentGroup_Insert_Input = {
   readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly contentGroupTags?: Maybe<ContentGroupTag_Arr_Rel_Insert_Input>;
   readonly contentGroupType?: Maybe<ContentGroupType_Obj_Rel_Insert_Input>;
   readonly contentGroupTypeName?: Maybe<ContentGroupType_Enum>;
   readonly contentItems?: Maybe<ContentItem_Arr_Rel_Insert_Input>;
@@ -4084,6 +4295,7 @@ export type ContentGroup_On_Conflict = {
 export type ContentGroup_Order_By = {
   readonly conference?: Maybe<Conference_Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
+  readonly contentGroupTags_aggregate?: Maybe<ContentGroupTag_Aggregate_Order_By>;
   readonly contentGroupType?: Maybe<ContentGroupType_Order_By>;
   readonly contentGroupTypeName?: Maybe<Order_By>;
   readonly contentItems_aggregate?: Maybe<ContentItem_Aggregate_Order_By>;
@@ -5333,6 +5545,399 @@ export type EchoOutput = {
   readonly message: Scalars['String'];
 };
 
+/** columns and relationships of "Email" */
+export type Email = {
+  readonly __typename?: 'Email';
+  readonly createdAt: Scalars['timestamptz'];
+  readonly emailAddress: Scalars['String'];
+  readonly htmlContents: Scalars['String'];
+  readonly id: Scalars['uuid'];
+  /** An object relationship */
+  readonly invitation?: Maybe<Invitation>;
+  readonly invitationId?: Maybe<Scalars['uuid']>;
+  readonly plainTextContents: Scalars['String'];
+  readonly reason: Scalars['String'];
+  readonly retriesCount: Scalars['Int'];
+  readonly sentAt?: Maybe<Scalars['timestamptz']>;
+  readonly subject: Scalars['String'];
+  readonly updatedAt: Scalars['timestamptz'];
+  /** An object relationship */
+  readonly user?: Maybe<User>;
+  readonly userId?: Maybe<Scalars['String']>;
+};
+
+/** aggregated selection of "Email" */
+export type Email_Aggregate = {
+  readonly __typename?: 'Email_aggregate';
+  readonly aggregate?: Maybe<Email_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Email>;
+};
+
+/** aggregate fields of "Email" */
+export type Email_Aggregate_Fields = {
+  readonly __typename?: 'Email_aggregate_fields';
+  readonly avg?: Maybe<Email_Avg_Fields>;
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Email_Max_Fields>;
+  readonly min?: Maybe<Email_Min_Fields>;
+  readonly stddev?: Maybe<Email_Stddev_Fields>;
+  readonly stddev_pop?: Maybe<Email_Stddev_Pop_Fields>;
+  readonly stddev_samp?: Maybe<Email_Stddev_Samp_Fields>;
+  readonly sum?: Maybe<Email_Sum_Fields>;
+  readonly var_pop?: Maybe<Email_Var_Pop_Fields>;
+  readonly var_samp?: Maybe<Email_Var_Samp_Fields>;
+  readonly variance?: Maybe<Email_Variance_Fields>;
+};
+
+
+/** aggregate fields of "Email" */
+export type Email_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Email_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "Email" */
+export type Email_Aggregate_Order_By = {
+  readonly avg?: Maybe<Email_Avg_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Email_Max_Order_By>;
+  readonly min?: Maybe<Email_Min_Order_By>;
+  readonly stddev?: Maybe<Email_Stddev_Order_By>;
+  readonly stddev_pop?: Maybe<Email_Stddev_Pop_Order_By>;
+  readonly stddev_samp?: Maybe<Email_Stddev_Samp_Order_By>;
+  readonly sum?: Maybe<Email_Sum_Order_By>;
+  readonly var_pop?: Maybe<Email_Var_Pop_Order_By>;
+  readonly var_samp?: Maybe<Email_Var_Samp_Order_By>;
+  readonly variance?: Maybe<Email_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "Email" */
+export type Email_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Email_Insert_Input>;
+  readonly on_conflict?: Maybe<Email_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Email_Avg_Fields = {
+  readonly __typename?: 'Email_avg_fields';
+  readonly retriesCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "Email" */
+export type Email_Avg_Order_By = {
+  readonly retriesCount?: Maybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "Email". All fields are combined with a logical 'AND'. */
+export type Email_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Email_Bool_Exp>>>;
+  readonly _not?: Maybe<Email_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Email_Bool_Exp>>>;
+  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly emailAddress?: Maybe<String_Comparison_Exp>;
+  readonly htmlContents?: Maybe<String_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly invitation?: Maybe<Invitation_Bool_Exp>;
+  readonly invitationId?: Maybe<Uuid_Comparison_Exp>;
+  readonly plainTextContents?: Maybe<String_Comparison_Exp>;
+  readonly reason?: Maybe<String_Comparison_Exp>;
+  readonly retriesCount?: Maybe<Int_Comparison_Exp>;
+  readonly sentAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly subject?: Maybe<String_Comparison_Exp>;
+  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly user?: Maybe<User_Bool_Exp>;
+  readonly userId?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "Email" */
+export enum Email_Constraint {
+  /** unique or primary key constraint */
+  EmailPkey = 'Email_pkey'
+}
+
+/** input type for incrementing integer column in table "Email" */
+export type Email_Inc_Input = {
+  readonly retriesCount?: Maybe<Scalars['Int']>;
+};
+
+/** input type for inserting data into table "Email" */
+export type Email_Insert_Input = {
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly emailAddress?: Maybe<Scalars['String']>;
+  readonly htmlContents?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly invitation?: Maybe<Invitation_Obj_Rel_Insert_Input>;
+  readonly invitationId?: Maybe<Scalars['uuid']>;
+  readonly plainTextContents?: Maybe<Scalars['String']>;
+  readonly reason?: Maybe<Scalars['String']>;
+  readonly retriesCount?: Maybe<Scalars['Int']>;
+  readonly sentAt?: Maybe<Scalars['timestamptz']>;
+  readonly subject?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly user?: Maybe<User_Obj_Rel_Insert_Input>;
+  readonly userId?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Email_Max_Fields = {
+  readonly __typename?: 'Email_max_fields';
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly emailAddress?: Maybe<Scalars['String']>;
+  readonly htmlContents?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly invitationId?: Maybe<Scalars['uuid']>;
+  readonly plainTextContents?: Maybe<Scalars['String']>;
+  readonly reason?: Maybe<Scalars['String']>;
+  readonly retriesCount?: Maybe<Scalars['Int']>;
+  readonly sentAt?: Maybe<Scalars['timestamptz']>;
+  readonly subject?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly userId?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "Email" */
+export type Email_Max_Order_By = {
+  readonly createdAt?: Maybe<Order_By>;
+  readonly emailAddress?: Maybe<Order_By>;
+  readonly htmlContents?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly invitationId?: Maybe<Order_By>;
+  readonly plainTextContents?: Maybe<Order_By>;
+  readonly reason?: Maybe<Order_By>;
+  readonly retriesCount?: Maybe<Order_By>;
+  readonly sentAt?: Maybe<Order_By>;
+  readonly subject?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly userId?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Email_Min_Fields = {
+  readonly __typename?: 'Email_min_fields';
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly emailAddress?: Maybe<Scalars['String']>;
+  readonly htmlContents?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly invitationId?: Maybe<Scalars['uuid']>;
+  readonly plainTextContents?: Maybe<Scalars['String']>;
+  readonly reason?: Maybe<Scalars['String']>;
+  readonly retriesCount?: Maybe<Scalars['Int']>;
+  readonly sentAt?: Maybe<Scalars['timestamptz']>;
+  readonly subject?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly userId?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "Email" */
+export type Email_Min_Order_By = {
+  readonly createdAt?: Maybe<Order_By>;
+  readonly emailAddress?: Maybe<Order_By>;
+  readonly htmlContents?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly invitationId?: Maybe<Order_By>;
+  readonly plainTextContents?: Maybe<Order_By>;
+  readonly reason?: Maybe<Order_By>;
+  readonly retriesCount?: Maybe<Order_By>;
+  readonly sentAt?: Maybe<Order_By>;
+  readonly subject?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly userId?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "Email" */
+export type Email_Mutation_Response = {
+  readonly __typename?: 'Email_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Email>;
+};
+
+/** input type for inserting object relation for remote table "Email" */
+export type Email_Obj_Rel_Insert_Input = {
+  readonly data: Email_Insert_Input;
+  readonly on_conflict?: Maybe<Email_On_Conflict>;
+};
+
+/** on conflict condition type for table "Email" */
+export type Email_On_Conflict = {
+  readonly constraint: Email_Constraint;
+  readonly update_columns: ReadonlyArray<Email_Update_Column>;
+  readonly where?: Maybe<Email_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "Email" */
+export type Email_Order_By = {
+  readonly createdAt?: Maybe<Order_By>;
+  readonly emailAddress?: Maybe<Order_By>;
+  readonly htmlContents?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly invitation?: Maybe<Invitation_Order_By>;
+  readonly invitationId?: Maybe<Order_By>;
+  readonly plainTextContents?: Maybe<Order_By>;
+  readonly reason?: Maybe<Order_By>;
+  readonly retriesCount?: Maybe<Order_By>;
+  readonly sentAt?: Maybe<Order_By>;
+  readonly subject?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly user?: Maybe<User_Order_By>;
+  readonly userId?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "Email" */
+export type Email_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "Email" */
+export enum Email_Select_Column {
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  EmailAddress = 'emailAddress',
+  /** column name */
+  HtmlContents = 'htmlContents',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  InvitationId = 'invitationId',
+  /** column name */
+  PlainTextContents = 'plainTextContents',
+  /** column name */
+  Reason = 'reason',
+  /** column name */
+  RetriesCount = 'retriesCount',
+  /** column name */
+  SentAt = 'sentAt',
+  /** column name */
+  Subject = 'subject',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  UserId = 'userId'
+}
+
+/** input type for updating data in table "Email" */
+export type Email_Set_Input = {
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly emailAddress?: Maybe<Scalars['String']>;
+  readonly htmlContents?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly invitationId?: Maybe<Scalars['uuid']>;
+  readonly plainTextContents?: Maybe<Scalars['String']>;
+  readonly reason?: Maybe<Scalars['String']>;
+  readonly retriesCount?: Maybe<Scalars['Int']>;
+  readonly sentAt?: Maybe<Scalars['timestamptz']>;
+  readonly subject?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly userId?: Maybe<Scalars['String']>;
+};
+
+/** aggregate stddev on columns */
+export type Email_Stddev_Fields = {
+  readonly __typename?: 'Email_stddev_fields';
+  readonly retriesCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "Email" */
+export type Email_Stddev_Order_By = {
+  readonly retriesCount?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Email_Stddev_Pop_Fields = {
+  readonly __typename?: 'Email_stddev_pop_fields';
+  readonly retriesCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "Email" */
+export type Email_Stddev_Pop_Order_By = {
+  readonly retriesCount?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Email_Stddev_Samp_Fields = {
+  readonly __typename?: 'Email_stddev_samp_fields';
+  readonly retriesCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "Email" */
+export type Email_Stddev_Samp_Order_By = {
+  readonly retriesCount?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Email_Sum_Fields = {
+  readonly __typename?: 'Email_sum_fields';
+  readonly retriesCount?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "Email" */
+export type Email_Sum_Order_By = {
+  readonly retriesCount?: Maybe<Order_By>;
+};
+
+/** update columns of table "Email" */
+export enum Email_Update_Column {
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  EmailAddress = 'emailAddress',
+  /** column name */
+  HtmlContents = 'htmlContents',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  InvitationId = 'invitationId',
+  /** column name */
+  PlainTextContents = 'plainTextContents',
+  /** column name */
+  Reason = 'reason',
+  /** column name */
+  RetriesCount = 'retriesCount',
+  /** column name */
+  SentAt = 'sentAt',
+  /** column name */
+  Subject = 'subject',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  UserId = 'userId'
+}
+
+/** aggregate var_pop on columns */
+export type Email_Var_Pop_Fields = {
+  readonly __typename?: 'Email_var_pop_fields';
+  readonly retriesCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "Email" */
+export type Email_Var_Pop_Order_By = {
+  readonly retriesCount?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Email_Var_Samp_Fields = {
+  readonly __typename?: 'Email_var_samp_fields';
+  readonly retriesCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "Email" */
+export type Email_Var_Samp_Order_By = {
+  readonly retriesCount?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Email_Variance_Fields = {
+  readonly __typename?: 'Email_variance_fields';
+  readonly retriesCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "Email" */
+export type Email_Variance_Order_By = {
+  readonly retriesCount?: Maybe<Order_By>;
+};
+
 /** columns and relationships of "Event" */
 export type Event = {
   readonly __typename?: 'Event';
@@ -5352,6 +5957,10 @@ export type Event = {
   readonly eventPeople: ReadonlyArray<EventPerson>;
   /** An aggregated array relationship */
   readonly eventPeople_aggregate: EventPerson_Aggregate;
+  /** An array relationship */
+  readonly eventTags: ReadonlyArray<EventTag>;
+  /** An aggregated array relationship */
+  readonly eventTags_aggregate: EventTag_Aggregate;
   /** An array relationship */
   readonly executedTransitions: ReadonlyArray<ExecutedTransitions>;
   /** An aggregated array relationship */
@@ -5413,6 +6022,26 @@ export type EventEventPeople_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<EventPerson_Order_By>>;
   where?: Maybe<EventPerson_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Event" */
+export type EventEventTagsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<EventTag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<EventTag_Order_By>>;
+  where?: Maybe<EventTag_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Event" */
+export type EventEventTags_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<EventTag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<EventTag_Order_By>>;
+  where?: Maybe<EventTag_Bool_Exp>;
 };
 
 
@@ -5889,6 +6518,175 @@ export enum EventPerson_Update_Column {
   RoleName = 'roleName'
 }
 
+/** columns and relationships of "EventTag" */
+export type EventTag = {
+  readonly __typename?: 'EventTag';
+  /** An object relationship */
+  readonly event: Event;
+  readonly eventId: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
+  /** An object relationship */
+  readonly tag: Tag;
+  readonly tagId: Scalars['uuid'];
+};
+
+/** aggregated selection of "EventTag" */
+export type EventTag_Aggregate = {
+  readonly __typename?: 'EventTag_aggregate';
+  readonly aggregate?: Maybe<EventTag_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<EventTag>;
+};
+
+/** aggregate fields of "EventTag" */
+export type EventTag_Aggregate_Fields = {
+  readonly __typename?: 'EventTag_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<EventTag_Max_Fields>;
+  readonly min?: Maybe<EventTag_Min_Fields>;
+};
+
+
+/** aggregate fields of "EventTag" */
+export type EventTag_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<EventTag_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "EventTag" */
+export type EventTag_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<EventTag_Max_Order_By>;
+  readonly min?: Maybe<EventTag_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "EventTag" */
+export type EventTag_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<EventTag_Insert_Input>;
+  readonly on_conflict?: Maybe<EventTag_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "EventTag". All fields are combined with a logical 'AND'. */
+export type EventTag_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<EventTag_Bool_Exp>>>;
+  readonly _not?: Maybe<EventTag_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<EventTag_Bool_Exp>>>;
+  readonly event?: Maybe<Event_Bool_Exp>;
+  readonly eventId?: Maybe<Uuid_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly tag?: Maybe<Tag_Bool_Exp>;
+  readonly tagId?: Maybe<Uuid_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "EventTag" */
+export enum EventTag_Constraint {
+  /** unique or primary key constraint */
+  EventTagPkey = 'EventTag_pkey',
+  /** unique or primary key constraint */
+  EventTagTagIdEventIdKey = 'EventTag_tagId_eventId_key'
+}
+
+/** input type for inserting data into table "EventTag" */
+export type EventTag_Insert_Input = {
+  readonly event?: Maybe<Event_Obj_Rel_Insert_Input>;
+  readonly eventId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly tag?: Maybe<Tag_Obj_Rel_Insert_Input>;
+  readonly tagId?: Maybe<Scalars['uuid']>;
+};
+
+/** aggregate max on columns */
+export type EventTag_Max_Fields = {
+  readonly __typename?: 'EventTag_max_fields';
+  readonly eventId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly tagId?: Maybe<Scalars['uuid']>;
+};
+
+/** order by max() on columns of table "EventTag" */
+export type EventTag_Max_Order_By = {
+  readonly eventId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly tagId?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type EventTag_Min_Fields = {
+  readonly __typename?: 'EventTag_min_fields';
+  readonly eventId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly tagId?: Maybe<Scalars['uuid']>;
+};
+
+/** order by min() on columns of table "EventTag" */
+export type EventTag_Min_Order_By = {
+  readonly eventId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly tagId?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "EventTag" */
+export type EventTag_Mutation_Response = {
+  readonly __typename?: 'EventTag_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<EventTag>;
+};
+
+/** input type for inserting object relation for remote table "EventTag" */
+export type EventTag_Obj_Rel_Insert_Input = {
+  readonly data: EventTag_Insert_Input;
+  readonly on_conflict?: Maybe<EventTag_On_Conflict>;
+};
+
+/** on conflict condition type for table "EventTag" */
+export type EventTag_On_Conflict = {
+  readonly constraint: EventTag_Constraint;
+  readonly update_columns: ReadonlyArray<EventTag_Update_Column>;
+  readonly where?: Maybe<EventTag_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "EventTag" */
+export type EventTag_Order_By = {
+  readonly event?: Maybe<Event_Order_By>;
+  readonly eventId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly tag?: Maybe<Tag_Order_By>;
+  readonly tagId?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "EventTag" */
+export type EventTag_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "EventTag" */
+export enum EventTag_Select_Column {
+  /** column name */
+  EventId = 'eventId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  TagId = 'tagId'
+}
+
+/** input type for updating data in table "EventTag" */
+export type EventTag_Set_Input = {
+  readonly eventId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly tagId?: Maybe<Scalars['uuid']>;
+};
+
+/** update columns of table "EventTag" */
+export enum EventTag_Update_Column {
+  /** column name */
+  EventId = 'eventId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  TagId = 'tagId'
+}
+
 /** aggregated selection of "Event" */
 export type Event_Aggregate = {
   readonly __typename?: 'Event_aggregate';
@@ -5964,6 +6762,7 @@ export type Event_Bool_Exp = {
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly durationSeconds?: Maybe<Int_Comparison_Exp>;
   readonly eventPeople?: Maybe<EventPerson_Bool_Exp>;
+  readonly eventTags?: Maybe<EventTag_Bool_Exp>;
   readonly executedTransitions?: Maybe<ExecutedTransitions_Bool_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly intendedRoomModeName?: Maybe<RoomMode_Enum_Comparison_Exp>;
@@ -5999,6 +6798,7 @@ export type Event_Insert_Input = {
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly durationSeconds?: Maybe<Scalars['Int']>;
   readonly eventPeople?: Maybe<EventPerson_Arr_Rel_Insert_Input>;
+  readonly eventTags?: Maybe<EventTag_Arr_Rel_Insert_Input>;
   readonly executedTransitions?: Maybe<ExecutedTransitions_Arr_Rel_Insert_Input>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly intendedRoomModeName?: Maybe<RoomMode_Enum>;
@@ -6103,6 +6903,7 @@ export type Event_Order_By = {
   readonly createdAt?: Maybe<Order_By>;
   readonly durationSeconds?: Maybe<Order_By>;
   readonly eventPeople_aggregate?: Maybe<EventPerson_Aggregate_Order_By>;
+  readonly eventTags_aggregate?: Maybe<EventTag_Aggregate_Order_By>;
   readonly executedTransitions_aggregate?: Maybe<ExecutedTransitions_Aggregate_Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly intendedRoomModeName?: Maybe<Order_By>;
@@ -7783,6 +8584,282 @@ export type Int_Comparison_Exp = {
   readonly _nin?: Maybe<ReadonlyArray<Scalars['Int']>>;
 };
 
+/** columns and relationships of "Invitation" */
+export type Invitation = {
+  readonly __typename?: 'Invitation';
+  /** An object relationship */
+  readonly attendee: Attendee;
+  readonly attendeeId: Scalars['uuid'];
+  readonly confirmationCode?: Maybe<Scalars['uuid']>;
+  readonly createdAt: Scalars['timestamptz'];
+  /** An array relationship */
+  readonly emails: ReadonlyArray<Email>;
+  /** An aggregated array relationship */
+  readonly emails_aggregate: Email_Aggregate;
+  /** A computed field, executes function "invitationhash" */
+  readonly hash?: Maybe<Scalars['String']>;
+  readonly id: Scalars['uuid'];
+  readonly inviteCode: Scalars['uuid'];
+  readonly invitedEmailAddress: Scalars['String'];
+  readonly linkToUserId?: Maybe<Scalars['String']>;
+  readonly updatedAt: Scalars['timestamptz'];
+  /** An object relationship */
+  readonly user?: Maybe<User>;
+};
+
+
+/** columns and relationships of "Invitation" */
+export type InvitationEmailsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Email_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Email_Order_By>>;
+  where?: Maybe<Email_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Invitation" */
+export type InvitationEmails_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Email_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Email_Order_By>>;
+  where?: Maybe<Email_Bool_Exp>;
+};
+
+export type InvitationConfirmationEmailInput = {
+  readonly inviteCode: Scalars['uuid'];
+};
+
+export type InvitationConfirmationEmailOutput = {
+  readonly __typename?: 'InvitationConfirmationEmailOutput';
+  readonly sent: Scalars['Boolean'];
+};
+
+/** aggregated selection of "Invitation" */
+export type Invitation_Aggregate = {
+  readonly __typename?: 'Invitation_aggregate';
+  readonly aggregate?: Maybe<Invitation_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Invitation>;
+};
+
+/** aggregate fields of "Invitation" */
+export type Invitation_Aggregate_Fields = {
+  readonly __typename?: 'Invitation_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Invitation_Max_Fields>;
+  readonly min?: Maybe<Invitation_Min_Fields>;
+};
+
+
+/** aggregate fields of "Invitation" */
+export type Invitation_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Invitation_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "Invitation" */
+export type Invitation_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Invitation_Max_Order_By>;
+  readonly min?: Maybe<Invitation_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "Invitation" */
+export type Invitation_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Invitation_Insert_Input>;
+  readonly on_conflict?: Maybe<Invitation_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "Invitation". All fields are combined with a logical 'AND'. */
+export type Invitation_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Invitation_Bool_Exp>>>;
+  readonly _not?: Maybe<Invitation_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Invitation_Bool_Exp>>>;
+  readonly attendee?: Maybe<Attendee_Bool_Exp>;
+  readonly attendeeId?: Maybe<Uuid_Comparison_Exp>;
+  readonly confirmationCode?: Maybe<Uuid_Comparison_Exp>;
+  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly emails?: Maybe<Email_Bool_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly inviteCode?: Maybe<Uuid_Comparison_Exp>;
+  readonly invitedEmailAddress?: Maybe<String_Comparison_Exp>;
+  readonly linkToUserId?: Maybe<String_Comparison_Exp>;
+  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly user?: Maybe<User_Bool_Exp>;
+};
+
+/** unique or primary key constraints on table "Invitation" */
+export enum Invitation_Constraint {
+  /** unique or primary key constraint */
+  InivitationAttendeeIdKey = 'Inivitation_attendeeId_key',
+  /** unique or primary key constraint */
+  InivitationConfirmationCodeKey = 'Inivitation_confirmationCode_key',
+  /** unique or primary key constraint */
+  InivitationInviteCodeKey = 'Inivitation_inviteCode_key',
+  /** unique or primary key constraint */
+  InivitationPkey = 'Inivitation_pkey'
+}
+
+/** input type for inserting data into table "Invitation" */
+export type Invitation_Insert_Input = {
+  readonly attendee?: Maybe<Attendee_Obj_Rel_Insert_Input>;
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly confirmationCode?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly emails?: Maybe<Email_Arr_Rel_Insert_Input>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly inviteCode?: Maybe<Scalars['uuid']>;
+  readonly invitedEmailAddress?: Maybe<Scalars['String']>;
+  readonly linkToUserId?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly user?: Maybe<User_Obj_Rel_Insert_Input>;
+};
+
+/** aggregate max on columns */
+export type Invitation_Max_Fields = {
+  readonly __typename?: 'Invitation_max_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly confirmationCode?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly inviteCode?: Maybe<Scalars['uuid']>;
+  readonly invitedEmailAddress?: Maybe<Scalars['String']>;
+  readonly linkToUserId?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "Invitation" */
+export type Invitation_Max_Order_By = {
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly confirmationCode?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly inviteCode?: Maybe<Order_By>;
+  readonly invitedEmailAddress?: Maybe<Order_By>;
+  readonly linkToUserId?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Invitation_Min_Fields = {
+  readonly __typename?: 'Invitation_min_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly confirmationCode?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly inviteCode?: Maybe<Scalars['uuid']>;
+  readonly invitedEmailAddress?: Maybe<Scalars['String']>;
+  readonly linkToUserId?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "Invitation" */
+export type Invitation_Min_Order_By = {
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly confirmationCode?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly inviteCode?: Maybe<Order_By>;
+  readonly invitedEmailAddress?: Maybe<Order_By>;
+  readonly linkToUserId?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "Invitation" */
+export type Invitation_Mutation_Response = {
+  readonly __typename?: 'Invitation_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Invitation>;
+};
+
+/** input type for inserting object relation for remote table "Invitation" */
+export type Invitation_Obj_Rel_Insert_Input = {
+  readonly data: Invitation_Insert_Input;
+  readonly on_conflict?: Maybe<Invitation_On_Conflict>;
+};
+
+/** on conflict condition type for table "Invitation" */
+export type Invitation_On_Conflict = {
+  readonly constraint: Invitation_Constraint;
+  readonly update_columns: ReadonlyArray<Invitation_Update_Column>;
+  readonly where?: Maybe<Invitation_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "Invitation" */
+export type Invitation_Order_By = {
+  readonly attendee?: Maybe<Attendee_Order_By>;
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly confirmationCode?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly emails_aggregate?: Maybe<Email_Aggregate_Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly inviteCode?: Maybe<Order_By>;
+  readonly invitedEmailAddress?: Maybe<Order_By>;
+  readonly linkToUserId?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly user?: Maybe<User_Order_By>;
+};
+
+/** primary key columns input for table: "Invitation" */
+export type Invitation_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "Invitation" */
+export enum Invitation_Select_Column {
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  ConfirmationCode = 'confirmationCode',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  InviteCode = 'inviteCode',
+  /** column name */
+  InvitedEmailAddress = 'invitedEmailAddress',
+  /** column name */
+  LinkToUserId = 'linkToUserId',
+  /** column name */
+  UpdatedAt = 'updatedAt'
+}
+
+/** input type for updating data in table "Invitation" */
+export type Invitation_Set_Input = {
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly confirmationCode?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly inviteCode?: Maybe<Scalars['uuid']>;
+  readonly invitedEmailAddress?: Maybe<Scalars['String']>;
+  readonly linkToUserId?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "Invitation" */
+export enum Invitation_Update_Column {
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  ConfirmationCode = 'confirmationCode',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  InviteCode = 'inviteCode',
+  /** column name */
+  InvitedEmailAddress = 'invitedEmailAddress',
+  /** column name */
+  LinkToUserId = 'linkToUserId',
+  /** column name */
+  UpdatedAt = 'updatedAt'
+}
+
 /** columns and relationships of "OnlineStatus" */
 export type OnlineStatus = {
   readonly __typename?: 'OnlineStatus';
@@ -8020,6 +9097,10 @@ export type OriginatingData = {
   /** An aggregated array relationship */
   readonly rooms_aggregate: Room_Aggregate;
   readonly sourceId: Scalars['String'];
+  /** An array relationship */
+  readonly tags: ReadonlyArray<Tag>;
+  /** An aggregated array relationship */
+  readonly tags_aggregate: Tag_Aggregate;
   readonly updatedAt: Scalars['timestamptz'];
 };
 
@@ -8169,6 +9250,26 @@ export type OriginatingDataRooms_AggregateArgs = {
   where?: Maybe<Room_Bool_Exp>;
 };
 
+
+/** columns and relationships of "OriginatingData" */
+export type OriginatingDataTagsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Tag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Tag_Order_By>>;
+  where?: Maybe<Tag_Bool_Exp>;
+};
+
+
+/** columns and relationships of "OriginatingData" */
+export type OriginatingDataTags_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Tag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Tag_Order_By>>;
+  where?: Maybe<Tag_Bool_Exp>;
+};
+
 /** aggregated selection of "OriginatingData" */
 export type OriginatingData_Aggregate = {
   readonly __typename?: 'OriginatingData_aggregate';
@@ -8227,6 +9328,7 @@ export type OriginatingData_Bool_Exp = {
   readonly requiredContentItems?: Maybe<RequiredContentItem_Bool_Exp>;
   readonly rooms?: Maybe<Room_Bool_Exp>;
   readonly sourceId?: Maybe<String_Comparison_Exp>;
+  readonly tags?: Maybe<Tag_Bool_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -8268,6 +9370,7 @@ export type OriginatingData_Insert_Input = {
   readonly requiredContentItems?: Maybe<RequiredContentItem_Arr_Rel_Insert_Input>;
   readonly rooms?: Maybe<Room_Arr_Rel_Insert_Input>;
   readonly sourceId?: Maybe<Scalars['String']>;
+  readonly tags?: Maybe<Tag_Arr_Rel_Insert_Input>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -8346,6 +9449,7 @@ export type OriginatingData_Order_By = {
   readonly requiredContentItems_aggregate?: Maybe<RequiredContentItem_Aggregate_Order_By>;
   readonly rooms_aggregate?: Maybe<Room_Aggregate_Order_By>;
   readonly sourceId?: Maybe<Order_By>;
+  readonly tags_aggregate?: Maybe<Tag_Aggregate_Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
 
@@ -8500,7 +9604,7 @@ export enum Permission_Enum {
   ConferenceModerateAttendees = 'CONFERENCE_MODERATE_ATTENDEES',
   /** View the conference. */
   ConferenceView = 'CONFERENCE_VIEW',
-  /** View conference attendees. */
+  /** View conference active attendees. */
   ConferenceViewAttendees = 'CONFERENCE_VIEW_ATTENDEES'
 }
 
@@ -10415,6 +11519,261 @@ export type String_Comparison_Exp = {
   readonly _similar?: Maybe<Scalars['String']>;
 };
 
+/** columns and relationships of "Tag" */
+export type Tag = {
+  readonly __typename?: 'Tag';
+  readonly colour: Scalars['String'];
+  /** An array relationship */
+  readonly contentGroupTags: ReadonlyArray<ContentGroupTag>;
+  /** An aggregated array relationship */
+  readonly contentGroupTags_aggregate: ContentGroupTag_Aggregate;
+  readonly createdAt: Scalars['timestamptz'];
+  /** An array relationship */
+  readonly eventTags: ReadonlyArray<EventTag>;
+  /** An aggregated array relationship */
+  readonly eventTags_aggregate: EventTag_Aggregate;
+  readonly id: Scalars['uuid'];
+  readonly name: Scalars['String'];
+  /** An object relationship */
+  readonly originatingData?: Maybe<OriginatingData>;
+  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly updatedAt: Scalars['timestamptz'];
+};
+
+
+/** columns and relationships of "Tag" */
+export type TagContentGroupTagsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<ContentGroupTag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<ContentGroupTag_Order_By>>;
+  where?: Maybe<ContentGroupTag_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Tag" */
+export type TagContentGroupTags_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<ContentGroupTag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<ContentGroupTag_Order_By>>;
+  where?: Maybe<ContentGroupTag_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Tag" */
+export type TagEventTagsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<EventTag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<EventTag_Order_By>>;
+  where?: Maybe<EventTag_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Tag" */
+export type TagEventTags_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<EventTag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<EventTag_Order_By>>;
+  where?: Maybe<EventTag_Bool_Exp>;
+};
+
+/** aggregated selection of "Tag" */
+export type Tag_Aggregate = {
+  readonly __typename?: 'Tag_aggregate';
+  readonly aggregate?: Maybe<Tag_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Tag>;
+};
+
+/** aggregate fields of "Tag" */
+export type Tag_Aggregate_Fields = {
+  readonly __typename?: 'Tag_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Tag_Max_Fields>;
+  readonly min?: Maybe<Tag_Min_Fields>;
+};
+
+
+/** aggregate fields of "Tag" */
+export type Tag_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Tag_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "Tag" */
+export type Tag_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Tag_Max_Order_By>;
+  readonly min?: Maybe<Tag_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "Tag" */
+export type Tag_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Tag_Insert_Input>;
+  readonly on_conflict?: Maybe<Tag_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "Tag". All fields are combined with a logical 'AND'. */
+export type Tag_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Tag_Bool_Exp>>>;
+  readonly _not?: Maybe<Tag_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Tag_Bool_Exp>>>;
+  readonly colour?: Maybe<String_Comparison_Exp>;
+  readonly contentGroupTags?: Maybe<ContentGroupTag_Bool_Exp>;
+  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly eventTags?: Maybe<EventTag_Bool_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly name?: Maybe<String_Comparison_Exp>;
+  readonly originatingData?: Maybe<OriginatingData_Bool_Exp>;
+  readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
+  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "Tag" */
+export enum Tag_Constraint {
+  /** unique or primary key constraint */
+  TagPkey = 'Tag_pkey'
+}
+
+/** input type for inserting data into table "Tag" */
+export type Tag_Insert_Input = {
+  readonly colour?: Maybe<Scalars['String']>;
+  readonly contentGroupTags?: Maybe<ContentGroupTag_Arr_Rel_Insert_Input>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly eventTags?: Maybe<EventTag_Arr_Rel_Insert_Input>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly originatingData?: Maybe<OriginatingData_Obj_Rel_Insert_Input>;
+  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Tag_Max_Fields = {
+  readonly __typename?: 'Tag_max_fields';
+  readonly colour?: Maybe<Scalars['String']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "Tag" */
+export type Tag_Max_Order_By = {
+  readonly colour?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+  readonly originatingDataId?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Tag_Min_Fields = {
+  readonly __typename?: 'Tag_min_fields';
+  readonly colour?: Maybe<Scalars['String']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "Tag" */
+export type Tag_Min_Order_By = {
+  readonly colour?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+  readonly originatingDataId?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "Tag" */
+export type Tag_Mutation_Response = {
+  readonly __typename?: 'Tag_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Tag>;
+};
+
+/** input type for inserting object relation for remote table "Tag" */
+export type Tag_Obj_Rel_Insert_Input = {
+  readonly data: Tag_Insert_Input;
+  readonly on_conflict?: Maybe<Tag_On_Conflict>;
+};
+
+/** on conflict condition type for table "Tag" */
+export type Tag_On_Conflict = {
+  readonly constraint: Tag_Constraint;
+  readonly update_columns: ReadonlyArray<Tag_Update_Column>;
+  readonly where?: Maybe<Tag_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "Tag" */
+export type Tag_Order_By = {
+  readonly colour?: Maybe<Order_By>;
+  readonly contentGroupTags_aggregate?: Maybe<ContentGroupTag_Aggregate_Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly eventTags_aggregate?: Maybe<EventTag_Aggregate_Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+  readonly originatingData?: Maybe<OriginatingData_Order_By>;
+  readonly originatingDataId?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "Tag" */
+export type Tag_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "Tag" */
+export enum Tag_Select_Column {
+  /** column name */
+  Colour = 'colour',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Name = 'name',
+  /** column name */
+  OriginatingDataId = 'originatingDataId',
+  /** column name */
+  UpdatedAt = 'updatedAt'
+}
+
+/** input type for updating data in table "Tag" */
+export type Tag_Set_Input = {
+  readonly colour?: Maybe<Scalars['String']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "Tag" */
+export enum Tag_Update_Column {
+  /** column name */
+  Colour = 'colour',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Name = 'name',
+  /** column name */
+  OriginatingDataId = 'originatingDataId',
+  /** column name */
+  UpdatedAt = 'updatedAt'
+}
+
 /** columns and relationships of "Transitions" */
 export type Transitions = {
   readonly __typename?: 'Transitions';
@@ -11039,6 +12398,10 @@ export type User = {
   readonly conferencesCreated_aggregate: Conference_Aggregate;
   readonly createdAt: Scalars['timestamptz'];
   readonly email?: Maybe<Scalars['String']>;
+  /** An array relationship */
+  readonly emails: ReadonlyArray<Email>;
+  /** An aggregated array relationship */
+  readonly emails_aggregate: Email_Aggregate;
   readonly firstName: Scalars['String'];
   /** An array relationship */
   readonly flaggedMessages: ReadonlyArray<FlaggedChatMessage>;
@@ -11049,6 +12412,10 @@ export type User = {
   /** An aggregated array relationship */
   readonly followedChats_aggregate: FollowedChat_Aggregate;
   readonly id: Scalars['String'];
+  /** An array relationship */
+  readonly invitationsPendingConfirmation: ReadonlyArray<Invitation>;
+  /** An aggregated array relationship */
+  readonly invitationsPendingConfirmation_aggregate: Invitation_Aggregate;
   readonly lastLoggedInAt?: Maybe<Scalars['timestamptz']>;
   readonly lastName: Scalars['String'];
   /** An array relationship */
@@ -11166,6 +12533,26 @@ export type UserConferencesCreated_AggregateArgs = {
 
 
 /** columns and relationships of "User" */
+export type UserEmailsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Email_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Email_Order_By>>;
+  where?: Maybe<Email_Bool_Exp>;
+};
+
+
+/** columns and relationships of "User" */
+export type UserEmails_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Email_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Email_Order_By>>;
+  where?: Maybe<Email_Bool_Exp>;
+};
+
+
+/** columns and relationships of "User" */
 export type UserFlaggedMessagesArgs = {
   distinct_on?: Maybe<ReadonlyArray<FlaggedChatMessage_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -11202,6 +12589,26 @@ export type UserFollowedChats_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<FollowedChat_Order_By>>;
   where?: Maybe<FollowedChat_Bool_Exp>;
+};
+
+
+/** columns and relationships of "User" */
+export type UserInvitationsPendingConfirmationArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Invitation_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Invitation_Order_By>>;
+  where?: Maybe<Invitation_Bool_Exp>;
+};
+
+
+/** columns and relationships of "User" */
+export type UserInvitationsPendingConfirmation_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Invitation_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Invitation_Order_By>>;
+  where?: Maybe<Invitation_Bool_Exp>;
 };
 
 
@@ -11390,10 +12797,12 @@ export type User_Bool_Exp = {
   readonly conferencesCreated?: Maybe<Conference_Bool_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly email?: Maybe<String_Comparison_Exp>;
+  readonly emails?: Maybe<Email_Bool_Exp>;
   readonly firstName?: Maybe<String_Comparison_Exp>;
   readonly flaggedMessages?: Maybe<FlaggedChatMessage_Bool_Exp>;
   readonly followedChats?: Maybe<FollowedChat_Bool_Exp>;
   readonly id?: Maybe<String_Comparison_Exp>;
+  readonly invitationsPendingConfirmation?: Maybe<Invitation_Bool_Exp>;
   readonly lastLoggedInAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly lastName?: Maybe<String_Comparison_Exp>;
   readonly memberOfChats?: Maybe<ChatMember_Bool_Exp>;
@@ -11423,10 +12832,12 @@ export type User_Insert_Input = {
   readonly conferencesCreated?: Maybe<Conference_Arr_Rel_Insert_Input>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly email?: Maybe<Scalars['String']>;
+  readonly emails?: Maybe<Email_Arr_Rel_Insert_Input>;
   readonly firstName?: Maybe<Scalars['String']>;
   readonly flaggedMessages?: Maybe<FlaggedChatMessage_Arr_Rel_Insert_Input>;
   readonly followedChats?: Maybe<FollowedChat_Arr_Rel_Insert_Input>;
   readonly id?: Maybe<Scalars['String']>;
+  readonly invitationsPendingConfirmation?: Maybe<Invitation_Arr_Rel_Insert_Input>;
   readonly lastLoggedInAt?: Maybe<Scalars['timestamptz']>;
   readonly lastName?: Maybe<Scalars['String']>;
   readonly memberOfChats?: Maybe<ChatMember_Arr_Rel_Insert_Input>;
@@ -11516,10 +12927,12 @@ export type User_Order_By = {
   readonly conferencesCreated_aggregate?: Maybe<Conference_Aggregate_Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly email?: Maybe<Order_By>;
+  readonly emails_aggregate?: Maybe<Email_Aggregate_Order_By>;
   readonly firstName?: Maybe<Order_By>;
   readonly flaggedMessages_aggregate?: Maybe<FlaggedChatMessage_Aggregate_Order_By>;
   readonly followedChats_aggregate?: Maybe<FollowedChat_Aggregate_Order_By>;
   readonly id?: Maybe<Order_By>;
+  readonly invitationsPendingConfirmation_aggregate?: Maybe<Invitation_Aggregate_Order_By>;
   readonly lastLoggedInAt?: Maybe<Order_By>;
   readonly lastName?: Maybe<Order_By>;
   readonly memberOfChats_aggregate?: Maybe<ChatMember_Aggregate_Order_By>;
@@ -11680,6 +13093,10 @@ export type Mutation_Root = {
   readonly delete_Conference_by_pk?: Maybe<Conference>;
   /** delete data from the table: "ContentGroup" */
   readonly delete_ContentGroup?: Maybe<ContentGroup_Mutation_Response>;
+  /** delete data from the table: "ContentGroupTag" */
+  readonly delete_ContentGroupTag?: Maybe<ContentGroupTag_Mutation_Response>;
+  /** delete single row from the table: "ContentGroupTag" */
+  readonly delete_ContentGroupTag_by_pk?: Maybe<ContentGroupTag>;
   /** delete data from the table: "ContentGroupType" */
   readonly delete_ContentGroupType?: Maybe<ContentGroupType_Mutation_Response>;
   /** delete single row from the table: "ContentGroupType" */
@@ -11702,6 +13119,10 @@ export type Mutation_Root = {
   readonly delete_ContentType?: Maybe<ContentType_Mutation_Response>;
   /** delete single row from the table: "ContentType" */
   readonly delete_ContentType_by_pk?: Maybe<ContentType>;
+  /** delete data from the table: "Email" */
+  readonly delete_Email?: Maybe<Email_Mutation_Response>;
+  /** delete single row from the table: "Email" */
+  readonly delete_Email_by_pk?: Maybe<Email>;
   /** delete data from the table: "Event" */
   readonly delete_Event?: Maybe<Event_Mutation_Response>;
   /** delete data from the table: "EventPerson" */
@@ -11712,6 +13133,10 @@ export type Mutation_Root = {
   readonly delete_EventPersonRole_by_pk?: Maybe<EventPersonRole>;
   /** delete single row from the table: "EventPerson" */
   readonly delete_EventPerson_by_pk?: Maybe<EventPerson>;
+  /** delete data from the table: "EventTag" */
+  readonly delete_EventTag?: Maybe<EventTag_Mutation_Response>;
+  /** delete single row from the table: "EventTag" */
+  readonly delete_EventTag_by_pk?: Maybe<EventTag>;
   /** delete single row from the table: "Event" */
   readonly delete_Event_by_pk?: Maybe<Event>;
   /** delete data from the table: "ExecutedTransitions" */
@@ -11742,6 +13167,10 @@ export type Mutation_Root = {
   readonly delete_InputType?: Maybe<InputType_Mutation_Response>;
   /** delete single row from the table: "InputType" */
   readonly delete_InputType_by_pk?: Maybe<InputType>;
+  /** delete data from the table: "Invitation" */
+  readonly delete_Invitation?: Maybe<Invitation_Mutation_Response>;
+  /** delete single row from the table: "Invitation" */
+  readonly delete_Invitation_by_pk?: Maybe<Invitation>;
   /** delete data from the table: "OnlineStatus" */
   readonly delete_OnlineStatus?: Maybe<OnlineStatus_Mutation_Response>;
   /** delete single row from the table: "OnlineStatus" */
@@ -11782,6 +13211,10 @@ export type Mutation_Root = {
   readonly delete_RoomParticipant_by_pk?: Maybe<RoomParticipant>;
   /** delete single row from the table: "Room" */
   readonly delete_Room_by_pk?: Maybe<Room>;
+  /** delete data from the table: "Tag" */
+  readonly delete_Tag?: Maybe<Tag_Mutation_Response>;
+  /** delete single row from the table: "Tag" */
+  readonly delete_Tag_by_pk?: Maybe<Tag>;
   /** delete data from the table: "Transitions" */
   readonly delete_Transitions?: Maybe<Transitions_Mutation_Response>;
   /** delete single row from the table: "Transitions" */
@@ -11848,6 +13281,10 @@ export type Mutation_Root = {
   readonly insert_Conference_one?: Maybe<Conference>;
   /** insert data into the table: "ContentGroup" */
   readonly insert_ContentGroup?: Maybe<ContentGroup_Mutation_Response>;
+  /** insert data into the table: "ContentGroupTag" */
+  readonly insert_ContentGroupTag?: Maybe<ContentGroupTag_Mutation_Response>;
+  /** insert a single row into the table: "ContentGroupTag" */
+  readonly insert_ContentGroupTag_one?: Maybe<ContentGroupTag>;
   /** insert data into the table: "ContentGroupType" */
   readonly insert_ContentGroupType?: Maybe<ContentGroupType_Mutation_Response>;
   /** insert a single row into the table: "ContentGroupType" */
@@ -11870,6 +13307,10 @@ export type Mutation_Root = {
   readonly insert_ContentType?: Maybe<ContentType_Mutation_Response>;
   /** insert a single row into the table: "ContentType" */
   readonly insert_ContentType_one?: Maybe<ContentType>;
+  /** insert data into the table: "Email" */
+  readonly insert_Email?: Maybe<Email_Mutation_Response>;
+  /** insert a single row into the table: "Email" */
+  readonly insert_Email_one?: Maybe<Email>;
   /** insert data into the table: "Event" */
   readonly insert_Event?: Maybe<Event_Mutation_Response>;
   /** insert data into the table: "EventPerson" */
@@ -11880,6 +13321,10 @@ export type Mutation_Root = {
   readonly insert_EventPersonRole_one?: Maybe<EventPersonRole>;
   /** insert a single row into the table: "EventPerson" */
   readonly insert_EventPerson_one?: Maybe<EventPerson>;
+  /** insert data into the table: "EventTag" */
+  readonly insert_EventTag?: Maybe<EventTag_Mutation_Response>;
+  /** insert a single row into the table: "EventTag" */
+  readonly insert_EventTag_one?: Maybe<EventTag>;
   /** insert a single row into the table: "Event" */
   readonly insert_Event_one?: Maybe<Event>;
   /** insert data into the table: "ExecutedTransitions" */
@@ -11910,6 +13355,10 @@ export type Mutation_Root = {
   readonly insert_InputType?: Maybe<InputType_Mutation_Response>;
   /** insert a single row into the table: "InputType" */
   readonly insert_InputType_one?: Maybe<InputType>;
+  /** insert data into the table: "Invitation" */
+  readonly insert_Invitation?: Maybe<Invitation_Mutation_Response>;
+  /** insert a single row into the table: "Invitation" */
+  readonly insert_Invitation_one?: Maybe<Invitation>;
   /** insert data into the table: "OnlineStatus" */
   readonly insert_OnlineStatus?: Maybe<OnlineStatus_Mutation_Response>;
   /** insert a single row into the table: "OnlineStatus" */
@@ -11950,6 +13399,10 @@ export type Mutation_Root = {
   readonly insert_RoomParticipant_one?: Maybe<RoomParticipant>;
   /** insert a single row into the table: "Room" */
   readonly insert_Room_one?: Maybe<Room>;
+  /** insert data into the table: "Tag" */
+  readonly insert_Tag?: Maybe<Tag_Mutation_Response>;
+  /** insert a single row into the table: "Tag" */
+  readonly insert_Tag_one?: Maybe<Tag>;
   /** insert data into the table: "Transitions" */
   readonly insert_Transitions?: Maybe<Transitions_Mutation_Response>;
   /** insert a single row into the table: "Transitions" */
@@ -11962,6 +13415,14 @@ export type Mutation_Root = {
   readonly insert_User?: Maybe<User_Mutation_Response>;
   /** insert a single row into the table: "User" */
   readonly insert_User_one?: Maybe<User>;
+  /** perform the action: "invitationConfirmCurrent" */
+  readonly invitationConfirmCurrent?: Maybe<ConfirmInvitationOutput>;
+  /** perform the action: "invitationConfirmSendInitialEmail" */
+  readonly invitationConfirmSendInitialEmail?: Maybe<InvitationConfirmationEmailOutput>;
+  /** perform the action: "invitationConfirmSendRepeatEmail" */
+  readonly invitationConfirmSendRepeatEmail?: Maybe<InvitationConfirmationEmailOutput>;
+  /** perform the action: "invitationConfirmWithCode" */
+  readonly invitationConfirmWithCode?: Maybe<ConfirmInvitationOutput>;
   /** update data of the table: "Attendee" */
   readonly update_Attendee?: Maybe<Attendee_Mutation_Response>;
   /** update single row of the table: "Attendee" */
@@ -12016,6 +13477,10 @@ export type Mutation_Root = {
   readonly update_Conference_by_pk?: Maybe<Conference>;
   /** update data of the table: "ContentGroup" */
   readonly update_ContentGroup?: Maybe<ContentGroup_Mutation_Response>;
+  /** update data of the table: "ContentGroupTag" */
+  readonly update_ContentGroupTag?: Maybe<ContentGroupTag_Mutation_Response>;
+  /** update single row of the table: "ContentGroupTag" */
+  readonly update_ContentGroupTag_by_pk?: Maybe<ContentGroupTag>;
   /** update data of the table: "ContentGroupType" */
   readonly update_ContentGroupType?: Maybe<ContentGroupType_Mutation_Response>;
   /** update single row of the table: "ContentGroupType" */
@@ -12038,6 +13503,10 @@ export type Mutation_Root = {
   readonly update_ContentType?: Maybe<ContentType_Mutation_Response>;
   /** update single row of the table: "ContentType" */
   readonly update_ContentType_by_pk?: Maybe<ContentType>;
+  /** update data of the table: "Email" */
+  readonly update_Email?: Maybe<Email_Mutation_Response>;
+  /** update single row of the table: "Email" */
+  readonly update_Email_by_pk?: Maybe<Email>;
   /** update data of the table: "Event" */
   readonly update_Event?: Maybe<Event_Mutation_Response>;
   /** update data of the table: "EventPerson" */
@@ -12048,6 +13517,10 @@ export type Mutation_Root = {
   readonly update_EventPersonRole_by_pk?: Maybe<EventPersonRole>;
   /** update single row of the table: "EventPerson" */
   readonly update_EventPerson_by_pk?: Maybe<EventPerson>;
+  /** update data of the table: "EventTag" */
+  readonly update_EventTag?: Maybe<EventTag_Mutation_Response>;
+  /** update single row of the table: "EventTag" */
+  readonly update_EventTag_by_pk?: Maybe<EventTag>;
   /** update single row of the table: "Event" */
   readonly update_Event_by_pk?: Maybe<Event>;
   /** update data of the table: "ExecutedTransitions" */
@@ -12078,6 +13551,10 @@ export type Mutation_Root = {
   readonly update_InputType?: Maybe<InputType_Mutation_Response>;
   /** update single row of the table: "InputType" */
   readonly update_InputType_by_pk?: Maybe<InputType>;
+  /** update data of the table: "Invitation" */
+  readonly update_Invitation?: Maybe<Invitation_Mutation_Response>;
+  /** update single row of the table: "Invitation" */
+  readonly update_Invitation_by_pk?: Maybe<Invitation>;
   /** update data of the table: "OnlineStatus" */
   readonly update_OnlineStatus?: Maybe<OnlineStatus_Mutation_Response>;
   /** update single row of the table: "OnlineStatus" */
@@ -12118,6 +13595,10 @@ export type Mutation_Root = {
   readonly update_RoomParticipant_by_pk?: Maybe<RoomParticipant>;
   /** update single row of the table: "Room" */
   readonly update_Room_by_pk?: Maybe<Room>;
+  /** update data of the table: "Tag" */
+  readonly update_Tag?: Maybe<Tag_Mutation_Response>;
+  /** update single row of the table: "Tag" */
+  readonly update_Tag_by_pk?: Maybe<Tag>;
   /** update data of the table: "Transitions" */
   readonly update_Transitions?: Maybe<Transitions_Mutation_Response>;
   /** update single row of the table: "Transitions" */
@@ -12296,6 +13777,18 @@ export type Mutation_RootDelete_ContentGroupArgs = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_ContentGroupTagArgs = {
+  where: ContentGroupTag_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_ContentGroupTag_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_ContentGroupTypeArgs = {
   where: ContentGroupType_Bool_Exp;
 };
@@ -12362,6 +13855,18 @@ export type Mutation_RootDelete_ContentType_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_EmailArgs = {
+  where: Email_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Email_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_EventArgs = {
   where: Event_Bool_Exp;
 };
@@ -12387,6 +13892,18 @@ export type Mutation_RootDelete_EventPersonRole_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_EventPerson_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_EventTagArgs = {
+  where: EventTag_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_EventTag_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -12478,6 +13995,18 @@ export type Mutation_RootDelete_InputTypeArgs = {
 /** mutation root */
 export type Mutation_RootDelete_InputType_By_PkArgs = {
   name: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_InvitationArgs = {
+  where: Invitation_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Invitation_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -12597,6 +14126,18 @@ export type Mutation_RootDelete_RoomParticipant_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Room_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_TagArgs = {
+  where: Tag_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Tag_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -12827,6 +14368,20 @@ export type Mutation_RootInsert_ContentGroupArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_ContentGroupTagArgs = {
+  objects: ReadonlyArray<ContentGroupTag_Insert_Input>;
+  on_conflict?: Maybe<ContentGroupTag_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_ContentGroupTag_OneArgs = {
+  object: ContentGroupTag_Insert_Input;
+  on_conflict?: Maybe<ContentGroupTag_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_ContentGroupTypeArgs = {
   objects: ReadonlyArray<ContentGroupType_Insert_Input>;
   on_conflict?: Maybe<ContentGroupType_On_Conflict>;
@@ -12904,6 +14459,20 @@ export type Mutation_RootInsert_ContentType_OneArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_EmailArgs = {
+  objects: ReadonlyArray<Email_Insert_Input>;
+  on_conflict?: Maybe<Email_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Email_OneArgs = {
+  object: Email_Insert_Input;
+  on_conflict?: Maybe<Email_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_EventArgs = {
   objects: ReadonlyArray<Event_Insert_Input>;
   on_conflict?: Maybe<Event_On_Conflict>;
@@ -12935,6 +14504,20 @@ export type Mutation_RootInsert_EventPersonRole_OneArgs = {
 export type Mutation_RootInsert_EventPerson_OneArgs = {
   object: EventPerson_Insert_Input;
   on_conflict?: Maybe<EventPerson_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_EventTagArgs = {
+  objects: ReadonlyArray<EventTag_Insert_Input>;
+  on_conflict?: Maybe<EventTag_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_EventTag_OneArgs = {
+  object: EventTag_Insert_Input;
+  on_conflict?: Maybe<EventTag_On_Conflict>;
 };
 
 
@@ -13040,6 +14623,20 @@ export type Mutation_RootInsert_InputTypeArgs = {
 export type Mutation_RootInsert_InputType_OneArgs = {
   object: InputType_Insert_Input;
   on_conflict?: Maybe<InputType_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_InvitationArgs = {
+  objects: ReadonlyArray<Invitation_Insert_Input>;
+  on_conflict?: Maybe<Invitation_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Invitation_OneArgs = {
+  object: Invitation_Insert_Input;
+  on_conflict?: Maybe<Invitation_On_Conflict>;
 };
 
 
@@ -13184,6 +14781,20 @@ export type Mutation_RootInsert_Room_OneArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_TagArgs = {
+  objects: ReadonlyArray<Tag_Insert_Input>;
+  on_conflict?: Maybe<Tag_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Tag_OneArgs = {
+  object: Tag_Insert_Input;
+  on_conflict?: Maybe<Tag_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_TransitionsArgs = {
   objects: ReadonlyArray<Transitions_Insert_Input>;
   on_conflict?: Maybe<Transitions_On_Conflict>;
@@ -13222,6 +14833,30 @@ export type Mutation_RootInsert_UserArgs = {
 export type Mutation_RootInsert_User_OneArgs = {
   object: User_Insert_Input;
   on_conflict?: Maybe<User_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInvitationConfirmCurrentArgs = {
+  inviteCode: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootInvitationConfirmSendInitialEmailArgs = {
+  inviteInput: InvitationConfirmationEmailInput;
+};
+
+
+/** mutation root */
+export type Mutation_RootInvitationConfirmSendRepeatEmailArgs = {
+  inviteInput: InvitationConfirmationEmailInput;
+};
+
+
+/** mutation root */
+export type Mutation_RootInvitationConfirmWithCodeArgs = {
+  inviteInput: ConfirmInvitationInput;
 };
 
 
@@ -13459,6 +15094,20 @@ export type Mutation_RootUpdate_ContentGroupArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_ContentGroupTagArgs = {
+  _set?: Maybe<ContentGroupTag_Set_Input>;
+  where: ContentGroupTag_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_ContentGroupTag_By_PkArgs = {
+  _set?: Maybe<ContentGroupTag_Set_Input>;
+  pk_columns: ContentGroupTag_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_ContentGroupTypeArgs = {
   _set?: Maybe<ContentGroupType_Set_Input>;
   where: ContentGroupType_Bool_Exp;
@@ -13548,6 +15197,22 @@ export type Mutation_RootUpdate_ContentType_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_EmailArgs = {
+  _inc?: Maybe<Email_Inc_Input>;
+  _set?: Maybe<Email_Set_Input>;
+  where: Email_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Email_By_PkArgs = {
+  _inc?: Maybe<Email_Inc_Input>;
+  _set?: Maybe<Email_Set_Input>;
+  pk_columns: Email_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_EventArgs = {
   _inc?: Maybe<Event_Inc_Input>;
   _set?: Maybe<Event_Set_Input>;
@@ -13580,6 +15245,20 @@ export type Mutation_RootUpdate_EventPersonRole_By_PkArgs = {
 export type Mutation_RootUpdate_EventPerson_By_PkArgs = {
   _set?: Maybe<EventPerson_Set_Input>;
   pk_columns: EventPerson_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_EventTagArgs = {
+  _set?: Maybe<EventTag_Set_Input>;
+  where: EventTag_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_EventTag_By_PkArgs = {
+  _set?: Maybe<EventTag_Set_Input>;
+  pk_columns: EventTag_Pk_Columns_Input;
 };
 
 
@@ -13686,6 +15365,20 @@ export type Mutation_RootUpdate_InputTypeArgs = {
 export type Mutation_RootUpdate_InputType_By_PkArgs = {
   _set?: Maybe<InputType_Set_Input>;
   pk_columns: InputType_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_InvitationArgs = {
+  _set?: Maybe<Invitation_Set_Input>;
+  where: Invitation_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Invitation_By_PkArgs = {
+  _set?: Maybe<Invitation_Set_Input>;
+  pk_columns: Invitation_Pk_Columns_Input;
 };
 
 
@@ -13842,6 +15535,20 @@ export type Mutation_RootUpdate_Room_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_TagArgs = {
+  _set?: Maybe<Tag_Set_Input>;
+  where: Tag_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Tag_By_PkArgs = {
+  _set?: Maybe<Tag_Set_Input>;
+  pk_columns: Tag_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_TransitionsArgs = {
   _set?: Maybe<Transitions_Set_Input>;
   where: Transitions_Bool_Exp;
@@ -13983,6 +15690,12 @@ export type Query_Root = {
   readonly Conference_by_pk?: Maybe<Conference>;
   /** fetch data from the table: "ContentGroup" */
   readonly ContentGroup: ReadonlyArray<ContentGroup>;
+  /** fetch data from the table: "ContentGroupTag" */
+  readonly ContentGroupTag: ReadonlyArray<ContentGroupTag>;
+  /** fetch aggregated fields from the table: "ContentGroupTag" */
+  readonly ContentGroupTag_aggregate: ContentGroupTag_Aggregate;
+  /** fetch data from the table: "ContentGroupTag" using primary key columns */
+  readonly ContentGroupTag_by_pk?: Maybe<ContentGroupTag>;
   /** fetch data from the table: "ContentGroupType" */
   readonly ContentGroupType: ReadonlyArray<ContentGroupType>;
   /** fetch aggregated fields from the table: "ContentGroupType" */
@@ -14017,6 +15730,12 @@ export type Query_Root = {
   readonly ContentType_aggregate: ContentType_Aggregate;
   /** fetch data from the table: "ContentType" using primary key columns */
   readonly ContentType_by_pk?: Maybe<ContentType>;
+  /** fetch data from the table: "Email" */
+  readonly Email: ReadonlyArray<Email>;
+  /** fetch aggregated fields from the table: "Email" */
+  readonly Email_aggregate: Email_Aggregate;
+  /** fetch data from the table: "Email" using primary key columns */
+  readonly Email_by_pk?: Maybe<Email>;
   /** fetch data from the table: "Event" */
   readonly Event: ReadonlyArray<Event>;
   /** fetch data from the table: "EventPerson" */
@@ -14031,6 +15750,12 @@ export type Query_Root = {
   readonly EventPerson_aggregate: EventPerson_Aggregate;
   /** fetch data from the table: "EventPerson" using primary key columns */
   readonly EventPerson_by_pk?: Maybe<EventPerson>;
+  /** fetch data from the table: "EventTag" */
+  readonly EventTag: ReadonlyArray<EventTag>;
+  /** fetch aggregated fields from the table: "EventTag" */
+  readonly EventTag_aggregate: EventTag_Aggregate;
+  /** fetch data from the table: "EventTag" using primary key columns */
+  readonly EventTag_by_pk?: Maybe<EventTag>;
   /** fetch aggregated fields from the table: "Event" */
   readonly Event_aggregate: Event_Aggregate;
   /** fetch data from the table: "Event" using primary key columns */
@@ -14077,6 +15802,12 @@ export type Query_Root = {
   readonly InputType_aggregate: InputType_Aggregate;
   /** fetch data from the table: "InputType" using primary key columns */
   readonly InputType_by_pk?: Maybe<InputType>;
+  /** fetch data from the table: "Invitation" */
+  readonly Invitation: ReadonlyArray<Invitation>;
+  /** fetch aggregated fields from the table: "Invitation" */
+  readonly Invitation_aggregate: Invitation_Aggregate;
+  /** fetch data from the table: "Invitation" using primary key columns */
+  readonly Invitation_by_pk?: Maybe<Invitation>;
   /** fetch data from the table: "OnlineStatus" */
   readonly OnlineStatus: ReadonlyArray<OnlineStatus>;
   /** fetch aggregated fields from the table: "OnlineStatus" */
@@ -14137,6 +15868,12 @@ export type Query_Root = {
   readonly Room_aggregate: Room_Aggregate;
   /** fetch data from the table: "Room" using primary key columns */
   readonly Room_by_pk?: Maybe<Room>;
+  /** fetch data from the table: "Tag" */
+  readonly Tag: ReadonlyArray<Tag>;
+  /** fetch aggregated fields from the table: "Tag" */
+  readonly Tag_aggregate: Tag_Aggregate;
+  /** fetch data from the table: "Tag" using primary key columns */
+  readonly Tag_by_pk?: Maybe<Tag>;
   /** fetch data from the table: "Transitions" */
   readonly Transitions: ReadonlyArray<Transitions>;
   /** fetch aggregated fields from the table: "Transitions" */
@@ -14511,6 +16248,32 @@ export type Query_RootContentGroupArgs = {
 
 
 /** query root */
+export type Query_RootContentGroupTagArgs = {
+  distinct_on?: Maybe<ReadonlyArray<ContentGroupTag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<ContentGroupTag_Order_By>>;
+  where?: Maybe<ContentGroupTag_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootContentGroupTag_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<ContentGroupTag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<ContentGroupTag_Order_By>>;
+  where?: Maybe<ContentGroupTag_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootContentGroupTag_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
 export type Query_RootContentGroupTypeArgs = {
   distinct_on?: Maybe<ReadonlyArray<ContentGroupType_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -14657,6 +16420,32 @@ export type Query_RootContentType_By_PkArgs = {
 
 
 /** query root */
+export type Query_RootEmailArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Email_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Email_Order_By>>;
+  where?: Maybe<Email_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootEmail_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Email_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Email_Order_By>>;
+  where?: Maybe<Email_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootEmail_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
 export type Query_RootEventArgs = {
   distinct_on?: Maybe<ReadonlyArray<Event_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -14714,6 +16503,32 @@ export type Query_RootEventPerson_AggregateArgs = {
 
 /** query root */
 export type Query_RootEventPerson_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
+export type Query_RootEventTagArgs = {
+  distinct_on?: Maybe<ReadonlyArray<EventTag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<EventTag_Order_By>>;
+  where?: Maybe<EventTag_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootEventTag_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<EventTag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<EventTag_Order_By>>;
+  where?: Maybe<EventTag_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootEventTag_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -14913,6 +16728,32 @@ export type Query_RootInputType_AggregateArgs = {
 /** query root */
 export type Query_RootInputType_By_PkArgs = {
   name: Scalars['String'];
+};
+
+
+/** query root */
+export type Query_RootInvitationArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Invitation_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Invitation_Order_By>>;
+  where?: Maybe<Invitation_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootInvitation_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Invitation_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Invitation_Order_By>>;
+  where?: Maybe<Invitation_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootInvitation_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -15177,6 +17018,32 @@ export type Query_RootRoom_By_PkArgs = {
 
 
 /** query root */
+export type Query_RootTagArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Tag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Tag_Order_By>>;
+  where?: Maybe<Tag_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootTag_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Tag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Tag_Order_By>>;
+  where?: Maybe<Tag_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootTag_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
 export type Query_RootTransitionsArgs = {
   distinct_on?: Maybe<ReadonlyArray<Transitions_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -15348,6 +17215,12 @@ export type Subscription_Root = {
   readonly Conference_by_pk?: Maybe<Conference>;
   /** fetch data from the table: "ContentGroup" */
   readonly ContentGroup: ReadonlyArray<ContentGroup>;
+  /** fetch data from the table: "ContentGroupTag" */
+  readonly ContentGroupTag: ReadonlyArray<ContentGroupTag>;
+  /** fetch aggregated fields from the table: "ContentGroupTag" */
+  readonly ContentGroupTag_aggregate: ContentGroupTag_Aggregate;
+  /** fetch data from the table: "ContentGroupTag" using primary key columns */
+  readonly ContentGroupTag_by_pk?: Maybe<ContentGroupTag>;
   /** fetch data from the table: "ContentGroupType" */
   readonly ContentGroupType: ReadonlyArray<ContentGroupType>;
   /** fetch aggregated fields from the table: "ContentGroupType" */
@@ -15382,6 +17255,12 @@ export type Subscription_Root = {
   readonly ContentType_aggregate: ContentType_Aggregate;
   /** fetch data from the table: "ContentType" using primary key columns */
   readonly ContentType_by_pk?: Maybe<ContentType>;
+  /** fetch data from the table: "Email" */
+  readonly Email: ReadonlyArray<Email>;
+  /** fetch aggregated fields from the table: "Email" */
+  readonly Email_aggregate: Email_Aggregate;
+  /** fetch data from the table: "Email" using primary key columns */
+  readonly Email_by_pk?: Maybe<Email>;
   /** fetch data from the table: "Event" */
   readonly Event: ReadonlyArray<Event>;
   /** fetch data from the table: "EventPerson" */
@@ -15396,6 +17275,12 @@ export type Subscription_Root = {
   readonly EventPerson_aggregate: EventPerson_Aggregate;
   /** fetch data from the table: "EventPerson" using primary key columns */
   readonly EventPerson_by_pk?: Maybe<EventPerson>;
+  /** fetch data from the table: "EventTag" */
+  readonly EventTag: ReadonlyArray<EventTag>;
+  /** fetch aggregated fields from the table: "EventTag" */
+  readonly EventTag_aggregate: EventTag_Aggregate;
+  /** fetch data from the table: "EventTag" using primary key columns */
+  readonly EventTag_by_pk?: Maybe<EventTag>;
   /** fetch aggregated fields from the table: "Event" */
   readonly Event_aggregate: Event_Aggregate;
   /** fetch data from the table: "Event" using primary key columns */
@@ -15442,6 +17327,12 @@ export type Subscription_Root = {
   readonly InputType_aggregate: InputType_Aggregate;
   /** fetch data from the table: "InputType" using primary key columns */
   readonly InputType_by_pk?: Maybe<InputType>;
+  /** fetch data from the table: "Invitation" */
+  readonly Invitation: ReadonlyArray<Invitation>;
+  /** fetch aggregated fields from the table: "Invitation" */
+  readonly Invitation_aggregate: Invitation_Aggregate;
+  /** fetch data from the table: "Invitation" using primary key columns */
+  readonly Invitation_by_pk?: Maybe<Invitation>;
   /** fetch data from the table: "OnlineStatus" */
   readonly OnlineStatus: ReadonlyArray<OnlineStatus>;
   /** fetch aggregated fields from the table: "OnlineStatus" */
@@ -15502,6 +17393,12 @@ export type Subscription_Root = {
   readonly Room_aggregate: Room_Aggregate;
   /** fetch data from the table: "Room" using primary key columns */
   readonly Room_by_pk?: Maybe<Room>;
+  /** fetch data from the table: "Tag" */
+  readonly Tag: ReadonlyArray<Tag>;
+  /** fetch aggregated fields from the table: "Tag" */
+  readonly Tag_aggregate: Tag_Aggregate;
+  /** fetch data from the table: "Tag" using primary key columns */
+  readonly Tag_by_pk?: Maybe<Tag>;
   /** fetch data from the table: "Transitions" */
   readonly Transitions: ReadonlyArray<Transitions>;
   /** fetch aggregated fields from the table: "Transitions" */
@@ -15876,6 +17773,32 @@ export type Subscription_RootContentGroupArgs = {
 
 
 /** subscription root */
+export type Subscription_RootContentGroupTagArgs = {
+  distinct_on?: Maybe<ReadonlyArray<ContentGroupTag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<ContentGroupTag_Order_By>>;
+  where?: Maybe<ContentGroupTag_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootContentGroupTag_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<ContentGroupTag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<ContentGroupTag_Order_By>>;
+  where?: Maybe<ContentGroupTag_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootContentGroupTag_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
 export type Subscription_RootContentGroupTypeArgs = {
   distinct_on?: Maybe<ReadonlyArray<ContentGroupType_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -16022,6 +17945,32 @@ export type Subscription_RootContentType_By_PkArgs = {
 
 
 /** subscription root */
+export type Subscription_RootEmailArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Email_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Email_Order_By>>;
+  where?: Maybe<Email_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootEmail_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Email_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Email_Order_By>>;
+  where?: Maybe<Email_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootEmail_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
 export type Subscription_RootEventArgs = {
   distinct_on?: Maybe<ReadonlyArray<Event_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -16079,6 +18028,32 @@ export type Subscription_RootEventPerson_AggregateArgs = {
 
 /** subscription root */
 export type Subscription_RootEventPerson_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
+export type Subscription_RootEventTagArgs = {
+  distinct_on?: Maybe<ReadonlyArray<EventTag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<EventTag_Order_By>>;
+  where?: Maybe<EventTag_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootEventTag_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<EventTag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<EventTag_Order_By>>;
+  where?: Maybe<EventTag_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootEventTag_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -16278,6 +18253,32 @@ export type Subscription_RootInputType_AggregateArgs = {
 /** subscription root */
 export type Subscription_RootInputType_By_PkArgs = {
   name: Scalars['String'];
+};
+
+
+/** subscription root */
+export type Subscription_RootInvitationArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Invitation_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Invitation_Order_By>>;
+  where?: Maybe<Invitation_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootInvitation_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Invitation_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Invitation_Order_By>>;
+  where?: Maybe<Invitation_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootInvitation_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -16537,6 +18538,32 @@ export type Subscription_RootRoom_AggregateArgs = {
 
 /** subscription root */
 export type Subscription_RootRoom_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
+export type Subscription_RootTagArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Tag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Tag_Order_By>>;
+  where?: Maybe<Tag_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootTag_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Tag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Tag_Order_By>>;
+  where?: Maybe<Tag_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootTag_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -16835,6 +18862,42 @@ export type ProtectedEchoQueryVariables = Exact<{
 
 export type ProtectedEchoQuery = { readonly __typename?: 'query_root', readonly protectedEcho?: Maybe<{ readonly __typename?: 'ProtectedEchoOutput', readonly message: string }> };
 
+export type SelectInvitationForAcceptQueryVariables = Exact<{
+  inviteCode: Scalars['uuid'];
+}>;
+
+
+export type SelectInvitationForAcceptQuery = { readonly __typename?: 'query_root', readonly Invitation: ReadonlyArray<{ readonly __typename?: 'Invitation', readonly hash?: Maybe<string> }> };
+
+export type Invitation_ConfirmCurrentMutationVariables = Exact<{
+  inviteCode: Scalars['uuid'];
+}>;
+
+
+export type Invitation_ConfirmCurrentMutation = { readonly __typename?: 'mutation_root', readonly invitationConfirmCurrent?: Maybe<{ readonly __typename?: 'ConfirmInvitationOutput', readonly confSlug?: Maybe<string>, readonly ok: boolean }> };
+
+export type Invitation_ConfirmWithCodeMutationVariables = Exact<{
+  inviteCode: Scalars['uuid'];
+  confirmationCode: Scalars['String'];
+}>;
+
+
+export type Invitation_ConfirmWithCodeMutation = { readonly __typename?: 'mutation_root', readonly invitationConfirmWithCode?: Maybe<{ readonly __typename?: 'ConfirmInvitationOutput', readonly confSlug?: Maybe<string>, readonly ok: boolean }> };
+
+export type SendInitialConfirmationEmailMutationVariables = Exact<{
+  inviteCode: Scalars['uuid'];
+}>;
+
+
+export type SendInitialConfirmationEmailMutation = { readonly __typename?: 'mutation_root', readonly invitationConfirmSendInitialEmail?: Maybe<{ readonly __typename?: 'InvitationConfirmationEmailOutput', readonly sent: boolean }> };
+
+export type SendRepeatConfirmationEmailMutationVariables = Exact<{
+  inviteCode: Scalars['uuid'];
+}>;
+
+
+export type SendRepeatConfirmationEmailMutation = { readonly __typename?: 'mutation_root', readonly invitationConfirmSendRepeatEmail?: Maybe<{ readonly __typename?: 'InvitationConfirmationEmailOutput', readonly sent: boolean }> };
+
 export type SelectUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -16845,7 +18908,7 @@ export type SelectCurrentUserQueryVariables = Exact<{
 }>;
 
 
-export type SelectCurrentUserQuery = { readonly __typename?: 'query_root', readonly User: ReadonlyArray<{ readonly __typename?: 'User', readonly id: string, readonly lastName: string, readonly firstName: string, readonly onlineStatus?: Maybe<{ readonly __typename?: 'OnlineStatus', readonly id: any, readonly lastSeen: any, readonly isIncognito: boolean }> }> };
+export type SelectCurrentUserQuery = { readonly __typename?: 'query_root', readonly User: ReadonlyArray<{ readonly __typename?: 'User', readonly id: string, readonly email?: Maybe<string>, readonly lastName: string, readonly firstName: string, readonly onlineStatus?: Maybe<{ readonly __typename?: 'OnlineStatus', readonly id: any, readonly lastSeen: any, readonly isIncognito: boolean }> }> };
 
 export type GetCurrentUserIsIncognitoQueryVariables = Exact<{
   userId: Scalars['String'];
@@ -17883,6 +19946,172 @@ export function useProtectedEchoLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type ProtectedEchoQueryHookResult = ReturnType<typeof useProtectedEchoQuery>;
 export type ProtectedEchoLazyQueryHookResult = ReturnType<typeof useProtectedEchoLazyQuery>;
 export type ProtectedEchoQueryResult = Apollo.QueryResult<ProtectedEchoQuery, ProtectedEchoQueryVariables>;
+export const SelectInvitationForAcceptDocument = gql`
+    query SelectInvitationForAccept($inviteCode: uuid!) {
+  Invitation(where: {inviteCode: {_eq: $inviteCode}}) {
+    hash
+  }
+}
+    `;
+
+/**
+ * __useSelectInvitationForAcceptQuery__
+ *
+ * To run a query within a React component, call `useSelectInvitationForAcceptQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectInvitationForAcceptQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectInvitationForAcceptQuery({
+ *   variables: {
+ *      inviteCode: // value for 'inviteCode'
+ *   },
+ * });
+ */
+export function useSelectInvitationForAcceptQuery(baseOptions: Apollo.QueryHookOptions<SelectInvitationForAcceptQuery, SelectInvitationForAcceptQueryVariables>) {
+        return Apollo.useQuery<SelectInvitationForAcceptQuery, SelectInvitationForAcceptQueryVariables>(SelectInvitationForAcceptDocument, baseOptions);
+      }
+export function useSelectInvitationForAcceptLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectInvitationForAcceptQuery, SelectInvitationForAcceptQueryVariables>) {
+          return Apollo.useLazyQuery<SelectInvitationForAcceptQuery, SelectInvitationForAcceptQueryVariables>(SelectInvitationForAcceptDocument, baseOptions);
+        }
+export type SelectInvitationForAcceptQueryHookResult = ReturnType<typeof useSelectInvitationForAcceptQuery>;
+export type SelectInvitationForAcceptLazyQueryHookResult = ReturnType<typeof useSelectInvitationForAcceptLazyQuery>;
+export type SelectInvitationForAcceptQueryResult = Apollo.QueryResult<SelectInvitationForAcceptQuery, SelectInvitationForAcceptQueryVariables>;
+export const Invitation_ConfirmCurrentDocument = gql`
+    mutation Invitation_ConfirmCurrent($inviteCode: uuid!) {
+  invitationConfirmCurrent(inviteCode: $inviteCode) {
+    confSlug
+    ok
+  }
+}
+    `;
+export type Invitation_ConfirmCurrentMutationFn = Apollo.MutationFunction<Invitation_ConfirmCurrentMutation, Invitation_ConfirmCurrentMutationVariables>;
+
+/**
+ * __useInvitation_ConfirmCurrentMutation__
+ *
+ * To run a mutation, you first call `useInvitation_ConfirmCurrentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInvitation_ConfirmCurrentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [invitationConfirmCurrentMutation, { data, loading, error }] = useInvitation_ConfirmCurrentMutation({
+ *   variables: {
+ *      inviteCode: // value for 'inviteCode'
+ *   },
+ * });
+ */
+export function useInvitation_ConfirmCurrentMutation(baseOptions?: Apollo.MutationHookOptions<Invitation_ConfirmCurrentMutation, Invitation_ConfirmCurrentMutationVariables>) {
+        return Apollo.useMutation<Invitation_ConfirmCurrentMutation, Invitation_ConfirmCurrentMutationVariables>(Invitation_ConfirmCurrentDocument, baseOptions);
+      }
+export type Invitation_ConfirmCurrentMutationHookResult = ReturnType<typeof useInvitation_ConfirmCurrentMutation>;
+export type Invitation_ConfirmCurrentMutationResult = Apollo.MutationResult<Invitation_ConfirmCurrentMutation>;
+export type Invitation_ConfirmCurrentMutationOptions = Apollo.BaseMutationOptions<Invitation_ConfirmCurrentMutation, Invitation_ConfirmCurrentMutationVariables>;
+export const Invitation_ConfirmWithCodeDocument = gql`
+    mutation Invitation_ConfirmWithCode($inviteCode: uuid!, $confirmationCode: String!) {
+  invitationConfirmWithCode(
+    inviteInput: {inviteCode: $inviteCode, confirmationCode: $confirmationCode}
+  ) {
+    confSlug
+    ok
+  }
+}
+    `;
+export type Invitation_ConfirmWithCodeMutationFn = Apollo.MutationFunction<Invitation_ConfirmWithCodeMutation, Invitation_ConfirmWithCodeMutationVariables>;
+
+/**
+ * __useInvitation_ConfirmWithCodeMutation__
+ *
+ * To run a mutation, you first call `useInvitation_ConfirmWithCodeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInvitation_ConfirmWithCodeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [invitationConfirmWithCodeMutation, { data, loading, error }] = useInvitation_ConfirmWithCodeMutation({
+ *   variables: {
+ *      inviteCode: // value for 'inviteCode'
+ *      confirmationCode: // value for 'confirmationCode'
+ *   },
+ * });
+ */
+export function useInvitation_ConfirmWithCodeMutation(baseOptions?: Apollo.MutationHookOptions<Invitation_ConfirmWithCodeMutation, Invitation_ConfirmWithCodeMutationVariables>) {
+        return Apollo.useMutation<Invitation_ConfirmWithCodeMutation, Invitation_ConfirmWithCodeMutationVariables>(Invitation_ConfirmWithCodeDocument, baseOptions);
+      }
+export type Invitation_ConfirmWithCodeMutationHookResult = ReturnType<typeof useInvitation_ConfirmWithCodeMutation>;
+export type Invitation_ConfirmWithCodeMutationResult = Apollo.MutationResult<Invitation_ConfirmWithCodeMutation>;
+export type Invitation_ConfirmWithCodeMutationOptions = Apollo.BaseMutationOptions<Invitation_ConfirmWithCodeMutation, Invitation_ConfirmWithCodeMutationVariables>;
+export const SendInitialConfirmationEmailDocument = gql`
+    mutation SendInitialConfirmationEmail($inviteCode: uuid!) {
+  invitationConfirmSendInitialEmail(inviteInput: {inviteCode: $inviteCode}) {
+    sent
+  }
+}
+    `;
+export type SendInitialConfirmationEmailMutationFn = Apollo.MutationFunction<SendInitialConfirmationEmailMutation, SendInitialConfirmationEmailMutationVariables>;
+
+/**
+ * __useSendInitialConfirmationEmailMutation__
+ *
+ * To run a mutation, you first call `useSendInitialConfirmationEmailMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendInitialConfirmationEmailMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendInitialConfirmationEmailMutation, { data, loading, error }] = useSendInitialConfirmationEmailMutation({
+ *   variables: {
+ *      inviteCode: // value for 'inviteCode'
+ *   },
+ * });
+ */
+export function useSendInitialConfirmationEmailMutation(baseOptions?: Apollo.MutationHookOptions<SendInitialConfirmationEmailMutation, SendInitialConfirmationEmailMutationVariables>) {
+        return Apollo.useMutation<SendInitialConfirmationEmailMutation, SendInitialConfirmationEmailMutationVariables>(SendInitialConfirmationEmailDocument, baseOptions);
+      }
+export type SendInitialConfirmationEmailMutationHookResult = ReturnType<typeof useSendInitialConfirmationEmailMutation>;
+export type SendInitialConfirmationEmailMutationResult = Apollo.MutationResult<SendInitialConfirmationEmailMutation>;
+export type SendInitialConfirmationEmailMutationOptions = Apollo.BaseMutationOptions<SendInitialConfirmationEmailMutation, SendInitialConfirmationEmailMutationVariables>;
+export const SendRepeatConfirmationEmailDocument = gql`
+    mutation SendRepeatConfirmationEmail($inviteCode: uuid!) {
+  invitationConfirmSendRepeatEmail(inviteInput: {inviteCode: $inviteCode}) {
+    sent
+  }
+}
+    `;
+export type SendRepeatConfirmationEmailMutationFn = Apollo.MutationFunction<SendRepeatConfirmationEmailMutation, SendRepeatConfirmationEmailMutationVariables>;
+
+/**
+ * __useSendRepeatConfirmationEmailMutation__
+ *
+ * To run a mutation, you first call `useSendRepeatConfirmationEmailMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendRepeatConfirmationEmailMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendRepeatConfirmationEmailMutation, { data, loading, error }] = useSendRepeatConfirmationEmailMutation({
+ *   variables: {
+ *      inviteCode: // value for 'inviteCode'
+ *   },
+ * });
+ */
+export function useSendRepeatConfirmationEmailMutation(baseOptions?: Apollo.MutationHookOptions<SendRepeatConfirmationEmailMutation, SendRepeatConfirmationEmailMutationVariables>) {
+        return Apollo.useMutation<SendRepeatConfirmationEmailMutation, SendRepeatConfirmationEmailMutationVariables>(SendRepeatConfirmationEmailDocument, baseOptions);
+      }
+export type SendRepeatConfirmationEmailMutationHookResult = ReturnType<typeof useSendRepeatConfirmationEmailMutation>;
+export type SendRepeatConfirmationEmailMutationResult = Apollo.MutationResult<SendRepeatConfirmationEmailMutation>;
+export type SendRepeatConfirmationEmailMutationOptions = Apollo.BaseMutationOptions<SendRepeatConfirmationEmailMutation, SendRepeatConfirmationEmailMutationVariables>;
 export const SelectUsersDocument = gql`
     query selectUsers {
   User {
@@ -17926,6 +20155,7 @@ export const SelectCurrentUserDocument = gql`
     query selectCurrentUser($userId: String!) {
   User(where: {id: {_eq: $userId}}) {
     id
+    email
     lastName
     firstName
     onlineStatus {

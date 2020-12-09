@@ -104,14 +104,15 @@ variables in the build which start with `SNOWPACK_PUBLIC_`.
 
 **_Note:_** Pay attention to the _Netlify?_ column when configuring Netlify.
 
-| Env Var                                      | Value                                                    | Netlify? |
-| -------------------------------------------- | -------------------------------------------------------- | -------- |
-| HASURA_ADMIN_SECRET                          | Admin secret (used only for GraphQL Codegen)             | No       |
-| _GraphQL_                                    |                                                          |          |
-| SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN           | The domain and port of the GraphQL server                | Yes      |
-| SNOWPACK_PUBLIC_GRAPHQL_API_SECURE_PROTOCOLS | Boolean. Default: true. Whether to use https/wss or not. | Yes      |
-| _Auth0_                                      |                                                          |          |
-| SNOWPACK_PUBLIC_AUTH_LOGIN_CALLBACK_URL      | `http(s)://<frontend-url>/auth0/logged-in`               | Yes      |
-| SNOWPACK_PUBLIC_AUTH_LOGOUT_CALLBACK_URL     | `http(s)://<frontend-url>/auth0/logged-out`              | Yes      |
-| SNOWPACK_PUBLIC_AUTH_DOMAIN                  | <auth0-domain> e.g. `something.eu.auth0.com`             | Yes      |
-| SNOWPACK_PUBLIC_AUTH_CLIENT_ID               | <auth0-client-id> as shown in Auth0 Application          | Yes      |
+| Env Var                                      | Value                                                                                | Netlify? |
+| -------------------------------------------- | ------------------------------------------------------------------------------------ | -------- |
+| HASURA_ADMIN_SECRET                          | Admin secret (used only for GraphQL Codegen)                                         | No       |
+| _GraphQL_                                    |                                                                                      |          |
+| SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN           | The domain and port of the GraphQL server                                            | Yes      |
+| SNOWPACK_PUBLIC_GRAPHQL_API_SECURE_PROTOCOLS | Boolean. Default: true. Whether to use https/wss or not.                             | Yes      |
+| _Auth0_                                      |                                                                                      |          |
+| SNOWPACK_PUBLIC_AUTH_LOGIN_CALLBACK_URL      | `http(s)://<frontend-url>/auth0/logged-in`                                           | Yes      |
+| SNOWPACK_PUBLIC_AUTH_LOGOUT_CALLBACK_URL     | `http(s)://<frontend-url>/auth0/logged-out`                                          | Yes      |
+| SNOWPACK_PUBLIC_AUTH_DOMAIN                  | <auth0-domain> e.g. `something.eu.auth0.com`                                         | Yes      |
+| SNOWPACK_PUBLIC_AUTH_CLIENT_ID               | <auth0-client-id> as shown in Auth0 Application                                      | Yes      |
+| SNOWPACK_PUBLIC_COMPANION_BASE_URL           | URL of the Uppy Companion instance (provided at `/companion` by the actions service) | Yes      |

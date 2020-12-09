@@ -4,12 +4,12 @@ import bodyParser from "body-parser";
 import express, { Request, Response } from "express";
 import { is } from "typescript-is";
 import handlerEcho from "./handlers/echo";
-import { handleConferenceCreated, handleEmailCreated } from "./handlers/event";
+import { handleEmailCreated } from "./handlers/event";
 import protectedEchoHandler from "./handlers/protectedEcho";
 import { checkJwt } from "./middlewares/checkJwt";
 import { checkUserScopes } from "./middlewares/checkScopes";
 import { router as companionRouter } from "./router/companion";
-import { ConferenceData, EmailData, Payload } from "./types/event";
+import { EmailData, Payload } from "./types/event";
 
 if (process.env.NODE_ENV !== "test") {
     assert(
@@ -85,14 +85,7 @@ app.post("/echo", jsonParser, async (req: Request, res: Response) => {
 app.post("/event", jsonParser, async (req: Request, res: Response) => {
     if (is<Payload>(req.body)) {
         try {
-            if (
-                req.body.trigger.name === "ConferenceCreated" &&
-                is<Payload<ConferenceData>>(req.body)
-            ) {
-                await handleConferenceCreated(req.body);
-            } else {
-                console.log("Received unhandled payload");
-            }
+            console.log("Received unhandled payload");
         } catch (e) {
             res.status(500).json("Failure while handling event");
             return;

@@ -32,6 +32,7 @@ Version 3 of Clowdr - this time it's scalable.
    clowdr> npm i
    ```
 
+1. Follow the AWS setup: [Clowdr AWS ReadMe](aws/README#Setting-up)
 1. Follow the Hasura setup: [Clowdr Hasura ReadMe](hasura/README#Setting-up)
 1. Follow the Actions Service setup: [Clowdr Actions Service
    ReadMe](services/actions/README#Setting-up)

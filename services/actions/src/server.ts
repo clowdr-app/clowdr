@@ -2,12 +2,9 @@ import sgMail from "@sendgrid/mail";
 import assert from "assert";
 import bodyParser from "body-parser";
 import express, { Request, Response } from "express";
-import jwt from "express-jwt";
-import jwksRsa from "jwks-rsa";
 import { is } from "typescript-is";
-import checkScopes from "./checkScopes";
 import handlerEcho from "./handlers/echo";
-import { handleConferenceCreated, handleEmailCreated } from "./handlers/event";
+import { handleEmailCreated } from "./handlers/event";
 import {
     invitationConfirmCurrentHandler,
     invitationConfirmSendInitialEmailHandler,
@@ -15,7 +12,10 @@ import {
     invitationConfirmWithCodeHandler,
 } from "./handlers/invitation";
 import protectedEchoHandler from "./handlers/protectedEcho";
-import { ConferenceData, EmailData, Payload } from "./types/event";
+import { checkJwt } from "./middlewares/checkJwt";
+import { checkUserScopes } from "./middlewares/checkScopes";
+import { router as companionRouter } from "./router/companion";
+import { EmailData, Payload } from "./types/event";
 
 type AuthenticatedRequest = Request & { userId: string };
 
@@ -60,47 +60,9 @@ assert(
     "EVENT_SECRET (x-hasura-event-secret custom session variable) environment variable not provided."
 );
 
-// Authorization middleware. When used, the
-// Access Token must exist and be verified against
-// the Auth0 JSON Web Key Set
-const checkJwt = jwt({
-    // Dynamically provide a signing key
-    // based on the kid in the header and
-    // the signing keys provided by the JWKS endpoint.
-    secret: jwksRsa.expressJwtSecret({
-        cache: true,
-        rateLimit: true,
-        jwksRequestsPerMinute: 1,
-        jwksUri: `https://${process.env.AUTH0_API_DOMAIN}/.well-known/jwks.json`,
-    }),
-
-    // Validate the audience and the issuer.
-    audience: process.env.AUTH0_AUDIENCE,
-    issuer: process.env.AUTH0_ISSUER_DOMAIN,
-    algorithms: ["RS256"],
-    requestProperty: "auth",
-    getToken: function fromHeaderOrQuerystring(req) {
-        if (
-            req.headers.authorization &&
-            req.headers.authorization.split(" ")[0] === "Bearer"
-        ) {
-            return req.headers.authorization.split(" ")[1];
-        } else if (req.query && req.query.token) {
-            return req.query.token;
-        }
-        return null;
-    },
-});
-
-const checkUserScopes = checkScopes(
-    ["user"],
-    "auth",
-    "https://hasura.io/jwt/claims",
-    "x-hasura-allowed-roles",
-    "x-hasura-user-id"
-);
-
 export const app: express.Application = express();
+
+app.use("/companion", companionRouter);
 
 app.use(function (req, res, next) {
     if (req.headers["x-hasura-event-secret"] !== process.env.EVENT_SECRET) {
@@ -142,14 +104,7 @@ app.post("/echo", jsonParser, async (req: Request, res: Response) => {
 app.post("/event", jsonParser, async (req: Request, res: Response) => {
     if (is<Payload>(req.body)) {
         try {
-            if (
-                req.body.trigger.name === "ConferenceCreated" &&
-                is<Payload<ConferenceData>>(req.body)
-            ) {
-                await handleConferenceCreated(req.body);
-            } else {
-                console.log("Received unhandled payload");
-            }
+            console.log("Received unhandled payload");
         } catch (e) {
             res.status(500).json("Failure while handling event");
             return;

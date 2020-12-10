@@ -18848,6 +18848,11 @@ export type CurrentUserGroupsRolesPermissionsQueryVariables = Exact<{
 
 export type CurrentUserGroupsRolesPermissionsQuery = { readonly __typename?: 'query_root', readonly User: ReadonlyArray<{ readonly __typename?: 'User', readonly id: string, readonly conferencesCreated: ReadonlyArray<{ readonly __typename?: 'Conference', readonly id: any }>, readonly attendees: ReadonlyArray<{ readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly conferenceId: any, readonly displayName: string, readonly groupAttendees: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly id: any, readonly groupId: any, readonly attendeeId: any, readonly group: { readonly __typename?: 'Group', readonly enabled: boolean, readonly id: any, readonly includeUnauthenticated: boolean, readonly name: string, readonly conferenceId: any, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any, readonly role: { readonly __typename?: 'Role', readonly id: any, readonly name: string, readonly conferenceId: any, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly permissionName: Permission_Enum, readonly id: any, readonly roleId: any }> } }> } }> }> }> };
 
+export type SelectRequiredItemQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SelectRequiredItemQuery = { readonly __typename?: 'query_root', readonly RequiredContentItem: ReadonlyArray<{ readonly __typename?: 'RequiredContentItem', readonly id: any, readonly contentTypeName: ContentType_Enum, readonly name: string, readonly conference: { readonly __typename?: 'Conference', readonly id: any, readonly name: string } }> };
+
 export type EchoQueryVariables = Exact<{
   message: Scalars['String'];
 }>;
@@ -19880,6 +19885,44 @@ export function useCurrentUserGroupsRolesPermissionsLazyQuery(baseOptions?: Apol
 export type CurrentUserGroupsRolesPermissionsQueryHookResult = ReturnType<typeof useCurrentUserGroupsRolesPermissionsQuery>;
 export type CurrentUserGroupsRolesPermissionsLazyQueryHookResult = ReturnType<typeof useCurrentUserGroupsRolesPermissionsLazyQuery>;
 export type CurrentUserGroupsRolesPermissionsQueryResult = Apollo.QueryResult<CurrentUserGroupsRolesPermissionsQuery, CurrentUserGroupsRolesPermissionsQueryVariables>;
+export const SelectRequiredItemDocument = gql`
+    query SelectRequiredItem {
+  RequiredContentItem {
+    id
+    contentTypeName
+    name
+    conference {
+      id
+      name
+    }
+  }
+}
+    `;
+
+/**
+ * __useSelectRequiredItemQuery__
+ *
+ * To run a query within a React component, call `useSelectRequiredItemQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectRequiredItemQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectRequiredItemQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSelectRequiredItemQuery(baseOptions?: Apollo.QueryHookOptions<SelectRequiredItemQuery, SelectRequiredItemQueryVariables>) {
+        return Apollo.useQuery<SelectRequiredItemQuery, SelectRequiredItemQueryVariables>(SelectRequiredItemDocument, baseOptions);
+      }
+export function useSelectRequiredItemLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectRequiredItemQuery, SelectRequiredItemQueryVariables>) {
+          return Apollo.useLazyQuery<SelectRequiredItemQuery, SelectRequiredItemQueryVariables>(SelectRequiredItemDocument, baseOptions);
+        }
+export type SelectRequiredItemQueryHookResult = ReturnType<typeof useSelectRequiredItemQuery>;
+export type SelectRequiredItemLazyQueryHookResult = ReturnType<typeof useSelectRequiredItemLazyQuery>;
+export type SelectRequiredItemQueryResult = Apollo.QueryResult<SelectRequiredItemQuery, SelectRequiredItemQueryVariables>;
 export const EchoDocument = gql`
     query Echo($message: String!) {
   echo(message: $message) {

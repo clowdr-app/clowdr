@@ -6,7 +6,7 @@ Eventually this may be split into multiple microservices.
 ## Pre-requisities
 
 1. [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
-1. [AWS](https://aws.amazon.com/)
+1. You have followed the AWS setup instructions in [aws/README.md](../../aws/README.md)
 
 ## Setting Up
 
@@ -79,8 +79,10 @@ variables according to [the table below](#actions-service-configuration).
 | STOP_EMAILS_CONTACT_EMAIL_ADDRESS | The email address users should contact when they received unexpected emails (e.g. `stop-emails@example.org`) |
 | GRAPHQL_API_SECURE_PROTOCOLS      | Boolean. Default: true. Whether to use https/wss or not.                                                     |
 | GRAPHQL_API_DOMAIN                | The domain and port of the GraphQL server                                                                    |
-| AWS_ACCESS_KEY_ID                 | The access key ID for your AWS user                                                                          |
-| AWS_SECRET_ACCESS_KEY             | The secret access key for your AWS user                                                                      |
-| AWS_REGION                        | The AWS region to operate in                                                                                 |
 | SENDGRID_API_KEY                  | Your SendGrid API Key                                                                                        |
 | SENDGRID_SENDER                   | Your SendGrid sender email address                                                                           |
+| HOST                              | The host URL of the actions service                                                                          |
+| AWS_CONTENT_BUCKET_ID             | The S3 bucket ID for content storage (see `aws/README.md`)                                                   |
+| AWS_REGION                        | The AWS region to operate in (see `aws/README.md`)                                                           |
+| AWS_SECRET_ACCESS_KEY             | The secret access key for your AWS user (see `aws/README.md`)                                                |
+| AWS_ACCESS_KEY_ID                 | The access key ID for your AWS user (see `aws/README.md`)                                                    |

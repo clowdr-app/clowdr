@@ -7,8 +7,9 @@ import {
     InvitationPartsFragment,
     InvitedUserPartsFragment,
     SelectInvitationAndUserDocument,
-    SendFreshInviteConfirmationDocument,
+    SendFreshInviteConfirmationEmailDocument,
     SetAttendeeUserIdDocument,
+    UpdateInvitationDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 
@@ -49,8 +50,13 @@ gql`
         }
     }
 
-    mutation SendFreshInviteConfirmation(
-        $confirmationCode: uuid!
+    mutation UpdateInvitation($confirmationCode: uuid!, $invitationId: uuid!, $userId: String!, $updatedAt: timestamptz!) {
+        update_Invitation(where: {id: {_eq: $invitationId}, updatedAt: {_eq: $updatedAt}}, _set: {confirmationCode: $confirmationCode, linkToUserId: $userId}) {
+            affected_rows
+        }
+    }
+
+    mutation SendFreshInviteConfirmationEmail(
         $emailAddress: String!
         $htmlContents: String!
         $invitationId: uuid!
@@ -58,12 +64,6 @@ gql`
         $subject: String!
         $userId: String!
     ) {
-        update_Invitation_by_pk(
-            pk_columns: { id: $invitationId }
-            _set: { confirmationCode: $confirmationCode, linkToUserId: $userId }
-        ) {
-            id
-        }
         insert_Email_one(
             object: {
                 emailAddress: $emailAddress
@@ -181,7 +181,7 @@ export async function invitationConfirmCurrentHandler(
             !!invitation.invitedEmailAddress &&
             !!user.email &&
             invitation.invitedEmailAddress.toLowerCase() ===
-                user.email.toLowerCase()
+            user.email.toLowerCase()
         );
     });
 }
@@ -290,18 +290,29 @@ export async function invitationConfirmSendInitialEmailHandler(
             invitation,
             user
         );
-        await apolloClient.mutate({
-            mutation: SendFreshInviteConfirmationDocument,
+        // updated_at serves as a mutex variable
+        const result = await apolloClient.mutate({
+            mutation: UpdateInvitationDocument,
             variables: {
-                emailAddress: sendEmailTo,
                 confirmationCode: newConfirmationCodeForDB,
                 invitationId: invitation.id,
                 userId: user.id,
-                subject: "Clowdr: Confirm acceptance of invitation",
-                htmlContents,
-                plainTextContents,
-            },
+                updatedAt: invitation.updatedAt
+            }
         });
+        if (result.data?.update_Invitation?.affected_rows && result.data?.update_Invitation?.affected_rows > 0) {
+            await apolloClient.mutate({
+                mutation: SendFreshInviteConfirmationEmailDocument,
+                variables: {
+                    emailAddress: sendEmailTo,
+                    invitationId: invitation.id,
+                    userId: user.id,
+                    subject: "Clowdr: Confirm acceptance of invitation",
+                    htmlContents,
+                    plainTextContents,
+                },
+            });
+        }
     }
     return {
         sent: true,
@@ -324,10 +335,9 @@ export async function invitationConfirmSendRepeatEmailHandler(
             user
         );
         await apolloClient.mutate({
-            mutation: SendFreshInviteConfirmationDocument,
+            mutation: SendFreshInviteConfirmationEmailDocument,
             variables: {
                 emailAddress: sendEmailTo,
-                confirmationCode: invitation.confirmationCode,
                 invitationId: invitation.id,
                 userId: user.id,
                 subject: "Clowdr: Confirm acceptance of invitation [Repeat]",

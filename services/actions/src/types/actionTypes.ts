@@ -1,5 +1,6 @@
 type Maybe<T> = T | null;
 
+type jsonb = any;
 type uuid = string;
 
 type SampleOutput = {
@@ -14,6 +15,10 @@ type ProtectedEchoOutput = {
     message: string;
 };
 
+type SubmitContentItemOutput = {
+    success: boolean;
+    message: string;
+};
 type ConfirmInvitationOutput = {
     ok: boolean;
     confSlug?: string;
@@ -32,6 +37,9 @@ type EchoInput = {
     message: string;
 };
 
+type SubmitContentItemInput = {
+    contentItemData: jsonb;
+};
 type ConfirmInvitationInput = {
     inviteCode: string;
     confirmationCode: string;
@@ -47,6 +55,7 @@ type Query = {
 };
 
 type Mutation = {
+    submitContentItem?: Maybe<SubmitContentItemOutput>;
     invitationConfirmCurrent?: Maybe<ConfirmInvitationOutput>;
     invitationConfirmSendInitialEmail?: Maybe<
         InvitationConfirmationEmailOutput
@@ -63,6 +72,10 @@ type protectedEchoArgs = {
     message: string;
 };
 
+type submitContentItemArgs = {
+    data: jsonb;
+    magicToken: string;
+};
 type invitationConfirmCurrentArgs = {
     inviteCode: uuid;
 };

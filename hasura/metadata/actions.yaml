@@ -59,17 +59,30 @@ actions:
       value_from_env: EVENT_SECRET
   permissions:
   - role: user
+- name: submitContentItem
+  definition:
+    kind: synchronous
+    handler: '{{ACTION_BASE_URL}}/content/upload'
+    forward_client_headers: true
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+  permissions:
+  - role: unauthenticated
+  - role: user
 custom_types:
   enums: []
   input_objects:
   - name: SampleInput
   - name: EchoInput
+  - name: SubmitContentItemInput
   - name: ConfirmInvitationInput
   - name: InvitationConfirmationEmailInput
   objects:
   - name: SampleOutput
   - name: EchoOutput
   - name: ProtectedEchoOutput
+  - name: SubmitContentItemOutput
   - name: ConfirmInvitationOutput
   - name: InvitationConfirmationEmailOutput
   scalars: []

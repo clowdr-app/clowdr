@@ -11519,6 +11519,16 @@ export type String_Comparison_Exp = {
   readonly _similar?: Maybe<Scalars['String']>;
 };
 
+export type SubmitContentItemInput = {
+  readonly contentItemData: Scalars['jsonb'];
+};
+
+export type SubmitContentItemOutput = {
+  readonly __typename?: 'SubmitContentItemOutput';
+  readonly message: Scalars['String'];
+  readonly success: Scalars['Boolean'];
+};
+
 /** columns and relationships of "Tag" */
 export type Tag = {
   readonly __typename?: 'Tag';
@@ -13423,6 +13433,8 @@ export type Mutation_Root = {
   readonly invitationConfirmSendRepeatEmail?: Maybe<InvitationConfirmationEmailOutput>;
   /** perform the action: "invitationConfirmWithCode" */
   readonly invitationConfirmWithCode?: Maybe<ConfirmInvitationOutput>;
+  /** perform the action: "submitContentItem" */
+  readonly submitContentItem?: Maybe<SubmitContentItemOutput>;
   /** update data of the table: "Attendee" */
   readonly update_Attendee?: Maybe<Attendee_Mutation_Response>;
   /** update single row of the table: "Attendee" */
@@ -14837,6 +14849,9 @@ export type Mutation_RootInsert_User_OneArgs = {
 
 
 /** mutation root */
+export type Mutation_RootSubmitContentItemArgs = {
+  data: Scalars['jsonb'];
+  magicToken: Scalars['String'];
 export type Mutation_RootInvitationConfirmCurrentArgs = {
   inviteCode: Scalars['uuid'];
 };
@@ -18853,6 +18868,14 @@ export type SelectRequiredItemQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type SelectRequiredItemQuery = { readonly __typename?: 'query_root', readonly RequiredContentItem: ReadonlyArray<{ readonly __typename?: 'RequiredContentItem', readonly id: any, readonly contentTypeName: ContentType_Enum, readonly name: string, readonly conference: { readonly __typename?: 'Conference', readonly id: any, readonly name: string } }> };
 
+export type SubmitContentItemMutationVariables = Exact<{
+  contentItemData: Scalars['jsonb'];
+  magicToken: Scalars['String'];
+}>;
+
+
+export type SubmitContentItemMutation = { readonly __typename?: 'mutation_root', readonly submitContentItem?: Maybe<{ readonly __typename?: 'SubmitContentItemOutput', readonly message: string, readonly success: boolean }> };
+
 export type EchoQueryVariables = Exact<{
   message: Scalars['String'];
 }>;
@@ -19923,6 +19946,40 @@ export function useSelectRequiredItemLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type SelectRequiredItemQueryHookResult = ReturnType<typeof useSelectRequiredItemQuery>;
 export type SelectRequiredItemLazyQueryHookResult = ReturnType<typeof useSelectRequiredItemLazyQuery>;
 export type SelectRequiredItemQueryResult = Apollo.QueryResult<SelectRequiredItemQuery, SelectRequiredItemQueryVariables>;
+export const SubmitContentItemDocument = gql`
+    mutation SubmitContentItem($contentItemData: jsonb!, $magicToken: String!) {
+  submitContentItem(data: $contentItemData, magicToken: $magicToken) {
+    message
+    success
+  }
+}
+    `;
+export type SubmitContentItemMutationFn = Apollo.MutationFunction<SubmitContentItemMutation, SubmitContentItemMutationVariables>;
+
+/**
+ * __useSubmitContentItemMutation__
+ *
+ * To run a mutation, you first call `useSubmitContentItemMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSubmitContentItemMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [submitContentItemMutation, { data, loading, error }] = useSubmitContentItemMutation({
+ *   variables: {
+ *      contentItemData: // value for 'contentItemData'
+ *      magicToken: // value for 'magicToken'
+ *   },
+ * });
+ */
+export function useSubmitContentItemMutation(baseOptions?: Apollo.MutationHookOptions<SubmitContentItemMutation, SubmitContentItemMutationVariables>) {
+        return Apollo.useMutation<SubmitContentItemMutation, SubmitContentItemMutationVariables>(SubmitContentItemDocument, baseOptions);
+      }
+export type SubmitContentItemMutationHookResult = ReturnType<typeof useSubmitContentItemMutation>;
+export type SubmitContentItemMutationResult = Apollo.MutationResult<SubmitContentItemMutation>;
+export type SubmitContentItemMutationOptions = Apollo.BaseMutationOptions<SubmitContentItemMutation, SubmitContentItemMutationVariables>;
 export const EchoDocument = gql`
     query Echo($message: String!) {
   echo(message: $message) {

@@ -40,6 +40,14 @@ type Query {
 }
 
 
+type Mutation {
+  submitContentItem (
+    data: jsonb!
+    magicToken: String!
+  ): SubmitContentItemOutput
+}
+
+
 
 
 input SampleInput {
@@ -49,6 +57,10 @@ input SampleInput {
 
 input EchoInput {
   message : String!
+}
+
+input SubmitContentItemInput {
+  contentItemData : jsonb!
 }
 
 input ConfirmInvitationInput {
@@ -69,6 +81,11 @@ type EchoOutput {
 }
 
 type ProtectedEchoOutput {
+  message : String!
+}
+
+type SubmitContentItemOutput {
+  success : Boolean!
   message : String!
 }
 

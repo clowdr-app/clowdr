@@ -7,6 +7,7 @@ import {
     FormLabel,
     Heading,
     Spinner,
+    useToast,
 } from "@chakra-ui/react";
 import AwsS3Multipart from "@uppy/aws-s3-multipart";
 import Uppy from "@uppy/core";
@@ -15,9 +16,14 @@ import "@uppy/progress-bar/dist/style.css";
 import { DragDrop, ProgressBar } from "@uppy/react";
 import { Field, FieldProps, Form, Formik } from "formik";
 import gql from "graphql-tag";
-import React, { useEffect, useMemo, useState } from "react";
-import { useSelectRequiredItemQuery } from "../../generated/graphql";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useHistory } from "react-router-dom";
+import {
+    useSelectRequiredItemQuery,
+    useSubmitContentItemMutation,
+} from "../../generated/graphql";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
+import FAIcon from "../Icons/FAIcon";
 import UnsavedChangesWarning from "../LeavingPageWarnings/UnsavedChangesWarning";
 
 gql`
@@ -30,6 +36,13 @@ gql`
                 id
                 name
             }
+        }
+    }
+
+    mutation SubmitContentItem($contentItemData: jsonb!, $magicToken: String!) {
+        submitContentItem(data: $contentItemData, magicToken: $magicToken) {
+            message
+            success
         }
     }
 `;
@@ -48,7 +61,10 @@ export default function UploadItemPage({
         },
     });
     useQueryErrorToast(error);
-    const [files, setFiles] = useState<string[]>([]);
+    const toast = useToast();
+    const [files, setFiles] = useState<Uppy.UppyFile[]>([]);
+    const [submitContentItem] = useSubmitContentItemMutation();
+    const history = useHistory();
 
     const uppy = useMemo(() => {
         if (!data?.RequiredContentItem[0]) {
@@ -61,7 +77,7 @@ export default function UploadItemPage({
             },
             allowMultipleUploads: false,
             restrictions: {
-                allowedFileTypes: [".mp4"],
+                allowedFileTypes: [".mp4", ".mkv", ".webm"],
                 maxNumberOfFiles: 1,
                 minNumberOfFiles: 1,
             },
@@ -75,10 +91,34 @@ export default function UploadItemPage({
         return uppy;
     }, [data?.RequiredContentItem]);
 
+    const updateFiles = useCallback(() => {
+        const validNameRegex = /^[a-zA-Z0-9.!*'()\-_ ]+$/;
+        if (uppy) {
+            const invalidFiles = uppy
+                ?.getFiles()
+                .filter((file) => !validNameRegex.test(file.name));
+            for (const invalidFile of invalidFiles) {
+                toast({
+                    status: "error",
+                    description:
+                        "Invalid file name. File names must only contain letters, numbers, spaces and the following special characters: !*'()-_",
+                });
+                uppy.removeFile(invalidFile.id);
+            }
+
+            setFiles(uppy.getFiles());
+        }
+    }, [toast, uppy]);
+
     useEffect(() => {
-        uppy?.on("file-added", () =>
-            setFiles(uppy.getFiles().map((file) => file.name))
-        );
+        uppy?.on("file-added", updateFiles);
+        uppy?.on("file-removed", updateFiles);
+        uppy?.on("upload-success", () => {
+            toast({
+                status: "success",
+                description: "All files uploaded.",
+            });
+        });
     });
 
     return (
@@ -95,27 +135,102 @@ export default function UploadItemPage({
                     <Heading as="h2">
                         {data?.RequiredContentItem[0].name}
                     </Heading>
-                    <DragDrop uppy={uppy as Uppy.Uppy} />
-                    <p>{files.join(", ")}</p>
                     <ProgressBar
                         uppy={uppy as Uppy.Uppy}
                         fixed
                         hideAfterFinish
                     />
-                    <Button
-                        onClick={async () => {
-                            await uppy?.upload();
-                        }}
-                    >
-                        Upload
-                    </Button>
                     <Formik
                         initialValues={{
                             agree: false,
-                            file: null,
                         }}
                         onSubmit={async (values) => {
                             console.log(values);
+                            if (!uppy) {
+                                throw new Error("No Uppy instance");
+                            }
+                            let result;
+                            try {
+                                result = await uppy.upload();
+                            } catch (e) {
+                                console.error("Failed to upload file", e);
+                                toast({
+                                    status: "error",
+                                    description:
+                                        "Failed to upload file. Please try again.",
+                                });
+                                uppy.reset();
+                                return;
+                            }
+
+                            if (
+                                result.failed.length > 0 ||
+                                result.successful.length < 1
+                            ) {
+                                console.error(
+                                    "Failed to upload file",
+                                    result.failed
+                                );
+                                toast({
+                                    status: "error",
+                                    description:
+                                        "Failed to upload file. Please try again later.",
+                                });
+                                uppy.reset();
+                                return;
+                            }
+
+                            try {
+                                const submitResult = await submitContentItem({
+                                    variables: {
+                                        contentItemData: {
+                                            url: result.successful[0].uploadURL,
+                                        },
+                                        magicToken: token,
+                                    },
+                                });
+
+                                if (
+                                    submitResult.errors ||
+                                    !submitResult.data?.submitContentItem
+                                        ?.success
+                                ) {
+                                    console.error(
+                                        "Failed to submit item",
+                                        submitResult.errors,
+                                        submitResult.data?.submitContentItem
+                                            ?.message
+                                    );
+                                    toast({
+                                        status: "error",
+                                        description: `Failed to submit item. Please try again later. Error: ${[
+                                            submitResult.data?.submitContentItem
+                                                ?.message,
+                                            ...(submitResult.errors?.map(
+                                                (e) => e.message
+                                            ) ?? []),
+                                        ].join("; ")}`,
+                                    });
+                                    uppy.reset();
+                                    return;
+                                }
+
+                                toast({
+                                    status: "success",
+                                    description: "Submitted item successfully.",
+                                });
+                                uppy.reset();
+                                history.push("/");
+                            } catch (e) {
+                                console.error("Failed to submit item", e);
+                                toast({
+                                    status: "error",
+                                    description:
+                                        "Failed to submit item. Please try again later.",
+                                });
+                                uppy.reset();
+                                return;
+                            }
                         }}
                     >
                         {({ dirty, ...props }) => (
@@ -124,7 +239,42 @@ export default function UploadItemPage({
                                     hasUnsavedChanges={dirty}
                                 />
                                 <Form>
-                                    <Field name="agree">
+                                    <DragDrop
+                                        uppy={uppy as Uppy.Uppy}
+                                        allowMultipleFiles={false}
+                                    />
+                                    <ul>
+                                        {files.map((file) => (
+                                            <li key={file.id}>
+                                                {file.name}{" "}
+                                                <Button
+                                                    onClick={() =>
+                                                        uppy?.removeFile(
+                                                            file.id
+                                                        )
+                                                    }
+                                                >
+                                                    <FAIcon
+                                                        iconStyle="s"
+                                                        icon="times"
+                                                        color="red.400"
+                                                    />
+                                                </Button>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                    <Field
+                                        name="agree"
+                                        validate={(
+                                            inValue: string | null | undefined
+                                        ) => {
+                                            let error;
+                                            if (!inValue) {
+                                                error = "Must agree to terms";
+                                            }
+                                            return error;
+                                        }}
+                                    >
                                         {({
                                             form,
                                             field,
@@ -136,7 +286,7 @@ export default function UploadItemPage({
                                                 }
                                                 isRequired
                                             >
-                                                <FormLabel htmlFor="name">
+                                                <FormLabel htmlFor="agree">
                                                     Agree?
                                                 </FormLabel>
                                                 <Checkbox
@@ -148,16 +298,20 @@ export default function UploadItemPage({
                                                     upload conditions.
                                                 </FormHelperText>
                                                 <FormErrorMessage>
-                                                    {form.errors.name}
+                                                    {form.errors.agree}
                                                 </FormErrorMessage>
                                             </FormControl>
                                         )}
                                     </Field>
-                                    <Field name="file">
-                                        {({ form, field }: FieldProps) => (
-                                            <FormControl />
-                                        )}
-                                    </Field>
+                                    <Button
+                                        mt={4}
+                                        colorScheme="green"
+                                        isLoading={props.isSubmitting}
+                                        type="submit"
+                                        isDisabled={!props.isValid || !dirty}
+                                    >
+                                        Upload
+                                    </Button>
                                 </Form>
                             </>
                         )}

@@ -50,8 +50,19 @@ gql`
         }
     }
 
-    mutation UpdateInvitation($confirmationCode: uuid!, $invitationId: uuid!, $userId: String!, $updatedAt: timestamptz!) {
-        update_Invitation(where: {id: {_eq: $invitationId}, updatedAt: {_eq: $updatedAt}}, _set: {confirmationCode: $confirmationCode, linkToUserId: $userId}) {
+    mutation UpdateInvitation(
+        $confirmationCode: uuid!
+        $invitationId: uuid!
+        $userId: String!
+        $updatedAt: timestamptz!
+    ) {
+        update_Invitation(
+            where: {
+                id: { _eq: $invitationId }
+                updatedAt: { _eq: $updatedAt }
+            }
+            _set: { confirmationCode: $confirmationCode, linkToUserId: $userId }
+        ) {
             affected_rows
         }
     }
@@ -181,7 +192,7 @@ export async function invitationConfirmCurrentHandler(
             !!invitation.invitedEmailAddress &&
             !!user.email &&
             invitation.invitedEmailAddress.toLowerCase() ===
-            user.email.toLowerCase()
+                user.email.toLowerCase()
         );
     });
 }
@@ -297,10 +308,13 @@ export async function invitationConfirmSendInitialEmailHandler(
                 confirmationCode: newConfirmationCodeForDB,
                 invitationId: invitation.id,
                 userId: user.id,
-                updatedAt: invitation.updatedAt
-            }
+                updatedAt: invitation.updatedAt,
+            },
         });
-        if (result.data?.update_Invitation?.affected_rows && result.data?.update_Invitation?.affected_rows > 0) {
+        if (
+            result.data?.update_Invitation?.affected_rows &&
+            result.data?.update_Invitation?.affected_rows > 0
+        ) {
             await apolloClient.mutate({
                 mutation: SendFreshInviteConfirmationEmailDocument,
                 variables: {

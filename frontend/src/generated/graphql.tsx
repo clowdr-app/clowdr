@@ -14849,9 +14849,6 @@ export type Mutation_RootInsert_User_OneArgs = {
 
 
 /** mutation root */
-export type Mutation_RootSubmitContentItemArgs = {
-  data: Scalars['jsonb'];
-  magicToken: Scalars['String'];
 export type Mutation_RootInvitationConfirmCurrentArgs = {
   inviteCode: Scalars['uuid'];
 };
@@ -14872,6 +14869,13 @@ export type Mutation_RootInvitationConfirmSendRepeatEmailArgs = {
 /** mutation root */
 export type Mutation_RootInvitationConfirmWithCodeArgs = {
   inviteInput: ConfirmInvitationInput;
+};
+
+
+/** mutation root */
+export type Mutation_RootSubmitContentItemArgs = {
+  data: Scalars['jsonb'];
+  magicToken: Scalars['String'];
 };
 
 

@@ -3,6 +3,8 @@ import assert from "assert";
 import bodyParser from "body-parser";
 import cors from "cors";
 import express from "express";
+import { extname } from "path";
+import { v4 as uuidv4 } from "uuid";
 
 assert(
     process.env.AWS_ACCESS_KEY_ID,
@@ -36,7 +38,8 @@ router.use(
                 secret: process.env.AWS_SECRET_ACCESS_KEY,
                 region: process.env.AWS_REGION,
                 getKey(_req, filename, _metadata) {
-                    return filename;
+                    const extension = extname(filename);
+                    return `${uuidv4()}${extension}`;
                 },
                 acl: "private",
                 awsClientOptions: {

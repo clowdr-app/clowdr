@@ -12,6 +12,7 @@ import {
     invitationConfirmWithCodeHandler,
 } from "./handlers/invitation";
 import protectedEchoHandler from "./handlers/protectedEcho";
+import uploadContentHandler from "./handlers/upload";
 import { checkJwt } from "./middlewares/checkJwt";
 import { checkUserScopes } from "./middlewares/checkScopes";
 import { router as companionRouter } from "./router/companion";
@@ -99,6 +100,21 @@ app.post("/echo", jsonParser, async (req: Request, res: Response) => {
     console.log(`Echoing "${params.message}"`);
     const result = handlerEcho(params);
     return res.json(result);
+});
+
+app.post("/content/upload", jsonParser, async (req: Request, res: Response) => {
+    const params = req.body.input;
+    if (is<submitContentItemArgs>(params)) {
+        console.log("/content/upload: Item upload requested");
+        const result = await uploadContentHandler(params);
+        return res.status(200).json(result);
+    } else {
+        console.error("/content/upload: Invalid request", req.body.input);
+        return res.status(200).json({
+            success: false,
+            message: "Invalid request",
+        });
+    }
 });
 
 app.post("/event", jsonParser, async (req: Request, res: Response) => {

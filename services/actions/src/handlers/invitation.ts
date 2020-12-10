@@ -242,7 +242,7 @@ please enter the confirmation code shown below. If this was not you, please
 contact your conference organiser.</p>
 
 <p>Confirmation code: ${externalConfirmationCode}<br />
-Page to enter the code: <a href="https://${process.env.FRONTEND_DOMAIN}/invitation/accept/${invitation.inviteCode}">https://${process.env.frontend_domain}/invitation/accept/${invitation.inviteCode}</a><br />
+Page to enter the code: <a href="https://${process.env.FRONTEND_DOMAIN}/invitation/accept/${invitation.inviteCode}">https://${process.env.FRONTEND_DOMAIN}/invitation/accept/${invitation.inviteCode}</a><br />
 (You will need to be logged in as ${user.email} in order to enter the confirmation code.)</p>
 
 <p>We hope you enjoy your conference,<br/>
@@ -259,7 +259,7 @@ please enter the confirmation code shown below. If this was not you, please
 contact your conference organiser.
 
 Confirmation code: ${externalConfirmationCode}
-Page to enter the code: https://${process.env.frontend_domain}/invitation/accept/${invitation.inviteCode}
+Page to enter the code: https://${process.env.FRONTEND_DOMAIN}/invitation/accept/${invitation.inviteCode}
 
 (You will need to be logged in as ${user.email} in order to enter the confirmation code.)
 

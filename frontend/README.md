@@ -115,4 +115,5 @@ variables in the build which start with `SNOWPACK_PUBLIC_`.
 | SNOWPACK_PUBLIC_AUTH_LOGOUT_CALLBACK_URL     | `http(s)://<frontend-url>/auth0/logged-out`                                          | Yes      |
 | SNOWPACK_PUBLIC_AUTH_DOMAIN                  | <auth0-domain> e.g. `something.eu.auth0.com`                                         | Yes      |
 | SNOWPACK_PUBLIC_AUTH_CLIENT_ID               | <auth0-client-id> as shown in Auth0 Application                                      | Yes      |
+| _AWS_                                        |                                                                                      |          |
 | SNOWPACK_PUBLIC_COMPANION_BASE_URL           | URL of the Uppy Companion instance (provided at `/companion` by the actions service) | Yes      |

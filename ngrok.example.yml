@@ -1,9 +1,13 @@
+authtoken: <Ngrok auth token>
+region: <Ngrok region>
 tunnels:
   auth:
     addr: 8080
     proto: http
     bind_tls: true
+    hostname: <Ngrok hostname>
   actions:
     addr: 3001
     proto: http
     bind_tls: true
+    hostname: <Ngrok hostname>

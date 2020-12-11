@@ -86,3 +86,5 @@ variables according to [the table below](#actions-service-configuration).
 | AWS_REGION                        | The AWS region to operate in (see `aws/README.md`)                                                           |
 | AWS_SECRET_ACCESS_KEY             | The secret access key for your AWS user (see `aws/README.md`)                                                |
 | AWS_ACCESS_KEY_ID                 | The access key ID for your AWS user (see `aws/README.md`)                                                    |
+| AWS_MEDIALIVE_SERVICE_ROLE_ARN    | The IAM role to be passed to MediaLive (see `aws/README.md`)                                                 |
+| AWS_MEDIACONVERT_SERVICE_ROLE_ARN | The IAM role to be passed to MediaConvert (see `aws/README.md`)                                              |

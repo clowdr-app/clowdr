@@ -1,3 +1,6 @@
+import { ContentType_Enum } from "../generated/graphql";
+import { ContentItemDataBlob } from "./content";
+
 export interface Payload<T = any> {
     event: {
         session_variables: { [x: string]: string };
@@ -34,6 +37,17 @@ export interface ConferenceData extends BaseData {
     name: string;
     shortName: string;
     slug: string;
+}
+
+export interface ContentItemData extends BaseData {
+    isHidden: boolean;
+    data: ContentItemDataBlob;
+    layoutData: any | null;
+    contentTypeName: ContentType_Enum;
+    name: string;
+    conferenceId: string;
+    contentGroupId: string;
+    originatingDataId: string | null;
 }
 
 export interface EmailData extends BaseData {

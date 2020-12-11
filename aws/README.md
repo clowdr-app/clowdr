@@ -15,6 +15,7 @@ AWS infrastructure-as-code for the Clowdr app.
 1. Install the CDK CLI: `npm install -g aws-cdk`
 1. `cd` into the `aws` folder
 1. Install npm modules: `npm i`
+1. Configure `cdk.context.json` according to [AWS Configuration](#aws-configuration) below
 1. Run `cdk deploy` to deploy the Clowdr infrastructure to your account
 1. Make a note of the three outputs: `AccessKeyId`, `SecretAccessKey` and `BucketId`. You will need these when setting up the actions service.
 
@@ -26,3 +27,10 @@ AWS infrastructure-as-code for the Clowdr app.
 - `cdk deploy` deploy this stack to your default AWS account/region
 - `cdk diff` compare deployed stack with current state
 - `cdk synth` emits the synthesized CloudFormation template
+
+## AWS Configuration
+
+| Key                         | Value                                                         |
+| --------------------------- | ------------------------------------------------------------- |
+| clowdr/transcodeWebhookUrl  | Publically-accessible URL for `/contentItem/notifyTranscode`  |
+| clowdr/transcribeWebhookUrl | Publically-accessible URL for `/contentItem/notifyTranscribe` |

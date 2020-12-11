@@ -62,7 +62,7 @@ actions:
 - name: submitContentItem
   definition:
     kind: synchronous
-    handler: '{{ACTION_BASE_URL}}/content/upload'
+    handler: '{{ACTION_BASE_URL}}/contentItem/submit'
     forward_client_headers: true
     headers:
     - name: x-hasura-event-secret

@@ -132,6 +132,7 @@ export class AwsStack extends cdk.Stack {
         const mediaConvertAccessRole = new iam.Role(this, "MediaConvertRole", {
             assumedBy: new iam.ServicePrincipal("mediaconvert.amazonaws.com"),
         });
+        mediaConvertAccessRole.grantPassRole(user);
         bucket.grantReadWrite(mediaConvertAccessRole);
 
         mediaConvertAccessRole.addToPolicy(
@@ -170,6 +171,9 @@ export class AwsStack extends cdk.Stack {
                 eventBusName: "TranscodeEvents",
             }
         );
+        new events.CfnArchive(this, "TranscodeEventArchive", {
+            sourceArn: transcodeEventBus.eventBusArn,
+        });
         const transcodeEventRule = new events.Rule(this, "TranscodeEventRule", {
             enabled: true,
             eventBus: transcodeEventBus,
@@ -213,6 +217,9 @@ export class AwsStack extends cdk.Stack {
                 eventBusName: "TranscribeEvents",
             }
         );
+        new events.CfnArchive(this, "TranscribeEventArchive", {
+            sourceArn: transcribeEventBus.eventBusArn,
+        });
         const transcribeEventRule = new events.Rule(
             this,
             "TranscribeEventRule",

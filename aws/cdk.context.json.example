@@ -1,3 +1,4 @@
 {
-    "clowdr/webhookUrl": "actions service public URL"
+    "clowdr/transcodeWebhookUrl": "<actions service base URL>/contentItem/notifyTranscode",
+    "clowdr/transcribeWebhookUrl": "<actions service base URL>/contentItem/notifyTranscribe"
 }

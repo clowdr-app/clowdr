@@ -12,10 +12,10 @@ import {
     invitationConfirmWithCodeHandler,
 } from "./handlers/invitation";
 import protectedEchoHandler from "./handlers/protectedEcho";
-import uploadContentHandler from "./handlers/upload";
 import { checkJwt } from "./middlewares/checkJwt";
 import { checkUserScopes } from "./middlewares/checkScopes";
 import { router as companionRouter } from "./router/companion";
+import { router as contentItemRouter } from "./router/contentItem";
 import { EmailData, Payload } from "./types/event";
 
 type AuthenticatedRequest = Request & { userId: string };
@@ -65,6 +65,10 @@ export const app: express.Application = express();
 
 app.use("/companion", companionRouter);
 
+app.get("/", function (_req, res) {
+    res.send("Clowdr");
+});
+
 app.use(function (req, res, next) {
     if (req.headers["x-hasura-event-secret"] !== process.env.EVENT_SECRET) {
         res.status(401);
@@ -76,10 +80,6 @@ app.use(function (req, res, next) {
 });
 
 const jsonParser = bodyParser.json();
-
-app.get("/", function (_req, res) {
-    res.send("Hello World!");
-});
 
 app.post(
     "/protectedEcho",
@@ -100,36 +100,6 @@ app.post("/echo", jsonParser, async (req: Request, res: Response) => {
     console.log(`Echoing "${params.message}"`);
     const result = handlerEcho(params);
     return res.json(result);
-});
-
-app.post("/content/upload", jsonParser, async (req: Request, res: Response) => {
-    const params = req.body.input;
-    if (is<submitContentItemArgs>(params)) {
-        console.log("/content/upload: Item upload requested");
-        const result = await uploadContentHandler(params);
-        return res.status(200).json(result);
-    } else {
-        console.error("/content/upload: Invalid request", req.body.input);
-        return res.status(200).json({
-            success: false,
-            message: "Invalid request",
-        });
-    }
-});
-
-app.post("/event", jsonParser, async (req: Request, res: Response) => {
-    if (is<Payload>(req.body)) {
-        try {
-            console.log("Received unhandled payload");
-        } catch (e) {
-            res.status(500).json("Failure while handling event");
-            return;
-        }
-        res.status(200).json("OK");
-    } else {
-        console.log("Received incorrect payload");
-        res.status(500).json("Unexpected payload");
-    }
 });
 
 app.post("/emailCreated", jsonParser, async (req: Request, res: Response) => {
@@ -225,6 +195,8 @@ app.post(
         return res.json(result);
     }
 );
+
+app.use("/contentItem", contentItemRouter);
 
 const portNumber = process.env.PORT ? parseInt(process.env.PORT, 10) : 4000;
 export const server = app.listen(portNumber, function () {

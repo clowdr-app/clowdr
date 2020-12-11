@@ -4,7 +4,9 @@ import React from "react";
 export default function AppLoadingScreen(): JSX.Element {
     return (
         <Center w="100%" h="100%">
-            <Spinner />
+            <div>
+                <Spinner />
+            </div>
         </Center>
     );
 }

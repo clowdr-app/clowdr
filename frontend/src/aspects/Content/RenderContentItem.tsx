@@ -1,8 +1,8 @@
+import type { ContentItemDataBlob } from "@clowdr-app/shared-types/types/content";
 import AmazonS3Uri from "amazon-s3-uri";
 import React, { useMemo } from "react";
 import ReactPlayer from "react-player";
 import { ContentType_Enum } from "../../generated/graphql";
-import type { ContentItemDataBlob } from "./content";
 
 export default function RenderContentItem({
     data,

@@ -1,5 +1,5 @@
+import { ContentItemDataBlob } from "@clowdr-app/shared-types/types/content";
 import { ContentType_Enum } from "../generated/graphql";
-import { ContentItemDataBlob } from "./content";
 
 export interface Payload<T = any> {
     event: {

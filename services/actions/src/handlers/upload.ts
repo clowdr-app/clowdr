@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client/core";
+import { ContentBlob } from "@clowdr-app/shared-types/types/content";
 import AmazonS3URI from "amazon-s3-uri";
 import { S3 } from "../aws/awsClient";
 import {
@@ -7,7 +8,6 @@ import {
     RequiredItemDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { ContentBlob } from "../types/content";
 
 gql`
     query RequiredItem($accessToken: String!) {

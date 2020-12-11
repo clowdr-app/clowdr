@@ -1,0 +1,23 @@
+{
+    "name": "@clowdr-app/shared-types",
+    "version": "1.0.0",
+    "description": "Development setup",
+    "scripts": {},
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/clowdr-app/clowdr.git"
+    },
+    "author": "Ed Nutting",
+    "license": "BSD-3-Clause",
+    "bugs": {
+        "url": "https://github.com/clowdr-app/clowdr/issues"
+    },
+    "homepage": "https://github.com/clowdr-app/clowdr#readme",
+    "devDependencies": {
+        "typescript": "^4.1.2"
+    },
+    "engines": {
+        "node": "15.x"
+    },
+    "dependencies": {}
+}

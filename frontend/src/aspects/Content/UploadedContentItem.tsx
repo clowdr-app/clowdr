@@ -28,7 +28,9 @@ export default function UploadedContentItem({
         fetchPolicy: "network-only",
     });
     return loading ? (
-        <Spinner />
+        <div>
+            <Spinner />
+        </div>
     ) : error ? (
         <>Could not load item.</>
     ) : (

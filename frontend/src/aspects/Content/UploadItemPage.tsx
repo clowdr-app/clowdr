@@ -126,7 +126,9 @@ export default function UploadItemPage({
                 Upload item
             </Heading>
             {loading ? (
-                <Spinner />
+                <div>
+                    <Spinner />
+                </div>
             ) : error ? (
                 <>An error occurred while loading data.</>
             ) : (

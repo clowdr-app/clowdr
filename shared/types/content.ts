@@ -1,4 +1,4 @@
-import { ContentType_Enum } from "../generated/graphql";
+import { ContentType_Enum } from "../../services/actions/src/generated/graphql";
 
 export interface ContentItemDataBlob {
     versions: ContentItemVersionData[];

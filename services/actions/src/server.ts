@@ -10,6 +10,8 @@ import {
     invitationConfirmSendInitialEmailHandler,
     invitationConfirmSendRepeatEmailHandler,
     invitationConfirmWithCodeHandler,
+    invitationSendInitialHandler,
+    invitationSendRepeatHandler,
 } from "./handlers/invitation";
 import protectedEchoHandler from "./handlers/protectedEcho";
 import uploadContentHandler from "./handlers/upload";
@@ -49,6 +51,11 @@ if (process.env.NODE_ENV !== "test") {
         process.env.FRONTEND_DOMAIN,
         "FRONTEND_DOMAIN environment variable not provided."
     );
+    process.env.FRONTEND_PROTOCOL =
+        process.env.FRONTEND_PROTOCOL ||
+        (process.env.FRONTEND_DOMAIN.startsWith("localhost")
+            ? "http"
+            : "https");
 
     assert(
         process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS,
@@ -157,6 +164,34 @@ app.post("/emailCreated", jsonParser, async (req: Request, res: Response) => {
         res.status(500).json("Unexpected payload");
     }
 });
+
+app.post(
+    "/invitation/send/initial",
+    jsonParser,
+    checkJwt,
+    checkUserScopes,
+    async (_req: Request, res: Response) => {
+        const req = _req as AuthenticatedRequest;
+        const params: invitationSendInitialEmailArgs = req.body.input;
+        console.log("Invitation/send/initial", params);
+        const result = await invitationSendInitialHandler(params, req.userId);
+        return res.json(result);
+    }
+);
+
+app.post(
+    "/invitation/send/repeat",
+    jsonParser,
+    checkJwt,
+    checkUserScopes,
+    async (_req: Request, res: Response) => {
+        const req = _req as AuthenticatedRequest;
+        const params: invitationSendRepeatEmailArgs = req.body.input;
+        console.log("Invitation/send/repeat", params);
+        const result = await invitationSendRepeatHandler(params, req.userId);
+        return res.json(result);
+    }
+);
 
 app.post(
     "/invitation/confirm/current",

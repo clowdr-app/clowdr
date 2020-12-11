@@ -33,6 +33,20 @@ type Mutation {
 }
 
 
+type Mutation {
+  invitationSendInitialEmail (
+    attendeeIds: [String!]!
+  ): [InvitationSendEmailResult!]!
+}
+
+
+type Mutation {
+  invitationSendRepeatEmail (
+    attendeeIds: [String!]!
+  ): [InvitationSendEmailResult!]!
+}
+
+
 type Query {
   protectedEcho (
     message: String!
@@ -95,6 +109,11 @@ type ConfirmInvitationOutput {
 }
 
 type InvitationConfirmationEmailOutput {
+  sent : Boolean!
+}
+
+type InvitationSendEmailResult {
+  attendeeId : String!
   sent : Boolean!
 }
 

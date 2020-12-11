@@ -103,14 +103,18 @@ export function defaultBooleanFilter(item: boolean, search?: boolean): boolean {
 }
 
 export function defaultSelectFilter(
-    itemKey: string,
-    searchKeys?: Array<string>
+    itemOptions: SelectOption | Array<SelectOption>,
+    searchValues?: Array<string>
 ): boolean {
-    if (searchKeys === undefined) {
+    if (searchValues === undefined) {
         return true;
     }
 
-    return searchKeys.some((key) => itemKey === key);
+    return searchValues.some((key) =>
+        itemOptions instanceof Array
+            ? itemOptions.some((x) => x.value === key)
+            : itemOptions.value === key
+    );
 }
 
 export function defaultStringSorter(itemX: string, itemY: string): number {
@@ -270,6 +274,7 @@ export interface Field<S, T, FieldSpecT extends FieldSpec<T> = FieldSpec<T>> {
     description: string;
 
     isHidden: boolean;
+    isEditableAtCreate?: boolean;
     isEditable?: boolean;
     // TODO: String editor input type (text, email, multiline, etc)
 
@@ -561,6 +566,15 @@ export type SecondaryEditorComponents = {
     footerButtons: SecondaryEditorFooterButton[];
 };
 
+export interface CustomButton<T, PK extends keyof T> {
+    text: string | JSX.Element;
+    label: string;
+    colorScheme: string;
+    alwaysEnabled: boolean;
+    action: (keys: Set<T[PK]>) => Promise<void>;
+    isRunning: boolean;
+}
+
 export interface CRUDTableProps<T, PK extends keyof T> {
     /**
      * The source data
@@ -600,7 +614,7 @@ export interface CRUDTableProps<T, PK extends keyof T> {
      * Buttons to show in the controls bar - e.g. "send emails to selected
      * attendees."
      */
-    customButtons?: Array<unknown>;
+    customButtons?: Array<CustomButton<T, PK>>;
 
     //
     // - TODO: Import from: CSV, JSON, XML
@@ -1015,7 +1029,11 @@ function CRUDCreateButton<T, PK extends keyof T>({
                 otherPrimaryFields
                     ? (Object.values(otherPrimaryFields) as Array<
                           Readonly<PrimaryField<T, keyof T>>
-                      >).filter((x) => !x.isHidden)
+                      >).filter(
+                          (x) =>
+                              !x.isHidden &&
+                              (x.isEditable || x.isEditableAtCreate)
+                      )
                     : []
             ),
         [otherPrimaryFields, primaryKeyField]
@@ -1175,7 +1193,7 @@ export default function CRUDTable<T, PK extends keyof T>(
         secondaryFields,
         csud,
         // TODO: highlighting,
-        // TODO: customButtons,
+        customButtons,
     } = props;
 
     const [selectedKeys, _setSelectedKeys] = useState<Set<T[PK]>>(new Set());
@@ -1567,6 +1585,33 @@ export default function CRUDTable<T, PK extends keyof T>(
     }
     templateColumnsStr += includeDeleteColumn ? " min-content" : "";
 
+    const visibleSelectedKeys = useMemo(() => {
+        const result = new Set<T[PK]>();
+        if (!isFilterable) {
+            data.forEach((item) => {
+                result.add(primaryKeyField.extract(item));
+            });
+        } else {
+            data.forEach((item) => {
+                const pk = primaryKeyField.extract(item);
+                if (
+                    selectedKeys.has(pk) &&
+                    filterFields.every((field) => applyFieldFilter(field, item))
+                ) {
+                    result.add(primaryKeyField.extract(item));
+                }
+            });
+        }
+        return result;
+    }, [
+        applyFieldFilter,
+        data,
+        filterFields,
+        isFilterable,
+        primaryKeyField,
+        selectedKeys,
+    ]);
+
     return (
         <>
             {csud &&
@@ -1656,6 +1701,30 @@ export default function CRUDTable<T, PK extends keyof T>(
                         />
                     ) : undefined}
                     {/* TODO: Edit multiple button using secondary view */}
+                    {customButtons?.map((button, idx) => {
+                        return (
+                            <Button
+                                key={`custom-button-${idx}`}
+                                aria-label={button.label}
+                                isDisabled={
+                                    (!button.alwaysEnabled &&
+                                        visibleSelectedKeys.size === 0) ||
+                                    button.isRunning ||
+                                    dirtyKeys.size > 0
+                                }
+                                colorScheme={button.colorScheme}
+                                onClick={(_ev) => {
+                                    button.action(visibleSelectedKeys);
+                                }}
+                                style={{
+                                    marginLeft: idx === 0 ? "auto" : undefined,
+                                }}
+                            >
+                                {button.isRunning ? <Spinner /> : undefined}
+                                {button.text}
+                            </Button>
+                        );
+                    })}
                 </ButtonGroup>
                 <Grid
                     width="100%"

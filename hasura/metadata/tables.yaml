@@ -50,6 +50,13 @@
         table:
           schema: public
           name: RoomParticipant
+  computed_fields:
+  - name: inviteSent
+    definition:
+      function:
+        schema: public
+        name: hasbeeninvited
+    comment: ""
   insert_permissions:
   - role: user
     permission:
@@ -79,6 +86,7 @@
       columns:
       - conferenceId
       - displayName
+      - id
       - userId
       backend_only: false
   select_permissions:
@@ -110,9 +118,13 @@
     permission:
       columns:
       - conferenceId
+      - created_at
       - displayName
       - id
+      - updated_at
       - userId
+      computed_fields:
+      - inviteSent
       filter:
         _or:
         - _and:
@@ -126,15 +138,8 @@
                 - groupRoles:
                     role:
                       rolePermissions:
-                        _or:
-                        - permissionName:
-                            _eq: CONFERENCE_VIEW_ATTENDEES
-                        - permissionName:
-                            _eq: CONFERENCE_MANAGE_ATTENDEES
-                        - permissionName:
-                            _eq: CONFERENCE_MANAGE_GROUPS
-                        - permissionName:
-                            _eq: CONFERENCE_MANAGE_ROLES
+                        permissionName:
+                          _eq: CONFERENCE_VIEW_ATTENDEES
                 - _or:
                   - includeUnauthenticated:
                       _eq: true
@@ -142,6 +147,28 @@
                       attendee:
                         userId:
                           _eq: X-Hasura-User-Id
+        - conference:
+            groups:
+              _and:
+              - enabled:
+                  _eq: true
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      _or:
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_ATTENDEES
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_GROUPS
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_ROLES
+              - _or:
+                - includeUnauthenticated:
+                    _eq: true
+                - groupAttendees:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
   update_permissions:
   - role: user
     permission:
@@ -150,13 +177,8 @@
       - userId
       filter:
         _or:
-        - _and:
-          - userId:
-              _eq: X-Hasura-User-Id
-          - groupAttendees:
-              group:
-                enabled:
-                  _eq: true
+        - userId:
+            _eq: X-Hasura-User-Id
         - conference:
             _or:
             - createdBy:

@@ -110,7 +110,9 @@ async function digest(inviteCode: string, email: string) {
 export default function AcceptInvitationPage(props: Props): JSX.Element {
     const toast = useToast();
 
-    const inviteCode = props.inviteCode ?? getCachedInviteCode();
+    const inviteCode = (props.inviteCode ?? getCachedInviteCode())
+        ?.trim()
+        ?.toLowerCase();
     useEffect(() => {
         if (props.inviteCode) {
             setCachedInviteCode(props.inviteCode);
@@ -304,7 +306,9 @@ export default function AcceptInvitationPage(props: Props): JSX.Element {
                                         {
                                             variables: {
                                                 inviteCode,
-                                                confirmationCode: values.code.trim(),
+                                                confirmationCode: values.code
+                                                    .trim()
+                                                    .toLowerCase(),
                                             },
                                         }
                                     );

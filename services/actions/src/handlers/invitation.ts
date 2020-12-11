@@ -3,10 +3,13 @@ import assert from "assert";
 import crypto from "crypto";
 import { v4 as uuidv4 } from "uuid";
 import {
-    DeleteInvitationDocument,
+    AttendeeWithInvitePartsFragment,
+    Email_Insert_Input,
+    InsertEmailsDocument,
     InvitationPartsFragment,
     InvitedUserPartsFragment,
     SelectInvitationAndUserDocument,
+    SelectPermittedAttendeesWithInvitationDocument,
     SendFreshInviteConfirmationEmailDocument,
     SetAttendeeUserIdDocument,
     UpdateInvitationDocument,
@@ -14,10 +17,19 @@ import {
 import { apolloClient } from "../graphqlClient";
 
 gql`
+    mutation InsertEmails($objects: [Email_insert_input!]!) {
+        insert_Email(objects: $objects) {
+            affected_rows
+        }
+    }
+`;
+
+gql`
     fragment InvitationParts on Invitation {
         attendeeId
         attendee {
             displayName
+            userId
             conference {
                 name
                 slug
@@ -90,12 +102,6 @@ gql`
         }
     }
 
-    mutation DeleteInvitation($invitationId: uuid!) {
-        delete_Invitation(where: { id: { _eq: $invitationId } }) {
-            affected_rows
-        }
-    }
-
     mutation SetAttendeeUserId($attendeeId: uuid!, $userId: String!) {
         update_Attendee(
             where: { id: { _eq: $attendeeId } }
@@ -104,7 +110,191 @@ gql`
             affected_rows
         }
     }
+
+    fragment AttendeeWithInviteParts on Attendee {
+        id
+        conference {
+            id
+            name
+            shortName
+            slug
+        }
+        invitation {
+            id
+            emails {
+                reason
+            }
+            inviteCode
+            invitedEmailAddress
+        }
+        displayName
+        userId
+    }
+
+    query SelectPermittedAttendeesWithInvitation(
+        $attendeeIds: [uuid!]!
+        $userId: String!
+    ) {
+        Attendee(
+            where: {
+                id: { _in: $attendeeIds }
+                conference: {
+                    _or: [
+                        { createdBy: { _eq: $userId } }
+                        {
+                            groups: {
+                                groupAttendees: {
+                                    attendee: { userId: { _eq: $userId } }
+                                }
+                                groupRoles: {
+                                    role: {
+                                        rolePermissions: {
+                                            permissionName: {
+                                                _in: [
+                                                    CONFERENCE_MANAGE_ATTENDEES
+                                                    CONFERENCE_MANAGE_GROUPS
+                                                    CONFERENCE_MANAGE_ROLES
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        ) {
+            ...AttendeeWithInviteParts
+        }
+    }
 `;
+
+async function sendInviteEmails(
+    attendeeIds: Array<string>,
+    userId: string,
+    shouldSend: (attendee: AttendeeWithInvitePartsFragment) => boolean,
+    isReminder: boolean
+): Promise<Array<InvitationSendEmailResult>> {
+    const attendees = await apolloClient.query({
+        query: SelectPermittedAttendeesWithInvitationDocument,
+        variables: {
+            userId,
+            attendeeIds,
+        },
+    });
+
+    if (attendees.error) {
+        throw new Error(attendees.error.message);
+    } else if (attendees.errors && attendees.errors.length > 0) {
+        throw new Error(attendees.errors.reduce((a, e) => `${a}\n* ${e};`, ""));
+    }
+
+    const results: Map<string, boolean> = new Map();
+    const emailsToSend: Map<string, Email_Insert_Input> = new Map();
+
+    for (const attendee of attendees.data.Attendee) {
+        if (!attendee.userId && attendee.invitation) {
+            if (shouldSend(attendee)) {
+                const plainTextContents = `Dear ${attendee.displayName},
+
+You are invited to attend ${attendee.conference.name} on Clowdr: the virtual
+conferencing platform. Please use the link and invite code below to create
+your profile and access the conference.
+
+Invitation code: ${attendee.invitation.inviteCode}
+Use your invite code at: ${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/
+
+We hope you enjoy your conference,
+The Clowdr team
+
+This is an automated email sent on behalf of Clowdr CIC. If you believe you have
+received this email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}`;
+                const htmlContents = `<p>Dear ${attendee.displayName},</p>
+
+<p>You are invited to attend ${attendee.conference.name} on Clowdr: the virtual
+conferencing platform. Please use the link and invite code below to create
+your profile and access the conference.</p>
+
+<p>
+<a href="${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/invitation/accept/${attendee.invitation.inviteCode}">Click here to use your invitation code: ${attendee.invitation.inviteCode}</a><br />
+Or enter it on the Clowdr home page at ${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}
+</p>
+
+<p>We hope you enjoy your conference,<br />
+The Clowdr team</p>
+
+<p>This is an automated email sent on behalf of Clowdr CIC. If you believe you have
+received this email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}</p>`;
+                emailsToSend.set(attendee.id, {
+                    emailAddress: attendee.invitation.invitedEmailAddress,
+                    invitationId: attendee.invitation.id,
+                    reason: "invite",
+                    subject: `Clowdr: ${
+                        isReminder ? "[Reminder] " : ""
+                    }Your invitation to ${attendee.conference.shortName}`,
+                    htmlContents,
+                    plainTextContents,
+                });
+            }
+        }
+    }
+
+    await apolloClient.mutate({
+        mutation: InsertEmailsDocument,
+        variables: {
+            objects: Array.from(emailsToSend.values()),
+        },
+    });
+    for (const attendeeId of Array.from(emailsToSend.keys())) {
+        results.set(attendeeId, true);
+    }
+
+    const output: Array<InvitationSendEmailResult> = [];
+    for (const attendeeId of attendeeIds) {
+        if (results.has(attendeeId)) {
+            const sent = results.get(attendeeId);
+            assert(sent);
+            output.push({
+                attendeeId,
+                sent,
+            });
+        } else {
+            output.push({
+                attendeeId,
+                sent: false,
+            });
+        }
+    }
+    return output;
+}
+
+export async function invitationSendInitialHandler(
+    args: invitationSendInitialEmailArgs,
+    userId: string
+): Promise<Array<InvitationSendEmailResult>> {
+    return sendInviteEmails(
+        args.attendeeIds,
+        userId,
+        (attendee) =>
+            !!attendee.invitation &&
+            attendee.invitation.emails.filter((x) => x.reason === "invite")
+                .length === 0,
+        false
+    );
+}
+
+export async function invitationSendRepeatHandler(
+    args: invitationSendRepeatEmailArgs,
+    userId: string
+): Promise<Array<InvitationSendEmailResult>> {
+    return sendInviteEmails(
+        args.attendeeIds,
+        userId,
+        (_attendee) => true,
+        true
+    );
+}
 
 async function getInvitationAndUser(
     inviteCode: string,
@@ -146,20 +336,6 @@ async function confirmUser(
     if (ok) {
         try {
             await apolloClient.mutate({
-                mutation: DeleteInvitationDocument,
-                variables: {
-                    invitationId: invitation.id,
-                },
-            });
-        } catch (e) {
-            console.error(
-                `Failed to delete invitation (${user.id}, ${invitation.id})`,
-                e
-            );
-        }
-
-        try {
-            await apolloClient.mutate({
                 mutation: SetAttendeeUserIdDocument,
                 variables: {
                     attendeeId: invitation.attendeeId,
@@ -191,6 +367,7 @@ export async function invitationConfirmCurrentHandler(
         return (
             !!invitation.invitedEmailAddress &&
             !!user.email &&
+            !invitation.attendee.userId &&
             invitation.invitedEmailAddress.toLowerCase() ===
                 user.email.toLowerCase()
         );
@@ -217,6 +394,7 @@ export async function invitationConfirmWithCodeHandler(
         userId,
         async (invitation, user) => {
             if (
+                !invitation.attendee.userId &&
                 invitation.confirmationCode &&
                 invitation.linkToUserId &&
                 user.email &&
@@ -253,7 +431,7 @@ please enter the confirmation code shown below. If this was not you, please
 contact your conference organiser.</p>
 
 <p>Confirmation code: ${externalConfirmationCode}<br />
-Page to enter the code: <a href="https://${process.env.FRONTEND_DOMAIN}/invitation/accept/${invitation.inviteCode}">https://${process.env.FRONTEND_DOMAIN}/invitation/accept/${invitation.inviteCode}</a><br />
+Page to enter the code: <a href="${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/invitation/accept/${invitation.inviteCode}">${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/invitation/accept/${invitation.inviteCode}</a><br />
 (You will need to be logged in as ${user.email} in order to enter the confirmation code.)</p>
 
 <p>We hope you enjoy your conference,<br/>
@@ -261,6 +439,7 @@ The Clowdr team</p>
 
 <p>This is an automated email sent on behalf of Clowdr CIC. If you believe you have
 received this email in error, please contact us via <a href="mailto:${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}">${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}</a></p>`;
+
     const plainTextContents = `Dear ${invitation.attendee.displayName},
 
 A user is trying to accept your invitation to ${invitation.attendee.conference.name}
@@ -270,7 +449,7 @@ please enter the confirmation code shown below. If this was not you, please
 contact your conference organiser.
 
 Confirmation code: ${externalConfirmationCode}
-Page to enter the code: https://${process.env.FRONTEND_DOMAIN}/invitation/accept/${invitation.inviteCode}
+Page to enter the code: ${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/invitation/accept/${invitation.inviteCode}
 
 (You will need to be logged in as ${user.email} in order to enter the confirmation code.)
 
@@ -293,7 +472,10 @@ export async function invitationConfirmSendInitialEmailHandler(
         args.inviteInput.inviteCode,
         userId
     );
-    if (!invitation.linkToUserId || invitation.linkToUserId !== user.id) {
+    if (
+        !invitation.attendee.userId &&
+        (!invitation.linkToUserId || invitation.linkToUserId !== user.id)
+    ) {
         const newConfirmationCodeForDB = uuidv4();
         const sendEmailTo = invitation.invitedEmailAddress;
         const { htmlContents, plainTextContents } = generateEmailContents(
@@ -341,7 +523,11 @@ export async function invitationConfirmSendRepeatEmailHandler(
         args.inviteInput.inviteCode,
         userId
     );
-    if (invitation.linkToUserId && invitation.linkToUserId === user.id) {
+    if (
+        !invitation.attendee.userId &&
+        invitation.linkToUserId &&
+        invitation.linkToUserId === user.id
+    ) {
         const sendEmailTo = invitation.invitedEmailAddress;
         const { htmlContents, plainTextContents } = generateEmailContents(
             invitation.confirmationCode,

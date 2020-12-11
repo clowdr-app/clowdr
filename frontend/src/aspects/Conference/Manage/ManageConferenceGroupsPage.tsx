@@ -15,6 +15,7 @@ import {
 import CRUDTable, {
     BooleanFieldFormat,
     CRUDTableProps,
+    defaultSelectFilter,
     defaultStringFilter,
     FieldType,
     PrimaryField,
@@ -297,6 +298,7 @@ export default function ManageConferenceGroupsPage(): JSX.Element {
                         opts instanceof Array
                             ? new Set(opts.map((x) => x.value))
                             : new Set([opts.value]),
+                    filter: defaultSelectFilter,
                     options: () => roleOptions,
                 },
             },

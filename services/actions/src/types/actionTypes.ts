@@ -1,7 +1,8 @@
 type Maybe<T> = T | null;
 
-type jsonb = any;
 type uuid = string;
+
+type jsonb = string;
 
 type SampleOutput = {
     accessToken: string;
@@ -19,12 +20,18 @@ type SubmitContentItemOutput = {
     success: boolean;
     message: string;
 };
+
 type ConfirmInvitationOutput = {
     ok: boolean;
-    confSlug?: string;
+    confSlug?: Maybe<string>;
 };
 
 type InvitationConfirmationEmailOutput = {
+    sent: boolean;
+};
+
+type InvitationSendEmailResult = {
+    attendeeId: string;
     sent: boolean;
 };
 
@@ -40,13 +47,14 @@ type EchoInput = {
 type SubmitContentItemInput = {
     contentItemData: jsonb;
 };
+
 type ConfirmInvitationInput = {
-    inviteCode: string;
+    inviteCode: uuid;
     confirmationCode: string;
 };
 
 type InvitationConfirmationEmailInput = {
-    inviteCode: string;
+    inviteCode: uuid;
 };
 
 type Query = {
@@ -55,13 +63,15 @@ type Query = {
 };
 
 type Mutation = {
-    submitContentItem?: Maybe<SubmitContentItemOutput>;
     invitationConfirmCurrent?: Maybe<ConfirmInvitationOutput>;
     invitationConfirmSendInitialEmail?: Maybe<
         InvitationConfirmationEmailOutput
     >;
     invitationConfirmSendRepeatEmail?: Maybe<InvitationConfirmationEmailOutput>;
     invitationConfirmWithCode?: Maybe<ConfirmInvitationOutput>;
+    invitationSendInitialEmail: Array<InvitationSendEmailResult>;
+    invitationSendRepeatEmail: Array<InvitationSendEmailResult>;
+    submitContentItem?: Maybe<SubmitContentItemOutput>;
 };
 
 type echoArgs = {
@@ -72,10 +82,6 @@ type protectedEchoArgs = {
     message: string;
 };
 
-type submitContentItemArgs = {
-    data: jsonb;
-    magicToken: string;
-};
 type invitationConfirmCurrentArgs = {
     inviteCode: uuid;
 };
@@ -90,4 +96,17 @@ type invitationConfirmSendRepeatEmailArgs = {
 
 type invitationConfirmWithCodeArgs = {
     inviteInput: ConfirmInvitationInput;
+};
+
+type invitationSendInitialEmailArgs = {
+    attendeeIds: Array<string>;
+};
+
+type invitationSendRepeatEmailArgs = {
+    attendeeIds: Array<string>;
+};
+
+type submitContentItemArgs = {
+    data: jsonb;
+    magicToken: string;
 };

@@ -3,6 +3,7 @@ import sgMail from "@sendgrid/mail";
 import assert from "assert";
 import { apolloClient } from "../graphqlClient";
 import { EmailData, Payload } from "../types/event";
+import { callWithRetry } from "../utils";
 
 export async function handleEmailCreated(
     payload: Payload<EmailData>
@@ -26,7 +27,7 @@ export async function handleEmailCreated(
 
         let error;
         try {
-            await sgMail.send(msg);
+            await callWithRetry(() => sgMail.send(msg));
         } catch (e) {
             error = e;
         }

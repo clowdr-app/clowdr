@@ -38,6 +38,8 @@ export type Attendee = {
   readonly id: Scalars['uuid'];
   /** An object relationship */
   readonly invitation?: Maybe<Invitation>;
+  /** A computed field, executes function "hasbeeninvited" */
+  readonly inviteSent?: Maybe<Scalars['Boolean']>;
   /** An array relationship */
   readonly roomParticipants: ReadonlyArray<RoomParticipant>;
   /** An aggregated array relationship */
@@ -8636,6 +8638,12 @@ export type InvitationConfirmationEmailOutput = {
   readonly sent: Scalars['Boolean'];
 };
 
+export type InvitationSendEmailResult = {
+  readonly __typename?: 'InvitationSendEmailResult';
+  readonly attendeeId: Scalars['String'];
+  readonly sent: Scalars['Boolean'];
+};
+
 /** aggregated selection of "Invitation" */
 export type Invitation_Aggregate = {
   readonly __typename?: 'Invitation_aggregate';
@@ -13433,6 +13441,10 @@ export type Mutation_Root = {
   readonly invitationConfirmSendRepeatEmail?: Maybe<InvitationConfirmationEmailOutput>;
   /** perform the action: "invitationConfirmWithCode" */
   readonly invitationConfirmWithCode?: Maybe<ConfirmInvitationOutput>;
+  /** perform the action: "invitationSendInitialEmail" */
+  readonly invitationSendInitialEmail: ReadonlyArray<InvitationSendEmailResult>;
+  /** perform the action: "invitationSendRepeatEmail" */
+  readonly invitationSendRepeatEmail: ReadonlyArray<InvitationSendEmailResult>;
   /** perform the action: "submitContentItem" */
   readonly submitContentItem?: Maybe<SubmitContentItemOutput>;
   /** update data of the table: "Attendee" */
@@ -14869,6 +14881,18 @@ export type Mutation_RootInvitationConfirmSendRepeatEmailArgs = {
 /** mutation root */
 export type Mutation_RootInvitationConfirmWithCodeArgs = {
   inviteInput: ConfirmInvitationInput;
+};
+
+
+/** mutation root */
+export type Mutation_RootInvitationSendInitialEmailArgs = {
+  attendeeIds: ReadonlyArray<Scalars['String']>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInvitationSendRepeatEmailArgs = {
+  attendeeIds: ReadonlyArray<Scalars['String']>;
 };
 
 
@@ -18794,6 +18818,57 @@ export type UpdateConferenceMutationVariables = Exact<{
 
 export type UpdateConferenceMutation = { readonly __typename?: 'mutation_root', readonly update_Conference?: Maybe<{ readonly __typename?: 'Conference_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string }> }> };
 
+export type AttendeePartsFragment = { readonly __typename?: 'Attendee', readonly conferenceId: any, readonly id: any, readonly userId?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly displayName: string, readonly inviteSent?: Maybe<boolean>, readonly groupAttendees: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly attendeeId: any, readonly id: any, readonly groupId: any }>, readonly invitation?: Maybe<{ readonly __typename?: 'Invitation', readonly attendeeId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any }> };
+
+export type SelectAllAttendeesQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type SelectAllAttendeesQuery = { readonly __typename?: 'query_root', readonly Attendee: ReadonlyArray<(
+    { readonly __typename?: 'Attendee' }
+    & AttendeePartsFragment
+  )> };
+
+export type CreateDeleteAttendeesMutationVariables = Exact<{
+  deleteAttendeeIds?: Maybe<ReadonlyArray<Scalars['uuid']>>;
+  insertAttendees: ReadonlyArray<Attendee_Insert_Input>;
+  insertInvitations: ReadonlyArray<Invitation_Insert_Input>;
+}>;
+
+
+export type CreateDeleteAttendeesMutation = { readonly __typename?: 'mutation_root', readonly delete_Attendee?: Maybe<{ readonly __typename?: 'Attendee_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Attendee', readonly id: any }> }>, readonly insert_Attendee?: Maybe<{ readonly __typename?: 'Attendee_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'Attendee' }
+      & AttendeePartsFragment
+    )> }>, readonly insert_Invitation?: Maybe<{ readonly __typename?: 'Invitation_mutation_response', readonly affected_rows: number }> };
+
+export type UpdateAttendeeMutationVariables = Exact<{
+  attendeeId: Scalars['uuid'];
+  attendeeName: Scalars['String'];
+  insertGroups: ReadonlyArray<GroupAttendee_Insert_Input>;
+  deleteGroupIds?: Maybe<ReadonlyArray<Scalars['uuid']>>;
+}>;
+
+
+export type UpdateAttendeeMutation = { readonly __typename?: 'mutation_root', readonly update_Attendee_by_pk?: Maybe<(
+    { readonly __typename?: 'Attendee' }
+    & AttendeePartsFragment
+  )>, readonly insert_GroupAttendee?: Maybe<{ readonly __typename?: 'GroupAttendee_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly id: any, readonly attendeeId: any, readonly groupId: any }> }>, readonly delete_GroupAttendee?: Maybe<{ readonly __typename?: 'GroupAttendee_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly id: any }> }> };
+
+export type SendInitialInviteEmailsMutationVariables = Exact<{
+  attendeeIds: ReadonlyArray<Scalars['String']>;
+}>;
+
+
+export type SendInitialInviteEmailsMutation = { readonly __typename?: 'mutation_root', readonly invitationSendInitialEmail: ReadonlyArray<{ readonly __typename?: 'InvitationSendEmailResult', readonly attendeeId: string, readonly sent: boolean }> };
+
+export type SendRepeatInviteEmailsMutationVariables = Exact<{
+  attendeeIds: ReadonlyArray<Scalars['String']>;
+}>;
+
+
+export type SendRepeatInviteEmailsMutation = { readonly __typename?: 'mutation_root', readonly invitationSendRepeatEmail: ReadonlyArray<{ readonly __typename?: 'InvitationSendEmailResult', readonly attendeeId: string, readonly sent: boolean }> };
+
 export type SelectAllPermissionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -18979,7 +19054,31 @@ export type UpdateCurrentUserLastSeenMutationVariables = Exact<{
 
 export type UpdateCurrentUserLastSeenMutation = { readonly __typename?: 'mutation_root', readonly update_OnlineStatus?: Maybe<{ readonly __typename?: 'OnlineStatus_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'OnlineStatus', readonly id: any, readonly lastSeen: any }> }> };
 
-
+export const AttendeePartsFragmentDoc = gql`
+    fragment AttendeeParts on Attendee {
+  conferenceId
+  id
+  groupAttendees {
+    attendeeId
+    id
+    groupId
+  }
+  invitation {
+    attendeeId
+    id
+    inviteCode
+    invitedEmailAddress
+    linkToUserId
+    createdAt
+    updatedAt
+  }
+  userId
+  updatedAt
+  createdAt
+  displayName
+  inviteSent
+}
+    `;
 export const SelectChatsDocument = gql`
     query selectChats {
   Chat {
@@ -19479,6 +19578,199 @@ export function useUpdateConferenceMutation(baseOptions?: Apollo.MutationHookOpt
 export type UpdateConferenceMutationHookResult = ReturnType<typeof useUpdateConferenceMutation>;
 export type UpdateConferenceMutationResult = Apollo.MutationResult<UpdateConferenceMutation>;
 export type UpdateConferenceMutationOptions = Apollo.BaseMutationOptions<UpdateConferenceMutation, UpdateConferenceMutationVariables>;
+export const SelectAllAttendeesDocument = gql`
+    query SelectAllAttendees($conferenceId: uuid!) {
+  Attendee(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...AttendeeParts
+  }
+}
+    ${AttendeePartsFragmentDoc}`;
+
+/**
+ * __useSelectAllAttendeesQuery__
+ *
+ * To run a query within a React component, call `useSelectAllAttendeesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectAllAttendeesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectAllAttendeesQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useSelectAllAttendeesQuery(baseOptions: Apollo.QueryHookOptions<SelectAllAttendeesQuery, SelectAllAttendeesQueryVariables>) {
+        return Apollo.useQuery<SelectAllAttendeesQuery, SelectAllAttendeesQueryVariables>(SelectAllAttendeesDocument, baseOptions);
+      }
+export function useSelectAllAttendeesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectAllAttendeesQuery, SelectAllAttendeesQueryVariables>) {
+          return Apollo.useLazyQuery<SelectAllAttendeesQuery, SelectAllAttendeesQueryVariables>(SelectAllAttendeesDocument, baseOptions);
+        }
+export type SelectAllAttendeesQueryHookResult = ReturnType<typeof useSelectAllAttendeesQuery>;
+export type SelectAllAttendeesLazyQueryHookResult = ReturnType<typeof useSelectAllAttendeesLazyQuery>;
+export type SelectAllAttendeesQueryResult = Apollo.QueryResult<SelectAllAttendeesQuery, SelectAllAttendeesQueryVariables>;
+export const CreateDeleteAttendeesDocument = gql`
+    mutation CreateDeleteAttendees($deleteAttendeeIds: [uuid!] = [], $insertAttendees: [Attendee_insert_input!]!, $insertInvitations: [Invitation_insert_input!]!) {
+  delete_Attendee(where: {id: {_in: $deleteAttendeeIds}}) {
+    returning {
+      id
+    }
+  }
+  insert_Attendee(objects: $insertAttendees) {
+    returning {
+      ...AttendeeParts
+    }
+  }
+  insert_Invitation(objects: $insertInvitations) {
+    affected_rows
+  }
+}
+    ${AttendeePartsFragmentDoc}`;
+export type CreateDeleteAttendeesMutationFn = Apollo.MutationFunction<CreateDeleteAttendeesMutation, CreateDeleteAttendeesMutationVariables>;
+
+/**
+ * __useCreateDeleteAttendeesMutation__
+ *
+ * To run a mutation, you first call `useCreateDeleteAttendeesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateDeleteAttendeesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createDeleteAttendeesMutation, { data, loading, error }] = useCreateDeleteAttendeesMutation({
+ *   variables: {
+ *      deleteAttendeeIds: // value for 'deleteAttendeeIds'
+ *      insertAttendees: // value for 'insertAttendees'
+ *      insertInvitations: // value for 'insertInvitations'
+ *   },
+ * });
+ */
+export function useCreateDeleteAttendeesMutation(baseOptions?: Apollo.MutationHookOptions<CreateDeleteAttendeesMutation, CreateDeleteAttendeesMutationVariables>) {
+        return Apollo.useMutation<CreateDeleteAttendeesMutation, CreateDeleteAttendeesMutationVariables>(CreateDeleteAttendeesDocument, baseOptions);
+      }
+export type CreateDeleteAttendeesMutationHookResult = ReturnType<typeof useCreateDeleteAttendeesMutation>;
+export type CreateDeleteAttendeesMutationResult = Apollo.MutationResult<CreateDeleteAttendeesMutation>;
+export type CreateDeleteAttendeesMutationOptions = Apollo.BaseMutationOptions<CreateDeleteAttendeesMutation, CreateDeleteAttendeesMutationVariables>;
+export const UpdateAttendeeDocument = gql`
+    mutation UpdateAttendee($attendeeId: uuid!, $attendeeName: String!, $insertGroups: [GroupAttendee_insert_input!]!, $deleteGroupIds: [uuid!] = []) {
+  update_Attendee_by_pk(
+    pk_columns: {id: $attendeeId}
+    _set: {displayName: $attendeeName}
+  ) {
+    ...AttendeeParts
+  }
+  insert_GroupAttendee(objects: $insertGroups) {
+    returning {
+      id
+      attendeeId
+      groupId
+    }
+  }
+  delete_GroupAttendee(where: {groupId: {_in: $deleteGroupIds}}) {
+    returning {
+      id
+    }
+  }
+}
+    ${AttendeePartsFragmentDoc}`;
+export type UpdateAttendeeMutationFn = Apollo.MutationFunction<UpdateAttendeeMutation, UpdateAttendeeMutationVariables>;
+
+/**
+ * __useUpdateAttendeeMutation__
+ *
+ * To run a mutation, you first call `useUpdateAttendeeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateAttendeeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateAttendeeMutation, { data, loading, error }] = useUpdateAttendeeMutation({
+ *   variables: {
+ *      attendeeId: // value for 'attendeeId'
+ *      attendeeName: // value for 'attendeeName'
+ *      insertGroups: // value for 'insertGroups'
+ *      deleteGroupIds: // value for 'deleteGroupIds'
+ *   },
+ * });
+ */
+export function useUpdateAttendeeMutation(baseOptions?: Apollo.MutationHookOptions<UpdateAttendeeMutation, UpdateAttendeeMutationVariables>) {
+        return Apollo.useMutation<UpdateAttendeeMutation, UpdateAttendeeMutationVariables>(UpdateAttendeeDocument, baseOptions);
+      }
+export type UpdateAttendeeMutationHookResult = ReturnType<typeof useUpdateAttendeeMutation>;
+export type UpdateAttendeeMutationResult = Apollo.MutationResult<UpdateAttendeeMutation>;
+export type UpdateAttendeeMutationOptions = Apollo.BaseMutationOptions<UpdateAttendeeMutation, UpdateAttendeeMutationVariables>;
+export const SendInitialInviteEmailsDocument = gql`
+    mutation SendInitialInviteEmails($attendeeIds: [String!]!) {
+  invitationSendInitialEmail(attendeeIds: $attendeeIds) {
+    attendeeId
+    sent
+  }
+}
+    `;
+export type SendInitialInviteEmailsMutationFn = Apollo.MutationFunction<SendInitialInviteEmailsMutation, SendInitialInviteEmailsMutationVariables>;
+
+/**
+ * __useSendInitialInviteEmailsMutation__
+ *
+ * To run a mutation, you first call `useSendInitialInviteEmailsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendInitialInviteEmailsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendInitialInviteEmailsMutation, { data, loading, error }] = useSendInitialInviteEmailsMutation({
+ *   variables: {
+ *      attendeeIds: // value for 'attendeeIds'
+ *   },
+ * });
+ */
+export function useSendInitialInviteEmailsMutation(baseOptions?: Apollo.MutationHookOptions<SendInitialInviteEmailsMutation, SendInitialInviteEmailsMutationVariables>) {
+        return Apollo.useMutation<SendInitialInviteEmailsMutation, SendInitialInviteEmailsMutationVariables>(SendInitialInviteEmailsDocument, baseOptions);
+      }
+export type SendInitialInviteEmailsMutationHookResult = ReturnType<typeof useSendInitialInviteEmailsMutation>;
+export type SendInitialInviteEmailsMutationResult = Apollo.MutationResult<SendInitialInviteEmailsMutation>;
+export type SendInitialInviteEmailsMutationOptions = Apollo.BaseMutationOptions<SendInitialInviteEmailsMutation, SendInitialInviteEmailsMutationVariables>;
+export const SendRepeatInviteEmailsDocument = gql`
+    mutation SendRepeatInviteEmails($attendeeIds: [String!]!) {
+  invitationSendRepeatEmail(attendeeIds: $attendeeIds) {
+    attendeeId
+    sent
+  }
+}
+    `;
+export type SendRepeatInviteEmailsMutationFn = Apollo.MutationFunction<SendRepeatInviteEmailsMutation, SendRepeatInviteEmailsMutationVariables>;
+
+/**
+ * __useSendRepeatInviteEmailsMutation__
+ *
+ * To run a mutation, you first call `useSendRepeatInviteEmailsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendRepeatInviteEmailsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendRepeatInviteEmailsMutation, { data, loading, error }] = useSendRepeatInviteEmailsMutation({
+ *   variables: {
+ *      attendeeIds: // value for 'attendeeIds'
+ *   },
+ * });
+ */
+export function useSendRepeatInviteEmailsMutation(baseOptions?: Apollo.MutationHookOptions<SendRepeatInviteEmailsMutation, SendRepeatInviteEmailsMutationVariables>) {
+        return Apollo.useMutation<SendRepeatInviteEmailsMutation, SendRepeatInviteEmailsMutationVariables>(SendRepeatInviteEmailsDocument, baseOptions);
+      }
+export type SendRepeatInviteEmailsMutationHookResult = ReturnType<typeof useSendRepeatInviteEmailsMutation>;
+export type SendRepeatInviteEmailsMutationResult = Apollo.MutationResult<SendRepeatInviteEmailsMutation>;
+export type SendRepeatInviteEmailsMutationOptions = Apollo.BaseMutationOptions<SendRepeatInviteEmailsMutation, SendRepeatInviteEmailsMutationVariables>;
 export const SelectAllPermissionsDocument = gql`
     query SelectAllPermissions {
   Permission {

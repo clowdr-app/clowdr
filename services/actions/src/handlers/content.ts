@@ -10,6 +10,7 @@ import {
     OutputGroupType,
     VideoCodec,
 } from "@aws-sdk/client-mediaconvert";
+import assert from "assert";
 import { MediaConvert } from "../aws/awsClient";
 import {
     ContentType_Enum,
@@ -51,7 +52,9 @@ export async function handleContentItemUpdated(
             `Creating new MediaConvert job for ${newVersion.data.s3Url}`
         );
 
-        const result = await (await MediaConvert()).createJob({
+        assert(MediaConvert, "AWS MediaConvert client is not initialised");
+
+        const result = await MediaConvert.createJob({
             Role: process.env.AWS_MEDIACONVERT_SERVICE_ROLE_ARN,
             Settings: {
                 Inputs: [

@@ -30,6 +30,7 @@
         "@aws-sdk/client-iam": "^1.0.0-rc.8",
         "@aws-sdk/client-mediaconvert": "^1.0.0-rc.8",
         "@aws-sdk/client-s3": "^1.0.0-rc.8",
+        "@aws-sdk/client-sns": "^1.0.0-rc.8",
         "@aws-sdk/region-provider": "0.1.0-preview.1",
         "@sendgrid/mail": "^7.4.0",
         "@uppy/companion": "^2.3.0",

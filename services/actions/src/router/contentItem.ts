@@ -6,9 +6,26 @@ import {
     handleGetByRequiredItem,
 } from "../handlers/content";
 import { submitContentHandler } from "../handlers/upload";
+import { checkEventSecret } from "../middlewares/checkEventSecret";
 import { ContentItemData, Payload } from "../types/event";
 
 export const router = express.Router();
+
+// Unprotected routes
+
+router.post("/notifyTranscode", async (req: Request, res: Response) => {
+    console.log("notifyTranscode", req);
+    res.status(200).json("OK");
+});
+
+router.post("/notifyTranscribe", (req: Request, res: Response) => {
+    console.log("notifyTranscribe", req);
+    res.status(200).json("OK");
+});
+
+// Protected routes
+
+router.use(checkEventSecret);
 
 router.post(
     "/updated",
@@ -75,13 +92,3 @@ router.post(
         }
     }
 );
-
-router.post("/notifyTranscode", async (req: Request, res: Response) => {
-    console.log("notifyTranscode", req);
-    res.status(200).json("OK");
-});
-
-router.post("/notifyTranscribe", (req: Request, res: Response) => {
-    console.log("notifyTranscribe", req);
-    res.status(200).json("OK");
-});

@@ -3,6 +3,7 @@ import assert from "assert";
 import bodyParser from "body-parser";
 import express, { Request, Response } from "express";
 import { is } from "typescript-is";
+import { initialiseAwsClient } from "./aws/awsClient";
 import handlerEcho from "./handlers/echo";
 import { handleEmailCreated } from "./handlers/event";
 import {
@@ -14,6 +15,7 @@ import {
     invitationSendRepeatHandler,
 } from "./handlers/invitation";
 import protectedEchoHandler from "./handlers/protectedEcho";
+import { checkEventSecret } from "./middlewares/checkEventSecret";
 import { checkJwt } from "./middlewares/checkJwt";
 import { checkUserScopes } from "./middlewares/checkScopes";
 import { router as companionRouter } from "./router/companion";
@@ -71,20 +73,13 @@ assert(
 export const app: express.Application = express();
 
 app.use("/companion", companionRouter);
+app.use("/contentItem", contentItemRouter);
 
 app.get("/", function (_req, res) {
     res.send("Clowdr");
 });
 
-app.use(function (req, res, next) {
-    if (req.headers["x-hasura-event-secret"] !== process.env.EVENT_SECRET) {
-        res.status(401);
-        res.send({});
-        next(new Error("Event secret missing"));
-    } else {
-        next();
-    }
-});
+app.use(checkEventSecret);
 
 const jsonParser = bodyParser.json();
 
@@ -231,9 +226,11 @@ app.post(
     }
 );
 
-app.use("/contentItem", contentItemRouter);
-
 const portNumber = process.env.PORT ? parseInt(process.env.PORT, 10) : 4000;
 export const server = app.listen(portNumber, function () {
     console.log(`App is listening on port ${process.env.PORT}!`);
+    console.log("Initialising AWS client");
+    initialiseAwsClient().then(() => {
+        console.log("Initialised AWS client");
+    });
 });

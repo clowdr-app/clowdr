@@ -5,7 +5,6 @@ import * as logs from "@aws-cdk/aws-logs";
 import * as s3 from "@aws-cdk/aws-s3";
 import { HttpMethods } from "@aws-cdk/aws-s3";
 import * as sns from "@aws-cdk/aws-sns";
-import * as subs from "@aws-cdk/aws-sns-subscriptions";
 import * as cdk from "@aws-cdk/core";
 
 export class AwsStack extends cdk.Stack {
@@ -160,28 +159,31 @@ export class AwsStack extends cdk.Stack {
         transcodeNotificationsTopic.grantPublish({
             grantPrincipal: new iam.ServicePrincipal("events.amazonaws.com"),
         });
+        // transcodeNotificationsTopic.addToResourcePolicy(
+        //     new iam.PolicyStatement({
+        //         actions: [
+        //             "SNS:Subscribe",
+        //             "SNS:ListSubscriptionsByTopic",
+        //             "SNS:DeleteTopic",
+        //             "SNS:GetTopicAttributes",
+        //             "SNS:Publish",
+        //             "SNS:RemovePermission",
+        //             "SNS:AddPermission",
+        //             "SNS:Receive",
+        //             "SNS:SetTopicAttributes",
+        //         ],
+        //         principals: [new iam.ServicePrincipal("events.amazonaws.com")],
+        //         resources: [transcodeNotificationsTopic.topicArn],
+        //         effect: iam.Effect.ALLOW,
+        //     })
+        // );
         transcodeNotificationsTopic.addToResourcePolicy(
             new iam.PolicyStatement({
-                actions: [
-                    "SNS:Subscribe",
-                    "SNS:ListSubscriptionsByTopic",
-                    "SNS:DeleteTopic",
-                    "SNS:GetTopicAttributes",
-                    "SNS:Publish",
-                    "SNS:RemovePermission",
-                    "SNS:AddPermission",
-                    "SNS:Receive",
-                    "SNS:SetTopicAttributes",
-                ],
-                principals: [new iam.ServicePrincipal("events.amazonaws.com")],
+                actions: ["SNS:Subscribe"],
+                principals: [new iam.ArnPrincipal(user.userArn)],
                 resources: [transcodeNotificationsTopic.topicArn],
                 effect: iam.Effect.ALLOW,
             })
-        );
-        transcodeNotificationsTopic.addSubscription(
-            new subs.UrlSubscription(
-                this.node.tryGetContext("clowdr/transcodeWebhookUrl")
-            )
         );
 
         const transcodeEventBus = new events.EventBus(
@@ -231,10 +233,13 @@ export class AwsStack extends cdk.Stack {
                 "transcribe.amazonaws.com"
             ),
         });
-        transcribeNotificationsTopic.addSubscription(
-            new subs.UrlSubscription(
-                this.node.tryGetContext("clowdr/transcribeWebhookUrl")
-            )
+        transcribeNotificationsTopic.addToResourcePolicy(
+            new iam.PolicyStatement({
+                actions: ["SNS:Subscribe"],
+                principals: [new iam.ArnPrincipal(user.userArn)],
+                resources: [transcribeNotificationsTopic.topicArn],
+                effect: iam.Effect.ALLOW,
+            })
         );
 
         const transcribeEventBus = new events.EventBus(
@@ -291,12 +296,12 @@ export class AwsStack extends cdk.Stack {
             value: accessKey.attrSecretAccessKey,
         });
 
-        new cdk.CfnOutput(this, "MediaLiveServiceRoleArn", {
-            value: mediaLiveAccessRole.roleArn,
-        });
-
         new cdk.CfnOutput(this, "MediaConvertServiceRoleArn", {
             value: mediaConvertAccessRole.roleArn,
+        });
+
+        new cdk.CfnOutput(this, "MediaLiveServiceRoleArn", {
+            value: mediaLiveAccessRole.roleArn,
         });
 
         new cdk.CfnOutput(this, "TranscodeNotificationsTopic", {

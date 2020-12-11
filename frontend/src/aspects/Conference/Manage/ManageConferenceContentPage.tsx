@@ -3,8 +3,10 @@ import { Heading, Spinner } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
+    ContentGroupType_Enum,
+    ContentType_Enum,
     Permission_Enum,
-    useSelectAllRequiredContentQuery,
+    useSelectAllContentGroupsQuery,
 } from "../../../generated/graphql";
 import CRUDTable, {
     CRUDTableProps,
@@ -21,32 +23,81 @@ import { useConference } from "../useConference";
 import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
 gql`
-    query SelectAllRequiredContent($conferenceId: uuid!) {
-        RequiredContentItem(where: { conferenceId: { _eq: $conferenceId } }) {
-            conferenceId
-            contentGroup {
-                title
-            }
-            contentTypeName
-            contentItem {
-                name
-            }
+    query SelectAllContentGroups($conferenceId: uuid!) {
+        ContentGroup(where: { conferenceId: { _eq: $conferenceId } }) {
             id
-            name
+            conferenceId
+            contentGroupTypeName
+            title
+            shortTitle
+            requiredContentItems {
+                id
+                name
+                contentTypeName
+                conferenceId
+                contentGroupId
+            }
+            contentItems {
+                conferenceId
+                contentGroupId
+                contentTypeName
+                data
+                id
+                isHidden
+                layoutData
+                name
+                requiredContentId
+                requiredContentItem {
+                    conferenceId
+                    contentGroupId
+                    contentTypeName
+                    id
+                    name
+                }
+            }
+            contentGroupTags {
+                id
+                tagId
+                contentGroupId
+            }
         }
     }
 `;
 
-type RequiredContentDescriptor = {
+type TagDescriptor = {
     id: string;
     name: string;
-    contentGroupTitle: string;
-    contentTypeName: string;
-    contentItemName?: string;
+    desciptor: string;
 };
 
-const RequiredContentCRUDTable = (
-    props: Readonly<CRUDTableProps<RequiredContentDescriptor, "id">>
+type ContentItemDescriptor = {
+    id: string;
+    typeName: ContentType_Enum;
+    isHidden: boolean;
+    layoutData: string;
+    requiredContentId?: string | null;
+    name: string;
+    data: any;
+};
+
+type RequiredContentItemDescriptor = {
+    id: string;
+    typeName: string;
+    name: string;
+};
+
+type ContentGroupDescriptor = {
+    id: string;
+    title: string;
+    shortTitle?: string | null;
+    typeName: ContentGroupType_Enum;
+    tagIds: TagDescriptor[];
+    items: ContentItemDescriptor[];
+    requiredItems: RequiredContentItemDescriptor[];
+};
+
+const ContentGroupCRUDTable = (
+    props: Readonly<CRUDTableProps<ContentGroupDescriptor, "id">>
 ) => CRUDTable(props);
 
 export default function ManageConferenceContentPage(): JSX.Element {
@@ -55,62 +106,71 @@ export default function ManageConferenceContentPage(): JSX.Element {
     useDashboardPrimaryMenuButtons();
 
     const {
-        loading: loadingAllRequiredContent,
-        error: errorAllRequiredContent,
-        data: allRequiredContent,
-    } = useSelectAllRequiredContentQuery({
+        loading: loadingAllContentGroups,
+        error: errorAllContentGroups,
+        data: allContentGroups,
+    } = useSelectAllContentGroupsQuery({
         fetchPolicy: "network-only",
         variables: {
             conferenceId: conference.id,
         },
-        context: {
-            headers: {
-                "x-hasura-magic-token": "Some value",
-            },
-        },
     });
-    useQueryErrorToast(errorAllRequiredContent);
+    useQueryErrorToast(errorAllContentGroups);
 
-    const parsedDBRequiredContent = useMemo(() => {
-        if (!allRequiredContent) {
+    const parsedDBContentGroups = useMemo(() => {
+        if (!allContentGroups) {
             return undefined;
         }
 
         return new Map(
-            allRequiredContent.RequiredContentItem.map((item): [
+            allContentGroups.ContentGroup.map((item): [
                 string,
-                RequiredContentDescriptor
+                ContentGroupDescriptor
             ] => [
                 item.id,
                 {
                     id: item.id,
-                    name: item.name,
-                    contentGroupTitle: item.contentGroup.title,
-                    contentTypeName: item.contentTypeName,
-                    contentItemName: item.contentItem?.name,
+                    title: item.title,
+                    shortTitle: item.shortTitle,
+                    typeName: item.contentGroupTypeName,
+                    tagIds: item.contentGroupTags.map((x) => x.tagId),
+                    items: item.contentItems.map((item) => ({
+                        id: item.id,
+                        isHidden: item.isHidden,
+                        name: item.name,
+                        typeName: item.contentTypeName,
+                        data: item.data,
+                        layoutData: item.layoutData,
+                        requiredContentId: item.requiredContentId,
+                    })),
+                    requiredItems: item.requiredContentItems.map((item) => ({
+                        id: item.id,
+                        name: item.name,
+                        typeName: item.contentTypeName,
+                    })),
                 },
             ])
         );
-    }, [allRequiredContent]);
+    }, [allContentGroups]);
 
     const fields = useMemo(() => {
         const result: {
-            [K: string]: Readonly<PrimaryField<RequiredContentDescriptor, any>>;
+            [K: string]: Readonly<PrimaryField<ContentGroupDescriptor, any>>;
         } = {
             name: {
-                heading: "Name",
-                ariaLabel: "Name",
-                description: "Name of required content item",
+                heading: "Title",
+                ariaLabel: "Title",
+                description: "Title of content",
                 isHidden: false,
                 isEditable: true,
-                defaultValue: "New item name",
+                defaultValue: "New content title",
                 insert: (item, v) => {
                     return {
                         ...item,
                         name: v,
                     };
                 },
-                extract: (v) => v.name,
+                extract: (v) => v.title,
                 spec: {
                     fieldType: FieldType.string,
                     convertFromUI: (x) => x,
@@ -118,7 +178,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                     filter: defaultStringFilter,
                 },
                 validate: (v) =>
-                    v.length >= 3 || ["Name must be at least 3 characters"],
+                    v.length >= 3 || ["Title must be at least 3 characters"],
             },
         };
         return result;
@@ -140,9 +200,9 @@ export default function ManageConferenceContentPage(): JSX.Element {
             >
                 Groups
             </Heading>
-            {loadingAllRequiredContent || !parsedDBRequiredContent ? (
+            {loadingAllContentGroups || !parsedDBContentGroups ? (
                 <Spinner />
-            ) : errorAllRequiredContent ? (
+            ) : errorAllContentGroups ? (
                 <>
                     An error occurred loading in data - please see further
                     information in notifications.
@@ -150,9 +210,9 @@ export default function ManageConferenceContentPage(): JSX.Element {
             ) : (
                 <></>
             )}
-            <RequiredContentCRUDTable
+            <ContentGroupCRUDTable
                 key="crud-table"
-                data={parsedDBRequiredContent ?? new Map()}
+                data={parsedDBContentGroups ?? new Map()}
                 csud={{
                     cudCallbacks: {
                         generateTemporaryKey: () => uuidv4(),

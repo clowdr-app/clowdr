@@ -1,6 +1,7 @@
 import * as events from "@aws-cdk/aws-events";
 import * as targets from "@aws-cdk/aws-events-targets";
 import * as iam from "@aws-cdk/aws-iam";
+import * as logs from "@aws-cdk/aws-logs";
 import * as s3 from "@aws-cdk/aws-s3";
 import { HttpMethods } from "@aws-cdk/aws-s3";
 import * as sns from "@aws-cdk/aws-sns";
@@ -37,7 +38,7 @@ export class AwsStack extends cdk.Stack {
                 blockPublicAcls: true,
                 blockPublicPolicy: false,
                 ignorePublicAcls: true,
-                restrictPublicBuckets: true,
+                restrictPublicBuckets: false,
             },
         });
 
@@ -159,6 +160,24 @@ export class AwsStack extends cdk.Stack {
         transcodeNotificationsTopic.grantPublish({
             grantPrincipal: new iam.ServicePrincipal("events.amazonaws.com"),
         });
+        transcodeNotificationsTopic.addToResourcePolicy(
+            new iam.PolicyStatement({
+                actions: [
+                    "SNS:Subscribe",
+                    "SNS:ListSubscriptionsByTopic",
+                    "SNS:DeleteTopic",
+                    "SNS:GetTopicAttributes",
+                    "SNS:Publish",
+                    "SNS:RemovePermission",
+                    "SNS:AddPermission",
+                    "SNS:Receive",
+                    "SNS:SetTopicAttributes",
+                ],
+                principals: [new iam.ServicePrincipal("events.amazonaws.com")],
+                resources: [transcodeNotificationsTopic.topicArn],
+                effect: iam.Effect.ALLOW,
+            })
+        );
         transcodeNotificationsTopic.addSubscription(
             new subs.UrlSubscription(
                 this.node.tryGetContext("clowdr/transcodeWebhookUrl")
@@ -168,9 +187,7 @@ export class AwsStack extends cdk.Stack {
         const transcodeEventBus = new events.EventBus(
             this,
             "TranscodeEventBus",
-            {
-                eventBusName: "TranscodeEvents",
-            }
+            {}
         );
         new events.CfnArchive(this, "TranscodeEventArchive", {
             sourceArn: transcodeEventBus.eventBusArn,
@@ -185,6 +202,15 @@ export class AwsStack extends cdk.Stack {
         });
         transcodeEventRule.addTarget(
             new targets.SnsTopic(transcodeNotificationsTopic)
+        );
+
+        const transcodeLogGroup = new logs.LogGroup(
+            this,
+            "TranscodeLogGroup",
+            {}
+        );
+        transcodeEventRule.addTarget(
+            new targets.CloudWatchLogGroup(transcodeLogGroup)
         );
 
         mediaConvertAccessRole.addToPolicy(
@@ -214,9 +240,7 @@ export class AwsStack extends cdk.Stack {
         const transcribeEventBus = new events.EventBus(
             this,
             "TranscribeEventBus",
-            {
-                eventBusName: "TranscribeEvents",
-            }
+            {}
         );
         new events.CfnArchive(this, "TranscribeEventArchive", {
             sourceArn: transcribeEventBus.eventBusArn,
@@ -235,6 +259,15 @@ export class AwsStack extends cdk.Stack {
         });
         transcribeEventRule.addTarget(
             new targets.SnsTopic(transcribeNotificationsTopic)
+        );
+
+        const transcribeLogGroup = new logs.LogGroup(
+            this,
+            "TranscribeLogGroup",
+            {}
+        );
+        transcribeEventRule.addTarget(
+            new targets.CloudWatchLogGroup(transcribeLogGroup)
         );
 
         transcribeAccessRole.addToPolicy(

@@ -129,7 +129,7 @@ type GroupOption = SelectOption;
 type AttendeeDescriptor = {
     isNew: boolean;
     id: string;
-    userId?: string;
+    userId?: string | null;
     displayName: string;
     invitedEmailAddress?: string;
     inviteSent: boolean;

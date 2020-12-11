@@ -17,7 +17,6 @@ import { DragDrop, ProgressBar } from "@uppy/react";
 import { Field, FieldProps, Form, Formik } from "formik";
 import gql from "graphql-tag";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useHistory } from "react-router-dom";
 import {
     useSelectRequiredItemQuery,
     useSubmitContentItemMutation,
@@ -25,6 +24,7 @@ import {
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
 import FAIcon from "../Icons/FAIcon";
 import UnsavedChangesWarning from "../LeavingPageWarnings/UnsavedChangesWarning";
+import UploadedContentItem from "./UploadedContentItem";
 
 gql`
     query SelectRequiredItem {
@@ -64,7 +64,6 @@ export default function UploadItemPage({
     const toast = useToast();
     const [files, setFiles] = useState<Uppy.UppyFile[]>([]);
     const [submitContentItem] = useSubmitContentItemMutation();
-    const history = useHistory();
 
     const uppy = useMemo(() => {
         if (!data?.RequiredContentItem[0]) {
@@ -132,7 +131,7 @@ export default function UploadItemPage({
                 <>An error occurred while loading data.</>
             ) : (
                 <>
-                    <Heading as="h2">
+                    <Heading as="h2" fontSize="1.5rem">
                         {data?.RequiredContentItem[0].name}
                     </Heading>
                     <ProgressBar
@@ -184,7 +183,8 @@ export default function UploadItemPage({
                                 const submitResult = await submitContentItem({
                                     variables: {
                                         contentItemData: {
-                                            url: result.successful[0].uploadURL,
+                                            s3Url:
+                                                result.successful[0].uploadURL,
                                         },
                                         magicToken: token,
                                     },
@@ -220,7 +220,7 @@ export default function UploadItemPage({
                                     description: "Submitted item successfully.",
                                 });
                                 uppy.reset();
-                                history.push("/");
+                                // history.push("/");
                             } catch (e) {
                                 console.error("Failed to submit item", e);
                                 toast({
@@ -318,6 +318,7 @@ export default function UploadItemPage({
                     </Formik>
                 </>
             )}
+            <UploadedContentItem magicToken={token} />
         </>
     );
 }

@@ -1,6 +1,6 @@
 {
     "scripts": {
-        "start": "snowpack dev",
+        "start": "snowpack dev --polyfill-node",
         "build": "snowpack build",
         "test": "jest --config jest.config.js",
         "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
@@ -25,6 +25,7 @@
         "@uppy/core": "^1.14.1",
         "@uppy/drag-drop": "^1.4.21",
         "@uppy/react": "^1.10.11",
+        "amazon-s3-uri": "^0.1.0",
         "apollo-cache-inmemory": "^1.6.6",
         "apollo-link-http": "^1.5.17",
         "apollo3-cache-persist": "^0.8.0",
@@ -34,6 +35,7 @@
         "graphql-tag": "^2.11.0",
         "react": "^17.0.0",
         "react-dom": "^17.0.0",
+        "react-player": "^2.7.0",
         "react-router-dom": "^5.2.0",
         "react-select": "^3.1.1",
         "uuid": "^8.3.1"

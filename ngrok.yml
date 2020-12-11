@@ -1,0 +1,9 @@
+tunnels:
+  auth:
+    addr: 8080
+    proto: http
+    bind_tls: true
+  actions:
+    addr: 3001
+    proto: http
+    bind_tls: true

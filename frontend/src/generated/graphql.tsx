@@ -7728,6 +7728,15 @@ export enum FollowedChat_Update_Column {
   UserId = 'userId'
 }
 
+export type GetContentItemOutput = {
+  readonly __typename?: 'GetContentItemOutput';
+  readonly contentTypeName: Scalars['String'];
+  readonly data: Scalars['jsonb'];
+  readonly id: Scalars['String'];
+  readonly layoutData?: Maybe<Scalars['jsonb']>;
+  readonly name: Scalars['String'];
+};
+
 /** columns and relationships of "Group" */
 export type Group = {
   readonly __typename?: 'Group';
@@ -15937,6 +15946,8 @@ export type Query_Root = {
   readonly User_by_pk?: Maybe<User>;
   /** perform the action: "echo" */
   readonly echo?: Maybe<EchoOutput>;
+  /** perform the action: "getContentItem" */
+  readonly getContentItem?: Maybe<ReadonlyArray<Maybe<GetContentItemOutput>>>;
   /** perform the action: "protectedEcho" */
   readonly protectedEcho?: Maybe<ProtectedEchoOutput>;
 };
@@ -17171,6 +17182,12 @@ export type Query_RootEchoArgs = {
 
 
 /** query root */
+export type Query_RootGetContentItemArgs = {
+  magicToken: Scalars['String'];
+};
+
+
+/** query root */
 export type Query_RootProtectedEchoArgs = {
   message: Scalars['String'];
 };
@@ -17462,6 +17479,8 @@ export type Subscription_Root = {
   readonly User_by_pk?: Maybe<User>;
   /** perform the action: "echo" */
   readonly echo?: Maybe<EchoOutput>;
+  /** perform the action: "getContentItem" */
+  readonly getContentItem?: Maybe<ReadonlyArray<Maybe<GetContentItemOutput>>>;
   /** perform the action: "protectedEcho" */
   readonly protectedEcho?: Maybe<ProtectedEchoOutput>;
 };
@@ -18696,6 +18715,12 @@ export type Subscription_RootEchoArgs = {
 
 
 /** subscription root */
+export type Subscription_RootGetContentItemArgs = {
+  magicToken: Scalars['String'];
+};
+
+
+/** subscription root */
 export type Subscription_RootProtectedEchoArgs = {
   message: Scalars['String'];
 };
@@ -18954,6 +18979,13 @@ export type SubmitContentItemMutationVariables = Exact<{
 
 
 export type SubmitContentItemMutation = { readonly __typename?: 'mutation_root', readonly submitContentItem?: Maybe<{ readonly __typename?: 'SubmitContentItemOutput', readonly message: string, readonly success: boolean }> };
+
+export type GetContentItemQueryVariables = Exact<{
+  magicToken: Scalars['String'];
+}>;
+
+
+export type GetContentItemQuery = { readonly __typename?: 'query_root', readonly getContentItem?: Maybe<ReadonlyArray<Maybe<{ readonly __typename?: 'GetContentItemOutput', readonly contentTypeName: string, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly id: string }>>> };
 
 export type EchoQueryVariables = Exact<{
   message: Scalars['String'];
@@ -20276,6 +20308,43 @@ export function useSubmitContentItemMutation(baseOptions?: Apollo.MutationHookOp
 export type SubmitContentItemMutationHookResult = ReturnType<typeof useSubmitContentItemMutation>;
 export type SubmitContentItemMutationResult = Apollo.MutationResult<SubmitContentItemMutation>;
 export type SubmitContentItemMutationOptions = Apollo.BaseMutationOptions<SubmitContentItemMutation, SubmitContentItemMutationVariables>;
+export const GetContentItemDocument = gql`
+    query GetContentItem($magicToken: String!) {
+  getContentItem(magicToken: $magicToken) {
+    contentTypeName
+    data
+    layoutData
+    name
+    id
+  }
+}
+    `;
+
+/**
+ * __useGetContentItemQuery__
+ *
+ * To run a query within a React component, call `useGetContentItemQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetContentItemQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetContentItemQuery({
+ *   variables: {
+ *      magicToken: // value for 'magicToken'
+ *   },
+ * });
+ */
+export function useGetContentItemQuery(baseOptions: Apollo.QueryHookOptions<GetContentItemQuery, GetContentItemQueryVariables>) {
+        return Apollo.useQuery<GetContentItemQuery, GetContentItemQueryVariables>(GetContentItemDocument, baseOptions);
+      }
+export function useGetContentItemLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetContentItemQuery, GetContentItemQueryVariables>) {
+          return Apollo.useLazyQuery<GetContentItemQuery, GetContentItemQueryVariables>(GetContentItemDocument, baseOptions);
+        }
+export type GetContentItemQueryHookResult = ReturnType<typeof useGetContentItemQuery>;
+export type GetContentItemLazyQueryHookResult = ReturnType<typeof useGetContentItemLazyQuery>;
+export type GetContentItemQueryResult = Apollo.QueryResult<GetContentItemQuery, GetContentItemQueryVariables>;
 export const EchoDocument = gql`
     query Echo($message: String!) {
   echo(message: $message) {

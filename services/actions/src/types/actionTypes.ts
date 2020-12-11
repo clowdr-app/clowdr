@@ -1,8 +1,8 @@
 type Maybe<T> = T | null;
 
-type uuid = string;
+type jsonb = any;
 
-type jsonb = string;
+type uuid = string;
 
 type SampleOutput = {
     accessToken: string;
@@ -35,6 +35,14 @@ type InvitationSendEmailResult = {
     sent: boolean;
 };
 
+type GetContentItemOutput = {
+    contentTypeName: string;
+    id: string;
+    name: string;
+    data: jsonb;
+    layoutData?: Maybe<jsonb>;
+};
+
 type SampleInput = {
     username: string;
     password: string;
@@ -59,6 +67,7 @@ type InvitationConfirmationEmailInput = {
 
 type Query = {
     echo?: Maybe<EchoOutput>;
+    getContentItem?: Maybe<Array<Maybe<GetContentItemOutput>>>;
     protectedEcho?: Maybe<ProtectedEchoOutput>;
 };
 
@@ -76,6 +85,10 @@ type Mutation = {
 
 type echoArgs = {
     message: string;
+};
+
+type getContentItemArgs = {
+    magicToken: string;
 };
 
 type protectedEchoArgs = {

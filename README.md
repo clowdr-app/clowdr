@@ -216,7 +216,7 @@ useful logs, uncomment `console.log` statements in the _Rules_ we created above.
 #### 8. Use ngrok for online (local) testing
 
 **_Every time_** you start up for online (local) development, you will need to
-start ngrok (`ngrok http 8080`) and copy the URL
+start ngrok (`ngrok start --config=ngrok.yaml auth actions`) and copy the auth URL
 (`http://<ngrok-subdomain>.ngrok.io/v1/graphql`) into the `HASURA_URL` Auth0
 _Rule Configuration_ as shown in step 5.
 

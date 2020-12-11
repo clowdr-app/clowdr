@@ -34,3 +34,4 @@ AWS infrastructure-as-code for the Clowdr app.
 | --------------------------- | ------------------------------------------------------------- |
 | clowdr/transcodeWebhookUrl  | Publically-accessible URL for `/contentItem/notifyTranscode`  |
 | clowdr/transcribeWebhookUrl | Publically-accessible URL for `/contentItem/notifyTranscribe` |
+| clowdr/stackName            | Name of the stack to deploy to                                |

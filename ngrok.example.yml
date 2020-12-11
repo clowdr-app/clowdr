@@ -1,13 +1,21 @@
 authtoken: <Ngrok auth token>
 region: <Ngrok region>
+# You will need to use your own Ngrok domains
+# ones shown here are for Clowdr employees using
+# Ngrok white label domains
 tunnels:
+  frontend:
+    addr: 3000
+    proto: http
+    bind_tls: true
+    hostname: <Your name>-frontend.your-domain.com
   auth:
     addr: 8080
     proto: http
     bind_tls: true
-    hostname: <Ngrok hostname>
+    hostname: <Your name>-auth.your-domain.com
   actions:
     addr: 3001
     proto: http
     bind_tls: true
-    hostname: <Ngrok hostname>
+    hostname: <Your name>-actions.your-domain.com

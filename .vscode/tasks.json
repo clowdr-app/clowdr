@@ -130,7 +130,8 @@
             "dependsOn": [
                 "Hasura Console -- Local Development",
                 "Actions Service -- Local Development",
-                "Frontend -- Local Development"
+                "Frontend -- Local Development",
+                "Ngrok"
             ],
             "dependsOrder": "parallel",
             "isBackground": true,
@@ -172,6 +173,20 @@
                 "instanceLimit": 1
             },
             "args": ["prettier", "--write", "."]
+        },
+        // Ngrok
+        {
+            "label": "Ngrok",
+            "type": "shell",
+            "command": "ngrok",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": ["start", "-config", "./ngrok.yml", "--all"]
         }
     ]
 }

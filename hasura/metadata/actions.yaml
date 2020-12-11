@@ -9,6 +9,17 @@ actions:
   permissions:
   - role: unauthenticated
   - role: user
+- name: getContentItem
+  definition:
+    kind: ""
+    handler: '{{ACTION_BASE_URL}}/contentItem/getByRequiredItem'
+    forward_client_headers: true
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+  permissions:
+  - role: unauthenticated
+  - role: user
 - name: invitationConfirmCurrent
   definition:
     kind: synchronous
@@ -85,4 +96,5 @@ custom_types:
   - name: SubmitContentItemOutput
   - name: ConfirmInvitationOutput
   - name: InvitationConfirmationEmailOutput
+  - name: GetContentItemOutput
   scalars: []

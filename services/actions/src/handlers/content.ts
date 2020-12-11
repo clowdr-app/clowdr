@@ -1,3 +1,4 @@
+import { gql } from "@apollo/client/core";
 import {
     AacCodingMode,
     AacRateControlMode,
@@ -10,7 +11,11 @@ import {
     VideoCodec,
 } from "@aws-sdk/client-mediaconvert";
 import { MediaConvert } from "../aws/awsClient";
-import { ContentType_Enum } from "../generated/graphql";
+import {
+    ContentType_Enum,
+    GetContentItemByRequiredItemDocument,
+} from "../generated/graphql";
+import { apolloClient } from "../graphqlClient";
 import { ContentItemData, Payload } from "../types/event";
 
 export async function handleContentItemUpdated(
@@ -117,4 +122,43 @@ export async function handleContentItemUpdated(
     } else {
         console.log("Content item video URL has not changed.");
     }
+}
+
+gql`
+    query GetContentItemByRequiredItem($accessToken: String!) {
+        ContentItem(
+            where: {
+                requiredContentItem: { accessToken: { _eq: $accessToken } }
+            }
+        ) {
+            id
+            contentTypeName
+            data
+            layoutData
+            name
+        }
+    }
+`;
+
+export async function handleGetByRequiredItem(
+    args: getContentItemArgs
+): Promise<Array<GetContentItemOutput>> {
+    const result = await apolloClient.query({
+        query: GetContentItemByRequiredItemDocument,
+        variables: {
+            accessToken: args.magicToken,
+        },
+    });
+
+    if (result.error) {
+        throw new Error("No item found");
+    }
+
+    return result.data.ContentItem.map((item) => ({
+        id: item.id,
+        name: item.name,
+        layoutData: item.layoutData,
+        data: item.data,
+        contentTypeName: item.contentTypeName,
+    }));
 }

@@ -35,7 +35,7 @@ export class AwsStack extends cdk.Stack {
         const bucket = new s3.Bucket(this, "ContentBucket", {
             blockPublicAccess: {
                 blockPublicAcls: true,
-                blockPublicPolicy: true,
+                blockPublicPolicy: false,
                 ignorePublicAcls: true,
                 restrictPublicBuckets: true,
             },
@@ -43,6 +43,7 @@ export class AwsStack extends cdk.Stack {
 
         bucket.grantPut(user);
         bucket.grantReadWrite(user);
+        bucket.grantPublicAccess();
         bucket.addCorsRule({
             allowedMethods: [
                 HttpMethods.GET,

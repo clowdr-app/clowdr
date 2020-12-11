@@ -5,6 +5,13 @@ type Query {
 }
 
 
+type Query {
+  getContentItem (
+    magicToken: String!
+  ): [GetContentItemOutput]
+}
+
+
 type Mutation {
   invitationConfirmCurrent (
     inviteCode: uuid!
@@ -96,5 +103,13 @@ type ConfirmInvitationOutput {
 
 type InvitationConfirmationEmailOutput {
   sent : Boolean!
+}
+
+type GetContentItemOutput {
+  contentTypeName : String!
+  name : String!
+  id : String!
+  data : jsonb!
+  layoutData : jsonb
 }
 

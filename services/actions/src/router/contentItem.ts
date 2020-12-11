@@ -1,7 +1,10 @@
 import bodyParser from "body-parser";
 import express, { Request, Response } from "express";
 import { assertType, is } from "typescript-is";
-import { handleContentItemUpdated } from "../handlers/content";
+import {
+    handleContentItemUpdated,
+    handleGetByRequiredItem,
+} from "../handlers/content";
 import { submitContentHandler } from "../handlers/upload";
 import { ContentItemData, Payload } from "../types/event";
 
@@ -44,6 +47,31 @@ router.post(
                 success: false,
                 message: "Invalid request",
             });
+        }
+    }
+);
+
+router.post(
+    "/getByRequiredItem",
+    bodyParser.json(),
+    async (
+        req: Request,
+        res: Response<Array<GetContentItemOutput> | string>
+    ) => {
+        const params = req.body.input;
+        try {
+            assertType<getContentItemArgs>(params);
+        } catch (e) {
+            console.error(`${req.path}: Invalid request:`, req.body.input);
+            return res.status(500).json("Invalid request");
+        }
+
+        try {
+            const result = await handleGetByRequiredItem(params);
+            return res.status(200).json(result);
+        } catch (e) {
+            console.error(`${req.path}: Failed to retrieve item`, e);
+            return res.status(500).json("Failed to retrieve item");
         }
     }
 );

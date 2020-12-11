@@ -24,6 +24,7 @@ import {
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
 import FAIcon from "../Icons/FAIcon";
 import UnsavedChangesWarning from "../LeavingPageWarnings/UnsavedChangesWarning";
+import UploadedContentItem from "./UploadedContentItem";
 
 gql`
     query SelectRequiredItem {
@@ -130,7 +131,7 @@ export default function UploadItemPage({
                 <>An error occurred while loading data.</>
             ) : (
                 <>
-                    <Heading as="h2">
+                    <Heading as="h2" fontSize="1.5rem">
                         {data?.RequiredContentItem[0].name}
                     </Heading>
                     <ProgressBar
@@ -317,6 +318,7 @@ export default function UploadItemPage({
                     </Formik>
                 </>
             )}
+            <UploadedContentItem magicToken={token} />
         </>
     );
 }

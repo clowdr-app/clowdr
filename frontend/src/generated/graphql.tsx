@@ -7726,6 +7726,15 @@ export enum FollowedChat_Update_Column {
   UserId = 'userId'
 }
 
+export type GetContentItemOutput = {
+  readonly __typename?: 'GetContentItemOutput';
+  readonly contentTypeName: Scalars['String'];
+  readonly data: Scalars['jsonb'];
+  readonly id: Scalars['String'];
+  readonly layoutData?: Maybe<Scalars['jsonb']>;
+  readonly name: Scalars['String'];
+};
+
 /** columns and relationships of "Group" */
 export type Group = {
   readonly __typename?: 'Group';
@@ -15913,6 +15922,8 @@ export type Query_Root = {
   readonly User_by_pk?: Maybe<User>;
   /** perform the action: "echo" */
   readonly echo?: Maybe<EchoOutput>;
+  /** perform the action: "getContentItem" */
+  readonly getContentItem?: Maybe<ReadonlyArray<Maybe<GetContentItemOutput>>>;
   /** perform the action: "protectedEcho" */
   readonly protectedEcho?: Maybe<ProtectedEchoOutput>;
 };
@@ -17147,6 +17158,12 @@ export type Query_RootEchoArgs = {
 
 
 /** query root */
+export type Query_RootGetContentItemArgs = {
+  magicToken: Scalars['String'];
+};
+
+
+/** query root */
 export type Query_RootProtectedEchoArgs = {
   message: Scalars['String'];
 };
@@ -17438,6 +17455,8 @@ export type Subscription_Root = {
   readonly User_by_pk?: Maybe<User>;
   /** perform the action: "echo" */
   readonly echo?: Maybe<EchoOutput>;
+  /** perform the action: "getContentItem" */
+  readonly getContentItem?: Maybe<ReadonlyArray<Maybe<GetContentItemOutput>>>;
   /** perform the action: "protectedEcho" */
   readonly protectedEcho?: Maybe<ProtectedEchoOutput>;
 };
@@ -18672,6 +18691,12 @@ export type Subscription_RootEchoArgs = {
 
 
 /** subscription root */
+export type Subscription_RootGetContentItemArgs = {
+  magicToken: Scalars['String'];
+};
+
+
+/** subscription root */
 export type Subscription_RootProtectedEchoArgs = {
   message: Scalars['String'];
 };
@@ -18866,6 +18891,13 @@ export type CurrentUserGroupsRolesPermissionsQueryVariables = Exact<{
 
 
 export type CurrentUserGroupsRolesPermissionsQuery = { readonly __typename?: 'query_root', readonly User: ReadonlyArray<{ readonly __typename?: 'User', readonly id: string, readonly conferencesCreated: ReadonlyArray<{ readonly __typename?: 'Conference', readonly id: any }>, readonly attendees: ReadonlyArray<{ readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly conferenceId: any, readonly displayName: string, readonly groupAttendees: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly id: any, readonly groupId: any, readonly attendeeId: any, readonly group: { readonly __typename?: 'Group', readonly enabled: boolean, readonly id: any, readonly includeUnauthenticated: boolean, readonly name: string, readonly conferenceId: any, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any, readonly role: { readonly __typename?: 'Role', readonly id: any, readonly name: string, readonly conferenceId: any, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly permissionName: Permission_Enum, readonly id: any, readonly roleId: any }> } }> } }> }> }> };
+
+export type GetContentItemQueryVariables = Exact<{
+  magicToken: Scalars['String'];
+}>;
+
+
+export type GetContentItemQuery = { readonly __typename?: 'query_root', readonly getContentItem?: Maybe<ReadonlyArray<Maybe<{ readonly __typename?: 'GetContentItemOutput', readonly contentTypeName: string, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly id: string }>>> };
 
 export type SelectRequiredItemQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -19912,6 +19944,43 @@ export function useCurrentUserGroupsRolesPermissionsLazyQuery(baseOptions?: Apol
 export type CurrentUserGroupsRolesPermissionsQueryHookResult = ReturnType<typeof useCurrentUserGroupsRolesPermissionsQuery>;
 export type CurrentUserGroupsRolesPermissionsLazyQueryHookResult = ReturnType<typeof useCurrentUserGroupsRolesPermissionsLazyQuery>;
 export type CurrentUserGroupsRolesPermissionsQueryResult = Apollo.QueryResult<CurrentUserGroupsRolesPermissionsQuery, CurrentUserGroupsRolesPermissionsQueryVariables>;
+export const GetContentItemDocument = gql`
+    query GetContentItem($magicToken: String!) {
+  getContentItem(magicToken: $magicToken) {
+    contentTypeName
+    data
+    layoutData
+    name
+    id
+  }
+}
+    `;
+
+/**
+ * __useGetContentItemQuery__
+ *
+ * To run a query within a React component, call `useGetContentItemQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetContentItemQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetContentItemQuery({
+ *   variables: {
+ *      magicToken: // value for 'magicToken'
+ *   },
+ * });
+ */
+export function useGetContentItemQuery(baseOptions: Apollo.QueryHookOptions<GetContentItemQuery, GetContentItemQueryVariables>) {
+        return Apollo.useQuery<GetContentItemQuery, GetContentItemQueryVariables>(GetContentItemDocument, baseOptions);
+      }
+export function useGetContentItemLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetContentItemQuery, GetContentItemQueryVariables>) {
+          return Apollo.useLazyQuery<GetContentItemQuery, GetContentItemQueryVariables>(GetContentItemDocument, baseOptions);
+        }
+export type GetContentItemQueryHookResult = ReturnType<typeof useGetContentItemQuery>;
+export type GetContentItemLazyQueryHookResult = ReturnType<typeof useGetContentItemLazyQuery>;
+export type GetContentItemQueryResult = Apollo.QueryResult<GetContentItemQuery, GetContentItemQueryVariables>;
 export const SelectRequiredItemDocument = gql`
     query SelectRequiredItem {
   RequiredContentItem {

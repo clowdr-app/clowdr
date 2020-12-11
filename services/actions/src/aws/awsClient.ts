@@ -47,7 +47,7 @@ const s3 = new S3({
     region,
 });
 
-const mediaconvert = async () => {
+const mediaconvert = async (): Promise<MediaConvert> => {
     const mediaConvertEndpoint = await new MediaConvert({
         apiVersion: "2017-08-29",
         credentials,

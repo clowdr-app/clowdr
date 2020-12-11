@@ -691,10 +691,6 @@ function FilterInput({
 // - TODO: Apply field descriptions in more places
 // - TODO: Apply default sorting priority
 //
-// Secondary Fields:
-// - TODO: Apply secondary field mode to Create modal
-// - TODO: Apply secondary field mode as an Edit side-panel
-//
 // Highlighting:
 // - TODO: Render highlighting options dropdown menu
 // - TODO: Toggle highlighting options on/off
@@ -710,7 +706,6 @@ function FilterInput({
 // - TODO: Multi-edit button
 // - TODO: Select all / deselect all button / clear selection (inc. hidden
 //   selections)
-// - TODO: Render & implement custom buttons
 //
 // Other:
 // - TODO: Double-click any cell to add to selection

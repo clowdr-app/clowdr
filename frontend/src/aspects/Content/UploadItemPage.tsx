@@ -308,7 +308,11 @@ export default function UploadItemPage({
                                         colorScheme="green"
                                         isLoading={props.isSubmitting}
                                         type="submit"
-                                        isDisabled={!props.isValid || !dirty}
+                                        isDisabled={
+                                            !props.isValid ||
+                                            !dirty ||
+                                            files.length !== 1
+                                        }
                                     >
                                         Upload
                                     </Button>

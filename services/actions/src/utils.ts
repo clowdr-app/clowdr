@@ -10,7 +10,7 @@ export async function callWithRetry<T>(f: () => Promise<T>): Promise<T> {
 }
 
 export function getHostUrl(): string {
-    assert(process.env.HOST_DOMAIN, "HOST environment variable not provided.");
+    assert(process.env.HOST_DOMAIN, "HOST_DOMAIN environment variable not provided.");
     assert(
         process.env.HOST_SECURE_PROTOCOLS,
         "HOST_SECURE_PROTOCOLS environment variable not provided."

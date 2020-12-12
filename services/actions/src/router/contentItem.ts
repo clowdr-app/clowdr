@@ -1,6 +1,9 @@
 import bodyParser from "body-parser";
 import express, { Request, Response } from "express";
+import fetch from "node-fetch";
+import MessageValidator from "sns-validator";
 import { assertType, is } from "typescript-is";
+import { promisify } from "util";
 import {
     handleContentItemUpdated,
     handleGetByRequiredItem,
@@ -13,15 +16,75 @@ export const router = express.Router();
 
 // Unprotected routes
 
-router.post("/notifyTranscode", async (req: Request, res: Response) => {
-    console.log("notifyTranscode", req);
-    res.status(200).json("OK");
-});
+router.post(
+    "/notifyTranscode",
+    bodyParser.text(),
+    async (req: Request, res: Response) => {
+        console.log("notifyTranscode");
 
-router.post("/notifyTranscribe", (req: Request, res: Response) => {
-    console.log("notifyTranscribe", req);
-    res.status(200).json("OK");
-});
+        const validator = new MessageValidator();
+        const validate = promisify(validator.validate.bind(validator));
+
+        let message;
+        try {
+            message = JSON.parse(req.body);
+            await validate(message);
+        } catch (e) {
+            console.log(
+                "notifyTranscode: Received invalid SNS notification",
+                e,
+                req
+            );
+            res.status(403).json("Access denied");
+            return;
+        }
+
+        if (
+            message["TopicArn"] !==
+            process.env.AWS_TRANSCODE_NOTIFICATIONS_TOPIC_ARN
+        ) {
+            console.log(
+                "notifyTranscode: Received SNS notification for the wrong topic",
+                message["TopicArn"]
+            );
+            res.status(403).json("Access denied");
+            return;
+        }
+
+        if (message["Type"] === "SubscriptionConfirmation") {
+            try {
+                await fetch(message["SubscribeURL"], {
+                    method: "get",
+                });
+                console.log("notifyTranscode: confirmed subscription");
+            } catch (e) {
+                console.error(
+                    "notifyTranscode: failed to confirm subscription",
+                    e
+                );
+                res.status(500).json("Failure");
+                return;
+            }
+        } else if (message["Type"] === "Notification") {
+            console.log(
+                "notifyTranscode Received message",
+                message["MessageId"],
+                message["Message"]
+            );
+        }
+
+        res.status(200).json("OK");
+    }
+);
+
+router.post(
+    "/notifyTranscribe",
+    bodyParser.json(),
+    (req: Request, res: Response) => {
+        console.log("notifyTranscribe", req);
+        res.status(200).json("OK");
+    }
+);
 
 // Protected routes
 

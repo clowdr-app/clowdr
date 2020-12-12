@@ -144,11 +144,6 @@ export class AwsStack extends cdk.Stack {
             })
         );
 
-        // Create a role to be used by Transcribe
-        const transcribeAccessRole = new iam.Role(this, "TranscribeRole", {
-            assumedBy: new iam.ServicePrincipal("transcribe.amazonaws.com"),
-        });
-
         /* Notifications and webhooks */
 
         // Transcoding notifications
@@ -157,26 +152,34 @@ export class AwsStack extends cdk.Stack {
             "TranscodeNotifications"
         );
         transcodeNotificationsTopic.grantPublish({
+            grantPrincipal: new iam.ArnPrincipal(
+                mediaConvertAccessRole.roleArn
+            ),
+        });
+        transcodeNotificationsTopic.grantPublish({
             grantPrincipal: new iam.ServicePrincipal("events.amazonaws.com"),
         });
-        // transcodeNotificationsTopic.addToResourcePolicy(
-        //     new iam.PolicyStatement({
-        //         actions: [
-        //             "SNS:Subscribe",
-        //             "SNS:ListSubscriptionsByTopic",
-        //             "SNS:DeleteTopic",
-        //             "SNS:GetTopicAttributes",
-        //             "SNS:Publish",
-        //             "SNS:RemovePermission",
-        //             "SNS:AddPermission",
-        //             "SNS:Receive",
-        //             "SNS:SetTopicAttributes",
-        //         ],
-        //         principals: [new iam.ServicePrincipal("events.amazonaws.com")],
-        //         resources: [transcodeNotificationsTopic.topicArn],
-        //         effect: iam.Effect.ALLOW,
-        //     })
-        // );
+        transcodeNotificationsTopic.addToResourcePolicy(
+            new iam.PolicyStatement({
+                actions: [
+                    "SNS:Subscribe",
+                    "SNS:ListSubscriptionsByTopic",
+                    "SNS:DeleteTopic",
+                    "SNS:GetTopicAttributes",
+                    "SNS:Publish",
+                    "SNS:RemovePermission",
+                    "SNS:AddPermission",
+                    "SNS:Receive",
+                    "SNS:SetTopicAttributes",
+                ],
+                principals: [
+                    new iam.ServicePrincipal("events.amazonaws.com"),
+                    new iam.ArnPrincipal(mediaConvertAccessRole.roleArn),
+                ],
+                resources: [transcodeNotificationsTopic.topicArn],
+                effect: iam.Effect.ALLOW,
+            })
+        );
         transcodeNotificationsTopic.addToResourcePolicy(
             new iam.PolicyStatement({
                 actions: ["SNS:Subscribe"],
@@ -186,17 +189,11 @@ export class AwsStack extends cdk.Stack {
             })
         );
 
-        const transcodeEventBus = new events.EventBus(
-            this,
-            "TranscodeEventBus",
-            {}
+        events.EventBus.grantPutEvents(
+            new iam.ServicePrincipal("mediaconvert.amazonaws.com")
         );
-        new events.CfnArchive(this, "TranscodeEventArchive", {
-            sourceArn: transcodeEventBus.eventBusArn,
-        });
         const transcodeEventRule = new events.Rule(this, "TranscodeEventRule", {
             enabled: true,
-            eventBus: transcodeEventBus,
         });
         transcodeEventRule.addEventPattern({
             source: ["aws.mediaconvert"],
@@ -213,14 +210,6 @@ export class AwsStack extends cdk.Stack {
         );
         transcodeEventRule.addTarget(
             new targets.CloudWatchLogGroup(transcodeLogGroup)
-        );
-
-        mediaConvertAccessRole.addToPolicy(
-            new iam.PolicyStatement({
-                actions: ["events:PutEvents"],
-                resources: [transcodeEventBus.eventBusArn],
-                effect: iam.Effect.ALLOW,
-            })
         );
 
         // Transcribe notifications
@@ -242,20 +231,11 @@ export class AwsStack extends cdk.Stack {
             })
         );
 
-        const transcribeEventBus = new events.EventBus(
-            this,
-            "TranscribeEventBus",
-            {}
-        );
-        new events.CfnArchive(this, "TranscribeEventArchive", {
-            sourceArn: transcribeEventBus.eventBusArn,
-        });
         const transcribeEventRule = new events.Rule(
             this,
             "TranscribeEventRule",
             {
                 enabled: true,
-                eventBus: transcribeEventBus,
             }
         );
         transcribeEventRule.addEventPattern({
@@ -273,14 +253,6 @@ export class AwsStack extends cdk.Stack {
         );
         transcribeEventRule.addTarget(
             new targets.CloudWatchLogGroup(transcribeLogGroup)
-        );
-
-        transcribeAccessRole.addToPolicy(
-            new iam.PolicyStatement({
-                actions: ["events:PutEvents"],
-                resources: [transcribeEventBus.eventBusArn],
-                effect: iam.Effect.ALLOW,
-            })
         );
 
         // Outputs

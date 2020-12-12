@@ -12,7 +12,7 @@ import CRUDTable, {
     InstantModeCUDCallbacks,
     StringFieldSpec,
     UpdateResult,
-} from "./CRDUTable";
+} from "./CRUDTable";
 
 type TestCRUDData = {
     id: string;

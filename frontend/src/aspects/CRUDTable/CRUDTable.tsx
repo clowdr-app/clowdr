@@ -431,7 +431,7 @@ const defaultRenderers: {
                     options={editMode.opts.options}
                     isMulti={editMode.opts.multiSelect}
                     closeMenuOnSelect={true}
-                    value={options}
+                    value={options as any}
                     onChange={(value) => {
                         editMode.onChange(value);
                     }}
@@ -461,6 +461,10 @@ const defaultRenderers: {
                             ...provided,
                             backgroundColor: "#f0edf7",
                             color: "black",
+                        }),
+                        singleValue: (provided: any, _state: any) => ({
+                            ...provided,
+                            color: "white",
                         }),
                         multiValueLabel: (provided: any, _state: any) => ({
                             ...provided,

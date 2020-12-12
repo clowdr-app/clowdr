@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client";
+import assert from "assert";
 import { Heading, Spinner } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -10,11 +11,13 @@ import {
 } from "../../../generated/graphql";
 import CRUDTable, {
     CRUDTableProps,
+    defaultSelectFilter,
     defaultStringFilter,
     FieldType,
     PrimaryField,
+    SelectOption,
     ValidatationResult,
-} from "../../CRUDTable/CRDUTable";
+} from "../../CRUDTable/CRUDTable";
 import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import isValidUUID from "../../Utils/isValidUUID";
@@ -153,11 +156,23 @@ export default function ManageConferenceContentPage(): JSX.Element {
         );
     }, [allContentGroups]);
 
+    const groupTypeOptions: SelectOption[] = useMemo(() => {
+        return Object.keys(ContentGroupType_Enum)
+            .filter(key => typeof (ContentGroupType_Enum as any)[key] === "string")
+            .map(key => {
+                const v = (ContentGroupType_Enum as any)[key] as string;
+                return {
+                    label: key,
+                    value: v
+                };
+            });
+    }, []);
+
     const fields = useMemo(() => {
         const result: {
             [K: string]: Readonly<PrimaryField<ContentGroupDescriptor, any>>;
         } = {
-            name: {
+            title: {
                 heading: "Title",
                 ariaLabel: "Title",
                 description: "Title of content",
@@ -180,9 +195,70 @@ export default function ManageConferenceContentPage(): JSX.Element {
                 validate: (v) =>
                     v.length >= 3 || ["Title must be at least 3 characters"],
             },
+            shortTitle: {
+                heading: "Short Title",
+                ariaLabel: "Short Title",
+                description: "Short title of content",
+                isHidden: false,
+                isEditable: true,
+                defaultValue: "New content short title",
+                insert: (item, v) => {
+                    return {
+                        ...item,
+                        name: v,
+                    };
+                },
+                extract: (v) => v.title,
+                spec: {
+                    fieldType: FieldType.string,
+                    convertFromUI: (x) => x,
+                    convertToUI: (x) => x,
+                    filter: defaultStringFilter,
+                },
+                validate: (v) =>
+                    v.length >= 3 || ["Short title must be at least 3 characters"],
+            },
+            typeName: {
+                heading: "Type",
+                ariaLabel: "Type",
+                description: "Type of content",
+                isHidden: false,
+                isEditable: true,
+                defaultValue: {
+                    label: "Paper",
+                    value: ContentGroupType_Enum.Paper
+                },
+                insert: (item, v) => {
+                    return {
+                        ...item,
+                        typeName: v
+                    };
+                },
+                extract: (item) => item.typeName,
+                spec: {
+                    fieldType: FieldType.select,
+                    convertFromUI: (opt) => {
+                        assert(!(opt instanceof Array) || opt.length === 1);
+                        if (opt instanceof Array) {
+                            return opt[0].value;
+                        }
+                        else {
+                            return opt.value;
+                        }
+                    },
+                    convertToUI: (typeName) => {
+                        const opt = groupTypeOptions.find(x => x.value === typeName);
+                        assert(opt);
+                        return opt;
+                    },
+                    multiSelect: false,
+                    options: () => groupTypeOptions,
+                    filter: defaultSelectFilter
+                }
+            }
         };
         return result;
-    }, []);
+    }, [groupTypeOptions]);
 
     return (
         <RequireAtLeastOnePermissionWrapper

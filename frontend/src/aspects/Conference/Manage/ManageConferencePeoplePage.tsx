@@ -24,7 +24,7 @@ import CRUDTable, {
     PrimaryField,
     SelectOption,
     UpdateResult,
-} from "../../CRUDTable/CRDUTable";
+} from "../../CRUDTable/CRUDTable";
 import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import isValidUUID from "../../Utils/isValidUUID";

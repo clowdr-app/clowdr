@@ -331,6 +331,15 @@ export default function ManageConferenceContentPage(): JSX.Element {
                     },
                     otherFields: fields,
                 }}
+                secondaryFields={{
+                    editSingle: (key, onClose) => {
+                        return {
+                            includeCloseButton: true,
+                            editorElement: <>TODO</>,
+                            footerButtons: []
+                        };
+                    }
+                }}
             />
         </RequireAtLeastOnePermissionWrapper>
     );

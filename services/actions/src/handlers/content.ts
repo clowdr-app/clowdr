@@ -1,42 +1,42 @@
 import { gql } from "@apollo/client/core";
-import {
-    AacCodingMode,
-    AacRateControlMode,
-    AacVbrQuality,
-    AudioCodec,
-    AudioSelectorType,
-    ContainerType,
-    H264RateControlMode,
-    OutputGroupType,
-    VideoCodec,
-} from "@aws-sdk/client-mediaconvert";
 import assert from "assert";
-import { MediaConvert } from "../aws/awsClient";
+import R from "ramda";
 import {
+    ContentItemAddNewVersionDocument,
     ContentType_Enum,
     GetContentItemByRequiredItemDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
+import { startTranscode } from "../lib/transcode";
 import { ContentItemData, Payload } from "../types/event";
+
+gql`
+    mutation ContentItemAddNewVersion($id: uuid!, $newVersion: jsonb!) {
+        update_ContentItem_by_pk(
+            pk_columns: { id: $id }
+            _append: { data: $newVersion }
+        ) {
+            id
+        }
+    }
+`;
 
 export async function handleContentItemUpdated(
     payload: Payload<ContentItemData>
 ): Promise<void> {
-    const oldContent = payload.event.data.old;
-    const newContent = payload.event.data.new;
+    const oldRow = payload.event.data.old;
+    const newRow = payload.event.data.new;
 
-    if (!newContent?.data) {
+    if (!newRow?.data) {
         console.error("handleContentItemUpdated: New content was empty");
         return;
     }
 
-    const oldVersion =
-        oldContent?.data.versions[oldContent.data.versions.length - 1];
-    const newVersion =
-        newContent.data.versions[newContent.data.versions.length - 1];
+    const oldVersion = oldRow?.data[oldRow.data.length - 1];
+    const currentVersion = newRow.data[newRow.data.length - 1];
 
     // If new version is not a video
-    if (newVersion.data.type !== ContentType_Enum.VideoBroadcast) {
+    if (currentVersion.data.type !== ContentType_Enum.VideoBroadcast) {
         console.log("Content item updated: was not a VideoBroadcast");
         return;
     }
@@ -44,86 +44,56 @@ export async function handleContentItemUpdated(
     // If there is a new video source URL, start transcoding
     if (
         (oldVersion &&
-            oldVersion.data.type == ContentType_Enum.VideoBroadcast &&
-            oldVersion.data.s3Url !== newVersion.data.s3Url) ||
-        (!oldVersion && newVersion.data.s3Url)
+            oldVersion.data.type === ContentType_Enum.VideoBroadcast &&
+            oldVersion.data.s3Url !== currentVersion.data.s3Url) ||
+        (!oldVersion && currentVersion.data.s3Url)
     ) {
-        console.log(
-            `Creating new MediaConvert job for ${newVersion.data.s3Url}`
+        const transcodeResult = await startTranscode(
+            currentVersion.data.s3Url,
+            newRow.id
         );
 
-        assert(MediaConvert, "AWS MediaConvert client is not initialised");
+        // Update data item with new version
+        const newVersion = R.clone(currentVersion);
+        assert(
+            newVersion.data.type === currentVersion.data.type,
+            "Clone failed (this should never happen!)"
+        ); // give TypeScript's inference a nudge
 
-        const result = await MediaConvert.createJob({
-            Role: process.env.AWS_MEDIACONVERT_SERVICE_ROLE_ARN,
-            Settings: {
-                Inputs: [
-                    {
-                        FileInput: newVersion.data.s3Url,
-                        AudioSelectors: {
-                            "Audio Selector 1": {
-                                SelectorType: AudioSelectorType.TRACK,
-                            },
-                        },
-                    },
-                ],
-                OutputGroups: [
-                    {
-                        CustomName: "File Group",
-                        OutputGroupSettings: {
-                            FileGroupSettings: {
-                                Destination: `s3://${process.env.AWS_CONTENT_BUCKET_ID}/`,
-                            },
-                            Type: OutputGroupType.FILE_GROUP_SETTINGS,
-                        },
-                        Outputs: [
-                            {
-                                NameModifier: "-transcode",
-                                ContainerSettings: {
-                                    Mp4Settings: {},
-                                    Container: ContainerType.MP4,
-                                },
-                                VideoDescription: {
-                                    CodecSettings: {
-                                        Codec: VideoCodec.H_264,
-                                        H264Settings: {
-                                            MaxBitrate: 6000000,
-                                            RateControlMode:
-                                                H264RateControlMode.QVBR,
-                                            QvbrSettings: {
-                                                QvbrQualityLevel: 9,
-                                            },
-                                        },
-                                    },
-                                },
-                                AudioDescriptions: [
-                                    {
-                                        CodecSettings: {
-                                            Codec: AudioCodec.AAC,
-                                            AacSettings: {
-                                                CodingMode:
-                                                    AacCodingMode.CODING_MODE_2_0,
-                                                SampleRate: 48000,
-                                                VbrQuality:
-                                                    AacVbrQuality.MEDIUM_HIGH,
-                                                RateControlMode:
-                                                    AacRateControlMode.VBR,
-                                            },
-                                        },
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                ],
+        newVersion.createdAt = Date.now();
+        newVersion.createdBy = "system";
+        newVersion.data.transcode = {
+            jobId: transcodeResult.jobId,
+            status: "IN_PROGRESS",
+            updatedTimestamp: transcodeResult.timestamp.getTime(),
+        };
+
+        const mutateResult = await apolloClient.mutate({
+            mutation: ContentItemAddNewVersionDocument,
+            variables: {
+                id: newRow.id,
+                newVersion,
             },
         });
 
-        console.log(
-            `Started new MediaConvert job for ${newVersion.data.s3Url} (id: ${result.Job?.Id})`
+        assert(
+            mutateResult.data?.update_ContentItem_by_pk?.id,
+            "Failed to record transcode initialisation"
         );
     } else {
         console.log("Content item video URL has not changed.");
+    }
+
+    // If there is a new transcode URL, notify the uploaders
+    if (
+        (oldVersion &&
+            oldVersion.data.type === ContentType_Enum.VideoBroadcast &&
+            currentVersion.data.transcode?.s3Url &&
+            oldVersion.data.transcode?.s3Url !==
+                currentVersion.data.transcode.s3Url) ||
+        (!oldVersion && currentVersion.data.transcode?.s3Url)
+    ) {
+        // TODO: Notify uploaders
     }
 }
 

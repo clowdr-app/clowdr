@@ -60973,7 +60973,7 @@
           },
           {
             "name": "CONFERENCE_VIEW_ATTENDEES",
-            "description": "View conference active attendees.",
+            "description": "View conference attendees.",
             "isDeprecated": false,
             "deprecationReason": null
           }
@@ -73160,6 +73160,38 @@
             "deprecationReason": null
           },
           {
+            "name": "conference",
+            "description": "An object relationship",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Conference",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "conferenceId",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "uuid",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "contentGroupTags",
             "description": "An array relationship",
             "args": [
@@ -73863,6 +73895,26 @@
             "defaultValue": null
           },
           {
+            "name": "conference",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "Conference_bool_exp",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "conferenceId",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "uuid_comparison_exp",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "contentGroupTags",
             "description": null,
             "type": {
@@ -73981,6 +74033,26 @@
             "defaultValue": null
           },
           {
+            "name": "conference",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "Conference_obj_rel_insert_input",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "conferenceId",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "uuid",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "contentGroupTags",
             "description": null,
             "type": {
@@ -74083,6 +74155,18 @@
             "deprecationReason": null
           },
           {
+            "name": "conferenceId",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "uuid",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "createdAt",
             "description": null,
             "args": [],
@@ -74165,6 +74249,16 @@
             "defaultValue": null
           },
           {
+            "name": "conferenceId",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "order_by",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "createdAt",
             "description": null,
             "type": {
@@ -74231,6 +74325,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "conferenceId",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "uuid",
               "ofType": null
             },
             "isDeprecated": false,
@@ -74310,6 +74416,16 @@
         "inputFields": [
           {
             "name": "colour",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "order_by",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "conferenceId",
             "description": null,
             "type": {
               "kind": "ENUM",
@@ -74533,6 +74649,26 @@
             "defaultValue": null
           },
           {
+            "name": "conference",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "Conference_order_by",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "conferenceId",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "order_by",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "contentGroupTags_aggregate",
             "description": null,
             "type": {
@@ -74657,6 +74793,12 @@
             "deprecationReason": null
           },
           {
+            "name": "conferenceId",
+            "description": "column name",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "createdAt",
             "description": "column name",
             "isDeprecated": false,
@@ -74701,6 +74843,16 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "conferenceId",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "uuid",
               "ofType": null
             },
             "defaultValue": null
@@ -74770,6 +74922,12 @@
         "enumValues": [
           {
             "name": "colour",
+            "description": "column name",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "conferenceId",
             "description": "column name",
             "isDeprecated": false,
             "deprecationReason": null

@@ -35,19 +35,25 @@ export default function UploadedContentItem({
         <>Could not load item.</>
     ) : (
         <>
-            <Heading as="h3" fontSize="1.2rem">
-                Previously uploaded
-            </Heading>
-            {data?.getContentItem?.map((item) =>
-                item ? (
-                    <RenderContentItem
-                        key={item.id}
-                        data={item.data}
-                        id={item.id}
-                    />
-                ) : (
-                    <></>
-                )
+            {data?.getContentItem?.length && data.getContentItem.length > 0 ? (
+                <>
+                    <Heading as="h3" fontSize="1.2rem">
+                        Previously uploaded
+                    </Heading>
+                    {data?.getContentItem?.map((item) =>
+                        item ? (
+                            <RenderContentItem
+                                key={item.id}
+                                data={item.data}
+                                id={item.id}
+                            />
+                        ) : (
+                            <></>
+                        )
+                    )}
+                </>
+            ) : (
+                <>No item has been uploaded yet.</>
             )}
         </>
     );

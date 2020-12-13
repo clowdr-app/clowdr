@@ -1,8 +1,10 @@
-import type { ContentItemDataBlob } from "@clowdr-app/shared-types/types/content";
+import {
+    ContentItemDataBlob,
+    ContentType_Enum,
+} from "@clowdr-app/shared-types/types/content";
 import AmazonS3Uri from "amazon-s3-uri";
 import React, { useMemo } from "react";
 import ReactPlayer from "react-player";
-import { ContentType_Enum } from "../../generated/graphql";
 
 export default function RenderContentItem({
     data,
@@ -12,20 +14,27 @@ export default function RenderContentItem({
     id: string;
 }): JSX.Element {
     const latestVersion =
-        data.versions && data.versions.length > 0
-            ? data.versions[data.versions.length - 1]
-            : null;
+        data && data.length > 0 ? data[data.length - 1] : null;
 
     const content = useMemo(() => {
         if (latestVersion?.data.type !== ContentType_Enum.VideoBroadcast) {
             return <>Cannot render this ({id}) yet.</>;
         }
 
-        if (!latestVersion.data.transcodedS3Url) {
-            return <>The item is still being processed</>;
+        if (latestVersion.data?.transcode?.status === "FAILED") {
+            return (
+                <>
+                    Failed to process this item:{" "}
+                    {latestVersion.data.transcode.message}
+                </>
+            );
         }
 
-        const { bucket, key } = AmazonS3Uri(latestVersion.data.transcodedS3Url);
+        if (!latestVersion.data.transcode?.s3Url) {
+            return <>This item is still being processed.</>;
+        }
+
+        const { bucket, key } = AmazonS3Uri(latestVersion.data.transcode.s3Url);
 
         return (
             <ReactPlayer

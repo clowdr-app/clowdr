@@ -1,5 +1,8 @@
 import { gql } from "@apollo/client/core";
-import { ContentBlob } from "@clowdr-app/shared-types/types/content";
+import {
+    ContentBlob,
+    ContentItemDataBlob,
+} from "@clowdr-app/shared-types/types/content";
 import AmazonS3URI from "amazon-s3-uri";
 import { S3 } from "../aws/awsClient";
 import {
@@ -176,7 +179,7 @@ async function createBlob(
     }
 }
 
-export async function submitContentHandler(
+export async function handleContentItemSubmitted(
     args: submitContentItemArgs
 ): Promise<SubmitContentItemOutput> {
     if (!args.magicToken) {
@@ -215,21 +218,21 @@ export async function submitContentHandler(
         }
 
         try {
+            const data: ContentItemDataBlob = [
+                {
+                    createdAt: Date.now(),
+                    createdBy: "user",
+                    data: newVersionData,
+                },
+            ];
+
             await apolloClient.mutate({
                 mutation: CreateContentItemDocument,
                 variables: {
                     conferenceId: requiredContentItem.conference.id,
                     contentGroupId: requiredContentItem.contentGroup.id,
                     contentTypeName: requiredContentItem.contentTypeName,
-                    data: {
-                        versions: [
-                            {
-                                createdAt: Date.now(),
-                                createdBy: "user",
-                                data: newVersionData,
-                            },
-                        ],
-                    },
+                    data,
                     isHidden: false,
                     layoutData: {},
                     name: requiredContentItem.name,

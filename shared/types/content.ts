@@ -1,8 +1,57 @@
-import type { ContentType_Enum } from "../../services/actions/src/generated/graphql";
+import gql from "graphql-tag";
 
-export interface ContentItemDataBlob {
-    versions: ContentItemVersionData[];
+gql`
+    query GetContentTypes {
+        ContentType {
+            name
+        }
+    }
+`;
+
+export enum ContentType_Enum {
+    /** Abstract Markdown text. */
+    Abstract = "ABSTRACT",
+    /** File for an image (stored by Clowdr). */
+    ImageFile = "IMAGE_FILE",
+    /** URL to an image (embedded in Clowdr UI). */
+    ImageUrl = "IMAGE_URL",
+    /** A generic URL. */
+    Link = "LINK",
+    /** A URL for a link button. */
+    LinkButton = "LINK_BUTTON",
+    /** File for a paper (stored by Clowdr). */
+    PaperFile = "PAPER_FILE",
+    /** Link for a paper (preview is not embedded in Clowdr UI). */
+    PaperLink = "PAPER_LINK",
+    /** URL to a paper (preview may be embedded in Clowdr UI e.g. PDF JS viewer). */
+    PaperUrl = "PAPER_URL",
+    /** File for a poster image (stored by Clowdr). */
+    PosterFile = "POSTER_FILE",
+    /** URL to a poster image (embedded in Clowdr UI). */
+    PosterUrl = "POSTER_URL",
+    /** General-purpose Markdown text. */
+    Text = "TEXT",
+    /** Video file to be broadcast. */
+    VideoBroadcast = "VIDEO_BROADCAST",
+    /** Video file for counting down to a transition in a broadcast. */
+    VideoCountdown = "VIDEO_COUNTDOWN",
+    /** File for a video (stored by Clowdr). */
+    VideoFile = "VIDEO_FILE",
+    /** Video file for filler loop between events/during breaks in a broadcast. */
+    VideoFiller = "VIDEO_FILLER",
+    /** Link to a video (video is not embedded in Clowdr UI). */
+    VideoLink = "VIDEO_LINK",
+    /** Video file to be published in advance of the conference. */
+    VideoPrepublish = "VIDEO_PREPUBLISH",
+    /** Video file for sponsors filler loop between events/during breaks in a broadcast. */
+    VideoSponsorsFiller = "VIDEO_SPONSORS_FILLER",
+    /** Video file for titles introducing an event during a broadcast. */
+    VideoTitles = "VIDEO_TITLES",
+    /** URL for a video (video is embedded in Clowdr UI). */
+    VideoUrl = "VIDEO_URL",
 }
+
+export type ContentItemDataBlob = ContentItemVersionData[];
 
 export interface ContentItemVersionData {
     createdAt: number;
@@ -131,9 +180,17 @@ interface LinkContentBlob extends BaseContentBlob {
     url: string;
 }
 
-interface VideoContentBlob extends FileContentBlob {
+export interface VideoContentBlob extends FileContentBlob {
     subtitleS3Urls: any;
-    transcodedS3Url?: string;
+    transcode?: TranscodeDetails;
+}
+
+interface TranscodeDetails {
+    s3Url?: string;
+    status: "IN_PROGRESS" | "FAILED" | "COMPLETED";
+    message?: string;
+    updatedTimestamp: number;
+    jobId: string;
 }
 
 interface BaseContentBlob {

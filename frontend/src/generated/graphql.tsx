@@ -9621,7 +9621,7 @@ export enum Permission_Enum {
   ConferenceModerateAttendees = 'CONFERENCE_MODERATE_ATTENDEES',
   /** View the conference. */
   ConferenceView = 'CONFERENCE_VIEW',
-  /** View conference active attendees. */
+  /** View conference attendees. */
   ConferenceViewAttendees = 'CONFERENCE_VIEW_ATTENDEES'
 }
 
@@ -11550,6 +11550,9 @@ export type SubmitContentItemOutput = {
 export type Tag = {
   readonly __typename?: 'Tag';
   readonly colour: Scalars['String'];
+  /** An object relationship */
+  readonly conference: Conference;
+  readonly conferenceId: Scalars['uuid'];
   /** An array relationship */
   readonly contentGroupTags: ReadonlyArray<ContentGroupTag>;
   /** An aggregated array relationship */
@@ -11648,6 +11651,8 @@ export type Tag_Bool_Exp = {
   readonly _not?: Maybe<Tag_Bool_Exp>;
   readonly _or?: Maybe<ReadonlyArray<Maybe<Tag_Bool_Exp>>>;
   readonly colour?: Maybe<String_Comparison_Exp>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly contentGroupTags?: Maybe<ContentGroupTag_Bool_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly eventTags?: Maybe<EventTag_Bool_Exp>;
@@ -11667,6 +11672,8 @@ export enum Tag_Constraint {
 /** input type for inserting data into table "Tag" */
 export type Tag_Insert_Input = {
   readonly colour?: Maybe<Scalars['String']>;
+  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly contentGroupTags?: Maybe<ContentGroupTag_Arr_Rel_Insert_Input>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly eventTags?: Maybe<EventTag_Arr_Rel_Insert_Input>;
@@ -11681,6 +11688,7 @@ export type Tag_Insert_Input = {
 export type Tag_Max_Fields = {
   readonly __typename?: 'Tag_max_fields';
   readonly colour?: Maybe<Scalars['String']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
@@ -11691,6 +11699,7 @@ export type Tag_Max_Fields = {
 /** order by max() on columns of table "Tag" */
 export type Tag_Max_Order_By = {
   readonly colour?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
@@ -11702,6 +11711,7 @@ export type Tag_Max_Order_By = {
 export type Tag_Min_Fields = {
   readonly __typename?: 'Tag_min_fields';
   readonly colour?: Maybe<Scalars['String']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
@@ -11712,6 +11722,7 @@ export type Tag_Min_Fields = {
 /** order by min() on columns of table "Tag" */
 export type Tag_Min_Order_By = {
   readonly colour?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
@@ -11744,6 +11755,8 @@ export type Tag_On_Conflict = {
 /** ordering options when selecting data from "Tag" */
 export type Tag_Order_By = {
   readonly colour?: Maybe<Order_By>;
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
   readonly contentGroupTags_aggregate?: Maybe<ContentGroupTag_Aggregate_Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly eventTags_aggregate?: Maybe<EventTag_Aggregate_Order_By>;
@@ -11764,6 +11777,8 @@ export enum Tag_Select_Column {
   /** column name */
   Colour = 'colour',
   /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
   CreatedAt = 'createdAt',
   /** column name */
   Id = 'id',
@@ -11778,6 +11793,7 @@ export enum Tag_Select_Column {
 /** input type for updating data in table "Tag" */
 export type Tag_Set_Input = {
   readonly colour?: Maybe<Scalars['String']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
@@ -11789,6 +11805,8 @@ export type Tag_Set_Input = {
 export enum Tag_Update_Column {
   /** column name */
   Colour = 'colour',
+  /** column name */
+  ConferenceId = 'conferenceId',
   /** column name */
   CreatedAt = 'createdAt',
   /** column name */

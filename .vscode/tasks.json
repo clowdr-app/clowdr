@@ -96,6 +96,20 @@
             },
             "args": ["run", "graphql-codegen"]
         },
+        // Shared -- GraphQL Codegen
+        {
+            "label": "Shared -- GraphQL Codegen",
+            "type": "shell",
+            "command": "npm",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/shared"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": ["run", "graphql-codegen"]
+        },
         // Frontend -- GraphQL Codegen
         {
             "label": "Frontend -- GraphQL Codegen",

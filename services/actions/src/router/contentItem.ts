@@ -1,3 +1,5 @@
+import { SNSNotification } from "@clowdr-app/shared-types/types/sns";
+import { MediaConvertEvent } from "@clowdr-app/shared-types/types/sns/mediaconvert";
 import bodyParser from "body-parser";
 import express, { Request, Response } from "express";
 import fetch from "node-fetch";
@@ -8,7 +10,8 @@ import {
     handleContentItemUpdated,
     handleGetByRequiredItem,
 } from "../handlers/content";
-import { submitContentHandler } from "../handlers/upload";
+import { handleContentItemSubmitted } from "../handlers/upload";
+import { completeTranscode } from "../lib/transcode";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
 import { ContentItemData, Payload } from "../types/event";
 
@@ -20,7 +23,7 @@ router.post(
     "/notifyTranscode",
     bodyParser.text(),
     async (req: Request, res: Response) => {
-        console.log("notifyTranscode");
+        console.log(req.originalUrl);
 
         const validator = new MessageValidator();
         const validate = promisify(validator.validate.bind(validator));
@@ -29,9 +32,10 @@ router.post(
         try {
             message = JSON.parse(req.body);
             await validate(message);
+            assertType<SNSNotification<any>>(message);
         } catch (e) {
             console.log(
-                "notifyTranscode: Received invalid SNS notification",
+                `${req.originalUrl}: received invalid SNS notification`,
                 e,
                 req
             );
@@ -44,7 +48,7 @@ router.post(
             process.env.AWS_TRANSCODE_NOTIFICATIONS_TOPIC_ARN
         ) {
             console.log(
-                "notifyTranscode: Received SNS notification for the wrong topic",
+                `${req.originalUrl}: received SNS notification for the wrong topic`,
                 message["TopicArn"]
             );
             res.status(403).json("Access denied");
@@ -56,10 +60,10 @@ router.post(
                 await fetch(message["SubscribeURL"], {
                     method: "get",
                 });
-                console.log("notifyTranscode: confirmed subscription");
+                console.log(`${req.originalUrl}: confirmed subscription`);
             } catch (e) {
                 console.error(
-                    "notifyTranscode: failed to confirm subscription",
+                    `${req.originalUrl}: failed to confirm subscription`,
                     e
                 );
                 res.status(500).json("Failure");
@@ -67,10 +71,39 @@ router.post(
             }
         } else if (message["Type"] === "Notification") {
             console.log(
-                "notifyTranscode Received message",
+                `${req.originalUrl}: received message`,
                 message["MessageId"],
                 message["Message"]
             );
+
+            let event: MediaConvertEvent;
+            try {
+                event = JSON.parse(message["Message"]);
+                assertType<MediaConvertEvent>(event);
+            } catch (err) {
+                console.error(
+                    `${req.originalUrl}: Unrecognised notification message`,
+                    err
+                );
+                res.status(500).json("Unrecognised notification message");
+                return;
+            }
+
+            try {
+                if (event.detail.status === "COMPLETE") {
+                    await completeTranscode(
+                        event.detail.userMetadata.contentItemId,
+                        event.detail.outputGroupDetails[0].outputDetails[0]
+                            .outputFilePaths[0],
+                        event.detail.jobId,
+                        new Date(event.detail.timestamp)
+                    );
+                }
+            } catch (e) {
+                console.error("Failed to complete transcode", e);
+                res.status(500).json("Failed to complete transcode");
+                return;
+            }
         }
 
         res.status(200).json("OK");
@@ -119,7 +152,7 @@ router.post(
         const params = req.body.input;
         if (is<submitContentItemArgs>(params)) {
             console.log(`${req.path}: Item upload requested`);
-            const result = await submitContentHandler(params);
+            const result = await handleContentItemSubmitted(params);
             return res.status(200).json(result);
         } else {
             console.error(`${req.path}: Invalid request:`, req.body.input);

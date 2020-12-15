@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
-import assert from "assert";
 import { Heading, Spinner } from "@chakra-ui/react";
+import assert from "assert";
 import React, { useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -158,12 +158,14 @@ export default function ManageConferenceContentPage(): JSX.Element {
 
     const groupTypeOptions: SelectOption[] = useMemo(() => {
         return Object.keys(ContentGroupType_Enum)
-            .filter(key => typeof (ContentGroupType_Enum as any)[key] === "string")
-            .map(key => {
+            .filter(
+                (key) => typeof (ContentGroupType_Enum as any)[key] === "string"
+            )
+            .map((key) => {
                 const v = (ContentGroupType_Enum as any)[key] as string;
                 return {
                     label: key,
-                    value: v
+                    value: v,
                 };
             });
     }, []);
@@ -216,7 +218,9 @@ export default function ManageConferenceContentPage(): JSX.Element {
                     filter: defaultStringFilter,
                 },
                 validate: (v) =>
-                    v.length >= 3 || ["Short title must be at least 3 characters"],
+                    v.length >= 3 || [
+                        "Short title must be at least 3 characters",
+                    ],
             },
             typeName: {
                 heading: "Type",
@@ -226,12 +230,12 @@ export default function ManageConferenceContentPage(): JSX.Element {
                 isEditable: true,
                 defaultValue: {
                     label: "Paper",
-                    value: ContentGroupType_Enum.Paper
+                    value: ContentGroupType_Enum.Paper,
                 },
                 insert: (item, v) => {
                     return {
                         ...item,
-                        typeName: v
+                        typeName: v,
                     };
                 },
                 extract: (item) => item.typeName,
@@ -241,21 +245,22 @@ export default function ManageConferenceContentPage(): JSX.Element {
                         assert(!(opt instanceof Array) || opt.length === 1);
                         if (opt instanceof Array) {
                             return opt[0].value;
-                        }
-                        else {
+                        } else {
                             return opt.value;
                         }
                     },
                     convertToUI: (typeName) => {
-                        const opt = groupTypeOptions.find(x => x.value === typeName);
+                        const opt = groupTypeOptions.find(
+                            (x) => x.value === typeName
+                        );
                         assert(opt);
                         return opt;
                     },
                     multiSelect: false,
                     options: () => groupTypeOptions,
-                    filter: defaultSelectFilter
-                }
-            }
+                    filter: defaultSelectFilter,
+                },
+            },
         };
         return result;
     }, [groupTypeOptions]);
@@ -336,9 +341,9 @@ export default function ManageConferenceContentPage(): JSX.Element {
                         return {
                             includeCloseButton: true,
                             editorElement: <>TODO</>,
-                            footerButtons: []
+                            footerButtons: [],
                         };
-                    }
+                    },
                 }}
             />
         </RequireAtLeastOnePermissionWrapper>

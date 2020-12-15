@@ -1,4 +1,5 @@
 {
     "prettier.prettierPath": "./node_modules/prettier/",
-    "typescript.preferences.importModuleSpecifier": "relative"
+    "typescript.preferences.importModuleSpecifier": "relative",
+    "restructuredtext.languageServer.disabled": true
 }

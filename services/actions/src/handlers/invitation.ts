@@ -472,6 +472,15 @@ export async function invitationConfirmSendInitialEmailHandler(
         args.inviteInput.inviteCode,
         userId
     );
+
+    // UI race condition might cause us to receive a request for
+    // which we don't really want to send an email.
+    if (invitation.invitedEmailAddress === user.email) {
+        return {
+            sent: true
+        };
+    }
+
     if (
         !invitation.attendee.userId &&
         (!invitation.linkToUserId || invitation.linkToUserId !== user.id)

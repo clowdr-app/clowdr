@@ -15,7 +15,7 @@ import {
     handleContentItemSubmitted,
     handleUpdateSubtitles,
 } from "../handlers/upload";
-import { completeTranscode } from "../lib/transcode";
+import { completeTranscode, failTranscode } from "../lib/transcode";
 import { completeTranscriptionJob } from "../lib/transcribe";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
 import { ContentItemData, Payload } from "../types/event";
@@ -105,8 +105,8 @@ router.post(
                 return;
             }
 
-            try {
-                if (event.detail.status === "COMPLETE") {
+            if (event.detail.status === "COMPLETE") {
+                try {
                     const transcodeS3Url =
                         event.detail.outputGroupDetails[0].outputDetails[0]
                             .outputFilePaths[0];
@@ -117,11 +117,24 @@ router.post(
                         event.detail.jobId,
                         new Date(event.detail.timestamp)
                     );
+                } catch (e) {
+                    console.error("Failed to complete transcode", e);
+                    res.status(500).json("Failed to complete transcode");
+                    return;
                 }
-            } catch (e) {
-                console.error("Failed to complete transcode", e);
-                res.status(500).json("Failed to complete transcode");
-                return;
+            } else if (event.detail.status === "ERROR") {
+                try {
+                    await failTranscode(
+                        event.detail.userMetadata.contentItemId,
+                        event.detail.jobId,
+                        new Date(event.detail.timestamp),
+                        event.detail.errorMessage
+                    );
+                } catch (e) {
+                    console.error("Failed to record failed transcode", e);
+                    res.status(500).json("Failed to record failed transcode");
+                    return;
+                }
             }
         }
 

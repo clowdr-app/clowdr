@@ -1,5 +1,5 @@
+import type { ContentItemDataBlob } from "@clowdr-app/shared-types/types/content";
 import React from "react";
-import type { ContentItemDataBlob } from "../../../../shared/types/content";
 import EditSubtitles from "./EditSubtitles";
 
 export function EditContentItem({
@@ -15,8 +15,8 @@ export function EditContentItem({
         data && data.length > 0 ? data[data.length - 1] : null;
 
     const latestSubtitles =
-        latestVersion?.data.type === "VIDEO_BROADCAST"
-            ? latestVersion?.data?.subtitles["en_US"]
+        latestVersion?.data.baseType === "video"
+            ? latestVersion?.data.subtitles["en_US"]
             : null;
     return (
         <>

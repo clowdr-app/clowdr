@@ -164,23 +164,29 @@ interface VideoUrlBlob extends UrlContentBlob {
 /* Meta content types */
 
 interface TextualContentBlob extends BaseContentBlob {
+    baseType: "text";
     text: string;
 }
 
 interface FileContentBlob extends BaseContentBlob {
+    baseType: "file";
     s3Url: string;
 }
 
 interface UrlContentBlob extends BaseContentBlob {
+    baseType: "url";
     url: string;
 }
 
 interface LinkContentBlob extends BaseContentBlob {
+    baseType: "link";
     text: string;
     url: string;
 }
 
-export interface VideoContentBlob extends FileContentBlob {
+export interface VideoContentBlob extends BaseContentBlob {
+    baseType: "video";
+    s3Url: string;
     transcode?: TranscodeDetails;
     subtitles: Record<LanguageCode, SubtitleDetails>;
 }

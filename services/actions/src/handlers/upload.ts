@@ -2,6 +2,7 @@ import { gql } from "@apollo/client/core";
 import {
     ContentBlob,
     ContentItemDataBlob,
+    ContentItemVersionData,
     VideoContentBlob,
 } from "@clowdr-app/shared-types/types/content";
 import AmazonS3URI from "amazon-s3-uri";
@@ -74,15 +75,6 @@ gql`
             id
         }
     }
-
-    mutation AddNewVersion($contentItemId: uuid!, $newData: jsonb!) {
-        update_ContentItem(
-            where: { id: { _eq: $contentItemId } }
-            _append: { data: $newData }
-        ) {
-            affected_rows
-        }
-    }
 `;
 
 async function checkS3Url(
@@ -127,6 +119,7 @@ async function createBlob(
                 return { error: "No text supplied" };
             }
             return {
+                baseType: "text",
                 type: contentTypeName,
                 text: inputData.text,
             };
@@ -141,6 +134,7 @@ async function createBlob(
                 return { error: result.message };
             }
             return {
+                baseType: "file",
                 type: contentTypeName,
                 s3Url: result.url,
             };
@@ -154,6 +148,7 @@ async function createBlob(
                 return { error: "No URL supplied" };
             }
             return {
+                baseType: "url",
                 type: contentTypeName,
                 url: inputData.url,
             };
@@ -164,6 +159,7 @@ async function createBlob(
                 return { error: "Text or URL not supplied" };
             }
             return {
+                baseType: "link",
                 type: contentTypeName,
                 text: inputData.text,
                 url: inputData.url,
@@ -183,6 +179,7 @@ async function createBlob(
                 return { error: result.message };
             }
             return {
+                baseType: "video",
                 type: contentTypeName,
                 s3Url: result.url,
                 subtitles: {},
@@ -229,18 +226,18 @@ export async function handleContentItemSubmitted(
         };
     }
 
-    if (!requiredContentItem.contentItem) {
-        const newVersionData = await createBlob(
-            args.data,
-            requiredContentItem.contentTypeName
-        );
-        if ("error" in newVersionData) {
-            return {
-                success: false,
-                message: newVersionData.error,
-            };
-        }
+    const newVersionData = await createBlob(
+        args.data,
+        requiredContentItem.contentTypeName
+    );
+    if ("error" in newVersionData) {
+        return {
+            success: false,
+            message: newVersionData.error,
+        };
+    }
 
+    if (!requiredContentItem.contentItem) {
         try {
             const data: ContentItemDataBlob = [
                 {
@@ -249,7 +246,6 @@ export async function handleContentItemSubmitted(
                     data: newVersionData,
                 },
             ];
-
             await apolloClient.mutate({
                 mutation: CreateContentItemDocument,
                 variables: {
@@ -287,7 +283,39 @@ export async function handleContentItemSubmitted(
     // If there is a content item of the same type, create a new version
 
     if (requiredContentItem.contentItem) {
-        //newVersionData[]
+        const latestVersion = await getLatestVersion(
+            requiredContentItem.contentItem.id
+        );
+
+        if (newVersionData.type !== latestVersion?.data.type) {
+            return {
+                success: false,
+                message:
+                    "An item of a different type has already been uploaded.",
+            };
+        } else {
+            try {
+                const newVersion: ContentItemVersionData = {
+                    createdAt: Date.now(),
+                    createdBy: "user",
+                    data: newVersionData,
+                };
+
+                await apolloClient.mutate({
+                    mutation: ContentItemAddNewVersionDocument,
+                    variables: {
+                        id: requiredContentItem.contentItem.id,
+                        newVersion,
+                    },
+                });
+            } catch (e) {
+                console.error("Failed to save new version of content item", e);
+                return {
+                    success: false,
+                    message: "Failed to save new version of content item",
+                };
+            }
+        }
     }
 
     return {

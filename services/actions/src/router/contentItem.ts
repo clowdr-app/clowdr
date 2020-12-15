@@ -11,7 +11,10 @@ import {
     handleContentItemUpdated,
     handleGetByRequiredItem,
 } from "../handlers/content";
-import { handleContentItemSubmitted } from "../handlers/upload";
+import {
+    handleContentItemSubmitted,
+    handleUpdateSubtitles,
+} from "../handlers/upload";
 import { completeTranscode } from "../lib/transcode";
 import { completeTranscriptionJob } from "../lib/transcribe";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
@@ -229,6 +232,25 @@ router.post(
             return res.status(200).json(result);
         } else {
             console.error(`${req.path}: Invalid request:`, req.body.input);
+            return res.status(200).json({
+                success: false,
+                message: "Invalid request",
+            });
+        }
+    }
+);
+
+router.post(
+    "/updateSubtitles",
+    bodyParser.json(),
+    async (req: Request, res: Response) => {
+        try {
+            const params = req.body.input;
+            assertType<updateSubtitlesArgs>(params);
+            const result = await handleUpdateSubtitles(params);
+            return res.status(200).json(result);
+        } catch (e) {
+            console.error(`${req.originalUrl}: invalid request:`, req.body);
             return res.status(200).json({
                 success: false,
                 message: "Invalid request",

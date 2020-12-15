@@ -2,6 +2,7 @@ import { gql } from "@apollo/client/core";
 import { Heading, Spinner } from "@chakra-ui/react";
 import React from "react";
 import { useGetContentItemQuery } from "../../generated/graphql";
+import { EditContentItem } from "./EditContentItem";
 import RenderContentItem from "./RenderContentItem";
 
 gql`
@@ -42,11 +43,17 @@ export default function UploadedContentItem({
                     </Heading>
                     {data?.getContentItem?.map((item) =>
                         item ? (
-                            <RenderContentItem
-                                key={item.id}
-                                data={item.data}
-                                id={item.id}
-                            />
+                            <div key={item.id}>
+                                <RenderContentItem
+                                    data={item.data}
+                                    contentItemId={item.id}
+                                />
+                                <EditContentItem
+                                    data={item.data}
+                                    contentItemId={item.id}
+                                    magicToken={magicToken}
+                                />
+                            </div>
                         ) : (
                             <></>
                         )

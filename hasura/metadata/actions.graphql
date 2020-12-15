@@ -69,6 +69,15 @@ type Mutation {
 }
 
 
+type Mutation {
+  updateSubtitles (
+    contentItemId: String!
+    subtitleText: String!
+    magicToken: String!
+  ): SubmitUpdatedSubtitlesOutput
+}
+
+
 
 
 input SampleInput {
@@ -91,6 +100,12 @@ input ConfirmInvitationInput {
 
 input InvitationConfirmationEmailInput {
   inviteCode : uuid!
+}
+
+input SubmitUpdatedSubtitlesInput {
+  contentItemId : String!
+  subtitleText : String!
+  accessToken : String!
 }
 
 type SampleOutput {
@@ -130,5 +145,10 @@ type GetContentItemOutput {
   id : String!
   data : jsonb!
   layoutData : jsonb
+}
+
+type SubmitUpdatedSubtitlesOutput {
+  success : Boolean!
+  message : String!
 }
 

@@ -37,10 +37,15 @@ type InvitationSendEmailResult = {
 
 type GetContentItemOutput = {
     contentTypeName: string;
-    id: string;
     name: string;
+    id: string;
     data: jsonb;
     layoutData?: Maybe<jsonb>;
+};
+
+type SubmitUpdatedSubtitlesOutput = {
+    success: boolean;
+    message: string;
 };
 
 type SampleInput = {
@@ -65,6 +70,12 @@ type InvitationConfirmationEmailInput = {
     inviteCode: uuid;
 };
 
+type SubmitUpdatedSubtitlesInput = {
+    contentItemId: string;
+    subtitleText: string;
+    accessToken: string;
+};
+
 type Query = {
     echo?: Maybe<EchoOutput>;
     getContentItem?: Maybe<Array<Maybe<GetContentItemOutput>>>;
@@ -81,6 +92,7 @@ type Mutation = {
     invitationSendInitialEmail: Array<InvitationSendEmailResult>;
     invitationSendRepeatEmail: Array<InvitationSendEmailResult>;
     submitContentItem?: Maybe<SubmitContentItemOutput>;
+    updateSubtitles?: Maybe<SubmitUpdatedSubtitlesOutput>;
 };
 
 type echoArgs = {
@@ -121,5 +133,11 @@ type invitationSendRepeatEmailArgs = {
 
 type submitContentItemArgs = {
     data: jsonb;
+    magicToken: string;
+};
+
+type updateSubtitlesArgs = {
+    contentItemId: string;
+    subtitleText: string;
     magicToken: string;
 };

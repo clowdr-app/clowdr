@@ -3,20 +3,20 @@ import {
     ContentType_Enum,
 } from "@clowdr-app/shared-types/types/content";
 import AmazonS3Uri from "amazon-s3-uri";
-import React, { useMemo } from "react";
+import React from "react";
 import ReactPlayer from "react-player";
 
 export default function RenderContentItem({
     data,
-    id,
+    contentItemId: id,
 }: {
     data: ContentItemDataBlob;
-    id: string;
+    contentItemId: string;
 }): JSX.Element {
     const latestVersion =
         data && data.length > 0 ? data[data.length - 1] : null;
 
-    const content = useMemo(() => {
+    function content() {
         if (latestVersion?.data.type !== ContentType_Enum.VideoBroadcast) {
             return <>Cannot render this ({id}) yet.</>;
         }
@@ -37,13 +37,12 @@ export default function RenderContentItem({
         const { bucket, key } = AmazonS3Uri(latestVersion.data.transcode.s3Url);
 
         return (
-            <>
-                <ReactPlayer
-                    url={`https://${bucket}.s3.eu-west-1.amazonaws.com/${key}`}
-                />
-            </>
+            <ReactPlayer
+                url={`https://${bucket}.s3.eu-west-1.amazonaws.com/${key}`}
+                controls={true}
+            />
         );
-    }, [id, latestVersion?.data]);
+    }
 
-    return content;
+    return content();
 }

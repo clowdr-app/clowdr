@@ -187,7 +187,7 @@ export interface VideoContentBlob extends FileContentBlob {
 
 type LanguageCode = string;
 
-interface SubtitleDetails {
+export interface SubtitleDetails {
     s3Url: string;
     status: "IN_PROGRESS" | "FAILED" | "COMPLETED";
     message?: string;

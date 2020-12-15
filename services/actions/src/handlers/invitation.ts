@@ -477,7 +477,7 @@ export async function invitationConfirmSendInitialEmailHandler(
     // which we don't really want to send an email.
     if (invitation.invitedEmailAddress === user.email) {
         return {
-            sent: true
+            sent: true,
         };
     }
 

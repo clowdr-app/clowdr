@@ -109,7 +109,7 @@ export default function EditSubtitles({
                 {({ dirty, ...props }) => (
                     <>
                         <UnsavedChangesWarning hasUnsavedChanges={dirty} />
-                        <Form>
+                        <Form style={{ width: "100%" }}>
                             <Field
                                 name="subtitles"
                                 validate={(
@@ -120,6 +120,7 @@ export default function EditSubtitles({
                             >
                                 {({ form, field }: FieldProps<string>) => (
                                     <FormControl
+                                        mt={5}
                                         isInvalid={
                                             !!form.errors.agree &&
                                             !!form.touched.agree
@@ -129,7 +130,11 @@ export default function EditSubtitles({
                                         <FormLabel htmlFor="subtitles">
                                             Subtitles
                                         </FormLabel>
-                                        <Textarea {...field} id="subtitles" />
+                                        <Textarea
+                                            {...field}
+                                            id="subtitles"
+                                            height={300}
+                                        />
                                         <FormErrorMessage>
                                             {form.errors.agree}
                                         </FormErrorMessage>

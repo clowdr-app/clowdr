@@ -3,7 +3,7 @@ import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import LoggedOutPage from "./aspects/Auth/LoggedOutPage";
 import ProtectedRoute from "./aspects/Auth/ProtectedRoute";
 import ConferenceRoutes from "./aspects/Conference/ConferenceRoutes";
-import UploadItemPage from "./aspects/Content/UploadItemPage";
+import SubmitItemPage from "./aspects/Content/SubmitItemPage";
 import CRUDTestPage from "./aspects/CRUDTable/CRUDTestPage";
 import PageNotFound from "./aspects/Errors/PageNotFound";
 import AcceptInvitationPage from "./aspects/Invitation/AcceptInvitationPage";
@@ -80,7 +80,7 @@ export default function Routing(): JSX.Element {
                     props: RouteComponentProps<{
                         token: string;
                     }>
-                ) => <UploadItemPage token={props.match.params.token} />}
+                ) => <SubmitItemPage magicToken={props.match.params.token} />}
             />
 
             {/*

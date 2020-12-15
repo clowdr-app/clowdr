@@ -3,7 +3,6 @@ import assert from "assert";
 import R from "ramda";
 import {
     ContentItemAddNewVersionDocument,
-    ContentType_Enum,
     GetContentItemByRequiredItemDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
@@ -37,7 +36,7 @@ export async function handleContentItemUpdated(
     const currentVersion = newRow.data[newRow.data.length - 1];
 
     // If new version is not a video
-    if (currentVersion.data.type !== ContentType_Enum.VideoBroadcast) {
+    if (currentVersion.data.baseType !== "video") {
         console.log("Content item updated: was not a VideoBroadcast");
         return;
     }
@@ -45,7 +44,7 @@ export async function handleContentItemUpdated(
     // If there is a new video source URL, start transcoding
     if (
         (oldVersion &&
-            oldVersion.data.type === ContentType_Enum.VideoBroadcast &&
+            oldVersion.data.baseType === "video" &&
             oldVersion.data.s3Url !== currentVersion.data.s3Url) ||
         (!oldVersion && currentVersion.data.s3Url)
     ) {
@@ -85,10 +84,10 @@ export async function handleContentItemUpdated(
         console.log("Content item video URL has not changed.");
     }
 
-    // If there is a new transcode URL, notify the uploaders
+    // If there is a new transcode URL, begin transcribing it
     if (
         (oldVersion &&
-            oldVersion.data.type === ContentType_Enum.VideoBroadcast &&
+            oldVersion.data.baseType === "video" &&
             currentVersion.data.transcode?.s3Url &&
             oldVersion.data.transcode?.s3Url !==
                 currentVersion.data.transcode.s3Url) ||
@@ -96,6 +95,9 @@ export async function handleContentItemUpdated(
     ) {
         await startTranscribe(currentVersion.data.transcode.s3Url, newRow.id);
     }
+
+    // If there are new en_US subtitles, notify the uploaders
+    // todo
 }
 
 gql`

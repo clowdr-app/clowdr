@@ -19359,7 +19359,12 @@ export type UpdateSubtitlesMutation = { readonly __typename?: 'mutation_root', r
 export type SelectRequiredItemQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SelectRequiredItemQuery = { readonly __typename?: 'query_root', readonly RequiredContentItem: ReadonlyArray<{ readonly __typename?: 'RequiredContentItem', readonly id: any, readonly contentTypeName: ContentType_Enum, readonly name: string, readonly conference: { readonly __typename?: 'Conference', readonly id: any, readonly name: string } }> };
+export type SelectRequiredItemQuery = { readonly __typename?: 'query_root', readonly RequiredContentItem: ReadonlyArray<(
+    { readonly __typename?: 'RequiredContentItem' }
+    & RequiredItemFieldsFragment
+  )> };
+
+export type RequiredItemFieldsFragment = { readonly __typename?: 'RequiredContentItem', readonly id: any, readonly contentTypeName: ContentType_Enum, readonly name: string, readonly conference: { readonly __typename?: 'Conference', readonly id: any, readonly name: string } };
 
 export type SubmitContentItemMutationVariables = Exact<{
   contentItemData: Scalars['jsonb'];
@@ -19498,6 +19503,17 @@ export const AttendeePartsFragmentDoc = gql`
   createdAt
   displayName
   inviteSent
+}
+    `;
+export const RequiredItemFieldsFragmentDoc = gql`
+    fragment RequiredItemFields on RequiredContentItem {
+  id
+  contentTypeName
+  name
+  conference {
+    id
+    name
+  }
 }
     `;
 export const SelectChatsDocument = gql`
@@ -20692,16 +20708,10 @@ export type UpdateSubtitlesMutationOptions = Apollo.BaseMutationOptions<UpdateSu
 export const SelectRequiredItemDocument = gql`
     query SelectRequiredItem {
   RequiredContentItem {
-    id
-    contentTypeName
-    name
-    conference {
-      id
-      name
-    }
+    ...RequiredItemFields
   }
 }
-    `;
+    ${RequiredItemFieldsFragmentDoc}`;
 
 /**
  * __useSelectRequiredItemQuery__

@@ -17,7 +17,9 @@ import {
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
 import UploadedContentItem from "./UploadedContentItem";
 import UploadFileForm from "./UploadFileForm";
+import UploadLinkForm from "./UploadLinkForm";
 import UploadTextForm from "./UploadTextForm";
+import UploadUrlForm from "./UploadUrlForm";
 
 gql`
     query SelectRequiredItem {
@@ -89,13 +91,16 @@ export default function SubmitItemPage({
                         allowedFileTypes={[".pdf", ".png", ".jpg"]}
                     />
                 );
-            case ContentType_Enum.Link:
-                return <>Link submission form</>;
+            case ContentType_Enum.LinkButton:
+            case ContentType_Enum.PaperLink:
+            case ContentType_Enum.VideoLink:
+                return <UploadLinkForm magicToken={magicToken} />;
             case ContentType_Enum.ImageUrl:
+            case ContentType_Enum.Link:
             case ContentType_Enum.PaperUrl:
             case ContentType_Enum.PosterUrl:
             case ContentType_Enum.VideoUrl:
-                return <>URL submission form</>;
+                return <UploadUrlForm magicToken={magicToken} />;
             case ContentType_Enum.VideoBroadcast:
             case ContentType_Enum.VideoCountdown:
             case ContentType_Enum.VideoFile:
@@ -111,8 +116,6 @@ export default function SubmitItemPage({
                     />
                 );
         }
-
-        return <>Unknown content type.</>;
     }, [magicToken, requiredItem]);
 
     return (

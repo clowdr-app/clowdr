@@ -1,8 +1,9 @@
-import { Text } from "@chakra-ui/react";
+import { Text, VStack } from "@chakra-ui/react";
 import type { ContentItemDataBlob } from "@clowdr-app/shared-types/types/content";
 import AmazonS3Uri from "amazon-s3-uri";
 import React from "react";
 import ReactPlayer from "react-player";
+import FAIcon from "../Icons/FAIcon";
 
 export default function RenderContentItem({
     data,
@@ -12,6 +13,11 @@ export default function RenderContentItem({
     const latestVersion =
         data && data.length > 0 ? data[data.length - 1] : null;
 
+    function s3UrlToHttpUrl(s3Url: string): string {
+        const { bucket, key } = AmazonS3Uri(s3Url);
+        return `https://${bucket}.s3.eu-west-1.amazonaws.com/${key}`;
+    }
+
     function content() {
         if (!latestVersion) {
             return <Text mt={5}>No content available to render.</Text>;
@@ -19,13 +25,35 @@ export default function RenderContentItem({
 
         switch (latestVersion.data.baseType) {
             case "file":
-                return <>Cannot render files yet</>;
+                return (
+                    <VStack>
+                        <a href={s3UrlToHttpUrl(latestVersion.data.s3Url)}>
+                            <FAIcon iconStyle="s" icon="download" />
+                        </a>
+                        <a href={s3UrlToHttpUrl(latestVersion.data.s3Url)}>
+                            File
+                        </a>
+                    </VStack>
+                );
             case "link":
-                return <>Cannot render links yet</>;
+                return (
+                    <Text>
+                        <a href={latestVersion.data.url}>
+                            {latestVersion.data.text}
+                        </a>
+                    </Text>
+                );
             case "text":
-                return <Text mt={5}>{latestVersion.data.text}</Text>;
+                return <Text>{latestVersion.data.text}</Text>;
             case "url":
-                return <Text mt={5}>URL: {latestVersion.data.url}</Text>;
+                return (
+                    <Text>
+                        URL:{" "}
+                        <a href={latestVersion.data.url}>
+                            {latestVersion.data.url}
+                        </a>
+                    </Text>
+                );
             case "video": {
                 if (latestVersion.data?.transcode?.status === "FAILED") {
                     return (
@@ -37,16 +65,12 @@ export default function RenderContentItem({
                 }
 
                 if (!latestVersion.data.transcode?.s3Url) {
-                    return (
-                        <Text mt={5}>This item is still being processed.</Text>
-                    );
+                    return <Text>This item is still being processed.</Text>;
                 }
-                const { bucket, key } = AmazonS3Uri(
-                    latestVersion.data.transcode.s3Url
-                );
+
                 return (
                     <ReactPlayer
-                        url={`https://${bucket}.s3.eu-west-1.amazonaws.com/${key}`}
+                        url={s3UrlToHttpUrl(latestVersion.data.s3Url)}
                         controls={true}
                     />
                 );

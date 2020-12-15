@@ -176,10 +176,15 @@ export default function UploadFileForm({
                     <>
                         <UnsavedChangesWarning hasUnsavedChanges={dirty} />
                         <Form style={{ width: "100%" }}>
-                            <DragDrop
-                                uppy={uppy as Uppy.Uppy}
-                                allowMultipleFiles={false}
-                            />
+                            <FormControl isInvalid={!files} isRequired>
+                                <DragDrop
+                                    uppy={uppy as Uppy.Uppy}
+                                    allowMultipleFiles={false}
+                                />
+                                <FormHelperText>
+                                    File types: {allowedFileTypes.join(", ")}
+                                </FormHelperText>
+                            </FormControl>
                             <ul>
                                 {files.map((file) => (
                                     <li key={file.id}>

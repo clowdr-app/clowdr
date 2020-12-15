@@ -20,6 +20,17 @@ actions:
   permissions:
   - role: unauthenticated
   - role: user
+- name: getUploadAgreement
+  definition:
+    kind: ""
+    handler: '{{ACTION_BASE_URL}}/contentItem/getUploadAgreement'
+    forward_client_headers: true
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+  permissions:
+  - role: unauthenticated
+  - role: user
 - name: invitationConfirmCurrent
   definition:
     kind: synchronous
@@ -131,4 +142,5 @@ custom_types:
   - name: InvitationSendEmailResult
   - name: GetContentItemOutput
   - name: SubmitUpdatedSubtitlesOutput
+  - name: GetUploadAgreementOutput
   scalars: []

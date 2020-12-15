@@ -7737,6 +7737,11 @@ export type GetContentItemOutput = {
   readonly name: Scalars['String'];
 };
 
+export type GetUploadAgreementOutput = {
+  readonly __typename?: 'GetUploadAgreementOutput';
+  readonly agreementText?: Maybe<Scalars['String']>;
+};
+
 /** columns and relationships of "Group" */
 export type Group = {
   readonly __typename?: 'Group';
@@ -16270,6 +16275,8 @@ export type Query_Root = {
   readonly echo?: Maybe<EchoOutput>;
   /** perform the action: "getContentItem" */
   readonly getContentItem?: Maybe<ReadonlyArray<Maybe<GetContentItemOutput>>>;
+  /** perform the action: "getUploadAgreement" */
+  readonly getUploadAgreement?: Maybe<GetUploadAgreementOutput>;
   /** perform the action: "protectedEcho" */
   readonly protectedEcho?: Maybe<ProtectedEchoOutput>;
 };
@@ -17536,6 +17543,12 @@ export type Query_RootGetContentItemArgs = {
 
 
 /** query root */
+export type Query_RootGetUploadAgreementArgs = {
+  magicToken: Scalars['String'];
+};
+
+
+/** query root */
 export type Query_RootProtectedEchoArgs = {
   message: Scalars['String'];
 };
@@ -17835,6 +17848,8 @@ export type Subscription_Root = {
   readonly echo?: Maybe<EchoOutput>;
   /** perform the action: "getContentItem" */
   readonly getContentItem?: Maybe<ReadonlyArray<Maybe<GetContentItemOutput>>>;
+  /** perform the action: "getUploadAgreement" */
+  readonly getUploadAgreement?: Maybe<GetUploadAgreementOutput>;
   /** perform the action: "protectedEcho" */
   readonly protectedEcho?: Maybe<ProtectedEchoOutput>;
 };
@@ -19101,6 +19116,12 @@ export type Subscription_RootGetContentItemArgs = {
 
 
 /** subscription root */
+export type Subscription_RootGetUploadAgreementArgs = {
+  magicToken: Scalars['String'];
+};
+
+
+/** subscription root */
 export type Subscription_RootProtectedEchoArgs = {
   message: Scalars['String'];
 };
@@ -19356,7 +19377,9 @@ export type UpdateSubtitlesMutationVariables = Exact<{
 
 export type UpdateSubtitlesMutation = { readonly __typename?: 'mutation_root', readonly updateSubtitles?: Maybe<{ readonly __typename?: 'SubmitUpdatedSubtitlesOutput', readonly message: string, readonly success: boolean }> };
 
-export type SelectRequiredItemQueryVariables = Exact<{ [key: string]: never; }>;
+export type SelectRequiredItemQueryVariables = Exact<{
+  requiredContentItemId: Scalars['uuid'];
+}>;
 
 
 export type SelectRequiredItemQuery = { readonly __typename?: 'query_root', readonly RequiredContentItem: ReadonlyArray<(
@@ -19373,6 +19396,13 @@ export type SubmitContentItemMutationVariables = Exact<{
 
 
 export type SubmitContentItemMutation = { readonly __typename?: 'mutation_root', readonly submitContentItem?: Maybe<{ readonly __typename?: 'SubmitContentItemOutput', readonly message: string, readonly success: boolean }> };
+
+export type GetUploadAgreementQueryVariables = Exact<{
+  magicToken: Scalars['String'];
+}>;
+
+
+export type GetUploadAgreementQuery = { readonly __typename?: 'query_root', readonly getUploadAgreement?: Maybe<{ readonly __typename?: 'GetUploadAgreementOutput', readonly agreementText?: Maybe<string> }> };
 
 export type GetContentItemQueryVariables = Exact<{
   magicToken: Scalars['String'];
@@ -20706,8 +20736,8 @@ export type UpdateSubtitlesMutationHookResult = ReturnType<typeof useUpdateSubti
 export type UpdateSubtitlesMutationResult = Apollo.MutationResult<UpdateSubtitlesMutation>;
 export type UpdateSubtitlesMutationOptions = Apollo.BaseMutationOptions<UpdateSubtitlesMutation, UpdateSubtitlesMutationVariables>;
 export const SelectRequiredItemDocument = gql`
-    query SelectRequiredItem {
-  RequiredContentItem {
+    query SelectRequiredItem($requiredContentItemId: uuid!) {
+  RequiredContentItem(where: {id: {_eq: $requiredContentItemId}}) {
     ...RequiredItemFields
   }
 }
@@ -20725,10 +20755,11 @@ export const SelectRequiredItemDocument = gql`
  * @example
  * const { data, loading, error } = useSelectRequiredItemQuery({
  *   variables: {
+ *      requiredContentItemId: // value for 'requiredContentItemId'
  *   },
  * });
  */
-export function useSelectRequiredItemQuery(baseOptions?: Apollo.QueryHookOptions<SelectRequiredItemQuery, SelectRequiredItemQueryVariables>) {
+export function useSelectRequiredItemQuery(baseOptions: Apollo.QueryHookOptions<SelectRequiredItemQuery, SelectRequiredItemQueryVariables>) {
         return Apollo.useQuery<SelectRequiredItemQuery, SelectRequiredItemQueryVariables>(SelectRequiredItemDocument, baseOptions);
       }
 export function useSelectRequiredItemLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectRequiredItemQuery, SelectRequiredItemQueryVariables>) {
@@ -20771,6 +20802,39 @@ export function useSubmitContentItemMutation(baseOptions?: Apollo.MutationHookOp
 export type SubmitContentItemMutationHookResult = ReturnType<typeof useSubmitContentItemMutation>;
 export type SubmitContentItemMutationResult = Apollo.MutationResult<SubmitContentItemMutation>;
 export type SubmitContentItemMutationOptions = Apollo.BaseMutationOptions<SubmitContentItemMutation, SubmitContentItemMutationVariables>;
+export const GetUploadAgreementDocument = gql`
+    query GetUploadAgreement($magicToken: String!) {
+  getUploadAgreement(magicToken: $magicToken) {
+    agreementText
+  }
+}
+    `;
+
+/**
+ * __useGetUploadAgreementQuery__
+ *
+ * To run a query within a React component, call `useGetUploadAgreementQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUploadAgreementQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUploadAgreementQuery({
+ *   variables: {
+ *      magicToken: // value for 'magicToken'
+ *   },
+ * });
+ */
+export function useGetUploadAgreementQuery(baseOptions: Apollo.QueryHookOptions<GetUploadAgreementQuery, GetUploadAgreementQueryVariables>) {
+        return Apollo.useQuery<GetUploadAgreementQuery, GetUploadAgreementQueryVariables>(GetUploadAgreementDocument, baseOptions);
+      }
+export function useGetUploadAgreementLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUploadAgreementQuery, GetUploadAgreementQueryVariables>) {
+          return Apollo.useLazyQuery<GetUploadAgreementQuery, GetUploadAgreementQueryVariables>(GetUploadAgreementDocument, baseOptions);
+        }
+export type GetUploadAgreementQueryHookResult = ReturnType<typeof useGetUploadAgreementQuery>;
+export type GetUploadAgreementLazyQueryHookResult = ReturnType<typeof useGetUploadAgreementLazyQuery>;
+export type GetUploadAgreementQueryResult = Apollo.QueryResult<GetUploadAgreementQuery, GetUploadAgreementQueryVariables>;
 export const GetContentItemDocument = gql`
     query GetContentItem($magicToken: String!) {
   getContentItem(magicToken: $magicToken) {

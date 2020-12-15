@@ -48,6 +48,10 @@ type SubmitUpdatedSubtitlesOutput = {
     message: string;
 };
 
+type GetUploadAgreementOutput = {
+    agreementText?: Maybe<string>;
+};
+
 type SampleInput = {
     username: string;
     password: string;
@@ -79,6 +83,7 @@ type SubmitUpdatedSubtitlesInput = {
 type Query = {
     echo?: Maybe<EchoOutput>;
     getContentItem?: Maybe<Array<Maybe<GetContentItemOutput>>>;
+    getUploadAgreement?: Maybe<GetUploadAgreementOutput>;
     protectedEcho?: Maybe<ProtectedEchoOutput>;
 };
 
@@ -100,6 +105,10 @@ type echoArgs = {
 };
 
 type getContentItemArgs = {
+    magicToken: string;
+};
+
+type getUploadAgreementArgs = {
     magicToken: string;
 };
 

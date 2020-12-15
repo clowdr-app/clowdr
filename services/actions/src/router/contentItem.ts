@@ -10,6 +10,7 @@ import { promisify } from "util";
 import {
     handleContentItemUpdated,
     handleGetByRequiredItem,
+    handleGetUploadAgreement,
 } from "../handlers/content";
 import {
     handleContentItemSubmitted,
@@ -293,6 +294,28 @@ router.post(
         } catch (e) {
             console.error(`${req.path}: Failed to retrieve item`, e);
             return res.status(500).json("Failed to retrieve item");
+        }
+    }
+);
+
+router.post(
+    "/getUploadAgreement",
+    bodyParser.json(),
+    async (req: Request, res: Response<GetUploadAgreementOutput | string>) => {
+        const params = req.body.input;
+        try {
+            assertType<getUploadAgreementArgs>(params);
+        } catch (e) {
+            console.error(`${req.path}: Invalid request:`, req.body.input);
+            return res.status(500).json("Invalid request");
+        }
+
+        try {
+            const result = await handleGetUploadAgreement(params);
+            return res.status(200).json(result);
+        } catch (e) {
+            console.error(`${req.path}: Failed to retrieve agreement text`, e);
+            return res.status(500).json("Failed to retrieve agreement text");
         }
     }
 );

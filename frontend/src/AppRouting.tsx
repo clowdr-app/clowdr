@@ -75,12 +75,18 @@ export default function Routing(): JSX.Element {
             />
 
             <Route
-                path="/upload/:token"
+                path="/upload/:id/:token"
                 component={(
                     props: RouteComponentProps<{
                         token: string;
+                        id: string;
                     }>
-                ) => <SubmitItemPage magicToken={props.match.params.token} />}
+                ) => (
+                    <SubmitItemPage
+                        magicToken={props.match.params.token}
+                        requiredContentItemId={props.match.params.id}
+                    />
+                )}
             />
 
             {/*

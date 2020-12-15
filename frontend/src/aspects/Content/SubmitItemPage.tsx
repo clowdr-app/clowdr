@@ -12,6 +12,7 @@ import gql from "graphql-tag";
 import React, { useMemo } from "react";
 import {
     ContentType_Enum,
+    useGetUploadAgreementQuery,
     useSelectRequiredItemQuery,
 } from "../../generated/graphql";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
@@ -22,8 +23,8 @@ import UploadTextForm from "./UploadTextForm";
 import UploadUrlForm from "./UploadUrlForm";
 
 gql`
-    query SelectRequiredItem {
-        RequiredContentItem {
+    query SelectRequiredItem($requiredContentItemId: uuid!) {
+        RequiredContentItem(where: { id: { _eq: $requiredContentItemId } }) {
             ...RequiredItemFields
         }
     }
@@ -44,12 +45,20 @@ gql`
             success
         }
     }
+
+    query GetUploadAgreement($magicToken: String!) {
+        getUploadAgreement(magicToken: $magicToken) {
+            agreementText
+        }
+    }
 `;
 
 export default function SubmitItemPage({
     magicToken,
+    requiredContentItemId,
 }: {
     magicToken: string;
+    requiredContentItemId: string;
 }): JSX.Element {
     const { loading, error, data } = useSelectRequiredItemQuery({
         fetchPolicy: "network-only",
@@ -57,6 +66,19 @@ export default function SubmitItemPage({
             headers: {
                 "x-hasura-magic-token": magicToken,
             },
+        },
+        variables: {
+            requiredContentItemId,
+        },
+    });
+    const {
+        loading: uploadAgreementLoading,
+        error: uploadAgreementError,
+        data: uploadAgreementData,
+    } = useGetUploadAgreementQuery({
+        fetchPolicy: "network-only",
+        variables: {
+            magicToken,
         },
     });
     useQueryErrorToast(error);
@@ -70,7 +92,13 @@ export default function SubmitItemPage({
         }
 
         return data.RequiredContentItem[0];
-    }, [data?.RequiredContentItem]);
+    }, [data]);
+
+    const uploadAgreement = useMemo(() => {
+        return (
+            uploadAgreementData?.getUploadAgreement?.agreementText ?? undefined
+        );
+    }, [uploadAgreementData]);
 
     const form = useMemo(() => {
         if (!requiredItem) {
@@ -80,7 +108,12 @@ export default function SubmitItemPage({
         switch (requiredItem.contentTypeName) {
             case ContentType_Enum.Abstract:
             case ContentType_Enum.Text:
-                return <UploadTextForm magicToken={magicToken} />;
+                return (
+                    <UploadTextForm
+                        magicToken={magicToken}
+                        uploadAgreement={uploadAgreement}
+                    />
+                );
             case ContentType_Enum.ImageFile:
             case ContentType_Enum.PaperFile:
             case ContentType_Enum.PosterFile:
@@ -89,18 +122,29 @@ export default function SubmitItemPage({
                         magicToken={magicToken}
                         requiredItem={requiredItem}
                         allowedFileTypes={[".pdf", ".png", ".jpg"]}
+                        uploadAgreement={uploadAgreement}
                     />
                 );
             case ContentType_Enum.LinkButton:
             case ContentType_Enum.PaperLink:
             case ContentType_Enum.VideoLink:
-                return <UploadLinkForm magicToken={magicToken} />;
+                return (
+                    <UploadLinkForm
+                        magicToken={magicToken}
+                        uploadAgreement={uploadAgreement}
+                    />
+                );
             case ContentType_Enum.ImageUrl:
             case ContentType_Enum.Link:
             case ContentType_Enum.PaperUrl:
             case ContentType_Enum.PosterUrl:
             case ContentType_Enum.VideoUrl:
-                return <UploadUrlForm magicToken={magicToken} />;
+                return (
+                    <UploadUrlForm
+                        magicToken={magicToken}
+                        uploadAgreement={uploadAgreement}
+                    />
+                );
             case ContentType_Enum.VideoBroadcast:
             case ContentType_Enum.VideoCountdown:
             case ContentType_Enum.VideoFile:
@@ -113,10 +157,11 @@ export default function SubmitItemPage({
                         magicToken={magicToken}
                         requiredItem={requiredItem}
                         allowedFileTypes={[".mp4", ".mkv", ".webm"]}
+                        uploadAgreement={uploadAgreement}
                     />
                 );
         }
-    }, [magicToken, requiredItem]);
+    }, [magicToken, requiredItem, uploadAgreement]);
 
     return (
         <Center>
@@ -126,11 +171,11 @@ export default function SubmitItemPage({
                         <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
                             Upload item
                         </Heading>
-                        {loading ? (
+                        {loading || uploadAgreementLoading ? (
                             <div>
                                 <Spinner />
                             </div>
-                        ) : error ? (
+                        ) : error || uploadAgreementError ? (
                             <Text mt={4}>
                                 An error occurred while loading data.
                             </Text>

@@ -5,6 +5,7 @@ import {
     FormErrorMessage,
     FormHelperText,
     FormLabel,
+    Text,
     useToast,
 } from "@chakra-ui/react";
 import AwsS3Multipart from "@uppy/aws-s3-multipart";
@@ -23,10 +24,12 @@ export default function UploadFileForm({
     requiredItem,
     magicToken,
     allowedFileTypes,
+    uploadAgreement,
 }: {
     requiredItem: RequiredItemFieldsFragment;
     magicToken: string;
     allowedFileTypes: string[];
+    uploadAgreement?: string;
 }): JSX.Element {
     const toast = useToast();
     const [files, setFiles] = useState<Uppy.UppyFile[]>([]);
@@ -203,50 +206,53 @@ export default function UploadFileForm({
                                     </li>
                                 ))}
                             </ul>
-                            <Field
-                                name="agree"
-                                validate={(
-                                    inValue: string | null | undefined
-                                ) => {
-                                    let error;
-                                    if (!inValue) {
-                                        error = "Must agree to terms";
-                                    }
-                                    return error;
-                                }}
-                            >
-                                {({ form, field }: FieldProps<string>) => (
-                                    <FormControl
-                                        isInvalid={
-                                            !!form.errors.agree &&
-                                            !!form.touched.agree
+                            {uploadAgreement && (
+                                <Field
+                                    name="agree"
+                                    validate={(
+                                        inValue: string | null | undefined
+                                    ) => {
+                                        let error;
+                                        if (!inValue) {
+                                            error = "Must agree to terms";
                                         }
-                                        isRequired
-                                        mt={5}
-                                    >
-                                        <FormLabel htmlFor="agree">
-                                            Agree?
-                                        </FormLabel>
-                                        <Checkbox {...field} id="agree" />
-                                        <FormHelperText>
-                                            Whether you agree to the upload
-                                            conditions.
-                                        </FormHelperText>
-                                        <FormErrorMessage>
-                                            {form.errors.agree}
-                                        </FormErrorMessage>
-                                    </FormControl>
-                                )}
-                            </Field>
+                                        return error;
+                                    }}
+                                >
+                                    {({ form, field }: FieldProps<string>) => (
+                                        <FormControl
+                                            isInvalid={
+                                                !!form.errors.agree &&
+                                                !!form.touched.agree
+                                            }
+                                            isRequired
+                                            mt={5}
+                                        >
+                                            <FormLabel htmlFor="agree">
+                                                Upload agreement
+                                            </FormLabel>
+                                            <Text mb={4}>
+                                                {uploadAgreement}
+                                            </Text>
+                                            <Checkbox {...field} id="agree" />
+                                            <FormHelperText>
+                                                I agree to the upload
+                                                conditions.
+                                            </FormHelperText>
+                                            <FormErrorMessage>
+                                                {form.errors.agree}
+                                            </FormErrorMessage>
+                                        </FormControl>
+                                    )}
+                                </Field>
+                            )}
                             <Button
                                 mt={4}
                                 colorScheme="green"
                                 isLoading={props.isSubmitting}
                                 type="submit"
                                 isDisabled={
-                                    !props.isValid ||
-                                    !dirty ||
-                                    files.length !== 1
+                                    !props.isValid || files.length !== 1
                                 }
                             >
                                 Upload

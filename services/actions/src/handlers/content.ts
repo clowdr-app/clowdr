@@ -4,6 +4,7 @@ import R from "ramda";
 import {
     ContentItemAddNewVersionDocument,
     GetContentItemByRequiredItemDocument,
+    GetUploadAgreementDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { startTranscode } from "../lib/transcode";
@@ -137,4 +138,48 @@ export async function handleGetByRequiredItem(
         data: item.data,
         contentTypeName: item.contentTypeName,
     }));
+}
+
+gql`
+    query GetUploadAgreement($accessToken: String!) {
+        RequiredContentItem(where: { accessToken: { _eq: $accessToken } }) {
+            conference {
+                configurations(where: { key: { _eq: "UPLOAD_AGREEMENT" } }) {
+                    value
+                }
+            }
+        }
+    }
+`;
+
+export async function handleGetUploadAgreement(
+    args: getUploadAgreementArgs
+): Promise<GetUploadAgreementOutput> {
+    const result = await apolloClient.query({
+        query: GetUploadAgreementDocument,
+        variables: {
+            accessToken: args.magicToken,
+        },
+    });
+
+    if (result.error) {
+        throw new Error("No item found");
+    }
+
+    if (
+        result.data.RequiredContentItem.length === 1 &&
+        result.data.RequiredContentItem[0].conference.configurations.length ===
+            1 &&
+        "text" in
+            result.data.RequiredContentItem[0].conference.configurations[0]
+                .value
+    ) {
+        return {
+            agreementText:
+                result.data.RequiredContentItem[0].conference.configurations[0]
+                    .value.text,
+        };
+    }
+
+    return {};
 }

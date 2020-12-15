@@ -12,6 +12,13 @@ type Query {
 }
 
 
+type Query {
+  getUploadAgreement (
+    magicToken: String!
+  ): GetUploadAgreementOutput
+}
+
+
 type Mutation {
   invitationConfirmCurrent (
     inviteCode: uuid!
@@ -150,5 +157,9 @@ type GetContentItemOutput {
 type SubmitUpdatedSubtitlesOutput {
   success : Boolean!
   message : String!
+}
+
+type GetUploadAgreementOutput {
+  agreementText : String
 }
 

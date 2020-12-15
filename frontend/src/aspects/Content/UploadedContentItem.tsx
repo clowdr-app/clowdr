@@ -1,7 +1,8 @@
 import { gql } from "@apollo/client/core";
-import { Spinner, Text, VStack } from "@chakra-ui/react";
+import { Button, Spinner, Text, Tooltip, VStack } from "@chakra-ui/react";
 import React from "react";
 import { useGetContentItemQuery } from "../../generated/graphql";
+import FAIcon from "../Icons/FAIcon";
 import { EditContentItem } from "./EditContentItem";
 import RenderContentItem from "./RenderContentItem";
 
@@ -22,7 +23,7 @@ export default function UploadedContentItem({
 }: {
     magicToken: string;
 }): JSX.Element {
-    const { loading, error, data } = useGetContentItemQuery({
+    const { loading, error, data, refetch } = useGetContentItemQuery({
         variables: {
             magicToken,
         },
@@ -41,6 +42,14 @@ export default function UploadedContentItem({
                     {data?.getContentItem?.map((item) =>
                         item ? (
                             <VStack spacing={2}>
+                                <Tooltip label="Refresh uploaded item">
+                                    <Button
+                                        aria-label="Refresh uploaded item"
+                                        onClick={async () => await refetch()}
+                                    >
+                                        <FAIcon iconStyle="s" icon="sync" />
+                                    </Button>
+                                </Tooltip>
                                 <RenderContentItem data={item.data} />
                                 <EditContentItem
                                     data={item.data}

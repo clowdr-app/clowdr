@@ -48992,6 +48992,29 @@
       },
       {
         "kind": "OBJECT",
+        "name": "GetUploadAgreementOutput",
+        "description": null,
+        "fields": [
+          {
+            "name": "agreementText",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
         "name": "Group",
         "description": "columns and relationships of \"Group\"",
         "fields": [
@@ -106032,6 +106055,33 @@
             "deprecationReason": null
           },
           {
+            "name": "getUploadAgreement",
+            "description": "perform the action: \"getUploadAgreement\"",
+            "args": [
+              {
+                "name": "magicToken",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "GetUploadAgreementOutput",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "protectedEcho",
             "description": "perform the action: \"protectedEcho\"",
             "args": [
@@ -115771,6 +115821,33 @@
                 "name": "GetContentItemOutput",
                 "ofType": null
               }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "getUploadAgreement",
+            "description": "perform the action: \"getUploadAgreement\"",
+            "args": [
+              {
+                "name": "magicToken",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "GetUploadAgreementOutput",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null

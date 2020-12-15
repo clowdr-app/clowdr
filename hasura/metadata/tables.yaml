@@ -2884,6 +2884,14 @@
                       _eq: X-Hasura-User-Id
 - table:
     schema: public
+    name: TranscriptionJob
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
+- table:
+    schema: public
     name: Transitions
   configuration:
     custom_root_fields: {}

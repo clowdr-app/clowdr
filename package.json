@@ -43,7 +43,6 @@
     "engines": {
         "node": "15.x"
     },
-    "dependencies": {},
     "workspaces": [
         "shared"
     ]

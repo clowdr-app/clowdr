@@ -3,11 +3,12 @@ import assert from "assert";
 import R from "ramda";
 import {
     ContentItemAddNewVersionDocument,
-    ContentType_Enum,
     GetContentItemByRequiredItemDocument,
+    GetUploadAgreementDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { startTranscode } from "../lib/transcode";
+import { startTranscribe } from "../lib/transcribe";
 import { ContentItemData, Payload } from "../types/event";
 
 gql`
@@ -36,7 +37,7 @@ export async function handleContentItemUpdated(
     const currentVersion = newRow.data[newRow.data.length - 1];
 
     // If new version is not a video
-    if (currentVersion.data.type !== ContentType_Enum.VideoBroadcast) {
+    if (currentVersion.data.baseType !== "video") {
         console.log("Content item updated: was not a VideoBroadcast");
         return;
     }
@@ -44,7 +45,7 @@ export async function handleContentItemUpdated(
     // If there is a new video source URL, start transcoding
     if (
         (oldVersion &&
-            oldVersion.data.type === ContentType_Enum.VideoBroadcast &&
+            oldVersion.data.baseType === "video" &&
             oldVersion.data.s3Url !== currentVersion.data.s3Url) ||
         (!oldVersion && currentVersion.data.s3Url)
     ) {
@@ -84,17 +85,20 @@ export async function handleContentItemUpdated(
         console.log("Content item video URL has not changed.");
     }
 
-    // If there is a new transcode URL, notify the uploaders
+    // If there is a new transcode URL, begin transcribing it
     if (
         (oldVersion &&
-            oldVersion.data.type === ContentType_Enum.VideoBroadcast &&
+            oldVersion.data.baseType === "video" &&
             currentVersion.data.transcode?.s3Url &&
             oldVersion.data.transcode?.s3Url !==
                 currentVersion.data.transcode.s3Url) ||
         (!oldVersion && currentVersion.data.transcode?.s3Url)
     ) {
-        // TODO: Notify uploaders
+        await startTranscribe(currentVersion.data.transcode.s3Url, newRow.id);
     }
+
+    // If there are new en_US subtitles, notify the uploaders
+    // todo
 }
 
 gql`
@@ -134,4 +138,48 @@ export async function handleGetByRequiredItem(
         data: item.data,
         contentTypeName: item.contentTypeName,
     }));
+}
+
+gql`
+    query GetUploadAgreement($accessToken: String!) {
+        RequiredContentItem(where: { accessToken: { _eq: $accessToken } }) {
+            conference {
+                configurations(where: { key: { _eq: "UPLOAD_AGREEMENT" } }) {
+                    value
+                }
+            }
+        }
+    }
+`;
+
+export async function handleGetUploadAgreement(
+    args: getUploadAgreementArgs
+): Promise<GetUploadAgreementOutput> {
+    const result = await apolloClient.query({
+        query: GetUploadAgreementDocument,
+        variables: {
+            accessToken: args.magicToken,
+        },
+    });
+
+    if (result.error) {
+        throw new Error("No item found");
+    }
+
+    if (
+        result.data.RequiredContentItem.length === 1 &&
+        result.data.RequiredContentItem[0].conference.configurations.length ===
+            1 &&
+        "text" in
+            result.data.RequiredContentItem[0].conference.configurations[0]
+                .value
+    ) {
+        return {
+            agreementText:
+                result.data.RequiredContentItem[0].conference.configurations[0]
+                    .value.text,
+        };
+    }
+
+    return {};
 }

@@ -2,34 +2,47 @@ import { gql } from "@apollo/client/core";
 import {
     ContentBlob,
     ContentItemDataBlob,
+    ContentItemVersionData,
+    VideoContentBlob,
 } from "@clowdr-app/shared-types/types/content";
 import AmazonS3URI from "amazon-s3-uri";
+import assert from "assert";
+import R from "ramda";
+import { is } from "typescript-is";
+import { v4 as uuidv4 } from "uuid";
 import { S3 } from "../aws/awsClient";
 import {
+    ContentItemAddNewVersionDocument,
     ContentType_Enum,
     CreateContentItemDocument,
     RequiredItemDocument,
+    RequiredItemFieldsFragment,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
+import { getLatestVersion } from "../lib/contentItem";
 
 gql`
     query RequiredItem($accessToken: String!) {
         RequiredContentItem(where: { accessToken: { _eq: $accessToken } }) {
+            ...RequiredItemFields
+        }
+    }
+
+    fragment RequiredItemFields on RequiredContentItem {
+        id
+        contentTypeName
+        name
+        conference {
             id
-            contentTypeName
             name
-            conference {
-                id
-                name
-            }
-            contentItem {
-                id
-                data
-                contentTypeName
-            }
-            contentGroup {
-                id
-            }
+        }
+        contentItem {
+            id
+            data
+            contentTypeName
+        }
+        contentGroup {
+            id
         }
     }
 
@@ -60,15 +73,6 @@ gql`
             }
         ) {
             id
-        }
-    }
-
-    mutation AddNewVersion($contentItemId: uuid!, $newData: jsonb!) {
-        update_ContentItem(
-            where: { id: { _eq: $contentItemId } }
-            _append: { data: $newData }
-        ) {
-            affected_rows
         }
     }
 `;
@@ -115,6 +119,7 @@ async function createBlob(
                 return { error: "No text supplied" };
             }
             return {
+                baseType: "text",
                 type: contentTypeName,
                 text: inputData.text,
             };
@@ -129,6 +134,7 @@ async function createBlob(
                 return { error: result.message };
             }
             return {
+                baseType: "file",
                 type: contentTypeName,
                 s3Url: result.url,
             };
@@ -142,6 +148,7 @@ async function createBlob(
                 return { error: "No URL supplied" };
             }
             return {
+                baseType: "url",
                 type: contentTypeName,
                 url: inputData.url,
             };
@@ -152,6 +159,7 @@ async function createBlob(
                 return { error: "Text or URL not supplied" };
             }
             return {
+                baseType: "link",
                 type: contentTypeName,
                 text: inputData.text,
                 url: inputData.url,
@@ -171,52 +179,65 @@ async function createBlob(
                 return { error: result.message };
             }
             return {
+                baseType: "video",
                 type: contentTypeName,
                 s3Url: result.url,
-                subtitleS3Urls: {},
+                subtitles: {},
             };
         }
     }
 }
 
-export async function handleContentItemSubmitted(
-    args: submitContentItemArgs
-): Promise<SubmitContentItemOutput> {
-    if (!args.magicToken) {
+async function getItemByToken(
+    magicToken: string
+): Promise<RequiredItemFieldsFragment | { error: string }> {
+    if (!magicToken) {
         return {
-            success: false,
-            message: "Access token not provided.",
+            error: "Access token not provided.",
         };
     }
 
     const response = await apolloClient.query({
         query: RequiredItemDocument,
         variables: {
-            accessToken: args.magicToken,
+            accessToken: magicToken,
         },
     });
 
     if (response.data.RequiredContentItem.length !== 1) {
         return {
-            success: false,
-            message: "Could not find a required item that matched the request.",
+            error: "Could not find a required item that matched the request.",
         };
     }
 
     const requiredContentItem = response.data.RequiredContentItem[0];
 
-    if (!requiredContentItem.contentItem) {
-        const newVersionData = await createBlob(
-            args.data,
-            requiredContentItem.contentTypeName
-        );
-        if ("error" in newVersionData) {
-            return {
-                success: false,
-                message: newVersionData.error,
-            };
-        }
+    return requiredContentItem;
+}
 
+export async function handleContentItemSubmitted(
+    args: submitContentItemArgs
+): Promise<SubmitContentItemOutput> {
+    const requiredContentItem = await getItemByToken(args.magicToken);
+    if ("error" in requiredContentItem) {
+        return {
+            success: false,
+            message: requiredContentItem.error,
+        };
+    }
+
+    const newVersionData = await createBlob(
+        args.data,
+        requiredContentItem.contentTypeName
+    );
+    if ("error" in newVersionData) {
+        return {
+            success: false,
+            message: newVersionData.error,
+        };
+    }
+
+    if (!requiredContentItem.contentItem) {
         try {
             const data: ContentItemDataBlob = [
                 {
@@ -225,7 +246,6 @@ export async function handleContentItemSubmitted(
                     data: newVersionData,
                 },
             ];
-
             await apolloClient.mutate({
                 mutation: CreateContentItemDocument,
                 variables: {
@@ -263,11 +283,129 @@ export async function handleContentItemSubmitted(
     // If there is a content item of the same type, create a new version
 
     if (requiredContentItem.contentItem) {
-        //newVersionData[]
+        const latestVersion = await getLatestVersion(
+            requiredContentItem.contentItem.id
+        );
+
+        if (newVersionData.type !== latestVersion?.data.type) {
+            return {
+                success: false,
+                message:
+                    "An item of a different type has already been uploaded.",
+            };
+        } else {
+            try {
+                const newVersion: ContentItemVersionData = {
+                    createdAt: Date.now(),
+                    createdBy: "user",
+                    data: newVersionData,
+                };
+
+                await apolloClient.mutate({
+                    mutation: ContentItemAddNewVersionDocument,
+                    variables: {
+                        id: requiredContentItem.contentItem.id,
+                        newVersion,
+                    },
+                });
+            } catch (e) {
+                console.error("Failed to save new version of content item", e);
+                return {
+                    success: false,
+                    message: "Failed to save new version of content item",
+                };
+            }
+        }
     }
 
     return {
         success: true,
         message: "",
+    };
+}
+
+export async function handleUpdateSubtitles(
+    args: updateSubtitlesArgs
+): Promise<SubmitUpdatedSubtitlesOutput> {
+    const requiredContentItem = await getItemByToken(args.magicToken);
+    if ("error" in requiredContentItem) {
+        return {
+            success: false,
+            message: requiredContentItem.error,
+        };
+    }
+
+    if (!requiredContentItem.contentItem) {
+        return {
+            message: "No matching content item",
+            success: false,
+        };
+    }
+
+    const latestVersion = await getLatestVersion(
+        requiredContentItem.contentItem.id
+    );
+
+    if (!latestVersion) {
+        return {
+            message: "No existing content item data",
+            success: false,
+        };
+    }
+
+    const newVersion = R.clone(latestVersion);
+    newVersion.createdAt = new Date().getTime();
+    newVersion.createdBy = "user";
+    assert(
+        is<VideoContentBlob>(newVersion.data),
+        "Content item is not a video"
+    );
+
+    const bucket = process.env.AWS_CONTENT_BUCKET_ID;
+    const key = `${uuidv4()}.srt`;
+
+    try {
+        await S3.putObject({
+            Bucket: bucket,
+            Key: key,
+            Body: Buffer.from(args.subtitleText, "utf-8"),
+            ContentType: "application/x-subrip",
+        });
+    } catch (e) {
+        console.error("Failed to upload new subtitles", e);
+        return {
+            message: "Failed to upload new subtitles",
+            success: false,
+        };
+    }
+
+    if (!newVersion.data.subtitles) {
+        newVersion.data.subtitles = {};
+    }
+
+    newVersion.data.subtitles["en_US"] = {
+        s3Url: `s3://${bucket}/${key}`,
+        status: "COMPLETED",
+    };
+
+    try {
+        await apolloClient.mutate({
+            mutation: ContentItemAddNewVersionDocument,
+            variables: {
+                id: requiredContentItem.contentItem.id,
+                newVersion,
+            },
+        });
+    } catch (e) {
+        console.error("Failed to save new content item version", e);
+        return {
+            message: "Failed to save new content item version",
+            success: false,
+        };
+    }
+
+    return {
+        message: "",
+        success: true,
     };
 }

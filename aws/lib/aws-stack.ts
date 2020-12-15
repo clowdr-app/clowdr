@@ -24,6 +24,13 @@ export class AwsStack extends cdk.Stack {
                 "AWSElementalMediaConvertFullAccess"
             )
         );
+        user.addToPolicy(
+            new iam.PolicyStatement({
+                actions: ["transcribe:*"],
+                effect: iam.Effect.ALLOW,
+                resources: ["*"],
+            })
+        );
 
         const accessKey = new iam.CfnAccessKey(this, "accessKey", {
             userName: user.userName,
@@ -143,6 +150,13 @@ export class AwsStack extends cdk.Stack {
                 effect: iam.Effect.ALLOW,
             })
         );
+
+        // Create a role to be used by Transcribe
+        const transcribeAccessRole = new iam.Role(this, "TranscribeRole", {
+            assumedBy: new iam.ServicePrincipal("transcribe.amazonaws.com"),
+        });
+        transcribeAccessRole.grantPassRole(user);
+        bucket.grantReadWrite(transcribeAccessRole);
 
         /* Notifications and webhooks */
 
@@ -274,6 +288,10 @@ export class AwsStack extends cdk.Stack {
 
         new cdk.CfnOutput(this, "MediaLiveServiceRoleArn", {
             value: mediaLiveAccessRole.roleArn,
+        });
+
+        new cdk.CfnOutput(this, "TranscribeServiceRoleArn", {
+            value: transcribeAccessRole.roleArn,
         });
 
         new cdk.CfnOutput(this, "TranscodeNotificationsTopic", {

@@ -14,6 +14,7 @@ type MediaConvertEventDetail =
     | MediaConvertEvent_PROGRESSING
     | MediaConvertEventDetail_INPUT_INFORMATION
     | MediaConvertEventDetail_COMPLETE
+    | MediaConvertEventDetail_ERROR
     | MediaConvertEventDetail_OTHER;
 
 interface MediaConvertEvent_PROGRESSING extends MediaConvertEventDetailsBase {
@@ -32,8 +33,14 @@ interface MediaConvertEventDetail_COMPLETE
     status: "COMPLETE";
 }
 
+interface MediaConvertEventDetail_ERROR extends MediaConvertEventDetailsBase {
+    status: "ERROR";
+    errorCode: number;
+    errorMessage: string;
+}
+
 interface MediaConvertEventDetail_OTHER extends MediaConvertEventDetailsBase {
-    status: "STATUS_UPDATE" | "ERROR" | "NEW_WARNING" | "QUEUE_HOP";
+    status: "STATUS_UPDATE" | "NEW_WARNING" | "QUEUE_HOP";
 }
 
 interface MediaConvertEventDetailsBase {

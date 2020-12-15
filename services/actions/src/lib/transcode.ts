@@ -120,12 +120,10 @@ export async function completeTranscode(
     timestamp: Date
 ): Promise<void> {
     const latestVersion = await getLatestVersion(contentItemId);
-
-    if (!latestVersion) {
-        throw new Error(
-            `Could not find latest version of content item ${contentItemId}`
-        );
-    }
+    assert(
+        latestVersion,
+        `Could not find latest version of content item ${contentItemId}`
+    );
 
     const newVersion = R.clone(latestVersion);
     assert(
@@ -139,6 +137,8 @@ export async function completeTranscode(
         updatedTimestamp: timestamp.getTime(),
         s3Url: transcodeS3Url,
     };
+    newVersion.createdAt = new Date().getTime();
+    newVersion.createdBy = "system";
 
     const result = await apolloClient.mutate({
         mutation: ContentItemAddNewVersionDocument,
@@ -154,5 +154,63 @@ export async function completeTranscode(
             result.errors
         );
         throw new Error(`Failed to complete transcode for ${contentItemId}`);
+    }
+}
+
+export async function failTranscode(
+    contentItemId: string,
+    transcodeJobId: string,
+    timestamp: Date,
+    errorMessage: string
+): Promise<void> {
+    const latestVersion = await getLatestVersion(contentItemId);
+    assert(
+        latestVersion,
+        `Could not find latest version of content item ${contentItemId}`
+    );
+
+    const newVersion = R.clone(latestVersion);
+    assert(
+        is<VideoContentBlob>(newVersion.data),
+        `Content item ${contentItemId} is not a video`
+    );
+
+    if (
+        latestVersion.data.baseType !== "video" ||
+        !latestVersion.data.transcode ||
+        latestVersion.data.transcode.jobId !== transcodeJobId
+    ) {
+        console.log(
+            "Received notification of transcode failure, but did not record it"
+        );
+        return;
+    }
+
+    newVersion.data.transcode = {
+        jobId: transcodeJobId,
+        status: "FAILED",
+        updatedTimestamp: timestamp.getTime(),
+        s3Url: undefined,
+        message: errorMessage,
+    };
+    newVersion.createdAt = new Date().getTime();
+    newVersion.createdBy = "system";
+
+    const result = await apolloClient.mutate({
+        mutation: ContentItemAddNewVersionDocument,
+        variables: {
+            id: contentItemId,
+            newVersion,
+        },
+    });
+
+    if (result.errors) {
+        console.error(
+            `Failed to record transcode failure for ${contentItemId}`,
+            result.errors
+        );
+        throw new Error(
+            `Failed to record transcode failure for ${contentItemId}`
+        );
     }
 }

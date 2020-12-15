@@ -3,8 +3,8 @@ import { IAM } from "@aws-sdk/client-iam";
 import { MediaConvert } from "@aws-sdk/client-mediaconvert";
 import { S3 } from "@aws-sdk/client-s3";
 import { SNS } from "@aws-sdk/client-sns";
-import { fromEnv } from "@aws-sdk/region-provider";
-import { Credentials } from "@aws-sdk/types";
+import { Transcribe } from "@aws-sdk/client-transcribe";
+import { fromEnv } from "@aws-sdk/credential-provider-env";
 import assert from "assert";
 import { customAlphabet } from "nanoid";
 import { getHostUrl } from "../utils";
@@ -28,6 +28,10 @@ assert(
     "Missing AWS_MEDIACONVERT_SERVICE_ROLE_ARN environment variable"
 );
 assert(
+    process.env.AWS_TRANSCRIBE_SERVICE_ROLE_ARN,
+    "Missing AWS_TRANSCRIBE_SERVICE_ROLE_ARN environment variable"
+);
+assert(
     process.env.AWS_TRANSCODE_NOTIFICATIONS_TOPIC_ARN,
     "Missing AWS_TRANSCODE_NOTIFICATIONS_TOPIC_ARN environment variable"
 );
@@ -36,12 +40,10 @@ assert(
     "Missing AWS_TRANSCRIBE_NOTIFICATIONS_TOPIC_ARN environment variable"
 );
 
-const credentials: Credentials = {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-};
+const credentials = fromEnv();
+const region = process.env.AWS_REGION;
 
-const region = fromEnv({ environmentVariableName: "AWS_REGION" });
+//const region = fromEnv({ environmentVariableName: "AWS_REGION" });
 
 const cf = new CloudFormation({
     apiVersion: "2010-05-15",
@@ -63,6 +65,12 @@ const s3 = new S3({
 
 const sns = new SNS({
     apiVersion: "2010-03-31",
+    credentials,
+    region,
+});
+
+const transcribe = new Transcribe({
+    apiVersion: "2017-10-26",
     credentials,
     region,
 });
@@ -99,20 +107,36 @@ async function getMediaConvertClient(): Promise<MediaConvert> {
 async function initialiseAwsClient(): Promise<void> {
     mediaconvert = await getMediaConvertClient();
 
-    // Subscribe to SNS topics
+    // Subscribe to transcode SNS topic
     const transcodeNotificationUrl = new URL(getHostUrl());
     transcodeNotificationUrl.pathname = "/contentItem/notifyTranscode";
 
     console.log("Subscribing to SNS topic: transcode notifications");
-    const result = await sns.subscribe({
+    const transcodeSubscribeResult = await sns.subscribe({
         Protocol: "https",
         TopicArn: process.env.AWS_TRANSCODE_NOTIFICATIONS_TOPIC_ARN,
         Endpoint: transcodeNotificationUrl.toString(),
     });
     console.log("Subscribed to SNS topic: transcode notifications");
 
-    if (!result.SubscriptionArn) {
+    if (!transcodeSubscribeResult.SubscriptionArn) {
         throw new Error("Could not subscribe to transcode notifications");
+    }
+
+    // Subscribe to transcribe SNS topic
+    const transcribeNotificationUrl = new URL(getHostUrl());
+    transcribeNotificationUrl.pathname = "/contentItem/notifyTranscribe";
+
+    console.log("Subscribing to SNS topic: transcribe notifications");
+    const transcribeSubscribeResult = await sns.subscribe({
+        Protocol: "https",
+        TopicArn: process.env.AWS_TRANSCRIBE_NOTIFICATIONS_TOPIC_ARN,
+        Endpoint: transcribeNotificationUrl.toString(),
+    });
+    console.log("Subscribed to SNS topic: transcribe notifications");
+
+    if (!transcribeSubscribeResult.SubscriptionArn) {
+        throw new Error("Could not subscribe to transcribe notifications");
     }
 }
 
@@ -121,6 +145,7 @@ export {
     iam as IAM,
     s3 as S3,
     mediaconvert as MediaConvert,
+    transcribe as Transcribe,
     initialiseAwsClient,
     shortId,
 };

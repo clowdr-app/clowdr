@@ -7737,6 +7737,11 @@ export type GetContentItemOutput = {
   readonly name: Scalars['String'];
 };
 
+export type GetUploadAgreementOutput = {
+  readonly __typename?: 'GetUploadAgreementOutput';
+  readonly agreementText?: Maybe<Scalars['String']>;
+};
+
 /** columns and relationships of "Group" */
 export type Group = {
   readonly __typename?: 'Group';
@@ -11546,6 +11551,18 @@ export type SubmitContentItemOutput = {
   readonly success: Scalars['Boolean'];
 };
 
+export type SubmitUpdatedSubtitlesInput = {
+  readonly accessToken: Scalars['String'];
+  readonly contentItemId: Scalars['String'];
+  readonly subtitleText: Scalars['String'];
+};
+
+export type SubmitUpdatedSubtitlesOutput = {
+  readonly __typename?: 'SubmitUpdatedSubtitlesOutput';
+  readonly message: Scalars['String'];
+  readonly success: Scalars['Boolean'];
+};
+
 /** columns and relationships of "Tag" */
 export type Tag = {
   readonly __typename?: 'Tag';
@@ -11817,6 +11834,230 @@ export enum Tag_Update_Column {
   OriginatingDataId = 'originatingDataId',
   /** column name */
   UpdatedAt = 'updatedAt'
+}
+
+/** columns and relationships of "TranscriptionJob" */
+export type TranscriptionJob = {
+  readonly __typename?: 'TranscriptionJob';
+  readonly awsTranscribeJobName: Scalars['String'];
+  readonly contentItemId: Scalars['uuid'];
+  readonly createdAt: Scalars['timestamptz'];
+  readonly id: Scalars['uuid'];
+  readonly languageCode: Scalars['String'];
+  readonly transcriptionS3Url: Scalars['String'];
+  readonly updatedAt: Scalars['timestamptz'];
+  readonly videoS3Url: Scalars['String'];
+};
+
+/** aggregated selection of "TranscriptionJob" */
+export type TranscriptionJob_Aggregate = {
+  readonly __typename?: 'TranscriptionJob_aggregate';
+  readonly aggregate?: Maybe<TranscriptionJob_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<TranscriptionJob>;
+};
+
+/** aggregate fields of "TranscriptionJob" */
+export type TranscriptionJob_Aggregate_Fields = {
+  readonly __typename?: 'TranscriptionJob_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<TranscriptionJob_Max_Fields>;
+  readonly min?: Maybe<TranscriptionJob_Min_Fields>;
+};
+
+
+/** aggregate fields of "TranscriptionJob" */
+export type TranscriptionJob_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<TranscriptionJob_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "TranscriptionJob" */
+export type TranscriptionJob_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<TranscriptionJob_Max_Order_By>;
+  readonly min?: Maybe<TranscriptionJob_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "TranscriptionJob" */
+export type TranscriptionJob_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<TranscriptionJob_Insert_Input>;
+  readonly on_conflict?: Maybe<TranscriptionJob_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "TranscriptionJob". All fields are combined with a logical 'AND'. */
+export type TranscriptionJob_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<TranscriptionJob_Bool_Exp>>>;
+  readonly _not?: Maybe<TranscriptionJob_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<TranscriptionJob_Bool_Exp>>>;
+  readonly awsTranscribeJobName?: Maybe<String_Comparison_Exp>;
+  readonly contentItemId?: Maybe<Uuid_Comparison_Exp>;
+  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly languageCode?: Maybe<String_Comparison_Exp>;
+  readonly transcriptionS3Url?: Maybe<String_Comparison_Exp>;
+  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly videoS3Url?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "TranscriptionJob" */
+export enum TranscriptionJob_Constraint {
+  /** unique or primary key constraint */
+  TranscriptionJobAwsTranscribeJobNameKey = 'TranscriptionJob_awsTranscribeJobName_key',
+  /** unique or primary key constraint */
+  TranscriptionJobPkey = 'TranscriptionJob_pkey'
+}
+
+/** input type for inserting data into table "TranscriptionJob" */
+export type TranscriptionJob_Insert_Input = {
+  readonly awsTranscribeJobName?: Maybe<Scalars['String']>;
+  readonly contentItemId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly languageCode?: Maybe<Scalars['String']>;
+  readonly transcriptionS3Url?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly videoS3Url?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type TranscriptionJob_Max_Fields = {
+  readonly __typename?: 'TranscriptionJob_max_fields';
+  readonly awsTranscribeJobName?: Maybe<Scalars['String']>;
+  readonly contentItemId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly languageCode?: Maybe<Scalars['String']>;
+  readonly transcriptionS3Url?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly videoS3Url?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "TranscriptionJob" */
+export type TranscriptionJob_Max_Order_By = {
+  readonly awsTranscribeJobName?: Maybe<Order_By>;
+  readonly contentItemId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly languageCode?: Maybe<Order_By>;
+  readonly transcriptionS3Url?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly videoS3Url?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type TranscriptionJob_Min_Fields = {
+  readonly __typename?: 'TranscriptionJob_min_fields';
+  readonly awsTranscribeJobName?: Maybe<Scalars['String']>;
+  readonly contentItemId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly languageCode?: Maybe<Scalars['String']>;
+  readonly transcriptionS3Url?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly videoS3Url?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "TranscriptionJob" */
+export type TranscriptionJob_Min_Order_By = {
+  readonly awsTranscribeJobName?: Maybe<Order_By>;
+  readonly contentItemId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly languageCode?: Maybe<Order_By>;
+  readonly transcriptionS3Url?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly videoS3Url?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "TranscriptionJob" */
+export type TranscriptionJob_Mutation_Response = {
+  readonly __typename?: 'TranscriptionJob_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<TranscriptionJob>;
+};
+
+/** input type for inserting object relation for remote table "TranscriptionJob" */
+export type TranscriptionJob_Obj_Rel_Insert_Input = {
+  readonly data: TranscriptionJob_Insert_Input;
+  readonly on_conflict?: Maybe<TranscriptionJob_On_Conflict>;
+};
+
+/** on conflict condition type for table "TranscriptionJob" */
+export type TranscriptionJob_On_Conflict = {
+  readonly constraint: TranscriptionJob_Constraint;
+  readonly update_columns: ReadonlyArray<TranscriptionJob_Update_Column>;
+  readonly where?: Maybe<TranscriptionJob_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "TranscriptionJob" */
+export type TranscriptionJob_Order_By = {
+  readonly awsTranscribeJobName?: Maybe<Order_By>;
+  readonly contentItemId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly languageCode?: Maybe<Order_By>;
+  readonly transcriptionS3Url?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly videoS3Url?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "TranscriptionJob" */
+export type TranscriptionJob_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "TranscriptionJob" */
+export enum TranscriptionJob_Select_Column {
+  /** column name */
+  AwsTranscribeJobName = 'awsTranscribeJobName',
+  /** column name */
+  ContentItemId = 'contentItemId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  LanguageCode = 'languageCode',
+  /** column name */
+  TranscriptionS3Url = 'transcriptionS3Url',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  VideoS3Url = 'videoS3Url'
+}
+
+/** input type for updating data in table "TranscriptionJob" */
+export type TranscriptionJob_Set_Input = {
+  readonly awsTranscribeJobName?: Maybe<Scalars['String']>;
+  readonly contentItemId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly languageCode?: Maybe<Scalars['String']>;
+  readonly transcriptionS3Url?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly videoS3Url?: Maybe<Scalars['String']>;
+};
+
+/** update columns of table "TranscriptionJob" */
+export enum TranscriptionJob_Update_Column {
+  /** column name */
+  AwsTranscribeJobName = 'awsTranscribeJobName',
+  /** column name */
+  ContentItemId = 'contentItemId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  LanguageCode = 'languageCode',
+  /** column name */
+  TranscriptionS3Url = 'transcriptionS3Url',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  VideoS3Url = 'videoS3Url'
 }
 
 /** columns and relationships of "Transitions" */
@@ -13260,6 +13501,10 @@ export type Mutation_Root = {
   readonly delete_Tag?: Maybe<Tag_Mutation_Response>;
   /** delete single row from the table: "Tag" */
   readonly delete_Tag_by_pk?: Maybe<Tag>;
+  /** delete data from the table: "TranscriptionJob" */
+  readonly delete_TranscriptionJob?: Maybe<TranscriptionJob_Mutation_Response>;
+  /** delete single row from the table: "TranscriptionJob" */
+  readonly delete_TranscriptionJob_by_pk?: Maybe<TranscriptionJob>;
   /** delete data from the table: "Transitions" */
   readonly delete_Transitions?: Maybe<Transitions_Mutation_Response>;
   /** delete single row from the table: "Transitions" */
@@ -13448,6 +13693,10 @@ export type Mutation_Root = {
   readonly insert_Tag?: Maybe<Tag_Mutation_Response>;
   /** insert a single row into the table: "Tag" */
   readonly insert_Tag_one?: Maybe<Tag>;
+  /** insert data into the table: "TranscriptionJob" */
+  readonly insert_TranscriptionJob?: Maybe<TranscriptionJob_Mutation_Response>;
+  /** insert a single row into the table: "TranscriptionJob" */
+  readonly insert_TranscriptionJob_one?: Maybe<TranscriptionJob>;
   /** insert data into the table: "Transitions" */
   readonly insert_Transitions?: Maybe<Transitions_Mutation_Response>;
   /** insert a single row into the table: "Transitions" */
@@ -13474,6 +13723,8 @@ export type Mutation_Root = {
   readonly invitationSendRepeatEmail: ReadonlyArray<InvitationSendEmailResult>;
   /** perform the action: "submitContentItem" */
   readonly submitContentItem?: Maybe<SubmitContentItemOutput>;
+  /** perform the action: "updateSubtitles" */
+  readonly updateSubtitles?: Maybe<SubmitUpdatedSubtitlesOutput>;
   /** update data of the table: "Attendee" */
   readonly update_Attendee?: Maybe<Attendee_Mutation_Response>;
   /** update single row of the table: "Attendee" */
@@ -13650,6 +13901,10 @@ export type Mutation_Root = {
   readonly update_Tag?: Maybe<Tag_Mutation_Response>;
   /** update single row of the table: "Tag" */
   readonly update_Tag_by_pk?: Maybe<Tag>;
+  /** update data of the table: "TranscriptionJob" */
+  readonly update_TranscriptionJob?: Maybe<TranscriptionJob_Mutation_Response>;
+  /** update single row of the table: "TranscriptionJob" */
+  readonly update_TranscriptionJob_by_pk?: Maybe<TranscriptionJob>;
   /** update data of the table: "Transitions" */
   readonly update_Transitions?: Maybe<Transitions_Mutation_Response>;
   /** update single row of the table: "Transitions" */
@@ -14189,6 +14444,18 @@ export type Mutation_RootDelete_TagArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Tag_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_TranscriptionJobArgs = {
+  where: TranscriptionJob_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_TranscriptionJob_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -14846,6 +15113,20 @@ export type Mutation_RootInsert_Tag_OneArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_TranscriptionJobArgs = {
+  objects: ReadonlyArray<TranscriptionJob_Insert_Input>;
+  on_conflict?: Maybe<TranscriptionJob_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_TranscriptionJob_OneArgs = {
+  object: TranscriptionJob_Insert_Input;
+  on_conflict?: Maybe<TranscriptionJob_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_TransitionsArgs = {
   objects: ReadonlyArray<Transitions_Insert_Input>;
   on_conflict?: Maybe<Transitions_On_Conflict>;
@@ -14927,6 +15208,14 @@ export type Mutation_RootInvitationSendRepeatEmailArgs = {
 export type Mutation_RootSubmitContentItemArgs = {
   data: Scalars['jsonb'];
   magicToken: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdateSubtitlesArgs = {
+  contentItemId: Scalars['String'];
+  magicToken: Scalars['String'];
+  subtitleText: Scalars['String'];
 };
 
 
@@ -15619,6 +15908,20 @@ export type Mutation_RootUpdate_Tag_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_TranscriptionJobArgs = {
+  _set?: Maybe<TranscriptionJob_Set_Input>;
+  where: TranscriptionJob_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_TranscriptionJob_By_PkArgs = {
+  _set?: Maybe<TranscriptionJob_Set_Input>;
+  pk_columns: TranscriptionJob_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_TransitionsArgs = {
   _set?: Maybe<Transitions_Set_Input>;
   where: Transitions_Bool_Exp;
@@ -15944,6 +16247,12 @@ export type Query_Root = {
   readonly Tag_aggregate: Tag_Aggregate;
   /** fetch data from the table: "Tag" using primary key columns */
   readonly Tag_by_pk?: Maybe<Tag>;
+  /** fetch data from the table: "TranscriptionJob" */
+  readonly TranscriptionJob: ReadonlyArray<TranscriptionJob>;
+  /** fetch aggregated fields from the table: "TranscriptionJob" */
+  readonly TranscriptionJob_aggregate: TranscriptionJob_Aggregate;
+  /** fetch data from the table: "TranscriptionJob" using primary key columns */
+  readonly TranscriptionJob_by_pk?: Maybe<TranscriptionJob>;
   /** fetch data from the table: "Transitions" */
   readonly Transitions: ReadonlyArray<Transitions>;
   /** fetch aggregated fields from the table: "Transitions" */
@@ -15966,6 +16275,8 @@ export type Query_Root = {
   readonly echo?: Maybe<EchoOutput>;
   /** perform the action: "getContentItem" */
   readonly getContentItem?: Maybe<ReadonlyArray<Maybe<GetContentItemOutput>>>;
+  /** perform the action: "getUploadAgreement" */
+  readonly getUploadAgreement?: Maybe<GetUploadAgreementOutput>;
   /** perform the action: "protectedEcho" */
   readonly protectedEcho?: Maybe<ProtectedEchoOutput>;
 };
@@ -17116,6 +17427,32 @@ export type Query_RootTag_By_PkArgs = {
 
 
 /** query root */
+export type Query_RootTranscriptionJobArgs = {
+  distinct_on?: Maybe<ReadonlyArray<TranscriptionJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<TranscriptionJob_Order_By>>;
+  where?: Maybe<TranscriptionJob_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootTranscriptionJob_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<TranscriptionJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<TranscriptionJob_Order_By>>;
+  where?: Maybe<TranscriptionJob_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootTranscriptionJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
 export type Query_RootTransitionsArgs = {
   distinct_on?: Maybe<ReadonlyArray<Transitions_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -17201,6 +17538,12 @@ export type Query_RootEchoArgs = {
 
 /** query root */
 export type Query_RootGetContentItemArgs = {
+  magicToken: Scalars['String'];
+};
+
+
+/** query root */
+export type Query_RootGetUploadAgreementArgs = {
   magicToken: Scalars['String'];
 };
 
@@ -17477,6 +17820,12 @@ export type Subscription_Root = {
   readonly Tag_aggregate: Tag_Aggregate;
   /** fetch data from the table: "Tag" using primary key columns */
   readonly Tag_by_pk?: Maybe<Tag>;
+  /** fetch data from the table: "TranscriptionJob" */
+  readonly TranscriptionJob: ReadonlyArray<TranscriptionJob>;
+  /** fetch aggregated fields from the table: "TranscriptionJob" */
+  readonly TranscriptionJob_aggregate: TranscriptionJob_Aggregate;
+  /** fetch data from the table: "TranscriptionJob" using primary key columns */
+  readonly TranscriptionJob_by_pk?: Maybe<TranscriptionJob>;
   /** fetch data from the table: "Transitions" */
   readonly Transitions: ReadonlyArray<Transitions>;
   /** fetch aggregated fields from the table: "Transitions" */
@@ -17499,6 +17848,8 @@ export type Subscription_Root = {
   readonly echo?: Maybe<EchoOutput>;
   /** perform the action: "getContentItem" */
   readonly getContentItem?: Maybe<ReadonlyArray<Maybe<GetContentItemOutput>>>;
+  /** perform the action: "getUploadAgreement" */
+  readonly getUploadAgreement?: Maybe<GetUploadAgreementOutput>;
   /** perform the action: "protectedEcho" */
   readonly protectedEcho?: Maybe<ProtectedEchoOutput>;
 };
@@ -18649,6 +19000,32 @@ export type Subscription_RootTag_By_PkArgs = {
 
 
 /** subscription root */
+export type Subscription_RootTranscriptionJobArgs = {
+  distinct_on?: Maybe<ReadonlyArray<TranscriptionJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<TranscriptionJob_Order_By>>;
+  where?: Maybe<TranscriptionJob_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootTranscriptionJob_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<TranscriptionJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<TranscriptionJob_Order_By>>;
+  where?: Maybe<TranscriptionJob_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootTranscriptionJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
 export type Subscription_RootTransitionsArgs = {
   distinct_on?: Maybe<ReadonlyArray<Transitions_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -18734,6 +19111,12 @@ export type Subscription_RootEchoArgs = {
 
 /** subscription root */
 export type Subscription_RootGetContentItemArgs = {
+  magicToken: Scalars['String'];
+};
+
+
+/** subscription root */
+export type Subscription_RootGetUploadAgreementArgs = {
   magicToken: Scalars['String'];
 };
 
@@ -18985,10 +19368,26 @@ export type CurrentUserGroupsRolesPermissionsQueryVariables = Exact<{
 
 export type CurrentUserGroupsRolesPermissionsQuery = { readonly __typename?: 'query_root', readonly User: ReadonlyArray<{ readonly __typename?: 'User', readonly id: string, readonly conferencesCreated: ReadonlyArray<{ readonly __typename?: 'Conference', readonly id: any }>, readonly attendees: ReadonlyArray<{ readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly conferenceId: any, readonly displayName: string, readonly groupAttendees: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly id: any, readonly groupId: any, readonly attendeeId: any, readonly group: { readonly __typename?: 'Group', readonly enabled: boolean, readonly id: any, readonly includeUnauthenticated: boolean, readonly name: string, readonly conferenceId: any, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any, readonly role: { readonly __typename?: 'Role', readonly id: any, readonly name: string, readonly conferenceId: any, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly permissionName: Permission_Enum, readonly id: any, readonly roleId: any }> } }> } }> }> }> };
 
-export type SelectRequiredItemQueryVariables = Exact<{ [key: string]: never; }>;
+export type UpdateSubtitlesMutationVariables = Exact<{
+  contentItemId: Scalars['String'];
+  magicToken: Scalars['String'];
+  subtitleText: Scalars['String'];
+}>;
 
 
-export type SelectRequiredItemQuery = { readonly __typename?: 'query_root', readonly RequiredContentItem: ReadonlyArray<{ readonly __typename?: 'RequiredContentItem', readonly id: any, readonly contentTypeName: ContentType_Enum, readonly name: string, readonly conference: { readonly __typename?: 'Conference', readonly id: any, readonly name: string } }> };
+export type UpdateSubtitlesMutation = { readonly __typename?: 'mutation_root', readonly updateSubtitles?: Maybe<{ readonly __typename?: 'SubmitUpdatedSubtitlesOutput', readonly message: string, readonly success: boolean }> };
+
+export type SelectRequiredItemQueryVariables = Exact<{
+  requiredContentItemId: Scalars['uuid'];
+}>;
+
+
+export type SelectRequiredItemQuery = { readonly __typename?: 'query_root', readonly RequiredContentItem: ReadonlyArray<(
+    { readonly __typename?: 'RequiredContentItem' }
+    & RequiredItemFieldsFragment
+  )> };
+
+export type RequiredItemFieldsFragment = { readonly __typename?: 'RequiredContentItem', readonly id: any, readonly contentTypeName: ContentType_Enum, readonly name: string, readonly conference: { readonly __typename?: 'Conference', readonly id: any, readonly name: string } };
 
 export type SubmitContentItemMutationVariables = Exact<{
   contentItemData: Scalars['jsonb'];
@@ -18997,6 +19396,13 @@ export type SubmitContentItemMutationVariables = Exact<{
 
 
 export type SubmitContentItemMutation = { readonly __typename?: 'mutation_root', readonly submitContentItem?: Maybe<{ readonly __typename?: 'SubmitContentItemOutput', readonly message: string, readonly success: boolean }> };
+
+export type GetUploadAgreementQueryVariables = Exact<{
+  magicToken: Scalars['String'];
+}>;
+
+
+export type GetUploadAgreementQuery = { readonly __typename?: 'query_root', readonly getUploadAgreement?: Maybe<{ readonly __typename?: 'GetUploadAgreementOutput', readonly agreementText?: Maybe<string> }> };
 
 export type GetContentItemQueryVariables = Exact<{
   magicToken: Scalars['String'];
@@ -19127,6 +19533,17 @@ export const AttendeePartsFragmentDoc = gql`
   createdAt
   displayName
   inviteSent
+}
+    `;
+export const RequiredItemFieldsFragmentDoc = gql`
+    fragment RequiredItemFields on RequiredContentItem {
+  id
+  contentTypeName
+  name
+  conference {
+    id
+    name
+  }
 }
     `;
 export const SelectChatsDocument = gql`
@@ -20279,19 +20696,52 @@ export function useCurrentUserGroupsRolesPermissionsLazyQuery(baseOptions?: Apol
 export type CurrentUserGroupsRolesPermissionsQueryHookResult = ReturnType<typeof useCurrentUserGroupsRolesPermissionsQuery>;
 export type CurrentUserGroupsRolesPermissionsLazyQueryHookResult = ReturnType<typeof useCurrentUserGroupsRolesPermissionsLazyQuery>;
 export type CurrentUserGroupsRolesPermissionsQueryResult = Apollo.QueryResult<CurrentUserGroupsRolesPermissionsQuery, CurrentUserGroupsRolesPermissionsQueryVariables>;
-export const SelectRequiredItemDocument = gql`
-    query SelectRequiredItem {
-  RequiredContentItem {
-    id
-    contentTypeName
-    name
-    conference {
-      id
-      name
-    }
+export const UpdateSubtitlesDocument = gql`
+    mutation UpdateSubtitles($contentItemId: String!, $magicToken: String!, $subtitleText: String!) {
+  updateSubtitles(
+    contentItemId: $contentItemId
+    magicToken: $magicToken
+    subtitleText: $subtitleText
+  ) {
+    message
+    success
   }
 }
     `;
+export type UpdateSubtitlesMutationFn = Apollo.MutationFunction<UpdateSubtitlesMutation, UpdateSubtitlesMutationVariables>;
+
+/**
+ * __useUpdateSubtitlesMutation__
+ *
+ * To run a mutation, you first call `useUpdateSubtitlesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateSubtitlesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateSubtitlesMutation, { data, loading, error }] = useUpdateSubtitlesMutation({
+ *   variables: {
+ *      contentItemId: // value for 'contentItemId'
+ *      magicToken: // value for 'magicToken'
+ *      subtitleText: // value for 'subtitleText'
+ *   },
+ * });
+ */
+export function useUpdateSubtitlesMutation(baseOptions?: Apollo.MutationHookOptions<UpdateSubtitlesMutation, UpdateSubtitlesMutationVariables>) {
+        return Apollo.useMutation<UpdateSubtitlesMutation, UpdateSubtitlesMutationVariables>(UpdateSubtitlesDocument, baseOptions);
+      }
+export type UpdateSubtitlesMutationHookResult = ReturnType<typeof useUpdateSubtitlesMutation>;
+export type UpdateSubtitlesMutationResult = Apollo.MutationResult<UpdateSubtitlesMutation>;
+export type UpdateSubtitlesMutationOptions = Apollo.BaseMutationOptions<UpdateSubtitlesMutation, UpdateSubtitlesMutationVariables>;
+export const SelectRequiredItemDocument = gql`
+    query SelectRequiredItem($requiredContentItemId: uuid!) {
+  RequiredContentItem(where: {id: {_eq: $requiredContentItemId}}) {
+    ...RequiredItemFields
+  }
+}
+    ${RequiredItemFieldsFragmentDoc}`;
 
 /**
  * __useSelectRequiredItemQuery__
@@ -20305,10 +20755,11 @@ export const SelectRequiredItemDocument = gql`
  * @example
  * const { data, loading, error } = useSelectRequiredItemQuery({
  *   variables: {
+ *      requiredContentItemId: // value for 'requiredContentItemId'
  *   },
  * });
  */
-export function useSelectRequiredItemQuery(baseOptions?: Apollo.QueryHookOptions<SelectRequiredItemQuery, SelectRequiredItemQueryVariables>) {
+export function useSelectRequiredItemQuery(baseOptions: Apollo.QueryHookOptions<SelectRequiredItemQuery, SelectRequiredItemQueryVariables>) {
         return Apollo.useQuery<SelectRequiredItemQuery, SelectRequiredItemQueryVariables>(SelectRequiredItemDocument, baseOptions);
       }
 export function useSelectRequiredItemLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectRequiredItemQuery, SelectRequiredItemQueryVariables>) {
@@ -20351,6 +20802,39 @@ export function useSubmitContentItemMutation(baseOptions?: Apollo.MutationHookOp
 export type SubmitContentItemMutationHookResult = ReturnType<typeof useSubmitContentItemMutation>;
 export type SubmitContentItemMutationResult = Apollo.MutationResult<SubmitContentItemMutation>;
 export type SubmitContentItemMutationOptions = Apollo.BaseMutationOptions<SubmitContentItemMutation, SubmitContentItemMutationVariables>;
+export const GetUploadAgreementDocument = gql`
+    query GetUploadAgreement($magicToken: String!) {
+  getUploadAgreement(magicToken: $magicToken) {
+    agreementText
+  }
+}
+    `;
+
+/**
+ * __useGetUploadAgreementQuery__
+ *
+ * To run a query within a React component, call `useGetUploadAgreementQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUploadAgreementQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUploadAgreementQuery({
+ *   variables: {
+ *      magicToken: // value for 'magicToken'
+ *   },
+ * });
+ */
+export function useGetUploadAgreementQuery(baseOptions: Apollo.QueryHookOptions<GetUploadAgreementQuery, GetUploadAgreementQueryVariables>) {
+        return Apollo.useQuery<GetUploadAgreementQuery, GetUploadAgreementQueryVariables>(GetUploadAgreementDocument, baseOptions);
+      }
+export function useGetUploadAgreementLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUploadAgreementQuery, GetUploadAgreementQueryVariables>) {
+          return Apollo.useLazyQuery<GetUploadAgreementQuery, GetUploadAgreementQueryVariables>(GetUploadAgreementDocument, baseOptions);
+        }
+export type GetUploadAgreementQueryHookResult = ReturnType<typeof useGetUploadAgreementQuery>;
+export type GetUploadAgreementLazyQueryHookResult = ReturnType<typeof useGetUploadAgreementLazyQuery>;
+export type GetUploadAgreementQueryResult = Apollo.QueryResult<GetUploadAgreementQuery, GetUploadAgreementQueryVariables>;
 export const GetContentItemDocument = gql`
     query GetContentItem($magicToken: String!) {
   getContentItem(magicToken: $magicToken) {

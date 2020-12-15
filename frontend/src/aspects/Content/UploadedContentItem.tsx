@@ -1,7 +1,9 @@
 import { gql } from "@apollo/client/core";
-import { Heading, Spinner } from "@chakra-ui/react";
+import { Button, Spinner, Text, Tooltip, VStack } from "@chakra-ui/react";
 import React from "react";
 import { useGetContentItemQuery } from "../../generated/graphql";
+import FAIcon from "../Icons/FAIcon";
+import { EditContentItem } from "./EditContentItem";
 import RenderContentItem from "./RenderContentItem";
 
 gql`
@@ -21,7 +23,7 @@ export default function UploadedContentItem({
 }: {
     magicToken: string;
 }): JSX.Element {
-    const { loading, error, data } = useGetContentItemQuery({
+    const { loading, error, data, refetch } = useGetContentItemQuery({
         variables: {
             magicToken,
         },
@@ -37,23 +39,31 @@ export default function UploadedContentItem({
         <>
             {data?.getContentItem?.length && data.getContentItem.length > 0 ? (
                 <>
-                    <Heading as="h3" fontSize="1.2rem">
-                        Previously uploaded
-                    </Heading>
                     {data?.getContentItem?.map((item) =>
                         item ? (
-                            <RenderContentItem
-                                key={item.id}
-                                data={item.data}
-                                id={item.id}
-                            />
+                            <VStack spacing={2}>
+                                <Tooltip label="Refresh uploaded item">
+                                    <Button
+                                        aria-label="Refresh uploaded item"
+                                        onClick={async () => await refetch()}
+                                    >
+                                        <FAIcon iconStyle="s" icon="sync" />
+                                    </Button>
+                                </Tooltip>
+                                <RenderContentItem data={item.data} />
+                                <EditContentItem
+                                    data={item.data}
+                                    contentItemId={item.id}
+                                    magicToken={magicToken}
+                                />
+                            </VStack>
                         ) : (
                             <></>
                         )
                     )}
                 </>
             ) : (
-                <>No item has been uploaded yet.</>
+                <Text mt={5}>No item has been uploaded yet.</Text>
             )}
         </>
     );

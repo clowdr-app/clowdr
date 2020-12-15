@@ -181,8 +181,16 @@ interface LinkContentBlob extends BaseContentBlob {
 }
 
 export interface VideoContentBlob extends FileContentBlob {
-    subtitleS3Urls: any;
     transcode?: TranscodeDetails;
+    subtitles: Record<LanguageCode, SubtitleDetails>;
+}
+
+type LanguageCode = string;
+
+interface SubtitleDetails {
+    s3Url: string;
+    status: "IN_PROGRESS" | "FAILED" | "COMPLETED";
+    message?: string;
 }
 
 interface TranscodeDetails {

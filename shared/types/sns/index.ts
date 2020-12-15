@@ -1,22 +1,28 @@
-export interface SubscriptionConfirmationMessage<T> extends SNSNotification<T> {
+export type SNSNotification<T> =
+    | SubscriptionConfirmationMessage<T>
+    | NotificationMessage<T>
+    | UnsubscribeMessage<T>;
+
+export interface SubscriptionConfirmationMessage<T>
+    extends SNSNotificationBase<T> {
     Type: "SubscriptionConfirmation";
     Token: string;
     SubscribeURL: string;
 }
 
-export interface NotificationMessage<T> extends SNSNotification<T> {
+export interface NotificationMessage<T> extends SNSNotificationBase<T> {
     Type: "Notification";
-    Subject: string;
+    Subject?: string;
     UnsubscribeURL: string;
 }
 
-export interface UnsubscribeMessage<T> extends SNSNotification<T> {
+export interface UnsubscribeMessage<T> extends SNSNotificationBase<T> {
     Type: "UnsubscribeConfirmation";
     Token: string;
     SubscribeURL: string;
 }
 
-export interface SNSNotification<T> {
+export interface SNSNotificationBase<T> {
     Type: string;
     MessageId: string;
     Message: T;

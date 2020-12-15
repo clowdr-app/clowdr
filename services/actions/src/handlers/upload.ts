@@ -173,7 +173,7 @@ async function createBlob(
             return {
                 type: contentTypeName,
                 s3Url: result.url,
-                subtitleS3Urls: {},
+                subtitles: {},
             };
         }
     }

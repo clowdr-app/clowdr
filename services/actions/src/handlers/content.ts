@@ -8,6 +8,7 @@ import {
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { startTranscode } from "../lib/transcode";
+import { startTranscribe } from "../lib/transcribe";
 import { ContentItemData, Payload } from "../types/event";
 
 gql`
@@ -93,7 +94,7 @@ export async function handleContentItemUpdated(
                 currentVersion.data.transcode.s3Url) ||
         (!oldVersion && currentVersion.data.transcode?.s3Url)
     ) {
-        // TODO: Notify uploaders
+        await startTranscribe(currentVersion.data.transcode.s3Url, newRow.id);
     }
 }
 

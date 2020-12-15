@@ -120,12 +120,10 @@ export async function completeTranscode(
     timestamp: Date
 ): Promise<void> {
     const latestVersion = await getLatestVersion(contentItemId);
-
-    if (!latestVersion) {
-        throw new Error(
-            `Could not find latest version of content item ${contentItemId}`
-        );
-    }
+    assert(
+        latestVersion,
+        `Could not find latest version of content item ${contentItemId}`
+    );
 
     const newVersion = R.clone(latestVersion);
     assert(
@@ -139,6 +137,8 @@ export async function completeTranscode(
         updatedTimestamp: timestamp.getTime(),
         s3Url: transcodeS3Url,
     };
+    newVersion.createdAt = new Date().getTime();
+    newVersion.createdBy = "system";
 
     const result = await apolloClient.mutate({
         mutation: ContentItemAddNewVersionDocument,

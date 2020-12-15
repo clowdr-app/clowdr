@@ -37,9 +37,11 @@ export default function RenderContentItem({
         const { bucket, key } = AmazonS3Uri(latestVersion.data.transcode.s3Url);
 
         return (
-            <ReactPlayer
-                url={`https://${bucket}.s3.eu-west-1.amazonaws.com/${key}`}
-            />
+            <>
+                <ReactPlayer
+                    url={`https://${bucket}.s3.eu-west-1.amazonaws.com/${key}`}
+                />
+            </>
         );
     }, [id, latestVersion?.data]);
 

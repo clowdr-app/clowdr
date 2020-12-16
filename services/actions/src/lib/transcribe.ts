@@ -117,8 +117,7 @@ export async function completeTranscriptionJob(
     await S3.putObject({
         Bucket: bucket,
         Key: transcriptSrtKey,
-        Body: Buffer.from(transcriptSrt, "utf-8"),
-        ContentType: "application/x-subrip",
+        Body: transcriptSrt,
     });
 
     // Save the new version of the content item

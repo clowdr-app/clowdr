@@ -43,8 +43,6 @@ assert(
 const credentials = fromEnv();
 const region = process.env.AWS_REGION;
 
-//const region = fromEnv({ environmentVariableName: "AWS_REGION" });
-
 const cf = new CloudFormation({
     apiVersion: "2010-05-15",
     credentials,
@@ -61,6 +59,7 @@ const s3 = new S3({
     apiVersion: "2006-03-01",
     credentials,
     region,
+    signingRegion: region,
 });
 
 const sns = new SNS({

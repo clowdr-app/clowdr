@@ -431,8 +431,7 @@ export async function handleUpdateSubtitles(
         await S3.putObject({
             Bucket: bucket,
             Key: key,
-            Body: Buffer.from(args.subtitleText, "utf-8"),
-            ContentType: "application/x-subrip",
+            Body: args.subtitleText,
         });
     } catch (e) {
         console.error("Failed to upload new subtitles", e);

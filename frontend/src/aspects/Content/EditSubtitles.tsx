@@ -3,6 +3,7 @@ import {
     Button,
     FormControl,
     FormErrorMessage,
+    FormHelperText,
     FormLabel,
     Spinner,
     Textarea,
@@ -12,6 +13,7 @@ import type { SubtitleDetails } from "@clowdr-app/shared-types/types/content";
 import AmazonS3Uri from "amazon-s3-uri";
 import { Field, FieldProps, Form, Formik } from "formik";
 import React from "react";
+import srtValidator from "srt-validator";
 import useFetch from "use-http";
 import { useUpdateSubtitlesMutation } from "../../generated/graphql";
 import UnsavedChangesWarning from "../LeavingPageWarnings/UnsavedChangesWarning";
@@ -115,15 +117,27 @@ export default function EditSubtitles({
                                 validate={(
                                     inValue: string | null | undefined
                                 ) => {
-                                    return inValue ? undefined : inValue;
+                                    let error;
+
+                                    if (!inValue) {
+                                        return;
+                                    }
+
+                                    const srtErrors = srtValidator(inValue);
+                                    if (srtErrors.length > 0) {
+                                        console.log("Invalid SRT", srtErrors);
+                                        error = "Invalid SRT";
+                                    }
+
+                                    return error;
                                 }}
                             >
                                 {({ form, field }: FieldProps<string>) => (
                                     <FormControl
                                         mt={5}
                                         isInvalid={
-                                            !!form.errors.agree &&
-                                            !!form.touched.agree
+                                            !!form.errors.subtitles &&
+                                            !!form.touched.subtitles
                                         }
                                         isRequired
                                     >
@@ -135,8 +149,11 @@ export default function EditSubtitles({
                                             id="subtitles"
                                             height={300}
                                         />
+                                        <FormHelperText>
+                                            Subtitles must be in SRT format.
+                                        </FormHelperText>
                                         <FormErrorMessage>
-                                            {form.errors.agree}
+                                            {form.errors.subtitles}
                                         </FormErrorMessage>
                                     </FormControl>
                                 )}

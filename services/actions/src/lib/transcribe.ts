@@ -3,12 +3,11 @@ import { LanguageCode } from "@aws-sdk/client-transcribe";
 import { VideoContentBlob } from "@clowdr-app/shared-types/types/content";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
-import srtConvert from "aws-transcription-to-srt";
 import getStream from "get-stream";
 import path from "path";
 import R from "ramda";
 import { Readable } from "stream";
-import { is } from "typescript-is";
+import { assertType, is } from "typescript-is";
 import { v4 as uuidv4 } from "uuid";
 import { S3, Transcribe } from "../aws/awsClient";
 import {
@@ -18,6 +17,7 @@ import {
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { getLatestVersion } from "./contentItem";
+import { AmazonTranscribeOutput, convertJsonToSrt } from "./subtitleConvert";
 
 gql`
     mutation CreateTranscriptionJob(
@@ -109,7 +109,9 @@ export async function completeTranscriptionJob(
         throw new Error("Could not parse transcribe output from S3");
     }
 
-    const transcriptSrt = srtConvert(transcriptJson);
+    assertType<AmazonTranscribeOutput>(transcriptJson);
+
+    const transcriptSrt = convertJsonToSrt(transcriptJson);
     const transcriptSrtKey = replaceExtension(key, ".srt");
 
     await S3.putObject({
@@ -145,11 +147,70 @@ export async function completeTranscriptionJob(
 
     if (transcriptionJobResult.errors) {
         console.error(
-            `Failed to complete transcode for ${job.contentItemId}`,
+            `Failed to record completed transcription for ${job.contentItemId}`,
             transcriptionJobResult.errors
         );
         throw new Error(
-            `Failed to complete transcode for ${job.contentItemId}`
+            `Failed to record completed transcription for ${job.contentItemId}`
+        );
+    }
+}
+
+export async function failTranscriptionJob(
+    awsTranscribeJobName: string
+): Promise<void> {
+    // Find our stored record of this transcription job
+    const transcriptionJobResult = await apolloClient.query({
+        query: GetTranscriptionJobDocument,
+        variables: {
+            awsTranscribeJobName,
+        },
+    });
+
+    if (transcriptionJobResult.data.TranscriptionJob.length !== 1) {
+        throw new Error("Could not find the specified transcription job");
+    }
+
+    const job = transcriptionJobResult.data.TranscriptionJob[0];
+
+    const latestVersion = await getLatestVersion(job.contentItemId);
+    assert(
+        latestVersion,
+        `Could not find latest version of content item ${job.contentItemId}`
+    );
+
+    // Save the new version of the content item
+    const newVersion = R.clone(latestVersion);
+    assert(
+        is<VideoContentBlob>(newVersion.data),
+        `Content item ${job.contentItemId} is not a video`
+    );
+
+    newVersion.data.subtitles = {};
+    newVersion.data.subtitles[job.languageCode] = {
+        s3Url: "",
+        status: "FAILED",
+        message: `Job ${awsTranscribeJobName} failed`,
+    };
+
+    newVersion.createdAt = new Date().getTime();
+    newVersion.createdBy = "system";
+
+    await apolloClient.mutate({
+        mutation: ContentItemAddNewVersionDocument,
+        variables: {
+            id: job.contentItemId,
+            newVersion,
+        },
+    });
+
+    if (transcriptionJobResult.errors) {
+        console.error(
+            `Failed to record failure of transcribe for ${job.contentItemId}`,
+            transcriptionJobResult.errors
+        );
+        throw new Error(
+            `Failed to record failure of transcribe for ${job.contentItemId}`
         );
     }
 }

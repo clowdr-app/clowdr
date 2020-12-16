@@ -7,6 +7,7 @@ import {
 } from "@clowdr-app/shared-types/types/content";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
+import { htmlToText } from "html-to-text";
 import R from "ramda";
 import { is } from "typescript-is";
 import { v4 as uuidv4 } from "uuid";
@@ -15,6 +16,9 @@ import {
     ContentItemAddNewVersionDocument,
     ContentType_Enum,
     CreateContentItemDocument,
+    Email_Insert_Input,
+    GetUploadersDocument,
+    InsertEmailsDocument,
     RequiredItemDocument,
     RequiredItemFieldsFragment,
 } from "../generated/graphql";
@@ -43,6 +47,7 @@ gql`
         }
         contentGroup {
             id
+            title
         }
     }
 
@@ -215,6 +220,59 @@ async function getItemByToken(
     return requiredContentItem;
 }
 
+gql`
+    query GetUploaders($requiredContentItemId: uuid!) {
+        Uploader(
+            where: {
+                requiredContentItem: { id: { _eq: $requiredContentItemId } }
+            }
+        ) {
+            name
+            id
+            email
+        }
+    }
+`;
+
+async function sendSubmittedEmail(
+    requiredContentItemId: string,
+    requiredContentItemName: string,
+    contentGroupTitle: string,
+    conferenceName: string
+) {
+    const uploaders = await apolloClient.query({
+        query: GetUploadersDocument,
+        variables: {
+            requiredContentItemId,
+        },
+    });
+
+    const emails: Email_Insert_Input[] = uploaders.data.Uploader.map(
+        (uploader) => {
+            const htmlContents = `<p>Dear ${uploader.name},</p>
+            <p>A new version of <em>${requiredContentItemName}</em> (${contentGroupTitle}) was uploaded to ${conferenceName}.</p>
+            <p>You are receiving this email because you are listed as an uploader for this item.
+            This is an automated email sent on behalf of Clowdr CIC. If you believe you have received this
+            email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}.</p>`;
+
+            return {
+                emailAddress: uploader.email,
+                reason: "item_submitted",
+                subject: `Clowdr: submitted item ${requiredContentItemName} to ${conferenceName}`,
+                htmlContents,
+                plainTextContents: htmlToText(htmlContents),
+            };
+        }
+    );
+
+    await apolloClient.mutate({
+        mutation: InsertEmailsDocument,
+        variables: {
+            objects: emails,
+        },
+    });
+}
+
 export async function handleContentItemSubmitted(
     args: submitContentItemArgs
 ): Promise<SubmitContentItemOutput> {
@@ -259,6 +317,13 @@ export async function handleContentItemSubmitted(
                     requiredContentId: requiredContentItem.id,
                 },
             });
+
+            await sendSubmittedEmail(
+                requiredContentItem.id,
+                requiredContentItem.name,
+                requiredContentItem.contentGroup.title,
+                requiredContentItem.conference.name
+            );
         } catch (e) {
             console.error("Failed to save new content item", e);
             return {
@@ -275,14 +340,6 @@ export async function handleContentItemSubmitted(
             message: "An item of a different type has already been uploaded.",
         };
     } else {
-        // There is already a content item, so we need to add a new blob version
-    }
-
-    // If there is no content item, create a new content item
-    // If there is a content item, but of a different type, fail
-    // If there is a content item of the same type, create a new version
-
-    if (requiredContentItem.contentItem) {
         const latestVersion = await getLatestVersion(
             requiredContentItem.contentItem.id
         );
@@ -308,6 +365,12 @@ export async function handleContentItemSubmitted(
                         newVersion,
                     },
                 });
+                await sendSubmittedEmail(
+                    requiredContentItem.id,
+                    requiredContentItem.name,
+                    requiredContentItem.contentGroup.title,
+                    requiredContentItem.conference.name
+                );
             } catch (e) {
                 console.error("Failed to save new version of content item", e);
                 return {

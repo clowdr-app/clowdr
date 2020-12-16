@@ -17,7 +17,10 @@ import {
     handleUpdateSubtitles,
 } from "../handlers/upload";
 import { completeTranscode, failTranscode } from "../lib/transcode";
-import { completeTranscriptionJob } from "../lib/transcribe";
+import {
+    completeTranscriptionJob,
+    failTranscriptionJob,
+} from "../lib/transcribe";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
 import { ContentItemData, Payload } from "../types/event";
 
@@ -200,7 +203,9 @@ router.post(
                     );
                 } else if (event.detail.TranscriptionJobStatus === "FAILED") {
                     console.log("Transcription job failed");
-                    //todo
+                    await failTranscriptionJob(
+                        event.detail.TranscriptionJobName
+                    );
                 }
             }
         }

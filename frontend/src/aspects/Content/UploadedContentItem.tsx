@@ -41,7 +41,7 @@ export default function UploadedContentItem({
                 <>
                     {data?.getContentItem?.map((item) =>
                         item ? (
-                            <VStack spacing={2}>
+                            <VStack spacing={2} key={item.id}>
                                 <Tooltip label="Refresh uploaded item">
                                     <Button
                                         aria-label="Refresh uploaded item"

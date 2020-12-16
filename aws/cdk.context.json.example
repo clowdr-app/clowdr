@@ -1,5 +1,6 @@
 {
-    "clowdr/transcodeWebhookUrl": "<actions service base URL>/contentItem/notifyTranscode",
-    "clowdr/transcribeWebhookUrl": "<actions service base URL>/contentItem/notifyTranscribe",
-    "clowdr/stackName": "dev"
+    "clowdr/stackName": "dev",
+    "clowdr/region": "eu-west-1",
+    "clowdr/account": "<AWS account ID>",
+    "clowdr/openShotKeyPairName": "<name of OpenShot instance key pair>"
 }

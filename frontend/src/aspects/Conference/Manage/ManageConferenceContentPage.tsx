@@ -1,8 +1,21 @@
 import { gql } from "@apollo/client";
-import { Heading, Spinner } from "@chakra-ui/react";
+import {
+    Accordion,
+    AccordionButton,
+    AccordionIcon,
+    AccordionItem,
+    AccordionPanel,
+    Box,
+    Heading,
+    Spinner,
+} from "@chakra-ui/react";
 import assert from "assert";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import {
+    ContentBaseType,
+    ItemBaseTypes,
+} from "../../../../../shared/types/content";
 import {
     ContentGroupType_Enum,
     ContentType_Enum,
@@ -15,14 +28,22 @@ import CRUDTable, {
     defaultStringFilter,
     FieldType,
     PrimaryField,
+    SecondaryEditorFooterButton,
     SelectOption,
-    ValidatationResult,
+    UpdateResult,
 } from "../../CRUDTable/CRUDTable";
 import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
+import useCurrentUser from "../../Users/CurrentUser/useCurrentUser";
 import isValidUUID from "../../Utils/isValidUUID";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
+import { TextItemTemplate } from "./Content/TextItem";
+import type {
+    ContentDescriptor,
+    ContentGroupDescriptor,
+    ItemBaseTemplate,
+} from "./Content/Types";
 import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
 gql`
@@ -67,44 +88,48 @@ gql`
     }
 `;
 
-type TagDescriptor = {
-    id: string;
-    name: string;
-    desciptor: string;
-};
-
-type ContentItemDescriptor = {
-    id: string;
-    typeName: ContentType_Enum;
-    isHidden: boolean;
-    layoutData: string;
-    requiredContentId?: string | null;
-    name: string;
-    data: any;
-};
-
-type RequiredContentItemDescriptor = {
-    id: string;
-    typeName: string;
-    name: string;
-};
-
-type ContentGroupDescriptor = {
-    id: string;
-    title: string;
-    shortTitle?: string | null;
-    typeName: ContentGroupType_Enum;
-    tagIds: TagDescriptor[];
-    items: ContentItemDescriptor[];
-    requiredItems: RequiredContentItemDescriptor[];
-};
-
 const ContentGroupCRUDTable = (
     props: Readonly<CRUDTableProps<ContentGroupDescriptor, "id">>
 ) => CRUDTable(props);
 
+const ItemBaseTemplates: { [K in ContentBaseType]: ItemBaseTemplate } = {
+    [ContentBaseType.File]: { supported: false },
+    [ContentBaseType.Link]: { supported: false },
+    [ContentBaseType.Text]: TextItemTemplate,
+    [ContentBaseType.URL]: { supported: false },
+    [ContentBaseType.Video]: { supported: false },
+};
+
+type GroupTemplate =
+    | {
+          supported: false;
+      }
+    | {
+          supported: true;
+          requiredItemTypes: ContentType_Enum[];
+          itemTypes: ContentType_Enum[];
+      };
+
+const GroupTemplates: { [K in ContentGroupType_Enum]: GroupTemplate } = {
+    [ContentGroupType_Enum.Keynote]: { supported: false },
+    [ContentGroupType_Enum.Other]: { supported: false },
+    [ContentGroupType_Enum.Paper]: {
+        supported: true,
+        requiredItemTypes: [
+            ContentType_Enum.VideoPrepublish,
+            ContentType_Enum.VideoBroadcast,
+        ],
+        itemTypes: [ContentType_Enum.Abstract, ContentType_Enum.PaperLink],
+    },
+    [ContentGroupType_Enum.Poster]: { supported: false },
+    [ContentGroupType_Enum.Sponsor]: { supported: false },
+    [ContentGroupType_Enum.Symposium]: { supported: false },
+    [ContentGroupType_Enum.Workshop]: { supported: false },
+};
+
 export default function ManageConferenceContentPage(): JSX.Element {
     const conference = useConference();
+    const currentUser = useCurrentUser();
 
     useDashboardPrimaryMenuButtons();
 
@@ -159,7 +184,13 @@ export default function ManageConferenceContentPage(): JSX.Element {
     const groupTypeOptions: SelectOption[] = useMemo(() => {
         return Object.keys(ContentGroupType_Enum)
             .filter(
-                (key) => typeof (ContentGroupType_Enum as any)[key] === "string"
+                (key) =>
+                    typeof (ContentGroupType_Enum as any)[key] === "string" &&
+                    GroupTemplates[
+                        (ContentGroupType_Enum as any)[
+                            key
+                        ] as ContentGroupType_Enum
+                    ].supported
             )
             .map((key) => {
                 const v = (ContentGroupType_Enum as any)[key] as string;
@@ -184,7 +215,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                 insert: (item, v) => {
                     return {
                         ...item,
-                        name: v,
+                        title: v,
                     };
                 },
                 extract: (v) => v.title,
@@ -207,10 +238,10 @@ export default function ManageConferenceContentPage(): JSX.Element {
                 insert: (item, v) => {
                     return {
                         ...item,
-                        name: v,
+                        shortTitle: v,
                     };
                 },
-                extract: (v) => v.title,
+                extract: (v) => v.shortTitle,
                 spec: {
                     fieldType: FieldType.string,
                     convertFromUI: (x) => x,
@@ -253,8 +284,14 @@ export default function ManageConferenceContentPage(): JSX.Element {
                         const opt = groupTypeOptions.find(
                             (x) => x.value === typeName
                         );
-                        assert(opt);
-                        return opt;
+                        if (opt) {
+                            return opt;
+                        } else {
+                            return {
+                                label: `<Unsupported (${typeName})>`,
+                                value: typeName,
+                            };
+                        }
                     },
                     multiSelect: false,
                     options: () => groupTypeOptions,
@@ -264,6 +301,16 @@ export default function ManageConferenceContentPage(): JSX.Element {
         };
         return result;
     }, [groupTypeOptions]);
+
+    const [allContentGroupsMap, setAllContentGroupsMap] = useState<
+        Map<string, ContentGroupDescriptor>
+    >();
+
+    useEffect(() => {
+        if (parsedDBContentGroups) {
+            setAllContentGroupsMap(parsedDBContentGroups);
+        }
+    }, [parsedDBContentGroups]);
 
     return (
         <RequireAtLeastOnePermissionWrapper
@@ -281,7 +328,9 @@ export default function ManageConferenceContentPage(): JSX.Element {
             >
                 Groups
             </Heading>
-            {loadingAllContentGroups || !parsedDBContentGroups ? (
+            {loadingAllContentGroups ||
+            !allContentGroupsMap ||
+            !parsedDBContentGroups ? (
                 <Spinner />
             ) : errorAllContentGroups ? (
                 <>
@@ -293,20 +342,64 @@ export default function ManageConferenceContentPage(): JSX.Element {
             )}
             <ContentGroupCRUDTable
                 key="crud-table"
-                data={parsedDBContentGroups ?? new Map()}
+                data={allContentGroupsMap ?? new Map()}
                 csud={{
                     cudCallbacks: {
                         generateTemporaryKey: () => uuidv4(),
                         create: (tempKey, item) => {
+                            const newItem = {
+                                ...item,
+                                isNew: true,
+                                id: tempKey,
+                            } as ContentGroupDescriptor;
+                            setAllContentGroupsMap((oldData) => {
+                                const newData = new Map(
+                                    oldData ? oldData.entries() : []
+                                );
+                                newData.set(tempKey, newItem);
+                                return newData;
+                            });
                             return true;
                         },
                         update: (items) => {
-                            console.log("todo");
-                            return new Map<string, ValidatationResult>();
+                            const results: Map<
+                                string,
+                                UpdateResult
+                            > = new Map();
+                            items.forEach((item, key) => {
+                                results.set(key, true);
+                            });
+
+                            setAllContentGroupsMap((oldData) => {
+                                if (oldData) {
+                                    const newData = new Map(oldData.entries());
+                                    items.forEach((item, key) => {
+                                        newData.set(key, item);
+                                    });
+                                    return newData;
+                                }
+                                return undefined;
+                            });
+
+                            return results;
                         },
                         delete: (keys) => {
-                            console.log("todo");
-                            return new Map<string, boolean>();
+                            const results: Map<string, boolean> = new Map();
+                            keys.forEach((key) => {
+                                results.set(key, true);
+                            });
+
+                            setAllContentGroupsMap((oldData) => {
+                                const newData = new Map(
+                                    oldData ? oldData.entries() : []
+                                );
+                                keys.forEach((key) => {
+                                    newData.delete(key);
+                                });
+                                return newData;
+                            });
+
+                            return results;
                         },
                         save: async (keys) => {
                             console.log("todo");
@@ -338,10 +431,136 @@ export default function ManageConferenceContentPage(): JSX.Element {
                 }}
                 secondaryFields={{
                     editSingle: (key, onClose) => {
+                        const group = allContentGroupsMap?.get(key);
+
+                        let editorElement: JSX.Element;
+                        const footerButtons: SecondaryEditorFooterButton[] = [];
+
+                        // TODO: Configure / Edit tabs
+
+                        if (group) {
+                            const groupTemplate =
+                                GroupTemplates[group.typeName];
+                            if (groupTemplate.supported) {
+                                const itemElements: JSX.Element[] = [];
+
+                                for (const itemType of groupTemplate.itemTypes) {
+                                    const baseType = ItemBaseTypes[itemType];
+                                    const itemTemplate =
+                                        ItemBaseTemplates[baseType];
+                                    let accordianTitle:
+                                        | string
+                                        | JSX.Element = `TODO: Unsupported item type ${itemType}`;
+                                    let accordianContents:
+                                        | JSX.Element
+                                        | undefined;
+
+                                    if (itemTemplate.supported) {
+                                        const item = group.items.find(
+                                            (x) =>
+                                                x.typeName === itemType &&
+                                                !x.requiredContentId
+                                        );
+                                        const itemDesc: ContentDescriptor = item
+                                            ? {
+                                                  type: "item-only",
+                                                  item,
+                                              }
+                                            : itemTemplate.createDefault(
+                                                  currentUser.user.User[0].id,
+                                                  group,
+                                                  itemType,
+                                                  false
+                                              );
+                                        assert(itemDesc.type === "item-only");
+
+                                        accordianTitle = itemTemplate.renderEditorHeading(
+                                            itemDesc
+                                        );
+                                        accordianContents = itemTemplate.renderEditor(
+                                            currentUser.user.User[0].id,
+                                            itemDesc,
+                                            (updatedDesc) => {
+                                                assert(
+                                                    updatedDesc.type ===
+                                                        "item-only"
+                                                );
+
+                                                setAllContentGroupsMap(
+                                                    (oldGroups) => {
+                                                        const newGroups: Map<
+                                                            string,
+                                                            ContentGroupDescriptor
+                                                        > = oldGroups
+                                                            ? new Map(oldGroups)
+                                                            : new Map();
+
+                                                        newGroups.set(
+                                                            group.id,
+                                                            {
+                                                                ...group,
+                                                                items: group.items.map(
+                                                                    (cItem) => {
+                                                                        return itemDesc
+                                                                            .item
+                                                                            .id
+                                                                            ? updatedDesc.item
+                                                                            : cItem;
+                                                                    }
+                                                                ),
+                                                            }
+                                                        );
+
+                                                        return newGroups;
+                                                    }
+                                                );
+                                            }
+                                        );
+                                    }
+
+                                    itemElements.push(
+                                        <AccordionItem key={`row-${itemType}`}>
+                                            <AccordionButton>
+                                                <Box flex="1" textAlign="left">
+                                                    {accordianTitle}
+                                                </Box>
+                                                {accordianContents && (
+                                                    <AccordionIcon />
+                                                )}
+                                            </AccordionButton>
+                                            {accordianContents && (
+                                                <AccordionPanel pb={4}>
+                                                    {accordianContents}
+                                                </AccordionPanel>
+                                            )}
+                                        </AccordionItem>
+                                    );
+                                }
+                                const itemsAccordian = (
+                                    <Accordion allowMultiple>
+                                        {itemElements}
+                                    </Accordion>
+                                );
+
+                                // TODO: Required items accordian
+
+                                editorElement = <>{itemsAccordian}</>;
+                            } else {
+                                editorElement = (
+                                    <>
+                                        TODO: Unsupported group type:{" "}
+                                        {group.typeName}
+                                    </>
+                                );
+                            }
+                        } else {
+                            editorElement = <>Error: Content not found.</>;
+                        }
+
                         return {
                             includeCloseButton: true,
-                            editorElement: <>TODO</>,
-                            footerButtons: [],
+                            editorElement,
+                            footerButtons,
                         };
                     },
                 }}

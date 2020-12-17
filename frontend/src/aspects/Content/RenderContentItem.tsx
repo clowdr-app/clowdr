@@ -1,5 +1,5 @@
 import { Text, VStack } from "@chakra-ui/react";
-import type { ContentItemDataBlob } from "@clowdr-app/shared-types/types/content";
+import { ContentBaseType, ContentItemDataBlob } from "@clowdr-app/shared-types/types/content";
 import AmazonS3Uri from "amazon-s3-uri";
 import React from "react";
 import ReactPlayer from "react-player";
@@ -24,7 +24,7 @@ export default function RenderContentItem({
         }
 
         switch (latestVersion.data.baseType) {
-            case "file":
+            case ContentBaseType.File:
                 return (
                     <VStack>
                         <a href={s3UrlToHttpUrl(latestVersion.data.s3Url)}>
@@ -35,7 +35,7 @@ export default function RenderContentItem({
                         </a>
                     </VStack>
                 );
-            case "link":
+            case ContentBaseType.Link:
                 return (
                     <Text>
                         <a href={latestVersion.data.url}>
@@ -43,9 +43,9 @@ export default function RenderContentItem({
                         </a>
                     </Text>
                 );
-            case "text":
+            case ContentBaseType.Text:
                 return <Text>{latestVersion.data.text}</Text>;
-            case "url":
+            case ContentBaseType.URL:
                 return (
                     <Text>
                         URL:{" "}
@@ -54,7 +54,7 @@ export default function RenderContentItem({
                         </a>
                     </Text>
                 );
-            case "video": {
+            case ContentBaseType.Video: {
                 if (latestVersion.data?.transcode?.status === "FAILED") {
                     return (
                         <>

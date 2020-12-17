@@ -1,5 +1,7 @@
 import { gql } from "@apollo/client/core";
 import {
+    AWSJobStatus,
+    ContentBaseType,
     ContentBlob,
     ContentItemDataBlob,
     ContentItemVersionData,
@@ -124,7 +126,7 @@ async function createBlob(
                 return { error: "No text supplied" };
             }
             return {
-                baseType: "text",
+                baseType: ContentBaseType.Text,
                 type: contentTypeName,
                 text: inputData.text,
             };
@@ -139,7 +141,7 @@ async function createBlob(
                 return { error: result.message };
             }
             return {
-                baseType: "file",
+                baseType: ContentBaseType.File,
                 type: contentTypeName,
                 s3Url: result.url,
             };
@@ -153,7 +155,7 @@ async function createBlob(
                 return { error: "No URL supplied" };
             }
             return {
-                baseType: "url",
+                baseType: ContentBaseType.URL,
                 type: contentTypeName,
                 url: inputData.url,
             };
@@ -164,7 +166,7 @@ async function createBlob(
                 return { error: "Text or URL not supplied" };
             }
             return {
-                baseType: "link",
+                baseType: ContentBaseType.Link,
                 type: contentTypeName,
                 text: inputData.text,
                 url: inputData.url,
@@ -184,7 +186,7 @@ async function createBlob(
                 return { error: result.message };
             }
             return {
-                baseType: "video",
+                baseType: ContentBaseType.Video,
                 type: contentTypeName,
                 s3Url: result.url,
                 subtitles: {},
@@ -447,7 +449,7 @@ export async function handleUpdateSubtitles(
 
     newVersion.data.subtitles["en_US"] = {
         s3Url: `s3://${bucket}/${key}`,
-        status: "COMPLETED",
+        status: AWSJobStatus.Completed,
     };
 
     try {

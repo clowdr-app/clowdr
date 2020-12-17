@@ -361,7 +361,7 @@ const defaultRenderers: {
         if (editMode) {
             return (
                 <Input
-                    value={value}
+                    value={value ?? ""}
                     onChange={(ev) => editMode.onChange(ev.target.value)}
                     aria-label={editMode.label}
                     disabled={editMode.isDisabled}

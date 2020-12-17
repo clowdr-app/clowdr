@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client/core";
 import { LanguageCode } from "@aws-sdk/client-transcribe";
-import { VideoContentBlob } from "@clowdr-app/shared-types/types/content";
+import { AWSJobStatus, VideoContentBlob } from "@clowdr-app/shared-types/types/content";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
 import getStream from "get-stream";
@@ -130,7 +130,7 @@ export async function completeTranscriptionJob(
     newVersion.data.subtitles = {};
     newVersion.data.subtitles[job.languageCode] = {
         s3Url: `s3://${bucket}/${transcriptSrtKey}`,
-        status: "COMPLETED",
+        status: AWSJobStatus.Completed,
     };
 
     newVersion.createdAt = new Date().getTime();
@@ -188,7 +188,7 @@ export async function failTranscriptionJob(
     newVersion.data.subtitles = {};
     newVersion.data.subtitles[job.languageCode] = {
         s3Url: "",
-        status: "FAILED",
+        status: AWSJobStatus.Failed,
         message: `Job ${awsTranscribeJobName} failed`,
     };
 

@@ -9,7 +9,7 @@ import {
     OutputGroupType,
     VideoCodec,
 } from "@aws-sdk/client-mediaconvert";
-import { VideoContentBlob } from "@clowdr-app/shared-types/types/content";
+import { AWSJobStatus, VideoContentBlob } from "@clowdr-app/shared-types/types/content";
 import assert from "assert";
 import R from "ramda";
 import { is } from "typescript-is";
@@ -133,7 +133,7 @@ export async function completeTranscode(
 
     newVersion.data.transcode = {
         jobId: transcodeJobId,
-        status: "COMPLETED",
+        status: AWSJobStatus.Completed,
         updatedTimestamp: timestamp.getTime(),
         s3Url: transcodeS3Url,
     };
@@ -188,7 +188,7 @@ export async function failTranscode(
 
     newVersion.data.transcode = {
         jobId: transcodeJobId,
-        status: "FAILED",
+        status: AWSJobStatus.Failed,
         updatedTimestamp: timestamp.getTime(),
         s3Url: undefined,
         message: errorMessage,

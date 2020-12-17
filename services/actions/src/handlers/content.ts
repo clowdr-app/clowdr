@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client/core";
+import { AWSJobStatus } from "@clowdr-app/shared-types/types/content";
 import assert from "assert";
 import { htmlToText } from "html-to-text";
 import R from "ramda";
@@ -71,7 +72,7 @@ export async function handleContentItemUpdated(
         newVersion.createdBy = "system";
         newVersion.data.transcode = {
             jobId: transcodeResult.jobId,
-            status: "IN_PROGRESS",
+            status: AWSJobStatus.InProgress,
             updatedTimestamp: transcodeResult.timestamp.getTime(),
         };
 

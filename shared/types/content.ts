@@ -81,111 +81,142 @@ export type ContentBlob =
     | VideoTitlesBlob
     | VideoUrlBlob;
 
-interface AbstractBlob extends TextualContentBlob {
+export interface AbstractBlob extends TextualContentBlob {
     type: ContentType_Enum.Abstract;
 }
 
-interface TextBlob extends TextualContentBlob {
+export interface TextBlob extends TextualContentBlob {
     type: ContentType_Enum.Text;
 }
 
-interface ImageFileBlob extends FileContentBlob {
+export interface ImageFileBlob extends FileContentBlob {
     type: ContentType_Enum.ImageFile;
 }
 
-interface PaperFileBlob extends FileContentBlob {
+export interface PaperFileBlob extends FileContentBlob {
     type: ContentType_Enum.PaperFile;
 }
 
-interface PosterFileBlob extends FileContentBlob {
+export interface PosterFileBlob extends FileContentBlob {
     type: ContentType_Enum.PosterFile;
 }
 
-interface ImageUrlBlob extends UrlContentBlob {
+export interface ImageUrlBlob extends UrlContentBlob {
     type: ContentType_Enum.ImageUrl;
 }
 
-interface LinkBlob extends UrlContentBlob {
+export interface LinkBlob extends UrlContentBlob {
     type: ContentType_Enum.Link;
 }
 
-interface PaperUrlBlob extends UrlContentBlob {
+export interface PaperUrlBlob extends UrlContentBlob {
     type: ContentType_Enum.PaperUrl;
 }
 
-interface PosterUrlBlob extends UrlContentBlob {
+export interface PosterUrlBlob extends UrlContentBlob {
     type: ContentType_Enum.PosterUrl;
 }
 
-interface LinkButtonBlob extends LinkContentBlob {
+export interface LinkButtonBlob extends LinkContentBlob {
     type: ContentType_Enum.LinkButton;
 }
 
-interface PaperLinkBlob extends LinkContentBlob {
+export interface PaperLinkBlob extends LinkContentBlob {
     type: ContentType_Enum.PaperLink;
 }
 
-interface VideoBroadcastBlob extends VideoContentBlob {
+export interface VideoBroadcastBlob extends VideoContentBlob {
     type: ContentType_Enum.VideoBroadcast;
 }
 
-interface VideoCountdownBlob extends VideoContentBlob {
+export interface VideoCountdownBlob extends VideoContentBlob {
     type: ContentType_Enum.VideoCountdown;
 }
 
-interface VideoFileBlob extends VideoContentBlob {
+export interface VideoFileBlob extends VideoContentBlob {
     type: ContentType_Enum.VideoFile;
 }
 
-interface VideoFillerBlob extends VideoContentBlob {
+export interface VideoFillerBlob extends VideoContentBlob {
     type: ContentType_Enum.VideoFiller;
 }
 
-interface VideoLinkBlob extends LinkContentBlob {
+export interface VideoLinkBlob extends LinkContentBlob {
     type: ContentType_Enum.VideoLink;
 }
 
-interface VideoPrepublishBlob extends VideoContentBlob {
+export interface VideoPrepublishBlob extends VideoContentBlob {
     type: ContentType_Enum.VideoPrepublish;
 }
 
-interface VideoSponsorsFillerBlob extends VideoContentBlob {
+export interface VideoSponsorsFillerBlob extends VideoContentBlob {
     type: ContentType_Enum.VideoSponsorsFiller;
 }
 
-interface VideoTitlesBlob extends VideoContentBlob {
+export interface VideoTitlesBlob extends VideoContentBlob {
     type: ContentType_Enum.VideoTitles;
 }
 
-interface VideoUrlBlob extends UrlContentBlob {
+export interface VideoUrlBlob extends UrlContentBlob {
     type: ContentType_Enum.VideoUrl;
 }
 
 /* Meta content types */
 
-interface TextualContentBlob extends BaseContentBlob {
-    baseType: "text";
+export enum ContentBaseType {
+    Text = "text",
+    File = "file",
+    URL = "url",
+    Link = "link",
+    Video = "video"
+}
+
+export const ItemBaseTypes: { [K in ContentType_Enum]: ContentBaseType } = {
+    [ContentType_Enum.Abstract]:  ContentBaseType.Text,
+    [ContentType_Enum.ImageFile]:  ContentBaseType.File,
+    [ContentType_Enum.ImageUrl]:  ContentBaseType.URL,
+    [ContentType_Enum.Link]:  ContentBaseType.Link,
+    [ContentType_Enum.LinkButton]:  ContentBaseType.Link,
+    [ContentType_Enum.PaperFile]:  ContentBaseType.File,
+    [ContentType_Enum.PaperLink]:  ContentBaseType.Link,
+    [ContentType_Enum.PaperUrl]:  ContentBaseType.URL,
+    [ContentType_Enum.PosterFile]:  ContentBaseType.File,
+    [ContentType_Enum.PosterUrl]:  ContentBaseType.URL,
+    [ContentType_Enum.Text]:  ContentBaseType.Text,
+    [ContentType_Enum.VideoBroadcast]:  ContentBaseType.Video,
+    [ContentType_Enum.VideoCountdown]:  ContentBaseType.Video,
+    [ContentType_Enum.VideoFile]:  ContentBaseType.Video,
+    [ContentType_Enum.VideoFiller]:  ContentBaseType.Video,
+    [ContentType_Enum.VideoLink]:  ContentBaseType.Video,
+    [ContentType_Enum.VideoPrepublish]:  ContentBaseType.Video,
+    [ContentType_Enum.VideoSponsorsFiller]:  ContentBaseType.Video,
+    [ContentType_Enum.VideoTitles]:  ContentBaseType.Video,
+    [ContentType_Enum.VideoUrl]:  ContentBaseType.URL,
+};
+
+export interface TextualContentBlob extends BaseContentBlob {
+    baseType: ContentBaseType.Text;
     text: string;
 }
 
-interface FileContentBlob extends BaseContentBlob {
-    baseType: "file";
+export interface FileContentBlob extends BaseContentBlob {
+    baseType: ContentBaseType.File;
     s3Url: string;
 }
 
-interface UrlContentBlob extends BaseContentBlob {
-    baseType: "url";
+export interface UrlContentBlob extends BaseContentBlob {
+    baseType: ContentBaseType.URL;
     url: string;
 }
 
-interface LinkContentBlob extends BaseContentBlob {
-    baseType: "link";
+export interface LinkContentBlob extends BaseContentBlob {
+    baseType: ContentBaseType.Link;
     text: string;
     url: string;
 }
 
 export interface VideoContentBlob extends BaseContentBlob {
-    baseType: "video";
+    baseType: ContentBaseType.Video;
     s3Url: string;
     transcode?: TranscodeDetails;
     subtitles: Record<LanguageCode, SubtitleDetails>;
@@ -193,15 +224,21 @@ export interface VideoContentBlob extends BaseContentBlob {
 
 type LanguageCode = string;
 
+export enum AWSJobStatus {
+    InProgress = "IN_PROGRESS",
+    Failed = "FAILED",
+    Completed = "COMPLETED"
+}
+
 export interface SubtitleDetails {
     s3Url: string;
-    status: "IN_PROGRESS" | "FAILED" | "COMPLETED";
+    status: AWSJobStatus;
     message?: string;
 }
 
 interface TranscodeDetails {
     s3Url?: string;
-    status: "IN_PROGRESS" | "FAILED" | "COMPLETED";
+    status: AWSJobStatus;
     message?: string;
     updatedTimestamp: number;
     jobId: string;

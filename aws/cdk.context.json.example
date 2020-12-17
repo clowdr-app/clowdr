@@ -2,5 +2,6 @@
     "clowdr/stackPrefix": "dev",
     "clowdr/region": "eu-west-1",
     "clowdr/account": "<AWS account ID>",
-    "clowdr/openShotKeyPairName": "<name of OpenShot instance key pair>"
+    "clowdr/openShotKeyPairName": "<name of OpenShot instance key pair>",
+    "clowdr/openShotCertificateArn": "<ARN of a certificate for the domain where OpenShot will be hosted>",
 }

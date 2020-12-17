@@ -14,15 +14,7 @@ export default function MainMenu(_props: Props): JSX.Element {
     const primaryButtons = usePrimaryMenuButtons();
     return (
         <>
-            <Stack
-                direction="row"
-                spacing="2"
-                justify="start"
-                align="center"
-                wrap="wrap"
-                role="menu"
-                width="100%"
-            >
+            <Stack direction="row" spacing="2" justify="start" align="center" wrap="wrap" role="menu" width="100%">
                 {primaryButtons.map((button) =>
                     typeof button.action === "string" ? (
                         <LinkButton

@@ -1,11 +1,4 @@
-import {
-    ApolloClient,
-    ApolloProvider,
-    HttpLink,
-    InMemoryCache,
-    NormalizedCacheObject,
-    split,
-} from "@apollo/client";
+import { ApolloClient, ApolloProvider, HttpLink, InMemoryCache, NormalizedCacheObject, split } from "@apollo/client";
 import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { setContext } from "@apollo/link-context";
@@ -24,24 +17,18 @@ export default function ApolloCustomProvider({
 
     useEffect(() => {
         (async () => {
-            const useSecureProtocols =
-                import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API_SECURE_PROTOCOLS !==
-                "false";
+            const useSecureProtocols = import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API_SECURE_PROTOCOLS !== "false";
             const httpProtocol = useSecureProtocols ? "https" : "http";
             const wsProtocol = useSecureProtocols ? "wss" : "ws";
 
             const authLink = setContext(async (_, { headers }) => {
                 const newHeaders: any = { ...headers };
 
-                const sendRequestUnauthenticated = headers
-                    ? headers["SEND-WITHOUT-AUTH"] === true
-                    : false;
+                const sendRequestUnauthenticated = headers ? headers["SEND-WITHOUT-AUTH"] === true : false;
                 delete newHeaders["SEND-WITHOUT-AUTH"];
 
                 if (isAuthenticated && !sendRequestUnauthenticated) {
-                    const magicToken = headers
-                        ? headers["x-hasura-magic-token"]
-                        : undefined;
+                    const magicToken = headers ? headers["x-hasura-magic-token"] : undefined;
                     delete newHeaders["x-hasura-magic-token"];
 
                     const ignoreCache = !!magicToken;
@@ -68,15 +55,11 @@ export default function ApolloCustomProvider({
             });
 
             const httpLink = new HttpLink({
-                uri: `${httpProtocol}://${
-                    import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN
-                }/v1/graphql`,
+                uri: `${httpProtocol}://${import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN}/v1/graphql`,
             });
 
             const wsLink = new WebSocketLink({
-                uri: `${wsProtocol}://${
-                    import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN
-                }/v1/graphql`, // use wss for a secure endpoint
+                uri: `${wsProtocol}://${import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN}/v1/graphql`, // use wss for a secure endpoint
                 options: {
                     reconnect: true,
                     connectionParams: async () => {
@@ -97,10 +80,7 @@ export default function ApolloCustomProvider({
                 split(
                     ({ query }) => {
                         const definition = getMainDefinition(query);
-                        return (
-                            definition.kind === "OperationDefinition" &&
-                            definition.operation === "subscription"
-                        );
+                        return definition.kind === "OperationDefinition" && definition.operation === "subscription";
                     },
                     wsLink,
                     httpLink

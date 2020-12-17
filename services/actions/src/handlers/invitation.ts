@@ -69,10 +69,7 @@ gql`
         $updatedAt: timestamptz!
     ) {
         update_Invitation(
-            where: {
-                id: { _eq: $invitationId }
-                updatedAt: { _eq: $updatedAt }
-            }
+            where: { id: { _eq: $invitationId }, updatedAt: { _eq: $updatedAt } }
             _set: { confirmationCode: $confirmationCode, linkToUserId: $userId }
         ) {
             affected_rows
@@ -103,10 +100,7 @@ gql`
     }
 
     mutation SetAttendeeUserId($attendeeId: uuid!, $userId: String!) {
-        update_Attendee(
-            where: { id: { _eq: $attendeeId } }
-            _set: { userId: $userId }
-        ) {
+        update_Attendee(where: { id: { _eq: $attendeeId } }, _set: { userId: $userId }) {
             affected_rows
         }
     }
@@ -131,10 +125,7 @@ gql`
         userId
     }
 
-    query SelectPermittedAttendeesWithInvitation(
-        $attendeeIds: [uuid!]!
-        $userId: String!
-    ) {
+    query SelectPermittedAttendeesWithInvitation($attendeeIds: [uuid!]!, $userId: String!) {
         Attendee(
             where: {
                 id: { _in: $attendeeIds }
@@ -143,9 +134,7 @@ gql`
                         { createdBy: { _eq: $userId } }
                         {
                             groups: {
-                                groupAttendees: {
-                                    attendee: { userId: { _eq: $userId } }
-                                }
+                                groupAttendees: { attendee: { userId: { _eq: $userId } } }
                                 groupRoles: {
                                     role: {
                                         rolePermissions: {
@@ -230,9 +219,9 @@ received this email in error, please contact us via ${process.env.STOP_EMAILS_CO
                     emailAddress: attendee.invitation.invitedEmailAddress,
                     invitationId: attendee.invitation.id,
                     reason: "invite",
-                    subject: `Clowdr: ${
-                        isReminder ? "[Reminder] " : ""
-                    }Your invitation to ${attendee.conference.shortName}`,
+                    subject: `Clowdr: ${isReminder ? "[Reminder] " : ""}Your invitation to ${
+                        attendee.conference.shortName
+                    }`,
                     htmlContents,
                     plainTextContents,
                 });
@@ -277,9 +266,7 @@ export async function invitationSendInitialHandler(
         args.attendeeIds,
         userId,
         (attendee) =>
-            !!attendee.invitation &&
-            attendee.invitation.emails.filter((x) => x.reason === "invite")
-                .length === 0,
+            !!attendee.invitation && attendee.invitation.emails.filter((x) => x.reason === "invite").length === 0,
         false
     );
 }
@@ -288,12 +275,7 @@ export async function invitationSendRepeatHandler(
     args: invitationSendRepeatEmailArgs,
     userId: string
 ): Promise<Array<InvitationSendEmailResult>> {
-    return sendInviteEmails(
-        args.attendeeIds,
-        userId,
-        (_attendee) => true,
-        true
-    );
+    return sendInviteEmails(args.attendeeIds, userId, (_attendee) => true, true);
 }
 
 async function getInvitationAndUser(
@@ -323,10 +305,7 @@ async function getInvitationAndUser(
 async function confirmUser(
     inviteCode: string,
     userId: string,
-    validate: (
-        invitation: InvitationPartsFragment,
-        user: InvitedUserPartsFragment
-    ) => Promise<boolean>
+    validate: (invitation: InvitationPartsFragment, user: InvitedUserPartsFragment) => Promise<boolean>
 ): Promise<ConfirmInvitationOutput> {
     const { invitation, user } = await getInvitationAndUser(inviteCode, userId);
 
@@ -346,10 +325,7 @@ async function confirmUser(
             confSlug = invitation.attendee.conference.slug;
         } catch (e) {
             ok = false;
-            console.error(
-                `Failed to link user to invitation (${user.id}, ${invitation.id})`,
-                e
-            );
+            console.error(`Failed to link user to invitation (${user.id}, ${invitation.id})`, e);
         }
     }
 
@@ -368,8 +344,7 @@ export async function invitationConfirmCurrentHandler(
             !!invitation.invitedEmailAddress &&
             !!user.email &&
             !invitation.attendee.userId &&
-            invitation.invitedEmailAddress.toLowerCase() ===
-                user.email.toLowerCase()
+            invitation.invitedEmailAddress.toLowerCase() === user.email.toLowerCase()
         );
     });
 }
@@ -389,27 +364,23 @@ export async function invitationConfirmWithCodeHandler(
     args: invitationConfirmWithCodeArgs,
     userId: string
 ): Promise<ConfirmInvitationOutput> {
-    return confirmUser(
-        args.inviteInput.inviteCode,
-        userId,
-        async (invitation, user) => {
-            if (
-                !invitation.attendee.userId &&
-                invitation.confirmationCode &&
-                invitation.linkToUserId &&
-                user.email &&
-                invitation.linkToUserId === user.id
-            ) {
-                const goldenCode = generateExternalConfirmationCode({
-                    confirmationCode: invitation.confirmationCode,
-                    invitedEmailAddress: invitation.invitedEmailAddress,
-                });
-                const inputCode = args.inviteInput.confirmationCode.toLowerCase();
-                return goldenCode === inputCode;
-            }
-            return false;
+    return confirmUser(args.inviteInput.inviteCode, userId, async (invitation, user) => {
+        if (
+            !invitation.attendee.userId &&
+            invitation.confirmationCode &&
+            invitation.linkToUserId &&
+            user.email &&
+            invitation.linkToUserId === user.id
+        ) {
+            const goldenCode = generateExternalConfirmationCode({
+                confirmationCode: invitation.confirmationCode,
+                invitedEmailAddress: invitation.invitedEmailAddress,
+            });
+            const inputCode = args.inviteInput.confirmationCode.toLowerCase();
+            return goldenCode === inputCode;
         }
-    );
+        return false;
+    });
 }
 
 function generateEmailContents(
@@ -468,10 +439,7 @@ export async function invitationConfirmSendInitialEmailHandler(
     args: invitationConfirmSendInitialEmailArgs,
     userId: string
 ): Promise<InvitationConfirmationEmailOutput> {
-    const { invitation, user } = await getInvitationAndUser(
-        args.inviteInput.inviteCode,
-        userId
-    );
+    const { invitation, user } = await getInvitationAndUser(args.inviteInput.inviteCode, userId);
 
     // UI race condition might cause us to receive a request for
     // which we don't really want to send an email.
@@ -481,17 +449,10 @@ export async function invitationConfirmSendInitialEmailHandler(
         };
     }
 
-    if (
-        !invitation.attendee.userId &&
-        (!invitation.linkToUserId || invitation.linkToUserId !== user.id)
-    ) {
+    if (!invitation.attendee.userId && (!invitation.linkToUserId || invitation.linkToUserId !== user.id)) {
         const newConfirmationCodeForDB = uuidv4();
         const sendEmailTo = invitation.invitedEmailAddress;
-        const { htmlContents, plainTextContents } = generateEmailContents(
-            newConfirmationCodeForDB,
-            invitation,
-            user
-        );
+        const { htmlContents, plainTextContents } = generateEmailContents(newConfirmationCodeForDB, invitation, user);
         // updated_at serves as a mutex variable
         const result = await apolloClient.mutate({
             mutation: UpdateInvitationDocument,
@@ -502,10 +463,7 @@ export async function invitationConfirmSendInitialEmailHandler(
                 updatedAt: invitation.updatedAt,
             },
         });
-        if (
-            result.data?.update_Invitation?.affected_rows &&
-            result.data?.update_Invitation?.affected_rows > 0
-        ) {
+        if (result.data?.update_Invitation?.affected_rows && result.data?.update_Invitation?.affected_rows > 0) {
             await apolloClient.mutate({
                 mutation: SendFreshInviteConfirmationEmailDocument,
                 variables: {
@@ -528,15 +486,8 @@ export async function invitationConfirmSendRepeatEmailHandler(
     args: invitationConfirmSendRepeatEmailArgs,
     userId: string
 ): Promise<InvitationConfirmationEmailOutput> {
-    const { invitation, user } = await getInvitationAndUser(
-        args.inviteInput.inviteCode,
-        userId
-    );
-    if (
-        !invitation.attendee.userId &&
-        invitation.linkToUserId &&
-        invitation.linkToUserId === user.id
-    ) {
+    const { invitation, user } = await getInvitationAndUser(args.inviteInput.inviteCode, userId);
+    if (!invitation.attendee.userId && invitation.linkToUserId && invitation.linkToUserId === user.id) {
         const sendEmailTo = invitation.invitedEmailAddress;
         const { htmlContents, plainTextContents } = generateEmailContents(
             invitation.confirmationCode,

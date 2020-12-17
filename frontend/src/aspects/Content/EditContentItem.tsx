@@ -11,21 +11,13 @@ export function EditContentItem({
     contentItemId: string;
     magicToken: string;
 }): JSX.Element {
-    const latestVersion =
-        data && data.length > 0 ? data[data.length - 1] : null;
+    const latestVersion = data && data.length > 0 ? data[data.length - 1] : null;
 
-    const latestSubtitles =
-        latestVersion?.data.baseType === "video"
-            ? latestVersion?.data.subtitles["en_US"]
-            : null;
+    const latestSubtitles = latestVersion?.data.baseType === "video" ? latestVersion?.data.subtitles["en_US"] : null;
     return (
         <>
             {latestSubtitles && (
-                <EditSubtitles
-                    data={latestSubtitles}
-                    contentItemId={contentItemId}
-                    magicToken={magicToken}
-                />
+                <EditSubtitles data={latestSubtitles} contentItemId={contentItemId} magicToken={magicToken} />
             )}
         </>
     );

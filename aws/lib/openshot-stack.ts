@@ -1,9 +1,6 @@
 import * as acm from "@aws-cdk/aws-certificatemanager";
 import * as ec2 from "@aws-cdk/aws-ec2";
-import {
-    GatewayVpcEndpointAwsService,
-    InterfaceVpcEndpointAwsService,
-} from "@aws-cdk/aws-ec2";
+import { GatewayVpcEndpointAwsService, InterfaceVpcEndpointAwsService } from "@aws-cdk/aws-ec2";
 import * as elbv2 from "@aws-cdk/aws-elasticloadbalancingv2";
 import * as elbv2_targets from "@aws-cdk/aws-elasticloadbalancingv2-targets";
 import * as iam from "@aws-cdk/aws-iam";
@@ -15,25 +12,13 @@ export class OpenshotStack extends cdk.Stack {
         super(scope, id, props);
 
         /* OpenShot cloud API */
-        const openShotServiceUser = new iam.User(
-            this,
-            "OpenShotServiceUser",
-            {}
-        );
-        openShotServiceUser.addManagedPolicy(
-            iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonS3FullAccess")
-        );
-        openShotServiceUser.addManagedPolicy(
-            iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonSQSFullAccess")
-        );
+        const openShotServiceUser = new iam.User(this, "OpenShotServiceUser", {});
+        openShotServiceUser.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonS3FullAccess"));
+        openShotServiceUser.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonSQSFullAccess"));
 
-        const openShotAccessKey = new iam.CfnAccessKey(
-            this,
-            "OpenShotAccessKey",
-            {
-                userName: openShotServiceUser.userName,
-            }
-        );
+        const openShotAccessKey = new iam.CfnAccessKey(this, "OpenShotAccessKey", {
+            userName: openShotServiceUser.userName,
+        });
 
         const vpc = new ec2.Vpc(this, "VPC", {
             cidr: "10.16.0.0/23",
@@ -52,14 +37,10 @@ export class OpenshotStack extends cdk.Stack {
             ],
         });
 
-        const vpcEndpointSecurityGroup = new ec2.SecurityGroup(
-            this,
-            "EndpointSecurityGroup",
-            {
-                vpc,
-                allowAllOutbound: true,
-            }
-        );
+        const vpcEndpointSecurityGroup = new ec2.SecurityGroup(this, "EndpointSecurityGroup", {
+            vpc,
+            allowAllOutbound: true,
+        });
 
         vpc.addGatewayEndpoint("S3Gateway", {
             service: GatewayVpcEndpointAwsService.S3,
@@ -107,16 +88,12 @@ export class OpenshotStack extends cdk.Stack {
         bastionInstance.allowSshAccessFrom(ec2.Peer.anyIpv4());
 
         const openShotAmi = new ec2.LookupMachineImage({
-            name:
-                "OpenShot Cloud API (1.2.3)-82b57f78-74b8-415f-9bff-1705102d8557-ami-0bcc970b7833289ec.4",
+            name: "OpenShot Cloud API (1.2.3)-82b57f78-74b8-415f-9bff-1705102d8557-ami-0bcc970b7833289ec.4",
         });
 
         const openShotInstance = new ec2.Instance(this, "OpenShotInstance", {
             machineImage: openShotAmi,
-            instanceType: ec2.InstanceType.of(
-                ec2.InstanceClass.T2,
-                ec2.InstanceSize.MEDIUM
-            ),
+            instanceType: ec2.InstanceType.of(ec2.InstanceClass.T2, ec2.InstanceSize.MEDIUM),
             keyName: this.node.tryGetContext("clowdr/openShotKeyPairName"),
             vpc,
             allowAllOutbound: true,
@@ -126,26 +103,16 @@ export class OpenshotStack extends cdk.Stack {
             securityGroup: vpcEndpointSecurityGroup,
         });
 
-        const openShotLoadBalancer = new elbv2.ApplicationLoadBalancer(
-            this,
-            "OpenShotLoadBalancer",
-            {
-                vpc,
-                vpcSubnets: vpc.selectSubnets({
-                    subnetType: ec2.SubnetType.PUBLIC,
-                }),
-                internetFacing: true,
-            }
-        );
+        const openShotLoadBalancer = new elbv2.ApplicationLoadBalancer(this, "OpenShotLoadBalancer", {
+            vpc,
+            vpcSubnets: vpc.selectSubnets({
+                subnetType: ec2.SubnetType.PUBLIC,
+            }),
+            internetFacing: true,
+        });
 
-        openShotInstance.connections.allowFrom(
-            openShotLoadBalancer,
-            ec2.Port.tcp(80)
-        );
-        openShotInstance.connections.allowFrom(
-            bastionInstance,
-            ec2.Port.tcp(22)
-        );
+        openShotInstance.connections.allowFrom(openShotLoadBalancer, ec2.Port.tcp(80));
+        openShotInstance.connections.allowFrom(bastionInstance, ec2.Port.tcp(22));
 
         bastionInstance.connections.allowFromAnyIpv4(ec2.Port.tcp(22));
         bastionInstance.connections.allowTo(openShotInstance, ec2.Port.tcp(22));
@@ -155,24 +122,19 @@ export class OpenshotStack extends cdk.Stack {
         openShotQueue.grantPurge(openShotServiceUser);
         openShotQueue.grantSendMessages(openShotServiceUser);
 
-        const httpsListener = openShotLoadBalancer.addListener(
-            "OpenShotHttpsListener",
-            {
-                port: 443,
-                open: true,
-                certificates: [
-                    elbv2.ListenerCertificate.fromCertificateManager(
-                        acm.Certificate.fromCertificateArn(
-                            this,
-                            "OpenShotCertificate",
-                            this.node.tryGetContext(
-                                "clowdr/openShotCertificateArn"
-                            )
-                        )
-                    ),
-                ],
-            }
-        );
+        const httpsListener = openShotLoadBalancer.addListener("OpenShotHttpsListener", {
+            port: 443,
+            open: true,
+            certificates: [
+                elbv2.ListenerCertificate.fromCertificateManager(
+                    acm.Certificate.fromCertificateArn(
+                        this,
+                        "OpenShotCertificate",
+                        this.node.tryGetContext("clowdr/openShotCertificateArn")
+                    )
+                ),
+            ],
+        });
 
         httpsListener.addTargets("OpenShotAPIHttpTarget", {
             port: 80,

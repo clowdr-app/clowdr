@@ -1,10 +1,4 @@
-import {
-    Heading,
-    Stack,
-    StackDivider,
-    useColorModeValue,
-    VStack,
-} from "@chakra-ui/react";
+import { Heading, Stack, StackDivider, useColorModeValue, VStack } from "@chakra-ui/react";
 import React from "react";
 import { Redirect } from "react-router-dom";
 import NewConferenceForm from "../../Conference/NewConferenceForm";
@@ -45,12 +39,7 @@ function NoConferencesView(): JSX.Element {
             spacing={["2em", "2em", "4em"]}
             width="100%"
             maxWidth="1000px"
-            divider={
-                <StackDivider
-                    orientation={["horizontal", "vertical"]}
-                    borderColor={dividerColor}
-                />
-            }
+            divider={<StackDivider orientation={["horizontal", "vertical"]} borderColor={dividerColor} />}
         >
             {useInviteEl}
             {newConferenceEl}

@@ -3,10 +3,7 @@ import React from "react";
 import { Permission_Enum } from "../../../generated/graphql";
 import LinkButton from "../../Chakra/LinkButton";
 import FAIcon from "../../Icons/FAIcon";
-import {
-    useNoPrimaryMenuButtons,
-    usePrimaryMenuButton,
-} from "../../Menu/usePrimaryMenuButtons";
+import { useNoPrimaryMenuButtons, usePrimaryMenuButton } from "../../Menu/usePrimaryMenuButtons";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
 
@@ -92,10 +89,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     name="Groups"
                     icon="user-cog"
                     description="Manage the groups of people at your conference and the times they can access the conference."
-                    permissions={[
-                        Permission_Enum.ConferenceManageRoles,
-                        Permission_Enum.ConferenceManageGroups,
-                    ]}
+                    permissions={[Permission_Enum.ConferenceManageRoles, Permission_Enum.ConferenceManageGroups]}
                     colorScheme="red"
                 />
                 <ManagementDashboardButton
@@ -131,10 +125,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     name="Import"
                     icon="download"
                     description="Import your content and schedule from Researchr or CSV, XML or JSON files."
-                    permissions={[
-                        Permission_Enum.ConferenceManageContent,
-                        Permission_Enum.ConferenceManageSchedule,
-                    ]}
+                    permissions={[Permission_Enum.ConferenceManageContent, Permission_Enum.ConferenceManageSchedule]}
                     colorScheme="green"
                 />
                 <ManagementDashboardButton

@@ -13,10 +13,7 @@ export default function RequireAtLeastOnePermissionWrapper({
 }): JSX.Element | null {
     const activePermissions = useConferenceCurrentUserActivePermissions();
 
-    if (
-        !permissions ||
-        permissions.some((permission) => activePermissions.has(permission))
-    ) {
+    if (!permissions || permissions.some((permission) => activePermissions.has(permission))) {
         return <>{children}</>;
     }
 

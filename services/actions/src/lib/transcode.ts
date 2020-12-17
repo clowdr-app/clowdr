@@ -23,10 +23,7 @@ interface StartTranscodeOutput {
     timestamp: Date;
 }
 
-export async function startTranscode(
-    s3InputUrl: string,
-    contentItemId: string
-): Promise<StartTranscodeOutput> {
+export async function startTranscode(s3InputUrl: string, contentItemId: string): Promise<StartTranscodeOutput> {
     console.log(`Creating new MediaConvert job for ${s3InputUrl}`);
 
     assert(MediaConvert, "AWS MediaConvert client is not initialised");
@@ -67,8 +64,7 @@ export async function startTranscode(
                                     Codec: VideoCodec.H_264,
                                     H264Settings: {
                                         MaxBitrate: 6000000,
-                                        RateControlMode:
-                                            H264RateControlMode.QVBR,
+                                        RateControlMode: H264RateControlMode.QVBR,
                                         QvbrSettings: {
                                             QvbrQualityLevel: 9,
                                         },
@@ -80,13 +76,10 @@ export async function startTranscode(
                                     CodecSettings: {
                                         Codec: AudioCodec.AAC,
                                         AacSettings: {
-                                            CodingMode:
-                                                AacCodingMode.CODING_MODE_2_0,
+                                            CodingMode: AacCodingMode.CODING_MODE_2_0,
                                             SampleRate: 48000,
-                                            VbrQuality:
-                                                AacVbrQuality.MEDIUM_HIGH,
-                                            RateControlMode:
-                                                AacRateControlMode.VBR,
+                                            VbrQuality: AacVbrQuality.MEDIUM_HIGH,
+                                            RateControlMode: AacRateControlMode.VBR,
                                         },
                                     },
                                 },
@@ -98,14 +91,9 @@ export async function startTranscode(
         },
     });
 
-    assert(
-        result.Job?.Id && result.Job.CreatedAt,
-        `Failed to create MediaConvert job for ${s3InputUrl}`
-    );
+    assert(result.Job?.Id && result.Job.CreatedAt, `Failed to create MediaConvert job for ${s3InputUrl}`);
 
-    console.log(
-        `Started new MediaConvert job for ${s3InputUrl} (id: ${result.Job?.Id})`
-    );
+    console.log(`Started new MediaConvert job for ${s3InputUrl} (id: ${result.Job?.Id})`);
 
     return {
         jobId: result.Job.Id,
@@ -120,16 +108,10 @@ export async function completeTranscode(
     timestamp: Date
 ): Promise<void> {
     const latestVersion = await getLatestVersion(contentItemId);
-    assert(
-        latestVersion,
-        `Could not find latest version of content item ${contentItemId}`
-    );
+    assert(latestVersion, `Could not find latest version of content item ${contentItemId}`);
 
     const newVersion = R.clone(latestVersion);
-    assert(
-        is<VideoContentBlob>(newVersion.data),
-        `Content item ${contentItemId} is not a video`
-    );
+    assert(is<VideoContentBlob>(newVersion.data), `Content item ${contentItemId} is not a video`);
 
     newVersion.data.transcode = {
         jobId: transcodeJobId,
@@ -149,10 +131,7 @@ export async function completeTranscode(
     });
 
     if (result.errors) {
-        console.error(
-            `Failed to complete transcode for ${contentItemId}`,
-            result.errors
-        );
+        console.error(`Failed to complete transcode for ${contentItemId}`, result.errors);
         throw new Error(`Failed to complete transcode for ${contentItemId}`);
     }
 }
@@ -164,25 +143,17 @@ export async function failTranscode(
     errorMessage: string
 ): Promise<void> {
     const latestVersion = await getLatestVersion(contentItemId);
-    assert(
-        latestVersion,
-        `Could not find latest version of content item ${contentItemId}`
-    );
+    assert(latestVersion, `Could not find latest version of content item ${contentItemId}`);
 
     const newVersion = R.clone(latestVersion);
-    assert(
-        is<VideoContentBlob>(newVersion.data),
-        `Content item ${contentItemId} is not a video`
-    );
+    assert(is<VideoContentBlob>(newVersion.data), `Content item ${contentItemId} is not a video`);
 
     if (
         latestVersion.data.baseType !== "video" ||
         !latestVersion.data.transcode ||
         latestVersion.data.transcode.jobId !== transcodeJobId
     ) {
-        console.log(
-            "Received notification of transcode failure, but did not record it"
-        );
+        console.log("Received notification of transcode failure, but did not record it");
         return;
     }
 
@@ -205,12 +176,7 @@ export async function failTranscode(
     });
 
     if (result.errors) {
-        console.error(
-            `Failed to record transcode failure for ${contentItemId}`,
-            result.errors
-        );
-        throw new Error(
-            `Failed to record transcode failure for ${contentItemId}`
-        );
+        console.error(`Failed to record transcode failure for ${contentItemId}`, result.errors);
+        throw new Error(`Failed to record transcode failure for ${contentItemId}`);
     }
 }

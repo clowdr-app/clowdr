@@ -1,9 +1,6 @@
 import { gql } from "@apollo/client";
 import React, { useCallback } from "react";
-import {
-    useDeleteIsTypingMutation,
-    useUpsertIsTypingMutation,
-} from "../../../generated/graphql";
+import { useDeleteIsTypingMutation, useUpsertIsTypingMutation } from "../../../generated/graphql";
 import useUserId from "../../Auth/useUserId";
 import { defaultIsTypingContext, IsTypingContext } from "./useIsTyping";
 
@@ -11,10 +8,7 @@ const _isTypingQueries = gql`
     mutation UpsertIsTyping($chatId: uuid!, $updatedAt: timestamptz!) {
         insert_ChatTyper(
             objects: { chatId: $chatId, updatedAt: $updatedAt }
-            on_conflict: {
-                constraint: ChatTyper_chatId_userId_key
-                update_columns: updatedAt
-            }
+            on_conflict: { constraint: ChatTyper_chatId_userId_key, update_columns: updatedAt }
         ) {
             returning {
                 id
@@ -26,9 +20,7 @@ const _isTypingQueries = gql`
     }
 
     mutation DeleteIsTyping($chatId: uuid!, $userId: String!) {
-        delete_ChatTyper(
-            where: { chatId: { _eq: $chatId }, userId: { _eq: $userId } }
-        ) {
+        delete_ChatTyper(where: { chatId: { _eq: $chatId }, userId: { _eq: $userId } }) {
             returning {
                 id
             }
@@ -44,17 +36,9 @@ export default function IsTypingProvider({
     const userId = useUserId();
 
     if (userId) {
-        return (
-            <IsTypingProvider_IsAuthenticated userId={userId}>
-                {children}
-            </IsTypingProvider_IsAuthenticated>
-        );
+        return <IsTypingProvider_IsAuthenticated userId={userId}>{children}</IsTypingProvider_IsAuthenticated>;
     } else {
-        return (
-            <IsTypingContext.Provider value={defaultIsTypingContext}>
-                {children}
-            </IsTypingContext.Provider>
-        );
+        return <IsTypingContext.Provider value={defaultIsTypingContext}>{children}</IsTypingContext.Provider>;
     }
 }
 

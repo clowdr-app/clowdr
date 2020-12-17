@@ -1,11 +1,7 @@
 import { gql } from "@apollo/client";
 import { useAuth0 } from "@auth0/auth0-react";
 import React, { useCallback } from "react";
-import {
-    useInsertMessageMutation,
-    useLiveChatSubscription,
-    useSelectChatQuery,
-} from "../../../generated/graphql";
+import { useInsertMessageMutation, useLiveChatSubscription, useSelectChatQuery } from "../../../generated/graphql";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import { ChatContext, defaultChatContext } from "./useChat";
 
@@ -37,9 +33,7 @@ const _chatQueries = gql`
     }
 
     mutation InsertMessage($chatId: uuid!, $content: jsonb!, $index: Int!) {
-        insert_ChatMessage(
-            objects: { chatId: $chatId, content: $content, index: $index }
-        ) {
+        insert_ChatMessage(objects: { chatId: $chatId, content: $content, index: $index }) {
             affected_rows
         }
     }
@@ -52,11 +46,7 @@ const _chatQueries = gql`
                 userId
                 updatedAt
             }
-            messages(
-                order_by: { index: desc }
-                limit: $limit
-                offset: $offset
-            ) {
+            messages(order_by: { index: desc }, limit: $limit, offset: $offset) {
                 content
                 createdAt
                 id
@@ -91,17 +81,9 @@ export default function ChatProvider({
     const { isAuthenticated } = useAuth0();
 
     if (isAuthenticated) {
-        return (
-            <ChatProvider_IsAuthenticated chatId={chatId}>
-                {children}
-            </ChatProvider_IsAuthenticated>
-        );
+        return <ChatProvider_IsAuthenticated chatId={chatId}>{children}</ChatProvider_IsAuthenticated>;
     } else {
-        return (
-            <ChatContext.Provider value={defaultChatContext}>
-                {children}
-            </ChatContext.Provider>
-        );
+        return <ChatContext.Provider value={defaultChatContext}>{children}</ChatContext.Provider>;
     }
 }
 
@@ -112,12 +94,7 @@ function ChatProvider_IsAuthenticated({
     children: string | JSX.Element | Array<JSX.Element>;
     chatId: string;
 }) {
-    const {
-        loading: chatLoading,
-        error: chatError,
-        data: chatData,
-        refetch: chatRefetch,
-    } = useSelectChatQuery({
+    const { loading: chatLoading, error: chatError, data: chatData, refetch: chatRefetch } = useSelectChatQuery({
         variables: {
             chatId,
         },
@@ -128,11 +105,7 @@ function ChatProvider_IsAuthenticated({
     // TODO: Split out subscriptions for typers and viewers
     // TODO: Subscribe to messages using limit:1
     // TODO: Split out the initial (paginated) fetch of messages
-    const {
-        data: liveChatData,
-        loading: liveChatLoading,
-        error: liveChatError,
-    } = useLiveChatSubscription({
+    const { data: liveChatData, loading: liveChatLoading, error: liveChatError } = useLiveChatSubscription({
         variables: {
             chatId,
             limit: 20,
@@ -142,18 +115,11 @@ function ChatProvider_IsAuthenticated({
     useQueryErrorToast(liveChatError);
 
     // TODO: Split sending a message into a different hook
-    const [
-        insertMessage,
-        { loading: insertMessageLoading, error: insertMessageError },
-    ] = useInsertMessageMutation();
+    const [insertMessage, { loading: insertMessageLoading, error: insertMessageError }] = useInsertMessageMutation();
 
     const chatValue = chatLoading ? null : chatError ? false : chatData ?? null;
     const liveChatValue =
-        chatLoading || liveChatLoading
-            ? null
-            : chatError || liveChatError
-            ? false
-            : liveChatData ?? null;
+        chatLoading || liveChatLoading ? null : chatError || liveChatError ? false : liveChatData ?? null;
 
     const sendMessage = useCallback(
         async (content: any) => {
@@ -182,9 +148,7 @@ function ChatProvider_IsAuthenticated({
                 refetchChat: chatRefetch,
                 sendMessage,
                 sendingMessage: insertMessageLoading,
-                sendMessageError: insertMessageError
-                    ? insertMessageError.message
-                    : false,
+                sendMessageError: insertMessageError ? insertMessageError.message : false,
             }}
         >
             {children}

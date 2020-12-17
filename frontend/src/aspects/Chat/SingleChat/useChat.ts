@@ -1,8 +1,5 @@
 import React from "react";
-import type {
-    LiveChatSubscription,
-    SelectChatQuery,
-} from "../../../generated/graphql";
+import type { LiveChatSubscription, SelectChatQuery } from "../../../generated/graphql";
 
 type ChatInfo = {
     chatId: string;

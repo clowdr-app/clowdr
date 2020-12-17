@@ -89,10 +89,7 @@ gql`
         $insertGroups: [GroupAttendee_insert_input!]!
         $deleteGroupIds: [uuid!] = []
     ) {
-        update_Attendee_by_pk(
-            pk_columns: { id: $attendeeId }
-            _set: { displayName: $attendeeName }
-        ) {
+        update_Attendee_by_pk(pk_columns: { id: $attendeeId }, _set: { displayName: $attendeeName }) {
             ...AttendeeParts
         }
         insert_GroupAttendee(objects: $insertGroups) {
@@ -136,9 +133,7 @@ type AttendeeDescriptor = {
     groupIds: Set<string>;
 };
 
-const AttendeesCRUDTable = (
-    props: Readonly<CRUDTableProps<AttendeeDescriptor, "id">>
-) => CRUDTable(props);
+const AttendeesCRUDTable = (props: Readonly<CRUDTableProps<AttendeeDescriptor, "id">>) => CRUDTable(props);
 
 // TODO: Email validation
 // TODO: Client-side de-duplication/validation
@@ -149,11 +144,7 @@ export default function ManageConferencePeoplePage(): JSX.Element {
 
     useDashboardPrimaryMenuButtons();
 
-    const {
-        loading: loadingAllGroups,
-        error: errorAllGroups,
-        data: allGroups,
-    } = useSelectAllGroupsQuery({
+    const { loading: loadingAllGroups, error: errorAllGroups, data: allGroups } = useSelectAllGroupsQuery({
         fetchPolicy: "network-only",
         variables: {
             conferenceId: conference.id,
@@ -177,9 +168,7 @@ export default function ManageConferencePeoplePage(): JSX.Element {
     const [createDeleteAttendeesMutation] = useCreateDeleteAttendeesMutation();
     const [updateAttendeeMutation] = useUpdateAttendeeMutation();
 
-    const [allAttendeesMap, setAllAttendeesMap] = useState<
-        Map<string, AttendeeDescriptor>
-    >();
+    const [allAttendeesMap, setAllAttendeesMap] = useState<Map<string, AttendeeDescriptor>>();
 
     const parsedDBAttendees = useMemo(() => {
         if (!allAttendees || !allGroups) {
@@ -242,14 +231,12 @@ export default function ManageConferencePeoplePage(): JSX.Element {
                     convertToUI: (x) => x,
                     filter: defaultStringFilter,
                 },
-                validate: (v) =>
-                    v.length >= 3 || ["Name must be at least 3 characters"],
+                validate: (v) => v.length >= 3 || ["Name must be at least 3 characters"],
             },
             inviteSent: {
                 heading: "Invite sent?",
                 ariaLabel: "Invite sent",
-                description:
-                    "Has at least one invitation email been sent to this user.",
+                description: "Has at least one invitation email been sent to this user.",
                 isHidden: false,
                 isEditable: false,
                 defaultValue: false,
@@ -279,18 +266,13 @@ export default function ManageConferencePeoplePage(): JSX.Element {
             invitatedEmailAddress: {
                 heading: "Invitation email address",
                 ariaLabel: "Invitation email address",
-                description:
-                    "The email address this attendee's invitation should be sent to.",
+                description: "The email address this attendee's invitation should be sent to.",
                 isHidden: false,
                 isEditableAtCreate: true,
                 isEditable: false,
                 defaultValue: "",
                 insert: (item, v) => {
-                    if (
-                        "isNew" in item &&
-                        !item.isNew &&
-                        !item.invitedEmailAddress
-                    ) {
+                    if ("isNew" in item && !item.isNew && !item.invitedEmailAddress) {
                         return item;
                     }
 
@@ -327,16 +309,12 @@ export default function ManageConferencePeoplePage(): JSX.Element {
                     multiSelect: true,
                     convertToUI: (ids) =>
                         Array.from(ids.values()).map((id) => {
-                            const opt = groupOptions.find(
-                                (x) => x.value === id
-                            );
+                            const opt = groupOptions.find((x) => x.value === id);
                             assert(opt);
                             return opt;
                         }),
                     convertFromUI: (opts) =>
-                        opts instanceof Array
-                            ? new Set(opts.map((x) => x.value))
-                            : new Set([opts.value]),
+                        opts instanceof Array ? new Set(opts.map((x) => x.value)) : new Set([opts.value]),
                     filter: defaultSelectFilter,
                     options: () => groupOptions,
                 },
@@ -345,43 +323,26 @@ export default function ManageConferencePeoplePage(): JSX.Element {
         return result;
     }, [allGroups?.Group]);
 
-    const [
-        sendInitialEmailsMutation,
-        { loading: sendInitialEmailsLoading },
-    ] = useSendInitialInviteEmailsMutation();
-    const [
-        sendRepeatEmailsMutation,
-        { loading: sendRepeatEmailsLoading },
-    ] = useSendRepeatInviteEmailsMutation();
+    const [sendInitialEmailsMutation, { loading: sendInitialEmailsLoading }] = useSendInitialInviteEmailsMutation();
+    const [sendRepeatEmailsMutation, { loading: sendRepeatEmailsLoading }] = useSendRepeatInviteEmailsMutation();
 
     const toast = useToast();
 
     return (
         <RequireAtLeastOnePermissionWrapper
-            permissions={[
-                Permission_Enum.ConferenceManageRoles,
-                Permission_Enum.ConferenceManageGroups,
-            ]}
+            permissions={[Permission_Enum.ConferenceManageRoles, Permission_Enum.ConferenceManageGroups]}
             componentIfDenied={<PageNotFound />}
         >
             <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
             </Heading>
-            <Heading
-                as="h2"
-                fontSize="1.7rem"
-                lineHeight="2.4rem"
-                fontStyle="italic"
-            >
+            <Heading as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                 Attendees
             </Heading>
             {loadingAllGroups || loadingAllAttendees || !allAttendeesMap ? (
                 <Spinner />
             ) : errorAllAttendees || errorAllGroups ? (
-                <>
-                    An error occurred loading in data - please see further
-                    information in notifications.
-                </>
+                <>An error occurred loading in data - please see further information in notifications.</>
             ) : (
                 <></>
             )}
@@ -398,19 +359,14 @@ export default function ManageConferencePeoplePage(): JSX.Element {
                                 id: tempKey,
                             } as AttendeeDescriptor;
                             setAllAttendeesMap((oldData) => {
-                                const newData = new Map(
-                                    oldData ? oldData.entries() : []
-                                );
+                                const newData = new Map(oldData ? oldData.entries() : []);
                                 newData.set(tempKey, newItem);
                                 return newData;
                             });
                             return true;
                         },
                         update: (items) => {
-                            const results: Map<
-                                string,
-                                UpdateResult
-                            > = new Map();
+                            const results: Map<string, UpdateResult> = new Map();
                             items.forEach((item, key) => {
                                 results.set(key, true);
                             });
@@ -435,9 +391,7 @@ export default function ManageConferencePeoplePage(): JSX.Element {
                             });
 
                             setAllAttendeesMap((oldData) => {
-                                const newData = new Map(
-                                    oldData ? oldData.entries() : []
-                                );
+                                const newData = new Map(oldData ? oldData.entries() : []);
                                 keys.forEach((key) => {
                                     newData.delete(key);
                                 });
@@ -474,29 +428,18 @@ export default function ManageConferencePeoplePage(): JSX.Element {
                                     if (item.isNew) {
                                         newKeys.add(key);
                                     } else {
-                                        const existing = parsedDBAttendees?.get(
-                                            key
-                                        );
+                                        const existing = parsedDBAttendees?.get(key);
                                         if (!existing) {
-                                            console.error(
-                                                "Not-new value was not found in the existing DB dataset."
-                                            );
+                                            console.error("Not-new value was not found in the existing DB dataset.");
                                             results.set(key, false);
                                             return;
                                         }
 
-                                        let changed =
-                                            item.displayName !==
-                                            existing.displayName;
+                                        let changed = item.displayName !== existing.displayName;
                                         const groupIdsAdded = new Set<string>();
-                                        const groupIdsDeleted = new Set<
-                                            string
-                                        >();
+                                        const groupIdsDeleted = new Set<string>();
                                         for (const group of allGroups.Group) {
-                                            if (
-                                                item.groupIds.has(group.id) &&
-                                                !existing.groupIds.has(group.id)
-                                            ) {
+                                            if (item.groupIds.has(group.id) && !existing.groupIds.has(group.id)) {
                                                 changed = true;
                                                 groupIdsAdded.add(group.id);
                                             } else if (
@@ -523,55 +466,34 @@ export default function ManageConferencePeoplePage(): JSX.Element {
                                 Record<string, any>
                             >;
                             try {
-                                const keysToInsert = Array.from(
-                                    newKeys.values()
-                                );
-                                createDeleteAttendeesResult = await createDeleteAttendeesMutation(
-                                    {
-                                        variables: {
-                                            deleteAttendeeIds: Array.from(
-                                                deletedKeys.values()
-                                            ),
-                                            insertAttendees: keysToInsert.map(
-                                                (key) => {
-                                                    const item = allAttendeesMap.get(
-                                                        key
-                                                    );
-                                                    assert(item);
-                                                    return {
-                                                        id: item.id,
-                                                        conferenceId:
-                                                            conference.id,
-                                                        displayName:
-                                                            item.displayName,
-                                                        groupAttendees: {
-                                                            data: Array.from(
-                                                                item.groupIds.values()
-                                                            ).map(
-                                                                (groupId) => ({
-                                                                    groupId,
-                                                                })
-                                                            ),
-                                                        },
-                                                    };
-                                                }
-                                            ),
-                                            insertInvitations: keysToInsert.map(
-                                                (key) => {
-                                                    const item = allAttendeesMap.get(
-                                                        key
-                                                    );
-                                                    assert(item);
-                                                    return {
-                                                        attendeeId: item.id,
-                                                        invitedEmailAddress:
-                                                            item.invitedEmailAddress,
-                                                    };
-                                                }
-                                            ),
-                                        },
-                                    }
-                                );
+                                const keysToInsert = Array.from(newKeys.values());
+                                createDeleteAttendeesResult = await createDeleteAttendeesMutation({
+                                    variables: {
+                                        deleteAttendeeIds: Array.from(deletedKeys.values()),
+                                        insertAttendees: keysToInsert.map((key) => {
+                                            const item = allAttendeesMap.get(key);
+                                            assert(item);
+                                            return {
+                                                id: item.id,
+                                                conferenceId: conference.id,
+                                                displayName: item.displayName,
+                                                groupAttendees: {
+                                                    data: Array.from(item.groupIds.values()).map((groupId) => ({
+                                                        groupId,
+                                                    })),
+                                                },
+                                            };
+                                        }),
+                                        insertInvitations: keysToInsert.map((key) => {
+                                            const item = allAttendeesMap.get(key);
+                                            assert(item);
+                                            return {
+                                                attendeeId: item.id,
+                                                invitedEmailAddress: item.invitedEmailAddress,
+                                            };
+                                        }),
+                                    },
+                                });
                             } catch (e) {
                                 createDeleteAttendeesResult = {
                                     errors: [e],
@@ -592,65 +514,46 @@ export default function ManageConferencePeoplePage(): JSX.Element {
                                     results.set(key, true);
                                 });
                             }
-                            console.log(
-                                "Created/deleted",
-                                createDeleteAttendeesResult
-                            );
+                            console.log("Created/deleted", createDeleteAttendeesResult);
 
                             let updatedResults: {
                                 key: string;
-                                result: FetchResult<
-                                    UpdateAttendeeMutation,
-                                    Record<string, any>,
-                                    Record<string, any>
-                                >;
+                                result: FetchResult<UpdateAttendeeMutation, Record<string, any>, Record<string, any>>;
                             }[];
                             try {
                                 updatedResults = await Promise.all(
-                                    Array.from(updatedKeys.entries()).map(
-                                        async ([key, { added, deleted }]) => {
-                                            const item = allAttendeesMap.get(
-                                                key
-                                            );
-                                            assert(item);
-                                            let result: FetchResult<
-                                                UpdateAttendeeMutation,
-                                                Record<string, any>,
-                                                Record<string, any>
-                                            >;
-                                            try {
-                                                result = await updateAttendeeMutation(
-                                                    {
-                                                        variables: {
+                                    Array.from(updatedKeys.entries()).map(async ([key, { added, deleted }]) => {
+                                        const item = allAttendeesMap.get(key);
+                                        assert(item);
+                                        let result: FetchResult<
+                                            UpdateAttendeeMutation,
+                                            Record<string, any>,
+                                            Record<string, any>
+                                        >;
+                                        try {
+                                            result = await updateAttendeeMutation({
+                                                variables: {
+                                                    attendeeId: item.id,
+                                                    attendeeName: item.displayName,
+                                                    deleteGroupIds: Array.from(deleted.values()),
+                                                    insertGroups: Array.from(added.values()).map((groupId) => {
+                                                        return {
                                                             attendeeId: item.id,
-                                                            attendeeName:
-                                                                item.displayName,
-                                                            deleteGroupIds: Array.from(
-                                                                deleted.values()
-                                                            ),
-                                                            insertGroups: Array.from(
-                                                                added.values()
-                                                            ).map((groupId) => {
-                                                                return {
-                                                                    attendeeId:
-                                                                        item.id,
-                                                                    groupId,
-                                                                };
-                                                            }),
-                                                        },
-                                                    }
-                                                );
-                                            } catch (e) {
-                                                result = {
-                                                    errors: [e],
-                                                };
-                                            }
-                                            return {
-                                                key,
-                                                result,
+                                                            groupId,
+                                                        };
+                                                    }),
+                                                },
+                                            });
+                                        } catch (e) {
+                                            result = {
+                                                errors: [e],
                                             };
                                         }
-                                    )
+                                        return {
+                                            key,
+                                            result,
+                                        };
+                                    })
                                 );
                             } catch (e) {
                                 updatedResults = [];
@@ -728,8 +631,7 @@ export default function ManageConferencePeoplePage(): JSX.Element {
 
                             await refetchAllAttendees();
                         },
-                        isRunning:
-                            sendInitialEmailsLoading || sendRepeatEmailsLoading,
+                        isRunning: sendInitialEmailsLoading || sendRepeatEmailsLoading,
                     },
                     {
                         text: "Send repeat invitations",
@@ -759,8 +661,7 @@ export default function ManageConferencePeoplePage(): JSX.Element {
 
                             await refetchAllAttendees();
                         },
-                        isRunning:
-                            sendInitialEmailsLoading || sendRepeatEmailsLoading,
+                        isRunning: sendInitialEmailsLoading || sendRepeatEmailsLoading,
                     },
                 ]}
             />

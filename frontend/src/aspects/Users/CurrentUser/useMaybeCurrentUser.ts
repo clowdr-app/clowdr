@@ -14,9 +14,7 @@ export const defaultCurrentUserContext: UserInfo = {
     refetchUser: async function (): Promise<void> {},
 };
 
-export const CurrentUserContext = React.createContext<UserInfo>(
-    defaultCurrentUserContext
-);
+export const CurrentUserContext = React.createContext<UserInfo>(defaultCurrentUserContext);
 
 export default function useMaybeCurrentUser(): UserInfo {
     return React.useContext(CurrentUserContext);

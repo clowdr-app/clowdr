@@ -4,9 +4,7 @@ import { useEffect } from "react";
 
 let shownJWTIssuedAtFutureReloadWarning = false;
 
-export default function useQueryErrorToast(
-    error: string | false | ApolloError | undefined
-): void {
+export default function useQueryErrorToast(error: string | false | ApolloError | undefined): void {
     const toast = useToast();
 
     useEffect(() => {
@@ -21,8 +19,7 @@ export default function useQueryErrorToast(
                         isClosable: false,
                         title: "Need to refresh",
                         duration: 5000,
-                        description:
-                            "We just need to refresh for a moment to finalise your login...",
+                        description: "We just need to refresh for a moment to finalise your login...",
                     });
                     setTimeout(() => {
                         window.location.reload();

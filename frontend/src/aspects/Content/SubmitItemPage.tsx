@@ -1,20 +1,9 @@
-import {
-    Center,
-    Container,
-    Heading,
-    Spinner,
-    Text,
-    VStack,
-} from "@chakra-ui/react";
+import { Center, Container, Heading, Spinner, Text, VStack } from "@chakra-ui/react";
 import "@uppy/core/dist/style.css";
 import "@uppy/progress-bar/dist/style.css";
 import gql from "graphql-tag";
 import React, { useMemo } from "react";
-import {
-    ContentType_Enum,
-    useGetUploadAgreementQuery,
-    useSelectRequiredItemQuery,
-} from "../../generated/graphql";
+import { ContentType_Enum, useGetUploadAgreementQuery, useSelectRequiredItemQuery } from "../../generated/graphql";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
 import UploadedContentItem from "./UploadedContentItem";
 import UploadFileForm from "./UploadFileForm";
@@ -84,10 +73,7 @@ export default function SubmitItemPage({
     useQueryErrorToast(error);
 
     const requiredItem = useMemo(() => {
-        if (
-            !data?.RequiredContentItem ||
-            data.RequiredContentItem.length !== 1
-        ) {
+        if (!data?.RequiredContentItem || data.RequiredContentItem.length !== 1) {
             return null;
         }
 
@@ -95,9 +81,7 @@ export default function SubmitItemPage({
     }, [data]);
 
     const uploadAgreement = useMemo(() => {
-        return (
-            uploadAgreementData?.getUploadAgreement?.agreementText ?? undefined
-        );
+        return uploadAgreementData?.getUploadAgreement?.agreementText ?? undefined;
     }, [uploadAgreementData]);
 
     const form = useMemo(() => {
@@ -108,12 +92,7 @@ export default function SubmitItemPage({
         switch (requiredItem.contentTypeName) {
             case ContentType_Enum.Abstract:
             case ContentType_Enum.Text:
-                return (
-                    <UploadTextForm
-                        magicToken={magicToken}
-                        uploadAgreement={uploadAgreement}
-                    />
-                );
+                return <UploadTextForm magicToken={magicToken} uploadAgreement={uploadAgreement} />;
             case ContentType_Enum.ImageFile:
             case ContentType_Enum.PaperFile:
             case ContentType_Enum.PosterFile:
@@ -128,23 +107,13 @@ export default function SubmitItemPage({
             case ContentType_Enum.LinkButton:
             case ContentType_Enum.PaperLink:
             case ContentType_Enum.VideoLink:
-                return (
-                    <UploadLinkForm
-                        magicToken={magicToken}
-                        uploadAgreement={uploadAgreement}
-                    />
-                );
+                return <UploadLinkForm magicToken={magicToken} uploadAgreement={uploadAgreement} />;
             case ContentType_Enum.ImageUrl:
             case ContentType_Enum.Link:
             case ContentType_Enum.PaperUrl:
             case ContentType_Enum.PosterUrl:
             case ContentType_Enum.VideoUrl:
-                return (
-                    <UploadUrlForm
-                        magicToken={magicToken}
-                        uploadAgreement={uploadAgreement}
-                    />
-                );
+                return <UploadUrlForm magicToken={magicToken} uploadAgreement={uploadAgreement} />;
             case ContentType_Enum.VideoBroadcast:
             case ContentType_Enum.VideoCountdown:
             case ContentType_Enum.VideoFile:
@@ -176,9 +145,7 @@ export default function SubmitItemPage({
                                 <Spinner />
                             </div>
                         ) : error || uploadAgreementError ? (
-                            <Text mt={4}>
-                                An error occurred while loading data.
-                            </Text>
+                            <Text mt={4}>An error occurred while loading data.</Text>
                         ) : !requiredItem ? (
                             <Text mt={4}>No matching item.</Text>
                         ) : (
@@ -191,9 +158,7 @@ export default function SubmitItemPage({
                                     <Heading as="h3" fontSize="1.2rem">
                                         Previously uploaded
                                     </Heading>
-                                    <UploadedContentItem
-                                        magicToken={magicToken}
-                                    />
+                                    <UploadedContentItem magicToken={magicToken} />
                                 </VStack>
                             </>
                         )}

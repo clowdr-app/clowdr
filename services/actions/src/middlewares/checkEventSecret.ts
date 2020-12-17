@@ -1,10 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-export const checkEventSecret = (
-    req: Request,
-    res: Response,
-    next: NextFunction
-): void => {
+export const checkEventSecret = (req: Request, res: Response, next: NextFunction): void => {
     {
         if (req.headers["x-hasura-event-secret"] !== process.env.EVENT_SECRET) {
             res.status(401);

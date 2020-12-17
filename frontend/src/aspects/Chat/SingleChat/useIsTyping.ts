@@ -19,9 +19,7 @@ export const defaultIsTypingContext: IsTypingInfo = {
     error: false,
 };
 
-export const IsTypingContext = React.createContext<IsTypingInfo>(
-    defaultIsTypingContext
-);
+export const IsTypingContext = React.createContext<IsTypingInfo>(defaultIsTypingContext);
 
 export default function useIsTyping(
     chatId: string
@@ -35,10 +33,7 @@ export default function useIsTyping(
     const _isTyping = upsertIsTypingInfo.isTyping;
     const _isNotTyping = upsertIsTypingInfo.isNotTyping;
     const isTyping = useCallback(() => _isTyping(chatId), [_isTyping, chatId]);
-    const isNotTyping = useCallback(
-        (altUserId?: string) => _isNotTyping(chatId, altUserId),
-        [_isNotTyping, chatId]
-    );
+    const isNotTyping = useCallback((altUserId?: string) => _isNotTyping(chatId, altUserId), [_isNotTyping, chatId]);
     return {
         isTyping,
         isNotTyping,

@@ -38,13 +38,7 @@ export default function InviteCodeInput(props: any): JSX.Element {
             }}
         >
             <FormControl width="auto" {...props}>
-                <FormLabel
-                    fontSize="100%"
-                    fontWeight="normal"
-                    htmlFor="invite-code"
-                    textAlign="center"
-                    marginRight={0}
-                >
+                <FormLabel fontSize="100%" fontWeight="normal" htmlFor="invite-code" textAlign="center" marginRight={0}>
                     Enter an invite code to begin.
                 </FormLabel>
                 <Box>
@@ -57,23 +51,11 @@ export default function InviteCodeInput(props: any): JSX.Element {
                                 borderTopRightRadius={0}
                                 borderBottomRightRadius={0}
                                 aria-label="Enter your invite code"
-                                isInvalid={
-                                    inviteCode.length > 0 && !isInviteCodeValid
-                                }
-                                focusBorderColor={
-                                    inviteCode.length > 0 && isInviteCodeValid
-                                        ? "green.200"
-                                        : undefined
-                                }
-                                borderColor={
-                                    inviteCode.length > 0 && isInviteCodeValid
-                                        ? "green.200"
-                                        : undefined
-                                }
+                                isInvalid={inviteCode.length > 0 && !isInviteCodeValid}
+                                focusBorderColor={inviteCode.length > 0 && isInviteCodeValid ? "green.200" : undefined}
+                                borderColor={inviteCode.length > 0 && isInviteCodeValid ? "green.200" : undefined}
                                 value={inviteCode}
-                                onChange={(ev) =>
-                                    setInviteCode(ev.target.value)
-                                }
+                                onChange={(ev) => setInviteCode(ev.target.value)}
                                 _placeholder={{
                                     color: "red",
                                 }}
@@ -82,16 +64,8 @@ export default function InviteCodeInput(props: any): JSX.Element {
                                 {inviteCode.length > 0 ? (
                                     <FAIcon
                                         iconStyle="s"
-                                        icon={
-                                            isInviteCodeValid
-                                                ? "check"
-                                                : "times"
-                                        }
-                                        color={
-                                            isInviteCodeValid
-                                                ? "green.200"
-                                                : "red.300"
-                                        }
+                                        icon={isInviteCodeValid ? "check" : "times"}
+                                        color={isInviteCodeValid ? "green.200" : "red.300"}
                                     />
                                 ) : undefined}
                             </InputRightElement>

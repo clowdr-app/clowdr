@@ -1,8 +1,5 @@
 import { gql } from "@apollo/client/core";
-import {
-    ContentItemDataBlob,
-    ContentItemVersionData,
-} from "@clowdr-app/shared-types/types/content";
+import { ContentItemDataBlob, ContentItemVersionData } from "@clowdr-app/shared-types/types/content";
 import R from "ramda";
 import { is } from "typescript-is";
 import { GetContentItemByIdDocument } from "../generated/graphql";
@@ -17,9 +14,7 @@ gql`
     }
 `;
 
-export async function getLatestVersion(
-    contentItemId: string
-): Promise<Maybe<ContentItemVersionData>> {
+export async function getLatestVersion(contentItemId: string): Promise<Maybe<ContentItemVersionData>> {
     const result = await apolloClient.query({
         query: GetContentItemByIdDocument,
         variables: {

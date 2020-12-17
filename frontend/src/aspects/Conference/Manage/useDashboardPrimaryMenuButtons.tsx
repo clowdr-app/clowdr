@@ -1,7 +1,4 @@
-import {
-    useNoPrimaryMenuButtons,
-    usePrimaryMenuButton,
-} from "../../Menu/usePrimaryMenuButtons";
+import { useNoPrimaryMenuButtons, usePrimaryMenuButton } from "../../Menu/usePrimaryMenuButtons";
 import { useConference } from "../useConference";
 
 export default function useDashboardPrimaryMenuButtons(): void {

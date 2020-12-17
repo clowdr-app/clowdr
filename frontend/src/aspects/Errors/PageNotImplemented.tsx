@@ -11,8 +11,8 @@ export default function PageNotImplemented(): JSX.Element {
                     <Link isExternal href="https://github.com/clowdr-app/">
                         Our team
                     </Link>{" "}
-                    is working as hard as they can to deliver features on a
-                    continuous rolling basis. Please check back soon!
+                    is working as hard as they can to deliver features on a continuous rolling basis. Please check back
+                    soon!
                 </Text>
                 <LinkButton to="/">Go to home page</LinkButton>
             </>

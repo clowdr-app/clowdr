@@ -3,10 +3,7 @@ import React from "react";
 import { useSelectCurrentUserQuery } from "../../../generated/graphql";
 import useUserId from "../../Auth/useUserId";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
-import {
-    CurrentUserContext,
-    defaultCurrentUserContext,
-} from "./useMaybeCurrentUser";
+import { CurrentUserContext, defaultCurrentUserContext } from "./useMaybeCurrentUser";
 
 gql`
     query selectCurrentUser($userId: String!) {
@@ -32,11 +29,7 @@ export default function CurrentUserProvider({
     const userId = useUserId();
 
     if (userId) {
-        return (
-            <CurrentUserProvider_IsAuthenticated userId={userId}>
-                {children}
-            </CurrentUserProvider_IsAuthenticated>
-        );
+        return <CurrentUserProvider_IsAuthenticated userId={userId}>{children}</CurrentUserProvider_IsAuthenticated>;
     } else {
         return (
             <CurrentUserContext.Provider

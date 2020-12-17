@@ -1,12 +1,7 @@
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import { Spinner } from "@chakra-ui/react";
 import React, { ComponentType } from "react";
-import {
-    Redirect,
-    Route,
-    RouteComponentProps,
-    RouteProps,
-} from "react-router-dom";
+import { Redirect, Route, RouteComponentProps, RouteProps } from "react-router-dom";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 
 export default function ProtectedRoute({

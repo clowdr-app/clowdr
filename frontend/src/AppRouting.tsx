@@ -46,17 +46,9 @@ export default function Routing(): JSX.Element {
                     props: RouteComponentProps<{
                         inviteCode: string;
                     }>
-                ) => (
-                    <AcceptInvitationPage
-                        inviteCode={props.match.params.inviteCode}
-                    />
-                )}
+                ) => <AcceptInvitationPage inviteCode={props.match.params.inviteCode} />}
             />
-            <Route
-                exact
-                path="/invitation/accept"
-                component={AcceptInvitationPage}
-            />
+            <Route exact path="/invitation/accept" component={AcceptInvitationPage} />
 
             <Route exact path="/crud/test" component={CRUDTestPage} />
 
@@ -66,12 +58,7 @@ export default function Routing(): JSX.Element {
                     props: RouteComponentProps<{
                         confSlug: string;
                     }>
-                ) => (
-                    <ConferenceRoutes
-                        rootUrl={props.match.url}
-                        confSlug={props.match.params.confSlug}
-                    />
-                )}
+                ) => <ConferenceRoutes rootUrl={props.match.url} confSlug={props.match.params.confSlug} />}
             />
 
             <Route

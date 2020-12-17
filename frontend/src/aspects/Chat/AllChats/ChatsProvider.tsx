@@ -32,25 +32,13 @@ export default function ChatsProvider({
     const { isAuthenticated } = useAuth0();
 
     if (isAuthenticated) {
-        return (
-            <ChatsProvider_IsAuthenticated>
-                {children}
-            </ChatsProvider_IsAuthenticated>
-        );
+        return <ChatsProvider_IsAuthenticated>{children}</ChatsProvider_IsAuthenticated>;
     } else {
-        return (
-            <ChatsContext.Provider value={defaultChatsContext}>
-                {children}
-            </ChatsContext.Provider>
-        );
+        return <ChatsContext.Provider value={defaultChatsContext}>{children}</ChatsContext.Provider>;
     }
 }
 
-function ChatsProvider_IsAuthenticated({
-    children,
-}: {
-    children: string | JSX.Element | Array<JSX.Element>;
-}) {
+function ChatsProvider_IsAuthenticated({ children }: { children: string | JSX.Element | Array<JSX.Element> }) {
     const { loading, error, data, refetch } = useSelectChatsQuery({
         pollInterval: 1000 * 120,
     });

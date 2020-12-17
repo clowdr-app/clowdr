@@ -28,11 +28,7 @@ declare module "@uppy/companion" {
             }
 
             export interface S3Options {
-                getKey(
-                    req: Request | undefined,
-                    filename: string,
-                    metadata: Record<string, any>
-                ): string;
+                getKey(req: Request | undefined, filename: string, metadata: Record<string, any>): string;
                 key: string;
                 secret: string;
                 bucket: string;

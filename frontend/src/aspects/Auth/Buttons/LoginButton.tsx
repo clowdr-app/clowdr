@@ -6,11 +6,7 @@ export default function LoginButton(): JSX.Element {
     const { loginWithRedirect } = useAuth0();
 
     return (
-        <Button
-            margin={0}
-            onClick={() => loginWithRedirect()}
-            colorScheme="green"
-        >
+        <Button margin={0} onClick={() => loginWithRedirect()} colorScheme="green">
             Log In
         </Button>
     );

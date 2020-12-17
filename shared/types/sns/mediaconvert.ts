@@ -21,14 +21,12 @@ interface MediaConvertEvent_PROGRESSING extends MediaConvertEventDetailsBase {
     status: "PROGRESSING";
 }
 
-interface MediaConvertEventDetail_INPUT_INFORMATION
-    extends MediaConvertEventDetailsBase {
+interface MediaConvertEventDetail_INPUT_INFORMATION extends MediaConvertEventDetailsBase {
     inputDetails: InputDetail[];
     status: "INPUT_INFORMATION";
 }
 
-interface MediaConvertEventDetail_COMPLETE
-    extends MediaConvertEventDetailsBase {
+interface MediaConvertEventDetail_COMPLETE extends MediaConvertEventDetailsBase {
     outputGroupDetails: OutputGroupDetail[];
     status: "COMPLETE";
 }

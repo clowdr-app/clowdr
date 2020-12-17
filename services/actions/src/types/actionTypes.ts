@@ -89,9 +89,7 @@ type Query = {
 
 type Mutation = {
     invitationConfirmCurrent?: Maybe<ConfirmInvitationOutput>;
-    invitationConfirmSendInitialEmail?: Maybe<
-        InvitationConfirmationEmailOutput
-    >;
+    invitationConfirmSendInitialEmail?: Maybe<InvitationConfirmationEmailOutput>;
     invitationConfirmSendRepeatEmail?: Maybe<InvitationConfirmationEmailOutput>;
     invitationConfirmWithCode?: Maybe<ConfirmInvitationOutput>;
     invitationSendInitialEmail: Array<InvitationSendEmailResult>;

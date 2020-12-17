@@ -1,11 +1,4 @@
-import {
-    Button,
-    Heading,
-    Input,
-    InputGroup,
-    InputLeftElement,
-    VStack,
-} from "@chakra-ui/react";
+import { Button, Heading, Input, InputGroup, InputLeftElement, VStack } from "@chakra-ui/react";
 import React, { MutableRefObject, useMemo, useState } from "react";
 import FAIcon from "../Icons/FAIcon";
 
@@ -48,8 +41,7 @@ export default function Column<I extends Item>({
         return result.sort(compareItems);
     }, [compareItems, filterItem, items, tSearch]);
 
-    const enableAdd =
-        onCreate && tSearch && tSearch.length > 0 && filteredItems.length === 0;
+    const enableAdd = onCreate && tSearch && tSearch.length > 0 && filteredItems.length === 0;
 
     const handleCreate = (ev: React.FormEvent<any> | React.MouseEvent<any>) => {
         ev.preventDefault();

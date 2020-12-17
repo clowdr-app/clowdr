@@ -1,6 +1,4 @@
-export type TranscribeEvent =
-    | TranscribeEventJobStatus
-    | TranscribeEventLanguageIdentification;
+export type TranscribeEvent = TranscribeEventJobStatus | TranscribeEventLanguageIdentification;
 
 interface TranscribeEventJobStatus extends TranscribeEventBase {
     "detail-type": "Transcribe Job State Change";

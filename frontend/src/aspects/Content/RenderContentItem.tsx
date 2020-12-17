@@ -5,13 +5,8 @@ import React from "react";
 import ReactPlayer from "react-player";
 import FAIcon from "../Icons/FAIcon";
 
-export default function RenderContentItem({
-    data,
-}: {
-    data: ContentItemDataBlob;
-}): JSX.Element {
-    const latestVersion =
-        data && data.length > 0 ? data[data.length - 1] : null;
+export default function RenderContentItem({ data }: { data: ContentItemDataBlob }): JSX.Element {
+    const latestVersion = data && data.length > 0 ? data[data.length - 1] : null;
 
     function s3UrlToHttpUrl(s3Url: string): string {
         const { bucket, key } = AmazonS3Uri(s3Url);
@@ -30,17 +25,13 @@ export default function RenderContentItem({
                         <a href={s3UrlToHttpUrl(latestVersion.data.s3Url)}>
                             <FAIcon iconStyle="s" icon="download" />
                         </a>
-                        <a href={s3UrlToHttpUrl(latestVersion.data.s3Url)}>
-                            File
-                        </a>
+                        <a href={s3UrlToHttpUrl(latestVersion.data.s3Url)}>File</a>
                     </VStack>
                 );
             case ContentBaseType.Link:
                 return (
                     <Text>
-                        <a href={latestVersion.data.url}>
-                            {latestVersion.data.text}
-                        </a>
+                        <a href={latestVersion.data.url}>{latestVersion.data.text}</a>
                     </Text>
                 );
             case ContentBaseType.Text:
@@ -48,32 +39,19 @@ export default function RenderContentItem({
             case ContentBaseType.URL:
                 return (
                     <Text>
-                        URL:{" "}
-                        <a href={latestVersion.data.url}>
-                            {latestVersion.data.url}
-                        </a>
+                        URL: <a href={latestVersion.data.url}>{latestVersion.data.url}</a>
                     </Text>
                 );
             case ContentBaseType.Video: {
                 if (latestVersion.data?.transcode?.status === "FAILED") {
-                    return (
-                        <>
-                            Failed to process this item:{" "}
-                            {latestVersion.data.transcode.message}
-                        </>
-                    );
+                    return <>Failed to process this item: {latestVersion.data.transcode.message}</>;
                 }
 
                 if (!latestVersion.data.transcode?.s3Url) {
                     return <Text>This item is still being processed.</Text>;
                 }
 
-                return (
-                    <ReactPlayer
-                        url={s3UrlToHttpUrl(latestVersion.data.s3Url)}
-                        controls={true}
-                    />
-                );
+                return <ReactPlayer url={s3UrlToHttpUrl(latestVersion.data.s3Url)} controls={true} />;
             }
         }
     }

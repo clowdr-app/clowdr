@@ -41,9 +41,7 @@ gql`
     }
 
     query GetTranscriptionJob($awsTranscribeJobName: String!) {
-        TranscriptionJob(
-            where: { awsTranscribeJobName: { _eq: $awsTranscribeJobName } }
-        ) {
+        TranscriptionJob(where: { awsTranscribeJobName: { _eq: $awsTranscribeJobName } }) {
             videoS3Url
             contentItemId
             transcriptionS3Url
@@ -61,9 +59,7 @@ function replaceExtension(key: string, extension: string): string {
     });
 }
 
-export async function completeTranscriptionJob(
-    awsTranscribeJobName: string
-): Promise<void> {
+export async function completeTranscriptionJob(awsTranscribeJobName: string): Promise<void> {
     // Find our stored record of this transcription job
     const transcriptionJobResult = await apolloClient.query({
         query: GetTranscriptionJobDocument,
@@ -79,10 +75,7 @@ export async function completeTranscriptionJob(
     const job = transcriptionJobResult.data.TranscriptionJob[0];
 
     const latestVersion = await getLatestVersion(job.contentItemId);
-    assert(
-        latestVersion,
-        `Could not find latest version of content item ${job.contentItemId}`
-    );
+    assert(latestVersion, `Could not find latest version of content item ${job.contentItemId}`);
 
     // Convert the Transcribe output to SRT and save to S3
 
@@ -98,10 +91,7 @@ export async function completeTranscriptionJob(
     assert(transcribeOutput.Body, "Could not get transcribe output from S3");
 
     let transcriptJson;
-    if (
-        "text" in transcribeOutput.Body &&
-        typeof transcribeOutput.Body.text === "function"
-    ) {
+    if ("text" in transcribeOutput.Body && typeof transcribeOutput.Body.text === "function") {
         transcriptJson = JSON.parse(await transcribeOutput.Body.text());
     } else if (transcribeOutput.Body instanceof Readable) {
         transcriptJson = JSON.parse(await getStream(transcribeOutput.Body));
@@ -122,10 +112,7 @@ export async function completeTranscriptionJob(
 
     // Save the new version of the content item
     const newVersion = R.clone(latestVersion);
-    assert(
-        is<VideoContentBlob>(newVersion.data),
-        `Content item ${job.contentItemId} is not a video`
-    );
+    assert(is<VideoContentBlob>(newVersion.data), `Content item ${job.contentItemId} is not a video`);
 
     newVersion.data.subtitles = {};
     newVersion.data.subtitles[job.languageCode] = {
@@ -149,15 +136,11 @@ export async function completeTranscriptionJob(
             `Failed to record completed transcription for ${job.contentItemId}`,
             transcriptionJobResult.errors
         );
-        throw new Error(
-            `Failed to record completed transcription for ${job.contentItemId}`
-        );
+        throw new Error(`Failed to record completed transcription for ${job.contentItemId}`);
     }
 }
 
-export async function failTranscriptionJob(
-    awsTranscribeJobName: string
-): Promise<void> {
+export async function failTranscriptionJob(awsTranscribeJobName: string): Promise<void> {
     // Find our stored record of this transcription job
     const transcriptionJobResult = await apolloClient.query({
         query: GetTranscriptionJobDocument,
@@ -173,17 +156,11 @@ export async function failTranscriptionJob(
     const job = transcriptionJobResult.data.TranscriptionJob[0];
 
     const latestVersion = await getLatestVersion(job.contentItemId);
-    assert(
-        latestVersion,
-        `Could not find latest version of content item ${job.contentItemId}`
-    );
+    assert(latestVersion, `Could not find latest version of content item ${job.contentItemId}`);
 
     // Save the new version of the content item
     const newVersion = R.clone(latestVersion);
-    assert(
-        is<VideoContentBlob>(newVersion.data),
-        `Content item ${job.contentItemId} is not a video`
-    );
+    assert(is<VideoContentBlob>(newVersion.data), `Content item ${job.contentItemId} is not a video`);
 
     newVersion.data.subtitles = {};
     newVersion.data.subtitles[job.languageCode] = {
@@ -204,20 +181,12 @@ export async function failTranscriptionJob(
     });
 
     if (transcriptionJobResult.errors) {
-        console.error(
-            `Failed to record failure of transcribe for ${job.contentItemId}`,
-            transcriptionJobResult.errors
-        );
-        throw new Error(
-            `Failed to record failure of transcribe for ${job.contentItemId}`
-        );
+        console.error(`Failed to record failure of transcribe for ${job.contentItemId}`, transcriptionJobResult.errors);
+        throw new Error(`Failed to record failure of transcribe for ${job.contentItemId}`);
     }
 }
 
-export async function startTranscribe(
-    transcodeS3Url: string,
-    contentItemId: string
-): Promise<void> {
+export async function startTranscribe(transcodeS3Url: string, contentItemId: string): Promise<void> {
     console.log(`Starting transcribe for ${transcodeS3Url}`);
     const { bucket, key } = AmazonS3URI(transcodeS3Url);
 

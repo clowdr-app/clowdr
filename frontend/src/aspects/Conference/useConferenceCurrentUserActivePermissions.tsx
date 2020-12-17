@@ -2,21 +2,13 @@ import React, { useContext, useMemo } from "react";
 import { Permission_Enum } from "../../generated/graphql";
 import { useCurrentUserGroupsRolesPermissions } from "./useConferenceCurrentUserGroups";
 
-function reduceToSet<S, T>(
-    array: ReadonlyArray<S>,
-    reduce: (acc: Set<T>, i: S) => Set<T>,
-    start?: Set<T>
-) {
+function reduceToSet<S, T>(array: ReadonlyArray<S>, reduce: (acc: Set<T>, i: S) => Set<T>, start?: Set<T>) {
     return array.reduce(reduce, new Set(start?.values() ?? []));
 }
 
-const ConferenceCurrentUserActivePermissionsContext = React.createContext<
-    Set<Permission_Enum>
->(new Set());
+const ConferenceCurrentUserActivePermissionsContext = React.createContext<Set<Permission_Enum>>(new Set());
 
-export function useConferenceCurrentUserActivePermissions(): Set<
-    Permission_Enum
-> {
+export function useConferenceCurrentUserActivePermissions(): Set<Permission_Enum> {
     return useContext(ConferenceCurrentUserActivePermissionsContext);
 }
 
@@ -42,9 +34,7 @@ export default function ConferenceCurrentUserActivePermissionsProvider({
                                     return reduceToSet(
                                         groupRole.role.rolePermissions,
                                         (acc, rolePermission) => {
-                                            acc.add(
-                                                rolePermission.permissionName
-                                            );
+                                            acc.add(rolePermission.permissionName);
                                             return acc;
                                         },
                                         acc

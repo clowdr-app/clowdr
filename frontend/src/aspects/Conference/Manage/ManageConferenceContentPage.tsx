@@ -12,10 +12,7 @@ import {
 import assert from "assert";
 import React, { useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import {
-    ContentBaseType,
-    ItemBaseTypes,
-} from "../../../../../shared/types/content";
+import { ContentBaseType, ItemBaseTypes } from "../../../../../shared/types/content";
 import {
     ContentGroupType_Enum,
     ContentType_Enum,
@@ -39,11 +36,7 @@ import isValidUUID from "../../Utils/isValidUUID";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
 import { TextItemTemplate } from "./Content/TextItem";
-import type {
-    ContentDescriptor,
-    ContentGroupDescriptor,
-    ItemBaseTemplate,
-} from "./Content/Types";
+import type { ContentDescriptor, ContentGroupDescriptor, ItemBaseTemplate } from "./Content/Types";
 import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
 gql`
@@ -88,9 +81,7 @@ gql`
     }
 `;
 
-const ContentGroupCRUDTable = (
-    props: Readonly<CRUDTableProps<ContentGroupDescriptor, "id">>
-) => CRUDTable(props);
+const ContentGroupCRUDTable = (props: Readonly<CRUDTableProps<ContentGroupDescriptor, "id">>) => CRUDTable(props);
 
 const ItemBaseTemplates: { [K in ContentBaseType]: ItemBaseTemplate } = {
     [ContentBaseType.File]: { supported: false },
@@ -115,10 +106,7 @@ const GroupTemplates: { [K in ContentGroupType_Enum]: GroupTemplate } = {
     [ContentGroupType_Enum.Other]: { supported: false },
     [ContentGroupType_Enum.Paper]: {
         supported: true,
-        requiredItemTypes: [
-            ContentType_Enum.VideoPrepublish,
-            ContentType_Enum.VideoBroadcast,
-        ],
+        requiredItemTypes: [ContentType_Enum.VideoPrepublish, ContentType_Enum.VideoBroadcast],
         itemTypes: [ContentType_Enum.Abstract, ContentType_Enum.PaperLink],
     },
     [ContentGroupType_Enum.Poster]: { supported: false },
@@ -151,10 +139,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
         }
 
         return new Map(
-            allContentGroups.ContentGroup.map((item): [
-                string,
-                ContentGroupDescriptor
-            ] => [
+            allContentGroups.ContentGroup.map((item): [string, ContentGroupDescriptor] => [
                 item.id,
                 {
                     id: item.id,
@@ -186,11 +171,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
             .filter(
                 (key) =>
                     typeof (ContentGroupType_Enum as any)[key] === "string" &&
-                    GroupTemplates[
-                        (ContentGroupType_Enum as any)[
-                            key
-                        ] as ContentGroupType_Enum
-                    ].supported
+                    GroupTemplates[(ContentGroupType_Enum as any)[key] as ContentGroupType_Enum].supported
             )
             .map((key) => {
                 const v = (ContentGroupType_Enum as any)[key] as string;
@@ -225,8 +206,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                     convertToUI: (x) => x,
                     filter: defaultStringFilter,
                 },
-                validate: (v) =>
-                    v.length >= 3 || ["Title must be at least 3 characters"],
+                validate: (v) => v.length >= 3 || ["Title must be at least 3 characters"],
             },
             shortTitle: {
                 heading: "Short Title",
@@ -248,10 +228,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                     convertToUI: (x) => x,
                     filter: defaultStringFilter,
                 },
-                validate: (v) =>
-                    v.length >= 3 || [
-                        "Short title must be at least 3 characters",
-                    ],
+                validate: (v) => v.length >= 3 || ["Short title must be at least 3 characters"],
             },
             typeName: {
                 heading: "Type",
@@ -281,9 +258,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                         }
                     },
                     convertToUI: (typeName) => {
-                        const opt = groupTypeOptions.find(
-                            (x) => x.value === typeName
-                        );
+                        const opt = groupTypeOptions.find((x) => x.value === typeName);
                         if (opt) {
                             return opt;
                         } else {
@@ -302,9 +277,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
         return result;
     }, [groupTypeOptions]);
 
-    const [allContentGroupsMap, setAllContentGroupsMap] = useState<
-        Map<string, ContentGroupDescriptor>
-    >();
+    const [allContentGroupsMap, setAllContentGroupsMap] = useState<Map<string, ContentGroupDescriptor>>();
 
     useEffect(() => {
         if (parsedDBContentGroups) {
@@ -320,23 +293,13 @@ export default function ManageConferenceContentPage(): JSX.Element {
             <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
             </Heading>
-            <Heading
-                as="h2"
-                fontSize="1.7rem"
-                lineHeight="2.4rem"
-                fontStyle="italic"
-            >
+            <Heading as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                 Groups
             </Heading>
-            {loadingAllContentGroups ||
-            !allContentGroupsMap ||
-            !parsedDBContentGroups ? (
+            {loadingAllContentGroups || !allContentGroupsMap || !parsedDBContentGroups ? (
                 <Spinner />
             ) : errorAllContentGroups ? (
-                <>
-                    An error occurred loading in data - please see further
-                    information in notifications.
-                </>
+                <>An error occurred loading in data - please see further information in notifications.</>
             ) : (
                 <></>
             )}
@@ -353,19 +316,14 @@ export default function ManageConferenceContentPage(): JSX.Element {
                                 id: tempKey,
                             } as ContentGroupDescriptor;
                             setAllContentGroupsMap((oldData) => {
-                                const newData = new Map(
-                                    oldData ? oldData.entries() : []
-                                );
+                                const newData = new Map(oldData ? oldData.entries() : []);
                                 newData.set(tempKey, newItem);
                                 return newData;
                             });
                             return true;
                         },
                         update: (items) => {
-                            const results: Map<
-                                string,
-                                UpdateResult
-                            > = new Map();
+                            const results: Map<string, UpdateResult> = new Map();
                             items.forEach((item, key) => {
                                 results.set(key, true);
                             });
@@ -390,9 +348,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                             });
 
                             setAllContentGroupsMap((oldData) => {
-                                const newData = new Map(
-                                    oldData ? oldData.entries() : []
-                                );
+                                const newData = new Map(oldData ? oldData.entries() : []);
                                 keys.forEach((key) => {
                                     newData.delete(key);
                                 });
@@ -403,6 +359,9 @@ export default function ManageConferenceContentPage(): JSX.Element {
                         },
                         save: async (keys) => {
                             console.log("todo");
+
+                            // TODO: Upsert groups, items, required items (nested?)
+                            // TODO: Delete old groups, items, required items
                             return new Map<string, boolean>();
                         },
                     },
@@ -439,27 +398,21 @@ export default function ManageConferenceContentPage(): JSX.Element {
                         // TODO: Configure / Edit tabs
 
                         if (group) {
-                            const groupTemplate =
-                                GroupTemplates[group.typeName];
+                            const groupTemplate = GroupTemplates[group.typeName];
                             if (groupTemplate.supported) {
                                 const itemElements: JSX.Element[] = [];
 
                                 for (const itemType of groupTemplate.itemTypes) {
                                     const baseType = ItemBaseTypes[itemType];
-                                    const itemTemplate =
-                                        ItemBaseTemplates[baseType];
+                                    const itemTemplate = ItemBaseTemplates[baseType];
                                     let accordianTitle:
                                         | string
                                         | JSX.Element = `TODO: Unsupported item type ${itemType}`;
-                                    let accordianContents:
-                                        | JSX.Element
-                                        | undefined;
+                                    let accordianContents: JSX.Element | undefined;
 
                                     if (itemTemplate.supported) {
                                         const item = group.items.find(
-                                            (x) =>
-                                                x.typeName === itemType &&
-                                                !x.requiredContentId
+                                            (x) => x.typeName === itemType && !x.requiredContentId
                                         );
                                         const itemDesc: ContentDescriptor = item
                                             ? {
@@ -474,46 +427,29 @@ export default function ManageConferenceContentPage(): JSX.Element {
                                               );
                                         assert(itemDesc.type === "item-only");
 
-                                        accordianTitle = itemTemplate.renderEditorHeading(
-                                            itemDesc
-                                        );
+                                        accordianTitle = itemTemplate.renderEditorHeading(itemDesc);
                                         accordianContents = itemTemplate.renderEditor(
                                             currentUser.user.User[0].id,
                                             itemDesc,
                                             (updatedDesc) => {
-                                                assert(
-                                                    updatedDesc.type ===
-                                                        "item-only"
-                                                );
+                                                assert(updatedDesc.type === "item-only");
 
-                                                setAllContentGroupsMap(
-                                                    (oldGroups) => {
-                                                        const newGroups: Map<
-                                                            string,
-                                                            ContentGroupDescriptor
-                                                        > = oldGroups
-                                                            ? new Map(oldGroups)
-                                                            : new Map();
+                                                setAllContentGroupsMap((oldGroups) => {
+                                                    const newGroups: Map<string, ContentGroupDescriptor> = oldGroups
+                                                        ? new Map(oldGroups)
+                                                        : new Map();
 
-                                                        newGroups.set(
-                                                            group.id,
-                                                            {
-                                                                ...group,
-                                                                items: group.items.map(
-                                                                    (cItem) => {
-                                                                        return itemDesc
-                                                                            .item
-                                                                            .id
-                                                                            ? updatedDesc.item
-                                                                            : cItem;
-                                                                    }
-                                                                ),
-                                                            }
-                                                        );
+                                                    newGroups.set(group.id, {
+                                                        ...group,
+                                                        items: group.items.map((cItem) => {
+                                                            return itemDesc.item.id === cItem.id
+                                                                ? updatedDesc.item
+                                                                : cItem;
+                                                        }),
+                                                    });
 
-                                                        return newGroups;
-                                                    }
-                                                );
+                                                    return newGroups;
+                                                });
                                             }
                                         );
                                     }
@@ -524,34 +460,115 @@ export default function ManageConferenceContentPage(): JSX.Element {
                                                 <Box flex="1" textAlign="left">
                                                     {accordianTitle}
                                                 </Box>
-                                                {accordianContents && (
-                                                    <AccordionIcon />
-                                                )}
+                                                {accordianContents && <AccordionIcon />}
                                             </AccordionButton>
                                             {accordianContents && (
-                                                <AccordionPanel pb={4}>
-                                                    {accordianContents}
-                                                </AccordionPanel>
+                                                <AccordionPanel pb={4}>{accordianContents}</AccordionPanel>
                                             )}
                                         </AccordionItem>
                                     );
                                 }
-                                const itemsAccordian = (
-                                    <Accordion allowMultiple>
-                                        {itemElements}
-                                    </Accordion>
-                                );
+                                const itemsAccordian = <Accordion allowMultiple>{itemElements}</Accordion>;
+
+                                for (const itemType of groupTemplate.requiredItemTypes) {
+                                    const baseType = ItemBaseTypes[itemType];
+                                    const itemTemplate = ItemBaseTemplates[baseType];
+                                    let accordianTitle:
+                                        | string
+                                        | JSX.Element = `TODO: Unsupported required item type ${itemType}`;
+                                    let accordianContents: JSX.Element | undefined;
+
+                                    if (itemTemplate.supported) {
+                                        const requiredItem = group.requiredItems.find((x) => x.typeName === itemType);
+                                        const item =
+                                            requiredItem &&
+                                            group.items.find(
+                                                (x) =>
+                                                    x.typeName === itemType && x.requiredContentId === requiredItem.id
+                                            );
+
+                                        const itemDesc: ContentDescriptor =
+                                            requiredItem && item
+                                                ? {
+                                                      type: "required-and-item",
+                                                      item,
+                                                      requiredItem,
+                                                  }
+                                                : requiredItem
+                                                ? {
+                                                      type: "required-only",
+                                                      requiredItem,
+                                                  }
+                                                : itemTemplate.createDefault(
+                                                      currentUser.user.User[0].id,
+                                                      group,
+                                                      itemType,
+                                                      true
+                                                  );
+                                        assert(itemDesc.type !== "item-only");
+
+                                        accordianTitle = itemTemplate.renderEditorHeading(itemDesc);
+                                        accordianContents = itemTemplate.renderEditor(
+                                            currentUser.user.User[0].id,
+                                            itemDesc,
+                                            (updatedDesc) => {
+                                                assert(updatedDesc.type !== "item-only");
+
+                                                setAllContentGroupsMap((oldGroups) => {
+                                                    const newGroups: Map<string, ContentGroupDescriptor> = oldGroups
+                                                        ? new Map(oldGroups)
+                                                        : new Map();
+
+                                                    newGroups.set(group.id, {
+                                                        ...group,
+                                                        items:
+                                                            itemDesc.type === "required-and-item" &&
+                                                            updatedDesc.type === "required-and-item"
+                                                                ? group.items.map((cItem) => {
+                                                                      return itemDesc.item.id === cItem.id
+                                                                          ? updatedDesc.item
+                                                                          : cItem;
+                                                                  })
+                                                                : itemDesc.type === "required-only" &&
+                                                                  updatedDesc.type === "required-and-item"
+                                                                ? [...group.items, updatedDesc.item]
+                                                                : itemDesc.type === "required-and-item" &&
+                                                                  updatedDesc.type === "required-only"
+                                                                ? group.items.filter((x) => x.id !== itemDesc.item.id)
+                                                                : group.items,
+                                                        requiredItems: group.requiredItems.map((x) =>
+                                                            x.id === itemDesc.requiredItem.id
+                                                                ? updatedDesc.requiredItem
+                                                                : x
+                                                        ),
+                                                    });
+
+                                                    return newGroups;
+                                                });
+                                            }
+                                        );
+                                    }
+
+                                    itemElements.push(
+                                        <AccordionItem key={`row-${itemType}`}>
+                                            <AccordionButton>
+                                                <Box flex="1" textAlign="left">
+                                                    {accordianTitle}
+                                                </Box>
+                                                {accordianContents && <AccordionIcon />}
+                                            </AccordionButton>
+                                            {accordianContents && (
+                                                <AccordionPanel pb={4}>{accordianContents}</AccordionPanel>
+                                            )}
+                                        </AccordionItem>
+                                    );
+                                }
 
                                 // TODO: Required items accordian
 
                                 editorElement = <>{itemsAccordian}</>;
                             } else {
-                                editorElement = (
-                                    <>
-                                        TODO: Unsupported group type:{" "}
-                                        {group.typeName}
-                                    </>
-                                );
+                                editorElement = <>TODO: Unsupported group type: {group.typeName}</>;
                             }
                         } else {
                             editorElement = <>Error: Content not found.</>;

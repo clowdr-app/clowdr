@@ -29,14 +29,8 @@ const _currentUserLastSeenQueries = gql`
         }
     }
 
-    mutation updateCurrentUserLastSeen(
-        $userId: String!
-        $lastSeen: timestamptz
-    ) {
-        update_OnlineStatus(
-            _set: { lastSeen: $lastSeen }
-            where: { userId: { _eq: $userId } }
-        ) {
+    mutation updateCurrentUserLastSeen($userId: String!, $lastSeen: timestamptz) {
+        update_OnlineStatus(_set: { lastSeen: $lastSeen }, where: { userId: { _eq: $userId } }) {
             returning {
                 id
                 lastSeen
@@ -52,17 +46,9 @@ export default function LastSeenProvider({
 }): JSX.Element {
     const userId = useUserId();
     if (userId) {
-        return (
-            <LastSeenProvider_UserIdExists userId={userId}>
-                {children}
-            </LastSeenProvider_UserIdExists>
-        );
+        return <LastSeenProvider_UserIdExists userId={userId}>{children}</LastSeenProvider_UserIdExists>;
     }
-    return (
-        <LastSeenContext.Provider value={undefined}>
-            {children}
-        </LastSeenContext.Provider>
-    );
+    return <LastSeenContext.Provider value={undefined}>{children}</LastSeenContext.Provider>;
 }
 
 function LastSeenProvider_UserIdExists({
@@ -96,8 +82,7 @@ function LastSeenProvider_UserIdExists({
         { loading: setLastSeenLoading, error: setLastSeenError },
     ] = useUpdateCurrentUserLastSeenMutation();
 
-    const loading =
-        getLastSeenLoading || setLastSeenLoading || insertLastSeenLoading;
+    const loading = getLastSeenLoading || setLastSeenLoading || insertLastSeenLoading;
     const error = getLastSeenError
         ? "Error loading last seen time! " + getLastSeenError
         : setLastSeenError
@@ -110,16 +95,9 @@ function LastSeenProvider_UserIdExists({
 
     useEffect(() => {
         if (!getLastSeenLoading && lastSeen === undefined) {
-            insertCurrentUserLastSeenMutation().then(() =>
-                refetchGetLastSeen()
-            );
+            insertCurrentUserLastSeenMutation().then(() => refetchGetLastSeen());
         }
-    }, [
-        insertCurrentUserLastSeenMutation,
-        lastSeen,
-        getLastSeenLoading,
-        refetchGetLastSeen,
-    ]);
+    }, [insertCurrentUserLastSeenMutation, lastSeen, getLastSeenLoading, refetchGetLastSeen]);
 
     usePolling(() => {
         updateCurrentUserLastSeenMutation({
@@ -131,9 +109,5 @@ function LastSeenProvider_UserIdExists({
     }, 60 * 1000);
 
     const value = lastSeen && (loading ? undefined : new Date(lastSeen));
-    return (
-        <LastSeenContext.Provider value={value}>
-            {children}
-        </LastSeenContext.Provider>
-    );
+    return <LastSeenContext.Provider value={value}>{children}</LastSeenContext.Provider>;
 }

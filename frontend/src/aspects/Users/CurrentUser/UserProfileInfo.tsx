@@ -7,12 +7,7 @@ export default function UserProfileInfo() {
 
     return (
         <Box margin="1em">
-            <Image
-                borderRadius="full"
-                boxSize="150px"
-                src={user.picture}
-                alt={user.name}
-            />
+            <Image borderRadius="full" boxSize="150px" src={user.picture} alt={user.name} />
             <Heading as="h1">{user.name}</Heading>
             <Text>{user.email}</Text>
         </Box>

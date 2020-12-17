@@ -49,10 +49,7 @@ gql`
         }
     }
 
-    mutation CreateDeleteRoles(
-        $deleteRoleIds: [uuid!] = []
-        $insertRoles: [Role_insert_input!]!
-    ) {
+    mutation CreateDeleteRoles($deleteRoleIds: [uuid!] = [], $insertRoles: [Role_insert_input!]!) {
         delete_Role(where: { id: { _in: $deleteRoleIds } }) {
             returning {
                 id
@@ -78,10 +75,7 @@ gql`
         $insertPermissions: [RolePermission_insert_input!]!
         $deletePermissionNames: [Permission_enum!] = []
     ) {
-        update_Role(
-            where: { id: { _eq: $roleId } }
-            _set: { name: $roleName }
-        ) {
+        update_Role(where: { id: { _eq: $roleId } }, _set: { name: $roleName }) {
             returning {
                 id
                 name
@@ -100,9 +94,7 @@ gql`
                 roleId
             }
         }
-        delete_RolePermission(
-            where: { permissionName: { _in: $deletePermissionNames } }
-        ) {
+        delete_RolePermission(where: { permissionName: { _in: $deletePermissionNames } }) {
             returning {
                 id
             }
@@ -117,9 +109,7 @@ type RoleDescriptor = {
     permissions: { [K: string]: boolean };
 };
 
-const RolesCRUDTable = (
-    props: Readonly<CRUDTableProps<RoleDescriptor, "id">>
-) => CRUDTable(props);
+const RolesCRUDTable = (props: Readonly<CRUDTableProps<RoleDescriptor, "id">>) => CRUDTable(props);
 
 export default function ManageConferenceRolesPage(): JSX.Element {
     const conference = useConference();
@@ -149,9 +139,7 @@ export default function ManageConferenceRolesPage(): JSX.Element {
     const [createDeleteRolesMutation] = useCreateDeleteRolesMutation();
     const [updateRoleMutation] = useUpdateRoleMutation();
 
-    const [allRolesMap, setAllRolesMap] = useState<
-        Map<string, RoleDescriptor>
-    >();
+    const [allRolesMap, setAllRolesMap] = useState<Map<string, RoleDescriptor>>();
 
     const parsedDBRoles = useMemo(() => {
         if (!allRoles || !allPermissions) {
@@ -164,9 +152,7 @@ export default function ManageConferenceRolesPage(): JSX.Element {
             const permissions: { [K: string]: boolean } = {};
             for (const key in Permission_Enum) {
                 const value = (Permission_Enum as any)[key] as string;
-                permissions[key] = role.rolePermissions.some(
-                    (x) => x.permissionName === value
-                );
+                permissions[key] = role.rolePermissions.some((x) => x.permissionName === value);
             }
             result.set(role.id, {
                 isNew: false,
@@ -219,23 +205,14 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                     convertToUI: (x) => x,
                     filter: defaultStringFilter,
                 },
-                validate: (v) =>
-                    v.length >= 3 || ["Name must be at least 3 characters"],
+                validate: (v) => v.length >= 3 || ["Name must be at least 3 characters"],
             },
         };
         for (const permissionEnumKey in Permission_Enum) {
-            const permissionEnumValue = (Permission_Enum as any)[
-                permissionEnumKey
-            ] as string;
+            const permissionEnumValue = (Permission_Enum as any)[permissionEnumKey] as string;
             const name = permissionEnumValue
                 .split("_")
-                .reduce(
-                    (acc, part) =>
-                        `${acc} ${part[0].toUpperCase()}${part
-                            .toLowerCase()
-                            .substr(1)}`,
-                    ""
-                )
+                .reduce((acc, part) => `${acc} ${part[0].toUpperCase()}${part.toLowerCase().substr(1)}`, "")
                 .substr(1)
                 .replace("Conference ", "");
 
@@ -243,14 +220,12 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                 heading: `${name}?`,
                 ariaLabel: `${name} Permission`,
                 description:
-                    allPermissions?.Permission.find(
-                        (x) => x.name === permissionEnumValue
-                    )?.description ?? "No description provided.",
+                    allPermissions?.Permission.find((x) => x.name === permissionEnumValue)?.description ??
+                    "No description provided.",
                 isHidden: false,
                 defaultValue:
                     permissionEnumValue === Permission_Enum.ConferenceView ||
-                    permissionEnumValue ===
-                        Permission_Enum.ConferenceViewAttendees,
+                    permissionEnumValue === Permission_Enum.ConferenceViewAttendees,
                 editorFalseLabel: "Deny",
                 editorTrueLabel: "Allow",
                 isEditable: true,
@@ -278,21 +253,13 @@ export default function ManageConferenceRolesPage(): JSX.Element {
             <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
             </Heading>
-            <Heading
-                as="h2"
-                fontSize="1.7rem"
-                lineHeight="2.4rem"
-                fontStyle="italic"
-            >
+            <Heading as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                 Roles
             </Heading>
             {loadingAllRoles || loadingAllPermissions || !allRolesMap ? (
                 <Spinner />
             ) : errorAllPermissions || errorAllRoles ? (
-                <>
-                    An error occurred loading in data - please see further
-                    information in notifications.
-                </>
+                <>An error occurred loading in data - please see further information in notifications.</>
             ) : (
                 <></>
             )}
@@ -309,19 +276,14 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                                 id: tempKey,
                             } as RoleDescriptor;
                             setAllRolesMap((oldData) => {
-                                const newData = new Map(
-                                    oldData ? oldData.entries() : []
-                                );
+                                const newData = new Map(oldData ? oldData.entries() : []);
                                 newData.set(tempKey, newItem);
                                 return newData;
                             });
                             return true;
                         },
                         update: (items) => {
-                            const results: Map<
-                                string,
-                                UpdateResult
-                            > = new Map();
+                            const results: Map<string, UpdateResult> = new Map();
                             items.forEach((item, key) => {
                                 results.set(key, true);
                             });
@@ -346,9 +308,7 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                             });
 
                             setAllRolesMap((oldData) => {
-                                const newData = new Map(
-                                    oldData ? oldData.entries() : []
-                                );
+                                const newData = new Map(oldData ? oldData.entries() : []);
                                 keys.forEach((key) => {
                                     newData.delete(key);
                                 });
@@ -384,53 +344,32 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                                     if (item.isNew) {
                                         newKeys.add(key);
                                     } else {
-                                        const existing = parsedDBRoles?.get(
-                                            key
-                                        );
+                                        const existing = parsedDBRoles?.get(key);
                                         if (!existing) {
-                                            console.error(
-                                                "Not-new value was not found in the existing DB dataset."
-                                            );
+                                            console.error("Not-new value was not found in the existing DB dataset.");
                                             results.set(key, false);
                                             return;
                                         }
 
-                                        let changed =
-                                            item.name !== existing.name;
-                                        const permissionsAdded = new Set<
-                                            Permission_Enum
-                                        >();
-                                        const permissionsDeleted = new Set<
-                                            Permission_Enum
-                                        >();
+                                        let changed = item.name !== existing.name;
+                                        const permissionsAdded = new Set<Permission_Enum>();
+                                        const permissionsDeleted = new Set<Permission_Enum>();
                                         for (const permissionEnumKey in Permission_Enum) {
                                             const permissionEnumValue = (Permission_Enum as any)[
                                                 permissionEnumKey
                                             ] as Permission_Enum;
                                             if (
-                                                item.permissions[
-                                                    permissionEnumKey
-                                                ] &&
-                                                !existing.permissions[
-                                                    permissionEnumKey
-                                                ]
+                                                item.permissions[permissionEnumKey] &&
+                                                !existing.permissions[permissionEnumKey]
                                             ) {
                                                 changed = true;
-                                                permissionsAdded.add(
-                                                    permissionEnumValue
-                                                );
+                                                permissionsAdded.add(permissionEnumValue);
                                             } else if (
-                                                !item.permissions[
-                                                    permissionEnumKey
-                                                ] &&
-                                                existing.permissions[
-                                                    permissionEnumKey
-                                                ]
+                                                !item.permissions[permissionEnumKey] &&
+                                                existing.permissions[permissionEnumKey]
                                             ) {
                                                 changed = true;
-                                                permissionsDeleted.add(
-                                                    permissionEnumValue
-                                                );
+                                                permissionsDeleted.add(permissionEnumValue);
                                             }
                                         }
                                         if (changed) {
@@ -449,46 +388,29 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                                 Record<string, any>
                             >;
                             try {
-                                createDeleteRolesResult = await createDeleteRolesMutation(
-                                    {
-                                        variables: {
-                                            deleteRoleIds: Array.from(
-                                                deletedKeys.values()
-                                            ),
-                                            insertRoles: Array.from(
-                                                newKeys.values()
-                                            ).map((key) => {
-                                                const item = allRolesMap.get(
-                                                    key
-                                                );
-                                                assert(item);
-                                                const permissionEnumKeys = Object.keys(
-                                                    item.permissions
-                                                ).filter(
-                                                    (key) =>
-                                                        item.permissions[key]
-                                                );
-                                                return {
-                                                    conferenceId: conference.id,
-                                                    name: item.name,
-                                                    rolePermissions: {
-                                                        data: permissionEnumKeys.map(
-                                                            (
-                                                                permissionEnumKey
-                                                            ) => {
-                                                                return {
-                                                                    permissionName: (Permission_Enum as any)[
-                                                                        permissionEnumKey
-                                                                    ],
-                                                                };
-                                                            }
-                                                        ),
-                                                    },
-                                                };
-                                            }),
-                                        },
-                                    }
-                                );
+                                createDeleteRolesResult = await createDeleteRolesMutation({
+                                    variables: {
+                                        deleteRoleIds: Array.from(deletedKeys.values()),
+                                        insertRoles: Array.from(newKeys.values()).map((key) => {
+                                            const item = allRolesMap.get(key);
+                                            assert(item);
+                                            const permissionEnumKeys = Object.keys(item.permissions).filter(
+                                                (key) => item.permissions[key]
+                                            );
+                                            return {
+                                                conferenceId: conference.id,
+                                                name: item.name,
+                                                rolePermissions: {
+                                                    data: permissionEnumKeys.map((permissionEnumKey) => {
+                                                        return {
+                                                            permissionName: (Permission_Enum as any)[permissionEnumKey],
+                                                        };
+                                                    }),
+                                                },
+                                            };
+                                        }),
+                                    },
+                                });
                             } catch (e) {
                                 createDeleteRolesResult = {
                                     errors: [e],
@@ -509,66 +431,48 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                                     results.set(key, true);
                                 });
                             }
-                            console.log(
-                                "Created/deleted",
-                                createDeleteRolesResult
-                            );
+                            console.log("Created/deleted", createDeleteRolesResult);
 
                             let updatedResults: {
                                 key: string;
-                                result: FetchResult<
-                                    UpdateRoleMutation,
-                                    Record<string, any>,
-                                    Record<string, any>
-                                >;
+                                result: FetchResult<UpdateRoleMutation, Record<string, any>, Record<string, any>>;
                             }[];
                             try {
                                 updatedResults = await Promise.all(
-                                    Array.from(updatedKeys.entries()).map(
-                                        async ([key, { added, deleted }]) => {
-                                            const item = allRolesMap.get(key);
-                                            assert(item);
-                                            let result: FetchResult<
-                                                UpdateRoleMutation,
-                                                Record<string, any>,
-                                                Record<string, any>
-                                            >;
-                                            try {
-                                                result = await updateRoleMutation(
-                                                    {
-                                                        variables: {
-                                                            roleId: item.id,
-                                                            roleName: item.name,
-                                                            deletePermissionNames: Array.from(
-                                                                deleted.values()
-                                                            ),
-                                                            insertPermissions: Array.from(
-                                                                added.values()
-                                                            ).map(
-                                                                (
-                                                                    permissionEnumValue
-                                                                ) => {
-                                                                    return {
-                                                                        roleId:
-                                                                            item.id,
-                                                                        permissionName: permissionEnumValue,
-                                                                    };
-                                                                }
-                                                            ),
-                                                        },
-                                                    }
-                                                );
-                                            } catch (e) {
-                                                result = {
-                                                    errors: [e],
-                                                };
-                                            }
-                                            return {
-                                                key,
-                                                result,
+                                    Array.from(updatedKeys.entries()).map(async ([key, { added, deleted }]) => {
+                                        const item = allRolesMap.get(key);
+                                        assert(item);
+                                        let result: FetchResult<
+                                            UpdateRoleMutation,
+                                            Record<string, any>,
+                                            Record<string, any>
+                                        >;
+                                        try {
+                                            result = await updateRoleMutation({
+                                                variables: {
+                                                    roleId: item.id,
+                                                    roleName: item.name,
+                                                    deletePermissionNames: Array.from(deleted.values()),
+                                                    insertPermissions: Array.from(added.values()).map(
+                                                        (permissionEnumValue) => {
+                                                            return {
+                                                                roleId: item.id,
+                                                                permissionName: permissionEnumValue,
+                                                            };
+                                                        }
+                                                    ),
+                                                },
+                                            });
+                                        } catch (e) {
+                                            result = {
+                                                errors: [e],
                                             };
                                         }
-                                    )
+                                        return {
+                                            key,
+                                            result,
+                                        };
+                                    })
                                 );
                             } catch (e) {
                                 updatedResults = [];

@@ -24,10 +24,7 @@ import {
 import { Field, FieldProps, Form, Formik } from "formik";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-import {
-    Permission_Enum,
-    useUpdateConferenceMutation,
-} from "../../../generated/graphql";
+import { Permission_Enum, useUpdateConferenceMutation } from "../../../generated/graphql";
 import PageNotFound from "../../Errors/PageNotFound";
 import FAIcon from "../../Icons/FAIcon";
 import UnsavedChangesWarning from "../../LeavingPageWarnings/UnsavedChangesWarning";
@@ -37,16 +34,8 @@ import { useConference } from "../useConference";
 import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
 const _updateConferenceQueries = gql`
-    mutation UpdateConference(
-        $id: uuid!
-        $name: String = ""
-        $shortName: String = ""
-        $slug: String = ""
-    ) {
-        update_Conference(
-            where: { id: { _eq: $id } }
-            _set: { name: $name, shortName: $shortName, slug: $slug }
-        ) {
+    mutation UpdateConference($id: uuid!, $name: String = "", $shortName: String = "", $slug: String = "") {
+        update_Conference(where: { id: { _eq: $id } }, _set: { name: $name, shortName: $shortName, slug: $slug }) {
             returning {
                 id
                 name
@@ -57,15 +46,11 @@ const _updateConferenceQueries = gql`
     }
 `;
 
-export function normaliseSlug(
-    value: string | null | undefined
-): string | undefined {
+export function normaliseSlug(value: string | null | undefined): string | undefined {
     return value?.replace(/\s/g, "");
 }
 
-export function validateSlug(
-    inValue: string | null | undefined
-): string | undefined {
+export function validateSlug(inValue: string | null | undefined): string | undefined {
     let error;
 
     const value = inValue ? normaliseSlug(inValue) : undefined;
@@ -80,9 +65,7 @@ export function validateSlug(
 
 export default function ManageConferenceNamePage(): JSX.Element {
     const conference = useConference();
-    const [slugWarningAccepted, setSlugWarningAccepted] = useState<boolean>(
-        false
-    );
+    const [slugWarningAccepted, setSlugWarningAccepted] = useState<boolean>(false);
     const [updateConferenceMutation] = useUpdateConferenceMutation();
     const toast = useToast();
     const history = useHistory();
@@ -97,12 +80,7 @@ export default function ManageConferenceNamePage(): JSX.Element {
             <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
             </Heading>
-            <Heading
-                as="h2"
-                fontSize="1.7rem"
-                lineHeight="2.4rem"
-                fontStyle="italic"
-            >
+            <Heading as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                 Name, short name and url
             </Heading>
             <Formik
@@ -117,9 +95,7 @@ export default function ManageConferenceNamePage(): JSX.Element {
                             id: conference.id,
                             name: values.name,
                             shortName: values.shortName,
-                            slug: slugWarningAccepted
-                                ? values.slug
-                                : conference.slug,
+                            slug: slugWarningAccepted ? values.slug : conference.slug,
                         };
                         const result = await updateConferenceMutation({
                             variables,
@@ -134,9 +110,7 @@ export default function ManageConferenceNamePage(): JSX.Element {
                             });
 
                             if (conference.slug !== variables.slug) {
-                                history.push(
-                                    `/conference/${variables.slug}/manage/name`
-                                );
+                                history.push(`/conference/${variables.slug}/manage/name`);
                             }
                         }
                     } catch (e) {
@@ -145,9 +119,7 @@ export default function ManageConferenceNamePage(): JSX.Element {
                         if (msg.includes("Uniqueness violation")) {
                             if (msg.includes("Conference_name_key")) {
                                 expectedError = "Name already taken.";
-                            } else if (
-                                msg.includes("Conference_shortName_key")
-                            ) {
+                            } else if (msg.includes("Conference_shortName_key")) {
                                 expectedError = "Short name already taken.";
                             } else if (msg.includes("Conference_slug_key")) {
                                 expectedError = "URL slug already taken.";
@@ -188,77 +160,40 @@ export default function ManageConferenceNamePage(): JSX.Element {
                         <Form>
                             <Field name="name" validate={validateName}>
                                 {({ field, form }: FieldProps<string>) => (
-                                    <FormControl
-                                        isInvalid={
-                                            !!form.errors.name &&
-                                            !!form.touched.name
-                                        }
-                                        isRequired
-                                    >
-                                        <FormLabel htmlFor="name">
-                                            Name
-                                        </FormLabel>
-                                        <Input
-                                            {...field}
-                                            id="name"
-                                            type="text"
-                                        />
-                                        <FormHelperText>
-                                            The long-form name of your
-                                            conference.
-                                        </FormHelperText>
-                                        <FormErrorMessage>
-                                            {form.errors.name}
-                                        </FormErrorMessage>
+                                    <FormControl isInvalid={!!form.errors.name && !!form.touched.name} isRequired>
+                                        <FormLabel htmlFor="name">Name</FormLabel>
+                                        <Input {...field} id="name" type="text" />
+                                        <FormHelperText>The long-form name of your conference.</FormHelperText>
+                                        <FormErrorMessage>{form.errors.name}</FormErrorMessage>
                                     </FormControl>
                                 )}
                             </Field>
-                            <Field
-                                name="shortName"
-                                validate={validateShortName}
-                            >
+                            <Field name="shortName" validate={validateShortName}>
                                 {({ field, form }: FieldProps<string>) => (
                                     <FormControl
-                                        isInvalid={
-                                            !!form.errors.shortName &&
-                                            !!form.touched.shortName
-                                        }
+                                        isInvalid={!!form.errors.shortName && !!form.touched.shortName}
                                         isRequired
                                         marginTop="1em"
                                     >
-                                        <FormLabel htmlFor="shortName">
-                                            Short Name
-                                        </FormLabel>
-                                        <Input
-                                            {...field}
-                                            id="shortName"
-                                            type="text"
-                                        />
+                                        <FormLabel htmlFor="shortName">Short Name</FormLabel>
+                                        <Input {...field} id="shortName" type="text" />
                                         <FormHelperText>
-                                            The short-form name of your
-                                            conference (e.g. its acronym and
-                                            year such as MAC 2020).
+                                            The short-form name of your conference (e.g. its acronym and year such as
+                                            MAC 2020).
                                         </FormHelperText>
-                                        <FormErrorMessage>
-                                            {form.errors.shortName}
-                                        </FormErrorMessage>
+                                        <FormErrorMessage>{form.errors.shortName}</FormErrorMessage>
                                     </FormControl>
                                 )}
                             </Field>
                             <Field name="slug" validate={validateSlug}>
                                 {({ field, form }: FieldProps<string>) => (
                                     <FormControl
-                                        isInvalid={
-                                            !!form.errors.slug &&
-                                            !!form.touched.slug
-                                        }
+                                        isInvalid={!!form.errors.slug && !!form.touched.slug}
                                         isRequired
                                         isDisabled={!slugWarningAccepted}
                                         marginTop="1em"
                                     >
-                                        <FormLabel htmlFor="slug">
-                                            URL slug
-                                        </FormLabel>
+                                        <FormLabel htmlFor="slug">URL slug</FormLabel>
                                         <Tooltip
                                             label={
                                                 !slugWarningAccepted
@@ -267,15 +202,11 @@ export default function ManageConferenceNamePage(): JSX.Element {
                                             }
                                         >
                                             <InputGroup>
-                                                <InputLeftAddon>
-                                                    /
-                                                </InputLeftAddon>
+                                                <InputLeftAddon>/</InputLeftAddon>
                                                 <Input
                                                     {...{
                                                         ...field,
-                                                        value: normaliseSlug(
-                                                            field.value
-                                                        ),
+                                                        value: normaliseSlug(field.value),
                                                     }}
                                                     id="slug"
                                                     type="text"
@@ -298,43 +229,22 @@ export default function ManageConferenceNamePage(): JSX.Element {
                                                                 Read warning
                                                             </Button>
                                                         </PopoverTrigger>
-                                                        <PopoverContent
-                                                            bgColor="yellow.200"
-                                                            color="black"
-                                                        >
+                                                        <PopoverContent bgColor="yellow.200" color="black">
                                                             <PopoverArrow bgColor="yellow.200" />
                                                             <PopoverCloseButton />
-                                                            <PopoverHeader fontWeight="bold">
-                                                                Warning!
-                                                            </PopoverHeader>
+                                                            <PopoverHeader fontWeight="bold">Warning!</PopoverHeader>
                                                             <PopoverBody whiteSpace="normal">
                                                                 <Text>
                                                                     <b>
-                                                                        We
-                                                                        strongly
-                                                                        discourage
-                                                                        you from
-                                                                        changing
-                                                                        your
-                                                                        conference&apos;s
-                                                                        URL.
+                                                                        We strongly discourage you from changing your
+                                                                        conference&apos;s URL.
                                                                     </b>{" "}
-                                                                    Changing the
-                                                                    url slug
-                                                                    will break
-                                                                    all existing
-                                                                    links
-                                                                    including
-                                                                    invitation
-                                                                    links.
+                                                                    Changing the url slug will break all existing links
+                                                                    including invitation links.
                                                                 </Text>
                                                                 <Text textAlign="center">
                                                                     <Button
-                                                                        onClick={() =>
-                                                                            setSlugWarningAccepted(
-                                                                                true
-                                                                            )
-                                                                        }
+                                                                        onClick={() => setSlugWarningAccepted(true)}
                                                                     >
                                                                         Accept
                                                                     </Button>
@@ -346,12 +256,9 @@ export default function ManageConferenceNamePage(): JSX.Element {
                                             </InputGroup>
                                         </Tooltip>
                                         <FormHelperText>
-                                            The identifying part of the url for
-                                            your conference.
+                                            The identifying part of the url for your conference.
                                         </FormHelperText>
-                                        <FormErrorMessage>
-                                            {form.errors.slug}
-                                        </FormErrorMessage>
+                                        <FormErrorMessage>{form.errors.slug}</FormErrorMessage>
                                     </FormControl>
                                 )}
                             </Field>

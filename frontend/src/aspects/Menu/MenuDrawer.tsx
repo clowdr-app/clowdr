@@ -36,20 +36,14 @@ export default function MainMenu(_props: Props): JSX.Element {
                             </Heading>
                             <Spacer />
                             <IncognitoToggleButton />
-                            <CloseButton
-                                colorScheme="green"
-                                onClick={onClose}
-                                title="Close main menu"
-                            />
+                            <CloseButton colorScheme="green" onClick={onClose} title="Close main menu" />
                         </Flex>
                     </DrawerHeader>
                     <DrawerBody>
                         <VStack align="stretch" spacing={0}>
                             <LinkButton
                                 aria-label="Home"
-                                leftIcon={
-                                    <FAIcon iconStyle="s" icon="home" inline />
-                                }
+                                leftIcon={<FAIcon iconStyle="s" icon="home" inline />}
                                 to={"/"}
                                 onClick={menuItemClicked}
                             >
@@ -57,13 +51,7 @@ export default function MainMenu(_props: Props): JSX.Element {
                             </LinkButton>
                             <LinkButton
                                 aria-label="Echo"
-                                leftIcon={
-                                    <FAIcon
-                                        iconStyle="s"
-                                        icon="comment-alt"
-                                        inline
-                                    />
-                                }
+                                leftIcon={<FAIcon iconStyle="s" icon="comment-alt" inline />}
                                 to={"/echo"}
                                 onClick={menuItemClicked}
                             >
@@ -73,13 +61,7 @@ export default function MainMenu(_props: Props): JSX.Element {
                                 <LinkButton
                                     colorScheme="red"
                                     aria-label="Protected echo"
-                                    leftIcon={
-                                        <FAIcon
-                                            iconStyle="s"
-                                            icon="comment-alt"
-                                            inline
-                                        />
-                                    }
+                                    leftIcon={<FAIcon iconStyle="s" icon="comment-alt" inline />}
                                     to={"/protectedEcho"}
                                     onClick={menuItemClicked}
                                 >
@@ -92,13 +74,7 @@ export default function MainMenu(_props: Props): JSX.Element {
                                 <LinkButton
                                     colorScheme="blue"
                                     aria-label="Profile"
-                                    leftIcon={
-                                        <FAIcon
-                                            iconStyle="s"
-                                            icon="user"
-                                            inline
-                                        />
-                                    }
+                                    leftIcon={<FAIcon iconStyle="s" icon="user" inline />}
                                     to={"/profile"}
                                     onClick={menuItemClicked}
                                 >
@@ -111,13 +87,7 @@ export default function MainMenu(_props: Props): JSX.Element {
                                 <LinkButton
                                     colorScheme="green"
                                     aria-label="Chats"
-                                    leftIcon={
-                                        <FAIcon
-                                            iconStyle="s"
-                                            icon="users"
-                                            inline
-                                        />
-                                    }
+                                    leftIcon={<FAIcon iconStyle="s" icon="users" inline />}
                                     to={"/"}
                                     onClick={menuItemClicked}
                                 >

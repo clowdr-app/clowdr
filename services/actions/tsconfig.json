@@ -1,11 +1,6 @@
 {
     "include": ["src/**/*"],
-    "exclude": [
-        "node_modules",
-        "**/*.spec.ts",
-        "**/*.test.ts",
-        "jest.config.ts"
-    ],
+    "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts", "jest.config.ts"],
     "compilerOptions": {
         /* Visit https://aka.ms/tsconfig.json to read more about this file */
 
@@ -72,8 +67,6 @@
         /* Advanced Options */
         "skipLibCheck": true /* Skip type checking of declaration files. */,
         "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */,
-        "plugins": [
-            { "transform": "typescript-is/lib/transform-inline/transformer" }
-        ]
+        "plugins": [{ "transform": "typescript-is/lib/transform-inline/transformer" }]
     }
 }

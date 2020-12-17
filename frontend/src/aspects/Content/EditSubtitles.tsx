@@ -19,16 +19,8 @@ import { useUpdateSubtitlesMutation } from "../../generated/graphql";
 import UnsavedChangesWarning from "../LeavingPageWarnings/UnsavedChangesWarning";
 
 gql`
-    mutation UpdateSubtitles(
-        $contentItemId: String!
-        $magicToken: String!
-        $subtitleText: String!
-    ) {
-        updateSubtitles(
-            contentItemId: $contentItemId
-            magicToken: $magicToken
-            subtitleText: $subtitleText
-        ) {
+    mutation UpdateSubtitles($contentItemId: String!, $magicToken: String!, $subtitleText: String!) {
+        updateSubtitles(contentItemId: $contentItemId, magicToken: $magicToken, subtitleText: $subtitleText) {
             message
             success
         }
@@ -49,11 +41,7 @@ export default function EditSubtitles({
 
     const { bucket, key } = AmazonS3Uri(data.s3Url);
     const subtitlesUrl = `https://${bucket}.s3.eu-west-1.amazonaws.com/${key}`;
-    const { loading, error, data: subtitlesData = [] } = useFetch(
-        subtitlesUrl,
-        {},
-        []
-    );
+    const { loading, error, data: subtitlesData = [] } = useFetch(subtitlesUrl, {}, []);
 
     return loading ? (
         <Spinner />
@@ -75,10 +63,7 @@ export default function EditSubtitles({
                             },
                         });
 
-                        if (
-                            submitResult.errors ||
-                            !submitResult.data?.updateSubtitles?.success
-                        ) {
+                        if (submitResult.errors || !submitResult.data?.updateSubtitles?.success) {
                             console.error(
                                 "Failed to update subtitles",
                                 submitResult.errors,
@@ -86,8 +71,7 @@ export default function EditSubtitles({
                             );
                             toast({
                                 status: "error",
-                                description:
-                                    "Failed to update subtitles. Please try again later.",
+                                description: "Failed to update subtitles. Please try again later.",
                             });
                             return;
                         }
@@ -101,8 +85,7 @@ export default function EditSubtitles({
                         console.error("Failed to update subtitles", e);
                         toast({
                             status: "error",
-                            description:
-                                "Failed to update subtitles. Please try again later.",
+                            description: "Failed to update subtitles. Please try again later.",
                         });
                         return;
                     }
@@ -114,9 +97,7 @@ export default function EditSubtitles({
                         <Form style={{ width: "100%" }}>
                             <Field
                                 name="subtitles"
-                                validate={(
-                                    inValue: string | null | undefined
-                                ) => {
+                                validate={(inValue: string | null | undefined) => {
                                     let error;
 
                                     if (!inValue) {
@@ -135,26 +116,13 @@ export default function EditSubtitles({
                                 {({ form, field }: FieldProps<string>) => (
                                     <FormControl
                                         mt={5}
-                                        isInvalid={
-                                            !!form.errors.subtitles &&
-                                            !!form.touched.subtitles
-                                        }
+                                        isInvalid={!!form.errors.subtitles && !!form.touched.subtitles}
                                         isRequired
                                     >
-                                        <FormLabel htmlFor="subtitles">
-                                            Subtitles
-                                        </FormLabel>
-                                        <Textarea
-                                            {...field}
-                                            id="subtitles"
-                                            height={300}
-                                        />
-                                        <FormHelperText>
-                                            Subtitles must be in SRT format.
-                                        </FormHelperText>
-                                        <FormErrorMessage>
-                                            {form.errors.subtitles}
-                                        </FormErrorMessage>
+                                        <FormLabel htmlFor="subtitles">Subtitles</FormLabel>
+                                        <Textarea {...field} id="subtitles" height={300} />
+                                        <FormHelperText>Subtitles must be in SRT format.</FormHelperText>
+                                        <FormErrorMessage>{form.errors.subtitles}</FormErrorMessage>
                                     </FormControl>
                                 )}
                             </Field>

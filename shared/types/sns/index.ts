@@ -1,10 +1,6 @@
-export type SNSNotification<T> =
-    | SubscriptionConfirmationMessage<T>
-    | NotificationMessage<T>
-    | UnsubscribeMessage<T>;
+export type SNSNotification<T> = SubscriptionConfirmationMessage<T> | NotificationMessage<T> | UnsubscribeMessage<T>;
 
-export interface SubscriptionConfirmationMessage<T>
-    extends SNSNotificationBase<T> {
+export interface SubscriptionConfirmationMessage<T> extends SNSNotificationBase<T> {
     Type: "SubscriptionConfirmation";
     Token: string;
     SubscribeURL: string;

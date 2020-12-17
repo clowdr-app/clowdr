@@ -12,9 +12,7 @@ export default function UsersList(): JSX.Element {
     const column = useMemo(() => {
         const users = _users &&
             currentUser && {
-                User: _users?.User.filter(
-                    (x) => x.id !== currentUser.User[0].id
-                ),
+                User: _users?.User.filter((x) => x.id !== currentUser.User[0].id),
             };
 
         if (users === undefined) {
@@ -36,17 +34,11 @@ export default function UsersList(): JSX.Element {
                 }}
                 renderItem={(user) => {
                     const isOnline =
-                        user.onlineStatus &&
-                        new Date(user.onlineStatus.lastSeen).getTime() >
-                            Date.now() - 80 * 1000;
+                        user.onlineStatus && new Date(user.onlineStatus.lastSeen).getTime() > Date.now() - 80 * 1000;
                     return (
                         <HStack key={user.id} width="100%">
                             <FAIcon
-                                icon={
-                                    user.onlineStatus === null
-                                        ? "times-circle"
-                                        : "circle"
-                                }
+                                icon={user.onlineStatus === null ? "times-circle" : "circle"}
                                 iconStyle={isOnline ? "s" : "r"}
                                 color={isOnline ? "#00ff00" : "#fcfcfc"}
                             />
@@ -58,12 +50,8 @@ export default function UsersList(): JSX.Element {
                 }}
                 filterItem={(search, item) => {
                     return (
-                        item.firstName
-                            .toLowerCase()
-                            .includes(search.toLowerCase()) ||
-                        item.lastName
-                            .toLowerCase()
-                            .includes(search.toLowerCase())
+                        item.firstName.toLowerCase().includes(search.toLowerCase()) ||
+                        item.lastName.toLowerCase().includes(search.toLowerCase())
                     );
                 }}
             />

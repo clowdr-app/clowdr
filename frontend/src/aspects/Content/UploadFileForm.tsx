@@ -13,10 +13,7 @@ import Uppy from "@uppy/core";
 import { DragDrop, ProgressBar } from "@uppy/react";
 import { Field, FieldProps, Form, Formik } from "formik";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import {
-    RequiredItemFieldsFragment,
-    useSubmitContentItemMutation,
-} from "../../generated/graphql";
+import { RequiredItemFieldsFragment, useSubmitContentItemMutation } from "../../generated/graphql";
 import FAIcon from "../Icons/FAIcon";
 import UnsavedChangesWarning from "../LeavingPageWarnings/UnsavedChangesWarning";
 
@@ -59,9 +56,7 @@ export default function UploadFileForm({
     const updateFiles = useCallback(() => {
         const validNameRegex = /^[a-zA-Z0-9.!*'()\-_ ]+$/;
         if (uppy) {
-            const invalidFiles = uppy
-                ?.getFiles()
-                .filter((file) => !validNameRegex.test(file.name));
+            const invalidFiles = uppy?.getFiles().filter((file) => !validNameRegex.test(file.name));
             for (const invalidFile of invalidFiles) {
                 toast({
                     status: "error",
@@ -104,22 +99,17 @@ export default function UploadFileForm({
                         console.error("Failed to upload file", e);
                         toast({
                             status: "error",
-                            description:
-                                "Failed to upload file. Please try again.",
+                            description: "Failed to upload file. Please try again.",
                         });
                         uppy.reset();
                         return;
                     }
 
-                    if (
-                        result.failed.length > 0 ||
-                        result.successful.length < 1
-                    ) {
+                    if (result.failed.length > 0 || result.successful.length < 1) {
                         console.error("Failed to upload file", result.failed);
                         toast({
                             status: "error",
-                            description:
-                                "Failed to upload file. Please try again later.",
+                            description: "Failed to upload file. Please try again later.",
                         });
                         uppy.reset();
                         return;
@@ -135,10 +125,7 @@ export default function UploadFileForm({
                             },
                         });
 
-                        if (
-                            submitResult.errors ||
-                            !submitResult.data?.submitContentItem?.success
-                        ) {
+                        if (submitResult.errors || !submitResult.data?.submitContentItem?.success) {
                             console.error(
                                 "Failed to submit item",
                                 submitResult.errors,
@@ -147,11 +134,8 @@ export default function UploadFileForm({
                             toast({
                                 status: "error",
                                 description: `Failed to submit item. Please try again later. Error: ${[
-                                    submitResult.data?.submitContentItem
-                                        ?.message,
-                                    ...(submitResult.errors?.map(
-                                        (e) => e.message
-                                    ) ?? []),
+                                    submitResult.data?.submitContentItem?.message,
+                                    ...(submitResult.errors?.map((e) => e.message) ?? []),
                                 ].join("; ")}`,
                             });
                             uppy.reset();
@@ -167,8 +151,7 @@ export default function UploadFileForm({
                         console.error("Failed to submit item", e);
                         toast({
                             status: "error",
-                            description:
-                                "Failed to submit item. Please try again later.",
+                            description: "Failed to submit item. Please try again later.",
                         });
                         uppy.reset();
                         return;
@@ -180,28 +163,15 @@ export default function UploadFileForm({
                         <UnsavedChangesWarning hasUnsavedChanges={dirty} />
                         <Form style={{ width: "100%" }}>
                             <FormControl isInvalid={!files} isRequired>
-                                <DragDrop
-                                    uppy={uppy as Uppy.Uppy}
-                                    allowMultipleFiles={false}
-                                />
-                                <FormHelperText>
-                                    File types: {allowedFileTypes.join(", ")}
-                                </FormHelperText>
+                                <DragDrop uppy={uppy as Uppy.Uppy} allowMultipleFiles={false} />
+                                <FormHelperText>File types: {allowedFileTypes.join(", ")}</FormHelperText>
                             </FormControl>
                             <ul>
                                 {files.map((file) => (
                                     <li key={file.id}>
                                         {file.name}{" "}
-                                        <Button
-                                            onClick={() =>
-                                                uppy?.removeFile(file.id)
-                                            }
-                                        >
-                                            <FAIcon
-                                                iconStyle="s"
-                                                icon="times"
-                                                color="red.400"
-                                            />
+                                        <Button onClick={() => uppy?.removeFile(file.id)}>
+                                            <FAIcon iconStyle="s" icon="times" color="red.400" />
                                         </Button>
                                     </li>
                                 ))}
@@ -209,9 +179,7 @@ export default function UploadFileForm({
                             {uploadAgreement && (
                                 <Field
                                     name="agree"
-                                    validate={(
-                                        inValue: string | null | undefined
-                                    ) => {
+                                    validate={(inValue: string | null | undefined) => {
                                         let error;
                                         if (!inValue) {
                                             error = "Must agree to terms";
@@ -221,27 +189,15 @@ export default function UploadFileForm({
                                 >
                                     {({ form, field }: FieldProps<string>) => (
                                         <FormControl
-                                            isInvalid={
-                                                !!form.errors.agree &&
-                                                !!form.touched.agree
-                                            }
+                                            isInvalid={!!form.errors.agree && !!form.touched.agree}
                                             isRequired
                                             mt={5}
                                         >
-                                            <FormLabel htmlFor="agree">
-                                                Upload agreement
-                                            </FormLabel>
-                                            <Text mb={4}>
-                                                {uploadAgreement}
-                                            </Text>
+                                            <FormLabel htmlFor="agree">Upload agreement</FormLabel>
+                                            <Text mb={4}>{uploadAgreement}</Text>
                                             <Checkbox {...field} id="agree" />
-                                            <FormHelperText>
-                                                I agree to the upload
-                                                conditions.
-                                            </FormHelperText>
-                                            <FormErrorMessage>
-                                                {form.errors.agree}
-                                            </FormErrorMessage>
+                                            <FormHelperText>I agree to the upload conditions.</FormHelperText>
+                                            <FormErrorMessage>{form.errors.agree}</FormErrorMessage>
                                         </FormControl>
                                     )}
                                 </Field>
@@ -251,9 +207,7 @@ export default function UploadFileForm({
                                 colorScheme="green"
                                 isLoading={props.isSubmitting}
                                 type="submit"
-                                isDisabled={
-                                    !props.isValid || files.length !== 1
-                                }
+                                isDisabled={!props.isValid || files.length !== 1}
                             >
                                 Upload
                             </Button>

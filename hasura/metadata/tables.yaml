@@ -699,6 +699,7 @@
       columns:
       - conferenceId
       - contentGroupTypeName
+      - id
       - originatingDataId
       - shortTitle
       - title
@@ -1022,6 +1023,7 @@
       - contentGroupId
       - contentTypeName
       - data
+      - id
       - layoutData
       - name
       - originatingDataId
@@ -2246,6 +2248,7 @@
       - conferenceId
       - contentGroupId
       - contentTypeName
+      - id
       - name
       - originatingDataId
       backend_only: false

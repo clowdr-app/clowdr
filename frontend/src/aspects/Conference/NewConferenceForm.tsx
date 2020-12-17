@@ -27,13 +27,7 @@ import isValidUUID from "../Utils/isValidUUID";
 gql`
     query ConferenceTaken($name: String!, $shortName: String!, $slug: String!) {
         Conference(
-            where: {
-                _or: [
-                    { name: { _eq: $name } }
-                    { shortName: { _eq: $shortName } }
-                    { slug: { _eq: $slug } }
-                ]
-            }
+            where: { _or: [{ name: { _eq: $name } }, { shortName: { _eq: $shortName } }, { slug: { _eq: $slug } }] }
             limit: 1
         ) {
             id
@@ -43,41 +37,20 @@ gql`
         }
     }
 
-    mutation CreateConference(
-        $name: String!
-        $shortName: String!
-        $slug: String!
-        $demoCode: uuid!
-    ) {
-        insert_Conference(
-            objects: [
-                {
-                    name: $name
-                    shortName: $shortName
-                    slug: $slug
-                    demoCodeId: $demoCode
-                }
-            ]
-        ) {
+    mutation CreateConference($name: String!, $shortName: String!, $slug: String!, $demoCode: uuid!) {
+        insert_Conference(objects: [{ name: $name, shortName: $shortName, slug: $slug, demoCodeId: $demoCode }]) {
             returning {
                 id
                 slug
             }
         }
 
-        update_ConferenceDemoCode(
-            where: { id: { _eq: $demoCode } }
-            _set: { note: "Code has been used." }
-        ) {
+        update_ConferenceDemoCode(where: { id: { _eq: $demoCode } }, _set: { note: "Code has been used." }) {
             affected_rows
         }
     }
 
-    mutation CreateNewConferenceMetaStructure(
-        $conferenceId: uuid!
-        $attendeeDisplayName: String!
-        $userId: String!
-    ) {
+    mutation CreateNewConferenceMetaStructure($conferenceId: uuid!, $attendeeDisplayName: String!, $userId: String!) {
         insert_Attendee(
             objects: [
                 {
@@ -99,33 +72,15 @@ gql`
                                                     name: "Organiser"
                                                     rolePermissions: {
                                                         data: [
-                                                            {
-                                                                permissionName: CONFERENCE_MANAGE_NAME
-                                                            }
-                                                            {
-                                                                permissionName: CONFERENCE_MANAGE_ATTENDEES
-                                                            }
-                                                            {
-                                                                permissionName: CONFERENCE_MODERATE_ATTENDEES
-                                                            }
-                                                            {
-                                                                permissionName: CONFERENCE_VIEW_ATTENDEES
-                                                            }
-                                                            {
-                                                                permissionName: CONFERENCE_VIEW
-                                                            }
-                                                            {
-                                                                permissionName: CONFERENCE_MANAGE_ROLES
-                                                            }
-                                                            {
-                                                                permissionName: CONFERENCE_MANAGE_GROUPS
-                                                            }
-                                                            {
-                                                                permissionName: CONFERENCE_MANAGE_CONTENT
-                                                            }
-                                                            {
-                                                                permissionName: CONFERENCE_MANAGE_SCHEDULE
-                                                            }
+                                                            { permissionName: CONFERENCE_MANAGE_NAME }
+                                                            { permissionName: CONFERENCE_MANAGE_ATTENDEES }
+                                                            { permissionName: CONFERENCE_MODERATE_ATTENDEES }
+                                                            { permissionName: CONFERENCE_VIEW_ATTENDEES }
+                                                            { permissionName: CONFERENCE_VIEW }
+                                                            { permissionName: CONFERENCE_MANAGE_ROLES }
+                                                            { permissionName: CONFERENCE_MANAGE_GROUPS }
+                                                            { permissionName: CONFERENCE_MANAGE_CONTENT }
+                                                            { permissionName: CONFERENCE_MANAGE_SCHEDULE }
                                                         ]
                                                     }
                                                 }
@@ -158,12 +113,8 @@ gql`
                                         name: "Attendee"
                                         rolePermissions: {
                                             data: [
-                                                {
-                                                    permissionName: CONFERENCE_VIEW
-                                                }
-                                                {
-                                                    permissionName: CONFERENCE_VIEW_ATTENDEES
-                                                }
+                                                { permissionName: CONFERENCE_VIEW }
+                                                { permissionName: CONFERENCE_VIEW_ATTENDEES }
                                             ]
                                         }
                                     }
@@ -184,13 +135,7 @@ gql`
                                     data: {
                                         conferenceId: $conferenceId
                                         name: "Public"
-                                        rolePermissions: {
-                                            data: [
-                                                {
-                                                    permissionName: CONFERENCE_VIEW
-                                                }
-                                            ]
-                                        }
+                                        rolePermissions: { data: [{ permissionName: CONFERENCE_VIEW }] }
                                     }
                                 }
                             }
@@ -211,12 +156,8 @@ gql`
                                         name: "Registrar"
                                         rolePermissions: {
                                             data: [
-                                                {
-                                                    permissionName: CONFERENCE_MANAGE_ATTENDEES
-                                                }
-                                                {
-                                                    permissionName: CONFERENCE_VIEW_ATTENDEES
-                                                }
+                                                { permissionName: CONFERENCE_MANAGE_ATTENDEES }
+                                                { permissionName: CONFERENCE_VIEW_ATTENDEES }
                                             ]
                                         }
                                     }
@@ -239,15 +180,9 @@ gql`
                                         name: "Moderator"
                                         rolePermissions: {
                                             data: [
-                                                {
-                                                    permissionName: CONFERENCE_MODERATE_ATTENDEES
-                                                }
-                                                {
-                                                    permissionName: CONFERENCE_VIEW_ATTENDEES
-                                                }
-                                                {
-                                                    permissionName: CONFERENCE_VIEW
-                                                }
+                                                { permissionName: CONFERENCE_MODERATE_ATTENDEES }
+                                                { permissionName: CONFERENCE_VIEW_ATTENDEES }
+                                                { permissionName: CONFERENCE_VIEW }
                                             ]
                                         }
                                     }
@@ -294,9 +229,7 @@ export function normaliseName(value: string, trim = true): string {
 /**
  * Returns error message or undefined if no errors.
  */
-export function validateName(
-    inValue: string | null | undefined
-): string | undefined {
+export function validateName(inValue: string | null | undefined): string | undefined {
     let error;
     const value = inValue ? normaliseName(inValue) : undefined;
     if (!value || value.length === 0) {
@@ -310,9 +243,7 @@ export function validateName(
 /**
  * Returns error message or undefined if no errors.
  */
-export function validateShortName(
-    inValue: string | null | undefined
-): string | undefined {
+export function validateShortName(inValue: string | null | undefined): string | undefined {
     let error;
     const value = inValue ? normaliseName(inValue) : undefined;
     if (!value || value.length === 0) {
@@ -330,9 +261,7 @@ export default function NewConferenceForm(): JSX.Element {
     const user = useCurrentUser();
 
     const [createConferenceMutation] = useCreateConferenceMutation();
-    const [
-        createNewConferenceMetaStructureMutation,
-    ] = useCreateNewConferenceMetaStructureMutation();
+    const [createNewConferenceMetaStructureMutation] = useCreateNewConferenceMetaStructureMutation();
 
     function validateDemoCode(value: string | null | undefined) {
         if (!!value && isValidUUID(value)) {
@@ -359,29 +288,19 @@ export default function NewConferenceForm(): JSX.Element {
                 const values = {
                     name: normaliseName(_values.new_conf_name),
                     shortName: normaliseName(_values.new_conf_short_name),
-                    slug: generateSlug(
-                        normaliseName(_values.new_conf_short_name)
-                    ),
+                    slug: generateSlug(normaliseName(_values.new_conf_short_name)),
                     demoCode: _values.new_conf_demo_code,
                 };
 
                 let failed: false | string = false;
 
-                const takenResult = await apolloClient.query<
-                    ConferenceTakenQuery,
-                    ConferenceTakenQueryVariables
-                >({
+                const takenResult = await apolloClient.query<ConferenceTakenQuery, ConferenceTakenQueryVariables>({
                     query: ConferenceTakenDocument,
                     variables: values,
                     fetchPolicy: "network-only",
                 });
                 try {
-                    let ok:
-                        | boolean
-                        | Pick<
-                              Conference,
-                              "id" | "name" | "shortName" | "slug"
-                          > = false;
+                    let ok: boolean | Pick<Conference, "id" | "name" | "shortName" | "slug"> = false;
                     if (takenResult.error) {
                         throw takenResult.error;
                     } else {
@@ -415,8 +334,7 @@ export default function NewConferenceForm(): JSX.Element {
                             // failed = true;
                         } else {
                             failed = false;
-                            const conferenceId =
-                                result.data.insert_Conference.returning[0].id;
+                            const conferenceId = result.data.insert_Conference.returning[0].id;
 
                             await createNewConferenceMetaStructureMutation({
                                 variables: {
@@ -430,9 +348,7 @@ export default function NewConferenceForm(): JSX.Element {
                                 title: "Conference created",
                                 status: "success",
                             });
-                            history.push(
-                                `/conference/${result.data.insert_Conference.returning[0].slug}/manage`
-                            );
+                            history.push(`/conference/${result.data.insert_Conference.returning[0].slug}/manage`);
                         }
                     } else {
                         const errors: FormikErrors<{
@@ -440,16 +356,13 @@ export default function NewConferenceForm(): JSX.Element {
                             new_conf_short_name: string;
                         }> = {};
                         if (ok.name === values.name) {
-                            errors.new_conf_name =
-                                "Name has already been taken";
+                            errors.new_conf_name = "Name has already been taken";
                         }
                         if (ok.shortName === values.shortName) {
-                            errors.new_conf_short_name =
-                                "Short name has already been taken";
+                            errors.new_conf_short_name = "Short name has already been taken";
                         }
                         if (ok.slug === values.slug) {
-                            errors.new_conf_short_name =
-                                "Short name has already been taken";
+                            errors.new_conf_short_name = "Short name has already been taken";
                         }
                         actions.setErrors(errors);
                     }
@@ -458,11 +371,7 @@ export default function NewConferenceForm(): JSX.Element {
                 }
 
                 if (failed) {
-                    if (
-                        failed.includes(
-                            "Check constraint violation. insert check constraint failed"
-                        )
-                    ) {
+                    if (failed.includes("Check constraint violation. insert check constraint failed")) {
                         toast({
                             title: "Failed to create conference",
                             description:
@@ -498,96 +407,59 @@ Please contact our tech support to investigate the issue shown below: support@cl
                     <Field name="new_conf_name" validate={validateName}>
                         {({ field, form }: FieldProps<string>) => (
                             <FormControl
-                                isInvalid={
-                                    !!form.errors.new_conf_name &&
-                                    !!form.touched.new_conf_name
-                                }
+                                isInvalid={!!form.errors.new_conf_name && !!form.touched.new_conf_name}
                                 isRequired
                             >
-                                <FormLabel htmlFor="new_conf_name">
-                                    Name
-                                </FormLabel>
+                                <FormLabel htmlFor="new_conf_name">Name</FormLabel>
                                 <Input
                                     {...{
                                         ...field,
-                                        value: normaliseName(
-                                            field.value,
-                                            false
-                                        ),
+                                        value: normaliseName(field.value, false),
                                     }}
                                     id="new_conf_name"
                                     placeholder="Name"
                                 />
-                                <FormErrorMessage>
-                                    {form.errors.new_conf_name}
-                                </FormErrorMessage>
+                                <FormErrorMessage>{form.errors.new_conf_name}</FormErrorMessage>
                             </FormControl>
                         )}
                     </Field>
-                    <Field
-                        name="new_conf_short_name"
-                        validate={validateShortName}
-                    >
+                    <Field name="new_conf_short_name" validate={validateShortName}>
                         {({ field, form }: FieldProps<string>) => (
                             <FormControl
-                                isInvalid={
-                                    !!form.errors.new_conf_short_name &&
-                                    !!form.touched.new_conf_short_name
-                                }
+                                isInvalid={!!form.errors.new_conf_short_name && !!form.touched.new_conf_short_name}
                                 isRequired
                                 marginTop="1em"
                             >
-                                <FormLabel htmlFor="new_conf_short_name">
-                                    Short name
-                                </FormLabel>
+                                <FormLabel htmlFor="new_conf_short_name">Short name</FormLabel>
                                 <Input
                                     {...{
                                         ...field,
-                                        value: normaliseName(
-                                            field.value,
-                                            false
-                                        ),
+                                        value: normaliseName(field.value, false),
                                     }}
                                     id="new_conf_short_name"
                                     placeholder="Short name"
                                 />
-                                <FormErrorMessage>
-                                    {form.errors.new_conf_short_name}
-                                </FormErrorMessage>
+                                <FormErrorMessage>{form.errors.new_conf_short_name}</FormErrorMessage>
                             </FormControl>
                         )}
                     </Field>
-                    <Field
-                        name="new_conf_demo_code"
-                        validate={validateDemoCode}
-                    >
+                    <Field name="new_conf_demo_code" validate={validateDemoCode}>
                         {({ field, form }: FieldProps<string>) => (
                             <FormControl
-                                isInvalid={
-                                    !!form.errors.new_conf_demo_code &&
-                                    !!form.touched.new_conf_demo_code
-                                }
+                                isInvalid={!!form.errors.new_conf_demo_code && !!form.touched.new_conf_demo_code}
                                 isRequired
                                 marginTop="1em"
                             >
-                                <FormLabel htmlFor="new_conf_demo_code">
-                                    Demo code
-                                </FormLabel>
+                                <FormLabel htmlFor="new_conf_demo_code">Demo code</FormLabel>
                                 <InputGroup>
-                                    <Input
-                                        {...field}
-                                        id="new_conf_demo_code"
-                                        placeholder="Demo code"
-                                    />
+                                    <Input {...field} id="new_conf_demo_code" placeholder="Demo code" />
                                     <InputRightAddon>
                                         <Tooltip label="To create a conference, please contact us at demo@clowdr.org to receive your demo code.">
                                             {"What's this?"}
                                         </Tooltip>
                                     </InputRightAddon>
                                 </InputGroup>
-                                <FormErrorMessage>
-                                    {form.errors.new_conf_demo_code}
-                                </FormErrorMessage>
+                                <FormErrorMessage>{form.errors.new_conf_demo_code}</FormErrorMessage>
                             </FormControl>
                         )}
                     </Field>

@@ -1,9 +1,4 @@
-import {
-    ApolloClient,
-    HttpLink,
-    InMemoryCache,
-    split,
-} from "@apollo/client/core";
+import { ApolloClient, HttpLink, InMemoryCache, split } from "@apollo/client/core";
 import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
 import fetch from "cross-fetch";
@@ -39,10 +34,7 @@ const wsLink = new WebSocketLink({
 const link = split(
     ({ query }) => {
         const definition = getMainDefinition(query);
-        return (
-            definition.kind === "OperationDefinition" &&
-            definition.operation === "subscription"
-        );
+        return definition.kind === "OperationDefinition" && definition.operation === "subscription";
     },
     wsLink,
     httpLink

@@ -57,17 +57,10 @@ function printPhrase(phrase: Phrase, index: number): string {
             return (
                 accum +
                 (idx === 0 ? "" : " ") +
-                (value.alternatives.length > 0
-                    ? value.alternatives[0].content
-                    : "<missing>")
+                (value.alternatives.length > 0 ? value.alternatives[0].content : "<missing>")
             );
         } else {
-            return (
-                accum +
-                (value.alternatives.length > 0
-                    ? value.alternatives[0].content
-                    : "<missing>")
-            );
+            return accum + (value.alternatives.length > 0 ? value.alternatives[0].content : "<missing>");
         }
     }, "");
     return `${index}\n${startTime} --> ${endTime}\n${text}\n\n`;
@@ -90,8 +83,7 @@ function getPhrases(awsTranscribeJson: AmazonTranscribeOutput): Phrase[] {
     for (const item of awsTranscribeJson.results.items) {
         if (
             item.type === "pronunciation" &&
-            (currentPhrase.endedAt - currentPhrase.startedAt > 5 ||
-                currentPhrase.items.length > 10)
+            (currentPhrase.endedAt - currentPhrase.startedAt > 5 || currentPhrase.items.length > 10)
         ) {
             phrases.push(currentPhrase);
             currentPhrase = {
@@ -124,9 +116,7 @@ function phrasesToSrt(phrases: Phrase[]): string {
     }, "");
 }
 
-export function convertJsonToSrt(
-    awsTranscribeJson: AmazonTranscribeOutput
-): string {
+export function convertJsonToSrt(awsTranscribeJson: AmazonTranscribeOutput): string {
     const phrases = getPhrases(awsTranscribeJson);
     return phrasesToSrt(phrases);
 }

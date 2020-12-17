@@ -21,18 +21,10 @@ const _conferenceProviderQueries = gql`
 
 export type ConferenceInfo = Pick<
     Conference,
-    | "createdBy"
-    | "id"
-    | "name"
-    | "shortName"
-    | "slug"
-    | "updatedAt"
-    | "createdAt"
+    "createdBy" | "id" | "name" | "shortName" | "slug" | "updatedAt" | "createdAt"
 >;
 
-const ConferenceContext = React.createContext<ConferenceInfo | undefined>(
-    undefined
-);
+const ConferenceContext = React.createContext<ConferenceInfo | undefined>(undefined);
 
 export function useConference(): ConferenceInfo {
     const conf = React.useContext(ConferenceContext);
@@ -66,9 +58,5 @@ export default function ConferenceProvider({
         return <PageNotFound />;
     }
 
-    return (
-        <ConferenceContext.Provider value={data.Conference[0]}>
-            {children}
-        </ConferenceContext.Provider>
-    );
+    return <ConferenceContext.Provider value={data.Conference[0]}>{children}</ConferenceContext.Provider>;
 }

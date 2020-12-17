@@ -5,9 +5,7 @@ import { apolloClient } from "../graphqlClient";
 import { EmailData, Payload } from "../types/event";
 import { callWithRetry } from "../utils";
 
-export async function handleEmailCreated(
-    payload: Payload<EmailData>
-): Promise<void> {
+export async function handleEmailCreated(payload: Payload<EmailData>): Promise<void> {
     if (!payload.event.data.new) {
         throw new Error("No new email data");
     }
@@ -35,11 +33,7 @@ export async function handleEmailCreated(
         await apolloClient.mutate({
             mutation: gql`
                 mutation UpdateEmail($id: uuid!, $sentAt: timestamptz = null) {
-                    update_Email(
-                        where: { id: { _eq: $id } }
-                        _set: { sentAt: $sentAt }
-                        _inc: { retriesCount: 1 }
-                    ) {
+                    update_Email(where: { id: { _eq: $id } }, _set: { sentAt: $sentAt }, _inc: { retriesCount: 1 }) {
                         affected_rows
                     }
                 }

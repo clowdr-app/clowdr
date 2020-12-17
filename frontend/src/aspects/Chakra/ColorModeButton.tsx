@@ -7,11 +7,7 @@ export default function ColorModeButton(): JSX.Element {
 
     return (
         <Tooltip label="Toggle dark mode">
-            <Button
-                margin={0}
-                onClick={toggleColorMode}
-                aria-label="Toggle dark mode"
-            >
+            <Button margin={0} onClick={toggleColorMode} aria-label="Toggle dark mode">
                 <FAIcon iconStyle="s" icon="sun" />
             </Button>
         </Tooltip>

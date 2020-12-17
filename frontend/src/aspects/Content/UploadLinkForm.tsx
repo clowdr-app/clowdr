@@ -43,10 +43,7 @@ export default function UploadLinkForm({
                             },
                         });
 
-                        if (
-                            submitResult.errors ||
-                            !submitResult.data?.submitContentItem?.success
-                        ) {
+                        if (submitResult.errors || !submitResult.data?.submitContentItem?.success) {
                             console.error(
                                 "Failed to submit item",
                                 submitResult.errors,
@@ -56,11 +53,8 @@ export default function UploadLinkForm({
                             toast({
                                 status: "error",
                                 description: `Failed to submit item. Please try again later. Error: ${[
-                                    submitResult.data?.submitContentItem
-                                        ?.message,
-                                    ...(submitResult.errors?.map(
-                                        (e) => e.message
-                                    ) ?? []),
+                                    submitResult.data?.submitContentItem?.message,
+                                    ...(submitResult.errors?.map((e) => e.message) ?? []),
                                 ].join("; ")}`,
                             });
                         }
@@ -73,8 +67,7 @@ export default function UploadLinkForm({
                         console.error("Failed to submit item", e);
                         toast({
                             status: "error",
-                            description:
-                                "Failed to submit item. Please try again later.",
+                            description: "Failed to submit item. Please try again later.",
                         });
                     }
                 }}
@@ -86,31 +79,20 @@ export default function UploadLinkForm({
                             <Field name="text">
                                 {({ form, field }: FieldProps<string>) => (
                                     <FormControl
-                                        isInvalid={
-                                            !!form.errors.text &&
-                                            !!form.touched.text
-                                        }
+                                        isInvalid={!!form.errors.text && !!form.touched.text}
                                         isRequired
                                         mt={5}
                                     >
-                                        <FormLabel htmlFor="text">
-                                            Text
-                                        </FormLabel>
+                                        <FormLabel htmlFor="text">Text</FormLabel>
                                         <Input {...field} id="text"></Input>
-                                        <FormHelperText>
-                                            Display text for the link.
-                                        </FormHelperText>
-                                        <FormErrorMessage>
-                                            {form.errors.text}
-                                        </FormErrorMessage>
+                                        <FormHelperText>Display text for the link.</FormHelperText>
+                                        <FormErrorMessage>{form.errors.text}</FormErrorMessage>
                                     </FormControl>
                                 )}
                             </Field>
                             <Field
                                 name="url"
-                                validate={(
-                                    inValue: string | null | undefined
-                                ) => {
+                                validate={(inValue: string | null | undefined) => {
                                     if (!inValue) {
                                         return "Missing URL";
                                     }
@@ -123,31 +105,18 @@ export default function UploadLinkForm({
                                 }}
                             >
                                 {({ form, field }: FieldProps<string>) => (
-                                    <FormControl
-                                        isInvalid={
-                                            !!form.errors.url &&
-                                            !!form.touched.url
-                                        }
-                                        isRequired
-                                        mt={5}
-                                    >
+                                    <FormControl isInvalid={!!form.errors.url && !!form.touched.url} isRequired mt={5}>
                                         <FormLabel htmlFor="url">URL</FormLabel>
                                         <Input {...field} id="url"></Input>
-                                        <FormHelperText>
-                                            URL of the link.
-                                        </FormHelperText>
-                                        <FormErrorMessage>
-                                            {form.errors.url}
-                                        </FormErrorMessage>
+                                        <FormHelperText>URL of the link.</FormHelperText>
+                                        <FormErrorMessage>{form.errors.url}</FormErrorMessage>
                                     </FormControl>
                                 )}
                             </Field>
                             {uploadAgreement && (
                                 <Field
                                     name="agree"
-                                    validate={(
-                                        inValue: string | null | undefined
-                                    ) => {
+                                    validate={(inValue: string | null | undefined) => {
                                         let error;
                                         if (!inValue) {
                                             error = "Must agree to terms";
@@ -157,27 +126,15 @@ export default function UploadLinkForm({
                                 >
                                     {({ form, field }: FieldProps<string>) => (
                                         <FormControl
-                                            isInvalid={
-                                                !!form.errors.agree &&
-                                                !!form.touched.agree
-                                            }
+                                            isInvalid={!!form.errors.agree && !!form.touched.agree}
                                             isRequired
                                             mt={5}
                                         >
-                                            <FormLabel htmlFor="agree">
-                                                Upload agreement
-                                            </FormLabel>
-                                            <Text mb={4}>
-                                                {uploadAgreement}
-                                            </Text>
+                                            <FormLabel htmlFor="agree">Upload agreement</FormLabel>
+                                            <Text mb={4}>{uploadAgreement}</Text>
                                             <Checkbox {...field} id="agree" />
-                                            <FormHelperText>
-                                                I agree to the upload
-                                                conditions.
-                                            </FormHelperText>
-                                            <FormErrorMessage>
-                                                {form.errors.agree}
-                                            </FormErrorMessage>
+                                            <FormHelperText>I agree to the upload conditions.</FormHelperText>
+                                            <FormErrorMessage>{form.errors.agree}</FormErrorMessage>
                                         </FormControl>
                                     )}
                                 </Field>

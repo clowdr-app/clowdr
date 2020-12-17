@@ -16,14 +16,8 @@ const _currentUserIsIncognitoQueries = gql`
         }
     }
 
-    mutation updateCurrentUserIsIncognito(
-        $userId: String!
-        $isIncognito: Boolean = false
-    ) {
-        update_OnlineStatus(
-            _set: { isIncognito: $isIncognito }
-            where: { userId: { _eq: $userId } }
-        ) {
+    mutation updateCurrentUserIsIncognito($userId: String!, $isIncognito: Boolean = false) {
+        update_OnlineStatus(_set: { isIncognito: $isIncognito }, where: { userId: { _eq: $userId } }) {
             returning {
                 id
                 isIncognito
@@ -104,11 +98,7 @@ function IncognitoToggleButtonElements(props: {
           };
     toggleIsIncognito: () => Promise<void>;
 }) {
-    if (
-        props.isIncognito.value === undefined &&
-        !props.isIncognito.loading &&
-        !props.isIncognito.error
-    ) {
+    if (props.isIncognito.value === undefined && !props.isIncognito.loading && !props.isIncognito.error) {
         return <></>;
     }
 

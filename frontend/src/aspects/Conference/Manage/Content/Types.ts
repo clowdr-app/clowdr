@@ -29,18 +29,18 @@ export type RequiredContentItemDescriptor = {
 
 export type ContentDescriptor =
     | {
-        type: "required-only";
-        requiredItem: RequiredContentItemDescriptor;
-    }
+          type: "required-only";
+          requiredItem: RequiredContentItemDescriptor;
+      }
     | {
-        type: "required-and-item";
-        requiredItem: RequiredContentItemDescriptor;
-        item: ContentItemDescriptor;
-    }
+          type: "required-and-item";
+          requiredItem: RequiredContentItemDescriptor;
+          item: ContentItemDescriptor;
+      }
     | {
-        type: "item-only";
-        item: ContentItemDescriptor;
-    };
+          type: "item-only";
+          item: ContentItemDescriptor;
+      };
 
 export type ContentGroupDescriptor = {
     isNew?: boolean;
@@ -55,20 +55,20 @@ export type ContentGroupDescriptor = {
 };
 export type ItemBaseTemplate =
     | {
-        supported: false;
-    }
+          supported: false;
+      }
     | {
-        supported: true;
-        createDefault: (
-            currentUserId: string,
-            group: ContentGroupDescriptor,
-            itemType: ContentType_Enum,
-            required: boolean
-        ) => ContentDescriptor;
-        renderEditorHeading: (data: ContentDescriptor) => JSX.Element;
-        renderEditor: (
-            currentUserId: string,
-            data: ContentDescriptor,
-            update: (updated: ContentDescriptor) => void
-        ) => JSX.Element;
-    };
+          supported: true;
+          createDefault: (
+              currentUserId: string,
+              group: ContentGroupDescriptor,
+              itemType: ContentType_Enum,
+              required: boolean
+          ) => ContentDescriptor;
+          renderEditorHeading: (data: ContentDescriptor) => JSX.Element;
+          renderEditor: (
+              currentUserId: string,
+              data: ContentDescriptor,
+              update: (updated: ContentDescriptor) => void
+          ) => JSX.Element;
+      };

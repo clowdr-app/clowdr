@@ -34,13 +34,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import assert from "assert";
-import React, {
-    Dispatch,
-    SetStateAction,
-    useCallback,
-    useMemo,
-    useState,
-} from "react";
+import React, { Dispatch, SetStateAction, useCallback, useMemo, useState } from "react";
 import Select from "react-select";
 import { v4 as uuidv4 } from "uuid";
 import FAIcon from "../Icons/FAIcon";
@@ -83,15 +77,8 @@ export function defaultStringFilter(
     return itemNormalised.includes(searchNormalised);
 }
 
-export function defaultIntegerFilter(
-    item: number,
-    searchLower?: number,
-    searchUpper?: number
-): boolean {
-    return (
-        (searchLower === undefined || searchLower <= item) &&
-        (searchUpper === undefined || item <= searchUpper)
-    );
+export function defaultIntegerFilter(item: number, searchLower?: number, searchUpper?: number): boolean {
+    return (searchLower === undefined || searchLower <= item) && (searchUpper === undefined || item <= searchUpper);
 }
 
 export function defaultBooleanFilter(item: boolean, search?: boolean): boolean {
@@ -111,9 +98,7 @@ export function defaultSelectFilter(
     }
 
     return searchValues.some((key) =>
-        itemOptions instanceof Array
-            ? itemOptions.some((x) => x.value === key)
-            : itemOptions.value === key
+        itemOptions instanceof Array ? itemOptions.some((x) => x.value === key) : itemOptions.value === key
     );
 }
 
@@ -141,11 +126,7 @@ export function defaultBooleanSorter(itemX: boolean, itemY: boolean): number {
     }
 }
 
-export function defaultSelectSorter(
-    itemKeyX: string,
-    itemKeyY: string,
-    options: Array<SelectOption>
-): number {
+export function defaultSelectSorter(itemKeyX: string, itemKeyY: string, options: Array<SelectOption>): number {
     const itemValueX = options.find((x) => x.value === itemKeyX)?.label;
     const itemValueY = options.find((y) => y.value === itemKeyY)?.label;
 
@@ -181,12 +162,7 @@ export type StringFieldSpec<S> = {
     convertToUI: (v: S) => string;
     convertFromUI?: (v: string) => S;
 
-    filter?: (
-        item: string,
-        search?: string,
-        shouldNotTrim?: boolean,
-        disallowSpaces?: boolean
-    ) => boolean;
+    filter?: (item: string, search?: string, shouldNotTrim?: boolean, disallowSpaces?: boolean) => boolean;
     sort?: (itemX: string, itemY: string) => number;
 
     areEqual?: (itemX: string, itemY: string) => boolean;
@@ -201,11 +177,7 @@ export type IntegerFieldSpec<S> = {
     convertToUI: (v: S) => number;
     convertFromUI?: (v: number) => S;
 
-    filter?: (
-        item: number,
-        searchLower?: number,
-        searchUpper?: number
-    ) => boolean;
+    filter?: (item: number, searchLower?: number, searchUpper?: number) => boolean;
     sort?: (itemX: number, itemY: number) => number;
 
     areEqual?: (itemX: number, itemY: number) => boolean;
@@ -236,20 +208,14 @@ export type SelectFieldSpec<S> = {
     /** Provides the key of the selected option. */
     convertFromUI?: (v: SelectOption | Array<SelectOption>) => S | Array<S>;
 
-    filter?: (
-        itemOptions: SelectOption | Array<SelectOption>,
-        searchValues?: Array<string>
-    ) => boolean;
+    filter?: (itemOptions: SelectOption | Array<SelectOption>, searchValues?: Array<string>) => boolean;
     sort?: (
         itemKeyX: SelectOption | Array<SelectOption>,
         itemKeyY: SelectOption | Array<SelectOption>,
         options: Array<SelectOption>
     ) => number;
 
-    areEqual?: (
-        itemKeyX: SelectOption | Array<SelectOption>,
-        itemKeyY: SelectOption | Array<SelectOption>
-    ) => boolean;
+    areEqual?: (itemKeyX: SelectOption | Array<SelectOption>, itemKeyY: SelectOption | Array<SelectOption>) => boolean;
 
     /** Intended to be used for a modal dialog to create new items. */
     create?: Readonly<{
@@ -257,11 +223,7 @@ export type SelectFieldSpec<S> = {
     }>;
 };
 
-export type FieldSpec<S> =
-    | StringFieldSpec<S>
-    | IntegerFieldSpec<S>
-    | BooleanFieldSpec<S>
-    | SelectFieldSpec<S>;
+export type FieldSpec<S> = StringFieldSpec<S> | IntegerFieldSpec<S> | BooleanFieldSpec<S> | SelectFieldSpec<S>;
 
 export type ValidatationResult = true | Array<string>;
 export type UpdateResult = true | Array<string>;
@@ -291,18 +253,11 @@ export interface Field<S, T, FieldSpecT extends FieldSpec<T> = FieldSpec<T>> {
     // - TODO: Field sizing / re-sizing (inc default implementations)
 }
 
-export interface PrimaryField<
-    S,
-    T,
-    FieldSpecT extends FieldSpec<T> = FieldSpec<T>
-> extends Field<S, T, FieldSpecT> {
+export interface PrimaryField<S, T, FieldSpecT extends FieldSpec<T> = FieldSpec<T>> extends Field<S, T, FieldSpecT> {
     defaultSortPriority?: number;
 }
 
-export type PrimaryKeyFieldSpec<S> =
-    | StringFieldSpec<S>
-    | IntegerFieldSpec<S>
-    | SelectFieldSpec<S>;
+export type PrimaryKeyFieldSpec<S> = StringFieldSpec<S> | IntegerFieldSpec<S> | SelectFieldSpec<S>;
 
 export interface PrimaryFields<T, PK extends keyof T> {
     keyField: Readonly<PrimaryField<T, T[PK], PrimaryKeyFieldSpec<T[PK]>>>;
@@ -341,9 +296,7 @@ export type InstantModeCUDCallbacks<T, PK extends keyof T> = {
 };
 
 export interface CUDCallbacks<T, PK extends keyof T> {
-    cudCallbacks?:
-        | BatchModeCUDCallbacks<T, PK>
-        | InstantModeCUDCallbacks<T, PK>;
+    cudCallbacks?: BatchModeCUDCallbacks<T, PK> | InstantModeCUDCallbacks<T, PK>;
 }
 
 const defaultRenderers: {
@@ -382,16 +335,12 @@ const defaultRenderers: {
         if (editMode) {
             return (
                 <HStack align="center">
-                    {editMode.opts?.falseLabel ? (
-                        <Text as="span">{editMode.opts?.falseLabel}</Text>
-                    ) : undefined}
+                    {editMode.opts?.falseLabel ? <Text as="span">{editMode.opts?.falseLabel}</Text> : undefined}
                     {editMode.opts?.format === BooleanFieldFormat.switch ? (
                         <Switch
                             isChecked={value}
                             colorScheme="blue"
-                            onChange={(ev) =>
-                                editMode.onChange(ev.target.checked)
-                            }
+                            onChange={(ev) => editMode.onChange(ev.target.checked)}
                             aria-label={editMode.label}
                             disabled={editMode.isDisabled}
                         />
@@ -399,16 +348,12 @@ const defaultRenderers: {
                         <Checkbox
                             isChecked={value}
                             colorScheme="blue"
-                            onChange={(ev) =>
-                                editMode.onChange(ev.target.checked)
-                            }
+                            onChange={(ev) => editMode.onChange(ev.target.checked)}
                             aria-label={editMode.label}
                             disabled={editMode.isDisabled}
                         />
                     )}
-                    {editMode.opts?.trueLabel ? (
-                        <Text as="span">{editMode.opts?.trueLabel}</Text>
-                    ) : undefined}
+                    {editMode.opts?.trueLabel ? <Text as="span">{editMode.opts?.trueLabel}</Text> : undefined}
                 </HStack>
             );
         } else {
@@ -419,10 +364,7 @@ const defaultRenderers: {
             }
         }
     },
-    [FieldType.select]: function renderSelectField(
-        options: SelectOption | Array<SelectOption>,
-        editMode
-    ) {
+    [FieldType.select]: function renderSelectField(options: SelectOption | Array<SelectOption>, editMode) {
         if (editMode) {
             return (
                 <Select
@@ -470,10 +412,7 @@ const defaultRenderers: {
                             ...provided,
                             color: "black",
                         }),
-                        option: (
-                            styles: any,
-                            { isDisabled, isFocused, isSelected }: any
-                        ) => {
+                        option: (styles: any, { isDisabled, isFocused, isSelected }: any) => {
                             return {
                                 ...styles,
                                 backgroundColor: isDisabled
@@ -488,9 +427,7 @@ const defaultRenderers: {
 
                                 ":active": {
                                     ...styles[":active"],
-                                    backgroundColor:
-                                        !isDisabled &&
-                                        (isSelected ? "#47367d" : "#47367d"),
+                                    backgroundColor: !isDisabled && (isSelected ? "#47367d" : "#47367d"),
                                 },
                             };
                         },
@@ -499,16 +436,7 @@ const defaultRenderers: {
             );
         } else {
             if (options instanceof Array) {
-                return (
-                    <span>
-                        {options
-                            .reduce(
-                                (acc, option) => `${acc}, ${option.label}`,
-                                ""
-                            )
-                            .substr(2)}
-                    </span>
-                );
+                return <span>{options.reduce((acc, option) => `${acc}, ${option.label}`, "").substr(2)}</span>;
             } else {
                 return <span>{options.label}</span>;
             }
@@ -594,14 +522,8 @@ export interface CRUDTableProps<T, PK extends keyof T> {
      * Fields which are hidden or editable through a side-panel or popout.
      */
     secondaryFields?: {
-        editSingle?: (
-            key: T[PK],
-            onClose: () => void
-        ) => SecondaryEditorComponents;
-        editMultiple?: (
-            keys: Set<T[PK]>,
-            onClose: () => void
-        ) => SecondaryEditorComponents;
+        editSingle?: (key: T[PK], onClose: () => void) => SecondaryEditorComponents;
+        editMultiple?: (keys: Set<T[PK]>, onClose: () => void) => SecondaryEditorComponents;
     };
 
     /**
@@ -761,15 +683,7 @@ function CRUDCell({
 
 type CRUDRowElement = JSX.Element;
 function CRUDRow<S, T, PK extends keyof S>({
-    rowData: {
-        index: rowIndex,
-        key,
-        primaryKey,
-        item,
-        isSelected,
-        isHighlighted,
-        isDisabled,
-    },
+    rowData: { index: rowIndex, key, primaryKey, item, isSelected, isHighlighted, isDisabled },
     beginEdit,
     endEdit,
     addDirtyKey,
@@ -777,8 +691,7 @@ function CRUDRow<S, T, PK extends keyof S>({
     visibleFields,
     csud,
 }: Readonly<CRUDTableRowProps<S, T, PK>>): CRUDRowElement {
-    const enableUpdate =
-        edit?.mode === "single" && !!csud?.cudCallbacks?.update && isSelected;
+    const enableUpdate = edit?.mode === "single" && !!csud?.cudCallbacks?.update && isSelected;
     const showDelete = !!csud?.cudCallbacks?.delete;
     const toast = useToast();
 
@@ -808,42 +721,24 @@ function CRUDRow<S, T, PK extends keyof S>({
                                       falseLabel: field.editorFalseLabel,
                                       trueLabel: field.editorTrueLabel,
                                       format:
-                                          field.spec.fieldType ===
-                                          FieldType.boolean
-                                              ? field.spec.format
-                                              : undefined,
+                                          field.spec.fieldType === FieldType.boolean ? field.spec.format : undefined,
                                       options:
-                                          field.spec.fieldType ===
-                                          FieldType.select
-                                              ? field.spec.options()
-                                              : undefined,
+                                          field.spec.fieldType === FieldType.select ? field.spec.options() : undefined,
                                       multiSelect:
-                                          field.spec.fieldType ===
-                                          FieldType.select
+                                          field.spec.fieldType === FieldType.select
                                               ? field.spec.multiSelect
                                               : undefined,
                                   },
                                   onChange: async (value) => {
-                                      const convertFromUI = field.spec
-                                          .convertFromUI as
-                                          | ((v: any) => T)
-                                          | undefined;
+                                      const convertFromUI = field.spec.convertFromUI as ((v: any) => T) | undefined;
                                       if (convertFromUI && field.insert) {
                                           const newVal = convertFromUI(value);
-                                          const newItem: S = field.insert(
-                                              item,
-                                              newVal
-                                          );
+                                          const newItem: S = field.insert(item, newVal);
 
                                           assert(edit?.mode === "single");
-                                          const p = csud?.cudCallbacks?.update?.(
-                                              new Map([[primaryKey, newItem]])
-                                          );
+                                          const p = csud?.cudCallbacks?.update?.(new Map([[primaryKey, newItem]]));
                                           if (p) {
-                                              let results: Map<
-                                                  S[PK],
-                                                  UpdateResult
-                                              >;
+                                              let results: Map<S[PK], UpdateResult>;
                                               if (p instanceof Promise) {
                                                   const editId = beginEdit();
                                                   results = await p;
@@ -855,11 +750,7 @@ function CRUDRow<S, T, PK extends keyof S>({
                                                   if (result !== true) {
                                                       toast({
                                                           description: result
-                                                              .reduce(
-                                                                  (acc, err) =>
-                                                                      `${acc}; ${err}`,
-                                                                  ""
-                                                              )
+                                                              .reduce((acc, err) => `${acc}; ${err}`, "")
                                                               .substring(2),
                                                           isClosable: true,
                                                           status: "error",
@@ -921,9 +812,7 @@ function CRUDRow<S, T, PK extends keyof S>({
                     paddingLeft="0.5rem"
                     paddingRight="0.5rem"
                     onClick={async () => {
-                        const p = csud?.cudCallbacks?.delete?.(
-                            new Set([primaryKey])
-                        );
+                        const p = csud?.cudCallbacks?.delete?.(new Set([primaryKey]));
                         if (p) {
                             let results: Map<S[PK], boolean>;
                             if (p instanceof Promise) {
@@ -969,9 +858,7 @@ function CRUDSelectionBox<T, PK extends keyof T>({
     setSelectedKeys,
 }: {
     item: T;
-    primaryKeyField: Readonly<
-        PrimaryField<T, T[PK], PrimaryKeyFieldSpec<T[PK]>>
-    >;
+    primaryKeyField: Readonly<PrimaryField<T, T[PK], PrimaryKeyFieldSpec<T[PK]>>>;
     isSelected: boolean;
     setSelectedKeys: React.Dispatch<React.SetStateAction<Set<T[PK]>>>;
 }): JSX.Element {
@@ -1000,10 +887,7 @@ function CRUDSelectionBox<T, PK extends keyof T>({
 
 function CRUDCreateButton<T, PK extends keyof T>({
     isDisabled,
-    primaryFields: {
-        keyField: primaryKeyField,
-        otherFields: otherPrimaryFields,
-    },
+    primaryFields: { keyField: primaryKeyField, otherFields: otherPrimaryFields },
     csud,
     addDirtyKey,
     setSelectedKeys,
@@ -1019,19 +903,11 @@ function CRUDCreateButton<T, PK extends keyof T>({
         () =>
             (primaryKeyField.isHidden
                 ? []
-                : [
-                      (primaryKeyField as unknown) as Readonly<
-                          PrimaryField<T, keyof T>
-                      >,
-                  ]
+                : [(primaryKeyField as unknown) as Readonly<PrimaryField<T, keyof T>>]
             ).concat(
                 otherPrimaryFields
-                    ? (Object.values(otherPrimaryFields) as Array<
-                          Readonly<PrimaryField<T, keyof T>>
-                      >).filter(
-                          (x) =>
-                              !x.isHidden &&
-                              (x.isEditable || x.isEditableAtCreate)
+                    ? (Object.values(otherPrimaryFields) as Array<Readonly<PrimaryField<T, keyof T>>>).filter(
+                          (x) => !x.isHidden && (x.isEditable || x.isEditableAtCreate)
                       )
                     : []
             ),
@@ -1041,53 +917,37 @@ function CRUDCreateButton<T, PK extends keyof T>({
     const defaultValues = useMemo(() => {
         const result: Map<string, any> = new Map();
         if (otherPrimaryFields) {
-            const fields = Object.values(otherPrimaryFields) as Array<
-                Readonly<PrimaryField<T, any>>
-            >;
+            const fields = Object.values(otherPrimaryFields) as Array<Readonly<PrimaryField<T, any>>>;
             fields.forEach((field) => {
                 result.set(field.heading, field.defaultValue);
             });
         }
         return result;
     }, [otherPrimaryFields]);
-    const [fieldValues, setFieldValues] = useState<Map<string, any>>(
-        defaultValues
-    );
+    const [fieldValues, setFieldValues] = useState<Map<string, any>>(defaultValues);
 
     const fieldEls = useMemo(
         () =>
             visibleFields.map((field, fieldIdx) => (
                 <FormControl key={`create-field-${fieldIdx}`}>
                     <FormLabel>{field.heading}</FormLabel>
-                    {defaultRenderers[field.spec.fieldType](
-                        fieldValues.get(field.heading),
-                        {
-                            label: field.ariaLabel,
-                            opts: {
-                                falseLabel: field.editorFalseLabel,
-                                trueLabel: field.editorTrueLabel,
-                                format:
-                                    field.spec.fieldType === FieldType.boolean
-                                        ? field.spec.format
-                                        : undefined,
-                                options:
-                                    field.spec.fieldType === FieldType.select
-                                        ? field.spec.options()
-                                        : undefined,
-                                multiSelect:
-                                    field.spec.fieldType === FieldType.select
-                                        ? field.spec.multiSelect
-                                        : undefined,
-                            },
-                            onChange: (value) => {
-                                setFieldValues((oldValues) => {
-                                    const newValues = new Map(oldValues);
-                                    newValues.set(field.heading, value);
-                                    return newValues;
-                                });
-                            },
-                        }
-                    )}
+                    {defaultRenderers[field.spec.fieldType](fieldValues.get(field.heading), {
+                        label: field.ariaLabel,
+                        opts: {
+                            falseLabel: field.editorFalseLabel,
+                            trueLabel: field.editorTrueLabel,
+                            format: field.spec.fieldType === FieldType.boolean ? field.spec.format : undefined,
+                            options: field.spec.fieldType === FieldType.select ? field.spec.options() : undefined,
+                            multiSelect: field.spec.fieldType === FieldType.select ? field.spec.multiSelect : undefined,
+                        },
+                        onChange: (value) => {
+                            setFieldValues((oldValues) => {
+                                const newValues = new Map(oldValues);
+                                newValues.set(field.heading, value);
+                                return newValues;
+                            });
+                        },
+                    })}
                     <FormHelperText>{field.description}</FormHelperText>
                 </FormControl>
             )),
@@ -1103,14 +963,10 @@ function CRUDCreateButton<T, PK extends keyof T>({
                 let newItem: Partial<T> = {};
                 primaryKeyField.insert?.(newItem, tempKey);
                 if (otherPrimaryFields) {
-                    const fields = Object.values(otherPrimaryFields) as Array<
-                        Readonly<PrimaryField<T, any>>
-                    >;
+                    const fields = Object.values(otherPrimaryFields) as Array<Readonly<PrimaryField<T, any>>>;
                     fields.forEach((field) => {
                         const uiValue = fieldValues.get(field.heading);
-                        const convertFromUI = field.spec.convertFromUI as
-                            | ((v: any) => T)
-                            | undefined;
+                        const convertFromUI = field.spec.convertFromUI as ((v: any) => T) | undefined;
                         if (convertFromUI && field.insert) {
                             const value = convertFromUI(uiValue);
                             newItem = field.insert(newItem, value);
@@ -1151,13 +1007,7 @@ function CRUDCreateButton<T, PK extends keyof T>({
                 Create new
             </Button>
 
-            <Modal
-                isOpen={isOpen}
-                onClose={onClose}
-                isCentered
-                scrollBehavior="inside"
-                size="xl"
-            >
+            <Modal isOpen={isOpen} onClose={onClose} isCentered scrollBehavior="inside" size="xl">
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>Create new</ModalHeader>
@@ -1180,15 +1030,10 @@ function CRUDCreateButton<T, PK extends keyof T>({
     );
 }
 
-export default function CRUDTable<T, PK extends keyof T>(
-    props: Readonly<CRUDTableProps<T, PK>>
-): JSX.Element {
+export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTableProps<T, PK>>): JSX.Element {
     const {
         data,
-        primaryFields: {
-            keyField: primaryKeyField,
-            otherFields: otherPrimaryFields,
-        },
+        primaryFields: { keyField: primaryKeyField, otherFields: otherPrimaryFields },
         secondaryFields,
         csud,
         // TODO: highlighting,
@@ -1219,11 +1064,7 @@ export default function CRUDTable<T, PK extends keyof T>(
         },
         [onSecondaryPanelOpen, secondaryFields?.editSingle, selectedKeys]
     );
-    const [
-        filterValues,
-        debouncedFilterValues,
-        setFilterValues,
-    ] = useDebouncedState<Map<string, unknown>>(new Map());
+    const [filterValues, debouncedFilterValues, setFilterValues] = useDebouncedState<Map<string, unknown>>(new Map());
 
     const [dirtyKeys, setDirtyKeys] = useState<Set<T[PK]>>(new Set());
     const [ongoingEdits, setOngoingEdits] = useState<Set<string>>(new Set());
@@ -1260,41 +1101,25 @@ export default function CRUDTable<T, PK extends keyof T>(
         () =>
             (primaryKeyField.isHidden
                 ? []
-                : [
-                      (primaryKeyField as unknown) as Readonly<
-                          PrimaryField<T, keyof T>
-                      >,
-                  ]
+                : [(primaryKeyField as unknown) as Readonly<PrimaryField<T, keyof T>>]
             ).concat(
                 otherPrimaryFields
-                    ? (Object.values(otherPrimaryFields) as Array<
-                          Readonly<PrimaryField<T, keyof T>>
-                      >).filter((x) => !x.isHidden)
+                    ? (Object.values(otherPrimaryFields) as Array<Readonly<PrimaryField<T, keyof T>>>).filter(
+                          (x) => !x.isHidden
+                      )
                     : []
             ),
         [otherPrimaryFields, primaryKeyField]
     );
-    const filterFields = useMemo(
-        () => visibleFields.filter((x) => !!x.spec.filter),
-        [visibleFields]
-    );
+    const filterFields = useMemo(() => visibleFields.filter((x) => !!x.spec.filter), [visibleFields]);
 
     const hasSecondaryFields = !!secondaryFields;
     const isFilterable = visibleFields.some((field) => !!field.spec.filter);
     const includeDeleteColumn = !!csud?.cudCallbacks?.delete;
-    const includeSelectorColumn =
-        includeDeleteColumn || hasSecondaryFields || isFilterable;
-    const editMode =
-        selectedKeys.size === 1
-            ? "single"
-            : selectedKeys.size > 0
-            ? "multi"
-            : false;
+    const includeSelectorColumn = includeDeleteColumn || hasSecondaryFields || isFilterable;
+    const editMode = selectedKeys.size === 1 ? "single" : selectedKeys.size > 0 ? "multi" : false;
     const isDisabled = ongoingEdits.size > 0;
-    const isBatchEditMode =
-        csud &&
-        csud.cudCallbacks &&
-        "generateTemporaryKey" in csud.cudCallbacks;
+    const isBatchEditMode = csud && csud.cudCallbacks && "generateTemporaryKey" in csud.cudCallbacks;
     const showCreate = !!csud?.cudCallbacks?.create;
 
     const allRows = useMemo(() => {
@@ -1346,48 +1171,28 @@ export default function CRUDTable<T, PK extends keyof T>(
     ]);
 
     const applyFieldFilter = useCallback(
-        function _applyFieldFilter<S, J extends keyof S>(
-            field: Field<S, J>,
-            item: S
-        ): boolean {
+        function _applyFieldFilter<S, J extends keyof S>(field: Field<S, J>, item: S): boolean {
             switch (field.spec.fieldType) {
                 case FieldType.string: {
                     const v = field.spec.convertToUI(field.extract(item));
                     return !!field.spec.filter?.(
                         v,
-                        debouncedFilterValues.get(field.heading) as
-                            | string
-                            | undefined,
+                        debouncedFilterValues.get(field.heading) as string | undefined,
                         field.spec.shouldNotTrim,
                         field.spec.disallowSpaces
                     );
                 }
                 case FieldType.integer: {
                     const v = field.spec.convertToUI(field.extract(item));
-                    return !!field.spec.filter?.(
-                        v,
-                        debouncedFilterValues.get(field.heading) as
-                            | number
-                            | undefined
-                    );
+                    return !!field.spec.filter?.(v, debouncedFilterValues.get(field.heading) as number | undefined);
                 }
                 case FieldType.boolean: {
                     const v = field.spec.convertToUI(field.extract(item));
-                    return !!field.spec.filter?.(
-                        v,
-                        debouncedFilterValues.get(field.heading) as
-                            | boolean
-                            | undefined
-                    );
+                    return !!field.spec.filter?.(v, debouncedFilterValues.get(field.heading) as boolean | undefined);
                 }
                 case FieldType.select: {
                     const v = field.spec.convertToUI(field.extract(item));
-                    return !!field.spec.filter?.(
-                        v,
-                        debouncedFilterValues.get(field.heading) as
-                            | string[]
-                            | undefined
-                    );
+                    return !!field.spec.filter?.(v, debouncedFilterValues.get(field.heading) as string[] | undefined);
                 }
             }
         },
@@ -1450,9 +1255,7 @@ export default function CRUDTable<T, PK extends keyof T>(
                                 label={field.ariaLabel}
                                 onChange={(value) => {
                                     setFilterValues((oldVals) => {
-                                        const newVals = new Map(
-                                            oldVals.entries()
-                                        );
+                                        const newVals = new Map(oldVals.entries());
                                         newVals.set(field.heading, value);
                                         return newVals;
                                     });
@@ -1516,9 +1319,7 @@ export default function CRUDTable<T, PK extends keyof T>(
             });
         } else {
             data.forEach((item, key) => {
-                if (
-                    filterFields.every((field) => applyFieldFilter(field, item))
-                ) {
+                if (filterFields.every((field) => applyFieldFilter(field, item))) {
                     const rowEl = allRows.get(key);
                     assert(rowEl);
                     if (includeSelectorColumn) {
@@ -1569,10 +1370,7 @@ export default function CRUDTable<T, PK extends keyof T>(
             const key = selectedKeys.values().next().value;
             return secondaryFields.editSingle(key, onSecondaryPanelClose);
         } else if (selectedKeys.size > 1 && secondaryFields?.editMultiple) {
-            return secondaryFields.editMultiple(
-                selectedKeys,
-                onSecondaryPanelClose
-            );
+            return secondaryFields.editMultiple(selectedKeys, onSecondaryPanelClose);
         } else {
             return undefined;
         }
@@ -1593,23 +1391,13 @@ export default function CRUDTable<T, PK extends keyof T>(
         } else {
             data.forEach((item) => {
                 const pk = primaryKeyField.extract(item);
-                if (
-                    selectedKeys.has(pk) &&
-                    filterFields.every((field) => applyFieldFilter(field, item))
-                ) {
+                if (selectedKeys.has(pk) && filterFields.every((field) => applyFieldFilter(field, item))) {
                     result.add(primaryKeyField.extract(item));
                 }
             });
         }
         return result;
-    }, [
-        applyFieldFilter,
-        data,
-        filterFields,
-        isFilterable,
-        primaryKeyField,
-        selectedKeys,
-    ]);
+    }, [applyFieldFilter, data, filterFields, isFilterable, primaryKeyField, selectedKeys]);
 
     return (
         <>
@@ -1626,19 +1414,11 @@ export default function CRUDTable<T, PK extends keyof T>(
                         <Button
                             colorScheme="green"
                             aria-label="Save changes"
-                            disabled={
-                                dirtyKeys.size === 0 || ongoingEdits.size > 0
-                            }
+                            disabled={dirtyKeys.size === 0 || ongoingEdits.size > 0}
                             onClick={async () => {
                                 const editId = beginEdit();
-                                if (
-                                    csud &&
-                                    csud.cudCallbacks &&
-                                    "save" in csud.cudCallbacks
-                                ) {
-                                    const results = await csud.cudCallbacks.save(
-                                        dirtyKeys
-                                    );
+                                if (csud && csud.cudCallbacks && "save" in csud.cudCallbacks) {
+                                    const results = await csud.cudCallbacks.save(dirtyKeys);
 
                                     let anyFailures = false;
                                     results.forEach((result, key) => {
@@ -1683,11 +1463,7 @@ export default function CRUDTable<T, PK extends keyof T>(
                         </Button>
                     ) : (
                         <HStack>
-                            <span>
-                                {ongoingEdits.size > 0
-                                    ? "Saving"
-                                    : "No changes"}
-                            </span>
+                            <span>{ongoingEdits.size > 0 ? "Saving" : "No changes"}</span>
                             {ongoingEdits.size > 0 ? <Spinner /> : undefined}
                         </HStack>
                     )}
@@ -1706,8 +1482,7 @@ export default function CRUDTable<T, PK extends keyof T>(
                                 key={`custom-button-${idx}`}
                                 aria-label={button.label}
                                 isDisabled={
-                                    (!button.alwaysEnabled &&
-                                        visibleSelectedKeys.size === 0) ||
+                                    (!button.alwaysEnabled && visibleSelectedKeys.size === 0) ||
                                     button.isRunning ||
                                     dirtyKeys.size > 0
                                 }
@@ -1725,11 +1500,7 @@ export default function CRUDTable<T, PK extends keyof T>(
                         );
                     })}
                 </ButtonGroup>
-                <Grid
-                    width="100%"
-                    overflowX="auto"
-                    templateColumns={templateColumnsStr}
-                >
+                <Grid width="100%" overflowX="auto" templateColumns={templateColumnsStr}>
                     {includeSelectorColumn ? (
                         <CRUDCell
                             key={"heading-selection"}
@@ -1738,11 +1509,7 @@ export default function CRUDTable<T, PK extends keyof T>(
                             rowIdx={-2}
                             colIdx={-1}
                         >
-                            <Text
-                                as="span"
-                                wordBreak="keep-all"
-                                whiteSpace="nowrap"
-                            >
+                            <Text as="span" wordBreak="keep-all" whiteSpace="nowrap">
                                 ({rowEls.length} row
                                 {rowEls.length > 1 ? "s" : ""})
                             </Text>
@@ -1770,33 +1537,24 @@ export default function CRUDTable<T, PK extends keyof T>(
             </VStack>
 
             <Drawer
-                isOpen={
-                    isSecondaryPanelOpen && !!secondaryEditor?.editorElement
-                }
+                isOpen={isSecondaryPanelOpen && !!secondaryEditor?.editorElement}
                 placement="right"
                 onClose={onSecondaryPanelClose}
                 // finalFocusRef={btnRef}
             >
                 <DrawerOverlay>
                     <DrawerContent>
-                        {secondaryEditor?.includeCloseButton ? (
-                            <DrawerCloseButton />
-                        ) : undefined}
+                        {secondaryEditor?.includeCloseButton ? <DrawerCloseButton /> : undefined}
                         <DrawerHeader>Edit</DrawerHeader>
 
-                        <DrawerBody>
-                            {secondaryEditor?.editorElement}
-                        </DrawerBody>
+                        <DrawerBody>{secondaryEditor?.editorElement}</DrawerBody>
 
                         {secondaryEditor?.footerButtons ? (
                             <DrawerFooter>
                                 {secondaryEditor.footerButtons.map((button) => {
                                     if (button.type === "close") {
                                         return (
-                                            <Button
-                                                aria-label="Close editor"
-                                                onClick={onSecondaryPanelClose}
-                                            >
+                                            <Button aria-label="Close editor" onClick={onSecondaryPanelClose}>
                                                 Close
                                             </Button>
                                         );

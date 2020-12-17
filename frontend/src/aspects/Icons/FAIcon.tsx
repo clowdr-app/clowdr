@@ -1,9 +1,4 @@
-import {
-    chakra,
-    ChakraProps,
-    forwardRef,
-    SystemStyleObject,
-} from "@chakra-ui/system";
+import { chakra, ChakraProps, forwardRef, SystemStyleObject } from "@chakra-ui/system";
 import { cx, __DEV__ } from "@chakra-ui/utils";
 import * as React from "react";
 
@@ -14,16 +9,7 @@ export interface IconProps extends ChakraProps, ChakraProps {
 }
 
 export const FAIcon = forwardRef<IconProps, "i">(function Icon(props, ref) {
-    const {
-        iconStyle,
-        icon,
-        inline,
-        as: element,
-        color,
-        className,
-        __css,
-        ...rest
-    } = props;
+    const { iconStyle, icon, inline, as: element, color, className, __css, ...rest } = props;
 
     const _className = cx("chakra-icon", className);
 
@@ -55,9 +41,7 @@ export const FAIcon = forwardRef<IconProps, "i">(function Icon(props, ref) {
     if (!icon || !iconStyle) {
         throw new Error("Icon not correctly specified!");
     }
-    const iconEl = (
-        <i className={`fa${iconStyle} fa-${icon}`} />
-    ) as React.ReactNode;
+    const iconEl = (<i className={`fa${iconStyle} fa-${icon}`} />) as React.ReactNode;
 
     return (
         <chakra.span verticalAlign="middle" {...shared} {...rest}>

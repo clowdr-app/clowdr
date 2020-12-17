@@ -14,16 +14,8 @@ export class AwsStack extends cdk.Stack {
         // Create user account to be used by the actions service
         const user = new iam.User(this, "ActionsUser", {});
 
-        user.addManagedPolicy(
-            iam.ManagedPolicy.fromAwsManagedPolicyName(
-                "AWSElementalMediaLiveFullAccess"
-            )
-        );
-        user.addManagedPolicy(
-            iam.ManagedPolicy.fromAwsManagedPolicyName(
-                "AWSElementalMediaConvertFullAccess"
-            )
-        );
+        user.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AWSElementalMediaLiveFullAccess"));
+        user.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AWSElementalMediaConvertFullAccess"));
         user.addToPolicy(
             new iam.PolicyStatement({
                 actions: ["transcribe:*"],
@@ -52,20 +44,11 @@ export class AwsStack extends cdk.Stack {
         bucket.grantReadWrite(user);
         bucket.grantPublicAccess();
         bucket.addCorsRule({
-            allowedMethods: [
-                HttpMethods.GET,
-                HttpMethods.PUT,
-                HttpMethods.POST,
-            ],
+            allowedMethods: [HttpMethods.GET, HttpMethods.PUT, HttpMethods.POST],
             allowedOrigins: ["*"],
             exposedHeaders: ["ETag"],
             maxAge: 3000,
-            allowedHeaders: [
-                "Authorization",
-                "x-amz-date",
-                "x-amz-content-sha256",
-                "content-type",
-            ],
+            allowedHeaders: ["Authorization", "x-amz-date", "x-amz-content-sha256", "content-type"],
         });
         bucket.addCorsRule({
             allowedHeaders: [],
@@ -130,11 +113,7 @@ export class AwsStack extends cdk.Stack {
                 effect: iam.Effect.ALLOW,
             })
         );
-        mediaLiveAccessRole.addManagedPolicy(
-            iam.ManagedPolicy.fromAwsManagedPolicyName(
-                "AmazonSSMReadOnlyAccess"
-            )
-        );
+        mediaLiveAccessRole.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonSSMReadOnlyAccess"));
 
         // Create a role to be used by MediaConvert
         const mediaConvertAccessRole = new iam.Role(this, "MediaConvertRole", {
@@ -161,14 +140,9 @@ export class AwsStack extends cdk.Stack {
         /* Notifications and webhooks */
 
         // Transcoding notifications
-        const transcodeNotificationsTopic = new sns.Topic(
-            this,
-            "TranscodeNotifications"
-        );
+        const transcodeNotificationsTopic = new sns.Topic(this, "TranscodeNotifications");
         transcodeNotificationsTopic.grantPublish({
-            grantPrincipal: new iam.ArnPrincipal(
-                mediaConvertAccessRole.roleArn
-            ),
+            grantPrincipal: new iam.ArnPrincipal(mediaConvertAccessRole.roleArn),
         });
         transcodeNotificationsTopic.grantPublish({
             grantPrincipal: new iam.ServicePrincipal("events.amazonaws.com"),
@@ -203,9 +177,7 @@ export class AwsStack extends cdk.Stack {
             })
         );
 
-        events.EventBus.grantPutEvents(
-            new iam.ServicePrincipal("mediaconvert.amazonaws.com")
-        );
+        events.EventBus.grantPutEvents(new iam.ServicePrincipal("mediaconvert.amazonaws.com"));
         const transcodeEventRule = new events.Rule(this, "TranscodeEventRule", {
             enabled: true,
         });
@@ -213,28 +185,15 @@ export class AwsStack extends cdk.Stack {
             source: ["aws.mediaconvert"],
             detailType: ["MediaConvert Job State Change"],
         });
-        transcodeEventRule.addTarget(
-            new targets.SnsTopic(transcodeNotificationsTopic)
-        );
+        transcodeEventRule.addTarget(new targets.SnsTopic(transcodeNotificationsTopic));
 
-        const transcodeLogGroup = new logs.LogGroup(
-            this,
-            "TranscodeLogGroup",
-            {}
-        );
-        transcodeEventRule.addTarget(
-            new targets.CloudWatchLogGroup(transcodeLogGroup)
-        );
+        const transcodeLogGroup = new logs.LogGroup(this, "TranscodeLogGroup", {});
+        transcodeEventRule.addTarget(new targets.CloudWatchLogGroup(transcodeLogGroup));
 
         // Transcribe notifications
-        const transcribeNotificationsTopic = new sns.Topic(
-            this,
-            "TranscribeNotifications"
-        );
+        const transcribeNotificationsTopic = new sns.Topic(this, "TranscribeNotifications");
         transcribeNotificationsTopic.grantPublish({
-            grantPrincipal: new iam.ServicePrincipal(
-                "transcribe.amazonaws.com"
-            ),
+            grantPrincipal: new iam.ServicePrincipal("transcribe.amazonaws.com"),
         });
         transcribeNotificationsTopic.addToResourcePolicy(
             new iam.PolicyStatement({
@@ -245,28 +204,16 @@ export class AwsStack extends cdk.Stack {
             })
         );
 
-        const transcribeEventRule = new events.Rule(
-            this,
-            "TranscribeEventRule",
-            {
-                enabled: true,
-            }
-        );
+        const transcribeEventRule = new events.Rule(this, "TranscribeEventRule", {
+            enabled: true,
+        });
         transcribeEventRule.addEventPattern({
             source: ["aws.transcribe"],
             detailType: ["Transcribe Job State Change"],
         });
-        transcribeEventRule.addTarget(
-            new targets.SnsTopic(transcribeNotificationsTopic)
-        );
-        const transcribeLogGroup = new logs.LogGroup(
-            this,
-            "TranscribeLogGroup",
-            {}
-        );
-        transcribeEventRule.addTarget(
-            new targets.CloudWatchLogGroup(transcribeLogGroup)
-        );
+        transcribeEventRule.addTarget(new targets.SnsTopic(transcribeNotificationsTopic));
+        const transcribeLogGroup = new logs.LogGroup(this, "TranscribeLogGroup", {});
+        transcribeEventRule.addTarget(new targets.CloudWatchLogGroup(transcribeLogGroup));
 
         /* Outputs */
         new cdk.CfnOutput(this, "BucketId", {

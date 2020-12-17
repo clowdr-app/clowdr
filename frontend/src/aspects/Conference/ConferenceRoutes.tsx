@@ -48,13 +48,7 @@ function AuthenticatedConferenceRoutes(rootUrl: string): JSX.Element {
     );
 }
 
-export default function ConferenceRoutes({
-    confSlug,
-    rootUrl,
-}: {
-    confSlug: string;
-    rootUrl: string;
-}): JSX.Element {
+export default function ConferenceRoutes({ confSlug, rootUrl }: { confSlug: string; rootUrl: string }): JSX.Element {
     return (
         <ConferenceProvider confSlug={confSlug}>
             <Switch>

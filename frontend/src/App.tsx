@@ -28,13 +28,7 @@ function App(_props: AppProps): JSX.Element {
                     alignItems="center"
                 >
                     <PrimaryMenuButtonsProvider>
-                        <VStack
-                            overflowX="hidden"
-                            overflowY="auto"
-                            spacing={5}
-                            margin="auto"
-                            width="100%"
-                        >
+                        <VStack overflowX="hidden" overflowY="auto" spacing={5} margin="auto" width="100%">
                             <Routing />
                         </VStack>
                         <MainMenu />

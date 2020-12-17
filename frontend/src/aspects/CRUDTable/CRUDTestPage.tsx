@@ -23,8 +23,7 @@ type TestCRUDData = {
     selectField1: string;
 };
 
-const TestCRUDTable = (props: Readonly<CRUDTableProps<TestCRUDData, "id">>) =>
-    CRUDTable(props);
+const TestCRUDTable = (props: Readonly<CRUDTableProps<TestCRUDData, "id">>) => CRUDTable(props);
 
 function generateInitialTestCRUDData(): Map<string, TestCRUDData> {
     const arr = new Array<[string, TestCRUDData]>();
@@ -46,9 +45,7 @@ function generateInitialTestCRUDData(): Map<string, TestCRUDData> {
 }
 
 export default function CRUDTestPage(): JSX.Element {
-    const [testData, setTestData] = useState<Map<string, TestCRUDData>>(
-        generateInitialTestCRUDData()
-    );
+    const [testData, setTestData] = useState<Map<string, TestCRUDData>>(generateInitialTestCRUDData());
 
     const stringFieldSpec: StringFieldSpec<string> = useMemo(
         () => ({
@@ -175,12 +172,7 @@ export default function CRUDTestPage(): JSX.Element {
             <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
                 CRUD Table Testing
             </Heading>
-            <Heading
-                as="h2"
-                fontSize="1.7rem"
-                lineHeight="2.4rem"
-                fontStyle="italic"
-            >
+            <Heading as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                 Manual testing page
             </Heading>
             <TestCRUDTable
@@ -212,10 +204,7 @@ export default function CRUDTestPage(): JSX.Element {
                             },
                             extract: (v) => v.stringField1,
                             spec: stringFieldSpec,
-                            validate: (v) =>
-                                v.length >= 10 || [
-                                    "Must be at least 10 characters",
-                                ],
+                            validate: (v) => v.length >= 10 || ["Must be at least 10 characters"],
                         },
                         bool1Field: {
                             heading: "Bool1",
@@ -236,9 +225,7 @@ export default function CRUDTestPage(): JSX.Element {
                     },
                 }}
                 csud={{
-                    cudCallbacks: bacthCUDMode
-                        ? syncCUDCallbacks
-                        : asyncCUDCallbacks,
+                    cudCallbacks: bacthCUDMode ? syncCUDCallbacks : asyncCUDCallbacks,
                 }}
                 secondaryFields={{
                     editSingle: (key, onClose) => {

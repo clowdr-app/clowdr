@@ -74,10 +74,7 @@ gql`
                 name: $name
                 requiredContentId: $requiredContentId
             }
-            on_conflict: {
-                constraint: ContentItem_requiredContentId_key
-                update_columns: data
-            }
+            on_conflict: { constraint: ContentItem_requiredContentId_key, update_columns: data }
         ) {
             id
         }
@@ -86,9 +83,7 @@ gql`
 
 async function checkS3Url(
     url: string
-): Promise<
-    { result: "success"; url: string } | { result: "error"; message: string }
-> {
+): Promise<{ result: "success"; url: string } | { result: "error"; message: string }> {
     const { region, bucket, key } = AmazonS3URI(url);
     if (region !== process.env.AWS_REGION) {
         return { result: "error", message: "Invalid S3 URL (region mismatch)" };
@@ -115,10 +110,7 @@ async function checkS3Url(
     return { result: "success", url: `s3://${bucket}/${key}` };
 }
 
-async function createBlob(
-    inputData: any,
-    contentTypeName: ContentType_Enum
-): Promise<ContentBlob | { error: string }> {
+async function createBlob(inputData: any, contentTypeName: ContentType_Enum): Promise<ContentBlob | { error: string }> {
     switch (contentTypeName) {
         case ContentType_Enum.Abstract:
         case ContentType_Enum.Text:
@@ -195,9 +187,7 @@ async function createBlob(
     }
 }
 
-async function getItemByToken(
-    magicToken: string
-): Promise<RequiredItemFieldsFragment | { error: string }> {
+async function getItemByToken(magicToken: string): Promise<RequiredItemFieldsFragment | { error: string }> {
     if (!magicToken) {
         return {
             error: "Access token not provided.",
@@ -224,11 +214,7 @@ async function getItemByToken(
 
 gql`
     query GetUploaders($requiredContentItemId: uuid!) {
-        Uploader(
-            where: {
-                requiredContentItem: { id: { _eq: $requiredContentItemId } }
-            }
-        ) {
+        Uploader(where: { requiredContentItem: { id: { _eq: $requiredContentItemId } } }) {
             name
             id
             email
@@ -249,23 +235,21 @@ async function sendSubmittedEmail(
         },
     });
 
-    const emails: Email_Insert_Input[] = uploaders.data.Uploader.map(
-        (uploader) => {
-            const htmlContents = `<p>Dear ${uploader.name},</p>
+    const emails: Email_Insert_Input[] = uploaders.data.Uploader.map((uploader) => {
+        const htmlContents = `<p>Dear ${uploader.name},</p>
             <p>A new version of <em>${requiredContentItemName}</em> (${contentGroupTitle}) was uploaded to ${conferenceName}.</p>
             <p>You are receiving this email because you are listed as an uploader for this item.
             This is an automated email sent on behalf of Clowdr CIC. If you believe you have received this
             email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}.</p>`;
 
-            return {
-                emailAddress: uploader.email,
-                reason: "item_submitted",
-                subject: `Clowdr: submitted item ${requiredContentItemName} to ${conferenceName}`,
-                htmlContents,
-                plainTextContents: htmlToText(htmlContents),
-            };
-        }
-    );
+        return {
+            emailAddress: uploader.email,
+            reason: "item_submitted",
+            subject: `Clowdr: submitted item ${requiredContentItemName} to ${conferenceName}`,
+            htmlContents,
+            plainTextContents: htmlToText(htmlContents),
+        };
+    });
 
     await apolloClient.mutate({
         mutation: InsertEmailsDocument,
@@ -275,9 +259,7 @@ async function sendSubmittedEmail(
     });
 }
 
-export async function handleContentItemSubmitted(
-    args: submitContentItemArgs
-): Promise<SubmitContentItemOutput> {
+export async function handleContentItemSubmitted(args: submitContentItemArgs): Promise<SubmitContentItemOutput> {
     const requiredContentItem = await getItemByToken(args.magicToken);
     if ("error" in requiredContentItem) {
         return {
@@ -286,10 +268,7 @@ export async function handleContentItemSubmitted(
         };
     }
 
-    const newVersionData = await createBlob(
-        args.data,
-        requiredContentItem.contentTypeName
-    );
+    const newVersionData = await createBlob(args.data, requiredContentItem.contentTypeName);
     if ("error" in newVersionData) {
         return {
             success: false,
@@ -333,24 +312,18 @@ export async function handleContentItemSubmitted(
                 message: "Failed to save new item.",
             };
         }
-    } else if (
-        requiredContentItem.contentItem.contentTypeName !==
-        requiredContentItem.contentTypeName
-    ) {
+    } else if (requiredContentItem.contentItem.contentTypeName !== requiredContentItem.contentTypeName) {
         return {
             success: false,
             message: "An item of a different type has already been uploaded.",
         };
     } else {
-        const latestVersion = await getLatestVersion(
-            requiredContentItem.contentItem.id
-        );
+        const latestVersion = await getLatestVersion(requiredContentItem.contentItem.id);
 
         if (newVersionData.type !== latestVersion?.data.type) {
             return {
                 success: false,
-                message:
-                    "An item of a different type has already been uploaded.",
+                message: "An item of a different type has already been uploaded.",
             };
         } else {
             try {
@@ -389,9 +362,7 @@ export async function handleContentItemSubmitted(
     };
 }
 
-export async function handleUpdateSubtitles(
-    args: updateSubtitlesArgs
-): Promise<SubmitUpdatedSubtitlesOutput> {
+export async function handleUpdateSubtitles(args: updateSubtitlesArgs): Promise<SubmitUpdatedSubtitlesOutput> {
     const requiredContentItem = await getItemByToken(args.magicToken);
     if ("error" in requiredContentItem) {
         return {
@@ -407,9 +378,7 @@ export async function handleUpdateSubtitles(
         };
     }
 
-    const latestVersion = await getLatestVersion(
-        requiredContentItem.contentItem.id
-    );
+    const latestVersion = await getLatestVersion(requiredContentItem.contentItem.id);
 
     if (!latestVersion) {
         return {
@@ -421,10 +390,7 @@ export async function handleUpdateSubtitles(
     const newVersion = R.clone(latestVersion);
     newVersion.createdAt = new Date().getTime();
     newVersion.createdBy = "user";
-    assert(
-        is<VideoContentBlob>(newVersion.data),
-        "Content item is not a video"
-    );
+    assert(is<VideoContentBlob>(newVersion.data), "Content item is not a video");
 
     const bucket = process.env.AWS_CONTENT_BUCKET_ID;
     const key = `${uuidv4()}.srt`;

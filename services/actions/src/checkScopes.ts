@@ -81,13 +81,9 @@ export default function checkScopes(
 
             let allowed: boolean;
             if (checkAllScopes) {
-                allowed = expectedScopes.every((scope) =>
-                    authScopes.includes(scope)
-                );
+                allowed = expectedScopes.every((scope) => authScopes.includes(scope));
             } else {
-                allowed = expectedScopes.some((scope) =>
-                    authScopes.includes(scope)
-                );
+                allowed = expectedScopes.some((scope) => authScopes.includes(scope));
             }
 
             if (allowed) {

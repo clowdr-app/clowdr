@@ -18,11 +18,7 @@ gql`
     }
 `;
 
-export default function UploadedContentItem({
-    magicToken,
-}: {
-    magicToken: string;
-}): JSX.Element {
+export default function UploadedContentItem({ magicToken }: { magicToken: string }): JSX.Element {
     const { loading, error, data, refetch } = useGetContentItemQuery({
         variables: {
             magicToken,
@@ -43,19 +39,12 @@ export default function UploadedContentItem({
                         item ? (
                             <VStack spacing={2} key={item.id}>
                                 <Tooltip label="Refresh uploaded item">
-                                    <Button
-                                        aria-label="Refresh uploaded item"
-                                        onClick={async () => await refetch()}
-                                    >
+                                    <Button aria-label="Refresh uploaded item" onClick={async () => await refetch()}>
                                         <FAIcon iconStyle="s" icon="sync" />
                                     </Button>
                                 </Tooltip>
                                 <RenderContentItem data={item.data} />
-                                <EditContentItem
-                                    data={item.data}
-                                    contentItemId={item.id}
-                                    magicToken={magicToken}
-                                />
+                                <EditContentItem data={item.data} contentItemId={item.id} magicToken={magicToken} />
                             </VStack>
                         ) : (
                             <></>

@@ -9,28 +9,13 @@ import assert from "assert";
 import { customAlphabet } from "nanoid";
 import { getHostUrl } from "../utils";
 
-assert(
-    process.env.AWS_ACCESS_KEY_ID,
-    "Missing AWS_ACCESS_KEY_ID environment variable"
-);
-assert(
-    process.env.AWS_SECRET_ACCESS_KEY,
-    "Missing AWS_SECRET_ACCESS_KEY environment variable"
-);
+assert(process.env.AWS_ACCESS_KEY_ID, "Missing AWS_ACCESS_KEY_ID environment variable");
+assert(process.env.AWS_SECRET_ACCESS_KEY, "Missing AWS_SECRET_ACCESS_KEY environment variable");
 
 assert(process.env.AWS_REGION, "Missing AWS_REGION environment variable");
-assert(
-    process.env.AWS_MEDIALIVE_SERVICE_ROLE_ARN,
-    "Missing AWS_MEDIALIVE_SERVICE_ROLE_ARN environment variable"
-);
-assert(
-    process.env.AWS_MEDIACONVERT_SERVICE_ROLE_ARN,
-    "Missing AWS_MEDIACONVERT_SERVICE_ROLE_ARN environment variable"
-);
-assert(
-    process.env.AWS_TRANSCRIBE_SERVICE_ROLE_ARN,
-    "Missing AWS_TRANSCRIBE_SERVICE_ROLE_ARN environment variable"
-);
+assert(process.env.AWS_MEDIALIVE_SERVICE_ROLE_ARN, "Missing AWS_MEDIALIVE_SERVICE_ROLE_ARN environment variable");
+assert(process.env.AWS_MEDIACONVERT_SERVICE_ROLE_ARN, "Missing AWS_MEDIACONVERT_SERVICE_ROLE_ARN environment variable");
+assert(process.env.AWS_TRANSCRIBE_SERVICE_ROLE_ARN, "Missing AWS_TRANSCRIBE_SERVICE_ROLE_ARN environment variable");
 assert(
     process.env.AWS_TRANSCODE_NOTIFICATIONS_TOPIC_ARN,
     "Missing AWS_TRANSCODE_NOTIFICATIONS_TOPIC_ARN environment variable"
@@ -90,9 +75,7 @@ async function getMediaConvertClient(): Promise<MediaConvert> {
         mediaConvertEndpoint.Endpoints.length < 1 ||
         !mediaConvertEndpoint.Endpoints[0].Url
     ) {
-        throw new Error(
-            "Could not retrieve customer-specific endpoint for MediaConvert"
-        );
+        throw new Error("Could not retrieve customer-specific endpoint for MediaConvert");
     }
 
     return new MediaConvert({

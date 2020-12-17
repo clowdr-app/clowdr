@@ -168,30 +168,30 @@ export enum ContentBaseType {
     File = "file",
     URL = "url",
     Link = "link",
-    Video = "video"
+    Video = "video",
 }
 
 export const ItemBaseTypes: { [K in ContentType_Enum]: ContentBaseType } = {
-    [ContentType_Enum.Abstract]:  ContentBaseType.Text,
-    [ContentType_Enum.ImageFile]:  ContentBaseType.File,
-    [ContentType_Enum.ImageUrl]:  ContentBaseType.URL,
-    [ContentType_Enum.Link]:  ContentBaseType.Link,
-    [ContentType_Enum.LinkButton]:  ContentBaseType.Link,
-    [ContentType_Enum.PaperFile]:  ContentBaseType.File,
-    [ContentType_Enum.PaperLink]:  ContentBaseType.Link,
-    [ContentType_Enum.PaperUrl]:  ContentBaseType.URL,
-    [ContentType_Enum.PosterFile]:  ContentBaseType.File,
-    [ContentType_Enum.PosterUrl]:  ContentBaseType.URL,
-    [ContentType_Enum.Text]:  ContentBaseType.Text,
-    [ContentType_Enum.VideoBroadcast]:  ContentBaseType.Video,
-    [ContentType_Enum.VideoCountdown]:  ContentBaseType.Video,
-    [ContentType_Enum.VideoFile]:  ContentBaseType.Video,
-    [ContentType_Enum.VideoFiller]:  ContentBaseType.Video,
-    [ContentType_Enum.VideoLink]:  ContentBaseType.Video,
-    [ContentType_Enum.VideoPrepublish]:  ContentBaseType.Video,
-    [ContentType_Enum.VideoSponsorsFiller]:  ContentBaseType.Video,
-    [ContentType_Enum.VideoTitles]:  ContentBaseType.Video,
-    [ContentType_Enum.VideoUrl]:  ContentBaseType.URL,
+    [ContentType_Enum.Abstract]: ContentBaseType.Text,
+    [ContentType_Enum.ImageFile]: ContentBaseType.File,
+    [ContentType_Enum.ImageUrl]: ContentBaseType.URL,
+    [ContentType_Enum.Link]: ContentBaseType.Link,
+    [ContentType_Enum.LinkButton]: ContentBaseType.Link,
+    [ContentType_Enum.PaperFile]: ContentBaseType.File,
+    [ContentType_Enum.PaperLink]: ContentBaseType.Link,
+    [ContentType_Enum.PaperUrl]: ContentBaseType.URL,
+    [ContentType_Enum.PosterFile]: ContentBaseType.File,
+    [ContentType_Enum.PosterUrl]: ContentBaseType.URL,
+    [ContentType_Enum.Text]: ContentBaseType.Text,
+    [ContentType_Enum.VideoBroadcast]: ContentBaseType.Video,
+    [ContentType_Enum.VideoCountdown]: ContentBaseType.Video,
+    [ContentType_Enum.VideoFile]: ContentBaseType.Video,
+    [ContentType_Enum.VideoFiller]: ContentBaseType.Video,
+    [ContentType_Enum.VideoLink]: ContentBaseType.Video,
+    [ContentType_Enum.VideoPrepublish]: ContentBaseType.Video,
+    [ContentType_Enum.VideoSponsorsFiller]: ContentBaseType.Video,
+    [ContentType_Enum.VideoTitles]: ContentBaseType.Video,
+    [ContentType_Enum.VideoUrl]: ContentBaseType.URL,
 };
 
 export interface TextualContentBlob extends BaseContentBlob {
@@ -227,7 +227,7 @@ type LanguageCode = string;
 export enum AWSJobStatus {
     InProgress = "IN_PROGRESS",
     Failed = "FAILED",
-    Completed = "COMPLETED"
+    Completed = "COMPLETED",
 }
 
 export interface SubtitleDetails {

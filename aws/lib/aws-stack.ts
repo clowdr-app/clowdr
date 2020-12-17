@@ -259,7 +259,6 @@ export class AwsStack extends cdk.Stack {
         transcribeEventRule.addTarget(
             new targets.SnsTopic(transcribeNotificationsTopic)
         );
-
         const transcribeLogGroup = new logs.LogGroup(
             this,
             "TranscribeLogGroup",
@@ -269,11 +268,12 @@ export class AwsStack extends cdk.Stack {
             new targets.CloudWatchLogGroup(transcribeLogGroup)
         );
 
-        // Outputs
+        /* Outputs */
         new cdk.CfnOutput(this, "BucketId", {
             value: bucket.bucketName,
         });
 
+        // Actions service access key
         new cdk.CfnOutput(this, "AccessKeyId", {
             value: accessKey.ref,
         });
@@ -282,6 +282,7 @@ export class AwsStack extends cdk.Stack {
             value: accessKey.attrSecretAccessKey,
         });
 
+        // Service roles
         new cdk.CfnOutput(this, "MediaConvertServiceRoleArn", {
             value: mediaConvertAccessRole.roleArn,
         });
@@ -294,6 +295,7 @@ export class AwsStack extends cdk.Stack {
             value: transcribeAccessRole.roleArn,
         });
 
+        // SNS topics
         new cdk.CfnOutput(this, "TranscodeNotificationsTopic", {
             value: transcodeNotificationsTopic.topicArn,
         });

@@ -1,5 +1,4 @@
 import axios, { AxiosInstance } from "axios";
-import { NumberLiteralType } from "typescript";
 import { assertType } from "typescript-is";
 import { Points } from "./openshotTypes";
 
@@ -14,7 +13,7 @@ interface EffectDetails {
     replace_image: boolean;
     has_audio: boolean;
     has_video: boolean;
-    order: NumberLiteralType;
+    order: number;
 }
 
 interface Effect {

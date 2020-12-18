@@ -4,7 +4,7 @@
     "description": "Action handlers",
     "main": "build/server.js",
     "scripts": {
-        "build": "tsc",
+        "build": "ttsc",
         "start": "node build/server.js",
         "dev": "npm run dev-stage2 && npm run dev-stage3",
         "dev-stage2": "npm run --prefix=../../shared/ --cwd=../../shared/ build",

@@ -73,7 +73,28 @@ Choose the following options:
 
 You can test that the instance is running by going to `https://<load balancer DNS name>/doc/`. Just accept the certificate error for this test.
 
-Finally, point the domain for which you generated the certificate at the load balancer. This step will vary depending on how your DNS is set up.
+Now point the domain for which you generated the certificate at the load balancer. This step will vary depending on how your DNS is set up.
+
+Go to `https://<your domain>/cloud-admin/` and log in with the username and password created above. Use the admin panel to create a new user account with API-only access.
+
+## SSH Tips
+
+You can create an SSH config file to make it easier to connect to the OpenShot instance. For example:
+
+```
+Host clowdr_bastion
+	HostName <bastion instance DNS name>
+	User ec2-user
+	IdentityFile ~/temp
+	ForwardAgent yes
+
+Host clowdr_openshot
+	HostName <OpenShot instance private DNS name>
+	ProxyJump clowdr_bastion
+	User ubuntu
+```
+
+If you are using Windows, you currently need to [patch SSH](https://github.com/microsoft/vscode-remote-release/issues/18#issuecomment-507258777) for this to work.
 
 ## Useful commands
 

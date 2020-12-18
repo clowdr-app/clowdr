@@ -45,6 +45,7 @@
         "@types/sns-validator": "^0.3.0",
         "@uppy/companion": "^2.3.0",
         "amazon-s3-uri": "^0.1.0",
+        "axios": "^0.19.2",
         "cors": "^2.8.5",
         "d3-format": "^2.0.0",
         "exponential-backoff": "^3.1.0",

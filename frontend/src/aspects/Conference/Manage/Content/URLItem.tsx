@@ -95,7 +95,7 @@ export const URLItemTemplate: ItemBaseTemplate = {
                 setTimeout(() => update(data), 0);
             }
 
-            const latestVersion = data.item.data.sort((x, y) => y.createdAt - x.createdAt)[0];
+            const latestVersion = data.item.data[data.item.data.length - 1];
             assert(
                 latestVersion.data.baseType === ContentBaseType.URL,
                 `URL Item Template mistakenly used for base type ${latestVersion.data.baseType}.`

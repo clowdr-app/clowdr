@@ -6,7 +6,7 @@ import ReactPlayer from "react-player";
 import FAIcon from "../Icons/FAIcon";
 
 export default function RenderContentItem({ data }: { data: ContentItemDataBlob }): JSX.Element {
-    const latestVersion = data && data.length > 0 ? data.sort((x, y) => y.createdAt - x.createdAt)[0] : null;
+    const latestVersion = data && data.length > 0 ? data[data.length - 1] : null;
 
     function s3UrlToHttpUrl(s3Url: string): string {
         const { bucket, key } = AmazonS3Uri(s3Url);

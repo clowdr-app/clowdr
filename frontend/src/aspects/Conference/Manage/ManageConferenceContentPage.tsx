@@ -52,6 +52,7 @@ import type {
     ItemBaseTemplate,
     RequiredContentItemDescriptor,
 } from "./Content/Types";
+import { URLItemTemplate } from "./Content/URLItem";
 import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
 gql`
@@ -221,7 +222,7 @@ const ItemBaseTemplates: { [K in ContentBaseType]: ItemBaseTemplate } = {
     [ContentBaseType.File]: { supported: false },
     [ContentBaseType.Link]: LinkItemTemplate,
     [ContentBaseType.Text]: TextItemTemplate,
-    [ContentBaseType.URL]: { supported: false },
+    [ContentBaseType.URL]: URLItemTemplate,
     [ContentBaseType.Video]: { supported: false },
 };
 

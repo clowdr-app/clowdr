@@ -31,14 +31,14 @@ export const TextItemTemplate: ItemBaseTemplate = {
             `Text Item Template mistakenly used for type ${type}.`
         );
 
-        const typeName = type[0] + type.toLowerCase().substr(1);
+        const name = type[0] + type.toLowerCase().substr(1);
         if (required) {
             return {
                 type: "required-only",
                 requiredItem: {
                     isNew: true,
                     id: uuidv4(),
-                    name: typeName,
+                    name,
                     typeName: type,
                 },
             };
@@ -48,7 +48,7 @@ export const TextItemTemplate: ItemBaseTemplate = {
                 item: {
                     isNew: true,
                     id: uuidv4(),
-                    name: typeName,
+                    name,
                     typeName: type,
                     isHidden: false,
                     data: [],

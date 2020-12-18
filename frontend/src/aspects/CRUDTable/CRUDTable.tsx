@@ -522,7 +522,12 @@ export interface CRUDTableProps<T, PK extends keyof T> {
      * Fields which are hidden or editable through a side-panel or popout.
      */
     secondaryFields?: {
-        editSingle?: (key: T[PK], onClose: () => void, markDirty: () => void) => SecondaryEditorComponents;
+        editSingle?: (
+            key: T[PK],
+            onClose: () => void,
+            isDirty: boolean,
+            markDirty: () => void
+        ) => SecondaryEditorComponents;
         editMultiple?: (
             keys: Set<T[PK]>,
             onClose: () => void,
@@ -1370,7 +1375,7 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
     const secondaryEditor = useMemo(() => {
         if (selectedKeys.size === 1 && secondaryFields?.editSingle) {
             const key = selectedKeys.values().next().value;
-            return secondaryFields.editSingle(key, onSecondaryPanelClose, () => {
+            return secondaryFields.editSingle(key, onSecondaryPanelClose, dirtyKeys.has(key), () => {
                 setTimeout(
                     () =>
                         setDirtyKeys((oldDirtyKeys) => {
@@ -1404,7 +1409,7 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
         } else {
             return undefined;
         }
-    }, [onSecondaryPanelClose, secondaryFields, selectedKeys]);
+    }, [dirtyKeys, onSecondaryPanelClose, secondaryFields, selectedKeys]);
 
     let templateColumnsStr = includeSelectorColumn ? "min-content" : "";
     for (let i = 0; i < visibleFields.length; i++) {

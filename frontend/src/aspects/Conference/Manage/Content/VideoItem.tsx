@@ -95,7 +95,7 @@ export const VideoItemTemplate: ItemBaseTemplate = {
                 `Video Item Template mistakenly used for type ${data.type}.`
             );
 
-            const VideoLabel = "Video";
+            const VideoLabel = "Uploaded video";
 
             if (data.item.data.length === 0) {
                 data = {
@@ -122,7 +122,7 @@ export const VideoItemTemplate: ItemBaseTemplate = {
                 </>
             );
         }
-        return <></>;
+        return <>No video uploaded yet.</>;
     },
     renderEditorHeading: function VideoItemEditorHeading(data) {
         return <>{data.type === "item-only" ? data.item.name : data.requiredItem.name}</>;

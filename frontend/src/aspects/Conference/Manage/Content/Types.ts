@@ -65,8 +65,5 @@ export type ItemBaseTemplate =
               required: boolean
           ) => ContentDescriptor;
           renderEditorHeading: (data: ContentDescriptor) => JSX.Element;
-          renderEditor: (
-              data: ContentDescriptor,
-              update: (updated: ContentDescriptor) => void
-          ) => JSX.Element;
+          renderEditor: (data: ContentDescriptor, update: (updated: ContentDescriptor) => void) => JSX.Element;
       };

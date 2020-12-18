@@ -51,7 +51,13 @@ export default function RenderContentItem({ data }: { data: ContentItemDataBlob 
                     return <Text>This item is still being processed.</Text>;
                 }
 
-                return <ReactPlayer style={{ maxWidth: "100%" }} url={s3UrlToHttpUrl(latestVersion.data.s3Url)} controls={true} />;
+                return (
+                    <ReactPlayer
+                        style={{ maxWidth: "100%" }}
+                        url={s3UrlToHttpUrl(latestVersion.data.s3Url)}
+                        controls={true}
+                    />
+                );
             }
         }
     }

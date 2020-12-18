@@ -8,7 +8,7 @@ import {
     Box,
     Heading,
     Spinner,
-    Text,
+    useDisclosure,
 } from "@chakra-ui/react";
 import { ContentBaseType, ItemBaseTypes } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
@@ -51,6 +51,7 @@ import type {
     ItemBaseTemplate,
     RequiredContentItemDescriptor,
 } from "./Content/Types";
+import UploadersModal from "./Content/UploadersModal";
 import { URLItemTemplate } from "./Content/URLItem";
 import { VideoItemTemplate } from "./Content/VideoItem";
 import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
@@ -785,7 +786,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                     otherFields: fields,
                 }}
                 secondaryFields={{
-                    editSingle: (key, onClose, markDirty) => {
+                    editSingle: function ContentGroupSecondaryEditor(key, onClose, isDirty, markDirty) {
                         const group = allContentGroupsMap?.get(key);
 
                         let editorElement: JSX.Element;
@@ -845,32 +846,27 @@ export default function ManageConferenceContentPage(): JSX.Element {
                                         }
 
                                         accordianTitle = itemTemplate.renderEditorHeading(itemDesc);
-                                        accordianContents = itemTemplate.renderEditor(
-                                            itemDesc,
-                                            (updatedDesc) => {
-                                                markDirty();
+                                        accordianContents = itemTemplate.renderEditor(itemDesc, (updatedDesc) => {
+                                            markDirty();
 
-                                                assert(updatedDesc.type === "item-only");
+                                            assert(updatedDesc.type === "item-only");
 
-                                                setAllContentGroupsMap((oldGroups) => {
-                                                    assert(oldGroups);
-                                                    const newGroups = new Map(oldGroups);
+                                            setAllContentGroupsMap((oldGroups) => {
+                                                assert(oldGroups);
+                                                const newGroups = new Map(oldGroups);
 
-                                                    const existingGroup = newGroups.get(group.id);
-                                                    assert(existingGroup);
-                                                    newGroups.set(group.id, {
-                                                        ...existingGroup,
-                                                        items: existingGroup.items.map((cItem) => {
-                                                            return itemDesc.item.id === cItem.id
-                                                                ? updatedDesc.item
-                                                                : cItem;
-                                                        }),
-                                                    });
-
-                                                    return newGroups;
+                                                const existingGroup = newGroups.get(group.id);
+                                                assert(existingGroup);
+                                                newGroups.set(group.id, {
+                                                    ...existingGroup,
+                                                    items: existingGroup.items.map((cItem) => {
+                                                        return itemDesc.item.id === cItem.id ? updatedDesc.item : cItem;
+                                                    }),
                                                 });
-                                            }
-                                        );
+
+                                                return newGroups;
+                                            });
+                                        });
                                     }
 
                                     itemElements.push(
@@ -926,58 +922,16 @@ export default function ManageConferenceContentPage(): JSX.Element {
                                         }
 
                                         accordianTitle = itemTemplate.renderEditorHeading(itemDesc);
-                                        const reqItemEditorContents = itemTemplate.renderEditor(
-                                            itemDesc,
-                                            (updatedDesc) => {
-                                                assert(updatedDesc.type !== "item-only");
-                                                markDirty();
-
-                                                setAllContentGroupsMap((oldGroups) => {
-                                                    assert(oldGroups);
-                                                    const newGroups = new Map(oldGroups);
-
-                                                    const existingGroup = newGroups.get(group.id);
-                                                    assert(existingGroup);
-                                                    newGroups.set(group.id, {
-                                                        ...existingGroup,
-                                                        items:
-                                                            itemDesc.type === "required-and-item" &&
-                                                            updatedDesc.type === "required-and-item"
-                                                                ? existingGroup.items.map((cItem) => {
-                                                                      return itemDesc.item.id === cItem.id
-                                                                          ? updatedDesc.item
-                                                                          : cItem;
-                                                                  })
-                                                                : itemDesc.type === "required-only" &&
-                                                                  updatedDesc.type === "required-and-item"
-                                                                ? [...existingGroup.items, updatedDesc.item]
-                                                                : itemDesc.type === "required-and-item" &&
-                                                                  updatedDesc.type === "required-only"
-                                                                ? existingGroup.items.filter(
-                                                                      (x) => x.id !== itemDesc.item.id
-                                                                  )
-                                                                : existingGroup.items,
-                                                        requiredItems: existingGroup.requiredItems.map((x) =>
-                                                            x.id === itemDesc.requiredItem.id
-                                                                ? updatedDesc.requiredItem
-                                                                : x
-                                                        ),
-                                                    });
-
-                                                    return newGroups;
-                                                });
-                                            }
-                                        );
 
                                         accordianContents = (
-                                            <>
-                                                <Box>
-                                                    <Text>TODO: Manage the names/emails of who has access</Text>
-                                                    <Text>TODO: Send upload reminder emails</Text>
-                                                    <Text>TODO: Show if content has already been uploaded</Text>
-                                                </Box>
-                                                {reqItemEditorContents}
-                                            </>
+                                            <RequiredItemEditor
+                                                group={group}
+                                                itemTemplate={itemTemplate}
+                                                isDirty={isDirty}
+                                                markDirty={markDirty}
+                                                setAllContentGroupsMap={setAllContentGroupsMap}
+                                                itemDesc={itemDesc}
+                                            />
                                         );
                                     }
 
@@ -1015,6 +969,87 @@ export default function ManageConferenceContentPage(): JSX.Element {
         </RequireAtLeastOnePermissionWrapper>
     );
 }
+function RequiredItemEditor({
+    group,
+    itemTemplate,
+    isDirty,
+    markDirty,
+    setAllContentGroupsMap,
+    itemDesc,
+}: {
+    group: ContentGroupDescriptor;
+    itemTemplate: {
+        supported: true;
+        createDefault: (
+            group: ContentGroupDescriptor,
+            itemType: ContentType_Enum,
+            required: boolean
+        ) => ContentDescriptor;
+        renderEditorHeading: (data: ContentDescriptor) => JSX.Element;
+        renderEditor: (data: ContentDescriptor, update: (updated: ContentDescriptor) => void) => JSX.Element;
+    };
+    isDirty: boolean;
+    markDirty: () => void;
+    setAllContentGroupsMap: React.Dispatch<React.SetStateAction<Map<string, ContentGroupDescriptor> | undefined>>;
+    itemDesc:
+        | {
+              type: "required-only";
+              requiredItem: RequiredContentItemDescriptor;
+          }
+        | {
+              type: "required-and-item";
+              requiredItem: RequiredContentItemDescriptor;
+              item: ContentItemDescriptor;
+          };
+}) {
+    const reqItemEditorContents = itemTemplate.renderEditor(itemDesc, (updatedDesc) => {
+        assert(updatedDesc.type !== "item-only");
+        markDirty();
+
+        setAllContentGroupsMap((oldGroups) => {
+            assert(oldGroups);
+            const newGroups = new Map(oldGroups);
+
+            const existingGroup = newGroups.get(group.id);
+            assert(existingGroup);
+            newGroups.set(group.id, {
+                ...existingGroup,
+                items:
+                    itemDesc.type === "required-and-item" && updatedDesc.type === "required-and-item"
+                        ? existingGroup.items.map((cItem) => {
+                              return itemDesc.item.id === cItem.id ? updatedDesc.item : cItem;
+                          })
+                        : itemDesc.type === "required-only" && updatedDesc.type === "required-and-item"
+                        ? [...existingGroup.items, updatedDesc.item]
+                        : itemDesc.type === "required-and-item" && updatedDesc.type === "required-only"
+                        ? existingGroup.items.filter((x) => x.id !== itemDesc.item.id)
+                        : existingGroup.items,
+                requiredItems: existingGroup.requiredItems.map((x) =>
+                    x.id === itemDesc.requiredItem.id ? updatedDesc.requiredItem : x
+                ),
+            });
+
+            return newGroups;
+        });
+    });
+
+    const { isOpen: isUploadersOpen, onOpen: onUploadersOpen, onClose: onUploadersClose } = useDisclosure();
+    const accordianContents = (
+        <>
+            {reqItemEditorContents}
+            <UploadersModal
+                isItemDirty={isDirty}
+                isOpen={isUploadersOpen}
+                onOpen={onUploadersOpen}
+                onClose={onUploadersClose}
+                groupTitle={group.title}
+                itemDesc={itemDesc.requiredItem}
+            />
+        </>
+    );
+    return accordianContents;
+}
+
 function fitGroupToTemplate(group: ContentGroupDescriptor) {
     assert(group.typeName);
     const groupTemplate = GroupTemplates[group.typeName];

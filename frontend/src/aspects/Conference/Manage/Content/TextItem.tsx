@@ -8,9 +8,7 @@ import type { ItemBaseTemplate } from "./Types";
 
 // TODO: Use Markdown editor instead of textarea
 
-function createDefaultText(
-    type: ContentType_Enum.Abstract | ContentType_Enum.Text
-): ContentItemVersionData {
+function createDefaultText(type: ContentType_Enum.Abstract | ContentType_Enum.Text): ContentItemVersionData {
     return {
         createdAt: new Date().getTime(),
         createdBy: "user",

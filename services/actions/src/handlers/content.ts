@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client/core";
-import { AWSJobStatus } from "@clowdr-app/shared-types/types/content";
+import { AWSJobStatus } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
 import { htmlToText } from "html-to-text";
 import R from "ramda";

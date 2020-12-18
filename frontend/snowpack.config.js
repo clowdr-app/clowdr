@@ -3,7 +3,6 @@ module.exports = {
     mount: {
         public: "/",
         src: "/_dist_",
-        "../shared": "/@clowdr-app/shared-types",
     },
     plugins: [
         "@snowpack/plugin-react-refresh",
@@ -25,8 +24,5 @@ module.exports = {
     },
     proxy: {
         /* ... */
-    },
-    alias: {
-        "@clowdr-app/shared-types": "../shared",
     },
 };

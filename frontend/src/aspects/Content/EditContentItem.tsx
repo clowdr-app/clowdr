@@ -1,4 +1,4 @@
-import type { ContentItemDataBlob } from "@clowdr-app/shared-types/types/content";
+import type { ContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
 import React from "react";
 import EditSubtitles from "./EditSubtitles";
 

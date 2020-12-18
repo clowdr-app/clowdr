@@ -10,10 +10,10 @@ import {
     Spinner,
     Text,
 } from "@chakra-ui/react";
+import { ContentBaseType, ItemBaseTypes } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
 import React, { useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { ContentBaseType, ItemBaseTypes } from "../../../../../shared/types/content";
 import {
     ContentGroupType_Enum,
     ContentGroup_Insert_Input,
@@ -39,7 +39,6 @@ import CRUDTable, {
 } from "../../CRUDTable/CRUDTable";
 import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
-import useCurrentUser from "../../Users/CurrentUser/useCurrentUser";
 import isValidUUID from "../../Utils/isValidUUID";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
@@ -53,6 +52,7 @@ import type {
     RequiredContentItemDescriptor,
 } from "./Content/Types";
 import { URLItemTemplate } from "./Content/URLItem";
+import { VideoItemTemplate } from "./Content/VideoItem";
 import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
 gql`
@@ -223,7 +223,7 @@ const ItemBaseTemplates: { [K in ContentBaseType]: ItemBaseTemplate } = {
     [ContentBaseType.Link]: LinkItemTemplate,
     [ContentBaseType.Text]: TextItemTemplate,
     [ContentBaseType.URL]: URLItemTemplate,
-    [ContentBaseType.Video]: { supported: false },
+    [ContentBaseType.Video]: VideoItemTemplate,
 };
 
 type GroupTemplate =
@@ -252,7 +252,6 @@ const GroupTemplates: { [K in ContentGroupType_Enum]: GroupTemplate } = {
 
 export default function ManageConferenceContentPage(): JSX.Element {
     const conference = useConference();
-    const currentUser = useCurrentUser();
 
     useDashboardPrimaryMenuButtons();
 
@@ -426,7 +425,39 @@ export default function ManageConferenceContentPage(): JSX.Element {
 
     useEffect(() => {
         if (parsedDBContentGroups) {
-            setAllContentGroupsMap(parsedDBContentGroups);
+            const newMap: Map<string, ContentGroupDescriptor> = new Map();
+            for (const [key, group] of parsedDBContentGroups) {
+                // Deep clone so that when we manipulate stuff later it doesn't
+                // accidentally screw up the query data
+                const newGroup: ContentGroupDescriptor = {
+                    id: group.id,
+                    items: group.items.map((item) => ({
+                        data: item.data.map((d) => ({
+                            createdAt: d.createdAt,
+                            createdBy: d.createdBy,
+                            data: { ...d.data },
+                        })),
+                        id: item.id,
+                        isHidden: item.isHidden,
+                        layoutData: item.layoutData,
+                        name: item.name,
+                        typeName: item.typeName,
+                        requiredContentId: item.requiredContentId,
+                    })),
+                    requiredItems: group.requiredItems.map((item) => ({
+                        id: item.id,
+                        name: item.name,
+                        typeName: item.typeName,
+                    })),
+                    shortTitle: group.shortTitle,
+                    title: group.title,
+                    typeName: group.typeName,
+                    tags: group.tags,
+                };
+                fitGroupToTemplate(newGroup);
+                newMap.set(key, newGroup);
+            }
+            setAllContentGroupsMap(newMap);
         }
     }, [parsedDBContentGroups]);
 
@@ -455,9 +486,6 @@ export default function ManageConferenceContentPage(): JSX.Element {
                     cudCallbacks: {
                         generateTemporaryKey: () => uuidv4(),
                         create: (tempKey, group) => {
-                            assert(group.typeName);
-                            const groupTemplate = GroupTemplates[group.typeName];
-                            assert(groupTemplate.supported);
                             const newGroup = {
                                 ...group,
                                 isNew: true,
@@ -466,44 +494,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                                 items: [],
                                 requiredItems: [],
                             } as ContentGroupDescriptor;
-                            newGroup.items = groupTemplate.itemTypes
-                                .filter((itemType) => {
-                                    const baseType = ItemBaseTypes[itemType];
-                                    const itemTemplate = ItemBaseTemplates[baseType];
-                                    return itemTemplate.supported;
-                                })
-                                .map((itemType) => {
-                                    const baseType = ItemBaseTypes[itemType];
-                                    const itemTemplate = ItemBaseTemplates[baseType];
-                                    assert(itemTemplate.supported);
-                                    const newItemDesc = itemTemplate.createDefault(
-                                        currentUser.user.User[0].id,
-                                        newGroup,
-                                        itemType,
-                                        false
-                                    );
-                                    assert(newItemDesc.type === "item-only");
-                                    return newItemDesc.item;
-                                });
-                            newGroup.requiredItems = groupTemplate.requiredItemTypes
-                                .filter((itemType) => {
-                                    const baseType = ItemBaseTypes[itemType];
-                                    const itemTemplate = ItemBaseTemplates[baseType];
-                                    return itemTemplate.supported;
-                                })
-                                .map((itemType) => {
-                                    const baseType = ItemBaseTypes[itemType];
-                                    const itemTemplate = ItemBaseTemplates[baseType];
-                                    assert(itemTemplate.supported);
-                                    const newItemDesc = itemTemplate.createDefault(
-                                        currentUser.user.User[0].id,
-                                        newGroup,
-                                        itemType,
-                                        true
-                                    );
-                                    assert(newItemDesc.type === "required-only");
-                                    return newItemDesc.requiredItem;
-                                });
+                            fitGroupToTemplate(newGroup);
                             setAllContentGroupsMap((oldData) => {
                                 const newData = new Map(oldData ? oldData.entries() : []);
                                 newData.set(tempKey, newGroup);
@@ -855,7 +846,6 @@ export default function ManageConferenceContentPage(): JSX.Element {
 
                                         accordianTitle = itemTemplate.renderEditorHeading(itemDesc);
                                         accordianContents = itemTemplate.renderEditor(
-                                            currentUser.user.User[0].id,
                                             itemDesc,
                                             (updatedDesc) => {
                                                 markDirty();
@@ -937,7 +927,6 @@ export default function ManageConferenceContentPage(): JSX.Element {
 
                                         accordianTitle = itemTemplate.renderEditorHeading(itemDesc);
                                         const reqItemEditorContents = itemTemplate.renderEditor(
-                                            currentUser.user.User[0].id,
                                             itemDesc,
                                             (updatedDesc) => {
                                                 assert(updatedDesc.type !== "item-only");
@@ -1025,4 +1014,44 @@ export default function ManageConferenceContentPage(): JSX.Element {
             />
         </RequireAtLeastOnePermissionWrapper>
     );
+}
+function fitGroupToTemplate(group: ContentGroupDescriptor) {
+    assert(group.typeName);
+    const groupTemplate = GroupTemplates[group.typeName];
+    assert(groupTemplate.supported);
+
+    group.items = [
+        ...group.items,
+        ...groupTemplate.itemTypes
+            .filter((itemType) => {
+                const baseType = ItemBaseTypes[itemType];
+                const itemTemplate = ItemBaseTemplates[baseType];
+                return itemTemplate.supported && !group.items.some((x) => x.typeName === itemType);
+            })
+            .map((itemType) => {
+                const baseType = ItemBaseTypes[itemType];
+                const itemTemplate = ItemBaseTemplates[baseType];
+                assert(itemTemplate.supported);
+                const newItemDesc = itemTemplate.createDefault(group, itemType, false);
+                assert(newItemDesc.type === "item-only");
+                return newItemDesc.item;
+            }),
+    ];
+    group.requiredItems = [
+        ...group.requiredItems,
+        ...groupTemplate.requiredItemTypes
+            .filter((itemType) => {
+                const baseType = ItemBaseTypes[itemType];
+                const itemTemplate = ItemBaseTemplates[baseType];
+                return itemTemplate.supported && !group.requiredItems.some((x) => x.typeName === itemType);
+            })
+            .map((itemType) => {
+                const baseType = ItemBaseTypes[itemType];
+                const itemTemplate = ItemBaseTemplates[baseType];
+                assert(itemTemplate.supported);
+                const newItemDesc = itemTemplate.createDefault(group, itemType, true);
+                assert(newItemDesc.type === "required-only");
+                return newItemDesc.requiredItem;
+            }),
+    ];
 }

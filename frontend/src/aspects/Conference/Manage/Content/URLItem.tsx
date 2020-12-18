@@ -1,18 +1,17 @@
 import { FormControl, FormLabel, Input } from "@chakra-ui/react";
+import { ContentBaseType, ContentItemVersionData } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
-import { ContentBaseType, ContentItemVersionData } from "../../../../../../shared/types/content";
 import { ContentType_Enum } from "../../../../generated/graphql";
 import type { ItemBaseTemplate } from "./Types";
 
 function createDefaultURL(
-    currentUserId: string,
     type: ContentType_Enum.ImageUrl | ContentType_Enum.PaperUrl | ContentType_Enum.VideoUrl | ContentType_Enum.PosterUrl
 ): ContentItemVersionData {
     return {
         createdAt: new Date().getTime(),
-        createdBy: currentUserId,
+        createdBy: "user",
         data: {
             type,
             baseType: ContentBaseType.URL,
@@ -23,12 +22,12 @@ function createDefaultURL(
 
 export const URLItemTemplate: ItemBaseTemplate = {
     supported: true,
-    createDefault: (currentUserId, group, type, required) => {
+    createDefault: (group, type, required) => {
         assert(
             type === ContentType_Enum.ImageUrl ||
-            type === ContentType_Enum.PaperUrl ||
-            type === ContentType_Enum.VideoUrl ||
-            type === ContentType_Enum.PosterUrl,
+                type === ContentType_Enum.PaperUrl ||
+                type === ContentType_Enum.VideoUrl ||
+                type === ContentType_Enum.PosterUrl,
             `URL Item Template mistakenly used for type ${type}.`
         );
 
@@ -65,13 +64,13 @@ export const URLItemTemplate: ItemBaseTemplate = {
             };
         }
     },
-    renderEditor: function URLItemEditor(currentUserId, data, update) {
+    renderEditor: function URLItemEditor(data, update) {
         if (data.type === "item-only" || data.type === "required-and-item") {
             assert(
                 data.item.typeName === ContentType_Enum.ImageUrl ||
-                data.item.typeName === ContentType_Enum.PaperUrl ||
-                data.item.typeName === ContentType_Enum.VideoUrl ||
-                data.item.typeName === ContentType_Enum.PosterUrl,
+                    data.item.typeName === ContentType_Enum.PaperUrl ||
+                    data.item.typeName === ContentType_Enum.VideoUrl ||
+                    data.item.typeName === ContentType_Enum.PosterUrl,
                 `URL Item Template mistakenly used for type ${data.type}.`
             );
 
@@ -90,7 +89,7 @@ export const URLItemTemplate: ItemBaseTemplate = {
                     ...data,
                     item: {
                         ...data.item,
-                        data: [createDefaultURL(currentUserId, data.item.typeName)],
+                        data: [createDefaultURL(data.item.typeName)],
                     },
                 };
                 setTimeout(() => update(data), 0);

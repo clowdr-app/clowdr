@@ -2,7 +2,9 @@
     "name": "@clowdr-app/shared-types",
     "version": "1.0.0",
     "description": "Development setup",
-    "scripts": {},
+    "scripts": {
+        "build": "tsc --build tsconfig.json"
+    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/clowdr-app/clowdr.git"
@@ -14,10 +16,10 @@
     },
     "homepage": "https://github.com/clowdr-app/clowdr#readme",
     "devDependencies": {
+        "graphql-tag": "^2.11.0",
         "typescript": "^4.1.2"
     },
     "engines": {
         "node": "15.x"
-    },
-    "dependencies": {}
+    }
 }

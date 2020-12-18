@@ -1,4 +1,4 @@
-import type { ContentItemDataBlob } from "../../../../../../shared/types/content";
+import type { ContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
 import type { ContentGroupType_Enum, ContentType_Enum } from "../../../../generated/graphql";
 
 export type TagDescriptor = {
@@ -60,14 +60,12 @@ export type ItemBaseTemplate =
     | {
           supported: true;
           createDefault: (
-              currentUserId: string,
               group: ContentGroupDescriptor,
               itemType: ContentType_Enum,
               required: boolean
           ) => ContentDescriptor;
           renderEditorHeading: (data: ContentDescriptor) => JSX.Element;
           renderEditor: (
-              currentUserId: string,
               data: ContentDescriptor,
               update: (updated: ContentDescriptor) => void
           ) => JSX.Element;

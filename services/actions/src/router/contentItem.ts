@@ -1,6 +1,6 @@
-import { SNSNotification } from "@clowdr-app/shared-types/types/sns";
-import { MediaConvertEvent } from "@clowdr-app/shared-types/types/sns/mediaconvert";
-import { TranscribeEvent } from "@clowdr-app/shared-types/types/sns/transcribe";
+import { SNSNotification } from "@clowdr-app/shared-types/build/sns";
+import { MediaConvertEvent } from "@clowdr-app/shared-types/build/sns/mediaconvert";
+import { TranscribeEvent } from "@clowdr-app/shared-types/build/sns/transcribe";
 import bodyParser from "body-parser";
 import express, { Request, Response } from "express";
 import fetch from "node-fetch";

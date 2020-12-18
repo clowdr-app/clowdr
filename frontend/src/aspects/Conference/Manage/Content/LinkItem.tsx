@@ -1,18 +1,17 @@
 import { FormControl, FormLabel, Input } from "@chakra-ui/react";
+import { ContentBaseType, ContentItemVersionData } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
-import { ContentBaseType, ContentItemVersionData } from "../../../../../../shared/types/content";
 import { ContentType_Enum } from "../../../../generated/graphql";
 import type { ItemBaseTemplate } from "./Types";
 
 function createDefaultLink(
-    currentUserId: string,
     type: ContentType_Enum.Link | ContentType_Enum.LinkButton | ContentType_Enum.PaperLink | ContentType_Enum.VideoLink
 ): ContentItemVersionData {
     return {
         createdAt: new Date().getTime(),
-        createdBy: currentUserId,
+        createdBy: "user",
         data: {
             type,
             baseType: ContentBaseType.Link,
@@ -24,7 +23,7 @@ function createDefaultLink(
 
 export const LinkItemTemplate: ItemBaseTemplate = {
     supported: true,
-    createDefault: (currentUserId, group, type, required) => {
+    createDefault: (group, type, required) => {
         assert(
             type === ContentType_Enum.Link ||
                 type === ContentType_Enum.LinkButton ||
@@ -66,7 +65,7 @@ export const LinkItemTemplate: ItemBaseTemplate = {
             };
         }
     },
-    renderEditor: function LinkItemEditor(currentUserId, data, update) {
+    renderEditor: function LinkItemEditor(data, update) {
         if (data.type === "item-only" || data.type === "required-and-item") {
             assert(
                 data.item.typeName === ContentType_Enum.Link ||
@@ -83,7 +82,7 @@ export const LinkItemTemplate: ItemBaseTemplate = {
                     ? "Paper title"
                     : data.item.typeName === ContentType_Enum.VideoLink
                     ? "Video title"
-                            : "Link title";
+                    : "Link title";
             const textLabel = textPlaceholder;
 
             const urlLabel = "URL";
@@ -101,7 +100,7 @@ export const LinkItemTemplate: ItemBaseTemplate = {
                     ...data,
                     item: {
                         ...data.item,
-                        data: [createDefaultLink(currentUserId, data.item.typeName)],
+                        data: [createDefaultLink(data.item.typeName)],
                     },
                 };
                 setTimeout(() => update(data), 0);

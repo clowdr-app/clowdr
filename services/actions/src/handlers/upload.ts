@@ -6,7 +6,7 @@ import {
     ContentItemDataBlob,
     ContentItemVersionData,
     VideoContentBlob,
-} from "@clowdr-app/shared-types/types/content";
+} from "@clowdr-app/shared-types/build/content";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
 import { htmlToText } from "html-to-text";

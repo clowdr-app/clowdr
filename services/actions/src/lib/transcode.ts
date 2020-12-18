@@ -9,7 +9,7 @@ import {
     OutputGroupType,
     VideoCodec,
 } from "@aws-sdk/client-mediaconvert";
-import { AWSJobStatus, VideoContentBlob } from "@clowdr-app/shared-types/types/content";
+import { AWSJobStatus, VideoContentBlob } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
 import R from "ramda";
 import { is } from "typescript-is";

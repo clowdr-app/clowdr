@@ -9,7 +9,7 @@ import {
     Textarea,
     useToast,
 } from "@chakra-ui/react";
-import type { SubtitleDetails } from "@clowdr-app/shared-types/types/content";
+import type { SubtitleDetails } from "@clowdr-app/shared-types/build/content";
 import AmazonS3Uri from "amazon-s3-uri";
 import { Field, FieldProps, Form, Formik } from "formik";
 import React from "react";

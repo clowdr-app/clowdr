@@ -1,4 +1,4 @@
-import { ContentItemDataBlob } from "@clowdr-app/shared-types/types/content";
+import { ContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
 import { ContentType_Enum } from "../generated/graphql";
 
 export interface Payload<T = any> {

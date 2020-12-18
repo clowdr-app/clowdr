@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client/core";
 import { LanguageCode } from "@aws-sdk/client-transcribe";
-import { AWSJobStatus, VideoContentBlob } from "@clowdr-app/shared-types/types/content";
+import { AWSJobStatus, VideoContentBlob } from "@clowdr-app/shared-types/build/content";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
 import getStream from "get-stream";

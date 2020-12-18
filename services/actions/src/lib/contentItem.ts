@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client/core";
-import { ContentItemDataBlob, ContentItemVersionData } from "@clowdr-app/shared-types/types/content";
+import { ContentItemDataBlob, ContentItemVersionData } from "@clowdr-app/shared-types/build/content";
 import R from "ramda";
 import { is } from "typescript-is";
 import { GetContentItemByIdDocument } from "../generated/graphql";

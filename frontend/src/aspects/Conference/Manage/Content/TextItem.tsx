@@ -1,20 +1,19 @@
 import { Textarea } from "@chakra-ui/react";
+import { ContentBaseType, ContentItemVersionData } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
-import { ContentBaseType, ContentItemVersionData } from "../../../../../../shared/types/content";
 import { ContentType_Enum } from "../../../../generated/graphql";
 import type { ItemBaseTemplate } from "./Types";
 
 // TODO: Use Markdown editor instead of textarea
 
 function createDefaultText(
-    currentUserId: string,
     type: ContentType_Enum.Abstract | ContentType_Enum.Text
 ): ContentItemVersionData {
     return {
         createdAt: new Date().getTime(),
-        createdBy: currentUserId,
+        createdBy: "user",
         data: {
             type,
             baseType: ContentBaseType.Text,
@@ -25,7 +24,7 @@ function createDefaultText(
 
 export const TextItemTemplate: ItemBaseTemplate = {
     supported: true,
-    createDefault: (currentUserId, group, type, required) => {
+    createDefault: (group, type, required) => {
         assert(
             type === ContentType_Enum.Abstract || type === ContentType_Enum.Text,
             `Text Item Template mistakenly used for type ${type}.`
@@ -57,7 +56,7 @@ export const TextItemTemplate: ItemBaseTemplate = {
             };
         }
     },
-    renderEditor: function TextItemEditor(currentUserId, data, update) {
+    renderEditor: function TextItemEditor(data, update) {
         if (data.type === "item-only" || data.type === "required-and-item") {
             assert(
                 data.item.typeName === ContentType_Enum.Abstract || data.item.typeName === ContentType_Enum.Text,
@@ -71,7 +70,7 @@ export const TextItemTemplate: ItemBaseTemplate = {
                     ...data,
                     item: {
                         ...data.item,
-                        data: [createDefaultText(currentUserId, data.item.typeName)],
+                        data: [createDefaultText(data.item.typeName)],
                     },
                 };
                 setTimeout(() => update(data), 0);

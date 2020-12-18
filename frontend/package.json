@@ -1,8 +1,9 @@
 {
     "scripts": {
-        "start": "snowpack dev --polyfill-node",
-        "build": "snowpack build --polyfill-node",
-        "test": "jest --config jest.config.js",
+        "start": "npm run build-shared && snowpack dev --polyfill-node",
+        "build": "npm run build-shared && snowpack build --polyfill-node",
+        "build-shared": "npm run --prefix=../shared/ --cwd=../shared/ build",
+        "test": "npm run build-shared && jest --config jest.config.js",
         "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
         "lint": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",
         "graphql-codegen": "graphql-codegen --config codegen.js"

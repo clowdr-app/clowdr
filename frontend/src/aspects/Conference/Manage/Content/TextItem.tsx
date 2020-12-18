@@ -37,7 +37,7 @@ export const TextItemTemplate: ItemBaseTemplate = {
                     isNew: true,
                     id: uuidv4(),
                     name: typeName,
-                    typeName,
+                    typeName: type,
                 },
             };
         } else {

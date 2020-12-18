@@ -762,7 +762,6 @@
   - role: user
     permission:
       columns:
-      - conferenceId
       - contentGroupTypeName
       - originatingDataId
       - shortTitle

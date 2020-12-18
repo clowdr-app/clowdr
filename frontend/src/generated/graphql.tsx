@@ -19200,12 +19200,104 @@ export type DeleteIsTypingMutationVariables = Exact<{
 
 export type DeleteIsTypingMutation = { readonly __typename?: 'mutation_root', readonly delete_ChatTyper?: Maybe<{ readonly __typename?: 'ChatTyper_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ChatTyper', readonly id: any }> }> };
 
+export type RequiredContentItemInfoFragment = { readonly __typename?: 'RequiredContentItem', readonly id: any, readonly name: string, readonly contentTypeName: ContentType_Enum, readonly conferenceId: any, readonly contentGroupId: any };
+
+export type ContentItemInfoFragment = { readonly __typename?: 'ContentItem', readonly conferenceId: any, readonly contentGroupId: any, readonly contentTypeName: ContentType_Enum, readonly data: any, readonly id: any, readonly isHidden: boolean, readonly layoutData?: Maybe<any>, readonly name: string, readonly requiredContentId?: Maybe<any>, readonly requiredContentItem?: Maybe<(
+    { readonly __typename?: 'RequiredContentItem' }
+    & RequiredContentItemInfoFragment
+  )> };
+
+export type ContentGroupTagInfoFragment = { readonly __typename?: 'ContentGroupTag', readonly id: any, readonly tagId: any, readonly contentGroupId: any };
+
+export type ContentGroupFullNestedInfoFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly conferenceId: any, readonly contentGroupTypeName: ContentGroupType_Enum, readonly title: string, readonly shortTitle?: Maybe<string>, readonly requiredContentItems: ReadonlyArray<(
+    { readonly __typename?: 'RequiredContentItem' }
+    & RequiredContentItemInfoFragment
+  )>, readonly contentItems: ReadonlyArray<(
+    { readonly __typename?: 'ContentItem' }
+    & ContentItemInfoFragment
+  )>, readonly contentGroupTags: ReadonlyArray<(
+    { readonly __typename?: 'ContentGroupTag' }
+    & ContentGroupTagInfoFragment
+  )> };
+
 export type SelectAllContentGroupsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type SelectAllContentGroupsQuery = { readonly __typename?: 'query_root', readonly ContentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly conferenceId: any, readonly contentGroupTypeName: ContentGroupType_Enum, readonly title: string, readonly shortTitle?: Maybe<string>, readonly requiredContentItems: ReadonlyArray<{ readonly __typename?: 'RequiredContentItem', readonly id: any, readonly name: string, readonly contentTypeName: ContentType_Enum, readonly conferenceId: any, readonly contentGroupId: any }>, readonly contentItems: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly conferenceId: any, readonly contentGroupId: any, readonly contentTypeName: ContentType_Enum, readonly data: any, readonly id: any, readonly isHidden: boolean, readonly layoutData?: Maybe<any>, readonly name: string, readonly requiredContentId?: Maybe<any>, readonly requiredContentItem?: Maybe<{ readonly __typename?: 'RequiredContentItem', readonly conferenceId: any, readonly contentGroupId: any, readonly contentTypeName: ContentType_Enum, readonly id: any, readonly name: string }> }>, readonly contentGroupTags: ReadonlyArray<{ readonly __typename?: 'ContentGroupTag', readonly id: any, readonly tagId: any, readonly contentGroupId: any }> }> };
+export type SelectAllContentGroupsQuery = { readonly __typename?: 'query_root', readonly ContentGroup: ReadonlyArray<(
+    { readonly __typename?: 'ContentGroup' }
+    & ContentGroupFullNestedInfoFragment
+  )> };
+
+export type InsertDeleteContentGroupsMutationVariables = Exact<{
+  newGroups: ReadonlyArray<ContentGroup_Insert_Input>;
+  deleteGroupIds: ReadonlyArray<Scalars['uuid']>;
+}>;
+
+
+export type InsertDeleteContentGroupsMutation = { readonly __typename?: 'mutation_root', readonly insert_ContentGroup?: Maybe<{ readonly __typename?: 'ContentGroup_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'ContentGroup' }
+      & ContentGroupFullNestedInfoFragment
+    )> }>, readonly delete_ContentGroup?: Maybe<{ readonly __typename?: 'ContentGroup_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any }> }> };
+
+export type UpdateContentGroupMutationVariables = Exact<{
+  newItems: ReadonlyArray<ContentItem_Insert_Input>;
+  newRequiredItems: ReadonlyArray<RequiredContentItem_Insert_Input>;
+  newGroupTags: ReadonlyArray<ContentGroupTag_Insert_Input>;
+  groupId: Scalars['uuid'];
+  contentGroupTypeName: ContentGroupType_Enum;
+  originatingDataId?: Maybe<Scalars['uuid']>;
+  shortTitle?: Maybe<Scalars['String']>;
+  title: Scalars['String'];
+  deleteItemIds: ReadonlyArray<Scalars['uuid']>;
+  deleteRequiredItemIds: ReadonlyArray<Scalars['uuid']>;
+  deleteGroupTagIds: ReadonlyArray<Scalars['uuid']>;
+}>;
+
+
+export type UpdateContentGroupMutation = { readonly __typename?: 'mutation_root', readonly insert_ContentItem?: Maybe<{ readonly __typename?: 'ContentItem_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'ContentItem' }
+      & ContentItemInfoFragment
+    )> }>, readonly insert_RequiredContentItem?: Maybe<{ readonly __typename?: 'RequiredContentItem_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'RequiredContentItem' }
+      & RequiredContentItemInfoFragment
+    )> }>, readonly insert_ContentGroupTag?: Maybe<{ readonly __typename?: 'ContentGroupTag_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'ContentGroupTag' }
+      & ContentGroupTagInfoFragment
+    )> }>, readonly update_ContentGroup_by_pk?: Maybe<(
+    { readonly __typename?: 'ContentGroup' }
+    & ContentGroupFullNestedInfoFragment
+  )>, readonly delete_ContentItem?: Maybe<{ readonly __typename?: 'ContentItem_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any }> }>, readonly delete_RequiredContentItem?: Maybe<{ readonly __typename?: 'RequiredContentItem_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'RequiredContentItem', readonly id: any }> }>, readonly delete_ContentGroupTag?: Maybe<{ readonly __typename?: 'ContentGroupTag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ContentGroupTag', readonly id: any }> }> };
+
+export type UpdateContentItemMutationVariables = Exact<{
+  id: Scalars['uuid'];
+  contentTypeName: ContentType_Enum;
+  layoutData: Scalars['jsonb'];
+  name: Scalars['String'];
+  data: Scalars['jsonb'];
+  originatingDataId?: Maybe<Scalars['uuid']>;
+  requiredContentId?: Maybe<Scalars['uuid']>;
+}>;
+
+
+export type UpdateContentItemMutation = { readonly __typename?: 'mutation_root', readonly update_ContentItem_by_pk?: Maybe<(
+    { readonly __typename?: 'ContentItem' }
+    & ContentItemInfoFragment
+  )> };
+
+export type UpdateRequiredContentItemMutationVariables = Exact<{
+  id: Scalars['uuid'];
+  contentTypeName: ContentType_Enum;
+  name: Scalars['String'];
+  originatingDataId?: Maybe<Scalars['uuid']>;
+}>;
+
+
+export type UpdateRequiredContentItemMutation = { readonly __typename?: 'mutation_root', readonly update_RequiredContentItem_by_pk?: Maybe<(
+    { readonly __typename?: 'RequiredContentItem' }
+    & RequiredContentItemInfoFragment
+  )> };
 
 export type SelectAllGroupsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -19510,6 +19602,58 @@ export type UpdateCurrentUserLastSeenMutationVariables = Exact<{
 
 export type UpdateCurrentUserLastSeenMutation = { readonly __typename?: 'mutation_root', readonly update_OnlineStatus?: Maybe<{ readonly __typename?: 'OnlineStatus_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'OnlineStatus', readonly id: any, readonly lastSeen: any }> }> };
 
+export const RequiredContentItemInfoFragmentDoc = gql`
+    fragment RequiredContentItemInfo on RequiredContentItem {
+  id
+  name
+  contentTypeName
+  conferenceId
+  contentGroupId
+}
+    `;
+export const ContentItemInfoFragmentDoc = gql`
+    fragment ContentItemInfo on ContentItem {
+  conferenceId
+  contentGroupId
+  contentTypeName
+  data
+  id
+  isHidden
+  layoutData
+  name
+  requiredContentId
+  requiredContentItem {
+    ...RequiredContentItemInfo
+  }
+}
+    ${RequiredContentItemInfoFragmentDoc}`;
+export const ContentGroupTagInfoFragmentDoc = gql`
+    fragment ContentGroupTagInfo on ContentGroupTag {
+  id
+  tagId
+  contentGroupId
+}
+    `;
+export const ContentGroupFullNestedInfoFragmentDoc = gql`
+    fragment ContentGroupFullNestedInfo on ContentGroup {
+  id
+  conferenceId
+  contentGroupTypeName
+  title
+  shortTitle
+  requiredContentItems {
+    ...RequiredContentItemInfo
+  }
+  contentItems {
+    ...ContentItemInfo
+  }
+  contentGroupTags {
+    ...ContentGroupTagInfo
+  }
+}
+    ${RequiredContentItemInfoFragmentDoc}
+${ContentItemInfoFragmentDoc}
+${ContentGroupTagInfoFragmentDoc}`;
 export const AttendeePartsFragmentDoc = gql`
     fragment AttendeeParts on Attendee {
   conferenceId
@@ -19811,44 +19955,10 @@ export type DeleteIsTypingMutationOptions = Apollo.BaseMutationOptions<DeleteIsT
 export const SelectAllContentGroupsDocument = gql`
     query SelectAllContentGroups($conferenceId: uuid!) {
   ContentGroup(where: {conferenceId: {_eq: $conferenceId}}) {
-    id
-    conferenceId
-    contentGroupTypeName
-    title
-    shortTitle
-    requiredContentItems {
-      id
-      name
-      contentTypeName
-      conferenceId
-      contentGroupId
-    }
-    contentItems {
-      conferenceId
-      contentGroupId
-      contentTypeName
-      data
-      id
-      isHidden
-      layoutData
-      name
-      requiredContentId
-      requiredContentItem {
-        conferenceId
-        contentGroupId
-        contentTypeName
-        id
-        name
-      }
-    }
-    contentGroupTags {
-      id
-      tagId
-      contentGroupId
-    }
+    ...ContentGroupFullNestedInfo
   }
 }
-    `;
+    ${ContentGroupFullNestedInfoFragmentDoc}`;
 
 /**
  * __useSelectAllContentGroupsQuery__
@@ -19875,6 +19985,203 @@ export function useSelectAllContentGroupsLazyQuery(baseOptions?: Apollo.LazyQuer
 export type SelectAllContentGroupsQueryHookResult = ReturnType<typeof useSelectAllContentGroupsQuery>;
 export type SelectAllContentGroupsLazyQueryHookResult = ReturnType<typeof useSelectAllContentGroupsLazyQuery>;
 export type SelectAllContentGroupsQueryResult = Apollo.QueryResult<SelectAllContentGroupsQuery, SelectAllContentGroupsQueryVariables>;
+export const InsertDeleteContentGroupsDocument = gql`
+    mutation InsertDeleteContentGroups($newGroups: [ContentGroup_insert_input!]!, $deleteGroupIds: [uuid!]!) {
+  insert_ContentGroup(objects: $newGroups) {
+    returning {
+      ...ContentGroupFullNestedInfo
+    }
+  }
+  delete_ContentGroup(where: {id: {_in: $deleteGroupIds}}) {
+    returning {
+      id
+    }
+  }
+}
+    ${ContentGroupFullNestedInfoFragmentDoc}`;
+export type InsertDeleteContentGroupsMutationFn = Apollo.MutationFunction<InsertDeleteContentGroupsMutation, InsertDeleteContentGroupsMutationVariables>;
+
+/**
+ * __useInsertDeleteContentGroupsMutation__
+ *
+ * To run a mutation, you first call `useInsertDeleteContentGroupsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInsertDeleteContentGroupsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [insertDeleteContentGroupsMutation, { data, loading, error }] = useInsertDeleteContentGroupsMutation({
+ *   variables: {
+ *      newGroups: // value for 'newGroups'
+ *      deleteGroupIds: // value for 'deleteGroupIds'
+ *   },
+ * });
+ */
+export function useInsertDeleteContentGroupsMutation(baseOptions?: Apollo.MutationHookOptions<InsertDeleteContentGroupsMutation, InsertDeleteContentGroupsMutationVariables>) {
+        return Apollo.useMutation<InsertDeleteContentGroupsMutation, InsertDeleteContentGroupsMutationVariables>(InsertDeleteContentGroupsDocument, baseOptions);
+      }
+export type InsertDeleteContentGroupsMutationHookResult = ReturnType<typeof useInsertDeleteContentGroupsMutation>;
+export type InsertDeleteContentGroupsMutationResult = Apollo.MutationResult<InsertDeleteContentGroupsMutation>;
+export type InsertDeleteContentGroupsMutationOptions = Apollo.BaseMutationOptions<InsertDeleteContentGroupsMutation, InsertDeleteContentGroupsMutationVariables>;
+export const UpdateContentGroupDocument = gql`
+    mutation UpdateContentGroup($newItems: [ContentItem_insert_input!]!, $newRequiredItems: [RequiredContentItem_insert_input!]!, $newGroupTags: [ContentGroupTag_insert_input!]!, $groupId: uuid!, $contentGroupTypeName: ContentGroupType_enum!, $originatingDataId: uuid = null, $shortTitle: String = null, $title: String!, $deleteItemIds: [uuid!]!, $deleteRequiredItemIds: [uuid!]!, $deleteGroupTagIds: [uuid!]!) {
+  insert_ContentItem(objects: $newItems) {
+    returning {
+      ...ContentItemInfo
+    }
+  }
+  insert_RequiredContentItem(objects: $newRequiredItems) {
+    returning {
+      ...RequiredContentItemInfo
+    }
+  }
+  insert_ContentGroupTag(objects: $newGroupTags) {
+    returning {
+      ...ContentGroupTagInfo
+    }
+  }
+  update_ContentGroup_by_pk(
+    pk_columns: {id: $groupId}
+    _set: {contentGroupTypeName: $contentGroupTypeName, originatingDataId: $originatingDataId, shortTitle: $shortTitle, title: $title}
+  ) {
+    ...ContentGroupFullNestedInfo
+  }
+  delete_ContentItem(where: {id: {_in: $deleteItemIds}}) {
+    returning {
+      id
+    }
+  }
+  delete_RequiredContentItem(where: {id: {_in: $deleteRequiredItemIds}}) {
+    returning {
+      id
+    }
+  }
+  delete_ContentGroupTag(where: {id: {_in: $deleteGroupTagIds}}) {
+    returning {
+      id
+    }
+  }
+}
+    ${ContentItemInfoFragmentDoc}
+${RequiredContentItemInfoFragmentDoc}
+${ContentGroupTagInfoFragmentDoc}
+${ContentGroupFullNestedInfoFragmentDoc}`;
+export type UpdateContentGroupMutationFn = Apollo.MutationFunction<UpdateContentGroupMutation, UpdateContentGroupMutationVariables>;
+
+/**
+ * __useUpdateContentGroupMutation__
+ *
+ * To run a mutation, you first call `useUpdateContentGroupMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateContentGroupMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateContentGroupMutation, { data, loading, error }] = useUpdateContentGroupMutation({
+ *   variables: {
+ *      newItems: // value for 'newItems'
+ *      newRequiredItems: // value for 'newRequiredItems'
+ *      newGroupTags: // value for 'newGroupTags'
+ *      groupId: // value for 'groupId'
+ *      contentGroupTypeName: // value for 'contentGroupTypeName'
+ *      originatingDataId: // value for 'originatingDataId'
+ *      shortTitle: // value for 'shortTitle'
+ *      title: // value for 'title'
+ *      deleteItemIds: // value for 'deleteItemIds'
+ *      deleteRequiredItemIds: // value for 'deleteRequiredItemIds'
+ *      deleteGroupTagIds: // value for 'deleteGroupTagIds'
+ *   },
+ * });
+ */
+export function useUpdateContentGroupMutation(baseOptions?: Apollo.MutationHookOptions<UpdateContentGroupMutation, UpdateContentGroupMutationVariables>) {
+        return Apollo.useMutation<UpdateContentGroupMutation, UpdateContentGroupMutationVariables>(UpdateContentGroupDocument, baseOptions);
+      }
+export type UpdateContentGroupMutationHookResult = ReturnType<typeof useUpdateContentGroupMutation>;
+export type UpdateContentGroupMutationResult = Apollo.MutationResult<UpdateContentGroupMutation>;
+export type UpdateContentGroupMutationOptions = Apollo.BaseMutationOptions<UpdateContentGroupMutation, UpdateContentGroupMutationVariables>;
+export const UpdateContentItemDocument = gql`
+    mutation UpdateContentItem($id: uuid!, $contentTypeName: ContentType_enum!, $layoutData: jsonb!, $name: String!, $data: jsonb!, $originatingDataId: uuid = null, $requiredContentId: uuid = null) {
+  update_ContentItem_by_pk(
+    pk_columns: {id: $id}
+    _set: {contentTypeName: $contentTypeName, layoutData: $layoutData, name: $name, data: $data, originatingDataId: $originatingDataId, requiredContentId: $requiredContentId}
+  ) {
+    ...ContentItemInfo
+  }
+}
+    ${ContentItemInfoFragmentDoc}`;
+export type UpdateContentItemMutationFn = Apollo.MutationFunction<UpdateContentItemMutation, UpdateContentItemMutationVariables>;
+
+/**
+ * __useUpdateContentItemMutation__
+ *
+ * To run a mutation, you first call `useUpdateContentItemMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateContentItemMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateContentItemMutation, { data, loading, error }] = useUpdateContentItemMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      contentTypeName: // value for 'contentTypeName'
+ *      layoutData: // value for 'layoutData'
+ *      name: // value for 'name'
+ *      data: // value for 'data'
+ *      originatingDataId: // value for 'originatingDataId'
+ *      requiredContentId: // value for 'requiredContentId'
+ *   },
+ * });
+ */
+export function useUpdateContentItemMutation(baseOptions?: Apollo.MutationHookOptions<UpdateContentItemMutation, UpdateContentItemMutationVariables>) {
+        return Apollo.useMutation<UpdateContentItemMutation, UpdateContentItemMutationVariables>(UpdateContentItemDocument, baseOptions);
+      }
+export type UpdateContentItemMutationHookResult = ReturnType<typeof useUpdateContentItemMutation>;
+export type UpdateContentItemMutationResult = Apollo.MutationResult<UpdateContentItemMutation>;
+export type UpdateContentItemMutationOptions = Apollo.BaseMutationOptions<UpdateContentItemMutation, UpdateContentItemMutationVariables>;
+export const UpdateRequiredContentItemDocument = gql`
+    mutation UpdateRequiredContentItem($id: uuid!, $contentTypeName: ContentType_enum!, $name: String!, $originatingDataId: uuid = null) {
+  update_RequiredContentItem_by_pk(
+    pk_columns: {id: $id}
+    _set: {contentTypeName: $contentTypeName, name: $name, originatingDataId: $originatingDataId}
+  ) {
+    ...RequiredContentItemInfo
+  }
+}
+    ${RequiredContentItemInfoFragmentDoc}`;
+export type UpdateRequiredContentItemMutationFn = Apollo.MutationFunction<UpdateRequiredContentItemMutation, UpdateRequiredContentItemMutationVariables>;
+
+/**
+ * __useUpdateRequiredContentItemMutation__
+ *
+ * To run a mutation, you first call `useUpdateRequiredContentItemMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateRequiredContentItemMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateRequiredContentItemMutation, { data, loading, error }] = useUpdateRequiredContentItemMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      contentTypeName: // value for 'contentTypeName'
+ *      name: // value for 'name'
+ *      originatingDataId: // value for 'originatingDataId'
+ *   },
+ * });
+ */
+export function useUpdateRequiredContentItemMutation(baseOptions?: Apollo.MutationHookOptions<UpdateRequiredContentItemMutation, UpdateRequiredContentItemMutationVariables>) {
+        return Apollo.useMutation<UpdateRequiredContentItemMutation, UpdateRequiredContentItemMutationVariables>(UpdateRequiredContentItemDocument, baseOptions);
+      }
+export type UpdateRequiredContentItemMutationHookResult = ReturnType<typeof useUpdateRequiredContentItemMutation>;
+export type UpdateRequiredContentItemMutationResult = Apollo.MutationResult<UpdateRequiredContentItemMutation>;
+export type UpdateRequiredContentItemMutationOptions = Apollo.BaseMutationOptions<UpdateRequiredContentItemMutation, UpdateRequiredContentItemMutationVariables>;
 export const SelectAllGroupsDocument = gql`
     query SelectAllGroups($conferenceId: uuid!) {
   Group(where: {conferenceId: {_eq: $conferenceId}}) {

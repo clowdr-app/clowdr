@@ -522,8 +522,12 @@ export interface CRUDTableProps<T, PK extends keyof T> {
      * Fields which are hidden or editable through a side-panel or popout.
      */
     secondaryFields?: {
-        editSingle?: (key: T[PK], onClose: () => void) => SecondaryEditorComponents;
-        editMultiple?: (keys: Set<T[PK]>, onClose: () => void) => SecondaryEditorComponents;
+        editSingle?: (key: T[PK], onClose: () => void, markDirty: () => void) => SecondaryEditorComponents;
+        editMultiple?: (
+            keys: Set<T[PK]>,
+            onClose: () => void,
+            markDirty: (keys: Set<T[PK]>) => void
+        ) => SecondaryEditorComponents;
     };
 
     /**
@@ -975,10 +979,8 @@ function CRUDCreateButton<T, PK extends keyof T>({
                 }
                 if (csud.cudCallbacks.create(tempKey, newItem)) {
                     addDirtyKey(tempKey);
-                    setSelectedKeys((oldKeys) => {
-                        const newKeys = new Set(oldKeys);
-                        newKeys.add(tempKey);
-                        return newKeys;
+                    setSelectedKeys(() => {
+                        return new Set([tempKey]);
                     });
 
                     setFieldValues(defaultValues);
@@ -1057,7 +1059,7 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
             _setSelectedKeys(newKeys);
 
             if (secondaryFields?.editSingle) {
-                if (selectedKeys.size === 0 && newKeys.size === 1) {
+                if (newKeys.size === 1) {
                     onSecondaryPanelOpen();
                 }
             }
@@ -1368,9 +1370,37 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
     const secondaryEditor = useMemo(() => {
         if (selectedKeys.size === 1 && secondaryFields?.editSingle) {
             const key = selectedKeys.values().next().value;
-            return secondaryFields.editSingle(key, onSecondaryPanelClose);
+            return secondaryFields.editSingle(key, onSecondaryPanelClose, () => {
+                setTimeout(
+                    () =>
+                        setDirtyKeys((oldDirtyKeys) => {
+                            if (!oldDirtyKeys.has(key)) {
+                                const newDirtyKeys = new Set(oldDirtyKeys);
+                                newDirtyKeys.add(key);
+                                return newDirtyKeys;
+                            }
+                            return oldDirtyKeys;
+                        }),
+                    0
+                );
+            });
         } else if (selectedKeys.size > 1 && secondaryFields?.editMultiple) {
-            return secondaryFields.editMultiple(selectedKeys, onSecondaryPanelClose);
+            return secondaryFields.editMultiple(selectedKeys, onSecondaryPanelClose, (keysToMark) => {
+                setTimeout(
+                    () =>
+                        setDirtyKeys((oldDirtyKeys) => {
+                            if (Array.from(keysToMark.values()).some((key) => !oldDirtyKeys.has(key))) {
+                                const newDirtyKeys = new Set(oldDirtyKeys);
+                                for (const key of keysToMark) {
+                                    newDirtyKeys.add(key);
+                                }
+                                return newDirtyKeys;
+                            }
+                            return oldDirtyKeys;
+                        }),
+                    0
+                );
+            });
         } else {
             return undefined;
         }

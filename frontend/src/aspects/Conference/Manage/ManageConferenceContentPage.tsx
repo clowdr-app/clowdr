@@ -8,6 +8,7 @@ import {
     Box,
     Heading,
     Spinner,
+    Text,
 } from "@chakra-ui/react";
 import assert from "assert";
 import React, { useEffect, useMemo, useState } from "react";
@@ -15,9 +16,16 @@ import { v4 as uuidv4 } from "uuid";
 import { ContentBaseType, ItemBaseTypes } from "../../../../../shared/types/content";
 import {
     ContentGroupType_Enum,
+    ContentGroup_Insert_Input,
+    ContentItem_Insert_Input,
     ContentType_Enum,
     Permission_Enum,
+    RequiredContentItem_Insert_Input,
+    useInsertDeleteContentGroupsMutation,
     useSelectAllContentGroupsQuery,
+    useUpdateContentGroupMutation,
+    useUpdateContentItemMutation,
+    useUpdateRequiredContentItemMutation,
 } from "../../../generated/graphql";
 import CRUDTable, {
     CRUDTableProps,
@@ -36,47 +44,172 @@ import isValidUUID from "../../Utils/isValidUUID";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
 import { TextItemTemplate } from "./Content/TextItem";
-import type { ContentDescriptor, ContentGroupDescriptor, ItemBaseTemplate } from "./Content/Types";
+import type {
+    ContentDescriptor,
+    ContentGroupDescriptor,
+    ContentItemDescriptor,
+    ItemBaseTemplate,
+    RequiredContentItemDescriptor,
+} from "./Content/Types";
 import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
 gql`
+    fragment RequiredContentItemInfo on RequiredContentItem {
+        id
+        name
+        contentTypeName
+        conferenceId
+        contentGroupId
+    }
+
+    fragment ContentItemInfo on ContentItem {
+        conferenceId
+        contentGroupId
+        contentTypeName
+        data
+        id
+        isHidden
+        layoutData
+        name
+        requiredContentId
+        requiredContentItem {
+            ...RequiredContentItemInfo
+        }
+    }
+
+    fragment ContentGroupTagInfo on ContentGroupTag {
+        id
+        tagId
+        contentGroupId
+    }
+
+    fragment ContentGroupFullNestedInfo on ContentGroup {
+        id
+        conferenceId
+        contentGroupTypeName
+        title
+        shortTitle
+        requiredContentItems {
+            ...RequiredContentItemInfo
+        }
+        contentItems {
+            ...ContentItemInfo
+        }
+        contentGroupTags {
+            ...ContentGroupTagInfo
+        }
+    }
+
     query SelectAllContentGroups($conferenceId: uuid!) {
         ContentGroup(where: { conferenceId: { _eq: $conferenceId } }) {
-            id
-            conferenceId
-            contentGroupTypeName
-            title
-            shortTitle
-            requiredContentItems {
-                id
-                name
-                contentTypeName
-                conferenceId
-                contentGroupId
+            ...ContentGroupFullNestedInfo
+        }
+    }
+
+    mutation InsertDeleteContentGroups($newGroups: [ContentGroup_insert_input!]!, $deleteGroupIds: [uuid!]!) {
+        insert_ContentGroup(objects: $newGroups) {
+            returning {
+                ...ContentGroupFullNestedInfo
             }
-            contentItems {
-                conferenceId
-                contentGroupId
-                contentTypeName
-                data
+        }
+        delete_ContentGroup(where: { id: { _in: $deleteGroupIds } }) {
+            returning {
                 id
-                isHidden
-                layoutData
-                name
-                requiredContentId
-                requiredContentItem {
-                    conferenceId
-                    contentGroupId
-                    contentTypeName
-                    id
-                    name
-                }
             }
-            contentGroupTags {
+        }
+    }
+
+    mutation UpdateContentGroup(
+        $newItems: [ContentItem_insert_input!]!
+        $newRequiredItems: [RequiredContentItem_insert_input!]!
+        $newGroupTags: [ContentGroupTag_insert_input!]!
+        $groupId: uuid!
+        $contentGroupTypeName: ContentGroupType_enum!
+        $originatingDataId: uuid = null
+        $shortTitle: String = null
+        $title: String!
+        $deleteItemIds: [uuid!]!
+        $deleteRequiredItemIds: [uuid!]!
+        $deleteGroupTagIds: [uuid!]!
+    ) {
+        insert_ContentItem(objects: $newItems) {
+            returning {
+                ...ContentItemInfo
+            }
+        }
+        insert_RequiredContentItem(objects: $newRequiredItems) {
+            returning {
+                ...RequiredContentItemInfo
+            }
+        }
+        insert_ContentGroupTag(objects: $newGroupTags) {
+            returning {
+                ...ContentGroupTagInfo
+            }
+        }
+        update_ContentGroup_by_pk(
+            pk_columns: { id: $groupId }
+            _set: {
+                contentGroupTypeName: $contentGroupTypeName
+                originatingDataId: $originatingDataId
+                shortTitle: $shortTitle
+                title: $title
+            }
+        ) {
+            ...ContentGroupFullNestedInfo
+        }
+        delete_ContentItem(where: { id: { _in: $deleteItemIds } }) {
+            returning {
                 id
-                tagId
-                contentGroupId
             }
+        }
+        delete_RequiredContentItem(where: { id: { _in: $deleteRequiredItemIds } }) {
+            returning {
+                id
+            }
+        }
+        delete_ContentGroupTag(where: { id: { _in: $deleteGroupTagIds } }) {
+            returning {
+                id
+            }
+        }
+    }
+
+    mutation UpdateContentItem(
+        $id: uuid!
+        $contentTypeName: ContentType_enum!
+        $layoutData: jsonb!
+        $name: String!
+        $data: jsonb!
+        $originatingDataId: uuid = null
+        $requiredContentId: uuid = null
+    ) {
+        update_ContentItem_by_pk(
+            pk_columns: { id: $id }
+            _set: {
+                contentTypeName: $contentTypeName
+                layoutData: $layoutData
+                name: $name
+                data: $data
+                originatingDataId: $originatingDataId
+                requiredContentId: $requiredContentId
+            }
+        ) {
+            ...ContentItemInfo
+        }
+    }
+
+    mutation UpdateRequiredContentItem(
+        $id: uuid!
+        $contentTypeName: ContentType_enum!
+        $name: String!
+        $originatingDataId: uuid = null
+    ) {
+        update_RequiredContentItem_by_pk(
+            pk_columns: { id: $id }
+            _set: { contentTypeName: $contentTypeName, name: $name, originatingDataId: $originatingDataId }
+        ) {
+            ...RequiredContentItemInfo
         }
     }
 `;
@@ -133,6 +266,11 @@ export default function ManageConferenceContentPage(): JSX.Element {
     });
     useQueryErrorToast(errorAllContentGroups);
 
+    const [insertDeleteContentGroupsMutation] = useInsertDeleteContentGroupsMutation();
+    const [updateContentGroupMutation] = useUpdateContentGroupMutation();
+    const [updateContentItemMutation] = useUpdateContentItemMutation();
+    const [updateRequiredContentItemMutation] = useUpdateRequiredContentItemMutation();
+
     const parsedDBContentGroups = useMemo(() => {
         if (!allContentGroups) {
             return undefined;
@@ -146,7 +284,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                     title: item.title,
                     shortTitle: item.shortTitle,
                     typeName: item.contentGroupTypeName,
-                    tagIds: item.contentGroupTags.map((x) => x.tagId),
+                    tags: item.contentGroupTags.map((x) => x.tagId),
                     items: item.contentItems.map((item) => ({
                         id: item.id,
                         isHidden: item.isHidden,
@@ -235,7 +373,12 @@ export default function ManageConferenceContentPage(): JSX.Element {
                 ariaLabel: "Type",
                 description: "Type of content",
                 isHidden: false,
-                isEditable: true,
+                // TODO: Make the type editable. When changing type, we must
+                //       update the content items / required content items
+                //       accordingly - preserve overlapping types
+                //       Warn the user before deleting any content
+                isEditable: false,
+                isEditableAtCreate: true,
                 defaultValue: {
                     label: "Paper",
                     value: ContentGroupType_Enum.Paper,
@@ -314,6 +457,9 @@ export default function ManageConferenceContentPage(): JSX.Element {
                                 ...item,
                                 isNew: true,
                                 id: tempKey,
+                                tags: [],
+                                items: [],
+                                requiredItems: [],
                             } as ContentGroupDescriptor;
                             setAllContentGroupsMap((oldData) => {
                                 const newData = new Map(oldData ? oldData.entries() : []);
@@ -358,11 +504,227 @@ export default function ManageConferenceContentPage(): JSX.Element {
                             return results;
                         },
                         save: async (keys) => {
-                            console.log("todo");
+                            assert(parsedDBContentGroups);
+                            assert(allContentGroupsMap);
 
-                            // TODO: Upsert groups, items, required items (nested?)
-                            // TODO: Delete old groups, items, required items
-                            return new Map<string, boolean>();
+                            const results: Map<string, boolean> = new Map();
+                            keys.forEach((key) => {
+                                results.set(key, false);
+                            });
+
+                            const newGroups = new Map<string, ContentGroupDescriptor>();
+                            const updatedGroups = new Map<string, ContentGroupDescriptor>();
+                            const deletedGroupKeys = new Set<string>();
+                            for (const key of keys.values()) {
+                                const group = allContentGroupsMap.get(key);
+                                if (group) {
+                                    if (group.isNew) {
+                                        newGroups.set(key, group);
+                                    } else {
+                                        updatedGroups.set(key, group);
+                                    }
+                                } else {
+                                    deletedGroupKeys.add(key);
+                                }
+                            }
+
+                            try {
+                                await insertDeleteContentGroupsMutation({
+                                    variables: {
+                                        deleteGroupIds: Array.from(deletedGroupKeys.values()),
+                                        newGroups: Array.from(newGroups.values()).map((group) => {
+                                            const groupResult: ContentGroup_Insert_Input = {
+                                                id: group.id,
+                                                conferenceId: conference.id,
+                                                contentGroupTags: {
+                                                    data: group.tags.map((tagId) => ({
+                                                        tagId,
+                                                    })),
+                                                },
+                                                contentGroupTypeName: group.typeName,
+                                                contentItems: {
+                                                    data: group.items.map((item) => {
+                                                        const itemResult: ContentItem_Insert_Input = {
+                                                            id: item.id,
+                                                            conferenceId: conference.id,
+                                                            contentTypeName: item.typeName,
+                                                            data: item.data,
+                                                            layoutData: item.layoutData,
+                                                            name: item.name,
+                                                            requiredContentId: item.requiredContentId,
+                                                        };
+                                                        return itemResult;
+                                                    }),
+                                                },
+                                                requiredContentItems: {
+                                                    data: group.requiredItems.map((item) => {
+                                                        const itemResult: RequiredContentItem_Insert_Input = {
+                                                            id: item.id,
+                                                            conferenceId: conference.id,
+                                                            accessToken: uuidv4(),
+                                                            name: item.name,
+                                                            contentTypeName: item.typeName,
+                                                        };
+                                                        return itemResult;
+                                                    }),
+                                                },
+                                                shortTitle: group.shortTitle,
+                                                title: group.title,
+                                            };
+                                            return groupResult;
+                                        }),
+                                    },
+                                });
+
+                                for (const key of newGroups.keys()) {
+                                    results.set(key, true);
+                                }
+                                for (const key of deletedGroupKeys.keys()) {
+                                    results.set(key, true);
+                                }
+                            } catch {
+                                for (const key of newGroups.keys()) {
+                                    results.set(key, false);
+                                }
+                                for (const key of deletedGroupKeys.keys()) {
+                                    results.set(key, false);
+                                }
+                            }
+
+                            const updateResultsArr: [string, boolean][] = await Promise.all(
+                                Array.from(updatedGroups.values()).map(
+                                    async (group): Promise<[string, boolean]> => {
+                                        let ok = false;
+                                        try {
+                                            const newItems = new Map<string, ContentItemDescriptor>();
+                                            const updatedItems = new Map<string, ContentItemDescriptor>();
+                                            const deleteItemKeys = new Set<string>();
+
+                                            const newRequiredItems = new Map<string, RequiredContentItemDescriptor>();
+                                            const updatedRequiredItems = new Map<
+                                                string,
+                                                RequiredContentItemDescriptor
+                                            >();
+                                            const deleteRequiredItemKeys = new Set<string>();
+
+                                            const newGroupTags = new Set<string>();
+                                            const deleteGroupTagKeys = new Set<string>();
+
+                                            const existingGroup = parsedDBContentGroups.get(group.id);
+                                            assert(existingGroup);
+                                            for (const item of group.items) {
+                                                if (item.isNew) {
+                                                    newItems.set(item.id, item);
+                                                } else {
+                                                    updatedItems.set(item.id, item);
+                                                }
+                                            }
+                                            for (const existingItem of existingGroup.items) {
+                                                if (!updatedItems.has(existingItem.id)) {
+                                                    deleteItemKeys.add(existingItem.id);
+                                                }
+                                            }
+
+                                            for (const item of group.requiredItems) {
+                                                if (item.isNew) {
+                                                    newRequiredItems.set(item.id, item);
+                                                } else {
+                                                    updatedRequiredItems.set(item.id, item);
+                                                }
+                                            }
+                                            for (const existingItem of existingGroup.requiredItems) {
+                                                if (!updatedRequiredItems.has(existingItem.id)) {
+                                                    deleteRequiredItemKeys.add(existingItem.id);
+                                                }
+                                            }
+
+                                            for (const tag of group.tags) {
+                                                if (!existingGroup.tags.find((x) => x.id === tag.id)) {
+                                                    newGroupTags.add(tag.id);
+                                                }
+                                            }
+                                            for (const tag of existingGroup.tags) {
+                                                if (!newGroupTags.has(tag.id)) {
+                                                    deleteGroupTagKeys.add(tag.id);
+                                                }
+                                            }
+
+                                            await updateContentGroupMutation({
+                                                variables: {
+                                                    contentGroupTypeName: group.typeName,
+                                                    deleteGroupTagIds: Array.from(deleteGroupTagKeys.values()),
+                                                    deleteItemIds: Array.from(deleteItemKeys.values()),
+                                                    deleteRequiredItemIds: Array.from(deleteRequiredItemKeys.values()),
+                                                    groupId: group.id,
+                                                    newGroupTags: Array.from(newGroupTags.values()).map((tagId) => ({
+                                                        contentGroupId: group.id,
+                                                        tagId,
+                                                    })),
+                                                    newItems: Array.from(newItems.values()).map((item) => ({
+                                                        conferenceId: conference.id,
+                                                        contentGroupId: group.id,
+                                                        contentTypeName: item.typeName,
+                                                        data: item.data,
+                                                        id: item.id,
+                                                        layoutData: item.layoutData,
+                                                        name: item.name,
+                                                        requiredContentId: item.requiredContentId,
+                                                    })),
+                                                    newRequiredItems: Array.from(newRequiredItems.values()).map(
+                                                        (item) => ({
+                                                            accessToken: uuidv4(),
+                                                            conferenceId: conference.id,
+                                                            contentGroupId: group.id,
+                                                            contentTypeName: item.typeName,
+                                                            id: item.id,
+                                                            name: item.name,
+                                                        })
+                                                    ),
+                                                    shortTitle: group.shortTitle,
+                                                    title: group.title,
+                                                },
+                                            });
+
+                                            await Promise.all(
+                                                Array.from(updatedItems.values()).map(async (item) => {
+                                                    await updateContentItemMutation({
+                                                        variables: {
+                                                            contentTypeName: item.typeName,
+                                                            data: item.data,
+                                                            id: item.id,
+                                                            layoutData: item.layoutData,
+                                                            name: item.name,
+                                                            requiredContentId: item.requiredContentId,
+                                                        },
+                                                    });
+                                                })
+                                            );
+
+                                            await Promise.all(
+                                                Array.from(updatedRequiredItems.values()).map(async (item) => {
+                                                    await updateRequiredContentItemMutation({
+                                                        variables: {
+                                                            contentTypeName: item.typeName,
+                                                            id: item.id,
+                                                            name: item.name,
+                                                        },
+                                                    });
+                                                })
+                                            );
+
+                                            ok = true;
+                                        } catch (e) {
+                                            ok = false;
+                                        }
+                                        return [group.id, ok];
+                                    }
+                                )
+                            );
+                            for (const [key, val] of updateResultsArr) {
+                                results.set(key, val);
+                            }
+
+                            return results;
                         },
                     },
                 }}
@@ -389,7 +751,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                     otherFields: fields,
                 }}
                 secondaryFields={{
-                    editSingle: (key, onClose) => {
+                    editSingle: (key, onClose, markDirty) => {
                         const group = allContentGroupsMap?.get(key);
 
                         let editorElement: JSX.Element;
@@ -426,22 +788,41 @@ export default function ManageConferenceContentPage(): JSX.Element {
                                                   false
                                               );
                                         assert(itemDesc.type === "item-only");
+                                        if (!item) {
+                                            markDirty();
+                                            setAllContentGroupsMap((oldGroups) => {
+                                                assert(oldGroups);
+                                                const newGroups = new Map(oldGroups);
+
+                                                const existingGroup = newGroups.get(group.id);
+                                                assert(existingGroup);
+                                                newGroups.set(group.id, {
+                                                    ...existingGroup,
+                                                    items: [...existingGroup.items, itemDesc.item],
+                                                });
+
+                                                return newGroups;
+                                            });
+                                        }
 
                                         accordianTitle = itemTemplate.renderEditorHeading(itemDesc);
                                         accordianContents = itemTemplate.renderEditor(
                                             currentUser.user.User[0].id,
                                             itemDesc,
                                             (updatedDesc) => {
+                                                markDirty();
+
                                                 assert(updatedDesc.type === "item-only");
 
                                                 setAllContentGroupsMap((oldGroups) => {
-                                                    const newGroups: Map<string, ContentGroupDescriptor> = oldGroups
-                                                        ? new Map(oldGroups)
-                                                        : new Map();
+                                                    assert(oldGroups);
+                                                    const newGroups = new Map(oldGroups);
 
+                                                    const existingGroup = newGroups.get(group.id);
+                                                    assert(existingGroup);
                                                     newGroups.set(group.id, {
-                                                        ...group,
-                                                        items: group.items.map((cItem) => {
+                                                        ...existingGroup,
+                                                        items: existingGroup.items.map((cItem) => {
                                                             return itemDesc.item.id === cItem.id
                                                                 ? updatedDesc.item
                                                                 : cItem;
@@ -506,37 +887,60 @@ export default function ManageConferenceContentPage(): JSX.Element {
                                                       true
                                                   );
                                         assert(itemDesc.type !== "item-only");
+                                        if (!requiredItem) {
+                                            markDirty();
+                                            setAllContentGroupsMap((oldGroups) => {
+                                                assert(oldGroups);
+                                                const newGroups = new Map(oldGroups);
+
+                                                const existingGroup = newGroups.get(group.id);
+                                                assert(existingGroup);
+                                                newGroups.set(group.id, {
+                                                    ...existingGroup,
+                                                    requiredItems: [
+                                                        ...existingGroup.requiredItems,
+                                                        itemDesc.requiredItem,
+                                                    ],
+                                                });
+
+                                                return newGroups;
+                                            });
+                                        }
 
                                         accordianTitle = itemTemplate.renderEditorHeading(itemDesc);
-                                        accordianContents = itemTemplate.renderEditor(
+                                        const reqItemEditorContents = itemTemplate.renderEditor(
                                             currentUser.user.User[0].id,
                                             itemDesc,
                                             (updatedDesc) => {
                                                 assert(updatedDesc.type !== "item-only");
+                                                markDirty();
 
                                                 setAllContentGroupsMap((oldGroups) => {
-                                                    const newGroups: Map<string, ContentGroupDescriptor> = oldGroups
-                                                        ? new Map(oldGroups)
-                                                        : new Map();
+                                                    assert(oldGroups);
+                                                    const newGroups = new Map(oldGroups);
 
+                                                    const existingGroup = newGroups.get(group.id);
+                                                    assert(existingGroup);
                                                     newGroups.set(group.id, {
-                                                        ...group,
+                                                        ...existingGroup,
                                                         items:
                                                             itemDesc.type === "required-and-item" &&
                                                             updatedDesc.type === "required-and-item"
-                                                                ? group.items.map((cItem) => {
+                                                                ? existingGroup.items.map((cItem) => {
                                                                       return itemDesc.item.id === cItem.id
                                                                           ? updatedDesc.item
                                                                           : cItem;
                                                                   })
                                                                 : itemDesc.type === "required-only" &&
                                                                   updatedDesc.type === "required-and-item"
-                                                                ? [...group.items, updatedDesc.item]
+                                                                ? [...existingGroup.items, updatedDesc.item]
                                                                 : itemDesc.type === "required-and-item" &&
                                                                   updatedDesc.type === "required-only"
-                                                                ? group.items.filter((x) => x.id !== itemDesc.item.id)
-                                                                : group.items,
-                                                        requiredItems: group.requiredItems.map((x) =>
+                                                                ? existingGroup.items.filter(
+                                                                      (x) => x.id !== itemDesc.item.id
+                                                                  )
+                                                                : existingGroup.items,
+                                                        requiredItems: existingGroup.requiredItems.map((x) =>
                                                             x.id === itemDesc.requiredItem.id
                                                                 ? updatedDesc.requiredItem
                                                                 : x
@@ -546,6 +950,17 @@ export default function ManageConferenceContentPage(): JSX.Element {
                                                     return newGroups;
                                                 });
                                             }
+                                        );
+
+                                        accordianContents = (
+                                            <>
+                                                <Box>
+                                                    <Text>TODO: Manage the names/emails of who has access</Text>
+                                                    <Text>TODO: Send upload reminder emails</Text>
+                                                    <Text>TODO: Show if content has already been uploaded</Text>
+                                                </Box>
+                                                {reqItemEditorContents}
+                                            </>
                                         );
                                     }
 
@@ -563,8 +978,6 @@ export default function ManageConferenceContentPage(): JSX.Element {
                                         </AccordionItem>
                                     );
                                 }
-
-                                // TODO: Required items accordian
 
                                 editorElement = <>{itemsAccordian}</>;
                             } else {

@@ -23,7 +23,7 @@ export type RequiredContentItemDescriptor = {
     isNew?: boolean;
 
     id: string;
-    typeName: string;
+    typeName: ContentType_Enum;
     name: string;
 };
 
@@ -49,7 +49,7 @@ export type ContentGroupDescriptor = {
     title: string;
     shortTitle?: string | null;
     typeName: ContentGroupType_Enum;
-    tagIds: TagDescriptor[];
+    tags: TagDescriptor[];
     items: ContentItemDescriptor[];
     requiredItems: RequiredContentItemDescriptor[];
 };

@@ -81,6 +81,7 @@ export default function UploadTextForm({
                                         mt={5}
                                     >
                                         <FormLabel htmlFor="text">Text</FormLabel>
+                                        {/* TODO: Use Markdown editor instead of a textarea */}
                                         <Textarea {...field} id="text"></Textarea>
                                         <FormHelperText>Text to submit.</FormHelperText>
                                         <FormErrorMessage>{form.errors.text}</FormErrorMessage>

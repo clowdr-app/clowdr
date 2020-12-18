@@ -104,12 +104,12 @@ export default function SubmitItemPage({
                         uploadAgreement={uploadAgreement}
                     />
                 );
+            case ContentType_Enum.Link:
             case ContentType_Enum.LinkButton:
             case ContentType_Enum.PaperLink:
             case ContentType_Enum.VideoLink:
                 return <UploadLinkForm magicToken={magicToken} uploadAgreement={uploadAgreement} />;
             case ContentType_Enum.ImageUrl:
-            case ContentType_Enum.Link:
             case ContentType_Enum.PaperUrl:
             case ContentType_Enum.PosterUrl:
             case ContentType_Enum.VideoUrl:

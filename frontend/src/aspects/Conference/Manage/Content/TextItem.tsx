@@ -6,7 +6,9 @@ import { ContentBaseType, ContentItemVersionData } from "../../../../../../share
 import { ContentType_Enum } from "../../../../generated/graphql";
 import type { ItemBaseTemplate } from "./Types";
 
-function createDefaultAbstract(
+// TODO: Use Markdown editor instead of textarea
+
+function createDefaultText(
     currentUserId: string,
     type: ContentType_Enum.Abstract | ContentType_Enum.Text
 ): ContentItemVersionData {
@@ -69,7 +71,7 @@ export const TextItemTemplate: ItemBaseTemplate = {
                     ...data,
                     item: {
                         ...data.item,
-                        data: [createDefaultAbstract(currentUserId, data.item.typeName)],
+                        data: [createDefaultText(currentUserId, data.item.typeName)],
                     },
                 };
                 setTimeout(() => update(data), 0);

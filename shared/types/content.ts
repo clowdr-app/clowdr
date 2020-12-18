@@ -105,7 +105,7 @@ export interface ImageUrlBlob extends UrlContentBlob {
     type: ContentType_Enum.ImageUrl;
 }
 
-export interface LinkBlob extends UrlContentBlob {
+export interface LinkBlob extends LinkContentBlob {
     type: ContentType_Enum.Link;
 }
 
@@ -187,7 +187,7 @@ export const ItemBaseTypes: { [K in ContentType_Enum]: ContentBaseType } = {
     [ContentType_Enum.VideoCountdown]: ContentBaseType.Video,
     [ContentType_Enum.VideoFile]: ContentBaseType.Video,
     [ContentType_Enum.VideoFiller]: ContentBaseType.Video,
-    [ContentType_Enum.VideoLink]: ContentBaseType.Video,
+    [ContentType_Enum.VideoLink]: ContentBaseType.Link,
     [ContentType_Enum.VideoPrepublish]: ContentBaseType.Video,
     [ContentType_Enum.VideoSponsorsFiller]: ContentBaseType.Video,
     [ContentType_Enum.VideoTitles]: ContentBaseType.Video,

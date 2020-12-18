@@ -1571,6 +1571,7 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
                 placement="right"
                 onClose={onSecondaryPanelClose}
                 // finalFocusRef={btnRef}
+                size="lg"
             >
                 <DrawerOverlay>
                     <DrawerContent>

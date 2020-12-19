@@ -471,7 +471,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                 Manage {conference.shortName}
             </Heading>
             <Heading as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
-                Groups
+                Content
             </Heading>
             {loadingAllContentGroups || !allContentGroupsMap || !parsedDBContentGroups ? (
                 <Spinner />

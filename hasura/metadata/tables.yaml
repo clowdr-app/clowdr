@@ -630,6 +630,82 @@
         usedById: x-hasura-User-Id
 - table:
     schema: public
+    name: ConferencePrepareJob
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
+  object_relationships:
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  - name: jobStatus
+    using:
+      foreign_key_constraint_on: jobStatusName
+  array_relationships:
+  - name: videoRenderJobs
+    using:
+      foreign_key_constraint_on:
+        column: conferencePrepareJobId
+        table:
+          schema: public
+          name: VideoRenderJob
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        _or:
+        - conference:
+            groups:
+              _and:
+              - enabled:
+                  _eq: true
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      permissionName:
+                        _eq: CONFERENCE_MANAGE_CONTENT
+              - _or:
+                - includeUnauthenticated:
+                    _eq: true
+                - groupAttendees:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
+      columns:
+      - conferenceId
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - conferenceId
+      - created_at
+      - id
+      - jobStatusName
+      - updated_at
+      filter:
+        _or:
+        - conference:
+            groups:
+              _and:
+              - enabled:
+                  _eq: true
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      permissionName:
+                        _eq: CONFERENCE_MANAGE_CONTENT
+              - _or:
+                - includeUnauthenticated:
+                    _eq: true
+                - groupAttendees:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
+- table:
+    schema: public
     name: ContentGroup
   configuration:
     custom_root_fields: {}
@@ -2026,6 +2102,10 @@
                             _eq: X-Hasura-User-Id
 - table:
     schema: public
+    name: JobStatus
+  is_enum: true
+- table:
+    schema: public
     name: OnlineStatus
   configuration:
     custom_root_fields: {}
@@ -3191,3 +3271,45 @@
       filter:
         id:
           _eq: X-Hasura-User-Id
+- table:
+    schema: public
+    name: VideoRenderJob
+  object_relationships:
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  - name: conferencePrepareJob
+    using:
+      foreign_key_constraint_on: conferencePrepareJobId
+  - name: jobStatus
+    using:
+      foreign_key_constraint_on: jobStatusName
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - conferenceId
+      - conferencePrepareJobId
+      - created_at
+      - id
+      - jobStatusName
+      - updated_at
+      filter:
+        _or:
+        - conference:
+            groups:
+              _and:
+              - enabled:
+                  _eq: true
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      permissionName:
+                        _eq: CONFERENCE_MANAGE_CONTENT
+              - _or:
+                - includeUnauthenticated:
+                    _eq: true
+                - groupAttendees:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id

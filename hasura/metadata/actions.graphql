@@ -163,3 +163,8 @@ type GetUploadAgreementOutput {
   agreementText : String
 }
 
+type ConferencePrepareOutput {
+  success : Boolean!
+  message : String
+}
+

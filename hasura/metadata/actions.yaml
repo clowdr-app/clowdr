@@ -143,4 +143,5 @@ custom_types:
   - name: GetContentItemOutput
   - name: SubmitUpdatedSubtitlesOutput
   - name: GetUploadAgreementOutput
+  - name: ConferencePrepareOutput
   scalars: []

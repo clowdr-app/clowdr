@@ -3404,6 +3404,228 @@ export enum ConferenceDemoCode_Update_Column {
   UsedById = 'usedById'
 }
 
+/** columns and relationships of "ConferencePrepareJob" */
+export type ConferencePrepareJob = {
+  readonly __typename?: 'ConferencePrepareJob';
+  /** An object relationship */
+  readonly conference: Conference;
+  readonly conferenceId: Scalars['uuid'];
+  readonly createdAt: Scalars['timestamptz'];
+  readonly id: Scalars['uuid'];
+  /** An object relationship */
+  readonly jobStatus: JobStatus;
+  readonly jobStatusName: JobStatus_Enum;
+  readonly updatedAt: Scalars['timestamptz'];
+  /** An array relationship */
+  readonly videoRenderJobs: ReadonlyArray<VideoRenderJob>;
+  /** An aggregated array relationship */
+  readonly videoRenderJobs_aggregate: VideoRenderJob_Aggregate;
+};
+
+
+/** columns and relationships of "ConferencePrepareJob" */
+export type ConferencePrepareJobVideoRenderJobsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<VideoRenderJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<VideoRenderJob_Order_By>>;
+  where?: Maybe<VideoRenderJob_Bool_Exp>;
+};
+
+
+/** columns and relationships of "ConferencePrepareJob" */
+export type ConferencePrepareJobVideoRenderJobs_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<VideoRenderJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<VideoRenderJob_Order_By>>;
+  where?: Maybe<VideoRenderJob_Bool_Exp>;
+};
+
+/** aggregated selection of "ConferencePrepareJob" */
+export type ConferencePrepareJob_Aggregate = {
+  readonly __typename?: 'ConferencePrepareJob_aggregate';
+  readonly aggregate?: Maybe<ConferencePrepareJob_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<ConferencePrepareJob>;
+};
+
+/** aggregate fields of "ConferencePrepareJob" */
+export type ConferencePrepareJob_Aggregate_Fields = {
+  readonly __typename?: 'ConferencePrepareJob_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<ConferencePrepareJob_Max_Fields>;
+  readonly min?: Maybe<ConferencePrepareJob_Min_Fields>;
+};
+
+
+/** aggregate fields of "ConferencePrepareJob" */
+export type ConferencePrepareJob_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<ConferencePrepareJob_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "ConferencePrepareJob" */
+export type ConferencePrepareJob_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<ConferencePrepareJob_Max_Order_By>;
+  readonly min?: Maybe<ConferencePrepareJob_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "ConferencePrepareJob" */
+export type ConferencePrepareJob_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<ConferencePrepareJob_Insert_Input>;
+  readonly on_conflict?: Maybe<ConferencePrepareJob_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "ConferencePrepareJob". All fields are combined with a logical 'AND'. */
+export type ConferencePrepareJob_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<ConferencePrepareJob_Bool_Exp>>>;
+  readonly _not?: Maybe<ConferencePrepareJob_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<ConferencePrepareJob_Bool_Exp>>>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly jobStatus?: Maybe<JobStatus_Bool_Exp>;
+  readonly jobStatusName?: Maybe<JobStatus_Enum_Comparison_Exp>;
+  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly videoRenderJobs?: Maybe<VideoRenderJob_Bool_Exp>;
+};
+
+/** unique or primary key constraints on table "ConferencePrepareJob" */
+export enum ConferencePrepareJob_Constraint {
+  /** unique or primary key constraint */
+  ConferencePrepareJobPkey = 'ConferencePrepareJob_pkey'
+}
+
+/** input type for inserting data into table "ConferencePrepareJob" */
+export type ConferencePrepareJob_Insert_Input = {
+  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly jobStatus?: Maybe<JobStatus_Obj_Rel_Insert_Input>;
+  readonly jobStatusName?: Maybe<JobStatus_Enum>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly videoRenderJobs?: Maybe<VideoRenderJob_Arr_Rel_Insert_Input>;
+};
+
+/** aggregate max on columns */
+export type ConferencePrepareJob_Max_Fields = {
+  readonly __typename?: 'ConferencePrepareJob_max_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "ConferencePrepareJob" */
+export type ConferencePrepareJob_Max_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type ConferencePrepareJob_Min_Fields = {
+  readonly __typename?: 'ConferencePrepareJob_min_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "ConferencePrepareJob" */
+export type ConferencePrepareJob_Min_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "ConferencePrepareJob" */
+export type ConferencePrepareJob_Mutation_Response = {
+  readonly __typename?: 'ConferencePrepareJob_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<ConferencePrepareJob>;
+};
+
+/** input type for inserting object relation for remote table "ConferencePrepareJob" */
+export type ConferencePrepareJob_Obj_Rel_Insert_Input = {
+  readonly data: ConferencePrepareJob_Insert_Input;
+  readonly on_conflict?: Maybe<ConferencePrepareJob_On_Conflict>;
+};
+
+/** on conflict condition type for table "ConferencePrepareJob" */
+export type ConferencePrepareJob_On_Conflict = {
+  readonly constraint: ConferencePrepareJob_Constraint;
+  readonly update_columns: ReadonlyArray<ConferencePrepareJob_Update_Column>;
+  readonly where?: Maybe<ConferencePrepareJob_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "ConferencePrepareJob" */
+export type ConferencePrepareJob_Order_By = {
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly jobStatus?: Maybe<JobStatus_Order_By>;
+  readonly jobStatusName?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly videoRenderJobs_aggregate?: Maybe<VideoRenderJob_Aggregate_Order_By>;
+};
+
+/** primary key columns input for table: "ConferencePrepareJob" */
+export type ConferencePrepareJob_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "ConferencePrepareJob" */
+export enum ConferencePrepareJob_Select_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  JobStatusName = 'jobStatusName',
+  /** column name */
+  UpdatedAt = 'updatedAt'
+}
+
+/** input type for updating data in table "ConferencePrepareJob" */
+export type ConferencePrepareJob_Set_Input = {
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly jobStatusName?: Maybe<JobStatus_Enum>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "ConferencePrepareJob" */
+export enum ConferencePrepareJob_Update_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  JobStatusName = 'jobStatusName',
+  /** column name */
+  UpdatedAt = 'updatedAt'
+}
+
+export type ConferencePrepareOutput = {
+  readonly __typename?: 'ConferencePrepareOutput';
+  readonly message?: Maybe<Scalars['String']>;
+  readonly success: Scalars['Boolean'];
+};
+
 /** aggregated selection of "Conference" */
 export type Conference_Aggregate = {
   readonly __typename?: 'Conference_aggregate';
@@ -8882,6 +9104,168 @@ export enum Invitation_Update_Column {
   UpdatedAt = 'updatedAt'
 }
 
+/** columns and relationships of "JobStatus" */
+export type JobStatus = {
+  readonly __typename?: 'JobStatus';
+  readonly description: Scalars['String'];
+  readonly name: Scalars['String'];
+};
+
+/** aggregated selection of "JobStatus" */
+export type JobStatus_Aggregate = {
+  readonly __typename?: 'JobStatus_aggregate';
+  readonly aggregate?: Maybe<JobStatus_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<JobStatus>;
+};
+
+/** aggregate fields of "JobStatus" */
+export type JobStatus_Aggregate_Fields = {
+  readonly __typename?: 'JobStatus_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<JobStatus_Max_Fields>;
+  readonly min?: Maybe<JobStatus_Min_Fields>;
+};
+
+
+/** aggregate fields of "JobStatus" */
+export type JobStatus_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<JobStatus_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "JobStatus" */
+export type JobStatus_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<JobStatus_Max_Order_By>;
+  readonly min?: Maybe<JobStatus_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "JobStatus" */
+export type JobStatus_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<JobStatus_Insert_Input>;
+  readonly on_conflict?: Maybe<JobStatus_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "JobStatus". All fields are combined with a logical 'AND'. */
+export type JobStatus_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<JobStatus_Bool_Exp>>>;
+  readonly _not?: Maybe<JobStatus_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<JobStatus_Bool_Exp>>>;
+  readonly description?: Maybe<String_Comparison_Exp>;
+  readonly name?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "JobStatus" */
+export enum JobStatus_Constraint {
+  /** unique or primary key constraint */
+  JobStatusPkey = 'JobStatus_pkey'
+}
+
+export enum JobStatus_Enum {
+  /** The job completed successfully. */
+  Completed = 'COMPLETED',
+  /** The job failed. */
+  Failed = 'FAILED',
+  /** The job is currently in progress. */
+  InProgress = 'IN_PROGRESS'
+}
+
+/** expression to compare columns of type JobStatus_enum. All fields are combined with logical 'AND'. */
+export type JobStatus_Enum_Comparison_Exp = {
+  readonly _eq?: Maybe<JobStatus_Enum>;
+  readonly _in?: Maybe<ReadonlyArray<JobStatus_Enum>>;
+  readonly _is_null?: Maybe<Scalars['Boolean']>;
+  readonly _neq?: Maybe<JobStatus_Enum>;
+  readonly _nin?: Maybe<ReadonlyArray<JobStatus_Enum>>;
+};
+
+/** input type for inserting data into table "JobStatus" */
+export type JobStatus_Insert_Input = {
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type JobStatus_Max_Fields = {
+  readonly __typename?: 'JobStatus_max_fields';
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "JobStatus" */
+export type JobStatus_Max_Order_By = {
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type JobStatus_Min_Fields = {
+  readonly __typename?: 'JobStatus_min_fields';
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "JobStatus" */
+export type JobStatus_Min_Order_By = {
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "JobStatus" */
+export type JobStatus_Mutation_Response = {
+  readonly __typename?: 'JobStatus_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<JobStatus>;
+};
+
+/** input type for inserting object relation for remote table "JobStatus" */
+export type JobStatus_Obj_Rel_Insert_Input = {
+  readonly data: JobStatus_Insert_Input;
+  readonly on_conflict?: Maybe<JobStatus_On_Conflict>;
+};
+
+/** on conflict condition type for table "JobStatus" */
+export type JobStatus_On_Conflict = {
+  readonly constraint: JobStatus_Constraint;
+  readonly update_columns: ReadonlyArray<JobStatus_Update_Column>;
+  readonly where?: Maybe<JobStatus_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "JobStatus" */
+export type JobStatus_Order_By = {
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "JobStatus" */
+export type JobStatus_Pk_Columns_Input = {
+  readonly name: Scalars['String'];
+};
+
+/** select columns of table "JobStatus" */
+export enum JobStatus_Select_Column {
+  /** column name */
+  Description = 'description',
+  /** column name */
+  Name = 'name'
+}
+
+/** input type for updating data in table "JobStatus" */
+export type JobStatus_Set_Input = {
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** update columns of table "JobStatus" */
+export enum JobStatus_Update_Column {
+  /** column name */
+  Description = 'description',
+  /** column name */
+  Name = 'name'
+}
+
 /** columns and relationships of "OnlineStatus" */
 export type OnlineStatus = {
   readonly __typename?: 'OnlineStatus';
@@ -13284,6 +13668,213 @@ export enum User_Update_Column {
   UpdatedAt = 'updatedAt'
 }
 
+/** columns and relationships of "VideoRenderJob" */
+export type VideoRenderJob = {
+  readonly __typename?: 'VideoRenderJob';
+  /** An object relationship */
+  readonly conference: Conference;
+  readonly conferenceId: Scalars['uuid'];
+  /** An object relationship */
+  readonly conferencePrepareJob: ConferencePrepareJob;
+  readonly conferencePrepareJobId: Scalars['uuid'];
+  readonly created_at: Scalars['timestamptz'];
+  readonly id: Scalars['uuid'];
+  /** An object relationship */
+  readonly jobStatus: JobStatus;
+  readonly jobStatusName: JobStatus_Enum;
+  readonly updated_at: Scalars['timestamptz'];
+};
+
+/** aggregated selection of "VideoRenderJob" */
+export type VideoRenderJob_Aggregate = {
+  readonly __typename?: 'VideoRenderJob_aggregate';
+  readonly aggregate?: Maybe<VideoRenderJob_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<VideoRenderJob>;
+};
+
+/** aggregate fields of "VideoRenderJob" */
+export type VideoRenderJob_Aggregate_Fields = {
+  readonly __typename?: 'VideoRenderJob_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<VideoRenderJob_Max_Fields>;
+  readonly min?: Maybe<VideoRenderJob_Min_Fields>;
+};
+
+
+/** aggregate fields of "VideoRenderJob" */
+export type VideoRenderJob_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<VideoRenderJob_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "VideoRenderJob" */
+export type VideoRenderJob_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<VideoRenderJob_Max_Order_By>;
+  readonly min?: Maybe<VideoRenderJob_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "VideoRenderJob" */
+export type VideoRenderJob_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<VideoRenderJob_Insert_Input>;
+  readonly on_conflict?: Maybe<VideoRenderJob_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "VideoRenderJob". All fields are combined with a logical 'AND'. */
+export type VideoRenderJob_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<VideoRenderJob_Bool_Exp>>>;
+  readonly _not?: Maybe<VideoRenderJob_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<VideoRenderJob_Bool_Exp>>>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly conferencePrepareJob?: Maybe<ConferencePrepareJob_Bool_Exp>;
+  readonly conferencePrepareJobId?: Maybe<Uuid_Comparison_Exp>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly jobStatus?: Maybe<JobStatus_Bool_Exp>;
+  readonly jobStatusName?: Maybe<JobStatus_Enum_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "VideoRenderJob" */
+export enum VideoRenderJob_Constraint {
+  /** unique or primary key constraint */
+  VideoRenderJobPkey = 'VideoRenderJob_pkey'
+}
+
+/** input type for inserting data into table "VideoRenderJob" */
+export type VideoRenderJob_Insert_Input = {
+  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly conferencePrepareJob?: Maybe<ConferencePrepareJob_Obj_Rel_Insert_Input>;
+  readonly conferencePrepareJobId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly jobStatus?: Maybe<JobStatus_Obj_Rel_Insert_Input>;
+  readonly jobStatusName?: Maybe<JobStatus_Enum>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type VideoRenderJob_Max_Fields = {
+  readonly __typename?: 'VideoRenderJob_max_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly conferencePrepareJobId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "VideoRenderJob" */
+export type VideoRenderJob_Max_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly conferencePrepareJobId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type VideoRenderJob_Min_Fields = {
+  readonly __typename?: 'VideoRenderJob_min_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly conferencePrepareJobId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "VideoRenderJob" */
+export type VideoRenderJob_Min_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly conferencePrepareJobId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "VideoRenderJob" */
+export type VideoRenderJob_Mutation_Response = {
+  readonly __typename?: 'VideoRenderJob_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<VideoRenderJob>;
+};
+
+/** input type for inserting object relation for remote table "VideoRenderJob" */
+export type VideoRenderJob_Obj_Rel_Insert_Input = {
+  readonly data: VideoRenderJob_Insert_Input;
+  readonly on_conflict?: Maybe<VideoRenderJob_On_Conflict>;
+};
+
+/** on conflict condition type for table "VideoRenderJob" */
+export type VideoRenderJob_On_Conflict = {
+  readonly constraint: VideoRenderJob_Constraint;
+  readonly update_columns: ReadonlyArray<VideoRenderJob_Update_Column>;
+  readonly where?: Maybe<VideoRenderJob_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "VideoRenderJob" */
+export type VideoRenderJob_Order_By = {
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly conferencePrepareJob?: Maybe<ConferencePrepareJob_Order_By>;
+  readonly conferencePrepareJobId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly jobStatus?: Maybe<JobStatus_Order_By>;
+  readonly jobStatusName?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "VideoRenderJob" */
+export type VideoRenderJob_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "VideoRenderJob" */
+export enum VideoRenderJob_Select_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  ConferencePrepareJobId = 'conferencePrepareJobId',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  JobStatusName = 'jobStatusName',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "VideoRenderJob" */
+export type VideoRenderJob_Set_Input = {
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly conferencePrepareJobId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly jobStatusName?: Maybe<JobStatus_Enum>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "VideoRenderJob" */
+export enum VideoRenderJob_Update_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  ConferencePrepareJobId = 'conferencePrepareJobId',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  JobStatusName = 'jobStatusName',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
 
 /** expression to compare columns of type json. All fields are combined with logical 'AND'. */
 export type Json_Comparison_Exp = {
@@ -13375,6 +13966,10 @@ export type Mutation_Root = {
   readonly delete_ConferenceDemoCode?: Maybe<ConferenceDemoCode_Mutation_Response>;
   /** delete single row from the table: "ConferenceDemoCode" */
   readonly delete_ConferenceDemoCode_by_pk?: Maybe<ConferenceDemoCode>;
+  /** delete data from the table: "ConferencePrepareJob" */
+  readonly delete_ConferencePrepareJob?: Maybe<ConferencePrepareJob_Mutation_Response>;
+  /** delete single row from the table: "ConferencePrepareJob" */
+  readonly delete_ConferencePrepareJob_by_pk?: Maybe<ConferencePrepareJob>;
   /** delete single row from the table: "Conference" */
   readonly delete_Conference_by_pk?: Maybe<Conference>;
   /** delete data from the table: "ContentGroup" */
@@ -13457,6 +14052,10 @@ export type Mutation_Root = {
   readonly delete_Invitation?: Maybe<Invitation_Mutation_Response>;
   /** delete single row from the table: "Invitation" */
   readonly delete_Invitation_by_pk?: Maybe<Invitation>;
+  /** delete data from the table: "JobStatus" */
+  readonly delete_JobStatus?: Maybe<JobStatus_Mutation_Response>;
+  /** delete single row from the table: "JobStatus" */
+  readonly delete_JobStatus_by_pk?: Maybe<JobStatus>;
   /** delete data from the table: "OnlineStatus" */
   readonly delete_OnlineStatus?: Maybe<OnlineStatus_Mutation_Response>;
   /** delete single row from the table: "OnlineStatus" */
@@ -13517,6 +14116,10 @@ export type Mutation_Root = {
   readonly delete_User?: Maybe<User_Mutation_Response>;
   /** delete single row from the table: "User" */
   readonly delete_User_by_pk?: Maybe<User>;
+  /** delete data from the table: "VideoRenderJob" */
+  readonly delete_VideoRenderJob?: Maybe<VideoRenderJob_Mutation_Response>;
+  /** delete single row from the table: "VideoRenderJob" */
+  readonly delete_VideoRenderJob_by_pk?: Maybe<VideoRenderJob>;
   /** insert data into the table: "Attendee" */
   readonly insert_Attendee?: Maybe<Attendee_Mutation_Response>;
   /** insert a single row into the table: "Attendee" */
@@ -13567,6 +14170,10 @@ export type Mutation_Root = {
   readonly insert_ConferenceDemoCode?: Maybe<ConferenceDemoCode_Mutation_Response>;
   /** insert a single row into the table: "ConferenceDemoCode" */
   readonly insert_ConferenceDemoCode_one?: Maybe<ConferenceDemoCode>;
+  /** insert data into the table: "ConferencePrepareJob" */
+  readonly insert_ConferencePrepareJob?: Maybe<ConferencePrepareJob_Mutation_Response>;
+  /** insert a single row into the table: "ConferencePrepareJob" */
+  readonly insert_ConferencePrepareJob_one?: Maybe<ConferencePrepareJob>;
   /** insert a single row into the table: "Conference" */
   readonly insert_Conference_one?: Maybe<Conference>;
   /** insert data into the table: "ContentGroup" */
@@ -13649,6 +14256,10 @@ export type Mutation_Root = {
   readonly insert_Invitation?: Maybe<Invitation_Mutation_Response>;
   /** insert a single row into the table: "Invitation" */
   readonly insert_Invitation_one?: Maybe<Invitation>;
+  /** insert data into the table: "JobStatus" */
+  readonly insert_JobStatus?: Maybe<JobStatus_Mutation_Response>;
+  /** insert a single row into the table: "JobStatus" */
+  readonly insert_JobStatus_one?: Maybe<JobStatus>;
   /** insert data into the table: "OnlineStatus" */
   readonly insert_OnlineStatus?: Maybe<OnlineStatus_Mutation_Response>;
   /** insert a single row into the table: "OnlineStatus" */
@@ -13709,6 +14320,10 @@ export type Mutation_Root = {
   readonly insert_User?: Maybe<User_Mutation_Response>;
   /** insert a single row into the table: "User" */
   readonly insert_User_one?: Maybe<User>;
+  /** insert data into the table: "VideoRenderJob" */
+  readonly insert_VideoRenderJob?: Maybe<VideoRenderJob_Mutation_Response>;
+  /** insert a single row into the table: "VideoRenderJob" */
+  readonly insert_VideoRenderJob_one?: Maybe<VideoRenderJob>;
   /** perform the action: "invitationConfirmCurrent" */
   readonly invitationConfirmCurrent?: Maybe<ConfirmInvitationOutput>;
   /** perform the action: "invitationConfirmSendInitialEmail" */
@@ -13775,6 +14390,10 @@ export type Mutation_Root = {
   readonly update_ConferenceDemoCode?: Maybe<ConferenceDemoCode_Mutation_Response>;
   /** update single row of the table: "ConferenceDemoCode" */
   readonly update_ConferenceDemoCode_by_pk?: Maybe<ConferenceDemoCode>;
+  /** update data of the table: "ConferencePrepareJob" */
+  readonly update_ConferencePrepareJob?: Maybe<ConferencePrepareJob_Mutation_Response>;
+  /** update single row of the table: "ConferencePrepareJob" */
+  readonly update_ConferencePrepareJob_by_pk?: Maybe<ConferencePrepareJob>;
   /** update single row of the table: "Conference" */
   readonly update_Conference_by_pk?: Maybe<Conference>;
   /** update data of the table: "ContentGroup" */
@@ -13857,6 +14476,10 @@ export type Mutation_Root = {
   readonly update_Invitation?: Maybe<Invitation_Mutation_Response>;
   /** update single row of the table: "Invitation" */
   readonly update_Invitation_by_pk?: Maybe<Invitation>;
+  /** update data of the table: "JobStatus" */
+  readonly update_JobStatus?: Maybe<JobStatus_Mutation_Response>;
+  /** update single row of the table: "JobStatus" */
+  readonly update_JobStatus_by_pk?: Maybe<JobStatus>;
   /** update data of the table: "OnlineStatus" */
   readonly update_OnlineStatus?: Maybe<OnlineStatus_Mutation_Response>;
   /** update single row of the table: "OnlineStatus" */
@@ -13917,6 +14540,10 @@ export type Mutation_Root = {
   readonly update_User?: Maybe<User_Mutation_Response>;
   /** update single row of the table: "User" */
   readonly update_User_by_pk?: Maybe<User>;
+  /** update data of the table: "VideoRenderJob" */
+  readonly update_VideoRenderJob?: Maybe<VideoRenderJob_Mutation_Response>;
+  /** update single row of the table: "VideoRenderJob" */
+  readonly update_VideoRenderJob_by_pk?: Maybe<VideoRenderJob>;
 };
 
 
@@ -14066,6 +14693,18 @@ export type Mutation_RootDelete_ConferenceDemoCodeArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_ConferenceDemoCode_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_ConferencePrepareJobArgs = {
+  where: ConferencePrepareJob_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_ConferencePrepareJob_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -14317,6 +14956,18 @@ export type Mutation_RootDelete_Invitation_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_JobStatusArgs = {
+  where: JobStatus_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_JobStatus_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_OnlineStatusArgs = {
   where: OnlineStatus_Bool_Exp;
 };
@@ -14497,6 +15148,18 @@ export type Mutation_RootDelete_User_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_VideoRenderJobArgs = {
+  where: VideoRenderJob_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_VideoRenderJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_AttendeeArgs = {
   objects: ReadonlyArray<Attendee_Insert_Input>;
   on_conflict?: Maybe<Attendee_On_Conflict>;
@@ -14668,6 +15331,20 @@ export type Mutation_RootInsert_ConferenceDemoCodeArgs = {
 export type Mutation_RootInsert_ConferenceDemoCode_OneArgs = {
   object: ConferenceDemoCode_Insert_Input;
   on_conflict?: Maybe<ConferenceDemoCode_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_ConferencePrepareJobArgs = {
+  objects: ReadonlyArray<ConferencePrepareJob_Insert_Input>;
+  on_conflict?: Maybe<ConferencePrepareJob_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_ConferencePrepareJob_OneArgs = {
+  object: ConferencePrepareJob_Insert_Input;
+  on_conflict?: Maybe<ConferencePrepareJob_On_Conflict>;
 };
 
 
@@ -14959,6 +15636,20 @@ export type Mutation_RootInsert_Invitation_OneArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_JobStatusArgs = {
+  objects: ReadonlyArray<JobStatus_Insert_Input>;
+  on_conflict?: Maybe<JobStatus_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_JobStatus_OneArgs = {
+  object: JobStatus_Insert_Input;
+  on_conflict?: Maybe<JobStatus_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_OnlineStatusArgs = {
   objects: ReadonlyArray<OnlineStatus_Insert_Input>;
   on_conflict?: Maybe<OnlineStatus_On_Conflict>;
@@ -15165,6 +15856,20 @@ export type Mutation_RootInsert_UserArgs = {
 export type Mutation_RootInsert_User_OneArgs = {
   object: User_Insert_Input;
   on_conflict?: Maybe<User_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_VideoRenderJobArgs = {
+  objects: ReadonlyArray<VideoRenderJob_Insert_Input>;
+  on_conflict?: Maybe<VideoRenderJob_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_VideoRenderJob_OneArgs = {
+  object: VideoRenderJob_Insert_Input;
+  on_conflict?: Maybe<VideoRenderJob_On_Conflict>;
 };
 
 
@@ -15435,6 +16140,20 @@ export type Mutation_RootUpdate_ConferenceDemoCodeArgs = {
 export type Mutation_RootUpdate_ConferenceDemoCode_By_PkArgs = {
   _set?: Maybe<ConferenceDemoCode_Set_Input>;
   pk_columns: ConferenceDemoCode_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_ConferencePrepareJobArgs = {
+  _set?: Maybe<ConferencePrepareJob_Set_Input>;
+  where: ConferencePrepareJob_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_ConferencePrepareJob_By_PkArgs = {
+  _set?: Maybe<ConferencePrepareJob_Set_Input>;
+  pk_columns: ConferencePrepareJob_Pk_Columns_Input;
 };
 
 
@@ -15742,6 +16461,20 @@ export type Mutation_RootUpdate_Invitation_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_JobStatusArgs = {
+  _set?: Maybe<JobStatus_Set_Input>;
+  where: JobStatus_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_JobStatus_By_PkArgs = {
+  _set?: Maybe<JobStatus_Set_Input>;
+  pk_columns: JobStatus_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_OnlineStatusArgs = {
   _set?: Maybe<OnlineStatus_Set_Input>;
   where: OnlineStatus_Bool_Exp;
@@ -15964,6 +16697,20 @@ export type Mutation_RootUpdate_User_By_PkArgs = {
   pk_columns: User_Pk_Columns_Input;
 };
 
+
+/** mutation root */
+export type Mutation_RootUpdate_VideoRenderJobArgs = {
+  _set?: Maybe<VideoRenderJob_Set_Input>;
+  where: VideoRenderJob_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_VideoRenderJob_By_PkArgs = {
+  _set?: Maybe<VideoRenderJob_Set_Input>;
+  pk_columns: VideoRenderJob_Pk_Columns_Input;
+};
+
 /** column ordering options */
 export enum Order_By {
   /** in the ascending order, nulls last */
@@ -16057,6 +16804,12 @@ export type Query_Root = {
   readonly ConferenceDemoCode_aggregate: ConferenceDemoCode_Aggregate;
   /** fetch data from the table: "ConferenceDemoCode" using primary key columns */
   readonly ConferenceDemoCode_by_pk?: Maybe<ConferenceDemoCode>;
+  /** fetch data from the table: "ConferencePrepareJob" */
+  readonly ConferencePrepareJob: ReadonlyArray<ConferencePrepareJob>;
+  /** fetch aggregated fields from the table: "ConferencePrepareJob" */
+  readonly ConferencePrepareJob_aggregate: ConferencePrepareJob_Aggregate;
+  /** fetch data from the table: "ConferencePrepareJob" using primary key columns */
+  readonly ConferencePrepareJob_by_pk?: Maybe<ConferencePrepareJob>;
   /** fetch aggregated fields from the table: "Conference" */
   readonly Conference_aggregate: Conference_Aggregate;
   /** fetch data from the table: "Conference" using primary key columns */
@@ -16181,6 +16934,12 @@ export type Query_Root = {
   readonly Invitation_aggregate: Invitation_Aggregate;
   /** fetch data from the table: "Invitation" using primary key columns */
   readonly Invitation_by_pk?: Maybe<Invitation>;
+  /** fetch data from the table: "JobStatus" */
+  readonly JobStatus: ReadonlyArray<JobStatus>;
+  /** fetch aggregated fields from the table: "JobStatus" */
+  readonly JobStatus_aggregate: JobStatus_Aggregate;
+  /** fetch data from the table: "JobStatus" using primary key columns */
+  readonly JobStatus_by_pk?: Maybe<JobStatus>;
   /** fetch data from the table: "OnlineStatus" */
   readonly OnlineStatus: ReadonlyArray<OnlineStatus>;
   /** fetch aggregated fields from the table: "OnlineStatus" */
@@ -16271,6 +17030,12 @@ export type Query_Root = {
   readonly User_aggregate: User_Aggregate;
   /** fetch data from the table: "User" using primary key columns */
   readonly User_by_pk?: Maybe<User>;
+  /** fetch data from the table: "VideoRenderJob" */
+  readonly VideoRenderJob: ReadonlyArray<VideoRenderJob>;
+  /** fetch aggregated fields from the table: "VideoRenderJob" */
+  readonly VideoRenderJob_aggregate: VideoRenderJob_Aggregate;
+  /** fetch data from the table: "VideoRenderJob" using primary key columns */
+  readonly VideoRenderJob_by_pk?: Maybe<VideoRenderJob>;
   /** perform the action: "echo" */
   readonly echo?: Maybe<EchoOutput>;
   /** perform the action: "getContentItem" */
@@ -16600,6 +17365,32 @@ export type Query_RootConferenceDemoCode_AggregateArgs = {
 
 /** query root */
 export type Query_RootConferenceDemoCode_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
+export type Query_RootConferencePrepareJobArgs = {
+  distinct_on?: Maybe<ReadonlyArray<ConferencePrepareJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<ConferencePrepareJob_Order_By>>;
+  where?: Maybe<ConferencePrepareJob_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootConferencePrepareJob_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<ConferencePrepareJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<ConferencePrepareJob_Order_By>>;
+  where?: Maybe<ConferencePrepareJob_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootConferencePrepareJob_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -17141,6 +17932,32 @@ export type Query_RootInvitation_By_PkArgs = {
 
 
 /** query root */
+export type Query_RootJobStatusArgs = {
+  distinct_on?: Maybe<ReadonlyArray<JobStatus_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<JobStatus_Order_By>>;
+  where?: Maybe<JobStatus_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootJobStatus_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<JobStatus_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<JobStatus_Order_By>>;
+  where?: Maybe<JobStatus_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootJobStatus_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** query root */
 export type Query_RootOnlineStatusArgs = {
   distinct_on?: Maybe<ReadonlyArray<OnlineStatus_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -17531,6 +18348,32 @@ export type Query_RootUser_By_PkArgs = {
 
 
 /** query root */
+export type Query_RootVideoRenderJobArgs = {
+  distinct_on?: Maybe<ReadonlyArray<VideoRenderJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<VideoRenderJob_Order_By>>;
+  where?: Maybe<VideoRenderJob_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootVideoRenderJob_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<VideoRenderJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<VideoRenderJob_Order_By>>;
+  where?: Maybe<VideoRenderJob_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootVideoRenderJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
 export type Query_RootEchoArgs = {
   message: Scalars['String'];
 };
@@ -17630,6 +18473,12 @@ export type Subscription_Root = {
   readonly ConferenceDemoCode_aggregate: ConferenceDemoCode_Aggregate;
   /** fetch data from the table: "ConferenceDemoCode" using primary key columns */
   readonly ConferenceDemoCode_by_pk?: Maybe<ConferenceDemoCode>;
+  /** fetch data from the table: "ConferencePrepareJob" */
+  readonly ConferencePrepareJob: ReadonlyArray<ConferencePrepareJob>;
+  /** fetch aggregated fields from the table: "ConferencePrepareJob" */
+  readonly ConferencePrepareJob_aggregate: ConferencePrepareJob_Aggregate;
+  /** fetch data from the table: "ConferencePrepareJob" using primary key columns */
+  readonly ConferencePrepareJob_by_pk?: Maybe<ConferencePrepareJob>;
   /** fetch aggregated fields from the table: "Conference" */
   readonly Conference_aggregate: Conference_Aggregate;
   /** fetch data from the table: "Conference" using primary key columns */
@@ -17754,6 +18603,12 @@ export type Subscription_Root = {
   readonly Invitation_aggregate: Invitation_Aggregate;
   /** fetch data from the table: "Invitation" using primary key columns */
   readonly Invitation_by_pk?: Maybe<Invitation>;
+  /** fetch data from the table: "JobStatus" */
+  readonly JobStatus: ReadonlyArray<JobStatus>;
+  /** fetch aggregated fields from the table: "JobStatus" */
+  readonly JobStatus_aggregate: JobStatus_Aggregate;
+  /** fetch data from the table: "JobStatus" using primary key columns */
+  readonly JobStatus_by_pk?: Maybe<JobStatus>;
   /** fetch data from the table: "OnlineStatus" */
   readonly OnlineStatus: ReadonlyArray<OnlineStatus>;
   /** fetch aggregated fields from the table: "OnlineStatus" */
@@ -17844,6 +18699,12 @@ export type Subscription_Root = {
   readonly User_aggregate: User_Aggregate;
   /** fetch data from the table: "User" using primary key columns */
   readonly User_by_pk?: Maybe<User>;
+  /** fetch data from the table: "VideoRenderJob" */
+  readonly VideoRenderJob: ReadonlyArray<VideoRenderJob>;
+  /** fetch aggregated fields from the table: "VideoRenderJob" */
+  readonly VideoRenderJob_aggregate: VideoRenderJob_Aggregate;
+  /** fetch data from the table: "VideoRenderJob" using primary key columns */
+  readonly VideoRenderJob_by_pk?: Maybe<VideoRenderJob>;
   /** perform the action: "echo" */
   readonly echo?: Maybe<EchoOutput>;
   /** perform the action: "getContentItem" */
@@ -18173,6 +19034,32 @@ export type Subscription_RootConferenceDemoCode_AggregateArgs = {
 
 /** subscription root */
 export type Subscription_RootConferenceDemoCode_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
+export type Subscription_RootConferencePrepareJobArgs = {
+  distinct_on?: Maybe<ReadonlyArray<ConferencePrepareJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<ConferencePrepareJob_Order_By>>;
+  where?: Maybe<ConferencePrepareJob_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootConferencePrepareJob_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<ConferencePrepareJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<ConferencePrepareJob_Order_By>>;
+  where?: Maybe<ConferencePrepareJob_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootConferencePrepareJob_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -18714,6 +19601,32 @@ export type Subscription_RootInvitation_By_PkArgs = {
 
 
 /** subscription root */
+export type Subscription_RootJobStatusArgs = {
+  distinct_on?: Maybe<ReadonlyArray<JobStatus_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<JobStatus_Order_By>>;
+  where?: Maybe<JobStatus_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootJobStatus_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<JobStatus_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<JobStatus_Order_By>>;
+  where?: Maybe<JobStatus_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootJobStatus_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** subscription root */
 export type Subscription_RootOnlineStatusArgs = {
   distinct_on?: Maybe<ReadonlyArray<OnlineStatus_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -19104,6 +20017,32 @@ export type Subscription_RootUser_By_PkArgs = {
 
 
 /** subscription root */
+export type Subscription_RootVideoRenderJobArgs = {
+  distinct_on?: Maybe<ReadonlyArray<VideoRenderJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<VideoRenderJob_Order_By>>;
+  where?: Maybe<VideoRenderJob_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootVideoRenderJob_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<VideoRenderJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<VideoRenderJob_Order_By>>;
+  where?: Maybe<VideoRenderJob_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootVideoRenderJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
 export type Subscription_RootEchoArgs = {
   message: Scalars['String'];
 };
@@ -19199,6 +20138,20 @@ export type DeleteIsTypingMutationVariables = Exact<{
 
 
 export type DeleteIsTypingMutation = { readonly __typename?: 'mutation_root', readonly delete_ChatTyper?: Maybe<{ readonly __typename?: 'ChatTyper_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ChatTyper', readonly id: any }> }> };
+
+export type CreateConferencePrepareJobMutationVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type CreateConferencePrepareJobMutation = { readonly __typename?: 'mutation_root', readonly insert_ConferencePrepareJob_one?: Maybe<{ readonly __typename?: 'ConferencePrepareJob', readonly id: any, readonly conferenceId: any }> };
+
+export type ConferencePrepareJobSubscriptionSubscriptionVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type ConferencePrepareJobSubscriptionSubscription = { readonly __typename?: 'subscription_root', readonly ConferencePrepareJob: ReadonlyArray<{ readonly __typename?: 'ConferencePrepareJob', readonly id: any, readonly jobStatusName: JobStatus_Enum, readonly updatedAt: any, readonly createdAt: any, readonly videoRenderJobs: ReadonlyArray<{ readonly __typename?: 'VideoRenderJob', readonly id: any, readonly jobStatusName: JobStatus_Enum, readonly updated_at: any, readonly created_at: any }> }> };
 
 export type RequiredContentItemInfoFragment = { readonly __typename?: 'RequiredContentItem', readonly id: any, readonly name: string, readonly contentTypeName: ContentType_Enum, readonly conferenceId: any, readonly contentGroupId: any };
 
@@ -19952,6 +20905,77 @@ export function useDeleteIsTypingMutation(baseOptions?: Apollo.MutationHookOptio
 export type DeleteIsTypingMutationHookResult = ReturnType<typeof useDeleteIsTypingMutation>;
 export type DeleteIsTypingMutationResult = Apollo.MutationResult<DeleteIsTypingMutation>;
 export type DeleteIsTypingMutationOptions = Apollo.BaseMutationOptions<DeleteIsTypingMutation, DeleteIsTypingMutationVariables>;
+export const CreateConferencePrepareJobDocument = gql`
+    mutation CreateConferencePrepareJob($conferenceId: uuid!) {
+  insert_ConferencePrepareJob_one(object: {conferenceId: $conferenceId}) {
+    id
+    conferenceId
+  }
+}
+    `;
+export type CreateConferencePrepareJobMutationFn = Apollo.MutationFunction<CreateConferencePrepareJobMutation, CreateConferencePrepareJobMutationVariables>;
+
+/**
+ * __useCreateConferencePrepareJobMutation__
+ *
+ * To run a mutation, you first call `useCreateConferencePrepareJobMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateConferencePrepareJobMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createConferencePrepareJobMutation, { data, loading, error }] = useCreateConferencePrepareJobMutation({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useCreateConferencePrepareJobMutation(baseOptions?: Apollo.MutationHookOptions<CreateConferencePrepareJobMutation, CreateConferencePrepareJobMutationVariables>) {
+        return Apollo.useMutation<CreateConferencePrepareJobMutation, CreateConferencePrepareJobMutationVariables>(CreateConferencePrepareJobDocument, baseOptions);
+      }
+export type CreateConferencePrepareJobMutationHookResult = ReturnType<typeof useCreateConferencePrepareJobMutation>;
+export type CreateConferencePrepareJobMutationResult = Apollo.MutationResult<CreateConferencePrepareJobMutation>;
+export type CreateConferencePrepareJobMutationOptions = Apollo.BaseMutationOptions<CreateConferencePrepareJobMutation, CreateConferencePrepareJobMutationVariables>;
+export const ConferencePrepareJobSubscriptionDocument = gql`
+    subscription ConferencePrepareJobSubscription($conferenceId: uuid!) {
+  ConferencePrepareJob(where: {conferenceId: {_eq: $conferenceId}}) {
+    id
+    jobStatusName
+    updatedAt
+    createdAt
+    videoRenderJobs {
+      id
+      jobStatusName
+      updated_at
+      created_at
+    }
+  }
+}
+    `;
+
+/**
+ * __useConferencePrepareJobSubscriptionSubscription__
+ *
+ * To run a query within a React component, call `useConferencePrepareJobSubscriptionSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useConferencePrepareJobSubscriptionSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useConferencePrepareJobSubscriptionSubscription({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useConferencePrepareJobSubscriptionSubscription(baseOptions: Apollo.SubscriptionHookOptions<ConferencePrepareJobSubscriptionSubscription, ConferencePrepareJobSubscriptionSubscriptionVariables>) {
+        return Apollo.useSubscription<ConferencePrepareJobSubscriptionSubscription, ConferencePrepareJobSubscriptionSubscriptionVariables>(ConferencePrepareJobSubscriptionDocument, baseOptions);
+      }
+export type ConferencePrepareJobSubscriptionSubscriptionHookResult = ReturnType<typeof useConferencePrepareJobSubscriptionSubscription>;
+export type ConferencePrepareJobSubscriptionSubscriptionResult = Apollo.SubscriptionResult<ConferencePrepareJobSubscriptionSubscription>;
 export const SelectAllContentGroupsDocument = gql`
     query SelectAllContentGroups($conferenceId: uuid!) {
   ContentGroup(where: {conferenceId: {_eq: $conferenceId}}) {

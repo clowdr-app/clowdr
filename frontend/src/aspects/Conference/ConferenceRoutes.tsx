@@ -3,6 +3,7 @@ import { Route, Switch } from "react-router-dom";
 import PageNotFound from "../Errors/PageNotFound";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import AttendeeLandingPage from "./Attend/AttendeeLandingPage";
+import ManageConferenceBroadcastPage from "./Manage/ManageConferenceBroadcastPage";
 import ManageConferenceContentPage from "./Manage/ManageConferenceContentPage";
 import ManageConferenceGroupsPage from "./Manage/ManageConferenceGroupsPage";
 import ManageConferenceNamePage from "./Manage/ManageConferenceNamePage";
@@ -41,6 +42,9 @@ function AuthenticatedConferenceRoutes(rootUrl: string): JSX.Element {
                     </Route>
                     <Route path={`${rootUrl}/manage/content`}>
                         <ManageConferenceContentPage />
+                    </Route>
+                    <Route path={`${rootUrl}/manage/broadcasts`}>
+                        <ManageConferenceBroadcastPage />
                     </Route>
                 </Switch>
             </ConferenceCurrentUserActivePermissionsProvider>

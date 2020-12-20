@@ -54,7 +54,7 @@ function AuthenticatedConferenceRoutes(rootUrl: string): JSX.Element {
                         <ManageConferenceBroadcastPage />
                     </Route>
 
-                    <Route path={`${rootUrl}/manage/`}>
+                    <Route path={`${rootUrl}/`}>
                         <PageNotFound />
                     </Route>
                 </Switch>

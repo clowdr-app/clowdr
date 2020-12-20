@@ -502,7 +502,10 @@ export interface CustomButton<T, PK extends keyof T> {
     text: string | JSX.Element;
     label: string;
     colorScheme: string;
-    alwaysEnabled: boolean;
+    enabledWhenNothingSelected: boolean;
+    enabledWhenDirty: boolean;
+    tooltipWhenEnabled: string;
+    tooltipWhenDisabled: string;
     action: (keys: Set<T[PK]>) => Promise<void>;
     isRunning: boolean;
 }
@@ -551,6 +554,11 @@ export interface CRUDTableProps<T, PK extends keyof T> {
      */
     customButtons?: Array<CustomButton<T, PK>>;
 
+    /**
+     * Whether some outer editor has unsaved changes or not.
+     * Used to make the table's "No/unsaved changes" messages less confusing.
+     */
+    externalUnsavedChanges?: boolean;
     //
     // - TODO: Import from: CSV, JSON, XML
     //   - Simple import (columns/fields directly mapped)
@@ -601,15 +609,6 @@ function FilterInput({
     }
 }
 
-// General:
-// - TODO: Ensure that operations act on the set of "selected and filtered" keys
-//   not just the set of selected keys (since that would produce unexpected
-//   results).
-//
-// Filtering:
-// - TODO: Supply set of "selected & filtered keys" to custom button click
-//   events
-//
 // Primary Fields:
 // - TODO: Apply string editor limits
 // - TODO: Apply string custom equality test or default equality test
@@ -632,15 +631,12 @@ function FilterInput({
 // - TODO: Apply highlighting options to cells
 //
 // CSUD:
-// - TODO: Implement async creation
 // - TODO: Implement sync multi-delete
 // - TODO: Implement async multi-delete
 //
 // Buttons:
 // - TODO: Multi-delete button
 // - TODO: Multi-edit button
-// - TODO: Select all / deselect all button / clear selection (inc. hidden
-//   selections)
 //
 // Other:
 // - TODO: Double-click any cell to add to selection
@@ -900,10 +896,14 @@ function CRUDCreateButton<T, PK extends keyof T>({
     csud,
     addDirtyKey,
     setSelectedKeys,
+    beginEdit,
+    endEdit,
 }: Readonly<CRUDTableProps<T, PK>> & {
     isDisabled: boolean;
     addDirtyKey: (key: T[PK]) => void;
     setSelectedKeys: React.Dispatch<React.SetStateAction<Set<T[PK]>>>;
+    beginEdit: () => string;
+    endEdit: (id: string) => void;
 }): JSX.Element {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const toast = useToast();
@@ -966,45 +966,88 @@ function CRUDCreateButton<T, PK extends keyof T>({
     function onCreate() {
         let ok = false;
 
-        if (csud && csud.cudCallbacks && csud.cudCallbacks.create) {
-            if ("generateTemporaryKey" in csud.cudCallbacks) {
-                const tempKey = csud.cudCallbacks.generateTemporaryKey();
-                let newItem: Partial<T> = {};
-                primaryKeyField.insert?.(newItem, tempKey);
-                if (otherPrimaryFields) {
-                    const fields = Object.values(otherPrimaryFields) as Array<Readonly<PrimaryField<T, any>>>;
-                    fields.forEach((field) => {
-                        const uiValue = fieldValues.get(field.heading);
-                        const convertFromUI = field.spec.convertFromUI as ((v: any) => T) | undefined;
-                        if (convertFromUI && field.insert) {
-                            const value = convertFromUI(uiValue);
-                            newItem = field.insert(newItem, value);
-                        }
-                    });
-                }
-                if (csud.cudCallbacks.create(tempKey, newItem)) {
-                    addDirtyKey(tempKey);
-                    setSelectedKeys(() => {
-                        return new Set([tempKey]);
-                    });
+        if (csud && csud.cudCallbacks) {
+            const cbs = csud.cudCallbacks;
+            if (cbs.create) {
+                if ("generateTemporaryKey" in cbs) {
+                    const tempKey = cbs.generateTemporaryKey();
+                    let newItem: Partial<T> = {};
+                    primaryKeyField.insert?.(newItem, tempKey);
+                    if (otherPrimaryFields) {
+                        const fields = Object.values(otherPrimaryFields) as Array<Readonly<PrimaryField<T, any>>>;
+                        fields.forEach((field) => {
+                            const uiValue = fieldValues.get(field.heading);
+                            const convertFromUI = field.spec.convertFromUI as ((v: any) => T) | undefined;
+                            if (convertFromUI && field.insert) {
+                                const value = convertFromUI(uiValue);
+                                newItem = field.insert(newItem, value);
+                            }
+                        });
+                    }
+                    if (cbs.create(tempKey, newItem)) {
+                        addDirtyKey(tempKey);
+                        setSelectedKeys(() => {
+                            return new Set([tempKey]);
+                        });
 
-                    setFieldValues(defaultValues);
-                    ok = true;
+                        setFieldValues(defaultValues);
+                        ok = true;
+                    } else {
+                        toast({
+                            title: "Error! Unable to create new item",
+                            status: "error",
+                            isClosable: true,
+                        });
+                    }
+
+                    if (ok) {
+                        onClose();
+                    }
                 } else {
-                    toast({
-                        title: "Error! Unable to create new item",
-                        status: "error",
-                        isClosable: true,
-                    });
-                }
-            } else {
-                // TODO: Async create
-                throw new Error("Async creation not implemented yet!");
-            }
-        }
+                    const editId = beginEdit();
+                    (async function doAsyncCreate() {
+                        try {
+                            let newItem: Partial<T> = {};
+                            if (otherPrimaryFields) {
+                                const fields = Object.values(otherPrimaryFields) as Array<
+                                    Readonly<PrimaryField<T, any>>
+                                >;
+                                fields.forEach((field) => {
+                                    const uiValue = fieldValues.get(field.heading);
+                                    const convertFromUI = field.spec.convertFromUI as ((v: any) => T) | undefined;
+                                    if (convertFromUI && field.insert) {
+                                        const value = convertFromUI(uiValue);
+                                        newItem = field.insert(newItem, value);
+                                    }
+                                });
+                            }
+                            assert(cbs.create);
+                            const tempKey = await cbs.create(newItem);
+                            if (tempKey) {
+                                addDirtyKey(tempKey);
+                                setSelectedKeys(() => {
+                                    return new Set([tempKey]);
+                                });
 
-        if (ok) {
-            onClose();
+                                setFieldValues(defaultValues);
+                                ok = true;
+                            } else {
+                                toast({
+                                    title: "Error! Unable to create new item",
+                                    status: "error",
+                                    isClosable: true,
+                                });
+                            }
+                        } finally {
+                            endEdit(editId);
+
+                            if (ok) {
+                                onClose();
+                            }
+                        }
+                    })();
+                }
+            }
         }
     }
 
@@ -1292,55 +1335,25 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
         return result;
     }, [filterValues, includeDeleteColumn, setFilterValues, visibleFields]);
 
-    const rowEls = useMemo(() => {
-        const result: Array<JSX.Element[]> = [];
+    const [rowEls, visibleKeys] = useMemo(() => {
+        const resultRowEls: Array<JSX.Element[]> = [];
+        const resultVisibleKeys: Set<T[PK]> = new Set();
 
         if (!isFilterable) {
             allRows.forEach((rowEl, key) => {
-                if (includeSelectorColumn) {
-                    const item = data.get(key);
-                    assert(item);
+                const item = data.get(key);
+                if (item) {
                     const keyV = primaryKeyField.extract(item);
-                    const isSelected = selectedKeys.has(keyV);
 
-                    result.push([
-                        <CRUDCell
-                            key={`${key}-selection`}
-                            rowKey={key}
-                            columnKey={"selection"}
-                            rowIdx={result.length}
-                            colIdx={-1}
-                        >
-                            <CRUDSelectionBox
-                                item={item}
-                                primaryKeyField={primaryKeyField}
-                                isSelected={isSelected}
-                                setSelectedKeys={setSelectedKeys}
-                            />
-                        </CRUDCell>,
-                        rowEl,
-                    ]);
-                } else {
-                    result.push([rowEl]);
-                }
-            });
-        } else {
-            data.forEach((item, key) => {
-                if (filterFields.every((field) => applyFieldFilter(field, item))) {
-                    const rowEl = allRows.get(key);
-                    assert(rowEl);
                     if (includeSelectorColumn) {
-                        const item = data.get(key);
-                        assert(item);
-                        const keyV = primaryKeyField.extract(item);
                         const isSelected = selectedKeys.has(keyV);
 
-                        result.push([
+                        resultRowEls.push([
                             <CRUDCell
                                 key={`${key}-selection`}
                                 rowKey={key}
                                 columnKey={"selection"}
-                                rowIdx={result.length}
+                                rowIdx={resultRowEls.length}
                                 colIdx={-1}
                             >
                                 <CRUDSelectionBox
@@ -1353,13 +1366,50 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
                             rowEl,
                         ]);
                     } else {
-                        result.push([rowEl]);
+                        resultRowEls.push([rowEl]);
+                    }
+
+                    resultVisibleKeys.add(keyV);
+                }
+            });
+        } else {
+            data.forEach((item, key) => {
+                if (filterFields.every((field) => applyFieldFilter(field, item))) {
+                    const keyV = primaryKeyField.extract(item);
+
+                    const rowEl = allRows.get(key);
+                    if (rowEl) {
+                        if (includeSelectorColumn) {
+                            const isSelected = selectedKeys.has(keyV);
+
+                            resultRowEls.push([
+                                <CRUDCell
+                                    key={`${key}-selection`}
+                                    rowKey={key}
+                                    columnKey={"selection"}
+                                    rowIdx={resultRowEls.length}
+                                    colIdx={-1}
+                                >
+                                    <CRUDSelectionBox
+                                        item={item}
+                                        primaryKeyField={primaryKeyField}
+                                        isSelected={isSelected}
+                                        setSelectedKeys={setSelectedKeys}
+                                    />
+                                </CRUDCell>,
+                                rowEl,
+                            ]);
+                        } else {
+                            resultRowEls.push([rowEl]);
+                        }
+
+                        resultVisibleKeys.add(keyV);
                     }
                 }
             });
         }
 
-        return result;
+        return [resultRowEls, resultVisibleKeys];
     }, [
         allRows,
         applyFieldFilter,
@@ -1418,16 +1468,17 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
     templateColumnsStr += includeDeleteColumn ? " min-content" : "";
 
     const visibleSelectedKeys = useMemo(() => {
-        const result = new Set<T[PK]>();
+        let result = new Set<T[PK]>();
         if (!isFilterable) {
-            data.forEach((item) => {
-                result.add(primaryKeyField.extract(item));
-            });
+            result = new Set(selectedKeys);
         } else {
-            data.forEach((item) => {
-                const pk = primaryKeyField.extract(item);
-                if (selectedKeys.has(pk) && filterFields.every((field) => applyFieldFilter(field, item))) {
-                    result.add(primaryKeyField.extract(item));
+            const allItems = Array.from(data.values());
+            selectedKeys.forEach((pk) => {
+                const item = allItems.find((x) => primaryKeyField.extract(x) === pk);
+                if (item) {
+                    if (filterFields.every((field) => applyFieldFilter(field, item))) {
+                        result.add(primaryKeyField.extract(item));
+                    }
                 }
             });
         }
@@ -1498,7 +1549,13 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
                         </Button>
                     ) : (
                         <HStack>
-                            <span>{ongoingEdits.size > 0 ? "Saving" : "No changes"}</span>
+                            <span>
+                                {ongoingEdits.size > 0
+                                    ? "Saving"
+                                    : dirtyKeys.size > 0 || props.externalUnsavedChanges
+                                    ? "Unsaved changes"
+                                    : "No changes"}
+                            </span>
                             {ongoingEdits.size > 0 ? <Spinner /> : undefined}
                         </HStack>
                     )}
@@ -1508,30 +1565,55 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
                             isDisabled={isDisabled}
                             addDirtyKey={addDirtyKey}
                             setSelectedKeys={setSelectedKeys}
+                            beginEdit={beginEdit}
+                            endEdit={endEdit}
                         />
                     ) : undefined}
+                    <Button
+                        colorScheme="blue"
+                        onClick={() => {
+                            if (selectedKeys.size > 0) {
+                                setSelectedKeys(new Set());
+                            } else {
+                                setSelectedKeys(visibleKeys);
+                            }
+                        }}
+                    >
+                        {selectedKeys.size > 0 ? "Deselect all" : "Select all"}
+                    </Button>
                     {/* TODO: Edit multiple button using secondary view */}
                     {customButtons?.map((button, idx) => {
+                        const isDisabledBecauseNoSelection =
+                            !button.enabledWhenNothingSelected && visibleSelectedKeys.size === 0;
+                        const isDisabledBecauseDirty = !button.enabledWhenDirty && dirtyKeys.size > 0;
+                        const isDisabled = isDisabledBecauseNoSelection || button.isRunning || isDisabledBecauseDirty;
                         return (
-                            <Button
+                            <Tooltip
                                 key={`custom-button-${idx}`}
-                                aria-label={button.label}
-                                isDisabled={
-                                    (!button.alwaysEnabled && visibleSelectedKeys.size === 0) ||
-                                    button.isRunning ||
-                                    dirtyKeys.size > 0
+                                label={isDisabledBecauseDirty ? button.tooltipWhenDisabled : button.tooltipWhenEnabled}
+                                aria-label={
+                                    isDisabledBecauseDirty ? button.tooltipWhenDisabled : button.tooltipWhenEnabled
                                 }
-                                colorScheme={button.colorScheme}
-                                onClick={(_ev) => {
-                                    button.action(visibleSelectedKeys);
-                                }}
-                                style={{
-                                    marginLeft: idx === 0 ? "auto" : undefined,
-                                }}
                             >
-                                {button.isRunning ? <Spinner /> : undefined}
-                                {button.text}
-                            </Button>
+                                <div
+                                    style={{
+                                        marginLeft: idx === 0 ? "auto" : undefined,
+                                        width: "auto",
+                                    }}
+                                >
+                                    <Button
+                                        aria-label={button.label}
+                                        isDisabled={isDisabled}
+                                        colorScheme={button.colorScheme}
+                                        onClick={(_ev) => {
+                                            button.action(visibleSelectedKeys);
+                                        }}
+                                    >
+                                        {button.isRunning ? <Spinner /> : undefined}
+                                        {button.text}
+                                    </Button>
+                                </div>
+                            </Tooltip>
                         );
                     })}
                 </ButtonGroup>

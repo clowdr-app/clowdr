@@ -15,6 +15,7 @@ import {
     invitationSendRepeatHandler,
 } from "./handlers/invitation";
 import protectedEchoHandler from "./handlers/protectedEcho";
+import { uploadSendSubmissionRequestsHandler } from "./handlers/upload";
 import { checkEventSecret } from "./middlewares/checkEventSecret";
 import { checkJwt } from "./middlewares/checkJwt";
 import { checkUserScopes } from "./middlewares/checkScopes";
@@ -154,6 +155,20 @@ app.post(
         const params: invitationConfirmSendRepeatEmailArgs = req.body.input;
         console.log("Invitation/confirm/send/repeat", params);
         const result = await invitationConfirmSendRepeatEmailHandler(params, req.userId);
+        return res.json(result);
+    }
+);
+
+app.post(
+    "/uploaders/sendSubmissionRequests",
+    jsonParser,
+    checkJwt,
+    checkUserScopes,
+    async (_req: Request, res: Response) => {
+        const req = _req as AuthenticatedRequest;
+        const params: uploadSendSubmissionRequestsArgs = req.body.input;
+        console.log("Uploaders/sendSubmissionRequests", params);
+        const result = await uploadSendSubmissionRequestsHandler(params, req.userId);
         return res.json(result);
     }
 );

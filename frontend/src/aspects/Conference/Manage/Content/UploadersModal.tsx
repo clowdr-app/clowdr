@@ -1,4 +1,9 @@
+import { gql } from "@apollo/client";
 import {
+    Alert,
+    AlertDescription,
+    AlertIcon,
+    AlertTitle,
     Box,
     Button,
     Center,
@@ -11,8 +16,24 @@ import {
     ModalOverlay,
     Text,
 } from "@chakra-ui/react";
-import React from "react";
-import type { RequiredContentItemDescriptor } from "./Types";
+import assert from "assert";
+import React, { useMemo } from "react";
+import { v4 as uuidv4 } from "uuid";
+import { useSendSubmissionRequestsMutation } from "../../../../generated/graphql";
+import CRUDTable, { CRUDTableProps, defaultStringFilter, FieldType, UpdateResult } from "../../../CRUDTable/CRUDTable";
+import isValidUUID from "../../../Utils/isValidUUID";
+import type { RequiredContentItemDescriptor, UploaderDescriptor } from "./Types";
+
+const UploaderCRUDTable = (props: Readonly<CRUDTableProps<UploaderDescriptor, "id">>) => CRUDTable(props);
+
+gql`
+    mutation SendSubmissionRequests($uploaderIds: [uuid!]!) {
+        uploadSendSubmissionRequests(uploaderIds: $uploaderIds) {
+            uploaderId
+            sent
+        }
+    }
+`;
 
 interface Props {
     isOpen: boolean;
@@ -21,6 +42,9 @@ interface Props {
     groupTitle: string;
     isItemDirty: boolean;
     itemDesc: RequiredContentItemDescriptor;
+    insertUploader: (uploader: UploaderDescriptor) => void;
+    updateUploader: (uploader: UploaderDescriptor) => void;
+    deleteUploader: (uploaderId: string) => void;
 }
 
 export default function UploadersModal({
@@ -30,7 +54,22 @@ export default function UploadersModal({
     groupTitle,
     itemDesc,
     isItemDirty,
+    insertUploader,
+    updateUploader,
+    deleteUploader,
 }: Props): JSX.Element {
+    const uploadersMap = useMemo(() => {
+        const results = new Map<string, UploaderDescriptor>();
+
+        itemDesc.uploaders.forEach((uploader) => {
+            results.set(uploader.id, uploader);
+        });
+
+        return results;
+    }, [itemDesc.uploaders]);
+
+    const [sendSubmissionRequests, { loading: sendingRequestsLoading }] = useSendSubmissionRequestsMutation();
+
     return (
         <>
             <Box>
@@ -54,12 +93,161 @@ export default function UploadersModal({
                     <ModalCloseButton />
                     <ModalBody>
                         <Box>
-                            <Text>TODO: Manage the names/emails of who has access (remember to mark as dirty)</Text>
-                            <Text>TODO: Send upload reminder emails (only if not dirty)</Text>
-                            <Text>
-                                TODO: Custom button on the main page CRUD table to send all uploaders a reminder email
-                            </Text>
-                            {isItemDirty ? "Dirty" : "Not dirty"}
+                            {isItemDirty ? (
+                                <Alert status="info" mb={2}>
+                                    <AlertIcon />
+                                    <AlertTitle mr={2}>Unsaved changes</AlertTitle>
+                                    <AlertDescription>
+                                        To be able to send email notifications, please save all your changes.
+                                    </AlertDescription>
+                                </Alert>
+                            ) : undefined}
+                            <UploaderCRUDTable
+                                data={uploadersMap}
+                                externalUnsavedChanges={isItemDirty}
+                                primaryFields={{
+                                    keyField: {
+                                        heading: "Id",
+                                        ariaLabel: "Unique identifier",
+                                        description: "Unique identifier",
+                                        isHidden: true,
+                                        insert: (item, v) => {
+                                            return {
+                                                ...item,
+                                                id: v,
+                                            };
+                                        },
+                                        extract: (v) => v.id,
+                                        spec: {
+                                            fieldType: FieldType.string,
+                                            convertToUI: (x) => x,
+                                            disallowSpaces: true,
+                                        },
+                                        validate: (v) => isValidUUID(v) || ["Invalid UUID"],
+                                    },
+                                    otherFields: {
+                                        name: {
+                                            heading: "Name",
+                                            ariaLabel: "Name",
+                                            description: "Name",
+                                            isHidden: false,
+                                            isEditable: true,
+                                            defaultValue: "Jenny Smith",
+                                            insert: (item, v) => {
+                                                return {
+                                                    ...item,
+                                                    name: v,
+                                                };
+                                            },
+                                            extract: (v) => v.name,
+                                            spec: {
+                                                fieldType: FieldType.string,
+                                                convertFromUI: (x) => x,
+                                                convertToUI: (x) => x,
+                                                filter: defaultStringFilter,
+                                            },
+                                            validate: (v) => v.length >= 3 || ["Name must be at least 3 characters"],
+                                        },
+                                        email: {
+                                            heading: "Email",
+                                            ariaLabel: "Email",
+                                            description:
+                                                "The email address this person's submission request should be sent to.",
+                                            isHidden: false,
+                                            isEditableAtCreate: true,
+                                            isEditable: false,
+                                            defaultValue: "",
+                                            insert: (item, v) => {
+                                                return {
+                                                    ...item,
+                                                    email: v,
+                                                };
+                                            },
+                                            extract: (v) => v.email,
+                                            spec: {
+                                                fieldType: FieldType.string,
+                                                convertFromUI: (x) => x,
+                                                convertToUI: (x) => x,
+                                                filter: defaultStringFilter,
+                                            },
+                                            validate: (_v) => true, // TODO
+                                        },
+                                        emailsSent: {
+                                            heading: "Requests sent",
+                                            ariaLabel: "Number of requests sent",
+                                            description: "Number of submission requests this uploader has been sent.",
+                                            isHidden: false,
+                                            isEditableAtCreate: false,
+                                            isEditable: false,
+                                            extract: (v) => v.emailsSentCount,
+                                            spec: {
+                                                fieldType: FieldType.integer,
+                                                convertToUI: (x) => x.toString(),
+                                            },
+                                        },
+                                    },
+                                }}
+                                csud={{
+                                    cudCallbacks: {
+                                        create: async (
+                                            partialUploader: Partial<UploaderDescriptor>
+                                        ): Promise<string | null> => {
+                                            assert(partialUploader.email);
+                                            assert(partialUploader.name);
+                                            const newUploader: UploaderDescriptor = {
+                                                email: partialUploader.email,
+                                                emailsSentCount: 0,
+                                                id: uuidv4(),
+                                                name: partialUploader.name,
+                                                requiredContentItemId: itemDesc.id,
+                                                isNew: true,
+                                            };
+                                            insertUploader(newUploader);
+                                            return newUploader.id;
+                                        },
+                                        update: async (uploaders): Promise<Map<string, UpdateResult>> => {
+                                            const results = new Map<string, UpdateResult>();
+                                            for (const [key, uploader] of uploaders) {
+                                                results.set(key, true);
+                                                updateUploader(uploader);
+                                            }
+                                            return results;
+                                        },
+                                        delete: async (keys): Promise<Map<string, boolean>> => {
+                                            const results = new Map<string, boolean>();
+                                            for (const key of keys) {
+                                                results.set(key, true);
+                                                deleteUploader(key);
+                                            }
+                                            return results;
+                                        },
+                                    },
+                                }}
+                                customButtons={
+                                    isItemDirty
+                                        ? []
+                                        : [
+                                              {
+                                                  action: async (uploaderIds) => {
+                                                      await sendSubmissionRequests({
+                                                          variables: {
+                                                              uploaderIds: Array.from(uploaderIds.values()),
+                                                          },
+                                                      });
+                                                  },
+                                                  enabledWhenNothingSelected: false,
+                                                  enabledWhenDirty: false,
+                                                  tooltipWhenDisabled:
+                                                      "Save your changes to enable sending submission requests",
+                                                  tooltipWhenEnabled: "Sends submission requests to selected uploaders",
+                                                  colorScheme: "red",
+                                                  isRunning: sendingRequestsLoading,
+                                                  label: "Send submission requests",
+                                                  text: "Send submission requests",
+                                              },
+                                          ]
+                                }
+                            />
                         </Box>
                     </ModalBody>
                     <ModalFooter>

@@ -78,10 +78,7 @@ export class OpenShotProjects {
         return result.data;
     }
 
-    public async updateProject(
-        id: number,
-        params: Partial<ProjectParameters>
-    ): Promise<Project> {
+    public async updateProject(id: number, params: Partial<ProjectParameters>): Promise<Project> {
         const result = await this.axios.patch(`/${id}`, params);
         assertType<Project>(result.data);
         return result.data;

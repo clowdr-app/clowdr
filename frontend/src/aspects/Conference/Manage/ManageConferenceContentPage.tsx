@@ -23,9 +23,11 @@ import {
     RequiredContentItem_Insert_Input,
     useInsertDeleteContentGroupsMutation,
     useSelectAllContentGroupsQuery,
+    useSendSubmissionRequestsMutation,
     useUpdateContentGroupMutation,
     useUpdateContentItemMutation,
     useUpdateRequiredContentItemMutation,
+    useUpdateUploaderMutation,
 } from "../../../generated/graphql";
 import CRUDTable, {
     CRUDTableProps,
@@ -50,6 +52,7 @@ import type {
     ContentItemDescriptor,
     ItemBaseTemplate,
     RequiredContentItemDescriptor,
+    UploaderDescriptor,
 } from "./Content/Types";
 import UploadersModal from "./Content/UploadersModal";
 import { URLItemTemplate } from "./Content/URLItem";
@@ -57,12 +60,24 @@ import { VideoItemTemplate } from "./Content/VideoItem";
 import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
 gql`
+    fragment UploaderInfo on Uploader {
+        id
+        conferenceId
+        email
+        emailsSentCount
+        name
+        requiredContentItemId
+    }
+
     fragment RequiredContentItemInfo on RequiredContentItem {
         id
         name
         contentTypeName
         conferenceId
         contentGroupId
+        uploaders {
+            ...UploaderInfo
+        }
     }
 
     fragment ContentItemInfo on ContentItem {
@@ -134,6 +149,8 @@ gql`
         $deleteItemIds: [uuid!]!
         $deleteRequiredItemIds: [uuid!]!
         $deleteGroupTagIds: [uuid!]!
+        $newUploaders: [Uploader_insert_input!]!
+        $deleteUploaderIds: [uuid!]!
     ) {
         insert_ContentItem(objects: $newItems) {
             returning {
@@ -148,6 +165,11 @@ gql`
         insert_ContentGroupTag(objects: $newGroupTags) {
             returning {
                 ...ContentGroupTagInfo
+            }
+        }
+        insert_Uploader(objects: $newUploaders) {
+            returning {
+                ...UploaderInfo
             }
         }
         update_ContentGroup_by_pk(
@@ -172,6 +194,11 @@ gql`
             }
         }
         delete_ContentGroupTag(where: { id: { _in: $deleteGroupTagIds } }) {
+            returning {
+                id
+            }
+        }
+        delete_Uploader(where: { id: { _in: $deleteUploaderIds } }) {
             returning {
                 id
             }
@@ -213,6 +240,12 @@ gql`
             _set: { contentTypeName: $contentTypeName, name: $name, originatingDataId: $originatingDataId }
         ) {
             ...RequiredContentItemInfo
+        }
+    }
+
+    mutation UpdateUploader($id: uuid!, $email: String!, $name: String!) {
+        update_Uploader_by_pk(pk_columns: { id: $id }, _set: { email: $email, name: $name }) {
+            ...UploaderInfo
         }
     }
 `;
@@ -272,6 +305,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
     const [updateContentGroupMutation] = useUpdateContentGroupMutation();
     const [updateContentItemMutation] = useUpdateContentItemMutation();
     const [updateRequiredContentItemMutation] = useUpdateRequiredContentItemMutation();
+    const [updateUploaderMutation] = useUpdateUploaderMutation();
 
     const parsedDBContentGroups = useMemo(() => {
         if (!allContentGroups) {
@@ -300,6 +334,13 @@ export default function ManageConferenceContentPage(): JSX.Element {
                         id: item.id,
                         name: item.name,
                         typeName: item.contentTypeName,
+                        uploaders: item.uploaders.map((uploader) => ({
+                            id: uploader.id,
+                            email: uploader.email,
+                            emailsSentCount: uploader.emailsSentCount,
+                            name: uploader.name,
+                            requiredContentItemId: uploader.requiredContentItemId,
+                        })),
                     })),
                 },
             ])
@@ -449,6 +490,13 @@ export default function ManageConferenceContentPage(): JSX.Element {
                         id: item.id,
                         name: item.name,
                         typeName: item.typeName,
+                        uploaders: item.uploaders.map((uploader) => ({
+                            id: uploader.id,
+                            email: uploader.email,
+                            emailsSentCount: uploader.emailsSentCount,
+                            name: uploader.name,
+                            requiredContentItemId: uploader.requiredContentItemId,
+                        })),
                     })),
                     shortTitle: group.shortTitle,
                     title: group.title,
@@ -461,6 +509,8 @@ export default function ManageConferenceContentPage(): JSX.Element {
             setAllContentGroupsMap(newMap);
         }
     }, [parsedDBContentGroups]);
+
+    const [sendSubmissionRequests, { loading: sendingRequestsLoading }] = useSendSubmissionRequestsMutation();
 
     return (
         <RequireAtLeastOnePermissionWrapper
@@ -599,6 +649,14 @@ export default function ManageConferenceContentPage(): JSX.Element {
                                                             accessToken: uuidv4(),
                                                             name: item.name,
                                                             contentTypeName: item.typeName,
+                                                            uploaders: {
+                                                                data: item.uploaders.map((uploader) => ({
+                                                                    conferenceId: conference.id,
+                                                                    email: uploader.email,
+                                                                    id: uploader.id,
+                                                                    name: uploader.name,
+                                                                })),
+                                                            },
                                                         };
                                                         return itemResult;
                                                     }),
@@ -645,6 +703,10 @@ export default function ManageConferenceContentPage(): JSX.Element {
                                             const newGroupTags = new Set<string>();
                                             const deleteGroupTagKeys = new Set<string>();
 
+                                            const newUploaders = new Map<string, UploaderDescriptor>();
+                                            const updatedUploaders = new Map<string, UploaderDescriptor>();
+                                            const deleteUploaderKeys = new Set<string>();
+
                                             const existingGroup = parsedDBContentGroups.get(group.id);
                                             assert(existingGroup);
                                             for (const item of group.items) {
@@ -665,11 +727,25 @@ export default function ManageConferenceContentPage(): JSX.Element {
                                                     newRequiredItems.set(item.id, item);
                                                 } else {
                                                     updatedRequiredItems.set(item.id, item);
+
+                                                    for (const uploader of item.uploaders) {
+                                                        if (uploader.isNew) {
+                                                            newUploaders.set(uploader.id, uploader);
+                                                        } else {
+                                                            updatedUploaders.set(uploader.id, uploader);
+                                                        }
+                                                    }
                                                 }
                                             }
                                             for (const existingItem of existingGroup.requiredItems) {
                                                 if (!updatedRequiredItems.has(existingItem.id)) {
                                                     deleteRequiredItemKeys.add(existingItem.id);
+                                                }
+
+                                                for (const existingUploader of existingItem.uploaders) {
+                                                    if (!updatedUploaders.has(existingUploader.id)) {
+                                                        deleteUploaderKeys.add(existingUploader.id);
+                                                    }
                                                 }
                                             }
 
@@ -690,6 +766,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                                                     deleteGroupTagIds: Array.from(deleteGroupTagKeys.values()),
                                                     deleteItemIds: Array.from(deleteItemKeys.values()),
                                                     deleteRequiredItemIds: Array.from(deleteRequiredItemKeys.values()),
+                                                    deleteUploaderIds: Array.from(deleteUploaderKeys.values()),
                                                     groupId: group.id,
                                                     newGroupTags: Array.from(newGroupTags.values()).map((tagId) => ({
                                                         contentGroupId: group.id,
@@ -715,6 +792,13 @@ export default function ManageConferenceContentPage(): JSX.Element {
                                                             name: item.name,
                                                         })
                                                     ),
+                                                    newUploaders: Array.from(newUploaders.values()).map((uploader) => ({
+                                                        conferenceId: conference.id,
+                                                        email: uploader.email,
+                                                        id: uploader.id,
+                                                        name: uploader.name,
+                                                        requiredContentItemId: uploader.requiredContentItemId,
+                                                    })),
                                                     shortTitle: group.shortTitle,
                                                     title: group.title,
                                                 },
@@ -742,6 +826,18 @@ export default function ManageConferenceContentPage(): JSX.Element {
                                                             contentTypeName: item.typeName,
                                                             id: item.id,
                                                             name: item.name,
+                                                        },
+                                                    });
+                                                })
+                                            );
+
+                                            await Promise.all(
+                                                Array.from(updatedUploaders.values()).map(async (uploader) => {
+                                                    await updateUploaderMutation({
+                                                        variables: {
+                                                            id: uploader.id,
+                                                            name: uploader.name,
+                                                            email: uploader.email,
                                                         },
                                                     });
                                                 })
@@ -965,10 +1061,40 @@ export default function ManageConferenceContentPage(): JSX.Element {
                         };
                     },
                 }}
+                customButtons={[
+                    {
+                        action: async (groupKeys) => {
+                            await sendSubmissionRequests({
+                                variables: {
+                                    uploaderIds: Array.from(groupKeys.values()).reduce((acc1, groupId) => {
+                                        const group = allContentGroupsMap?.get(groupId);
+                                        assert(group);
+                                        return [
+                                            ...acc1,
+                                            ...group.requiredItems.reduce(
+                                                (acc, item) => [...acc, ...item.uploaders.map((x) => x.id)],
+                                                [] as string[]
+                                            ),
+                                        ];
+                                    }, [] as string[]),
+                                },
+                            });
+                        },
+                        enabledWhenNothingSelected: false,
+                        enabledWhenDirty: false,
+                        tooltipWhenDisabled: "Save your changes to enable sending submission requests",
+                        tooltipWhenEnabled: "Sends submission requests to all uploaders of selected items",
+                        colorScheme: "red",
+                        isRunning: sendingRequestsLoading,
+                        label: "Send submission requests",
+                        text: "Send submission requests",
+                    },
+                ]}
             />
         </RequireAtLeastOnePermissionWrapper>
     );
 }
+
 function RequiredItemEditor({
     group,
     itemTemplate,
@@ -1044,6 +1170,82 @@ function RequiredItemEditor({
                 onClose={onUploadersClose}
                 groupTitle={group.title}
                 itemDesc={itemDesc.requiredItem}
+                insertUploader={(uploader) => {
+                    markDirty();
+                    setAllContentGroupsMap((oldGroups) => {
+                        const newGroups: Map<string, ContentGroupDescriptor> = oldGroups
+                            ? new Map(oldGroups)
+                            : new Map();
+                        const existingGroup = newGroups.get(group.id);
+                        assert(existingGroup);
+                        newGroups.set(group.id, {
+                            ...existingGroup,
+                            requiredItems: existingGroup.requiredItems.map((existingItem) => {
+                                if (existingItem.id === itemDesc.requiredItem.id) {
+                                    return {
+                                        ...existingItem,
+                                        uploaders: [...existingItem.uploaders, uploader],
+                                    };
+                                } else {
+                                    return existingItem;
+                                }
+                            }),
+                        });
+                        return newGroups;
+                    });
+                }}
+                updateUploader={(uploader) => {
+                    markDirty();
+                    setAllContentGroupsMap((oldGroups) => {
+                        const newGroups: Map<string, ContentGroupDescriptor> = oldGroups
+                            ? new Map(oldGroups)
+                            : new Map();
+                        const existingGroup = newGroups.get(group.id);
+                        assert(existingGroup);
+                        newGroups.set(group.id, {
+                            ...existingGroup,
+                            requiredItems: existingGroup.requiredItems.map((existingItem) => {
+                                if (existingItem.id === itemDesc.requiredItem.id) {
+                                    return {
+                                        ...existingItem,
+                                        uploaders: existingItem.uploaders.map((existingUploader) =>
+                                            existingUploader.id === uploader.id ? uploader : existingUploader
+                                        ),
+                                    };
+                                } else {
+                                    return existingItem;
+                                }
+                            }),
+                        });
+                        return newGroups;
+                    });
+                }}
+                deleteUploader={(uploaderId) => {
+                    markDirty();
+                    setAllContentGroupsMap((oldGroups) => {
+                        const newGroups: Map<string, ContentGroupDescriptor> = oldGroups
+                            ? new Map(oldGroups)
+                            : new Map();
+                        const existingGroup = newGroups.get(group.id);
+                        assert(existingGroup);
+                        newGroups.set(group.id, {
+                            ...existingGroup,
+                            requiredItems: existingGroup.requiredItems.map((existingItem) => {
+                                if (existingItem.id === itemDesc.requiredItem.id) {
+                                    return {
+                                        ...existingItem,
+                                        uploaders: existingItem.uploaders.filter(
+                                            (existingUploader) => existingUploader.id !== uploaderId
+                                        ),
+                                    };
+                                } else {
+                                    return existingItem;
+                                }
+                            }),
+                        });
+                        return newGroups;
+                    });
+                }}
             />
         </>
     );

@@ -96,11 +96,7 @@ export class OpenShotFiles {
         this.axios.defaults.headers.common["Authorization"] = this.authToken;
     }
 
-    public async uploadUrl(
-        projectId: number,
-        url: string,
-        name: string
-    ): Promise<File> {
+    public async uploadUrl(projectId: number, url: string, name: string): Promise<File> {
         const result = await this.axios.post("/", {
             media: null,
             project: `${this.baseUrl}/projects/${projectId}`,
@@ -113,12 +109,7 @@ export class OpenShotFiles {
         return result.data;
     }
 
-    public async uploadS3Url(
-        projectId: number,
-        bucket: string,
-        key: string,
-        name: string
-    ): Promise<File> {
+    public async uploadS3Url(projectId: number, bucket: string, key: string, name: string): Promise<File> {
         const result = await this.axios.post("/", {
             media: null,
             project: `${this.baseUrl}/projects/${projectId}`,
@@ -138,11 +129,7 @@ export class OpenShotFiles {
         return result.data;
     }
 
-    public async copyFile(
-        id: number,
-        name: string,
-        projectId: number
-    ): Promise<File> {
+    public async copyFile(id: number, name: string, projectId: number): Promise<File> {
         const result = await this.axios.post(`/${id}/copy`, {
             name,
             project: projectId,
@@ -151,14 +138,8 @@ export class OpenShotFiles {
         return result.data;
     }
 
-    public async replaceText(
-        id: number,
-        replacement: TextReplacement
-    ): Promise<unknown> {
-        const result = await this.axios.post(
-            `/${id}/text-replace`,
-            replacement
-        );
+    public async replaceText(id: number, replacement: TextReplacement): Promise<unknown> {
+        const result = await this.axios.post(`/${id}/text-replace`, replacement);
         return result.data;
     }
 }

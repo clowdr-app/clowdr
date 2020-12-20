@@ -3035,7 +3035,7 @@
       columns:
       - conferenceId
       - email
-      - emailsSentCount
+      - id
       - name
       - requiredContentItemId
       backend_only: false

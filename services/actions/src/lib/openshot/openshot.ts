@@ -19,9 +19,7 @@ export class OpenShot {
     }
 
     private authHeader(): string {
-        const token = Buffer.from(this.username + ":" + this.password).toString(
-            "base64"
-        );
+        const token = Buffer.from(this.username + ":" + this.password).toString("base64");
         return `Basic ${token}`;
     }
 }

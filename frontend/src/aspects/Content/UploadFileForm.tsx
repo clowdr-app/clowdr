@@ -83,7 +83,7 @@ export default function UploadFileForm({
 
     return (
         <>
-            <ProgressBar uppy={uppy as Uppy.Uppy} fixed hideAfterFinish />{" "}
+            <ProgressBar uppy={uppy as Uppy.Uppy} fixed hideAfterFinish />
             <Formik
                 initialValues={{
                     agree: false,

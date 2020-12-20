@@ -85,6 +85,13 @@ type Mutation {
 }
 
 
+type Mutation {
+  uploadSendSubmissionRequests (
+    uploaderIds: [uuid]!
+  ): [UploaderSendSubmissionRequestResult!]!
+}
+
+
 
 
 input SampleInput {
@@ -166,5 +173,10 @@ type GetUploadAgreementOutput {
 type ConferencePrepareOutput {
   success : Boolean!
   message : String
+}
+
+type UploaderSendSubmissionRequestResult {
+  uploaderId : uuid!
+  sent : Boolean!
 }
 

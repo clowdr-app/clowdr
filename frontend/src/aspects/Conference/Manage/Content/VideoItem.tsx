@@ -65,6 +65,7 @@ export const VideoItemTemplate: ItemBaseTemplate = {
                     id: uuidv4(),
                     name,
                     typeName: type,
+                    uploaders: [],
                 },
             };
         } else {

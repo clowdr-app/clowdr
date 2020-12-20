@@ -123,6 +123,16 @@ actions:
   permissions:
   - role: unauthenticated
   - role: user
+- name: uploadSendSubmissionRequests
+  definition:
+    kind: synchronous
+    handler: '{{ACTION_BASE_URL}}/uploaders/sendSubmissionRequests'
+    forward_client_headers: true
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+  permissions:
+  - role: user
 custom_types:
   enums: []
   input_objects:
@@ -144,4 +154,5 @@ custom_types:
   - name: SubmitUpdatedSubtitlesOutput
   - name: GetUploadAgreementOutput
   - name: ConferencePrepareOutput
+  - name: UploaderSendSubmissionRequestResult
   scalars: []

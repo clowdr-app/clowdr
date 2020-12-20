@@ -263,7 +263,7 @@ export default function ManageConferencePeoplePage(): JSX.Element {
                     filter: defaultBooleanFilter,
                 },
             },
-            invitatedEmailAddress: {
+            invitedEmailAddress: {
                 heading: "Invitation email address",
                 ariaLabel: "Invitation email address",
                 description: "The email address this attendee's invitation should be sent to.",
@@ -288,7 +288,7 @@ export default function ManageConferencePeoplePage(): JSX.Element {
                     convertToUI: (x) => x,
                     filter: defaultStringFilter,
                 },
-                validate: (v) => true, // TODO
+                validate: (_v) => true, // TODO
             },
             groups: {
                 heading: "Groups",
@@ -607,7 +607,11 @@ export default function ManageConferencePeoplePage(): JSX.Element {
                         text: "Send initial invitations",
                         label: "Send initial invitations",
                         colorScheme: "purple",
-                        alwaysEnabled: false,
+                        enabledWhenNothingSelected: false,
+                        enabledWhenDirty: false,
+                        tooltipWhenDisabled: "Save changes to enable sending invitations",
+                        tooltipWhenEnabled:
+                            "Sends invitations to selected attendees who have not already been sent an invite.",
                         action: async (keys) => {
                             const result = await sendInitialEmailsMutation({
                                 variables: {
@@ -631,13 +635,16 @@ export default function ManageConferencePeoplePage(): JSX.Element {
 
                             await refetchAllAttendees();
                         },
-                        isRunning: sendInitialEmailsLoading || sendRepeatEmailsLoading,
+                        isRunning: sendInitialEmailsLoading,
                     },
                     {
                         text: "Send repeat invitations",
                         label: "Send repeat invitations",
                         colorScheme: "purple",
-                        alwaysEnabled: false,
+                        enabledWhenNothingSelected: false,
+                        enabledWhenDirty: false,
+                        tooltipWhenDisabled: "Save changes to enable sending invitations",
+                        tooltipWhenEnabled: "Sends repeat invitations to all selected attendees.",
                         action: async (keys) => {
                             const result = await sendRepeatEmailsMutation({
                                 variables: {
@@ -661,7 +668,7 @@ export default function ManageConferencePeoplePage(): JSX.Element {
 
                             await refetchAllAttendees();
                         },
-                        isRunning: sendInitialEmailsLoading || sendRepeatEmailsLoading,
+                        isRunning: sendRepeatEmailsLoading,
                     },
                 ]}
             />

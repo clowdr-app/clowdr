@@ -21,8 +21,11 @@ import {
     Email_Insert_Input,
     GetUploadersDocument,
     InsertEmailsDocument,
+    InsertSubmissionRequestEmailsDocument,
     RequiredItemDocument,
     RequiredItemFieldsFragment,
+    SelectUploadersAndUserDocument,
+    UploaderPartsFragment,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { getLatestVersion } from "../lib/contentItem";
@@ -37,6 +40,7 @@ gql`
     fragment RequiredItemFields on RequiredContentItem {
         id
         contentTypeName
+        accessToken
         name
         conference {
             id
@@ -438,4 +442,190 @@ export async function handleUpdateSubtitles(args: updateSubtitlesArgs): Promise<
         message: "",
         success: true,
     };
+}
+
+gql`
+    fragment UploaderParts on Uploader {
+        id
+        conference {
+            id
+            name
+        }
+        email
+        emailsSentCount
+        name
+        requiredContentItem {
+            ...RequiredItemFields
+        }
+    }
+
+    query SelectUploadersAndUser($uploaderIds: [uuid!]!, $userId: String!) {
+        Uploader(where: { id: { _in: $uploaderIds } }) {
+            ...UploaderParts
+        }
+
+        User_by_pk(id: $userId) {
+            id
+        }
+    }
+
+    mutation InsertSubmissionRequestEmails($emails: [Email_insert_input!]!, $uploaderIds: [uuid!]!) {
+        insert_Email(objects: $emails) {
+            affected_rows
+        }
+        update_Uploader(where: { id: { _in: $uploaderIds } }, _inc: { emailsSentCount: 1 }) {
+            affected_rows
+        }
+    }
+`;
+
+async function getUploadersAndUser(
+    uploaderIds: string[],
+    userId: string
+): Promise<{
+    uploaders: UploaderPartsFragment[];
+    user: { id: string };
+}> {
+    const query = await apolloClient.query({
+        query: SelectUploadersAndUserDocument,
+        variables: {
+            uploaderIds,
+            userId,
+        },
+    });
+    assert(query.data.Uploader);
+    assert(query.data.User_by_pk);
+    const uploaders = query.data.Uploader;
+    const user = query.data.User_by_pk;
+    return {
+        uploaders,
+        user,
+    };
+}
+
+function generateEmailContents(uploader: UploaderPartsFragment) {
+    const contentTypeFriendlyName = generateContentTypeFriendlyName(uploader.requiredContentItem.contentTypeName);
+    const url = `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/upload/${uploader.requiredContentItem.id}/${uploader.requiredContentItem.accessToken}`;
+
+    // TODO: Add info like deadlines, max file sizes, tutorial video link, etc
+    const htmlContents = `<p>Dear ${uploader.name},</p>
+    <p>
+        The organisers of ${uploader.conference.name} are requesting that you or
+        your co-authors/co-presenters upload ${contentTypeFriendlyName} for
+        "${uploader.requiredContentItem.contentGroup.title}".
+    </p>
+    <p>
+        Please do not forward or share this email: anyone with the link contained
+        herein can use it to upload content to your conference item.
+    </p>
+    <p>
+        Please submit your content <a href="${url}">here</a>.
+    </p>
+    <p>
+        You should have already received instructions from your conference
+        organisers about the requirements for this content (e.g. maximum length,
+        upload deadlines, etc). You should also have received a link to the
+        tutorial video explaining how to upload your content.
+    </p>
+    <p>
+        Please note: For video content, you are allowed a maximum of 3 
+        uploaded versions per item. Your last submitted version will be the one
+        used. Any late submissions may or may not be processed, in accordance
+        with the guidance provided by your conference organisers.
+    </p>
+    <p>We hope you enjoy your conference,<br/>
+    The Clowdr team
+    </p>
+    <p>This is an automated email sent on behalf of Clowdr CIC. If you believe you have
+    received this email in error, please contact us via <a href="mailto:${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}">${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}</a></p>`;
+
+    const plainTextContents = htmlToText(htmlContents);
+    return {
+        htmlContents,
+        plainTextContents,
+    };
+}
+
+function generateContentTypeFriendlyName(type: ContentType_Enum) {
+    switch (type) {
+        case ContentType_Enum.Abstract:
+            return "Abstract";
+        case ContentType_Enum.ImageFile:
+            return "Image file";
+        case ContentType_Enum.ImageUrl:
+            return "Image URL";
+        case ContentType_Enum.Link:
+            return "Link";
+        case ContentType_Enum.LinkButton:
+            return "Link button";
+        case ContentType_Enum.PaperFile:
+            return "Paper file";
+        case ContentType_Enum.PaperLink:
+            return "Paper link";
+        case ContentType_Enum.PaperUrl:
+            return "Paper URL";
+        case ContentType_Enum.PosterFile:
+            return "Poster file";
+        case ContentType_Enum.PosterUrl:
+            return "Poster URL";
+        case ContentType_Enum.Text:
+            return "Text";
+        case ContentType_Enum.VideoBroadcast:
+            return "Video for broadcast";
+        case ContentType_Enum.VideoCountdown:
+            return "Video countdown";
+        case ContentType_Enum.VideoFile:
+            return "Video file";
+        case ContentType_Enum.VideoFiller:
+            return "Filler video";
+        case ContentType_Enum.VideoLink:
+            return "Link to video";
+        case ContentType_Enum.VideoPrepublish:
+            return "Video for pre-publication";
+        case ContentType_Enum.VideoSponsorsFiller:
+            return "Sponsors filler video";
+        case ContentType_Enum.VideoTitles:
+            return "Pre-roll titles video";
+        case ContentType_Enum.VideoUrl:
+            return "Video URL";
+    }
+}
+
+export async function uploadSendSubmissionRequestsHandler(
+    args: uploadSendSubmissionRequestsArgs,
+    userId: string
+): Promise<UploaderSendSubmissionRequestResult[]> {
+    const { uploaders, user } = await getUploadersAndUser(args.uploaderIds, userId);
+    assert(user.id);
+
+    let ok = false;
+    try {
+        const newEmails: Email_Insert_Input[] = uploaders.map((uploader) => {
+            const { htmlContents, plainTextContents } = generateEmailContents(uploader);
+            const contentTypeFriendlyName = generateContentTypeFriendlyName(
+                uploader.requiredContentItem.contentTypeName
+            );
+            return {
+                emailAddress: uploader.email,
+                htmlContents,
+                plainTextContents,
+                reason: "upload-request",
+                subject: `Clowdr: Submission required: ${contentTypeFriendlyName}`,
+            };
+        });
+
+        await apolloClient.mutate({
+            mutation: InsertSubmissionRequestEmailsDocument,
+            variables: {
+                emails: newEmails,
+                uploaderIds: uploaders.map((x) => x.id),
+            },
+        });
+
+        ok = true;
+    } catch (_e) {
+        ok = false;
+    }
+
+    return uploaders.map((x) => ({ uploaderId: x.id, sent: ok }));
 }

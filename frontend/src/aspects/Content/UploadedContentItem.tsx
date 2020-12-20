@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client/core";
 import { Button, Spinner, Text, Tooltip, VStack } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useGetContentItemQuery } from "../../generated/graphql";
 import FAIcon from "../Icons/FAIcon";
 import { EditContentItem } from "./EditContentItem";
@@ -25,6 +25,16 @@ export default function UploadedContentItem({ magicToken }: { magicToken: string
         },
         fetchPolicy: "network-only",
     });
+    const [disableRefresh, setDisableRefresh] = useState<boolean>(false);
+    useEffect(() => {
+        if (disableRefresh) {
+            (async () => {
+                await new Promise((resolve) => setTimeout(resolve, 60000));
+                setDisableRefresh(false);
+            })();
+        }
+    }, [disableRefresh]);
+
     return loading ? (
         <div>
             <Spinner />
@@ -39,8 +49,19 @@ export default function UploadedContentItem({ magicToken }: { magicToken: string
                         item ? (
                             <VStack spacing={2} key={item.id}>
                                 <Tooltip label="Refresh uploaded item">
-                                    <Button aria-label="Refresh uploaded item" onClick={async () => await refetch()}>
-                                        <FAIcon iconStyle="s" icon="sync" />
+                                    <Button
+                                        aria-label="Refresh uploaded item"
+                                        onClick={async () => {
+                                            setDisableRefresh(true);
+                                            await refetch();
+                                        }}
+                                        disabled={disableRefresh}
+                                    >
+                                        {disableRefresh ? (
+                                            "(Please wait before refreshing again)"
+                                        ) : (
+                                            <FAIcon iconStyle="s" icon="sync" />
+                                        )}
                                     </Button>
                                 </Tooltip>
                                 <RenderContentItem data={item.data} />

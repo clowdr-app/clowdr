@@ -9162,11 +9162,11 @@ export enum JobStatus_Constraint {
 }
 
 export enum JobStatus_Enum {
-  /** The job completed successfully. */
+  /** Job completed successfully. */
   Completed = 'COMPLETED',
-  /** The job failed. */
+  /** Job failed during execution. */
   Failed = 'FAILED',
-  /** The job is currently in progress. */
+  /** Job is currently in progress. */
   InProgress = 'IN_PROGRESS'
 }
 
@@ -12721,6 +12721,12 @@ export type Uploader = {
   readonly updatedAt: Scalars['timestamptz'];
 };
 
+export type UploaderSendSubmissionRequestResult = {
+  readonly __typename?: 'UploaderSendSubmissionRequestResult';
+  readonly sent: Scalars['Boolean'];
+  readonly uploaderId: Scalars['uuid'];
+};
+
 /** aggregated selection of "Uploader" */
 export type Uploader_Aggregate = {
   readonly __typename?: 'Uploader_aggregate';
@@ -14544,6 +14550,8 @@ export type Mutation_Root = {
   readonly update_VideoRenderJob?: Maybe<VideoRenderJob_Mutation_Response>;
   /** update single row of the table: "VideoRenderJob" */
   readonly update_VideoRenderJob_by_pk?: Maybe<VideoRenderJob>;
+  /** perform the action: "uploadSendSubmissionRequests" */
+  readonly uploadSendSubmissionRequests: ReadonlyArray<UploaderSendSubmissionRequestResult>;
 };
 
 
@@ -16709,6 +16717,12 @@ export type Mutation_RootUpdate_VideoRenderJobArgs = {
 export type Mutation_RootUpdate_VideoRenderJob_By_PkArgs = {
   _set?: Maybe<VideoRenderJob_Set_Input>;
   pk_columns: VideoRenderJob_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUploadSendSubmissionRequestsArgs = {
+  uploaderIds: ReadonlyArray<Maybe<Scalars['uuid']>>;
 };
 
 /** column ordering options */
@@ -20139,6 +20153,13 @@ export type DeleteIsTypingMutationVariables = Exact<{
 
 export type DeleteIsTypingMutation = { readonly __typename?: 'mutation_root', readonly delete_ChatTyper?: Maybe<{ readonly __typename?: 'ChatTyper_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ChatTyper', readonly id: any }> }> };
 
+export type SendSubmissionRequestsMutationVariables = Exact<{
+  uploaderIds: ReadonlyArray<Scalars['uuid']>;
+}>;
+
+
+export type SendSubmissionRequestsMutation = { readonly __typename?: 'mutation_root', readonly uploadSendSubmissionRequests: ReadonlyArray<{ readonly __typename?: 'UploaderSendSubmissionRequestResult', readonly uploaderId: any, readonly sent: boolean }> };
+
 export type CreateConferencePrepareJobMutationVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
@@ -20153,7 +20174,12 @@ export type ConferencePrepareJobSubscriptionSubscriptionVariables = Exact<{
 
 export type ConferencePrepareJobSubscriptionSubscription = { readonly __typename?: 'subscription_root', readonly ConferencePrepareJob: ReadonlyArray<{ readonly __typename?: 'ConferencePrepareJob', readonly id: any, readonly jobStatusName: JobStatus_Enum, readonly updatedAt: any, readonly createdAt: any, readonly videoRenderJobs: ReadonlyArray<{ readonly __typename?: 'VideoRenderJob', readonly id: any, readonly jobStatusName: JobStatus_Enum, readonly updated_at: any, readonly created_at: any }> }> };
 
-export type RequiredContentItemInfoFragment = { readonly __typename?: 'RequiredContentItem', readonly id: any, readonly name: string, readonly contentTypeName: ContentType_Enum, readonly conferenceId: any, readonly contentGroupId: any };
+export type UploaderInfoFragment = { readonly __typename?: 'Uploader', readonly id: any, readonly conferenceId: any, readonly email: string, readonly emailsSentCount: number, readonly name: string, readonly requiredContentItemId: any };
+
+export type RequiredContentItemInfoFragment = { readonly __typename?: 'RequiredContentItem', readonly id: any, readonly name: string, readonly contentTypeName: ContentType_Enum, readonly conferenceId: any, readonly contentGroupId: any, readonly uploaders: ReadonlyArray<(
+    { readonly __typename?: 'Uploader' }
+    & UploaderInfoFragment
+  )> };
 
 export type ContentItemInfoFragment = { readonly __typename?: 'ContentItem', readonly conferenceId: any, readonly contentGroupId: any, readonly contentTypeName: ContentType_Enum, readonly data: any, readonly id: any, readonly isHidden: boolean, readonly layoutData?: Maybe<any>, readonly name: string, readonly requiredContentId?: Maybe<any>, readonly requiredContentItem?: Maybe<(
     { readonly __typename?: 'RequiredContentItem' }
@@ -20206,6 +20232,8 @@ export type UpdateContentGroupMutationVariables = Exact<{
   deleteItemIds: ReadonlyArray<Scalars['uuid']>;
   deleteRequiredItemIds: ReadonlyArray<Scalars['uuid']>;
   deleteGroupTagIds: ReadonlyArray<Scalars['uuid']>;
+  newUploaders: ReadonlyArray<Uploader_Insert_Input>;
+  deleteUploaderIds: ReadonlyArray<Scalars['uuid']>;
 }>;
 
 
@@ -20218,10 +20246,13 @@ export type UpdateContentGroupMutation = { readonly __typename?: 'mutation_root'
     )> }>, readonly insert_ContentGroupTag?: Maybe<{ readonly __typename?: 'ContentGroupTag_mutation_response', readonly returning: ReadonlyArray<(
       { readonly __typename?: 'ContentGroupTag' }
       & ContentGroupTagInfoFragment
+    )> }>, readonly insert_Uploader?: Maybe<{ readonly __typename?: 'Uploader_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'Uploader' }
+      & UploaderInfoFragment
     )> }>, readonly update_ContentGroup_by_pk?: Maybe<(
     { readonly __typename?: 'ContentGroup' }
     & ContentGroupFullNestedInfoFragment
-  )>, readonly delete_ContentItem?: Maybe<{ readonly __typename?: 'ContentItem_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any }> }>, readonly delete_RequiredContentItem?: Maybe<{ readonly __typename?: 'RequiredContentItem_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'RequiredContentItem', readonly id: any }> }>, readonly delete_ContentGroupTag?: Maybe<{ readonly __typename?: 'ContentGroupTag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ContentGroupTag', readonly id: any }> }> };
+  )>, readonly delete_ContentItem?: Maybe<{ readonly __typename?: 'ContentItem_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any }> }>, readonly delete_RequiredContentItem?: Maybe<{ readonly __typename?: 'RequiredContentItem_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'RequiredContentItem', readonly id: any }> }>, readonly delete_ContentGroupTag?: Maybe<{ readonly __typename?: 'ContentGroupTag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ContentGroupTag', readonly id: any }> }>, readonly delete_Uploader?: Maybe<{ readonly __typename?: 'Uploader_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Uploader', readonly id: any }> }> };
 
 export type UpdateContentItemMutationVariables = Exact<{
   id: Scalars['uuid'];
@@ -20250,6 +20281,18 @@ export type UpdateRequiredContentItemMutationVariables = Exact<{
 export type UpdateRequiredContentItemMutation = { readonly __typename?: 'mutation_root', readonly update_RequiredContentItem_by_pk?: Maybe<(
     { readonly __typename?: 'RequiredContentItem' }
     & RequiredContentItemInfoFragment
+  )> };
+
+export type UpdateUploaderMutationVariables = Exact<{
+  id: Scalars['uuid'];
+  email: Scalars['String'];
+  name: Scalars['String'];
+}>;
+
+
+export type UpdateUploaderMutation = { readonly __typename?: 'mutation_root', readonly update_Uploader_by_pk?: Maybe<(
+    { readonly __typename?: 'Uploader' }
+    & UploaderInfoFragment
   )> };
 
 export type SelectAllGroupsQueryVariables = Exact<{
@@ -20555,6 +20598,16 @@ export type UpdateCurrentUserLastSeenMutationVariables = Exact<{
 
 export type UpdateCurrentUserLastSeenMutation = { readonly __typename?: 'mutation_root', readonly update_OnlineStatus?: Maybe<{ readonly __typename?: 'OnlineStatus_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'OnlineStatus', readonly id: any, readonly lastSeen: any }> }> };
 
+export const UploaderInfoFragmentDoc = gql`
+    fragment UploaderInfo on Uploader {
+  id
+  conferenceId
+  email
+  emailsSentCount
+  name
+  requiredContentItemId
+}
+    `;
 export const RequiredContentItemInfoFragmentDoc = gql`
     fragment RequiredContentItemInfo on RequiredContentItem {
   id
@@ -20562,8 +20615,11 @@ export const RequiredContentItemInfoFragmentDoc = gql`
   contentTypeName
   conferenceId
   contentGroupId
+  uploaders {
+    ...UploaderInfo
+  }
 }
-    `;
+    ${UploaderInfoFragmentDoc}`;
 export const ContentItemInfoFragmentDoc = gql`
     fragment ContentItemInfo on ContentItem {
   conferenceId
@@ -20905,6 +20961,39 @@ export function useDeleteIsTypingMutation(baseOptions?: Apollo.MutationHookOptio
 export type DeleteIsTypingMutationHookResult = ReturnType<typeof useDeleteIsTypingMutation>;
 export type DeleteIsTypingMutationResult = Apollo.MutationResult<DeleteIsTypingMutation>;
 export type DeleteIsTypingMutationOptions = Apollo.BaseMutationOptions<DeleteIsTypingMutation, DeleteIsTypingMutationVariables>;
+export const SendSubmissionRequestsDocument = gql`
+    mutation SendSubmissionRequests($uploaderIds: [uuid!]!) {
+  uploadSendSubmissionRequests(uploaderIds: $uploaderIds) {
+    uploaderId
+    sent
+  }
+}
+    `;
+export type SendSubmissionRequestsMutationFn = Apollo.MutationFunction<SendSubmissionRequestsMutation, SendSubmissionRequestsMutationVariables>;
+
+/**
+ * __useSendSubmissionRequestsMutation__
+ *
+ * To run a mutation, you first call `useSendSubmissionRequestsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendSubmissionRequestsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendSubmissionRequestsMutation, { data, loading, error }] = useSendSubmissionRequestsMutation({
+ *   variables: {
+ *      uploaderIds: // value for 'uploaderIds'
+ *   },
+ * });
+ */
+export function useSendSubmissionRequestsMutation(baseOptions?: Apollo.MutationHookOptions<SendSubmissionRequestsMutation, SendSubmissionRequestsMutationVariables>) {
+        return Apollo.useMutation<SendSubmissionRequestsMutation, SendSubmissionRequestsMutationVariables>(SendSubmissionRequestsDocument, baseOptions);
+      }
+export type SendSubmissionRequestsMutationHookResult = ReturnType<typeof useSendSubmissionRequestsMutation>;
+export type SendSubmissionRequestsMutationResult = Apollo.MutationResult<SendSubmissionRequestsMutation>;
+export type SendSubmissionRequestsMutationOptions = Apollo.BaseMutationOptions<SendSubmissionRequestsMutation, SendSubmissionRequestsMutationVariables>;
 export const CreateConferencePrepareJobDocument = gql`
     mutation CreateConferencePrepareJob($conferenceId: uuid!) {
   insert_ConferencePrepareJob_one(object: {conferenceId: $conferenceId}) {
@@ -21050,7 +21139,7 @@ export type InsertDeleteContentGroupsMutationHookResult = ReturnType<typeof useI
 export type InsertDeleteContentGroupsMutationResult = Apollo.MutationResult<InsertDeleteContentGroupsMutation>;
 export type InsertDeleteContentGroupsMutationOptions = Apollo.BaseMutationOptions<InsertDeleteContentGroupsMutation, InsertDeleteContentGroupsMutationVariables>;
 export const UpdateContentGroupDocument = gql`
-    mutation UpdateContentGroup($newItems: [ContentItem_insert_input!]!, $newRequiredItems: [RequiredContentItem_insert_input!]!, $newGroupTags: [ContentGroupTag_insert_input!]!, $groupId: uuid!, $contentGroupTypeName: ContentGroupType_enum!, $originatingDataId: uuid = null, $shortTitle: String = null, $title: String!, $deleteItemIds: [uuid!]!, $deleteRequiredItemIds: [uuid!]!, $deleteGroupTagIds: [uuid!]!) {
+    mutation UpdateContentGroup($newItems: [ContentItem_insert_input!]!, $newRequiredItems: [RequiredContentItem_insert_input!]!, $newGroupTags: [ContentGroupTag_insert_input!]!, $groupId: uuid!, $contentGroupTypeName: ContentGroupType_enum!, $originatingDataId: uuid = null, $shortTitle: String = null, $title: String!, $deleteItemIds: [uuid!]!, $deleteRequiredItemIds: [uuid!]!, $deleteGroupTagIds: [uuid!]!, $newUploaders: [Uploader_insert_input!]!, $deleteUploaderIds: [uuid!]!) {
   insert_ContentItem(objects: $newItems) {
     returning {
       ...ContentItemInfo
@@ -21064,6 +21153,11 @@ export const UpdateContentGroupDocument = gql`
   insert_ContentGroupTag(objects: $newGroupTags) {
     returning {
       ...ContentGroupTagInfo
+    }
+  }
+  insert_Uploader(objects: $newUploaders) {
+    returning {
+      ...UploaderInfo
     }
   }
   update_ContentGroup_by_pk(
@@ -21087,10 +21181,16 @@ export const UpdateContentGroupDocument = gql`
       id
     }
   }
+  delete_Uploader(where: {id: {_in: $deleteUploaderIds}}) {
+    returning {
+      id
+    }
+  }
 }
     ${ContentItemInfoFragmentDoc}
 ${RequiredContentItemInfoFragmentDoc}
 ${ContentGroupTagInfoFragmentDoc}
+${UploaderInfoFragmentDoc}
 ${ContentGroupFullNestedInfoFragmentDoc}`;
 export type UpdateContentGroupMutationFn = Apollo.MutationFunction<UpdateContentGroupMutation, UpdateContentGroupMutationVariables>;
 
@@ -21118,6 +21218,8 @@ export type UpdateContentGroupMutationFn = Apollo.MutationFunction<UpdateContent
  *      deleteItemIds: // value for 'deleteItemIds'
  *      deleteRequiredItemIds: // value for 'deleteRequiredItemIds'
  *      deleteGroupTagIds: // value for 'deleteGroupTagIds'
+ *      newUploaders: // value for 'newUploaders'
+ *      deleteUploaderIds: // value for 'deleteUploaderIds'
  *   },
  * });
  */
@@ -21206,6 +21308,40 @@ export function useUpdateRequiredContentItemMutation(baseOptions?: Apollo.Mutati
 export type UpdateRequiredContentItemMutationHookResult = ReturnType<typeof useUpdateRequiredContentItemMutation>;
 export type UpdateRequiredContentItemMutationResult = Apollo.MutationResult<UpdateRequiredContentItemMutation>;
 export type UpdateRequiredContentItemMutationOptions = Apollo.BaseMutationOptions<UpdateRequiredContentItemMutation, UpdateRequiredContentItemMutationVariables>;
+export const UpdateUploaderDocument = gql`
+    mutation UpdateUploader($id: uuid!, $email: String!, $name: String!) {
+  update_Uploader_by_pk(pk_columns: {id: $id}, _set: {email: $email, name: $name}) {
+    ...UploaderInfo
+  }
+}
+    ${UploaderInfoFragmentDoc}`;
+export type UpdateUploaderMutationFn = Apollo.MutationFunction<UpdateUploaderMutation, UpdateUploaderMutationVariables>;
+
+/**
+ * __useUpdateUploaderMutation__
+ *
+ * To run a mutation, you first call `useUpdateUploaderMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateUploaderMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateUploaderMutation, { data, loading, error }] = useUpdateUploaderMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      email: // value for 'email'
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useUpdateUploaderMutation(baseOptions?: Apollo.MutationHookOptions<UpdateUploaderMutation, UpdateUploaderMutationVariables>) {
+        return Apollo.useMutation<UpdateUploaderMutation, UpdateUploaderMutationVariables>(UpdateUploaderDocument, baseOptions);
+      }
+export type UpdateUploaderMutationHookResult = ReturnType<typeof useUpdateUploaderMutation>;
+export type UpdateUploaderMutationResult = Apollo.MutationResult<UpdateUploaderMutation>;
+export type UpdateUploaderMutationOptions = Apollo.BaseMutationOptions<UpdateUploaderMutation, UpdateUploaderMutationVariables>;
 export const SelectAllGroupsDocument = gql`
     query SelectAllGroups($conferenceId: uuid!) {
   Group(where: {conferenceId: {_eq: $conferenceId}}) {

@@ -25,6 +25,17 @@ export type RequiredContentItemDescriptor = {
     id: string;
     typeName: ContentType_Enum;
     name: string;
+    uploaders: UploaderDescriptor[];
+};
+
+export type UploaderDescriptor = {
+    isNew?: boolean;
+
+    id: string;
+    email: string;
+    emailsSentCount: number;
+    name: string;
+    requiredContentItemId: string;
 };
 
 export type ContentDescriptor =

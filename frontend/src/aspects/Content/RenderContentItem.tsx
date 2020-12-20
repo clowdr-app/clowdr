@@ -48,7 +48,7 @@ export default function RenderContentItem({ data }: { data: ContentItemDataBlob 
                 }
 
                 if (!latestVersion.data.transcode?.s3Url) {
-                    return <Text>This item is still being processed.</Text>;
+                    return <Text>This item is still being processed. Please check back in 15 minutes.</Text>;
                 }
 
                 return (

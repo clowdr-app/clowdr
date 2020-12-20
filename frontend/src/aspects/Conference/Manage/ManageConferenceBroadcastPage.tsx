@@ -2,7 +2,6 @@ import { gql } from "@apollo/client";
 import {
     Box,
     Button,
-    Container,
     Heading,
     Spinner,
     Table,
@@ -94,30 +93,33 @@ export default function ManageConferenceBroadcastPage(): JSX.Element {
             permissions={[Permission_Enum.ConferenceManageContent]}
             componentIfDenied={<PageNotFound />}
         >
-            <Container centerContent>
-                <Heading as="h1">Broadcast</Heading>
-                <Button
-                    mt={5}
-                    aria-label="Prepare broadcasts"
-                    onClick={async () => {
-                        await create({
-                            variables: {
-                                conferenceId: conference.id,
-                            },
-                        });
-                        toast({
-                            status: "success",
-                            description: "Started preparing broadcasts.",
-                        });
-                    }}
-                >
-                    Prepare broadcasts
-                </Button>
-                {loading ? <Spinner /> : error ? <Text mt={3}>Failed to start broadcast preparation.</Text> : <></>}
-                <Box mt={5}>
-                    <PrepareJobsList conferenceId={conference.id} />
-                </Box>
-            </Container>
+            <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
+                Manage {conference.shortName}
+            </Heading>
+            <Heading as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
+                Broadcasts
+            </Heading>
+            <Button
+                mt={5}
+                aria-label="Prepare broadcasts"
+                onClick={async () => {
+                    await create({
+                        variables: {
+                            conferenceId: conference.id,
+                        },
+                    });
+                    toast({
+                        status: "success",
+                        description: "Started preparing broadcasts.",
+                    });
+                }}
+            >
+                Prepare broadcasts
+            </Button>
+            {loading ? <Spinner /> : error ? <Text mt={3}>Failed to start broadcast preparation.</Text> : <></>}
+            <Box mt={5}>
+                <PrepareJobsList conferenceId={conference.id} />
+            </Box>
         </RequireAtLeastOnePermissionWrapper>
     );
 }

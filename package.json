@@ -44,6 +44,7 @@
         "node": "15.x"
     },
     "workspaces": [
-        "shared"
+        "shared",
+        "react-transcript-editor"
     ]
 }

@@ -1,0 +1,3 @@
+[submodule "react-transcript-editor"]
+	path = react-transcript-editor
+	url = git@github.com:clowdr-app/react-transcript-editor.git

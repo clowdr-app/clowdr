@@ -7,9 +7,7 @@
         "jsx": "preserve",
         "baseUrl": "./",
         /* paths - If you configure Snowpack import aliases, add them here. */
-        "paths": {
-            "@clowdr-app/shared-types/*": ["../shared/*"]
-        },
+        "paths": {},
         /* noEmit - Snowpack builds (emits) files, not tsc. */
         "noEmit": true,
         /* Additional Options */
@@ -19,5 +17,6 @@
         "resolveJsonModule": true,
         "allowSyntheticDefaultImports": true,
         "importsNotUsedAsValues": "error"
-    }
+    },
+    "exclude": ["./build"]
 }

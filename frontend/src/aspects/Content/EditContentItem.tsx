@@ -15,10 +15,16 @@ export function EditContentItem({
     const latestVersion = data && data.length > 0 ? data[data.length - 1] : null;
 
     const latestSubtitles = latestVersion?.data.baseType === "video" ? latestVersion?.data.subtitles["en_US"] : null;
+    const latestTranscodeURL = latestVersion?.data.baseType === "video" ? latestVersion?.data.transcode?.s3Url : null;
     return (
         <>
-            {latestSubtitles ? (
-                <EditSubtitles data={latestSubtitles} contentItemId={contentItemId} magicToken={magicToken} />
+            {latestTranscodeURL && latestSubtitles ? (
+                <EditSubtitles
+                    videoS3URL={latestTranscodeURL}
+                    data={latestSubtitles}
+                    contentItemId={contentItemId}
+                    magicToken={magicToken}
+                />
             ) : (
                 <Text>Subtitles are still being processed for this item. Please check back in 15 minutes.</Text>
             )}

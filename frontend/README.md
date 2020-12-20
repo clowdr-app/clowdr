@@ -93,7 +93,7 @@ The frontend can easily be deployed using Netlify:
 
 1. Connect to GitHub, select the relevant repo and branch
 1. Leave the base directory blank
-1. Build command: `cd frontend && npm i && npm run build`
+1. Build command: `cd react-transcript-editor && npm run build:component && cd ../frontend && npm i && npm run build`
 1. Publish directory: `frontend/build`
 1. Environment variables: As below
 

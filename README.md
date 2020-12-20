@@ -24,6 +24,12 @@ Version 3 of Clowdr - this time it's scalable.
 ## Setting Up
 
 1. Clone this repository
+1. Initialise/update submodules
+1. Enter and build `react-transcript-editor`
+   1. Run `npm install`
+   1. Run `npm run build:component`
+   1. You should see the `dist` folder created.
+   1. You will not need to do this again (hopefully)
 1. Install npm packages.
 
    This will also install dependencies in subdirectories.

@@ -64,7 +64,12 @@ export default function UploadedContentItem({ magicToken }: { magicToken: string
                                         )}
                                     </Button>
                                 </Tooltip>
-                                <RenderContentItem data={item.data} />
+                                {!item?.data ||
+                                item?.data.length === 0 ||
+                                item?.data[item.data.length - 1]?.data.baseType !== "video" ||
+                                !item?.data[item.data.length - 1]?.data.subtitles["en_US"] ? (
+                                    <RenderContentItem data={item.data} />
+                                ) : undefined}
                                 <EditContentItem data={item.data} contentItemId={item.id} magicToken={magicToken} />
                             </VStack>
                         ) : (

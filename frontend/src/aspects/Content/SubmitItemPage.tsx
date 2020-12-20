@@ -135,7 +135,7 @@ export default function SubmitItemPage({
     return (
         <Center>
             <VStack spacing={4}>
-                <Container centerContent>
+                <Container centerContent maxW="100%">
                     <VStack spacing={4}>
                         <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
                             Upload item
@@ -153,7 +153,7 @@ export default function SubmitItemPage({
                                 <Heading as="h2" fontSize="1.5rem" mt={5}>
                                     {requiredItem.name}
                                 </Heading>
-                                {form}
+                                <Center>{form}</Center>
                                 <VStack spacing={4}>
                                     <Heading as="h3" fontSize="1.2rem">
                                         Previously uploaded

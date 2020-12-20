@@ -5,3 +5,5 @@ coverage
 # Ignore certain source folders:
 hasura
 frontend/src/generated/
+react-transcript-editor/
+aws/cdk.out/

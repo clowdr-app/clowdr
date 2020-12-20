@@ -1,22 +1,11 @@
 import { gql } from "@apollo/client";
-import {
-    Button,
-    FormControl,
-    FormErrorMessage,
-    FormHelperText,
-    FormLabel,
-    Spinner,
-    Textarea,
-    useToast,
-} from "@chakra-ui/react";
+import TranscriptEditor from "@bbc/react-transcript-editor/dist/TranscriptEditor";
+import { Box, Spinner } from "@chakra-ui/react";
 import type { SubtitleDetails } from "@clowdr-app/shared-types/build/content";
 import AmazonS3Uri from "amazon-s3-uri";
-import { Field, FieldProps, Form, Formik } from "formik";
+import assert from "assert";
 import React from "react";
-import srtValidator from "srt-validator";
 import useFetch from "use-http";
-import { useUpdateSubtitlesMutation } from "../../generated/graphql";
-import UnsavedChangesWarning from "../LeavingPageWarnings/UnsavedChangesWarning";
 
 gql`
     mutation UpdateSubtitles($contentItemId: String!, $magicToken: String!, $subtitleText: String!) {
@@ -28,19 +17,28 @@ gql`
 `;
 
 export default function EditSubtitles({
+    videoS3URL,
     data,
     contentItemId,
     magicToken,
 }: {
+    videoS3URL: string;
     data: SubtitleDetails;
     contentItemId: string;
     magicToken: string;
 }): JSX.Element {
-    const [updateSubtitles] = useUpdateSubtitlesMutation();
-    const toast = useToast();
+    // TODO: const [updateSubtitles] = useUpdateSubtitlesMutation();
+    // TODO: const toast = useToast();
 
-    const { bucket, key } = AmazonS3Uri(data.s3Url);
-    const subtitlesUrl = `https://${bucket}.s3.eu-west-1.amazonaws.com/${key}`;
+    const { bucket: _srtBucket, key: _srtKey } = AmazonS3Uri(data.s3Url);
+    const { bucket: videoBucket, key: videoKey } = AmazonS3Uri(videoS3URL);
+    assert(videoKey);
+    const videoUrl = `https://${videoBucket}.s3-eu-west-1.amazonaws.com/${videoKey}`;
+    // TODO: Re-enable: const subtitlesUrl = `https://${_srtBucket}.s3.eu-west-1.amazonaws.com/${_srtKey}`;
+    const subtitlesUrl = `https://${videoBucket}.s3-eu-west-1.amazonaws.com/${videoKey.substr(
+        0,
+        videoKey.length - 4
+    )}.json`;
     const { loading, error, data: subtitlesData = [] } = useFetch(subtitlesUrl, {}, []);
 
     return loading ? (
@@ -48,8 +46,20 @@ export default function EditSubtitles({
     ) : error ? (
         <>Could not load subtitles.</>
     ) : (
-        <>
-            <Formik
+        <Box color="black">
+            <TranscriptEditor
+                isEditable
+                transcriptData={subtitlesData}
+                mediaUrl={videoUrl}
+                sttJsonType="amazontranscribe" // TODO: SRT
+                spellCheck
+                autoSaveContentType="sttJsonType"
+                handleAutoSaveChanges={(data) => {
+                    // TODO: Save changes
+                    console.log(data);
+                }}
+            />
+            {/* <Formik
                 initialValues={{
                     subtitles: subtitlesData,
                 }}
@@ -138,7 +148,7 @@ export default function EditSubtitles({
                         </Form>
                     </>
                 )}
-            </Formik>
-        </>
+            </Formik> */}
+        </Box>
     );
 }

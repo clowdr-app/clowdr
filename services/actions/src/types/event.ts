@@ -1,5 +1,5 @@
 import { ContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
-import { ContentType_Enum } from "../generated/graphql";
+import { ContentType_Enum, JobStatus_Enum } from "../generated/graphql";
 
 export interface Payload<T = any> {
     event: {
@@ -60,4 +60,9 @@ export interface EmailData extends BaseData {
     plainTextContents: string;
     sentAt: string | null;
     subject: string;
+}
+
+export interface ConferencePrepareJobData extends BaseData {
+    jobStatusName: JobStatus_Enum;
+    conferenceId: string;
 }

@@ -84,7 +84,7 @@ function PrepareJobsList({ conferenceId }: { conferenceId: string }): JSX.Elemen
 export default function ManageConferenceBroadcastPage(): JSX.Element {
     const conference = useConference();
     useDashboardPrimaryMenuButtons();
-    const [create, { data, loading, error }] = useCreateConferencePrepareJobMutation();
+    const [create, { loading, error }] = useCreateConferencePrepareJobMutation();
     useQueryErrorToast(error);
     const toast = useToast();
 

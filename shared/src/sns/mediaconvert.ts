@@ -1,3 +1,8 @@
+export enum TranscodeMode {
+    PREVIEW = "preview",
+    BROADCAST = "broadcast",
+}
+
 export interface MediaConvertEvent {
     version: string;
     id: string;
@@ -50,6 +55,7 @@ interface MediaConvertEventDetailsBase {
     userMetadata: {
         [key: string]: unknown;
         contentItemId: string;
+        mode: TranscodeMode;
     };
 }
 

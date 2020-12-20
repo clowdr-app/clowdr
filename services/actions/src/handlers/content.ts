@@ -14,7 +14,7 @@ import {
     InsertEmailsDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { startTranscode } from "../lib/transcode";
+import { startPreviewTranscode } from "../lib/transcode";
 import { startTranscribe } from "../lib/transcribe";
 import { ContentItemData, Payload } from "../types/event";
 
@@ -49,7 +49,7 @@ export async function handleContentItemUpdated(payload: Payload<ContentItemData>
         (oldVersion && oldVersion.data.baseType === "video" && oldVersion.data.s3Url !== currentVersion.data.s3Url) ||
         (!oldVersion && currentVersion.data.s3Url)
     ) {
-        const transcodeResult = await startTranscode(currentVersion.data.s3Url, newRow.id);
+        const transcodeResult = await startPreviewTranscode(currentVersion.data.s3Url, newRow.id);
 
         // Update data item with new version
         const newVersion = R.clone(currentVersion);

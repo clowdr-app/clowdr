@@ -5,6 +5,7 @@ import {
     ContentBlob,
     ContentItemDataBlob,
     ContentItemVersionData,
+    ContentType_Enum,
     VideoContentBlob,
 } from "@clowdr-app/shared-types/build/content";
 import AmazonS3URI from "amazon-s3-uri";
@@ -16,7 +17,6 @@ import { v4 as uuidv4 } from "uuid";
 import { S3 } from "../aws/awsClient";
 import {
     ContentItemAddNewVersionDocument,
-    ContentType_Enum,
     CreateContentItemDocument,
     Email_Insert_Input,
     GetUploadersDocument,

@@ -220,6 +220,7 @@ export interface VideoContentBlob extends BaseContentBlob {
     s3Url: string;
     transcode?: TranscodeDetails;
     subtitles: Record<LanguageCode, SubtitleDetails>;
+    broadcastTranscode?: TranscodeDetails;
 }
 
 type LanguageCode = string;

@@ -704,6 +704,20 @@
                     attendee:
                       userId:
                         _eq: X-Hasura-User-Id
+  event_triggers:
+  - name: ConferencePrepareJobCreated
+    definition:
+      enable_manual: false
+      insert:
+        columns: '*'
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{ACTION_BASE_URL}}/conferencePrepareJob/inserted'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - table:
     schema: public
     name: ContentGroup
@@ -3619,6 +3633,9 @@
     schema: public
     name: VideoRenderJob
   object_relationships:
+  - name: broadcastContentItem
+    using:
+      foreign_key_constraint_on: broadcastContentItemId
   - name: conference
     using:
       foreign_key_constraint_on: conferenceId

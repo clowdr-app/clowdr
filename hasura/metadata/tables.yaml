@@ -744,6 +744,13 @@
         table:
           schema: public
           name: Event
+  - name: people
+    using:
+      foreign_key_constraint_on:
+        column: groupId
+        table:
+          schema: public
+          name: ContentGroupPerson
   - name: requiredContentItems
     using:
       foreign_key_constraint_on:
@@ -899,6 +906,19 @@
                   attendee:
                     userId:
                       _eq: X-Hasura-User-Id
+- table:
+    schema: public
+    name: ContentGroupPerson
+  object_relationships:
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  - name: group
+    using:
+      foreign_key_constraint_on: groupId
+  - name: person
+    using:
+      foreign_key_constraint_on: personId
 - table:
     schema: public
     name: ContentGroupTag
@@ -1064,14 +1084,6 @@
   - name: requiredContentItem
     using:
       foreign_key_constraint_on: requiredContentId
-  array_relationships:
-  - name: contentItemPeople
-    using:
-      foreign_key_constraint_on:
-        column: itemId
-        table:
-          schema: public
-          name: ContentItemPerson
   insert_permissions:
   - role: user
     permission:
@@ -1264,19 +1276,6 @@
       value_from_env: EVENT_SECRET
 - table:
     schema: public
-    name: ContentItemPerson
-  object_relationships:
-  - name: conference
-    using:
-      foreign_key_constraint_on: conferenceId
-  - name: item
-    using:
-      foreign_key_constraint_on: itemId
-  - name: person
-    using:
-      foreign_key_constraint_on: personId
-- table:
-    schema: public
     name: ContentPerson
   object_relationships:
   - name: attendee
@@ -1295,7 +1294,7 @@
         column: personId
         table:
           schema: public
-          name: ContentItemPerson
+          name: ContentGroupPerson
 - table:
     schema: public
     name: ContentType

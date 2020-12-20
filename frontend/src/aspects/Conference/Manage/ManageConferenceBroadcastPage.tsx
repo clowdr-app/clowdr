@@ -17,10 +17,13 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import {
+    Permission_Enum,
     useConferencePrepareJobSubscriptionSubscription,
     useCreateConferencePrepareJobMutation,
 } from "../../../generated/graphql";
+import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
+import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
 import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
@@ -87,29 +90,34 @@ export default function ManageConferenceBroadcastPage(): JSX.Element {
     const toast = useToast();
 
     return (
-        <Container centerContent>
-            <Heading as="h1">Broadcast</Heading>
-            <Button
-                mt={5}
-                aria-label="Prepare broadcasts"
-                onClick={async () => {
-                    await create({
-                        variables: {
-                            conferenceId: conference.id,
-                        },
-                    });
-                    toast({
-                        status: "success",
-                        description: "Started preparing broadcasts.",
-                    });
-                }}
-            >
-                Prepare broadcasts
-            </Button>
-            {loading ? <Spinner /> : error ? <Text mt={3}>Failed to start broadcast preparation.</Text> : <></>}
-            <Box mt={5}>
-                <PrepareJobsList conferenceId={conference.id} />
-            </Box>
-        </Container>
+        <RequireAtLeastOnePermissionWrapper
+            permissions={[Permission_Enum.ConferenceManageContent]}
+            componentIfDenied={<PageNotFound />}
+        >
+            <Container centerContent>
+                <Heading as="h1">Broadcast</Heading>
+                <Button
+                    mt={5}
+                    aria-label="Prepare broadcasts"
+                    onClick={async () => {
+                        await create({
+                            variables: {
+                                conferenceId: conference.id,
+                            },
+                        });
+                        toast({
+                            status: "success",
+                            description: "Started preparing broadcasts.",
+                        });
+                    }}
+                >
+                    Prepare broadcasts
+                </Button>
+                {loading ? <Spinner /> : error ? <Text mt={3}>Failed to start broadcast preparation.</Text> : <></>}
+                <Box mt={5}>
+                    <PrepareJobsList conferenceId={conference.id} />
+                </Box>
+            </Container>
+        </RequireAtLeastOnePermissionWrapper>
     );
 }

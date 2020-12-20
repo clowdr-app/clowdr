@@ -6,47 +6,7 @@ import FAIcon from "../../Icons/FAIcon";
 import { useNoPrimaryMenuButtons, usePrimaryMenuButton } from "../../Menu/usePrimaryMenuButtons";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
-
-function ManagementDashboardButton({
-    to,
-    name,
-    icon,
-    description,
-    permissions,
-    colorScheme,
-}: {
-    to: string;
-    name: string;
-    icon: string;
-    description: string;
-    permissions?: Permission_Enum[];
-    colorScheme?: string;
-}): JSX.Element | null {
-    const conference = useConference();
-
-    return (
-        <RequireAtLeastOnePermissionWrapper permissions={permissions}>
-            <LinkButton
-                to={`/conference/${conference.slug}/manage/${to}`}
-                padding={5}
-                overflow="hidden"
-                whiteSpace="normal"
-                linkProps={{
-                    maxWidth: "calc(20% - 1rem)",
-                    minWidth: "300px",
-                }}
-                colorScheme={colorScheme ?? "blue"}
-            >
-                <Heading as="h2" fontSize="1.5rem" marginBottom="0.5rem">
-                    <FAIcon iconStyle="s" icon={icon} />
-                    <br />
-                    {name}
-                </Heading>
-                <Text>{description}</Text>
-            </LinkButton>
-        </RequireAtLeastOnePermissionWrapper>
-    );
-}
+import RestrictedDashboardButton from "./RestrictedDashboardButton";
 
 export default function ManagerLandingPage(): JSX.Element {
     const conference = useConference();
@@ -69,14 +29,14 @@ export default function ManagerLandingPage(): JSX.Element {
                 alignItems="stretch"
                 justifyContent="center"
             >
-                <ManagementDashboardButton
+                <RestrictedDashboardButton
                     to="name"
                     name="Name"
                     icon="signature"
                     description="Manage the name, short name and url of your conference."
                     permissions={[Permission_Enum.ConferenceManageName]}
                 />
-                <ManagementDashboardButton
+                <RestrictedDashboardButton
                     to="roles"
                     name="Roles"
                     icon="lock"
@@ -84,7 +44,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     permissions={[Permission_Enum.ConferenceManageRoles]}
                     colorScheme="red"
                 />
-                <ManagementDashboardButton
+                <RestrictedDashboardButton
                     to="groups"
                     name="Groups"
                     icon="user-cog"
@@ -92,7 +52,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     permissions={[Permission_Enum.ConferenceManageRoles, Permission_Enum.ConferenceManageGroups]}
                     colorScheme="red"
                 />
-                <ManagementDashboardButton
+                <RestrictedDashboardButton
                     to="people"
                     name="People"
                     icon="users"
@@ -104,7 +64,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     ]}
                     colorScheme="red"
                 />
-                <ManagementDashboardButton
+                <RestrictedDashboardButton
                     to="content"
                     name="Content"
                     icon="align-left"
@@ -112,7 +72,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     permissions={[Permission_Enum.ConferenceManageContent]}
                     colorScheme="green"
                 />
-                <ManagementDashboardButton
+                <RestrictedDashboardButton
                     to="schedule"
                     name="Schedule"
                     icon="calendar"
@@ -120,7 +80,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     permissions={[Permission_Enum.ConferenceManageSchedule]}
                     colorScheme="green"
                 />
-                <ManagementDashboardButton
+                <RestrictedDashboardButton
                     to="import"
                     name="Import"
                     icon="download"
@@ -128,7 +88,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     permissions={[Permission_Enum.ConferenceManageContent, Permission_Enum.ConferenceManageSchedule]}
                     colorScheme="green"
                 />
-                <ManagementDashboardButton
+                <RestrictedDashboardButton
                     to="export"
                     name="Export"
                     icon="upload"
@@ -136,7 +96,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     permissions={[Permission_Enum.ConferenceManageContent]}
                     colorScheme="green"
                 />
-                <ManagementDashboardButton
+                <RestrictedDashboardButton
                     to="sponsors"
                     name="Sponsors"
                     icon="star"
@@ -146,7 +106,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     ]}
                     colorScheme="purple"
                 />
-                <ManagementDashboardButton
+                <RestrictedDashboardButton
                     to="chats"
                     name="Chats"
                     icon="comments"
@@ -156,7 +116,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     ]}
                     colorScheme="yellow"
                 />
-                <ManagementDashboardButton
+                <RestrictedDashboardButton
                     to="rooms"
                     name="Rooms"
                     icon="coffee"
@@ -166,7 +126,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     ]}
                     colorScheme="yellow"
                 />
-                <ManagementDashboardButton
+                <RestrictedDashboardButton
                     to="broadcasts"
                     name="Broadcasts"
                     icon="video"
@@ -176,7 +136,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     ]}
                     colorScheme="yellow"
                 />
-                <ManagementDashboardButton
+                <RestrictedDashboardButton
                     to="analytics"
                     name="Analytics"
                     icon="chart-line"
@@ -186,7 +146,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     ]}
                     colorScheme="yellow"
                 />
-                <ManagementDashboardButton
+                <RestrictedDashboardButton
                     to="support"
                     name="Support"
                     icon="question-circle"

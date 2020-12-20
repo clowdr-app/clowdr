@@ -1,32 +1,12 @@
-import { gql } from "@apollo/client";
-import {
-    Box,
-    Button,
-    Container,
-    Flex,
-    Heading,
-    Spinner,
-    Table,
-    TableCaption,
-    Tbody,
-    Td,
-    Text,
-    Th,
-    Thead,
-    Tr,
-    useToast,
-} from "@chakra-ui/react";
+import { Flex, Heading } from "@chakra-ui/react";
 import React from "react";
 import { Route, Switch } from "react-router-dom";
-import {
-    Permission_Enum,
-    useConferencePrepareJobSubscriptionSubscription,
-    useCreateConferencePrepareJobMutation,
-} from "../../../generated/graphql";
+import { Permission_Enum } from "../../../generated/graphql";
 import PageNotFound from "../../Errors/PageNotFound";
 import PageNotImplemented from "../../Errors/PageNotImplemented";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
+import ImportContentPage from "./Import/ImportContentPage";
 import RestrictedDashboardButton from "./RestrictedDashboardButton";
 import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
@@ -34,7 +14,7 @@ export default function ManageConferenceImportPage({ rootUrl }: { rootUrl: strin
     return (
         <Switch>
             <Route path={`${rootUrl}/content`}>
-                <PageNotImplemented />
+                <ImportContentPage />
             </Route>
             <Route path={`${rootUrl}/schedule`}>
                 <PageNotImplemented />

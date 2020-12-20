@@ -3911,6 +3911,10 @@ export type ContentGroup = {
   readonly originatingData?: Maybe<OriginatingData>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
   /** An array relationship */
+  readonly people: ReadonlyArray<ContentGroupPerson>;
+  /** An aggregated array relationship */
+  readonly people_aggregate: ContentGroupPerson_Aggregate;
+  /** An array relationship */
   readonly requiredContentItems: ReadonlyArray<RequiredContentItem>;
   /** An aggregated array relationship */
   readonly requiredContentItems_aggregate: RequiredContentItem_Aggregate;
@@ -3981,6 +3985,26 @@ export type ContentGroupEvents_AggregateArgs = {
 
 
 /** columns and relationships of "ContentGroup" */
+export type ContentGroupPeopleArgs = {
+  distinct_on?: Maybe<ReadonlyArray<ContentGroupPerson_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<ContentGroupPerson_Order_By>>;
+  where?: Maybe<ContentGroupPerson_Bool_Exp>;
+};
+
+
+/** columns and relationships of "ContentGroup" */
+export type ContentGroupPeople_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<ContentGroupPerson_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<ContentGroupPerson_Order_By>>;
+  where?: Maybe<ContentGroupPerson_Bool_Exp>;
+};
+
+
+/** columns and relationships of "ContentGroup" */
 export type ContentGroupRequiredContentItemsArgs = {
   distinct_on?: Maybe<ReadonlyArray<RequiredContentItem_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -3997,6 +4021,328 @@ export type ContentGroupRequiredContentItems_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<RequiredContentItem_Order_By>>;
   where?: Maybe<RequiredContentItem_Bool_Exp>;
+};
+
+/** columns and relationships of "ContentGroupPerson" */
+export type ContentGroupPerson = {
+  readonly __typename?: 'ContentGroupPerson';
+  /** An object relationship */
+  readonly conference: Conference;
+  readonly conferenceId: Scalars['uuid'];
+  /** An object relationship */
+  readonly group: ContentGroup;
+  readonly groupId: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
+  /** An object relationship */
+  readonly person: ContentPerson;
+  readonly personId: Scalars['uuid'];
+  readonly priority?: Maybe<Scalars['Int']>;
+  readonly roleName: Scalars['String'];
+};
+
+/** aggregated selection of "ContentGroupPerson" */
+export type ContentGroupPerson_Aggregate = {
+  readonly __typename?: 'ContentGroupPerson_aggregate';
+  readonly aggregate?: Maybe<ContentGroupPerson_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<ContentGroupPerson>;
+};
+
+/** aggregate fields of "ContentGroupPerson" */
+export type ContentGroupPerson_Aggregate_Fields = {
+  readonly __typename?: 'ContentGroupPerson_aggregate_fields';
+  readonly avg?: Maybe<ContentGroupPerson_Avg_Fields>;
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<ContentGroupPerson_Max_Fields>;
+  readonly min?: Maybe<ContentGroupPerson_Min_Fields>;
+  readonly stddev?: Maybe<ContentGroupPerson_Stddev_Fields>;
+  readonly stddev_pop?: Maybe<ContentGroupPerson_Stddev_Pop_Fields>;
+  readonly stddev_samp?: Maybe<ContentGroupPerson_Stddev_Samp_Fields>;
+  readonly sum?: Maybe<ContentGroupPerson_Sum_Fields>;
+  readonly var_pop?: Maybe<ContentGroupPerson_Var_Pop_Fields>;
+  readonly var_samp?: Maybe<ContentGroupPerson_Var_Samp_Fields>;
+  readonly variance?: Maybe<ContentGroupPerson_Variance_Fields>;
+};
+
+
+/** aggregate fields of "ContentGroupPerson" */
+export type ContentGroupPerson_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<ContentGroupPerson_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "ContentGroupPerson" */
+export type ContentGroupPerson_Aggregate_Order_By = {
+  readonly avg?: Maybe<ContentGroupPerson_Avg_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<ContentGroupPerson_Max_Order_By>;
+  readonly min?: Maybe<ContentGroupPerson_Min_Order_By>;
+  readonly stddev?: Maybe<ContentGroupPerson_Stddev_Order_By>;
+  readonly stddev_pop?: Maybe<ContentGroupPerson_Stddev_Pop_Order_By>;
+  readonly stddev_samp?: Maybe<ContentGroupPerson_Stddev_Samp_Order_By>;
+  readonly sum?: Maybe<ContentGroupPerson_Sum_Order_By>;
+  readonly var_pop?: Maybe<ContentGroupPerson_Var_Pop_Order_By>;
+  readonly var_samp?: Maybe<ContentGroupPerson_Var_Samp_Order_By>;
+  readonly variance?: Maybe<ContentGroupPerson_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "ContentGroupPerson" */
+export type ContentGroupPerson_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<ContentGroupPerson_Insert_Input>;
+  readonly on_conflict?: Maybe<ContentGroupPerson_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type ContentGroupPerson_Avg_Fields = {
+  readonly __typename?: 'ContentGroupPerson_avg_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "ContentGroupPerson" */
+export type ContentGroupPerson_Avg_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "ContentGroupPerson". All fields are combined with a logical 'AND'. */
+export type ContentGroupPerson_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<ContentGroupPerson_Bool_Exp>>>;
+  readonly _not?: Maybe<ContentGroupPerson_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<ContentGroupPerson_Bool_Exp>>>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly group?: Maybe<ContentGroup_Bool_Exp>;
+  readonly groupId?: Maybe<Uuid_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly person?: Maybe<ContentPerson_Bool_Exp>;
+  readonly personId?: Maybe<Uuid_Comparison_Exp>;
+  readonly priority?: Maybe<Int_Comparison_Exp>;
+  readonly roleName?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "ContentGroupPerson" */
+export enum ContentGroupPerson_Constraint {
+  /** unique or primary key constraint */
+  ContentItemPersonPkey = 'ContentItemPerson_pkey',
+  /** unique or primary key constraint */
+  ContentItemPersonRoleNamePersonIdGroupIdKey = 'ContentItemPerson_roleName_personId_groupId_key'
+}
+
+/** input type for incrementing integer column in table "ContentGroupPerson" */
+export type ContentGroupPerson_Inc_Input = {
+  readonly priority?: Maybe<Scalars['Int']>;
+};
+
+/** input type for inserting data into table "ContentGroupPerson" */
+export type ContentGroupPerson_Insert_Input = {
+  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly group?: Maybe<ContentGroup_Obj_Rel_Insert_Input>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly person?: Maybe<ContentPerson_Obj_Rel_Insert_Input>;
+  readonly personId?: Maybe<Scalars['uuid']>;
+  readonly priority?: Maybe<Scalars['Int']>;
+  readonly roleName?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type ContentGroupPerson_Max_Fields = {
+  readonly __typename?: 'ContentGroupPerson_max_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly personId?: Maybe<Scalars['uuid']>;
+  readonly priority?: Maybe<Scalars['Int']>;
+  readonly roleName?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "ContentGroupPerson" */
+export type ContentGroupPerson_Max_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly groupId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly personId?: Maybe<Order_By>;
+  readonly priority?: Maybe<Order_By>;
+  readonly roleName?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type ContentGroupPerson_Min_Fields = {
+  readonly __typename?: 'ContentGroupPerson_min_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly personId?: Maybe<Scalars['uuid']>;
+  readonly priority?: Maybe<Scalars['Int']>;
+  readonly roleName?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "ContentGroupPerson" */
+export type ContentGroupPerson_Min_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly groupId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly personId?: Maybe<Order_By>;
+  readonly priority?: Maybe<Order_By>;
+  readonly roleName?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "ContentGroupPerson" */
+export type ContentGroupPerson_Mutation_Response = {
+  readonly __typename?: 'ContentGroupPerson_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<ContentGroupPerson>;
+};
+
+/** input type for inserting object relation for remote table "ContentGroupPerson" */
+export type ContentGroupPerson_Obj_Rel_Insert_Input = {
+  readonly data: ContentGroupPerson_Insert_Input;
+  readonly on_conflict?: Maybe<ContentGroupPerson_On_Conflict>;
+};
+
+/** on conflict condition type for table "ContentGroupPerson" */
+export type ContentGroupPerson_On_Conflict = {
+  readonly constraint: ContentGroupPerson_Constraint;
+  readonly update_columns: ReadonlyArray<ContentGroupPerson_Update_Column>;
+  readonly where?: Maybe<ContentGroupPerson_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "ContentGroupPerson" */
+export type ContentGroupPerson_Order_By = {
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly group?: Maybe<ContentGroup_Order_By>;
+  readonly groupId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly person?: Maybe<ContentPerson_Order_By>;
+  readonly personId?: Maybe<Order_By>;
+  readonly priority?: Maybe<Order_By>;
+  readonly roleName?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "ContentGroupPerson" */
+export type ContentGroupPerson_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "ContentGroupPerson" */
+export enum ContentGroupPerson_Select_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  GroupId = 'groupId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  PersonId = 'personId',
+  /** column name */
+  Priority = 'priority',
+  /** column name */
+  RoleName = 'roleName'
+}
+
+/** input type for updating data in table "ContentGroupPerson" */
+export type ContentGroupPerson_Set_Input = {
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly personId?: Maybe<Scalars['uuid']>;
+  readonly priority?: Maybe<Scalars['Int']>;
+  readonly roleName?: Maybe<Scalars['String']>;
+};
+
+/** aggregate stddev on columns */
+export type ContentGroupPerson_Stddev_Fields = {
+  readonly __typename?: 'ContentGroupPerson_stddev_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "ContentGroupPerson" */
+export type ContentGroupPerson_Stddev_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type ContentGroupPerson_Stddev_Pop_Fields = {
+  readonly __typename?: 'ContentGroupPerson_stddev_pop_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "ContentGroupPerson" */
+export type ContentGroupPerson_Stddev_Pop_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type ContentGroupPerson_Stddev_Samp_Fields = {
+  readonly __typename?: 'ContentGroupPerson_stddev_samp_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "ContentGroupPerson" */
+export type ContentGroupPerson_Stddev_Samp_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type ContentGroupPerson_Sum_Fields = {
+  readonly __typename?: 'ContentGroupPerson_sum_fields';
+  readonly priority?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "ContentGroupPerson" */
+export type ContentGroupPerson_Sum_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** update columns of table "ContentGroupPerson" */
+export enum ContentGroupPerson_Update_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  GroupId = 'groupId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  PersonId = 'personId',
+  /** column name */
+  Priority = 'priority',
+  /** column name */
+  RoleName = 'roleName'
+}
+
+/** aggregate var_pop on columns */
+export type ContentGroupPerson_Var_Pop_Fields = {
+  readonly __typename?: 'ContentGroupPerson_var_pop_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "ContentGroupPerson" */
+export type ContentGroupPerson_Var_Pop_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type ContentGroupPerson_Var_Samp_Fields = {
+  readonly __typename?: 'ContentGroupPerson_var_samp_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "ContentGroupPerson" */
+export type ContentGroupPerson_Var_Samp_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type ContentGroupPerson_Variance_Fields = {
+  readonly __typename?: 'ContentGroupPerson_variance_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "ContentGroupPerson" */
+export type ContentGroupPerson_Variance_Order_By = {
+  readonly priority?: Maybe<Order_By>;
 };
 
 /** columns and relationships of "ContentGroupTag" */
@@ -4416,6 +4762,7 @@ export type ContentGroup_Bool_Exp = {
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly originatingData?: Maybe<OriginatingData_Bool_Exp>;
   readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
+  readonly people?: Maybe<ContentGroupPerson_Bool_Exp>;
   readonly requiredContentItems?: Maybe<RequiredContentItem_Bool_Exp>;
   readonly shortTitle?: Maybe<String_Comparison_Exp>;
   readonly title?: Maybe<String_Comparison_Exp>;
@@ -4441,6 +4788,7 @@ export type ContentGroup_Insert_Input = {
   readonly id?: Maybe<Scalars['uuid']>;
   readonly originatingData?: Maybe<OriginatingData_Obj_Rel_Insert_Input>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly people?: Maybe<ContentGroupPerson_Arr_Rel_Insert_Input>;
   readonly requiredContentItems?: Maybe<RequiredContentItem_Arr_Rel_Insert_Input>;
   readonly shortTitle?: Maybe<Scalars['String']>;
   readonly title?: Maybe<Scalars['String']>;
@@ -4528,6 +4876,7 @@ export type ContentGroup_Order_By = {
   readonly id?: Maybe<Order_By>;
   readonly originatingData?: Maybe<OriginatingData_Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
+  readonly people_aggregate?: Maybe<ContentGroupPerson_Aggregate_Order_By>;
   readonly requiredContentItems_aggregate?: Maybe<RequiredContentItem_Aggregate_Order_By>;
   readonly shortTitle?: Maybe<Order_By>;
   readonly title?: Maybe<Order_By>;
@@ -4602,10 +4951,6 @@ export type ContentItem = {
   /** An object relationship */
   readonly contentGroup: ContentGroup;
   readonly contentGroupId: Scalars['uuid'];
-  /** An array relationship */
-  readonly contentItemPeople: ReadonlyArray<ContentItemPerson>;
-  /** An aggregated array relationship */
-  readonly contentItemPeople_aggregate: ContentItemPerson_Aggregate;
   /** An object relationship */
   readonly contentType: ContentType;
   readonly contentTypeName: ContentType_Enum;
@@ -4626,26 +4971,6 @@ export type ContentItem = {
 
 
 /** columns and relationships of "ContentItem" */
-export type ContentItemContentItemPeopleArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ContentItemPerson_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ContentItemPerson_Order_By>>;
-  where?: Maybe<ContentItemPerson_Bool_Exp>;
-};
-
-
-/** columns and relationships of "ContentItem" */
-export type ContentItemContentItemPeople_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ContentItemPerson_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ContentItemPerson_Order_By>>;
-  where?: Maybe<ContentItemPerson_Bool_Exp>;
-};
-
-
-/** columns and relationships of "ContentItem" */
 export type ContentItemDataArgs = {
   path?: Maybe<Scalars['String']>;
 };
@@ -4654,326 +4979,6 @@ export type ContentItemDataArgs = {
 /** columns and relationships of "ContentItem" */
 export type ContentItemLayoutDataArgs = {
   path?: Maybe<Scalars['String']>;
-};
-
-/** columns and relationships of "ContentItemPerson" */
-export type ContentItemPerson = {
-  readonly __typename?: 'ContentItemPerson';
-  /** An object relationship */
-  readonly conference: Conference;
-  readonly conferenceId: Scalars['uuid'];
-  readonly id: Scalars['uuid'];
-  /** An object relationship */
-  readonly item: ContentItem;
-  readonly itemId: Scalars['uuid'];
-  /** An object relationship */
-  readonly person: ContentPerson;
-  readonly personId: Scalars['uuid'];
-  readonly priority?: Maybe<Scalars['Int']>;
-  readonly roleName: Scalars['String'];
-};
-
-/** aggregated selection of "ContentItemPerson" */
-export type ContentItemPerson_Aggregate = {
-  readonly __typename?: 'ContentItemPerson_aggregate';
-  readonly aggregate?: Maybe<ContentItemPerson_Aggregate_Fields>;
-  readonly nodes: ReadonlyArray<ContentItemPerson>;
-};
-
-/** aggregate fields of "ContentItemPerson" */
-export type ContentItemPerson_Aggregate_Fields = {
-  readonly __typename?: 'ContentItemPerson_aggregate_fields';
-  readonly avg?: Maybe<ContentItemPerson_Avg_Fields>;
-  readonly count?: Maybe<Scalars['Int']>;
-  readonly max?: Maybe<ContentItemPerson_Max_Fields>;
-  readonly min?: Maybe<ContentItemPerson_Min_Fields>;
-  readonly stddev?: Maybe<ContentItemPerson_Stddev_Fields>;
-  readonly stddev_pop?: Maybe<ContentItemPerson_Stddev_Pop_Fields>;
-  readonly stddev_samp?: Maybe<ContentItemPerson_Stddev_Samp_Fields>;
-  readonly sum?: Maybe<ContentItemPerson_Sum_Fields>;
-  readonly var_pop?: Maybe<ContentItemPerson_Var_Pop_Fields>;
-  readonly var_samp?: Maybe<ContentItemPerson_Var_Samp_Fields>;
-  readonly variance?: Maybe<ContentItemPerson_Variance_Fields>;
-};
-
-
-/** aggregate fields of "ContentItemPerson" */
-export type ContentItemPerson_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<ReadonlyArray<ContentItemPerson_Select_Column>>;
-  distinct?: Maybe<Scalars['Boolean']>;
-};
-
-/** order by aggregate values of table "ContentItemPerson" */
-export type ContentItemPerson_Aggregate_Order_By = {
-  readonly avg?: Maybe<ContentItemPerson_Avg_Order_By>;
-  readonly count?: Maybe<Order_By>;
-  readonly max?: Maybe<ContentItemPerson_Max_Order_By>;
-  readonly min?: Maybe<ContentItemPerson_Min_Order_By>;
-  readonly stddev?: Maybe<ContentItemPerson_Stddev_Order_By>;
-  readonly stddev_pop?: Maybe<ContentItemPerson_Stddev_Pop_Order_By>;
-  readonly stddev_samp?: Maybe<ContentItemPerson_Stddev_Samp_Order_By>;
-  readonly sum?: Maybe<ContentItemPerson_Sum_Order_By>;
-  readonly var_pop?: Maybe<ContentItemPerson_Var_Pop_Order_By>;
-  readonly var_samp?: Maybe<ContentItemPerson_Var_Samp_Order_By>;
-  readonly variance?: Maybe<ContentItemPerson_Variance_Order_By>;
-};
-
-/** input type for inserting array relation for remote table "ContentItemPerson" */
-export type ContentItemPerson_Arr_Rel_Insert_Input = {
-  readonly data: ReadonlyArray<ContentItemPerson_Insert_Input>;
-  readonly on_conflict?: Maybe<ContentItemPerson_On_Conflict>;
-};
-
-/** aggregate avg on columns */
-export type ContentItemPerson_Avg_Fields = {
-  readonly __typename?: 'ContentItemPerson_avg_fields';
-  readonly priority?: Maybe<Scalars['Float']>;
-};
-
-/** order by avg() on columns of table "ContentItemPerson" */
-export type ContentItemPerson_Avg_Order_By = {
-  readonly priority?: Maybe<Order_By>;
-};
-
-/** Boolean expression to filter rows from the table "ContentItemPerson". All fields are combined with a logical 'AND'. */
-export type ContentItemPerson_Bool_Exp = {
-  readonly _and?: Maybe<ReadonlyArray<Maybe<ContentItemPerson_Bool_Exp>>>;
-  readonly _not?: Maybe<ContentItemPerson_Bool_Exp>;
-  readonly _or?: Maybe<ReadonlyArray<Maybe<ContentItemPerson_Bool_Exp>>>;
-  readonly conference?: Maybe<Conference_Bool_Exp>;
-  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
-  readonly id?: Maybe<Uuid_Comparison_Exp>;
-  readonly item?: Maybe<ContentItem_Bool_Exp>;
-  readonly itemId?: Maybe<Uuid_Comparison_Exp>;
-  readonly person?: Maybe<ContentPerson_Bool_Exp>;
-  readonly personId?: Maybe<Uuid_Comparison_Exp>;
-  readonly priority?: Maybe<Int_Comparison_Exp>;
-  readonly roleName?: Maybe<String_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "ContentItemPerson" */
-export enum ContentItemPerson_Constraint {
-  /** unique or primary key constraint */
-  ContentItemPersonPkey = 'ContentItemPerson_pkey'
-}
-
-/** input type for incrementing integer column in table "ContentItemPerson" */
-export type ContentItemPerson_Inc_Input = {
-  readonly priority?: Maybe<Scalars['Int']>;
-};
-
-/** input type for inserting data into table "ContentItemPerson" */
-export type ContentItemPerson_Insert_Input = {
-  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
-  readonly conferenceId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly item?: Maybe<ContentItem_Obj_Rel_Insert_Input>;
-  readonly itemId?: Maybe<Scalars['uuid']>;
-  readonly person?: Maybe<ContentPerson_Obj_Rel_Insert_Input>;
-  readonly personId?: Maybe<Scalars['uuid']>;
-  readonly priority?: Maybe<Scalars['Int']>;
-  readonly roleName?: Maybe<Scalars['String']>;
-};
-
-/** aggregate max on columns */
-export type ContentItemPerson_Max_Fields = {
-  readonly __typename?: 'ContentItemPerson_max_fields';
-  readonly conferenceId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly itemId?: Maybe<Scalars['uuid']>;
-  readonly personId?: Maybe<Scalars['uuid']>;
-  readonly priority?: Maybe<Scalars['Int']>;
-  readonly roleName?: Maybe<Scalars['String']>;
-};
-
-/** order by max() on columns of table "ContentItemPerson" */
-export type ContentItemPerson_Max_Order_By = {
-  readonly conferenceId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly itemId?: Maybe<Order_By>;
-  readonly personId?: Maybe<Order_By>;
-  readonly priority?: Maybe<Order_By>;
-  readonly roleName?: Maybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type ContentItemPerson_Min_Fields = {
-  readonly __typename?: 'ContentItemPerson_min_fields';
-  readonly conferenceId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly itemId?: Maybe<Scalars['uuid']>;
-  readonly personId?: Maybe<Scalars['uuid']>;
-  readonly priority?: Maybe<Scalars['Int']>;
-  readonly roleName?: Maybe<Scalars['String']>;
-};
-
-/** order by min() on columns of table "ContentItemPerson" */
-export type ContentItemPerson_Min_Order_By = {
-  readonly conferenceId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly itemId?: Maybe<Order_By>;
-  readonly personId?: Maybe<Order_By>;
-  readonly priority?: Maybe<Order_By>;
-  readonly roleName?: Maybe<Order_By>;
-};
-
-/** response of any mutation on the table "ContentItemPerson" */
-export type ContentItemPerson_Mutation_Response = {
-  readonly __typename?: 'ContentItemPerson_mutation_response';
-  /** number of affected rows by the mutation */
-  readonly affected_rows: Scalars['Int'];
-  /** data of the affected rows by the mutation */
-  readonly returning: ReadonlyArray<ContentItemPerson>;
-};
-
-/** input type for inserting object relation for remote table "ContentItemPerson" */
-export type ContentItemPerson_Obj_Rel_Insert_Input = {
-  readonly data: ContentItemPerson_Insert_Input;
-  readonly on_conflict?: Maybe<ContentItemPerson_On_Conflict>;
-};
-
-/** on conflict condition type for table "ContentItemPerson" */
-export type ContentItemPerson_On_Conflict = {
-  readonly constraint: ContentItemPerson_Constraint;
-  readonly update_columns: ReadonlyArray<ContentItemPerson_Update_Column>;
-  readonly where?: Maybe<ContentItemPerson_Bool_Exp>;
-};
-
-/** ordering options when selecting data from "ContentItemPerson" */
-export type ContentItemPerson_Order_By = {
-  readonly conference?: Maybe<Conference_Order_By>;
-  readonly conferenceId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly item?: Maybe<ContentItem_Order_By>;
-  readonly itemId?: Maybe<Order_By>;
-  readonly person?: Maybe<ContentPerson_Order_By>;
-  readonly personId?: Maybe<Order_By>;
-  readonly priority?: Maybe<Order_By>;
-  readonly roleName?: Maybe<Order_By>;
-};
-
-/** primary key columns input for table: "ContentItemPerson" */
-export type ContentItemPerson_Pk_Columns_Input = {
-  readonly id: Scalars['uuid'];
-};
-
-/** select columns of table "ContentItemPerson" */
-export enum ContentItemPerson_Select_Column {
-  /** column name */
-  ConferenceId = 'conferenceId',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  ItemId = 'itemId',
-  /** column name */
-  PersonId = 'personId',
-  /** column name */
-  Priority = 'priority',
-  /** column name */
-  RoleName = 'roleName'
-}
-
-/** input type for updating data in table "ContentItemPerson" */
-export type ContentItemPerson_Set_Input = {
-  readonly conferenceId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly itemId?: Maybe<Scalars['uuid']>;
-  readonly personId?: Maybe<Scalars['uuid']>;
-  readonly priority?: Maybe<Scalars['Int']>;
-  readonly roleName?: Maybe<Scalars['String']>;
-};
-
-/** aggregate stddev on columns */
-export type ContentItemPerson_Stddev_Fields = {
-  readonly __typename?: 'ContentItemPerson_stddev_fields';
-  readonly priority?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev() on columns of table "ContentItemPerson" */
-export type ContentItemPerson_Stddev_Order_By = {
-  readonly priority?: Maybe<Order_By>;
-};
-
-/** aggregate stddev_pop on columns */
-export type ContentItemPerson_Stddev_Pop_Fields = {
-  readonly __typename?: 'ContentItemPerson_stddev_pop_fields';
-  readonly priority?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_pop() on columns of table "ContentItemPerson" */
-export type ContentItemPerson_Stddev_Pop_Order_By = {
-  readonly priority?: Maybe<Order_By>;
-};
-
-/** aggregate stddev_samp on columns */
-export type ContentItemPerson_Stddev_Samp_Fields = {
-  readonly __typename?: 'ContentItemPerson_stddev_samp_fields';
-  readonly priority?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_samp() on columns of table "ContentItemPerson" */
-export type ContentItemPerson_Stddev_Samp_Order_By = {
-  readonly priority?: Maybe<Order_By>;
-};
-
-/** aggregate sum on columns */
-export type ContentItemPerson_Sum_Fields = {
-  readonly __typename?: 'ContentItemPerson_sum_fields';
-  readonly priority?: Maybe<Scalars['Int']>;
-};
-
-/** order by sum() on columns of table "ContentItemPerson" */
-export type ContentItemPerson_Sum_Order_By = {
-  readonly priority?: Maybe<Order_By>;
-};
-
-/** update columns of table "ContentItemPerson" */
-export enum ContentItemPerson_Update_Column {
-  /** column name */
-  ConferenceId = 'conferenceId',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  ItemId = 'itemId',
-  /** column name */
-  PersonId = 'personId',
-  /** column name */
-  Priority = 'priority',
-  /** column name */
-  RoleName = 'roleName'
-}
-
-/** aggregate var_pop on columns */
-export type ContentItemPerson_Var_Pop_Fields = {
-  readonly __typename?: 'ContentItemPerson_var_pop_fields';
-  readonly priority?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_pop() on columns of table "ContentItemPerson" */
-export type ContentItemPerson_Var_Pop_Order_By = {
-  readonly priority?: Maybe<Order_By>;
-};
-
-/** aggregate var_samp on columns */
-export type ContentItemPerson_Var_Samp_Fields = {
-  readonly __typename?: 'ContentItemPerson_var_samp_fields';
-  readonly priority?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_samp() on columns of table "ContentItemPerson" */
-export type ContentItemPerson_Var_Samp_Order_By = {
-  readonly priority?: Maybe<Order_By>;
-};
-
-/** aggregate variance on columns */
-export type ContentItemPerson_Variance_Fields = {
-  readonly __typename?: 'ContentItemPerson_variance_fields';
-  readonly priority?: Maybe<Scalars['Float']>;
-};
-
-/** order by variance() on columns of table "ContentItemPerson" */
-export type ContentItemPerson_Variance_Order_By = {
-  readonly priority?: Maybe<Order_By>;
 };
 
 /** aggregated selection of "ContentItem" */
@@ -5027,7 +5032,6 @@ export type ContentItem_Bool_Exp = {
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly contentGroup?: Maybe<ContentGroup_Bool_Exp>;
   readonly contentGroupId?: Maybe<Uuid_Comparison_Exp>;
-  readonly contentItemPeople?: Maybe<ContentItemPerson_Bool_Exp>;
   readonly contentType?: Maybe<ContentType_Bool_Exp>;
   readonly contentTypeName?: Maybe<ContentType_Enum_Comparison_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
@@ -5076,7 +5080,6 @@ export type ContentItem_Insert_Input = {
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly contentGroup?: Maybe<ContentGroup_Obj_Rel_Insert_Input>;
   readonly contentGroupId?: Maybe<Scalars['uuid']>;
-  readonly contentItemPeople?: Maybe<ContentItemPerson_Arr_Rel_Insert_Input>;
   readonly contentType?: Maybe<ContentType_Obj_Rel_Insert_Input>;
   readonly contentTypeName?: Maybe<ContentType_Enum>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
@@ -5171,7 +5174,6 @@ export type ContentItem_Order_By = {
   readonly conferenceId?: Maybe<Order_By>;
   readonly contentGroup?: Maybe<ContentGroup_Order_By>;
   readonly contentGroupId?: Maybe<Order_By>;
-  readonly contentItemPeople_aggregate?: Maybe<ContentItemPerson_Aggregate_Order_By>;
   readonly contentType?: Maybe<ContentType_Order_By>;
   readonly contentTypeName?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
@@ -5281,9 +5283,10 @@ export type ContentPerson = {
   readonly conference: Conference;
   readonly conferenceId: Scalars['uuid'];
   /** An array relationship */
-  readonly contentItemPeople: ReadonlyArray<ContentItemPerson>;
+  readonly contentItemPeople: ReadonlyArray<ContentGroupPerson>;
   /** An aggregated array relationship */
-  readonly contentItemPeople_aggregate: ContentItemPerson_Aggregate;
+  readonly contentItemPeople_aggregate: ContentGroupPerson_Aggregate;
+  readonly email?: Maybe<Scalars['String']>;
   readonly id: Scalars['uuid'];
   readonly name: Scalars['String'];
   /** An object relationship */
@@ -5294,21 +5297,21 @@ export type ContentPerson = {
 
 /** columns and relationships of "ContentPerson" */
 export type ContentPersonContentItemPeopleArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ContentItemPerson_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ContentGroupPerson_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ContentItemPerson_Order_By>>;
-  where?: Maybe<ContentItemPerson_Bool_Exp>;
+  order_by?: Maybe<ReadonlyArray<ContentGroupPerson_Order_By>>;
+  where?: Maybe<ContentGroupPerson_Bool_Exp>;
 };
 
 
 /** columns and relationships of "ContentPerson" */
 export type ContentPersonContentItemPeople_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ContentItemPerson_Select_Column>>;
+  distinct_on?: Maybe<ReadonlyArray<ContentGroupPerson_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ContentItemPerson_Order_By>>;
-  where?: Maybe<ContentItemPerson_Bool_Exp>;
+  order_by?: Maybe<ReadonlyArray<ContentGroupPerson_Order_By>>;
+  where?: Maybe<ContentGroupPerson_Bool_Exp>;
 };
 
 /** aggregated selection of "ContentPerson" */
@@ -5356,7 +5359,8 @@ export type ContentPerson_Bool_Exp = {
   readonly attendeeId?: Maybe<Uuid_Comparison_Exp>;
   readonly conference?: Maybe<Conference_Bool_Exp>;
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
-  readonly contentItemPeople?: Maybe<ContentItemPerson_Bool_Exp>;
+  readonly contentItemPeople?: Maybe<ContentGroupPerson_Bool_Exp>;
+  readonly email?: Maybe<String_Comparison_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly name?: Maybe<String_Comparison_Exp>;
   readonly originatingData?: Maybe<OriginatingData_Bool_Exp>;
@@ -5378,7 +5382,8 @@ export type ContentPerson_Insert_Input = {
   readonly attendeeId?: Maybe<Scalars['uuid']>;
   readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
-  readonly contentItemPeople?: Maybe<ContentItemPerson_Arr_Rel_Insert_Input>;
+  readonly contentItemPeople?: Maybe<ContentGroupPerson_Arr_Rel_Insert_Input>;
+  readonly email?: Maybe<Scalars['String']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingData?: Maybe<OriginatingData_Obj_Rel_Insert_Input>;
@@ -5391,6 +5396,7 @@ export type ContentPerson_Max_Fields = {
   readonly affiliation?: Maybe<Scalars['String']>;
   readonly attendeeId?: Maybe<Scalars['uuid']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly email?: Maybe<Scalars['String']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
@@ -5401,6 +5407,7 @@ export type ContentPerson_Max_Order_By = {
   readonly affiliation?: Maybe<Order_By>;
   readonly attendeeId?: Maybe<Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
+  readonly email?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
@@ -5412,6 +5419,7 @@ export type ContentPerson_Min_Fields = {
   readonly affiliation?: Maybe<Scalars['String']>;
   readonly attendeeId?: Maybe<Scalars['uuid']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly email?: Maybe<Scalars['String']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
@@ -5422,6 +5430,7 @@ export type ContentPerson_Min_Order_By = {
   readonly affiliation?: Maybe<Order_By>;
   readonly attendeeId?: Maybe<Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
+  readonly email?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
@@ -5456,7 +5465,8 @@ export type ContentPerson_Order_By = {
   readonly attendeeId?: Maybe<Order_By>;
   readonly conference?: Maybe<Conference_Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
-  readonly contentItemPeople_aggregate?: Maybe<ContentItemPerson_Aggregate_Order_By>;
+  readonly contentItemPeople_aggregate?: Maybe<ContentGroupPerson_Aggregate_Order_By>;
+  readonly email?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly originatingData?: Maybe<OriginatingData_Order_By>;
@@ -5477,6 +5487,8 @@ export enum ContentPerson_Select_Column {
   /** column name */
   ConferenceId = 'conferenceId',
   /** column name */
+  Email = 'email',
+  /** column name */
   Id = 'id',
   /** column name */
   Name = 'name',
@@ -5489,6 +5501,7 @@ export type ContentPerson_Set_Input = {
   readonly affiliation?: Maybe<Scalars['String']>;
   readonly attendeeId?: Maybe<Scalars['uuid']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly email?: Maybe<Scalars['String']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
@@ -5502,6 +5515,8 @@ export enum ContentPerson_Update_Column {
   AttendeeId = 'attendeeId',
   /** column name */
   ConferenceId = 'conferenceId',
+  /** column name */
+  Email = 'email',
   /** column name */
   Id = 'id',
   /** column name */
@@ -13980,6 +13995,10 @@ export type Mutation_Root = {
   readonly delete_Conference_by_pk?: Maybe<Conference>;
   /** delete data from the table: "ContentGroup" */
   readonly delete_ContentGroup?: Maybe<ContentGroup_Mutation_Response>;
+  /** delete data from the table: "ContentGroupPerson" */
+  readonly delete_ContentGroupPerson?: Maybe<ContentGroupPerson_Mutation_Response>;
+  /** delete single row from the table: "ContentGroupPerson" */
+  readonly delete_ContentGroupPerson_by_pk?: Maybe<ContentGroupPerson>;
   /** delete data from the table: "ContentGroupTag" */
   readonly delete_ContentGroupTag?: Maybe<ContentGroupTag_Mutation_Response>;
   /** delete single row from the table: "ContentGroupTag" */
@@ -13992,10 +14011,6 @@ export type Mutation_Root = {
   readonly delete_ContentGroup_by_pk?: Maybe<ContentGroup>;
   /** delete data from the table: "ContentItem" */
   readonly delete_ContentItem?: Maybe<ContentItem_Mutation_Response>;
-  /** delete data from the table: "ContentItemPerson" */
-  readonly delete_ContentItemPerson?: Maybe<ContentItemPerson_Mutation_Response>;
-  /** delete single row from the table: "ContentItemPerson" */
-  readonly delete_ContentItemPerson_by_pk?: Maybe<ContentItemPerson>;
   /** delete single row from the table: "ContentItem" */
   readonly delete_ContentItem_by_pk?: Maybe<ContentItem>;
   /** delete data from the table: "ContentPerson" */
@@ -14184,6 +14199,10 @@ export type Mutation_Root = {
   readonly insert_Conference_one?: Maybe<Conference>;
   /** insert data into the table: "ContentGroup" */
   readonly insert_ContentGroup?: Maybe<ContentGroup_Mutation_Response>;
+  /** insert data into the table: "ContentGroupPerson" */
+  readonly insert_ContentGroupPerson?: Maybe<ContentGroupPerson_Mutation_Response>;
+  /** insert a single row into the table: "ContentGroupPerson" */
+  readonly insert_ContentGroupPerson_one?: Maybe<ContentGroupPerson>;
   /** insert data into the table: "ContentGroupTag" */
   readonly insert_ContentGroupTag?: Maybe<ContentGroupTag_Mutation_Response>;
   /** insert a single row into the table: "ContentGroupTag" */
@@ -14196,10 +14215,6 @@ export type Mutation_Root = {
   readonly insert_ContentGroup_one?: Maybe<ContentGroup>;
   /** insert data into the table: "ContentItem" */
   readonly insert_ContentItem?: Maybe<ContentItem_Mutation_Response>;
-  /** insert data into the table: "ContentItemPerson" */
-  readonly insert_ContentItemPerson?: Maybe<ContentItemPerson_Mutation_Response>;
-  /** insert a single row into the table: "ContentItemPerson" */
-  readonly insert_ContentItemPerson_one?: Maybe<ContentItemPerson>;
   /** insert a single row into the table: "ContentItem" */
   readonly insert_ContentItem_one?: Maybe<ContentItem>;
   /** insert data into the table: "ContentPerson" */
@@ -14404,6 +14419,10 @@ export type Mutation_Root = {
   readonly update_Conference_by_pk?: Maybe<Conference>;
   /** update data of the table: "ContentGroup" */
   readonly update_ContentGroup?: Maybe<ContentGroup_Mutation_Response>;
+  /** update data of the table: "ContentGroupPerson" */
+  readonly update_ContentGroupPerson?: Maybe<ContentGroupPerson_Mutation_Response>;
+  /** update single row of the table: "ContentGroupPerson" */
+  readonly update_ContentGroupPerson_by_pk?: Maybe<ContentGroupPerson>;
   /** update data of the table: "ContentGroupTag" */
   readonly update_ContentGroupTag?: Maybe<ContentGroupTag_Mutation_Response>;
   /** update single row of the table: "ContentGroupTag" */
@@ -14416,10 +14435,6 @@ export type Mutation_Root = {
   readonly update_ContentGroup_by_pk?: Maybe<ContentGroup>;
   /** update data of the table: "ContentItem" */
   readonly update_ContentItem?: Maybe<ContentItem_Mutation_Response>;
-  /** update data of the table: "ContentItemPerson" */
-  readonly update_ContentItemPerson?: Maybe<ContentItemPerson_Mutation_Response>;
-  /** update single row of the table: "ContentItemPerson" */
-  readonly update_ContentItemPerson_by_pk?: Maybe<ContentItemPerson>;
   /** update single row of the table: "ContentItem" */
   readonly update_ContentItem_by_pk?: Maybe<ContentItem>;
   /** update data of the table: "ContentPerson" */
@@ -14730,6 +14745,18 @@ export type Mutation_RootDelete_ContentGroupArgs = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_ContentGroupPersonArgs = {
+  where: ContentGroupPerson_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_ContentGroupPerson_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_ContentGroupTagArgs = {
   where: ContentGroupTag_Bool_Exp;
 };
@@ -14762,18 +14789,6 @@ export type Mutation_RootDelete_ContentGroup_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootDelete_ContentItemArgs = {
   where: ContentItem_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_ContentItemPersonArgs = {
-  where: ContentItemPerson_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_ContentItemPerson_By_PkArgs = {
-  id: Scalars['uuid'];
 };
 
 
@@ -15371,6 +15386,20 @@ export type Mutation_RootInsert_ContentGroupArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_ContentGroupPersonArgs = {
+  objects: ReadonlyArray<ContentGroupPerson_Insert_Input>;
+  on_conflict?: Maybe<ContentGroupPerson_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_ContentGroupPerson_OneArgs = {
+  object: ContentGroupPerson_Insert_Input;
+  on_conflict?: Maybe<ContentGroupPerson_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_ContentGroupTagArgs = {
   objects: ReadonlyArray<ContentGroupTag_Insert_Input>;
   on_conflict?: Maybe<ContentGroupTag_On_Conflict>;
@@ -15409,20 +15438,6 @@ export type Mutation_RootInsert_ContentGroup_OneArgs = {
 export type Mutation_RootInsert_ContentItemArgs = {
   objects: ReadonlyArray<ContentItem_Insert_Input>;
   on_conflict?: Maybe<ContentItem_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_ContentItemPersonArgs = {
-  objects: ReadonlyArray<ContentItemPerson_Insert_Input>;
-  on_conflict?: Maybe<ContentItemPerson_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_ContentItemPerson_OneArgs = {
-  object: ContentItemPerson_Insert_Input;
-  on_conflict?: Maybe<ContentItemPerson_On_Conflict>;
 };
 
 
@@ -16180,6 +16195,22 @@ export type Mutation_RootUpdate_ContentGroupArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_ContentGroupPersonArgs = {
+  _inc?: Maybe<ContentGroupPerson_Inc_Input>;
+  _set?: Maybe<ContentGroupPerson_Set_Input>;
+  where: ContentGroupPerson_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_ContentGroupPerson_By_PkArgs = {
+  _inc?: Maybe<ContentGroupPerson_Inc_Input>;
+  _set?: Maybe<ContentGroupPerson_Set_Input>;
+  pk_columns: ContentGroupPerson_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_ContentGroupTagArgs = {
   _set?: Maybe<ContentGroupTag_Set_Input>;
   where: ContentGroupTag_Bool_Exp;
@@ -16223,22 +16254,6 @@ export type Mutation_RootUpdate_ContentItemArgs = {
   _prepend?: Maybe<ContentItem_Prepend_Input>;
   _set?: Maybe<ContentItem_Set_Input>;
   where: ContentItem_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_ContentItemPersonArgs = {
-  _inc?: Maybe<ContentItemPerson_Inc_Input>;
-  _set?: Maybe<ContentItemPerson_Set_Input>;
-  where: ContentItemPerson_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_ContentItemPerson_By_PkArgs = {
-  _inc?: Maybe<ContentItemPerson_Inc_Input>;
-  _set?: Maybe<ContentItemPerson_Set_Input>;
-  pk_columns: ContentItemPerson_Pk_Columns_Input;
 };
 
 
@@ -16830,6 +16845,12 @@ export type Query_Root = {
   readonly Conference_by_pk?: Maybe<Conference>;
   /** fetch data from the table: "ContentGroup" */
   readonly ContentGroup: ReadonlyArray<ContentGroup>;
+  /** fetch data from the table: "ContentGroupPerson" */
+  readonly ContentGroupPerson: ReadonlyArray<ContentGroupPerson>;
+  /** fetch aggregated fields from the table: "ContentGroupPerson" */
+  readonly ContentGroupPerson_aggregate: ContentGroupPerson_Aggregate;
+  /** fetch data from the table: "ContentGroupPerson" using primary key columns */
+  readonly ContentGroupPerson_by_pk?: Maybe<ContentGroupPerson>;
   /** fetch data from the table: "ContentGroupTag" */
   readonly ContentGroupTag: ReadonlyArray<ContentGroupTag>;
   /** fetch aggregated fields from the table: "ContentGroupTag" */
@@ -16848,12 +16869,6 @@ export type Query_Root = {
   readonly ContentGroup_by_pk?: Maybe<ContentGroup>;
   /** fetch data from the table: "ContentItem" */
   readonly ContentItem: ReadonlyArray<ContentItem>;
-  /** fetch data from the table: "ContentItemPerson" */
-  readonly ContentItemPerson: ReadonlyArray<ContentItemPerson>;
-  /** fetch aggregated fields from the table: "ContentItemPerson" */
-  readonly ContentItemPerson_aggregate: ContentItemPerson_Aggregate;
-  /** fetch data from the table: "ContentItemPerson" using primary key columns */
-  readonly ContentItemPerson_by_pk?: Maybe<ContentItemPerson>;
   /** fetch aggregated fields from the table: "ContentItem" */
   readonly ContentItem_aggregate: ContentItem_Aggregate;
   /** fetch data from the table: "ContentItem" using primary key columns */
@@ -17436,6 +17451,32 @@ export type Query_RootContentGroupArgs = {
 
 
 /** query root */
+export type Query_RootContentGroupPersonArgs = {
+  distinct_on?: Maybe<ReadonlyArray<ContentGroupPerson_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<ContentGroupPerson_Order_By>>;
+  where?: Maybe<ContentGroupPerson_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootContentGroupPerson_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<ContentGroupPerson_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<ContentGroupPerson_Order_By>>;
+  where?: Maybe<ContentGroupPerson_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootContentGroupPerson_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
 export type Query_RootContentGroupTagArgs = {
   distinct_on?: Maybe<ReadonlyArray<ContentGroupTag_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -17510,32 +17551,6 @@ export type Query_RootContentItemArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<ContentItem_Order_By>>;
   where?: Maybe<ContentItem_Bool_Exp>;
-};
-
-
-/** query root */
-export type Query_RootContentItemPersonArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ContentItemPerson_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ContentItemPerson_Order_By>>;
-  where?: Maybe<ContentItemPerson_Bool_Exp>;
-};
-
-
-/** query root */
-export type Query_RootContentItemPerson_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ContentItemPerson_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ContentItemPerson_Order_By>>;
-  where?: Maybe<ContentItemPerson_Bool_Exp>;
-};
-
-
-/** query root */
-export type Query_RootContentItemPerson_By_PkArgs = {
-  id: Scalars['uuid'];
 };
 
 
@@ -18499,6 +18514,12 @@ export type Subscription_Root = {
   readonly Conference_by_pk?: Maybe<Conference>;
   /** fetch data from the table: "ContentGroup" */
   readonly ContentGroup: ReadonlyArray<ContentGroup>;
+  /** fetch data from the table: "ContentGroupPerson" */
+  readonly ContentGroupPerson: ReadonlyArray<ContentGroupPerson>;
+  /** fetch aggregated fields from the table: "ContentGroupPerson" */
+  readonly ContentGroupPerson_aggregate: ContentGroupPerson_Aggregate;
+  /** fetch data from the table: "ContentGroupPerson" using primary key columns */
+  readonly ContentGroupPerson_by_pk?: Maybe<ContentGroupPerson>;
   /** fetch data from the table: "ContentGroupTag" */
   readonly ContentGroupTag: ReadonlyArray<ContentGroupTag>;
   /** fetch aggregated fields from the table: "ContentGroupTag" */
@@ -18517,12 +18538,6 @@ export type Subscription_Root = {
   readonly ContentGroup_by_pk?: Maybe<ContentGroup>;
   /** fetch data from the table: "ContentItem" */
   readonly ContentItem: ReadonlyArray<ContentItem>;
-  /** fetch data from the table: "ContentItemPerson" */
-  readonly ContentItemPerson: ReadonlyArray<ContentItemPerson>;
-  /** fetch aggregated fields from the table: "ContentItemPerson" */
-  readonly ContentItemPerson_aggregate: ContentItemPerson_Aggregate;
-  /** fetch data from the table: "ContentItemPerson" using primary key columns */
-  readonly ContentItemPerson_by_pk?: Maybe<ContentItemPerson>;
   /** fetch aggregated fields from the table: "ContentItem" */
   readonly ContentItem_aggregate: ContentItem_Aggregate;
   /** fetch data from the table: "ContentItem" using primary key columns */
@@ -19105,6 +19120,32 @@ export type Subscription_RootContentGroupArgs = {
 
 
 /** subscription root */
+export type Subscription_RootContentGroupPersonArgs = {
+  distinct_on?: Maybe<ReadonlyArray<ContentGroupPerson_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<ContentGroupPerson_Order_By>>;
+  where?: Maybe<ContentGroupPerson_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootContentGroupPerson_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<ContentGroupPerson_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<ContentGroupPerson_Order_By>>;
+  where?: Maybe<ContentGroupPerson_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootContentGroupPerson_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
 export type Subscription_RootContentGroupTagArgs = {
   distinct_on?: Maybe<ReadonlyArray<ContentGroupTag_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -19179,32 +19220,6 @@ export type Subscription_RootContentItemArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<ContentItem_Order_By>>;
   where?: Maybe<ContentItem_Bool_Exp>;
-};
-
-
-/** subscription root */
-export type Subscription_RootContentItemPersonArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ContentItemPerson_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ContentItemPerson_Order_By>>;
-  where?: Maybe<ContentItemPerson_Bool_Exp>;
-};
-
-
-/** subscription root */
-export type Subscription_RootContentItemPerson_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ContentItemPerson_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ContentItemPerson_Order_By>>;
-  where?: Maybe<ContentItemPerson_Bool_Exp>;
-};
-
-
-/** subscription root */
-export type Subscription_RootContentItemPerson_By_PkArgs = {
-  id: Scalars['uuid'];
 };
 
 
@@ -20176,19 +20191,37 @@ export type ConferencePrepareJobSubscriptionSubscription = { readonly __typename
 
 export type UploaderInfoFragment = { readonly __typename?: 'Uploader', readonly id: any, readonly conferenceId: any, readonly email: string, readonly emailsSentCount: number, readonly name: string, readonly requiredContentItemId: any };
 
-export type RequiredContentItemInfoFragment = { readonly __typename?: 'RequiredContentItem', readonly id: any, readonly name: string, readonly contentTypeName: ContentType_Enum, readonly conferenceId: any, readonly contentGroupId: any, readonly uploaders: ReadonlyArray<(
+export type RequiredContentItemInfoFragment = { readonly __typename?: 'RequiredContentItem', readonly id: any, readonly name: string, readonly contentTypeName: ContentType_Enum, readonly conferenceId: any, readonly contentGroupId: any, readonly originatingDataId?: Maybe<any>, readonly uploaders: ReadonlyArray<(
     { readonly __typename?: 'Uploader' }
     & UploaderInfoFragment
+  )>, readonly originatingData?: Maybe<(
+    { readonly __typename?: 'OriginatingData' }
+    & OriginatingDataInfoFragment
   )> };
 
-export type ContentItemInfoFragment = { readonly __typename?: 'ContentItem', readonly conferenceId: any, readonly contentGroupId: any, readonly contentTypeName: ContentType_Enum, readonly data: any, readonly id: any, readonly isHidden: boolean, readonly layoutData?: Maybe<any>, readonly name: string, readonly requiredContentId?: Maybe<any>, readonly requiredContentItem?: Maybe<(
+export type ContentItemInfoFragment = { readonly __typename?: 'ContentItem', readonly conferenceId: any, readonly contentGroupId: any, readonly contentTypeName: ContentType_Enum, readonly data: any, readonly id: any, readonly isHidden: boolean, readonly layoutData?: Maybe<any>, readonly name: string, readonly requiredContentId?: Maybe<any>, readonly originatingDataId?: Maybe<any>, readonly requiredContentItem?: Maybe<(
     { readonly __typename?: 'RequiredContentItem' }
     & RequiredContentItemInfoFragment
+  )>, readonly originatingData?: Maybe<(
+    { readonly __typename?: 'OriginatingData' }
+    & OriginatingDataInfoFragment
+  )> };
+
+export type OriginatingDataInfoFragment = { readonly __typename?: 'OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> };
+
+export type ContentPersonInfoFragment = { readonly __typename?: 'ContentPerson', readonly id: any, readonly conferenceId: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly originatingData?: Maybe<(
+    { readonly __typename?: 'OriginatingData' }
+    & OriginatingDataInfoFragment
   )> };
 
 export type ContentGroupTagInfoFragment = { readonly __typename?: 'ContentGroupTag', readonly id: any, readonly tagId: any, readonly contentGroupId: any };
 
-export type ContentGroupFullNestedInfoFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly conferenceId: any, readonly contentGroupTypeName: ContentGroupType_Enum, readonly title: string, readonly shortTitle?: Maybe<string>, readonly requiredContentItems: ReadonlyArray<(
+export type ContentGroupPersonInfoFragment = { readonly __typename?: 'ContentGroupPerson', readonly id: any, readonly conferenceId: any, readonly groupId: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string, readonly person: (
+    { readonly __typename?: 'ContentPerson' }
+    & ContentPersonInfoFragment
+  ) };
+
+export type ContentGroupFullNestedInfoFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly conferenceId: any, readonly contentGroupTypeName: ContentGroupType_Enum, readonly title: string, readonly shortTitle?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly requiredContentItems: ReadonlyArray<(
     { readonly __typename?: 'RequiredContentItem' }
     & RequiredContentItemInfoFragment
   )>, readonly contentItems: ReadonlyArray<(
@@ -20197,6 +20230,12 @@ export type ContentGroupFullNestedInfoFragment = { readonly __typename?: 'Conten
   )>, readonly contentGroupTags: ReadonlyArray<(
     { readonly __typename?: 'ContentGroupTag' }
     & ContentGroupTagInfoFragment
+  )>, readonly people: ReadonlyArray<(
+    { readonly __typename?: 'ContentGroupPerson' }
+    & ContentGroupPersonInfoFragment
+  )>, readonly originatingData?: Maybe<(
+    { readonly __typename?: 'OriginatingData' }
+    & OriginatingDataInfoFragment
   )> };
 
 export type SelectAllContentGroupsQueryVariables = Exact<{
@@ -20220,6 +20259,17 @@ export type InsertDeleteContentGroupsMutation = { readonly __typename?: 'mutatio
       & ContentGroupFullNestedInfoFragment
     )> }>, readonly delete_ContentGroup?: Maybe<{ readonly __typename?: 'ContentGroup_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any }> }> };
 
+export type InsertDeleteContentPeopleMutationVariables = Exact<{
+  newPeople: ReadonlyArray<ContentPerson_Insert_Input>;
+  deletePersonIds: ReadonlyArray<Scalars['uuid']>;
+}>;
+
+
+export type InsertDeleteContentPeopleMutation = { readonly __typename?: 'mutation_root', readonly insert_ContentPerson?: Maybe<{ readonly __typename?: 'ContentPerson_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'ContentPerson' }
+      & ContentPersonInfoFragment
+    )> }>, readonly delete_ContentPerson?: Maybe<{ readonly __typename?: 'ContentPerson_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ContentPerson', readonly id: any }> }> };
+
 export type UpdateContentGroupMutationVariables = Exact<{
   newItems: ReadonlyArray<ContentItem_Insert_Input>;
   newRequiredItems: ReadonlyArray<RequiredContentItem_Insert_Input>;
@@ -20234,6 +20284,8 @@ export type UpdateContentGroupMutationVariables = Exact<{
   deleteGroupTagIds: ReadonlyArray<Scalars['uuid']>;
   newUploaders: ReadonlyArray<Uploader_Insert_Input>;
   deleteUploaderIds: ReadonlyArray<Scalars['uuid']>;
+  newGroupPeople: ReadonlyArray<ContentGroupPerson_Insert_Input>;
+  deleteGroupPeopleIds: ReadonlyArray<Scalars['uuid']>;
 }>;
 
 
@@ -20249,10 +20301,13 @@ export type UpdateContentGroupMutation = { readonly __typename?: 'mutation_root'
     )> }>, readonly insert_Uploader?: Maybe<{ readonly __typename?: 'Uploader_mutation_response', readonly returning: ReadonlyArray<(
       { readonly __typename?: 'Uploader' }
       & UploaderInfoFragment
+    )> }>, readonly insert_ContentGroupPerson?: Maybe<{ readonly __typename?: 'ContentGroupPerson_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'ContentGroupPerson' }
+      & ContentGroupPersonInfoFragment
     )> }>, readonly update_ContentGroup_by_pk?: Maybe<(
     { readonly __typename?: 'ContentGroup' }
     & ContentGroupFullNestedInfoFragment
-  )>, readonly delete_ContentItem?: Maybe<{ readonly __typename?: 'ContentItem_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any }> }>, readonly delete_RequiredContentItem?: Maybe<{ readonly __typename?: 'RequiredContentItem_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'RequiredContentItem', readonly id: any }> }>, readonly delete_ContentGroupTag?: Maybe<{ readonly __typename?: 'ContentGroupTag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ContentGroupTag', readonly id: any }> }>, readonly delete_Uploader?: Maybe<{ readonly __typename?: 'Uploader_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Uploader', readonly id: any }> }> };
+  )>, readonly delete_ContentItem?: Maybe<{ readonly __typename?: 'ContentItem_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any }> }>, readonly delete_RequiredContentItem?: Maybe<{ readonly __typename?: 'RequiredContentItem_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'RequiredContentItem', readonly id: any }> }>, readonly delete_ContentGroupTag?: Maybe<{ readonly __typename?: 'ContentGroupTag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ContentGroupTag', readonly id: any }> }>, readonly delete_Uploader?: Maybe<{ readonly __typename?: 'Uploader_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Uploader', readonly id: any }> }>, readonly delete_ContentGroupPerson?: Maybe<{ readonly __typename?: 'ContentGroupPerson_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ContentGroupPerson', readonly id: any }> }> };
 
 export type UpdateContentItemMutationVariables = Exact<{
   id: Scalars['uuid'];
@@ -20293,6 +20348,31 @@ export type UpdateUploaderMutationVariables = Exact<{
 export type UpdateUploaderMutation = { readonly __typename?: 'mutation_root', readonly update_Uploader_by_pk?: Maybe<(
     { readonly __typename?: 'Uploader' }
     & UploaderInfoFragment
+  )> };
+
+export type UpdateGroupPersonMutationVariables = Exact<{
+  id: Scalars['uuid'];
+  roleName: Scalars['String'];
+  priority: Scalars['Int'];
+}>;
+
+
+export type UpdateGroupPersonMutation = { readonly __typename?: 'mutation_root', readonly update_ContentGroupPerson_by_pk?: Maybe<(
+    { readonly __typename?: 'ContentGroupPerson' }
+    & ContentGroupPersonInfoFragment
+  )> };
+
+export type UpdatePersonMutationVariables = Exact<{
+  id: Scalars['uuid'];
+  name: Scalars['String'];
+  affiliation: Scalars['String'];
+  email: Scalars['String'];
+}>;
+
+
+export type UpdatePersonMutation = { readonly __typename?: 'mutation_root', readonly update_ContentPerson_by_pk?: Maybe<(
+    { readonly __typename?: 'ContentPerson' }
+    & ContentPersonInfoFragment
   )> };
 
 export type SelectAllGroupsQueryVariables = Exact<{
@@ -20608,6 +20688,14 @@ export const UploaderInfoFragmentDoc = gql`
   requiredContentItemId
 }
     `;
+export const OriginatingDataInfoFragmentDoc = gql`
+    fragment OriginatingDataInfo on OriginatingData {
+  id
+  conferenceId
+  sourceId
+  data
+}
+    `;
 export const RequiredContentItemInfoFragmentDoc = gql`
     fragment RequiredContentItemInfo on RequiredContentItem {
   id
@@ -20618,8 +20706,13 @@ export const RequiredContentItemInfoFragmentDoc = gql`
   uploaders {
     ...UploaderInfo
   }
+  originatingDataId
+  originatingData {
+    ...OriginatingDataInfo
+  }
 }
-    ${UploaderInfoFragmentDoc}`;
+    ${UploaderInfoFragmentDoc}
+${OriginatingDataInfoFragmentDoc}`;
 export const ContentItemInfoFragmentDoc = gql`
     fragment ContentItemInfo on ContentItem {
   conferenceId
@@ -20634,8 +20727,13 @@ export const ContentItemInfoFragmentDoc = gql`
   requiredContentItem {
     ...RequiredContentItemInfo
   }
+  originatingDataId
+  originatingData {
+    ...OriginatingDataInfo
+  }
 }
-    ${RequiredContentItemInfoFragmentDoc}`;
+    ${RequiredContentItemInfoFragmentDoc}
+${OriginatingDataInfoFragmentDoc}`;
 export const ContentGroupTagInfoFragmentDoc = gql`
     fragment ContentGroupTagInfo on ContentGroupTag {
   id
@@ -20643,6 +20741,32 @@ export const ContentGroupTagInfoFragmentDoc = gql`
   contentGroupId
 }
     `;
+export const ContentPersonInfoFragmentDoc = gql`
+    fragment ContentPersonInfo on ContentPerson {
+  id
+  conferenceId
+  name
+  affiliation
+  email
+  originatingDataId
+  originatingData {
+    ...OriginatingDataInfo
+  }
+}
+    ${OriginatingDataInfoFragmentDoc}`;
+export const ContentGroupPersonInfoFragmentDoc = gql`
+    fragment ContentGroupPersonInfo on ContentGroupPerson {
+  id
+  conferenceId
+  groupId
+  personId
+  person {
+    ...ContentPersonInfo
+  }
+  priority
+  roleName
+}
+    ${ContentPersonInfoFragmentDoc}`;
 export const ContentGroupFullNestedInfoFragmentDoc = gql`
     fragment ContentGroupFullNestedInfo on ContentGroup {
   id
@@ -20659,10 +20783,19 @@ export const ContentGroupFullNestedInfoFragmentDoc = gql`
   contentGroupTags {
     ...ContentGroupTagInfo
   }
+  people {
+    ...ContentGroupPersonInfo
+  }
+  originatingDataId
+  originatingData {
+    ...OriginatingDataInfo
+  }
 }
     ${RequiredContentItemInfoFragmentDoc}
 ${ContentItemInfoFragmentDoc}
-${ContentGroupTagInfoFragmentDoc}`;
+${ContentGroupTagInfoFragmentDoc}
+${ContentGroupPersonInfoFragmentDoc}
+${OriginatingDataInfoFragmentDoc}`;
 export const AttendeePartsFragmentDoc = gql`
     fragment AttendeeParts on Attendee {
   conferenceId
@@ -21138,8 +21271,48 @@ export function useInsertDeleteContentGroupsMutation(baseOptions?: Apollo.Mutati
 export type InsertDeleteContentGroupsMutationHookResult = ReturnType<typeof useInsertDeleteContentGroupsMutation>;
 export type InsertDeleteContentGroupsMutationResult = Apollo.MutationResult<InsertDeleteContentGroupsMutation>;
 export type InsertDeleteContentGroupsMutationOptions = Apollo.BaseMutationOptions<InsertDeleteContentGroupsMutation, InsertDeleteContentGroupsMutationVariables>;
+export const InsertDeleteContentPeopleDocument = gql`
+    mutation InsertDeleteContentPeople($newPeople: [ContentPerson_insert_input!]!, $deletePersonIds: [uuid!]!) {
+  insert_ContentPerson(objects: $newPeople) {
+    returning {
+      ...ContentPersonInfo
+    }
+  }
+  delete_ContentPerson(where: {id: {_in: $deletePersonIds}}) {
+    returning {
+      id
+    }
+  }
+}
+    ${ContentPersonInfoFragmentDoc}`;
+export type InsertDeleteContentPeopleMutationFn = Apollo.MutationFunction<InsertDeleteContentPeopleMutation, InsertDeleteContentPeopleMutationVariables>;
+
+/**
+ * __useInsertDeleteContentPeopleMutation__
+ *
+ * To run a mutation, you first call `useInsertDeleteContentPeopleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInsertDeleteContentPeopleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [insertDeleteContentPeopleMutation, { data, loading, error }] = useInsertDeleteContentPeopleMutation({
+ *   variables: {
+ *      newPeople: // value for 'newPeople'
+ *      deletePersonIds: // value for 'deletePersonIds'
+ *   },
+ * });
+ */
+export function useInsertDeleteContentPeopleMutation(baseOptions?: Apollo.MutationHookOptions<InsertDeleteContentPeopleMutation, InsertDeleteContentPeopleMutationVariables>) {
+        return Apollo.useMutation<InsertDeleteContentPeopleMutation, InsertDeleteContentPeopleMutationVariables>(InsertDeleteContentPeopleDocument, baseOptions);
+      }
+export type InsertDeleteContentPeopleMutationHookResult = ReturnType<typeof useInsertDeleteContentPeopleMutation>;
+export type InsertDeleteContentPeopleMutationResult = Apollo.MutationResult<InsertDeleteContentPeopleMutation>;
+export type InsertDeleteContentPeopleMutationOptions = Apollo.BaseMutationOptions<InsertDeleteContentPeopleMutation, InsertDeleteContentPeopleMutationVariables>;
 export const UpdateContentGroupDocument = gql`
-    mutation UpdateContentGroup($newItems: [ContentItem_insert_input!]!, $newRequiredItems: [RequiredContentItem_insert_input!]!, $newGroupTags: [ContentGroupTag_insert_input!]!, $groupId: uuid!, $contentGroupTypeName: ContentGroupType_enum!, $originatingDataId: uuid = null, $shortTitle: String = null, $title: String!, $deleteItemIds: [uuid!]!, $deleteRequiredItemIds: [uuid!]!, $deleteGroupTagIds: [uuid!]!, $newUploaders: [Uploader_insert_input!]!, $deleteUploaderIds: [uuid!]!) {
+    mutation UpdateContentGroup($newItems: [ContentItem_insert_input!]!, $newRequiredItems: [RequiredContentItem_insert_input!]!, $newGroupTags: [ContentGroupTag_insert_input!]!, $groupId: uuid!, $contentGroupTypeName: ContentGroupType_enum!, $originatingDataId: uuid = null, $shortTitle: String = null, $title: String!, $deleteItemIds: [uuid!]!, $deleteRequiredItemIds: [uuid!]!, $deleteGroupTagIds: [uuid!]!, $newUploaders: [Uploader_insert_input!]!, $deleteUploaderIds: [uuid!]!, $newGroupPeople: [ContentGroupPerson_insert_input!]!, $deleteGroupPeopleIds: [uuid!]!) {
   insert_ContentItem(objects: $newItems) {
     returning {
       ...ContentItemInfo
@@ -21158,6 +21331,11 @@ export const UpdateContentGroupDocument = gql`
   insert_Uploader(objects: $newUploaders) {
     returning {
       ...UploaderInfo
+    }
+  }
+  insert_ContentGroupPerson(objects: $newGroupPeople) {
+    returning {
+      ...ContentGroupPersonInfo
     }
   }
   update_ContentGroup_by_pk(
@@ -21186,11 +21364,17 @@ export const UpdateContentGroupDocument = gql`
       id
     }
   }
+  delete_ContentGroupPerson(where: {id: {_in: $deleteGroupPeopleIds}}) {
+    returning {
+      id
+    }
+  }
 }
     ${ContentItemInfoFragmentDoc}
 ${RequiredContentItemInfoFragmentDoc}
 ${ContentGroupTagInfoFragmentDoc}
 ${UploaderInfoFragmentDoc}
+${ContentGroupPersonInfoFragmentDoc}
 ${ContentGroupFullNestedInfoFragmentDoc}`;
 export type UpdateContentGroupMutationFn = Apollo.MutationFunction<UpdateContentGroupMutation, UpdateContentGroupMutationVariables>;
 
@@ -21220,6 +21404,8 @@ export type UpdateContentGroupMutationFn = Apollo.MutationFunction<UpdateContent
  *      deleteGroupTagIds: // value for 'deleteGroupTagIds'
  *      newUploaders: // value for 'newUploaders'
  *      deleteUploaderIds: // value for 'deleteUploaderIds'
+ *      newGroupPeople: // value for 'newGroupPeople'
+ *      deleteGroupPeopleIds: // value for 'deleteGroupPeopleIds'
  *   },
  * });
  */
@@ -21342,6 +21528,81 @@ export function useUpdateUploaderMutation(baseOptions?: Apollo.MutationHookOptio
 export type UpdateUploaderMutationHookResult = ReturnType<typeof useUpdateUploaderMutation>;
 export type UpdateUploaderMutationResult = Apollo.MutationResult<UpdateUploaderMutation>;
 export type UpdateUploaderMutationOptions = Apollo.BaseMutationOptions<UpdateUploaderMutation, UpdateUploaderMutationVariables>;
+export const UpdateGroupPersonDocument = gql`
+    mutation UpdateGroupPerson($id: uuid!, $roleName: String!, $priority: Int!) {
+  update_ContentGroupPerson_by_pk(
+    pk_columns: {id: $id}
+    _set: {roleName: $roleName, priority: $priority}
+  ) {
+    ...ContentGroupPersonInfo
+  }
+}
+    ${ContentGroupPersonInfoFragmentDoc}`;
+export type UpdateGroupPersonMutationFn = Apollo.MutationFunction<UpdateGroupPersonMutation, UpdateGroupPersonMutationVariables>;
+
+/**
+ * __useUpdateGroupPersonMutation__
+ *
+ * To run a mutation, you first call `useUpdateGroupPersonMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateGroupPersonMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateGroupPersonMutation, { data, loading, error }] = useUpdateGroupPersonMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      roleName: // value for 'roleName'
+ *      priority: // value for 'priority'
+ *   },
+ * });
+ */
+export function useUpdateGroupPersonMutation(baseOptions?: Apollo.MutationHookOptions<UpdateGroupPersonMutation, UpdateGroupPersonMutationVariables>) {
+        return Apollo.useMutation<UpdateGroupPersonMutation, UpdateGroupPersonMutationVariables>(UpdateGroupPersonDocument, baseOptions);
+      }
+export type UpdateGroupPersonMutationHookResult = ReturnType<typeof useUpdateGroupPersonMutation>;
+export type UpdateGroupPersonMutationResult = Apollo.MutationResult<UpdateGroupPersonMutation>;
+export type UpdateGroupPersonMutationOptions = Apollo.BaseMutationOptions<UpdateGroupPersonMutation, UpdateGroupPersonMutationVariables>;
+export const UpdatePersonDocument = gql`
+    mutation UpdatePerson($id: uuid!, $name: String!, $affiliation: String!, $email: String!) {
+  update_ContentPerson_by_pk(
+    pk_columns: {id: $id}
+    _set: {name: $name, affiliation: $affiliation, email: $email}
+  ) {
+    ...ContentPersonInfo
+  }
+}
+    ${ContentPersonInfoFragmentDoc}`;
+export type UpdatePersonMutationFn = Apollo.MutationFunction<UpdatePersonMutation, UpdatePersonMutationVariables>;
+
+/**
+ * __useUpdatePersonMutation__
+ *
+ * To run a mutation, you first call `useUpdatePersonMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdatePersonMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updatePersonMutation, { data, loading, error }] = useUpdatePersonMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      name: // value for 'name'
+ *      affiliation: // value for 'affiliation'
+ *      email: // value for 'email'
+ *   },
+ * });
+ */
+export function useUpdatePersonMutation(baseOptions?: Apollo.MutationHookOptions<UpdatePersonMutation, UpdatePersonMutationVariables>) {
+        return Apollo.useMutation<UpdatePersonMutation, UpdatePersonMutationVariables>(UpdatePersonDocument, baseOptions);
+      }
+export type UpdatePersonMutationHookResult = ReturnType<typeof useUpdatePersonMutation>;
+export type UpdatePersonMutationResult = Apollo.MutationResult<UpdatePersonMutation>;
+export type UpdatePersonMutationOptions = Apollo.BaseMutationOptions<UpdatePersonMutation, UpdatePersonMutationVariables>;
 export const SelectAllGroupsDocument = gql`
     query SelectAllGroups($conferenceId: uuid!) {
   Group(where: {conferenceId: {_eq: $conferenceId}}) {

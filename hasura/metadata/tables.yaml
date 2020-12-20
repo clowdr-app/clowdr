@@ -1281,6 +1281,7 @@
       - isHidden
       - layoutData
       - name
+      - originatingDataId
       - requiredContentId
       - updated_at
       filter:

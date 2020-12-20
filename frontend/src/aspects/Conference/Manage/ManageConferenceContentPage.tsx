@@ -46,10 +46,12 @@ import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWr
 import { useConference } from "../useConference";
 import { LinkItemTemplate } from "./Content/LinkItem";
 import { TextItemTemplate } from "./Content/TextItem";
-import type {
+import {
     ContentDescriptor,
     ContentGroupDescriptor,
     ContentItemDescriptor,
+    convertContentGroupsToDescriptors,
+    deepCloneContentGroupDescriptor,
     ItemBaseTemplate,
     RequiredContentItemDescriptor,
     UploaderDescriptor,
@@ -78,6 +80,10 @@ gql`
         uploaders {
             ...UploaderInfo
         }
+        originatingDataId
+        originatingData {
+            ...OriginatingDataInfo
+        }
     }
 
     fragment ContentItemInfo on ContentItem {
@@ -93,12 +99,47 @@ gql`
         requiredContentItem {
             ...RequiredContentItemInfo
         }
+        originatingDataId
+        originatingData {
+            ...OriginatingDataInfo
+        }
+    }
+
+    fragment OriginatingDataInfo on OriginatingData {
+        id
+        conferenceId
+        sourceId
+        data
+    }
+
+    fragment ContentPersonInfo on ContentPerson {
+        id
+        conferenceId
+        name
+        affiliation
+        email
+        originatingDataId
+        originatingData {
+            ...OriginatingDataInfo
+        }
     }
 
     fragment ContentGroupTagInfo on ContentGroupTag {
         id
         tagId
         contentGroupId
+    }
+
+    fragment ContentGroupPersonInfo on ContentGroupPerson {
+        id
+        conferenceId
+        groupId
+        personId
+        person {
+            ...ContentPersonInfo
+        }
+        priority
+        roleName
     }
 
     fragment ContentGroupFullNestedInfo on ContentGroup {
@@ -115,6 +156,13 @@ gql`
         }
         contentGroupTags {
             ...ContentGroupTagInfo
+        }
+        people {
+            ...ContentGroupPersonInfo
+        }
+        originatingDataId
+        originatingData {
+            ...OriginatingDataInfo
         }
     }
 
@@ -137,6 +185,19 @@ gql`
         }
     }
 
+    mutation InsertDeleteContentPeople($newPeople: [ContentPerson_insert_input!]!, $deletePersonIds: [uuid!]!) {
+        insert_ContentPerson(objects: $newPeople) {
+            returning {
+                ...ContentPersonInfo
+            }
+        }
+        delete_ContentPerson(where: { id: { _in: $deletePersonIds } }) {
+            returning {
+                id
+            }
+        }
+    }
+
     mutation UpdateContentGroup(
         $newItems: [ContentItem_insert_input!]!
         $newRequiredItems: [RequiredContentItem_insert_input!]!
@@ -151,6 +212,8 @@ gql`
         $deleteGroupTagIds: [uuid!]!
         $newUploaders: [Uploader_insert_input!]!
         $deleteUploaderIds: [uuid!]!
+        $newGroupPeople: [ContentGroupPerson_insert_input!]!
+        $deleteGroupPeopleIds: [uuid!]!
     ) {
         insert_ContentItem(objects: $newItems) {
             returning {
@@ -170,6 +233,11 @@ gql`
         insert_Uploader(objects: $newUploaders) {
             returning {
                 ...UploaderInfo
+            }
+        }
+        insert_ContentGroupPerson(objects: $newGroupPeople) {
+            returning {
+                ...ContentGroupPersonInfo
             }
         }
         update_ContentGroup_by_pk(
@@ -199,6 +267,11 @@ gql`
             }
         }
         delete_Uploader(where: { id: { _in: $deleteUploaderIds } }) {
+            returning {
+                id
+            }
+        }
+        delete_ContentGroupPerson(where: { id: { _in: $deleteGroupPeopleIds } }) {
             returning {
                 id
             }
@@ -248,6 +321,21 @@ gql`
             ...UploaderInfo
         }
     }
+
+    mutation UpdateGroupPerson($id: uuid!, $roleName: String!, $priority: Int!) {
+        update_ContentGroupPerson_by_pk(pk_columns: { id: $id }, _set: { roleName: $roleName, priority: $priority }) {
+            ...ContentGroupPersonInfo
+        }
+    }
+
+    mutation UpdatePerson($id: uuid!, $name: String!, $affiliation: String!, $email: String!) {
+        update_ContentPerson_by_pk(
+            pk_columns: { id: $id }
+            _set: { name: $name, affiliation: $affiliation, email: $email }
+        ) {
+            ...ContentPersonInfo
+        }
+    }
 `;
 
 const ContentGroupCRUDTable = (props: Readonly<CRUDTableProps<ContentGroupDescriptor, "id">>) => CRUDTable(props);
@@ -284,6 +372,10 @@ const GroupTemplates: { [K in ContentGroupType_Enum]: GroupTemplate } = {
     [ContentGroupType_Enum.Workshop]: { supported: false },
 };
 
+// TODO: Render and allow editing (through a modal) of Content People
+// TODO: Secondary buttons (at top level and in Content People modal) to enable
+//       automatic linking based on email addresses.
+
 export default function ManageConferenceContentPage(): JSX.Element {
     const conference = useConference();
 
@@ -307,45 +399,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
     const [updateRequiredContentItemMutation] = useUpdateRequiredContentItemMutation();
     const [updateUploaderMutation] = useUpdateUploaderMutation();
 
-    const parsedDBContentGroups = useMemo(() => {
-        if (!allContentGroups) {
-            return undefined;
-        }
-
-        return new Map(
-            allContentGroups.ContentGroup.map((item): [string, ContentGroupDescriptor] => [
-                item.id,
-                {
-                    id: item.id,
-                    title: item.title,
-                    shortTitle: item.shortTitle,
-                    typeName: item.contentGroupTypeName,
-                    tags: item.contentGroupTags.map((x) => x.tagId),
-                    items: item.contentItems.map((item) => ({
-                        id: item.id,
-                        isHidden: item.isHidden,
-                        name: item.name,
-                        typeName: item.contentTypeName,
-                        data: item.data,
-                        layoutData: item.layoutData,
-                        requiredContentId: item.requiredContentId,
-                    })),
-                    requiredItems: item.requiredContentItems.map((item) => ({
-                        id: item.id,
-                        name: item.name,
-                        typeName: item.contentTypeName,
-                        uploaders: item.uploaders.map((uploader) => ({
-                            id: uploader.id,
-                            email: uploader.email,
-                            emailsSentCount: uploader.emailsSentCount,
-                            name: uploader.name,
-                            requiredContentItemId: uploader.requiredContentItemId,
-                        })),
-                    })),
-                },
-            ])
-        );
-    }, [allContentGroups]);
+    const parsedDBContentGroups = useMemo(() => convertContentGroupsToDescriptors(allContentGroups), [allContentGroups]);
 
     const groupTypeOptions: SelectOption[] = useMemo(() => {
         return Object.keys(ContentGroupType_Enum)
@@ -471,38 +525,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
             for (const [key, group] of parsedDBContentGroups) {
                 // Deep clone so that when we manipulate stuff later it doesn't
                 // accidentally screw up the query data
-                const newGroup: ContentGroupDescriptor = {
-                    id: group.id,
-                    items: group.items.map((item) => ({
-                        data: item.data.map((d) => ({
-                            createdAt: d.createdAt,
-                            createdBy: d.createdBy,
-                            data: { ...d.data },
-                        })),
-                        id: item.id,
-                        isHidden: item.isHidden,
-                        layoutData: item.layoutData,
-                        name: item.name,
-                        typeName: item.typeName,
-                        requiredContentId: item.requiredContentId,
-                    })),
-                    requiredItems: group.requiredItems.map((item) => ({
-                        id: item.id,
-                        name: item.name,
-                        typeName: item.typeName,
-                        uploaders: item.uploaders.map((uploader) => ({
-                            id: uploader.id,
-                            email: uploader.email,
-                            emailsSentCount: uploader.emailsSentCount,
-                            name: uploader.name,
-                            requiredContentItemId: uploader.requiredContentItemId,
-                        })),
-                    })),
-                    shortTitle: group.shortTitle,
-                    title: group.title,
-                    typeName: group.typeName,
-                    tags: group.tags,
-                };
+                const newGroup: ContentGroupDescriptor = deepCloneContentGroupDescriptor(group);
                 fitGroupToTemplate(newGroup);
                 newMap.set(key, newGroup);
             }
@@ -799,6 +822,8 @@ export default function ManageConferenceContentPage(): JSX.Element {
                                                         name: uploader.name,
                                                         requiredContentItemId: uploader.requiredContentItemId,
                                                     })),
+                                                    deleteGroupPeopleIds: [], // TODO
+                                                    newGroupPeople: [], // TODO
                                                     shortTitle: group.shortTitle,
                                                     title: group.title,
                                                 },

@@ -11,6 +11,7 @@ import {
     Text,
     Th,
     Thead,
+    Tooltip,
     Tr,
     useToast,
 } from "@chakra-ui/react";
@@ -38,6 +39,7 @@ gql`
         ConferencePrepareJob(where: { conferenceId: { _eq: $conferenceId } }) {
             id
             jobStatusName
+            message
             updatedAt
             createdAt
             videoRenderJobs {
@@ -72,7 +74,9 @@ function PrepareJobsList({ conferenceId }: { conferenceId: string }): JSX.Elemen
                 {data?.ConferencePrepareJob.map((job) => (
                     <Tr key={job.id}>
                         <Td>{job.createdAt}</Td>
-                        <Td>{job.jobStatusName}</Td>
+                        <Td>
+                            <Tooltip label={job.message}>{job.jobStatusName}</Tooltip>{" "}
+                        </Td>
                         <Td>{job.updatedAt}</Td>
                     </Tr>
                 ))}

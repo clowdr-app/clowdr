@@ -20,7 +20,10 @@ import { checkEventSecret } from "./middlewares/checkEventSecret";
 import { checkJwt } from "./middlewares/checkJwt";
 import { checkUserScopes } from "./middlewares/checkScopes";
 import { router as companionRouter } from "./router/companion";
+import { router as conferencePrepareJobRouter } from "./router/conferencePrepareJob";
 import { router as contentItemRouter } from "./router/contentItem";
+import { router as openshotRouter } from "./router/openshot";
+import { router as videoRenderJobRouter } from "./router/videoRenderJob";
 import { EmailData, Payload } from "./types/event";
 
 type AuthenticatedRequest = Request & { userId: string };
@@ -54,6 +57,9 @@ export const app: express.Application = express();
 
 app.use("/companion", companionRouter);
 app.use("/contentItem", contentItemRouter);
+app.use("/openshot", openshotRouter);
+app.use("/conferencePrepareJob", conferencePrepareJobRouter);
+app.use("/videoRenderJob", videoRenderJobRouter);
 
 app.get("/", function (_req, res) {
     res.send("Clowdr");

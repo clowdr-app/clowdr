@@ -1,16 +1,26 @@
 import { gql } from "@apollo/client/core";
 import { ContentItemDataBlob, ContentType_Enum } from "@clowdr-app/shared-types/build/content";
+import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
+import { v4 as uuidv4 } from "uuid";
+import wrap from "word-wrap";
 import {
     CreateBroadcastContentItemDocument,
     CreateVideoRenderJobDocument,
-    FailConferencePrepareJobDocument,
+    CreateVideoTitlesContentItemDocument,
+    GetConfigurationValueDocument,
     GetEventTitleDetailsDocument,
     GetVideoBroadcastContentItemsDocument,
+    GetVideoTitlesContentItemDocument,
+    JobStatus_Enum,
     OtherConferencePrepareJobsDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { ConferencePrepareJobData, Payload } from "../types/event";
+import { failConferencePrepareJob } from "../lib/conferencePrepareJob";
+import { OpenShotClient } from "../lib/openshot/openshot";
+import { ChannelLayout } from "../lib/openshot/openshotProjects";
+import { failVideoRenderJob, startTitlesVideoRenderJob } from "../lib/videoRenderJob";
+import { ConferencePrepareJobData, Payload, VideoRenderJobData } from "../types/event";
 
 gql`
     query OtherConferencePrepareJobs($conferenceId: uuid!, $conferencePrepareJobId: uuid!) {
@@ -26,12 +36,6 @@ gql`
         }
     }
 
-    mutation FailConferencePrepareJob($id: uuid!, $message: String!) {
-        update_ConferencePrepareJob_by_pk(pk_columns: { id: $id }, _set: { jobStatusName: FAILED, message: $message }) {
-            id
-        }
-    }
-
     query GetVideoBroadcastContentItems($conferenceId: uuid) {
         ContentItem(where: { conferenceId: { _eq: $conferenceId }, contentTypeName: { _eq: VIDEO_BROADCAST } }) {
             id
@@ -39,160 +43,446 @@ gql`
         }
     }
 
-    mutation CreateVideoRenderJob($conferenceId: uuid!, $conferencePrepareJobId: uuid!, $data: jsonb!) {
-        insert_VideoRenderJob_one(
-            object: { conferenceId: $conferenceId, conferencePrepareJobId: $conferencePrepareJobId, data: $data }
-        ) {
+    query GetConfigurationValue($key: String!, $conferenceId: uuid!) {
+        ConferenceConfiguration(where: { key: { _eq: $key }, conferenceId: { _eq: $conferenceId } }) {
             id
-        }
-    }
-
-    mutation CreateBroadcastContentItem($conferenceId: uuid!, $contentItemId: uuid!, $input: jsonb!) {
-        insert_BroadcastContentItem_one(
-            object: { conferenceId: $conferenceId, contentItemId: $contentItemId, inputTypeName: MP4, input: $input }
-        ) {
-            id
-        }
-    }
-
-    query GetEventTitleDetails($conferenceId: uuid!) {
-        Event(
-            where: {
-                conferenceId: { _eq: $conferenceId }
-                contentGroup: { contentItems: { contentTypeName: { _in: [VIDEO_BROADCAST] } } }
-                intendedRoomModeName: { _eq: PRERECORDED }
-            }
-        ) {
-            id
-            contentGroup {
-                id
-                title
-                contentItems(
-                    distinct_on: contentTypeName
-                    where: { contentTypeName: { _eq: VIDEO_BROADCAST } }
-                    order_by: { contentTypeName: asc }
-                    limit: 1
-                ) {
-                    contentItemPeople(distinct_on: id) {
-                        person {
-                            name
-                            id
-                        }
-                        id
-                    }
-                    contentTypeName
-                    id
-                }
-            }
-            intendedRoomModeName
-            name
+            value
         }
     }
 `;
 
 export async function handleConferencePrepareJobInserted(payload: Payload<ConferencePrepareJobData>): Promise<void> {
-    //todo
     assert(payload.event.data.new, "Payload must contain new row data");
 
-    // get list of other in-progress jobs. If any are in progress, set this new one to failed and return.
-    const otherJobs = await apolloClient.query({
-        query: OtherConferencePrepareJobsDocument,
-        variables: {
-            conferenceId: payload.event.data.new.conferenceId,
-            conferencePrepareJobId: payload.event.data.new.id,
-        },
-    });
+    console.log("Conference prepare: job triggered", payload.event.data.new.id, payload.event.data.new.conferenceId);
 
-    if (otherJobs.data.ConferencePrepareJob.length > 0) {
-        await apolloClient.mutate({
-            mutation: FailConferencePrepareJobDocument,
+    try {
+        // get list of other in-progress jobs. If any are in progress, set this new one to failed and return.
+        const otherJobs = await apolloClient.query({
+            query: OtherConferencePrepareJobsDocument,
             variables: {
-                id: payload.event.data.new.id,
-                message: "Another job is already in progress",
+                conferenceId: payload.event.data.new.conferenceId,
+                conferencePrepareJobId: payload.event.data.new.id,
             },
         });
-        return;
-    }
 
-    // else, continue
-    // cleanup previous?
-    // Get all video broadcast content items for this conference
-    const videoBroadcastItems = await apolloClient.query({
-        query: GetVideoBroadcastContentItemsDocument,
-        variables: {
-            conferenceId: payload.event.data.new.conferenceId,
-        },
-    });
-
-    // For each video broadcast, add a broadcast content item if the item
-    // has already been transcoded for broadcast. Else fire off a transcoding job.
-    for (const videoBroadcastItem of videoBroadcastItems.data.ContentItem) {
-        const content: ContentItemDataBlob = videoBroadcastItem.data;
-
-        if (content.length < 1) {
-            continue;
+        if (otherJobs.data.ConferencePrepareJob.length > 0) {
+            console.log(
+                "Conference prepare: another job in progress, aborting.",
+                otherJobs.data.ConferencePrepareJob[0].id,
+                payload.event.data.new.id
+            );
+            throw new Error(
+                `Another conference prepare job (${otherJobs.data.ConferencePrepareJob[0].id}) is already in progress`
+            );
         }
 
-        const latestVersion = content[content.length - 1];
+        // else, continue
+        // cleanup previous?
+        // Get all video broadcast content items for this conference
+        const videoBroadcastItems = await apolloClient.query({
+            query: GetVideoBroadcastContentItemsDocument,
+            variables: {
+                conferenceId: payload.event.data.new.conferenceId,
+            },
+        });
+        console.log(
+            `Conference prepare: found ${videoBroadcastItems.data.ContentItem.length} video broadcast items`,
+            payload.event.data.new.id
+        );
 
-        if (latestVersion.data.type !== ContentType_Enum.VideoBroadcast) {
-            continue;
+        // For each video broadcast, add a broadcast content item if the item
+        // has already been transcoded for broadcast. Else fire off a transcoding job.
+        for (const videoBroadcastItem of videoBroadcastItems.data.ContentItem) {
+            console.log("Conference prepare: prepare broadcast item", videoBroadcastItem.id, payload.event.data.new.id);
+            const content: ContentItemDataBlob = videoBroadcastItem.data;
+
+            if (content.length < 1) {
+                console.warn(
+                    "Conference prepare: no content item versions",
+                    videoBroadcastItem.id,
+                    payload.event.data.new.id
+                );
+                continue;
+            }
+
+            const latestVersion = content[content.length - 1];
+
+            if (latestVersion.data.type !== ContentType_Enum.VideoBroadcast) {
+                console.warn(
+                    "Conference prepare: invalid content item data (not a video broadcast)",
+                    videoBroadcastItem.id,
+                    payload.event.data.new.id
+                );
+                continue;
+            }
+
+            if (
+                latestVersion.data.broadcastTranscode &&
+                latestVersion.data.broadcastTranscode.message === "COMPLETED" &&
+                latestVersion.data.broadcastTranscode.s3Url
+            ) {
+                console.log(
+                    "Conference prepare: item already has up-to-date broadcast transcode",
+                    videoBroadcastItem.id,
+                    payload.event.data.new.id
+                );
+                const broadcastItemInput: MP4Input = {
+                    s3Url: latestVersion.data.broadcastTranscode.s3Url,
+                    type: "MP4Input",
+                };
+
+                await apolloClient.mutate({
+                    mutation: CreateBroadcastContentItemDocument,
+                    variables: {
+                        conferenceId: payload.event.data.new.conferenceId,
+                        contentItemId: videoBroadcastItem.id,
+                        input: broadcastItemInput,
+                    },
+                });
+            } else {
+                console.log(
+                    "Conference prepare: item needs broadcast transcode",
+                    videoBroadcastItem.id,
+                    payload.event.data.new.id
+                );
+
+                gql`
+                    mutation CreateBroadcastContentItem($conferenceId: uuid!, $contentItemId: uuid!, $input: jsonb!) {
+                        insert_BroadcastContentItem_one(
+                            object: {
+                                conferenceId: $conferenceId
+                                contentItemId: $contentItemId
+                                inputTypeName: MP4
+                                input: $input
+                            }
+                            on_conflict: {
+                                constraint: BroadcastContentItem_contentItemId_key
+                                update_columns: [conferenceId, input, inputTypeName]
+                            }
+                        ) {
+                            id
+                        }
+                    }
+                `;
+
+                // Create an empty broadcast content item
+                const broadcastItemInput: PendingCreation = {
+                    type: "PendingCreation",
+                };
+
+                const broadcastcontentItemResult = await apolloClient.mutate({
+                    mutation: CreateBroadcastContentItemDocument,
+                    variables: {
+                        conferenceId: payload.event.data.new.conferenceId,
+                        contentItemId: videoBroadcastItem.id,
+                        input: broadcastItemInput,
+                    },
+                });
+
+                if (!broadcastcontentItemResult.data?.insert_BroadcastContentItem_one?.id) {
+                    console.error(
+                        "Conference prepare: failed to create broadcast content item",
+                        broadcastcontentItemResult.errors,
+                        videoBroadcastItem.id,
+                        payload.event.data.new.id
+                    );
+                    continue;
+                }
+
+                const broadcastRenderJobData: BroadcastRenderJobDataBlob = {
+                    type: "BroadcastRenderJob",
+                    subtitlesS3Url: latestVersion.data.subtitles["en_US"].s3Url,
+                    videoS3Url: latestVersion.data.s3Url,
+                };
+
+                // Create a video render job to populate the broadcast content item
+                await apolloClient.mutate({
+                    mutation: CreateVideoRenderJobDocument,
+                    variables: {
+                        conferenceId: payload.event.data.new.conferenceId,
+                        conferencePrepareJobId: payload.event.data.new.id,
+                        data: broadcastRenderJobData,
+                        broadcastContentItemId: broadcastcontentItemResult.data.insert_BroadcastContentItem_one.id,
+                    },
+                });
+            }
         }
 
-        if (
-            latestVersion.data.broadcastTranscode &&
-            latestVersion.data.broadcastTranscode.message === "COMPLETED" &&
-            latestVersion.data.broadcastTranscode.s3Url
-        ) {
-            const broadcastItemInput: MP4Input = {
-                s3Url: latestVersion.data.broadcastTranscode.s3Url,
-                type: "MP4Input",
+        // Render event title slides
+        console.log("Conference prepare: rendering title slides", payload.event.data.new.id);
+        const videoFillerResult = await apolloClient.query({
+            query: GetConfigurationValueDocument,
+            variables: {
+                conferenceId: payload.event.data.new.conferenceId,
+                key: "VIDEO_FILLER",
+            },
+        });
+
+        let videoFiller, bucket, key;
+        try {
+            videoFiller = videoFillerResult.data.ConferenceConfiguration[0].value[0];
+            const parsedUri = AmazonS3URI(videoFiller);
+            bucket = parsedUri.bucket;
+            key = parsedUri.key;
+        } catch (e) {
+            console.error("Conference prepare: could not load video filler", payload.event.data.new.id);
+        }
+
+        gql`
+            query GetEventTitleDetails($conferenceId: uuid!) {
+                Event(
+                    where: {
+                        conferenceId: { _eq: $conferenceId }
+                        contentGroup: { contentItems: { contentTypeName: { _in: [VIDEO_BROADCAST] } } }
+                        intendedRoomModeName: { _eq: PRERECORDED }
+                    }
+                ) {
+                    id
+                    contentGroup {
+                        id
+                        title
+                        contentItems(
+                            distinct_on: contentTypeName
+                            where: { contentTypeName: { _eq: VIDEO_BROADCAST } }
+                            order_by: { contentTypeName: asc }
+                            limit: 1
+                        ) {
+                            contentItemPeople(distinct_on: id) {
+                                person {
+                                    name
+                                    id
+                                }
+                                id
+                            }
+                            contentTypeName
+                            id
+                            contentGroupId
+                        }
+                    }
+                    intendedRoomModeName
+                    name
+                }
+            }
+        `;
+
+        const eventsResult = await apolloClient.query({
+            query: GetEventTitleDetailsDocument,
+            variables: {
+                conferenceId: payload.event.data.new.conferenceId,
+            },
+        });
+
+        console.log(
+            `Conference prepare: rendering title slides for ${eventsResult.data.Event.length} events`,
+            payload.event.data.new.id
+        );
+        for (const event of eventsResult.data.Event) {
+            console.log("Conference prepare: rendering title slides for event", payload.event.data.new.id, event.id);
+            if (!event.contentGroup || event.contentGroup.contentItems.length < 1) {
+                console.warn(
+                    "Conference prepare: event does not contain a video broadcast",
+                    payload.event.data.new.id,
+                    event.id
+                );
+                continue;
+            }
+
+            const contentItem = event.contentGroup?.contentItems[0];
+
+            const names = contentItem.contentItemPeople.map((person) => person.person.name);
+            const eventTitle = event.name;
+            const name = uuidv4();
+
+            const project = await OpenShotClient.projects.createProject({
+                channel_layout: ChannelLayout.STEREO,
+                channels: 2,
+                fps_den: 1,
+                fps_num: 30,
+                height: 1080,
+                width: 1920,
+                name,
+                sample_rate: 44100,
+                json: {},
+            });
+
+            let duration = 10.0;
+
+            if (bucket && key) {
+                const videoFile = await OpenShotClient.files.uploadS3Url(project.id, bucket, key, key);
+
+                duration = videoFile.json.duration;
+
+                await OpenShotClient.clips.createClip({
+                    project: OpenShotClient.projects.toUrl(project.id),
+                    file: OpenShotClient.files.toUrl(videoFile.id),
+                    start: 0.0,
+                    end: duration,
+                    layer: 0,
+                    json: {},
+                    position: 0.0,
+                });
+            }
+
+            const titleFile = await OpenShotClient.projects.createTitle(project.id, {
+                template: "Center-Text.svg",
+                text: wrap(eventTitle, { width: 30 })
+                    .split("\n")
+                    .map((line) => `<tspan x="960" dy="1em">${line.trim()}</tspan>`)
+                    .join(""),
+                font_size: 100.0,
+                font_name: "Bitstream Vera Sans",
+                fill_color: "#ffcc00",
+                fill_opacity: 1.0,
+                stroke_color: "#000000",
+                stroke_size: 3.0,
+                stroke_opacity: 1.0,
+                drop_shadow: true,
+                background_color: "#000000",
+                background_opacity: 0.4,
+            });
+
+            await OpenShotClient.clips.createClip({
+                project: OpenShotClient.projects.toUrl(project.id),
+                file: OpenShotClient.files.toUrl(titleFile.id),
+                start: 0.0,
+                end: duration,
+                layer: 1,
+                json: {},
+                position: 0.0,
+            });
+
+            const titleRenderJobData: TitleRenderJobDataBlob = {
+                type: "TitleRenderJob",
+                authors: names,
+                openShotProjectId: project.id,
+                name,
             };
 
-            await apolloClient.mutate({
+            const broadcastContentItemInput: PendingCreation = {
+                type: "PendingCreation",
+            };
+
+            gql`
+                mutation CreateVideoTitlesContentItem($conferenceId: uuid!, $contentGroupId: uuid!, $title: String!) {
+                    insert_ContentItem_one(
+                        object: {
+                            conferenceId: $conferenceId
+                            contentGroupId: $contentGroupId
+                            contentTypeName: VIDEO_TITLES
+                            data: []
+                            name: $title
+                        }
+                    ) {
+                        id
+                    }
+                }
+
+                query GetVideoTitlesContentItem($contentGroupId: uuid!, $title: String!) {
+                    ContentItem(
+                        where: {
+                            contentGroupId: { _eq: $contentGroupId }
+                            contentTypeName: { _eq: VIDEO_TITLES }
+                            name: { _eq: $title }
+                        }
+                        limit: 1
+                        order_by: { createdAt: desc }
+                    ) {
+                        id
+                    }
+                }
+            `;
+
+            // Check whether there is an existing title slide content item for this event name.
+            // If not, create it.
+            const existingTitlesContentItemResult = await apolloClient.query({
+                query: GetVideoTitlesContentItemDocument,
+                variables: {
+                    contentGroupId: contentItem.contentGroupId,
+                    title: event.name,
+                },
+            });
+
+            let titleContentItemId;
+            if (existingTitlesContentItemResult.data.ContentItem.length > 0) {
+                titleContentItemId = existingTitlesContentItemResult.data.ContentItem[0].id;
+            } else {
+                const createTitlesContentItemResult = await apolloClient.mutate({
+                    mutation: CreateVideoTitlesContentItemDocument,
+                    variables: {
+                        conferenceId: payload.event.data.new.conferenceId,
+                        contentGroupId: contentItem.contentGroupId,
+                        title: event.name,
+                    },
+                });
+
+                if (!createTitlesContentItemResult.data?.insert_ContentItem_one?.id) {
+                    console.error(
+                        "Conference prepare: could not create new content item for titles",
+                        createTitlesContentItemResult.errors,
+                        payload.event.data.new.id,
+                        event.id
+                    );
+                    throw new Error(`Could not create new titles content item for event (${event.id})`);
+                }
+                titleContentItemId = createTitlesContentItemResult.data.insert_ContentItem_one.id;
+            }
+
+            gql`
+                mutation CreateVideoRenderJob(
+                    $conferenceId: uuid!
+                    $conferencePrepareJobId: uuid!
+                    $broadcastContentItemId: uuid!
+                    $data: jsonb!
+                ) {
+                    insert_VideoRenderJob_one(
+                        object: {
+                            conferenceId: $conferenceId
+                            conferencePrepareJobId: $conferencePrepareJobId
+                            broadcastContentItemId: $broadcastContentItemId
+                            data: $data
+                            jobStatusName: NEW
+                        }
+                    ) {
+                        id
+                    }
+                }
+            `;
+
+            const broadcastcontentItemResult = await apolloClient.mutate({
                 mutation: CreateBroadcastContentItemDocument,
                 variables: {
                     conferenceId: payload.event.data.new.conferenceId,
-                    contentItemId: videoBroadcastItem.id,
-                    input: broadcastItemInput,
+                    contentItemId: titleContentItemId,
+                    input: broadcastContentItemInput,
                 },
             });
-        } else {
-            const broadcastRenderJobData: BroadcastRenderJobData = {
-                type: "BroadcastRenderJob",
-                subtitlesS3Url: latestVersion.data.subtitles["en_US"].s3Url,
-                videoS3Url: latestVersion.data.s3Url,
-            };
+
+            if (!broadcastcontentItemResult.data?.insert_BroadcastContentItem_one?.id) {
+                console.error(
+                    "Conference prepare: failed to create broadcast content item",
+                    broadcastcontentItemResult.errors,
+                    event.id,
+                    payload.event.data.new.id
+                );
+                throw new Error(`Failed to create broadcast content item for event (${event.id})`);
+            }
 
             await apolloClient.mutate({
                 mutation: CreateVideoRenderJobDocument,
                 variables: {
                     conferenceId: payload.event.data.new.conferenceId,
                     conferencePrepareJobId: payload.event.data.new.id,
-                    data: broadcastRenderJobData,
+                    data: titleRenderJobData,
+                    broadcastContentItemId: broadcastcontentItemResult.data.insert_BroadcastContentItem_one.id,
                 },
             });
+
+            console.log("Conference prepare: finished initialising job", payload.event.data.new.id);
         }
-    }
-
-    const eventsResult = await apolloClient.query({
-        query: GetEventTitleDetailsDocument,
-        variables: {
-            conferenceId: payload.event.data.new.conferenceId,
-        },
-    });
-
-    for (const event of eventsResult.data.Event) {
-        if (!event.contentGroup || event.contentGroup.contentItems.length < 1) {
-            continue;
-        }
-
-        const contentItem = event.contentGroup?.contentItems[0];
-
-        const names = contentItem.contentItemPeople.map((person) => person.person.name);
-        const eventTitle = event.name;
-
-        //if (contentItem)
+    } catch (e) {
+        console.error("Conference prepare: fatal error while initialising job", e);
+        await failConferencePrepareJob(payload.event.data.new.id, e.message ?? "Unknown error while initialising job");
     }
 
     // TODO: listen to BroadcastRenderJob insertions and start a transcode
@@ -202,4 +492,89 @@ export async function handleConferencePrepareJobInserted(payload: Payload<Confer
     // for each event's content group, create content items for title slides and so on if they do not exist
     // trigger title slide generation job for each event
     // create transitions
+}
+
+export async function handleVideoRenderJobUpdated(payload: Payload<VideoRenderJobData>): Promise<void> {
+    assert(payload.event.data.new, "Payload must contain new row data");
+
+    switch (payload.event.data.new.data.type) {
+        case "BroadcastRenderJob": {
+            switch (payload.event.data.new.jobStatusName) {
+                case JobStatus_Enum.New: {
+                    break;
+                }
+                case JobStatus_Enum.Completed: {
+                    break;
+                }
+                case JobStatus_Enum.Failed: {
+                    break;
+                }
+                case JobStatus_Enum.InProgress: {
+                    break;
+                }
+            }
+            return;
+        }
+        case "TitleRenderJob": {
+            switch (payload.event.data.new.jobStatusName) {
+                case JobStatus_Enum.New: {
+                    console.log(`New title render job ${payload.event.data.new.id}`);
+                    try {
+                        const exportKey = `${uuidv4()}.mp4`;
+                        const webhookKey = uuidv4();
+                        assert(
+                            process.env.AWS_CONTENT_BUCKET_ID,
+                            "AWS_CONTENT_BUCKET_ID environment variable must be defined"
+                        );
+
+                        const exportResult = await OpenShotClient.exports.createExport({
+                            video_format: "mp4",
+                            video_codec: "libx264",
+                            video_bitrate: 8000000,
+                            audio_codec: "ac3",
+                            audio_bitrate: 1920000,
+                            start_frame: 1,
+                            end_frame: 100, //todo: change back
+                            export_type: "video",
+                            json: {
+                                bucket: process.env.AWS_CONTENT_BUCKET_ID,
+                                url: exportKey,
+                                acl: "private",
+                                webhookKey,
+                            },
+                            project: OpenShotClient.projects.toUrl(payload.event.data.new.data.openShotProjectId),
+                            webhook: `${process.env.HOST_SECURE_PROTOCOLS ? "https" : "http"}://${
+                                process.env.HOST_DOMAIN
+                            }/openshot/notifyExport/${payload.event.data.new.id}`,
+                        });
+
+                        await startTitlesVideoRenderJob(
+                            payload.event.data.new.id,
+                            payload.event.data.new.data,
+                            exportResult.id,
+                            webhookKey
+                        );
+                    } catch (e) {
+                        await failVideoRenderJob(payload.event.data.new.id, e.toString());
+                    }
+                    break;
+                }
+                case JobStatus_Enum.Completed: {
+                    console.log(`Completed title render job ${payload.event.data.new.id}`);
+                    // todo: write into the broadcast content item
+                    break;
+                }
+                case JobStatus_Enum.Failed: {
+                    console.log(`Failed title render job ${payload.event.data.new.id}`);
+                    // todo: report up to the conference prepare job
+                    break;
+                }
+                case JobStatus_Enum.InProgress: {
+                    console.log(`In progress title render job ${payload.event.data.new.id}`);
+                    break;
+                }
+            }
+            return;
+        }
+    }
 }

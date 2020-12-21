@@ -66,3 +66,11 @@ export interface ConferencePrepareJobData extends BaseData {
     jobStatusName: JobStatus_Enum;
     conferenceId: string;
 }
+
+export interface VideoRenderJobData extends BaseData {
+    conferencePrepareJobId: string;
+    jobStatusName: JobStatus_Enum;
+    conferenceId: string;
+    broadcastContentItemId: string;
+    data: VideoRenderJobDataBlob;
+}

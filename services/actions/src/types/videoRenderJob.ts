@@ -1,14 +1,15 @@
-type VideoRenderJobData = TitleRenderJobData | BroadcastRenderJobData;
+type VideoRenderJobDataBlob = TitleRenderJobDataBlob | BroadcastRenderJobDataBlob;
 
-interface TitleRenderJobData {
+interface TitleRenderJobDataBlob {
     type: "TitleRenderJob";
-    title: string;
+    name: string;
     authors: string[];
     openShotProjectId: number;
     openShotExportId?: number;
+    webhookKey?: string;
 }
 
-interface BroadcastRenderJobData {
+interface BroadcastRenderJobDataBlob {
     type: "BroadcastRenderJob";
     videoS3Url: string;
     subtitlesS3Url?: string;

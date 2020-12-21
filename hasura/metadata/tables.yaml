@@ -684,6 +684,7 @@
       - created_at
       - id
       - jobStatusName
+      - message
       - updated_at
       filter:
         _or:
@@ -3674,3 +3675,28 @@
                     attendee:
                       userId:
                         _eq: X-Hasura-User-Id
+  event_triggers:
+  - name: VideoRenderJobUpdated
+    definition:
+      enable_manual: false
+      insert:
+        columns: '*'
+      update:
+        columns:
+        - data
+        - jobStatusName
+        - message
+        - created_at
+        - updated_at
+        - broadcastContentItemId
+        - conferenceId
+        - conferencePrepareJobId
+        - id
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{ACTION_BASE_URL}}/videoRenderJob/updated'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET

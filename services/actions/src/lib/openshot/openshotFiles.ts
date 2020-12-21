@@ -1,8 +1,21 @@
 import axios, { AxiosInstance } from "axios";
 import { assertType } from "typescript-is";
+import { OpenShotClient } from "./openshot";
 import { Fraction } from "./openshotTypes";
 
-export interface VideoDetails {
+export interface VideoDetails extends BaseDetails {
+    media_type: "video";
+}
+
+export interface AudioDetails extends BaseDetails {
+    media_type: "video";
+}
+
+export interface ImageDetails extends BaseDetails {
+    media_type: "image";
+}
+
+interface BaseDetails {
     acodec: string;
     audio_bit_rate: number;
     audio_stream_index: number;
@@ -31,48 +44,15 @@ export interface VideoDetails {
     video_stream_index: number;
     video_timebase: Fraction;
     width: number;
-    media_type: "video";
 }
 
-export interface AudioDetails {
-    interlaced_frame: boolean;
-    height: number;
-    metadata: any;
-    width: number;
-    video_length: string;
-    duration: number;
-    pixel_format: number;
-    acodec: string;
-    video_bit_rate: number;
-    path: string;
-    media_type: "video";
-    audio_stream_index: number;
-    sample_rate: number;
-    has_single_image: boolean;
-    video_stream_index: number;
-    top_field_first: true;
-    display_ratio: Fraction;
-    video_timebase: Fraction;
-    channels: number;
-    vcodec: string;
-    has_video: boolean;
-    has_audio: boolean;
-    fps: Fraction;
-    type: string;
-    audio_timebase: Fraction;
-    pixel_ratio: Fraction;
-    file_size: string;
-    channel_layout: number;
-    audio_bit_rate: number;
-}
-
-interface File {
+export interface File {
     url: string;
     id: number;
     media: string;
     project: string;
     actions: string[];
-    json: AudioDetails | VideoDetails;
+    json: AudioDetails | VideoDetails | ImageDetails;
     date_created: string;
     date_updated: string;
 }
@@ -99,7 +79,7 @@ export class OpenShotFiles {
     public async uploadUrl(projectId: number, url: string, name: string): Promise<File> {
         const result = await this.axios.post("/", {
             media: null,
-            project: `${this.baseUrl}/projects/${projectId}`,
+            project: OpenShotClient.projects.toUrl(projectId),
             json: {
                 url,
                 name,
@@ -112,7 +92,7 @@ export class OpenShotFiles {
     public async uploadS3Url(projectId: number, bucket: string, key: string, name: string): Promise<File> {
         const result = await this.axios.post("/", {
             media: null,
-            project: `${this.baseUrl}/projects/${projectId}`,
+            project: OpenShotClient.projects.toUrl(projectId),
             json: {
                 url: key,
                 bucket,
@@ -141,5 +121,9 @@ export class OpenShotFiles {
     public async replaceText(id: number, replacement: TextReplacement): Promise<unknown> {
         const result = await this.axios.post(`/${id}/text-replace`, replacement);
         return result.data;
+    }
+
+    public toUrl(fileId: number): string {
+        return `${this.baseUrl}/files/${fileId}/`;
     }
 }

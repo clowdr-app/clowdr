@@ -46,6 +46,7 @@
         "@uppy/companion": "^2.3.0",
         "amazon-s3-uri": "^0.1.0",
         "axios": "^0.19.2",
+        "axios-better-stacktrace": "^1.1.0",
         "cors": "^2.8.5",
         "d3-format": "^2.0.0",
         "exponential-backoff": "^3.1.0",
@@ -66,7 +67,8 @@
         "supertest": "^6.0.1",
         "typescript": "^4.0.5",
         "typescript-is": "^0.17.0",
-        "uuid": "^8.3.1"
+        "uuid": "^8.3.1",
+        "word-wrap": "^1.2.3"
     },
     "engines": {
         "node": "15.x"

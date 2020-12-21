@@ -1,28 +1,7 @@
 import axios, { AxiosInstance } from "axios";
 import { assertType } from "typescript-is";
 import { Project } from "./openshotProjects";
-
-interface Export {
-    url: string;
-    id: number;
-    output: string;
-    export_type: string;
-    video_format: string;
-    video_codec: string;
-    video_bitrate: number;
-    audio_codec: string;
-    audio_bitrate: number;
-    start_frame: number;
-    end_frame: number;
-    actions: string[];
-    project: string;
-    webhook: string;
-    json: any;
-    progress: number;
-    status: string;
-    date_created: string;
-    date_updated: string;
-}
+import { Export } from "./openshotTypes";
 
 interface Exports {
     count: number;
@@ -38,7 +17,7 @@ interface S3ExportDetails {
 }
 
 interface ExportParameters {
-    export_type: string;
+    export_type: "video" | "audio" | "image" | "waveform";
     video_format: string;
     video_codec: string;
     video_bitrate: number;
@@ -48,7 +27,7 @@ interface ExportParameters {
     end_frame: number;
     project: string;
     webhook: string;
-    json: Partial<Project> & Maybe<S3ExportDetails>;
+    json: Partial<Project> & Maybe<S3ExportDetails> & { webhookKey?: string };
 }
 
 export class OpenShotExports {

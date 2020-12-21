@@ -31,8 +31,12 @@ export async function handleContentItemUpdated(payload: Payload<ContentItemData>
     const newRow = payload.event.data.new;
 
     if (!newRow?.data) {
-        console.error("handleContentItemUpdated: New content was empty");
+        console.error("handleContentItemUpdated: new content was empty", newRow?.id);
         return;
+    }
+
+    if (newRow.data.length === 0) {
+        console.log("handleContentItemUpdated: content item does not have any versions yet, ignoring", newRow.id);
     }
 
     const oldVersion = oldRow?.data[oldRow.data.length - 1];
@@ -40,7 +44,7 @@ export async function handleContentItemUpdated(payload: Payload<ContentItemData>
 
     // If new version is not a video
     if (currentVersion.data.baseType !== "video") {
-        console.log("Content item updated: was not a VideoBroadcast");
+        console.log("Content item updated: was not a VideoBroadcast", newRow.id);
         return;
     }
 
@@ -73,7 +77,7 @@ export async function handleContentItemUpdated(payload: Payload<ContentItemData>
 
         assert(mutateResult.data?.update_ContentItem_by_pk?.id, "Failed to record transcode initialisation");
     } else {
-        console.log("Content item video URL has not changed.");
+        console.log("Content item video URL has not changed.", newRow.id);
     }
 
     // If there is a new transcode URL, begin transcribing it

@@ -1,37 +1,37 @@
 import axios, { AxiosInstance } from "axios";
 import { assertType } from "typescript-is";
-import { AudioDetails, VideoDetails } from "./openshotFiles";
+import { AudioDetails, ImageDetails, VideoDetails } from "./openshotFiles";
 import { Points } from "./openshotTypes";
 
 interface ClipDetails {
+    alpha: Points;
     anchor: number;
     channel_filter: Points;
-    waveform: boolean;
-    scale_x: Points;
-    has_video: Points;
+    channel_mapping: Points;
+    display: 0;
+    gravity: number;
     has_audio: Points;
+    has_video: Points;
+    location_x: Points;
     location_y: Points;
-    alpha: Points;
     image: string;
+    reader: VideoDetails | AudioDetails | ImageDetails;
+    rotation: Points;
+    scale: number;
+    scale_y: Points;
+    scale_x: Points;
     shear_x: Points;
     shear_y: Points;
-    rotation: Points;
-    reader: VideoDetails | AudioDetails;
-    scale: number;
-    channel_mapping: Points;
-    gravity: number;
-    scale_y: Points;
-    volume: Points;
+    time: Points;
     title: string;
+    volume: Points;
+    waveform: boolean;
     wave_color: {
         blue: Points;
         alpha: Points;
         green: Points;
         red: Points;
     };
-    display: 0;
-    time: Points;
-    location_x: Points;
 }
 
 interface Clip {
@@ -50,12 +50,12 @@ interface Clip {
 }
 
 interface ClipParameters {
+    project: string;
     position: number;
     start: number;
     end: number;
     layer: number;
     file: string;
-    project: string;
     json: any;
 }
 
@@ -96,5 +96,9 @@ export class OpenShotClips {
         const result = await this.axios.get(`/${id}`);
         assertType<Clip>(result.data);
         return result.data;
+    }
+
+    public toUrl(clipId: number): string {
+        return `${this.baseUrl}/clips/${clipId}/`;
     }
 }

@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 import { assertType } from "typescript-is";
+import { File } from "./openshotFiles";
 
 export interface Project {
     url: string;
@@ -29,7 +30,7 @@ interface Projects {
     results: Array<Project>;
 }
 
-enum ChannelLayout {
+export enum ChannelLayout {
     STEREO = 3,
     MONO = 4,
     SURROUND = 7,
@@ -44,6 +45,24 @@ interface ProjectParameters {
     sample_rate: number;
     channels: number;
     channel_layout: ChannelLayout;
+    json: {
+        [key: string]: string;
+    };
+}
+
+interface TitleParameters {
+    template: string;
+    text: string;
+    font_size: number;
+    font_name: string;
+    fill_color: string;
+    fill_opacity: number;
+    stroke_color: string;
+    stroke_size: number;
+    stroke_opacity: number;
+    drop_shadow: boolean;
+    background_color: string;
+    background_opacity: number;
 }
 
 export class OpenShotProjects {
@@ -94,5 +113,15 @@ export class OpenShotProjects {
         const result = await this.axios.get(`/${id}/validate`);
         assertType<{ detail: string }>(result.data);
         return result.data.detail === "Your project is valid!";
+    }
+
+    public async createTitle(id: number, params: TitleParameters): Promise<File> {
+        const result = await this.axios.post(`${id}/title/`, params);
+        assertType<File>(result.data);
+        return result.data;
+    }
+
+    public toUrl(projectId: number): string {
+        return `${this.baseUrl}/projects/${projectId}/`;
     }
 }

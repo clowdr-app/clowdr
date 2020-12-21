@@ -94,3 +94,6 @@ Note: `AWS_` values come from the outputs of your AWS deployment. See [`aws/READ
 | AWS_TRANSCRIBE_SERVICE_ROLE_ARN        | The IAM role to be passed to Transcribe                                                                      | Yes      |
 | AWS_TRANSCODE_NOTIFICATIONS_TOPIC_ARN  | The ARN of the SNS topic for transcoding notifications                                                       | Yes      |
 | AWS_TRANSCRIBE_NOTIFICATIONS_TOPIC_ARN | The ARN of the SNS topic for transcription notifications                                                     | Yes      |
+| OPENSHOT_BASE_URL                      | The base URL of the OpenShot instance                                                                        |          |
+| OPENSHOT_USERNAME                      | The username you created for your OpenShot instance                                                          |          |
+| OPENSHOT_PASSWORD                      | The password you created for your OpenShot instance                                                          |          |

@@ -12,7 +12,7 @@
         "dev-stage2": "tsc-watch --compiler \"ttypescript/bin/tsc\" --onCompilationComplete \"npm run-script copy-resources\" --onSuccess \"npm run-script --prefix=../../ --cwd=../../ run-services-actions\"",
         "copy-resources": "node node_modules/rimraf/bin.js build/resources && node node_modules/cpy-cli/cli.js --prefix=src/resources --cwd=src/resources **/* ../../build/resources --parents",
         "test": "jest --config jest.config.ts --forceExit",
-        "graphql-codegen": "graphql-codegen --config codegen.js"
+        "graphql-codegen": "npx graphql-codegen --config codegen.js"
     },
     "repository": {
         "type": "git",

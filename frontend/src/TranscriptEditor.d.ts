@@ -1,6 +1,4 @@
-import type { Ref } from "react";
-
-export declare interface TranscriptEditorProps {
+interface TranscriptEditorProps {
     transcriptData: any;
     mediaUrl: string;
     handleAutoSaveChanges?: (data: any) => void;
@@ -15,4 +13,4 @@ export declare interface TranscriptEditorProps {
     mediaType?: "video" | string;
 }
 
-export declare type TranscriptEditorT = (props: TranscriptEditorProps) => JSX.Element;
+export default function TranscriptEditor(props: React.PropsWithoutRef<TranscriptEditorProps>): JSX.Element;

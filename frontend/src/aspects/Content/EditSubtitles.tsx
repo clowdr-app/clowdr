@@ -5,10 +5,7 @@ import AmazonS3Uri from "amazon-s3-uri";
 import assert from "assert";
 import React from "react";
 import useFetch from "use-http";
-import type { TranscriptEditorT } from "../../../types/TranscriptEditor";
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const TranscriptEditor = require("../../TranscriptEditor") as TranscriptEditorT;
+import TranscriptEditor from "../../TranscriptEditor";
 
 gql`
     mutation UpdateSubtitles($contentItemId: String!, $magicToken: String!, $subtitleText: String!) {

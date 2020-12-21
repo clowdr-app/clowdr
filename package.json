@@ -45,7 +45,6 @@
         "npm": "7.3.x"
     },
     "workspaces": [
-        "shared",
-        "react-transcript-editor"
+        "shared"
     ]
 }

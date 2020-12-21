@@ -47,14 +47,14 @@ export default function EditSubtitles({
         <>Could not load subtitles.</>
     ) : (
         <Box color="black">
-            <TranscriptEditor
+            <TranscriptEditor.default
                 isEditable
                 transcriptData={subtitlesData}
                 mediaUrl={videoUrl}
                 sttJsonType="amazontranscribe" // TODO: SRT
                 spellCheck
                 autoSaveContentType="sttJsonType"
-                handleAutoSaveChanges={(data) => {
+                handleAutoSaveChanges={(data: any) => {
                     // TODO: Save changes
                     console.log(data);
                 }}

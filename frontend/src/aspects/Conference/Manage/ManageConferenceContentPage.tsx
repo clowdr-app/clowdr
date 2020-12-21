@@ -399,7 +399,9 @@ export default function ManageConferenceContentPage(): JSX.Element {
     const [updateRequiredContentItemMutation] = useUpdateRequiredContentItemMutation();
     const [updateUploaderMutation] = useUpdateUploaderMutation();
 
-    const parsedDBContentGroups = useMemo(() => convertContentGroupsToDescriptors(allContentGroups), [allContentGroups]);
+    const parsedDBContentGroups = useMemo(() => convertContentGroupsToDescriptors(allContentGroups), [
+        allContentGroups,
+    ]);
 
     const groupTypeOptions: SelectOption[] = useMemo(() => {
         return Object.keys(ContentGroupType_Enum)

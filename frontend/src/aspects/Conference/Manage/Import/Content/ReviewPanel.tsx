@@ -8,10 +8,7 @@ import { convertContentGroupsToDescriptors } from "../../Content/Types";
 export default function ReviewPanel(): JSX.Element {
     const conference = useConference();
 
-    const {
-        error: errorDBContentGroups,
-        data: dbContentGroups,
-    } = useSelectAllContentGroupsQuery({
+    const { error: errorDBContentGroups, data: dbContentGroups } = useSelectAllContentGroupsQuery({
         fetchPolicy: "network-only",
         variables: {
             conferenceId: conference.id,

@@ -1,5 +1,9 @@
 import type { ContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
-import type { ContentGroupType_Enum, ContentType_Enum, SelectAllContentGroupsQuery } from "../../../../generated/graphql";
+import type {
+    ContentGroupType_Enum,
+    ContentType_Enum,
+    SelectAllContentGroupsQuery,
+} from "../../../../generated/graphql";
 
 export type TagDescriptor = {
     id: string;
@@ -40,18 +44,18 @@ export type UploaderDescriptor = {
 
 export type ContentDescriptor =
     | {
-        type: "required-only";
-        requiredItem: RequiredContentItemDescriptor;
-    }
+          type: "required-only";
+          requiredItem: RequiredContentItemDescriptor;
+      }
     | {
-        type: "required-and-item";
-        requiredItem: RequiredContentItemDescriptor;
-        item: ContentItemDescriptor;
-    }
+          type: "required-and-item";
+          requiredItem: RequiredContentItemDescriptor;
+          item: ContentItemDescriptor;
+      }
     | {
-        type: "item-only";
-        item: ContentItemDescriptor;
-    };
+          type: "item-only";
+          item: ContentItemDescriptor;
+      };
 
 export type ContentPersonDescriptor = {
     isNew?: boolean;
@@ -89,20 +93,22 @@ export type ContentGroupDescriptor = {
 };
 export type ItemBaseTemplate =
     | {
-        supported: false;
-    }
+          supported: false;
+      }
     | {
-        supported: true;
-        createDefault: (
-            group: ContentGroupDescriptor,
-            itemType: ContentType_Enum,
-            required: boolean
-        ) => ContentDescriptor;
-        renderEditorHeading: (data: ContentDescriptor) => JSX.Element;
-        renderEditor: (data: ContentDescriptor, update: (updated: ContentDescriptor) => void) => JSX.Element;
-    };
+          supported: true;
+          createDefault: (
+              group: ContentGroupDescriptor,
+              itemType: ContentType_Enum,
+              required: boolean
+          ) => ContentDescriptor;
+          renderEditorHeading: (data: ContentDescriptor) => JSX.Element;
+          renderEditor: (data: ContentDescriptor, update: (updated: ContentDescriptor) => void) => JSX.Element;
+      };
 
-export function convertContentGroupsToDescriptors(allContentGroups: SelectAllContentGroupsQuery | undefined): Map<string, ContentGroupDescriptor> | undefined {
+export function convertContentGroupsToDescriptors(
+    allContentGroups: SelectAllContentGroupsQuery | undefined
+): Map<string, ContentGroupDescriptor> | undefined {
     if (!allContentGroups) {
         return undefined;
     }
@@ -137,7 +143,7 @@ export function convertContentGroupsToDescriptors(allContentGroups: SelectAllCon
                         requiredContentItemId: uploader.requiredContentItemId,
                     })),
                 })),
-                people: item.people.map(groupPerson => ({
+                people: item.people.map((groupPerson) => ({
                     conferenceId: groupPerson.conferenceId,
                     groupId: groupPerson.groupId,
                     id: groupPerson.id,
@@ -149,7 +155,7 @@ export function convertContentGroupsToDescriptors(allContentGroups: SelectAllCon
                         email: groupPerson.person.email,
                     },
                     priority: groupPerson.priority,
-                    roleName: groupPerson.roleName
+                    roleName: groupPerson.roleName,
                 })),
             },
         ])
@@ -184,7 +190,7 @@ export function deepCloneContentGroupDescriptor(group: ContentGroupDescriptor): 
                 requiredContentItemId: uploader.requiredContentItemId,
             })),
         })),
-        people: group.people.map(groupPerson => ({
+        people: group.people.map((groupPerson) => ({
             conferenceId: groupPerson.conferenceId,
             groupId: groupPerson.groupId,
             id: groupPerson.id,
@@ -196,7 +202,7 @@ export function deepCloneContentGroupDescriptor(group: ContentGroupDescriptor): 
                 email: groupPerson.person.email,
             },
             priority: groupPerson.priority,
-            roleName: groupPerson.roleName
+            roleName: groupPerson.roleName,
         })),
         shortTitle: group.shortTitle,
         title: group.title,

@@ -1,10 +1,7 @@
-import { Flex, Heading, Text } from "@chakra-ui/react";
+import { Flex, Heading } from "@chakra-ui/react";
 import React from "react";
 import { Permission_Enum } from "../../../generated/graphql";
-import LinkButton from "../../Chakra/LinkButton";
-import FAIcon from "../../Icons/FAIcon";
 import { useNoPrimaryMenuButtons, usePrimaryMenuButton } from "../../Menu/usePrimaryMenuButtons";
-import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
 import RestrictedDashboardButton from "./RestrictedDashboardButton";
 

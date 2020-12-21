@@ -117,3 +117,5 @@ variables in the build which start with `SNOWPACK_PUBLIC_`.
 | SNOWPACK_PUBLIC_AUTH_CLIENT_ID               | <auth0-client-id> as shown in Auth0 Application                                      | Yes      |
 | _AWS_                                        |                                                                                      |          |
 | SNOWPACK_PUBLIC_COMPANION_BASE_URL           | URL of the Uppy Companion instance (provided at `/companion` by the actions service) | Yes      |
+| NPM_VERSION                                  | `7.3` (only required in Netlify)                                                     | Only     |
+| NODE_VERSION                                 | `15.4` (only required in Netlify)                                                    | Only     |

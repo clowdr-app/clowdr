@@ -131,6 +131,15 @@ Now, configure the application in the _Settings_ tab.
    blank value when there is a constraint conflict results in it reflecting the
    last logged in time._
 
+1. Create a new _Rule_
+
+   - Select `Empty rule`
+   - `Name` it something like `Force Verified Email Before Login`
+   - Replace the `Script` with the code from `Force Verified Email Before Login Rule` below
+   - Don't forget to `Save changes`
+
+   This rule prevents users from logging in before they have verified their account.
+
 ##### Hasura JWT Rule
 
 ```js
@@ -182,6 +191,18 @@ function (user, context, callback) {
   sendRequest(configuration.HASURA_URL, configuration.HASURA_ADMIN_SECRET);
   if (configuration.HASURA_URL_LOCAL && configuration.HASURA_ADMIN_SECRET_LOCAL) {
   	sendRequest(configuration.HASURA_URL_LOCAL, configuration.HASURA_ADMIN_SECRET_LOCAL);
+  }
+}
+```
+
+##### Force Verified Email Before Login Rule
+
+```js
+function emailVerified(user, context, callback) {
+  if (!user.email_verified) {
+    return callback(new UnauthorizedError("Please verify your email before logging in."));
+  } else {
+    return callback(null, user, context);
   }
 }
 ```

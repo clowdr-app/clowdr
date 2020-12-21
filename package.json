@@ -4,7 +4,7 @@
     "description": "Development setup",
     "main": "index.js",
     "scripts": {
-        "postinstall": "cd services/actions && npm install && cd ../../frontend && npm install && cd ../aws && npm install && cd ../shared && npm install",
+        "postinstall": "cd services/actions && npm ci && cd ../../frontend && npm ci && cd ../aws && npm ci && cd ../shared && npm ci",
         "heroku-postbuild": "cd services/actions && npm run build",
         "run-services-actions": "heroku local -p 3001 web"
     },

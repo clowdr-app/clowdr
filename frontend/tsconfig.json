@@ -1,5 +1,6 @@
 {
-    "include": ["src", "types", "node_modules/@types"],
+    "include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.tsx", "types", "node_modules/@types"],
+    "exclude": ["./build"],
     "compilerOptions": {
         "module": "esnext",
         "target": "ES2016",
@@ -17,6 +18,5 @@
         "resolveJsonModule": true,
         "allowSyntheticDefaultImports": true,
         "importsNotUsedAsValues": "error"
-    },
-    "exclude": ["./build"]
+    }
 }

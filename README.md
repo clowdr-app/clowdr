@@ -200,6 +200,9 @@ function (user, context, callback) {
 ```js
 function emailVerified(user, context, callback) {
   if (!user.email_verified) {
+    context.redirect = {
+      url: process.env.FRONTEND_EMAIL_VERIF_REQUIRED_URL,
+    };
     return callback(new UnauthorizedError("Please verify your email before logging in."));
   } else {
     return callback(null, user, context);
@@ -211,11 +214,12 @@ function emailVerified(user, context, callback) {
 
 Under _Rule Settings_ add the following key-value pairs:
 
-| Key                 | Value                                                                                       | Notes                                                                                                                                                     |
-| ------------------- | ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| HASURA_NAMESPACE    | `https://hasura.io/jwt/claims`                                                              | For Hasura, this value must always be this URL.                                                                                                           |
-| HASURA_ADMIN_SECRET | The Hasura Admin Secret                                                                     | For local testing, see Hasura Environment Variables.                                                                                                      |
-| HASURA_URL          | The full URL to the Hasura GraphQL API. E.g. `http://<ngrok-subdomain>.ngrok.io/v1/graphql` | Use Ngrok to make a `localhost` server accessible by Auth0: command `ngrok http 8080`. Hint: The Hasura Service _not_ the Hasura Console URL/port number! |
+| Key                               | Value                                                                                       | Notes                                                                                                                                                     |
+| --------------------------------- | ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| HASURA_NAMESPACE                  | `https://hasura.io/jwt/claims`                                                              | For Hasura, this value must always be this URL.                                                                                                           |
+| HASURA_ADMIN_SECRET               | The Hasura Admin Secret                                                                     | For local testing, see Hasura Environment Variables.                                                                                                      |
+| HASURA_URL                        | The full URL to the Hasura GraphQL API. E.g. `http://<ngrok-subdomain>.ngrok.io/v1/graphql` | Use Ngrok to make a `localhost` server accessible by Auth0: command `ngrok http 8080`. Hint: The Hasura Service _not_ the Hasura Console URL/port number! |
+| FRONTEND_EMAIL_VERIF_REQUIRED_URL | Full url to redirect to if the user has logged in but needs to verify their email address.  | E.g. `https://localhost:3000/auth/email-verification-required`                                                                                            |
 
 You can optionally use `HASURA_ADMIN_SECRET_LOCAL` and `HASURA_URL_LOCAL` in addition to the non-local versions to have
 user records pushed to both services simultaneously (useful in testing environments).

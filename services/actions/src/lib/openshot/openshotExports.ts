@@ -62,6 +62,10 @@ export class OpenShotExports {
         return result.data;
     }
 
+    public async deleteExport(id: number): Promise<void> {
+        await this.axios.delete(`/${id}`);
+    }
+
     public async retryExport(id: number): Promise<{ detail: string }> {
         const result = await this.axios.post(`/${id}/retry`);
         assertType<{ detail: string }>(result.data);

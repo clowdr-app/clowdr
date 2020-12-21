@@ -242,19 +242,19 @@ export async function handleConferencePrepareJobInserted(payload: Payload<Confer
                     contentGroup {
                         id
                         title
+                        people(distinct_on: id) {
+                            person {
+                                name
+                                id
+                            }
+                            id
+                        }
                         contentItems(
                             distinct_on: contentTypeName
                             where: { contentTypeName: { _eq: VIDEO_BROADCAST } }
                             order_by: { contentTypeName: asc }
                             limit: 1
                         ) {
-                            contentItemPeople(distinct_on: id) {
-                                person {
-                                    name
-                                    id
-                                }
-                                id
-                            }
                             contentTypeName
                             id
                             contentGroupId
@@ -290,7 +290,7 @@ export async function handleConferencePrepareJobInserted(payload: Payload<Confer
 
             const contentItem = event.contentGroup?.contentItems[0];
 
-            const names = contentItem.contentItemPeople.map((person) => person.person.name);
+            const names = event.contentGroup.people.map((person) => person.person.name);
             const eventTitle = event.name;
             const name = uuidv4();
 
@@ -562,11 +562,23 @@ export async function handleVideoRenderJobUpdated(payload: Payload<VideoRenderJo
                 case JobStatus_Enum.Completed: {
                     console.log(`Completed title render job ${payload.event.data.new.id}`);
                     // todo: write into the broadcast content item
+                    console.log(
+                        "Deleting completed OpenShot project",
+                        payload.event.data.new.data.openShotProjectId,
+                        payload.event.data.new.id
+                    );
+                    //await OpenShotClient.projects.deleteProject(payload.event.data.new.data.openShotProjectId);
                     break;
                 }
                 case JobStatus_Enum.Failed: {
                     console.log(`Failed title render job ${payload.event.data.new.id}`);
                     // todo: report up to the conference prepare job
+                    console.log(
+                        "Deleting failed OpenShot project",
+                        payload.event.data.new.data.openShotProjectId,
+                        payload.event.data.new.id
+                    );
+                    //await OpenShotClient.projects.deleteProject(payload.event.data.new.data.openShotProjectId);
                     break;
                 }
                 case JobStatus_Enum.InProgress: {

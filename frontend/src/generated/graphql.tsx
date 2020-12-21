@@ -3415,6 +3415,7 @@ export type ConferencePrepareJob = {
   /** An object relationship */
   readonly jobStatus: JobStatus;
   readonly jobStatusName: JobStatus_Enum;
+  readonly message?: Maybe<Scalars['String']>;
   readonly updatedAt: Scalars['timestamptz'];
   /** An array relationship */
   readonly videoRenderJobs: ReadonlyArray<VideoRenderJob>;
@@ -3488,6 +3489,7 @@ export type ConferencePrepareJob_Bool_Exp = {
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly jobStatus?: Maybe<JobStatus_Bool_Exp>;
   readonly jobStatusName?: Maybe<JobStatus_Enum_Comparison_Exp>;
+  readonly message?: Maybe<String_Comparison_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly videoRenderJobs?: Maybe<VideoRenderJob_Bool_Exp>;
 };
@@ -3506,6 +3508,7 @@ export type ConferencePrepareJob_Insert_Input = {
   readonly id?: Maybe<Scalars['uuid']>;
   readonly jobStatus?: Maybe<JobStatus_Obj_Rel_Insert_Input>;
   readonly jobStatusName?: Maybe<JobStatus_Enum>;
+  readonly message?: Maybe<Scalars['String']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
   readonly videoRenderJobs?: Maybe<VideoRenderJob_Arr_Rel_Insert_Input>;
 };
@@ -3516,6 +3519,7 @@ export type ConferencePrepareJob_Max_Fields = {
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly message?: Maybe<Scalars['String']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -3524,6 +3528,7 @@ export type ConferencePrepareJob_Max_Order_By = {
   readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
+  readonly message?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
 
@@ -3533,6 +3538,7 @@ export type ConferencePrepareJob_Min_Fields = {
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly message?: Maybe<Scalars['String']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -3541,6 +3547,7 @@ export type ConferencePrepareJob_Min_Order_By = {
   readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
+  readonly message?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
 
@@ -3574,6 +3581,7 @@ export type ConferencePrepareJob_Order_By = {
   readonly id?: Maybe<Order_By>;
   readonly jobStatus?: Maybe<JobStatus_Order_By>;
   readonly jobStatusName?: Maybe<Order_By>;
+  readonly message?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
   readonly videoRenderJobs_aggregate?: Maybe<VideoRenderJob_Aggregate_Order_By>;
 };
@@ -3594,6 +3602,8 @@ export enum ConferencePrepareJob_Select_Column {
   /** column name */
   JobStatusName = 'jobStatusName',
   /** column name */
+  Message = 'message',
+  /** column name */
   UpdatedAt = 'updatedAt'
 }
 
@@ -3603,6 +3613,7 @@ export type ConferencePrepareJob_Set_Input = {
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly jobStatusName?: Maybe<JobStatus_Enum>;
+  readonly message?: Maybe<Scalars['String']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -3616,6 +3627,8 @@ export enum ConferencePrepareJob_Update_Column {
   Id = 'id',
   /** column name */
   JobStatusName = 'jobStatusName',
+  /** column name */
+  Message = 'message',
   /** column name */
   UpdatedAt = 'updatedAt'
 }
@@ -9182,7 +9195,9 @@ export enum JobStatus_Enum {
   /** Job failed during execution. */
   Failed = 'FAILED',
   /** Job is currently in progress. */
-  InProgress = 'IN_PROGRESS'
+  InProgress = 'IN_PROGRESS',
+  /** Job has not yet started execution. */
+  New = 'NEW'
 }
 
 /** expression to compare columns of type JobStatus_enum. All fields are combined with logical 'AND'. */
@@ -13693,17 +13708,28 @@ export enum User_Update_Column {
 export type VideoRenderJob = {
   readonly __typename?: 'VideoRenderJob';
   /** An object relationship */
+  readonly broadcastContentItem: BroadcastContentItem;
+  readonly broadcastContentItemId: Scalars['uuid'];
+  /** An object relationship */
   readonly conference: Conference;
   readonly conferenceId: Scalars['uuid'];
   /** An object relationship */
   readonly conferencePrepareJob: ConferencePrepareJob;
   readonly conferencePrepareJobId: Scalars['uuid'];
   readonly created_at: Scalars['timestamptz'];
+  readonly data: Scalars['jsonb'];
   readonly id: Scalars['uuid'];
   /** An object relationship */
   readonly jobStatus: JobStatus;
   readonly jobStatusName: JobStatus_Enum;
+  readonly message?: Maybe<Scalars['String']>;
   readonly updated_at: Scalars['timestamptz'];
+};
+
+
+/** columns and relationships of "VideoRenderJob" */
+export type VideoRenderJobDataArgs = {
+  path?: Maybe<Scalars['String']>;
 };
 
 /** aggregated selection of "VideoRenderJob" */
@@ -13735,6 +13761,11 @@ export type VideoRenderJob_Aggregate_Order_By = {
   readonly min?: Maybe<VideoRenderJob_Min_Order_By>;
 };
 
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type VideoRenderJob_Append_Input = {
+  readonly data?: Maybe<Scalars['jsonb']>;
+};
+
 /** input type for inserting array relation for remote table "VideoRenderJob" */
 export type VideoRenderJob_Arr_Rel_Insert_Input = {
   readonly data: ReadonlyArray<VideoRenderJob_Insert_Input>;
@@ -13746,14 +13777,18 @@ export type VideoRenderJob_Bool_Exp = {
   readonly _and?: Maybe<ReadonlyArray<Maybe<VideoRenderJob_Bool_Exp>>>;
   readonly _not?: Maybe<VideoRenderJob_Bool_Exp>;
   readonly _or?: Maybe<ReadonlyArray<Maybe<VideoRenderJob_Bool_Exp>>>;
+  readonly broadcastContentItem?: Maybe<BroadcastContentItem_Bool_Exp>;
+  readonly broadcastContentItemId?: Maybe<Uuid_Comparison_Exp>;
   readonly conference?: Maybe<Conference_Bool_Exp>;
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly conferencePrepareJob?: Maybe<ConferencePrepareJob_Bool_Exp>;
   readonly conferencePrepareJobId?: Maybe<Uuid_Comparison_Exp>;
   readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly data?: Maybe<Jsonb_Comparison_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly jobStatus?: Maybe<JobStatus_Bool_Exp>;
   readonly jobStatusName?: Maybe<JobStatus_Enum_Comparison_Exp>;
+  readonly message?: Maybe<String_Comparison_Exp>;
   readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -13763,54 +13798,81 @@ export enum VideoRenderJob_Constraint {
   VideoRenderJobPkey = 'VideoRenderJob_pkey'
 }
 
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type VideoRenderJob_Delete_At_Path_Input = {
+  readonly data?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type VideoRenderJob_Delete_Elem_Input = {
+  readonly data?: Maybe<Scalars['Int']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type VideoRenderJob_Delete_Key_Input = {
+  readonly data?: Maybe<Scalars['String']>;
+};
+
 /** input type for inserting data into table "VideoRenderJob" */
 export type VideoRenderJob_Insert_Input = {
+  readonly broadcastContentItem?: Maybe<BroadcastContentItem_Obj_Rel_Insert_Input>;
+  readonly broadcastContentItemId?: Maybe<Scalars['uuid']>;
   readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly conferencePrepareJob?: Maybe<ConferencePrepareJob_Obj_Rel_Insert_Input>;
   readonly conferencePrepareJobId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly data?: Maybe<Scalars['jsonb']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly jobStatus?: Maybe<JobStatus_Obj_Rel_Insert_Input>;
   readonly jobStatusName?: Maybe<JobStatus_Enum>;
+  readonly message?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
 /** aggregate max on columns */
 export type VideoRenderJob_Max_Fields = {
   readonly __typename?: 'VideoRenderJob_max_fields';
+  readonly broadcastContentItemId?: Maybe<Scalars['uuid']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly conferencePrepareJobId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly message?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
 /** order by max() on columns of table "VideoRenderJob" */
 export type VideoRenderJob_Max_Order_By = {
+  readonly broadcastContentItemId?: Maybe<Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly conferencePrepareJobId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
+  readonly message?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type VideoRenderJob_Min_Fields = {
   readonly __typename?: 'VideoRenderJob_min_fields';
+  readonly broadcastContentItemId?: Maybe<Scalars['uuid']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly conferencePrepareJobId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly message?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
 /** order by min() on columns of table "VideoRenderJob" */
 export type VideoRenderJob_Min_Order_By = {
+  readonly broadcastContentItemId?: Maybe<Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly conferencePrepareJobId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
+  readonly message?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
 
@@ -13838,14 +13900,18 @@ export type VideoRenderJob_On_Conflict = {
 
 /** ordering options when selecting data from "VideoRenderJob" */
 export type VideoRenderJob_Order_By = {
+  readonly broadcastContentItem?: Maybe<BroadcastContentItem_Order_By>;
+  readonly broadcastContentItemId?: Maybe<Order_By>;
   readonly conference?: Maybe<Conference_Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly conferencePrepareJob?: Maybe<ConferencePrepareJob_Order_By>;
   readonly conferencePrepareJobId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
+  readonly data?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly jobStatus?: Maybe<JobStatus_Order_By>;
   readonly jobStatusName?: Maybe<Order_By>;
+  readonly message?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
 
@@ -13854,8 +13920,15 @@ export type VideoRenderJob_Pk_Columns_Input = {
   readonly id: Scalars['uuid'];
 };
 
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type VideoRenderJob_Prepend_Input = {
+  readonly data?: Maybe<Scalars['jsonb']>;
+};
+
 /** select columns of table "VideoRenderJob" */
 export enum VideoRenderJob_Select_Column {
+  /** column name */
+  BroadcastContentItemId = 'broadcastContentItemId',
   /** column name */
   ConferenceId = 'conferenceId',
   /** column name */
@@ -13863,25 +13936,34 @@ export enum VideoRenderJob_Select_Column {
   /** column name */
   CreatedAt = 'created_at',
   /** column name */
+  Data = 'data',
+  /** column name */
   Id = 'id',
   /** column name */
   JobStatusName = 'jobStatusName',
+  /** column name */
+  Message = 'message',
   /** column name */
   UpdatedAt = 'updated_at'
 }
 
 /** input type for updating data in table "VideoRenderJob" */
 export type VideoRenderJob_Set_Input = {
+  readonly broadcastContentItemId?: Maybe<Scalars['uuid']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly conferencePrepareJobId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly data?: Maybe<Scalars['jsonb']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly jobStatusName?: Maybe<JobStatus_Enum>;
+  readonly message?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
 /** update columns of table "VideoRenderJob" */
 export enum VideoRenderJob_Update_Column {
+  /** column name */
+  BroadcastContentItemId = 'broadcastContentItemId',
   /** column name */
   ConferenceId = 'conferenceId',
   /** column name */
@@ -13889,9 +13971,13 @@ export enum VideoRenderJob_Update_Column {
   /** column name */
   CreatedAt = 'created_at',
   /** column name */
+  Data = 'data',
+  /** column name */
   Id = 'id',
   /** column name */
   JobStatusName = 'jobStatusName',
+  /** column name */
+  Message = 'message',
   /** column name */
   UpdatedAt = 'updated_at'
 }
@@ -16723,6 +16809,11 @@ export type Mutation_RootUpdate_User_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_VideoRenderJobArgs = {
+  _append?: Maybe<VideoRenderJob_Append_Input>;
+  _delete_at_path?: Maybe<VideoRenderJob_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<VideoRenderJob_Delete_Elem_Input>;
+  _delete_key?: Maybe<VideoRenderJob_Delete_Key_Input>;
+  _prepend?: Maybe<VideoRenderJob_Prepend_Input>;
   _set?: Maybe<VideoRenderJob_Set_Input>;
   where: VideoRenderJob_Bool_Exp;
 };
@@ -16730,6 +16821,11 @@ export type Mutation_RootUpdate_VideoRenderJobArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_VideoRenderJob_By_PkArgs = {
+  _append?: Maybe<VideoRenderJob_Append_Input>;
+  _delete_at_path?: Maybe<VideoRenderJob_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<VideoRenderJob_Delete_Elem_Input>;
+  _delete_key?: Maybe<VideoRenderJob_Delete_Key_Input>;
+  _prepend?: Maybe<VideoRenderJob_Prepend_Input>;
   _set?: Maybe<VideoRenderJob_Set_Input>;
   pk_columns: VideoRenderJob_Pk_Columns_Input;
 };
@@ -20187,7 +20283,7 @@ export type ConferencePrepareJobSubscriptionSubscriptionVariables = Exact<{
 }>;
 
 
-export type ConferencePrepareJobSubscriptionSubscription = { readonly __typename?: 'subscription_root', readonly ConferencePrepareJob: ReadonlyArray<{ readonly __typename?: 'ConferencePrepareJob', readonly id: any, readonly jobStatusName: JobStatus_Enum, readonly updatedAt: any, readonly createdAt: any, readonly videoRenderJobs: ReadonlyArray<{ readonly __typename?: 'VideoRenderJob', readonly id: any, readonly jobStatusName: JobStatus_Enum, readonly updated_at: any, readonly created_at: any }> }> };
+export type ConferencePrepareJobSubscriptionSubscription = { readonly __typename?: 'subscription_root', readonly ConferencePrepareJob: ReadonlyArray<{ readonly __typename?: 'ConferencePrepareJob', readonly id: any, readonly jobStatusName: JobStatus_Enum, readonly message?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly videoRenderJobs: ReadonlyArray<{ readonly __typename?: 'VideoRenderJob', readonly id: any, readonly jobStatusName: JobStatus_Enum, readonly updated_at: any, readonly created_at: any }> }> };
 
 export type UploaderInfoFragment = { readonly __typename?: 'Uploader', readonly id: any, readonly conferenceId: any, readonly email: string, readonly emailsSentCount: number, readonly name: string, readonly requiredContentItemId: any };
 
@@ -21165,6 +21261,7 @@ export const ConferencePrepareJobSubscriptionDocument = gql`
   ConferencePrepareJob(where: {conferenceId: {_eq: $conferenceId}}) {
     id
     jobStatusName
+    message
     updatedAt
     createdAt
     videoRenderJobs {

@@ -77,6 +77,24 @@ Now point the domain for which you generated the certificate at the load balance
 
 Go to `https://<your domain>/cloud-admin/` and log in with the username and password created above. Use the admin panel to create a new user account with API-only access.
 
+#### Patching the OpenShot instance
+
+In order to make webhooks work properly, we will modify the code on the OpenShot instance slightly. Open the file `~/api_app/video_queue/worker.py` and find the two lines that read:
+
+```python
+r = post(webhook_url, data=export_json_all)
+```
+
+Change them both to:
+
+```python
+r = post(webhook_url, json=export_json_all)
+```
+
+We do this to ensure that the webhook is called with a JSON body rather than a URL encoded body (which omits the nested JSON data).
+
+Now run `sudo supervisorctl restart all` to restart the worker processes.
+
 ## SSH Tips
 
 You can create an SSH config file to make it easier to connect to the OpenShot instance. For example:

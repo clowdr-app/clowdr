@@ -104,32 +104,7 @@ export class OpenShotProjects {
     }
 
     public async deleteProject(id: number): Promise<void> {
-        const project = await this.getProject(id);
-        await Promise.all(
-            project.clips.map(async (export_) => {
-                await axios.create().delete(export_);
-                return null;
-            })
-        );
-        await Promise.all(
-            project.effects.map(async (export_) => {
-                await axios.create().delete(export_);
-                return null;
-            })
-        );
-        await Promise.all(
-            project.files.map(async (export_) => {
-                await axios.create().delete(export_);
-                return null;
-            })
-        );
-        await Promise.all(
-            project.exports.map(async (export_) => {
-                await axios.create().delete(export_);
-                return null;
-            })
-        );
-        await this.axios.delete(`/${id}`);
+        await this.axios.delete(`/${id}/`, {});
     }
 
     public async copyProject(id: number, name: string): Promise<Project> {

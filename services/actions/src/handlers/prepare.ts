@@ -534,7 +534,7 @@ export async function handleVideoRenderJobUpdated(payload: Payload<VideoRenderJo
                             audio_codec: "ac3",
                             audio_bitrate: 1920000,
                             start_frame: 1,
-                            end_frame: 100, //todo: change back
+                            end_frame: 0,
                             export_type: "video",
                             json: {
                                 bucket: process.env.AWS_CONTENT_BUCKET_ID,
@@ -567,7 +567,7 @@ export async function handleVideoRenderJobUpdated(payload: Payload<VideoRenderJo
                         payload.event.data.new.data.openShotProjectId,
                         payload.event.data.new.id
                     );
-                    //await OpenShotClient.projects.deleteProject(payload.event.data.new.data.openShotProjectId);
+                    await OpenShotClient.projects.deleteProject(payload.event.data.new.data.openShotProjectId);
                     break;
                 }
                 case JobStatus_Enum.Failed: {
@@ -578,7 +578,7 @@ export async function handleVideoRenderJobUpdated(payload: Payload<VideoRenderJo
                         payload.event.data.new.data.openShotProjectId,
                         payload.event.data.new.id
                     );
-                    //await OpenShotClient.projects.deleteProject(payload.event.data.new.data.openShotProjectId);
+                    await OpenShotClient.projects.deleteProject(payload.event.data.new.data.openShotProjectId);
                     break;
                 }
                 case JobStatus_Enum.InProgress: {

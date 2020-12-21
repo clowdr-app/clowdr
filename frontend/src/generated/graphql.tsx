@@ -10040,7 +10040,7 @@ export enum Permission_Enum {
   ConferenceModerateAttendees = 'CONFERENCE_MODERATE_ATTENDEES',
   /** View the conference. */
   ConferenceView = 'CONFERENCE_VIEW',
-  /** View conference attendees. */
+  /** View conference active attendees. */
   ConferenceViewAttendees = 'CONFERENCE_VIEW_ATTENDEES'
 }
 

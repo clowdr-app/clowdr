@@ -41,7 +41,8 @@
         "*.{js,css,md}": "prettier --write"
     },
     "engines": {
-        "node": "15.x"
+        "node": "15.4.0",
+        "npm": "7.3.x"
     },
     "workspaces": [
         "shared",

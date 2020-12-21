@@ -1,3 +1,4 @@
+import { Text } from "@chakra-ui/react";
 import React from "react";
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import LoggedOutPage from "./aspects/Auth/LoggedOutPage";
@@ -5,6 +6,7 @@ import ProtectedRoute from "./aspects/Auth/ProtectedRoute";
 import ConferenceRoutes from "./aspects/Conference/ConferenceRoutes";
 import SubmitItemPage from "./aspects/Content/SubmitItemPage";
 import CRUDTestPage from "./aspects/CRUDTable/CRUDTestPage";
+import GenericErrorPage from "./aspects/Errors/GenericErrorPage";
 import PageNotFound from "./aspects/Errors/PageNotFound";
 import AcceptInvitationPage from "./aspects/Invitation/AcceptInvitationPage";
 import CurrentUserPage from "./aspects/Users/CurrentUser/CurrentUserPage";
@@ -14,9 +16,38 @@ import NewUserLandingPage from "./aspects/Users/NewUser/LandingPage";
 export default function Routing(): JSX.Element {
     return (
         <Switch>
-            <Route exact path="/auth0/logged-in">
-                <Redirect to="/user" />
+            <Route exact path="/auth0/email-verification-required">
+                <GenericErrorPage heading="Please verify your email">
+                    <Text fontSize="xl" lineHeight="revert" fontWeight="light" maxW={600}>
+                        Before you can login you must verify your email address.{" "}
+                        <b>
+                            You should have received an email from&nbsp;
+                            <i>no-reply@auth0user.net</i>
+                        </b>
+                        &nbsp;with your verification link. After verifying your email, please log in again.
+                    </Text>
+                </GenericErrorPage>
             </Route>
+            <Route
+                path="/auth0/logged-in"
+                render={(props) => {
+                    if (props.location.search.includes("error")) {
+                        if (props.location.search.includes("verify")) {
+                            return <Redirect to="/auth0/email-verification-required" />;
+                        } else {
+                            return (
+                                <GenericErrorPage heading="Authentication error">
+                                    <Text fontSize="xl" lineHeight="revert" fontWeight="light">
+                                        Sorry, an authentication error has occurred. Please try again later.
+                                    </Text>
+                                </GenericErrorPage>
+                            );
+                        }
+                    } else {
+                        return <Redirect to="/user" />;
+                    }
+                }}
+            />
             <Route exact path="/auth0/logged-in/stay-on-page">
                 Staying on this page so you can debug.
             </Route>

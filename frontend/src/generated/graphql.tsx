@@ -20271,20 +20271,6 @@ export type SendSubmissionRequestsMutationVariables = Exact<{
 
 export type SendSubmissionRequestsMutation = { readonly __typename?: 'mutation_root', readonly uploadSendSubmissionRequests: ReadonlyArray<{ readonly __typename?: 'UploaderSendSubmissionRequestResult', readonly uploaderId: any, readonly sent: boolean }> };
 
-export type CreateConferencePrepareJobMutationVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-}>;
-
-
-export type CreateConferencePrepareJobMutation = { readonly __typename?: 'mutation_root', readonly insert_ConferencePrepareJob_one?: Maybe<{ readonly __typename?: 'ConferencePrepareJob', readonly id: any, readonly conferenceId: any }> };
-
-export type ConferencePrepareJobSubscriptionSubscriptionVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-}>;
-
-
-export type ConferencePrepareJobSubscriptionSubscription = { readonly __typename?: 'subscription_root', readonly ConferencePrepareJob: ReadonlyArray<{ readonly __typename?: 'ConferencePrepareJob', readonly id: any, readonly jobStatusName: JobStatus_Enum, readonly message?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly videoRenderJobs: ReadonlyArray<{ readonly __typename?: 'VideoRenderJob', readonly id: any, readonly jobStatusName: JobStatus_Enum, readonly updated_at: any, readonly created_at: any }> }> };
-
 export type UploaderInfoFragment = { readonly __typename?: 'Uploader', readonly id: any, readonly conferenceId: any, readonly email: string, readonly emailsSentCount: number, readonly name: string, readonly requiredContentItemId: any };
 
 export type RequiredContentItemInfoFragment = { readonly __typename?: 'RequiredContentItem', readonly id: any, readonly name: string, readonly contentTypeName: ContentType_Enum, readonly conferenceId: any, readonly contentGroupId: any, readonly originatingDataId?: Maybe<any>, readonly uploaders: ReadonlyArray<(
@@ -20470,6 +20456,20 @@ export type UpdatePersonMutation = { readonly __typename?: 'mutation_root', read
     { readonly __typename?: 'ContentPerson' }
     & ContentPersonInfoFragment
   )> };
+
+export type CreateConferencePrepareJobMutationVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type CreateConferencePrepareJobMutation = { readonly __typename?: 'mutation_root', readonly insert_ConferencePrepareJob_one?: Maybe<{ readonly __typename?: 'ConferencePrepareJob', readonly id: any, readonly conferenceId: any }> };
+
+export type ConferencePrepareJobSubscriptionSubscriptionVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type ConferencePrepareJobSubscriptionSubscription = { readonly __typename?: 'subscription_root', readonly ConferencePrepareJob: ReadonlyArray<{ readonly __typename?: 'ConferencePrepareJob', readonly id: any, readonly jobStatusName: JobStatus_Enum, readonly message?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly videoRenderJobs: ReadonlyArray<{ readonly __typename?: 'VideoRenderJob', readonly id: any, readonly jobStatusName: JobStatus_Enum, readonly updated_at: any, readonly created_at: any }> }> };
 
 export type SelectAllGroupsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -21263,78 +21263,6 @@ export function useSendSubmissionRequestsMutation(baseOptions?: Apollo.MutationH
 export type SendSubmissionRequestsMutationHookResult = ReturnType<typeof useSendSubmissionRequestsMutation>;
 export type SendSubmissionRequestsMutationResult = Apollo.MutationResult<SendSubmissionRequestsMutation>;
 export type SendSubmissionRequestsMutationOptions = Apollo.BaseMutationOptions<SendSubmissionRequestsMutation, SendSubmissionRequestsMutationVariables>;
-export const CreateConferencePrepareJobDocument = gql`
-    mutation CreateConferencePrepareJob($conferenceId: uuid!) {
-  insert_ConferencePrepareJob_one(object: {conferenceId: $conferenceId}) {
-    id
-    conferenceId
-  }
-}
-    `;
-export type CreateConferencePrepareJobMutationFn = Apollo.MutationFunction<CreateConferencePrepareJobMutation, CreateConferencePrepareJobMutationVariables>;
-
-/**
- * __useCreateConferencePrepareJobMutation__
- *
- * To run a mutation, you first call `useCreateConferencePrepareJobMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateConferencePrepareJobMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createConferencePrepareJobMutation, { data, loading, error }] = useCreateConferencePrepareJobMutation({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useCreateConferencePrepareJobMutation(baseOptions?: Apollo.MutationHookOptions<CreateConferencePrepareJobMutation, CreateConferencePrepareJobMutationVariables>) {
-        return Apollo.useMutation<CreateConferencePrepareJobMutation, CreateConferencePrepareJobMutationVariables>(CreateConferencePrepareJobDocument, baseOptions);
-      }
-export type CreateConferencePrepareJobMutationHookResult = ReturnType<typeof useCreateConferencePrepareJobMutation>;
-export type CreateConferencePrepareJobMutationResult = Apollo.MutationResult<CreateConferencePrepareJobMutation>;
-export type CreateConferencePrepareJobMutationOptions = Apollo.BaseMutationOptions<CreateConferencePrepareJobMutation, CreateConferencePrepareJobMutationVariables>;
-export const ConferencePrepareJobSubscriptionDocument = gql`
-    subscription ConferencePrepareJobSubscription($conferenceId: uuid!) {
-  ConferencePrepareJob(where: {conferenceId: {_eq: $conferenceId}}) {
-    id
-    jobStatusName
-    message
-    updatedAt
-    createdAt
-    videoRenderJobs {
-      id
-      jobStatusName
-      updated_at
-      created_at
-    }
-  }
-}
-    `;
-
-/**
- * __useConferencePrepareJobSubscriptionSubscription__
- *
- * To run a query within a React component, call `useConferencePrepareJobSubscriptionSubscription` and pass it any options that fit your needs.
- * When your component renders, `useConferencePrepareJobSubscriptionSubscription` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useConferencePrepareJobSubscriptionSubscription({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useConferencePrepareJobSubscriptionSubscription(baseOptions: Apollo.SubscriptionHookOptions<ConferencePrepareJobSubscriptionSubscription, ConferencePrepareJobSubscriptionSubscriptionVariables>) {
-        return Apollo.useSubscription<ConferencePrepareJobSubscriptionSubscription, ConferencePrepareJobSubscriptionSubscriptionVariables>(ConferencePrepareJobSubscriptionDocument, baseOptions);
-      }
-export type ConferencePrepareJobSubscriptionSubscriptionHookResult = ReturnType<typeof useConferencePrepareJobSubscriptionSubscription>;
-export type ConferencePrepareJobSubscriptionSubscriptionResult = Apollo.SubscriptionResult<ConferencePrepareJobSubscriptionSubscription>;
 export const SelectAllContentGroupsDocument = gql`
     query SelectAllContentGroups($conferenceId: uuid!) {
   ContentGroup(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -21740,6 +21668,78 @@ export function useUpdatePersonMutation(baseOptions?: Apollo.MutationHookOptions
 export type UpdatePersonMutationHookResult = ReturnType<typeof useUpdatePersonMutation>;
 export type UpdatePersonMutationResult = Apollo.MutationResult<UpdatePersonMutation>;
 export type UpdatePersonMutationOptions = Apollo.BaseMutationOptions<UpdatePersonMutation, UpdatePersonMutationVariables>;
+export const CreateConferencePrepareJobDocument = gql`
+    mutation CreateConferencePrepareJob($conferenceId: uuid!) {
+  insert_ConferencePrepareJob_one(object: {conferenceId: $conferenceId}) {
+    id
+    conferenceId
+  }
+}
+    `;
+export type CreateConferencePrepareJobMutationFn = Apollo.MutationFunction<CreateConferencePrepareJobMutation, CreateConferencePrepareJobMutationVariables>;
+
+/**
+ * __useCreateConferencePrepareJobMutation__
+ *
+ * To run a mutation, you first call `useCreateConferencePrepareJobMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateConferencePrepareJobMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createConferencePrepareJobMutation, { data, loading, error }] = useCreateConferencePrepareJobMutation({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useCreateConferencePrepareJobMutation(baseOptions?: Apollo.MutationHookOptions<CreateConferencePrepareJobMutation, CreateConferencePrepareJobMutationVariables>) {
+        return Apollo.useMutation<CreateConferencePrepareJobMutation, CreateConferencePrepareJobMutationVariables>(CreateConferencePrepareJobDocument, baseOptions);
+      }
+export type CreateConferencePrepareJobMutationHookResult = ReturnType<typeof useCreateConferencePrepareJobMutation>;
+export type CreateConferencePrepareJobMutationResult = Apollo.MutationResult<CreateConferencePrepareJobMutation>;
+export type CreateConferencePrepareJobMutationOptions = Apollo.BaseMutationOptions<CreateConferencePrepareJobMutation, CreateConferencePrepareJobMutationVariables>;
+export const ConferencePrepareJobSubscriptionDocument = gql`
+    subscription ConferencePrepareJobSubscription($conferenceId: uuid!) {
+  ConferencePrepareJob(where: {conferenceId: {_eq: $conferenceId}}) {
+    id
+    jobStatusName
+    message
+    updatedAt
+    createdAt
+    videoRenderJobs {
+      id
+      jobStatusName
+      updated_at
+      created_at
+    }
+  }
+}
+    `;
+
+/**
+ * __useConferencePrepareJobSubscriptionSubscription__
+ *
+ * To run a query within a React component, call `useConferencePrepareJobSubscriptionSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useConferencePrepareJobSubscriptionSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useConferencePrepareJobSubscriptionSubscription({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useConferencePrepareJobSubscriptionSubscription(baseOptions: Apollo.SubscriptionHookOptions<ConferencePrepareJobSubscriptionSubscription, ConferencePrepareJobSubscriptionSubscriptionVariables>) {
+        return Apollo.useSubscription<ConferencePrepareJobSubscriptionSubscription, ConferencePrepareJobSubscriptionSubscriptionVariables>(ConferencePrepareJobSubscriptionDocument, baseOptions);
+      }
+export type ConferencePrepareJobSubscriptionSubscriptionHookResult = ReturnType<typeof useConferencePrepareJobSubscriptionSubscription>;
+export type ConferencePrepareJobSubscriptionSubscriptionResult = Apollo.SubscriptionResult<ConferencePrepareJobSubscriptionSubscription>;
 export const SelectAllGroupsDocument = gql`
     query SelectAllGroups($conferenceId: uuid!) {
   Group(where: {conferenceId: {_eq: $conferenceId}}) {

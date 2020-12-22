@@ -1,16 +1,8 @@
 import React from "react";
 import { Redirect } from "react-router-dom";
-import UseInviteOrCreateView from "../../Conference/UseInviteOrCreateView";
-import { useNoPrimaryMenuButtons } from "../../Menu/usePrimaryMenuButtons";
 import { getCachedInviteCode } from "../NewUser/InviteCodeLocalStorage";
 import ListConferencesView from "./ListConferencesView";
 import useCurrentUser from "./useCurrentUser";
-
-function UseInviteCodeOrCreatePage(): JSX.Element {
-    useNoPrimaryMenuButtons();
-
-    return <UseInviteOrCreateView />;
-}
 
 export default function CurrentUserPage(): JSX.Element {
     const inviteCode = getCachedInviteCode();

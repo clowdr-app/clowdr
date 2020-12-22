@@ -1,13 +1,15 @@
-name: Services/Actions Tests
-on: [push, pull_request]
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install modules
-        run: npm i
-        working-directory: ./services/actions
-      - name: Run tests
-        run: npm test
-        working-directory: ./services/actions
+# TODO: Re-enable this at some point
+#
+# name: Services/Actions Tests
+# on: [push, pull_request]
+# jobs:
+#   test:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v2
+#       - name: Install modules
+#         run: npm i
+#         working-directory: ./services/actions
+#       - name: Run tests
+#         run: npm test
+#         working-directory: ./services/actions

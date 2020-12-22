@@ -1,10 +1,11 @@
+import { gql } from "@apollo/client";
 import { Center, Container, Heading, Spinner, Text, VStack } from "@chakra-ui/react";
 import "@uppy/core/dist/style.css";
 import "@uppy/progress-bar/dist/style.css";
-import gql from "graphql-tag";
 import React, { useMemo } from "react";
 import { ContentType_Enum, useGetUploadAgreementQuery, useSelectRequiredItemQuery } from "../../generated/graphql";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
+import { useNoPrimaryMenuButtons } from "../Menu/usePrimaryMenuButtons";
 import UploadedContentItem from "./UploadedContentItem";
 import UploadFileForm from "./UploadFileForm";
 import UploadLinkForm from "./UploadLinkForm";
@@ -49,6 +50,8 @@ export default function SubmitItemPage({
     magicToken: string;
     requiredContentItemId: string;
 }): JSX.Element {
+    useNoPrimaryMenuButtons();
+
     const { loading, error, data } = useSelectRequiredItemQuery({
         fetchPolicy: "network-only",
         context: {

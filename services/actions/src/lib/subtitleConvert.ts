@@ -38,8 +38,9 @@ function toTimeCode(totalSeconds: number): string {
     const hours = Math.floor(totalSeconds / 3600);
     const minuteSeconds = totalSeconds - hours * 3600;
     const minutes = Math.floor(minuteSeconds / 60);
-    const seconds = minuteSeconds - minutes * 60;
-    const millis = (seconds % 1) * 1000;
+    const secondSeconds = minuteSeconds - minutes * 60;
+    const seconds = Math.floor(secondSeconds);
+    const millis = (secondSeconds - seconds) * 1000;
 
     const hoursPart = d3.format("02d")(hours);
     const minutesPart = d3.format("02d")(minutes);
@@ -72,6 +73,22 @@ interface Phrase {
     endedAt: number;
 }
 
+function phraseLength(phrase: Phrase): number {
+    return phrase.items.length + phrase.items.map(itemLength).reduce((acc, val) => acc + val, 0);
+}
+
+function itemLength(item: Item): number {
+    if (item.type === "pronunciation") {
+        if (item.alternatives.length > 0) {
+            return item.alternatives[0].content.length;
+        } else {
+            return 0;
+        }
+    } else {
+        return 1;
+    }
+}
+
 function getPhrases(awsTranscribeJson: AmazonTranscribeOutput): Phrase[] {
     let currentPhrase: Phrase = {
         items: [],
@@ -83,7 +100,8 @@ function getPhrases(awsTranscribeJson: AmazonTranscribeOutput): Phrase[] {
     for (const item of awsTranscribeJson.results.items) {
         if (
             item.type === "pronunciation" &&
-            (currentPhrase.endedAt - currentPhrase.startedAt > 5 || currentPhrase.items.length > 10)
+            (currentPhrase.endedAt - currentPhrase.startedAt > 5 ||
+                phraseLength(currentPhrase) + itemLength(item) >= 32)
         ) {
             phrases.push(currentPhrase);
             currentPhrase = {

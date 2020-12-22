@@ -1,4 +1,5 @@
 import {
+    Box,
     Button,
     ButtonGroup,
     Checkbox,
@@ -649,6 +650,7 @@ function CRUDCell({
     colIdx,
     isDisabled,
     isSelected,
+    minW = 200,
 }: {
     rowKey: string;
     columnKey: string;
@@ -659,6 +661,7 @@ function CRUDCell({
     isSelected?: boolean;
     isHighlighted?: boolean; // TODO: Apply isHighlighted
     inEditingMode?: boolean;
+    minW?: number;
 }): JSX.Element {
     const selectionBgColor = useColorModeValue("purple.50", "purple.900");
     const selectionTextColor = useColorModeValue("black", "white");
@@ -680,6 +683,7 @@ function CRUDCell({
             display="flex"
             justifyContent="center"
             alignItems="center"
+            minW={minW}
         >
             {children}
         </GridItem>
@@ -805,6 +809,7 @@ function CRUDRow<S, T, PK extends keyof S>({
                 colIdx={visibleFields.length}
                 isSelected={isSelected}
                 isHighlighted={isHighlighted}
+                minW={50}
             >
                 <Button
                     colorScheme="red"
@@ -1283,6 +1288,7 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
                     columnKey={"<<<###filter-title###>>>"}
                     rowIdx={rowIdx}
                     colIdx={-1}
+                    minW={50}
                 >
                     <Text as="span" fontStyle="italic">
                         Filters
@@ -1326,6 +1332,7 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
                         columnKey="<<<###delete###>>>"
                         rowIdx={rowIdx}
                         colIdx={visibleFields.length}
+                        minW={50}
                     >
                         <></>
                     </CRUDCell>
@@ -1355,6 +1362,7 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
                                 columnKey={"selection"}
                                 rowIdx={resultRowEls.length}
                                 colIdx={-1}
+                                minW={50}
                             >
                                 <CRUDSelectionBox
                                     item={item}
@@ -1389,6 +1397,7 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
                                     columnKey={"selection"}
                                     rowIdx={resultRowEls.length}
                                     colIdx={-1}
+                                    minW={50}
                                 >
                                     <CRUDSelectionBox
                                         item={item}
@@ -1495,7 +1504,7 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
                 <UnsavedChangesWarning hasUnsavedChanges={dirtyKeys.size > 0} />
             ) : undefined}
             <VStack width="100%">
-                <ButtonGroup justify="start" width="100%">
+                <ButtonGroup justify="start" width="100%" flexWrap="wrap">
                     {isBatchEditMode ? (
                         <Button
                             colorScheme="green"
@@ -1595,12 +1604,8 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
                                     isDisabledBecauseDirty ? button.tooltipWhenDisabled : button.tooltipWhenEnabled
                                 }
                             >
-                                <div
-                                    style={{
-                                        marginLeft: idx === 0 ? "auto" : undefined,
-                                        width: "auto",
-                                    }}
-                                >
+                                {/* This additional box is necessary otherwise the tooltip doesn't show on a disabled button */}
+                                <Box style={{ marginLeft: "auto" }}>
                                     <Button
                                         aria-label={button.label}
                                         isDisabled={isDisabled}
@@ -1612,7 +1617,7 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
                                         {button.isRunning ? <Spinner /> : undefined}
                                         {button.text}
                                     </Button>
-                                </div>
+                                </Box>
                             </Tooltip>
                         );
                     })}
@@ -1625,6 +1630,7 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
                             columnKey={"selection"}
                             rowIdx={-2}
                             colIdx={-1}
+                            minW={50}
                         >
                             <Text as="span" wordBreak="keep-all" whiteSpace="nowrap">
                                 ({rowEls.length} row
@@ -1642,6 +1648,7 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
                             columnKey={"delete"}
                             rowIdx={-2}
                             colIdx={visibleFields.length}
+                            minW={50}
                         >
                             <></>
                         </CRUDCell>

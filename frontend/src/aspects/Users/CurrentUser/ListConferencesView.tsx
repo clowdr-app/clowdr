@@ -1,6 +1,5 @@
 import { SettingsIcon, ViewIcon } from "@chakra-ui/icons";
 import {
-    Button,
     ComponentWithAs,
     Heading,
     Icon,
@@ -17,42 +16,26 @@ import {
 import React, { useEffect, useMemo } from "react";
 import { AttendeeFieldsFragment, Permission_Enum } from "../../../generated/graphql";
 import LinkButton from "../../Chakra/LinkButton";
+import UseInviteOrCreateView from "../../Conference/UseInviteOrCreateView";
 import usePrimaryMenuButtons from "../../Menu/usePrimaryMenuButtons";
 import useCurrentUser from "./useCurrentUser";
-import UseInviteOrCreateView from "./UseInviteOrCreateView";
 
 export default function ListConferencesView(): JSX.Element {
     const { isOpen: shouldShowUseInvite, onOpen: showUseInvite, onClose: hideUseInvite } = useDisclosure();
     const { setPrimaryMenuButtons } = usePrimaryMenuButtons();
     useEffect(() => {
-        setPrimaryMenuButtons([
-            !shouldShowUseInvite
-                ? {
-                      action: showUseInvite,
-                      key: "list-conferences:show-use-invite",
-                      label: "Use invite code",
-                      text: "Use invite code",
-                      colorScheme: "blue",
-                  }
-                : {
-                      action: hideUseInvite,
-                      key: "list-conferences:hide-use-invite",
-                      label: "My conferences",
-                      text: "My conferences",
-                      colorScheme: "blue",
-                  },
-            ...(shouldShowUseInvite
-                ? []
-                : [
+        setPrimaryMenuButtons(
+            shouldShowUseInvite
+                ? [
                       {
-                          action: showUseInvite,
-                          key: "list-conferences:create-conference",
-                          label: "Create a conference",
-                          text: "Create a conference",
-                          colorScheme: "green",
+                          action: hideUseInvite,
+                          key: "list-conferences:hide-use-invite",
+                          label: "My conferences",
+                          text: "My conferences",
                       },
-                  ]),
-        ]);
+                  ]
+                : []
+        );
     }, [hideUseInvite, setPrimaryMenuButtons, shouldShowUseInvite, showUseInvite]);
 
     const { user } = useCurrentUser();
@@ -140,9 +123,9 @@ export default function ListConferencesView(): JSX.Element {
             {renderConferenceList(
                 ViewIcon,
                 attending,
-                <Button colorScheme="blue" onClick={showUseInvite} marginRight={0}>
+                <LinkButton to="/conference/joinOrCreate" colorScheme="blue" onClick={showUseInvite} marginRight={0}>
                     Use invite code
-                </Button>,
+                </LinkButton>,
                 ""
             )}
         </VStack>
@@ -159,9 +142,9 @@ export default function ListConferencesView(): JSX.Element {
             {renderConferenceList(
                 SettingsIcon,
                 organising,
-                <Button colorScheme="green" onClick={showUseInvite} marginRight={0}>
+                <LinkButton to="/conference/joinOrCreate" colorScheme="green" onClick={showUseInvite} marginRight={0}>
                     Create a conference
-                </Button>,
+                </LinkButton>,
                 "manage"
             )}
         </VStack>

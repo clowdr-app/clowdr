@@ -21,9 +21,7 @@ export default function LinkButton(props: LinkButtonProps): JSX.Element {
             display="inline-block"
             {...linkProps}
         >
-            <Button {...remaining}>
-                {children}
-            </Button>
+            <Button {...remaining}>{children}</Button>
         </Link>
     );
 }

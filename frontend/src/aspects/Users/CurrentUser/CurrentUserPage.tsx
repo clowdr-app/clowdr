@@ -1,10 +1,10 @@
 import React from "react";
 import { Redirect } from "react-router-dom";
+import UseInviteOrCreateView from "../../Conference/UseInviteOrCreateView";
 import { useNoPrimaryMenuButtons } from "../../Menu/usePrimaryMenuButtons";
 import { getCachedInviteCode } from "../NewUser/InviteCodeLocalStorage";
 import ListConferencesView from "./ListConferencesView";
 import useCurrentUser from "./useCurrentUser";
-import UseInviteOrCreateView from "./UseInviteOrCreateView";
 
 function UseInviteCodeOrCreatePage(): JSX.Element {
     useNoPrimaryMenuButtons();
@@ -23,6 +23,6 @@ export default function CurrentUserPage(): JSX.Element {
     if (user.attendees.length > 0) {
         return <ListConferencesView />;
     } else {
-        return <UseInviteCodeOrCreatePage />;
+        return <Redirect to="/conference/joinOrCreate" />;
     }
 }

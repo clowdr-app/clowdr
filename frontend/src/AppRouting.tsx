@@ -5,6 +5,7 @@ import EmailVerificationRequiredPage from "./aspects/Auth/EmailVerificationRequi
 import LoggedOutPage from "./aspects/Auth/LoggedOutPage";
 import ProtectedRoute from "./aspects/Auth/ProtectedRoute";
 import ConferenceRoutes from "./aspects/Conference/ConferenceRoutes";
+import UseInviteOrCreateView from "./aspects/Conference/UseInviteOrCreateView";
 import SubmitItemPage from "./aspects/Content/SubmitItemPage";
 import CRUDTestPage from "./aspects/CRUDTable/CRUDTestPage";
 import GenericErrorPage from "./aspects/Errors/GenericErrorPage";
@@ -74,6 +75,10 @@ export default function Routing(): JSX.Element {
             <Route exact path="/invitation/accept" component={AcceptInvitationPage} />
 
             <Route exact path="/crud/test" component={CRUDTestPage} />
+
+            <Route exact path="/conference/joinOrCreate">
+                <UseInviteOrCreateView />
+            </Route>
 
             <Route
                 path="/conference/:confSlug"

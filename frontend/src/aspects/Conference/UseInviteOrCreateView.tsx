@@ -1,7 +1,7 @@
 import { Heading, Stack, StackDivider, useColorModeValue, VStack } from "@chakra-ui/react";
 import React from "react";
-import NewConferenceForm from "../../Conference/NewConferenceForm";
-import InviteCodeInput from "../NewUser/InviteCodeInput";
+import InviteCodeInput from "../Users/NewUser/InviteCodeInput";
+import NewConferenceForm from "./NewConferenceForm";
 
 export default function UseInviteOrCreateView(): JSX.Element {
     const useInviteEl = (

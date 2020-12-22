@@ -36,7 +36,6 @@ export default function RestrictedDashboardButton({
                 }}
                 colorScheme={colorScheme ?? "blue"}
                 flexDirection="column"
-
                 justifyContent="center"
                 alignItems="center"
                 display="inline-flex"

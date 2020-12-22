@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { useSelectAllContentGroupsQuery } from "../../../../../generated/graphql";
 import useQueryErrorToast from "../../../../GQL/useQueryErrorToast";
 import { useConference } from "../../../useConference";
-import { convertContentGroupsToDescriptors } from "../../Content/Types";
+import { convertContentGroupsToDescriptors } from "../../Content/Functions";
 
 export default function ReviewPanel(): JSX.Element {
     const conference = useConference();

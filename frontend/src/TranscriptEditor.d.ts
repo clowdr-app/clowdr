@@ -13,10 +13,8 @@ interface TranscriptEditorProps {
     mediaType?: "video" | string;
 }
 
-type TranscriptEditorT = (props: React.PropsWithoutRef<TranscriptEditorProps>) => JSX.Element;
+export type TranscriptEditorT = (props: React.PropsWithoutRef<TranscriptEditorProps>) => JSX.Element;
 
-declare const module: {
-    default: TranscriptEditorT;
-};
+declare const Editor: TranscriptEditorT;
 
-export default module;
+export default Editor;

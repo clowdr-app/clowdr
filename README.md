@@ -71,6 +71,7 @@ considered for merging._**
 Now, configure the application in the _Settings_ tab.
 
 1. Configure `Allowed Callback URLs` (comma-separated)
+   (The format/suffix of these urls should not be altered.)
 
    For example, you should include `localhost` and optionally your Netlify app url(s), if you have set up Netlify:
 
@@ -78,11 +79,14 @@ Now, configure the application in the _Settings_ tab.
    - `https://<netlify-subdomain>.netlify.app/auth0/logged-in`
 
 1. Configure `Allowed Logout URLs` (comma-separated)
+   (The format/suffix of these urls should not be altered.)
 
    E.g.
 
    - `http://localhost:3000/auth0/logged-out`
+   - `http://localhost:3000/auth0/email-verification-required/no-redirect`
    - `https://<netlify-subdomain>.netlify.app/auth0/logged-out`
+   - `https://<netlify-subdomain>.netlify.app/auth0/email-verification-required/no-redirect`
 
 1. Configure `Allowed Web Origins` (comma-separated)
 

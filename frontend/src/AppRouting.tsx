@@ -1,6 +1,7 @@
 import { Text } from "@chakra-ui/react";
 import React from "react";
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
+import EmailVerificationRequiredPage from "./aspects/Auth/EmailVerificationRequiredPage";
 import LoggedOutPage from "./aspects/Auth/LoggedOutPage";
 import ProtectedRoute from "./aspects/Auth/ProtectedRoute";
 import ConferenceRoutes from "./aspects/Conference/ConferenceRoutes";
@@ -16,17 +17,8 @@ import NewUserLandingPage from "./aspects/Users/NewUser/LandingPage";
 export default function Routing(): JSX.Element {
     return (
         <Switch>
-            <Route exact path="/auth0/email-verification-required">
-                <GenericErrorPage heading="Please verify your email">
-                    <Text fontSize="xl" lineHeight="revert" fontWeight="light" maxW={600}>
-                        Before you can login you must verify your email address.{" "}
-                        <b>
-                            You should have received an email from&nbsp;
-                            <i>no-reply@auth0user.net</i>
-                        </b>
-                        &nbsp;with your verification link. After verifying your email, please log in again.
-                    </Text>
-                </GenericErrorPage>
+            <Route exact path="/auth0/email-verification-required/:noRedirect?">
+                {(props) => <EmailVerificationRequiredPage noRedirect={props.match?.params.noRedirect ?? false} />}
             </Route>
             <Route
                 path="/auth0/logged-in"

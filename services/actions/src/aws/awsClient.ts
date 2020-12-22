@@ -30,6 +30,10 @@ assert(
     process.env.AWS_TRANSCRIBE_NOTIFICATIONS_TOPIC_ARN,
     "Missing AWS_TRANSCRIBE_NOTIFICATIONS_TOPIC_ARN environment variable"
 );
+assert(
+    process.env.AWS_ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN,
+    "Missing AWS_ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN environment variable"
+);
 
 const credentials = fromEnv();
 const region = process.env.AWS_REGION;
@@ -103,7 +107,7 @@ async function initialiseAwsClient(): Promise<void> {
 
     // Subscribe to transcode SNS topic
     const transcodeNotificationUrl = new URL(getHostUrl());
-    transcodeNotificationUrl.pathname = "/contentItem/notifyTranscode";
+    transcodeNotificationUrl.pathname = "/mediaConvert/notify";
 
     console.log("Subscribing to SNS topic: transcode notifications");
     const transcodeSubscribeResult = await sns.subscribe({
@@ -119,7 +123,7 @@ async function initialiseAwsClient(): Promise<void> {
 
     // Subscribe to transcribe SNS topic
     const transcribeNotificationUrl = new URL(getHostUrl());
-    transcribeNotificationUrl.pathname = "/contentItem/notifyTranscribe";
+    transcribeNotificationUrl.pathname = "/amazonTranscribe/notify";
 
     console.log("Subscribing to SNS topic: transcribe notifications");
     const transcribeSubscribeResult = await sns.subscribe({
@@ -131,6 +135,22 @@ async function initialiseAwsClient(): Promise<void> {
 
     if (!transcribeSubscribeResult.SubscriptionArn) {
         throw new Error("Could not subscribe to transcribe notifications");
+    }
+
+    // Subscribe to Elastic Transcoder SNS topic
+    const elasticTranscoderNotificationUrl = new URL(getHostUrl());
+    elasticTranscoderNotificationUrl.pathname = "/elasticTranscoder/notify";
+
+    console.log("Subscribing to SNS topic: Elastic Transcoder notifications");
+    const elasticTranscoderSubscribeResult = await sns.subscribe({
+        Protocol: "https",
+        TopicArn: process.env.AWS_ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN,
+        Endpoint: elasticTranscoderNotificationUrl.toString(),
+    });
+    console.log("Subscribed to SNS topic: Elastic Transcoder notifications");
+
+    if (!elasticTranscoderSubscribeResult.SubscriptionArn) {
+        throw new Error("Could not subscribe to Elastic Transcoder notifications");
     }
 }
 

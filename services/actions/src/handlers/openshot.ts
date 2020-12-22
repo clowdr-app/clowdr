@@ -99,7 +99,7 @@ export async function handleOpenShotExportNotification(
                     console.warn("No corresponding content item found for video render job", videoRenderJobId);
                 }
             } else {
-                console.log("Received broadcast transcode result for expired job", videoRenderJobId);
+                console.log("Received title video generation result for expired job", videoRenderJobId);
             }
 
             console.log("Marking title video rendering job complete", videoRenderJobId);

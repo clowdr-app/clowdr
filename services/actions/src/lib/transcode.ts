@@ -134,10 +134,10 @@ export async function startElasticBroadcastTranscode(
             Role: process.env.AWS_ELASTIC_TRANSCODER_SERVICE_ROLE_ARN,
             OutputBucket: process.env.AWS_CONTENT_BUCKET_ID,
             Notifications: {
-                Completed: process.env.AWS_TRANSCODE_NOTIFICATIONS_TOPIC_ARN,
-                Error: process.env.AWS_TRANSCODE_NOTIFICATIONS_TOPIC_ARN,
-                Progressing: process.env.AWS_TRANSCODE_NOTIFICATIONS_TOPIC_ARN,
-                Warning: process.env.AWS_TRANSCODE_NOTIFICATIONS_TOPIC_ARN,
+                Completed: process.env.AWS_ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN,
+                Error: process.env.AWS_ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN,
+                Progressing: process.env.AWS_ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN,
+                Warning: process.env.AWS_ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN,
             },
         });
         pipeline = output.Pipeline;
@@ -200,6 +200,7 @@ export async function startElasticBroadcastTranscode(
         },
         UserMetadata: {
             videoRenderJobId,
+            bucket: process.env.AWS_CONTENT_BUCKET_ID,
         },
     });
 

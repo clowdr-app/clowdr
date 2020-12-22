@@ -5,6 +5,7 @@ import NewConferenceForm from "../../Conference/NewConferenceForm";
 import { useNoPrimaryMenuButtons } from "../../Menu/usePrimaryMenuButtons";
 import InviteCodeInput from "../NewUser/InviteCodeInput";
 import { getCachedInviteCode } from "../NewUser/InviteCodeLocalStorage";
+import useCurrentUser from "./useCurrentUser";
 
 function NoConferencesView(): JSX.Element {
     const useInviteEl = (
@@ -51,6 +52,7 @@ export default function CurrentUserPage(): JSX.Element {
     useNoPrimaryMenuButtons();
 
     const inviteCode = getCachedInviteCode();
+    const { user } = useCurrentUser();
 
     if (inviteCode) {
         return <Redirect to={`/invitation/accept/${inviteCode}`} />;

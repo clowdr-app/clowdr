@@ -100,7 +100,7 @@ export default function AcceptInvitationPage(props: Props): JSX.Element {
         }
     }, [props.inviteCode]);
 
-    const user = useMaybeCurrentUser();
+    const { user, loading: isUserLoading } = useMaybeCurrentUser();
 
     const { loading, error, data } = useSelectInvitationForAcceptQuery({
         context: {
@@ -118,8 +118,8 @@ export default function AcceptInvitationPage(props: Props): JSX.Element {
     const [hashOK, setHashOK] = useState<boolean>();
     useEffect(() => {
         (async () => {
-            if (inviteCode && user.user && data?.Invitation) {
-                const email = user.user.User[0].email;
+            if (inviteCode && user && data?.Invitation) {
+                const email = user.email;
                 assert(email);
                 const hashToCheck = await digest(inviteCode, email);
                 if (hashToCheck === data.Invitation[0].hash) {
@@ -129,7 +129,7 @@ export default function AcceptInvitationPage(props: Props): JSX.Element {
                 }
             }
         })();
-    }, [data?.Invitation, inviteCode, user.user]);
+    }, [data?.Invitation, inviteCode, user]);
 
     const [confirmCurrentMutation] = useInvitation_ConfirmCurrentMutation();
     const [confirmWithCodeMutation] = useInvitation_ConfirmWithCodeMutation();
@@ -139,7 +139,7 @@ export default function AcceptInvitationPage(props: Props): JSX.Element {
     const [confirmedConfSlug, setConfirmedConfSlug] = useState<string>();
     useEffect(() => {
         (async () => {
-            if (user.user && !error && data) {
+            if (user && !error && data) {
                 if (hashOK) {
                     const result = await confirmCurrentMutation({
                         variables: {
@@ -175,7 +175,7 @@ export default function AcceptInvitationPage(props: Props): JSX.Element {
                 }
             }
         })();
-    }, [confirmCurrentMutation, data, error, hashOK, inviteCode, sendInitialEmailMutation, toast, user.user]);
+    }, [confirmCurrentMutation, data, error, hashOK, inviteCode, sendInitialEmailMutation, toast, user]);
 
     const history = useHistory();
     useEffect(() => {
@@ -189,11 +189,11 @@ export default function AcceptInvitationPage(props: Props): JSX.Element {
         return <Redirect to="/" />;
     }
 
-    if (loading || user.loading) {
+    if (loading || isUserLoading) {
         return <Spinner />;
     }
 
-    if (user.user) {
+    if (user) {
         if (error || !data) {
             return (
                 <PageFailedToLoad>
@@ -248,7 +248,7 @@ export default function AcceptInvitationPage(props: Props): JSX.Element {
                             </Heading>
                             <Text maxW={800}>
                                 Since you are using a different email address to log into Clowdr (
-                                {user.user.User[0].email}) from the email address your invitation was sent to, we just
+                                {user.email}) from the email address your invitation was sent to, we just
                                 need to confirm who you are.
                             </Text>
                             <Text maxW={800}>

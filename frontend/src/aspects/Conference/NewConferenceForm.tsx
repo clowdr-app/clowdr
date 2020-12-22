@@ -258,7 +258,7 @@ export default function NewConferenceForm(): JSX.Element {
     const toast = useToast();
     const apolloClient = useApolloClient();
     const history = useHistory();
-    const user = useCurrentUser();
+    const { user } = useCurrentUser();
 
     const [createConferenceMutation] = useCreateConferenceMutation();
     const [createNewConferenceMetaStructureMutation] = useCreateNewConferenceMetaStructureMutation();
@@ -339,8 +339,8 @@ export default function NewConferenceForm(): JSX.Element {
                             await createNewConferenceMetaStructureMutation({
                                 variables: {
                                     conferenceId,
-                                    attendeeDisplayName: `${user.user.User[0].firstName} ${user.user.User[0].lastName}`,
-                                    userId: user.user.User[0].id,
+                                    attendeeDisplayName: `${user.firstName} ${user.lastName}`,
+                                    userId: user.id,
                                 },
                             });
 

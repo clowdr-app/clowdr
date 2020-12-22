@@ -13,7 +13,7 @@ export default function ProtectedRoute({
     component: RouteComponentProps<any> | ComponentType<any>;
 } & RouteProps): JSX.Element {
     const { isAuthenticated, error } = useAuth0();
-    const user = useMaybeCurrentUser();
+    const { user } = useMaybeCurrentUser();
 
     if (error) {
         return <Route {...args} component={() => <Redirect to="/" />} />;
@@ -23,7 +23,7 @@ export default function ProtectedRoute({
         return altIfNotAuthed;
     }
 
-    if (isAuthenticated && !user.user) {
+    if (isAuthenticated && !user) {
         return <Spinner />;
     }
 

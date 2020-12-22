@@ -68,7 +68,7 @@ function CurrentUserProvider_IsAuthenticated({
         <CurrentUserContext.Provider
             value={{
                 loading,
-                user: value,
+                user: value ? value?.User[0] ?? false : value,
                 refetchUser: refetch,
             }}
         >

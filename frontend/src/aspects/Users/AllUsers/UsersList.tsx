@@ -12,7 +12,7 @@ export default function UsersList(): JSX.Element {
     const column = useMemo(() => {
         const users = _users &&
             currentUser && {
-                User: _users?.User.filter((x) => x.id !== currentUser.User[0].id),
+                User: _users?.User.filter((x) => x.id !== currentUser.id),
             };
 
         if (users === undefined) {

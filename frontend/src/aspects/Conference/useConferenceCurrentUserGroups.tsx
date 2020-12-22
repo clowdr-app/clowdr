@@ -70,12 +70,12 @@ export default function CurrentUserGroupsRolesPermissionsProvider({
     children: string | JSX.Element | JSX.Element[];
 }): JSX.Element {
     const conference = useConference();
-    const user = useCurrentUser();
+    const { user } = useCurrentUser();
     const { loading, error, data } = useCurrentUserGroupsRolesPermissionsQuery({
         fetchPolicy: "cache-and-network",
         variables: {
             conferenceId: conference.id,
-            userId: user.user.User[0].id,
+            userId: user.id,
         },
     });
 

@@ -3,7 +3,7 @@ require("dotenv").config();
 module.exports = {
     schema: [
         {
-            [`http${process.env.GRAPHQL_API_SECURE_PROTOCOLS ? "s" : ""}://${
+            [`http${process.env.GRAPHQL_API_SECURE_PROTOCOLS === "true" ? "s" : ""}://${
                 process.env.GRAPHQL_API_DOMAIN
             }/v1/graphql`]: {
                 headers: {

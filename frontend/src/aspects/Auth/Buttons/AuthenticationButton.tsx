@@ -3,7 +3,7 @@ import React from "react";
 import LoginButton from "./LoginButton";
 import LogoutButton from "./LogoutButton";
 
-export default function AuthenticationButton() {
+export default function AuthenticationButton(): JSX.Element {
     const { isAuthenticated } = useAuth0();
 
     return isAuthenticated ? <LogoutButton /> : <LoginButton />;

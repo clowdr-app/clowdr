@@ -37,11 +37,6 @@ const theme = extendTheme({
         body: {
             bgColor: "black",
         },
-        Button: {
-            baseStyle: {
-                margin: "0.3em",
-            },
-        },
         Heading: {
             baseStyle: {
                 textAlign: "center",

@@ -1,15 +1,11 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { Heading, Link, Text } from "@chakra-ui/react";
+import { Heading, Text } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 import LinkButton from "../Chakra/LinkButton";
 import FAIcon from "../Icons/FAIcon";
 import { useNoPrimaryMenuButtons } from "../Menu/usePrimaryMenuButtons";
 
-export default function EmailVerificationRequiredPage({
-    noRedirect
-}: {
-    noRedirect: boolean;
-}): JSX.Element {
+export default function EmailVerificationRequiredPage({ noRedirect }: { noRedirect: boolean }): JSX.Element {
     const { logout } = useAuth0();
 
     useNoPrimaryMenuButtons();
@@ -17,9 +13,10 @@ export default function EmailVerificationRequiredPage({
     useEffect(() => {
         if (!noRedirect) {
             let returnTo = import.meta.env.SNOWPACK_PUBLIC_AUTH_LOGOUT_CALLBACK_URL;
-            returnTo = returnTo.substr(0, returnTo.length - "logged-out".length) + "email-verification-required/no-redirect";
+            returnTo =
+                returnTo.substr(0, returnTo.length - "logged-out".length) + "email-verification-required/no-redirect";
             logout({
-                returnTo
+                returnTo,
             });
         }
     }, [logout, noRedirect]);

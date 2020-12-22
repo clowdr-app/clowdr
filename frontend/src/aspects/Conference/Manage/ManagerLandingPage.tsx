@@ -1,20 +1,24 @@
 import { Flex, Heading } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect } from "react";
 import { Permission_Enum } from "../../../generated/graphql";
-import { useNoPrimaryMenuButtons, usePrimaryMenuButton } from "../../Menu/usePrimaryMenuButtons";
+import usePrimaryMenuButtons from "../../Menu/usePrimaryMenuButtons";
 import { useConference } from "../useConference";
 import RestrictedDashboardButton from "./RestrictedDashboardButton";
 
 export default function ManagerLandingPage(): JSX.Element {
     const conference = useConference();
 
-    useNoPrimaryMenuButtons();
-    usePrimaryMenuButton({
-        key: `view-conference-${conference.slug}`,
-        action: `/conference/${conference.slug}`,
-        label: "View conference",
-        text: "View conference",
-    });
+    const { setPrimaryMenuButtons } = usePrimaryMenuButtons();
+    useEffect(() => {
+        setPrimaryMenuButtons([
+            {
+                key: `view-conference-${conference.slug}`,
+                action: `/conference/${conference.slug}`,
+                label: "View conference",
+                text: "View conference",
+            },
+        ]);
+    }, [conference.slug, setPrimaryMenuButtons]);
 
     return (
         <>

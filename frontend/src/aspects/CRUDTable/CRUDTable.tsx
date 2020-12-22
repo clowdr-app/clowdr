@@ -1,7 +1,5 @@
 import {
-    Box,
     Button,
-    ButtonGroup,
     Checkbox,
     Drawer,
     DrawerBody,
@@ -26,6 +24,7 @@ import {
     ModalHeader,
     ModalOverlay,
     Spinner,
+    Stack,
     Switch,
     Text,
     Tooltip,
@@ -1504,7 +1503,14 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
                 <UnsavedChangesWarning hasUnsavedChanges={dirtyKeys.size > 0} />
             ) : undefined}
             <VStack width="100%">
-                <ButtonGroup justify="start" width="100%" flexWrap="wrap">
+                <Stack
+                    direction={["column", "row"]}
+                    justify="start"
+                    align={["stretch", "start"]}
+                    width="100%"
+                    flexWrap="wrap"
+                    gridRowGap={[0, 2]}
+                >
                     {isBatchEditMode ? (
                         <Button
                             colorScheme="green"
@@ -1587,6 +1593,7 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
                                 setSelectedKeys(visibleKeys);
                             }
                         }}
+                        marginRight={[0, "auto"]}
                     >
                         {selectedKeys.size > 0 ? "Deselect all" : "Select all"}
                     </Button>
@@ -1605,7 +1612,7 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
                                 }
                             >
                                 {/* This additional box is necessary otherwise the tooltip doesn't show on a disabled button */}
-                                <Box style={{ marginLeft: "auto" }}>
+                                <VStack align={["stretch", "start"]}>
                                     <Button
                                         aria-label={button.label}
                                         isDisabled={isDisabled}
@@ -1617,11 +1624,11 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
                                         {button.isRunning ? <Spinner /> : undefined}
                                         {button.text}
                                     </Button>
-                                </Box>
+                                </VStack>
                             </Tooltip>
                         );
                     })}
-                </ButtonGroup>
+                </Stack>
                 <Grid width="100%" overflowX="auto" templateColumns={templateColumnsStr}>
                     {includeSelectorColumn ? (
                         <CRUDCell

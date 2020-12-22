@@ -14,18 +14,17 @@ export default function LinkButton(props: LinkButtonProps): JSX.Element {
     return (
         <Link
             as={ReactLink}
-            {...linkProps}
             to={to}
             isExternal={isExternal}
-            margin="0.3rem"
             textDecoration="none !important"
             tabIndex={-1}
+            display="inline-block"
+            {...linkProps}
         >
             <Button
-                justifyContent="start"
+                justifyContent="center"
                 alignItems="center"
                 display="inline-flex"
-                flexDirection="column"
                 width="100%"
                 height="100%"
                 margin={0}

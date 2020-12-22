@@ -247,9 +247,8 @@ export default function AcceptInvitationPage(props: Props): JSX.Element {
                                 Confirmation email
                             </Heading>
                             <Text maxW={800}>
-                                Since you are using a different email address to log into Clowdr (
-                                {user.email}) from the email address your invitation was sent to, we just
-                                need to confirm who you are.
+                                Since you are using a different email address to log into Clowdr ({user.email}) from the
+                                email address your invitation was sent to, we just need to confirm who you are.
                             </Text>
                             <Text maxW={800}>
                                 We have sent a confirmation code to the same email address as your invitation. This may

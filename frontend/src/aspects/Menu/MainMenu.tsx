@@ -1,4 +1,4 @@
-import { Button, Spacer, Stack } from "@chakra-ui/react";
+import { Box, Button, Stack } from "@chakra-ui/react";
 import React from "react";
 import { Route, Switch } from "react-router-dom";
 import AuthenticationButton from "../Auth/Buttons/AuthenticationButton";
@@ -11,10 +11,19 @@ import usePrimaryMenuButtons from "./usePrimaryMenuButtons";
 interface Props {}
 
 export default function MainMenu(_props: Props): JSX.Element {
-    const primaryButtons = usePrimaryMenuButtons();
+    const { buttons: primaryButtons } = usePrimaryMenuButtons();
     return (
         <>
-            <Stack direction="row" spacing="2" justify="start" align="center" wrap="wrap" role="menu" width="100%">
+            <Stack
+                direction={["column", "row"]}
+                spacing={2}
+                justify="start"
+                align={["stretch", "center"]}
+                wrap="wrap"
+                role="menu"
+                width="100%"
+                gridRowGap={[0, 2]}
+            >
                 {primaryButtons.map((button) =>
                     typeof button.action === "string" ? (
                         <LinkButton
@@ -22,6 +31,8 @@ export default function MainMenu(_props: Props): JSX.Element {
                             to={button.action}
                             aria-label={button.label}
                             colorScheme={button.colorScheme}
+                            textAlign="center"
+                            size="sm"
                         >
                             {button.text}
                         </LinkButton>
@@ -31,6 +42,8 @@ export default function MainMenu(_props: Props): JSX.Element {
                             onClick={button.action}
                             aria-label={button.label}
                             colorScheme={button.colorScheme}
+                            textAlign="center"
+                            size="sm"
                         >
                             {button.text}
                         </Button>
@@ -46,10 +59,18 @@ export default function MainMenu(_props: Props): JSX.Element {
                 <Heading as="h1" fontSize="140%" height="auto">
                     Clowdr Chat Demo
                 </Heading>*/}
-                <Spacer />
                 <Switch>
                     <Route exact path="/"></Route>
+                    <Route exact path="/user">
+                        <Box marginRight={[0, "auto"]} display={["none", "block"]} />
+                        <AuthenticationButton />
+                        <SignupButton />
+                    </Route>
                     <Route path="/">
+                        <Box marginRight={[0, "auto"]} display={["none", "block"]} />
+                        <LinkButton to="/user" size="sm">
+                            My Conferences
+                        </LinkButton>
                         <AuthenticationButton />
                         <SignupButton />
                     </Route>

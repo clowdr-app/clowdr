@@ -31,10 +31,11 @@ export default function RestrictedDashboardButton({
                 overflow="hidden"
                 whiteSpace="normal"
                 linkProps={{
-                    maxWidth: "calc(20% - 1rem)",
+                    maxWidth: "20%",
                     minWidth: "300px",
                 }}
                 colorScheme={colorScheme ?? "blue"}
+                flexDirection="column"
             >
                 <Heading as="h2" fontSize="1.5rem" marginBottom="0.5rem">
                     <FAIcon iconStyle="s" icon={icon} />

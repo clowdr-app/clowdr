@@ -6,7 +6,41 @@ import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import { CurrentUserContext, defaultCurrentUserContext } from "./useMaybeCurrentUser";
 
 gql`
-    query selectCurrentUser($userId: String!) {
+    fragment AttendeeFields on Attendee {
+        id
+        userId
+        conferenceId
+        displayName
+        createdAt
+        updatedAt
+        conference {
+            id
+            name
+            shortName
+            slug
+        }
+        groupAttendees {
+            id
+            group {
+                id
+                enabled
+                name
+                groupRoles {
+                    id
+                    role {
+                        id
+                        name
+                        rolePermissions {
+                            id
+                            permissionName
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    query SelectCurrentUser($userId: String!) {
         User(where: { id: { _eq: $userId } }) {
             id
             email
@@ -16,6 +50,9 @@ gql`
                 id
                 lastSeen
                 isIncognito
+            }
+            attendees {
+                ...AttendeeFields
             }
         }
     }

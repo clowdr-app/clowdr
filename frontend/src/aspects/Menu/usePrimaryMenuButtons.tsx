@@ -35,16 +35,13 @@ export function useNoPrimaryMenuButtons(): void {
     }, [setPrimaryMenuButtons]);
 }
 
-export function usePrimaryMenuButton(button: PrimaryMenuButton): void {
-    const [_, setPrimaryMenuButtons] = React.useContext(PrimaryMenuButtonsContext);
-
-    useEffect(() => {
-        setPrimaryMenuButtons((oldButtons) => [...oldButtons.filter((x) => x.key !== button.key), button]);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [button.key, setPrimaryMenuButtons]);
-}
-
-export default function usePrimaryMenuButtons(): PrimaryMenuButtons {
-    const [buttons] = React.useContext(PrimaryMenuButtonsContext);
-    return buttons;
+export default function usePrimaryMenuButtons(): {
+    buttons: PrimaryMenuButtonsContextT[0];
+    setPrimaryMenuButtons: PrimaryMenuButtonsContextT[1];
+} {
+    const [buttons, setPrimaryMenuButtons] = React.useContext(PrimaryMenuButtonsContext);
+    return {
+        buttons,
+        setPrimaryMenuButtons,
+    };
 }

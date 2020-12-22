@@ -20730,12 +20730,17 @@ export type SelectUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type SelectUsersQuery = { readonly __typename?: 'query_root', readonly User: ReadonlyArray<{ readonly __typename?: 'User', readonly id: string, readonly lastName: string, readonly firstName: string, readonly onlineStatus?: Maybe<{ readonly __typename?: 'OnlineStatus', readonly id: any, readonly lastSeen: any, readonly isIncognito: boolean }> }> };
 
+export type AttendeeFieldsFragment = { readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly conferenceId: any, readonly displayName: string, readonly createdAt: any, readonly updatedAt: any, readonly conference: { readonly __typename?: 'Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string }, readonly groupAttendees: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly id: any, readonly group: { readonly __typename?: 'Group', readonly id: any, readonly enabled: boolean, readonly name: string, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly role: { readonly __typename?: 'Role', readonly id: any, readonly name: string, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly id: any, readonly permissionName: Permission_Enum }> } }> } }> };
+
 export type SelectCurrentUserQueryVariables = Exact<{
   userId: Scalars['String'];
 }>;
 
 
-export type SelectCurrentUserQuery = { readonly __typename?: 'query_root', readonly User: ReadonlyArray<{ readonly __typename?: 'User', readonly id: string, readonly email?: Maybe<string>, readonly lastName: string, readonly firstName: string, readonly onlineStatus?: Maybe<{ readonly __typename?: 'OnlineStatus', readonly id: any, readonly lastSeen: any, readonly isIncognito: boolean }> }> };
+export type SelectCurrentUserQuery = { readonly __typename?: 'query_root', readonly User: ReadonlyArray<{ readonly __typename?: 'User', readonly id: string, readonly email?: Maybe<string>, readonly lastName: string, readonly firstName: string, readonly onlineStatus?: Maybe<{ readonly __typename?: 'OnlineStatus', readonly id: any, readonly lastSeen: any, readonly isIncognito: boolean }>, readonly attendees: ReadonlyArray<(
+      { readonly __typename?: 'Attendee' }
+      & AttendeeFieldsFragment
+    )> }> };
 
 export type GetCurrentUserIsIncognitoQueryVariables = Exact<{
   userId: Scalars['String'];
@@ -20925,6 +20930,41 @@ export const RequiredItemFieldsFragmentDoc = gql`
   conference {
     id
     name
+  }
+}
+    `;
+export const AttendeeFieldsFragmentDoc = gql`
+    fragment AttendeeFields on Attendee {
+  id
+  userId
+  conferenceId
+  displayName
+  createdAt
+  updatedAt
+  conference {
+    id
+    name
+    shortName
+    slug
+  }
+  groupAttendees {
+    id
+    group {
+      id
+      enabled
+      name
+      groupRoles {
+        id
+        role {
+          id
+          name
+          rolePermissions {
+            id
+            permissionName
+          }
+        }
+      }
+    }
   }
 }
     `;
@@ -22969,7 +23009,7 @@ export type SelectUsersQueryHookResult = ReturnType<typeof useSelectUsersQuery>;
 export type SelectUsersLazyQueryHookResult = ReturnType<typeof useSelectUsersLazyQuery>;
 export type SelectUsersQueryResult = Apollo.QueryResult<SelectUsersQuery, SelectUsersQueryVariables>;
 export const SelectCurrentUserDocument = gql`
-    query selectCurrentUser($userId: String!) {
+    query SelectCurrentUser($userId: String!) {
   User(where: {id: {_eq: $userId}}) {
     id
     email
@@ -22980,9 +23020,12 @@ export const SelectCurrentUserDocument = gql`
       lastSeen
       isIncognito
     }
+    attendees {
+      ...AttendeeFields
+    }
   }
 }
-    `;
+    ${AttendeeFieldsFragmentDoc}`;
 
 /**
  * __useSelectCurrentUserQuery__

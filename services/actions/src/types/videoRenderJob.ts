@@ -13,5 +13,5 @@ interface BroadcastRenderJobDataBlob {
     type: "BroadcastRenderJob";
     videoS3Url: string;
     subtitlesS3Url?: string;
-    mediaConvertJobId?: string;
+    elasticTranscoderJobId?: string;
 }

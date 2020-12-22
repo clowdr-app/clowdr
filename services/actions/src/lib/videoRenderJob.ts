@@ -65,9 +65,9 @@ export async function startTitlesVideoRenderJob(
 export async function startBroadcastVideoRenderJob(
     videoRenderJobId: string,
     broadcastRenderJobData: BroadcastRenderJobDataBlob,
-    mediaConvertJobId: string
+    elasticTranscoderJobId: string
 ): Promise<void> {
-    broadcastRenderJobData["mediaConvertJobId"] = mediaConvertJobId;
+    broadcastRenderJobData["elasticTranscoderJobId"] = elasticTranscoderJobId;
     await apolloClient.mutate({
         mutation: StartVideoRenderJobDocument,
         variables: {

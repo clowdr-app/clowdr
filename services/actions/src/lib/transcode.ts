@@ -1,3 +1,4 @@
+import { Captions, InputCaptions } from "@aws-sdk/client-elastic-transcoder";
 import {
     AacCodingMode,
     AacRateControlMode,
@@ -16,10 +17,12 @@ import {
 } from "@aws-sdk/client-mediaconvert";
 import { AWSJobStatus, TranscodeDetails, VideoContentBlob } from "@clowdr-app/shared-types/build/content";
 import { TranscodeMode } from "@clowdr-app/shared-types/build/sns/mediaconvert";
+import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
 import R from "ramda";
 import { is } from "typescript-is";
-import { MediaConvert } from "../aws/awsClient";
+import { v4 as uuidv4 } from "uuid";
+import { ElasticTranscoder, MediaConvert } from "../aws/awsClient";
 import { ContentItemAddNewVersionDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { addNewContentItemVersion, createNewVersionFromPreviewTranscode, getLatestVersion } from "./contentItem";
@@ -107,6 +110,104 @@ export async function startPreviewTranscode(s3InputUrl: string, contentItemId: s
     return {
         jobId: result.Job.Id,
         timestamp: result.Job.CreatedAt,
+    };
+}
+
+export async function startElasticBroadcastTranscode(
+    s3VideoUrl: string,
+    s3CaptionsUrl: string | null,
+    videoRenderJobId: string
+): Promise<StartTranscodeOutput> {
+    console.log(`Create broadcast Elastic Transcoder job for ${s3VideoUrl}`);
+
+    assert(ElasticTranscoder, "AWS Elastic Transcoder client is not initialised");
+
+    // Get or create the existing Elastic Transcoder pipeline (CloudFormation/CDK doesn't support ET)
+    let pipeline;
+    const allPipelines = await ElasticTranscoder.listPipelines({});
+    pipeline = allPipelines.Pipelines?.find((pipeline) => pipeline.Name === process.env.AWS_PREFIX);
+
+    if (!pipeline) {
+        const output = await ElasticTranscoder.createPipeline({
+            InputBucket: process.env.AWS_CONTENT_BUCKET_ID,
+            Name: process.env.AWS_PREFIX,
+            Role: process.env.AWS_ELASTIC_TRANSCODER_SERVICE_ROLE_ARN,
+            OutputBucket: process.env.AWS_CONTENT_BUCKET_ID,
+            Notifications: {
+                Completed: process.env.AWS_TRANSCODE_NOTIFICATIONS_TOPIC_ARN,
+                Error: process.env.AWS_TRANSCODE_NOTIFICATIONS_TOPIC_ARN,
+                Progressing: process.env.AWS_TRANSCODE_NOTIFICATIONS_TOPIC_ARN,
+                Warning: process.env.AWS_TRANSCODE_NOTIFICATIONS_TOPIC_ARN,
+            },
+        });
+        pipeline = output.Pipeline;
+    }
+
+    assert(
+        pipeline,
+        `Failed to get or create AWS Elastic Transcoder pipeline for bucket ${process.env.AWS_CONTENT_BUCKET_ID}`
+    );
+
+    const { bucket: videoBucket, key: videoKey } = new AmazonS3URI(s3VideoUrl);
+    assert(
+        process.env.AWS_CONTENT_BUCKET_ID === videoBucket,
+        `Cannot transcode a video that is not in the expected content bucket: ${s3VideoUrl}`
+    );
+    assert(videoKey, `Could not retrieve key from video S3 URL: ${s3VideoUrl}`);
+
+    let inputCaptions: { InputCaptions?: InputCaptions } = {};
+    let outputCaptions: { Captions?: Captions } = {};
+    if (s3CaptionsUrl) {
+        const { bucket: captionsBucket, key: captionsKey } = new AmazonS3URI(s3CaptionsUrl);
+        assert(
+            process.env.AWS_CONTENT_BUCKET_ID === captionsBucket,
+            `Cannot use captions that are not in the expected content bucket: ${s3CaptionsUrl}`
+        );
+        assert(captionsKey, `Could not retrieve key from captions S3 URL: ${s3CaptionsUrl}`);
+        inputCaptions = {
+            InputCaptions: {
+                MergePolicy: "Override",
+                CaptionSources: [
+                    {
+                        Key: captionsKey,
+                        Language: "eng",
+                        Label: "English",
+                    },
+                ],
+            },
+        };
+        outputCaptions = {
+            Captions: {
+                CaptionFormats: [{ Format: "cea-708" }],
+            },
+        };
+    }
+
+    const outputKey = `${uuidv4()}.mp4`;
+
+    const jobOutput = await ElasticTranscoder.createJob({
+        PipelineId: pipeline.Id,
+        Inputs: [
+            {
+                Key: videoKey,
+                ...inputCaptions,
+            },
+        ],
+        Output: {
+            Key: outputKey,
+            PresetId: "1351620000001-000001", // "Generic 1080p"
+            ...outputCaptions,
+        },
+        UserMetadata: {
+            videoRenderJobId,
+        },
+    });
+
+    assert(jobOutput.Job?.Id, `Failed to start Elastic Transcoder job for ${s3VideoUrl}`);
+
+    return {
+        jobId: jobOutput.Job.Id,
+        timestamp: new Date(),
     };
 }
 

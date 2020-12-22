@@ -20,7 +20,7 @@ import { apolloClient } from "../graphqlClient";
 import { failConferencePrepareJob, finishConferencePrepareJobIfAllRenderJobsEnded } from "../lib/conferencePrepareJob";
 import { OpenShotClient } from "../lib/openshot/openshot";
 import { ChannelLayout } from "../lib/openshot/openshotProjects";
-import { startBroadcastTranscode } from "../lib/transcode";
+import { startElasticBroadcastTranscode } from "../lib/transcode";
 import { failVideoRenderJob, startBroadcastVideoRenderJob, startTitlesVideoRenderJob } from "../lib/videoRenderJob";
 import { ConferencePrepareJobData, Payload, VideoRenderJobData } from "../types/event";
 
@@ -528,7 +528,7 @@ export async function handleVideoRenderJobUpdated(payload: Payload<VideoRenderJo
                         );
                     }
                     try {
-                        const broadcastTranscodeOutput = await startBroadcastTranscode(
+                        const broadcastTranscodeOutput = await startElasticBroadcastTranscode(
                             payload.event.data.new.data.videoS3Url,
                             payload.event.data.new.data.subtitlesS3Url ?? null,
                             payload.event.data.new.id
@@ -540,6 +540,7 @@ export async function handleVideoRenderJobUpdated(payload: Payload<VideoRenderJo
                             broadcastTranscodeOutput.jobId
                         );
                     } catch (e) {
+                        console.error("Failed to start broadcast transcode", e);
                         await failVideoRenderJob(payload.event.data.new.id, e.toString());
                     }
                     break;

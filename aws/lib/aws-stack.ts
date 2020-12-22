@@ -16,6 +16,7 @@ export class AwsStack extends cdk.Stack {
 
         user.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AWSElementalMediaLiveFullAccess"));
         user.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AWSElementalMediaConvertFullAccess"));
+        user.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonElasticTranscoder_FullAccess"));
         user.addToPolicy(
             new iam.PolicyStatement({
                 actions: ["transcribe:*"],
@@ -215,6 +216,27 @@ export class AwsStack extends cdk.Stack {
         const transcribeLogGroup = new logs.LogGroup(this, "TranscribeLogGroup", {});
         transcribeEventRule.addTarget(new targets.CloudWatchLogGroup(transcribeLogGroup));
 
+        /* Elastic Transcoder */
+        const elasticTranscoderServiceRole = new iam.Role(this, "ElasticTranscoderServiceRole", {
+            assumedBy: new iam.ServicePrincipal("elastictranscoder.amazonaws.com"),
+        });
+        elasticTranscoderServiceRole.addToPolicy(
+            new iam.PolicyStatement({
+                actions: ["s3:Put*", "s3:ListBucket", "s3:*MultipartUpload*", "s3:Get*"],
+                effect: iam.Effect.ALLOW,
+                resources: [bucket.bucketArn, `${bucket.bucketArn}/*`],
+            })
+        );
+        transcodeNotificationsTopic.grantPublish(elasticTranscoderServiceRole);
+        elasticTranscoderServiceRole.addToPolicy(
+            new iam.PolicyStatement({
+                actions: ["s3:*Delete*", "s3:*Policy*", "sns:*Remove*", "sns:*Delete*", "sns:*Permission*"],
+                effect: iam.Effect.DENY,
+                resources: ["*"],
+            })
+        );
+        elasticTranscoderServiceRole.grantPassRole(user);
+
         /* Outputs */
         new cdk.CfnOutput(this, "BucketId", {
             value: bucket.bucketName,
@@ -240,6 +262,10 @@ export class AwsStack extends cdk.Stack {
 
         new cdk.CfnOutput(this, "TranscribeServiceRoleArn", {
             value: transcribeAccessRole.roleArn,
+        });
+
+        new cdk.CfnOutput(this, "ElasticTranscoderServiceRoleArn", {
+            value: elasticTranscoderServiceRole.roleArn,
         });
 
         // SNS topics

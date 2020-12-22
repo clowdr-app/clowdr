@@ -1,4 +1,5 @@
 import { CloudFormation } from "@aws-sdk/client-cloudformation";
+import { ElasticTranscoder } from "@aws-sdk/client-elastic-transcoder";
 import { IAM } from "@aws-sdk/client-iam";
 import { MediaConvert } from "@aws-sdk/client-mediaconvert";
 import { S3 } from "@aws-sdk/client-s3";
@@ -9,12 +10,17 @@ import assert from "assert";
 import { customAlphabet } from "nanoid";
 import { getHostUrl } from "../utils";
 
+assert(process.env.AWS_PREFIX, "Missing AWS_PREFIX environment variable");
 assert(process.env.AWS_ACCESS_KEY_ID, "Missing AWS_ACCESS_KEY_ID environment variable");
 assert(process.env.AWS_SECRET_ACCESS_KEY, "Missing AWS_SECRET_ACCESS_KEY environment variable");
 
 assert(process.env.AWS_REGION, "Missing AWS_REGION environment variable");
 assert(process.env.AWS_MEDIALIVE_SERVICE_ROLE_ARN, "Missing AWS_MEDIALIVE_SERVICE_ROLE_ARN environment variable");
 assert(process.env.AWS_MEDIACONVERT_SERVICE_ROLE_ARN, "Missing AWS_MEDIACONVERT_SERVICE_ROLE_ARN environment variable");
+assert(
+    process.env.AWS_ELASTIC_TRANSCODER_SERVICE_ROLE_ARN,
+    "Missing AWS_ELASTIC_TRANSCODER_SERVICE_ROLE_ARN environment variable"
+);
 assert(process.env.AWS_TRANSCRIBE_SERVICE_ROLE_ARN, "Missing AWS_TRANSCRIBE_SERVICE_ROLE_ARN environment variable");
 assert(
     process.env.AWS_TRANSCODE_NOTIFICATIONS_TOPIC_ARN,
@@ -55,6 +61,12 @@ const sns = new SNS({
 
 const transcribe = new Transcribe({
     apiVersion: "2017-10-26",
+    credentials,
+    region,
+});
+
+const transcoder = new ElasticTranscoder({
+    apiVersion: "2012-09-25",
     credentials,
     region,
 });
@@ -128,6 +140,7 @@ export {
     s3 as S3,
     mediaconvert as MediaConvert,
     transcribe as Transcribe,
+    transcoder as ElasticTranscoder,
     initialiseAwsClient,
     shortId,
 };

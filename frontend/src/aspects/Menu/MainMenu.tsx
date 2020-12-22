@@ -5,6 +5,7 @@ import AuthenticationButton from "../Auth/Buttons/AuthenticationButton";
 import SignupButton from "../Auth/Buttons/SignUpButton";
 import ColorModeButton from "../Chakra/ColorModeButton";
 import LinkButton from "../Chakra/LinkButton";
+import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import MenuDrawer from "./MenuDrawer";
 import usePrimaryMenuButtons from "./usePrimaryMenuButtons";
 
@@ -12,6 +13,7 @@ interface Props {}
 
 export default function MainMenu(_props: Props): JSX.Element {
     const { buttons: primaryButtons } = usePrimaryMenuButtons();
+    const { user } = useMaybeCurrentUser();
     return (
         <>
             <Stack
@@ -68,9 +70,11 @@ export default function MainMenu(_props: Props): JSX.Element {
                     </Route>
                     <Route path="/">
                         <Box marginRight={[0, "auto"]} display={["none", "block"]} />
-                        <LinkButton to="/user" size="sm">
-                            My Conferences
-                        </LinkButton>
+                        {user ? (
+                            <LinkButton to="/user" size="sm">
+                                My Conferences
+                            </LinkButton>
+                        ) : undefined}
                         <AuthenticationButton />
                         <SignupButton />
                     </Route>

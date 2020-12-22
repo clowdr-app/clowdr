@@ -36,6 +36,13 @@ export default function RestrictedDashboardButton({
                 }}
                 colorScheme={colorScheme ?? "blue"}
                 flexDirection="column"
+
+                justifyContent="center"
+                alignItems="center"
+                display="inline-flex"
+                width="100%"
+                height="100%"
+                margin={0}
             >
                 <Heading as="h2" fontSize="1.5rem" marginBottom="0.5rem">
                     <FAIcon iconStyle="s" icon={icon} />

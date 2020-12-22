@@ -21,16 +21,7 @@ export default function LinkButton(props: LinkButtonProps): JSX.Element {
             display="inline-block"
             {...linkProps}
         >
-            <Button
-                justifyContent="center"
-                alignItems="center"
-                display="inline-flex"
-                width="100%"
-                height="100%"
-                margin={0}
-                padding="0.7rem 1rem"
-                {...remaining}
-            >
+            <Button {...remaining}>
                 {children}
             </Button>
         </Link>

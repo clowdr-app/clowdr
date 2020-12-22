@@ -70,7 +70,7 @@ export default function MainMenu(_props: Props): JSX.Element {
                     </Route>
                     <Route path="/">
                         <Box marginRight={[0, "auto"]} display={["none", "block"]} />
-                        {user ? (
+                        {user && user.attendees.length > 0 ? (
                             <LinkButton to="/user" size="sm">
                                 My Conferences
                             </LinkButton>

@@ -9,6 +9,7 @@ import {
     CreateVideoRenderJobDocument,
     CreateVideoTitlesContentItemDocument,
     GetConfigurationValueDocument,
+    GetContentItemIdForVideoRenderJobDocument,
     GetEventTitleDetailsDocument,
     GetVideoBroadcastContentItemsDocument,
     GetVideoTitlesContentItemDocument,
@@ -16,10 +17,11 @@ import {
     OtherConferencePrepareJobsDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { failConferencePrepareJob } from "../lib/conferencePrepareJob";
+import { failConferencePrepareJob, finishConferencePrepareJobIfAllRenderJobsEnded } from "../lib/conferencePrepareJob";
 import { OpenShotClient } from "../lib/openshot/openshot";
 import { ChannelLayout } from "../lib/openshot/openshotProjects";
-import { failVideoRenderJob, startTitlesVideoRenderJob } from "../lib/videoRenderJob";
+import { startBroadcastTranscode } from "../lib/transcode";
+import { failVideoRenderJob, startBroadcastVideoRenderJob, startTitlesVideoRenderJob } from "../lib/videoRenderJob";
 import { ConferencePrepareJobData, Payload, VideoRenderJobData } from "../types/event";
 
 gql`
@@ -494,6 +496,18 @@ export async function handleConferencePrepareJobInserted(payload: Payload<Confer
     // create transitions
 }
 
+gql`
+    query GetContentItemIdForVideoRenderJob($videoRenderJobId: uuid!) {
+        VideoRenderJob_by_pk(id: $videoRenderJobId) {
+            broadcastContentItem {
+                contentItemId
+                id
+            }
+            id
+        }
+    }
+`;
+
 export async function handleVideoRenderJobUpdated(payload: Payload<VideoRenderJobData>): Promise<void> {
     assert(payload.event.data.new, "Payload must contain new row data");
 
@@ -501,15 +515,50 @@ export async function handleVideoRenderJobUpdated(payload: Payload<VideoRenderJo
         case "BroadcastRenderJob": {
             switch (payload.event.data.new.jobStatusName) {
                 case JobStatus_Enum.New: {
+                    console.log(`New broadcast render job ${payload.event.data.new.id}`);
+                    const result = await apolloClient.query({
+                        query: GetContentItemIdForVideoRenderJobDocument,
+                        variables: {
+                            videoRenderJobId: payload.event.data.new.id,
+                        },
+                    });
+                    if (!result.data.VideoRenderJob_by_pk?.broadcastContentItem.contentItemId) {
+                        throw new Error(
+                            `Could not determine associated content item for broadcast video render job (${payload.event.data.new.id})`
+                        );
+                    }
+                    try {
+                        const broadcastTranscodeOutput = await startBroadcastTranscode(
+                            payload.event.data.new.data.videoS3Url,
+                            payload.event.data.new.data.subtitlesS3Url ?? null,
+                            payload.event.data.new.id
+                        );
+
+                        await startBroadcastVideoRenderJob(
+                            payload.event.data.new.id,
+                            payload.event.data.new.data,
+                            broadcastTranscodeOutput.jobId
+                        );
+                    } catch (e) {
+                        await failVideoRenderJob(payload.event.data.new.id, e.toString());
+                    }
                     break;
                 }
                 case JobStatus_Enum.Completed: {
+                    console.log(`Completed broadcast render job ${payload.event.data.new.id}`);
+                    await finishConferencePrepareJobIfAllRenderJobsEnded(payload.event.data.new.conferencePrepareJobId);
                     break;
                 }
                 case JobStatus_Enum.Failed: {
+                    console.log(`Failed broadcast render job ${payload.event.data.new.id}`);
+                    await failConferencePrepareJob(
+                        payload.event.data.new.conferencePrepareJobId,
+                        `Render job ${payload.event.data.new.id} failed: ${payload.event.data.new.message}`
+                    );
                     break;
                 }
                 case JobStatus_Enum.InProgress: {
+                    console.log(`In progress broadcast render job ${payload.event.data.new.id}`);
                     break;
                 }
             }
@@ -568,6 +617,7 @@ export async function handleVideoRenderJobUpdated(payload: Payload<VideoRenderJo
                         payload.event.data.new.id
                     );
                     await OpenShotClient.projects.deleteProject(payload.event.data.new.data.openShotProjectId);
+                    await finishConferencePrepareJobIfAllRenderJobsEnded(payload.event.data.new.conferencePrepareJobId);
                     break;
                 }
                 case JobStatus_Enum.Failed: {
@@ -579,6 +629,10 @@ export async function handleVideoRenderJobUpdated(payload: Payload<VideoRenderJo
                         payload.event.data.new.id
                     );
                     await OpenShotClient.projects.deleteProject(payload.event.data.new.data.openShotProjectId);
+                    await failConferencePrepareJob(
+                        payload.event.data.new.conferencePrepareJobId,
+                        `Render job ${payload.event.data.new.id} failed: ${payload.event.data.new.message}`
+                    );
                     break;
                 }
                 case JobStatus_Enum.InProgress: {

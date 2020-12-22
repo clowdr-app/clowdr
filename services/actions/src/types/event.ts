@@ -73,4 +73,5 @@ export interface VideoRenderJobData extends BaseData {
     conferenceId: string;
     broadcastContentItemId: string;
     data: VideoRenderJobDataBlob;
+    message: string | null;
 }

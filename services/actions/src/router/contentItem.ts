@@ -1,5 +1,5 @@
 import { SNSNotification } from "@clowdr-app/shared-types/build/sns";
-import { MediaConvertEvent } from "@clowdr-app/shared-types/build/sns/mediaconvert";
+import { MediaConvertEvent, TranscodeMode } from "@clowdr-app/shared-types/build/sns/mediaconvert";
 import { TranscribeEvent } from "@clowdr-app/shared-types/build/sns/transcribe";
 import bodyParser from "body-parser";
 import express, { Request, Response } from "express";
@@ -9,8 +9,9 @@ import { assertType, is } from "typescript-is";
 import { promisify } from "util";
 import { handleContentItemUpdated, handleGetByRequiredItem, handleGetUploadAgreement } from "../handlers/content";
 import { handleContentItemSubmitted, handleUpdateSubtitles } from "../handlers/upload";
-import { completeTranscode, failTranscode } from "../lib/transcode";
+import { completePreviewTranscode, failPreviewTranscode } from "../lib/transcode";
 import { completeTranscriptionJob, failTranscriptionJob } from "../lib/transcribe";
+import { completeBroadcastTranscode, failBroadcastTranscode } from "../lib/videoRenderJob";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
 import { ContentItemData, Payload } from "../types/event";
 
@@ -85,12 +86,19 @@ router.post("/notifyTranscode", bodyParser.text(), async (req: Request, res: Res
             try {
                 const transcodeS3Url = event.detail.outputGroupDetails[0].outputDetails[0].outputFilePaths[0];
 
-                await completeTranscode(
-                    event.detail.userMetadata.contentItemId,
-                    transcodeS3Url,
-                    event.detail.jobId,
-                    new Date(event.detail.timestamp)
-                );
+                switch (event.detail.userMetadata.mode) {
+                    case TranscodeMode.BROADCAST:
+                        await completeBroadcastTranscode(event.detail.userMetadata.videoRenderJobId, transcodeS3Url);
+                        break;
+                    case TranscodeMode.PREVIEW:
+                        await completePreviewTranscode(
+                            event.detail.userMetadata.contentItemId,
+                            transcodeS3Url,
+                            event.detail.jobId,
+                            new Date(event.detail.timestamp)
+                        );
+                        break;
+                }
             } catch (e) {
                 console.error("Failed to complete transcode", e);
                 res.status(500).json("Failed to complete transcode");
@@ -98,12 +106,22 @@ router.post("/notifyTranscode", bodyParser.text(), async (req: Request, res: Res
             }
         } else if (event.detail.status === "ERROR") {
             try {
-                await failTranscode(
-                    event.detail.userMetadata.contentItemId,
-                    event.detail.jobId,
-                    new Date(event.detail.timestamp),
-                    event.detail.errorMessage
-                );
+                switch (event.detail.userMetadata.mode) {
+                    case TranscodeMode.BROADCAST:
+                        await failBroadcastTranscode(
+                            event.detail.userMetadata.videoRenderJobId,
+                            event.detail.errorMessage
+                        );
+                        break;
+                    case TranscodeMode.PREVIEW:
+                        await failPreviewTranscode(
+                            event.detail.userMetadata.contentItemId,
+                            event.detail.jobId,
+                            new Date(event.detail.timestamp),
+                            event.detail.errorMessage
+                        );
+                        break;
+                }
             } catch (e) {
                 console.error("Failed to record failed transcode", e);
                 res.status(500).json("Failed to record failed transcode");

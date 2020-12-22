@@ -237,7 +237,7 @@ export interface SubtitleDetails {
     message?: string;
 }
 
-interface TranscodeDetails {
+export interface TranscodeDetails {
     s3Url?: string;
     status: AWSJobStatus;
     message?: string;

@@ -94,7 +94,7 @@
             "runOptions": {
                 "instanceLimit": 1
             },
-            "args": ["run", "graphql-codegen"]
+            "args": ["run", "gql-cdg"]
         },
         // Shared -- GraphQL Codegen
         {

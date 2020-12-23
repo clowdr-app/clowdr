@@ -1097,6 +1097,7 @@
                         _eq: X-Hasura-User-Id
       columns:
       - contentGroupId
+      - id
       - tagId
       backend_only: false
   select_permissions:
@@ -3220,6 +3221,7 @@
       columns:
       - colour
       - conferenceId
+      - id
       - name
       - originatingDataId
       backend_only: false

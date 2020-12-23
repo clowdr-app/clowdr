@@ -313,8 +313,10 @@ export default function ManageConferencePeoplePage(): JSX.Element {
                             assert(opt);
                             return opt;
                         }),
-                    convertFromUI: (opts) =>
-                        opts instanceof Array ? new Set(opts.map((x) => x.value)) : new Set([opts.value]),
+                    convertFromUI: (opts) => {
+                        opts ??= [];
+                        return opts instanceof Array ? new Set(opts.map((x) => x.value)) : new Set([opts.value]);
+                    },
                     filter: defaultSelectFilter,
                     options: () => groupOptions,
                 },

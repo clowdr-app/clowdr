@@ -277,7 +277,7 @@ gql`
                 id
             }
         }
-        delete_ContentGroupTag(where: { id: { _in: $deleteGroupTagIds } }) {
+        delete_ContentGroupTag(where: { tag: { id: { _in: $deleteGroupTagIds } } }) {
             returning {
                 id
             }
@@ -698,7 +698,7 @@ export function useSaveContentDiff():
                                     id: group.id,
                                     conferenceId: conference.id,
                                     contentGroupTags: {
-                                        data: group.tags.map((tagId) => ({
+                                        data: Array.from(group.tagIds.values()).map((tagId) => ({
                                             tagId,
                                         })),
                                     },
@@ -848,14 +848,14 @@ export function useSaveContentDiff():
                                     }
                                 }
 
-                                for (const tag of group.tags) {
-                                    if (!existingGroup.tags.find((x) => x.id === tag.id)) {
-                                        newGroupTags.add(tag.id);
+                                for (const tagId of group.tagIds) {
+                                    if (!existingGroup.tagIds.has(tagId)) {
+                                        newGroupTags.add(tagId);
                                     }
                                 }
-                                for (const tag of existingGroup.tags) {
-                                    if (!newGroupTags.has(tag.id)) {
-                                        deleteGroupTagKeys.add(tag.id);
+                                for (const tagId of existingGroup.tagIds) {
+                                    if (!group.tagIds.has(tagId)) {
+                                        deleteGroupTagKeys.add(tagId);
                                     }
                                 }
 

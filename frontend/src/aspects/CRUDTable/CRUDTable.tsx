@@ -610,7 +610,8 @@ function FilterInput({
         case FieldType.string:
             return <StringFilterInput {...props} />;
         default:
-            return <Text as="span">TODO: Filter type ({fieldType})</Text>;
+            return <></>;
+            // return <Text as="span">TODO: Filter type ({fieldType})</Text>;
     }
 }
 
@@ -1096,6 +1097,7 @@ function CRUDCreateButton<T, PK extends keyof T>({
 export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTableProps<T, PK>>): JSX.Element {
     const {
         data,
+        externalUnsavedChanges,
         primaryFields: { keyField: primaryKeyField, otherFields: otherPrimaryFields },
         secondaryFields,
         csud,
@@ -1524,7 +1526,7 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
                         <Button
                             colorScheme="green"
                             aria-label="Save changes"
-                            disabled={dirtyKeys.size === 0 || ongoingEdits.size > 0}
+                            disabled={ongoingEdits.size > 0 || (!externalUnsavedChanges && dirtyKeys.size === 0)}
                             onClick={async () => {
                                 const editId = beginEdit();
                                 if (csud && csud.cudCallbacks && "save" in csud.cudCallbacks) {
@@ -1576,7 +1578,7 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
                             <span>
                                 {ongoingEdits.size > 0
                                     ? "Saving"
-                                    : dirtyKeys.size > 0 || props.externalUnsavedChanges
+                                    : dirtyKeys.size > 0 || externalUnsavedChanges
                                     ? "Unsaved changes"
                                     : "No changes"}
                             </span>

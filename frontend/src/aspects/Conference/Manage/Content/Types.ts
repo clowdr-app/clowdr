@@ -100,7 +100,7 @@ export type ContentGroupDescriptor = {
     title: string;
     shortTitle?: string | null;
     typeName: ContentGroupType_Enum;
-    tags: TagDescriptor[];
+    tagIds: Set<string>;
     items: ContentItemDescriptor[];
     requiredItems: RequiredContentItemDescriptor[];
     people: ContentGroupPersonDescriptor[];

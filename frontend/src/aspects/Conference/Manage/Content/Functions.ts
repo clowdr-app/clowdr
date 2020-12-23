@@ -24,7 +24,7 @@ export function convertContentToDescriptors(
                     title: item.title,
                     shortTitle: item.shortTitle,
                     typeName: item.contentGroupTypeName,
-                    tags: item.contentGroupTags.map((x) => x.tagId),
+                    tagIds: new Set(item.contentGroupTags.map((x) => x.tagId)),
                     items: item.contentItems.map((item) => ({
                         id: item.id,
                         isHidden: item.isHidden,
@@ -135,6 +135,6 @@ export function deepCloneContentGroupDescriptor(group: ContentGroupDescriptor): 
         shortTitle: group.shortTitle,
         title: group.title,
         typeName: group.typeName,
-        tags: group.tags,
+        tagIds: new Set(group.tagIds),
     };
 }

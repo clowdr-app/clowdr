@@ -21630,7 +21630,7 @@ export const UpdateContentGroupDocument = gql`
       id
     }
   }
-  delete_ContentGroupTag(where: {id: {_in: $deleteGroupTagIds}}) {
+  delete_ContentGroupTag(where: {tag: {id: {_in: $deleteGroupTagIds}}}) {
     returning {
       id
     }

@@ -8,6 +8,7 @@ import {
     Heading,
     Spinner,
     useDisclosure,
+    useToast,
 } from "@chakra-ui/react";
 import { ItemBaseTypes } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
@@ -34,6 +35,7 @@ import isValidUUID from "../../Utils/isValidUUID";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
 import { deepCloneContentGroupDescriptor } from "./Content/Functions";
+import ManageTagsModal from "./Content/ManageTagsModal";
 import { fitGroupToTemplate, GroupTemplates, ItemBaseTemplates } from "./Content/Templates";
 import type {
     ContentDescriptor,
@@ -53,6 +55,7 @@ const ContentGroupCRUDTable = (props: Readonly<CRUDTableProps<ContentGroupDescri
 // TODO: Render and allow editing (through a modal) of Content People
 // TODO: Secondary buttons (at top level and in Content People modal) to enable
 //       automatic linking based on email addresses.
+// TODO: Exhibition halls table(s)
 
 export default function ManageConferenceContentPage(): JSX.Element {
     const conference = useConference();
@@ -77,6 +80,23 @@ export default function ManageConferenceContentPage(): JSX.Element {
             });
     }, []);
 
+    const [allGroupsMap, setAllContentGroupsMap] = useState<Map<string, ContentGroupDescriptor>>();
+    const [allPeopleMap, setAllPeopleMap] = useState<Map<string, ContentPersonDescriptor>>();
+    const [allTagsMap, setAllTagsMap] = useState<Map<string, TagDescriptor>>();
+    const [allOriginatingDatasMap, setAllOriginatingDatasMap] = useState<Map<string, OriginatingDataDescriptor>>();
+
+    
+    const tagOptions = useMemo(
+        () =>
+            allTagsMap
+                ? Array.from(allTagsMap.values()).map((tag) => ({
+                      label: tag.name,
+                      value: tag.id,
+                  }))
+                : [],
+        [allTagsMap]
+    );
+
     const fields = useMemo(() => {
         const result: {
             [K: string]: Readonly<PrimaryField<ContentGroupDescriptor, any>>;
@@ -84,7 +104,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
             title: {
                 heading: "Title",
                 ariaLabel: "Title",
-                description: "Title of content",
+                description: "Title of the content",
                 isHidden: false,
                 isEditable: true,
                 defaultValue: "New content title",
@@ -106,7 +126,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
             shortTitle: {
                 heading: "Short Title",
                 ariaLabel: "Short Title",
-                description: "Short title of content",
+                description: "Short version of the content title",
                 isHidden: false,
                 isEditable: true,
                 defaultValue: "New content short title",
@@ -173,14 +193,40 @@ export default function ManageConferenceContentPage(): JSX.Element {
                     filter: defaultSelectFilter,
                 },
             },
+            tags: {
+                heading: "Tags",
+                ariaLabel: "Tags",
+                description: "Tags for the content to group it with other items",
+                isHidden: false,
+                isEditable: true,
+                defaultValue: [],
+                extract: (item) => item.tagIds,
+                insert: (item, v) => {
+                    return {
+                        ...item,
+                        tagIds: v,
+                    };
+                },
+                spec: {
+                    fieldType: FieldType.select,
+                    multiSelect: true,
+                    options: () => tagOptions,
+                    convertToUI: (ids) =>
+                        Array.from(ids.values()).map((id) => {
+                            const opt = tagOptions.find((x) => x.value === id);
+                            assert(opt);
+                            return opt;
+                        }),
+                    convertFromUI: (opts) => {
+                        opts ??= [];
+                        return opts instanceof Array ? new Set(opts.map((x) => x.value)) : new Set([opts.value]);
+                    },
+                    filter: defaultSelectFilter,
+                },
+            },
         };
         return result;
-    }, [groupTypeOptions]);
-
-    const [allGroupsMap, setAllContentGroupsMap] = useState<Map<string, ContentGroupDescriptor>>();
-    const [allPeopleMap, setAllPeopleMap] = useState<Map<string, ContentPersonDescriptor>>();
-    const [allTagsMap, setAllTagsMap] = useState<Map<string, TagDescriptor>>();
-    const [allOriginatingDatasMap, setAllOriginatingDatasMap] = useState<Map<string, OriginatingDataDescriptor>>();
+    }, [groupTypeOptions, tagOptions]);
 
     useEffect(() => {
         if (!saveContentDiff.loadingContent && !saveContentDiff.errorContent && saveContentDiff.originalContentGroups) {
@@ -220,6 +266,11 @@ export default function ManageConferenceContentPage(): JSX.Element {
 
     const [sendSubmissionRequests, { loading: sendingRequestsLoading }] = useSendSubmissionRequestsMutation();
 
+    const { isOpen: tagsModalOpen, onOpen: onTagsModalOpen, onClose: onTagsModalClose } = useDisclosure();
+    const [dirtyTagIds, setDirtyTagIds] = useState<Set<string>>(new Set());
+
+    const toast = useToast();
+
     return (
         <RequireAtLeastOnePermissionWrapper
             permissions={[Permission_Enum.ConferenceManageContent]}
@@ -242,6 +293,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
             <ContentGroupCRUDTable
                 key="crud-table"
                 data={allGroupsMap ?? new Map()}
+                externalUnsavedChanges={dirtyTagIds.size > 0}
                 csud={{
                     cudCallbacks: {
                         generateTemporaryKey: () => uuidv4(),
@@ -305,20 +357,32 @@ export default function ManageConferenceContentPage(): JSX.Element {
                             assert(!saveContentDiff.loadingContent);
                             assert(!saveContentDiff.errorContent);
                             assert(saveContentDiff.originalContentGroups);
-                            return (
+                            const results = (
                                 await saveContentDiff.saveContentDiff(
                                     {
                                         groupKeys: keys,
                                         originatingDataKeys: new Set(),
-                                        peopleKeys: new Set(),
-                                        tagKeys: new Set(),
+                                        peopleKeys: new Set(), // TODO
+                                        tagKeys: dirtyTagIds,
                                     },
                                     allTagsMap,
                                     allPeopleMap,
                                     allOriginatingDatasMap,
                                     allGroupsMap
                                 )
-                            ).groups;
+                            );
+
+                            setDirtyTagIds(oldTagIds => {
+                                const newTagIds = new Set(oldTagIds);
+                                for (const [tagId, result] of results.tags) {
+                                    if (result) {
+                                        newTagIds.delete(tagId);
+                                    }
+                                }
+                                return newTagIds;
+                            });
+                            
+                            return results.groups;
                         },
                     },
                 }}
@@ -359,6 +423,19 @@ export default function ManageConferenceContentPage(): JSX.Element {
                 }}
                 customButtons={[
                     {
+                        action: async (_groupKeys) => {
+                            onTagsModalOpen();
+                        },
+                        enabledWhenNothingSelected: true,
+                        enabledWhenDirty: true,
+                        tooltipWhenDisabled: "",
+                        tooltipWhenEnabled: "Tags can be used to group and highlight related content.",
+                        colorScheme: "purple",
+                        isRunning: false,
+                        label: "Manage tags",
+                        text: "Manage tags",
+                    },
+                    {
                         action: async (groupKeys) => {
                             await sendSubmissionRequests({
                                 variables: {
@@ -387,6 +464,60 @@ export default function ManageConferenceContentPage(): JSX.Element {
                     },
                 ]}
             />
+            <ManageTagsModal
+                tags={allTagsMap ?? new Map()}
+                areTagsDirty={dirtyTagIds.size > 0}
+                isOpen={tagsModalOpen}
+                onOpen={onTagsModalOpen}
+                onClose={onTagsModalClose}
+                insertTag={(tag) => {
+                    setDirtyTagIds(oldTagIds => {
+                        const newTagIds = new Set(oldTagIds);
+                        newTagIds.add(tag.id);
+                        return newTagIds;
+                    });
+                    setAllTagsMap((oldTags) => {
+                        const newTags: Map<string, TagDescriptor> = oldTags ? new Map(oldTags) : new Map();
+                        newTags.set(tag.id, tag);
+                        return newTags;
+                    });
+                }}
+                updateTag={(tag) => {
+                    setDirtyTagIds(oldTagIds => {
+                        const newTagIds = new Set(oldTagIds);
+                        newTagIds.add(tag.id);
+                        return newTagIds;
+                    });
+                    setAllTagsMap((oldTags) => {
+                        const newTags: Map<string, TagDescriptor> = oldTags ? new Map(oldTags) : new Map();
+                        newTags.set(tag.id, tag);
+                        return newTags;
+                    });
+                }}
+                deleteTag={(tagId) => {
+                    const isInUse = Array.from(allGroupsMap?.values() ?? []).some((group) => group.tagIds.has(tagId));
+                    if (isInUse) {
+                        toast({
+                            description: "Cannot delete a tag while it is still in use. Please remove the tag from all content then try again.",
+                            isClosable: true,
+                            status: "error",
+                            title: "Cannot delete tag"
+                        });
+                    }
+                    else {
+                        setDirtyTagIds(oldTagIds => {
+                            const newTagIds = new Set(oldTagIds);
+                            newTagIds.add(tagId);
+                            return newTagIds;
+                        });
+                        setAllTagsMap((oldTags) => {
+                            const newTags: Map<string, TagDescriptor> = oldTags ? new Map(oldTags) : new Map();
+                            newTags.delete(tagId);
+                            return newTags;
+                        });
+                    }
+                }}
+            />
         </RequireAtLeastOnePermissionWrapper>
     );
 }
@@ -408,6 +539,8 @@ function ContentGroupSecondaryEditor(
         const groupTemplate = GroupTemplates[group.typeName];
         if (groupTemplate.supported) {
             const itemElements: JSX.Element[] = [];
+
+            // TODO: Manage people
 
             for (const itemType of groupTemplate.itemTypes) {
                 const baseType = ItemBaseTypes[itemType];
@@ -487,7 +620,6 @@ function ContentGroupSecondaryEditor(
                     </AccordionItem>
                 );
             }
-            const itemsAccordian = <Accordion allowMultiple>{itemElements}</Accordion>;
 
             for (const itemType of groupTemplate.requiredItemTypes) {
                 const baseType = ItemBaseTypes[itemType];
@@ -547,6 +679,9 @@ function ContentGroupSecondaryEditor(
                 );
             }
 
+            // TODO: View originating data (if any)
+
+            const itemsAccordian = <Accordion allowMultiple>{itemElements}</Accordion>;
             editorElement = <>{itemsAccordian}</>;
         } else {
             editorElement = <>TODO: Unsupported group type: {group.typeName}</>;

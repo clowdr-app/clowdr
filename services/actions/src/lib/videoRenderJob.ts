@@ -82,7 +82,7 @@ gql`
         VideoRenderJob_aggregate(
             where: {
                 conferencePrepareJobId: { _eq: $conferencePrepareJobId }
-                _and: { jobStatusName: { _nin: [COMPLETED, FAILED] } }
+                _and: { jobStatusName: { _nin: [COMPLETED] } }
             }
         ) {
             aggregate {
@@ -92,7 +92,7 @@ gql`
     }
 `;
 
-export async function allVideoRenderJobsEnded(conferencePrepareJobId: string): Promise<boolean> {
+export async function allVideoRenderJobsCompleted(conferencePrepareJobId: string): Promise<boolean> {
     const result = await apolloClient.query({
         query: CountUnfinishedVideoRenderJobsDocument,
         variables: {

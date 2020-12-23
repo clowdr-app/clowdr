@@ -17,7 +17,7 @@ import {
     OtherConferencePrepareJobsDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { failConferencePrepareJob, finishConferencePrepareJobIfAllRenderJobsEnded } from "../lib/conferencePrepareJob";
+import { failConferencePrepareJob, updateStatusOfConferencePrepareJob } from "../lib/conferencePrepareJob";
 import { OpenShotClient } from "../lib/openshot/openshot";
 import { ChannelLayout } from "../lib/openshot/openshotProjects";
 import { startElasticBroadcastTranscode } from "../lib/transcode";
@@ -547,7 +547,7 @@ export async function handleVideoRenderJobUpdated(payload: Payload<VideoRenderJo
                 }
                 case JobStatus_Enum.Completed: {
                     console.log(`Completed broadcast render job ${payload.event.data.new.id}`);
-                    await finishConferencePrepareJobIfAllRenderJobsEnded(payload.event.data.new.conferencePrepareJobId);
+                    await updateStatusOfConferencePrepareJob(payload.event.data.new.conferencePrepareJobId);
                     break;
                 }
                 case JobStatus_Enum.Failed: {
@@ -618,7 +618,7 @@ export async function handleVideoRenderJobUpdated(payload: Payload<VideoRenderJo
                         payload.event.data.new.id
                     );
                     await OpenShotClient.projects.deleteProject(payload.event.data.new.data.openShotProjectId);
-                    await finishConferencePrepareJobIfAllRenderJobsEnded(payload.event.data.new.conferencePrepareJobId);
+                    await updateStatusOfConferencePrepareJob(payload.event.data.new.conferencePrepareJobId);
                     break;
                 }
                 case JobStatus_Enum.Failed: {

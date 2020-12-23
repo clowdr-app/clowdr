@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client/core";
 import { CompleteConferencePrepareJobDocument, FailConferencePrepareJobDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { allVideoRenderJobsEnded } from "./videoRenderJob";
+import { allVideoRenderJobsCompleted } from "./videoRenderJob";
 
 gql`
     mutation FailConferencePrepareJob($id: uuid!, $message: String!) {
@@ -30,8 +30,8 @@ gql`
     }
 `;
 
-export async function finishConferencePrepareJobIfAllRenderJobsEnded(id: string): Promise<void> {
-    const renderJobsEnded = await allVideoRenderJobsEnded(id);
+export async function updateStatusOfConferencePrepareJob(id: string): Promise<void> {
+    const renderJobsEnded = await allVideoRenderJobsCompleted(id);
     if (renderJobsEnded) {
         await apolloClient.mutate({
             mutation: CompleteConferencePrepareJobDocument,

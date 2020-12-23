@@ -38,11 +38,11 @@ export default function EditSubtitles({
     assert(videoKey);
     const videoUrl = `https://${videoBucket}.s3-eu-west-1.amazonaws.com/${videoKey}`;
     const subtitlesUrl = `https://${_srtBucket}.s3.eu-west-1.amazonaws.com/${_srtKey}`;
-    const { loading, error, data: subtitlesData = [] } = useFetch(subtitlesUrl, {}, []);
+    const { loading, error, data: subtitlesData = "" } = useFetch(subtitlesUrl, {}, []);
 
     return loading && !subtitlesData ? (
         <Spinner />
-    ) : error ? (
+    ) : error || subtitlesData === "" ? (
         <>Could not load subtitles.</>
     ) : (
         <Box color="black">

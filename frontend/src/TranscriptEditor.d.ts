@@ -1,3 +1,5 @@
+import type { RefObject } from "react";
+
 interface TranscriptEditorProps {
     transcriptData: any;
     mediaUrl: string;
@@ -9,11 +11,11 @@ interface TranscriptEditorProps {
     handleAnalyticsEvents?: (event: { category: string; action: string; name: string; value: any }) => void;
     fileName?: string;
     title?: string;
-    ref?: Ref;
+    ref?: RefObject<HTMLElement>;
     mediaType?: "video" | string;
 }
 
-export type TranscriptEditorT = (props: React.PropsWithoutRef<TranscriptEditorProps>) => JSX.Element;
+export type TranscriptEditorT = (props: React.PropsWithRef<TranscriptEditorProps>) => JSX.Element;
 
 declare const Editor: TranscriptEditorT;
 

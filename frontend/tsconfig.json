@@ -2,7 +2,6 @@
     "include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.tsx", "types", "node_modules/@types"],
     "exclude": ["./build"],
     "compilerOptions": {
-        "allowJs": true,
         "module": "esnext",
         "target": "ES2016",
         "moduleResolution": "node",

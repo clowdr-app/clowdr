@@ -35,6 +35,7 @@ import PageNotFound from "../../Errors/PageNotFound";
 import isValidUUID from "../../Utils/isValidUUID";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
+import ContentGroupPersonsModal from "./Content/ContentGroupPersonsModal";
 import { deepCloneContentGroupDescriptor } from "./Content/Functions";
 import ManagePeopleModal from "./Content/ManagePeopleModal";
 import ManageTagsModal from "./Content/ManageTagsModal";
@@ -383,7 +384,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                                 }
                                 return newTagIds;
                             });
-                            
+
                             setEditedPeopleIds((oldPersonIds) => {
                                 const newPersonIds = new Set(oldPersonIds);
                                 for (const [personId, result] of results.people) {
@@ -458,7 +459,8 @@ export default function ManageConferenceContentPage(): JSX.Element {
                         enabledWhenNothingSelected: true,
                         enabledWhenDirty: true,
                         tooltipWhenDisabled: "",
-                        tooltipWhenEnabled: "People can be listed as presenters, authors, chairs and other such roles for content and events.",
+                        tooltipWhenEnabled:
+                            "People can be listed as presenters, authors, chairs and other such roles for content and events.",
                         colorScheme: "purple",
                         isRunning: false,
                         label: "Manage people",
@@ -560,7 +562,9 @@ export default function ManageConferenceContentPage(): JSX.Element {
                         return newPersonIds;
                     });
                     setAllPeopleMap((oldPeople) => {
-                        const newPeople: Map<string, ContentPersonDescriptor> = oldPeople ? new Map(oldPeople) : new Map();
+                        const newPeople: Map<string, ContentPersonDescriptor> = oldPeople
+                            ? new Map(oldPeople)
+                            : new Map();
                         newPeople.set(person.id, person);
                         return newPeople;
                     });
@@ -572,13 +576,17 @@ export default function ManageConferenceContentPage(): JSX.Element {
                         return newPersonIds;
                     });
                     setAllPeopleMap((oldPeople) => {
-                        const newPeople: Map<string, ContentPersonDescriptor> = oldPeople ? new Map(oldPeople) : new Map();
+                        const newPeople: Map<string, ContentPersonDescriptor> = oldPeople
+                            ? new Map(oldPeople)
+                            : new Map();
                         newPeople.set(person.id, person);
                         return newPeople;
                     });
                 }}
                 deletePerson={(personId) => {
-                    const isInUse = Array.from(allGroupsMap?.values() ?? []).some((group) => group.people.some(x => x.personId === personId));
+                    const isInUse = Array.from(allGroupsMap?.values() ?? []).some((group) =>
+                        group.people.some((x) => x.personId === personId)
+                    );
                     if (isInUse) {
                         toast({
                             description:
@@ -594,7 +602,9 @@ export default function ManageConferenceContentPage(): JSX.Element {
                             return newPersonIds;
                         });
                         setAllPeopleMap((oldPeople) => {
-                            const newPeople: Map<string, ContentPersonDescriptor> = oldPeople ? new Map(oldPeople) : new Map();
+                            const newPeople: Map<string, ContentPersonDescriptor> = oldPeople
+                                ? new Map(oldPeople)
+                                : new Map();
                             newPeople.delete(personId);
                             return newPeople;
                         });
@@ -625,7 +635,25 @@ function ContentGroupSecondaryEditor(
         if (groupTemplate.supported) {
             const itemElements: JSX.Element[] = [];
 
-            // TODO: Manage people
+            itemElements.push(
+                <AccordionItem key="originating-data">
+                    <AccordionButton>
+                        <Box flex="1" textAlign="left">
+                            People
+                        </Box>
+                        <AccordionIcon />
+                    </AccordionButton>
+                    <AccordionPanel pb={4}>
+                        <GroupPeopleEditorModal
+                            group={group}
+                            isDirty={isDirty}
+                            markDirty={markDirty}
+                            peopleMap={allPeopleMap}
+                            setAllContentGroupsMap={setAllContentGroupsMap}
+                        />
+                    </AccordionPanel>
+                </AccordionItem>
+            );
 
             for (const itemType of groupTemplate.itemTypes) {
                 const baseType = ItemBaseTypes[itemType];
@@ -806,6 +834,117 @@ function ContentGroupSecondaryEditor(
         editorElement,
         footerButtons,
     };
+}
+
+function GroupPeopleEditorModal({
+    group,
+    peopleMap,
+    isDirty,
+    markDirty,
+    setAllContentGroupsMap,
+}: {
+    group: ContentGroupDescriptor;
+    peopleMap: Map<string, ContentPersonDescriptor>;
+    isDirty: boolean;
+    markDirty: () => void;
+    setAllContentGroupsMap: React.Dispatch<React.SetStateAction<Map<string, ContentGroupDescriptor> | undefined>>;
+}) {
+    // const reqItemEditorContents = itemTemplate.renderEditor(itemDesc, (updatedDesc) => {
+    //     assert(updatedDesc.type !== "item-only");
+    //     markDirty();
+
+    //     setAllContentGroupsMap((oldGroups) => {
+    //         assert(oldGroups);
+    //         const newGroups = new Map(oldGroups);
+
+    //         const existingGroup = newGroups.get(group.id);
+    //         assert(existingGroup);
+    //         newGroups.set(group.id, {
+    //             ...existingGroup,
+    //             items:
+    //                 itemDesc.type === "required-and-item" && updatedDesc.type === "required-and-item"
+    //                     ? existingGroup.items.map((cItem) => {
+    //                           return itemDesc.item.id === cItem.id ? updatedDesc.item : cItem;
+    //                       })
+    //                     : itemDesc.type === "required-only" && updatedDesc.type === "required-and-item"
+    //                     ? [...existingGroup.items, updatedDesc.item]
+    //                     : itemDesc.type === "required-and-item" && updatedDesc.type === "required-only"
+    //                     ? existingGroup.items.filter((x) => x.id !== itemDesc.item.id)
+    //                     : existingGroup.items,
+    //             requiredItems: existingGroup.requiredItems.map((x) =>
+    //                 x.id === itemDesc.requiredItem.id ? updatedDesc.requiredItem : x
+    //             ),
+    //         });
+
+    //         return newGroups;
+    //     });
+    // });
+
+    const { isOpen: isUploadersOpen, onOpen: onUploadersOpen, onClose: onUploadersClose } = useDisclosure();
+    const accordianContents = (
+        <>
+            <ContentGroupPersonsModal
+                isGroupDirty={isDirty}
+                isOpen={isUploadersOpen}
+                onOpen={onUploadersOpen}
+                onClose={onUploadersClose}
+                group={group}
+                peopleMap={peopleMap}
+                insertContentGroupPerson={(contentGroupPerson) => {
+                    markDirty();
+                    setAllContentGroupsMap((oldGroups) => {
+                        const newGroups: Map<string, ContentGroupDescriptor> = oldGroups
+                            ? new Map(oldGroups)
+                            : new Map();
+                        const existingGroup = newGroups.get(group.id);
+                        assert(existingGroup);
+                        newGroups.set(group.id, {
+                            ...existingGroup,
+                            people: [...existingGroup.people, contentGroupPerson],
+                        });
+                        return newGroups;
+                    });
+                }}
+                updateContentGroupPerson={(contentGroupPerson) => {
+                    markDirty();
+                    setAllContentGroupsMap((oldGroups) => {
+                        const newGroups: Map<string, ContentGroupDescriptor> = oldGroups
+                            ? new Map(oldGroups)
+                            : new Map();
+                        const existingGroup = newGroups.get(group.id);
+                        assert(existingGroup);
+                        newGroups.set(group.id, {
+                            ...existingGroup,
+                            people: existingGroup.people.map((existingContentGroupPerson) =>
+                                existingContentGroupPerson.id === contentGroupPerson.id
+                                    ? contentGroupPerson
+                                    : existingContentGroupPerson
+                            ),
+                        });
+                        return newGroups;
+                    });
+                }}
+                deleteContentGroupPerson={(contentGroupPersonId) => {
+                    markDirty();
+                    setAllContentGroupsMap((oldGroups) => {
+                        const newGroups: Map<string, ContentGroupDescriptor> = oldGroups
+                            ? new Map(oldGroups)
+                            : new Map();
+                        const existingGroup = newGroups.get(group.id);
+                        assert(existingGroup);
+                        newGroups.set(group.id, {
+                            ...existingGroup,
+                            people: existingGroup.people.filter(
+                                (existingContentGroupPerson) => existingContentGroupPerson.id !== contentGroupPersonId
+                            ),
+                        });
+                        return newGroups;
+                    });
+                }}
+            />
+        </>
+    );
+    return accordianContents;
 }
 
 function RequiredItemEditorModal({

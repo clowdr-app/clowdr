@@ -32,6 +32,11 @@ import {
     useDisclosure,
     useToast,
     VStack,
+    NumberInput,
+    NumberInputField,
+    NumberInputStepper,
+    NumberDecrementStepper,
+    NumberIncrementStepper
 } from "@chakra-ui/react";
 import assert from "assert";
 import React, { Dispatch, SetStateAction, useCallback, useMemo, useState } from "react";
@@ -330,9 +335,22 @@ const defaultRenderers: {
         }
     },
     [FieldType.integer]: function renderIntegerField(value: number, editMode) {
-        // TODO: Integer edit mode
         if (editMode) {
-            throw new Error("Integer edit mode not implemented yet!");
+            return (
+                <NumberInput
+                    precision={0}
+                    value={value ?? ""}
+                    onChange={(value) => editMode.onChange(value.length === 0 ? null : parseInt(value, 10))}
+                    aria-label={editMode.label}
+                    disabled={editMode.isDisabled}
+                    maxWidth="100%">
+                    <NumberInputField />
+                    <NumberInputStepper>
+                        <NumberIncrementStepper />
+                        <NumberDecrementStepper />
+                    </NumberInputStepper>
+                </NumberInput>
+            );
         }
         return <Text as="span" maxWidth="100%">{value}</Text>;
     },

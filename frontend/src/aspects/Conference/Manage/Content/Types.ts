@@ -1,6 +1,18 @@
 import type { ContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
 import type { ContentGroupType_Enum, ContentType_Enum } from "../../../../generated/graphql";
 
+export enum ContentRole {
+    Author = "AUTHOR",
+    Presenter = "PRESENTER",
+    Chair = "CHAIR"
+}
+
+export const ContentRoleNames: ReadonlyArray<ContentRole> = [
+    ContentRole.Author,
+    ContentRole.Chair,
+    ContentRole.Presenter
+];
+
 export type TagDescriptor = {
     isNew?: boolean;
 

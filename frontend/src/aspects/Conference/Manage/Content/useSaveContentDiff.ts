@@ -978,9 +978,10 @@ export function useSaveContentDiff():
                                         newGroupPeople: Array.from(newGroupPersons.values()).map((groupPerson) => ({
                                             conferenceId: conference.id,
                                             id: groupPerson.id,
-                                            personId: groupPerson.id,
+                                            personId: groupPerson.personId,
                                             priority: groupPerson.priority,
                                             roleName: groupPerson.roleName,
+                                            groupId: group.id
                                         })),
                                         originatingDataId: group.originatingDataId,
                                         shortTitle: group.shortTitle,

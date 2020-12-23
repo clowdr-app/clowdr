@@ -341,6 +341,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                             disallowSpaces: true,
                         },
                         validate: (v) => isValidUUID(v) || ["Invalid UUID"],
+                        getRowTitle: (v) => v.title,
                     },
                     otherFields: fields,
                 }}

@@ -124,6 +124,7 @@ export default function UploadersModal({
                                             disallowSpaces: true,
                                         },
                                         validate: (v) => isValidUUID(v) || ["Invalid UUID"],
+                                        getRowTitle: (v) => v.name,
                                     },
                                     otherFields: {
                                         name: {

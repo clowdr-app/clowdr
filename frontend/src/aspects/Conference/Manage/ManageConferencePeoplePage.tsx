@@ -597,6 +597,7 @@ export default function ManageConferencePeoplePage(): JSX.Element {
                             disallowSpaces: true,
                         },
                         validate: (v) => isValidUUID(v) || ["Invalid UUID"],
+                        getRowTitle: (v) => v.displayName,
                     },
                     otherFields: fields,
                 }}

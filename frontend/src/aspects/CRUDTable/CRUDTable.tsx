@@ -259,8 +259,12 @@ export interface PrimaryField<S, T, FieldSpecT extends FieldSpec<T> = FieldSpec<
 
 export type PrimaryKeyFieldSpec<S> = StringFieldSpec<S> | IntegerFieldSpec<S> | SelectFieldSpec<S>;
 
+export type PrimaryKeyField<T, PK extends keyof T> = PrimaryField<T, T[PK], PrimaryKeyFieldSpec<T[PK]>> & {
+    getRowTitle: (item: T) => string;
+};
+
 export interface PrimaryFields<T, PK extends keyof T> {
-    keyField: Readonly<PrimaryField<T, T[PK], PrimaryKeyFieldSpec<T[PK]>>>;
+    keyField: Readonly<PrimaryKeyField<T, PK>>;
 
     otherFields?: {
         [K in string]?: Readonly<PrimaryField<T, any>>;
@@ -867,14 +871,17 @@ function CRUDSelectionBox<T, PK extends keyof T>({
     setSelectedKeys,
 }: {
     item: T;
-    primaryKeyField: Readonly<PrimaryField<T, T[PK], PrimaryKeyFieldSpec<T[PK]>>>;
+    primaryKeyField: Readonly<PrimaryKeyField<T, PK>>;
     isSelected: boolean;
     setSelectedKeys: React.Dispatch<React.SetStateAction<Set<T[PK]>>>;
 }): JSX.Element {
     const keyV = primaryKeyField.extract(item);
+    const title = primaryKeyField.getRowTitle(item);
     return (
         <Checkbox
             isChecked={isSelected}
+            aria-label={isSelected ? `Deselect row: ${title}` : `Select row: ${title}`}
+            title={isSelected ? `Deselect row: ${title}` : `Select row: ${title}`}
             onChange={(ev) => {
                 if (!ev.target.checked) {
                     setSelectedKeys((oldSelectedKeys) => {
@@ -1641,7 +1648,7 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
                         >
                             <Text as="span" wordBreak="keep-all" whiteSpace="nowrap">
                                 ({rowEls.length} row
-                                {rowEls.length > 1 ? "s" : ""})
+                                {rowEls.length !== 1 ? "s" : ""})
                             </Text>
                         </CRUDCell>
                     ) : (

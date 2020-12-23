@@ -190,6 +190,7 @@ export default function CRUDTestPage(): JSX.Element {
                             disallowSpaces: true,
                         },
                         validate: (v) => isValidUUID(v) || ["Invalid UUID"],
+                        getRowTitle: (v) => v.id,
                     },
                     otherFields: {
                         str1Field: {

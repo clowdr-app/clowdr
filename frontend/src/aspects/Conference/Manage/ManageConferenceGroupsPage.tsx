@@ -550,6 +550,7 @@ export default function ManageConferenceGroupsPage(): JSX.Element {
                             disallowSpaces: true,
                         },
                         validate: (v) => isValidUUID(v) || ["Invalid UUID"],
+                        getRowTitle: (v) => v.name,
                     },
                     otherFields: fields,
                 }}

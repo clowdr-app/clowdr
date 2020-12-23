@@ -43,21 +43,6 @@ import type {
     UploaderDescriptor,
 } from "./Types";
 
-// person: {
-//     data: {
-//         affiliation: personGroup.person.affiliation,
-//         conferenceId: conference.id,
-//         email: personGroup.person.email,
-//         id: personGroup.person.id,
-//         name: personGroup.person.name,
-//     },
-//     on_conflict: {
-//         constraint:
-//             ContentPerson_Constraint.ContentPersonConferenceIdNameAffiliationKey,
-//         update_columns: [ContentPerson_Update_Column.Email],
-//     },
-// },
-
 gql`
     fragment UploaderInfo on Uploader {
         id

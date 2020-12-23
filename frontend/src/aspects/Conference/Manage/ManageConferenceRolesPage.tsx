@@ -256,7 +256,7 @@ export default function ManageConferenceRolesPage(): JSX.Element {
             <Heading as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                 Roles
             </Heading>
-            {loadingAllRoles || loadingAllPermissions || !allRolesMap ? (
+            {(loadingAllPermissions && !allPermissions) || (loadingAllRoles && !allRolesMap) ? (
                 <Spinner />
             ) : errorAllPermissions || errorAllRoles ? (
                 <>An error occurred loading in data - please see further information in notifications.</>
@@ -431,7 +431,6 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                                     results.set(key, true);
                                 });
                             }
-                            console.log("Created/deleted", createDeleteRolesResult);
 
                             let updatedResults: {
                                 key: string;
@@ -483,7 +482,6 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                                     });
                                 });
                             }
-                            console.log("Updated", updatedResults);
 
                             updatedResults.forEach((result) => {
                                 if (result.result.errors) {

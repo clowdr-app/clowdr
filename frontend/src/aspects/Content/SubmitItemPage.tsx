@@ -143,7 +143,7 @@ export default function SubmitItemPage({
                         <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
                             Upload item
                         </Heading>
-                        {loading || uploadAgreementLoading ? (
+                        {(loading && !data) || (uploadAgreementLoading && !uploadAgreementData) ? (
                             <div>
                                 <Spinner />
                             </div>

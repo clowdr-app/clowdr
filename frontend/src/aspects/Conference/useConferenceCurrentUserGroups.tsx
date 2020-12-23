@@ -79,7 +79,7 @@ export default function CurrentUserGroupsRolesPermissionsProvider({
         },
     });
 
-    if (loading) {
+    if (loading && !data) {
         return <Spinner />;
     }
 

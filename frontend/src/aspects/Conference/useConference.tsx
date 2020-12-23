@@ -46,7 +46,7 @@ export default function ConferenceProvider({
         },
     });
 
-    if (loading) {
+    if (loading && !data) {
         return <Spinner />;
     }
 

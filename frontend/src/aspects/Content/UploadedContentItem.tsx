@@ -35,7 +35,7 @@ export default function UploadedContentItem({ magicToken }: { magicToken: string
         }
     }, [disableRefresh]);
 
-    return loading ? (
+    return loading && !data ? (
         <div>
             <Spinner />
         </div>

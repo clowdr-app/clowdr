@@ -56,7 +56,7 @@ function PrepareJobsList({ conferenceId }: { conferenceId: string }): JSX.Elemen
     const { data, loading, error } = useConferencePrepareJobSubscriptionSubscription({ variables: { conferenceId } });
     useQueryErrorToast(error);
 
-    return loading ? (
+    return loading && !data ? (
         <Spinner />
     ) : error ? (
         <>Error while loading list of jobs.</>

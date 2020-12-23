@@ -41,7 +41,7 @@ export default function EditSubtitles({
     )}.json`;
     const { loading, error, data: subtitlesData = [] } = useFetch(subtitlesUrl, {}, []);
 
-    return loading ? (
+    return loading && !subtitlesData ? (
         <Spinner />
     ) : error ? (
         <>Could not load subtitles.</>

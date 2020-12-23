@@ -39,7 +39,10 @@ import type {
     ContentDescriptor,
     ContentGroupDescriptor,
     ContentItemDescriptor,
+    ContentPersonDescriptor,
+    OriginatingDataDescriptor,
     RequiredContentItemDescriptor,
+    TagDescriptor,
 } from "./Content/Types";
 import UploadersModal from "./Content/UploadersModal";
 import { useSaveContentDiff } from "./Content/useSaveContentDiff";
@@ -175,20 +178,45 @@ export default function ManageConferenceContentPage(): JSX.Element {
     }, [groupTypeOptions]);
 
     const [allGroupsMap, setAllContentGroupsMap] = useState<Map<string, ContentGroupDescriptor>>();
+    const [allPeopleMap, setAllPeopleMap] = useState<Map<string, ContentPersonDescriptor>>();
+    const [allTagsMap, setAllTagsMap] = useState<Map<string, TagDescriptor>>();
+    const [allOriginatingDatasMap, setAllOriginatingDatasMap] = useState<Map<string, OriginatingDataDescriptor>>();
 
     useEffect(() => {
-        if (saveContentDiff.originalContentGroups) {
-            const newMap: Map<string, ContentGroupDescriptor> = new Map();
+        if (!saveContentDiff.loadingContent && !saveContentDiff.errorContent && saveContentDiff.originalContentGroups) {
+            const newGroupsMap = new Map<string, ContentGroupDescriptor>();
+            const newPeopleMap = new Map<string, ContentPersonDescriptor>();
+            const newTagsMap = new Map<string, TagDescriptor>();
+            const newOriginatingDatasMap = new Map<string, OriginatingDataDescriptor>();
             for (const [key, group] of saveContentDiff.originalContentGroups) {
                 // Deep clone so that when we manipulate stuff later it doesn't
                 // accidentally screw up the query data
                 const newGroup: ContentGroupDescriptor = deepCloneContentGroupDescriptor(group);
                 fitGroupToTemplate(newGroup);
-                newMap.set(key, newGroup);
+                newGroupsMap.set(key, newGroup);
             }
-            setAllContentGroupsMap(newMap);
+            for (const [key, value] of saveContentDiff.originalPeople) {
+                newPeopleMap.set(key, { ...value });
+            }
+            for (const [key, value] of saveContentDiff.originalTags) {
+                newTagsMap.set(key, { ...value });
+            }
+            for (const [key, value] of saveContentDiff.originalOriginatingDatas) {
+                newOriginatingDatasMap.set(key, { ...value });
+            }
+            setAllContentGroupsMap(newGroupsMap);
+            setAllPeopleMap(newPeopleMap);
+            setAllTagsMap(newTagsMap);
+            setAllOriginatingDatasMap(newOriginatingDatasMap);
         }
-    }, [saveContentDiff.originalContentGroups]);
+    }, [
+        saveContentDiff.errorContent,
+        saveContentDiff.loadingContent,
+        saveContentDiff.originalContentGroups,
+        saveContentDiff.originalOriginatingDatas,
+        saveContentDiff.originalPeople,
+        saveContentDiff.originalTags,
+    ]);
 
     const [sendSubmissionRequests, { loading: sendingRequestsLoading }] = useSendSubmissionRequestsMutation();
 
@@ -203,9 +231,10 @@ export default function ManageConferenceContentPage(): JSX.Element {
             <Heading as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                 Content
             </Heading>
-            {saveContentDiff.loadingContentGroups || !allGroupsMap || !saveContentDiff.originalContentGroups ? (
+            {saveContentDiff.loadingContent &&
+            (!allGroupsMap || !allTagsMap || !allPeopleMap || !allOriginatingDatasMap) ? (
                 <Spinner />
-            ) : saveContentDiff.errorContentGroups ? (
+            ) : saveContentDiff.errorContent ? (
                 <>An error occurred loading in data - please see further information in notifications.</>
             ) : (
                 <></>
@@ -270,10 +299,26 @@ export default function ManageConferenceContentPage(): JSX.Element {
                         },
                         save: async (keys) => {
                             assert(allGroupsMap);
-                            assert(!saveContentDiff.loadingContentGroups);
-                            assert(!saveContentDiff.errorContentGroups);
+                            assert(allTagsMap);
+                            assert(allPeopleMap);
+                            assert(allOriginatingDatasMap);
+                            assert(!saveContentDiff.loadingContent);
+                            assert(!saveContentDiff.errorContent);
                             assert(saveContentDiff.originalContentGroups);
-                            return await saveContentDiff.saveContentDiff(keys, allGroupsMap);
+                            return (
+                                await saveContentDiff.saveContentDiff(
+                                    {
+                                        groupKeys: keys,
+                                        originatingDataKeys: new Set(),
+                                        peopleKeys: new Set(),
+                                        tagKeys: new Set(),
+                                    },
+                                    allTagsMap,
+                                    allPeopleMap,
+                                    allOriginatingDatasMap,
+                                    allGroupsMap
+                                )
+                            ).groups;
                         },
                     },
                 }}

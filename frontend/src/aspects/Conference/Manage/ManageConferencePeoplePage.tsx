@@ -339,7 +339,7 @@ export default function ManageConferencePeoplePage(): JSX.Element {
             <Heading as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                 Attendees
             </Heading>
-            {loadingAllGroups || loadingAllAttendees || !allAttendeesMap ? (
+            {(loadingAllGroups && !allGroups) || (loadingAllAttendees && !allAttendeesMap) ? (
                 <Spinner />
             ) : errorAllAttendees || errorAllGroups ? (
                 <>An error occurred loading in data - please see further information in notifications.</>
@@ -514,7 +514,6 @@ export default function ManageConferencePeoplePage(): JSX.Element {
                                     results.set(key, true);
                                 });
                             }
-                            console.log("Created/deleted", createDeleteAttendeesResult);
 
                             let updatedResults: {
                                 key: string;
@@ -564,7 +563,6 @@ export default function ManageConferencePeoplePage(): JSX.Element {
                                     });
                                 });
                             }
-                            console.log("Updated", updatedResults);
 
                             updatedResults.forEach((result) => {
                                 if (result.result.errors) {

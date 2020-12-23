@@ -1,27 +1,62 @@
 import { ApolloError, gql } from "@apollo/client";
 import assert from "assert";
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
+    ContentGroupPerson_Insert_Input,
     ContentGroup_Insert_Input,
     ContentItem_Insert_Input,
+    ContentPerson_Insert_Input,
+    OriginatingData_Insert_Input,
     RequiredContentItem_Insert_Input,
+    Tag_Insert_Input,
+    Uploader_Constraint,
+    Uploader_Insert_Input,
+    Uploader_Update_Column,
+    useDeleteContentPeopleMutation,
+    useDeleteOriginatingDatasMutation,
+    useDeleteTagsMutation,
+    useInsertContentPeopleMutation,
     useInsertDeleteContentGroupsMutation,
-    useSelectAllContentGroupsQuery,
+    useInsertOriginatingDatasMutation,
+    useInsertTagsMutation,
+    useSelectAllContentQuery,
     useUpdateContentGroupMutation,
     useUpdateContentItemMutation,
+    useUpdateGroupPersonMutation,
+    useUpdatePersonMutation,
     useUpdateRequiredContentItemMutation,
+    useUpdateTagMutation,
     useUpdateUploaderMutation,
 } from "../../../../generated/graphql";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import { useConference } from "../../useConference";
-import { convertContentGroupsToDescriptors } from "./Functions";
+import { convertContentToDescriptors } from "./Functions";
 import type {
     ContentGroupDescriptor,
+    ContentGroupPersonDescriptor,
     ContentItemDescriptor,
+    ContentPersonDescriptor,
+    OriginatingDataDescriptor,
     RequiredContentItemDescriptor,
+    TagDescriptor,
     UploaderDescriptor,
 } from "./Types";
+
+// person: {
+//     data: {
+//         affiliation: personGroup.person.affiliation,
+//         conferenceId: conference.id,
+//         email: personGroup.person.email,
+//         id: personGroup.person.id,
+//         name: personGroup.person.name,
+//     },
+//     on_conflict: {
+//         constraint:
+//             ContentPerson_Constraint.ContentPersonConferenceIdNameAffiliationKey,
+//         update_columns: [ContentPerson_Update_Column.Email],
+//     },
+// },
 
 gql`
     fragment UploaderInfo on Uploader {
@@ -43,9 +78,6 @@ gql`
             ...UploaderInfo
         }
         originatingDataId
-        originatingData {
-            ...OriginatingDataInfo
-        }
     }
 
     fragment ContentItemInfo on ContentItem {
@@ -58,13 +90,7 @@ gql`
         layoutData
         name
         requiredContentId
-        requiredContentItem {
-            ...RequiredContentItemInfo
-        }
         originatingDataId
-        originatingData {
-            ...OriginatingDataInfo
-        }
     }
 
     fragment OriginatingDataInfo on OriginatingData {
@@ -81,9 +107,6 @@ gql`
         affiliation
         email
         originatingDataId
-        originatingData {
-            ...OriginatingDataInfo
-        }
     }
 
     fragment ContentGroupTagInfo on ContentGroupTag {
@@ -97,9 +120,6 @@ gql`
         conferenceId
         groupId
         personId
-        person {
-            ...ContentPersonInfo
-        }
         priority
         roleName
     }
@@ -123,14 +143,28 @@ gql`
             ...ContentGroupPersonInfo
         }
         originatingDataId
-        originatingData {
-            ...OriginatingDataInfo
-        }
     }
 
-    query SelectAllContentGroups($conferenceId: uuid!) {
+    fragment TagInfo on Tag {
+        id
+        conferenceId
+        colour
+        name
+        originatingDataId
+    }
+
+    query SelectAllContent($conferenceId: uuid!) {
         ContentGroup(where: { conferenceId: { _eq: $conferenceId } }) {
             ...ContentGroupFullNestedInfo
+        }
+        ContentPerson {
+            ...ContentPersonInfo
+        }
+        OriginatingData {
+            ...OriginatingDataInfo
+        }
+        Tag {
+            ...TagInfo
         }
     }
 
@@ -147,12 +181,47 @@ gql`
         }
     }
 
-    mutation InsertDeleteContentPeople($newPeople: [ContentPerson_insert_input!]!, $deletePersonIds: [uuid!]!) {
+    mutation InsertOriginatingDatas($newDatas: [OriginatingData_insert_input!]!) {
+        insert_OriginatingData(objects: $newDatas) {
+            returning {
+                ...OriginatingDataInfo
+            }
+        }
+    }
+
+    mutation DeleteOriginatingDatas($deleteDataIds: [uuid!]!) {
+        delete_OriginatingData(where: { id: { _in: $deleteDataIds } }) {
+            returning {
+                id
+            }
+        }
+    }
+
+    mutation InsertTags($newTags: [Tag_insert_input!]!) {
+        insert_Tag(objects: $newTags) {
+            returning {
+                ...TagInfo
+            }
+        }
+    }
+
+    mutation DeleteTags($deleteTagIds: [uuid!]!) {
+        delete_Tag(where: { id: { _in: $deleteTagIds } }) {
+            returning {
+                id
+            }
+        }
+    }
+
+    mutation InsertContentPeople($newPeople: [ContentPerson_insert_input!]!) {
         insert_ContentPerson(objects: $newPeople) {
             returning {
                 ...ContentPersonInfo
             }
         }
+    }
+
+    mutation DeleteContentPeople($deletePersonIds: [uuid!]!) {
         delete_ContentPerson(where: { id: { _in: $deletePersonIds } }) {
             returning {
                 id
@@ -284,113 +353,243 @@ gql`
         }
     }
 
-    mutation UpdateGroupPerson($id: uuid!, $roleName: String!, $priority: Int!) {
+    mutation UpdateGroupPerson($id: uuid!, $roleName: String!, $priority: Int = null) {
         update_ContentGroupPerson_by_pk(pk_columns: { id: $id }, _set: { roleName: $roleName, priority: $priority }) {
             ...ContentGroupPersonInfo
         }
     }
 
-    mutation UpdatePerson($id: uuid!, $name: String!, $affiliation: String!, $email: String!) {
+    mutation UpdatePerson(
+        $id: uuid!
+        $name: String!
+        $affiliation: String = null
+        $email: String = null
+        $originatingDataId: uuid = null
+    ) {
         update_ContentPerson_by_pk(
             pk_columns: { id: $id }
-            _set: { name: $name, affiliation: $affiliation, email: $email }
+            _set: { name: $name, affiliation: $affiliation, email: $email, originatingDataId: $originatingDataId }
         ) {
             ...ContentPersonInfo
         }
     }
+
+    mutation UpdateTag($id: uuid!, $name: String!, $colour: String!, $originatingDataId: uuid = null) {
+        update_Tag_by_pk(
+            pk_columns: { id: $id }
+            _set: { name: $name, colour: $colour, originatingDataId: $originatingDataId }
+        ) {
+            ...TagInfo
+        }
+    }
 `;
+
+export type AllContentStateT =
+    | {
+          contentGroups: Map<string, ContentGroupDescriptor>;
+          people: Map<string, ContentPersonDescriptor>;
+          tags: Map<string, TagDescriptor>;
+          originatingDatas: Map<string, OriginatingDataDescriptor>;
+      }
+    | undefined;
 
 export function useSaveContentDiff():
     | {
-          loadingContentGroups: true;
-          errorContentGroups: ApolloError | undefined;
+          loadingContent: true;
+          errorContent: ApolloError | undefined;
           originalContentGroups: undefined;
-          saveContentDiff: undefined;
+          originalPeople: undefined;
+          originalTags: undefined;
+          originalOriginatingDatas: undefined;
       }
     | {
-          loadingContentGroups: false;
-          errorContentGroups: ApolloError;
+          loadingContent: false;
+          errorContent: ApolloError;
           originalContentGroups: undefined;
-          saveContentDiff: undefined;
+          originalPeople: undefined;
+          originalTags: undefined;
+          originalOriginatingDatas: undefined;
       }
     | {
-          loadingContentGroups: false;
-          errorContentGroups: undefined;
+          loadingContent: false;
+          errorContent: undefined;
           originalContentGroups: undefined;
-          saveContentDiff: undefined;
+          originalPeople: undefined;
+          originalTags: undefined;
+          originalOriginatingDatas: undefined;
       }
     | {
-          loadingContentGroups: false;
-          errorContentGroups: undefined;
+          loadingContent: boolean;
+          errorContent: undefined;
           originalContentGroups: Map<string, ContentGroupDescriptor>;
+          originalPeople: Map<string, ContentPersonDescriptor>;
+          originalTags: Map<string, TagDescriptor>;
+          originalOriginatingDatas: Map<string, OriginatingDataDescriptor>;
           saveContentDiff: (
-              keys: Set<string>,
+              dirtyKeys: {
+                  tagKeys: Set<string>;
+                  peopleKeys: Set<string>;
+                  originatingDataKeys: Set<string>;
+                  groupKeys: Set<string>;
+              },
+              tags: Map<string, TagDescriptor>,
+              people: Map<string, ContentPersonDescriptor>,
+              originatingDatas: Map<string, OriginatingDataDescriptor>,
               groups: Map<string, ContentGroupDescriptor>
-          ) => Promise<Map<string, boolean>>;
+          ) => Promise<{
+              groups: Map<string, boolean>;
+              people: Map<string, boolean>;
+              tags: Map<string, boolean>;
+              originatingDatas: Map<string, boolean>;
+          }>;
       } {
     const conference = useConference();
+
+    const [insertContentPeopleMutation] = useInsertContentPeopleMutation();
+    const [deleteContentPeopleMutation] = useDeleteContentPeopleMutation();
+    const [updatePersonMutation] = useUpdatePersonMutation();
+    const [insertOriginatingDatasMutation] = useInsertOriginatingDatasMutation();
+    const [deleteOriginatingDatasMutation] = useDeleteOriginatingDatasMutation();
+    const [insertTagsMutation] = useInsertTagsMutation();
+    const [deleteTagsMutation] = useDeleteTagsMutation();
+    const [updateTagMutation] = useUpdateTagMutation();
 
     const [insertDeleteContentGroupsMutation] = useInsertDeleteContentGroupsMutation();
     const [updateContentGroupMutation] = useUpdateContentGroupMutation();
     const [updateContentItemMutation] = useUpdateContentItemMutation();
     const [updateRequiredContentItemMutation] = useUpdateRequiredContentItemMutation();
     const [updateUploaderMutation] = useUpdateUploaderMutation();
+    const [updateGroupPersonMutation] = useUpdateGroupPersonMutation();
 
-    const {
-        loading: loadingContentGroups,
-        error: errorContentGroups,
-        data: allContentGroups,
-    } = useSelectAllContentGroupsQuery({
+    const { loading: loadingContent, error: errorContent, data: allContent } = useSelectAllContentQuery({
         fetchPolicy: "network-only",
         variables: {
             conferenceId: conference.id,
         },
     });
-    useQueryErrorToast(errorContentGroups);
+    useQueryErrorToast(errorContent);
 
-    const originalContentGroups = useMemo(() => convertContentGroupsToDescriptors(allContentGroups), [
-        allContentGroups,
-    ]);
+    const [original, setOriginal] = useState<AllContentStateT>();
+    useEffect(() => {
+        if (allContent) {
+            setOriginal(convertContentToDescriptors(allContent));
+        }
+    }, [allContent]);
 
-    if (loadingContentGroups) {
+    if (loadingContent && !original) {
         return {
-            loadingContentGroups,
-            errorContentGroups,
+            loadingContent: loadingContent,
+            errorContent: errorContent,
             originalContentGroups: undefined,
-            saveContentDiff: undefined,
+            originalPeople: undefined,
+            originalTags: undefined,
+            originalOriginatingDatas: undefined,
         };
-    } else if (errorContentGroups) {
+    } else if (errorContent) {
         return {
-            loadingContentGroups,
-            errorContentGroups,
+            loadingContent: loadingContent,
+            errorContent: errorContent,
             originalContentGroups: undefined,
-            saveContentDiff: undefined,
+            originalPeople: undefined,
+            originalTags: undefined,
+            originalOriginatingDatas: undefined,
         };
-    } else if (!originalContentGroups) {
+    } else if (!original) {
         return {
-            loadingContentGroups,
-            errorContentGroups,
-            originalContentGroups,
-            saveContentDiff: undefined,
+            loadingContent: loadingContent,
+            errorContent: errorContent,
+            originalContentGroups: undefined,
+            originalPeople: undefined,
+            originalTags: undefined,
+            originalOriginatingDatas: undefined,
         };
     } else {
         return {
-            loadingContentGroups,
-            errorContentGroups,
-            originalContentGroups,
+            loadingContent: loadingContent,
+            errorContent: errorContent,
+            originalContentGroups: original.contentGroups,
+            originalOriginatingDatas: original.originatingDatas,
+            originalPeople: original.people,
+            originalTags: original.tags,
             saveContentDiff: async function saveContentDiff(
-                keys: Set<string>,
-                groups: Map<string, ContentGroupDescriptor>
+                { groupKeys, originatingDataKeys, peopleKeys, tagKeys },
+                tags,
+                people,
+                originatingDatas,
+                groups
             ) {
-                const results: Map<string, boolean> = new Map();
-                keys.forEach((key) => {
-                    results.set(key, false);
+                const tagResults: Map<string, boolean> = new Map();
+                tagKeys.forEach((key) => {
+                    tagResults.set(key, false);
                 });
+
+                const originatingDataResults: Map<string, boolean> = new Map();
+                originatingDataKeys.forEach((key) => {
+                    originatingDataResults.set(key, false);
+                });
+
+                const peopleResults: Map<string, boolean> = new Map();
+                peopleKeys.forEach((key) => {
+                    peopleResults.set(key, false);
+                });
+
+                const groupResults: Map<string, boolean> = new Map();
+                groupKeys.forEach((key) => {
+                    groupResults.set(key, false);
+                });
+
+                const newTags = new Map<string, TagDescriptor>();
+                const updatedTags = new Map<string, TagDescriptor>();
+                const deletedTagKeys = new Set<string>();
+                for (const key of tagKeys.values()) {
+                    const tag = tags.get(key);
+                    if (tag) {
+                        if (tag.isNew) {
+                            newTags.set(key, tag);
+                        } else {
+                            updatedTags.set(key, tag);
+                        }
+                    } else {
+                        deletedTagKeys.add(key);
+                    }
+                }
+
+                const newPeople = new Map<string, ContentPersonDescriptor>();
+                const updatedPeople = new Map<string, ContentPersonDescriptor>();
+                const deletedPersonKeys = new Set<string>();
+                for (const key of peopleKeys.values()) {
+                    const person = people.get(key);
+                    if (person) {
+                        if (person.isNew) {
+                            newPeople.set(key, person);
+                        } else {
+                            updatedPeople.set(key, person);
+                        }
+                    } else {
+                        deletedPersonKeys.add(key);
+                    }
+                }
+
+                const newOriginatingDatas = new Map<string, OriginatingDataDescriptor>();
+                const updatedOriginatingDatas = new Map<string, OriginatingDataDescriptor>();
+                const deletedOriginatingDataKeys = new Set<string>();
+                for (const key of originatingDataKeys.values()) {
+                    const originatingData = originatingDatas.get(key);
+                    if (originatingData) {
+                        if (originatingData.isNew) {
+                            newOriginatingDatas.set(key, originatingData);
+                        } else {
+                            updatedOriginatingDatas.set(key, originatingData);
+                        }
+                    } else {
+                        deletedOriginatingDataKeys.add(key);
+                    }
+                }
 
                 const newGroups = new Map<string, ContentGroupDescriptor>();
                 const updatedGroups = new Map<string, ContentGroupDescriptor>();
                 const deletedGroupKeys = new Set<string>();
-                for (const key of keys.values()) {
+                for (const key of groupKeys.values()) {
                     const group = groups.get(key);
                     if (group) {
                         if (group.isNew) {
@@ -404,6 +603,108 @@ export function useSaveContentDiff():
                 }
 
                 try {
+                    await insertTagsMutation({
+                        variables: {
+                            newTags: Array.from(newTags.values()).map(
+                                (tag): Tag_Insert_Input => ({
+                                    id: tag.id,
+                                    name: tag.name,
+                                    colour: tag.colour,
+                                    conferenceId: conference.id,
+                                    originatingDataId: tag.originatingDataId,
+                                })
+                            ),
+                        },
+                    });
+                    for (const key of newTags.keys()) {
+                        tagResults.set(key, true);
+                    }
+
+                    const updateTagResultsArr: [string, boolean][] = await Promise.all(
+                        Array.from(updatedTags.values()).map(
+                            async (tag): Promise<[string, boolean]> => {
+                                let ok = false;
+                                try {
+                                    await updateTagMutation({
+                                        variables: {
+                                            id: tag.id,
+                                            colour: tag.colour,
+                                            name: tag.name,
+                                            originatingDataId: tag.originatingDataId,
+                                        },
+                                    });
+                                    ok = true;
+                                } catch (_e) {
+                                    ok = false;
+                                }
+                                return [tag.id, ok];
+                            }
+                        )
+                    );
+                    for (const [key, val] of updateTagResultsArr) {
+                        tagResults.set(key, val);
+                    }
+
+                    await insertOriginatingDatasMutation({
+                        variables: {
+                            newDatas: Array.from(newOriginatingDatas.values()).map(
+                                (originatingData): OriginatingData_Insert_Input => ({
+                                    id: originatingData.id,
+                                    conferenceId: conference.id,
+                                    data: originatingData.data,
+                                    sourceId: originatingData.sourceId,
+                                })
+                            ),
+                        },
+                    });
+                    for (const key of newOriginatingDatas.keys()) {
+                        originatingDataResults.set(key, true);
+                    }
+
+                    await insertContentPeopleMutation({
+                        variables: {
+                            newPeople: Array.from(newPeople.values()).map(
+                                (person): ContentPerson_Insert_Input => ({
+                                    id: person.id,
+                                    conferenceId: conference.id,
+                                    affiliation: person.affiliation,
+                                    email: person.email,
+                                    name: person.name,
+                                    originatingDataId: person.originatingDataId,
+                                })
+                            ),
+                        },
+                    });
+                    for (const key of newPeople.keys()) {
+                        peopleResults.set(key, true);
+                    }
+
+                    const updateContentPersonResultsArr: [string, boolean][] = await Promise.all(
+                        Array.from(updatedPeople.values()).map(
+                            async (person): Promise<[string, boolean]> => {
+                                let ok = false;
+                                try {
+                                    await updatePersonMutation({
+                                        variables: {
+                                            id: person.id,
+                                            affiliation: person.affiliation,
+                                            email: person.email,
+                                            name: person.name,
+                                            originatingDataId: person.originatingDataId,
+                                        },
+                                    });
+                                    ok = true;
+                                } catch (_e) {
+                                    ok = false;
+                                }
+                                return [person.id, ok];
+                            }
+                        )
+                    );
+                    for (const [key, val] of updateContentPersonResultsArr) {
+                        peopleResults.set(key, val);
+                    }
+
                     await insertDeleteContentGroupsMutation({
                         variables: {
                             deleteGroupIds: Array.from(deletedGroupKeys.values()),
@@ -427,6 +728,7 @@ export function useSaveContentDiff():
                                                 layoutData: item.layoutData,
                                                 name: item.name,
                                                 requiredContentId: item.requiredContentId,
+                                                originatingDataId: item.originatingDataId,
                                             };
                                             return itemResult;
                                         }),
@@ -440,17 +742,38 @@ export function useSaveContentDiff():
                                                 name: item.name,
                                                 contentTypeName: item.typeName,
                                                 uploaders: {
-                                                    data: item.uploaders.map((uploader) => ({
-                                                        conferenceId: conference.id,
-                                                        email: uploader.email,
-                                                        id: uploader.id,
-                                                        name: uploader.name,
-                                                    })),
+                                                    data: item.uploaders.map(
+                                                        (uploader): Uploader_Insert_Input => ({
+                                                            conferenceId: conference.id,
+                                                            email: uploader.email,
+                                                            id: uploader.id,
+                                                            name: uploader.name,
+                                                        })
+                                                    ),
+                                                    on_conflict: {
+                                                        constraint:
+                                                            Uploader_Constraint.UploaderEmailRequiredContentItemIdKey,
+                                                        update_columns: [Uploader_Update_Column.Name],
+                                                    },
                                                 },
+                                                originatingDataId: item.originatingDataId,
                                             };
                                             return itemResult;
                                         }),
                                     },
+                                    people: {
+                                        data: group.people.map((personGroup) => {
+                                            const personGroupResult: ContentGroupPerson_Insert_Input = {
+                                                id: personGroup.id,
+                                                conferenceId: conference.id,
+                                                priority: personGroup.priority,
+                                                roleName: personGroup.roleName,
+                                                personId: personGroup.personId,
+                                            };
+                                            return personGroupResult;
+                                        }),
+                                    },
+                                    originatingDataId: group.originatingDataId,
                                     shortTitle: group.shortTitle,
                                     title: group.title,
                                 };
@@ -460,21 +783,21 @@ export function useSaveContentDiff():
                     });
 
                     for (const key of newGroups.keys()) {
-                        results.set(key, true);
+                        groupResults.set(key, true);
                     }
                     for (const key of deletedGroupKeys.keys()) {
-                        results.set(key, true);
+                        groupResults.set(key, true);
                     }
                 } catch {
                     for (const key of newGroups.keys()) {
-                        results.set(key, false);
+                        groupResults.set(key, false);
                     }
                     for (const key of deletedGroupKeys.keys()) {
-                        results.set(key, false);
+                        groupResults.set(key, false);
                     }
                 }
 
-                const updateResultsArr: [string, boolean][] = await Promise.all(
+                const updateGroupResultsArr: [string, boolean][] = await Promise.all(
                     Array.from(updatedGroups.values()).map(
                         async (group): Promise<[string, boolean]> => {
                             let ok = false;
@@ -494,7 +817,11 @@ export function useSaveContentDiff():
                                 const updatedUploaders = new Map<string, UploaderDescriptor>();
                                 const deleteUploaderKeys = new Set<string>();
 
-                                const existingGroup = originalContentGroups.get(group.id);
+                                const newGroupPersons = new Map<string, ContentGroupPersonDescriptor>();
+                                const updatedGroupPersons = new Map<string, ContentGroupPersonDescriptor>();
+                                const deleteGroupPersonKeys = new Set<string>();
+
+                                const existingGroup = original.contentGroups.get(group.id);
                                 assert(existingGroup);
                                 for (const item of group.items) {
                                     if (item.isNew) {
@@ -547,49 +874,18 @@ export function useSaveContentDiff():
                                     }
                                 }
 
-                                await updateContentGroupMutation({
-                                    variables: {
-                                        contentGroupTypeName: group.typeName,
-                                        deleteGroupTagIds: Array.from(deleteGroupTagKeys.values()),
-                                        deleteItemIds: Array.from(deleteItemKeys.values()),
-                                        deleteRequiredItemIds: Array.from(deleteRequiredItemKeys.values()),
-                                        deleteUploaderIds: Array.from(deleteUploaderKeys.values()),
-                                        groupId: group.id,
-                                        newGroupTags: Array.from(newGroupTags.values()).map((tagId) => ({
-                                            contentGroupId: group.id,
-                                            tagId,
-                                        })),
-                                        newItems: Array.from(newItems.values()).map((item) => ({
-                                            conferenceId: conference.id,
-                                            contentGroupId: group.id,
-                                            contentTypeName: item.typeName,
-                                            data: item.data,
-                                            id: item.id,
-                                            layoutData: item.layoutData,
-                                            name: item.name,
-                                            requiredContentId: item.requiredContentId,
-                                        })),
-                                        newRequiredItems: Array.from(newRequiredItems.values()).map((item) => ({
-                                            accessToken: uuidv4(),
-                                            conferenceId: conference.id,
-                                            contentGroupId: group.id,
-                                            contentTypeName: item.typeName,
-                                            id: item.id,
-                                            name: item.name,
-                                        })),
-                                        newUploaders: Array.from(newUploaders.values()).map((uploader) => ({
-                                            conferenceId: conference.id,
-                                            email: uploader.email,
-                                            id: uploader.id,
-                                            name: uploader.name,
-                                            requiredContentItemId: uploader.requiredContentItemId,
-                                        })),
-                                        deleteGroupPeopleIds: [], // TODO
-                                        newGroupPeople: [], // TODO
-                                        shortTitle: group.shortTitle,
-                                        title: group.title,
-                                    },
-                                });
+                                for (const groupPerson of group.people) {
+                                    if (groupPerson.isNew) {
+                                        newGroupPersons.set(groupPerson.id, groupPerson);
+                                    } else {
+                                        updatedGroupPersons.set(groupPerson.id, groupPerson);
+                                    }
+                                }
+                                for (const existingGroupPerson of existingGroup.people) {
+                                    if (!updatedGroupPersons.has(existingGroupPerson.id)) {
+                                        deleteGroupPersonKeys.add(existingGroupPerson.id);
+                                    }
+                                }
 
                                 await Promise.all(
                                     Array.from(updatedItems.values()).map(async (item) => {
@@ -601,6 +897,7 @@ export function useSaveContentDiff():
                                                 layoutData: item.layoutData,
                                                 name: item.name,
                                                 requiredContentId: item.requiredContentId,
+                                                originatingDataId: item.originatingDataId,
                                             },
                                         });
                                     })
@@ -613,6 +910,7 @@ export function useSaveContentDiff():
                                                 contentTypeName: item.typeName,
                                                 id: item.id,
                                                 name: item.name,
+                                                originatingDataId: item.originatingDataId,
                                             },
                                         });
                                     })
@@ -630,6 +928,81 @@ export function useSaveContentDiff():
                                     })
                                 );
 
+                                await Promise.all(
+                                    Array.from(updatedGroupPersons.values()).map(async (groupPerson) => {
+                                        await updateGroupPersonMutation({
+                                            variables: {
+                                                id: groupPerson.id,
+                                                priority: groupPerson.priority,
+                                                roleName: groupPerson.roleName,
+                                            },
+                                        });
+                                    })
+                                );
+
+                                await updateContentGroupMutation({
+                                    variables: {
+                                        contentGroupTypeName: group.typeName,
+                                        deleteGroupTagIds: Array.from(deleteGroupTagKeys.values()),
+                                        deleteItemIds: Array.from(deleteItemKeys.values()),
+                                        deleteRequiredItemIds: Array.from(deleteRequiredItemKeys.values()),
+                                        deleteUploaderIds: Array.from(deleteUploaderKeys.values()),
+                                        deleteGroupPeopleIds: Array.from(deleteGroupPersonKeys.values()),
+                                        groupId: group.id,
+                                        newGroupTags: Array.from(newGroupTags.values()).map((tagId) => ({
+                                            contentGroupId: group.id,
+                                            tagId,
+                                        })),
+                                        newItems: Array.from(newItems.values()).map((item) => ({
+                                            conferenceId: conference.id,
+                                            contentGroupId: group.id,
+                                            contentTypeName: item.typeName,
+                                            data: item.data,
+                                            id: item.id,
+                                            layoutData: item.layoutData,
+                                            name: item.name,
+                                            requiredContentId: item.requiredContentId,
+                                            originatingDataId: item.originatingDataId,
+                                        })),
+                                        newRequiredItems: Array.from(newRequiredItems.values()).map((item) => ({
+                                            accessToken: uuidv4(),
+                                            conferenceId: conference.id,
+                                            contentGroupId: group.id,
+                                            contentTypeName: item.typeName,
+                                            id: item.id,
+                                            name: item.name,
+                                            originatingDataId: item.originatingDataId,
+                                            uploaders: {
+                                                data: item.uploaders.map(
+                                                    (uploader): Uploader_Insert_Input => ({
+                                                        id: uploader.id,
+                                                        email: uploader.email,
+                                                        name: uploader.name,
+                                                        conferenceId: conference.id,
+                                                    })
+                                                ),
+                                            },
+                                        })),
+                                        newUploaders: Array.from(newUploaders.values()).map((uploader) => ({
+                                            conferenceId: conference.id,
+                                            email: uploader.email,
+                                            id: uploader.id,
+                                            name: uploader.name,
+                                            requiredContentItemId: uploader.requiredContentItemId,
+                                        })),
+                                        newGroupPeople: Array.from(newGroupPersons.values()).map((groupPerson) => ({
+                                            conferenceId: conference.id,
+                                            id: groupPerson.id,
+                                            personId: groupPerson.id,
+                                            priority: groupPerson.priority,
+                                            roleName: groupPerson.roleName,
+                                        })),
+                                        originatingDataId: group.originatingDataId,
+                                        shortTitle: group.shortTitle,
+                                        title: group.title,
+                                    },
+                                });
+
                                 ok = true;
                             } catch (e) {
                                 ok = false;
@@ -638,11 +1011,61 @@ export function useSaveContentDiff():
                         }
                     )
                 );
-                for (const [key, val] of updateResultsArr) {
-                    results.set(key, val);
+                for (const [key, val] of updateGroupResultsArr) {
+                    groupResults.set(key, val);
                 }
 
-                return results;
+                try {
+                    await deleteTagsMutation({
+                        variables: {
+                            deleteTagIds: Array.from(deletedTagKeys.values()),
+                        },
+                    });
+                    for (const key of deletedTagKeys.keys()) {
+                        tagResults.set(key, true);
+                    }
+                } catch {
+                    for (const key of deletedTagKeys.keys()) {
+                        tagResults.set(key, false);
+                    }
+                }
+
+                try {
+                    await deleteContentPeopleMutation({
+                        variables: {
+                            deletePersonIds: Array.from(deletedPersonKeys.values()),
+                        },
+                    });
+                    for (const key of deletedPersonKeys.keys()) {
+                        peopleResults.set(key, true);
+                    }
+                } catch {
+                    for (const key of deletedPersonKeys.keys()) {
+                        peopleResults.set(key, false);
+                    }
+                }
+
+                try {
+                    await deleteOriginatingDatasMutation({
+                        variables: {
+                            deleteDataIds: Array.from(deletedOriginatingDataKeys.values()),
+                        },
+                    });
+                    for (const key of deletedOriginatingDataKeys.keys()) {
+                        originatingDataResults.set(key, true);
+                    }
+                } catch {
+                    for (const key of deletedOriginatingDataKeys.keys()) {
+                        originatingDataResults.set(key, false);
+                    }
+                }
+
+                return {
+                    groups: groupResults,
+                    originatingDatas: originatingDataResults,
+                    people: peopleResults,
+                    tags: tagResults,
+                };
             },
         };
     }

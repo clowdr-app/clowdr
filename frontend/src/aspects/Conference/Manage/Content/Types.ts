@@ -2,9 +2,25 @@ import type { ContentItemDataBlob } from "@clowdr-app/shared-types/build/content
 import type { ContentGroupType_Enum, ContentType_Enum } from "../../../../generated/graphql";
 
 export type TagDescriptor = {
+    isNew?: boolean;
+
     id: string;
     name: string;
-    desciptor: string;
+    colour: string;
+    originatingDataId?: string;
+};
+
+export type OriginatingDataPart = {
+    originName: "Researchr" | "HotCRP" | string;
+    data: any;
+};
+
+export type OriginatingDataDescriptor = {
+    isNew?: boolean;
+
+    id: string;
+    sourceId: string;
+    data: OriginatingDataPart[];
 };
 
 export type ContentItemDescriptor = {
@@ -17,6 +33,7 @@ export type ContentItemDescriptor = {
     requiredContentId?: string | null;
     name: string;
     data: ContentItemDataBlob;
+    originatingDataId?: string;
 };
 
 export type RequiredContentItemDescriptor = {
@@ -26,6 +43,7 @@ export type RequiredContentItemDescriptor = {
     typeName: ContentType_Enum;
     name: string;
     uploaders: UploaderDescriptor[];
+    originatingDataId?: string;
 };
 
 export type UploaderDescriptor = {
@@ -61,6 +79,7 @@ export type ContentPersonDescriptor = {
     name: string;
     affiliation?: string | null;
     email?: string | null;
+    originatingDataId?: string;
 };
 
 export type ContentGroupPersonDescriptor = {
@@ -71,8 +90,7 @@ export type ContentGroupPersonDescriptor = {
     groupId: string;
     priority?: number | null;
     roleName: string;
-
-    person: ContentPersonDescriptor;
+    personId: string;
 };
 
 export type ContentGroupDescriptor = {
@@ -86,6 +104,7 @@ export type ContentGroupDescriptor = {
     items: ContentItemDescriptor[];
     requiredItems: RequiredContentItemDescriptor[];
     people: ContentGroupPersonDescriptor[];
+    originatingDataId?: string;
 };
 export type ItemBaseTemplate =
     | {

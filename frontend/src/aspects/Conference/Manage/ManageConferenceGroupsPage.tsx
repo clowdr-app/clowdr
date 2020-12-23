@@ -298,7 +298,7 @@ export default function ManageConferenceGroupsPage(): JSX.Element {
             <Heading as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                 Groups
             </Heading>
-            {loadingAllGroups || loadingAllRoles || !allGroupsMap ? (
+            {(loadingAllRoles && !allRoles) || (loadingAllGroups && !allGroupsMap) ? (
                 <Spinner />
             ) : errorAllRoles || errorAllGroups ? (
                 <>An error occurred loading in data - please see further information in notifications.</>
@@ -465,7 +465,6 @@ export default function ManageConferenceGroupsPage(): JSX.Element {
                                     results.set(key, true);
                                 });
                             }
-                            console.log("Created/deleted", createDeleteGroupsResult);
 
                             let updatedResults: {
                                 key: string;
@@ -517,7 +516,6 @@ export default function ManageConferenceGroupsPage(): JSX.Element {
                                     });
                                 });
                             }
-                            console.log("Updated", updatedResults);
 
                             updatedResults.forEach((result) => {
                                 if (result.result.errors) {

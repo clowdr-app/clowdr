@@ -14,42 +14,48 @@ import React from "react";
 import { v4 as uuidv4 } from "uuid";
 import CRUDTable, { CRUDTableProps, defaultStringFilter, FieldType, UpdateResult } from "../../../CRUDTable/CRUDTable";
 import isValidUUID from "../../../Utils/isValidUUID";
-import type { TagDescriptor } from "./Types";
+import { useConference } from "../../useConference";
+import type { ContentPersonDescriptor } from "./Types";
 
-const TagCRUDTable = (props: Readonly<CRUDTableProps<TagDescriptor, "id">>) => CRUDTable(props);
+const PersonCRUDTable = (props: Readonly<CRUDTableProps<ContentPersonDescriptor, "id">>) => CRUDTable(props);
+
+// TODO: Handle duplicate email addresses (edit/create)
+// TODO: Handle duplicate name+affiliation (edit/create)
 
 interface Props {
     isOpen: boolean;
     onOpen: () => void;
     onClose: () => void;
-    tags: Map<string, TagDescriptor>;
-    areTagsDirty: boolean;
-    insertTag: (tag: TagDescriptor) => void;
-    updateTag: (tag: TagDescriptor) => void;
-    deleteTag: (tagId: string) => void;
+    persons: Map<string, ContentPersonDescriptor>;
+    arePersonsEdited: boolean;
+    insertPerson: (person: ContentPersonDescriptor) => void;
+    updatePerson: (person: ContentPersonDescriptor) => void;
+    deletePerson: (personId: string) => void;
 }
 
-export default function ManageTagsModal({
+export default function ManagePersonsModal({
     isOpen,
     onClose,
-    tags,
-    areTagsDirty,
-    insertTag,
-    updateTag,
-    deleteTag,
+    persons,
+    arePersonsEdited,
+    insertPerson,
+    updatePerson,
+    deletePerson,
 }: Props): JSX.Element {
+    const conference = useConference();
+
     return (
         <>
             <Modal isCentered onClose={onClose} isOpen={isOpen} motionPreset="scale" size="full">
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader paddingBottom={0}>Manage Tags</ModalHeader>
+                    <ModalHeader paddingBottom={0}>Manage People</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
                         <Box>
-                            <TagCRUDTable
-                                data={tags}
-                                externalUnsavedChanges={areTagsDirty}
+                            <PersonCRUDTable
+                                data={persons}
+                                externalUnsavedChanges={arePersonsEdited}
                                 primaryFields={{
                                     keyField: {
                                         heading: "Id",
@@ -94,20 +100,42 @@ export default function ManageTagsModal({
                                             },
                                             validate: (v) => v.length >= 3 || ["Name must be at least 3 characters"],
                                         },
-                                        colour: {
-                                            heading: "Colour",
-                                            ariaLabel: "Colour",
-                                            description: "The colour of the tag (hex or rgb or rgba format).",
+                                        affiliation: {
+                                            heading: "Affiliation",
+                                            ariaLabel: "Affiliation",
+                                            description: "The person's affiliation address.",
                                             isHidden: false,
                                             isEditable: true,
-                                            defaultValue: "#6a0dad",
+                                            defaultValue: "",
                                             insert: (item, v) => {
                                                 return {
                                                     ...item,
-                                                    colour: v,
+                                                    affiliation: v,
                                                 };
                                             },
-                                            extract: (v) => v.colour,
+                                            extract: (v) => v.affiliation,
+                                            spec: {
+                                                fieldType: FieldType.string,
+                                                convertFromUI: (x) => x,
+                                                convertToUI: (x) => x,
+                                                filter: defaultStringFilter,
+                                            },
+                                            validate: (_v) => true, // TODO
+                                        },
+                                        email: {
+                                            heading: "Email",
+                                            ariaLabel: "Email",
+                                            description: "The person's email address.",
+                                            isHidden: false,
+                                            isEditable: true,
+                                            defaultValue: "",
+                                            insert: (item, v) => {
+                                                return {
+                                                    ...item,
+                                                    email: v,
+                                                };
+                                            },
+                                            extract: (v) => v.email,
                                             spec: {
                                                 fieldType: FieldType.string,
                                                 convertFromUI: (x) => x,
@@ -120,23 +148,25 @@ export default function ManageTagsModal({
                                 }}
                                 csud={{
                                     cudCallbacks: {
-                                        create: async (partialTag: Partial<TagDescriptor>): Promise<string | null> => {
-                                            assert(partialTag.colour);
-                                            assert(partialTag.name);
-                                            const newTag: TagDescriptor = {
-                                                colour: partialTag.colour,
+                                        create: async (partialPerson: Partial<ContentPersonDescriptor>): Promise<string | null> => {
+                                            assert(partialPerson.affiliation);
+                                            assert(partialPerson.name);
+                                            const newPerson: ContentPersonDescriptor = {
+                                                affiliation: partialPerson.affiliation,
                                                 id: uuidv4(),
-                                                name: partialTag.name,
+                                                name: partialPerson.name,
+                                                email: partialPerson.email,
+                                                conferenceId: conference.id,
                                                 isNew: true,
                                             };
-                                            insertTag(newTag);
-                                            return newTag.id;
+                                            insertPerson(newPerson);
+                                            return newPerson.id;
                                         },
-                                        update: async (tags): Promise<Map<string, UpdateResult>> => {
+                                        update: async (persons): Promise<Map<string, UpdateResult>> => {
                                             const results = new Map<string, UpdateResult>();
-                                            for (const [key, tag] of tags) {
+                                            for (const [key, person] of persons) {
                                                 results.set(key, true);
-                                                updateTag(tag);
+                                                updatePerson(person);
                                             }
                                             return results;
                                         },
@@ -144,7 +174,7 @@ export default function ManageTagsModal({
                                             const results = new Map<string, boolean>();
                                             for (const key of keys) {
                                                 results.set(key, true);
-                                                deleteTag(key);
+                                                deletePerson(key);
                                             }
                                             return results;
                                         },

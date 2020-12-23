@@ -21303,13 +21303,13 @@ export const SelectAllContentDocument = gql`
   ContentGroup(where: {conferenceId: {_eq: $conferenceId}}) {
     ...ContentGroupFullNestedInfo
   }
-  ContentPerson {
+  ContentPerson(where: {conferenceId: {_eq: $conferenceId}}) {
     ...ContentPersonInfo
   }
-  OriginatingData {
+  OriginatingData(where: {conferenceId: {_eq: $conferenceId}}) {
     ...OriginatingDataInfo
   }
-  Tag {
+  Tag(where: {conferenceId: {_eq: $conferenceId}}) {
     ...TagInfo
   }
 }

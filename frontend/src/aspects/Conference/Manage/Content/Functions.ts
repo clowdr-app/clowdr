@@ -17,15 +17,15 @@ export function convertContentToDescriptors(
 } {
     return {
         contentGroups: new Map(
-            allContent.ContentGroup.map((item): [string, ContentGroupDescriptor] => [
-                item.id,
+            allContent.ContentGroup.map((group): [string, ContentGroupDescriptor] => [
+                group.id,
                 {
-                    id: item.id,
-                    title: item.title,
-                    shortTitle: item.shortTitle,
-                    typeName: item.contentGroupTypeName,
-                    tagIds: new Set(item.contentGroupTags.map((x) => x.tagId)),
-                    items: item.contentItems.map((item) => ({
+                    id: group.id,
+                    title: group.title,
+                    shortTitle: group.shortTitle,
+                    typeName: group.contentGroupTypeName,
+                    tagIds: new Set(group.contentGroupTags.map((x) => x.tagId)),
+                    items: group.contentItems.map((item) => ({
                         id: item.id,
                         isHidden: item.isHidden,
                         name: item.name,
@@ -35,7 +35,7 @@ export function convertContentToDescriptors(
                         requiredContentId: item.requiredContentId,
                         originatingDataId: item.originatingDataId,
                     })),
-                    requiredItems: item.requiredContentItems.map((item) => ({
+                    requiredItems: group.requiredContentItems.map((item) => ({
                         id: item.id,
                         name: item.name,
                         typeName: item.contentTypeName,
@@ -48,7 +48,7 @@ export function convertContentToDescriptors(
                         })),
                         originatingDataId: item.originatingDataId,
                     })),
-                    people: item.people.map((groupPerson) => ({
+                    people: group.people.map((groupPerson) => ({
                         conferenceId: groupPerson.conferenceId,
                         groupId: groupPerson.groupId,
                         id: groupPerson.id,
@@ -56,6 +56,7 @@ export function convertContentToDescriptors(
                         priority: groupPerson.priority,
                         roleName: groupPerson.roleName,
                     })),
+                    originatingDataId: group.originatingDataId
                 },
             ])
         ),
@@ -136,5 +137,6 @@ export function deepCloneContentGroupDescriptor(group: ContentGroupDescriptor): 
         title: group.title,
         typeName: group.typeName,
         tagIds: new Set(group.tagIds),
+        originatingDataId: group.originatingDataId
     };
 }

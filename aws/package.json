@@ -11,7 +11,7 @@
         "cdk": "cdk"
     },
     "devDependencies": {
-        "@aws-cdk/assert": "1.78.0",
+        "@aws-cdk/assert": "1.79.0",
         "@types/jest": "^26.0.10",
         "@types/node": "10.17.27",
         "aws-cdk": "1.77.0",
@@ -21,19 +21,19 @@
         "typescript": "~3.9.7"
     },
     "dependencies": {
-        "@aws-cdk/aws-certificatemanager": "^1.78.0",
-        "@aws-cdk/aws-cloudwatch": "^1.78.0",
-        "@aws-cdk/aws-ec2": "^1.78.0",
-        "@aws-cdk/aws-elasticloadbalancingv2": "^1.78.0",
-        "@aws-cdk/aws-elasticloadbalancingv2-targets": "^1.78.0",
-        "@aws-cdk/aws-events": "^1.78.0",
-        "@aws-cdk/aws-events-targets": "^1.78.0",
-        "@aws-cdk/aws-logs": "^1.78.0",
-        "@aws-cdk/aws-s3": "^1.78.0",
-        "@aws-cdk/aws-sns": "^1.78.0",
-        "@aws-cdk/aws-sns-subscriptions": "^1.78.0",
-        "@aws-cdk/aws-sqs": "^1.78.0",
-        "@aws-cdk/core": "1.78.0",
+        "@aws-cdk/aws-certificatemanager": "^1.79.0",
+        "@aws-cdk/aws-cloudwatch": "^1.79.0",
+        "@aws-cdk/aws-ec2": "^1.79.0",
+        "@aws-cdk/aws-elasticloadbalancingv2": "^1.79.0",
+        "@aws-cdk/aws-elasticloadbalancingv2-targets": "^1.79.0",
+        "@aws-cdk/aws-events": "^1.79.0",
+        "@aws-cdk/aws-events-targets": "^1.79.0",
+        "@aws-cdk/aws-logs": "^1.79.0",
+        "@aws-cdk/aws-s3": "^1.79.0",
+        "@aws-cdk/aws-sns": "^1.79.0",
+        "@aws-cdk/aws-sns-subscriptions": "^1.79.0",
+        "@aws-cdk/aws-sqs": "^1.79.0",
+        "@aws-cdk/core": "1.79.0",
         "source-map-support": "^0.5.16"
     }
 }

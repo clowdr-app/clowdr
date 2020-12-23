@@ -97,6 +97,19 @@ The frontend can easily be deployed using Netlify:
 1. Publish directory: `frontend/build`
 1. Environment variables: As below
 
+## Developer Notes
+
+### react-transcript-editor
+
+Because JavaScript monorepos are hard, we currently resort to building a single-file ESM version of [@bbc/react-transcript-editor](https://www.npmjs.com/package/@bbc/react-transcript-editor) and vendoring (i.e. copy-pasting) it into the `src/` directory of this project.
+
+A fork of the transcript editor is included as a Git submodule of this repository. There are a couple of key changes:
+
+- A custom Rollup configuration that bundles the `TranscriptEditor` component as an ES module
+- The docx support is commented out (because it doubles the bundle size)
+
+If you need to build a new version, run `npm run build:transcript-editor` and copy the resulting `output/TranscriptEditor.js` file into the frontend.
+
 ## Frontend Configuration
 
 **_Note:_** Snowpack (the build tool we use) will only include environment
@@ -117,3 +130,5 @@ variables in the build which start with `SNOWPACK_PUBLIC_`.
 | SNOWPACK_PUBLIC_AUTH_CLIENT_ID               | <auth0-client-id> as shown in Auth0 Application                                      | Yes      |
 | _AWS_                                        |                                                                                      |          |
 | SNOWPACK_PUBLIC_COMPANION_BASE_URL           | URL of the Uppy Companion instance (provided at `/companion` by the actions service) | Yes      |
+| NPM_VERSION                                  | `7.3` (only required in Netlify)                                                     | Only     |
+| NODE_VERSION                                 | `15.4` (only required in Netlify)                                                    | Only     |

@@ -46,17 +46,25 @@ interface MediaConvertEventDetail_OTHER extends MediaConvertEventDetailsBase {
     status: "STATUS_UPDATE" | "NEW_WARNING" | "QUEUE_HOP";
 }
 
+type MediaConvertEventUserMetadata = MediaConvertEventBroadcastUserMetadata | MediaConvertEventPreviewUserMetadata;
+
+interface MediaConvertEventBroadcastUserMetadata {
+    mode: TranscodeMode.BROADCAST;
+    videoRenderJobId: string;
+}
+
+interface MediaConvertEventPreviewUserMetadata {
+    mode: TranscodeMode.PREVIEW;
+    contentItemId: string;
+}
+
 interface MediaConvertEventDetailsBase {
     timestamp: number;
     accountId: string;
     queue: string;
     jobId: string;
     status: string;
-    userMetadata: {
-        [key: string]: unknown;
-        contentItemId: string;
-        mode: TranscodeMode;
-    };
+    userMetadata: MediaConvertEventUserMetadata;
 }
 
 interface InputDetail {

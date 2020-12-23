@@ -1,4 +1,5 @@
 import { CloudFormation } from "@aws-sdk/client-cloudformation";
+import { ElasticTranscoder } from "@aws-sdk/client-elastic-transcoder";
 import { IAM } from "@aws-sdk/client-iam";
 import { MediaConvert } from "@aws-sdk/client-mediaconvert";
 import { S3 } from "@aws-sdk/client-s3";
@@ -9,12 +10,17 @@ import assert from "assert";
 import { customAlphabet } from "nanoid";
 import { getHostUrl } from "../utils";
 
+assert(process.env.AWS_PREFIX, "Missing AWS_PREFIX environment variable");
 assert(process.env.AWS_ACCESS_KEY_ID, "Missing AWS_ACCESS_KEY_ID environment variable");
 assert(process.env.AWS_SECRET_ACCESS_KEY, "Missing AWS_SECRET_ACCESS_KEY environment variable");
 
 assert(process.env.AWS_REGION, "Missing AWS_REGION environment variable");
 assert(process.env.AWS_MEDIALIVE_SERVICE_ROLE_ARN, "Missing AWS_MEDIALIVE_SERVICE_ROLE_ARN environment variable");
 assert(process.env.AWS_MEDIACONVERT_SERVICE_ROLE_ARN, "Missing AWS_MEDIACONVERT_SERVICE_ROLE_ARN environment variable");
+assert(
+    process.env.AWS_ELASTIC_TRANSCODER_SERVICE_ROLE_ARN,
+    "Missing AWS_ELASTIC_TRANSCODER_SERVICE_ROLE_ARN environment variable"
+);
 assert(process.env.AWS_TRANSCRIBE_SERVICE_ROLE_ARN, "Missing AWS_TRANSCRIBE_SERVICE_ROLE_ARN environment variable");
 assert(
     process.env.AWS_TRANSCODE_NOTIFICATIONS_TOPIC_ARN,
@@ -23,6 +29,10 @@ assert(
 assert(
     process.env.AWS_TRANSCRIBE_NOTIFICATIONS_TOPIC_ARN,
     "Missing AWS_TRANSCRIBE_NOTIFICATIONS_TOPIC_ARN environment variable"
+);
+assert(
+    process.env.AWS_ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN,
+    "Missing AWS_ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN environment variable"
 );
 
 const credentials = fromEnv();
@@ -59,6 +69,12 @@ const transcribe = new Transcribe({
     region,
 });
 
+const transcoder = new ElasticTranscoder({
+    apiVersion: "2012-09-25",
+    credentials,
+    region,
+});
+
 let mediaconvert: MediaConvert | null = null;
 
 const shortId = customAlphabet("abcdefghijklmnopqrstuvwxyz1234567890", 5);
@@ -91,7 +107,7 @@ async function initialiseAwsClient(): Promise<void> {
 
     // Subscribe to transcode SNS topic
     const transcodeNotificationUrl = new URL(getHostUrl());
-    transcodeNotificationUrl.pathname = "/contentItem/notifyTranscode";
+    transcodeNotificationUrl.pathname = "/mediaConvert/notify";
 
     console.log("Subscribing to SNS topic: transcode notifications");
     const transcodeSubscribeResult = await sns.subscribe({
@@ -107,7 +123,7 @@ async function initialiseAwsClient(): Promise<void> {
 
     // Subscribe to transcribe SNS topic
     const transcribeNotificationUrl = new URL(getHostUrl());
-    transcribeNotificationUrl.pathname = "/contentItem/notifyTranscribe";
+    transcribeNotificationUrl.pathname = "/amazonTranscribe/notify";
 
     console.log("Subscribing to SNS topic: transcribe notifications");
     const transcribeSubscribeResult = await sns.subscribe({
@@ -120,6 +136,22 @@ async function initialiseAwsClient(): Promise<void> {
     if (!transcribeSubscribeResult.SubscriptionArn) {
         throw new Error("Could not subscribe to transcribe notifications");
     }
+
+    // Subscribe to Elastic Transcoder SNS topic
+    const elasticTranscoderNotificationUrl = new URL(getHostUrl());
+    elasticTranscoderNotificationUrl.pathname = "/elasticTranscoder/notify";
+
+    console.log("Subscribing to SNS topic: Elastic Transcoder notifications");
+    const elasticTranscoderSubscribeResult = await sns.subscribe({
+        Protocol: "https",
+        TopicArn: process.env.AWS_ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN,
+        Endpoint: elasticTranscoderNotificationUrl.toString(),
+    });
+    console.log("Subscribed to SNS topic: Elastic Transcoder notifications");
+
+    if (!elasticTranscoderSubscribeResult.SubscriptionArn) {
+        throw new Error("Could not subscribe to Elastic Transcoder notifications");
+    }
 }
 
 export {
@@ -128,6 +160,7 @@ export {
     s3 as S3,
     mediaconvert as MediaConvert,
     transcribe as Transcribe,
+    transcoder as ElasticTranscoder,
     initialiseAwsClient,
     shortId,
 };

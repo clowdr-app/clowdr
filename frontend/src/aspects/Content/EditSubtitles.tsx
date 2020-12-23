@@ -47,7 +47,7 @@ export default function EditSubtitles({
         <>Could not load subtitles.</>
     ) : (
         <Box color="black">
-            <TranscriptEditor.default
+            <TranscriptEditor
                 isEditable
                 transcriptData={subtitlesData}
                 mediaUrl={videoUrl}

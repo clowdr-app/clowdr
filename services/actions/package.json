@@ -30,6 +30,7 @@
     "dependencies": {
         "@apollo/client": "^3.3.6",
         "@aws-sdk/client-cloudformation": "^3.0.0",
+        "@aws-sdk/client-elastic-transcoder": "^3.0.0",
         "@aws-sdk/client-iam": "^3.0.0",
         "@aws-sdk/client-mediaconvert": "^3.0.0",
         "@aws-sdk/client-s3": "^3.0.0",

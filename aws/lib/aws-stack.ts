@@ -16,6 +16,7 @@ export class AwsStack extends cdk.Stack {
 
         user.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AWSElementalMediaLiveFullAccess"));
         user.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AWSElementalMediaConvertFullAccess"));
+        user.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonElasticTranscoder_FullAccess"));
         user.addToPolicy(
             new iam.PolicyStatement({
                 actions: ["transcribe:*"],
@@ -137,17 +138,37 @@ export class AwsStack extends cdk.Stack {
         transcribeAccessRole.grantPassRole(user);
         bucket.grantReadWrite(transcribeAccessRole);
 
+        /* Elastic Transcoder */
+        const elasticTranscoderServiceRole = new iam.Role(this, "ElasticTranscoderServiceRole", {
+            assumedBy: new iam.ServicePrincipal("elastictranscoder.amazonaws.com"),
+        });
+        elasticTranscoderServiceRole.addToPolicy(
+            new iam.PolicyStatement({
+                actions: ["s3:Put*", "s3:ListBucket", "s3:*MultipartUpload*", "s3:Get*"],
+                effect: iam.Effect.ALLOW,
+                resources: [bucket.bucketArn, `${bucket.bucketArn}/*`],
+            })
+        );
+        elasticTranscoderServiceRole.addToPolicy(
+            new iam.PolicyStatement({
+                actions: ["s3:*Delete*", "s3:*Policy*", "sns:*Remove*", "sns:*Delete*", "sns:*Permission*"],
+                effect: iam.Effect.DENY,
+                resources: ["*"],
+            })
+        );
+        elasticTranscoderServiceRole.grantPassRole(user);
+
         /* Notifications and webhooks */
 
         // Transcoding notifications
-        const transcodeNotificationsTopic = new sns.Topic(this, "TranscodeNotifications");
-        transcodeNotificationsTopic.grantPublish({
+        const mediaConvertNotificationsTopic = new sns.Topic(this, "TranscodeNotifications");
+        mediaConvertNotificationsTopic.grantPublish({
             grantPrincipal: new iam.ArnPrincipal(mediaConvertAccessRole.roleArn),
         });
-        transcodeNotificationsTopic.grantPublish({
+        mediaConvertNotificationsTopic.grantPublish({
             grantPrincipal: new iam.ServicePrincipal("events.amazonaws.com"),
         });
-        transcodeNotificationsTopic.addToResourcePolicy(
+        mediaConvertNotificationsTopic.addToResourcePolicy(
             new iam.PolicyStatement({
                 actions: [
                     "SNS:Subscribe",
@@ -164,31 +185,31 @@ export class AwsStack extends cdk.Stack {
                     new iam.ServicePrincipal("events.amazonaws.com"),
                     new iam.ArnPrincipal(mediaConvertAccessRole.roleArn),
                 ],
-                resources: [transcodeNotificationsTopic.topicArn],
+                resources: [mediaConvertNotificationsTopic.topicArn],
                 effect: iam.Effect.ALLOW,
             })
         );
-        transcodeNotificationsTopic.addToResourcePolicy(
+        mediaConvertNotificationsTopic.addToResourcePolicy(
             new iam.PolicyStatement({
                 actions: ["SNS:Subscribe"],
                 principals: [new iam.ArnPrincipal(user.userArn)],
-                resources: [transcodeNotificationsTopic.topicArn],
+                resources: [mediaConvertNotificationsTopic.topicArn],
                 effect: iam.Effect.ALLOW,
             })
         );
 
         events.EventBus.grantPutEvents(new iam.ServicePrincipal("mediaconvert.amazonaws.com"));
-        const transcodeEventRule = new events.Rule(this, "TranscodeEventRule", {
+        const mediaConvertEventRule = new events.Rule(this, "TranscodeEventRule", {
             enabled: true,
         });
-        transcodeEventRule.addEventPattern({
+        mediaConvertEventRule.addEventPattern({
             source: ["aws.mediaconvert"],
             detailType: ["MediaConvert Job State Change"],
         });
-        transcodeEventRule.addTarget(new targets.SnsTopic(transcodeNotificationsTopic));
+        mediaConvertEventRule.addTarget(new targets.SnsTopic(mediaConvertNotificationsTopic));
 
         const transcodeLogGroup = new logs.LogGroup(this, "TranscodeLogGroup", {});
-        transcodeEventRule.addTarget(new targets.CloudWatchLogGroup(transcodeLogGroup));
+        mediaConvertEventRule.addTarget(new targets.CloudWatchLogGroup(transcodeLogGroup));
 
         // Transcribe notifications
         const transcribeNotificationsTopic = new sns.Topic(this, "TranscribeNotifications");
@@ -214,6 +235,21 @@ export class AwsStack extends cdk.Stack {
         transcribeEventRule.addTarget(new targets.SnsTopic(transcribeNotificationsTopic));
         const transcribeLogGroup = new logs.LogGroup(this, "TranscribeLogGroup", {});
         transcribeEventRule.addTarget(new targets.CloudWatchLogGroup(transcribeLogGroup));
+
+        // Elastic Transcoder notifications
+        const elasticTranscoderNotificationsTopic = new sns.Topic(this, "ElasticTranscoderNotifications");
+        elasticTranscoderNotificationsTopic.grantPublish({
+            grantPrincipal: new iam.ServicePrincipal("elastictranscoder.amazonaws.com"),
+        });
+        elasticTranscoderNotificationsTopic.addToResourcePolicy(
+            new iam.PolicyStatement({
+                actions: ["SNS:Subscribe"],
+                principals: [new iam.ArnPrincipal(user.userArn)],
+                resources: [elasticTranscoderNotificationsTopic.topicArn],
+                effect: iam.Effect.ALLOW,
+            })
+        );
+        elasticTranscoderNotificationsTopic.grantPublish(elasticTranscoderServiceRole);
 
         /* Outputs */
         new cdk.CfnOutput(this, "BucketId", {
@@ -242,13 +278,21 @@ export class AwsStack extends cdk.Stack {
             value: transcribeAccessRole.roleArn,
         });
 
+        new cdk.CfnOutput(this, "ElasticTranscoderServiceRoleArn", {
+            value: elasticTranscoderServiceRole.roleArn,
+        });
+
         // SNS topics
         new cdk.CfnOutput(this, "TranscodeNotificationsTopic", {
-            value: transcodeNotificationsTopic.topicArn,
+            value: mediaConvertNotificationsTopic.topicArn,
         });
 
         new cdk.CfnOutput(this, "TranscribeNotificationsTopic", {
             value: transcribeNotificationsTopic.topicArn,
+        });
+
+        new cdk.CfnOutput(this, "ElasticTranscoderNotificationsTopic", {
+            value: elasticTranscoderNotificationsTopic.topicArn,
         });
     }
 }

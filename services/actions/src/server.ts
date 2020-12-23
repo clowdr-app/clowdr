@@ -19,9 +19,12 @@ import { uploadSendSubmissionRequestsHandler } from "./handlers/upload";
 import { checkEventSecret } from "./middlewares/checkEventSecret";
 import { checkJwt } from "./middlewares/checkJwt";
 import { checkUserScopes } from "./middlewares/checkScopes";
+import { router as amazonTranscribeRouter } from "./router/amazonTranscribe";
 import { router as companionRouter } from "./router/companion";
 import { router as conferencePrepareJobRouter } from "./router/conferencePrepareJob";
 import { router as contentItemRouter } from "./router/contentItem";
+import { router as elasticTranscoderRouter } from "./router/elasticTranscoder";
+import { router as mediaConvertRouter } from "./router/mediaConvert";
 import { router as openshotRouter } from "./router/openshot";
 import { router as videoRenderJobRouter } from "./router/videoRenderJob";
 import { EmailData, Payload } from "./types/event";
@@ -56,8 +59,12 @@ assert(
 export const app: express.Application = express();
 
 app.use("/companion", companionRouter);
-app.use("/contentItem", contentItemRouter);
 app.use("/openshot", openshotRouter);
+app.use("/mediaConvert", mediaConvertRouter);
+app.use("/amazonTranscribe", amazonTranscribeRouter);
+app.use("/elasticTranscoder", elasticTranscoderRouter);
+
+app.use("/contentItem", contentItemRouter);
 app.use("/conferencePrepareJob", conferencePrepareJobRouter);
 app.use("/videoRenderJob", videoRenderJobRouter);
 

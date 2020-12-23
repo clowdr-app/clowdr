@@ -322,10 +322,11 @@ const defaultRenderers: {
                     onChange={(ev) => editMode.onChange(ev.target.value)}
                     aria-label={editMode.label}
                     disabled={editMode.isDisabled}
+                    maxWidth="100%"
                 />
             );
         } else {
-            return <span>{value}</span>;
+            return <Text as="span" maxWidth="100%">{value}</Text>;
         }
     },
     [FieldType.integer]: function renderIntegerField(value: number, editMode) {
@@ -333,7 +334,7 @@ const defaultRenderers: {
         if (editMode) {
             throw new Error("Integer edit mode not implemented yet!");
         }
-        return <span>{value}</span>;
+        return <Text as="span" maxWidth="100%">{value}</Text>;
     },
     [FieldType.boolean]: function renderBooleanField(value: boolean, editMode) {
         if (editMode) {
@@ -440,9 +441,9 @@ const defaultRenderers: {
             );
         } else {
             if (options instanceof Array) {
-                return <span>{options.reduce((acc, option) => `${acc}, ${option.label}`, "").substr(2)}</span>;
+                return <Text as="span" maxWidth="100%">{options.reduce((acc, option) => `${acc}, ${option.label}`, "").substr(2)}</Text>;
             } else {
-                return <span>{options.label}</span>;
+                return <Text as="span" maxWidth="100%">{options.label}</Text>;
             }
         }
     },
@@ -687,6 +688,7 @@ function CRUDCell({
             justifyContent="center"
             alignItems="center"
             minW={minW}
+            overflowWrap="break-word"
         >
             {children}
         </GridItem>
@@ -1636,7 +1638,7 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
                         );
                     })}
                 </Stack>
-                <Grid width="100%" overflowX="auto" templateColumns={templateColumnsStr}>
+                <Grid width="100%" overflowX="auto" templateColumns={templateColumnsStr} minH="30vh" gridAutoRows="min-content">
                     {includeSelectorColumn ? (
                         <CRUDCell
                             key={"heading-selection"}

@@ -55,9 +55,6 @@ import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
 const ContentGroupCRUDTable = (props: Readonly<CRUDTableProps<ContentGroupDescriptor, "id">>) => CRUDTable(props);
 
-// TODO: Render and allow editing (through a modal) of Content People
-// TODO: Secondary buttons (at top level and in Content People modal) to enable
-//       automatic linking based on email addresses.
 // TODO: Exhibition halls table(s)
 
 export default function ManageConferenceContentPage(): JSX.Element {
@@ -849,37 +846,6 @@ function GroupPeopleEditorModal({
     markDirty: () => void;
     setAllContentGroupsMap: React.Dispatch<React.SetStateAction<Map<string, ContentGroupDescriptor> | undefined>>;
 }) {
-    // const reqItemEditorContents = itemTemplate.renderEditor(itemDesc, (updatedDesc) => {
-    //     assert(updatedDesc.type !== "item-only");
-    //     markDirty();
-
-    //     setAllContentGroupsMap((oldGroups) => {
-    //         assert(oldGroups);
-    //         const newGroups = new Map(oldGroups);
-
-    //         const existingGroup = newGroups.get(group.id);
-    //         assert(existingGroup);
-    //         newGroups.set(group.id, {
-    //             ...existingGroup,
-    //             items:
-    //                 itemDesc.type === "required-and-item" && updatedDesc.type === "required-and-item"
-    //                     ? existingGroup.items.map((cItem) => {
-    //                           return itemDesc.item.id === cItem.id ? updatedDesc.item : cItem;
-    //                       })
-    //                     : itemDesc.type === "required-only" && updatedDesc.type === "required-and-item"
-    //                     ? [...existingGroup.items, updatedDesc.item]
-    //                     : itemDesc.type === "required-and-item" && updatedDesc.type === "required-only"
-    //                     ? existingGroup.items.filter((x) => x.id !== itemDesc.item.id)
-    //                     : existingGroup.items,
-    //             requiredItems: existingGroup.requiredItems.map((x) =>
-    //                 x.id === itemDesc.requiredItem.id ? updatedDesc.requiredItem : x
-    //             ),
-    //         });
-
-    //         return newGroups;
-    //     });
-    // });
-
     const { isOpen: isUploadersOpen, onOpen: onUploadersOpen, onClose: onUploadersClose } = useDisclosure();
     const accordianContents = (
         <>

@@ -120,7 +120,7 @@ export default function ManagePersonsModal({
                                                 convertToUI: (x) => x,
                                                 filter: defaultStringFilter,
                                             },
-                                            validate: (_v) => true, // TODO
+                                            validate: (_v) => true, // TODO: Validation
                                         },
                                         email: {
                                             heading: "Email",
@@ -142,7 +142,7 @@ export default function ManagePersonsModal({
                                                 convertToUI: (x) => x,
                                                 filter: defaultStringFilter,
                                             },
-                                            validate: (_v) => true, // TODO
+                                            validate: (_v) => true, // TODO: Validation
                                         },
                                     },
                                 }}

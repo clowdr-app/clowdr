@@ -171,7 +171,7 @@ export default function UploadersModal({
                                                 convertToUI: (x) => x,
                                                 filter: defaultStringFilter,
                                             },
-                                            validate: (_v) => true, // TODO
+                                            validate: (_v) => true, // TODO: Validation
                                         },
                                         emailsSent: {
                                             heading: "Requests sent",

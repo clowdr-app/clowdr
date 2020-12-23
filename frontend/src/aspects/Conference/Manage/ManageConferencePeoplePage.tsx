@@ -288,7 +288,7 @@ export default function ManageConferencePeoplePage(): JSX.Element {
                     convertToUI: (x) => x,
                     filter: defaultStringFilter,
                 },
-                validate: (_v) => true, // TODO
+                validate: (_v) => true, // TODO: Validation
             },
             groups: {
                 heading: "Groups",

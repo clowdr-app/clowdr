@@ -114,7 +114,7 @@ export default function ManageTagsModal({
                                                 convertToUI: (x) => x,
                                                 filter: defaultStringFilter,
                                             },
-                                            validate: (_v) => true, // TODO
+                                            validate: (_v) => true, // TODO: Validation
                                         },
                                     },
                                 }}

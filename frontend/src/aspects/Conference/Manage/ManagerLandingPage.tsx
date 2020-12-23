@@ -103,7 +103,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     icon="star"
                     description="Manage your sponsors and their representatives."
                     permissions={[
-                        Permission_Enum.ConferenceManageContent, // TODO: Manage chats sponsors
+                        Permission_Enum.ConferenceManageContent, // TODO: Manage sponsors permission
                     ]}
                     colorScheme="purple"
                 />

@@ -7,6 +7,7 @@ frontend/src/generated/
 frontend/src/TranscriptEditor.js
 services/actions/src/generated/
 react-transcript-editor/
+slate-transcript-editor/
 aws/cdk.out/
 
 **/graphql.schema.json

@@ -1,9 +1,8 @@
 import { gql } from "@apollo/client";
-import { Box, Button, Spinner, useToast } from "@chakra-ui/react";
+import { Box, Spinner, useToast } from "@chakra-ui/react";
 import type { SubtitleDetails } from "@clowdr-app/shared-types/build/content";
 import AmazonS3Uri from "amazon-s3-uri";
 import assert from "assert";
-import { Form, Formik } from "formik";
 import React, { useRef } from "react";
 import useFetch from "use-http";
 import { useUpdateSubtitlesMutation } from "../../generated/graphql";
@@ -46,74 +45,35 @@ export default function EditSubtitles({
         <>Could not load subtitles.</>
     ) : (
         <Box color="black">
-            <Formik
-                initialValues={{}}
-                onSubmit={async (_values) => {
+            <TranscriptEditor
+                srtTranscript={subtitlesData}
+                mediaUrl={videoUrl}
+                handleSaveEditor={async (srtTranscript: string) => {
                     try {
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore
-                        const { data } = transcriptEditorRef.current.getEditorContent("srt");
-
-                        const submitResult = await updateSubtitles({
+                        const result = await updateSubtitles({
                             variables: {
                                 contentItemId,
                                 magicToken,
-                                subtitleText: data,
+                                subtitleText: srtTranscript,
                             },
                         });
-
-                        if (submitResult.errors || !submitResult.data?.updateSubtitles?.success) {
-                            console.error(
-                                "Failed to update subtitles",
-                                submitResult.errors,
-                                submitResult.data?.updateSubtitles?.message
-                            );
+                        if (result.data?.updateSubtitles?.success) {
                             toast({
-                                status: "error",
-                                description: "Failed to update subtitles. Please try again later.",
+                                description: "Saved subtitles",
+                                status: "success",
                             });
-                            return;
+                        } else {
+                            throw new Error(result.data?.updateSubtitles?.message ?? "Failed for unknown reason");
                         }
-
-                        toast({
-                            status: "success",
-                            description: "Updated subtitles successfully.",
-                        });
-                        return;
                     } catch (e) {
-                        console.error("Failed to update subtitles", e);
+                        console.error("Failed to save subtitles", e);
                         toast({
+                            description: "Failed to save subtitles",
                             status: "error",
-                            description: "Failed to update subtitles. Please try again later.",
                         });
-                        return;
                     }
                 }}
-                isInitialValid={true}
-            >
-                {({ isSubmitting }) => (
-                    <>
-                        <TranscriptEditor
-                            isEditable
-                            transcriptData={{ data: subtitlesData }}
-                            mediaUrl={videoUrl}
-                            sttJsonType="srt" // TODO: SRT
-                            spellCheck
-                            autoSaveContentType="draftjs"
-                            handleAutoSaveChanges={(_data: any) => {
-                                // TODO: Save changes
-                                //console.log(data);
-                            }}
-                            ref={transcriptEditorRef}
-                        />
-                        <Form style={{ width: "100%" }}>
-                            <Button mt={4} colorScheme="green" isLoading={isSubmitting} type="submit">
-                                Update subtitles
-                            </Button>
-                        </Form>
-                    </>
-                )}
-            </Formik>
+            />
         </Box>
     );
 }

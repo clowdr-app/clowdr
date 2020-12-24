@@ -21,6 +21,7 @@ interface Props {
     srtTranscript: string;
     mediaUrl: string;
     handleSaveEditor: (srtTranscript: any) => void;
+    handleChange?: () => void;
 }
 
 export type TranscriptEditorT = (props: React.PropsWithRef<Props>) => JSX.Element;

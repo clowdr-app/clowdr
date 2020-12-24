@@ -2,6 +2,8 @@
 
 Version 3 of Clowdr - this time it's scalable.
 
+If you want to contribute to Clowdr, please read our [contribution guidelines](CONTRIBUTING).
+
 ## Structure
 
 | Folder           | Contents                                                         | ReadMe                                 |

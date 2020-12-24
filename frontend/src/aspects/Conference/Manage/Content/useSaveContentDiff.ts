@@ -297,7 +297,7 @@ gql`
     mutation UpdateContentItem(
         $id: uuid!
         $contentTypeName: ContentType_enum!
-        $layoutData: jsonb!
+        $layoutData: jsonb = null
         $name: String!
         $data: jsonb!
         $originatingDataId: uuid = null

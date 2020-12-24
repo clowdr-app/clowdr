@@ -20427,7 +20427,7 @@ export type UpdateContentGroupMutation = { readonly __typename?: 'mutation_root'
 export type UpdateContentItemMutationVariables = Exact<{
   id: Scalars['uuid'];
   contentTypeName: ContentType_Enum;
-  layoutData: Scalars['jsonb'];
+  layoutData?: Maybe<Scalars['jsonb']>;
   name: Scalars['String'];
   data: Scalars['jsonb'];
   originatingDataId?: Maybe<Scalars['uuid']>;
@@ -21692,7 +21692,7 @@ export type UpdateContentGroupMutationHookResult = ReturnType<typeof useUpdateCo
 export type UpdateContentGroupMutationResult = Apollo.MutationResult<UpdateContentGroupMutation>;
 export type UpdateContentGroupMutationOptions = Apollo.BaseMutationOptions<UpdateContentGroupMutation, UpdateContentGroupMutationVariables>;
 export const UpdateContentItemDocument = gql`
-    mutation UpdateContentItem($id: uuid!, $contentTypeName: ContentType_enum!, $layoutData: jsonb!, $name: String!, $data: jsonb!, $originatingDataId: uuid = null, $requiredContentId: uuid = null) {
+    mutation UpdateContentItem($id: uuid!, $contentTypeName: ContentType_enum!, $layoutData: jsonb = null, $name: String!, $data: jsonb!, $originatingDataId: uuid = null, $requiredContentId: uuid = null) {
   update_ContentItem_by_pk(
     pk_columns: {id: $id}
     _set: {contentTypeName: $contentTypeName, layoutData: $layoutData, name: $name, data: $data, originatingDataId: $originatingDataId, requiredContentId: $requiredContentId}

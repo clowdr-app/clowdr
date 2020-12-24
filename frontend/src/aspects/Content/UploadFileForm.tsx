@@ -22,11 +22,13 @@ export default function UploadFileForm({
     magicToken,
     allowedFileTypes,
     uploadAgreement,
+    handleFormSubmitted,
 }: {
     requiredItem: RequiredItemFieldsFragment;
     magicToken: string;
     allowedFileTypes: string[];
     uploadAgreement?: string;
+    handleFormSubmitted?: () => Promise<void>;
 }): JSX.Element {
     const toast = useToast();
     const [files, setFiles] = useState<Uppy.UppyFile[]>([]);
@@ -88,7 +90,7 @@ export default function UploadFileForm({
                 initialValues={{
                     agree: false,
                 }}
-                onSubmit={async (values) => {
+                onSubmit={async (_values) => {
                     if (!uppy) {
                         throw new Error("No Uppy instance");
                     }
@@ -126,20 +128,7 @@ export default function UploadFileForm({
                         });
 
                         if (submitResult.errors || !submitResult.data?.submitContentItem?.success) {
-                            console.error(
-                                "Failed to submit item",
-                                submitResult.errors,
-                                submitResult.data?.submitContentItem?.message
-                            );
-                            toast({
-                                status: "error",
-                                description: `Failed to submit item. Please try again later. Error: ${[
-                                    submitResult.data?.submitContentItem?.message,
-                                    ...(submitResult.errors?.map((e) => e.message) ?? []),
-                                ].join("; ")}`,
-                            });
-                            uppy.reset();
-                            return;
+                            throw new Error("Failed to submit item.");
                         }
 
                         toast({
@@ -147,6 +136,10 @@ export default function UploadFileForm({
                             description: "Submitted item successfully.",
                         });
                         uppy.reset();
+
+                        if (handleFormSubmitted) {
+                            await handleFormSubmitted();
+                        }
                     } catch (e) {
                         console.error("Failed to submit item", e);
                         toast({

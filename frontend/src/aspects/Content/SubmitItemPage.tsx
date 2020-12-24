@@ -2,7 +2,7 @@ import { gql } from "@apollo/client";
 import { Center, Container, Heading, Spinner, Text, VStack } from "@chakra-ui/react";
 import "@uppy/core/dist/style.css";
 import "@uppy/progress-bar/dist/style.css";
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { ContentType_Enum, useGetUploadAgreementQuery, useSelectRequiredItemQuery } from "../../generated/graphql";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
 import { useNoPrimaryMenuButtons } from "../Menu/usePrimaryMenuButtons";
@@ -23,6 +23,7 @@ gql`
         id
         contentTypeName
         name
+        uploadsRemaining
         conference {
             id
             name
@@ -52,7 +53,7 @@ export default function SubmitItemPage({
 }): JSX.Element {
     useNoPrimaryMenuButtons();
 
-    const { loading, error, data } = useSelectRequiredItemQuery({
+    const { loading, error, data, refetch } = useSelectRequiredItemQuery({
         fetchPolicy: "network-only",
         context: {
             headers: {
@@ -87,6 +88,10 @@ export default function SubmitItemPage({
         return uploadAgreementData?.getUploadAgreement?.agreementText ?? undefined;
     }, [uploadAgreementData]);
 
+    const formSubmitted = useCallback(async () => {
+        await refetch();
+    }, [refetch]);
+
     const form = useMemo(() => {
         if (!requiredItem) {
             return <>No matching item found.</>;
@@ -105,18 +110,31 @@ export default function SubmitItemPage({
                         requiredItem={requiredItem}
                         allowedFileTypes={[".pdf", ".png", ".jpg"]}
                         uploadAgreement={uploadAgreement}
+                        handleFormSubmitted={formSubmitted}
                     />
                 );
             case ContentType_Enum.Link:
             case ContentType_Enum.LinkButton:
             case ContentType_Enum.PaperLink:
             case ContentType_Enum.VideoLink:
-                return <UploadLinkForm magicToken={magicToken} uploadAgreement={uploadAgreement} />;
+                return (
+                    <UploadLinkForm
+                        magicToken={magicToken}
+                        uploadAgreement={uploadAgreement}
+                        handleFormSubmitted={formSubmitted}
+                    />
+                );
             case ContentType_Enum.ImageUrl:
             case ContentType_Enum.PaperUrl:
             case ContentType_Enum.PosterUrl:
             case ContentType_Enum.VideoUrl:
-                return <UploadUrlForm magicToken={magicToken} uploadAgreement={uploadAgreement} />;
+                return (
+                    <UploadUrlForm
+                        magicToken={magicToken}
+                        uploadAgreement={uploadAgreement}
+                        handleFormSubmitted={formSubmitted}
+                    />
+                );
             case ContentType_Enum.VideoBroadcast:
             case ContentType_Enum.VideoCountdown:
             case ContentType_Enum.VideoFile:
@@ -130,10 +148,11 @@ export default function SubmitItemPage({
                         requiredItem={requiredItem}
                         allowedFileTypes={[".mp4", ".mkv", ".webm"]}
                         uploadAgreement={uploadAgreement}
+                        handleFormSubmitted={formSubmitted}
                     />
                 );
         }
-    }, [magicToken, requiredItem, uploadAgreement]);
+    }, [formSubmitted, magicToken, requiredItem, uploadAgreement]);
 
     return (
         <Center>
@@ -156,7 +175,24 @@ export default function SubmitItemPage({
                                 <Heading as="h2" fontSize="1.5rem" mt={5}>
                                     {requiredItem.name}
                                 </Heading>
-                                <Center>{form}</Center>
+                                {requiredItem.uploadsRemaining === 0 ? (
+                                    <Text mt={4}>
+                                        No uploads remaining for this item. Please contact your conference organisers if
+                                        you need to upload another version.
+                                    </Text>
+                                ) : (
+                                    <>
+                                        {requiredItem.uploadsRemaining ? (
+                                            <Text mt={4}>
+                                                {requiredItem.uploadsRemaining} upload attempt
+                                                {requiredItem.uploadsRemaining > 1 ? "s" : ""} remaining.
+                                            </Text>
+                                        ) : (
+                                            <></>
+                                        )}
+                                        <Center>{form}</Center>
+                                    </>
+                                )}
                                 <VStack spacing={4}>
                                     <Heading as="h3" fontSize="1.2rem">
                                         Previously uploaded

@@ -3,10 +3,12 @@ import assert from "assert";
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
+    ContentGroupHallway_Insert_Input,
     ContentGroupPerson_Insert_Input,
     ContentGroup_Insert_Input,
     ContentItem_Insert_Input,
     ContentPerson_Insert_Input,
+    Hallway_Insert_Input,
     OriginatingData_Insert_Input,
     RequiredContentItem_Insert_Input,
     Tag_Insert_Input,
@@ -14,16 +16,20 @@ import {
     Uploader_Insert_Input,
     Uploader_Update_Column,
     useDeleteContentPeopleMutation,
+    useDeleteHallwaysMutation,
     useDeleteOriginatingDatasMutation,
     useDeleteTagsMutation,
     useInsertContentPeopleMutation,
     useInsertDeleteContentGroupsMutation,
+    useInsertHallwaysMutation,
     useInsertOriginatingDatasMutation,
     useInsertTagsMutation,
     useSelectAllContentQuery,
     useUpdateContentGroupMutation,
     useUpdateContentItemMutation,
+    useUpdateGroupHallwayMutation,
     useUpdateGroupPersonMutation,
+    useUpdateHallwayMutation,
     useUpdatePersonMutation,
     useUpdateRequiredContentItemMutation,
     useUpdateTagMutation,
@@ -34,9 +40,11 @@ import { useConference } from "../../useConference";
 import { convertContentToDescriptors } from "./Functions";
 import type {
     ContentGroupDescriptor,
+    ContentGroupHallwayDescriptor,
     ContentGroupPersonDescriptor,
     ContentItemDescriptor,
     ContentPersonDescriptor,
+    HallwayDescriptor,
     OriginatingDataDescriptor,
     RequiredContentItemDescriptor,
     TagDescriptor,
@@ -100,6 +108,15 @@ gql`
         contentGroupId
     }
 
+    fragment ContentGroupHallwayInfo on ContentGroupHallway {
+        id
+        groupId
+        hallwayId
+        conferenceId
+        priority
+        layout
+    }
+
     fragment ContentGroupPersonInfo on ContentGroupPerson {
         id
         conferenceId
@@ -124,6 +141,9 @@ gql`
         contentGroupTags {
             ...ContentGroupTagInfo
         }
+        hallways {
+            ...ContentGroupHallwayInfo
+        }
         people {
             ...ContentGroupPersonInfo
         }
@@ -138,6 +158,14 @@ gql`
         originatingDataId
     }
 
+    fragment HallwayInfo on Hallway {
+        id
+        conferenceId
+        colour
+        name
+        priority
+    }
+
     query SelectAllContent($conferenceId: uuid!) {
         ContentGroup(where: { conferenceId: { _eq: $conferenceId } }) {
             ...ContentGroupFullNestedInfo
@@ -150,6 +178,9 @@ gql`
         }
         Tag(where: { conferenceId: { _eq: $conferenceId } }) {
             ...TagInfo
+        }
+        Hallway(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...HallwayInfo
         }
     }
 
@@ -190,8 +221,24 @@ gql`
         }
     }
 
+    mutation InsertHallways($newHallways: [Hallway_insert_input!]!) {
+        insert_Hallway(objects: $newHallways) {
+            returning {
+                ...HallwayInfo
+            }
+        }
+    }
+
     mutation DeleteTags($deleteTagIds: [uuid!]!) {
         delete_Tag(where: { id: { _in: $deleteTagIds } }) {
+            returning {
+                id
+            }
+        }
+    }
+
+    mutation DeleteHallways($deleteHallwayIds: [uuid!]!) {
+        delete_Hallway(where: { id: { _in: $deleteHallwayIds } }) {
             returning {
                 id
             }
@@ -218,6 +265,7 @@ gql`
         $newItems: [ContentItem_insert_input!]!
         $newRequiredItems: [RequiredContentItem_insert_input!]!
         $newGroupTags: [ContentGroupTag_insert_input!]!
+        $newGroupHallways: [ContentGroupHallway_insert_input!]!
         $groupId: uuid!
         $contentGroupTypeName: ContentGroupType_enum!
         $originatingDataId: uuid = null
@@ -226,6 +274,7 @@ gql`
         $deleteItemIds: [uuid!]!
         $deleteRequiredItemIds: [uuid!]!
         $deleteGroupTagIds: [uuid!]!
+        $deleteGroupHallwayIds: [uuid!]!
         $newUploaders: [Uploader_insert_input!]!
         $deleteUploaderIds: [uuid!]!
         $newGroupPeople: [ContentGroupPerson_insert_input!]!
@@ -244,6 +293,11 @@ gql`
         insert_ContentGroupTag(objects: $newGroupTags) {
             returning {
                 ...ContentGroupTagInfo
+            }
+        }
+        insert_ContentGroupHallway(objects: $newGroupHallways) {
+            returning {
+                ...ContentGroupHallwayInfo
             }
         }
         insert_Uploader(objects: $newUploaders) {
@@ -278,6 +332,11 @@ gql`
             }
         }
         delete_ContentGroupTag(where: { tag: { id: { _in: $deleteGroupTagIds } } }) {
+            returning {
+                id
+            }
+        }
+        delete_ContentGroupHallway(where: { id: { _in: $deleteGroupHallwayIds } }) {
             returning {
                 id
             }
@@ -344,6 +403,12 @@ gql`
         }
     }
 
+    mutation UpdateGroupHallway($id: uuid!, $priority: Int = null, $layout: jsonb = null) {
+        update_ContentGroupHallway_by_pk(pk_columns: { id: $id }, _set: { layout: $layout, priority: $priority }) {
+            ...ContentGroupHallwayInfo
+        }
+    }
+
     mutation UpdatePerson(
         $id: uuid!
         $name: String!
@@ -367,6 +432,12 @@ gql`
             ...TagInfo
         }
     }
+
+    mutation UpdateHallway($id: uuid!, $name: String!, $colour: String!, $priority: Int!) {
+        update_Hallway_by_pk(pk_columns: { id: $id }, _set: { name: $name, colour: $colour, priority: $priority }) {
+            ...HallwayInfo
+        }
+    }
 `;
 
 export type AllContentStateT =
@@ -374,6 +445,7 @@ export type AllContentStateT =
           contentGroups: Map<string, ContentGroupDescriptor>;
           people: Map<string, ContentPersonDescriptor>;
           tags: Map<string, TagDescriptor>;
+          hallways: Map<string, HallwayDescriptor>;
           originatingDatas: Map<string, OriginatingDataDescriptor>;
       }
     | undefined;
@@ -386,6 +458,7 @@ export function useSaveContentDiff():
           originalPeople: undefined;
           originalTags: undefined;
           originalOriginatingDatas: undefined;
+          originalHallways: undefined;
       }
     | {
           loadingContent: false;
@@ -394,6 +467,7 @@ export function useSaveContentDiff():
           originalPeople: undefined;
           originalTags: undefined;
           originalOriginatingDatas: undefined;
+          originalHallways: undefined;
       }
     | {
           loadingContent: false;
@@ -402,6 +476,7 @@ export function useSaveContentDiff():
           originalPeople: undefined;
           originalTags: undefined;
           originalOriginatingDatas: undefined;
+          originalHallways: undefined;
       }
     | {
           loadingContent: boolean;
@@ -410,22 +485,26 @@ export function useSaveContentDiff():
           originalPeople: Map<string, ContentPersonDescriptor>;
           originalTags: Map<string, TagDescriptor>;
           originalOriginatingDatas: Map<string, OriginatingDataDescriptor>;
+          originalHallways: Map<string, HallwayDescriptor>;
           saveContentDiff: (
               dirtyKeys: {
                   tagKeys: Set<string>;
                   peopleKeys: Set<string>;
                   originatingDataKeys: Set<string>;
                   groupKeys: Set<string>;
+                  hallwayKeys: Set<string>;
               },
               tags: Map<string, TagDescriptor>,
               people: Map<string, ContentPersonDescriptor>,
               originatingDatas: Map<string, OriginatingDataDescriptor>,
-              groups: Map<string, ContentGroupDescriptor>
+              groups: Map<string, ContentGroupDescriptor>,
+              hallways: Map<string, HallwayDescriptor>
           ) => Promise<{
               groups: Map<string, boolean>;
               people: Map<string, boolean>;
               tags: Map<string, boolean>;
               originatingDatas: Map<string, boolean>;
+              hallways: Map<string, boolean>;
           }>;
       } {
     const conference = useConference();
@@ -433,6 +512,9 @@ export function useSaveContentDiff():
     const [insertContentPeopleMutation] = useInsertContentPeopleMutation();
     const [deleteContentPeopleMutation] = useDeleteContentPeopleMutation();
     const [updatePersonMutation] = useUpdatePersonMutation();
+    const [insertHallwaysMutation] = useInsertHallwaysMutation();
+    const [deleteHallwaysMutation] = useDeleteHallwaysMutation();
+    const [updateHallwayMutation] = useUpdateHallwayMutation();
     const [insertOriginatingDatasMutation] = useInsertOriginatingDatasMutation();
     const [deleteOriginatingDatasMutation] = useDeleteOriginatingDatasMutation();
     const [insertTagsMutation] = useInsertTagsMutation();
@@ -445,6 +527,7 @@ export function useSaveContentDiff():
     const [updateRequiredContentItemMutation] = useUpdateRequiredContentItemMutation();
     const [updateUploaderMutation] = useUpdateUploaderMutation();
     const [updateGroupPersonMutation] = useUpdateGroupPersonMutation();
+    const [updateGroupHallwayMutation] = useUpdateGroupHallwayMutation();
 
     const { loading: loadingContent, error: errorContent, data: allContent } = useSelectAllContentQuery({
         fetchPolicy: "network-only",
@@ -469,6 +552,7 @@ export function useSaveContentDiff():
             originalPeople: undefined,
             originalTags: undefined,
             originalOriginatingDatas: undefined,
+            originalHallways: undefined,
         };
     } else if (errorContent) {
         return {
@@ -478,6 +562,7 @@ export function useSaveContentDiff():
             originalPeople: undefined,
             originalTags: undefined,
             originalOriginatingDatas: undefined,
+            originalHallways: undefined,
         };
     } else if (!original) {
         return {
@@ -487,6 +572,7 @@ export function useSaveContentDiff():
             originalPeople: undefined,
             originalTags: undefined,
             originalOriginatingDatas: undefined,
+            originalHallways: undefined,
         };
     } else {
         return {
@@ -496,12 +582,14 @@ export function useSaveContentDiff():
             originalOriginatingDatas: original.originatingDatas,
             originalPeople: original.people,
             originalTags: original.tags,
+            originalHallways: original.hallways,
             saveContentDiff: async function saveContentDiff(
-                { groupKeys, originatingDataKeys, peopleKeys, tagKeys },
+                { groupKeys, originatingDataKeys, peopleKeys, tagKeys, hallwayKeys },
                 tags,
                 people,
                 originatingDatas,
-                groups
+                groups,
+                hallways
             ) {
                 const tagResults: Map<string, boolean> = new Map();
                 tagKeys.forEach((key) => {
@@ -521,6 +609,11 @@ export function useSaveContentDiff():
                 const groupResults: Map<string, boolean> = new Map();
                 groupKeys.forEach((key) => {
                     groupResults.set(key, false);
+                });
+
+                const hallwayResults: Map<string, boolean> = new Map();
+                hallwayKeys.forEach((key) => {
+                    hallwayResults.set(key, false);
                 });
 
                 const newTags = new Map<string, TagDescriptor>();
@@ -587,22 +680,40 @@ export function useSaveContentDiff():
                     }
                 }
 
+                const newHallways = new Map<string, HallwayDescriptor>();
+                const updatedHallways = new Map<string, HallwayDescriptor>();
+                const deletedHallwayKeys = new Set<string>();
+                for (const key of hallwayKeys.values()) {
+                    const hallway = hallways.get(key);
+                    if (hallway) {
+                        if (hallway.isNew) {
+                            newHallways.set(key, hallway);
+                        } else {
+                            updatedHallways.set(key, hallway);
+                        }
+                    } else {
+                        deletedHallwayKeys.add(key);
+                    }
+                }
+
                 try {
-                    await insertTagsMutation({
-                        variables: {
-                            newTags: Array.from(newTags.values()).map(
-                                (tag): Tag_Insert_Input => ({
-                                    id: tag.id,
-                                    name: tag.name,
-                                    colour: tag.colour,
-                                    conferenceId: conference.id,
-                                    originatingDataId: tag.originatingDataId,
-                                })
-                            ),
-                        },
-                    });
-                    for (const key of newTags.keys()) {
-                        tagResults.set(key, true);
+                    if (newTags.size > 0) {
+                        await insertTagsMutation({
+                            variables: {
+                                newTags: Array.from(newTags.values()).map(
+                                    (tag): Tag_Insert_Input => ({
+                                        id: tag.id,
+                                        name: tag.name,
+                                        colour: tag.colour,
+                                        conferenceId: conference.id,
+                                        originatingDataId: tag.originatingDataId,
+                                    })
+                                ),
+                            },
+                        });
+                        for (const key of newTags.keys()) {
+                            tagResults.set(key, true);
+                        }
                     }
 
                     const updateTagResultsArr: [string, boolean][] = await Promise.all(
@@ -630,38 +741,42 @@ export function useSaveContentDiff():
                         tagResults.set(key, val);
                     }
 
-                    await insertOriginatingDatasMutation({
-                        variables: {
-                            newDatas: Array.from(newOriginatingDatas.values()).map(
-                                (originatingData): OriginatingData_Insert_Input => ({
-                                    id: originatingData.id,
-                                    conferenceId: conference.id,
-                                    data: originatingData.data,
-                                    sourceId: originatingData.sourceId,
-                                })
-                            ),
-                        },
-                    });
-                    for (const key of newOriginatingDatas.keys()) {
-                        originatingDataResults.set(key, true);
+                    if (newOriginatingDatas.size > 0) {
+                        await insertOriginatingDatasMutation({
+                            variables: {
+                                newDatas: Array.from(newOriginatingDatas.values()).map(
+                                    (originatingData): OriginatingData_Insert_Input => ({
+                                        id: originatingData.id,
+                                        conferenceId: conference.id,
+                                        data: originatingData.data,
+                                        sourceId: originatingData.sourceId,
+                                    })
+                                ),
+                            },
+                        });
+                        for (const key of newOriginatingDatas.keys()) {
+                            originatingDataResults.set(key, true);
+                        }
                     }
 
-                    await insertContentPeopleMutation({
-                        variables: {
-                            newPeople: Array.from(newPeople.values()).map(
-                                (person): ContentPerson_Insert_Input => ({
-                                    id: person.id,
-                                    conferenceId: conference.id,
-                                    affiliation: person.affiliation,
-                                    email: person.email,
-                                    name: person.name,
-                                    originatingDataId: person.originatingDataId,
-                                })
-                            ),
-                        },
-                    });
-                    for (const key of newPeople.keys()) {
-                        peopleResults.set(key, true);
+                    if (newPeople.size > 0) {
+                        await insertContentPeopleMutation({
+                            variables: {
+                                newPeople: Array.from(newPeople.values()).map(
+                                    (person): ContentPerson_Insert_Input => ({
+                                        id: person.id,
+                                        conferenceId: conference.id,
+                                        affiliation: person.affiliation,
+                                        email: person.email,
+                                        name: person.name,
+                                        originatingDataId: person.originatingDataId,
+                                    })
+                                ),
+                            },
+                        });
+                        for (const key of newPeople.keys()) {
+                            peopleResults.set(key, true);
+                        }
                     }
 
                     const updateContentPersonResultsArr: [string, boolean][] = await Promise.all(
@@ -690,88 +805,146 @@ export function useSaveContentDiff():
                         peopleResults.set(key, val);
                     }
 
-                    await insertDeleteContentGroupsMutation({
-                        variables: {
-                            deleteGroupIds: Array.from(deletedGroupKeys.values()),
-                            newGroups: Array.from(newGroups.values()).map((group) => {
-                                const groupResult: ContentGroup_Insert_Input = {
-                                    id: group.id,
-                                    conferenceId: conference.id,
-                                    contentGroupTags: {
-                                        data: Array.from(group.tagIds.values()).map((tagId) => ({
-                                            tagId,
-                                        })),
-                                    },
-                                    contentGroupTypeName: group.typeName,
-                                    contentItems: {
-                                        data: group.items.map((item) => {
-                                            const itemResult: ContentItem_Insert_Input = {
-                                                id: item.id,
-                                                conferenceId: conference.id,
-                                                contentTypeName: item.typeName,
-                                                data: item.data,
-                                                layoutData: item.layoutData,
-                                                name: item.name,
-                                                requiredContentId: item.requiredContentId,
-                                                originatingDataId: item.originatingDataId,
-                                            };
-                                            return itemResult;
-                                        }),
-                                    },
-                                    requiredContentItems: {
-                                        data: group.requiredItems.map((item) => {
-                                            const itemResult: RequiredContentItem_Insert_Input = {
-                                                id: item.id,
-                                                conferenceId: conference.id,
-                                                accessToken: uuidv4(),
-                                                name: item.name,
-                                                contentTypeName: item.typeName,
-                                                uploaders: {
-                                                    data: item.uploaders.map(
-                                                        (uploader): Uploader_Insert_Input => ({
-                                                            conferenceId: conference.id,
-                                                            email: uploader.email,
-                                                            id: uploader.id,
-                                                            name: uploader.name,
-                                                        })
-                                                    ),
-                                                    on_conflict: {
-                                                        constraint:
-                                                            Uploader_Constraint.UploaderEmailRequiredContentItemIdKey,
-                                                        update_columns: [Uploader_Update_Column.Name],
-                                                    },
-                                                },
-                                                originatingDataId: item.originatingDataId,
-                                            };
-                                            return itemResult;
-                                        }),
-                                    },
-                                    people: {
-                                        data: group.people.map((personGroup) => {
-                                            const personGroupResult: ContentGroupPerson_Insert_Input = {
-                                                id: personGroup.id,
-                                                conferenceId: conference.id,
-                                                priority: personGroup.priority,
-                                                roleName: personGroup.roleName,
-                                                personId: personGroup.personId,
-                                            };
-                                            return personGroupResult;
-                                        }),
-                                    },
-                                    originatingDataId: group.originatingDataId,
-                                    shortTitle: group.shortTitle,
-                                    title: group.title,
-                                };
-                                return groupResult;
-                            }),
-                        },
-                    });
-
-                    for (const key of newGroups.keys()) {
-                        groupResults.set(key, true);
+                    if (newHallways.size > 0) {
+                        await insertHallwaysMutation({
+                            variables: {
+                                newHallways: Array.from(newHallways.values()).map(
+                                    (hallway): Hallway_Insert_Input => ({
+                                        id: hallway.id,
+                                        conferenceId: conference.id,
+                                        name: hallway.name,
+                                        colour: hallway.colour,
+                                        priority: hallway.priority,
+                                    })
+                                ),
+                            },
+                        });
+                        for (const key of newHallways.keys()) {
+                            hallwayResults.set(key, true);
+                        }
                     }
-                    for (const key of deletedGroupKeys.keys()) {
-                        groupResults.set(key, true);
+
+                    const updateHallwayResultsArr: [string, boolean][] = await Promise.all(
+                        Array.from(updatedHallways.values()).map(
+                            async (hallway): Promise<[string, boolean]> => {
+                                let ok = false;
+                                try {
+                                    await updateHallwayMutation({
+                                        variables: {
+                                            id: hallway.id,
+                                            name: hallway.name,
+                                            colour: hallway.colour,
+                                            priority: hallway.priority,
+                                        },
+                                    });
+                                    ok = true;
+                                } catch (_e) {
+                                    ok = false;
+                                }
+                                return [hallway.id, ok];
+                            }
+                        )
+                    );
+                    for (const [key, val] of updateHallwayResultsArr) {
+                        hallwayResults.set(key, val);
+                    }
+
+                    if (deletedGroupKeys.size > 0 || newGroups.size > 0) {
+                        await insertDeleteContentGroupsMutation({
+                            variables: {
+                                deleteGroupIds: Array.from(deletedGroupKeys.values()),
+                                newGroups: Array.from(newGroups.values()).map((group) => {
+                                    const groupResult: ContentGroup_Insert_Input = {
+                                        id: group.id,
+                                        conferenceId: conference.id,
+                                        contentGroupTags: {
+                                            data: Array.from(group.tagIds.values()).map((tagId) => ({
+                                                tagId,
+                                            })),
+                                        },
+                                        contentGroupTypeName: group.typeName,
+                                        contentItems: {
+                                            data: group.items.map((item) => {
+                                                const itemResult: ContentItem_Insert_Input = {
+                                                    id: item.id,
+                                                    conferenceId: conference.id,
+                                                    contentTypeName: item.typeName,
+                                                    data: item.data,
+                                                    layoutData: item.layoutData,
+                                                    name: item.name,
+                                                    requiredContentId: item.requiredContentId,
+                                                    originatingDataId: item.originatingDataId,
+                                                };
+                                                return itemResult;
+                                            }),
+                                        },
+                                        requiredContentItems: {
+                                            data: group.requiredItems.map((item) => {
+                                                const itemResult: RequiredContentItem_Insert_Input = {
+                                                    id: item.id,
+                                                    conferenceId: conference.id,
+                                                    accessToken: uuidv4(),
+                                                    name: item.name,
+                                                    contentTypeName: item.typeName,
+                                                    uploaders: {
+                                                        data: item.uploaders.map(
+                                                            (uploader): Uploader_Insert_Input => ({
+                                                                conferenceId: conference.id,
+                                                                email: uploader.email,
+                                                                id: uploader.id,
+                                                                name: uploader.name,
+                                                            })
+                                                        ),
+                                                        on_conflict: {
+                                                            constraint:
+                                                                Uploader_Constraint.UploaderEmailRequiredContentItemIdKey,
+                                                            update_columns: [Uploader_Update_Column.Name],
+                                                        },
+                                                    },
+                                                    originatingDataId: item.originatingDataId,
+                                                };
+                                                return itemResult;
+                                            }),
+                                        },
+                                        people: {
+                                            data: group.people.map((personGroup) => {
+                                                const personGroupResult: ContentGroupPerson_Insert_Input = {
+                                                    id: personGroup.id,
+                                                    conferenceId: conference.id,
+                                                    priority: personGroup.priority,
+                                                    roleName: personGroup.roleName,
+                                                    personId: personGroup.personId,
+                                                };
+                                                return personGroupResult;
+                                            }),
+                                        },
+                                        hallways: {
+                                            data: group.hallways.map((hallwayGroup) => {
+                                                const hallwayGroupResult: ContentGroupHallway_Insert_Input = {
+                                                    id: hallwayGroup.id,
+                                                    conferenceId: conference.id,
+                                                    priority: hallwayGroup.priority,
+                                                    layout: hallwayGroup.layout,
+                                                    hallwayId: hallwayGroup.hallwayId,
+                                                };
+                                                return hallwayGroupResult;
+                                            }),
+                                        },
+                                        originatingDataId: group.originatingDataId,
+                                        shortTitle: group.shortTitle,
+                                        title: group.title,
+                                    };
+                                    return groupResult;
+                                }),
+                            },
+                        });
+
+                        for (const key of newGroups.keys()) {
+                            groupResults.set(key, true);
+                        }
+                        for (const key of deletedGroupKeys.keys()) {
+                            groupResults.set(key, true);
+                        }
                     }
                 } catch {
                     for (const key of newGroups.keys()) {
@@ -805,6 +978,10 @@ export function useSaveContentDiff():
                                 const newGroupPersons = new Map<string, ContentGroupPersonDescriptor>();
                                 const updatedGroupPersons = new Map<string, ContentGroupPersonDescriptor>();
                                 const deleteGroupPersonKeys = new Set<string>();
+
+                                const newGroupHallways = new Map<string, ContentGroupHallwayDescriptor>();
+                                const updatedGroupHallways = new Map<string, ContentGroupHallwayDescriptor>();
+                                const deleteGroupHallwayKeys = new Set<string>();
 
                                 const existingGroup = original.contentGroups.get(group.id);
                                 assert(existingGroup);
@@ -872,58 +1049,93 @@ export function useSaveContentDiff():
                                     }
                                 }
 
-                                await Promise.all(
-                                    Array.from(updatedItems.values()).map(async (item) => {
-                                        await updateContentItemMutation({
-                                            variables: {
-                                                contentTypeName: item.typeName,
-                                                data: item.data,
-                                                id: item.id,
-                                                layoutData: item.layoutData,
-                                                name: item.name,
-                                                requiredContentId: item.requiredContentId,
-                                                originatingDataId: item.originatingDataId,
-                                            },
-                                        });
-                                    })
-                                );
+                                for (const groupHallway of group.hallways) {
+                                    if (groupHallway.isNew) {
+                                        newGroupHallways.set(groupHallway.id, groupHallway);
+                                    } else {
+                                        updatedGroupHallways.set(groupHallway.id, groupHallway);
+                                    }
+                                }
+                                for (const existingGroupHallway of existingGroup.hallways) {
+                                    if (!updatedGroupHallways.has(existingGroupHallway.id)) {
+                                        deleteGroupHallwayKeys.add(existingGroupHallway.id);
+                                    }
+                                }
 
-                                await Promise.all(
-                                    Array.from(updatedRequiredItems.values()).map(async (item) => {
-                                        await updateRequiredContentItemMutation({
-                                            variables: {
-                                                contentTypeName: item.typeName,
-                                                id: item.id,
-                                                name: item.name,
-                                                originatingDataId: item.originatingDataId,
-                                            },
-                                        });
-                                    })
-                                );
+                                if (updatedItems.size > 0) {
+                                    await Promise.all(
+                                        Array.from(updatedItems.values()).map(async (item) => {
+                                            await updateContentItemMutation({
+                                                variables: {
+                                                    contentTypeName: item.typeName,
+                                                    data: item.data,
+                                                    id: item.id,
+                                                    layoutData: item.layoutData,
+                                                    name: item.name,
+                                                    requiredContentId: item.requiredContentId,
+                                                    originatingDataId: item.originatingDataId,
+                                                },
+                                            });
+                                        })
+                                    );
+                                }
 
-                                await Promise.all(
-                                    Array.from(updatedUploaders.values()).map(async (uploader) => {
-                                        await updateUploaderMutation({
-                                            variables: {
-                                                id: uploader.id,
-                                                name: uploader.name,
-                                                email: uploader.email,
-                                            },
-                                        });
-                                    })
-                                );
+                                if (updatedRequiredItems.size > 0) {
+                                    await Promise.all(
+                                        Array.from(updatedRequiredItems.values()).map(async (item) => {
+                                            await updateRequiredContentItemMutation({
+                                                variables: {
+                                                    contentTypeName: item.typeName,
+                                                    id: item.id,
+                                                    name: item.name,
+                                                    originatingDataId: item.originatingDataId,
+                                                },
+                                            });
+                                        })
+                                    );
+                                }
 
-                                await Promise.all(
-                                    Array.from(updatedGroupPersons.values()).map(async (groupPerson) => {
-                                        await updateGroupPersonMutation({
-                                            variables: {
-                                                id: groupPerson.id,
-                                                priority: groupPerson.priority,
-                                                roleName: groupPerson.roleName,
-                                            },
-                                        });
-                                    })
-                                );
+                                if (updatedUploaders.size > 0) {
+                                    await Promise.all(
+                                        Array.from(updatedUploaders.values()).map(async (uploader) => {
+                                            await updateUploaderMutation({
+                                                variables: {
+                                                    id: uploader.id,
+                                                    name: uploader.name,
+                                                    email: uploader.email,
+                                                },
+                                            });
+                                        })
+                                    );
+                                }
+
+                                if (updatedGroupPersons.size > 0) {
+                                    await Promise.all(
+                                        Array.from(updatedGroupPersons.values()).map(async (groupPerson) => {
+                                            await updateGroupPersonMutation({
+                                                variables: {
+                                                    id: groupPerson.id,
+                                                    priority: groupPerson.priority,
+                                                    roleName: groupPerson.roleName,
+                                                },
+                                            });
+                                        })
+                                    );
+                                }
+
+                                if (updatedGroupHallways.size > 0) {
+                                    await Promise.all(
+                                        Array.from(updatedGroupHallways.values()).map(async (groupHallway) => {
+                                            await updateGroupHallwayMutation({
+                                                variables: {
+                                                    id: groupHallway.id,
+                                                    priority: groupHallway.priority,
+                                                    layout: groupHallway.layout,
+                                                },
+                                            });
+                                        })
+                                    );
+                                }
 
                                 await updateContentGroupMutation({
                                     variables: {
@@ -933,6 +1145,7 @@ export function useSaveContentDiff():
                                         deleteRequiredItemIds: Array.from(deleteRequiredItemKeys.values()),
                                         deleteUploaderIds: Array.from(deleteUploaderKeys.values()),
                                         deleteGroupPeopleIds: Array.from(deleteGroupPersonKeys.values()),
+                                        deleteGroupHallwayIds: Array.from(deleteGroupHallwayKeys.values()),
                                         groupId: group.id,
                                         newGroupTags: Array.from(newGroupTags.values()).map((tagId) => ({
                                             contentGroupId: group.id,
@@ -981,7 +1194,15 @@ export function useSaveContentDiff():
                                             personId: groupPerson.personId,
                                             priority: groupPerson.priority,
                                             roleName: groupPerson.roleName,
-                                            groupId: group.id
+                                            groupId: group.id,
+                                        })),
+                                        newGroupHallways: Array.from(newGroupHallways.values()).map((groupHallway) => ({
+                                            conferenceId: conference.id,
+                                            id: groupHallway.id,
+                                            hallwayId: groupHallway.hallwayId,
+                                            priority: groupHallway.priority,
+                                            layout: groupHallway.layout,
+                                            groupId: group.id,
                                         })),
                                         originatingDataId: group.originatingDataId,
                                         shortTitle: group.shortTitle,
@@ -1002,13 +1223,15 @@ export function useSaveContentDiff():
                 }
 
                 try {
-                    await deleteTagsMutation({
-                        variables: {
-                            deleteTagIds: Array.from(deletedTagKeys.values()),
-                        },
-                    });
-                    for (const key of deletedTagKeys.keys()) {
-                        tagResults.set(key, true);
+                    if (deletedTagKeys.size > 0) {
+                        await deleteTagsMutation({
+                            variables: {
+                                deleteTagIds: Array.from(deletedTagKeys.values()),
+                            },
+                        });
+                        for (const key of deletedTagKeys.keys()) {
+                            tagResults.set(key, true);
+                        }
                     }
                 } catch {
                     for (const key of deletedTagKeys.keys()) {
@@ -1017,13 +1240,32 @@ export function useSaveContentDiff():
                 }
 
                 try {
-                    await deleteContentPeopleMutation({
-                        variables: {
-                            deletePersonIds: Array.from(deletedPersonKeys.values()),
-                        },
-                    });
-                    for (const key of deletedPersonKeys.keys()) {
-                        peopleResults.set(key, true);
+                    if (deletedHallwayKeys.size > 0) {
+                        await deleteHallwaysMutation({
+                            variables: {
+                                deleteHallwayIds: Array.from(deletedHallwayKeys.values()),
+                            },
+                        });
+                        for (const key of deletedHallwayKeys.keys()) {
+                            hallwayResults.set(key, true);
+                        }
+                    }
+                } catch {
+                    for (const key of deletedHallwayKeys.keys()) {
+                        hallwayResults.set(key, false);
+                    }
+                }
+
+                try {
+                    if (deletedPersonKeys.size > 0) {
+                        await deleteContentPeopleMutation({
+                            variables: {
+                                deletePersonIds: Array.from(deletedPersonKeys.values()),
+                            },
+                        });
+                        for (const key of deletedPersonKeys.keys()) {
+                            peopleResults.set(key, true);
+                        }
                     }
                 } catch {
                     for (const key of deletedPersonKeys.keys()) {
@@ -1032,13 +1274,15 @@ export function useSaveContentDiff():
                 }
 
                 try {
-                    await deleteOriginatingDatasMutation({
-                        variables: {
-                            deleteDataIds: Array.from(deletedOriginatingDataKeys.values()),
-                        },
-                    });
-                    for (const key of deletedOriginatingDataKeys.keys()) {
-                        originatingDataResults.set(key, true);
+                    if (deletedOriginatingDataKeys.size > 0) {
+                        await deleteOriginatingDatasMutation({
+                            variables: {
+                                deleteDataIds: Array.from(deletedOriginatingDataKeys.values()),
+                            },
+                        });
+                        for (const key of deletedOriginatingDataKeys.keys()) {
+                            originatingDataResults.set(key, true);
+                        }
                     }
                 } catch {
                     for (const key of deletedOriginatingDataKeys.keys()) {
@@ -1051,6 +1295,7 @@ export function useSaveContentDiff():
                     originatingDatas: originatingDataResults,
                     people: peopleResults,
                     tags: tagResults,
+                    hallways: hallwayResults,
                 };
             },
         };

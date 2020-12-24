@@ -35,8 +35,10 @@ import PageNotFound from "../../Errors/PageNotFound";
 import isValidUUID from "../../Utils/isValidUUID";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
+import ContentGroupHallwaysModal from "./Content/ContentGroupHallwaysModal";
 import ContentGroupPersonsModal from "./Content/ContentGroupPersonsModal";
 import { deepCloneContentGroupDescriptor } from "./Content/Functions";
+import ManageHallwaysModal from "./Content/ManageHallwaysModal";
 import ManagePeopleModal from "./Content/ManagePeopleModal";
 import ManageTagsModal from "./Content/ManageTagsModal";
 import { fitGroupToTemplate, GroupTemplates, ItemBaseTemplates } from "./Content/Templates";
@@ -45,6 +47,7 @@ import type {
     ContentGroupDescriptor,
     ContentItemDescriptor,
     ContentPersonDescriptor,
+    HallwayDescriptor,
     OriginatingDataDescriptor,
     RequiredContentItemDescriptor,
     TagDescriptor,
@@ -54,8 +57,6 @@ import { useSaveContentDiff } from "./Content/useSaveContentDiff";
 import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
 const ContentGroupCRUDTable = (props: Readonly<CRUDTableProps<ContentGroupDescriptor, "id">>) => CRUDTable(props);
-
-// TODO: Exhibition halls table(s)
 
 export default function ManageConferenceContentPage(): JSX.Element {
     const conference = useConference();
@@ -82,6 +83,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
 
     const [allGroupsMap, setAllContentGroupsMap] = useState<Map<string, ContentGroupDescriptor>>();
     const [allPeopleMap, setAllPeopleMap] = useState<Map<string, ContentPersonDescriptor>>();
+    const [allHallwaysMap, setAllHallwaysMap] = useState<Map<string, HallwayDescriptor>>();
     const [allTagsMap, setAllTagsMap] = useState<Map<string, TagDescriptor>>();
     const [allOriginatingDatasMap, setAllOriginatingDatasMap] = useState<Map<string, OriginatingDataDescriptor>>();
 
@@ -232,6 +234,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
             const newGroupsMap = new Map<string, ContentGroupDescriptor>();
             const newPeopleMap = new Map<string, ContentPersonDescriptor>();
             const newTagsMap = new Map<string, TagDescriptor>();
+            const newHallwaysMap = new Map<string, HallwayDescriptor>();
             const newOriginatingDatasMap = new Map<string, OriginatingDataDescriptor>();
             for (const [key, group] of saveContentDiff.originalContentGroups) {
                 // Deep clone so that when we manipulate stuff later it doesn't
@@ -249,15 +252,20 @@ export default function ManageConferenceContentPage(): JSX.Element {
             for (const [key, value] of saveContentDiff.originalOriginatingDatas) {
                 newOriginatingDatasMap.set(key, { ...value });
             }
+            for (const [key, value] of saveContentDiff.originalHallways) {
+                newHallwaysMap.set(key, { ...value });
+            }
             setAllContentGroupsMap(newGroupsMap);
             setAllPeopleMap(newPeopleMap);
             setAllTagsMap(newTagsMap);
             setAllOriginatingDatasMap(newOriginatingDatasMap);
+            setAllHallwaysMap(newHallwaysMap);
         }
     }, [
         saveContentDiff.errorContent,
         saveContentDiff.loadingContent,
         saveContentDiff.originalContentGroups,
+        saveContentDiff.originalHallways,
         saveContentDiff.originalOriginatingDatas,
         saveContentDiff.originalPeople,
         saveContentDiff.originalTags,
@@ -270,6 +278,9 @@ export default function ManageConferenceContentPage(): JSX.Element {
 
     const { isOpen: peopleModalOpen, onOpen: onPeopleModalOpen, onClose: onPeopleModalClose } = useDisclosure();
     const [editedPeopleIds, setEditedPeopleIds] = useState<Set<string>>(new Set());
+    
+    const { isOpen: hallwaysModalOpen, onOpen: onHallwaysModalOpen, onClose: onHallwaysModalClose } = useDisclosure();
+    const [editedHallwaysIds, setEditedHallwaysIds] = useState<Set<string>>(new Set());
 
     const toast = useToast();
 
@@ -285,7 +296,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                 Content
             </Heading>
             {saveContentDiff.loadingContent &&
-            (!allGroupsMap || !allTagsMap || !allPeopleMap || !allOriginatingDatasMap) ? (
+            (!allGroupsMap || !allTagsMap || !allPeopleMap || !allOriginatingDatasMap || !allHallwaysMap) ? (
                 <Spinner />
             ) : saveContentDiff.errorContent ? (
                 <>An error occurred loading in data - please see further information in notifications.</>
@@ -295,7 +306,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
             <ContentGroupCRUDTable
                 key="crud-table"
                 data={allGroupsMap ?? new Map()}
-                externalUnsavedChanges={dirtyTagIds.size > 0 || editedPeopleIds.size > 0}
+                externalUnsavedChanges={dirtyTagIds.size > 0 || editedPeopleIds.size > 0 || editedHallwaysIds.size > 0}
                 csud={{
                     cudCallbacks: {
                         generateTemporaryKey: () => uuidv4(),
@@ -355,6 +366,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                             assert(allGroupsMap);
                             assert(allTagsMap);
                             assert(allPeopleMap);
+                            assert(allHallwaysMap);
                             assert(allOriginatingDatasMap);
                             assert(!saveContentDiff.loadingContent);
                             assert(!saveContentDiff.errorContent);
@@ -365,11 +377,13 @@ export default function ManageConferenceContentPage(): JSX.Element {
                                     originatingDataKeys: new Set(),
                                     peopleKeys: editedPeopleIds,
                                     tagKeys: dirtyTagIds,
+                                    hallwayKeys: editedHallwaysIds,
                                 },
                                 allTagsMap,
                                 allPeopleMap,
                                 allOriginatingDatasMap,
-                                allGroupsMap
+                                allGroupsMap,
+                                allHallwaysMap,
                             );
 
                             setDirtyTagIds((oldTagIds) => {
@@ -390,6 +404,16 @@ export default function ManageConferenceContentPage(): JSX.Element {
                                     }
                                 }
                                 return newPersonIds;
+                            });
+
+                            setEditedHallwaysIds((oldHallwayIds) => {
+                                const newHallwayIds = new Set(oldHallwayIds);
+                                for (const [hallwayId, result] of results.hallways) {
+                                    if (result) {
+                                        newHallwayIds.delete(hallwayId);
+                                    }
+                                }
+                                return newHallwayIds;
                             });
 
                             return results.groups;
@@ -423,11 +447,13 @@ export default function ManageConferenceContentPage(): JSX.Element {
                     editSingle: (key, onClose, isDirty, markDirty) => {
                         assert(allGroupsMap);
                         assert(allPeopleMap);
+                        assert(allHallwaysMap);
                         assert(allOriginatingDatasMap);
                         return ContentGroupSecondaryEditor(
                             allGroupsMap,
                             allPeopleMap,
                             allOriginatingDatasMap,
+                            allHallwaysMap,
                             key,
                             markDirty,
                             setAllContentGroupsMap,
@@ -462,6 +488,20 @@ export default function ManageConferenceContentPage(): JSX.Element {
                         isRunning: false,
                         label: "Manage people",
                         text: "Manage people",
+                    },
+                    {
+                        action: async (_groupKeys) => {
+                            onHallwaysModalOpen();
+                        },
+                        enabledWhenNothingSelected: true,
+                        enabledWhenDirty: true,
+                        tooltipWhenDisabled: "",
+                        tooltipWhenEnabled:
+                            "Hallways can exhibit items, rooms and events.",
+                        colorScheme: "purple",
+                        isRunning: false,
+                        label: "Manage hallways",
+                        text: "Manage hallways",
                     },
                     {
                         action: async (groupKeys) => {
@@ -608,6 +648,68 @@ export default function ManageConferenceContentPage(): JSX.Element {
                     }
                 }}
             />
+            <ManageHallwaysModal
+                hallways={allHallwaysMap ?? new Map()}
+                areHallwaysDirty={editedHallwaysIds.size > 0}
+                isOpen={hallwaysModalOpen}
+                onOpen={onHallwaysModalOpen}
+                onClose={onHallwaysModalClose}
+                insertHallway={(hallway) => {
+                    setEditedHallwaysIds((oldHallwayIds) => {
+                        const newHallwayIds = new Set(oldHallwayIds);
+                        newHallwayIds.add(hallway.id);
+                        return newHallwayIds;
+                    });
+                    setAllHallwaysMap((oldHallways) => {
+                        const newHallways: Map<string, HallwayDescriptor> = oldHallways
+                            ? new Map(oldHallways)
+                            : new Map();
+                        newHallways.set(hallway.id, hallway);
+                        return newHallways;
+                    });
+                }}
+                updateHallway={(hallway) => {
+                    setEditedHallwaysIds((oldHallwayIds) => {
+                        const newHallwayIds = new Set(oldHallwayIds);
+                        newHallwayIds.add(hallway.id);
+                        return newHallwayIds;
+                    });
+                    setAllHallwaysMap((oldHallways) => {
+                        const newHallways: Map<string, HallwayDescriptor> = oldHallways
+                            ? new Map(oldHallways)
+                            : new Map();
+                        newHallways.set(hallway.id, hallway);
+                        return newHallways;
+                    });
+                }}
+                deleteHallway={(hallwayId) => {
+                    const isInUse = Array.from(allGroupsMap?.values() ?? []).some((group) =>
+                        group.hallways.some((x) => x.hallwayId === hallwayId)
+                    );
+                    if (isInUse) {
+                        toast({
+                            description:
+                                "Cannot delete a hallway while they are associated with some content. Please dissociate the hallway from all content then try again.",
+                            isClosable: true,
+                            status: "error",
+                            title: "Cannot delete hallway",
+                        });
+                    } else {
+                        setEditedHallwaysIds((oldHallwayIds) => {
+                            const newHallwayIds = new Set(oldHallwayIds);
+                            newHallwayIds.add(hallwayId);
+                            return newHallwayIds;
+                        });
+                        setAllHallwaysMap((oldHallways) => {
+                            const newHallways: Map<string, HallwayDescriptor> = oldHallways
+                                ? new Map(oldHallways)
+                                : new Map();
+                            newHallways.delete(hallwayId);
+                            return newHallways;
+                        });
+                    }
+                }}
+            />
         </RequireAtLeastOnePermissionWrapper>
     );
 }
@@ -616,6 +718,7 @@ function ContentGroupSecondaryEditor(
     allGroupsMap: Map<string, ContentGroupDescriptor>,
     allPeopleMap: Map<string, ContentPersonDescriptor>,
     allOriginatingDatasMap: Map<string, OriginatingDataDescriptor>,
+    allHallwaysMap: Map<string, HallwayDescriptor>,
     key: string,
     markDirty: () => void,
     setAllContentGroupsMap: React.Dispatch<React.SetStateAction<Map<string, ContentGroupDescriptor> | undefined>>,
@@ -646,6 +749,26 @@ function ContentGroupSecondaryEditor(
                             isDirty={isDirty}
                             markDirty={markDirty}
                             peopleMap={allPeopleMap}
+                            setAllContentGroupsMap={setAllContentGroupsMap}
+                        />
+                    </AccordionPanel>
+                </AccordionItem>
+            );
+            
+            itemElements.push(
+                <AccordionItem key="originating-data">
+                    <AccordionButton>
+                        <Box flex="1" textAlign="left">
+                            Hallways
+                        </Box>
+                        <AccordionIcon />
+                    </AccordionButton>
+                    <AccordionPanel pb={4}>
+                        <GroupHallwaysEditorModal
+                            group={group}
+                            isDirty={isDirty}
+                            markDirty={markDirty}
+                            hallwaysMap={allHallwaysMap}
                             setAllContentGroupsMap={setAllContentGroupsMap}
                         />
                     </AccordionPanel>
@@ -902,6 +1025,86 @@ function GroupPeopleEditorModal({
                             ...existingGroup,
                             people: existingGroup.people.filter(
                                 (existingContentGroupPerson) => existingContentGroupPerson.id !== contentGroupPersonId
+                            ),
+                        });
+                        return newGroups;
+                    });
+                }}
+            />
+        </>
+    );
+    return accordianContents;
+}
+
+function GroupHallwaysEditorModal({
+    group,
+    hallwaysMap,
+    isDirty,
+    markDirty,
+    setAllContentGroupsMap,
+}: {
+    group: ContentGroupDescriptor;
+    hallwaysMap: Map<string, HallwayDescriptor>;
+    isDirty: boolean;
+    markDirty: () => void;
+    setAllContentGroupsMap: React.Dispatch<React.SetStateAction<Map<string, ContentGroupDescriptor> | undefined>>;
+}) {
+    const { isOpen: isUploadersOpen, onOpen: onUploadersOpen, onClose: onUploadersClose } = useDisclosure();
+    const accordianContents = (
+        <>
+            <ContentGroupHallwaysModal
+                isGroupDirty={isDirty}
+                isOpen={isUploadersOpen}
+                onOpen={onUploadersOpen}
+                onClose={onUploadersClose}
+                group={group}
+                hallwaysMap={hallwaysMap}
+                insertContentGroupHallway={(contentGroupHallway) => {
+                    markDirty();
+                    setAllContentGroupsMap((oldGroups) => {
+                        const newGroups: Map<string, ContentGroupDescriptor> = oldGroups
+                            ? new Map(oldGroups)
+                            : new Map();
+                        const existingGroup = newGroups.get(group.id);
+                        assert(existingGroup);
+                        newGroups.set(group.id, {
+                            ...existingGroup,
+                            hallways: [...existingGroup.hallways, contentGroupHallway],
+                        });
+                        return newGroups;
+                    });
+                }}
+                updateContentGroupHallway={(contentGroupHallway) => {
+                    markDirty();
+                    setAllContentGroupsMap((oldGroups) => {
+                        const newGroups: Map<string, ContentGroupDescriptor> = oldGroups
+                            ? new Map(oldGroups)
+                            : new Map();
+                        const existingGroup = newGroups.get(group.id);
+                        assert(existingGroup);
+                        newGroups.set(group.id, {
+                            ...existingGroup,
+                            hallways: existingGroup.hallways.map((existingContentGroupHallway) =>
+                                existingContentGroupHallway.id === contentGroupHallway.id
+                                    ? contentGroupHallway
+                                    : existingContentGroupHallway
+                            ),
+                        });
+                        return newGroups;
+                    });
+                }}
+                deleteContentGroupHallway={(contentGroupHallwayId) => {
+                    markDirty();
+                    setAllContentGroupsMap((oldGroups) => {
+                        const newGroups: Map<string, ContentGroupDescriptor> = oldGroups
+                            ? new Map(oldGroups)
+                            : new Map();
+                        const existingGroup = newGroups.get(group.id);
+                        assert(existingGroup);
+                        newGroups.set(group.id, {
+                            ...existingGroup,
+                            hallways: existingGroup.hallways.filter(
+                                (existingContentGroupHallway) => existingContentGroupHallway.id !== contentGroupHallwayId
                             ),
                         });
                         return newGroups;

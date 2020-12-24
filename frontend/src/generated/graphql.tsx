@@ -2802,6 +2802,10 @@ export type Conference = {
   readonly groups: ReadonlyArray<Group>;
   /** An aggregated array relationship */
   readonly groups_aggregate: Group_Aggregate;
+  /** An array relationship */
+  readonly hallways: ReadonlyArray<Hallway>;
+  /** An aggregated array relationship */
+  readonly hallways_aggregate: Hallway_Aggregate;
   readonly id: Scalars['uuid'];
   readonly name: Scalars['String'];
   /** An array relationship */
@@ -2818,6 +2822,10 @@ export type Conference = {
   readonly rooms_aggregate: Room_Aggregate;
   readonly shortName: Scalars['String'];
   readonly slug: Scalars['String'];
+  /** An array relationship */
+  readonly tags: ReadonlyArray<Tag>;
+  /** An aggregated array relationship */
+  readonly tags_aggregate: Tag_Aggregate;
   readonly updatedAt: Scalars['timestamptz'];
 };
 
@@ -2923,6 +2931,26 @@ export type ConferenceGroups_AggregateArgs = {
 
 
 /** columns and relationships of "Conference" */
+export type ConferenceHallwaysArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Hallway_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Hallway_Order_By>>;
+  where?: Maybe<Hallway_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Conference" */
+export type ConferenceHallways_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Hallway_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Hallway_Order_By>>;
+  where?: Maybe<Hallway_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Conference" */
 export type ConferenceOriginatingDatasArgs = {
   distinct_on?: Maybe<ReadonlyArray<OriginatingData_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -2979,6 +3007,26 @@ export type ConferenceRooms_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Room_Order_By>>;
   where?: Maybe<Room_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Conference" */
+export type ConferenceTagsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Tag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Tag_Order_By>>;
+  where?: Maybe<Tag_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Conference" */
+export type ConferenceTags_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Tag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Tag_Order_By>>;
+  where?: Maybe<Tag_Bool_Exp>;
 };
 
 /** columns and relationships of "ConferenceConfiguration" */
@@ -3689,6 +3737,7 @@ export type Conference_Bool_Exp = {
   readonly demoCode?: Maybe<ConferenceDemoCode_Bool_Exp>;
   readonly demoCodeId?: Maybe<Uuid_Comparison_Exp>;
   readonly groups?: Maybe<Group_Bool_Exp>;
+  readonly hallways?: Maybe<Hallway_Bool_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly name?: Maybe<String_Comparison_Exp>;
   readonly originatingDatas?: Maybe<OriginatingData_Bool_Exp>;
@@ -3696,6 +3745,7 @@ export type Conference_Bool_Exp = {
   readonly rooms?: Maybe<Room_Bool_Exp>;
   readonly shortName?: Maybe<String_Comparison_Exp>;
   readonly slug?: Maybe<String_Comparison_Exp>;
+  readonly tags?: Maybe<Tag_Bool_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -3725,6 +3775,7 @@ export type Conference_Insert_Input = {
   readonly demoCode?: Maybe<ConferenceDemoCode_Obj_Rel_Insert_Input>;
   readonly demoCodeId?: Maybe<Scalars['uuid']>;
   readonly groups?: Maybe<Group_Arr_Rel_Insert_Input>;
+  readonly hallways?: Maybe<Hallway_Arr_Rel_Insert_Input>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDatas?: Maybe<OriginatingData_Arr_Rel_Insert_Input>;
@@ -3732,6 +3783,7 @@ export type Conference_Insert_Input = {
   readonly rooms?: Maybe<Room_Arr_Rel_Insert_Input>;
   readonly shortName?: Maybe<Scalars['String']>;
   readonly slug?: Maybe<Scalars['String']>;
+  readonly tags?: Maybe<Tag_Arr_Rel_Insert_Input>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -3819,6 +3871,7 @@ export type Conference_Order_By = {
   readonly demoCode?: Maybe<ConferenceDemoCode_Order_By>;
   readonly demoCodeId?: Maybe<Order_By>;
   readonly groups_aggregate?: Maybe<Group_Aggregate_Order_By>;
+  readonly hallways_aggregate?: Maybe<Hallway_Aggregate_Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly originatingDatas_aggregate?: Maybe<OriginatingData_Aggregate_Order_By>;
@@ -3826,6 +3879,7 @@ export type Conference_Order_By = {
   readonly rooms_aggregate?: Maybe<Room_Aggregate_Order_By>;
   readonly shortName?: Maybe<Order_By>;
   readonly slug?: Maybe<Order_By>;
+  readonly tags_aggregate?: Maybe<Tag_Aggregate_Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
 
@@ -3919,6 +3973,10 @@ export type ContentGroup = {
   readonly events: ReadonlyArray<Event>;
   /** An aggregated array relationship */
   readonly events_aggregate: Event_Aggregate;
+  /** An array relationship */
+  readonly hallways: ReadonlyArray<ContentGroupHallway>;
+  /** An aggregated array relationship */
+  readonly hallways_aggregate: ContentGroupHallway_Aggregate;
   readonly id: Scalars['uuid'];
   /** An object relationship */
   readonly originatingData?: Maybe<OriginatingData>;
@@ -3998,6 +4056,26 @@ export type ContentGroupEvents_AggregateArgs = {
 
 
 /** columns and relationships of "ContentGroup" */
+export type ContentGroupHallwaysArgs = {
+  distinct_on?: Maybe<ReadonlyArray<ContentGroupHallway_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<ContentGroupHallway_Order_By>>;
+  where?: Maybe<ContentGroupHallway_Bool_Exp>;
+};
+
+
+/** columns and relationships of "ContentGroup" */
+export type ContentGroupHallways_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<ContentGroupHallway_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<ContentGroupHallway_Order_By>>;
+  where?: Maybe<ContentGroupHallway_Bool_Exp>;
+};
+
+
+/** columns and relationships of "ContentGroup" */
 export type ContentGroupPeopleArgs = {
   distinct_on?: Maybe<ReadonlyArray<ContentGroupPerson_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -4034,6 +4112,353 @@ export type ContentGroupRequiredContentItems_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<RequiredContentItem_Order_By>>;
   where?: Maybe<RequiredContentItem_Bool_Exp>;
+};
+
+/** columns and relationships of "ContentGroupHallway" */
+export type ContentGroupHallway = {
+  readonly __typename?: 'ContentGroupHallway';
+  /** An object relationship */
+  readonly conference: Conference;
+  readonly conferenceId: Scalars['uuid'];
+  /** An object relationship */
+  readonly contentGroup: ContentGroup;
+  readonly groupId: Scalars['uuid'];
+  /** An object relationship */
+  readonly hallway: Hallway;
+  readonly hallwayId: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
+  readonly layout?: Maybe<Scalars['jsonb']>;
+  readonly priority?: Maybe<Scalars['Int']>;
+};
+
+
+/** columns and relationships of "ContentGroupHallway" */
+export type ContentGroupHallwayLayoutArgs = {
+  path?: Maybe<Scalars['String']>;
+};
+
+/** aggregated selection of "ContentGroupHallway" */
+export type ContentGroupHallway_Aggregate = {
+  readonly __typename?: 'ContentGroupHallway_aggregate';
+  readonly aggregate?: Maybe<ContentGroupHallway_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<ContentGroupHallway>;
+};
+
+/** aggregate fields of "ContentGroupHallway" */
+export type ContentGroupHallway_Aggregate_Fields = {
+  readonly __typename?: 'ContentGroupHallway_aggregate_fields';
+  readonly avg?: Maybe<ContentGroupHallway_Avg_Fields>;
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<ContentGroupHallway_Max_Fields>;
+  readonly min?: Maybe<ContentGroupHallway_Min_Fields>;
+  readonly stddev?: Maybe<ContentGroupHallway_Stddev_Fields>;
+  readonly stddev_pop?: Maybe<ContentGroupHallway_Stddev_Pop_Fields>;
+  readonly stddev_samp?: Maybe<ContentGroupHallway_Stddev_Samp_Fields>;
+  readonly sum?: Maybe<ContentGroupHallway_Sum_Fields>;
+  readonly var_pop?: Maybe<ContentGroupHallway_Var_Pop_Fields>;
+  readonly var_samp?: Maybe<ContentGroupHallway_Var_Samp_Fields>;
+  readonly variance?: Maybe<ContentGroupHallway_Variance_Fields>;
+};
+
+
+/** aggregate fields of "ContentGroupHallway" */
+export type ContentGroupHallway_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<ContentGroupHallway_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "ContentGroupHallway" */
+export type ContentGroupHallway_Aggregate_Order_By = {
+  readonly avg?: Maybe<ContentGroupHallway_Avg_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<ContentGroupHallway_Max_Order_By>;
+  readonly min?: Maybe<ContentGroupHallway_Min_Order_By>;
+  readonly stddev?: Maybe<ContentGroupHallway_Stddev_Order_By>;
+  readonly stddev_pop?: Maybe<ContentGroupHallway_Stddev_Pop_Order_By>;
+  readonly stddev_samp?: Maybe<ContentGroupHallway_Stddev_Samp_Order_By>;
+  readonly sum?: Maybe<ContentGroupHallway_Sum_Order_By>;
+  readonly var_pop?: Maybe<ContentGroupHallway_Var_Pop_Order_By>;
+  readonly var_samp?: Maybe<ContentGroupHallway_Var_Samp_Order_By>;
+  readonly variance?: Maybe<ContentGroupHallway_Variance_Order_By>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type ContentGroupHallway_Append_Input = {
+  readonly layout?: Maybe<Scalars['jsonb']>;
+};
+
+/** input type for inserting array relation for remote table "ContentGroupHallway" */
+export type ContentGroupHallway_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<ContentGroupHallway_Insert_Input>;
+  readonly on_conflict?: Maybe<ContentGroupHallway_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type ContentGroupHallway_Avg_Fields = {
+  readonly __typename?: 'ContentGroupHallway_avg_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "ContentGroupHallway" */
+export type ContentGroupHallway_Avg_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "ContentGroupHallway". All fields are combined with a logical 'AND'. */
+export type ContentGroupHallway_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<ContentGroupHallway_Bool_Exp>>>;
+  readonly _not?: Maybe<ContentGroupHallway_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<ContentGroupHallway_Bool_Exp>>>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly contentGroup?: Maybe<ContentGroup_Bool_Exp>;
+  readonly groupId?: Maybe<Uuid_Comparison_Exp>;
+  readonly hallway?: Maybe<Hallway_Bool_Exp>;
+  readonly hallwayId?: Maybe<Uuid_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly layout?: Maybe<Jsonb_Comparison_Exp>;
+  readonly priority?: Maybe<Int_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "ContentGroupHallway" */
+export enum ContentGroupHallway_Constraint {
+  /** unique or primary key constraint */
+  ContentGroupHallwayPkey = 'ContentGroupHallway_pkey'
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type ContentGroupHallway_Delete_At_Path_Input = {
+  readonly layout?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type ContentGroupHallway_Delete_Elem_Input = {
+  readonly layout?: Maybe<Scalars['Int']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type ContentGroupHallway_Delete_Key_Input = {
+  readonly layout?: Maybe<Scalars['String']>;
+};
+
+/** input type for incrementing integer column in table "ContentGroupHallway" */
+export type ContentGroupHallway_Inc_Input = {
+  readonly priority?: Maybe<Scalars['Int']>;
+};
+
+/** input type for inserting data into table "ContentGroupHallway" */
+export type ContentGroupHallway_Insert_Input = {
+  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly contentGroup?: Maybe<ContentGroup_Obj_Rel_Insert_Input>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly hallway?: Maybe<Hallway_Obj_Rel_Insert_Input>;
+  readonly hallwayId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly layout?: Maybe<Scalars['jsonb']>;
+  readonly priority?: Maybe<Scalars['Int']>;
+};
+
+/** aggregate max on columns */
+export type ContentGroupHallway_Max_Fields = {
+  readonly __typename?: 'ContentGroupHallway_max_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly hallwayId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly priority?: Maybe<Scalars['Int']>;
+};
+
+/** order by max() on columns of table "ContentGroupHallway" */
+export type ContentGroupHallway_Max_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly groupId?: Maybe<Order_By>;
+  readonly hallwayId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type ContentGroupHallway_Min_Fields = {
+  readonly __typename?: 'ContentGroupHallway_min_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly hallwayId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly priority?: Maybe<Scalars['Int']>;
+};
+
+/** order by min() on columns of table "ContentGroupHallway" */
+export type ContentGroupHallway_Min_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly groupId?: Maybe<Order_By>;
+  readonly hallwayId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "ContentGroupHallway" */
+export type ContentGroupHallway_Mutation_Response = {
+  readonly __typename?: 'ContentGroupHallway_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<ContentGroupHallway>;
+};
+
+/** input type for inserting object relation for remote table "ContentGroupHallway" */
+export type ContentGroupHallway_Obj_Rel_Insert_Input = {
+  readonly data: ContentGroupHallway_Insert_Input;
+  readonly on_conflict?: Maybe<ContentGroupHallway_On_Conflict>;
+};
+
+/** on conflict condition type for table "ContentGroupHallway" */
+export type ContentGroupHallway_On_Conflict = {
+  readonly constraint: ContentGroupHallway_Constraint;
+  readonly update_columns: ReadonlyArray<ContentGroupHallway_Update_Column>;
+  readonly where?: Maybe<ContentGroupHallway_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "ContentGroupHallway" */
+export type ContentGroupHallway_Order_By = {
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly contentGroup?: Maybe<ContentGroup_Order_By>;
+  readonly groupId?: Maybe<Order_By>;
+  readonly hallway?: Maybe<Hallway_Order_By>;
+  readonly hallwayId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly layout?: Maybe<Order_By>;
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "ContentGroupHallway" */
+export type ContentGroupHallway_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type ContentGroupHallway_Prepend_Input = {
+  readonly layout?: Maybe<Scalars['jsonb']>;
+};
+
+/** select columns of table "ContentGroupHallway" */
+export enum ContentGroupHallway_Select_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  GroupId = 'groupId',
+  /** column name */
+  HallwayId = 'hallwayId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Layout = 'layout',
+  /** column name */
+  Priority = 'priority'
+}
+
+/** input type for updating data in table "ContentGroupHallway" */
+export type ContentGroupHallway_Set_Input = {
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly hallwayId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly layout?: Maybe<Scalars['jsonb']>;
+  readonly priority?: Maybe<Scalars['Int']>;
+};
+
+/** aggregate stddev on columns */
+export type ContentGroupHallway_Stddev_Fields = {
+  readonly __typename?: 'ContentGroupHallway_stddev_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "ContentGroupHallway" */
+export type ContentGroupHallway_Stddev_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type ContentGroupHallway_Stddev_Pop_Fields = {
+  readonly __typename?: 'ContentGroupHallway_stddev_pop_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "ContentGroupHallway" */
+export type ContentGroupHallway_Stddev_Pop_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type ContentGroupHallway_Stddev_Samp_Fields = {
+  readonly __typename?: 'ContentGroupHallway_stddev_samp_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "ContentGroupHallway" */
+export type ContentGroupHallway_Stddev_Samp_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type ContentGroupHallway_Sum_Fields = {
+  readonly __typename?: 'ContentGroupHallway_sum_fields';
+  readonly priority?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "ContentGroupHallway" */
+export type ContentGroupHallway_Sum_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** update columns of table "ContentGroupHallway" */
+export enum ContentGroupHallway_Update_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  GroupId = 'groupId',
+  /** column name */
+  HallwayId = 'hallwayId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Layout = 'layout',
+  /** column name */
+  Priority = 'priority'
+}
+
+/** aggregate var_pop on columns */
+export type ContentGroupHallway_Var_Pop_Fields = {
+  readonly __typename?: 'ContentGroupHallway_var_pop_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "ContentGroupHallway" */
+export type ContentGroupHallway_Var_Pop_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type ContentGroupHallway_Var_Samp_Fields = {
+  readonly __typename?: 'ContentGroupHallway_var_samp_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "ContentGroupHallway" */
+export type ContentGroupHallway_Var_Samp_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type ContentGroupHallway_Variance_Fields = {
+  readonly __typename?: 'ContentGroupHallway_variance_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "ContentGroupHallway" */
+export type ContentGroupHallway_Variance_Order_By = {
+  readonly priority?: Maybe<Order_By>;
 };
 
 /** columns and relationships of "ContentGroupPerson" */
@@ -4772,6 +5197,7 @@ export type ContentGroup_Bool_Exp = {
   readonly contentItems?: Maybe<ContentItem_Bool_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly events?: Maybe<Event_Bool_Exp>;
+  readonly hallways?: Maybe<ContentGroupHallway_Bool_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly originatingData?: Maybe<OriginatingData_Bool_Exp>;
   readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
@@ -4798,6 +5224,7 @@ export type ContentGroup_Insert_Input = {
   readonly contentItems?: Maybe<ContentItem_Arr_Rel_Insert_Input>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly events?: Maybe<Event_Arr_Rel_Insert_Input>;
+  readonly hallways?: Maybe<ContentGroupHallway_Arr_Rel_Insert_Input>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly originatingData?: Maybe<OriginatingData_Obj_Rel_Insert_Input>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
@@ -4886,6 +5313,7 @@ export type ContentGroup_Order_By = {
   readonly contentItems_aggregate?: Maybe<ContentItem_Aggregate_Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly events_aggregate?: Maybe<Event_Aggregate_Order_By>;
+  readonly hallways_aggregate?: Maybe<ContentGroupHallway_Aggregate_Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly originatingData?: Maybe<OriginatingData_Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
@@ -8643,6 +9071,358 @@ export enum Group_Update_Column {
   /** column name */
   UpdatedAt = 'updatedAt'
 }
+
+/** columns and relationships of "Hallway" */
+export type Hallway = {
+  readonly __typename?: 'Hallway';
+  readonly colour: Scalars['String'];
+  /** An object relationship */
+  readonly conference: Conference;
+  readonly conferenceId: Scalars['uuid'];
+  /** An array relationship */
+  readonly contentGroups: ReadonlyArray<ContentGroupHallway>;
+  /** An aggregated array relationship */
+  readonly contentGroups_aggregate: ContentGroupHallway_Aggregate;
+  readonly created_at: Scalars['timestamptz'];
+  readonly id: Scalars['uuid'];
+  readonly name: Scalars['String'];
+  readonly priority: Scalars['Int'];
+  readonly updated_at: Scalars['timestamptz'];
+};
+
+
+/** columns and relationships of "Hallway" */
+export type HallwayContentGroupsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<ContentGroupHallway_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<ContentGroupHallway_Order_By>>;
+  where?: Maybe<ContentGroupHallway_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Hallway" */
+export type HallwayContentGroups_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<ContentGroupHallway_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<ContentGroupHallway_Order_By>>;
+  where?: Maybe<ContentGroupHallway_Bool_Exp>;
+};
+
+/** aggregated selection of "Hallway" */
+export type Hallway_Aggregate = {
+  readonly __typename?: 'Hallway_aggregate';
+  readonly aggregate?: Maybe<Hallway_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Hallway>;
+};
+
+/** aggregate fields of "Hallway" */
+export type Hallway_Aggregate_Fields = {
+  readonly __typename?: 'Hallway_aggregate_fields';
+  readonly avg?: Maybe<Hallway_Avg_Fields>;
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Hallway_Max_Fields>;
+  readonly min?: Maybe<Hallway_Min_Fields>;
+  readonly stddev?: Maybe<Hallway_Stddev_Fields>;
+  readonly stddev_pop?: Maybe<Hallway_Stddev_Pop_Fields>;
+  readonly stddev_samp?: Maybe<Hallway_Stddev_Samp_Fields>;
+  readonly sum?: Maybe<Hallway_Sum_Fields>;
+  readonly var_pop?: Maybe<Hallway_Var_Pop_Fields>;
+  readonly var_samp?: Maybe<Hallway_Var_Samp_Fields>;
+  readonly variance?: Maybe<Hallway_Variance_Fields>;
+};
+
+
+/** aggregate fields of "Hallway" */
+export type Hallway_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Hallway_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "Hallway" */
+export type Hallway_Aggregate_Order_By = {
+  readonly avg?: Maybe<Hallway_Avg_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Hallway_Max_Order_By>;
+  readonly min?: Maybe<Hallway_Min_Order_By>;
+  readonly stddev?: Maybe<Hallway_Stddev_Order_By>;
+  readonly stddev_pop?: Maybe<Hallway_Stddev_Pop_Order_By>;
+  readonly stddev_samp?: Maybe<Hallway_Stddev_Samp_Order_By>;
+  readonly sum?: Maybe<Hallway_Sum_Order_By>;
+  readonly var_pop?: Maybe<Hallway_Var_Pop_Order_By>;
+  readonly var_samp?: Maybe<Hallway_Var_Samp_Order_By>;
+  readonly variance?: Maybe<Hallway_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "Hallway" */
+export type Hallway_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Hallway_Insert_Input>;
+  readonly on_conflict?: Maybe<Hallway_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Hallway_Avg_Fields = {
+  readonly __typename?: 'Hallway_avg_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "Hallway" */
+export type Hallway_Avg_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "Hallway". All fields are combined with a logical 'AND'. */
+export type Hallway_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Hallway_Bool_Exp>>>;
+  readonly _not?: Maybe<Hallway_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Hallway_Bool_Exp>>>;
+  readonly colour?: Maybe<String_Comparison_Exp>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly contentGroups?: Maybe<ContentGroupHallway_Bool_Exp>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly name?: Maybe<String_Comparison_Exp>;
+  readonly priority?: Maybe<Int_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "Hallway" */
+export enum Hallway_Constraint {
+  /** unique or primary key constraint */
+  HallwayNameConferenceIdKey = 'Hallway_name_conferenceId_key',
+  /** unique or primary key constraint */
+  HallwayPkey = 'Hallway_pkey'
+}
+
+/** input type for incrementing integer column in table "Hallway" */
+export type Hallway_Inc_Input = {
+  readonly priority?: Maybe<Scalars['Int']>;
+};
+
+/** input type for inserting data into table "Hallway" */
+export type Hallway_Insert_Input = {
+  readonly colour?: Maybe<Scalars['String']>;
+  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly contentGroups?: Maybe<ContentGroupHallway_Arr_Rel_Insert_Input>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly priority?: Maybe<Scalars['Int']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Hallway_Max_Fields = {
+  readonly __typename?: 'Hallway_max_fields';
+  readonly colour?: Maybe<Scalars['String']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly priority?: Maybe<Scalars['Int']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "Hallway" */
+export type Hallway_Max_Order_By = {
+  readonly colour?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+  readonly priority?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Hallway_Min_Fields = {
+  readonly __typename?: 'Hallway_min_fields';
+  readonly colour?: Maybe<Scalars['String']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly priority?: Maybe<Scalars['Int']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "Hallway" */
+export type Hallway_Min_Order_By = {
+  readonly colour?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+  readonly priority?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "Hallway" */
+export type Hallway_Mutation_Response = {
+  readonly __typename?: 'Hallway_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Hallway>;
+};
+
+/** input type for inserting object relation for remote table "Hallway" */
+export type Hallway_Obj_Rel_Insert_Input = {
+  readonly data: Hallway_Insert_Input;
+  readonly on_conflict?: Maybe<Hallway_On_Conflict>;
+};
+
+/** on conflict condition type for table "Hallway" */
+export type Hallway_On_Conflict = {
+  readonly constraint: Hallway_Constraint;
+  readonly update_columns: ReadonlyArray<Hallway_Update_Column>;
+  readonly where?: Maybe<Hallway_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "Hallway" */
+export type Hallway_Order_By = {
+  readonly colour?: Maybe<Order_By>;
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly contentGroups_aggregate?: Maybe<ContentGroupHallway_Aggregate_Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+  readonly priority?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "Hallway" */
+export type Hallway_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "Hallway" */
+export enum Hallway_Select_Column {
+  /** column name */
+  Colour = 'colour',
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Name = 'name',
+  /** column name */
+  Priority = 'priority',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "Hallway" */
+export type Hallway_Set_Input = {
+  readonly colour?: Maybe<Scalars['String']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly priority?: Maybe<Scalars['Int']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate stddev on columns */
+export type Hallway_Stddev_Fields = {
+  readonly __typename?: 'Hallway_stddev_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "Hallway" */
+export type Hallway_Stddev_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Hallway_Stddev_Pop_Fields = {
+  readonly __typename?: 'Hallway_stddev_pop_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "Hallway" */
+export type Hallway_Stddev_Pop_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Hallway_Stddev_Samp_Fields = {
+  readonly __typename?: 'Hallway_stddev_samp_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "Hallway" */
+export type Hallway_Stddev_Samp_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Hallway_Sum_Fields = {
+  readonly __typename?: 'Hallway_sum_fields';
+  readonly priority?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "Hallway" */
+export type Hallway_Sum_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** update columns of table "Hallway" */
+export enum Hallway_Update_Column {
+  /** column name */
+  Colour = 'colour',
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Name = 'name',
+  /** column name */
+  Priority = 'priority',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** aggregate var_pop on columns */
+export type Hallway_Var_Pop_Fields = {
+  readonly __typename?: 'Hallway_var_pop_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "Hallway" */
+export type Hallway_Var_Pop_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Hallway_Var_Samp_Fields = {
+  readonly __typename?: 'Hallway_var_samp_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "Hallway" */
+export type Hallway_Var_Samp_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Hallway_Variance_Fields = {
+  readonly __typename?: 'Hallway_variance_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "Hallway" */
+export type Hallway_Variance_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
 
 /** columns and relationships of "InputType" */
 export type InputType = {
@@ -14081,6 +14861,10 @@ export type Mutation_Root = {
   readonly delete_Conference_by_pk?: Maybe<Conference>;
   /** delete data from the table: "ContentGroup" */
   readonly delete_ContentGroup?: Maybe<ContentGroup_Mutation_Response>;
+  /** delete data from the table: "ContentGroupHallway" */
+  readonly delete_ContentGroupHallway?: Maybe<ContentGroupHallway_Mutation_Response>;
+  /** delete single row from the table: "ContentGroupHallway" */
+  readonly delete_ContentGroupHallway_by_pk?: Maybe<ContentGroupHallway>;
   /** delete data from the table: "ContentGroupPerson" */
   readonly delete_ContentGroupPerson?: Maybe<ContentGroupPerson_Mutation_Response>;
   /** delete single row from the table: "ContentGroupPerson" */
@@ -14151,6 +14935,10 @@ export type Mutation_Root = {
   readonly delete_GroupRole_by_pk?: Maybe<GroupRole>;
   /** delete single row from the table: "Group" */
   readonly delete_Group_by_pk?: Maybe<Group>;
+  /** delete data from the table: "Hallway" */
+  readonly delete_Hallway?: Maybe<Hallway_Mutation_Response>;
+  /** delete single row from the table: "Hallway" */
+  readonly delete_Hallway_by_pk?: Maybe<Hallway>;
   /** delete data from the table: "InputType" */
   readonly delete_InputType?: Maybe<InputType_Mutation_Response>;
   /** delete single row from the table: "InputType" */
@@ -14285,6 +15073,10 @@ export type Mutation_Root = {
   readonly insert_Conference_one?: Maybe<Conference>;
   /** insert data into the table: "ContentGroup" */
   readonly insert_ContentGroup?: Maybe<ContentGroup_Mutation_Response>;
+  /** insert data into the table: "ContentGroupHallway" */
+  readonly insert_ContentGroupHallway?: Maybe<ContentGroupHallway_Mutation_Response>;
+  /** insert a single row into the table: "ContentGroupHallway" */
+  readonly insert_ContentGroupHallway_one?: Maybe<ContentGroupHallway>;
   /** insert data into the table: "ContentGroupPerson" */
   readonly insert_ContentGroupPerson?: Maybe<ContentGroupPerson_Mutation_Response>;
   /** insert a single row into the table: "ContentGroupPerson" */
@@ -14355,6 +15147,10 @@ export type Mutation_Root = {
   readonly insert_GroupRole_one?: Maybe<GroupRole>;
   /** insert a single row into the table: "Group" */
   readonly insert_Group_one?: Maybe<Group>;
+  /** insert data into the table: "Hallway" */
+  readonly insert_Hallway?: Maybe<Hallway_Mutation_Response>;
+  /** insert a single row into the table: "Hallway" */
+  readonly insert_Hallway_one?: Maybe<Hallway>;
   /** insert data into the table: "InputType" */
   readonly insert_InputType?: Maybe<InputType_Mutation_Response>;
   /** insert a single row into the table: "InputType" */
@@ -14505,6 +15301,10 @@ export type Mutation_Root = {
   readonly update_Conference_by_pk?: Maybe<Conference>;
   /** update data of the table: "ContentGroup" */
   readonly update_ContentGroup?: Maybe<ContentGroup_Mutation_Response>;
+  /** update data of the table: "ContentGroupHallway" */
+  readonly update_ContentGroupHallway?: Maybe<ContentGroupHallway_Mutation_Response>;
+  /** update single row of the table: "ContentGroupHallway" */
+  readonly update_ContentGroupHallway_by_pk?: Maybe<ContentGroupHallway>;
   /** update data of the table: "ContentGroupPerson" */
   readonly update_ContentGroupPerson?: Maybe<ContentGroupPerson_Mutation_Response>;
   /** update single row of the table: "ContentGroupPerson" */
@@ -14575,6 +15375,10 @@ export type Mutation_Root = {
   readonly update_GroupRole_by_pk?: Maybe<GroupRole>;
   /** update single row of the table: "Group" */
   readonly update_Group_by_pk?: Maybe<Group>;
+  /** update data of the table: "Hallway" */
+  readonly update_Hallway?: Maybe<Hallway_Mutation_Response>;
+  /** update single row of the table: "Hallway" */
+  readonly update_Hallway_by_pk?: Maybe<Hallway>;
   /** update data of the table: "InputType" */
   readonly update_InputType?: Maybe<InputType_Mutation_Response>;
   /** update single row of the table: "InputType" */
@@ -14831,6 +15635,18 @@ export type Mutation_RootDelete_ContentGroupArgs = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_ContentGroupHallwayArgs = {
+  where: ContentGroupHallway_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_ContentGroupHallway_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_ContentGroupPersonArgs = {
   where: ContentGroupPerson_Bool_Exp;
 };
@@ -15036,6 +15852,18 @@ export type Mutation_RootDelete_GroupRole_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Group_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_HallwayArgs = {
+  where: Hallway_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Hallway_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -15472,6 +16300,20 @@ export type Mutation_RootInsert_ContentGroupArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_ContentGroupHallwayArgs = {
+  objects: ReadonlyArray<ContentGroupHallway_Insert_Input>;
+  on_conflict?: Maybe<ContentGroupHallway_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_ContentGroupHallway_OneArgs = {
+  object: ContentGroupHallway_Insert_Input;
+  on_conflict?: Maybe<ContentGroupHallway_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_ContentGroupPersonArgs = {
   objects: ReadonlyArray<ContentGroupPerson_Insert_Input>;
   on_conflict?: Maybe<ContentGroupPerson_On_Conflict>;
@@ -15713,6 +16555,20 @@ export type Mutation_RootInsert_GroupRole_OneArgs = {
 export type Mutation_RootInsert_Group_OneArgs = {
   object: Group_Insert_Input;
   on_conflict?: Maybe<Group_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_HallwayArgs = {
+  objects: ReadonlyArray<Hallway_Insert_Input>;
+  on_conflict?: Maybe<Hallway_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Hallway_OneArgs = {
+  object: Hallway_Insert_Input;
+  on_conflict?: Maybe<Hallway_On_Conflict>;
 };
 
 
@@ -16281,6 +17137,32 @@ export type Mutation_RootUpdate_ContentGroupArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_ContentGroupHallwayArgs = {
+  _append?: Maybe<ContentGroupHallway_Append_Input>;
+  _delete_at_path?: Maybe<ContentGroupHallway_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<ContentGroupHallway_Delete_Elem_Input>;
+  _delete_key?: Maybe<ContentGroupHallway_Delete_Key_Input>;
+  _inc?: Maybe<ContentGroupHallway_Inc_Input>;
+  _prepend?: Maybe<ContentGroupHallway_Prepend_Input>;
+  _set?: Maybe<ContentGroupHallway_Set_Input>;
+  where: ContentGroupHallway_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_ContentGroupHallway_By_PkArgs = {
+  _append?: Maybe<ContentGroupHallway_Append_Input>;
+  _delete_at_path?: Maybe<ContentGroupHallway_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<ContentGroupHallway_Delete_Elem_Input>;
+  _delete_key?: Maybe<ContentGroupHallway_Delete_Key_Input>;
+  _inc?: Maybe<ContentGroupHallway_Inc_Input>;
+  _prepend?: Maybe<ContentGroupHallway_Prepend_Input>;
+  _set?: Maybe<ContentGroupHallway_Set_Input>;
+  pk_columns: ContentGroupHallway_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_ContentGroupPersonArgs = {
   _inc?: Maybe<ContentGroupPerson_Inc_Input>;
   _set?: Maybe<ContentGroupPerson_Set_Input>;
@@ -16538,6 +17420,22 @@ export type Mutation_RootUpdate_GroupRole_By_PkArgs = {
 export type Mutation_RootUpdate_Group_By_PkArgs = {
   _set?: Maybe<Group_Set_Input>;
   pk_columns: Group_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_HallwayArgs = {
+  _inc?: Maybe<Hallway_Inc_Input>;
+  _set?: Maybe<Hallway_Set_Input>;
+  where: Hallway_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Hallway_By_PkArgs = {
+  _inc?: Maybe<Hallway_Inc_Input>;
+  _set?: Maybe<Hallway_Set_Input>;
+  pk_columns: Hallway_Pk_Columns_Input;
 };
 
 
@@ -16941,6 +17839,12 @@ export type Query_Root = {
   readonly Conference_by_pk?: Maybe<Conference>;
   /** fetch data from the table: "ContentGroup" */
   readonly ContentGroup: ReadonlyArray<ContentGroup>;
+  /** fetch data from the table: "ContentGroupHallway" */
+  readonly ContentGroupHallway: ReadonlyArray<ContentGroupHallway>;
+  /** fetch aggregated fields from the table: "ContentGroupHallway" */
+  readonly ContentGroupHallway_aggregate: ContentGroupHallway_Aggregate;
+  /** fetch data from the table: "ContentGroupHallway" using primary key columns */
+  readonly ContentGroupHallway_by_pk?: Maybe<ContentGroupHallway>;
   /** fetch data from the table: "ContentGroupPerson" */
   readonly ContentGroupPerson: ReadonlyArray<ContentGroupPerson>;
   /** fetch aggregated fields from the table: "ContentGroupPerson" */
@@ -17047,6 +17951,12 @@ export type Query_Root = {
   readonly Group_aggregate: Group_Aggregate;
   /** fetch data from the table: "Group" using primary key columns */
   readonly Group_by_pk?: Maybe<Group>;
+  /** fetch data from the table: "Hallway" */
+  readonly Hallway: ReadonlyArray<Hallway>;
+  /** fetch aggregated fields from the table: "Hallway" */
+  readonly Hallway_aggregate: Hallway_Aggregate;
+  /** fetch data from the table: "Hallway" using primary key columns */
+  readonly Hallway_by_pk?: Maybe<Hallway>;
   /** fetch data from the table: "InputType" */
   readonly InputType: ReadonlyArray<InputType>;
   /** fetch aggregated fields from the table: "InputType" */
@@ -17547,6 +18457,32 @@ export type Query_RootContentGroupArgs = {
 
 
 /** query root */
+export type Query_RootContentGroupHallwayArgs = {
+  distinct_on?: Maybe<ReadonlyArray<ContentGroupHallway_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<ContentGroupHallway_Order_By>>;
+  where?: Maybe<ContentGroupHallway_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootContentGroupHallway_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<ContentGroupHallway_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<ContentGroupHallway_Order_By>>;
+  where?: Maybe<ContentGroupHallway_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootContentGroupHallway_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
 export type Query_RootContentGroupPersonArgs = {
   distinct_on?: Maybe<ReadonlyArray<ContentGroupPerson_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -18000,6 +18936,32 @@ export type Query_RootGroup_AggregateArgs = {
 
 /** query root */
 export type Query_RootGroup_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
+export type Query_RootHallwayArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Hallway_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Hallway_Order_By>>;
+  where?: Maybe<Hallway_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootHallway_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Hallway_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Hallway_Order_By>>;
+  where?: Maybe<Hallway_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootHallway_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -18610,6 +19572,12 @@ export type Subscription_Root = {
   readonly Conference_by_pk?: Maybe<Conference>;
   /** fetch data from the table: "ContentGroup" */
   readonly ContentGroup: ReadonlyArray<ContentGroup>;
+  /** fetch data from the table: "ContentGroupHallway" */
+  readonly ContentGroupHallway: ReadonlyArray<ContentGroupHallway>;
+  /** fetch aggregated fields from the table: "ContentGroupHallway" */
+  readonly ContentGroupHallway_aggregate: ContentGroupHallway_Aggregate;
+  /** fetch data from the table: "ContentGroupHallway" using primary key columns */
+  readonly ContentGroupHallway_by_pk?: Maybe<ContentGroupHallway>;
   /** fetch data from the table: "ContentGroupPerson" */
   readonly ContentGroupPerson: ReadonlyArray<ContentGroupPerson>;
   /** fetch aggregated fields from the table: "ContentGroupPerson" */
@@ -18716,6 +19684,12 @@ export type Subscription_Root = {
   readonly Group_aggregate: Group_Aggregate;
   /** fetch data from the table: "Group" using primary key columns */
   readonly Group_by_pk?: Maybe<Group>;
+  /** fetch data from the table: "Hallway" */
+  readonly Hallway: ReadonlyArray<Hallway>;
+  /** fetch aggregated fields from the table: "Hallway" */
+  readonly Hallway_aggregate: Hallway_Aggregate;
+  /** fetch data from the table: "Hallway" using primary key columns */
+  readonly Hallway_by_pk?: Maybe<Hallway>;
   /** fetch data from the table: "InputType" */
   readonly InputType: ReadonlyArray<InputType>;
   /** fetch aggregated fields from the table: "InputType" */
@@ -19216,6 +20190,32 @@ export type Subscription_RootContentGroupArgs = {
 
 
 /** subscription root */
+export type Subscription_RootContentGroupHallwayArgs = {
+  distinct_on?: Maybe<ReadonlyArray<ContentGroupHallway_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<ContentGroupHallway_Order_By>>;
+  where?: Maybe<ContentGroupHallway_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootContentGroupHallway_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<ContentGroupHallway_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<ContentGroupHallway_Order_By>>;
+  where?: Maybe<ContentGroupHallway_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootContentGroupHallway_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
 export type Subscription_RootContentGroupPersonArgs = {
   distinct_on?: Maybe<ReadonlyArray<ContentGroupPerson_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -19669,6 +20669,32 @@ export type Subscription_RootGroup_AggregateArgs = {
 
 /** subscription root */
 export type Subscription_RootGroup_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
+export type Subscription_RootHallwayArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Hallway_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Hallway_Order_By>>;
+  where?: Maybe<Hallway_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootHallway_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Hallway_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Hallway_Order_By>>;
+  where?: Maybe<Hallway_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootHallway_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -20286,6 +21312,8 @@ export type ContentPersonInfoFragment = { readonly __typename?: 'ContentPerson',
 
 export type ContentGroupTagInfoFragment = { readonly __typename?: 'ContentGroupTag', readonly id: any, readonly tagId: any, readonly contentGroupId: any };
 
+export type ContentGroupHallwayInfoFragment = { readonly __typename?: 'ContentGroupHallway', readonly id: any, readonly groupId: any, readonly hallwayId: any, readonly conferenceId: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any> };
+
 export type ContentGroupPersonInfoFragment = { readonly __typename?: 'ContentGroupPerson', readonly id: any, readonly conferenceId: any, readonly groupId: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string };
 
 export type ContentGroupFullNestedInfoFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly conferenceId: any, readonly contentGroupTypeName: ContentGroupType_Enum, readonly title: string, readonly shortTitle?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly requiredContentItems: ReadonlyArray<(
@@ -20297,12 +21325,17 @@ export type ContentGroupFullNestedInfoFragment = { readonly __typename?: 'Conten
   )>, readonly contentGroupTags: ReadonlyArray<(
     { readonly __typename?: 'ContentGroupTag' }
     & ContentGroupTagInfoFragment
+  )>, readonly hallways: ReadonlyArray<(
+    { readonly __typename?: 'ContentGroupHallway' }
+    & ContentGroupHallwayInfoFragment
   )>, readonly people: ReadonlyArray<(
     { readonly __typename?: 'ContentGroupPerson' }
     & ContentGroupPersonInfoFragment
   )> };
 
 export type TagInfoFragment = { readonly __typename?: 'Tag', readonly id: any, readonly conferenceId: any, readonly colour: string, readonly name: string, readonly originatingDataId?: Maybe<any> };
+
+export type HallwayInfoFragment = { readonly __typename?: 'Hallway', readonly id: any, readonly conferenceId: any, readonly colour: string, readonly name: string, readonly priority: number };
 
 export type SelectAllContentQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -20321,6 +21354,9 @@ export type SelectAllContentQuery = { readonly __typename?: 'query_root', readon
   )>, readonly Tag: ReadonlyArray<(
     { readonly __typename?: 'Tag' }
     & TagInfoFragment
+  )>, readonly Hallway: ReadonlyArray<(
+    { readonly __typename?: 'Hallway' }
+    & HallwayInfoFragment
   )> };
 
 export type InsertDeleteContentGroupsMutationVariables = Exact<{
@@ -20361,12 +21397,29 @@ export type InsertTagsMutation = { readonly __typename?: 'mutation_root', readon
       & TagInfoFragment
     )> }> };
 
+export type InsertHallwaysMutationVariables = Exact<{
+  newHallways: ReadonlyArray<Hallway_Insert_Input>;
+}>;
+
+
+export type InsertHallwaysMutation = { readonly __typename?: 'mutation_root', readonly insert_Hallway?: Maybe<{ readonly __typename?: 'Hallway_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'Hallway' }
+      & HallwayInfoFragment
+    )> }> };
+
 export type DeleteTagsMutationVariables = Exact<{
   deleteTagIds: ReadonlyArray<Scalars['uuid']>;
 }>;
 
 
 export type DeleteTagsMutation = { readonly __typename?: 'mutation_root', readonly delete_Tag?: Maybe<{ readonly __typename?: 'Tag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Tag', readonly id: any }> }> };
+
+export type DeleteHallwaysMutationVariables = Exact<{
+  deleteHallwayIds: ReadonlyArray<Scalars['uuid']>;
+}>;
+
+
+export type DeleteHallwaysMutation = { readonly __typename?: 'mutation_root', readonly delete_Hallway?: Maybe<{ readonly __typename?: 'Hallway_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Hallway', readonly id: any }> }> };
 
 export type InsertContentPeopleMutationVariables = Exact<{
   newPeople: ReadonlyArray<ContentPerson_Insert_Input>;
@@ -20389,6 +21442,7 @@ export type UpdateContentGroupMutationVariables = Exact<{
   newItems: ReadonlyArray<ContentItem_Insert_Input>;
   newRequiredItems: ReadonlyArray<RequiredContentItem_Insert_Input>;
   newGroupTags: ReadonlyArray<ContentGroupTag_Insert_Input>;
+  newGroupHallways: ReadonlyArray<ContentGroupHallway_Insert_Input>;
   groupId: Scalars['uuid'];
   contentGroupTypeName: ContentGroupType_Enum;
   originatingDataId?: Maybe<Scalars['uuid']>;
@@ -20397,6 +21451,7 @@ export type UpdateContentGroupMutationVariables = Exact<{
   deleteItemIds: ReadonlyArray<Scalars['uuid']>;
   deleteRequiredItemIds: ReadonlyArray<Scalars['uuid']>;
   deleteGroupTagIds: ReadonlyArray<Scalars['uuid']>;
+  deleteGroupHallwayIds: ReadonlyArray<Scalars['uuid']>;
   newUploaders: ReadonlyArray<Uploader_Insert_Input>;
   deleteUploaderIds: ReadonlyArray<Scalars['uuid']>;
   newGroupPeople: ReadonlyArray<ContentGroupPerson_Insert_Input>;
@@ -20413,6 +21468,9 @@ export type UpdateContentGroupMutation = { readonly __typename?: 'mutation_root'
     )> }>, readonly insert_ContentGroupTag?: Maybe<{ readonly __typename?: 'ContentGroupTag_mutation_response', readonly returning: ReadonlyArray<(
       { readonly __typename?: 'ContentGroupTag' }
       & ContentGroupTagInfoFragment
+    )> }>, readonly insert_ContentGroupHallway?: Maybe<{ readonly __typename?: 'ContentGroupHallway_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'ContentGroupHallway' }
+      & ContentGroupHallwayInfoFragment
     )> }>, readonly insert_Uploader?: Maybe<{ readonly __typename?: 'Uploader_mutation_response', readonly returning: ReadonlyArray<(
       { readonly __typename?: 'Uploader' }
       & UploaderInfoFragment
@@ -20422,7 +21480,7 @@ export type UpdateContentGroupMutation = { readonly __typename?: 'mutation_root'
     )> }>, readonly update_ContentGroup_by_pk?: Maybe<(
     { readonly __typename?: 'ContentGroup' }
     & ContentGroupFullNestedInfoFragment
-  )>, readonly delete_ContentItem?: Maybe<{ readonly __typename?: 'ContentItem_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any }> }>, readonly delete_RequiredContentItem?: Maybe<{ readonly __typename?: 'RequiredContentItem_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'RequiredContentItem', readonly id: any }> }>, readonly delete_ContentGroupTag?: Maybe<{ readonly __typename?: 'ContentGroupTag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ContentGroupTag', readonly id: any }> }>, readonly delete_Uploader?: Maybe<{ readonly __typename?: 'Uploader_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Uploader', readonly id: any }> }>, readonly delete_ContentGroupPerson?: Maybe<{ readonly __typename?: 'ContentGroupPerson_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ContentGroupPerson', readonly id: any }> }> };
+  )>, readonly delete_ContentItem?: Maybe<{ readonly __typename?: 'ContentItem_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any }> }>, readonly delete_RequiredContentItem?: Maybe<{ readonly __typename?: 'RequiredContentItem_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'RequiredContentItem', readonly id: any }> }>, readonly delete_ContentGroupTag?: Maybe<{ readonly __typename?: 'ContentGroupTag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ContentGroupTag', readonly id: any }> }>, readonly delete_ContentGroupHallway?: Maybe<{ readonly __typename?: 'ContentGroupHallway_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ContentGroupHallway', readonly id: any }> }>, readonly delete_Uploader?: Maybe<{ readonly __typename?: 'Uploader_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Uploader', readonly id: any }> }>, readonly delete_ContentGroupPerson?: Maybe<{ readonly __typename?: 'ContentGroupPerson_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ContentGroupPerson', readonly id: any }> }> };
 
 export type UpdateContentItemMutationVariables = Exact<{
   id: Scalars['uuid'];
@@ -20477,6 +21535,18 @@ export type UpdateGroupPersonMutation = { readonly __typename?: 'mutation_root',
     & ContentGroupPersonInfoFragment
   )> };
 
+export type UpdateGroupHallwayMutationVariables = Exact<{
+  id: Scalars['uuid'];
+  priority?: Maybe<Scalars['Int']>;
+  layout?: Maybe<Scalars['jsonb']>;
+}>;
+
+
+export type UpdateGroupHallwayMutation = { readonly __typename?: 'mutation_root', readonly update_ContentGroupHallway_by_pk?: Maybe<(
+    { readonly __typename?: 'ContentGroupHallway' }
+    & ContentGroupHallwayInfoFragment
+  )> };
+
 export type UpdatePersonMutationVariables = Exact<{
   id: Scalars['uuid'];
   name: Scalars['String'];
@@ -20502,6 +21572,19 @@ export type UpdateTagMutationVariables = Exact<{
 export type UpdateTagMutation = { readonly __typename?: 'mutation_root', readonly update_Tag_by_pk?: Maybe<(
     { readonly __typename?: 'Tag' }
     & TagInfoFragment
+  )> };
+
+export type UpdateHallwayMutationVariables = Exact<{
+  id: Scalars['uuid'];
+  name: Scalars['String'];
+  colour: Scalars['String'];
+  priority: Scalars['Int'];
+}>;
+
+
+export type UpdateHallwayMutation = { readonly __typename?: 'mutation_root', readonly update_Hallway_by_pk?: Maybe<(
+    { readonly __typename?: 'Hallway' }
+    & HallwayInfoFragment
   )> };
 
 export type CreateConferencePrepareJobMutationVariables = Exact<{
@@ -20888,6 +21971,16 @@ export const ContentGroupTagInfoFragmentDoc = gql`
   contentGroupId
 }
     `;
+export const ContentGroupHallwayInfoFragmentDoc = gql`
+    fragment ContentGroupHallwayInfo on ContentGroupHallway {
+  id
+  groupId
+  hallwayId
+  conferenceId
+  priority
+  layout
+}
+    `;
 export const ContentGroupPersonInfoFragmentDoc = gql`
     fragment ContentGroupPersonInfo on ContentGroupPerson {
   id
@@ -20914,6 +22007,9 @@ export const ContentGroupFullNestedInfoFragmentDoc = gql`
   contentGroupTags {
     ...ContentGroupTagInfo
   }
+  hallways {
+    ...ContentGroupHallwayInfo
+  }
   people {
     ...ContentGroupPersonInfo
   }
@@ -20922,6 +22018,7 @@ export const ContentGroupFullNestedInfoFragmentDoc = gql`
     ${RequiredContentItemInfoFragmentDoc}
 ${ContentItemInfoFragmentDoc}
 ${ContentGroupTagInfoFragmentDoc}
+${ContentGroupHallwayInfoFragmentDoc}
 ${ContentGroupPersonInfoFragmentDoc}`;
 export const TagInfoFragmentDoc = gql`
     fragment TagInfo on Tag {
@@ -20930,6 +22027,15 @@ export const TagInfoFragmentDoc = gql`
   colour
   name
   originatingDataId
+}
+    `;
+export const HallwayInfoFragmentDoc = gql`
+    fragment HallwayInfo on Hallway {
+  id
+  conferenceId
+  colour
+  name
+  priority
 }
     `;
 export const AttendeePartsFragmentDoc = gql`
@@ -21312,11 +22418,15 @@ export const SelectAllContentDocument = gql`
   Tag(where: {conferenceId: {_eq: $conferenceId}}) {
     ...TagInfo
   }
+  Hallway(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...HallwayInfo
+  }
 }
     ${ContentGroupFullNestedInfoFragmentDoc}
 ${ContentPersonInfoFragmentDoc}
 ${OriginatingDataInfoFragmentDoc}
-${TagInfoFragmentDoc}`;
+${TagInfoFragmentDoc}
+${HallwayInfoFragmentDoc}`;
 
 /**
  * __useSelectAllContentQuery__
@@ -21485,6 +22595,40 @@ export function useInsertTagsMutation(baseOptions?: Apollo.MutationHookOptions<I
 export type InsertTagsMutationHookResult = ReturnType<typeof useInsertTagsMutation>;
 export type InsertTagsMutationResult = Apollo.MutationResult<InsertTagsMutation>;
 export type InsertTagsMutationOptions = Apollo.BaseMutationOptions<InsertTagsMutation, InsertTagsMutationVariables>;
+export const InsertHallwaysDocument = gql`
+    mutation InsertHallways($newHallways: [Hallway_insert_input!]!) {
+  insert_Hallway(objects: $newHallways) {
+    returning {
+      ...HallwayInfo
+    }
+  }
+}
+    ${HallwayInfoFragmentDoc}`;
+export type InsertHallwaysMutationFn = Apollo.MutationFunction<InsertHallwaysMutation, InsertHallwaysMutationVariables>;
+
+/**
+ * __useInsertHallwaysMutation__
+ *
+ * To run a mutation, you first call `useInsertHallwaysMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInsertHallwaysMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [insertHallwaysMutation, { data, loading, error }] = useInsertHallwaysMutation({
+ *   variables: {
+ *      newHallways: // value for 'newHallways'
+ *   },
+ * });
+ */
+export function useInsertHallwaysMutation(baseOptions?: Apollo.MutationHookOptions<InsertHallwaysMutation, InsertHallwaysMutationVariables>) {
+        return Apollo.useMutation<InsertHallwaysMutation, InsertHallwaysMutationVariables>(InsertHallwaysDocument, baseOptions);
+      }
+export type InsertHallwaysMutationHookResult = ReturnType<typeof useInsertHallwaysMutation>;
+export type InsertHallwaysMutationResult = Apollo.MutationResult<InsertHallwaysMutation>;
+export type InsertHallwaysMutationOptions = Apollo.BaseMutationOptions<InsertHallwaysMutation, InsertHallwaysMutationVariables>;
 export const DeleteTagsDocument = gql`
     mutation DeleteTags($deleteTagIds: [uuid!]!) {
   delete_Tag(where: {id: {_in: $deleteTagIds}}) {
@@ -21519,6 +22663,40 @@ export function useDeleteTagsMutation(baseOptions?: Apollo.MutationHookOptions<D
 export type DeleteTagsMutationHookResult = ReturnType<typeof useDeleteTagsMutation>;
 export type DeleteTagsMutationResult = Apollo.MutationResult<DeleteTagsMutation>;
 export type DeleteTagsMutationOptions = Apollo.BaseMutationOptions<DeleteTagsMutation, DeleteTagsMutationVariables>;
+export const DeleteHallwaysDocument = gql`
+    mutation DeleteHallways($deleteHallwayIds: [uuid!]!) {
+  delete_Hallway(where: {id: {_in: $deleteHallwayIds}}) {
+    returning {
+      id
+    }
+  }
+}
+    `;
+export type DeleteHallwaysMutationFn = Apollo.MutationFunction<DeleteHallwaysMutation, DeleteHallwaysMutationVariables>;
+
+/**
+ * __useDeleteHallwaysMutation__
+ *
+ * To run a mutation, you first call `useDeleteHallwaysMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteHallwaysMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteHallwaysMutation, { data, loading, error }] = useDeleteHallwaysMutation({
+ *   variables: {
+ *      deleteHallwayIds: // value for 'deleteHallwayIds'
+ *   },
+ * });
+ */
+export function useDeleteHallwaysMutation(baseOptions?: Apollo.MutationHookOptions<DeleteHallwaysMutation, DeleteHallwaysMutationVariables>) {
+        return Apollo.useMutation<DeleteHallwaysMutation, DeleteHallwaysMutationVariables>(DeleteHallwaysDocument, baseOptions);
+      }
+export type DeleteHallwaysMutationHookResult = ReturnType<typeof useDeleteHallwaysMutation>;
+export type DeleteHallwaysMutationResult = Apollo.MutationResult<DeleteHallwaysMutation>;
+export type DeleteHallwaysMutationOptions = Apollo.BaseMutationOptions<DeleteHallwaysMutation, DeleteHallwaysMutationVariables>;
 export const InsertContentPeopleDocument = gql`
     mutation InsertContentPeople($newPeople: [ContentPerson_insert_input!]!) {
   insert_ContentPerson(objects: $newPeople) {
@@ -21588,7 +22766,7 @@ export type DeleteContentPeopleMutationHookResult = ReturnType<typeof useDeleteC
 export type DeleteContentPeopleMutationResult = Apollo.MutationResult<DeleteContentPeopleMutation>;
 export type DeleteContentPeopleMutationOptions = Apollo.BaseMutationOptions<DeleteContentPeopleMutation, DeleteContentPeopleMutationVariables>;
 export const UpdateContentGroupDocument = gql`
-    mutation UpdateContentGroup($newItems: [ContentItem_insert_input!]!, $newRequiredItems: [RequiredContentItem_insert_input!]!, $newGroupTags: [ContentGroupTag_insert_input!]!, $groupId: uuid!, $contentGroupTypeName: ContentGroupType_enum!, $originatingDataId: uuid = null, $shortTitle: String = null, $title: String!, $deleteItemIds: [uuid!]!, $deleteRequiredItemIds: [uuid!]!, $deleteGroupTagIds: [uuid!]!, $newUploaders: [Uploader_insert_input!]!, $deleteUploaderIds: [uuid!]!, $newGroupPeople: [ContentGroupPerson_insert_input!]!, $deleteGroupPeopleIds: [uuid!]!) {
+    mutation UpdateContentGroup($newItems: [ContentItem_insert_input!]!, $newRequiredItems: [RequiredContentItem_insert_input!]!, $newGroupTags: [ContentGroupTag_insert_input!]!, $newGroupHallways: [ContentGroupHallway_insert_input!]!, $groupId: uuid!, $contentGroupTypeName: ContentGroupType_enum!, $originatingDataId: uuid = null, $shortTitle: String = null, $title: String!, $deleteItemIds: [uuid!]!, $deleteRequiredItemIds: [uuid!]!, $deleteGroupTagIds: [uuid!]!, $deleteGroupHallwayIds: [uuid!]!, $newUploaders: [Uploader_insert_input!]!, $deleteUploaderIds: [uuid!]!, $newGroupPeople: [ContentGroupPerson_insert_input!]!, $deleteGroupPeopleIds: [uuid!]!) {
   insert_ContentItem(objects: $newItems) {
     returning {
       ...ContentItemInfo
@@ -21602,6 +22780,11 @@ export const UpdateContentGroupDocument = gql`
   insert_ContentGroupTag(objects: $newGroupTags) {
     returning {
       ...ContentGroupTagInfo
+    }
+  }
+  insert_ContentGroupHallway(objects: $newGroupHallways) {
+    returning {
+      ...ContentGroupHallwayInfo
     }
   }
   insert_Uploader(objects: $newUploaders) {
@@ -21635,6 +22818,11 @@ export const UpdateContentGroupDocument = gql`
       id
     }
   }
+  delete_ContentGroupHallway(where: {id: {_in: $deleteGroupHallwayIds}}) {
+    returning {
+      id
+    }
+  }
   delete_Uploader(where: {id: {_in: $deleteUploaderIds}}) {
     returning {
       id
@@ -21649,6 +22837,7 @@ export const UpdateContentGroupDocument = gql`
     ${ContentItemInfoFragmentDoc}
 ${RequiredContentItemInfoFragmentDoc}
 ${ContentGroupTagInfoFragmentDoc}
+${ContentGroupHallwayInfoFragmentDoc}
 ${UploaderInfoFragmentDoc}
 ${ContentGroupPersonInfoFragmentDoc}
 ${ContentGroupFullNestedInfoFragmentDoc}`;
@@ -21670,6 +22859,7 @@ export type UpdateContentGroupMutationFn = Apollo.MutationFunction<UpdateContent
  *      newItems: // value for 'newItems'
  *      newRequiredItems: // value for 'newRequiredItems'
  *      newGroupTags: // value for 'newGroupTags'
+ *      newGroupHallways: // value for 'newGroupHallways'
  *      groupId: // value for 'groupId'
  *      contentGroupTypeName: // value for 'contentGroupTypeName'
  *      originatingDataId: // value for 'originatingDataId'
@@ -21678,6 +22868,7 @@ export type UpdateContentGroupMutationFn = Apollo.MutationFunction<UpdateContent
  *      deleteItemIds: // value for 'deleteItemIds'
  *      deleteRequiredItemIds: // value for 'deleteRequiredItemIds'
  *      deleteGroupTagIds: // value for 'deleteGroupTagIds'
+ *      deleteGroupHallwayIds: // value for 'deleteGroupHallwayIds'
  *      newUploaders: // value for 'newUploaders'
  *      deleteUploaderIds: // value for 'deleteUploaderIds'
  *      newGroupPeople: // value for 'newGroupPeople'
@@ -21841,6 +23032,43 @@ export function useUpdateGroupPersonMutation(baseOptions?: Apollo.MutationHookOp
 export type UpdateGroupPersonMutationHookResult = ReturnType<typeof useUpdateGroupPersonMutation>;
 export type UpdateGroupPersonMutationResult = Apollo.MutationResult<UpdateGroupPersonMutation>;
 export type UpdateGroupPersonMutationOptions = Apollo.BaseMutationOptions<UpdateGroupPersonMutation, UpdateGroupPersonMutationVariables>;
+export const UpdateGroupHallwayDocument = gql`
+    mutation UpdateGroupHallway($id: uuid!, $priority: Int = null, $layout: jsonb = null) {
+  update_ContentGroupHallway_by_pk(
+    pk_columns: {id: $id}
+    _set: {layout: $layout, priority: $priority}
+  ) {
+    ...ContentGroupHallwayInfo
+  }
+}
+    ${ContentGroupHallwayInfoFragmentDoc}`;
+export type UpdateGroupHallwayMutationFn = Apollo.MutationFunction<UpdateGroupHallwayMutation, UpdateGroupHallwayMutationVariables>;
+
+/**
+ * __useUpdateGroupHallwayMutation__
+ *
+ * To run a mutation, you first call `useUpdateGroupHallwayMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateGroupHallwayMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateGroupHallwayMutation, { data, loading, error }] = useUpdateGroupHallwayMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      priority: // value for 'priority'
+ *      layout: // value for 'layout'
+ *   },
+ * });
+ */
+export function useUpdateGroupHallwayMutation(baseOptions?: Apollo.MutationHookOptions<UpdateGroupHallwayMutation, UpdateGroupHallwayMutationVariables>) {
+        return Apollo.useMutation<UpdateGroupHallwayMutation, UpdateGroupHallwayMutationVariables>(UpdateGroupHallwayDocument, baseOptions);
+      }
+export type UpdateGroupHallwayMutationHookResult = ReturnType<typeof useUpdateGroupHallwayMutation>;
+export type UpdateGroupHallwayMutationResult = Apollo.MutationResult<UpdateGroupHallwayMutation>;
+export type UpdateGroupHallwayMutationOptions = Apollo.BaseMutationOptions<UpdateGroupHallwayMutation, UpdateGroupHallwayMutationVariables>;
 export const UpdatePersonDocument = gql`
     mutation UpdatePerson($id: uuid!, $name: String!, $affiliation: String = null, $email: String = null, $originatingDataId: uuid = null) {
   update_ContentPerson_by_pk(
@@ -21918,6 +23146,44 @@ export function useUpdateTagMutation(baseOptions?: Apollo.MutationHookOptions<Up
 export type UpdateTagMutationHookResult = ReturnType<typeof useUpdateTagMutation>;
 export type UpdateTagMutationResult = Apollo.MutationResult<UpdateTagMutation>;
 export type UpdateTagMutationOptions = Apollo.BaseMutationOptions<UpdateTagMutation, UpdateTagMutationVariables>;
+export const UpdateHallwayDocument = gql`
+    mutation UpdateHallway($id: uuid!, $name: String!, $colour: String!, $priority: Int!) {
+  update_Hallway_by_pk(
+    pk_columns: {id: $id}
+    _set: {name: $name, colour: $colour, priority: $priority}
+  ) {
+    ...HallwayInfo
+  }
+}
+    ${HallwayInfoFragmentDoc}`;
+export type UpdateHallwayMutationFn = Apollo.MutationFunction<UpdateHallwayMutation, UpdateHallwayMutationVariables>;
+
+/**
+ * __useUpdateHallwayMutation__
+ *
+ * To run a mutation, you first call `useUpdateHallwayMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateHallwayMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateHallwayMutation, { data, loading, error }] = useUpdateHallwayMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      name: // value for 'name'
+ *      colour: // value for 'colour'
+ *      priority: // value for 'priority'
+ *   },
+ * });
+ */
+export function useUpdateHallwayMutation(baseOptions?: Apollo.MutationHookOptions<UpdateHallwayMutation, UpdateHallwayMutationVariables>) {
+        return Apollo.useMutation<UpdateHallwayMutation, UpdateHallwayMutationVariables>(UpdateHallwayDocument, baseOptions);
+      }
+export type UpdateHallwayMutationHookResult = ReturnType<typeof useUpdateHallwayMutation>;
+export type UpdateHallwayMutationResult = Apollo.MutationResult<UpdateHallwayMutation>;
+export type UpdateHallwayMutationOptions = Apollo.BaseMutationOptions<UpdateHallwayMutation, UpdateHallwayMutationVariables>;
 export const CreateConferencePrepareJobDocument = gql`
     mutation CreateConferencePrepareJob($conferenceId: uuid!) {
   insert_ConferencePrepareJob_one(object: {conferenceId: $conferenceId}) {

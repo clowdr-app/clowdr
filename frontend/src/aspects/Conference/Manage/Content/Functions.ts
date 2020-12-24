@@ -2,6 +2,7 @@ import type { SelectAllContentQuery } from "../../../../generated/graphql";
 import type {
     ContentGroupDescriptor,
     ContentPersonDescriptor,
+    HallwayDescriptor,
     OriginatingDataDescriptor,
     OriginatingDataPart,
     TagDescriptor,
@@ -14,6 +15,7 @@ export function convertContentToDescriptors(
     people: Map<string, ContentPersonDescriptor>;
     tags: Map<string, TagDescriptor>;
     originatingDatas: Map<string, OriginatingDataDescriptor>;
+    hallways: Map<string, HallwayDescriptor>;
 } {
     return {
         contentGroups: new Map(
@@ -56,7 +58,15 @@ export function convertContentToDescriptors(
                         priority: groupPerson.priority,
                         roleName: groupPerson.roleName,
                     })),
-                    originatingDataId: group.originatingDataId
+                    hallways: group.hallways.map((groupHallway) => ({
+                        conferenceId: groupHallway.conferenceId,
+                        groupId: groupHallway.groupId,
+                        hallwayId: groupHallway.hallwayId,
+                        id: groupHallway.id,
+                        layout: groupHallway.layout,
+                        priority: groupHallway.priority,
+                    })),
+                    originatingDataId: group.originatingDataId,
                 },
             ])
         ),
@@ -91,6 +101,17 @@ export function convertContentToDescriptors(
                     id: data.id,
                     sourceId: data.sourceId,
                     data: data.data as OriginatingDataPart[],
+                },
+            ])
+        ),
+        hallways: new Map(
+            allContent.Hallway.map((data): [string, HallwayDescriptor] => [
+                data.id,
+                {
+                    id: data.id,
+                    colour: data.colour,
+                    name: data.name,
+                    priority: data.priority,
                 },
             ])
         ),
@@ -133,10 +154,14 @@ export function deepCloneContentGroupDescriptor(group: ContentGroupDescriptor): 
             priority: groupPerson.priority,
             roleName: groupPerson.roleName,
         })),
+        hallways: group.hallways.map((groupHallway) => ({
+            ...groupHallway,
+            layout: groupHallway.layout ? { ...groupHallway.layout } : null
+        })),
         shortTitle: group.shortTitle,
         title: group.title,
         typeName: group.typeName,
         tagIds: new Set(group.tagIds),
-        originatingDataId: group.originatingDataId
+        originatingDataId: group.originatingDataId,
     };
 }

@@ -22,6 +22,15 @@ export type TagDescriptor = {
     originatingDataId?: string;
 };
 
+export type HallwayDescriptor = {
+    isNew?: boolean;
+    
+    id: string;
+    name: string;
+    colour: string;
+    priority: number;
+};
+
 export type OriginatingDataPart = {
     originName: "Researchr" | "HotCRP" | string;
     data: any;
@@ -94,6 +103,17 @@ export type ContentPersonDescriptor = {
     originatingDataId?: string;
 };
 
+export type ContentGroupHallwayDescriptor = {
+    isNew?: boolean;
+
+    id: string;
+    conferenceId: string;
+    groupId: string;
+    hallwayId: string;
+    priority?: number | null;
+    layout?: any | null;
+};
+
 export type ContentGroupPersonDescriptor = {
     isNew?: boolean;
 
@@ -116,6 +136,7 @@ export type ContentGroupDescriptor = {
     items: ContentItemDescriptor[];
     requiredItems: RequiredContentItemDescriptor[];
     people: ContentGroupPersonDescriptor[];
+    hallways: ContentGroupHallwayDescriptor[];
     originatingDataId?: string;
 };
 export type ItemBaseTemplate =

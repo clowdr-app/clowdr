@@ -128,7 +128,10 @@ export default function UploadFileForm({
                         });
 
                         if (submitResult.errors || !submitResult.data?.submitContentItem?.success) {
-                            throw new Error("Failed to submit item.");
+                            throw new Error(
+                                submitResult.data?.submitContentItem?.message ??
+                                    submitResult.errors?.join("; " ?? "Unknown reason for failure.")
+                            );
                         }
 
                         toast({
@@ -144,7 +147,8 @@ export default function UploadFileForm({
                         console.error("Failed to submit item", e);
                         toast({
                             status: "error",
-                            description: "Failed to submit item. Please try again later.",
+                            title: "Failed to submit item.",
+                            description: e?.message ?? "Please try again later.",
                         });
                         uppy.reset();
                         return;

@@ -35,6 +35,12 @@ gql`
     query RequiredItem($accessToken: String!) {
         RequiredContentItem(where: { accessToken: { _eq: $accessToken } }) {
             ...RequiredItemFields
+            conference {
+                configurations(where: { key: { _eq: "UPLOAD_CUTOFF_TIMESTAMP" } }) {
+                    id
+                    value
+                }
+            }
         }
     }
 
@@ -193,7 +199,12 @@ async function createBlob(inputData: any, contentTypeName: ContentType_Enum): Pr
     }
 }
 
-async function getItemByToken(magicToken: string): Promise<RequiredItemFieldsFragment | { error: string }> {
+interface ItemByToken {
+    requiredContentItem: RequiredItemFieldsFragment;
+    uploadCutoffTimestamp?: Date;
+}
+
+async function getItemByToken(magicToken: string): Promise<ItemByToken | { error: string }> {
     if (!magicToken) {
         return {
             error: "Access token not provided.",
@@ -215,7 +226,14 @@ async function getItemByToken(magicToken: string): Promise<RequiredItemFieldsFra
 
     const requiredContentItem = response.data.RequiredContentItem[0];
 
-    return requiredContentItem;
+    const result: ItemByToken = { requiredContentItem };
+
+    if (requiredContentItem.conference.configurations.length === 1) {
+        // UPLOAD_CUTOFF_TIMESTAMP is specified in epoch milliseconds
+        result.uploadCutoffTimestamp = new Date(parseInt(requiredContentItem.conference.configurations[0].value));
+    }
+
+    return result;
 }
 
 gql`
@@ -266,18 +284,27 @@ async function sendSubmittedEmail(
 }
 
 export async function handleContentItemSubmitted(args: submitContentItemArgs): Promise<SubmitContentItemOutput> {
-    const requiredContentItem = await getItemByToken(args.magicToken);
-    if ("error" in requiredContentItem) {
+    const itemByToken = await getItemByToken(args.magicToken);
+    if ("error" in itemByToken) {
         return {
             success: false,
-            message: requiredContentItem.error,
+            message: itemByToken.error,
         };
     }
+
+    const requiredContentItem = itemByToken.requiredContentItem;
 
     if (requiredContentItem.uploadsRemaining === 0) {
         return {
             success: false,
             message: "No upload attempts remaining",
+        };
+    }
+
+    if (itemByToken.uploadCutoffTimestamp && itemByToken.uploadCutoffTimestamp < new Date()) {
+        return {
+            success: false,
+            message: "Upload deadline has passed",
         };
     }
 
@@ -394,13 +421,15 @@ export async function handleContentItemSubmitted(args: submitContentItemArgs): P
 }
 
 export async function handleUpdateSubtitles(args: updateSubtitlesArgs): Promise<SubmitUpdatedSubtitlesOutput> {
-    const requiredContentItem = await getItemByToken(args.magicToken);
-    if ("error" in requiredContentItem) {
+    const itemByToken = await getItemByToken(args.magicToken);
+    if ("error" in itemByToken) {
         return {
             success: false,
-            message: requiredContentItem.error,
+            message: itemByToken.error,
         };
     }
+
+    const requiredContentItem = itemByToken.requiredContentItem;
 
     if (!requiredContentItem.contentItem) {
         return {

@@ -51,7 +51,7 @@ router.post("/updateSubtitles", bodyParser.json(), async (req: Request, res: Res
         const result = await handleUpdateSubtitles(params);
         return res.status(200).json(result);
     } catch (e) {
-        console.error(`${req.originalUrl}: invalid request:`, req.body);
+        console.error(`${req.originalUrl}: invalid request:`, req.body, e);
         return res.status(200).json({
             success: false,
             message: "Invalid request",

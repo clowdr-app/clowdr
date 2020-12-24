@@ -25,6 +25,7 @@ import {
     RequiredItemDocument,
     RequiredItemFieldsFragment,
     SelectUploadersAndUserDocument,
+    SetRequiredContentItemUploadsRemainingDocument,
     UploaderPartsFragment,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
@@ -42,6 +43,7 @@ gql`
         contentTypeName
         accessToken
         name
+        uploadsRemaining
         conference {
             id
             name
@@ -272,6 +274,13 @@ export async function handleContentItemSubmitted(args: submitContentItemArgs): P
         };
     }
 
+    if (requiredContentItem.uploadsRemaining === 0) {
+        return {
+            success: false,
+            message: "No upload attempts remaining",
+        };
+    }
+
     const newVersionData = await createBlob(args.data, requiredContentItem.contentTypeName);
     if ("error" in newVersionData) {
         return {
@@ -358,6 +367,24 @@ export async function handleContentItemSubmitted(args: submitContentItemArgs): P
                 };
             }
         }
+    }
+
+    gql`
+        mutation SetRequiredContentItemUploadsRemaining($id: uuid!, $uploadsRemaining: Int!) {
+            update_RequiredContentItem_by_pk(pk_columns: { id: $id }, _set: { uploadsRemaining: $uploadsRemaining }) {
+                id
+            }
+        }
+    `;
+
+    if (requiredContentItem.uploadsRemaining) {
+        apolloClient.mutate({
+            mutation: SetRequiredContentItemUploadsRemainingDocument,
+            variables: {
+                id: requiredContentItem.id,
+                uploadsRemaining: R.max(requiredContentItem.uploadsRemaining - 1, 0),
+            },
+        });
     }
 
     return {

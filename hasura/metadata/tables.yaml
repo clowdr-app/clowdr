@@ -3020,6 +3020,7 @@
       - name
       - originatingDataId
       - updated_at
+      - uploadsRemaining
       filter:
         _or:
         - _and:
@@ -3049,6 +3050,7 @@
       - name
       - originatingDataId
       - updated_at
+      - uploadsRemaining
       filter:
         _or:
         - conference:

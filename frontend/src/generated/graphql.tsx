@@ -10040,7 +10040,7 @@ export enum Permission_Enum {
   ConferenceModerateAttendees = 'CONFERENCE_MODERATE_ATTENDEES',
   /** View the conference. */
   ConferenceView = 'CONFERENCE_VIEW',
-  /** View conference active attendees. */
+  /** View conference attendees. */
   ConferenceViewAttendees = 'CONFERENCE_VIEW_ATTENDEES'
 }
 
@@ -10351,6 +10351,7 @@ export type RequiredContentItem = {
   readonly uploaders: ReadonlyArray<Uploader>;
   /** An aggregated array relationship */
   readonly uploaders_aggregate: Uploader_Aggregate;
+  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
 };
 
 
@@ -10383,9 +10384,17 @@ export type RequiredContentItem_Aggregate = {
 /** aggregate fields of "RequiredContentItem" */
 export type RequiredContentItem_Aggregate_Fields = {
   readonly __typename?: 'RequiredContentItem_aggregate_fields';
+  readonly avg?: Maybe<RequiredContentItem_Avg_Fields>;
   readonly count?: Maybe<Scalars['Int']>;
   readonly max?: Maybe<RequiredContentItem_Max_Fields>;
   readonly min?: Maybe<RequiredContentItem_Min_Fields>;
+  readonly stddev?: Maybe<RequiredContentItem_Stddev_Fields>;
+  readonly stddev_pop?: Maybe<RequiredContentItem_Stddev_Pop_Fields>;
+  readonly stddev_samp?: Maybe<RequiredContentItem_Stddev_Samp_Fields>;
+  readonly sum?: Maybe<RequiredContentItem_Sum_Fields>;
+  readonly var_pop?: Maybe<RequiredContentItem_Var_Pop_Fields>;
+  readonly var_samp?: Maybe<RequiredContentItem_Var_Samp_Fields>;
+  readonly variance?: Maybe<RequiredContentItem_Variance_Fields>;
 };
 
 
@@ -10397,15 +10406,34 @@ export type RequiredContentItem_Aggregate_FieldsCountArgs = {
 
 /** order by aggregate values of table "RequiredContentItem" */
 export type RequiredContentItem_Aggregate_Order_By = {
+  readonly avg?: Maybe<RequiredContentItem_Avg_Order_By>;
   readonly count?: Maybe<Order_By>;
   readonly max?: Maybe<RequiredContentItem_Max_Order_By>;
   readonly min?: Maybe<RequiredContentItem_Min_Order_By>;
+  readonly stddev?: Maybe<RequiredContentItem_Stddev_Order_By>;
+  readonly stddev_pop?: Maybe<RequiredContentItem_Stddev_Pop_Order_By>;
+  readonly stddev_samp?: Maybe<RequiredContentItem_Stddev_Samp_Order_By>;
+  readonly sum?: Maybe<RequiredContentItem_Sum_Order_By>;
+  readonly var_pop?: Maybe<RequiredContentItem_Var_Pop_Order_By>;
+  readonly var_samp?: Maybe<RequiredContentItem_Var_Samp_Order_By>;
+  readonly variance?: Maybe<RequiredContentItem_Variance_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "RequiredContentItem" */
 export type RequiredContentItem_Arr_Rel_Insert_Input = {
   readonly data: ReadonlyArray<RequiredContentItem_Insert_Input>;
   readonly on_conflict?: Maybe<RequiredContentItem_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type RequiredContentItem_Avg_Fields = {
+  readonly __typename?: 'RequiredContentItem_avg_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "RequiredContentItem" */
+export type RequiredContentItem_Avg_Order_By = {
+  readonly uploadsRemaining?: Maybe<Order_By>;
 };
 
 /** Boolean expression to filter rows from the table "RequiredContentItem". All fields are combined with a logical 'AND'. */
@@ -10428,6 +10456,7 @@ export type RequiredContentItem_Bool_Exp = {
   readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly uploaders?: Maybe<Uploader_Bool_Exp>;
+  readonly uploadsRemaining?: Maybe<Int_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "RequiredContentItem" */
@@ -10435,6 +10464,11 @@ export enum RequiredContentItem_Constraint {
   /** unique or primary key constraint */
   RequiredContentItemPkey = 'RequiredContentItem_pkey'
 }
+
+/** input type for incrementing integer column in table "RequiredContentItem" */
+export type RequiredContentItem_Inc_Input = {
+  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
+};
 
 /** input type for inserting data into table "RequiredContentItem" */
 export type RequiredContentItem_Insert_Input = {
@@ -10453,6 +10487,7 @@ export type RequiredContentItem_Insert_Input = {
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
   readonly uploaders?: Maybe<Uploader_Arr_Rel_Insert_Input>;
+  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
 };
 
 /** aggregate max on columns */
@@ -10466,6 +10501,7 @@ export type RequiredContentItem_Max_Fields = {
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
 };
 
 /** order by max() on columns of table "RequiredContentItem" */
@@ -10478,6 +10514,7 @@ export type RequiredContentItem_Max_Order_By = {
   readonly name?: Maybe<Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
+  readonly uploadsRemaining?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
@@ -10491,6 +10528,7 @@ export type RequiredContentItem_Min_Fields = {
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
 };
 
 /** order by min() on columns of table "RequiredContentItem" */
@@ -10503,6 +10541,7 @@ export type RequiredContentItem_Min_Order_By = {
   readonly name?: Maybe<Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
+  readonly uploadsRemaining?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "RequiredContentItem" */
@@ -10544,6 +10583,7 @@ export type RequiredContentItem_Order_By = {
   readonly originatingDataId?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
   readonly uploaders_aggregate?: Maybe<Uploader_Aggregate_Order_By>;
+  readonly uploadsRemaining?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: "RequiredContentItem" */
@@ -10570,7 +10610,9 @@ export enum RequiredContentItem_Select_Column {
   /** column name */
   OriginatingDataId = 'originatingDataId',
   /** column name */
-  UpdatedAt = 'updatedAt'
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  UploadsRemaining = 'uploadsRemaining'
 }
 
 /** input type for updating data in table "RequiredContentItem" */
@@ -10584,6 +10626,51 @@ export type RequiredContentItem_Set_Input = {
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
+};
+
+/** aggregate stddev on columns */
+export type RequiredContentItem_Stddev_Fields = {
+  readonly __typename?: 'RequiredContentItem_stddev_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "RequiredContentItem" */
+export type RequiredContentItem_Stddev_Order_By = {
+  readonly uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type RequiredContentItem_Stddev_Pop_Fields = {
+  readonly __typename?: 'RequiredContentItem_stddev_pop_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "RequiredContentItem" */
+export type RequiredContentItem_Stddev_Pop_Order_By = {
+  readonly uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type RequiredContentItem_Stddev_Samp_Fields = {
+  readonly __typename?: 'RequiredContentItem_stddev_samp_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "RequiredContentItem" */
+export type RequiredContentItem_Stddev_Samp_Order_By = {
+  readonly uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type RequiredContentItem_Sum_Fields = {
+  readonly __typename?: 'RequiredContentItem_sum_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "RequiredContentItem" */
+export type RequiredContentItem_Sum_Order_By = {
+  readonly uploadsRemaining?: Maybe<Order_By>;
 };
 
 /** update columns of table "RequiredContentItem" */
@@ -10605,8 +10692,43 @@ export enum RequiredContentItem_Update_Column {
   /** column name */
   OriginatingDataId = 'originatingDataId',
   /** column name */
-  UpdatedAt = 'updatedAt'
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  UploadsRemaining = 'uploadsRemaining'
 }
+
+/** aggregate var_pop on columns */
+export type RequiredContentItem_Var_Pop_Fields = {
+  readonly __typename?: 'RequiredContentItem_var_pop_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "RequiredContentItem" */
+export type RequiredContentItem_Var_Pop_Order_By = {
+  readonly uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type RequiredContentItem_Var_Samp_Fields = {
+  readonly __typename?: 'RequiredContentItem_var_samp_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "RequiredContentItem" */
+export type RequiredContentItem_Var_Samp_Order_By = {
+  readonly uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type RequiredContentItem_Variance_Fields = {
+  readonly __typename?: 'RequiredContentItem_variance_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "RequiredContentItem" */
+export type RequiredContentItem_Variance_Order_By = {
+  readonly uploadsRemaining?: Maybe<Order_By>;
+};
 
 /** columns and relationships of "Role" */
 export type Role = {
@@ -16651,6 +16773,7 @@ export type Mutation_RootUpdate_PinnedChat_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_RequiredContentItemArgs = {
+  _inc?: Maybe<RequiredContentItem_Inc_Input>;
   _set?: Maybe<RequiredContentItem_Set_Input>;
   where: RequiredContentItem_Bool_Exp;
 };
@@ -16658,6 +16781,7 @@ export type Mutation_RootUpdate_RequiredContentItemArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_RequiredContentItem_By_PkArgs = {
+  _inc?: Maybe<RequiredContentItem_Inc_Input>;
   _set?: Maybe<RequiredContentItem_Set_Input>;
   pk_columns: RequiredContentItem_Pk_Columns_Input;
 };
@@ -20698,7 +20822,7 @@ export type SelectRequiredItemQuery = { readonly __typename?: 'query_root', read
     & RequiredItemFieldsFragment
   )> };
 
-export type RequiredItemFieldsFragment = { readonly __typename?: 'RequiredContentItem', readonly id: any, readonly contentTypeName: ContentType_Enum, readonly name: string, readonly conference: { readonly __typename?: 'Conference', readonly id: any, readonly name: string } };
+export type RequiredItemFieldsFragment = { readonly __typename?: 'RequiredContentItem', readonly id: any, readonly contentTypeName: ContentType_Enum, readonly name: string, readonly uploadsRemaining?: Maybe<number>, readonly conference: { readonly __typename?: 'Conference', readonly id: any, readonly name: string } };
 
 export type SubmitContentItemMutationVariables = Exact<{
   contentItemData: Scalars['jsonb'];
@@ -20962,6 +21086,7 @@ export const RequiredItemFieldsFragmentDoc = gql`
   id
   contentTypeName
   name
+  uploadsRemaining
   conference {
     id
     name

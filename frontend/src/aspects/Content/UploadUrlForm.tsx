@@ -17,9 +17,11 @@ import UnsavedChangesWarning from "../LeavingPageWarnings/UnsavedChangesWarning"
 export default function UploadUrlForm({
     magicToken,
     uploadAgreement,
+    handleFormSubmitted,
 }: {
     magicToken: string;
     uploadAgreement?: string;
+    handleFormSubmitted?: () => Promise<void>;
 }): JSX.Element {
     const toast = useToast();
     const [submitContentItem] = useSubmitContentItemMutation();
@@ -42,25 +44,17 @@ export default function UploadUrlForm({
                         });
 
                         if (submitResult.errors || !submitResult.data?.submitContentItem?.success) {
-                            console.error(
-                                "Failed to submit item",
-                                submitResult.errors,
-                                submitResult.data?.submitContentItem?.message
-                            );
-
-                            toast({
-                                status: "error",
-                                description: `Failed to submit item. Please try again later. Error: ${[
-                                    submitResult.data?.submitContentItem?.message,
-                                    ...(submitResult.errors?.map((e) => e.message) ?? []),
-                                ].join("; ")}`,
-                            });
+                            throw new Error("Failed to submit item.");
                         }
 
                         toast({
                             status: "success",
                             description: "Submitted item successfully.",
                         });
+
+                        if (handleFormSubmitted) {
+                            await handleFormSubmitted();
+                        }
                     } catch (e) {
                         console.error("Failed to submit item", e);
                         toast({

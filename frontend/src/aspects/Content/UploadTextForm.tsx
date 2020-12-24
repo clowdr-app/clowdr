@@ -41,19 +41,10 @@ export default function UploadTextForm({
                         });
 
                         if (submitResult.errors || !submitResult.data?.submitContentItem?.success) {
-                            console.error(
-                                "Failed to submit item",
-                                submitResult.errors,
-                                submitResult.data?.submitContentItem?.message
+                            throw new Error(
+                                submitResult.data?.submitContentItem?.message ??
+                                    submitResult.errors?.join("; " ?? "Unknown reason for failure.")
                             );
-
-                            toast({
-                                status: "error",
-                                description: `Failed to submit item. Please try again later. Error: ${[
-                                    submitResult.data?.submitContentItem?.message,
-                                    ...(submitResult.errors?.map((e) => e.message) ?? []),
-                                ].join("; ")}`,
-                            });
                         }
 
                         toast({
@@ -64,7 +55,8 @@ export default function UploadTextForm({
                         console.error("Failed to submit item", e);
                         toast({
                             status: "error",
-                            description: "Failed to submit item. Please try again later.",
+                            title: "Failed to submit item.",
+                            description: e?.message ?? "Please try again later.",
                         });
                     }
                 }}

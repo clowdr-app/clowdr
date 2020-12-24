@@ -12,7 +12,13 @@ import {
 import assert from "assert";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
-import CRUDTable, { CRUDTableProps, defaultIntegerFilter, defaultStringFilter, FieldType, UpdateResult } from "../../../CRUDTable/CRUDTable";
+import CRUDTable, {
+    CRUDTableProps,
+    defaultIntegerFilter,
+    defaultStringFilter,
+    FieldType,
+    UpdateResult,
+} from "../../../CRUDTable/CRUDTable";
 import isValidUUID from "../../../Utils/isValidUUID";
 import type { HallwayDescriptor } from "./Types";
 
@@ -119,7 +125,8 @@ export default function ManageHallwaysModal({
                                         priority: {
                                             heading: "Priority",
                                             ariaLabel: "Priority",
-                                            description: "Priority determines the order hallways are listed. Ascending sort (lowest first).",
+                                            description:
+                                                "Priority determines the order hallways are listed. Ascending sort (lowest first).",
                                             isHidden: false,
                                             isEditable: true,
                                             defaultValue: hallways.size,
@@ -134,17 +141,22 @@ export default function ManageHallwaysModal({
                                                 fieldType: FieldType.integer,
                                                 convertToUI: (x) => x,
                                                 convertFromUI: (x) => x,
-                                                filter: defaultIntegerFilter
+                                                filter: defaultIntegerFilter,
                                             },
                                         },
                                     },
                                 }}
                                 csud={{
                                     cudCallbacks: {
-                                        create: async (partialHallway: Partial<HallwayDescriptor>): Promise<string | null> => {
+                                        create: async (
+                                            partialHallway: Partial<HallwayDescriptor>
+                                        ): Promise<string | null> => {
                                             assert(partialHallway.colour);
                                             assert(partialHallway.name);
-                                            assert(partialHallway.priority !== null && partialHallway.priority !== undefined);
+                                            assert(
+                                                partialHallway.priority !== null &&
+                                                    partialHallway.priority !== undefined
+                                            );
                                             const newHallway: HallwayDescriptor = {
                                                 colour: partialHallway.colour,
                                                 id: uuidv4(),

@@ -160,7 +160,7 @@ export function deepCloneContentGroupDescriptor(group: ContentGroupDescriptor): 
         })),
         hallways: group.hallways.map((groupHallway) => ({
             ...groupHallway,
-            layout: groupHallway.layout ? { ...groupHallway.layout } : null
+            layout: groupHallway.layout ? { ...groupHallway.layout } : null,
         })),
         shortTitle: group.shortTitle,
         title: group.title,

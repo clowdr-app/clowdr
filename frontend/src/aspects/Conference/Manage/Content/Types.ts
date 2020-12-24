@@ -4,13 +4,13 @@ import type { ContentGroupType_Enum, ContentType_Enum } from "../../../../genera
 export enum ContentRole {
     Author = "AUTHOR",
     Presenter = "PRESENTER",
-    Chair = "CHAIR"
+    Chair = "CHAIR",
 }
 
 export const ContentRoleNames: ReadonlyArray<ContentRole> = [
     ContentRole.Author,
     ContentRole.Chair,
-    ContentRole.Presenter
+    ContentRole.Presenter,
 ];
 
 export type TagDescriptor = {
@@ -24,7 +24,7 @@ export type TagDescriptor = {
 
 export type HallwayDescriptor = {
     isNew?: boolean;
-    
+
     id: string;
     name: string;
     colour: string;

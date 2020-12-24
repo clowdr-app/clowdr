@@ -387,7 +387,12 @@ gql`
     ) {
         update_RequiredContentItem_by_pk(
             pk_columns: { id: $id }
-            _set: { contentTypeName: $contentTypeName, name: $name, originatingDataId: $originatingDataId, uploadsRemaining: $uploadsRemaining }
+            _set: {
+                contentTypeName: $contentTypeName
+                name: $name
+                originatingDataId: $originatingDataId
+                uploadsRemaining: $uploadsRemaining
+            }
         ) {
             ...RequiredContentItemInfo
         }

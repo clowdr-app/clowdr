@@ -14,7 +14,13 @@ import {
 import assert from "assert";
 import React, { useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";
-import CRUDTable, { CRUDTableProps, defaultIntegerFilter, defaultSelectFilter, FieldType, UpdateResult } from "../../../CRUDTable/CRUDTable";
+import CRUDTable, {
+    CRUDTableProps,
+    defaultIntegerFilter,
+    defaultSelectFilter,
+    FieldType,
+    UpdateResult,
+} from "../../../CRUDTable/CRUDTable";
 import isValidUUID from "../../../Utils/isValidUUID";
 import { useConference } from "../../useConference";
 import type { ContentGroupDescriptor, ContentGroupHallwayDescriptor, HallwayDescriptor } from "./Types";
@@ -71,9 +77,7 @@ export default function ContentGroupHallwaysModal({
                     <Button onClick={onOpen} colorScheme="blue">
                         Manage Content Hallways
                     </Button>
-                    <Text as="p">
-                        (Hallways can exhibit items, rooms and events.)
-                    </Text>
+                    <Text as="p">(Hallways can exhibit items, rooms and events.)</Text>
                 </Center>
             </Box>
             <Modal isCentered onClose={onClose} isOpen={isOpen} motionPreset="scale" size="full">
@@ -159,7 +163,8 @@ export default function ContentGroupHallwaysModal({
                                         priority: {
                                             heading: "Priority",
                                             ariaLabel: "Priority",
-                                            description: "Priority determines the order items are listed in the hallway. Ascending sort (lowest first).",
+                                            description:
+                                                "Priority determines the order items are listed in the hallway. Ascending sort (lowest first).",
                                             isHidden: false,
                                             isEditable: true,
                                             defaultValue: group.hallways.length - 1,
@@ -174,7 +179,7 @@ export default function ContentGroupHallwaysModal({
                                                 fieldType: FieldType.integer,
                                                 convertToUI: (x) => x,
                                                 convertFromUI: (x) => x,
-                                                filter: defaultIntegerFilter
+                                                filter: defaultIntegerFilter,
                                             },
                                         },
                                         // TODO: Layout info
@@ -186,7 +191,10 @@ export default function ContentGroupHallwaysModal({
                                             partialContentGroupHallway: Partial<ContentGroupHallwayDescriptor>
                                         ): Promise<string | null> => {
                                             assert(partialContentGroupHallway.hallwayId);
-                                            assert(partialContentGroupHallway.priority !== null && partialContentGroupHallway.priority !== undefined);
+                                            assert(
+                                                partialContentGroupHallway.priority !== null &&
+                                                    partialContentGroupHallway.priority !== undefined
+                                            );
                                             const newContentGroupHallway: ContentGroupHallwayDescriptor = {
                                                 id: uuidv4(),
                                                 isNew: true,

@@ -148,7 +148,9 @@ export default function ManagePersonsModal({
                                 }}
                                 csud={{
                                     cudCallbacks: {
-                                        create: async (partialPerson: Partial<ContentPersonDescriptor>): Promise<string | null> => {
+                                        create: async (
+                                            partialPerson: Partial<ContentPersonDescriptor>
+                                        ): Promise<string | null> => {
                                             assert(partialPerson.affiliation);
                                             assert(partialPerson.name);
                                             const newPerson: ContentPersonDescriptor = {

@@ -23,6 +23,11 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
+    NumberDecrementStepper,
+    NumberIncrementStepper,
+    NumberInput,
+    NumberInputField,
+    NumberInputStepper,
     Spinner,
     Stack,
     Switch,
@@ -32,11 +37,6 @@ import {
     useDisclosure,
     useToast,
     VStack,
-    NumberInput,
-    NumberInputField,
-    NumberInputStepper,
-    NumberDecrementStepper,
-    NumberIncrementStepper
 } from "@chakra-ui/react";
 import assert from "assert";
 import React, { Dispatch, SetStateAction, useCallback, useMemo, useState } from "react";
@@ -331,7 +331,11 @@ const defaultRenderers: {
                 />
             );
         } else {
-            return <Text as="span" maxWidth="100%">{value}</Text>;
+            return (
+                <Text as="span" maxWidth="100%">
+                    {value}
+                </Text>
+            );
         }
     },
     [FieldType.integer]: function renderIntegerField(value: number, editMode) {
@@ -343,7 +347,8 @@ const defaultRenderers: {
                     onChange={(value) => editMode.onChange(value.length === 0 ? null : parseInt(value, 10))}
                     aria-label={editMode.label}
                     disabled={editMode.isDisabled}
-                    maxWidth="100%">
+                    maxWidth="100%"
+                >
                     <NumberInputField />
                     <NumberInputStepper>
                         <NumberIncrementStepper />
@@ -352,7 +357,11 @@ const defaultRenderers: {
                 </NumberInput>
             );
         }
-        return <Text as="span" maxWidth="100%">{value}</Text>;
+        return (
+            <Text as="span" maxWidth="100%">
+                {value}
+            </Text>
+        );
     },
     [FieldType.boolean]: function renderBooleanField(value: boolean, editMode) {
         if (editMode) {
@@ -459,9 +468,17 @@ const defaultRenderers: {
             );
         } else {
             if (options instanceof Array) {
-                return <Text as="span" maxWidth="100%">{options.reduce((acc, option) => `${acc}, ${option.label}`, "").substr(2)}</Text>;
+                return (
+                    <Text as="span" maxWidth="100%">
+                        {options.reduce((acc, option) => `${acc}, ${option.label}`, "").substr(2)}
+                    </Text>
+                );
             } else {
-                return <Text as="span" maxWidth="100%">{options.label}</Text>;
+                return (
+                    <Text as="span" maxWidth="100%">
+                        {options.label}
+                    </Text>
+                );
             }
         }
     },
@@ -629,7 +646,7 @@ function FilterInput({
             return <StringFilterInput {...props} />;
         default:
             return <></>;
-            // return <Text as="span">TODO: Filter type ({fieldType})</Text>;
+        // return <Text as="span">TODO: Filter type ({fieldType})</Text>;
     }
 }
 
@@ -1658,7 +1675,13 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
                         );
                     })}
                 </Stack>
-                <Grid width="100%" overflowX="auto" templateColumns={templateColumnsStr} minH="30vh" gridAutoRows="min-content">
+                <Grid
+                    width="100%"
+                    overflowX="auto"
+                    templateColumns={templateColumnsStr}
+                    minH="30vh"
+                    gridAutoRows="min-content"
+                >
                     {includeSelectorColumn ? (
                         <CRUDCell
                             key={"heading-selection"}

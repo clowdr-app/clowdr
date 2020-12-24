@@ -108,16 +108,22 @@ export default function UploadersModal({
                                 <NumberInput
                                     precision={0}
                                     value={itemDesc.uploadsRemaining ?? ""}
-                                    onChange={(value) => setUploadsRemaining(value.length === 0 ? null : parseInt(value, 10))}
+                                    onChange={(value) =>
+                                        setUploadsRemaining(value.length === 0 ? null : parseInt(value, 10))
+                                    }
                                     aria-label=""
-                                    maxWidth="100%">
+                                    maxWidth="100%"
+                                >
                                     <NumberInputField />
                                     <NumberInputStepper>
                                         <NumberIncrementStepper />
                                         <NumberDecrementStepper />
                                     </NumberInputStepper>
                                 </NumberInput>
-                                <FormHelperText>Number of repeat submissions allowed for this item. Leave blank to allow unlimited. Recommended value: 3.</FormHelperText>
+                                <FormHelperText>
+                                    Number of repeat submissions allowed for this item. Leave blank to allow unlimited.
+                                    Recommended value: 3.
+                                </FormHelperText>
                             </FormControl>
                             {isItemDirty ? (
                                 <Alert status="info" mb={2}>

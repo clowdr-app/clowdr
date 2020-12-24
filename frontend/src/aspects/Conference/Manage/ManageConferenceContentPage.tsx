@@ -278,7 +278,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
 
     const { isOpen: peopleModalOpen, onOpen: onPeopleModalOpen, onClose: onPeopleModalClose } = useDisclosure();
     const [editedPeopleIds, setEditedPeopleIds] = useState<Set<string>>(new Set());
-    
+
     const { isOpen: hallwaysModalOpen, onOpen: onHallwaysModalOpen, onClose: onHallwaysModalClose } = useDisclosure();
     const [editedHallwaysIds, setEditedHallwaysIds] = useState<Set<string>>(new Set());
 
@@ -383,7 +383,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                                 allPeopleMap,
                                 allOriginatingDatasMap,
                                 allGroupsMap,
-                                allHallwaysMap,
+                                allHallwaysMap
                             );
 
                             setDirtyTagIds((oldTagIds) => {
@@ -496,8 +496,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                         enabledWhenNothingSelected: true,
                         enabledWhenDirty: true,
                         tooltipWhenDisabled: "",
-                        tooltipWhenEnabled:
-                            "Hallways can exhibit items, rooms and events.",
+                        tooltipWhenEnabled: "Hallways can exhibit items, rooms and events.",
                         colorScheme: "purple",
                         isRunning: false,
                         label: "Manage hallways",
@@ -754,7 +753,7 @@ function ContentGroupSecondaryEditor(
                     </AccordionPanel>
                 </AccordionItem>
             );
-            
+
             itemElements.push(
                 <AccordionItem key="originating-data">
                     <AccordionButton>
@@ -1104,7 +1103,8 @@ function GroupHallwaysEditorModal({
                         newGroups.set(group.id, {
                             ...existingGroup,
                             hallways: existingGroup.hallways.filter(
-                                (existingContentGroupHallway) => existingContentGroupHallway.id !== contentGroupHallwayId
+                                (existingContentGroupHallway) =>
+                                    existingContentGroupHallway.id !== contentGroupHallwayId
                             ),
                         });
                         return newGroups;
@@ -1205,7 +1205,7 @@ function RequiredItemEditorModal({
                                 if (existingItem.id === itemDesc.requiredItem.id) {
                                     return {
                                         ...existingItem,
-                                        uploadsRemaining: newUploadsRemaining
+                                        uploadsRemaining: newUploadsRemaining,
                                     };
                                 } else {
                                     return existingItem;

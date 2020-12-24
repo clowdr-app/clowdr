@@ -177,8 +177,8 @@ export default function SubmitItemPage({
                                 </Heading>
                                 {requiredItem.uploadsRemaining === 0 ? (
                                     <Text mt={4}>
-                                        No upload attempts remaining for this item. Please contact your conference organisers if
-                                        you need to upload another version.
+                                        No upload attempts remaining for this item. Please contact your conference
+                                        organisers if you need to upload another version.
                                     </Text>
                                 ) : (
                                     <>

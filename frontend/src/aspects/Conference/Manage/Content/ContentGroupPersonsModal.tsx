@@ -14,10 +14,21 @@ import {
 import assert from "assert";
 import React, { useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";
-import CRUDTable, { CRUDTableProps, defaultIntegerFilter, defaultSelectFilter, FieldType, UpdateResult } from "../../../CRUDTable/CRUDTable";
+import CRUDTable, {
+    CRUDTableProps,
+    defaultIntegerFilter,
+    defaultSelectFilter,
+    FieldType,
+    UpdateResult,
+} from "../../../CRUDTable/CRUDTable";
 import isValidUUID from "../../../Utils/isValidUUID";
 import { useConference } from "../../useConference";
-import { ContentGroupDescriptor, ContentGroupPersonDescriptor, ContentPersonDescriptor, ContentRoleNames } from "./Types";
+import {
+    ContentGroupDescriptor,
+    ContentGroupPersonDescriptor,
+    ContentPersonDescriptor,
+    ContentRoleNames,
+} from "./Types";
 
 const ContentGroupPersonCRUDTable = (props: Readonly<CRUDTableProps<ContentGroupPersonDescriptor, "id">>) =>
     CRUDTable(props);
@@ -63,9 +74,9 @@ export default function ContentGroupPersonsModal({
     }, [peopleMap]);
 
     const roleOptions = useMemo(() => {
-        return ContentRoleNames.map(roleName => ({
+        return ContentRoleNames.map((roleName) => ({
             label: roleName[0] + roleName.toLowerCase().substr(1),
-            value: roleName
+            value: roleName,
         }));
     }, []);
 
@@ -207,7 +218,8 @@ export default function ContentGroupPersonsModal({
                                         priority: {
                                             heading: "Priority",
                                             ariaLabel: "Priority",
-                                            description: "Priority determines the order people are listed when displayed on item pages. Ascending sort (lowest first).",
+                                            description:
+                                                "Priority determines the order people are listed when displayed on item pages. Ascending sort (lowest first).",
                                             isHidden: false,
                                             isEditable: true,
                                             defaultValue: group.people.length - 1,
@@ -222,7 +234,7 @@ export default function ContentGroupPersonsModal({
                                                 fieldType: FieldType.integer,
                                                 convertToUI: (x) => x,
                                                 convertFromUI: (x) => x,
-                                                filter: defaultIntegerFilter
+                                                filter: defaultIntegerFilter,
                                             },
                                         },
                                     },

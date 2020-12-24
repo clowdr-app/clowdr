@@ -1,0 +1,2 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE TABLE "public"."ContentGroupHallway"("id" uuid NOT NULL DEFAULT gen_random_uuid(), "groupId" uuid NOT NULL, "hallwayId" uuid NOT NULL, "priority" integer, "layout" jsonb, "conferenceId" uuid NOT NULL, PRIMARY KEY ("id") , FOREIGN KEY ("groupId") REFERENCES "public"."ContentGroup"("id") ON UPDATE cascade ON DELETE cascade, FOREIGN KEY ("hallwayId") REFERENCES "public"."Hallway"("id") ON UPDATE cascade ON DELETE cascade, FOREIGN KEY ("conferenceId") REFERENCES "public"."Conference"("id") ON UPDATE cascade ON DELETE cascade);

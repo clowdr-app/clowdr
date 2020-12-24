@@ -1191,6 +1191,30 @@ function RequiredItemEditorModal({
                 onClose={onUploadersClose}
                 groupTitle={group.title}
                 itemDesc={itemDesc.requiredItem}
+                setUploadsRemaining={(newUploadsRemaining) => {
+                    markDirty();
+                    setAllContentGroupsMap((oldGroups) => {
+                        const newGroups: Map<string, ContentGroupDescriptor> = oldGroups
+                            ? new Map(oldGroups)
+                            : new Map();
+                        const existingGroup = newGroups.get(group.id);
+                        assert(existingGroup);
+                        newGroups.set(group.id, {
+                            ...existingGroup,
+                            requiredItems: existingGroup.requiredItems.map((existingItem) => {
+                                if (existingItem.id === itemDesc.requiredItem.id) {
+                                    return {
+                                        ...existingItem,
+                                        uploadsRemaining: newUploadsRemaining
+                                    };
+                                } else {
+                                    return existingItem;
+                                }
+                            }),
+                        });
+                        return newGroups;
+                    });
+                }}
                 insertUploader={(uploader) => {
                     markDirty();
                     setAllContentGroupsMap((oldGroups) => {

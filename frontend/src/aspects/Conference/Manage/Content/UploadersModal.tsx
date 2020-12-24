@@ -7,6 +7,9 @@ import {
     Box,
     Button,
     Center,
+    FormControl,
+    FormHelperText,
+    FormLabel,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -14,6 +17,11 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
+    NumberDecrementStepper,
+    NumberIncrementStepper,
+    NumberInput,
+    NumberInputField,
+    NumberInputStepper,
     Text,
 } from "@chakra-ui/react";
 import assert from "assert";
@@ -42,6 +50,7 @@ interface Props {
     groupTitle: string;
     isItemDirty: boolean;
     itemDesc: RequiredContentItemDescriptor;
+    setUploadsRemaining: (newUploadsRemaining: number | null) => void;
     insertUploader: (uploader: UploaderDescriptor) => void;
     updateUploader: (uploader: UploaderDescriptor) => void;
     deleteUploader: (uploaderId: string) => void;
@@ -54,6 +63,7 @@ export default function UploadersModal({
     groupTitle,
     itemDesc,
     isItemDirty,
+    setUploadsRemaining,
     insertUploader,
     updateUploader,
     deleteUploader,
@@ -93,6 +103,22 @@ export default function UploadersModal({
                     <ModalCloseButton />
                     <ModalBody>
                         <Box>
+                            <FormControl maxW={300} pb={10}>
+                                <FormLabel>Submission attempts remaining</FormLabel>
+                                <NumberInput
+                                    precision={0}
+                                    value={itemDesc.uploadsRemaining ?? ""}
+                                    onChange={(value) => setUploadsRemaining(value.length === 0 ? null : parseInt(value, 10))}
+                                    aria-label=""
+                                    maxWidth="100%">
+                                    <NumberInputField />
+                                    <NumberInputStepper>
+                                        <NumberIncrementStepper />
+                                        <NumberDecrementStepper />
+                                    </NumberInputStepper>
+                                </NumberInput>
+                                <FormHelperText>Number of repeat submissions allowed for this item. Leave blank to allow unlimited. Recommended value: 3.</FormHelperText>
+                            </FormControl>
                             {isItemDirty ? (
                                 <Alert status="info" mb={2}>
                                     <AlertIcon />

@@ -67,6 +67,7 @@ gql`
         contentTypeName
         conferenceId
         contentGroupId
+        uploadsRemaining
         uploaders {
             ...UploaderInfo
         }
@@ -381,11 +382,12 @@ gql`
         $id: uuid!
         $contentTypeName: ContentType_enum!
         $name: String!
+        $uploadsRemaining: Int = null
         $originatingDataId: uuid = null
     ) {
         update_RequiredContentItem_by_pk(
             pk_columns: { id: $id }
-            _set: { contentTypeName: $contentTypeName, name: $name, originatingDataId: $originatingDataId }
+            _set: { contentTypeName: $contentTypeName, name: $name, originatingDataId: $originatingDataId, uploadsRemaining: $uploadsRemaining }
         ) {
             ...RequiredContentItemInfo
         }
@@ -886,6 +888,7 @@ export function useSaveContentDiff():
                                                     accessToken: uuidv4(),
                                                     name: item.name,
                                                     contentTypeName: item.typeName,
+                                                    uploadsRemaining: item.uploadsRemaining,
                                                     uploaders: {
                                                         data: item.uploaders.map(
                                                             (uploader): Uploader_Insert_Input => ({
@@ -1088,6 +1091,7 @@ export function useSaveContentDiff():
                                                     contentTypeName: item.typeName,
                                                     id: item.id,
                                                     name: item.name,
+                                                    uploadsRemaining: item.uploadsRemaining,
                                                     originatingDataId: item.originatingDataId,
                                                 },
                                             });
@@ -1169,6 +1173,7 @@ export function useSaveContentDiff():
                                             contentTypeName: item.typeName,
                                             id: item.id,
                                             name: item.name,
+                                            uploadsRemaining: item.uploadsRemaining,
                                             originatingDataId: item.originatingDataId,
                                             uploaders: {
                                                 data: item.uploaders.map(

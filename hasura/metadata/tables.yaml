@@ -3008,6 +3008,7 @@
       - id
       - name
       - originatingDataId
+      - uploadsRemaining
       backend_only: false
   select_permissions:
   - role: unauthenticated
@@ -3087,6 +3088,7 @@
       - contentTypeName
       - name
       - originatingDataId
+      - uploadsRemaining
       filter:
         conference:
           groups:

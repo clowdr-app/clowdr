@@ -10820,7 +10820,7 @@ export enum Permission_Enum {
   ConferenceModerateAttendees = 'CONFERENCE_MODERATE_ATTENDEES',
   /** View the conference. */
   ConferenceView = 'CONFERENCE_VIEW',
-  /** View conference attendees. */
+  /** View conference active attendees. */
   ConferenceViewAttendees = 'CONFERENCE_VIEW_ATTENDEES'
 }
 
@@ -21423,7 +21423,7 @@ export type SendSubmissionRequestsMutation = { readonly __typename?: 'mutation_r
 
 export type UploaderInfoFragment = { readonly __typename?: 'Uploader', readonly id: any, readonly conferenceId: any, readonly email: string, readonly emailsSentCount: number, readonly name: string, readonly requiredContentItemId: any };
 
-export type RequiredContentItemInfoFragment = { readonly __typename?: 'RequiredContentItem', readonly id: any, readonly name: string, readonly contentTypeName: ContentType_Enum, readonly conferenceId: any, readonly contentGroupId: any, readonly originatingDataId?: Maybe<any>, readonly uploaders: ReadonlyArray<(
+export type RequiredContentItemInfoFragment = { readonly __typename?: 'RequiredContentItem', readonly id: any, readonly name: string, readonly contentTypeName: ContentType_Enum, readonly conferenceId: any, readonly contentGroupId: any, readonly uploadsRemaining?: Maybe<number>, readonly originatingDataId?: Maybe<any>, readonly uploaders: ReadonlyArray<(
     { readonly __typename?: 'Uploader' }
     & UploaderInfoFragment
   )> };
@@ -21626,6 +21626,7 @@ export type UpdateRequiredContentItemMutationVariables = Exact<{
   id: Scalars['uuid'];
   contentTypeName: ContentType_Enum;
   name: Scalars['String'];
+  uploadsRemaining?: Maybe<Scalars['Int']>;
   originatingDataId?: Maybe<Scalars['uuid']>;
 }>;
 
@@ -22068,6 +22069,7 @@ export const RequiredContentItemInfoFragmentDoc = gql`
   contentTypeName
   conferenceId
   contentGroupId
+  uploadsRemaining
   uploaders {
     ...UploaderInfo
   }
@@ -23049,10 +23051,10 @@ export type UpdateContentItemMutationHookResult = ReturnType<typeof useUpdateCon
 export type UpdateContentItemMutationResult = Apollo.MutationResult<UpdateContentItemMutation>;
 export type UpdateContentItemMutationOptions = Apollo.BaseMutationOptions<UpdateContentItemMutation, UpdateContentItemMutationVariables>;
 export const UpdateRequiredContentItemDocument = gql`
-    mutation UpdateRequiredContentItem($id: uuid!, $contentTypeName: ContentType_enum!, $name: String!, $originatingDataId: uuid = null) {
+    mutation UpdateRequiredContentItem($id: uuid!, $contentTypeName: ContentType_enum!, $name: String!, $uploadsRemaining: Int = null, $originatingDataId: uuid = null) {
   update_RequiredContentItem_by_pk(
     pk_columns: {id: $id}
-    _set: {contentTypeName: $contentTypeName, name: $name, originatingDataId: $originatingDataId}
+    _set: {contentTypeName: $contentTypeName, name: $name, originatingDataId: $originatingDataId, uploadsRemaining: $uploadsRemaining}
   ) {
     ...RequiredContentItemInfo
   }
@@ -23076,6 +23078,7 @@ export type UpdateRequiredContentItemMutationFn = Apollo.MutationFunction<Update
  *      id: // value for 'id'
  *      contentTypeName: // value for 'contentTypeName'
  *      name: // value for 'name'
+ *      uploadsRemaining: // value for 'uploadsRemaining'
  *      originatingDataId: // value for 'originatingDataId'
  *   },
  * });

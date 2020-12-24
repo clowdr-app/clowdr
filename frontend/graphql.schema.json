@@ -68237,7 +68237,7 @@
           },
           {
             "name": "CONFERENCE_VIEW_ATTENDEES",
-            "description": "View conference attendees.",
+            "description": "View conference active attendees.",
             "isDeprecated": false,
             "deprecationReason": null
           }

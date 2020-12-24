@@ -65,6 +65,7 @@ export type RequiredContentItemDescriptor = {
     name: string;
     uploaders: UploaderDescriptor[];
     originatingDataId?: string;
+    uploadsRemaining?: number | null;
 };
 
 export type UploaderDescriptor = {

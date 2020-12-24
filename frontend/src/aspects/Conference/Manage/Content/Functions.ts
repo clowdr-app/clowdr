@@ -41,6 +41,7 @@ export function convertContentToDescriptors(
                         id: item.id,
                         name: item.name,
                         typeName: item.contentTypeName,
+                        uploadsRemaining: item.uploadsRemaining,
                         uploaders: item.uploaders.map((uploader) => ({
                             id: uploader.id,
                             email: uploader.email,
@@ -133,11 +134,14 @@ export function deepCloneContentGroupDescriptor(group: ContentGroupDescriptor): 
             name: item.name,
             typeName: item.typeName,
             requiredContentId: item.requiredContentId,
+            originatingDataId: item.originatingDataId,
         })),
         requiredItems: group.requiredItems.map((item) => ({
             id: item.id,
             name: item.name,
             typeName: item.typeName,
+            originatingDataId: item.originatingDataId,
+            uploadsRemaining: item.uploadsRemaining,
             uploaders: item.uploaders.map((uploader) => ({
                 id: uploader.id,
                 email: uploader.email,

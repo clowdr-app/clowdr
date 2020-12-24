@@ -4,7 +4,6 @@ import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
 import { tryConfirmSubscription, validateSNSNotification } from "../lib/sns/sns";
 import { completePreviewTranscode, failPreviewTranscode } from "../lib/transcode";
-import { completeBroadcastTranscode, failBroadcastTranscode } from "../lib/videoRenderJob";
 
 export const router = express.Router();
 
@@ -50,9 +49,8 @@ router.post("/notify", bodyParser.text(), async (req: Request, res: Response) =>
 
                     switch (event.detail.userMetadata.mode) {
                         case TranscodeMode.BROADCAST:
-                            await completeBroadcastTranscode(
-                                event.detail.userMetadata.videoRenderJobId,
-                                transcodeS3Url
+                            console.error(
+                                "Received unexpected broadcast transcode result from MediaConvert. These are currently handled by Elastic Transcoder."
                             );
                             break;
                         case TranscodeMode.PREVIEW:
@@ -73,9 +71,8 @@ router.post("/notify", bodyParser.text(), async (req: Request, res: Response) =>
                 try {
                     switch (event.detail.userMetadata.mode) {
                         case TranscodeMode.BROADCAST:
-                            await failBroadcastTranscode(
-                                event.detail.userMetadata.videoRenderJobId,
-                                event.detail.errorMessage
+                            console.error(
+                                "Received unexpected broadcast transcode result from MediaConvert. These are currently handled by Elastic Transcoder."
                             );
                             break;
                         case TranscodeMode.PREVIEW:

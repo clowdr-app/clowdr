@@ -2,13 +2,98 @@ import { gql } from "@apollo/client/core";
 import {
     CompleteVideoRenderJobDocument,
     CountUnfinishedVideoRenderJobsDocument,
+    ExpireVideoRenderJobDocument,
     FailVideoRenderJobDocument,
     GetBroadcastVideoRenderJobDetailsDocument,
     JobStatus_Enum,
     StartVideoRenderJobDocument,
-    UpdateMp4BroadcastContentItemDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
+
+gql`
+    mutation CompleteVideoRenderJob($videoRenderJobId: uuid!, $data: jsonb!) {
+        update_VideoRenderJob_by_pk(
+            pk_columns: { id: $videoRenderJobId }
+            _set: { jobStatusName: COMPLETED }
+            _append: { data: $data }
+        ) {
+            id
+            broadcastContentItemId
+        }
+    }
+`;
+
+interface CompleteVideoRenderJobResult {
+    status:
+        | "Success"
+        | "CouldNotFindVideoRenderJob"
+        | "VideoRenderJobNotInProgress"
+        | "ConferencePrepareJobNotInProgress";
+    message?: string;
+}
+
+export async function completeVideoRenderJob(
+    videoRenderJobId: string,
+    s3Url: string,
+    durationSeconds: number | undefined
+): Promise<CompleteVideoRenderJobResult> {
+    // Check whether the job is currently in progress
+    const broadcastRenderJobResult = await apolloClient.query({
+        query: GetBroadcastVideoRenderJobDetailsDocument,
+        variables: {
+            videoRenderJobId,
+        },
+    });
+
+    if (!broadcastRenderJobResult.data.VideoRenderJob_by_pk) {
+        console.warn("Could not complete video render job: video render job not found", videoRenderJobId);
+        return {
+            status: "CouldNotFindVideoRenderJob",
+        };
+    }
+
+    const videoRenderJob = broadcastRenderJobResult.data.VideoRenderJob_by_pk;
+
+    if (videoRenderJob.conferencePrepareJob.jobStatusName !== JobStatus_Enum.InProgress) {
+        console.warn(
+            "Could not complete video render job: conference prepare job not in progress",
+            videoRenderJobId,
+            videoRenderJob.conferencePrepareJob.jobStatusName
+        );
+        return {
+            status: "ConferencePrepareJobNotInProgress",
+        };
+    }
+
+    if (videoRenderJob.jobStatusName !== JobStatus_Enum.InProgress) {
+        console.warn(
+            "Could not complete video render job: video render job not in progress",
+            videoRenderJobId,
+            videoRenderJob.jobStatusName
+        );
+        return {
+            status: "VideoRenderJobNotInProgress",
+        };
+    }
+
+    const mp4BroadcastContentItemData: MP4Input = {
+        s3Url,
+        type: "MP4Input",
+        durationSeconds,
+    };
+
+    await apolloClient.mutate({
+        mutation: CompleteVideoRenderJobDocument,
+        variables: {
+            videoRenderJobId,
+            data: { broadcastContentItemData: mp4BroadcastContentItemData },
+        },
+    });
+
+    return {
+        status: "Success",
+    };
+}
 
 gql`
     mutation FailVideoRenderJob($videoRenderJobId: uuid!, $message: String!) {
@@ -27,6 +112,27 @@ export async function failVideoRenderJob(videoRenderJobId: string, message: stri
         mutation: FailVideoRenderJobDocument,
         variables: {
             message: message,
+            videoRenderJobId,
+        },
+    });
+}
+
+gql`
+    mutation ExpireVideoRenderJob($videoRenderJobId: uuid!, $message: String!) {
+        update_VideoRenderJob_by_pk(
+            pk_columns: { id: $videoRenderJobId }
+            _set: { jobStatusName: EXPIRED, message: $message }
+        ) {
+            id
+        }
+    }
+`;
+
+export async function ExpireVideoRenderJob(videoRenderJobId: string, message: string): Promise<void> {
+    await apolloClient.mutate({
+        mutation: ExpireVideoRenderJobDocument,
+        variables: {
+            message,
             videoRenderJobId,
         },
     });
@@ -115,62 +221,7 @@ gql`
                 id
                 jobStatusName
             }
+            jobStatusName
         }
     }
 `;
-
-export async function completeBroadcastTranscode(videoRenderJobId: string, transcodeS3Url: string): Promise<void> {
-    console.log("Broadcast transcode succeeded", videoRenderJobId);
-
-    try {
-        const broadcastRenderJobResult = await apolloClient.query({
-            query: GetBroadcastVideoRenderJobDetailsDocument,
-            variables: {
-                videoRenderJobId,
-            },
-        });
-
-        if (
-            broadcastRenderJobResult.data.VideoRenderJob_by_pk?.conferencePrepareJob.jobStatusName &&
-            broadcastRenderJobResult.data.VideoRenderJob_by_pk.conferencePrepareJob.jobStatusName in
-                [JobStatus_Enum.InProgress, JobStatus_Enum.New]
-        ) {
-            if (broadcastRenderJobResult.data.VideoRenderJob_by_pk.broadcastContentItem) {
-                console.log("Updating broadcast content item with result of transcode", videoRenderJobId);
-                const input: MP4Input = {
-                    s3Url: transcodeS3Url,
-                    type: "MP4Input",
-                };
-
-                await apolloClient.mutate({
-                    mutation: UpdateMp4BroadcastContentItemDocument,
-                    variables: {
-                        broadcastContentItemId:
-                            broadcastRenderJobResult.data.VideoRenderJob_by_pk.broadcastContentItem.id,
-                        input,
-                    },
-                });
-            } else {
-                console.log("No corresponding broadcast content item found for video render job", videoRenderJobId);
-            }
-        } else {
-            console.log("Received broadcast transcode result for expired job", videoRenderJobId);
-        }
-
-        console.log("Marking broadcast video rendering job complete", videoRenderJobId);
-        await apolloClient.mutate({
-            mutation: CompleteVideoRenderJobDocument,
-            variables: {
-                videoRenderJobId,
-            },
-        });
-    } catch (e) {
-        console.error("Failed to record completion of broadcast transcode", videoRenderJobId);
-        await failBroadcastTranscode(videoRenderJobId, e.message ?? "Failed for unknown reason");
-    }
-}
-
-export async function failBroadcastTranscode(videoRenderJobId: string, errorMessage: string): Promise<void> {
-    console.log("Broadcast transcode did not succeed", videoRenderJobId);
-    await failVideoRenderJob(videoRenderJobId, errorMessage);
-}

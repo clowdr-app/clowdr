@@ -6,6 +6,7 @@ interface PendingCreation {
 
 interface MP4Input {
     type: "MP4Input";
+    durationSeconds?: number;
     s3Url: string;
 }
 

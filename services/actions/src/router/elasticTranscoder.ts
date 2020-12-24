@@ -3,7 +3,7 @@ import bodyParser from "body-parser";
 import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
 import { tryConfirmSubscription, validateSNSNotification } from "../lib/sns/sns";
-import { completeBroadcastTranscode, failBroadcastTranscode } from "../lib/videoRenderJob";
+import * as VideoRenderJob from "../lib/videoRenderJob";
 
 export const router = express.Router();
 
@@ -47,7 +47,7 @@ router.post("/notify", bodyParser.text(), async (req: Request, res: Response) =>
                 case "ERROR": {
                     console.log("Elastic Transcoder job errored", event.jobId);
                     try {
-                        await failBroadcastTranscode(
+                        await VideoRenderJob.failVideoRenderJob(
                             event.userMetadata.videoRenderJobId,
                             event.messageDetails ?? event.errorCode?.toString() ?? "Unknown reason for failure"
                         );
@@ -57,16 +57,29 @@ router.post("/notify", bodyParser.text(), async (req: Request, res: Response) =>
                     break;
                 }
                 case "COMPLETED": {
-                    console.log("Elastic Transcoder job completed", event.jobId);
-                    if (event.outputs.length < 1) {
-                        console.error("Completed Elastic Transcoder job has no outputs", event.jobId);
-                        await failBroadcastTranscode(
+                    try {
+                        if (event.outputs.length === 1) {
+                            console.log("Elastic Transcoder job completed", event.jobId);
+                            const s3Url = `s3://${event.userMetadata.bucket}/${event.outputs[0].key}`;
+                            await VideoRenderJob.completeVideoRenderJob(
+                                event.userMetadata.videoRenderJobId,
+                                s3Url,
+                                undefined
+                            );
+                        } else {
+                            console.log("Elastic Transcoder job finished without outputs", event.jobId);
+                            throw new Error("Elastic Transcoder job finished without outputs");
+                        }
+                    } catch (e) {
+                        console.error(
+                            "Failed to record completion of broadcast transcode",
                             event.userMetadata.videoRenderJobId,
-                            "Completed job had no outputs"
+                            e
                         );
-                    } else {
-                        const s3Url = `s3://${event.userMetadata.bucket}/${event.outputs[0].key}`;
-                        await completeBroadcastTranscode(event.userMetadata.videoRenderJobId, s3Url);
+                        await VideoRenderJob.failVideoRenderJob(
+                            event.userMetadata.videoRenderJobId,
+                            e.message ?? "Failed for unknown reason"
+                        );
                     }
                     break;
                 }

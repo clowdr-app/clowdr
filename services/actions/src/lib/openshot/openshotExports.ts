@@ -16,7 +16,7 @@ interface S3ExportDetails {
     acl: string;
 }
 
-interface ExportParameters {
+export interface ExportParameters {
     export_type: "video" | "audio" | "image" | "waveform";
     video_format: string;
     video_codec: string;

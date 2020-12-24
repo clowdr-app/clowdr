@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client/core";
 import {
+    AWSJobStatus,
     ContentItemDataBlob,
     ContentItemVersionData,
     TranscodeDetails,
@@ -88,4 +89,20 @@ export async function addNewContentItemVersion(contentItemId: string, version: C
         console.error("Failed to add new content item version", result.errors);
         throw new Error(`Failed to add new content item version: ${result.errors}`);
     }
+}
+
+export async function addNewBroadcastTranscode(
+    contentItemId: string,
+    videoRenderJobId: string,
+    s3Url: string
+): Promise<void> {
+    console.log("Updating content item with result of broadcast transcode", videoRenderJobId, contentItemId);
+    const transcodeDetails: TranscodeDetails = {
+        jobId: videoRenderJobId,
+        status: AWSJobStatus.Completed,
+        updatedTimestamp: new Date().getTime(),
+        s3Url,
+    };
+    const newVersion = await createNewVersionFromBroadcastTranscode(contentItemId, transcodeDetails);
+    await addNewContentItemVersion(contentItemId, newVersion);
 }

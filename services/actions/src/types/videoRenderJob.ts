@@ -7,6 +7,7 @@ interface TitleRenderJobDataBlob {
     openShotProjectId: number;
     openShotExportId?: number;
     webhookKey?: string;
+    broadcastContentItemData?: MP4Input;
 }
 
 interface BroadcastRenderJobDataBlob {
@@ -14,4 +15,5 @@ interface BroadcastRenderJobDataBlob {
     videoS3Url: string;
     subtitlesS3Url?: string;
     elasticTranscoderJobId?: string;
+    broadcastContentItemData?: MP4Input;
 }

@@ -1,7 +1,7 @@
 import bodyParser from "body-parser";
 import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
-import { handleVideoRenderJobUpdated } from "../handlers/prepare";
+import { handleVideoRenderJobUpdated } from "../handlers/videoRenderJob";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
 import { Payload, VideoRenderJobData } from "../types/event";
 

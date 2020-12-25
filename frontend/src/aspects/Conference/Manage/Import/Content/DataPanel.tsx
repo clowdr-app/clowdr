@@ -1,13 +1,23 @@
-import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Select, Spinner, Text, VStack } from "@chakra-ui/react";
+import {
+    Alert,
+    AlertDescription,
+    AlertIcon,
+    AlertTitle,
+    Box,
+    Code,
+    Select,
+    Spinner,
+    Text,
+    VStack,
+} from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import useCSVJSONXMLFileSelector from "../../../../Files/useCSVJSONXMLFileSelector";
 import useCSVJSONXMLImportOptions from "../../../../Files/useCSVJSONXMLImportOptions";
-import useCSVJSONXMLParse, { ParserResult } from "../../../../Files/useCSVJSONXMLParser";
+import useCSVJSONXMLParse, { ParsedData, ParserResult } from "../../../../Files/useCSVJSONXMLParser";
 
-function parser(data: any): ParserResult<{
-    columns: string[];
-    rows: any[][];
-}> {
+export type ParsedContentData = any[];
+
+function parser(data: any): ParserResult<ParsedContentData> {
     // Researchr XML
     if (data.subevent) {
         data = data.subevent;
@@ -16,27 +26,24 @@ function parser(data: any): ParserResult<{
     if (!(data instanceof Array)) {
         return {
             ok: false,
-            error: "Data should be a list of items."
+            error: "Data should be a list of items.",
         };
     }
-    // TODO
+
     return {
         ok: true,
-        data: {
-            columns: [], // TODO
-            rows: data
-        },
+        data,
     };
 }
 
-export default function DataPanel(): JSX.Element {
+export default function DataPanel({ onData }: { onData?: (data: ParsedData<ParsedContentData>[] | undefined) => void }): JSX.Element {
     const { acceptedFiles, component: fileImporterEl } = useCSVJSONXMLFileSelector();
     const { importOptions, openOptionsButton, optionsComponent } = useCSVJSONXMLImportOptions(acceptedFiles);
     const { data } = useCSVJSONXMLParse(importOptions, parser);
 
     useEffect(() => {
-        setSelectedFileIndex(0);
-    }, [data]);
+        onData?.(data);
+    }, [data, onData]);
     const [selectedFileIndex, setSelectedFileIndex] = useState<number>(-1);
 
     const selectedData =
@@ -74,7 +81,11 @@ export default function DataPanel(): JSX.Element {
                                         <AlertDescription>{selectedData.error}</AlertDescription>
                                     </Alert>
                                 ) : (
-                                    <Text as="p">{JSON.stringify(selectedData.data.rows, null, 2)}</Text>
+                                    <Text as="pre" w="100%" overflowWrap="break-word" whiteSpace="pre-wrap">
+                                        <Code w="100%" p={2}>
+                                            {JSON.stringify(selectedData.data, null, 2)}
+                                        </Code>
+                                    </Text>
                                 )}
                             </>
                         )}

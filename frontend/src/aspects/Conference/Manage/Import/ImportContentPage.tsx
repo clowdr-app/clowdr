@@ -1,20 +1,23 @@
 import { Box, Heading, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { Permission_Enum } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
+import type { ParsedData } from "../../../Files/useCSVJSONXMLParser";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../useConference";
 import useDashboardPrimaryMenuButtons from "../useDashboardPrimaryMenuButtons";
 import ConfigPanel from "./Content/ConfigPanel";
-import DataPanel from "./Content/DataPanel";
+import DataPanel, { ParsedContentData } from "./Content/DataPanel";
 import ReviewPanel from "./Content/ReviewPanel";
 
 export default function ImportContentPage(): JSX.Element {
     const conference = useConference();
     useDashboardPrimaryMenuButtons();
 
-    const dataPanel = useMemo(() => <DataPanel />, []);
-    const configPanel = useMemo(() => <ConfigPanel />, []);
+    const [data, setData] = useState<ParsedData<ParsedContentData>[]>();
+
+    const dataPanel = useMemo(() => <DataPanel onData={setData} />, []);
+    const configPanel = useMemo(() => data && <ConfigPanel data={data} />, [data]);
     const reviewPanel = useMemo(() => <ReviewPanel />, []);
 
     return (
@@ -32,8 +35,8 @@ export default function ImportContentPage(): JSX.Element {
                 <Tabs defaultIndex={0} w="100%">
                     <TabList>
                         <Tab>Data</Tab>
-                        <Tab>Configure</Tab>
-                        <Tab>Review</Tab>
+                        <Tab isDisabled={!data || data.length === 0}>Configure</Tab>
+                        <Tab isDisabled={!data || data.length === 0}>Review</Tab>
                     </TabList>
 
                     <TabPanels>

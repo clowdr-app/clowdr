@@ -62,7 +62,9 @@ async function parseFile<T>(options: ImportOptions, parser: Parser<T>): Promise<
                         ignoreCdata: true,
                         ignoreDeclaration: true,
                         ignoreDoctype: true,
-                        trim: true
+                        trim: true,
+                        nativeType: true,
+                        addParent: false
                     });
                     console.log(xmlParsed);
                     const ignoreKeys = [
@@ -82,8 +84,7 @@ async function parseFile<T>(options: ImportOptions, parser: Parser<T>): Promise<
                     }
                     if (data.length === 1) {
                         data = data[0];
-                    }
-                    else if (data.length === 0) {
+                    } else if (data.length === 0) {
                         return {
                             fileName: options.file.name,
                             error: "Failed to parse data.",

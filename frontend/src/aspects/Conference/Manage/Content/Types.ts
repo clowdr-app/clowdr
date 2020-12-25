@@ -140,6 +140,7 @@ export type ContentGroupDescriptor = {
     hallways: ContentGroupHallwayDescriptor[];
     originatingDataId?: string;
 };
+
 export type ItemBaseTemplate =
     | {
           supported: false;

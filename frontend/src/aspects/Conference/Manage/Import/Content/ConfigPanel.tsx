@@ -63,7 +63,7 @@ const presetJSONata_ResearchrQuery_POPL2021 = (conferenceId: string) => `
         "hallways": [],
         "originatingDataId": slot_id._text
     },
-    "rooms": ($rooms := $distinct($.**.room.$match(_text, /[^|]*\| ?(.*)/).groups[0]); $rooms.{"name": $}),
+    "rooms": ($rooms := $distinct($.**.room.$match(_text, /[^|]*\\| ?(.*)/).groups[0]); $rooms.{"name": $}),
     "tags": ($tags := $distinct($.**.tracks.track._text); $tags.{ "name": $ }),
     "events": $.$@$session.timeslot[event_id].{
         "id": $.event_id._text,
@@ -71,7 +71,7 @@ const presetJSONata_ResearchrQuery_POPL2021 = (conferenceId: string) => `
         "startAt": $.date._text & 'T' & $.start_time._text,
         "endAt": $.end_date._text & 'T' & $.end_time._text,
 
-        "roomName": $match(room._text, /[^|]*\| ?(.*)/).groups[0],
+        "roomName": $match(room._text, /[^|]*\\| ?(.*)/).groups[0],
         "tagNames": $session.tracks.track._text,
 
         "chairs": 
@@ -94,7 +94,7 @@ const presetJSONata_ResearchrQuery_POPL2021 = (conferenceId: string) => `
         "id": subevent_id._text,
         "title": title._text, 
         "researchrLink": { "url": url._text, "label": url_link_display._text },
-        "roomName": $match(room._text, /[^|]*\| ?(.*)/).groups[0],
+        "roomName": $match(room._text, /[^|]*\\| ?(.*)/).groups[0],
         "chair": 
             timeslot[$not($exists($.event_id))].persons.person[role._text="Session Chair"].
                 { 

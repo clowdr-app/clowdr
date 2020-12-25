@@ -115,11 +115,7 @@ export async function handleConferencePrepareJobInserted(payload: Payload<Confer
                 continue;
             }
 
-            if (
-                latestVersion.data.broadcastTranscode &&
-                latestVersion.data.broadcastTranscode.message === "COMPLETED" &&
-                latestVersion.data.broadcastTranscode.s3Url
-            ) {
+            if (latestVersion.data.broadcastTranscode && latestVersion.data.broadcastTranscode.s3Url) {
                 console.log(
                     "Conference prepare: item already has up-to-date broadcast transcode",
                     videoBroadcastItem.id,

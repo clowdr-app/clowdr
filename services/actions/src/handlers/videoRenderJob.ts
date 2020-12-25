@@ -81,22 +81,29 @@ export async function handleVideoRenderJobUpdated(payload: Payload<VideoRenderJo
                 }
                 case JobStatus_Enum.Completed: {
                     console.log("Completed broadcast render job", payload.event.data.new.id);
-                    if (!payload.event.data.new.data.broadcastContentItemData) {
-                        console.error(
-                            "Did not find any broadcast content item data in completed video render job",
-                            payload.event.data.new.id
-                        );
+                    try {
+                        if (!payload.event.data.new.data.broadcastContentItemData) {
+                            console.error(
+                                "Did not find any broadcast content item data in completed video render job",
+                                payload.event.data.new.id
+                            );
+                            throw new Error(
+                                "Did not find any broadcast content item data in completed video render job"
+                            );
+                        } else {
+                            await BroadcastContentItem.updateMP4BroadcastContentItem(
+                                payload.event.data.new.broadcastContentItemId,
+                                payload.event.data.new.data.broadcastContentItemData
+                            );
+                            await ConferencePrepareJob.updateStatusOfConferencePrepareJob(
+                                payload.event.data.new.conferencePrepareJobId
+                            );
+                        }
+                    } catch (e) {
+                        console.error("Failure while processing completed render job", payload.event.data.new.id, e);
                         await VideoRenderJob.failVideoRenderJob(
                             payload.event.data.new.id,
-                            "Completed job did not contain any broadcast content item data."
-                        );
-                    } else {
-                        await BroadcastContentItem.updateMP4BroadcastContentItem(
-                            payload.event.data.new.id,
-                            payload.event.data.new.data.broadcastContentItemData
-                        );
-                        await ConferencePrepareJob.updateStatusOfConferencePrepareJob(
-                            payload.event.data.new.conferencePrepareJobId
+                            e?.message ?? "Unknown failure when processing completed render job"
                         );
                     }
                     break;
@@ -152,37 +159,62 @@ export async function handleVideoRenderJobUpdated(payload: Payload<VideoRenderJo
                             webhookKey
                         );
                     } catch (e) {
-                        await VideoRenderJob.failVideoRenderJob(payload.event.data.new.id, e.toString());
+                        console.error("Failure while processing new title render job", payload.event.data.new.id, e);
+                        await VideoRenderJob.failVideoRenderJob(
+                            payload.event.data.new.id,
+                            e.message ?? "Unknown failure while processing new render job"
+                        );
                     }
                     break;
                 }
                 case JobStatus_Enum.Completed: {
                     console.log(`Completed title render job ${payload.event.data.new.id}`);
-                    await cleanupOpenShotProject(payload.event.data.new.data.openShotProjectId);
+                    try {
+                        await cleanupOpenShotProject(payload.event.data.new.data.openShotProjectId);
 
-                    if (!payload.event.data.new.data.broadcastContentItemData) {
-                        console.error(
-                            "Did not find any broadcast content item data in completed video render job",
-                            payload.event.data.new.id
-                        );
+                        if (!payload.event.data.new.data.broadcastContentItemData) {
+                            console.error(
+                                "Did not find any broadcast content item data in completed video render job",
+                                payload.event.data.new.id
+                            );
+                            throw new Error(
+                                "Did not find any broadcast content item data in completed video render job"
+                            );
+                        } else {
+                            console.log(
+                                "Updating broadcast content item with results of job",
+                                payload.event.data.new.id,
+                                payload.event.data.new.broadcastContentItemId
+                            );
+                            await BroadcastContentItem.updateMP4BroadcastContentItem(
+                                payload.event.data.new.broadcastContentItemId,
+                                payload.event.data.new.data.broadcastContentItemData
+                            );
+                            console.log(
+                                "Updating status of conference prepare job",
+                                payload.event.data.new.id,
+                                payload.event.data.new.conferencePrepareJobId
+                            );
+                            await ConferencePrepareJob.updateStatusOfConferencePrepareJob(
+                                payload.event.data.new.conferencePrepareJobId
+                            );
+                        }
+                    } catch (e) {
+                        console.error("Failure while processing completed render job", payload.event.data.new.id, e);
                         await VideoRenderJob.failVideoRenderJob(
                             payload.event.data.new.id,
-                            "Completed job did not contain any broadcast content item data."
-                        );
-                    } else {
-                        await BroadcastContentItem.updateMP4BroadcastContentItem(
-                            payload.event.data.new.id,
-                            payload.event.data.new.data.broadcastContentItemData
-                        );
-                        await ConferencePrepareJob.updateStatusOfConferencePrepareJob(
-                            payload.event.data.new.conferencePrepareJobId
+                            e?.message ?? "Unknown failure while processing completed render job"
                         );
                     }
                     break;
                 }
                 case JobStatus_Enum.Failed: {
                     console.log(`Failed title render job ${payload.event.data.new.id}`);
-                    await cleanupOpenShotProject(payload.event.data.new.data.openShotProjectId);
+                    try {
+                        await cleanupOpenShotProject(payload.event.data.new.data.openShotProjectId);
+                    } catch (e) {
+                        console.error("Failed to clean up OpenShot project", payload.event.data.new.id, e);
+                    }
                     await ConferencePrepareJob.failConferencePrepareJob(
                         payload.event.data.new.conferencePrepareJobId,
                         `Render job ${payload.event.data.new.id} failed: ${payload.event.data.new.message}`

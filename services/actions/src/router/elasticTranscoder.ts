@@ -64,7 +64,7 @@ router.post("/notify", bodyParser.text(), async (req: Request, res: Response) =>
                             await VideoRenderJob.completeVideoRenderJob(
                                 event.userMetadata.videoRenderJobId,
                                 s3Url,
-                                undefined
+                                event.outputs[0].duration
                             );
                         } else {
                             console.log("Elastic Transcoder job finished without outputs", event.jobId);

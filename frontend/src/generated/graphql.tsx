@@ -9975,6 +9975,8 @@ export enum JobStatus_Constraint {
 export enum JobStatus_Enum {
   /** Job completed successfully. */
   Completed = 'COMPLETED',
+  /** Job is no longer valid. */
+  Expired = 'EXPIRED',
   /** Job failed during execution. */
   Failed = 'FAILED',
   /** Job is currently in progress. */
@@ -10823,7 +10825,7 @@ export enum Permission_Enum {
   ConferenceModerateAttendees = 'CONFERENCE_MODERATE_ATTENDEES',
   /** View the conference. */
   ConferenceView = 'CONFERENCE_VIEW',
-  /** View conference active attendees. */
+  /** View conference attendees. */
   ConferenceViewAttendees = 'CONFERENCE_VIEW_ATTENDEES'
 }
 

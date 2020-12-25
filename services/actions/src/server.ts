@@ -20,6 +20,7 @@ import { checkEventSecret } from "./middlewares/checkEventSecret";
 import { checkJwt } from "./middlewares/checkJwt";
 import { checkUserScopes } from "./middlewares/checkScopes";
 import { router as amazonTranscribeRouter } from "./router/amazonTranscribe";
+import { router as broadcastContentItemRouter } from "./router/broadcastContentItem";
 import { router as companionRouter } from "./router/companion";
 import { router as conferencePrepareJobRouter } from "./router/conferencePrepareJob";
 import { router as contentItemRouter } from "./router/contentItem";
@@ -67,6 +68,7 @@ app.use("/elasticTranscoder", elasticTranscoderRouter);
 app.use("/contentItem", contentItemRouter);
 app.use("/conferencePrepareJob", conferencePrepareJobRouter);
 app.use("/videoRenderJob", videoRenderJobRouter);
+app.use("/broadcastContentItemRouter", broadcastContentItemRouter);
 
 app.get("/", function (_req, res) {
     res.send("Clowdr");

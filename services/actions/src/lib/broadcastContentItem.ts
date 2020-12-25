@@ -22,7 +22,7 @@ export async function updateMP4BroadcastContentItem(broadcastContentItemId: stri
         },
     });
 
-    if (!result.data) {
+    if (!result.data || !result.data.update_BroadcastContentItem_by_pk?.id) {
         console.error("The broadcast content item was not found", broadcastContentItemId);
         throw new Error("The broadcast content item was not found");
     }

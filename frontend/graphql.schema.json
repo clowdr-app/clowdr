@@ -62935,6 +62935,12 @@
             "deprecationReason": null
           },
           {
+            "name": "EXPIRED",
+            "description": "Job is no longer valid.",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "FAILED",
             "description": "Job failed during execution.",
             "isDeprecated": false,
@@ -68259,7 +68265,7 @@
           },
           {
             "name": "CONFERENCE_VIEW_ATTENDEES",
-            "description": "View conference active attendees.",
+            "description": "View conference attendees.",
             "isDeprecated": false,
             "deprecationReason": null
           }

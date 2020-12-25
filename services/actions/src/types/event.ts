@@ -1,5 +1,5 @@
 import { ContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
-import { ContentType_Enum, JobStatus_Enum } from "../generated/graphql";
+import { ContentType_Enum, InputType_Enum, JobStatus_Enum } from "../generated/graphql";
 
 export interface Payload<T = any> {
     event: {
@@ -74,4 +74,11 @@ export interface VideoRenderJobData extends BaseData {
     broadcastContentItemId: string;
     data: VideoRenderJobDataBlob;
     message: string | null;
+}
+
+export interface BroadcastContentItemData extends BaseData {
+    contentItemId: string;
+    input: BroadcastContentItemInput;
+    inputTypeName: InputType_Enum;
+    conferenceId: string;
 }

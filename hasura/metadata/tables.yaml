@@ -283,6 +283,26 @@
         table:
           schema: public
           name: Transitions
+  event_triggers:
+  - name: BroadcastContentItemUpdated
+    definition:
+      enable_manual: false
+      insert:
+        columns: '*'
+      update:
+        columns:
+        - input
+        - inputTypeName
+        - conferenceId
+        - contentItemId
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{ACTION_BASE_URL}}/broadcastContentItem/updated'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - table:
     schema: public
     name: Chat

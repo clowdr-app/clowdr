@@ -224,7 +224,7 @@ export interface VideoContentBlob extends BaseContentBlob {
     s3Url: string;
     transcode?: TranscodeDetails;
     subtitles: Record<LanguageCode, SubtitleDetails>;
-    broadcastTranscode?: TranscodeDetails;
+    broadcastTranscode?: BroadcastTranscodeDetails;
 }
 
 type LanguageCode = string;
@@ -247,6 +247,11 @@ export interface TranscodeDetails {
     message?: string;
     updatedTimestamp: number;
     jobId: string;
+}
+
+export interface BroadcastTranscodeDetails {
+    s3Url?: string;
+    updatedTimestamp: number;
 }
 
 interface BaseContentBlob {

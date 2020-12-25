@@ -60,6 +60,10 @@ export async function completeVideoRenderJob(
             videoRenderJobId,
             videoRenderJob.conferencePrepareJob.jobStatusName
         );
+        await expireVideoRenderJob(
+            videoRenderJobId,
+            "Tried to complete job while conference prepare job was in an invalid state."
+        );
         return {
             status: "ConferencePrepareJobNotInProgress",
         };
@@ -71,6 +75,9 @@ export async function completeVideoRenderJob(
             videoRenderJobId,
             videoRenderJob.jobStatusName
         );
+        if (videoRenderJob.jobStatusName === JobStatus_Enum.New) {
+            await failVideoRenderJob(videoRenderJobId, "Tried to complete job before it started.");
+        }
         return {
             status: "VideoRenderJobNotInProgress",
         };
@@ -128,7 +135,7 @@ gql`
     }
 `;
 
-export async function ExpireVideoRenderJob(videoRenderJobId: string, message: string): Promise<void> {
+export async function expireVideoRenderJob(videoRenderJobId: string, message: string): Promise<void> {
     await apolloClient.mutate({
         mutation: ExpireVideoRenderJobDocument,
         variables: {

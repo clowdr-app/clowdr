@@ -1,8 +1,10 @@
 import { gql } from "@apollo/client/core";
 import {
     BroadcastTranscodeDetails,
+    ContentBaseType,
     ContentItemDataBlob,
     ContentItemVersionData,
+    ContentType_Enum,
     TranscodeDetails,
     VideoContentBlob,
 } from "@clowdr-app/shared-types/build/content";
@@ -17,11 +19,14 @@ gql`
         ContentItem_by_pk(id: $contentItemId) {
             id
             data
+            contentTypeName
         }
     }
 `;
 
-export async function getLatestVersion(contentItemId: string): Promise<Maybe<ContentItemVersionData>> {
+export async function getLatestVersion(
+    contentItemId: string
+): Promise<{ latestVersion: Maybe<ContentItemVersionData>; contentTypeName: ContentType_Enum }> {
     const result = await apolloClient.query({
         query: GetContentItemByIdDocument,
         variables: {
@@ -30,23 +35,23 @@ export async function getLatestVersion(contentItemId: string): Promise<Maybe<Con
     });
 
     if (!result.data.ContentItem_by_pk) {
-        return null;
+        throw new Error("Could not find content item");
     }
 
     if (!is<ContentItemDataBlob>(result.data.ContentItem_by_pk.data)) {
-        return null;
+        return { latestVersion: null, contentTypeName: result.data.ContentItem_by_pk.contentTypeName };
     }
 
     const latestVersion = R.last(result.data.ContentItem_by_pk.data);
 
-    return latestVersion ?? null;
+    return { latestVersion: latestVersion ?? null, contentTypeName: result.data.ContentItem_by_pk.contentTypeName };
 }
 
 export async function createNewVersionFromPreviewTranscode(
     contentItemId: string,
     transcodeDetails: TranscodeDetails
 ): Promise<ContentItemVersionData> {
-    const latestVersion = await getLatestVersion(contentItemId);
+    const { latestVersion } = await getLatestVersion(contentItemId);
     assert(latestVersion, "Could not find latest version of content item data");
 
     const newVersion = R.clone(latestVersion);
@@ -63,10 +68,21 @@ export async function createNewVersionFromBroadcastTranscode(
     contentItemId: string,
     transcodeDetails: BroadcastTranscodeDetails
 ): Promise<ContentItemVersionData> {
-    const latestVersion = await getLatestVersion(contentItemId);
-    assert(latestVersion, "Could not find latest version of content item data");
+    const { latestVersion, contentTypeName } = await getLatestVersion(contentItemId);
 
-    const newVersion = R.clone(latestVersion);
+    const newVersion = R.clone(
+        latestVersion ??
+            ({
+                createdAt: new Date().getTime(),
+                createdBy: "system",
+                data: {
+                    baseType: ContentBaseType.Video,
+                    s3Url: "",
+                    subtitles: {},
+                    type: contentTypeName,
+                },
+            } as ContentItemVersionData)
+    );
     assert(is<VideoContentBlob>(newVersion.data), "Content item is not a video");
 
     newVersion.data.broadcastTranscode = transcodeDetails;

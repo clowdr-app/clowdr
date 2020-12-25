@@ -378,7 +378,7 @@ export async function handleContentItemSubmitted(args: submitContentItemArgs): P
             message: "An item of a different type has already been uploaded.",
         };
     } else {
-        const latestVersion = await getLatestVersion(requiredContentItem.contentItem.id);
+        const { latestVersion } = await getLatestVersion(requiredContentItem.contentItem.id);
 
         if (newVersionData.type !== latestVersion?.data.type) {
             return {
@@ -458,7 +458,7 @@ export async function handleUpdateSubtitles(args: updateSubtitlesArgs): Promise<
         };
     }
 
-    const latestVersion = await getLatestVersion(requiredContentItem.contentItem.id);
+    const { latestVersion } = await getLatestVersion(requiredContentItem.contentItem.id);
 
     if (!latestVersion) {
         return {

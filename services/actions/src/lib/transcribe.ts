@@ -74,7 +74,7 @@ export async function completeTranscriptionJob(awsTranscribeJobName: string): Pr
 
     const job = transcriptionJobResult.data.TranscriptionJob[0];
 
-    const latestVersion = await getLatestVersion(job.contentItemId);
+    const { latestVersion } = await getLatestVersion(job.contentItemId);
     assert(latestVersion, `Could not find latest version of content item ${job.contentItemId}`);
 
     // Convert the Transcribe output to SRT and save to S3
@@ -155,7 +155,7 @@ export async function failTranscriptionJob(awsTranscribeJobName: string): Promis
 
     const job = transcriptionJobResult.data.TranscriptionJob[0];
 
-    const latestVersion = await getLatestVersion(job.contentItemId);
+    const { latestVersion } = await getLatestVersion(job.contentItemId);
     assert(latestVersion, `Could not find latest version of content item ${job.contentItemId}`);
 
     // Save the new version of the content item

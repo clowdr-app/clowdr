@@ -68,7 +68,7 @@ app.use("/elasticTranscoder", elasticTranscoderRouter);
 app.use("/contentItem", contentItemRouter);
 app.use("/conferencePrepareJob", conferencePrepareJobRouter);
 app.use("/videoRenderJob", videoRenderJobRouter);
-app.use("/broadcastContentItemRouter", broadcastContentItemRouter);
+app.use("/broadcastContentItem", broadcastContentItemRouter);
 
 app.get("/", function (_req, res) {
     res.send("Clowdr");

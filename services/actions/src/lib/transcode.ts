@@ -326,7 +326,7 @@ export async function failPreviewTranscode(
     timestamp: Date,
     errorMessage: string
 ): Promise<void> {
-    const latestVersion = await getLatestVersion(contentItemId);
+    const { latestVersion } = await getLatestVersion(contentItemId);
     assert(latestVersion, `Could not find latest version of content item ${contentItemId}`);
 
     const newVersion = R.clone(latestVersion);

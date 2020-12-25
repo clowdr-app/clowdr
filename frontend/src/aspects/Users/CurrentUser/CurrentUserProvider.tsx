@@ -46,11 +46,6 @@ gql`
             email
             lastName
             firstName
-            onlineStatus {
-                id
-                lastSeen
-                isIncognito
-            }
             attendees {
                 ...AttendeeFields
             }

@@ -10,7 +10,7 @@ import usePolling from "../../../Generic/usePolling";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import { LastSeenContext } from "./useLastSeen";
 
-const _currentUserLastSeenQueries = gql`
+gql`
     query getCurrentUserLastSeen($userId: String!) {
         OnlineStatus(where: { userId: { _eq: $userId } }) {
             id
@@ -42,7 +42,7 @@ const _currentUserLastSeenQueries = gql`
 export default function LastSeenProvider({
     children,
 }: {
-    children: string | JSX.Element | Array<JSX.Element>;
+    children?: string | JSX.Element | Array<JSX.Element>;
 }): JSX.Element {
     const userId = useUserId();
     if (userId) {
@@ -56,7 +56,7 @@ function LastSeenProvider_UserIdExists({
     children,
 }: {
     userId: string;
-    children: string | JSX.Element | Array<JSX.Element>;
+    children?: string | JSX.Element | Array<JSX.Element>;
 }): JSX.Element {
     const {
         loading: getLastSeenLoading,

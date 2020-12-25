@@ -21992,7 +21992,7 @@ export type SelectCurrentUserQueryVariables = Exact<{
 }>;
 
 
-export type SelectCurrentUserQuery = { readonly __typename?: 'query_root', readonly User: ReadonlyArray<{ readonly __typename?: 'User', readonly id: string, readonly email?: Maybe<string>, readonly lastName: string, readonly firstName: string, readonly onlineStatus?: Maybe<{ readonly __typename?: 'OnlineStatus', readonly id: any, readonly lastSeen: any, readonly isIncognito: boolean }>, readonly attendees: ReadonlyArray<(
+export type SelectCurrentUserQuery = { readonly __typename?: 'query_root', readonly User: ReadonlyArray<{ readonly __typename?: 'User', readonly id: string, readonly email?: Maybe<string>, readonly lastName: string, readonly firstName: string, readonly attendees: ReadonlyArray<(
       { readonly __typename?: 'Attendee' }
       & AttendeeFieldsFragment
     )> }> };
@@ -24659,11 +24659,6 @@ export const SelectCurrentUserDocument = gql`
     email
     lastName
     firstName
-    onlineStatus {
-      id
-      lastSeen
-      isIncognito
-    }
     attendees {
       ...AttendeeFields
     }

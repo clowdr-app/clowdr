@@ -36,7 +36,11 @@ function parser(data: any): ParserResult<ParsedContentData> {
     };
 }
 
-export default function DataPanel({ onData }: { onData?: (data: ParsedData<ParsedContentData>[] | undefined) => void }): JSX.Element {
+export default function DataPanel({
+    onData,
+}: {
+    onData?: (data: ParsedData<ParsedContentData>[] | undefined) => void;
+}): JSX.Element {
     const { acceptedFiles, component: fileImporterEl } = useCSVJSONXMLFileSelector();
     const { importOptions, openOptionsButton, optionsComponent } = useCSVJSONXMLImportOptions(acceptedFiles);
     const { data } = useCSVJSONXMLParse(importOptions, parser);

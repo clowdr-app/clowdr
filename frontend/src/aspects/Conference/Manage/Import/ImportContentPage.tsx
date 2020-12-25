@@ -40,17 +40,11 @@ export default function ImportContentPage(): JSX.Element {
                     </TabList>
 
                     <TabPanels>
-                        <TabPanel>
-                            {dataPanel}
-                        </TabPanel>
+                        <TabPanel>{dataPanel}</TabPanel>
 
-                        <TabPanel>
-                            {configPanel}
-                        </TabPanel>
+                        <TabPanel>{configPanel}</TabPanel>
 
-                        <TabPanel>
-                            {reviewPanel}
-                        </TabPanel>
+                        <TabPanel>{reviewPanel}</TabPanel>
                     </TabPanels>
                 </Tabs>
             </Box>

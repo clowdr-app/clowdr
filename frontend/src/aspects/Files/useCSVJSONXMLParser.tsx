@@ -64,7 +64,7 @@ async function parseFile<T>(options: ImportOptions, parser: Parser<T>): Promise<
                         ignoreDoctype: true,
                         trim: true,
                         nativeType: true,
-                        addParent: false
+                        addParent: false,
                     });
                     console.log(xmlParsed);
                     const ignoreKeys = [

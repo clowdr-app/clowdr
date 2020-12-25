@@ -106,7 +106,7 @@ export default function useCSVJSONXMLFileSelector(): {
                                                 if (innerType) {
                                                     const dataArray = await file.async("arraybuffer");
                                                     return new File([dataArray], file.name, {
-                                                        type: innerType
+                                                        type: innerType,
                                                     });
                                                 }
                                             }
@@ -128,7 +128,10 @@ export default function useCSVJSONXMLFileSelector(): {
                         }, [] as File[])
                     );
                     setAcceptedFiles(
-                        maybeManyFiles.reduce<(File | FileGroup)[]>((acc, f) => (f ? "files" in f ? [...acc, f] : [...acc, ...f] : acc), [])
+                        maybeManyFiles.reduce<(File | FileGroup)[]>(
+                            (acc, f) => (f ? ("files" in f ? [...acc, f] : [...acc, ...f]) : acc),
+                            []
+                        )
                     );
                 } catch {
                     setAcceptedFiles([]);
@@ -194,12 +197,14 @@ export default function useCSVJSONXMLFileSelector(): {
     const inputProps = getInputProps();
 
     const outputAcceptedFiles = useMemo(
-        () => (acceptedFiles?.reduce<File[]>((acc, f) => ("files" in f ? [...acc, ...f.files] : [...acc, f]), []) ?? [])
-            .map(file => {
+        () =>
+            (
+                acceptedFiles?.reduce<File[]>((acc, f) => ("files" in f ? [...acc, ...f.files] : [...acc, f]), []) ?? []
+            ).map((file) => {
                 const type = normaliseFileType(file.name, file.type);
                 return {
                     file,
-                    type
+                    type,
                 } as FileInfo;
             }),
         [acceptedFiles]
@@ -220,7 +225,10 @@ export default function useCSVJSONXMLFileSelector(): {
                         <FAIcon iconStyle="s" icon="file-alt" fontSize="190%" />
                         <Box pl={2}>
                             <Text as="p">Drag and drop some files here, or click to select files</Text>
-                            <Text as="em">(Please select one or more CSV, JSON or XML files or ZIP files containing CSV/JSON/XML files.)</Text>
+                            <Text as="em">
+                                (Please select one or more CSV, JSON or XML files or ZIP files containing CSV/JSON/XML
+                                files.)
+                            </Text>
                         </Box>
                     </HStack>
                 </Box>

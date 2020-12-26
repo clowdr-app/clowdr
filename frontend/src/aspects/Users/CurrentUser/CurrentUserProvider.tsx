@@ -87,6 +87,8 @@ function CurrentUserProvider_IsAuthenticated({
         variables: {
             userId,
         },
+        fetchPolicy: "cache-and-network",
+        nextFetchPolicy: "cache-first"
     });
     useQueryErrorToast(error);
 

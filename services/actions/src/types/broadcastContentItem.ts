@@ -12,4 +12,5 @@ interface MP4Input {
 
 interface VonageInput {
     type: "VonageInput";
+    sessionId: string;
 }

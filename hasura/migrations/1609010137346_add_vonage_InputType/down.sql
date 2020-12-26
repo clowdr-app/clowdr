@@ -1,0 +1,2 @@
+DELETE FROM "InputType"
+  WHERE "name" = 'VONAGE_SESSION';

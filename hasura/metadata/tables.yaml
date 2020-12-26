@@ -261,6 +261,9 @@
   - name: inputType
     using:
       foreign_key_constraint_on: inputTypeName
+  - name: room
+    using:
+      foreign_key_constraint_on: roomId
   array_relationships:
   - name: executedTransitions
     using:

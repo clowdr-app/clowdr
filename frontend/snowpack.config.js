@@ -7,7 +7,7 @@ module.exports = {
     plugins: [
         "@snowpack/plugin-react-refresh",
         "@snowpack/plugin-dotenv",
-        "@snowpack/plugin-typescript",
+        ["./snowpack/plugins/plugin-typescript/plugin.js", { tsc: "ttsc" }],
         "@snowpack/plugin-webpack",
     ],
     install: [

@@ -12,3 +12,5 @@ aws/cdk.out/
 
 **/graphql.schema.json
 **/package-lock.json
+
+frontend/snowpack/

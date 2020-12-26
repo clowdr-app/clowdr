@@ -1,4 +1,5 @@
 frontend/src/generated/
+frontend/snowpack/
 
 services/actions/src/types/
 

@@ -102,7 +102,6 @@ export default function useCSVJSONXMLFileSelector(): {
                                             const file = zip.file(path);
                                             if (file && !file.dir) {
                                                 const innerType = normaliseFileType(file.name, "<Unknown>");
-                                                console.log("inner type", innerType);
                                                 if (innerType) {
                                                     const dataArray = await file.async("arraybuffer");
                                                     return new File([dataArray], file.name, {

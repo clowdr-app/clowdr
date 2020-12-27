@@ -319,7 +319,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                                 requiredItems: [],
                                 hallways: [],
                                 people: [],
-                                tagIds: new Set()
+                                tagIds: new Set(),
                             } as ContentGroupDescriptor;
                             fitGroupToTemplate(newGroup);
                             setAllContentGroupsMap((oldData) => {

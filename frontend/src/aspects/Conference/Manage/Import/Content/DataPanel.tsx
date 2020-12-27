@@ -4,6 +4,7 @@ import {
     AlertIcon,
     AlertTitle,
     Box,
+    Button,
     Code,
     Select,
     Spinner,
@@ -14,6 +15,7 @@ import React, { useEffect, useState } from "react";
 import useCSVJSONXMLFileSelector from "../../../../Files/useCSVJSONXMLFileSelector";
 import useCSVJSONXMLImportOptions from "../../../../Files/useCSVJSONXMLImportOptions";
 import useCSVJSONXMLParse, { ParsedData, ParserResult } from "../../../../Files/useCSVJSONXMLParser";
+import FAIcon from "../../../../Icons/FAIcon";
 
 export type ParsedContentData = any[];
 
@@ -63,6 +65,7 @@ export default function DataPanel({
                         <Spinner />
                     ) : (
                         <Select
+                            aria-label="Select a file to preview imported data"
                             placeholder="Select a file"
                             variant="flushed"
                             value={selectedFileIndex}
@@ -85,7 +88,25 @@ export default function DataPanel({
                                         <AlertDescription>{selectedData.error}</AlertDescription>
                                     </Alert>
                                 ) : (
-                                    <Text as="pre" w="100%" overflowWrap="break-word" whiteSpace="pre-wrap">
+                                    <Text
+                                        as="pre"
+                                        w="100%"
+                                        overflowWrap="break-word"
+                                        whiteSpace="pre-wrap"
+                                        position="relative"
+                                    >
+                                        <Button
+                                            aria-label="Copy output data"
+                                            position="absolute"
+                                            top={2}
+                                            right={2}
+                                            colorScheme="purple"
+                                            onClick={() => {
+                                                navigator.clipboard.writeText(JSON.stringify(selectedData, null, 2));
+                                            }}
+                                        >
+                                            <FAIcon iconStyle="r" icon="clipboard" />
+                                        </Button>
                                         <Code w="100%" p={2}>
                                             {JSON.stringify(selectedData.data, null, 2)}
                                         </Code>

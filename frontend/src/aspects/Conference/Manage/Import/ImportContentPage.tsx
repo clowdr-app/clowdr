@@ -1,4 +1,5 @@
 import { Box, Heading, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
+import type { IntermediaryData } from "@clowdr-app/shared-types/build/import/intermediary";
 import React, { useMemo, useState } from "react";
 import { Permission_Enum } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
@@ -8,6 +9,7 @@ import { useConference } from "../../useConference";
 import useDashboardPrimaryMenuButtons from "../useDashboardPrimaryMenuButtons";
 import ConfigPanel from "./Content/ConfigPanel";
 import DataPanel, { ParsedContentData } from "./Content/DataPanel";
+import MergePanel from "./Content/MergePanel";
 import ReviewPanel from "./Content/ReviewPanel";
 
 export default function ImportContentPage(): JSX.Element {
@@ -15,10 +17,12 @@ export default function ImportContentPage(): JSX.Element {
     useDashboardPrimaryMenuButtons();
 
     const [data, setData] = useState<ParsedData<ParsedContentData>[]>();
+    const [intermediaryData, setIntermediaryData] = useState<Record<string, IntermediaryData>>({});
 
     const dataPanel = useMemo(() => <DataPanel onData={setData} />, []);
-    const configPanel = useMemo(() => data && <ConfigPanel data={data} />, [data]);
-    const reviewPanel = useMemo(() => <ReviewPanel />, []);
+    const configPanel = useMemo(() => data && <ConfigPanel data={data} onChange={setIntermediaryData} />, [data]);
+    const reviewPanel = useMemo(() => <ReviewPanel data={intermediaryData} />, [intermediaryData]);
+    const mergePanel = useMemo(() => <MergePanel data={intermediaryData} />, [intermediaryData]);
 
     return (
         <RequireAtLeastOnePermissionWrapper
@@ -37,14 +41,14 @@ export default function ImportContentPage(): JSX.Element {
                         <Tab>Data</Tab>
                         <Tab isDisabled={!data || data.length === 0}>Configure</Tab>
                         <Tab isDisabled={!data || data.length === 0}>Review</Tab>
+                        <Tab isDisabled={!data || data.length === 0}>Merge</Tab>
                     </TabList>
 
                     <TabPanels>
                         <TabPanel>{dataPanel}</TabPanel>
-
                         <TabPanel>{configPanel}</TabPanel>
-
                         <TabPanel>{reviewPanel}</TabPanel>
+                        <TabPanel>{mergePanel}</TabPanel>
                     </TabPanels>
                 </Tabs>
             </Box>

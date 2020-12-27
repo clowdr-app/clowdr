@@ -1,12 +1,8 @@
-import gql from "graphql-tag";
-
-gql`
-    query GetContentTypes {
-        ContentType {
-            name
-        }
-    }
-`;
+export enum ContentRole {
+    Author = "AUTHOR",
+    Presenter = "PRESENTER",
+    Chair = "CHAIR",
+}
 
 export enum ContentType_Enum {
     /** Abstract Markdown text. */

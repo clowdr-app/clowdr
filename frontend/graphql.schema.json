@@ -38523,6 +38523,12 @@
             "description": "URL for a video (video is embedded in Clowdr UI).",
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "ZOOM",
+            "description": "Data for a Zoom meeting.",
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "possibleTypes": null

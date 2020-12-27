@@ -26,17 +26,41 @@ export type GroupTemplate =
       };
 
 export const GroupTemplates: { [K in ContentGroupType_Enum]: GroupTemplate } = {
-    [ContentGroupType_Enum.Keynote]: { supported: false },
-    [ContentGroupType_Enum.Other]: { supported: false },
+    [ContentGroupType_Enum.Keynote]: {
+        supported: true,
+        requiredItemTypes: [],
+        itemTypes: [ContentType_Enum.Abstract],
+    },
+    [ContentGroupType_Enum.Other]: {
+        supported: true,
+        requiredItemTypes: [],
+        itemTypes: [],
+    },
     [ContentGroupType_Enum.Paper]: {
         supported: true,
         requiredItemTypes: [ContentType_Enum.VideoPrepublish, ContentType_Enum.VideoBroadcast],
-        itemTypes: [ContentType_Enum.Abstract, ContentType_Enum.PaperLink],
+        itemTypes: [ContentType_Enum.Abstract],
     },
-    [ContentGroupType_Enum.Poster]: { supported: false },
-    [ContentGroupType_Enum.Sponsor]: { supported: false },
-    [ContentGroupType_Enum.Symposium]: { supported: false },
-    [ContentGroupType_Enum.Workshop]: { supported: false },
+    [ContentGroupType_Enum.Poster]: {
+        supported: true,
+        requiredItemTypes: [],
+        itemTypes: [ContentType_Enum.PosterFile],
+    },
+    [ContentGroupType_Enum.Sponsor]: {
+        supported: true,
+        requiredItemTypes: [ContentType_Enum.ImageFile],
+        itemTypes: [],
+    },
+    [ContentGroupType_Enum.Symposium]: {
+        supported: true,
+        requiredItemTypes: [],
+        itemTypes: [ContentType_Enum.Abstract, ContentType_Enum.Zoom],
+    },
+    [ContentGroupType_Enum.Workshop]: {
+        supported: true,
+        requiredItemTypes: [],
+        itemTypes: [ContentType_Enum.Abstract, ContentType_Enum.Zoom],
+    },
 };
 
 export function fitGroupToTemplate(group: ContentGroupDescriptor): void {

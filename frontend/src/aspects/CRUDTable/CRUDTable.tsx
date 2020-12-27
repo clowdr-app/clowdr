@@ -1762,7 +1762,8 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
                             minW={50}
                         >
                             <Text as="span" wordBreak="keep-all" whiteSpace="nowrap">
-                                ({visibleSelectedKeys.size > 0 ? `${visibleSelectedKeys.size} / ` : ""}{rowEls.length} row
+                                ({visibleSelectedKeys.size > 0 ? `${visibleSelectedKeys.size} / ` : ""}
+                                {rowEls.length} row
                                 {rowEls.length !== 1 ? "s" : ""})
                             </Text>
                         </CRUDCell>

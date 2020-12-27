@@ -30,7 +30,7 @@ function Set_toJSON(key: string, value: any) {
 }
 
 export default function JSONataQueryModal({
-    data,
+    data: poisonData,
     buttonText,
     defaultQuery,
 }: {
@@ -42,6 +42,10 @@ export default function JSONataQueryModal({
     const [query, setQuery] = useState<string>(defaultQuery);
     const [error, setError] = useState<string | null>(null);
     const [result, setResult] = useState<any>();
+    const [data, setData] = useState<any>({});
+    useEffect(() => {
+        setData(JSON.parse(JSON.stringify(poisonData, Set_toJSON)));
+    }, [poisonData]);
     useEffect(() => {
         setResult(null);
         const t = setTimeout(() => {

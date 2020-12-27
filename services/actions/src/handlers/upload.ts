@@ -154,6 +154,7 @@ async function createBlob(inputData: any, contentTypeName: ContentType_Enum): Pr
         case ContentType_Enum.PaperUrl:
         case ContentType_Enum.PosterUrl:
         case ContentType_Enum.VideoUrl:
+        case ContentType_Enum.Zoom:
             if (!inputData.url) {
                 return { error: "No URL supplied" };
             }
@@ -651,6 +652,8 @@ function generateContentTypeFriendlyName(type: ContentType_Enum) {
             return "Pre-roll titles video";
         case ContentType_Enum.VideoUrl:
             return "Video URL";
+        case ContentType_Enum.Zoom:
+            return "Zoom Meeting URL";
     }
 }
 

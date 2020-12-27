@@ -45,6 +45,8 @@ export enum ContentType_Enum {
     VideoTitles = "VIDEO_TITLES",
     /** URL for a video (video is embedded in Clowdr UI). */
     VideoUrl = "VIDEO_URL",
+    /** Data for a Zoom meeting. */
+    Zoom = "ZOOM",
 }
 
 export type ContentItemDataBlob = ContentItemVersionData[];
@@ -75,7 +77,8 @@ export type ContentBlob =
     | VideoPrepublishBlob
     | VideoSponsorsFillerBlob
     | VideoTitlesBlob
-    | VideoUrlBlob;
+    | VideoUrlBlob
+    | ZoomBlob;
 
 export interface AbstractBlob extends TextualContentBlob {
     type: ContentType_Enum.Abstract;
@@ -157,6 +160,10 @@ export interface VideoUrlBlob extends UrlContentBlob {
     type: ContentType_Enum.VideoUrl;
 }
 
+export interface ZoomBlob extends UrlContentBlob {
+    type: ContentType_Enum.Zoom;
+}
+
 /* Meta content types */
 
 export enum ContentBaseType {
@@ -188,6 +195,7 @@ export const ItemBaseTypes: { [K in ContentType_Enum]: ContentBaseType } = {
     [ContentType_Enum.VideoSponsorsFiller]: ContentBaseType.Video,
     [ContentType_Enum.VideoTitles]: ContentBaseType.Video,
     [ContentType_Enum.VideoUrl]: ContentBaseType.URL,
+    [ContentType_Enum.Zoom]: ContentBaseType.URL,
 };
 
 export interface TextualContentBlob extends BaseContentBlob {

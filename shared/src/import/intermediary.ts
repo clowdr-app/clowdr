@@ -43,6 +43,8 @@ declare enum ContentType_Enum {
     VideoTitles = "VIDEO_TITLES",
     /** URL for a video (video is embedded in Clowdr UI). */
     VideoUrl = "VIDEO_URL",
+    /** Data for a Zoom meeting. */
+    Zoom = "ZOOM",
 }
 
 declare enum ContentGroupType_Enum {

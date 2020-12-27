@@ -7,7 +7,12 @@ import { ContentType_Enum } from "../../../../generated/graphql";
 import type { ItemBaseTemplate } from "./Types";
 
 function createDefaultURL(
-    type: ContentType_Enum.ImageUrl | ContentType_Enum.PaperUrl | ContentType_Enum.VideoUrl | ContentType_Enum.PosterUrl
+    type:
+        | ContentType_Enum.ImageUrl
+        | ContentType_Enum.PaperUrl
+        | ContentType_Enum.VideoUrl
+        | ContentType_Enum.PosterUrl
+        | ContentType_Enum.Zoom
 ): ContentItemVersionData {
     return {
         createdAt: new Date().getTime(),
@@ -27,7 +32,8 @@ export const URLItemTemplate: ItemBaseTemplate = {
             type === ContentType_Enum.ImageUrl ||
                 type === ContentType_Enum.PaperUrl ||
                 type === ContentType_Enum.VideoUrl ||
-                type === ContentType_Enum.PosterUrl,
+                type === ContentType_Enum.PosterUrl ||
+                type === ContentType_Enum.Zoom,
             `URL Item Template mistakenly used for type ${type}.`
         );
 
@@ -38,6 +44,8 @@ export const URLItemTemplate: ItemBaseTemplate = {
                 ? "URL to a paper file (PDF, Text or Markdown only)"
                 : type === ContentType_Enum.VideoUrl
                 ? "URL to a video file (MP4 or OGG only)"
+                : type === ContentType_Enum.Zoom
+                ? "URL to a Zoom Meeting"
                 : "URL to a poster image or file (PNG, JPG/JPEG, GIF, SVG or PDF only)";
         if (required) {
             return {
@@ -71,7 +79,8 @@ export const URLItemTemplate: ItemBaseTemplate = {
                 data.item.typeName === ContentType_Enum.ImageUrl ||
                     data.item.typeName === ContentType_Enum.PaperUrl ||
                     data.item.typeName === ContentType_Enum.VideoUrl ||
-                    data.item.typeName === ContentType_Enum.PosterUrl,
+                    data.item.typeName === ContentType_Enum.PosterUrl ||
+                    data.item.typeName === ContentType_Enum.Zoom,
                 `URL Item Template mistakenly used for type ${data.type}.`
             );
 
@@ -83,6 +92,8 @@ export const URLItemTemplate: ItemBaseTemplate = {
                     ? "https://ia800600.us.archive.org/7/items/archive_IHGC/Thesis.pdf"
                     : data.item.typeName === ContentType_Enum.VideoUrl
                     ? "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                    : data.item.typeName === ContentType_Enum.Zoom
+                    ? "https://zoom.us/j/12345678901?pwd=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
                     : "https://www.example.org/a-poster.pdf";
 
             if (data.item.data.length === 0) {

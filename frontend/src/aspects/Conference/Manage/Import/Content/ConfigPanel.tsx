@@ -23,8 +23,8 @@ const presetJSONata_ResearchrQuery_POPL2021 = `
         $tagNames := [$session.tracks.track._text.$trim($)];
         {
         "originatingDataSourceId": slot_id._text,
-        "title": title._text,
-        "typeName": "PAPER",
+        "title": $contains(title._text, /^Structured Social$/i) ? "Structured Social" : $contains(title._text, /^Unstructured Social$/i) ? "Social Time" : title._text,
+        "typeName": $roomName = "Break" or title._text = "Break" ? "OTHER" : $roomName = "POPL" ? "KEYNOTE" : $roomName = "POPL-A" or $roomName = "POPL-B" ? "PAPER" : "WORKSHOP",
         "items": [
             {
                 "typeName": "ABSTRACT",
@@ -40,7 +40,24 @@ const presetJSONata_ResearchrQuery_POPL2021 = `
                     }
                 }],
                 "originatingDataSourceId": slot_id._text
-            }
+            },
+            ($roomName != "Break" and title._text != "Break" and $roomName != "POPL" and $roomName != "POPL-A" and $roomName != "POPL-B" 
+                ? {
+                    "typeName": "ZOOM",
+                    "isHidden": false,
+                    "name": "Zoom",
+                    "data": [{
+                        "createdAt": $millis(),
+                        "createdBy": "importer",
+                        "data": {
+                            "type": "ZOOM",
+                            "baseType": "url",
+                            "url": "<Not configured>"
+                        }
+                    }],
+                    "originatingDataSourceId": slot_id._text
+                }
+                : undefined)
         ],
         "tagNames": $tagNames,
         "people": $append(persons.person[role._text = "Author"].{
@@ -106,7 +123,7 @@ const presetJSONata_HotCRPQuery_POPL2021 = `
                     }
                 ]
             }
-        ] 
+        ]
         /* "people": [$@$people. */
         /*     authors#$personIdx.{ */
         /*         "name_affiliation": first & ' ' & last & ' (' & affiliation & ')', */

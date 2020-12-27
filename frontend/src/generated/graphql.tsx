@@ -6113,7 +6113,9 @@ export enum ContentType_Enum {
   /** Video file for titles introducing an event during a broadcast. */
   VideoTitles = 'VIDEO_TITLES',
   /** URL for a video (video is embedded in Clowdr UI). */
-  VideoUrl = 'VIDEO_URL'
+  VideoUrl = 'VIDEO_URL',
+  /** Data for a Zoom meeting. */
+  Zoom = 'ZOOM'
 }
 
 /** expression to compare columns of type ContentType_enum. All fields are combined with logical 'AND'. */

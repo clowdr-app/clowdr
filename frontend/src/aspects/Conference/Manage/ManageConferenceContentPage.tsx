@@ -737,7 +737,7 @@ function ContentGroupSecondaryEditor(
             const itemElements: JSX.Element[] = [];
 
             itemElements.push(
-                <AccordionItem key="originating-data">
+                <AccordionItem key="people">
                     <AccordionButton>
                         <Box flex="1" textAlign="left">
                             People
@@ -757,7 +757,7 @@ function ContentGroupSecondaryEditor(
             );
 
             itemElements.push(
-                <AccordionItem key="originating-data">
+                <AccordionItem key="hallways">
                     <AccordionButton>
                         <Box flex="1" textAlign="left">
                             Hallways

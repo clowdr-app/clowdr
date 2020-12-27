@@ -2,6 +2,7 @@ import * as events from "@aws-cdk/aws-events";
 import * as targets from "@aws-cdk/aws-events-targets";
 import * as iam from "@aws-cdk/aws-iam";
 import * as logs from "@aws-cdk/aws-logs";
+import * as ml from "@aws-cdk/aws-medialive";
 import * as s3 from "@aws-cdk/aws-s3";
 import { HttpMethods } from "@aws-cdk/aws-s3";
 import * as sns from "@aws-cdk/aws-sns";
@@ -251,6 +252,11 @@ export class AwsStack extends cdk.Stack {
         );
         elasticTranscoderNotificationsTopic.grantPublish(elasticTranscoderServiceRole);
 
+        /* Elemental */
+        const inputSecurityGroup = new ml.CfnInputSecurityGroup(this, "InputSecurityGroup", {
+            whitelistRules: [{ cidr: "0.0.0.1/0" }],
+        });
+
         /* Outputs */
         new cdk.CfnOutput(this, "BucketId", {
             value: bucket.bucketName,
@@ -294,5 +300,8 @@ export class AwsStack extends cdk.Stack {
         new cdk.CfnOutput(this, "ElasticTranscoderNotificationsTopic", {
             value: elasticTranscoderNotificationsTopic.topicArn,
         });
+
+        // Elemental
+        new cdk.CfnOutput(this, "MediaLiveInputSecurityGroupId", { value: inputSecurityGroup.ref });
     }
 }

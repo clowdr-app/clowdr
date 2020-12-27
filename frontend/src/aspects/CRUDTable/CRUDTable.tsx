@@ -671,12 +671,7 @@ function FilterInput({
 // - TODO: Toggle highlighting options on/off
 // - TODO: Apply highlighting options to cells
 //
-// CSUD:
-// - TODO: Implement sync multi-delete
-// - TODO: Implement async multi-delete
-//
 // Buttons:
-// - TODO: Multi-delete button
 // - TODO: Multi-edit button
 //
 // Other:
@@ -936,6 +931,69 @@ function CRUDSelectionBox<T, PK extends keyof T>({
                 }
             }}
         />
+    );
+}
+
+function CRUDDeleteSelectedButton<T, PK extends keyof T>({
+    isDisabled,
+    csud,
+    addDirtyKey,
+    selectedKeys,
+    beginEdit,
+    endEdit,
+    marginRight,
+}: Readonly<CRUDTableProps<T, PK>> & {
+    isDisabled: boolean;
+    addDirtyKey: (key: T[PK]) => void;
+    selectedKeys: Set<T[PK]>;
+    beginEdit: () => string;
+    endEdit: (id: string) => void;
+    marginRight: any;
+}): JSX.Element {
+    const toast = useToast();
+
+    async function onDelete() {
+        if (csud && csud.cudCallbacks) {
+            const cbs = csud.cudCallbacks;
+            if (cbs.delete) {
+                const p = csud?.cudCallbacks?.delete?.(selectedKeys);
+                if (p) {
+                    let results: Map<T[PK], boolean>;
+                    if (p instanceof Promise) {
+                        const editId = beginEdit();
+                        results = await p;
+                        endEdit(editId);
+                    } else {
+                        results = p;
+                    }
+
+                    results.forEach((result, key) => {
+                        if (result === true) {
+                            addDirtyKey(key);
+                        } else {
+                            toast({
+                                isClosable: true,
+                                status: "error",
+                                title: `Error deleting item ${key}`,
+                            });
+                        }
+                    });
+                }
+            }
+        }
+    }
+
+    return (
+        <Button
+            onClick={(ev) => {
+                onDelete();
+            }}
+            disabled={isDisabled}
+            colorScheme="red"
+            marginRight={marginRight}
+        >
+            Delete selected
+        </Button>
     );
 }
 
@@ -1221,6 +1279,7 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
     const isDisabled = ongoingEdits.size > 0;
     const isBatchEditMode = csud && csud.cudCallbacks && "generateTemporaryKey" in csud.cudCallbacks;
     const showCreate = !!csud?.cudCallbacks?.create;
+    const showDeleteAll = !!csud?.cudCallbacks?.delete;
 
     const allRows = useMemo(() => {
         const result: Map<string, CRUDRowElement> = new Map();
@@ -1639,10 +1698,21 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
                                 setSelectedKeys(visibleKeys);
                             }
                         }}
-                        marginRight={[0, "auto"]}
+                        marginRight={!showDeleteAll ? [0, "auto"] : undefined}
                     >
                         {selectedKeys.size > 0 ? "Deselect all" : "Select all"}
                     </Button>
+                    {showDeleteAll ? (
+                        <CRUDDeleteSelectedButton
+                            {...props}
+                            isDisabled={isDisabled || visibleSelectedKeys.size === 0}
+                            addDirtyKey={addDirtyKey}
+                            selectedKeys={visibleSelectedKeys}
+                            beginEdit={beginEdit}
+                            endEdit={endEdit}
+                            marginRight={[0, "auto"]}
+                        />
+                    ) : undefined}
                     {/* TODO: Edit multiple button using secondary view */}
                     {customButtons?.map((button, idx) => {
                         const isDisabledBecauseNoSelection =

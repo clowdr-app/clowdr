@@ -9,6 +9,7 @@ import type {
     IntermediaryOriginatingDataDescriptor,
     IntermediaryPersonDescriptor,
     IntermediaryRequiredItemDescriptor,
+    IntermediaryTagDescriptor,
     IntermediaryUploaderDescriptor,
 } from "@clowdr-app/shared-types/build/import/intermediary";
 import assert from "assert";
@@ -673,6 +674,48 @@ function findExistingHallway(
     );
 }
 
+function mergeTag(
+    item1: IntermediaryTagDescriptor,
+    item2: IntermediaryTagDescriptor
+): {
+    result: IntermediaryTagDescriptor;
+    changes: ChangeSummary[];
+} {
+    const changes: ChangeSummary[] = [];
+
+    const result: IntermediaryTagDescriptor = {};
+
+    mergeFieldInPlace(changes, result, "id", item1, item2);
+    mergeFieldInPlace(changes, result, "originatingDataSourceId", item1, item2, mergeOriginatingSourceId);
+    mergeFieldInPlace(changes, result, "name", item1, item2);
+    mergeFieldInPlace(changes, result, "colour", item1, item2);
+
+    changes.push({
+        location: "Tag",
+        type: "MERGE_IMPORTED",
+        description: "Merged two matching tags.",
+        importData: [item1, item2],
+        newData: result,
+    });
+
+    return {
+        result,
+        changes,
+    };
+}
+
+function findExistingTag(
+    items: IntermediaryTagDescriptor[],
+    item: IntermediaryTagDescriptor
+): number | undefined {
+    return (
+        findMatch(items, item, isMatch_Id) ??
+        findMatch(items, item, isMatch_OriginatingDataSourceId) ??
+        findMatch(items, item, isMatch_String_Exact("name")) ??
+        findMatch(items, item, isMatch_String_EditDistance("name"))
+    );
+}
+
 function mergeOriginatingData(
     item1: IntermediaryOriginatingDataDescriptor,
     item2: IntermediaryOriginatingDataDescriptor
@@ -818,13 +861,9 @@ function mergeImportedData(
             mergeLists("Person", "Inserted unmatched person", items1, items2, findExistingPerson, mergePerson)
         );
 
-        if (data.people) {
-            // TODO
-        }
-
-        if (data.tags) {
-            // TODO
-        }
+        mergeFieldInPlace(changes, result, "tags", importData[key1], data, (items1, items2) =>
+            mergeLists("Tag", "Inserted unmatched tag", items1, items2, findExistingTag, mergeTag)
+        );
     }
 
     return {

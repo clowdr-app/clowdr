@@ -275,7 +275,7 @@ export default function useCSVJSONXMLImportOptions(
         ),
         optionsComponent: (
             <>
-                <Modal isOpen={isOpen} onClose={onClose}>
+                <Modal scrollBehavior="inside" isCentered isOpen={isOpen} onClose={onClose}>
                     <ModalOverlay />
                     <ModalContent>
                         <ModalHeader>Importer Options</ModalHeader>

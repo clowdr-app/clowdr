@@ -22,6 +22,13 @@ import jsonata from "jsonata";
 import React, { useEffect, useState } from "react";
 import FAIcon from "../Icons/FAIcon";
 
+function Set_toJSON(key: string, value: any) {
+    if (typeof value === "object" && value instanceof Set) {
+        return [...value];
+    }
+    return value;
+}
+
 export default function JSONataQueryModal({
     data,
     buttonText,
@@ -97,13 +104,13 @@ export default function JSONataQueryModal({
                                 right={2}
                                 colorScheme="purple"
                                 onClick={() => {
-                                    navigator.clipboard.writeText(JSON.stringify(result, null, 2));
+                                    navigator.clipboard.writeText(JSON.stringify(result, Set_toJSON, 2));
                                 }}
                             >
                                 <FAIcon iconStyle="r" icon="clipboard" />
                             </Button>
                             <Code w="100%" p={2}>
-                                {JSON.stringify(result, null, 2)}
+                                {JSON.stringify(result, Set_toJSON, 2)}
                             </Code>
                         </Text>
                     </ModalBody>

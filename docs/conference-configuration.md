@@ -8,7 +8,7 @@ A list of videos to be used as the background for title/sponsor slides.
 
 ### Key
 
-`VIDEO_FILLER`
+`BACKGROUND_VIDEOS`
 
 ### Value
 

@@ -22,6 +22,7 @@ import { apolloClient } from "../graphqlClient";
 import { failConferencePrepareJob } from "../lib/conferencePrepareJob";
 import { OpenShotClient } from "../lib/openshot/openshot";
 import { ChannelLayout } from "../lib/openshot/openshotProjects";
+import { createTransitions } from "../lib/transitions";
 import * as VonageClient from "../lib/vonage/vonageClient";
 import { ConferencePrepareJobData, Payload } from "../types/event";
 
@@ -243,7 +244,7 @@ async function createEventTitleSlideBroadcastItems(
         query: GetConfigurationValueDocument,
         variables: {
             conferenceId: conferenceId,
-            key: "VIDEO_FILLER",
+            key: "BACKGROUND_VIDEOS",
         },
     });
 
@@ -618,4 +619,7 @@ async function createPresenterRoomBroadcastItems(conferenceId: string): Promise<
             },
         });
     }
+
+    console.log("Creating transitions for conference", conferenceId);
+    createTransitions(conferenceId);
 }

@@ -3435,6 +3435,14 @@
     schema: public
     name: Room
   object_relationships:
+  - name: broadcastContentItem
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: BroadcastContentItem
+        column_mapping:
+          id: roomId
   - name: conference
     using:
       foreign_key_constraint_on: conferenceId

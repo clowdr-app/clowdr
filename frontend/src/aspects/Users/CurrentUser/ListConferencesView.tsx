@@ -40,6 +40,8 @@ export default function ListConferencesView(): JSX.Element {
 
     const { user } = useCurrentUser();
 
+    const buttonTextColour = useColorModeValue("black", "white");
+
     const { attending, organising } = useMemo(() => {
         const attendingResult: AttendeeFieldsFragment[] = [];
         const organisingResult: AttendeeFieldsFragment[] = [];
@@ -89,15 +91,18 @@ export default function ListConferencesView(): JSX.Element {
 
         return (
             <>
-                <List spacing={3} justifyContent="stretch">
+                <List spacing={0}>
                     {attendees.map((attendee) => {
                         return (
-                            <ListItem key={attendee.id}>
+                            <ListItem key={attendee.id} display="list-item">
                                 <LinkButton
                                     leftIcon={
                                         <Icon as={icon} color="green.500" fontSize="50%" verticalAlign="middle" />
                                     }
                                     to={`/conference/${attendee.conference.slug}/${subPath}`}
+                                    border={0}
+                                    background="none"
+                                    color={buttonTextColour}
                                 >
                                     <Text as="span" verticalAlign="middle">
                                         {attendee.conference.shortName}

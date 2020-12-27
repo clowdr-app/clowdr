@@ -95,7 +95,7 @@ export default function ContentGroupPersonsModal({
                     </Text>
                 </Center>
             </Box>
-            <Modal isCentered onClose={onClose} isOpen={isOpen} motionPreset="scale" size="full">
+            <Modal scrollBehavior="inside" onClose={onClose} isOpen={isOpen} motionPreset="scale" size="full">
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader paddingBottom={0}>Manage Content People</ModalHeader>

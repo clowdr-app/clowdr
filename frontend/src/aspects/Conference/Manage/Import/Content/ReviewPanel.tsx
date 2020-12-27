@@ -26,13 +26,6 @@ const defaultQuery = `
         "researchr": [$hotCRPTitles[$not($ in $researchrTitles)]],
         "hotCRP": [$researchrTitles[$not($ in $hotCRPTitles or $ in $expectedHotCRPMissing)]]
     },
-    "mismatched_authors": [
-        $researchrPapers.$@$researchrPaper.$hotCRPPapers[$lowercase(title) = $lowercase($researchrPaper.title)][$count(people) != $count($researchrPaper.people)].{
-             "title": $researchrPaper.title,
-             "hotCRPPeople": people,
-             "researchrPeople": $researchrPaper.people
-        }
-    ],
     "matching": [$hotCRPTitles[$ in $researchrTitles]],
 
     "researchrTitles": $researchrTitles,

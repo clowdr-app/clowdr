@@ -80,7 +80,7 @@ export default function ContentGroupHallwaysModal({
                     <Text as="p">(Hallways can exhibit items, rooms and events.)</Text>
                 </Center>
             </Box>
-            <Modal isCentered onClose={onClose} isOpen={isOpen} motionPreset="scale" size="full">
+            <Modal scrollBehavior="inside" onClose={onClose} isOpen={isOpen} motionPreset="scale" size="full">
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader paddingBottom={0}>Manage Content Hallways</ModalHeader>

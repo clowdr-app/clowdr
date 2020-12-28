@@ -17,9 +17,7 @@ import useCSVJSONXMLImportOptions from "../../../../Files/useCSVJSONXMLImportOpt
 import useCSVJSONXMLParse, { ParsedData, ParserResult } from "../../../../Files/useCSVJSONXMLParser";
 import FAIcon from "../../../../Icons/FAIcon";
 
-export type ParsedContentData = any[];
-
-function parser(data: any): ParserResult<ParsedContentData> {
+function parser(data: any): ParserResult<any[]> {
     // Researchr XML
     if (data.subevent) {
         data = data.subevent;
@@ -41,7 +39,7 @@ function parser(data: any): ParserResult<ParsedContentData> {
 export default function DataPanel({
     onData,
 }: {
-    onData?: (data: ParsedData<ParsedContentData>[] | undefined) => void;
+    onData?: (data: ParsedData<any[]>[] | undefined) => void;
 }): JSX.Element {
     const { acceptedFiles, component: fileImporterEl } = useCSVJSONXMLFileSelector();
     const { importOptions, openOptionsButton, optionsComponent } = useCSVJSONXMLImportOptions(acceptedFiles);

@@ -24,7 +24,6 @@ import type {
 } from "../../Content/Types";
 import { useSaveContentDiff } from "../../Content/useSaveContentDiff";
 import { ChangeSummary, Set_toJSON } from "../Merge";
-import mergeContent from "./MergeContent";
 
 export default function MergePanel({ data }: { data: Record<string, IntermediaryData> }): JSX.Element {
     const conference = useConference();
@@ -53,22 +52,24 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
         if (originalContentGroups && originalHallways && originalOriginatingDatas && originalPeople && originalTags) {
             try {
                 setError(null);
-                const merged = mergeContent(
-                    conference.id,
-                    data,
-                    originalContentGroups,
-                    originalHallways,
-                    originalOriginatingDatas,
-                    originalPeople,
-                    originalTags
-                );
-                setMergedContentGroupsMap(merged.newContentGroups);
-                setMergedPeopleMap(merged.newPeople);
-                setMergedHallwaysMap(merged.newHallways);
-                setMergedTagsMap(merged.newTags);
-                setMergedOriginatingDatasMap(merged.newOriginatingDatas);
-                setChanges(merged.changes);
-                console.log("Merged", merged);
+                // TODO
+                throw new Error("Not implemented");
+                // const merged = mergeContent(
+                //     conference.id,
+                //     data,
+                //     originalContentGroups,
+                //     originalHallways,
+                //     originalOriginatingDatas,
+                //     originalPeople,
+                //     originalTags
+                // );
+                // setMergedContentGroupsMap(merged.newContentGroups);
+                // setMergedPeopleMap(merged.newPeople);
+                // setMergedHallwaysMap(merged.newHallways);
+                // setMergedTagsMap(merged.newTags);
+                // setMergedOriginatingDatasMap(merged.newOriginatingDatas);
+                // setChanges(merged.changes);
+                // console.log("Merged", merged);
             } catch (e) {
                 setMergedContentGroupsMap(originalContentGroups);
                 setMergedPeopleMap(originalPeople);

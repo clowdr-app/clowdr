@@ -3,10 +3,10 @@ import React from "react";
 import { Route, Switch } from "react-router-dom";
 import { Permission_Enum } from "../../../generated/graphql";
 import PageNotFound from "../../Errors/PageNotFound";
-import PageNotImplemented from "../../Errors/PageNotImplemented";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
 import ImportContentPage from "./Import/ImportContentPage";
+import ImportSchedulePage from "./Import/ImportSchedulePage";
 import RestrictedDashboardButton from "./RestrictedDashboardButton";
 import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
@@ -17,7 +17,7 @@ export default function ManageConferenceImportPage({ rootUrl }: { rootUrl: strin
                 <ImportContentPage />
             </Route>
             <Route path={`${rootUrl}/schedule`}>
-                <PageNotImplemented />
+                <ImportSchedulePage />
             </Route>
             <Route path={`${rootUrl}/`}>
                 <InnerManageConferenceImportPage />

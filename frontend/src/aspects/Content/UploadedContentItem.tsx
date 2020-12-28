@@ -1,30 +1,24 @@
-import { gql } from "@apollo/client/core";
+import type { ApolloQueryResult } from "@apollo/client";
 import { Button, Spinner, Text, Tooltip, VStack } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import { useGetContentItemQuery } from "../../generated/graphql";
+import type { Exact, GetContentItemQuery } from "../../generated/graphql";
 import FAIcon from "../Icons/FAIcon";
 import { EditContentItem } from "./EditContentItem";
 import RenderContentItem from "./RenderContentItem";
 
-gql`
-    query GetContentItem($magicToken: String!) {
-        getContentItem(magicToken: $magicToken) {
-            contentTypeName
-            data
-            layoutData
-            name
-            id
-        }
-    }
-`;
-
-export default function UploadedContentItem({ magicToken }: { magicToken: string }): JSX.Element {
-    const { loading, error, data, refetch } = useGetContentItemQuery({
-        variables: {
-            magicToken,
-        },
-        fetchPolicy: "network-only",
-    });
+export default function UploadedContentItem({
+    magicToken,
+    loading,
+    error,
+    data,
+    refetch
+}: {
+    magicToken: string;
+    loading: boolean;
+    error: boolean;
+    data: GetContentItemQuery | undefined;
+    refetch: (variables?: Partial<Exact<{ magicToken: string; }>> | undefined) => Promise<ApolloQueryResult<GetContentItemQuery>>;
+}): JSX.Element {
     const [disableRefresh, setDisableRefresh] = useState<boolean>(false);
     useEffect(() => {
         if (disableRefresh) {

@@ -159,6 +159,7 @@ type GetContentItemOutput {
   id : String!
   data : jsonb!
   layoutData : jsonb
+  contentGroupTitle : String!
 }
 
 type SubmitUpdatedSubtitlesOutput {

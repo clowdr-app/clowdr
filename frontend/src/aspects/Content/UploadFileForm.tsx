@@ -5,14 +5,17 @@ import {
     FormErrorMessage,
     FormHelperText,
     FormLabel,
+    ListItem,
     Text,
+    UnorderedList,
     useToast,
 } from "@chakra-ui/react";
 import AwsS3Multipart from "@uppy/aws-s3-multipart";
 import Uppy from "@uppy/core";
 import "@uppy/core/dist/style.css";
 import "@uppy/drag-drop/dist/style.css";
-import { DragDrop, ProgressBar } from "@uppy/react";
+import "@uppy/status-bar/dist/style.css";
+import { DragDrop, StatusBar } from "@uppy/react";
 import { Field, FieldProps, Form, Formik } from "formik";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { RequiredItemFieldsFragment, useSubmitContentItemMutation } from "../../generated/graphql";
@@ -87,7 +90,6 @@ export default function UploadFileForm({
 
     return (
         <>
-            <ProgressBar uppy={uppy as Uppy.Uppy} fixed hideAfterFinish />
             <Formik
                 initialValues={{
                     agree: false,
@@ -165,16 +167,16 @@ export default function UploadFileForm({
                                 <DragDrop uppy={uppy as Uppy.Uppy} allowMultipleFiles={false} />
                                 <FormHelperText>File types: {allowedFileTypes.join(", ")}</FormHelperText>
                             </FormControl>
-                            <ul>
+                            <UnorderedList mb={4}>
                                 {files.map((file) => (
-                                    <li key={file.id}>
+                                    <ListItem key={file.id}>
                                         {file.name}{" "}
                                         <Button onClick={() => uppy?.removeFile(file.id)}>
                                             <FAIcon iconStyle="s" icon="times" color="red.400" />
                                         </Button>
-                                    </li>
+                                    </ListItem>
                                 ))}
-                            </ul>
+                            </UnorderedList>
                             {uploadAgreement && (
                                 <Field
                                     name="agree"
@@ -190,7 +192,7 @@ export default function UploadFileForm({
                                         <FormControl
                                             isInvalid={!!form.errors.agree && !!form.touched.agree}
                                             isRequired
-                                            mt={5}
+                                            mb={4}
                                         >
                                             <FormLabel htmlFor="agree">Upload agreement</FormLabel>
                                             <Text mb={4}>{uploadAgreement}</Text>
@@ -201,8 +203,8 @@ export default function UploadFileForm({
                                     )}
                                 </Field>
                             )}
+                            <StatusBar uppy={uppy as Uppy.Uppy} hideAfterFinish hideUploadButton />
                             <Button
-                                mt={4}
                                 colorScheme="green"
                                 isLoading={props.isSubmitting}
                                 type="submit"

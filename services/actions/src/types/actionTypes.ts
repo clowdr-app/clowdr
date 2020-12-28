@@ -45,6 +45,7 @@ type GetContentItemOutput = {
     id: string;
     data: jsonb;
     layoutData?: Maybe<jsonb>;
+    contentGroupTitle: string;
 };
 
 type SubmitUpdatedSubtitlesOutput = {

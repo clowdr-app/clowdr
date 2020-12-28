@@ -381,6 +381,9 @@ gql`
             data
             layoutData
             name
+            contentGroup {
+                title
+            }
         }
     }
 `;
@@ -403,6 +406,7 @@ export async function handleGetByRequiredItem(args: getContentItemArgs): Promise
         layoutData: item.layoutData,
         data: item.data,
         contentTypeName: item.contentTypeName,
+        contentGroupTitle: item.contentGroup.title,
     }));
 }
 

@@ -8410,6 +8410,7 @@ export enum FollowedChat_Update_Column {
 
 export type GetContentItemOutput = {
   readonly __typename?: 'GetContentItemOutput';
+  readonly contentGroupTitle: Scalars['String'];
   readonly contentTypeName: Scalars['String'];
   readonly data: Scalars['jsonb'];
   readonly id: Scalars['String'];
@@ -21898,6 +21899,13 @@ export type UpdateSubtitlesMutationVariables = Exact<{
 
 export type UpdateSubtitlesMutation = { readonly __typename?: 'mutation_root', readonly updateSubtitles?: Maybe<{ readonly __typename?: 'SubmitUpdatedSubtitlesOutput', readonly message: string, readonly success: boolean }> };
 
+export type GetContentItemQueryVariables = Exact<{
+  magicToken: Scalars['String'];
+}>;
+
+
+export type GetContentItemQuery = { readonly __typename?: 'query_root', readonly getContentItem?: Maybe<ReadonlyArray<Maybe<{ readonly __typename?: 'GetContentItemOutput', readonly contentTypeName: string, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly id: string, readonly contentGroupTitle: string }>>> };
+
 export type SelectRequiredItemQueryVariables = Exact<{
   requiredContentItemId: Scalars['uuid'];
 }>;
@@ -21924,13 +21932,6 @@ export type GetUploadAgreementQueryVariables = Exact<{
 
 
 export type GetUploadAgreementQuery = { readonly __typename?: 'query_root', readonly getUploadAgreement?: Maybe<{ readonly __typename?: 'GetUploadAgreementOutput', readonly agreementText?: Maybe<string> }> };
-
-export type GetContentItemQueryVariables = Exact<{
-  magicToken: Scalars['String'];
-}>;
-
-
-export type GetContentItemQuery = { readonly __typename?: 'query_root', readonly getContentItem?: Maybe<ReadonlyArray<Maybe<{ readonly __typename?: 'GetContentItemOutput', readonly contentTypeName: string, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly id: string }>>> };
 
 export type EchoQueryVariables = Exact<{
   message: Scalars['String'];
@@ -24246,6 +24247,44 @@ export function useUpdateSubtitlesMutation(baseOptions?: Apollo.MutationHookOpti
 export type UpdateSubtitlesMutationHookResult = ReturnType<typeof useUpdateSubtitlesMutation>;
 export type UpdateSubtitlesMutationResult = Apollo.MutationResult<UpdateSubtitlesMutation>;
 export type UpdateSubtitlesMutationOptions = Apollo.BaseMutationOptions<UpdateSubtitlesMutation, UpdateSubtitlesMutationVariables>;
+export const GetContentItemDocument = gql`
+    query GetContentItem($magicToken: String!) {
+  getContentItem(magicToken: $magicToken) {
+    contentTypeName
+    data
+    layoutData
+    name
+    id
+    contentGroupTitle
+  }
+}
+    `;
+
+/**
+ * __useGetContentItemQuery__
+ *
+ * To run a query within a React component, call `useGetContentItemQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetContentItemQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetContentItemQuery({
+ *   variables: {
+ *      magicToken: // value for 'magicToken'
+ *   },
+ * });
+ */
+export function useGetContentItemQuery(baseOptions: Apollo.QueryHookOptions<GetContentItemQuery, GetContentItemQueryVariables>) {
+        return Apollo.useQuery<GetContentItemQuery, GetContentItemQueryVariables>(GetContentItemDocument, baseOptions);
+      }
+export function useGetContentItemLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetContentItemQuery, GetContentItemQueryVariables>) {
+          return Apollo.useLazyQuery<GetContentItemQuery, GetContentItemQueryVariables>(GetContentItemDocument, baseOptions);
+        }
+export type GetContentItemQueryHookResult = ReturnType<typeof useGetContentItemQuery>;
+export type GetContentItemLazyQueryHookResult = ReturnType<typeof useGetContentItemLazyQuery>;
+export type GetContentItemQueryResult = Apollo.QueryResult<GetContentItemQuery, GetContentItemQueryVariables>;
 export const SelectRequiredItemDocument = gql`
     query SelectRequiredItem($requiredContentItemId: uuid!) {
   RequiredContentItem(where: {id: {_eq: $requiredContentItemId}}) {
@@ -24346,43 +24385,6 @@ export function useGetUploadAgreementLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type GetUploadAgreementQueryHookResult = ReturnType<typeof useGetUploadAgreementQuery>;
 export type GetUploadAgreementLazyQueryHookResult = ReturnType<typeof useGetUploadAgreementLazyQuery>;
 export type GetUploadAgreementQueryResult = Apollo.QueryResult<GetUploadAgreementQuery, GetUploadAgreementQueryVariables>;
-export const GetContentItemDocument = gql`
-    query GetContentItem($magicToken: String!) {
-  getContentItem(magicToken: $magicToken) {
-    contentTypeName
-    data
-    layoutData
-    name
-    id
-  }
-}
-    `;
-
-/**
- * __useGetContentItemQuery__
- *
- * To run a query within a React component, call `useGetContentItemQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetContentItemQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetContentItemQuery({
- *   variables: {
- *      magicToken: // value for 'magicToken'
- *   },
- * });
- */
-export function useGetContentItemQuery(baseOptions: Apollo.QueryHookOptions<GetContentItemQuery, GetContentItemQueryVariables>) {
-        return Apollo.useQuery<GetContentItemQuery, GetContentItemQueryVariables>(GetContentItemDocument, baseOptions);
-      }
-export function useGetContentItemLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetContentItemQuery, GetContentItemQueryVariables>) {
-          return Apollo.useLazyQuery<GetContentItemQuery, GetContentItemQueryVariables>(GetContentItemDocument, baseOptions);
-        }
-export type GetContentItemQueryHookResult = ReturnType<typeof useGetContentItemQuery>;
-export type GetContentItemLazyQueryHookResult = ReturnType<typeof useGetContentItemLazyQuery>;
-export type GetContentItemQueryResult = Apollo.QueryResult<GetContentItemQuery, GetContentItemQueryVariables>;
 export const EchoDocument = gql`
     query Echo($message: String!) {
   echo(message: $message) {

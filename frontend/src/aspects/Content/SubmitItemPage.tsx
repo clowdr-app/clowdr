@@ -1,9 +1,25 @@
 import { gql } from "@apollo/client";
-import { Center, Container, Heading, Spinner, Text, VStack } from "@chakra-ui/react";
+import {
+    Box,
+    Center,
+    Container,
+    Divider,
+    Heading,
+    ListItem,
+    Spinner,
+    Text,
+    UnorderedList,
+    VStack,
+} from "@chakra-ui/react";
 import "@uppy/core/dist/style.css";
 import "@uppy/progress-bar/dist/style.css";
 import React, { useCallback, useMemo } from "react";
-import { ContentType_Enum, useGetUploadAgreementQuery, useSelectRequiredItemQuery } from "../../generated/graphql";
+import {
+    ContentType_Enum,
+    useGetContentItemQuery,
+    useGetUploadAgreementQuery,
+    useSelectRequiredItemQuery,
+} from "../../generated/graphql";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
 import { useNoPrimaryMenuButtons } from "../Menu/usePrimaryMenuButtons";
 import UploadedContentItem from "./UploadedContentItem";
@@ -13,6 +29,17 @@ import UploadTextForm from "./UploadTextForm";
 import UploadUrlForm from "./UploadUrlForm";
 
 gql`
+    query GetContentItem($magicToken: String!) {
+        getContentItem(magicToken: $magicToken) {
+            contentTypeName
+            data
+            layoutData
+            name
+            id
+            contentGroupTitle
+        }
+    }
+
     query SelectRequiredItem($requiredContentItemId: uuid!) {
         RequiredContentItem(where: { id: { _eq: $requiredContentItemId } }) {
             ...RequiredItemFields
@@ -73,6 +100,19 @@ export default function SubmitItemPage({
         variables: {
             magicToken,
         },
+    });
+    useQueryErrorToast(error);
+
+    const {
+        loading: loadingContentItem,
+        error: errorContentItem,
+        data: dataContentItem,
+        refetch: refetchContentItem,
+    } = useGetContentItemQuery({
+        variables: {
+            magicToken,
+        },
+        fetchPolicy: "network-only",
     });
     useQueryErrorToast(error);
 
@@ -160,8 +200,13 @@ export default function SubmitItemPage({
                 <Container centerContent maxW="100%">
                     <VStack spacing={4}>
                         <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
-                            Upload item
+                            Content Submission
                         </Heading>
+                        {dataContentItem?.getContentItem?.[0]?.contentGroupTitle && (
+                            <Heading as="h2" fontSize="1.5rem" lineHeight="2.2rem" fontStyle="italic">
+                                {dataContentItem.getContentItem[0].contentGroupTitle}
+                            </Heading>
+                        )}
                         {(loading && !data) || (uploadAgreementLoading && !uploadAgreementData) ? (
                             <div>
                                 <Spinner />
@@ -172,8 +217,8 @@ export default function SubmitItemPage({
                             <Text mt={4}>No matching item.</Text>
                         ) : (
                             <>
-                                <Heading as="h2" fontSize="1.5rem" mt={5}>
-                                    {requiredItem.name}
+                                <Heading as="h3" fontSize="1.2rem" mt={5}>
+                                    Upload: {requiredItem.name}
                                 </Heading>
                                 {requiredItem.uploadsRemaining === 0 ? (
                                     <Text mt={4}>
@@ -182,22 +227,55 @@ export default function SubmitItemPage({
                                     </Text>
                                 ) : (
                                     <>
-                                        {requiredItem.uploadsRemaining ? (
-                                            <Text mt={4}>
-                                                {requiredItem.uploadsRemaining} upload attempt
-                                                {requiredItem.uploadsRemaining > 1 ? "s" : ""} remaining.
-                                            </Text>
-                                        ) : (
-                                            <></>
-                                        )}
+                                        {requiredItem.contentTypeName === ContentType_Enum.VideoBroadcast ? (
+                                            <Box>
+                                                <UnorderedList>
+                                                    {requiredItem.uploadsRemaining ? (
+                                                        <ListItem>
+                                                            {requiredItem.uploadsRemaining} upload attempt
+                                                            {requiredItem.uploadsRemaining > 1 ? "s" : ""} remaining.
+                                                        </ListItem>
+                                                    ) : (
+                                                        <></>
+                                                        )}
+                                                    <ListItem>This video will be live streamed during the conference just prior to your Q&amp;A session.</ListItem>
+                                                    <ListItem>Maximum 5 minute video duration</ListItem>
+                                                    <ListItem>Maximum 1080p video quality</ListItem>
+                                                </UnorderedList>
+                                            </Box>
+                                        ) : undefined}
+                                        {requiredItem.contentTypeName === ContentType_Enum.VideoPrepublish ? (
+                                            <Box>
+                                                <UnorderedList>
+                                                    {requiredItem.uploadsRemaining ? (
+                                                        <ListItem>
+                                                            {requiredItem.uploadsRemaining} upload attempt
+                                                            {requiredItem.uploadsRemaining > 1 ? "s" : ""} remaining.
+                                                        </ListItem>
+                                                    ) : (
+                                                        <></>
+                                                        )}
+                                                    <ListItem>This video will be made publicly available around the 11th of January.</ListItem>
+                                                    <ListItem>Maximum 30 minute video duration</ListItem>
+                                                    <ListItem>Maximum 1080p video quality</ListItem>
+                                                </UnorderedList>
+                                            </Box>
+                                        ) : undefined}
                                         <Center>{form}</Center>
                                     </>
                                 )}
+                                <Divider />
                                 <VStack spacing={4}>
                                     <Heading as="h3" fontSize="1.2rem">
                                         Previously uploaded
                                     </Heading>
-                                    <UploadedContentItem magicToken={magicToken} />
+                                    <UploadedContentItem
+                                        magicToken={magicToken}
+                                        data={dataContentItem}
+                                        error={!!errorContentItem}
+                                        loading={loadingContentItem}
+                                        refetch={refetchContentItem}
+                                    />
                                 </VStack>
                             </>
                         )}

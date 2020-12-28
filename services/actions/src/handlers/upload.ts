@@ -270,7 +270,7 @@ async function sendSubmittedEmail(
     <li><b>Within the next 2 hours</b> the second email will let you know subtitles have been generated for your video and are available for editing.</li>
     <li>In the unlikely event that processing your video fails, you will receive an email. You should then forward this to your conference's organising committee to ask for technical assistance.</li>
     <li>Please remember to check your spam/junk folder for emails from us, just in case.</li>
-    <li>If you don't receive an update within 4 hours, please contact your conference organisers for technical support. Please do not repeat the upload as this will deplete your allowed upload attempts.</li>
+    <li>If you don't receive an update within 4 hours, please contact your conference organisers for technical support.</li>
 </ol>
 <p>Thank you,<br/>
 The Clowdr team

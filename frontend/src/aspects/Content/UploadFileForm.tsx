@@ -81,7 +81,7 @@ export default function UploadFileForm({
                 description: "All files uploaded.",
             });
         });
-    });
+    }, [toast, updateFiles, uppy]);
 
     return (
         <>

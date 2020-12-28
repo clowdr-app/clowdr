@@ -140,7 +140,7 @@ export default function UploadFileForm({
 
                         toast({
                             status: "success",
-                            description: "Submitted item successfully.",
+                            description: "Uploaded item successfully.",
                         });
                         uppy.reset();
 

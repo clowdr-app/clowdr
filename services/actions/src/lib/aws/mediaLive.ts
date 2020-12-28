@@ -1,3 +1,4 @@
+import { FeatureActivationsInputPrepareScheduleActions } from "@aws-sdk/client-medialive";
 import { MediaLive, shortId } from "../../aws/awsClient";
 
 export enum ChannelState {
@@ -101,6 +102,9 @@ export async function createChannel(
         ],
         RoleArn: process.env.AWS_MEDIALIVE_SERVICE_ROLE_ARN,
         EncoderSettings: {
+            FeatureActivations: {
+                InputPrepareScheduleActions: FeatureActivationsInputPrepareScheduleActions.ENABLED,
+            },
             AudioDescriptions: [
                 {
                     CodecSettings: {

@@ -316,7 +316,12 @@ export async function syncChannelSchedules(): Promise<void> {
     }
 
     for (const room of rooms.data.Room) {
-        await syncChannelSchedule(room.id);
+        try {
+            await syncChannelSchedule(room.id);
+        } catch (e) {
+            console.error("Failure while syncing channel schedule", room.id, e);
+            continue;
+        }
     }
 }
 
@@ -352,10 +357,12 @@ interface ComparableScheduleAction {
     name: string;
     mp4Key?: string;
     inputAttachmentNameSuffix: string;
+    timeMillis: number;
     invalid?: boolean;
 }
 
 export async function syncChannelSchedule(roomId: string): Promise<void> {
+    console.log("Attempting to sync channel schedule", roomId);
     const channelResult = await apolloClient.query({
         query: GetMediaLiveChannelByRoomDocument,
         variables: {
@@ -369,6 +376,15 @@ export async function syncChannelSchedule(roomId: string): Promise<void> {
     }
 
     const channel = channelResult.data.Room_by_pk.mediaLiveChannel;
+
+    const mediaLiveChannel = await MediaLive.describeChannel({
+        ChannelId: channel.mediaLiveChannelId,
+    });
+
+    if (mediaLiveChannel.State !== "IDLE" && mediaLiveChannel.State !== "RUNNING") {
+        console.warn("Cannot sync channel schedule", roomId, channel.id, mediaLiveChannel.State);
+        return;
+    }
 
     const allTransitionsResult = await apolloClient.query({
         query: GetTransitionsByRoomDocument,
@@ -398,12 +414,14 @@ export async function syncChannelSchedule(roomId: string): Promise<void> {
                     name: `${transition.id}-prepare`,
                     mp4Key: key,
                     inputAttachmentNameSuffix: "mp4",
+                    timeMillis: Date.parse(transition.time) - 30000,
                 };
 
                 const switchAction: ComparableScheduleAction = {
                     name: `${transition.id}`,
                     mp4Key: key,
                     inputAttachmentNameSuffix: "mp4",
+                    timeMillis: Date.parse(transition.time),
                 };
 
                 return [prepareAction, switchAction];
@@ -412,6 +430,7 @@ export async function syncChannelSchedule(roomId: string): Promise<void> {
                     {
                         name: `${transition.id}`,
                         inputAttachmentNameSuffix: "vonage",
+                        timeMillis: Date.parse(transition.time),
                     },
                 ];
             } else {
@@ -438,6 +457,10 @@ export async function syncChannelSchedule(roomId: string): Promise<void> {
                         action.ScheduleActionSettings.InputPrepareSettings.UrlPath?.length === 1
                             ? action.ScheduleActionSettings.InputPrepareSettings.UrlPath[0]
                             : "",
+                    timeMillis: Date.parse(
+                        action.ScheduleActionStartSettings?.FixedModeScheduleActionStartSettings?.Time ??
+                            "1970-01-01T00:00:00+0000"
+                    ),
                 };
                 return result;
             } else if (action.ScheduleActionSettings?.InputSwitchSettings) {
@@ -447,6 +470,10 @@ export async function syncChannelSchedule(roomId: string): Promise<void> {
                     const result: ComparableScheduleAction = {
                         inputAttachmentNameSuffix: "vonage",
                         name: action.ActionName,
+                        timeMillis: Date.parse(
+                            action.ScheduleActionStartSettings?.FixedModeScheduleActionStartSettings?.Time ??
+                                "1970-01-01T00:00:00+0000"
+                        ),
                     };
                     return result;
                 } else if (
@@ -459,6 +486,10 @@ export async function syncChannelSchedule(roomId: string): Promise<void> {
                             action.ScheduleActionSettings.InputSwitchSettings.UrlPath?.length === 1
                                 ? action.ScheduleActionSettings.InputSwitchSettings.UrlPath[0]
                                 : "",
+                        timeMillis: Date.parse(
+                            action.ScheduleActionStartSettings?.FixedModeScheduleActionStartSettings?.Time ??
+                                "1970-01-01T00:00:00+0000"
+                        ),
                     };
                     return result;
                 } else {
@@ -524,7 +555,7 @@ export async function syncChannelSchedule(roomId: string): Promise<void> {
                     },
                     ScheduleActionStartSettings: {
                         FixedModeScheduleActionStartSettings: {
-                            Time: transition.time,
+                            Time: new Date(Date.parse(transition.time)).toISOString(),
                         },
                     },
                 });
@@ -541,7 +572,7 @@ export async function syncChannelSchedule(roomId: string): Promise<void> {
                     },
                     ScheduleActionStartSettings: {
                         FixedModeScheduleActionStartSettings: {
-                            Time: transition.time,
+                            Time: new Date(Date.parse(transition.time) - 30000).toISOString(),
                         },
                     },
                 });
@@ -560,7 +591,7 @@ export async function syncChannelSchedule(roomId: string): Promise<void> {
                     },
                     ScheduleActionStartSettings: {
                         FixedModeScheduleActionStartSettings: {
-                            Time: transition.time,
+                            Time: new Date(Date.parse(transition.time)).toISOString(),
                         },
                     },
                 });

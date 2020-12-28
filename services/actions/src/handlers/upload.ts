@@ -262,15 +262,27 @@ async function sendSubmittedEmail(
 
     const emails: Email_Insert_Input[] = uploaders.data.Uploader.map((uploader) => {
         const htmlContents = `<p>Dear ${uploader.name},</p>
-            <p>A new version of <em>${requiredContentItemName}</em> (${contentGroupTitle}) was uploaded to ${conferenceName}.</p>
-            <p>You are receiving this email because you are listed as an uploader for this item.
-            This is an automated email sent on behalf of Clowdr CIC. If you believe you have received this
-            email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}.</p>`;
+<p>A new version of <em>${requiredContentItemName}</em> (${contentGroupTitle}) was uploaded to ${conferenceName}.</p>
+<p>Our systems will now start processing your content. For videos, we will process your video and then auto-generate subtitles.</p>
+<p>For video submissions, you will receive two further emails:</p>
+<ol>
+    <li><b>Within the next hour</b> you should receive the first email, letting you know when we've successfully processed your video.</li>
+    <li><b>Within the next 2 hours</b> the second email will let you know subtitles have been generated for your video and are available for editing.</li>
+    <li>In the unlikely event that processing your video fails, you will receive an email. You should then forward this to your conference's organising committee to ask for technical assistance.</li>
+    <li>Please remember to check your spam/junk folder for emails from us, just in case.</li>
+    <li>If you don't receive an update within 4 hours, please contact your conference organisers for technical support. Please do not repeat the upload as this will deplete your allowed upload attempts.</li>
+</ol>
+<p>Thank you,<br/>
+The Clowdr team
+</p>
+<p>You are receiving this email because you are listed as an uploader for this item.
+This is an automated email sent on behalf of Clowdr CIC. If you believe you have received this
+email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}.</p>`;
 
         return {
             emailAddress: uploader.email,
             reason: "item_submitted",
-            subject: `Clowdr: submitted item ${requiredContentItemName} to ${conferenceName}`,
+            subject: `Clowdr: Submission RECEIVED: ${requiredContentItemName} to ${conferenceName}`,
             htmlContents,
             plainTextContents: htmlToText(htmlContents),
         };
@@ -573,35 +585,63 @@ function generateEmailContents(uploader: UploaderPartsFragment) {
 
     // TODO: Add info like deadlines, max file sizes, tutorial video link, etc
     const htmlContents = `<p>Dear ${uploader.name},</p>
-    <p>
-        The organisers of ${uploader.conference.name} are requesting that you or
-        your co-authors/co-presenters upload ${contentTypeFriendlyName} for
-        "${uploader.requiredContentItem.contentGroup.title}".
-    </p>
-    <p>
-        Please do not forward or share this email: anyone with the link contained
-        herein can use it to upload content to your conference item.
-    </p>
-    <p>
-        Please submit your content <a href="${url}">here</a>.
-    </p>
-    <p>
-        You should have already received instructions from your conference
-        organisers about the requirements for this content (e.g. maximum length,
-        upload deadlines, etc). You should also have received a link to the
-        tutorial video explaining how to upload your content.
-    </p>
-    <p>
-        Please note: For video content, you are allowed a maximum of 3 
-        uploaded versions per item. Your last submitted version will be the one
-        used. Any late submissions may or may not be processed, in accordance
-        with the guidance provided by your conference organisers.
-    </p>
-    <p>We hope you enjoy your conference,<br/>
-    The Clowdr team
-    </p>
-    <p>This is an automated email sent on behalf of Clowdr CIC. If you believe you have
-    received this email in error, please contact us via <a href="mailto:${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}">${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}</a></p>`;
+<p>
+    The organisers of ${uploader.conference.name} are requesting that you or
+    your co-authors/co-presenters upload ${contentTypeFriendlyName} for
+    "${uploader.requiredContentItem.contentGroup.title}".
+</p>
+<p>
+    Please do not forward or share this email: anyone with the link contained
+    herein can use it to upload content to your conference item.
+</p>
+<p>
+    Please <a href="${url}">submit your content on this page</a>.
+</p>
+<p>
+    Please <a href="TODO">watch this X minute instructional video</a> to learn how to use Clowdr's content upload system. This video also shows how to edit subtitles.
+</p>
+<p>
+    You should have received two emails (including this one) for the two separate videos you should
+    upload. These are the <b>Broadcast video</b> and the <b>Pre-publication video</b>.
+</p>
+<ul>
+    <li><b>Broadcast video:</b> Max 5 mins. Live streamed during the main conference before the live Q&amp;A.
+        <ul>
+            <li>If your video is longer than 5 minutes, it will be abruptly cut short during the live stream. The system is automated and there is no leeway in the schedule. Please make sure your video is under 5 minutes long.</li>
+        </ul>
+    </li>
+    <li><span><b>Pre-published video:</b> Max 30 mins. Published around the 11th Jan for attendees to watch before the conference.</span>
+        <ul>
+            <li>If your video is longer than 30 minutes, we are likely to cut it down (by clipping it to 30 mins).</li>
+        </ul>
+    </li>
+    <li><b>Submission deadline: 23:59 UTC on 3rd January 2021.</b>
+        <ul>
+            <li>Your upload must start before this deadline, but any ongoing (uninterrupted) uploads will be allowed to continue past this time.</li>
+            <li>Please do not leave submitting to the last moment; Submitting at the last moment is risky. If we are unable to automatically process your video and are only made aware of an issue after the deadline, we may not have time to resolve the problem.</li>
+            <li>If you fail to submit on time, your videos may not be processed for pre-publication.</li>
+            <li>Submissions after this time may be blocked and will require you to contact the POPL organising committee.</li>
+        </ul>
+    </li>
+    <li><span><b>Up to 3 uploads</b> per requested video are allowed.</span>
+        <ul>
+            <li><b>Additional uploads are not available.</b></li>
+            <li>Only the last uploaded version will be used. We recommend you review and edit your video locally (e.g. using VLC Media Player) before uploading to Clowdr.</li>
+        </ul>
+    </li>
+    <li>After uploading your video, Clowdr will process it and auto-generate subtitles. You will receive emails for each stage of processing.</li>
+    <li><b>Once subtitles have been generated, you will have the opportunity to edit them.</b></li>
+    <li><b>The deadline for editing subtitles is 12:00 UTC on 7th January 2021.</b>
+        <ul>
+            <li>After editing subtitles, please remember to <b>click the "Save" button!</b></li>
+        </ul>
+    </li>
+</ul>
+<p>We hope you enjoy your conference,<br/>
+The Clowdr team
+</p>
+<p>This is an automated email sent on behalf of Clowdr CIC. If you believe you have
+received this email in error, please contact us via <a href="mailto:${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}">${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}</a></p>`;
 
     const plainTextContents = htmlToText(htmlContents);
     return {
@@ -676,7 +716,7 @@ export async function uploadSendSubmissionRequestsHandler(
                 htmlContents,
                 plainTextContents,
                 reason: "upload-request",
-                subject: `Clowdr: Submission required: ${contentTypeFriendlyName}`,
+                subject: `#${uploader.requiredContentItem.contentTypeName === "VIDEO_BROADCAST" ? "1" : "2"} of 2, Clowdr submission request: ${contentTypeFriendlyName}`,
             };
         });
 

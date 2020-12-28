@@ -190,16 +190,22 @@ async function sendTranscriptionEmail(contentItemId: string, contentItemName: st
 
     const emails: Email_Insert_Input[] = uploaders.data.Uploader.map((uploader) => {
         const htmlContents = `<p>Dear ${uploader.name},</p>
-            <p>We automatically generated subtitles for your item <em>${contentItemName}</em> (${contentItemDetails.data.ContentItem_by_pk?.contentGroup.title}) at ${contentItemDetails.data.ContentItem_by_pk?.conference.name}. You can now review and edit them.</p>
-            <p><a href="${magicItemLink}">View and edit subtitles</a></p>
-            <p>You are receiving this email because you are listed as an uploader for this item.
-            This is an automated email sent on behalf of Clowdr CIC. If you believe you have received this
-            email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}.</p>`;
+<p>We have automatically generated subtitles for your item <em>${contentItemName}</em> (${contentItemDetails.data.ContentItem_by_pk?.contentGroup.title}) at ${contentItemDetails.data.ContentItem_by_pk?.conference.name}.</p>
+<p>We kindly request that you now review and edit them, as we know automated subtitles aren't always accurate.</p>
+<p><a href="${magicItemLink}">View and edit subtitles on this page</a></p>
+<p><b>The deadline for editing subtitles is 12:00 UTC on 7th January 2021.</b></p>
+<p>After this time, subtitles will be automatically embedded into the video files and moved into the content delivery system - they will no longer be editable.</p>
+<p>Thank you,<br/>
+The Clowdr team
+</p>
+<p>You are receiving this email because you are listed as an uploader for this item.
+This is an automated email sent on behalf of Clowdr CIC. If you believe you have received this
+email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}.</p>`;
 
         return {
             emailAddress: uploader.email,
             reason: "item_transcription_succeeded",
-            subject: `Clowdr: generated subtitles for item ${contentItemName} at ${contentItemDetails.data.ContentItem_by_pk?.conference.name}`,
+            subject: `Clowdr: Submission SUCCESS: Subtitles generated for ${contentItemName} at ${contentItemDetails.data.ContentItem_by_pk?.conference.name}`,
             htmlContents,
             plainTextContents: htmlToText(htmlContents),
         };
@@ -247,20 +253,41 @@ async function sendTranscriptionFailedEmail(contentItemId: string, contentItemNa
 
     const emails: Email_Insert_Input[] = uploaders.data.Uploader.map((uploader) => {
         const htmlContents = `<p>Dear ${uploader.name},</p>
-            <p>There was a problem during automatic subtitle generation for your item <em>${contentItemName}</em> (${contentItemDetails.data.ContentItem_by_pk?.contentGroup.title}) at ${contentItemDetails.data.ContentItem_by_pk?.conference.name}.</p>
-            <p><a href="${magicItemLink}">Manually add subtitles</a></p>
-            <p>You are receiving this email because you are listed as an uploader for this item.
-            This is an automated email sent on behalf of Clowdr CIC. If you believe you have received this
-            email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}.</p>`;
+<p>Your item ${contentItemName} (${contentItemDetails.data.ContentItem_by_pk?.contentGroup.title}) at ${contentItemDetails.data.ContentItem_by_pk?.conference.name} <b>has successfully entered our systems</b>. Your video will be included in the conference pre-publications and/or live streams (as appropriate).</p>
+<p>However, we are sorry that unfortunately an error occurred and we were unable to auto-generate subtitles. We appreciate this is a significant inconvenience but we kindly ask that you to manually enter subtitles for your video.</p>
+<p><a href="${magicItemLink}">Please manually add subtitles on this page.</a></p>
+<p><b>The deadline for submitting subtitles is 12:00 UTC on 7th January 2021.</b></p>
+<p>After this time, subtitles will be automatically embedded into the video files and moved into the content delivery system - they will no longer be editable.</p>
+<p>We have also sent ourselves a notification of this failure via email and we will assist you at our earliest opportunity. If we can get automated subtitles working for your video, we will let you know as soon as possible!</p>
+<p>Thank you,<br/>
+The Clowdr team
+</p>
+<p>You are receiving this email because you are listed as an uploader for this item.
+This is an automated email sent on behalf of Clowdr CIC. If you believe you have received this
+email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}.</p>`;
 
         return {
             emailAddress: uploader.email,
             reason: "item_transcription_failed",
-            subject: `Clowdr: failed to generate subtitles for item ${contentItemName} at ${contentItemDetails.data.ContentItem_by_pk?.conference.name}`,
+            subject: `Clowdr: Submission ERROR: Failed to generate subtitles for ${contentItemName} at ${contentItemDetails.data.ContentItem_by_pk?.conference.name}`,
             htmlContents,
             plainTextContents: htmlToText(htmlContents),
         };
     });
+
+    {
+        const htmlContents = `<p>Yep, this is the automated system here to tell you that the automation failed.</p>
+<p>Here's the content item id: ${contentItemId}.</p>
+<p>Here's the magic link: <a href="${magicItemLink}">${magicItemLink}</a></p>
+<p>Good luck fixing me!</p>`;
+        emails.push({
+            emailAddress: process.env.FAILURE_NOTIFICATIONS_EMAIL_ADDRESS,
+            reason: "item_transcription_failed",
+            subject: `PRIORITY: SYSTEM ERROR: Failed to generate subtitles for ${contentItemName} at ${contentItemDetails.data.ContentItem_by_pk?.conference.name}`,
+            htmlContents,
+            plainTextContents: htmlToText(htmlContents),
+        });
+    }
 
     await apolloClient.mutate({
         mutation: InsertEmailsDocument,
@@ -304,21 +331,39 @@ async function sendTranscodeFailedEmail(contentItemId: string, contentItemName: 
 
     const emails: Email_Insert_Input[] = uploaders.data.Uploader.map((uploader) => {
         const htmlContents = `<p>Dear ${uploader.name},</p>
-            <p>There was a problem while processing your item <em>${contentItemName}</em> (${contentItemDetails.data.ContentItem_by_pk?.contentGroup.title}) at ${contentItemDetails.data.ContentItem_by_pk?.conference.name}.</p>
-            <p>Details: ${message}</p>
-            <p><a href="${magicItemLink}">Try uploading a new version</a></p>
-            <p>You are receiving this email because you are listed as an uploader for this item.
-            This is an automated email sent on behalf of Clowdr CIC. If you believe you have received this
-            email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}.</p>`;
+<p>There was a problem processing <b>${contentItemName}</b> (${contentItemDetails.data.ContentItem_by_pk?.contentGroup.title}) for ${contentItemDetails.data.ContentItem_by_pk?.conference.name}. Your video is not currently accepted by Clowdr's systems and currently will not be included in the conference pre-publications or live streams.</p>
+<p>Error details: ${message}</p>
+<p><a href="${magicItemLink}">You may try uploading a new version</a> but we recommend you forward this email to your conference's organisers and ask for technical assistance.</p>
+<p>We have also sent ourselves a notification of this failure via email and we will assist you as soon as possible. Making Clowdr work for you is our top priority! We will try to understand the error and solve the issue either by fixing our software or providing you instructions for how to work around it.</p>
+<p>Thank you,<br/>
+The Clowdr team
+</p>
+<p>You are receiving this email because you are listed as an uploader for this item.
+This is an automated email sent on behalf of Clowdr CIC. If you believe you have received this
+email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}.</p>`;
 
         return {
             emailAddress: uploader.email,
             reason: "item_transcode_failed",
-            subject: `Clowdr: failed to process item ${contentItemName} at ${contentItemDetails.data.ContentItem_by_pk?.conference.name}`,
+            subject: `Clowdr: Submission ERROR: Failed to process ${contentItemName} at ${contentItemDetails.data.ContentItem_by_pk?.conference.name}`,
             htmlContents,
             plainTextContents: htmlToText(htmlContents),
         };
     });
+
+    {
+        const htmlContents = `<p>Yep, this is the automated system here to tell you that the automation failed.</p>
+<p>Here's the content item id: ${contentItemId}.</p>
+<p>Here's the magic link: <a href="${magicItemLink}">${magicItemLink}</a></p>
+<p>Good luck fixing me!</p>`;
+        emails.push({
+            emailAddress: process.env.FAILURE_NOTIFICATIONS_EMAIL_ADDRESS,
+            reason: "item_transcode_failed",
+            subject: `URGENT: SYSTEM ERROR: Failed to process ${contentItemName} at ${contentItemDetails.data.ContentItem_by_pk?.conference.name}`,
+            htmlContents,
+            plainTextContents: htmlToText(htmlContents),
+        });
+    }
 
     await apolloClient.mutate({
         mutation: InsertEmailsDocument,

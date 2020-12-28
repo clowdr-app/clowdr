@@ -27,6 +27,7 @@ import { router as conferencePrepareJobRouter } from "./router/conferencePrepare
 import { router as contentItemRouter } from "./router/contentItem";
 import { router as elasticTranscoderRouter } from "./router/elasticTranscoder";
 import { router as mediaConvertRouter } from "./router/mediaConvert";
+import { router as mediaLiveRouter } from "./router/mediaLive";
 import { router as openshotRouter } from "./router/openshot";
 import { router as videoRenderJobRouter } from "./router/videoRenderJob";
 import { EmailData, Payload } from "./types/event";
@@ -65,6 +66,7 @@ app.use("/openshot", openshotRouter);
 app.use("/mediaConvert", mediaConvertRouter);
 app.use("/amazonTranscribe", amazonTranscribeRouter);
 app.use("/elasticTranscoder", elasticTranscoderRouter);
+app.use("/mediaLive", mediaLiveRouter);
 
 app.use("/contentItem", contentItemRouter);
 app.use("/conferencePrepareJob", conferencePrepareJobRouter);

@@ -19,6 +19,10 @@ assert(process.env.AWS_SECRET_ACCESS_KEY, "Missing AWS_SECRET_ACCESS_KEY environ
 
 assert(process.env.AWS_REGION, "Missing AWS_REGION environment variable");
 assert(process.env.AWS_MEDIALIVE_SERVICE_ROLE_ARN, "Missing AWS_MEDIALIVE_SERVICE_ROLE_ARN environment variable");
+assert(
+    process.env.AWS_MEDIALIVE_NOTIFICATIONS_TOPIC_ARN,
+    "Missing AWS_MEDIALIVE_NOTIFICATIONS_TOPIC_ARN environment variable"
+);
 assert(process.env.AWS_MEDIACONVERT_SERVICE_ROLE_ARN, "Missing AWS_MEDIACONVERT_SERVICE_ROLE_ARN environment variable");
 assert(
     process.env.AWS_ELASTIC_TRANSCODER_SERVICE_ROLE_ARN,
@@ -176,6 +180,22 @@ async function initialiseAwsClient(): Promise<void> {
 
     if (!elasticTranscoderSubscribeResult.SubscriptionArn) {
         throw new Error("Could not subscribe to Elastic Transcoder notifications");
+    }
+
+    // Subscribe to MediaLive SNS topic
+    const mediaLiveNotificationUrl = new URL(getHostUrl());
+    mediaLiveNotificationUrl.pathname = "/mediaLive/notify";
+
+    console.log("Subscribing to SNS topic: MediaLive notifications");
+    const mediaLiveSubscribeResult = await sns.subscribe({
+        Protocol: "https",
+        TopicArn: process.env.AWS_MEDIALIVE_NOTIFICATIONS_TOPIC_ARN,
+        Endpoint: mediaLiveNotificationUrl.toString(),
+    });
+    console.log("Subscribed to SNS topic: MediaLive notifications");
+
+    if (!mediaLiveSubscribeResult.SubscriptionArn) {
+        throw new Error("Could not subscribe to MediaLive notifications");
     }
 }
 

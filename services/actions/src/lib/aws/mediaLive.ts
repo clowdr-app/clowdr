@@ -1,4 +1,39 @@
-import { FeatureActivationsInputPrepareScheduleActions } from "@aws-sdk/client-medialive";
+import {
+    AacCodingMode,
+    AacInputType,
+    AacProfile,
+    AacRateControlMode,
+    AacRawFormat,
+    AacSettings,
+    AacSpec,
+    AacVbrQuality,
+    AfdSignaling,
+    FeatureActivationsInputPrepareScheduleActions,
+    H264AdaptiveQuantization,
+    H264ColorMetadata,
+    H264EntropyEncoding,
+    H264FlickerAq,
+    H264ForceFieldPictures,
+    H264FramerateControl,
+    H264GopBReference,
+    H264GopSizeUnits,
+    H264Level,
+    H264LookAheadRateControl,
+    H264ParControl,
+    H264Profile,
+    H264RateControlMode,
+    H264ScanType,
+    H264SceneChangeDetect,
+    H264Settings,
+    H264SpatialAq,
+    H264SubGopLength,
+    H264Syntax,
+    H264TemporalAq,
+    H264TimecodeInsertionBehavior,
+    InputSourceEndBehavior,
+    VideoDescriptionRespondToAfd,
+    VideoDescriptionScalingBehavior,
+} from "@aws-sdk/client-medialive";
 import { MediaLive, shortId } from "../../aws/awsClient";
 
 export enum ChannelState {
@@ -68,23 +103,84 @@ export async function createMP4Input(roomId: string, securityGroupId: string): P
     throw new Error("Failed to create new Input");
 }
 
+export async function createLoopingMP4Input(roomId: string, securityGroupId: string): Promise<string> {
+    const input = await MediaLive.createInput({
+        Tags: { roomId },
+        Name: shortId(),
+        Type: "MP4_FILE",
+        Sources: [{ Url: `s3ssl://${process.env.AWS_CONTENT_BUCKET_ID}/$urlPath$` }],
+        InputSecurityGroups: [securityGroupId],
+    });
+    if (input.Input?.Id) {
+        return input.Input.Id;
+    }
+    throw new Error("Failed to create new Input");
+}
+
 export interface MediaLiveChannel {
     channelId: string;
     mp4InputAttachmentName: string;
+    loopingMp4InputAttachmentName: string;
     vonageInputAttachmentName: string;
 }
+
+const defaultH264Settings: Partial<H264Settings> = {
+    AfdSignaling: AfdSignaling.NONE,
+    ColorMetadata: H264ColorMetadata.INSERT,
+    AdaptiveQuantization: H264AdaptiveQuantization.MEDIUM,
+    EntropyEncoding: H264EntropyEncoding.CABAC,
+    FlickerAq: H264FlickerAq.ENABLED,
+    ForceFieldPictures: H264ForceFieldPictures.DISABLED,
+    FramerateControl: H264FramerateControl.SPECIFIED,
+    FramerateNumerator: 30,
+    FramerateDenominator: 1,
+    GopBReference: H264GopBReference.DISABLED,
+    GopClosedCadence: 1,
+    GopNumBFrames: 2,
+    GopSize: 1,
+    GopSizeUnits: H264GopSizeUnits.SECONDS,
+    SubgopLength: H264SubGopLength.FIXED,
+    ScanType: H264ScanType.PROGRESSIVE,
+    Level: H264Level.H264_LEVEL_AUTO,
+    LookAheadRateControl: H264LookAheadRateControl.MEDIUM,
+    NumRefFrames: 1,
+    ParControl: H264ParControl.SPECIFIED,
+    ParNumerator: 1,
+    ParDenominator: 1,
+    Profile: H264Profile.MAIN,
+    Syntax: H264Syntax.DEFAULT,
+    SceneChangeDetect: H264SceneChangeDetect.ENABLED,
+    SpatialAq: H264SpatialAq.ENABLED,
+    TemporalAq: H264TemporalAq.ENABLED,
+    TimecodeInsertion: H264TimecodeInsertionBehavior.DISABLED,
+};
+
+const defaultAacSettings: Partial<AacSettings> = {
+    InputType: AacInputType.NORMAL,
+    CodingMode: AacCodingMode.CODING_MODE_2_0,
+    RawFormat: AacRawFormat.NONE,
+    Spec: AacSpec.MPEG4,
+    Profile: AacProfile.LC,
+    RateControlMode: AacRateControlMode.VBR,
+    SampleRate: 48000,
+};
 
 export async function createChannel(
     roomId: string,
     vonageInputId: string,
     mp4InputId: string,
+    loopingMp4InputId: string,
     mediaPackageId: string
 ): Promise<MediaLiveChannel> {
     const destinationId = shortId();
-    const videoDescriptionName = shortId();
-    const audioDescriptionName = shortId();
+    const video1080p30 = shortId();
+    const audio1080p30 = shortId();
+    const video720p30 = shortId();
+    const video360p30 = shortId();
+    const audio360p30 = shortId();
     const vonageInputAttachmentName = `${shortId()}-vonage`;
     const mp4InputAttachmentName = `${shortId()}-mp4`;
+    const loopingMp4InputAttachmentName = `${shortId()}-looping`;
 
     const channel = await MediaLive.createChannel({
         Name: shortId(),
@@ -99,6 +195,13 @@ export async function createChannel(
                 InputAttachmentName: mp4InputAttachmentName,
                 InputId: mp4InputId,
             },
+            {
+                InputAttachmentName: loopingMp4InputAttachmentName,
+                InputId: loopingMp4InputId,
+                InputSettings: {
+                    SourceEndBehavior: InputSourceEndBehavior.LOOP,
+                },
+            },
         ],
         RoleArn: process.env.AWS_MEDIALIVE_SERVICE_ROLE_ARN,
         EncoderSettings: {
@@ -109,19 +212,25 @@ export async function createChannel(
                 {
                     CodecSettings: {
                         AacSettings: {
-                            InputType: "NORMAL",
-                            Bitrate: 192000,
-                            CodingMode: "CODING_MODE_2_0",
-                            RawFormat: "NONE",
-                            Spec: "MPEG4",
-                            Profile: "LC",
-                            RateControlMode: "CBR",
-                            SampleRate: 48000,
+                            ...defaultAacSettings,
+                            VbrQuality: AacVbrQuality.HIGH,
                         },
                     },
                     AudioTypeControl: "FOLLOW_INPUT",
                     LanguageCodeControl: "FOLLOW_INPUT",
-                    Name: audioDescriptionName,
+                    Name: audio1080p30,
+                    AudioSelectorName: undefined,
+                },
+                {
+                    CodecSettings: {
+                        AacSettings: {
+                            ...defaultAacSettings,
+                            VbrQuality: AacVbrQuality.MEDIUM_HIGH,
+                        },
+                    },
+                    AudioTypeControl: "FOLLOW_INPUT",
+                    LanguageCodeControl: "FOLLOW_INPUT",
+                    Name: audio360p30,
                     AudioSelectorName: undefined,
                 },
             ],
@@ -131,8 +240,24 @@ export async function createChannel(
                     Outputs: [
                         {
                             OutputName: "1080p30",
-                            VideoDescriptionName: videoDescriptionName,
-                            AudioDescriptionNames: [audioDescriptionName],
+                            VideoDescriptionName: video1080p30,
+                            AudioDescriptionNames: [audio1080p30],
+                            OutputSettings: {
+                                MediaPackageOutputSettings: {},
+                            },
+                        },
+                        {
+                            OutputName: "720p30",
+                            VideoDescriptionName: video720p30,
+                            AudioDescriptionNames: [audio1080p30], // intentional
+                            OutputSettings: {
+                                MediaPackageOutputSettings: {},
+                            },
+                        },
+                        {
+                            OutputName: "360p30",
+                            VideoDescriptionName: video360p30,
+                            AudioDescriptionNames: [audio360p30],
                             OutputSettings: {
                                 MediaPackageOutputSettings: {},
                             },
@@ -152,43 +277,50 @@ export async function createChannel(
                 {
                     CodecSettings: {
                         H264Settings: {
-                            AfdSignaling: "NONE",
-                            ColorMetadata: "INSERT",
-                            AdaptiveQuantization: "MEDIUM",
-                            EntropyEncoding: "CABAC",
-                            FlickerAq: "ENABLED",
-                            ForceFieldPictures: "DISABLED",
-                            FramerateControl: "SPECIFIED",
-                            FramerateNumerator: 30,
-                            FramerateDenominator: 1,
-                            GopBReference: "DISABLED",
-                            GopClosedCadence: 1,
-                            GopNumBFrames: 2,
-                            GopSize: 90,
-                            GopSizeUnits: "FRAMES",
-                            SubgopLength: "FIXED",
-                            ScanType: "PROGRESSIVE",
-                            Level: "H264_LEVEL_AUTO",
-                            LookAheadRateControl: "MEDIUM",
-                            NumRefFrames: 1,
-                            ParControl: "SPECIFIED",
-                            ParNumerator: 1,
-                            ParDenominator: 1,
-                            Profile: "MAIN",
-                            RateControlMode: "CBR",
-                            Syntax: "DEFAULT",
-                            SceneChangeDetect: "ENABLED",
-                            SpatialAq: "ENABLED",
-                            TemporalAq: "ENABLED",
-                            TimecodeInsertion: "DISABLED",
+                            ...defaultH264Settings,
+                            RateControlMode: H264RateControlMode.QVBR,
+                            MaxBitrate: 3000000,
+                            QvbrQualityLevel: 7,
                         },
                     },
                     Height: 1080,
-                    Name: videoDescriptionName,
-                    RespondToAfd: "NONE",
+                    Name: video1080p30,
+                    RespondToAfd: VideoDescriptionRespondToAfd.PASSTHROUGH,
                     Sharpness: 50,
-                    ScalingBehavior: "DEFAULT",
+                    ScalingBehavior: VideoDescriptionScalingBehavior.DEFAULT,
                     Width: 1920,
+                },
+                {
+                    CodecSettings: {
+                        H264Settings: {
+                            ...defaultH264Settings,
+                            RateControlMode: H264RateControlMode.QVBR,
+                            MaxBitrate: 3000000,
+                            QvbrQualityLevel: 6,
+                        },
+                    },
+                    Height: 720,
+                    Name: video720p30,
+                    RespondToAfd: VideoDescriptionRespondToAfd.PASSTHROUGH,
+                    Sharpness: 50,
+                    ScalingBehavior: VideoDescriptionScalingBehavior.DEFAULT,
+                    Width: 1280,
+                },
+                {
+                    CodecSettings: {
+                        H264Settings: {
+                            ...defaultH264Settings,
+                            RateControlMode: H264RateControlMode.QVBR,
+                            MaxBitrate: 2000000,
+                            QvbrQualityLevel: 6,
+                        },
+                    },
+                    Height: 360,
+                    Name: video360p30,
+                    RespondToAfd: VideoDescriptionRespondToAfd.PASSTHROUGH,
+                    Sharpness: 50,
+                    ScalingBehavior: VideoDescriptionScalingBehavior.DEFAULT,
+                    Width: 480,
                 },
             ],
         },
@@ -209,6 +341,7 @@ export async function createChannel(
         return {
             channelId: channel.Channel.Id,
             mp4InputAttachmentName,
+            loopingMp4InputAttachmentName,
             vonageInputAttachmentName,
         };
     }

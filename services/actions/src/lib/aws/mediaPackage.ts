@@ -27,7 +27,7 @@ export async function createOriginEndpoint(roomId: string, mediaPackageId: strin
             PlaylistType: "EVENT",
             PlaylistWindowSeconds: 60,
             ProgramDateTimeIntervalSeconds: 0,
-            SegmentDurationSeconds: 6,
+            SegmentDurationSeconds: 1,
             StreamSelection: {
                 MaxVideoBitsPerSecond: 2147483647,
                 MinVideoBitsPerSecond: 0,

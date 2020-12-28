@@ -96,6 +96,7 @@ Note: `AWS_` values come from the outputs of your AWS deployment. See [`aws/READ
 | AWS_ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN | The IAM role to be passed to Elastic Transcoder                                                                     | Yes      |
 | AWS_ELASTIC_TRANSCODER_SERVICE_ROLE_ARN        | The ARN of the SNS topic for Elastic Transcoder notifications                                                       | Yes      |
 | AWS_MEDIALIVE_INPUT_SECURITY_GROUP_ID          | The ID of the security group to be used for MediaLive RTMP Push inputs                                              | Yes      |
+| AWS_MEDIALIVE_NOTIFICATIONS_TOPIC_ARN          | The ARN of the SNS topic for MediaLive notifications                                                                | Yes      |
 | AWS_MEDIALIVE_SERVICE_ROLE_ARN                 | The IAM role to be passed to MediaLive                                                                              | Yes      |
 | AWS_MEDIACONVERT_SERVICE_ROLE_ARN              | The IAM role to be passed to MediaConvert                                                                           | Yes      |
 | AWS_TRANSCRIBE_SERVICE_ROLE_ARN                | The IAM role to be passed to Transcribe                                                                             | Yes      |

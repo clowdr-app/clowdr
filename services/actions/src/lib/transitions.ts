@@ -113,7 +113,7 @@ export async function createTransitionsForRoom(conferenceId: string, roomId: str
                             event.id,
                             roomId,
                             conferenceId,
-                            new Date(startTimeMillis - 5000)
+                            new Date(startTimeMillis - 10000)
                         );
                     } else {
                         console.warn("No titles found for event", event.id, event.contentGroup?.id);

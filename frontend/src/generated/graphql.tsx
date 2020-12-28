@@ -380,8 +380,8 @@ export type BroadcastContentItem = {
   readonly conference: Conference;
   readonly conferenceId: Scalars['uuid'];
   /** An object relationship */
-  readonly contentItem: ContentItem;
-  readonly contentItemId: Scalars['uuid'];
+  readonly contentItem?: Maybe<ContentItem>;
+  readonly contentItemId?: Maybe<Scalars['uuid']>;
   readonly createdAt: Scalars['timestamptz'];
   /** An array relationship */
   readonly executedTransitions: ReadonlyArray<ExecutedTransitions>;
@@ -396,6 +396,9 @@ export type BroadcastContentItem = {
   /** An object relationship */
   readonly inputType: InputType;
   readonly inputTypeName: InputType_Enum;
+  /** An object relationship */
+  readonly room?: Maybe<Room>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
   /** An array relationship */
   readonly transitions: ReadonlyArray<Transitions>;
   /** An aggregated array relationship */
@@ -525,6 +528,8 @@ export type BroadcastContentItem_Bool_Exp = {
   readonly input?: Maybe<Jsonb_Comparison_Exp>;
   readonly inputType?: Maybe<InputType_Bool_Exp>;
   readonly inputTypeName?: Maybe<InputType_Enum_Comparison_Exp>;
+  readonly room?: Maybe<Room_Bool_Exp>;
+  readonly roomId?: Maybe<Uuid_Comparison_Exp>;
   readonly transitions?: Maybe<Transitions_Bool_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
 };
@@ -534,7 +539,9 @@ export enum BroadcastContentItem_Constraint {
   /** unique or primary key constraint */
   BroadcastContentItemContentItemIdKey = 'BroadcastContentItem_contentItemId_key',
   /** unique or primary key constraint */
-  BroadcastContentItemPkey = 'BroadcastContentItem_pkey'
+  BroadcastContentItemPkey = 'BroadcastContentItem_pkey',
+  /** unique or primary key constraint */
+  BroadcastContentItemRoomIdKey = 'BroadcastContentItem_roomId_key'
 }
 
 /** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
@@ -565,6 +572,8 @@ export type BroadcastContentItem_Insert_Input = {
   readonly input?: Maybe<Scalars['jsonb']>;
   readonly inputType?: Maybe<InputType_Obj_Rel_Insert_Input>;
   readonly inputTypeName?: Maybe<InputType_Enum>;
+  readonly room?: Maybe<Room_Obj_Rel_Insert_Input>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
   readonly transitions?: Maybe<Transitions_Arr_Rel_Insert_Input>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
@@ -576,6 +585,7 @@ export type BroadcastContentItem_Max_Fields = {
   readonly contentItemId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -585,6 +595,7 @@ export type BroadcastContentItem_Max_Order_By = {
   readonly contentItemId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
+  readonly roomId?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
 
@@ -595,6 +606,7 @@ export type BroadcastContentItem_Min_Fields = {
   readonly contentItemId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -604,6 +616,7 @@ export type BroadcastContentItem_Min_Order_By = {
   readonly contentItemId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
+  readonly roomId?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
 
@@ -642,6 +655,8 @@ export type BroadcastContentItem_Order_By = {
   readonly input?: Maybe<Order_By>;
   readonly inputType?: Maybe<InputType_Order_By>;
   readonly inputTypeName?: Maybe<Order_By>;
+  readonly room?: Maybe<Room_Order_By>;
+  readonly roomId?: Maybe<Order_By>;
   readonly transitions_aggregate?: Maybe<Transitions_Aggregate_Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
@@ -671,6 +686,8 @@ export enum BroadcastContentItem_Select_Column {
   /** column name */
   InputTypeName = 'inputTypeName',
   /** column name */
+  RoomId = 'roomId',
+  /** column name */
   UpdatedAt = 'updatedAt'
 }
 
@@ -682,6 +699,7 @@ export type BroadcastContentItem_Set_Input = {
   readonly id?: Maybe<Scalars['uuid']>;
   readonly input?: Maybe<Scalars['jsonb']>;
   readonly inputTypeName?: Maybe<InputType_Enum>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -699,6 +717,8 @@ export enum BroadcastContentItem_Update_Column {
   Input = 'input',
   /** column name */
   InputTypeName = 'inputTypeName',
+  /** column name */
+  RoomId = 'roomId',
   /** column name */
   UpdatedAt = 'updatedAt'
 }
@@ -9519,7 +9539,9 @@ export enum InputType_Enum {
   /** PNG image. */
   Png = 'PNG',
   /** RTMP stream in push mode. */
-  RtmpPush = 'RTMP_PUSH'
+  RtmpPush = 'RTMP_PUSH',
+  /** RTMP push from a Vonage Video API session. */
+  VonageSession = 'VONAGE_SESSION'
 }
 
 /** expression to compare columns of type InputType_enum. All fields are combined with logical 'AND'. */
@@ -10079,6 +10101,293 @@ export enum JobStatus_Update_Column {
   Description = 'description',
   /** column name */
   Name = 'name'
+}
+
+/** columns and relationships of "MediaLiveChannel" */
+export type MediaLiveChannel = {
+  readonly __typename?: 'MediaLiveChannel';
+  readonly cloudFrontDistributionId: Scalars['String'];
+  readonly cloudFrontDomain: Scalars['String'];
+  readonly createdAt: Scalars['timestamptz'];
+  readonly endpointUri: Scalars['String'];
+  readonly id: Scalars['uuid'];
+  readonly mediaLiveChannelId: Scalars['String'];
+  readonly mediaPackageChannelId: Scalars['String'];
+  readonly mp4InputAttachmentName: Scalars['String'];
+  readonly mp4InputId: Scalars['String'];
+  readonly rtmpInputId: Scalars['String'];
+  readonly rtmpInputUri: Scalars['String'];
+  readonly updatedAt: Scalars['timestamptz'];
+  readonly vonageInputAttachmentName: Scalars['String'];
+};
+
+/** aggregated selection of "MediaLiveChannel" */
+export type MediaLiveChannel_Aggregate = {
+  readonly __typename?: 'MediaLiveChannel_aggregate';
+  readonly aggregate?: Maybe<MediaLiveChannel_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<MediaLiveChannel>;
+};
+
+/** aggregate fields of "MediaLiveChannel" */
+export type MediaLiveChannel_Aggregate_Fields = {
+  readonly __typename?: 'MediaLiveChannel_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<MediaLiveChannel_Max_Fields>;
+  readonly min?: Maybe<MediaLiveChannel_Min_Fields>;
+};
+
+
+/** aggregate fields of "MediaLiveChannel" */
+export type MediaLiveChannel_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<MediaLiveChannel_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "MediaLiveChannel" */
+export type MediaLiveChannel_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<MediaLiveChannel_Max_Order_By>;
+  readonly min?: Maybe<MediaLiveChannel_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "MediaLiveChannel" */
+export type MediaLiveChannel_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<MediaLiveChannel_Insert_Input>;
+  readonly on_conflict?: Maybe<MediaLiveChannel_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "MediaLiveChannel". All fields are combined with a logical 'AND'. */
+export type MediaLiveChannel_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<MediaLiveChannel_Bool_Exp>>>;
+  readonly _not?: Maybe<MediaLiveChannel_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<MediaLiveChannel_Bool_Exp>>>;
+  readonly cloudFrontDistributionId?: Maybe<String_Comparison_Exp>;
+  readonly cloudFrontDomain?: Maybe<String_Comparison_Exp>;
+  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly endpointUri?: Maybe<String_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly mediaLiveChannelId?: Maybe<String_Comparison_Exp>;
+  readonly mediaPackageChannelId?: Maybe<String_Comparison_Exp>;
+  readonly mp4InputAttachmentName?: Maybe<String_Comparison_Exp>;
+  readonly mp4InputId?: Maybe<String_Comparison_Exp>;
+  readonly rtmpInputId?: Maybe<String_Comparison_Exp>;
+  readonly rtmpInputUri?: Maybe<String_Comparison_Exp>;
+  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly vonageInputAttachmentName?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "MediaLiveChannel" */
+export enum MediaLiveChannel_Constraint {
+  /** unique or primary key constraint */
+  MediaLiveChannelPkey = 'MediaLiveChannel_pkey'
+}
+
+/** input type for inserting data into table "MediaLiveChannel" */
+export type MediaLiveChannel_Insert_Input = {
+  readonly cloudFrontDistributionId?: Maybe<Scalars['String']>;
+  readonly cloudFrontDomain?: Maybe<Scalars['String']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly endpointUri?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly mediaLiveChannelId?: Maybe<Scalars['String']>;
+  readonly mediaPackageChannelId?: Maybe<Scalars['String']>;
+  readonly mp4InputAttachmentName?: Maybe<Scalars['String']>;
+  readonly mp4InputId?: Maybe<Scalars['String']>;
+  readonly rtmpInputId?: Maybe<Scalars['String']>;
+  readonly rtmpInputUri?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly vonageInputAttachmentName?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type MediaLiveChannel_Max_Fields = {
+  readonly __typename?: 'MediaLiveChannel_max_fields';
+  readonly cloudFrontDistributionId?: Maybe<Scalars['String']>;
+  readonly cloudFrontDomain?: Maybe<Scalars['String']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly endpointUri?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly mediaLiveChannelId?: Maybe<Scalars['String']>;
+  readonly mediaPackageChannelId?: Maybe<Scalars['String']>;
+  readonly mp4InputAttachmentName?: Maybe<Scalars['String']>;
+  readonly mp4InputId?: Maybe<Scalars['String']>;
+  readonly rtmpInputId?: Maybe<Scalars['String']>;
+  readonly rtmpInputUri?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly vonageInputAttachmentName?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "MediaLiveChannel" */
+export type MediaLiveChannel_Max_Order_By = {
+  readonly cloudFrontDistributionId?: Maybe<Order_By>;
+  readonly cloudFrontDomain?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly endpointUri?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly mediaLiveChannelId?: Maybe<Order_By>;
+  readonly mediaPackageChannelId?: Maybe<Order_By>;
+  readonly mp4InputAttachmentName?: Maybe<Order_By>;
+  readonly mp4InputId?: Maybe<Order_By>;
+  readonly rtmpInputId?: Maybe<Order_By>;
+  readonly rtmpInputUri?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly vonageInputAttachmentName?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type MediaLiveChannel_Min_Fields = {
+  readonly __typename?: 'MediaLiveChannel_min_fields';
+  readonly cloudFrontDistributionId?: Maybe<Scalars['String']>;
+  readonly cloudFrontDomain?: Maybe<Scalars['String']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly endpointUri?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly mediaLiveChannelId?: Maybe<Scalars['String']>;
+  readonly mediaPackageChannelId?: Maybe<Scalars['String']>;
+  readonly mp4InputAttachmentName?: Maybe<Scalars['String']>;
+  readonly mp4InputId?: Maybe<Scalars['String']>;
+  readonly rtmpInputId?: Maybe<Scalars['String']>;
+  readonly rtmpInputUri?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly vonageInputAttachmentName?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "MediaLiveChannel" */
+export type MediaLiveChannel_Min_Order_By = {
+  readonly cloudFrontDistributionId?: Maybe<Order_By>;
+  readonly cloudFrontDomain?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly endpointUri?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly mediaLiveChannelId?: Maybe<Order_By>;
+  readonly mediaPackageChannelId?: Maybe<Order_By>;
+  readonly mp4InputAttachmentName?: Maybe<Order_By>;
+  readonly mp4InputId?: Maybe<Order_By>;
+  readonly rtmpInputId?: Maybe<Order_By>;
+  readonly rtmpInputUri?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly vonageInputAttachmentName?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "MediaLiveChannel" */
+export type MediaLiveChannel_Mutation_Response = {
+  readonly __typename?: 'MediaLiveChannel_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<MediaLiveChannel>;
+};
+
+/** input type for inserting object relation for remote table "MediaLiveChannel" */
+export type MediaLiveChannel_Obj_Rel_Insert_Input = {
+  readonly data: MediaLiveChannel_Insert_Input;
+  readonly on_conflict?: Maybe<MediaLiveChannel_On_Conflict>;
+};
+
+/** on conflict condition type for table "MediaLiveChannel" */
+export type MediaLiveChannel_On_Conflict = {
+  readonly constraint: MediaLiveChannel_Constraint;
+  readonly update_columns: ReadonlyArray<MediaLiveChannel_Update_Column>;
+  readonly where?: Maybe<MediaLiveChannel_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "MediaLiveChannel" */
+export type MediaLiveChannel_Order_By = {
+  readonly cloudFrontDistributionId?: Maybe<Order_By>;
+  readonly cloudFrontDomain?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly endpointUri?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly mediaLiveChannelId?: Maybe<Order_By>;
+  readonly mediaPackageChannelId?: Maybe<Order_By>;
+  readonly mp4InputAttachmentName?: Maybe<Order_By>;
+  readonly mp4InputId?: Maybe<Order_By>;
+  readonly rtmpInputId?: Maybe<Order_By>;
+  readonly rtmpInputUri?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly vonageInputAttachmentName?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "MediaLiveChannel" */
+export type MediaLiveChannel_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "MediaLiveChannel" */
+export enum MediaLiveChannel_Select_Column {
+  /** column name */
+  CloudFrontDistributionId = 'cloudFrontDistributionId',
+  /** column name */
+  CloudFrontDomain = 'cloudFrontDomain',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  EndpointUri = 'endpointUri',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  MediaLiveChannelId = 'mediaLiveChannelId',
+  /** column name */
+  MediaPackageChannelId = 'mediaPackageChannelId',
+  /** column name */
+  Mp4InputAttachmentName = 'mp4InputAttachmentName',
+  /** column name */
+  Mp4InputId = 'mp4InputId',
+  /** column name */
+  RtmpInputId = 'rtmpInputId',
+  /** column name */
+  RtmpInputUri = 'rtmpInputUri',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  VonageInputAttachmentName = 'vonageInputAttachmentName'
+}
+
+/** input type for updating data in table "MediaLiveChannel" */
+export type MediaLiveChannel_Set_Input = {
+  readonly cloudFrontDistributionId?: Maybe<Scalars['String']>;
+  readonly cloudFrontDomain?: Maybe<Scalars['String']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly endpointUri?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly mediaLiveChannelId?: Maybe<Scalars['String']>;
+  readonly mediaPackageChannelId?: Maybe<Scalars['String']>;
+  readonly mp4InputAttachmentName?: Maybe<Scalars['String']>;
+  readonly mp4InputId?: Maybe<Scalars['String']>;
+  readonly rtmpInputId?: Maybe<Scalars['String']>;
+  readonly rtmpInputUri?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly vonageInputAttachmentName?: Maybe<Scalars['String']>;
+};
+
+/** update columns of table "MediaLiveChannel" */
+export enum MediaLiveChannel_Update_Column {
+  /** column name */
+  CloudFrontDistributionId = 'cloudFrontDistributionId',
+  /** column name */
+  CloudFrontDomain = 'cloudFrontDomain',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  EndpointUri = 'endpointUri',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  MediaLiveChannelId = 'mediaLiveChannelId',
+  /** column name */
+  MediaPackageChannelId = 'mediaPackageChannelId',
+  /** column name */
+  Mp4InputAttachmentName = 'mp4InputAttachmentName',
+  /** column name */
+  Mp4InputId = 'mp4InputId',
+  /** column name */
+  RtmpInputId = 'rtmpInputId',
+  /** column name */
+  RtmpInputUri = 'rtmpInputUri',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  VonageInputAttachmentName = 'vonageInputAttachmentName'
 }
 
 /** columns and relationships of "OnlineStatus" */
@@ -10825,7 +11134,7 @@ export enum Permission_Enum {
   ConferenceModerateAttendees = 'CONFERENCE_MODERATE_ATTENDEES',
   /** View the conference. */
   ConferenceView = 'CONFERENCE_VIEW',
-  /** View conference attendees. */
+  /** View conference active attendees. */
   ConferenceViewAttendees = 'CONFERENCE_VIEW_ATTENDEES'
 }
 
@@ -11955,6 +12264,8 @@ export enum Role_Update_Column {
 /** columns and relationships of "Room" */
 export type Room = {
   readonly __typename?: 'Room';
+  /** An object relationship */
+  readonly broadcastContentItem?: Maybe<BroadcastContentItem>;
   readonly capacity?: Maybe<Scalars['Int']>;
   /** An object relationship */
   readonly conference: Conference;
@@ -11972,6 +12283,9 @@ export type Room = {
   /** An aggregated array relationship */
   readonly executedTransitions_aggregate: ExecutedTransitions_Aggregate;
   readonly id: Scalars['uuid'];
+  /** An object relationship */
+  readonly mediaLiveChannel?: Maybe<MediaLiveChannel>;
+  readonly mediaLiveChannelId?: Maybe<Scalars['uuid']>;
   readonly name: Scalars['String'];
   /** An object relationship */
   readonly originatingData?: Maybe<OriginatingData>;
@@ -11980,6 +12294,8 @@ export type Room = {
   readonly participants: ReadonlyArray<RoomParticipant>;
   /** An aggregated array relationship */
   readonly participants_aggregate: RoomParticipant_Aggregate;
+  readonly presenterVonageSessionId?: Maybe<Scalars['String']>;
+  readonly publicVonageSessionId?: Maybe<Scalars['String']>;
   /** An array relationship */
   readonly transitions: ReadonlyArray<Transitions>;
   /** An aggregated array relationship */
@@ -12565,6 +12881,7 @@ export type Room_Bool_Exp = {
   readonly _and?: Maybe<ReadonlyArray<Maybe<Room_Bool_Exp>>>;
   readonly _not?: Maybe<Room_Bool_Exp>;
   readonly _or?: Maybe<ReadonlyArray<Maybe<Room_Bool_Exp>>>;
+  readonly broadcastContentItem?: Maybe<BroadcastContentItem_Bool_Exp>;
   readonly capacity?: Maybe<Int_Comparison_Exp>;
   readonly conference?: Maybe<Conference_Bool_Exp>;
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
@@ -12574,10 +12891,14 @@ export type Room_Bool_Exp = {
   readonly events?: Maybe<Event_Bool_Exp>;
   readonly executedTransitions?: Maybe<ExecutedTransitions_Bool_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly mediaLiveChannel?: Maybe<MediaLiveChannel_Bool_Exp>;
+  readonly mediaLiveChannelId?: Maybe<Uuid_Comparison_Exp>;
   readonly name?: Maybe<String_Comparison_Exp>;
   readonly originatingData?: Maybe<OriginatingData_Bool_Exp>;
   readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
   readonly participants?: Maybe<RoomParticipant_Bool_Exp>;
+  readonly presenterVonageSessionId?: Maybe<String_Comparison_Exp>;
+  readonly publicVonageSessionId?: Maybe<String_Comparison_Exp>;
   readonly transitions?: Maybe<Transitions_Bool_Exp>;
   readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
 };
@@ -12586,6 +12907,8 @@ export type Room_Bool_Exp = {
 export enum Room_Constraint {
   /** unique or primary key constraint */
   RoomConferenceIdNameKey = 'Room_conferenceId_name_key',
+  /** unique or primary key constraint */
+  RoomMediaLiveChannelIdKey = 'Room_mediaLiveChannelId_key',
   /** unique or primary key constraint */
   RoomPkey = 'Room_pkey'
 }
@@ -12597,6 +12920,7 @@ export type Room_Inc_Input = {
 
 /** input type for inserting data into table "Room" */
 export type Room_Insert_Input = {
+  readonly broadcastContentItem?: Maybe<BroadcastContentItem_Obj_Rel_Insert_Input>;
   readonly capacity?: Maybe<Scalars['Int']>;
   readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
@@ -12606,10 +12930,14 @@ export type Room_Insert_Input = {
   readonly events?: Maybe<Event_Arr_Rel_Insert_Input>;
   readonly executedTransitions?: Maybe<ExecutedTransitions_Arr_Rel_Insert_Input>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly mediaLiveChannel?: Maybe<MediaLiveChannel_Obj_Rel_Insert_Input>;
+  readonly mediaLiveChannelId?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingData?: Maybe<OriginatingData_Obj_Rel_Insert_Input>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
   readonly participants?: Maybe<RoomParticipant_Arr_Rel_Insert_Input>;
+  readonly presenterVonageSessionId?: Maybe<Scalars['String']>;
+  readonly publicVonageSessionId?: Maybe<Scalars['String']>;
   readonly transitions?: Maybe<Transitions_Arr_Rel_Insert_Input>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -12621,8 +12949,11 @@ export type Room_Max_Fields = {
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly mediaLiveChannelId?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly presenterVonageSessionId?: Maybe<Scalars['String']>;
+  readonly publicVonageSessionId?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -12632,8 +12963,11 @@ export type Room_Max_Order_By = {
   readonly conferenceId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
+  readonly mediaLiveChannelId?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
+  readonly presenterVonageSessionId?: Maybe<Order_By>;
+  readonly publicVonageSessionId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
 
@@ -12644,8 +12978,11 @@ export type Room_Min_Fields = {
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly mediaLiveChannelId?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly presenterVonageSessionId?: Maybe<Scalars['String']>;
+  readonly publicVonageSessionId?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -12655,8 +12992,11 @@ export type Room_Min_Order_By = {
   readonly conferenceId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
+  readonly mediaLiveChannelId?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
+  readonly presenterVonageSessionId?: Maybe<Order_By>;
+  readonly publicVonageSessionId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
 
@@ -12684,6 +13024,7 @@ export type Room_On_Conflict = {
 
 /** ordering options when selecting data from "Room" */
 export type Room_Order_By = {
+  readonly broadcastContentItem?: Maybe<BroadcastContentItem_Order_By>;
   readonly capacity?: Maybe<Order_By>;
   readonly conference?: Maybe<Conference_Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
@@ -12693,10 +13034,14 @@ export type Room_Order_By = {
   readonly events_aggregate?: Maybe<Event_Aggregate_Order_By>;
   readonly executedTransitions_aggregate?: Maybe<ExecutedTransitions_Aggregate_Order_By>;
   readonly id?: Maybe<Order_By>;
+  readonly mediaLiveChannel?: Maybe<MediaLiveChannel_Order_By>;
+  readonly mediaLiveChannelId?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly originatingData?: Maybe<OriginatingData_Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
   readonly participants_aggregate?: Maybe<RoomParticipant_Aggregate_Order_By>;
+  readonly presenterVonageSessionId?: Maybe<Order_By>;
+  readonly publicVonageSessionId?: Maybe<Order_By>;
   readonly transitions_aggregate?: Maybe<Transitions_Aggregate_Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
@@ -12719,9 +13064,15 @@ export enum Room_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
+  MediaLiveChannelId = 'mediaLiveChannelId',
+  /** column name */
   Name = 'name',
   /** column name */
   OriginatingDataId = 'originatingDataId',
+  /** column name */
+  PresenterVonageSessionId = 'presenterVonageSessionId',
+  /** column name */
+  PublicVonageSessionId = 'publicVonageSessionId',
   /** column name */
   UpdatedAt = 'updated_at'
 }
@@ -12733,8 +13084,11 @@ export type Room_Set_Input = {
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly currentModeName?: Maybe<RoomMode_Enum>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly mediaLiveChannelId?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly presenterVonageSessionId?: Maybe<Scalars['String']>;
+  readonly publicVonageSessionId?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -12795,9 +13149,15 @@ export enum Room_Update_Column {
   /** column name */
   Id = 'id',
   /** column name */
+  MediaLiveChannelId = 'mediaLiveChannelId',
+  /** column name */
   Name = 'name',
   /** column name */
   OriginatingDataId = 'originatingDataId',
+  /** column name */
+  PresenterVonageSessionId = 'presenterVonageSessionId',
+  /** column name */
+  PublicVonageSessionId = 'publicVonageSessionId',
   /** column name */
   UpdatedAt = 'updated_at'
 }
@@ -15080,6 +15440,10 @@ export type Mutation_Root = {
   readonly delete_JobStatus?: Maybe<JobStatus_Mutation_Response>;
   /** delete single row from the table: "JobStatus" */
   readonly delete_JobStatus_by_pk?: Maybe<JobStatus>;
+  /** delete data from the table: "MediaLiveChannel" */
+  readonly delete_MediaLiveChannel?: Maybe<MediaLiveChannel_Mutation_Response>;
+  /** delete single row from the table: "MediaLiveChannel" */
+  readonly delete_MediaLiveChannel_by_pk?: Maybe<MediaLiveChannel>;
   /** delete data from the table: "OnlineStatus" */
   readonly delete_OnlineStatus?: Maybe<OnlineStatus_Mutation_Response>;
   /** delete single row from the table: "OnlineStatus" */
@@ -15292,6 +15656,10 @@ export type Mutation_Root = {
   readonly insert_JobStatus?: Maybe<JobStatus_Mutation_Response>;
   /** insert a single row into the table: "JobStatus" */
   readonly insert_JobStatus_one?: Maybe<JobStatus>;
+  /** insert data into the table: "MediaLiveChannel" */
+  readonly insert_MediaLiveChannel?: Maybe<MediaLiveChannel_Mutation_Response>;
+  /** insert a single row into the table: "MediaLiveChannel" */
+  readonly insert_MediaLiveChannel_one?: Maybe<MediaLiveChannel>;
   /** insert data into the table: "OnlineStatus" */
   readonly insert_OnlineStatus?: Maybe<OnlineStatus_Mutation_Response>;
   /** insert a single row into the table: "OnlineStatus" */
@@ -15520,6 +15888,10 @@ export type Mutation_Root = {
   readonly update_JobStatus?: Maybe<JobStatus_Mutation_Response>;
   /** update single row of the table: "JobStatus" */
   readonly update_JobStatus_by_pk?: Maybe<JobStatus>;
+  /** update data of the table: "MediaLiveChannel" */
+  readonly update_MediaLiveChannel?: Maybe<MediaLiveChannel_Mutation_Response>;
+  /** update single row of the table: "MediaLiveChannel" */
+  readonly update_MediaLiveChannel_by_pk?: Maybe<MediaLiveChannel>;
   /** update data of the table: "OnlineStatus" */
   readonly update_OnlineStatus?: Maybe<OnlineStatus_Mutation_Response>;
   /** update single row of the table: "OnlineStatus" */
@@ -16030,6 +16402,18 @@ export type Mutation_RootDelete_JobStatusArgs = {
 /** mutation root */
 export type Mutation_RootDelete_JobStatus_By_PkArgs = {
   name: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_MediaLiveChannelArgs = {
+  where: MediaLiveChannel_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_MediaLiveChannel_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -16740,6 +17124,20 @@ export type Mutation_RootInsert_JobStatusArgs = {
 export type Mutation_RootInsert_JobStatus_OneArgs = {
   object: JobStatus_Insert_Input;
   on_conflict?: Maybe<JobStatus_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_MediaLiveChannelArgs = {
+  objects: ReadonlyArray<MediaLiveChannel_Insert_Input>;
+  on_conflict?: Maybe<MediaLiveChannel_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_MediaLiveChannel_OneArgs = {
+  object: MediaLiveChannel_Insert_Input;
+  on_conflict?: Maybe<MediaLiveChannel_On_Conflict>;
 };
 
 
@@ -17611,6 +18009,20 @@ export type Mutation_RootUpdate_JobStatus_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_MediaLiveChannelArgs = {
+  _set?: Maybe<MediaLiveChannel_Set_Input>;
+  where: MediaLiveChannel_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_MediaLiveChannel_By_PkArgs = {
+  _set?: Maybe<MediaLiveChannel_Set_Input>;
+  pk_columns: MediaLiveChannel_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_OnlineStatusArgs = {
   _set?: Maybe<OnlineStatus_Set_Input>;
   where: OnlineStatus_Bool_Exp;
@@ -18106,6 +18518,12 @@ export type Query_Root = {
   readonly JobStatus_aggregate: JobStatus_Aggregate;
   /** fetch data from the table: "JobStatus" using primary key columns */
   readonly JobStatus_by_pk?: Maybe<JobStatus>;
+  /** fetch data from the table: "MediaLiveChannel" */
+  readonly MediaLiveChannel: ReadonlyArray<MediaLiveChannel>;
+  /** fetch aggregated fields from the table: "MediaLiveChannel" */
+  readonly MediaLiveChannel_aggregate: MediaLiveChannel_Aggregate;
+  /** fetch data from the table: "MediaLiveChannel" using primary key columns */
+  readonly MediaLiveChannel_by_pk?: Maybe<MediaLiveChannel>;
   /** fetch data from the table: "OnlineStatus" */
   readonly OnlineStatus: ReadonlyArray<OnlineStatus>;
   /** fetch aggregated fields from the table: "OnlineStatus" */
@@ -19176,6 +19594,32 @@ export type Query_RootJobStatus_By_PkArgs = {
 
 
 /** query root */
+export type Query_RootMediaLiveChannelArgs = {
+  distinct_on?: Maybe<ReadonlyArray<MediaLiveChannel_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<MediaLiveChannel_Order_By>>;
+  where?: Maybe<MediaLiveChannel_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootMediaLiveChannel_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<MediaLiveChannel_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<MediaLiveChannel_Order_By>>;
+  where?: Maybe<MediaLiveChannel_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootMediaLiveChannel_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
 export type Query_RootOnlineStatusArgs = {
   distinct_on?: Maybe<ReadonlyArray<OnlineStatus_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -19839,6 +20283,12 @@ export type Subscription_Root = {
   readonly JobStatus_aggregate: JobStatus_Aggregate;
   /** fetch data from the table: "JobStatus" using primary key columns */
   readonly JobStatus_by_pk?: Maybe<JobStatus>;
+  /** fetch data from the table: "MediaLiveChannel" */
+  readonly MediaLiveChannel: ReadonlyArray<MediaLiveChannel>;
+  /** fetch aggregated fields from the table: "MediaLiveChannel" */
+  readonly MediaLiveChannel_aggregate: MediaLiveChannel_Aggregate;
+  /** fetch data from the table: "MediaLiveChannel" using primary key columns */
+  readonly MediaLiveChannel_by_pk?: Maybe<MediaLiveChannel>;
   /** fetch data from the table: "OnlineStatus" */
   readonly OnlineStatus: ReadonlyArray<OnlineStatus>;
   /** fetch aggregated fields from the table: "OnlineStatus" */
@@ -20905,6 +21355,32 @@ export type Subscription_RootJobStatus_AggregateArgs = {
 /** subscription root */
 export type Subscription_RootJobStatus_By_PkArgs = {
   name: Scalars['String'];
+};
+
+
+/** subscription root */
+export type Subscription_RootMediaLiveChannelArgs = {
+  distinct_on?: Maybe<ReadonlyArray<MediaLiveChannel_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<MediaLiveChannel_Order_By>>;
+  where?: Maybe<MediaLiveChannel_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootMediaLiveChannel_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<MediaLiveChannel_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<MediaLiveChannel_Order_By>>;
+  where?: Maybe<MediaLiveChannel_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootMediaLiveChannel_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 

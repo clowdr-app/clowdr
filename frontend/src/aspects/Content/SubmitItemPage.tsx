@@ -238,8 +238,11 @@ export default function SubmitItemPage({
                                                         </ListItem>
                                                     ) : (
                                                         <></>
-                                                        )}
-                                                    <ListItem>This video will be live streamed during the conference just prior to your Q&amp;A session.</ListItem>
+                                                    )}
+                                                    <ListItem>
+                                                        This video will be live streamed during the conference just
+                                                        prior to your Q&amp;A session.
+                                                    </ListItem>
                                                     <ListItem>Maximum 5 minute video duration</ListItem>
                                                     <ListItem>Maximum 1080p video quality</ListItem>
                                                 </UnorderedList>
@@ -255,8 +258,11 @@ export default function SubmitItemPage({
                                                         </ListItem>
                                                     ) : (
                                                         <></>
-                                                        )}
-                                                    <ListItem>This video will be made publicly available around the 11th of January.</ListItem>
+                                                    )}
+                                                    <ListItem>
+                                                        This video will be made publicly available around the 11th of
+                                                        January.
+                                                    </ListItem>
                                                     <ListItem>Maximum 30 minute video duration</ListItem>
                                                     <ListItem>Maximum 1080p video quality</ListItem>
                                                 </UnorderedList>

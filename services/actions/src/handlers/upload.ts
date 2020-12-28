@@ -716,7 +716,9 @@ export async function uploadSendSubmissionRequestsHandler(
                 htmlContents,
                 plainTextContents,
                 reason: "upload-request",
-                subject: `#${uploader.requiredContentItem.contentTypeName === "VIDEO_BROADCAST" ? "1" : "2"} of 2, Clowdr submission request: ${contentTypeFriendlyName}`,
+                subject: `#${
+                    uploader.requiredContentItem.contentTypeName === "VIDEO_BROADCAST" ? "1" : "2"
+                } of 2, Clowdr submission request: ${contentTypeFriendlyName}`,
             };
         });
 

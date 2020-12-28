@@ -11,13 +11,15 @@ export default function UploadedContentItem({
     loading,
     error,
     data,
-    refetch
+    refetch,
 }: {
     magicToken: string;
     loading: boolean;
     error: boolean;
     data: GetContentItemQuery | undefined;
-    refetch: (variables?: Partial<Exact<{ magicToken: string; }>> | undefined) => Promise<ApolloQueryResult<GetContentItemQuery>>;
+    refetch: (
+        variables?: Partial<Exact<{ magicToken: string }>> | undefined
+    ) => Promise<ApolloQueryResult<GetContentItemQuery>>;
 }): JSX.Element {
     const [disableRefresh, setDisableRefresh] = useState<boolean>(false);
     useEffect(() => {

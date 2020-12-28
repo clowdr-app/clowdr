@@ -11118,6 +11118,8 @@ export type RequiredContentItem = {
   /** An object relationship */
   readonly contentGroup: ContentGroup;
   readonly contentGroupId: Scalars['uuid'];
+  /** A computed field, executes function "requireditem_content_group_title" */
+  readonly contentGroupTitle?: Maybe<Scalars['String']>;
   /** An object relationship */
   readonly contentItem?: Maybe<ContentItem>;
   /** An object relationship */
@@ -21916,7 +21918,7 @@ export type SelectRequiredItemQuery = { readonly __typename?: 'query_root', read
     & RequiredItemFieldsFragment
   )> };
 
-export type RequiredItemFieldsFragment = { readonly __typename?: 'RequiredContentItem', readonly id: any, readonly contentTypeName: ContentType_Enum, readonly name: string, readonly uploadsRemaining?: Maybe<number>, readonly conference: { readonly __typename?: 'Conference', readonly id: any, readonly name: string } };
+export type RequiredItemFieldsFragment = { readonly __typename?: 'RequiredContentItem', readonly id: any, readonly contentTypeName: ContentType_Enum, readonly name: string, readonly uploadsRemaining?: Maybe<number>, readonly contentGroupTitle?: Maybe<string>, readonly conference: { readonly __typename?: 'Conference', readonly id: any, readonly name: string } };
 
 export type SubmitContentItemMutationVariables = Exact<{
   contentItemData: Scalars['jsonb'];
@@ -22202,6 +22204,7 @@ export const RequiredItemFieldsFragmentDoc = gql`
     id
     name
   }
+  contentGroupTitle
 }
     `;
 export const AttendeeFieldsFragmentDoc = gql`

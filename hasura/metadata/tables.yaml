@@ -2979,6 +2979,13 @@
         table:
           schema: public
           name: Uploader
+  computed_fields:
+  - name: contentGroupTitle
+    definition:
+      function:
+        schema: public
+        name: requireditem_content_group_title
+    comment: ""
   insert_permissions:
   - role: user
     permission:
@@ -3022,6 +3029,8 @@
       - originatingDataId
       - updated_at
       - uploadsRemaining
+      computed_fields:
+      - contentGroupTitle
       filter:
         _or:
         - _and:
@@ -3052,6 +3061,8 @@
       - originatingDataId
       - updated_at
       - uploadsRemaining
+      computed_fields:
+      - contentGroupTitle
       filter:
         _or:
         - conference:

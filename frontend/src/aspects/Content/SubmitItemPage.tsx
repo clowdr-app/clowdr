@@ -55,6 +55,7 @@ gql`
             id
             name
         }
+        contentGroupTitle
     }
 
     mutation SubmitContentItem($contentItemData: jsonb!, $magicToken: String!) {
@@ -202,9 +203,9 @@ export default function SubmitItemPage({
                         <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
                             Content Submission
                         </Heading>
-                        {dataContentItem?.getContentItem?.[0]?.contentGroupTitle && (
+                        {requiredItem && (
                             <Heading as="h2" fontSize="1.5rem" lineHeight="2.2rem" fontStyle="italic">
-                                {dataContentItem.getContentItem[0].contentGroupTitle}
+                                {requiredItem.contentGroupTitle}
                             </Heading>
                         )}
                         {(loading && !data) || (uploadAgreementLoading && !uploadAgreementData) ? (

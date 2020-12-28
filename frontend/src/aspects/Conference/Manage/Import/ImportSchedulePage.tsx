@@ -51,21 +51,24 @@ const presetJSONata_ResearchrQuery_POPL2021 = `
                     "name": $trim(first_name._text & ' ' & last_name._text),
                     "affiliation": affiliation._text
                 }
-    },
-    "sessions": $.{
-        "originatingDataSourceId": subevent_id._text,
-        "title": title._text,
-        "researchrLink": { "url": url._text, "label": url_link_display._text },
-        "roomName": $match(room._text, /[^|]*\\| ?(.*)/).groups[0],
-        "chair":
-            timeslot[$not($exists(event_id))].persons.person[role._text="Session Chair"].
-                {
-                    "name": $trim(first_name._text & ' ' & last_name._text),
-                    "affiliation": affiliation._text
-                }
     }
 }
 `;
+
+// TODO: At some point in the future, import sessions from Researchr
+//
+// "sessions": $.{
+//     "originatingDataSourceId": subevent_id._text,
+//     "title": title._text,
+//     "researchrLink": { "url": url._text, "label": url_link_display._text },
+//     "roomName": $match(room._text, /[^|]*\\| ?(.*)/).groups[0],
+//     "chair":
+//         timeslot[$not($exists(event_id))].persons.person[role._text="Session Chair"].
+//             {
+//                 "name": $trim(first_name._text & ' ' & last_name._text),
+//                 "affiliation": affiliation._text
+//             }
+// }
 
 export default function ImportSchedulePage(): JSX.Element {
     const conference = useConference();

@@ -26,6 +26,7 @@ export type HallwayDescriptor = {
 };
 
 export type OriginatingDataPart = {
+    sourceId: string;
     originName: "Researchr" | "HotCRP" | string;
     data: any;
 };

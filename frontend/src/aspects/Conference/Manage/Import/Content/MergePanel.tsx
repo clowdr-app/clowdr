@@ -134,7 +134,7 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
             ) : undefined}
             <Box mt={2}>
                 <ButtonGroup isAttached>
-                    <JSONataQueryModal data={changes} buttonText="Changes Query Tool" defaultQuery={"*"} />
+                    <JSONataQueryModal data={changes} buttonText="Changes Query Tool" defaultQuery={"$"} />
                     <Button
                         aria-label="Copy changes"
                         onClick={() => {
@@ -147,7 +147,7 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
             </Box>
             <Box mt={2}>
                 <ButtonGroup isAttached>
-                    <JSONataQueryModal data={finalData} buttonText="Final Data Query Tool" defaultQuery={"*"} />
+                    <JSONataQueryModal data={finalData} buttonText="Final Data Query Tool" defaultQuery={"$"} />
                     <Button
                         aria-label="Copy final dataset"
                         onClick={() => {

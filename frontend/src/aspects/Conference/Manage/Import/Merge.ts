@@ -14,7 +14,6 @@ export interface ChangeSummary {
     type: "MERGE" | "INSERT" | "UPDATE" | "DELETE";
     description: string;
 
-    originalData?: any;
     importData: any[];
     newData: any;
 }
@@ -70,7 +69,7 @@ export function defaultMerger<C, T>(
                 newData: [prefer === "VAL1" ? x : y],
             },
         ],
-        result: x,
+        result: prefer === "VAL1" ? x : y,
     };
 }
 
@@ -170,11 +169,11 @@ export function mergeFieldInPlace<C, S, T extends S, K extends keyof (S | T)>(
 }
 
 export function mergeLists<C, S, T>(
-    context: C,
+    ctx: C,
     tableName: string,
     list1: S[],
     list2: (S | T)[],
-    find: (items: S[], item: S | T) => number | undefined,
+    find: (context: C, items: S[], item: S | T) => number | undefined,
     convert: (context: C, item: S | T) => S,
     merge: (
         context: C,
@@ -192,10 +191,10 @@ export function mergeLists<C, S, T>(
     const changes: ChangeSummary[] = [];
 
     for (const item2 of list2) {
-        const existingIdx = find(results, item2);
+        const existingIdx = find(ctx, results, item2);
         if (existingIdx !== undefined) {
             const existingItem = results[existingIdx];
-            const { result: newItem, changes: newChanges } = merge(context, existingItem, convert(context, item2));
+            const { result: newItem, changes: newChanges } = merge(ctx, existingItem, convert(ctx, item2));
             results.splice(existingIdx, 1, newItem);
             changes.push(...newChanges);
             changes.push({
@@ -206,7 +205,7 @@ export function mergeLists<C, S, T>(
                 newData: newItem,
             });
         } else {
-            const newItem = convert(context, item2);
+            const newItem = convert(ctx, item2);
             changes.push({
                 location: tableName,
                 type: "INSERT",
@@ -224,33 +223,92 @@ export function mergeLists<C, S, T>(
     };
 }
 
-export function findMatch<S, T>(items: S[], item: T, isMatch: (item1: S, item2: T) => boolean): number | undefined {
+export function findMatch<C, S, T>(
+    ctx: C,
+    items: S[],
+    item: T,
+    isMatch: (ctx: C, item1: S, item2: T) => boolean
+): number | undefined {
     for (let idx = 0; idx < items.length; idx++) {
-        if (isMatch(items[idx], item)) {
+        if (isMatch(ctx, items[idx], item)) {
             return idx;
         }
     }
     return undefined;
 }
 
-// TODO: Handle remappings
-export function isMatch_Id<T extends { id?: string }, S extends T>(item1: S, item2: T): boolean {
-    return !!item1.id && !!item2.id && item1.id === item2.id;
+/**
+ * The real object id -> list of other ids that have been merged into/absorbed by the object
+ */
+export type IdMap = Map<string, Set<string>>;
+
+export type IdRemappingContext<TableNames extends keyof any> = {
+    idMaps: Record<TableNames, IdMap>;
+};
+
+function isMatch_Id_internal<TableName extends string, C extends IdRemappingContext<TableName>>(
+    ctx: C,
+    tableName: TableName,
+    id1: string,
+    id2: string
+): boolean {
+    if (id1 === id2) {
+        return true;
+    }
+
+    const idMap = ctx.idMaps[tableName];
+    const map1 = idMap.get(id1);
+    const map2 = idMap.get(id2);
+    const id1Vals = [id1, ...(map1?.values() ?? [])];
+    const id2Vals = [id2, ...(map2?.values() ?? [])];
+    return id1Vals.some((id1) => id2Vals.includes(id1));
+}
+
+export function isMatch_Id_Generalised<
+    TableName extends string,
+    IdFieldName1 extends string,
+    IdFieldName2 extends string,
+    C extends IdRemappingContext<TableName>,
+    S extends Partial<Record<IdFieldName1, string>>,
+    T extends Partial<Record<IdFieldName2, string>>
+>(
+    tableName: TableName,
+    idFieldName1: IdFieldName1,
+    idFieldName2: IdFieldName2
+): (ctx: C, item1: S, item2: T) => boolean {
+    return (ctx, item1, item2) => {
+        const f1: string | undefined = item1[idFieldName1];
+        const f2: string | undefined = item2[idFieldName2];
+        if (!f1 || !f2) {
+            return false;
+        }
+        return isMatch_Id_internal(ctx, tableName, f1, f2);
+    };
+}
+
+export function isMatch_Id<
+    TableName extends string,
+    C extends IdRemappingContext<TableName>,
+    T extends { id?: string },
+    S extends T
+>(tableName: TableName): (ctx: C, item1: S, item2: T) => boolean {
+    return isMatch_Id_Generalised<TableName, "id", "id", C, S, T>(tableName, "id", "id");
 }
 
 export function isMatch_OriginatingData<
+    C extends IdRemappingContext<"OriginatingData">,
     T extends { id?: string; sourceId?: string; originatingDataId?: string; originatingDataSourceId?: string },
     S extends { id?: string; sourceId?: string; originatingDataId?: string; originatingDataSourceId?: string }
->(item1: S, item2: T): boolean {
+>(ctx: C, item1: S, item2: T): boolean {
     if (item1.id) {
         if (item2.id) {
-            if (item1.id === item2.id) {
+            if (isMatch_Id_internal(ctx, "OriginatingData", item1.id, item2.id)) {
                 return true;
             }
         }
 
         if (item2.originatingDataId) {
-            if (item1.id === item2.originatingDataId) {
+            if (isMatch_Id_internal(ctx, "OriginatingData", item1.id, item2.originatingDataId)) {
                 return true;
             }
         }
@@ -258,7 +316,7 @@ export function isMatch_OriginatingData<
 
     if (item2.id) {
         if (item1.originatingDataId) {
-            if (item2.id === item1.originatingDataId) {
+            if (isMatch_Id_internal(ctx, "OriginatingData", item1.originatingDataId, item2.id)) {
                 return true;
             }
         }
@@ -276,9 +334,10 @@ export function isMatch_OriginatingData<
 }
 
 export function isMatch_OriginatingDataId<
+    C,
     T extends { originatingDataId?: string; originatingDataSourceId?: string },
     S extends { originatingDataId?: string; originatingDataSourceId?: string }
->(item1: S, item2: T): boolean {
+>(_ctx: C, item1: S, item2: T): boolean {
     const id1 = item1.originatingDataSourceId || item1.originatingDataId;
     const id2 = item2.originatingDataSourceId || item2.originatingDataId;
     if (!id1 || !id2) {
@@ -290,8 +349,8 @@ export function isMatch_OriginatingDataId<
     return parts1.some((part) => parts2.includes(part));
 }
 
-export function isMatch_String_Exact<T, S extends T>(k?: keyof (S | T)): (item1: S, item2: T) => boolean {
-    return (item1, item2) => {
+export function isMatch_String_Exact<C, T, S extends T>(k?: keyof (S | T)): (ctx: C, item1: S, item2: T) => boolean {
+    return (_ctx, item1, item2) => {
         const v1 = k ? item1[k] : item1;
         const v2 = k ? item2[k] : item2;
 
@@ -303,8 +362,10 @@ export function isMatch_String_Exact<T, S extends T>(k?: keyof (S | T)): (item1:
     };
 }
 
-export function isMatch_String_EditDistance<T, S extends T>(k?: keyof (S | T)): (item1: S, item2: T) => boolean {
-    return (item1, item2) => {
+export function isMatch_String_EditDistance<C, T, S extends T>(
+    k?: keyof (S | T)
+): (ctx: C, item1: S, item2: T) => boolean {
+    return (_ctx, item1, item2) => {
         const v1 = k ? item1[k] : item1;
         const v2 = k ? item2[k] : item2;
 
@@ -326,12 +387,15 @@ export function isMatch_String_EditDistance<T, S extends T>(k?: keyof (S | T)): 
 }
 
 export function findExistingOriginatingData<
+    C extends IdRemappingContext<"OriginatingData">,
     T extends { id?: string; sourceId?: string; originatingDataId?: string; originatingDataSourceId?: string }
->(items: OriginatingDataDescriptor[], item: T): number | undefined {
-    return findMatch(items, item, isMatch_OriginatingData);
+>(ctx: C, items: OriginatingDataDescriptor[], item: T): number | undefined {
+    return findMatch(ctx, items, item, isMatch_OriginatingData);
 }
 
 export function findExistingNamedItem<
+    TableName extends string,
+    C extends IdRemappingContext<TableName | "OriginatingData">,
     T extends {
         id?: string;
         originatingDataId?: string;
@@ -339,17 +403,103 @@ export function findExistingNamedItem<
         name?: string;
     },
     S extends T
->(items: S[], item: T): number | undefined {
+>(tableName: TableName): (ctx: C, items: S[], item: T) => number | undefined {
+    return (ctx, items, item) => {
+        return (
+            findMatch(ctx, items, item, isMatch_Id(tableName)) ??
+            findMatch(ctx, items, item, isMatch_OriginatingDataId) ??
+            findMatch(ctx, items, item, isMatch_String_Exact("name")) ??
+            findMatch(ctx, items, item, isMatch_String_EditDistance("name"))
+        );
+    };
+}
+
+export function findExistingString<C>(ctx: C, items: string[], item: string): number | undefined {
     return (
-        findMatch(items, item, isMatch_Id) ??
-        findMatch(items, item, isMatch_OriginatingDataId) ??
-        findMatch(items, item, isMatch_String_Exact("name")) ??
-        findMatch(items, item, isMatch_String_EditDistance("name"))
+        findMatch(ctx, items, item, isMatch_String_Exact()) ||
+        findMatch(ctx, items, item, isMatch_String_EditDistance())
     );
 }
 
-export function findExistingString(items: string[], item: string): number | undefined {
-    return findMatch(items, item, isMatch_String_Exact()) || findMatch(items, item, isMatch_String_EditDistance());
+export function mergeIdInPlace<
+    TableName extends string,
+    C extends IdRemappingContext<TableName>,
+    S extends { id?: string; isNew?: boolean }
+>(tableName: TableName, ctx: C, changes: ChangeSummary[], result: S, item1: S, item2: S, treatNoIdAsError = true): void {
+    function absorbId(concreteId: string, absorbedId: string) {
+        let concreteSet = idMap.get(concreteId);
+        if (concreteSet) {
+            concreteSet.add(absorbedId);
+        } else {
+            concreteSet = new Set([absorbedId]);
+            idMap.set(concreteId, concreteSet);
+        }
+        const concreteSet_TypeCorrect: Set<string> = concreteSet;
+
+        const absorbedSet = idMap.get(absorbedId);
+        if (absorbedSet) {
+            idMap.delete(absorbedId);
+            absorbedSet.forEach((id) => concreteSet_TypeCorrect.add(id));
+        }
+    }
+
+    const idMap = ctx.idMaps[tableName];
+
+    if (item1.id && !item1.isNew) {
+        result.id = item1.id;
+        changes.push({
+            location: tableName + ".id",
+            description: "Chose left value as it was not new.",
+            type: "MERGE",
+            importData: [item1.id, item2.id],
+            newData: item1.id
+        });
+
+        if (item2.id) {
+            absorbId(item1.id, item2.id);
+        }
+    } else if (item2.id && !item2.isNew) {
+        result.id = item2.id;
+        changes.push({
+            location: tableName + ".id",
+            description: "Chose right value as it was not new.",
+            type: "MERGE",
+            importData: [item1.id, item2.id],
+            newData: item2.id
+        });
+
+        if (item1.id) {
+            absorbId(item2.id, item1.id);
+        }
+    } else if (item1.id) {
+        result.id = item1.id;
+        changes.push({
+            location: tableName + ".id",
+            description: "Chose left value as it was preferred.",
+            type: "MERGE",
+            importData: [item1.id, item2.id],
+            newData: item1.id
+        });
+
+        if (item2.id) {
+            absorbId(item1.id, item2.id);
+        }
+    } else if (item2.id) {
+        result.id = item2.id;
+        changes.push({
+            location: tableName + ".id",
+            description: "Chose right value as it was preferred.",
+            type: "MERGE",
+            importData: [item1.id, item2.id],
+            newData: item2.id
+        });
+
+        if (item1.id) {
+            absorbId(item2.id, item1.id);
+        }
+    } else if (treatNoIdAsError) {
+        throw new Error("No available Id to merge!");
+    }
 }
 
 export function mergeIsNewInPlace<C, S extends { isNew?: boolean }>(_context: C, result: S, item1: S, item2: S): void {

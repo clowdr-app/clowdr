@@ -64,8 +64,15 @@ declare enum ContentGroupType_Enum {
     Workshop = "WORKSHOP",
 }
 
+export interface IntermediaryOriginatingDataPart {
+    sourceId: string;
+    originName: "Researchr" | "HotCRP" | string;
+    data: any;
+}
+
 export interface IntermediaryOriginatingDataDescriptor {
-    // TODO
+    sourceId: string;
+    data: IntermediaryOriginatingDataPart[];
 }
 
 export interface IntermediaryItemDescriptor {

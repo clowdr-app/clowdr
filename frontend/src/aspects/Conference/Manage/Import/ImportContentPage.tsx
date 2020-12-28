@@ -124,13 +124,46 @@ const presetJSONata_ResearchrQuery_POPL2021 = `
         /* "homepageURL": homepage_url._text, */
         /* "bio": bio._text */
     },
-    "tags": ($tags := $distinct($.**.tracks.track._text); $tags.{ "name": $ })
+    "tags": ($tags := $distinct($.**.tracks.track._text); $tags.{ "name": $ }),
+    "originatingDatas": $append([
+        $.*[$exists(slot_id)].$@$event.{
+            "sourceId": slot_id._text,
+            "data": [
+                {
+                    "sourceId": slot_id._text,
+                    "originName": "Researchr",
+                    "data": $
+                }
+            ]
+        }
+    ], [
+        $.**.person.{
+            "sourceId": person_id._text,
+            "data": [
+                {
+                    "sourceId": person_id._text,
+                    "originName": "Researchr",
+                    "data": $
+                }
+            ]
+        }
+    ])
 }
 `;
 
 // TODO: Originating datas
 const presetJSONata_HotCRPQuery_POPL2021 = `
 {
+    "originatingDatas": [
+        $[$exists(pid)].{
+            "sourceId": $string(pid),
+            "data": [{
+                "sourceId": $string(pid),
+                "originName": "HotCRP",
+                "data": $
+            }]
+        }
+    ],
     "groups": $.{
         "originatingDataSourceId": $string(pid),
         "title": title,
@@ -138,7 +171,7 @@ const presetJSONata_HotCRPQuery_POPL2021 = `
             {
                 "typeName": "VIDEO_PREPUBLISH",
                 "name": "Pre-published video",
-                "originatingDataSourceId": slot_id._text,
+                "originatingDataSourceId": $string(pid),
                 "uploadsRemaining": 3,
                 "uploaders": [
                     contacts.{
@@ -150,7 +183,7 @@ const presetJSONata_HotCRPQuery_POPL2021 = `
             {
                 "typeName": "VIDEO_BROADCAST",
                 "name": "Livestream broadcast video",
-                "originatingDataSourceId": slot_id._text,
+                "originatingDataSourceId": $string(pid),
                 "uploadsRemaining": 3,
                 "uploaders": [
                     contacts.{
@@ -169,7 +202,8 @@ const presetJSONata_HotCRPQuery_POPL2021 = `
         /* ] */
     },
     "people": [
-        $.**.authors.{
+        $.$@$group.**.authors.{
+            "originatingDataSourceId": $string($group.pid),
             "email": email,
             "name": first & ' ' & last,
             "affiliation": affiliation

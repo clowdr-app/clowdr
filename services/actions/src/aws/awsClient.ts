@@ -1,7 +1,10 @@
 import { CloudFormation } from "@aws-sdk/client-cloudformation";
+import { CloudFront } from "@aws-sdk/client-cloudfront";
 import { ElasticTranscoder } from "@aws-sdk/client-elastic-transcoder";
 import { IAM } from "@aws-sdk/client-iam";
 import { MediaConvert } from "@aws-sdk/client-mediaconvert";
+import { MediaLive } from "@aws-sdk/client-medialive";
+import { MediaPackage } from "@aws-sdk/client-mediapackage";
 import { S3 } from "@aws-sdk/client-s3";
 import { SNS } from "@aws-sdk/client-sns";
 import { Transcribe } from "@aws-sdk/client-transcribe";
@@ -33,6 +36,10 @@ assert(
 assert(
     process.env.AWS_ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN,
     "Missing AWS_ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN environment variable"
+);
+assert(
+    process.env.AWS_MEDIALIVE_INPUT_SECURITY_GROUP_ID,
+    "Missing AWS_MEDIALIVE_INPUT_SECURITY_GROUP_ID environment variable"
 );
 
 const credentials = fromEnv();
@@ -71,6 +78,24 @@ const transcribe = new Transcribe({
 
 const transcoder = new ElasticTranscoder({
     apiVersion: "2012-09-25",
+    credentials,
+    region,
+});
+
+const mediaLive = new MediaLive({
+    apiVersion: "2017-10-14",
+    credentials,
+    region,
+});
+
+const mediaPackage = new MediaPackage({
+    apiVersion: "2017-10-14",
+    credentials,
+    region,
+});
+
+const cloudFront = new CloudFront({
+    apiVersion: "2020-05-31",
     credentials,
     region,
 });
@@ -161,6 +186,9 @@ export {
     mediaconvert as MediaConvert,
     transcribe as Transcribe,
     transcoder as ElasticTranscoder,
+    mediaLive as MediaLive,
+    mediaPackage as MediaPackage,
+    cloudFront as CloudFront,
     initialiseAwsClient,
     shortId,
 };

@@ -2725,6 +2725,14 @@
   is_enum: true
 - table:
     schema: public
+    name: MediaLiveChannel
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
+- table:
+    schema: public
     name: OnlineStatus
   configuration:
     custom_root_fields: {}
@@ -3449,6 +3457,9 @@
   - name: currentMode
     using:
       foreign_key_constraint_on: currentModeName
+  - name: mediaLiveChannel
+    using:
+      foreign_key_constraint_on: mediaLiveChannelId
   - name: originatingData
     using:
       foreign_key_constraint_on: originatingDataId

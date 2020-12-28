@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client/core";
+import R from "ramda";
 import {
     ContentType_Enum,
     CreateTransitionDocument,
@@ -153,6 +154,13 @@ export async function createTransitionsForRoom(conferenceId: string, roomId: str
             }
         }
     }
+
+    R.aperture(2)(eventsResult.data.Room_by_pk.events).filter(([event1, event2]) => {
+        const event1Start = Date.parse(event1.startTime);
+        const event2Start = Date.parse(event2.startTime);
+        const maxGap = 2 * 60 * 60 * 1000;
+        return event1Start + event1.durationSeconds * 1000 + maxGap < event2Start;
+    });
 }
 
 async function createTransition(

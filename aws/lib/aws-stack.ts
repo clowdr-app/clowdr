@@ -214,6 +214,56 @@ export class AwsStack extends cdk.Stack {
         const transcodeLogGroup = new logs.LogGroup(this, "TranscodeLogGroup", {});
         mediaConvertEventRule.addTarget(new targets.CloudWatchLogGroup(transcodeLogGroup));
 
+        // MediaLive channel notifications
+        const mediaLiveNotificationsTopic = new sns.Topic(this, "MediaLiveNotifications");
+        mediaLiveNotificationsTopic.grantPublish({
+            grantPrincipal: new iam.ArnPrincipal(mediaLiveAccessRole.roleArn),
+        });
+        mediaLiveNotificationsTopic.grantPublish({
+            grantPrincipal: new iam.ServicePrincipal("events.amazonaws.com"),
+        });
+        mediaLiveNotificationsTopic.addToResourcePolicy(
+            new iam.PolicyStatement({
+                actions: [
+                    "SNS:Subscribe",
+                    "SNS:ListSubscriptionsByTopic",
+                    "SNS:DeleteTopic",
+                    "SNS:GetTopicAttributes",
+                    "SNS:Publish",
+                    "SNS:RemovePermission",
+                    "SNS:AddPermission",
+                    "SNS:Receive",
+                    "SNS:SetTopicAttributes",
+                ],
+                principals: [
+                    new iam.ServicePrincipal("events.amazonaws.com"),
+                    new iam.ArnPrincipal(mediaLiveAccessRole.roleArn),
+                ],
+                resources: [mediaLiveNotificationsTopic.topicArn],
+                effect: iam.Effect.ALLOW,
+            })
+        );
+        mediaLiveNotificationsTopic.addToResourcePolicy(
+            new iam.PolicyStatement({
+                actions: ["SNS:Subscribe"],
+                principals: [new iam.ArnPrincipal(user.userArn)],
+                resources: [mediaLiveNotificationsTopic.topicArn],
+                effect: iam.Effect.ALLOW,
+            })
+        );
+
+        events.EventBus.grantPutEvents(new iam.ServicePrincipal("medialive.amazonaws.com"));
+        const mediaLiveEventRule = new events.Rule(this, "MediaLiveEventRule", {
+            enabled: true,
+        });
+        mediaLiveEventRule.addEventPattern({
+            source: ["aws.medialive"],
+        });
+        mediaLiveEventRule.addTarget(new targets.SnsTopic(mediaLiveNotificationsTopic));
+
+        const mediaLiveLogGroup = new logs.LogGroup(this, "MediaLiveLogGroup", {});
+        mediaLiveEventRule.addTarget(new targets.CloudWatchLogGroup(mediaLiveLogGroup));
+
         // Transcribe notifications
         const transcribeNotificationsTopic = new sns.Topic(this, "TranscribeNotifications");
         transcribeNotificationsTopic.grantPublish({
@@ -301,6 +351,10 @@ export class AwsStack extends cdk.Stack {
 
         new cdk.CfnOutput(this, "ElasticTranscoderNotificationsTopic", {
             value: elasticTranscoderNotificationsTopic.topicArn,
+        });
+
+        new cdk.CfnOutput(this, "MediaLiveNotificationsTopic", {
+            value: mediaLiveNotificationsTopic.topicArn,
         });
 
         // Elemental

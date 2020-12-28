@@ -67,26 +67,35 @@ export async function createMP4Input(roomId: string, securityGroupId: string): P
     throw new Error("Failed to create new Input");
 }
 
+export interface MediaLiveChannel {
+    channelId: string;
+    mp4InputAttachmentName: string;
+    vonageInputAttachmentName: string;
+}
+
 export async function createChannel(
     roomId: string,
-    rtmpInputId: string,
+    vonageInputId: string,
     mp4InputId: string,
     mediaPackageId: string
-): Promise<string> {
+): Promise<MediaLiveChannel> {
     const destinationId = shortId();
     const videoDescriptionName = shortId();
     const audioDescriptionName = shortId();
+    const vonageInputAttachmentName = `${shortId()}-vonage`;
+    const mp4InputAttachmentName = `${shortId()}-mp4`;
+
     const channel = await MediaLive.createChannel({
         Name: shortId(),
         Tags: { roomId },
         ChannelClass: "SINGLE_PIPELINE",
         InputAttachments: [
             {
-                InputAttachmentName: shortId(),
-                InputId: rtmpInputId,
+                InputAttachmentName: vonageInputAttachmentName,
+                InputId: vonageInputId,
             },
             {
-                InputAttachmentName: shortId(),
+                InputAttachmentName: mp4InputAttachmentName,
                 InputId: mp4InputId,
             },
         ],
@@ -193,7 +202,11 @@ export async function createChannel(
         ],
     });
     if (channel.Channel?.Id) {
-        return channel.Channel.Id;
+        return {
+            channelId: channel.Channel.Id,
+            mp4InputAttachmentName,
+            vonageInputAttachmentName,
+        };
     }
     throw new Error("Failed to create new Channel");
 }

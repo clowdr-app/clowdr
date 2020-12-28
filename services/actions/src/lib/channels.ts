@@ -1,12 +1,18 @@
 import { gql } from "@apollo/client/core";
+import { ScheduleAction } from "@aws-sdk/client-medialive";
+import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
+import R from "ramda";
 import { MediaLive } from "../aws/awsClient";
 import {
     CreateMediaLiveChannelDocument,
     DeleteMediaLiveChannelDocument,
     GetMediaLiveChannelByRoomDocument,
+    GetRoomsWithEventsDocument,
     GetRoomsWithEventsStartingDocument,
     GetRoomsWithNoEventsStartingDocument,
+    GetTransitionsByRoomDocument,
+    InputType_Enum,
     SetMediaLiveChannelForRoomDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
@@ -22,7 +28,14 @@ import { createChannel as createMediaPackageChannel, createOriginEndpoint } from
 
 gql`
     query GetRoomsWithEventsStarting($from: timestamptz, $to: timestamptz) {
-        Room(where: { events: { startTime: { _gte: $from, _lte: $to } } }) {
+        Room(
+            where: {
+                events: {
+                    startTime: { _gte: $from, _lte: $to }
+                    intendedRoomModeName: { _in: [PRERECORDED, Q_AND_A, PRESENTATION] }
+                }
+            }
+        ) {
             id
             mediaLiveChannel {
                 id
@@ -192,12 +205,14 @@ gql`
     mutation CreateMediaLiveChannel(
         $cloudFrontDistributionId: String!
         $mediaLiveChannelId: String!
-        $mediaPackageChannelId: String = ""
-        $mp4InputId: String = ""
+        $mediaPackageChannelId: String!
+        $mp4InputId: String!
         $rtmpInputId: String!
         $rtmpInputUri: String!
         $endpointUri: String!
         $cloudFrontDomain: String!
+        $mp4InputAttachmentName: String!
+        $vonageInputAttachmentName: String!
     ) {
         insert_MediaLiveChannel_one(
             object: {
@@ -209,6 +224,8 @@ gql`
                 rtmpInputUri: $rtmpInputUri
                 endpointUri: $endpointUri
                 cloudFrontDomain: $cloudFrontDomain
+                mp4InputAttachmentName: $mp4InputAttachmentName
+                vonageInputAttachmentName: $vonageInputAttachmentName
             }
         ) {
             id
@@ -233,7 +250,7 @@ async function createNewChannelForRoom(roomId: string): Promise<void> {
     const mediaPackageChannelId = await createMediaPackageChannel(roomId);
     const originEndpoint = await createOriginEndpoint(roomId, mediaPackageChannelId);
 
-    const mediaLiveChannelId = await createMediaLiveChannel(roomId, rtmpInput.id, mp4InputId, mediaPackageChannelId);
+    const mediaLiveChannel = await createMediaLiveChannel(roomId, rtmpInput.id, mp4InputId, mediaPackageChannelId);
     const cloudFrontDistribution = await createDistribution(roomId, originEndpoint);
 
     const result = await apolloClient.mutate({
@@ -242,18 +259,20 @@ async function createNewChannelForRoom(roomId: string): Promise<void> {
             cloudFrontDistributionId: cloudFrontDistribution.id,
             cloudFrontDomain: cloudFrontDistribution.domain,
             endpointUri: originEndpoint.endpointUri,
-            mediaLiveChannelId: mediaLiveChannelId,
+            mediaLiveChannelId: mediaLiveChannel.channelId,
             rtmpInputId: rtmpInput.id,
             rtmpInputUri: rtmpInput.rtmpUri,
             mediaPackageChannelId: mediaPackageChannelId,
             mp4InputId: mp4InputId,
+            mp4InputAttachmentName: mediaLiveChannel.mp4InputAttachmentName,
+            vonageInputAttachmentName: mediaLiveChannel.vonageInputAttachmentName,
         },
     });
 
     if (result.errors) {
         console.error(
             "Failure while saving details of new MediaLive channel",
-            mediaLiveChannelId,
+            mediaLiveChannel.channelId,
             roomId,
             result.errors
         );
@@ -278,8 +297,27 @@ async function createNewChannelForRoom(roomId: string): Promise<void> {
     }
 }
 
-async function syncChannelSchedules(): Promise<void> {
-    // todo
+gql`
+    query GetRoomsWithEvents {
+        Room(where: { events: { intendedRoomModeName: { _in: [Q_AND_A, PRERECORDED, PRESENTATION] } } }) {
+            id
+        }
+    }
+`;
+
+export async function syncChannelSchedules(): Promise<void> {
+    // TODO: only look at future/current events?
+    const rooms = await apolloClient.query({
+        query: GetRoomsWithEventsDocument,
+    });
+
+    if (rooms.error || rooms.errors) {
+        console.error("Could not get rooms with events to sync channel schedules", rooms.error, rooms.errors);
+    }
+
+    for (const room of rooms.data.Room) {
+        await syncChannelSchedule(room.id);
+    }
 }
 
 gql`
@@ -287,7 +325,10 @@ gql`
         Room_by_pk(id: $roomId) {
             id
             mediaLiveChannel {
+                id
                 mediaLiveChannelId
+                mp4InputAttachmentName
+                vonageInputAttachmentName
             }
         }
     }
@@ -297,42 +338,251 @@ gql`
     query GetTransitionsByRoom($roomId: uuid!) {
         Transitions(where: { roomId: { _eq: $roomId } }) {
             broadcastContentItem {
+                id
                 input
                 inputTypeName
             }
+            id
             time
         }
     }
 `;
 
-async function syncChannelSchedule(roomId: string): Promise<void> {
-    const result = await apolloClient.query({
+interface ComparableScheduleAction {
+    name: string;
+    mp4Key?: string;
+    inputAttachmentNameSuffix: string;
+    invalid?: boolean;
+}
+
+export async function syncChannelSchedule(roomId: string): Promise<void> {
+    const channelResult = await apolloClient.query({
         query: GetMediaLiveChannelByRoomDocument,
         variables: {
             roomId,
         },
     });
 
-    if (!result.data.Room_by_pk?.mediaLiveChannel?.mediaLiveChannelId) {
+    if (!channelResult.data.Room_by_pk?.mediaLiveChannel?.mediaLiveChannelId) {
         console.warn("No MediaLive channel details found for room. Skipping schedule sync.", roomId);
         return;
     }
 
-    const channelId = result.data.Room_by_pk.mediaLiveChannel.mediaLiveChannelId;
+    const channel = channelResult.data.Room_by_pk.mediaLiveChannel;
 
-    // assume that any outdated transitions have been removed from the schedule
-    // TODO: listen to transition changes/deletes and purge the old versions from the schedule
-
-    // get existing schedule for the channel, find any missing switches, insert them
-    const existingSchedule = await MediaLive.describeSchedule({
-        ChannelId: channelId,
-    });
-
-    const transitions = await MediaLive.batchUpdateSchedule({
-        // todo
-        ChannelId: result.data.Room_by_pk.mediaLiveChannel.mediaLiveChannelId,
-        Creates: {
-            ScheduleActions: [],
+    const allTransitionsResult = await apolloClient.query({
+        query: GetTransitionsByRoomDocument,
+        variables: {
+            roomId,
         },
     });
+
+    if (allTransitionsResult.error || allTransitionsResult.errors) {
+        console.error("Error while retrieving transitions for room. Skipping schedule sync.", roomId);
+        return;
+    }
+
+    // Generate a simplified representation of what the channel schedule 'ought' to be
+    const transitions = allTransitionsResult.data.Transitions;
+    const expectedSchedule = R.flatten(
+        transitions.map((transition) => {
+            const input: BroadcastContentItemInput = transition.broadcastContentItem.input;
+            if (input.type === "MP4Input") {
+                const { key } = new AmazonS3URI(input.s3Url);
+
+                if (!key) {
+                    return [];
+                }
+
+                const prepareAction: ComparableScheduleAction = {
+                    name: `${transition.id}-prepare`,
+                    mp4Key: key,
+                    inputAttachmentNameSuffix: "mp4",
+                };
+
+                const switchAction: ComparableScheduleAction = {
+                    name: `${transition.id}`,
+                    mp4Key: key,
+                    inputAttachmentNameSuffix: "mp4",
+                };
+
+                return [prepareAction, switchAction];
+            } else if (input.type === "VonageInput") {
+                return [
+                    {
+                        name: `${transition.id}`,
+                        inputAttachmentNameSuffix: "vonage",
+                    },
+                ];
+            } else {
+                return [];
+            }
+        })
+    );
+
+    // Generate a simplified version of what the channel schedule 'actually' is
+    const existingSchedule = await MediaLive.describeSchedule({
+        ChannelId: channel.mediaLiveChannelId,
+    });
+
+    const actualSchedule =
+        existingSchedule.ScheduleActions?.map((action) => {
+            if (!action.ActionName) {
+                return null;
+            }
+            if (action.ScheduleActionSettings?.InputPrepareSettings) {
+                const result: ComparableScheduleAction = {
+                    inputAttachmentNameSuffix: "mp4",
+                    name: action.ActionName,
+                    mp4Key:
+                        action.ScheduleActionSettings.InputPrepareSettings.UrlPath?.length === 1
+                            ? action.ScheduleActionSettings.InputPrepareSettings.UrlPath[0]
+                            : "",
+                };
+                return result;
+            } else if (action.ScheduleActionSettings?.InputSwitchSettings) {
+                if (
+                    action.ScheduleActionSettings.InputSwitchSettings.InputAttachmentNameReference?.endsWith("-vonage")
+                ) {
+                    const result: ComparableScheduleAction = {
+                        inputAttachmentNameSuffix: "vonage",
+                        name: action.ActionName,
+                    };
+                    return result;
+                } else if (
+                    action.ScheduleActionSettings.InputSwitchSettings.InputAttachmentNameReference?.endsWith("mp4")
+                ) {
+                    const result: ComparableScheduleAction = {
+                        inputAttachmentNameSuffix: "mp4",
+                        name: action.ActionName,
+                        mp4Key:
+                            action.ScheduleActionSettings.InputSwitchSettings.UrlPath?.length === 1
+                                ? action.ScheduleActionSettings.InputSwitchSettings.UrlPath[0]
+                                : "",
+                    };
+                    return result;
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        }).filter(notEmpty) ?? [];
+
+    // Identify schedule actions that are not mean to be there and delete them
+    const unexpectedScheduleItems = R.without(expectedSchedule, actualSchedule);
+
+    console.log(
+        `Removing ${unexpectedScheduleItems.length} expired items from channel schedule`,
+        roomId,
+        channel.mediaLiveChannelId
+    );
+    await MediaLive.batchUpdateSchedule({
+        ChannelId: channel.mediaLiveChannelId,
+        Deletes: {
+            ActionNames: unexpectedScheduleItems.map((item) => item.name),
+        },
+    });
+
+    // Go through each transition and create any missing schedule actions
+    console.log("Refetching updated channel schedule", roomId, channel.mediaLiveChannelId);
+    const trimmedSchedule = await MediaLive.describeSchedule({
+        ChannelId: channel.mediaLiveChannelId,
+    });
+
+    const trimmedScheduleActionNames =
+        trimmedSchedule.ScheduleActions?.map((action) => action.ActionName).filter(notEmpty) ?? [];
+
+    const earliestInsertionTime = new Date().getTime() + 30000;
+
+    console.log("Generating list of new schedule actions", roomId, channel.mediaLiveChannelId);
+    const newScheduleActions: ScheduleAction[] = [];
+    for (const transition of allTransitionsResult.data.Transitions) {
+        // Don't try to insert transitions in the next 30s (AWS limit: 15s after present)
+        if (Date.parse(transition.time) < earliestInsertionTime) {
+            continue;
+        }
+
+        const input: BroadcastContentItemInput = transition.broadcastContentItem.input;
+        if (transition.broadcastContentItem.inputTypeName === InputType_Enum.Mp4 && input.type === "MP4Input") {
+            let urlPath;
+            try {
+                const { key } = new AmazonS3URI(input.s3Url);
+                urlPath = key;
+            } catch (e) {
+                console.error("Invalid S3 uri on transition", input.s3Url, transition.id, roomId);
+                continue;
+            }
+            if (!trimmedScheduleActionNames.includes(`${transition.id}`) && urlPath) {
+                newScheduleActions.push({
+                    ActionName: transition.id,
+                    ScheduleActionSettings: {
+                        InputSwitchSettings: {
+                            InputAttachmentNameReference: channel.mp4InputAttachmentName,
+                            UrlPath: [urlPath],
+                        },
+                    },
+                    ScheduleActionStartSettings: {
+                        FixedModeScheduleActionStartSettings: {
+                            Time: transition.time,
+                        },
+                    },
+                });
+            }
+
+            if (!trimmedScheduleActionNames.includes(`${transition.id}-prepare`) && urlPath) {
+                newScheduleActions.push({
+                    ActionName: `${transition.id}-prepare`,
+                    ScheduleActionSettings: {
+                        InputPrepareSettings: {
+                            InputAttachmentNameReference: channel.mp4InputAttachmentName,
+                            UrlPath: [urlPath],
+                        },
+                    },
+                    ScheduleActionStartSettings: {
+                        FixedModeScheduleActionStartSettings: {
+                            Time: transition.time,
+                        },
+                    },
+                });
+            }
+        } else if (
+            transition.broadcastContentItem.inputTypeName === InputType_Enum.VonageSession &&
+            input.type === "VonageInput"
+        ) {
+            if (!trimmedScheduleActionNames.includes(`${transition.id}`)) {
+                newScheduleActions.push({
+                    ActionName: `${transition.id}`,
+                    ScheduleActionSettings: {
+                        InputSwitchSettings: {
+                            InputAttachmentNameReference: channel.vonageInputAttachmentName,
+                        },
+                    },
+                    ScheduleActionStartSettings: {
+                        FixedModeScheduleActionStartSettings: {
+                            Time: transition.time,
+                        },
+                    },
+                });
+            }
+        }
+    }
+    console.log(
+        `Generated ${newScheduleActions.length} new schedule actions for channel`,
+        roomId,
+        channel.mediaLiveChannelId
+    );
+
+    console.log("Updating channel schedule", roomId, channel.mediaLiveChannelId);
+    await MediaLive.batchUpdateSchedule({
+        // todo
+        ChannelId: channelResult.data.Room_by_pk.mediaLiveChannel.mediaLiveChannelId,
+        Creates: {
+            ScheduleActions: newScheduleActions,
+        },
+    });
+}
+
+function notEmpty<TValue>(value: TValue | null | undefined): value is TValue {
+    return value !== null && value !== undefined;
 }

@@ -7,6 +7,8 @@ Eventually this may be split into multiple microservices.
 
 1. [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
 1. You have followed the AWS setup instructions in [aws/README.md](../../aws/README.md)
+1. You have created a [SendGrid](https://www.sendgrid.com) account and an API key for it.
+1. You have create a [Vonage Video API](https://www.vonage.co.uk/communications-apis/video/) account and an API key for it.
 
 ## Setting Up
 
@@ -93,6 +95,7 @@ Note: `AWS_` values come from the outputs of your AWS deployment. See [`aws/READ
 | AWS_CONTENT_BUCKET_ID                          | The S3 bucket ID for content storage                                                                                | Yes      |
 | AWS_ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN | The IAM role to be passed to Elastic Transcoder                                                                     | Yes      |
 | AWS_ELASTIC_TRANSCODER_SERVICE_ROLE_ARN        | The ARN of the SNS topic for Elastic Transcoder notifications                                                       | Yes      |
+| AWS_MEDIALIVE_INPUT_SECURITY_GROUP_ID          | The ID of the security group to be used for MediaLive RTMP Push inputs                                              | Yes      |
 | AWS_MEDIALIVE_SERVICE_ROLE_ARN                 | The IAM role to be passed to MediaLive                                                                              | Yes      |
 | AWS_MEDIACONVERT_SERVICE_ROLE_ARN              | The IAM role to be passed to MediaConvert                                                                           | Yes      |
 | AWS_TRANSCRIBE_SERVICE_ROLE_ARN                | The IAM role to be passed to Transcribe                                                                             | Yes      |
@@ -101,3 +104,5 @@ Note: `AWS_` values come from the outputs of your AWS deployment. See [`aws/READ
 | OPENSHOT_BASE_URL                              | The base URL of the OpenShot instance                                                                               |          |
 | OPENSHOT_USERNAME                              | The username you created for your OpenShot instance                                                                 |          |
 | OPENSHOT_PASSWORD                              | The password you created for your OpenShot instance                                                                 |          |
+| OPENTOK_API_KEY                                | Your Vonage Video API key                                                                                           |          |
+| OPENTOK_API_SECRET                             | Your Vonage Video API secret                                                                                        |          |

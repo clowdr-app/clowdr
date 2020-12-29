@@ -1,6 +1,6 @@
 import type { SelectWholeScheduleQuery } from "../../../../generated/graphql";
 import type { OriginatingDataDescriptor, OriginatingDataPart, TagDescriptor } from "../Shared/Types";
-import type { RoomDescriptor, EventDescriptor, EventPersonDescriptor } from "./Types";
+import type { EventDescriptor, EventPersonDescriptor, RoomDescriptor } from "./Types";
 
 export function convertScheduleToDescriptors(
     schedule: SelectWholeScheduleQuery
@@ -24,14 +24,16 @@ export function convertScheduleToDescriptors(
                     roomId: event.roomId,
                     startTime: event.startTime,
                     tagIds: new Set(event.eventTags.map((x) => x.tagId)),
-                    people: event.eventPeople.map((eventPerson): EventPersonDescriptor => ({
-                        affiliation: eventPerson.affiliation,
-                        attendeeId: eventPerson.attendeeId,
-                        id: eventPerson.id,
-                        name: eventPerson.name,
-                        originatingDataId: eventPerson.originatingDataId,
-                        roleName: eventPerson.roleName,
-                    })),
+                    people: event.eventPeople.map(
+                        (eventPerson): EventPersonDescriptor => ({
+                            affiliation: eventPerson.affiliation,
+                            attendeeId: eventPerson.attendeeId,
+                            id: eventPerson.id,
+                            name: eventPerson.name,
+                            originatingDataId: eventPerson.originatingDataId,
+                            roleName: eventPerson.roleName,
+                        })
+                    ),
                 },
             ])
         ),
@@ -83,14 +85,16 @@ export function deepCloneEventDescriptor(event: EventDescriptor): EventDescripto
         roomId: event.roomId,
         startTime: event.startTime,
         tagIds: new Set(event.tagIds),
-        people: event.people.map((eventPerson): EventPersonDescriptor => ({
-            affiliation: eventPerson.affiliation,
-            attendeeId: eventPerson.attendeeId,
-            id: eventPerson.id,
-            name: eventPerson.name,
-            originatingDataId: eventPerson.originatingDataId,
-            roleName: eventPerson.roleName,
-        })),
+        people: event.people.map(
+            (eventPerson): EventPersonDescriptor => ({
+                affiliation: eventPerson.affiliation,
+                attendeeId: eventPerson.attendeeId,
+                id: eventPerson.id,
+                name: eventPerson.name,
+                originatingDataId: eventPerson.originatingDataId,
+                roleName: eventPerson.roleName,
+            })
+        ),
     };
 }
 

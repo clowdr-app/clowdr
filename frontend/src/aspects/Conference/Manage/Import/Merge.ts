@@ -1,4 +1,5 @@
 import levenshtein from "levenshtein-edit-distance";
+import { v4 as uuidv4 } from "uuid";
 import type { OriginatingDataDescriptor } from "../Content/Types";
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -295,7 +296,7 @@ export function isMatch_Id<
     return isMatch_Id_Generalised<TableName, "id", "id", C, S, T>(tableName, "id", "id");
 }
 
-export function isMatch_OriginatingData<
+function isMatch_OriginatingData<
     C extends IdRemappingContext<"OriginatingData">,
     T extends { id?: string; sourceId?: string; originatingDataId?: string; originatingDataSourceId?: string },
     S extends { id?: string; sourceId?: string; originatingDataId?: string; originatingDataSourceId?: string }
@@ -330,7 +331,7 @@ export function isMatch_OriginatingData<
 
     const parts1 = id1.split("¬");
     const parts2 = id2.split("¬");
-    return parts1.some((part) => parts2.includes(part));
+    return parts1.every((part) => parts2.includes(part)) && parts2.every((part) => parts1.includes(part));
 }
 
 export function isMatch_OriginatingDataId<
@@ -398,8 +399,6 @@ export function findExistingNamedItem<
     C extends IdRemappingContext<TableName | "OriginatingData">,
     T extends {
         id?: string;
-        originatingDataId?: string;
-        originatingDataSourceId?: string;
         name?: string;
     },
     S extends T
@@ -407,9 +406,25 @@ export function findExistingNamedItem<
     return (ctx, items, item) => {
         return (
             findMatch(ctx, items, item, isMatch_Id(tableName)) ??
-            findMatch(ctx, items, item, isMatch_OriginatingDataId) ??
             findMatch(ctx, items, item, isMatch_String_Exact("name")) ??
             findMatch(ctx, items, item, isMatch_String_EditDistance("name"))
+        );
+    };
+}
+
+export function findExistingEmailItem<
+    TableName extends string,
+    C extends IdRemappingContext<TableName | "OriginatingData">,
+    T extends {
+        id?: string;
+        email?: string;
+    },
+    S extends T
+>(tableName: TableName): (ctx: C, items: S[], item: T) => number | undefined {
+    return (ctx, items, item) => {
+        return (
+            findMatch(ctx, items, item, isMatch_Id(tableName)) ??
+            findMatch(ctx, items, item, isMatch_String_Exact("email"))
         );
     };
 }
@@ -425,7 +440,15 @@ export function mergeIdInPlace<
     TableName extends string,
     C extends IdRemappingContext<TableName>,
     S extends { id?: string; isNew?: boolean }
->(tableName: TableName, ctx: C, changes: ChangeSummary[], result: S, item1: S, item2: S, treatNoIdAsError = true): void {
+>(
+    tableName: TableName,
+    ctx: C,
+    changes: ChangeSummary[],
+    result: S,
+    item1: S,
+    item2: S,
+    treatNoIdAsError = true
+): void {
     function absorbId(concreteId: string, absorbedId: string) {
         let concreteSet = idMap.get(concreteId);
         if (concreteSet) {
@@ -452,7 +475,7 @@ export function mergeIdInPlace<
             description: "Chose left value as it was not new.",
             type: "MERGE",
             importData: [item1.id, item2.id],
-            newData: item1.id
+            newData: item1.id,
         });
 
         if (item2.id) {
@@ -465,7 +488,7 @@ export function mergeIdInPlace<
             description: "Chose right value as it was not new.",
             type: "MERGE",
             importData: [item1.id, item2.id],
-            newData: item2.id
+            newData: item2.id,
         });
 
         if (item1.id) {
@@ -478,7 +501,7 @@ export function mergeIdInPlace<
             description: "Chose left value as it was preferred.",
             type: "MERGE",
             importData: [item1.id, item2.id],
-            newData: item1.id
+            newData: item1.id,
         });
 
         if (item2.id) {
@@ -491,7 +514,7 @@ export function mergeIdInPlace<
             description: "Chose right value as it was preferred.",
             type: "MERGE",
             importData: [item1.id, item2.id],
-            newData: item2.id
+            newData: item2.id,
         });
 
         if (item1.id) {
@@ -507,5 +530,126 @@ export function mergeIsNewInPlace<C, S extends { isNew?: boolean }>(_context: C,
         result.isNew = true;
     } else {
         delete result.isNew;
+    }
+}
+
+export function sourceIdsEquivalent(sId1: string, sId2: string): "L" | "R" | undefined {
+    const ps1 = sId1.split("¬");
+    const ps2 = sId2.split("¬");
+    if (ps1.length > ps2.length) {
+        if (ps2.every((id) => ps1.includes(id))) {
+            return "R";
+        } else if (ps1.every((id) => ps2.includes(id))) {
+            return "L";
+        }
+    } else {
+        if (ps1.every((id) => ps2.includes(id))) {
+            return "L";
+        } else if (ps2.every((id) => ps1.includes(id))) {
+            return "R";
+        }
+    }
+    return undefined;
+}
+
+export function mergeOriginatingDataIdInPlace<
+    C extends IdRemappingContext<"OriginatingData"> & { originatingDatas: OriginatingDataDescriptor[] },
+    S extends { originatingDataId?: string }
+>(ctx: C, changes: ChangeSummary[], result: S, item1: S, item2: S): void {
+    if (item1.originatingDataId && item2.originatingDataId) {
+        if (item1.originatingDataId === item2.originatingDataId) {
+            result.originatingDataId = item1.originatingDataId;
+        } else {
+            const data1Idx = findExistingOriginatingData<C, S>(ctx, ctx.originatingDatas, item1);
+            const data2Idx = findExistingOriginatingData<C, S>(ctx, ctx.originatingDatas, item2);
+            if (data1Idx && data2Idx) {
+                const data1 = ctx.originatingDatas[data1Idx];
+                const data2 = ctx.originatingDatas[data2Idx];
+
+                const d1SParts = data1.sourceId.split("¬");
+                const d2SParts = data2.sourceId.split("¬");
+                const existingMergedData = ctx.originatingDatas.find((d) => {
+                    const sParts = d.sourceId.split("¬");
+                    if (
+                        d1SParts.every((id) => sParts.includes(id)) &&
+                        d2SParts.every((id) => sParts.includes(id)) &&
+                        sParts.every((id) => d1SParts.includes(id) || d2SParts.includes(id))
+                    ) {
+                        return d;
+                    }
+                    return undefined;
+                });
+                if (existingMergedData) {
+                    const mergedId = existingMergedData.id;
+
+                    changes.push({
+                        location: "Unknown - Originating data id",
+                        description: "Used merged data for existing single source.",
+                        type: "MERGE",
+                        importData: [item1.originatingDataId, item2.originatingDataId],
+                        newData: mergedId,
+                    });
+                    result.originatingDataId = mergedId;
+                } else {
+                    const newData: OriginatingDataDescriptor = {
+                        id: uuidv4(),
+                        isNew: true,
+                        sourceId: data1.sourceId + "¬" + data2.sourceId,
+                        data: [...data1.data, ...data2.data],
+                    };
+                    ctx.originatingDatas.push(newData);
+                    const mergedId = newData.id;
+
+                    changes.push({
+                        location: "Unknown - Originating data id",
+                        description: "Merged datas into a single source.",
+                        type: "MERGE",
+                        importData: [item1.originatingDataId, item2.originatingDataId],
+                        newData: mergedId,
+                    });
+                    result.originatingDataId = mergedId;
+                }
+            } else if (data1Idx) {
+                result.originatingDataId = item1.originatingDataId;
+                changes.push({
+                    location: "Unknown - Originating data id",
+                    description: "Chose only available value (lefthand) (righthand originating data not found)",
+                    type: "MERGE",
+                    importData: [item1.originatingDataId],
+                    newData: item1.originatingDataId,
+                });
+            } else if (data2Idx) {
+                result.originatingDataId = item2.originatingDataId;
+                changes.push({
+                    location: "Unknown - Originating data id",
+                    description: "Chose only available value (righthand) (lefthand originating data not found)",
+                    type: "MERGE",
+                    importData: [item2.originatingDataId],
+                    newData: item2.originatingDataId,
+                });
+            } else {
+                delete result.originatingDataId;
+            }
+        }
+    } else if (item1.originatingDataId) {
+        result.originatingDataId = item1.originatingDataId;
+        changes.push({
+            location: "Unknown - Originating data id",
+            description: "Chose only available value (lefthand)",
+            type: "MERGE",
+            importData: [item1.originatingDataId],
+            newData: item1.originatingDataId,
+        });
+    } else if (item2.originatingDataId) {
+        result.originatingDataId = item2.originatingDataId;
+        changes.push({
+            location: "Unknown - Originating data id",
+            description: "Chose only available value (righthand)",
+            type: "MERGE",
+            importData: [item2.originatingDataId],
+            newData: item2.originatingDataId,
+        });
+    } else {
+        delete result.originatingDataId;
     }
 }

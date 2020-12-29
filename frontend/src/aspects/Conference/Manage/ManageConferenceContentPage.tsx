@@ -5,6 +5,7 @@ import {
     AccordionItem,
     AccordionPanel,
     Box,
+    Code,
     Heading,
     Spinner,
     Text,
@@ -920,8 +921,15 @@ function ContentGroupSecondaryEditor(
                     accordianContents = (
                         <>
                             <Text>The following shows the raw data received when this item was imported.</Text>
-                            <Text as="pre" overflow="auto">
-                                {JSON.stringify(originatingData.data, null, 2)}
+                            <Text as="pre" w="100%" overflowWrap="break-word" whiteSpace="pre-wrap" mt={2}>
+                                <Code w="100%" p={2}>
+                                    Source Ids: {JSON.stringify(originatingData.sourceId.split("¬"), null, 2)}
+                                </Code>
+                            </Text>
+                            <Text as="pre" w="100%" overflowWrap="break-word" whiteSpace="pre-wrap" mt={2}>
+                                <Code w="100%" p={2}>
+                                    {JSON.stringify(originatingData.data, null, 2)}
+                                </Code>
                             </Text>
                         </>
                     );

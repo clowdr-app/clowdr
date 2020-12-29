@@ -69,6 +69,9 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
                 setMergedOriginatingDatasMap(merged.newOriginatingDatas);
                 setChanges(merged.changes);
                 console.log("Merged", merged);
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                window.merged = merged;
             } catch (e) {
                 setMergedContentGroupsMap(originalContentGroups);
                 setMergedPeopleMap(originalPeople);
@@ -98,6 +101,7 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
     };
 
     const toast = useToast();
+    const [isSaving, setIsSaving] = useState<boolean>(false);
 
     return loadingContent &&
         (!mergedGroupsMap || !mergedTagsMap || !mergedPeopleMap || !mergedOriginatingDatasMap || !mergedHallwaysMap) ? (
@@ -170,9 +174,11 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
                             !mergedHallwaysMap ||
                             !mergedTagsMap ||
                             !mergedOriginatingDatasMap
-                        )
+                        ) || isSaving
                     }
+                    isLoading={isSaving}
                     onClick={async () => {
+                        setIsSaving(true);
                         assert(saveContentDiff.originalContentGroups);
                         assert(mergedGroupsMap);
                         assert(mergedPeopleMap);
@@ -252,6 +258,7 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
                                 title: "Changes saved",
                             });
                         }
+                        setIsSaving(false);
                     }}
                     colorScheme="green"
                 >

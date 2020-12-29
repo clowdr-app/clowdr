@@ -26,6 +26,7 @@ import type {
 } from "../../Content/Types";
 import {
     ChangeSummary,
+    findExistingEmailItem,
     findExistingNamedItem,
     findExistingOriginatingData,
     findMatch,
@@ -39,6 +40,8 @@ import {
     mergeIdInPlace,
     mergeIsNewInPlace,
     mergeLists,
+    mergeOriginatingDataIdInPlace,
+    sourceIdsEquivalent,
 } from "../Merge";
 
 type Context = {
@@ -66,7 +69,7 @@ function findUploader(
     items: UploaderDescriptor[],
     item: IntermediaryUploaderDescriptor | UploaderDescriptor
 ): number | undefined {
-    return findExistingNamedItem("Uploader")(ctx, items, item);
+    return findExistingEmailItem("Uploader")(ctx, items, item);
 }
 
 function mergeUploader(
@@ -155,7 +158,7 @@ function mergeRequiredItem(
 
     mergeIdInPlace("RequiredItem", context, changes, result, item1, item2);
     mergeIsNewInPlace(context, result, item1, item2);
-    mergeFieldInPlace(context, changes, result, "originatingDataId", item1, item2);
+    mergeOriginatingDataIdInPlace(context, changes, result, item1, item2);
     mergeFieldInPlace(context, changes, result, "name", item1, item2);
     mergeFieldInPlace(context, changes, result, "typeName", item1, item2);
     mergeFieldInPlace(context, changes, result, "uploadsRemaining", item1, item2, true, (_ctx, x, y) => {
@@ -280,7 +283,7 @@ function mergeItem(
 
     mergeIdInPlace("Item", context, changes, result, item1, item2);
     mergeIsNewInPlace(context, result, item1, item2);
-    mergeFieldInPlace(context, changes, result, "originatingDataId", item1, item2);
+    mergeOriginatingDataIdInPlace(context, changes, result, item1, item2);
     mergeFieldInPlace(context, changes, result, "name", item1, item2);
     mergeFieldInPlace(context, changes, result, "typeName", item1, item2);
     mergeFieldInPlace(context, changes, result, "isHidden", item1, item2);
@@ -336,7 +339,9 @@ function mergeItems(
 }
 
 function convertTagName(context: Context, tagName: string): string {
-    const r = findMatch(context, context.tags, tagName, (ctx, item1, item2) => isMatch_String_Exact()(ctx, item1.name, item2));
+    const r = findMatch(context, context.tags, tagName, (ctx, item1, item2) =>
+        isMatch_String_Exact()(ctx, item1.name, item2)
+    );
     if (r !== undefined) {
         return context.tags[r].id;
     } else {
@@ -351,7 +356,16 @@ function findExistingGroupPerson(
 ): number | undefined {
     return (
         findMatch(ctx, items, item, isMatch_Id("GroupPerson")) ??
-        findMatch(ctx, items, item, isMatch_String_Exact("personId"))
+        findMatch(ctx, items, item, (ctxInner, item1, item2) => {
+            if ("roleName" in item2) {
+                return item1.roleName === item2.roleName && isMatch_String_Exact("personId")(ctxInner, item1, item2);
+            }
+            return isMatch_String_Exact<
+                Context,
+                ContentGroupPersonDescriptor | IntermediaryGroupPersonDescriptor,
+                ContentGroupPersonDescriptor
+            >("personId")(ctxInner, item1, item2);
+        })
         // TODO: Find by name_affiliation
     );
 }
@@ -483,7 +497,10 @@ function findExistingGroupHallway(
     items: ContentGroupHallwayDescriptor[],
     item: IntermediaryGroupHallwayDescriptor | ContentGroupHallwayDescriptor
 ): number | undefined {
-    return findMatch(ctx, items, item, isMatch_Id("GroupHallway")) || findMatch(ctx, items, item, isMatch_String_Exact("hallwayId"));
+    return (
+        findMatch(ctx, items, item, isMatch_Id("GroupHallway")) ||
+        findMatch(ctx, items, item, isMatch_String_Exact("hallwayId"))
+    );
 }
 
 function mergeGroupHallways(
@@ -579,7 +596,7 @@ function mergeGroup(
 
     mergeIdInPlace("Group", context, changes, result, item1, item2);
     mergeIsNewInPlace(context, result, item1, item2);
-    mergeFieldInPlace(context, changes, result, "originatingDataId", item1, item2);
+    mergeOriginatingDataIdInPlace(context, changes, result, item1, item2);
     mergeFieldInPlace(context, changes, result, "title", item1, item2);
     mergeFieldInPlace(context, changes, result, "typeName", item1, item2);
     mergeFieldInPlace(context, changes, result, "items", item1, item2, true, mergeItems);
@@ -589,7 +606,15 @@ function mergeGroup(
         items2.forEach((id) => tagIdsMerged.add(id));
         return {
             result: tagIdsMerged,
-            changes: [], // TODO
+            changes: [
+                {
+                    location: "Group.tagIds",
+                    description: "Merged tags ids into single set",
+                    importData: [items1, items2],
+                    newData: tagIdsMerged,
+                    type: "MERGE",
+                },
+            ],
         };
     });
     mergeFieldInPlace(context, changes, result, "people", item1, item2, true, mergeGroupPeople);
@@ -710,7 +735,7 @@ function mergeTag(
 
     mergeIdInPlace("Tag", context, changes, result, item1, item2);
     mergeIsNewInPlace(context, result, item1, item2);
-    mergeFieldInPlace(context, changes, result, "originatingDataId", item1, item2);
+    mergeOriginatingDataIdInPlace(context, changes, result, item1, item2);
     mergeFieldInPlace(context, changes, result, "name", item1, item2);
     mergeFieldInPlace(context, changes, result, "colour", item1, item2);
 
@@ -728,7 +753,11 @@ function mergeTag(
     };
 }
 
-function findExistingTag(ctx: Context, items: TagDescriptor[], item: IntermediaryTagDescriptor | TagDescriptor): number | undefined {
+function findExistingTag(
+    ctx: Context,
+    items: TagDescriptor[],
+    item: IntermediaryTagDescriptor | TagDescriptor
+): number | undefined {
     return (
         findMatch(ctx, items, item, isMatch_Id("Tag")) ??
         findMatch(ctx, items, item, isMatch_OriginatingDataId) ??
@@ -764,10 +793,27 @@ function mergeOriginatingData(
 
     const result = {} as OriginatingDataDescriptor;
 
-    mergeIdInPlace("OriginatingData", context, changes, result, item1, item2);
-    mergeIsNewInPlace(context, result, item1, item2);
-    result.data = [...item1.data, ...item2.data];
-    result.sourceId = item1.sourceId + "¬" + item2.sourceId;
+    const sIdD = sourceIdsEquivalent(item1.sourceId, item2.sourceId);
+    if (sIdD === "L") {
+        result.id = item1.id;
+        if (item1.isNew) {
+            result.isNew = true;
+        }
+        result.data = [...item1.data];
+        result.sourceId = item1.sourceId;
+    } else if (sIdD === "R") {
+        result.id = item2.id;
+        if (item2.isNew) {
+            result.isNew = true;
+        }
+        result.data = [...item2.data];
+        result.sourceId = item2.sourceId;
+    } else {
+        result.id = uuidv4();
+        result.isNew = true;
+        result.data = [...item1.data, ...item2.data];
+        result.sourceId = item1.sourceId + "¬" + item2.sourceId;
+    }
 
     changes.push({
         location: "OriginatingData",
@@ -819,7 +865,7 @@ function mergePerson(
 
     mergeIdInPlace("Person", context, changes, result, item1, item2);
     mergeIsNewInPlace(context, result, item1, item2);
-    mergeFieldInPlace(context, changes, result, "originatingDataId", item1, item2);
+    mergeOriginatingDataIdInPlace(context, changes, result, item1, item2);
     mergeFieldInPlace(context, changes, result, "name", item1, item2);
     mergeFieldInPlace(context, changes, result, "affiliation", item1, item2);
     mergeFieldInPlace(context, changes, result, "email", item1, item2);
@@ -913,8 +959,28 @@ function findExistingPersonForGroup(
     };
     const matchExact = isMatch_String_Exact();
     const matchDistance = isMatch_String_EditDistance();
+    if (item.personId) {
+        const pId = item.personId;
+        const origDataIds = ctx.originatingDatas
+            .filter((x) => sourceIdsEquivalent(x.sourceId, pId) === "R")
+            .map((x) => x.id);
+        const personIdx = items.findIndex((x) => x.originatingDataId && origDataIds.includes(x.originatingDataId));
+        if (personIdx !== -1) {
+            return personIdx;
+        }
+    }
+
     return (
         findMatch(ctx, items, item, isMatch_Id_Generalised("Person", "id", "personId")) ??
+        findMatch(ctx, items, item, (ctxInner, item1, item2) => {
+            if (item1.originatingDataId && item2.personId) {
+                const origData = ctxInner.originatingDatas.find((x) => x.id === item1.originatingDataId);
+                if (origData && origData.sourceId === item2.personId) {
+                    return true;
+                }
+            }
+            return false;
+        }) ??
         findMatch(ctx, items, item, (ctxInner, x, y) => {
             const left = generateMatchableNameA(x);
             const right = generateMatchableNameB(y);
@@ -972,7 +1038,7 @@ function mergeData(
             Tag: IdMap;
             OriginatingData: IdMap;
             Person: IdMap;
-        },
+        };
         conferenceId: string;
         groups: ContentGroupDescriptor[];
         people: ContentPersonDescriptor[];
@@ -1128,7 +1194,40 @@ export default function mergeContent(
     const newOriginatingDatas = new Map(result.newOriginatingDatas.map((x) => [x.id, x]));
     const newHallways = new Map(result.newHallways.map((x) => [x.id, x]));
 
-    // TODO: Prune unused originating datas
+    const unusedOriginatingDataIds = new Set(newOriginatingDatas.keys());
+    newContentGroups.forEach((group) => {
+        if (group.originatingDataId) {
+            unusedOriginatingDataIds.delete(group.originatingDataId);
+        }
+
+        group.items.forEach((item) => {
+            if (item.originatingDataId) {
+                unusedOriginatingDataIds.delete(item.originatingDataId);
+            }
+        });
+
+        group.requiredItems.forEach((item) => {
+            if (item.originatingDataId) {
+                unusedOriginatingDataIds.delete(item.originatingDataId);
+            }
+        });
+    });
+
+    newPeople.forEach((item) => {
+        if (item.originatingDataId) {
+            unusedOriginatingDataIds.delete(item.originatingDataId);
+        }
+    });
+
+    newTags.forEach((item) => {
+        if (item.originatingDataId) {
+            unusedOriginatingDataIds.delete(item.originatingDataId);
+        }
+    });
+
+    unusedOriginatingDataIds.forEach((id) => {
+        originalOriginatingDatas.delete(id);
+    });
 
     return {
         changes,

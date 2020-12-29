@@ -22334,7 +22334,7 @@ export type RoomInfoFragment = { readonly __typename?: 'Room', readonly capacity
 
 export type RoomParticipantInfoFragment = { readonly __typename?: 'RoomParticipant', readonly attendeeId: any, readonly conferenceId: any, readonly id: any, readonly roomId: any };
 
-export type EventInfoFragment = { readonly __typename?: 'Event', readonly conferenceId: any, readonly contentGroupId?: Maybe<any>, readonly durationSeconds: number, readonly id: any, readonly intendedRoomModeName: RoomMode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly eventPeople: ReadonlyArray<(
+export type EventInfoFragment = { readonly __typename?: 'Event', readonly conferenceId: any, readonly id: any, readonly durationSeconds: number, readonly intendedRoomModeName: RoomMode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly contentGroupId?: Maybe<any>, readonly eventPeople: ReadonlyArray<(
     { readonly __typename?: 'EventPerson' }
     & EventPersonInfoFragment
   )>, readonly eventTags: ReadonlyArray<(
@@ -22410,11 +22410,11 @@ export type UpdateEventMutationVariables = Exact<{
   eventId: Scalars['uuid'];
   roomId: Scalars['uuid'];
   intendedRoomModeName: RoomMode_Enum;
-  contentGroupId?: Maybe<Scalars['uuid']>;
   originatingDataId?: Maybe<Scalars['uuid']>;
   name: Scalars['String'];
   startTime: Scalars['timestamptz'];
   durationSeconds: Scalars['Int'];
+  contentGroupId?: Maybe<Scalars['uuid']>;
   newEventTags: ReadonlyArray<EventTag_Insert_Input>;
   deleteEventTagIds: ReadonlyArray<Scalars['uuid']>;
   newEventPeople: ReadonlyArray<EventPerson_Insert_Input>;
@@ -22836,7 +22836,7 @@ export const EventTagInfoFragmentDoc = gql`
 export const EventInfoFragmentDoc = gql`
     fragment EventInfo on Event {
   conferenceId
-  contentGroupId
+  id
   durationSeconds
   eventPeople {
     ...EventPersonInfo
@@ -22850,6 +22850,7 @@ export const EventInfoFragmentDoc = gql`
   originatingDataId
   roomId
   startTime
+  contentGroupId
 }
     ${EventPersonInfoFragmentDoc}
 ${EventTagInfoFragmentDoc}`;
@@ -24805,7 +24806,7 @@ export type InsertDeleteEventsMutationHookResult = ReturnType<typeof useInsertDe
 export type InsertDeleteEventsMutationResult = Apollo.MutationResult<InsertDeleteEventsMutation>;
 export type InsertDeleteEventsMutationOptions = Apollo.BaseMutationOptions<InsertDeleteEventsMutation, InsertDeleteEventsMutationVariables>;
 export const UpdateEventDocument = gql`
-    mutation UpdateEvent($eventId: uuid!, $roomId: uuid!, $intendedRoomModeName: RoomMode_enum!, $contentGroupId: uuid = null, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $newEventTags: [EventTag_insert_input!]!, $deleteEventTagIds: [uuid!]!, $newEventPeople: [EventPerson_insert_input!]!, $deleteEventPeopleIds: [uuid!]!) {
+    mutation UpdateEvent($eventId: uuid!, $roomId: uuid!, $intendedRoomModeName: RoomMode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $contentGroupId: uuid = null, $newEventTags: [EventTag_insert_input!]!, $deleteEventTagIds: [uuid!]!, $newEventPeople: [EventPerson_insert_input!]!, $deleteEventPeopleIds: [uuid!]!) {
   insert_EventTag(objects: $newEventTags) {
     returning {
       ...EventTagInfo
@@ -24818,7 +24819,7 @@ export const UpdateEventDocument = gql`
   }
   update_Event_by_pk(
     pk_columns: {id: $eventId}
-    _set: {roomId: $roomId, intendedRoomModeName: $intendedRoomModeName, contentGroupId: $contentGroupId, originatingDataId: $originatingDataId, name: $name, startTime: $startTime, durationSeconds: $durationSeconds}
+    _set: {roomId: $roomId, intendedRoomModeName: $intendedRoomModeName, originatingDataId: $originatingDataId, name: $name, startTime: $startTime, durationSeconds: $durationSeconds}
   ) {
     ...EventInfo
   }
@@ -24854,11 +24855,11 @@ export type UpdateEventMutationFn = Apollo.MutationFunction<UpdateEventMutation,
  *      eventId: // value for 'eventId'
  *      roomId: // value for 'roomId'
  *      intendedRoomModeName: // value for 'intendedRoomModeName'
- *      contentGroupId: // value for 'contentGroupId'
  *      originatingDataId: // value for 'originatingDataId'
  *      name: // value for 'name'
  *      startTime: // value for 'startTime'
  *      durationSeconds: // value for 'durationSeconds'
+ *      contentGroupId: // value for 'contentGroupId'
  *      newEventTags: // value for 'newEventTags'
  *      deleteEventTagIds: // value for 'deleteEventTagIds'
  *      newEventPeople: // value for 'newEventPeople'

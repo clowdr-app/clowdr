@@ -19,10 +19,10 @@ import type {
     ContentGroupDescriptor,
     ContentPersonDescriptor,
     HallwayDescriptor,
-    OriginatingDataDescriptor,
     TagDescriptor,
 } from "../../Content/Types";
 import { useSaveContentDiff } from "../../Content/useSaveContentDiff";
+import type { OriginatingDataDescriptor } from "../../Shared/Types";
 import { ChangeSummary, Set_toJSON } from "../Merge";
 
 export default function MergePanel({ data }: { data: Record<string, IntermediaryData> }): JSX.Element {

@@ -25,20 +25,6 @@ export type HallwayDescriptor = {
     priority: number;
 };
 
-export type OriginatingDataPart = {
-    sourceId: string;
-    originName: "Researchr" | "HotCRP" | string;
-    data: any;
-};
-
-export type OriginatingDataDescriptor = {
-    isNew?: boolean;
-
-    id: string;
-    sourceId: string;
-    data: OriginatingDataPart[];
-};
-
 export type ContentItemDescriptor = {
     isNew?: boolean;
 

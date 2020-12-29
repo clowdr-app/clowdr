@@ -37,6 +37,7 @@ import {
 } from "../../../../generated/graphql";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import { useConference } from "../../useConference";
+import type { OriginatingDataDescriptor } from "../Shared/Types";
 import { convertContentToDescriptors } from "./Functions";
 import type {
     ContentGroupDescriptor,
@@ -45,7 +46,6 @@ import type {
     ContentItemDescriptor,
     ContentPersonDescriptor,
     HallwayDescriptor,
-    OriginatingDataDescriptor,
     RequiredContentItemDescriptor,
     TagDescriptor,
     UploaderDescriptor,

@@ -1,6 +1,7 @@
+import type { IntermediaryOriginatingDataDescriptor } from "@clowdr-app/shared-types/build/import/intermediary";
 import levenshtein from "levenshtein-edit-distance";
 import { v4 as uuidv4 } from "uuid";
-import type { OriginatingDataDescriptor } from "../Content/Types";
+import type { OriginatingDataDescriptor } from "../Shared/Types";
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function Set_toJSON(key: string, value: any): any {
@@ -652,4 +653,67 @@ export function mergeOriginatingDataIdInPlace<
     } else {
         delete result.originatingDataId;
     }
+}
+
+export function convertOriginatingData<C>(
+    context: C,
+    item: IntermediaryOriginatingDataDescriptor | OriginatingDataDescriptor
+): OriginatingDataDescriptor {
+    const result = {
+        id: ("id" in item ? item.id : undefined) ?? uuidv4(),
+        isNew: ("isNew" in item && item.isNew) || !("id" in item ? item.id : undefined),
+
+        data: "data" in item ? item.data : [],
+        sourceId: "sourceId" in item ? item.sourceId : undefined,
+    } as OriginatingDataDescriptor;
+
+    return result;
+}
+
+export function mergeOriginatingData<C>(
+    context: C,
+    item1: OriginatingDataDescriptor,
+    item2: OriginatingDataDescriptor
+): {
+    result: OriginatingDataDescriptor;
+    changes: ChangeSummary[];
+} {
+    const changes: ChangeSummary[] = [];
+
+    const result = {} as OriginatingDataDescriptor;
+
+    const sIdD = sourceIdsEquivalent(item1.sourceId, item2.sourceId);
+    if (sIdD === "L") {
+        result.id = item1.id;
+        if (item1.isNew) {
+            result.isNew = true;
+        }
+        result.data = [...item1.data];
+        result.sourceId = item1.sourceId;
+    } else if (sIdD === "R") {
+        result.id = item2.id;
+        if (item2.isNew) {
+            result.isNew = true;
+        }
+        result.data = [...item2.data];
+        result.sourceId = item2.sourceId;
+    } else {
+        result.id = uuidv4();
+        result.isNew = true;
+        result.data = [...item1.data, ...item2.data];
+        result.sourceId = item1.sourceId + "¬" + item2.sourceId;
+    }
+
+    changes.push({
+        location: "OriginatingData",
+        type: "MERGE",
+        description: "Merged two matching originating data.",
+        importData: [item1, item2],
+        newData: result,
+    });
+
+    return {
+        result,
+        changes,
+    };
 }

@@ -49,12 +49,12 @@ import type {
     ContentItemDescriptor,
     ContentPersonDescriptor,
     HallwayDescriptor,
-    OriginatingDataDescriptor,
     RequiredContentItemDescriptor,
     TagDescriptor,
 } from "./Content/Types";
 import UploadersModal from "./Content/UploadersModal";
 import { useSaveContentDiff } from "./Content/useSaveContentDiff";
+import type { OriginatingDataDescriptor } from "./Shared/Types";
 import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
 const ContentGroupCRUDTable = (props: Readonly<CRUDTableProps<ContentGroupDescriptor, "id">>) => CRUDTable(props);

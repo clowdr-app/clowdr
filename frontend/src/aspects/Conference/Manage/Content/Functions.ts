@@ -1,10 +1,9 @@
 import type { SelectAllContentQuery } from "../../../../generated/graphql";
+import type { OriginatingDataDescriptor, OriginatingDataPart } from "../Shared/Types";
 import type {
     ContentGroupDescriptor,
     ContentPersonDescriptor,
     HallwayDescriptor,
-    OriginatingDataDescriptor,
-    OriginatingDataPart,
     TagDescriptor,
 } from "./Types";
 

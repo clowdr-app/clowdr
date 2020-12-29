@@ -5,7 +5,6 @@ import type {
     IntermediaryGroupPersonDescriptor,
     IntermediaryHallwayDescriptor,
     IntermediaryItemDescriptor,
-    IntermediaryOriginatingDataDescriptor,
     IntermediaryPersonDescriptor,
     IntermediaryRequiredItemDescriptor,
     IntermediaryTagDescriptor,
@@ -19,13 +18,14 @@ import type {
     ContentItemDescriptor,
     ContentPersonDescriptor,
     HallwayDescriptor,
-    OriginatingDataDescriptor,
     RequiredContentItemDescriptor,
     TagDescriptor,
     UploaderDescriptor,
 } from "../../Content/Types";
+import type { OriginatingDataDescriptor } from "../../Shared/Types";
 import {
     ChangeSummary,
+    convertOriginatingData,
     findExistingEmailItem,
     findExistingNamedItem,
     findExistingOriginatingData,
@@ -40,6 +40,7 @@ import {
     mergeIdInPlace,
     mergeIsNewInPlace,
     mergeLists,
+    mergeOriginatingData,
     mergeOriginatingDataIdInPlace,
     sourceIdsEquivalent,
 } from "../Merge";
@@ -764,69 +765,6 @@ function findExistingTag(
         findMatch(ctx, items, item, isMatch_String_Exact("name")) ??
         findMatch(ctx, items, item, isMatch_String_EditDistance("name"))
     );
-}
-
-function convertOriginatingData(
-    context: Context,
-    item: IntermediaryOriginatingDataDescriptor | OriginatingDataDescriptor
-): OriginatingDataDescriptor {
-    const result = {
-        id: ("id" in item ? item.id : undefined) ?? uuidv4(),
-        isNew: ("isNew" in item && item.isNew) || !("id" in item ? item.id : undefined),
-
-        data: "data" in item ? item.data : [],
-        sourceId: "sourceId" in item ? item.sourceId : undefined,
-    } as OriginatingDataDescriptor;
-
-    return result;
-}
-
-function mergeOriginatingData(
-    context: Context,
-    item1: OriginatingDataDescriptor,
-    item2: OriginatingDataDescriptor
-): {
-    result: OriginatingDataDescriptor;
-    changes: ChangeSummary[];
-} {
-    const changes: ChangeSummary[] = [];
-
-    const result = {} as OriginatingDataDescriptor;
-
-    const sIdD = sourceIdsEquivalent(item1.sourceId, item2.sourceId);
-    if (sIdD === "L") {
-        result.id = item1.id;
-        if (item1.isNew) {
-            result.isNew = true;
-        }
-        result.data = [...item1.data];
-        result.sourceId = item1.sourceId;
-    } else if (sIdD === "R") {
-        result.id = item2.id;
-        if (item2.isNew) {
-            result.isNew = true;
-        }
-        result.data = [...item2.data];
-        result.sourceId = item2.sourceId;
-    } else {
-        result.id = uuidv4();
-        result.isNew = true;
-        result.data = [...item1.data, ...item2.data];
-        result.sourceId = item1.sourceId + "¬" + item2.sourceId;
-    }
-
-    changes.push({
-        location: "OriginatingData",
-        type: "MERGE",
-        description: "Merged two matching originating data.",
-        importData: [item1, item2],
-        newData: result,
-    });
-
-    return {
-        result,
-        changes,
-    };
 }
 
 function convertPerson(

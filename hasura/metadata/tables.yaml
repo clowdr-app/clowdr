@@ -1957,17 +1957,18 @@
   - role: user
     permission:
       columns:
-      - id
-      - created_at
-      - updated_at
-      - roomId
-      - intendedRoomModeName
-      - originatingDataId
-      - name
-      - startTime
-      - durationSeconds
       - conferenceId
       - contentGroupId
+      - created_at
+      - durationSeconds
+      - endTime
+      - id
+      - intendedRoomModeName
+      - name
+      - originatingDataId
+      - roomId
+      - startTime
+      - updated_at
       filter:
         _or:
         - conference:

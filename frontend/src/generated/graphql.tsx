@@ -22327,6 +22327,127 @@ export type UpdateRoleMutationVariables = Exact<{
 
 export type UpdateRoleMutation = { readonly __typename?: 'mutation_root', readonly update_Role?: Maybe<{ readonly __typename?: 'Role_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Role', readonly id: any, readonly name: string, readonly conferenceId: any, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly id: any, readonly permissionName: Permission_Enum, readonly roleId: any }> }> }>, readonly insert_RolePermission?: Maybe<{ readonly __typename?: 'RolePermission_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly id: any, readonly permissionName: Permission_Enum, readonly roleId: any }> }>, readonly delete_RolePermission?: Maybe<{ readonly __typename?: 'RolePermission_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly id: any }> }> };
 
+export type RoomInfoFragment = { readonly __typename?: 'Room', readonly capacity?: Maybe<number>, readonly conferenceId: any, readonly currentModeName: RoomMode_Enum, readonly id: any, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly participants: ReadonlyArray<(
+    { readonly __typename?: 'RoomParticipant' }
+    & RoomParticipantInfoFragment
+  )> };
+
+export type RoomParticipantInfoFragment = { readonly __typename?: 'RoomParticipant', readonly attendeeId: any, readonly conferenceId: any, readonly id: any, readonly roomId: any };
+
+export type EventInfoFragment = { readonly __typename?: 'Event', readonly conferenceId: any, readonly contentGroupId?: Maybe<any>, readonly durationSeconds: number, readonly id: any, readonly intendedRoomModeName: RoomMode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly eventPeople: ReadonlyArray<(
+    { readonly __typename?: 'EventPerson' }
+    & EventPersonInfoFragment
+  )>, readonly eventTags: ReadonlyArray<(
+    { readonly __typename?: 'EventTag' }
+    & EventTagInfoFragment
+  )> };
+
+export type EventPersonInfoFragment = { readonly __typename?: 'EventPerson', readonly affiliation?: Maybe<string>, readonly attendeeId?: Maybe<any>, readonly conferenceId: any, readonly eventId: any, readonly id: any, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roleName: EventPersonRole_Enum };
+
+export type EventTagInfoFragment = { readonly __typename?: 'EventTag', readonly eventId: any, readonly id: any, readonly tagId: any };
+
+export type SelectWholeScheduleQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type SelectWholeScheduleQuery = { readonly __typename?: 'query_root', readonly Room: ReadonlyArray<(
+    { readonly __typename?: 'Room' }
+    & RoomInfoFragment
+  )>, readonly Event: ReadonlyArray<(
+    { readonly __typename?: 'Event' }
+    & EventInfoFragment
+  )>, readonly OriginatingData: ReadonlyArray<(
+    { readonly __typename?: 'OriginatingData' }
+    & OriginatingDataInfoFragment
+  )>, readonly Tag: ReadonlyArray<(
+    { readonly __typename?: 'Tag' }
+    & TagInfoFragment
+  )> };
+
+export type InsertRoomsMutationVariables = Exact<{
+  newRooms: ReadonlyArray<Room_Insert_Input>;
+}>;
+
+
+export type InsertRoomsMutation = { readonly __typename?: 'mutation_root', readonly insert_Room?: Maybe<{ readonly __typename?: 'Room_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'Room' }
+      & RoomInfoFragment
+    )> }> };
+
+export type DeleteRoomsMutationVariables = Exact<{
+  deleteRoomIds: ReadonlyArray<Scalars['uuid']>;
+}>;
+
+
+export type DeleteRoomsMutation = { readonly __typename?: 'mutation_root', readonly delete_Room?: Maybe<{ readonly __typename?: 'Room_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }> }> };
+
+export type UpdateRoomMutationVariables = Exact<{
+  id: Scalars['uuid'];
+  name: Scalars['String'];
+  currentModeName: RoomMode_Enum;
+  originatingDataId?: Maybe<Scalars['uuid']>;
+}>;
+
+
+export type UpdateRoomMutation = { readonly __typename?: 'mutation_root', readonly update_Room_by_pk?: Maybe<(
+    { readonly __typename?: 'Room' }
+    & RoomInfoFragment
+  )> };
+
+export type InsertDeleteEventsMutationVariables = Exact<{
+  newEvents: ReadonlyArray<Event_Insert_Input>;
+  deleteEventIds: ReadonlyArray<Scalars['uuid']>;
+}>;
+
+
+export type InsertDeleteEventsMutation = { readonly __typename?: 'mutation_root', readonly insert_Event?: Maybe<{ readonly __typename?: 'Event_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'Event' }
+      & EventInfoFragment
+    )> }>, readonly delete_Event?: Maybe<{ readonly __typename?: 'Event_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Event', readonly id: any }> }> };
+
+export type UpdateEventMutationVariables = Exact<{
+  eventId: Scalars['uuid'];
+  roomId: Scalars['uuid'];
+  intendedRoomModeName: RoomMode_Enum;
+  contentGroupId?: Maybe<Scalars['uuid']>;
+  originatingDataId?: Maybe<Scalars['uuid']>;
+  name: Scalars['String'];
+  startTime: Scalars['timestamptz'];
+  durationSeconds: Scalars['Int'];
+  newEventTags: ReadonlyArray<EventTag_Insert_Input>;
+  deleteEventTagIds: ReadonlyArray<Scalars['uuid']>;
+  newEventPeople: ReadonlyArray<EventPerson_Insert_Input>;
+  deleteEventPeopleIds: ReadonlyArray<Scalars['uuid']>;
+}>;
+
+
+export type UpdateEventMutation = { readonly __typename?: 'mutation_root', readonly insert_EventTag?: Maybe<{ readonly __typename?: 'EventTag_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'EventTag' }
+      & EventTagInfoFragment
+    )> }>, readonly insert_EventPerson?: Maybe<{ readonly __typename?: 'EventPerson_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'EventPerson' }
+      & EventPersonInfoFragment
+    )> }>, readonly update_Event_by_pk?: Maybe<(
+    { readonly __typename?: 'Event' }
+    & EventInfoFragment
+  )>, readonly delete_EventTag?: Maybe<{ readonly __typename?: 'EventTag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'EventTag', readonly id: any }> }>, readonly delete_EventPerson?: Maybe<{ readonly __typename?: 'EventPerson_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'EventPerson', readonly id: any }> }> };
+
+export type UpdateEventPersonMutationVariables = Exact<{
+  id: Scalars['uuid'];
+  attendeeId?: Maybe<Scalars['uuid']>;
+  name: Scalars['String'];
+  affiliation?: Maybe<Scalars['String']>;
+  roleName: EventPersonRole_Enum;
+  originatingDataId?: Maybe<Scalars['uuid']>;
+}>;
+
+
+export type UpdateEventPersonMutation = { readonly __typename?: 'mutation_root', readonly update_EventPerson_by_pk?: Maybe<(
+    { readonly __typename?: 'EventPerson' }
+    & EventPersonInfoFragment
+  )> };
+
 export type ConferenceTakenQueryVariables = Exact<{
   name: Scalars['String'];
   shortName: Scalars['String'];
@@ -22672,6 +22793,66 @@ export const AttendeePartsFragmentDoc = gql`
   inviteSent
 }
     `;
+export const RoomParticipantInfoFragmentDoc = gql`
+    fragment RoomParticipantInfo on RoomParticipant {
+  attendeeId
+  conferenceId
+  id
+  roomId
+}
+    `;
+export const RoomInfoFragmentDoc = gql`
+    fragment RoomInfo on Room {
+  capacity
+  conferenceId
+  currentModeName
+  id
+  name
+  originatingDataId
+  participants {
+    ...RoomParticipantInfo
+  }
+}
+    ${RoomParticipantInfoFragmentDoc}`;
+export const EventPersonInfoFragmentDoc = gql`
+    fragment EventPersonInfo on EventPerson {
+  affiliation
+  attendeeId
+  conferenceId
+  eventId
+  id
+  name
+  originatingDataId
+  roleName
+}
+    `;
+export const EventTagInfoFragmentDoc = gql`
+    fragment EventTagInfo on EventTag {
+  eventId
+  id
+  tagId
+}
+    `;
+export const EventInfoFragmentDoc = gql`
+    fragment EventInfo on Event {
+  conferenceId
+  contentGroupId
+  durationSeconds
+  eventPeople {
+    ...EventPersonInfo
+  }
+  eventTags {
+    ...EventTagInfo
+  }
+  id
+  intendedRoomModeName
+  name
+  originatingDataId
+  roomId
+  startTime
+}
+    ${EventPersonInfoFragmentDoc}
+${EventTagInfoFragmentDoc}`;
 export const RequiredItemFieldsFragmentDoc = gql`
     fragment RequiredItemFields on RequiredContentItem {
   id
@@ -24432,6 +24613,305 @@ export function useUpdateRoleMutation(baseOptions?: Apollo.MutationHookOptions<U
 export type UpdateRoleMutationHookResult = ReturnType<typeof useUpdateRoleMutation>;
 export type UpdateRoleMutationResult = Apollo.MutationResult<UpdateRoleMutation>;
 export type UpdateRoleMutationOptions = Apollo.BaseMutationOptions<UpdateRoleMutation, UpdateRoleMutationVariables>;
+export const SelectWholeScheduleDocument = gql`
+    query SelectWholeSchedule($conferenceId: uuid!) {
+  Room(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...RoomInfo
+  }
+  Event(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...EventInfo
+  }
+  OriginatingData(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...OriginatingDataInfo
+  }
+  Tag(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...TagInfo
+  }
+}
+    ${RoomInfoFragmentDoc}
+${EventInfoFragmentDoc}
+${OriginatingDataInfoFragmentDoc}
+${TagInfoFragmentDoc}`;
+
+/**
+ * __useSelectWholeScheduleQuery__
+ *
+ * To run a query within a React component, call `useSelectWholeScheduleQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectWholeScheduleQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectWholeScheduleQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useSelectWholeScheduleQuery(baseOptions: Apollo.QueryHookOptions<SelectWholeScheduleQuery, SelectWholeScheduleQueryVariables>) {
+        return Apollo.useQuery<SelectWholeScheduleQuery, SelectWholeScheduleQueryVariables>(SelectWholeScheduleDocument, baseOptions);
+      }
+export function useSelectWholeScheduleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectWholeScheduleQuery, SelectWholeScheduleQueryVariables>) {
+          return Apollo.useLazyQuery<SelectWholeScheduleQuery, SelectWholeScheduleQueryVariables>(SelectWholeScheduleDocument, baseOptions);
+        }
+export type SelectWholeScheduleQueryHookResult = ReturnType<typeof useSelectWholeScheduleQuery>;
+export type SelectWholeScheduleLazyQueryHookResult = ReturnType<typeof useSelectWholeScheduleLazyQuery>;
+export type SelectWholeScheduleQueryResult = Apollo.QueryResult<SelectWholeScheduleQuery, SelectWholeScheduleQueryVariables>;
+export const InsertRoomsDocument = gql`
+    mutation InsertRooms($newRooms: [Room_insert_input!]!) {
+  insert_Room(objects: $newRooms) {
+    returning {
+      ...RoomInfo
+    }
+  }
+}
+    ${RoomInfoFragmentDoc}`;
+export type InsertRoomsMutationFn = Apollo.MutationFunction<InsertRoomsMutation, InsertRoomsMutationVariables>;
+
+/**
+ * __useInsertRoomsMutation__
+ *
+ * To run a mutation, you first call `useInsertRoomsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInsertRoomsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [insertRoomsMutation, { data, loading, error }] = useInsertRoomsMutation({
+ *   variables: {
+ *      newRooms: // value for 'newRooms'
+ *   },
+ * });
+ */
+export function useInsertRoomsMutation(baseOptions?: Apollo.MutationHookOptions<InsertRoomsMutation, InsertRoomsMutationVariables>) {
+        return Apollo.useMutation<InsertRoomsMutation, InsertRoomsMutationVariables>(InsertRoomsDocument, baseOptions);
+      }
+export type InsertRoomsMutationHookResult = ReturnType<typeof useInsertRoomsMutation>;
+export type InsertRoomsMutationResult = Apollo.MutationResult<InsertRoomsMutation>;
+export type InsertRoomsMutationOptions = Apollo.BaseMutationOptions<InsertRoomsMutation, InsertRoomsMutationVariables>;
+export const DeleteRoomsDocument = gql`
+    mutation DeleteRooms($deleteRoomIds: [uuid!]!) {
+  delete_Room(where: {id: {_in: $deleteRoomIds}}) {
+    returning {
+      id
+    }
+  }
+}
+    `;
+export type DeleteRoomsMutationFn = Apollo.MutationFunction<DeleteRoomsMutation, DeleteRoomsMutationVariables>;
+
+/**
+ * __useDeleteRoomsMutation__
+ *
+ * To run a mutation, you first call `useDeleteRoomsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteRoomsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteRoomsMutation, { data, loading, error }] = useDeleteRoomsMutation({
+ *   variables: {
+ *      deleteRoomIds: // value for 'deleteRoomIds'
+ *   },
+ * });
+ */
+export function useDeleteRoomsMutation(baseOptions?: Apollo.MutationHookOptions<DeleteRoomsMutation, DeleteRoomsMutationVariables>) {
+        return Apollo.useMutation<DeleteRoomsMutation, DeleteRoomsMutationVariables>(DeleteRoomsDocument, baseOptions);
+      }
+export type DeleteRoomsMutationHookResult = ReturnType<typeof useDeleteRoomsMutation>;
+export type DeleteRoomsMutationResult = Apollo.MutationResult<DeleteRoomsMutation>;
+export type DeleteRoomsMutationOptions = Apollo.BaseMutationOptions<DeleteRoomsMutation, DeleteRoomsMutationVariables>;
+export const UpdateRoomDocument = gql`
+    mutation UpdateRoom($id: uuid!, $name: String!, $currentModeName: RoomMode_enum!, $originatingDataId: uuid = null) {
+  update_Room_by_pk(
+    pk_columns: {id: $id}
+    _set: {name: $name, currentModeName: $currentModeName, originatingDataId: $originatingDataId}
+  ) {
+    ...RoomInfo
+  }
+}
+    ${RoomInfoFragmentDoc}`;
+export type UpdateRoomMutationFn = Apollo.MutationFunction<UpdateRoomMutation, UpdateRoomMutationVariables>;
+
+/**
+ * __useUpdateRoomMutation__
+ *
+ * To run a mutation, you first call `useUpdateRoomMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateRoomMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateRoomMutation, { data, loading, error }] = useUpdateRoomMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      name: // value for 'name'
+ *      currentModeName: // value for 'currentModeName'
+ *      originatingDataId: // value for 'originatingDataId'
+ *   },
+ * });
+ */
+export function useUpdateRoomMutation(baseOptions?: Apollo.MutationHookOptions<UpdateRoomMutation, UpdateRoomMutationVariables>) {
+        return Apollo.useMutation<UpdateRoomMutation, UpdateRoomMutationVariables>(UpdateRoomDocument, baseOptions);
+      }
+export type UpdateRoomMutationHookResult = ReturnType<typeof useUpdateRoomMutation>;
+export type UpdateRoomMutationResult = Apollo.MutationResult<UpdateRoomMutation>;
+export type UpdateRoomMutationOptions = Apollo.BaseMutationOptions<UpdateRoomMutation, UpdateRoomMutationVariables>;
+export const InsertDeleteEventsDocument = gql`
+    mutation InsertDeleteEvents($newEvents: [Event_insert_input!]!, $deleteEventIds: [uuid!]!) {
+  insert_Event(objects: $newEvents) {
+    returning {
+      ...EventInfo
+    }
+  }
+  delete_Event(where: {id: {_in: $deleteEventIds}}) {
+    returning {
+      id
+    }
+  }
+}
+    ${EventInfoFragmentDoc}`;
+export type InsertDeleteEventsMutationFn = Apollo.MutationFunction<InsertDeleteEventsMutation, InsertDeleteEventsMutationVariables>;
+
+/**
+ * __useInsertDeleteEventsMutation__
+ *
+ * To run a mutation, you first call `useInsertDeleteEventsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInsertDeleteEventsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [insertDeleteEventsMutation, { data, loading, error }] = useInsertDeleteEventsMutation({
+ *   variables: {
+ *      newEvents: // value for 'newEvents'
+ *      deleteEventIds: // value for 'deleteEventIds'
+ *   },
+ * });
+ */
+export function useInsertDeleteEventsMutation(baseOptions?: Apollo.MutationHookOptions<InsertDeleteEventsMutation, InsertDeleteEventsMutationVariables>) {
+        return Apollo.useMutation<InsertDeleteEventsMutation, InsertDeleteEventsMutationVariables>(InsertDeleteEventsDocument, baseOptions);
+      }
+export type InsertDeleteEventsMutationHookResult = ReturnType<typeof useInsertDeleteEventsMutation>;
+export type InsertDeleteEventsMutationResult = Apollo.MutationResult<InsertDeleteEventsMutation>;
+export type InsertDeleteEventsMutationOptions = Apollo.BaseMutationOptions<InsertDeleteEventsMutation, InsertDeleteEventsMutationVariables>;
+export const UpdateEventDocument = gql`
+    mutation UpdateEvent($eventId: uuid!, $roomId: uuid!, $intendedRoomModeName: RoomMode_enum!, $contentGroupId: uuid = null, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $newEventTags: [EventTag_insert_input!]!, $deleteEventTagIds: [uuid!]!, $newEventPeople: [EventPerson_insert_input!]!, $deleteEventPeopleIds: [uuid!]!) {
+  insert_EventTag(objects: $newEventTags) {
+    returning {
+      ...EventTagInfo
+    }
+  }
+  insert_EventPerson(objects: $newEventPeople) {
+    returning {
+      ...EventPersonInfo
+    }
+  }
+  update_Event_by_pk(
+    pk_columns: {id: $eventId}
+    _set: {roomId: $roomId, intendedRoomModeName: $intendedRoomModeName, contentGroupId: $contentGroupId, originatingDataId: $originatingDataId, name: $name, startTime: $startTime, durationSeconds: $durationSeconds}
+  ) {
+    ...EventInfo
+  }
+  delete_EventTag(where: {tag: {id: {_in: $deleteEventTagIds}}}) {
+    returning {
+      id
+    }
+  }
+  delete_EventPerson(where: {id: {_in: $deleteEventPeopleIds}}) {
+    returning {
+      id
+    }
+  }
+}
+    ${EventTagInfoFragmentDoc}
+${EventPersonInfoFragmentDoc}
+${EventInfoFragmentDoc}`;
+export type UpdateEventMutationFn = Apollo.MutationFunction<UpdateEventMutation, UpdateEventMutationVariables>;
+
+/**
+ * __useUpdateEventMutation__
+ *
+ * To run a mutation, you first call `useUpdateEventMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateEventMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateEventMutation, { data, loading, error }] = useUpdateEventMutation({
+ *   variables: {
+ *      eventId: // value for 'eventId'
+ *      roomId: // value for 'roomId'
+ *      intendedRoomModeName: // value for 'intendedRoomModeName'
+ *      contentGroupId: // value for 'contentGroupId'
+ *      originatingDataId: // value for 'originatingDataId'
+ *      name: // value for 'name'
+ *      startTime: // value for 'startTime'
+ *      durationSeconds: // value for 'durationSeconds'
+ *      newEventTags: // value for 'newEventTags'
+ *      deleteEventTagIds: // value for 'deleteEventTagIds'
+ *      newEventPeople: // value for 'newEventPeople'
+ *      deleteEventPeopleIds: // value for 'deleteEventPeopleIds'
+ *   },
+ * });
+ */
+export function useUpdateEventMutation(baseOptions?: Apollo.MutationHookOptions<UpdateEventMutation, UpdateEventMutationVariables>) {
+        return Apollo.useMutation<UpdateEventMutation, UpdateEventMutationVariables>(UpdateEventDocument, baseOptions);
+      }
+export type UpdateEventMutationHookResult = ReturnType<typeof useUpdateEventMutation>;
+export type UpdateEventMutationResult = Apollo.MutationResult<UpdateEventMutation>;
+export type UpdateEventMutationOptions = Apollo.BaseMutationOptions<UpdateEventMutation, UpdateEventMutationVariables>;
+export const UpdateEventPersonDocument = gql`
+    mutation UpdateEventPerson($id: uuid!, $attendeeId: uuid = null, $name: String!, $affiliation: String = null, $roleName: EventPersonRole_enum!, $originatingDataId: uuid = null) {
+  update_EventPerson_by_pk(
+    pk_columns: {id: $id}
+    _set: {attendeeId: $attendeeId, name: $name, affiliation: $affiliation, roleName: $roleName, originatingDataId: $originatingDataId}
+  ) {
+    ...EventPersonInfo
+  }
+}
+    ${EventPersonInfoFragmentDoc}`;
+export type UpdateEventPersonMutationFn = Apollo.MutationFunction<UpdateEventPersonMutation, UpdateEventPersonMutationVariables>;
+
+/**
+ * __useUpdateEventPersonMutation__
+ *
+ * To run a mutation, you first call `useUpdateEventPersonMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateEventPersonMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateEventPersonMutation, { data, loading, error }] = useUpdateEventPersonMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      attendeeId: // value for 'attendeeId'
+ *      name: // value for 'name'
+ *      affiliation: // value for 'affiliation'
+ *      roleName: // value for 'roleName'
+ *      originatingDataId: // value for 'originatingDataId'
+ *   },
+ * });
+ */
+export function useUpdateEventPersonMutation(baseOptions?: Apollo.MutationHookOptions<UpdateEventPersonMutation, UpdateEventPersonMutationVariables>) {
+        return Apollo.useMutation<UpdateEventPersonMutation, UpdateEventPersonMutationVariables>(UpdateEventPersonDocument, baseOptions);
+      }
+export type UpdateEventPersonMutationHookResult = ReturnType<typeof useUpdateEventPersonMutation>;
+export type UpdateEventPersonMutationResult = Apollo.MutationResult<UpdateEventPersonMutation>;
+export type UpdateEventPersonMutationOptions = Apollo.BaseMutationOptions<UpdateEventPersonMutation, UpdateEventPersonMutationVariables>;
 export const ConferenceTakenDocument = gql`
     query ConferenceTaken($name: String!, $shortName: String!, $slug: String!) {
   Conference(

@@ -75,6 +75,13 @@ declare enum ContentGroupType_Enum {
     Workshop = "WORKSHOP",
 }
 
+declare enum EventPersonRole_Enum {
+    /** Chair/moderator of the event */
+    Chair = "CHAIR",
+    /** A presenter. */
+    Presenter = "PRESENTER",
+}
+
 export interface IntermediaryOriginatingDataPart {
     sourceId: string;
     originName: "Researchr" | "HotCRP" | string;
@@ -199,11 +206,10 @@ export interface IntermediaryRoomDescriptor {
     originatingDataId?: string;
     name?: string;
     currentModeName?: RoomMode_Enum;
-    capacity?: number;
-    participants?: Set<string>;
+    capacity?: number | null;
 }
 
-export interface IntermediaryEventDesciptor {
+export interface IntermediaryEventDescriptor {
     id?: string;
     originatingDataId?: string;
     roomId?: string;
@@ -213,7 +219,7 @@ export interface IntermediaryEventDesciptor {
     startTime?: string;
     durationSeconds?: number;
     people?: IntermediaryEventPersonDescriptor[];
-    tagIds?: Set<string>;
+    tagNames?: Array<string>;
 }
 
 export interface IntermediaryEventPersonDescriptor {
@@ -222,13 +228,13 @@ export interface IntermediaryEventPersonDescriptor {
     attendeeId?: string | null;
     name?: string;
     affiliation?: string | null;
-    roleName?: string;
+    roleName?: EventPersonRole_Enum;
 }
 
 export interface IntermediaryScheduleData {
     originatingDatas?: Array<IntermediaryOriginatingDataDescriptor>;
     rooms?: Array<IntermediaryRoomDescriptor>;
-    events?: Array<IntermediaryEventDesciptor>;
+    events?: Array<IntermediaryEventDescriptor>;
 }
 
 function internalScheduleConverter(data: any, query: string): IntermediaryScheduleData | string {

@@ -235,6 +235,7 @@ export interface IntermediaryScheduleData {
     originatingDatas?: Array<IntermediaryOriginatingDataDescriptor>;
     rooms?: Array<IntermediaryRoomDescriptor>;
     events?: Array<IntermediaryEventDescriptor>;
+    tags?: Array<IntermediaryTagDescriptor>;
 }
 
 function internalScheduleConverter(data: any, query: string): IntermediaryScheduleData | string {

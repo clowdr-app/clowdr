@@ -3,7 +3,7 @@ import { FollowPoint, ScheduleAction } from "@aws-sdk/client-medialive";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
 import R from "ramda";
-import { MediaLive, shortId } from "../aws/awsClient";
+import { CloudFront, MediaLive, MediaPackage, shortId } from "../aws/awsClient";
 import {
     CreateMediaLiveChannelDocument,
     DeleteMediaLiveChannelDocument,
@@ -248,70 +248,157 @@ gql`
     }
 `;
 
+interface ChannelResources {
+    mediaLiveChannelIds: string[];
+    mediaLiveInputIds: string[];
+    mediaPackageChannelIds: string[];
+    mediaPackageOriginEndpointIds: string[];
+    cloudFrontDistributionIds: string[];
+}
+
+async function cleanUpChannelResources(channelResources: ChannelResources) {
+    try {
+        for (const mediaLiveChannelId of channelResources.mediaLiveChannelIds) {
+            await MediaLive.deleteChannel({
+                ChannelId: mediaLiveChannelId,
+            });
+        }
+    } catch (e) {
+        console.error("Failed to clean up MediaLive channels", e, channelResources.mediaLiveChannelIds);
+    }
+
+    try {
+        for (const mediaPackageOriginEndpointId of channelResources.mediaPackageOriginEndpointIds) {
+            await MediaPackage.deleteOriginEndpoint({
+                Id: mediaPackageOriginEndpointId,
+            });
+        }
+    } catch (e) {
+        console.error(
+            "Failed to clean up MediaPackage origin endpoints",
+            e,
+            channelResources.mediaPackageOriginEndpointIds
+        );
+    }
+
+    try {
+        // This may fail because the channel must be fully deleted before inputs can be deleted
+        // TODO: come up with a better solution
+        for (const mediaPackageChannelId of channelResources.mediaPackageChannelIds) {
+            await MediaPackage.deleteChannel({
+                Id: mediaPackageChannelId,
+            });
+        }
+    } catch (e) {
+        console.error("Failed to clean up MediaPackage channels", e, channelResources.mediaPackageChannelIds);
+    }
+
+    try {
+        for (const mediaLiveInputId of channelResources.mediaLiveInputIds) {
+            await MediaLive.deleteInput({
+                InputId: mediaLiveInputId,
+            });
+        }
+    } catch (e) {
+        console.error("Failed to clean up MediaLive inputs", e, channelResources.mediaLiveInputIds);
+    }
+
+    try {
+        // This will likely fail because CloudFront distributions must be disabled before deletion
+        // TODO: come up with a better solution (polling? wait for event? scheduled reaping?)
+        for (const cloudFrontDistributionId of channelResources.cloudFrontDistributionIds) {
+            await CloudFront.deleteDistribution({
+                Id: cloudFrontDistributionId,
+            });
+        }
+    } catch (e) {
+        console.error("Failed to clean up CloudFront distribution", e, channelResources.cloudFrontDistributionIds);
+    }
+}
+
 async function createNewChannelForRoom(roomId: string, conferenceId: string): Promise<void> {
     assert(
         process.env.AWS_MEDIALIVE_INPUT_SECURITY_GROUP_ID,
         "AWS_MEDIALIVE_INPUT_SECURITY_GROUP_ID environment variable must be defined"
     );
-    const rtmpInput = await createRtmpInput(roomId, process.env.AWS_MEDIALIVE_INPUT_SECURITY_GROUP_ID);
-    const mp4InputId = await createMP4Input(roomId, process.env.AWS_MEDIALIVE_INPUT_SECURITY_GROUP_ID);
-    const loopingMp4InputId = await createLoopingMP4Input(roomId, process.env.AWS_MEDIALIVE_INPUT_SECURITY_GROUP_ID);
+    let rtmpInput;
+    let mp4InputId;
+    let loopingMp4InputId;
+    let mediaPackageChannelId;
+    let originEndpoint;
+    let mediaLiveChannel;
+    let cloudFrontDistribution;
+    try {
+        rtmpInput = await createRtmpInput(roomId, process.env.AWS_MEDIALIVE_INPUT_SECURITY_GROUP_ID);
+        mp4InputId = await createMP4Input(roomId, process.env.AWS_MEDIALIVE_INPUT_SECURITY_GROUP_ID);
+        loopingMp4InputId = await createLoopingMP4Input(roomId, process.env.AWS_MEDIALIVE_INPUT_SECURITY_GROUP_ID);
 
-    const mediaPackageChannelId = await createMediaPackageChannel(roomId);
-    const originEndpoint = await createOriginEndpoint(roomId, mediaPackageChannelId);
+        mediaPackageChannelId = await createMediaPackageChannel(roomId);
+        originEndpoint = await createOriginEndpoint(roomId, mediaPackageChannelId);
 
-    const mediaLiveChannel = await createMediaLiveChannel(
-        roomId,
-        rtmpInput.id,
-        mp4InputId,
-        loopingMp4InputId,
-        mediaPackageChannelId
-    );
-    const cloudFrontDistribution = await createDistribution(roomId, originEndpoint);
-
-    const result = await apolloClient.mutate({
-        mutation: CreateMediaLiveChannelDocument,
-        variables: {
-            cloudFrontDistributionId: cloudFrontDistribution.id,
-            cloudFrontDomain: cloudFrontDistribution.domain,
-            endpointUri: originEndpoint.endpointUri,
-            mediaLiveChannelId: mediaLiveChannel.channelId,
-            rtmpInputId: rtmpInput.id,
-            rtmpInputUri: rtmpInput.rtmpUri,
-            mediaPackageChannelId: mediaPackageChannelId,
-            mp4InputId: mp4InputId,
-            mp4InputAttachmentName: mediaLiveChannel.mp4InputAttachmentName,
-            loopingMp4InputAttachmentName: mediaLiveChannel.loopingMp4InputAttachmentName,
-            vonageInputAttachmentName: mediaLiveChannel.vonageInputAttachmentName,
-            conferenceId,
-        },
-    });
-
-    if (result.errors) {
-        console.error(
-            "Failure while saving details of new MediaLive channel",
-            mediaLiveChannel.channelId,
+        mediaLiveChannel = await createMediaLiveChannel(
             roomId,
-            result.errors
+            rtmpInput.id,
+            mp4InputId,
+            loopingMp4InputId,
+            mediaPackageChannelId
         );
-        throw new Error("Failure while saving details of new MediaLive channel");
-    }
+        cloudFrontDistribution = await createDistribution(roomId, originEndpoint);
 
-    const updateResult = await apolloClient.mutate({
-        mutation: SetMediaLiveChannelForRoomDocument,
-        variables: {
-            roomId,
-            mediaLiveChannelId: result.data?.insert_MediaLiveChannel_one?.id,
-        },
-    });
+        const result = await apolloClient.mutate({
+            mutation: CreateMediaLiveChannelDocument,
+            variables: {
+                cloudFrontDistributionId: cloudFrontDistribution.id,
+                cloudFrontDomain: cloudFrontDistribution.domain,
+                endpointUri: originEndpoint.endpointUri,
+                mediaLiveChannelId: mediaLiveChannel.channelId,
+                rtmpInputId: rtmpInput.id,
+                rtmpInputUri: rtmpInput.rtmpUri,
+                mediaPackageChannelId: mediaPackageChannelId,
+                mp4InputId: mp4InputId,
+                mp4InputAttachmentName: mediaLiveChannel.mp4InputAttachmentName,
+                loopingMp4InputAttachmentName: mediaLiveChannel.loopingMp4InputAttachmentName,
+                vonageInputAttachmentName: mediaLiveChannel.vonageInputAttachmentName,
+                conferenceId,
+            },
+        });
 
-    if (updateResult.errors) {
-        console.error(
-            "Failure while storing new MediaLive channel against room",
-            result.data?.insert_MediaLiveChannel_one?.id,
-            roomId,
-            result.errors
-        );
+        if (result.errors) {
+            console.error(
+                "Failure while saving details of new MediaLive channel",
+                mediaLiveChannel.channelId,
+                roomId,
+                result.errors
+            );
+            throw new Error("Failure while saving details of new MediaLive channel");
+        }
+
+        const updateResult = await apolloClient.mutate({
+            mutation: SetMediaLiveChannelForRoomDocument,
+            variables: {
+                roomId,
+                mediaLiveChannelId: result.data?.insert_MediaLiveChannel_one?.id,
+            },
+        });
+
+        if (updateResult.errors) {
+            console.error(
+                "Failure while storing new MediaLive channel against room",
+                result.data?.insert_MediaLiveChannel_one?.id,
+                roomId,
+                result.errors
+            );
+        }
+    } catch (e) {
+        // If any of the above process failed, attempt to clean up
+        console.error("Failed to create new MediaLive channel. Attempting to clean up any resources.", e);
+        await cleanUpChannelResources({
+            mediaLiveChannelIds: [mediaLiveChannel?.channelId].filter(notEmpty),
+            cloudFrontDistributionIds: [cloudFrontDistribution?.id].filter(notEmpty),
+            mediaLiveInputIds: [rtmpInput?.id, mp4InputId, loopingMp4InputId].filter(notEmpty),
+            mediaPackageChannelIds: [mediaPackageChannelId].filter(notEmpty),
+            mediaPackageOriginEndpointIds: [originEndpoint?.id].filter(notEmpty),
+        });
     }
 }
 

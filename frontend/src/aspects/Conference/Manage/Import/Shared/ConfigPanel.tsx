@@ -10,7 +10,10 @@ import {
     Select,
     Textarea,
 } from "@chakra-ui/react";
-import { IntermediaryData, JSONataToIntermediary } from "@clowdr-app/shared-types/build/import/intermediary";
+import {
+    IntermediaryContentData,
+    JSONataToIntermediaryContent,
+} from "@clowdr-app/shared-types/build/import/intermediary";
 import React, { useEffect, useState } from "react";
 import type { ParsedData } from "../../../../Files/useCSVJSONXMLParser";
 
@@ -23,7 +26,7 @@ export default function ConfigPanel({
     presetJSONataUnknownFileTypeQuery,
 }: {
     data: ParsedData<any[]>[];
-    onChange?: (data: Record<string, IntermediaryData>) => void;
+    onChange?: (data: Record<string, IntermediaryContentData>) => void;
     presetJSONataXMLQuery?: string;
     presetJSONataJSONQuery?: string;
     presetJSONataCSVQuery?: string;
@@ -65,13 +68,13 @@ export default function ConfigPanel({
     const [errors, setErrors] = useState<Map<string, string>>(new Map());
     useEffect(() => {
         const t = setTimeout(() => {
-            const outputData: Record<string, IntermediaryData> = {};
+            const outputData: Record<string, IntermediaryContentData> = {};
             const outputErrors = new Map<string, string>();
             for (const parsedData of data) {
                 if ("data" in parsedData) {
                     const template = templates.get(parsedData.fileName);
                     if (template) {
-                        const result = JSONataToIntermediary(parsedData.data, template);
+                        const result = JSONataToIntermediaryContent(parsedData.data, template);
                         if (typeof result === "string") {
                             outputErrors.set(parsedData.fileName, `Query resulted in invalid data. ${result}`);
                         } else if (result) {

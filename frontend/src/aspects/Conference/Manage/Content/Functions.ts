@@ -1,11 +1,6 @@
 import type { SelectAllContentQuery } from "../../../../generated/graphql";
-import type { OriginatingDataDescriptor, OriginatingDataPart } from "../Shared/Types";
-import type {
-    ContentGroupDescriptor,
-    ContentPersonDescriptor,
-    HallwayDescriptor,
-    TagDescriptor,
-} from "./Types";
+import type { OriginatingDataDescriptor, OriginatingDataPart, TagDescriptor } from "../Shared/Types";
+import type { ContentGroupDescriptor, ContentPersonDescriptor, HallwayDescriptor } from "./Types";
 
 export function convertContentToDescriptors(
     allContent: SelectAllContentQuery

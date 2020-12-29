@@ -1,5 +1,5 @@
 import { Box, Button, Code, Text } from "@chakra-ui/react";
-import type { IntermediaryData } from "@clowdr-app/shared-types/build/import/intermediary";
+import type { IntermediaryContentData } from "@clowdr-app/shared-types/build/import/intermediary";
 import React from "react";
 import JSONataQueryModal from "../../../../Files/JSONataQueryModal";
 import FAIcon from "../../../../Icons/FAIcon";
@@ -8,7 +8,7 @@ export default function ReviewPanel({
     data,
     defaultQuery,
 }: {
-    data: Record<string, IntermediaryData>;
+    data: Record<string, IntermediaryContentData>;
     defaultQuery: string;
 }): JSX.Element {
     return (

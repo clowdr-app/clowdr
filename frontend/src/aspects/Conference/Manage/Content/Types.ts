@@ -7,15 +7,6 @@ export const ContentRoleNames: ReadonlyArray<ContentRole> = [
     ContentRole.Presenter,
 ];
 
-export type TagDescriptor = {
-    isNew?: boolean;
-
-    id: string;
-    name: string;
-    colour: string;
-    originatingDataId?: string;
-};
-
 export type HallwayDescriptor = {
     isNew?: boolean;
 

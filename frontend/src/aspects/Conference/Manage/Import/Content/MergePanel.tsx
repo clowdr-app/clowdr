@@ -9,24 +9,19 @@ import {
     Spinner,
     useToast,
 } from "@chakra-ui/react";
-import type { IntermediaryData } from "@clowdr-app/shared-types/build/import/intermediary";
+import type { IntermediaryContentData } from "@clowdr-app/shared-types/build/import/intermediary";
 import assert from "assert";
 import React, { useEffect, useState } from "react";
 import JSONataQueryModal from "../../../../Files/JSONataQueryModal";
 import FAIcon from "../../../../Icons/FAIcon";
 import { useConference } from "../../../useConference";
-import type {
-    ContentGroupDescriptor,
-    ContentPersonDescriptor,
-    HallwayDescriptor,
-    TagDescriptor,
-} from "../../Content/Types";
+import type { ContentGroupDescriptor, ContentPersonDescriptor, HallwayDescriptor } from "../../Content/Types";
 import { useSaveContentDiff } from "../../Content/useSaveContentDiff";
-import type { OriginatingDataDescriptor } from "../../Shared/Types";
+import type { OriginatingDataDescriptor, TagDescriptor } from "../../Shared/Types";
 import { ChangeSummary, Set_toJSON } from "../Merge";
 import mergeContent from "./MergeContent";
 
-export default function MergePanel({ data }: { data: Record<string, IntermediaryData> }): JSX.Element {
+export default function MergePanel({ data }: { data: Record<string, IntermediaryContentData> }): JSX.Element {
     const conference = useConference();
     const saveContentDiff = useSaveContentDiff();
     const {

@@ -1,5 +1,5 @@
 import type {
-    IntermediaryData,
+    IntermediaryContentData,
     IntermediaryGroupDescriptor,
     IntermediaryGroupHallwayDescriptor,
     IntermediaryGroupPersonDescriptor,
@@ -19,10 +19,9 @@ import type {
     ContentPersonDescriptor,
     HallwayDescriptor,
     RequiredContentItemDescriptor,
-    TagDescriptor,
     UploaderDescriptor,
 } from "../../Content/Types";
-import type { OriginatingDataDescriptor } from "../../Shared/Types";
+import type { OriginatingDataDescriptor, TagDescriptor } from "../../Shared/Types";
 import {
     ChangeSummary,
     convertOriginatingData,
@@ -944,7 +943,7 @@ function findExistingPersonForGroup(
 
 function mergeData(
     conferenceId: string,
-    importData: Record<string, IntermediaryData>,
+    importData: Record<string, IntermediaryContentData>,
     originalContentGroups: ContentGroupDescriptor[],
     originalHallways: HallwayDescriptor[],
     originalOriginatingDatas: OriginatingDataDescriptor[],
@@ -1099,7 +1098,7 @@ function mergeData(
 
 export default function mergeContent(
     conferenceId: string,
-    importData: Record<string, IntermediaryData>,
+    importData: Record<string, IntermediaryContentData>,
     originalContentGroups: Map<string, ContentGroupDescriptor>,
     originalHallways: Map<string, HallwayDescriptor>,
     originalOriginatingDatas: Map<string, OriginatingDataDescriptor>,

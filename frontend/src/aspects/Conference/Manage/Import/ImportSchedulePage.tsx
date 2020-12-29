@@ -1,5 +1,5 @@
 import { Box, Heading, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
-import type { IntermediaryData } from "@clowdr-app/shared-types/build/import/intermediary";
+import type { IntermediaryContentData } from "@clowdr-app/shared-types/build/import/intermediary";
 import React, { useMemo, useState } from "react";
 import { Permission_Enum } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
@@ -75,7 +75,7 @@ export default function ImportSchedulePage(): JSX.Element {
     useDashboardPrimaryMenuButtons();
 
     const [data, setData] = useState<ParsedData<any[]>[]>();
-    const [intermediaryData, setIntermediaryData] = useState<Record<string, IntermediaryData>>({});
+    const [intermediaryData, setIntermediaryData] = useState<Record<string, IntermediaryContentData>>({});
 
     const dataPanel = useMemo(() => <DataPanel onData={setData} />, []);
     const configPanel = useMemo(

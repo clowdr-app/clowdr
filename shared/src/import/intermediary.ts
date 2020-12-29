@@ -2,6 +2,17 @@ import jsonata from "jsonata";
 import { assertType, TypeGuardError } from "typescript-is";
 import type { ContentItemDataBlob, ContentRole } from "../content";
 
+declare enum RoomMode_Enum {
+    /** Users may participate in the general video chat. */
+    Breakout = "BREAKOUT",
+    /** Pre-recorded content should be played out to attendees. The breakout and Q&A video chats may also be available to relevant users. */
+    Prerecorded = "PRERECORDED",
+    /** A live presentation should be delivered in the Q&A video chat. The breakout video chat may also be available to relevant users. */
+    Presentation = "PRESENTATION",
+    /** A live Q&A/discussion should be delivered in the Q&A video chat. The breakout video chat may also be available to relevant users. */
+    QAndA = "Q_AND_A",
+}
+
 declare enum ContentType_Enum {
     /** Abstract Markdown text. */
     Abstract = "ABSTRACT",
@@ -153,7 +164,7 @@ export interface IntermediaryPersonDescriptor {
     email?: string;
 }
 
-export interface IntermediaryData {
+export interface IntermediaryContentData {
     originatingDatas?: Array<IntermediaryOriginatingDataDescriptor>;
     groups?: Array<IntermediaryGroupDescriptor>;
     hallways?: Array<IntermediaryHallwayDescriptor>;
@@ -161,10 +172,10 @@ export interface IntermediaryData {
     people?: Array<IntermediaryPersonDescriptor>;
 }
 
-function internalConverter(data: any, query: string): IntermediaryData | string {
+function internalContentConverter(data: any, query: string): IntermediaryContentData | string {
     const expression = jsonata(query);
     const result = expression.evaluate(data);
-    if (assertType<IntermediaryData>(result)) {
+    if (assertType<IntermediaryContentData>(result)) {
         return result;
     } else {
         return "Unknown error";
@@ -172,9 +183,68 @@ function internalConverter(data: any, query: string): IntermediaryData | string 
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function JSONataToIntermediary(data: any, query: string): IntermediaryData | string | undefined {
+export function JSONataToIntermediaryContent(data: any, query: string): IntermediaryContentData | string | undefined {
     try {
-        return internalConverter(data, query);
+        return internalContentConverter(data, query);
+    } catch (e) {
+        if (e instanceof TypeGuardError) {
+            return e.message;
+        }
+        return undefined;
+    }
+}
+
+export interface IntermediaryRoomDescriptor {
+    id?: string;
+    originatingDataId?: string;
+    name?: string;
+    currentModeName?: RoomMode_Enum;
+    capacity?: number;
+    participants?: Set<string>;
+}
+
+export interface IntermediaryEventDesciptor {
+    id?: string;
+    originatingDataId?: string;
+    roomId?: string;
+    intendedRoomModeName?: RoomMode_Enum;
+    contentGroupId?: string | null;
+    name?: string;
+    startTime?: string;
+    durationSeconds?: number;
+    people?: IntermediaryEventPersonDescriptor[];
+    tagIds?: Set<string>;
+}
+
+export interface IntermediaryEventPersonDescriptor {
+    id?: string;
+    originatingDataId?: string;
+    attendeeId?: string | null;
+    name?: string;
+    affiliation?: string | null;
+    roleName?: string;
+}
+
+export interface IntermediaryScheduleData {
+    originatingDatas?: Array<IntermediaryOriginatingDataDescriptor>;
+    rooms?: Array<IntermediaryRoomDescriptor>;
+    events?: Array<IntermediaryEventDesciptor>;
+}
+
+function internalScheduleConverter(data: any, query: string): IntermediaryScheduleData | string {
+    const expression = jsonata(query);
+    const result = expression.evaluate(data);
+    if (assertType<IntermediaryScheduleData>(result)) {
+        return result;
+    } else {
+        return "Unknown error";
+    }
+}
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export function JSONataToIntermediarySchedule(data: any, query: string): IntermediaryScheduleData | string | undefined {
+    try {
+        return internalScheduleConverter(data, query);
     } catch (e) {
         if (e instanceof TypeGuardError) {
             return e.message;

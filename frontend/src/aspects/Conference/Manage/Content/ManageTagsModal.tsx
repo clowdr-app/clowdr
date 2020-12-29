@@ -14,7 +14,7 @@ import React from "react";
 import { v4 as uuidv4 } from "uuid";
 import CRUDTable, { CRUDTableProps, defaultStringFilter, FieldType, UpdateResult } from "../../../CRUDTable/CRUDTable";
 import isValidUUID from "../../../Utils/isValidUUID";
-import type { TagDescriptor } from "./Types";
+import type { TagDescriptor } from "../Shared/Types";
 
 const TagCRUDTable = (props: Readonly<CRUDTableProps<TagDescriptor, "id">>) => CRUDTable(props);
 

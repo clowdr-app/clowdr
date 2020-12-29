@@ -11,3 +11,12 @@ export type OriginatingDataDescriptor = {
     sourceId: string;
     data: OriginatingDataPart[];
 };
+
+export type TagDescriptor = {
+    isNew?: boolean;
+
+    id: string;
+    name: string;
+    colour: string;
+    originatingDataId?: string;
+};

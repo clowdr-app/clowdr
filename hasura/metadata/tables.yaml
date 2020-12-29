@@ -3111,6 +3111,9 @@
       updated_at: updatedAt
       created_at: createdAt
   object_relationships:
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
   - name: room
     using:
       manual_configuration:
@@ -3119,6 +3122,35 @@
           name: Room
         column_mapping:
           id: mediaLiveChannelId
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - cloudFrontDomain
+      - endpointUri
+      - id
+      filter:
+        _or:
+        - conference:
+            groups:
+              _and:
+              - enabled:
+                  _eq: true
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      _or:
+                      - permissionName:
+                          _eq: CONFERENCE_VIEW
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_SCHEDULE
+              - _or:
+                - includeUnauthenticated:
+                    _eq: true
+                - groupAttendees:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: OnlineStatus

@@ -1,6 +1,6 @@
 - name: SyncChannels
   webhook: '{{ACTION_BASE_URL}}/channels/sync'
-  schedule: '*/5 * * * *'
+  schedule: '*/2 * * * *'
   include_in_metadata: true
   payload: {}
   retry_conf:

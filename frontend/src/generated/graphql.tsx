@@ -383,6 +383,9 @@ export type BroadcastContentItem = {
   readonly contentItem?: Maybe<ContentItem>;
   readonly contentItemId?: Maybe<Scalars['uuid']>;
   readonly createdAt: Scalars['timestamptz'];
+  /** An object relationship */
+  readonly event?: Maybe<Event>;
+  readonly eventId?: Maybe<Scalars['uuid']>;
   /** An array relationship */
   readonly executedTransitions: ReadonlyArray<ExecutedTransitions>;
   /** An aggregated array relationship */
@@ -396,9 +399,6 @@ export type BroadcastContentItem = {
   /** An object relationship */
   readonly inputType: InputType;
   readonly inputTypeName: InputType_Enum;
-  /** An object relationship */
-  readonly room?: Maybe<Room>;
-  readonly roomId?: Maybe<Scalars['uuid']>;
   /** An array relationship */
   readonly transitions: ReadonlyArray<Transitions>;
   /** An aggregated array relationship */
@@ -522,14 +522,14 @@ export type BroadcastContentItem_Bool_Exp = {
   readonly contentItem?: Maybe<ContentItem_Bool_Exp>;
   readonly contentItemId?: Maybe<Uuid_Comparison_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly event?: Maybe<Event_Bool_Exp>;
+  readonly eventId?: Maybe<Uuid_Comparison_Exp>;
   readonly executedTransitions?: Maybe<ExecutedTransitions_Bool_Exp>;
   readonly fallbackForTransitions?: Maybe<Transitions_Bool_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly input?: Maybe<Jsonb_Comparison_Exp>;
   readonly inputType?: Maybe<InputType_Bool_Exp>;
   readonly inputTypeName?: Maybe<InputType_Enum_Comparison_Exp>;
-  readonly room?: Maybe<Room_Bool_Exp>;
-  readonly roomId?: Maybe<Uuid_Comparison_Exp>;
   readonly transitions?: Maybe<Transitions_Bool_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
 };
@@ -539,9 +539,9 @@ export enum BroadcastContentItem_Constraint {
   /** unique or primary key constraint */
   BroadcastContentItemContentItemIdKey = 'BroadcastContentItem_contentItemId_key',
   /** unique or primary key constraint */
-  BroadcastContentItemPkey = 'BroadcastContentItem_pkey',
+  BroadcastContentItemEventIdKey = 'BroadcastContentItem_eventId_key',
   /** unique or primary key constraint */
-  BroadcastContentItemRoomIdKey = 'BroadcastContentItem_roomId_key'
+  BroadcastContentItemPkey = 'BroadcastContentItem_pkey'
 }
 
 /** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
@@ -566,14 +566,14 @@ export type BroadcastContentItem_Insert_Input = {
   readonly contentItem?: Maybe<ContentItem_Obj_Rel_Insert_Input>;
   readonly contentItemId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly event?: Maybe<Event_Obj_Rel_Insert_Input>;
+  readonly eventId?: Maybe<Scalars['uuid']>;
   readonly executedTransitions?: Maybe<ExecutedTransitions_Arr_Rel_Insert_Input>;
   readonly fallbackForTransitions?: Maybe<Transitions_Arr_Rel_Insert_Input>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly input?: Maybe<Scalars['jsonb']>;
   readonly inputType?: Maybe<InputType_Obj_Rel_Insert_Input>;
   readonly inputTypeName?: Maybe<InputType_Enum>;
-  readonly room?: Maybe<Room_Obj_Rel_Insert_Input>;
-  readonly roomId?: Maybe<Scalars['uuid']>;
   readonly transitions?: Maybe<Transitions_Arr_Rel_Insert_Input>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
@@ -584,8 +584,8 @@ export type BroadcastContentItem_Max_Fields = {
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly contentItemId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly eventId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
-  readonly roomId?: Maybe<Scalars['uuid']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -594,8 +594,8 @@ export type BroadcastContentItem_Max_Order_By = {
   readonly conferenceId?: Maybe<Order_By>;
   readonly contentItemId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
+  readonly eventId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
-  readonly roomId?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
 
@@ -605,8 +605,8 @@ export type BroadcastContentItem_Min_Fields = {
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly contentItemId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly eventId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
-  readonly roomId?: Maybe<Scalars['uuid']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -615,8 +615,8 @@ export type BroadcastContentItem_Min_Order_By = {
   readonly conferenceId?: Maybe<Order_By>;
   readonly contentItemId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
+  readonly eventId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
-  readonly roomId?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
 
@@ -649,14 +649,14 @@ export type BroadcastContentItem_Order_By = {
   readonly contentItem?: Maybe<ContentItem_Order_By>;
   readonly contentItemId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
+  readonly event?: Maybe<Event_Order_By>;
+  readonly eventId?: Maybe<Order_By>;
   readonly executedTransitions_aggregate?: Maybe<ExecutedTransitions_Aggregate_Order_By>;
   readonly fallbackForTransitions_aggregate?: Maybe<Transitions_Aggregate_Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly input?: Maybe<Order_By>;
   readonly inputType?: Maybe<InputType_Order_By>;
   readonly inputTypeName?: Maybe<Order_By>;
-  readonly room?: Maybe<Room_Order_By>;
-  readonly roomId?: Maybe<Order_By>;
   readonly transitions_aggregate?: Maybe<Transitions_Aggregate_Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
@@ -680,13 +680,13 @@ export enum BroadcastContentItem_Select_Column {
   /** column name */
   CreatedAt = 'createdAt',
   /** column name */
+  EventId = 'eventId',
+  /** column name */
   Id = 'id',
   /** column name */
   Input = 'input',
   /** column name */
   InputTypeName = 'inputTypeName',
-  /** column name */
-  RoomId = 'roomId',
   /** column name */
   UpdatedAt = 'updatedAt'
 }
@@ -696,10 +696,10 @@ export type BroadcastContentItem_Set_Input = {
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly contentItemId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly eventId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly input?: Maybe<Scalars['jsonb']>;
   readonly inputTypeName?: Maybe<InputType_Enum>;
-  readonly roomId?: Maybe<Scalars['uuid']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -712,13 +712,13 @@ export enum BroadcastContentItem_Update_Column {
   /** column name */
   CreatedAt = 'createdAt',
   /** column name */
+  EventId = 'eventId',
+  /** column name */
   Id = 'id',
   /** column name */
   Input = 'input',
   /** column name */
   InputTypeName = 'inputTypeName',
-  /** column name */
-  RoomId = 'roomId',
   /** column name */
   UpdatedAt = 'updatedAt'
 }
@@ -6133,7 +6133,9 @@ export enum ContentType_Enum {
   /** Video file for titles introducing an event during a broadcast. */
   VideoTitles = 'VIDEO_TITLES',
   /** URL for a video (video is embedded in Clowdr UI). */
-  VideoUrl = 'VIDEO_URL'
+  VideoUrl = 'VIDEO_URL',
+  /** Data for a Zoom meeting. */
+  Zoom = 'ZOOM'
 }
 
 /** expression to compare columns of type ContentType_enum. All fields are combined with logical 'AND'. */
@@ -6641,6 +6643,8 @@ export type Email_Variance_Order_By = {
 /** columns and relationships of "Event" */
 export type Event = {
   readonly __typename?: 'Event';
+  /** An object relationship */
+  readonly broadcastContentItem?: Maybe<BroadcastContentItem>;
   /** An array relationship */
   readonly broadcasts: ReadonlyArray<Broadcast>;
   /** An aggregated array relationship */
@@ -6653,6 +6657,7 @@ export type Event = {
   readonly contentGroupId?: Maybe<Scalars['uuid']>;
   readonly createdAt: Scalars['timestamptz'];
   readonly durationSeconds: Scalars['Int'];
+  readonly endTime?: Maybe<Scalars['timestamptz']>;
   /** An array relationship */
   readonly eventPeople: ReadonlyArray<EventPerson>;
   /** An aggregated array relationship */
@@ -6661,6 +6666,8 @@ export type Event = {
   readonly eventTags: ReadonlyArray<EventTag>;
   /** An aggregated array relationship */
   readonly eventTags_aggregate: EventTag_Aggregate;
+  /** An object relationship */
+  readonly eventVonageSession?: Maybe<EventVonageSession>;
   /** An array relationship */
   readonly executedTransitions: ReadonlyArray<ExecutedTransitions>;
   /** An aggregated array relationship */
@@ -7387,6 +7394,216 @@ export enum EventTag_Update_Column {
   TagId = 'tagId'
 }
 
+/** columns and relationships of "EventVonageSession" */
+export type EventVonageSession = {
+  readonly __typename?: 'EventVonageSession';
+  /** An object relationship */
+  readonly conference: Conference;
+  readonly conferenceId: Scalars['uuid'];
+  readonly createdAt: Scalars['timestamptz'];
+  /** An object relationship */
+  readonly event: Event;
+  readonly eventId: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
+  readonly sessionId: Scalars['String'];
+  readonly updatedAt: Scalars['timestamptz'];
+};
+
+/** aggregated selection of "EventVonageSession" */
+export type EventVonageSession_Aggregate = {
+  readonly __typename?: 'EventVonageSession_aggregate';
+  readonly aggregate?: Maybe<EventVonageSession_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<EventVonageSession>;
+};
+
+/** aggregate fields of "EventVonageSession" */
+export type EventVonageSession_Aggregate_Fields = {
+  readonly __typename?: 'EventVonageSession_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<EventVonageSession_Max_Fields>;
+  readonly min?: Maybe<EventVonageSession_Min_Fields>;
+};
+
+
+/** aggregate fields of "EventVonageSession" */
+export type EventVonageSession_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<EventVonageSession_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "EventVonageSession" */
+export type EventVonageSession_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<EventVonageSession_Max_Order_By>;
+  readonly min?: Maybe<EventVonageSession_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "EventVonageSession" */
+export type EventVonageSession_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<EventVonageSession_Insert_Input>;
+  readonly on_conflict?: Maybe<EventVonageSession_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "EventVonageSession". All fields are combined with a logical 'AND'. */
+export type EventVonageSession_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<EventVonageSession_Bool_Exp>>>;
+  readonly _not?: Maybe<EventVonageSession_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<EventVonageSession_Bool_Exp>>>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly event?: Maybe<Event_Bool_Exp>;
+  readonly eventId?: Maybe<Uuid_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly sessionId?: Maybe<String_Comparison_Exp>;
+  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "EventVonageSession" */
+export enum EventVonageSession_Constraint {
+  /** unique or primary key constraint */
+  EventVonageSessionEventIdKey = 'EventVonageSession_eventId_key',
+  /** unique or primary key constraint */
+  EventVonageSessionPkey = 'EventVonageSession_pkey',
+  /** unique or primary key constraint */
+  EventVonageSessionSessionIdKey = 'EventVonageSession_sessionId_key'
+}
+
+/** input type for inserting data into table "EventVonageSession" */
+export type EventVonageSession_Insert_Input = {
+  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly event?: Maybe<Event_Obj_Rel_Insert_Input>;
+  readonly eventId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly sessionId?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type EventVonageSession_Max_Fields = {
+  readonly __typename?: 'EventVonageSession_max_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly eventId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly sessionId?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "EventVonageSession" */
+export type EventVonageSession_Max_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly eventId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly sessionId?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type EventVonageSession_Min_Fields = {
+  readonly __typename?: 'EventVonageSession_min_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly eventId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly sessionId?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "EventVonageSession" */
+export type EventVonageSession_Min_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly eventId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly sessionId?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "EventVonageSession" */
+export type EventVonageSession_Mutation_Response = {
+  readonly __typename?: 'EventVonageSession_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<EventVonageSession>;
+};
+
+/** input type for inserting object relation for remote table "EventVonageSession" */
+export type EventVonageSession_Obj_Rel_Insert_Input = {
+  readonly data: EventVonageSession_Insert_Input;
+  readonly on_conflict?: Maybe<EventVonageSession_On_Conflict>;
+};
+
+/** on conflict condition type for table "EventVonageSession" */
+export type EventVonageSession_On_Conflict = {
+  readonly constraint: EventVonageSession_Constraint;
+  readonly update_columns: ReadonlyArray<EventVonageSession_Update_Column>;
+  readonly where?: Maybe<EventVonageSession_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "EventVonageSession" */
+export type EventVonageSession_Order_By = {
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly event?: Maybe<Event_Order_By>;
+  readonly eventId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly sessionId?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "EventVonageSession" */
+export type EventVonageSession_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "EventVonageSession" */
+export enum EventVonageSession_Select_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  EventId = 'eventId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  SessionId = 'sessionId',
+  /** column name */
+  UpdatedAt = 'updatedAt'
+}
+
+/** input type for updating data in table "EventVonageSession" */
+export type EventVonageSession_Set_Input = {
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly eventId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly sessionId?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "EventVonageSession" */
+export enum EventVonageSession_Update_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  EventId = 'eventId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  SessionId = 'sessionId',
+  /** column name */
+  UpdatedAt = 'updatedAt'
+}
+
 /** aggregated selection of "Event" */
 export type Event_Aggregate = {
   readonly __typename?: 'Event_aggregate';
@@ -7454,6 +7671,7 @@ export type Event_Bool_Exp = {
   readonly _and?: Maybe<ReadonlyArray<Maybe<Event_Bool_Exp>>>;
   readonly _not?: Maybe<Event_Bool_Exp>;
   readonly _or?: Maybe<ReadonlyArray<Maybe<Event_Bool_Exp>>>;
+  readonly broadcastContentItem?: Maybe<BroadcastContentItem_Bool_Exp>;
   readonly broadcasts?: Maybe<Broadcast_Bool_Exp>;
   readonly conference?: Maybe<Conference_Bool_Exp>;
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
@@ -7461,8 +7679,10 @@ export type Event_Bool_Exp = {
   readonly contentGroupId?: Maybe<Uuid_Comparison_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly durationSeconds?: Maybe<Int_Comparison_Exp>;
+  readonly endTime?: Maybe<Timestamptz_Comparison_Exp>;
   readonly eventPeople?: Maybe<EventPerson_Bool_Exp>;
   readonly eventTags?: Maybe<EventTag_Bool_Exp>;
+  readonly eventVonageSession?: Maybe<EventVonageSession_Bool_Exp>;
   readonly executedTransitions?: Maybe<ExecutedTransitions_Bool_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly intendedRoomModeName?: Maybe<RoomMode_Enum_Comparison_Exp>;
@@ -7490,6 +7710,7 @@ export type Event_Inc_Input = {
 
 /** input type for inserting data into table "Event" */
 export type Event_Insert_Input = {
+  readonly broadcastContentItem?: Maybe<BroadcastContentItem_Obj_Rel_Insert_Input>;
   readonly broadcasts?: Maybe<Broadcast_Arr_Rel_Insert_Input>;
   readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
@@ -7497,8 +7718,10 @@ export type Event_Insert_Input = {
   readonly contentGroupId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly durationSeconds?: Maybe<Scalars['Int']>;
+  readonly endTime?: Maybe<Scalars['timestamptz']>;
   readonly eventPeople?: Maybe<EventPerson_Arr_Rel_Insert_Input>;
   readonly eventTags?: Maybe<EventTag_Arr_Rel_Insert_Input>;
+  readonly eventVonageSession?: Maybe<EventVonageSession_Obj_Rel_Insert_Input>;
   readonly executedTransitions?: Maybe<ExecutedTransitions_Arr_Rel_Insert_Input>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly intendedRoomModeName?: Maybe<RoomMode_Enum>;
@@ -7520,6 +7743,7 @@ export type Event_Max_Fields = {
   readonly contentGroupId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly durationSeconds?: Maybe<Scalars['Int']>;
+  readonly endTime?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
@@ -7534,6 +7758,7 @@ export type Event_Max_Order_By = {
   readonly contentGroupId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly durationSeconds?: Maybe<Order_By>;
+  readonly endTime?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
@@ -7549,6 +7774,7 @@ export type Event_Min_Fields = {
   readonly contentGroupId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly durationSeconds?: Maybe<Scalars['Int']>;
+  readonly endTime?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
@@ -7563,6 +7789,7 @@ export type Event_Min_Order_By = {
   readonly contentGroupId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly durationSeconds?: Maybe<Order_By>;
+  readonly endTime?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
@@ -7595,6 +7822,7 @@ export type Event_On_Conflict = {
 
 /** ordering options when selecting data from "Event" */
 export type Event_Order_By = {
+  readonly broadcastContentItem?: Maybe<BroadcastContentItem_Order_By>;
   readonly broadcasts_aggregate?: Maybe<Broadcast_Aggregate_Order_By>;
   readonly conference?: Maybe<Conference_Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
@@ -7602,8 +7830,10 @@ export type Event_Order_By = {
   readonly contentGroupId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly durationSeconds?: Maybe<Order_By>;
+  readonly endTime?: Maybe<Order_By>;
   readonly eventPeople_aggregate?: Maybe<EventPerson_Aggregate_Order_By>;
   readonly eventTags_aggregate?: Maybe<EventTag_Aggregate_Order_By>;
+  readonly eventVonageSession?: Maybe<EventVonageSession_Order_By>;
   readonly executedTransitions_aggregate?: Maybe<ExecutedTransitions_Aggregate_Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly intendedRoomModeName?: Maybe<Order_By>;
@@ -7634,6 +7864,8 @@ export enum Event_Select_Column {
   /** column name */
   DurationSeconds = 'durationSeconds',
   /** column name */
+  EndTime = 'endTime',
+  /** column name */
   Id = 'id',
   /** column name */
   IntendedRoomModeName = 'intendedRoomModeName',
@@ -7655,6 +7887,7 @@ export type Event_Set_Input = {
   readonly contentGroupId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly durationSeconds?: Maybe<Scalars['Int']>;
+  readonly endTime?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly intendedRoomModeName?: Maybe<RoomMode_Enum>;
   readonly name?: Maybe<Scalars['String']>;
@@ -7718,6 +7951,8 @@ export enum Event_Update_Column {
   CreatedAt = 'createdAt',
   /** column name */
   DurationSeconds = 'durationSeconds',
+  /** column name */
+  EndTime = 'endTime',
   /** column name */
   Id = 'id',
   /** column name */
@@ -10101,6 +10336,11 @@ export enum JobStatus_Update_Column {
   Name = 'name'
 }
 
+export type JoinEventVonageSessionOutput = {
+  readonly __typename?: 'JoinEventVonageSessionOutput';
+  readonly accessToken?: Maybe<Scalars['String']>;
+};
+
 /** columns and relationships of "MediaLiveChannel" */
 export type MediaLiveChannel = {
   readonly __typename?: 'MediaLiveChannel';
@@ -12298,8 +12538,6 @@ export enum Role_Update_Column {
 /** columns and relationships of "Room" */
 export type Room = {
   readonly __typename?: 'Room';
-  /** An object relationship */
-  readonly broadcastContentItem?: Maybe<BroadcastContentItem>;
   readonly capacity?: Maybe<Scalars['Int']>;
   /** An object relationship */
   readonly conference: Conference;
@@ -12328,7 +12566,6 @@ export type Room = {
   readonly participants: ReadonlyArray<RoomParticipant>;
   /** An aggregated array relationship */
   readonly participants_aggregate: RoomParticipant_Aggregate;
-  readonly presenterVonageSessionId?: Maybe<Scalars['String']>;
   readonly publicVonageSessionId?: Maybe<Scalars['String']>;
   /** An array relationship */
   readonly transitions: ReadonlyArray<Transitions>;
@@ -12915,7 +13152,6 @@ export type Room_Bool_Exp = {
   readonly _and?: Maybe<ReadonlyArray<Maybe<Room_Bool_Exp>>>;
   readonly _not?: Maybe<Room_Bool_Exp>;
   readonly _or?: Maybe<ReadonlyArray<Maybe<Room_Bool_Exp>>>;
-  readonly broadcastContentItem?: Maybe<BroadcastContentItem_Bool_Exp>;
   readonly capacity?: Maybe<Int_Comparison_Exp>;
   readonly conference?: Maybe<Conference_Bool_Exp>;
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
@@ -12931,7 +13167,6 @@ export type Room_Bool_Exp = {
   readonly originatingData?: Maybe<OriginatingData_Bool_Exp>;
   readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
   readonly participants?: Maybe<RoomParticipant_Bool_Exp>;
-  readonly presenterVonageSessionId?: Maybe<String_Comparison_Exp>;
   readonly publicVonageSessionId?: Maybe<String_Comparison_Exp>;
   readonly transitions?: Maybe<Transitions_Bool_Exp>;
   readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
@@ -12954,7 +13189,6 @@ export type Room_Inc_Input = {
 
 /** input type for inserting data into table "Room" */
 export type Room_Insert_Input = {
-  readonly broadcastContentItem?: Maybe<BroadcastContentItem_Obj_Rel_Insert_Input>;
   readonly capacity?: Maybe<Scalars['Int']>;
   readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
@@ -12970,7 +13204,6 @@ export type Room_Insert_Input = {
   readonly originatingData?: Maybe<OriginatingData_Obj_Rel_Insert_Input>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
   readonly participants?: Maybe<RoomParticipant_Arr_Rel_Insert_Input>;
-  readonly presenterVonageSessionId?: Maybe<Scalars['String']>;
   readonly publicVonageSessionId?: Maybe<Scalars['String']>;
   readonly transitions?: Maybe<Transitions_Arr_Rel_Insert_Input>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
@@ -12986,7 +13219,6 @@ export type Room_Max_Fields = {
   readonly mediaLiveChannelId?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
-  readonly presenterVonageSessionId?: Maybe<Scalars['String']>;
   readonly publicVonageSessionId?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -13000,7 +13232,6 @@ export type Room_Max_Order_By = {
   readonly mediaLiveChannelId?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
-  readonly presenterVonageSessionId?: Maybe<Order_By>;
   readonly publicVonageSessionId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
@@ -13015,7 +13246,6 @@ export type Room_Min_Fields = {
   readonly mediaLiveChannelId?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
-  readonly presenterVonageSessionId?: Maybe<Scalars['String']>;
   readonly publicVonageSessionId?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -13029,7 +13259,6 @@ export type Room_Min_Order_By = {
   readonly mediaLiveChannelId?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
-  readonly presenterVonageSessionId?: Maybe<Order_By>;
   readonly publicVonageSessionId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
@@ -13058,7 +13287,6 @@ export type Room_On_Conflict = {
 
 /** ordering options when selecting data from "Room" */
 export type Room_Order_By = {
-  readonly broadcastContentItem?: Maybe<BroadcastContentItem_Order_By>;
   readonly capacity?: Maybe<Order_By>;
   readonly conference?: Maybe<Conference_Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
@@ -13074,7 +13302,6 @@ export type Room_Order_By = {
   readonly originatingData?: Maybe<OriginatingData_Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
   readonly participants_aggregate?: Maybe<RoomParticipant_Aggregate_Order_By>;
-  readonly presenterVonageSessionId?: Maybe<Order_By>;
   readonly publicVonageSessionId?: Maybe<Order_By>;
   readonly transitions_aggregate?: Maybe<Transitions_Aggregate_Order_By>;
   readonly updated_at?: Maybe<Order_By>;
@@ -13104,8 +13331,6 @@ export enum Room_Select_Column {
   /** column name */
   OriginatingDataId = 'originatingDataId',
   /** column name */
-  PresenterVonageSessionId = 'presenterVonageSessionId',
-  /** column name */
   PublicVonageSessionId = 'publicVonageSessionId',
   /** column name */
   UpdatedAt = 'updated_at'
@@ -13121,7 +13346,6 @@ export type Room_Set_Input = {
   readonly mediaLiveChannelId?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
-  readonly presenterVonageSessionId?: Maybe<Scalars['String']>;
   readonly publicVonageSessionId?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -13188,8 +13412,6 @@ export enum Room_Update_Column {
   Name = 'name',
   /** column name */
   OriginatingDataId = 'originatingDataId',
-  /** column name */
-  PresenterVonageSessionId = 'presenterVonageSessionId',
   /** column name */
   PublicVonageSessionId = 'publicVonageSessionId',
   /** column name */
@@ -15432,6 +15654,10 @@ export type Mutation_Root = {
   readonly delete_EventTag?: Maybe<EventTag_Mutation_Response>;
   /** delete single row from the table: "EventTag" */
   readonly delete_EventTag_by_pk?: Maybe<EventTag>;
+  /** delete data from the table: "EventVonageSession" */
+  readonly delete_EventVonageSession?: Maybe<EventVonageSession_Mutation_Response>;
+  /** delete single row from the table: "EventVonageSession" */
+  readonly delete_EventVonageSession_by_pk?: Maybe<EventVonageSession>;
   /** delete single row from the table: "Event" */
   readonly delete_Event_by_pk?: Maybe<Event>;
   /** delete data from the table: "ExecutedTransitions" */
@@ -15648,6 +15874,10 @@ export type Mutation_Root = {
   readonly insert_EventTag?: Maybe<EventTag_Mutation_Response>;
   /** insert a single row into the table: "EventTag" */
   readonly insert_EventTag_one?: Maybe<EventTag>;
+  /** insert data into the table: "EventVonageSession" */
+  readonly insert_EventVonageSession?: Maybe<EventVonageSession_Mutation_Response>;
+  /** insert a single row into the table: "EventVonageSession" */
+  readonly insert_EventVonageSession_one?: Maybe<EventVonageSession>;
   /** insert a single row into the table: "Event" */
   readonly insert_Event_one?: Maybe<Event>;
   /** insert data into the table: "ExecutedTransitions" */
@@ -15770,6 +16000,8 @@ export type Mutation_Root = {
   readonly invitationSendInitialEmail: ReadonlyArray<InvitationSendEmailResult>;
   /** perform the action: "invitationSendRepeatEmail" */
   readonly invitationSendRepeatEmail: ReadonlyArray<InvitationSendEmailResult>;
+  /** perform the action: "joinEventVonageSession" */
+  readonly joinEventVonageSession?: Maybe<JoinEventVonageSessionOutput>;
   /** perform the action: "submitContentItem" */
   readonly submitContentItem?: Maybe<SubmitContentItemOutput>;
   /** perform the action: "updateSubtitles" */
@@ -15880,6 +16112,10 @@ export type Mutation_Root = {
   readonly update_EventTag?: Maybe<EventTag_Mutation_Response>;
   /** update single row of the table: "EventTag" */
   readonly update_EventTag_by_pk?: Maybe<EventTag>;
+  /** update data of the table: "EventVonageSession" */
+  readonly update_EventVonageSession?: Maybe<EventVonageSession_Mutation_Response>;
+  /** update single row of the table: "EventVonageSession" */
+  readonly update_EventVonageSession_by_pk?: Maybe<EventVonageSession>;
   /** update single row of the table: "Event" */
   readonly update_Event_by_pk?: Maybe<Event>;
   /** update data of the table: "ExecutedTransitions" */
@@ -16309,6 +16545,18 @@ export type Mutation_RootDelete_EventTagArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_EventTag_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_EventVonageSessionArgs = {
+  where: EventVonageSession_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_EventVonageSession_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -17015,6 +17263,20 @@ export type Mutation_RootInsert_EventTag_OneArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_EventVonageSessionArgs = {
+  objects: ReadonlyArray<EventVonageSession_Insert_Input>;
+  on_conflict?: Maybe<EventVonageSession_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_EventVonageSession_OneArgs = {
+  object: EventVonageSession_Insert_Input;
+  on_conflict?: Maybe<EventVonageSession_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_Event_OneArgs = {
   object: Event_Insert_Input;
   on_conflict?: Maybe<Event_On_Conflict>;
@@ -17432,6 +17694,12 @@ export type Mutation_RootInvitationSendInitialEmailArgs = {
 /** mutation root */
 export type Mutation_RootInvitationSendRepeatEmailArgs = {
   attendeeIds: ReadonlyArray<Scalars['String']>;
+};
+
+
+/** mutation root */
+export type Mutation_RootJoinEventVonageSessionArgs = {
+  eventId: Scalars['uuid'];
 };
 
 
@@ -17889,6 +18157,20 @@ export type Mutation_RootUpdate_EventTagArgs = {
 export type Mutation_RootUpdate_EventTag_By_PkArgs = {
   _set?: Maybe<EventTag_Set_Input>;
   pk_columns: EventTag_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_EventVonageSessionArgs = {
+  _set?: Maybe<EventVonageSession_Set_Input>;
+  where: EventVonageSession_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_EventVonageSession_By_PkArgs = {
+  _set?: Maybe<EventVonageSession_Set_Input>;
+  pk_columns: EventVonageSession_Pk_Columns_Input;
 };
 
 
@@ -18488,6 +18770,12 @@ export type Query_Root = {
   readonly EventTag_aggregate: EventTag_Aggregate;
   /** fetch data from the table: "EventTag" using primary key columns */
   readonly EventTag_by_pk?: Maybe<EventTag>;
+  /** fetch data from the table: "EventVonageSession" */
+  readonly EventVonageSession: ReadonlyArray<EventVonageSession>;
+  /** fetch aggregated fields from the table: "EventVonageSession" */
+  readonly EventVonageSession_aggregate: EventVonageSession_Aggregate;
+  /** fetch data from the table: "EventVonageSession" using primary key columns */
+  readonly EventVonageSession_by_pk?: Maybe<EventVonageSession>;
   /** fetch aggregated fields from the table: "Event" */
   readonly Event_aggregate: Event_Aggregate;
   /** fetch data from the table: "Event" using primary key columns */
@@ -19347,6 +19635,32 @@ export type Query_RootEventTag_AggregateArgs = {
 
 /** query root */
 export type Query_RootEventTag_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
+export type Query_RootEventVonageSessionArgs = {
+  distinct_on?: Maybe<ReadonlyArray<EventVonageSession_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<EventVonageSession_Order_By>>;
+  where?: Maybe<EventVonageSession_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootEventVonageSession_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<EventVonageSession_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<EventVonageSession_Order_By>>;
+  where?: Maybe<EventVonageSession_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootEventVonageSession_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -20253,6 +20567,12 @@ export type Subscription_Root = {
   readonly EventTag_aggregate: EventTag_Aggregate;
   /** fetch data from the table: "EventTag" using primary key columns */
   readonly EventTag_by_pk?: Maybe<EventTag>;
+  /** fetch data from the table: "EventVonageSession" */
+  readonly EventVonageSession: ReadonlyArray<EventVonageSession>;
+  /** fetch aggregated fields from the table: "EventVonageSession" */
+  readonly EventVonageSession_aggregate: EventVonageSession_Aggregate;
+  /** fetch data from the table: "EventVonageSession" using primary key columns */
+  readonly EventVonageSession_by_pk?: Maybe<EventVonageSession>;
   /** fetch aggregated fields from the table: "Event" */
   readonly Event_aggregate: Event_Aggregate;
   /** fetch data from the table: "Event" using primary key columns */
@@ -21117,6 +21437,32 @@ export type Subscription_RootEventTag_By_PkArgs = {
 
 
 /** subscription root */
+export type Subscription_RootEventVonageSessionArgs = {
+  distinct_on?: Maybe<ReadonlyArray<EventVonageSession_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<EventVonageSession_Order_By>>;
+  where?: Maybe<EventVonageSession_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootEventVonageSession_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<EventVonageSession_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<EventVonageSession_Order_By>>;
+  where?: Maybe<EventVonageSession_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootEventVonageSession_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
 export type Subscription_RootEvent_AggregateArgs = {
   distinct_on?: Maybe<ReadonlyArray<Event_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -21939,6 +22285,20 @@ export type GetRoomDetailsQueryVariables = Exact<{
 
 export type GetRoomDetailsQuery = { readonly __typename?: 'query_root', readonly Room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly mediaLiveChannel?: Maybe<{ readonly __typename?: 'MediaLiveChannel', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly id: any }> }> };
 
+export type OngoingEventsInRoomQueryVariables = Exact<{
+  time: Scalars['timestamptz'];
+  roomId: Scalars['uuid'];
+  userId: Scalars['String'];
+}>;
+
+
+export type OngoingEventsInRoomQuery = { readonly __typename?: 'query_root', readonly Event: ReadonlyArray<(
+    { readonly __typename?: 'Event', readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'EventPerson', readonly id: any, readonly roleName: EventPersonRole_Enum }> }
+    & CoreEventFieldsFragment
+  )> };
+
+export type CoreEventFieldsFragment = { readonly __typename?: 'Event', readonly id: any, readonly startTime: any, readonly name: string, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum };
+
 export type SendSubmissionRequestsMutationVariables = Exact<{
   uploaderIds: ReadonlyArray<Scalars['uuid']>;
 }>;
@@ -22683,6 +23043,16 @@ export type UpdateCurrentUserLastSeenMutationVariables = Exact<{
 
 export type UpdateCurrentUserLastSeenMutation = { readonly __typename?: 'mutation_root', readonly update_OnlineStatus?: Maybe<{ readonly __typename?: 'OnlineStatus_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'OnlineStatus', readonly id: any, readonly lastSeen: any }> }> };
 
+export const CoreEventFieldsFragmentDoc = gql`
+    fragment CoreEventFields on Event {
+  id
+  startTime
+  name
+  durationSeconds
+  endTime
+  intendedRoomModeName
+}
+    `;
 export const OriginatingDataInfoFragmentDoc = gql`
     fragment OriginatingDataInfo on OriginatingData {
   id
@@ -23250,6 +23620,47 @@ export function useGetRoomDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type GetRoomDetailsQueryHookResult = ReturnType<typeof useGetRoomDetailsQuery>;
 export type GetRoomDetailsLazyQueryHookResult = ReturnType<typeof useGetRoomDetailsLazyQuery>;
 export type GetRoomDetailsQueryResult = Apollo.QueryResult<GetRoomDetailsQuery, GetRoomDetailsQueryVariables>;
+export const OngoingEventsInRoomDocument = gql`
+    query OngoingEventsInRoom($time: timestamptz!, $roomId: uuid!, $userId: String!) {
+  Event(
+    where: {endTime: {_gt: $time}, startTime: {_lte: $time}, room: {id: {_eq: $roomId}}}
+  ) {
+    ...CoreEventFields
+    eventPeople(where: {attendee: {userId: {_eq: $userId}}}) {
+      id
+      roleName
+    }
+  }
+}
+    ${CoreEventFieldsFragmentDoc}`;
+
+/**
+ * __useOngoingEventsInRoomQuery__
+ *
+ * To run a query within a React component, call `useOngoingEventsInRoomQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOngoingEventsInRoomQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOngoingEventsInRoomQuery({
+ *   variables: {
+ *      time: // value for 'time'
+ *      roomId: // value for 'roomId'
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useOngoingEventsInRoomQuery(baseOptions: Apollo.QueryHookOptions<OngoingEventsInRoomQuery, OngoingEventsInRoomQueryVariables>) {
+        return Apollo.useQuery<OngoingEventsInRoomQuery, OngoingEventsInRoomQueryVariables>(OngoingEventsInRoomDocument, baseOptions);
+      }
+export function useOngoingEventsInRoomLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OngoingEventsInRoomQuery, OngoingEventsInRoomQueryVariables>) {
+          return Apollo.useLazyQuery<OngoingEventsInRoomQuery, OngoingEventsInRoomQueryVariables>(OngoingEventsInRoomDocument, baseOptions);
+        }
+export type OngoingEventsInRoomQueryHookResult = ReturnType<typeof useOngoingEventsInRoomQuery>;
+export type OngoingEventsInRoomLazyQueryHookResult = ReturnType<typeof useOngoingEventsInRoomLazyQuery>;
+export type OngoingEventsInRoomQueryResult = Apollo.QueryResult<OngoingEventsInRoomQuery, OngoingEventsInRoomQueryVariables>;
 export const SendSubmissionRequestsDocument = gql`
     mutation SendSubmissionRequests($uploaderIds: [uuid!]!) {
   uploadSendSubmissionRequests(uploaderIds: $uploaderIds) {

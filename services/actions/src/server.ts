@@ -30,7 +30,8 @@ import { router as mediaConvertRouter } from "./router/mediaConvert";
 import { router as mediaLiveRouter } from "./router/mediaLive";
 import { router as openshotRouter } from "./router/openshot";
 import { router as videoRenderJobRouter } from "./router/videoRenderJob";
-import { EmailData, Payload } from "./types/event";
+import { router as vonageRouter } from "./router/vonage";
+import { EmailData, Payload } from "./types/hasura/event";
 
 type AuthenticatedRequest = Request & { userId: string };
 
@@ -67,6 +68,8 @@ app.use("/mediaConvert", mediaConvertRouter);
 app.use("/amazonTranscribe", amazonTranscribeRouter);
 app.use("/elasticTranscoder", elasticTranscoderRouter);
 app.use("/mediaLive", mediaLiveRouter);
+
+app.use("/vonage", vonageRouter);
 
 app.use("/contentItem", contentItemRouter);
 app.use("/conferencePrepareJob", conferencePrepareJobRouter);

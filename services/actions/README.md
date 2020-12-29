@@ -13,12 +13,9 @@ Eventually this may be split into multiple microservices.
 ## Setting Up
 
 1. Copy the `services/actions/.env.example` to `services/actions/.env`
-1. Create an AWS user with admin access. Generate a new access key for this user - you will need the access key ID and secret key in the next step.
-
-- TODO: limit permissions for this user
-
 1. Configure your `.env` according to the [Actions Service
    Configuration](#actions-service-configuration) table below
+   - You will need the outputs from running the AWS CDK deployment
 
 ## Local Development
 
@@ -107,3 +104,4 @@ Note: `AWS_` values come from the outputs of your AWS deployment. See [`aws/READ
 | OPENSHOT_PASSWORD                              | The password you created for your OpenShot instance                                                                 |          |
 | OPENTOK_API_KEY                                | Your Vonage Video API key                                                                                           |          |
 | OPENTOK_API_SECRET                             | Your Vonage Video API secret                                                                                        |          |
+| VONAGE_WEBHOOK_SECRET                          | A random token (your choice!) to be sent with Vonage webhook calls                                                  |          |

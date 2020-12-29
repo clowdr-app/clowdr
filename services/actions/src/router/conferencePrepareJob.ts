@@ -3,7 +3,7 @@ import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
 import { handleConferencePrepareJobInserted } from "../handlers/prepare";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
-import { ConferencePrepareJobData, Payload } from "../types/event";
+import { ConferencePrepareJobData, Payload } from "../types/hasura/event";
 
 export const router = express.Router();
 

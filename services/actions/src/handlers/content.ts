@@ -16,7 +16,7 @@ import {
 import { apolloClient } from "../graphqlClient";
 import { startPreviewTranscode } from "../lib/transcode";
 import { startTranscribe } from "../lib/transcribe";
-import { ContentItemData, Payload } from "../types/event";
+import { ContentItemData, Payload } from "../types/hasura/event";
 
 gql`
     mutation ContentItemAddNewVersion($id: uuid!, $newVersion: jsonb!) {

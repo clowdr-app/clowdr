@@ -45,7 +45,6 @@ gql`
                 id
                 mediaLiveChannelId
             }
-            presenterVonageSessionId
         }
     }
 
@@ -153,7 +152,6 @@ gql`
                 id
                 mediaLiveChannelId
             }
-            presenterVonageSessionId
         }
     }
 `;

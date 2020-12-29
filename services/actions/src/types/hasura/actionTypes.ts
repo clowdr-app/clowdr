@@ -1,9 +1,5 @@
 type Maybe<T> = T | null;
 
-// If you see "Invalid request"s occurring when they
-//  shouldn't, maybe this type accidentally got assigned
-//  to "string" instead of "any"? Hasura's CodeGen
-//  generates the wrong type.
 type jsonb = any;
 
 type uuid = string;
@@ -67,6 +63,10 @@ type UploaderSendSubmissionRequestResult = {
     sent: boolean;
 };
 
+type JoinEventVonageSessionOutput = {
+    accessToken?: Maybe<string>;
+};
+
 type SampleInput = {
     username: string;
     password: string;
@@ -109,6 +109,7 @@ type Mutation = {
     invitationConfirmWithCode?: Maybe<ConfirmInvitationOutput>;
     invitationSendInitialEmail: Array<InvitationSendEmailResult>;
     invitationSendRepeatEmail: Array<InvitationSendEmailResult>;
+    joinEventVonageSession?: Maybe<JoinEventVonageSessionOutput>;
     submitContentItem?: Maybe<SubmitContentItemOutput>;
     updateSubtitles?: Maybe<SubmitUpdatedSubtitlesOutput>;
     uploadSendSubmissionRequests: Array<UploaderSendSubmissionRequestResult>;
@@ -152,6 +153,10 @@ type invitationSendInitialEmailArgs = {
 
 type invitationSendRepeatEmailArgs = {
     attendeeIds: Array<string>;
+};
+
+type joinEventVonageSessionArgs = {
+    eventId: uuid;
 };
 
 type submitContentItemArgs = {

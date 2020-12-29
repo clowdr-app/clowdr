@@ -3,7 +3,7 @@ import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
 import { handleVideoRenderJobUpdated } from "../handlers/videoRenderJob";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
-import { Payload, VideoRenderJobData } from "../types/event";
+import { Payload, VideoRenderJobData } from "../types/hasura/event";
 
 export const router = express.Router();
 

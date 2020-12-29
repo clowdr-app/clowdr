@@ -2,7 +2,7 @@ import { gql } from "@apollo/client/core";
 import sgMail from "@sendgrid/mail";
 import assert from "assert";
 import { apolloClient } from "../graphqlClient";
-import { EmailData, Payload } from "../types/event";
+import { EmailData, Payload } from "../types/hasura/event";
 import { callWithRetry } from "../utils";
 
 export async function handleEmailCreated(payload: Payload<EmailData>): Promise<void> {

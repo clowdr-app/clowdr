@@ -76,10 +76,10 @@ export async function createTransitionsForRoom(conferenceId: string, roomId: str
                     startTime
                     intendedRoomModeName
                     name
-                }
-                broadcastContentItem {
-                    id
-                    inputTypeName
+                    broadcastContentItem {
+                        id
+                        inputTypeName
+                    }
                 }
             }
         }
@@ -139,7 +139,7 @@ export async function createTransitionsForRoom(conferenceId: string, roomId: str
             case RoomMode_Enum.Presentation:
             case RoomMode_Enum.QAndA: {
                 console.log("Creating transitions for live event", event.id);
-                const broadcastContentItem = eventsResult.data.Room_by_pk.broadcastContentItem;
+                const broadcastContentItem = event.broadcastContentItem;
 
                 if (broadcastContentItem && broadcastContentItem.inputTypeName === InputType_Enum.VonageSession) {
                     await createTransition(

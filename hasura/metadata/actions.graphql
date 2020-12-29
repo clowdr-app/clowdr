@@ -61,6 +61,13 @@ type Mutation {
 }
 
 
+type Mutation {
+  joinEventVonageSession (
+    eventId: uuid!
+  ): JoinEventVonageSessionOutput
+}
+
+
 type Query {
   protectedEcho (
     message: String!
@@ -179,5 +186,9 @@ type ConferencePrepareOutput {
 type UploaderSendSubmissionRequestResult {
   uploaderId : uuid!
   sent : Boolean!
+}
+
+type JoinEventVonageSessionOutput {
+  accessToken : String
 }
 

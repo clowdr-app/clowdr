@@ -258,12 +258,12 @@
   - name: contentItem
     using:
       foreign_key_constraint_on: contentItemId
+  - name: event
+    using:
+      foreign_key_constraint_on: eventId
   - name: inputType
     using:
       foreign_key_constraint_on: inputTypeName
-  - name: room
-    using:
-      foreign_key_constraint_on: roomId
   array_relationships:
   - name: executedTransitions
     using:
@@ -1830,12 +1830,28 @@
       updated_at: updatedAt
       created_at: createdAt
   object_relationships:
+  - name: broadcastContentItem
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: BroadcastContentItem
+        column_mapping:
+          id: eventId
   - name: conference
     using:
       foreign_key_constraint_on: conferenceId
   - name: contentGroup
     using:
       foreign_key_constraint_on: contentGroupId
+  - name: eventVonageSession
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: EventVonageSession
+        column_mapping:
+          id: eventId
   - name: originatingData
     using:
       foreign_key_constraint_on: originatingDataId
@@ -1941,17 +1957,17 @@
   - role: user
     permission:
       columns:
-      - durationSeconds
-      - intendedRoomModeName
-      - name
+      - id
       - created_at
-      - startTime
       - updated_at
+      - roomId
+      - intendedRoomModeName
+      - originatingDataId
+      - name
+      - startTime
+      - durationSeconds
       - conferenceId
       - contentGroupId
-      - id
-      - originatingDataId
-      - roomId
       filter:
         _or:
         - conference:
@@ -2307,6 +2323,52 @@
                     rolePermissions:
                       permissionName:
                         _eq: CONFERENCE_MANAGE_SCHEDULE
+              - _or:
+                - includeUnauthenticated:
+                    _eq: true
+                - groupAttendees:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
+- table:
+    schema: public
+    name: EventVonageSession
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
+  object_relationships:
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  - name: event
+    using:
+      foreign_key_constraint_on: eventId
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - conferenceId
+      - created_at
+      - id
+      - sessionId
+      - updated_at
+      filter:
+        _or:
+        - conference:
+            groups:
+              _and:
+              - enabled:
+                  _eq: true
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      _or:
+                      - permissionName:
+                          _eq: CONFERENCE_VIEW
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_SCHEDULE
               - _or:
                 - includeUnauthenticated:
                     _eq: true
@@ -3863,14 +3925,6 @@
     schema: public
     name: Room
   object_relationships:
-  - name: broadcastContentItem
-    using:
-      manual_configuration:
-        remote_table:
-          schema: public
-          name: BroadcastContentItem
-        column_mapping:
-          id: roomId
   - name: conference
     using:
       foreign_key_constraint_on: conferenceId
@@ -3972,7 +4026,6 @@
       - mediaLiveChannelId
       - name
       - originatingDataId
-      - presenterVonageSessionId
       - publicVonageSessionId
       - updated_at
       filter:

@@ -10,13 +10,13 @@ import {
     CreateVideoTitlesContentItemDocument,
     CreateVonageBroadcastContentItemDocument,
     GetConfigurationValueDocument,
+    GetEventsDocument,
+    GetEventsWithoutVonageSessionDocument,
     GetEventTitleDetailsDocument,
-    GetRoomsDocument,
-    GetRoomsWithoutPresenterVonageSessionDocument,
     GetVideoBroadcastContentItemsDocument,
     GetVideoTitlesContentItemDocument,
     OtherConferencePrepareJobsDocument,
-    SetPresenterVonageSessionIdDocument,
+    SetEventVonageSessionIdDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { failConferencePrepareJob } from "../lib/conferencePrepareJob";
@@ -24,7 +24,7 @@ import { OpenShotClient } from "../lib/openshot/openshot";
 import { ChannelLayout } from "../lib/openshot/openshotProjects";
 import { createTransitions } from "../lib/transitions";
 import * as VonageClient from "../lib/vonage/vonageClient";
-import { ConferencePrepareJobData, Payload } from "../types/event";
+import { ConferencePrepareJobData, Payload } from "../types/hasura/event";
 
 gql`
     query OtherConferencePrepareJobs($conferenceId: uuid!, $conferencePrepareJobId: uuid!) {
@@ -83,7 +83,7 @@ export async function handleConferencePrepareJobInserted(payload: Payload<Confer
 
         await createVideoBroadcastItems(payload.event.data.new.id, payload.event.data.new.conferenceId);
         await createEventTitleSlideBroadcastItems(payload.event.data.new.id, payload.event.data.new.conferenceId);
-        await createPresenterRoomBroadcastItems(payload.event.data.new.conferenceId);
+        await createEventVonageSessionsBroadcastItems(payload.event.data.new.conferenceId);
 
         console.log("Conference prepare: finished initialising job", payload.event.data.new.id);
     } catch (e) {
@@ -503,44 +503,33 @@ async function createEventTitleSlideBroadcastItems(
     }
 }
 
-async function createPresenterRoomBroadcastItems(conferenceId: string): Promise<void> {
+async function createEventVonageSessionsBroadcastItems(conferenceId: string): Promise<void> {
     console.log("Creating broadcast content items for presenter Vonage rooms", conferenceId);
     gql`
-        query GetRoomsWithoutPresenterVonageSession($conferenceId: uuid!) {
-            Room(where: { conferenceId: { _eq: $conferenceId }, presenterVonageSessionId: { _is_null: true } }) {
+        query GetEventsWithoutVonageSession($conferenceId: uuid!) {
+            Event(where: { conferenceId: { _eq: $conferenceId }, _and: { _not: { eventVonageSession: {} } } }) {
                 id
             }
         }
     `;
 
-    const roomsWithoutSessionResult = await apolloClient.query({
-        query: GetRoomsWithoutPresenterVonageSessionDocument,
+    const eventsWithoutSessionResult = await apolloClient.query({
+        query: GetEventsWithoutVonageSessionDocument,
         variables: {
             conferenceId,
         },
     });
 
-    if (roomsWithoutSessionResult.error || roomsWithoutSessionResult.errors) {
+    if (eventsWithoutSessionResult.error || eventsWithoutSessionResult.errors) {
         console.error(
-            "Failed to retrieve list of rooms without presenter Vonage sessions",
-            roomsWithoutSessionResult.error ?? roomsWithoutSessionResult.errors
+            "Failed to retrieve list of events without presenter Vonage sessions",
+            eventsWithoutSessionResult.error ?? eventsWithoutSessionResult.errors
         );
-        throw new Error("Failed to retrieve list of rooms without presenter Vonage sessions");
+        throw new Error("Failed to retrieve list of events without presenter Vonage sessions");
     }
 
-    gql`
-        mutation SetPresenterVonageSessionId($roomId: uuid!, $presenterVonageSessionId: String!) {
-            update_Room(
-                where: { id: { _eq: $roomId } }
-                _set: { presenterVonageSessionId: $presenterVonageSessionId }
-            ) {
-                affected_rows
-            }
-        }
-    `;
-
-    for (const room of roomsWithoutSessionResult.data.Room) {
-        console.log("Creating Vonage session for room", room.id);
+    for (const room of eventsWithoutSessionResult.data.Event) {
+        console.log("Creating Vonage session for event", room.id);
         try {
             const sessionResult = await VonageClient.createSession({ mediaMode: "routed" });
 
@@ -548,11 +537,23 @@ async function createPresenterRoomBroadcastItems(conferenceId: string): Promise<
                 throw new Error("No session ID returned from Vonage");
             }
 
+            gql`
+                mutation SetEventVonageSessionId($eventId: uuid!, $conferenceId: uuid!, $sessionId: String!) {
+                    insert_EventVonageSession_one(
+                        object: { eventId: $eventId, conferenceId: $conferenceId, sessionId: $sessionId }
+                        on_conflict: { constraint: EventVonageSession_eventId_key, update_columns: sessionId }
+                    ) {
+                        id
+                    }
+                }
+            `;
+
             await apolloClient.mutate({
-                mutation: SetPresenterVonageSessionIdDocument,
+                mutation: SetEventVonageSessionIdDocument,
                 variables: {
-                    roomId: room.id,
-                    presenterVonageSessionId: sessionResult?.sessionId,
+                    eventId: room.id,
+                    conferenceId,
+                    sessionId: sessionResult.sessionId,
                 },
             });
         } catch (e) {
@@ -562,34 +563,37 @@ async function createPresenterRoomBroadcastItems(conferenceId: string): Promise<
     }
 
     gql`
-        query GetRooms($conferenceId: uuid!) {
-            Room(where: { conferenceId: { _eq: $conferenceId } }) {
+        query GetEvents($conferenceId: uuid!) {
+            Event(where: { conferenceId: { _eq: $conferenceId } }) {
                 id
-                presenterVonageSessionId
+                eventVonageSession {
+                    sessionId
+                    id
+                }
             }
         }
     `;
 
-    console.log("Creating broadcast content items for each room's presenter Vonage session", conferenceId);
-    const roomsResult = await apolloClient.query({
-        query: GetRoomsDocument,
+    console.log("Creating broadcast content items for each event's Vonage session", conferenceId);
+    const eventsResult = await apolloClient.query({
+        query: GetEventsDocument,
         variables: {
             conferenceId,
         },
         fetchPolicy: "network-only",
     });
 
-    if (roomsResult.error || roomsResult.errors) {
-        console.error("Failed to retrieve presenter Vonage sessions", roomsResult.error ?? roomsResult.errors);
-        throw new Error("Failed to retrieve presenter Vonage sessions");
+    if (eventsResult.error || eventsResult.errors) {
+        console.error("Failed to retrieve event Vonage sessions", eventsResult.error ?? eventsResult.errors);
+        throw new Error("Failed to retrieve event Vonage sessions");
     }
 
     gql`
-        mutation CreateVonageBroadcastContentItem($conferenceId: uuid!, $roomId: uuid!, $input: jsonb!) {
+        mutation CreateVonageBroadcastContentItem($conferenceId: uuid!, $eventId: uuid!, $input: jsonb!) {
             insert_BroadcastContentItem_one(
-                object: { conferenceId: $conferenceId, roomId: $roomId, inputTypeName: VONAGE_SESSION, input: $input }
+                object: { conferenceId: $conferenceId, eventId: $eventId, inputTypeName: VONAGE_SESSION, input: $input }
                 on_conflict: {
-                    constraint: BroadcastContentItem_roomId_key
+                    constraint: BroadcastContentItem_eventId_key
                     update_columns: [conferenceId, input, inputTypeName]
                 }
             ) {
@@ -598,16 +602,16 @@ async function createPresenterRoomBroadcastItems(conferenceId: string): Promise<
         }
     `;
 
-    for (const room of roomsResult.data.Room) {
-        console.log("Creating Vonage broadcast content item for room", room.id);
-        if (!room.presenterVonageSessionId) {
-            console.warn("Missing Vonage session id for room, skipping.", room.id, room.presenterVonageSessionId);
+    for (const event of eventsResult.data.Event) {
+        console.log("Creating Vonage broadcast content item for event", event.id);
+        if (!event.eventVonageSession?.sessionId) {
+            console.warn("Missing Vonage session id for event, skipping.", event.id);
             continue;
         }
 
         const input: VonageInput = {
             type: "VonageInput",
-            sessionId: room.presenterVonageSessionId,
+            sessionId: event.eventVonageSession.sessionId,
         };
 
         await apolloClient.mutate({
@@ -615,7 +619,7 @@ async function createPresenterRoomBroadcastItems(conferenceId: string): Promise<
             variables: {
                 conferenceId,
                 input,
-                roomId: room.id,
+                eventId: event.id,
             },
         });
     }

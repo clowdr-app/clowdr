@@ -4,7 +4,7 @@ import { assertType, is } from "typescript-is";
 import { handleContentItemUpdated, handleGetByRequiredItem, handleGetUploadAgreement } from "../handlers/content";
 import { handleContentItemSubmitted, handleUpdateSubtitles } from "../handlers/upload";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
-import { ContentItemData, Payload } from "../types/event";
+import { ContentItemData, Payload } from "../types/hasura/event";
 
 export const router = express.Router();
 

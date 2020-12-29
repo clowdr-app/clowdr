@@ -91,6 +91,16 @@ actions:
       value_from_env: EVENT_SECRET
   permissions:
   - role: user
+- name: joinEventVonageSession
+  definition:
+    kind: synchronous
+    handler: '{{ACTION_BASE_URL}}/vonage/joinEvent'
+    forward_client_headers: true
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+  permissions:
+  - role: user
 - name: protectedEcho
   definition:
     kind: ""
@@ -155,4 +165,5 @@ custom_types:
   - name: GetUploadAgreementOutput
   - name: ConferencePrepareOutput
   - name: UploaderSendSubmissionRequestResult
+  - name: JoinEventVonageSessionOutput
   scalars: []

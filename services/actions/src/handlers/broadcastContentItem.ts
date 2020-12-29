@@ -1,7 +1,7 @@
 import assert from "assert";
 import { InputType_Enum } from "../generated/graphql";
 import * as ContentItem from "../lib/contentItem";
-import { BroadcastContentItemData, Payload } from "../types/event";
+import { BroadcastContentItemData, Payload } from "../types/hasura/event";
 
 export async function handleBroadcastContentItemUpdated(payload: Payload<BroadcastContentItemData>): Promise<void> {
     assert(payload.event.data.new, "Payload must contain new row data");

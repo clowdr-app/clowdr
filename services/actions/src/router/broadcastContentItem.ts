@@ -3,7 +3,7 @@ import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
 import { handleBroadcastContentItemUpdated } from "../handlers/broadcastContentItem";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
-import { BroadcastContentItemData, Payload } from "../types/event";
+import { BroadcastContentItemData, Payload } from "../types/hasura/event";
 
 export const router = express.Router();
 

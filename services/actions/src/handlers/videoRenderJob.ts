@@ -9,7 +9,7 @@ import { OpenShotClient } from "../lib/openshot/openshot";
 import { ExportParameters } from "../lib/openshot/openshotExports";
 import * as Transcode from "../lib/transcode";
 import * as VideoRenderJob from "../lib/videoRenderJob";
-import { Payload, VideoRenderJobData } from "../types/event";
+import { Payload, VideoRenderJobData } from "../types/hasura/event";
 
 gql`
     query GetContentItemIdForVideoRenderJob($videoRenderJobId: uuid!) {

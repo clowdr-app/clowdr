@@ -12,7 +12,7 @@ import {
     GetMediaLiveChannelByRoomDocument,
     GetRoomsWithEventsDocument,
     GetRoomsWithEventsStartingDocument,
-    GetRoomsWithNoEventsStartingDocument,
+    GetRoomsWithNoEventsDocument,
     GetTransitionsByRoomDocument,
     InputType_Enum,
     SetMediaLiveChannelForRoomDocument,
@@ -145,8 +145,13 @@ export async function ensureUpcomingChannelsCreated(): Promise<void> {
 }
 
 gql`
-    query GetRoomsWithNoEventsStarting($from: timestamptz, $to: timestamptz) {
-        Room(where: { _not: { events: { startTime: { _gte: $from, _lte: $to } } } }) {
+    query GetRoomsWithNoEvents($from: timestamptz, $to: timestamptz) {
+        Room(
+            where: {
+                _not: { events: { startTime: { _gte: $from, _lte: $to } } }
+                _and: { _not: { events: { startTime: { _lte: $from }, endTime: { _gte: $from } } } }
+            }
+        ) {
             id
             mediaLiveChannel {
                 id
@@ -158,14 +163,13 @@ gql`
 
 export async function stopChannelsWithoutUpcomingOrCurrentEvents(): Promise<void> {
     console.log("Stopping channels with no recent or upcoming events");
-    // WARNING: this is hardcoded to check for events that started up to two hours ago.
-    // TODO: make this more robust for long events
+    // TODO: perhaps this should look at transitions as well as events?
     const now = new Date();
-    const from = new Date(now.getTime() - 120 * 60 * 1000).toISOString();
+    const from = now.toISOString();
     const to = new Date(now.getTime() + 120 * 60 * 1000).toISOString();
 
     const roomsResult = await apolloClient.query({
-        query: GetRoomsWithNoEventsStartingDocument,
+        query: GetRoomsWithNoEventsDocument,
         variables: {
             from,
             to,

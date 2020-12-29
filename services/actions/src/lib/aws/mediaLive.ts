@@ -8,6 +8,8 @@ import {
     AacSpec,
     AacVbrQuality,
     AfdSignaling,
+    EmbeddedConvert608To708,
+    EmbeddedScte20Detection,
     FeatureActivationsInputPrepareScheduleActions,
     H264AdaptiveQuantization,
     H264ColorMetadata,
@@ -174,10 +176,12 @@ export async function createChannel(
 ): Promise<MediaLiveChannel> {
     const destinationId = shortId();
     const video1080p30 = shortId();
-    const audio1080p30 = shortId();
+    const audioHQDescriptorName = shortId();
     const video720p30 = shortId();
     const video360p30 = shortId();
-    const audio360p30 = shortId();
+    const audioLQDescriptorName = shortId();
+    const mp4CaptionSelectorName = shortId();
+    const mp4CaptionDescriptorName = shortId();
     const vonageInputAttachmentName = `${shortId()}-vonage`;
     const mp4InputAttachmentName = `${shortId()}-mp4`;
     const loopingMp4InputAttachmentName = `${shortId()}-looping`;
@@ -190,16 +194,59 @@ export async function createChannel(
             {
                 InputAttachmentName: vonageInputAttachmentName,
                 InputId: vonageInputId,
+                InputSettings: {
+                    CaptionSelectors: [
+                        {
+                            Name: mp4CaptionSelectorName,
+                            LanguageCode: "eng",
+                            SelectorSettings: {
+                                EmbeddedSourceSettings: {
+                                    Convert608To708: EmbeddedConvert608To708.UPCONVERT,
+                                    Source608ChannelNumber: 1,
+                                    Scte20Detection: EmbeddedScte20Detection.OFF,
+                                },
+                            },
+                        },
+                    ],
+                },
             },
             {
                 InputAttachmentName: mp4InputAttachmentName,
                 InputId: mp4InputId,
+                InputSettings: {
+                    CaptionSelectors: [
+                        {
+                            Name: mp4CaptionSelectorName,
+                            LanguageCode: "eng",
+                            SelectorSettings: {
+                                EmbeddedSourceSettings: {
+                                    Convert608To708: EmbeddedConvert608To708.UPCONVERT,
+                                    Source608ChannelNumber: 1,
+                                    Scte20Detection: EmbeddedScte20Detection.OFF,
+                                },
+                            },
+                        },
+                    ],
+                },
             },
             {
                 InputAttachmentName: loopingMp4InputAttachmentName,
                 InputId: loopingMp4InputId,
                 InputSettings: {
                     SourceEndBehavior: InputSourceEndBehavior.LOOP,
+                    CaptionSelectors: [
+                        {
+                            Name: mp4CaptionSelectorName,
+                            LanguageCode: "eng",
+                            SelectorSettings: {
+                                EmbeddedSourceSettings: {
+                                    Convert608To708: EmbeddedConvert608To708.UPCONVERT,
+                                    Source608ChannelNumber: 1,
+                                    Scte20Detection: EmbeddedScte20Detection.OFF,
+                                },
+                            },
+                        },
+                    ],
                 },
             },
         ],
@@ -218,7 +265,7 @@ export async function createChannel(
                     },
                     AudioTypeControl: "FOLLOW_INPUT",
                     LanguageCodeControl: "FOLLOW_INPUT",
-                    Name: audio1080p30,
+                    Name: audioHQDescriptorName,
                     AudioSelectorName: undefined,
                 },
                 {
@@ -230,7 +277,7 @@ export async function createChannel(
                     },
                     AudioTypeControl: "FOLLOW_INPUT",
                     LanguageCodeControl: "FOLLOW_INPUT",
-                    Name: audio360p30,
+                    Name: audioLQDescriptorName,
                     AudioSelectorName: undefined,
                 },
             ],
@@ -241,7 +288,7 @@ export async function createChannel(
                         {
                             OutputName: "1080p30",
                             VideoDescriptionName: video1080p30,
-                            AudioDescriptionNames: [audio1080p30],
+                            AudioDescriptionNames: [audioHQDescriptorName],
                             OutputSettings: {
                                 MediaPackageOutputSettings: {},
                             },
@@ -249,7 +296,7 @@ export async function createChannel(
                         {
                             OutputName: "720p30",
                             VideoDescriptionName: video720p30,
-                            AudioDescriptionNames: [audio1080p30], // intentional
+                            AudioDescriptionNames: [audioHQDescriptorName],
                             OutputSettings: {
                                 MediaPackageOutputSettings: {},
                             },
@@ -257,7 +304,14 @@ export async function createChannel(
                         {
                             OutputName: "360p30",
                             VideoDescriptionName: video360p30,
-                            AudioDescriptionNames: [audio360p30],
+                            AudioDescriptionNames: [audioLQDescriptorName],
+                            OutputSettings: {
+                                MediaPackageOutputSettings: {},
+                            },
+                        },
+                        {
+                            OutputName: "captions",
+                            CaptionDescriptionNames: [mp4CaptionDescriptorName],
                             OutputSettings: {
                                 MediaPackageOutputSettings: {},
                             },
@@ -321,6 +375,17 @@ export async function createChannel(
                     Sharpness: 50,
                     ScalingBehavior: VideoDescriptionScalingBehavior.DEFAULT,
                     Width: 480,
+                },
+            ],
+            CaptionDescriptions: [
+                {
+                    CaptionSelectorName: mp4CaptionSelectorName,
+                    Name: mp4CaptionDescriptorName,
+                    DestinationSettings: {
+                        WebvttDestinationSettings: {},
+                    },
+                    LanguageCode: "eng",
+                    LanguageDescription: "English",
                 },
             ],
         },

@@ -40,6 +40,7 @@ gql`
             }
         ) {
             id
+            conferenceId
             mediaLiveChannel {
                 id
                 mediaLiveChannelId
@@ -84,6 +85,7 @@ export async function ensureUpcomingChannelsCreated(): Promise<void> {
         let needToCreateChannel = false;
         if (room.mediaLiveChannel) {
             const channelState = await getMediaLiveChannelState(room.mediaLiveChannel.mediaLiveChannelId);
+            console.log("Checked channel state", room.id, room.mediaLiveChannel.mediaLiveChannelId, channelState);
             if (
                 [
                     ChannelState.CREATE_FAILED,
@@ -138,7 +140,7 @@ export async function ensureUpcomingChannelsCreated(): Promise<void> {
 
         if (needToCreateChannel || !room.mediaLiveChannel) {
             console.log("Creating new MediaLive channel for room", room.id);
-            await createNewChannelForRoom(room.id);
+            await createNewChannelForRoom(room.id, room.conferenceId);
         }
     }
 }
@@ -217,6 +219,7 @@ gql`
         $mp4InputAttachmentName: String!
         $loopingMp4InputAttachmentName: String!
         $vonageInputAttachmentName: String!
+        $conferenceId: uuid!
     ) {
         insert_MediaLiveChannel_one(
             object: {
@@ -231,6 +234,7 @@ gql`
                 mp4InputAttachmentName: $mp4InputAttachmentName
                 loopingMp4InputAttachmentName: $loopingMp4InputAttachmentName
                 vonageInputAttachmentName: $vonageInputAttachmentName
+                conferenceId: $conferenceId
             }
         ) {
             id
@@ -244,7 +248,7 @@ gql`
     }
 `;
 
-async function createNewChannelForRoom(roomId: string): Promise<void> {
+async function createNewChannelForRoom(roomId: string, conferenceId: string): Promise<void> {
     assert(
         process.env.AWS_MEDIALIVE_INPUT_SECURITY_GROUP_ID,
         "AWS_MEDIALIVE_INPUT_SECURITY_GROUP_ID environment variable must be defined"
@@ -279,6 +283,7 @@ async function createNewChannelForRoom(roomId: string): Promise<void> {
             mp4InputAttachmentName: mediaLiveChannel.mp4InputAttachmentName,
             loopingMp4InputAttachmentName: mediaLiveChannel.loopingMp4InputAttachmentName,
             vonageInputAttachmentName: mediaLiveChannel.vonageInputAttachmentName,
+            conferenceId,
         },
     });
 
@@ -527,12 +532,43 @@ export async function syncChannelSchedule(roomId: string): Promise<void> {
         roomId,
         channel.mediaLiveChannelId
     );
-    await MediaLive.batchUpdateSchedule({
-        ChannelId: channel.mediaLiveChannelId,
-        Deletes: {
-            ActionNames: unexpectedScheduleItems.map((item) => item.name),
-        },
-    });
+    try {
+        const unexpectedFollowScheduleActions = existingSchedule.ScheduleActions?.filter(
+            (action) =>
+                action.ScheduleActionStartSettings?.FollowModeScheduleActionStartSettings?.ReferenceActionName &&
+                unexpectedScheduleItems.find(
+                    (item) =>
+                        item.name ===
+                        action.ScheduleActionStartSettings?.FollowModeScheduleActionStartSettings?.ReferenceActionName
+                )
+        );
+        if (unexpectedFollowScheduleActions && unexpectedFollowScheduleActions.length > 0) {
+            await MediaLive.batchUpdateSchedule({
+                ChannelId: channel.mediaLiveChannelId,
+                Deletes: {
+                    ActionNames: unexpectedFollowScheduleActions?.map((item) => item.ActionName).filter(notEmpty),
+                },
+            });
+        }
+
+        await MediaLive.batchUpdateSchedule({
+            ChannelId: channel.mediaLiveChannelId,
+            Deletes: {
+                ActionNames: unexpectedScheduleItems.map((item) => item.name),
+            },
+        });
+    } catch (e) {
+        console.error(
+            "Error while deleting items from schedule. Attempting to stop the channel so that items can be deleted while it is idle.",
+            roomId,
+            channel.mediaLiveChannelId,
+            e
+        );
+        await MediaLive.stopChannel({
+            ChannelId: channel.mediaLiveChannelId,
+        });
+        return;
+    }
 
     // Go through each transition and create any missing schedule actions
     console.log("Refetching updated channel schedule", roomId, channel.mediaLiveChannelId);

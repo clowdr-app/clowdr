@@ -38671,12 +38671,6 @@
             "description": "URL for a video (video is embedded in Clowdr UI).",
             "isDeprecated": false,
             "deprecationReason": null
-          },
-          {
-            "name": "ZOOM",
-            "description": "Data for a Zoom meeting.",
-            "isDeprecated": false,
-            "deprecationReason": null
           }
         ],
         "possibleTypes": null
@@ -63669,6 +63663,38 @@
             "deprecationReason": null
           },
           {
+            "name": "conference",
+            "description": "An object relationship",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Conference",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "conferenceId",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "uuid",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "createdAt",
             "description": null,
             "args": [],
@@ -63710,6 +63736,22 @@
               "ofType": {
                 "kind": "SCALAR",
                 "name": "uuid",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "loopingMp4InputAttachmentName",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -63776,6 +63818,18 @@
                 "name": "String",
                 "ofType": null
               }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "room",
+            "description": "An object relationship",
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Room",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -64122,6 +64176,26 @@
             "defaultValue": null
           },
           {
+            "name": "conference",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "Conference_bool_exp",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "conferenceId",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "uuid_comparison_exp",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "createdAt",
             "description": null,
             "type": {
@@ -64147,6 +64221,16 @@
             "type": {
               "kind": "INPUT_OBJECT",
               "name": "uuid_comparison_exp",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "loopingMp4InputAttachmentName",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "String_comparison_exp",
               "ofType": null
             },
             "defaultValue": null
@@ -64187,6 +64271,16 @@
             "type": {
               "kind": "INPUT_OBJECT",
               "name": "String_comparison_exp",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "room",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "Room_bool_exp",
               "ofType": null
             },
             "defaultValue": null
@@ -64280,6 +64374,26 @@
             "defaultValue": null
           },
           {
+            "name": "conference",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "Conference_obj_rel_insert_input",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "conferenceId",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "uuid",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "createdAt",
             "description": null,
             "type": {
@@ -64305,6 +64419,16 @@
             "type": {
               "kind": "SCALAR",
               "name": "uuid",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "loopingMp4InputAttachmentName",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null
@@ -64345,6 +64469,16 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "room",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "Room_obj_rel_insert_input",
               "ofType": null
             },
             "defaultValue": null
@@ -64424,6 +64558,18 @@
             "deprecationReason": null
           },
           {
+            "name": "conferenceId",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "uuid",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "createdAt",
             "description": null,
             "args": [],
@@ -64454,6 +64600,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "uuid",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "loopingMp4InputAttachmentName",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
               "ofType": null
             },
             "isDeprecated": false,
@@ -64588,6 +64746,16 @@
             "defaultValue": null
           },
           {
+            "name": "conferenceId",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "order_by",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "createdAt",
             "description": null,
             "type": {
@@ -64609,6 +64777,16 @@
           },
           {
             "name": "id",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "order_by",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "loopingMp4InputAttachmentName",
             "description": null,
             "type": {
               "kind": "ENUM",
@@ -64732,6 +64910,18 @@
             "deprecationReason": null
           },
           {
+            "name": "conferenceId",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "uuid",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "createdAt",
             "description": null,
             "args": [],
@@ -64762,6 +64952,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "uuid",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "loopingMp4InputAttachmentName",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
               "ofType": null
             },
             "isDeprecated": false,
@@ -64896,6 +65098,16 @@
             "defaultValue": null
           },
           {
+            "name": "conferenceId",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "order_by",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "createdAt",
             "description": null,
             "type": {
@@ -64917,6 +65129,16 @@
           },
           {
             "name": "id",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "order_by",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "loopingMp4InputAttachmentName",
             "description": null,
             "type": {
               "kind": "ENUM",
@@ -65180,6 +65402,26 @@
             "defaultValue": null
           },
           {
+            "name": "conference",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "Conference_order_by",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "conferenceId",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "order_by",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "createdAt",
             "description": null,
             "type": {
@@ -65201,6 +65443,16 @@
           },
           {
             "name": "id",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "order_by",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "loopingMp4InputAttachmentName",
             "description": null,
             "type": {
               "kind": "ENUM",
@@ -65245,6 +65497,16 @@
             "type": {
               "kind": "ENUM",
               "name": "order_by",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "room",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "Room_order_by",
               "ofType": null
             },
             "defaultValue": null
@@ -65340,6 +65602,12 @@
             "deprecationReason": null
           },
           {
+            "name": "conferenceId",
+            "description": "column name",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "createdAt",
             "description": "column name",
             "isDeprecated": false,
@@ -65353,6 +65621,12 @@
           },
           {
             "name": "id",
+            "description": "column name",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "loopingMp4InputAttachmentName",
             "description": "column name",
             "isDeprecated": false,
             "deprecationReason": null
@@ -65435,6 +65709,16 @@
             "defaultValue": null
           },
           {
+            "name": "conferenceId",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "uuid",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "createdAt",
             "description": null,
             "type": {
@@ -65460,6 +65744,16 @@
             "type": {
               "kind": "SCALAR",
               "name": "uuid",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "loopingMp4InputAttachmentName",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null
@@ -65570,6 +65864,12 @@
             "deprecationReason": null
           },
           {
+            "name": "conferenceId",
+            "description": "column name",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "createdAt",
             "description": "column name",
             "isDeprecated": false,
@@ -65583,6 +65883,12 @@
           },
           {
             "name": "id",
+            "description": "column name",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "loopingMp4InputAttachmentName",
             "description": "column name",
             "isDeprecated": false,
             "deprecationReason": null
@@ -70426,7 +70732,7 @@
           },
           {
             "name": "CONFERENCE_VIEW_ATTENDEES",
-            "description": "View conference active attendees.",
+            "description": "View conference attendees.",
             "isDeprecated": false,
             "deprecationReason": null
           }

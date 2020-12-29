@@ -15,9 +15,9 @@ router.post("/sync", async (_req: Request, res: Response) => {
     // todo: destroy channels for rooms with no ongoing events in the last 30 mins
     // todo: sync input switches
     try {
+        await syncChannelSchedules();
         await ensureUpcomingChannelsCreated();
         await stopChannelsWithoutUpcomingOrCurrentEvents();
-        await syncChannelSchedules();
     } catch (e) {
         console.error("Failure while ensuring creation of upcoming channels", e);
         res.status(500).json("Failure");

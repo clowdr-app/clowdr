@@ -3,6 +3,7 @@ import { Route, RouteComponentProps, Switch } from "react-router-dom";
 import PageNotFound from "../Errors/PageNotFound";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import AttendeeLandingPage from "./Attend/AttendeeLandingPage";
+import RoomPage from "./Attend/Room/RoomPage";
 import ManageConferenceBroadcastPage from "./Manage/ManageConferenceBroadcastPage";
 import ManageConferenceContentPage from "./Manage/ManageConferenceContentPage";
 import ManageConferenceGroupsPage from "./Manage/ManageConferenceGroupsPage";
@@ -53,6 +54,15 @@ function AuthenticatedConferenceRoutes(rootUrl: string): JSX.Element {
                     <Route path={`${rootUrl}/manage/broadcasts`}>
                         <ManageConferenceBroadcastPage />
                     </Route>
+
+                    <Route
+                        path={`${rootUrl}/room/:roomId`}
+                        component={(
+                            props: RouteComponentProps<{
+                                roomId: string;
+                            }>
+                        ) => <RoomPage roomId={props.match.params.roomId} />}
+                    />
 
                     <Route path={`${rootUrl}/`}>
                         <PageNotFound />

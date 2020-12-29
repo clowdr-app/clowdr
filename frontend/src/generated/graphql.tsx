@@ -6133,9 +6133,7 @@ export enum ContentType_Enum {
   /** Video file for titles introducing an event during a broadcast. */
   VideoTitles = 'VIDEO_TITLES',
   /** URL for a video (video is embedded in Clowdr UI). */
-  VideoUrl = 'VIDEO_URL',
-  /** Data for a Zoom meeting. */
-  Zoom = 'ZOOM'
+  VideoUrl = 'VIDEO_URL'
 }
 
 /** expression to compare columns of type ContentType_enum. All fields are combined with logical 'AND'. */
@@ -10108,13 +10106,19 @@ export type MediaLiveChannel = {
   readonly __typename?: 'MediaLiveChannel';
   readonly cloudFrontDistributionId: Scalars['String'];
   readonly cloudFrontDomain: Scalars['String'];
+  /** An object relationship */
+  readonly conference: Conference;
+  readonly conferenceId: Scalars['uuid'];
   readonly createdAt: Scalars['timestamptz'];
   readonly endpointUri: Scalars['String'];
   readonly id: Scalars['uuid'];
+  readonly loopingMp4InputAttachmentName: Scalars['String'];
   readonly mediaLiveChannelId: Scalars['String'];
   readonly mediaPackageChannelId: Scalars['String'];
   readonly mp4InputAttachmentName: Scalars['String'];
   readonly mp4InputId: Scalars['String'];
+  /** An object relationship */
+  readonly room?: Maybe<Room>;
   readonly rtmpInputId: Scalars['String'];
   readonly rtmpInputUri: Scalars['String'];
   readonly updatedAt: Scalars['timestamptz'];
@@ -10163,13 +10167,17 @@ export type MediaLiveChannel_Bool_Exp = {
   readonly _or?: Maybe<ReadonlyArray<Maybe<MediaLiveChannel_Bool_Exp>>>;
   readonly cloudFrontDistributionId?: Maybe<String_Comparison_Exp>;
   readonly cloudFrontDomain?: Maybe<String_Comparison_Exp>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly endpointUri?: Maybe<String_Comparison_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly loopingMp4InputAttachmentName?: Maybe<String_Comparison_Exp>;
   readonly mediaLiveChannelId?: Maybe<String_Comparison_Exp>;
   readonly mediaPackageChannelId?: Maybe<String_Comparison_Exp>;
   readonly mp4InputAttachmentName?: Maybe<String_Comparison_Exp>;
   readonly mp4InputId?: Maybe<String_Comparison_Exp>;
+  readonly room?: Maybe<Room_Bool_Exp>;
   readonly rtmpInputId?: Maybe<String_Comparison_Exp>;
   readonly rtmpInputUri?: Maybe<String_Comparison_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
@@ -10186,13 +10194,17 @@ export enum MediaLiveChannel_Constraint {
 export type MediaLiveChannel_Insert_Input = {
   readonly cloudFrontDistributionId?: Maybe<Scalars['String']>;
   readonly cloudFrontDomain?: Maybe<Scalars['String']>;
+  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly endpointUri?: Maybe<Scalars['String']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly loopingMp4InputAttachmentName?: Maybe<Scalars['String']>;
   readonly mediaLiveChannelId?: Maybe<Scalars['String']>;
   readonly mediaPackageChannelId?: Maybe<Scalars['String']>;
   readonly mp4InputAttachmentName?: Maybe<Scalars['String']>;
   readonly mp4InputId?: Maybe<Scalars['String']>;
+  readonly room?: Maybe<Room_Obj_Rel_Insert_Input>;
   readonly rtmpInputId?: Maybe<Scalars['String']>;
   readonly rtmpInputUri?: Maybe<Scalars['String']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
@@ -10204,9 +10216,11 @@ export type MediaLiveChannel_Max_Fields = {
   readonly __typename?: 'MediaLiveChannel_max_fields';
   readonly cloudFrontDistributionId?: Maybe<Scalars['String']>;
   readonly cloudFrontDomain?: Maybe<Scalars['String']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly endpointUri?: Maybe<Scalars['String']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly loopingMp4InputAttachmentName?: Maybe<Scalars['String']>;
   readonly mediaLiveChannelId?: Maybe<Scalars['String']>;
   readonly mediaPackageChannelId?: Maybe<Scalars['String']>;
   readonly mp4InputAttachmentName?: Maybe<Scalars['String']>;
@@ -10221,9 +10235,11 @@ export type MediaLiveChannel_Max_Fields = {
 export type MediaLiveChannel_Max_Order_By = {
   readonly cloudFrontDistributionId?: Maybe<Order_By>;
   readonly cloudFrontDomain?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly endpointUri?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
+  readonly loopingMp4InputAttachmentName?: Maybe<Order_By>;
   readonly mediaLiveChannelId?: Maybe<Order_By>;
   readonly mediaPackageChannelId?: Maybe<Order_By>;
   readonly mp4InputAttachmentName?: Maybe<Order_By>;
@@ -10239,9 +10255,11 @@ export type MediaLiveChannel_Min_Fields = {
   readonly __typename?: 'MediaLiveChannel_min_fields';
   readonly cloudFrontDistributionId?: Maybe<Scalars['String']>;
   readonly cloudFrontDomain?: Maybe<Scalars['String']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly endpointUri?: Maybe<Scalars['String']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly loopingMp4InputAttachmentName?: Maybe<Scalars['String']>;
   readonly mediaLiveChannelId?: Maybe<Scalars['String']>;
   readonly mediaPackageChannelId?: Maybe<Scalars['String']>;
   readonly mp4InputAttachmentName?: Maybe<Scalars['String']>;
@@ -10256,9 +10274,11 @@ export type MediaLiveChannel_Min_Fields = {
 export type MediaLiveChannel_Min_Order_By = {
   readonly cloudFrontDistributionId?: Maybe<Order_By>;
   readonly cloudFrontDomain?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly endpointUri?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
+  readonly loopingMp4InputAttachmentName?: Maybe<Order_By>;
   readonly mediaLiveChannelId?: Maybe<Order_By>;
   readonly mediaPackageChannelId?: Maybe<Order_By>;
   readonly mp4InputAttachmentName?: Maybe<Order_By>;
@@ -10295,13 +10315,17 @@ export type MediaLiveChannel_On_Conflict = {
 export type MediaLiveChannel_Order_By = {
   readonly cloudFrontDistributionId?: Maybe<Order_By>;
   readonly cloudFrontDomain?: Maybe<Order_By>;
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly endpointUri?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
+  readonly loopingMp4InputAttachmentName?: Maybe<Order_By>;
   readonly mediaLiveChannelId?: Maybe<Order_By>;
   readonly mediaPackageChannelId?: Maybe<Order_By>;
   readonly mp4InputAttachmentName?: Maybe<Order_By>;
   readonly mp4InputId?: Maybe<Order_By>;
+  readonly room?: Maybe<Room_Order_By>;
   readonly rtmpInputId?: Maybe<Order_By>;
   readonly rtmpInputUri?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
@@ -10320,11 +10344,15 @@ export enum MediaLiveChannel_Select_Column {
   /** column name */
   CloudFrontDomain = 'cloudFrontDomain',
   /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
   CreatedAt = 'createdAt',
   /** column name */
   EndpointUri = 'endpointUri',
   /** column name */
   Id = 'id',
+  /** column name */
+  LoopingMp4InputAttachmentName = 'loopingMp4InputAttachmentName',
   /** column name */
   MediaLiveChannelId = 'mediaLiveChannelId',
   /** column name */
@@ -10347,9 +10375,11 @@ export enum MediaLiveChannel_Select_Column {
 export type MediaLiveChannel_Set_Input = {
   readonly cloudFrontDistributionId?: Maybe<Scalars['String']>;
   readonly cloudFrontDomain?: Maybe<Scalars['String']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly endpointUri?: Maybe<Scalars['String']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly loopingMp4InputAttachmentName?: Maybe<Scalars['String']>;
   readonly mediaLiveChannelId?: Maybe<Scalars['String']>;
   readonly mediaPackageChannelId?: Maybe<Scalars['String']>;
   readonly mp4InputAttachmentName?: Maybe<Scalars['String']>;
@@ -10367,11 +10397,15 @@ export enum MediaLiveChannel_Update_Column {
   /** column name */
   CloudFrontDomain = 'cloudFrontDomain',
   /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
   CreatedAt = 'createdAt',
   /** column name */
   EndpointUri = 'endpointUri',
   /** column name */
   Id = 'id',
+  /** column name */
+  LoopingMp4InputAttachmentName = 'loopingMp4InputAttachmentName',
   /** column name */
   MediaLiveChannelId = 'mediaLiveChannelId',
   /** column name */
@@ -11134,7 +11168,7 @@ export enum Permission_Enum {
   ConferenceModerateAttendees = 'CONFERENCE_MODERATE_ATTENDEES',
   /** View the conference. */
   ConferenceView = 'CONFERENCE_VIEW',
-  /** View conference active attendees. */
+  /** View conference attendees. */
   ConferenceViewAttendees = 'CONFERENCE_VIEW_ATTENDEES'
 }
 
@@ -21897,6 +21931,14 @@ export type DeleteIsTypingMutationVariables = Exact<{
 
 export type DeleteIsTypingMutation = { readonly __typename?: 'mutation_root', readonly delete_ChatTyper?: Maybe<{ readonly __typename?: 'ChatTyper_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ChatTyper', readonly id: any }> }> };
 
+export type GetRoomDetailsQueryVariables = Exact<{
+  roomId: Scalars['uuid'];
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type GetRoomDetailsQuery = { readonly __typename?: 'query_root', readonly Room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly mediaLiveChannel?: Maybe<{ readonly __typename?: 'MediaLiveChannel', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly id: any }> }> };
+
 export type SendSubmissionRequestsMutationVariables = Exact<{
   uploaderIds: ReadonlyArray<Scalars['uuid']>;
 }>;
@@ -23167,6 +23209,47 @@ export function useDeleteIsTypingMutation(baseOptions?: Apollo.MutationHookOptio
 export type DeleteIsTypingMutationHookResult = ReturnType<typeof useDeleteIsTypingMutation>;
 export type DeleteIsTypingMutationResult = Apollo.MutationResult<DeleteIsTypingMutation>;
 export type DeleteIsTypingMutationOptions = Apollo.BaseMutationOptions<DeleteIsTypingMutation, DeleteIsTypingMutationVariables>;
+export const GetRoomDetailsDocument = gql`
+    query GetRoomDetails($roomId: uuid!, $conferenceId: uuid!) {
+  Room(where: {_and: {conferenceId: {_eq: $conferenceId}}, id: {_eq: $roomId}}) {
+    id
+    name
+    currentModeName
+    mediaLiveChannel {
+      cloudFrontDomain
+      endpointUri
+      id
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetRoomDetailsQuery__
+ *
+ * To run a query within a React component, call `useGetRoomDetailsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRoomDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRoomDetailsQuery({
+ *   variables: {
+ *      roomId: // value for 'roomId'
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useGetRoomDetailsQuery(baseOptions: Apollo.QueryHookOptions<GetRoomDetailsQuery, GetRoomDetailsQueryVariables>) {
+        return Apollo.useQuery<GetRoomDetailsQuery, GetRoomDetailsQueryVariables>(GetRoomDetailsDocument, baseOptions);
+      }
+export function useGetRoomDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRoomDetailsQuery, GetRoomDetailsQueryVariables>) {
+          return Apollo.useLazyQuery<GetRoomDetailsQuery, GetRoomDetailsQueryVariables>(GetRoomDetailsDocument, baseOptions);
+        }
+export type GetRoomDetailsQueryHookResult = ReturnType<typeof useGetRoomDetailsQuery>;
+export type GetRoomDetailsLazyQueryHookResult = ReturnType<typeof useGetRoomDetailsLazyQuery>;
+export type GetRoomDetailsQueryResult = Apollo.QueryResult<GetRoomDetailsQuery, GetRoomDetailsQueryVariables>;
 export const SendSubmissionRequestsDocument = gql`
     mutation SendSubmissionRequests($uploaderIds: [uuid!]!) {
   uploadSendSubmissionRequests(uploaderIds: $uploaderIds) {

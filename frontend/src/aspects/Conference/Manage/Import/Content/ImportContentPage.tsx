@@ -1,16 +1,19 @@
 import { Box, Heading, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
-import type { IntermediaryContentData } from "@clowdr-app/shared-types/build/import/intermediary";
+import {
+    IntermediaryContentData,
+    JSONataToIntermediaryContent,
+} from "@clowdr-app/shared-types/build/import/intermediary";
 import React, { useMemo, useState } from "react";
-import { Permission_Enum } from "../../../../generated/graphql";
-import PageNotFound from "../../../Errors/PageNotFound";
-import type { ParsedData } from "../../../Files/useCSVJSONXMLParser";
-import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
-import { useConference } from "../../useConference";
-import useDashboardPrimaryMenuButtons from "../useDashboardPrimaryMenuButtons";
-import MergePanel from "./Content/MergePanel";
-import ConfigPanel from "./Shared/ConfigPanel";
-import DataPanel from "./Shared/DataPanel";
-import ReviewPanel from "./Shared/ReviewPanel";
+import { Permission_Enum } from "../../../../../generated/graphql";
+import PageNotFound from "../../../../Errors/PageNotFound";
+import type { ParsedData } from "../../../../Files/useCSVJSONXMLParser";
+import RequireAtLeastOnePermissionWrapper from "../../../RequireAtLeastOnePermissionWrapper";
+import { useConference } from "../../../useConference";
+import useDashboardPrimaryMenuButtons from "../../useDashboardPrimaryMenuButtons";
+import ConfigPanel from "../Shared/ConfigPanel";
+import DataPanel from "../Shared/DataPanel";
+import ReviewPanel from "../Shared/ReviewPanel";
+import MergePanel from "./MergePanel";
 
 const defaultReviewQuery = `
 (
@@ -51,7 +54,6 @@ const presetJSONata_UnknownQuery = `
 }
 `;
 
-// TODO: Originating datas
 const presetJSONata_ResearchrQuery_POPL2021 = `
 {
     "groups": $.$@$session.timeslot[event_id].(
@@ -151,7 +153,6 @@ const presetJSONata_ResearchrQuery_POPL2021 = `
 }
 `;
 
-// TODO: Originating datas
 const presetJSONata_HotCRPQuery_POPL2021 = `
 {
     "originatingDatas": [
@@ -226,6 +227,7 @@ export default function ImportContentPage(): JSX.Element {
                 <ConfigPanel
                     data={data}
                     onChange={setIntermediaryData}
+                    JSONataFunction={JSONataToIntermediaryContent}
                     presetJSONataXMLQuery={presetJSONata_ResearchrQuery_POPL2021}
                     presetJSONataJSONQuery={presetJSONata_HotCRPQuery_POPL2021}
                     presetJSONataUnknownFileTypeQuery={presetJSONata_UnknownQuery}

@@ -22,6 +22,7 @@ import {
 } from "../../../../generated/graphql";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import { useConference } from "../../useConference";
+import type { ContentGroupDescriptor } from "../Content/Types";
 import type { OriginatingDataDescriptor, TagDescriptor } from "../Shared/Types";
 import { convertScheduleToDescriptors } from "./Functions";
 import type { EventDescriptor, EventPersonDescriptor, RoomDescriptor } from "./Types";
@@ -94,6 +95,9 @@ gql`
         }
         Tag(where: { conferenceId: { _eq: $conferenceId } }) {
             ...TagInfo
+        }
+        ContentGroup(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...ContentGroupFullNestedInfo
         }
     }
 
@@ -213,6 +217,7 @@ export type WholeScheduleStateT =
           tags: Map<string, TagDescriptor>;
           rooms: Map<string, RoomDescriptor>;
           originatingDatas: Map<string, OriginatingDataDescriptor>;
+          contentGroups: ContentGroupDescriptor[];
       }
     | undefined;
 
@@ -224,6 +229,7 @@ export function useSaveScheduleDiff():
           originalTags: undefined;
           originalOriginatingDatas: undefined;
           originalRooms: undefined;
+          contentGroups: undefined;
       }
     | {
           loadingContent: false;
@@ -232,6 +238,7 @@ export function useSaveScheduleDiff():
           originalTags: undefined;
           originalOriginatingDatas: undefined;
           originalRooms: undefined;
+          contentGroups: undefined;
       }
     | {
           loadingContent: false;
@@ -240,6 +247,7 @@ export function useSaveScheduleDiff():
           originalTags: undefined;
           originalOriginatingDatas: undefined;
           originalRooms: undefined;
+          contentGroups: undefined;
       }
     | {
           loadingContent: boolean;
@@ -248,6 +256,7 @@ export function useSaveScheduleDiff():
           originalTags: Map<string, TagDescriptor>;
           originalOriginatingDatas: Map<string, OriginatingDataDescriptor>;
           originalRooms: Map<string, RoomDescriptor>;
+          contentGroups: ContentGroupDescriptor[];
           saveScheduleDiff: (
               dirtyKeys: {
                   tagKeys: Set<string>;
@@ -304,6 +313,7 @@ export function useSaveScheduleDiff():
             originalTags: undefined,
             originalOriginatingDatas: undefined,
             originalRooms: undefined,
+            contentGroups: undefined,
         };
     } else if (errorContent) {
         return {
@@ -313,6 +323,7 @@ export function useSaveScheduleDiff():
             originalTags: undefined,
             originalOriginatingDatas: undefined,
             originalRooms: undefined,
+            contentGroups: undefined,
         };
     } else if (!original) {
         return {
@@ -322,6 +333,7 @@ export function useSaveScheduleDiff():
             originalTags: undefined,
             originalOriginatingDatas: undefined,
             originalRooms: undefined,
+            contentGroups: undefined,
         };
     } else {
         return {
@@ -331,6 +343,7 @@ export function useSaveScheduleDiff():
             originalOriginatingDatas: original.originatingDatas,
             originalTags: original.tags,
             originalRooms: original.rooms,
+            contentGroups: original.contentGroups,
             saveScheduleDiff: async function saveScheduleDiff(
                 { eventKeys, originatingDataKeys, tagKeys, roomKeys },
                 tags,
@@ -496,12 +509,6 @@ export function useSaveScheduleDiff():
                                         originatingDataId: room.originatingDataId,
                                         currentModeName: room.currentModeName,
                                         capacity: room.capacity,
-                                        participants: {
-                                            data: [...room.participants.values()].map((p) => ({
-                                                attendeeId: p,
-                                                conferenceId: conference.id,
-                                            })),
-                                        },
                                     })
                                 ),
                             },
@@ -548,7 +555,7 @@ export function useSaveScheduleDiff():
                                         intendedRoomModeName: event.intendedRoomModeName,
                                         contentGroupId: event.contentGroupId,
                                         name: event.name,
-                                        startTime: event.startTime,
+                                        startTime: new Date(event.startTime).toISOString(),
                                         durationSeconds: event.durationSeconds,
                                         originatingDataId: event.originatingDataId,
                                         eventTags: {
@@ -656,7 +663,7 @@ export function useSaveScheduleDiff():
                                         intendedRoomModeName: event.intendedRoomModeName,
                                         contentGroupId: event.contentGroupId,
                                         name: event.name,
-                                        startTime: event.startTime,
+                                        startTime: new Date(event.startTime).toISOString(),
                                         durationSeconds: event.durationSeconds,
                                         deleteEventTagIds: Array.from(deleteEventTagKeys.values()),
                                         deleteEventPeopleIds: Array.from(deleteEventPersonKeys.values()),

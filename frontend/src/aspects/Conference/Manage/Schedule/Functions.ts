@@ -1,4 +1,6 @@
 import type { SelectWholeScheduleQuery } from "../../../../generated/graphql";
+import { convertContentGroupToDescriptor } from "../Content/Functions";
+import type { ContentGroupDescriptor } from "../Content/Types";
 import type { OriginatingDataDescriptor, OriginatingDataPart, TagDescriptor } from "../Shared/Types";
 import type { EventDescriptor, EventPersonDescriptor, RoomDescriptor } from "./Types";
 
@@ -9,8 +11,10 @@ export function convertScheduleToDescriptors(
     events: Map<string, EventDescriptor>;
     tags: Map<string, TagDescriptor>;
     originatingDatas: Map<string, OriginatingDataDescriptor>;
+    contentGroups: ContentGroupDescriptor[];
 } {
     return {
+        contentGroups: schedule.ContentGroup.map((group) => convertContentGroupToDescriptor(group)),
         events: new Map(
             schedule.Event.map((event): [string, EventDescriptor] => [
                 event.id,

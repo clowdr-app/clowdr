@@ -5,8 +5,8 @@ import { Permission_Enum } from "../../../generated/graphql";
 import PageNotFound from "../../Errors/PageNotFound";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
-import ImportContentPage from "./Import/ImportContentPage";
-import ImportSchedulePage from "./Import/ImportSchedulePage";
+import ImportContentPage from "./Import/Content/ImportContentPage";
+import ImportSchedulePage from "./Import/Schedule/ImportSchedulePage";
 import RestrictedDashboardButton from "./RestrictedDashboardButton";
 import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 

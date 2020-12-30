@@ -563,7 +563,7 @@ export function mergeOriginatingDataIdInPlace<
         } else {
             const data1Idx = findExistingOriginatingData<C, S>(ctx, ctx.originatingDatas, item1);
             const data2Idx = findExistingOriginatingData<C, S>(ctx, ctx.originatingDatas, item2);
-            if (data1Idx && data2Idx) {
+            if (data1Idx !== undefined && data2Idx !== undefined) {
                 const data1 = ctx.originatingDatas[data1Idx];
                 const data2 = ctx.originatingDatas[data2Idx];
 
@@ -610,7 +610,7 @@ export function mergeOriginatingDataIdInPlace<
                     });
                     result.originatingDataId = mergedId;
                 }
-            } else if (data1Idx) {
+            } else if (data1Idx !== undefined) {
                 result.originatingDataId = item1.originatingDataId;
                 changes.push({
                     location: "Unknown - Originating data id",
@@ -619,7 +619,7 @@ export function mergeOriginatingDataIdInPlace<
                     importData: [item1.originatingDataId],
                     newData: item1.originatingDataId,
                 });
-            } else if (data2Idx) {
+            } else if (data2Idx !== undefined) {
                 result.originatingDataId = item2.originatingDataId;
                 changes.push({
                     location: "Unknown - Originating data id",

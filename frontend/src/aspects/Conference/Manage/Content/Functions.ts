@@ -1,4 +1,4 @@
-import type { SelectAllContentQuery } from "../../../../generated/graphql";
+import type { ContentGroupFullNestedInfoFragment, SelectAllContentQuery } from "../../../../generated/graphql";
 import type { OriginatingDataDescriptor, OriginatingDataPart, TagDescriptor } from "../Shared/Types";
 import type { ContentGroupDescriptor, ContentPersonDescriptor, HallwayDescriptor } from "./Types";
 
@@ -15,54 +15,7 @@ export function convertContentToDescriptors(
         contentGroups: new Map(
             allContent.ContentGroup.map((group): [string, ContentGroupDescriptor] => [
                 group.id,
-                {
-                    id: group.id,
-                    title: group.title,
-                    shortTitle: group.shortTitle,
-                    typeName: group.contentGroupTypeName,
-                    tagIds: new Set(group.contentGroupTags.map((x) => x.tagId)),
-                    items: group.contentItems.map((item) => ({
-                        id: item.id,
-                        isHidden: item.isHidden,
-                        name: item.name,
-                        typeName: item.contentTypeName,
-                        data: Array.isArray(item.data) ? [...item.data] : { ...item.data },
-                        layoutData: item.layoutData,
-                        requiredContentId: item.requiredContentId,
-                        originatingDataId: item.originatingDataId,
-                    })),
-                    requiredItems: group.requiredContentItems.map((item) => ({
-                        id: item.id,
-                        name: item.name,
-                        typeName: item.contentTypeName,
-                        uploadsRemaining: item.uploadsRemaining,
-                        uploaders: item.uploaders.map((uploader) => ({
-                            id: uploader.id,
-                            email: uploader.email,
-                            emailsSentCount: uploader.emailsSentCount,
-                            name: uploader.name,
-                            requiredContentItemId: uploader.requiredContentItemId,
-                        })),
-                        originatingDataId: item.originatingDataId,
-                    })),
-                    people: group.people.map((groupPerson) => ({
-                        conferenceId: groupPerson.conferenceId,
-                        groupId: groupPerson.groupId,
-                        id: groupPerson.id,
-                        personId: groupPerson.personId,
-                        priority: groupPerson.priority,
-                        roleName: groupPerson.roleName,
-                    })),
-                    hallways: group.hallways.map((groupHallway) => ({
-                        conferenceId: groupHallway.conferenceId,
-                        groupId: groupHallway.groupId,
-                        hallwayId: groupHallway.hallwayId,
-                        id: groupHallway.id,
-                        layout: groupHallway.layout,
-                        priority: groupHallway.priority,
-                    })),
-                    originatingDataId: group.originatingDataId,
-                },
+                convertContentGroupToDescriptor(group),
             ])
         ),
         tags: new Map(
@@ -110,6 +63,57 @@ export function convertContentToDescriptors(
                 },
             ])
         ),
+    };
+}
+
+export function convertContentGroupToDescriptor(group: ContentGroupFullNestedInfoFragment): ContentGroupDescriptor {
+    return {
+        id: group.id,
+        title: group.title,
+        shortTitle: group.shortTitle,
+        typeName: group.contentGroupTypeName,
+        tagIds: new Set(group.contentGroupTags.map((x) => x.tagId)),
+        items: group.contentItems.map((item) => ({
+            id: item.id,
+            isHidden: item.isHidden,
+            name: item.name,
+            typeName: item.contentTypeName,
+            data: Array.isArray(item.data) ? [...item.data] : { ...item.data },
+            layoutData: item.layoutData,
+            requiredContentId: item.requiredContentId,
+            originatingDataId: item.originatingDataId,
+        })),
+        requiredItems: group.requiredContentItems.map((item) => ({
+            id: item.id,
+            name: item.name,
+            typeName: item.contentTypeName,
+            uploadsRemaining: item.uploadsRemaining,
+            uploaders: item.uploaders.map((uploader) => ({
+                id: uploader.id,
+                email: uploader.email,
+                emailsSentCount: uploader.emailsSentCount,
+                name: uploader.name,
+                requiredContentItemId: uploader.requiredContentItemId,
+            })),
+            originatingDataId: item.originatingDataId,
+        })),
+        people: group.people.map((groupPerson) => ({
+            conferenceId: groupPerson.conferenceId,
+            groupId: groupPerson.groupId,
+            id: groupPerson.id,
+            personId: groupPerson.personId,
+            priority: groupPerson.priority,
+            roleName: groupPerson.roleName,
+        })),
+        hallways: group.hallways.map((groupHallway) => ({
+            conferenceId: groupHallway.conferenceId,
+            groupId: groupHallway.groupId,
+            hallwayId: groupHallway.hallwayId,
+            id: groupHallway.id,
+            layout: groupHallway.layout,
+            priority: groupHallway.priority,
+        })),
+        originatingDataId: group.originatingDataId,
     };
 }
 

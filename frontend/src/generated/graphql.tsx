@@ -22363,6 +22363,9 @@ export type SelectWholeScheduleQuery = { readonly __typename?: 'query_root', rea
   )>, readonly Tag: ReadonlyArray<(
     { readonly __typename?: 'Tag' }
     & TagInfoFragment
+  )>, readonly ContentGroup: ReadonlyArray<(
+    { readonly __typename?: 'ContentGroup' }
+    & ContentGroupFullNestedInfoFragment
   )> };
 
 export type InsertRoomsMutationVariables = Exact<{
@@ -24628,11 +24631,15 @@ export const SelectWholeScheduleDocument = gql`
   Tag(where: {conferenceId: {_eq: $conferenceId}}) {
     ...TagInfo
   }
+  ContentGroup(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...ContentGroupFullNestedInfo
+  }
 }
     ${RoomInfoFragmentDoc}
 ${EventInfoFragmentDoc}
 ${OriginatingDataInfoFragmentDoc}
-${TagInfoFragmentDoc}`;
+${TagInfoFragmentDoc}
+${ContentGroupFullNestedInfoFragmentDoc}`;
 
 /**
  * __useSelectWholeScheduleQuery__

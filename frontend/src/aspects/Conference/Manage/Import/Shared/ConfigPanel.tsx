@@ -10,9 +10,9 @@ import {
     Select,
     Textarea,
 } from "@chakra-ui/react";
-import {
+import type {
     IntermediaryContentData,
-    JSONataToIntermediaryContent,
+    IntermediaryScheduleData,
 } from "@clowdr-app/shared-types/build/import/intermediary";
 import React, { useEffect, useState } from "react";
 import type { ParsedData } from "../../../../Files/useCSVJSONXMLParser";
@@ -20,13 +20,18 @@ import type { ParsedData } from "../../../../Files/useCSVJSONXMLParser";
 export default function ConfigPanel({
     data,
     onChange,
+    JSONataFunction,
     presetJSONataXMLQuery,
     presetJSONataJSONQuery,
     presetJSONataCSVQuery,
     presetJSONataUnknownFileTypeQuery,
 }: {
     data: ParsedData<any[]>[];
-    onChange?: (data: Record<string, IntermediaryContentData>) => void;
+    onChange?: (data: Record<string, IntermediaryContentData | IntermediaryScheduleData>) => void;
+    JSONataFunction: (
+        data: any,
+        query: string
+    ) => IntermediaryContentData | IntermediaryScheduleData | string | undefined;
     presetJSONataXMLQuery?: string;
     presetJSONataJSONQuery?: string;
     presetJSONataCSVQuery?: string;
@@ -68,13 +73,13 @@ export default function ConfigPanel({
     const [errors, setErrors] = useState<Map<string, string>>(new Map());
     useEffect(() => {
         const t = setTimeout(() => {
-            const outputData: Record<string, IntermediaryContentData> = {};
+            const outputData: Record<string, IntermediaryContentData | IntermediaryScheduleData> = {};
             const outputErrors = new Map<string, string>();
             for (const parsedData of data) {
                 if ("data" in parsedData) {
                     const template = templates.get(parsedData.fileName);
                     if (template) {
-                        const result = JSONataToIntermediaryContent(parsedData.data, template);
+                        const result = JSONataFunction(parsedData.data, template);
                         if (typeof result === "string") {
                             outputErrors.set(parsedData.fileName, `Query resulted in invalid data. ${result}`);
                         } else if (result) {
@@ -95,7 +100,7 @@ export default function ConfigPanel({
         return () => {
             clearTimeout(t);
         };
-    }, [data, onChange, templates]);
+    }, [JSONataFunction, data, onChange, templates]);
 
     const selectedData =
         data && selectedFileIndex >= 0 && selectedFileIndex < data.length ? data[selectedFileIndex] : undefined;

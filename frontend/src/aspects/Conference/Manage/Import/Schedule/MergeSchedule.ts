@@ -6,6 +6,8 @@ import type {
     IntermediaryTagDescriptor,
 } from "@clowdr-app/shared-types/build/import/intermediary";
 import { v4 as uuidv4 } from "uuid";
+import { RoomMode_Enum } from "../../../../../generated/graphql";
+import type { ContentGroupDescriptor } from "../../Content/Types";
 import type { EventDescriptor, EventPersonDescriptor, RoomDescriptor } from "../../Schedule/Types";
 import type { OriginatingDataDescriptor, TagDescriptor } from "../../Shared/Types";
 import {
@@ -40,6 +42,8 @@ type Context = {
     conferenceId: string;
     originatingDatas: OriginatingDataDescriptor[];
     tags: TagDescriptor[];
+    rooms: RoomDescriptor[];
+    contentGroups: ContentGroupDescriptor[];
 };
 
 function convertTagName(context: Context, tagName: string): string {
@@ -61,22 +65,20 @@ function findExistingEventPerson(
     return (
         findMatch(ctx, items, item, isMatch_Id("EventPerson")) ??
         findMatch(ctx, items, item, (ctxInner, item1, item2) => {
-            if ("roleName" in item2) {
-                return (
-                    item1.roleName === item2.roleName &&
-                    isMatch_String_Exact<
-                        Context,
-                        EventPersonDescriptor | IntermediaryEventPersonDescriptor,
-                        EventPersonDescriptor
-                    >("attendeeId")(ctxInner, item1, item2)
-                );
-            }
-            return isMatch_String_Exact<
-                Context,
-                EventPersonDescriptor | IntermediaryEventPersonDescriptor,
-                EventPersonDescriptor
-            >("attendeeId")(ctxInner, item1, item2);
-        })
+            return (
+                isMatch_String_Exact<
+                    Context,
+                    IntermediaryEventPersonDescriptor | EventPersonDescriptor,
+                    EventPersonDescriptor
+                >("name")(ctxInner, item1, item2) &&
+                isMatch_String_Exact<
+                    Context,
+                    IntermediaryEventPersonDescriptor | EventPersonDescriptor,
+                    EventPersonDescriptor
+                >("affiliation")(ctxInner, item1, item2)
+            );
+        }) ??
+        findMatch(ctx, items, item, isMatch_String_Exact("attendeeId"))
     );
 }
 
@@ -163,7 +165,7 @@ function convertEvent(context: Context, item: IntermediaryEventDescriptor | Even
         intendedRoomModeName: item.intendedRoomModeName,
         contentGroupId: item.contentGroupId,
         name: item.name,
-        startTime: item.startTime,
+        startTime: typeof item.startTime === "number" ? new Date(item.startTime).toISOString() : item.startTime,
         durationSeconds: item.durationSeconds,
         people: [],
         tagIds: new Set(),
@@ -187,6 +189,37 @@ function convertEvent(context: Context, item: IntermediaryEventDescriptor | Even
     if ("tagNames" in item && item.tagNames) {
         for (const x of item.tagNames) {
             result.tagIds.add(convertTagName(context, x));
+        }
+    }
+
+    if ("roomName" in item && item.roomName && !item.roomId) {
+        const r = findMatch(context, context.rooms, item.roomName, (ctx, item1, item2) =>
+            isMatch_String_Exact()(ctx, item1.name, item2)
+        );
+        if (r !== undefined) {
+            result.roomId = context.rooms[r].id;
+        }
+    }
+
+    if ("contentGroupSourceId" in item && item.contentGroupSourceId && !item.contentGroupId) {
+        const srcId = item.contentGroupSourceId;
+        const groups = context.contentGroups.filter((g) => {
+            if (g.originatingDataId) {
+                const od = context.originatingDatas.find((x) => x.id === g.originatingDataId);
+                if (od) {
+                    if (sourceIdsEquivalent(od.sourceId, srcId)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        });
+        if (groups.length === 1) {
+            result.contentGroupId = groups[0].id;
+        } else if (groups.length > 1) {
+            throw new Error("Multiple possible content groups could match this event!");
+        } else {
+            throw new Error("No content groups match this event!");
         }
     }
 
@@ -255,26 +288,32 @@ function findExistingEvent(
         findMatch(ctx, items, item, isMatch_Id("Event")) ??
         findMatch(ctx, items, item, isMatch_OriginatingDataId) ??
         findMatch(ctx, items, item, (ctxInner, item1, item2) => {
-            return (
-                isMatch_String_Exact<Context, IntermediaryEventDescriptor | EventDescriptor, EventDescriptor>("name")(
-                    ctxInner,
-                    item1,
-                    item2
-                ) &&
-                !!item1.startTime &&
-                item1.startTime === item2.startTime
-            );
-        }) ??
-        findMatch(ctx, items, item, (ctxInner, item1, item2) => {
-            return (
-                isMatch_String_EditDistance<Context, IntermediaryEventDescriptor | EventDescriptor, EventDescriptor>("name")(
-                    ctxInner,
-                    item1,
-                    item2
-                ) &&
-                !!item1.startTime &&
-                item1.startTime === item2.startTime
-            );
+            if ("roomName" in item2 && item2.roomName && !item2.roomId) {
+                const item2RoomIdx = findExistingRoom(ctxInner, ctxInner.rooms, { name: item2.roomName });
+                if (item2RoomIdx !== undefined) {
+                    const item2Room = ctxInner.rooms[item2RoomIdx];
+                    return (
+                        isMatch_String_Exact<Context, IntermediaryEventDescriptor | EventDescriptor, EventDescriptor>(
+                            "name"
+                        )(ctxInner, item1, item2) &&
+                        item2.startTime !== undefined &&
+                        new Date(item1.startTime).getTime() === item2.startTime &&
+                        (isMatch_Id_Generalised("Room", "roomId", "id")(ctxInner, item1, item2Room) ||
+                            isMatch_Id_Generalised("Room", "id", "roomId")(ctxInner, item2Room, item1))
+                    );
+                }
+                return false;
+            } else {
+                return (
+                    isMatch_String_Exact<Context, IntermediaryEventDescriptor | EventDescriptor, EventDescriptor>(
+                        "name"
+                    )(ctxInner, item1, item2) &&
+                    item2.startTime !== undefined &&
+                    new Date(item1.startTime).getTime() === new Date(item2.startTime).getTime() &&
+                    (isMatch_Id_Generalised("Room", "roomId", "roomId")(ctxInner, item1, item2) ||
+                        isMatch_Id_Generalised("Room", "roomId", "roomId")(ctxInner, item2, item1))
+                );
+            }
         })
     );
 }
@@ -285,9 +324,9 @@ function convertRoom(context: Context, item: IntermediaryRoomDescriptor | RoomDe
         isNew: ("isNew" in item && item.isNew) || !item.id,
 
         name: item.name,
-        currentModeName: item.currentModeName,
+        currentModeName: item.currentModeName ?? RoomMode_Enum.Breakout,
         capacity: item.capacity,
-        participants: new Set()
+        participants: new Set(),
     } as RoomDescriptor;
 
     const origDataIdx = findExistingOriginatingData(context, context.originatingDatas, item);
@@ -410,7 +449,8 @@ function mergeData(
     originalEvents: EventDescriptor[],
     originalRooms: RoomDescriptor[],
     originalOriginatingDatas: OriginatingDataDescriptor[],
-    originalTags: TagDescriptor[]
+    originalTags: TagDescriptor[],
+    contentGroups: ContentGroupDescriptor[]
 ): {
     newEvents: EventDescriptor[];
     newTags: TagDescriptor[];
@@ -437,6 +477,7 @@ function mergeData(
         tags: TagDescriptor[];
         originatingDatas: OriginatingDataDescriptor[];
         rooms: RoomDescriptor[];
+        contentGroups: ContentGroupDescriptor[];
     } = {
         idMaps: {
             EventPerson: new Map(),
@@ -450,6 +491,7 @@ function mergeData(
         tags: [...originalTags],
         originatingDatas: [...originalOriginatingDatas],
         rooms: [...originalRooms],
+        contentGroups: [...contentGroups],
     };
     const changes: ChangeSummary[] = [];
 
@@ -526,13 +568,14 @@ function mergeData(
     };
 }
 
-export default function mergeContent(
+export default function mergeSchedule(
     conferenceId: string,
     importData: Record<string, IntermediaryScheduleData>,
     originalEvents: Map<string, EventDescriptor>,
     originalRooms: Map<string, RoomDescriptor>,
     originalOriginatingDatas: Map<string, OriginatingDataDescriptor>,
-    originalTags: Map<string, TagDescriptor>
+    originalTags: Map<string, TagDescriptor>,
+    contentGroups: ContentGroupDescriptor[]
 ): {
     changes: ChangeSummary[];
     newEvents: Map<string, EventDescriptor>;
@@ -548,7 +591,8 @@ export default function mergeContent(
         Array.from(originalEvents.values()),
         Array.from(originalRooms.values()),
         Array.from(originalOriginatingDatas.values()),
-        Array.from(originalTags.values())
+        Array.from(originalTags.values()),
+        contentGroups
     );
     changes.push(...result.changes);
 

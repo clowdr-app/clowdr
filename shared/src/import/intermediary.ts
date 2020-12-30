@@ -203,7 +203,7 @@ export function JSONataToIntermediaryContent(data: any, query: string): Intermed
 
 export interface IntermediaryRoomDescriptor {
     id?: string;
-    originatingDataId?: string;
+    originatingDataSourceId?: string;
     name?: string;
     currentModeName?: RoomMode_Enum;
     capacity?: number | null;
@@ -211,12 +211,14 @@ export interface IntermediaryRoomDescriptor {
 
 export interface IntermediaryEventDescriptor {
     id?: string;
-    originatingDataId?: string;
+    originatingDataSourceId?: string;
     roomId?: string;
+    roomName?: string;
     intendedRoomModeName?: RoomMode_Enum;
     contentGroupId?: string | null;
+    contentGroupSourceId?: string;
     name?: string;
-    startTime?: string;
+    startTime?: number;
     durationSeconds?: number;
     people?: IntermediaryEventPersonDescriptor[];
     tagNames?: Array<string>;
@@ -224,7 +226,7 @@ export interface IntermediaryEventDescriptor {
 
 export interface IntermediaryEventPersonDescriptor {
     id?: string;
-    originatingDataId?: string;
+    originatingDataSourceId?: string;
     attendeeId?: string | null;
     name?: string;
     affiliation?: string | null;

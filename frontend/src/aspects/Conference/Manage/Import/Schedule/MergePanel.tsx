@@ -15,27 +15,27 @@ import React, { useEffect, useState } from "react";
 import JSONataQueryModal from "../../../../Files/JSONataQueryModal";
 import FAIcon from "../../../../Icons/FAIcon";
 import { useConference } from "../../../useConference";
-import type { ContentGroupDescriptor, ContentPersonDescriptor, HallwayDescriptor } from "../../Content/Types";
-import { useSaveContentDiff } from "../../Content/useSaveContentDiff";
+import type { EventDescriptor, RoomDescriptor } from "../../Schedule/Types";
+import { useSaveScheduleDiff } from "../../Schedule/useSaveScheduleDiff";
 import type { OriginatingDataDescriptor, TagDescriptor } from "../../Shared/Types";
 import { ChangeSummary, Set_toJSON } from "../Merge";
+import mergeSchedule from "./MergeSchedule";
 
 export default function MergePanel({ data }: { data: Record<string, IntermediaryContentData> }): JSX.Element {
     const conference = useConference();
-    const saveContentDiff = useSaveContentDiff();
+    const saveContentDiff = useSaveScheduleDiff();
     const {
         errorContent,
         loadingContent,
-        originalContentGroups,
-        originalHallways,
+        contentGroups,
+        originalEvents,
+        originalRooms,
         originalOriginatingDatas,
-        originalPeople,
         originalTags,
     } = saveContentDiff;
 
-    const [mergedGroupsMap, setMergedContentGroupsMap] = useState<Map<string, ContentGroupDescriptor>>();
-    const [mergedPeopleMap, setMergedPeopleMap] = useState<Map<string, ContentPersonDescriptor>>();
-    const [mergedHallwaysMap, setMergedHallwaysMap] = useState<Map<string, HallwayDescriptor>>();
+    const [mergedEventsMap, setMergedEventsMap] = useState<Map<string, EventDescriptor>>();
+    const [mergedRoomsMap, setMergedRoomsMap] = useState<Map<string, RoomDescriptor>>();
     const [mergedTagsMap, setMergedTagsMap] = useState<Map<string, TagDescriptor>>();
     const [mergedOriginatingDatasMap, setMergedOriginatingDatasMap] = useState<
         Map<string, OriginatingDataDescriptor>
@@ -44,51 +44,38 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        if (originalContentGroups && originalHallways && originalOriginatingDatas && originalPeople && originalTags) {
+        if (contentGroups && originalEvents && originalRooms && originalOriginatingDatas && originalTags) {
             try {
                 setError(null);
-                // TODO
-                throw new Error("Not implemented");
-                // const merged = mergeContent(
-                //     conference.id,
-                //     data,
-                //     originalContentGroups,
-                //     originalHallways,
-                //     originalOriginatingDatas,
-                //     originalPeople,
-                //     originalTags
-                // );
-                // setMergedContentGroupsMap(merged.newContentGroups);
-                // setMergedPeopleMap(merged.newPeople);
-                // setMergedHallwaysMap(merged.newHallways);
-                // setMergedTagsMap(merged.newTags);
-                // setMergedOriginatingDatasMap(merged.newOriginatingDatas);
-                // setChanges(merged.changes);
-                // console.log("Merged", merged);
+                const merged = mergeSchedule(
+                    conference.id,
+                    data,
+                    originalEvents,
+                    originalRooms,
+                    originalOriginatingDatas,
+                    originalTags,
+                    contentGroups
+                );
+                setMergedEventsMap(merged.newEvents);
+                setMergedRoomsMap(merged.newRooms);
+                setMergedTagsMap(merged.newTags);
+                setMergedOriginatingDatasMap(merged.newOriginatingDatas);
+                setChanges(merged.changes);
+                console.log("Merged", merged);
             } catch (e) {
-                setMergedContentGroupsMap(originalContentGroups);
-                setMergedPeopleMap(originalPeople);
-                setMergedHallwaysMap(originalHallways);
+                setMergedEventsMap(originalEvents);
+                setMergedRoomsMap(originalRooms);
                 setMergedTagsMap(originalTags);
                 setMergedOriginatingDatasMap(originalOriginatingDatas);
                 setChanges([]);
                 setError(e.message);
             }
         }
-    }, [
-        conference.id,
-        data,
-        originalContentGroups,
-        originalHallways,
-        originalOriginatingDatas,
-        originalPeople,
-        originalTags,
-    ]);
+    }, [conference.id, data, originalEvents, originalRooms, originalOriginatingDatas, originalTags, contentGroups]);
 
     const finalData = {
-        groups: Array.from(mergedGroupsMap?.values() ?? []),
-        people: Array.from(mergedPeopleMap?.values() ?? []),
-        hallways: Array.from(mergedHallwaysMap?.values() ?? []),
+        events: Array.from(mergedEventsMap?.values() ?? []),
+        rooms: Array.from(mergedRoomsMap?.values() ?? []),
         tags: Array.from(mergedTagsMap?.values() ?? []),
         originatingDatas: Array.from(mergedOriginatingDatasMap?.values() ?? []),
     };
@@ -96,8 +83,7 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
     const toast = useToast();
     const [isSaving, setIsSaving] = useState<boolean>(false);
 
-    return loadingContent &&
-        (!mergedGroupsMap || !mergedTagsMap || !mergedPeopleMap || !mergedOriginatingDatasMap || !mergedHallwaysMap) ? (
+    return loadingContent && (!mergedEventsMap || !mergedTagsMap || !mergedOriginatingDatasMap || !mergedRoomsMap) ? (
         <Spinner />
     ) : errorContent ? (
         <>An error occurred loading in data - please see further information in notifications.</>
@@ -162,9 +148,8 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
                             loadingContent ||
                             errorContent ||
                             error ||
-                            !mergedGroupsMap ||
-                            !mergedPeopleMap ||
-                            !mergedHallwaysMap ||
+                            !mergedEventsMap ||
+                            !mergedRoomsMap ||
                             !mergedTagsMap ||
                             !mergedOriginatingDatasMap
                         ) || isSaving
@@ -172,10 +157,9 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
                     isLoading={isSaving}
                     onClick={async () => {
                         setIsSaving(true);
-                        assert(saveContentDiff.originalContentGroups);
-                        assert(mergedGroupsMap);
-                        assert(mergedPeopleMap);
-                        assert(mergedHallwaysMap);
+                        assert(saveContentDiff.originalEvents);
+                        assert(mergedEventsMap);
+                        assert(mergedRoomsMap);
                         assert(mergedTagsMap);
                         assert(mergedOriginatingDatasMap);
                         const newOriginatingDataKeys = new Set(
@@ -183,46 +167,38 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
                                 .filter((x) => x.isNew)
                                 .map((x) => x.id)
                         );
-                        const results = await saveContentDiff.saveContentDiff(
+                        const results = await saveContentDiff.saveScheduleDiff(
                             {
-                                groupKeys: new Set(mergedGroupsMap.keys()),
-                                hallwayKeys: new Set(mergedHallwaysMap.keys()),
+                                eventKeys: new Set(mergedEventsMap.keys()),
+                                roomKeys: new Set(mergedRoomsMap.keys()),
                                 originatingDataKeys: newOriginatingDataKeys,
-                                peopleKeys: new Set(mergedPeopleMap.keys()),
                                 tagKeys: new Set(mergedTagsMap.keys()),
                             },
                             mergedTagsMap,
-                            mergedPeopleMap,
                             mergedOriginatingDatasMap,
-                            mergedGroupsMap,
-                            mergedHallwaysMap
+                            mergedEventsMap,
+                            mergedRoomsMap
                         );
 
                         const failures: { [K: string]: string[] } = {
-                            groups: [],
-                            hallways: [],
+                            events: [],
+                            rooms: [],
                             originatingDatas: [],
-                            people: [],
                             tags: [],
                         };
-                        results.groups.forEach((v, k) => {
+                        results.events.forEach((v, k) => {
                             if (!v) {
-                                failures.groups.push(k);
+                                failures.events.push(k);
                             }
                         });
-                        results.hallways.forEach((v, k) => {
+                        results.rooms.forEach((v, k) => {
                             if (!v) {
-                                failures.hallways.push(k);
+                                failures.rooms.push(k);
                             }
                         });
                         results.originatingDatas.forEach((v, k) => {
                             if (!v) {
                                 failures.originatingDatas.push(k);
-                            }
-                        });
-                        results.people.forEach((v, k) => {
-                            if (!v) {
-                                failures.people.push(k);
                             }
                         });
                         results.tags.forEach((v, k) => {
@@ -231,10 +207,9 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
                             }
                         });
                         const failureCount =
-                            failures.groups.length +
-                            failures.hallways.length +
+                            failures.events.length +
+                            failures.rooms.length +
                             failures.originatingDatas.length +
-                            failures.people.length +
                             failures.tags.length;
                         if (failureCount > 0) {
                             toast({

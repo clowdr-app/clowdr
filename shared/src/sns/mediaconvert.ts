@@ -51,11 +51,13 @@ type MediaConvertEventUserMetadata = MediaConvertEventBroadcastUserMetadata | Me
 interface MediaConvertEventBroadcastUserMetadata {
     mode: TranscodeMode.BROADCAST;
     videoRenderJobId: string;
+    environment?: string;
 }
 
 interface MediaConvertEventPreviewUserMetadata {
     mode: TranscodeMode.PREVIEW;
     contentItemId: string;
+    environment?: string;
 }
 
 interface MediaConvertEventDetailsBase {

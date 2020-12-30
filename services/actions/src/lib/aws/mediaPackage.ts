@@ -3,7 +3,7 @@ import { MediaPackage, shortId } from "../../aws/awsClient";
 export async function createChannel(roomId: string): Promise<string> {
     const channel = await MediaPackage.createChannel({
         Id: shortId(),
-        Tags: { roomId },
+        Tags: { roomId, environment: process.env.AWS_PREFIX ?? "unknown" },
     });
     if (!channel.Id) {
         throw new Error("Failed to create new MediaPackage Channel");
@@ -19,7 +19,7 @@ export interface OriginEndpoint {
 export async function createOriginEndpoint(roomId: string, mediaPackageId: string): Promise<OriginEndpoint> {
     const originEndpoint = await MediaPackage.createOriginEndpoint({
         ChannelId: mediaPackageId,
-        Tags: { roomId },
+        Tags: { roomId, environment: process.env.AWS_PREFIX ?? "unknown" },
         Id: shortId(),
         HlsPackage: {
             AdMarkers: "NONE",

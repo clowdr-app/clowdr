@@ -89,6 +89,19 @@ export async function createDistribution(roomId: string, originEndpoint: OriginE
     if (!distribution.Distribution?.DomainName || !distribution.Distribution.Id) {
         throw new Error("Failed to create Distribution");
     }
+
+    await CloudFront.tagResource({
+        Resource: distribution.Distribution.ARN,
+        Tags: {
+            Items: [
+                {
+                    Key: "environment",
+                    Value: process.env.AWS_PREFIX ?? "unknown",
+                },
+            ],
+        },
+    });
+
     return {
         id: distribution.Distribution.Id,
         domain: distribution.Distribution.DomainName,

@@ -14,5 +14,5 @@ assert(stackPrefix, "clowdr/stackName is not specified");
 assert(region, "clowdr/region is not specified");
 assert(account, "clowdr/account is not specified");
 
-new AwsStack(app, `${stackPrefix}-main`, { env: { region, account } });
-new OpenshotStack(app, `${stackPrefix}-openshot`, { env: { region, account } });
+new AwsStack(app, `${stackPrefix}-main`, stackPrefix, { env: { region, account }, tags: { environment: stackPrefix } });
+new OpenshotStack(app, `${stackPrefix}-openshot`, { env: { region, account }, tags: { environment: stackPrefix } });

@@ -9,7 +9,7 @@ import * as sns from "@aws-cdk/aws-sns";
 import * as cdk from "@aws-cdk/core";
 
 export class AwsStack extends cdk.Stack {
-    constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+    constructor(scope: cdk.Construct, id: string, stackPrefix: string, props?: cdk.StackProps) {
         super(scope, id, props);
 
         // Create user account to be used by the actions service
@@ -208,6 +208,11 @@ export class AwsStack extends cdk.Stack {
         mediaConvertEventRule.addEventPattern({
             source: ["aws.mediaconvert"],
             detailType: ["MediaConvert Job State Change"],
+            detail: {
+                userMetadata: {
+                    environment: [stackPrefix],
+                },
+            },
         });
         mediaConvertEventRule.addTarget(new targets.SnsTopic(mediaConvertNotificationsTopic));
 

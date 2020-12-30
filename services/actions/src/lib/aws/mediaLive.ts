@@ -11,6 +11,7 @@ import {
     EmbeddedConvert608To708,
     EmbeddedScte20Detection,
     FeatureActivationsInputPrepareScheduleActions,
+    GlobalConfigurationInputEndAction,
     H264AdaptiveQuantization,
     H264ColorMetadata,
     H264EntropyEncoding,
@@ -72,7 +73,7 @@ export interface RtmpInput {
 export async function createRtmpInput(roomId: string, securityGroupId: string): Promise<RtmpInput> {
     const input = await MediaLive.createInput({
         Destinations: [{ StreamName: shortId() }],
-        Tags: { roomId },
+        Tags: { roomId, environment: process.env.AWS_PREFIX ?? "unknown" },
         Name: shortId(),
         Type: "RTMP_PUSH",
         InputSecurityGroups: [securityGroupId],
@@ -93,7 +94,7 @@ export async function createRtmpInput(roomId: string, securityGroupId: string): 
 
 export async function createMP4Input(roomId: string, securityGroupId: string): Promise<string> {
     const input = await MediaLive.createInput({
-        Tags: { roomId },
+        Tags: { roomId, environment: process.env.AWS_PREFIX ?? "unknown" },
         Name: shortId(),
         Type: "MP4_FILE",
         Sources: [{ Url: `s3ssl://${process.env.AWS_CONTENT_BUCKET_ID}/$urlPath$` }],
@@ -107,7 +108,7 @@ export async function createMP4Input(roomId: string, securityGroupId: string): P
 
 export async function createLoopingMP4Input(roomId: string, securityGroupId: string): Promise<string> {
     const input = await MediaLive.createInput({
-        Tags: { roomId },
+        Tags: { roomId, environment: process.env.AWS_PREFIX ?? "unknown" },
         Name: shortId(),
         Type: "MP4_FILE",
         Sources: [{ Url: `s3ssl://${process.env.AWS_CONTENT_BUCKET_ID}/$urlPath$` }],
@@ -172,7 +173,8 @@ export async function createChannel(
     vonageInputId: string,
     mp4InputId: string,
     loopingMp4InputId: string,
-    mediaPackageId: string
+    mediaPackageId: string,
+    fallbackSlateUrl: string | null
 ): Promise<MediaLiveChannel> {
     const destinationId = shortId();
     const video1080p30 = shortId();
@@ -188,7 +190,7 @@ export async function createChannel(
 
     const channel = await MediaLive.createChannel({
         Name: shortId(),
-        Tags: { roomId },
+        Tags: { roomId, environment: process.env.AWS_PREFIX ?? "unknown" },
         ChannelClass: "SINGLE_PIPELINE",
         InputAttachments: [
             {
@@ -255,6 +257,21 @@ export async function createChannel(
             FeatureActivations: {
                 InputPrepareScheduleActions: FeatureActivationsInputPrepareScheduleActions.ENABLED,
             },
+            ...(fallbackSlateUrl
+                ? {
+                      GlobalConfiguration: {
+                          InputEndAction: GlobalConfigurationInputEndAction.NONE,
+                          InputLossBehavior: {
+                              BlackFrameMsec: 10000,
+                              InputLossImageColor: "333333",
+                              InputLossImageSlate: {
+                                  Uri: fallbackSlateUrl,
+                              },
+                              RepeatFrameMsec: 1000,
+                          },
+                      },
+                  }
+                : {}),
             AudioDescriptions: [
                 {
                     CodecSettings: {

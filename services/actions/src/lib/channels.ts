@@ -8,7 +8,6 @@ import {
     CreateMediaLiveChannelDocument,
     DeleteMediaLiveChannelDocument,
     GetConferenceIdFromChannelResourceIdDocument,
-    GetConfigurationValueDocument,
     GetMediaLiveChannelByRoomDocument,
     GetRoomsWithEventsDocument,
     GetRoomsWithEventsStartingDocument,
@@ -28,6 +27,7 @@ import {
     getMediaLiveChannelState,
 } from "../lib/aws/mediaLive";
 import { createChannel as createMediaPackageChannel, createOriginEndpoint } from "../lib/aws/mediaPackage";
+import { getConferenceConfiguration } from "./conferenceConfiguration";
 
 gql`
     query GetRoomsWithEventsStarting($from: timestamptz, $to: timestamptz) {
@@ -326,6 +326,11 @@ async function cleanUpChannelResources(channelResources: ChannelResources) {
     }
 }
 
+async function getInputLossSlateUrl(conferenceId: string): Promise<string | null> {
+    const inputLossSlateUrl = await getConferenceConfiguration<string>(conferenceId, "INPUT_LOSS_SLATE");
+    return inputLossSlateUrl;
+}
+
 async function createNewChannelForRoom(roomId: string, conferenceId: string): Promise<void> {
     assert(
         process.env.AWS_MEDIALIVE_INPUT_SECURITY_GROUP_ID,
@@ -346,12 +351,15 @@ async function createNewChannelForRoom(roomId: string, conferenceId: string): Pr
         mediaPackageChannelId = await createMediaPackageChannel(roomId);
         originEndpoint = await createOriginEndpoint(roomId, mediaPackageChannelId);
 
+        const inputLossSlateUrl = await getInputLossSlateUrl(conferenceId);
+
         mediaLiveChannel = await createMediaLiveChannel(
             roomId,
             rtmpInput.id,
             mp4InputId,
             loopingMp4InputId,
-            mediaPackageChannelId
+            mediaPackageChannelId,
+            inputLossSlateUrl
         );
         cloudFrontDistribution = await createDistribution(roomId, originEndpoint);
 
@@ -531,13 +539,6 @@ export async function syncChannelSchedule(roomId: string): Promise<boolean> {
                 if (!key) {
                     return [];
                 }
-
-                // const prepareAction: ComparableScheduleAction = {
-                //     name: `${transition.id}-prepare`,
-                //     mp4Key: key,
-                //     inputAttachmentNameSuffix: "mp4",
-                //     timeMillis: Date.parse(transition.time) - 30000,
-                // };
 
                 const switchAction: ComparableScheduleAction = {
                     name: `${transition.id}`,
@@ -732,23 +733,6 @@ export async function syncChannelSchedule(roomId: string): Promise<boolean> {
                     },
                 });
             }
-
-            // if (!trimmedScheduleActionNames.includes(`${transition.id}-prepare`) && urlPath) {
-            //     newScheduleActions.push({
-            //         ActionName: `${transition.id}-prepare`,
-            //         ScheduleActionSettings: {
-            //             InputPrepareSettings: {
-            //                 InputAttachmentNameReference: channel.mp4InputAttachmentName,
-            //                 UrlPath: [urlPath],
-            //             },
-            //         },
-            //         ScheduleActionStartSettings: {
-            //             FixedModeScheduleActionStartSettings: {
-            //                 Time: new Date(Date.parse(transition.time) - 30000).toISOString(),
-            //             },
-            //         },
-            //     });
-            // }
         } else if (
             transition.broadcastContentItem.inputTypeName === InputType_Enum.VonageSession &&
             input.type === "VonageInput"
@@ -764,22 +748,6 @@ export async function syncChannelSchedule(roomId: string): Promise<boolean> {
                     ScheduleActionStartSettings: {
                         FixedModeScheduleActionStartSettings: {
                             Time: new Date(Date.parse(transition.time)).toISOString(),
-                        },
-                    },
-                });
-
-                newScheduleActions.push({
-                    ActionName: `${transition.id}-follow`,
-                    ScheduleActionSettings: {
-                        InputSwitchSettings: {
-                            InputAttachmentNameReference: channel.loopingMp4InputAttachmentName,
-                            UrlPath: [fillerVideoKey],
-                        },
-                    },
-                    ScheduleActionStartSettings: {
-                        FollowModeScheduleActionStartSettings: {
-                            FollowPoint: FollowPoint.END,
-                            ReferenceActionName: `${transition.id}`,
                         },
                     },
                 });
@@ -889,37 +857,17 @@ export async function switchToFillerVideo(channelResourceId: string): Promise<vo
 }
 
 async function getFillerVideo(conferenceId: string): Promise<string> {
-    // Find the filler video to be played
-    const fillerVideosResult = await apolloClient.query({
-        query: GetConfigurationValueDocument,
-        variables: {
-            conferenceId: conferenceId,
-            key: "FILLER_VIDEOS",
-        },
-    });
-
-    if (fillerVideosResult.error || fillerVideosResult.errors) {
-        console.error("Error while retrieving filler videos for conference", conferenceId);
-        throw new Error("Error while retrieving filler videos for conference");
-    }
-
-    if (fillerVideosResult.data.ConferenceConfiguration.length === 0) {
-        console.log("No filler videos found for conference", conferenceId);
-        throw new Error("No filler videos found for conference");
-    }
-
-    // Set the dynamic path for the MP4 MediaLive input
     let urlPath;
     try {
-        const { key } = new AmazonS3URI(fillerVideosResult.data.ConferenceConfiguration[0].value[0]);
+        const fillerVideosConfiguration = await getConferenceConfiguration<string[]>(conferenceId, "FILLER_VIDEOS");
+        if (!fillerVideosConfiguration || fillerVideosConfiguration.length < 1) {
+            throw new Error("Could not retrieve FILLER_VIDEOS configuration for conference");
+        }
+
+        const { key } = new AmazonS3URI(fillerVideosConfiguration[0]);
         urlPath = key;
     } catch (e) {
-        console.error(
-            "Error parsing filler video URI",
-            conferenceId,
-            fillerVideosResult.data.ConferenceConfiguration[0].value,
-            e
-        );
+        console.error("Error parsing filler video URI", conferenceId, e);
     }
 
     if (!urlPath) {

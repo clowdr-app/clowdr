@@ -66,6 +66,7 @@ export async function startPreviewTranscode(s3InputUrl: string, contentItemId: s
         UserMetadata: {
             contentItemId,
             mode: TranscodeMode.PREVIEW,
+            environment: process.env.AWS_PREFIX ?? "unknown",
         },
         Settings: {
             Inputs: [

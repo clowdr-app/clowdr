@@ -9,7 +9,6 @@ import {
     CreateVideoRenderJobDocument,
     CreateVideoTitlesContentItemDocument,
     CreateVonageBroadcastContentItemDocument,
-    GetConfigurationValueDocument,
     GetEventsDocument,
     GetEventsWithoutVonageSessionDocument,
     GetEventTitleDetailsDocument,
@@ -19,6 +18,7 @@ import {
     SetEventVonageSessionIdDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
+import { getConferenceConfiguration } from "../lib/conferenceConfiguration";
 import { failConferencePrepareJob } from "../lib/conferencePrepareJob";
 import { OpenShotClient } from "../lib/openshot/openshot";
 import { ChannelLayout } from "../lib/openshot/openshotProjects";
@@ -44,13 +44,6 @@ gql`
         ContentItem(where: { conferenceId: { _eq: $conferenceId }, contentTypeName: { _eq: VIDEO_BROADCAST } }) {
             id
             data
-        }
-    }
-
-    query GetConfigurationValue($key: String!, $conferenceId: uuid!) {
-        ConferenceConfiguration(where: { key: { _eq: $key }, conferenceId: { _eq: $conferenceId } }) {
-            id
-            value
         }
     }
 `;
@@ -240,22 +233,19 @@ async function createEventTitleSlideBroadcastItems(
 ): Promise<void> {
     // Render event title slides
     console.log("Conference prepare: rendering title slides", conferencePrepareJobId);
-    const videoFillerResult = await apolloClient.query({
-        query: GetConfigurationValueDocument,
-        variables: {
-            conferenceId: conferenceId,
-            key: "BACKGROUND_VIDEOS",
-        },
-    });
 
-    let videoFiller, bucket, key;
+    let backgroundVideo, bucket, key;
     try {
-        videoFiller = videoFillerResult.data.ConferenceConfiguration[0].value[0];
-        const parsedUri = AmazonS3URI(videoFiller);
+        const backgroundVideos = await getConferenceConfiguration<string[]>(conferenceId, "BACKGROUND_VIDEOS");
+        if (!backgroundVideos) {
+            throw new Error("No BACKGROUND_VIDEOS configuration found");
+        }
+        backgroundVideo = backgroundVideos[0];
+        const parsedUri = AmazonS3URI(backgroundVideo);
         bucket = parsedUri.bucket;
         key = parsedUri.key;
     } catch (e) {
-        console.error("Conference prepare: could not load video filler", conferencePrepareJobId);
+        console.error("Conference prepare: could not load video filler", conferencePrepareJobId, e);
     }
 
     gql`

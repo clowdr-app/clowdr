@@ -43,6 +43,18 @@ router.post("/notify", bodyParser.text(), async (req: Request, res: Response) =>
                 return;
             }
 
+            if (
+                event.detail.userMetadata.environment &&
+                event.detail.userMetadata.environment !== process.env.AWS_PREFIX
+            ) {
+                console.warn(
+                    "Received MediaConvert event for AWS environment that does not match this one",
+                    event.detail.userMetadata.environment,
+                    process.env.AWS_PREFIX
+                );
+                res.status(200).json("Environment mismatch");
+            }
+
             if (event.detail.status === "COMPLETE") {
                 try {
                     const transcodeS3Url = event.detail.outputGroupDetails[0].outputDetails[0].outputFilePaths[0];

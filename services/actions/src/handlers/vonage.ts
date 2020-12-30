@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client/core";
-import { shortId } from "../aws/awsClient";
 import { GetEventRolesForUserDocument, OngoingBroadcastableVideoRoomEventsDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import * as Vonage from "../lib/vonage/vonageClient";
+import { startEventBroadcast } from "../lib/vonage/vonageTools";
 import { WebhookReqBody } from "../types/vonage";
 
 gql`
@@ -16,17 +16,6 @@ gql`
             }
         ) {
             id
-            startTime
-            durationSeconds
-            endTime
-            intendedRoomModeName
-            room {
-                id
-                mediaLiveChannel {
-                    rtmpInputUri
-                    id
-                }
-            }
         }
     }
 `;
@@ -65,67 +54,7 @@ export async function handleVonageSessionMonitoringWebhook(payload: WebhookReqBo
 
     const ongoingMatchingEvent = ongoingMatchingEvents.data.Event[0];
 
-    if (!ongoingMatchingEvent.room.mediaLiveChannel?.rtmpInputUri) {
-        console.error(
-            "No RTMP Push URI available for event room.",
-            payload.sessionId,
-            ongoingMatchingEvent.id,
-            ongoingMatchingEvent.room.id
-        );
-        return;
-    }
-
-    const rtmpUri = ongoingMatchingEvent.room.mediaLiveChannel.rtmpInputUri;
-    const rtmpUriParts = rtmpUri.split("/");
-    if (rtmpUriParts.length < 2) {
-        console.error("RTMP Push URI has unexpected format", payload.sessionId, ongoingMatchingEvent.id, rtmpUri);
-        return;
-    }
-    const streamName = rtmpUriParts[rtmpUriParts.length - 1];
-    const serverUrl = rtmpUri.substring(0, rtmpUri.length - streamName.length);
-
-    const existingSessionBroadcasts = await Vonage.listBroadcasts({
-        sessionId: payload.sessionId,
-    });
-
-    if (!existingSessionBroadcasts) {
-        console.error("Could not retrieve existing session broadcasts.", payload.sessionId);
-        return;
-    }
-
-    const existingBroadcast = existingSessionBroadcasts.find((broadcast) =>
-        broadcast.broadcastUrls.rtmp?.find(
-            (destination) => destination.serverUrl === ongoingMatchingEvent.room.mediaLiveChannel?.rtmpInputUri
-        )
-    );
-
-    if (!existingBroadcast) {
-        console.log(
-            "Starting a broadcast from session to event room",
-            payload.sessionId,
-            ongoingMatchingEvent.id,
-            ongoingMatchingEvent.room.id
-        );
-        await Vonage.startBroadcast(payload.sessionId, {
-            layout: { type: "bestFit" },
-            outputs: {
-                rtmp: [
-                    {
-                        id: shortId(),
-                        serverUrl,
-                        streamName,
-                    },
-                ],
-            },
-            resolution: "1280x720",
-        });
-    } else {
-        console.log(
-            "There is already an existing RTMP broadcast from the session to the ongoing event.",
-            payload.sessionId,
-            ongoingMatchingEvent.id
-        );
-    }
+    await startEventBroadcast(ongoingMatchingEvent.id);
 }
 
 gql`

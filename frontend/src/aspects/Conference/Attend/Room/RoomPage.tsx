@@ -1,8 +1,13 @@
 import { gql } from "@apollo/client";
-import { Heading, Spinner, Text } from "@chakra-ui/react";
+import { Button, Heading, Spinner, Text, useToast } from "@chakra-ui/react";
 import React, { useMemo, useState } from "react";
 import ReactPlayer from "react-player";
-import { useGetRoomDetailsQuery, useOngoingEventsInRoomQuery } from "../../../../generated/graphql";
+import {
+    useGetEventVonageDetailsQuery,
+    useGetEventVonageTokenMutation,
+    useGetRoomDetailsQuery,
+    useOngoingEventsInRoomQuery,
+} from "../../../../generated/graphql";
 import useUserId from "../../../Auth/useUserId";
 import { useNoPrimaryMenuButtons } from "../../../Menu/usePrimaryMenuButtons";
 import useOpenTok from "../../../Vonage/useOpenTok";
@@ -107,6 +112,7 @@ function CurrentRoomEvent({ roomId }: { roomId: string }): JSX.Element {
                     <Text>
                         {data?.Event[0].startTime} to {data?.Event[0].endTime}
                     </Text>
+                    {data?.Event[0].eventPeople.length > 0 ? <EventRoom eventId={data.Event[0].id} /> : <></>}
                 </>
             ) : (
                 <Text>No current event.</Text>
@@ -115,7 +121,94 @@ function CurrentRoomEvent({ roomId }: { roomId: string }): JSX.Element {
     );
 }
 
+gql`
+    mutation GetEventVonageToken($eventId: uuid!) {
+        joinEventVonageSession(eventId: $eventId) {
+            accessToken
+        }
+    }
+
+    query GetEventVonageDetails($eventId: uuid!) {
+        Event_by_pk(id: $eventId) {
+            eventVonageSession {
+                sessionId
+                id
+            }
+            id
+        }
+    }
+`;
+
 function EventRoom({ eventId }: { eventId: string }): JSX.Element {
-    const [opentokProps, opentokMethod] = useOpenTok();
-    return <></>;
+    const [openTokProps, openTokMethods] = useOpenTok();
+    const toast = useToast();
+    const { data, loading, error } = useGetEventVonageDetailsQuery({
+        variables: {
+            eventId,
+        },
+    });
+    const [getEventVonageTokenMutation] = useGetEventVonageTokenMutation();
+
+    return (
+        <>
+            <Text>Vonage room</Text>
+            <div id="camera" style={{ width: 400, height: 400 }}></div>
+            <Button
+                onClick={async () => {
+                    if (!data?.Event_by_pk?.eventVonageSession?.sessionId) {
+                        toast({
+                            status: "error",
+                            description: "Haven't yet retrieved event session ID",
+                        });
+                        return;
+                    }
+
+                    const result = await getEventVonageTokenMutation({
+                        variables: {
+                            eventId,
+                        },
+                    });
+
+                    if (result.data?.joinEventVonageSession?.accessToken) {
+                        const session = await openTokMethods.initSession({
+                            apiKey: import.meta.env.SNOWPACK_PUBLIC_OPENTOK_API_KEY,
+                            sessionId: data.Event_by_pk.eventVonageSession.sessionId,
+                            sessionOptions: {},
+                        });
+                        if (!session) {
+                            toast({
+                                status: "error",
+                                description: "Session does not yet exist",
+                            });
+                            return;
+                        }
+                        await openTokMethods.connectSession(result.data.joinEventVonageSession.accessToken, session);
+                        await openTokMethods.publish({
+                            name: "camera",
+                            element: "camera",
+                            options: {},
+                        });
+                    } else {
+                        toast({
+                            status: "error",
+                            description: "Failed to get token for joining the event",
+                        });
+                    }
+                }}
+            >
+                Connect
+            </Button>
+            {openTokProps.isSessionConnected ? (
+                <Button
+                    onClick={() => {
+                        openTokMethods.disconnectSession();
+                    }}
+                >
+                    Disconnect
+                </Button>
+            ) : (
+                <></>
+            )}
+        </>
+    );
 }

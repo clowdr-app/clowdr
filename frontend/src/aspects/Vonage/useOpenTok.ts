@@ -1,6 +1,6 @@
 import OT from "@opentok/client";
 import { useCallback } from "react";
-import useOpenTokReducer, { OpenTokState } from "./useOpentokReducer";
+import useOpenTokReducer, { OpenTokState } from "./useOpenTokReducer";
 import useSessionEventHandler, { SessionEvent } from "./useSessionEventHandler";
 
 // default options for subscribe and initPublisher

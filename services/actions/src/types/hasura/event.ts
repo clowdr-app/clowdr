@@ -78,7 +78,7 @@ export interface VideoRenderJobData extends BaseData {
 
 export interface BroadcastContentItemDataBase extends BaseData {
     contentItemId: string | null;
-    roomId: string | null;
+    eventId: string | null;
     input: BroadcastContentItemInput;
     inputTypeName: InputType_Enum;
     conferenceId: string;
@@ -88,14 +88,14 @@ export type BroadcastContentItemData = MP4BroadcastContentItemData | VonageBroad
 
 export interface MP4BroadcastContentItemData extends BroadcastContentItemDataBase {
     contentItemId: string;
-    roomId: null;
+    eventId: null;
     inputTypeName: InputType_Enum.Mp4;
     input: MP4Input | PendingCreation;
 }
 
 export interface VonageBroadcastContentItemData extends BroadcastContentItemDataBase {
     contentItemId: null;
-    roomId: string;
+    eventId: string;
     inputTypeName: InputType_Enum.VonageSession;
     input: VonageInput | PendingCreation;
 }

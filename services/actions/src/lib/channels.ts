@@ -520,12 +520,12 @@ export async function syncChannelSchedule(roomId: string): Promise<void> {
                     return [];
                 }
 
-                const prepareAction: ComparableScheduleAction = {
-                    name: `${transition.id}-prepare`,
-                    mp4Key: key,
-                    inputAttachmentNameSuffix: "mp4",
-                    timeMillis: Date.parse(transition.time) - 30000,
-                };
+                // const prepareAction: ComparableScheduleAction = {
+                //     name: `${transition.id}-prepare`,
+                //     mp4Key: key,
+                //     inputAttachmentNameSuffix: "mp4",
+                //     timeMillis: Date.parse(transition.time) - 30000,
+                // };
 
                 const switchAction: ComparableScheduleAction = {
                     name: `${transition.id}`,
@@ -534,7 +534,7 @@ export async function syncChannelSchedule(roomId: string): Promise<void> {
                     timeMillis: Date.parse(transition.time),
                 };
 
-                return [prepareAction, switchAction];
+                return [switchAction];
             } else if (input.type === "VonageInput") {
                 return [
                     {
@@ -721,22 +721,22 @@ export async function syncChannelSchedule(roomId: string): Promise<void> {
                 });
             }
 
-            if (!trimmedScheduleActionNames.includes(`${transition.id}-prepare`) && urlPath) {
-                newScheduleActions.push({
-                    ActionName: `${transition.id}-prepare`,
-                    ScheduleActionSettings: {
-                        InputPrepareSettings: {
-                            InputAttachmentNameReference: channel.mp4InputAttachmentName,
-                            UrlPath: [urlPath],
-                        },
-                    },
-                    ScheduleActionStartSettings: {
-                        FixedModeScheduleActionStartSettings: {
-                            Time: new Date(Date.parse(transition.time) - 30000).toISOString(),
-                        },
-                    },
-                });
-            }
+            // if (!trimmedScheduleActionNames.includes(`${transition.id}-prepare`) && urlPath) {
+            //     newScheduleActions.push({
+            //         ActionName: `${transition.id}-prepare`,
+            //         ScheduleActionSettings: {
+            //             InputPrepareSettings: {
+            //                 InputAttachmentNameReference: channel.mp4InputAttachmentName,
+            //                 UrlPath: [urlPath],
+            //             },
+            //         },
+            //         ScheduleActionStartSettings: {
+            //             FixedModeScheduleActionStartSettings: {
+            //                 Time: new Date(Date.parse(transition.time) - 30000).toISOString(),
+            //             },
+            //         },
+            //     });
+            // }
         } else if (
             transition.broadcastContentItem.inputTypeName === InputType_Enum.VonageSession &&
             input.type === "VonageInput"

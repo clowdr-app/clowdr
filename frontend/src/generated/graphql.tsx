@@ -22299,6 +22299,20 @@ export type OngoingEventsInRoomQuery = { readonly __typename?: 'query_root', rea
 
 export type CoreEventFieldsFragment = { readonly __typename?: 'Event', readonly id: any, readonly startTime: any, readonly name: string, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum };
 
+export type GetEventVonageTokenMutationVariables = Exact<{
+  eventId: Scalars['uuid'];
+}>;
+
+
+export type GetEventVonageTokenMutation = { readonly __typename?: 'mutation_root', readonly joinEventVonageSession?: Maybe<{ readonly __typename?: 'JoinEventVonageSessionOutput', readonly accessToken?: Maybe<string> }> };
+
+export type GetEventVonageDetailsQueryVariables = Exact<{
+  eventId: Scalars['uuid'];
+}>;
+
+
+export type GetEventVonageDetailsQuery = { readonly __typename?: 'query_root', readonly Event_by_pk?: Maybe<{ readonly __typename?: 'Event', readonly id: any, readonly eventVonageSession?: Maybe<{ readonly __typename?: 'EventVonageSession', readonly sessionId: string, readonly id: any }> }> };
+
 export type SendSubmissionRequestsMutationVariables = Exact<{
   uploaderIds: ReadonlyArray<Scalars['uuid']>;
 }>;
@@ -23661,6 +23675,75 @@ export function useOngoingEventsInRoomLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type OngoingEventsInRoomQueryHookResult = ReturnType<typeof useOngoingEventsInRoomQuery>;
 export type OngoingEventsInRoomLazyQueryHookResult = ReturnType<typeof useOngoingEventsInRoomLazyQuery>;
 export type OngoingEventsInRoomQueryResult = Apollo.QueryResult<OngoingEventsInRoomQuery, OngoingEventsInRoomQueryVariables>;
+export const GetEventVonageTokenDocument = gql`
+    mutation GetEventVonageToken($eventId: uuid!) {
+  joinEventVonageSession(eventId: $eventId) {
+    accessToken
+  }
+}
+    `;
+export type GetEventVonageTokenMutationFn = Apollo.MutationFunction<GetEventVonageTokenMutation, GetEventVonageTokenMutationVariables>;
+
+/**
+ * __useGetEventVonageTokenMutation__
+ *
+ * To run a mutation, you first call `useGetEventVonageTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGetEventVonageTokenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [getEventVonageTokenMutation, { data, loading, error }] = useGetEventVonageTokenMutation({
+ *   variables: {
+ *      eventId: // value for 'eventId'
+ *   },
+ * });
+ */
+export function useGetEventVonageTokenMutation(baseOptions?: Apollo.MutationHookOptions<GetEventVonageTokenMutation, GetEventVonageTokenMutationVariables>) {
+        return Apollo.useMutation<GetEventVonageTokenMutation, GetEventVonageTokenMutationVariables>(GetEventVonageTokenDocument, baseOptions);
+      }
+export type GetEventVonageTokenMutationHookResult = ReturnType<typeof useGetEventVonageTokenMutation>;
+export type GetEventVonageTokenMutationResult = Apollo.MutationResult<GetEventVonageTokenMutation>;
+export type GetEventVonageTokenMutationOptions = Apollo.BaseMutationOptions<GetEventVonageTokenMutation, GetEventVonageTokenMutationVariables>;
+export const GetEventVonageDetailsDocument = gql`
+    query GetEventVonageDetails($eventId: uuid!) {
+  Event_by_pk(id: $eventId) {
+    eventVonageSession {
+      sessionId
+      id
+    }
+    id
+  }
+}
+    `;
+
+/**
+ * __useGetEventVonageDetailsQuery__
+ *
+ * To run a query within a React component, call `useGetEventVonageDetailsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetEventVonageDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetEventVonageDetailsQuery({
+ *   variables: {
+ *      eventId: // value for 'eventId'
+ *   },
+ * });
+ */
+export function useGetEventVonageDetailsQuery(baseOptions: Apollo.QueryHookOptions<GetEventVonageDetailsQuery, GetEventVonageDetailsQueryVariables>) {
+        return Apollo.useQuery<GetEventVonageDetailsQuery, GetEventVonageDetailsQueryVariables>(GetEventVonageDetailsDocument, baseOptions);
+      }
+export function useGetEventVonageDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetEventVonageDetailsQuery, GetEventVonageDetailsQueryVariables>) {
+          return Apollo.useLazyQuery<GetEventVonageDetailsQuery, GetEventVonageDetailsQueryVariables>(GetEventVonageDetailsDocument, baseOptions);
+        }
+export type GetEventVonageDetailsQueryHookResult = ReturnType<typeof useGetEventVonageDetailsQuery>;
+export type GetEventVonageDetailsLazyQueryHookResult = ReturnType<typeof useGetEventVonageDetailsLazyQuery>;
+export type GetEventVonageDetailsQueryResult = Apollo.QueryResult<GetEventVonageDetailsQuery, GetEventVonageDetailsQueryVariables>;
 export const SendSubmissionRequestsDocument = gql`
     mutation SendSubmissionRequests($uploaderIds: [uuid!]!) {
   uploadSendSubmissionRequests(uploaderIds: $uploaderIds) {

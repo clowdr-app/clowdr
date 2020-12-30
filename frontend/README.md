@@ -132,3 +132,5 @@ variables in the build which start with `SNOWPACK_PUBLIC_`.
 | SNOWPACK_PUBLIC_COMPANION_BASE_URL           | URL of the Uppy Companion instance (provided at `/companion` by the actions service) | Yes      |
 | NPM_VERSION                                  | `7.3` (only required in Netlify)                                                     | Only     |
 | NODE_VERSION                                 | `15.4` (only required in Netlify)                                                    | Only     |
+| _Vonage Video API_                           |                                                                                      |
+| SNOWPACK_PUBLIC_OPENTOK_API_KEY              | API key for the Vonage Video API project                                             |          |

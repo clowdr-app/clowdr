@@ -2,6 +2,7 @@ import { gql } from "@apollo/client";
 import {
     Box,
     Button,
+    Center,
     Heading,
     Spinner,
     Table,
@@ -15,14 +16,16 @@ import {
     Tr,
     useToast,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useCallback } from "react";
 import {
     Permission_Enum,
     useConferencePrepareJobSubscriptionSubscription,
     useCreateConferencePrepareJobMutation,
+    useGetMediaLiveChannelsQuery,
 } from "../../../generated/graphql";
 import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
+import FAIcon from "../../Icons/FAIcon";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
 import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
@@ -36,7 +39,11 @@ gql`
     }
 
     subscription ConferencePrepareJobSubscription($conferenceId: uuid!) {
-        ConferencePrepareJob(where: { conferenceId: { _eq: $conferenceId } }) {
+        ConferencePrepareJob(
+            where: { conferenceId: { _eq: $conferenceId } }
+            order_by: { createdAt: desc }
+            limit: 10
+        ) {
             id
             jobStatusName
             message
@@ -85,6 +92,69 @@ function PrepareJobsList({ conferenceId }: { conferenceId: string }): JSX.Elemen
     );
 }
 
+gql`
+    query GetMediaLiveChannels($conferenceId: uuid!) {
+        Room(where: { mediaLiveChannel: {}, conferenceId: { _eq: $conferenceId } }) {
+            mediaLiveChannel {
+                cloudFrontDomain
+                endpointUri
+                id
+            }
+            name
+            id
+        }
+    }
+`;
+
+function BroadcastRooms({ conferenceId }: { conferenceId: string }): JSX.Element {
+    const { data, loading, error, refetch } = useGetMediaLiveChannelsQuery({ variables: { conferenceId } });
+    useQueryErrorToast(error);
+
+    const toStreamingEndpoint = useCallback((endpointUri: string, cloudFrontDomain: string): string => {
+        const url = new URL(endpointUri);
+        url.hostname = cloudFrontDomain;
+        return url.toString();
+    }, []);
+
+    return loading && !data ? (
+        <Spinner />
+    ) : error ? (
+        <>Error while loading list of rooms.</>
+    ) : (
+        <>
+            <Center>
+                <Button aria-label="Refresh rooms" onClick={() => refetch()} size="sm">
+                    <FAIcon icon="sync" iconStyle="s" />
+                </Button>
+            </Center>
+            <Table variant="simple">
+                <TableCaption>Rooms that are set up for broadcast</TableCaption>
+                <Thead>
+                    <Tr>
+                        <Th>Name</Th>
+                        <Th>HLS URL</Th>
+                    </Tr>
+                </Thead>
+                <Tbody>
+                    {data?.Room.map((room) => (
+                        <Tr key={room.id}>
+                            <Td>{room.name}</Td>
+                            <Td>
+                                {room.mediaLiveChannel
+                                    ? toStreamingEndpoint(
+                                          room.mediaLiveChannel.endpointUri,
+                                          room.mediaLiveChannel.cloudFrontDomain
+                                      )
+                                    : "No channel"}
+                            </Td>
+                        </Tr>
+                    ))}
+                </Tbody>
+            </Table>
+        </>
+    );
+}
+
 export default function ManageConferenceBroadcastPage(): JSX.Element {
     const conference = useConference();
     useDashboardPrimaryMenuButtons();
@@ -123,6 +193,9 @@ export default function ManageConferenceBroadcastPage(): JSX.Element {
             {loading ? <Spinner /> : error ? <Text mt={3}>Failed to start broadcast preparation.</Text> : <></>}
             <Box mt={5}>
                 <PrepareJobsList conferenceId={conference.id} />
+            </Box>
+            <Box mt={5}>
+                <BroadcastRooms conferenceId={conference.id} />
             </Box>
         </RequireAtLeastOnePermissionWrapper>
     );

@@ -22625,6 +22625,13 @@ export type ConferencePrepareJobSubscriptionSubscriptionVariables = Exact<{
 
 export type ConferencePrepareJobSubscriptionSubscription = { readonly __typename?: 'subscription_root', readonly ConferencePrepareJob: ReadonlyArray<{ readonly __typename?: 'ConferencePrepareJob', readonly id: any, readonly jobStatusName: JobStatus_Enum, readonly message?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly videoRenderJobs: ReadonlyArray<{ readonly __typename?: 'VideoRenderJob', readonly id: any, readonly jobStatusName: JobStatus_Enum, readonly updated_at: any, readonly created_at: any }> }> };
 
+export type GetMediaLiveChannelsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type GetMediaLiveChannelsQuery = { readonly __typename?: 'query_root', readonly Room: ReadonlyArray<{ readonly __typename?: 'Room', readonly name: string, readonly id: any, readonly mediaLiveChannel?: Maybe<{ readonly __typename?: 'MediaLiveChannel', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly id: any }> }> };
+
 export type SelectAllGroupsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
@@ -24593,7 +24600,11 @@ export type CreateConferencePrepareJobMutationResult = Apollo.MutationResult<Cre
 export type CreateConferencePrepareJobMutationOptions = Apollo.BaseMutationOptions<CreateConferencePrepareJobMutation, CreateConferencePrepareJobMutationVariables>;
 export const ConferencePrepareJobSubscriptionDocument = gql`
     subscription ConferencePrepareJobSubscription($conferenceId: uuid!) {
-  ConferencePrepareJob(where: {conferenceId: {_eq: $conferenceId}}) {
+  ConferencePrepareJob(
+    where: {conferenceId: {_eq: $conferenceId}}
+    order_by: {createdAt: desc}
+    limit: 10
+  ) {
     id
     jobStatusName
     message
@@ -24630,6 +24641,45 @@ export function useConferencePrepareJobSubscriptionSubscription(baseOptions: Apo
       }
 export type ConferencePrepareJobSubscriptionSubscriptionHookResult = ReturnType<typeof useConferencePrepareJobSubscriptionSubscription>;
 export type ConferencePrepareJobSubscriptionSubscriptionResult = Apollo.SubscriptionResult<ConferencePrepareJobSubscriptionSubscription>;
+export const GetMediaLiveChannelsDocument = gql`
+    query GetMediaLiveChannels($conferenceId: uuid!) {
+  Room(where: {mediaLiveChannel: {}, conferenceId: {_eq: $conferenceId}}) {
+    mediaLiveChannel {
+      cloudFrontDomain
+      endpointUri
+      id
+    }
+    name
+    id
+  }
+}
+    `;
+
+/**
+ * __useGetMediaLiveChannelsQuery__
+ *
+ * To run a query within a React component, call `useGetMediaLiveChannelsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMediaLiveChannelsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMediaLiveChannelsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useGetMediaLiveChannelsQuery(baseOptions: Apollo.QueryHookOptions<GetMediaLiveChannelsQuery, GetMediaLiveChannelsQueryVariables>) {
+        return Apollo.useQuery<GetMediaLiveChannelsQuery, GetMediaLiveChannelsQueryVariables>(GetMediaLiveChannelsDocument, baseOptions);
+      }
+export function useGetMediaLiveChannelsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMediaLiveChannelsQuery, GetMediaLiveChannelsQueryVariables>) {
+          return Apollo.useLazyQuery<GetMediaLiveChannelsQuery, GetMediaLiveChannelsQueryVariables>(GetMediaLiveChannelsDocument, baseOptions);
+        }
+export type GetMediaLiveChannelsQueryHookResult = ReturnType<typeof useGetMediaLiveChannelsQuery>;
+export type GetMediaLiveChannelsLazyQueryHookResult = ReturnType<typeof useGetMediaLiveChannelsLazyQuery>;
+export type GetMediaLiveChannelsQueryResult = Apollo.QueryResult<GetMediaLiveChannelsQuery, GetMediaLiveChannelsQueryVariables>;
 export const SelectAllGroupsDocument = gql`
     query SelectAllGroups($conferenceId: uuid!) {
   Group(where: {conferenceId: {_eq: $conferenceId}}) {

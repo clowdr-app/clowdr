@@ -5,7 +5,7 @@ import express, { Request, Response } from "express";
 import { is } from "typescript-is";
 import { initialiseAwsClient } from "./aws/awsClient";
 import handlerEcho from "./handlers/echo";
-import { handleEmailCreated } from "./handlers/event";
+import { handleEmailCreated } from "./handlers/email";
 import {
     invitationConfirmCurrentHandler,
     invitationConfirmSendInitialEmailHandler,
@@ -26,6 +26,7 @@ import { router as companionRouter } from "./router/companion";
 import { router as conferencePrepareJobRouter } from "./router/conferencePrepareJob";
 import { router as contentItemRouter } from "./router/contentItem";
 import { router as elasticTranscoderRouter } from "./router/elasticTranscoder";
+import { router as eventRouter } from "./router/event";
 import { router as mediaConvertRouter } from "./router/mediaConvert";
 import { router as mediaLiveRouter } from "./router/mediaLive";
 import { router as openshotRouter } from "./router/openshot";
@@ -75,6 +76,7 @@ app.use("/contentItem", contentItemRouter);
 app.use("/conferencePrepareJob", conferencePrepareJobRouter);
 app.use("/videoRenderJob", videoRenderJobRouter);
 app.use("/broadcastContentItem", broadcastContentItemRouter);
+app.use("/event", eventRouter);
 
 app.use("/channels", channelsRouter);
 

@@ -3,6 +3,7 @@ import { shortId } from "../../aws/awsClient";
 import { GetEventBroadcastDetailsDocument } from "../../generated/graphql";
 import { apolloClient } from "../../graphqlClient";
 import * as Vonage from "./vonageClient";
+import { stopBroadcast } from "./vonageClient";
 
 gql`
     query GetEventBroadcastDetails($eventId: uuid!) {
@@ -27,7 +28,13 @@ gql`
     }
 `;
 
-export async function startEventBroadcast(eventId: string): Promise<void> {
+interface EventBroadcastDetails {
+    rtmpServerUrl: string;
+    rtmpStreamName: string;
+    vonageSessionId: string;
+}
+
+export async function getEventBroadcastDetails(eventId: string): Promise<EventBroadcastDetails> {
     const eventResult = await apolloClient.query({
         query: GetEventBroadcastDetailsDocument,
         variables: {
@@ -36,38 +43,47 @@ export async function startEventBroadcast(eventId: string): Promise<void> {
     });
 
     if (!eventResult.data.Event_by_pk) {
-        console.error("Could not find event", eventId);
-        return;
+        throw new Error("Could not find event");
     }
 
     if (!eventResult.data.Event_by_pk.room.mediaLiveChannel?.rtmpInputUri) {
-        console.error("No RTMP Push URI available for event room.", eventId, eventResult.data.Event_by_pk.room.id);
-        return;
+        throw new Error("No RTMP Push URI available for event room.");
     }
 
     const rtmpUri = eventResult.data.Event_by_pk.room.mediaLiveChannel.rtmpInputUri;
     const rtmpUriParts = rtmpUri.split("/");
     if (rtmpUriParts.length < 2) {
-        console.error("RTMP Push URI has unexpected format", eventId, rtmpUri);
-        return;
+        throw new Error("RTMP Push URI has unexpected format");
     }
     const streamName = rtmpUriParts[rtmpUriParts.length - 1];
     const serverUrl = rtmpUri.substring(0, rtmpUri.length - streamName.length);
-    console.log("Parsed RTMP URI", serverUrl, streamName);
 
     if (!eventResult.data.Event_by_pk.eventVonageSession?.sessionId) {
-        console.error("Could not find Vonage session ID for event", eventId);
+        throw new Error("Could not find Vonage session ID for event");
+    }
+
+    return {
+        rtmpServerUrl: serverUrl,
+        rtmpStreamName: streamName,
+        vonageSessionId: eventResult.data.Event_by_pk.eventVonageSession.sessionId,
+    };
+}
+
+export async function startEventBroadcast(eventId: string): Promise<void> {
+    let broadcastDetails: EventBroadcastDetails;
+    try {
+        broadcastDetails = await getEventBroadcastDetails(eventId);
+    } catch (e) {
+        console.error("Error retrieving Vonage broadcast details for event", e);
         return;
     }
 
-    const sessionId = eventResult.data.Event_by_pk.eventVonageSession.sessionId;
-
     const existingSessionBroadcasts = await Vonage.listBroadcasts({
-        sessionId,
+        sessionId: broadcastDetails.vonageSessionId,
     });
 
     if (!existingSessionBroadcasts) {
-        console.error("Could not retrieve existing session broadcasts.", sessionId);
+        console.error("Could not retrieve existing session broadcasts.", broadcastDetails.vonageSessionId);
         return;
     }
 
@@ -75,41 +91,53 @@ export async function startEventBroadcast(eventId: string): Promise<void> {
 
     console.log(
         `Vonage session has ${startedSessionBroadcasts.length} existing live broadcasts`,
-        sessionId,
+        broadcastDetails.vonageSessionId,
         startedSessionBroadcasts
     );
 
     if (startedSessionBroadcasts.length > 1) {
         console.warn(
             "Found more than one live broadcast for session - which is not allowed. Stopping them.",
-            sessionId
+            broadcastDetails.vonageSessionId
         );
         for (const broadcast of startedSessionBroadcasts) {
             try {
                 await Vonage.stopBroadcast(broadcast.id);
             } catch (e) {
-                console.error("Error while stopping invalid broadcast", sessionId, broadcast.status, e);
+                console.error(
+                    "Error while stopping invalid broadcast",
+                    broadcastDetails.vonageSessionId,
+                    broadcast.status,
+                    e
+                );
             }
         }
     }
 
     const existingBroadcast = startedSessionBroadcasts.find((broadcast) =>
         broadcast.broadcastUrls.rtmp?.find(
-            (destination) => destination.serverUrl === serverUrl && destination.streamName === streamName
+            (destination) =>
+                destination.serverUrl === broadcastDetails.rtmpServerUrl &&
+                destination.streamName === broadcastDetails.rtmpStreamName
         )
     );
 
     if (!existingBroadcast) {
         const rtmpId = shortId();
-        console.log("Starting a broadcast from session to event room", sessionId, eventId, rtmpId);
-        await Vonage.startBroadcast(sessionId, {
+        console.log(
+            "Starting a broadcast from session to event room",
+            broadcastDetails.vonageSessionId,
+            eventId,
+            rtmpId
+        );
+        await Vonage.startBroadcast(broadcastDetails.vonageSessionId, {
             layout: { type: "bestFit" },
             outputs: {
                 rtmp: [
                     {
                         id: rtmpId,
-                        serverUrl,
-                        streamName,
+                        serverUrl: broadcastDetails.rtmpServerUrl,
+                        streamName: broadcastDetails.rtmpStreamName,
                     },
                 ],
             },
@@ -118,8 +146,37 @@ export async function startEventBroadcast(eventId: string): Promise<void> {
     } else {
         console.log(
             "There is already an existing RTMP broadcast from the session to the ongoing event.",
-            sessionId,
+            broadcastDetails.vonageSessionId,
             eventId
         );
+    }
+}
+
+export async function stopEventBroadcasts(eventId: string): Promise<void> {
+    let broadcastDetails: EventBroadcastDetails;
+    try {
+        broadcastDetails = await getEventBroadcastDetails(eventId);
+    } catch (e) {
+        console.error("Error retrieving Vonage broadcast details for event", e);
+        return;
+    }
+
+    const existingSessionBroadcasts = await Vonage.listBroadcasts({
+        sessionId: broadcastDetails.vonageSessionId,
+    });
+
+    if (!existingSessionBroadcasts) {
+        console.error("Could not retrieve existing session broadcasts.", broadcastDetails.vonageSessionId);
+        return;
+    }
+
+    for (const existingBroadcast of existingSessionBroadcasts) {
+        try {
+            if (existingBroadcast.status === "started") {
+                await stopBroadcast(existingBroadcast.id);
+            }
+        } catch (e) {
+            console.error("Could not stop existing session broadcast", eventId, existingBroadcast.id);
+        }
     }
 }

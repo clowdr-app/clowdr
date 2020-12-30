@@ -145,7 +145,7 @@ export async function handleVideoRenderJobUpdated(payload: Payload<VideoRenderJo
                                 webhookKey,
                             },
                             project: OpenShotClient.projects.toUrl(payload.event.data.new.data.openShotProjectId),
-                            webhook: `${process.env.HOST_SECURE_PROTOCOLS ? "https" : "http"}://${
+                            webhook: `${process.env.HOST_SECURE_PROTOCOLS !== "false" ? "https" : "http"}://${
                                 process.env.HOST_DOMAIN
                             }/openshot/notifyExport/${payload.event.data.new.id}`,
                         };

@@ -1,51 +1,80 @@
 import { gql } from "@apollo/client/core";
-import sgMail from "@sendgrid/mail";
-import assert from "assert";
+import { GetEventTimingsDocument, RoomMode_Enum } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { EmailData, Payload } from "../types/hasura/event";
-import { callWithRetry } from "../utils";
+import { createEventEndTrigger, createEventStartTrigger } from "../lib/event";
+import { startEventBroadcast, stopEventBroadcasts } from "../lib/vonage/vonageTools";
+import { EventData, Payload } from "../types/hasura/event";
 
-export async function handleEmailCreated(payload: Payload<EmailData>): Promise<void> {
-    if (!payload.event.data.new) {
-        throw new Error("No new email data");
+export async function handleEventUpdated(payload: Payload<EventData>): Promise<void> {
+    const oldRow = payload.event.data.old;
+    const newRow = payload.event.data.new;
+
+    if (!newRow) {
+        console.error("handleEventUpdated: new content was empty");
+        return;
     }
 
-    const email = payload.event.data.new;
+    if (![RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(newRow.intendedRoomModeName)) {
+        // No need to insert scheduled events for other kinds of room modes, as there
+        // is no RTMP broadcast to be triggered
+        return;
+    }
 
-    if (email.sentAt === null && email.retriesCount < 3) {
-        assert(process.env.SENDGRID_SENDER);
+    if (oldRow) {
+        // Event was updated
 
-        const msg = {
-            to: email.emailAddress,
-            from: process.env.SENDGRID_SENDER,
-            subject: email.subject,
-            text: email.plainTextContents,
-            html: email.htmlContents,
-        };
-
-        let error;
-        try {
-            await callWithRetry(() => sgMail.send(msg));
-        } catch (e) {
-            error = e;
+        if (oldRow.startTime !== newRow.startTime) {
+            await createEventStartTrigger(newRow.id, newRow.startTime);
         }
 
-        await apolloClient.mutate({
-            mutation: gql`
-                mutation UpdateEmail($id: uuid!, $sentAt: timestamptz = null) {
-                    update_Email(where: { id: { _eq: $id } }, _set: { sentAt: $sentAt }, _inc: { retriesCount: 1 }) {
-                        affected_rows
-                    }
-                }
-            `,
-            variables: {
-                id: email.id,
-                sentAt: error ? null : new Date().toISOString(),
-            },
-        });
-
-        if (error) {
-            throw error;
+        if (oldRow.endTime !== newRow.endTime && newRow.endTime) {
+            await createEventEndTrigger(newRow.id, newRow.endTime);
         }
+    } else {
+        // Event was inserted
+        await createEventStartTrigger(newRow.id, newRow.startTime);
+        if (newRow.endTime) {
+            await createEventEndTrigger(newRow.id, newRow.endTime);
+        }
+    }
+}
+
+gql`
+    query GetEventTimings($eventId: uuid!) {
+        Event_by_pk(id: $eventId) {
+            id
+            startTime
+            endTime
+        }
+    }
+`;
+
+export async function handleEventStartNotification(eventId: string, startTime: string): Promise<void> {
+    const result = await apolloClient.query({
+        query: GetEventTimingsDocument,
+        variables: {
+            eventId,
+        },
+    });
+
+    if (result.data.Event_by_pk?.startTime && result.data.Event_by_pk.startTime === startTime) {
+        await startEventBroadcast(result.data.Event_by_pk.id);
+    } else {
+        console.log("Event start notification did not match current event start time, skipping.", eventId, startTime);
+    }
+}
+
+export async function handleEventEndNotification(eventId: string, endTime: string): Promise<void> {
+    const result = await apolloClient.query({
+        query: GetEventTimingsDocument,
+        variables: {
+            eventId,
+        },
+    });
+
+    if (result.data.Event_by_pk?.endTime && result.data.Event_by_pk.endTime === endTime) {
+        await stopEventBroadcasts(result.data.Event_by_pk.id);
+    } else {
+        console.log("Event stop notification did not match current event end time, skipping.", eventId, endTime);
     }
 }

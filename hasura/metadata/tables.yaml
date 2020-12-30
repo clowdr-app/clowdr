@@ -2042,6 +2042,34 @@
                   attendee:
                     userId:
                       _eq: X-Hasura-User-Id
+  event_triggers:
+  - name: EventUpdated
+    definition:
+      enable_manual: true
+      insert:
+        columns: '*'
+      update:
+        columns:
+        - durationSeconds
+        - intendedRoomModeName
+        - name
+        - created_at
+        - endTime
+        - startTime
+        - updated_at
+        - conferenceId
+        - contentGroupId
+        - id
+        - originatingDataId
+        - roomId
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{ACTION_BASE_URL}}/event/updated'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - table:
     schema: public
     name: EventPerson

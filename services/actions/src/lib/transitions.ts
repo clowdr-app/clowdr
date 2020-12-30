@@ -56,6 +56,7 @@ export async function createTransitionsForRoom(conferenceId: string, roomId: str
     gql`
         query GetEventsForRoom($roomId: uuid!) {
             Room_by_pk(id: $roomId) {
+                id
                 events(order_by: { startTime: asc }) {
                     contentGroup {
                         id

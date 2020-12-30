@@ -1,5 +1,5 @@
 import { ContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
-import { ContentType_Enum, InputType_Enum, JobStatus_Enum } from "../../generated/graphql";
+import { ContentType_Enum, InputType_Enum, JobStatus_Enum, RoomMode_Enum } from "../../generated/graphql";
 
 export interface Payload<T = any> {
     event: {
@@ -23,6 +23,14 @@ export interface Payload<T = any> {
         schema: string;
         name: string;
     };
+}
+
+export interface ScheduledEventPayload<T = any> {
+    scheduled_time: string;
+    payload: T;
+    created_at: string;
+    id: string;
+    comment: string | null;
 }
 
 export interface BaseData {
@@ -98,4 +106,16 @@ export interface VonageBroadcastContentItemData extends BroadcastContentItemData
     eventId: string;
     inputTypeName: InputType_Enum.VonageSession;
     input: VonageInput | PendingCreation;
+}
+
+export interface EventData extends BaseData {
+    durationSeconds: number;
+    intendedRoomModeName: RoomMode_Enum;
+    name: string;
+    endTime: string | null;
+    startTime: string;
+    conferenceId: string;
+    contentGroupId: string | null;
+    originatingDataId: string | null;
+    roomId: string;
 }

@@ -55,7 +55,9 @@ gql`
     }
 `;
 
-export async function ensureUpcomingChannelsCreated(): Promise<void> {
+export async function ensureUpcomingChannelsCreated(holdOffOnCreatingChannel: {
+    [roomId: string]: boolean;
+}): Promise<void> {
     console.log("Ensuring channels created for rooms with upcoming events");
     const now = new Date();
     const from = now.toISOString();
@@ -81,6 +83,12 @@ export async function ensureUpcomingChannelsCreated(): Promise<void> {
 
     for (const room of roomsResult.data.Room) {
         console.log("Syncing channel for room", room.id);
+
+        if (holdOffOnCreatingChannel[room.id]) {
+            console.warn("Channel sync has requested a hold on restarting the channel", room.id);
+            continue;
+        }
+
         let needToCreateChannel = false;
         if (room.mediaLiveChannel) {
             const channelState = await getMediaLiveChannelState(room.mediaLiveChannel.mediaLiveChannelId);
@@ -412,7 +420,7 @@ gql`
     }
 `;
 
-export async function syncChannelSchedules(): Promise<void> {
+export async function syncChannelSchedules(): Promise<{ [roomId: string]: boolean }> {
     // TODO: only look at future/current events?
     const rooms = await apolloClient.query({
         query: GetRoomsWithEventsDocument,
@@ -422,14 +430,17 @@ export async function syncChannelSchedules(): Promise<void> {
         console.error("Could not get rooms with events to sync channel schedules", rooms.error, rooms.errors);
     }
 
+    const holdOffOnCreatingChannel: { [roomId: string]: boolean } = {};
     for (const room of rooms.data.Room) {
         try {
-            await syncChannelSchedule(room.id);
+            holdOffOnCreatingChannel[room.id] = await syncChannelSchedule(room.id);
         } catch (e) {
             console.error("Failure while syncing channel schedule", room.id, e);
             continue;
         }
     }
+
+    return holdOffOnCreatingChannel;
 }
 
 gql`
@@ -470,7 +481,8 @@ interface ComparableScheduleAction {
     invalid?: boolean;
 }
 
-export async function syncChannelSchedule(roomId: string): Promise<void> {
+// Return value: whether to hold off on recreating the channel
+export async function syncChannelSchedule(roomId: string): Promise<boolean> {
     console.log("Attempting to sync channel schedule", roomId);
     const channelResult = await apolloClient.query({
         query: GetMediaLiveChannelByRoomDocument,
@@ -481,7 +493,7 @@ export async function syncChannelSchedule(roomId: string): Promise<void> {
 
     if (!channelResult.data.Room_by_pk?.mediaLiveChannel?.mediaLiveChannelId) {
         console.warn("No MediaLive channel details found for room. Skipping schedule sync.", roomId);
-        return;
+        return false;
     }
 
     const channel = channelResult.data.Room_by_pk.mediaLiveChannel;
@@ -492,7 +504,7 @@ export async function syncChannelSchedule(roomId: string): Promise<void> {
 
     if (mediaLiveChannel.State !== "IDLE" && mediaLiveChannel.State !== "RUNNING") {
         console.warn("Cannot sync channel schedule", roomId, channel.id, mediaLiveChannel.State);
-        return;
+        return true;
     }
 
     const allTransitionsResult = await apolloClient.query({
@@ -504,7 +516,7 @@ export async function syncChannelSchedule(roomId: string): Promise<void> {
 
     if (allTransitionsResult.error || allTransitionsResult.errors) {
         console.error("Error while retrieving transitions for room. Skipping schedule sync.", roomId);
-        return;
+        return false;
     }
 
     // Generate a simplified representation of what the channel schedule 'ought' to be
@@ -656,7 +668,7 @@ export async function syncChannelSchedule(roomId: string): Promise<void> {
         await MediaLive.stopChannel({
             ChannelId: channel.mediaLiveChannelId,
         });
-        return;
+        return true;
     }
 
     // Go through each transition and create any missing schedule actions
@@ -755,6 +767,22 @@ export async function syncChannelSchedule(roomId: string): Promise<void> {
                         },
                     },
                 });
+
+                newScheduleActions.push({
+                    ActionName: `${transition.id}-follow`,
+                    ScheduleActionSettings: {
+                        InputSwitchSettings: {
+                            InputAttachmentNameReference: channel.loopingMp4InputAttachmentName,
+                            UrlPath: [fillerVideoKey],
+                        },
+                    },
+                    ScheduleActionStartSettings: {
+                        FollowModeScheduleActionStartSettings: {
+                            FollowPoint: FollowPoint.END,
+                            ReferenceActionName: `${transition.id}`,
+                        },
+                    },
+                });
             }
         }
     }
@@ -772,6 +800,8 @@ export async function syncChannelSchedule(roomId: string): Promise<void> {
             ScheduleActions: newScheduleActions,
         },
     });
+
+    return false;
 }
 
 export async function switchToFillerVideo(channelResourceId: string): Promise<void> {

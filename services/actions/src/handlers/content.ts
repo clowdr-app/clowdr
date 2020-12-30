@@ -193,7 +193,7 @@ async function sendTranscriptionEmail(contentItemId: string, contentItemName: st
 <p>We have automatically generated subtitles for your item <em>${contentItemName}</em> (${contentItemDetails.data.ContentItem_by_pk?.contentGroup.title}) at ${contentItemDetails.data.ContentItem_by_pk?.conference.name}.</p>
 <p>We kindly request that you now review and edit them, as we know automated subtitles aren't always accurate.</p>
 <p><a href="${magicItemLink}">View and edit subtitles on this page</a></p>
-<p><b>The deadline for editing subtitles is 12:00 UTC on 7th January 2021.</b></p>
+<p><b>The deadline for editing subtitles is 12:00 UTC on 6th January 2021.</b></p>
 <p>After this time, subtitles will be automatically embedded into the video files and moved into the content delivery system - they will no longer be editable.</p>
 <p>Thank you,<br/>
 The Clowdr team
@@ -256,7 +256,7 @@ async function sendTranscriptionFailedEmail(contentItemId: string, contentItemNa
 <p>Your item ${contentItemName} (${contentItemDetails.data.ContentItem_by_pk?.contentGroup.title}) at ${contentItemDetails.data.ContentItem_by_pk?.conference.name} <b>has successfully entered our systems</b>. Your video will be included in the conference pre-publications and/or live streams (as appropriate).</p>
 <p>However, we are sorry that unfortunately an error occurred and we were unable to auto-generate subtitles. We appreciate this is a significant inconvenience but we kindly ask that you to manually enter subtitles for your video.</p>
 <p><a href="${magicItemLink}">Please manually add subtitles on this page.</a></p>
-<p><b>The deadline for submitting subtitles is 12:00 UTC on 7th January 2021.</b></p>
+<p><b>The deadline for submitting subtitles is 12:00 UTC on 6th January 2021.</b></p>
 <p>After this time, subtitles will be automatically embedded into the video files and moved into the content delivery system - they will no longer be editable.</p>
 <p>We have also sent ourselves a notification of this failure via email and we will assist you at our earliest opportunity. If we can get automated subtitles working for your video, we will let you know as soon as possible!</p>
 <p>Thank you,<br/>

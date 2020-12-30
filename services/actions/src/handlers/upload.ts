@@ -583,7 +583,7 @@ function generateEmailContents(uploader: UploaderPartsFragment) {
     const contentTypeFriendlyName = generateContentTypeFriendlyName(uploader.requiredContentItem.contentTypeName);
     const url = `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/upload/${uploader.requiredContentItem.id}/${uploader.requiredContentItem.accessToken}`;
 
-    // TODO: Add info like deadlines, max file sizes, tutorial video link, etc
+    // TODO: Make info like deadlines, max file sizes, tutorial video link, etc configurable
     const htmlContents = `<p>Dear ${uploader.name},</p>
 <p>
     The organisers of ${uploader.conference.name} are requesting that you or
@@ -615,8 +615,9 @@ function generateEmailContents(uploader: UploaderPartsFragment) {
             <li>If your video is longer than 30 minutes, we are likely to cut it down (by clipping it to 30 mins).</li>
         </ul>
     </li>
-    <li><b>Submission deadline: 23:59 UTC on 3rd January 2021.</b>
+    <li><b>Submission deadline: 12:00 UTC on 4th January 2021.</b>
         <ul>
+            <li>The deadline time has been chosen as it is equivalent to 'end of 3rd January for anywhere in the world'.</li>
             <li>Your upload must start before this deadline, but any ongoing (uninterrupted) uploads will be allowed to continue past this time.</li>
             <li>Please do not leave submitting to the last moment; Submitting at the last moment is risky. If we are unable to automatically process your video and are only made aware of an issue after the deadline, we may not have time to resolve the problem.</li>
             <li>If you fail to submit on time, your videos may not be processed for pre-publication.</li>
@@ -631,7 +632,7 @@ function generateEmailContents(uploader: UploaderPartsFragment) {
     </li>
     <li>After uploading your video, Clowdr will process it and auto-generate subtitles. You will receive emails for each stage of processing.</li>
     <li><b>Once subtitles have been generated, you will have the opportunity to edit them.</b></li>
-    <li><b>The deadline for editing subtitles is 12:00 UTC on 7th January 2021.</b>
+    <li><b>The deadline for editing subtitles is 12:00 UTC on 6th January 2021.</b>
         <ul>
             <li>After editing subtitles, please remember to <b>click the "Save" button!</b></li>
         </ul>

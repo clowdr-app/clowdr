@@ -12,6 +12,7 @@ import ManageConferenceImportPage from "./Manage/ManageConferenceImportPage";
 import ManageConferenceNamePage from "./Manage/ManageConferenceNamePage";
 import ManageConferencePeoplePage from "./Manage/ManageConferencePeoplePage";
 import ManageConferenceRolesPage from "./Manage/ManageConferenceRolesPage";
+import ManageConferenceRoomsPage from "./Manage/ManageConferenceRoomsPage";
 import ManagerLandingPage from "./Manage/ManagerLandingPage";
 import ConferenceProvider from "./useConference";
 import ConferenceCurrentUserActivePermissionsProvider from "./useConferenceCurrentUserActivePermissions";
@@ -52,6 +53,9 @@ function AuthenticatedConferenceRoutes(rootUrl: string): JSX.Element {
                             <ManageConferenceImportPage rootUrl={props.match.url} />
                         )}
                     />
+                    <Route path={`${rootUrl}/manage/rooms`}>
+                        <ManageConferenceRoomsPage />
+                    </Route>
                     <Route path={`${rootUrl}/manage/broadcasts`}>
                         <ManageConferenceBroadcastPage />
                     </Route>
@@ -60,9 +64,6 @@ function AuthenticatedConferenceRoutes(rootUrl: string): JSX.Element {
                         <PageNotImplemented />
                     </Route>
                     <Route path={`${rootUrl}/manage/schedule`}>
-                        <PageNotImplemented />
-                    </Route>
-                    <Route path={`${rootUrl}/manage/rooms`}>
                         <PageNotImplemented />
                     </Route>
                     <Route path={`${rootUrl}/manage/chats`}>

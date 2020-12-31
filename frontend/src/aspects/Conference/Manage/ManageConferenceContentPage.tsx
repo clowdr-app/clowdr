@@ -20,7 +20,7 @@ import {
     ContentGroupType_Enum,
     ContentType_Enum,
     Permission_Enum,
-    useSendSubmissionRequestsMutation,
+    useInsertSubmissionRequestEmailJobsMutation,
 } from "../../../generated/graphql";
 import CRUDTable, {
     BooleanFieldFormat,
@@ -294,7 +294,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
         saveContentDiff.originalTags,
     ]);
 
-    const [sendSubmissionRequests, { loading: sendingRequestsLoading }] = useSendSubmissionRequestsMutation();
+    const [sendSubmissionRequests, { loading: sendingRequestsLoading }] = useInsertSubmissionRequestEmailJobsMutation();
 
     const { isOpen: tagsModalOpen, onOpen: onTagsModalOpen, onClose: onTagsModalClose } = useDisclosure();
     const [dirtyTagIds, setDirtyTagIds] = useState<Set<string>>(new Set());
@@ -538,18 +538,27 @@ export default function ManageConferenceContentPage(): JSX.Element {
                         action: async (groupKeys) => {
                             await sendSubmissionRequests({
                                 variables: {
-                                    uploaderIds: Array.from(groupKeys.values()).reduce((acc1, groupId) => {
+                                    objs: Array.from(groupKeys.values()).reduce((acc1, groupId) => {
                                         const group = allGroupsMap?.get(groupId);
                                         assert(group);
                                         return [
                                             ...acc1,
                                             ...group.requiredItems.reduce(
-                                                (acc, item) => [...acc, ...item.uploaders.map((x) => x.id)],
-                                                [] as string[]
+                                                (acc, item) => [
+                                                    ...acc,
+                                                    ...item.uploaders.map((x) => ({ uploaderId: x.id })),
+                                                ],
+                                                [] as { uploaderId: string }[]
                                             ),
                                         ];
-                                    }, [] as string[]),
+                                    }, [] as { uploaderId: string }[]),
                                 },
+                            });
+                            toast({
+                                title: "Requests sent",
+                                duration: 3000,
+                                isClosable: true,
+                                status: "success",
                             });
                         },
                         enabledWhenNothingSelected: false,

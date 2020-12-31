@@ -24,12 +24,13 @@ import {
     InsertSubmissionRequestEmailsDocument,
     RequiredItemDocument,
     RequiredItemFieldsFragment,
-    SelectUploadersAndUserDocument,
+    SelectUploaderDocument,
     SetRequiredContentItemUploadsRemainingDocument,
     UploaderPartsFragment,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { getLatestVersion } from "../lib/contentItem";
+import { SubmissionRequestEmailJobData } from "../types/hasura/event";
 
 gql`
     query RequiredItem($accessToken: String!) {
@@ -535,13 +536,9 @@ gql`
         }
     }
 
-    query SelectUploadersAndUser($uploaderIds: [uuid!]!, $userId: String!) {
-        Uploader(where: { id: { _in: $uploaderIds } }) {
+    query SelectUploader($id: uuid!) {
+        Uploader_by_pk(id: $id) {
             ...UploaderParts
-        }
-
-        User_by_pk(id: $userId) {
-            id
         }
     }
 
@@ -555,27 +552,21 @@ gql`
     }
 `;
 
-async function getUploadersAndUser(
-    uploaderIds: string[],
-    userId: string
+async function getUploader(
+    uploaderId: string
 ): Promise<{
-    uploaders: UploaderPartsFragment[];
-    user: { id: string };
+    uploader: UploaderPartsFragment;
 }> {
     const query = await apolloClient.query({
-        query: SelectUploadersAndUserDocument,
+        query: SelectUploaderDocument,
         variables: {
-            uploaderIds,
-            userId,
+            id: uploaderId,
         },
     });
-    assert(query.data.Uploader);
-    assert(query.data.User_by_pk);
-    const uploaders = query.data.Uploader;
-    const user = query.data.User_by_pk;
+    assert(query.data.Uploader_by_pk);
+    const uploader = query.data.Uploader_by_pk;
     return {
-        uploaders,
-        user,
+        uploader,
     };
 }
 
@@ -605,7 +596,7 @@ function generateEmailContents(uploader: UploaderPartsFragment) {
     upload. These are the <b>Broadcast video</b> and the <b>Pre-publication video</b>.
 </p>
 <ul>
-    <li><b>Broadcast video:</b> Max 5 mins. Live streamed during the main conference before the live Q&amp;A.
+    <li><b>Broadcast video:</b> Max 5 mins. For POPL, this will be both pre-published and live streamed during the main conference before the live Q&amp;A.
         <ul>
             <li>If your video is longer than 5 minutes, it will be abruptly cut short during the live stream. The system is automated and there is no leeway in the schedule. Please make sure your video is under 5 minutes long.</li>
         </ul>
@@ -699,35 +690,29 @@ function generateContentTypeFriendlyName(type: ContentType_Enum) {
 }
 
 export async function uploadSendSubmissionRequestsHandler(
-    args: uploadSendSubmissionRequestsArgs,
-    userId: string
-): Promise<UploaderSendSubmissionRequestResult[]> {
-    const { uploaders, user } = await getUploadersAndUser(args.uploaderIds, userId);
-    assert(user.id);
+    data: SubmissionRequestEmailJobData
+): Promise<UploaderSendSubmissionRequestResult> {
+    const { uploader } = await getUploader(data.uploaderId);
 
     let ok = false;
     try {
-        const newEmails: Email_Insert_Input[] = uploaders.map((uploader) => {
-            const { htmlContents, plainTextContents } = generateEmailContents(uploader);
-            const contentTypeFriendlyName = generateContentTypeFriendlyName(
-                uploader.requiredContentItem.contentTypeName
-            );
-            return {
-                emailAddress: uploader.email,
-                htmlContents,
-                plainTextContents,
-                reason: "upload-request",
-                subject: `#${
-                    uploader.requiredContentItem.contentTypeName === "VIDEO_BROADCAST" ? "1" : "2"
-                } of 2, Clowdr submission request: ${contentTypeFriendlyName}`,
-            };
-        });
+        const { htmlContents, plainTextContents } = generateEmailContents(uploader);
+        const contentTypeFriendlyName = generateContentTypeFriendlyName(uploader.requiredContentItem.contentTypeName);
+        const newEmail: Email_Insert_Input = {
+            emailAddress: uploader.email,
+            htmlContents,
+            plainTextContents,
+            reason: "upload-request",
+            subject: `#${
+                uploader.requiredContentItem.contentTypeName === "VIDEO_BROADCAST" ? "1" : "2"
+            } of 2, Clowdr submission request: ${contentTypeFriendlyName}`,
+        };
 
         await apolloClient.mutate({
             mutation: InsertSubmissionRequestEmailsDocument,
             variables: {
-                emails: newEmails,
-                uploaderIds: uploaders.map((x) => x.id),
+                emails: [newEmail],
+                uploaderIds: [uploader.id],
             },
         });
 
@@ -736,5 +721,5 @@ export async function uploadSendSubmissionRequestsHandler(
         ok = false;
     }
 
-    return uploaders.map((x) => ({ uploaderId: x.id, sent: ok }));
+    return { uploaderId: data.uploaderId, sent: ok };
 }

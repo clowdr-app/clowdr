@@ -23,11 +23,12 @@ import {
     NumberInputField,
     NumberInputStepper,
     Text,
+    useToast,
 } from "@chakra-ui/react";
 import assert from "assert";
 import React, { useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { useSendSubmissionRequestsMutation } from "../../../../generated/graphql";
+import { useInsertSubmissionRequestEmailJobsMutation } from "../../../../generated/graphql";
 import CRUDTable, { CRUDTableProps, defaultStringFilter, FieldType, UpdateResult } from "../../../CRUDTable/CRUDTable";
 import isValidUUID from "../../../Utils/isValidUUID";
 import type { RequiredContentItemDescriptor, UploaderDescriptor } from "./Types";
@@ -35,10 +36,9 @@ import type { RequiredContentItemDescriptor, UploaderDescriptor } from "./Types"
 const UploaderCRUDTable = (props: Readonly<CRUDTableProps<UploaderDescriptor, "id">>) => CRUDTable(props);
 
 gql`
-    mutation SendSubmissionRequests($uploaderIds: [uuid!]!) {
-        uploadSendSubmissionRequests(uploaderIds: $uploaderIds) {
-            uploaderId
-            sent
+    mutation InsertSubmissionRequestEmailJobs($objs: [job_queues_SubmissionRequestEmailJob_insert_input!]!) {
+        insert_job_queues_SubmissionRequestEmailJob(objects: $objs) {
+            affected_rows
         }
     }
 `;
@@ -78,7 +78,8 @@ export default function UploadersModal({
         return results;
     }, [itemDesc.uploaders]);
 
-    const [sendSubmissionRequests, { loading: sendingRequestsLoading }] = useSendSubmissionRequestsMutation();
+    const [sendSubmissionRequests, { loading: sendingRequestsLoading }] = useInsertSubmissionRequestEmailJobsMutation();
+    const toast = useToast();
 
     return (
         <>
@@ -264,8 +265,18 @@ export default function UploadersModal({
                                                   action: async (uploaderIds) => {
                                                       await sendSubmissionRequests({
                                                           variables: {
-                                                              uploaderIds: Array.from(uploaderIds.values()),
+                                                              objs: Array.from(uploaderIds.values()).map(
+                                                                  (uploaderId) => ({
+                                                                      uploaderId,
+                                                                  })
+                                                              ),
                                                           },
+                                                      });
+                                                      toast({
+                                                          title: "Requests sent",
+                                                          duration: 3000,
+                                                          isClosable: true,
+                                                          status: "success",
                                                       });
                                                   },
                                                   enabledWhenNothingSelected: false,

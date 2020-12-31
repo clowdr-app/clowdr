@@ -78,13 +78,6 @@ type Mutation {
 }
 
 
-type Mutation {
-  uploadSendSubmissionRequests (
-    uploaderIds: [uuid]!
-  ): [UploaderSendSubmissionRequestResult!]!
-}
-
-
 
 
 input SampleInput {

@@ -31,7 +31,7 @@ import { router as mediaLiveRouter } from "./router/mediaLive";
 import { router as openshotRouter } from "./router/openshot";
 import { router as videoRenderJobRouter } from "./router/videoRenderJob";
 import { router as vonageRouter } from "./router/vonage";
-import { EmailData, InvitationEmailJobData, Payload } from "./types/hasura/event";
+import { EmailData, InvitationEmailJobData, Payload, SubmissionRequestEmailJobData } from "./types/hasura/event";
 
 type AuthenticatedRequest = Request & { userId: string };
 
@@ -192,19 +192,30 @@ app.post(
     }
 );
 
-app.post(
-    "/uploaders/sendSubmissionRequests",
-    jsonParser,
-    checkJwt,
-    checkUserScopes,
-    async (_req: Request, res: Response) => {
-        const req = _req as AuthenticatedRequest;
-        const params: uploadSendSubmissionRequestsArgs = req.body.input;
-        console.log("Uploaders/sendSubmissionRequests", params);
-        const result = await uploadSendSubmissionRequestsHandler(params, req.userId);
-        return res.json(result);
+app.post("/uploaders/sendSubmissionRequests", jsonParser, async (req: Request, res: Response) => {
+    if (is<Payload>(req.body)) {
+        try {
+            if (
+                req.body.trigger.name === "SubmissionRequestEmailJobCreated" &&
+                req.body.event.data.new &&
+                is<Payload<SubmissionRequestEmailJobData>>(req.body)
+            ) {
+                await uploadSendSubmissionRequestsHandler(req.body.event.data.new);
+            } else {
+                console.log(`Received unhandled payload: ${req.body.trigger.name}`);
+                res.status(400).json("Received unhandled payload");
+                return;
+            }
+        } catch (e) {
+            res.status(500).json("Failure while handling event");
+            return;
+        }
+        res.status(200).json("OK");
+    } else {
+        console.log("Received incorrect payload");
+        res.status(500).json("Unexpected payload");
     }
-);
+});
 
 const portNumber = process.env.PORT ? parseInt(process.env.PORT, 10) : 4000;
 export const server = app.listen(portNumber, function () {

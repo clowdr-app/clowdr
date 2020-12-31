@@ -15731,6 +15731,181 @@ export enum Job_Queues_InvitationEmailJob_Update_Column {
   UpdatedAt = 'updatedAt'
 }
 
+/** columns and relationships of "job_queues.SubmissionRequestEmailJob" */
+export type Job_Queues_SubmissionRequestEmailJob = {
+  readonly __typename?: 'job_queues_SubmissionRequestEmailJob';
+  readonly created_at: Scalars['timestamptz'];
+  readonly id: Scalars['uuid'];
+  readonly updated_at: Scalars['timestamptz'];
+  /** An object relationship */
+  readonly uploader: Uploader;
+  readonly uploaderId: Scalars['uuid'];
+};
+
+/** aggregated selection of "job_queues.SubmissionRequestEmailJob" */
+export type Job_Queues_SubmissionRequestEmailJob_Aggregate = {
+  readonly __typename?: 'job_queues_SubmissionRequestEmailJob_aggregate';
+  readonly aggregate?: Maybe<Job_Queues_SubmissionRequestEmailJob_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Job_Queues_SubmissionRequestEmailJob>;
+};
+
+/** aggregate fields of "job_queues.SubmissionRequestEmailJob" */
+export type Job_Queues_SubmissionRequestEmailJob_Aggregate_Fields = {
+  readonly __typename?: 'job_queues_SubmissionRequestEmailJob_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Job_Queues_SubmissionRequestEmailJob_Max_Fields>;
+  readonly min?: Maybe<Job_Queues_SubmissionRequestEmailJob_Min_Fields>;
+};
+
+
+/** aggregate fields of "job_queues.SubmissionRequestEmailJob" */
+export type Job_Queues_SubmissionRequestEmailJob_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Job_Queues_SubmissionRequestEmailJob_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "job_queues.SubmissionRequestEmailJob" */
+export type Job_Queues_SubmissionRequestEmailJob_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Job_Queues_SubmissionRequestEmailJob_Max_Order_By>;
+  readonly min?: Maybe<Job_Queues_SubmissionRequestEmailJob_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "job_queues.SubmissionRequestEmailJob" */
+export type Job_Queues_SubmissionRequestEmailJob_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Job_Queues_SubmissionRequestEmailJob_Insert_Input>;
+  readonly on_conflict?: Maybe<Job_Queues_SubmissionRequestEmailJob_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "job_queues.SubmissionRequestEmailJob". All fields are combined with a logical 'AND'. */
+export type Job_Queues_SubmissionRequestEmailJob_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Job_Queues_SubmissionRequestEmailJob_Bool_Exp>>>;
+  readonly _not?: Maybe<Job_Queues_SubmissionRequestEmailJob_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Job_Queues_SubmissionRequestEmailJob_Bool_Exp>>>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly uploader?: Maybe<Uploader_Bool_Exp>;
+  readonly uploaderId?: Maybe<Uuid_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "job_queues.SubmissionRequestEmailJob" */
+export enum Job_Queues_SubmissionRequestEmailJob_Constraint {
+  /** unique or primary key constraint */
+  SubmissionRequestEmailJobPkey = 'SubmissionRequestEmailJob_pkey'
+}
+
+/** input type for inserting data into table "job_queues.SubmissionRequestEmailJob" */
+export type Job_Queues_SubmissionRequestEmailJob_Insert_Input = {
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly uploader?: Maybe<Uploader_Obj_Rel_Insert_Input>;
+  readonly uploaderId?: Maybe<Scalars['uuid']>;
+};
+
+/** aggregate max on columns */
+export type Job_Queues_SubmissionRequestEmailJob_Max_Fields = {
+  readonly __typename?: 'job_queues_SubmissionRequestEmailJob_max_fields';
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly uploaderId?: Maybe<Scalars['uuid']>;
+};
+
+/** order by max() on columns of table "job_queues.SubmissionRequestEmailJob" */
+export type Job_Queues_SubmissionRequestEmailJob_Max_Order_By = {
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+  readonly uploaderId?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Job_Queues_SubmissionRequestEmailJob_Min_Fields = {
+  readonly __typename?: 'job_queues_SubmissionRequestEmailJob_min_fields';
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly uploaderId?: Maybe<Scalars['uuid']>;
+};
+
+/** order by min() on columns of table "job_queues.SubmissionRequestEmailJob" */
+export type Job_Queues_SubmissionRequestEmailJob_Min_Order_By = {
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+  readonly uploaderId?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "job_queues.SubmissionRequestEmailJob" */
+export type Job_Queues_SubmissionRequestEmailJob_Mutation_Response = {
+  readonly __typename?: 'job_queues_SubmissionRequestEmailJob_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Job_Queues_SubmissionRequestEmailJob>;
+};
+
+/** input type for inserting object relation for remote table "job_queues.SubmissionRequestEmailJob" */
+export type Job_Queues_SubmissionRequestEmailJob_Obj_Rel_Insert_Input = {
+  readonly data: Job_Queues_SubmissionRequestEmailJob_Insert_Input;
+  readonly on_conflict?: Maybe<Job_Queues_SubmissionRequestEmailJob_On_Conflict>;
+};
+
+/** on conflict condition type for table "job_queues.SubmissionRequestEmailJob" */
+export type Job_Queues_SubmissionRequestEmailJob_On_Conflict = {
+  readonly constraint: Job_Queues_SubmissionRequestEmailJob_Constraint;
+  readonly update_columns: ReadonlyArray<Job_Queues_SubmissionRequestEmailJob_Update_Column>;
+  readonly where?: Maybe<Job_Queues_SubmissionRequestEmailJob_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "job_queues.SubmissionRequestEmailJob" */
+export type Job_Queues_SubmissionRequestEmailJob_Order_By = {
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+  readonly uploader?: Maybe<Uploader_Order_By>;
+  readonly uploaderId?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "job_queues.SubmissionRequestEmailJob" */
+export type Job_Queues_SubmissionRequestEmailJob_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "job_queues.SubmissionRequestEmailJob" */
+export enum Job_Queues_SubmissionRequestEmailJob_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  UploaderId = 'uploaderId'
+}
+
+/** input type for updating data in table "job_queues.SubmissionRequestEmailJob" */
+export type Job_Queues_SubmissionRequestEmailJob_Set_Input = {
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly uploaderId?: Maybe<Scalars['uuid']>;
+};
+
+/** update columns of table "job_queues.SubmissionRequestEmailJob" */
+export enum Job_Queues_SubmissionRequestEmailJob_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  UploaderId = 'uploaderId'
+}
+
 
 /** expression to compare columns of type json. All fields are combined with logical 'AND'. */
 export type Json_Comparison_Exp = {
@@ -15996,6 +16171,10 @@ export type Mutation_Root = {
   readonly delete_job_queues_InvitationEmailJob?: Maybe<Job_Queues_InvitationEmailJob_Mutation_Response>;
   /** delete single row from the table: "job_queues.InvitationEmailJob" */
   readonly delete_job_queues_InvitationEmailJob_by_pk?: Maybe<Job_Queues_InvitationEmailJob>;
+  /** delete data from the table: "job_queues.SubmissionRequestEmailJob" */
+  readonly delete_job_queues_SubmissionRequestEmailJob?: Maybe<Job_Queues_SubmissionRequestEmailJob_Mutation_Response>;
+  /** delete single row from the table: "job_queues.SubmissionRequestEmailJob" */
+  readonly delete_job_queues_SubmissionRequestEmailJob_by_pk?: Maybe<Job_Queues_SubmissionRequestEmailJob>;
   /** insert data into the table: "Attendee" */
   readonly insert_Attendee?: Maybe<Attendee_Mutation_Response>;
   /** insert a single row into the table: "Attendee" */
@@ -16220,6 +16399,10 @@ export type Mutation_Root = {
   readonly insert_job_queues_InvitationEmailJob?: Maybe<Job_Queues_InvitationEmailJob_Mutation_Response>;
   /** insert a single row into the table: "job_queues.InvitationEmailJob" */
   readonly insert_job_queues_InvitationEmailJob_one?: Maybe<Job_Queues_InvitationEmailJob>;
+  /** insert data into the table: "job_queues.SubmissionRequestEmailJob" */
+  readonly insert_job_queues_SubmissionRequestEmailJob?: Maybe<Job_Queues_SubmissionRequestEmailJob_Mutation_Response>;
+  /** insert a single row into the table: "job_queues.SubmissionRequestEmailJob" */
+  readonly insert_job_queues_SubmissionRequestEmailJob_one?: Maybe<Job_Queues_SubmissionRequestEmailJob>;
   /** perform the action: "invitationConfirmCurrent" */
   readonly invitationConfirmCurrent?: Maybe<ConfirmInvitationOutput>;
   /** perform the action: "invitationConfirmSendInitialEmail" */
@@ -16458,8 +16641,10 @@ export type Mutation_Root = {
   readonly update_job_queues_InvitationEmailJob?: Maybe<Job_Queues_InvitationEmailJob_Mutation_Response>;
   /** update single row of the table: "job_queues.InvitationEmailJob" */
   readonly update_job_queues_InvitationEmailJob_by_pk?: Maybe<Job_Queues_InvitationEmailJob>;
-  /** perform the action: "uploadSendSubmissionRequests" */
-  readonly uploadSendSubmissionRequests: ReadonlyArray<UploaderSendSubmissionRequestResult>;
+  /** update data of the table: "job_queues.SubmissionRequestEmailJob" */
+  readonly update_job_queues_SubmissionRequestEmailJob?: Maybe<Job_Queues_SubmissionRequestEmailJob_Mutation_Response>;
+  /** update single row of the table: "job_queues.SubmissionRequestEmailJob" */
+  readonly update_job_queues_SubmissionRequestEmailJob_by_pk?: Maybe<Job_Queues_SubmissionRequestEmailJob>;
 };
 
 
@@ -17131,6 +17316,18 @@ export type Mutation_RootDelete_Job_Queues_InvitationEmailJobArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Job_Queues_InvitationEmailJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Job_Queues_SubmissionRequestEmailJobArgs = {
+  where: Job_Queues_SubmissionRequestEmailJob_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Job_Queues_SubmissionRequestEmailJob_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -17916,6 +18113,20 @@ export type Mutation_RootInsert_Job_Queues_InvitationEmailJobArgs = {
 export type Mutation_RootInsert_Job_Queues_InvitationEmailJob_OneArgs = {
   object: Job_Queues_InvitationEmailJob_Insert_Input;
   on_conflict?: Maybe<Job_Queues_InvitationEmailJob_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Job_Queues_SubmissionRequestEmailJobArgs = {
+  objects: ReadonlyArray<Job_Queues_SubmissionRequestEmailJob_Insert_Input>;
+  on_conflict?: Maybe<Job_Queues_SubmissionRequestEmailJob_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Job_Queues_SubmissionRequestEmailJob_OneArgs = {
+  object: Job_Queues_SubmissionRequestEmailJob_Insert_Input;
+  on_conflict?: Maybe<Job_Queues_SubmissionRequestEmailJob_On_Conflict>;
 };
 
 
@@ -18859,8 +19070,16 @@ export type Mutation_RootUpdate_Job_Queues_InvitationEmailJob_By_PkArgs = {
 
 
 /** mutation root */
-export type Mutation_RootUploadSendSubmissionRequestsArgs = {
-  uploaderIds: ReadonlyArray<Maybe<Scalars['uuid']>>;
+export type Mutation_RootUpdate_Job_Queues_SubmissionRequestEmailJobArgs = {
+  _set?: Maybe<Job_Queues_SubmissionRequestEmailJob_Set_Input>;
+  where: Job_Queues_SubmissionRequestEmailJob_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Job_Queues_SubmissionRequestEmailJob_By_PkArgs = {
+  _set?: Maybe<Job_Queues_SubmissionRequestEmailJob_Set_Input>;
+  pk_columns: Job_Queues_SubmissionRequestEmailJob_Pk_Columns_Input;
 };
 
 /** column ordering options */
@@ -19224,6 +19443,12 @@ export type Query_Root = {
   readonly job_queues_InvitationEmailJob_aggregate: Job_Queues_InvitationEmailJob_Aggregate;
   /** fetch data from the table: "job_queues.InvitationEmailJob" using primary key columns */
   readonly job_queues_InvitationEmailJob_by_pk?: Maybe<Job_Queues_InvitationEmailJob>;
+  /** fetch data from the table: "job_queues.SubmissionRequestEmailJob" */
+  readonly job_queues_SubmissionRequestEmailJob: ReadonlyArray<Job_Queues_SubmissionRequestEmailJob>;
+  /** fetch aggregated fields from the table: "job_queues.SubmissionRequestEmailJob" */
+  readonly job_queues_SubmissionRequestEmailJob_aggregate: Job_Queues_SubmissionRequestEmailJob_Aggregate;
+  /** fetch data from the table: "job_queues.SubmissionRequestEmailJob" using primary key columns */
+  readonly job_queues_SubmissionRequestEmailJob_by_pk?: Maybe<Job_Queues_SubmissionRequestEmailJob>;
   /** perform the action: "protectedEcho" */
   readonly protectedEcho?: Maybe<ProtectedEchoOutput>;
 };
@@ -20704,6 +20929,32 @@ export type Query_RootJob_Queues_InvitationEmailJob_By_PkArgs = {
 
 
 /** query root */
+export type Query_RootJob_Queues_SubmissionRequestEmailJobArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_SubmissionRequestEmailJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_SubmissionRequestEmailJob_Order_By>>;
+  where?: Maybe<Job_Queues_SubmissionRequestEmailJob_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootJob_Queues_SubmissionRequestEmailJob_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_SubmissionRequestEmailJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_SubmissionRequestEmailJob_Order_By>>;
+  where?: Maybe<Job_Queues_SubmissionRequestEmailJob_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootJob_Queues_SubmissionRequestEmailJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
 export type Query_RootProtectedEchoArgs = {
   message: Scalars['String'];
 };
@@ -21053,6 +21304,12 @@ export type Subscription_Root = {
   readonly job_queues_InvitationEmailJob_aggregate: Job_Queues_InvitationEmailJob_Aggregate;
   /** fetch data from the table: "job_queues.InvitationEmailJob" using primary key columns */
   readonly job_queues_InvitationEmailJob_by_pk?: Maybe<Job_Queues_InvitationEmailJob>;
+  /** fetch data from the table: "job_queues.SubmissionRequestEmailJob" */
+  readonly job_queues_SubmissionRequestEmailJob: ReadonlyArray<Job_Queues_SubmissionRequestEmailJob>;
+  /** fetch aggregated fields from the table: "job_queues.SubmissionRequestEmailJob" */
+  readonly job_queues_SubmissionRequestEmailJob_aggregate: Job_Queues_SubmissionRequestEmailJob_Aggregate;
+  /** fetch data from the table: "job_queues.SubmissionRequestEmailJob" using primary key columns */
+  readonly job_queues_SubmissionRequestEmailJob_by_pk?: Maybe<Job_Queues_SubmissionRequestEmailJob>;
   /** perform the action: "protectedEcho" */
   readonly protectedEcho?: Maybe<ProtectedEchoOutput>;
 };
@@ -22533,6 +22790,32 @@ export type Subscription_RootJob_Queues_InvitationEmailJob_By_PkArgs = {
 
 
 /** subscription root */
+export type Subscription_RootJob_Queues_SubmissionRequestEmailJobArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_SubmissionRequestEmailJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_SubmissionRequestEmailJob_Order_By>>;
+  where?: Maybe<Job_Queues_SubmissionRequestEmailJob_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootJob_Queues_SubmissionRequestEmailJob_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_SubmissionRequestEmailJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_SubmissionRequestEmailJob_Order_By>>;
+  where?: Maybe<Job_Queues_SubmissionRequestEmailJob_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootJob_Queues_SubmissionRequestEmailJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
 export type Subscription_RootProtectedEchoArgs = {
   message: Scalars['String'];
 };
@@ -22655,12 +22938,12 @@ export type SelectContentGroupsQueryVariables = Exact<{
 
 export type SelectContentGroupsQuery = { readonly __typename?: 'query_root', readonly ContentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentItems: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly contentTypeName: ContentType_Enum, readonly data: any, readonly name: string }> }> };
 
-export type SendSubmissionRequestsMutationVariables = Exact<{
-  uploaderIds: ReadonlyArray<Scalars['uuid']>;
+export type InsertSubmissionRequestEmailJobsMutationVariables = Exact<{
+  objs: ReadonlyArray<Job_Queues_SubmissionRequestEmailJob_Insert_Input>;
 }>;
 
 
-export type SendSubmissionRequestsMutation = { readonly __typename?: 'mutation_root', readonly uploadSendSubmissionRequests: ReadonlyArray<{ readonly __typename?: 'UploaderSendSubmissionRequestResult', readonly uploaderId: any, readonly sent: boolean }> };
+export type InsertSubmissionRequestEmailJobsMutation = { readonly __typename?: 'mutation_root', readonly insert_job_queues_SubmissionRequestEmailJob?: Maybe<{ readonly __typename?: 'job_queues_SubmissionRequestEmailJob_mutation_response', readonly affected_rows: number }> };
 
 export type UploaderInfoFragment = { readonly __typename?: 'Uploader', readonly id: any, readonly conferenceId: any, readonly email: string, readonly emailsSentCount: number, readonly name: string, readonly requiredContentItemId: any };
 
@@ -24133,39 +24416,38 @@ export function useSelectContentGroupsLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type SelectContentGroupsQueryHookResult = ReturnType<typeof useSelectContentGroupsQuery>;
 export type SelectContentGroupsLazyQueryHookResult = ReturnType<typeof useSelectContentGroupsLazyQuery>;
 export type SelectContentGroupsQueryResult = Apollo.QueryResult<SelectContentGroupsQuery, SelectContentGroupsQueryVariables>;
-export const SendSubmissionRequestsDocument = gql`
-    mutation SendSubmissionRequests($uploaderIds: [uuid!]!) {
-  uploadSendSubmissionRequests(uploaderIds: $uploaderIds) {
-    uploaderId
-    sent
+export const InsertSubmissionRequestEmailJobsDocument = gql`
+    mutation InsertSubmissionRequestEmailJobs($objs: [job_queues_SubmissionRequestEmailJob_insert_input!]!) {
+  insert_job_queues_SubmissionRequestEmailJob(objects: $objs) {
+    affected_rows
   }
 }
     `;
-export type SendSubmissionRequestsMutationFn = Apollo.MutationFunction<SendSubmissionRequestsMutation, SendSubmissionRequestsMutationVariables>;
+export type InsertSubmissionRequestEmailJobsMutationFn = Apollo.MutationFunction<InsertSubmissionRequestEmailJobsMutation, InsertSubmissionRequestEmailJobsMutationVariables>;
 
 /**
- * __useSendSubmissionRequestsMutation__
+ * __useInsertSubmissionRequestEmailJobsMutation__
  *
- * To run a mutation, you first call `useSendSubmissionRequestsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSendSubmissionRequestsMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useInsertSubmissionRequestEmailJobsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInsertSubmissionRequestEmailJobsMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [sendSubmissionRequestsMutation, { data, loading, error }] = useSendSubmissionRequestsMutation({
+ * const [insertSubmissionRequestEmailJobsMutation, { data, loading, error }] = useInsertSubmissionRequestEmailJobsMutation({
  *   variables: {
- *      uploaderIds: // value for 'uploaderIds'
+ *      objs: // value for 'objs'
  *   },
  * });
  */
-export function useSendSubmissionRequestsMutation(baseOptions?: Apollo.MutationHookOptions<SendSubmissionRequestsMutation, SendSubmissionRequestsMutationVariables>) {
-        return Apollo.useMutation<SendSubmissionRequestsMutation, SendSubmissionRequestsMutationVariables>(SendSubmissionRequestsDocument, baseOptions);
+export function useInsertSubmissionRequestEmailJobsMutation(baseOptions?: Apollo.MutationHookOptions<InsertSubmissionRequestEmailJobsMutation, InsertSubmissionRequestEmailJobsMutationVariables>) {
+        return Apollo.useMutation<InsertSubmissionRequestEmailJobsMutation, InsertSubmissionRequestEmailJobsMutationVariables>(InsertSubmissionRequestEmailJobsDocument, baseOptions);
       }
-export type SendSubmissionRequestsMutationHookResult = ReturnType<typeof useSendSubmissionRequestsMutation>;
-export type SendSubmissionRequestsMutationResult = Apollo.MutationResult<SendSubmissionRequestsMutation>;
-export type SendSubmissionRequestsMutationOptions = Apollo.BaseMutationOptions<SendSubmissionRequestsMutation, SendSubmissionRequestsMutationVariables>;
+export type InsertSubmissionRequestEmailJobsMutationHookResult = ReturnType<typeof useInsertSubmissionRequestEmailJobsMutation>;
+export type InsertSubmissionRequestEmailJobsMutationResult = Apollo.MutationResult<InsertSubmissionRequestEmailJobsMutation>;
+export type InsertSubmissionRequestEmailJobsMutationOptions = Apollo.BaseMutationOptions<InsertSubmissionRequestEmailJobsMutation, InsertSubmissionRequestEmailJobsMutationVariables>;
 export const SelectAllContentDocument = gql`
     query SelectAllContent($conferenceId: uuid!) {
   ContentGroup(where: {conferenceId: {_eq: $conferenceId}}) {

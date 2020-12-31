@@ -76,6 +76,10 @@ export interface InvitationEmailJobData extends BaseData {
     attendeeIds: string[];
 }
 
+export interface SubmissionRequestEmailJobData extends BaseData {
+    uploaderId: string;
+}
+
 export interface ConferencePrepareJobData extends BaseData {
     jobStatusName: JobStatus_Enum;
     conferenceId: string;

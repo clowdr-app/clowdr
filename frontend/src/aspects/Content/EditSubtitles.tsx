@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Box, Spinner, useToast } from "@chakra-ui/react";
+import { Box, Center, Spinner, useToast } from "@chakra-ui/react";
 import type { SubtitleDetails } from "@clowdr-app/shared-types/build/content";
 import AmazonS3Uri from "amazon-s3-uri";
 import assert from "assert";
@@ -47,6 +47,9 @@ export default function EditSubtitles({
     ) : (
         <Box color="black">
             <UnsavedChangesWarning hasUnsavedChanges={hasUnsavedChanges} />
+            <Center as="p" mb={4} mt={4} fontSize="110%">
+                You should keep to only 1 line per timecode, and at most 80 characters per line.
+            </Center>
             <TranscriptEditor
                 srtTranscript={subtitlesData}
                 mediaUrl={videoUrl}

@@ -1,3 +1,5 @@
+import { is } from "typescript-is";
+
 export enum ContentRole {
     Author = "AUTHOR",
     Presenter = "PRESENTER",
@@ -50,6 +52,19 @@ export enum ContentType_Enum {
 }
 
 export type ContentItemDataBlob = ContentItemVersionData[];
+
+function isContentItemDataBlobInternal(data: any): boolean {
+    return is<ContentItemDataBlob>(data);
+}
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export function isContentItemDataBlob(data: any): boolean {
+    try {
+        return isContentItemDataBlobInternal(data);
+    } catch (e) {
+        return false;
+    }
+}
 
 export interface ContentItemVersionData {
     createdAt: number;
@@ -225,6 +240,7 @@ export interface VideoContentBlob extends BaseContentBlob {
     transcode?: TranscodeDetails;
     subtitles: Record<LanguageCode, SubtitleDetails>;
     broadcastTranscode?: BroadcastTranscodeDetails;
+    vimeoUpload?: string;
 }
 
 type LanguageCode = string;

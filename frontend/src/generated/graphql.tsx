@@ -22313,6 +22313,14 @@ export type GetEventVonageDetailsQueryVariables = Exact<{
 
 export type GetEventVonageDetailsQuery = { readonly __typename?: 'query_root', readonly Event_by_pk?: Maybe<{ readonly __typename?: 'Event', readonly id: any, readonly eventVonageSession?: Maybe<{ readonly __typename?: 'EventVonageSession', readonly sessionId: string, readonly id: any }> }> };
 
+export type SelectContentGroupsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  contentGroupIds: ReadonlyArray<Scalars['uuid']>;
+}>;
+
+
+export type SelectContentGroupsQuery = { readonly __typename?: 'query_root', readonly ContentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentItems: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly contentTypeName: ContentType_Enum, readonly data: any, readonly name: string }> }> };
+
 export type SendSubmissionRequestsMutationVariables = Exact<{
   uploaderIds: ReadonlyArray<Scalars['uuid']>;
 }>;
@@ -23751,6 +23759,51 @@ export function useGetEventVonageDetailsLazyQuery(baseOptions?: Apollo.LazyQuery
 export type GetEventVonageDetailsQueryHookResult = ReturnType<typeof useGetEventVonageDetailsQuery>;
 export type GetEventVonageDetailsLazyQueryHookResult = ReturnType<typeof useGetEventVonageDetailsLazyQuery>;
 export type GetEventVonageDetailsQueryResult = Apollo.QueryResult<GetEventVonageDetailsQuery, GetEventVonageDetailsQueryVariables>;
+export const SelectContentGroupsDocument = gql`
+    query SelectContentGroups($conferenceId: uuid!, $contentGroupIds: [uuid!]!) {
+  ContentGroup(
+    where: {conferenceId: {_eq: $conferenceId}, id: {_in: $contentGroupIds}}
+  ) {
+    contentItems(
+      where: {contentTypeName: {_in: [VIDEO_BROADCAST, VIDEO_PREPUBLISH]}}
+    ) {
+      id
+      contentTypeName
+      data
+      name
+    }
+    id
+    title
+  }
+}
+    `;
+
+/**
+ * __useSelectContentGroupsQuery__
+ *
+ * To run a query within a React component, call `useSelectContentGroupsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectContentGroupsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectContentGroupsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      contentGroupIds: // value for 'contentGroupIds'
+ *   },
+ * });
+ */
+export function useSelectContentGroupsQuery(baseOptions: Apollo.QueryHookOptions<SelectContentGroupsQuery, SelectContentGroupsQueryVariables>) {
+        return Apollo.useQuery<SelectContentGroupsQuery, SelectContentGroupsQueryVariables>(SelectContentGroupsDocument, baseOptions);
+      }
+export function useSelectContentGroupsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectContentGroupsQuery, SelectContentGroupsQueryVariables>) {
+          return Apollo.useLazyQuery<SelectContentGroupsQuery, SelectContentGroupsQueryVariables>(SelectContentGroupsDocument, baseOptions);
+        }
+export type SelectContentGroupsQueryHookResult = ReturnType<typeof useSelectContentGroupsQuery>;
+export type SelectContentGroupsLazyQueryHookResult = ReturnType<typeof useSelectContentGroupsLazyQuery>;
+export type SelectContentGroupsQueryResult = Apollo.QueryResult<SelectContentGroupsQuery, SelectContentGroupsQueryVariables>;
 export const SendSubmissionRequestsDocument = gql`
     mutation SendSubmissionRequests($uploaderIds: [uuid!]!) {
   uploadSendSubmissionRequests(uploaderIds: $uploaderIds) {

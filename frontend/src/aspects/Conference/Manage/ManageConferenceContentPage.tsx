@@ -45,6 +45,7 @@ import { deepCloneContentGroupDescriptor } from "./Content/Functions";
 import ManageHallwaysModal from "./Content/ManageHallwaysModal";
 import ManagePeopleModal from "./Content/ManagePeopleModal";
 import ManageTagsModal from "./Content/ManageTagsModal";
+import PublishVideosModal from "./Content/PublishVideosModal";
 import { fitGroupToTemplate, GroupTemplates, ItemBaseTemplates } from "./Content/Templates";
 import type {
     ContentDescriptor,
@@ -304,6 +305,13 @@ export default function ManageConferenceContentPage(): JSX.Element {
     const { isOpen: hallwaysModalOpen, onOpen: onHallwaysModalOpen, onClose: onHallwaysModalClose } = useDisclosure();
     const [editedHallwaysIds, setEditedHallwaysIds] = useState<Set<string>>(new Set());
 
+    const {
+        isOpen: publishVideosModalOpen,
+        onOpen: onPublishVideosModalOpen,
+        onClose: onPublishVideosModalClose,
+    } = useDisclosure();
+    const [publishVideosIds, setPublishVideosIds] = useState<Set<string>>(new Set());
+
     const toast = useToast();
 
     return (
@@ -553,6 +561,20 @@ export default function ManageConferenceContentPage(): JSX.Element {
                         label: "Send submission requests",
                         text: "Send submission requests",
                     },
+                    {
+                        action: async (groupKeys) => {
+                            setPublishVideosIds(groupKeys);
+                            onPublishVideosModalOpen();
+                        },
+                        enabledWhenNothingSelected: false,
+                        enabledWhenDirty: false,
+                        tooltipWhenDisabled: "Save your changes to enable publishing videos",
+                        tooltipWhenEnabled: "Publish videos from the select items",
+                        colorScheme: "red",
+                        isRunning: false,
+                        label: "Publish videos",
+                        text: "Publish videos",
+                    },
                 ]}
             />
             <ManageTagsModal
@@ -732,6 +754,12 @@ export default function ManageConferenceContentPage(): JSX.Element {
                         });
                     }
                 }}
+            />
+            <PublishVideosModal
+                isOpen={publishVideosModalOpen}
+                onOpen={onPublishVideosModalOpen}
+                onClose={onPublishVideosModalClose}
+                contentGroupIds={publishVideosIds}
             />
         </RequireAtLeastOnePermissionWrapper>
     );

@@ -1,4 +1,4 @@
-import { ContentBaseType } from "@clowdr-app/shared-types/build/content";
+import { ContentBaseType, ContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
 import { ContentType_Enum } from "../../../../generated/graphql";
 import type { ContentGroupDescriptor } from "./Types";
@@ -20,21 +20,49 @@ export function readyToPublishVideos(contentGroup: ContentGroupDescriptor): bool
         return false;
     }
 
-    const itemsWithoutPreviewTranscode = contentGroup.items
+    const unpublishableItems = contentGroup.items
         .filter((item) => videoContentTypes.includes(item.typeName))
-        .map((item) => R.last(item.data))
-        .filter(
-            (latestVersion) =>
-                latestVersion &&
-                videoContentTypes.includes(latestVersion.data.type) &&
-                latestVersion.data.baseType === ContentBaseType.Video &&
-                !latestVersion.data.transcode
-        );
+        .filter((item) => contentItemPublishStateInternal(item.data) === ContentItemPublishState.NotPublishable);
 
-    if (itemsWithoutPreviewTranscode.length > 0) {
-        // There are still video items that do not have a preview transcode.
+    if (unpublishableItems.length > 0) {
+        // There are still video items that do not have a preview transcode and subtitles.
         return false;
     }
 
     return true;
+}
+
+export enum ContentItemPublishState {
+    Publishable,
+    AlreadyPublished,
+    NotPublishable,
+}
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export function contentItemPublishState(contentItemDataBlob: any): ContentItemPublishState {
+    // todo: determine if this is possible
+    // if (!isContentItemDataBlob(contentItemDataBlob)) {
+    //     return ContentItemPublishState.NotPublishable;
+    // }
+    return contentItemPublishStateInternal(contentItemDataBlob);
+}
+
+function contentItemPublishStateInternal(data: ContentItemDataBlob): ContentItemPublishState {
+    const latestVersion = R.last(data);
+
+    if (!latestVersion) {
+        return ContentItemPublishState.NotPublishable;
+    }
+
+    if (latestVersion.data.baseType !== ContentBaseType.Video) {
+        return ContentItemPublishState.NotPublishable;
+    }
+
+    if (latestVersion.data.vimeoUpload) {
+        return ContentItemPublishState.AlreadyPublished;
+    }
+
+    return latestVersion.data.transcode && Object.keys(latestVersion.data.subtitles).length > 0
+        ? ContentItemPublishState.Publishable
+        : ContentItemPublishState.NotPublishable;
 }

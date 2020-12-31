@@ -233,7 +233,7 @@ export interface VideoContentBlob extends BaseContentBlob {
     transcode?: TranscodeDetails;
     subtitles: Record<LanguageCode, SubtitleDetails>;
     broadcastTranscode?: BroadcastTranscodeDetails;
-    vimeoUpload?: string;
+    vimeoUpload?: VimeoPublishDetails;
 }
 
 type LanguageCode = string;
@@ -261,6 +261,10 @@ export interface TranscodeDetails {
 export interface BroadcastTranscodeDetails {
     s3Url?: string;
     updatedTimestamp: number;
+}
+
+export interface VimeoPublishDetails {
+    videoUri: string;
 }
 
 interface BaseContentBlob {

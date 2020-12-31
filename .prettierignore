@@ -2,7 +2,7 @@
 build
 coverage
 
-hasura
+/hasura
 frontend/src/generated/
 frontend/src/TranscriptEditor.js
 services/actions/src/generated/

@@ -29,6 +29,7 @@ import { router as eventRouter } from "./router/event";
 import { router as mediaConvertRouter } from "./router/mediaConvert";
 import { router as mediaLiveRouter } from "./router/mediaLive";
 import { router as openshotRouter } from "./router/openshot";
+import { router as publishVideoJobRouter } from "./router/publishVideoJob";
 import { router as videoRenderJobRouter } from "./router/videoRenderJob";
 import { router as vonageRouter } from "./router/vonage";
 import { EmailData, InvitationEmailJobData, Payload, SubmissionRequestEmailJobData } from "./types/hasura/event";
@@ -76,6 +77,7 @@ app.use("/conferencePrepareJob", conferencePrepareJobRouter);
 app.use("/videoRenderJob", videoRenderJobRouter);
 app.use("/broadcastContentItem", broadcastContentItemRouter);
 app.use("/event", eventRouter);
+app.use("/publishVideoJob", publishVideoJobRouter);
 
 app.use("/channels", channelsRouter);
 

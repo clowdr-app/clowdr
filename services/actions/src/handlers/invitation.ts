@@ -4,17 +4,19 @@ import crypto from "crypto";
 import { v4 as uuidv4 } from "uuid";
 import {
     AttendeeWithInvitePartsFragment,
+    DeleteInvitationEmailsJobDocument,
     Email_Insert_Input,
     InsertEmailsDocument,
     InvitationPartsFragment,
     InvitedUserPartsFragment,
+    SelectAttendeesWithInvitationDocument,
     SelectInvitationAndUserDocument,
-    SelectPermittedAttendeesWithInvitationDocument,
     SendFreshInviteConfirmationEmailDocument,
     SetAttendeeUserIdDocument,
     UpdateInvitationDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
+import { InvitationEmailJobData } from "../types/hasura/event";
 
 gql`
     mutation InsertEmails($objects: [Email_insert_input!]!) {
@@ -125,50 +127,27 @@ gql`
         userId
     }
 
-    query SelectPermittedAttendeesWithInvitation($attendeeIds: [uuid!]!, $userId: String!) {
-        Attendee(
-            where: {
-                id: { _in: $attendeeIds }
-                conference: {
-                    _or: [
-                        { createdBy: { _eq: $userId } }
-                        {
-                            groups: {
-                                groupAttendees: { attendee: { userId: { _eq: $userId } } }
-                                groupRoles: {
-                                    role: {
-                                        rolePermissions: {
-                                            permissionName: {
-                                                _in: [
-                                                    CONFERENCE_MANAGE_ATTENDEES
-                                                    CONFERENCE_MANAGE_GROUPS
-                                                    CONFERENCE_MANAGE_ROLES
-                                                ]
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    ]
-                }
-            }
-        ) {
+    query SelectAttendeesWithInvitation($attendeeIds: [uuid!]!) {
+        Attendee(where: { _and: [{ id: { _in: $attendeeIds } }, { userId: { _is_null: true } }] }) {
             ...AttendeeWithInviteParts
+        }
+    }
+
+    mutation DeleteInvitationEmailsJob($id: uuid!) {
+        delete_job_queues_InvitationEmailJob_by_pk(id: $id) {
+            id
         }
     }
 `;
 
 async function sendInviteEmails(
+    jobId: string,
     attendeeIds: Array<string>,
-    userId: string,
-    shouldSend: (attendee: AttendeeWithInvitePartsFragment) => boolean,
-    isReminder: boolean
+    shouldSend: (attendee: AttendeeWithInvitePartsFragment) => "INITIAL" | "REPEAT" | false
 ): Promise<Array<InvitationSendEmailResult>> {
     const attendees = await apolloClient.query({
-        query: SelectPermittedAttendeesWithInvitationDocument,
+        query: SelectAttendeesWithInvitationDocument,
         variables: {
-            userId,
             attendeeIds,
         },
     });
@@ -184,7 +163,8 @@ async function sendInviteEmails(
 
     for (const attendee of attendees.data.Attendee) {
         if (!attendee.userId && attendee.invitation) {
-            if (shouldSend(attendee)) {
+            const sendType = shouldSend(attendee);
+            if (sendType) {
                 const plainTextContents = `Dear ${attendee.displayName},
 
 You are invited to attend ${attendee.conference.name} on Clowdr: the virtual
@@ -219,7 +199,7 @@ received this email in error, please contact us via ${process.env.STOP_EMAILS_CO
                     emailAddress: attendee.invitation.invitedEmailAddress,
                     invitationId: attendee.invitation.id,
                     reason: "invite",
-                    subject: `Clowdr: ${isReminder ? "[Reminder] " : ""}Your invitation to ${
+                    subject: `Clowdr: ${sendType === "REPEAT" ? "[Reminder] " : ""}Your invitation to ${
                         attendee.conference.shortName
                     }`,
                     htmlContents,
@@ -237,6 +217,17 @@ received this email in error, please contact us via ${process.env.STOP_EMAILS_CO
     });
     for (const attendeeId of Array.from(emailsToSend.keys())) {
         results.set(attendeeId, true);
+    }
+
+    try {
+        await apolloClient.mutate({
+            mutation: DeleteInvitationEmailsJobDocument,
+            variables: {
+                id: jobId,
+            },
+        });
+    } catch (e) {
+        console.warn(`Failed to delete Invitation Email Job: ${jobId}`);
     }
 
     const output: Array<InvitationSendEmailResult> = [];
@@ -258,24 +249,17 @@ received this email in error, please contact us via ${process.env.STOP_EMAILS_CO
     return output;
 }
 
-export async function invitationSendInitialHandler(
-    args: invitationSendInitialEmailArgs,
-    userId: string
+export async function invitationSendInvitationsHandler(
+    data: InvitationEmailJobData
 ): Promise<Array<InvitationSendEmailResult>> {
-    return sendInviteEmails(
-        args.attendeeIds,
-        userId,
-        (attendee) =>
-            !!attendee.invitation && attendee.invitation.emails.filter((x) => x.reason === "invite").length === 0,
-        false
-    );
-}
-
-export async function invitationSendRepeatHandler(
-    args: invitationSendRepeatEmailArgs,
-    userId: string
-): Promise<Array<InvitationSendEmailResult>> {
-    return sendInviteEmails(args.attendeeIds, userId, (_attendee) => true, true);
+    return sendInviteEmails(data.id, data.attendeeIds, (attendee) => {
+        if (!!attendee.invitation && attendee.invitation.emails.filter((x) => x.reason === "invite").length === 0) {
+            return "INITIAL";
+        } else if (data.sendRepeat) {
+            return "REPEAT";
+        }
+        return false;
+    });
 }
 
 async function getInvitationAndUser(

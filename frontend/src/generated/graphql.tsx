@@ -15507,6 +15507,230 @@ export enum VideoRenderJob_Update_Column {
   UpdatedAt = 'updated_at'
 }
 
+/** columns and relationships of "job_queues.InvitationEmailJob" */
+export type Job_Queues_InvitationEmailJob = {
+  readonly __typename?: 'job_queues_InvitationEmailJob';
+  readonly attendeeIds: Scalars['jsonb'];
+  /** An object relationship */
+  readonly conference: Conference;
+  readonly conferenceId: Scalars['uuid'];
+  readonly createdAt: Scalars['timestamptz'];
+  readonly id: Scalars['uuid'];
+  readonly sendRepeat: Scalars['Boolean'];
+  readonly updatedAt: Scalars['timestamptz'];
+};
+
+
+/** columns and relationships of "job_queues.InvitationEmailJob" */
+export type Job_Queues_InvitationEmailJobAttendeeIdsArgs = {
+  path?: Maybe<Scalars['String']>;
+};
+
+/** aggregated selection of "job_queues.InvitationEmailJob" */
+export type Job_Queues_InvitationEmailJob_Aggregate = {
+  readonly __typename?: 'job_queues_InvitationEmailJob_aggregate';
+  readonly aggregate?: Maybe<Job_Queues_InvitationEmailJob_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Job_Queues_InvitationEmailJob>;
+};
+
+/** aggregate fields of "job_queues.InvitationEmailJob" */
+export type Job_Queues_InvitationEmailJob_Aggregate_Fields = {
+  readonly __typename?: 'job_queues_InvitationEmailJob_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Job_Queues_InvitationEmailJob_Max_Fields>;
+  readonly min?: Maybe<Job_Queues_InvitationEmailJob_Min_Fields>;
+};
+
+
+/** aggregate fields of "job_queues.InvitationEmailJob" */
+export type Job_Queues_InvitationEmailJob_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Job_Queues_InvitationEmailJob_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "job_queues.InvitationEmailJob" */
+export type Job_Queues_InvitationEmailJob_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Job_Queues_InvitationEmailJob_Max_Order_By>;
+  readonly min?: Maybe<Job_Queues_InvitationEmailJob_Min_Order_By>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Job_Queues_InvitationEmailJob_Append_Input = {
+  readonly attendeeIds?: Maybe<Scalars['jsonb']>;
+};
+
+/** input type for inserting array relation for remote table "job_queues.InvitationEmailJob" */
+export type Job_Queues_InvitationEmailJob_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Job_Queues_InvitationEmailJob_Insert_Input>;
+  readonly on_conflict?: Maybe<Job_Queues_InvitationEmailJob_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "job_queues.InvitationEmailJob". All fields are combined with a logical 'AND'. */
+export type Job_Queues_InvitationEmailJob_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Job_Queues_InvitationEmailJob_Bool_Exp>>>;
+  readonly _not?: Maybe<Job_Queues_InvitationEmailJob_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Job_Queues_InvitationEmailJob_Bool_Exp>>>;
+  readonly attendeeIds?: Maybe<Jsonb_Comparison_Exp>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly sendRepeat?: Maybe<Boolean_Comparison_Exp>;
+  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "job_queues.InvitationEmailJob" */
+export enum Job_Queues_InvitationEmailJob_Constraint {
+  /** unique or primary key constraint */
+  InvitationEmailJobsPkey = 'InvitationEmailJobs_pkey'
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Job_Queues_InvitationEmailJob_Delete_At_Path_Input = {
+  readonly attendeeIds?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Job_Queues_InvitationEmailJob_Delete_Elem_Input = {
+  readonly attendeeIds?: Maybe<Scalars['Int']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Job_Queues_InvitationEmailJob_Delete_Key_Input = {
+  readonly attendeeIds?: Maybe<Scalars['String']>;
+};
+
+/** input type for inserting data into table "job_queues.InvitationEmailJob" */
+export type Job_Queues_InvitationEmailJob_Insert_Input = {
+  readonly attendeeIds?: Maybe<Scalars['jsonb']>;
+  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly sendRepeat?: Maybe<Scalars['Boolean']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Job_Queues_InvitationEmailJob_Max_Fields = {
+  readonly __typename?: 'job_queues_InvitationEmailJob_max_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "job_queues.InvitationEmailJob" */
+export type Job_Queues_InvitationEmailJob_Max_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Job_Queues_InvitationEmailJob_Min_Fields = {
+  readonly __typename?: 'job_queues_InvitationEmailJob_min_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "job_queues.InvitationEmailJob" */
+export type Job_Queues_InvitationEmailJob_Min_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "job_queues.InvitationEmailJob" */
+export type Job_Queues_InvitationEmailJob_Mutation_Response = {
+  readonly __typename?: 'job_queues_InvitationEmailJob_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Job_Queues_InvitationEmailJob>;
+};
+
+/** input type for inserting object relation for remote table "job_queues.InvitationEmailJob" */
+export type Job_Queues_InvitationEmailJob_Obj_Rel_Insert_Input = {
+  readonly data: Job_Queues_InvitationEmailJob_Insert_Input;
+  readonly on_conflict?: Maybe<Job_Queues_InvitationEmailJob_On_Conflict>;
+};
+
+/** on conflict condition type for table "job_queues.InvitationEmailJob" */
+export type Job_Queues_InvitationEmailJob_On_Conflict = {
+  readonly constraint: Job_Queues_InvitationEmailJob_Constraint;
+  readonly update_columns: ReadonlyArray<Job_Queues_InvitationEmailJob_Update_Column>;
+  readonly where?: Maybe<Job_Queues_InvitationEmailJob_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "job_queues.InvitationEmailJob" */
+export type Job_Queues_InvitationEmailJob_Order_By = {
+  readonly attendeeIds?: Maybe<Order_By>;
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly sendRepeat?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "job_queues.InvitationEmailJob" */
+export type Job_Queues_InvitationEmailJob_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Job_Queues_InvitationEmailJob_Prepend_Input = {
+  readonly attendeeIds?: Maybe<Scalars['jsonb']>;
+};
+
+/** select columns of table "job_queues.InvitationEmailJob" */
+export enum Job_Queues_InvitationEmailJob_Select_Column {
+  /** column name */
+  AttendeeIds = 'attendeeIds',
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  SendRepeat = 'sendRepeat',
+  /** column name */
+  UpdatedAt = 'updatedAt'
+}
+
+/** input type for updating data in table "job_queues.InvitationEmailJob" */
+export type Job_Queues_InvitationEmailJob_Set_Input = {
+  readonly attendeeIds?: Maybe<Scalars['jsonb']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly sendRepeat?: Maybe<Scalars['Boolean']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "job_queues.InvitationEmailJob" */
+export enum Job_Queues_InvitationEmailJob_Update_Column {
+  /** column name */
+  AttendeeIds = 'attendeeIds',
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  SendRepeat = 'sendRepeat',
+  /** column name */
+  UpdatedAt = 'updatedAt'
+}
+
 
 /** expression to compare columns of type json. All fields are combined with logical 'AND'. */
 export type Json_Comparison_Exp = {
@@ -15768,6 +15992,10 @@ export type Mutation_Root = {
   readonly delete_VideoRenderJob?: Maybe<VideoRenderJob_Mutation_Response>;
   /** delete single row from the table: "VideoRenderJob" */
   readonly delete_VideoRenderJob_by_pk?: Maybe<VideoRenderJob>;
+  /** delete data from the table: "job_queues.InvitationEmailJob" */
+  readonly delete_job_queues_InvitationEmailJob?: Maybe<Job_Queues_InvitationEmailJob_Mutation_Response>;
+  /** delete single row from the table: "job_queues.InvitationEmailJob" */
+  readonly delete_job_queues_InvitationEmailJob_by_pk?: Maybe<Job_Queues_InvitationEmailJob>;
   /** insert data into the table: "Attendee" */
   readonly insert_Attendee?: Maybe<Attendee_Mutation_Response>;
   /** insert a single row into the table: "Attendee" */
@@ -15988,6 +16216,10 @@ export type Mutation_Root = {
   readonly insert_VideoRenderJob?: Maybe<VideoRenderJob_Mutation_Response>;
   /** insert a single row into the table: "VideoRenderJob" */
   readonly insert_VideoRenderJob_one?: Maybe<VideoRenderJob>;
+  /** insert data into the table: "job_queues.InvitationEmailJob" */
+  readonly insert_job_queues_InvitationEmailJob?: Maybe<Job_Queues_InvitationEmailJob_Mutation_Response>;
+  /** insert a single row into the table: "job_queues.InvitationEmailJob" */
+  readonly insert_job_queues_InvitationEmailJob_one?: Maybe<Job_Queues_InvitationEmailJob>;
   /** perform the action: "invitationConfirmCurrent" */
   readonly invitationConfirmCurrent?: Maybe<ConfirmInvitationOutput>;
   /** perform the action: "invitationConfirmSendInitialEmail" */
@@ -15996,10 +16228,6 @@ export type Mutation_Root = {
   readonly invitationConfirmSendRepeatEmail?: Maybe<InvitationConfirmationEmailOutput>;
   /** perform the action: "invitationConfirmWithCode" */
   readonly invitationConfirmWithCode?: Maybe<ConfirmInvitationOutput>;
-  /** perform the action: "invitationSendInitialEmail" */
-  readonly invitationSendInitialEmail: ReadonlyArray<InvitationSendEmailResult>;
-  /** perform the action: "invitationSendRepeatEmail" */
-  readonly invitationSendRepeatEmail: ReadonlyArray<InvitationSendEmailResult>;
   /** perform the action: "joinEventVonageSession" */
   readonly joinEventVonageSession?: Maybe<JoinEventVonageSessionOutput>;
   /** perform the action: "submitContentItem" */
@@ -16226,6 +16454,10 @@ export type Mutation_Root = {
   readonly update_VideoRenderJob?: Maybe<VideoRenderJob_Mutation_Response>;
   /** update single row of the table: "VideoRenderJob" */
   readonly update_VideoRenderJob_by_pk?: Maybe<VideoRenderJob>;
+  /** update data of the table: "job_queues.InvitationEmailJob" */
+  readonly update_job_queues_InvitationEmailJob?: Maybe<Job_Queues_InvitationEmailJob_Mutation_Response>;
+  /** update single row of the table: "job_queues.InvitationEmailJob" */
+  readonly update_job_queues_InvitationEmailJob_by_pk?: Maybe<Job_Queues_InvitationEmailJob>;
   /** perform the action: "uploadSendSubmissionRequests" */
   readonly uploadSendSubmissionRequests: ReadonlyArray<UploaderSendSubmissionRequestResult>;
 };
@@ -16887,6 +17119,18 @@ export type Mutation_RootDelete_VideoRenderJobArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_VideoRenderJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Job_Queues_InvitationEmailJobArgs = {
+  where: Job_Queues_InvitationEmailJob_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Job_Queues_InvitationEmailJob_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -17662,6 +17906,20 @@ export type Mutation_RootInsert_VideoRenderJob_OneArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_Job_Queues_InvitationEmailJobArgs = {
+  objects: ReadonlyArray<Job_Queues_InvitationEmailJob_Insert_Input>;
+  on_conflict?: Maybe<Job_Queues_InvitationEmailJob_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Job_Queues_InvitationEmailJob_OneArgs = {
+  object: Job_Queues_InvitationEmailJob_Insert_Input;
+  on_conflict?: Maybe<Job_Queues_InvitationEmailJob_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInvitationConfirmCurrentArgs = {
   inviteCode: Scalars['uuid'];
 };
@@ -17682,18 +17940,6 @@ export type Mutation_RootInvitationConfirmSendRepeatEmailArgs = {
 /** mutation root */
 export type Mutation_RootInvitationConfirmWithCodeArgs = {
   inviteInput: ConfirmInvitationInput;
-};
-
-
-/** mutation root */
-export type Mutation_RootInvitationSendInitialEmailArgs = {
-  attendeeIds: ReadonlyArray<Scalars['String']>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInvitationSendRepeatEmailArgs = {
-  attendeeIds: ReadonlyArray<Scalars['String']>;
 };
 
 
@@ -18589,6 +18835,30 @@ export type Mutation_RootUpdate_VideoRenderJob_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_Job_Queues_InvitationEmailJobArgs = {
+  _append?: Maybe<Job_Queues_InvitationEmailJob_Append_Input>;
+  _delete_at_path?: Maybe<Job_Queues_InvitationEmailJob_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<Job_Queues_InvitationEmailJob_Delete_Elem_Input>;
+  _delete_key?: Maybe<Job_Queues_InvitationEmailJob_Delete_Key_Input>;
+  _prepend?: Maybe<Job_Queues_InvitationEmailJob_Prepend_Input>;
+  _set?: Maybe<Job_Queues_InvitationEmailJob_Set_Input>;
+  where: Job_Queues_InvitationEmailJob_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Job_Queues_InvitationEmailJob_By_PkArgs = {
+  _append?: Maybe<Job_Queues_InvitationEmailJob_Append_Input>;
+  _delete_at_path?: Maybe<Job_Queues_InvitationEmailJob_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<Job_Queues_InvitationEmailJob_Delete_Elem_Input>;
+  _delete_key?: Maybe<Job_Queues_InvitationEmailJob_Delete_Key_Input>;
+  _prepend?: Maybe<Job_Queues_InvitationEmailJob_Prepend_Input>;
+  _set?: Maybe<Job_Queues_InvitationEmailJob_Set_Input>;
+  pk_columns: Job_Queues_InvitationEmailJob_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUploadSendSubmissionRequestsArgs = {
   uploaderIds: ReadonlyArray<Maybe<Scalars['uuid']>>;
 };
@@ -18948,6 +19218,12 @@ export type Query_Root = {
   readonly getContentItem?: Maybe<ReadonlyArray<Maybe<GetContentItemOutput>>>;
   /** perform the action: "getUploadAgreement" */
   readonly getUploadAgreement?: Maybe<GetUploadAgreementOutput>;
+  /** fetch data from the table: "job_queues.InvitationEmailJob" */
+  readonly job_queues_InvitationEmailJob: ReadonlyArray<Job_Queues_InvitationEmailJob>;
+  /** fetch aggregated fields from the table: "job_queues.InvitationEmailJob" */
+  readonly job_queues_InvitationEmailJob_aggregate: Job_Queues_InvitationEmailJob_Aggregate;
+  /** fetch data from the table: "job_queues.InvitationEmailJob" using primary key columns */
+  readonly job_queues_InvitationEmailJob_by_pk?: Maybe<Job_Queues_InvitationEmailJob>;
   /** perform the action: "protectedEcho" */
   readonly protectedEcho?: Maybe<ProtectedEchoOutput>;
 };
@@ -20402,6 +20678,32 @@ export type Query_RootGetUploadAgreementArgs = {
 
 
 /** query root */
+export type Query_RootJob_Queues_InvitationEmailJobArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_InvitationEmailJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_InvitationEmailJob_Order_By>>;
+  where?: Maybe<Job_Queues_InvitationEmailJob_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootJob_Queues_InvitationEmailJob_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_InvitationEmailJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_InvitationEmailJob_Order_By>>;
+  where?: Maybe<Job_Queues_InvitationEmailJob_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootJob_Queues_InvitationEmailJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
 export type Query_RootProtectedEchoArgs = {
   message: Scalars['String'];
 };
@@ -20745,6 +21047,12 @@ export type Subscription_Root = {
   readonly getContentItem?: Maybe<ReadonlyArray<Maybe<GetContentItemOutput>>>;
   /** perform the action: "getUploadAgreement" */
   readonly getUploadAgreement?: Maybe<GetUploadAgreementOutput>;
+  /** fetch data from the table: "job_queues.InvitationEmailJob" */
+  readonly job_queues_InvitationEmailJob: ReadonlyArray<Job_Queues_InvitationEmailJob>;
+  /** fetch aggregated fields from the table: "job_queues.InvitationEmailJob" */
+  readonly job_queues_InvitationEmailJob_aggregate: Job_Queues_InvitationEmailJob_Aggregate;
+  /** fetch data from the table: "job_queues.InvitationEmailJob" using primary key columns */
+  readonly job_queues_InvitationEmailJob_by_pk?: Maybe<Job_Queues_InvitationEmailJob>;
   /** perform the action: "protectedEcho" */
   readonly protectedEcho?: Maybe<ProtectedEchoOutput>;
 };
@@ -22199,6 +22507,32 @@ export type Subscription_RootGetUploadAgreementArgs = {
 
 
 /** subscription root */
+export type Subscription_RootJob_Queues_InvitationEmailJobArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_InvitationEmailJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_InvitationEmailJob_Order_By>>;
+  where?: Maybe<Job_Queues_InvitationEmailJob_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootJob_Queues_InvitationEmailJob_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_InvitationEmailJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_InvitationEmailJob_Order_By>>;
+  where?: Maybe<Job_Queues_InvitationEmailJob_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootJob_Queues_InvitationEmailJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
 export type Subscription_RootProtectedEchoArgs = {
   message: Scalars['String'];
 };
@@ -22714,19 +23048,14 @@ export type UpdateAttendeeMutation = { readonly __typename?: 'mutation_root', re
     & AttendeePartsFragment
   )>, readonly insert_GroupAttendee?: Maybe<{ readonly __typename?: 'GroupAttendee_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly id: any, readonly attendeeId: any, readonly groupId: any }> }>, readonly delete_GroupAttendee?: Maybe<{ readonly __typename?: 'GroupAttendee_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly id: any }> }> };
 
-export type SendInitialInviteEmailsMutationVariables = Exact<{
-  attendeeIds: ReadonlyArray<Scalars['String']>;
+export type InsertInvitationEmailJobsMutationVariables = Exact<{
+  attendeeIds: Scalars['jsonb'];
+  conferenceId: Scalars['uuid'];
+  sendRepeat: Scalars['Boolean'];
 }>;
 
 
-export type SendInitialInviteEmailsMutation = { readonly __typename?: 'mutation_root', readonly invitationSendInitialEmail: ReadonlyArray<{ readonly __typename?: 'InvitationSendEmailResult', readonly attendeeId: string, readonly sent: boolean }> };
-
-export type SendRepeatInviteEmailsMutationVariables = Exact<{
-  attendeeIds: ReadonlyArray<Scalars['String']>;
-}>;
-
-
-export type SendRepeatInviteEmailsMutation = { readonly __typename?: 'mutation_root', readonly invitationSendRepeatEmail: ReadonlyArray<{ readonly __typename?: 'InvitationSendEmailResult', readonly attendeeId: string, readonly sent: boolean }> };
+export type InsertInvitationEmailJobsMutation = { readonly __typename?: 'mutation_root', readonly insert_job_queues_InvitationEmailJob?: Maybe<{ readonly __typename?: 'job_queues_InvitationEmailJob_mutation_response', readonly affected_rows: number }> };
 
 export type SelectAllPermissionsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -25055,72 +25384,42 @@ export function useUpdateAttendeeMutation(baseOptions?: Apollo.MutationHookOptio
 export type UpdateAttendeeMutationHookResult = ReturnType<typeof useUpdateAttendeeMutation>;
 export type UpdateAttendeeMutationResult = Apollo.MutationResult<UpdateAttendeeMutation>;
 export type UpdateAttendeeMutationOptions = Apollo.BaseMutationOptions<UpdateAttendeeMutation, UpdateAttendeeMutationVariables>;
-export const SendInitialInviteEmailsDocument = gql`
-    mutation SendInitialInviteEmails($attendeeIds: [String!]!) {
-  invitationSendInitialEmail(attendeeIds: $attendeeIds) {
-    attendeeId
-    sent
+export const InsertInvitationEmailJobsDocument = gql`
+    mutation InsertInvitationEmailJobs($attendeeIds: jsonb!, $conferenceId: uuid!, $sendRepeat: Boolean!) {
+  insert_job_queues_InvitationEmailJob(
+    objects: [{attendeeIds: $attendeeIds, conferenceId: $conferenceId, sendRepeat: $sendRepeat}]
+  ) {
+    affected_rows
   }
 }
     `;
-export type SendInitialInviteEmailsMutationFn = Apollo.MutationFunction<SendInitialInviteEmailsMutation, SendInitialInviteEmailsMutationVariables>;
+export type InsertInvitationEmailJobsMutationFn = Apollo.MutationFunction<InsertInvitationEmailJobsMutation, InsertInvitationEmailJobsMutationVariables>;
 
 /**
- * __useSendInitialInviteEmailsMutation__
+ * __useInsertInvitationEmailJobsMutation__
  *
- * To run a mutation, you first call `useSendInitialInviteEmailsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSendInitialInviteEmailsMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useInsertInvitationEmailJobsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInsertInvitationEmailJobsMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [sendInitialInviteEmailsMutation, { data, loading, error }] = useSendInitialInviteEmailsMutation({
+ * const [insertInvitationEmailJobsMutation, { data, loading, error }] = useInsertInvitationEmailJobsMutation({
  *   variables: {
  *      attendeeIds: // value for 'attendeeIds'
+ *      conferenceId: // value for 'conferenceId'
+ *      sendRepeat: // value for 'sendRepeat'
  *   },
  * });
  */
-export function useSendInitialInviteEmailsMutation(baseOptions?: Apollo.MutationHookOptions<SendInitialInviteEmailsMutation, SendInitialInviteEmailsMutationVariables>) {
-        return Apollo.useMutation<SendInitialInviteEmailsMutation, SendInitialInviteEmailsMutationVariables>(SendInitialInviteEmailsDocument, baseOptions);
+export function useInsertInvitationEmailJobsMutation(baseOptions?: Apollo.MutationHookOptions<InsertInvitationEmailJobsMutation, InsertInvitationEmailJobsMutationVariables>) {
+        return Apollo.useMutation<InsertInvitationEmailJobsMutation, InsertInvitationEmailJobsMutationVariables>(InsertInvitationEmailJobsDocument, baseOptions);
       }
-export type SendInitialInviteEmailsMutationHookResult = ReturnType<typeof useSendInitialInviteEmailsMutation>;
-export type SendInitialInviteEmailsMutationResult = Apollo.MutationResult<SendInitialInviteEmailsMutation>;
-export type SendInitialInviteEmailsMutationOptions = Apollo.BaseMutationOptions<SendInitialInviteEmailsMutation, SendInitialInviteEmailsMutationVariables>;
-export const SendRepeatInviteEmailsDocument = gql`
-    mutation SendRepeatInviteEmails($attendeeIds: [String!]!) {
-  invitationSendRepeatEmail(attendeeIds: $attendeeIds) {
-    attendeeId
-    sent
-  }
-}
-    `;
-export type SendRepeatInviteEmailsMutationFn = Apollo.MutationFunction<SendRepeatInviteEmailsMutation, SendRepeatInviteEmailsMutationVariables>;
-
-/**
- * __useSendRepeatInviteEmailsMutation__
- *
- * To run a mutation, you first call `useSendRepeatInviteEmailsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSendRepeatInviteEmailsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [sendRepeatInviteEmailsMutation, { data, loading, error }] = useSendRepeatInviteEmailsMutation({
- *   variables: {
- *      attendeeIds: // value for 'attendeeIds'
- *   },
- * });
- */
-export function useSendRepeatInviteEmailsMutation(baseOptions?: Apollo.MutationHookOptions<SendRepeatInviteEmailsMutation, SendRepeatInviteEmailsMutationVariables>) {
-        return Apollo.useMutation<SendRepeatInviteEmailsMutation, SendRepeatInviteEmailsMutationVariables>(SendRepeatInviteEmailsDocument, baseOptions);
-      }
-export type SendRepeatInviteEmailsMutationHookResult = ReturnType<typeof useSendRepeatInviteEmailsMutation>;
-export type SendRepeatInviteEmailsMutationResult = Apollo.MutationResult<SendRepeatInviteEmailsMutation>;
-export type SendRepeatInviteEmailsMutationOptions = Apollo.BaseMutationOptions<SendRepeatInviteEmailsMutation, SendRepeatInviteEmailsMutationVariables>;
+export type InsertInvitationEmailJobsMutationHookResult = ReturnType<typeof useInsertInvitationEmailJobsMutation>;
+export type InsertInvitationEmailJobsMutationResult = Apollo.MutationResult<InsertInvitationEmailJobsMutation>;
+export type InsertInvitationEmailJobsMutationOptions = Apollo.BaseMutationOptions<InsertInvitationEmailJobsMutation, InsertInvitationEmailJobsMutationVariables>;
 export const SelectAllPermissionsDocument = gql`
     query SelectAllPermissions {
   Permission {

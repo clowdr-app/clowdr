@@ -8,10 +8,9 @@ import {
     Permission_Enum,
     UpdateAttendeeMutation,
     useCreateDeleteAttendeesMutation,
+    useInsertInvitationEmailJobsMutation,
     useSelectAllAttendeesQuery,
     useSelectAllGroupsQuery,
-    useSendInitialInviteEmailsMutation,
-    useSendRepeatInviteEmailsMutation,
     useUpdateAttendeeMutation,
 } from "../../../generated/graphql";
 import CRUDTable, {
@@ -106,17 +105,11 @@ gql`
         }
     }
 
-    mutation SendInitialInviteEmails($attendeeIds: [String!]!) {
-        invitationSendInitialEmail(attendeeIds: $attendeeIds) {
-            attendeeId
-            sent
-        }
-    }
-
-    mutation SendRepeatInviteEmails($attendeeIds: [String!]!) {
-        invitationSendRepeatEmail(attendeeIds: $attendeeIds) {
-            attendeeId
-            sent
+    mutation InsertInvitationEmailJobs($attendeeIds: jsonb!, $conferenceId: uuid!, $sendRepeat: Boolean!) {
+        insert_job_queues_InvitationEmailJob(
+            objects: [{ attendeeIds: $attendeeIds, conferenceId: $conferenceId, sendRepeat: $sendRepeat }]
+        ) {
+            affected_rows
         }
     }
 `;
@@ -325,8 +318,10 @@ export default function ManageConferencePeoplePage(): JSX.Element {
         return result;
     }, [allGroups?.Group]);
 
-    const [sendInitialEmailsMutation, { loading: sendInitialEmailsLoading }] = useSendInitialInviteEmailsMutation();
-    const [sendRepeatEmailsMutation, { loading: sendRepeatEmailsLoading }] = useSendRepeatInviteEmailsMutation();
+    const [
+        insertInvitationEmailJobsMutation,
+        { loading: insertInvitationEmailJobsLoading },
+    ] = useInsertInvitationEmailJobsMutation();
 
     const toast = useToast();
 
@@ -614,9 +609,11 @@ export default function ManageConferencePeoplePage(): JSX.Element {
                         tooltipWhenEnabled:
                             "Sends invitations to selected attendees who have not already been sent an invite.",
                         action: async (keys) => {
-                            const result = await sendInitialEmailsMutation({
+                            const result = await insertInvitationEmailJobsMutation({
                                 variables: {
                                     attendeeIds: Array.from(keys.values()),
+                                    conferenceId: conference.id,
+                                    sendRepeat: false,
                                 },
                             });
                             if (result.errors && result.errors.length > 0) {
@@ -636,7 +633,7 @@ export default function ManageConferencePeoplePage(): JSX.Element {
 
                             await refetchAllAttendees();
                         },
-                        isRunning: sendInitialEmailsLoading,
+                        isRunning: insertInvitationEmailJobsLoading,
                     },
                     {
                         text: "Send repeat invitations",
@@ -647,9 +644,11 @@ export default function ManageConferencePeoplePage(): JSX.Element {
                         tooltipWhenDisabled: "Save changes to enable sending invitations",
                         tooltipWhenEnabled: "Sends repeat invitations to all selected attendees.",
                         action: async (keys) => {
-                            const result = await sendRepeatEmailsMutation({
+                            const result = await insertInvitationEmailJobsMutation({
                                 variables: {
                                     attendeeIds: Array.from(keys.values()),
+                                    conferenceId: conference.id,
+                                    sendRepeat: true,
                                 },
                             });
                             if (result.errors && result.errors.length > 0) {
@@ -669,7 +668,7 @@ export default function ManageConferencePeoplePage(): JSX.Element {
 
                             await refetchAllAttendees();
                         },
-                        isRunning: sendRepeatEmailsLoading,
+                        isRunning: insertInvitationEmailJobsLoading,
                     },
                 ]}
             />

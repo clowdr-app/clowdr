@@ -71,26 +71,6 @@ actions:
       value_from_env: EVENT_SECRET
   permissions:
   - role: user
-- name: invitationSendInitialEmail
-  definition:
-    kind: synchronous
-    handler: '{{ACTION_BASE_URL}}/invitation/send/initial'
-    forward_client_headers: true
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
-  permissions:
-  - role: user
-- name: invitationSendRepeatEmail
-  definition:
-    kind: synchronous
-    handler: '{{ACTION_BASE_URL}}/invitation/send/repeat'
-    forward_client_headers: true
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
-  permissions:
-  - role: user
 - name: joinEventVonageSession
   definition:
     kind: synchronous

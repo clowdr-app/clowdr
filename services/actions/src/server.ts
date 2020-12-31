@@ -11,8 +11,7 @@ import {
     invitationConfirmSendInitialEmailHandler,
     invitationConfirmSendRepeatEmailHandler,
     invitationConfirmWithCodeHandler,
-    invitationSendInitialHandler,
-    invitationSendRepeatHandler,
+    invitationSendInvitationsHandler,
 } from "./handlers/invitation";
 import protectedEchoHandler from "./handlers/protectedEcho";
 import { uploadSendSubmissionRequestsHandler } from "./handlers/upload";
@@ -32,7 +31,7 @@ import { router as mediaLiveRouter } from "./router/mediaLive";
 import { router as openshotRouter } from "./router/openshot";
 import { router as videoRenderJobRouter } from "./router/videoRenderJob";
 import { router as vonageRouter } from "./router/vonage";
-import { EmailData, Payload } from "./types/hasura/event";
+import { EmailData, InvitationEmailJobData, Payload } from "./types/hasura/event";
 
 type AuthenticatedRequest = Request & { userId: string };
 
@@ -124,20 +123,29 @@ app.post("/emailCreated", jsonParser, async (req: Request, res: Response) => {
     }
 });
 
-app.post("/invitation/send/initial", jsonParser, checkJwt, checkUserScopes, async (_req: Request, res: Response) => {
-    const req = _req as AuthenticatedRequest;
-    const params: invitationSendInitialEmailArgs = req.body.input;
-    console.log("Invitation/send/initial", params);
-    const result = await invitationSendInitialHandler(params, req.userId);
-    return res.json(result);
-});
-
-app.post("/invitation/send/repeat", jsonParser, checkJwt, checkUserScopes, async (_req: Request, res: Response) => {
-    const req = _req as AuthenticatedRequest;
-    const params: invitationSendRepeatEmailArgs = req.body.input;
-    console.log("Invitation/send/repeat", params);
-    const result = await invitationSendRepeatHandler(params, req.userId);
-    return res.json(result);
+app.post("/invitationEmailJobCreated", jsonParser, async (req: Request, res: Response) => {
+    if (is<Payload>(req.body)) {
+        try {
+            if (
+                req.body.trigger.name === "InvitationEmailJobCreated" &&
+                req.body.event.data.new &&
+                is<Payload<InvitationEmailJobData>>(req.body)
+            ) {
+                await invitationSendInvitationsHandler(req.body.event.data.new);
+            } else {
+                console.log(`Received unhandled payload: ${req.body.trigger.name}`);
+                res.status(400).json("Received unhandled payload");
+                return;
+            }
+        } catch (e) {
+            res.status(500).json("Failure while handling event");
+            return;
+        }
+        res.status(200).json("OK");
+    } else {
+        console.log("Received incorrect payload");
+        res.status(500).json("Unexpected payload");
+    }
 });
 
 app.post("/invitation/confirm/current", jsonParser, checkJwt, checkUserScopes, async (_req: Request, res: Response) => {

@@ -1,4 +1,61 @@
 - table:
+    schema: job_queues
+    name: InvitationEmailJob
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
+  object_relationships:
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        conference:
+          _or:
+          - createdBy:
+              _eq: X-Hasura-User-Id
+          - groups:
+              _and:
+              - enabled:
+                  _eq: true
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      _or:
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_ROLES
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_GROUPS
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_ATTENDEES
+              - groupAttendees:
+                  attendee:
+                    userId:
+                      _eq: X-Hasura-User-Id
+      columns:
+      - attendeeIds
+      - conferenceId
+      - sendRepeat
+      backend_only: false
+  event_triggers:
+  - name: InvitationEmailJobCreated
+    definition:
+      enable_manual: true
+      insert:
+        columns: '*'
+    retry_conf:
+      num_retries: 3
+      interval_sec: 60
+      timeout_sec: 120
+    webhook: '{{ACTION_BASE_URL}}/invitationEmailJobCreated'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+- table:
     schema: public
     name: Attendee
   configuration:

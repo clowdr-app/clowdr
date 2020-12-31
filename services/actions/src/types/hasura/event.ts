@@ -70,6 +70,12 @@ export interface EmailData extends BaseData {
     subject: string;
 }
 
+export interface InvitationEmailJobData extends BaseData {
+    conferenceId: string;
+    sendRepeat: boolean;
+    attendeeIds: string[];
+}
+
 export interface ConferencePrepareJobData extends BaseData {
     jobStatusName: JobStatus_Enum;
     conferenceId: string;

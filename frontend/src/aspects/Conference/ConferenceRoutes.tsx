@@ -1,6 +1,7 @@
 import React from "react";
 import { Route, RouteComponentProps, Switch } from "react-router-dom";
 import PageNotFound from "../Errors/PageNotFound";
+import PageNotImplemented from "../Errors/PageNotImplemented";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import AttendeeLandingPage from "./Attend/AttendeeLandingPage";
 import RoomPage from "./Attend/Room/RoomPage";
@@ -53,6 +54,28 @@ function AuthenticatedConferenceRoutes(rootUrl: string): JSX.Element {
                     />
                     <Route path={`${rootUrl}/manage/broadcasts`}>
                         <ManageConferenceBroadcastPage />
+                    </Route>
+
+                    <Route path={`${rootUrl}/manage/export`}>
+                        <PageNotImplemented />
+                    </Route>
+                    <Route path={`${rootUrl}/manage/schedule`}>
+                        <PageNotImplemented />
+                    </Route>
+                    <Route path={`${rootUrl}/manage/rooms`}>
+                        <PageNotImplemented />
+                    </Route>
+                    <Route path={`${rootUrl}/manage/chats`}>
+                        <PageNotImplemented />
+                    </Route>
+                    <Route path={`${rootUrl}/manage/sponsors`}>
+                        <PageNotImplemented />
+                    </Route>
+                    <Route path={`${rootUrl}/manage/analytics`}>
+                        <PageNotImplemented />
+                    </Route>
+                    <Route path={`${rootUrl}/manage/support`}>
+                        <PageNotImplemented />
                     </Route>
 
                     <Route

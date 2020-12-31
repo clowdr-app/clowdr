@@ -598,7 +598,7 @@ function generateEmailContents(uploader: UploaderPartsFragment) {
     Please <a href="${url}">submit your content on this page</a>.
 </p>
 <p>
-    Please <a href="https://youtu.be/BABr0tlIbHs">watch this 4 minute instructional video</a> to learn how to use Clowdr's content upload system. This video also shows how to edit subtitles.
+    Please <a href="https://youtu.be/l0SqCISybqk">watch this 6 minute instructional video</a> to learn how to use Clowdr's content upload system. This video also shows how to edit subtitles.
 </p>
 <p>
     You should have received two emails (including this one) for the two separate videos you should

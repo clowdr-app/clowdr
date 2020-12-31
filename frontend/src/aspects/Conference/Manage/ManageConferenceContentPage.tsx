@@ -23,6 +23,8 @@ import {
     useSendSubmissionRequestsMutation,
 } from "../../../generated/graphql";
 import CRUDTable, {
+    BooleanFieldFormat,
+    BooleanFieldSpec,
     CRUDTableProps,
     defaultSelectFilter,
     defaultStringFilter,
@@ -38,6 +40,7 @@ import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWr
 import { useConference } from "../useConference";
 import ContentGroupHallwaysModal from "./Content/ContentGroupHallwaysModal";
 import ContentGroupPersonsModal from "./Content/ContentGroupPersonsModal";
+import { readyToPublishVideos } from "./Content/contentPublishing";
 import { deepCloneContentGroupDescriptor } from "./Content/Functions";
 import ManageHallwaysModal from "./Content/ManageHallwaysModal";
 import ManagePeopleModal from "./Content/ManagePeopleModal";
@@ -96,6 +99,16 @@ export default function ManageConferenceContentPage(): JSX.Element {
                   }))
                 : [],
         [allTagsMap]
+    );
+
+    const booleanFieldSpec: BooleanFieldSpec<boolean> = useMemo(
+        () => ({
+            fieldType: FieldType.boolean,
+            convertFromUI: (x) => x,
+            convertToUI: (x: boolean) => x,
+            format: BooleanFieldFormat.checkbox,
+        }),
+        []
     );
 
     const fields = useMemo(() => {
@@ -225,9 +238,18 @@ export default function ManageConferenceContentPage(): JSX.Element {
                     filter: defaultSelectFilter,
                 },
             },
+            readyToPublishVideos: {
+                heading: "Can publish?",
+                ariaLabel: "Can this content group be published?",
+                description: "Can this content group be published?",
+                isHidden: false,
+                isEditable: false,
+                extract: readyToPublishVideos,
+                spec: booleanFieldSpec,
+            },
         };
         return result;
-    }, [groupTypeOptions, tagOptions]);
+    }, [booleanFieldSpec, groupTypeOptions, tagOptions]);
 
     useEffect(() => {
         if (!saveContentDiff.loadingContent && !saveContentDiff.errorContent && saveContentDiff.originalContentGroups) {

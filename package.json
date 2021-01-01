@@ -45,5 +45,8 @@
     },
     "workspaces": [
         "shared"
-    ]
+    ],
+    "dependencies": {
+        "typescript-is": "^0.17.0"
+    }
 }

@@ -113,6 +113,7 @@ app.post("/emailCreated", jsonParser, async (req: Request, res: Response) => {
                 return;
             }
         } catch (e) {
+            console.error("Failure while handling event emailCreated", e);
             res.status(500).json("Failure while handling event");
             return;
         }
@@ -138,6 +139,7 @@ app.post("/invitationEmailJobCreated", jsonParser, async (req: Request, res: Res
                 return;
             }
         } catch (e) {
+            console.error("Failure while handling event invitationEmailJobCreated", e);
             res.status(500).json("Failure while handling event");
             return;
         }
@@ -207,6 +209,7 @@ app.post("/uploaders/sendSubmissionRequests", jsonParser, async (req: Request, r
                 return;
             }
         } catch (e) {
+            console.error("Failure while handling event sendSubmissionRequests", e);
             res.status(500).json("Failure while handling event");
             return;
         }

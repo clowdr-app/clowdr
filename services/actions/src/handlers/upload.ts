@@ -554,18 +554,6 @@ function generateEmailContents(uploader: UploaderPartsFragment) {
     // TODO: Make info like deadlines, max file sizes, tutorial video link, etc configurable
     const htmlContents = `<p>Dear ${uploader.name},</p>
 <p>
-    We would like to apologise if you have received multiple copies of these emails today.
-    As with all new software, there have been some bugs to iron out - in particular, our interaction with
-    our mail server.
-</p>
-<p>
-    This last set of emails include the name of the associated paper in the subject line. This will hopefully
-    enable you to distinguish the various request emails (and thus the submission links) more easily.
-</p>
-<p>
-    ----
-</p>
-<p>
     The organisers of ${uploader.conference.name} are requesting that you or
     your co-authors/co-presenters upload ${contentTypeFriendlyName} for
     "${uploader.requiredContentItem.contentGroup.title}".

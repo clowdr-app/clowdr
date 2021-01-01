@@ -2,7 +2,7 @@
 build
 coverage
 
-hasura
+/hasura
 frontend/src/generated/
 frontend/src/TranscriptEditor.js
 services/actions/src/generated/
@@ -14,3 +14,6 @@ aws/cdk.out/
 **/package-lock.json
 
 frontend/snowpack/
+node_modules/
+
+services/actions/src/lib/vimeoClient.ts

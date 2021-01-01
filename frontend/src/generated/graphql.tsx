@@ -15731,6 +15731,225 @@ export enum Job_Queues_InvitationEmailJob_Update_Column {
   UpdatedAt = 'updatedAt'
 }
 
+/** columns and relationships of "job_queues.PublishVideoJob" */
+export type Job_Queues_PublishVideoJob = {
+  readonly __typename?: 'job_queues_PublishVideoJob';
+  /** An object relationship */
+  readonly conference: Conference;
+  readonly conferenceId: Scalars['uuid'];
+  /** An object relationship */
+  readonly contentItem: ContentItem;
+  readonly contentItemId: Scalars['uuid'];
+  readonly createdAt: Scalars['timestamptz'];
+  readonly id: Scalars['uuid'];
+  readonly jobStatusName: Scalars['String'];
+  readonly updatedAt: Scalars['timestamptz'];
+  readonly vimeoVideoUrl?: Maybe<Scalars['String']>;
+};
+
+/** aggregated selection of "job_queues.PublishVideoJob" */
+export type Job_Queues_PublishVideoJob_Aggregate = {
+  readonly __typename?: 'job_queues_PublishVideoJob_aggregate';
+  readonly aggregate?: Maybe<Job_Queues_PublishVideoJob_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Job_Queues_PublishVideoJob>;
+};
+
+/** aggregate fields of "job_queues.PublishVideoJob" */
+export type Job_Queues_PublishVideoJob_Aggregate_Fields = {
+  readonly __typename?: 'job_queues_PublishVideoJob_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Job_Queues_PublishVideoJob_Max_Fields>;
+  readonly min?: Maybe<Job_Queues_PublishVideoJob_Min_Fields>;
+};
+
+
+/** aggregate fields of "job_queues.PublishVideoJob" */
+export type Job_Queues_PublishVideoJob_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Job_Queues_PublishVideoJob_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "job_queues.PublishVideoJob" */
+export type Job_Queues_PublishVideoJob_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Job_Queues_PublishVideoJob_Max_Order_By>;
+  readonly min?: Maybe<Job_Queues_PublishVideoJob_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "job_queues.PublishVideoJob" */
+export type Job_Queues_PublishVideoJob_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Job_Queues_PublishVideoJob_Insert_Input>;
+  readonly on_conflict?: Maybe<Job_Queues_PublishVideoJob_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "job_queues.PublishVideoJob". All fields are combined with a logical 'AND'. */
+export type Job_Queues_PublishVideoJob_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Job_Queues_PublishVideoJob_Bool_Exp>>>;
+  readonly _not?: Maybe<Job_Queues_PublishVideoJob_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Job_Queues_PublishVideoJob_Bool_Exp>>>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly contentItem?: Maybe<ContentItem_Bool_Exp>;
+  readonly contentItemId?: Maybe<Uuid_Comparison_Exp>;
+  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly jobStatusName?: Maybe<String_Comparison_Exp>;
+  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly vimeoVideoUrl?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "job_queues.PublishVideoJob" */
+export enum Job_Queues_PublishVideoJob_Constraint {
+  /** unique or primary key constraint */
+  PublishVideoJobPkey = 'PublishVideoJob_pkey'
+}
+
+/** input type for inserting data into table "job_queues.PublishVideoJob" */
+export type Job_Queues_PublishVideoJob_Insert_Input = {
+  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly contentItem?: Maybe<ContentItem_Obj_Rel_Insert_Input>;
+  readonly contentItemId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly jobStatusName?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly vimeoVideoUrl?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Job_Queues_PublishVideoJob_Max_Fields = {
+  readonly __typename?: 'job_queues_PublishVideoJob_max_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly contentItemId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly jobStatusName?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly vimeoVideoUrl?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "job_queues.PublishVideoJob" */
+export type Job_Queues_PublishVideoJob_Max_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly contentItemId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly jobStatusName?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly vimeoVideoUrl?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Job_Queues_PublishVideoJob_Min_Fields = {
+  readonly __typename?: 'job_queues_PublishVideoJob_min_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly contentItemId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly jobStatusName?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly vimeoVideoUrl?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "job_queues.PublishVideoJob" */
+export type Job_Queues_PublishVideoJob_Min_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly contentItemId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly jobStatusName?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly vimeoVideoUrl?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "job_queues.PublishVideoJob" */
+export type Job_Queues_PublishVideoJob_Mutation_Response = {
+  readonly __typename?: 'job_queues_PublishVideoJob_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Job_Queues_PublishVideoJob>;
+};
+
+/** input type for inserting object relation for remote table "job_queues.PublishVideoJob" */
+export type Job_Queues_PublishVideoJob_Obj_Rel_Insert_Input = {
+  readonly data: Job_Queues_PublishVideoJob_Insert_Input;
+  readonly on_conflict?: Maybe<Job_Queues_PublishVideoJob_On_Conflict>;
+};
+
+/** on conflict condition type for table "job_queues.PublishVideoJob" */
+export type Job_Queues_PublishVideoJob_On_Conflict = {
+  readonly constraint: Job_Queues_PublishVideoJob_Constraint;
+  readonly update_columns: ReadonlyArray<Job_Queues_PublishVideoJob_Update_Column>;
+  readonly where?: Maybe<Job_Queues_PublishVideoJob_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "job_queues.PublishVideoJob" */
+export type Job_Queues_PublishVideoJob_Order_By = {
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly contentItem?: Maybe<ContentItem_Order_By>;
+  readonly contentItemId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly jobStatusName?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly vimeoVideoUrl?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "job_queues.PublishVideoJob" */
+export type Job_Queues_PublishVideoJob_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "job_queues.PublishVideoJob" */
+export enum Job_Queues_PublishVideoJob_Select_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  ContentItemId = 'contentItemId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  JobStatusName = 'jobStatusName',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  VimeoVideoUrl = 'vimeoVideoUrl'
+}
+
+/** input type for updating data in table "job_queues.PublishVideoJob" */
+export type Job_Queues_PublishVideoJob_Set_Input = {
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly contentItemId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly jobStatusName?: Maybe<Scalars['String']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly vimeoVideoUrl?: Maybe<Scalars['String']>;
+};
+
+/** update columns of table "job_queues.PublishVideoJob" */
+export enum Job_Queues_PublishVideoJob_Update_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  ContentItemId = 'contentItemId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  JobStatusName = 'jobStatusName',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  VimeoVideoUrl = 'vimeoVideoUrl'
+}
+
 /** columns and relationships of "job_queues.SubmissionRequestEmailJob" */
 export type Job_Queues_SubmissionRequestEmailJob = {
   readonly __typename?: 'job_queues_SubmissionRequestEmailJob';
@@ -16171,6 +16390,10 @@ export type Mutation_Root = {
   readonly delete_job_queues_InvitationEmailJob?: Maybe<Job_Queues_InvitationEmailJob_Mutation_Response>;
   /** delete single row from the table: "job_queues.InvitationEmailJob" */
   readonly delete_job_queues_InvitationEmailJob_by_pk?: Maybe<Job_Queues_InvitationEmailJob>;
+  /** delete data from the table: "job_queues.PublishVideoJob" */
+  readonly delete_job_queues_PublishVideoJob?: Maybe<Job_Queues_PublishVideoJob_Mutation_Response>;
+  /** delete single row from the table: "job_queues.PublishVideoJob" */
+  readonly delete_job_queues_PublishVideoJob_by_pk?: Maybe<Job_Queues_PublishVideoJob>;
   /** delete data from the table: "job_queues.SubmissionRequestEmailJob" */
   readonly delete_job_queues_SubmissionRequestEmailJob?: Maybe<Job_Queues_SubmissionRequestEmailJob_Mutation_Response>;
   /** delete single row from the table: "job_queues.SubmissionRequestEmailJob" */
@@ -16399,6 +16622,10 @@ export type Mutation_Root = {
   readonly insert_job_queues_InvitationEmailJob?: Maybe<Job_Queues_InvitationEmailJob_Mutation_Response>;
   /** insert a single row into the table: "job_queues.InvitationEmailJob" */
   readonly insert_job_queues_InvitationEmailJob_one?: Maybe<Job_Queues_InvitationEmailJob>;
+  /** insert data into the table: "job_queues.PublishVideoJob" */
+  readonly insert_job_queues_PublishVideoJob?: Maybe<Job_Queues_PublishVideoJob_Mutation_Response>;
+  /** insert a single row into the table: "job_queues.PublishVideoJob" */
+  readonly insert_job_queues_PublishVideoJob_one?: Maybe<Job_Queues_PublishVideoJob>;
   /** insert data into the table: "job_queues.SubmissionRequestEmailJob" */
   readonly insert_job_queues_SubmissionRequestEmailJob?: Maybe<Job_Queues_SubmissionRequestEmailJob_Mutation_Response>;
   /** insert a single row into the table: "job_queues.SubmissionRequestEmailJob" */
@@ -16641,6 +16868,10 @@ export type Mutation_Root = {
   readonly update_job_queues_InvitationEmailJob?: Maybe<Job_Queues_InvitationEmailJob_Mutation_Response>;
   /** update single row of the table: "job_queues.InvitationEmailJob" */
   readonly update_job_queues_InvitationEmailJob_by_pk?: Maybe<Job_Queues_InvitationEmailJob>;
+  /** update data of the table: "job_queues.PublishVideoJob" */
+  readonly update_job_queues_PublishVideoJob?: Maybe<Job_Queues_PublishVideoJob_Mutation_Response>;
+  /** update single row of the table: "job_queues.PublishVideoJob" */
+  readonly update_job_queues_PublishVideoJob_by_pk?: Maybe<Job_Queues_PublishVideoJob>;
   /** update data of the table: "job_queues.SubmissionRequestEmailJob" */
   readonly update_job_queues_SubmissionRequestEmailJob?: Maybe<Job_Queues_SubmissionRequestEmailJob_Mutation_Response>;
   /** update single row of the table: "job_queues.SubmissionRequestEmailJob" */
@@ -17316,6 +17547,18 @@ export type Mutation_RootDelete_Job_Queues_InvitationEmailJobArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Job_Queues_InvitationEmailJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Job_Queues_PublishVideoJobArgs = {
+  where: Job_Queues_PublishVideoJob_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Job_Queues_PublishVideoJob_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -18113,6 +18356,20 @@ export type Mutation_RootInsert_Job_Queues_InvitationEmailJobArgs = {
 export type Mutation_RootInsert_Job_Queues_InvitationEmailJob_OneArgs = {
   object: Job_Queues_InvitationEmailJob_Insert_Input;
   on_conflict?: Maybe<Job_Queues_InvitationEmailJob_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Job_Queues_PublishVideoJobArgs = {
+  objects: ReadonlyArray<Job_Queues_PublishVideoJob_Insert_Input>;
+  on_conflict?: Maybe<Job_Queues_PublishVideoJob_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Job_Queues_PublishVideoJob_OneArgs = {
+  object: Job_Queues_PublishVideoJob_Insert_Input;
+  on_conflict?: Maybe<Job_Queues_PublishVideoJob_On_Conflict>;
 };
 
 
@@ -19070,6 +19327,20 @@ export type Mutation_RootUpdate_Job_Queues_InvitationEmailJob_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_Job_Queues_PublishVideoJobArgs = {
+  _set?: Maybe<Job_Queues_PublishVideoJob_Set_Input>;
+  where: Job_Queues_PublishVideoJob_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Job_Queues_PublishVideoJob_By_PkArgs = {
+  _set?: Maybe<Job_Queues_PublishVideoJob_Set_Input>;
+  pk_columns: Job_Queues_PublishVideoJob_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_Job_Queues_SubmissionRequestEmailJobArgs = {
   _set?: Maybe<Job_Queues_SubmissionRequestEmailJob_Set_Input>;
   where: Job_Queues_SubmissionRequestEmailJob_Bool_Exp;
@@ -19443,6 +19714,12 @@ export type Query_Root = {
   readonly job_queues_InvitationEmailJob_aggregate: Job_Queues_InvitationEmailJob_Aggregate;
   /** fetch data from the table: "job_queues.InvitationEmailJob" using primary key columns */
   readonly job_queues_InvitationEmailJob_by_pk?: Maybe<Job_Queues_InvitationEmailJob>;
+  /** fetch data from the table: "job_queues.PublishVideoJob" */
+  readonly job_queues_PublishVideoJob: ReadonlyArray<Job_Queues_PublishVideoJob>;
+  /** fetch aggregated fields from the table: "job_queues.PublishVideoJob" */
+  readonly job_queues_PublishVideoJob_aggregate: Job_Queues_PublishVideoJob_Aggregate;
+  /** fetch data from the table: "job_queues.PublishVideoJob" using primary key columns */
+  readonly job_queues_PublishVideoJob_by_pk?: Maybe<Job_Queues_PublishVideoJob>;
   /** fetch data from the table: "job_queues.SubmissionRequestEmailJob" */
   readonly job_queues_SubmissionRequestEmailJob: ReadonlyArray<Job_Queues_SubmissionRequestEmailJob>;
   /** fetch aggregated fields from the table: "job_queues.SubmissionRequestEmailJob" */
@@ -20929,6 +21206,32 @@ export type Query_RootJob_Queues_InvitationEmailJob_By_PkArgs = {
 
 
 /** query root */
+export type Query_RootJob_Queues_PublishVideoJobArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_PublishVideoJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_PublishVideoJob_Order_By>>;
+  where?: Maybe<Job_Queues_PublishVideoJob_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootJob_Queues_PublishVideoJob_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_PublishVideoJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_PublishVideoJob_Order_By>>;
+  where?: Maybe<Job_Queues_PublishVideoJob_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootJob_Queues_PublishVideoJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
 export type Query_RootJob_Queues_SubmissionRequestEmailJobArgs = {
   distinct_on?: Maybe<ReadonlyArray<Job_Queues_SubmissionRequestEmailJob_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -21304,6 +21607,12 @@ export type Subscription_Root = {
   readonly job_queues_InvitationEmailJob_aggregate: Job_Queues_InvitationEmailJob_Aggregate;
   /** fetch data from the table: "job_queues.InvitationEmailJob" using primary key columns */
   readonly job_queues_InvitationEmailJob_by_pk?: Maybe<Job_Queues_InvitationEmailJob>;
+  /** fetch data from the table: "job_queues.PublishVideoJob" */
+  readonly job_queues_PublishVideoJob: ReadonlyArray<Job_Queues_PublishVideoJob>;
+  /** fetch aggregated fields from the table: "job_queues.PublishVideoJob" */
+  readonly job_queues_PublishVideoJob_aggregate: Job_Queues_PublishVideoJob_Aggregate;
+  /** fetch data from the table: "job_queues.PublishVideoJob" using primary key columns */
+  readonly job_queues_PublishVideoJob_by_pk?: Maybe<Job_Queues_PublishVideoJob>;
   /** fetch data from the table: "job_queues.SubmissionRequestEmailJob" */
   readonly job_queues_SubmissionRequestEmailJob: ReadonlyArray<Job_Queues_SubmissionRequestEmailJob>;
   /** fetch aggregated fields from the table: "job_queues.SubmissionRequestEmailJob" */
@@ -22790,6 +23099,32 @@ export type Subscription_RootJob_Queues_InvitationEmailJob_By_PkArgs = {
 
 
 /** subscription root */
+export type Subscription_RootJob_Queues_PublishVideoJobArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_PublishVideoJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_PublishVideoJob_Order_By>>;
+  where?: Maybe<Job_Queues_PublishVideoJob_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootJob_Queues_PublishVideoJob_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_PublishVideoJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_PublishVideoJob_Order_By>>;
+  where?: Maybe<Job_Queues_PublishVideoJob_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootJob_Queues_PublishVideoJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
 export type Subscription_RootJob_Queues_SubmissionRequestEmailJobArgs = {
   distinct_on?: Maybe<ReadonlyArray<Job_Queues_SubmissionRequestEmailJob_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -22937,6 +23272,13 @@ export type SelectContentGroupsQueryVariables = Exact<{
 
 
 export type SelectContentGroupsQuery = { readonly __typename?: 'query_root', readonly ContentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentItems: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly contentTypeName: ContentType_Enum, readonly data: any, readonly name: string }> }> };
+
+export type InsertPublishVideoJobsMutationVariables = Exact<{
+  objects: ReadonlyArray<Job_Queues_PublishVideoJob_Insert_Input>;
+}>;
+
+
+export type InsertPublishVideoJobsMutation = { readonly __typename?: 'mutation_root', readonly insert_job_queues_PublishVideoJob?: Maybe<{ readonly __typename?: 'job_queues_PublishVideoJob_mutation_response', readonly affected_rows: number, readonly returning: ReadonlyArray<{ readonly __typename?: 'job_queues_PublishVideoJob', readonly id: any }> }> };
 
 export type InsertSubmissionRequestEmailJobsMutationVariables = Exact<{
   objs: ReadonlyArray<Job_Queues_SubmissionRequestEmailJob_Insert_Input>;
@@ -24416,6 +24758,41 @@ export function useSelectContentGroupsLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type SelectContentGroupsQueryHookResult = ReturnType<typeof useSelectContentGroupsQuery>;
 export type SelectContentGroupsLazyQueryHookResult = ReturnType<typeof useSelectContentGroupsLazyQuery>;
 export type SelectContentGroupsQueryResult = Apollo.QueryResult<SelectContentGroupsQuery, SelectContentGroupsQueryVariables>;
+export const InsertPublishVideoJobsDocument = gql`
+    mutation InsertPublishVideoJobs($objects: [job_queues_PublishVideoJob_insert_input!]!) {
+  insert_job_queues_PublishVideoJob(objects: $objects) {
+    affected_rows
+    returning {
+      id
+    }
+  }
+}
+    `;
+export type InsertPublishVideoJobsMutationFn = Apollo.MutationFunction<InsertPublishVideoJobsMutation, InsertPublishVideoJobsMutationVariables>;
+
+/**
+ * __useInsertPublishVideoJobsMutation__
+ *
+ * To run a mutation, you first call `useInsertPublishVideoJobsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInsertPublishVideoJobsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [insertPublishVideoJobsMutation, { data, loading, error }] = useInsertPublishVideoJobsMutation({
+ *   variables: {
+ *      objects: // value for 'objects'
+ *   },
+ * });
+ */
+export function useInsertPublishVideoJobsMutation(baseOptions?: Apollo.MutationHookOptions<InsertPublishVideoJobsMutation, InsertPublishVideoJobsMutationVariables>) {
+        return Apollo.useMutation<InsertPublishVideoJobsMutation, InsertPublishVideoJobsMutationVariables>(InsertPublishVideoJobsDocument, baseOptions);
+      }
+export type InsertPublishVideoJobsMutationHookResult = ReturnType<typeof useInsertPublishVideoJobsMutation>;
+export type InsertPublishVideoJobsMutationResult = Apollo.MutationResult<InsertPublishVideoJobsMutation>;
+export type InsertPublishVideoJobsMutationOptions = Apollo.BaseMutationOptions<InsertPublishVideoJobsMutation, InsertPublishVideoJobsMutationVariables>;
 export const InsertSubmissionRequestEmailJobsDocument = gql`
     mutation InsertSubmissionRequestEmailJobs($objs: [job_queues_SubmissionRequestEmailJob_insert_input!]!) {
   insert_job_queues_SubmissionRequestEmailJob(objects: $objs) {

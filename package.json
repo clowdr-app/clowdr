@@ -47,6 +47,8 @@
         "shared"
     ],
     "dependencies": {
+        "@types/ramda": "^0.27.34",
+        "ramda": "^0.27.1",
         "typescript-is": "^0.17.0"
     }
 }

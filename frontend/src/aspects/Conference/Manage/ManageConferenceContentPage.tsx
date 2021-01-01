@@ -241,8 +241,8 @@ export default function ManageConferenceContentPage(): JSX.Element {
             },
             readyToPublishVideos: {
                 heading: "Can publish?",
-                ariaLabel: "Can this content group be published?",
-                description: "Can this content group be published?",
+                ariaLabel: "Are all video items ready to publish?",
+                description: "Are all video items ready to publish?",
                 isHidden: false,
                 isEditable: false,
                 extract: readyToPublishVideos,

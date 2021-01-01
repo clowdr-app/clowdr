@@ -705,7 +705,9 @@ export async function uploadSendSubmissionRequestsHandler(
             reason: "upload-request",
             subject: `#${
                 uploader.requiredContentItem.contentTypeName === "VIDEO_BROADCAST" ? "1" : "2"
-            } of 2, Clowdr submission request: ${contentTypeFriendlyName}`,
+            } of 2, Clowdr submission request: ${contentTypeFriendlyName} for ${
+                uploader.requiredContentItem.contentGroup.title
+            }`,
         };
 
         await apolloClient.mutate({

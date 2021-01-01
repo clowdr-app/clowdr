@@ -560,7 +560,7 @@ function generateEmailContents(uploader: UploaderPartsFragment) {
 </p>
 <p>
     This last set of emails include the name of the associated paper in the subject line. This will hopefully
-    enable you to distinguish the variosu request emails (and thus the submission links) more easily.
+    enable you to distinguish the various request emails (and thus the submission links) more easily.
 </p>
 <p>
     ----

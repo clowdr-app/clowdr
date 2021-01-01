@@ -14,3 +14,6 @@ aws/cdk.out/
 **/package-lock.json
 
 frontend/snowpack/
+node_modules/
+
+services/actions/src/lib/vimeoClient.ts

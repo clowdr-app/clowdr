@@ -3,10 +3,8 @@ import { LanguageCode } from "@aws-sdk/client-transcribe";
 import { AWSJobStatus, VideoContentBlob } from "@clowdr-app/shared-types/build/content";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
-import getStream from "get-stream";
 import path from "path";
 import R from "ramda";
-import { Readable } from "stream";
 import { assertType, is } from "typescript-is";
 import { v4 as uuidv4 } from "uuid";
 import { S3, Transcribe } from "../aws/awsClient";
@@ -16,6 +14,7 @@ import {
     GetTranscriptionJobDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
+import { getS3TextObject } from "./aws/s3";
 import { getLatestVersion } from "./contentItem";
 import { AmazonTranscribeOutput, convertJsonToSrt } from "./subtitleConvert";
 
@@ -83,21 +82,8 @@ export async function completeTranscriptionJob(awsTranscribeJobName: string): Pr
     assert(bucket, "Could not parse bucket from S3 URI");
     assert(key, "Could not parse key from S3 URI");
 
-    const transcribeOutput = await S3.getObject({
-        Bucket: bucket,
-        Key: key,
-    });
-
-    assert(transcribeOutput.Body, "Could not get transcribe output from S3");
-
-    let transcriptJson;
-    if ("text" in transcribeOutput.Body && typeof transcribeOutput.Body.text === "function") {
-        transcriptJson = JSON.parse(await transcribeOutput.Body.text());
-    } else if (transcribeOutput.Body instanceof Readable) {
-        transcriptJson = JSON.parse(await getStream(transcribeOutput.Body));
-    } else {
-        throw new Error("Could not parse transcribe output from S3");
-    }
+    const transcriptText = await getS3TextObject(bucket, key);
+    const transcriptJson = await JSON.parse(transcriptText);
 
     assertType<AmazonTranscribeOutput>(transcriptJson);
 

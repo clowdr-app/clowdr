@@ -12,12 +12,13 @@ import {
     ModalOverlay,
     Spinner,
     Text,
+    useToast,
     VStack,
 } from "@chakra-ui/react";
 import { ContentItemPublishState, contentItemPublishState } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
-import React, { useEffect, useMemo, useState } from "react";
-import { useSelectContentGroupsQuery } from "../../../../generated/graphql";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useInsertPublishVideoJobsMutation, useSelectContentGroupsQuery } from "../../../../generated/graphql";
 import { useConference } from "../../useConference";
 
 interface Props {
@@ -38,6 +39,15 @@ gql`
             }
             id
             title
+        }
+    }
+
+    mutation InsertPublishVideoJobs($objects: [job_queues_PublishVideoJob_insert_input!]!) {
+        insert_job_queues_PublishVideoJob(objects: $objects) {
+            affected_rows
+            returning {
+                id
+            }
         }
     }
 `;
@@ -81,6 +91,18 @@ export default function PublishVideosModal({ isOpen, onClose, contentGroupIds }:
     }, [defaultCheckedItemIds]);
 
     const [checkedItemIds, setCheckedItemIds] = useState<string[]>(defaultCheckedItemIds);
+    const [publishing, setPublishing] = useState<boolean>(false);
+    const toast = useToast();
+
+    const [insertPublishVideoJobs] = useInsertPublishVideoJobsMutation();
+
+    const publishVideos = useCallback(async () => {
+        await insertPublishVideoJobs({
+            variables: {
+                objects: checkedItemIds.map((itemId) => ({ contentItemId: itemId, conferenceId: conference.id })),
+            },
+        });
+    }, [checkedItemIds, conference.id, insertPublishVideoJobs]);
 
     function publishStateToLabel(status: ContentItemPublishState): string {
         switch (status) {
@@ -138,9 +160,27 @@ export default function PublishVideosModal({ isOpen, onClose, contentGroupIds }:
                     </ModalBody>
                     <ModalFooter>
                         <Button
-                            onClick={() => {
-                                //todo
+                            onClick={async () => {
+                                try {
+                                    setPublishing(true);
+                                    await publishVideos();
+                                    toast({
+                                        description:
+                                            "Started publishing videos. They might take a few minutes to appear.",
+                                        status: "success",
+                                    });
+                                } catch (e) {
+                                    console.error("Error while publishing videos", e);
+                                    toast({
+                                        description: "Failed to start publishing videos. Please try again later.",
+                                        status: "error",
+                                    });
+                                } finally {
+                                    setPublishing(false);
+                                    onClose();
+                                }
                             }}
+                            isLoading={publishing}
                             colorScheme="green"
                             mt={5}
                         >

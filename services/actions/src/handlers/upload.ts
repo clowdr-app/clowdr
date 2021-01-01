@@ -555,7 +555,7 @@ function generateEmailContents(uploader: UploaderPartsFragment) {
     const htmlContents = `<p>Dear ${uploader.name},</p>
 <p>
     We would like to apologise if you have received multiple copies of these emails today.
-    As will all new software, there have been some bugs to iron out - in particular, our interaction with
+    As with all new software, there have been some bugs to iron out - in particular, our interaction with
     our mail server.
 </p>
 <p>

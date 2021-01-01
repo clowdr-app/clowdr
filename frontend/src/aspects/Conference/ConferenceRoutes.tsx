@@ -81,6 +81,13 @@ function AuthenticatedConferenceRoutes(rootUrl: string): JSX.Element {
                     </Route>
 
                     <Route
+                        path={`${rootUrl}/item/:contentGroupId`}
+                        component={(props: RouteComponentProps<{ contentGroupId: string }>) => (
+                            <ContentGroupPage contentGroupId={props.match.params.contentGroupId} />
+                        )}
+                    />
+
+                    <Route
                         path={`${rootUrl}/room/:roomId`}
                         component={(
                             props: RouteComponentProps<{
@@ -105,13 +112,6 @@ export default function ConferenceRoutes({ confSlug, rootUrl }: { confSlug: stri
                 <Route exact path={`${rootUrl}/`}>
                     <AttendeeLandingPage />
                 </Route>
-
-                <Route
-                    path={`${rootUrl}/item/:contentGroupId`}
-                    component={(props: RouteComponentProps<{ contentGroupId: string }>) => (
-                        <ContentGroupPage contentGroupId={props.match.params.contentGroupId} />
-                    )}
-                />
 
                 {AuthenticatedConferenceRoutes(rootUrl)}
 

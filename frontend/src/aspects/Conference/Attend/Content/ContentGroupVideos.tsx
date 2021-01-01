@@ -1,4 +1,4 @@
-import { Container, Heading } from "@chakra-ui/react";
+import { Box, Flex, Heading } from "@chakra-ui/react";
 import { assertIsContentItemDataBlob, VideoContentBlob } from "@clowdr-app/shared-types/build/content";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
@@ -21,11 +21,13 @@ export function ContentGroupVideos({ contentGroupData }: { contentGroupData: Con
 
                     if (latestVersion?.data.baseType === "video") {
                         return (
-                            <ContentGroupVideo
-                                key={contentItem.id}
-                                title={contentItem.name}
-                                videoContentItemData={latestVersion.data}
-                            />
+                            <Box flexGrow={1}>
+                                <ContentGroupVideo
+                                    key={contentItem.id}
+                                    title={contentItem.name}
+                                    videoContentItemData={latestVersion.data}
+                                />
+                            </Box>
                         );
                     } else {
                         return <></>;
@@ -35,7 +37,7 @@ export function ContentGroupVideos({ contentGroupData }: { contentGroupData: Con
                 }
             });
     }, [contentGroupData.contentItems]);
-    return <Container>{videoContentItems}</Container>;
+    return <Flex>{videoContentItems}</Flex>;
 }
 
 export function ContentGroupVideo({

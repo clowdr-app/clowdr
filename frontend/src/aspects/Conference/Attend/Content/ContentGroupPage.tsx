@@ -1,8 +1,10 @@
 import { gql } from "@apollo/client";
-import { Box } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import React from "react";
-import { GetContentGroupQuery, useGetContentGroupQuery } from "../../../../generated/graphql";
+import { ContentGroupDataFragment, Permission_Enum, useGetContentGroupQuery } from "../../../../generated/graphql";
+import PageNotFound from "../../../Errors/PageNotFound";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
+import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import ContentGroupSummary from "./ContentGroupSummary";
 import { ContentGroupVideos } from "./ContentGroupVideos";
 
@@ -34,24 +36,25 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
     });
 
     return (
-        <>
-            <ApolloQueryWrapper queryResult={result}>
-                {(data: GetContentGroupQuery) => {
+        <RequireAtLeastOnePermissionWrapper
+            componentIfDenied={<PageNotFound />}
+            permissions={[Permission_Enum.ConferenceView]}
+        >
+            <ApolloQueryWrapper queryResult={result} getter={(data) => data.ContentGroup_by_pk}>
+                {(contentGroupData: ContentGroupDataFragment) => {
                     return (
-                        <>
-                            {data.ContentGroup_by_pk ? (
-                                <Box textAlign="center">
-                                    <ContentGroupSummary contentGroupData={data.ContentGroup_by_pk} />
-                                    <ContentGroupVideos contentGroupData={data.ContentGroup_by_pk} />
-                                </Box>
-                            ) : (
-                                <></>
-                            )}
-                            {/* {contentItems} */}
-                        </>
+                        <Flex width="100%" height="100%">
+                            <Box textAlign="center" flexGrow={1} overflowY="auto">
+                                <ContentGroupVideos contentGroupData={contentGroupData} />
+                                <ContentGroupSummary contentGroupData={contentGroupData} />
+                            </Box>
+                            <Box width="20%" border="1px solid white" height="100%">
+                                foo bar
+                            </Box>
+                        </Flex>
                     );
                 }}
             </ApolloQueryWrapper>
-        </>
+        </RequireAtLeastOnePermissionWrapper>
     );
 }

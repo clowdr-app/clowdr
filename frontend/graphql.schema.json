@@ -100185,6 +100185,22 @@
         "description": "columns and relationships of \"job_queues.PublishVideoJob\"",
         "fields": [
           {
+            "name": "conference",
+            "description": "An object relationship",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Conference",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "conferenceId",
             "description": null,
             "args": [],
@@ -100194,6 +100210,22 @@
               "ofType": {
                 "kind": "SCALAR",
                 "name": "uuid",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "contentItem",
+            "description": "An object relationship",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "ContentItem",
                 "ofType": null
               }
             },
@@ -100217,7 +100249,7 @@
             "deprecationReason": null
           },
           {
-            "name": "created_at",
+            "name": "createdAt",
             "description": null,
             "args": [],
             "type": {
@@ -100265,7 +100297,7 @@
             "deprecationReason": null
           },
           {
-            "name": "updated_at",
+            "name": "updatedAt",
             "description": null,
             "args": [],
             "type": {
@@ -100550,11 +100582,31 @@
             "defaultValue": null
           },
           {
+            "name": "conference",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "Conference_bool_exp",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "conferenceId",
             "description": null,
             "type": {
               "kind": "INPUT_OBJECT",
               "name": "uuid_comparison_exp",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "contentItem",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "ContentItem_bool_exp",
               "ofType": null
             },
             "defaultValue": null
@@ -100570,7 +100622,7 @@
             "defaultValue": null
           },
           {
-            "name": "created_at",
+            "name": "createdAt",
             "description": null,
             "type": {
               "kind": "INPUT_OBJECT",
@@ -100600,7 +100652,7 @@
             "defaultValue": null
           },
           {
-            "name": "updated_at",
+            "name": "updatedAt",
             "description": null,
             "type": {
               "kind": "INPUT_OBJECT",
@@ -100648,11 +100700,31 @@
         "fields": null,
         "inputFields": [
           {
+            "name": "conference",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "Conference_obj_rel_insert_input",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "conferenceId",
             "description": null,
             "type": {
               "kind": "SCALAR",
               "name": "uuid",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "contentItem",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "ContentItem_obj_rel_insert_input",
               "ofType": null
             },
             "defaultValue": null
@@ -100668,7 +100740,7 @@
             "defaultValue": null
           },
           {
-            "name": "created_at",
+            "name": "createdAt",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -100698,7 +100770,7 @@
             "defaultValue": null
           },
           {
-            "name": "updated_at",
+            "name": "updatedAt",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -100752,7 +100824,7 @@
             "deprecationReason": null
           },
           {
-            "name": "created_at",
+            "name": "createdAt",
             "description": null,
             "args": [],
             "type": {
@@ -100788,7 +100860,7 @@
             "deprecationReason": null
           },
           {
-            "name": "updated_at",
+            "name": "updatedAt",
             "description": null,
             "args": [],
             "type": {
@@ -100844,7 +100916,7 @@
             "defaultValue": null
           },
           {
-            "name": "created_at",
+            "name": "createdAt",
             "description": null,
             "type": {
               "kind": "ENUM",
@@ -100874,7 +100946,7 @@
             "defaultValue": null
           },
           {
-            "name": "updated_at",
+            "name": "updatedAt",
             "description": null,
             "type": {
               "kind": "ENUM",
@@ -100928,7 +101000,7 @@
             "deprecationReason": null
           },
           {
-            "name": "created_at",
+            "name": "createdAt",
             "description": null,
             "args": [],
             "type": {
@@ -100964,7 +101036,7 @@
             "deprecationReason": null
           },
           {
-            "name": "updated_at",
+            "name": "updatedAt",
             "description": null,
             "args": [],
             "type": {
@@ -101020,7 +101092,7 @@
             "defaultValue": null
           },
           {
-            "name": "created_at",
+            "name": "createdAt",
             "description": null,
             "type": {
               "kind": "ENUM",
@@ -101050,7 +101122,7 @@
             "defaultValue": null
           },
           {
-            "name": "updated_at",
+            "name": "updatedAt",
             "description": null,
             "type": {
               "kind": "ENUM",
@@ -101224,11 +101296,31 @@
         "fields": null,
         "inputFields": [
           {
+            "name": "conference",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "Conference_order_by",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "conferenceId",
             "description": null,
             "type": {
               "kind": "ENUM",
               "name": "order_by",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "contentItem",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "ContentItem_order_by",
               "ofType": null
             },
             "defaultValue": null
@@ -101244,7 +101336,7 @@
             "defaultValue": null
           },
           {
-            "name": "created_at",
+            "name": "createdAt",
             "description": null,
             "type": {
               "kind": "ENUM",
@@ -101274,7 +101366,7 @@
             "defaultValue": null
           },
           {
-            "name": "updated_at",
+            "name": "updatedAt",
             "description": null,
             "type": {
               "kind": "ENUM",
@@ -101344,7 +101436,7 @@
             "deprecationReason": null
           },
           {
-            "name": "created_at",
+            "name": "createdAt",
             "description": "column name",
             "isDeprecated": false,
             "deprecationReason": null
@@ -101362,7 +101454,7 @@
             "deprecationReason": null
           },
           {
-            "name": "updated_at",
+            "name": "updatedAt",
             "description": "column name",
             "isDeprecated": false,
             "deprecationReason": null
@@ -101403,7 +101495,7 @@
             "defaultValue": null
           },
           {
-            "name": "created_at",
+            "name": "createdAt",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -101433,7 +101525,7 @@
             "defaultValue": null
           },
           {
-            "name": "updated_at",
+            "name": "updatedAt",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -101478,7 +101570,7 @@
             "deprecationReason": null
           },
           {
-            "name": "created_at",
+            "name": "createdAt",
             "description": "column name",
             "isDeprecated": false,
             "deprecationReason": null
@@ -101496,7 +101588,7 @@
             "deprecationReason": null
           },
           {
-            "name": "updated_at",
+            "name": "updatedAt",
             "description": "column name",
             "isDeprecated": false,
             "deprecationReason": null

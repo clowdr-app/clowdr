@@ -11,12 +11,12 @@ import {
     GetRequiredContentItemDocument,
     GetUploadAgreementDocument,
     GetUploadersForContentItemDocument,
-    InsertEmailsDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { startPreviewTranscode } from "../lib/transcode";
 import { startTranscribe } from "../lib/transcribe";
 import { ContentItemData, Payload } from "../types/hasura/event";
+import { insertEmails } from "./email";
 
 gql`
     mutation ContentItemAddNewVersion($id: uuid!, $newVersion: jsonb!) {
@@ -211,12 +211,7 @@ email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_AD
         };
     });
 
-    await apolloClient.mutate({
-        mutation: InsertEmailsDocument,
-        variables: {
-            objects: emails,
-        },
-    });
+    await insertEmails(emails);
 }
 
 async function sendTranscriptionFailedEmail(contentItemId: string, contentItemName: string) {
@@ -289,12 +284,7 @@ email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_AD
         });
     }
 
-    await apolloClient.mutate({
-        mutation: InsertEmailsDocument,
-        variables: {
-            objects: emails,
-        },
-    });
+    await insertEmails(emails);
 }
 
 async function sendTranscodeFailedEmail(contentItemId: string, contentItemName: string, message: string) {
@@ -365,12 +355,7 @@ email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_AD
         });
     }
 
-    await apolloClient.mutate({
-        mutation: InsertEmailsDocument,
-        variables: {
-            objects: emails,
-        },
-    });
+    await insertEmails(emails);
 }
 
 gql`

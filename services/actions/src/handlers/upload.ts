@@ -20,7 +20,6 @@ import {
     CreateContentItemDocument,
     Email_Insert_Input,
     GetUploadersDocument,
-    InsertEmailsDocument,
     InsertSubmissionRequestEmailsDocument,
     MarkAndSelectUnprocessedSubmissionRequestEmailJobsDocument,
     RequiredItemDocument,
@@ -32,6 +31,7 @@ import {
 import { apolloClient } from "../graphqlClient";
 import { getLatestVersion } from "../lib/contentItem";
 import { callWithRetry } from "../utils";
+import { insertEmails } from "./email";
 
 gql`
     query RequiredItem($accessToken: String!) {
@@ -290,12 +290,7 @@ email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_AD
         };
     });
 
-    await apolloClient.mutate({
-        mutation: InsertEmailsDocument,
-        variables: {
-            objects: emails,
-        },
-    });
+    await insertEmails(emails);
 }
 
 export async function handleContentItemSubmitted(args: submitContentItemArgs): Promise<SubmitContentItemOutput> {

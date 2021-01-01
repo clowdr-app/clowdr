@@ -6,7 +6,6 @@ import {
     AttendeeWithInvitePartsFragment,
     DeleteInvitationEmailsJobDocument,
     Email_Insert_Input,
-    InsertEmailsDocument,
     InvitationPartsFragment,
     InvitedUserPartsFragment,
     SelectAttendeesWithInvitationDocument,
@@ -17,14 +16,7 @@ import {
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { InvitationEmailJobData } from "../types/hasura/event";
-
-gql`
-    mutation InsertEmails($objects: [Email_insert_input!]!) {
-        insert_Email(objects: $objects) {
-            affected_rows
-        }
-    }
-`;
+import { insertEmails } from "./email";
 
 gql`
     fragment InvitationParts on Invitation {
@@ -209,12 +201,7 @@ received this email in error, please contact us via ${process.env.STOP_EMAILS_CO
         }
     }
 
-    await apolloClient.mutate({
-        mutation: InsertEmailsDocument,
-        variables: {
-            objects: Array.from(emailsToSend.values()),
-        },
-    });
+    await insertEmails(Array.from(emailsToSend.values()));
     for (const attendeeId of Array.from(emailsToSend.keys())) {
         results.set(attendeeId, true);
     }

@@ -1,9 +1,27 @@
 import { gql } from "@apollo/client/core";
 import sgMail from "@sendgrid/mail";
 import assert from "assert";
-import { MarkAndSelectUnsentEmailsDocument, SelectUnsentEmailIdsDocument, UnmarkUnsentEmailsDocument } from "../generated/graphql";
+import { Email_Insert_Input, InsertEmailsDocument, MarkAndSelectUnsentEmailsDocument, SelectUnsentEmailIdsDocument, UnmarkUnsentEmailsDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { callWithRetry } from "../utils";
+
+gql`
+    mutation InsertEmails($objects: [Email_insert_input!]!) {
+        insert_Email(objects: $objects) {
+            affected_rows
+        }
+    }
+`;
+
+export async function insertEmails(emails: Email_Insert_Input[]): Promise<number | undefined> {
+    const r = await apolloClient.mutate({
+        mutation: InsertEmailsDocument,
+        variables: {
+            objects: emails,
+        },
+    });
+    return r.data?.insert_Email?.affected_rows;
+}
 
 gql`
     query SelectUnsentEmailIds {

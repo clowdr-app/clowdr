@@ -1,9 +1,9 @@
 export interface ActionPayload<T> {
     action: {
         name: string;
-    },
-    input: T,
+    };
+    input: T;
     session_variables: {
-        [key: string]: string,
-    }
+        [key: string]: string;
+    };
 }

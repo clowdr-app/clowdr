@@ -1,8 +1,8 @@
-import assert from "assert";
 import { gql } from "@apollo/client/core";
+import sgMail from "@sendgrid/mail";
+import assert from "assert";
 import { MarkAndSelectUnsentEmailsDocument, UnmarkUnsentEmailsDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import sgMail from "@sendgrid/mail";
 import { callWithRetry } from "../utils";
 
 gql`
@@ -32,8 +32,8 @@ export async function processEmailsJobQueue(): Promise<void> {
     const emailsToSend = await apolloClient.mutate({
         mutation: MarkAndSelectUnsentEmailsDocument,
         variables: {
-            sentAt: new Date().toISOString()
-        }
+            sentAt: new Date().toISOString(),
+        },
     });
     assert(emailsToSend.data?.update_Email, "Failed to fetch emails to send.");
 
@@ -61,12 +61,11 @@ export async function processEmailsJobQueue(): Promise<void> {
             await apolloClient.mutate({
                 mutation: UnmarkUnsentEmailsDocument,
                 variables: {
-                    ids: unsuccessfulEmailIds
-                }
+                    ids: unsuccessfulEmailIds,
+                },
             });
         });
-    }
-    catch (e) {
+    } catch (e) {
         console.error(`Could not unmark failed emails: ${e.toString()}`);
     }
 }

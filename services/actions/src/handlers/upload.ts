@@ -22,15 +22,16 @@ import {
     GetUploadersDocument,
     InsertEmailsDocument,
     InsertSubmissionRequestEmailsDocument,
+    MarkAndSelectUnprocessedSubmissionRequestEmailJobsDocument,
     RequiredItemDocument,
     RequiredItemFieldsFragment,
-    SelectUploaderDocument,
     SetRequiredContentItemUploadsRemainingDocument,
+    UnmarkSubmissionRequestEmailJobsDocument,
     UploaderPartsFragment,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { getLatestVersion } from "../lib/contentItem";
-import { SubmissionRequestEmailJobData } from "../types/hasura/event";
+import { callWithRetry } from "../utils";
 
 gql`
     query RequiredItem($accessToken: String!) {
@@ -536,12 +537,6 @@ gql`
         }
     }
 
-    query SelectUploader($id: uuid!) {
-        Uploader_by_pk(id: $id) {
-            ...UploaderParts
-        }
-    }
-
     mutation InsertSubmissionRequestEmails($emails: [Email_insert_input!]!, $uploaderIds: [uuid!]!) {
         insert_Email(objects: $emails) {
             affected_rows
@@ -551,24 +546,6 @@ gql`
         }
     }
 `;
-
-async function getUploader(
-    uploaderId: string
-): Promise<{
-    uploader: UploaderPartsFragment;
-}> {
-    const query = await apolloClient.query({
-        query: SelectUploaderDocument,
-        variables: {
-            id: uploaderId,
-        },
-    });
-    assert(query.data.Uploader_by_pk);
-    const uploader = query.data.Uploader_by_pk;
-    return {
-        uploader,
-    };
-}
 
 function generateEmailContents(uploader: UploaderPartsFragment) {
     const contentTypeFriendlyName = generateContentTypeFriendlyName(uploader.requiredContentItem.contentTypeName);
@@ -689,37 +666,80 @@ function generateContentTypeFriendlyName(type: ContentType_Enum) {
     }
 }
 
-export async function uploadSendSubmissionRequestsHandler(
-    data: SubmissionRequestEmailJobData
-): Promise<UploaderSendSubmissionRequestResult> {
-    const { uploader } = await getUploader(data.uploaderId);
+gql`
+    mutation MarkAndSelectUnprocessedSubmissionRequestEmailJobs {
+        update_job_queues_SubmissionRequestEmailJob(where: { processed: { _eq: false } }, _set: { processed: true }) {
+            returning {
+                id
+                uploader {
+                    ...UploaderParts
+                }
+            }
+        }
+    }
 
-    let ok = false;
-    try {
-        const { htmlContents, plainTextContents } = generateEmailContents(uploader);
-        const contentTypeFriendlyName = generateContentTypeFriendlyName(uploader.requiredContentItem.contentTypeName);
+    mutation UnmarkSubmissionRequestEmailJobs($ids: [uuid!]!) {
+        update_job_queues_SubmissionRequestEmailJob(where: { id: { _in: $ids } }, _set: { processed: false }) {
+            affected_rows
+        }
+    }
+`;
+
+export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
+    const jobsToProcess = await apolloClient.mutate({
+        mutation: MarkAndSelectUnprocessedSubmissionRequestEmailJobsDocument,
+        variables: {},
+    });
+    assert(jobsToProcess.data?.update_job_queues_SubmissionRequestEmailJob, "Failed to fetch jobs to process.");
+
+    const emails: Email_Insert_Input[] = [];
+    const uploaderIds: string[] = [];
+    for (const job of jobsToProcess.data.update_job_queues_SubmissionRequestEmailJob.returning) {
+        const { htmlContents, plainTextContents } = generateEmailContents(job.uploader);
+        const contentTypeFriendlyName = generateContentTypeFriendlyName(
+            job.uploader.requiredContentItem.contentTypeName
+        );
         const newEmail: Email_Insert_Input = {
-            emailAddress: uploader.email,
+            emailAddress: job.uploader.email,
             htmlContents,
             plainTextContents,
             reason: "upload-request",
             subject: `#${
-                uploader.requiredContentItem.contentTypeName === "VIDEO_BROADCAST" ? "1" : "2"
+                job.uploader.requiredContentItem.contentTypeName === "VIDEO_BROADCAST" ? "1" : "2"
             } of 2, Clowdr submission request: ${contentTypeFriendlyName}`,
         };
+        emails.push(newEmail);
+        uploaderIds.push(job.uploader.id);
+    }
 
+    try {
         await apolloClient.mutate({
             mutation: InsertSubmissionRequestEmailsDocument,
             variables: {
-                emails: [newEmail],
-                uploaderIds: [uploader.id],
+                emails: emails,
+                uploaderIds: uploaderIds,
             },
         });
+    } catch (e) {
+        console.error(
+            `Could not process jobs: ${jobsToProcess.data.update_job_queues_SubmissionRequestEmailJob.returning.reduce(
+                (acc, x) => `${acc}, ${x}`,
+                ""
+            )}:\n${e.toString()}`
+        );
 
-        ok = true;
-    } catch (_e) {
-        ok = false;
+        try {
+            const jobIds = jobsToProcess.data.update_job_queues_SubmissionRequestEmailJob.returning.map((x) => x.id);
+            await callWithRetry(async () => {
+                await apolloClient.mutate({
+                    mutation: UnmarkSubmissionRequestEmailJobsDocument,
+                    variables: {
+                        ids: jobIds,
+                    },
+                });
+            });
+        } catch (e) {
+            console.error(`Could not unmark failed emails: ${e.toString()}`);
+        }
     }
-
-    return { uploaderId: data.uploaderId, sent: ok };
 }

@@ -5,7 +5,7 @@ import express, { Request, Response } from "express";
 import { is } from "typescript-is";
 import { initialiseAwsClient } from "./aws/awsClient";
 import handlerEcho from "./handlers/echo";
-import { handleEmailCreated } from "./handlers/email";
+import { processEmailsJobQueue } from "./handlers/email";
 import {
     invitationConfirmCurrentHandler,
     invitationConfirmSendInitialEmailHandler,
@@ -14,7 +14,7 @@ import {
     invitationSendInvitationsHandler,
 } from "./handlers/invitation";
 import protectedEchoHandler from "./handlers/protectedEcho";
-import { uploadSendSubmissionRequestsHandler } from "./handlers/upload";
+import { processSendSubmissionRequestsJobQueue } from "./handlers/upload";
 import { checkEventSecret } from "./middlewares/checkEventSecret";
 import { checkJwt } from "./middlewares/checkJwt";
 import { checkUserScopes } from "./middlewares/checkScopes";
@@ -31,7 +31,7 @@ import { router as mediaLiveRouter } from "./router/mediaLive";
 import { router as openshotRouter } from "./router/openshot";
 import { router as videoRenderJobRouter } from "./router/videoRenderJob";
 import { router as vonageRouter } from "./router/vonage";
-import { EmailData, InvitationEmailJobData, Payload, SubmissionRequestEmailJobData } from "./types/hasura/event";
+import { InvitationEmailJobData, Payload } from "./types/hasura/event";
 
 type AuthenticatedRequest = Request & { userId: string };
 
@@ -102,26 +102,26 @@ app.post("/echo", jsonParser, async (req: Request, res: Response) => {
     return res.json(result);
 });
 
-app.post("/emailCreated", jsonParser, async (req: Request, res: Response) => {
-    if (is<Payload>(req.body)) {
-        try {
-            if (req.body.trigger.name === "EmailCreated" && is<Payload<EmailData>>(req.body)) {
-                await handleEmailCreated(req.body);
-            } else {
-                console.log(`Received unhandled payload: ${req.body.trigger.name}`);
-                res.status(400).json("Received unhandled payload");
-                return;
-            }
-        } catch (e) {
-            console.error("Failure while handling event emailCreated", e);
-            res.status(500).json("Failure while handling event");
-            return;
-        }
-        res.status(200).json("OK");
-    } else {
-        console.log("Received incorrect payload");
-        res.status(500).json("Unexpected payload");
+app.post("/queues/processEmailsJobQueue", jsonParser, async (_req: Request, res: Response) => {
+    try {
+        await processEmailsJobQueue();
+    } catch (e) {
+        console.error("Failure while processing emails job queue", e);
+        res.status(500).json("Failure");
+        return;
     }
+    res.status(200).json("OK");
+});
+
+app.post("/queues/processSendSubmissionRequestsJobQueue", jsonParser, async (_req: Request, res: Response) => {
+    try {
+        await processSendSubmissionRequestsJobQueue();
+    } catch (e) {
+        console.error("Failure while processing send submission requests job queue", e);
+        res.status(500).json("Failure");
+        return;
+    }
+    res.status(200).json("OK");
 });
 
 app.post("/invitationEmailJobCreated", jsonParser, async (req: Request, res: Response) => {
@@ -193,32 +193,6 @@ app.post(
         return res.json(result);
     }
 );
-
-app.post("/uploaders/sendSubmissionRequests", jsonParser, async (req: Request, res: Response) => {
-    if (is<Payload>(req.body)) {
-        try {
-            if (
-                req.body.trigger.name === "SubmissionRequestEmailJobCreated" &&
-                req.body.event.data.new &&
-                is<Payload<SubmissionRequestEmailJobData>>(req.body)
-            ) {
-                await uploadSendSubmissionRequestsHandler(req.body.event.data.new);
-            } else {
-                console.log(`Received unhandled payload: ${req.body.trigger.name}`);
-                res.status(400).json("Received unhandled payload");
-                return;
-            }
-        } catch (e) {
-            console.error("Failure while handling event sendSubmissionRequests", e);
-            res.status(500).json("Failure while handling event");
-            return;
-        }
-        res.status(200).json("OK");
-    } else {
-        console.log("Received incorrect payload");
-        res.status(500).json("Unexpected payload");
-    }
-});
 
 const portNumber = process.env.PORT ? parseInt(process.env.PORT, 10) : 4000;
 export const server = app.listen(portNumber, function () {

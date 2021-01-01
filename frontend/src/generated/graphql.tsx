@@ -23238,6 +23238,13 @@ export type DeleteIsTypingMutationVariables = Exact<{
 
 export type DeleteIsTypingMutation = { readonly __typename?: 'mutation_root', readonly delete_ChatTyper?: Maybe<{ readonly __typename?: 'ChatTyper_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ChatTyper', readonly id: any }> }> };
 
+export type GetContentGroupQueryVariables = Exact<{
+  contentGroupId: Scalars['uuid'];
+}>;
+
+
+export type GetContentGroupQuery = { readonly __typename?: 'query_root', readonly ContentGroup_by_pk?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly contentItems: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly contentTypeName: ContentType_Enum }> }> };
+
 export type GetRoomDetailsQueryVariables = Exact<{
   roomId: Scalars['uuid'];
   conferenceId: Scalars['uuid'];
@@ -24571,6 +24578,48 @@ export function useDeleteIsTypingMutation(baseOptions?: Apollo.MutationHookOptio
 export type DeleteIsTypingMutationHookResult = ReturnType<typeof useDeleteIsTypingMutation>;
 export type DeleteIsTypingMutationResult = Apollo.MutationResult<DeleteIsTypingMutation>;
 export type DeleteIsTypingMutationOptions = Apollo.BaseMutationOptions<DeleteIsTypingMutation, DeleteIsTypingMutationVariables>;
+export const GetContentGroupDocument = gql`
+    query GetContentGroup($contentGroupId: uuid!) {
+  ContentGroup_by_pk(id: $contentGroupId) {
+    id
+    title
+    contentGroupTypeName
+    contentItems {
+      id
+      data
+      layoutData
+      name
+      contentTypeName
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetContentGroupQuery__
+ *
+ * To run a query within a React component, call `useGetContentGroupQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetContentGroupQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetContentGroupQuery({
+ *   variables: {
+ *      contentGroupId: // value for 'contentGroupId'
+ *   },
+ * });
+ */
+export function useGetContentGroupQuery(baseOptions: Apollo.QueryHookOptions<GetContentGroupQuery, GetContentGroupQueryVariables>) {
+        return Apollo.useQuery<GetContentGroupQuery, GetContentGroupQueryVariables>(GetContentGroupDocument, baseOptions);
+      }
+export function useGetContentGroupLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetContentGroupQuery, GetContentGroupQueryVariables>) {
+          return Apollo.useLazyQuery<GetContentGroupQuery, GetContentGroupQueryVariables>(GetContentGroupDocument, baseOptions);
+        }
+export type GetContentGroupQueryHookResult = ReturnType<typeof useGetContentGroupQuery>;
+export type GetContentGroupLazyQueryHookResult = ReturnType<typeof useGetContentGroupLazyQuery>;
+export type GetContentGroupQueryResult = Apollo.QueryResult<GetContentGroupQuery, GetContentGroupQueryVariables>;
 export const GetRoomDetailsDocument = gql`
     query GetRoomDetails($roomId: uuid!, $conferenceId: uuid!) {
   Room(where: {_and: {conferenceId: {_eq: $conferenceId}}, id: {_eq: $roomId}}) {

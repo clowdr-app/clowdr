@@ -22,6 +22,7 @@ import {
     Permission_Enum,
     useInsertSubmissionRequestEmailJobsMutation,
 } from "../../../generated/graphql";
+import LinkButton from "../../Chakra/LinkButton";
 import CRUDTable, {
     BooleanFieldFormat,
     BooleanFieldSpec,
@@ -35,6 +36,7 @@ import CRUDTable, {
     UpdateResult,
 } from "../../CRUDTable/CRUDTable";
 import PageNotFound from "../../Errors/PageNotFound";
+import FAIcon from "../../Icons/FAIcon";
 import isValidUUID from "../../Utils/isValidUUID";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
@@ -489,7 +491,8 @@ export default function ManageConferenceContentPage(): JSX.Element {
                             key,
                             markDirty,
                             setAllContentGroupsMap,
-                            isDirty
+                            isDirty,
+                            conference.slug
                         );
                     },
                 }}
@@ -782,7 +785,8 @@ function ContentGroupSecondaryEditor(
     key: string,
     markDirty: () => void,
     setAllContentGroupsMap: React.Dispatch<React.SetStateAction<Map<string, ContentGroupDescriptor> | undefined>>,
-    isDirty: boolean
+    isDirty: boolean,
+    conferenceSlug: string
 ) {
     const group = allGroupsMap.get(key);
 
@@ -1010,7 +1014,22 @@ function ContentGroupSecondaryEditor(
             }
 
             const itemsAccordian = <Accordion allowMultiple>{itemElements}</Accordion>;
-            editorElement = <>{itemsAccordian}</>;
+            editorElement = (
+                <>
+                    <LinkButton
+                        to={`/conference/${conferenceSlug}/item/${group.id}`}
+                        colorScheme="green"
+                        mb={4}
+                        isExternal={true}
+                        aria-label={`View ${group.title} in the attendee view`}
+                        title={`View ${group.title} in the attendee view`}
+                    >
+                        <FAIcon icon="external-link-alt" iconStyle="s" mr={3} />
+                        View item
+                    </LinkButton>
+                    {itemsAccordian}
+                </>
+            );
         } else {
             editorElement = <>TODO: Unsupported group type: {group.typeName}</>;
         }

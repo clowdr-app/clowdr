@@ -4,6 +4,7 @@ import PageNotFound from "../Errors/PageNotFound";
 import PageNotImplemented from "../Errors/PageNotImplemented";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import AttendeeLandingPage from "./Attend/AttendeeLandingPage";
+import ContentGroupPage from "./Attend/Content/ContentGroupPage";
 import RoomPage from "./Attend/Room/RoomPage";
 import ManageConferenceBroadcastPage from "./Manage/ManageConferenceBroadcastPage";
 import ManageConferenceContentPage from "./Manage/ManageConferenceContentPage";
@@ -104,6 +105,13 @@ export default function ConferenceRoutes({ confSlug, rootUrl }: { confSlug: stri
                 <Route exact path={`${rootUrl}/`}>
                     <AttendeeLandingPage />
                 </Route>
+
+                <Route
+                    path={`${rootUrl}/item/:contentGroupId`}
+                    component={(props: RouteComponentProps<{ contentGroupId: string }>) => (
+                        <ContentGroupPage contentGroupId={props.match.params.contentGroupId} />
+                    )}
+                />
 
                 {AuthenticatedConferenceRoutes(rootUrl)}
 

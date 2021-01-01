@@ -1,13 +1,19 @@
 import { gql } from "@apollo/client/core";
 import sgMail from "@sendgrid/mail";
 import assert from "assert";
-import { MarkAndSelectUnsentEmailsDocument, UnmarkUnsentEmailsDocument } from "../generated/graphql";
+import { MarkAndSelectUnsentEmailsDocument, SelectUnsentEmailIdsDocument, UnmarkUnsentEmailsDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { callWithRetry } from "../utils";
 
 gql`
-    mutation MarkAndSelectUnsentEmails($sentAt: timestamptz!) {
-        update_Email(where: { sentAt: { _is_null: true } }, _set: { sentAt: $sentAt }, _inc: { retriesCount: 1 }) {
+    query SelectUnsentEmailIds {
+        Email(where: { sentAt: { _is_null: true } }, limit: 300) {
+            id
+        }
+    }
+
+    mutation MarkAndSelectUnsentEmails($ids: [uuid!]!, $sentAt: timestamptz!) {
+        update_Email(where: { id: { _in: $ids }, sentAt: { _is_null: true } }, _set: { sentAt: $sentAt }, _inc: { retriesCount: 1 }) {
             returning {
                 emailAddress
                 htmlContents
@@ -28,40 +34,47 @@ gql`
 
 export async function processEmailsJobQueue(): Promise<void> {
     assert(process.env.SENDGRID_SENDER, "SENDGRID_SENDER env var not set!");
+    const senderAddress = process.env.SENDGRID_SENDER;
 
+    const unsentEmailIds = await apolloClient.query({
+        query: SelectUnsentEmailIdsDocument
+    });
     const emailsToSend = await apolloClient.mutate({
         mutation: MarkAndSelectUnsentEmailsDocument,
         variables: {
+            ids: unsentEmailIds.data.Email.map(x => x.id),
             sentAt: new Date().toISOString(),
         },
     });
     assert(emailsToSend.data?.update_Email, "Failed to fetch emails to send.");
 
-    const unsuccessfulEmailIds: string[] = [];
-    for (const email of emailsToSend.data.update_Email.returning) {
-        try {
-            if (email.retriesCount < 3) {
-                const msg = {
-                    to: email.emailAddress,
-                    from: process.env.SENDGRID_SENDER,
-                    subject: email.subject,
-                    text: email.plainTextContents,
-                    html: email.htmlContents,
-                };
-                await callWithRetry(() => sgMail.send(msg));
+    const unsuccessfulEmailIds: (string | undefined)[] = await Promise.all(
+        emailsToSend.data.update_Email.returning.map(async (email) => {
+            try {
+                if (email.retriesCount < 3) {
+                    const msg = {
+                        to: email.emailAddress,
+                        from: senderAddress,
+                        subject: email.subject,
+                        text: email.plainTextContents,
+                        html: email.htmlContents,
+                    };
+                    await callWithRetry(() => sgMail.send(msg));
+                }
+            } catch (e) {
+                console.error(`Could not send email ${email.id}: ${e.toString()}`);
+                return email.id;
             }
-        } catch (e) {
-            console.error(`Could not send email ${email.id}: ${e.toString()}`);
-            unsuccessfulEmailIds.push(email.id);
-        }
-    }
+            return undefined;
+        })
+    );
 
     try {
         await callWithRetry(async () => {
             await apolloClient.mutate({
                 mutation: UnmarkUnsentEmailsDocument,
                 variables: {
-                    ids: unsuccessfulEmailIds,
+                    ids: unsuccessfulEmailIds.filter(x => !!x),
                 },
             });
         });

@@ -7,11 +7,11 @@ import {
     useCurrentUserGroupsRolesPermissionsQuery,
 } from "../../generated/graphql";
 import PageNotFound from "../Errors/PageNotFound";
-import useCurrentUser from "../Users/CurrentUser/useCurrentUser";
+import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import { useConference } from "./useConference";
 
 gql`
-    query CurrentUserGroupsRolesPermissions($userId: String!, $conferenceId: uuid!) {
+    query CurrentUserGroupsRolesPermissions($userId: String, $conferenceId: uuid!) {
         User(where: { id: { _eq: $userId } }) {
             conferencesCreated(where: { id: { _eq: $conferenceId } }) {
                 id
@@ -51,6 +51,34 @@ gql`
             }
             id
         }
+        publicGroups: Group(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                enabled: { _eq: true }
+                includeUnauthenticated: { _eq: true }
+            }
+        ) {
+            groupRoles {
+                role {
+                    rolePermissions {
+                        permissionName
+                        id
+                        roleId
+                    }
+                    id
+                    name
+                    conferenceId
+                }
+                id
+                roleId
+                groupId
+            }
+            enabled
+            id
+            includeUnauthenticated
+            name
+            conferenceId
+        }
     }
 `;
 
@@ -70,12 +98,12 @@ export default function CurrentUserGroupsRolesPermissionsProvider({
     children: string | JSX.Element | JSX.Element[];
 }): JSX.Element {
     const conference = useConference();
-    const { user } = useCurrentUser();
+    const { user } = useMaybeCurrentUser();
     const { loading, error, data } = useCurrentUserGroupsRolesPermissionsQuery({
         fetchPolicy: "cache-and-network",
         variables: {
             conferenceId: conference.id,
-            userId: user.id,
+            userId: user ? user.id : null,
         },
     });
 

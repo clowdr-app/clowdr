@@ -35,6 +35,9 @@ gql`
         id
         name
         originatingDataId
+        originatingData {
+            ...OriginatingDataInfo
+        }
         participants {
             ...RoomParticipantInfo
         }
@@ -117,10 +120,10 @@ gql`
         }
     }
 
-    mutation UpdateRoom($id: uuid!, $name: String!, $currentModeName: RoomMode_enum!, $originatingDataId: uuid = null) {
+    mutation UpdateRoom($id: uuid!, $name: String!, $capacity: Int = null, $originatingDataId: uuid = null) {
         update_Room_by_pk(
             pk_columns: { id: $id }
-            _set: { name: $name, currentModeName: $currentModeName, originatingDataId: $originatingDataId }
+            _set: { name: $name, capacity: $capacity, originatingDataId: $originatingDataId }
         ) {
             ...RoomInfo
         }
@@ -507,7 +510,6 @@ export function useSaveScheduleDiff():
                                         conferenceId: conference.id,
                                         name: room.name,
                                         originatingDataId: room.originatingDataId,
-                                        currentModeName: room.currentModeName,
                                         capacity: room.capacity,
                                     })
                                 ),
@@ -527,7 +529,7 @@ export function useSaveScheduleDiff():
                                         variables: {
                                             id: room.id,
                                             name: room.name,
-                                            currentModeName: room.currentModeName,
+                                            capacity: room.capacity,
                                             originatingDataId: room.originatingDataId,
                                         },
                                     });

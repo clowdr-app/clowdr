@@ -324,7 +324,6 @@ function convertRoom(context: Context, item: IntermediaryRoomDescriptor | RoomDe
         isNew: ("isNew" in item && item.isNew) || !item.id,
 
         name: item.name,
-        currentModeName: item.currentModeName ?? RoomMode_Enum.Breakout,
         capacity: item.capacity,
         participants: new Set(),
     } as RoomDescriptor;
@@ -351,8 +350,8 @@ function mergeRoom(
 
     mergeIdInPlace("Room", context, changes, result, item1, item2);
     mergeIsNewInPlace(context, result, item1, item2);
+    mergeOriginatingDataIdInPlace(context, changes, result, item1, item2);
     mergeFieldInPlace(context, changes, result, "name", item1, item2);
-    mergeFieldInPlace(context, changes, result, "currentModeName", item1, item2);
     mergeFieldInPlace(context, changes, result, "capacity", item1, item2);
 
     changes.push({

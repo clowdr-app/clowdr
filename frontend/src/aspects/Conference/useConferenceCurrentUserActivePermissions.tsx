@@ -23,33 +23,58 @@ export default function ConferenceCurrentUserActivePermissionsProvider({
         if (groups.User[0].conferencesCreated.length > 0) {
             return new Set(Object.values(Permission_Enum));
         } else {
-            return reduceToSet(groups.User[0].attendees, (acc, attendee) => {
+            const publicPermissions: Set<Permission_Enum> = reduceToSet(groups.publicGroups, (acc, group) => {
                 return reduceToSet(
-                    attendee.groupAttendees,
-                    (acc, groupAttendee) => {
-                        if (groupAttendee.group.enabled) {
-                            return reduceToSet(
-                                groupAttendee.group.groupRoles,
-                                (acc, groupRole) => {
-                                    return reduceToSet(
-                                        groupRole.role.rolePermissions,
-                                        (acc, rolePermission) => {
-                                            acc.add(rolePermission.permissionName);
-                                            return acc;
-                                        },
-                                        acc
-                                    );
-                                },
-                                acc
-                            );
-                        }
-                        return acc;
+                    group.groupRoles,
+                    (acc, groupRole) => {
+                        return reduceToSet(
+                            groupRole.role.rolePermissions,
+                            (acc, rolePermission) => {
+                                acc.add(rolePermission.permissionName);
+                                return acc;
+                            },
+                            acc
+                        );
                     },
                     acc
                 );
             });
+            if (groups.User.length > 0) {
+                return reduceToSet(
+                    groups.User[0].attendees,
+                    (acc, attendee) => {
+                        return reduceToSet(
+                            attendee.groupAttendees,
+                            (acc, groupAttendee) => {
+                                if (groupAttendee.group.enabled) {
+                                    return reduceToSet(
+                                        groupAttendee.group.groupRoles,
+                                        (acc, groupRole) => {
+                                            return reduceToSet(
+                                                groupRole.role.rolePermissions,
+                                                (acc, rolePermission) => {
+                                                    acc.add(rolePermission.permissionName);
+                                                    return acc;
+                                                },
+                                                acc
+                                            );
+                                        },
+                                        acc
+                                    );
+                                }
+                                return acc;
+                            },
+                            acc
+                        );
+                    },
+                    publicPermissions
+                );
+            }
+            else {
+                return publicPermissions;
+            }
         }
-    }, [groups.User]);
+    }, [groups.User, groups.publicGroups]);
 
     return (
         <ConferenceCurrentUserActivePermissionsContext.Provider value={value}>

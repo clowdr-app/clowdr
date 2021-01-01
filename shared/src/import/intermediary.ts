@@ -205,7 +205,6 @@ export interface IntermediaryRoomDescriptor {
     id?: string;
     originatingDataSourceId?: string;
     name?: string;
-    currentModeName?: RoomMode_Enum;
     capacity?: number | null;
 }
 

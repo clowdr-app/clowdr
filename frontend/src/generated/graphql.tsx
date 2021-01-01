@@ -15955,7 +15955,6 @@ export type Job_Queues_SubmissionRequestEmailJob = {
   readonly __typename?: 'job_queues_SubmissionRequestEmailJob';
   readonly created_at: Scalars['timestamptz'];
   readonly id: Scalars['uuid'];
-  readonly processed: Scalars['Boolean'];
   readonly updated_at: Scalars['timestamptz'];
   /** An object relationship */
   readonly uploader: Uploader;
@@ -16004,7 +16003,6 @@ export type Job_Queues_SubmissionRequestEmailJob_Bool_Exp = {
   readonly _or?: Maybe<ReadonlyArray<Maybe<Job_Queues_SubmissionRequestEmailJob_Bool_Exp>>>;
   readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
-  readonly processed?: Maybe<Boolean_Comparison_Exp>;
   readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
   readonly uploader?: Maybe<Uploader_Bool_Exp>;
   readonly uploaderId?: Maybe<Uuid_Comparison_Exp>;
@@ -16020,7 +16018,6 @@ export enum Job_Queues_SubmissionRequestEmailJob_Constraint {
 export type Job_Queues_SubmissionRequestEmailJob_Insert_Input = {
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
-  readonly processed?: Maybe<Scalars['Boolean']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
   readonly uploader?: Maybe<Uploader_Obj_Rel_Insert_Input>;
   readonly uploaderId?: Maybe<Scalars['uuid']>;
@@ -16086,7 +16083,6 @@ export type Job_Queues_SubmissionRequestEmailJob_On_Conflict = {
 export type Job_Queues_SubmissionRequestEmailJob_Order_By = {
   readonly created_at?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
-  readonly processed?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
   readonly uploader?: Maybe<Uploader_Order_By>;
   readonly uploaderId?: Maybe<Order_By>;
@@ -16104,8 +16100,6 @@ export enum Job_Queues_SubmissionRequestEmailJob_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
-  Processed = 'processed',
-  /** column name */
   UpdatedAt = 'updated_at',
   /** column name */
   UploaderId = 'uploaderId'
@@ -16115,7 +16109,6 @@ export enum Job_Queues_SubmissionRequestEmailJob_Select_Column {
 export type Job_Queues_SubmissionRequestEmailJob_Set_Input = {
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
-  readonly processed?: Maybe<Scalars['Boolean']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
   readonly uploaderId?: Maybe<Scalars['uuid']>;
 };
@@ -16126,8 +16119,6 @@ export enum Job_Queues_SubmissionRequestEmailJob_Update_Column {
   CreatedAt = 'created_at',
   /** column name */
   Id = 'id',
-  /** column name */
-  Processed = 'processed',
   /** column name */
   UpdatedAt = 'updated_at',
   /** column name */
@@ -23238,12 +23229,22 @@ export type DeleteIsTypingMutationVariables = Exact<{
 
 export type DeleteIsTypingMutation = { readonly __typename?: 'mutation_root', readonly delete_ChatTyper?: Maybe<{ readonly __typename?: 'ChatTyper_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ChatTyper', readonly id: any }> }> };
 
+export type ContentPersonDataFragment = { readonly __typename?: 'ContentGroupPerson', readonly id: any, readonly roleName: string, readonly person: { readonly __typename?: 'ContentPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string> } };
+
 export type GetContentGroupQueryVariables = Exact<{
   contentGroupId: Scalars['uuid'];
 }>;
 
 
-export type GetContentGroupQuery = { readonly __typename?: 'query_root', readonly ContentGroup_by_pk?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly contentItems: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly contentTypeName: ContentType_Enum }> }> };
+export type GetContentGroupQuery = { readonly __typename?: 'query_root', readonly ContentGroup_by_pk?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly contentItems: ReadonlyArray<(
+      { readonly __typename?: 'ContentItem' }
+      & ContentItemDataFragment
+    )>, readonly people: ReadonlyArray<(
+      { readonly __typename?: 'ContentGroupPerson' }
+      & ContentPersonDataFragment
+    )> }> };
+
+export type ContentItemDataFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly contentTypeName: ContentType_Enum };
 
 export type GetRoomDetailsQueryVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -24042,6 +24043,26 @@ export type UpdateCurrentUserLastSeenMutationVariables = Exact<{
 
 export type UpdateCurrentUserLastSeenMutation = { readonly __typename?: 'mutation_root', readonly update_OnlineStatus?: Maybe<{ readonly __typename?: 'OnlineStatus_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'OnlineStatus', readonly id: any, readonly lastSeen: any }> }> };
 
+export const ContentPersonDataFragmentDoc = gql`
+    fragment ContentPersonData on ContentGroupPerson {
+  id
+  person {
+    id
+    name
+    affiliation
+  }
+  roleName
+}
+    `;
+export const ContentItemDataFragmentDoc = gql`
+    fragment ContentItemData on ContentItem {
+  id
+  data
+  layoutData
+  name
+  contentTypeName
+}
+    `;
 export const CoreEventFieldsFragmentDoc = gql`
     fragment CoreEventFields on Event {
   id
@@ -24585,15 +24606,15 @@ export const GetContentGroupDocument = gql`
     title
     contentGroupTypeName
     contentItems {
-      id
-      data
-      layoutData
-      name
-      contentTypeName
+      ...ContentItemData
+    }
+    people(order_by: {priority: asc}) {
+      ...ContentPersonData
     }
   }
 }
-    `;
+    ${ContentItemDataFragmentDoc}
+${ContentPersonDataFragmentDoc}`;
 
 /**
  * __useGetContentGroupQuery__

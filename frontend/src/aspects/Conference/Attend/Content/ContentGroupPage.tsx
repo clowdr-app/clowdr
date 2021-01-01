@@ -1,8 +1,10 @@
 import { gql } from "@apollo/client";
-import React from "react";
+import { Heading } from "@chakra-ui/react";
+import React, { useMemo } from "react";
 import { GetContentGroupQuery, useGetContentGroupQuery } from "../../../../generated/graphql";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
-import { useConference } from "../../useConference";
+import { AuthorList } from "./AuthorList";
+import ContentItem from "./ContentItem";
 
 gql`
     query GetContentGroup($contentGroupId: uuid!) {
@@ -11,30 +13,39 @@ gql`
             title
             contentGroupTypeName
             contentItems {
-                id
-                data
-                layoutData
-                name
-                contentTypeName
+                ...ContentItemData
+            }
+            people(order_by: { priority: asc }) {
+                ...ContentPersonData
             }
         }
     }
 `;
 
 export default function ContentGroupPage({ contentGroupId }: { contentGroupId: string }): JSX.Element {
-    const conference = useConference();
-
     const result = useGetContentGroupQuery({
         variables: {
             contentGroupId,
         },
     });
 
+    const contentItems = useMemo(() => {
+        return result.data?.ContentGroup_by_pk?.contentItems.map((item) => {
+            return <ContentItem key={item.id} contentItemData={item} />;
+        });
+    }, [result.data?.ContentGroup_by_pk?.contentItems]);
+
     return (
         <>
             <ApolloQueryWrapper queryResult={result}>
                 {(data: GetContentGroupQuery) => {
-                    return <>{data.ContentGroup_by_pk?.title}</>;
+                    return (
+                        <>
+                            <Heading as="h2"> {data.ContentGroup_by_pk?.title}</Heading>
+                            {<AuthorList contentPeopleData={data.ContentGroup_by_pk?.people ?? []} />}
+                            {contentItems}
+                        </>
+                    );
                 }}
             </ApolloQueryWrapper>
         </>

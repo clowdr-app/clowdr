@@ -835,93 +835,95 @@ function ContentGroupSecondaryEditor(
                 </AccordionItem>
             );
 
-            for (const itemType of groupTemplate.itemTypes) {
-                const baseType = ItemBaseTypes[itemType];
-                const itemTemplate = ItemBaseTemplates[baseType];
-                let accordianTitle: string | JSX.Element = `TODO: Unsupported item type ${itemType}`;
-                let accordianContents: JSX.Element | undefined;
+            for (const item of group.items) {
+                if (!item.requiredContentId) {
+                    const itemType = item.typeName;
+                    const baseType = ItemBaseTypes[itemType];
+                    const itemTemplate = ItemBaseTemplates[baseType];
+                    let accordianTitle: string | JSX.Element = `TODO: Unsupported item type ${itemType}`;
+                    let accordianContents: JSX.Element | undefined;
 
-                if (itemTemplate.supported) {
-                    const item = group.items.find((x) => x.typeName === itemType && !x.requiredContentId);
-                    const itemDesc: ContentDescriptor | null = item
-                        ? {
-                              type: "item-only",
-                              item,
-                          }
-                        : null;
-                    if (!itemDesc) {
-                        throw new Error(
-                            `Item ${itemType} does not exist for the group ${group.id} following template ${group.typeName}!`
-                        );
-                    }
+                    if (itemTemplate.supported) {
+                        const itemDesc: ContentDescriptor | null = item
+                            ? {
+                                  type: "item-only",
+                                  item,
+                              }
+                            : null;
+                        if (!itemDesc) {
+                            throw new Error(
+                                `Item ${itemType} does not exist for the group ${group.id} following template ${group.typeName}!`
+                            );
+                        }
 
-                    if (!item) {
-                        setTimeout(() => {
+                        if (!item) {
+                            setTimeout(() => {
+                                markDirty();
+                                setAllContentGroupsMap((oldGroups) => {
+                                    assert(oldGroups);
+                                    const newGroups = new Map(oldGroups);
+
+                                    const existingGroup = newGroups.get(group.id);
+                                    assert(existingGroup);
+                                    if (existingGroup.items.some((x) => x.id === itemDesc.item.id)) {
+                                        return oldGroups;
+                                    }
+                                    newGroups.set(group.id, {
+                                        ...existingGroup,
+                                        items: [...existingGroup.items, itemDesc.item],
+                                    });
+
+                                    return newGroups;
+                                });
+                            }, 0);
+                        }
+
+                        accordianTitle = itemTemplate.renderEditorHeading(itemDesc);
+                        accordianContents = itemTemplate.renderEditor(itemDesc, (updatedDesc) => {
                             markDirty();
+
+                            assert(updatedDesc.type === "item-only");
+
                             setAllContentGroupsMap((oldGroups) => {
                                 assert(oldGroups);
                                 const newGroups = new Map(oldGroups);
 
                                 const existingGroup = newGroups.get(group.id);
                                 assert(existingGroup);
-                                if (existingGroup.items.some((x) => x.id === itemDesc.item.id)) {
-                                    return oldGroups;
-                                }
                                 newGroups.set(group.id, {
                                     ...existingGroup,
-                                    items: [...existingGroup.items, itemDesc.item],
+                                    items: existingGroup.items.map((cItem) => {
+                                        return itemDesc.item.id === cItem.id ? updatedDesc.item : cItem;
+                                    }),
                                 });
 
                                 return newGroups;
                             });
-                        }, 0);
+                        });
                     }
 
-                    accordianTitle = itemTemplate.renderEditorHeading(itemDesc);
-                    accordianContents = itemTemplate.renderEditor(itemDesc, (updatedDesc) => {
-                        markDirty();
-
-                        assert(updatedDesc.type === "item-only");
-
-                        setAllContentGroupsMap((oldGroups) => {
-                            assert(oldGroups);
-                            const newGroups = new Map(oldGroups);
-
-                            const existingGroup = newGroups.get(group.id);
-                            assert(existingGroup);
-                            newGroups.set(group.id, {
-                                ...existingGroup,
-                                items: existingGroup.items.map((cItem) => {
-                                    return itemDesc.item.id === cItem.id ? updatedDesc.item : cItem;
-                                }),
-                            });
-
-                            return newGroups;
-                        });
-                    });
+                    itemElements.push(
+                        <AccordionItem key={`row-${itemType}`}>
+                            <AccordionButton>
+                                <Box flex="1" textAlign="left">
+                                    {accordianTitle}
+                                </Box>
+                                {accordianContents && <AccordionIcon />}
+                            </AccordionButton>
+                            {accordianContents && <AccordionPanel pb={4}>{accordianContents}</AccordionPanel>}
+                        </AccordionItem>
+                    );
                 }
-
-                itemElements.push(
-                    <AccordionItem key={`row-${itemType}`}>
-                        <AccordionButton>
-                            <Box flex="1" textAlign="left">
-                                {accordianTitle}
-                            </Box>
-                            {accordianContents && <AccordionIcon />}
-                        </AccordionButton>
-                        {accordianContents && <AccordionPanel pb={4}>{accordianContents}</AccordionPanel>}
-                    </AccordionItem>
-                );
             }
 
-            for (const itemType of groupTemplate.requiredItemTypes) {
+            for (const requiredItem of group.requiredItems) {
+                const itemType = requiredItem.typeName;
                 const baseType = ItemBaseTypes[itemType];
                 const itemTemplate = ItemBaseTemplates[baseType];
                 let accordianTitle: string | JSX.Element = `TODO: Unsupported required item type ${itemType}`;
                 let accordianContents: JSX.Element | undefined;
 
                 if (itemTemplate.supported) {
-                    const requiredItem = group.requiredItems.find((x) => x.typeName === itemType);
                     const item =
                         requiredItem &&
                         group.items.find((x) => x.typeName === itemType && x.requiredContentId === requiredItem.id);

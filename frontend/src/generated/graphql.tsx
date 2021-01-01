@@ -15734,16 +15734,12 @@ export enum Job_Queues_InvitationEmailJob_Update_Column {
 /** columns and relationships of "job_queues.PublishVideoJob" */
 export type Job_Queues_PublishVideoJob = {
   readonly __typename?: 'job_queues_PublishVideoJob';
-  /** An object relationship */
-  readonly conference: Conference;
   readonly conferenceId: Scalars['uuid'];
-  /** An object relationship */
-  readonly contentItem: ContentItem;
   readonly contentItemId: Scalars['uuid'];
-  readonly createdAt: Scalars['timestamptz'];
+  readonly created_at: Scalars['timestamptz'];
   readonly id: Scalars['uuid'];
   readonly jobStatusName: Scalars['String'];
-  readonly updatedAt: Scalars['timestamptz'];
+  readonly updated_at: Scalars['timestamptz'];
   readonly vimeoVideoUrl?: Maybe<Scalars['String']>;
 };
 
@@ -15787,14 +15783,12 @@ export type Job_Queues_PublishVideoJob_Bool_Exp = {
   readonly _and?: Maybe<ReadonlyArray<Maybe<Job_Queues_PublishVideoJob_Bool_Exp>>>;
   readonly _not?: Maybe<Job_Queues_PublishVideoJob_Bool_Exp>;
   readonly _or?: Maybe<ReadonlyArray<Maybe<Job_Queues_PublishVideoJob_Bool_Exp>>>;
-  readonly conference?: Maybe<Conference_Bool_Exp>;
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
-  readonly contentItem?: Maybe<ContentItem_Bool_Exp>;
   readonly contentItemId?: Maybe<Uuid_Comparison_Exp>;
-  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly jobStatusName?: Maybe<String_Comparison_Exp>;
-  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
   readonly vimeoVideoUrl?: Maybe<String_Comparison_Exp>;
 };
 
@@ -15806,14 +15800,12 @@ export enum Job_Queues_PublishVideoJob_Constraint {
 
 /** input type for inserting data into table "job_queues.PublishVideoJob" */
 export type Job_Queues_PublishVideoJob_Insert_Input = {
-  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
-  readonly contentItem?: Maybe<ContentItem_Obj_Rel_Insert_Input>;
   readonly contentItemId?: Maybe<Scalars['uuid']>;
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly jobStatusName?: Maybe<Scalars['String']>;
-  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
   readonly vimeoVideoUrl?: Maybe<Scalars['String']>;
 };
 
@@ -15822,10 +15814,10 @@ export type Job_Queues_PublishVideoJob_Max_Fields = {
   readonly __typename?: 'job_queues_PublishVideoJob_max_fields';
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly contentItemId?: Maybe<Scalars['uuid']>;
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly jobStatusName?: Maybe<Scalars['String']>;
-  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
   readonly vimeoVideoUrl?: Maybe<Scalars['String']>;
 };
 
@@ -15833,10 +15825,10 @@ export type Job_Queues_PublishVideoJob_Max_Fields = {
 export type Job_Queues_PublishVideoJob_Max_Order_By = {
   readonly conferenceId?: Maybe<Order_By>;
   readonly contentItemId?: Maybe<Order_By>;
-  readonly createdAt?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly jobStatusName?: Maybe<Order_By>;
-  readonly updatedAt?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
   readonly vimeoVideoUrl?: Maybe<Order_By>;
 };
 
@@ -15845,10 +15837,10 @@ export type Job_Queues_PublishVideoJob_Min_Fields = {
   readonly __typename?: 'job_queues_PublishVideoJob_min_fields';
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly contentItemId?: Maybe<Scalars['uuid']>;
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly jobStatusName?: Maybe<Scalars['String']>;
-  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
   readonly vimeoVideoUrl?: Maybe<Scalars['String']>;
 };
 
@@ -15856,10 +15848,10 @@ export type Job_Queues_PublishVideoJob_Min_Fields = {
 export type Job_Queues_PublishVideoJob_Min_Order_By = {
   readonly conferenceId?: Maybe<Order_By>;
   readonly contentItemId?: Maybe<Order_By>;
-  readonly createdAt?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly jobStatusName?: Maybe<Order_By>;
-  readonly updatedAt?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
   readonly vimeoVideoUrl?: Maybe<Order_By>;
 };
 
@@ -15887,14 +15879,12 @@ export type Job_Queues_PublishVideoJob_On_Conflict = {
 
 /** ordering options when selecting data from "job_queues.PublishVideoJob" */
 export type Job_Queues_PublishVideoJob_Order_By = {
-  readonly conference?: Maybe<Conference_Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
-  readonly contentItem?: Maybe<ContentItem_Order_By>;
   readonly contentItemId?: Maybe<Order_By>;
-  readonly createdAt?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly jobStatusName?: Maybe<Order_By>;
-  readonly updatedAt?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
   readonly vimeoVideoUrl?: Maybe<Order_By>;
 };
 
@@ -15910,13 +15900,13 @@ export enum Job_Queues_PublishVideoJob_Select_Column {
   /** column name */
   ContentItemId = 'contentItemId',
   /** column name */
-  CreatedAt = 'createdAt',
+  CreatedAt = 'created_at',
   /** column name */
   Id = 'id',
   /** column name */
   JobStatusName = 'jobStatusName',
   /** column name */
-  UpdatedAt = 'updatedAt',
+  UpdatedAt = 'updated_at',
   /** column name */
   VimeoVideoUrl = 'vimeoVideoUrl'
 }
@@ -15925,10 +15915,10 @@ export enum Job_Queues_PublishVideoJob_Select_Column {
 export type Job_Queues_PublishVideoJob_Set_Input = {
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly contentItemId?: Maybe<Scalars['uuid']>;
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly jobStatusName?: Maybe<Scalars['String']>;
-  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
   readonly vimeoVideoUrl?: Maybe<Scalars['String']>;
 };
 
@@ -15939,13 +15929,13 @@ export enum Job_Queues_PublishVideoJob_Update_Column {
   /** column name */
   ContentItemId = 'contentItemId',
   /** column name */
-  CreatedAt = 'createdAt',
+  CreatedAt = 'created_at',
   /** column name */
   Id = 'id',
   /** column name */
   JobStatusName = 'jobStatusName',
   /** column name */
-  UpdatedAt = 'updatedAt',
+  UpdatedAt = 'updated_at',
   /** column name */
   VimeoVideoUrl = 'vimeoVideoUrl'
 }
@@ -15955,6 +15945,7 @@ export type Job_Queues_SubmissionRequestEmailJob = {
   readonly __typename?: 'job_queues_SubmissionRequestEmailJob';
   readonly created_at: Scalars['timestamptz'];
   readonly id: Scalars['uuid'];
+  readonly processed: Scalars['Boolean'];
   readonly updated_at: Scalars['timestamptz'];
   /** An object relationship */
   readonly uploader: Uploader;
@@ -16003,6 +15994,7 @@ export type Job_Queues_SubmissionRequestEmailJob_Bool_Exp = {
   readonly _or?: Maybe<ReadonlyArray<Maybe<Job_Queues_SubmissionRequestEmailJob_Bool_Exp>>>;
   readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly processed?: Maybe<Boolean_Comparison_Exp>;
   readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
   readonly uploader?: Maybe<Uploader_Bool_Exp>;
   readonly uploaderId?: Maybe<Uuid_Comparison_Exp>;
@@ -16018,6 +16010,7 @@ export enum Job_Queues_SubmissionRequestEmailJob_Constraint {
 export type Job_Queues_SubmissionRequestEmailJob_Insert_Input = {
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly processed?: Maybe<Scalars['Boolean']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
   readonly uploader?: Maybe<Uploader_Obj_Rel_Insert_Input>;
   readonly uploaderId?: Maybe<Scalars['uuid']>;
@@ -16083,6 +16076,7 @@ export type Job_Queues_SubmissionRequestEmailJob_On_Conflict = {
 export type Job_Queues_SubmissionRequestEmailJob_Order_By = {
   readonly created_at?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
+  readonly processed?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
   readonly uploader?: Maybe<Uploader_Order_By>;
   readonly uploaderId?: Maybe<Order_By>;
@@ -16100,6 +16094,8 @@ export enum Job_Queues_SubmissionRequestEmailJob_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
+  Processed = 'processed',
+  /** column name */
   UpdatedAt = 'updated_at',
   /** column name */
   UploaderId = 'uploaderId'
@@ -16109,6 +16105,7 @@ export enum Job_Queues_SubmissionRequestEmailJob_Select_Column {
 export type Job_Queues_SubmissionRequestEmailJob_Set_Input = {
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly processed?: Maybe<Scalars['Boolean']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
   readonly uploaderId?: Maybe<Scalars['uuid']>;
 };
@@ -16119,6 +16116,8 @@ export enum Job_Queues_SubmissionRequestEmailJob_Update_Column {
   CreatedAt = 'created_at',
   /** column name */
   Id = 'id',
+  /** column name */
+  Processed = 'processed',
   /** column name */
   UpdatedAt = 'updated_at',
   /** column name */

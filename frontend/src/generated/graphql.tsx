@@ -23254,13 +23254,18 @@ export type GetContentGroupQueryVariables = Exact<{
 }>;
 
 
-export type GetContentGroupQuery = { readonly __typename?: 'query_root', readonly ContentGroup_by_pk?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly contentItems: ReadonlyArray<(
-      { readonly __typename?: 'ContentItem' }
-      & ContentItemDataFragment
-    )>, readonly people: ReadonlyArray<(
-      { readonly __typename?: 'ContentGroupPerson' }
-      & ContentPersonDataFragment
-    )> }> };
+export type GetContentGroupQuery = { readonly __typename?: 'query_root', readonly ContentGroup_by_pk?: Maybe<(
+    { readonly __typename?: 'ContentGroup' }
+    & ContentGroupDataFragment
+  )> };
+
+export type ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly contentItems: ReadonlyArray<(
+    { readonly __typename?: 'ContentItem' }
+    & ContentItemDataFragment
+  )>, readonly people: ReadonlyArray<(
+    { readonly __typename?: 'ContentGroupPerson' }
+    & ContentPersonDataFragment
+  )> };
 
 export type ContentItemDataFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly contentTypeName: ContentType_Enum };
 
@@ -24107,6 +24112,15 @@ export type UpdateCurrentUserLastSeenMutationVariables = Exact<{
 
 export type UpdateCurrentUserLastSeenMutation = { readonly __typename?: 'mutation_root', readonly update_OnlineStatus?: Maybe<{ readonly __typename?: 'OnlineStatus_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'OnlineStatus', readonly id: any, readonly lastSeen: any }> }> };
 
+export const ContentItemDataFragmentDoc = gql`
+    fragment ContentItemData on ContentItem {
+  id
+  data
+  layoutData
+  name
+  contentTypeName
+}
+    `;
 export const ContentPersonDataFragmentDoc = gql`
     fragment ContentPersonData on ContentGroupPerson {
   id
@@ -24118,15 +24132,20 @@ export const ContentPersonDataFragmentDoc = gql`
   roleName
 }
     `;
-export const ContentItemDataFragmentDoc = gql`
-    fragment ContentItemData on ContentItem {
+export const ContentGroupDataFragmentDoc = gql`
+    fragment ContentGroupData on ContentGroup {
   id
-  data
-  layoutData
-  name
-  contentTypeName
+  title
+  contentGroupTypeName
+  contentItems {
+    ...ContentItemData
+  }
+  people(order_by: {priority: asc}) {
+    ...ContentPersonData
+  }
 }
-    `;
+    ${ContentItemDataFragmentDoc}
+${ContentPersonDataFragmentDoc}`;
 export const CoreEventFieldsFragmentDoc = gql`
     fragment CoreEventFields on Event {
   id
@@ -24697,19 +24716,10 @@ export type DeleteIsTypingMutationOptions = Apollo.BaseMutationOptions<DeleteIsT
 export const GetContentGroupDocument = gql`
     query GetContentGroup($contentGroupId: uuid!) {
   ContentGroup_by_pk(id: $contentGroupId) {
-    id
-    title
-    contentGroupTypeName
-    contentItems {
-      ...ContentItemData
-    }
-    people(order_by: {priority: asc}) {
-      ...ContentPersonData
-    }
+    ...ContentGroupData
   }
 }
-    ${ContentItemDataFragmentDoc}
-${ContentPersonDataFragmentDoc}`;
+    ${ContentGroupDataFragmentDoc}`;
 
 /**
  * __useGetContentGroupQuery__

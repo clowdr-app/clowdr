@@ -32,7 +32,7 @@ export function AuthorList({
 export function Author({ contentPersonData }: { contentPersonData: ContentPersonDataFragment }): JSX.Element {
     return (
         <Flex>
-            <Box ml="3">
+            <Box>
                 <Text fontWeight="bold">
                     {contentPersonData.person.name}
                     <Badge ml="2" colorScheme="green" verticalAlign="initial">

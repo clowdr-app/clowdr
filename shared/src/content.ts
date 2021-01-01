@@ -1,5 +1,5 @@
 import * as R from "ramda";
-import { is } from "typescript-is";
+import { assertType, is } from "typescript-is";
 
 export enum ContentRole {
     Author = "AUTHOR",
@@ -57,6 +57,11 @@ export type ContentItemDataBlob = ContentItemVersionData[];
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function isContentItemDataBlob(data: any): boolean {
     return is<ContentItemDataBlob>(data);
+}
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export function assertIsContentItemDataBlob(data: any): asserts data is ContentItemDataBlob {
+    assertType<ContentItemDataBlob>(data);
 }
 
 export interface ContentItemVersionData {

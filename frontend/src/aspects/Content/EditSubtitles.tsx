@@ -45,42 +45,44 @@ export default function EditSubtitles({
     ) : error || subtitlesData === "" ? (
         <>Could not load subtitles.</>
     ) : (
-        <Box color="black">
+        <Box>
             <UnsavedChangesWarning hasUnsavedChanges={hasUnsavedChanges} />
             <Center as="p" mb={4} mt={4} fontSize="110%">
                 You should keep to only 1 line per timecode, and at most 80 characters per line.
             </Center>
-            <TranscriptEditor
-                srtTranscript={subtitlesData}
-                mediaUrl={videoUrl}
-                handleSaveEditor={async (srtTranscript: string) => {
-                    try {
-                        const result = await updateSubtitles({
-                            variables: {
-                                contentItemId,
-                                magicToken,
-                                subtitleText: srtTranscript,
-                            },
-                        });
-                        if (result.data?.updateSubtitles?.success) {
-                            toast({
-                                description: "Saved subtitles",
-                                status: "success",
+            <Box color="black">
+                <TranscriptEditor
+                    srtTranscript={subtitlesData}
+                    mediaUrl={videoUrl}
+                    handleSaveEditor={async (srtTranscript: string) => {
+                        try {
+                            const result = await updateSubtitles({
+                                variables: {
+                                    contentItemId,
+                                    magicToken,
+                                    subtitleText: srtTranscript,
+                                },
                             });
-                        } else {
-                            throw new Error(result.data?.updateSubtitles?.message ?? "Failed for unknown reason");
+                            if (result.data?.updateSubtitles?.success) {
+                                toast({
+                                    description: "Saved subtitles",
+                                    status: "success",
+                                });
+                            } else {
+                                throw new Error(result.data?.updateSubtitles?.message ?? "Failed for unknown reason");
+                            }
+                            setHasUnsavedChanges(false);
+                        } catch (e) {
+                            console.error("Failed to save subtitles", e);
+                            toast({
+                                description: "Failed to save subtitles",
+                                status: "error",
+                            });
                         }
-                        setHasUnsavedChanges(false);
-                    } catch (e) {
-                        console.error("Failed to save subtitles", e);
-                        toast({
-                            description: "Failed to save subtitles",
-                            status: "error",
-                        });
-                    }
-                }}
-                handleChange={() => setHasUnsavedChanges(true)}
-            />
+                    }}
+                    handleChange={() => setHasUnsavedChanges(true)}
+                />
+            </Box>
         </Box>
     );
 }

@@ -49,8 +49,8 @@
         columns: '*'
     retry_conf:
       num_retries: 3
-      interval_sec: 60
-      timeout_sec: 120
+      interval_sec: 120
+      timeout_sec: 60
     webhook: '{{ACTION_BASE_URL}}/invitationEmailJobCreated'
     headers:
     - name: x-hasura-event-secret
@@ -95,8 +95,8 @@
         columns: '*'
     retry_conf:
       num_retries: 3
-      interval_sec: 60
-      timeout_sec: 120
+      interval_sec: 120
+      timeout_sec: 60
     webhook: '{{ACTION_BASE_URL}}/uploaders/sendSubmissionRequests'
     headers:
     - name: x-hasura-event-secret
@@ -1918,7 +1918,7 @@
         columns: '*'
     retry_conf:
       num_retries: 3
-      interval_sec: 10
+      interval_sec: 120
       timeout_sec: 60
     webhook: '{{ACTION_BASE_URL}}/emailCreated'
     headers:

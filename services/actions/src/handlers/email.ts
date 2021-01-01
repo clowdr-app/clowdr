@@ -1,7 +1,13 @@
 import { gql } from "@apollo/client/core";
 import sgMail from "@sendgrid/mail";
 import assert from "assert";
-import { Email_Insert_Input, InsertEmailsDocument, MarkAndSelectUnsentEmailsDocument, SelectUnsentEmailIdsDocument, UnmarkUnsentEmailsDocument } from "../generated/graphql";
+import {
+    Email_Insert_Input,
+    InsertEmailsDocument,
+    MarkAndSelectUnsentEmailsDocument,
+    SelectUnsentEmailIdsDocument,
+    UnmarkUnsentEmailsDocument,
+} from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { callWithRetry } from "../utils";
 
@@ -31,7 +37,11 @@ gql`
     }
 
     mutation MarkAndSelectUnsentEmails($ids: [uuid!]!, $sentAt: timestamptz!) {
-        update_Email(where: { id: { _in: $ids }, sentAt: { _is_null: true } }, _set: { sentAt: $sentAt }, _inc: { retriesCount: 1 }) {
+        update_Email(
+            where: { id: { _in: $ids }, sentAt: { _is_null: true } }
+            _set: { sentAt: $sentAt }
+            _inc: { retriesCount: 1 }
+        ) {
             returning {
                 emailAddress
                 htmlContents
@@ -55,12 +65,12 @@ export async function processEmailsJobQueue(): Promise<void> {
     const senderAddress = process.env.SENDGRID_SENDER;
 
     const unsentEmailIds = await apolloClient.query({
-        query: SelectUnsentEmailIdsDocument
+        query: SelectUnsentEmailIdsDocument,
     });
     const emailsToSend = await apolloClient.mutate({
         mutation: MarkAndSelectUnsentEmailsDocument,
         variables: {
-            ids: unsentEmailIds.data.Email.map(x => x.id),
+            ids: unsentEmailIds.data.Email.map((x) => x.id),
             sentAt: new Date().toISOString(),
         },
     });
@@ -92,7 +102,7 @@ export async function processEmailsJobQueue(): Promise<void> {
             await apolloClient.mutate({
                 mutation: UnmarkUnsentEmailsDocument,
                 variables: {
-                    ids: unsuccessfulEmailIds.filter(x => !!x),
+                    ids: unsuccessfulEmailIds.filter((x) => !!x),
                 },
             });
         });

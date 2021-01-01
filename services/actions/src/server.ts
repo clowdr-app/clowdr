@@ -2,7 +2,6 @@ import sgMail from "@sendgrid/mail";
 import assert from "assert";
 import bodyParser from "body-parser";
 import express, { Request, Response } from "express";
-import { is } from "typescript-is";
 import { initialiseAwsClient } from "./aws/awsClient";
 import handlerEcho from "./handlers/echo";
 import { processEmailsJobQueue } from "./handlers/email";
@@ -11,7 +10,7 @@ import {
     invitationConfirmSendInitialEmailHandler,
     invitationConfirmSendRepeatEmailHandler,
     invitationConfirmWithCodeHandler,
-    invitationSendInvitationsHandler,
+    processInvitationEmailsQueue,
 } from "./handlers/invitation";
 import protectedEchoHandler from "./handlers/protectedEcho";
 import { processSendSubmissionRequestsJobQueue } from "./handlers/upload";
@@ -32,7 +31,6 @@ import { router as openshotRouter } from "./router/openshot";
 import { router as publishVideoJobRouter } from "./router/publishVideoJob";
 import { router as videoRenderJobRouter } from "./router/videoRenderJob";
 import { router as vonageRouter } from "./router/vonage";
-import { InvitationEmailJobData, Payload } from "./types/hasura/event";
 
 type AuthenticatedRequest = Request & { userId: string };
 
@@ -126,30 +124,15 @@ app.post("/queues/processSendSubmissionRequestsJobQueue", jsonParser, async (_re
     res.status(200).json("OK");
 });
 
-app.post("/invitationEmailJobCreated", jsonParser, async (req: Request, res: Response) => {
-    if (is<Payload>(req.body)) {
-        try {
-            if (
-                req.body.trigger.name === "InvitationEmailJobCreated" &&
-                req.body.event.data.new &&
-                is<Payload<InvitationEmailJobData>>(req.body)
-            ) {
-                await invitationSendInvitationsHandler(req.body.event.data.new);
-            } else {
-                console.log(`Received unhandled payload: ${req.body.trigger.name}`);
-                res.status(400).json("Received unhandled payload");
-                return;
-            }
-        } catch (e) {
-            console.error("Failure while handling event invitationEmailJobCreated", e);
-            res.status(500).json("Failure while handling event");
-            return;
-        }
-        res.status(200).json("OK");
-    } else {
-        console.log("Received incorrect payload");
-        res.status(500).json("Unexpected payload");
+app.post("/queues/processInvitationEmailsQueue", jsonParser, async (_req: Request, res: Response) => {
+    try {
+        await processInvitationEmailsQueue();
+    } catch (e) {
+        console.error("Failure while processing invitations emails job queue", e);
+        res.status(500).json("Failure");
+        return;
     }
+    res.status(200).json("OK");
 });
 
 app.post("/invitation/confirm/current", jsonParser, checkJwt, checkUserScopes, async (_req: Request, res: Response) => {

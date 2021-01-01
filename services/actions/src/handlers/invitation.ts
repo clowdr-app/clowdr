@@ -4,18 +4,18 @@ import crypto from "crypto";
 import { v4 as uuidv4 } from "uuid";
 import {
     AttendeeWithInvitePartsFragment,
-    DeleteInvitationEmailsJobDocument,
     Email_Insert_Input,
     InvitationPartsFragment,
     InvitedUserPartsFragment,
+    MarkAndSelectUnprocessedInvitationEmailJobsDocument,
     SelectAttendeesWithInvitationDocument,
     SelectInvitationAndUserDocument,
     SendFreshInviteConfirmationEmailDocument,
     SetAttendeeUserIdDocument,
+    UnmarkInvitationEmailJobsDocument,
     UpdateInvitationDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { InvitationEmailJobData } from "../types/hasura/event";
 import { insertEmails } from "./email";
 
 gql`
@@ -125,18 +125,27 @@ gql`
         }
     }
 
-    mutation DeleteInvitationEmailsJob($id: uuid!) {
-        delete_job_queues_InvitationEmailJob_by_pk(id: $id) {
-            id
+    mutation MarkAndSelectUnprocessedInvitationEmailJobs {
+        update_job_queues_InvitationEmailJob(where: { processed: { _eq: false } }, _set: { processed: true }) {
+            returning {
+                id
+                attendeeIds
+                sendRepeat
+            }
+        }
+    }
+
+    mutation UnmarkInvitationEmailJobs($ids: [uuid!]!) {
+        update_job_queues_InvitationEmailJob(where: { id: { _in: $ids } }, _set: { processed: false }) {
+            affected_rows
         }
     }
 `;
 
 async function sendInviteEmails(
-    jobId: string,
     attendeeIds: Array<string>,
     shouldSend: (attendee: AttendeeWithInvitePartsFragment) => "INITIAL" | "REPEAT" | false
-): Promise<Array<InvitationSendEmailResult>> {
+): Promise<void> {
     const attendees = await apolloClient.query({
         query: SelectAttendeesWithInvitationDocument,
         variables: {
@@ -150,7 +159,6 @@ async function sendInviteEmails(
         throw new Error(attendees.errors.reduce((a, e) => `${a}\n* ${e};`, ""));
     }
 
-    const results: Map<string, boolean> = new Map();
     const emailsToSend: Map<string, Email_Insert_Input> = new Map();
 
     for (const attendee of attendees.data.Attendee) {
@@ -202,50 +210,40 @@ received this email in error, please contact us via ${process.env.STOP_EMAILS_CO
     }
 
     await insertEmails(Array.from(emailsToSend.values()));
-    for (const attendeeId of Array.from(emailsToSend.keys())) {
-        results.set(attendeeId, true);
-    }
-
-    try {
-        await apolloClient.mutate({
-            mutation: DeleteInvitationEmailsJobDocument,
-            variables: {
-                id: jobId,
-            },
-        });
-    } catch (e) {
-        console.warn(`Failed to delete Invitation Email Job: ${jobId}`);
-    }
-
-    const output: Array<InvitationSendEmailResult> = [];
-    for (const attendeeId of attendeeIds) {
-        if (results.has(attendeeId)) {
-            const sent = results.get(attendeeId);
-            assert(sent);
-            output.push({
-                attendeeId,
-                sent,
-            });
-        } else {
-            output.push({
-                attendeeId,
-                sent: false,
-            });
-        }
-    }
-    return output;
 }
 
-export async function invitationSendInvitationsHandler(
-    data: InvitationEmailJobData
-): Promise<Array<InvitationSendEmailResult>> {
-    return sendInviteEmails(data.id, data.attendeeIds, (attendee) => {
-        if (!!attendee.invitation && attendee.invitation.emails.filter((x) => x.reason === "invite").length === 0) {
-            return "INITIAL";
-        } else if (data.sendRepeat) {
-            return "REPEAT";
+export async function processInvitationEmailsQueue(): Promise<void> {
+    const jobs = await apolloClient.mutate({
+        mutation: MarkAndSelectUnprocessedInvitationEmailJobsDocument,
+        variables: {},
+    });
+    assert(jobs.data?.update_job_queues_InvitationEmailJob?.returning, "Unable to fetch Send Invitations jobs.");
+
+    const failedJobIds: string[] = [];
+    for (const job of jobs.data.update_job_queues_InvitationEmailJob.returning) {
+        try {
+            await sendInviteEmails(job.attendeeIds, (attendee) => {
+                if (
+                    !!attendee.invitation &&
+                    attendee.invitation.emails.filter((x) => x.reason === "invite").length === 0
+                ) {
+                    return "INITIAL";
+                } else if (job.sendRepeat) {
+                    return "REPEAT";
+                }
+                return false;
+            });
+        } catch (e) {
+            console.error(`Failed to process send invite emails job: ${job.id}`);
+            failedJobIds.push(job.id);
         }
-        return false;
+    }
+
+    await apolloClient.mutate({
+        mutation: UnmarkInvitationEmailJobsDocument,
+        variables: {
+            ids: failedJobIds,
+        },
     });
 }
 

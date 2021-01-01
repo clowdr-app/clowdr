@@ -41,20 +41,6 @@
       - conferenceId
       - sendRepeat
       backend_only: false
-  event_triggers:
-  - name: InvitationEmailJobCreated
-    definition:
-      enable_manual: true
-      insert:
-        columns: '*'
-    retry_conf:
-      num_retries: 3
-      interval_sec: 120
-      timeout_sec: 60
-    webhook: '{{ACTION_BASE_URL}}/invitationEmailJobCreated'
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
 - table:
     schema: job_queues
     name: PublishVideoJob

@@ -348,6 +348,8 @@ const defaultRenderers: {
                     aria-label={editMode.label}
                     disabled={editMode.isDisabled}
                     maxWidth="100%"
+                    max={editMode.opts.max}
+                    min={editMode.opts.min}
                 >
                     <NumberInputField />
                     <NumberInputStepper>
@@ -773,6 +775,8 @@ function CRUDRow<S, T, PK extends keyof S>({
                                           field.spec.fieldType === FieldType.select
                                               ? field.spec.multiSelect
                                               : undefined,
+                                      max: field.spec.fieldType === FieldType.integer ? field.spec.max : undefined,
+                                      min: field.spec.fieldType === FieldType.integer ? field.spec.min : undefined,
                                   },
                                   onChange: async (value) => {
                                       const convertFromUI = field.spec.convertFromUI as ((v: any) => T) | undefined;
@@ -784,11 +788,13 @@ function CRUDRow<S, T, PK extends keyof S>({
                                           const p = csud?.cudCallbacks?.update?.(new Map([[primaryKey, newItem]]));
                                           if (p) {
                                               let results: Map<S[PK], UpdateResult>;
-                                              if (p instanceof Promise) {
+                                              const isInstant = p instanceof Promise;
+                                              if (isInstant) {
                                                   const editId = beginEdit();
                                                   results = await p;
                                                   endEdit(editId);
                                               } else {
+                                                  assert(!(p instanceof Promise));
                                                   results = p;
                                               }
                                               results.forEach((result, key) => {
@@ -801,7 +807,7 @@ function CRUDRow<S, T, PK extends keyof S>({
                                                           status: "error",
                                                           title: `Error applying update to item ${key}`,
                                                       });
-                                                  } else {
+                                                  } else if (!isInstant) {
                                                       addDirtyKey(key);
                                                   }
                                               });
@@ -861,17 +867,21 @@ function CRUDRow<S, T, PK extends keyof S>({
                         const p = csud?.cudCallbacks?.delete?.(new Set([primaryKey]));
                         if (p) {
                             let results: Map<S[PK], boolean>;
-                            if (p instanceof Promise) {
+                            const isInstant = p instanceof Promise;
+                            if (isInstant) {
                                 const editId = beginEdit();
                                 results = await p;
                                 endEdit(editId);
                             } else {
+                                assert(!(p instanceof Promise));
                                 results = p;
                             }
 
                             results.forEach((result, key) => {
                                 if (result === true) {
-                                    addDirtyKey(key);
+                                    if (!isInstant) {
+                                        addDirtyKey(key);
+                                    }
                                 } else {
                                     toast({
                                         isClosable: true,
@@ -959,17 +969,21 @@ function CRUDDeleteSelectedButton<T, PK extends keyof T>({
                 const p = csud?.cudCallbacks?.delete?.(selectedKeys);
                 if (p) {
                     let results: Map<T[PK], boolean>;
-                    if (p instanceof Promise) {
+                    const isInstant = p instanceof Promise;
+                    if (isInstant) {
                         const editId = beginEdit();
                         results = await p;
                         endEdit(editId);
                     } else {
+                        assert(!(p instanceof Promise));
                         results = p;
                     }
 
                     results.forEach((result, key) => {
                         if (result === true) {
-                            addDirtyKey(key);
+                            if (!isInstant) {
+                                addDirtyKey(key);
+                            }
                         } else {
                             toast({
                                 isClosable: true,
@@ -985,7 +999,7 @@ function CRUDDeleteSelectedButton<T, PK extends keyof T>({
 
     return (
         <Button
-            onClick={(ev) => {
+            onClick={(_ev) => {
                 onDelete();
             }}
             disabled={isDisabled}
@@ -1131,7 +1145,6 @@ function CRUDCreateButton<T, PK extends keyof T>({
                             assert(cbs.create);
                             const tempKey = await cbs.create(newItem);
                             if (tempKey) {
-                                addDirtyKey(tempKey);
                                 setSelectedKeys(() => {
                                     return new Set([tempKey]);
                                 });

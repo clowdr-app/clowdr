@@ -69,8 +69,7 @@ export default function ConferenceCurrentUserActivePermissionsProvider({
                     },
                     publicPermissions
                 );
-            }
-            else {
+            } else {
                 return publicPermissions;
             }
         }

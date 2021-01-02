@@ -23772,13 +23772,12 @@ export type SelectAllRoomsWithParticipantsQuery = { readonly __typename?: 'query
     & RoomWithParticipantInfoFragment
   )> };
 
-export type CreateDeleteRoomsMutationVariables = Exact<{
-  deleteRoomIds?: Maybe<ReadonlyArray<Scalars['uuid']>>;
-  insertRooms: ReadonlyArray<Room_Insert_Input>;
+export type CreateRoomMutationVariables = Exact<{
+  room: Room_Insert_Input;
 }>;
 
 
-export type CreateDeleteRoomsMutation = { readonly __typename?: 'mutation_root', readonly delete_Room?: Maybe<{ readonly __typename?: 'Room_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }> }>, readonly insert_Room?: Maybe<{ readonly __typename?: 'Room_mutation_response', readonly returning: ReadonlyArray<(
+export type CreateRoomMutation = { readonly __typename?: 'mutation_root', readonly insert_Room?: Maybe<{ readonly __typename?: 'Room_mutation_response', readonly returning: ReadonlyArray<(
       { readonly __typename?: 'Room' }
       & RoomWithParticipantInfoFragment
     )> }> };
@@ -26472,46 +26471,40 @@ export function useSelectAllRoomsWithParticipantsLazyQuery(baseOptions?: Apollo.
 export type SelectAllRoomsWithParticipantsQueryHookResult = ReturnType<typeof useSelectAllRoomsWithParticipantsQuery>;
 export type SelectAllRoomsWithParticipantsLazyQueryHookResult = ReturnType<typeof useSelectAllRoomsWithParticipantsLazyQuery>;
 export type SelectAllRoomsWithParticipantsQueryResult = Apollo.QueryResult<SelectAllRoomsWithParticipantsQuery, SelectAllRoomsWithParticipantsQueryVariables>;
-export const CreateDeleteRoomsDocument = gql`
-    mutation CreateDeleteRooms($deleteRoomIds: [uuid!] = [], $insertRooms: [Room_insert_input!]!) {
-  delete_Room(where: {id: {_in: $deleteRoomIds}}) {
-    returning {
-      id
-    }
-  }
-  insert_Room(objects: $insertRooms) {
+export const CreateRoomDocument = gql`
+    mutation CreateRoom($room: Room_insert_input!) {
+  insert_Room(objects: [$room]) {
     returning {
       ...RoomWithParticipantInfo
     }
   }
 }
     ${RoomWithParticipantInfoFragmentDoc}`;
-export type CreateDeleteRoomsMutationFn = Apollo.MutationFunction<CreateDeleteRoomsMutation, CreateDeleteRoomsMutationVariables>;
+export type CreateRoomMutationFn = Apollo.MutationFunction<CreateRoomMutation, CreateRoomMutationVariables>;
 
 /**
- * __useCreateDeleteRoomsMutation__
+ * __useCreateRoomMutation__
  *
- * To run a mutation, you first call `useCreateDeleteRoomsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateDeleteRoomsMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useCreateRoomMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateRoomMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [createDeleteRoomsMutation, { data, loading, error }] = useCreateDeleteRoomsMutation({
+ * const [createRoomMutation, { data, loading, error }] = useCreateRoomMutation({
  *   variables: {
- *      deleteRoomIds: // value for 'deleteRoomIds'
- *      insertRooms: // value for 'insertRooms'
+ *      room: // value for 'room'
  *   },
  * });
  */
-export function useCreateDeleteRoomsMutation(baseOptions?: Apollo.MutationHookOptions<CreateDeleteRoomsMutation, CreateDeleteRoomsMutationVariables>) {
-        return Apollo.useMutation<CreateDeleteRoomsMutation, CreateDeleteRoomsMutationVariables>(CreateDeleteRoomsDocument, baseOptions);
+export function useCreateRoomMutation(baseOptions?: Apollo.MutationHookOptions<CreateRoomMutation, CreateRoomMutationVariables>) {
+        return Apollo.useMutation<CreateRoomMutation, CreateRoomMutationVariables>(CreateRoomDocument, baseOptions);
       }
-export type CreateDeleteRoomsMutationHookResult = ReturnType<typeof useCreateDeleteRoomsMutation>;
-export type CreateDeleteRoomsMutationResult = Apollo.MutationResult<CreateDeleteRoomsMutation>;
-export type CreateDeleteRoomsMutationOptions = Apollo.BaseMutationOptions<CreateDeleteRoomsMutation, CreateDeleteRoomsMutationVariables>;
+export type CreateRoomMutationHookResult = ReturnType<typeof useCreateRoomMutation>;
+export type CreateRoomMutationResult = Apollo.MutationResult<CreateRoomMutation>;
+export type CreateRoomMutationOptions = Apollo.BaseMutationOptions<CreateRoomMutation, CreateRoomMutationVariables>;
 export const UpdateRoomsWithParticipantsDocument = gql`
     mutation UpdateRoomsWithParticipants($id: uuid!, $name: String!, $capacity: Int!) {
   update_Room_by_pk(

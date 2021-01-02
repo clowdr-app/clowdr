@@ -6,7 +6,6 @@ import type {
     IntermediaryTagDescriptor,
 } from "@clowdr-app/shared-types/build/import/intermediary";
 import { v4 as uuidv4 } from "uuid";
-import { RoomMode_Enum } from "../../../../../generated/graphql";
 import type { ContentGroupDescriptor } from "../../Content/Types";
 import type { EventDescriptor, EventPersonDescriptor, RoomDescriptor } from "../../Schedule/Types";
 import type { OriginatingDataDescriptor, TagDescriptor } from "../../Shared/Types";

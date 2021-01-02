@@ -221,7 +221,7 @@ function useOpenTok(): [state: OpenTokState, actions: OpenTokActions] {
             options: Partial<OT.PublisherProperties>;
         }): Promise<OT.Publisher> => {
             if (publisher[name]) {
-                throw new Error(`[ReactUseOpenTok] initPublisher: The publisher(${name}) is already existed`);
+                throw new Error(`[ReactUseOpenTok] initPublisher: The publisher(${name}) already exists`);
             }
             return new Promise((resolve, reject) => {
                 const newPublisher = OT.initPublisher(element, { ...defaultOptions, ...options }, (error) => {
@@ -242,7 +242,7 @@ function useOpenTok(): [state: OpenTokState, actions: OpenTokActions] {
     const removePublisher = useCallback(
         ({ name }): void => {
             if (!publisher[name]) {
-                throw new Error(`[ReactUseOpenTok] removePublisher: The publisher(${name}) does not exist`);
+                throw new Error(`[ReactUseOpenTok] removePublisher: The publisher (${name}) does not exist`);
             }
 
             const published = streams.some((stream) => stream.streamId === publisher[name].stream?.streamId);
@@ -261,7 +261,7 @@ function useOpenTok(): [state: OpenTokState, actions: OpenTokActions] {
     const publishPublisher = useCallback(
         ({ name }): Promise<OT.Stream> => {
             if (!publisher[name]) {
-                throw new Error(`[ReactUseOpenTok] publishPublisher: The publisher(${name}) does not exist`);
+                throw new Error(`[ReactUseOpenTok] publishPublisher: The publisher (${name}) does not exist`);
             }
 
             if (!session) {

@@ -184,7 +184,7 @@ function useOpenTokReducer(): [state: OpenTokState, action: ReducerActions] {
                 });
             },
         }),
-        []
+        [dispatch]
     );
 
     return [state, action];

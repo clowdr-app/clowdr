@@ -1,5 +1,10 @@
 import { gql } from "@apollo/client/core";
-import { GetEventRolesForUserDocument, OngoingBroadcastableVideoRoomEventsDocument } from "../generated/graphql";
+import {
+    GetEventRolesForUserDocument,
+    GetRoomWhereUserAttendsConferenceDocument,
+    OngoingBroadcastableVideoRoomEventsDocument,
+    SetRoomVonageSessionIdDocument,
+} from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import * as Vonage from "../lib/vonage/vonageClient";
 import { startEventBroadcast } from "../lib/vonage/vonageTools";
@@ -120,4 +125,80 @@ export async function handleJoinEvent(
     return {
         accessToken,
     };
+}
+
+gql`
+    query GetRoomWhereUserAttendsConference($roomId: uuid, $userId: String) {
+        Room(where: { id: { _eq: $roomId }, conference: { attendees: { userId: { _eq: $userId } } } }) {
+            id
+            publicVonageSessionId
+        }
+    }
+`;
+
+export async function handleJoinRoom(
+    payload: joinRoomVonageSessionArgs,
+    userId: string
+): Promise<JoinRoomVonageSessionOutput> {
+    // TODO: check the user's roles explicitly, rather than just conference attendee-ship
+    const roomResult = await apolloClient.query({
+        query: GetRoomWhereUserAttendsConferenceDocument,
+        variables: {
+            roomId: payload.roomId,
+            userId,
+        },
+    });
+
+    if (roomResult.data.Room.length === 0) {
+        console.warn("Could not find room to generate Vonage access token", payload.roomId);
+        return {};
+    }
+
+    const room = roomResult.data.Room[0];
+
+    let publicVonageSessionId = room.publicVonageSessionId;
+    if (!publicVonageSessionId) {
+        try {
+            publicVonageSessionId = await createRoomVonageSession(payload.roomId);
+        } catch (e) {
+            console.error("Failed to initialise Vonage session for room", payload.roomId, e);
+            throw new Error("Failed to initialise Vonage session for room");
+        }
+    }
+
+    const accessToken = Vonage.vonage.generateToken(publicVonageSessionId, {
+        data: `userId=${userId}`,
+        role: "publisher",
+    });
+
+    return {
+        accessToken,
+        sessionId: publicVonageSessionId,
+    };
+}
+
+async function createRoomVonageSession(roomId: string): Promise<string> {
+    const sessionResult = await Vonage.createSession({ mediaMode: "relayed" });
+
+    if (!sessionResult) {
+        throw new Error("No session ID returned from Vonage");
+    }
+
+    gql`
+        mutation SetRoomVonageSessionId($roomId: uuid!, $sessionId: String!) {
+            update_Room_by_pk(pk_columns: { id: $roomId }, _set: { publicVonageSessionId: $sessionId }) {
+                id
+            }
+        }
+    `;
+
+    await apolloClient.mutate({
+        mutation: SetRoomVonageSessionIdDocument,
+        variables: {
+            roomId: roomId,
+            sessionId: sessionResult.sessionId,
+        },
+    });
+
+    return sessionResult.sessionId;
 }

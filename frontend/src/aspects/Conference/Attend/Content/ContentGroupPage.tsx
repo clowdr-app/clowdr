@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Flex, SkeletonCircle, SkeletonText } from "@chakra-ui/react";
 import React from "react";
 import { ContentGroupDataFragment, Permission_Enum, useGetContentGroupQuery } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
@@ -43,13 +43,14 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
             <ApolloQueryWrapper queryResult={result} getter={(data) => data.ContentGroup_by_pk}>
                 {(contentGroupData: ContentGroupDataFragment) => {
                     return (
-                        <Flex width="100%" height="100%">
+                        <Flex width="100%" height="100%" gridColumnGap={5}>
                             <Box textAlign="center" flexGrow={1} overflowY="auto">
                                 <ContentGroupVideos contentGroupData={contentGroupData} />
                                 <ContentGroupSummary contentGroupData={contentGroupData} />
                             </Box>
                             <Box width="30%" border="1px solid white" height="100%">
-                                foo bar
+                                <SkeletonCircle size="20" />
+                                <SkeletonText mt={8} noOfLines={5} spacing={5} />
                             </Box>
                         </Flex>
                     );

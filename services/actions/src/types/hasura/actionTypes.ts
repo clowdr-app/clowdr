@@ -67,6 +67,11 @@ type JoinEventVonageSessionOutput = {
     accessToken?: Maybe<string>;
 };
 
+type JoinRoomVonageSessionOutput = {
+    sessionId?: Maybe<string>;
+    accessToken?: Maybe<string>;
+};
+
 type SampleInput = {
     username: string;
     password: string;
@@ -107,12 +112,10 @@ type Mutation = {
     invitationConfirmSendInitialEmail?: Maybe<InvitationConfirmationEmailOutput>;
     invitationConfirmSendRepeatEmail?: Maybe<InvitationConfirmationEmailOutput>;
     invitationConfirmWithCode?: Maybe<ConfirmInvitationOutput>;
-    invitationSendInitialEmail: Array<InvitationSendEmailResult>;
-    invitationSendRepeatEmail: Array<InvitationSendEmailResult>;
     joinEventVonageSession?: Maybe<JoinEventVonageSessionOutput>;
+    joinRoomVonageSession?: Maybe<JoinRoomVonageSessionOutput>;
     submitContentItem?: Maybe<SubmitContentItemOutput>;
     updateSubtitles?: Maybe<SubmitUpdatedSubtitlesOutput>;
-    uploadSendSubmissionRequests: Array<UploaderSendSubmissionRequestResult>;
 };
 
 type echoArgs = {
@@ -147,16 +150,12 @@ type invitationConfirmWithCodeArgs = {
     inviteInput: ConfirmInvitationInput;
 };
 
-type invitationSendInitialEmailArgs = {
-    attendeeIds: Array<string>;
-};
-
-type invitationSendRepeatEmailArgs = {
-    attendeeIds: Array<string>;
-};
-
 type joinEventVonageSessionArgs = {
     eventId: uuid;
+};
+
+type joinRoomVonageSessionArgs = {
+    roomId: uuid;
 };
 
 type submitContentItemArgs = {
@@ -168,8 +167,4 @@ type updateSubtitlesArgs = {
     contentItemId: string;
     subtitleText: string;
     magicToken: string;
-};
-
-type uploadSendSubmissionRequestsArgs = {
-    uploaderIds: Array<uuid>;
 };

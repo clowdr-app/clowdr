@@ -54,6 +54,13 @@ type Mutation {
 }
 
 
+type Mutation {
+  joinRoomVonageSession (
+    roomId: uuid!
+  ): JoinRoomVonageSessionOutput
+}
+
+
 type Query {
   protectedEcho (
     message: String!
@@ -168,6 +175,11 @@ type UploaderSendSubmissionRequestResult {
 }
 
 type JoinEventVonageSessionOutput {
+  accessToken : String
+}
+
+type JoinRoomVonageSessionOutput {
+  sessionId : String
   accessToken : String
 }
 

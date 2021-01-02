@@ -2,7 +2,7 @@ import assert from "assert";
 import bodyParser from "body-parser";
 import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
-import { handleJoinEvent, handleVonageSessionMonitoringWebhook } from "../handlers/vonage";
+import { handleJoinEvent, handleJoinRoom, handleVonageSessionMonitoringWebhook } from "../handlers/vonage";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
 import { ActionPayload } from "../types/hasura/action";
 import { WebhookReqBody } from "../types/vonage";
@@ -59,6 +59,25 @@ router.post("/joinEvent", bodyParser.json(), async (req: Request, res: Response<
 
     try {
         const result = await handleJoinEvent(body.input, body.session_variables["x-hasura-user-id"]);
+        return res.status(200).json(result);
+    } catch (e) {
+        console.error(`${req.originalUrl}: failure while handling request`, req.body.input, e);
+        return res.status(200).json({});
+    }
+});
+
+router.post("/joinRoom", bodyParser.json(), async (req: Request, res: Response<JoinRoomVonageSessionOutput>) => {
+    let body: ActionPayload<joinRoomVonageSessionArgs>;
+    try {
+        body = req.body;
+        assertType<ActionPayload<joinRoomVonageSessionArgs>>(body);
+    } catch (e) {
+        console.error(`${req.originalUrl}: invalid request`, req.body.input, e);
+        return res.status(200).json({});
+    }
+
+    try {
+        const result = await handleJoinRoom(body.input, body.session_variables["x-hasura-user-id"]);
         return res.status(200).json(result);
     } catch (e) {
         console.error(`${req.originalUrl}: failure while handling request`, req.body.input, e);

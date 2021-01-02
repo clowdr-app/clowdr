@@ -65175,6 +65175,41 @@
       },
       {
         "kind": "OBJECT",
+        "name": "JoinRoomVonageSessionOutput",
+        "description": null,
+        "fields": [
+          {
+            "name": "accessToken",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "sessionId",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
         "name": "MediaLiveChannel",
         "description": "columns and relationships of \"MediaLiveChannel\"",
         "fields": [
@@ -111126,6 +111161,33 @@
             "type": {
               "kind": "OBJECT",
               "name": "JoinEventVonageSessionOutput",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "joinRoomVonageSession",
+            "description": "perform the action: \"joinRoomVonageSession\"",
+            "args": [
+              {
+                "name": "roomId",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "uuid",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "JoinRoomVonageSessionOutput",
               "ofType": null
             },
             "isDeprecated": false,

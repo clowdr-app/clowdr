@@ -4159,11 +4159,10 @@
                   attendee:
                     userId:
                       _eq: X-Hasura-User-Id
-      set:
-        currentModeName: BREAKOUT
       columns:
       - capacity
       - conferenceId
+      - currentModeName
       - id
       - name
       - originatingDataId
@@ -4227,7 +4226,7 @@
   - role: user
     permission:
       columns:
-      - capacity
+      - currentModeName
       - name
       - originatingDataId
       filter:

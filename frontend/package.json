@@ -9,6 +9,8 @@
         "graphql-codegen": "graphql-codegen --config codegen.js"
     },
     "dependencies": {
+        "@ahanapediatrics/ahana-fp": "^2.6.0",
+        "@ahanapediatrics/react-volume-meter": "^5.9.0",
         "@apollo/client": "^3.3.6",
         "@apollo/link-context": "^2.0.0-beta.3",
         "@apollo/react-hooks": "^4.0.0",

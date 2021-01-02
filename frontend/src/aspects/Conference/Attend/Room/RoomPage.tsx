@@ -1,5 +1,14 @@
 import { gql } from "@apollo/client";
-import { Box, Flex, Heading, Skeleton, SkeletonCircle, SkeletonText } from "@chakra-ui/react";
+import {
+    Box,
+    Flex,
+    Heading,
+    Skeleton,
+    SkeletonCircle,
+    SkeletonText,
+    useBreakpointValue,
+    useColorModeValue,
+} from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { Permission_Enum, RoomDetailsFragment, useGetRoomDetailsQuery } from "../../../../generated/graphql";
 import usePolling from "../../../Generic/usePolling";
@@ -104,17 +113,19 @@ function Room({ roomDetails }: { roomDetails: RoomDetailsFragment }): JSX.Elemen
 }
 
 function BreakoutRoom({ roomDetails }: { roomDetails: RoomDetailsFragment }): JSX.Element {
+    const backgroundColor = useColorModeValue("gray.50", "gray.900");
+    const stackColumns = useBreakpointValue({ base: true, lg: false });
     return (
-        <Flex width="100%" height="100%" gridColumnGap={5}>
+        <Flex width="100%" height="100%" gridColumnGap={5} flexWrap={stackColumns ? "wrap" : "nowrap"}>
             <Box textAlign="left" flexGrow={1} overflowY="auto" p={2}>
-                <Box height="80vh" width="100%" background="gray.50">
+                <Box height="80vh" width="100%" background={backgroundColor}>
                     <VonageRoom roomId={roomDetails.id} />
                 </Box>
                 <Heading as="h2" textAlign="left" mt={5}>
                     {roomDetails.name}
                 </Heading>
             </Box>
-            <Box width="30%" border="1px solid white" height="100%">
+            <Box width={stackColumns ? "100%" : "30%"} border="1px solid white" height="100%">
                 <SkeletonCircle size="20" />
                 <SkeletonText mt={8} noOfLines={5} spacing={5} />
             </Box>

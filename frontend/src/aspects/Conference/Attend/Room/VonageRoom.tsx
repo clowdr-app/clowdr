@@ -1,3 +1,5 @@
+import { Optional } from "@ahanapediatrics/ahana-fp";
+import { VmShape, VolumeMeter } from "@ahanapediatrics/react-volume-meter";
 import { gql } from "@apollo/client";
 import { SettingsIcon } from "@chakra-ui/icons";
 import { Box, Button, HStack, Text, useDisclosure, useToast, VStack } from "@chakra-ui/react";
@@ -7,6 +9,7 @@ import FAIcon from "../../../Icons/FAIcon";
 import useOpenTok from "../../../Vonage/useOpenTok";
 import { useVonageRoom, VonageRoomStateActionType, VonageRoomStateProvider } from "../../../Vonage/useVonageRoom";
 import DeviceChooserModal from "./DeviceChooserModal";
+import PlaceholderImage from "./PlaceholderImage";
 
 gql`
     mutation GetRoomVonageToken($roomId: uuid!) {
@@ -19,11 +22,21 @@ gql`
 
 export default function VonageRoom({ roomId }: { roomId: string }): JSX.Element {
     const [openTokProps, openTokMethods] = useOpenTok();
+    const { state, dispatch } = useVonageRoom();
     const [getRoomVonageToken] = useGetRoomVonageTokenMutation({
         variables: {
             roomId,
         },
     });
+
+    // useEffect(() => {
+    //     return () => {
+    //         dispatch({
+    //             cameraEnabled: false,
+    //             type: VonageRoomStateActionType.SetCameraIntendedState,
+    //         });
+    //     };
+    // }, [dispatch]);
 
     const joinRoom = useCallback(async () => {
         const result = await getRoomVonageToken();
@@ -92,6 +105,8 @@ export default function VonageRoom({ roomId }: { roomId: string }): JSX.Element 
     );
 }
 
+const AudioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+
 function CameraPreview(): JSX.Element {
     const { state, dispatch } = useVonageRoom();
     const cameraPreviewRef = useRef<HTMLVideoElement>(null);
@@ -111,6 +126,20 @@ function CameraPreview(): JSX.Element {
         });
     }, [dispatch]);
 
+    const startMicrophone = useCallback(() => {
+        dispatch({
+            type: VonageRoomStateActionType.SetMicrophoneIntendedState,
+            microphoneEnabled: true,
+        });
+    }, [dispatch]);
+
+    const stopMicrophone = useCallback(() => {
+        dispatch({
+            type: VonageRoomStateActionType.SetMicrophoneIntendedState,
+            microphoneEnabled: false,
+        });
+    }, [dispatch]);
+
     useEffect(() => {
         if (cameraPreviewRef.current) {
             cameraPreviewRef.current.srcObject = state.cameraStream;
@@ -121,19 +150,39 @@ function CameraPreview(): JSX.Element {
 
     return (
         <HStack>
-            <video
-                ref={cameraPreviewRef}
-                style={{
-                    background: "gray.100",
-                    height: "300px",
-                    width: "300px",
-                    objectFit: "cover",
-                }}
-            />
+            <Box position="relative">
+                <Box position="absolute" width="50%" top="50%" left="50%" transform="translate(-50%,-50%)">
+                    <PlaceholderImage colour="black" />
+                </Box>
+                <video
+                    ref={cameraPreviewRef}
+                    autoPlay={true}
+                    style={{
+                        border: "1px solid gray",
+                        height: "300px",
+                        width: "300px",
+                        objectFit: "cover",
+                        transform: "rotateY(180deg)",
+                    }}
+                />
+                <Box position="absolute" bottom="5" right="5">
+                    {state.microphoneStream ? (
+                        <VolumeMeter
+                            audioContext={AudioContext}
+                            height={50}
+                            width={50}
+                            shape={VmShape.VM_STEPPED}
+                            stream={Optional.of(state.microphoneStream)}
+                        />
+                    ) : (
+                        <></>
+                    )}
+                </Box>
+            </Box>
             <VStack alignItems="left">
                 {state.cameraStream ? (
                     <Button onClick={stopCamera}>
-                        <FAIcon icon="video" iconStyle="s" mr="auto" />
+                        <FAIcon icon="video-slash" iconStyle="s" mr="auto" />
                         <span style={{ marginLeft: "1rem" }}>Stop video</span>
                     </Button>
                 ) : (
@@ -142,10 +191,17 @@ function CameraPreview(): JSX.Element {
                         <span style={{ marginLeft: "1rem" }}>Start video</span>
                     </Button>
                 )}
-                <Button>
-                    <FAIcon icon="microphone" iconStyle="s" mr="auto" />
-                    <span style={{ marginLeft: "1rem" }}>Start microphone</span>
-                </Button>
+                {state.microphoneStream ? (
+                    <Button onClick={stopMicrophone}>
+                        <FAIcon icon="microphone-slash" iconStyle="s" mr="auto" />
+                        <span style={{ marginLeft: "1rem" }}>Stop microphone</span>
+                    </Button>
+                ) : (
+                    <Button onClick={startMicrophone}>
+                        <FAIcon icon="microphone" iconStyle="s" mr="auto" />
+                        <span style={{ marginLeft: "1rem" }}>Start microphone</span>
+                    </Button>
+                )}
             </VStack>
         </HStack>
     );
@@ -157,15 +213,21 @@ function VonageRoomControlBar({ onJoinRoom }: { onJoinRoom: () => void }): JSX.E
 
     return (
         <>
-            <HStack>
-                <Button leftIcon={<SettingsIcon />} onClick={onOpen}>
+            <HStack p={2}>
+                <Button mr="auto" leftIcon={<SettingsIcon />} onClick={onOpen}>
                     Settings
                 </Button>
-                <Button ml="auto">Join Room</Button>
+                <Button colorScheme="green">Join Room</Button>
             </HStack>
             <DeviceChooserModal
-                cameraId={state.preferredCameraId}
-                microphoneId={state.preferredMicrophoneId}
+                cameraId={
+                    state.preferredCameraId ?? state.cameraStream?.getVideoTracks()[0].getSettings().deviceId ?? null
+                }
+                microphoneId={
+                    state.preferredMicrophoneId ??
+                    state.microphoneStream?.getAudioTracks()[0].getSettings().deviceId ??
+                    null
+                }
                 isOpen={isOpen}
                 onChangeCamera={(cameraId) =>
                     dispatch({ type: VonageRoomStateActionType.SetPreferredCamera, cameraId })

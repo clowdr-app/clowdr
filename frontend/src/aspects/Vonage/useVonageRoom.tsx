@@ -1,41 +1,44 @@
 import { useToast } from "@chakra-ui/react";
-import React, { Dispatch, useEffect, useReducer } from "react";
+import React, { Dispatch, useEffect, useReducer, useRef } from "react";
 
 interface VonageRoomState {
     preferredCameraId: string | null;
-    preferredMicrophoneId: string | null;
     cameraIntendedEnabled: boolean;
     cameraStream: MediaStream | null;
+    preferredMicrophoneId: string | null;
+    microphoneIntendedEnabled: boolean;
+    microphoneStream: MediaStream | null;
 }
 
 const initialRoomState: VonageRoomState = {
     preferredCameraId: null,
-    preferredMicrophoneId: null,
     cameraIntendedEnabled: false,
     cameraStream: null,
+    preferredMicrophoneId: null,
+    microphoneIntendedEnabled: false,
+    microphoneStream: null,
 };
 
 type VonageRoomStateAction =
     | SetPreferredCamera
     | SetPreferredMicrophone
     | SetCameraIntendedState
-    | SetCameraMediaStream;
+    | SetCameraMediaStream
+    | SetMicrophoneIntendedState
+    | SetMicrophoneMediaStream;
 
 export enum VonageRoomStateActionType {
     SetPreferredCamera,
-    SetPreferredMicrophone,
     SetCameraIntendedState,
     SetCameraMediaStream,
+    SetPreferredMicrophone,
+    SetMicrophoneIntendedState,
+    SetMicrophoneMediaStream,
 }
 
 interface SetPreferredCamera {
     type: VonageRoomStateActionType.SetPreferredCamera;
     cameraId: string;
-}
-
-interface SetPreferredMicrophone {
-    type: VonageRoomStateActionType.SetPreferredMicrophone;
-    microphoneId: string;
 }
 
 interface SetCameraIntendedState {
@@ -45,6 +48,21 @@ interface SetCameraIntendedState {
 
 interface SetCameraMediaStream {
     type: VonageRoomStateActionType.SetCameraMediaStream;
+    mediaStream: MediaStream | null;
+}
+
+interface SetPreferredMicrophone {
+    type: VonageRoomStateActionType.SetPreferredMicrophone;
+    microphoneId: string;
+}
+
+interface SetMicrophoneIntendedState {
+    type: VonageRoomStateActionType.SetMicrophoneIntendedState;
+    microphoneEnabled: boolean;
+}
+
+interface SetMicrophoneMediaStream {
+    type: VonageRoomStateActionType.SetMicrophoneMediaStream;
     mediaStream: MediaStream | null;
 }
 
@@ -61,13 +79,36 @@ export const VonageContext = React.createContext<VonageRoomStateReducer>({
 function reducer(state: VonageRoomState, action: VonageRoomStateAction): VonageRoomState {
     switch (action.type) {
         case VonageRoomStateActionType.SetPreferredCamera:
+            if (action.cameraId !== state.preferredCameraId) {
+                state.cameraStream?.getTracks().forEach((track) => track.stop());
+                return { ...state, preferredCameraId: action.cameraId, cameraStream: null };
+            }
             return { ...state, preferredCameraId: action.cameraId };
-        case VonageRoomStateActionType.SetPreferredMicrophone:
-            return { ...state, preferredMicrophoneId: action.microphoneId };
+
         case VonageRoomStateActionType.SetCameraIntendedState:
             return { ...state, cameraIntendedEnabled: action.cameraEnabled };
+
         case VonageRoomStateActionType.SetCameraMediaStream:
+            if (action.mediaStream === null) {
+                state.cameraStream?.getTracks().forEach((track) => track.stop());
+            }
             return { ...state, cameraStream: action.mediaStream };
+
+        case VonageRoomStateActionType.SetPreferredMicrophone:
+            if (action.microphoneId !== state.preferredMicrophoneId) {
+                state.microphoneStream?.getTracks().forEach((track) => track.stop());
+                return { ...state, preferredMicrophoneId: action.microphoneId, microphoneStream: null };
+            }
+            return { ...state, preferredMicrophoneId: action.microphoneId };
+
+        case VonageRoomStateActionType.SetMicrophoneIntendedState:
+            return { ...state, microphoneIntendedEnabled: action.microphoneEnabled };
+
+        case VonageRoomStateActionType.SetMicrophoneMediaStream:
+            if (action.mediaStream === null) {
+                state.microphoneStream?.getTracks().forEach((track) => track.stop());
+            }
+            return { ...state, microphoneStream: action.mediaStream };
     }
 }
 
@@ -78,6 +119,39 @@ export function VonageRoomStateProvider({
 }): JSX.Element {
     const [state, dispatch] = useReducer(reducer, initialRoomState);
     const toast = useToast();
+    const unmountRef = useRef<() => void>();
+    const unloadRef = useRef<EventListener>();
+
+    useEffect(() => {
+        function stop() {
+            state.cameraStream?.getTracks().forEach((track) => track.stop());
+            state.microphoneStream?.getTracks().forEach((track) => track.stop());
+        }
+
+        unmountRef.current = () => {
+            stop();
+        };
+        unloadRef.current = () => {
+            stop();
+        };
+    }, [state.cameraStream, state.microphoneStream]);
+
+    useEffect(() => {
+        return () => {
+            if (unmountRef && unmountRef.current) {
+                unmountRef.current();
+            }
+        };
+    }, []);
+
+    useEffect(() => {
+        if (unloadRef && unloadRef.current) {
+            window.addEventListener("beforeunload", unloadRef.current);
+        }
+        return () => {
+            if (unloadRef && unloadRef.current) window.removeEventListener("beforeunload", unloadRef.current);
+        };
+    }, []);
 
     useEffect(() => {
         async function enableCamera() {
@@ -109,7 +183,6 @@ export function VonageRoomStateProvider({
 
     useEffect(() => {
         async function disableCamera() {
-            state.cameraStream?.getTracks().forEach((track) => track.stop());
             dispatch({
                 type: VonageRoomStateActionType.SetCameraMediaStream,
                 mediaStream: null,
@@ -119,7 +192,50 @@ export function VonageRoomStateProvider({
         if (!state.cameraIntendedEnabled) {
             disableCamera();
         }
-    }, [state.cameraIntendedEnabled, state.cameraStream]);
+    }, [state.cameraIntendedEnabled]);
+
+    useEffect(() => {
+        async function enableMicrophone() {
+            const deviceConstraints = state.preferredMicrophoneId
+                ? { deviceId: { exact: state.preferredMicrophoneId } }
+                : {};
+
+            try {
+                const mediaStream = await navigator.mediaDevices.getUserMedia({
+                    audio: {
+                        ...deviceConstraints,
+                    },
+                });
+                dispatch({
+                    type: VonageRoomStateActionType.SetMicrophoneMediaStream,
+                    mediaStream,
+                });
+            } catch (e) {
+                console.error("Failed to start microphone preview", e);
+                toast({
+                    description: "Failed to start microphone",
+                    status: "error",
+                });
+            }
+        }
+
+        if (state.microphoneIntendedEnabled) {
+            enableMicrophone();
+        }
+    }, [state.microphoneIntendedEnabled, state.preferredMicrophoneId, toast]);
+
+    useEffect(() => {
+        async function disableMicrophone() {
+            dispatch({
+                type: VonageRoomStateActionType.SetMicrophoneMediaStream,
+                mediaStream: null,
+            });
+        }
+
+        if (!state.microphoneIntendedEnabled) {
+            disableMicrophone();
+        }
+    }, [state.microphoneIntendedEnabled]);
 
     return <VonageContext.Provider value={{ state, dispatch }}>{children}</VonageContext.Provider>;
 }

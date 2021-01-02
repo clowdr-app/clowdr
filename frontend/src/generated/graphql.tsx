@@ -10341,6 +10341,12 @@ export type JoinEventVonageSessionOutput = {
   readonly accessToken?: Maybe<Scalars['String']>;
 };
 
+export type JoinRoomVonageSessionOutput = {
+  readonly __typename?: 'JoinRoomVonageSessionOutput';
+  readonly accessToken?: Maybe<Scalars['String']>;
+  readonly sessionId?: Maybe<Scalars['String']>;
+};
+
 /** columns and relationships of "MediaLiveChannel" */
 export type MediaLiveChannel = {
   readonly __typename?: 'MediaLiveChannel';
@@ -16658,6 +16664,8 @@ export type Mutation_Root = {
   readonly invitationConfirmWithCode?: Maybe<ConfirmInvitationOutput>;
   /** perform the action: "joinEventVonageSession" */
   readonly joinEventVonageSession?: Maybe<JoinEventVonageSessionOutput>;
+  /** perform the action: "joinRoomVonageSession" */
+  readonly joinRoomVonageSession?: Maybe<JoinRoomVonageSessionOutput>;
   /** perform the action: "submitContentItem" */
   readonly submitContentItem?: Maybe<SubmitContentItemOutput>;
   /** perform the action: "updateSubtitles" */
@@ -18432,6 +18440,12 @@ export type Mutation_RootInvitationConfirmWithCodeArgs = {
 /** mutation root */
 export type Mutation_RootJoinEventVonageSessionArgs = {
   eventId: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootJoinRoomVonageSessionArgs = {
+  roomId: Scalars['uuid'];
 };
 
 
@@ -23271,25 +23285,26 @@ export type ContentItemDataFragment = { readonly __typename?: 'ContentItem', rea
 
 export type GetRoomDetailsQueryVariables = Exact<{
   roomId: Scalars['uuid'];
-  conferenceId: Scalars['uuid'];
+  eventsFrom: Scalars['timestamptz'];
 }>;
 
 
-export type GetRoomDetailsQuery = { readonly __typename?: 'query_root', readonly Room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly mediaLiveChannel?: Maybe<{ readonly __typename?: 'MediaLiveChannel', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly id: any }> }> };
-
-export type OngoingEventsInRoomQueryVariables = Exact<{
-  time: Scalars['timestamptz'];
-  roomId: Scalars['uuid'];
-  userId: Scalars['String'];
-}>;
-
-
-export type OngoingEventsInRoomQuery = { readonly __typename?: 'query_root', readonly Event: ReadonlyArray<(
-    { readonly __typename?: 'Event', readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'EventPerson', readonly id: any, readonly roleName: EventPersonRole_Enum }> }
-    & CoreEventFieldsFragment
+export type GetRoomDetailsQuery = { readonly __typename?: 'query_root', readonly Room_by_pk?: Maybe<(
+    { readonly __typename?: 'Room' }
+    & RoomDetailsFragment
   )> };
 
-export type CoreEventFieldsFragment = { readonly __typename?: 'Event', readonly id: any, readonly startTime: any, readonly name: string, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum };
+export type RoomDetailsFragment = (
+  { readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly publicVonageSessionId?: Maybe<string>, readonly mediaLiveChannel?: Maybe<{ readonly __typename?: 'MediaLiveChannel', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly id: any }> }
+  & RoomEventsFragment
+);
+
+export type RoomEventsFragment = { readonly __typename?: 'Room', readonly events: ReadonlyArray<(
+    { readonly __typename?: 'Event' }
+    & RoomEventDetailsFragment
+  )> };
+
+export type RoomEventDetailsFragment = { readonly __typename?: 'Event', readonly id: any, readonly startTime: any, readonly name: string, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'EventPerson', readonly id: any, readonly roleName: EventPersonRole_Enum, readonly attendee?: Maybe<{ readonly __typename?: 'Attendee', readonly displayName: string, readonly id: any, readonly userId?: Maybe<string> }> }> };
 
 export type GetEventVonageTokenMutationVariables = Exact<{
   eventId: Scalars['uuid'];
@@ -23304,6 +23319,13 @@ export type GetEventVonageDetailsQueryVariables = Exact<{
 
 
 export type GetEventVonageDetailsQuery = { readonly __typename?: 'query_root', readonly Event_by_pk?: Maybe<{ readonly __typename?: 'Event', readonly id: any, readonly eventVonageSession?: Maybe<{ readonly __typename?: 'EventVonageSession', readonly sessionId: string, readonly id: any }> }> };
+
+export type GetRoomVonageTokenMutationVariables = Exact<{
+  roomId: Scalars['uuid'];
+}>;
+
+
+export type GetRoomVonageTokenMutation = { readonly __typename?: 'mutation_root', readonly joinRoomVonageSession?: Maybe<{ readonly __typename?: 'JoinRoomVonageSessionOutput', readonly accessToken?: Maybe<string>, readonly sessionId?: Maybe<string> }> };
 
 export type SelectContentGroupsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -24145,16 +24167,46 @@ export const ContentGroupDataFragmentDoc = gql`
 }
     ${ContentItemDataFragmentDoc}
 ${ContentPersonDataFragmentDoc}`;
-export const CoreEventFieldsFragmentDoc = gql`
-    fragment CoreEventFields on Event {
+export const RoomEventDetailsFragmentDoc = gql`
+    fragment RoomEventDetails on Event {
   id
   startTime
   name
   durationSeconds
   endTime
   intendedRoomModeName
+  eventPeople {
+    id
+    roleName
+    attendee {
+      displayName
+      id
+      userId
+    }
+  }
 }
     `;
+export const RoomEventsFragmentDoc = gql`
+    fragment RoomEvents on Room {
+  events(where: {endTime: {_gt: $eventsFrom}}) {
+    ...RoomEventDetails
+  }
+}
+    ${RoomEventDetailsFragmentDoc}`;
+export const RoomDetailsFragmentDoc = gql`
+    fragment RoomDetails on Room {
+  id
+  name
+  currentModeName
+  mediaLiveChannel {
+    cloudFrontDomain
+    endpointUri
+    id
+  }
+  publicVonageSessionId
+  ...RoomEvents
+}
+    ${RoomEventsFragmentDoc}`;
 export const ContentPersonInfoFragmentDoc = gql`
     fragment ContentPersonInfo on ContentPerson {
   id
@@ -24746,19 +24798,12 @@ export type GetContentGroupQueryHookResult = ReturnType<typeof useGetContentGrou
 export type GetContentGroupLazyQueryHookResult = ReturnType<typeof useGetContentGroupLazyQuery>;
 export type GetContentGroupQueryResult = Apollo.QueryResult<GetContentGroupQuery, GetContentGroupQueryVariables>;
 export const GetRoomDetailsDocument = gql`
-    query GetRoomDetails($roomId: uuid!, $conferenceId: uuid!) {
-  Room(where: {_and: {conferenceId: {_eq: $conferenceId}}, id: {_eq: $roomId}}) {
-    id
-    name
-    currentModeName
-    mediaLiveChannel {
-      cloudFrontDomain
-      endpointUri
-      id
-    }
+    query GetRoomDetails($roomId: uuid!, $eventsFrom: timestamptz!) {
+  Room_by_pk(id: $roomId) {
+    ...RoomDetails
   }
 }
-    `;
+    ${RoomDetailsFragmentDoc}`;
 
 /**
  * __useGetRoomDetailsQuery__
@@ -24773,7 +24818,7 @@ export const GetRoomDetailsDocument = gql`
  * const { data, loading, error } = useGetRoomDetailsQuery({
  *   variables: {
  *      roomId: // value for 'roomId'
- *      conferenceId: // value for 'conferenceId'
+ *      eventsFrom: // value for 'eventsFrom'
  *   },
  * });
  */
@@ -24786,47 +24831,6 @@ export function useGetRoomDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type GetRoomDetailsQueryHookResult = ReturnType<typeof useGetRoomDetailsQuery>;
 export type GetRoomDetailsLazyQueryHookResult = ReturnType<typeof useGetRoomDetailsLazyQuery>;
 export type GetRoomDetailsQueryResult = Apollo.QueryResult<GetRoomDetailsQuery, GetRoomDetailsQueryVariables>;
-export const OngoingEventsInRoomDocument = gql`
-    query OngoingEventsInRoom($time: timestamptz!, $roomId: uuid!, $userId: String!) {
-  Event(
-    where: {endTime: {_gt: $time}, startTime: {_lte: $time}, room: {id: {_eq: $roomId}}}
-  ) {
-    ...CoreEventFields
-    eventPeople(where: {attendee: {userId: {_eq: $userId}}}) {
-      id
-      roleName
-    }
-  }
-}
-    ${CoreEventFieldsFragmentDoc}`;
-
-/**
- * __useOngoingEventsInRoomQuery__
- *
- * To run a query within a React component, call `useOngoingEventsInRoomQuery` and pass it any options that fit your needs.
- * When your component renders, `useOngoingEventsInRoomQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useOngoingEventsInRoomQuery({
- *   variables: {
- *      time: // value for 'time'
- *      roomId: // value for 'roomId'
- *      userId: // value for 'userId'
- *   },
- * });
- */
-export function useOngoingEventsInRoomQuery(baseOptions: Apollo.QueryHookOptions<OngoingEventsInRoomQuery, OngoingEventsInRoomQueryVariables>) {
-        return Apollo.useQuery<OngoingEventsInRoomQuery, OngoingEventsInRoomQueryVariables>(OngoingEventsInRoomDocument, baseOptions);
-      }
-export function useOngoingEventsInRoomLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OngoingEventsInRoomQuery, OngoingEventsInRoomQueryVariables>) {
-          return Apollo.useLazyQuery<OngoingEventsInRoomQuery, OngoingEventsInRoomQueryVariables>(OngoingEventsInRoomDocument, baseOptions);
-        }
-export type OngoingEventsInRoomQueryHookResult = ReturnType<typeof useOngoingEventsInRoomQuery>;
-export type OngoingEventsInRoomLazyQueryHookResult = ReturnType<typeof useOngoingEventsInRoomLazyQuery>;
-export type OngoingEventsInRoomQueryResult = Apollo.QueryResult<OngoingEventsInRoomQuery, OngoingEventsInRoomQueryVariables>;
 export const GetEventVonageTokenDocument = gql`
     mutation GetEventVonageToken($eventId: uuid!) {
   joinEventVonageSession(eventId: $eventId) {
@@ -24896,6 +24900,39 @@ export function useGetEventVonageDetailsLazyQuery(baseOptions?: Apollo.LazyQuery
 export type GetEventVonageDetailsQueryHookResult = ReturnType<typeof useGetEventVonageDetailsQuery>;
 export type GetEventVonageDetailsLazyQueryHookResult = ReturnType<typeof useGetEventVonageDetailsLazyQuery>;
 export type GetEventVonageDetailsQueryResult = Apollo.QueryResult<GetEventVonageDetailsQuery, GetEventVonageDetailsQueryVariables>;
+export const GetRoomVonageTokenDocument = gql`
+    mutation GetRoomVonageToken($roomId: uuid!) {
+  joinRoomVonageSession(roomId: $roomId) {
+    accessToken
+    sessionId
+  }
+}
+    `;
+export type GetRoomVonageTokenMutationFn = Apollo.MutationFunction<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>;
+
+/**
+ * __useGetRoomVonageTokenMutation__
+ *
+ * To run a mutation, you first call `useGetRoomVonageTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGetRoomVonageTokenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [getRoomVonageTokenMutation, { data, loading, error }] = useGetRoomVonageTokenMutation({
+ *   variables: {
+ *      roomId: // value for 'roomId'
+ *   },
+ * });
+ */
+export function useGetRoomVonageTokenMutation(baseOptions?: Apollo.MutationHookOptions<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>) {
+        return Apollo.useMutation<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>(GetRoomVonageTokenDocument, baseOptions);
+      }
+export type GetRoomVonageTokenMutationHookResult = ReturnType<typeof useGetRoomVonageTokenMutation>;
+export type GetRoomVonageTokenMutationResult = Apollo.MutationResult<GetRoomVonageTokenMutation>;
+export type GetRoomVonageTokenMutationOptions = Apollo.BaseMutationOptions<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>;
 export const SelectContentGroupsDocument = gql`
     query SelectContentGroups($conferenceId: uuid!, $contentGroupIds: [uuid!]!) {
   ContentGroup(

@@ -29,7 +29,7 @@ export default function ContentGroupSummary({
     }, [contentGroupData.contentItems]);
 
     return (
-        <Container textAlign="left" width="100%" alignItems="left">
+        <Container textAlign="left" width="100%" alignItems="left" mt={5} ml={0}>
             <Heading as="h2" textAlign="left" mb={5}>
                 {contentGroupData.title}
             </Heading>

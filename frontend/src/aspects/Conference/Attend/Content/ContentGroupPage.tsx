@@ -48,7 +48,7 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
                                 <ContentGroupVideos contentGroupData={contentGroupData} />
                                 <ContentGroupSummary contentGroupData={contentGroupData} />
                             </Box>
-                            <Box width="20%" border="1px solid white" height="100%">
+                            <Box width="30%" border="1px solid white" height="100%">
                                 foo bar
                             </Box>
                         </Flex>

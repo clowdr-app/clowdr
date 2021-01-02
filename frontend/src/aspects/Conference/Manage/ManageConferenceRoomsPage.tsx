@@ -9,6 +9,7 @@ import {
     Code,
     Heading,
     ListItem,
+    Spinner,
     Text,
     UnorderedList,
 } from "@chakra-ui/react";
@@ -20,6 +21,7 @@ import {
     RoomMode_Enum,
     RoomParticipantWithAttendeeInfoFragment,
     RoomWithParticipantInfoFragment,
+    SelectAllRoomsWithParticipantsQuery,
     useCreateRoomMutation,
     useDeleteRoomsMutation,
     useSelectAllRoomsWithParticipantsQuery,
@@ -149,7 +151,7 @@ function RoomSecondaryEditor({ room }: { room: RoomWithParticipantInfoFragment }
     );
 }
 
-function EditableRoomsCRUDTable({ originalData }: { originalData: ReadonlyArray<RoomWithParticipantInfoFragment> }) {
+function EditableRoomsCRUDTable({ originalData, refetch }: { originalData: ReadonlyArray<RoomWithParticipantInfoFragment>; refetch: () => Promise<void> }) {
     const data = useMemo(() => {
         return new Map<string, RoomWithParticipantInfo>(
             originalData.map((room): [string, RoomWithParticipantInfo] => {
@@ -261,6 +263,7 @@ function EditableRoomsCRUDTable({ originalData }: { originalData: ReadonlyArray<
                             },
                         });
                         if (newRoom.data?.insert_Room?.returning && newRoom.data.insert_Room.returning.length > 0) {
+                            await refetch();
                             return newRoom.data.insert_Room.returning[0].id;
                         }
                         return null;
@@ -295,19 +298,27 @@ function EditableRoomsCRUDTable({ originalData }: { originalData: ReadonlyArray<
                                 deleteRoomIds: ids,
                             },
                         });
+                        await refetch();
                         return new Map(ids.map((id) => [id, true]));
                     },
                 },
             }}
             secondaryFields={{
-                editSingle: (key, onClose, isDirty, markDirty) => {
+                editSingle: (key, _onClose, _isDirty, _markDirty) => {
                     const room = data.get(key);
-                    assert(room);
-                    return {
-                        editorElement: <RoomSecondaryEditor room={room} />,
-                        footerButtons: [],
-                        includeCloseButton: true,
-                    };
+                    if (room) {
+                        return {
+                            editorElement: <RoomSecondaryEditor room={room} />,
+                            footerButtons: [],
+                            includeCloseButton: true,
+                        };
+                    } else {
+                        return {
+                            editorElement: <Spinner />,
+                            footerButtons: [],
+                            includeCloseButton: true,
+                        };
+                    }
                 },
             }}
         />
@@ -336,9 +347,18 @@ export default function ManageConferenceRoomsPage(): JSX.Element {
             <Heading as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                 Rooms
             </Heading>
-            <ApolloQueryWrapper queryResult={selectAllRoomsResult}>
+            <ApolloQueryWrapper<
+                SelectAllRoomsWithParticipantsQuery,
+                unknown,
+                ReadonlyArray<RoomWithParticipantInfoFragment>
+            >
+                getter={(x) => x.Room}
+                queryResult={selectAllRoomsResult}
+            >
                 {(data) => {
-                    return <EditableRoomsCRUDTable originalData={data.Room} />;
+                    return <EditableRoomsCRUDTable originalData={data} refetch={async () => {
+                        await selectAllRoomsResult.refetch();
+                    }} />;
                 }}
             </ApolloQueryWrapper>
         </RequireAtLeastOnePermissionWrapper>

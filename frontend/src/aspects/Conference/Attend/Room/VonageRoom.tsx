@@ -263,7 +263,11 @@ export default function VonageRoom({
                     </VStack>
                 )}
             </Box>
-            <VonageRoomControlBar onJoinRoom={joinRoom} onLeaveRoom={leaveRoom} />
+            <VonageRoomControlBar
+                onJoinRoom={joinRoom}
+                onLeaveRoom={leaveRoom}
+                inRoom={openTokProps.isSessionConnected}
+            />
         </Box>
     );
 }
@@ -321,9 +325,11 @@ function PreJoin({ cameraPreviewRef }: { cameraPreviewRef: React.RefObject<HTMLV
 function VonageRoomControlBar({
     onJoinRoom,
     onLeaveRoom,
+    inRoom,
 }: {
     onJoinRoom: () => void;
     onLeaveRoom: () => void;
+    inRoom: boolean;
 }): JSX.Element {
     const { state, dispatch } = useVonageRoom();
     const { isOpen, onClose, onOpen } = useDisclosure();
@@ -384,12 +390,15 @@ function VonageRoomControlBar({
                         <span style={{ marginLeft: "1rem" }}>Start microphone</span>
                     </Button>
                 )}
-                <Button colorScheme="green" onClick={onJoinRoom}>
-                    Join Room
-                </Button>
-                <Button colorScheme="green" onClick={onLeaveRoom}>
-                    Leave Room
-                </Button>
+                {inRoom ? (
+                    <Button colorScheme="green" onClick={onLeaveRoom}>
+                        Leave Room
+                    </Button>
+                ) : (
+                    <Button colorScheme="green" onClick={onJoinRoom}>
+                        Join Room
+                    </Button>
+                )}
             </HStack>
             <DeviceChooserModal
                 cameraId={

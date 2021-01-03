@@ -6,6 +6,7 @@ import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import AttendeeLandingPage from "./Attend/AttendeeLandingPage";
 import ContentGroupPage from "./Attend/Content/ContentGroupPage";
 import RoomPage from "./Attend/Room/RoomPage";
+import ConferenceTimeline from "./Attend/Schedule/ConferenceTimeline";
 import ManageConferenceBroadcastPage from "./Manage/ManageConferenceBroadcastPage";
 import ManageConferenceContentPage from "./Manage/ManageConferenceContentPage";
 import ManageConferenceGroupsPage from "./Manage/ManageConferenceGroupsPage";
@@ -95,6 +96,10 @@ function AuthenticatedConferenceRoutes(rootUrl: string): JSX.Element {
                             }>
                         ) => <RoomPage roomId={props.match.params.roomId} />}
                     />
+
+                    <Route path={`${rootUrl}/schedule`}>
+                        <ConferenceTimeline />
+                    </Route>
 
                     <Route path={`${rootUrl}/`}>
                         <PageNotFound />

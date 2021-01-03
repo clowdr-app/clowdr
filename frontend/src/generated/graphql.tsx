@@ -23327,6 +23327,86 @@ export type GetRoomVonageTokenMutationVariables = Exact<{
 
 export type GetRoomVonageTokenMutation = { readonly __typename?: 'mutation_root', readonly joinRoomVonageSession?: Maybe<{ readonly __typename?: 'JoinRoomVonageSessionOutput', readonly accessToken?: Maybe<string>, readonly sessionId?: Maybe<string> }> };
 
+export type Timeline_TagFragment = { readonly __typename?: 'Tag', readonly id: any, readonly name: string, readonly colour: string };
+
+export type Timeline_ContentGroupTagFragment = { readonly __typename?: 'ContentGroupTag', readonly id: any, readonly tag: (
+    { readonly __typename?: 'Tag' }
+    & Timeline_TagFragment
+  ) };
+
+export type Timeline_EventTagFragment = { readonly __typename?: 'EventTag', readonly id: any, readonly tag: (
+    { readonly __typename?: 'Tag' }
+    & Timeline_TagFragment
+  ) };
+
+export type Timeline_ContentItemFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly contentTypeName: ContentType_Enum, readonly name: string, readonly data: any, readonly isHidden: boolean, readonly layoutData?: Maybe<any> };
+
+export type Timeline_HallwayFragment = { readonly __typename?: 'Hallway', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number };
+
+export type Timeline_ContentGroupHallwayFragment = { readonly __typename?: 'ContentGroupHallway', readonly id: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any>, readonly hallway: (
+    { readonly __typename?: 'Hallway' }
+    & Timeline_HallwayFragment
+  ) };
+
+export type Timeline_ContentPersonFragment = { readonly __typename?: 'ContentPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly attendeeId?: Maybe<any> };
+
+export type Timeline_ContentGroupPersonFragment = { readonly __typename?: 'ContentGroupPerson', readonly id: any, readonly priority?: Maybe<number>, readonly roleName: string, readonly person: (
+    { readonly __typename?: 'ContentPerson' }
+    & Timeline_ContentPersonFragment
+  ) };
+
+export type Timeline_EventPersonFragment = { readonly __typename?: 'EventPerson', readonly id: any, readonly attendeeId?: Maybe<any>, readonly name: string, readonly affiliation?: Maybe<string>, readonly roleName: EventPersonRole_Enum };
+
+export type Timeline_ContentGroupFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly contentGroupTypeName: ContentGroupType_Enum, readonly title: string, readonly shortTitle?: Maybe<string>, readonly contentGroupTags: ReadonlyArray<(
+    { readonly __typename?: 'ContentGroupTag' }
+    & Timeline_ContentGroupTagFragment
+  )>, readonly contentItems: ReadonlyArray<(
+    { readonly __typename?: 'ContentItem' }
+    & Timeline_ContentItemFragment
+  )>, readonly hallways: ReadonlyArray<(
+    { readonly __typename?: 'ContentGroupHallway' }
+    & Timeline_ContentGroupHallwayFragment
+  )>, readonly people: ReadonlyArray<(
+    { readonly __typename?: 'ContentGroupPerson' }
+    & Timeline_ContentGroupPersonFragment
+  )> };
+
+export type Timeline_EventFragment = { readonly __typename?: 'Event', readonly id: any, readonly roomId: any, readonly intendedRoomModeName: RoomMode_Enum, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly contentGroup?: Maybe<(
+    { readonly __typename?: 'ContentGroup' }
+    & Timeline_ContentGroupFragment
+  )>, readonly eventPeople: ReadonlyArray<(
+    { readonly __typename?: 'EventPerson' }
+    & Timeline_EventPersonFragment
+  )>, readonly eventTags: ReadonlyArray<(
+    { readonly __typename?: 'EventTag' }
+    & Timeline_EventTagFragment
+  )> };
+
+export type Timeline_RoomFragment = { readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly events: ReadonlyArray<(
+    { readonly __typename?: 'Event' }
+    & Timeline_EventFragment
+  )> };
+
+export type Timeline_SelectRoomsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type Timeline_SelectRoomsQuery = { readonly __typename?: 'query_root', readonly Room: ReadonlyArray<(
+    { readonly __typename?: 'Room' }
+    & Timeline_RoomFragment
+  )> };
+
+export type Timeline_SelectRoomQueryVariables = Exact<{
+  id: Scalars['uuid'];
+}>;
+
+
+export type Timeline_SelectRoomQuery = { readonly __typename?: 'query_root', readonly Room_by_pk?: Maybe<(
+    { readonly __typename?: 'Room' }
+    & Timeline_RoomFragment
+  )> };
+
 export type SelectContentGroupsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
   contentGroupIds: ReadonlyArray<Scalars['uuid']>;
@@ -24207,6 +24287,138 @@ export const RoomDetailsFragmentDoc = gql`
   ...RoomEvents
 }
     ${RoomEventsFragmentDoc}`;
+export const Timeline_TagFragmentDoc = gql`
+    fragment Timeline_Tag on Tag {
+  id
+  name
+  colour
+}
+    `;
+export const Timeline_ContentGroupTagFragmentDoc = gql`
+    fragment Timeline_ContentGroupTag on ContentGroupTag {
+  id
+  tag {
+    ...Timeline_Tag
+  }
+}
+    ${Timeline_TagFragmentDoc}`;
+export const Timeline_ContentItemFragmentDoc = gql`
+    fragment Timeline_ContentItem on ContentItem {
+  id
+  contentTypeName
+  name
+  data
+  isHidden
+  layoutData
+}
+    `;
+export const Timeline_HallwayFragmentDoc = gql`
+    fragment Timeline_Hallway on Hallway {
+  id
+  name
+  colour
+  priority
+}
+    `;
+export const Timeline_ContentGroupHallwayFragmentDoc = gql`
+    fragment Timeline_ContentGroupHallway on ContentGroupHallway {
+  id
+  priority
+  layout
+  hallway {
+    ...Timeline_Hallway
+  }
+}
+    ${Timeline_HallwayFragmentDoc}`;
+export const Timeline_ContentPersonFragmentDoc = gql`
+    fragment Timeline_ContentPerson on ContentPerson {
+  id
+  name
+  affiliation
+  attendeeId
+}
+    `;
+export const Timeline_ContentGroupPersonFragmentDoc = gql`
+    fragment Timeline_ContentGroupPerson on ContentGroupPerson {
+  id
+  priority
+  roleName
+  person {
+    ...Timeline_ContentPerson
+  }
+}
+    ${Timeline_ContentPersonFragmentDoc}`;
+export const Timeline_ContentGroupFragmentDoc = gql`
+    fragment Timeline_ContentGroup on ContentGroup {
+  id
+  contentGroupTypeName
+  title
+  shortTitle
+  contentGroupTags {
+    ...Timeline_ContentGroupTag
+  }
+  contentItems {
+    ...Timeline_ContentItem
+  }
+  hallways {
+    ...Timeline_ContentGroupHallway
+  }
+  people {
+    ...Timeline_ContentGroupPerson
+  }
+}
+    ${Timeline_ContentGroupTagFragmentDoc}
+${Timeline_ContentItemFragmentDoc}
+${Timeline_ContentGroupHallwayFragmentDoc}
+${Timeline_ContentGroupPersonFragmentDoc}`;
+export const Timeline_EventPersonFragmentDoc = gql`
+    fragment Timeline_EventPerson on EventPerson {
+  id
+  attendeeId
+  name
+  affiliation
+  roleName
+}
+    `;
+export const Timeline_EventTagFragmentDoc = gql`
+    fragment Timeline_EventTag on EventTag {
+  id
+  tag {
+    ...Timeline_Tag
+  }
+}
+    ${Timeline_TagFragmentDoc}`;
+export const Timeline_EventFragmentDoc = gql`
+    fragment Timeline_Event on Event {
+  id
+  roomId
+  intendedRoomModeName
+  name
+  startTime
+  durationSeconds
+  contentGroup {
+    ...Timeline_ContentGroup
+  }
+  eventPeople {
+    ...Timeline_EventPerson
+  }
+  eventTags {
+    ...Timeline_EventTag
+  }
+}
+    ${Timeline_ContentGroupFragmentDoc}
+${Timeline_EventPersonFragmentDoc}
+${Timeline_EventTagFragmentDoc}`;
+export const Timeline_RoomFragmentDoc = gql`
+    fragment Timeline_Room on Room {
+  id
+  name
+  currentModeName
+  events {
+    ...Timeline_Event
+  }
+}
+    ${Timeline_EventFragmentDoc}`;
 export const ContentPersonInfoFragmentDoc = gql`
     fragment ContentPersonInfo on ContentPerson {
   id
@@ -24933,6 +25145,72 @@ export function useGetRoomVonageTokenMutation(baseOptions?: Apollo.MutationHookO
 export type GetRoomVonageTokenMutationHookResult = ReturnType<typeof useGetRoomVonageTokenMutation>;
 export type GetRoomVonageTokenMutationResult = Apollo.MutationResult<GetRoomVonageTokenMutation>;
 export type GetRoomVonageTokenMutationOptions = Apollo.BaseMutationOptions<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>;
+export const Timeline_SelectRoomsDocument = gql`
+    query Timeline_SelectRooms($conferenceId: uuid!) {
+  Room(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...Timeline_Room
+  }
+}
+    ${Timeline_RoomFragmentDoc}`;
+
+/**
+ * __useTimeline_SelectRoomsQuery__
+ *
+ * To run a query within a React component, call `useTimeline_SelectRoomsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTimeline_SelectRoomsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTimeline_SelectRoomsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useTimeline_SelectRoomsQuery(baseOptions: Apollo.QueryHookOptions<Timeline_SelectRoomsQuery, Timeline_SelectRoomsQueryVariables>) {
+        return Apollo.useQuery<Timeline_SelectRoomsQuery, Timeline_SelectRoomsQueryVariables>(Timeline_SelectRoomsDocument, baseOptions);
+      }
+export function useTimeline_SelectRoomsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Timeline_SelectRoomsQuery, Timeline_SelectRoomsQueryVariables>) {
+          return Apollo.useLazyQuery<Timeline_SelectRoomsQuery, Timeline_SelectRoomsQueryVariables>(Timeline_SelectRoomsDocument, baseOptions);
+        }
+export type Timeline_SelectRoomsQueryHookResult = ReturnType<typeof useTimeline_SelectRoomsQuery>;
+export type Timeline_SelectRoomsLazyQueryHookResult = ReturnType<typeof useTimeline_SelectRoomsLazyQuery>;
+export type Timeline_SelectRoomsQueryResult = Apollo.QueryResult<Timeline_SelectRoomsQuery, Timeline_SelectRoomsQueryVariables>;
+export const Timeline_SelectRoomDocument = gql`
+    query Timeline_SelectRoom($id: uuid!) {
+  Room_by_pk(id: $id) {
+    ...Timeline_Room
+  }
+}
+    ${Timeline_RoomFragmentDoc}`;
+
+/**
+ * __useTimeline_SelectRoomQuery__
+ *
+ * To run a query within a React component, call `useTimeline_SelectRoomQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTimeline_SelectRoomQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTimeline_SelectRoomQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useTimeline_SelectRoomQuery(baseOptions: Apollo.QueryHookOptions<Timeline_SelectRoomQuery, Timeline_SelectRoomQueryVariables>) {
+        return Apollo.useQuery<Timeline_SelectRoomQuery, Timeline_SelectRoomQueryVariables>(Timeline_SelectRoomDocument, baseOptions);
+      }
+export function useTimeline_SelectRoomLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Timeline_SelectRoomQuery, Timeline_SelectRoomQueryVariables>) {
+          return Apollo.useLazyQuery<Timeline_SelectRoomQuery, Timeline_SelectRoomQueryVariables>(Timeline_SelectRoomDocument, baseOptions);
+        }
+export type Timeline_SelectRoomQueryHookResult = ReturnType<typeof useTimeline_SelectRoomQuery>;
+export type Timeline_SelectRoomLazyQueryHookResult = ReturnType<typeof useTimeline_SelectRoomLazyQuery>;
+export type Timeline_SelectRoomQueryResult = Apollo.QueryResult<Timeline_SelectRoomQuery, Timeline_SelectRoomQueryVariables>;
 export const SelectContentGroupsDocument = gql`
     query SelectContentGroups($conferenceId: uuid!, $contentGroupIds: [uuid!]!) {
   ContentGroup(

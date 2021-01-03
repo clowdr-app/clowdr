@@ -18,7 +18,3 @@ code {
     height: 100%;
     overflow: hidden;
 }
-
-#root a {
-    text-decoration: underline;
-}

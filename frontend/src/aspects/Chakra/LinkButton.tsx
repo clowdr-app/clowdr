@@ -17,11 +17,10 @@ export default function LinkButton(props: LinkButtonProps): JSX.Element {
             to={to}
             isExternal={isExternal}
             textDecoration="none !important"
-            tabIndex={-1}
             display="inline-block"
             {...linkProps}
         >
-            <Button {...remaining}>{children}</Button>
+            <Button as="div" {...remaining}>{children}</Button>
         </Link>
     );
 }

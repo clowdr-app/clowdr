@@ -42,6 +42,11 @@ const theme = extendTheme({
                 textAlign: "center",
             },
         },
+        Link: {
+            baseStyle: {
+                textDecoration: "underline",
+            },
+        },
     },
 });
 

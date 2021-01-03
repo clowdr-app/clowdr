@@ -24,8 +24,6 @@ import {
 } from "../../../generated/graphql";
 import LinkButton from "../../Chakra/LinkButton";
 import CRUDTable, {
-    BooleanFieldFormat,
-    BooleanFieldSpec,
     CRUDTableProps,
     defaultSelectFilter,
     defaultStringFilter,
@@ -42,7 +40,6 @@ import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWr
 import { useConference } from "../useConference";
 import ContentGroupHallwaysModal from "./Content/ContentGroupHallwaysModal";
 import ContentGroupPersonsModal from "./Content/ContentGroupPersonsModal";
-import { readyToPublishVideos } from "./Content/contentPublishing";
 import { deepCloneContentGroupDescriptor } from "./Content/Functions";
 import ManageHallwaysModal from "./Content/ManageHallwaysModal";
 import ManagePeopleModal from "./Content/ManagePeopleModal";
@@ -104,15 +101,15 @@ export default function ManageConferenceContentPage(): JSX.Element {
         [allTagsMap]
     );
 
-    const booleanFieldSpec: BooleanFieldSpec<boolean> = useMemo(
-        () => ({
-            fieldType: FieldType.boolean,
-            convertFromUI: (x) => x,
-            convertToUI: (x: boolean) => x,
-            format: BooleanFieldFormat.checkbox,
-        }),
-        []
-    );
+    // const booleanFieldSpec: BooleanFieldSpec<boolean> = useMemo(
+    //     () => ({
+    //         fieldType: FieldType.boolean,
+    //         convertFromUI: (x) => x,
+    //         convertToUI: (x: boolean) => x,
+    //         format: BooleanFieldFormat.checkbox,
+    //     }),
+    //     []
+    // );
 
     const fields = useMemo(() => {
         const result: {
@@ -241,18 +238,18 @@ export default function ManageConferenceContentPage(): JSX.Element {
                     filter: defaultSelectFilter,
                 },
             },
-            readyToPublishVideos: {
-                heading: "Can publish?",
-                ariaLabel: "Are all video items ready to publish?",
-                description: "Are all video items ready to publish?",
-                isHidden: false,
-                isEditable: false,
-                extract: readyToPublishVideos,
-                spec: booleanFieldSpec,
-            },
+            // readyToPublishVideos: {
+            //     heading: "Can publish?",
+            //     ariaLabel: "Are all video items ready to publish?",
+            //     description: "Are all video items ready to publish?",
+            //     isHidden: false,
+            //     isEditable: false,
+            //     extract: readyToPublishVideos,
+            //     spec: booleanFieldSpec,
+            // },
         };
         return result;
-    }, [booleanFieldSpec, groupTypeOptions, tagOptions]);
+    }, [groupTypeOptions, tagOptions]);
 
     useEffect(() => {
         if (!saveContentDiff.loadingContent && !saveContentDiff.errorContent && saveContentDiff.originalContentGroups) {

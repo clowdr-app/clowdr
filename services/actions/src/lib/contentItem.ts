@@ -92,21 +92,21 @@ export async function createNewVersionFromBroadcastTranscode(
     return newVersion;
 }
 
-export function createNewVersionFromPublishToVimeo(
-    contentItemVersionData: ContentItemVersionData,
-    vimeoVideoUrl: string
-): ContentItemVersionData {
-    const newVersion = R.clone(contentItemVersionData);
-    assert(is<VideoContentBlob>(newVersion.data), "Content item is not a video");
+// export function createNewVersionFromPublishToVimeo(
+//     contentItemVersionData: ContentItemVersionData,
+//     vimeoVideoUrl: string
+// ): ContentItemVersionData {
+//     const newVersion = R.clone(contentItemVersionData);
+//     assert(is<VideoContentBlob>(newVersion.data), "Content item is not a video");
 
-    newVersion.data.vimeoUpload = {
-        videoUri: vimeoVideoUrl,
-    };
-    newVersion.createdAt = new Date().getTime();
-    newVersion.createdBy = "system";
+//     newVersion.data.vimeoUpload = {
+//         videoUri: vimeoVideoUrl,
+//     };
+//     newVersion.createdAt = new Date().getTime();
+//     newVersion.createdBy = "system";
 
-    return newVersion;
-}
+//     return newVersion;
+// }
 
 export async function addNewContentItemVersion(contentItemId: string, version: ContentItemVersionData): Promise<void> {
     const result = await apolloClient.mutate({

@@ -94,12 +94,12 @@ export interface VideoRenderJobData extends BaseData {
     message: string | null;
 }
 
-export interface PublishVideoJobData extends BaseData {
-    contentItemId: string;
-    jobStatusName: JobStatus_Enum;
-    conferenceId: string;
-    vimeoVideoUrl: string | null;
-}
+// export interface PublishVideoJobData extends BaseData {
+//     contentItemId: string;
+//     jobStatusName: JobStatus_Enum;
+//     conferenceId: string;
+//     vimeoVideoUrl: string | null;
+// }
 
 export interface BroadcastContentItemDataBase extends BaseData {
     contentItemId: string | null;

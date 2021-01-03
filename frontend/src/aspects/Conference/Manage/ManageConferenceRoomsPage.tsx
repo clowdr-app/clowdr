@@ -27,6 +27,7 @@ import {
     useSelectAllRoomsWithParticipantsQuery,
     useUpdateRoomMutation,
 } from "../../../generated/graphql";
+import LinkButton from "../../Chakra/LinkButton";
 import CRUDTable, {
     CRUDTableProps,
     defaultIntegerFilter,
@@ -36,6 +37,7 @@ import CRUDTable, {
 } from "../../CRUDTable/CRUDTable";
 import PageNotFound from "../../Errors/PageNotFound";
 import ApolloQueryWrapper from "../../GQL/ApolloQueryWrapper";
+import FAIcon from "../../Icons/FAIcon";
 import isValidUUID from "../../Utils/isValidUUID";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
@@ -102,54 +104,68 @@ interface RoomWithParticipantInfo {
 const RoomsCRUDTable = (props: Readonly<CRUDTableProps<RoomWithParticipantInfo, "id">>) => CRUDTable(props);
 
 function RoomSecondaryEditor({ room }: { room: RoomWithParticipantInfoFragment }): JSX.Element {
+    const conference = useConference();
     return (
-        <Accordion>
-            <AccordionItem>
-                <AccordionButton>
-                    <Box flex="1" textAlign="left">
-                        Participants
-                    </Box>
-                    <AccordionIcon />
-                </AccordionButton>
-                <AccordionPanel pt={4} pb={4}>
-                    {room.participants.length === 0 ? (
-                        "Room is currently empty."
-                    ) : (
-                        <UnorderedList>
-                            {room.participants.map((participant) => (
-                                <ListItem key={participant.id}>{participant.attendee.displayName}</ListItem>
-                            ))}
-                        </UnorderedList>
-                    )}
-                </AccordionPanel>
-            </AccordionItem>
-
-            {room.originatingData ? (
+        <>
+            <LinkButton
+                to={`/conference/${conference.slug}/room/${room.id}`}
+                colorScheme="green"
+                mb={4}
+                isExternal={true}
+                aria-label={`View ${room.name} as an attendee`}
+                title={`View ${room.name} as an attendee`}
+            >
+                <FAIcon icon="external-link-alt" iconStyle="s" mr={3} />
+                View room
+            </LinkButton>
+            <Accordion>
                 <AccordionItem>
                     <AccordionButton>
                         <Box flex="1" textAlign="left">
-                            Section 2 title
+                            Participants
                         </Box>
                         <AccordionIcon />
                     </AccordionButton>
                     <AccordionPanel pt={4} pb={4}>
-                        <>
-                            <Text>The following shows the raw data received when this room was imported.</Text>
-                            <Text as="pre" w="100%" overflowWrap="break-word" whiteSpace="pre-wrap" mt={2}>
-                                <Code w="100%" p={2}>
-                                    Source Ids: {JSON.stringify(room.originatingData.sourceId.split("¬"), null, 2)}
-                                </Code>
-                            </Text>
-                            <Text as="pre" w="100%" overflowWrap="break-word" whiteSpace="pre-wrap" mt={2}>
-                                <Code w="100%" p={2}>
-                                    {JSON.stringify(room.originatingData.data, null, 2)}
-                                </Code>
-                            </Text>
-                        </>
+                        {room.participants.length === 0 ? (
+                            "Room is currently empty."
+                        ) : (
+                            <UnorderedList>
+                                {room.participants.map((participant) => (
+                                    <ListItem key={participant.id}>{participant.attendee.displayName}</ListItem>
+                                ))}
+                            </UnorderedList>
+                        )}
                     </AccordionPanel>
                 </AccordionItem>
-            ) : undefined}
-        </Accordion>
+
+                {room.originatingData ? (
+                    <AccordionItem>
+                        <AccordionButton>
+                            <Box flex="1" textAlign="left">
+                                Section 2 title
+                            </Box>
+                            <AccordionIcon />
+                        </AccordionButton>
+                        <AccordionPanel pt={4} pb={4}>
+                            <>
+                                <Text>The following shows the raw data received when this room was imported.</Text>
+                                <Text as="pre" w="100%" overflowWrap="break-word" whiteSpace="pre-wrap" mt={2}>
+                                    <Code w="100%" p={2}>
+                                        Source Ids: {JSON.stringify(room.originatingData.sourceId.split("¬"), null, 2)}
+                                    </Code>
+                                </Text>
+                                <Text as="pre" w="100%" overflowWrap="break-word" whiteSpace="pre-wrap" mt={2}>
+                                    <Code w="100%" p={2}>
+                                        {JSON.stringify(room.originatingData.data, null, 2)}
+                                    </Code>
+                                </Text>
+                            </>
+                        </AccordionPanel>
+                    </AccordionItem>
+                ) : undefined}
+            </Accordion>
+        </>
     );
 }
 

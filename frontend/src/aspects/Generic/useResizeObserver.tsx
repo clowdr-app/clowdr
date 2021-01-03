@@ -1,6 +1,8 @@
 import React, { MutableRefObject, useState } from "react";
 
-export default function useResizeObserver<T extends Element>(elRef: MutableRefObject<T | null>): ReadonlyArray<ResizeObserverEntry> {
+export default function useResizeObserver<T extends Element>(
+    elRef: MutableRefObject<T | null>
+): ReadonlyArray<ResizeObserverEntry> {
     const [observerEntries, setObserverEntries] = useState<ReadonlyArray<ResizeObserverEntry>>([]);
 
     const observer = React.useRef(

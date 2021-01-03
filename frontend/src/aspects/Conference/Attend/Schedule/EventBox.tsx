@@ -10,7 +10,6 @@ import {
     PopoverTrigger,
     useColorModeValue,
     useDisclosure,
-    Text,
 } from "@chakra-ui/react";
 import { ContentBaseType, ContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
 import React, { useCallback, useMemo } from "react";
@@ -57,7 +56,7 @@ function EventBoxInner({
     }, [eventTitle]);
 
     const now = Date.now();
-    const isLive = (eventStartMs < now && now < eventStartMs + durationSeconds * 1000);
+    const isLive = eventStartMs < now && now < eventStartMs + durationSeconds * 1000;
 
     const eventFocusRef = React.useRef<HTMLButtonElement>(null);
     const { isOpen, onClose: onCloseInner, onOpen } = useDisclosure();
@@ -224,9 +223,12 @@ export default function EventBox({
     const eventStartMs = useMemo(() => Date.parse(event.startTime), [event.startTime]);
     const durationSeconds = useMemo(() => sortedEvents.reduce((acc, e) => acc + e.durationSeconds, 0), [sortedEvents]);
 
-    if (eventStartMs + durationSeconds * 1000 + (1000 * 60 * 10) < timelineParams.startTimeMs) {
+    if (eventStartMs + durationSeconds * 1000 + 1000 * 60 * 10 < timelineParams.startTimeMs) {
         return null;
-    } else if (eventStartMs - (1000 * 60 * 10) > timelineParams.startTimeMs + timelineParams.visibleTimeSpanSeconds * 1000) {
+    } else if (
+        eventStartMs - 1000 * 60 * 10 >
+        timelineParams.startTimeMs + timelineParams.visibleTimeSpanSeconds * 1000
+    ) {
         return null;
     }
 

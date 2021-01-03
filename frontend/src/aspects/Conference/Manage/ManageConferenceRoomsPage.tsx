@@ -59,6 +59,7 @@ gql`
         name
         currentModeName
         capacity
+        priority
         participants {
             ...RoomParticipantWithAttendeeInfo
         }
@@ -81,8 +82,8 @@ gql`
         }
     }
 
-    mutation UpdateRoomsWithParticipants($id: uuid!, $name: String!, $capacity: Int!) {
-        update_Room_by_pk(pk_columns: { id: $id }, _set: { name: $name, capacity: $capacity }) {
+    mutation UpdateRoomsWithParticipants($id: uuid!, $name: String!, $capacity: Int!, $priority: Int!) {
+        update_Room_by_pk(pk_columns: { id: $id }, _set: { name: $name, capacity: $capacity, priority: $priority }) {
             ...RoomWithParticipantInfo
         }
     }
@@ -94,6 +95,7 @@ interface RoomWithParticipantInfo {
     name: string;
     currentModeName: RoomMode_Enum;
     capacity?: Maybe<number>;
+    priority: number;
     participants: ReadonlyArray<RoomParticipantWithAttendeeInfoFragment>;
 }
 
@@ -151,7 +153,13 @@ function RoomSecondaryEditor({ room }: { room: RoomWithParticipantInfoFragment }
     );
 }
 
-function EditableRoomsCRUDTable({ originalData, refetch }: { originalData: ReadonlyArray<RoomWithParticipantInfoFragment>; refetch: () => Promise<void> }) {
+function EditableRoomsCRUDTable({
+    originalData,
+    refetch,
+}: {
+    originalData: ReadonlyArray<RoomWithParticipantInfoFragment>;
+    refetch: () => Promise<void>;
+}) {
     const data = useMemo(() => {
         return new Map<string, RoomWithParticipantInfo>(
             originalData.map((room): [string, RoomWithParticipantInfo] => {
@@ -235,6 +243,28 @@ function EditableRoomsCRUDTable({ originalData, refetch }: { originalData: Reado
                             min: -1,
                         },
                     },
+                    priority: {
+                        heading: "Priority",
+                        ariaLabel: "Priority",
+                        description:
+                            "Priority determines the order rooms are listed in the schedule. Ascending sort (lowest first).",
+                        isHidden: false,
+                        isEditable: true,
+                        defaultValue: 10,
+                        insert: (item, v) => {
+                            return {
+                                ...item,
+                                priority: v,
+                            };
+                        },
+                        extract: (v) => v.priority,
+                        spec: {
+                            fieldType: FieldType.integer,
+                            convertToUI: (x) => x,
+                            convertFromUI: (x) => x,
+                            filter: defaultIntegerFilter,
+                        },
+                    },
                     currentModeName: {
                         heading: "Current Mode",
                         ariaLabel: "Current Mode",
@@ -253,11 +283,13 @@ function EditableRoomsCRUDTable({ originalData, refetch }: { originalData: Reado
                 cudCallbacks: {
                     create: async (value: Partial<RoomWithParticipantInfo>): Promise<string | null> => {
                         assert(value.name);
+                        assert(value.priority !== undefined);
                         const newRoom = await createRoom({
                             variables: {
                                 room: {
                                     conferenceId: conference.id,
                                     capacity: value.capacity,
+                                    priority: value.priority,
                                     name: value.name,
                                 },
                             },
@@ -281,6 +313,7 @@ function EditableRoomsCRUDTable({ originalData, refetch }: { originalData: Reado
                                         id: value.id,
                                         name: value.name,
                                         capacity: value.capacity,
+                                        priority: value.priority,
                                     },
                                 });
                                 results.set(key, true);
@@ -356,9 +389,14 @@ export default function ManageConferenceRoomsPage(): JSX.Element {
                 queryResult={selectAllRoomsResult}
             >
                 {(data) => {
-                    return <EditableRoomsCRUDTable originalData={data} refetch={async () => {
-                        await selectAllRoomsResult.refetch();
-                    }} />;
+                    return (
+                        <EditableRoomsCRUDTable
+                            originalData={data}
+                            refetch={async () => {
+                                await selectAllRoomsResult.refetch();
+                            }}
+                        />
+                    );
                 }}
             </ApolloQueryWrapper>
         </RequireAtLeastOnePermissionWrapper>

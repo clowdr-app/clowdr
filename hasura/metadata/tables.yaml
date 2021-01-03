@@ -4166,6 +4166,7 @@
       - id
       - name
       - originatingDataId
+      - priority
       backend_only: false
   select_permissions:
   - role: unauthenticated
@@ -4174,6 +4175,7 @@
       - conferenceId
       - id
       - name
+      - priority
       filter:
         conference:
           groups:
@@ -4198,6 +4200,7 @@
       - mediaLiveChannelId
       - name
       - originatingDataId
+      - priority
       - publicVonageSessionId
       - updated_at
       filter:
@@ -4226,9 +4229,11 @@
   - role: user
     permission:
       columns:
+      - capacity
       - currentModeName
       - name
       - originatingDataId
+      - priority
       filter:
         conference:
           groups:

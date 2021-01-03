@@ -34,6 +34,7 @@ gql`
         currentModeName
         id
         name
+        priority
         originatingDataId
         originatingData {
             ...OriginatingDataInfo
@@ -120,10 +121,16 @@ gql`
         }
     }
 
-    mutation UpdateRoom($id: uuid!, $name: String!, $capacity: Int = null, $originatingDataId: uuid = null) {
+    mutation UpdateRoom(
+        $id: uuid!
+        $name: String!
+        $capacity: Int = null
+        $originatingDataId: uuid = null
+        $priority: Int!
+    ) {
         update_Room_by_pk(
             pk_columns: { id: $id }
-            _set: { name: $name, capacity: $capacity, originatingDataId: $originatingDataId }
+            _set: { name: $name, capacity: $capacity, originatingDataId: $originatingDataId, priority: $priority }
         ) {
             ...RoomInfo
         }
@@ -511,6 +518,7 @@ export function useSaveScheduleDiff():
                                         name: room.name,
                                         originatingDataId: room.originatingDataId,
                                         capacity: room.capacity,
+                                        priority: room.priority,
                                     })
                                 ),
                             },
@@ -531,6 +539,7 @@ export function useSaveScheduleDiff():
                                             name: room.name,
                                             capacity: room.capacity,
                                             originatingDataId: room.originatingDataId,
+                                            priority: room.priority,
                                         },
                                     });
                                     ok = true;

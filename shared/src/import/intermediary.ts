@@ -206,6 +206,7 @@ export interface IntermediaryRoomDescriptor {
     originatingDataSourceId?: string;
     name?: string;
     capacity?: number | null;
+    priority?: number;
 }
 
 export interface IntermediaryEventDescriptor {

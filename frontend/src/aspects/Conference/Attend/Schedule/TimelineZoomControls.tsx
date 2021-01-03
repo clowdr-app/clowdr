@@ -5,22 +5,22 @@ import useWindowEvent from "../../../Window/useWindowEvent";
 import useTimelineParameters from "./useTimelineParameters";
 
 const zoomBoundariesMinutes = [
-    5,     // 5 mins
-    10,    // 10 mins
-    15,    // 15 mins
-    30,    // 30 mins
-    60,    // 1 hour
-    120,   // 2 hours
-    180,   // 3 hours
-    240,   // 4 hours
-    360,   // 6 hours
-    480,   // 8 hours
-    720,   // 12 hours
-    1440,  // 1 day
-    2880,  // 2 days
-    4320,  // 3 days
-    5760,  // 4 days
-    7200,  // 5 days
+    5, // 5 mins
+    10, // 10 mins
+    15, // 15 mins
+    30, // 30 mins
+    60, // 1 hour
+    120, // 2 hours
+    180, // 3 hours
+    240, // 4 hours
+    360, // 6 hours
+    480, // 8 hours
+    720, // 12 hours
+    1440, // 1 day
+    2880, // 2 days
+    4320, // 3 days
+    5760, // 4 days
+    7200, // 5 days
     10080, // 1 week
     20160, // 2 weeks
 ];

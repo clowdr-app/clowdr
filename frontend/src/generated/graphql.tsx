@@ -12572,6 +12572,7 @@ export type Room = {
   readonly participants: ReadonlyArray<RoomParticipant>;
   /** An aggregated array relationship */
   readonly participants_aggregate: RoomParticipant_Aggregate;
+  readonly priority: Scalars['Int'];
   readonly publicVonageSessionId?: Maybe<Scalars['String']>;
   /** An array relationship */
   readonly transitions: ReadonlyArray<Transitions>;
@@ -13146,11 +13147,13 @@ export type Room_Arr_Rel_Insert_Input = {
 export type Room_Avg_Fields = {
   readonly __typename?: 'Room_avg_fields';
   readonly capacity?: Maybe<Scalars['Float']>;
+  readonly priority?: Maybe<Scalars['Float']>;
 };
 
 /** order by avg() on columns of table "Room" */
 export type Room_Avg_Order_By = {
   readonly capacity?: Maybe<Order_By>;
+  readonly priority?: Maybe<Order_By>;
 };
 
 /** Boolean expression to filter rows from the table "Room". All fields are combined with a logical 'AND'. */
@@ -13173,6 +13176,7 @@ export type Room_Bool_Exp = {
   readonly originatingData?: Maybe<OriginatingData_Bool_Exp>;
   readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
   readonly participants?: Maybe<RoomParticipant_Bool_Exp>;
+  readonly priority?: Maybe<Int_Comparison_Exp>;
   readonly publicVonageSessionId?: Maybe<String_Comparison_Exp>;
   readonly transitions?: Maybe<Transitions_Bool_Exp>;
   readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
@@ -13191,6 +13195,7 @@ export enum Room_Constraint {
 /** input type for incrementing integer column in table "Room" */
 export type Room_Inc_Input = {
   readonly capacity?: Maybe<Scalars['Int']>;
+  readonly priority?: Maybe<Scalars['Int']>;
 };
 
 /** input type for inserting data into table "Room" */
@@ -13210,6 +13215,7 @@ export type Room_Insert_Input = {
   readonly originatingData?: Maybe<OriginatingData_Obj_Rel_Insert_Input>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
   readonly participants?: Maybe<RoomParticipant_Arr_Rel_Insert_Input>;
+  readonly priority?: Maybe<Scalars['Int']>;
   readonly publicVonageSessionId?: Maybe<Scalars['String']>;
   readonly transitions?: Maybe<Transitions_Arr_Rel_Insert_Input>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
@@ -13225,6 +13231,7 @@ export type Room_Max_Fields = {
   readonly mediaLiveChannelId?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly priority?: Maybe<Scalars['Int']>;
   readonly publicVonageSessionId?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -13238,6 +13245,7 @@ export type Room_Max_Order_By = {
   readonly mediaLiveChannelId?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
+  readonly priority?: Maybe<Order_By>;
   readonly publicVonageSessionId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
@@ -13252,6 +13260,7 @@ export type Room_Min_Fields = {
   readonly mediaLiveChannelId?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly priority?: Maybe<Scalars['Int']>;
   readonly publicVonageSessionId?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -13265,6 +13274,7 @@ export type Room_Min_Order_By = {
   readonly mediaLiveChannelId?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
+  readonly priority?: Maybe<Order_By>;
   readonly publicVonageSessionId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
@@ -13308,6 +13318,7 @@ export type Room_Order_By = {
   readonly originatingData?: Maybe<OriginatingData_Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
   readonly participants_aggregate?: Maybe<RoomParticipant_Aggregate_Order_By>;
+  readonly priority?: Maybe<Order_By>;
   readonly publicVonageSessionId?: Maybe<Order_By>;
   readonly transitions_aggregate?: Maybe<Transitions_Aggregate_Order_By>;
   readonly updated_at?: Maybe<Order_By>;
@@ -13337,6 +13348,8 @@ export enum Room_Select_Column {
   /** column name */
   OriginatingDataId = 'originatingDataId',
   /** column name */
+  Priority = 'priority',
+  /** column name */
   PublicVonageSessionId = 'publicVonageSessionId',
   /** column name */
   UpdatedAt = 'updated_at'
@@ -13352,6 +13365,7 @@ export type Room_Set_Input = {
   readonly mediaLiveChannelId?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly priority?: Maybe<Scalars['Int']>;
   readonly publicVonageSessionId?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -13360,44 +13374,52 @@ export type Room_Set_Input = {
 export type Room_Stddev_Fields = {
   readonly __typename?: 'Room_stddev_fields';
   readonly capacity?: Maybe<Scalars['Float']>;
+  readonly priority?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev() on columns of table "Room" */
 export type Room_Stddev_Order_By = {
   readonly capacity?: Maybe<Order_By>;
+  readonly priority?: Maybe<Order_By>;
 };
 
 /** aggregate stddev_pop on columns */
 export type Room_Stddev_Pop_Fields = {
   readonly __typename?: 'Room_stddev_pop_fields';
   readonly capacity?: Maybe<Scalars['Float']>;
+  readonly priority?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev_pop() on columns of table "Room" */
 export type Room_Stddev_Pop_Order_By = {
   readonly capacity?: Maybe<Order_By>;
+  readonly priority?: Maybe<Order_By>;
 };
 
 /** aggregate stddev_samp on columns */
 export type Room_Stddev_Samp_Fields = {
   readonly __typename?: 'Room_stddev_samp_fields';
   readonly capacity?: Maybe<Scalars['Float']>;
+  readonly priority?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev_samp() on columns of table "Room" */
 export type Room_Stddev_Samp_Order_By = {
   readonly capacity?: Maybe<Order_By>;
+  readonly priority?: Maybe<Order_By>;
 };
 
 /** aggregate sum on columns */
 export type Room_Sum_Fields = {
   readonly __typename?: 'Room_sum_fields';
   readonly capacity?: Maybe<Scalars['Int']>;
+  readonly priority?: Maybe<Scalars['Int']>;
 };
 
 /** order by sum() on columns of table "Room" */
 export type Room_Sum_Order_By = {
   readonly capacity?: Maybe<Order_By>;
+  readonly priority?: Maybe<Order_By>;
 };
 
 /** update columns of table "Room" */
@@ -13419,6 +13441,8 @@ export enum Room_Update_Column {
   /** column name */
   OriginatingDataId = 'originatingDataId',
   /** column name */
+  Priority = 'priority',
+  /** column name */
   PublicVonageSessionId = 'publicVonageSessionId',
   /** column name */
   UpdatedAt = 'updated_at'
@@ -13428,33 +13452,39 @@ export enum Room_Update_Column {
 export type Room_Var_Pop_Fields = {
   readonly __typename?: 'Room_var_pop_fields';
   readonly capacity?: Maybe<Scalars['Float']>;
+  readonly priority?: Maybe<Scalars['Float']>;
 };
 
 /** order by var_pop() on columns of table "Room" */
 export type Room_Var_Pop_Order_By = {
   readonly capacity?: Maybe<Order_By>;
+  readonly priority?: Maybe<Order_By>;
 };
 
 /** aggregate var_samp on columns */
 export type Room_Var_Samp_Fields = {
   readonly __typename?: 'Room_var_samp_fields';
   readonly capacity?: Maybe<Scalars['Float']>;
+  readonly priority?: Maybe<Scalars['Float']>;
 };
 
 /** order by var_samp() on columns of table "Room" */
 export type Room_Var_Samp_Order_By = {
   readonly capacity?: Maybe<Order_By>;
+  readonly priority?: Maybe<Order_By>;
 };
 
 /** aggregate variance on columns */
 export type Room_Variance_Fields = {
   readonly __typename?: 'Room_variance_fields';
   readonly capacity?: Maybe<Scalars['Float']>;
+  readonly priority?: Maybe<Scalars['Float']>;
 };
 
 /** order by variance() on columns of table "Room" */
 export type Room_Variance_Order_By = {
   readonly capacity?: Maybe<Order_By>;
+  readonly priority?: Maybe<Order_By>;
 };
 
 export type SampleInput = {
@@ -23382,7 +23412,7 @@ export type Timeline_EventFragment = { readonly __typename?: 'Event', readonly i
     & Timeline_EventTagFragment
   )> };
 
-export type Timeline_RoomFragment = { readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly events: ReadonlyArray<(
+export type Timeline_RoomFragment = { readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly priority: number, readonly events: ReadonlyArray<(
     { readonly __typename?: 'Event' }
     & Timeline_EventFragment
   )> };
@@ -23856,7 +23886,7 @@ export type UpdateRoleMutation = { readonly __typename?: 'mutation_root', readon
 
 export type RoomParticipantWithAttendeeInfoFragment = { readonly __typename?: 'RoomParticipant', readonly id: any, readonly conferenceId: any, readonly attendeeId: any, readonly roomId: any, readonly attendee: { readonly __typename?: 'Attendee', readonly displayName: string } };
 
-export type RoomWithParticipantInfoFragment = { readonly __typename?: 'Room', readonly id: any, readonly conferenceId: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly capacity?: Maybe<number>, readonly participants: ReadonlyArray<(
+export type RoomWithParticipantInfoFragment = { readonly __typename?: 'Room', readonly id: any, readonly conferenceId: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly capacity?: Maybe<number>, readonly priority: number, readonly participants: ReadonlyArray<(
     { readonly __typename?: 'RoomParticipant' }
     & RoomParticipantWithAttendeeInfoFragment
   )>, readonly originatingData?: Maybe<(
@@ -23888,6 +23918,7 @@ export type UpdateRoomsWithParticipantsMutationVariables = Exact<{
   id: Scalars['uuid'];
   name: Scalars['String'];
   capacity: Scalars['Int'];
+  priority: Scalars['Int'];
 }>;
 
 
@@ -23896,7 +23927,7 @@ export type UpdateRoomsWithParticipantsMutation = { readonly __typename?: 'mutat
     & RoomWithParticipantInfoFragment
   )> };
 
-export type RoomInfoFragment = { readonly __typename?: 'Room', readonly capacity?: Maybe<number>, readonly conferenceId: any, readonly currentModeName: RoomMode_Enum, readonly id: any, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly originatingData?: Maybe<(
+export type RoomInfoFragment = { readonly __typename?: 'Room', readonly capacity?: Maybe<number>, readonly conferenceId: any, readonly currentModeName: RoomMode_Enum, readonly id: any, readonly name: string, readonly priority: number, readonly originatingDataId?: Maybe<any>, readonly originatingData?: Maybe<(
     { readonly __typename?: 'OriginatingData' }
     & OriginatingDataInfoFragment
   )>, readonly participants: ReadonlyArray<(
@@ -23962,6 +23993,7 @@ export type UpdateRoomMutationVariables = Exact<{
   name: Scalars['String'];
   capacity?: Maybe<Scalars['Int']>;
   originatingDataId?: Maybe<Scalars['uuid']>;
+  priority: Scalars['Int'];
 }>;
 
 
@@ -24414,6 +24446,7 @@ export const Timeline_RoomFragmentDoc = gql`
   id
   name
   currentModeName
+  priority
   events {
     ...Timeline_Event
   }
@@ -24592,6 +24625,7 @@ export const RoomWithParticipantInfoFragmentDoc = gql`
   name
   currentModeName
   capacity
+  priority
   participants {
     ...RoomParticipantWithAttendeeInfo
   }
@@ -24616,6 +24650,7 @@ export const RoomInfoFragmentDoc = gql`
   currentModeName
   id
   name
+  priority
   originatingDataId
   originatingData {
     ...OriginatingDataInfo
@@ -26821,10 +26856,10 @@ export type CreateRoomMutationHookResult = ReturnType<typeof useCreateRoomMutati
 export type CreateRoomMutationResult = Apollo.MutationResult<CreateRoomMutation>;
 export type CreateRoomMutationOptions = Apollo.BaseMutationOptions<CreateRoomMutation, CreateRoomMutationVariables>;
 export const UpdateRoomsWithParticipantsDocument = gql`
-    mutation UpdateRoomsWithParticipants($id: uuid!, $name: String!, $capacity: Int!) {
+    mutation UpdateRoomsWithParticipants($id: uuid!, $name: String!, $capacity: Int!, $priority: Int!) {
   update_Room_by_pk(
     pk_columns: {id: $id}
-    _set: {name: $name, capacity: $capacity}
+    _set: {name: $name, capacity: $capacity, priority: $priority}
   ) {
     ...RoomWithParticipantInfo
   }
@@ -26848,6 +26883,7 @@ export type UpdateRoomsWithParticipantsMutationFn = Apollo.MutationFunction<Upda
  *      id: // value for 'id'
  *      name: // value for 'name'
  *      capacity: // value for 'capacity'
+ *      priority: // value for 'priority'
  *   },
  * });
  */
@@ -26975,10 +27011,10 @@ export type DeleteRoomsMutationHookResult = ReturnType<typeof useDeleteRoomsMuta
 export type DeleteRoomsMutationResult = Apollo.MutationResult<DeleteRoomsMutation>;
 export type DeleteRoomsMutationOptions = Apollo.BaseMutationOptions<DeleteRoomsMutation, DeleteRoomsMutationVariables>;
 export const UpdateRoomDocument = gql`
-    mutation UpdateRoom($id: uuid!, $name: String!, $capacity: Int = null, $originatingDataId: uuid = null) {
+    mutation UpdateRoom($id: uuid!, $name: String!, $capacity: Int = null, $originatingDataId: uuid = null, $priority: Int!) {
   update_Room_by_pk(
     pk_columns: {id: $id}
-    _set: {name: $name, capacity: $capacity, originatingDataId: $originatingDataId}
+    _set: {name: $name, capacity: $capacity, originatingDataId: $originatingDataId, priority: $priority}
   ) {
     ...RoomInfo
   }
@@ -27003,6 +27039,7 @@ export type UpdateRoomMutationFn = Apollo.MutationFunction<UpdateRoomMutation, U
  *      name: // value for 'name'
  *      capacity: // value for 'capacity'
  *      originatingDataId: // value for 'originatingDataId'
+ *      priority: // value for 'priority'
  *   },
  * });
  */

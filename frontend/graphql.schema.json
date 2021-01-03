@@ -79976,6 +79976,22 @@
             "deprecationReason": null
           },
           {
+            "name": "priority",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "publicVonageSessionId",
             "description": null,
             "args": [],
@@ -83244,6 +83260,18 @@
             },
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "priority",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Float",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "inputFields": null,
@@ -83259,6 +83287,16 @@
         "inputFields": [
           {
             "name": "capacity",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "order_by",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "priority",
             "description": null,
             "type": {
               "kind": "ENUM",
@@ -83467,6 +83505,16 @@
             "defaultValue": null
           },
           {
+            "name": "priority",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "Int_comparison_exp",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "publicVonageSessionId",
             "description": null,
             "type": {
@@ -83538,6 +83586,16 @@
         "inputFields": [
           {
             "name": "capacity",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "priority",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -83708,6 +83766,16 @@
             "defaultValue": null
           },
           {
+            "name": "priority",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "publicVonageSessionId",
             "description": null,
             "type": {
@@ -83832,6 +83900,18 @@
             "deprecationReason": null
           },
           {
+            "name": "priority",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "publicVonageSessionId",
             "description": null,
             "args": [],
@@ -83929,6 +84009,16 @@
           },
           {
             "name": "originatingDataId",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "order_by",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "priority",
             "description": null,
             "type": {
               "kind": "ENUM",
@@ -84052,6 +84142,18 @@
             "deprecationReason": null
           },
           {
+            "name": "priority",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "publicVonageSessionId",
             "description": null,
             "args": [],
@@ -84149,6 +84251,16 @@
           },
           {
             "name": "originatingDataId",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "order_by",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "priority",
             "description": null,
             "type": {
               "kind": "ENUM",
@@ -84482,6 +84594,16 @@
             "defaultValue": null
           },
           {
+            "name": "priority",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "order_by",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "publicVonageSessionId",
             "description": null,
             "type": {
@@ -84598,6 +84720,12 @@
             "deprecationReason": null
           },
           {
+            "name": "priority",
+            "description": "column name",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "publicVonageSessionId",
             "description": "column name",
             "isDeprecated": false,
@@ -84699,6 +84827,16 @@
             "defaultValue": null
           },
           {
+            "name": "priority",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "publicVonageSessionId",
             "description": null,
             "type": {
@@ -84739,6 +84877,18 @@
             },
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "priority",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Float",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "inputFields": null,
@@ -84761,6 +84911,16 @@
               "ofType": null
             },
             "defaultValue": null
+          },
+          {
+            "name": "priority",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "order_by",
+              "ofType": null
+            },
+            "defaultValue": null
           }
         ],
         "interfaces": null,
@@ -84774,6 +84934,18 @@
         "fields": [
           {
             "name": "capacity",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Float",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "priority",
             "description": null,
             "args": [],
             "type": {
@@ -84805,6 +84977,16 @@
               "ofType": null
             },
             "defaultValue": null
+          },
+          {
+            "name": "priority",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "order_by",
+              "ofType": null
+            },
+            "defaultValue": null
           }
         ],
         "interfaces": null,
@@ -84818,6 +85000,18 @@
         "fields": [
           {
             "name": "capacity",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Float",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "priority",
             "description": null,
             "args": [],
             "type": {
@@ -84849,6 +85043,16 @@
               "ofType": null
             },
             "defaultValue": null
+          },
+          {
+            "name": "priority",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "order_by",
+              "ofType": null
+            },
+            "defaultValue": null
           }
         ],
         "interfaces": null,
@@ -84862,6 +85066,18 @@
         "fields": [
           {
             "name": "capacity",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "priority",
             "description": null,
             "args": [],
             "type": {
@@ -84886,6 +85102,16 @@
         "inputFields": [
           {
             "name": "capacity",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "order_by",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "priority",
             "description": null,
             "type": {
               "kind": "ENUM",
@@ -84956,6 +85182,12 @@
             "deprecationReason": null
           },
           {
+            "name": "priority",
+            "description": "column name",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "publicVonageSessionId",
             "description": "column name",
             "isDeprecated": false,
@@ -84977,6 +85209,18 @@
         "fields": [
           {
             "name": "capacity",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Float",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "priority",
             "description": null,
             "args": [],
             "type": {
@@ -85008,6 +85252,16 @@
               "ofType": null
             },
             "defaultValue": null
+          },
+          {
+            "name": "priority",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "order_by",
+              "ofType": null
+            },
+            "defaultValue": null
           }
         ],
         "interfaces": null,
@@ -85021,6 +85275,18 @@
         "fields": [
           {
             "name": "capacity",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Float",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "priority",
             "description": null,
             "args": [],
             "type": {
@@ -85052,6 +85318,16 @@
               "ofType": null
             },
             "defaultValue": null
+          },
+          {
+            "name": "priority",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "order_by",
+              "ofType": null
+            },
+            "defaultValue": null
           }
         ],
         "interfaces": null,
@@ -85065,6 +85341,18 @@
         "fields": [
           {
             "name": "capacity",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Float",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "priority",
             "description": null,
             "args": [],
             "type": {
@@ -85089,6 +85377,16 @@
         "inputFields": [
           {
             "name": "capacity",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "order_by",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "priority",
             "description": null,
             "type": {
               "kind": "ENUM",

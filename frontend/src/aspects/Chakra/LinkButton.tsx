@@ -21,7 +21,9 @@ export default function LinkButton(props: LinkButtonProps & { ref?: Ref<HTMLAnch
             {...linkProps}
             ref={ref}
         >
-            <Button as="div" {...remaining}>{children}</Button>
+            <Button as="div" {...remaining}>
+                {children}
+            </Button>
         </Link>
     );
 }

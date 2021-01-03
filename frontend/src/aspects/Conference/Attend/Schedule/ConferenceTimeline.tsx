@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 import { Box, Flex, useColorModeValue } from "@chakra-ui/react";
-import React from "react";
+import React, { useMemo } from "react";
 import {
     Permission_Enum,
     Timeline_RoomFragment,
@@ -130,6 +130,7 @@ gql`
         id
         name
         currentModeName
+        priority
         events {
             ...Timeline_Event
         }
@@ -148,8 +149,16 @@ gql`
     }
 `;
 
-function ConferenceTimelineInner({ rooms }: { rooms: ReadonlyArray<Timeline_RoomFragment> }): JSX.Element {
+function ConferenceTimelineInner({
+    rooms: unsortedRooms,
+}: {
+    rooms: ReadonlyArray<Timeline_RoomFragment>;
+}): JSX.Element {
     const params = useTimelineParameters();
+
+    const rooms = useMemo(() => {
+        return [...unsortedRooms].sort((x, y) => x.name.localeCompare(y.name)).sort((x, y) => x.priority - y.priority);
+    }, [unsortedRooms]);
 
     const roomRowHeight = 70;
     const borderColour = useColorModeValue("gray.400", "gray.400");

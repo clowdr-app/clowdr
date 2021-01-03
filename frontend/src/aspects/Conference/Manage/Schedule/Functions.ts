@@ -67,6 +67,7 @@ export function convertScheduleToDescriptors(
                 data.id,
                 {
                     capacity: data.capacity,
+                    priority: data.priority,
                     currentModeName: data.currentModeName,
                     id: data.id,
                     name: data.name,
@@ -105,6 +106,7 @@ export function deepCloneEventDescriptor(event: EventDescriptor): EventDescripto
 export function deepCloneRoomDescriptor(room: RoomDescriptor): RoomDescriptor {
     return {
         capacity: room.capacity,
+        priority: room.priority,
         currentModeName: room.currentModeName,
         id: room.id,
         name: room.name,

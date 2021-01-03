@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 import { Box, Flex, useColorModeValue } from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import {
     Permission_Enum,
     Timeline_RoomFragment,
@@ -13,10 +13,10 @@ import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissio
 import { useConference } from "../../useConference";
 import RoomNameBox from "./RoomNameBox";
 import RoomTimeline from "./RoomTimeline";
-import Scoller from "./Scroller";
+import Scroller from "./Scroller";
 import TimeBar from "./TimeBar";
 import TimelineZoomControls from "./TimelineZoomControls";
-import useTimelineParameters, { TimelineParameters } from "./useTimelineParameters";
+import { TimelineParameters } from "./useTimelineParameters";
 
 gql`
     fragment Timeline_Tag on Tag {
@@ -154,17 +154,16 @@ function ConferenceTimelineInner({
 }: {
     rooms: ReadonlyArray<Timeline_RoomFragment>;
 }): JSX.Element {
-    const params = useTimelineParameters();
-
     const rooms = useMemo(() => {
         return [...unsortedRooms].sort((x, y) => x.name.localeCompare(y.name)).sort((x, y) => x.priority - y.priority);
     }, [unsortedRooms]);
 
     const roomRowHeight = 70;
     const borderColour = useColorModeValue("gray.400", "gray.400");
+    const [pixelsPerSecond, setPixelsPerSecond] = useState<number>(1);
 
     return (
-        <>
+        <TimelineParameters>
             <Box w="100%">
                 <Flex w="100%" direction="row" justify="end">
                     <TimelineZoomControls />
@@ -184,13 +183,12 @@ function ConferenceTimelineInner({
                             ))}
                         </Box>
                         <Box w="100%" h="100%" flex="1 1 100%">
-                            <TimeBar height={roomRowHeight} borderColour={borderColour} />
-                            <Scoller
-                                visibleTimeSpanSeconds={params.visibleTimeSpanSeconds}
-                                fullTimeSpanSeconds={params.fullTimeSpanSeconds}
-                                startAtTimeOffsetSeconds={params.startTimeOffsetSeconds}
-                                height={roomRowHeight * rooms.length}
-                            >
+                            <TimeBar
+                                height={roomRowHeight}
+                                borderColour={borderColour}
+                                pixelsPerSecond={pixelsPerSecond}
+                            />
+                            <Scroller height={roomRowHeight * rooms.length} pixelsPerSecondF={setPixelsPerSecond}>
                                 {rooms.map((room, idx) => (
                                     <Box
                                         key={room.id}
@@ -208,12 +206,12 @@ function ConferenceTimelineInner({
                                         />
                                     </Box>
                                 ))}
-                            </Scoller>
+                            </Scroller>
                         </Box>
                     </Flex>
                 </Box>
             </Box>
-        </>
+        </TimelineParameters>
     );
 }
 
@@ -229,11 +227,7 @@ function ConferenceTimelineFetchWrapper(): JSX.Element {
             queryResult={roomsResult}
             getter={(x) => x.Room}
         >
-            {(rooms) => (
-                <TimelineParameters>
-                    <ConferenceTimelineInner rooms={rooms} />
-                </TimelineParameters>
-            )}
+            {(rooms) => <ConferenceTimelineInner rooms={rooms} />}
         </ApolloQueryWrapper>
     );
 }

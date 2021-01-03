@@ -177,8 +177,8 @@ function EventBoxInner({
                 zIndex={1}
                 cursor="pointer"
                 position="absolute"
-                left={leftPx}
-                width={widthPx}
+                left={Math.round(leftPx) + "px"}
+                width={Math.round(widthPx) + "px"}
                 height="100%"
                 top={0}
                 borderLeftColor={borderColour}

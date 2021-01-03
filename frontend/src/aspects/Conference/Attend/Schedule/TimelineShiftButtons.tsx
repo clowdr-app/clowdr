@@ -42,6 +42,7 @@ export default function TimelineShiftButtons(): JSX.Element {
                     position="absolute"
                     left="0"
                     onClick={shiftEarlier}
+                    zIndex={3}
                 >
                     <FAIcon iconStyle="s" icon="chevron-left" />
                 </Button>
@@ -57,6 +58,7 @@ export default function TimelineShiftButtons(): JSX.Element {
                     position="absolute"
                     right="0"
                     onClick={shiftLater}
+                    zIndex={3}
                 >
                     <FAIcon iconStyle="s" icon="chevron-right" />
                 </Button>

@@ -8,10 +8,29 @@ import {
 } from "../../../../generated/graphql";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import EventBox from "./EventBox";
-import Scoller from "./Scroller";
+import NowMarker from "./NowMarker";
+import Scroller, { useScrollerParams } from "./Scroller";
 import TimelineShiftButtons from "./TimelineShiftButtons";
 import TimelineZoomControls from "./TimelineZoomControls";
 import useTimelineParameters, { TimelineParameters } from "./useTimelineParameters";
+
+function RoomTimelineContents({
+    groupedEvents,
+    room,
+}: {
+    groupedEvents: Timeline_EventFragment[][];
+    room: Timeline_RoomFragment;
+}): JSX.Element {
+    const scrollerParams = useScrollerParams();
+    return (
+        <>
+            {groupedEvents.map((events) => (
+                <EventBox roomName={room.name} key={events[0].id} sortedEvents={events} />
+            ))}
+            <NowMarker pixelsPerSecond={scrollerParams.pixelsPerSecond} />
+        </>
+    );
+}
 
 function RoomTimelineInner({
     room,
@@ -59,12 +78,6 @@ function RoomTimelineInner({
         return result;
     }, [room.events]);
 
-    const contents = useMemo(() => {
-        return groupedEvents.map((events) => (
-            <EventBox roomName={room.name} key={events[0].id} sortedEvents={events} />
-        ));
-    }, [groupedEvents, room.name]);
-
     useEffect(() => {
         for (const event of room.events) {
             params.notifyEventStart(Date.parse(event.startTime));
@@ -75,16 +88,13 @@ function RoomTimelineInner({
     return (
         <Box pos="relative" w="100%" h={height}>
             {useScroller ? (
-                <Scoller
-                    visibleTimeSpanSeconds={params.visibleTimeSpanSeconds}
-                    fullTimeSpanSeconds={params.fullTimeSpanSeconds}
-                    startAtTimeOffsetSeconds={params.startTimeOffsetSeconds}
+                <Scroller
                     height={height}
                 >
-                    {contents}
-                </Scoller>
+                    <RoomTimelineContents groupedEvents={groupedEvents} room={room} />
+                </Scroller>
             ) : (
-                contents
+                <RoomTimelineContents groupedEvents={groupedEvents} room={room} />
             )}
             {!hideTimeZoomButtons ? (
                 <Box pos="absolute" top="0" right="0">

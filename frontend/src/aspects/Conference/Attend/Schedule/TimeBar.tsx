@@ -1,6 +1,7 @@
 import { Box } from "@chakra-ui/react";
 import React from "react";
 import useWindowEvent from "../../../Window/useWindowEvent";
+import NowMarker from "./NowMarker";
 import TimelineShiftButtons from "./TimelineShiftButtons";
 import useTimelineParameters from "./useTimelineParameters";
 
@@ -8,10 +9,12 @@ export default function TimeBar({
     height,
     width,
     borderColour,
+    pixelsPerSecond,
 }: {
     height: number | string;
     width?: number | string;
     borderColour: string;
+    pixelsPerSecond: number;
 }): JSX.Element {
     const params = useTimelineParameters();
 
@@ -34,7 +37,9 @@ export default function TimeBar({
             borderBottomWidth={1}
             borderBottomStyle="solid"
             borderBottomColor={borderColour}
+            overflow="hidden"
         >
+            <NowMarker pixelsPerSecond={pixelsPerSecond} manualScrollOffset />
             Align: {new Date(params.startTimeMs).toLocaleString()}
             <br />
             Span: {(params.visibleTimeSpanSeconds / (60 * 60)).toLocaleString()} hours

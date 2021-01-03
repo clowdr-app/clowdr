@@ -1,5 +1,5 @@
 import { Box } from "@chakra-ui/react";
-import React, { createContext, useContext, useMemo, useRef } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useRef } from "react";
 import { DraggableCore } from "react-draggable";
 import useResizeObserver from "../../../Generic/useResizeObserver";
 import useTimelineParameters from "./useTimelineParameters";
@@ -16,18 +16,14 @@ export function useScrollerParams(): ScrollerParams {
     return useContext(ScrollerParamsContext);
 }
 
-export default function Scoller({
+export default function Scroller({
     children,
-    visibleTimeSpanSeconds,
-    fullTimeSpanSeconds,
-    startAtTimeOffsetSeconds,
     height,
+    pixelsPerSecondF,
 }: {
     children: React.ReactNode | React.ReactNodeArray | ((outerWidth: number) => React.ReactNode | React.ReactNodeArray);
-    visibleTimeSpanSeconds: number;
-    fullTimeSpanSeconds: number;
-    startAtTimeOffsetSeconds: number;
     height: number;
+    pixelsPerSecondF?: (pps: number) => void;
 }): JSX.Element {
     const timelineParams = useTimelineParameters();
     const outerRef = useRef<HTMLDivElement>(null);
@@ -40,10 +36,14 @@ export default function Scoller({
         return 0;
     }, [outerSizeEntries]);
 
-    const pixelsPerSecond = visibleTimeSpanSeconds === 0 ? 1 : outerWidth / visibleTimeSpanSeconds;
-    const innerWidth = Math.max(outerWidth, pixelsPerSecond * fullTimeSpanSeconds);
-    const innerLeftT = pixelsPerSecond * -startAtTimeOffsetSeconds;
+    const pixelsPerSecond = timelineParams.visibleTimeSpanSeconds === 0 ? 1 : outerWidth / timelineParams.visibleTimeSpanSeconds;
+    const innerWidth = Math.max(outerWidth, pixelsPerSecond * timelineParams.fullTimeSpanSeconds);
+    const innerLeftT = pixelsPerSecond * -timelineParams.startTimeOffsetSeconds;
     const innerLeft = Math.min(0, Math.max(innerLeftT, outerWidth - innerWidth));
+
+    useEffect(() => {
+        pixelsPerSecondF?.(pixelsPerSecond);
+    }, [pixelsPerSecond, pixelsPerSecondF]);
 
     const dragData = useRef<{
         x: number;

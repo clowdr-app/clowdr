@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useCallback, useContext, useState } from "react";
 import { roundToNearest } from "../../../Generic/MathUtils";
 
 interface TimelineParameters {
@@ -37,20 +37,45 @@ const TimelinePositionContext = createContext<TimelineParameters>({
     },
 });
 
-export function TimelineParameters({ children }: { children: React.ReactNode | React.ReactNodeArray }): JSX.Element {
-    const [startTimeMs, setStartTime] = useState<number>(Date.now());
+function fetchDefaultStartTime(): number {
+    const v = window.localStorage.getItem("timeline-params-last-start-time");
+    if (v) {
+        return parseFloat(v);
+    }
+    return Date.now();
+}
+
+export function TimelineParameters({
+    children,
+    defaultStartTime = fetchDefaultStartTime(),
+}: {
+    children: React.ReactNode | React.ReactNodeArray;
+    defaultStartTime?: number;
+}): JSX.Element {
+    const [startTimeMs, setStartTimeInner] = useState<number>(defaultStartTime);
     const [visibleTimeSpanSeconds, setTimeSpanSeconds] = useState<number>(60 * 60 * 4);
+
+    const setStartTime = useCallback((v: React.SetStateAction<number>) => {
+        setStartTimeInner((old) => {
+            const newV = typeof v === "function" ? v(old) : v;
+            window.localStorage.setItem("timeline-params-last-start-time", newV.toString());
+            return newV;
+        });
+    }, []);
 
     const [earliestEventStartV, setEarliestEventStart] = useState<number>();
     const [latestEventEndV, setLatestEventEnd] = useState<number>();
 
-    const earliestEventStart = earliestEventStartV ?? Date.now();
+    const earliestEventStart = earliestEventStartV ?? startTimeMs;
     const latestEventEnd = latestEventEndV ?? earliestEventStart + 1000;
 
     return (
         <TimelinePositionContext.Provider
             value={{
-                startTimeMs: roundToNearest(Math.max(earliestEventStart, Math.min(latestEventEnd, startTimeMs)), 5 * 60 * 1000),
+                startTimeMs: roundToNearest(
+                    Math.max(earliestEventStart, Math.min(latestEventEnd, startTimeMs)),
+                    5 * 60 * 1000
+                ),
                 visibleTimeSpanSeconds: visibleTimeSpanSeconds,
                 earliestMs: earliestEventStart,
                 latestMs: latestEventEnd,
@@ -58,14 +83,25 @@ export function TimelineParameters({ children }: { children: React.ReactNode | R
                 startTimeOffsetSeconds: (startTimeMs - earliestEventStart) / 1000,
                 shiftTo: (t) => {
                     if (typeof t === "number") {
-                        setStartTime(Math.max(earliestEventStart, Math.min(latestEventEnd - (visibleTimeSpanSeconds * 1000), t)));
-                    }
-                    else {
-                        setStartTime(old => Math.max(earliestEventStart, Math.min(latestEventEnd - (visibleTimeSpanSeconds * 1000), t(old, visibleTimeSpanSeconds * 1000))));
+                        setStartTime(
+                            Math.max(earliestEventStart, Math.min(latestEventEnd - visibleTimeSpanSeconds * 1000, t))
+                        );
+                    } else {
+                        setStartTime((old) =>
+                            Math.max(
+                                earliestEventStart,
+                                Math.min(
+                                    latestEventEnd - visibleTimeSpanSeconds * 1000,
+                                    t(old, visibleTimeSpanSeconds * 1000)
+                                )
+                            )
+                        );
                     }
                 },
                 zoomTo: (span) => {
-                    setTimeSpanSeconds(old => Math.max(5 * 60, Math.min((latestEventEnd - earliestEventStart) / 1000, span(old))));
+                    setTimeSpanSeconds((old) =>
+                        Math.max(5 * 60, Math.min((latestEventEnd - earliestEventStart) / 1000, span(old)))
+                    );
                 },
                 notifyEventStart: (t) => {
                     setEarliestEventStart((old) => (!old || t < old ? t : old));

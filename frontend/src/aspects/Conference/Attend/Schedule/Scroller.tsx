@@ -79,6 +79,7 @@ export default function Scoller({
                         left: innerLeft,
                         boxSizing: "border-box",
                         overflow: "hidden",
+                        transition: "none",
                     }}
                 >
                     <ScrollerParamsContext.Provider

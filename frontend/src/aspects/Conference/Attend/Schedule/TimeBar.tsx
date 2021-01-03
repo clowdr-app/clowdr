@@ -17,7 +17,7 @@ export default function TimeBar({
 
     useWindowEvent("wheel", (ev) => {
         if (ev.shiftKey) {
-            params.shiftTo((startTimeMs, visibleTimSpanMs) => startTimeMs + visibleTimSpanMs * 0.1 * ev.deltaY);
+            params.shiftTo((startTimeMs, visibleTimSpanMs) => startTimeMs + visibleTimSpanMs * 0.1 * Math.sign(ev.deltaY));
             ev.preventDefault();
             ev.stopPropagation();
             return false;

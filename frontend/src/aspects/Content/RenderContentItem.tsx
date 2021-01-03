@@ -54,7 +54,7 @@ export default function RenderContentItem({ data }: { data: ContentItemDataBlob 
                 return (
                     <ReactPlayer
                         style={{ maxWidth: "100%" }}
-                        url={s3UrlToHttpUrl(latestVersion.data.s3Url)}
+                        url={s3UrlToHttpUrl(latestVersion.data.transcode.s3Url)}
                         controls={true}
                     />
                 );

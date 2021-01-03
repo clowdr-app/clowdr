@@ -1,7 +1,7 @@
 import OT from "@opentok/client";
 import { useCallback } from "react";
 import useOpenTokReducer, { OpenTokState } from "./useOpenTokReducer";
-import useSessionEventHandler, { SessionEvent } from "./useSessionEventHandler";
+import useSessionEventHandler, { EventMap } from "./useSessionEventHandler";
 
 // default options for subscribe and initPublisher
 const defaultOptions: Partial<OT.PublisherProperties> = {
@@ -53,7 +53,7 @@ interface OpenTokActions {
         options,
     }: {
         name: string;
-        element: string;
+        element?: string | HTMLElement;
         options: Partial<OT.PublisherProperties>;
     }): Promise<OT.Publisher>;
     removePublisher({ name }: { name: string }): void;
@@ -64,7 +64,7 @@ interface OpenTokActions {
         options,
     }: {
         name: string;
-        element: string;
+        element?: string | HTMLElement;
         options: Partial<OT.PublisherProperties>;
     }): Promise<OT.Stream>;
     unpublish({ name }: { name: string }): void;
@@ -74,7 +74,7 @@ interface OpenTokActions {
         options,
     }: {
         stream: OT.Stream;
-        element: string | HTMLElement;
+        element?: string | HTMLElement;
         options: Partial<OT.SubscriberProperties>;
     }): OT.Subscriber;
     unsubscribe({ stream }: { stream: OT.Stream }): void;
@@ -105,28 +105,28 @@ function useOpenTok(): [state: OpenTokState, actions: OpenTokActions] {
     } = state;
 
     const handleConnectionCreated = useCallback(
-        (event) => {
+        (event: EventMap["connectionCreated"]) => {
             action.addConnection(event.connection);
         },
         [action]
     );
 
     const handleConnectionDestroyed = useCallback(
-        (event) => {
+        (event: EventMap["connectionDestroyed"]) => {
             action.removeConnection(event.connection);
         },
         [action]
     );
 
     const handleStreamCreated = useCallback(
-        (event) => {
+        (event: EventMap["streamCreated"]) => {
             action.addStream(event.stream);
         },
         [action]
     );
 
     const handleStreamDestroyed = useCallback(
-        (event) => {
+        (event: EventMap["streamDestroyed"]) => {
             action.removeStream(event.stream);
         },
         [action]
@@ -217,7 +217,7 @@ function useOpenTok(): [state: OpenTokState, actions: OpenTokActions] {
             options,
         }: {
             name: string;
-            element: string;
+            element?: string | HTMLElement;
             options: Partial<OT.PublisherProperties>;
         }): Promise<OT.Publisher> => {
             if (publisher[name]) {
@@ -294,7 +294,7 @@ function useOpenTok(): [state: OpenTokState, actions: OpenTokActions] {
             options,
         }: {
             name: string;
-            element: string;
+            element?: string | HTMLElement;
             options: Partial<OT.PublisherProperties>;
         }): Promise<OT.Stream> => {
             if (publisher[name]) {
@@ -358,7 +358,7 @@ function useOpenTok(): [state: OpenTokState, actions: OpenTokActions] {
             options,
         }: {
             stream: OT.Stream;
-            element: string | HTMLElement;
+            element?: string | HTMLElement;
             options: Partial<OT.SubscriberProperties>;
         }): OT.Subscriber => {
             if (!session) {
@@ -427,10 +427,10 @@ function useOpenTok(): [state: OpenTokState, actions: OpenTokActions] {
         [isSessionConnected, session]
     );
 
-    useSessionEventHandler(SessionEvent.CONNECTION_CREATED, handleConnectionCreated, session);
-    useSessionEventHandler(SessionEvent.CONNECTION_DESTROYED, handleConnectionDestroyed, session);
-    useSessionEventHandler(SessionEvent.STREAM_CREATED, handleStreamCreated, session);
-    useSessionEventHandler(SessionEvent.STREAM_DESTROYED, handleStreamDestroyed, session);
+    useSessionEventHandler("connectionCreated", handleConnectionCreated, session);
+    useSessionEventHandler("connectionDestroyed", handleConnectionDestroyed, session);
+    useSessionEventHandler("streamCreated", handleStreamCreated, session);
+    useSessionEventHandler("streamDestroyed", handleStreamDestroyed, session);
 
     return [
         state,

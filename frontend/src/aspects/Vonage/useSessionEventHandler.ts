@@ -1,47 +1,66 @@
-import type * as OpenTok from "@opentok/client";
+import type * as OT from "@opentok/client";
 import { useEffect } from "react";
 
-const events = [
-    "archiveStarted",
-    "archiveStopped",
-    "connectionCreated",
-    "connectionDestroyed",
-    "sessionConnected",
-    "sessionDisconnected",
-    "sessionReconnected",
-    "sessionReconnecting",
-    "signal",
-    "streamCreated",
-    "streamDestroyed",
-    "streamPropertyChanged",
-];
+export type EventMap = {
+    archiveStarted: OT.Event<"archiveStarted", OT.Session> & {
+        id: string;
+        name: string;
+    };
 
-export enum SessionEvent {
-    ARCHIVE_STARTED = "archiveStarted",
-    ARCHIVE_STOPPED = "archiveStopped",
-    CONNECTION_CREATED = "connectionCreated",
-    CONNECTION_DESTROYED = "connectionDestroyed",
-    SESSION_CONNECTED = "sessionConnected",
-    SESSION_DISCONNECTED = "sessionDisconnected",
-    SESSION_RECONNECTED = "sessionReconnected",
-    SESSION_RECONNECTING = "sessionReconnecting",
-    SIGNAL = "signal",
-    STREAM_CREATED = "streamCreated",
-    STREAM_DESTROYED = "streamDestroyed",
-    STREAM_PROPERTY_CHANGED = "streamPropertyChanged",
-}
+    archiveStopped: OT.Event<"archiveStopped", OT.Session> & {
+        id: string;
+        name: string;
+    };
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export default function useSubscribe(type: SessionEvent, callback: any, session: OpenTok.Session | undefined): any {
-    const isEventTypeSupported = events.some((e) => type.startsWith(e));
-    if (!isEventTypeSupported) {
-        throw new Error("[ReactUseOpenTok] useSessionEventHandler: The event type is NOT supported");
-    }
-    if (typeof callback !== "function") {
-        throw new Error("[ReactUseOpenTok] useSessionEventHandler: Incorrect value or type of callback");
-    }
+    connectionCreated: OT.Event<"connectionCreated", OT.Session> & {
+        connection: OT.Connection;
+    };
 
+    connectionDestroyed: OT.Event<"connectionDestroyed", OT.Session> & {
+        connection: OT.Connection;
+        reason: string;
+    };
+
+    sessionConnected: OT.Event<"sessionConnected", OT.Session>;
+
+    sessionDisconnected: OT.Event<"sessionDisconnected", OT.Session> & {
+        reason: string;
+    };
+
+    sessionReconnected: OT.Event<"sessionReconnected", OT.Session>;
+    sessionReconnecting: OT.Event<"sessionReconnecting", OT.Session>;
+
+    signal: OT.Event<"signal", OT.Session> & {
+        type?: string;
+        data?: string;
+        from: OT.Connection;
+    };
+
+    streamCreated: OT.Event<"streamCreated", OT.Session> & {
+        stream: OT.Stream;
+    };
+
+    streamDestroyed: OT.Event<"streamDestroyed", OT.Session> & {
+        stream: OT.Stream;
+        reason: string;
+    };
+
+    streamPropertyChanged: OT.Event<"streamPropertyChanged", OT.Session> & {
+        stream: OT.Stream;
+    } & (
+            | { changedProperty: "hasAudio"; oldValue: boolean; newValue: boolean }
+            | { changedProperty: "hasVideo"; oldValue: boolean; newValue: boolean }
+            | { changedProperty: "videoDimensions"; oldValue: OT.Dimensions; newValue: OT.Dimensions }
+        );
+};
+
+export default function useSubscribe<EventName extends keyof EventMap>(
+    type: EventName,
+    callback: (event: EventMap[EventName]) => void,
+    session: OT.Session | undefined
+): void {
     useEffect(() => {
+        console.log("Resubscribing");
         if (!session) {
             return;
         }
@@ -50,9 +69,10 @@ export default function useSubscribe(type: SessionEvent, callback: any, session:
             return;
         }
 
-        session.on(type, callback);
+        session.on(type, callback as any);
         return () => {
-            session.off(type, callback);
+            session.off(type, callback as any);
         };
-    }, [session, type, callback]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [callback, session, type]);
 }

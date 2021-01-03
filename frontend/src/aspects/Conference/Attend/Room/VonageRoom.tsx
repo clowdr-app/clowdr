@@ -2,12 +2,13 @@ import { Optional } from "@ahanapediatrics/ahana-fp";
 import { VmShape, VolumeMeter } from "@ahanapediatrics/react-volume-meter";
 import { gql } from "@apollo/client";
 import { SettingsIcon } from "@chakra-ui/icons";
-import { Box, Button, HStack, Text, useDisclosure, useToast, VStack } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useRef } from "react";
+import { Box, Button, HStack, useDisclosure, useToast, VStack } from "@chakra-ui/react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useGetRoomVonageTokenMutation } from "../../../../generated/graphql";
 import FAIcon from "../../../Icons/FAIcon";
 import useOpenTok from "../../../Vonage/useOpenTok";
-import { useVonageRoom, VonageRoomStateActionType, VonageRoomStateProvider } from "../../../Vonage/useVonageRoom";
+import useSessionEventHandler, { EventMap } from "../../../Vonage/useSessionEventHandler";
+import { useVonageRoom, VonageRoomStateActionType } from "../../../Vonage/useVonageRoom";
 import DeviceChooserModal from "./DeviceChooserModal";
 import PlaceholderImage from "./PlaceholderImage";
 
@@ -20,14 +21,23 @@ gql`
     }
 `;
 
-export default function VonageRoom({ roomId }: { roomId: string }): JSX.Element {
+export default function VonageRoom({
+    roomId,
+}: // publicVonageSessionId,
+{
+    roomId: string;
+    // publicVonageSessionId: string;
+}): JSX.Element {
     const [openTokProps, openTokMethods] = useOpenTok();
-    const { state, dispatch } = useVonageRoom();
+    const { state, computedState, dispatch } = useVonageRoom();
+    const [vonageSessionId, setVonageSessionId] = useState<string | null>(null);
     const [getRoomVonageToken] = useGetRoomVonageTokenMutation({
         variables: {
             roomId,
         },
     });
+    const toast = useToast();
+    const videoContainerRef = useRef<HTMLDivElement>(null);
 
     // useEffect(() => {
     //     return () => {
@@ -38,76 +48,155 @@ export default function VonageRoom({ roomId }: { roomId: string }): JSX.Element 
     //     };
     // }, [dispatch]);
 
+    useEffect(() => {
+        async function fn() {
+            const result = await getRoomVonageToken();
+            setVonageSessionId(result.data?.joinRoomVonageSession?.sessionId ?? null);
+        }
+        fn();
+    }, [getRoomVonageToken]);
+
+    useEffect(() => {
+        async function initSession() {
+            if (!vonageSessionId) {
+                return;
+            }
+
+            if (openTokProps.isSessionInitialized) {
+                return;
+            }
+
+            await openTokMethods.initSession({
+                apiKey: import.meta.env.SNOWPACK_PUBLIC_OPENTOK_API_KEY,
+                sessionId: vonageSessionId,
+                sessionOptions: {},
+            });
+        }
+        initSession();
+    }, [getRoomVonageToken, openTokMethods, openTokProps.isSessionInitialized, vonageSessionId]);
+
     const joinRoom = useCallback(async () => {
+        console.log("Joining room");
         const result = await getRoomVonageToken();
 
         if (!result.data?.joinRoomVonageSession?.accessToken || !result.data.joinRoomVonageSession.sessionId) {
             return;
         }
 
-        const session = await openTokMethods.initSession({
-            apiKey: import.meta.env.SNOWPACK_PUBLIC_OPENTOK_API_KEY,
-            sessionId: result.data.joinRoomVonageSession.sessionId,
-            sessionOptions: {},
-        });
+        try {
+            if (!openTokProps.session) {
+                throw new Error("No session");
+            }
 
-        await openTokMethods.initPublisher({
-            element: "my-video",
-            name: "camera",
-            options: {},
-        });
+            await openTokMethods.connectSession(result.data.joinRoomVonageSession.accessToken, openTokProps.session);
+        } catch (e) {
+            console.error("Failed to join room", e);
+            toast({
+                status: "error",
+                description: "Cannot connect to room",
+            });
+        }
+    }, [getRoomVonageToken, openTokMethods, openTokProps.session, toast]);
 
-        await openTokMethods.connectSession(result.data.joinRoomVonageSession.accessToken, session);
+    const streamCreatedHandler = useCallback(
+        (event: EventMap["streamCreated"]) => {
+            console.log("Stream created", event.stream.streamId);
+            openTokMethods.subscribe({
+                stream: event.stream,
+                element: videoContainerRef.current ?? undefined,
+                options: {
+                    insertMode: "append",
+                    height: "300",
+                    width: "300",
+                },
+            });
+        },
+        [openTokMethods]
+    );
+    useSessionEventHandler("streamCreated", streamCreatedHandler, openTokProps.session);
 
-        await openTokMethods.publishPublisher({ name: "camera" });
-    }, [getRoomVonageToken, openTokMethods]);
+    const streamDestroyedHandler = useCallback(
+        (event: EventMap["streamDestroyed"]) => {
+            console.log("Stream destroyed", event.stream.streamId);
+            openTokMethods.unsubscribe({
+                stream: event.stream,
+            });
+        },
+        [openTokMethods]
+    );
+    useSessionEventHandler("streamDestroyed", streamDestroyedHandler, openTokProps.session);
+
+    const sessionConnectedHandler = useCallback(
+        async (event: EventMap["sessionConnected"]) => {
+            console.log("Session connected", event.target.sessionId);
+
+            if (!videoContainerRef.current) {
+                throw new Error("No element to publish to");
+            }
+
+            if ((computedState.videoTrack || computedState.audioTrack) && !openTokProps.publisher["camera"]) {
+                console.log("Publishing camera");
+                await openTokMethods.publish({
+                    name: "camera",
+                    element: videoContainerRef.current,
+                    options: {
+                        videoSource: computedState.videoTrack?.getSettings().deviceId,
+                        audioSource: computedState.audioTrack?.getSettings().deviceId,
+                        insertMode: "append",
+                        style: {},
+                        height: 300,
+                        width: 300,
+                    },
+                });
+            }
+        },
+        [computedState.videoTrack, computedState.audioTrack, openTokMethods, openTokProps.publisher]
+    );
+    useSessionEventHandler("sessionConnected", sessionConnectedHandler, openTokProps.session);
+
+    const sessionDisconnectedHandler = useCallback(
+        (event: EventMap["sessionDisconnected"]) => {
+            console.log("Session disconnected", event.target.sessionId);
+            if (openTokProps.publisher["camera"]) {
+                console.log("Unpublishing camera");
+                openTokMethods.unpublish({ name: "camera" });
+            }
+        },
+        [openTokMethods, openTokProps.publisher]
+    );
+    useSessionEventHandler("sessionDisconnected", sessionDisconnectedHandler, openTokProps.session);
+
+    const leaveRoom = useCallback(() => {
+        if (openTokProps.isSessionConnected) {
+            openTokMethods.disconnectSession();
+        }
+    }, [openTokMethods, openTokProps.isSessionConnected]);
 
     return (
-        <VonageRoomStateProvider>
-            <Box minH="100%" display="grid" gridTemplateRows="1fr auto">
-                <Box>
-                    {openTokProps.session ? (
-                        openTokProps.session.connection ? (
-                            <Box textAlign="center">
-                                <Button
-                                    mt={5}
-                                    onClick={() => {
-                                        try {
-                                            openTokMethods.unpublish({ name: "camera" });
-                                        } catch (e) {
-                                            console.warn("Could not unpublish own video");
-                                        }
-                                        try {
-                                            openTokMethods.removePublisher({ name: "camera" });
-                                        } catch (e) {
-                                            console.warn("Could not remove own video publisher");
-                                        }
-                                        openTokMethods.disconnectSession();
-                                    }}
-                                >
-                                    Disconnect
-                                </Button>
-                            </Box>
-                        ) : (
-                            <Text>Connecting</Text>
-                        )
-                    ) : (
-                        <VStack justifyContent="center" height="100%">
-                            <Box height="50%">
-                                <CameraPreview />
-                            </Box>
-                        </VStack>
-                    )}
-                </Box>
-                <VonageRoomControlBar onJoinRoom={joinRoom} />
+        <Box minH="100%" display="grid" gridTemplateRows="1fr auto">
+            <Box position="relative">
+                <VStack justifyContent="center" height="100%" position="absolute" width="100%">
+                    <Box height="50%">
+                        <PreJoin />
+                    </Box>
+                </VStack>
+                <Box
+                    position="absolute"
+                    pointerEvents="none"
+                    width="100%"
+                    height="100%"
+                    ref={videoContainerRef}
+                    overflowY="auto"
+                ></Box>
             </Box>
-        </VonageRoomStateProvider>
+            <VonageRoomControlBar onJoinRoom={joinRoom} onLeaveRoom={leaveRoom} />
+        </Box>
     );
 }
 
 const AudioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
 
-function CameraPreview(): JSX.Element {
+function PreJoin(): JSX.Element {
     const { state, dispatch } = useVonageRoom();
     const cameraPreviewRef = useRef<HTMLVideoElement>(null);
     const toast = useToast();
@@ -207,7 +296,13 @@ function CameraPreview(): JSX.Element {
     );
 }
 
-function VonageRoomControlBar({ onJoinRoom }: { onJoinRoom: () => void }): JSX.Element {
+function VonageRoomControlBar({
+    onJoinRoom,
+    onLeaveRoom,
+}: {
+    onJoinRoom: () => void;
+    onLeaveRoom: () => void;
+}): JSX.Element {
     const { state, dispatch } = useVonageRoom();
     const { isOpen, onClose, onOpen } = useDisclosure();
 
@@ -217,7 +312,12 @@ function VonageRoomControlBar({ onJoinRoom }: { onJoinRoom: () => void }): JSX.E
                 <Button mr="auto" leftIcon={<SettingsIcon />} onClick={onOpen}>
                     Settings
                 </Button>
-                <Button colorScheme="green">Join Room</Button>
+                <Button colorScheme="green" onClick={onJoinRoom}>
+                    Join Room
+                </Button>
+                <Button colorScheme="green" onClick={onLeaveRoom}>
+                    Leave Room
+                </Button>
             </HStack>
             <DeviceChooserModal
                 cameraId={

@@ -14,6 +14,7 @@ import { Permission_Enum, RoomDetailsFragment, useGetRoomDetailsQuery } from "..
 import usePolling from "../../../Generic/usePolling";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import { useNoPrimaryMenuButtons } from "../../../Menu/usePrimaryMenuButtons";
+import { VonageRoomStateProvider } from "../../../Vonage/useVonageRoom";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { useCurrentRoomEvent } from "./useCurrentRoomEvent";
 import VonageRoom from "./VonageRoom";
@@ -119,7 +120,9 @@ function BreakoutRoom({ roomDetails }: { roomDetails: RoomDetailsFragment }): JS
         <Flex width="100%" height="100%" gridColumnGap={5} flexWrap={stackColumns ? "wrap" : "nowrap"}>
             <Box textAlign="left" flexGrow={1} overflowY="auto" p={2}>
                 <Box height="80vh" width="100%" background={backgroundColor}>
-                    <VonageRoom roomId={roomDetails.id} />
+                    <VonageRoomStateProvider>
+                        <VonageRoom roomId={roomDetails.id} />
+                    </VonageRoomStateProvider>
                 </Box>
                 <Heading as="h2" textAlign="left" mt={5}>
                     {roomDetails.name}

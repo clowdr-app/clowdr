@@ -1,5 +1,5 @@
 import { useToast } from "@chakra-ui/react";
-import React, { Dispatch, useEffect, useReducer, useRef } from "react";
+import React, { Dispatch, useEffect, useMemo, useReducer, useRef } from "react";
 
 interface VonageRoomState {
     preferredCameraId: string | null;
@@ -66,13 +66,25 @@ interface SetMicrophoneMediaStream {
     mediaStream: MediaStream | null;
 }
 
-interface VonageRoomStateReducer {
+interface VonageRoomComputedState {
+    videoTrack: MediaStreamTrack | null;
+    audioTrack: MediaStreamTrack | null;
+}
+
+const initialComputedState: VonageRoomComputedState = {
+    videoTrack: null,
+    audioTrack: null,
+};
+
+interface VonageRoomContext {
     state: VonageRoomState;
+    computedState: VonageRoomComputedState;
     dispatch: Dispatch<VonageRoomStateAction>;
 }
 
-export const VonageContext = React.createContext<VonageRoomStateReducer>({
+export const VonageContext = React.createContext<VonageRoomContext>({
     state: initialRoomState,
+    computedState: initialComputedState,
     dispatch: () => null,
 });
 
@@ -237,9 +249,32 @@ export function VonageRoomStateProvider({
         }
     }, [state.microphoneIntendedEnabled]);
 
-    return <VonageContext.Provider value={{ state, dispatch }}>{children}</VonageContext.Provider>;
+    const cameraTrack = useMemo(() => {
+        const videoTracks = state.cameraStream?.getVideoTracks();
+        if (videoTracks && videoTracks.length > 0) {
+            return videoTracks[0];
+        }
+        return null;
+    }, [state.cameraStream]);
+
+    const microphoneTrack = useMemo(() => {
+        const audioTracks = state.microphoneStream?.getAudioTracks();
+        if (audioTracks && audioTracks.length > 0) {
+            return audioTracks[0];
+        }
+        return null;
+    }, [state.microphoneStream]);
+
+    const computedState = useMemo(() => {
+        return {
+            videoTrack: cameraTrack,
+            audioTrack: microphoneTrack,
+        };
+    }, [cameraTrack, microphoneTrack]);
+
+    return <VonageContext.Provider value={{ state, dispatch, computedState }}>{children}</VonageContext.Provider>;
 }
 
-export function useVonageRoom(): VonageRoomStateReducer {
+export function useVonageRoom(): VonageRoomContext {
     return React.useContext(VonageContext);
 }

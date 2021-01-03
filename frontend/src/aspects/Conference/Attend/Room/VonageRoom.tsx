@@ -1,16 +1,12 @@
-import { Optional } from "@ahanapediatrics/ahana-fp";
-import { VmShape, VolumeMeter } from "@ahanapediatrics/react-volume-meter";
 import { gql } from "@apollo/client";
-import { SettingsIcon } from "@chakra-ui/icons";
-import { Box, Button, HStack, useColorModeValue, useDisclosure, useToast, VStack } from "@chakra-ui/react";
+import { Box, useToast, VStack } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useGetRoomVonageTokenMutation } from "../../../../generated/graphql";
-import FAIcon from "../../../Icons/FAIcon";
 import useOpenTok from "../../../Vonage/useOpenTok";
 import useSessionEventHandler, { EventMap } from "../../../Vonage/useSessionEventHandler";
-import { useVonageRoom, VonageRoomStateActionType } from "../../../Vonage/useVonageRoom";
-import DeviceChooserModal from "./DeviceChooserModal";
-import PlaceholderImage from "./PlaceholderImage";
+import { useVonageRoom } from "../../../Vonage/useVonageRoom";
+import { PreJoin } from "./PreJoin";
+import { VonageRoomControlBar } from "./VonageRoomControlBar";
 
 gql`
     mutation GetRoomVonageToken($roomId: uuid!) {
@@ -39,15 +35,6 @@ export default function VonageRoom({
     const toast = useToast();
     const videoContainerRef = useRef<HTMLDivElement>(null);
     const cameraPreviewRef = useRef<HTMLVideoElement>(null);
-
-    // useEffect(() => {
-    //     return () => {
-    //         dispatch({
-    //             cameraEnabled: false,
-    //             type: VonageRoomStateActionType.SetCameraIntendedState,
-    //         });
-    //     };
-    // }, [dispatch]);
 
     useEffect(() => {
         async function fn() {
@@ -239,10 +226,6 @@ export default function VonageRoom({
     );
     useSessionEventHandler("sessionDisconnected", sessionDisconnectedHandler, openTokProps.session);
 
-    // const connectionCreatedHandler = useCallback(() => {
-
-    // })
-
     const leaveRoom = useCallback(() => {
         if (openTokProps.isSessionConnected) {
             openTokMethods.disconnectSession();
@@ -269,156 +252,5 @@ export default function VonageRoom({
                 inRoom={openTokProps.isSessionConnected}
             />
         </Box>
-    );
-}
-
-const AudioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-
-function PreJoin({ cameraPreviewRef }: { cameraPreviewRef: React.RefObject<HTMLVideoElement> }): JSX.Element {
-    const { state, dispatch } = useVonageRoom();
-    const toast = useToast();
-    const placeholderColour = useColorModeValue("black", "white");
-
-    useEffect(() => {
-        if (cameraPreviewRef.current) {
-            cameraPreviewRef.current.srcObject = state.cameraStream;
-        } else {
-            throw new Error("Failed to start camera: element missing");
-        }
-    }, [cameraPreviewRef, state.cameraStream, toast]);
-
-    return (
-        <HStack>
-            <Box position="relative">
-                <Box position="absolute" width="50%" top="50%" left="50%" transform="translate(-50%,-50%)">
-                    <PlaceholderImage colour={placeholderColour} />
-                </Box>
-                <video
-                    ref={cameraPreviewRef}
-                    autoPlay={true}
-                    style={{
-                        border: "1px solid gray",
-                        height: "300px",
-                        width: "300px",
-                        objectFit: "cover",
-                        transform: "rotateY(180deg)",
-                    }}
-                />
-                <Box position="absolute" bottom="5" right="5">
-                    {state.microphoneStream ? (
-                        <VolumeMeter
-                            audioContext={AudioContext}
-                            height={50}
-                            width={50}
-                            shape={VmShape.VM_STEPPED}
-                            stream={Optional.of(state.microphoneStream)}
-                        />
-                    ) : (
-                        <></>
-                    )}
-                </Box>
-            </Box>
-        </HStack>
-    );
-}
-
-function VonageRoomControlBar({
-    onJoinRoom,
-    onLeaveRoom,
-    inRoom,
-}: {
-    onJoinRoom: () => void;
-    onLeaveRoom: () => void;
-    inRoom: boolean;
-}): JSX.Element {
-    const { state, dispatch } = useVonageRoom();
-    const { isOpen, onClose, onOpen } = useDisclosure();
-
-    const startCamera = useCallback(() => {
-        dispatch({
-            type: VonageRoomStateActionType.SetCameraIntendedState,
-            cameraEnabled: true,
-        });
-    }, [dispatch]);
-
-    const stopCamera = useCallback(() => {
-        dispatch({
-            type: VonageRoomStateActionType.SetCameraIntendedState,
-            cameraEnabled: false,
-        });
-    }, [dispatch]);
-
-    const startMicrophone = useCallback(() => {
-        dispatch({
-            type: VonageRoomStateActionType.SetMicrophoneIntendedState,
-            microphoneEnabled: true,
-        });
-    }, [dispatch]);
-
-    const stopMicrophone = useCallback(() => {
-        dispatch({
-            type: VonageRoomStateActionType.SetMicrophoneIntendedState,
-            microphoneEnabled: false,
-        });
-    }, [dispatch]);
-
-    return (
-        <>
-            <HStack p={2}>
-                <Button leftIcon={<SettingsIcon />} onClick={onOpen}>
-                    Settings
-                </Button>
-                {state.cameraStream ? (
-                    <Button onClick={stopCamera}>
-                        <FAIcon icon="video-slash" iconStyle="s" mr="auto" />
-                        <span style={{ marginLeft: "1rem" }}>Stop video</span>
-                    </Button>
-                ) : (
-                    <Button onClick={startCamera}>
-                        <FAIcon icon="video" iconStyle="s" mr="auto" />
-                        <span style={{ marginLeft: "1rem" }}>Start video</span>
-                    </Button>
-                )}
-                {state.microphoneStream ? (
-                    <Button onClick={stopMicrophone} mr="auto">
-                        <FAIcon icon="microphone-slash" iconStyle="s" mr="auto" />
-                        <span style={{ marginLeft: "1rem" }}>Stop microphone</span>
-                    </Button>
-                ) : (
-                    <Button onClick={startMicrophone} mr="auto">
-                        <FAIcon icon="microphone" iconStyle="s" mr="auto" />
-                        <span style={{ marginLeft: "1rem" }}>Start microphone</span>
-                    </Button>
-                )}
-                {inRoom ? (
-                    <Button colorScheme="green" onClick={onLeaveRoom}>
-                        Leave Room
-                    </Button>
-                ) : (
-                    <Button colorScheme="green" onClick={onJoinRoom}>
-                        Join Room
-                    </Button>
-                )}
-            </HStack>
-            <DeviceChooserModal
-                cameraId={
-                    state.preferredCameraId ?? state.cameraStream?.getVideoTracks()[0].getSettings().deviceId ?? null
-                }
-                microphoneId={
-                    state.preferredMicrophoneId ??
-                    state.microphoneStream?.getAudioTracks()[0].getSettings().deviceId ??
-                    null
-                }
-                isOpen={isOpen}
-                onChangeCamera={(cameraId) =>
-                    dispatch({ type: VonageRoomStateActionType.SetPreferredCamera, cameraId })
-                }
-                onChangeMicrophone={(microphoneId) =>
-                    dispatch({ type: VonageRoomStateActionType.SetPreferredMicrophone, microphoneId })
-                }
-                onClose={onClose}
-                onOpen={onOpen}
-            />
-        </>
     );
 }

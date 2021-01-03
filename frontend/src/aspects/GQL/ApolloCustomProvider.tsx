@@ -88,13 +88,18 @@ export default function ApolloCustomProvider({
             );
 
             const cache = new InMemoryCache();
-            if (import.meta.env.MODE !== "development") {
-                await persistCache({
-                    cache,
-                    storage: window.localStorage,
-                    maxSize: 1048576 * 50, // 50 MiB
-                });
-            }
+            // Apollo's local storage cache is a totally broken PoS...
+            //  if you hit the memory limit, it crashes your whole website
+            //  with a quoto-exceeded error. It also doesn't handle switching
+            //  accounts (i.e. auth tokens).
+            //
+            // if (import.meta.env.MODE !== "development") {
+            //     await persistCache({
+            //         cache,
+            //         storage: window.localStorage,
+            //         maxSize: 1048576 * 50, // 50 MiB
+            //     });
+            // }
 
             const client = new ApolloClient({
                 link,

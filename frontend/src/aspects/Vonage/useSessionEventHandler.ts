@@ -60,7 +60,6 @@ export default function useSubscribe<EventName extends keyof EventMap>(
     session: OT.Session | undefined
 ): void {
     useEffect(() => {
-        console.log("Resubscribing");
         if (!session) {
             return;
         }

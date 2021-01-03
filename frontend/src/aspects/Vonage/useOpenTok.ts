@@ -67,6 +67,15 @@ interface OpenTokActions {
         element?: string | HTMLElement;
         options: Partial<OT.PublisherProperties>;
     }): Promise<OT.Stream>;
+    republish({
+        name,
+        element,
+        options,
+    }: {
+        name: string;
+        element?: string | HTMLElement;
+        options: Partial<OT.PublisherProperties>;
+    }): Promise<OT.Stream>;
     unpublish({ name }: { name: string }): void;
     subscribe({
         stream,
@@ -297,8 +306,9 @@ function useOpenTok(): [state: OpenTokState, actions: OpenTokActions] {
             element?: string | HTMLElement;
             options: Partial<OT.PublisherProperties>;
         }): Promise<OT.Stream> => {
+            console.log("Publish");
             if (publisher[name]) {
-                throw new Error(`[ReactUseOpenTok] publish: The publisher(${name}) is already existed`);
+                throw new Error(`[ReactUseOpenTok] publish: The publisher (${name}) already exists`);
             }
 
             return new Promise<OT.Publisher>((resolve, reject) => {
@@ -335,6 +345,7 @@ function useOpenTok(): [state: OpenTokState, actions: OpenTokActions] {
 
     const unpublish = useCallback(
         ({ name }: { name: string }): void => {
+            console.log("Unpublish");
             if (!(publisher && publisher[name])) {
                 throw new Error(`[ReactUseOpenTok] unpublish: publisher[${name}] is undefined`);
             }
@@ -347,6 +358,62 @@ function useOpenTok(): [state: OpenTokState, actions: OpenTokActions] {
             if (stream) {
                 action.removeStream(stream);
             }
+        },
+        [action, publisher, session]
+    );
+
+    const republish = useCallback(
+        ({
+            name,
+            element,
+            options,
+        }: {
+            name: string;
+            element?: string | HTMLElement;
+            options: Partial<OT.PublisherProperties>;
+        }): Promise<OT.Stream> => {
+            console.log("Republish");
+            if (publisher && publisher[name]) {
+                const stream = publisher && publisher[name] && publisher[name].stream;
+
+                session?.unpublish(publisher[name]);
+
+                if (stream) {
+                    action.removeStream(stream);
+                }
+            }
+
+            return new Promise<OT.Publisher>((resolve, reject) => {
+                const newPublisher = OT.initPublisher(element, { ...defaultOptions, ...options }, (error) => {
+                    if (error) {
+                        action.removePublisher({ name });
+                        reject(error);
+                    }
+                });
+                resolve(newPublisher);
+            }).then((newPublisher) => {
+                return new Promise((resolve, reject) => {
+                    if (!session) {
+                        action.removePublisher({ name });
+                        reject("[ReactUseOpenTok] republish: The session is not defined");
+                    }
+                    session?.publish(newPublisher, (error: OT.OTError | undefined) => {
+                        if (error) {
+                            action.removePublisher({ name });
+                            reject(error);
+                        } else if (!newPublisher.stream) {
+                            reject("[ReactUseOpenTok] republish: The stream is still undefined");
+                        } else {
+                            action.setPublisher({
+                                name,
+                                publisher: newPublisher,
+                            });
+                            action.addStream(newPublisher.stream);
+                            resolve(newPublisher.stream);
+                        }
+                    });
+                });
+            });
         },
         [action, publisher, session]
     );
@@ -444,6 +511,7 @@ function useOpenTok(): [state: OpenTokState, actions: OpenTokActions] {
             publishPublisher,
             publish,
             unpublish,
+            republish,
             subscribe,
             unsubscribe,
             sendSignal,

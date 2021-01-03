@@ -2,7 +2,7 @@ import { Optional } from "@ahanapediatrics/ahana-fp";
 import { VmShape, VolumeMeter } from "@ahanapediatrics/react-volume-meter";
 import { gql } from "@apollo/client";
 import { SettingsIcon } from "@chakra-ui/icons";
-import { Box, Button, HStack, useDisclosure, useToast, VStack } from "@chakra-ui/react";
+import { Box, Button, HStack, useColorModeValue, useDisclosure, useToast, VStack } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useGetRoomVonageTokenMutation } from "../../../../generated/graphql";
 import FAIcon from "../../../Icons/FAIcon";
@@ -38,6 +38,7 @@ export default function VonageRoom({
     });
     const toast = useToast();
     const videoContainerRef = useRef<HTMLDivElement>(null);
+    const cameraPreviewRef = useRef<HTMLVideoElement>(null);
 
     // useEffect(() => {
     //     return () => {
@@ -98,6 +99,69 @@ export default function VonageRoom({
         }
     }, [getRoomVonageToken, openTokMethods, openTokProps.session, toast]);
 
+    useEffect(() => {
+        if (!videoContainerRef.current) {
+            throw new Error("No element to publish to");
+        }
+
+        if (computedState.videoTrack && openTokProps.publisher["camera"]) {
+            openTokMethods.republish({
+                name: "camera",
+                element: videoContainerRef.current,
+                options: {
+                    videoSource: computedState.videoTrack?.getSettings().deviceId,
+                    audioSource: computedState.audioTrack?.getSettings().deviceId,
+                    publishAudio: state.microphoneIntendedEnabled,
+                    publishVideo: state.cameraIntendedEnabled,
+                    insertMode: "append",
+                    style: {},
+                    facingMode: "user",
+                    height: 300,
+                    width: 300,
+                },
+            });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [computedState.videoTrack]);
+
+    useEffect(() => {
+        if (!videoContainerRef.current) {
+            throw new Error("No element to publish to");
+        }
+
+        if (openTokProps.publisher["camera"] && !state.cameraIntendedEnabled) {
+            openTokMethods.republish({
+                name: "camera",
+                element: videoContainerRef.current,
+                options: {
+                    videoSource: computedState.videoTrack?.getSettings().deviceId,
+                    audioSource: computedState.audioTrack?.getSettings().deviceId,
+                    publishAudio: state.microphoneIntendedEnabled,
+                    publishVideo: state.cameraIntendedEnabled,
+                    insertMode: "append",
+                    style: {},
+                    facingMode: "user",
+                    height: 300,
+                    width: 300,
+                },
+            });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [state.cameraIntendedEnabled]);
+
+    useEffect(() => {
+        if (openTokProps.publisher["camera"]) {
+            if (computedState.audioTrack) {
+                openTokProps.publisher["camera"].publishAudio(true);
+                openTokProps.publisher["camera"].setAudioSource(computedState.audioTrack);
+            } else {
+                openTokProps.publisher["camera"].publishAudio(false);
+                openTokProps.publisher["camera"].setAudioSource(false);
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [computedState.audioTrack]);
+
     const streamCreatedHandler = useCallback(
         (event: EventMap["streamCreated"]) => {
             console.log("Stream created", event.stream.streamId);
@@ -134,7 +198,7 @@ export default function VonageRoom({
                 throw new Error("No element to publish to");
             }
 
-            if ((computedState.videoTrack || computedState.audioTrack) && !openTokProps.publisher["camera"]) {
+            if (!openTokProps.publisher["camera"]) {
                 console.log("Publishing camera");
                 await openTokMethods.publish({
                     name: "camera",
@@ -142,6 +206,8 @@ export default function VonageRoom({
                     options: {
                         videoSource: computedState.videoTrack?.getSettings().deviceId,
                         audioSource: computedState.audioTrack?.getSettings().deviceId,
+                        publishAudio: state.microphoneIntendedEnabled,
+                        publishVideo: state.cameraIntendedEnabled,
                         insertMode: "append",
                         style: {},
                         height: 300,
@@ -150,7 +216,14 @@ export default function VonageRoom({
                 });
             }
         },
-        [computedState.videoTrack, computedState.audioTrack, openTokMethods, openTokProps.publisher]
+        [
+            openTokProps.publisher,
+            openTokMethods,
+            computedState.videoTrack,
+            computedState.audioTrack,
+            state.microphoneIntendedEnabled,
+            state.cameraIntendedEnabled,
+        ]
     );
     useSessionEventHandler("sessionConnected", sessionConnectedHandler, openTokProps.session);
 
@@ -166,6 +239,10 @@ export default function VonageRoom({
     );
     useSessionEventHandler("sessionDisconnected", sessionDisconnectedHandler, openTokProps.session);
 
+    // const connectionCreatedHandler = useCallback(() => {
+
+    // })
+
     const leaveRoom = useCallback(() => {
         if (openTokProps.isSessionConnected) {
             openTokMethods.disconnectSession();
@@ -175,19 +252,16 @@ export default function VonageRoom({
     return (
         <Box minH="100%" display="grid" gridTemplateRows="1fr auto">
             <Box position="relative">
-                <VStack justifyContent="center" height="100%" position="absolute" width="100%">
-                    <Box height="50%">
-                        <PreJoin />
-                    </Box>
-                </VStack>
-                <Box
-                    position="absolute"
-                    pointerEvents="none"
-                    width="100%"
-                    height="100%"
-                    ref={videoContainerRef}
-                    overflowY="auto"
-                ></Box>
+                <Box position="absolute" width="100%" height="100%" ref={videoContainerRef} overflowY="auto"></Box>
+                {openTokProps.session?.connection ? (
+                    <></>
+                ) : (
+                    <VStack justifyContent="center" height="100%" position="absolute" width="100%">
+                        <Box height="50%">
+                            <PreJoin cameraPreviewRef={cameraPreviewRef} />
+                        </Box>
+                    </VStack>
+                )}
             </Box>
             <VonageRoomControlBar onJoinRoom={joinRoom} onLeaveRoom={leaveRoom} />
         </Box>
@@ -196,10 +270,63 @@ export default function VonageRoom({
 
 const AudioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
 
-function PreJoin(): JSX.Element {
+function PreJoin({ cameraPreviewRef }: { cameraPreviewRef: React.RefObject<HTMLVideoElement> }): JSX.Element {
     const { state, dispatch } = useVonageRoom();
-    const cameraPreviewRef = useRef<HTMLVideoElement>(null);
     const toast = useToast();
+    const placeholderColour = useColorModeValue("black", "white");
+
+    useEffect(() => {
+        if (cameraPreviewRef.current) {
+            cameraPreviewRef.current.srcObject = state.cameraStream;
+        } else {
+            throw new Error("Failed to start camera: element missing");
+        }
+    }, [cameraPreviewRef, state.cameraStream, toast]);
+
+    return (
+        <HStack>
+            <Box position="relative">
+                <Box position="absolute" width="50%" top="50%" left="50%" transform="translate(-50%,-50%)">
+                    <PlaceholderImage colour={placeholderColour} />
+                </Box>
+                <video
+                    ref={cameraPreviewRef}
+                    autoPlay={true}
+                    style={{
+                        border: "1px solid gray",
+                        height: "300px",
+                        width: "300px",
+                        objectFit: "cover",
+                        transform: "rotateY(180deg)",
+                    }}
+                />
+                <Box position="absolute" bottom="5" right="5">
+                    {state.microphoneStream ? (
+                        <VolumeMeter
+                            audioContext={AudioContext}
+                            height={50}
+                            width={50}
+                            shape={VmShape.VM_STEPPED}
+                            stream={Optional.of(state.microphoneStream)}
+                        />
+                    ) : (
+                        <></>
+                    )}
+                </Box>
+            </Box>
+        </HStack>
+    );
+}
+
+function VonageRoomControlBar({
+    onJoinRoom,
+    onLeaveRoom,
+}: {
+    onJoinRoom: () => void;
+    onLeaveRoom: () => void;
+}): JSX.Element {
+    const { state, dispatch } = useVonageRoom();
+    const { isOpen, onClose, onOpen } = useDisclosure();
 
     const startCamera = useCallback(() => {
         dispatch({
@@ -229,46 +356,12 @@ function PreJoin(): JSX.Element {
         });
     }, [dispatch]);
 
-    useEffect(() => {
-        if (cameraPreviewRef.current) {
-            cameraPreviewRef.current.srcObject = state.cameraStream;
-        } else {
-            throw new Error("Failed to start camera: element missing");
-        }
-    }, [state.cameraStream, toast]);
-
     return (
-        <HStack>
-            <Box position="relative">
-                <Box position="absolute" width="50%" top="50%" left="50%" transform="translate(-50%,-50%)">
-                    <PlaceholderImage colour="black" />
-                </Box>
-                <video
-                    ref={cameraPreviewRef}
-                    autoPlay={true}
-                    style={{
-                        border: "1px solid gray",
-                        height: "300px",
-                        width: "300px",
-                        objectFit: "cover",
-                        transform: "rotateY(180deg)",
-                    }}
-                />
-                <Box position="absolute" bottom="5" right="5">
-                    {state.microphoneStream ? (
-                        <VolumeMeter
-                            audioContext={AudioContext}
-                            height={50}
-                            width={50}
-                            shape={VmShape.VM_STEPPED}
-                            stream={Optional.of(state.microphoneStream)}
-                        />
-                    ) : (
-                        <></>
-                    )}
-                </Box>
-            </Box>
-            <VStack alignItems="left">
+        <>
+            <HStack p={2}>
+                <Button leftIcon={<SettingsIcon />} onClick={onOpen}>
+                    Settings
+                </Button>
                 {state.cameraStream ? (
                     <Button onClick={stopCamera}>
                         <FAIcon icon="video-slash" iconStyle="s" mr="auto" />
@@ -281,37 +374,16 @@ function PreJoin(): JSX.Element {
                     </Button>
                 )}
                 {state.microphoneStream ? (
-                    <Button onClick={stopMicrophone}>
+                    <Button onClick={stopMicrophone} mr="auto">
                         <FAIcon icon="microphone-slash" iconStyle="s" mr="auto" />
                         <span style={{ marginLeft: "1rem" }}>Stop microphone</span>
                     </Button>
                 ) : (
-                    <Button onClick={startMicrophone}>
+                    <Button onClick={startMicrophone} mr="auto">
                         <FAIcon icon="microphone" iconStyle="s" mr="auto" />
                         <span style={{ marginLeft: "1rem" }}>Start microphone</span>
                     </Button>
                 )}
-            </VStack>
-        </HStack>
-    );
-}
-
-function VonageRoomControlBar({
-    onJoinRoom,
-    onLeaveRoom,
-}: {
-    onJoinRoom: () => void;
-    onLeaveRoom: () => void;
-}): JSX.Element {
-    const { state, dispatch } = useVonageRoom();
-    const { isOpen, onClose, onOpen } = useDisclosure();
-
-    return (
-        <>
-            <HStack p={2}>
-                <Button mr="auto" leftIcon={<SettingsIcon />} onClick={onOpen}>
-                    Settings
-                </Button>
                 <Button colorScheme="green" onClick={onJoinRoom}>
                     Join Room
                 </Button>

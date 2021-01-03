@@ -1,6 +1,8 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Link } from "@chakra-ui/react";
 import React from "react";
+import { Link as ReactLink } from "react-router-dom";
 import type { Timeline_RoomFragment } from "../../../../generated/graphql";
+import { useConference } from "../../useConference";
 
 export default function RoomNameBox({
     room,
@@ -13,6 +15,7 @@ export default function RoomNameBox({
     showBottomBorder: boolean;
     borderColour: string;
 }): JSX.Element {
+    const conference = useConference();
     return (
         <Box
             p={4}
@@ -24,7 +27,9 @@ export default function RoomNameBox({
             borderBottomStyle="solid"
             borderBottomColor={borderColour}
         >
-            {room.name}
+            <Link as={ReactLink} to={`/conference/${conference.slug}/room/${room.id}`} textDecoration="none">
+                {room.name}
+            </Link>
         </Box>
     );
 }

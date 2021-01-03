@@ -60,7 +60,6 @@ function RoomTimelineInner({
     }, [room.events]);
 
     const contents = useMemo(() => {
-        console.log("Ordering", groupedEvents.map((x, idx) => idx < groupedEvents.length - 1 ? Date.parse(x[0].startTime) - Date.parse(groupedEvents[idx + 1][0].startTime) : x[0].startTime));
         return groupedEvents.map((events) => (
             <EventBox roomName={room.name} key={events[0].id} sortedEvents={events} />
         ));

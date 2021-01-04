@@ -1,7 +1,12 @@
 import { gql } from "@apollo/client";
 import { Box, useToast, VStack } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useGetRoomVonageTokenMutation } from "../../../../generated/graphql";
+import React, { useCallback, useEffect, useRef } from "react";
+import {
+    RoomDetailsFragment,
+    RoomEventDetailsFragment,
+    useGetEventVonageTokenMutation,
+    useGetRoomVonageTokenMutation,
+} from "../../../../generated/graphql";
 import useOpenTok from "../../../Vonage/useOpenTok";
 import useSessionEventHandler, { EventMap } from "../../../Vonage/useSessionEventHandler";
 import { useVonageRoom } from "../../../Vonage/useVonageRoom";
@@ -15,34 +20,70 @@ gql`
             sessionId
         }
     }
+
+    mutation GetEventVonageToken($eventId: uuid!) {
+        joinEventVonageSession(eventId: $eventId) {
+            accessToken
+        }
+    }
 `;
 
-export default function VonageRoom({
-    roomId,
-}: // publicVonageSessionId,
-{
-    roomId: string;
-    // publicVonageSessionId: string;
+export function BreakoutVonageRoom({ room }: { room: RoomDetailsFragment }): JSX.Element {
+    const [getRoomVonageToken] = useGetRoomVonageTokenMutation({
+        variables: {
+            roomId: room.id,
+        },
+    });
+
+    const getAccessToken = useCallback(async () => {
+        const result = await getRoomVonageToken();
+        if (!result.data?.joinRoomVonageSession?.accessToken) {
+            throw new Error("No Vonage session ID");
+        }
+        return result.data?.joinRoomVonageSession.accessToken;
+    }, [getRoomVonageToken]);
+
+    return room.publicVonageSessionId ? (
+        <VonageRoom vonageSessionId={room.publicVonageSessionId} getAccessToken={getAccessToken} />
+    ) : (
+        <>No breakout session exists </>
+    );
+}
+
+export function EventVonageRoom({ event }: { event: RoomEventDetailsFragment }): JSX.Element {
+    const [getEventVonageToken] = useGetEventVonageTokenMutation({
+        variables: {
+            eventId: event.id,
+        },
+    });
+
+    const getAccessToken = useCallback(async () => {
+        const result = await getEventVonageToken();
+        if (!result.data?.joinEventVonageSession?.accessToken) {
+            throw new Error("No Vonage session ID");
+        }
+        return result.data?.joinEventVonageSession.accessToken;
+    }, [getEventVonageToken]);
+
+    return event.eventVonageSession ? (
+        <VonageRoom vonageSessionId={event.eventVonageSession.sessionId} getAccessToken={getAccessToken} />
+    ) : (
+        <>No video session exists </>
+    );
+}
+
+export function VonageRoom({
+    vonageSessionId,
+    getAccessToken,
+}: {
+    vonageSessionId: string;
+    getAccessToken: () => Promise<string>;
 }): JSX.Element {
     const [openTokProps, openTokMethods] = useOpenTok();
     const { state, computedState, dispatch } = useVonageRoom();
-    const [vonageSessionId, setVonageSessionId] = useState<string | null>(null);
-    const [getRoomVonageToken] = useGetRoomVonageTokenMutation({
-        variables: {
-            roomId,
-        },
-    });
     const toast = useToast();
     const videoContainerRef = useRef<HTMLDivElement>(null);
     const cameraPreviewRef = useRef<HTMLVideoElement>(null);
-
-    useEffect(() => {
-        async function fn() {
-            const result = await getRoomVonageToken();
-            setVonageSessionId(result.data?.joinRoomVonageSession?.sessionId ?? null);
-        }
-        fn();
-    }, [getRoomVonageToken]);
 
     useEffect(() => {
         async function initSession() {
@@ -61,22 +102,18 @@ export default function VonageRoom({
             });
         }
         initSession();
-    }, [getRoomVonageToken, openTokMethods, openTokProps.isSessionInitialized, vonageSessionId]);
+    }, [openTokMethods, openTokProps.isSessionInitialized, vonageSessionId]);
 
     const joinRoom = useCallback(async () => {
         console.log("Joining room");
-        const result = await getRoomVonageToken();
-
-        if (!result.data?.joinRoomVonageSession?.accessToken || !result.data.joinRoomVonageSession.sessionId) {
-            return;
-        }
+        const accessToken = await getAccessToken();
 
         try {
             if (!openTokProps.session) {
                 throw new Error("No session");
             }
 
-            await openTokMethods.connectSession(result.data.joinRoomVonageSession.accessToken, openTokProps.session);
+            await openTokMethods.connectSession(accessToken, openTokProps.session);
         } catch (e) {
             console.error("Failed to join room", e);
             toast({
@@ -84,7 +121,7 @@ export default function VonageRoom({
                 description: "Cannot connect to room",
             });
         }
-    }, [getRoomVonageToken, openTokMethods, openTokProps.session, toast]);
+    }, [getAccessToken, openTokMethods, openTokProps.session, toast]);
 
     useEffect(() => {
         if (!videoContainerRef.current) {

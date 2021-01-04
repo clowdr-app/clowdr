@@ -49,6 +49,13 @@ gql`
                 userId
             }
         }
+        contentGroup {
+            ...ContentGroupData
+        }
+        eventVonageSession {
+            id
+            sessionId
+        }
     }
 `;
 

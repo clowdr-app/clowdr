@@ -136,3 +136,14 @@ export interface EventData extends BaseData {
     originatingDataId: string | null;
     roomId: string;
 }
+
+export interface RoomData extends BaseData {
+    conferenceId: string;
+    name: string;
+    currentModeName: RoomMode_Enum;
+    originatingDataId: string | null;
+    capacity: number | null;
+    publicVonageSessionId: string | null;
+    mediaLiveChannelId: string | null;
+    priority: number;
+}

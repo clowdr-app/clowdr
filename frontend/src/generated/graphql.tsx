@@ -23342,7 +23342,10 @@ export type RoomEventsFragment = { readonly __typename?: 'Room', readonly events
     & RoomEventDetailsFragment
   )> };
 
-export type RoomEventDetailsFragment = { readonly __typename?: 'Event', readonly id: any, readonly startTime: any, readonly name: string, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'EventPerson', readonly id: any, readonly roleName: EventPersonRole_Enum, readonly attendee?: Maybe<{ readonly __typename?: 'Attendee', readonly displayName: string, readonly id: any, readonly userId?: Maybe<string> }> }> };
+export type RoomEventDetailsFragment = { readonly __typename?: 'Event', readonly id: any, readonly startTime: any, readonly name: string, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'EventPerson', readonly id: any, readonly roleName: EventPersonRole_Enum, readonly attendee?: Maybe<{ readonly __typename?: 'Attendee', readonly displayName: string, readonly id: any, readonly userId?: Maybe<string> }> }>, readonly contentGroup?: Maybe<(
+    { readonly __typename?: 'ContentGroup' }
+    & ContentGroupDataFragment
+  )>, readonly eventVonageSession?: Maybe<{ readonly __typename?: 'EventVonageSession', readonly id: any, readonly sessionId: string }> };
 
 export type GetEventVonageTokenMutationVariables = Exact<{
   eventId: Scalars['uuid'];
@@ -24238,6 +24241,26 @@ export type UpdateCurrentUserLastSeenMutationVariables = Exact<{
 
 export type UpdateCurrentUserLastSeenMutation = { readonly __typename?: 'mutation_root', readonly update_OnlineStatus?: Maybe<{ readonly __typename?: 'OnlineStatus_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'OnlineStatus', readonly id: any, readonly lastSeen: any }> }> };
 
+export const ContentGroupEventFragmentDoc = gql`
+    fragment ContentGroupEvent on Event {
+  startTime
+  room {
+    name
+    id
+  }
+  id
+  durationSeconds
+  endTime
+  name
+}
+    `;
+export const ContentGroupEventsFragmentDoc = gql`
+    fragment ContentGroupEvents on ContentGroup {
+  events {
+    ...ContentGroupEvent
+  }
+}
+    ${ContentGroupEventFragmentDoc}`;
 export const ContentItemDataFragmentDoc = gql`
     fragment ContentItemData on ContentItem {
   id
@@ -24272,26 +24295,6 @@ export const ContentGroupDataFragmentDoc = gql`
 }
     ${ContentItemDataFragmentDoc}
 ${ContentPersonDataFragmentDoc}`;
-export const ContentGroupEventFragmentDoc = gql`
-    fragment ContentGroupEvent on Event {
-  startTime
-  room {
-    name
-    id
-  }
-  id
-  durationSeconds
-  endTime
-  name
-}
-    `;
-export const ContentGroupEventsFragmentDoc = gql`
-    fragment ContentGroupEvents on ContentGroup {
-  events {
-    ...ContentGroupEvent
-  }
-}
-    ${ContentGroupEventFragmentDoc}`;
 export const RoomEventDetailsFragmentDoc = gql`
     fragment RoomEventDetails on Event {
   id
@@ -24309,8 +24312,15 @@ export const RoomEventDetailsFragmentDoc = gql`
       userId
     }
   }
+  contentGroup {
+    ...ContentGroupData
+  }
+  eventVonageSession {
+    id
+    sessionId
+  }
 }
-    `;
+    ${ContentGroupDataFragmentDoc}`;
 export const RoomEventsFragmentDoc = gql`
     fragment RoomEvents on Room {
   events(where: {endTime: {_gt: $eventsFrom}}) {

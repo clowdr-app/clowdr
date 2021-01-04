@@ -36,10 +36,10 @@ export function AuthorList({
 export function Author({ contentPersonData }: { contentPersonData: ContentPersonDataFragment }): JSX.Element {
     return (
         <VStack textAlign="left" justifyContent="start" alignItems="start" flexBasis="1 1 50%">
-            <Text fontWeight="bold" aria-label="Person">
+            <Text fontWeight="bold">
                 {contentPersonData.person.name}
             </Text>
-            <Badge ml="2" colorScheme="green" verticalAlign="initial" aria-label="Role">
+            <Badge ml="2" colorScheme="green" verticalAlign="initial">
                 {contentPersonData.roleName}
             </Badge>
             <Text fontSize="sm">

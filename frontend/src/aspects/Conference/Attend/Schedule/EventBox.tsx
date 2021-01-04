@@ -15,7 +15,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { ContentBaseType, ContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { Link as ReactLink } from "react-router-dom";
 import { ContentType_Enum, Timeline_EventFragment } from "../../../../generated/graphql";
 import LinkButton from "../../../Chakra/LinkButton";
@@ -69,6 +69,21 @@ function EventBoxPopover({
     const eventUrl =
         `/conference/${conference.slug}` +
         (event.contentGroup && !isLive ? `/item/${event.contentGroup.id}` : `/room/${event.roomId}`);
+
+    const ref = useRef<HTMLAnchorElement>(null);
+    useEffect(() => {
+        let tId: number | undefined;
+        if (isOpen) {
+            tId = setTimeout((() => {
+                ref.current?.focus();
+            }) as TimerHandler, 50);
+        }
+        return () => {
+            if (tId) {
+                clearTimeout(tId);
+            }
+        };
+    }, [isOpen]);
     return (
         <Popover
             variant="responsive"
@@ -78,6 +93,7 @@ function EventBoxPopover({
             isOpen={isOpen}
             onClose={onClose}
             returnFocusOnClose={false}
+            autoFocus={true}
         >
             <PopoverTrigger>
                 <div
@@ -108,7 +124,7 @@ function EventBoxPopover({
                 <PopoverHeader fontWeight="semibold" pr={1}>
                     <Flex direction="row">
                         <Text mb={2}>
-                            <Link as={ReactLink} to={eventUrl} textDecoration="none">
+                            <Link ref={ref} as={ReactLink} to={eventUrl} textDecoration="none">
                                 {eventTitle}
                             </Link>
                         </Text>
@@ -121,9 +137,9 @@ function EventBoxPopover({
                                 to={eventUrl}
                                 title={
                                     isLive
-                                        ? `Event is live. Go to room ${roomName}`
+                                        ? `Event is happening now. Go to room ${roomName}`
                                         : event.contentGroup
-                                        ? `View ${event.contentGroup.title}`
+                                        ? "View this event"
                                         : `Go to room ${roomName}`
                                 }
                                 textDecoration="none"
@@ -150,7 +166,7 @@ function EventBoxPopover({
                     {event.contentGroup?.people && event.contentGroup?.people.length > 0 ? (
                         <AuthorList contentPeopleData={event.contentGroup.people} />
                     ) : undefined}
-                    <Text as="p">{abstractText}</Text>
+                    <Text aria-label="Abstract.">{abstractText}</Text>
                 </PopoverBody>
             </PopoverContent>
         </Popover>
@@ -191,11 +207,7 @@ export default function EventBox({
     }, [eventTitle]);
 
     const eventFocusRef = React.useRef<HTMLButtonElement>(null);
-    const { isOpen, onClose: onCloseInner, onOpen } = useDisclosure();
-    const onClose = useCallback(() => {
-        onCloseInner();
-        eventFocusRef.current?.focus();
-    }, [onCloseInner]);
+    const { isOpen, onClose, onOpen } = useDisclosure();
 
     const scrollToEvent = useCallback(() => {
         eventFocusRef.current?.scrollIntoView({
@@ -214,7 +226,6 @@ export default function EventBox({
         <>
             <Button
                 ref={eventFocusRef}
-                as="div"
                 zIndex={1}
                 cursor="pointer"
                 position="absolute"
@@ -242,6 +253,12 @@ export default function EventBox({
                 overflow="hidden"
                 minW={0}
                 colorScheme="blue"
+                role="button"
+                aria-label={`${eventTitle} starts ${new Date(event.startTime).toLocaleString(undefined, {
+                    weekday: "long",
+                    hour: "numeric",
+                    minute: "numeric",
+                })} and lasts ${Math.round(durationSeconds / 60)} minutes.`}
             >
                 {buttonContents}
             </Button>

@@ -108,7 +108,6 @@ export function useGenerateMarkers(
         submarkerColour,
         submarkerHeight,
         timeline.earliestMs,
-        timeline.fullTimeSpanSeconds,
         timeline.latestMs,
     ]);
 }

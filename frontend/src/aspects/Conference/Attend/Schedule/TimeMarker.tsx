@@ -38,6 +38,7 @@ export default function TimeMarker({
                     whiteSpace: "nowrap",
                     borderRadius: "1000px",
                 }}
+                aria-hidden="true"
             >
                 <div
                     style={{
@@ -82,6 +83,7 @@ export default function TimeMarker({
                     overflow: "visible",
                     whiteSpace: "nowrap",
                 }}
+                aria-hidden="true"
             >
                 <div
                     style={{

@@ -1,4 +1,4 @@
-import { Button, Flex, Text } from "@chakra-ui/react";
+import { Button, ButtonGroup, Text } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import type { Timeline_EventFragment, Timeline_RoomFragment } from "../../../../generated/graphql";
 import { roundDownToNearest } from "../../../Generic/MathUtils";
@@ -47,7 +47,8 @@ export default function DayList({
     const nowOffsetSeconds = nowOffsetMs / 1000;
 
     return (
-        <Flex
+        <ButtonGroup
+            role="navigation"
             w="auto"
             h="auto"
             spacing={0}
@@ -74,6 +75,7 @@ export default function DayList({
                     onClick={() => {
                         scrollToNow();
                     }}
+                    aria-label="Scroll schedule to now"
                 >
                     <Text w="100%" display="block" as="span" mt="3px">
                         Now
@@ -98,6 +100,11 @@ export default function DayList({
                     onClick={() => {
                         scrollToEvent(date[1].event);
                     }}
+                    aria-label={`Scroll schedule to ${date[0].toLocaleString(undefined, {
+                        weekday: "long",
+                        day: "numeric",
+                        month: "long",
+                    })}`}
                 >
                     {idx === 0 ||
                     idx === distinctDates.length - 1 ||
@@ -114,6 +121,6 @@ export default function DayList({
                     </Text>
                 </Button>
             ))}
-        </Flex>
+        </ButtonGroup>
     );
 }

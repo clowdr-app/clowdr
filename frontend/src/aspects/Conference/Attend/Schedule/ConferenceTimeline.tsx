@@ -262,10 +262,18 @@ function ConferenceTimelineInner({
                 borderColor={borderColour}
                 borderWidth={1}
                 borderStyle="solid"
+                hideScrollbars={false}
             >
-                <Flex direction="row" w="100%" justifyContent="stretch" alignItems="start">
+                <Flex
+                    direction="row"
+                    w="100%"
+                    justifyContent="stretch"
+                    alignItems="start"
+                    role="region"
+                    aria-label="Conference schedule"
+                >
                     {window.innerWidth > 500 ? (
-                        <Box flex="1 0 max-content">
+                        <Box flex="1 0 max-content" role="list" aria-label="Rooms">
                             <RoomNameBox
                                 room="Rooms"
                                 height={5 + roomRowHeight / 2}

@@ -112,7 +112,6 @@ export default function UploadersModal({
                                     onChange={(value) =>
                                         setUploadsRemaining(value.length === 0 ? null : parseInt(value, 10))
                                     }
-                                    aria-label=""
                                     maxWidth="100%"
                                 >
                                     <NumberInputField />

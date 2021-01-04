@@ -49,11 +49,12 @@ export default function RoomNameBox({
             borderBottomColor={borderColour}
             justifyContent="start"
             backgroundColor={backgroundColor}
+            role="listitem"
         >
             {typeof room === "string" ? (
                 room
             ) : (
-                <Link as={ReactLink} to={`/conference/${conference.slug}/room/${room.id}`} textDecoration="none">
+                    <Link as={ReactLink} to={`/conference/${conference.slug}/room/${room.id}`} textDecoration="none" aria-label={`${room.name} room`}>
                     <HStack>
                         {roomIcon}
                         <Text>{room.name}</Text>

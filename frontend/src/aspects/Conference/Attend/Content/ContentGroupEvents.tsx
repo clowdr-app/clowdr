@@ -54,17 +54,17 @@ function Event({ contentGroupEvent }: { contentGroupEvent: ContentGroupEventFrag
         >
             <HStack>
                 <Box minWidth="30%" width="30%">
-                    <Link to={`/conference/${conference.slug}/room/${contentGroupEvent.room.id}`}>
+                    <Link to={`/conference/${conference.slug}/room/${contentGroupEvent.room.id}`} aria-label={`Go to room ${contentGroupEvent.room.name}`}>
                         {contentGroupEvent.room.name}
                     </Link>
                 </Box>
                 <Box>
-                    <Text fontWeight="bold" aria-label="Event">
+                    <Text>
                         {contentGroupEvent.name}
                     </Text>
 
                     <Text>
-                        <span aria-label="Start time">{startTime}</span> <span aria-label="Duration">({duration})</span>
+                        {startTime} ({duration})
                     </Text>
                 </Box>
             </HStack>

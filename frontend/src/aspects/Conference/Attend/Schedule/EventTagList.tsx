@@ -21,6 +21,8 @@ export default function EventTagList({ tags }: { tags: readonly Timeline_EventTa
                     borderRadius="full"
                     color={colour}
                     size="sm"
+                    role="note"
+                    aria-label={`Tag: ${tag.tag.name}`}
                 >
                     {tag.tag.name}
                 </Tag>

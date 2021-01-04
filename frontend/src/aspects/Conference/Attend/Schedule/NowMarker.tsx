@@ -1,18 +1,43 @@
-import React from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useRealTime } from "../../../Generic/useRealTime";
 import { useTimelineParameters } from "./useTimelineParameters";
 
-export default function NowMarker({ showLabel = false }: { showLabel?: boolean }): JSX.Element | null {
-    const now = useRealTime();
+export default function NowMarker({
+    showLabel = false,
+    setScrollToNow,
+}: {
+    showLabel?: boolean;
+    setScrollToNow?: (cb: () => void) => void;
+}): JSX.Element | null {
+    const now = useRealTime(60000, true);
     const timelineParams = useTimelineParameters();
 
     const offsetMs = now - timelineParams.earliestMs;
     const offsetSeconds = offsetMs / 1000;
     const percent = (100 * offsetSeconds) / timelineParams.fullTimeSpanSeconds;
 
+    const ref = useRef<HTMLDivElement>(null);
+    const scrollToNow = useCallback(() => {
+        if (offsetSeconds >= 0) {
+            ref.current?.scrollIntoView({
+                behavior: "smooth",
+                block: "end",
+                inline: "center",
+            });
+        }
+    }, [offsetSeconds]);
+    useEffect(() => {
+        setScrollToNow?.(scrollToNow);
+    }, [scrollToNow, setScrollToNow]);
+
+    if (offsetSeconds < 0) {
+        return <></>;
+    }
+
     if (showLabel) {
         return (
             <div
+                ref={ref}
                 style={{
                     zIndex: 2,
                     position: "absolute",
@@ -39,6 +64,7 @@ export default function NowMarker({ showLabel = false }: { showLabel?: boolean }
     } else {
         return (
             <div
+                ref={ref}
                 style={{
                     zIndex: 2,
                     position: "absolute",

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
-export function useRealTime(periodMs = 10000): number {
+const nowOffset = Date.parse("2021-01-18 17:30") - Date.now();
+export function useRealTime(periodMs = 10000, virtualisedTime = false): number {
     const [now, setNow] = useState<number>(Date.now());
     useEffect(() => {
         const intervalId = setInterval(() => {
@@ -10,5 +11,5 @@ export function useRealTime(periodMs = 10000): number {
             clearInterval(intervalId);
         };
     }, [periodMs]);
-    return now;
+    return now + (virtualisedTime ? nowOffset : 0);
 }

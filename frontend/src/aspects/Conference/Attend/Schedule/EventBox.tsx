@@ -15,7 +15,8 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { ContentBaseType, ContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
+import { Link as ReactLink } from "react-router-dom";
 import { ContentType_Enum, Timeline_EventFragment } from "../../../../generated/graphql";
 import LinkButton from "../../../Chakra/LinkButton";
 import FAIcon from "../../../Icons/FAIcon";
@@ -24,7 +25,6 @@ import { AuthorList } from "../Content/AuthorList";
 import { EventPersonList } from "../Content/EventPersonList";
 import EventTagList from "./EventTagList";
 import { useTimelineParameters } from "./useTimelineParameters";
-import { Link as ReactLink } from "react-router-dom";
 
 function EventBoxPopover({
     leftPc,
@@ -66,10 +66,9 @@ function EventBoxPopover({
             abstractText = innerAbstractData.data.text;
         }
     }
-    const eventUrl = `/conference/${conference.slug}` +
-        (event.contentGroup && !isLive
-            ? `/item/${event.contentGroup.id}`
-            : `/room/${event.roomId}`);
+    const eventUrl =
+        `/conference/${conference.slug}` +
+        (event.contentGroup && !isLive ? `/item/${event.contentGroup.id}` : `/room/${event.roomId}`);
     return (
         <Popover
             variant="responsive"
@@ -161,9 +160,11 @@ function EventBoxPopover({
 export default function EventBox({
     sortedEvents,
     roomName,
+    setScrollToEvent,
 }: {
     sortedEvents: ReadonlyArray<Timeline_EventFragment>;
     roomName: string;
+    setScrollToEvent?: (f: () => void) => void;
 }): JSX.Element | null {
     const event = sortedEvents[0];
     const eventStartMs = useMemo(() => Date.parse(event.startTime), [event.startTime]);
@@ -195,6 +196,18 @@ export default function EventBox({
         onCloseInner();
         eventFocusRef.current?.focus();
     }, [onCloseInner]);
+
+    const scrollToEvent = useCallback(() => {
+        eventFocusRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+            inline: "start",
+        });
+    }, []);
+
+    useEffect(() => {
+        setScrollToEvent?.(scrollToEvent);
+    }, [scrollToEvent, setScrollToEvent]);
 
     const borderColour = useColorModeValue("blue.200", "blue.800");
     return (

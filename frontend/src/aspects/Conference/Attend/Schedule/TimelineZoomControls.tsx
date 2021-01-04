@@ -78,12 +78,12 @@ export default function TimelineZoomControls(): JSX.Element {
     return (
         <Box>
             <Tooltip label="Use +/- keys to zoom the timeline.">
-                <Button mr={2} size="lg" p={3} background="none" onClick={() => zoomOut()} fontSize="2em">
+                <Button ml={3} size="lg" p={3} background="none" onClick={() => zoomOut()} fontSize="2em">
                     <FAIcon iconStyle="s" icon="search-minus" />
                 </Button>
             </Tooltip>
             <Tooltip label="Use +/- keys to zoom the timeline.">
-                <Button size="lg" p={3} background="none" onClick={() => zoomIn()} fontSize="2em">
+                <Button ml={1} size="lg" p={3} background="none" onClick={() => zoomIn()} fontSize="2em">
                     <FAIcon iconStyle="s" icon="search-plus" />
                 </Button>
             </Tooltip>

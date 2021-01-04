@@ -1,5 +1,5 @@
 import { Box } from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
     Timeline_EventFragment,
     Timeline_RoomFragment,
@@ -15,14 +15,41 @@ import { TimelineParameters } from "./useTimelineParameters";
 function RoomTimelineContents({
     groupedEvents,
     room,
+    setScrollToEvent,
 }: {
     groupedEvents: Timeline_EventFragment[][];
     room: Timeline_RoomFragment;
+    setScrollToEvent?: (f: (event: Timeline_EventFragment) => void) => void;
 }): JSX.Element {
+    const [scrollCallbacks, setScrollCallbacks] = useState<Map<string, () => void>>(new Map());
     const eventBoxes = useMemo(
-        () => groupedEvents.map((events) => <EventBox roomName={room.name} key={events[0].id} sortedEvents={events} />),
+        () =>
+            groupedEvents.map((events) => (
+                <EventBox
+                    roomName={room.name}
+                    key={events[0].id}
+                    sortedEvents={events}
+                    setScrollToEvent={(cb) => {
+                        setScrollCallbacks((old) => {
+                            const newMap = new Map(old);
+                            events.forEach((e) => newMap.set(e.id, cb));
+                            return newMap;
+                        });
+                    }}
+                />
+            )),
         [groupedEvents, room.name]
     );
+    const scrollToEvent = useCallback(
+        (ev: Timeline_EventFragment) => {
+            const evCb = scrollCallbacks.get(ev.id);
+            evCb?.();
+        },
+        [scrollCallbacks]
+    );
+    useEffect(() => {
+        setScrollToEvent?.(scrollToEvent);
+    }, [scrollToEvent, setScrollToEvent]);
     return <>{eventBoxes}</>;
 }
 
@@ -32,12 +59,14 @@ function RoomTimelineInner({
     useScroller = false,
     height = 50,
     backgroundColor,
+    setScrollToEvent,
 }: {
     room: Timeline_RoomFragment;
     hideTimeZoomButtons?: boolean;
     useScroller?: boolean;
-        height?: number;
-        backgroundColor?: string;
+    height?: number;
+    backgroundColor?: string;
+    setScrollToEvent?: (f: (event: Timeline_EventFragment) => void) => void;
 }): JSX.Element {
     const groupedEvents = useMemo(() => {
         const result: Timeline_EventFragment[][] = [];
@@ -74,10 +103,14 @@ function RoomTimelineInner({
         <Box pos="relative" w="100%" h={height + "px"} backgroundColor={backgroundColor}>
             {useScroller ? (
                 <Scroller height={height}>
-                    <RoomTimelineContents groupedEvents={groupedEvents} room={room} />
+                    <RoomTimelineContents
+                        groupedEvents={groupedEvents}
+                        room={room}
+                        setScrollToEvent={setScrollToEvent}
+                    />
                 </Scroller>
             ) : (
-                <RoomTimelineContents groupedEvents={groupedEvents} room={room} />
+                <RoomTimelineContents groupedEvents={groupedEvents} room={room} setScrollToEvent={setScrollToEvent} />
             )}
             {!hideTimeZoomButtons ? (
                 <Box pos="absolute" top="0" right="0">
@@ -94,12 +127,14 @@ function RoomTimelineFetchWrapper({
     useScroller = true,
     height,
     backgroundColor,
+    setScrollToEvent,
 }: {
     roomId: string;
     hideTimeZoomButtons?: boolean;
     useScroller?: boolean;
     height?: number;
     backgroundColor?: string;
+    setScrollToEvent?: (f: (event: Timeline_EventFragment) => void) => void;
 }): JSX.Element {
     const roomResult = useTimeline_SelectRoomQuery({
         variables: {
@@ -154,6 +189,7 @@ function RoomTimelineFetchWrapper({
                         useScroller={useScroller}
                         height={height}
                         backgroundColor={backgroundColor}
+                        setScrollToEvent={setScrollToEvent}
                     />
                 </TimelineParameters>
             )}
@@ -167,6 +203,7 @@ type Props = {
     hideTimeZoomButtons?: boolean;
     useScroller?: boolean;
     height?: number;
+    setScrollToEvent?: (f: (event: Timeline_EventFragment) => void) => void;
 };
 
 export default function RoomTimeline({ room, ...props }: Props): JSX.Element {

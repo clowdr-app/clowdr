@@ -42,10 +42,8 @@ export function useGenerateMarkers(
     const submarkerColour = useColorModeValue("#333", "#ddd");
 
     return useMemo(() => {
-        const scale = 2 * 60 * 60 / scroller.visibleTimeSpanSeconds;
-        const markerDensity = findMarkerBoundary(
-            window.innerWidth * scale
-        );
+        const scale = (2 * 60 * 60) / scroller.visibleTimeSpanSeconds;
+        const markerDensity = findMarkerBoundary(window.innerWidth * scale);
         const markerDivisions = markerDensity[0];
         const markerSubdivisions = markerDensity[1];
 

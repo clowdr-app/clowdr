@@ -1,9 +1,10 @@
 import { gql } from "@apollo/client";
 import { Box, Flex, useColorModeValue } from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import ScrollContainer from "react-indiana-drag-scroll";
 import {
     Permission_Enum,
+    Timeline_EventFragment,
     Timeline_RoomFragment,
     Timeline_SelectRoomsQuery,
     useTimeline_SelectRoomsQuery,
@@ -12,6 +13,7 @@ import PageNotFound from "../../../Errors/PageNotFound";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../useConference";
+import DayList from "./DayList";
 import NowMarker from "./NowMarker";
 import RoomNameBox from "./RoomNameBox";
 import RoomTimeline from "./RoomTimeline";
@@ -184,6 +186,10 @@ function ConferenceTimelineInner({
         [alternateBgColor, borderColour, rooms]
     );
 
+    const [scrollCallbacks, setScrollCallbacks] = useState<Map<string, (ev: Timeline_EventFragment) => void>>(
+        new Map()
+    );
+
     const roomTimelines = useMemo(
         () =>
             rooms.map((room, idx) => (
@@ -200,6 +206,13 @@ function ConferenceTimelineInner({
                         hideTimeShiftButtons={true}
                         hideTimeZoomButtons={true}
                         height={roomRowHeight}
+                        setScrollToEvent={(cb) => {
+                            setScrollCallbacks((old) => {
+                                const newMap = new Map(old);
+                                newMap.set(room.id, cb);
+                                return newMap;
+                            });
+                        }}
                     />
                 </Box>
             )),
@@ -208,16 +221,42 @@ function ConferenceTimelineInner({
 
     const roomMarkers = useGenerateMarkers(`calc(100% - ${5 + roomRowHeight / 2}px)`, "", true, false, false);
 
+    const scrollToEvent = useCallback(
+        (ev: Timeline_EventFragment) => {
+            const cb = scrollCallbacks.get(ev.roomId);
+            cb?.(ev);
+        },
+        [scrollCallbacks]
+    );
+
+    const [scrollToNow, setScrollToNow] = useState<{ f: () => void }>({
+        f: () => {
+            /*EMPTY*/
+        },
+    });
+
+    const labeledNowMarker = useMemo(
+        () => (
+            <NowMarker
+                showLabel
+                setScrollToNow={(cb) => {
+                    setScrollToNow({ f: cb });
+                }}
+            />
+        ),
+        []
+    );
+
     return (
         <Box w="100%" p={2}>
             <Flex w="100%" direction="row" justify="center" alignItems="center">
+                <DayList rooms={rooms} scrollToEvent={scrollToEvent} scrollToNow={scrollToNow.f} />
                 <TimelineZoomControls />
             </Flex>
             <Box
                 cursor="pointer"
                 as={ScrollContainer}
                 w="100%"
-                mt={4}
                 maxHeight="80vh"
                 horizontal={false}
                 borderColor={borderColour}
@@ -241,7 +280,7 @@ function ConferenceTimelineInner({
                         {timeBar}
                         {roomMarkers}
                         <NowMarker />
-                        <NowMarker showLabel />
+                        {labeledNowMarker}
                         {roomTimelines}
                     </Scroller>
                 </Flex>

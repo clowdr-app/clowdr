@@ -35,7 +35,7 @@ export function AuthorList({
 
 export function Author({ contentPersonData }: { contentPersonData: ContentPersonDataFragment }): JSX.Element {
     return (
-        <VStack textAlign="left" justifyContent="start" alignItems="start" flexBasis="1 1 50%">
+        <VStack textAlign="left" justifyContent="flex-start" alignItems="start" flexBasis="1 1 50%">
             <Text fontWeight="bold">
                 {contentPersonData.person.name}
             </Text>

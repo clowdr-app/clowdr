@@ -120,7 +120,7 @@ export default function ListConferencesView(): JSX.Element {
         <VStack
             width={["100%", "100%", "50%"]}
             flexDirection="column"
-            justifyContent="start"
+            justifyContent="flex-start"
             alignItems="center"
             spacing={5}
         >
@@ -139,7 +139,7 @@ export default function ListConferencesView(): JSX.Element {
         <VStack
             width={["100%", "100%", "50%"]}
             flexDirection="column"
-            justifyContent="start"
+            justifyContent="flex-start"
             alignItems="center"
             spacing={5}
         >

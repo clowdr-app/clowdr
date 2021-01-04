@@ -71,7 +71,7 @@ export default function DayList({
                     height="auto"
                     p={3}
                     flexDirection="column"
-                    justifyContent="end"
+                    justifyContent="flex-end"
                     onClick={() => {
                         scrollToNow();
                     }}
@@ -96,7 +96,7 @@ export default function DayList({
                     height="auto"
                     p={3}
                     flexDirection="column"
-                    justifyContent="end"
+                    justifyContent="flex-end"
                     onClick={() => {
                         scrollToEvent(date[1].event);
                     }}

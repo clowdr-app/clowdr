@@ -128,7 +128,7 @@ function EventBoxPopover({
                                 {eventTitle}
                             </Link>
                         </Text>
-                        <Flex direction="row" justifyContent="end" alignItems="start" ml="auto">
+                        <Flex direction="row" justifyContent="flex-end" alignItems="start" ml="auto">
                             <LinkButton
                                 ml={1}
                                 mr={1}
@@ -161,7 +161,7 @@ function EventBoxPopover({
                     <EventTagList tags={event.eventTags} />
                 </PopoverHeader>
                 <PopoverArrow />
-                <PopoverBody as={VStack} spacing={4} justifyContent="start" alignItems="start">
+                <PopoverBody as={VStack} spacing={4} justifyContent="flex-start" alignItems="start">
                     {event.eventPeople.length > 0 ? <EventPersonList people={event.eventPeople} /> : undefined}
                     {event.contentGroup?.people && event.contentGroup?.people.length > 0 ? (
                         <AuthorList contentPeopleData={event.contentGroup.people} />

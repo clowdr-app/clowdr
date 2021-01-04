@@ -47,7 +47,7 @@ export default function RoomNameBox({
             borderBottomWidth={showBottomBorder ? 1 : 0}
             borderBottomStyle="solid"
             borderBottomColor={borderColour}
-            justifyContent="start"
+            justifyContent="flex-start"
             backgroundColor={backgroundColor}
             role="listitem"
         >

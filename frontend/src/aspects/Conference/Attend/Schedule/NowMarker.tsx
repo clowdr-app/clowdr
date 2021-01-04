@@ -9,7 +9,7 @@ export default function NowMarker({
     showLabel?: boolean;
     setScrollToNow?: (cb: () => void) => void;
 }): JSX.Element | null {
-    const now = useRealTime(60000, true);
+    const now = useRealTime(60000);
     const timelineParams = useTimelineParameters();
 
     const offsetMs = now - timelineParams.earliestMs;

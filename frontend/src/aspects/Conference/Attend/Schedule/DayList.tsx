@@ -41,7 +41,7 @@ export default function DayList({
             .map((x) => [new Date(x[0]), x[1]] as [Date, FirstEventInfo]);
     }, [rooms]);
 
-    const now = useRealTime(60000, true);
+    const now = useRealTime(60000);
     const timelineParams = useTimelineParameters();
     const nowOffsetMs = now - timelineParams.earliestMs;
     const nowOffsetSeconds = nowOffsetMs / 1000;

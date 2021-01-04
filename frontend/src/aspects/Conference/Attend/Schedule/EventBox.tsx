@@ -119,7 +119,7 @@ function EventBoxPopover({
                     ev.stopPropagation();
                 }}
                 maxH="30vh"
-                width={500}
+                width={Math.min(window.innerWidth * 0.8, 500)}
             >
                 <PopoverHeader fontWeight="semibold" pr={1}>
                     <Flex direction="row">

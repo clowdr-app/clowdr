@@ -1,6 +1,6 @@
 import { Box, useColorModeValue } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import { distanceToBoundary, roundDownToNearest, roundUpToNearest } from "../../../Generic/MathUtils";
+import { distanceToBoundary } from "../../../Generic/MathUtils";
 import { useScrollerParams } from "./Scroller";
 import TimeMarker from "./TimeMarker";
 import { useTimelineParameters } from "./useTimelineParameters";
@@ -48,8 +48,8 @@ export function useGenerateMarkers(
         const markerSubdivisions = markerDensity[1];
 
         const results: JSX.Element[] = [];
-        const start = roundDownToNearest(timeline.earliestMs, 60 * 60 * 1000);
-        const end = roundUpToNearest(timeline.latestMs, 60 * 60 * 1000);
+        const start = timeline.earliestMs;
+        const end = timeline.latestMs;
         const markerSpacing = (4 * 60 * 60 * 1000) / markerDivisions;
         const submarkerSpacing = markerSpacing / markerSubdivisions;
 

@@ -1,4 +1,5 @@
 import React, { createContext, useContext } from "react";
+import { roundDownToNearest, roundUpToNearest } from "../../../Generic/MathUtils";
 
 export interface TimelineParameters {
     earliestMs: number;
@@ -23,13 +24,15 @@ export function TimelineParameters({
     defaultStartTime?: number;
     earliestEventStart: number;
     latestEventEnd: number;
-}): JSX.Element {
+    }): JSX.Element {
+    const earliestMs = roundDownToNearest(earliestEventStart, 60 * 60 * 1000);
+    const latestMs = roundUpToNearest(latestEventEnd, 60 * 60 * 1000);
     return (
         <TimelineContext.Provider
             value={{
-                earliestMs: earliestEventStart,
-                latestMs: latestEventEnd,
-                fullTimeSpanSeconds: Math.max(1000, latestEventEnd - earliestEventStart) / 1000,
+                earliestMs,
+                latestMs,
+                fullTimeSpanSeconds: Math.max(1000, latestMs - earliestMs) / 1000,
             }}
         >
             {children}

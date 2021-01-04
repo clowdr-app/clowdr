@@ -11,12 +11,14 @@ export default function RoomNameBox({
     showBottomBorder,
     borderColour,
     backgroundColor,
+    marginTop,
 }: {
     room: Timeline_RoomFragment | string;
     height: number | string;
     showBottomBorder: boolean;
     borderColour: string;
     backgroundColor?: string;
+    marginTop?: string;
 }): JSX.Element {
     const conference = useConference();
     let roomIcon: JSX.Element | undefined;
@@ -49,7 +51,11 @@ export default function RoomNameBox({
             borderBottomColor={borderColour}
             justifyContent="flex-start"
             backgroundColor={backgroundColor}
-            role="listitem"
+            role={typeof room === "string" ? "none" : "listitem"}
+            mt={marginTop}
+            borderTopWidth={marginTop ? 1 : 0}
+            borderTopStyle="solid"
+            borderTopColor={borderColour}
         >
             {typeof room === "string" ? (
                 room

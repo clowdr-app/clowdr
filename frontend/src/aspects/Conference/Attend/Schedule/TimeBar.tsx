@@ -115,9 +115,11 @@ export function useGenerateMarkers(
 export default function TimeBar({
     height,
     borderColour,
+    marginTop,
 }: {
     height: number | string;
     borderColour: string;
+    marginTop?: string;
 }): JSX.Element {
     const markers = useGenerateMarkers("100%", "20%", false, true, true);
 
@@ -130,8 +132,12 @@ export default function TimeBar({
             borderBottomWidth={1}
             borderBottomStyle="solid"
             borderBottomColor={borderColour}
+            borderTopWidth={marginTop ? 1 : 0}
+            borderTopStyle="solid"
+            borderTopColor={borderColour}
             overflow="hidden"
             backgroundColor={bgColor}
+            mt={marginTop}
         >
             {markers}
         </Box>

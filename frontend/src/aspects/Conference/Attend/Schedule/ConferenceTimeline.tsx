@@ -163,27 +163,47 @@ function ConferenceTimelineInner({
     }, [unsortedRooms]);
 
     const roomRowHeight = 70;
+    const timeBarHeight = 5 + roomRowHeight / 2;
     const borderColour = useColorModeValue("gray.400", "gray.400");
 
-    const timeBar = useMemo(() => <TimeBar height={5 + roomRowHeight / 2} borderColour={borderColour} />, [
+    const timeBarF = useCallback((key: string, mt?: string) => <TimeBar key={key} height={timeBarHeight} borderColour={borderColour} marginTop={mt} />, [
         borderColour,
+        timeBarHeight,
     ]);
 
     const alternateBgColor = useColorModeValue("blue.100", "blue.700");
 
+    const rowInterval = Math.round((window.innerHeight - 250) / roomRowHeight);
+    const timeBarSeparation = "2em";
+
     const roomNameBoxes = useMemo(
         () =>
-            rooms.map((room, idx) => (
-                <RoomNameBox
-                    key={room.id}
-                    room={room}
-                    height={roomRowHeight}
-                    showBottomBorder={true}
-                    borderColour={borderColour}
-                    backgroundColor={idx % 2 === 1 ? alternateBgColor : undefined}
-                />
-            )),
-        [alternateBgColor, borderColour, rooms]
+            rooms.reduce(
+                (acc, room, idx) => [
+                    ...acc,
+                    idx > 0 && idx % rowInterval === 0 ? (
+                        <RoomNameBox
+                            key={"filler-" + idx}
+                            room={""}
+                            height={timeBarHeight}
+                            showBottomBorder={true}
+                            borderColour={borderColour}
+                            backgroundColor={alternateBgColor}
+                            marginTop={timeBarSeparation}
+                        />
+                    ) : undefined,
+                    <RoomNameBox
+                        key={room.id}
+                        room={room}
+                        height={roomRowHeight}
+                        showBottomBorder={true}
+                        borderColour={borderColour}
+                        backgroundColor={idx % 2 === 1 ? alternateBgColor : undefined}
+                    />,
+                ],
+                [] as (JSX.Element | undefined)[]
+            ),
+        [alternateBgColor, borderColour, rooms, rowInterval, timeBarHeight]
     );
 
     const [scrollCallbacks, setScrollCallbacks] = useState<Map<string, (ev: Timeline_EventFragment) => void>>(
@@ -192,34 +212,39 @@ function ConferenceTimelineInner({
 
     const roomTimelines = useMemo(
         () =>
-            rooms.map((room, idx) => (
-                <Box
-                    key={room.id}
-                    w="100%"
-                    h={roomRowHeight + "px"}
-                    borderBottomWidth={idx !== rooms.length - 1 ? 1 : 0}
-                    borderBottomStyle="solid"
-                    borderBottomColor={borderColour}
-                >
-                    <RoomTimeline
-                        room={room}
-                        hideTimeShiftButtons={true}
-                        hideTimeZoomButtons={true}
-                        height={roomRowHeight}
-                        setScrollToEvent={(cb) => {
-                            setScrollCallbacks((old) => {
-                                const newMap = new Map(old);
-                                newMap.set(room.id, cb);
-                                return newMap;
-                            });
-                        }}
-                    />
-                </Box>
-            )),
-        [borderColour, rooms]
+            rooms.reduce(
+                (acc, room, idx) => [
+                    ...acc,
+                    idx % rowInterval === 0 ? timeBarF("timeline-" + idx, idx > 0 ? timeBarSeparation : undefined) : undefined,
+                    <Box
+                        key={room.id}
+                        w="100%"
+                        h={roomRowHeight + "px"}
+                        borderBottomWidth={idx !== rooms.length - 1 ? 1 : 0}
+                        borderBottomStyle="solid"
+                        borderBottomColor={borderColour}
+                    >
+                        <RoomTimeline
+                            room={room}
+                            hideTimeShiftButtons={true}
+                            hideTimeZoomButtons={true}
+                            height={roomRowHeight}
+                            setScrollToEvent={(cb) => {
+                                setScrollCallbacks((old) => {
+                                    const newMap = new Map(old);
+                                    newMap.set(room.id, cb);
+                                    return newMap;
+                                });
+                            }}
+                        />
+                    </Box>,
+                ],
+                [] as (JSX.Element | undefined)[]
+            ),
+        [borderColour, rooms, rowInterval, timeBarF]
     );
 
-    const roomMarkers = useGenerateMarkers(`calc(100% - ${5 + roomRowHeight / 2}px)`, "", true, false, false);
+    const roomMarkers = useGenerateMarkers(`calc(100% - ${timeBarHeight}px)`, "", true, false, false);
 
     const scrollToEvent = useCallback(
         (ev: Timeline_EventFragment) => {
@@ -276,7 +301,7 @@ function ConferenceTimelineInner({
                         <Box flex="1 0 max-content" role="list" aria-label="Rooms">
                             <RoomNameBox
                                 room="Rooms"
-                                height={5 + roomRowHeight / 2}
+                                height={timeBarHeight}
                                 showBottomBorder={true}
                                 borderColour={borderColour}
                                 backgroundColor={alternateBgColor}
@@ -285,7 +310,6 @@ function ConferenceTimelineInner({
                         </Box>
                     ) : undefined}
                     <Scroller>
-                        {timeBar}
                         {roomMarkers}
                         <NowMarker />
                         {labeledNowMarker}

@@ -1,17 +1,24 @@
 import { gql } from "@apollo/client";
-import { Box, Flex, SkeletonCircle, SkeletonText } from "@chakra-ui/react";
+import { Box, Flex, Heading, SkeletonCircle, SkeletonText, useBreakpointValue } from "@chakra-ui/react";
 import React from "react";
-import { ContentGroupDataFragment, Permission_Enum, useGetContentGroupQuery } from "../../../../generated/graphql";
+import {
+    ContentGroupDataFragment,
+    ContentGroupEventsFragment,
+    Permission_Enum,
+    useGetContentGroupQuery,
+} from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
-import ContentGroupSummary from "./ContentGroupSummary";
+import { ContentGroupEvents } from "./ContentGroupEvents";
+import { ContentGroupSummary } from "./ContentGroupSummary";
 import { ContentGroupVideos } from "./ContentGroupVideos";
 
 gql`
     query GetContentGroup($contentGroupId: uuid!) {
         ContentGroup_by_pk(id: $contentGroupId) {
             ...ContentGroupData
+            ...ContentGroupEvents
         }
     }
 
@@ -19,12 +26,30 @@ gql`
         id
         title
         contentGroupTypeName
-        contentItems {
+        contentItems(where: { isHidden: { _eq: false } }) {
             ...ContentItemData
         }
         people(order_by: { priority: asc }) {
             ...ContentPersonData
         }
+    }
+
+    fragment ContentGroupEvents on ContentGroup {
+        events {
+            ...ContentGroupEvent
+        }
+    }
+
+    fragment ContentGroupEvent on Event {
+        startTime
+        room {
+            name
+            id
+        }
+        id
+        durationSeconds
+        endTime
+        name
     }
 `;
 
@@ -34,6 +59,7 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
             contentGroupId,
         },
     });
+    const stackColumns = useBreakpointValue({ base: true, lg: false });
 
     return (
         <RequireAtLeastOnePermissionWrapper
@@ -41,14 +67,20 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
             permissions={[Permission_Enum.ConferenceView]}
         >
             <ApolloQueryWrapper queryResult={result} getter={(data) => data.ContentGroup_by_pk}>
-                {(contentGroupData: ContentGroupDataFragment) => {
+                {(contentGroupData: ContentGroupDataFragment & ContentGroupEventsFragment) => {
                     return (
-                        <Flex width="100%" height="100%" gridColumnGap={5}>
-                            <Box textAlign="center" flexGrow={1} overflowY="auto">
+                        <Flex width="100%" height="100%" gridColumnGap={5} flexWrap={stackColumns ? "wrap" : "nowrap"}>
+                            <Box textAlign="center" flexGrow={1} overflowY="auto" style={{ scrollbarWidth: "thin" }}>
                                 <ContentGroupVideos contentGroupData={contentGroupData} />
-                                <ContentGroupSummary contentGroupData={contentGroupData} />
+                                <Box ml={5}>
+                                    <ContentGroupSummary contentGroupData={contentGroupData} />
+                                    <Heading as="h3" size="lg" textAlign="left">
+                                        Events
+                                    </Heading>
+                                    <ContentGroupEvents contentGroupEvents={contentGroupData} />
+                                </Box>
                             </Box>
-                            <Box width="30%" border="1px solid white" height="100%">
+                            <Box width={stackColumns ? "100%" : "30%"} border="1px solid white" height="100%">
                                 <SkeletonCircle size="20" />
                                 <SkeletonText mt={8} noOfLines={5} spacing={5} />
                             </Box>

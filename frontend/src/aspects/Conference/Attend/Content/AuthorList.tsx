@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Badge, Box, Flex, HStack, Text } from "@chakra-ui/react";
+import { Badge, Box, HStack, Text } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import type { ContentPersonDataFragment } from "../../../../generated/graphql";
 
@@ -26,21 +26,23 @@ export function AuthorList({
         });
     }, [contentPeopleData]);
 
-    return <HStack spacing="5">{authorElements}</HStack>;
+    return (
+        <HStack spacing="0" gridGap="4" wrap="wrap">
+            {authorElements}
+        </HStack>
+    );
 }
 
 export function Author({ contentPersonData }: { contentPersonData: ContentPersonDataFragment }): JSX.Element {
     return (
-        <Flex>
-            <Box>
-                <Text fontWeight="bold">
-                    {contentPersonData.person.name}
-                    <Badge ml="2" colorScheme="green" verticalAlign="initial">
-                        {contentPersonData.roleName}
-                    </Badge>
-                </Text>
-                <Text fontSize="sm">{contentPersonData.person.affiliation}</Text>
-            </Box>
-        </Flex>
+        <Box textAlign="left">
+            <Text fontWeight="bold" aria-label="Person">
+                {contentPersonData.person.name}
+                <Badge ml="2" colorScheme="green" verticalAlign="initial" aria-label="Role">
+                    {contentPersonData.roleName}
+                </Badge>
+            </Text>
+            <Text fontSize="sm">{contentPersonData.person.affiliation}</Text>
+        </Box>
     );
 }

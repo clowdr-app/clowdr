@@ -48,6 +48,7 @@
         "apollo-cache-inmemory": "^1.6.6",
         "apollo-link-http": "^1.5.17",
         "apollo3-cache-persist": "^0.8.0",
+        "date-fns": "^2.16.1",
         "formik": "^2.2.6",
         "framer-motion": "^2.9.5",
         "graphql": "^15.4.0",

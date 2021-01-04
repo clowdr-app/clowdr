@@ -23301,6 +23301,7 @@ export type GetContentGroupQueryVariables = Exact<{
 export type GetContentGroupQuery = { readonly __typename?: 'query_root', readonly ContentGroup_by_pk?: Maybe<(
     { readonly __typename?: 'ContentGroup' }
     & ContentGroupDataFragment
+    & ContentGroupEventsFragment
   )> };
 
 export type ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly contentItems: ReadonlyArray<(
@@ -23310,6 +23311,13 @@ export type ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', r
     { readonly __typename?: 'ContentGroupPerson' }
     & ContentPersonDataFragment
   )> };
+
+export type ContentGroupEventsFragment = { readonly __typename?: 'ContentGroup', readonly events: ReadonlyArray<(
+    { readonly __typename?: 'Event' }
+    & ContentGroupEventFragment
+  )> };
+
+export type ContentGroupEventFragment = { readonly __typename?: 'Event', readonly startTime: any, readonly id: any, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly name: string, readonly room: { readonly __typename?: 'Room', readonly name: string, readonly id: any } };
 
 export type ContentItemDataFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly contentTypeName: ContentType_Enum };
 
@@ -23436,21 +23444,6 @@ export type Timeline_SelectRoomQuery = { readonly __typename?: 'query_root', rea
     { readonly __typename?: 'Room' }
     & Timeline_RoomFragment
   )> };
-
-export type SelectContentGroupsQueryVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-  contentGroupIds: ReadonlyArray<Scalars['uuid']>;
-}>;
-
-
-export type SelectContentGroupsQuery = { readonly __typename?: 'query_root', readonly ContentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentItems: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly contentTypeName: ContentType_Enum, readonly data: any, readonly name: string }> }> };
-
-export type InsertPublishVideoJobsMutationVariables = Exact<{
-  objects: ReadonlyArray<Job_Queues_PublishVideoJob_Insert_Input>;
-}>;
-
-
-export type InsertPublishVideoJobsMutation = { readonly __typename?: 'mutation_root', readonly insert_job_queues_PublishVideoJob?: Maybe<{ readonly __typename?: 'job_queues_PublishVideoJob_mutation_response', readonly affected_rows: number, readonly returning: ReadonlyArray<{ readonly __typename?: 'job_queues_PublishVideoJob', readonly id: any }> }> };
 
 export type InsertSubmissionRequestEmailJobsMutationVariables = Exact<{
   objs: ReadonlyArray<Job_Queues_SubmissionRequestEmailJob_Insert_Input>;
@@ -24270,7 +24263,7 @@ export const ContentGroupDataFragmentDoc = gql`
   id
   title
   contentGroupTypeName
-  contentItems {
+  contentItems(where: {isHidden: {_eq: false}}) {
     ...ContentItemData
   }
   people(order_by: {priority: asc}) {
@@ -24279,6 +24272,26 @@ export const ContentGroupDataFragmentDoc = gql`
 }
     ${ContentItemDataFragmentDoc}
 ${ContentPersonDataFragmentDoc}`;
+export const ContentGroupEventFragmentDoc = gql`
+    fragment ContentGroupEvent on Event {
+  startTime
+  room {
+    name
+    id
+  }
+  id
+  durationSeconds
+  endTime
+  name
+}
+    `;
+export const ContentGroupEventsFragmentDoc = gql`
+    fragment ContentGroupEvents on ContentGroup {
+  events {
+    ...ContentGroupEvent
+  }
+}
+    ${ContentGroupEventFragmentDoc}`;
 export const RoomEventDetailsFragmentDoc = gql`
     fragment RoomEventDetails on Event {
   id
@@ -25015,9 +25028,11 @@ export const GetContentGroupDocument = gql`
     query GetContentGroup($contentGroupId: uuid!) {
   ContentGroup_by_pk(id: $contentGroupId) {
     ...ContentGroupData
+    ...ContentGroupEvents
   }
 }
-    ${ContentGroupDataFragmentDoc}`;
+    ${ContentGroupDataFragmentDoc}
+${ContentGroupEventsFragmentDoc}`;
 
 /**
  * __useGetContentGroupQuery__
@@ -25246,86 +25261,6 @@ export function useTimeline_SelectRoomLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type Timeline_SelectRoomQueryHookResult = ReturnType<typeof useTimeline_SelectRoomQuery>;
 export type Timeline_SelectRoomLazyQueryHookResult = ReturnType<typeof useTimeline_SelectRoomLazyQuery>;
 export type Timeline_SelectRoomQueryResult = Apollo.QueryResult<Timeline_SelectRoomQuery, Timeline_SelectRoomQueryVariables>;
-export const SelectContentGroupsDocument = gql`
-    query SelectContentGroups($conferenceId: uuid!, $contentGroupIds: [uuid!]!) {
-  ContentGroup(
-    where: {conferenceId: {_eq: $conferenceId}, id: {_in: $contentGroupIds}}
-  ) {
-    contentItems(
-      where: {contentTypeName: {_in: [VIDEO_BROADCAST, VIDEO_PREPUBLISH]}}
-    ) {
-      id
-      contentTypeName
-      data
-      name
-    }
-    id
-    title
-  }
-}
-    `;
-
-/**
- * __useSelectContentGroupsQuery__
- *
- * To run a query within a React component, call `useSelectContentGroupsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectContentGroupsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectContentGroupsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      contentGroupIds: // value for 'contentGroupIds'
- *   },
- * });
- */
-export function useSelectContentGroupsQuery(baseOptions: Apollo.QueryHookOptions<SelectContentGroupsQuery, SelectContentGroupsQueryVariables>) {
-        return Apollo.useQuery<SelectContentGroupsQuery, SelectContentGroupsQueryVariables>(SelectContentGroupsDocument, baseOptions);
-      }
-export function useSelectContentGroupsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectContentGroupsQuery, SelectContentGroupsQueryVariables>) {
-          return Apollo.useLazyQuery<SelectContentGroupsQuery, SelectContentGroupsQueryVariables>(SelectContentGroupsDocument, baseOptions);
-        }
-export type SelectContentGroupsQueryHookResult = ReturnType<typeof useSelectContentGroupsQuery>;
-export type SelectContentGroupsLazyQueryHookResult = ReturnType<typeof useSelectContentGroupsLazyQuery>;
-export type SelectContentGroupsQueryResult = Apollo.QueryResult<SelectContentGroupsQuery, SelectContentGroupsQueryVariables>;
-export const InsertPublishVideoJobsDocument = gql`
-    mutation InsertPublishVideoJobs($objects: [job_queues_PublishVideoJob_insert_input!]!) {
-  insert_job_queues_PublishVideoJob(objects: $objects) {
-    affected_rows
-    returning {
-      id
-    }
-  }
-}
-    `;
-export type InsertPublishVideoJobsMutationFn = Apollo.MutationFunction<InsertPublishVideoJobsMutation, InsertPublishVideoJobsMutationVariables>;
-
-/**
- * __useInsertPublishVideoJobsMutation__
- *
- * To run a mutation, you first call `useInsertPublishVideoJobsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInsertPublishVideoJobsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [insertPublishVideoJobsMutation, { data, loading, error }] = useInsertPublishVideoJobsMutation({
- *   variables: {
- *      objects: // value for 'objects'
- *   },
- * });
- */
-export function useInsertPublishVideoJobsMutation(baseOptions?: Apollo.MutationHookOptions<InsertPublishVideoJobsMutation, InsertPublishVideoJobsMutationVariables>) {
-        return Apollo.useMutation<InsertPublishVideoJobsMutation, InsertPublishVideoJobsMutationVariables>(InsertPublishVideoJobsDocument, baseOptions);
-      }
-export type InsertPublishVideoJobsMutationHookResult = ReturnType<typeof useInsertPublishVideoJobsMutation>;
-export type InsertPublishVideoJobsMutationResult = Apollo.MutationResult<InsertPublishVideoJobsMutation>;
-export type InsertPublishVideoJobsMutationOptions = Apollo.BaseMutationOptions<InsertPublishVideoJobsMutation, InsertPublishVideoJobsMutationVariables>;
 export const InsertSubmissionRequestEmailJobsDocument = gql`
     mutation InsertSubmissionRequestEmailJobs($objs: [job_queues_SubmissionRequestEmailJob_insert_input!]!) {
   insert_job_queues_SubmissionRequestEmailJob(objects: $objs) {

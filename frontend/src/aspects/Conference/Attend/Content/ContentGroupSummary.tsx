@@ -1,15 +1,11 @@
-import { Container, Heading, Text } from "@chakra-ui/react";
+import { Box, Container, Heading, Text } from "@chakra-ui/react";
 import { assertIsContentItemDataBlob, ContentBaseType } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import { ContentGroupDataFragment, ContentType_Enum } from "../../../../generated/graphql";
 import { AuthorList } from "./AuthorList";
 
-export default function ContentGroupSummary({
-    contentGroupData,
-}: {
-    contentGroupData: ContentGroupDataFragment;
-}): JSX.Element {
+export function ContentGroupSummary({ contentGroupData }: { contentGroupData: ContentGroupDataFragment }): JSX.Element {
     const abstractContentItem = useMemo(() => {
         const abstractItem = contentGroupData.contentItems.find(
             (contentItem) => contentItem.contentTypeName === ContentType_Enum.Abstract
@@ -29,13 +25,15 @@ export default function ContentGroupSummary({
     }, [contentGroupData.contentItems]);
 
     return (
-        <Container textAlign="left" width="100%" alignItems="left" mt={5} ml={0}>
+        <Box alignItems="left" textAlign="left" my={5}>
             <Text colorScheme="green">{contentGroupData.contentGroupTypeName}</Text>
-            <Heading as="h2" textAlign="left" mb={5}>
+            <Heading as="h2" mb={5} textAlign="left">
                 {contentGroupData.title}
             </Heading>
             {<AuthorList contentPeopleData={contentGroupData.people ?? []} />}
-            {abstractContentItem}
-        </Container>
+            <Container width="100%" mt={5} ml={0} pl={0}>
+                {abstractContentItem}
+            </Container>
+        </Box>
     );
 }

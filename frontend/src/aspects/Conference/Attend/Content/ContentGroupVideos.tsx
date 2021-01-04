@@ -139,6 +139,7 @@ export function ContentGroupVideo({
                 onPlay={onPlay}
                 onPause={onPause}
                 config={subtitlesConfig}
+                style={{ borderRadius: "10px", overflow: "hidden" }}
             />
         );
     }, [onPause, onPlay, previewTranscodeUrl, subtitlesConfig]);
@@ -146,7 +147,11 @@ export function ContentGroupVideo({
     return (
         <>
             <Heading as="h3" fontSize={24} mb={4} color="gray.50">
-                {title}
+                {title === "Livestream broadcast video"
+                    ? "Lightning talk"
+                    : title === "Pre-published video"
+                    ? "Presentation"
+                    : title}
             </Heading>
             {player}
         </>

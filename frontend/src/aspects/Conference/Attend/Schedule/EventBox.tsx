@@ -74,9 +74,12 @@ function EventBoxPopover({
     useEffect(() => {
         let tId: number | undefined;
         if (isOpen) {
-            tId = setTimeout((() => {
-                ref.current?.focus();
-            }) as TimerHandler, 50);
+            tId = setTimeout(
+                (() => {
+                    ref.current?.focus();
+                }) as TimerHandler,
+                50
+            );
         }
         return () => {
             if (tId) {
@@ -123,7 +126,7 @@ function EventBoxPopover({
             >
                 <PopoverHeader fontWeight="semibold" pr={1}>
                     <Flex direction="row">
-                        <Text mb={2}>
+                        <Text>
                             <Link ref={ref} as={ReactLink} to={eventUrl} textDecoration="none">
                                 {eventTitle}
                             </Link>
@@ -146,11 +149,14 @@ function EventBoxPopover({
                             >
                                 {isLive ? (
                                     <>
-                                        <FAIcon iconStyle="s" icon="eye" mr={2} /> LIVE
+                                        <FAIcon iconStyle="s" icon="link" mr={2} /> LIVE
                                     </>
                                 ) : (
-                                    <FAIcon iconStyle="s" icon="eye" />
+                                    <FAIcon iconStyle="s" icon="link" />
                                 )}
+                                <Text as="span" ml={1}>
+                                    View
+                                </Text>
                                 {/* TODO: Time until event starts */}
                             </LinkButton>
                             {/* <Button colorScheme="gray" size="sm" onClick={onClose}>
@@ -158,6 +164,24 @@ function EventBoxPopover({
                                 </Button> */}
                         </Flex>
                     </Flex>
+                    <Text
+                        aria-label={`Starts at ${new Date(event.startTime).toLocaleString(undefined, {
+                            weekday: "long",
+                            hour: "numeric",
+                            minute: "numeric",
+                        })} and lasts ${Math.round(durationSeconds / 60)} minutes.`}
+                        mb={2}
+                    >
+                        {new Date(eventStartMs).toLocaleString(undefined, {
+                            hour: "numeric",
+                            minute: "numeric",
+                            hour12: false,
+                        })} - {new Date(eventStartMs + durationSeconds * 1000).toLocaleString(undefined, {
+                            hour: "numeric",
+                            minute: "numeric",
+                            hour12: false,
+                        })}
+                    </Text>
                     <EventTagList tags={event.eventTags} />
                 </PopoverHeader>
                 <PopoverArrow />
@@ -166,7 +190,7 @@ function EventBoxPopover({
                     {event.contentGroup?.people && event.contentGroup?.people.length > 0 ? (
                         <AuthorList contentPeopleData={event.contentGroup.people} />
                     ) : undefined}
-                    <Text aria-label="Abstract.">{abstractText}</Text>
+                    <Text>{abstractText}</Text>
                 </PopoverBody>
             </PopoverContent>
         </Popover>

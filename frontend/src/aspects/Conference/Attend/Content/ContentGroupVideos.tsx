@@ -29,14 +29,21 @@ export function ContentGroupVideos({ contentGroupData }: { contentGroupData: Con
                                 key={contentItem.id}
                                 flexGrow={1}
                                 flexShrink={1}
-                                transition="max-width 1s, width 1s, margin 1s"
-                                width={selectedVideoId === contentItem.id ? "100%" : "0"}
-                                maxWidth={selectedVideoId && selectedVideoId === contentItem.id ? "100%" : "30%"}
-                                mx={!selectedVideoId || selectedVideoId === contentItem.id ? 5 : 0}
-                                visibility={
-                                    !selectedVideoId || selectedVideoId === contentItem.id ? "visible" : "hidden"
-                                }
-                                overflow="hidden"
+                                transition="max-width 1s, width 1s, height 1s, margin 1s"
+                                maxWidth={[
+                                    "100%",
+                                    "100%",
+                                    selectedVideoId === contentItem.id ? "70%" : selectedVideoId ? "0%" : "50%",
+                                ]}
+                                flexBasis={0}
+                                mx={5}
+                                my={3}
+                                visibility={[
+                                    "visible",
+                                    "visible",
+                                    !selectedVideoId || selectedVideoId === contentItem.id ? "visible" : "hidden",
+                                ]}
+                                overflow={["visible", "visible", "hidden"]}
                             >
                                 <ContentGroupVideo
                                     title={contentItem.name}
@@ -55,7 +62,15 @@ export function ContentGroupVideos({ contentGroupData }: { contentGroupData: Con
             });
     }, [contentGroupData.contentItems, selectedVideoId]);
     return (
-        <Flex justifyContent="center" alignItems="center" background="gray.900" borderRadius={5} py={5} minH="80vh">
+        <Flex
+            justifyContent={["flex-start", "flex-start", "center"]}
+            alignItems="center"
+            background="gray.900"
+            borderRadius={5}
+            py={5}
+            minH={["0", "0", "80vh"]}
+            flexDir={["column", "column", "row"]}
+        >
             {videoContentItems}
         </Flex>
     );
@@ -136,6 +151,7 @@ export function ContentGroupVideo({
                 controls={true}
                 width="100%"
                 height="auto"
+                maxHeight="100%"
                 onPlay={onPlay}
                 onPause={onPause}
                 config={subtitlesConfig}

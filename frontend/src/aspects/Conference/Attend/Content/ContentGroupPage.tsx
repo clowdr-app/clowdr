@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Box, Flex, Heading, SkeletonCircle, SkeletonText, useBreakpointValue } from "@chakra-ui/react";
+import { Box, Flex, Heading, useBreakpointValue } from "@chakra-ui/react";
 import React from "react";
 import {
     ContentGroupDataFragment,
@@ -80,10 +80,7 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
                                     <ContentGroupEvents contentGroupEvents={contentGroupData} />
                                 </Box>
                             </Box>
-                            <Box width={stackColumns ? "100%" : "30%"} border="1px solid white" height="100%">
-                                <SkeletonCircle size="20" />
-                                <SkeletonText mt={8} noOfLines={5} spacing={5} />
-                            </Box>
+                            {/* <Box width={stackColumns ? "100%" : "30%"} height="100%"></Box> */}
                         </Flex>
                     );
                 }}

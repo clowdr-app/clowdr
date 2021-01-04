@@ -1,5 +1,5 @@
 import { Box } from "@chakra-ui/react";
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import {
     Timeline_EventFragment,
     Timeline_RoomFragment,
@@ -8,11 +8,9 @@ import {
 } from "../../../../generated/graphql";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import EventBox from "./EventBox";
-import NowMarker from "./NowMarker";
-import Scroller, { useScrollerParams } from "./Scroller";
-import TimelineShiftButtons from "./TimelineShiftButtons";
+import Scroller from "./Scroller";
 import TimelineZoomControls from "./TimelineZoomControls";
-import useTimelineParameters, { TimelineParameters } from "./useTimelineParameters";
+import { TimelineParameters } from "./useTimelineParameters";
 
 function RoomTimelineContents({
     groupedEvents,
@@ -21,32 +19,26 @@ function RoomTimelineContents({
     groupedEvents: Timeline_EventFragment[][];
     room: Timeline_RoomFragment;
 }): JSX.Element {
-    const scrollerParams = useScrollerParams();
-    return (
-        <>
-            {groupedEvents.map((events) => (
-                <EventBox roomName={room.name} key={events[0].id} sortedEvents={events} />
-            ))}
-            <NowMarker pixelsPerSecond={scrollerParams.pixelsPerSecond} />
-        </>
+    const eventBoxes = useMemo(
+        () => groupedEvents.map((events) => <EventBox roomName={room.name} key={events[0].id} sortedEvents={events} />),
+        [groupedEvents, room.name]
     );
+    return <>{eventBoxes}</>;
 }
 
 function RoomTimelineInner({
     room,
-    hideTimeShiftButtons = true,
     hideTimeZoomButtons = true,
     useScroller = false,
     height = 50,
+    backgroundColor,
 }: {
     room: Timeline_RoomFragment;
-    hideTimeShiftButtons?: boolean;
     hideTimeZoomButtons?: boolean;
     useScroller?: boolean;
-    height?: number;
+        height?: number;
+        backgroundColor?: string;
 }): JSX.Element {
-    const params = useTimelineParameters();
-
     const groupedEvents = useMemo(() => {
         const result: Timeline_EventFragment[][] = [];
         const sortedEvents = [...room.events].sort((x, y) => Date.parse(x.startTime) - Date.parse(y.startTime));
@@ -78,19 +70,10 @@ function RoomTimelineInner({
         return result;
     }, [room.events]);
 
-    useEffect(() => {
-        for (const event of room.events) {
-            params.notifyEventStart(Date.parse(event.startTime));
-            params.notifyEventEnd(Date.parse(event.startTime) + event.durationSeconds * 1000);
-        }
-    }, [params, room.events]);
-
     return (
-        <Box pos="relative" w="100%" h={height}>
+        <Box pos="relative" w="100%" h={height + "px"} backgroundColor={backgroundColor}>
             {useScroller ? (
-                <Scroller
-                    height={height}
-                >
+                <Scroller height={height}>
                     <RoomTimelineContents groupedEvents={groupedEvents} room={room} />
                 </Scroller>
             ) : (
@@ -101,42 +84,76 @@ function RoomTimelineInner({
                     <TimelineZoomControls />
                 </Box>
             ) : undefined}
-            {!hideTimeShiftButtons ? <TimelineShiftButtons /> : undefined}
         </Box>
     );
 }
 
 function RoomTimelineFetchWrapper({
     roomId,
-    hideTimeShiftButtons = false,
     hideTimeZoomButtons = false,
     useScroller = true,
     height,
+    backgroundColor,
 }: {
     roomId: string;
-    hideTimeShiftButtons?: boolean;
     hideTimeZoomButtons?: boolean;
     useScroller?: boolean;
     height?: number;
+    backgroundColor?: string;
 }): JSX.Element {
     const roomResult = useTimeline_SelectRoomQuery({
         variables: {
             id: roomId,
         },
     });
+
+    const eventInfo = useMemo(
+        () =>
+            roomResult.data?.Room_by_pk?.events.reduce(
+                (x, event) => {
+                    const startT = Date.parse(event.startTime);
+                    const endT = startT + event.durationSeconds * 1000;
+                    if (startT < x.roomEarliest) {
+                        if (endT > x.roomLatest) {
+                            return {
+                                roomEarliest: startT,
+                                roomLatest: endT,
+                            };
+                        } else {
+                            return {
+                                roomEarliest: startT,
+                                roomLatest: x.roomLatest,
+                            };
+                        }
+                    } else if (endT > x.roomLatest) {
+                        return {
+                            roomEarliest: x.roomEarliest,
+                            roomLatest: endT,
+                        };
+                    }
+                    return x;
+                },
+                { roomEarliest: Number.POSITIVE_INFINITY, roomLatest: Number.NEGATIVE_INFINITY }
+            ),
+        [roomResult.data?.Room_by_pk?.events]
+    );
+
     return (
         <ApolloQueryWrapper<Timeline_SelectRoomQuery, unknown, Timeline_RoomFragment>
             queryResult={roomResult}
             getter={(x) => x.Room_by_pk}
         >
             {(room) => (
-                <TimelineParameters>
+                <TimelineParameters
+                    earliestEventStart={eventInfo?.roomEarliest ?? 0}
+                    latestEventEnd={eventInfo?.roomLatest ?? 0}
+                >
                     <RoomTimelineInner
                         room={room}
-                        hideTimeShiftButtons={hideTimeShiftButtons}
                         hideTimeZoomButtons={hideTimeZoomButtons}
                         useScroller={useScroller}
                         height={height}
+                        backgroundColor={backgroundColor}
                     />
                 </TimelineParameters>
             )}

@@ -62,6 +62,7 @@
         "react-dom": "^17.0.0",
         "react-draggable": "^4.4.3",
         "react-dropzone": "^11.2.4",
+        "react-indiana-drag-scroll": "^1.8.0",
         "react-player": "^2.7.0",
         "react-router-dom": "^5.2.0",
         "react-select": "^3.1.1",

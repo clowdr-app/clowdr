@@ -47,6 +47,16 @@ const theme = extendTheme({
                 textDecoration: "underline",
             },
         },
+        Popover: {
+            parts: ["popper"],
+            baseStyle: (props) => ({
+                popper: {
+                    zIndex: 10,
+                    maxW: props.width ? props.width : "xs",
+                    w: "100%",
+                },
+            }),
+        },
     },
 });
 

@@ -2,7 +2,7 @@ import { Box, Button, Tooltip } from "@chakra-ui/react";
 import React, { useCallback } from "react";
 import FAIcon from "../../../Icons/FAIcon";
 import useWindowEvent from "../../../Window/useWindowEvent";
-import useTimelineParameters from "./useTimelineParameters";
+import { useScrollerParams } from "./Scroller";
 
 const zoomBoundariesMinutes = [
     5, // 5 mins
@@ -37,7 +37,7 @@ function findBoundary(seconds: number): number {
 }
 
 export default function TimelineZoomControls(): JSX.Element {
-    const params = useTimelineParameters();
+    const params = useScrollerParams();
     const defaultZoomFactor = 1.25;
 
     const zoomOut = useCallback(() => {
@@ -78,12 +78,12 @@ export default function TimelineZoomControls(): JSX.Element {
     return (
         <Box>
             <Tooltip label="Use +/- keys to zoom the timeline.">
-                <Button minW={0} minH={0} p={0} w="auto" h="auto" background="none" onClick={zoomOut} zIndex={3}>
+                <Button mr={2} size="lg" p={3} background="none" onClick={() => zoomOut()} fontSize="2em">
                     <FAIcon iconStyle="s" icon="search-minus" />
                 </Button>
             </Tooltip>
             <Tooltip label="Use +/- keys to zoom the timeline.">
-                <Button minW={0} minH={0} p={0} w="auto" h="auto" background="none" onClick={zoomIn} zIndex={3}>
+                <Button size="lg" p={3} background="none" onClick={() => zoomIn()} fontSize="2em">
                     <FAIcon iconStyle="s" icon="search-plus" />
                 </Button>
             </Tooltip>

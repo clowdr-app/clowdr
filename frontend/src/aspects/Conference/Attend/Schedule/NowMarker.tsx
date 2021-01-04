@@ -1,49 +1,56 @@
-import { Box } from "@chakra-ui/react";
 import React from "react";
 import { useRealTime } from "../../../Generic/useRealTime";
-import useTimelineParameters from "./useTimelineParameters";
+import { useTimelineParameters } from "./useTimelineParameters";
 
-function NowMarkerInner({ now, pixelsPerSecond, manualScrollOffset }: { now: number; pixelsPerSecond: number; manualScrollOffset: boolean }): JSX.Element {
+export default function NowMarker({ showLabel = false }: { showLabel?: boolean }): JSX.Element | null {
+    const now = useRealTime();
     const timelineParams = useTimelineParameters();
 
     const offsetMs = now - timelineParams.earliestMs;
     const offsetSeconds = offsetMs / 1000;
-    const leftPxV = offsetSeconds * pixelsPerSecond;
+    const percent = (100 * offsetSeconds) / timelineParams.fullTimeSpanSeconds;
 
-    let leftPx = leftPxV;
-    if (manualScrollOffset) {
-        leftPx += pixelsPerSecond * -timelineParams.startTimeOffsetSeconds;
-    }
-
-    return (
-        <>
-            <Box
-                zIndex={2}
-                position="absolute"
-                left={Math.round(leftPx) + "px"}
-                width="1px"
-                height="100%"
-                top={0}
-                borderLeftColor="#ff3333"
-                borderLeftWidth={1}
-                borderLeftStyle="solid"
-                p={0}
+    if (showLabel) {
+        return (
+            <div
+                style={{
+                    zIndex: 2,
+                    position: "absolute",
+                    left: percent + "%",
+                    width: "auto",
+                    height: "auto",
+                    top: "7px",
+                    borderLeftColor: "#ff3333",
+                    borderLeftWidth: "2px",
+                    borderLeftStyle: "solid",
+                    background: "#ff3333",
+                    borderTopRightRadius: "1000px",
+                    borderBottomRightRadius: "1000px",
+                    padding: "0.2em",
+                    paddingTop: "0",
+                    paddingRight: "0.6em",
+                    fontSize: "80%",
+                    color: "white",
+                }}
             >
-            </Box>
-        </>
-    );
-}
-
-export default function NowMarker({ pixelsPerSecond, manualScrollOffset = false }: { pixelsPerSecond: number; manualScrollOffset?: boolean }): JSX.Element | null {
-    const timelineParams = useTimelineParameters();
-
-    const now = useRealTime();
-
-    if (now + 60000 < timelineParams.startTimeMs) {
-        return null;
-    } else if (now - 60000 > timelineParams.startTimeMs + timelineParams.visibleTimeSpanSeconds * 1000) {
-        return null;
+                Live now
+            </div>
+        );
+    } else {
+        return (
+            <div
+                style={{
+                    zIndex: 2,
+                    position: "absolute",
+                    left: percent + "%",
+                    width: "1px",
+                    height: "calc(100% - 7px)",
+                    bottom: 0,
+                    borderLeftColor: "#ff3333",
+                    borderLeftWidth: "2px",
+                    borderLeftStyle: "solid",
+                }}
+            ></div>
+        );
     }
-
-    return <NowMarkerInner now={now} pixelsPerSecond={pixelsPerSecond} manualScrollOffset={manualScrollOffset} />;
 }

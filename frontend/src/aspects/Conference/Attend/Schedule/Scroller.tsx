@@ -1,96 +1,73 @@
 import { Box } from "@chakra-ui/react";
-import React, { createContext, useContext, useEffect, useMemo, useRef } from "react";
-import { DraggableCore } from "react-draggable";
-import useResizeObserver from "../../../Generic/useResizeObserver";
-import useTimelineParameters from "./useTimelineParameters";
+import React, { useCallback, useState } from "react";
+import ScrollContainer from "react-indiana-drag-scroll";
+import { useTimelineParameters } from "./useTimelineParameters";
 
 interface ScrollerParams {
-    pixelsPerSecond: number;
+    visibleTimeSpanSeconds: number;
+    zoomTo: (next: (oldTimeSpanSeconds: number) => number) => void;
 }
-
-const ScrollerParamsContext = createContext<ScrollerParams>({
-    pixelsPerSecond: 0,
+const ScrollerContext = React.createContext<ScrollerParams>({
+    visibleTimeSpanSeconds: 4 * 60 * 60,
+    zoomTo: () => {
+        /* EMPTY */
+    },
 });
 
 export function useScrollerParams(): ScrollerParams {
-    return useContext(ScrollerParamsContext);
+    return React.useContext(ScrollerContext);
+}
+
+export function ScrollerProvider({ children }: { children: React.ReactNode | React.ReactNodeArray }): JSX.Element {
+    const timelineParams = useTimelineParameters();
+    const [visibleTimeSpanSeconds, setVisibleTimeSpanSeconds] = useState(4 * 60 * 60);
+    const zoomTo = useCallback(
+        (span) => {
+            setVisibleTimeSpanSeconds((old) =>
+                Math.max(5 * 60, Math.min((timelineParams.latestMs - timelineParams.earliestMs) / 1000, span(old)))
+            );
+        },
+        [timelineParams.latestMs, timelineParams.earliestMs]
+    );
+
+    return (
+        <ScrollerContext.Provider
+            value={{
+                visibleTimeSpanSeconds,
+                zoomTo,
+            }}
+        >
+            {children}
+        </ScrollerContext.Provider>
+    );
 }
 
 export default function Scroller({
     children,
     height,
-    pixelsPerSecondF,
 }: {
-    children: React.ReactNode | React.ReactNodeArray | ((outerWidth: number) => React.ReactNode | React.ReactNodeArray);
-    height: number;
-    pixelsPerSecondF?: (pps: number) => void;
+    children: React.ReactNode | React.ReactNodeArray;
+    height?: number;
 }): JSX.Element {
-    const timelineParams = useTimelineParameters();
-    const outerRef = useRef<HTMLDivElement>(null);
-    const outerSizeEntries = useResizeObserver(outerRef);
+    const { visibleTimeSpanSeconds } = useScrollerParams();
+    const { fullTimeSpanSeconds } = useTimelineParameters();
 
-    const outerWidth = useMemo(() => {
-        if (outerSizeEntries.length > 0) {
-            return outerSizeEntries[0].contentRect.width;
-        }
-        return 0;
-    }, [outerSizeEntries]);
+    const innerWidthPx = (1920 * fullTimeSpanSeconds) / visibleTimeSpanSeconds;
 
-    const pixelsPerSecond = timelineParams.visibleTimeSpanSeconds === 0 ? 1 : outerWidth / timelineParams.visibleTimeSpanSeconds;
-    const innerWidth = Math.max(outerWidth, pixelsPerSecond * timelineParams.fullTimeSpanSeconds);
-    const innerLeftT = pixelsPerSecond * -timelineParams.startTimeOffsetSeconds;
-    const innerLeft = Math.min(0, Math.max(innerLeftT, outerWidth - innerWidth));
-
-    useEffect(() => {
-        pixelsPerSecondF?.(pixelsPerSecond);
-    }, [pixelsPerSecond, pixelsPerSecondF]);
-
-    const dragData = useRef<{
-        x: number;
-        t: number;
-    }>({
-        x: 0,
-        t: 0,
-    });
     return (
-        <DraggableCore
-            onStart={(_ev, data) => {
-                dragData.current.x = data.x;
-                dragData.current.t = timelineParams.startTimeMs;
-            }}
-            onDrag={(ev, data) => {
-                const delta = dragData.current.x - data.x;
-                if (Math.abs(delta) > 0) {
-                    const v = dragData.current.t + 1000 * (delta / pixelsPerSecond);
-                    timelineParams.shiftTo(v);
-                    ev.preventDefault();
-                    ev.stopPropagation();
-                }
-            }}
-            allowAnyClick={true}
-        >
-            <Box ref={outerRef} position="relative" w="100%" h={height} overflow="hidden">
-                <div
-                    style={{
-                        position: "absolute",
-                        width: innerWidth,
-                        height: "100%",
-                        top: 0,
-                        left: innerLeft,
-                        boxSizing: "border-box",
-                        overflow: "hidden",
-                        transition: "none",
-                    }}
-                >
-                    <ScrollerParamsContext.Provider
-                        value={{
-                            pixelsPerSecond,
-                        }}
-                    >
-                        {typeof children === "function" ? children(outerWidth) : children}
-                    </ScrollerParamsContext.Provider>
-                </div>
-            </Box>
-        </DraggableCore>
+        <Box as={ScrollContainer} w="100%" h={height} vertical={false}>
+            <div
+                style={{
+                    width: innerWidthPx,
+                    height: "auto",
+                    boxSizing: "border-box",
+                    transition: "none",
+                    overflow: "hidden",
+                    position: "relative",
+                }}
+            >
+                {children}
+            </div>
+        </Box>
     );
 }

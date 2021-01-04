@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client";
 import { Box, Flex, useColorModeValue } from "@chakra-ui/react";
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
+import ScrollContainer from "react-indiana-drag-scroll";
 import {
     Permission_Enum,
     Timeline_RoomFragment,
@@ -11,10 +12,11 @@ import PageNotFound from "../../../Errors/PageNotFound";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../useConference";
+import NowMarker from "./NowMarker";
 import RoomNameBox from "./RoomNameBox";
 import RoomTimeline from "./RoomTimeline";
-import Scroller from "./Scroller";
-import TimeBar from "./TimeBar";
+import Scroller, { ScrollerProvider } from "./Scroller";
+import TimeBar, { useGenerateMarkers } from "./TimeBar";
 import TimelineZoomControls from "./TimelineZoomControls";
 import { TimelineParameters } from "./useTimelineParameters";
 
@@ -160,57 +162,158 @@ function ConferenceTimelineInner({
 
     const roomRowHeight = 70;
     const borderColour = useColorModeValue("gray.400", "gray.400");
-    const [pixelsPerSecond, setPixelsPerSecond] = useState<number>(1);
+
+    const timeBar = useMemo(() => <TimeBar height={5 + roomRowHeight / 2} borderColour={borderColour} />, [
+        borderColour,
+    ]);
+
+    const alternateBgColor = useColorModeValue("blue.100", "blue.700");
+
+    const roomNameBoxes = useMemo(
+        () =>
+            rooms.map((room, idx) => (
+                <RoomNameBox
+                    key={room.id}
+                    room={room}
+                    height={roomRowHeight}
+                    showBottomBorder={true}
+                    borderColour={borderColour}
+                    backgroundColor={idx % 2 === 1 ? alternateBgColor : undefined}
+                />
+            )),
+        [alternateBgColor, borderColour, rooms]
+    );
+
+    const roomTimelines = useMemo(
+        () =>
+            rooms.map((room, idx) => (
+                <Box
+                    key={room.id}
+                    w="100%"
+                    h={roomRowHeight + "px"}
+                    borderBottomWidth={idx !== rooms.length - 1 ? 1 : 0}
+                    borderBottomStyle="solid"
+                    borderBottomColor={borderColour}
+                >
+                    <RoomTimeline
+                        room={room}
+                        hideTimeShiftButtons={true}
+                        hideTimeZoomButtons={true}
+                        height={roomRowHeight}
+                    />
+                </Box>
+            )),
+        [borderColour, rooms]
+    );
+
+    const roomMarkers = useGenerateMarkers(`calc(100% - ${5 + roomRowHeight / 2}px)`, "", true, false, false);
 
     return (
-        <TimelineParameters>
-            <Box w="100%">
-                <Flex w="100%" direction="row" justify="end">
-                    <TimelineZoomControls />
-                </Flex>
-                <Box w="100%">
-                    <Flex direction="row" w="100%" justifyContent="stretch" alignItems="start">
+        <Box w="100%" p={2}>
+            <Flex w="100%" direction="row" justify="center" alignItems="center">
+                <TimelineZoomControls />
+            </Flex>
+            <Box
+                cursor="pointer"
+                as={ScrollContainer}
+                w="100%"
+                mt={4}
+                maxHeight="80vh"
+                horizontal={false}
+                borderColor={borderColour}
+                borderWidth={1}
+                borderStyle="solid"
+            >
+                <Flex direction="row" w="100%" justifyContent="stretch" alignItems="start">
+                    {window.innerWidth > 500 ? (
                         <Box flex="1 0 max-content">
-                            <Box h={roomRowHeight}></Box>
-                            {rooms.map((room, idx) => (
-                                <RoomNameBox
-                                    key={room.id}
-                                    room={room}
-                                    height={roomRowHeight}
-                                    showBottomBorder={idx !== rooms.length - 1}
-                                    borderColour={borderColour}
-                                />
-                            ))}
-                        </Box>
-                        <Box w="100%" h="100%" flex="1 1 100%">
-                            <TimeBar
-                                height={roomRowHeight}
+                            <RoomNameBox
+                                room="Rooms"
+                                height={5 + roomRowHeight / 2}
+                                showBottomBorder={true}
                                 borderColour={borderColour}
-                                pixelsPerSecond={pixelsPerSecond}
+                                backgroundColor={alternateBgColor}
                             />
-                            <Scroller height={roomRowHeight * rooms.length} pixelsPerSecondF={setPixelsPerSecond}>
-                                {rooms.map((room, idx) => (
-                                    <Box
-                                        key={room.id}
-                                        w="100%"
-                                        h={roomRowHeight}
-                                        borderBottomWidth={idx !== rooms.length - 1 ? 1 : 0}
-                                        borderBottomStyle="solid"
-                                        borderBottomColor={borderColour}
-                                    >
-                                        <RoomTimeline
-                                            room={room}
-                                            hideTimeShiftButtons={true}
-                                            hideTimeZoomButtons={true}
-                                            height={roomRowHeight}
-                                        />
-                                    </Box>
-                                ))}
-                            </Scroller>
+                            {roomNameBoxes}
                         </Box>
-                    </Flex>
-                </Box>
+                    ) : undefined}
+                    <Scroller>
+                        {timeBar}
+                        {roomMarkers}
+                        <NowMarker />
+                        <NowMarker showLabel />
+                        {roomTimelines}
+                    </Scroller>
+                </Flex>
             </Box>
+        </Box>
+    );
+}
+
+function ConferenceTimelineIntermediaryWrapper({
+    rooms,
+}: {
+    rooms: ReadonlyArray<Timeline_RoomFragment>;
+}): JSX.Element {
+    const { earliestStart, latestEnd } = useMemo(() => {
+        return rooms.reduce(
+            (vals, room) => {
+                const { roomEarliest, roomLatest } = room.events.reduce(
+                    (x, event) => {
+                        const startT = Date.parse(event.startTime);
+                        const endT = startT + event.durationSeconds * 1000;
+                        if (startT < x.roomEarliest) {
+                            if (endT > x.roomLatest) {
+                                return {
+                                    roomEarliest: startT,
+                                    roomLatest: endT,
+                                };
+                            } else {
+                                return {
+                                    roomEarliest: startT,
+                                    roomLatest: x.roomLatest,
+                                };
+                            }
+                        } else if (endT > x.roomLatest) {
+                            return {
+                                roomEarliest: x.roomEarliest,
+                                roomLatest: endT,
+                            };
+                        }
+                        return x;
+                    },
+                    { roomEarliest: Number.POSITIVE_INFINITY, roomLatest: Number.NEGATIVE_INFINITY }
+                );
+
+                if (roomEarliest < vals.earliestStart) {
+                    if (roomLatest > vals.latestEnd) {
+                        return {
+                            earliestStart: roomEarliest,
+                            latestEnd: roomLatest,
+                        };
+                    } else {
+                        return {
+                            earliestStart: roomEarliest,
+                            latestEnd: vals.latestEnd,
+                        };
+                    }
+                } else if (roomLatest > vals.latestEnd) {
+                    return {
+                        earliestStart: vals.earliestStart,
+                        latestEnd: roomLatest,
+                    };
+                }
+                return vals;
+            },
+            { earliestStart: Number.POSITIVE_INFINITY, latestEnd: Number.NEGATIVE_INFINITY }
+        );
+    }, [rooms]);
+
+    return (
+        <TimelineParameters earliestEventStart={earliestStart} latestEventEnd={latestEnd}>
+            <ScrollerProvider>
+                <ConferenceTimelineInner rooms={rooms} />
+            </ScrollerProvider>
         </TimelineParameters>
     );
 }
@@ -227,7 +330,7 @@ function ConferenceTimelineFetchWrapper(): JSX.Element {
             queryResult={roomsResult}
             getter={(x) => x.Room}
         >
-            {(rooms) => <ConferenceTimelineInner rooms={rooms} />}
+            {(rooms) => <ConferenceTimelineIntermediaryWrapper rooms={rooms} />}
         </ApolloQueryWrapper>
     );
 }

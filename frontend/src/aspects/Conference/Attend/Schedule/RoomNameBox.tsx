@@ -1,7 +1,8 @@
-import { Box, Link } from "@chakra-ui/react";
+import { Center, HStack, Link, Text } from "@chakra-ui/react";
 import React from "react";
 import { Link as ReactLink } from "react-router-dom";
-import type { Timeline_RoomFragment } from "../../../../generated/graphql";
+import { RoomMode_Enum, Timeline_RoomFragment } from "../../../../generated/graphql";
+import FAIcon from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";
 
 export default function RoomNameBox({
@@ -9,27 +10,56 @@ export default function RoomNameBox({
     height,
     showBottomBorder,
     borderColour,
+    backgroundColor,
 }: {
-    room: Timeline_RoomFragment;
+    room: Timeline_RoomFragment | string;
     height: number | string;
     showBottomBorder: boolean;
     borderColour: string;
+    backgroundColor?: string;
 }): JSX.Element {
     const conference = useConference();
+    let roomIcon: JSX.Element | undefined;
+    if (typeof room !== "string") {
+        switch (room.currentModeName) {
+            case RoomMode_Enum.Breakout:
+                roomIcon = <FAIcon iconStyle="s" icon="users" />;
+                break;
+            case RoomMode_Enum.Prerecorded:
+                roomIcon = <FAIcon iconStyle="s" icon="film" />;
+                break;
+            case RoomMode_Enum.Presentation:
+                roomIcon = <FAIcon iconStyle="s" icon="chalkboard-teacher" />;
+                break;
+            case RoomMode_Enum.QAndA:
+                roomIcon = <FAIcon iconStyle="s" icon="comments" />;
+                break;
+        }
+    }
+
     return (
-        <Box
+        <Center
             p={4}
-            h={height}
+            h={height + "px"}
             borderRightWidth={1}
-            borderBottomWidth={showBottomBorder ? 1 : 0}
             borderRightStyle="solid"
             borderRightColor={borderColour}
+            borderBottomWidth={showBottomBorder ? 1 : 0}
             borderBottomStyle="solid"
             borderBottomColor={borderColour}
+            justifyContent="start"
+            backgroundColor={backgroundColor}
         >
-            <Link as={ReactLink} to={`/conference/${conference.slug}/room/${room.id}`} textDecoration="none">
-                {room.name}
-            </Link>
-        </Box>
+            {typeof room === "string" ? (
+                room
+            ) : (
+                <Link as={ReactLink} to={`/conference/${conference.slug}/room/${room.id}`} textDecoration="none">
+                    <HStack>
+                        {roomIcon}
+                        <Text>{room.name}</Text>
+                    </HStack>
+                </Link>
+            )}
+        </Center>
     );
 }

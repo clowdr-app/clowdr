@@ -23958,16 +23958,6 @@ export type UpdateRoomsWithParticipantsMutation = { readonly __typename?: 'mutat
     & RoomWithParticipantInfoFragment
   )> };
 
-export type SelectAllEventsQueryVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-}>;
-
-
-export type SelectAllEventsQuery = { readonly __typename?: 'query_root', readonly Event: ReadonlyArray<(
-    { readonly __typename?: 'Event' }
-    & EventInfoFragment
-  )> };
-
 export type RoomInfoFragment = { readonly __typename?: 'Room', readonly capacity?: Maybe<number>, readonly conferenceId: any, readonly currentModeName: RoomMode_Enum, readonly id: any, readonly name: string, readonly priority: number, readonly originatingDataId?: Maybe<any>, readonly originatingData?: Maybe<(
     { readonly __typename?: 'OriginatingData' }
     & OriginatingDataInfoFragment
@@ -23986,9 +23976,11 @@ export type EventInfoFragment = { readonly __typename?: 'Event', readonly confer
     & EventTagInfoFragment
   )> };
 
-export type EventPersonInfoFragment = { readonly __typename?: 'EventPerson', readonly affiliation?: Maybe<string>, readonly attendeeId?: Maybe<any>, readonly conferenceId: any, readonly eventId: any, readonly id: any, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roleName: EventPersonRole_Enum };
+export type EventPersonInfoFragment = { readonly __typename?: 'EventPerson', readonly affiliation?: Maybe<string>, readonly attendeeId?: Maybe<any>, readonly conferenceId: any, readonly eventId: any, readonly id: any, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roleName: EventPersonRole_Enum, readonly attendee?: Maybe<{ readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string, readonly userId?: Maybe<string> }> };
 
 export type EventTagInfoFragment = { readonly __typename?: 'EventTag', readonly eventId: any, readonly id: any, readonly tagId: any };
+
+export type AttendeeInfoFragment = { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string };
 
 export type SelectWholeScheduleQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -24010,6 +24002,9 @@ export type SelectWholeScheduleQuery = { readonly __typename?: 'query_root', rea
   )>, readonly ContentGroup: ReadonlyArray<(
     { readonly __typename?: 'ContentGroup' }
     & ContentGroupFullNestedInfoFragment
+  )>, readonly Attendee: ReadonlyArray<(
+    { readonly __typename?: 'Attendee' }
+    & AttendeeInfoFragment
   )> };
 
 export type InsertRoomsMutationVariables = Exact<{
@@ -24749,6 +24744,11 @@ export const EventPersonInfoFragmentDoc = gql`
     fragment EventPersonInfo on EventPerson {
   affiliation
   attendeeId
+  attendee {
+    id
+    displayName
+    userId
+  }
   conferenceId
   eventId
   id
@@ -24786,6 +24786,12 @@ export const EventInfoFragmentDoc = gql`
 }
     ${EventPersonInfoFragmentDoc}
 ${EventTagInfoFragmentDoc}`;
+export const AttendeeInfoFragmentDoc = gql`
+    fragment AttendeeInfo on Attendee {
+  id
+  displayName
+}
+    `;
 export const RequiredItemFieldsFragmentDoc = gql`
     fragment RequiredItemFields on RequiredContentItem {
   id
@@ -26969,39 +26975,6 @@ export function useUpdateRoomsWithParticipantsMutation(baseOptions?: Apollo.Muta
 export type UpdateRoomsWithParticipantsMutationHookResult = ReturnType<typeof useUpdateRoomsWithParticipantsMutation>;
 export type UpdateRoomsWithParticipantsMutationResult = Apollo.MutationResult<UpdateRoomsWithParticipantsMutation>;
 export type UpdateRoomsWithParticipantsMutationOptions = Apollo.BaseMutationOptions<UpdateRoomsWithParticipantsMutation, UpdateRoomsWithParticipantsMutationVariables>;
-export const SelectAllEventsDocument = gql`
-    query SelectAllEvents($conferenceId: uuid!) {
-  Event(where: {conferenceId: {_eq: $conferenceId}}) {
-    ...EventInfo
-  }
-}
-    ${EventInfoFragmentDoc}`;
-
-/**
- * __useSelectAllEventsQuery__
- *
- * To run a query within a React component, call `useSelectAllEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectAllEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectAllEventsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useSelectAllEventsQuery(baseOptions: Apollo.QueryHookOptions<SelectAllEventsQuery, SelectAllEventsQueryVariables>) {
-        return Apollo.useQuery<SelectAllEventsQuery, SelectAllEventsQueryVariables>(SelectAllEventsDocument, baseOptions);
-      }
-export function useSelectAllEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectAllEventsQuery, SelectAllEventsQueryVariables>) {
-          return Apollo.useLazyQuery<SelectAllEventsQuery, SelectAllEventsQueryVariables>(SelectAllEventsDocument, baseOptions);
-        }
-export type SelectAllEventsQueryHookResult = ReturnType<typeof useSelectAllEventsQuery>;
-export type SelectAllEventsLazyQueryHookResult = ReturnType<typeof useSelectAllEventsLazyQuery>;
-export type SelectAllEventsQueryResult = Apollo.QueryResult<SelectAllEventsQuery, SelectAllEventsQueryVariables>;
 export const SelectWholeScheduleDocument = gql`
     query SelectWholeSchedule($conferenceId: uuid!) {
   Room(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -27019,12 +26992,16 @@ export const SelectWholeScheduleDocument = gql`
   ContentGroup(where: {conferenceId: {_eq: $conferenceId}}) {
     ...ContentGroupFullNestedInfo
   }
+  Attendee(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...AttendeeInfo
+  }
 }
     ${RoomInfoFragmentDoc}
 ${EventInfoFragmentDoc}
 ${OriginatingDataInfoFragmentDoc}
 ${TagInfoFragmentDoc}
-${ContentGroupFullNestedInfoFragmentDoc}`;
+${ContentGroupFullNestedInfoFragmentDoc}
+${AttendeeInfoFragmentDoc}`;
 
 /**
  * __useSelectWholeScheduleQuery__

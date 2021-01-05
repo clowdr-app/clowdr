@@ -25,7 +25,7 @@ import { useConference } from "../../useConference";
 import type { ContentGroupDescriptor } from "../Content/Types";
 import type { OriginatingDataDescriptor, TagDescriptor } from "../Shared/Types";
 import { convertScheduleToDescriptors } from "./Functions";
-import type { EventDescriptor, EventPersonDescriptor, RoomDescriptor } from "./Types";
+import type { AttendeeDescriptor, EventDescriptor, EventPersonDescriptor, RoomDescriptor } from "./Types";
 
 gql`
     fragment RoomInfo on Room {
@@ -74,6 +74,11 @@ gql`
     fragment EventPersonInfo on EventPerson {
         affiliation
         attendeeId
+        attendee {
+            id
+            displayName
+            userId
+        }
         conferenceId
         eventId
         id
@@ -86,6 +91,11 @@ gql`
         eventId
         id
         tagId
+    }
+
+    fragment AttendeeInfo on Attendee {
+        id
+        displayName
     }
 
     query SelectWholeSchedule($conferenceId: uuid!) {
@@ -103,6 +113,9 @@ gql`
         }
         ContentGroup(where: { conferenceId: { _eq: $conferenceId } }) {
             ...ContentGroupFullNestedInfo
+        }
+        Attendee(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...AttendeeInfo
         }
     }
 
@@ -228,6 +241,7 @@ export type WholeScheduleStateT =
           tags: Map<string, TagDescriptor>;
           rooms: Map<string, RoomDescriptor>;
           originatingDatas: Map<string, OriginatingDataDescriptor>;
+          attendees: Map<string, AttendeeDescriptor>;
           contentGroups: ContentGroupDescriptor[];
       }
     | undefined;
@@ -240,6 +254,7 @@ export function useSaveScheduleDiff():
           originalTags: undefined;
           originalOriginatingDatas: undefined;
           originalRooms: undefined;
+          originalAttendees: undefined;
           contentGroups: undefined;
       }
     | {
@@ -249,6 +264,7 @@ export function useSaveScheduleDiff():
           originalTags: undefined;
           originalOriginatingDatas: undefined;
           originalRooms: undefined;
+          originalAttendees: undefined;
           contentGroups: undefined;
       }
     | {
@@ -258,6 +274,7 @@ export function useSaveScheduleDiff():
           originalTags: undefined;
           originalOriginatingDatas: undefined;
           originalRooms: undefined;
+          originalAttendees: undefined;
           contentGroups: undefined;
       }
     | {
@@ -267,6 +284,7 @@ export function useSaveScheduleDiff():
           originalTags: Map<string, TagDescriptor>;
           originalOriginatingDatas: Map<string, OriginatingDataDescriptor>;
           originalRooms: Map<string, RoomDescriptor>;
+          originalAttendees: Map<string, AttendeeDescriptor>;
           contentGroups: ContentGroupDescriptor[];
           saveScheduleDiff: (
               dirtyKeys: {
@@ -324,6 +342,7 @@ export function useSaveScheduleDiff():
             originalTags: undefined,
             originalOriginatingDatas: undefined,
             originalRooms: undefined,
+            originalAttendees: undefined,
             contentGroups: undefined,
         };
     } else if (errorContent) {
@@ -334,6 +353,7 @@ export function useSaveScheduleDiff():
             originalTags: undefined,
             originalOriginatingDatas: undefined,
             originalRooms: undefined,
+            originalAttendees: undefined,
             contentGroups: undefined,
         };
     } else if (!original) {
@@ -344,6 +364,7 @@ export function useSaveScheduleDiff():
             originalTags: undefined,
             originalOriginatingDatas: undefined,
             originalRooms: undefined,
+            originalAttendees: undefined,
             contentGroups: undefined,
         };
     } else {
@@ -354,6 +375,7 @@ export function useSaveScheduleDiff():
             originalOriginatingDatas: original.originatingDatas,
             originalTags: original.tags,
             originalRooms: original.rooms,
+            originalAttendees: original.attendees,
             contentGroups: original.contentGroups,
             saveScheduleDiff: async function saveScheduleDiff(
                 { eventKeys, originatingDataKeys, tagKeys, roomKeys },

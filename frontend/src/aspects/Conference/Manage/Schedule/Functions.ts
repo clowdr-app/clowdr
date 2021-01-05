@@ -2,7 +2,7 @@ import type { SelectWholeScheduleQuery } from "../../../../generated/graphql";
 import { convertContentGroupToDescriptor } from "../Content/Functions";
 import type { ContentGroupDescriptor } from "../Content/Types";
 import type { OriginatingDataDescriptor, OriginatingDataPart, TagDescriptor } from "../Shared/Types";
-import type { EventDescriptor, EventPersonDescriptor, RoomDescriptor } from "./Types";
+import type { AttendeeDescriptor, EventDescriptor, EventPersonDescriptor, RoomDescriptor } from "./Types";
 
 export function convertScheduleToDescriptors(
     schedule: SelectWholeScheduleQuery
@@ -11,6 +11,7 @@ export function convertScheduleToDescriptors(
     events: Map<string, EventDescriptor>;
     tags: Map<string, TagDescriptor>;
     originatingDatas: Map<string, OriginatingDataDescriptor>;
+    attendees: Map<string, AttendeeDescriptor>;
     contentGroups: ContentGroupDescriptor[];
 } {
     return {
@@ -36,6 +37,7 @@ export function convertScheduleToDescriptors(
                             name: eventPerson.name,
                             originatingDataId: eventPerson.originatingDataId,
                             roleName: eventPerson.roleName,
+                            eventId: eventPerson.id,
                         })
                     ),
                 },
@@ -76,6 +78,15 @@ export function convertScheduleToDescriptors(
                 },
             ])
         ),
+        attendees: new Map(
+            schedule.Attendee.map((data): [string, AttendeeDescriptor] => [
+                data.id,
+                {
+                    displayName: data.displayName,
+                    id: data.id,
+                },
+            ])
+        ),
     };
 }
 
@@ -94,6 +105,7 @@ export function deepCloneEventDescriptor(event: EventDescriptor): EventDescripto
             (eventPerson): EventPersonDescriptor => ({
                 affiliation: eventPerson.affiliation,
                 attendeeId: eventPerson.attendeeId,
+                eventId: eventPerson.eventId,
                 id: eventPerson.id,
                 name: eventPerson.name,
                 originatingDataId: eventPerson.originatingDataId,

@@ -38,8 +38,15 @@ export type EventPersonDescriptor = {
     id: string;
     originatingDataId?: string;
 
+    eventId: string;
     attendeeId?: string | null;
     name: string;
     affiliation?: string | null;
     roleName: EventPersonRole_Enum;
+};
+
+export type AttendeeDescriptor = {
+    isNew?: boolean;
+    id: string;
+    displayName: string;
 };

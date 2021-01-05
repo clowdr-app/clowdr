@@ -29,6 +29,7 @@ import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import isValidUUID from "../../Utils/isValidUUID";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
+import type { AttendeeDescriptor } from "./People/Types";
 import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
 gql`
@@ -115,16 +116,6 @@ gql`
 `;
 
 type GroupOption = SelectOption;
-
-type AttendeeDescriptor = {
-    isNew: boolean;
-    id: string;
-    userId?: string | null;
-    displayName: string;
-    invitedEmailAddress?: string;
-    inviteSent: boolean;
-    groupIds: Set<string>;
-};
 
 const AttendeesCRUDTable = (props: Readonly<CRUDTableProps<AttendeeDescriptor, "id">>) => CRUDTable(props);
 

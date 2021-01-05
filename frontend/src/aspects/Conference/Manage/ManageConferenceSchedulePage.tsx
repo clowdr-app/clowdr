@@ -1,15 +1,18 @@
-import { Heading } from "@chakra-ui/react";
+import {
+    Accordion,
+    AccordionButton,
+    AccordionIcon,
+    AccordionItem,
+    AccordionPanel,
+    Box,
+    Heading,
+    useDisclosure,
+} from "@chakra-ui/react";
 import assert from "assert";
 import { addHours, addSeconds, differenceInSeconds, startOfHour } from "date-fns";
 import React, { useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import {
-    EventInfoFragment,
-    Permission_Enum,
-    RoomMode_Enum,
-    SelectAllEventsQuery,
-    useSelectAllEventsQuery,
-} from "../../../generated/graphql";
+import { Permission_Enum, RoomMode_Enum } from "../../../generated/graphql";
 import CRUDTable, {
     CRUDTableProps,
     defaultDateTimeFilter,
@@ -21,25 +24,19 @@ import CRUDTable, {
     UpdateResult,
 } from "../../CRUDTable/CRUDTable";
 import PageNotFound from "../../Errors/PageNotFound";
-import ApolloQueryWrapper from "../../GQL/ApolloQueryWrapper";
 import isValidUUID from "../../Utils/isValidUUID";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
 import type { ContentGroupDescriptor } from "./Content/Types";
-import type { EventDescriptor, RoomDescriptor } from "./Schedule/Types";
+import { EventPersonsModal } from "./Schedule/EventPersonsModal";
+import type { AttendeeDescriptor, EventDescriptor, RoomDescriptor } from "./Schedule/Types";
 import { useSaveScheduleDiff } from "./Schedule/useSaveScheduleDiff";
 import type { OriginatingDataDescriptor, TagDescriptor } from "./Shared/Types";
 import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
 const ScheduleCRUDTable = (props: Readonly<CRUDTableProps<EventDescriptor, "id">>) => CRUDTable(props);
 
-function EditableScheduleCRUDTable({
-    originalData,
-    refetch,
-}: {
-    originalData: ReadonlyArray<EventInfoFragment>;
-    refetch: () => Promise<void>;
-}) {
+function EditableScheduleCRUDTable() {
     const saveScheduleDiff = useSaveScheduleDiff();
 
     const roomModeOptions: SelectOption[] = useMemo(() => {
@@ -59,6 +56,7 @@ function EditableScheduleCRUDTable({
     const [allTagsMap, setAllTagsMap] = useState<Map<string, TagDescriptor>>();
     const [allRoomsMap, setAllRoomsMap] = useState<Map<string, RoomDescriptor>>();
     const [allOriginatingDatasMap, setAllOriginatingDatasMap] = useState<Map<string, OriginatingDataDescriptor>>();
+    const [allAttendeesMap, setAllAttendeesMap] = useState<Map<string, AttendeeDescriptor>>();
 
     // TODO: tags modal
     const [dirtyTagIds, setDirtyTagIds] = useState<Set<string>>(new Set());
@@ -251,6 +249,7 @@ function EditableScheduleCRUDTable({
             const newTagsMap = new Map<string, TagDescriptor>();
             const newOriginatingDatasMap = new Map<string, OriginatingDataDescriptor>();
             const newRoomsMap = new Map<string, RoomDescriptor>();
+            const newAttendeesMap = new Map<string, AttendeeDescriptor>();
 
             for (const [key, value] of saveScheduleDiff.originalEvents) {
                 newEventsMap.set(key, { ...value });
@@ -272,16 +271,22 @@ function EditableScheduleCRUDTable({
                 newGroupsMap.set(group.id, { ...group });
             }
 
+            for (const [key, value] of saveScheduleDiff.originalAttendees) {
+                newAttendeesMap.set(key, { ...value });
+            }
+
             setAllEventsMap(newEventsMap);
             setAllContentGroupsMap(newGroupsMap);
             setAllTagsMap(newTagsMap);
             setAllRoomsMap(newRoomsMap);
             setAllOriginatingDatasMap(newOriginatingDatasMap);
+            setAllAttendeesMap(newAttendeesMap);
         }
     }, [
         saveScheduleDiff.contentGroups,
         saveScheduleDiff.errorContent,
         saveScheduleDiff.loadingContent,
+        saveScheduleDiff.originalAttendees,
         saveScheduleDiff.originalEvents,
         saveScheduleDiff.originalOriginatingDatas,
         saveScheduleDiff.originalRooms,
@@ -412,6 +417,20 @@ function EditableScheduleCRUDTable({
                 },
                 otherFields: fields,
             }}
+            secondaryFields={{
+                editSingle: (key, onClose, isDirty, markDirty) => {
+                    assert(allEventsMap);
+                    assert(allAttendeesMap);
+                    return EventSecondaryEditor(
+                        allEventsMap,
+                        allAttendeesMap,
+                        key,
+                        markDirty,
+                        isDirty,
+                        setAllEventsMap
+                    );
+                },
+            }}
         />
     );
 }
@@ -420,12 +439,6 @@ export default function ManageConferenceSchedulePage(): JSX.Element {
     const conference = useConference();
 
     useDashboardPrimaryMenuButtons();
-
-    const selectAllEventsResult = useSelectAllEventsQuery({
-        variables: {
-            conferenceId: conference.id,
-        },
-    });
 
     return (
         <RequireAtLeastOnePermissionWrapper
@@ -438,21 +451,125 @@ export default function ManageConferenceSchedulePage(): JSX.Element {
             <Heading as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                 Events
             </Heading>
-            <ApolloQueryWrapper<SelectAllEventsQuery, unknown, ReadonlyArray<EventInfoFragment>>
-                getter={(x) => x.Event}
-                queryResult={selectAllEventsResult}
-            >
-                {(data) => {
-                    return (
-                        <EditableScheduleCRUDTable
-                            originalData={data}
-                            refetch={async () => {
-                                await selectAllEventsResult.refetch();
-                            }}
-                        />
-                    );
-                }}
-            </ApolloQueryWrapper>
+
+            <EditableScheduleCRUDTable />
         </RequireAtLeastOnePermissionWrapper>
     );
+}
+
+function EventSecondaryEditor(
+    allEventsMap: Map<string, EventDescriptor>,
+    allAttendeesMap: Map<string, AttendeeDescriptor>,
+    key: string,
+    markDirty: () => void,
+    isDirty: boolean,
+    setAllEventsMap: React.Dispatch<React.SetStateAction<Map<string, EventDescriptor> | undefined>>
+) {
+    const event = allEventsMap.get(key);
+
+    const editor = (
+        <>
+            {event ? (
+                <Accordion defaultIndex={[0]}>
+                    <AccordionItem key="people">
+                        <AccordionButton>
+                            <Box flex="1" textAlign="left">
+                                People
+                            </Box>
+                            <AccordionIcon />
+                        </AccordionButton>
+                        <AccordionPanel>
+                            <EventPeopleEditorModal
+                                event={event}
+                                isDirty={isDirty}
+                                markDirty={markDirty}
+                                attendeeMap={allAttendeesMap}
+                                setAllEventsMap={setAllEventsMap}
+                            />
+                        </AccordionPanel>
+                    </AccordionItem>
+                </Accordion>
+            ) : (
+                <>No event found.</>
+            )}
+        </>
+    );
+
+    return {
+        includeCloseButton: true,
+        editorElement: editor,
+        footerButtons: [],
+    };
+}
+
+function EventPeopleEditorModal({
+    event,
+    attendeeMap,
+    isDirty,
+    markDirty,
+    setAllEventsMap,
+}: {
+    event: EventDescriptor;
+    attendeeMap: Map<string, AttendeeDescriptor>;
+    isDirty: boolean;
+    markDirty: () => void;
+    setAllEventsMap: React.Dispatch<React.SetStateAction<Map<string, EventDescriptor> | undefined>>;
+}) {
+    const { isOpen: isUploadersOpen, onOpen: onUploadersOpen, onClose: onUploadersClose } = useDisclosure();
+    const accordionContents = (
+        <>
+            <EventPersonsModal
+                isEventDirty={isDirty}
+                isOpen={isUploadersOpen}
+                onOpen={onUploadersOpen}
+                onClose={onUploadersClose}
+                event={event}
+                attendeeMap={attendeeMap}
+                insertEventPerson={(eventPerson) => {
+                    markDirty();
+                    setAllEventsMap((oldEvents) => {
+                        const newEvents: Map<string, EventDescriptor> = oldEvents ? new Map(oldEvents) : new Map();
+                        const existingEvent = newEvents.get(event.id);
+                        assert(existingEvent);
+                        newEvents.set(event.id, {
+                            ...existingEvent,
+                            people: [...existingEvent.people, eventPerson],
+                        });
+                        return newEvents;
+                    });
+                }}
+                updateEventPerson={(eventPerson) => {
+                    markDirty();
+                    setAllEventsMap((oldEvents) => {
+                        const newEvents: Map<string, EventDescriptor> = oldEvents ? new Map(oldEvents) : new Map();
+                        const existingEvent = newEvents.get(event.id);
+                        assert(existingEvent);
+                        newEvents.set(event.id, {
+                            ...existingEvent,
+                            people: existingEvent.people.map((existingEventPerson) =>
+                                existingEventPerson.id === eventPerson.id ? eventPerson : existingEventPerson
+                            ),
+                        });
+                        return newEvents;
+                    });
+                }}
+                deleteEventPerson={(eventPersonId) => {
+                    markDirty();
+                    setAllEventsMap((oldEvents) => {
+                        const newEvents: Map<string, EventDescriptor> = oldEvents ? new Map(oldEvents) : new Map();
+                        const existingEvent = newEvents.get(event.id);
+                        assert(existingEvent);
+                        newEvents.set(event.id, {
+                            ...existingEvent,
+                            people: existingEvent.people.filter(
+                                (existingEventPerson) => existingEventPerson.id !== eventPersonId
+                            ),
+                        });
+                        return newEvents;
+                    });
+                }}
+            />
+        </>
+    );
+    return accordionContents;
 }

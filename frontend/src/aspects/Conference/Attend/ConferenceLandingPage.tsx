@@ -35,7 +35,7 @@ function ConferenceLandingContent({ group }: { group: ContentGroupDataFragment }
                 {
                     assertIsContentItemDataBlob(item.data);
                     const latestVersion = item.data[item.data.length - 1];
-                    elements.push(
+                    elements.splice(0, 0,
                         <Box key={"item-" + item.id} mt={5} maxW={600}>
                             <Markdown>
                                 {latestVersion?.data.baseType === ContentBaseType.Text ? latestVersion.data.text : ""}

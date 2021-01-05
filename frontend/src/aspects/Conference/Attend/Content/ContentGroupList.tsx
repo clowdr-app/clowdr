@@ -175,7 +175,11 @@ function Panel({ tag, isExpanded }: { tag: TagWithContentFragment; isExpanded: b
                     {resultCountStr}
                 </FormLabel>
             </FormControl>
-            <SimpleGrid columns={[1, 2, 3]} autoRows="min-content" spacing={[2, 2, 4]}>
+            <SimpleGrid
+                columns={[1, Math.min(2, filteredElements.length), Math.min(3, filteredElements.length)]}
+                autoRows="min-content"
+                spacing={[2, 2, 4]}
+            >
                 {filteredElements.map((g) => g.el)}
             </SimpleGrid>
         </Center>
@@ -230,7 +234,7 @@ export default function ContentGroupList(): JSX.Element {
             <Center flexDirection="column">
                 <SimpleGrid
                     aria-describedby="content-groups-accordion-header"
-                    columns={[1, 2, 3, 4]}
+                    columns={[1, Math.min(2, sortedTags.length), Math.min(3, sortedTags.length), Math.min(4, sortedTags.length)]}
                     maxW={1024}
                     autoRows={["min-content", "min-content", "1fr"]}
                     spacing={[2, 2, 4]}

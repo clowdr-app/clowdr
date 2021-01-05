@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 import { Box, Heading, Spinner } from "@chakra-ui/react";
-import { assertIsContentItemDataBlob, ContentBaseType } from "@clowdr-app/shared-types/build/content";
+import { assertIsContentItemDataBlob, ContentBaseType, ContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
 import React, { useMemo } from "react";
 import {
     ContentGroupDataFragment,
@@ -73,6 +73,16 @@ function ConferenceLandingPageInner(): JSX.Element {
         return null;
     }, [data]);
 
+    const hasAbstract = useMemo(() => group?.contentItems.some(item => {
+        if (item.contentTypeName === ContentType_Enum.Abstract) {
+            const data: ContentItemDataBlob = item.data;
+            if (data.length > 0 && data[0].data.baseType === ContentBaseType.Text && data[0].data.text && data[0].data.text.trim() !== "") {
+                return true;
+            }
+        }
+        return false;
+    }), [group?.contentItems]);
+
     if (!group) {
         return (
             <Box>
@@ -92,7 +102,7 @@ function ConferenceLandingPageInner(): JSX.Element {
 
     return (
         <>
-            <Heading as="h1">{conference.shortName}</Heading>
+            {!hasAbstract ? <Heading as="h1">{conference.shortName}</Heading> : undefined}
             <ConferenceLandingContent group={group} />
         </>
     );

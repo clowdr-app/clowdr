@@ -70,7 +70,7 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
                 {(contentGroupData: ContentGroupDataFragment & ContentGroupEventsFragment) => {
                     return (
                         <Flex width="100%" height="100%" gridColumnGap={5} flexWrap={stackColumns ? "wrap" : "nowrap"}>
-                            <Box textAlign="center" flexGrow={1} overflowY="auto" style={{ scrollbarWidth: "thin" }}>
+                            <Box textAlign="center" flexGrow={1} style={{ scrollbarWidth: "thin" }}>
                                 <ContentGroupVideos contentGroupData={contentGroupData} />
                                 <Box ml={5}>
                                     <ContentGroupSummary contentGroupData={contentGroupData} />

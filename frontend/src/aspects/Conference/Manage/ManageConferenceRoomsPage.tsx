@@ -306,6 +306,7 @@ function EditableRoomsCRUDTable({
                                     conferenceId: conference.id,
                                     capacity: value.capacity,
                                     priority: value.priority,
+                                    currentModeName: RoomMode_Enum.Breakout,
                                     name: value.name,
                                 },
                             },

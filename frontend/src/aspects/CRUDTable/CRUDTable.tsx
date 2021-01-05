@@ -39,11 +39,13 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import assert from "assert";
+import { formatISO9075 } from "date-fns";
 import React, { Dispatch, SetStateAction, useCallback, useMemo, useState } from "react";
 import Select from "react-select";
 import { v4 as uuidv4 } from "uuid";
 import FAIcon from "../Icons/FAIcon";
 import UnsavedChangesWarning from "../LeavingPageWarnings/UnsavedChangesWarning";
+import { DateTimePicker } from "./DateTimePicker";
 import useDebouncedState from "./useDebouncedState";
 
 export enum FieldType {
@@ -51,6 +53,7 @@ export enum FieldType {
     integer,
     boolean,
     select,
+    datetime,
 }
 
 export enum BooleanFieldFormat {
@@ -105,6 +108,11 @@ export function defaultSelectFilter(
     return searchValues.some((key) =>
         itemOptions instanceof Array ? itemOptions.some((x) => x.value === key) : itemOptions.value === key
     );
+}
+
+export function defaultDateTimeFilter(item: Date, search?: string): boolean {
+    // TODO: provide a filter method with upper and lower bound
+    return search ? item.toISOString().includes(search) : true;
 }
 
 export function defaultStringSorter(itemX: string, itemY: string): number {
@@ -228,7 +236,24 @@ export type SelectFieldSpec<S> = {
     }>;
 };
 
-export type FieldSpec<S> = StringFieldSpec<S> | IntegerFieldSpec<S> | BooleanFieldSpec<S> | SelectFieldSpec<S>;
+export type DateTimeFieldSpec<S> = {
+    fieldType: FieldType.datetime;
+
+    convertToUI: (v: S) => Date;
+    convertFromUI: (v: Date) => S;
+
+    filter?: (item: Date, search?: string) => boolean;
+    sort?: (itemX: Date, itemY: Date) => number;
+
+    areEqual?: (itemX: Date, itemY: Date) => boolean;
+};
+
+export type FieldSpec<S> =
+    | StringFieldSpec<S>
+    | IntegerFieldSpec<S>
+    | BooleanFieldSpec<S>
+    | SelectFieldSpec<S>
+    | DateTimeFieldSpec<S>;
 
 export type ValidatationResult = true | Array<string>;
 export type UpdateResult = true | Array<string>;
@@ -308,16 +333,15 @@ export interface CUDCallbacks<T, PK extends keyof T> {
     cudCallbacks?: BatchModeCUDCallbacks<T, PK> | InstantModeCUDCallbacks<T, PK>;
 }
 
+export type EditMode = {
+    label: string;
+    onChange: (value: any) => void;
+    opts?: any;
+    isDisabled?: boolean;
+};
+
 const defaultRenderers: {
-    readonly [K in FieldType]: (
-        value: any,
-        editMode?: {
-            label: string;
-            onChange: (value: any) => void;
-            opts?: any;
-            isDisabled?: boolean;
-        }
-    ) => JSX.Element;
+    readonly [K in FieldType]: (value: any, editMode?: EditMode) => JSX.Element;
 } = {
     [FieldType.string]: function renderStringField(value: string, editMode) {
         if (editMode) {
@@ -482,6 +506,13 @@ const defaultRenderers: {
                     </Text>
                 );
             }
+        }
+    },
+    [FieldType.datetime]: function renderDateTimeField(value: Date, editMode) {
+        if (editMode) {
+            return <DateTimePicker value={value} editMode={editMode} />;
+        } else {
+            return <>{formatISO9075(value)}</>;
         }
     },
 };
@@ -1365,6 +1396,10 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
                 case FieldType.select: {
                     const v = field.spec.convertToUI(field.extract(item));
                     return !!field.spec.filter?.(v, debouncedFilterValues.get(field.heading) as string[] | undefined);
+                }
+                case FieldType.datetime: {
+                    const v = field.spec.convertToUI(field.extract(item));
+                    return !!field.spec.filter?.(v, debouncedFilterValues.get(field.heading) as string | undefined);
                 }
             }
         },

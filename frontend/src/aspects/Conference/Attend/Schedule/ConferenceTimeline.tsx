@@ -166,10 +166,12 @@ function ConferenceTimelineInner({
     const timeBarHeight = 5 + roomRowHeight / 2;
     const borderColour = useColorModeValue("gray.400", "gray.400");
 
-    const timeBarF = useCallback((key: string, mt?: string) => <TimeBar key={key} height={timeBarHeight} borderColour={borderColour} marginTop={mt} />, [
-        borderColour,
-        timeBarHeight,
-    ]);
+    const timeBarF = useCallback(
+        (key: string, mt?: string) => (
+            <TimeBar key={key} height={timeBarHeight} borderColour={borderColour} marginTop={mt} />
+        ),
+        [borderColour, timeBarHeight]
+    );
 
     const alternateBgColor = useColorModeValue("blue.100", "blue.700");
 
@@ -215,7 +217,9 @@ function ConferenceTimelineInner({
             rooms.reduce(
                 (acc, room, idx) => [
                     ...acc,
-                    idx % rowInterval === 0 ? timeBarF("timeline-" + idx, idx > 0 ? timeBarSeparation : undefined) : undefined,
+                    idx % rowInterval === 0
+                        ? timeBarF("timeline-" + idx, idx > 0 ? timeBarSeparation : undefined)
+                        : undefined,
                     <Box
                         key={room.id}
                         w="100%"

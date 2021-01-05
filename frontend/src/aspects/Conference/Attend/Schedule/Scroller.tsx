@@ -55,7 +55,15 @@ export default function Scroller({
     const innerWidthPx = (1920 * fullTimeSpanSeconds) / visibleTimeSpanSeconds;
 
     return (
-        <Box as={ScrollContainer} w="100%" h={height} vertical={false} hideScrollbars={false} role="region" aria-label="Room schedules">
+        <Box
+            as={ScrollContainer}
+            w="100%"
+            h={height}
+            vertical={false}
+            hideScrollbars={false}
+            role="region"
+            aria-label="Room schedules"
+        >
             <div
                 style={{
                     width: innerWidthPx,

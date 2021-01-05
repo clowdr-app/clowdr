@@ -3,7 +3,7 @@ import { Route, RouteComponentProps, Switch } from "react-router-dom";
 import PageNotFound from "../Errors/PageNotFound";
 import PageNotImplemented from "../Errors/PageNotImplemented";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
-import AttendeeLandingPage from "./Attend/AttendeeLandingPage";
+import ConferenceLandingPage from "./Attend/ConferenceLandingPage";
 import ContentGroupPage from "./Attend/Content/ContentGroupPage";
 import RoomPage from "./Attend/Room/RoomPage";
 import ConferenceTimeline from "./Attend/Schedule/ConferenceTimeline";
@@ -101,8 +101,8 @@ function AuthenticatedConferenceRoutes(rootUrl: string): JSX.Element {
                         <ConferenceTimeline />
                     </Route>
 
-                    <Route path={`${rootUrl}/`}>
-                        <PageNotFound />
+                    <Route exact path={`${rootUrl}/`}>
+                        <ConferenceLandingPage />
                     </Route>
                 </Switch>
             </ConferenceCurrentUserActivePermissionsProvider>
@@ -114,10 +114,6 @@ export default function ConferenceRoutes({ confSlug, rootUrl }: { confSlug: stri
     return (
         <ConferenceProvider confSlug={confSlug}>
             <Switch>
-                <Route exact path={`${rootUrl}/`}>
-                    <AttendeeLandingPage />
-                </Route>
-
                 {AuthenticatedConferenceRoutes(rootUrl)}
 
                 <Route path={`${rootUrl}/`}>

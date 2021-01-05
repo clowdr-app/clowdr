@@ -199,6 +199,9 @@ async function createBlob(inputData: any, contentTypeName: ContentType_Enum): Pr
                 subtitles: {},
             };
         }
+        case ContentType_Enum.ContentGroupList:
+        case ContentType_Enum.WholeSchedule:
+            return { error: "Component content item types cannot be uploaded." };
     }
 }
 
@@ -618,6 +621,8 @@ function generateContentTypeFriendlyName(type: ContentType_Enum) {
     switch (type) {
         case ContentType_Enum.Abstract:
             return "Abstract";
+        case ContentType_Enum.ContentGroupList:
+            return "Content group list";
         case ContentType_Enum.ImageFile:
             return "Image file";
         case ContentType_Enum.ImageUrl:
@@ -656,6 +661,8 @@ function generateContentTypeFriendlyName(type: ContentType_Enum) {
             return "Pre-roll titles video";
         case ContentType_Enum.VideoUrl:
             return "Video URL";
+        case ContentType_Enum.WholeSchedule:
+            return "Whole schedule";
         case ContentType_Enum.Zoom:
             return "Zoom Meeting URL";
     }

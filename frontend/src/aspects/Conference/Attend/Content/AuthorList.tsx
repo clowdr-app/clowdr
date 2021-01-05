@@ -17,14 +17,16 @@ gql`
 
 export function AuthorList({
     contentPeopleData,
+    hideRole,
 }: {
     contentPeopleData: readonly ContentPersonDataFragment[];
+    hideRole?: boolean;
 }): JSX.Element {
     const authorElements = useMemo(() => {
         return contentPeopleData.map((contentPersonData) => {
-            return <Author contentPersonData={contentPersonData} key={contentPersonData.id} />;
+            return <Author contentPersonData={contentPersonData} key={contentPersonData.id} hideRole={hideRole} />;
         });
-    }, [contentPeopleData]);
+    }, [contentPeopleData, hideRole]);
 
     return (
         <HStack spacing="0" gridGap="4" wrap="wrap">
@@ -33,15 +35,21 @@ export function AuthorList({
     );
 }
 
-export function Author({ contentPersonData }: { contentPersonData: ContentPersonDataFragment }): JSX.Element {
+export function Author({
+    contentPersonData,
+    hideRole,
+}: {
+    contentPersonData: ContentPersonDataFragment;
+    hideRole?: boolean;
+}): JSX.Element {
     return (
-        <VStack textAlign="left" justifyContent="flex-start" alignItems="start" flexBasis="1 1 50%">
-            <Text fontWeight="bold">
-                {contentPersonData.person.name}
-            </Text>
-            <Badge ml="2" colorScheme="green" verticalAlign="initial">
-                {contentPersonData.roleName}
-            </Badge>
+        <VStack textAlign="left" justifyContent="flex-start" alignItems="start">
+            <Text fontWeight="bold">{contentPersonData.person.name}</Text>
+            {!hideRole ? (
+                <Badge ml="2" colorScheme="green" verticalAlign="initial">
+                    {contentPersonData.roleName}
+                </Badge>
+            ) : undefined}
             <Text fontSize="sm">
                 {contentPersonData.person.affiliation &&
                 contentPersonData.person.affiliation !== "None" &&

@@ -5057,6 +5057,8 @@ export enum ContentGroupType_Constraint {
 export enum ContentGroupType_Enum {
   /** A keynote. */
   Keynote = 'KEYNOTE',
+  /** Conference main landing page. */
+  LandingPage = 'LANDING_PAGE',
   /** A generic group type - use sparingly. */
   Other = 'OTHER',
   /** A paper. */
@@ -6096,6 +6098,8 @@ export enum ContentType_Constraint {
 export enum ContentType_Enum {
   /** Abstract Markdown text. */
   Abstract = 'ABSTRACT',
+  /** List of content groups in the system. */
+  ContentGroupList = 'CONTENT_GROUP_LIST',
   /** File for an image (stored by Clowdr). */
   ImageFile = 'IMAGE_FILE',
   /** URL to an image (embedded in Clowdr UI). */
@@ -6134,6 +6138,8 @@ export enum ContentType_Enum {
   VideoTitles = 'VIDEO_TITLES',
   /** URL for a video (video is embedded in Clowdr UI). */
   VideoUrl = 'VIDEO_URL',
+  /** Schedule view for the whole conference. */
+  WholeSchedule = 'WHOLE_SCHEDULE',
   /** Data for a Zoom meeting. */
   Zoom = 'ZOOM'
 }
@@ -23291,7 +23297,35 @@ export type DeleteIsTypingMutationVariables = Exact<{
 
 export type DeleteIsTypingMutation = { readonly __typename?: 'mutation_root', readonly delete_ChatTyper?: Maybe<{ readonly __typename?: 'ChatTyper_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ChatTyper', readonly id: any }> }> };
 
+export type ConferenceLandingPageContentGroupQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type ConferenceLandingPageContentGroupQuery = { readonly __typename?: 'query_root', readonly ContentGroup: ReadonlyArray<(
+    { readonly __typename?: 'ContentGroup' }
+    & ContentGroupDataFragment
+  )> };
+
 export type ContentPersonDataFragment = { readonly __typename?: 'ContentGroupPerson', readonly id: any, readonly roleName: string, readonly person: { readonly __typename?: 'ContentPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string> } };
+
+export type TagWithContentFragment = (
+  { readonly __typename?: 'Tag', readonly contentGroupTags: ReadonlyArray<{ readonly __typename?: 'ContentGroupTag', readonly contentGroup: (
+      { readonly __typename?: 'ContentGroup' }
+      & ContentGroupDataFragment
+    ) }> }
+  & TagInfoFragment
+);
+
+export type ContentByTagQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type ContentByTagQuery = { readonly __typename?: 'query_root', readonly Tag: ReadonlyArray<(
+    { readonly __typename?: 'Tag' }
+    & TagWithContentFragment
+  )> };
 
 export type GetContentGroupQueryVariables = Exact<{
   contentGroupId: Scalars['uuid'];
@@ -24071,10 +24105,15 @@ export type CreateNewConferenceMetaStructureMutationVariables = Exact<{
   conferenceId: Scalars['uuid'];
   attendeeDisplayName: Scalars['String'];
   userId: Scalars['String'];
+  abstractData: Scalars['jsonb'];
+  contentGroupListData: Scalars['jsonb'];
 }>;
 
 
-export type CreateNewConferenceMetaStructureMutation = { readonly __typename?: 'mutation_root', readonly insert_Attendee?: Maybe<{ readonly __typename?: 'Attendee_mutation_response', readonly affected_rows: number }>, readonly insert_Group?: Maybe<{ readonly __typename?: 'Group_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Group', readonly id: any, readonly conferenceId: any, readonly name: string, readonly enabled: boolean, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any, readonly role: { readonly __typename?: 'Role', readonly id: any, readonly name: string, readonly conferenceId: any, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly id: any, readonly roleId: any, readonly permissionName: Permission_Enum }> } }> }> }> };
+export type CreateNewConferenceMetaStructureMutation = { readonly __typename?: 'mutation_root', readonly insert_Attendee?: Maybe<{ readonly __typename?: 'Attendee_mutation_response', readonly affected_rows: number }>, readonly insert_Group?: Maybe<{ readonly __typename?: 'Group_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Group', readonly id: any, readonly conferenceId: any, readonly name: string, readonly enabled: boolean, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any, readonly role: { readonly __typename?: 'Role', readonly id: any, readonly name: string, readonly conferenceId: any, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly id: any, readonly roleId: any, readonly permissionName: Permission_Enum }> } }> }> }>, readonly insert_ContentGroup?: Maybe<{ readonly __typename?: 'ContentGroup_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'ContentGroup' }
+      & ContentGroupDataFragment
+    )> }> };
 
 export type ConferenceBySlugQueryVariables = Exact<{
   slug: Scalars['String'];
@@ -24238,6 +24277,15 @@ export type UpdateCurrentUserLastSeenMutationVariables = Exact<{
 
 export type UpdateCurrentUserLastSeenMutation = { readonly __typename?: 'mutation_root', readonly update_OnlineStatus?: Maybe<{ readonly __typename?: 'OnlineStatus_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'OnlineStatus', readonly id: any, readonly lastSeen: any }> }> };
 
+export const TagInfoFragmentDoc = gql`
+    fragment TagInfo on Tag {
+  id
+  conferenceId
+  colour
+  name
+  originatingDataId
+}
+    `;
 export const ContentItemDataFragmentDoc = gql`
     fragment ContentItemData on ContentItem {
   id
@@ -24272,6 +24320,17 @@ export const ContentGroupDataFragmentDoc = gql`
 }
     ${ContentItemDataFragmentDoc}
 ${ContentPersonDataFragmentDoc}`;
+export const TagWithContentFragmentDoc = gql`
+    fragment TagWithContent on Tag {
+  ...TagInfo
+  contentGroupTags {
+    contentGroup {
+      ...ContentGroupData
+    }
+  }
+}
+    ${TagInfoFragmentDoc}
+${ContentGroupDataFragmentDoc}`;
 export const ContentGroupEventFragmentDoc = gql`
     fragment ContentGroupEvent on Event {
   startTime
@@ -24569,15 +24628,6 @@ ${ContentItemInfoFragmentDoc}
 ${ContentGroupTagInfoFragmentDoc}
 ${ContentGroupHallwayInfoFragmentDoc}
 ${ContentGroupPersonInfoFragmentDoc}`;
-export const TagInfoFragmentDoc = gql`
-    fragment TagInfo on Tag {
-  id
-  conferenceId
-  colour
-  name
-  originatingDataId
-}
-    `;
 export const HallwayInfoFragmentDoc = gql`
     fragment HallwayInfo on Hallway {
   id
@@ -25024,6 +25074,74 @@ export function useDeleteIsTypingMutation(baseOptions?: Apollo.MutationHookOptio
 export type DeleteIsTypingMutationHookResult = ReturnType<typeof useDeleteIsTypingMutation>;
 export type DeleteIsTypingMutationResult = Apollo.MutationResult<DeleteIsTypingMutation>;
 export type DeleteIsTypingMutationOptions = Apollo.BaseMutationOptions<DeleteIsTypingMutation, DeleteIsTypingMutationVariables>;
+export const ConferenceLandingPageContentGroupDocument = gql`
+    query ConferenceLandingPageContentGroup($conferenceId: uuid!) {
+  ContentGroup(
+    where: {_and: [{conferenceId: {_eq: $conferenceId}}, {contentGroupTypeName: {_eq: LANDING_PAGE}}]}
+  ) {
+    ...ContentGroupData
+  }
+}
+    ${ContentGroupDataFragmentDoc}`;
+
+/**
+ * __useConferenceLandingPageContentGroupQuery__
+ *
+ * To run a query within a React component, call `useConferenceLandingPageContentGroupQuery` and pass it any options that fit your needs.
+ * When your component renders, `useConferenceLandingPageContentGroupQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useConferenceLandingPageContentGroupQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useConferenceLandingPageContentGroupQuery(baseOptions: Apollo.QueryHookOptions<ConferenceLandingPageContentGroupQuery, ConferenceLandingPageContentGroupQueryVariables>) {
+        return Apollo.useQuery<ConferenceLandingPageContentGroupQuery, ConferenceLandingPageContentGroupQueryVariables>(ConferenceLandingPageContentGroupDocument, baseOptions);
+      }
+export function useConferenceLandingPageContentGroupLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ConferenceLandingPageContentGroupQuery, ConferenceLandingPageContentGroupQueryVariables>) {
+          return Apollo.useLazyQuery<ConferenceLandingPageContentGroupQuery, ConferenceLandingPageContentGroupQueryVariables>(ConferenceLandingPageContentGroupDocument, baseOptions);
+        }
+export type ConferenceLandingPageContentGroupQueryHookResult = ReturnType<typeof useConferenceLandingPageContentGroupQuery>;
+export type ConferenceLandingPageContentGroupLazyQueryHookResult = ReturnType<typeof useConferenceLandingPageContentGroupLazyQuery>;
+export type ConferenceLandingPageContentGroupQueryResult = Apollo.QueryResult<ConferenceLandingPageContentGroupQuery, ConferenceLandingPageContentGroupQueryVariables>;
+export const ContentByTagDocument = gql`
+    query ContentByTag($conferenceId: uuid!) {
+  Tag(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...TagWithContent
+  }
+}
+    ${TagWithContentFragmentDoc}`;
+
+/**
+ * __useContentByTagQuery__
+ *
+ * To run a query within a React component, call `useContentByTagQuery` and pass it any options that fit your needs.
+ * When your component renders, `useContentByTagQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useContentByTagQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useContentByTagQuery(baseOptions: Apollo.QueryHookOptions<ContentByTagQuery, ContentByTagQueryVariables>) {
+        return Apollo.useQuery<ContentByTagQuery, ContentByTagQueryVariables>(ContentByTagDocument, baseOptions);
+      }
+export function useContentByTagLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ContentByTagQuery, ContentByTagQueryVariables>) {
+          return Apollo.useLazyQuery<ContentByTagQuery, ContentByTagQueryVariables>(ContentByTagDocument, baseOptions);
+        }
+export type ContentByTagQueryHookResult = ReturnType<typeof useContentByTagQuery>;
+export type ContentByTagLazyQueryHookResult = ReturnType<typeof useContentByTagLazyQuery>;
+export type ContentByTagQueryResult = Apollo.QueryResult<ContentByTagQuery, ContentByTagQueryVariables>;
 export const GetContentGroupDocument = gql`
     query GetContentGroup($contentGroupId: uuid!) {
   ContentGroup_by_pk(id: $contentGroupId) {
@@ -27220,7 +27338,7 @@ export type CreateConferenceMutationHookResult = ReturnType<typeof useCreateConf
 export type CreateConferenceMutationResult = Apollo.MutationResult<CreateConferenceMutation>;
 export type CreateConferenceMutationOptions = Apollo.BaseMutationOptions<CreateConferenceMutation, CreateConferenceMutationVariables>;
 export const CreateNewConferenceMetaStructureDocument = gql`
-    mutation CreateNewConferenceMetaStructure($conferenceId: uuid!, $attendeeDisplayName: String!, $userId: String!) {
+    mutation CreateNewConferenceMetaStructure($conferenceId: uuid!, $attendeeDisplayName: String!, $userId: String!, $abstractData: jsonb!, $contentGroupListData: jsonb!) {
   insert_Attendee(
     objects: [{displayName: $attendeeDisplayName, userId: $userId, conferenceId: $conferenceId, groupAttendees: {data: {group: {data: {conferenceId: $conferenceId, includeUnauthenticated: false, name: "Organisers", groupRoles: {data: {role: {data: {conferenceId: $conferenceId, name: "Organiser", rolePermissions: {data: [{permissionName: CONFERENCE_MANAGE_NAME}, {permissionName: CONFERENCE_MANAGE_ATTENDEES}, {permissionName: CONFERENCE_MODERATE_ATTENDEES}, {permissionName: CONFERENCE_VIEW_ATTENDEES}, {permissionName: CONFERENCE_VIEW}, {permissionName: CONFERENCE_MANAGE_ROLES}, {permissionName: CONFERENCE_MANAGE_GROUPS}, {permissionName: CONFERENCE_MANAGE_CONTENT}, {permissionName: CONFERENCE_MANAGE_SCHEDULE}]}}}}}}}}}}]
   ) {
@@ -27251,8 +27369,15 @@ export const CreateNewConferenceMetaStructureDocument = gql`
       }
     }
   }
+  insert_ContentGroup(
+    objects: {conferenceId: $conferenceId, contentGroupTypeName: LANDING_PAGE, contentItems: {data: [{conferenceId: $conferenceId, contentTypeName: ABSTRACT, data: $abstractData, isHidden: false, layoutData: {}, name: "Welcome text"}, {conferenceId: $conferenceId, contentTypeName: CONTENT_GROUP_LIST, data: $contentGroupListData, isHidden: false, layoutData: {}, name: "Content group list"}]}, shortTitle: "Landing", title: "Landing page"}
+  ) {
+    returning {
+      ...ContentGroupData
+    }
+  }
 }
-    `;
+    ${ContentGroupDataFragmentDoc}`;
 export type CreateNewConferenceMetaStructureMutationFn = Apollo.MutationFunction<CreateNewConferenceMetaStructureMutation, CreateNewConferenceMetaStructureMutationVariables>;
 
 /**
@@ -27271,6 +27396,8 @@ export type CreateNewConferenceMetaStructureMutationFn = Apollo.MutationFunction
  *      conferenceId: // value for 'conferenceId'
  *      attendeeDisplayName: // value for 'attendeeDisplayName'
  *      userId: // value for 'userId'
+ *      abstractData: // value for 'abstractData'
+ *      contentGroupListData: // value for 'contentGroupListData'
  *   },
  * });
  */

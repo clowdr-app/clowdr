@@ -20,6 +20,7 @@ import { Link as ReactLink } from "react-router-dom";
 import { ContentType_Enum, Timeline_EventFragment } from "../../../../generated/graphql";
 import LinkButton from "../../../Chakra/LinkButton";
 import FAIcon from "../../../Icons/FAIcon";
+import { Markdown } from "../../../Text/Markdown";
 import { useConference } from "../../useConference";
 import { AuthorList } from "../Content/AuthorList";
 import { EventPersonList } from "../Content/EventPersonList";
@@ -176,7 +177,9 @@ function EventBoxPopover({
                             hour: "numeric",
                             minute: "numeric",
                             hour12: false,
-                        })} - {new Date(eventStartMs + durationSeconds * 1000).toLocaleString(undefined, {
+                        })}{" "}
+                        -{" "}
+                        {new Date(eventStartMs + durationSeconds * 1000).toLocaleString(undefined, {
                             hour: "numeric",
                             minute: "numeric",
                             hour12: false,
@@ -190,7 +193,9 @@ function EventBoxPopover({
                     {event.contentGroup?.people && event.contentGroup?.people.length > 0 ? (
                         <AuthorList contentPeopleData={event.contentGroup.people} />
                     ) : undefined}
-                    <Text>{abstractText}</Text>
+                    <Box>
+                        <Markdown>{abstractText}</Markdown>
+                    </Box>
                 </PopoverBody>
             </PopoverContent>
         </Popover>

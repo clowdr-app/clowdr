@@ -59,6 +59,9 @@ export default function RenderContentItem({ data }: { data: ContentItemDataBlob 
                     />
                 );
             }
+            case ContentBaseType.Component: {
+                return <Text>This item type cannot be uploaded.</Text>;
+            }
         }
     }
 

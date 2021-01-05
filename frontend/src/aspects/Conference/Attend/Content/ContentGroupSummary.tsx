@@ -3,6 +3,7 @@ import { assertIsContentItemDataBlob, ContentBaseType } from "@clowdr-app/shared
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import { ContentGroupDataFragment, ContentType_Enum } from "../../../../generated/graphql";
+import { Markdown } from "../../../Text/Markdown";
 import { AuthorList } from "./AuthorList";
 
 export function ContentGroupSummary({ contentGroupData }: { contentGroupData: ContentGroupDataFragment }): JSX.Element {
@@ -15,9 +16,11 @@ export function ContentGroupSummary({ contentGroupData }: { contentGroupData: Co
             const latestVersion = R.last(abstractItem.data);
 
             return (
-                <Text mt={5}>
-                    {latestVersion?.data.baseType === ContentBaseType.Text ? latestVersion.data.text : ""}
-                </Text>
+                <Box mt={5}>
+                    <Markdown>
+                        {latestVersion?.data.baseType === ContentBaseType.Text ? latestVersion.data.text : ""}
+                    </Markdown>
+                </Box>
             );
         } catch (e) {
             return <></>;

@@ -24,7 +24,7 @@ export function TimelineParameters({
     defaultStartTime?: number;
     earliestEventStart: number;
     latestEventEnd: number;
-    }): JSX.Element {
+}): JSX.Element {
     const earliestMs = roundDownToNearest(earliestEventStart, 60 * 60 * 1000);
     const latestMs = roundUpToNearest(latestEventEnd, 60 * 60 * 1000);
     return (

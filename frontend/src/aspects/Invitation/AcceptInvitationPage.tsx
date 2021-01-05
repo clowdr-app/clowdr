@@ -190,7 +190,11 @@ export default function AcceptInvitationPage(props: Props): JSX.Element {
     }
 
     if (loading || isUserLoading) {
-        return <Spinner />;
+        return (
+            <Box>
+                <Spinner />
+            </Box>
+        );
     }
 
     if (user) {
@@ -214,7 +218,11 @@ export default function AcceptInvitationPage(props: Props): JSX.Element {
             );
         } else {
             if (hashOK === undefined) {
-                return <Spinner />;
+                return (
+                    <Box>
+                        <Spinner />
+                    </Box>
+                );
             } else {
                 if (hashOK) {
                     return (

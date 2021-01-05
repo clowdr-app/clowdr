@@ -16,6 +16,8 @@ declare enum RoomMode_Enum {
 declare enum ContentType_Enum {
     /** Abstract Markdown text. */
     Abstract = "ABSTRACT",
+    /** List of content groups in the system. */
+    ContentGroupList = "CONTENT_GROUP_LIST",
     /** File for an image (stored by Clowdr). */
     ImageFile = "IMAGE_FILE",
     /** URL to an image (embedded in Clowdr UI). */
@@ -54,6 +56,8 @@ declare enum ContentType_Enum {
     VideoTitles = "VIDEO_TITLES",
     /** URL for a video (video is embedded in Clowdr UI). */
     VideoUrl = "VIDEO_URL",
+    /** Schedule view for the whole conference. */
+    WholeSchedule = "WHOLE_SCHEDULE",
     /** Data for a Zoom meeting. */
     Zoom = "ZOOM",
 }

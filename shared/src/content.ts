@@ -9,6 +9,8 @@ export enum ContentRole {
 export enum ContentType_Enum {
     /** Abstract Markdown text. */
     Abstract = "ABSTRACT",
+    /** List of content groups in the system. */
+    ContentGroupList = "CONTENT_GROUP_LIST",
     /** File for an image (stored by Clowdr). */
     ImageFile = "IMAGE_FILE",
     /** URL to an image (embedded in Clowdr UI). */
@@ -47,6 +49,8 @@ export enum ContentType_Enum {
     VideoTitles = "VIDEO_TITLES",
     /** URL for a video (video is embedded in Clowdr UI). */
     VideoUrl = "VIDEO_URL",
+    /** Schedule view for the whole conference. */
+    WholeSchedule = "WHOLE_SCHEDULE",
     /** Data for a Zoom meeting. */
     Zoom = "ZOOM",
 }
@@ -71,6 +75,7 @@ export interface ContentItemVersionData {
 
 export type ContentBlob =
     | AbstractBlob
+    | ContentGroupListBlob
     | TextBlob
     | ImageFileBlob
     | PaperFileBlob
@@ -90,10 +95,15 @@ export type ContentBlob =
     | VideoSponsorsFillerBlob
     | VideoTitlesBlob
     | VideoUrlBlob
+    | WholeScheduleBlob
     | ZoomBlob;
 
 export interface AbstractBlob extends TextualContentBlob {
     type: ContentType_Enum.Abstract;
+}
+
+export interface ContentGroupListBlob extends ComponentBlob {
+    type: ContentType_Enum.ContentGroupList;
 }
 
 export interface TextBlob extends TextualContentBlob {
@@ -172,6 +182,10 @@ export interface VideoUrlBlob extends UrlContentBlob {
     type: ContentType_Enum.VideoUrl;
 }
 
+export interface WholeScheduleBlob extends ComponentBlob {
+    type: ContentType_Enum.ContentGroupList;
+}
+
 export interface ZoomBlob extends UrlContentBlob {
     type: ContentType_Enum.Zoom;
 }
@@ -179,6 +193,7 @@ export interface ZoomBlob extends UrlContentBlob {
 /* Meta content types */
 
 export enum ContentBaseType {
+    Component = "component",
     Text = "text",
     File = "file",
     URL = "url",
@@ -188,6 +203,7 @@ export enum ContentBaseType {
 
 export const ItemBaseTypes: { [K in ContentType_Enum]: ContentBaseType } = {
     [ContentType_Enum.Abstract]: ContentBaseType.Text,
+    [ContentType_Enum.ContentGroupList]: ContentBaseType.Component,
     [ContentType_Enum.ImageFile]: ContentBaseType.File,
     [ContentType_Enum.ImageUrl]: ContentBaseType.URL,
     [ContentType_Enum.Link]: ContentBaseType.Link,
@@ -208,7 +224,12 @@ export const ItemBaseTypes: { [K in ContentType_Enum]: ContentBaseType } = {
     [ContentType_Enum.VideoTitles]: ContentBaseType.Video,
     [ContentType_Enum.VideoUrl]: ContentBaseType.URL,
     [ContentType_Enum.Zoom]: ContentBaseType.URL,
+    [ContentType_Enum.WholeSchedule]: ContentBaseType.Component,
 };
+
+export interface ComponentBlob extends BaseContentBlob {
+    baseType: ContentBaseType.Component;
+}
 
 export interface TextualContentBlob extends BaseContentBlob {
     baseType: ContentBaseType.Text;

@@ -31911,6 +31911,12 @@
             "deprecationReason": null
           },
           {
+            "name": "LANDING_PAGE",
+            "description": "Conference main landing page.",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "OTHER",
             "description": "A generic group type - use sparingly.",
             "isDeprecated": false,
@@ -38559,6 +38565,12 @@
             "deprecationReason": null
           },
           {
+            "name": "CONTENT_GROUP_LIST",
+            "description": "List of content groups in the system.",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "IMAGE_FILE",
             "description": "File for an image (stored by Clowdr).",
             "isDeprecated": false,
@@ -38669,6 +38681,12 @@
           {
             "name": "VIDEO_URL",
             "description": "URL for a video (video is embedded in Clowdr UI).",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "WHOLE_SCHEDULE",
+            "description": "Schedule view for the whole conference.",
             "isDeprecated": false,
             "deprecationReason": null
           },

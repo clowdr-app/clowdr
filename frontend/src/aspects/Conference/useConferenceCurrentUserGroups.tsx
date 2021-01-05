@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Spinner } from "@chakra-ui/react";
+import { Box, Spinner } from "@chakra-ui/react";
 import assert from "assert";
 import React from "react";
 import {
@@ -108,7 +108,11 @@ export default function CurrentUserGroupsRolesPermissionsProvider({
     });
 
     if (loading && !data) {
-        return <Spinner />;
+        return (
+            <Box>
+                <Spinner />
+            </Box>
+        );
     }
 
     if (error) {

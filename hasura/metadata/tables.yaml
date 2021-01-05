@@ -1599,6 +1599,7 @@
       - contentTypeName
       - data
       - id
+      - isHidden
       - layoutData
       - name
       - originatingDataId

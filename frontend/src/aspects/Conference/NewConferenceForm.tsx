@@ -50,7 +50,13 @@ gql`
         }
     }
 
-    mutation CreateNewConferenceMetaStructure($conferenceId: uuid!, $attendeeDisplayName: String!, $userId: String!) {
+    mutation CreateNewConferenceMetaStructure(
+        $conferenceId: uuid!
+        $attendeeDisplayName: String!
+        $userId: String!
+        $abstractData: jsonb!
+        $contentGroupListData: jsonb!
+    ) {
         insert_Attendee(
             objects: [
                 {
@@ -215,6 +221,39 @@ gql`
                 }
             }
         }
+
+        insert_ContentGroup(
+            objects: {
+                conferenceId: $conferenceId
+                contentGroupTypeName: LANDING_PAGE
+                contentItems: {
+                    data: [
+                        {
+                            conferenceId: $conferenceId
+                            contentTypeName: ABSTRACT
+                            data: $abstractData
+                            isHidden: false
+                            layoutData: {}
+                            name: "Welcome text"
+                        }
+                        {
+                            conferenceId: $conferenceId
+                            contentTypeName: CONTENT_GROUP_LIST
+                            data: $contentGroupListData
+                            isHidden: false
+                            layoutData: {}
+                            name: "Content group list"
+                        }
+                    ]
+                }
+                shortTitle: "Landing"
+                title: "Landing page"
+            }
+        ) {
+            returning {
+                ...ContentGroupData
+            }
+        }
     }
 `;
 
@@ -335,12 +374,31 @@ export default function NewConferenceForm(): JSX.Element {
                         } else {
                             failed = false;
                             const conferenceId = result.data.insert_Conference.returning[0].id;
+                            const now = Date.now();
 
                             await createNewConferenceMetaStructureMutation({
                                 variables: {
                                     conferenceId,
                                     attendeeDisplayName: `${user.firstName} ${user.lastName}`,
                                     userId: user.id,
+                                    abstractData: [
+                                        {
+                                            createdAt: now,
+                                            createdBy: "system",
+                                            data: {
+                                                type: "ABSTRACT",
+                                                baseType: "text",
+                                                text: "Welcome to this conference!",
+                                            },
+                                        },
+                                    ],
+                                    contentGroupListData: [
+                                        {
+                                            createdAt: now,
+                                            createdBy: "system",
+                                            data: { type: "CONTENT_GROUP_LIST", baseType: "component" },
+                                        },
+                                    ],
                                 },
                             });
 

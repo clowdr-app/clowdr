@@ -1,6 +1,7 @@
 import { ContentBaseType, ItemBaseTypes } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
 import { ContentGroupType_Enum, ContentType_Enum } from "../../../../generated/graphql";
+import { ComponentItemTemplate } from "./ComponentItem";
 import { LinkItemTemplate } from "./LinkItem";
 import { TextItemTemplate } from "./TextItem";
 import type { ContentGroupDescriptor, ItemBaseTemplate } from "./Types";
@@ -9,6 +10,7 @@ import { VideoItemTemplate } from "./VideoItem";
 
 export const ItemBaseTemplates: { [K in ContentBaseType]: ItemBaseTemplate } = {
     [ContentBaseType.File]: { supported: false },
+    [ContentBaseType.Component]: ComponentItemTemplate,
     [ContentBaseType.Link]: LinkItemTemplate,
     [ContentBaseType.Text]: TextItemTemplate,
     [ContentBaseType.URL]: URLItemTemplate,
@@ -60,6 +62,11 @@ export const GroupTemplates: { [K in ContentGroupType_Enum]: GroupTemplate } = {
         supported: true,
         requiredItemTypes: [],
         itemTypes: [ContentType_Enum.Abstract, ContentType_Enum.Zoom],
+    },
+    [ContentGroupType_Enum.LandingPage]: {
+        supported: true,
+        requiredItemTypes: [],
+        itemTypes: [ContentType_Enum.Abstract, ContentType_Enum.ContentGroupList],
     },
 };
 

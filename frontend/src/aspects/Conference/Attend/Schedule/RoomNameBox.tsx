@@ -60,7 +60,12 @@ export default function RoomNameBox({
             {typeof room === "string" ? (
                 room
             ) : (
-                    <Link as={ReactLink} to={`/conference/${conference.slug}/room/${room.id}`} textDecoration="none" aria-label={`${room.name} room`}>
+                <Link
+                    as={ReactLink}
+                    to={`/conference/${conference.slug}/room/${room.id}`}
+                    textDecoration="none"
+                    aria-label={`${room.name} room`}
+                >
                     <HStack>
                         {roomIcon}
                         <Text>{room.name}</Text>

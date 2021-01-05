@@ -100,7 +100,14 @@ function RoomTimelineInner({
     }, [room.events]);
 
     return (
-        <Box pos="relative" w="100%" h={height + "px"} backgroundColor={backgroundColor} role="region" aria-label={`${room.name} room schedule.`}>
+        <Box
+            pos="relative"
+            w="100%"
+            h={height + "px"}
+            backgroundColor={backgroundColor}
+            role="region"
+            aria-label={`${room.name} room schedule.`}
+        >
             {useScroller ? (
                 <Scroller height={height}>
                     <RoomTimelineContents

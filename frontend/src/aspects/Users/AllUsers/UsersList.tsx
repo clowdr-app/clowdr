@@ -1,4 +1,4 @@
-import { HStack, Spinner, Text } from "@chakra-ui/react";
+import { Box, HStack, Spinner, Text } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import Column from "../../Generic/Column";
 import FAIcon from "../../Icons/FAIcon";
@@ -16,7 +16,11 @@ export default function UsersList(): JSX.Element {
             };
 
         if (users === undefined) {
-            return <Spinner />;
+            return (
+                <Box>
+                    <Spinner />
+                </Box>
+            );
         }
         if (users === false) {
             return <Text>Error!</Text>;

@@ -1,4 +1,4 @@
-import { Flex, VStack } from "@chakra-ui/react";
+import { Box, Flex, VStack } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import "./App.css";
 import Routing from "./AppRouting";
@@ -29,6 +29,9 @@ function App(_props: AppProps): JSX.Element {
                 <PrimaryMenuButtonsProvider>
                     <VStack overflowX="hidden" overflowY="auto" spacing={5} margin="auto" width="100%">
                         <Routing />
+                        <Box h="40px" display="inline-block" flex="0 0 40px">
+                            &nbsp;
+                        </Box>
                     </VStack>
                     <MainMenu />
                 </PrimaryMenuButtonsProvider>

@@ -28,6 +28,7 @@ import { router as eventRouter } from "./router/event";
 import { router as mediaConvertRouter } from "./router/mediaConvert";
 import { router as mediaLiveRouter } from "./router/mediaLive";
 import { router as openshotRouter } from "./router/openshot";
+import { router as roomRouter } from "./router/room";
 import { router as videoRenderJobRouter } from "./router/videoRenderJob";
 import { router as vonageRouter } from "./router/vonage";
 
@@ -74,6 +75,7 @@ app.use("/conferencePrepareJob", conferencePrepareJobRouter);
 app.use("/videoRenderJob", videoRenderJobRouter);
 app.use("/broadcastContentItem", broadcastContentItemRouter);
 app.use("/event", eventRouter);
+app.use("/room", roomRouter);
 
 app.use("/channels", channelsRouter);
 

@@ -23376,7 +23376,10 @@ export type RoomEventsFragment = { readonly __typename?: 'Room', readonly events
     & RoomEventDetailsFragment
   )> };
 
-export type RoomEventDetailsFragment = { readonly __typename?: 'Event', readonly id: any, readonly startTime: any, readonly name: string, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'EventPerson', readonly id: any, readonly roleName: EventPersonRole_Enum, readonly attendee?: Maybe<{ readonly __typename?: 'Attendee', readonly displayName: string, readonly id: any, readonly userId?: Maybe<string> }> }> };
+export type RoomEventDetailsFragment = { readonly __typename?: 'Event', readonly id: any, readonly startTime: any, readonly name: string, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'EventPerson', readonly id: any, readonly roleName: EventPersonRole_Enum, readonly attendee?: Maybe<{ readonly __typename?: 'Attendee', readonly displayName: string, readonly id: any, readonly userId?: Maybe<string> }> }>, readonly contentGroup?: Maybe<(
+    { readonly __typename?: 'ContentGroup' }
+    & ContentGroupDataFragment
+  )>, readonly eventVonageSession?: Maybe<{ readonly __typename?: 'EventVonageSession', readonly id: any, readonly sessionId: string }> };
 
 export type GetEventVonageTokenMutationVariables = Exact<{
   eventId: Scalars['uuid'];
@@ -24368,8 +24371,15 @@ export const RoomEventDetailsFragmentDoc = gql`
       userId
     }
   }
+  contentGroup {
+    ...ContentGroupData
+  }
+  eventVonageSession {
+    id
+    sessionId
+  }
 }
-    `;
+    ${ContentGroupDataFragmentDoc}`;
 export const RoomEventsFragmentDoc = gql`
     fragment RoomEvents on Room {
   events(where: {endTime: {_gt: $eventsFrom}}) {

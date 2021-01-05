@@ -84,12 +84,12 @@ export default function ContentGroupPersonsModal({
 
     return (
         <>
-            <Box>
+            <Box mt={4}>
                 <Center flexDir="column">
                     <Button onClick={onOpen} colorScheme="blue">
                         Manage Content People
                     </Button>
-                    <Text as="p">
+                    <Text mt={2} as="p">
                         (People can be listed as presenters, authors, chairs and other such roles for content and
                         events.)
                     </Text>

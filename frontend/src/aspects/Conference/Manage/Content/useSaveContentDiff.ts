@@ -359,6 +359,7 @@ gql`
         $layoutData: jsonb = null
         $name: String!
         $data: jsonb!
+        $isHidden: Boolean!
         $originatingDataId: uuid = null
         $requiredContentId: uuid = null
     ) {
@@ -369,6 +370,7 @@ gql`
                 layoutData: $layoutData
                 name: $name
                 data: $data
+                isHidden: $isHidden
                 originatingDataId: $originatingDataId
                 requiredContentId: $requiredContentId
             }
@@ -878,6 +880,7 @@ export function useSaveContentDiff():
                                                     data: item.data,
                                                     layoutData: item.layoutData,
                                                     name: item.name,
+                                                    isHidden: item.isHidden,
                                                     requiredContentId: item.requiredContentId,
                                                     originatingDataId: item.originatingDataId,
                                                 };
@@ -1079,6 +1082,7 @@ export function useSaveContentDiff():
                                                     id: item.id,
                                                     layoutData: item.layoutData,
                                                     name: item.name,
+                                                    isHidden: item.isHidden,
                                                     requiredContentId: item.requiredContentId,
                                                     originatingDataId: item.originatingDataId,
                                                 },
@@ -1166,6 +1170,7 @@ export function useSaveContentDiff():
                                             data: item.data,
                                             id: item.id,
                                             layoutData: item.layoutData,
+                                            isHidden: item.isHidden,
                                             name: item.name,
                                             requiredContentId: item.requiredContentId,
                                             originatingDataId: item.originatingDataId,

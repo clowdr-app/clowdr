@@ -1,3 +1,4 @@
+import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Accordion,
     AccordionButton,
@@ -5,9 +6,21 @@ import {
     AccordionItem,
     AccordionPanel,
     Box,
+    Button,
     Code,
+    Flex,
+    FormControl,
+    FormHelperText,
+    FormLabel,
     Heading,
+    HStack,
+    IconButton,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuList,
     Spinner,
+    Switch,
     Text,
     useDisclosure,
     useToast,
@@ -78,7 +91,10 @@ export default function ManageConferenceContentPage(): JSX.Element {
             .map((key) => {
                 const v = (ContentGroupType_Enum as any)[key] as string;
                 return {
-                    label: key,
+                    label: v
+                        .split("_")
+                        .map((x) => x[0] + x.substr(1).toLowerCase())
+                        .reduce((acc, x) => `${acc} ${x}`),
                     value: v,
                 };
             });
@@ -790,8 +806,135 @@ function ContentGroupSecondaryEditor(
     let editorElement: JSX.Element;
     const footerButtons: SecondaryEditorFooterButton[] = [];
 
+    const contentTypeOptions: { label: string; value: ContentType_Enum }[] = (() => {
+        return Object.keys(ContentType_Enum)
+            .filter(
+                (key) =>
+                    typeof (ContentType_Enum as any)[key] === "string" &&
+                    ItemBaseTemplates[ItemBaseTypes[(ContentType_Enum as any)[key] as ContentType_Enum]].supported
+            )
+            .map((key) => {
+                const v = (ContentType_Enum as any)[key] as string;
+                return {
+                    label: v
+                        .split("_")
+                        .map((x) => x[0] + x.substr(1).toLowerCase())
+                        .reduce((acc, x) => `${acc} ${x}`),
+                    value: v as ContentType_Enum,
+                };
+            });
+    })();
+
     // TODO: Configure / Edit tabs
     if (group) {
+        const addContentMenu = (
+            <>
+                <Menu size="sm">
+                    <MenuButton m={1} flex="0 0 auto" as={Button} rightIcon={<ChevronDownIcon />}>
+                        Add content
+                    </MenuButton>
+                    <MenuList maxH="20vh" overflowY="auto">
+                        {contentTypeOptions.map((typeOpt) => (
+                            <MenuItem
+                                key={typeOpt.value}
+                                onClick={() => {
+                                    markDirty();
+
+                                    setAllContentGroupsMap((oldGroups) => {
+                                        assert(oldGroups);
+                                        const newGroups = new Map(oldGroups);
+
+                                        const existingGroup = newGroups.get(group.id);
+                                        assert(existingGroup);
+                                        const template = ItemBaseTemplates[ItemBaseTypes[typeOpt.value]];
+                                        assert(template.supported);
+                                        const newContent = template.createDefault(existingGroup, typeOpt.value, false);
+                                        assert(newContent.type === "item-only");
+                                        newGroups.set(group.id, {
+                                            ...existingGroup,
+                                            items: [...existingGroup.items, newContent.item],
+                                        });
+
+                                        return newGroups;
+                                    });
+                                }}
+                            >
+                                {typeOpt.label}
+                            </MenuItem>
+                        ))}
+                    </MenuList>
+                </Menu>
+                <Menu size="sm">
+                    <MenuButton m={1} flex="0 0 auto" as={Button} rightIcon={<ChevronDownIcon />}>
+                        Add uploadable
+                    </MenuButton>
+                    <MenuList maxH="20vh" overflowY="auto">
+                        {contentTypeOptions.map((typeOpt) => (
+                            <MenuItem
+                                key={typeOpt.value}
+                                onClick={() => {
+                                    markDirty();
+
+                                    setAllContentGroupsMap((oldGroups) => {
+                                        assert(oldGroups);
+                                        const newGroups = new Map(oldGroups);
+
+                                        const existingGroup = newGroups.get(group.id);
+                                        assert(existingGroup);
+                                        const template = ItemBaseTemplates[ItemBaseTypes[typeOpt.value]];
+                                        assert(template.supported);
+                                        const newContent = template.createDefault(existingGroup, typeOpt.value, true);
+                                        if (newContent.type === "required-only") {
+                                            newGroups.set(group.id, {
+                                                ...existingGroup,
+                                                requiredItems: [
+                                                    ...existingGroup.requiredItems,
+                                                    newContent.requiredItem,
+                                                ],
+                                            });
+                                        } else if (newContent.type === "required-and-item") {
+                                            newGroups.set(group.id, {
+                                                ...existingGroup,
+                                                items: [...existingGroup.items, newContent.item],
+                                                requiredItems: [
+                                                    ...existingGroup.requiredItems,
+                                                    newContent.requiredItem,
+                                                ],
+                                            });
+                                        }
+
+                                        return newGroups;
+                                    });
+                                }}
+                            >
+                                {typeOpt.label}
+                            </MenuItem>
+                        ))}
+                    </MenuList>
+                </Menu>
+            </>
+        );
+        const menu = (
+            <Flex flexWrap="wrap">
+                <LinkButton
+                    to={`/conference/${conferenceSlug}/item/${group.id}`}
+                    colorScheme="green"
+                    mb={4}
+                    isExternal={true}
+                    aria-label={`View ${group.title} in the attendee view`}
+                    title={`View ${group.title} in the attendee view`}
+                    linkProps={{
+                        flex: "0 0 auto",
+                        margin: 1,
+                    }}
+                >
+                    <FAIcon icon="link" iconStyle="s" mr={3} />
+                    View item
+                </LinkButton>
+                {addContentMenu}
+            </Flex>
+        );
+
         const groupTemplate = GroupTemplates[group.typeName];
         if (groupTemplate.supported) {
             const itemElements: JSX.Element[] = [];
@@ -836,7 +979,9 @@ function ContentGroupSecondaryEditor(
                 </AccordionItem>
             );
 
-            for (const item of group.items) {
+            for (const item of group.items
+                .sort((x, y) => x.name.localeCompare(y.name))
+                .sort((x, y) => x.typeName.localeCompare(y.typeName))) {
                 if (!item.requiredContentId) {
                     const itemType = item.typeName;
                     const baseType = ItemBaseTypes[itemType];
@@ -911,13 +1056,90 @@ function ContentGroupSecondaryEditor(
                                 </Box>
                                 {accordianContents && <AccordionIcon />}
                             </AccordionButton>
-                            {accordianContents && <AccordionPanel pb={4}>{accordianContents}</AccordionPanel>}
+                            {accordianContents && (
+                                <AccordionPanel pb={4}>
+                                    <HStack pb={4}>
+                                        <FormControl
+                                            display="flex"
+                                            flexDir="row"
+                                            alignItems="flex-start"
+                                            justifyContent="flex-start"
+                                        >
+                                            <FormLabel m={0} p={0} fontSize="0.9em">
+                                                Hidden?
+                                            </FormLabel>
+                                            <Switch
+                                                m={0}
+                                                ml={2}
+                                                p={0}
+                                                lineHeight="1em"
+                                                size="sm"
+                                                isChecked={item.isHidden}
+                                                onChange={() => {
+                                                    markDirty();
+
+                                                    setAllContentGroupsMap((oldGroups) => {
+                                                        assert(oldGroups);
+                                                        const newGroups = new Map(oldGroups);
+
+                                                        const existingGroup = newGroups.get(group.id);
+                                                        assert(existingGroup);
+                                                        newGroups.set(group.id, {
+                                                            ...existingGroup,
+                                                            items: existingGroup.items.map((cItem) => {
+                                                                return item.id === cItem.id
+                                                                    ? { ...cItem, isHidden: !cItem.isHidden }
+                                                                    : cItem;
+                                                            }),
+                                                        });
+
+                                                        return newGroups;
+                                                    });
+                                                }}
+                                            />
+                                            <FormHelperText m={0} ml={2} p={0}>
+                                                Enable to hide this content from attendees.
+                                            </FormHelperText>
+                                        </FormControl>
+                                        <Box ml="auto">
+                                            <IconButton
+                                                colorScheme="red"
+                                                size="sm"
+                                                aria-label="Delete content"
+                                                icon={<FAIcon iconStyle="s" icon="trash-alt" />}
+                                                onClick={() => {
+                                                    markDirty();
+
+                                                    setAllContentGroupsMap((oldGroups) => {
+                                                        assert(oldGroups);
+                                                        const newGroups = new Map(oldGroups);
+
+                                                        const existingGroup = newGroups.get(group.id);
+                                                        assert(existingGroup);
+                                                        newGroups.set(group.id, {
+                                                            ...existingGroup,
+                                                            items: existingGroup.items.filter((cItem) => {
+                                                                return item.id !== cItem.id;
+                                                            }),
+                                                        });
+
+                                                        return newGroups;
+                                                    });
+                                                }}
+                                            />
+                                        </Box>
+                                    </HStack>
+                                    {accordianContents}
+                                </AccordionPanel>
+                            )}
                         </AccordionItem>
                     );
                 }
             }
 
-            for (const requiredItem of group.requiredItems) {
+            for (const requiredItem of group.requiredItems
+                .sort((x, y) => x.name.localeCompare(y.name))
+                .sort((x, y) => x.typeName.localeCompare(y.typeName))) {
                 const itemType = requiredItem.typeName;
                 const baseType = ItemBaseTypes[itemType];
                 const itemTemplate = ItemBaseTemplates[baseType];
@@ -966,11 +1188,44 @@ function ContentGroupSecondaryEditor(
                     <AccordionItem key={`row-${itemType}`}>
                         <AccordionButton>
                             <Box flex="1" textAlign="left">
-                                {accordianTitle}
+                                (Uploadable) {accordianTitle}
                             </Box>
                             {accordianContents && <AccordionIcon />}
                         </AccordionButton>
-                        {accordianContents && <AccordionPanel pb={4}>{accordianContents}</AccordionPanel>}
+                        {accordianContents && (
+                            <AccordionPanel pb={4}>
+                                <HStack pb={4} justifyContent="flex-end">
+                                    <Box>
+                                        <IconButton
+                                            colorScheme="red"
+                                            size="sm"
+                                            aria-label="Delete content"
+                                            icon={<FAIcon iconStyle="s" icon="trash-alt" />}
+                                            onClick={() => {
+                                                markDirty();
+
+                                                setAllContentGroupsMap((oldGroups) => {
+                                                    assert(oldGroups);
+                                                    const newGroups = new Map(oldGroups);
+
+                                                    const existingGroup = newGroups.get(group.id);
+                                                    assert(existingGroup);
+                                                    newGroups.set(group.id, {
+                                                        ...existingGroup,
+                                                        requiredItems: existingGroup.requiredItems.filter((cItem) => {
+                                                            return requiredItem.id !== cItem.id;
+                                                        }),
+                                                    });
+
+                                                    return newGroups;
+                                                });
+                                            }}
+                                        />
+                                    </Box>
+                                </HStack>
+                                {accordianContents}
+                            </AccordionPanel>
+                        )}
                     </AccordionItem>
                 );
             }
@@ -1010,25 +1265,20 @@ function ContentGroupSecondaryEditor(
                 );
             }
 
-            const itemsAccordian = <Accordion allowMultiple>{itemElements}</Accordion>;
+            const itemsAccordian = <Accordion allowToggle>{itemElements}</Accordion>;
             editorElement = (
                 <>
-                    <LinkButton
-                        to={`/conference/${conferenceSlug}/item/${group.id}`}
-                        colorScheme="green"
-                        mb={4}
-                        isExternal={true}
-                        aria-label={`View ${group.title} in the attendee view`}
-                        title={`View ${group.title} in the attendee view`}
-                    >
-                        <FAIcon icon="external-link-alt" iconStyle="s" mr={3} />
-                        View item
-                    </LinkButton>
+                    {menu}
                     {itemsAccordian}
                 </>
             );
         } else {
-            editorElement = <>TODO: Unsupported group type: {group.typeName}</>;
+            editorElement = (
+                <>
+                    {menu}
+                    <Text>TODO: Unsupported group type: {group.typeName}</Text>
+                </>
+            );
         }
     } else {
         editorElement = <>Error: Content not found.</>;

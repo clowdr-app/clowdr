@@ -23680,6 +23680,7 @@ export type UpdateContentItemMutationVariables = Exact<{
   layoutData?: Maybe<Scalars['jsonb']>;
   name: Scalars['String'];
   data: Scalars['jsonb'];
+  isHidden: Scalars['Boolean'];
   originatingDataId?: Maybe<Scalars['uuid']>;
   requiredContentId?: Maybe<Scalars['uuid']>;
 }>;
@@ -25911,10 +25912,10 @@ export type UpdateContentGroupMutationHookResult = ReturnType<typeof useUpdateCo
 export type UpdateContentGroupMutationResult = Apollo.MutationResult<UpdateContentGroupMutation>;
 export type UpdateContentGroupMutationOptions = Apollo.BaseMutationOptions<UpdateContentGroupMutation, UpdateContentGroupMutationVariables>;
 export const UpdateContentItemDocument = gql`
-    mutation UpdateContentItem($id: uuid!, $contentTypeName: ContentType_enum!, $layoutData: jsonb = null, $name: String!, $data: jsonb!, $originatingDataId: uuid = null, $requiredContentId: uuid = null) {
+    mutation UpdateContentItem($id: uuid!, $contentTypeName: ContentType_enum!, $layoutData: jsonb = null, $name: String!, $data: jsonb!, $isHidden: Boolean!, $originatingDataId: uuid = null, $requiredContentId: uuid = null) {
   update_ContentItem_by_pk(
     pk_columns: {id: $id}
-    _set: {contentTypeName: $contentTypeName, layoutData: $layoutData, name: $name, data: $data, originatingDataId: $originatingDataId, requiredContentId: $requiredContentId}
+    _set: {contentTypeName: $contentTypeName, layoutData: $layoutData, name: $name, data: $data, isHidden: $isHidden, originatingDataId: $originatingDataId, requiredContentId: $requiredContentId}
   ) {
     ...ContentItemInfo
   }
@@ -25940,6 +25941,7 @@ export type UpdateContentItemMutationFn = Apollo.MutationFunction<UpdateContentI
  *      layoutData: // value for 'layoutData'
  *      name: // value for 'name'
  *      data: // value for 'data'
+ *      isHidden: // value for 'isHidden'
  *      originatingDataId: // value for 'originatingDataId'
  *      requiredContentId: // value for 'requiredContentId'
  *   },

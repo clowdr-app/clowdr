@@ -67,6 +67,7 @@ gql`
         originatingDataId
         roomId
         startTime
+        endTime
         contentGroupId
     }
 
@@ -601,7 +602,7 @@ export function useSaveScheduleDiff():
                             eventResults.set(key, true);
                         }
                     }
-                } catch {
+                } catch (_e) {
                     for (const key of newEvents.keys()) {
                         eventResults.set(key, false);
                     }

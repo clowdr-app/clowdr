@@ -15,6 +15,7 @@ import ManageConferenceNamePage from "./Manage/ManageConferenceNamePage";
 import ManageConferencePeoplePage from "./Manage/ManageConferencePeoplePage";
 import ManageConferenceRolesPage from "./Manage/ManageConferenceRolesPage";
 import ManageConferenceRoomsPage from "./Manage/ManageConferenceRoomsPage";
+import ManageConferenceSchedulePage from "./Manage/ManageConferenceSchedulePage";
 import ManagerLandingPage from "./Manage/ManagerLandingPage";
 import ConferenceProvider from "./useConference";
 import ConferenceCurrentUserActivePermissionsProvider from "./useConferenceCurrentUserActivePermissions";
@@ -66,7 +67,7 @@ function AuthenticatedConferenceRoutes(rootUrl: string): JSX.Element {
                         <PageNotImplemented />
                     </Route>
                     <Route path={`${rootUrl}/manage/schedule`}>
-                        <PageNotImplemented />
+                        <ManageConferenceSchedulePage />
                     </Route>
                     <Route path={`${rootUrl}/manage/chats`}>
                         <PageNotImplemented />

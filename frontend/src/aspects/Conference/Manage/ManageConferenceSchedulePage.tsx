@@ -51,7 +51,7 @@ function EditableScheduleCRUDTable() {
             });
     }, []);
 
-    const [allGroupsMap, setAllContentGroupsMap] = useState<Map<string, ContentGroupDescriptor>>();
+    const [allContentGroupsMap, setAllContentGroupsMap] = useState<Map<string, ContentGroupDescriptor>>();
     const [allEventsMap, setAllEventsMap] = useState<Map<string, EventDescriptor>>();
     const [allTagsMap, setAllTagsMap] = useState<Map<string, TagDescriptor>>();
     const [allRoomsMap, setAllRoomsMap] = useState<Map<string, RoomDescriptor>>();
@@ -69,6 +69,25 @@ function EditableScheduleCRUDTable() {
               }))
             : [];
     }, [allRoomsMap]);
+
+    const contentGroupOptions: SelectOption[] = useMemo(() => {
+        if (allContentGroupsMap) {
+            const options = Array.from(
+                allContentGroupsMap,
+                ([key, value]): SelectOption => ({
+                    label: value.title,
+                    value: key,
+                })
+            );
+            options.unshift({
+                label: "None",
+                value: "",
+            });
+            return options;
+        }
+
+        return [];
+    }, [allContentGroupsMap]);
 
     const fields = useMemo(() => {
         const result: {
@@ -238,9 +257,59 @@ function EditableScheduleCRUDTable() {
                 },
                 validate: (v) => !!roomOptions.find((x) => x.value === v) || ["Must choose a room mode"],
             },
+            contentGroup: {
+                heading: "Associated content",
+                ariaLabel: "Associated content",
+                description: "Content associated with this event",
+                isHidden: false,
+                isEditable: true,
+                insert: (item, v) => {
+                    return {
+                        ...item,
+                        contentGroupId: v,
+                    };
+                },
+                extract: (item) => item.contentGroupId,
+                spec: {
+                    fieldType: FieldType.select,
+                    convertFromUI: (opt) => {
+                        assert(!(opt instanceof Array) || opt.length === 1);
+                        if (opt instanceof Array) {
+                            return opt[0].value.length === 0 ? null : opt[0].value;
+                        } else {
+                            return opt.value.length === 0 ? null : opt.value;
+                        }
+                    },
+                    convertToUI: (contentGroupId) => {
+                        if (!contentGroupId) {
+                            return {
+                                label: "No content selected",
+                                value: null,
+                            };
+                        }
+                        const title = allContentGroupsMap?.get(contentGroupId)?.title;
+                        if (title) {
+                            return {
+                                label: title,
+                                value: contentGroupId,
+                            };
+                        } else {
+                            return {
+                                label: `Unknown content ${contentGroupId}`,
+                                value: contentGroupId,
+                            };
+                        }
+                    },
+                    multiSelect: false,
+                    options: () => contentGroupOptions,
+                    filter: defaultSelectFilter,
+                },
+                validate: (v) =>
+                    !v || !!contentGroupOptions.find((x) => x.value === v) || ["Must choose a valid content group"],
+            },
         };
         return result;
-    }, [allRoomsMap, roomModeOptions, roomOptions]);
+    }, [allContentGroupsMap, allRoomsMap, contentGroupOptions, roomModeOptions, roomOptions]);
 
     useEffect(() => {
         if (!saveScheduleDiff.loadingContent && !saveScheduleDiff.errorContent && saveScheduleDiff.originalEvents) {
@@ -358,7 +427,7 @@ function EditableScheduleCRUDTable() {
                     },
                     save: async (keys) => {
                         assert(allEventsMap);
-                        assert(allGroupsMap);
+                        assert(allContentGroupsMap);
                         assert(allOriginatingDatasMap);
                         assert(allTagsMap);
                         assert(allRoomsMap);

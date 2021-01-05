@@ -77,7 +77,9 @@ export default function ContentGroupHallwaysModal({
                     <Button onClick={onOpen} colorScheme="blue">
                         Manage Content Hallways
                     </Button>
-                    <Text mt={2} as="p">(Hallways can exhibit items, rooms and events.)</Text>
+                    <Text mt={2} as="p">
+                        (Hallways can exhibit items, rooms and events.)
+                    </Text>
                 </Center>
             </Box>
             <Modal scrollBehavior="inside" onClose={onClose} isOpen={isOpen} motionPreset="scale" size="full">

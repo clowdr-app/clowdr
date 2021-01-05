@@ -88,7 +88,9 @@ export default function UploadersModal({
                     <Button onClick={onOpen} colorScheme="blue">
                         Manage uploaders
                     </Button>
-                    <Text mt={2} as="p">(Uploaders are the people who may upload content to this item.)</Text>
+                    <Text mt={2} as="p">
+                        (Uploaders are the people who may upload content to this item.)
+                    </Text>
                 </Center>
             </Box>
             <Modal scrollBehavior="inside" onClose={onClose} isOpen={isOpen} motionPreset="scale" size="full">

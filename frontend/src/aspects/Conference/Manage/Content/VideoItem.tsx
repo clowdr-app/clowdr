@@ -1,10 +1,9 @@
-import { FormControl, FormLabel } from "@chakra-ui/react";
 import { ContentBaseType, ContentItemVersionData } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
 import { ContentType_Enum } from "../../../../generated/graphql";
-import RenderContentItem from "../../../Content/RenderContentItem";
+import { ContentGroupVideo } from "../../Attend/Content/ContentGroupVideos";
 import type { ItemBaseTemplate } from "./Types";
 
 function createDefaultVideo(
@@ -96,8 +95,6 @@ export const VideoItemTemplate: ItemBaseTemplate = {
                 `Video Item Template mistakenly used for type ${data.type}.`
             );
 
-            const VideoLabel = "Uploaded video";
-
             if (data.item.data.length === 0) {
                 data = {
                     ...data,
@@ -116,10 +113,7 @@ export const VideoItemTemplate: ItemBaseTemplate = {
             );
             return (
                 <>
-                    <FormControl>
-                        <FormLabel>{VideoLabel}</FormLabel>
-                        <RenderContentItem data={data.item.data} />
-                    </FormControl>
+                    <ContentGroupVideo title={data.item.name} videoContentItemData={latestVersion.data} />
                 </>
             );
         }

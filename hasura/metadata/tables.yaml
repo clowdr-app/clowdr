@@ -2499,7 +2499,7 @@
                     rolePermissions:
                       _or:
                       - permissionName:
-                          _eq: CONFERENCE_VIEW
+                          _eq: CONFERENCE_VIEW_ATTENDEES
                       - permissionName:
                           _eq: CONFERENCE_MANAGE_SCHEDULE
               - _or:

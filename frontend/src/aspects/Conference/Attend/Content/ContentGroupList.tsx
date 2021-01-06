@@ -120,11 +120,12 @@ function Panel({ tag, isExpanded }: { tag: TagWithContentFragment; isExpanded: b
             })),
         [sortedGroups]
     );
+    const s = search.toLowerCase();
     const filteredElements = groupElements.filter((g) => {
         return (
-            g.title.includes(search) ||
-            g.names.some((name) => name.includes(search)) ||
-            g.affiliations.some((affiliation) => affiliation.includes(search))
+            g.title.includes(s) ||
+            g.names.some((name) => name.includes(s)) ||
+            g.affiliations.some((affiliation) => affiliation.includes(s))
         );
     });
 

@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Box, useToast, VStack } from "@chakra-ui/react";
+import { Box, Flex, useToast, VStack } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useRef } from "react";
 import {
     RoomDetailsFragment,
@@ -272,14 +272,12 @@ export function VonageRoom({
     return (
         <Box minH="100%" display="grid" gridTemplateRows="1fr auto">
             <Box position="relative">
-                <Box position="absolute" width="100%" height="100%" ref={videoContainerRef} overflowY="auto"></Box>
+                <Flex width="100%" height="auto" ref={videoContainerRef} overflowY="auto"></Flex>
                 {openTokProps.session?.connection ? (
                     <></>
                 ) : (
-                    <VStack justifyContent="center" height="100%" position="absolute" width="100%">
-                        <Box height="50%">
-                            <PreJoin cameraPreviewRef={cameraPreviewRef} />
-                        </Box>
+                    <VStack justifyContent="center" height="100%" width="100%">
+                        <PreJoin cameraPreviewRef={cameraPreviewRef} />
                     </VStack>
                 )}
             </Box>

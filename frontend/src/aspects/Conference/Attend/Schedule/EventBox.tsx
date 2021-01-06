@@ -9,6 +9,7 @@ import {
     PopoverContent,
     PopoverHeader,
     PopoverTrigger,
+    Portal,
     Text,
     useColorModeValue,
     useDisclosure,
@@ -113,91 +114,93 @@ function EventBoxPopover({
                     }}
                 ></div>
             </PopoverTrigger>
-            <PopoverContent
-                overflowY="auto"
-                overflowX="hidden"
-                onMouseDown={(ev) => {
-                    ev.stopPropagation();
-                }}
-                onMouseMove={(ev) => {
-                    ev.stopPropagation();
-                }}
-                maxH="30vh"
-                width={Math.min(window.innerWidth * 0.8, 500)}
-            >
-                <PopoverHeader fontWeight="semibold" pr={1}>
-                    <Flex direction="row">
-                        <Text>
-                            <Link ref={ref} as={ReactLink} to={eventUrl} textDecoration="none">
-                                {eventTitle}
-                            </Link>
-                        </Text>
-                        <Flex direction="row" justifyContent="flex-end" alignItems="flex-start" ml="auto">
-                            <LinkButton
-                                ml={1}
-                                mr={1}
-                                size="sm"
-                                colorScheme={isLive ? "red" : "green"}
-                                to={eventUrl}
-                                title={
-                                    isLive
-                                        ? `Event is happening now. Go to room ${roomName}`
-                                        : event.contentGroup
-                                        ? "View this event"
-                                        : `Go to room ${roomName}`
-                                }
-                                textDecoration="none"
-                            >
-                                {isLive ? (
-                                    <>
-                                        <FAIcon iconStyle="s" icon="link" mr={2} /> LIVE
-                                    </>
-                                ) : (
-                                    <FAIcon iconStyle="s" icon="link" />
-                                )}
-                                <Text as="span" ml={1}>
-                                    View
-                                </Text>
-                                {/* TODO: Time until event starts */}
-                            </LinkButton>
-                            {/* <Button colorScheme="gray" size="sm" onClick={onClose}>
+            <Portal>
+                <PopoverContent
+                    overflowY="auto"
+                    overflowX="hidden"
+                    onMouseDown={(ev) => {
+                        ev.stopPropagation();
+                    }}
+                    onMouseMove={(ev) => {
+                        ev.stopPropagation();
+                    }}
+                    maxH="30vh"
+                    width={Math.min(window.innerWidth * 0.8, 500)}
+                >
+                    <PopoverHeader fontWeight="semibold" pr={1}>
+                        <Flex direction="row">
+                            <Text>
+                                <Link ref={ref} as={ReactLink} to={eventUrl} textDecoration="none">
+                                    {eventTitle}
+                                </Link>
+                            </Text>
+                            <Flex direction="row" justifyContent="flex-end" alignItems="start" ml="auto">
+                                <LinkButton
+                                    ml={1}
+                                    mr={1}
+                                    size="sm"
+                                    colorScheme={isLive ? "red" : "green"}
+                                    to={eventUrl}
+                                    title={
+                                        isLive
+                                            ? `Event is happening now. Go to room ${roomName}`
+                                            : event.contentGroup
+                                            ? "View this event"
+                                            : `Go to room ${roomName}`
+                                    }
+                                    textDecoration="none"
+                                >
+                                    {isLive ? (
+                                        <>
+                                            <FAIcon iconStyle="s" icon="link" mr={2} /> LIVE
+                                        </>
+                                    ) : (
+                                        <FAIcon iconStyle="s" icon="link" />
+                                    )}
+                                    <Text as="span" ml={1}>
+                                        View
+                                    </Text>
+                                    {/* TODO: Time until event starts */}
+                                </LinkButton>
+                                {/* <Button colorScheme="gray" size="sm" onClick={onClose}>
                                     <FAIcon iconStyle="s" icon="times" />
                                 </Button> */}
+                            </Flex>
                         </Flex>
-                    </Flex>
-                    <Text
-                        aria-label={`Starts at ${new Date(event.startTime).toLocaleString(undefined, {
-                            weekday: "long",
-                            hour: "numeric",
-                            minute: "numeric",
-                        })} and lasts ${Math.round(durationSeconds / 60)} minutes.`}
-                        mb={2}
-                    >
-                        {new Date(eventStartMs).toLocaleString(undefined, {
-                            hour: "numeric",
-                            minute: "numeric",
-                            hour12: false,
-                        })}{" "}
-                        -{" "}
-                        {new Date(eventStartMs + durationSeconds * 1000).toLocaleString(undefined, {
-                            hour: "numeric",
-                            minute: "numeric",
-                            hour12: false,
-                        })}
-                    </Text>
-                    <EventTagList tags={event.eventTags} />
-                </PopoverHeader>
-                <PopoverArrow />
-                <PopoverBody as={VStack} spacing={4} justifyContent="flex-start" alignItems="flex-start">
-                    {event.eventPeople.length > 0 ? <EventPersonList people={event.eventPeople} /> : undefined}
-                    {event.contentGroup?.people && event.contentGroup?.people.length > 0 ? (
-                        <AuthorList contentPeopleData={event.contentGroup.people} />
-                    ) : undefined}
-                    <Box>
-                        <Markdown>{abstractText}</Markdown>
-                    </Box>
-                </PopoverBody>
-            </PopoverContent>
+                        <Text
+                            aria-label={`Starts at ${new Date(event.startTime).toLocaleString(undefined, {
+                                weekday: "long",
+                                hour: "numeric",
+                                minute: "numeric",
+                            })} and lasts ${Math.round(durationSeconds / 60)} minutes.`}
+                            mb={2}
+                        >
+                            {new Date(eventStartMs).toLocaleString(undefined, {
+                                hour: "numeric",
+                                minute: "numeric",
+                                hour12: false,
+                            })}{" "}
+                            -{" "}
+                            {new Date(eventStartMs + durationSeconds * 1000).toLocaleString(undefined, {
+                                hour: "numeric",
+                                minute: "numeric",
+                                hour12: false,
+                            })}
+                        </Text>
+                        <EventTagList tags={event.eventTags} />
+                    </PopoverHeader>
+                    <PopoverArrow />
+                    <PopoverBody as={VStack} spacing={4} justifyContent="flex-start" alignItems="start">
+                        {event.eventPeople.length > 0 ? <EventPersonList people={event.eventPeople} /> : undefined}
+                        {event.contentGroup?.people && event.contentGroup?.people.length > 0 ? (
+                            <AuthorList contentPeopleData={event.contentGroup.people} />
+                        ) : undefined}
+                        <Box>
+                            <Markdown>{abstractText}</Markdown>
+                        </Box>
+                    </PopoverBody>
+                </PopoverContent>
+            </Portal>
         </Popover>
     );
 }

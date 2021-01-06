@@ -1,6 +1,6 @@
 import {
-    Box,
-    Flex,
+    Grid,
+    GridItem,
     Heading,
     SkeletonCircle,
     SkeletonText,
@@ -9,12 +9,14 @@ import {
     TabPanel,
     TabPanels,
     Tabs,
+    Tag,
+    Text,
     useBreakpointValue,
     useColorModeValue,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import ReactPlayer from "react-player";
-import type { RoomDetailsFragment } from "../../../../generated/graphql";
+import { RoomDetailsFragment, useUserEventRolesSubscription } from "../../../../generated/graphql";
 import useUserId from "../../../Auth/useUserId";
 import { VonageRoomStateProvider } from "../../../Vonage/useVonageRoom";
 import { ContentGroupSummary } from "../Content/ContentGroupSummary";
@@ -24,8 +26,15 @@ import { BreakoutVonageRoom, EventVonageRoom } from "./VonageRoom";
 export function Room({ roomDetails }: { roomDetails: RoomDetailsFragment }): JSX.Element {
     const backgroundColor = useColorModeValue("gray.50", "gray.900");
     const stackColumns = useBreakpointValue({ base: true, lg: false });
-    const { currentRoomEvent, withinThreeMinutesOfEvent } = useCurrentRoomEvent(roomDetails);
+    const { currentRoomEvent, withinThreeMinutesOfEvent, nextRoomEvent } = useCurrentRoomEvent(roomDetails);
     const userId = useUserId();
+
+    const { data: currentEventRolesData } = useUserEventRolesSubscription({
+        variables: {
+            eventId: currentRoomEvent?.id,
+            userId: userId ?? "",
+        },
+    });
 
     const hlsUri = useMemo(() => {
         if (!roomDetails.mediaLiveChannel) {
@@ -36,22 +45,41 @@ export function Room({ roomDetails }: { roomDetails: RoomDetailsFragment }): JSX
         return finalUri.toString();
     }, [roomDetails.mediaLiveChannel]);
 
-    const canJoinEventRoom = useMemo(() => {
-        return !!currentRoomEvent?.eventPeople.find((person) => person.attendee?.userId === userId);
-    }, [currentRoomEvent?.eventPeople, userId]);
+    const canJoinCurrentEventRoom = useMemo(() => {
+        return (
+            currentEventRolesData?.Event_by_pk?.eventPeople &&
+            currentEventRolesData?.Event_by_pk?.eventPeople.length > 0
+        );
+    }, [currentEventRolesData?.Event_by_pk?.eventPeople]);
+
+    const canJoinNextEventRoom = useMemo(() => {
+        return !!nextRoomEvent?.eventPeople.find((person) => person.attendee?.userId === userId);
+    }, [nextRoomEvent?.eventPeople, userId]);
 
     return (
-        <Flex width="100%" height="100%" gridColumnGap={5} flexWrap={stackColumns ? "wrap" : "nowrap"}>
-            <Box textAlign="left" flexGrow={1} overflowY={stackColumns ? "visible" : "auto"} p={2}>
+        <Grid width="100%" gridColumnGap={5} gridTemplateColumns="1fr 25%" flexWrap={stackColumns ? "wrap" : "nowrap"}>
+            <GridItem textAlign="left" overflowY={stackColumns ? "visible" : "auto"} p={2}>
                 <Tabs width="100%" background={backgroundColor}>
                     <TabList>
                         {hlsUri && withinThreeMinutesOfEvent && <Tab disabled={!withinThreeMinutesOfEvent}>Event</Tab>}
                         <Tab>Breakout Room</Tab>
-                        {canJoinEventRoom && currentRoomEvent && <Tab>Event Room</Tab>}
+                        {canJoinCurrentEventRoom && currentRoomEvent && (
+                            <Tab>
+                                Event Room ({currentRoomEvent.name}){" "}
+                                <Tag ml={2} colorScheme="green">
+                                    Now
+                                </Tag>
+                            </Tab>
+                        )}
+                        {canJoinNextEventRoom && nextRoomEvent && (
+                            <Tab>
+                                Event Room ({nextRoomEvent.name}) <Tag ml={2}>Next</Tag>
+                            </Tab>
+                        )}
                     </TabList>
                     <TabPanels>
                         {hlsUri && withinThreeMinutesOfEvent && (
-                            <TabPanel width="100%" minH="80vh">
+                            <TabPanel>
                                 <ReactPlayer
                                     width="100%"
                                     height="auto"
@@ -66,15 +94,22 @@ export function Room({ roomDetails }: { roomDetails: RoomDetailsFragment }): JSX
                                 />
                             </TabPanel>
                         )}
-                        <TabPanel minHeight="80vh" height="80vh">
+                        <TabPanel>
                             <VonageRoomStateProvider>
                                 <BreakoutVonageRoom room={roomDetails} />
                             </VonageRoomStateProvider>
                         </TabPanel>
-                        {canJoinEventRoom && currentRoomEvent && (
+                        {canJoinCurrentEventRoom && currentRoomEvent && (
                             <TabPanel>
                                 <VonageRoomStateProvider>
                                     <EventVonageRoom event={currentRoomEvent} />
+                                </VonageRoomStateProvider>
+                            </TabPanel>
+                        )}
+                        {canJoinNextEventRoom && nextRoomEvent && (
+                            <TabPanel>
+                                <VonageRoomStateProvider>
+                                    <EventVonageRoom event={nextRoomEvent} />
                                 </VonageRoomStateProvider>
                             </TabPanel>
                         )}
@@ -84,16 +119,26 @@ export function Room({ roomDetails }: { roomDetails: RoomDetailsFragment }): JSX
                     {roomDetails.name}
                 </Heading>
 
-                {currentRoomEvent?.contentGroup ? (
-                    <ContentGroupSummary contentGroupData={currentRoomEvent.contentGroup} />
+                {currentRoomEvent ? (
+                    <>
+                        <Heading as="h3" textAlign="left" size="md" mt={5}>
+                            Current event
+                        </Heading>
+                        <Text>{currentRoomEvent.name}</Text>
+                        {currentRoomEvent?.contentGroup ? (
+                            <ContentGroupSummary contentGroupData={currentRoomEvent.contentGroup} />
+                        ) : (
+                            <></>
+                        )}
+                    </>
                 ) : (
                     <></>
                 )}
-            </Box>
-            <Box width={stackColumns ? "100%" : "30%"} border="1px solid white" height="100%" p={5}>
+            </GridItem>
+            <GridItem border="1px solid white" p={5}>
                 <SkeletonCircle size="20" />
                 <SkeletonText mt={8} noOfLines={5} spacing={5} />
-            </Box>
-        </Flex>
+            </GridItem>
+        </Grid>
     );
 }

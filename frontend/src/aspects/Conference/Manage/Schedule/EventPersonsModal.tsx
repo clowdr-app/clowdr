@@ -228,7 +228,7 @@ export function EventPersonsModal({
                                             extract: (item) => item.affiliation,
                                             spec: {
                                                 fieldType: FieldType.string,
-                                                convertFromUI: (x) => (x.length === 0 ? null : x),
+                                                convertFromUI: (x) => (!x || x?.length === 0 ? null : x),
                                                 convertToUI: (x) => x,
                                                 filter: defaultStringFilter,
                                             },

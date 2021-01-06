@@ -9,7 +9,6 @@ import {
     PopoverContent,
     PopoverHeader,
     PopoverTrigger,
-    Portal,
     Text,
     useColorModeValue,
     useDisclosure,
@@ -165,7 +164,6 @@ function EventBoxPopover({
                                 {/* <Button colorScheme="gray" size="sm" onClick={onClose}>
                                     <FAIcon iconStyle="s" icon="times" />
                                 </Button> */}
-                            </Flex>
                         </Flex>
                         <Text
                             aria-label={`Starts at ${new Date(event.startTime).toLocaleString(undefined, {

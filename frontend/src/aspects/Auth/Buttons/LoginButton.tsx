@@ -6,7 +6,7 @@ export default function LoginButton(): JSX.Element {
     const { loginWithRedirect } = useAuth0();
 
     return (
-        <Button size="sm" onClick={() => loginWithRedirect()} colorScheme="green">
+        <Button size="sm" onClick={() => loginWithRedirect()} colorScheme="green" role="menuitem">
             Log In
         </Button>
     );

@@ -33,6 +33,9 @@ const theme = extendTheme({
         initialColorMode: "dark",
     },
     colors,
+    shadows: {
+        outline: "0 0 0 3px rgba(255, 187, 0, 0.8)",
+    },
     components: {
         body: {
             bgColor: "black",

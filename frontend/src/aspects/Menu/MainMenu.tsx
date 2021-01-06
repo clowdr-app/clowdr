@@ -36,6 +36,7 @@ export default function MainMenu(_props: Props): JSX.Element {
                             colorScheme={button.colorScheme}
                             textAlign="center"
                             size="sm"
+                            role="menuitem"
                         >
                             {button.text}
                         </LinkButton>
@@ -47,6 +48,7 @@ export default function MainMenu(_props: Props): JSX.Element {
                             colorScheme={button.colorScheme}
                             textAlign="center"
                             size="sm"
+                            role="menuitem"
                         >
                             {button.text}
                         </Button>
@@ -72,7 +74,7 @@ export default function MainMenu(_props: Props): JSX.Element {
                     <Route path="/">
                         <Box marginRight={[0, "auto"]} display={["none", "block"]} />
                         {user && user.attendees.length > 0 ? (
-                            <LinkButton to="/user" size="sm">
+                            <LinkButton to="/user" size="sm" role="menuitem">
                                 My Conferences
                             </LinkButton>
                         ) : undefined}

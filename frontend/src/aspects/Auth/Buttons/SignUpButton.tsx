@@ -7,7 +7,12 @@ export default function SignupButton(): JSX.Element {
     return isAuthenticated ? (
         <></>
     ) : (
-        <Button size="sm" onClick={() => loginWithRedirect({ screen_hint: "signup" })} colorScheme="blue">
+        <Button
+            size="sm"
+            onClick={() => loginWithRedirect({ screen_hint: "signup" })}
+            colorScheme="blue"
+            role="menuitem"
+        >
             Sign Up
         </Button>
     );

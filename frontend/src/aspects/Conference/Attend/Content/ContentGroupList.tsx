@@ -142,6 +142,7 @@ function Panel({ tag, isExpanded }: { tag: TagWithContentFragment; isExpanded: b
     return (
         <Center
             role="region"
+            id={`content-groups-accordion-panel-${tag.id}`}
             aria-labelledby={`content-groups-accordion-button-${tag.id}`}
             hidden={!isExpanded ? true : undefined}
             transition={"height 5s linear"}
@@ -155,6 +156,9 @@ function Panel({ tag, isExpanded }: { tag: TagWithContentFragment; isExpanded: b
                 {tag.name}
             </Heading>
             <FormControl mb={4} maxW={400}>
+                <FormLabel mt={4} textAlign="center">
+                    {resultCountStr}
+                </FormLabel>
                 <InputGroup>
                     <InputLeftAddon aria-hidden>Search</InputLeftAddon>
                     <Input
@@ -171,9 +175,6 @@ function Panel({ tag, isExpanded }: { tag: TagWithContentFragment; isExpanded: b
                     </InputRightElement>
                 </InputGroup>
                 <FormHelperText>Search for an item by title or a person&apos;s name or affiliation.</FormHelperText>
-                <FormLabel mt={4} textAlign="center">
-                    {resultCountStr}
-                </FormLabel>
             </FormControl>
             <SimpleGrid
                 columns={[1, Math.min(2, filteredElements.length), Math.min(3, filteredElements.length)]}

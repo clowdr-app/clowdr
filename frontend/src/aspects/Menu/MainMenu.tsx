@@ -25,6 +25,7 @@ export default function MainMenu(_props: Props): JSX.Element {
                 role="menu"
                 width="100%"
                 gridRowGap={[0, 2]}
+                flex="0 0 auto"
             >
                 {primaryButtons.map((button) =>
                     typeof button.action === "string" ? (

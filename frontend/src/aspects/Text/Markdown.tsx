@@ -30,7 +30,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-
 /* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
 import { ExternalLinkIcon } from "@chakra-ui/icons";
@@ -98,7 +97,10 @@ export function Markdown(props?: { children?: string; className?: string; linkCo
                 link: function customLink({ href, children }: { href: string; children: JSX.Element }): JSX.Element {
                     return (
                         <Link href={href} color={props?.linkColour} isExternal={true} rel="noopener noreferrer">
-                            {children}<sup><ExternalLinkIcon mx="2px" fontSize="1rem" paddingTop="2px" /></sup>
+                            {children}
+                            <sup>
+                                <ExternalLinkIcon mx="2px" fontSize="1rem" paddingTop="2px" />
+                            </sup>
                         </Link>
                     );
                 },

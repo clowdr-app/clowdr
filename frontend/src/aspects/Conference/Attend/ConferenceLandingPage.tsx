@@ -1,6 +1,10 @@
 import { gql } from "@apollo/client";
 import { Box, Heading, Spinner } from "@chakra-ui/react";
-import { assertIsContentItemDataBlob, ContentBaseType, ContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
+import {
+    assertIsContentItemDataBlob,
+    ContentBaseType,
+    ContentItemDataBlob,
+} from "@clowdr-app/shared-types/build/content";
 import React, { useMemo } from "react";
 import {
     ContentGroupDataFragment,
@@ -38,7 +42,7 @@ function ConferenceLandingContent({ group }: { group: ContentGroupDataFragment }
                     elements.splice(
                         0,
                         0,
-                        <Box key={"item-" + item.id} mt={5} maxW={600}>
+                        <Box key={"item-" + item.id} mt={5} maxW={600} display="inline-block">
                             <Markdown>
                                 {latestVersion?.data.baseType === ContentBaseType.Text ? latestVersion.data.text : ""}
                             </Markdown>
@@ -73,15 +77,24 @@ function ConferenceLandingPageInner(): JSX.Element {
         return null;
     }, [data]);
 
-    const hasAbstract = useMemo(() => group?.contentItems.some(item => {
-        if (item.contentTypeName === ContentType_Enum.Abstract) {
-            const data: ContentItemDataBlob = item.data;
-            if (data.length > 0 && data[0].data.baseType === ContentBaseType.Text && data[0].data.text && data[0].data.text.trim() !== "") {
-                return true;
-            }
-        }
-        return false;
-    }), [group?.contentItems]);
+    const hasAbstract = useMemo(
+        () =>
+            group?.contentItems.some((item) => {
+                if (item.contentTypeName === ContentType_Enum.Abstract) {
+                    const data: ContentItemDataBlob = item.data;
+                    if (
+                        data.length > 0 &&
+                        data[0].data.baseType === ContentBaseType.Text &&
+                        data[0].data.text &&
+                        data[0].data.text.trim() !== ""
+                    ) {
+                        return true;
+                    }
+                }
+                return false;
+            }),
+        [group?.contentItems]
+    );
 
     if (!group) {
         return (

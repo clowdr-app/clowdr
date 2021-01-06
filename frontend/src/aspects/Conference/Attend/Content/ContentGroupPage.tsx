@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 import { Box, Flex, Heading, useBreakpointValue } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect } from "react";
 import {
     ContentGroupDataFragment,
     ContentGroupEventsFragment,
@@ -9,7 +9,9 @@ import {
 } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
+import usePrimaryMenuButtons from "../../../Menu/usePrimaryMenuButtons";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import { useConference } from "../../useConference";
 import { ContentGroupEvents } from "./ContentGroupEvents";
 import { ContentGroupSummary } from "./ContentGroupSummary";
 import { ContentGroupVideos } from "./ContentGroupVideos";
@@ -60,6 +62,19 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
         },
     });
     const stackColumns = useBreakpointValue({ base: true, lg: false });
+    const conference = useConference();
+
+    const { setPrimaryMenuButtons } = usePrimaryMenuButtons();
+    useEffect(() => {
+        setPrimaryMenuButtons([
+            {
+                key: "conference-home",
+                action: `/conference/${conference.slug}`,
+                text: "Home",
+                label: "Home",
+            },
+        ]);
+    }, [conference.slug, setPrimaryMenuButtons]);
 
     return (
         <RequireAtLeastOnePermissionWrapper

@@ -23402,6 +23402,14 @@ export type GetRoomVonageTokenMutationVariables = Exact<{
 
 export type GetRoomVonageTokenMutation = { readonly __typename?: 'mutation_root', readonly joinRoomVonageSession?: Maybe<{ readonly __typename?: 'JoinRoomVonageSessionOutput', readonly accessToken?: Maybe<string>, readonly sessionId?: Maybe<string> }> };
 
+export type UserEventRolesSubscriptionVariables = Exact<{
+  eventId: Scalars['uuid'];
+  userId: Scalars['String'];
+}>;
+
+
+export type UserEventRolesSubscription = { readonly __typename?: 'subscription_root', readonly Event_by_pk?: Maybe<{ readonly __typename?: 'Event', readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'EventPerson', readonly roleName: EventPersonRole_Enum, readonly id: any }> }> };
+
 export type Timeline_TagFragment = { readonly __typename?: 'Tag', readonly id: any, readonly name: string, readonly colour: string };
 
 export type Timeline_ContentGroupTagFragment = { readonly __typename?: 'ContentGroupTag', readonly id: any, readonly tag: (
@@ -25383,6 +25391,39 @@ export function useGetRoomVonageTokenMutation(baseOptions?: Apollo.MutationHookO
 export type GetRoomVonageTokenMutationHookResult = ReturnType<typeof useGetRoomVonageTokenMutation>;
 export type GetRoomVonageTokenMutationResult = Apollo.MutationResult<GetRoomVonageTokenMutation>;
 export type GetRoomVonageTokenMutationOptions = Apollo.BaseMutationOptions<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>;
+export const UserEventRolesDocument = gql`
+    subscription UserEventRoles($eventId: uuid!, $userId: String!) {
+  Event_by_pk(id: $eventId) {
+    eventPeople(where: {attendee: {userId: {_eq: $userId}}}) {
+      roleName
+      id
+    }
+  }
+}
+    `;
+
+/**
+ * __useUserEventRolesSubscription__
+ *
+ * To run a query within a React component, call `useUserEventRolesSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useUserEventRolesSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserEventRolesSubscription({
+ *   variables: {
+ *      eventId: // value for 'eventId'
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useUserEventRolesSubscription(baseOptions: Apollo.SubscriptionHookOptions<UserEventRolesSubscription, UserEventRolesSubscriptionVariables>) {
+        return Apollo.useSubscription<UserEventRolesSubscription, UserEventRolesSubscriptionVariables>(UserEventRolesDocument, baseOptions);
+      }
+export type UserEventRolesSubscriptionHookResult = ReturnType<typeof useUserEventRolesSubscription>;
+export type UserEventRolesSubscriptionResult = Apollo.SubscriptionResult<UserEventRolesSubscription>;
 export const Timeline_SelectRoomsDocument = gql`
     query Timeline_SelectRooms($conferenceId: uuid!) {
   Room(where: {conferenceId: {_eq: $conferenceId}}) {

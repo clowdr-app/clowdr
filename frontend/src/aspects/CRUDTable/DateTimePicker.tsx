@@ -1,7 +1,7 @@
-import { HStack, Input, Text } from "@chakra-ui/react";
+import { HStack, Input, Tooltip, VisuallyHidden } from "@chakra-ui/react";
 import {
     format,
-    getDay,
+    getDate,
     getHours,
     getMinutes,
     getMonth,
@@ -10,7 +10,7 @@ import {
     isEqual,
     isValid,
     parse,
-    setDay,
+    setDate,
     setHours,
     setMinutes,
     setMonth,
@@ -19,6 +19,7 @@ import {
 } from "date-fns";
 import { utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import FAIcon from "../Icons/FAIcon";
 import type { EditMode } from "./CRUDTable";
 
 export function DateTimePicker({ value, editMode }: { value: Date; editMode: EditMode }): JSX.Element {
@@ -44,14 +45,7 @@ export function DateTimePicker({ value, editMode }: { value: Date; editMode: Edi
         }
     }, [utcDateTime, editMode, value]);
 
-    // useEffect(() => {
-    //     if (!dateTime || !isEqual(value, dateTime)) {
-    //         setDateTime(value);
-    //     }
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [value]);
-
-    const setDate = useCallback(
+    const setDateTime = useCallback(
         (newDateValue: string) => {
             const newDate = parse(newDateValue, "yyyy-MM-dd", value);
             if (!isValid(newDate)) {
@@ -60,9 +54,9 @@ export function DateTimePicker({ value, editMode }: { value: Date; editMode: Edi
             const existingLocalDateTime = utcToZonedTime(utcDateTime, localTimeZone);
             const year = getYear(newDate);
             const month = getMonth(newDate);
-            const day = getDay(newDate);
+            const day = getDate(newDate);
             const newUtcDateTime = zonedTimeToUtc(
-                setDay(setMonth(setYear(existingLocalDateTime, year), month), day),
+                setDate(setMonth(setYear(existingLocalDateTime, year), month), day),
                 localTimeZone
             );
 
@@ -97,9 +91,12 @@ export function DateTimePicker({ value, editMode }: { value: Date; editMode: Edi
 
     return (
         <HStack>
-            <Input type="date" value={localDateValue} onChange={(e) => setDate(e.target.value)} />
-            <Input type="time" value={localTimeValue} onChange={(e) => setTime(e.target.value)} />
-            <Text>({localTimeZone})</Text>
+            <Input type="date" value={localDateValue} onChange={(e) => setDateTime(e.target.value)} />
+            <Input type="time" value={localTimeValue} onChange={(e) => setTime(e.target.value)} step="1" />
+            <Tooltip label={`Timezone: ${localTimeZone}`}>
+                <FAIcon icon="user-clock" iconStyle="s" />
+            </Tooltip>
+            <VisuallyHidden>Timezone is {localTimeZone}</VisuallyHidden>
         </HStack>
     );
 }

@@ -24131,13 +24131,31 @@ export type ConferenceBySlugQueryVariables = Exact<{
 
 export type ConferenceBySlugQuery = { readonly __typename?: 'query_root', readonly Conference: ReadonlyArray<{ readonly __typename?: 'Conference', readonly createdBy: string, readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string, readonly updatedAt: any, readonly createdAt: any }> };
 
+export type GroupDataFragment = { readonly __typename?: 'Group', readonly enabled: boolean, readonly id: any, readonly includeUnauthenticated: boolean, readonly name: string, readonly conferenceId: any, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any, readonly role: { readonly __typename?: 'Role', readonly id: any, readonly name: string, readonly conferenceId: any, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly permissionName: Permission_Enum, readonly id: any, readonly roleId: any }> } }> };
+
 export type CurrentUserGroupsRolesPermissionsQueryVariables = Exact<{
   userId?: Maybe<Scalars['String']>;
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type CurrentUserGroupsRolesPermissionsQuery = { readonly __typename?: 'query_root', readonly User: ReadonlyArray<{ readonly __typename?: 'User', readonly id: string, readonly conferencesCreated: ReadonlyArray<{ readonly __typename?: 'Conference', readonly id: any }>, readonly attendees: ReadonlyArray<{ readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly conferenceId: any, readonly displayName: string, readonly groupAttendees: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly id: any, readonly groupId: any, readonly attendeeId: any, readonly group: { readonly __typename?: 'Group', readonly enabled: boolean, readonly id: any, readonly includeUnauthenticated: boolean, readonly name: string, readonly conferenceId: any, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any, readonly role: { readonly __typename?: 'Role', readonly id: any, readonly name: string, readonly conferenceId: any, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly permissionName: Permission_Enum, readonly id: any, readonly roleId: any }> } }> } }> }> }>, readonly publicGroups: ReadonlyArray<{ readonly __typename?: 'Group', readonly enabled: boolean, readonly id: any, readonly includeUnauthenticated: boolean, readonly name: string, readonly conferenceId: any, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any, readonly role: { readonly __typename?: 'Role', readonly id: any, readonly name: string, readonly conferenceId: any, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly permissionName: Permission_Enum, readonly id: any, readonly roleId: any }> } }> }> };
+export type CurrentUserGroupsRolesPermissionsQuery = { readonly __typename?: 'query_root', readonly User: ReadonlyArray<{ readonly __typename?: 'User', readonly id: string, readonly conferencesCreated: ReadonlyArray<{ readonly __typename?: 'Conference', readonly id: any }>, readonly attendees: ReadonlyArray<{ readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly conferenceId: any, readonly displayName: string, readonly groupAttendees: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly id: any, readonly groupId: any, readonly attendeeId: any, readonly group: (
+          { readonly __typename?: 'Group' }
+          & GroupDataFragment
+        ) }> }> }>, readonly publicGroups: ReadonlyArray<(
+    { readonly __typename?: 'Group' }
+    & GroupDataFragment
+  )> };
+
+export type PublicUserGroupsRolesPermissionsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type PublicUserGroupsRolesPermissionsQuery = { readonly __typename?: 'query_root', readonly publicGroups: ReadonlyArray<(
+    { readonly __typename?: 'Group' }
+    & GroupDataFragment
+  )> };
 
 export type UpdateSubtitlesMutationVariables = Exact<{
   contentItemId: Scalars['String'];
@@ -24790,6 +24808,30 @@ export const AttendeeInfoFragmentDoc = gql`
     fragment AttendeeInfo on Attendee {
   id
   displayName
+}
+    `;
+export const GroupDataFragmentDoc = gql`
+    fragment GroupData on Group {
+  groupRoles {
+    role {
+      rolePermissions {
+        permissionName
+        id
+        roleId
+      }
+      id
+      name
+      conferenceId
+    }
+    id
+    roleId
+    groupId
+  }
+  enabled
+  id
+  includeUnauthenticated
+  name
+  conferenceId
 }
     `;
 export const RequiredItemFieldsFragmentDoc = gql`
@@ -27488,26 +27530,7 @@ export const CurrentUserGroupsRolesPermissionsDocument = gql`
     attendees(where: {conferenceId: {_eq: $conferenceId}}) {
       groupAttendees {
         group {
-          groupRoles {
-            role {
-              rolePermissions {
-                permissionName
-                id
-                roleId
-              }
-              id
-              name
-              conferenceId
-            }
-            id
-            roleId
-            groupId
-          }
-          enabled
-          id
-          includeUnauthenticated
-          name
-          conferenceId
+          ...GroupData
         }
         id
         groupId
@@ -27523,29 +27546,10 @@ export const CurrentUserGroupsRolesPermissionsDocument = gql`
   publicGroups: Group(
     where: {conferenceId: {_eq: $conferenceId}, enabled: {_eq: true}, includeUnauthenticated: {_eq: true}}
   ) {
-    groupRoles {
-      role {
-        rolePermissions {
-          permissionName
-          id
-          roleId
-        }
-        id
-        name
-        conferenceId
-      }
-      id
-      roleId
-      groupId
-    }
-    enabled
-    id
-    includeUnauthenticated
-    name
-    conferenceId
+    ...GroupData
   }
 }
-    `;
+    ${GroupDataFragmentDoc}`;
 
 /**
  * __useCurrentUserGroupsRolesPermissionsQuery__
@@ -27573,6 +27577,41 @@ export function useCurrentUserGroupsRolesPermissionsLazyQuery(baseOptions?: Apol
 export type CurrentUserGroupsRolesPermissionsQueryHookResult = ReturnType<typeof useCurrentUserGroupsRolesPermissionsQuery>;
 export type CurrentUserGroupsRolesPermissionsLazyQueryHookResult = ReturnType<typeof useCurrentUserGroupsRolesPermissionsLazyQuery>;
 export type CurrentUserGroupsRolesPermissionsQueryResult = Apollo.QueryResult<CurrentUserGroupsRolesPermissionsQuery, CurrentUserGroupsRolesPermissionsQueryVariables>;
+export const PublicUserGroupsRolesPermissionsDocument = gql`
+    query PublicUserGroupsRolesPermissions($conferenceId: uuid!) {
+  publicGroups: Group(
+    where: {conferenceId: {_eq: $conferenceId}, enabled: {_eq: true}, includeUnauthenticated: {_eq: true}}
+  ) {
+    ...GroupData
+  }
+}
+    ${GroupDataFragmentDoc}`;
+
+/**
+ * __usePublicUserGroupsRolesPermissionsQuery__
+ *
+ * To run a query within a React component, call `usePublicUserGroupsRolesPermissionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePublicUserGroupsRolesPermissionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePublicUserGroupsRolesPermissionsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function usePublicUserGroupsRolesPermissionsQuery(baseOptions: Apollo.QueryHookOptions<PublicUserGroupsRolesPermissionsQuery, PublicUserGroupsRolesPermissionsQueryVariables>) {
+        return Apollo.useQuery<PublicUserGroupsRolesPermissionsQuery, PublicUserGroupsRolesPermissionsQueryVariables>(PublicUserGroupsRolesPermissionsDocument, baseOptions);
+      }
+export function usePublicUserGroupsRolesPermissionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PublicUserGroupsRolesPermissionsQuery, PublicUserGroupsRolesPermissionsQueryVariables>) {
+          return Apollo.useLazyQuery<PublicUserGroupsRolesPermissionsQuery, PublicUserGroupsRolesPermissionsQueryVariables>(PublicUserGroupsRolesPermissionsDocument, baseOptions);
+        }
+export type PublicUserGroupsRolesPermissionsQueryHookResult = ReturnType<typeof usePublicUserGroupsRolesPermissionsQuery>;
+export type PublicUserGroupsRolesPermissionsLazyQueryHookResult = ReturnType<typeof usePublicUserGroupsRolesPermissionsLazyQuery>;
+export type PublicUserGroupsRolesPermissionsQueryResult = Apollo.QueryResult<PublicUserGroupsRolesPermissionsQuery, PublicUserGroupsRolesPermissionsQueryVariables>;
 export const UpdateSubtitlesDocument = gql`
     mutation UpdateSubtitles($contentItemId: String!, $magicToken: String!, $subtitleText: String!) {
   updateSubtitles(

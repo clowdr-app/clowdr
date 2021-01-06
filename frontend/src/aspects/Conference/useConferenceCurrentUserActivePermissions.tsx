@@ -20,60 +20,63 @@ export default function ConferenceCurrentUserActivePermissionsProvider({
     const groups = useCurrentUserGroupsRolesPermissions();
 
     const value: Set<Permission_Enum> = useMemo(() => {
-        if (groups.User[0].conferencesCreated.length > 0) {
-            return new Set(Object.values(Permission_Enum));
-        } else {
-            const publicPermissions: Set<Permission_Enum> = reduceToSet(groups.publicGroups, (acc, group) => {
-                return reduceToSet(
-                    group.groupRoles,
-                    (acc, groupRole) => {
-                        return reduceToSet(
-                            groupRole.role.rolePermissions,
-                            (acc, rolePermission) => {
-                                acc.add(rolePermission.permissionName);
-                                return acc;
-                            },
-                            acc
-                        );
-                    },
-                    acc
-                );
-            });
-            if (groups.User.length > 0) {
-                return reduceToSet(
-                    groups.User[0].attendees,
-                    (acc, attendee) => {
-                        return reduceToSet(
-                            attendee.groupAttendees,
-                            (acc, groupAttendee) => {
-                                if (groupAttendee.group.enabled) {
-                                    return reduceToSet(
-                                        groupAttendee.group.groupRoles,
-                                        (acc, groupRole) => {
-                                            return reduceToSet(
-                                                groupRole.role.rolePermissions,
-                                                (acc, rolePermission) => {
-                                                    acc.add(rolePermission.permissionName);
-                                                    return acc;
-                                                },
-                                                acc
-                                            );
-                                        },
-                                        acc
-                                    );
-                                }
-                                return acc;
-                            },
-                            acc
-                        );
-                    },
-                    publicPermissions
-                );
+        const publicPermissions: Set<Permission_Enum> = reduceToSet(groups.publicGroups, (acc, group) => {
+            return reduceToSet(
+                group.groupRoles,
+                (acc, groupRole) => {
+                    return reduceToSet(
+                        groupRole.role.rolePermissions,
+                        (acc, rolePermission) => {
+                            acc.add(rolePermission.permissionName);
+                            return acc;
+                        },
+                        acc
+                    );
+                },
+                acc
+            );
+        });
+
+        if ("User" in groups) {
+            if (groups.User[0].conferencesCreated.length > 0) {
+                return new Set(Object.values(Permission_Enum));
             } else {
-                return publicPermissions;
+                if (groups.User.length > 0) {
+                    return reduceToSet(
+                        groups.User[0].attendees,
+                        (acc, attendee) => {
+                            return reduceToSet(
+                                attendee.groupAttendees,
+                                (acc, groupAttendee) => {
+                                    if (groupAttendee.group.enabled) {
+                                        return reduceToSet(
+                                            groupAttendee.group.groupRoles,
+                                            (acc, groupRole) => {
+                                                return reduceToSet(
+                                                    groupRole.role.rolePermissions,
+                                                    (acc, rolePermission) => {
+                                                        acc.add(rolePermission.permissionName);
+                                                        return acc;
+                                                    },
+                                                    acc
+                                                );
+                                            },
+                                            acc
+                                        );
+                                    }
+                                    return acc;
+                                },
+                                acc
+                            );
+                        },
+                        publicPermissions
+                    );
+                }
             }
         }
-    }, [groups.User, groups.publicGroups]);
+
+        return publicPermissions;
+    }, [groups]);
 
     return (
         <ConferenceCurrentUserActivePermissionsContext.Provider value={value}>

@@ -1146,11 +1146,11 @@ function ContentGroupSecondaryEditor(
                 let accordianTitle: string | JSX.Element = `TODO: Unsupported required item type ${itemType}`;
                 let accordianContents: JSX.Element | undefined;
 
-                if (itemTemplate.supported) {
-                    const item =
-                        requiredItem &&
-                        group.items.find((x) => x.typeName === itemType && x.requiredContentId === requiredItem.id);
+                const item =
+                    requiredItem &&
+                    group.items.find((x) => x.typeName === itemType && x.requiredContentId === requiredItem.id);
 
+                if (itemTemplate.supported) {
                     const itemDesc: ContentDescriptor | null =
                         requiredItem && item
                             ? {
@@ -1195,6 +1195,50 @@ function ContentGroupSecondaryEditor(
                         {accordianContents && (
                             <AccordionPanel pb={4}>
                                 <HStack pb={4} justifyContent="flex-end">
+                                    {item ? (
+                                        <FormControl
+                                            display="flex"
+                                            flexDir="row"
+                                            alignItems="flex-start"
+                                            justifyContent="flex-start"
+                                        >
+                                            <FormLabel m={0} p={0} fontSize="0.9em">
+                                                Hidden?
+                                            </FormLabel>
+                                            <Switch
+                                                m={0}
+                                                ml={2}
+                                                p={0}
+                                                lineHeight="1em"
+                                                size="sm"
+                                                isChecked={item.isHidden}
+                                                onChange={() => {
+                                                    markDirty();
+
+                                                    setAllContentGroupsMap((oldGroups) => {
+                                                        assert(oldGroups);
+                                                        const newGroups = new Map(oldGroups);
+
+                                                        const existingGroup = newGroups.get(group.id);
+                                                        assert(existingGroup);
+                                                        newGroups.set(group.id, {
+                                                            ...existingGroup,
+                                                            items: existingGroup.items.map((cItem) => {
+                                                                return item.id === cItem.id
+                                                                    ? { ...cItem, isHidden: !cItem.isHidden }
+                                                                    : cItem;
+                                                            }),
+                                                        });
+
+                                                        return newGroups;
+                                                    });
+                                                }}
+                                            />
+                                            <FormHelperText m={0} ml={2} p={0}>
+                                                Enable to hide this content from attendees.
+                                            </FormHelperText>
+                                        </FormControl>
+                                    ) : undefined}
                                     <Box>
                                         <IconButton
                                             colorScheme="red"

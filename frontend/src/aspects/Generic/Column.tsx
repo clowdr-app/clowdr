@@ -91,7 +91,7 @@ export default function Column<I extends Item>({
     );
 
     return (
-        <VStack height="100%" align="left" justify="start">
+        <VStack height="100%" align="left" justify="flex-start">
             <Heading as="h3" fontSize="170%">
                 {title}
             </Heading>

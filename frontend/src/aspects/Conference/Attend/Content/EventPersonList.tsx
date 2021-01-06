@@ -18,7 +18,7 @@ export function EventPersonList({ people }: { people: readonly Timeline_EventPer
 
 export function Person({ person }: { person: Timeline_EventPersonFragment }): JSX.Element {
     return (
-        <VStack textAlign="left" justifyContent="flex-start" alignItems="start" flexBasis="1 1 50%">
+        <VStack textAlign="left" justifyContent="flex-start" alignItems="flex-start" flexBasis="1 1 50%">
             <Text fontWeight="bold">{person.name}</Text>
             <Badge ml="2" colorScheme="green" verticalAlign="initial">
                 {person.roleName}

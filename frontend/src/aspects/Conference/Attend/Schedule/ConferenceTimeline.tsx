@@ -297,7 +297,7 @@ function ConferenceTimelineInner({
                     direction="row"
                     w="100%"
                     justifyContent="stretch"
-                    alignItems="start"
+                    alignItems="flex-start"
                     role="region"
                     aria-label="Conference schedule"
                 >

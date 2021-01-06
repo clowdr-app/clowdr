@@ -17,10 +17,10 @@ export default function MainMenu(_props: Props): JSX.Element {
     return (
         <>
             <Stack
-                direction={["column", "row"]}
+                direction="row"
                 spacing={2}
-                justify="start"
-                align={["stretch", "center"]}
+                justify="flex-start"
+                align={["flex-start", "center"]}
                 wrap="wrap"
                 role="menu"
                 width="100%"
@@ -65,14 +65,16 @@ export default function MainMenu(_props: Props): JSX.Element {
                     Clowdr Chat Demo
                 </Heading>*/}
                 <Switch>
-                    <Route exact path="/"></Route>
+                    <Route exact path="/">
+                        <Box marginRight="auto" display="block" />
+                    </Route>
                     <Route exact path="/user">
-                        <Box marginRight={[0, "auto"]} display={["none", "block"]} />
+                        <Box marginRight="auto" display="block" />
                         <AuthenticationButton />
                         <SignupButton />
                     </Route>
                     <Route path="/">
-                        <Box marginRight={[0, "auto"]} display={["none", "block"]} />
+                        <Box marginRight="auto" display="block" />
                         {user && user.attendees.length > 0 ? (
                             <LinkButton to="/user" size="sm" role="menuitem">
                                 My Conferences

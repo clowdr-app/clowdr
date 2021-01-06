@@ -1658,8 +1658,8 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
             <VStack width="100%">
                 <Stack
                     direction={["column", "row"]}
-                    justify="start"
-                    align={["stretch", "start"]}
+                    justify="flex-start"
+                    align={["stretch", "flex-start"]}
                     width="100%"
                     flexWrap="wrap"
                     gridRowGap={[0, 2]}
@@ -1776,7 +1776,7 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
                                 }
                             >
                                 {/* This additional box is necessary otherwise the tooltip doesn't show on a disabled button */}
-                                <VStack align={["stretch", "start"]}>
+                                <VStack align={["stretch", "flex-start"]}>
                                     <Button
                                         aria-label={button.label}
                                         isDisabled={isDisabled}

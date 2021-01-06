@@ -43,7 +43,7 @@ export function Author({
     hideRole?: boolean;
 }): JSX.Element {
     return (
-        <VStack textAlign="left" justifyContent="flex-start" alignItems="start">
+        <VStack textAlign="left" justifyContent="flex-start" alignItems="flex-start">
             <Text fontWeight="bold">{contentPersonData.person.name}</Text>
             {!hideRole ? (
                 <Badge ml="2" colorScheme="green" verticalAlign="initial">

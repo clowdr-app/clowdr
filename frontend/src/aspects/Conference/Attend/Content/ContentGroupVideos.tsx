@@ -18,6 +18,7 @@ export function ContentGroupVideos({ contentGroupData }: { contentGroupData: Con
                     contentItem.contentTypeName === ContentType_Enum.VideoBroadcast ||
                     contentItem.contentTypeName === ContentType_Enum.VideoPrepublish
             )
+            .sort((x, y) => x.contentTypeName.localeCompare(y.contentTypeName))
             .map((contentItem) => {
                 try {
                     assertIsContentItemDataBlob(contentItem?.data);

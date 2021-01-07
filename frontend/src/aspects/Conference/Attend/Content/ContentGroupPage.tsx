@@ -10,6 +10,7 @@ import {
 import PageNotFound from "../../../Errors/PageNotFound";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import usePrimaryMenuButtons from "../../../Menu/usePrimaryMenuButtons";
+import { useTitle } from "../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../useConference";
 import { ContentGroupEvents } from "./ContentGroupEvents";
@@ -63,6 +64,7 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
     });
     const stackColumns = useBreakpointValue({ base: true, lg: false });
     const conference = useConference();
+    const title = useTitle(result.data?.ContentGroup_by_pk?.title ?? "Unknown content item");
 
     const { setPrimaryMenuButtons } = usePrimaryMenuButtons();
     useEffect(() => {
@@ -84,19 +86,27 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
             <ApolloQueryWrapper queryResult={result} getter={(data) => data.ContentGroup_by_pk}>
                 {(contentGroupData: ContentGroupDataFragment & ContentGroupEventsFragment) => {
                     return (
-                        <Flex width="100%" height="100%" gridColumnGap={5} flexWrap={stackColumns ? "wrap" : "nowrap"}>
-                            <Box textAlign="center" flexGrow={1} style={{ scrollbarWidth: "thin" }}>
-                                <ContentGroupVideos contentGroupData={contentGroupData} />
-                                <Box ml={5}>
-                                    <ContentGroupSummary contentGroupData={contentGroupData} />
-                                    <Heading as="h3" size="lg" textAlign="left">
-                                        Events
-                                    </Heading>
-                                    <ContentGroupEvents contentGroupEvents={contentGroupData} />
+                        <>
+                            {title}
+                            <Flex
+                                width="100%"
+                                height="100%"
+                                gridColumnGap={5}
+                                flexWrap={stackColumns ? "wrap" : "nowrap"}
+                            >
+                                <Box textAlign="center" flexGrow={1} style={{ scrollbarWidth: "thin" }}>
+                                    <ContentGroupVideos contentGroupData={contentGroupData} />
+                                    <Box ml={5}>
+                                        <ContentGroupSummary contentGroupData={contentGroupData} />
+                                        <Heading as="h3" size="lg" textAlign="left">
+                                            Events
+                                        </Heading>
+                                        <ContentGroupEvents contentGroupEvents={contentGroupData} />
+                                    </Box>
                                 </Box>
-                            </Box>
-                            {/* <Box width={stackColumns ? "100%" : "30%"} height="100%"></Box> */}
-                        </Flex>
+                                {/* <Box width={stackColumns ? "100%" : "30%"} height="100%"></Box> */}
+                            </Flex>
+                        </>
                     );
                 }}
             </ApolloQueryWrapper>

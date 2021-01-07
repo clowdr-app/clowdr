@@ -1,11 +1,13 @@
 import { gql } from "@apollo/client";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Permission_Enum, RoomDetailsFragment, useGetRoomDetailsQuery } from "../../../../generated/graphql";
 import usePolling from "../../../Generic/usePolling";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
-import { useNoPrimaryMenuButtons } from "../../../Menu/usePrimaryMenuButtons";
+import usePrimaryMenuButtons from "../../../Menu/usePrimaryMenuButtons";
 import RoomMembersProvider from "../../../Room/RoomMembersProvider";
+import { useTitle } from "../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import { useConference } from "../../useConference";
 import { Room } from "./Room";
 
 gql`
@@ -63,7 +65,6 @@ gql`
 `;
 
 export default function RoomPage({ roomId }: { roomId: string }): JSX.Element {
-    // const [currentTime, setCurrentTime] = useState<string>(new Date().toISOString());
     const currentTime = useMemo(() => new Date().toISOString(), []);
     const result = useGetRoomDetailsQuery({
         variables: {
@@ -71,22 +72,34 @@ export default function RoomPage({ roomId }: { roomId: string }): JSX.Element {
             eventsFrom: currentTime,
         },
     });
+    const title = useTitle(result.loading ? "Loading room" : result.data?.Room_by_pk?.name ?? "Unknown room");
 
     usePolling(
         () => {
-            //setCurrentTime(new Date().toISOString());
             result.refetch({ eventsFrom: new Date().toISOString() });
         },
         10000,
         true
     );
 
-    useNoPrimaryMenuButtons();
+    const conference = useConference();
+    const { setPrimaryMenuButtons } = usePrimaryMenuButtons();
+    useEffect(() => {
+        setPrimaryMenuButtons([
+            {
+                key: "conference-home",
+                action: `/conference/${conference.slug}`,
+                text: "Home",
+                label: "Home",
+            },
+        ]);
+    }, [conference.slug, setPrimaryMenuButtons]);
 
     return (
         <RequireAtLeastOnePermissionWrapper
             permissions={[Permission_Enum.ConferenceView, Permission_Enum.ConferenceViewAttendees]}
         >
+            {title}
             <RoomMembersProvider roomId={roomId}>
                 <ApolloQueryWrapper getter={(data) => data.Room_by_pk} queryResult={result}>
                     {(room: RoomDetailsFragment) => <Room roomDetails={room} />}

@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { HelmetProvider } from "react-helmet-async";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import Auth0CustomProvider from "./aspects/Auth/Auth0CustomProvider";
@@ -9,15 +10,17 @@ import "./index.css";
 
 ReactDOM.render(
     <React.StrictMode>
-        <BrowserRouter>
-            <ChakraCustomProvider>
-                <Auth0CustomProvider>
-                    <ApolloCustomProvider>
-                        <App />
-                    </ApolloCustomProvider>
-                </Auth0CustomProvider>
-            </ChakraCustomProvider>
-        </BrowserRouter>
+        <HelmetProvider>
+            <BrowserRouter>
+                <ChakraCustomProvider>
+                    <Auth0CustomProvider>
+                        <ApolloCustomProvider>
+                            <App />
+                        </ApolloCustomProvider>
+                    </Auth0CustomProvider>
+                </ChakraCustomProvider>
+            </BrowserRouter>
+        </HelmetProvider>
     </React.StrictMode>,
     document.getElementById("root")
 );

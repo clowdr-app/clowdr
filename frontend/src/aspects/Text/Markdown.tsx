@@ -96,7 +96,12 @@ export function Markdown(props?: { children?: string; className?: string; linkCo
                 },
                 link: function customLink({ href, children }: { href: string; children: JSX.Element }): JSX.Element {
                     return (
-                        <Link href={href} color={props?.linkColour} isExternal={true} rel="external noopener noreferrer">
+                        <Link
+                            href={href}
+                            color={props?.linkColour}
+                            isExternal={true}
+                            rel="external noopener noreferrer"
+                        >
                             {children}
                             <sup>
                                 <ExternalLinkIcon mx="2px" fontSize="1rem" paddingTop="2px" />

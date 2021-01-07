@@ -29,10 +29,10 @@ import { router as eventRouter } from "./router/event";
 import { router as mediaConvertRouter } from "./router/mediaConvert";
 import { router as mediaLiveRouter } from "./router/mediaLive";
 import { router as openshotRouter } from "./router/openshot";
+import { router as profileRouter } from "./router/profile";
 import { router as roomRouter } from "./router/room";
 import { router as videoRenderJobRouter } from "./router/videoRenderJob";
 import { router as vonageRouter } from "./router/vonage";
-import { router as profileRouter } from "./router/profile";
 
 if (process.env.NODE_ENV !== "test") {
     assert(process.env.AUTH0_API_DOMAIN, "AUTH0_API_DOMAIN environment variable not provided.");

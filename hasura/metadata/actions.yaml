@@ -20,16 +20,6 @@ actions:
   permissions:
   - role: unauthenticated
   - role: user
-- name: getProfilePhotoUrl
-  definition:
-    kind: ""
-    handler: '{{ACTION_BASE_URL}}/profile/photoURL'
-    forward_client_headers: true
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
-  permissions:
-  - role: user
 - name: getUploadAgreement
   definition:
     kind: ""
@@ -122,6 +112,16 @@ actions:
   permissions:
   - role: unauthenticated
   - role: user
+- name: updateProfilePhoto
+  definition:
+    kind: synchronous
+    handler: '{{ACTION_BASE_URL}}/profile/photo/update'
+    forward_client_headers: true
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+  permissions:
+  - role: user
 - name: updateSubtitles
   definition:
     kind: synchronous
@@ -158,4 +158,5 @@ custom_types:
   - name: JoinEventVonageSessionOutput
   - name: JoinRoomVonageSessionOutput
   - name: ProfilePhotoURLResponse
+  - name: UpdateProfilePhotoResponse
   scalars: []

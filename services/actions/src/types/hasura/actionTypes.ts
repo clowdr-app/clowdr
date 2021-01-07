@@ -76,6 +76,10 @@ type ProfilePhotoURLResponse = {
     url: string;
 };
 
+type UpdateProfilePhotoResponse = {
+    ok: boolean;
+};
+
 type SampleInput = {
     username: string;
     password: string;
@@ -107,7 +111,6 @@ type SubmitUpdatedSubtitlesInput = {
 type Query = {
     echo?: Maybe<EchoOutput>;
     getContentItem?: Maybe<Array<Maybe<GetContentItemOutput>>>;
-    getProfilePhotoUrl?: Maybe<ProfilePhotoURLResponse>;
     getUploadAgreement?: Maybe<GetUploadAgreementOutput>;
     protectedEcho?: Maybe<ProtectedEchoOutput>;
 };
@@ -120,6 +123,7 @@ type Mutation = {
     joinEventVonageSession?: Maybe<JoinEventVonageSessionOutput>;
     joinRoomVonageSession?: Maybe<JoinRoomVonageSessionOutput>;
     submitContentItem?: Maybe<SubmitContentItemOutput>;
+    updateProfilePhoto?: Maybe<UpdateProfilePhotoResponse>;
     updateSubtitles?: Maybe<SubmitUpdatedSubtitlesOutput>;
 };
 
@@ -129,12 +133,6 @@ type echoArgs = {
 
 type getContentItemArgs = {
     magicToken: string;
-};
-
-type getProfilePhotoUrlArgs = {
-    attendeeId: uuid;
-    w: number;
-    h: number;
 };
 
 type getUploadAgreementArgs = {
@@ -172,6 +170,11 @@ type joinRoomVonageSessionArgs = {
 type submitContentItemArgs = {
     data: jsonb;
     magicToken: string;
+};
+
+type updateProfilePhotoArgs = {
+    attendeeId: uuid;
+    s3URL: string;
 };
 
 type updateSubtitlesArgs = {

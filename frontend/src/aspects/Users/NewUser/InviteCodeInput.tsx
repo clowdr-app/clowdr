@@ -14,7 +14,13 @@ import FAIcon from "../../Icons/FAIcon";
 import isValidUUID from "../../Utils/isValidUUID";
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export default function InviteCodeInput(props: any): JSX.Element {
+export default function InviteCodeInput({
+    message = "Enter an invite code to begin.",
+    marginBottom,
+}: {
+    message?: string;
+    marginBottom?: string;
+}): JSX.Element {
     const [inviteCode, setInviteCode] = useState<string>("");
     const inviteCodeButtonRef = useRef<HTMLButtonElement>(null);
     const isInviteCodeValid = isValidUUID(inviteCode);
@@ -37,9 +43,9 @@ export default function InviteCodeInput(props: any): JSX.Element {
                 }
             }}
         >
-            <FormControl width="auto" {...props}>
+            <FormControl width="auto" marginBottom={marginBottom}>
                 <FormLabel fontSize="100%" fontWeight="normal" htmlFor="invite-code" textAlign="center" marginRight={0}>
-                    Enter an invite code to begin.
+                    {message}
                 </FormLabel>
                 <Box>
                     <InputGroup>

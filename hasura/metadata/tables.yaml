@@ -443,7 +443,10 @@
       - bio
       - country
       - github
+      - photoURL_350x350
+      - photoURL_50x50
       - pronouns
+      - realName
       - timezoneUTCOffset
       - twitter
       - website

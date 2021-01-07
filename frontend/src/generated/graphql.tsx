@@ -40,6 +40,8 @@ export type Attendee = {
   readonly invitation?: Maybe<Invitation>;
   /** A computed field, executes function "hasbeeninvited" */
   readonly inviteSent?: Maybe<Scalars['Boolean']>;
+  /** An object relationship */
+  readonly profile?: Maybe<AttendeeProfile>;
   /** An array relationship */
   readonly roomParticipants: ReadonlyArray<RoomParticipant>;
   /** An aggregated array relationship */
@@ -130,6 +132,521 @@ export type AttendeeRoomParticipants_AggregateArgs = {
   where?: Maybe<RoomParticipant_Bool_Exp>;
 };
 
+/** columns and relationships of "AttendeeProfile" */
+export type AttendeeProfile = {
+  readonly __typename?: 'AttendeeProfile';
+  readonly affiliation?: Maybe<Scalars['String']>;
+  readonly affiliationURL?: Maybe<Scalars['String']>;
+  /** An object relationship */
+  readonly attendee: Attendee;
+  readonly attendeeId: Scalars['uuid'];
+  readonly badges?: Maybe<Scalars['jsonb']>;
+  readonly bio?: Maybe<Scalars['String']>;
+  readonly country?: Maybe<Scalars['String']>;
+  readonly created_at: Scalars['timestamptz'];
+  readonly github?: Maybe<Scalars['String']>;
+  readonly photoS3BucketName?: Maybe<Scalars['String']>;
+  readonly photoS3BucketRegion?: Maybe<Scalars['String']>;
+  readonly photoS3ObjectName?: Maybe<Scalars['String']>;
+  readonly photoURL_350x350?: Maybe<Scalars['String']>;
+  readonly photoURL_50x50?: Maybe<Scalars['String']>;
+  readonly pronouns?: Maybe<Scalars['jsonb']>;
+  readonly realName?: Maybe<Scalars['String']>;
+  readonly timezoneUTCOffset?: Maybe<Scalars['Int']>;
+  readonly twitter?: Maybe<Scalars['String']>;
+  readonly updated_at: Scalars['timestamptz'];
+  readonly website?: Maybe<Scalars['String']>;
+};
+
+
+/** columns and relationships of "AttendeeProfile" */
+export type AttendeeProfileBadgesArgs = {
+  path?: Maybe<Scalars['String']>;
+};
+
+
+/** columns and relationships of "AttendeeProfile" */
+export type AttendeeProfilePronounsArgs = {
+  path?: Maybe<Scalars['String']>;
+};
+
+/** aggregated selection of "AttendeeProfile" */
+export type AttendeeProfile_Aggregate = {
+  readonly __typename?: 'AttendeeProfile_aggregate';
+  readonly aggregate?: Maybe<AttendeeProfile_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<AttendeeProfile>;
+};
+
+/** aggregate fields of "AttendeeProfile" */
+export type AttendeeProfile_Aggregate_Fields = {
+  readonly __typename?: 'AttendeeProfile_aggregate_fields';
+  readonly avg?: Maybe<AttendeeProfile_Avg_Fields>;
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<AttendeeProfile_Max_Fields>;
+  readonly min?: Maybe<AttendeeProfile_Min_Fields>;
+  readonly stddev?: Maybe<AttendeeProfile_Stddev_Fields>;
+  readonly stddev_pop?: Maybe<AttendeeProfile_Stddev_Pop_Fields>;
+  readonly stddev_samp?: Maybe<AttendeeProfile_Stddev_Samp_Fields>;
+  readonly sum?: Maybe<AttendeeProfile_Sum_Fields>;
+  readonly var_pop?: Maybe<AttendeeProfile_Var_Pop_Fields>;
+  readonly var_samp?: Maybe<AttendeeProfile_Var_Samp_Fields>;
+  readonly variance?: Maybe<AttendeeProfile_Variance_Fields>;
+};
+
+
+/** aggregate fields of "AttendeeProfile" */
+export type AttendeeProfile_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<AttendeeProfile_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "AttendeeProfile" */
+export type AttendeeProfile_Aggregate_Order_By = {
+  readonly avg?: Maybe<AttendeeProfile_Avg_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<AttendeeProfile_Max_Order_By>;
+  readonly min?: Maybe<AttendeeProfile_Min_Order_By>;
+  readonly stddev?: Maybe<AttendeeProfile_Stddev_Order_By>;
+  readonly stddev_pop?: Maybe<AttendeeProfile_Stddev_Pop_Order_By>;
+  readonly stddev_samp?: Maybe<AttendeeProfile_Stddev_Samp_Order_By>;
+  readonly sum?: Maybe<AttendeeProfile_Sum_Order_By>;
+  readonly var_pop?: Maybe<AttendeeProfile_Var_Pop_Order_By>;
+  readonly var_samp?: Maybe<AttendeeProfile_Var_Samp_Order_By>;
+  readonly variance?: Maybe<AttendeeProfile_Variance_Order_By>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type AttendeeProfile_Append_Input = {
+  readonly badges?: Maybe<Scalars['jsonb']>;
+  readonly pronouns?: Maybe<Scalars['jsonb']>;
+};
+
+/** input type for inserting array relation for remote table "AttendeeProfile" */
+export type AttendeeProfile_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<AttendeeProfile_Insert_Input>;
+  readonly on_conflict?: Maybe<AttendeeProfile_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type AttendeeProfile_Avg_Fields = {
+  readonly __typename?: 'AttendeeProfile_avg_fields';
+  readonly timezoneUTCOffset?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "AttendeeProfile" */
+export type AttendeeProfile_Avg_Order_By = {
+  readonly timezoneUTCOffset?: Maybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "AttendeeProfile". All fields are combined with a logical 'AND'. */
+export type AttendeeProfile_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<AttendeeProfile_Bool_Exp>>>;
+  readonly _not?: Maybe<AttendeeProfile_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<AttendeeProfile_Bool_Exp>>>;
+  readonly affiliation?: Maybe<String_Comparison_Exp>;
+  readonly affiliationURL?: Maybe<String_Comparison_Exp>;
+  readonly attendee?: Maybe<Attendee_Bool_Exp>;
+  readonly attendeeId?: Maybe<Uuid_Comparison_Exp>;
+  readonly badges?: Maybe<Jsonb_Comparison_Exp>;
+  readonly bio?: Maybe<String_Comparison_Exp>;
+  readonly country?: Maybe<String_Comparison_Exp>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly github?: Maybe<String_Comparison_Exp>;
+  readonly photoS3BucketName?: Maybe<String_Comparison_Exp>;
+  readonly photoS3BucketRegion?: Maybe<String_Comparison_Exp>;
+  readonly photoS3ObjectName?: Maybe<String_Comparison_Exp>;
+  readonly photoURL_350x350?: Maybe<String_Comparison_Exp>;
+  readonly photoURL_50x50?: Maybe<String_Comparison_Exp>;
+  readonly pronouns?: Maybe<Jsonb_Comparison_Exp>;
+  readonly realName?: Maybe<String_Comparison_Exp>;
+  readonly timezoneUTCOffset?: Maybe<Int_Comparison_Exp>;
+  readonly twitter?: Maybe<String_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly website?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "AttendeeProfile" */
+export enum AttendeeProfile_Constraint {
+  /** unique or primary key constraint */
+  AttendeeProfileAttendeeIdKey = 'AttendeeProfile_attendeeId_key',
+  /** unique or primary key constraint */
+  AttendeeProfilePkey = 'AttendeeProfile_pkey'
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type AttendeeProfile_Delete_At_Path_Input = {
+  readonly badges?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+  readonly pronouns?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type AttendeeProfile_Delete_Elem_Input = {
+  readonly badges?: Maybe<Scalars['Int']>;
+  readonly pronouns?: Maybe<Scalars['Int']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type AttendeeProfile_Delete_Key_Input = {
+  readonly badges?: Maybe<Scalars['String']>;
+  readonly pronouns?: Maybe<Scalars['String']>;
+};
+
+/** input type for incrementing integer column in table "AttendeeProfile" */
+export type AttendeeProfile_Inc_Input = {
+  readonly timezoneUTCOffset?: Maybe<Scalars['Int']>;
+};
+
+/** input type for inserting data into table "AttendeeProfile" */
+export type AttendeeProfile_Insert_Input = {
+  readonly affiliation?: Maybe<Scalars['String']>;
+  readonly affiliationURL?: Maybe<Scalars['String']>;
+  readonly attendee?: Maybe<Attendee_Obj_Rel_Insert_Input>;
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly badges?: Maybe<Scalars['jsonb']>;
+  readonly bio?: Maybe<Scalars['String']>;
+  readonly country?: Maybe<Scalars['String']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly github?: Maybe<Scalars['String']>;
+  readonly photoS3BucketName?: Maybe<Scalars['String']>;
+  readonly photoS3BucketRegion?: Maybe<Scalars['String']>;
+  readonly photoS3ObjectName?: Maybe<Scalars['String']>;
+  readonly photoURL_350x350?: Maybe<Scalars['String']>;
+  readonly photoURL_50x50?: Maybe<Scalars['String']>;
+  readonly pronouns?: Maybe<Scalars['jsonb']>;
+  readonly realName?: Maybe<Scalars['String']>;
+  readonly timezoneUTCOffset?: Maybe<Scalars['Int']>;
+  readonly twitter?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly website?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type AttendeeProfile_Max_Fields = {
+  readonly __typename?: 'AttendeeProfile_max_fields';
+  readonly affiliation?: Maybe<Scalars['String']>;
+  readonly affiliationURL?: Maybe<Scalars['String']>;
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly bio?: Maybe<Scalars['String']>;
+  readonly country?: Maybe<Scalars['String']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly github?: Maybe<Scalars['String']>;
+  readonly photoS3BucketName?: Maybe<Scalars['String']>;
+  readonly photoS3BucketRegion?: Maybe<Scalars['String']>;
+  readonly photoS3ObjectName?: Maybe<Scalars['String']>;
+  readonly photoURL_350x350?: Maybe<Scalars['String']>;
+  readonly photoURL_50x50?: Maybe<Scalars['String']>;
+  readonly realName?: Maybe<Scalars['String']>;
+  readonly timezoneUTCOffset?: Maybe<Scalars['Int']>;
+  readonly twitter?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly website?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "AttendeeProfile" */
+export type AttendeeProfile_Max_Order_By = {
+  readonly affiliation?: Maybe<Order_By>;
+  readonly affiliationURL?: Maybe<Order_By>;
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly bio?: Maybe<Order_By>;
+  readonly country?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly github?: Maybe<Order_By>;
+  readonly photoS3BucketName?: Maybe<Order_By>;
+  readonly photoS3BucketRegion?: Maybe<Order_By>;
+  readonly photoS3ObjectName?: Maybe<Order_By>;
+  readonly photoURL_350x350?: Maybe<Order_By>;
+  readonly photoURL_50x50?: Maybe<Order_By>;
+  readonly realName?: Maybe<Order_By>;
+  readonly timezoneUTCOffset?: Maybe<Order_By>;
+  readonly twitter?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+  readonly website?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type AttendeeProfile_Min_Fields = {
+  readonly __typename?: 'AttendeeProfile_min_fields';
+  readonly affiliation?: Maybe<Scalars['String']>;
+  readonly affiliationURL?: Maybe<Scalars['String']>;
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly bio?: Maybe<Scalars['String']>;
+  readonly country?: Maybe<Scalars['String']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly github?: Maybe<Scalars['String']>;
+  readonly photoS3BucketName?: Maybe<Scalars['String']>;
+  readonly photoS3BucketRegion?: Maybe<Scalars['String']>;
+  readonly photoS3ObjectName?: Maybe<Scalars['String']>;
+  readonly photoURL_350x350?: Maybe<Scalars['String']>;
+  readonly photoURL_50x50?: Maybe<Scalars['String']>;
+  readonly realName?: Maybe<Scalars['String']>;
+  readonly timezoneUTCOffset?: Maybe<Scalars['Int']>;
+  readonly twitter?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly website?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "AttendeeProfile" */
+export type AttendeeProfile_Min_Order_By = {
+  readonly affiliation?: Maybe<Order_By>;
+  readonly affiliationURL?: Maybe<Order_By>;
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly bio?: Maybe<Order_By>;
+  readonly country?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly github?: Maybe<Order_By>;
+  readonly photoS3BucketName?: Maybe<Order_By>;
+  readonly photoS3BucketRegion?: Maybe<Order_By>;
+  readonly photoS3ObjectName?: Maybe<Order_By>;
+  readonly photoURL_350x350?: Maybe<Order_By>;
+  readonly photoURL_50x50?: Maybe<Order_By>;
+  readonly realName?: Maybe<Order_By>;
+  readonly timezoneUTCOffset?: Maybe<Order_By>;
+  readonly twitter?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+  readonly website?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "AttendeeProfile" */
+export type AttendeeProfile_Mutation_Response = {
+  readonly __typename?: 'AttendeeProfile_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<AttendeeProfile>;
+};
+
+/** input type for inserting object relation for remote table "AttendeeProfile" */
+export type AttendeeProfile_Obj_Rel_Insert_Input = {
+  readonly data: AttendeeProfile_Insert_Input;
+  readonly on_conflict?: Maybe<AttendeeProfile_On_Conflict>;
+};
+
+/** on conflict condition type for table "AttendeeProfile" */
+export type AttendeeProfile_On_Conflict = {
+  readonly constraint: AttendeeProfile_Constraint;
+  readonly update_columns: ReadonlyArray<AttendeeProfile_Update_Column>;
+  readonly where?: Maybe<AttendeeProfile_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "AttendeeProfile" */
+export type AttendeeProfile_Order_By = {
+  readonly affiliation?: Maybe<Order_By>;
+  readonly affiliationURL?: Maybe<Order_By>;
+  readonly attendee?: Maybe<Attendee_Order_By>;
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly badges?: Maybe<Order_By>;
+  readonly bio?: Maybe<Order_By>;
+  readonly country?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly github?: Maybe<Order_By>;
+  readonly photoS3BucketName?: Maybe<Order_By>;
+  readonly photoS3BucketRegion?: Maybe<Order_By>;
+  readonly photoS3ObjectName?: Maybe<Order_By>;
+  readonly photoURL_350x350?: Maybe<Order_By>;
+  readonly photoURL_50x50?: Maybe<Order_By>;
+  readonly pronouns?: Maybe<Order_By>;
+  readonly realName?: Maybe<Order_By>;
+  readonly timezoneUTCOffset?: Maybe<Order_By>;
+  readonly twitter?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+  readonly website?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "AttendeeProfile" */
+export type AttendeeProfile_Pk_Columns_Input = {
+  readonly attendeeId: Scalars['uuid'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type AttendeeProfile_Prepend_Input = {
+  readonly badges?: Maybe<Scalars['jsonb']>;
+  readonly pronouns?: Maybe<Scalars['jsonb']>;
+};
+
+/** select columns of table "AttendeeProfile" */
+export enum AttendeeProfile_Select_Column {
+  /** column name */
+  Affiliation = 'affiliation',
+  /** column name */
+  AffiliationUrl = 'affiliationURL',
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  Badges = 'badges',
+  /** column name */
+  Bio = 'bio',
+  /** column name */
+  Country = 'country',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Github = 'github',
+  /** column name */
+  PhotoS3BucketName = 'photoS3BucketName',
+  /** column name */
+  PhotoS3BucketRegion = 'photoS3BucketRegion',
+  /** column name */
+  PhotoS3ObjectName = 'photoS3ObjectName',
+  /** column name */
+  PhotoUrl_350x350 = 'photoURL_350x350',
+  /** column name */
+  PhotoUrl_50x50 = 'photoURL_50x50',
+  /** column name */
+  Pronouns = 'pronouns',
+  /** column name */
+  RealName = 'realName',
+  /** column name */
+  TimezoneUtcOffset = 'timezoneUTCOffset',
+  /** column name */
+  Twitter = 'twitter',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  Website = 'website'
+}
+
+/** input type for updating data in table "AttendeeProfile" */
+export type AttendeeProfile_Set_Input = {
+  readonly affiliation?: Maybe<Scalars['String']>;
+  readonly affiliationURL?: Maybe<Scalars['String']>;
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly badges?: Maybe<Scalars['jsonb']>;
+  readonly bio?: Maybe<Scalars['String']>;
+  readonly country?: Maybe<Scalars['String']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly github?: Maybe<Scalars['String']>;
+  readonly photoS3BucketName?: Maybe<Scalars['String']>;
+  readonly photoS3BucketRegion?: Maybe<Scalars['String']>;
+  readonly photoS3ObjectName?: Maybe<Scalars['String']>;
+  readonly photoURL_350x350?: Maybe<Scalars['String']>;
+  readonly photoURL_50x50?: Maybe<Scalars['String']>;
+  readonly pronouns?: Maybe<Scalars['jsonb']>;
+  readonly realName?: Maybe<Scalars['String']>;
+  readonly timezoneUTCOffset?: Maybe<Scalars['Int']>;
+  readonly twitter?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly website?: Maybe<Scalars['String']>;
+};
+
+/** aggregate stddev on columns */
+export type AttendeeProfile_Stddev_Fields = {
+  readonly __typename?: 'AttendeeProfile_stddev_fields';
+  readonly timezoneUTCOffset?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "AttendeeProfile" */
+export type AttendeeProfile_Stddev_Order_By = {
+  readonly timezoneUTCOffset?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type AttendeeProfile_Stddev_Pop_Fields = {
+  readonly __typename?: 'AttendeeProfile_stddev_pop_fields';
+  readonly timezoneUTCOffset?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "AttendeeProfile" */
+export type AttendeeProfile_Stddev_Pop_Order_By = {
+  readonly timezoneUTCOffset?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type AttendeeProfile_Stddev_Samp_Fields = {
+  readonly __typename?: 'AttendeeProfile_stddev_samp_fields';
+  readonly timezoneUTCOffset?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "AttendeeProfile" */
+export type AttendeeProfile_Stddev_Samp_Order_By = {
+  readonly timezoneUTCOffset?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type AttendeeProfile_Sum_Fields = {
+  readonly __typename?: 'AttendeeProfile_sum_fields';
+  readonly timezoneUTCOffset?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "AttendeeProfile" */
+export type AttendeeProfile_Sum_Order_By = {
+  readonly timezoneUTCOffset?: Maybe<Order_By>;
+};
+
+/** update columns of table "AttendeeProfile" */
+export enum AttendeeProfile_Update_Column {
+  /** column name */
+  Affiliation = 'affiliation',
+  /** column name */
+  AffiliationUrl = 'affiliationURL',
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  Badges = 'badges',
+  /** column name */
+  Bio = 'bio',
+  /** column name */
+  Country = 'country',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Github = 'github',
+  /** column name */
+  PhotoS3BucketName = 'photoS3BucketName',
+  /** column name */
+  PhotoS3BucketRegion = 'photoS3BucketRegion',
+  /** column name */
+  PhotoS3ObjectName = 'photoS3ObjectName',
+  /** column name */
+  PhotoUrl_350x350 = 'photoURL_350x350',
+  /** column name */
+  PhotoUrl_50x50 = 'photoURL_50x50',
+  /** column name */
+  Pronouns = 'pronouns',
+  /** column name */
+  RealName = 'realName',
+  /** column name */
+  TimezoneUtcOffset = 'timezoneUTCOffset',
+  /** column name */
+  Twitter = 'twitter',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  Website = 'website'
+}
+
+/** aggregate var_pop on columns */
+export type AttendeeProfile_Var_Pop_Fields = {
+  readonly __typename?: 'AttendeeProfile_var_pop_fields';
+  readonly timezoneUTCOffset?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "AttendeeProfile" */
+export type AttendeeProfile_Var_Pop_Order_By = {
+  readonly timezoneUTCOffset?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type AttendeeProfile_Var_Samp_Fields = {
+  readonly __typename?: 'AttendeeProfile_var_samp_fields';
+  readonly timezoneUTCOffset?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "AttendeeProfile" */
+export type AttendeeProfile_Var_Samp_Order_By = {
+  readonly timezoneUTCOffset?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type AttendeeProfile_Variance_Fields = {
+  readonly __typename?: 'AttendeeProfile_variance_fields';
+  readonly timezoneUTCOffset?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "AttendeeProfile" */
+export type AttendeeProfile_Variance_Order_By = {
+  readonly timezoneUTCOffset?: Maybe<Order_By>;
+};
+
 /** aggregated selection of "Attendee" */
 export type Attendee_Aggregate = {
   readonly __typename?: 'Attendee_aggregate';
@@ -179,6 +696,7 @@ export type Attendee_Bool_Exp = {
   readonly groupAttendees?: Maybe<GroupAttendee_Bool_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly invitation?: Maybe<Invitation_Bool_Exp>;
+  readonly profile?: Maybe<AttendeeProfile_Bool_Exp>;
   readonly roomParticipants?: Maybe<RoomParticipant_Bool_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly user?: Maybe<User_Bool_Exp>;
@@ -204,6 +722,7 @@ export type Attendee_Insert_Input = {
   readonly groupAttendees?: Maybe<GroupAttendee_Arr_Rel_Insert_Input>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly invitation?: Maybe<Invitation_Obj_Rel_Insert_Input>;
+  readonly profile?: Maybe<AttendeeProfile_Obj_Rel_Insert_Input>;
   readonly roomParticipants?: Maybe<RoomParticipant_Arr_Rel_Insert_Input>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
   readonly user?: Maybe<User_Obj_Rel_Insert_Input>;
@@ -285,6 +804,7 @@ export type Attendee_Order_By = {
   readonly groupAttendees_aggregate?: Maybe<GroupAttendee_Aggregate_Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly invitation?: Maybe<Invitation_Order_By>;
+  readonly profile?: Maybe<AttendeeProfile_Order_By>;
   readonly roomParticipants_aggregate?: Maybe<RoomParticipant_Aggregate_Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
   readonly user?: Maybe<User_Order_By>;
@@ -11700,6 +12220,11 @@ export enum PinnedChat_Update_Column {
   UserId = 'userId'
 }
 
+export type ProfilePhotoUrlResponse = {
+  readonly __typename?: 'ProfilePhotoURLResponse';
+  readonly url: Scalars['String'];
+};
+
 export type ProtectedEchoOutput = {
   readonly __typename?: 'ProtectedEchoOutput';
   readonly message: Scalars['String'];
@@ -14301,6 +14826,11 @@ export enum Transitions_Update_Column {
   UpdatedAt = 'updatedAt'
 }
 
+export type UpdateProfilePhotoResponse = {
+  readonly __typename?: 'UpdateProfilePhotoResponse';
+  readonly ok: Scalars['Boolean'];
+};
+
 /** columns and relationships of "Uploader" */
 export type Uploader = {
   readonly __typename?: 'Uploader';
@@ -16228,6 +16758,10 @@ export type Mutation_Root = {
   readonly __typename?: 'mutation_root';
   /** delete data from the table: "Attendee" */
   readonly delete_Attendee?: Maybe<Attendee_Mutation_Response>;
+  /** delete data from the table: "AttendeeProfile" */
+  readonly delete_AttendeeProfile?: Maybe<AttendeeProfile_Mutation_Response>;
+  /** delete single row from the table: "AttendeeProfile" */
+  readonly delete_AttendeeProfile_by_pk?: Maybe<AttendeeProfile>;
   /** delete single row from the table: "Attendee" */
   readonly delete_Attendee_by_pk?: Maybe<Attendee>;
   /** delete data from the table: "Broadcast" */
@@ -16460,6 +16994,10 @@ export type Mutation_Root = {
   readonly delete_job_queues_SubmissionRequestEmailJob_by_pk?: Maybe<Job_Queues_SubmissionRequestEmailJob>;
   /** insert data into the table: "Attendee" */
   readonly insert_Attendee?: Maybe<Attendee_Mutation_Response>;
+  /** insert data into the table: "AttendeeProfile" */
+  readonly insert_AttendeeProfile?: Maybe<AttendeeProfile_Mutation_Response>;
+  /** insert a single row into the table: "AttendeeProfile" */
+  readonly insert_AttendeeProfile_one?: Maybe<AttendeeProfile>;
   /** insert a single row into the table: "Attendee" */
   readonly insert_Attendee_one?: Maybe<Attendee>;
   /** insert data into the table: "Broadcast" */
@@ -16704,10 +17242,16 @@ export type Mutation_Root = {
   readonly joinRoomVonageSession?: Maybe<JoinRoomVonageSessionOutput>;
   /** perform the action: "submitContentItem" */
   readonly submitContentItem?: Maybe<SubmitContentItemOutput>;
+  /** perform the action: "updateProfilePhoto" */
+  readonly updateProfilePhoto?: Maybe<UpdateProfilePhotoResponse>;
   /** perform the action: "updateSubtitles" */
   readonly updateSubtitles?: Maybe<SubmitUpdatedSubtitlesOutput>;
   /** update data of the table: "Attendee" */
   readonly update_Attendee?: Maybe<Attendee_Mutation_Response>;
+  /** update data of the table: "AttendeeProfile" */
+  readonly update_AttendeeProfile?: Maybe<AttendeeProfile_Mutation_Response>;
+  /** update single row of the table: "AttendeeProfile" */
+  readonly update_AttendeeProfile_by_pk?: Maybe<AttendeeProfile>;
   /** update single row of the table: "Attendee" */
   readonly update_Attendee_by_pk?: Maybe<Attendee>;
   /** update data of the table: "Broadcast" */
@@ -16944,6 +17488,18 @@ export type Mutation_Root = {
 /** mutation root */
 export type Mutation_RootDelete_AttendeeArgs = {
   where: Attendee_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_AttendeeProfileArgs = {
+  where: AttendeeProfile_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_AttendeeProfile_By_PkArgs = {
+  attendeeId: Scalars['uuid'];
 };
 
 
@@ -17641,6 +18197,20 @@ export type Mutation_RootDelete_Job_Queues_SubmissionRequestEmailJob_By_PkArgs =
 export type Mutation_RootInsert_AttendeeArgs = {
   objects: ReadonlyArray<Attendee_Insert_Input>;
   on_conflict?: Maybe<Attendee_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_AttendeeProfileArgs = {
+  objects: ReadonlyArray<AttendeeProfile_Insert_Input>;
+  on_conflict?: Maybe<AttendeeProfile_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_AttendeeProfile_OneArgs = {
+  object: AttendeeProfile_Insert_Input;
+  on_conflict?: Maybe<AttendeeProfile_On_Conflict>;
 };
 
 
@@ -18493,6 +19063,13 @@ export type Mutation_RootSubmitContentItemArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdateProfilePhotoArgs = {
+  attendeeId: Scalars['uuid'];
+  s3URL: Scalars['String'];
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdateSubtitlesArgs = {
   contentItemId: Scalars['String'];
   magicToken: Scalars['String'];
@@ -18504,6 +19081,32 @@ export type Mutation_RootUpdateSubtitlesArgs = {
 export type Mutation_RootUpdate_AttendeeArgs = {
   _set?: Maybe<Attendee_Set_Input>;
   where: Attendee_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_AttendeeProfileArgs = {
+  _append?: Maybe<AttendeeProfile_Append_Input>;
+  _delete_at_path?: Maybe<AttendeeProfile_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<AttendeeProfile_Delete_Elem_Input>;
+  _delete_key?: Maybe<AttendeeProfile_Delete_Key_Input>;
+  _inc?: Maybe<AttendeeProfile_Inc_Input>;
+  _prepend?: Maybe<AttendeeProfile_Prepend_Input>;
+  _set?: Maybe<AttendeeProfile_Set_Input>;
+  where: AttendeeProfile_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_AttendeeProfile_By_PkArgs = {
+  _append?: Maybe<AttendeeProfile_Append_Input>;
+  _delete_at_path?: Maybe<AttendeeProfile_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<AttendeeProfile_Delete_Elem_Input>;
+  _delete_key?: Maybe<AttendeeProfile_Delete_Key_Input>;
+  _inc?: Maybe<AttendeeProfile_Inc_Input>;
+  _prepend?: Maybe<AttendeeProfile_Prepend_Input>;
+  _set?: Maybe<AttendeeProfile_Set_Input>;
+  pk_columns: AttendeeProfile_Pk_Columns_Input;
 };
 
 
@@ -19442,6 +20045,12 @@ export type Query_Root = {
   readonly __typename?: 'query_root';
   /** fetch data from the table: "Attendee" */
   readonly Attendee: ReadonlyArray<Attendee>;
+  /** fetch data from the table: "AttendeeProfile" */
+  readonly AttendeeProfile: ReadonlyArray<AttendeeProfile>;
+  /** fetch aggregated fields from the table: "AttendeeProfile" */
+  readonly AttendeeProfile_aggregate: AttendeeProfile_Aggregate;
+  /** fetch data from the table: "AttendeeProfile" using primary key columns */
+  readonly AttendeeProfile_by_pk?: Maybe<AttendeeProfile>;
   /** fetch aggregated fields from the table: "Attendee" */
   readonly Attendee_aggregate: Attendee_Aggregate;
   /** fetch data from the table: "Attendee" using primary key columns */
@@ -19806,6 +20415,32 @@ export type Query_RootAttendeeArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Attendee_Order_By>>;
   where?: Maybe<Attendee_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootAttendeeProfileArgs = {
+  distinct_on?: Maybe<ReadonlyArray<AttendeeProfile_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<AttendeeProfile_Order_By>>;
+  where?: Maybe<AttendeeProfile_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootAttendeeProfile_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<AttendeeProfile_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<AttendeeProfile_Order_By>>;
+  where?: Maybe<AttendeeProfile_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootAttendeeProfile_By_PkArgs = {
+  attendeeId: Scalars['uuid'];
 };
 
 
@@ -21335,6 +21970,12 @@ export type Subscription_Root = {
   readonly __typename?: 'subscription_root';
   /** fetch data from the table: "Attendee" */
   readonly Attendee: ReadonlyArray<Attendee>;
+  /** fetch data from the table: "AttendeeProfile" */
+  readonly AttendeeProfile: ReadonlyArray<AttendeeProfile>;
+  /** fetch aggregated fields from the table: "AttendeeProfile" */
+  readonly AttendeeProfile_aggregate: AttendeeProfile_Aggregate;
+  /** fetch data from the table: "AttendeeProfile" using primary key columns */
+  readonly AttendeeProfile_by_pk?: Maybe<AttendeeProfile>;
   /** fetch aggregated fields from the table: "Attendee" */
   readonly Attendee_aggregate: Attendee_Aggregate;
   /** fetch data from the table: "Attendee" using primary key columns */
@@ -21699,6 +22340,32 @@ export type Subscription_RootAttendeeArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Attendee_Order_By>>;
   where?: Maybe<Attendee_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootAttendeeProfileArgs = {
+  distinct_on?: Maybe<ReadonlyArray<AttendeeProfile_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<AttendeeProfile_Order_By>>;
+  where?: Maybe<AttendeeProfile_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootAttendeeProfile_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<AttendeeProfile_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<AttendeeProfile_Order_By>>;
+  where?: Maybe<AttendeeProfile_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootAttendeeProfile_By_PkArgs = {
+  attendeeId: Scalars['uuid'];
 };
 
 
@@ -23355,6 +24022,14 @@ export type ContentGroupEventFragment = { readonly __typename?: 'Event', readonl
 
 export type ContentItemDataFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly contentTypeName: ContentType_Enum };
 
+export type SubmitProfilePhotoMutationVariables = Exact<{
+  attendeeId: Scalars['uuid'];
+  s3URL: Scalars['String'];
+}>;
+
+
+export type SubmitProfilePhotoMutation = { readonly __typename?: 'mutation_root', readonly updateProfilePhoto?: Maybe<{ readonly __typename?: 'UpdateProfilePhotoResponse', readonly ok: boolean }> };
+
 export type GetRoomDetailsQueryVariables = Exact<{
   roomId: Scalars['uuid'];
   eventsFrom: Scalars['timestamptz'];
@@ -24165,6 +24840,24 @@ export type PublicUserGroupsRolesPermissionsQuery = { readonly __typename?: 'que
     & GroupDataFragment
   )> };
 
+export type AttendeeProfileDataFragment = { readonly __typename?: 'AttendeeProfile', readonly attendeeId: any, readonly realName?: Maybe<string>, readonly badges?: Maybe<any>, readonly affiliation?: Maybe<string>, readonly affiliationURL?: Maybe<string>, readonly country?: Maybe<string>, readonly timezoneUTCOffset?: Maybe<number>, readonly bio?: Maybe<string>, readonly website?: Maybe<string>, readonly github?: Maybe<string>, readonly twitter?: Maybe<string>, readonly pronouns?: Maybe<any>, readonly photoURL_50x50?: Maybe<string>, readonly photoURL_350x350?: Maybe<string> };
+
+export type AttendeeDataFragment = { readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly displayName: string, readonly profile?: Maybe<(
+    { readonly __typename?: 'AttendeeProfile' }
+    & AttendeeProfileDataFragment
+  )> };
+
+export type AttendeeByUserIdConferenceIdQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  userId: Scalars['String'];
+}>;
+
+
+export type AttendeeByUserIdConferenceIdQuery = { readonly __typename?: 'query_root', readonly Attendee: ReadonlyArray<(
+    { readonly __typename?: 'Attendee' }
+    & AttendeeDataFragment
+  )> };
+
 export type UpdateSubtitlesMutationVariables = Exact<{
   contentItemId: Scalars['String'];
   magicToken: Scalars['String'];
@@ -24842,6 +25535,34 @@ export const GroupDataFragmentDoc = gql`
   conferenceId
 }
     `;
+export const AttendeeProfileDataFragmentDoc = gql`
+    fragment AttendeeProfileData on AttendeeProfile {
+  attendeeId
+  realName
+  badges
+  affiliation
+  affiliationURL
+  country
+  timezoneUTCOffset
+  bio
+  website
+  github
+  twitter
+  pronouns
+  photoURL_50x50
+  photoURL_350x350
+}
+    `;
+export const AttendeeDataFragmentDoc = gql`
+    fragment AttendeeData on Attendee {
+  id
+  userId
+  displayName
+  profile {
+    ...AttendeeProfileData
+  }
+}
+    ${AttendeeProfileDataFragmentDoc}`;
 export const RequiredItemFieldsFragmentDoc = gql`
     fragment RequiredItemFields on RequiredContentItem {
   id
@@ -25255,6 +25976,39 @@ export function useGetContentGroupLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type GetContentGroupQueryHookResult = ReturnType<typeof useGetContentGroupQuery>;
 export type GetContentGroupLazyQueryHookResult = ReturnType<typeof useGetContentGroupLazyQuery>;
 export type GetContentGroupQueryResult = Apollo.QueryResult<GetContentGroupQuery, GetContentGroupQueryVariables>;
+export const SubmitProfilePhotoDocument = gql`
+    mutation SubmitProfilePhoto($attendeeId: uuid!, $s3URL: String!) {
+  updateProfilePhoto(attendeeId: $attendeeId, s3URL: $s3URL) {
+    ok
+  }
+}
+    `;
+export type SubmitProfilePhotoMutationFn = Apollo.MutationFunction<SubmitProfilePhotoMutation, SubmitProfilePhotoMutationVariables>;
+
+/**
+ * __useSubmitProfilePhotoMutation__
+ *
+ * To run a mutation, you first call `useSubmitProfilePhotoMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSubmitProfilePhotoMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [submitProfilePhotoMutation, { data, loading, error }] = useSubmitProfilePhotoMutation({
+ *   variables: {
+ *      attendeeId: // value for 'attendeeId'
+ *      s3URL: // value for 's3URL'
+ *   },
+ * });
+ */
+export function useSubmitProfilePhotoMutation(baseOptions?: Apollo.MutationHookOptions<SubmitProfilePhotoMutation, SubmitProfilePhotoMutationVariables>) {
+        return Apollo.useMutation<SubmitProfilePhotoMutation, SubmitProfilePhotoMutationVariables>(SubmitProfilePhotoDocument, baseOptions);
+      }
+export type SubmitProfilePhotoMutationHookResult = ReturnType<typeof useSubmitProfilePhotoMutation>;
+export type SubmitProfilePhotoMutationResult = Apollo.MutationResult<SubmitProfilePhotoMutation>;
+export type SubmitProfilePhotoMutationOptions = Apollo.BaseMutationOptions<SubmitProfilePhotoMutation, SubmitProfilePhotoMutationVariables>;
 export const GetRoomDetailsDocument = gql`
     query GetRoomDetails($roomId: uuid!, $eventsFrom: timestamptz!) {
   Room_by_pk(id: $roomId) {
@@ -27653,6 +28407,43 @@ export function usePublicUserGroupsRolesPermissionsLazyQuery(baseOptions?: Apoll
 export type PublicUserGroupsRolesPermissionsQueryHookResult = ReturnType<typeof usePublicUserGroupsRolesPermissionsQuery>;
 export type PublicUserGroupsRolesPermissionsLazyQueryHookResult = ReturnType<typeof usePublicUserGroupsRolesPermissionsLazyQuery>;
 export type PublicUserGroupsRolesPermissionsQueryResult = Apollo.QueryResult<PublicUserGroupsRolesPermissionsQuery, PublicUserGroupsRolesPermissionsQueryVariables>;
+export const AttendeeByUserIdConferenceIdDocument = gql`
+    query AttendeeByUserIdConferenceId($conferenceId: uuid!, $userId: String!) {
+  Attendee(
+    where: {_and: [{conferenceId: {_eq: $conferenceId}}, {userId: {_eq: $userId}}]}
+    limit: 1
+  ) {
+    ...AttendeeData
+  }
+}
+    ${AttendeeDataFragmentDoc}`;
+
+/**
+ * __useAttendeeByUserIdConferenceIdQuery__
+ *
+ * To run a query within a React component, call `useAttendeeByUserIdConferenceIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAttendeeByUserIdConferenceIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAttendeeByUserIdConferenceIdQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useAttendeeByUserIdConferenceIdQuery(baseOptions: Apollo.QueryHookOptions<AttendeeByUserIdConferenceIdQuery, AttendeeByUserIdConferenceIdQueryVariables>) {
+        return Apollo.useQuery<AttendeeByUserIdConferenceIdQuery, AttendeeByUserIdConferenceIdQueryVariables>(AttendeeByUserIdConferenceIdDocument, baseOptions);
+      }
+export function useAttendeeByUserIdConferenceIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AttendeeByUserIdConferenceIdQuery, AttendeeByUserIdConferenceIdQueryVariables>) {
+          return Apollo.useLazyQuery<AttendeeByUserIdConferenceIdQuery, AttendeeByUserIdConferenceIdQueryVariables>(AttendeeByUserIdConferenceIdDocument, baseOptions);
+        }
+export type AttendeeByUserIdConferenceIdQueryHookResult = ReturnType<typeof useAttendeeByUserIdConferenceIdQuery>;
+export type AttendeeByUserIdConferenceIdLazyQueryHookResult = ReturnType<typeof useAttendeeByUserIdConferenceIdLazyQuery>;
+export type AttendeeByUserIdConferenceIdQueryResult = Apollo.QueryResult<AttendeeByUserIdConferenceIdQuery, AttendeeByUserIdConferenceIdQueryVariables>;
 export const UpdateSubtitlesDocument = gql`
     mutation UpdateSubtitles($contentItemId: String!, $magicToken: String!, $subtitleText: String!) {
   updateSubtitles(

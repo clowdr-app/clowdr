@@ -40,7 +40,6 @@ export default function ConferenceProvider({
     children: string | JSX.Element | JSX.Element[];
 }): JSX.Element {
     const { loading, error, data } = useConferenceBySlugQuery({
-        fetchPolicy: "cache-and-network",
         variables: {
             slug: confSlug,
         },

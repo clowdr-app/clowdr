@@ -101,7 +101,6 @@ function PublicUserGroupsRolesPermissionsProvider({
 }): JSX.Element {
     const conference = useConference();
     const { loading, error, data } = usePublicUserGroupsRolesPermissionsQuery({
-        fetchPolicy: "cache-and-network",
         variables: {
             conferenceId: conference.id,
         },
@@ -139,7 +138,6 @@ function AuthedUserGroupsRolesPermissionsProvider({
 }): JSX.Element {
     const conference = useConference();
     const { loading, error, data } = useCurrentUserGroupsRolesPermissionsQuery({
-        fetchPolicy: "cache-and-network",
         variables: {
             conferenceId: conference.id,
             userId: user.id,

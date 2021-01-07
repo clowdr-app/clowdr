@@ -5,7 +5,7 @@ import SignupButton from "../../Auth/Buttons/SignUpButton";
 import { useNoPrimaryMenuButtons } from "../../Menu/usePrimaryMenuButtons";
 import InviteCodeInput from "./InviteCodeInput";
 
-export default function NewUserLandingPage(): JSX.Element {
+export default function NewUserLandingPage({ conferenceName }: { conferenceName?: string }): JSX.Element {
     useNoPrimaryMenuButtons();
 
     return (
@@ -13,7 +13,17 @@ export default function NewUserLandingPage(): JSX.Element {
             <Heading as="h1" fontSize="4.25rem" lineHeight="4.25rem" fontWeight="thin" marginBottom="4rem">
                 Clowdr
             </Heading>
-            <InviteCodeInput marginBottom="1.5rem" />
+            {conferenceName ? (
+                <>
+                    <Heading as="h2" fontSize="1.6rem" lineHeight="2.2rem" fontWeight="thin" marginBottom="2rem">
+                        {conferenceName}
+                    </Heading>
+                </>
+            ) : undefined}
+            <InviteCodeInput
+                message={conferenceName ? "Please enter the invite code you were sent by email." : undefined}
+                marginBottom="1.5rem"
+            />
             <Divider marginBottom="1rem" />
             <FormControl textAlign="center">
                 <Heading as="h2" fontSize="100%" fontWeight="normal" margin={0} lineHeight="revert" mb={3}>

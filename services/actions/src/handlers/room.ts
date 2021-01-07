@@ -1,6 +1,11 @@
 import { gql } from "@apollo/client/core";
 import assert from "assert";
-import { SetRoomVonageSessionIdDocument } from "../generated/graphql";
+import {
+    AddAttendeeToRoomPeopleDocument,
+    GetAttendeesForRoomAndUserDocument,
+    RoomPersonRole_Enum,
+    SetRoomVonageSessionIdDocument,
+} from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import * as Vonage from "../lib/vonage/vonageClient";
 import { Payload, RoomData } from "../types/hasura/event";
@@ -9,6 +14,11 @@ export async function handleRoomCreated(payload: Payload<RoomData>): Promise<voi
     assert(payload.event.data.new, "Expected new row data");
 
     await createRoomVonageSession(payload.event.data.new.id);
+    await addUserToRoomPeople(
+        payload.event.session_variables["x-hasura-user-id"],
+        payload.event.data.new.id,
+        RoomPersonRole_Enum.Admin
+    );
 }
 
 async function createRoomVonageSession(roomId: string): Promise<string> {
@@ -35,4 +45,68 @@ async function createRoomVonageSession(roomId: string): Promise<string> {
     });
 
     return sessionResult.sessionId;
+}
+
+export async function addUserToRoomPeople(userId: string, roomId: string, role: RoomPersonRole_Enum): Promise<void> {
+    gql`
+        query GetAttendeesForRoomAndUser($roomId: uuid!, $userId: String!) {
+            Room_by_pk(id: $roomId) {
+                id
+                conference {
+                    attendees(where: { userId: { _eq: $userId } }) {
+                        userId
+                        id
+                    }
+                    id
+                }
+            }
+        }
+    `;
+
+    const result = await apolloClient.query({
+        query: GetAttendeesForRoomAndUserDocument,
+        variables: {
+            roomId,
+            userId,
+        },
+    });
+
+    if (result.error || result.errors) {
+        console.error("Failed to get attendee to be added to the room people list", userId, roomId);
+        throw new Error("Failed to get attendee to be added to the room people list");
+    }
+
+    if (
+        !result.data.Room_by_pk?.conference.attendees ||
+        result.data.Room_by_pk.conference.attendees.length === 0 ||
+        !result.data.Room_by_pk.conference.attendees[0].userId
+    ) {
+        console.error("Could not find an attendee to be added to the room people list", userId, roomId);
+        throw new Error("Could not find an attendee to be added to the room people list");
+    }
+
+    const attendeeId = result.data.Room_by_pk.conference.attendees[0].id;
+
+    gql`
+        mutation AddAttendeeToRoomPeople(
+            $attendeeId: uuid!
+            $roomId: uuid!
+            $roomPersonRoleName: RoomPersonRole_enum!
+        ) {
+            insert_RoomPerson_one(
+                object: { attendeeId: $attendeeId, roomId: $roomId, roomPersonRoleName: $roomPersonRoleName }
+            ) {
+                id
+            }
+        }
+    `;
+
+    await apolloClient.mutate({
+        mutation: AddAttendeeToRoomPeopleDocument,
+        variables: {
+            attendeeId,
+            roomId,
+            roomPersonRoleName: role,
+        },
+    });
 }

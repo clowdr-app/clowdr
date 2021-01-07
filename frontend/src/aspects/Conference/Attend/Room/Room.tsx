@@ -20,6 +20,7 @@ import { RoomDetailsFragment, useUserEventRolesSubscription } from "../../../../
 import useUserId from "../../../Auth/useUserId";
 import { VonageRoomStateProvider } from "../../../Vonage/useVonageRoom";
 import { ContentGroupSummary } from "../Content/ContentGroupSummary";
+import { RoomControlBar } from "./RoomControlBar";
 import { useCurrentRoomEvent } from "./useCurrentRoomEvent";
 import { BreakoutVonageRoom, EventVonageRoom } from "./VonageRoom";
 
@@ -57,7 +58,15 @@ export function Room({ roomDetails }: { roomDetails: RoomDetailsFragment }): JSX
     }, [nextRoomEvent?.eventPeople, userId]);
 
     return (
-        <Grid width="100%" gridColumnGap={5} gridTemplateColumns="1fr 25%" flexWrap={stackColumns ? "wrap" : "nowrap"}>
+        <Grid
+            width="100%"
+            gridColumnGap={5}
+            gridTemplateColumns={["1fr", "1fr", "1fr 25%"]}
+            gridTemplateRows={["min-content 1fr 1fr", "min-content 1fr 1fr", "min-content 1fr"]}
+        >
+            <GridItem colSpan={[1, 1, 2]}>
+                <RoomControlBar roomDetails={roomDetails} />
+            </GridItem>
             <GridItem textAlign="left" overflowY={stackColumns ? "visible" : "auto"} p={2}>
                 <Tabs width="100%" background={backgroundColor}>
                     <TabList>

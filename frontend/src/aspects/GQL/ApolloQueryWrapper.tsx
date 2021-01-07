@@ -1,6 +1,7 @@
 import type { QueryResult } from "@apollo/client";
 import { Spinner } from "@chakra-ui/react";
 import React, { useMemo } from "react";
+import useQueryErrorToast from "./useQueryErrorToast";
 
 export default function ApolloQueryWrapper<TData, TVariables, TInnerData>({
     queryResult,
@@ -18,6 +19,8 @@ export default function ApolloQueryWrapper<TData, TVariables, TInnerData>({
             return undefined;
         }
     }, [getter, queryResult.data]);
+    useQueryErrorToast(queryResult.error);
+
     return (
         <>
             {queryResult.loading ? (
@@ -25,7 +28,7 @@ export default function ApolloQueryWrapper<TData, TVariables, TInnerData>({
             ) : queryResult.error ? (
                 <>An error occurred loading in data - please see further information in notifications.</>
             ) : undefined}
-            {!innerData ? undefined : children(innerData)}
+            {!innerData ? <>No data found</> : children(innerData)}
         </>
     );
 }

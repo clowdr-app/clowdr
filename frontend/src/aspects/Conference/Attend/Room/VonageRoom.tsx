@@ -138,7 +138,9 @@ export function VonageRoom({
                     publishAudio: state.microphoneIntendedEnabled,
                     publishVideo: state.cameraIntendedEnabled,
                     insertMode: "append",
-                    style: {},
+                    style: {
+                        nameDisplayMode: "on",
+                    },
                     facingMode: "user",
                     height: 300,
                     width: 300,
@@ -163,7 +165,9 @@ export function VonageRoom({
                     publishAudio: state.microphoneIntendedEnabled,
                     publishVideo: state.cameraIntendedEnabled,
                     insertMode: "append",
-                    style: {},
+                    style: {
+                        nameDisplayMode: "on",
+                    },
                     facingMode: "user",
                     height: 300,
                     width: 300,
@@ -189,6 +193,7 @@ export function VonageRoom({
     const streamCreatedHandler = useCallback(
         (event: EventMap["streamCreated"]) => {
             console.log("Stream created", event.stream.streamId);
+            event.stream.connection.data
             openTokMethods.subscribe({
                 stream: event.stream,
                 element: videoContainerRef.current ?? undefined,
@@ -196,6 +201,9 @@ export function VonageRoom({
                     insertMode: "append",
                     height: "300",
                     width: "300",
+                    style: {
+                        nameDisplayMode: "on",
+                    },
                 },
             });
         },
@@ -233,7 +241,9 @@ export function VonageRoom({
                         publishAudio: state.microphoneIntendedEnabled,
                         publishVideo: state.cameraIntendedEnabled,
                         insertMode: "append",
-                        style: {},
+                        style: {
+                            nameDisplayMode: "on",
+                        },
                         height: 300,
                         width: 300,
                     },
@@ -270,9 +280,9 @@ export function VonageRoom({
     }, [openTokMethods, openTokProps.isSessionConnected]);
 
     return (
-        <Box minH="100%" display="grid" gridTemplateRows="1fr auto">
-            <Box position="relative">
-                <Flex width="100%" height="auto" ref={videoContainerRef} overflowY="auto"></Flex>
+        <Box display="grid" gridTemplateRows="1fr auto">
+            <Box maxH="80vh" overflowY="auto">
+                <Flex width="100%" height="auto" flexWrap="wrap" ref={videoContainerRef} overflowY="auto" />
                 {openTokProps.session?.connection ? (
                     <></>
                 ) : (

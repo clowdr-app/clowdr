@@ -24,7 +24,20 @@ gql`
             id
         }
         publicVonageSessionId
+        roomPrivacyName
         ...RoomEvents
+        ...RoomPeople
+    }
+
+    fragment RoomPeople on Room {
+        roomPeople {
+            id
+            roomPersonRoleName
+            attendee {
+                displayName
+                id
+            }
+        }
     }
 
     fragment RoomEvents on Room {

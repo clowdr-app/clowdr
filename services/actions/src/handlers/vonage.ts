@@ -67,6 +67,10 @@ gql`
             eventPeople(where: { attendee: { userId: { _eq: $userId } } }) {
                 id
                 roleName
+                attendee {
+                    id
+                    displayName
+                }
             }
             eventVonageSession {
                 sessionId
@@ -117,7 +121,7 @@ export async function handleJoinEvent(
     }
 
     const accessToken = Vonage.vonage.generateToken(rolesResult.data.Event_by_pk.eventVonageSession.sessionId, {
-        data: `userId=${userId}`,
+        data: JSON.stringify({ userId }),
         role: "moderator", // TODO: change depending on event person role
     });
 
@@ -160,7 +164,7 @@ export async function handleJoinRoom(
     }
 
     const accessToken = Vonage.vonage.generateToken(room.publicVonageSessionId, {
-        data: `userId=${userId}`,
+        data: JSON.stringify({ userId }),
         role: "publisher",
     });
 

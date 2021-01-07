@@ -157,6 +157,7 @@ export default function AcceptInvitationPage(props: Props): JSX.Element {
                             status: "error",
                             title: "Unable to confirm invitation",
                         });
+                        setCachedInviteCode(null);
                     }
                 } else {
                     const result = await sendInitialEmailMutation({

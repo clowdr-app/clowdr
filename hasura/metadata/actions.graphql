@@ -13,6 +13,15 @@ type Query {
 
 
 type Query {
+  getProfilePhotoUrl (
+    attendeeId: uuid!
+    w: Int!
+    h: Int!
+  ): ProfilePhotoURLResponse
+}
+
+
+type Query {
   getUploadAgreement (
     magicToken: String!
   ): GetUploadAgreementOutput
@@ -181,5 +190,9 @@ type JoinEventVonageSessionOutput {
 type JoinRoomVonageSessionOutput {
   sessionId : String
   accessToken : String
+}
+
+type ProfilePhotoURLResponse {
+  url : String!
 }
 

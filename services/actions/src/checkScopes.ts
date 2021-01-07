@@ -27,6 +27,8 @@
 
 import { NextFunction, Request, Response } from "express";
 
+export type AuthenticatedRequest = Request & { userId: string };
+
 export default function checkScopes(
     expectedScopes: string[],
     authKey: string,

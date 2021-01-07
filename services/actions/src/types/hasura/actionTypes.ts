@@ -72,6 +72,10 @@ type JoinRoomVonageSessionOutput = {
     accessToken?: Maybe<string>;
 };
 
+type ProfilePhotoURLResponse = {
+    url: string;
+};
+
 type SampleInput = {
     username: string;
     password: string;
@@ -103,6 +107,7 @@ type SubmitUpdatedSubtitlesInput = {
 type Query = {
     echo?: Maybe<EchoOutput>;
     getContentItem?: Maybe<Array<Maybe<GetContentItemOutput>>>;
+    getProfilePhotoUrl?: Maybe<ProfilePhotoURLResponse>;
     getUploadAgreement?: Maybe<GetUploadAgreementOutput>;
     protectedEcho?: Maybe<ProtectedEchoOutput>;
 };
@@ -124,6 +129,12 @@ type echoArgs = {
 
 type getContentItemArgs = {
     magicToken: string;
+};
+
+type getProfilePhotoUrlArgs = {
+    attendeeId: uuid;
+    w: number;
+    h: number;
 };
 
 type getUploadAgreementArgs = {

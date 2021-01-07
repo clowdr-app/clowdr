@@ -99,6 +99,9 @@ Note: `AWS_` values come from the outputs of your AWS deployment. See [`aws/READ
 | AWS_TRANSCRIBE_SERVICE_ROLE_ARN                | The IAM role to be passed to Transcribe                                                                             | Yes      |
 | AWS_TRANSCODE_NOTIFICATIONS_TOPIC_ARN          | The ARN of the SNS topic for MediaConvert notifications                                                             | Yes      |
 | AWS_TRANSCRIBE_NOTIFICATIONS_TOPIC_ARN         | The ARN of the SNS topic for transcription notifications                                                            | Yes      |
+| AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME        | The name of the Cloudfront distribution obtained from deploying the Serverless Image Handler template               | No       |
+| AWS_IMAGES_BUCKET                              | The name of the bucket you manually created in AWS.                                                                 | No       |
+| AWS_IMAGES_SECRET_VALUE                        | The value you manually entered into Secrets Manager.                                                                | No       |
 | OPENSHOT_BASE_URL                              | The base URL of the OpenShot instance                                                                               |          |
 | OPENSHOT_USERNAME                              | The username you created for your OpenShot instance                                                                 |          |
 | OPENSHOT_PASSWORD                              | The password you created for your OpenShot instance                                                                 |          |

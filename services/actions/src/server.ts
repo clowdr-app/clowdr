@@ -3,6 +3,7 @@ import assert from "assert";
 import bodyParser from "body-parser";
 import express, { Request, Response } from "express";
 import { initialiseAwsClient } from "./aws/awsClient";
+import { AuthenticatedRequest } from "./checkScopes";
 import handlerEcho from "./handlers/echo";
 import { processEmailsJobQueue } from "./handlers/email";
 import {
@@ -31,8 +32,7 @@ import { router as openshotRouter } from "./router/openshot";
 import { router as roomRouter } from "./router/room";
 import { router as videoRenderJobRouter } from "./router/videoRenderJob";
 import { router as vonageRouter } from "./router/vonage";
-
-type AuthenticatedRequest = Request & { userId: string };
+import { router as profileRouter } from "./router/profile";
 
 if (process.env.NODE_ENV !== "test") {
     assert(process.env.AUTH0_API_DOMAIN, "AUTH0_API_DOMAIN environment variable not provided.");
@@ -78,6 +78,8 @@ app.use("/event", eventRouter);
 app.use("/room", roomRouter);
 
 app.use("/channels", channelsRouter);
+
+app.use("/profile", profileRouter);
 
 app.get("/", function (_req, res) {
     res.send("Clowdr");

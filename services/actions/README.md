@@ -9,6 +9,30 @@ Eventually this may be split into multiple microservices.
 1. You have followed the AWS setup instructions in [aws/README.md](../../aws/README.md)
 1. You have created a [SendGrid](https://www.sendgrid.com) account and an API key for it.
 1. You have create a [Vonage Video API](https://www.vonage.co.uk/communications-apis/video/) account and an API key for it.
+1. You have deployed the [Image Handler](#deploying-the-image-handler) stack.
+
+## Deploying the image handler
+
+We use the AWS `serverless-image-handler` template for processing uploaded profile images. These are the steps to deploy it:
+
+1. Create a new secret in AWS Secrets Manager - you can use any secret name and secret key you like. Choose a secure random string and make a note of it.
+1. In AWS CloudFormation, create a stack from the template `https://solutions-reference.s3.amazonaws.com/serverless-image-handler/latest/serverless-image-handler.template`
+1. Choose the Stack name to be something unique, preferably using your `AWS_PREFIX`.
+1. Set the parameters as follows:
+
+- `CorsEnabled`: Yes
+- `CorsOrigin`: `http://localhost` if running locally, or an appropriate origin.
+- `SourceBuckets`: the name of your content bucket (i.e. `AWS_CONTENT_BUCKET_ID`)
+- `DeployDemoUI`: No
+- `LogRetentionPeriod`: 1
+- `EnableSignature`: Yes
+- `SecretsManagerSecret`: the name of the secret you created earlier
+- `SecretsManagerKey`: the key of the secret you created earlier
+- `EnableDefaultFallbackImage`: No
+- `AutoWebP`: Yes
+
+1. Deploy the stack and wait for creation to copmlete.
+1. Make a note of the `ApiEndpoint` output.
 
 ## Setting Up
 
@@ -107,3 +131,5 @@ Note: `AWS_` values come from the outputs of your AWS deployment. See [`aws/READ
 | OPENTOK_API_KEY                                | Your Vonage Video API key                                                                                           |          |
 | OPENTOK_API_SECRET                             | Your Vonage Video API secret                                                                                        |          |
 | VONAGE_WEBHOOK_SECRET                          | A random token (your choice!) to be sent with Vonage webhook calls                                                  |          |
+| AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME        | The `ApiEndpoint` output from your Serverless Image Handler stack                                                   |          |
+| AWS_IMAGES_SECRET_VALUE                        | The secret created for your Serverless Image Handler                                                                |          |

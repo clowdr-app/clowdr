@@ -4,8 +4,8 @@ import PageNotImplemented from "../Errors/PageNotImplemented";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import ConferenceLandingPage from "./Attend/ConferenceLandingPage";
 import ContentGroupPage from "./Attend/Content/ContentGroupPage";
-import RoomListPage from "./Attend/Room/RoomListPage";
 import EditProfilePage from "./Attend/Profile/EditProfilePage";
+import RoomListPage from "./Attend/Room/RoomListPage";
 import ViewProfilePage from "./Attend/Profile/ViewProfilePage";
 import RoomPage from "./Attend/Room/RoomPage";
 import ConferenceTimeline from "./Attend/Schedule/ConferenceTimeline";
@@ -107,18 +107,18 @@ function ConferenceRoutesInner({ rootUrl }: { rootUrl: string }): JSX.Element {
                 )}
             />
 
-                        <Route path={`${rootUrl}/rooms`}>
-                            <RoomListPage />
-                        </Route>
+            <Route path={`${rootUrl}/rooms`}>
+                <RoomListPage />
+            </Route>
 
-                        <Route
-                            path={`${rootUrl}/room/:roomId`}
-                            component={(
-                                props: RouteComponentProps<{
-                                    roomId: string;
-                                }>
-                            ) => <RoomPage roomId={props.match.params.roomId} />}
-                        />
+            <Route
+                path={`${rootUrl}/room/:roomId`}
+                component={(
+                    props: RouteComponentProps<{
+                        roomId: string;
+                    }>
+                ) => <RoomPage roomId={props.match.params.roomId} />}
+            />
             <Route
                 path={`${rootUrl}/room/:roomId`}
                 component={(

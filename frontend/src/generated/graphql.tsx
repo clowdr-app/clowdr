@@ -13115,6 +13115,13 @@ export type Room = {
   readonly priority: Scalars['Int'];
   readonly publicVonageSessionId?: Maybe<Scalars['String']>;
   /** An array relationship */
+  readonly roomPeople: ReadonlyArray<RoomPerson>;
+  /** An aggregated array relationship */
+  readonly roomPeople_aggregate: RoomPerson_Aggregate;
+  /** An object relationship */
+  readonly roomPrivacy: RoomPrivacy;
+  readonly roomPrivacyName: RoomPrivacy_Enum;
+  /** An array relationship */
   readonly transitions: ReadonlyArray<Transitions>;
   /** An aggregated array relationship */
   readonly transitions_aggregate: Transitions_Aggregate;
@@ -13179,6 +13186,26 @@ export type RoomParticipants_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<RoomParticipant_Order_By>>;
   where?: Maybe<RoomParticipant_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Room" */
+export type RoomRoomPeopleArgs = {
+  distinct_on?: Maybe<ReadonlyArray<RoomPerson_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<RoomPerson_Order_By>>;
+  where?: Maybe<RoomPerson_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Room" */
+export type RoomRoomPeople_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<RoomPerson_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<RoomPerson_Order_By>>;
+  where?: Maybe<RoomPerson_Bool_Exp>;
 };
 
 
@@ -13632,6 +13659,537 @@ export enum RoomParticipant_Update_Column {
   UpdatedAt = 'updatedAt'
 }
 
+/** columns and relationships of "RoomPerson" */
+export type RoomPerson = {
+  readonly __typename?: 'RoomPerson';
+  /** An object relationship */
+  readonly attendee: Attendee;
+  readonly attendeeId: Scalars['uuid'];
+  readonly createdAt: Scalars['timestamptz'];
+  readonly id: Scalars['uuid'];
+  /** An object relationship */
+  readonly room: Room;
+  readonly roomId: Scalars['uuid'];
+  /** An object relationship */
+  readonly roomPersonRole: RoomPersonRole;
+  readonly roomPersonRoleName: RoomPersonRole_Enum;
+  readonly updatedAt: Scalars['timestamptz'];
+};
+
+/** columns and relationships of "RoomPersonRole" */
+export type RoomPersonRole = {
+  readonly __typename?: 'RoomPersonRole';
+  readonly description: Scalars['String'];
+  readonly name: Scalars['String'];
+};
+
+/** aggregated selection of "RoomPersonRole" */
+export type RoomPersonRole_Aggregate = {
+  readonly __typename?: 'RoomPersonRole_aggregate';
+  readonly aggregate?: Maybe<RoomPersonRole_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<RoomPersonRole>;
+};
+
+/** aggregate fields of "RoomPersonRole" */
+export type RoomPersonRole_Aggregate_Fields = {
+  readonly __typename?: 'RoomPersonRole_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<RoomPersonRole_Max_Fields>;
+  readonly min?: Maybe<RoomPersonRole_Min_Fields>;
+};
+
+
+/** aggregate fields of "RoomPersonRole" */
+export type RoomPersonRole_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<RoomPersonRole_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "RoomPersonRole" */
+export type RoomPersonRole_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<RoomPersonRole_Max_Order_By>;
+  readonly min?: Maybe<RoomPersonRole_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "RoomPersonRole" */
+export type RoomPersonRole_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<RoomPersonRole_Insert_Input>;
+  readonly on_conflict?: Maybe<RoomPersonRole_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "RoomPersonRole". All fields are combined with a logical 'AND'. */
+export type RoomPersonRole_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<RoomPersonRole_Bool_Exp>>>;
+  readonly _not?: Maybe<RoomPersonRole_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<RoomPersonRole_Bool_Exp>>>;
+  readonly description?: Maybe<String_Comparison_Exp>;
+  readonly name?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "RoomPersonRole" */
+export enum RoomPersonRole_Constraint {
+  /** unique or primary key constraint */
+  RoomPersonRolePkey = 'RoomPersonRole_pkey'
+}
+
+export enum RoomPersonRole_Enum {
+  /** User has control over the room. */
+  Admin = 'ADMIN',
+  /** User can participate in the room. */
+  Participant = 'PARTICIPANT'
+}
+
+/** expression to compare columns of type RoomPersonRole_enum. All fields are combined with logical 'AND'. */
+export type RoomPersonRole_Enum_Comparison_Exp = {
+  readonly _eq?: Maybe<RoomPersonRole_Enum>;
+  readonly _in?: Maybe<ReadonlyArray<RoomPersonRole_Enum>>;
+  readonly _is_null?: Maybe<Scalars['Boolean']>;
+  readonly _neq?: Maybe<RoomPersonRole_Enum>;
+  readonly _nin?: Maybe<ReadonlyArray<RoomPersonRole_Enum>>;
+};
+
+/** input type for inserting data into table "RoomPersonRole" */
+export type RoomPersonRole_Insert_Input = {
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type RoomPersonRole_Max_Fields = {
+  readonly __typename?: 'RoomPersonRole_max_fields';
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "RoomPersonRole" */
+export type RoomPersonRole_Max_Order_By = {
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type RoomPersonRole_Min_Fields = {
+  readonly __typename?: 'RoomPersonRole_min_fields';
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "RoomPersonRole" */
+export type RoomPersonRole_Min_Order_By = {
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "RoomPersonRole" */
+export type RoomPersonRole_Mutation_Response = {
+  readonly __typename?: 'RoomPersonRole_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<RoomPersonRole>;
+};
+
+/** input type for inserting object relation for remote table "RoomPersonRole" */
+export type RoomPersonRole_Obj_Rel_Insert_Input = {
+  readonly data: RoomPersonRole_Insert_Input;
+  readonly on_conflict?: Maybe<RoomPersonRole_On_Conflict>;
+};
+
+/** on conflict condition type for table "RoomPersonRole" */
+export type RoomPersonRole_On_Conflict = {
+  readonly constraint: RoomPersonRole_Constraint;
+  readonly update_columns: ReadonlyArray<RoomPersonRole_Update_Column>;
+  readonly where?: Maybe<RoomPersonRole_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "RoomPersonRole" */
+export type RoomPersonRole_Order_By = {
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "RoomPersonRole" */
+export type RoomPersonRole_Pk_Columns_Input = {
+  readonly name: Scalars['String'];
+};
+
+/** select columns of table "RoomPersonRole" */
+export enum RoomPersonRole_Select_Column {
+  /** column name */
+  Description = 'description',
+  /** column name */
+  Name = 'name'
+}
+
+/** input type for updating data in table "RoomPersonRole" */
+export type RoomPersonRole_Set_Input = {
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** update columns of table "RoomPersonRole" */
+export enum RoomPersonRole_Update_Column {
+  /** column name */
+  Description = 'description',
+  /** column name */
+  Name = 'name'
+}
+
+/** aggregated selection of "RoomPerson" */
+export type RoomPerson_Aggregate = {
+  readonly __typename?: 'RoomPerson_aggregate';
+  readonly aggregate?: Maybe<RoomPerson_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<RoomPerson>;
+};
+
+/** aggregate fields of "RoomPerson" */
+export type RoomPerson_Aggregate_Fields = {
+  readonly __typename?: 'RoomPerson_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<RoomPerson_Max_Fields>;
+  readonly min?: Maybe<RoomPerson_Min_Fields>;
+};
+
+
+/** aggregate fields of "RoomPerson" */
+export type RoomPerson_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<RoomPerson_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "RoomPerson" */
+export type RoomPerson_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<RoomPerson_Max_Order_By>;
+  readonly min?: Maybe<RoomPerson_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "RoomPerson" */
+export type RoomPerson_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<RoomPerson_Insert_Input>;
+  readonly on_conflict?: Maybe<RoomPerson_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "RoomPerson". All fields are combined with a logical 'AND'. */
+export type RoomPerson_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<RoomPerson_Bool_Exp>>>;
+  readonly _not?: Maybe<RoomPerson_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<RoomPerson_Bool_Exp>>>;
+  readonly attendee?: Maybe<Attendee_Bool_Exp>;
+  readonly attendeeId?: Maybe<Uuid_Comparison_Exp>;
+  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly room?: Maybe<Room_Bool_Exp>;
+  readonly roomId?: Maybe<Uuid_Comparison_Exp>;
+  readonly roomPersonRole?: Maybe<RoomPersonRole_Bool_Exp>;
+  readonly roomPersonRoleName?: Maybe<RoomPersonRole_Enum_Comparison_Exp>;
+  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "RoomPerson" */
+export enum RoomPerson_Constraint {
+  /** unique or primary key constraint */
+  RoomPersonAttendeeIdRoomIdKey = 'RoomPerson_attendeeId_roomId_key',
+  /** unique or primary key constraint */
+  RoomPersonPkey = 'RoomPerson_pkey'
+}
+
+/** input type for inserting data into table "RoomPerson" */
+export type RoomPerson_Insert_Input = {
+  readonly attendee?: Maybe<Attendee_Obj_Rel_Insert_Input>;
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly room?: Maybe<Room_Obj_Rel_Insert_Input>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly roomPersonRole?: Maybe<RoomPersonRole_Obj_Rel_Insert_Input>;
+  readonly roomPersonRoleName?: Maybe<RoomPersonRole_Enum>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type RoomPerson_Max_Fields = {
+  readonly __typename?: 'RoomPerson_max_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "RoomPerson" */
+export type RoomPerson_Max_Order_By = {
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly roomId?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type RoomPerson_Min_Fields = {
+  readonly __typename?: 'RoomPerson_min_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "RoomPerson" */
+export type RoomPerson_Min_Order_By = {
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly roomId?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "RoomPerson" */
+export type RoomPerson_Mutation_Response = {
+  readonly __typename?: 'RoomPerson_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<RoomPerson>;
+};
+
+/** input type for inserting object relation for remote table "RoomPerson" */
+export type RoomPerson_Obj_Rel_Insert_Input = {
+  readonly data: RoomPerson_Insert_Input;
+  readonly on_conflict?: Maybe<RoomPerson_On_Conflict>;
+};
+
+/** on conflict condition type for table "RoomPerson" */
+export type RoomPerson_On_Conflict = {
+  readonly constraint: RoomPerson_Constraint;
+  readonly update_columns: ReadonlyArray<RoomPerson_Update_Column>;
+  readonly where?: Maybe<RoomPerson_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "RoomPerson" */
+export type RoomPerson_Order_By = {
+  readonly attendee?: Maybe<Attendee_Order_By>;
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly room?: Maybe<Room_Order_By>;
+  readonly roomId?: Maybe<Order_By>;
+  readonly roomPersonRole?: Maybe<RoomPersonRole_Order_By>;
+  readonly roomPersonRoleName?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "RoomPerson" */
+export type RoomPerson_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "RoomPerson" */
+export enum RoomPerson_Select_Column {
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  RoomId = 'roomId',
+  /** column name */
+  RoomPersonRoleName = 'roomPersonRoleName',
+  /** column name */
+  UpdatedAt = 'updatedAt'
+}
+
+/** input type for updating data in table "RoomPerson" */
+export type RoomPerson_Set_Input = {
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly roomPersonRoleName?: Maybe<RoomPersonRole_Enum>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "RoomPerson" */
+export enum RoomPerson_Update_Column {
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  RoomId = 'roomId',
+  /** column name */
+  RoomPersonRoleName = 'roomPersonRoleName',
+  /** column name */
+  UpdatedAt = 'updatedAt'
+}
+
+/** columns and relationships of "RoomPrivacy" */
+export type RoomPrivacy = {
+  readonly __typename?: 'RoomPrivacy';
+  readonly description: Scalars['String'];
+  readonly name: Scalars['String'];
+};
+
+/** aggregated selection of "RoomPrivacy" */
+export type RoomPrivacy_Aggregate = {
+  readonly __typename?: 'RoomPrivacy_aggregate';
+  readonly aggregate?: Maybe<RoomPrivacy_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<RoomPrivacy>;
+};
+
+/** aggregate fields of "RoomPrivacy" */
+export type RoomPrivacy_Aggregate_Fields = {
+  readonly __typename?: 'RoomPrivacy_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<RoomPrivacy_Max_Fields>;
+  readonly min?: Maybe<RoomPrivacy_Min_Fields>;
+};
+
+
+/** aggregate fields of "RoomPrivacy" */
+export type RoomPrivacy_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<RoomPrivacy_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "RoomPrivacy" */
+export type RoomPrivacy_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<RoomPrivacy_Max_Order_By>;
+  readonly min?: Maybe<RoomPrivacy_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "RoomPrivacy" */
+export type RoomPrivacy_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<RoomPrivacy_Insert_Input>;
+  readonly on_conflict?: Maybe<RoomPrivacy_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "RoomPrivacy". All fields are combined with a logical 'AND'. */
+export type RoomPrivacy_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<RoomPrivacy_Bool_Exp>>>;
+  readonly _not?: Maybe<RoomPrivacy_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<RoomPrivacy_Bool_Exp>>>;
+  readonly description?: Maybe<String_Comparison_Exp>;
+  readonly name?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "RoomPrivacy" */
+export enum RoomPrivacy_Constraint {
+  /** unique or primary key constraint */
+  RoomPrivacyPkey = 'RoomPrivacy_pkey'
+}
+
+export enum RoomPrivacy_Enum {
+  /** Room is a direct message between two attendees. No new attendees can be added. */
+  Dm = 'DM',
+  /** Room is only visible to attendees who have been given access. New attendees can be added. */
+  Private = 'PRIVATE',
+  /** Room is visible to all attendees at the conference. */
+  Public = 'PUBLIC'
+}
+
+/** expression to compare columns of type RoomPrivacy_enum. All fields are combined with logical 'AND'. */
+export type RoomPrivacy_Enum_Comparison_Exp = {
+  readonly _eq?: Maybe<RoomPrivacy_Enum>;
+  readonly _in?: Maybe<ReadonlyArray<RoomPrivacy_Enum>>;
+  readonly _is_null?: Maybe<Scalars['Boolean']>;
+  readonly _neq?: Maybe<RoomPrivacy_Enum>;
+  readonly _nin?: Maybe<ReadonlyArray<RoomPrivacy_Enum>>;
+};
+
+/** input type for inserting data into table "RoomPrivacy" */
+export type RoomPrivacy_Insert_Input = {
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type RoomPrivacy_Max_Fields = {
+  readonly __typename?: 'RoomPrivacy_max_fields';
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "RoomPrivacy" */
+export type RoomPrivacy_Max_Order_By = {
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type RoomPrivacy_Min_Fields = {
+  readonly __typename?: 'RoomPrivacy_min_fields';
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "RoomPrivacy" */
+export type RoomPrivacy_Min_Order_By = {
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "RoomPrivacy" */
+export type RoomPrivacy_Mutation_Response = {
+  readonly __typename?: 'RoomPrivacy_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<RoomPrivacy>;
+};
+
+/** input type for inserting object relation for remote table "RoomPrivacy" */
+export type RoomPrivacy_Obj_Rel_Insert_Input = {
+  readonly data: RoomPrivacy_Insert_Input;
+  readonly on_conflict?: Maybe<RoomPrivacy_On_Conflict>;
+};
+
+/** on conflict condition type for table "RoomPrivacy" */
+export type RoomPrivacy_On_Conflict = {
+  readonly constraint: RoomPrivacy_Constraint;
+  readonly update_columns: ReadonlyArray<RoomPrivacy_Update_Column>;
+  readonly where?: Maybe<RoomPrivacy_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "RoomPrivacy" */
+export type RoomPrivacy_Order_By = {
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "RoomPrivacy" */
+export type RoomPrivacy_Pk_Columns_Input = {
+  readonly name: Scalars['String'];
+};
+
+/** select columns of table "RoomPrivacy" */
+export enum RoomPrivacy_Select_Column {
+  /** column name */
+  Description = 'description',
+  /** column name */
+  Name = 'name'
+}
+
+/** input type for updating data in table "RoomPrivacy" */
+export type RoomPrivacy_Set_Input = {
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** update columns of table "RoomPrivacy" */
+export enum RoomPrivacy_Update_Column {
+  /** column name */
+  Description = 'description',
+  /** column name */
+  Name = 'name'
+}
+
 /** aggregated selection of "Room" */
 export type Room_Aggregate = {
   readonly __typename?: 'Room_aggregate';
@@ -13718,6 +14276,9 @@ export type Room_Bool_Exp = {
   readonly participants?: Maybe<RoomParticipant_Bool_Exp>;
   readonly priority?: Maybe<Int_Comparison_Exp>;
   readonly publicVonageSessionId?: Maybe<String_Comparison_Exp>;
+  readonly roomPeople?: Maybe<RoomPerson_Bool_Exp>;
+  readonly roomPrivacy?: Maybe<RoomPrivacy_Bool_Exp>;
+  readonly roomPrivacyName?: Maybe<RoomPrivacy_Enum_Comparison_Exp>;
   readonly transitions?: Maybe<Transitions_Bool_Exp>;
   readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
 };
@@ -13757,6 +14318,9 @@ export type Room_Insert_Input = {
   readonly participants?: Maybe<RoomParticipant_Arr_Rel_Insert_Input>;
   readonly priority?: Maybe<Scalars['Int']>;
   readonly publicVonageSessionId?: Maybe<Scalars['String']>;
+  readonly roomPeople?: Maybe<RoomPerson_Arr_Rel_Insert_Input>;
+  readonly roomPrivacy?: Maybe<RoomPrivacy_Obj_Rel_Insert_Input>;
+  readonly roomPrivacyName?: Maybe<RoomPrivacy_Enum>;
   readonly transitions?: Maybe<Transitions_Arr_Rel_Insert_Input>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -13860,6 +14424,9 @@ export type Room_Order_By = {
   readonly participants_aggregate?: Maybe<RoomParticipant_Aggregate_Order_By>;
   readonly priority?: Maybe<Order_By>;
   readonly publicVonageSessionId?: Maybe<Order_By>;
+  readonly roomPeople_aggregate?: Maybe<RoomPerson_Aggregate_Order_By>;
+  readonly roomPrivacy?: Maybe<RoomPrivacy_Order_By>;
+  readonly roomPrivacyName?: Maybe<Order_By>;
   readonly transitions_aggregate?: Maybe<Transitions_Aggregate_Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
@@ -13892,6 +14459,8 @@ export enum Room_Select_Column {
   /** column name */
   PublicVonageSessionId = 'publicVonageSessionId',
   /** column name */
+  RoomPrivacyName = 'roomPrivacyName',
+  /** column name */
   UpdatedAt = 'updated_at'
 }
 
@@ -13907,6 +14476,7 @@ export type Room_Set_Input = {
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
   readonly priority?: Maybe<Scalars['Int']>;
   readonly publicVonageSessionId?: Maybe<Scalars['String']>;
+  readonly roomPrivacyName?: Maybe<RoomPrivacy_Enum>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -13984,6 +14554,8 @@ export enum Room_Update_Column {
   Priority = 'priority',
   /** column name */
   PublicVonageSessionId = 'publicVonageSessionId',
+  /** column name */
+  RoomPrivacyName = 'roomPrivacyName',
   /** column name */
   UpdatedAt = 'updated_at'
 }
@@ -16963,6 +17535,18 @@ export type Mutation_Root = {
   readonly delete_RoomParticipant?: Maybe<RoomParticipant_Mutation_Response>;
   /** delete single row from the table: "RoomParticipant" */
   readonly delete_RoomParticipant_by_pk?: Maybe<RoomParticipant>;
+  /** delete data from the table: "RoomPerson" */
+  readonly delete_RoomPerson?: Maybe<RoomPerson_Mutation_Response>;
+  /** delete data from the table: "RoomPersonRole" */
+  readonly delete_RoomPersonRole?: Maybe<RoomPersonRole_Mutation_Response>;
+  /** delete single row from the table: "RoomPersonRole" */
+  readonly delete_RoomPersonRole_by_pk?: Maybe<RoomPersonRole>;
+  /** delete single row from the table: "RoomPerson" */
+  readonly delete_RoomPerson_by_pk?: Maybe<RoomPerson>;
+  /** delete data from the table: "RoomPrivacy" */
+  readonly delete_RoomPrivacy?: Maybe<RoomPrivacy_Mutation_Response>;
+  /** delete single row from the table: "RoomPrivacy" */
+  readonly delete_RoomPrivacy_by_pk?: Maybe<RoomPrivacy>;
   /** delete single row from the table: "Room" */
   readonly delete_Room_by_pk?: Maybe<Room>;
   /** delete data from the table: "Tag" */
@@ -17199,6 +17783,18 @@ export type Mutation_Root = {
   readonly insert_RoomParticipant?: Maybe<RoomParticipant_Mutation_Response>;
   /** insert a single row into the table: "RoomParticipant" */
   readonly insert_RoomParticipant_one?: Maybe<RoomParticipant>;
+  /** insert data into the table: "RoomPerson" */
+  readonly insert_RoomPerson?: Maybe<RoomPerson_Mutation_Response>;
+  /** insert data into the table: "RoomPersonRole" */
+  readonly insert_RoomPersonRole?: Maybe<RoomPersonRole_Mutation_Response>;
+  /** insert a single row into the table: "RoomPersonRole" */
+  readonly insert_RoomPersonRole_one?: Maybe<RoomPersonRole>;
+  /** insert a single row into the table: "RoomPerson" */
+  readonly insert_RoomPerson_one?: Maybe<RoomPerson>;
+  /** insert data into the table: "RoomPrivacy" */
+  readonly insert_RoomPrivacy?: Maybe<RoomPrivacy_Mutation_Response>;
+  /** insert a single row into the table: "RoomPrivacy" */
+  readonly insert_RoomPrivacy_one?: Maybe<RoomPrivacy>;
   /** insert a single row into the table: "Room" */
   readonly insert_Room_one?: Maybe<Room>;
   /** insert data into the table: "Tag" */
@@ -17453,6 +18049,18 @@ export type Mutation_Root = {
   readonly update_RoomParticipant?: Maybe<RoomParticipant_Mutation_Response>;
   /** update single row of the table: "RoomParticipant" */
   readonly update_RoomParticipant_by_pk?: Maybe<RoomParticipant>;
+  /** update data of the table: "RoomPerson" */
+  readonly update_RoomPerson?: Maybe<RoomPerson_Mutation_Response>;
+  /** update data of the table: "RoomPersonRole" */
+  readonly update_RoomPersonRole?: Maybe<RoomPersonRole_Mutation_Response>;
+  /** update single row of the table: "RoomPersonRole" */
+  readonly update_RoomPersonRole_by_pk?: Maybe<RoomPersonRole>;
+  /** update single row of the table: "RoomPerson" */
+  readonly update_RoomPerson_by_pk?: Maybe<RoomPerson>;
+  /** update data of the table: "RoomPrivacy" */
+  readonly update_RoomPrivacy?: Maybe<RoomPrivacy_Mutation_Response>;
+  /** update single row of the table: "RoomPrivacy" */
+  readonly update_RoomPrivacy_by_pk?: Maybe<RoomPrivacy>;
   /** update single row of the table: "Room" */
   readonly update_Room_by_pk?: Maybe<Room>;
   /** update data of the table: "Tag" */
@@ -18085,6 +18693,42 @@ export type Mutation_RootDelete_RoomParticipantArgs = {
 /** mutation root */
 export type Mutation_RootDelete_RoomParticipant_By_PkArgs = {
   id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_RoomPersonArgs = {
+  where: RoomPerson_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_RoomPersonRoleArgs = {
+  where: RoomPersonRole_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_RoomPersonRole_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_RoomPerson_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_RoomPrivacyArgs = {
+  where: RoomPrivacy_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_RoomPrivacy_By_PkArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -18892,6 +19536,48 @@ export type Mutation_RootInsert_RoomParticipantArgs = {
 export type Mutation_RootInsert_RoomParticipant_OneArgs = {
   object: RoomParticipant_Insert_Input;
   on_conflict?: Maybe<RoomParticipant_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_RoomPersonArgs = {
+  objects: ReadonlyArray<RoomPerson_Insert_Input>;
+  on_conflict?: Maybe<RoomPerson_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_RoomPersonRoleArgs = {
+  objects: ReadonlyArray<RoomPersonRole_Insert_Input>;
+  on_conflict?: Maybe<RoomPersonRole_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_RoomPersonRole_OneArgs = {
+  object: RoomPersonRole_Insert_Input;
+  on_conflict?: Maybe<RoomPersonRole_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_RoomPerson_OneArgs = {
+  object: RoomPerson_Insert_Input;
+  on_conflict?: Maybe<RoomPerson_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_RoomPrivacyArgs = {
+  objects: ReadonlyArray<RoomPrivacy_Insert_Input>;
+  on_conflict?: Maybe<RoomPrivacy_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_RoomPrivacy_OneArgs = {
+  object: RoomPrivacy_Insert_Input;
+  on_conflict?: Maybe<RoomPrivacy_On_Conflict>;
 };
 
 
@@ -19879,6 +20565,48 @@ export type Mutation_RootUpdate_RoomParticipant_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_RoomPersonArgs = {
+  _set?: Maybe<RoomPerson_Set_Input>;
+  where: RoomPerson_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_RoomPersonRoleArgs = {
+  _set?: Maybe<RoomPersonRole_Set_Input>;
+  where: RoomPersonRole_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_RoomPersonRole_By_PkArgs = {
+  _set?: Maybe<RoomPersonRole_Set_Input>;
+  pk_columns: RoomPersonRole_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_RoomPerson_By_PkArgs = {
+  _set?: Maybe<RoomPerson_Set_Input>;
+  pk_columns: RoomPerson_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_RoomPrivacyArgs = {
+  _set?: Maybe<RoomPrivacy_Set_Input>;
+  where: RoomPrivacy_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_RoomPrivacy_By_PkArgs = {
+  _set?: Maybe<RoomPrivacy_Set_Input>;
+  pk_columns: RoomPrivacy_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_Room_By_PkArgs = {
   _inc?: Maybe<Room_Inc_Input>;
   _set?: Maybe<Room_Set_Input>;
@@ -20348,6 +21076,24 @@ export type Query_Root = {
   readonly RoomParticipant_aggregate: RoomParticipant_Aggregate;
   /** fetch data from the table: "RoomParticipant" using primary key columns */
   readonly RoomParticipant_by_pk?: Maybe<RoomParticipant>;
+  /** fetch data from the table: "RoomPerson" */
+  readonly RoomPerson: ReadonlyArray<RoomPerson>;
+  /** fetch data from the table: "RoomPersonRole" */
+  readonly RoomPersonRole: ReadonlyArray<RoomPersonRole>;
+  /** fetch aggregated fields from the table: "RoomPersonRole" */
+  readonly RoomPersonRole_aggregate: RoomPersonRole_Aggregate;
+  /** fetch data from the table: "RoomPersonRole" using primary key columns */
+  readonly RoomPersonRole_by_pk?: Maybe<RoomPersonRole>;
+  /** fetch aggregated fields from the table: "RoomPerson" */
+  readonly RoomPerson_aggregate: RoomPerson_Aggregate;
+  /** fetch data from the table: "RoomPerson" using primary key columns */
+  readonly RoomPerson_by_pk?: Maybe<RoomPerson>;
+  /** fetch data from the table: "RoomPrivacy" */
+  readonly RoomPrivacy: ReadonlyArray<RoomPrivacy>;
+  /** fetch aggregated fields from the table: "RoomPrivacy" */
+  readonly RoomPrivacy_aggregate: RoomPrivacy_Aggregate;
+  /** fetch data from the table: "RoomPrivacy" using primary key columns */
+  readonly RoomPrivacy_by_pk?: Maybe<RoomPrivacy>;
   /** fetch aggregated fields from the table: "Room" */
   readonly Room_aggregate: Room_Aggregate;
   /** fetch data from the table: "Room" using primary key columns */
@@ -21702,6 +22448,84 @@ export type Query_RootRoomParticipant_By_PkArgs = {
 
 
 /** query root */
+export type Query_RootRoomPersonArgs = {
+  distinct_on?: Maybe<ReadonlyArray<RoomPerson_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<RoomPerson_Order_By>>;
+  where?: Maybe<RoomPerson_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootRoomPersonRoleArgs = {
+  distinct_on?: Maybe<ReadonlyArray<RoomPersonRole_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<RoomPersonRole_Order_By>>;
+  where?: Maybe<RoomPersonRole_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootRoomPersonRole_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<RoomPersonRole_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<RoomPersonRole_Order_By>>;
+  where?: Maybe<RoomPersonRole_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootRoomPersonRole_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** query root */
+export type Query_RootRoomPerson_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<RoomPerson_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<RoomPerson_Order_By>>;
+  where?: Maybe<RoomPerson_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootRoomPerson_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
+export type Query_RootRoomPrivacyArgs = {
+  distinct_on?: Maybe<ReadonlyArray<RoomPrivacy_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<RoomPrivacy_Order_By>>;
+  where?: Maybe<RoomPrivacy_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootRoomPrivacy_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<RoomPrivacy_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<RoomPrivacy_Order_By>>;
+  where?: Maybe<RoomPrivacy_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootRoomPrivacy_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** query root */
 export type Query_RootRoom_AggregateArgs = {
   distinct_on?: Maybe<ReadonlyArray<Room_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -22273,6 +23097,24 @@ export type Subscription_Root = {
   readonly RoomParticipant_aggregate: RoomParticipant_Aggregate;
   /** fetch data from the table: "RoomParticipant" using primary key columns */
   readonly RoomParticipant_by_pk?: Maybe<RoomParticipant>;
+  /** fetch data from the table: "RoomPerson" */
+  readonly RoomPerson: ReadonlyArray<RoomPerson>;
+  /** fetch data from the table: "RoomPersonRole" */
+  readonly RoomPersonRole: ReadonlyArray<RoomPersonRole>;
+  /** fetch aggregated fields from the table: "RoomPersonRole" */
+  readonly RoomPersonRole_aggregate: RoomPersonRole_Aggregate;
+  /** fetch data from the table: "RoomPersonRole" using primary key columns */
+  readonly RoomPersonRole_by_pk?: Maybe<RoomPersonRole>;
+  /** fetch aggregated fields from the table: "RoomPerson" */
+  readonly RoomPerson_aggregate: RoomPerson_Aggregate;
+  /** fetch data from the table: "RoomPerson" using primary key columns */
+  readonly RoomPerson_by_pk?: Maybe<RoomPerson>;
+  /** fetch data from the table: "RoomPrivacy" */
+  readonly RoomPrivacy: ReadonlyArray<RoomPrivacy>;
+  /** fetch aggregated fields from the table: "RoomPrivacy" */
+  readonly RoomPrivacy_aggregate: RoomPrivacy_Aggregate;
+  /** fetch data from the table: "RoomPrivacy" using primary key columns */
+  readonly RoomPrivacy_by_pk?: Maybe<RoomPrivacy>;
   /** fetch aggregated fields from the table: "Room" */
   readonly Room_aggregate: Room_Aggregate;
   /** fetch data from the table: "Room" using primary key columns */
@@ -23627,6 +24469,84 @@ export type Subscription_RootRoomParticipant_By_PkArgs = {
 
 
 /** subscription root */
+export type Subscription_RootRoomPersonArgs = {
+  distinct_on?: Maybe<ReadonlyArray<RoomPerson_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<RoomPerson_Order_By>>;
+  where?: Maybe<RoomPerson_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootRoomPersonRoleArgs = {
+  distinct_on?: Maybe<ReadonlyArray<RoomPersonRole_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<RoomPersonRole_Order_By>>;
+  where?: Maybe<RoomPersonRole_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootRoomPersonRole_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<RoomPersonRole_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<RoomPersonRole_Order_By>>;
+  where?: Maybe<RoomPersonRole_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootRoomPersonRole_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** subscription root */
+export type Subscription_RootRoomPerson_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<RoomPerson_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<RoomPerson_Order_By>>;
+  where?: Maybe<RoomPerson_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootRoomPerson_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
+export type Subscription_RootRoomPrivacyArgs = {
+  distinct_on?: Maybe<ReadonlyArray<RoomPrivacy_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<RoomPrivacy_Order_By>>;
+  where?: Maybe<RoomPrivacy_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootRoomPrivacy_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<RoomPrivacy_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<RoomPrivacy_Order_By>>;
+  where?: Maybe<RoomPrivacy_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootRoomPrivacy_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** subscription root */
 export type Subscription_RootRoom_AggregateArgs = {
   distinct_on?: Maybe<ReadonlyArray<Room_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -24055,6 +24975,43 @@ export type SubmitProfilePhotoMutationVariables = Exact<{
 
 export type SubmitProfilePhotoMutation = { readonly __typename?: 'mutation_root', readonly updateProfilePhoto?: Maybe<{ readonly __typename?: 'UpdateProfilePhotoResponse', readonly ok: boolean }> };
 
+export type AddParticipantToRoomMutationVariables = Exact<{
+  attendeeId: Scalars['uuid'];
+  roomId: Scalars['uuid'];
+}>;
+
+
+export type AddParticipantToRoomMutation = { readonly __typename?: 'mutation_root', readonly insert_RoomPerson_one?: Maybe<{ readonly __typename?: 'RoomPerson', readonly id: any }> };
+
+export type SearchAttendeesQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  displayName: Scalars['String'];
+}>;
+
+
+export type SearchAttendeesQuery = { readonly __typename?: 'query_root', readonly Attendee: ReadonlyArray<{ readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string }> };
+
+export type GetAllRoomsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type GetAllRoomsQuery = { readonly __typename?: 'query_root', readonly Room: ReadonlyArray<(
+    { readonly __typename?: 'Room' }
+    & RoomListRoomDetailsFragment
+  )> };
+
+export type RoomListRoomDetailsFragment = { readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly roomPrivacyName: RoomPrivacy_Enum };
+
+export type AttendeeCreateRoomMutationVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  name: Scalars['String'];
+  roomPrivacyName: RoomPrivacy_Enum;
+}>;
+
+
+export type AttendeeCreateRoomMutation = { readonly __typename?: 'mutation_root', readonly insert_Room_one?: Maybe<{ readonly __typename?: 'Room', readonly id: any }> };
+
 export type GetRoomDetailsQueryVariables = Exact<{
   roomId: Scalars['uuid'];
   eventsFrom: Scalars['timestamptz'];
@@ -24067,8 +25024,9 @@ export type GetRoomDetailsQuery = { readonly __typename?: 'query_root', readonly
   )> };
 
 export type RoomDetailsFragment = (
-  { readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly publicVonageSessionId?: Maybe<string>, readonly mediaLiveChannel?: Maybe<{ readonly __typename?: 'MediaLiveChannel', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly id: any }> }
+  { readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly publicVonageSessionId?: Maybe<string>, readonly roomPrivacyName: RoomPrivacy_Enum, readonly mediaLiveChannel?: Maybe<{ readonly __typename?: 'MediaLiveChannel', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly id: any }> }
   & RoomEventsFragment
+  & RoomPeopleFragment
 );
 
 export type RoomEventsFragment = { readonly __typename?: 'Room', readonly events: ReadonlyArray<(
@@ -24987,6 +25945,18 @@ export type SendRepeatConfirmationEmailMutationVariables = Exact<{
 
 export type SendRepeatConfirmationEmailMutation = { readonly __typename?: 'mutation_root', readonly invitationConfirmSendRepeatEmail?: Maybe<{ readonly __typename?: 'InvitationConfirmationEmailOutput', readonly sent: boolean }> };
 
+export type GetRoomMembersSubscriptionVariables = Exact<{
+  roomId: Scalars['uuid'];
+}>;
+
+
+export type GetRoomMembersSubscription = { readonly __typename?: 'subscription_root', readonly Room_by_pk?: Maybe<(
+    { readonly __typename?: 'Room' }
+    & RoomPeopleFragment
+  )> };
+
+export type RoomPeopleFragment = { readonly __typename?: 'Room', readonly roomPeople: ReadonlyArray<{ readonly __typename?: 'RoomPerson', readonly id: any, readonly roomPersonRoleName: RoomPersonRole_Enum, readonly attendee: { readonly __typename?: 'Attendee', readonly displayName: string, readonly id: any } }> };
+
 export type SelectUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -25115,6 +26085,13 @@ export const ContentGroupEventsFragmentDoc = gql`
   }
 }
     ${ContentGroupEventFragmentDoc}`;
+export const RoomListRoomDetailsFragmentDoc = gql`
+    fragment RoomListRoomDetails on Room {
+  id
+  name
+  roomPrivacyName
+}
+    `;
 export const RoomEventDetailsFragmentDoc = gql`
     fragment RoomEventDetails on Event {
   id
@@ -25148,6 +26125,18 @@ export const RoomEventsFragmentDoc = gql`
   }
 }
     ${RoomEventDetailsFragmentDoc}`;
+export const RoomPeopleFragmentDoc = gql`
+    fragment RoomPeople on Room {
+  roomPeople(order_by: {attendee: {displayName: asc}}) {
+    id
+    roomPersonRoleName
+    attendee {
+      displayName
+      id
+    }
+  }
+}
+    `;
 export const RoomDetailsFragmentDoc = gql`
     fragment RoomDetails on Room {
   id
@@ -25159,9 +26148,12 @@ export const RoomDetailsFragmentDoc = gql`
     id
   }
   publicVonageSessionId
+  roomPrivacyName
   ...RoomEvents
+  ...RoomPeople
 }
-    ${RoomEventsFragmentDoc}`;
+    ${RoomEventsFragmentDoc}
+${RoomPeopleFragmentDoc}`;
 export const Timeline_TagFragmentDoc = gql`
     fragment Timeline_Tag on Tag {
   id
@@ -26114,6 +27106,147 @@ export function useSubmitProfilePhotoMutation(baseOptions?: Apollo.MutationHookO
 export type SubmitProfilePhotoMutationHookResult = ReturnType<typeof useSubmitProfilePhotoMutation>;
 export type SubmitProfilePhotoMutationResult = Apollo.MutationResult<SubmitProfilePhotoMutation>;
 export type SubmitProfilePhotoMutationOptions = Apollo.BaseMutationOptions<SubmitProfilePhotoMutation, SubmitProfilePhotoMutationVariables>;
+export const AddParticipantToRoomDocument = gql`
+    mutation AddParticipantToRoom($attendeeId: uuid!, $roomId: uuid!) {
+  insert_RoomPerson_one(
+    object: {attendeeId: $attendeeId, roomId: $roomId, roomPersonRoleName: PARTICIPANT}
+  ) {
+    id
+  }
+}
+    `;
+export type AddParticipantToRoomMutationFn = Apollo.MutationFunction<AddParticipantToRoomMutation, AddParticipantToRoomMutationVariables>;
+
+/**
+ * __useAddParticipantToRoomMutation__
+ *
+ * To run a mutation, you first call `useAddParticipantToRoomMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddParticipantToRoomMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addParticipantToRoomMutation, { data, loading, error }] = useAddParticipantToRoomMutation({
+ *   variables: {
+ *      attendeeId: // value for 'attendeeId'
+ *      roomId: // value for 'roomId'
+ *   },
+ * });
+ */
+export function useAddParticipantToRoomMutation(baseOptions?: Apollo.MutationHookOptions<AddParticipantToRoomMutation, AddParticipantToRoomMutationVariables>) {
+        return Apollo.useMutation<AddParticipantToRoomMutation, AddParticipantToRoomMutationVariables>(AddParticipantToRoomDocument, baseOptions);
+      }
+export type AddParticipantToRoomMutationHookResult = ReturnType<typeof useAddParticipantToRoomMutation>;
+export type AddParticipantToRoomMutationResult = Apollo.MutationResult<AddParticipantToRoomMutation>;
+export type AddParticipantToRoomMutationOptions = Apollo.BaseMutationOptions<AddParticipantToRoomMutation, AddParticipantToRoomMutationVariables>;
+export const SearchAttendeesDocument = gql`
+    query SearchAttendees($conferenceId: uuid!, $displayName: String!) {
+  Attendee(
+    where: {conferenceId: {_eq: $conferenceId}, displayName: {_ilike: $displayName}}
+  ) {
+    id
+    displayName
+  }
+}
+    `;
+
+/**
+ * __useSearchAttendeesQuery__
+ *
+ * To run a query within a React component, call `useSearchAttendeesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchAttendeesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchAttendeesQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      displayName: // value for 'displayName'
+ *   },
+ * });
+ */
+export function useSearchAttendeesQuery(baseOptions: Apollo.QueryHookOptions<SearchAttendeesQuery, SearchAttendeesQueryVariables>) {
+        return Apollo.useQuery<SearchAttendeesQuery, SearchAttendeesQueryVariables>(SearchAttendeesDocument, baseOptions);
+      }
+export function useSearchAttendeesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchAttendeesQuery, SearchAttendeesQueryVariables>) {
+          return Apollo.useLazyQuery<SearchAttendeesQuery, SearchAttendeesQueryVariables>(SearchAttendeesDocument, baseOptions);
+        }
+export type SearchAttendeesQueryHookResult = ReturnType<typeof useSearchAttendeesQuery>;
+export type SearchAttendeesLazyQueryHookResult = ReturnType<typeof useSearchAttendeesLazyQuery>;
+export type SearchAttendeesQueryResult = Apollo.QueryResult<SearchAttendeesQuery, SearchAttendeesQueryVariables>;
+export const GetAllRoomsDocument = gql`
+    query GetAllRooms($conferenceId: uuid!) {
+  Room(where: {conferenceId: {_eq: $conferenceId}}, order_by: {name: asc}) {
+    ...RoomListRoomDetails
+  }
+}
+    ${RoomListRoomDetailsFragmentDoc}`;
+
+/**
+ * __useGetAllRoomsQuery__
+ *
+ * To run a query within a React component, call `useGetAllRoomsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllRoomsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllRoomsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useGetAllRoomsQuery(baseOptions: Apollo.QueryHookOptions<GetAllRoomsQuery, GetAllRoomsQueryVariables>) {
+        return Apollo.useQuery<GetAllRoomsQuery, GetAllRoomsQueryVariables>(GetAllRoomsDocument, baseOptions);
+      }
+export function useGetAllRoomsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllRoomsQuery, GetAllRoomsQueryVariables>) {
+          return Apollo.useLazyQuery<GetAllRoomsQuery, GetAllRoomsQueryVariables>(GetAllRoomsDocument, baseOptions);
+        }
+export type GetAllRoomsQueryHookResult = ReturnType<typeof useGetAllRoomsQuery>;
+export type GetAllRoomsLazyQueryHookResult = ReturnType<typeof useGetAllRoomsLazyQuery>;
+export type GetAllRoomsQueryResult = Apollo.QueryResult<GetAllRoomsQuery, GetAllRoomsQueryVariables>;
+export const AttendeeCreateRoomDocument = gql`
+    mutation AttendeeCreateRoom($conferenceId: uuid!, $name: String!, $roomPrivacyName: RoomPrivacy_enum!) {
+  insert_Room_one(
+    object: {capacity: 50, conferenceId: $conferenceId, currentModeName: BREAKOUT, name: $name, roomPrivacyName: $roomPrivacyName}
+  ) {
+    id
+  }
+}
+    `;
+export type AttendeeCreateRoomMutationFn = Apollo.MutationFunction<AttendeeCreateRoomMutation, AttendeeCreateRoomMutationVariables>;
+
+/**
+ * __useAttendeeCreateRoomMutation__
+ *
+ * To run a mutation, you first call `useAttendeeCreateRoomMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAttendeeCreateRoomMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [attendeeCreateRoomMutation, { data, loading, error }] = useAttendeeCreateRoomMutation({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      name: // value for 'name'
+ *      roomPrivacyName: // value for 'roomPrivacyName'
+ *   },
+ * });
+ */
+export function useAttendeeCreateRoomMutation(baseOptions?: Apollo.MutationHookOptions<AttendeeCreateRoomMutation, AttendeeCreateRoomMutationVariables>) {
+        return Apollo.useMutation<AttendeeCreateRoomMutation, AttendeeCreateRoomMutationVariables>(AttendeeCreateRoomDocument, baseOptions);
+      }
+export type AttendeeCreateRoomMutationHookResult = ReturnType<typeof useAttendeeCreateRoomMutation>;
+export type AttendeeCreateRoomMutationResult = Apollo.MutationResult<AttendeeCreateRoomMutation>;
+export type AttendeeCreateRoomMutationOptions = Apollo.BaseMutationOptions<AttendeeCreateRoomMutation, AttendeeCreateRoomMutationVariables>;
 export const GetRoomDetailsDocument = gql`
     query GetRoomDetails($roomId: uuid!, $eventsFrom: timestamptz!) {
   Room_by_pk(id: $roomId) {
@@ -28995,6 +30128,35 @@ export function useSendRepeatConfirmationEmailMutation(baseOptions?: Apollo.Muta
 export type SendRepeatConfirmationEmailMutationHookResult = ReturnType<typeof useSendRepeatConfirmationEmailMutation>;
 export type SendRepeatConfirmationEmailMutationResult = Apollo.MutationResult<SendRepeatConfirmationEmailMutation>;
 export type SendRepeatConfirmationEmailMutationOptions = Apollo.BaseMutationOptions<SendRepeatConfirmationEmailMutation, SendRepeatConfirmationEmailMutationVariables>;
+export const GetRoomMembersDocument = gql`
+    subscription GetRoomMembers($roomId: uuid!) {
+  Room_by_pk(id: $roomId) {
+    ...RoomPeople
+  }
+}
+    ${RoomPeopleFragmentDoc}`;
+
+/**
+ * __useGetRoomMembersSubscription__
+ *
+ * To run a query within a React component, call `useGetRoomMembersSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useGetRoomMembersSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRoomMembersSubscription({
+ *   variables: {
+ *      roomId: // value for 'roomId'
+ *   },
+ * });
+ */
+export function useGetRoomMembersSubscription(baseOptions: Apollo.SubscriptionHookOptions<GetRoomMembersSubscription, GetRoomMembersSubscriptionVariables>) {
+        return Apollo.useSubscription<GetRoomMembersSubscription, GetRoomMembersSubscriptionVariables>(GetRoomMembersDocument, baseOptions);
+      }
+export type GetRoomMembersSubscriptionHookResult = ReturnType<typeof useGetRoomMembersSubscription>;
+export type GetRoomMembersSubscriptionResult = Apollo.SubscriptionResult<GetRoomMembersSubscription>;
 export const SelectUsersDocument = gql`
     query selectUsers {
   User {

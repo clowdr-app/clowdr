@@ -1,4 +1,4 @@
-import { ChakraProvider, extendTheme } from "@chakra-ui/react";
+import { ChakraProvider, extendTheme, PortalManager } from "@chakra-ui/react";
 import React from "react";
 
 const colors = {
@@ -71,5 +71,9 @@ export default function ChakraCustomProvider({
 }: {
     children: JSX.Element | Array<JSX.Element>;
 }): JSX.Element {
-    return <ChakraProvider theme={theme}>{children}</ChakraProvider>;
+    return (
+        <ChakraProvider theme={theme}>
+            <PortalManager>{children}</PortalManager>
+        </ChakraProvider>
+    );
 }

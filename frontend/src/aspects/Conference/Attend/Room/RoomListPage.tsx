@@ -154,7 +154,9 @@ function CreateRoomModal({
                                         <Field name="new_room_name" validate={validateShortName}>
                                             {({ field, form }: FieldProps<string>) => (
                                                 <FormControl
-                                                    isInvalid={!!form.errors.name && !!form.touched.name}
+                                                    isInvalid={
+                                                        !!form.errors.new_room_name && !!form.touched.new_room_name
+                                                    }
                                                     isRequired
                                                 >
                                                     <FormLabel htmlFor="new_room_name">Room Name</FormLabel>
@@ -166,14 +168,17 @@ function CreateRoomModal({
                                                         id="new_room_name"
                                                         placeholder="Room name"
                                                     />
-                                                    <FormErrorMessage>{form.errors.name}</FormErrorMessage>
+                                                    <FormErrorMessage>{form.errors.new_room_name}</FormErrorMessage>
                                                 </FormControl>
                                             )}
                                         </Field>
                                         <Field name="new_room_private">
                                             {({ field, form }: FieldProps<string>) => (
                                                 <FormControl
-                                                    isInvalid={!!form.errors.private && !!form.touched.private}
+                                                    isInvalid={
+                                                        !!form.errors.new_room_private &&
+                                                        !!form.touched.new_room_private
+                                                    }
                                                     isRequired
                                                     mt="1em"
                                                 >

@@ -1,7 +1,8 @@
 import { SimpleGrid, Text } from "@chakra-ui/react";
 import React from "react";
-import type { RoomListRoomDetailsFragment } from "../../../../generated/graphql";
+import { RoomListRoomDetailsFragment, RoomPrivacy_Enum } from "../../../../generated/graphql";
 import LinkButton from "../../../Chakra/LinkButton";
+import FAIcon from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";
 
 export function RoomList({ rooms }: { rooms: readonly RoomListRoomDetailsFragment[] }): JSX.Element {
@@ -19,11 +20,12 @@ export function RoomList({ rooms }: { rooms: readonly RoomListRoomDetailsFragmen
                     to={`/conference/${conference.slug}/room/${room.id}`}
                     p={[2, 4]}
                     alignItems="center"
-                    justifyContent="flex-start"
+                    justifyContent="center"
                     flexDir="column"
                     width="100%"
                     height="100%"
                 >
+                    {room.roomPrivacyName === RoomPrivacy_Enum.Private ? <FAIcon icon="lock" iconStyle="s" /> : <></>}
                     <Text p={5}>{room.name}</Text>
                 </LinkButton>
             ))}

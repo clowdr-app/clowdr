@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Button, FormControl, FormHelperText, ListItem, UnorderedList, useToast } from "@chakra-ui/react";
+import { Box, Button, Flex, FormControl, FormHelperText, Image, Spinner, Text, useToast } from "@chakra-ui/react";
 import AwsS3Multipart from "@uppy/aws-s3-multipart";
 import Uppy from "@uppy/core";
 import "@uppy/core/dist/style.css";
@@ -9,7 +9,6 @@ import "@uppy/status-bar/dist/style.css";
 import { Form, Formik } from "formik";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useSubmitProfilePhotoMutation } from "../../../../generated/graphql";
-import FAIcon from "../../../Icons/FAIcon";
 import UnsavedChangesWarning from "../../../LeavingPageWarnings/UnsavedChangesWarning";
 import useCurrentAttendee from "../../useCurrentAttendee";
 
@@ -30,7 +29,7 @@ export default function EditProfilePitureForm({
     const toast = useToast();
     const [files, setFiles] = useState<Uppy.UppyFile[]>([]);
     const [submitProfilePhoto] = useSubmitProfilePhotoMutation();
-    const allowedFileTypes = useMemo(() => [".webp", ".png", ".jpg", ".jpeg", ".gif"], []);
+    const allowedFileTypes = useMemo(() => ["image/*", ".jpg", ".jpeg", ".png", ".gif", ".webp"], []);
     const uppy = useMemo(() => {
         const uppy = Uppy<Uppy.StrictTypes>({
             id: "profile-photo-upload",
@@ -42,6 +41,7 @@ export default function EditProfilePitureForm({
                 allowedFileTypes,
                 maxNumberOfFiles: 1,
                 minNumberOfFiles: 1,
+                maxFileSize: 1024 * 1024,
             },
             autoProceed: false,
         });
@@ -73,13 +73,7 @@ export default function EditProfilePitureForm({
     useEffect(() => {
         uppy?.on("file-added", updateFiles);
         uppy?.on("file-removed", updateFiles);
-        uppy?.on("upload-success", () => {
-            toast({
-                status: "success",
-                description: "File uploaded.",
-            });
-        });
-    }, [toast, updateFiles, uppy]);
+    }, [attendee, toast, updateFiles, uppy]);
 
     return (
         <>
@@ -124,10 +118,16 @@ export default function EditProfilePitureForm({
                             throw new Error("Upload failed.");
                         }
 
+                        await new Promise<void>((resolve) => setTimeout(async () => {
+                            await attendee.refetch();
+                            resolve();
+                        }, 1500));
+
                         toast({
                             status: "success",
                             description: "Uploaded file successfully.",
                         });
+
                         uppy.reset();
 
                         if (handleFormSubmitted) {
@@ -147,22 +147,76 @@ export default function EditProfilePitureForm({
             >
                 {({ dirty, ...props }) => (
                     <>
-                        <UnsavedChangesWarning hasUnsavedChanges={dirty} />
-                        <Form style={{ width: "100%" }}>
+                        <UnsavedChangesWarning hasUnsavedChanges={dirty || files.length > 0} />
+                        <Form style={{ width: "100%", maxWidth: "350px" }}>
                             <FormControl isInvalid={!files} isRequired>
-                                <DragDrop uppy={uppy as Uppy.Uppy} allowMultipleFiles={false} />
-                                <FormHelperText>File types: {allowedFileTypes.join(", ")}</FormHelperText>
+                                <Box
+                                    pos="relative"
+                                    w={350}
+                                    h={350}
+                                    borderWidth={2}
+                                    borderColor="gray.400"
+                                    borderRadius={10}
+                                    mt={2}
+                                    mb={2}
+                                    p={0}
+                                    overflow="hidden"
+                                >
+                                    {files.length === 1 || attendee.profile?.photoURL_350x350 ? (
+                                        <Image
+                                            mt={2}
+                                            alt={
+                                                files.length === 1
+                                                    ? "Preview of the selected file."
+                                                    : "Your current profile picture."
+                                            }
+                                            src={
+                                                (files.length === 1
+                                                    ? URL.createObjectURL(files[0].data)
+                                                    : attendee.profile?.photoURL_350x350) as string
+                                            }
+                                            objectFit="cover"
+                                            w="100%"
+                                            h="100%"
+                                            pos="absolute"
+                                            top={0}
+                                            left={0}
+                                            m={0}
+                                            p={0}
+                                            filter="brightness(25%)"
+                                        />
+                                    ) : undefined}
+                                    <Flex
+                                        w="100%"
+                                        h="100%"
+                                        pos="absolute"
+                                        justifyContent={files.length === 1 ? "center" : "flex-start"}
+                                        alignItems="center"
+                                        flexDir="column"
+                                        p={5}
+                                    >
+                                        <Text as="span" mt={files.length === 1 ? 0 : 10} fontWeight="bold" fontSize="1.5em" textAlign="center">
+                                            {files.length === 1
+                                                ? "Please press Upload when you're ready"
+                                                : !attendee.profile?.photoURL_350x350
+                                                ? "Please upload a picture."
+                                                : undefined}
+                                        </Text>
+                                    </Flex>
+                                    <Box display={files.length === 1 ? "none" : ""}>
+                                        <DragDrop
+                                            width={350}
+                                            height={350}
+                                            uppy={uppy as Uppy.Uppy}
+                                            allowMultipleFiles={false}
+                                        />
+                                    </Box>
+                                </Box>
+                                <FormHelperText>
+                                    File types: {allowedFileTypes.join(", ")}.<br />
+                                    Maximum file size 1MiB.
+                                </FormHelperText>
                             </FormControl>
-                            <UnorderedList mb={4}>
-                                {files.map((file) => (
-                                    <ListItem key={file.id}>
-                                        {file.name}{" "}
-                                        <Button onClick={() => uppy?.removeFile(file.id)}>
-                                            <FAIcon iconStyle="s" icon="times" color="red.400" />
-                                        </Button>
-                                    </ListItem>
-                                ))}
-                            </UnorderedList>
 
                             <StatusBar uppy={uppy as Uppy.Uppy} hideAfterFinish hideUploadButton />
                             <Button
@@ -170,6 +224,7 @@ export default function EditProfilePitureForm({
                                 isLoading={props.isSubmitting}
                                 type="submit"
                                 isDisabled={!props.isValid || files.length !== 1}
+                                mt={2}
                             >
                                 Upload
                             </Button>

@@ -41,9 +41,13 @@ gql`
     }
 `;
 
-const AttendeeContext = React.createContext<AttendeeDataFragment | undefined>(undefined);
+export type AttendeeContextT = AttendeeDataFragment & {
+    refetch: () => Promise<void>;
+};
 
-export default function useCurrentAttendee(): AttendeeDataFragment {
+const AttendeeContext = React.createContext<AttendeeContextT | undefined>(undefined);
+
+export default function useCurrentAttendee(): AttendeeContextT {
     const ctx = React.useContext(AttendeeContext);
     assert(ctx);
     return ctx;
@@ -52,7 +56,7 @@ export default function useCurrentAttendee(): AttendeeDataFragment {
 export function CurrentAttendeeProvider({ children }: { children: string | JSX.Element | JSX.Element[] }): JSX.Element {
     const conference = useConference();
     const user = useCurrentUser();
-    const { loading, error, data } = useAttendeeByUserIdConferenceIdQuery({
+    const { loading, error, data, refetch } = useAttendeeByUserIdConferenceIdQuery({
         variables: {
             conferenceId: conference.id,
             userId: user.user.id,
@@ -75,5 +79,16 @@ export function CurrentAttendeeProvider({ children }: { children: string | JSX.E
         return <PageNotFound />;
     }
 
-    return <AttendeeContext.Provider value={data.Attendee[0]}>{children}</AttendeeContext.Provider>;
+    return (
+        <AttendeeContext.Provider
+            value={{
+                ...data.Attendee[0],
+                refetch: async () => {
+                    await refetch();
+                },
+            }}
+        >
+            {children}
+        </AttendeeContext.Provider>
+    );
 }

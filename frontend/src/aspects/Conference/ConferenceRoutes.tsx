@@ -1,5 +1,6 @@
 import React from "react";
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
+import { Permission_Enum } from "../../generated/graphql";
 import PageNotImplemented from "../Errors/PageNotImplemented";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import AttendeeListPage from "./Attend/Attendee/AttendeeListPage";
@@ -20,6 +21,7 @@ import ManageConferenceRolesPage from "./Manage/ManageConferenceRolesPage";
 import ManageConferenceRoomsPage from "./Manage/ManageConferenceRoomsPage";
 import ManageConferenceSchedulePage from "./Manage/ManageConferenceSchedulePage";
 import ManagerLandingPage from "./Manage/ManagerLandingPage";
+import RequireAtLeastOnePermissionWrapper from "./RequireAtLeastOnePermissionWrapper";
 import ConferenceProvider, { useConference } from "./useConference";
 import ConferenceCurrentUserActivePermissionsProvider from "./useConferenceCurrentUserActivePermissions";
 import CurrentUserGroupsRolesPermissionsProvider from "./useConferenceCurrentUserGroups";
@@ -113,7 +115,17 @@ function ConferenceRoutesInner({ rootUrl }: { rootUrl: string }): JSX.Element {
             </Route>
 
             <Route path={`${rootUrl}/attendees`}>
-                <AttendeeListPage />
+                <RequireAtLeastOnePermissionWrapper
+                    componentIfDenied={<Redirect to={`/conference/${conference.slug}`} />}
+                    permissions={[
+                        Permission_Enum.ConferenceViewAttendees,
+                        Permission_Enum.ConferenceManageAttendees,
+                        Permission_Enum.ConferenceManageGroups,
+                        Permission_Enum.ConferenceManageRoles,
+                    ]}
+                >
+                    <AttendeeListPage />
+                </RequireAtLeastOnePermissionWrapper>
             </Route>
 
             <Route
@@ -134,7 +146,12 @@ function ConferenceRoutesInner({ rootUrl }: { rootUrl: string }): JSX.Element {
             />
 
             <Route path={`${rootUrl}/schedule`}>
-                <ConferenceTimeline />
+                <RequireAtLeastOnePermissionWrapper
+                    componentIfDenied={<Redirect to={`/conference/${conference.slug}`} />}
+                    permissions={[Permission_Enum.ConferenceView, Permission_Enum.ConferenceManageSchedule]}
+                >
+                    <ConferenceTimeline />
+                </RequireAtLeastOnePermissionWrapper>
             </Route>
 
             <Route exact path={`${rootUrl}/profile/edit/:attendeeId`}>

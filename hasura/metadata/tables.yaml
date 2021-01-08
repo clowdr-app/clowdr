@@ -1194,6 +1194,7 @@
       - conferenceId
       - contentGroupTypeName
       - id
+      - originatingDataId
       - shortTitle
       - title
       filter:
@@ -1801,6 +1802,7 @@
       - isHidden
       - layoutData
       - name
+      - originatingDataId
       filter:
         conference:
           groups:
@@ -2008,6 +2010,7 @@
       - email
       - id
       - name
+      - originatingDataId
       filter:
         conference:
           groups:
@@ -2264,9 +2267,11 @@
       - conferenceId
       - contentGroupId
       - durationSeconds
+      - endTime
       - id
       - intendedRoomModeName
       - name
+      - originatingDataId
       - roomId
       - startTime
       filter:
@@ -4964,6 +4969,7 @@
       - conferenceId
       - id
       - name
+      - originatingDataId
       filter:
         conference:
           groups:

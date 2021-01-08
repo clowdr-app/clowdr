@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
-import { Box, Flex, useColorModeValue } from "@chakra-ui/react";
-import React, { useCallback, useMemo, useState } from "react";
+import { Box, Flex, Heading, useColorModeValue } from "@chakra-ui/react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import ScrollContainer from "react-indiana-drag-scroll";
 import {
     Permission_Enum,
@@ -11,6 +11,7 @@ import {
 } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
+import usePrimaryMenuButtons from "../../../Menu/usePrimaryMenuButtons";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../useConference";
 import DayList from "./DayList";
@@ -158,6 +159,19 @@ function ConferenceTimelineInner({
 }: {
     rooms: ReadonlyArray<Timeline_RoomFragment>;
 }): JSX.Element {
+    const conference = useConference();
+    const { setPrimaryMenuButtons } = usePrimaryMenuButtons();
+    useEffect(() => {
+        setPrimaryMenuButtons([
+            {
+                key: "conference-home",
+                action: `/conference/${conference.slug}`,
+                text: "Home",
+                label: "Home",
+            },
+        ]);
+    }, [conference.slug, setPrimaryMenuButtons]);
+
     const rooms = useMemo(() => {
         return [...unsortedRooms].sort((x, y) => x.name.localeCompare(y.name)).sort((x, y) => x.priority - y.priority);
     }, [unsortedRooms]);
@@ -277,51 +291,54 @@ function ConferenceTimelineInner({
     );
 
     return (
-        <Box w="100%" p={2}>
-            <Flex w="100%" direction="row" justify="center" alignItems="center">
-                <DayList rooms={rooms} scrollToEvent={scrollToEvent} scrollToNow={scrollToNow.f} />
-                <TimelineZoomControls />
-            </Flex>
-            <Box
-                cursor="pointer"
-                as={ScrollContainer}
-                w="100%"
-                maxHeight="80vh"
-                horizontal={false}
-                borderColor={borderColour}
-                borderWidth={1}
-                borderStyle="solid"
-                hideScrollbars={false}
-            >
-                <Flex
-                    direction="row"
-                    w="100%"
-                    justifyContent="stretch"
-                    alignItems="flex-start"
-                    role="region"
-                    aria-label="Conference schedule"
-                >
-                    {window.innerWidth > 500 ? (
-                        <Box flex="1 0 max-content" role="list" aria-label="Rooms">
-                            <RoomNameBox
-                                room="Rooms"
-                                height={timeBarHeight}
-                                showBottomBorder={true}
-                                borderColour={borderColour}
-                                backgroundColor={alternateBgColor}
-                            />
-                            {roomNameBoxes}
-                        </Box>
-                    ) : undefined}
-                    <Scroller>
-                        {roomMarkers}
-                        <NowMarker />
-                        {labeledNowMarker}
-                        {roomTimelines}
-                    </Scroller>
+        <>
+            <Heading as="h1">Schedule</Heading>
+            <Box w="100%" p={2}>
+                <Flex w="100%" direction="row" justify="center" alignItems="center">
+                    <DayList rooms={rooms} scrollToEvent={scrollToEvent} scrollToNow={scrollToNow.f} />
+                    <TimelineZoomControls />
                 </Flex>
+                <Box
+                    cursor="pointer"
+                    as={ScrollContainer}
+                    w="100%"
+                    maxHeight="calc(100vh - 300px)"
+                    horizontal={false}
+                    borderColor={borderColour}
+                    borderWidth={1}
+                    borderStyle="solid"
+                    hideScrollbars={false}
+                >
+                    <Flex
+                        direction="row"
+                        w="100%"
+                        justifyContent="stretch"
+                        alignItems="flex-start"
+                        role="region"
+                        aria-label="Conference schedule"
+                    >
+                        {window.innerWidth > 500 ? (
+                            <Box flex="1 0 max-content" role="list" aria-label="Rooms">
+                                <RoomNameBox
+                                    room="Rooms"
+                                    height={timeBarHeight}
+                                    showBottomBorder={true}
+                                    borderColour={borderColour}
+                                    backgroundColor={alternateBgColor}
+                                />
+                                {roomNameBoxes}
+                            </Box>
+                        ) : undefined}
+                        <Scroller>
+                            {roomMarkers}
+                            <NowMarker />
+                            {labeledNowMarker}
+                            {roomTimelines}
+                        </Scroller>
+                    </Flex>
+                </Box>
             </Box>
-        </Box>
+        </>
     );
 }
 

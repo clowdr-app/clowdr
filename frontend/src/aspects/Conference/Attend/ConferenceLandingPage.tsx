@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Box, Heading, Spinner } from "@chakra-ui/react";
+import { Box, Heading, HStack, Spinner } from "@chakra-ui/react";
 import {
     assertIsContentItemDataBlob,
     ContentBaseType,
@@ -12,13 +12,16 @@ import {
     Permission_Enum,
     useConferenceLandingPageContentGroupQuery,
 } from "../../../generated/graphql";
+import LinkButton from "../../Chakra/LinkButton";
 import PageFailedToLoad from "../../Errors/PageFailedToLoad";
 import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
+import FAIcon from "../../Icons/FAIcon";
 import { useNoPrimaryMenuButtons } from "../../Menu/usePrimaryMenuButtons";
 import { Markdown } from "../../Text/Markdown";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
+import { useConferenceCurrentUserActivePermissions } from "../useConferenceCurrentUserActivePermissions";
 import ContentGroupList from "./Content/ContentGroupList";
 
 gql`
@@ -62,6 +65,7 @@ function ConferenceLandingContent({ group }: { group: ContentGroupDataFragment }
 
 function ConferenceLandingPageInner(): JSX.Element {
     const conference = useConference();
+    const activePermissions = useConferenceCurrentUserActivePermissions();
 
     const { error, data } = useConferenceLandingPageContentGroupQuery({
         variables: {
@@ -116,6 +120,20 @@ function ConferenceLandingPageInner(): JSX.Element {
     return (
         <>
             {!hasAbstract ? <Heading as="h1">{conference.shortName}</Heading> : undefined}
+            <HStack>
+                <LinkButton to={`/conference/${conference.slug}/schedule`} variant="outline" size="lg">
+                    <FAIcon iconStyle="r" icon="calendar" mr={2} /> Schedule
+                </LinkButton>
+                {[
+                    Permission_Enum.ConferenceManageAttendees,
+                    Permission_Enum.ConferenceManageGroups,
+                    Permission_Enum.ConferenceManageRoles,
+                ].some((permission) => activePermissions.has(permission)) ? (
+                    <LinkButton to={`/conference/${conference.slug}/attendees`} variant="outline" size="lg">
+                        <FAIcon iconStyle="s" icon="users" mr={2} /> Attendees
+                    </LinkButton>
+                ) : undefined}
+            </HStack>
             <ConferenceLandingContent group={group} />
         </>
     );

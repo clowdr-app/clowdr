@@ -140,6 +140,21 @@ function useOpenTok(): [state: OpenTokState, actions: OpenTokActions] {
         },
         [action]
     );
+    const handleSessionDisconnected = useCallback(
+        (event: EventMap["sessionDisconnected"]) => {
+            if (event.target.sessionId === session?.sessionId) {
+                action.update({
+                    connections: [],
+                    isSessionConnected: false,
+                    isSessionInitialized: false,
+                    session: undefined,
+                    streams: [],
+                    subscribers: [],
+                });
+            }
+        },
+        [action, session?.sessionId]
+    );
 
     const initSession = useCallback(
         ({
@@ -178,7 +193,6 @@ function useOpenTok(): [state: OpenTokState, actions: OpenTokActions] {
                     } else {
                         const connectionId = sessionToConnect.connection.connectionId;
                         action.update({
-                            connectionId,
                             isSessionConnected: true,
                         });
                         resolve(connectionId);
@@ -214,7 +228,6 @@ function useOpenTok(): [state: OpenTokState, actions: OpenTokActions] {
     const disconnectSession = useCallback((): void => {
         session?.disconnect();
         action.update({
-            connectionId: null,
             isSessionConnected: false,
         });
     }, [action, session]);
@@ -498,6 +511,7 @@ function useOpenTok(): [state: OpenTokState, actions: OpenTokActions] {
     useSessionEventHandler("connectionDestroyed", handleConnectionDestroyed, session);
     useSessionEventHandler("streamCreated", handleStreamCreated, session);
     useSessionEventHandler("streamDestroyed", handleStreamDestroyed, session);
+    useSessionEventHandler("sessionDisconnected", handleSessionDisconnected, session);
 
     return [
         state,

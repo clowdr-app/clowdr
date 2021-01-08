@@ -25980,6 +25980,18 @@ export type GetRoomMembersSubscription = { readonly __typename?: 'subscription_r
 
 export type RoomPeopleFragment = { readonly __typename?: 'Room', readonly roomPeople: ReadonlyArray<{ readonly __typename?: 'RoomPerson', readonly id: any, readonly roomPersonRoleName: RoomPersonRole_Enum, readonly attendee: { readonly __typename?: 'Attendee', readonly displayName: string, readonly id: any } }> };
 
+export type GetRoomParticipantsSubscriptionVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type GetRoomParticipantsSubscription = { readonly __typename?: 'subscription_root', readonly RoomParticipant: ReadonlyArray<(
+    { readonly __typename?: 'RoomParticipant' }
+    & RoomParticipantDetailsFragment
+  )> };
+
+export type RoomParticipantDetailsFragment = { readonly __typename?: 'RoomParticipant', readonly attendeeId: any, readonly conferenceId: any, readonly id: any, readonly roomId: any, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } };
+
 export type SelectUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -26626,6 +26638,18 @@ export const RequiredItemFieldsFragmentDoc = gql`
     name
   }
   contentGroupTitle
+}
+    `;
+export const RoomParticipantDetailsFragmentDoc = gql`
+    fragment RoomParticipantDetails on RoomParticipant {
+  attendeeId
+  conferenceId
+  id
+  roomId
+  attendee {
+    id
+    displayName
+  }
 }
     `;
 export const AttendeeFieldsFragmentDoc = gql`
@@ -30218,6 +30242,35 @@ export function useGetRoomMembersSubscription(baseOptions: Apollo.SubscriptionHo
       }
 export type GetRoomMembersSubscriptionHookResult = ReturnType<typeof useGetRoomMembersSubscription>;
 export type GetRoomMembersSubscriptionResult = Apollo.SubscriptionResult<GetRoomMembersSubscription>;
+export const GetRoomParticipantsDocument = gql`
+    subscription GetRoomParticipants($conferenceId: uuid!) {
+  RoomParticipant(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...RoomParticipantDetails
+  }
+}
+    ${RoomParticipantDetailsFragmentDoc}`;
+
+/**
+ * __useGetRoomParticipantsSubscription__
+ *
+ * To run a query within a React component, call `useGetRoomParticipantsSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useGetRoomParticipantsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRoomParticipantsSubscription({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useGetRoomParticipantsSubscription(baseOptions: Apollo.SubscriptionHookOptions<GetRoomParticipantsSubscription, GetRoomParticipantsSubscriptionVariables>) {
+        return Apollo.useSubscription<GetRoomParticipantsSubscription, GetRoomParticipantsSubscriptionVariables>(GetRoomParticipantsDocument, baseOptions);
+      }
+export type GetRoomParticipantsSubscriptionHookResult = ReturnType<typeof useGetRoomParticipantsSubscription>;
+export type GetRoomParticipantsSubscriptionResult = Apollo.SubscriptionResult<GetRoomParticipantsSubscription>;
 export const SelectUsersDocument = gql`
     query selectUsers {
   User {

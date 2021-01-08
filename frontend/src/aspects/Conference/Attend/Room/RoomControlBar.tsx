@@ -19,6 +19,7 @@ import React, { useMemo } from "react";
 import { RoomDetailsFragment, RoomPersonRole_Enum, RoomPrivacy_Enum } from "../../../../generated/graphql";
 import { FAIcon } from "../../../Icons/FAIcon";
 import useRoomMembers from "../../../Room/useRoomMembers";
+import useRoomParticipants from "../../../Room/useRoomParticipants";
 import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
 import { AddRoomPersonModal } from "./AddRoomPersonModal";
 
@@ -26,6 +27,7 @@ export function RoomControlBar({ roomDetails }: { roomDetails: RoomDetailsFragme
     const user = useCurrentUser();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const roomMembers = useRoomMembers();
+    const roomParticipants = useRoomParticipants();
 
     const roomMembersList = useMemo(
         () => (
@@ -33,7 +35,18 @@ export function RoomControlBar({ roomDetails }: { roomDetails: RoomDetailsFragme
                 {roomMembers ? (
                     roomMembers.roomPeople.map((person) => (
                         <ListItem key={person.id}>
-                            <FAIcon icon="user" iconStyle="s" mr={5} />
+                            <FAIcon
+                                icon={
+                                    roomParticipants &&
+                                    roomParticipants.find(
+                                        (participant) => person.attendee.id === participant.attendeeId
+                                    )
+                                        ? "video"
+                                        : "user"
+                                }
+                                iconStyle="s"
+                                mr={5}
+                            />
                             {person.attendee.displayName}
                         </ListItem>
                     ))
@@ -42,7 +55,25 @@ export function RoomControlBar({ roomDetails }: { roomDetails: RoomDetailsFragme
                 )}
             </List>
         ),
-        [roomMembers]
+        [roomMembers, roomParticipants]
+    );
+
+    const roomParticipantsList = useMemo(
+        () => (
+            <List>
+                {roomParticipants ? (
+                    roomParticipants.map((participant) => (
+                        <ListItem key={participant.id}>
+                            <FAIcon icon="video" iconStyle="s" mr={5} />
+                            {participant.attendee.displayName}
+                        </ListItem>
+                    ))
+                ) : (
+                    <></>
+                )}
+            </List>
+        ),
+        [roomParticipants]
     );
 
     return (
@@ -59,7 +90,24 @@ export function RoomControlBar({ roomDetails }: { roomDetails: RoomDetailsFragme
             ) : (
                 <></>
             )}
-            {roomDetails.roomPrivacyName === RoomPrivacy_Enum.Private ? (
+            {roomDetails.roomPrivacyName === RoomPrivacy_Enum.Public ? (
+                <Popover>
+                    <PopoverTrigger>
+                        <Button aria-label="Current room participants" title="Current room participants">
+                            <FAIcon icon="users" iconStyle="s" />
+                            <Badge ml={2}>{roomParticipants ? roomParticipants.length : "0"} </Badge>
+                        </Button>
+                    </PopoverTrigger>
+                    <Portal>
+                        <PopoverContent>
+                            <PopoverArrow />
+                            <PopoverHeader>Participants</PopoverHeader>
+                            <PopoverCloseButton />
+                            <PopoverBody>{roomParticipantsList}</PopoverBody>
+                        </PopoverContent>
+                    </Portal>
+                </Popover>
+            ) : (
                 <Popover>
                     <PopoverTrigger>
                         <Button aria-label="Members of this room" title="Members of this room">
@@ -76,8 +124,6 @@ export function RoomControlBar({ roomDetails }: { roomDetails: RoomDetailsFragme
                         </PopoverContent>
                     </Portal>
                 </Popover>
-            ) : (
-                <></>
             )}
             <AddRoomPersonModal roomId={roomDetails.id} isOpen={isOpen} onClose={onClose} />
         </HStack>

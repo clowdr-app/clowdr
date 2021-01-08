@@ -10,5 +10,6 @@ const createSession = promisify(vonage.createSession.bind(vonage));
 const startBroadcast = promisify(vonage.startBroadcast.bind(vonage));
 const stopBroadcast = promisify(vonage.stopBroadcast.bind(vonage));
 const listBroadcasts = promisify(vonage.listBroadcasts.bind(vonage));
+const forceDisconnect = promisify(vonage.forceDisconnect.bind(vonage));
 
-export { vonage, createSession, startBroadcast, listBroadcasts, stopBroadcast };
+export { vonage, createSession, startBroadcast, listBroadcasts, stopBroadcast, forceDisconnect };

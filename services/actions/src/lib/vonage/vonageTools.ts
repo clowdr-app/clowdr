@@ -1,6 +1,12 @@
 import { gql } from "@apollo/client/core";
 import { shortId } from "../../aws/awsClient";
-import { GetEventBroadcastDetailsDocument } from "../../generated/graphql";
+import {
+    CreateRoomParticipantDocument,
+    GetEventBroadcastDetailsDocument,
+    GetRoomBySessionIdDocument,
+    GetRoomParticipantDetailsDocument,
+    RemoveRoomParticipantDocument,
+} from "../../generated/graphql";
 import { apolloClient } from "../../graphqlClient";
 import * as Vonage from "./vonageClient";
 import { stopBroadcast } from "./vonageClient";
@@ -178,5 +184,200 @@ export async function stopEventBroadcasts(eventId: string): Promise<void> {
         } catch (e) {
             console.error("Could not stop existing session broadcast", eventId, existingBroadcast.id);
         }
+    }
+}
+
+gql`
+    query GetRoomParticipantDetails($roomId: uuid!, $attendeeId: uuid!) {
+        RoomParticipant(where: { roomId: { _eq: $roomId }, attendeeId: { _eq: $attendeeId } }) {
+            id
+            room {
+                id
+                publicVonageSessionId
+            }
+            vonageConnectionId
+        }
+    }
+`;
+
+export async function kickAttendeeFromRoom(roomId: string, attendeeId: string): Promise<void> {
+    const participantResult = await apolloClient.query({
+        query: GetRoomParticipantDetailsDocument,
+        variables: {
+            attendeeId,
+            roomId,
+        },
+    });
+
+    if (participantResult.error || participantResult.errors) {
+        console.error(
+            "Error while retrieving participant to be kicked",
+            roomId,
+            attendeeId,
+            participantResult.error,
+            participantResult.errors
+        );
+        throw new Error("Error while retrieving participant to be kicked");
+    }
+
+    if (participantResult.data.RoomParticipant.length !== 1) {
+        console.error("Could not find a room participant to kick", roomId, attendeeId);
+        throw new Error("Could not find a room participant to kick");
+    }
+
+    if (!participantResult.data.RoomParticipant[0].room.publicVonageSessionId) {
+        console.error("Could not find Vonage session to kick participant from", roomId, attendeeId);
+        throw new Error("Could not find Vonage session to kick participant from");
+    }
+
+    await Vonage.forceDisconnect(
+        participantResult.data.RoomParticipant[0].room.publicVonageSessionId,
+        participantResult.data.RoomParticipant[0].vonageConnectionId
+    );
+
+    await removeRoomParticipant(
+        participantResult.data.RoomParticipant[0].room.publicVonageSessionId,
+        attendeeId,
+        participantResult.data.RoomParticipant[0].vonageConnectionId
+    );
+}
+
+gql`
+    query GetRoomBySessionId($sessionId: String!) {
+        Room(where: { publicVonageSessionId: { _eq: $sessionId } }) {
+            id
+            conferenceId
+        }
+    }
+
+    mutation CreateRoomParticipant(
+        $attendeeId: uuid!
+        $conferenceId: uuid!
+        $roomId: uuid!
+        $vonageConnectionId: String!
+    ) {
+        insert_RoomParticipant_one(
+            object: {
+                attendeeId: $attendeeId
+                conferenceId: $conferenceId
+                roomId: $roomId
+                vonageConnectionId: $vonageConnectionId
+            }
+        ) {
+            id
+        }
+    }
+`;
+
+export async function addRoomParticipant(
+    sessionId: string,
+    vonageConnectionId: string,
+    attendeeId: string
+): Promise<void> {
+    const roomResult = await apolloClient.query({
+        query: GetRoomBySessionIdDocument,
+        variables: {
+            sessionId,
+        },
+    });
+
+    if (roomResult.error || roomResult.errors) {
+        console.error("Could not retrieve room from Vonage session ID", sessionId, attendeeId);
+        throw new Error("Could not retrieve room from Vonage session ID");
+    }
+
+    if (roomResult.data.Room.length !== 1) {
+        console.error("Could not find room associated with Vonage session ID", sessionId, attendeeId);
+        throw new Error("Could not find room associated with Vonage session ID");
+    }
+
+    try {
+        await apolloClient.mutate({
+            mutation: CreateRoomParticipantDocument,
+            variables: {
+                attendeeId,
+                conferenceId: roomResult.data.Room[0].conferenceId,
+                roomId: roomResult.data.Room[0].id,
+                vonageConnectionId,
+            },
+        });
+    } catch (e) {
+        // If there is already a row for this room, kick the previous connection before recording the new one
+        console.log(
+            "Attendee is already in the room, kicking from previous session",
+            roomResult.data.Room[0].id,
+            attendeeId
+        );
+        await kickAttendeeFromRoom(roomResult.data.Room[0].id, attendeeId);
+
+        await apolloClient.mutate({
+            mutation: CreateRoomParticipantDocument,
+            variables: {
+                attendeeId,
+                conferenceId: roomResult.data.Room[0].conferenceId,
+                roomId: roomResult.data.Room[0].id,
+                vonageConnectionId,
+            },
+        });
+    }
+}
+
+gql`
+    mutation RemoveRoomParticipant(
+        $attendeeId: uuid!
+        $conferenceId: uuid!
+        $roomId: uuid!
+        $vonageConnectionId: String!
+    ) {
+        delete_RoomParticipant(
+            where: {
+                attendeeId: { _eq: $attendeeId }
+                conferenceId: { _eq: $conferenceId }
+                roomId: { _eq: $roomId }
+                vonageConnectionId: { _eq: $vonageConnectionId }
+            }
+        ) {
+            affected_rows
+        }
+    }
+`;
+
+export async function removeRoomParticipant(
+    sessionId: string,
+    attendeeId: string,
+    vonageConnectionId: string
+): Promise<void> {
+    const result = await apolloClient.query({
+        query: GetRoomBySessionIdDocument,
+        variables: {
+            sessionId,
+        },
+    });
+
+    if (result.error || result.errors) {
+        console.error("Could not retrieve room from Vonage session ID", sessionId, attendeeId);
+        throw new Error("Could not retrieve room from Vonage session ID");
+    }
+
+    if (result.data.Room.length !== 1) {
+        console.error("Could not find room associated with Vonage session ID", sessionId, attendeeId);
+        throw new Error("Could not find room associated with Vonage session ID");
+    }
+
+    const removeResult = await apolloClient.mutate({
+        mutation: RemoveRoomParticipantDocument,
+        variables: {
+            attendeeId,
+            conferenceId: result.data.Room[0].conferenceId,
+            roomId: result.data.Room[0].id,
+            vonageConnectionId,
+        },
+    });
+
+    if (
+        !removeResult.data?.delete_RoomParticipant?.affected_rows ||
+        removeResult.data.delete_RoomParticipant.affected_rows === 0
+    ) {
+        console.warn("Could not find participant to remove", sessionId, attendeeId);
     }
 }

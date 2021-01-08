@@ -52,6 +52,7 @@ gql`
         accessToken
         name
         uploadsRemaining
+        isHidden
         conference {
             id
             name
@@ -321,13 +322,6 @@ export async function handleContentItemSubmitted(args: submitContentItemArgs): P
         };
     }
 
-    if (requiredContentItem.uploadsRemaining === 0) {
-        return {
-            success: false,
-            message: "No upload attempts remaining",
-        };
-    }
-
     const newVersionData = await createBlob(args.data, requiredContentItem.contentTypeName);
     if ("error" in newVersionData) {
         return {
@@ -352,7 +346,7 @@ export async function handleContentItemSubmitted(args: submitContentItemArgs): P
                     contentGroupId: requiredContentItem.contentGroup.id,
                     contentTypeName: requiredContentItem.contentTypeName,
                     data,
-                    isHidden: false,
+                    isHidden: requiredContentItem.isHidden,
                     layoutData: {},
                     name: requiredContentItem.name,
                     requiredContentId: requiredContentItem.id,

@@ -44,7 +44,7 @@ export function AddRoomPersonModal({
             }
             const result = await refetch({
                 conferenceId: conference.id,
-                displayName: `%${searchTerm}%`,
+                search: `%${searchTerm}%`,
             });
             return result.data.Attendee.map((item) => ({
                 value: item.id,

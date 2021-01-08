@@ -90,11 +90,4 @@ gql`
             id
         }
     }
-
-    query SearchAttendees($conferenceId: uuid!, $displayName: String!) {
-        Attendee(where: { conferenceId: { _eq: $conferenceId }, displayName: { _ilike: $displayName } }) {
-            id
-            displayName
-        }
-    }
 `;

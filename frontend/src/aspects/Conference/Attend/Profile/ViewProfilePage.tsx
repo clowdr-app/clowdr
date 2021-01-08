@@ -1,19 +1,5 @@
 import { ExternalLinkIcon } from "@chakra-ui/icons";
-import {
-    Badge,
-    Box,
-    Center,
-    chakra,
-    Divider,
-    Grid,
-    GridItem,
-    Heading,
-    HStack,
-    Image,
-    Link,
-    Spinner,
-    VStack,
-} from "@chakra-ui/react";
+import { Badge, Box, Center, chakra, Divider, Heading, HStack, Image, Link, Spinner, VStack } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 import { Redirect } from "react-router-dom";
 import { Permission_Enum, useAttendeeByIdQuery } from "../../../../generated/graphql";
@@ -29,6 +15,7 @@ import useMaybeCurrentUser from "../../../Users/CurrentUser/useMaybeCurrentUser"
 import { useConference } from "../../useConference";
 import { useConferenceCurrentUserActivePermissions } from "../../useConferenceCurrentUserActivePermissions";
 import { Attendee, useMaybeCurrentAttendee } from "../../useCurrentAttendee";
+import AttendeeExtraInfo from "./AttendeeExtraInfo";
 
 function ViewProfilePageInner({ attendee }: { attendee: Attendee }): JSX.Element {
     const conference = useConference();
@@ -150,68 +137,7 @@ function ViewProfilePageInner({ attendee }: { attendee: Attendee }): JSX.Element
                 </VStack>
             </HStack>
             <Divider pt={4} />
-            <Grid pt={4} gridTemplateColumns="auto auto" gap={4} alignSelf="flex-start" pl={4}>
-                {attendee.profile.timezoneUTCOffset !== undefined && attendee.profile.timezoneUTCOffset !== null ? (
-                    <>
-                        <GridItem fontWeight="600">Timezone</GridItem>
-                        <GridItem>
-                            <Badge fontSize="md" p={1}>
-                                &nbsp; UTC{attendee.profile.timezoneUTCOffset < 0 ? "-" : "+"}
-                                {Math.abs(attendee.profile.timezoneUTCOffset)}
-                                &nbsp;&nbsp;
-                            </Badge>
-                        </GridItem>
-                    </>
-                ) : undefined}
-                {attendee.profile.country ? (
-                    <>
-                        <GridItem fontWeight="600">Country</GridItem>
-                        <GridItem>{attendee.profile.country}</GridItem>
-                    </>
-                ) : undefined}
-                {attendee.profile.website ? (
-                    <>
-                        <GridItem fontWeight="600">Website</GridItem>
-                        <GridItem>
-                            <Link isExternal href={`https://${attendee.profile.website}`}>
-                                {attendee.profile.website}
-                                &nbsp;
-                                <chakra.sup>
-                                    <ExternalLinkIcon />
-                                </chakra.sup>
-                            </Link>
-                        </GridItem>
-                    </>
-                ) : undefined}
-                {attendee.profile.twitter ? (
-                    <>
-                        <GridItem fontWeight="600">Twitter</GridItem>
-                        <GridItem>
-                            <Link isExternal href={`https://twitter.com/${attendee.profile.twitter}`}>
-                                @{attendee.profile.twitter}
-                                &nbsp;
-                                <chakra.sup>
-                                    <ExternalLinkIcon />
-                                </chakra.sup>
-                            </Link>
-                        </GridItem>
-                    </>
-                ) : undefined}
-                {attendee.profile.github ? (
-                    <>
-                        <GridItem fontWeight="600">GitHub</GridItem>
-                        <GridItem>
-                            <Link isExternal href={`https://github.com/${attendee.profile.github}`}>
-                                {attendee.profile.github}
-                                &nbsp;
-                                <chakra.sup>
-                                    <ExternalLinkIcon />
-                                </chakra.sup>
-                            </Link>
-                        </GridItem>
-                    </>
-                ) : undefined}
-            </Grid>
+            <AttendeeExtraInfo pt={4} attendee={attendee} />
         </VStack>
     );
 }

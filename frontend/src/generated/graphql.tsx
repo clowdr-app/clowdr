@@ -24893,6 +24893,27 @@ export type DeleteIsTypingMutationVariables = Exact<{
 
 export type DeleteIsTypingMutation = { readonly __typename?: 'mutation_root', readonly delete_ChatTyper?: Maybe<{ readonly __typename?: 'ChatTyper_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ChatTyper', readonly id: any }> }> };
 
+export type SelectAttendeesQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type SelectAttendeesQuery = { readonly __typename?: 'query_root', readonly Attendee: ReadonlyArray<(
+    { readonly __typename?: 'Attendee' }
+    & AttendeeDataFragment
+  )> };
+
+export type SearchAttendeesQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  search: Scalars['String'];
+}>;
+
+
+export type SearchAttendeesQuery = { readonly __typename?: 'query_root', readonly Attendee: ReadonlyArray<(
+    { readonly __typename?: 'Attendee' }
+    & AttendeeDataFragment
+  )> };
+
 export type ConferenceLandingPageContentGroupQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
@@ -24982,14 +25003,6 @@ export type AddParticipantToRoomMutationVariables = Exact<{
 
 
 export type AddParticipantToRoomMutation = { readonly __typename?: 'mutation_root', readonly insert_RoomPerson_one?: Maybe<{ readonly __typename?: 'RoomPerson', readonly id: any }> };
-
-export type SearchAttendeesQueryVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-  displayName: Scalars['String'];
-}>;
-
-
-export type SearchAttendeesQuery = { readonly __typename?: 'query_root', readonly Attendee: ReadonlyArray<{ readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string }> };
 
 export type GetAllRoomsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -26901,6 +26914,79 @@ export function useDeleteIsTypingMutation(baseOptions?: Apollo.MutationHookOptio
 export type DeleteIsTypingMutationHookResult = ReturnType<typeof useDeleteIsTypingMutation>;
 export type DeleteIsTypingMutationResult = Apollo.MutationResult<DeleteIsTypingMutation>;
 export type DeleteIsTypingMutationOptions = Apollo.BaseMutationOptions<DeleteIsTypingMutation, DeleteIsTypingMutationVariables>;
+export const SelectAttendeesDocument = gql`
+    query SelectAttendees($conferenceId: uuid!) {
+  Attendee(
+    where: {conferenceId: {_eq: $conferenceId}}
+    order_by: {displayName: asc}
+  ) {
+    ...AttendeeData
+  }
+}
+    ${AttendeeDataFragmentDoc}`;
+
+/**
+ * __useSelectAttendeesQuery__
+ *
+ * To run a query within a React component, call `useSelectAttendeesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectAttendeesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectAttendeesQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useSelectAttendeesQuery(baseOptions: Apollo.QueryHookOptions<SelectAttendeesQuery, SelectAttendeesQueryVariables>) {
+        return Apollo.useQuery<SelectAttendeesQuery, SelectAttendeesQueryVariables>(SelectAttendeesDocument, baseOptions);
+      }
+export function useSelectAttendeesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectAttendeesQuery, SelectAttendeesQueryVariables>) {
+          return Apollo.useLazyQuery<SelectAttendeesQuery, SelectAttendeesQueryVariables>(SelectAttendeesDocument, baseOptions);
+        }
+export type SelectAttendeesQueryHookResult = ReturnType<typeof useSelectAttendeesQuery>;
+export type SelectAttendeesLazyQueryHookResult = ReturnType<typeof useSelectAttendeesLazyQuery>;
+export type SelectAttendeesQueryResult = Apollo.QueryResult<SelectAttendeesQuery, SelectAttendeesQueryVariables>;
+export const SearchAttendeesDocument = gql`
+    query SearchAttendees($conferenceId: uuid!, $search: String!) {
+  Attendee(
+    where: {_and: [{conferenceId: {_eq: $conferenceId}}, {_or: [{displayName: {_ilike: $search}}, {profile: {_or: [{affiliation: {_ilike: $search}}, {bio: {_ilike: $search}}]}}]}]}
+    order_by: {displayName: asc}
+  ) {
+    ...AttendeeData
+  }
+}
+    ${AttendeeDataFragmentDoc}`;
+
+/**
+ * __useSearchAttendeesQuery__
+ *
+ * To run a query within a React component, call `useSearchAttendeesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchAttendeesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchAttendeesQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      search: // value for 'search'
+ *   },
+ * });
+ */
+export function useSearchAttendeesQuery(baseOptions: Apollo.QueryHookOptions<SearchAttendeesQuery, SearchAttendeesQueryVariables>) {
+        return Apollo.useQuery<SearchAttendeesQuery, SearchAttendeesQueryVariables>(SearchAttendeesDocument, baseOptions);
+      }
+export function useSearchAttendeesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchAttendeesQuery, SearchAttendeesQueryVariables>) {
+          return Apollo.useLazyQuery<SearchAttendeesQuery, SearchAttendeesQueryVariables>(SearchAttendeesDocument, baseOptions);
+        }
+export type SearchAttendeesQueryHookResult = ReturnType<typeof useSearchAttendeesQuery>;
+export type SearchAttendeesLazyQueryHookResult = ReturnType<typeof useSearchAttendeesLazyQuery>;
+export type SearchAttendeesQueryResult = Apollo.QueryResult<SearchAttendeesQuery, SearchAttendeesQueryVariables>;
 export const ConferenceLandingPageContentGroupDocument = gql`
     query ConferenceLandingPageContentGroup($conferenceId: uuid!) {
   ContentGroup(
@@ -27141,43 +27227,6 @@ export function useAddParticipantToRoomMutation(baseOptions?: Apollo.MutationHoo
 export type AddParticipantToRoomMutationHookResult = ReturnType<typeof useAddParticipantToRoomMutation>;
 export type AddParticipantToRoomMutationResult = Apollo.MutationResult<AddParticipantToRoomMutation>;
 export type AddParticipantToRoomMutationOptions = Apollo.BaseMutationOptions<AddParticipantToRoomMutation, AddParticipantToRoomMutationVariables>;
-export const SearchAttendeesDocument = gql`
-    query SearchAttendees($conferenceId: uuid!, $displayName: String!) {
-  Attendee(
-    where: {conferenceId: {_eq: $conferenceId}, displayName: {_ilike: $displayName}}
-  ) {
-    id
-    displayName
-  }
-}
-    `;
-
-/**
- * __useSearchAttendeesQuery__
- *
- * To run a query within a React component, call `useSearchAttendeesQuery` and pass it any options that fit your needs.
- * When your component renders, `useSearchAttendeesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSearchAttendeesQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      displayName: // value for 'displayName'
- *   },
- * });
- */
-export function useSearchAttendeesQuery(baseOptions: Apollo.QueryHookOptions<SearchAttendeesQuery, SearchAttendeesQueryVariables>) {
-        return Apollo.useQuery<SearchAttendeesQuery, SearchAttendeesQueryVariables>(SearchAttendeesDocument, baseOptions);
-      }
-export function useSearchAttendeesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchAttendeesQuery, SearchAttendeesQueryVariables>) {
-          return Apollo.useLazyQuery<SearchAttendeesQuery, SearchAttendeesQueryVariables>(SearchAttendeesDocument, baseOptions);
-        }
-export type SearchAttendeesQueryHookResult = ReturnType<typeof useSearchAttendeesQuery>;
-export type SearchAttendeesLazyQueryHookResult = ReturnType<typeof useSearchAttendeesLazyQuery>;
-export type SearchAttendeesQueryResult = Apollo.QueryResult<SearchAttendeesQuery, SearchAttendeesQueryVariables>;
 export const GetAllRoomsDocument = gql`
     query GetAllRooms($conferenceId: uuid!) {
   Room(where: {conferenceId: {_eq: $conferenceId}}, order_by: {name: asc}) {

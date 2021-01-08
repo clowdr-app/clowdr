@@ -2,11 +2,12 @@ import React from "react";
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import PageNotImplemented from "../Errors/PageNotImplemented";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
+import AttendeeListPage from "./Attend/Attendee/AttendeeListPage";
 import ConferenceLandingPage from "./Attend/ConferenceLandingPage";
 import ContentGroupPage from "./Attend/Content/ContentGroupPage";
 import EditProfilePage from "./Attend/Profile/EditProfilePage";
-import RoomListPage from "./Attend/Room/RoomListPage";
 import ViewProfilePage from "./Attend/Profile/ViewProfilePage";
+import RoomListPage from "./Attend/Room/RoomListPage";
 import RoomPage from "./Attend/Room/RoomPage";
 import ConferenceTimeline from "./Attend/Schedule/ConferenceTimeline";
 import ManageConferenceBroadcastPage from "./Manage/ManageConferenceBroadcastPage";
@@ -109,6 +110,10 @@ function ConferenceRoutesInner({ rootUrl }: { rootUrl: string }): JSX.Element {
 
             <Route path={`${rootUrl}/rooms`}>
                 <RoomListPage />
+            </Route>
+
+            <Route path={`${rootUrl}/attendees`}>
+                <AttendeeListPage />
             </Route>
 
             <Route

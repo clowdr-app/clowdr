@@ -15,6 +15,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useSearchAttendeesLazyQuery, useSelectAttendeesQuery } from "../../../../generated/graphql";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import FAIcon from "../../../Icons/FAIcon";
+import usePrimaryMenuButtons from "../../../Menu/usePrimaryMenuButtons";
 import { useConference } from "../../useConference";
 import type { Attendee } from "../../useCurrentAttendee";
 import AttendeesList from "./AttendeesList";
@@ -50,6 +51,18 @@ export default function AttendeeListPage(): JSX.Element {
     const [search, setSearch] = useState<string>("");
 
     const conference = useConference();
+
+    const { setPrimaryMenuButtons } = usePrimaryMenuButtons();
+    useEffect(() => {
+        setPrimaryMenuButtons([
+            {
+                key: "conference-home",
+                action: `/conference/${conference.slug}`,
+                text: "Home",
+                label: "Home",
+            },
+        ]);
+    }, [conference.slug, setPrimaryMenuButtons]);
 
     const [
         searchQuery,

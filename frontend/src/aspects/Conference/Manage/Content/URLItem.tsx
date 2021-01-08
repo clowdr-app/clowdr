@@ -54,6 +54,7 @@ export const URLItemTemplate: ItemBaseTemplate = {
                     isNew: true,
                     id: uuidv4(),
                     name,
+                    isHidden: false,
                     typeName: type,
                     uploaders: [],
                 },

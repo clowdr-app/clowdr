@@ -25179,7 +25179,7 @@ export type InsertSubmissionRequestEmailJobsMutation = { readonly __typename?: '
 
 export type UploaderInfoFragment = { readonly __typename?: 'Uploader', readonly id: any, readonly conferenceId: any, readonly email: string, readonly emailsSentCount: number, readonly name: string, readonly requiredContentItemId: any };
 
-export type RequiredContentItemInfoFragment = { readonly __typename?: 'RequiredContentItem', readonly id: any, readonly name: string, readonly contentTypeName: ContentType_Enum, readonly conferenceId: any, readonly contentGroupId: any, readonly uploadsRemaining?: Maybe<number>, readonly originatingDataId?: Maybe<any>, readonly uploaders: ReadonlyArray<(
+export type RequiredContentItemInfoFragment = { readonly __typename?: 'RequiredContentItem', readonly id: any, readonly name: string, readonly isHidden: boolean, readonly contentTypeName: ContentType_Enum, readonly conferenceId: any, readonly contentGroupId: any, readonly uploadsRemaining?: Maybe<number>, readonly originatingDataId?: Maybe<any>, readonly uploaders: ReadonlyArray<(
     { readonly __typename?: 'Uploader' }
     & UploaderInfoFragment
   )> };
@@ -25383,6 +25383,7 @@ export type UpdateRequiredContentItemMutationVariables = Exact<{
   id: Scalars['uuid'];
   contentTypeName: ContentType_Enum;
   name: Scalars['String'];
+  isHidden: Scalars['Boolean'];
   uploadsRemaining?: Maybe<Scalars['Int']>;
   originatingDataId?: Maybe<Scalars['uuid']>;
 }>;
@@ -26333,6 +26334,7 @@ export const RequiredContentItemInfoFragmentDoc = gql`
     fragment RequiredContentItemInfo on RequiredContentItem {
   id
   name
+  isHidden
   contentTypeName
   conferenceId
   contentGroupId
@@ -28093,10 +28095,10 @@ export type UpdateContentItemMutationHookResult = ReturnType<typeof useUpdateCon
 export type UpdateContentItemMutationResult = Apollo.MutationResult<UpdateContentItemMutation>;
 export type UpdateContentItemMutationOptions = Apollo.BaseMutationOptions<UpdateContentItemMutation, UpdateContentItemMutationVariables>;
 export const UpdateRequiredContentItemDocument = gql`
-    mutation UpdateRequiredContentItem($id: uuid!, $contentTypeName: ContentType_enum!, $name: String!, $uploadsRemaining: Int = null, $originatingDataId: uuid = null) {
+    mutation UpdateRequiredContentItem($id: uuid!, $contentTypeName: ContentType_enum!, $name: String!, $isHidden: Boolean!, $uploadsRemaining: Int = null, $originatingDataId: uuid = null) {
   update_RequiredContentItem_by_pk(
     pk_columns: {id: $id}
-    _set: {contentTypeName: $contentTypeName, name: $name, originatingDataId: $originatingDataId, uploadsRemaining: $uploadsRemaining}
+    _set: {contentTypeName: $contentTypeName, name: $name, isHidden: $isHidden, originatingDataId: $originatingDataId, uploadsRemaining: $uploadsRemaining}
   ) {
     ...RequiredContentItemInfo
   }
@@ -28120,6 +28122,7 @@ export type UpdateRequiredContentItemMutationFn = Apollo.MutationFunction<Update
  *      id: // value for 'id'
  *      contentTypeName: // value for 'contentTypeName'
  *      name: // value for 'name'
+ *      isHidden: // value for 'isHidden'
  *      uploadsRemaining: // value for 'uploadsRemaining'
  *      originatingDataId: // value for 'originatingDataId'
  *   },

@@ -1228,6 +1228,11 @@ function ContentGroupSecondaryEditor(
                                                                     ? { ...cItem, isHidden: !cItem.isHidden }
                                                                     : cItem;
                                                             }),
+                                                            requiredItems: existingGroup.requiredItems.map((cItem) => {
+                                                                return requiredItem.id === cItem.id
+                                                                    ? { ...cItem, isHidden: !cItem.isHidden }
+                                                                    : cItem;
+                                                            }),
                                                         });
 
                                                         return newGroups;
@@ -1238,7 +1243,50 @@ function ContentGroupSecondaryEditor(
                                                 Enable to hide this content from attendees.
                                             </FormHelperText>
                                         </FormControl>
-                                    ) : undefined}
+                                    ) : (
+                                        <FormControl
+                                            display="flex"
+                                            flexDir="row"
+                                            alignItems="flex-start"
+                                            justifyContent="flex-start"
+                                        >
+                                            <FormLabel m={0} p={0} fontSize="0.9em">
+                                                Hidden?
+                                            </FormLabel>
+                                            <Switch
+                                                m={0}
+                                                ml={2}
+                                                p={0}
+                                                lineHeight="1em"
+                                                size="sm"
+                                                isChecked={requiredItem.isHidden}
+                                                onChange={() => {
+                                                    markDirty();
+
+                                                    setAllContentGroupsMap((oldGroups) => {
+                                                        assert(oldGroups);
+                                                        const newGroups = new Map(oldGroups);
+
+                                                        const existingGroup = newGroups.get(group.id);
+                                                        assert(existingGroup);
+                                                        newGroups.set(group.id, {
+                                                            ...existingGroup,
+                                                            requiredItems: existingGroup.requiredItems.map((cItem) => {
+                                                                return requiredItem.id === cItem.id
+                                                                    ? { ...cItem, isHidden: !cItem.isHidden }
+                                                                    : cItem;
+                                                            }),
+                                                        });
+
+                                                        return newGroups;
+                                                    });
+                                                }}
+                                            />
+                                            <FormHelperText m={0} ml={2} p={0}>
+                                                Enable to hide this content from attendees.
+                                            </FormHelperText>
+                                        </FormControl>
+                                    )}
                                     <Box>
                                         <IconButton
                                             colorScheme="red"

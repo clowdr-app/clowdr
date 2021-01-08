@@ -63,6 +63,7 @@ gql`
     fragment RequiredContentItemInfo on RequiredContentItem {
         id
         name
+        isHidden
         contentTypeName
         conferenceId
         contentGroupId
@@ -383,6 +384,7 @@ gql`
         $id: uuid!
         $contentTypeName: ContentType_enum!
         $name: String!
+        $isHidden: Boolean!
         $uploadsRemaining: Int = null
         $originatingDataId: uuid = null
     ) {
@@ -391,6 +393,7 @@ gql`
             _set: {
                 contentTypeName: $contentTypeName
                 name: $name
+                isHidden: $isHidden
                 originatingDataId: $originatingDataId
                 uploadsRemaining: $uploadsRemaining
             }
@@ -894,6 +897,7 @@ export function useSaveContentDiff():
                                                     conferenceId: conference.id,
                                                     accessToken: uuidv4(),
                                                     name: item.name,
+                                                    isHidden: item.isHidden,
                                                     contentTypeName: item.typeName,
                                                     uploadsRemaining: item.uploadsRemaining,
                                                     uploaders: {
@@ -1099,6 +1103,7 @@ export function useSaveContentDiff():
                                                     contentTypeName: item.typeName,
                                                     id: item.id,
                                                     name: item.name,
+                                                    isHidden: item.isHidden,
                                                     uploadsRemaining: item.uploadsRemaining,
                                                     originatingDataId: item.originatingDataId,
                                                 },
@@ -1182,6 +1187,7 @@ export function useSaveContentDiff():
                                             contentTypeName: item.typeName,
                                             id: item.id,
                                             name: item.name,
+                                            isHidden: item.isHidden,
                                             uploadsRemaining: item.uploadsRemaining,
                                             originatingDataId: item.originatingDataId,
                                             uploaders: {

@@ -232,6 +232,7 @@ function convertRequiredItem(
 
         name: item.name,
         typeName: item.typeName,
+        isHidden: "isHidden" in item && item.isHidden,
         uploadsRemaining: item.uploadsRemaining,
         uploaders: [],
     } as RequiredContentItemDescriptor;

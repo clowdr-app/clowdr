@@ -88,6 +88,7 @@ export function convertContentGroupToDescriptor(group: ContentGroupFullNestedInf
             name: item.name,
             typeName: item.contentTypeName,
             uploadsRemaining: item.uploadsRemaining,
+            isHidden: item.isHidden,
             uploaders: item.uploaders.map((uploader) => ({
                 id: uploader.id,
                 email: uploader.email,
@@ -138,6 +139,7 @@ export function deepCloneContentGroupDescriptor(group: ContentGroupDescriptor): 
             id: item.id,
             name: item.name,
             typeName: item.typeName,
+            isHidden: item.isHidden,
             originatingDataId: item.originatingDataId,
             uploadsRemaining: item.uploadsRemaining,
             uploaders: item.uploaders.map((uploader) => ({

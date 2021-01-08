@@ -35,6 +35,7 @@ export type RequiredContentItemDescriptor = {
     id: string;
     typeName: ContentType_Enum;
     name: string;
+    isHidden: boolean;
     uploaders: UploaderDescriptor[];
     originatingDataId?: string;
     uploadsRemaining?: number | null;

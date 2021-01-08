@@ -27,7 +27,7 @@ function App(_props: AppProps): JSX.Element {
                 alignItems="center"
             >
                 <PrimaryMenuButtonsProvider>
-                    <Box overflowX="hidden" overflowY="auto" width="100%" mt={2}>
+                    <Box overflowX="hidden" overflowY="auto" width="100%" mt={2} mb="auto">
                         <VStack spacing={5} width="100%">
                             <Routing />
                             <Box h="40px" display="inline-block" flex="0 0 40px">

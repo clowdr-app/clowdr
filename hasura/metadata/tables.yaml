@@ -3883,6 +3883,7 @@
       - contentGroupId
       - contentTypeName
       - id
+      - isHidden
       - name
       - originatingDataId
       - uploadsRemaining
@@ -3895,6 +3896,7 @@
       - contentGroupId
       - contentTypeName
       - id
+      - isHidden
       - name
       - originatingDataId
       - updated_at
@@ -3927,6 +3929,7 @@
       - contentGroupId
       - contentTypeName
       - id
+      - isHidden
       - name
       - originatingDataId
       - updated_at
@@ -3967,6 +3970,7 @@
       - accessToken
       - contentGroupId
       - contentTypeName
+      - isHidden
       - name
       - originatingDataId
       - uploadsRemaining

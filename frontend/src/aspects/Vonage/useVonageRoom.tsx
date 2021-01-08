@@ -28,7 +28,7 @@ type VonageRoomStateAction =
     | SetCameraMediaStream
     | SetMicrophoneIntendedState
     | SetMicrophoneMediaStream
-    | SetScreenIntendedState;
+    | SetScreenShareIntendedState;
 
 export enum VonageRoomStateActionType {
     SetPreferredCamera,
@@ -37,7 +37,7 @@ export enum VonageRoomStateActionType {
     SetPreferredMicrophone,
     SetMicrophoneIntendedState,
     SetMicrophoneMediaStream,
-    SetScreenIntededState,
+    SetScreenShareIntendedState,
 }
 
 interface SetPreferredCamera {
@@ -70,8 +70,8 @@ interface SetMicrophoneMediaStream {
     mediaStream: MediaStream | null;
 }
 
-interface SetScreenIntendedState {
-    type: VonageRoomStateActionType.SetScreenIntededState;
+interface SetScreenShareIntendedState {
+    type: VonageRoomStateActionType.SetScreenShareIntendedState;
     screenEnabled: boolean;
 }
 
@@ -131,7 +131,7 @@ function reducer(state: VonageRoomState, action: VonageRoomStateAction): VonageR
             }
             return { ...state, microphoneStream: action.mediaStream };
 
-        case VonageRoomStateActionType.SetScreenIntededState:
+        case VonageRoomStateActionType.SetScreenShareIntendedState:
             return { ...state, screenIntendedEnabled: action.screenEnabled };
     }
 }

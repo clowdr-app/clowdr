@@ -45,6 +45,20 @@ export function VonageRoomControlBar({
         });
     }, [dispatch]);
 
+    const startScreenShare = useCallback(() => {
+        dispatch({
+            type: VonageRoomStateActionType.SetScreenShareIntendedState,
+            screenEnabled: true,
+        });
+    }, [dispatch]);
+
+    const stopScreenShare = useCallback(() => {
+        dispatch({
+            type: VonageRoomStateActionType.SetScreenShareIntendedState,
+            screenEnabled: false,
+        });
+    }, [dispatch]);
+
     return (
         <>
             <HStack p={2}>

@@ -105,7 +105,17 @@ export function VonageRoom({
 
     const joinRoom = useCallback(async () => {
         console.log("Joining room");
-        const accessToken = await getAccessToken();
+        let accessToken;
+        try {
+            accessToken = await getAccessToken();
+        } catch (e) {
+            toast({
+                status: "error",
+                title: "Failed to join room",
+                description: "Could not retrieve access token",
+            });
+            return;
+        }
 
         try {
             if (!openTokProps.session) {

@@ -1,3 +1,16 @@
+- name: ProcessSendSubmissionRequestsJobQueue
+  webhook: '{{ACTION_BASE_URL}}/queues/processSendSubmissionRequestsJobQueue'
+  schedule: '* * * * *'
+  include_in_metadata: true
+  payload: {}
+  retry_conf:
+    num_retries: 0
+    timeout_seconds: 60
+    tolerance_seconds: 60
+    retry_interval_seconds: 10
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
 - name: SyncChannels
   webhook: '{{ACTION_BASE_URL}}/channels/sync'
   schedule: '*/2 * * * *'
@@ -13,19 +26,6 @@
     value_from_env: EVENT_SECRET
 - name: ProcessEmailsJobQueue
   webhook: '{{ACTION_BASE_URL}}/queues/processEmailsJobQueue'
-  schedule: '* * * * *'
-  include_in_metadata: true
-  payload: {}
-  retry_conf:
-    num_retries: 0
-    timeout_seconds: 60
-    tolerance_seconds: 60
-    retry_interval_seconds: 10
-  headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
-- name: ProcessSendSubmissionRequestsJobQueue
-  webhook: '{{ACTION_BASE_URL}}/queues/processSendSubmissionRequestsJobQueue'
   schedule: '* * * * *'
   include_in_metadata: true
   payload: {}

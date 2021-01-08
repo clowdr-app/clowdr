@@ -1,0 +1,1 @@
+COMMENT ON TABLE "chat"."ChatPin" IS NULL;

@@ -83,7 +83,7 @@ function PrepareJobsList({ conferenceId }: { conferenceId: string }): JSX.Elemen
                     <Tr key={job.id}>
                         <Td>{job.createdAt}</Td>
                         <Td>
-                            <Tooltip label={job.message}>{job.jobStatusName}</Tooltip>{" "}
+                            <Tooltip label={job.message}>{job.jobStatusName}</Tooltip>
                         </Td>
                         <Td>{job.updatedAt}</Td>
                     </Tr>

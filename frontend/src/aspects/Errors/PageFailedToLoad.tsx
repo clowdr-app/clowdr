@@ -19,7 +19,6 @@ export default function PageFailedToLoad({ children }: { children: JSX.Element |
                         window.location.reload();
                     }}
                 >
-                    {" "}
                     Try again
                 </Button>
             </>

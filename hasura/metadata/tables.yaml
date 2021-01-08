@@ -1,4 +1,1192 @@
 - table:
+    schema: chat
+    name: Chat
+  object_relationships:
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  array_relationships:
+  - name: contentGroup
+    using:
+      foreign_key_constraint_on:
+        column: chatId
+        table:
+          schema: public
+          name: ContentGroup
+  - name: flags
+    using:
+      foreign_key_constraint_on:
+        column: discussionChatId
+        table:
+          schema: chat
+          name: Flag
+  - name: messages
+    using:
+      foreign_key_constraint_on:
+        column: chatId
+        table:
+          schema: chat
+          name: Message
+  - name: pins
+    using:
+      foreign_key_constraint_on:
+        column: chatId
+        table:
+          schema: chat
+          name: Pin
+  - name: readUpToIndices
+    using:
+      foreign_key_constraint_on:
+        column: chatId
+        table:
+          schema: chat
+          name: ReadUpToIndex
+  - name: room
+    using:
+      foreign_key_constraint_on:
+        column: chatId
+        table:
+          schema: public
+          name: Room
+  - name: subscriptions
+    using:
+      foreign_key_constraint_on:
+        column: chatId
+        table:
+          schema: chat
+          name: Subscription
+  - name: typers
+    using:
+      foreign_key_constraint_on:
+        column: chatId
+        table:
+          schema: chat
+          name: Typer
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - conferenceId
+      - created_at
+      - enableAutoPin
+      - enableAutoSubscribe
+      - enableMandatoryPin
+      - enableMandatorySubscribe
+      - id
+      - restrictToAdmins
+      - updated_at
+      filter:
+        _and:
+        - conference:
+            groups:
+              _and:
+              - enabled:
+                  _eq: true
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      _or:
+                      - permissionName:
+                          _eq: CONFERENCE_VIEW
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_SCHEDULE
+                      - permissionName:
+                          _eq: CONFERENCE_VIEW_ATTENDEES
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_CONTENT
+              - _or:
+                - includeUnauthenticated:
+                    _eq: true
+                - groupAttendees:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
+        - _or:
+          - room:
+              _or:
+              - roomPrivacyName:
+                  _eq: PUBLIC
+              - roomPeople:
+                  attendee:
+                    userId:
+                      _eq: X-Hasura-User-Id
+          - _not:
+              room: {}
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - enableAutoPin
+      - enableAutoSubscribe
+      - enableMandatoryPin
+      - enableMandatorySubscribe
+      - restrictToAdmins
+      filter:
+        _and:
+        - conference:
+            groups:
+              _and:
+              - enabled:
+                  _eq: true
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      _or:
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_SCHEDULE
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_CONTENT
+              - _or:
+                - includeUnauthenticated:
+                    _eq: true
+                - groupAttendees:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
+      check: null
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        _and:
+        - conference:
+            groups:
+              _and:
+              - enabled:
+                  _eq: true
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      _or:
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_SCHEDULE
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_CONTENT
+              - _or:
+                - includeUnauthenticated:
+                    _eq: true
+                - groupAttendees:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
+- table:
+    schema: chat
+    name: Flag
+  object_relationships:
+  - name: discussionChat
+    using:
+      foreign_key_constraint_on: discussionChatId
+  - name: flaggedBy
+    using:
+      foreign_key_constraint_on: flaggedById
+  - name: message
+    using:
+      foreign_key_constraint_on: messageId
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        _and:
+        - flaggedBy:
+            userId:
+              _eq: X-Hasura-User-Id
+        - message:
+            chat:
+              _or:
+              - _and:
+                - restrictToAdmins:
+                    _eq: false
+                - conference:
+                    groups:
+                      _and:
+                      - enabled:
+                          _eq: true
+                      - groupRoles:
+                          role:
+                            rolePermissions:
+                              _or:
+                              - permissionName:
+                                  _eq: CONFERENCE_VIEW
+                              - permissionName:
+                                  _eq: CONFERENCE_MANAGE_ATTENDEES
+                              - permissionName:
+                                  _eq: CONFERENCE_VIEW_ATTENDEES
+                      - _or:
+                        - includeUnauthenticated:
+                            _eq: true
+                        - groupAttendees:
+                            attendee:
+                              userId:
+                                _eq: X-Hasura-User-Id
+                - _or:
+                  - room:
+                      _or:
+                      - roomPrivacyName:
+                          _eq: PUBLIC
+                      - roomPeople:
+                          attendee:
+                            userId:
+                              _eq: X-Hasura-User-Id
+                  - _not:
+                      room: {}
+              - _and:
+                - restrictToAdmins:
+                    _eq: true
+                - conference:
+                    groups:
+                      _and:
+                      - enabled:
+                          _eq: true
+                      - groupRoles:
+                          role:
+                            rolePermissions:
+                              permissionName:
+                                _eq: CONFERENCE_MANAGE_ATTENDEES
+                      - _or:
+                        - includeUnauthenticated:
+                            _eq: true
+                        - groupAttendees:
+                            attendee:
+                              userId:
+                                _eq: X-Hasura-User-Id
+                - _or:
+                  - room:
+                      _or:
+                      - roomPrivacyName:
+                          _eq: PUBLIC
+                      - roomPeople:
+                          attendee:
+                            userId:
+                              _eq: X-Hasura-User-Id
+                  - _not:
+                      room: {}
+      columns:
+      - discussionChatId
+      - flaggedById
+      - id
+      - messageId
+      - notes
+      - type
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - id
+      - messageId
+      - notes
+      - resolution
+      - type
+      - created_at
+      - resolved_at
+      - updated_at
+      - discussionChatId
+      - flaggedById
+      filter:
+        _or:
+        - flaggedBy:
+            userId:
+              _eq: X-Hasura-User-Id
+        - message:
+            chat:
+              conference:
+                groups:
+                  _and:
+                  - enabled:
+                      _eq: true
+                  - groupRoles:
+                      role:
+                        rolePermissions:
+                          permissionName:
+                            _eq: CONFERENCE_MANAGE_ATTENDEES
+                  - _or:
+                    - includeUnauthenticated:
+                        _eq: true
+                    - groupAttendees:
+                        attendee:
+                          userId:
+                            _eq: X-Hasura-User-Id
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - discussionChatId
+      - id
+      - notes
+      - resolution
+      - resolved_at
+      - type
+      filter:
+        _and:
+        - resolved_at:
+            _is_null: true
+        - _or:
+          - flaggedBy:
+              userId:
+                _eq: X-Hasura-User-Id
+          - message:
+              chat:
+                conference:
+                  groups:
+                    _and:
+                    - enabled:
+                        _eq: true
+                    - groupRoles:
+                        role:
+                          rolePermissions:
+                            permissionName:
+                              _eq: CONFERENCE_MANAGE_ATTENDEES
+                    - _or:
+                      - includeUnauthenticated:
+                          _eq: true
+                      - groupAttendees:
+                          attendee:
+                            userId:
+                              _eq: X-Hasura-User-Id
+      check: null
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        _and:
+        - resolved_at:
+            _is_null: true
+        - flaggedBy:
+            userId:
+              _eq: X-Hasura-User-Id
+- table:
+    schema: chat
+    name: FlagType
+  is_enum: true
+  select_permissions:
+  - role: unauthenticated
+    permission:
+      columns:
+      - description
+      - name
+      filter: {}
+  - role: user
+    permission:
+      columns:
+      - name
+      - description
+      filter: {}
+- table:
+    schema: chat
+    name: Message
+  object_relationships:
+  - name: chat
+    using:
+      foreign_key_constraint_on: chatId
+  - name: duplicateIncoming
+    using:
+      manual_configuration:
+        remote_table:
+          schema: chat
+          name: Message
+        column_mapping:
+          id: duplicatedMessageId
+  - name: duplicateOutgoing
+    using:
+      foreign_key_constraint_on: duplicatedMessageId
+  - name: sender
+    using:
+      foreign_key_constraint_on: senderId
+  array_relationships:
+  - name: flags
+    using:
+      foreign_key_constraint_on:
+        column: messageId
+        table:
+          schema: chat
+          name: Flag
+  - name: reactions
+    using:
+      foreign_key_constraint_on:
+        column: messageId
+        table:
+          schema: chat
+          name: Reaction
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        _and:
+        - sender:
+            userId:
+              _eq: X-Hasura-User-Id
+        - chat:
+            _or:
+            - _and:
+              - restrictToAdmins:
+                  _eq: false
+              - conference:
+                  groups:
+                    _and:
+                    - enabled:
+                        _eq: true
+                    - groupRoles:
+                        role:
+                          rolePermissions:
+                            _or:
+                            - permissionName:
+                                _eq: CONFERENCE_VIEW
+                            - permissionName:
+                                _eq: CONFERENCE_VIEW_ATTENDEES
+                            - permissionName:
+                                _eq: CONFERENCE_MANAGE_ATTENDEES
+                    - _or:
+                      - includeUnauthenticated:
+                          _eq: true
+                      - groupAttendees:
+                          attendee:
+                            userId:
+                              _eq: X-Hasura-User-Id
+              - _or:
+                - room:
+                    _or:
+                    - roomPrivacyName:
+                        _eq: PUBLIC
+                    - roomPeople:
+                        attendee:
+                          userId:
+                            _eq: X-Hasura-User-Id
+                - _not:
+                    room: {}
+            - _and:
+              - restrictToAdmins:
+                  _eq: true
+              - conference:
+                  groups:
+                    _and:
+                    - enabled:
+                        _eq: true
+                    - groupRoles:
+                        role:
+                          rolePermissions:
+                            permissionName:
+                              _eq: CONFERENCE_MANAGE_ATTENDEES
+                    - _or:
+                      - includeUnauthenticated:
+                          _eq: true
+                      - groupAttendees:
+                          attendee:
+                            userId:
+                              _eq: X-Hasura-User-Id
+              - _or:
+                - room:
+                    _or:
+                    - roomPrivacyName:
+                        _eq: PUBLIC
+                    - roomPeople:
+                        attendee:
+                          userId:
+                            _eq: X-Hasura-User-Id
+                - _not:
+                    room: {}
+      columns:
+      - chatId
+      - data
+      - duplicatedMessageId
+      - id
+      - isPinned
+      - message
+      - senderId
+      - type
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - isPinned
+      - duplicatedMessageId
+      - id
+      - data
+      - message
+      - type
+      - created_at
+      - updated_at
+      - chatId
+      - senderId
+      filter:
+        chat:
+          _or:
+          - _and:
+            - restrictToAdmins:
+                _eq: false
+            - conference:
+                groups:
+                  _and:
+                  - enabled:
+                      _eq: true
+                  - groupRoles:
+                      role:
+                        rolePermissions:
+                          _or:
+                          - permissionName:
+                              _eq: CONFERENCE_VIEW
+                          - permissionName:
+                              _eq: CONFERENCE_MANAGE_ATTENDEES
+                          - permissionName:
+                              _eq: CONFERENCE_VIEW_ATTENDEES
+                  - _or:
+                    - includeUnauthenticated:
+                        _eq: true
+                    - groupAttendees:
+                        attendee:
+                          userId:
+                            _eq: X-Hasura-User-Id
+            - _or:
+              - room:
+                  _or:
+                  - roomPrivacyName:
+                      _eq: PUBLIC
+                  - roomPeople:
+                      attendee:
+                        userId:
+                          _eq: X-Hasura-User-Id
+              - _not:
+                  room: {}
+          - _and:
+            - restrictToAdmins:
+                _eq: true
+            - conference:
+                groups:
+                  _and:
+                  - enabled:
+                      _eq: true
+                  - groupRoles:
+                      role:
+                        rolePermissions:
+                          permissionName:
+                            _eq: CONFERENCE_MANAGE_ATTENDEES
+                  - _or:
+                    - includeUnauthenticated:
+                        _eq: true
+                    - groupAttendees:
+                        attendee:
+                          userId:
+                            _eq: X-Hasura-User-Id
+            - _or:
+              - room:
+                  _or:
+                  - roomPrivacyName:
+                      _eq: PUBLIC
+                  - roomPeople:
+                      attendee:
+                        userId:
+                          _eq: X-Hasura-User-Id
+              - _not:
+                  room: {}
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - data
+      - duplicatedMessageId
+      - isPinned
+      - message
+      filter:
+        _or:
+        - sender:
+            userId:
+              _eq: X-Hasura-User-Id
+        - chat:
+            _and:
+            - conference:
+                groups:
+                  _and:
+                  - enabled:
+                      _eq: true
+                  - groupRoles:
+                      role:
+                        rolePermissions:
+                          _or:
+                          - permissionName:
+                              _eq: CONFERENCE_MANAGE_ATTENDEES
+                  - _or:
+                    - includeUnauthenticated:
+                        _eq: true
+                    - groupAttendees:
+                        attendee:
+                          userId:
+                            _eq: X-Hasura-User-Id
+            - _or:
+              - room:
+                  _or:
+                  - roomPrivacyName:
+                      _eq: PUBLIC
+                  - roomPeople:
+                      attendee:
+                        userId:
+                          _eq: X-Hasura-User-Id
+              - _not:
+                  room: {}
+      check: {}
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        _or:
+        - sender:
+            userId:
+              _eq: X-Hasura-User-Id
+        - chat:
+            _and:
+            - conference:
+                groups:
+                  _and:
+                  - enabled:
+                      _eq: true
+                  - groupRoles:
+                      role:
+                        rolePermissions:
+                          _or:
+                          - permissionName:
+                              _eq: CONFERENCE_MANAGE_ATTENDEES
+                  - _or:
+                    - includeUnauthenticated:
+                        _eq: true
+                    - groupAttendees:
+                        attendee:
+                          userId:
+                            _eq: X-Hasura-User-Id
+            - _or:
+              - room:
+                  _or:
+                  - roomPrivacyName:
+                      _eq: PUBLIC
+                  - roomPeople:
+                      attendee:
+                        userId:
+                          _eq: X-Hasura-User-Id
+              - _not:
+                  room: {}
+- table:
+    schema: chat
+    name: MessageType
+  is_enum: true
+  select_permissions:
+  - role: unauthenticated
+    permission:
+      columns:
+      - name
+      filter: {}
+  - role: user
+    permission:
+      columns:
+      - name
+      filter: {}
+- table:
+    schema: chat
+    name: Pin
+  object_relationships:
+  - name: attendee
+    using:
+      foreign_key_constraint_on: attendeeId
+  - name: chat
+    using:
+      foreign_key_constraint_on: chatId
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        attendee:
+          userId:
+            _eq: X-Hasura-User-Id
+      columns:
+      - attendeeId
+      - chatId
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - wasManuallyPinned
+      - created_at
+      - attendeeId
+      - chatId
+      filter:
+        attendee:
+          userId:
+            _eq: X-Hasura-User-Id
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - wasManuallyPinned
+      filter:
+        attendee:
+          userId:
+            _eq: X-Hasura-User-Id
+      check: null
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        attendee:
+          userId:
+            _eq: X-Hasura-User-Id
+- table:
+    schema: chat
+    name: Reaction
+  object_relationships:
+  - name: message
+    using:
+      foreign_key_constraint_on: messageId
+  - name: sender
+    using:
+      foreign_key_constraint_on: senderId
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        _and:
+        - sender:
+            userId:
+              _eq: X-Hasura-User-Id
+        - message:
+            chat:
+              _or:
+              - _and:
+                - restrictToAdmins:
+                    _eq: false
+                - conference:
+                    groups:
+                      _and:
+                      - enabled:
+                          _eq: true
+                      - groupRoles:
+                          role:
+                            rolePermissions:
+                              _or:
+                              - permissionName:
+                                  _eq: CONFERENCE_VIEW
+                              - permissionName:
+                                  _eq: CONFERENCE_MANAGE_ATTENDEES
+                              - permissionName:
+                                  _eq: CONFERENCE_VIEW_ATTENDEES
+                      - _or:
+                        - includeUnauthenticated:
+                            _eq: true
+                        - groupAttendees:
+                            attendee:
+                              userId:
+                                _eq: X-Hasura-User-Id
+                - _or:
+                  - room:
+                      _or:
+                      - roomPrivacyName:
+                          _eq: PUBLIC
+                      - roomPeople:
+                          attendee:
+                            userId:
+                              _eq: X-Hasura-User-Id
+                  - _not:
+                      room: {}
+              - _and:
+                - restrictToAdmins:
+                    _eq: true
+                - conference:
+                    groups:
+                      _and:
+                      - enabled:
+                          _eq: true
+                      - groupRoles:
+                          role:
+                            rolePermissions:
+                              permissionName:
+                                _eq: CONFERENCE_MANAGE_ATTENDEES
+                      - _or:
+                        - includeUnauthenticated:
+                            _eq: true
+                        - groupAttendees:
+                            attendee:
+                              userId:
+                                _eq: X-Hasura-User-Id
+                - _or:
+                  - room:
+                      _or:
+                      - roomPrivacyName:
+                          _eq: PUBLIC
+                      - roomPeople:
+                          attendee:
+                            userId:
+                              _eq: X-Hasura-User-Id
+                  - _not:
+                      room: {}
+      columns:
+      - data
+      - id
+      - messageId
+      - senderId
+      - symbol
+      - type
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - id
+      - messageId
+      - data
+      - symbol
+      - type
+      - created_at
+      - updated_at
+      - senderId
+      filter:
+        message:
+          chat:
+            _or:
+            - _and:
+              - restrictToAdmins:
+                  _eq: false
+              - conference:
+                  groups:
+                    _and:
+                    - enabled:
+                        _eq: true
+                    - groupRoles:
+                        role:
+                          rolePermissions:
+                            _or:
+                            - permissionName:
+                                _eq: CONFERENCE_VIEW
+                            - permissionName:
+                                _eq: CONFERENCE_MANAGE_ATTENDEES
+                            - permissionName:
+                                _eq: CONFERENCE_VIEW_ATTENDEES
+                    - _or:
+                      - includeUnauthenticated:
+                          _eq: true
+                      - groupAttendees:
+                          attendee:
+                            userId:
+                              _eq: X-Hasura-User-Id
+              - _or:
+                - room:
+                    _or:
+                    - roomPrivacyName:
+                        _eq: PUBLIC
+                    - roomPeople:
+                        attendee:
+                          userId:
+                            _eq: X-Hasura-User-Id
+                - _not:
+                    room: {}
+            - _and:
+              - restrictToAdmins:
+                  _eq: true
+              - conference:
+                  groups:
+                    _and:
+                    - enabled:
+                        _eq: true
+                    - groupRoles:
+                        role:
+                          rolePermissions:
+                            permissionName:
+                              _eq: CONFERENCE_MANAGE_ATTENDEES
+                    - _or:
+                      - includeUnauthenticated:
+                          _eq: true
+                      - groupAttendees:
+                          attendee:
+                            userId:
+                              _eq: X-Hasura-User-Id
+              - _or:
+                - room:
+                    _or:
+                    - roomPrivacyName:
+                        _eq: PUBLIC
+                    - roomPeople:
+                        attendee:
+                          userId:
+                            _eq: X-Hasura-User-Id
+                - _not:
+                    room: {}
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        _or:
+        - sender:
+            userId:
+              _eq: X-Hasura-User-Id
+        - message:
+            chat:
+              _and:
+              - conference:
+                  groups:
+                    _and:
+                    - enabled:
+                        _eq: true
+                    - groupRoles:
+                        role:
+                          rolePermissions:
+                            _or:
+                            - permissionName:
+                                _eq: CONFERENCE_MANAGE_ATTENDEES
+                    - _or:
+                      - includeUnauthenticated:
+                          _eq: true
+                      - groupAttendees:
+                          attendee:
+                            userId:
+                              _eq: X-Hasura-User-Id
+              - _or:
+                - room:
+                    _or:
+                    - roomPrivacyName:
+                        _eq: PUBLIC
+                    - roomPeople:
+                        attendee:
+                          userId:
+                            _eq: X-Hasura-User-Id
+                - _not:
+                    room: {}
+- table:
+    schema: chat
+    name: ReactionType
+  is_enum: true
+  select_permissions:
+  - role: unauthenticated
+    permission:
+      columns:
+      - description
+      - name
+      filter: {}
+  - role: user
+    permission:
+      columns:
+      - name
+      - description
+      filter: {}
+- table:
+    schema: chat
+    name: ReadUpToIndex
+  object_relationships:
+  - name: attendee
+    using:
+      foreign_key_constraint_on: attendeeId
+  - name: chat
+    using:
+      foreign_key_constraint_on: chatId
+  - name: message
+    using:
+      foreign_key_constraint_on: messageId
+  computed_fields:
+  - name: unreadCount
+    definition:
+      function:
+        schema: chat
+        name: unreadCount
+    comment: ""
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        attendee:
+          userId:
+            _eq: X-Hasura-User-Id
+      columns:
+      - attendeeId
+      - chatId
+      - messageId
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - messageId
+      - updated_at
+      - attendeeId
+      - chatId
+      computed_fields:
+      - unreadCount
+      filter:
+        attendee:
+          userId:
+            _eq: X-Hasura-User-Id
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - messageId
+      filter:
+        attendee:
+          userId:
+            _eq: X-Hasura-User-Id
+      check: null
+  delete_permissions:
+  - role: user
+    permission:
+      filter: {}
+- table:
+    schema: chat
+    name: Subscription
+  object_relationships:
+  - name: attendee
+    using:
+      foreign_key_constraint_on: attendeeId
+  - name: chat
+    using:
+      foreign_key_constraint_on: chatId
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        attendee:
+          userId:
+            _eq: X-Hasura-User-Id
+      columns:
+      - attendeeId
+      - chatId
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - wasManuallySubscribed
+      - created_at
+      - attendeeId
+      - chatId
+      filter:
+        attendee:
+          userId:
+            _eq: X-Hasura-User-Id
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - wasManuallySubscribed
+      filter:
+        attendee:
+          userId:
+            _eq: X-Hasura-User-Id
+      check: null
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        attendee:
+          userId:
+            _eq: X-Hasura-User-Id
+- table:
+    schema: chat
+    name: Typer
+  object_relationships:
+  - name: attendee
+    using:
+      foreign_key_constraint_on: attendeeId
+  - name: chat
+    using:
+      foreign_key_constraint_on: chatId
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        attendee:
+          userId:
+            _eq: X-Hasura-User-Id
+      columns:
+      - attendeeId
+      - chatId
+      - updated_at
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - updated_at
+      - attendeeId
+      - chatId
+      filter:
+        chat:
+          _or:
+          - _and:
+            - restrictToAdmins:
+                _eq: false
+            - conference:
+                groups:
+                  _and:
+                  - enabled:
+                      _eq: true
+                  - groupRoles:
+                      role:
+                        rolePermissions:
+                          _or:
+                          - permissionName:
+                              _eq: CONFERENCE_VIEW
+                          - permissionName:
+                              _eq: CONFERENCE_MANAGE_ATTENDEES
+                          - permissionName:
+                              _eq: CONFERENCE_VIEW_ATTENDEES
+                  - _or:
+                    - includeUnauthenticated:
+                        _eq: true
+                    - groupAttendees:
+                        attendee:
+                          userId:
+                            _eq: X-Hasura-User-Id
+            - _or:
+              - room:
+                  _or:
+                  - roomPrivacyName:
+                      _eq: PUBLIC
+                  - roomPeople:
+                      attendee:
+                        userId:
+                          _eq: X-Hasura-User-Id
+              - _not:
+                  room: {}
+          - _and:
+            - restrictToAdmins:
+                _eq: true
+            - conference:
+                groups:
+                  _and:
+                  - enabled:
+                      _eq: true
+                  - groupRoles:
+                      role:
+                        rolePermissions:
+                          permissionName:
+                            _eq: CONFERENCE_MANAGE_ATTENDEES
+                  - _or:
+                    - includeUnauthenticated:
+                        _eq: true
+                    - groupAttendees:
+                        attendee:
+                          userId:
+                            _eq: X-Hasura-User-Id
+            - _or:
+              - room:
+                  _or:
+                  - roomPrivacyName:
+                      _eq: PUBLIC
+                  - roomPeople:
+                      attendee:
+                        userId:
+                          _eq: X-Hasura-User-Id
+              - _not:
+                  room: {}
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - updated_at
+      filter:
+        attendee:
+          userId:
+            _eq: X-Hasura-User-Id
+      check: null
+  delete_permissions:
+  - role: user
+    permission:
+      filter: {}
+- table:
     schema: job_queues
     name: InvitationEmailJob
   configuration:
@@ -649,124 +1837,6 @@
       value_from_env: EVENT_SECRET
 - table:
     schema: public
-    name: Chat
-  object_relationships:
-  - name: creator
-    using:
-      foreign_key_constraint_on: creatorId
-  array_relationships:
-  - name: flaggedMessages
-    using:
-      foreign_key_constraint_on:
-        column: moderationChatId
-        table:
-          schema: public
-          name: FlaggedChatMessage
-  - name: members
-    using:
-      foreign_key_constraint_on:
-        column: chatId
-        table:
-          schema: public
-          name: ChatMember
-  - name: messages
-    using:
-      foreign_key_constraint_on:
-        column: chatId
-        table:
-          schema: public
-          name: ChatMessage
-  - name: typers
-    using:
-      foreign_key_constraint_on:
-        column: chatId
-        table:
-          schema: public
-          name: ChatTyper
-  - name: viewers
-    using:
-      foreign_key_constraint_on:
-        column: chatId
-        table:
-          schema: public
-          name: ChatViewer
-- table:
-    schema: public
-    name: ChatMember
-  object_relationships:
-  - name: chat
-    using:
-      foreign_key_constraint_on: chatId
-  - name: user
-    using:
-      foreign_key_constraint_on: userId
-- table:
-    schema: public
-    name: ChatMessage
-  object_relationships:
-  - name: chat
-    using:
-      foreign_key_constraint_on: chatId
-  - name: sender
-    using:
-      foreign_key_constraint_on: senderId
-  array_relationships:
-  - name: flags
-    using:
-      foreign_key_constraint_on:
-        column: messageId
-        table:
-          schema: public
-          name: FlaggedChatMessage
-  - name: reactions
-    using:
-      foreign_key_constraint_on:
-        column: messageId
-        table:
-          schema: public
-          name: ChatReaction
-- table:
-    schema: public
-    name: ChatReaction
-  object_relationships:
-  - name: message
-    using:
-      foreign_key_constraint_on: messageId
-  - name: reactor
-    using:
-      foreign_key_constraint_on: reactorId
-- table:
-    schema: public
-    name: ChatTyper
-  object_relationships:
-  - name: chat
-    using:
-      foreign_key_constraint_on: chatId
-  - name: user
-    using:
-      foreign_key_constraint_on: userId
-- table:
-    schema: public
-    name: ChatUnreadIndex
-  object_relationships:
-  - name: chat
-    using:
-      foreign_key_constraint_on: chatId
-  - name: user
-    using:
-      foreign_key_constraint_on: userId
-- table:
-    schema: public
-    name: ChatViewer
-  object_relationships:
-  - name: chat
-    using:
-      foreign_key_constraint_on: chatId
-  - name: user
-    using:
-      foreign_key_constraint_on: userId
-- table:
-    schema: public
     name: Conference
   configuration:
     custom_root_fields: {}
@@ -788,6 +1858,13 @@
         table:
           schema: public
           name: Attendee
+  - name: chats
+    using:
+      foreign_key_constraint_on:
+        column: conferenceId
+        table:
+          schema: chat
+          name: Chat
   - name: configurations
     using:
       foreign_key_constraint_on:
@@ -1106,6 +2183,9 @@
       updated_at: updatedAt
       created_at: createdAt
   object_relationships:
+  - name: chat
+    using:
+      foreign_key_constraint_on: chatId
   - name: conference
     using:
       foreign_key_constraint_on: conferenceId
@@ -1191,6 +2271,7 @@
   - role: unauthenticated
     permission:
       columns:
+      - chatId
       - conferenceId
       - contentGroupTypeName
       - id
@@ -1213,6 +2294,7 @@
   - role: user
     permission:
       columns:
+      - chatId
       - conferenceId
       - contentGroupTypeName
       - id
@@ -2764,29 +3846,6 @@
       foreign_key_constraint_on: roomId
 - table:
     schema: public
-    name: FlaggedChatMessage
-  object_relationships:
-  - name: flaggedBy
-    using:
-      foreign_key_constraint_on: flaggedById
-  - name: message
-    using:
-      foreign_key_constraint_on: messageId
-  - name: moderationChat
-    using:
-      foreign_key_constraint_on: moderationChatId
-- table:
-    schema: public
-    name: FollowedChat
-  object_relationships:
-  - name: chat
-    using:
-      foreign_key_constraint_on: chatId
-  - name: user
-    using:
-      foreign_key_constraint_on: userId
-- table:
-    schema: public
     name: Group
   configuration:
     custom_root_fields: {}
@@ -3812,16 +4871,6 @@
       filter: {}
 - table:
     schema: public
-    name: PinnedChat
-  object_relationships:
-  - name: chat
-    using:
-      foreign_key_constraint_on: chatId
-  - name: user
-    using:
-      foreign_key_constraint_on: userId
-- table:
-    schema: public
     name: RequiredContentItem
   configuration:
     custom_root_fields: {}
@@ -4294,6 +5343,9 @@
     schema: public
     name: Room
   object_relationships:
+  - name: chat
+    using:
+      foreign_key_constraint_on: chatId
   - name: conference
     using:
       foreign_key_constraint_on: conferenceId
@@ -4384,6 +5436,7 @@
     permission:
       columns:
       - capacity
+      - chatId
       - conferenceId
       - currentModeName
       - id
@@ -4411,6 +5464,7 @@
     permission:
       columns:
       - capacity
+      - chatId
       - conferenceId
       - created_at
       - currentModeName
@@ -5275,13 +6329,6 @@
         table:
           schema: public
           name: Attendee
-  - name: chats
-    using:
-      foreign_key_constraint_on:
-        column: creatorId
-        table:
-          schema: public
-          name: Chat
   - name: conferenceDemoCodes
     using:
       foreign_key_constraint_on:
@@ -5303,20 +6350,6 @@
         table:
           schema: public
           name: Email
-  - name: flaggedMessages
-    using:
-      foreign_key_constraint_on:
-        column: flaggedById
-        table:
-          schema: public
-          name: FlaggedChatMessage
-  - name: followedChats
-    using:
-      foreign_key_constraint_on:
-        column: userId
-        table:
-          schema: public
-          name: FollowedChat
   - name: invitationsPendingConfirmation
     using:
       foreign_key_constraint_on:
@@ -5324,55 +6357,6 @@
         table:
           schema: public
           name: Invitation
-  - name: memberOfChats
-    using:
-      foreign_key_constraint_on:
-        column: userId
-        table:
-          schema: public
-          name: ChatMember
-  - name: pinnedChats
-    using:
-      foreign_key_constraint_on:
-        column: userId
-        table:
-          schema: public
-          name: PinnedChat
-  - name: reactions
-    using:
-      foreign_key_constraint_on:
-        column: reactorId
-        table:
-          schema: public
-          name: ChatReaction
-  - name: sentMessages
-    using:
-      foreign_key_constraint_on:
-        column: senderId
-        table:
-          schema: public
-          name: ChatMessage
-  - name: typingInChats
-    using:
-      foreign_key_constraint_on:
-        column: userId
-        table:
-          schema: public
-          name: ChatTyper
-  - name: unreadIndices
-    using:
-      foreign_key_constraint_on:
-        column: userId
-        table:
-          schema: public
-          name: ChatUnreadIndex
-  - name: viewingChats
-    using:
-      foreign_key_constraint_on:
-        column: userId
-        table:
-          schema: public
-          name: ChatViewer
   select_permissions:
   - role: user
     permission:

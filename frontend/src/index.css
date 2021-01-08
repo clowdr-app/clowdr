@@ -18,3 +18,30 @@ code {
     height: 100%;
     overflow: hidden;
 }
+
+.emoji-mart-scroll {
+    border-bottom: 0;
+    margin-bottom: 6px;
+}
+
+.emoji-mart-scroll + .emoji-mart-bar {
+    display: none;
+}
+
+.twemoji-reaction {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    margin-left: 1px;
+    margin-right: 1px;
+    vertical-align: baseline;
+}
+
+.twemoji-reaction > img {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    margin-left: 1px;
+    margin-right: 1px;
+    vertical-align: baseline;
+}

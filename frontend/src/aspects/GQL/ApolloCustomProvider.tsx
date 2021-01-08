@@ -86,7 +86,16 @@ export default function ApolloCustomProvider({
                 )
             );
 
-            const cache = new InMemoryCache();
+            const cache = new InMemoryCache({
+                typePolicies: {
+                    chat_Pin: {
+                        keyFields: ["chatId", "attendeeId"],
+                    },
+                    chat_Subscription: {
+                        keyFields: ["chatId", "attendeeId"],
+                    },
+                },
+            });
             // Apollo's local storage cache is a totally broken PoS...
             //  if you hit the memory limit, it crashes your whole website
             //  with a quoto-exceeded error. It also doesn't handle switching

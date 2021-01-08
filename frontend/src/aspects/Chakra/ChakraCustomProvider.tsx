@@ -14,6 +14,7 @@ const colors = {
         800: "#0a3915",
         900: "#06230d",
     },
+    white: "#fcfcfc",
     focus: {
         400: "rgba(255, 187, 0, 0.8)",
     },
@@ -31,13 +32,15 @@ const colors = {
     // },
 };
 
+export const defaultOutline_AsBoxShadow = "0 0 0 3px rgba(255, 187, 0, 0.8)";
+
 const theme = extendTheme({
     config: {
         initialColorMode: "dark",
     },
     colors,
     shadows: {
-        outline: "0 0 0 3px rgba(255, 187, 0, 0.8)",
+        outline: defaultOutline_AsBoxShadow,
     },
     components: {
         body: {

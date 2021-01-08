@@ -1,0 +1,15 @@
+CREATE OR REPLACE FUNCTION chat.delete_chat()
+  RETURNS TRIGGER
+  LANGUAGE PLPGSQL
+  AS
+$$
+DECLARE
+    nid uuid;
+BEGIN
+    DELETE FROM chat."Chat" WHERE "id" = OLD."chatId";
+	RETURN OLD;
+END;
+$$;
+
+CREATE TRIGGER delete_chat AFTER DELETE ON "Room" FOR EACH ROW EXECUTE FUNCTION chat.delete_chat();
+CREATE TRIGGER delete_chat AFTER DELETE ON "ContentGroup" FOR EACH ROW EXECUTE FUNCTION chat.delete_chat();

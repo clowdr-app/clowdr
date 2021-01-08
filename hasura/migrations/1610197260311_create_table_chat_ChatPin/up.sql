@@ -1,0 +1,1 @@
+CREATE TABLE "chat"."ChatPin"("chatId" uuid NOT NULL, "attendeeId" uuid NOT NULL, "created_at" timestamptz NOT NULL DEFAULT now(), "wasManuallyPinned" boolean NOT NULL DEFAULT true, PRIMARY KEY ("chatId","attendeeId") );

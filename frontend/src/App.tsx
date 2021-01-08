@@ -2,6 +2,7 @@ import { Box, Flex, VStack } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import "./App.css";
 import Routing from "./AppRouting";
+import EmojiMartProvider from "./aspects/Emoji/EmojiMartContext";
 import MainMenu from "./aspects/Menu/MainMenu";
 import { PrimaryMenuButtonsProvider } from "./aspects/Menu/usePrimaryMenuButtons";
 import CurrentUserProvider from "./aspects/Users/CurrentUser/CurrentUserProvider";
@@ -42,10 +43,10 @@ function App(_props: AppProps): JSX.Element {
         []
     );
     return (
-        <>
+        <EmojiMartProvider>
             <LastSeenProvider />
             <CurrentUserProvider>{page}</CurrentUserProvider>
-        </>
+        </EmojiMartProvider>
     );
 }
 

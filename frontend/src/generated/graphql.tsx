@@ -1476,1851 +1476,6 @@ export enum Broadcast_Update_Column {
   UpdatedAt = 'updatedAt'
 }
 
-/** columns and relationships of "Chat" */
-export type Chat = {
-  readonly __typename?: 'Chat';
-  readonly createdAt: Scalars['timestamptz'];
-  /** An object relationship */
-  readonly creator: User;
-  readonly creatorId: Scalars['String'];
-  readonly description?: Maybe<Scalars['String']>;
-  /** An array relationship */
-  readonly flaggedMessages: ReadonlyArray<FlaggedChatMessage>;
-  /** An aggregated array relationship */
-  readonly flaggedMessages_aggregate: FlaggedChatMessage_Aggregate;
-  readonly id: Scalars['uuid'];
-  readonly isAutoNotify: Scalars['Boolean'];
-  readonly isAutoPin: Scalars['Boolean'];
-  /** An array relationship */
-  readonly members: ReadonlyArray<ChatMember>;
-  /** An aggregated array relationship */
-  readonly members_aggregate: ChatMember_Aggregate;
-  /** An array relationship */
-  readonly messages: ReadonlyArray<ChatMessage>;
-  /** An aggregated array relationship */
-  readonly messages_aggregate: ChatMessage_Aggregate;
-  readonly mode: Scalars['String'];
-  readonly name: Scalars['String'];
-  /** An array relationship */
-  readonly typers: ReadonlyArray<ChatTyper>;
-  /** An aggregated array relationship */
-  readonly typers_aggregate: ChatTyper_Aggregate;
-  readonly updatedAt: Scalars['timestamptz'];
-  /** An array relationship */
-  readonly viewers: ReadonlyArray<ChatViewer>;
-  /** An aggregated array relationship */
-  readonly viewers_aggregate: ChatViewer_Aggregate;
-};
-
-
-/** columns and relationships of "Chat" */
-export type ChatFlaggedMessagesArgs = {
-  distinct_on?: Maybe<ReadonlyArray<FlaggedChatMessage_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<FlaggedChatMessage_Order_By>>;
-  where?: Maybe<FlaggedChatMessage_Bool_Exp>;
-};
-
-
-/** columns and relationships of "Chat" */
-export type ChatFlaggedMessages_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<FlaggedChatMessage_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<FlaggedChatMessage_Order_By>>;
-  where?: Maybe<FlaggedChatMessage_Bool_Exp>;
-};
-
-
-/** columns and relationships of "Chat" */
-export type ChatMembersArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatMember_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatMember_Order_By>>;
-  where?: Maybe<ChatMember_Bool_Exp>;
-};
-
-
-/** columns and relationships of "Chat" */
-export type ChatMembers_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatMember_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatMember_Order_By>>;
-  where?: Maybe<ChatMember_Bool_Exp>;
-};
-
-
-/** columns and relationships of "Chat" */
-export type ChatMessagesArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatMessage_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatMessage_Order_By>>;
-  where?: Maybe<ChatMessage_Bool_Exp>;
-};
-
-
-/** columns and relationships of "Chat" */
-export type ChatMessages_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatMessage_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatMessage_Order_By>>;
-  where?: Maybe<ChatMessage_Bool_Exp>;
-};
-
-
-/** columns and relationships of "Chat" */
-export type ChatTypersArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatTyper_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatTyper_Order_By>>;
-  where?: Maybe<ChatTyper_Bool_Exp>;
-};
-
-
-/** columns and relationships of "Chat" */
-export type ChatTypers_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatTyper_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatTyper_Order_By>>;
-  where?: Maybe<ChatTyper_Bool_Exp>;
-};
-
-
-/** columns and relationships of "Chat" */
-export type ChatViewersArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatViewer_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatViewer_Order_By>>;
-  where?: Maybe<ChatViewer_Bool_Exp>;
-};
-
-
-/** columns and relationships of "Chat" */
-export type ChatViewers_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatViewer_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatViewer_Order_By>>;
-  where?: Maybe<ChatViewer_Bool_Exp>;
-};
-
-/** columns and relationships of "ChatMember" */
-export type ChatMember = {
-  readonly __typename?: 'ChatMember';
-  /** An object relationship */
-  readonly chat: Chat;
-  readonly chatId: Scalars['uuid'];
-  readonly createdAt: Scalars['timestamptz'];
-  readonly id: Scalars['uuid'];
-  readonly invitationAcceptedAt?: Maybe<Scalars['timestamptz']>;
-  readonly updatedAt: Scalars['timestamptz'];
-  /** An object relationship */
-  readonly user: User;
-  readonly userId: Scalars['String'];
-};
-
-/** aggregated selection of "ChatMember" */
-export type ChatMember_Aggregate = {
-  readonly __typename?: 'ChatMember_aggregate';
-  readonly aggregate?: Maybe<ChatMember_Aggregate_Fields>;
-  readonly nodes: ReadonlyArray<ChatMember>;
-};
-
-/** aggregate fields of "ChatMember" */
-export type ChatMember_Aggregate_Fields = {
-  readonly __typename?: 'ChatMember_aggregate_fields';
-  readonly count?: Maybe<Scalars['Int']>;
-  readonly max?: Maybe<ChatMember_Max_Fields>;
-  readonly min?: Maybe<ChatMember_Min_Fields>;
-};
-
-
-/** aggregate fields of "ChatMember" */
-export type ChatMember_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<ReadonlyArray<ChatMember_Select_Column>>;
-  distinct?: Maybe<Scalars['Boolean']>;
-};
-
-/** order by aggregate values of table "ChatMember" */
-export type ChatMember_Aggregate_Order_By = {
-  readonly count?: Maybe<Order_By>;
-  readonly max?: Maybe<ChatMember_Max_Order_By>;
-  readonly min?: Maybe<ChatMember_Min_Order_By>;
-};
-
-/** input type for inserting array relation for remote table "ChatMember" */
-export type ChatMember_Arr_Rel_Insert_Input = {
-  readonly data: ReadonlyArray<ChatMember_Insert_Input>;
-  readonly on_conflict?: Maybe<ChatMember_On_Conflict>;
-};
-
-/** Boolean expression to filter rows from the table "ChatMember". All fields are combined with a logical 'AND'. */
-export type ChatMember_Bool_Exp = {
-  readonly _and?: Maybe<ReadonlyArray<Maybe<ChatMember_Bool_Exp>>>;
-  readonly _not?: Maybe<ChatMember_Bool_Exp>;
-  readonly _or?: Maybe<ReadonlyArray<Maybe<ChatMember_Bool_Exp>>>;
-  readonly chat?: Maybe<Chat_Bool_Exp>;
-  readonly chatId?: Maybe<Uuid_Comparison_Exp>;
-  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
-  readonly id?: Maybe<Uuid_Comparison_Exp>;
-  readonly invitationAcceptedAt?: Maybe<Timestamptz_Comparison_Exp>;
-  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
-  readonly user?: Maybe<User_Bool_Exp>;
-  readonly userId?: Maybe<String_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "ChatMember" */
-export enum ChatMember_Constraint {
-  /** unique or primary key constraint */
-  ChatMemberChatIdUserIdKey = 'ChatMember_chatId_userId_key',
-  /** unique or primary key constraint */
-  ChatMemberPkey = 'ChatMember_pkey'
-}
-
-/** input type for inserting data into table "ChatMember" */
-export type ChatMember_Insert_Input = {
-  readonly chat?: Maybe<Chat_Obj_Rel_Insert_Input>;
-  readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly invitationAcceptedAt?: Maybe<Scalars['timestamptz']>;
-  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-  readonly user?: Maybe<User_Obj_Rel_Insert_Input>;
-  readonly userId?: Maybe<Scalars['String']>;
-};
-
-/** aggregate max on columns */
-export type ChatMember_Max_Fields = {
-  readonly __typename?: 'ChatMember_max_fields';
-  readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly invitationAcceptedAt?: Maybe<Scalars['timestamptz']>;
-  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-  readonly userId?: Maybe<Scalars['String']>;
-};
-
-/** order by max() on columns of table "ChatMember" */
-export type ChatMember_Max_Order_By = {
-  readonly chatId?: Maybe<Order_By>;
-  readonly createdAt?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly invitationAcceptedAt?: Maybe<Order_By>;
-  readonly updatedAt?: Maybe<Order_By>;
-  readonly userId?: Maybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type ChatMember_Min_Fields = {
-  readonly __typename?: 'ChatMember_min_fields';
-  readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly invitationAcceptedAt?: Maybe<Scalars['timestamptz']>;
-  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-  readonly userId?: Maybe<Scalars['String']>;
-};
-
-/** order by min() on columns of table "ChatMember" */
-export type ChatMember_Min_Order_By = {
-  readonly chatId?: Maybe<Order_By>;
-  readonly createdAt?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly invitationAcceptedAt?: Maybe<Order_By>;
-  readonly updatedAt?: Maybe<Order_By>;
-  readonly userId?: Maybe<Order_By>;
-};
-
-/** response of any mutation on the table "ChatMember" */
-export type ChatMember_Mutation_Response = {
-  readonly __typename?: 'ChatMember_mutation_response';
-  /** number of affected rows by the mutation */
-  readonly affected_rows: Scalars['Int'];
-  /** data of the affected rows by the mutation */
-  readonly returning: ReadonlyArray<ChatMember>;
-};
-
-/** input type for inserting object relation for remote table "ChatMember" */
-export type ChatMember_Obj_Rel_Insert_Input = {
-  readonly data: ChatMember_Insert_Input;
-  readonly on_conflict?: Maybe<ChatMember_On_Conflict>;
-};
-
-/** on conflict condition type for table "ChatMember" */
-export type ChatMember_On_Conflict = {
-  readonly constraint: ChatMember_Constraint;
-  readonly update_columns: ReadonlyArray<ChatMember_Update_Column>;
-  readonly where?: Maybe<ChatMember_Bool_Exp>;
-};
-
-/** ordering options when selecting data from "ChatMember" */
-export type ChatMember_Order_By = {
-  readonly chat?: Maybe<Chat_Order_By>;
-  readonly chatId?: Maybe<Order_By>;
-  readonly createdAt?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly invitationAcceptedAt?: Maybe<Order_By>;
-  readonly updatedAt?: Maybe<Order_By>;
-  readonly user?: Maybe<User_Order_By>;
-  readonly userId?: Maybe<Order_By>;
-};
-
-/** primary key columns input for table: "ChatMember" */
-export type ChatMember_Pk_Columns_Input = {
-  readonly id: Scalars['uuid'];
-};
-
-/** select columns of table "ChatMember" */
-export enum ChatMember_Select_Column {
-  /** column name */
-  ChatId = 'chatId',
-  /** column name */
-  CreatedAt = 'createdAt',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  InvitationAcceptedAt = 'invitationAcceptedAt',
-  /** column name */
-  UpdatedAt = 'updatedAt',
-  /** column name */
-  UserId = 'userId'
-}
-
-/** input type for updating data in table "ChatMember" */
-export type ChatMember_Set_Input = {
-  readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly invitationAcceptedAt?: Maybe<Scalars['timestamptz']>;
-  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-  readonly userId?: Maybe<Scalars['String']>;
-};
-
-/** update columns of table "ChatMember" */
-export enum ChatMember_Update_Column {
-  /** column name */
-  ChatId = 'chatId',
-  /** column name */
-  CreatedAt = 'createdAt',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  InvitationAcceptedAt = 'invitationAcceptedAt',
-  /** column name */
-  UpdatedAt = 'updatedAt',
-  /** column name */
-  UserId = 'userId'
-}
-
-/** columns and relationships of "ChatMessage" */
-export type ChatMessage = {
-  readonly __typename?: 'ChatMessage';
-  /** An object relationship */
-  readonly chat: Chat;
-  readonly chatId: Scalars['uuid'];
-  readonly content: Scalars['jsonb'];
-  readonly createdAt: Scalars['timestamptz'];
-  /** An array relationship */
-  readonly flags: ReadonlyArray<FlaggedChatMessage>;
-  /** An aggregated array relationship */
-  readonly flags_aggregate: FlaggedChatMessage_Aggregate;
-  readonly id: Scalars['uuid'];
-  readonly index: Scalars['Int'];
-  readonly isHighlighted: Scalars['Boolean'];
-  /** An array relationship */
-  readonly reactions: ReadonlyArray<ChatReaction>;
-  /** An aggregated array relationship */
-  readonly reactions_aggregate: ChatReaction_Aggregate;
-  /** An object relationship */
-  readonly sender: User;
-  readonly senderId: Scalars['String'];
-  readonly updatedAt: Scalars['timestamptz'];
-};
-
-
-/** columns and relationships of "ChatMessage" */
-export type ChatMessageContentArgs = {
-  path?: Maybe<Scalars['String']>;
-};
-
-
-/** columns and relationships of "ChatMessage" */
-export type ChatMessageFlagsArgs = {
-  distinct_on?: Maybe<ReadonlyArray<FlaggedChatMessage_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<FlaggedChatMessage_Order_By>>;
-  where?: Maybe<FlaggedChatMessage_Bool_Exp>;
-};
-
-
-/** columns and relationships of "ChatMessage" */
-export type ChatMessageFlags_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<FlaggedChatMessage_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<FlaggedChatMessage_Order_By>>;
-  where?: Maybe<FlaggedChatMessage_Bool_Exp>;
-};
-
-
-/** columns and relationships of "ChatMessage" */
-export type ChatMessageReactionsArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatReaction_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatReaction_Order_By>>;
-  where?: Maybe<ChatReaction_Bool_Exp>;
-};
-
-
-/** columns and relationships of "ChatMessage" */
-export type ChatMessageReactions_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatReaction_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatReaction_Order_By>>;
-  where?: Maybe<ChatReaction_Bool_Exp>;
-};
-
-/** aggregated selection of "ChatMessage" */
-export type ChatMessage_Aggregate = {
-  readonly __typename?: 'ChatMessage_aggregate';
-  readonly aggregate?: Maybe<ChatMessage_Aggregate_Fields>;
-  readonly nodes: ReadonlyArray<ChatMessage>;
-};
-
-/** aggregate fields of "ChatMessage" */
-export type ChatMessage_Aggregate_Fields = {
-  readonly __typename?: 'ChatMessage_aggregate_fields';
-  readonly avg?: Maybe<ChatMessage_Avg_Fields>;
-  readonly count?: Maybe<Scalars['Int']>;
-  readonly max?: Maybe<ChatMessage_Max_Fields>;
-  readonly min?: Maybe<ChatMessage_Min_Fields>;
-  readonly stddev?: Maybe<ChatMessage_Stddev_Fields>;
-  readonly stddev_pop?: Maybe<ChatMessage_Stddev_Pop_Fields>;
-  readonly stddev_samp?: Maybe<ChatMessage_Stddev_Samp_Fields>;
-  readonly sum?: Maybe<ChatMessage_Sum_Fields>;
-  readonly var_pop?: Maybe<ChatMessage_Var_Pop_Fields>;
-  readonly var_samp?: Maybe<ChatMessage_Var_Samp_Fields>;
-  readonly variance?: Maybe<ChatMessage_Variance_Fields>;
-};
-
-
-/** aggregate fields of "ChatMessage" */
-export type ChatMessage_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<ReadonlyArray<ChatMessage_Select_Column>>;
-  distinct?: Maybe<Scalars['Boolean']>;
-};
-
-/** order by aggregate values of table "ChatMessage" */
-export type ChatMessage_Aggregate_Order_By = {
-  readonly avg?: Maybe<ChatMessage_Avg_Order_By>;
-  readonly count?: Maybe<Order_By>;
-  readonly max?: Maybe<ChatMessage_Max_Order_By>;
-  readonly min?: Maybe<ChatMessage_Min_Order_By>;
-  readonly stddev?: Maybe<ChatMessage_Stddev_Order_By>;
-  readonly stddev_pop?: Maybe<ChatMessage_Stddev_Pop_Order_By>;
-  readonly stddev_samp?: Maybe<ChatMessage_Stddev_Samp_Order_By>;
-  readonly sum?: Maybe<ChatMessage_Sum_Order_By>;
-  readonly var_pop?: Maybe<ChatMessage_Var_Pop_Order_By>;
-  readonly var_samp?: Maybe<ChatMessage_Var_Samp_Order_By>;
-  readonly variance?: Maybe<ChatMessage_Variance_Order_By>;
-};
-
-/** append existing jsonb value of filtered columns with new jsonb value */
-export type ChatMessage_Append_Input = {
-  readonly content?: Maybe<Scalars['jsonb']>;
-};
-
-/** input type for inserting array relation for remote table "ChatMessage" */
-export type ChatMessage_Arr_Rel_Insert_Input = {
-  readonly data: ReadonlyArray<ChatMessage_Insert_Input>;
-  readonly on_conflict?: Maybe<ChatMessage_On_Conflict>;
-};
-
-/** aggregate avg on columns */
-export type ChatMessage_Avg_Fields = {
-  readonly __typename?: 'ChatMessage_avg_fields';
-  readonly index?: Maybe<Scalars['Float']>;
-};
-
-/** order by avg() on columns of table "ChatMessage" */
-export type ChatMessage_Avg_Order_By = {
-  readonly index?: Maybe<Order_By>;
-};
-
-/** Boolean expression to filter rows from the table "ChatMessage". All fields are combined with a logical 'AND'. */
-export type ChatMessage_Bool_Exp = {
-  readonly _and?: Maybe<ReadonlyArray<Maybe<ChatMessage_Bool_Exp>>>;
-  readonly _not?: Maybe<ChatMessage_Bool_Exp>;
-  readonly _or?: Maybe<ReadonlyArray<Maybe<ChatMessage_Bool_Exp>>>;
-  readonly chat?: Maybe<Chat_Bool_Exp>;
-  readonly chatId?: Maybe<Uuid_Comparison_Exp>;
-  readonly content?: Maybe<Jsonb_Comparison_Exp>;
-  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
-  readonly flags?: Maybe<FlaggedChatMessage_Bool_Exp>;
-  readonly id?: Maybe<Uuid_Comparison_Exp>;
-  readonly index?: Maybe<Int_Comparison_Exp>;
-  readonly isHighlighted?: Maybe<Boolean_Comparison_Exp>;
-  readonly reactions?: Maybe<ChatReaction_Bool_Exp>;
-  readonly sender?: Maybe<User_Bool_Exp>;
-  readonly senderId?: Maybe<String_Comparison_Exp>;
-  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "ChatMessage" */
-export enum ChatMessage_Constraint {
-  /** unique or primary key constraint */
-  ChatMessageChatIdIndexKey = 'ChatMessage_chatId_index_key',
-  /** unique or primary key constraint */
-  ChatMessagePkey = 'ChatMessage_pkey'
-}
-
-/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
-export type ChatMessage_Delete_At_Path_Input = {
-  readonly content?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
-};
-
-/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
-export type ChatMessage_Delete_Elem_Input = {
-  readonly content?: Maybe<Scalars['Int']>;
-};
-
-/** delete key/value pair or string element. key/value pairs are matched based on their key value */
-export type ChatMessage_Delete_Key_Input = {
-  readonly content?: Maybe<Scalars['String']>;
-};
-
-/** input type for incrementing integer column in table "ChatMessage" */
-export type ChatMessage_Inc_Input = {
-  readonly index?: Maybe<Scalars['Int']>;
-};
-
-/** input type for inserting data into table "ChatMessage" */
-export type ChatMessage_Insert_Input = {
-  readonly chat?: Maybe<Chat_Obj_Rel_Insert_Input>;
-  readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly content?: Maybe<Scalars['jsonb']>;
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly flags?: Maybe<FlaggedChatMessage_Arr_Rel_Insert_Input>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly index?: Maybe<Scalars['Int']>;
-  readonly isHighlighted?: Maybe<Scalars['Boolean']>;
-  readonly reactions?: Maybe<ChatReaction_Arr_Rel_Insert_Input>;
-  readonly sender?: Maybe<User_Obj_Rel_Insert_Input>;
-  readonly senderId?: Maybe<Scalars['String']>;
-  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-};
-
-/** aggregate max on columns */
-export type ChatMessage_Max_Fields = {
-  readonly __typename?: 'ChatMessage_max_fields';
-  readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly index?: Maybe<Scalars['Int']>;
-  readonly senderId?: Maybe<Scalars['String']>;
-  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-};
-
-/** order by max() on columns of table "ChatMessage" */
-export type ChatMessage_Max_Order_By = {
-  readonly chatId?: Maybe<Order_By>;
-  readonly createdAt?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly index?: Maybe<Order_By>;
-  readonly senderId?: Maybe<Order_By>;
-  readonly updatedAt?: Maybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type ChatMessage_Min_Fields = {
-  readonly __typename?: 'ChatMessage_min_fields';
-  readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly index?: Maybe<Scalars['Int']>;
-  readonly senderId?: Maybe<Scalars['String']>;
-  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-};
-
-/** order by min() on columns of table "ChatMessage" */
-export type ChatMessage_Min_Order_By = {
-  readonly chatId?: Maybe<Order_By>;
-  readonly createdAt?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly index?: Maybe<Order_By>;
-  readonly senderId?: Maybe<Order_By>;
-  readonly updatedAt?: Maybe<Order_By>;
-};
-
-/** response of any mutation on the table "ChatMessage" */
-export type ChatMessage_Mutation_Response = {
-  readonly __typename?: 'ChatMessage_mutation_response';
-  /** number of affected rows by the mutation */
-  readonly affected_rows: Scalars['Int'];
-  /** data of the affected rows by the mutation */
-  readonly returning: ReadonlyArray<ChatMessage>;
-};
-
-/** input type for inserting object relation for remote table "ChatMessage" */
-export type ChatMessage_Obj_Rel_Insert_Input = {
-  readonly data: ChatMessage_Insert_Input;
-  readonly on_conflict?: Maybe<ChatMessage_On_Conflict>;
-};
-
-/** on conflict condition type for table "ChatMessage" */
-export type ChatMessage_On_Conflict = {
-  readonly constraint: ChatMessage_Constraint;
-  readonly update_columns: ReadonlyArray<ChatMessage_Update_Column>;
-  readonly where?: Maybe<ChatMessage_Bool_Exp>;
-};
-
-/** ordering options when selecting data from "ChatMessage" */
-export type ChatMessage_Order_By = {
-  readonly chat?: Maybe<Chat_Order_By>;
-  readonly chatId?: Maybe<Order_By>;
-  readonly content?: Maybe<Order_By>;
-  readonly createdAt?: Maybe<Order_By>;
-  readonly flags_aggregate?: Maybe<FlaggedChatMessage_Aggregate_Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly index?: Maybe<Order_By>;
-  readonly isHighlighted?: Maybe<Order_By>;
-  readonly reactions_aggregate?: Maybe<ChatReaction_Aggregate_Order_By>;
-  readonly sender?: Maybe<User_Order_By>;
-  readonly senderId?: Maybe<Order_By>;
-  readonly updatedAt?: Maybe<Order_By>;
-};
-
-/** primary key columns input for table: "ChatMessage" */
-export type ChatMessage_Pk_Columns_Input = {
-  readonly id: Scalars['uuid'];
-};
-
-/** prepend existing jsonb value of filtered columns with new jsonb value */
-export type ChatMessage_Prepend_Input = {
-  readonly content?: Maybe<Scalars['jsonb']>;
-};
-
-/** select columns of table "ChatMessage" */
-export enum ChatMessage_Select_Column {
-  /** column name */
-  ChatId = 'chatId',
-  /** column name */
-  Content = 'content',
-  /** column name */
-  CreatedAt = 'createdAt',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  Index = 'index',
-  /** column name */
-  IsHighlighted = 'isHighlighted',
-  /** column name */
-  SenderId = 'senderId',
-  /** column name */
-  UpdatedAt = 'updatedAt'
-}
-
-/** input type for updating data in table "ChatMessage" */
-export type ChatMessage_Set_Input = {
-  readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly content?: Maybe<Scalars['jsonb']>;
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly index?: Maybe<Scalars['Int']>;
-  readonly isHighlighted?: Maybe<Scalars['Boolean']>;
-  readonly senderId?: Maybe<Scalars['String']>;
-  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-};
-
-/** aggregate stddev on columns */
-export type ChatMessage_Stddev_Fields = {
-  readonly __typename?: 'ChatMessage_stddev_fields';
-  readonly index?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev() on columns of table "ChatMessage" */
-export type ChatMessage_Stddev_Order_By = {
-  readonly index?: Maybe<Order_By>;
-};
-
-/** aggregate stddev_pop on columns */
-export type ChatMessage_Stddev_Pop_Fields = {
-  readonly __typename?: 'ChatMessage_stddev_pop_fields';
-  readonly index?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_pop() on columns of table "ChatMessage" */
-export type ChatMessage_Stddev_Pop_Order_By = {
-  readonly index?: Maybe<Order_By>;
-};
-
-/** aggregate stddev_samp on columns */
-export type ChatMessage_Stddev_Samp_Fields = {
-  readonly __typename?: 'ChatMessage_stddev_samp_fields';
-  readonly index?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_samp() on columns of table "ChatMessage" */
-export type ChatMessage_Stddev_Samp_Order_By = {
-  readonly index?: Maybe<Order_By>;
-};
-
-/** aggregate sum on columns */
-export type ChatMessage_Sum_Fields = {
-  readonly __typename?: 'ChatMessage_sum_fields';
-  readonly index?: Maybe<Scalars['Int']>;
-};
-
-/** order by sum() on columns of table "ChatMessage" */
-export type ChatMessage_Sum_Order_By = {
-  readonly index?: Maybe<Order_By>;
-};
-
-/** update columns of table "ChatMessage" */
-export enum ChatMessage_Update_Column {
-  /** column name */
-  ChatId = 'chatId',
-  /** column name */
-  Content = 'content',
-  /** column name */
-  CreatedAt = 'createdAt',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  Index = 'index',
-  /** column name */
-  IsHighlighted = 'isHighlighted',
-  /** column name */
-  SenderId = 'senderId',
-  /** column name */
-  UpdatedAt = 'updatedAt'
-}
-
-/** aggregate var_pop on columns */
-export type ChatMessage_Var_Pop_Fields = {
-  readonly __typename?: 'ChatMessage_var_pop_fields';
-  readonly index?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_pop() on columns of table "ChatMessage" */
-export type ChatMessage_Var_Pop_Order_By = {
-  readonly index?: Maybe<Order_By>;
-};
-
-/** aggregate var_samp on columns */
-export type ChatMessage_Var_Samp_Fields = {
-  readonly __typename?: 'ChatMessage_var_samp_fields';
-  readonly index?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_samp() on columns of table "ChatMessage" */
-export type ChatMessage_Var_Samp_Order_By = {
-  readonly index?: Maybe<Order_By>;
-};
-
-/** aggregate variance on columns */
-export type ChatMessage_Variance_Fields = {
-  readonly __typename?: 'ChatMessage_variance_fields';
-  readonly index?: Maybe<Scalars['Float']>;
-};
-
-/** order by variance() on columns of table "ChatMessage" */
-export type ChatMessage_Variance_Order_By = {
-  readonly index?: Maybe<Order_By>;
-};
-
-/** columns and relationships of "ChatReaction" */
-export type ChatReaction = {
-  readonly __typename?: 'ChatReaction';
-  readonly createdAt: Scalars['timestamptz'];
-  readonly id: Scalars['uuid'];
-  /** An object relationship */
-  readonly message: ChatMessage;
-  readonly messageId: Scalars['uuid'];
-  readonly reaction: Scalars['String'];
-  /** An object relationship */
-  readonly reactor: User;
-  readonly reactorId: Scalars['String'];
-};
-
-/** aggregated selection of "ChatReaction" */
-export type ChatReaction_Aggregate = {
-  readonly __typename?: 'ChatReaction_aggregate';
-  readonly aggregate?: Maybe<ChatReaction_Aggregate_Fields>;
-  readonly nodes: ReadonlyArray<ChatReaction>;
-};
-
-/** aggregate fields of "ChatReaction" */
-export type ChatReaction_Aggregate_Fields = {
-  readonly __typename?: 'ChatReaction_aggregate_fields';
-  readonly count?: Maybe<Scalars['Int']>;
-  readonly max?: Maybe<ChatReaction_Max_Fields>;
-  readonly min?: Maybe<ChatReaction_Min_Fields>;
-};
-
-
-/** aggregate fields of "ChatReaction" */
-export type ChatReaction_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<ReadonlyArray<ChatReaction_Select_Column>>;
-  distinct?: Maybe<Scalars['Boolean']>;
-};
-
-/** order by aggregate values of table "ChatReaction" */
-export type ChatReaction_Aggregate_Order_By = {
-  readonly count?: Maybe<Order_By>;
-  readonly max?: Maybe<ChatReaction_Max_Order_By>;
-  readonly min?: Maybe<ChatReaction_Min_Order_By>;
-};
-
-/** input type for inserting array relation for remote table "ChatReaction" */
-export type ChatReaction_Arr_Rel_Insert_Input = {
-  readonly data: ReadonlyArray<ChatReaction_Insert_Input>;
-  readonly on_conflict?: Maybe<ChatReaction_On_Conflict>;
-};
-
-/** Boolean expression to filter rows from the table "ChatReaction". All fields are combined with a logical 'AND'. */
-export type ChatReaction_Bool_Exp = {
-  readonly _and?: Maybe<ReadonlyArray<Maybe<ChatReaction_Bool_Exp>>>;
-  readonly _not?: Maybe<ChatReaction_Bool_Exp>;
-  readonly _or?: Maybe<ReadonlyArray<Maybe<ChatReaction_Bool_Exp>>>;
-  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
-  readonly id?: Maybe<Uuid_Comparison_Exp>;
-  readonly message?: Maybe<ChatMessage_Bool_Exp>;
-  readonly messageId?: Maybe<Uuid_Comparison_Exp>;
-  readonly reaction?: Maybe<String_Comparison_Exp>;
-  readonly reactor?: Maybe<User_Bool_Exp>;
-  readonly reactorId?: Maybe<String_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "ChatReaction" */
-export enum ChatReaction_Constraint {
-  /** unique or primary key constraint */
-  ChatReactionMessageIdReactorIdReactionKey = 'ChatReaction_messageId_reactorId_reaction_key',
-  /** unique or primary key constraint */
-  ChatReactionPkey = 'ChatReaction_pkey'
-}
-
-/** input type for inserting data into table "ChatReaction" */
-export type ChatReaction_Insert_Input = {
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly message?: Maybe<ChatMessage_Obj_Rel_Insert_Input>;
-  readonly messageId?: Maybe<Scalars['uuid']>;
-  readonly reaction?: Maybe<Scalars['String']>;
-  readonly reactor?: Maybe<User_Obj_Rel_Insert_Input>;
-  readonly reactorId?: Maybe<Scalars['String']>;
-};
-
-/** aggregate max on columns */
-export type ChatReaction_Max_Fields = {
-  readonly __typename?: 'ChatReaction_max_fields';
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly messageId?: Maybe<Scalars['uuid']>;
-  readonly reaction?: Maybe<Scalars['String']>;
-  readonly reactorId?: Maybe<Scalars['String']>;
-};
-
-/** order by max() on columns of table "ChatReaction" */
-export type ChatReaction_Max_Order_By = {
-  readonly createdAt?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly messageId?: Maybe<Order_By>;
-  readonly reaction?: Maybe<Order_By>;
-  readonly reactorId?: Maybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type ChatReaction_Min_Fields = {
-  readonly __typename?: 'ChatReaction_min_fields';
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly messageId?: Maybe<Scalars['uuid']>;
-  readonly reaction?: Maybe<Scalars['String']>;
-  readonly reactorId?: Maybe<Scalars['String']>;
-};
-
-/** order by min() on columns of table "ChatReaction" */
-export type ChatReaction_Min_Order_By = {
-  readonly createdAt?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly messageId?: Maybe<Order_By>;
-  readonly reaction?: Maybe<Order_By>;
-  readonly reactorId?: Maybe<Order_By>;
-};
-
-/** response of any mutation on the table "ChatReaction" */
-export type ChatReaction_Mutation_Response = {
-  readonly __typename?: 'ChatReaction_mutation_response';
-  /** number of affected rows by the mutation */
-  readonly affected_rows: Scalars['Int'];
-  /** data of the affected rows by the mutation */
-  readonly returning: ReadonlyArray<ChatReaction>;
-};
-
-/** input type for inserting object relation for remote table "ChatReaction" */
-export type ChatReaction_Obj_Rel_Insert_Input = {
-  readonly data: ChatReaction_Insert_Input;
-  readonly on_conflict?: Maybe<ChatReaction_On_Conflict>;
-};
-
-/** on conflict condition type for table "ChatReaction" */
-export type ChatReaction_On_Conflict = {
-  readonly constraint: ChatReaction_Constraint;
-  readonly update_columns: ReadonlyArray<ChatReaction_Update_Column>;
-  readonly where?: Maybe<ChatReaction_Bool_Exp>;
-};
-
-/** ordering options when selecting data from "ChatReaction" */
-export type ChatReaction_Order_By = {
-  readonly createdAt?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly message?: Maybe<ChatMessage_Order_By>;
-  readonly messageId?: Maybe<Order_By>;
-  readonly reaction?: Maybe<Order_By>;
-  readonly reactor?: Maybe<User_Order_By>;
-  readonly reactorId?: Maybe<Order_By>;
-};
-
-/** primary key columns input for table: "ChatReaction" */
-export type ChatReaction_Pk_Columns_Input = {
-  readonly id: Scalars['uuid'];
-};
-
-/** select columns of table "ChatReaction" */
-export enum ChatReaction_Select_Column {
-  /** column name */
-  CreatedAt = 'createdAt',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  MessageId = 'messageId',
-  /** column name */
-  Reaction = 'reaction',
-  /** column name */
-  ReactorId = 'reactorId'
-}
-
-/** input type for updating data in table "ChatReaction" */
-export type ChatReaction_Set_Input = {
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly messageId?: Maybe<Scalars['uuid']>;
-  readonly reaction?: Maybe<Scalars['String']>;
-  readonly reactorId?: Maybe<Scalars['String']>;
-};
-
-/** update columns of table "ChatReaction" */
-export enum ChatReaction_Update_Column {
-  /** column name */
-  CreatedAt = 'createdAt',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  MessageId = 'messageId',
-  /** column name */
-  Reaction = 'reaction',
-  /** column name */
-  ReactorId = 'reactorId'
-}
-
-/** columns and relationships of "ChatTyper" */
-export type ChatTyper = {
-  readonly __typename?: 'ChatTyper';
-  /** An object relationship */
-  readonly chat: Chat;
-  readonly chatId: Scalars['uuid'];
-  readonly id: Scalars['uuid'];
-  readonly updatedAt: Scalars['timestamptz'];
-  /** An object relationship */
-  readonly user: User;
-  readonly userId: Scalars['String'];
-};
-
-/** aggregated selection of "ChatTyper" */
-export type ChatTyper_Aggregate = {
-  readonly __typename?: 'ChatTyper_aggregate';
-  readonly aggregate?: Maybe<ChatTyper_Aggregate_Fields>;
-  readonly nodes: ReadonlyArray<ChatTyper>;
-};
-
-/** aggregate fields of "ChatTyper" */
-export type ChatTyper_Aggregate_Fields = {
-  readonly __typename?: 'ChatTyper_aggregate_fields';
-  readonly count?: Maybe<Scalars['Int']>;
-  readonly max?: Maybe<ChatTyper_Max_Fields>;
-  readonly min?: Maybe<ChatTyper_Min_Fields>;
-};
-
-
-/** aggregate fields of "ChatTyper" */
-export type ChatTyper_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<ReadonlyArray<ChatTyper_Select_Column>>;
-  distinct?: Maybe<Scalars['Boolean']>;
-};
-
-/** order by aggregate values of table "ChatTyper" */
-export type ChatTyper_Aggregate_Order_By = {
-  readonly count?: Maybe<Order_By>;
-  readonly max?: Maybe<ChatTyper_Max_Order_By>;
-  readonly min?: Maybe<ChatTyper_Min_Order_By>;
-};
-
-/** input type for inserting array relation for remote table "ChatTyper" */
-export type ChatTyper_Arr_Rel_Insert_Input = {
-  readonly data: ReadonlyArray<ChatTyper_Insert_Input>;
-  readonly on_conflict?: Maybe<ChatTyper_On_Conflict>;
-};
-
-/** Boolean expression to filter rows from the table "ChatTyper". All fields are combined with a logical 'AND'. */
-export type ChatTyper_Bool_Exp = {
-  readonly _and?: Maybe<ReadonlyArray<Maybe<ChatTyper_Bool_Exp>>>;
-  readonly _not?: Maybe<ChatTyper_Bool_Exp>;
-  readonly _or?: Maybe<ReadonlyArray<Maybe<ChatTyper_Bool_Exp>>>;
-  readonly chat?: Maybe<Chat_Bool_Exp>;
-  readonly chatId?: Maybe<Uuid_Comparison_Exp>;
-  readonly id?: Maybe<Uuid_Comparison_Exp>;
-  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
-  readonly user?: Maybe<User_Bool_Exp>;
-  readonly userId?: Maybe<String_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "ChatTyper" */
-export enum ChatTyper_Constraint {
-  /** unique or primary key constraint */
-  ChatTyperChatIdUserIdKey = 'ChatTyper_chatId_userId_key',
-  /** unique or primary key constraint */
-  ChatTypersPkey = 'ChatTypers_pkey'
-}
-
-/** input type for inserting data into table "ChatTyper" */
-export type ChatTyper_Insert_Input = {
-  readonly chat?: Maybe<Chat_Obj_Rel_Insert_Input>;
-  readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-  readonly user?: Maybe<User_Obj_Rel_Insert_Input>;
-  readonly userId?: Maybe<Scalars['String']>;
-};
-
-/** aggregate max on columns */
-export type ChatTyper_Max_Fields = {
-  readonly __typename?: 'ChatTyper_max_fields';
-  readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-  readonly userId?: Maybe<Scalars['String']>;
-};
-
-/** order by max() on columns of table "ChatTyper" */
-export type ChatTyper_Max_Order_By = {
-  readonly chatId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly updatedAt?: Maybe<Order_By>;
-  readonly userId?: Maybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type ChatTyper_Min_Fields = {
-  readonly __typename?: 'ChatTyper_min_fields';
-  readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-  readonly userId?: Maybe<Scalars['String']>;
-};
-
-/** order by min() on columns of table "ChatTyper" */
-export type ChatTyper_Min_Order_By = {
-  readonly chatId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly updatedAt?: Maybe<Order_By>;
-  readonly userId?: Maybe<Order_By>;
-};
-
-/** response of any mutation on the table "ChatTyper" */
-export type ChatTyper_Mutation_Response = {
-  readonly __typename?: 'ChatTyper_mutation_response';
-  /** number of affected rows by the mutation */
-  readonly affected_rows: Scalars['Int'];
-  /** data of the affected rows by the mutation */
-  readonly returning: ReadonlyArray<ChatTyper>;
-};
-
-/** input type for inserting object relation for remote table "ChatTyper" */
-export type ChatTyper_Obj_Rel_Insert_Input = {
-  readonly data: ChatTyper_Insert_Input;
-  readonly on_conflict?: Maybe<ChatTyper_On_Conflict>;
-};
-
-/** on conflict condition type for table "ChatTyper" */
-export type ChatTyper_On_Conflict = {
-  readonly constraint: ChatTyper_Constraint;
-  readonly update_columns: ReadonlyArray<ChatTyper_Update_Column>;
-  readonly where?: Maybe<ChatTyper_Bool_Exp>;
-};
-
-/** ordering options when selecting data from "ChatTyper" */
-export type ChatTyper_Order_By = {
-  readonly chat?: Maybe<Chat_Order_By>;
-  readonly chatId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly updatedAt?: Maybe<Order_By>;
-  readonly user?: Maybe<User_Order_By>;
-  readonly userId?: Maybe<Order_By>;
-};
-
-/** primary key columns input for table: "ChatTyper" */
-export type ChatTyper_Pk_Columns_Input = {
-  readonly id: Scalars['uuid'];
-};
-
-/** select columns of table "ChatTyper" */
-export enum ChatTyper_Select_Column {
-  /** column name */
-  ChatId = 'chatId',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  UpdatedAt = 'updatedAt',
-  /** column name */
-  UserId = 'userId'
-}
-
-/** input type for updating data in table "ChatTyper" */
-export type ChatTyper_Set_Input = {
-  readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-  readonly userId?: Maybe<Scalars['String']>;
-};
-
-/** update columns of table "ChatTyper" */
-export enum ChatTyper_Update_Column {
-  /** column name */
-  ChatId = 'chatId',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  UpdatedAt = 'updatedAt',
-  /** column name */
-  UserId = 'userId'
-}
-
-/** columns and relationships of "ChatUnreadIndex" */
-export type ChatUnreadIndex = {
-  readonly __typename?: 'ChatUnreadIndex';
-  /** An object relationship */
-  readonly chat: Chat;
-  readonly chatId: Scalars['uuid'];
-  readonly id: Scalars['uuid'];
-  readonly index?: Maybe<Scalars['Int']>;
-  /** An object relationship */
-  readonly user: User;
-  readonly userId: Scalars['String'];
-};
-
-/** aggregated selection of "ChatUnreadIndex" */
-export type ChatUnreadIndex_Aggregate = {
-  readonly __typename?: 'ChatUnreadIndex_aggregate';
-  readonly aggregate?: Maybe<ChatUnreadIndex_Aggregate_Fields>;
-  readonly nodes: ReadonlyArray<ChatUnreadIndex>;
-};
-
-/** aggregate fields of "ChatUnreadIndex" */
-export type ChatUnreadIndex_Aggregate_Fields = {
-  readonly __typename?: 'ChatUnreadIndex_aggregate_fields';
-  readonly avg?: Maybe<ChatUnreadIndex_Avg_Fields>;
-  readonly count?: Maybe<Scalars['Int']>;
-  readonly max?: Maybe<ChatUnreadIndex_Max_Fields>;
-  readonly min?: Maybe<ChatUnreadIndex_Min_Fields>;
-  readonly stddev?: Maybe<ChatUnreadIndex_Stddev_Fields>;
-  readonly stddev_pop?: Maybe<ChatUnreadIndex_Stddev_Pop_Fields>;
-  readonly stddev_samp?: Maybe<ChatUnreadIndex_Stddev_Samp_Fields>;
-  readonly sum?: Maybe<ChatUnreadIndex_Sum_Fields>;
-  readonly var_pop?: Maybe<ChatUnreadIndex_Var_Pop_Fields>;
-  readonly var_samp?: Maybe<ChatUnreadIndex_Var_Samp_Fields>;
-  readonly variance?: Maybe<ChatUnreadIndex_Variance_Fields>;
-};
-
-
-/** aggregate fields of "ChatUnreadIndex" */
-export type ChatUnreadIndex_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<ReadonlyArray<ChatUnreadIndex_Select_Column>>;
-  distinct?: Maybe<Scalars['Boolean']>;
-};
-
-/** order by aggregate values of table "ChatUnreadIndex" */
-export type ChatUnreadIndex_Aggregate_Order_By = {
-  readonly avg?: Maybe<ChatUnreadIndex_Avg_Order_By>;
-  readonly count?: Maybe<Order_By>;
-  readonly max?: Maybe<ChatUnreadIndex_Max_Order_By>;
-  readonly min?: Maybe<ChatUnreadIndex_Min_Order_By>;
-  readonly stddev?: Maybe<ChatUnreadIndex_Stddev_Order_By>;
-  readonly stddev_pop?: Maybe<ChatUnreadIndex_Stddev_Pop_Order_By>;
-  readonly stddev_samp?: Maybe<ChatUnreadIndex_Stddev_Samp_Order_By>;
-  readonly sum?: Maybe<ChatUnreadIndex_Sum_Order_By>;
-  readonly var_pop?: Maybe<ChatUnreadIndex_Var_Pop_Order_By>;
-  readonly var_samp?: Maybe<ChatUnreadIndex_Var_Samp_Order_By>;
-  readonly variance?: Maybe<ChatUnreadIndex_Variance_Order_By>;
-};
-
-/** input type for inserting array relation for remote table "ChatUnreadIndex" */
-export type ChatUnreadIndex_Arr_Rel_Insert_Input = {
-  readonly data: ReadonlyArray<ChatUnreadIndex_Insert_Input>;
-  readonly on_conflict?: Maybe<ChatUnreadIndex_On_Conflict>;
-};
-
-/** aggregate avg on columns */
-export type ChatUnreadIndex_Avg_Fields = {
-  readonly __typename?: 'ChatUnreadIndex_avg_fields';
-  readonly index?: Maybe<Scalars['Float']>;
-};
-
-/** order by avg() on columns of table "ChatUnreadIndex" */
-export type ChatUnreadIndex_Avg_Order_By = {
-  readonly index?: Maybe<Order_By>;
-};
-
-/** Boolean expression to filter rows from the table "ChatUnreadIndex". All fields are combined with a logical 'AND'. */
-export type ChatUnreadIndex_Bool_Exp = {
-  readonly _and?: Maybe<ReadonlyArray<Maybe<ChatUnreadIndex_Bool_Exp>>>;
-  readonly _not?: Maybe<ChatUnreadIndex_Bool_Exp>;
-  readonly _or?: Maybe<ReadonlyArray<Maybe<ChatUnreadIndex_Bool_Exp>>>;
-  readonly chat?: Maybe<Chat_Bool_Exp>;
-  readonly chatId?: Maybe<Uuid_Comparison_Exp>;
-  readonly id?: Maybe<Uuid_Comparison_Exp>;
-  readonly index?: Maybe<Int_Comparison_Exp>;
-  readonly user?: Maybe<User_Bool_Exp>;
-  readonly userId?: Maybe<String_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "ChatUnreadIndex" */
-export enum ChatUnreadIndex_Constraint {
-  /** unique or primary key constraint */
-  ChatUnreadIndexChatIdUserIdKey = 'ChatUnreadIndex_chatId_userId_key',
-  /** unique or primary key constraint */
-  ChatUnreadIndexPkey = 'ChatUnreadIndex_pkey'
-}
-
-/** input type for incrementing integer column in table "ChatUnreadIndex" */
-export type ChatUnreadIndex_Inc_Input = {
-  readonly index?: Maybe<Scalars['Int']>;
-};
-
-/** input type for inserting data into table "ChatUnreadIndex" */
-export type ChatUnreadIndex_Insert_Input = {
-  readonly chat?: Maybe<Chat_Obj_Rel_Insert_Input>;
-  readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly index?: Maybe<Scalars['Int']>;
-  readonly user?: Maybe<User_Obj_Rel_Insert_Input>;
-  readonly userId?: Maybe<Scalars['String']>;
-};
-
-/** aggregate max on columns */
-export type ChatUnreadIndex_Max_Fields = {
-  readonly __typename?: 'ChatUnreadIndex_max_fields';
-  readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly index?: Maybe<Scalars['Int']>;
-  readonly userId?: Maybe<Scalars['String']>;
-};
-
-/** order by max() on columns of table "ChatUnreadIndex" */
-export type ChatUnreadIndex_Max_Order_By = {
-  readonly chatId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly index?: Maybe<Order_By>;
-  readonly userId?: Maybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type ChatUnreadIndex_Min_Fields = {
-  readonly __typename?: 'ChatUnreadIndex_min_fields';
-  readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly index?: Maybe<Scalars['Int']>;
-  readonly userId?: Maybe<Scalars['String']>;
-};
-
-/** order by min() on columns of table "ChatUnreadIndex" */
-export type ChatUnreadIndex_Min_Order_By = {
-  readonly chatId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly index?: Maybe<Order_By>;
-  readonly userId?: Maybe<Order_By>;
-};
-
-/** response of any mutation on the table "ChatUnreadIndex" */
-export type ChatUnreadIndex_Mutation_Response = {
-  readonly __typename?: 'ChatUnreadIndex_mutation_response';
-  /** number of affected rows by the mutation */
-  readonly affected_rows: Scalars['Int'];
-  /** data of the affected rows by the mutation */
-  readonly returning: ReadonlyArray<ChatUnreadIndex>;
-};
-
-/** input type for inserting object relation for remote table "ChatUnreadIndex" */
-export type ChatUnreadIndex_Obj_Rel_Insert_Input = {
-  readonly data: ChatUnreadIndex_Insert_Input;
-  readonly on_conflict?: Maybe<ChatUnreadIndex_On_Conflict>;
-};
-
-/** on conflict condition type for table "ChatUnreadIndex" */
-export type ChatUnreadIndex_On_Conflict = {
-  readonly constraint: ChatUnreadIndex_Constraint;
-  readonly update_columns: ReadonlyArray<ChatUnreadIndex_Update_Column>;
-  readonly where?: Maybe<ChatUnreadIndex_Bool_Exp>;
-};
-
-/** ordering options when selecting data from "ChatUnreadIndex" */
-export type ChatUnreadIndex_Order_By = {
-  readonly chat?: Maybe<Chat_Order_By>;
-  readonly chatId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly index?: Maybe<Order_By>;
-  readonly user?: Maybe<User_Order_By>;
-  readonly userId?: Maybe<Order_By>;
-};
-
-/** primary key columns input for table: "ChatUnreadIndex" */
-export type ChatUnreadIndex_Pk_Columns_Input = {
-  readonly id: Scalars['uuid'];
-};
-
-/** select columns of table "ChatUnreadIndex" */
-export enum ChatUnreadIndex_Select_Column {
-  /** column name */
-  ChatId = 'chatId',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  Index = 'index',
-  /** column name */
-  UserId = 'userId'
-}
-
-/** input type for updating data in table "ChatUnreadIndex" */
-export type ChatUnreadIndex_Set_Input = {
-  readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly index?: Maybe<Scalars['Int']>;
-  readonly userId?: Maybe<Scalars['String']>;
-};
-
-/** aggregate stddev on columns */
-export type ChatUnreadIndex_Stddev_Fields = {
-  readonly __typename?: 'ChatUnreadIndex_stddev_fields';
-  readonly index?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev() on columns of table "ChatUnreadIndex" */
-export type ChatUnreadIndex_Stddev_Order_By = {
-  readonly index?: Maybe<Order_By>;
-};
-
-/** aggregate stddev_pop on columns */
-export type ChatUnreadIndex_Stddev_Pop_Fields = {
-  readonly __typename?: 'ChatUnreadIndex_stddev_pop_fields';
-  readonly index?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_pop() on columns of table "ChatUnreadIndex" */
-export type ChatUnreadIndex_Stddev_Pop_Order_By = {
-  readonly index?: Maybe<Order_By>;
-};
-
-/** aggregate stddev_samp on columns */
-export type ChatUnreadIndex_Stddev_Samp_Fields = {
-  readonly __typename?: 'ChatUnreadIndex_stddev_samp_fields';
-  readonly index?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_samp() on columns of table "ChatUnreadIndex" */
-export type ChatUnreadIndex_Stddev_Samp_Order_By = {
-  readonly index?: Maybe<Order_By>;
-};
-
-/** aggregate sum on columns */
-export type ChatUnreadIndex_Sum_Fields = {
-  readonly __typename?: 'ChatUnreadIndex_sum_fields';
-  readonly index?: Maybe<Scalars['Int']>;
-};
-
-/** order by sum() on columns of table "ChatUnreadIndex" */
-export type ChatUnreadIndex_Sum_Order_By = {
-  readonly index?: Maybe<Order_By>;
-};
-
-/** update columns of table "ChatUnreadIndex" */
-export enum ChatUnreadIndex_Update_Column {
-  /** column name */
-  ChatId = 'chatId',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  Index = 'index',
-  /** column name */
-  UserId = 'userId'
-}
-
-/** aggregate var_pop on columns */
-export type ChatUnreadIndex_Var_Pop_Fields = {
-  readonly __typename?: 'ChatUnreadIndex_var_pop_fields';
-  readonly index?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_pop() on columns of table "ChatUnreadIndex" */
-export type ChatUnreadIndex_Var_Pop_Order_By = {
-  readonly index?: Maybe<Order_By>;
-};
-
-/** aggregate var_samp on columns */
-export type ChatUnreadIndex_Var_Samp_Fields = {
-  readonly __typename?: 'ChatUnreadIndex_var_samp_fields';
-  readonly index?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_samp() on columns of table "ChatUnreadIndex" */
-export type ChatUnreadIndex_Var_Samp_Order_By = {
-  readonly index?: Maybe<Order_By>;
-};
-
-/** aggregate variance on columns */
-export type ChatUnreadIndex_Variance_Fields = {
-  readonly __typename?: 'ChatUnreadIndex_variance_fields';
-  readonly index?: Maybe<Scalars['Float']>;
-};
-
-/** order by variance() on columns of table "ChatUnreadIndex" */
-export type ChatUnreadIndex_Variance_Order_By = {
-  readonly index?: Maybe<Order_By>;
-};
-
-/** columns and relationships of "ChatViewer" */
-export type ChatViewer = {
-  readonly __typename?: 'ChatViewer';
-  /** An object relationship */
-  readonly chat: Chat;
-  readonly chatId: Scalars['uuid'];
-  readonly id: Scalars['uuid'];
-  readonly lastSeen: Scalars['timestamptz'];
-  /** An object relationship */
-  readonly user: User;
-  readonly userId: Scalars['String'];
-};
-
-/** aggregated selection of "ChatViewer" */
-export type ChatViewer_Aggregate = {
-  readonly __typename?: 'ChatViewer_aggregate';
-  readonly aggregate?: Maybe<ChatViewer_Aggregate_Fields>;
-  readonly nodes: ReadonlyArray<ChatViewer>;
-};
-
-/** aggregate fields of "ChatViewer" */
-export type ChatViewer_Aggregate_Fields = {
-  readonly __typename?: 'ChatViewer_aggregate_fields';
-  readonly count?: Maybe<Scalars['Int']>;
-  readonly max?: Maybe<ChatViewer_Max_Fields>;
-  readonly min?: Maybe<ChatViewer_Min_Fields>;
-};
-
-
-/** aggregate fields of "ChatViewer" */
-export type ChatViewer_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<ReadonlyArray<ChatViewer_Select_Column>>;
-  distinct?: Maybe<Scalars['Boolean']>;
-};
-
-/** order by aggregate values of table "ChatViewer" */
-export type ChatViewer_Aggregate_Order_By = {
-  readonly count?: Maybe<Order_By>;
-  readonly max?: Maybe<ChatViewer_Max_Order_By>;
-  readonly min?: Maybe<ChatViewer_Min_Order_By>;
-};
-
-/** input type for inserting array relation for remote table "ChatViewer" */
-export type ChatViewer_Arr_Rel_Insert_Input = {
-  readonly data: ReadonlyArray<ChatViewer_Insert_Input>;
-  readonly on_conflict?: Maybe<ChatViewer_On_Conflict>;
-};
-
-/** Boolean expression to filter rows from the table "ChatViewer". All fields are combined with a logical 'AND'. */
-export type ChatViewer_Bool_Exp = {
-  readonly _and?: Maybe<ReadonlyArray<Maybe<ChatViewer_Bool_Exp>>>;
-  readonly _not?: Maybe<ChatViewer_Bool_Exp>;
-  readonly _or?: Maybe<ReadonlyArray<Maybe<ChatViewer_Bool_Exp>>>;
-  readonly chat?: Maybe<Chat_Bool_Exp>;
-  readonly chatId?: Maybe<Uuid_Comparison_Exp>;
-  readonly id?: Maybe<Uuid_Comparison_Exp>;
-  readonly lastSeen?: Maybe<Timestamptz_Comparison_Exp>;
-  readonly user?: Maybe<User_Bool_Exp>;
-  readonly userId?: Maybe<String_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "ChatViewer" */
-export enum ChatViewer_Constraint {
-  /** unique or primary key constraint */
-  ChatViewerChatIdUserIdKey = 'ChatViewer_chatId_userId_key',
-  /** unique or primary key constraint */
-  ChatViewerPkey = 'ChatViewer_pkey'
-}
-
-/** input type for inserting data into table "ChatViewer" */
-export type ChatViewer_Insert_Input = {
-  readonly chat?: Maybe<Chat_Obj_Rel_Insert_Input>;
-  readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly lastSeen?: Maybe<Scalars['timestamptz']>;
-  readonly user?: Maybe<User_Obj_Rel_Insert_Input>;
-  readonly userId?: Maybe<Scalars['String']>;
-};
-
-/** aggregate max on columns */
-export type ChatViewer_Max_Fields = {
-  readonly __typename?: 'ChatViewer_max_fields';
-  readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly lastSeen?: Maybe<Scalars['timestamptz']>;
-  readonly userId?: Maybe<Scalars['String']>;
-};
-
-/** order by max() on columns of table "ChatViewer" */
-export type ChatViewer_Max_Order_By = {
-  readonly chatId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly lastSeen?: Maybe<Order_By>;
-  readonly userId?: Maybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type ChatViewer_Min_Fields = {
-  readonly __typename?: 'ChatViewer_min_fields';
-  readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly lastSeen?: Maybe<Scalars['timestamptz']>;
-  readonly userId?: Maybe<Scalars['String']>;
-};
-
-/** order by min() on columns of table "ChatViewer" */
-export type ChatViewer_Min_Order_By = {
-  readonly chatId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly lastSeen?: Maybe<Order_By>;
-  readonly userId?: Maybe<Order_By>;
-};
-
-/** response of any mutation on the table "ChatViewer" */
-export type ChatViewer_Mutation_Response = {
-  readonly __typename?: 'ChatViewer_mutation_response';
-  /** number of affected rows by the mutation */
-  readonly affected_rows: Scalars['Int'];
-  /** data of the affected rows by the mutation */
-  readonly returning: ReadonlyArray<ChatViewer>;
-};
-
-/** input type for inserting object relation for remote table "ChatViewer" */
-export type ChatViewer_Obj_Rel_Insert_Input = {
-  readonly data: ChatViewer_Insert_Input;
-  readonly on_conflict?: Maybe<ChatViewer_On_Conflict>;
-};
-
-/** on conflict condition type for table "ChatViewer" */
-export type ChatViewer_On_Conflict = {
-  readonly constraint: ChatViewer_Constraint;
-  readonly update_columns: ReadonlyArray<ChatViewer_Update_Column>;
-  readonly where?: Maybe<ChatViewer_Bool_Exp>;
-};
-
-/** ordering options when selecting data from "ChatViewer" */
-export type ChatViewer_Order_By = {
-  readonly chat?: Maybe<Chat_Order_By>;
-  readonly chatId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly lastSeen?: Maybe<Order_By>;
-  readonly user?: Maybe<User_Order_By>;
-  readonly userId?: Maybe<Order_By>;
-};
-
-/** primary key columns input for table: "ChatViewer" */
-export type ChatViewer_Pk_Columns_Input = {
-  readonly id: Scalars['uuid'];
-};
-
-/** select columns of table "ChatViewer" */
-export enum ChatViewer_Select_Column {
-  /** column name */
-  ChatId = 'chatId',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  LastSeen = 'lastSeen',
-  /** column name */
-  UserId = 'userId'
-}
-
-/** input type for updating data in table "ChatViewer" */
-export type ChatViewer_Set_Input = {
-  readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly lastSeen?: Maybe<Scalars['timestamptz']>;
-  readonly userId?: Maybe<Scalars['String']>;
-};
-
-/** update columns of table "ChatViewer" */
-export enum ChatViewer_Update_Column {
-  /** column name */
-  ChatId = 'chatId',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  LastSeen = 'lastSeen',
-  /** column name */
-  UserId = 'userId'
-}
-
-/** aggregated selection of "Chat" */
-export type Chat_Aggregate = {
-  readonly __typename?: 'Chat_aggregate';
-  readonly aggregate?: Maybe<Chat_Aggregate_Fields>;
-  readonly nodes: ReadonlyArray<Chat>;
-};
-
-/** aggregate fields of "Chat" */
-export type Chat_Aggregate_Fields = {
-  readonly __typename?: 'Chat_aggregate_fields';
-  readonly count?: Maybe<Scalars['Int']>;
-  readonly max?: Maybe<Chat_Max_Fields>;
-  readonly min?: Maybe<Chat_Min_Fields>;
-};
-
-
-/** aggregate fields of "Chat" */
-export type Chat_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<ReadonlyArray<Chat_Select_Column>>;
-  distinct?: Maybe<Scalars['Boolean']>;
-};
-
-/** order by aggregate values of table "Chat" */
-export type Chat_Aggregate_Order_By = {
-  readonly count?: Maybe<Order_By>;
-  readonly max?: Maybe<Chat_Max_Order_By>;
-  readonly min?: Maybe<Chat_Min_Order_By>;
-};
-
-/** input type for inserting array relation for remote table "Chat" */
-export type Chat_Arr_Rel_Insert_Input = {
-  readonly data: ReadonlyArray<Chat_Insert_Input>;
-  readonly on_conflict?: Maybe<Chat_On_Conflict>;
-};
-
-/** Boolean expression to filter rows from the table "Chat". All fields are combined with a logical 'AND'. */
-export type Chat_Bool_Exp = {
-  readonly _and?: Maybe<ReadonlyArray<Maybe<Chat_Bool_Exp>>>;
-  readonly _not?: Maybe<Chat_Bool_Exp>;
-  readonly _or?: Maybe<ReadonlyArray<Maybe<Chat_Bool_Exp>>>;
-  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
-  readonly creator?: Maybe<User_Bool_Exp>;
-  readonly creatorId?: Maybe<String_Comparison_Exp>;
-  readonly description?: Maybe<String_Comparison_Exp>;
-  readonly flaggedMessages?: Maybe<FlaggedChatMessage_Bool_Exp>;
-  readonly id?: Maybe<Uuid_Comparison_Exp>;
-  readonly isAutoNotify?: Maybe<Boolean_Comparison_Exp>;
-  readonly isAutoPin?: Maybe<Boolean_Comparison_Exp>;
-  readonly members?: Maybe<ChatMember_Bool_Exp>;
-  readonly messages?: Maybe<ChatMessage_Bool_Exp>;
-  readonly mode?: Maybe<String_Comparison_Exp>;
-  readonly name?: Maybe<String_Comparison_Exp>;
-  readonly typers?: Maybe<ChatTyper_Bool_Exp>;
-  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
-  readonly viewers?: Maybe<ChatViewer_Bool_Exp>;
-};
-
-/** unique or primary key constraints on table "Chat" */
-export enum Chat_Constraint {
-  /** unique or primary key constraint */
-  ChatPkey = 'Chat_pkey'
-}
-
-/** input type for inserting data into table "Chat" */
-export type Chat_Insert_Input = {
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly creator?: Maybe<User_Obj_Rel_Insert_Input>;
-  readonly creatorId?: Maybe<Scalars['String']>;
-  readonly description?: Maybe<Scalars['String']>;
-  readonly flaggedMessages?: Maybe<FlaggedChatMessage_Arr_Rel_Insert_Input>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly isAutoNotify?: Maybe<Scalars['Boolean']>;
-  readonly isAutoPin?: Maybe<Scalars['Boolean']>;
-  readonly members?: Maybe<ChatMember_Arr_Rel_Insert_Input>;
-  readonly messages?: Maybe<ChatMessage_Arr_Rel_Insert_Input>;
-  readonly mode?: Maybe<Scalars['String']>;
-  readonly name?: Maybe<Scalars['String']>;
-  readonly typers?: Maybe<ChatTyper_Arr_Rel_Insert_Input>;
-  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-  readonly viewers?: Maybe<ChatViewer_Arr_Rel_Insert_Input>;
-};
-
-/** aggregate max on columns */
-export type Chat_Max_Fields = {
-  readonly __typename?: 'Chat_max_fields';
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly creatorId?: Maybe<Scalars['String']>;
-  readonly description?: Maybe<Scalars['String']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly mode?: Maybe<Scalars['String']>;
-  readonly name?: Maybe<Scalars['String']>;
-  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-};
-
-/** order by max() on columns of table "Chat" */
-export type Chat_Max_Order_By = {
-  readonly createdAt?: Maybe<Order_By>;
-  readonly creatorId?: Maybe<Order_By>;
-  readonly description?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly mode?: Maybe<Order_By>;
-  readonly name?: Maybe<Order_By>;
-  readonly updatedAt?: Maybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type Chat_Min_Fields = {
-  readonly __typename?: 'Chat_min_fields';
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly creatorId?: Maybe<Scalars['String']>;
-  readonly description?: Maybe<Scalars['String']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly mode?: Maybe<Scalars['String']>;
-  readonly name?: Maybe<Scalars['String']>;
-  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-};
-
-/** order by min() on columns of table "Chat" */
-export type Chat_Min_Order_By = {
-  readonly createdAt?: Maybe<Order_By>;
-  readonly creatorId?: Maybe<Order_By>;
-  readonly description?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly mode?: Maybe<Order_By>;
-  readonly name?: Maybe<Order_By>;
-  readonly updatedAt?: Maybe<Order_By>;
-};
-
-/** response of any mutation on the table "Chat" */
-export type Chat_Mutation_Response = {
-  readonly __typename?: 'Chat_mutation_response';
-  /** number of affected rows by the mutation */
-  readonly affected_rows: Scalars['Int'];
-  /** data of the affected rows by the mutation */
-  readonly returning: ReadonlyArray<Chat>;
-};
-
-/** input type for inserting object relation for remote table "Chat" */
-export type Chat_Obj_Rel_Insert_Input = {
-  readonly data: Chat_Insert_Input;
-  readonly on_conflict?: Maybe<Chat_On_Conflict>;
-};
-
-/** on conflict condition type for table "Chat" */
-export type Chat_On_Conflict = {
-  readonly constraint: Chat_Constraint;
-  readonly update_columns: ReadonlyArray<Chat_Update_Column>;
-  readonly where?: Maybe<Chat_Bool_Exp>;
-};
-
-/** ordering options when selecting data from "Chat" */
-export type Chat_Order_By = {
-  readonly createdAt?: Maybe<Order_By>;
-  readonly creator?: Maybe<User_Order_By>;
-  readonly creatorId?: Maybe<Order_By>;
-  readonly description?: Maybe<Order_By>;
-  readonly flaggedMessages_aggregate?: Maybe<FlaggedChatMessage_Aggregate_Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly isAutoNotify?: Maybe<Order_By>;
-  readonly isAutoPin?: Maybe<Order_By>;
-  readonly members_aggregate?: Maybe<ChatMember_Aggregate_Order_By>;
-  readonly messages_aggregate?: Maybe<ChatMessage_Aggregate_Order_By>;
-  readonly mode?: Maybe<Order_By>;
-  readonly name?: Maybe<Order_By>;
-  readonly typers_aggregate?: Maybe<ChatTyper_Aggregate_Order_By>;
-  readonly updatedAt?: Maybe<Order_By>;
-  readonly viewers_aggregate?: Maybe<ChatViewer_Aggregate_Order_By>;
-};
-
-/** primary key columns input for table: "Chat" */
-export type Chat_Pk_Columns_Input = {
-  readonly id: Scalars['uuid'];
-};
-
-/** select columns of table "Chat" */
-export enum Chat_Select_Column {
-  /** column name */
-  CreatedAt = 'createdAt',
-  /** column name */
-  CreatorId = 'creatorId',
-  /** column name */
-  Description = 'description',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  IsAutoNotify = 'isAutoNotify',
-  /** column name */
-  IsAutoPin = 'isAutoPin',
-  /** column name */
-  Mode = 'mode',
-  /** column name */
-  Name = 'name',
-  /** column name */
-  UpdatedAt = 'updatedAt'
-}
-
-/** input type for updating data in table "Chat" */
-export type Chat_Set_Input = {
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly creatorId?: Maybe<Scalars['String']>;
-  readonly description?: Maybe<Scalars['String']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly isAutoNotify?: Maybe<Scalars['Boolean']>;
-  readonly isAutoPin?: Maybe<Scalars['Boolean']>;
-  readonly mode?: Maybe<Scalars['String']>;
-  readonly name?: Maybe<Scalars['String']>;
-  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-};
-
-/** update columns of table "Chat" */
-export enum Chat_Update_Column {
-  /** column name */
-  CreatedAt = 'createdAt',
-  /** column name */
-  CreatorId = 'creatorId',
-  /** column name */
-  Description = 'description',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  IsAutoNotify = 'isAutoNotify',
-  /** column name */
-  IsAutoPin = 'isAutoPin',
-  /** column name */
-  Mode = 'mode',
-  /** column name */
-  Name = 'name',
-  /** column name */
-  UpdatedAt = 'updatedAt'
-}
-
 /** columns and relationships of "Conference" */
 export type Conference = {
   readonly __typename?: 'Conference';
@@ -3328,6 +1483,10 @@ export type Conference = {
   readonly attendees: ReadonlyArray<Attendee>;
   /** An aggregated array relationship */
   readonly attendees_aggregate: Attendee_Aggregate;
+  /** An array relationship */
+  readonly chats: ReadonlyArray<Chat_Chat>;
+  /** An aggregated array relationship */
+  readonly chats_aggregate: Chat_Chat_Aggregate;
   /** An array relationship */
   readonly configurations: ReadonlyArray<ConferenceConfiguration>;
   /** An aggregated array relationship */
@@ -3396,6 +1555,26 @@ export type ConferenceAttendees_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Attendee_Order_By>>;
   where?: Maybe<Attendee_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Conference" */
+export type ConferenceChatsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Chat_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Chat_Order_By>>;
+  where?: Maybe<Chat_Chat_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Conference" */
+export type ConferenceChats_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Chat_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Chat_Order_By>>;
+  where?: Maybe<Chat_Chat_Bool_Exp>;
 };
 
 
@@ -4277,6 +2456,7 @@ export type Conference_Bool_Exp = {
   readonly _not?: Maybe<Conference_Bool_Exp>;
   readonly _or?: Maybe<ReadonlyArray<Maybe<Conference_Bool_Exp>>>;
   readonly attendees?: Maybe<Attendee_Bool_Exp>;
+  readonly chats?: Maybe<Chat_Chat_Bool_Exp>;
   readonly configurations?: Maybe<ConferenceConfiguration_Bool_Exp>;
   readonly contentGroups?: Maybe<ContentGroup_Bool_Exp>;
   readonly contentPeople?: Maybe<ContentPerson_Bool_Exp>;
@@ -4315,6 +2495,7 @@ export enum Conference_Constraint {
 /** input type for inserting data into table "Conference" */
 export type Conference_Insert_Input = {
   readonly attendees?: Maybe<Attendee_Arr_Rel_Insert_Input>;
+  readonly chats?: Maybe<Chat_Chat_Arr_Rel_Insert_Input>;
   readonly configurations?: Maybe<ConferenceConfiguration_Arr_Rel_Insert_Input>;
   readonly contentGroups?: Maybe<ContentGroup_Arr_Rel_Insert_Input>;
   readonly contentPeople?: Maybe<ContentPerson_Arr_Rel_Insert_Input>;
@@ -4411,6 +2592,7 @@ export type Conference_On_Conflict = {
 /** ordering options when selecting data from "Conference" */
 export type Conference_Order_By = {
   readonly attendees_aggregate?: Maybe<Attendee_Aggregate_Order_By>;
+  readonly chats_aggregate?: Maybe<Chat_Chat_Aggregate_Order_By>;
   readonly configurations_aggregate?: Maybe<ConferenceConfiguration_Aggregate_Order_By>;
   readonly contentGroups_aggregate?: Maybe<ContentGroup_Aggregate_Order_By>;
   readonly contentPeople_aggregate?: Maybe<ContentPerson_Aggregate_Order_By>;
@@ -4503,6 +2685,9 @@ export type ConfirmInvitationOutput = {
 /** columns and relationships of "ContentGroup" */
 export type ContentGroup = {
   readonly __typename?: 'ContentGroup';
+  /** An object relationship */
+  readonly chat?: Maybe<Chat_Chat>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
   /** An object relationship */
   readonly conference: Conference;
   readonly conferenceId: Scalars['uuid'];
@@ -5740,6 +3925,8 @@ export type ContentGroup_Bool_Exp = {
   readonly _and?: Maybe<ReadonlyArray<Maybe<ContentGroup_Bool_Exp>>>;
   readonly _not?: Maybe<ContentGroup_Bool_Exp>;
   readonly _or?: Maybe<ReadonlyArray<Maybe<ContentGroup_Bool_Exp>>>;
+  readonly chat?: Maybe<Chat_Chat_Bool_Exp>;
+  readonly chatId?: Maybe<Uuid_Comparison_Exp>;
   readonly conference?: Maybe<Conference_Bool_Exp>;
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly contentGroupTags?: Maybe<ContentGroupTag_Bool_Exp>;
@@ -5767,6 +3954,8 @@ export enum ContentGroup_Constraint {
 
 /** input type for inserting data into table "ContentGroup" */
 export type ContentGroup_Insert_Input = {
+  readonly chat?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
   readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly contentGroupTags?: Maybe<ContentGroupTag_Arr_Rel_Insert_Input>;
@@ -5789,6 +3978,7 @@ export type ContentGroup_Insert_Input = {
 /** aggregate max on columns */
 export type ContentGroup_Max_Fields = {
   readonly __typename?: 'ContentGroup_max_fields';
+  readonly chatId?: Maybe<Scalars['uuid']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
@@ -5800,6 +3990,7 @@ export type ContentGroup_Max_Fields = {
 
 /** order by max() on columns of table "ContentGroup" */
 export type ContentGroup_Max_Order_By = {
+  readonly chatId?: Maybe<Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
@@ -5812,6 +4003,7 @@ export type ContentGroup_Max_Order_By = {
 /** aggregate min on columns */
 export type ContentGroup_Min_Fields = {
   readonly __typename?: 'ContentGroup_min_fields';
+  readonly chatId?: Maybe<Scalars['uuid']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
@@ -5823,6 +4015,7 @@ export type ContentGroup_Min_Fields = {
 
 /** order by min() on columns of table "ContentGroup" */
 export type ContentGroup_Min_Order_By = {
+  readonly chatId?: Maybe<Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
@@ -5856,6 +4049,8 @@ export type ContentGroup_On_Conflict = {
 
 /** ordering options when selecting data from "ContentGroup" */
 export type ContentGroup_Order_By = {
+  readonly chat?: Maybe<Chat_Chat_Order_By>;
+  readonly chatId?: Maybe<Order_By>;
   readonly conference?: Maybe<Conference_Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly contentGroupTags_aggregate?: Maybe<ContentGroupTag_Aggregate_Order_By>;
@@ -5883,6 +4078,8 @@ export type ContentGroup_Pk_Columns_Input = {
 /** select columns of table "ContentGroup" */
 export enum ContentGroup_Select_Column {
   /** column name */
+  ChatId = 'chatId',
+  /** column name */
   ConferenceId = 'conferenceId',
   /** column name */
   ContentGroupTypeName = 'contentGroupTypeName',
@@ -5902,6 +4099,7 @@ export enum ContentGroup_Select_Column {
 
 /** input type for updating data in table "ContentGroup" */
 export type ContentGroup_Set_Input = {
+  readonly chatId?: Maybe<Scalars['uuid']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly contentGroupTypeName?: Maybe<ContentGroupType_Enum>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
@@ -5914,6 +4112,8 @@ export type ContentGroup_Set_Input = {
 
 /** update columns of table "ContentGroup" */
 export enum ContentGroup_Update_Column {
+  /** column name */
+  ChatId = 'chatId',
   /** column name */
   ConferenceId = 'conferenceId',
   /** column name */
@@ -8779,423 +6979,6 @@ export enum ExecutedTransitions_Update_Column {
   UpdatedAt = 'updatedAt'
 }
 
-/** columns and relationships of "FlaggedChatMessage" */
-export type FlaggedChatMessage = {
-  readonly __typename?: 'FlaggedChatMessage';
-  readonly createdAt: Scalars['timestamptz'];
-  /** An object relationship */
-  readonly flaggedBy: User;
-  readonly flaggedById: Scalars['String'];
-  readonly id: Scalars['uuid'];
-  /** An object relationship */
-  readonly message: ChatMessage;
-  readonly messageId: Scalars['uuid'];
-  /** An object relationship */
-  readonly moderationChat?: Maybe<Chat>;
-  readonly moderationChatId?: Maybe<Scalars['uuid']>;
-  readonly notes?: Maybe<Scalars['String']>;
-  readonly resolutionAction?: Maybe<Scalars['String']>;
-  readonly resolvedAt?: Maybe<Scalars['timestamptz']>;
-};
-
-/** aggregated selection of "FlaggedChatMessage" */
-export type FlaggedChatMessage_Aggregate = {
-  readonly __typename?: 'FlaggedChatMessage_aggregate';
-  readonly aggregate?: Maybe<FlaggedChatMessage_Aggregate_Fields>;
-  readonly nodes: ReadonlyArray<FlaggedChatMessage>;
-};
-
-/** aggregate fields of "FlaggedChatMessage" */
-export type FlaggedChatMessage_Aggregate_Fields = {
-  readonly __typename?: 'FlaggedChatMessage_aggregate_fields';
-  readonly count?: Maybe<Scalars['Int']>;
-  readonly max?: Maybe<FlaggedChatMessage_Max_Fields>;
-  readonly min?: Maybe<FlaggedChatMessage_Min_Fields>;
-};
-
-
-/** aggregate fields of "FlaggedChatMessage" */
-export type FlaggedChatMessage_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<ReadonlyArray<FlaggedChatMessage_Select_Column>>;
-  distinct?: Maybe<Scalars['Boolean']>;
-};
-
-/** order by aggregate values of table "FlaggedChatMessage" */
-export type FlaggedChatMessage_Aggregate_Order_By = {
-  readonly count?: Maybe<Order_By>;
-  readonly max?: Maybe<FlaggedChatMessage_Max_Order_By>;
-  readonly min?: Maybe<FlaggedChatMessage_Min_Order_By>;
-};
-
-/** input type for inserting array relation for remote table "FlaggedChatMessage" */
-export type FlaggedChatMessage_Arr_Rel_Insert_Input = {
-  readonly data: ReadonlyArray<FlaggedChatMessage_Insert_Input>;
-  readonly on_conflict?: Maybe<FlaggedChatMessage_On_Conflict>;
-};
-
-/** Boolean expression to filter rows from the table "FlaggedChatMessage". All fields are combined with a logical 'AND'. */
-export type FlaggedChatMessage_Bool_Exp = {
-  readonly _and?: Maybe<ReadonlyArray<Maybe<FlaggedChatMessage_Bool_Exp>>>;
-  readonly _not?: Maybe<FlaggedChatMessage_Bool_Exp>;
-  readonly _or?: Maybe<ReadonlyArray<Maybe<FlaggedChatMessage_Bool_Exp>>>;
-  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
-  readonly flaggedBy?: Maybe<User_Bool_Exp>;
-  readonly flaggedById?: Maybe<String_Comparison_Exp>;
-  readonly id?: Maybe<Uuid_Comparison_Exp>;
-  readonly message?: Maybe<ChatMessage_Bool_Exp>;
-  readonly messageId?: Maybe<Uuid_Comparison_Exp>;
-  readonly moderationChat?: Maybe<Chat_Bool_Exp>;
-  readonly moderationChatId?: Maybe<Uuid_Comparison_Exp>;
-  readonly notes?: Maybe<String_Comparison_Exp>;
-  readonly resolutionAction?: Maybe<String_Comparison_Exp>;
-  readonly resolvedAt?: Maybe<Timestamptz_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "FlaggedChatMessage" */
-export enum FlaggedChatMessage_Constraint {
-  /** unique or primary key constraint */
-  FlaggedChatMessageMessageIdFlaggedByIdKey = 'FlaggedChatMessage_messageId_flaggedById_key',
-  /** unique or primary key constraint */
-  FlaggedChatMessagePkey = 'FlaggedChatMessage_pkey'
-}
-
-/** input type for inserting data into table "FlaggedChatMessage" */
-export type FlaggedChatMessage_Insert_Input = {
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly flaggedBy?: Maybe<User_Obj_Rel_Insert_Input>;
-  readonly flaggedById?: Maybe<Scalars['String']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly message?: Maybe<ChatMessage_Obj_Rel_Insert_Input>;
-  readonly messageId?: Maybe<Scalars['uuid']>;
-  readonly moderationChat?: Maybe<Chat_Obj_Rel_Insert_Input>;
-  readonly moderationChatId?: Maybe<Scalars['uuid']>;
-  readonly notes?: Maybe<Scalars['String']>;
-  readonly resolutionAction?: Maybe<Scalars['String']>;
-  readonly resolvedAt?: Maybe<Scalars['timestamptz']>;
-};
-
-/** aggregate max on columns */
-export type FlaggedChatMessage_Max_Fields = {
-  readonly __typename?: 'FlaggedChatMessage_max_fields';
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly flaggedById?: Maybe<Scalars['String']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly messageId?: Maybe<Scalars['uuid']>;
-  readonly moderationChatId?: Maybe<Scalars['uuid']>;
-  readonly notes?: Maybe<Scalars['String']>;
-  readonly resolutionAction?: Maybe<Scalars['String']>;
-  readonly resolvedAt?: Maybe<Scalars['timestamptz']>;
-};
-
-/** order by max() on columns of table "FlaggedChatMessage" */
-export type FlaggedChatMessage_Max_Order_By = {
-  readonly createdAt?: Maybe<Order_By>;
-  readonly flaggedById?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly messageId?: Maybe<Order_By>;
-  readonly moderationChatId?: Maybe<Order_By>;
-  readonly notes?: Maybe<Order_By>;
-  readonly resolutionAction?: Maybe<Order_By>;
-  readonly resolvedAt?: Maybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type FlaggedChatMessage_Min_Fields = {
-  readonly __typename?: 'FlaggedChatMessage_min_fields';
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly flaggedById?: Maybe<Scalars['String']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly messageId?: Maybe<Scalars['uuid']>;
-  readonly moderationChatId?: Maybe<Scalars['uuid']>;
-  readonly notes?: Maybe<Scalars['String']>;
-  readonly resolutionAction?: Maybe<Scalars['String']>;
-  readonly resolvedAt?: Maybe<Scalars['timestamptz']>;
-};
-
-/** order by min() on columns of table "FlaggedChatMessage" */
-export type FlaggedChatMessage_Min_Order_By = {
-  readonly createdAt?: Maybe<Order_By>;
-  readonly flaggedById?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly messageId?: Maybe<Order_By>;
-  readonly moderationChatId?: Maybe<Order_By>;
-  readonly notes?: Maybe<Order_By>;
-  readonly resolutionAction?: Maybe<Order_By>;
-  readonly resolvedAt?: Maybe<Order_By>;
-};
-
-/** response of any mutation on the table "FlaggedChatMessage" */
-export type FlaggedChatMessage_Mutation_Response = {
-  readonly __typename?: 'FlaggedChatMessage_mutation_response';
-  /** number of affected rows by the mutation */
-  readonly affected_rows: Scalars['Int'];
-  /** data of the affected rows by the mutation */
-  readonly returning: ReadonlyArray<FlaggedChatMessage>;
-};
-
-/** input type for inserting object relation for remote table "FlaggedChatMessage" */
-export type FlaggedChatMessage_Obj_Rel_Insert_Input = {
-  readonly data: FlaggedChatMessage_Insert_Input;
-  readonly on_conflict?: Maybe<FlaggedChatMessage_On_Conflict>;
-};
-
-/** on conflict condition type for table "FlaggedChatMessage" */
-export type FlaggedChatMessage_On_Conflict = {
-  readonly constraint: FlaggedChatMessage_Constraint;
-  readonly update_columns: ReadonlyArray<FlaggedChatMessage_Update_Column>;
-  readonly where?: Maybe<FlaggedChatMessage_Bool_Exp>;
-};
-
-/** ordering options when selecting data from "FlaggedChatMessage" */
-export type FlaggedChatMessage_Order_By = {
-  readonly createdAt?: Maybe<Order_By>;
-  readonly flaggedBy?: Maybe<User_Order_By>;
-  readonly flaggedById?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly message?: Maybe<ChatMessage_Order_By>;
-  readonly messageId?: Maybe<Order_By>;
-  readonly moderationChat?: Maybe<Chat_Order_By>;
-  readonly moderationChatId?: Maybe<Order_By>;
-  readonly notes?: Maybe<Order_By>;
-  readonly resolutionAction?: Maybe<Order_By>;
-  readonly resolvedAt?: Maybe<Order_By>;
-};
-
-/** primary key columns input for table: "FlaggedChatMessage" */
-export type FlaggedChatMessage_Pk_Columns_Input = {
-  readonly id: Scalars['uuid'];
-};
-
-/** select columns of table "FlaggedChatMessage" */
-export enum FlaggedChatMessage_Select_Column {
-  /** column name */
-  CreatedAt = 'createdAt',
-  /** column name */
-  FlaggedById = 'flaggedById',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  MessageId = 'messageId',
-  /** column name */
-  ModerationChatId = 'moderationChatId',
-  /** column name */
-  Notes = 'notes',
-  /** column name */
-  ResolutionAction = 'resolutionAction',
-  /** column name */
-  ResolvedAt = 'resolvedAt'
-}
-
-/** input type for updating data in table "FlaggedChatMessage" */
-export type FlaggedChatMessage_Set_Input = {
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly flaggedById?: Maybe<Scalars['String']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly messageId?: Maybe<Scalars['uuid']>;
-  readonly moderationChatId?: Maybe<Scalars['uuid']>;
-  readonly notes?: Maybe<Scalars['String']>;
-  readonly resolutionAction?: Maybe<Scalars['String']>;
-  readonly resolvedAt?: Maybe<Scalars['timestamptz']>;
-};
-
-/** update columns of table "FlaggedChatMessage" */
-export enum FlaggedChatMessage_Update_Column {
-  /** column name */
-  CreatedAt = 'createdAt',
-  /** column name */
-  FlaggedById = 'flaggedById',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  MessageId = 'messageId',
-  /** column name */
-  ModerationChatId = 'moderationChatId',
-  /** column name */
-  Notes = 'notes',
-  /** column name */
-  ResolutionAction = 'resolutionAction',
-  /** column name */
-  ResolvedAt = 'resolvedAt'
-}
-
-/** columns and relationships of "FollowedChat" */
-export type FollowedChat = {
-  readonly __typename?: 'FollowedChat';
-  /** An object relationship */
-  readonly chat: Chat;
-  readonly chatId: Scalars['uuid'];
-  readonly id: Scalars['uuid'];
-  readonly manual: Scalars['Boolean'];
-  /** An object relationship */
-  readonly user: User;
-  readonly userId: Scalars['String'];
-};
-
-/** aggregated selection of "FollowedChat" */
-export type FollowedChat_Aggregate = {
-  readonly __typename?: 'FollowedChat_aggregate';
-  readonly aggregate?: Maybe<FollowedChat_Aggregate_Fields>;
-  readonly nodes: ReadonlyArray<FollowedChat>;
-};
-
-/** aggregate fields of "FollowedChat" */
-export type FollowedChat_Aggregate_Fields = {
-  readonly __typename?: 'FollowedChat_aggregate_fields';
-  readonly count?: Maybe<Scalars['Int']>;
-  readonly max?: Maybe<FollowedChat_Max_Fields>;
-  readonly min?: Maybe<FollowedChat_Min_Fields>;
-};
-
-
-/** aggregate fields of "FollowedChat" */
-export type FollowedChat_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<ReadonlyArray<FollowedChat_Select_Column>>;
-  distinct?: Maybe<Scalars['Boolean']>;
-};
-
-/** order by aggregate values of table "FollowedChat" */
-export type FollowedChat_Aggregate_Order_By = {
-  readonly count?: Maybe<Order_By>;
-  readonly max?: Maybe<FollowedChat_Max_Order_By>;
-  readonly min?: Maybe<FollowedChat_Min_Order_By>;
-};
-
-/** input type for inserting array relation for remote table "FollowedChat" */
-export type FollowedChat_Arr_Rel_Insert_Input = {
-  readonly data: ReadonlyArray<FollowedChat_Insert_Input>;
-  readonly on_conflict?: Maybe<FollowedChat_On_Conflict>;
-};
-
-/** Boolean expression to filter rows from the table "FollowedChat". All fields are combined with a logical 'AND'. */
-export type FollowedChat_Bool_Exp = {
-  readonly _and?: Maybe<ReadonlyArray<Maybe<FollowedChat_Bool_Exp>>>;
-  readonly _not?: Maybe<FollowedChat_Bool_Exp>;
-  readonly _or?: Maybe<ReadonlyArray<Maybe<FollowedChat_Bool_Exp>>>;
-  readonly chat?: Maybe<Chat_Bool_Exp>;
-  readonly chatId?: Maybe<Uuid_Comparison_Exp>;
-  readonly id?: Maybe<Uuid_Comparison_Exp>;
-  readonly manual?: Maybe<Boolean_Comparison_Exp>;
-  readonly user?: Maybe<User_Bool_Exp>;
-  readonly userId?: Maybe<String_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "FollowedChat" */
-export enum FollowedChat_Constraint {
-  /** unique or primary key constraint */
-  FollowedChatChatIdUserIdKey = 'FollowedChat_chatId_userId_key',
-  /** unique or primary key constraint */
-  FollowedChatPkey = 'FollowedChat_pkey'
-}
-
-/** input type for inserting data into table "FollowedChat" */
-export type FollowedChat_Insert_Input = {
-  readonly chat?: Maybe<Chat_Obj_Rel_Insert_Input>;
-  readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly manual?: Maybe<Scalars['Boolean']>;
-  readonly user?: Maybe<User_Obj_Rel_Insert_Input>;
-  readonly userId?: Maybe<Scalars['String']>;
-};
-
-/** aggregate max on columns */
-export type FollowedChat_Max_Fields = {
-  readonly __typename?: 'FollowedChat_max_fields';
-  readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly userId?: Maybe<Scalars['String']>;
-};
-
-/** order by max() on columns of table "FollowedChat" */
-export type FollowedChat_Max_Order_By = {
-  readonly chatId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly userId?: Maybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type FollowedChat_Min_Fields = {
-  readonly __typename?: 'FollowedChat_min_fields';
-  readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly userId?: Maybe<Scalars['String']>;
-};
-
-/** order by min() on columns of table "FollowedChat" */
-export type FollowedChat_Min_Order_By = {
-  readonly chatId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly userId?: Maybe<Order_By>;
-};
-
-/** response of any mutation on the table "FollowedChat" */
-export type FollowedChat_Mutation_Response = {
-  readonly __typename?: 'FollowedChat_mutation_response';
-  /** number of affected rows by the mutation */
-  readonly affected_rows: Scalars['Int'];
-  /** data of the affected rows by the mutation */
-  readonly returning: ReadonlyArray<FollowedChat>;
-};
-
-/** input type for inserting object relation for remote table "FollowedChat" */
-export type FollowedChat_Obj_Rel_Insert_Input = {
-  readonly data: FollowedChat_Insert_Input;
-  readonly on_conflict?: Maybe<FollowedChat_On_Conflict>;
-};
-
-/** on conflict condition type for table "FollowedChat" */
-export type FollowedChat_On_Conflict = {
-  readonly constraint: FollowedChat_Constraint;
-  readonly update_columns: ReadonlyArray<FollowedChat_Update_Column>;
-  readonly where?: Maybe<FollowedChat_Bool_Exp>;
-};
-
-/** ordering options when selecting data from "FollowedChat" */
-export type FollowedChat_Order_By = {
-  readonly chat?: Maybe<Chat_Order_By>;
-  readonly chatId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly manual?: Maybe<Order_By>;
-  readonly user?: Maybe<User_Order_By>;
-  readonly userId?: Maybe<Order_By>;
-};
-
-/** primary key columns input for table: "FollowedChat" */
-export type FollowedChat_Pk_Columns_Input = {
-  readonly id: Scalars['uuid'];
-};
-
-/** select columns of table "FollowedChat" */
-export enum FollowedChat_Select_Column {
-  /** column name */
-  ChatId = 'chatId',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  Manual = 'manual',
-  /** column name */
-  UserId = 'userId'
-}
-
-/** input type for updating data in table "FollowedChat" */
-export type FollowedChat_Set_Input = {
-  readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly manual?: Maybe<Scalars['Boolean']>;
-  readonly userId?: Maybe<Scalars['String']>;
-};
-
-/** update columns of table "FollowedChat" */
-export enum FollowedChat_Update_Column {
-  /** column name */
-  ChatId = 'chatId',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  Manual = 'manual',
-  /** column name */
-  UserId = 'userId'
-}
-
 export type GetContentItemOutput = {
   readonly __typename?: 'GetContentItemOutput';
   readonly contentGroupTitle: Scalars['String'];
@@ -12051,184 +9834,6 @@ export enum Permission_Update_Column {
   Name = 'name'
 }
 
-/** columns and relationships of "PinnedChat" */
-export type PinnedChat = {
-  readonly __typename?: 'PinnedChat';
-  /** An object relationship */
-  readonly chat: Chat;
-  readonly chatId: Scalars['uuid'];
-  readonly id: Scalars['uuid'];
-  readonly manual: Scalars['Boolean'];
-  /** An object relationship */
-  readonly user: User;
-  readonly userId: Scalars['String'];
-};
-
-/** aggregated selection of "PinnedChat" */
-export type PinnedChat_Aggregate = {
-  readonly __typename?: 'PinnedChat_aggregate';
-  readonly aggregate?: Maybe<PinnedChat_Aggregate_Fields>;
-  readonly nodes: ReadonlyArray<PinnedChat>;
-};
-
-/** aggregate fields of "PinnedChat" */
-export type PinnedChat_Aggregate_Fields = {
-  readonly __typename?: 'PinnedChat_aggregate_fields';
-  readonly count?: Maybe<Scalars['Int']>;
-  readonly max?: Maybe<PinnedChat_Max_Fields>;
-  readonly min?: Maybe<PinnedChat_Min_Fields>;
-};
-
-
-/** aggregate fields of "PinnedChat" */
-export type PinnedChat_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<ReadonlyArray<PinnedChat_Select_Column>>;
-  distinct?: Maybe<Scalars['Boolean']>;
-};
-
-/** order by aggregate values of table "PinnedChat" */
-export type PinnedChat_Aggregate_Order_By = {
-  readonly count?: Maybe<Order_By>;
-  readonly max?: Maybe<PinnedChat_Max_Order_By>;
-  readonly min?: Maybe<PinnedChat_Min_Order_By>;
-};
-
-/** input type for inserting array relation for remote table "PinnedChat" */
-export type PinnedChat_Arr_Rel_Insert_Input = {
-  readonly data: ReadonlyArray<PinnedChat_Insert_Input>;
-  readonly on_conflict?: Maybe<PinnedChat_On_Conflict>;
-};
-
-/** Boolean expression to filter rows from the table "PinnedChat". All fields are combined with a logical 'AND'. */
-export type PinnedChat_Bool_Exp = {
-  readonly _and?: Maybe<ReadonlyArray<Maybe<PinnedChat_Bool_Exp>>>;
-  readonly _not?: Maybe<PinnedChat_Bool_Exp>;
-  readonly _or?: Maybe<ReadonlyArray<Maybe<PinnedChat_Bool_Exp>>>;
-  readonly chat?: Maybe<Chat_Bool_Exp>;
-  readonly chatId?: Maybe<Uuid_Comparison_Exp>;
-  readonly id?: Maybe<Uuid_Comparison_Exp>;
-  readonly manual?: Maybe<Boolean_Comparison_Exp>;
-  readonly user?: Maybe<User_Bool_Exp>;
-  readonly userId?: Maybe<String_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "PinnedChat" */
-export enum PinnedChat_Constraint {
-  /** unique or primary key constraint */
-  PinnedChatChatIdUserIdKey = 'PinnedChat_chatId_userId_key',
-  /** unique or primary key constraint */
-  PinnedChatPkey = 'PinnedChat_pkey'
-}
-
-/** input type for inserting data into table "PinnedChat" */
-export type PinnedChat_Insert_Input = {
-  readonly chat?: Maybe<Chat_Obj_Rel_Insert_Input>;
-  readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly manual?: Maybe<Scalars['Boolean']>;
-  readonly user?: Maybe<User_Obj_Rel_Insert_Input>;
-  readonly userId?: Maybe<Scalars['String']>;
-};
-
-/** aggregate max on columns */
-export type PinnedChat_Max_Fields = {
-  readonly __typename?: 'PinnedChat_max_fields';
-  readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly userId?: Maybe<Scalars['String']>;
-};
-
-/** order by max() on columns of table "PinnedChat" */
-export type PinnedChat_Max_Order_By = {
-  readonly chatId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly userId?: Maybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type PinnedChat_Min_Fields = {
-  readonly __typename?: 'PinnedChat_min_fields';
-  readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly userId?: Maybe<Scalars['String']>;
-};
-
-/** order by min() on columns of table "PinnedChat" */
-export type PinnedChat_Min_Order_By = {
-  readonly chatId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly userId?: Maybe<Order_By>;
-};
-
-/** response of any mutation on the table "PinnedChat" */
-export type PinnedChat_Mutation_Response = {
-  readonly __typename?: 'PinnedChat_mutation_response';
-  /** number of affected rows by the mutation */
-  readonly affected_rows: Scalars['Int'];
-  /** data of the affected rows by the mutation */
-  readonly returning: ReadonlyArray<PinnedChat>;
-};
-
-/** input type for inserting object relation for remote table "PinnedChat" */
-export type PinnedChat_Obj_Rel_Insert_Input = {
-  readonly data: PinnedChat_Insert_Input;
-  readonly on_conflict?: Maybe<PinnedChat_On_Conflict>;
-};
-
-/** on conflict condition type for table "PinnedChat" */
-export type PinnedChat_On_Conflict = {
-  readonly constraint: PinnedChat_Constraint;
-  readonly update_columns: ReadonlyArray<PinnedChat_Update_Column>;
-  readonly where?: Maybe<PinnedChat_Bool_Exp>;
-};
-
-/** ordering options when selecting data from "PinnedChat" */
-export type PinnedChat_Order_By = {
-  readonly chat?: Maybe<Chat_Order_By>;
-  readonly chatId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly manual?: Maybe<Order_By>;
-  readonly user?: Maybe<User_Order_By>;
-  readonly userId?: Maybe<Order_By>;
-};
-
-/** primary key columns input for table: "PinnedChat" */
-export type PinnedChat_Pk_Columns_Input = {
-  readonly id: Scalars['uuid'];
-};
-
-/** select columns of table "PinnedChat" */
-export enum PinnedChat_Select_Column {
-  /** column name */
-  ChatId = 'chatId',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  Manual = 'manual',
-  /** column name */
-  UserId = 'userId'
-}
-
-/** input type for updating data in table "PinnedChat" */
-export type PinnedChat_Set_Input = {
-  readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly manual?: Maybe<Scalars['Boolean']>;
-  readonly userId?: Maybe<Scalars['String']>;
-};
-
-/** update columns of table "PinnedChat" */
-export enum PinnedChat_Update_Column {
-  /** column name */
-  ChatId = 'chatId',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  Manual = 'manual',
-  /** column name */
-  UserId = 'userId'
-}
-
 export type ProfilePhotoUrlResponse = {
   readonly __typename?: 'ProfilePhotoURLResponse';
   readonly url: Scalars['String'];
@@ -13094,6 +10699,9 @@ export enum Role_Update_Column {
 export type Room = {
   readonly __typename?: 'Room';
   readonly capacity?: Maybe<Scalars['Int']>;
+  /** An object relationship */
+  readonly chat?: Maybe<Chat_Chat>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
   /** An object relationship */
   readonly conference: Conference;
   readonly conferenceId: Scalars['uuid'];
@@ -14097,6 +11705,8 @@ export enum RoomPrivacy_Constraint {
 export enum RoomPrivacy_Enum {
   /** Room is a direct message between two attendees. No new attendees can be added. */
   Dm = 'DM',
+  /** Room access is automatically controlled by the system. */
+  Managed = 'MANAGED',
   /** Room is only visible to attendees who have been given access. New attendees can be added. */
   Private = 'PRIVATE',
   /** Room is visible to all attendees at the conference. */
@@ -14269,6 +11879,8 @@ export type Room_Bool_Exp = {
   readonly _not?: Maybe<Room_Bool_Exp>;
   readonly _or?: Maybe<ReadonlyArray<Maybe<Room_Bool_Exp>>>;
   readonly capacity?: Maybe<Int_Comparison_Exp>;
+  readonly chat?: Maybe<Chat_Chat_Bool_Exp>;
+  readonly chatId?: Maybe<Uuid_Comparison_Exp>;
   readonly conference?: Maybe<Conference_Bool_Exp>;
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
@@ -14311,6 +11923,8 @@ export type Room_Inc_Input = {
 /** input type for inserting data into table "Room" */
 export type Room_Insert_Input = {
   readonly capacity?: Maybe<Scalars['Int']>;
+  readonly chat?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
   readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
@@ -14338,6 +11952,7 @@ export type Room_Insert_Input = {
 export type Room_Max_Fields = {
   readonly __typename?: 'Room_max_fields';
   readonly capacity?: Maybe<Scalars['Int']>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
@@ -14352,6 +11967,7 @@ export type Room_Max_Fields = {
 /** order by max() on columns of table "Room" */
 export type Room_Max_Order_By = {
   readonly capacity?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
@@ -14367,6 +11983,7 @@ export type Room_Max_Order_By = {
 export type Room_Min_Fields = {
   readonly __typename?: 'Room_min_fields';
   readonly capacity?: Maybe<Scalars['Int']>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
@@ -14381,6 +11998,7 @@ export type Room_Min_Fields = {
 /** order by min() on columns of table "Room" */
 export type Room_Min_Order_By = {
   readonly capacity?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
@@ -14417,6 +12035,8 @@ export type Room_On_Conflict = {
 /** ordering options when selecting data from "Room" */
 export type Room_Order_By = {
   readonly capacity?: Maybe<Order_By>;
+  readonly chat?: Maybe<Chat_Chat_Order_By>;
+  readonly chatId?: Maybe<Order_By>;
   readonly conference?: Maybe<Conference_Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
@@ -14450,6 +12070,8 @@ export enum Room_Select_Column {
   /** column name */
   Capacity = 'capacity',
   /** column name */
+  ChatId = 'chatId',
+  /** column name */
   ConferenceId = 'conferenceId',
   /** column name */
   CreatedAt = 'created_at',
@@ -14476,6 +12098,7 @@ export enum Room_Select_Column {
 /** input type for updating data in table "Room" */
 export type Room_Set_Input = {
   readonly capacity?: Maybe<Scalars['Int']>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly currentModeName?: Maybe<RoomMode_Enum>;
@@ -14545,6 +12168,8 @@ export type Room_Sum_Order_By = {
 export enum Room_Update_Column {
   /** column name */
   Capacity = 'capacity',
+  /** column name */
+  ChatId = 'chatId',
   /** column name */
   ConferenceId = 'conferenceId',
   /** column name */
@@ -15778,10 +13403,6 @@ export type User = {
   /** An aggregated array relationship */
   readonly attendees_aggregate: Attendee_Aggregate;
   /** An array relationship */
-  readonly chats: ReadonlyArray<Chat>;
-  /** An aggregated array relationship */
-  readonly chats_aggregate: Chat_Aggregate;
-  /** An array relationship */
   readonly conferenceDemoCodes: ReadonlyArray<ConferenceDemoCode>;
   /** An aggregated array relationship */
   readonly conferenceDemoCodes_aggregate: ConferenceDemoCode_Aggregate;
@@ -15796,14 +13417,6 @@ export type User = {
   /** An aggregated array relationship */
   readonly emails_aggregate: Email_Aggregate;
   readonly firstName: Scalars['String'];
-  /** An array relationship */
-  readonly flaggedMessages: ReadonlyArray<FlaggedChatMessage>;
-  /** An aggregated array relationship */
-  readonly flaggedMessages_aggregate: FlaggedChatMessage_Aggregate;
-  /** An array relationship */
-  readonly followedChats: ReadonlyArray<FollowedChat>;
-  /** An aggregated array relationship */
-  readonly followedChats_aggregate: FollowedChat_Aggregate;
   readonly id: Scalars['String'];
   /** An array relationship */
   readonly invitationsPendingConfirmation: ReadonlyArray<Invitation>;
@@ -15811,37 +13424,9 @@ export type User = {
   readonly invitationsPendingConfirmation_aggregate: Invitation_Aggregate;
   readonly lastLoggedInAt?: Maybe<Scalars['timestamptz']>;
   readonly lastName: Scalars['String'];
-  /** An array relationship */
-  readonly memberOfChats: ReadonlyArray<ChatMember>;
-  /** An aggregated array relationship */
-  readonly memberOfChats_aggregate: ChatMember_Aggregate;
   /** An object relationship */
   readonly onlineStatus?: Maybe<OnlineStatus>;
-  /** An array relationship */
-  readonly pinnedChats: ReadonlyArray<PinnedChat>;
-  /** An aggregated array relationship */
-  readonly pinnedChats_aggregate: PinnedChat_Aggregate;
-  /** An array relationship */
-  readonly reactions: ReadonlyArray<ChatReaction>;
-  /** An aggregated array relationship */
-  readonly reactions_aggregate: ChatReaction_Aggregate;
-  /** An array relationship */
-  readonly sentMessages: ReadonlyArray<ChatMessage>;
-  /** An aggregated array relationship */
-  readonly sentMessages_aggregate: ChatMessage_Aggregate;
-  /** An array relationship */
-  readonly typingInChats: ReadonlyArray<ChatTyper>;
-  /** An aggregated array relationship */
-  readonly typingInChats_aggregate: ChatTyper_Aggregate;
-  /** An array relationship */
-  readonly unreadIndices: ReadonlyArray<ChatUnreadIndex>;
-  /** An aggregated array relationship */
-  readonly unreadIndices_aggregate: ChatUnreadIndex_Aggregate;
   readonly updatedAt: Scalars['timestamptz'];
-  /** An array relationship */
-  readonly viewingChats: ReadonlyArray<ChatViewer>;
-  /** An aggregated array relationship */
-  readonly viewingChats_aggregate: ChatViewer_Aggregate;
 };
 
 
@@ -15862,26 +13447,6 @@ export type UserAttendees_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Attendee_Order_By>>;
   where?: Maybe<Attendee_Bool_Exp>;
-};
-
-
-/** columns and relationships of "User" */
-export type UserChatsArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Chat_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Chat_Order_By>>;
-  where?: Maybe<Chat_Bool_Exp>;
-};
-
-
-/** columns and relationships of "User" */
-export type UserChats_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Chat_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Chat_Order_By>>;
-  where?: Maybe<Chat_Bool_Exp>;
 };
 
 
@@ -15946,46 +13511,6 @@ export type UserEmails_AggregateArgs = {
 
 
 /** columns and relationships of "User" */
-export type UserFlaggedMessagesArgs = {
-  distinct_on?: Maybe<ReadonlyArray<FlaggedChatMessage_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<FlaggedChatMessage_Order_By>>;
-  where?: Maybe<FlaggedChatMessage_Bool_Exp>;
-};
-
-
-/** columns and relationships of "User" */
-export type UserFlaggedMessages_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<FlaggedChatMessage_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<FlaggedChatMessage_Order_By>>;
-  where?: Maybe<FlaggedChatMessage_Bool_Exp>;
-};
-
-
-/** columns and relationships of "User" */
-export type UserFollowedChatsArgs = {
-  distinct_on?: Maybe<ReadonlyArray<FollowedChat_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<FollowedChat_Order_By>>;
-  where?: Maybe<FollowedChat_Bool_Exp>;
-};
-
-
-/** columns and relationships of "User" */
-export type UserFollowedChats_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<FollowedChat_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<FollowedChat_Order_By>>;
-  where?: Maybe<FollowedChat_Bool_Exp>;
-};
-
-
-/** columns and relationships of "User" */
 export type UserInvitationsPendingConfirmationArgs = {
   distinct_on?: Maybe<ReadonlyArray<Invitation_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -16002,146 +13527,6 @@ export type UserInvitationsPendingConfirmation_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Invitation_Order_By>>;
   where?: Maybe<Invitation_Bool_Exp>;
-};
-
-
-/** columns and relationships of "User" */
-export type UserMemberOfChatsArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatMember_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatMember_Order_By>>;
-  where?: Maybe<ChatMember_Bool_Exp>;
-};
-
-
-/** columns and relationships of "User" */
-export type UserMemberOfChats_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatMember_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatMember_Order_By>>;
-  where?: Maybe<ChatMember_Bool_Exp>;
-};
-
-
-/** columns and relationships of "User" */
-export type UserPinnedChatsArgs = {
-  distinct_on?: Maybe<ReadonlyArray<PinnedChat_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<PinnedChat_Order_By>>;
-  where?: Maybe<PinnedChat_Bool_Exp>;
-};
-
-
-/** columns and relationships of "User" */
-export type UserPinnedChats_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<PinnedChat_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<PinnedChat_Order_By>>;
-  where?: Maybe<PinnedChat_Bool_Exp>;
-};
-
-
-/** columns and relationships of "User" */
-export type UserReactionsArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatReaction_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatReaction_Order_By>>;
-  where?: Maybe<ChatReaction_Bool_Exp>;
-};
-
-
-/** columns and relationships of "User" */
-export type UserReactions_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatReaction_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatReaction_Order_By>>;
-  where?: Maybe<ChatReaction_Bool_Exp>;
-};
-
-
-/** columns and relationships of "User" */
-export type UserSentMessagesArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatMessage_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatMessage_Order_By>>;
-  where?: Maybe<ChatMessage_Bool_Exp>;
-};
-
-
-/** columns and relationships of "User" */
-export type UserSentMessages_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatMessage_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatMessage_Order_By>>;
-  where?: Maybe<ChatMessage_Bool_Exp>;
-};
-
-
-/** columns and relationships of "User" */
-export type UserTypingInChatsArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatTyper_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatTyper_Order_By>>;
-  where?: Maybe<ChatTyper_Bool_Exp>;
-};
-
-
-/** columns and relationships of "User" */
-export type UserTypingInChats_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatTyper_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatTyper_Order_By>>;
-  where?: Maybe<ChatTyper_Bool_Exp>;
-};
-
-
-/** columns and relationships of "User" */
-export type UserUnreadIndicesArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatUnreadIndex_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatUnreadIndex_Order_By>>;
-  where?: Maybe<ChatUnreadIndex_Bool_Exp>;
-};
-
-
-/** columns and relationships of "User" */
-export type UserUnreadIndices_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatUnreadIndex_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatUnreadIndex_Order_By>>;
-  where?: Maybe<ChatUnreadIndex_Bool_Exp>;
-};
-
-
-/** columns and relationships of "User" */
-export type UserViewingChatsArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatViewer_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatViewer_Order_By>>;
-  where?: Maybe<ChatViewer_Bool_Exp>;
-};
-
-
-/** columns and relationships of "User" */
-export type UserViewingChats_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatViewer_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatViewer_Order_By>>;
-  where?: Maybe<ChatViewer_Bool_Exp>;
 };
 
 /** aggregated selection of "User" */
@@ -16185,28 +13570,18 @@ export type User_Bool_Exp = {
   readonly _not?: Maybe<User_Bool_Exp>;
   readonly _or?: Maybe<ReadonlyArray<Maybe<User_Bool_Exp>>>;
   readonly attendees?: Maybe<Attendee_Bool_Exp>;
-  readonly chats?: Maybe<Chat_Bool_Exp>;
   readonly conferenceDemoCodes?: Maybe<ConferenceDemoCode_Bool_Exp>;
   readonly conferencesCreated?: Maybe<Conference_Bool_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly email?: Maybe<String_Comparison_Exp>;
   readonly emails?: Maybe<Email_Bool_Exp>;
   readonly firstName?: Maybe<String_Comparison_Exp>;
-  readonly flaggedMessages?: Maybe<FlaggedChatMessage_Bool_Exp>;
-  readonly followedChats?: Maybe<FollowedChat_Bool_Exp>;
   readonly id?: Maybe<String_Comparison_Exp>;
   readonly invitationsPendingConfirmation?: Maybe<Invitation_Bool_Exp>;
   readonly lastLoggedInAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly lastName?: Maybe<String_Comparison_Exp>;
-  readonly memberOfChats?: Maybe<ChatMember_Bool_Exp>;
   readonly onlineStatus?: Maybe<OnlineStatus_Bool_Exp>;
-  readonly pinnedChats?: Maybe<PinnedChat_Bool_Exp>;
-  readonly reactions?: Maybe<ChatReaction_Bool_Exp>;
-  readonly sentMessages?: Maybe<ChatMessage_Bool_Exp>;
-  readonly typingInChats?: Maybe<ChatTyper_Bool_Exp>;
-  readonly unreadIndices?: Maybe<ChatUnreadIndex_Bool_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
-  readonly viewingChats?: Maybe<ChatViewer_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "User" */
@@ -16220,28 +13595,18 @@ export enum User_Constraint {
 /** input type for inserting data into table "User" */
 export type User_Insert_Input = {
   readonly attendees?: Maybe<Attendee_Arr_Rel_Insert_Input>;
-  readonly chats?: Maybe<Chat_Arr_Rel_Insert_Input>;
   readonly conferenceDemoCodes?: Maybe<ConferenceDemoCode_Arr_Rel_Insert_Input>;
   readonly conferencesCreated?: Maybe<Conference_Arr_Rel_Insert_Input>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly email?: Maybe<Scalars['String']>;
   readonly emails?: Maybe<Email_Arr_Rel_Insert_Input>;
   readonly firstName?: Maybe<Scalars['String']>;
-  readonly flaggedMessages?: Maybe<FlaggedChatMessage_Arr_Rel_Insert_Input>;
-  readonly followedChats?: Maybe<FollowedChat_Arr_Rel_Insert_Input>;
   readonly id?: Maybe<Scalars['String']>;
   readonly invitationsPendingConfirmation?: Maybe<Invitation_Arr_Rel_Insert_Input>;
   readonly lastLoggedInAt?: Maybe<Scalars['timestamptz']>;
   readonly lastName?: Maybe<Scalars['String']>;
-  readonly memberOfChats?: Maybe<ChatMember_Arr_Rel_Insert_Input>;
   readonly onlineStatus?: Maybe<OnlineStatus_Obj_Rel_Insert_Input>;
-  readonly pinnedChats?: Maybe<PinnedChat_Arr_Rel_Insert_Input>;
-  readonly reactions?: Maybe<ChatReaction_Arr_Rel_Insert_Input>;
-  readonly sentMessages?: Maybe<ChatMessage_Arr_Rel_Insert_Input>;
-  readonly typingInChats?: Maybe<ChatTyper_Arr_Rel_Insert_Input>;
-  readonly unreadIndices?: Maybe<ChatUnreadIndex_Arr_Rel_Insert_Input>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-  readonly viewingChats?: Maybe<ChatViewer_Arr_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -16315,28 +13680,18 @@ export type User_On_Conflict = {
 /** ordering options when selecting data from "User" */
 export type User_Order_By = {
   readonly attendees_aggregate?: Maybe<Attendee_Aggregate_Order_By>;
-  readonly chats_aggregate?: Maybe<Chat_Aggregate_Order_By>;
   readonly conferenceDemoCodes_aggregate?: Maybe<ConferenceDemoCode_Aggregate_Order_By>;
   readonly conferencesCreated_aggregate?: Maybe<Conference_Aggregate_Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly email?: Maybe<Order_By>;
   readonly emails_aggregate?: Maybe<Email_Aggregate_Order_By>;
   readonly firstName?: Maybe<Order_By>;
-  readonly flaggedMessages_aggregate?: Maybe<FlaggedChatMessage_Aggregate_Order_By>;
-  readonly followedChats_aggregate?: Maybe<FollowedChat_Aggregate_Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly invitationsPendingConfirmation_aggregate?: Maybe<Invitation_Aggregate_Order_By>;
   readonly lastLoggedInAt?: Maybe<Order_By>;
   readonly lastName?: Maybe<Order_By>;
-  readonly memberOfChats_aggregate?: Maybe<ChatMember_Aggregate_Order_By>;
   readonly onlineStatus?: Maybe<OnlineStatus_Order_By>;
-  readonly pinnedChats_aggregate?: Maybe<PinnedChat_Aggregate_Order_By>;
-  readonly reactions_aggregate?: Maybe<ChatReaction_Aggregate_Order_By>;
-  readonly sentMessages_aggregate?: Maybe<ChatMessage_Aggregate_Order_By>;
-  readonly typingInChats_aggregate?: Maybe<ChatTyper_Aggregate_Order_By>;
-  readonly unreadIndices_aggregate?: Maybe<ChatUnreadIndex_Aggregate_Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
-  readonly viewingChats_aggregate?: Maybe<ChatViewer_Aggregate_Order_By>;
 };
 
 /** primary key columns input for table: "User" */
@@ -16665,6 +14020,2999 @@ export enum VideoRenderJob_Update_Column {
   JobStatusName = 'jobStatusName',
   /** column name */
   Message = 'message',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** columns and relationships of "chat.Chat" */
+export type Chat_Chat = {
+  readonly __typename?: 'chat_Chat';
+  /** An object relationship */
+  readonly conference: Conference;
+  readonly conferenceId: Scalars['uuid'];
+  /** An array relationship */
+  readonly contentGroup: ReadonlyArray<ContentGroup>;
+  /** An aggregated array relationship */
+  readonly contentGroup_aggregate: ContentGroup_Aggregate;
+  readonly created_at: Scalars['timestamptz'];
+  readonly enableAutoPin: Scalars['Boolean'];
+  readonly enableAutoSubscribe: Scalars['Boolean'];
+  readonly enableMandatoryPin: Scalars['Boolean'];
+  readonly enableMandatorySubscribe: Scalars['Boolean'];
+  /** An array relationship */
+  readonly flags: ReadonlyArray<Chat_Flag>;
+  /** An aggregated array relationship */
+  readonly flags_aggregate: Chat_Flag_Aggregate;
+  readonly id: Scalars['uuid'];
+  /** An array relationship */
+  readonly messages: ReadonlyArray<Chat_Message>;
+  /** An aggregated array relationship */
+  readonly messages_aggregate: Chat_Message_Aggregate;
+  /** An array relationship */
+  readonly pins: ReadonlyArray<Chat_Pin>;
+  /** An aggregated array relationship */
+  readonly pins_aggregate: Chat_Pin_Aggregate;
+  /** An array relationship */
+  readonly readUpToIndices: ReadonlyArray<Chat_ReadUpToIndex>;
+  /** An aggregated array relationship */
+  readonly readUpToIndices_aggregate: Chat_ReadUpToIndex_Aggregate;
+  readonly restrictToAdmins?: Maybe<Scalars['Boolean']>;
+  /** An array relationship */
+  readonly room: ReadonlyArray<Room>;
+  /** An aggregated array relationship */
+  readonly room_aggregate: Room_Aggregate;
+  /** An array relationship */
+  readonly subscriptions: ReadonlyArray<Chat_Subscription>;
+  /** An aggregated array relationship */
+  readonly subscriptions_aggregate: Chat_Subscription_Aggregate;
+  /** An array relationship */
+  readonly typers: ReadonlyArray<Chat_Typer>;
+  /** An aggregated array relationship */
+  readonly typers_aggregate: Chat_Typer_Aggregate;
+  readonly updated_at: Scalars['timestamptz'];
+};
+
+
+/** columns and relationships of "chat.Chat" */
+export type Chat_ChatContentGroupArgs = {
+  distinct_on?: Maybe<ReadonlyArray<ContentGroup_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<ContentGroup_Order_By>>;
+  where?: Maybe<ContentGroup_Bool_Exp>;
+};
+
+
+/** columns and relationships of "chat.Chat" */
+export type Chat_ChatContentGroup_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<ContentGroup_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<ContentGroup_Order_By>>;
+  where?: Maybe<ContentGroup_Bool_Exp>;
+};
+
+
+/** columns and relationships of "chat.Chat" */
+export type Chat_ChatFlagsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Flag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Flag_Order_By>>;
+  where?: Maybe<Chat_Flag_Bool_Exp>;
+};
+
+
+/** columns and relationships of "chat.Chat" */
+export type Chat_ChatFlags_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Flag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Flag_Order_By>>;
+  where?: Maybe<Chat_Flag_Bool_Exp>;
+};
+
+
+/** columns and relationships of "chat.Chat" */
+export type Chat_ChatMessagesArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Message_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Message_Order_By>>;
+  where?: Maybe<Chat_Message_Bool_Exp>;
+};
+
+
+/** columns and relationships of "chat.Chat" */
+export type Chat_ChatMessages_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Message_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Message_Order_By>>;
+  where?: Maybe<Chat_Message_Bool_Exp>;
+};
+
+
+/** columns and relationships of "chat.Chat" */
+export type Chat_ChatPinsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Pin_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Pin_Order_By>>;
+  where?: Maybe<Chat_Pin_Bool_Exp>;
+};
+
+
+/** columns and relationships of "chat.Chat" */
+export type Chat_ChatPins_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Pin_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Pin_Order_By>>;
+  where?: Maybe<Chat_Pin_Bool_Exp>;
+};
+
+
+/** columns and relationships of "chat.Chat" */
+export type Chat_ChatReadUpToIndicesArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_ReadUpToIndex_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_ReadUpToIndex_Order_By>>;
+  where?: Maybe<Chat_ReadUpToIndex_Bool_Exp>;
+};
+
+
+/** columns and relationships of "chat.Chat" */
+export type Chat_ChatReadUpToIndices_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_ReadUpToIndex_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_ReadUpToIndex_Order_By>>;
+  where?: Maybe<Chat_ReadUpToIndex_Bool_Exp>;
+};
+
+
+/** columns and relationships of "chat.Chat" */
+export type Chat_ChatRoomArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_Order_By>>;
+  where?: Maybe<Room_Bool_Exp>;
+};
+
+
+/** columns and relationships of "chat.Chat" */
+export type Chat_ChatRoom_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_Order_By>>;
+  where?: Maybe<Room_Bool_Exp>;
+};
+
+
+/** columns and relationships of "chat.Chat" */
+export type Chat_ChatSubscriptionsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Subscription_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Subscription_Order_By>>;
+  where?: Maybe<Chat_Subscription_Bool_Exp>;
+};
+
+
+/** columns and relationships of "chat.Chat" */
+export type Chat_ChatSubscriptions_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Subscription_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Subscription_Order_By>>;
+  where?: Maybe<Chat_Subscription_Bool_Exp>;
+};
+
+
+/** columns and relationships of "chat.Chat" */
+export type Chat_ChatTypersArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Typer_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Typer_Order_By>>;
+  where?: Maybe<Chat_Typer_Bool_Exp>;
+};
+
+
+/** columns and relationships of "chat.Chat" */
+export type Chat_ChatTypers_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Typer_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Typer_Order_By>>;
+  where?: Maybe<Chat_Typer_Bool_Exp>;
+};
+
+/** aggregated selection of "chat.Chat" */
+export type Chat_Chat_Aggregate = {
+  readonly __typename?: 'chat_Chat_aggregate';
+  readonly aggregate?: Maybe<Chat_Chat_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Chat_Chat>;
+};
+
+/** aggregate fields of "chat.Chat" */
+export type Chat_Chat_Aggregate_Fields = {
+  readonly __typename?: 'chat_Chat_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Chat_Chat_Max_Fields>;
+  readonly min?: Maybe<Chat_Chat_Min_Fields>;
+};
+
+
+/** aggregate fields of "chat.Chat" */
+export type Chat_Chat_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Chat_Chat_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "chat.Chat" */
+export type Chat_Chat_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Chat_Chat_Max_Order_By>;
+  readonly min?: Maybe<Chat_Chat_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "chat.Chat" */
+export type Chat_Chat_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Chat_Chat_Insert_Input>;
+  readonly on_conflict?: Maybe<Chat_Chat_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "chat.Chat". All fields are combined with a logical 'AND'. */
+export type Chat_Chat_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Chat_Chat_Bool_Exp>>>;
+  readonly _not?: Maybe<Chat_Chat_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Chat_Chat_Bool_Exp>>>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly contentGroup?: Maybe<ContentGroup_Bool_Exp>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly enableAutoPin?: Maybe<Boolean_Comparison_Exp>;
+  readonly enableAutoSubscribe?: Maybe<Boolean_Comparison_Exp>;
+  readonly enableMandatoryPin?: Maybe<Boolean_Comparison_Exp>;
+  readonly enableMandatorySubscribe?: Maybe<Boolean_Comparison_Exp>;
+  readonly flags?: Maybe<Chat_Flag_Bool_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly messages?: Maybe<Chat_Message_Bool_Exp>;
+  readonly pins?: Maybe<Chat_Pin_Bool_Exp>;
+  readonly readUpToIndices?: Maybe<Chat_ReadUpToIndex_Bool_Exp>;
+  readonly restrictToAdmins?: Maybe<Boolean_Comparison_Exp>;
+  readonly room?: Maybe<Room_Bool_Exp>;
+  readonly subscriptions?: Maybe<Chat_Subscription_Bool_Exp>;
+  readonly typers?: Maybe<Chat_Typer_Bool_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "chat.Chat" */
+export enum Chat_Chat_Constraint {
+  /** unique or primary key constraint */
+  ChatPkey = 'Chat_pkey'
+}
+
+/** input type for inserting data into table "chat.Chat" */
+export type Chat_Chat_Insert_Input = {
+  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly contentGroup?: Maybe<ContentGroup_Arr_Rel_Insert_Input>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly enableAutoPin?: Maybe<Scalars['Boolean']>;
+  readonly enableAutoSubscribe?: Maybe<Scalars['Boolean']>;
+  readonly enableMandatoryPin?: Maybe<Scalars['Boolean']>;
+  readonly enableMandatorySubscribe?: Maybe<Scalars['Boolean']>;
+  readonly flags?: Maybe<Chat_Flag_Arr_Rel_Insert_Input>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly messages?: Maybe<Chat_Message_Arr_Rel_Insert_Input>;
+  readonly pins?: Maybe<Chat_Pin_Arr_Rel_Insert_Input>;
+  readonly readUpToIndices?: Maybe<Chat_ReadUpToIndex_Arr_Rel_Insert_Input>;
+  readonly restrictToAdmins?: Maybe<Scalars['Boolean']>;
+  readonly room?: Maybe<Room_Arr_Rel_Insert_Input>;
+  readonly subscriptions?: Maybe<Chat_Subscription_Arr_Rel_Insert_Input>;
+  readonly typers?: Maybe<Chat_Typer_Arr_Rel_Insert_Input>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Chat_Chat_Max_Fields = {
+  readonly __typename?: 'chat_Chat_max_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "chat.Chat" */
+export type Chat_Chat_Max_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Chat_Chat_Min_Fields = {
+  readonly __typename?: 'chat_Chat_min_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "chat.Chat" */
+export type Chat_Chat_Min_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "chat.Chat" */
+export type Chat_Chat_Mutation_Response = {
+  readonly __typename?: 'chat_Chat_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Chat_Chat>;
+};
+
+/** input type for inserting object relation for remote table "chat.Chat" */
+export type Chat_Chat_Obj_Rel_Insert_Input = {
+  readonly data: Chat_Chat_Insert_Input;
+  readonly on_conflict?: Maybe<Chat_Chat_On_Conflict>;
+};
+
+/** on conflict condition type for table "chat.Chat" */
+export type Chat_Chat_On_Conflict = {
+  readonly constraint: Chat_Chat_Constraint;
+  readonly update_columns: ReadonlyArray<Chat_Chat_Update_Column>;
+  readonly where?: Maybe<Chat_Chat_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "chat.Chat" */
+export type Chat_Chat_Order_By = {
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly contentGroup_aggregate?: Maybe<ContentGroup_Aggregate_Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly enableAutoPin?: Maybe<Order_By>;
+  readonly enableAutoSubscribe?: Maybe<Order_By>;
+  readonly enableMandatoryPin?: Maybe<Order_By>;
+  readonly enableMandatorySubscribe?: Maybe<Order_By>;
+  readonly flags_aggregate?: Maybe<Chat_Flag_Aggregate_Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly messages_aggregate?: Maybe<Chat_Message_Aggregate_Order_By>;
+  readonly pins_aggregate?: Maybe<Chat_Pin_Aggregate_Order_By>;
+  readonly readUpToIndices_aggregate?: Maybe<Chat_ReadUpToIndex_Aggregate_Order_By>;
+  readonly restrictToAdmins?: Maybe<Order_By>;
+  readonly room_aggregate?: Maybe<Room_Aggregate_Order_By>;
+  readonly subscriptions_aggregate?: Maybe<Chat_Subscription_Aggregate_Order_By>;
+  readonly typers_aggregate?: Maybe<Chat_Typer_Aggregate_Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "chat.Chat" */
+export type Chat_Chat_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "chat.Chat" */
+export enum Chat_Chat_Select_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  EnableAutoPin = 'enableAutoPin',
+  /** column name */
+  EnableAutoSubscribe = 'enableAutoSubscribe',
+  /** column name */
+  EnableMandatoryPin = 'enableMandatoryPin',
+  /** column name */
+  EnableMandatorySubscribe = 'enableMandatorySubscribe',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  RestrictToAdmins = 'restrictToAdmins',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "chat.Chat" */
+export type Chat_Chat_Set_Input = {
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly enableAutoPin?: Maybe<Scalars['Boolean']>;
+  readonly enableAutoSubscribe?: Maybe<Scalars['Boolean']>;
+  readonly enableMandatoryPin?: Maybe<Scalars['Boolean']>;
+  readonly enableMandatorySubscribe?: Maybe<Scalars['Boolean']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly restrictToAdmins?: Maybe<Scalars['Boolean']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "chat.Chat" */
+export enum Chat_Chat_Update_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  EnableAutoPin = 'enableAutoPin',
+  /** column name */
+  EnableAutoSubscribe = 'enableAutoSubscribe',
+  /** column name */
+  EnableMandatoryPin = 'enableMandatoryPin',
+  /** column name */
+  EnableMandatorySubscribe = 'enableMandatorySubscribe',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  RestrictToAdmins = 'restrictToAdmins',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** columns and relationships of "chat.Flag" */
+export type Chat_Flag = {
+  readonly __typename?: 'chat_Flag';
+  readonly created_at: Scalars['timestamptz'];
+  /** An object relationship */
+  readonly discussionChat?: Maybe<Chat_Chat>;
+  readonly discussionChatId?: Maybe<Scalars['uuid']>;
+  /** An object relationship */
+  readonly flaggedBy?: Maybe<Attendee>;
+  readonly flaggedById?: Maybe<Scalars['uuid']>;
+  readonly id: Scalars['Int'];
+  /** An object relationship */
+  readonly message: Chat_Message;
+  readonly messageId: Scalars['Int'];
+  readonly notes?: Maybe<Scalars['String']>;
+  readonly resolution?: Maybe<Scalars['String']>;
+  readonly resolved_at?: Maybe<Scalars['timestamptz']>;
+  readonly type: Chat_FlagType_Enum;
+  readonly updated_at: Scalars['timestamptz'];
+};
+
+/** columns and relationships of "chat.FlagType" */
+export type Chat_FlagType = {
+  readonly __typename?: 'chat_FlagType';
+  readonly description: Scalars['String'];
+  readonly name: Scalars['String'];
+};
+
+/** aggregated selection of "chat.FlagType" */
+export type Chat_FlagType_Aggregate = {
+  readonly __typename?: 'chat_FlagType_aggregate';
+  readonly aggregate?: Maybe<Chat_FlagType_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Chat_FlagType>;
+};
+
+/** aggregate fields of "chat.FlagType" */
+export type Chat_FlagType_Aggregate_Fields = {
+  readonly __typename?: 'chat_FlagType_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Chat_FlagType_Max_Fields>;
+  readonly min?: Maybe<Chat_FlagType_Min_Fields>;
+};
+
+
+/** aggregate fields of "chat.FlagType" */
+export type Chat_FlagType_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Chat_FlagType_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "chat.FlagType" */
+export type Chat_FlagType_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Chat_FlagType_Max_Order_By>;
+  readonly min?: Maybe<Chat_FlagType_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "chat.FlagType" */
+export type Chat_FlagType_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Chat_FlagType_Insert_Input>;
+  readonly on_conflict?: Maybe<Chat_FlagType_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "chat.FlagType". All fields are combined with a logical 'AND'. */
+export type Chat_FlagType_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Chat_FlagType_Bool_Exp>>>;
+  readonly _not?: Maybe<Chat_FlagType_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Chat_FlagType_Bool_Exp>>>;
+  readonly description?: Maybe<String_Comparison_Exp>;
+  readonly name?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "chat.FlagType" */
+export enum Chat_FlagType_Constraint {
+  /** unique or primary key constraint */
+  FlagTypePkey = 'FlagType_pkey'
+}
+
+export enum Chat_FlagType_Enum {
+  /** It's abusive or harmful. */
+  Abusive = 'Abusive',
+  /** It contains false information and is intended to mislead readers. */
+  Disinformation = 'Disinformation',
+  /** It gives the wrong idea or impression. */
+  Misleading = 'Misleading',
+  /** It expresses intentions of self-harm or suicide. */
+  RiskToLife = 'Risk_To_Life',
+  /** It's spam, suspicious or annoying. */
+  Spam = 'Spam'
+}
+
+/** expression to compare columns of type chat_FlagType_enum. All fields are combined with logical 'AND'. */
+export type Chat_FlagType_Enum_Comparison_Exp = {
+  readonly _eq?: Maybe<Chat_FlagType_Enum>;
+  readonly _in?: Maybe<ReadonlyArray<Chat_FlagType_Enum>>;
+  readonly _is_null?: Maybe<Scalars['Boolean']>;
+  readonly _neq?: Maybe<Chat_FlagType_Enum>;
+  readonly _nin?: Maybe<ReadonlyArray<Chat_FlagType_Enum>>;
+};
+
+/** input type for inserting data into table "chat.FlagType" */
+export type Chat_FlagType_Insert_Input = {
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Chat_FlagType_Max_Fields = {
+  readonly __typename?: 'chat_FlagType_max_fields';
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "chat.FlagType" */
+export type Chat_FlagType_Max_Order_By = {
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Chat_FlagType_Min_Fields = {
+  readonly __typename?: 'chat_FlagType_min_fields';
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "chat.FlagType" */
+export type Chat_FlagType_Min_Order_By = {
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "chat.FlagType" */
+export type Chat_FlagType_Mutation_Response = {
+  readonly __typename?: 'chat_FlagType_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Chat_FlagType>;
+};
+
+/** input type for inserting object relation for remote table "chat.FlagType" */
+export type Chat_FlagType_Obj_Rel_Insert_Input = {
+  readonly data: Chat_FlagType_Insert_Input;
+  readonly on_conflict?: Maybe<Chat_FlagType_On_Conflict>;
+};
+
+/** on conflict condition type for table "chat.FlagType" */
+export type Chat_FlagType_On_Conflict = {
+  readonly constraint: Chat_FlagType_Constraint;
+  readonly update_columns: ReadonlyArray<Chat_FlagType_Update_Column>;
+  readonly where?: Maybe<Chat_FlagType_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "chat.FlagType" */
+export type Chat_FlagType_Order_By = {
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "chat.FlagType" */
+export type Chat_FlagType_Pk_Columns_Input = {
+  readonly name: Scalars['String'];
+};
+
+/** select columns of table "chat.FlagType" */
+export enum Chat_FlagType_Select_Column {
+  /** column name */
+  Description = 'description',
+  /** column name */
+  Name = 'name'
+}
+
+/** input type for updating data in table "chat.FlagType" */
+export type Chat_FlagType_Set_Input = {
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** update columns of table "chat.FlagType" */
+export enum Chat_FlagType_Update_Column {
+  /** column name */
+  Description = 'description',
+  /** column name */
+  Name = 'name'
+}
+
+/** aggregated selection of "chat.Flag" */
+export type Chat_Flag_Aggregate = {
+  readonly __typename?: 'chat_Flag_aggregate';
+  readonly aggregate?: Maybe<Chat_Flag_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Chat_Flag>;
+};
+
+/** aggregate fields of "chat.Flag" */
+export type Chat_Flag_Aggregate_Fields = {
+  readonly __typename?: 'chat_Flag_aggregate_fields';
+  readonly avg?: Maybe<Chat_Flag_Avg_Fields>;
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Chat_Flag_Max_Fields>;
+  readonly min?: Maybe<Chat_Flag_Min_Fields>;
+  readonly stddev?: Maybe<Chat_Flag_Stddev_Fields>;
+  readonly stddev_pop?: Maybe<Chat_Flag_Stddev_Pop_Fields>;
+  readonly stddev_samp?: Maybe<Chat_Flag_Stddev_Samp_Fields>;
+  readonly sum?: Maybe<Chat_Flag_Sum_Fields>;
+  readonly var_pop?: Maybe<Chat_Flag_Var_Pop_Fields>;
+  readonly var_samp?: Maybe<Chat_Flag_Var_Samp_Fields>;
+  readonly variance?: Maybe<Chat_Flag_Variance_Fields>;
+};
+
+
+/** aggregate fields of "chat.Flag" */
+export type Chat_Flag_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Chat_Flag_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "chat.Flag" */
+export type Chat_Flag_Aggregate_Order_By = {
+  readonly avg?: Maybe<Chat_Flag_Avg_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Chat_Flag_Max_Order_By>;
+  readonly min?: Maybe<Chat_Flag_Min_Order_By>;
+  readonly stddev?: Maybe<Chat_Flag_Stddev_Order_By>;
+  readonly stddev_pop?: Maybe<Chat_Flag_Stddev_Pop_Order_By>;
+  readonly stddev_samp?: Maybe<Chat_Flag_Stddev_Samp_Order_By>;
+  readonly sum?: Maybe<Chat_Flag_Sum_Order_By>;
+  readonly var_pop?: Maybe<Chat_Flag_Var_Pop_Order_By>;
+  readonly var_samp?: Maybe<Chat_Flag_Var_Samp_Order_By>;
+  readonly variance?: Maybe<Chat_Flag_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "chat.Flag" */
+export type Chat_Flag_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Chat_Flag_Insert_Input>;
+  readonly on_conflict?: Maybe<Chat_Flag_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Chat_Flag_Avg_Fields = {
+  readonly __typename?: 'chat_Flag_avg_fields';
+  readonly id?: Maybe<Scalars['Float']>;
+  readonly messageId?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "chat.Flag" */
+export type Chat_Flag_Avg_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly messageId?: Maybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "chat.Flag". All fields are combined with a logical 'AND'. */
+export type Chat_Flag_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Chat_Flag_Bool_Exp>>>;
+  readonly _not?: Maybe<Chat_Flag_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Chat_Flag_Bool_Exp>>>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly discussionChat?: Maybe<Chat_Chat_Bool_Exp>;
+  readonly discussionChatId?: Maybe<Uuid_Comparison_Exp>;
+  readonly flaggedBy?: Maybe<Attendee_Bool_Exp>;
+  readonly flaggedById?: Maybe<Uuid_Comparison_Exp>;
+  readonly id?: Maybe<Int_Comparison_Exp>;
+  readonly message?: Maybe<Chat_Message_Bool_Exp>;
+  readonly messageId?: Maybe<Int_Comparison_Exp>;
+  readonly notes?: Maybe<String_Comparison_Exp>;
+  readonly resolution?: Maybe<String_Comparison_Exp>;
+  readonly resolved_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly type?: Maybe<Chat_FlagType_Enum_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "chat.Flag" */
+export enum Chat_Flag_Constraint {
+  /** unique or primary key constraint */
+  FlagMessageIdFlaggedByIdTypeKey = 'Flag_messageId_flaggedById_type_key',
+  /** unique or primary key constraint */
+  FlagPkey = 'Flag_pkey'
+}
+
+/** input type for incrementing integer column in table "chat.Flag" */
+export type Chat_Flag_Inc_Input = {
+  readonly id?: Maybe<Scalars['Int']>;
+  readonly messageId?: Maybe<Scalars['Int']>;
+};
+
+/** input type for inserting data into table "chat.Flag" */
+export type Chat_Flag_Insert_Input = {
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly discussionChat?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
+  readonly discussionChatId?: Maybe<Scalars['uuid']>;
+  readonly flaggedBy?: Maybe<Attendee_Obj_Rel_Insert_Input>;
+  readonly flaggedById?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['Int']>;
+  readonly message?: Maybe<Chat_Message_Obj_Rel_Insert_Input>;
+  readonly messageId?: Maybe<Scalars['Int']>;
+  readonly notes?: Maybe<Scalars['String']>;
+  readonly resolution?: Maybe<Scalars['String']>;
+  readonly resolved_at?: Maybe<Scalars['timestamptz']>;
+  readonly type?: Maybe<Chat_FlagType_Enum>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Chat_Flag_Max_Fields = {
+  readonly __typename?: 'chat_Flag_max_fields';
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly discussionChatId?: Maybe<Scalars['uuid']>;
+  readonly flaggedById?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['Int']>;
+  readonly messageId?: Maybe<Scalars['Int']>;
+  readonly notes?: Maybe<Scalars['String']>;
+  readonly resolution?: Maybe<Scalars['String']>;
+  readonly resolved_at?: Maybe<Scalars['timestamptz']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "chat.Flag" */
+export type Chat_Flag_Max_Order_By = {
+  readonly created_at?: Maybe<Order_By>;
+  readonly discussionChatId?: Maybe<Order_By>;
+  readonly flaggedById?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly messageId?: Maybe<Order_By>;
+  readonly notes?: Maybe<Order_By>;
+  readonly resolution?: Maybe<Order_By>;
+  readonly resolved_at?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Chat_Flag_Min_Fields = {
+  readonly __typename?: 'chat_Flag_min_fields';
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly discussionChatId?: Maybe<Scalars['uuid']>;
+  readonly flaggedById?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['Int']>;
+  readonly messageId?: Maybe<Scalars['Int']>;
+  readonly notes?: Maybe<Scalars['String']>;
+  readonly resolution?: Maybe<Scalars['String']>;
+  readonly resolved_at?: Maybe<Scalars['timestamptz']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "chat.Flag" */
+export type Chat_Flag_Min_Order_By = {
+  readonly created_at?: Maybe<Order_By>;
+  readonly discussionChatId?: Maybe<Order_By>;
+  readonly flaggedById?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly messageId?: Maybe<Order_By>;
+  readonly notes?: Maybe<Order_By>;
+  readonly resolution?: Maybe<Order_By>;
+  readonly resolved_at?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "chat.Flag" */
+export type Chat_Flag_Mutation_Response = {
+  readonly __typename?: 'chat_Flag_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Chat_Flag>;
+};
+
+/** input type for inserting object relation for remote table "chat.Flag" */
+export type Chat_Flag_Obj_Rel_Insert_Input = {
+  readonly data: Chat_Flag_Insert_Input;
+  readonly on_conflict?: Maybe<Chat_Flag_On_Conflict>;
+};
+
+/** on conflict condition type for table "chat.Flag" */
+export type Chat_Flag_On_Conflict = {
+  readonly constraint: Chat_Flag_Constraint;
+  readonly update_columns: ReadonlyArray<Chat_Flag_Update_Column>;
+  readonly where?: Maybe<Chat_Flag_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "chat.Flag" */
+export type Chat_Flag_Order_By = {
+  readonly created_at?: Maybe<Order_By>;
+  readonly discussionChat?: Maybe<Chat_Chat_Order_By>;
+  readonly discussionChatId?: Maybe<Order_By>;
+  readonly flaggedBy?: Maybe<Attendee_Order_By>;
+  readonly flaggedById?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly message?: Maybe<Chat_Message_Order_By>;
+  readonly messageId?: Maybe<Order_By>;
+  readonly notes?: Maybe<Order_By>;
+  readonly resolution?: Maybe<Order_By>;
+  readonly resolved_at?: Maybe<Order_By>;
+  readonly type?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "chat.Flag" */
+export type Chat_Flag_Pk_Columns_Input = {
+  readonly id: Scalars['Int'];
+};
+
+/** select columns of table "chat.Flag" */
+export enum Chat_Flag_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  DiscussionChatId = 'discussionChatId',
+  /** column name */
+  FlaggedById = 'flaggedById',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  MessageId = 'messageId',
+  /** column name */
+  Notes = 'notes',
+  /** column name */
+  Resolution = 'resolution',
+  /** column name */
+  ResolvedAt = 'resolved_at',
+  /** column name */
+  Type = 'type',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "chat.Flag" */
+export type Chat_Flag_Set_Input = {
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly discussionChatId?: Maybe<Scalars['uuid']>;
+  readonly flaggedById?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['Int']>;
+  readonly messageId?: Maybe<Scalars['Int']>;
+  readonly notes?: Maybe<Scalars['String']>;
+  readonly resolution?: Maybe<Scalars['String']>;
+  readonly resolved_at?: Maybe<Scalars['timestamptz']>;
+  readonly type?: Maybe<Chat_FlagType_Enum>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate stddev on columns */
+export type Chat_Flag_Stddev_Fields = {
+  readonly __typename?: 'chat_Flag_stddev_fields';
+  readonly id?: Maybe<Scalars['Float']>;
+  readonly messageId?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "chat.Flag" */
+export type Chat_Flag_Stddev_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly messageId?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Chat_Flag_Stddev_Pop_Fields = {
+  readonly __typename?: 'chat_Flag_stddev_pop_fields';
+  readonly id?: Maybe<Scalars['Float']>;
+  readonly messageId?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "chat.Flag" */
+export type Chat_Flag_Stddev_Pop_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly messageId?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Chat_Flag_Stddev_Samp_Fields = {
+  readonly __typename?: 'chat_Flag_stddev_samp_fields';
+  readonly id?: Maybe<Scalars['Float']>;
+  readonly messageId?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "chat.Flag" */
+export type Chat_Flag_Stddev_Samp_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly messageId?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Chat_Flag_Sum_Fields = {
+  readonly __typename?: 'chat_Flag_sum_fields';
+  readonly id?: Maybe<Scalars['Int']>;
+  readonly messageId?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "chat.Flag" */
+export type Chat_Flag_Sum_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly messageId?: Maybe<Order_By>;
+};
+
+/** update columns of table "chat.Flag" */
+export enum Chat_Flag_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  DiscussionChatId = 'discussionChatId',
+  /** column name */
+  FlaggedById = 'flaggedById',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  MessageId = 'messageId',
+  /** column name */
+  Notes = 'notes',
+  /** column name */
+  Resolution = 'resolution',
+  /** column name */
+  ResolvedAt = 'resolved_at',
+  /** column name */
+  Type = 'type',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** aggregate var_pop on columns */
+export type Chat_Flag_Var_Pop_Fields = {
+  readonly __typename?: 'chat_Flag_var_pop_fields';
+  readonly id?: Maybe<Scalars['Float']>;
+  readonly messageId?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "chat.Flag" */
+export type Chat_Flag_Var_Pop_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly messageId?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Chat_Flag_Var_Samp_Fields = {
+  readonly __typename?: 'chat_Flag_var_samp_fields';
+  readonly id?: Maybe<Scalars['Float']>;
+  readonly messageId?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "chat.Flag" */
+export type Chat_Flag_Var_Samp_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly messageId?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Chat_Flag_Variance_Fields = {
+  readonly __typename?: 'chat_Flag_variance_fields';
+  readonly id?: Maybe<Scalars['Float']>;
+  readonly messageId?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "chat.Flag" */
+export type Chat_Flag_Variance_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly messageId?: Maybe<Order_By>;
+};
+
+/** columns and relationships of "chat.Message" */
+export type Chat_Message = {
+  readonly __typename?: 'chat_Message';
+  /** An object relationship */
+  readonly chat: Chat_Chat;
+  readonly chatId: Scalars['uuid'];
+  readonly created_at: Scalars['timestamptz'];
+  readonly data: Scalars['jsonb'];
+  /** An object relationship */
+  readonly duplicateIncoming?: Maybe<Chat_Message>;
+  /** An object relationship */
+  readonly duplicateOutgoing?: Maybe<Chat_Message>;
+  readonly duplicatedMessageId?: Maybe<Scalars['Int']>;
+  /** An array relationship */
+  readonly flags: ReadonlyArray<Chat_Flag>;
+  /** An aggregated array relationship */
+  readonly flags_aggregate: Chat_Flag_Aggregate;
+  readonly id: Scalars['Int'];
+  readonly isPinned: Scalars['Boolean'];
+  readonly message: Scalars['String'];
+  /** An array relationship */
+  readonly reactions: ReadonlyArray<Chat_Reaction>;
+  /** An aggregated array relationship */
+  readonly reactions_aggregate: Chat_Reaction_Aggregate;
+  /** An object relationship */
+  readonly sender?: Maybe<Attendee>;
+  readonly senderId?: Maybe<Scalars['uuid']>;
+  readonly type: Chat_MessageType_Enum;
+  readonly updated_at: Scalars['timestamptz'];
+};
+
+
+/** columns and relationships of "chat.Message" */
+export type Chat_MessageDataArgs = {
+  path?: Maybe<Scalars['String']>;
+};
+
+
+/** columns and relationships of "chat.Message" */
+export type Chat_MessageFlagsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Flag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Flag_Order_By>>;
+  where?: Maybe<Chat_Flag_Bool_Exp>;
+};
+
+
+/** columns and relationships of "chat.Message" */
+export type Chat_MessageFlags_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Flag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Flag_Order_By>>;
+  where?: Maybe<Chat_Flag_Bool_Exp>;
+};
+
+
+/** columns and relationships of "chat.Message" */
+export type Chat_MessageReactionsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Reaction_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Reaction_Order_By>>;
+  where?: Maybe<Chat_Reaction_Bool_Exp>;
+};
+
+
+/** columns and relationships of "chat.Message" */
+export type Chat_MessageReactions_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Reaction_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Reaction_Order_By>>;
+  where?: Maybe<Chat_Reaction_Bool_Exp>;
+};
+
+/** columns and relationships of "chat.MessageType" */
+export type Chat_MessageType = {
+  readonly __typename?: 'chat_MessageType';
+  readonly name: Scalars['String'];
+};
+
+/** aggregated selection of "chat.MessageType" */
+export type Chat_MessageType_Aggregate = {
+  readonly __typename?: 'chat_MessageType_aggregate';
+  readonly aggregate?: Maybe<Chat_MessageType_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Chat_MessageType>;
+};
+
+/** aggregate fields of "chat.MessageType" */
+export type Chat_MessageType_Aggregate_Fields = {
+  readonly __typename?: 'chat_MessageType_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Chat_MessageType_Max_Fields>;
+  readonly min?: Maybe<Chat_MessageType_Min_Fields>;
+};
+
+
+/** aggregate fields of "chat.MessageType" */
+export type Chat_MessageType_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Chat_MessageType_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "chat.MessageType" */
+export type Chat_MessageType_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Chat_MessageType_Max_Order_By>;
+  readonly min?: Maybe<Chat_MessageType_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "chat.MessageType" */
+export type Chat_MessageType_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Chat_MessageType_Insert_Input>;
+  readonly on_conflict?: Maybe<Chat_MessageType_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "chat.MessageType". All fields are combined with a logical 'AND'. */
+export type Chat_MessageType_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Chat_MessageType_Bool_Exp>>>;
+  readonly _not?: Maybe<Chat_MessageType_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Chat_MessageType_Bool_Exp>>>;
+  readonly name?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "chat.MessageType" */
+export enum Chat_MessageType_Constraint {
+  /** unique or primary key constraint */
+  MessageTypePkey = 'MessageType_pkey'
+}
+
+export enum Chat_MessageType_Enum {
+  Answer = 'ANSWER',
+  DuplicationMarker = 'DUPLICATION_MARKER',
+  Emote = 'EMOTE',
+  Message = 'MESSAGE',
+  Poll = 'POLL',
+  PollResults = 'POLL_RESULTS',
+  Question = 'QUESTION'
+}
+
+/** expression to compare columns of type chat_MessageType_enum. All fields are combined with logical 'AND'. */
+export type Chat_MessageType_Enum_Comparison_Exp = {
+  readonly _eq?: Maybe<Chat_MessageType_Enum>;
+  readonly _in?: Maybe<ReadonlyArray<Chat_MessageType_Enum>>;
+  readonly _is_null?: Maybe<Scalars['Boolean']>;
+  readonly _neq?: Maybe<Chat_MessageType_Enum>;
+  readonly _nin?: Maybe<ReadonlyArray<Chat_MessageType_Enum>>;
+};
+
+/** input type for inserting data into table "chat.MessageType" */
+export type Chat_MessageType_Insert_Input = {
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Chat_MessageType_Max_Fields = {
+  readonly __typename?: 'chat_MessageType_max_fields';
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "chat.MessageType" */
+export type Chat_MessageType_Max_Order_By = {
+  readonly name?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Chat_MessageType_Min_Fields = {
+  readonly __typename?: 'chat_MessageType_min_fields';
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "chat.MessageType" */
+export type Chat_MessageType_Min_Order_By = {
+  readonly name?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "chat.MessageType" */
+export type Chat_MessageType_Mutation_Response = {
+  readonly __typename?: 'chat_MessageType_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Chat_MessageType>;
+};
+
+/** input type for inserting object relation for remote table "chat.MessageType" */
+export type Chat_MessageType_Obj_Rel_Insert_Input = {
+  readonly data: Chat_MessageType_Insert_Input;
+  readonly on_conflict?: Maybe<Chat_MessageType_On_Conflict>;
+};
+
+/** on conflict condition type for table "chat.MessageType" */
+export type Chat_MessageType_On_Conflict = {
+  readonly constraint: Chat_MessageType_Constraint;
+  readonly update_columns: ReadonlyArray<Chat_MessageType_Update_Column>;
+  readonly where?: Maybe<Chat_MessageType_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "chat.MessageType" */
+export type Chat_MessageType_Order_By = {
+  readonly name?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "chat.MessageType" */
+export type Chat_MessageType_Pk_Columns_Input = {
+  readonly name: Scalars['String'];
+};
+
+/** select columns of table "chat.MessageType" */
+export enum Chat_MessageType_Select_Column {
+  /** column name */
+  Name = 'name'
+}
+
+/** input type for updating data in table "chat.MessageType" */
+export type Chat_MessageType_Set_Input = {
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** update columns of table "chat.MessageType" */
+export enum Chat_MessageType_Update_Column {
+  /** column name */
+  Name = 'name'
+}
+
+/** aggregated selection of "chat.Message" */
+export type Chat_Message_Aggregate = {
+  readonly __typename?: 'chat_Message_aggregate';
+  readonly aggregate?: Maybe<Chat_Message_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Chat_Message>;
+};
+
+/** aggregate fields of "chat.Message" */
+export type Chat_Message_Aggregate_Fields = {
+  readonly __typename?: 'chat_Message_aggregate_fields';
+  readonly avg?: Maybe<Chat_Message_Avg_Fields>;
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Chat_Message_Max_Fields>;
+  readonly min?: Maybe<Chat_Message_Min_Fields>;
+  readonly stddev?: Maybe<Chat_Message_Stddev_Fields>;
+  readonly stddev_pop?: Maybe<Chat_Message_Stddev_Pop_Fields>;
+  readonly stddev_samp?: Maybe<Chat_Message_Stddev_Samp_Fields>;
+  readonly sum?: Maybe<Chat_Message_Sum_Fields>;
+  readonly var_pop?: Maybe<Chat_Message_Var_Pop_Fields>;
+  readonly var_samp?: Maybe<Chat_Message_Var_Samp_Fields>;
+  readonly variance?: Maybe<Chat_Message_Variance_Fields>;
+};
+
+
+/** aggregate fields of "chat.Message" */
+export type Chat_Message_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Chat_Message_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "chat.Message" */
+export type Chat_Message_Aggregate_Order_By = {
+  readonly avg?: Maybe<Chat_Message_Avg_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Chat_Message_Max_Order_By>;
+  readonly min?: Maybe<Chat_Message_Min_Order_By>;
+  readonly stddev?: Maybe<Chat_Message_Stddev_Order_By>;
+  readonly stddev_pop?: Maybe<Chat_Message_Stddev_Pop_Order_By>;
+  readonly stddev_samp?: Maybe<Chat_Message_Stddev_Samp_Order_By>;
+  readonly sum?: Maybe<Chat_Message_Sum_Order_By>;
+  readonly var_pop?: Maybe<Chat_Message_Var_Pop_Order_By>;
+  readonly var_samp?: Maybe<Chat_Message_Var_Samp_Order_By>;
+  readonly variance?: Maybe<Chat_Message_Variance_Order_By>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Chat_Message_Append_Input = {
+  readonly data?: Maybe<Scalars['jsonb']>;
+};
+
+/** input type for inserting array relation for remote table "chat.Message" */
+export type Chat_Message_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Chat_Message_Insert_Input>;
+  readonly on_conflict?: Maybe<Chat_Message_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Chat_Message_Avg_Fields = {
+  readonly __typename?: 'chat_Message_avg_fields';
+  readonly duplicatedMessageId?: Maybe<Scalars['Float']>;
+  readonly id?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "chat.Message" */
+export type Chat_Message_Avg_Order_By = {
+  readonly duplicatedMessageId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "chat.Message". All fields are combined with a logical 'AND'. */
+export type Chat_Message_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Chat_Message_Bool_Exp>>>;
+  readonly _not?: Maybe<Chat_Message_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Chat_Message_Bool_Exp>>>;
+  readonly chat?: Maybe<Chat_Chat_Bool_Exp>;
+  readonly chatId?: Maybe<Uuid_Comparison_Exp>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly data?: Maybe<Jsonb_Comparison_Exp>;
+  readonly duplicateIncoming?: Maybe<Chat_Message_Bool_Exp>;
+  readonly duplicateOutgoing?: Maybe<Chat_Message_Bool_Exp>;
+  readonly duplicatedMessageId?: Maybe<Int_Comparison_Exp>;
+  readonly flags?: Maybe<Chat_Flag_Bool_Exp>;
+  readonly id?: Maybe<Int_Comparison_Exp>;
+  readonly isPinned?: Maybe<Boolean_Comparison_Exp>;
+  readonly message?: Maybe<String_Comparison_Exp>;
+  readonly reactions?: Maybe<Chat_Reaction_Bool_Exp>;
+  readonly sender?: Maybe<Attendee_Bool_Exp>;
+  readonly senderId?: Maybe<Uuid_Comparison_Exp>;
+  readonly type?: Maybe<Chat_MessageType_Enum_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "chat.Message" */
+export enum Chat_Message_Constraint {
+  /** unique or primary key constraint */
+  MessageDuplicatedMessageIdKey = 'Message_duplicatedMessageId_key',
+  /** unique or primary key constraint */
+  MessagePkey = 'Message_pkey'
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Chat_Message_Delete_At_Path_Input = {
+  readonly data?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Chat_Message_Delete_Elem_Input = {
+  readonly data?: Maybe<Scalars['Int']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Chat_Message_Delete_Key_Input = {
+  readonly data?: Maybe<Scalars['String']>;
+};
+
+/** input type for incrementing integer column in table "chat.Message" */
+export type Chat_Message_Inc_Input = {
+  readonly duplicatedMessageId?: Maybe<Scalars['Int']>;
+  readonly id?: Maybe<Scalars['Int']>;
+};
+
+/** input type for inserting data into table "chat.Message" */
+export type Chat_Message_Insert_Input = {
+  readonly chat?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly data?: Maybe<Scalars['jsonb']>;
+  readonly duplicateIncoming?: Maybe<Chat_Message_Obj_Rel_Insert_Input>;
+  readonly duplicateOutgoing?: Maybe<Chat_Message_Obj_Rel_Insert_Input>;
+  readonly duplicatedMessageId?: Maybe<Scalars['Int']>;
+  readonly flags?: Maybe<Chat_Flag_Arr_Rel_Insert_Input>;
+  readonly id?: Maybe<Scalars['Int']>;
+  readonly isPinned?: Maybe<Scalars['Boolean']>;
+  readonly message?: Maybe<Scalars['String']>;
+  readonly reactions?: Maybe<Chat_Reaction_Arr_Rel_Insert_Input>;
+  readonly sender?: Maybe<Attendee_Obj_Rel_Insert_Input>;
+  readonly senderId?: Maybe<Scalars['uuid']>;
+  readonly type?: Maybe<Chat_MessageType_Enum>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Chat_Message_Max_Fields = {
+  readonly __typename?: 'chat_Message_max_fields';
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly duplicatedMessageId?: Maybe<Scalars['Int']>;
+  readonly id?: Maybe<Scalars['Int']>;
+  readonly message?: Maybe<Scalars['String']>;
+  readonly senderId?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "chat.Message" */
+export type Chat_Message_Max_Order_By = {
+  readonly chatId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly duplicatedMessageId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly message?: Maybe<Order_By>;
+  readonly senderId?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Chat_Message_Min_Fields = {
+  readonly __typename?: 'chat_Message_min_fields';
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly duplicatedMessageId?: Maybe<Scalars['Int']>;
+  readonly id?: Maybe<Scalars['Int']>;
+  readonly message?: Maybe<Scalars['String']>;
+  readonly senderId?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "chat.Message" */
+export type Chat_Message_Min_Order_By = {
+  readonly chatId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly duplicatedMessageId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly message?: Maybe<Order_By>;
+  readonly senderId?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "chat.Message" */
+export type Chat_Message_Mutation_Response = {
+  readonly __typename?: 'chat_Message_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Chat_Message>;
+};
+
+/** input type for inserting object relation for remote table "chat.Message" */
+export type Chat_Message_Obj_Rel_Insert_Input = {
+  readonly data: Chat_Message_Insert_Input;
+  readonly on_conflict?: Maybe<Chat_Message_On_Conflict>;
+};
+
+/** on conflict condition type for table "chat.Message" */
+export type Chat_Message_On_Conflict = {
+  readonly constraint: Chat_Message_Constraint;
+  readonly update_columns: ReadonlyArray<Chat_Message_Update_Column>;
+  readonly where?: Maybe<Chat_Message_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "chat.Message" */
+export type Chat_Message_Order_By = {
+  readonly chat?: Maybe<Chat_Chat_Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly data?: Maybe<Order_By>;
+  readonly duplicateIncoming?: Maybe<Chat_Message_Order_By>;
+  readonly duplicateOutgoing?: Maybe<Chat_Message_Order_By>;
+  readonly duplicatedMessageId?: Maybe<Order_By>;
+  readonly flags_aggregate?: Maybe<Chat_Flag_Aggregate_Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly isPinned?: Maybe<Order_By>;
+  readonly message?: Maybe<Order_By>;
+  readonly reactions_aggregate?: Maybe<Chat_Reaction_Aggregate_Order_By>;
+  readonly sender?: Maybe<Attendee_Order_By>;
+  readonly senderId?: Maybe<Order_By>;
+  readonly type?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "chat.Message" */
+export type Chat_Message_Pk_Columns_Input = {
+  readonly id: Scalars['Int'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Chat_Message_Prepend_Input = {
+  readonly data?: Maybe<Scalars['jsonb']>;
+};
+
+/** select columns of table "chat.Message" */
+export enum Chat_Message_Select_Column {
+  /** column name */
+  ChatId = 'chatId',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Data = 'data',
+  /** column name */
+  DuplicatedMessageId = 'duplicatedMessageId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  IsPinned = 'isPinned',
+  /** column name */
+  Message = 'message',
+  /** column name */
+  SenderId = 'senderId',
+  /** column name */
+  Type = 'type',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "chat.Message" */
+export type Chat_Message_Set_Input = {
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly data?: Maybe<Scalars['jsonb']>;
+  readonly duplicatedMessageId?: Maybe<Scalars['Int']>;
+  readonly id?: Maybe<Scalars['Int']>;
+  readonly isPinned?: Maybe<Scalars['Boolean']>;
+  readonly message?: Maybe<Scalars['String']>;
+  readonly senderId?: Maybe<Scalars['uuid']>;
+  readonly type?: Maybe<Chat_MessageType_Enum>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate stddev on columns */
+export type Chat_Message_Stddev_Fields = {
+  readonly __typename?: 'chat_Message_stddev_fields';
+  readonly duplicatedMessageId?: Maybe<Scalars['Float']>;
+  readonly id?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "chat.Message" */
+export type Chat_Message_Stddev_Order_By = {
+  readonly duplicatedMessageId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Chat_Message_Stddev_Pop_Fields = {
+  readonly __typename?: 'chat_Message_stddev_pop_fields';
+  readonly duplicatedMessageId?: Maybe<Scalars['Float']>;
+  readonly id?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "chat.Message" */
+export type Chat_Message_Stddev_Pop_Order_By = {
+  readonly duplicatedMessageId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Chat_Message_Stddev_Samp_Fields = {
+  readonly __typename?: 'chat_Message_stddev_samp_fields';
+  readonly duplicatedMessageId?: Maybe<Scalars['Float']>;
+  readonly id?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "chat.Message" */
+export type Chat_Message_Stddev_Samp_Order_By = {
+  readonly duplicatedMessageId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Chat_Message_Sum_Fields = {
+  readonly __typename?: 'chat_Message_sum_fields';
+  readonly duplicatedMessageId?: Maybe<Scalars['Int']>;
+  readonly id?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "chat.Message" */
+export type Chat_Message_Sum_Order_By = {
+  readonly duplicatedMessageId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+};
+
+/** update columns of table "chat.Message" */
+export enum Chat_Message_Update_Column {
+  /** column name */
+  ChatId = 'chatId',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Data = 'data',
+  /** column name */
+  DuplicatedMessageId = 'duplicatedMessageId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  IsPinned = 'isPinned',
+  /** column name */
+  Message = 'message',
+  /** column name */
+  SenderId = 'senderId',
+  /** column name */
+  Type = 'type',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** aggregate var_pop on columns */
+export type Chat_Message_Var_Pop_Fields = {
+  readonly __typename?: 'chat_Message_var_pop_fields';
+  readonly duplicatedMessageId?: Maybe<Scalars['Float']>;
+  readonly id?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "chat.Message" */
+export type Chat_Message_Var_Pop_Order_By = {
+  readonly duplicatedMessageId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Chat_Message_Var_Samp_Fields = {
+  readonly __typename?: 'chat_Message_var_samp_fields';
+  readonly duplicatedMessageId?: Maybe<Scalars['Float']>;
+  readonly id?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "chat.Message" */
+export type Chat_Message_Var_Samp_Order_By = {
+  readonly duplicatedMessageId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Chat_Message_Variance_Fields = {
+  readonly __typename?: 'chat_Message_variance_fields';
+  readonly duplicatedMessageId?: Maybe<Scalars['Float']>;
+  readonly id?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "chat.Message" */
+export type Chat_Message_Variance_Order_By = {
+  readonly duplicatedMessageId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+};
+
+/**
+ * Pin a chat to the sidebar.
+ * 
+ * 
+ * columns and relationships of "chat.Pin"
+ */
+export type Chat_Pin = {
+  readonly __typename?: 'chat_Pin';
+  /** An object relationship */
+  readonly attendee: Attendee;
+  readonly attendeeId: Scalars['uuid'];
+  /** An object relationship */
+  readonly chat: Chat_Chat;
+  readonly chatId: Scalars['uuid'];
+  readonly created_at: Scalars['timestamptz'];
+  readonly wasManuallyPinned: Scalars['Boolean'];
+};
+
+/** aggregated selection of "chat.Pin" */
+export type Chat_Pin_Aggregate = {
+  readonly __typename?: 'chat_Pin_aggregate';
+  readonly aggregate?: Maybe<Chat_Pin_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Chat_Pin>;
+};
+
+/** aggregate fields of "chat.Pin" */
+export type Chat_Pin_Aggregate_Fields = {
+  readonly __typename?: 'chat_Pin_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Chat_Pin_Max_Fields>;
+  readonly min?: Maybe<Chat_Pin_Min_Fields>;
+};
+
+
+/** aggregate fields of "chat.Pin" */
+export type Chat_Pin_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Chat_Pin_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "chat.Pin" */
+export type Chat_Pin_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Chat_Pin_Max_Order_By>;
+  readonly min?: Maybe<Chat_Pin_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "chat.Pin" */
+export type Chat_Pin_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Chat_Pin_Insert_Input>;
+  readonly on_conflict?: Maybe<Chat_Pin_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "chat.Pin". All fields are combined with a logical 'AND'. */
+export type Chat_Pin_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Chat_Pin_Bool_Exp>>>;
+  readonly _not?: Maybe<Chat_Pin_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Chat_Pin_Bool_Exp>>>;
+  readonly attendee?: Maybe<Attendee_Bool_Exp>;
+  readonly attendeeId?: Maybe<Uuid_Comparison_Exp>;
+  readonly chat?: Maybe<Chat_Chat_Bool_Exp>;
+  readonly chatId?: Maybe<Uuid_Comparison_Exp>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly wasManuallyPinned?: Maybe<Boolean_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "chat.Pin" */
+export enum Chat_Pin_Constraint {
+  /** unique or primary key constraint */
+  ChatPinPkey = 'ChatPin_pkey'
+}
+
+/** input type for inserting data into table "chat.Pin" */
+export type Chat_Pin_Insert_Input = {
+  readonly attendee?: Maybe<Attendee_Obj_Rel_Insert_Input>;
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly chat?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly wasManuallyPinned?: Maybe<Scalars['Boolean']>;
+};
+
+/** aggregate max on columns */
+export type Chat_Pin_Max_Fields = {
+  readonly __typename?: 'chat_Pin_max_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "chat.Pin" */
+export type Chat_Pin_Max_Order_By = {
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Chat_Pin_Min_Fields = {
+  readonly __typename?: 'chat_Pin_min_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "chat.Pin" */
+export type Chat_Pin_Min_Order_By = {
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "chat.Pin" */
+export type Chat_Pin_Mutation_Response = {
+  readonly __typename?: 'chat_Pin_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Chat_Pin>;
+};
+
+/** input type for inserting object relation for remote table "chat.Pin" */
+export type Chat_Pin_Obj_Rel_Insert_Input = {
+  readonly data: Chat_Pin_Insert_Input;
+  readonly on_conflict?: Maybe<Chat_Pin_On_Conflict>;
+};
+
+/** on conflict condition type for table "chat.Pin" */
+export type Chat_Pin_On_Conflict = {
+  readonly constraint: Chat_Pin_Constraint;
+  readonly update_columns: ReadonlyArray<Chat_Pin_Update_Column>;
+  readonly where?: Maybe<Chat_Pin_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "chat.Pin" */
+export type Chat_Pin_Order_By = {
+  readonly attendee?: Maybe<Attendee_Order_By>;
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly chat?: Maybe<Chat_Chat_Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly wasManuallyPinned?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "chat.Pin" */
+export type Chat_Pin_Pk_Columns_Input = {
+  readonly attendeeId: Scalars['uuid'];
+  readonly chatId: Scalars['uuid'];
+};
+
+/** select columns of table "chat.Pin" */
+export enum Chat_Pin_Select_Column {
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  ChatId = 'chatId',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  WasManuallyPinned = 'wasManuallyPinned'
+}
+
+/** input type for updating data in table "chat.Pin" */
+export type Chat_Pin_Set_Input = {
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly wasManuallyPinned?: Maybe<Scalars['Boolean']>;
+};
+
+/** update columns of table "chat.Pin" */
+export enum Chat_Pin_Update_Column {
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  ChatId = 'chatId',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  WasManuallyPinned = 'wasManuallyPinned'
+}
+
+/** columns and relationships of "chat.Reaction" */
+export type Chat_Reaction = {
+  readonly __typename?: 'chat_Reaction';
+  readonly created_at: Scalars['timestamptz'];
+  readonly data: Scalars['jsonb'];
+  readonly id: Scalars['Int'];
+  /** An object relationship */
+  readonly message: Chat_Message;
+  readonly messageId: Scalars['Int'];
+  /** An object relationship */
+  readonly sender: Attendee;
+  readonly senderId: Scalars['uuid'];
+  readonly symbol: Scalars['String'];
+  readonly type: Chat_ReactionType_Enum;
+  readonly updated_at: Scalars['timestamptz'];
+};
+
+
+/** columns and relationships of "chat.Reaction" */
+export type Chat_ReactionDataArgs = {
+  path?: Maybe<Scalars['String']>;
+};
+
+/** columns and relationships of "chat.ReactionType" */
+export type Chat_ReactionType = {
+  readonly __typename?: 'chat_ReactionType';
+  readonly description: Scalars['String'];
+  readonly name: Scalars['String'];
+};
+
+/** aggregated selection of "chat.ReactionType" */
+export type Chat_ReactionType_Aggregate = {
+  readonly __typename?: 'chat_ReactionType_aggregate';
+  readonly aggregate?: Maybe<Chat_ReactionType_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Chat_ReactionType>;
+};
+
+/** aggregate fields of "chat.ReactionType" */
+export type Chat_ReactionType_Aggregate_Fields = {
+  readonly __typename?: 'chat_ReactionType_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Chat_ReactionType_Max_Fields>;
+  readonly min?: Maybe<Chat_ReactionType_Min_Fields>;
+};
+
+
+/** aggregate fields of "chat.ReactionType" */
+export type Chat_ReactionType_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Chat_ReactionType_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "chat.ReactionType" */
+export type Chat_ReactionType_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Chat_ReactionType_Max_Order_By>;
+  readonly min?: Maybe<Chat_ReactionType_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "chat.ReactionType" */
+export type Chat_ReactionType_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Chat_ReactionType_Insert_Input>;
+  readonly on_conflict?: Maybe<Chat_ReactionType_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "chat.ReactionType". All fields are combined with a logical 'AND'. */
+export type Chat_ReactionType_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Chat_ReactionType_Bool_Exp>>>;
+  readonly _not?: Maybe<Chat_ReactionType_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Chat_ReactionType_Bool_Exp>>>;
+  readonly description?: Maybe<String_Comparison_Exp>;
+  readonly name?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "chat.ReactionType" */
+export enum Chat_ReactionType_Constraint {
+  /** unique or primary key constraint */
+  ReactionTypePkey = 'ReactionType_pkey'
+}
+
+export enum Chat_ReactionType_Enum {
+  /** Link to a message that answers the question. */
+  Answer = 'ANSWER',
+  /** A plain emoji reaction */
+  Emoji = 'EMOJI',
+  /** A vote in a poll */
+  PollChoice = 'POLL_CHOICE',
+  /** Stop accepting new responses to the poll */
+  PollClosed = 'POLL_CLOSED',
+  /** Make the poll results visible */
+  PollComplete = 'POLL_COMPLETE'
+}
+
+/** expression to compare columns of type chat_ReactionType_enum. All fields are combined with logical 'AND'. */
+export type Chat_ReactionType_Enum_Comparison_Exp = {
+  readonly _eq?: Maybe<Chat_ReactionType_Enum>;
+  readonly _in?: Maybe<ReadonlyArray<Chat_ReactionType_Enum>>;
+  readonly _is_null?: Maybe<Scalars['Boolean']>;
+  readonly _neq?: Maybe<Chat_ReactionType_Enum>;
+  readonly _nin?: Maybe<ReadonlyArray<Chat_ReactionType_Enum>>;
+};
+
+/** input type for inserting data into table "chat.ReactionType" */
+export type Chat_ReactionType_Insert_Input = {
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Chat_ReactionType_Max_Fields = {
+  readonly __typename?: 'chat_ReactionType_max_fields';
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "chat.ReactionType" */
+export type Chat_ReactionType_Max_Order_By = {
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Chat_ReactionType_Min_Fields = {
+  readonly __typename?: 'chat_ReactionType_min_fields';
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "chat.ReactionType" */
+export type Chat_ReactionType_Min_Order_By = {
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "chat.ReactionType" */
+export type Chat_ReactionType_Mutation_Response = {
+  readonly __typename?: 'chat_ReactionType_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Chat_ReactionType>;
+};
+
+/** input type for inserting object relation for remote table "chat.ReactionType" */
+export type Chat_ReactionType_Obj_Rel_Insert_Input = {
+  readonly data: Chat_ReactionType_Insert_Input;
+  readonly on_conflict?: Maybe<Chat_ReactionType_On_Conflict>;
+};
+
+/** on conflict condition type for table "chat.ReactionType" */
+export type Chat_ReactionType_On_Conflict = {
+  readonly constraint: Chat_ReactionType_Constraint;
+  readonly update_columns: ReadonlyArray<Chat_ReactionType_Update_Column>;
+  readonly where?: Maybe<Chat_ReactionType_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "chat.ReactionType" */
+export type Chat_ReactionType_Order_By = {
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "chat.ReactionType" */
+export type Chat_ReactionType_Pk_Columns_Input = {
+  readonly name: Scalars['String'];
+};
+
+/** select columns of table "chat.ReactionType" */
+export enum Chat_ReactionType_Select_Column {
+  /** column name */
+  Description = 'description',
+  /** column name */
+  Name = 'name'
+}
+
+/** input type for updating data in table "chat.ReactionType" */
+export type Chat_ReactionType_Set_Input = {
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** update columns of table "chat.ReactionType" */
+export enum Chat_ReactionType_Update_Column {
+  /** column name */
+  Description = 'description',
+  /** column name */
+  Name = 'name'
+}
+
+/** aggregated selection of "chat.Reaction" */
+export type Chat_Reaction_Aggregate = {
+  readonly __typename?: 'chat_Reaction_aggregate';
+  readonly aggregate?: Maybe<Chat_Reaction_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Chat_Reaction>;
+};
+
+/** aggregate fields of "chat.Reaction" */
+export type Chat_Reaction_Aggregate_Fields = {
+  readonly __typename?: 'chat_Reaction_aggregate_fields';
+  readonly avg?: Maybe<Chat_Reaction_Avg_Fields>;
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Chat_Reaction_Max_Fields>;
+  readonly min?: Maybe<Chat_Reaction_Min_Fields>;
+  readonly stddev?: Maybe<Chat_Reaction_Stddev_Fields>;
+  readonly stddev_pop?: Maybe<Chat_Reaction_Stddev_Pop_Fields>;
+  readonly stddev_samp?: Maybe<Chat_Reaction_Stddev_Samp_Fields>;
+  readonly sum?: Maybe<Chat_Reaction_Sum_Fields>;
+  readonly var_pop?: Maybe<Chat_Reaction_Var_Pop_Fields>;
+  readonly var_samp?: Maybe<Chat_Reaction_Var_Samp_Fields>;
+  readonly variance?: Maybe<Chat_Reaction_Variance_Fields>;
+};
+
+
+/** aggregate fields of "chat.Reaction" */
+export type Chat_Reaction_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Chat_Reaction_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "chat.Reaction" */
+export type Chat_Reaction_Aggregate_Order_By = {
+  readonly avg?: Maybe<Chat_Reaction_Avg_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Chat_Reaction_Max_Order_By>;
+  readonly min?: Maybe<Chat_Reaction_Min_Order_By>;
+  readonly stddev?: Maybe<Chat_Reaction_Stddev_Order_By>;
+  readonly stddev_pop?: Maybe<Chat_Reaction_Stddev_Pop_Order_By>;
+  readonly stddev_samp?: Maybe<Chat_Reaction_Stddev_Samp_Order_By>;
+  readonly sum?: Maybe<Chat_Reaction_Sum_Order_By>;
+  readonly var_pop?: Maybe<Chat_Reaction_Var_Pop_Order_By>;
+  readonly var_samp?: Maybe<Chat_Reaction_Var_Samp_Order_By>;
+  readonly variance?: Maybe<Chat_Reaction_Variance_Order_By>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Chat_Reaction_Append_Input = {
+  readonly data?: Maybe<Scalars['jsonb']>;
+};
+
+/** input type for inserting array relation for remote table "chat.Reaction" */
+export type Chat_Reaction_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Chat_Reaction_Insert_Input>;
+  readonly on_conflict?: Maybe<Chat_Reaction_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Chat_Reaction_Avg_Fields = {
+  readonly __typename?: 'chat_Reaction_avg_fields';
+  readonly id?: Maybe<Scalars['Float']>;
+  readonly messageId?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "chat.Reaction" */
+export type Chat_Reaction_Avg_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly messageId?: Maybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "chat.Reaction". All fields are combined with a logical 'AND'. */
+export type Chat_Reaction_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Chat_Reaction_Bool_Exp>>>;
+  readonly _not?: Maybe<Chat_Reaction_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Chat_Reaction_Bool_Exp>>>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly data?: Maybe<Jsonb_Comparison_Exp>;
+  readonly id?: Maybe<Int_Comparison_Exp>;
+  readonly message?: Maybe<Chat_Message_Bool_Exp>;
+  readonly messageId?: Maybe<Int_Comparison_Exp>;
+  readonly sender?: Maybe<Attendee_Bool_Exp>;
+  readonly senderId?: Maybe<Uuid_Comparison_Exp>;
+  readonly symbol?: Maybe<String_Comparison_Exp>;
+  readonly type?: Maybe<Chat_ReactionType_Enum_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "chat.Reaction" */
+export enum Chat_Reaction_Constraint {
+  /** unique or primary key constraint */
+  ReactionPkey = 'Reaction_pkey'
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Chat_Reaction_Delete_At_Path_Input = {
+  readonly data?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Chat_Reaction_Delete_Elem_Input = {
+  readonly data?: Maybe<Scalars['Int']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Chat_Reaction_Delete_Key_Input = {
+  readonly data?: Maybe<Scalars['String']>;
+};
+
+/** input type for incrementing integer column in table "chat.Reaction" */
+export type Chat_Reaction_Inc_Input = {
+  readonly id?: Maybe<Scalars['Int']>;
+  readonly messageId?: Maybe<Scalars['Int']>;
+};
+
+/** input type for inserting data into table "chat.Reaction" */
+export type Chat_Reaction_Insert_Input = {
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly data?: Maybe<Scalars['jsonb']>;
+  readonly id?: Maybe<Scalars['Int']>;
+  readonly message?: Maybe<Chat_Message_Obj_Rel_Insert_Input>;
+  readonly messageId?: Maybe<Scalars['Int']>;
+  readonly sender?: Maybe<Attendee_Obj_Rel_Insert_Input>;
+  readonly senderId?: Maybe<Scalars['uuid']>;
+  readonly symbol?: Maybe<Scalars['String']>;
+  readonly type?: Maybe<Chat_ReactionType_Enum>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Chat_Reaction_Max_Fields = {
+  readonly __typename?: 'chat_Reaction_max_fields';
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['Int']>;
+  readonly messageId?: Maybe<Scalars['Int']>;
+  readonly senderId?: Maybe<Scalars['uuid']>;
+  readonly symbol?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "chat.Reaction" */
+export type Chat_Reaction_Max_Order_By = {
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly messageId?: Maybe<Order_By>;
+  readonly senderId?: Maybe<Order_By>;
+  readonly symbol?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Chat_Reaction_Min_Fields = {
+  readonly __typename?: 'chat_Reaction_min_fields';
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['Int']>;
+  readonly messageId?: Maybe<Scalars['Int']>;
+  readonly senderId?: Maybe<Scalars['uuid']>;
+  readonly symbol?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "chat.Reaction" */
+export type Chat_Reaction_Min_Order_By = {
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly messageId?: Maybe<Order_By>;
+  readonly senderId?: Maybe<Order_By>;
+  readonly symbol?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "chat.Reaction" */
+export type Chat_Reaction_Mutation_Response = {
+  readonly __typename?: 'chat_Reaction_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Chat_Reaction>;
+};
+
+/** input type for inserting object relation for remote table "chat.Reaction" */
+export type Chat_Reaction_Obj_Rel_Insert_Input = {
+  readonly data: Chat_Reaction_Insert_Input;
+  readonly on_conflict?: Maybe<Chat_Reaction_On_Conflict>;
+};
+
+/** on conflict condition type for table "chat.Reaction" */
+export type Chat_Reaction_On_Conflict = {
+  readonly constraint: Chat_Reaction_Constraint;
+  readonly update_columns: ReadonlyArray<Chat_Reaction_Update_Column>;
+  readonly where?: Maybe<Chat_Reaction_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "chat.Reaction" */
+export type Chat_Reaction_Order_By = {
+  readonly created_at?: Maybe<Order_By>;
+  readonly data?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly message?: Maybe<Chat_Message_Order_By>;
+  readonly messageId?: Maybe<Order_By>;
+  readonly sender?: Maybe<Attendee_Order_By>;
+  readonly senderId?: Maybe<Order_By>;
+  readonly symbol?: Maybe<Order_By>;
+  readonly type?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "chat.Reaction" */
+export type Chat_Reaction_Pk_Columns_Input = {
+  readonly id: Scalars['Int'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Chat_Reaction_Prepend_Input = {
+  readonly data?: Maybe<Scalars['jsonb']>;
+};
+
+/** select columns of table "chat.Reaction" */
+export enum Chat_Reaction_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Data = 'data',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  MessageId = 'messageId',
+  /** column name */
+  SenderId = 'senderId',
+  /** column name */
+  Symbol = 'symbol',
+  /** column name */
+  Type = 'type',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "chat.Reaction" */
+export type Chat_Reaction_Set_Input = {
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly data?: Maybe<Scalars['jsonb']>;
+  readonly id?: Maybe<Scalars['Int']>;
+  readonly messageId?: Maybe<Scalars['Int']>;
+  readonly senderId?: Maybe<Scalars['uuid']>;
+  readonly symbol?: Maybe<Scalars['String']>;
+  readonly type?: Maybe<Chat_ReactionType_Enum>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate stddev on columns */
+export type Chat_Reaction_Stddev_Fields = {
+  readonly __typename?: 'chat_Reaction_stddev_fields';
+  readonly id?: Maybe<Scalars['Float']>;
+  readonly messageId?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "chat.Reaction" */
+export type Chat_Reaction_Stddev_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly messageId?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Chat_Reaction_Stddev_Pop_Fields = {
+  readonly __typename?: 'chat_Reaction_stddev_pop_fields';
+  readonly id?: Maybe<Scalars['Float']>;
+  readonly messageId?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "chat.Reaction" */
+export type Chat_Reaction_Stddev_Pop_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly messageId?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Chat_Reaction_Stddev_Samp_Fields = {
+  readonly __typename?: 'chat_Reaction_stddev_samp_fields';
+  readonly id?: Maybe<Scalars['Float']>;
+  readonly messageId?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "chat.Reaction" */
+export type Chat_Reaction_Stddev_Samp_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly messageId?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Chat_Reaction_Sum_Fields = {
+  readonly __typename?: 'chat_Reaction_sum_fields';
+  readonly id?: Maybe<Scalars['Int']>;
+  readonly messageId?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "chat.Reaction" */
+export type Chat_Reaction_Sum_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly messageId?: Maybe<Order_By>;
+};
+
+/** update columns of table "chat.Reaction" */
+export enum Chat_Reaction_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Data = 'data',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  MessageId = 'messageId',
+  /** column name */
+  SenderId = 'senderId',
+  /** column name */
+  Symbol = 'symbol',
+  /** column name */
+  Type = 'type',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** aggregate var_pop on columns */
+export type Chat_Reaction_Var_Pop_Fields = {
+  readonly __typename?: 'chat_Reaction_var_pop_fields';
+  readonly id?: Maybe<Scalars['Float']>;
+  readonly messageId?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "chat.Reaction" */
+export type Chat_Reaction_Var_Pop_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly messageId?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Chat_Reaction_Var_Samp_Fields = {
+  readonly __typename?: 'chat_Reaction_var_samp_fields';
+  readonly id?: Maybe<Scalars['Float']>;
+  readonly messageId?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "chat.Reaction" */
+export type Chat_Reaction_Var_Samp_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly messageId?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Chat_Reaction_Variance_Fields = {
+  readonly __typename?: 'chat_Reaction_variance_fields';
+  readonly id?: Maybe<Scalars['Float']>;
+  readonly messageId?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "chat.Reaction" */
+export type Chat_Reaction_Variance_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly messageId?: Maybe<Order_By>;
+};
+
+/** columns and relationships of "chat.ReadUpToIndex" */
+export type Chat_ReadUpToIndex = {
+  readonly __typename?: 'chat_ReadUpToIndex';
+  /** An object relationship */
+  readonly attendee: Attendee;
+  readonly attendeeId: Scalars['uuid'];
+  /** An object relationship */
+  readonly chat: Chat_Chat;
+  readonly chatId: Scalars['uuid'];
+  /** An object relationship */
+  readonly message: Chat_Message;
+  readonly messageId: Scalars['Int'];
+  /** A computed field, executes function "chat.unreadCount" */
+  readonly unreadCount?: Maybe<Scalars['Int']>;
+  readonly updated_at: Scalars['timestamptz'];
+};
+
+/** aggregated selection of "chat.ReadUpToIndex" */
+export type Chat_ReadUpToIndex_Aggregate = {
+  readonly __typename?: 'chat_ReadUpToIndex_aggregate';
+  readonly aggregate?: Maybe<Chat_ReadUpToIndex_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Chat_ReadUpToIndex>;
+};
+
+/** aggregate fields of "chat.ReadUpToIndex" */
+export type Chat_ReadUpToIndex_Aggregate_Fields = {
+  readonly __typename?: 'chat_ReadUpToIndex_aggregate_fields';
+  readonly avg?: Maybe<Chat_ReadUpToIndex_Avg_Fields>;
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Chat_ReadUpToIndex_Max_Fields>;
+  readonly min?: Maybe<Chat_ReadUpToIndex_Min_Fields>;
+  readonly stddev?: Maybe<Chat_ReadUpToIndex_Stddev_Fields>;
+  readonly stddev_pop?: Maybe<Chat_ReadUpToIndex_Stddev_Pop_Fields>;
+  readonly stddev_samp?: Maybe<Chat_ReadUpToIndex_Stddev_Samp_Fields>;
+  readonly sum?: Maybe<Chat_ReadUpToIndex_Sum_Fields>;
+  readonly var_pop?: Maybe<Chat_ReadUpToIndex_Var_Pop_Fields>;
+  readonly var_samp?: Maybe<Chat_ReadUpToIndex_Var_Samp_Fields>;
+  readonly variance?: Maybe<Chat_ReadUpToIndex_Variance_Fields>;
+};
+
+
+/** aggregate fields of "chat.ReadUpToIndex" */
+export type Chat_ReadUpToIndex_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Chat_ReadUpToIndex_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "chat.ReadUpToIndex" */
+export type Chat_ReadUpToIndex_Aggregate_Order_By = {
+  readonly avg?: Maybe<Chat_ReadUpToIndex_Avg_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Chat_ReadUpToIndex_Max_Order_By>;
+  readonly min?: Maybe<Chat_ReadUpToIndex_Min_Order_By>;
+  readonly stddev?: Maybe<Chat_ReadUpToIndex_Stddev_Order_By>;
+  readonly stddev_pop?: Maybe<Chat_ReadUpToIndex_Stddev_Pop_Order_By>;
+  readonly stddev_samp?: Maybe<Chat_ReadUpToIndex_Stddev_Samp_Order_By>;
+  readonly sum?: Maybe<Chat_ReadUpToIndex_Sum_Order_By>;
+  readonly var_pop?: Maybe<Chat_ReadUpToIndex_Var_Pop_Order_By>;
+  readonly var_samp?: Maybe<Chat_ReadUpToIndex_Var_Samp_Order_By>;
+  readonly variance?: Maybe<Chat_ReadUpToIndex_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "chat.ReadUpToIndex" */
+export type Chat_ReadUpToIndex_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Chat_ReadUpToIndex_Insert_Input>;
+  readonly on_conflict?: Maybe<Chat_ReadUpToIndex_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Chat_ReadUpToIndex_Avg_Fields = {
+  readonly __typename?: 'chat_ReadUpToIndex_avg_fields';
+  readonly messageId?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "chat.ReadUpToIndex" */
+export type Chat_ReadUpToIndex_Avg_Order_By = {
+  readonly messageId?: Maybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "chat.ReadUpToIndex". All fields are combined with a logical 'AND'. */
+export type Chat_ReadUpToIndex_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Chat_ReadUpToIndex_Bool_Exp>>>;
+  readonly _not?: Maybe<Chat_ReadUpToIndex_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Chat_ReadUpToIndex_Bool_Exp>>>;
+  readonly attendee?: Maybe<Attendee_Bool_Exp>;
+  readonly attendeeId?: Maybe<Uuid_Comparison_Exp>;
+  readonly chat?: Maybe<Chat_Chat_Bool_Exp>;
+  readonly chatId?: Maybe<Uuid_Comparison_Exp>;
+  readonly message?: Maybe<Chat_Message_Bool_Exp>;
+  readonly messageId?: Maybe<Int_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "chat.ReadUpToIndex" */
+export enum Chat_ReadUpToIndex_Constraint {
+  /** unique or primary key constraint */
+  ReadUpToIndexPkey = 'ReadUpToIndex_pkey'
+}
+
+/** input type for incrementing integer column in table "chat.ReadUpToIndex" */
+export type Chat_ReadUpToIndex_Inc_Input = {
+  readonly messageId?: Maybe<Scalars['Int']>;
+};
+
+/** input type for inserting data into table "chat.ReadUpToIndex" */
+export type Chat_ReadUpToIndex_Insert_Input = {
+  readonly attendee?: Maybe<Attendee_Obj_Rel_Insert_Input>;
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly chat?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly message?: Maybe<Chat_Message_Obj_Rel_Insert_Input>;
+  readonly messageId?: Maybe<Scalars['Int']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Chat_ReadUpToIndex_Max_Fields = {
+  readonly __typename?: 'chat_ReadUpToIndex_max_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly messageId?: Maybe<Scalars['Int']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "chat.ReadUpToIndex" */
+export type Chat_ReadUpToIndex_Max_Order_By = {
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly messageId?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Chat_ReadUpToIndex_Min_Fields = {
+  readonly __typename?: 'chat_ReadUpToIndex_min_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly messageId?: Maybe<Scalars['Int']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "chat.ReadUpToIndex" */
+export type Chat_ReadUpToIndex_Min_Order_By = {
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly messageId?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "chat.ReadUpToIndex" */
+export type Chat_ReadUpToIndex_Mutation_Response = {
+  readonly __typename?: 'chat_ReadUpToIndex_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Chat_ReadUpToIndex>;
+};
+
+/** input type for inserting object relation for remote table "chat.ReadUpToIndex" */
+export type Chat_ReadUpToIndex_Obj_Rel_Insert_Input = {
+  readonly data: Chat_ReadUpToIndex_Insert_Input;
+  readonly on_conflict?: Maybe<Chat_ReadUpToIndex_On_Conflict>;
+};
+
+/** on conflict condition type for table "chat.ReadUpToIndex" */
+export type Chat_ReadUpToIndex_On_Conflict = {
+  readonly constraint: Chat_ReadUpToIndex_Constraint;
+  readonly update_columns: ReadonlyArray<Chat_ReadUpToIndex_Update_Column>;
+  readonly where?: Maybe<Chat_ReadUpToIndex_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "chat.ReadUpToIndex" */
+export type Chat_ReadUpToIndex_Order_By = {
+  readonly attendee?: Maybe<Attendee_Order_By>;
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly chat?: Maybe<Chat_Chat_Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly message?: Maybe<Chat_Message_Order_By>;
+  readonly messageId?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "chat.ReadUpToIndex" */
+export type Chat_ReadUpToIndex_Pk_Columns_Input = {
+  readonly attendeeId: Scalars['uuid'];
+  readonly chatId: Scalars['uuid'];
+};
+
+/** select columns of table "chat.ReadUpToIndex" */
+export enum Chat_ReadUpToIndex_Select_Column {
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  ChatId = 'chatId',
+  /** column name */
+  MessageId = 'messageId',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "chat.ReadUpToIndex" */
+export type Chat_ReadUpToIndex_Set_Input = {
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly messageId?: Maybe<Scalars['Int']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate stddev on columns */
+export type Chat_ReadUpToIndex_Stddev_Fields = {
+  readonly __typename?: 'chat_ReadUpToIndex_stddev_fields';
+  readonly messageId?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "chat.ReadUpToIndex" */
+export type Chat_ReadUpToIndex_Stddev_Order_By = {
+  readonly messageId?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Chat_ReadUpToIndex_Stddev_Pop_Fields = {
+  readonly __typename?: 'chat_ReadUpToIndex_stddev_pop_fields';
+  readonly messageId?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "chat.ReadUpToIndex" */
+export type Chat_ReadUpToIndex_Stddev_Pop_Order_By = {
+  readonly messageId?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Chat_ReadUpToIndex_Stddev_Samp_Fields = {
+  readonly __typename?: 'chat_ReadUpToIndex_stddev_samp_fields';
+  readonly messageId?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "chat.ReadUpToIndex" */
+export type Chat_ReadUpToIndex_Stddev_Samp_Order_By = {
+  readonly messageId?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Chat_ReadUpToIndex_Sum_Fields = {
+  readonly __typename?: 'chat_ReadUpToIndex_sum_fields';
+  readonly messageId?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "chat.ReadUpToIndex" */
+export type Chat_ReadUpToIndex_Sum_Order_By = {
+  readonly messageId?: Maybe<Order_By>;
+};
+
+/** update columns of table "chat.ReadUpToIndex" */
+export enum Chat_ReadUpToIndex_Update_Column {
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  ChatId = 'chatId',
+  /** column name */
+  MessageId = 'messageId',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** aggregate var_pop on columns */
+export type Chat_ReadUpToIndex_Var_Pop_Fields = {
+  readonly __typename?: 'chat_ReadUpToIndex_var_pop_fields';
+  readonly messageId?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "chat.ReadUpToIndex" */
+export type Chat_ReadUpToIndex_Var_Pop_Order_By = {
+  readonly messageId?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Chat_ReadUpToIndex_Var_Samp_Fields = {
+  readonly __typename?: 'chat_ReadUpToIndex_var_samp_fields';
+  readonly messageId?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "chat.ReadUpToIndex" */
+export type Chat_ReadUpToIndex_Var_Samp_Order_By = {
+  readonly messageId?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Chat_ReadUpToIndex_Variance_Fields = {
+  readonly __typename?: 'chat_ReadUpToIndex_variance_fields';
+  readonly messageId?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "chat.ReadUpToIndex" */
+export type Chat_ReadUpToIndex_Variance_Order_By = {
+  readonly messageId?: Maybe<Order_By>;
+};
+
+/**
+ * Subscribe to chat notifications.
+ * 
+ * 
+ * columns and relationships of "chat.Subscription"
+ */
+export type Chat_Subscription = {
+  readonly __typename?: 'chat_Subscription';
+  /** An object relationship */
+  readonly attendee: Attendee;
+  readonly attendeeId: Scalars['uuid'];
+  /** An object relationship */
+  readonly chat: Chat_Chat;
+  readonly chatId: Scalars['uuid'];
+  readonly created_at: Scalars['timestamptz'];
+  readonly wasManuallySubscribed: Scalars['Boolean'];
+};
+
+/** aggregated selection of "chat.Subscription" */
+export type Chat_Subscription_Aggregate = {
+  readonly __typename?: 'chat_Subscription_aggregate';
+  readonly aggregate?: Maybe<Chat_Subscription_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Chat_Subscription>;
+};
+
+/** aggregate fields of "chat.Subscription" */
+export type Chat_Subscription_Aggregate_Fields = {
+  readonly __typename?: 'chat_Subscription_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Chat_Subscription_Max_Fields>;
+  readonly min?: Maybe<Chat_Subscription_Min_Fields>;
+};
+
+
+/** aggregate fields of "chat.Subscription" */
+export type Chat_Subscription_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Chat_Subscription_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "chat.Subscription" */
+export type Chat_Subscription_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Chat_Subscription_Max_Order_By>;
+  readonly min?: Maybe<Chat_Subscription_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "chat.Subscription" */
+export type Chat_Subscription_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Chat_Subscription_Insert_Input>;
+  readonly on_conflict?: Maybe<Chat_Subscription_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "chat.Subscription". All fields are combined with a logical 'AND'. */
+export type Chat_Subscription_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Chat_Subscription_Bool_Exp>>>;
+  readonly _not?: Maybe<Chat_Subscription_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Chat_Subscription_Bool_Exp>>>;
+  readonly attendee?: Maybe<Attendee_Bool_Exp>;
+  readonly attendeeId?: Maybe<Uuid_Comparison_Exp>;
+  readonly chat?: Maybe<Chat_Chat_Bool_Exp>;
+  readonly chatId?: Maybe<Uuid_Comparison_Exp>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly wasManuallySubscribed?: Maybe<Boolean_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "chat.Subscription" */
+export enum Chat_Subscription_Constraint {
+  /** unique or primary key constraint */
+  SubscriptionPkey = 'Subscription_pkey'
+}
+
+/** input type for inserting data into table "chat.Subscription" */
+export type Chat_Subscription_Insert_Input = {
+  readonly attendee?: Maybe<Attendee_Obj_Rel_Insert_Input>;
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly chat?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly wasManuallySubscribed?: Maybe<Scalars['Boolean']>;
+};
+
+/** aggregate max on columns */
+export type Chat_Subscription_Max_Fields = {
+  readonly __typename?: 'chat_Subscription_max_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "chat.Subscription" */
+export type Chat_Subscription_Max_Order_By = {
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Chat_Subscription_Min_Fields = {
+  readonly __typename?: 'chat_Subscription_min_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "chat.Subscription" */
+export type Chat_Subscription_Min_Order_By = {
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "chat.Subscription" */
+export type Chat_Subscription_Mutation_Response = {
+  readonly __typename?: 'chat_Subscription_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Chat_Subscription>;
+};
+
+/** input type for inserting object relation for remote table "chat.Subscription" */
+export type Chat_Subscription_Obj_Rel_Insert_Input = {
+  readonly data: Chat_Subscription_Insert_Input;
+  readonly on_conflict?: Maybe<Chat_Subscription_On_Conflict>;
+};
+
+/** on conflict condition type for table "chat.Subscription" */
+export type Chat_Subscription_On_Conflict = {
+  readonly constraint: Chat_Subscription_Constraint;
+  readonly update_columns: ReadonlyArray<Chat_Subscription_Update_Column>;
+  readonly where?: Maybe<Chat_Subscription_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "chat.Subscription" */
+export type Chat_Subscription_Order_By = {
+  readonly attendee?: Maybe<Attendee_Order_By>;
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly chat?: Maybe<Chat_Chat_Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly wasManuallySubscribed?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "chat.Subscription" */
+export type Chat_Subscription_Pk_Columns_Input = {
+  readonly attendeeId: Scalars['uuid'];
+  readonly chatId: Scalars['uuid'];
+};
+
+/** select columns of table "chat.Subscription" */
+export enum Chat_Subscription_Select_Column {
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  ChatId = 'chatId',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  WasManuallySubscribed = 'wasManuallySubscribed'
+}
+
+/** input type for updating data in table "chat.Subscription" */
+export type Chat_Subscription_Set_Input = {
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly wasManuallySubscribed?: Maybe<Scalars['Boolean']>;
+};
+
+/** update columns of table "chat.Subscription" */
+export enum Chat_Subscription_Update_Column {
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  ChatId = 'chatId',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  WasManuallySubscribed = 'wasManuallySubscribed'
+}
+
+/** columns and relationships of "chat.Typer" */
+export type Chat_Typer = {
+  readonly __typename?: 'chat_Typer';
+  /** An object relationship */
+  readonly attendee: Attendee;
+  readonly attendeeId: Scalars['uuid'];
+  /** An object relationship */
+  readonly chat: Chat_Chat;
+  readonly chatId: Scalars['uuid'];
+  readonly messageTypeName: Chat_MessageType_Enum;
+  readonly updated_at: Scalars['timestamptz'];
+};
+
+/** aggregated selection of "chat.Typer" */
+export type Chat_Typer_Aggregate = {
+  readonly __typename?: 'chat_Typer_aggregate';
+  readonly aggregate?: Maybe<Chat_Typer_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Chat_Typer>;
+};
+
+/** aggregate fields of "chat.Typer" */
+export type Chat_Typer_Aggregate_Fields = {
+  readonly __typename?: 'chat_Typer_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Chat_Typer_Max_Fields>;
+  readonly min?: Maybe<Chat_Typer_Min_Fields>;
+};
+
+
+/** aggregate fields of "chat.Typer" */
+export type Chat_Typer_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Chat_Typer_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "chat.Typer" */
+export type Chat_Typer_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Chat_Typer_Max_Order_By>;
+  readonly min?: Maybe<Chat_Typer_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "chat.Typer" */
+export type Chat_Typer_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Chat_Typer_Insert_Input>;
+  readonly on_conflict?: Maybe<Chat_Typer_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "chat.Typer". All fields are combined with a logical 'AND'. */
+export type Chat_Typer_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Chat_Typer_Bool_Exp>>>;
+  readonly _not?: Maybe<Chat_Typer_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Chat_Typer_Bool_Exp>>>;
+  readonly attendee?: Maybe<Attendee_Bool_Exp>;
+  readonly attendeeId?: Maybe<Uuid_Comparison_Exp>;
+  readonly chat?: Maybe<Chat_Chat_Bool_Exp>;
+  readonly chatId?: Maybe<Uuid_Comparison_Exp>;
+  readonly messageTypeName?: Maybe<Chat_MessageType_Enum_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "chat.Typer" */
+export enum Chat_Typer_Constraint {
+  /** unique or primary key constraint */
+  TyperPkey = 'Typer_pkey'
+}
+
+/** input type for inserting data into table "chat.Typer" */
+export type Chat_Typer_Insert_Input = {
+  readonly attendee?: Maybe<Attendee_Obj_Rel_Insert_Input>;
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly chat?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly messageTypeName?: Maybe<Chat_MessageType_Enum>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Chat_Typer_Max_Fields = {
+  readonly __typename?: 'chat_Typer_max_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "chat.Typer" */
+export type Chat_Typer_Max_Order_By = {
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Chat_Typer_Min_Fields = {
+  readonly __typename?: 'chat_Typer_min_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "chat.Typer" */
+export type Chat_Typer_Min_Order_By = {
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "chat.Typer" */
+export type Chat_Typer_Mutation_Response = {
+  readonly __typename?: 'chat_Typer_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Chat_Typer>;
+};
+
+/** input type for inserting object relation for remote table "chat.Typer" */
+export type Chat_Typer_Obj_Rel_Insert_Input = {
+  readonly data: Chat_Typer_Insert_Input;
+  readonly on_conflict?: Maybe<Chat_Typer_On_Conflict>;
+};
+
+/** on conflict condition type for table "chat.Typer" */
+export type Chat_Typer_On_Conflict = {
+  readonly constraint: Chat_Typer_Constraint;
+  readonly update_columns: ReadonlyArray<Chat_Typer_Update_Column>;
+  readonly where?: Maybe<Chat_Typer_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "chat.Typer" */
+export type Chat_Typer_Order_By = {
+  readonly attendee?: Maybe<Attendee_Order_By>;
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly chat?: Maybe<Chat_Chat_Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+  readonly messageTypeName?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "chat.Typer" */
+export type Chat_Typer_Pk_Columns_Input = {
+  readonly attendeeId: Scalars['uuid'];
+  readonly chatId: Scalars['uuid'];
+};
+
+/** select columns of table "chat.Typer" */
+export enum Chat_Typer_Select_Column {
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  ChatId = 'chatId',
+  /** column name */
+  MessageTypeName = 'messageTypeName',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "chat.Typer" */
+export type Chat_Typer_Set_Input = {
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly messageTypeName?: Maybe<Chat_MessageType_Enum>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "chat.Typer" */
+export enum Chat_Typer_Update_Column {
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  ChatId = 'chatId',
+  /** column name */
+  MessageTypeName = 'messageTypeName',
   /** column name */
   UpdatedAt = 'updated_at'
 }
@@ -17362,34 +17710,6 @@ export type Mutation_Root = {
   readonly delete_BroadcastContentItem_by_pk?: Maybe<BroadcastContentItem>;
   /** delete single row from the table: "Broadcast" */
   readonly delete_Broadcast_by_pk?: Maybe<Broadcast>;
-  /** delete data from the table: "Chat" */
-  readonly delete_Chat?: Maybe<Chat_Mutation_Response>;
-  /** delete data from the table: "ChatMember" */
-  readonly delete_ChatMember?: Maybe<ChatMember_Mutation_Response>;
-  /** delete single row from the table: "ChatMember" */
-  readonly delete_ChatMember_by_pk?: Maybe<ChatMember>;
-  /** delete data from the table: "ChatMessage" */
-  readonly delete_ChatMessage?: Maybe<ChatMessage_Mutation_Response>;
-  /** delete single row from the table: "ChatMessage" */
-  readonly delete_ChatMessage_by_pk?: Maybe<ChatMessage>;
-  /** delete data from the table: "ChatReaction" */
-  readonly delete_ChatReaction?: Maybe<ChatReaction_Mutation_Response>;
-  /** delete single row from the table: "ChatReaction" */
-  readonly delete_ChatReaction_by_pk?: Maybe<ChatReaction>;
-  /** delete data from the table: "ChatTyper" */
-  readonly delete_ChatTyper?: Maybe<ChatTyper_Mutation_Response>;
-  /** delete single row from the table: "ChatTyper" */
-  readonly delete_ChatTyper_by_pk?: Maybe<ChatTyper>;
-  /** delete data from the table: "ChatUnreadIndex" */
-  readonly delete_ChatUnreadIndex?: Maybe<ChatUnreadIndex_Mutation_Response>;
-  /** delete single row from the table: "ChatUnreadIndex" */
-  readonly delete_ChatUnreadIndex_by_pk?: Maybe<ChatUnreadIndex>;
-  /** delete data from the table: "ChatViewer" */
-  readonly delete_ChatViewer?: Maybe<ChatViewer_Mutation_Response>;
-  /** delete single row from the table: "ChatViewer" */
-  readonly delete_ChatViewer_by_pk?: Maybe<ChatViewer>;
-  /** delete single row from the table: "Chat" */
-  readonly delete_Chat_by_pk?: Maybe<Chat>;
   /** delete data from the table: "Conference" */
   readonly delete_Conference?: Maybe<Conference_Mutation_Response>;
   /** delete data from the table: "ConferenceConfiguration" */
@@ -17466,14 +17786,6 @@ export type Mutation_Root = {
   readonly delete_ExecutedTransitions?: Maybe<ExecutedTransitions_Mutation_Response>;
   /** delete single row from the table: "ExecutedTransitions" */
   readonly delete_ExecutedTransitions_by_pk?: Maybe<ExecutedTransitions>;
-  /** delete data from the table: "FlaggedChatMessage" */
-  readonly delete_FlaggedChatMessage?: Maybe<FlaggedChatMessage_Mutation_Response>;
-  /** delete single row from the table: "FlaggedChatMessage" */
-  readonly delete_FlaggedChatMessage_by_pk?: Maybe<FlaggedChatMessage>;
-  /** delete data from the table: "FollowedChat" */
-  readonly delete_FollowedChat?: Maybe<FollowedChat_Mutation_Response>;
-  /** delete single row from the table: "FollowedChat" */
-  readonly delete_FollowedChat_by_pk?: Maybe<FollowedChat>;
   /** delete data from the table: "Group" */
   readonly delete_Group?: Maybe<Group_Mutation_Response>;
   /** delete data from the table: "GroupAttendee" */
@@ -17518,10 +17830,6 @@ export type Mutation_Root = {
   readonly delete_Permission?: Maybe<Permission_Mutation_Response>;
   /** delete single row from the table: "Permission" */
   readonly delete_Permission_by_pk?: Maybe<Permission>;
-  /** delete data from the table: "PinnedChat" */
-  readonly delete_PinnedChat?: Maybe<PinnedChat_Mutation_Response>;
-  /** delete single row from the table: "PinnedChat" */
-  readonly delete_PinnedChat_by_pk?: Maybe<PinnedChat>;
   /** delete data from the table: "RequiredContentItem" */
   readonly delete_RequiredContentItem?: Maybe<RequiredContentItem_Mutation_Response>;
   /** delete single row from the table: "RequiredContentItem" */
@@ -17582,6 +17890,50 @@ export type Mutation_Root = {
   readonly delete_VideoRenderJob?: Maybe<VideoRenderJob_Mutation_Response>;
   /** delete single row from the table: "VideoRenderJob" */
   readonly delete_VideoRenderJob_by_pk?: Maybe<VideoRenderJob>;
+  /** delete data from the table: "chat.Chat" */
+  readonly delete_chat_Chat?: Maybe<Chat_Chat_Mutation_Response>;
+  /** delete single row from the table: "chat.Chat" */
+  readonly delete_chat_Chat_by_pk?: Maybe<Chat_Chat>;
+  /** delete data from the table: "chat.Flag" */
+  readonly delete_chat_Flag?: Maybe<Chat_Flag_Mutation_Response>;
+  /** delete data from the table: "chat.FlagType" */
+  readonly delete_chat_FlagType?: Maybe<Chat_FlagType_Mutation_Response>;
+  /** delete single row from the table: "chat.FlagType" */
+  readonly delete_chat_FlagType_by_pk?: Maybe<Chat_FlagType>;
+  /** delete single row from the table: "chat.Flag" */
+  readonly delete_chat_Flag_by_pk?: Maybe<Chat_Flag>;
+  /** delete data from the table: "chat.Message" */
+  readonly delete_chat_Message?: Maybe<Chat_Message_Mutation_Response>;
+  /** delete data from the table: "chat.MessageType" */
+  readonly delete_chat_MessageType?: Maybe<Chat_MessageType_Mutation_Response>;
+  /** delete single row from the table: "chat.MessageType" */
+  readonly delete_chat_MessageType_by_pk?: Maybe<Chat_MessageType>;
+  /** delete single row from the table: "chat.Message" */
+  readonly delete_chat_Message_by_pk?: Maybe<Chat_Message>;
+  /** delete data from the table: "chat.Pin" */
+  readonly delete_chat_Pin?: Maybe<Chat_Pin_Mutation_Response>;
+  /** delete single row from the table: "chat.Pin" */
+  readonly delete_chat_Pin_by_pk?: Maybe<Chat_Pin>;
+  /** delete data from the table: "chat.Reaction" */
+  readonly delete_chat_Reaction?: Maybe<Chat_Reaction_Mutation_Response>;
+  /** delete data from the table: "chat.ReactionType" */
+  readonly delete_chat_ReactionType?: Maybe<Chat_ReactionType_Mutation_Response>;
+  /** delete single row from the table: "chat.ReactionType" */
+  readonly delete_chat_ReactionType_by_pk?: Maybe<Chat_ReactionType>;
+  /** delete single row from the table: "chat.Reaction" */
+  readonly delete_chat_Reaction_by_pk?: Maybe<Chat_Reaction>;
+  /** delete data from the table: "chat.ReadUpToIndex" */
+  readonly delete_chat_ReadUpToIndex?: Maybe<Chat_ReadUpToIndex_Mutation_Response>;
+  /** delete single row from the table: "chat.ReadUpToIndex" */
+  readonly delete_chat_ReadUpToIndex_by_pk?: Maybe<Chat_ReadUpToIndex>;
+  /** delete data from the table: "chat.Subscription" */
+  readonly delete_chat_Subscription?: Maybe<Chat_Subscription_Mutation_Response>;
+  /** delete single row from the table: "chat.Subscription" */
+  readonly delete_chat_Subscription_by_pk?: Maybe<Chat_Subscription>;
+  /** delete data from the table: "chat.Typer" */
+  readonly delete_chat_Typer?: Maybe<Chat_Typer_Mutation_Response>;
+  /** delete single row from the table: "chat.Typer" */
+  readonly delete_chat_Typer_by_pk?: Maybe<Chat_Typer>;
   /** delete data from the table: "job_queues.InvitationEmailJob" */
   readonly delete_job_queues_InvitationEmailJob?: Maybe<Job_Queues_InvitationEmailJob_Mutation_Response>;
   /** delete single row from the table: "job_queues.InvitationEmailJob" */
@@ -17610,34 +17962,6 @@ export type Mutation_Root = {
   readonly insert_BroadcastContentItem_one?: Maybe<BroadcastContentItem>;
   /** insert a single row into the table: "Broadcast" */
   readonly insert_Broadcast_one?: Maybe<Broadcast>;
-  /** insert data into the table: "Chat" */
-  readonly insert_Chat?: Maybe<Chat_Mutation_Response>;
-  /** insert data into the table: "ChatMember" */
-  readonly insert_ChatMember?: Maybe<ChatMember_Mutation_Response>;
-  /** insert a single row into the table: "ChatMember" */
-  readonly insert_ChatMember_one?: Maybe<ChatMember>;
-  /** insert data into the table: "ChatMessage" */
-  readonly insert_ChatMessage?: Maybe<ChatMessage_Mutation_Response>;
-  /** insert a single row into the table: "ChatMessage" */
-  readonly insert_ChatMessage_one?: Maybe<ChatMessage>;
-  /** insert data into the table: "ChatReaction" */
-  readonly insert_ChatReaction?: Maybe<ChatReaction_Mutation_Response>;
-  /** insert a single row into the table: "ChatReaction" */
-  readonly insert_ChatReaction_one?: Maybe<ChatReaction>;
-  /** insert data into the table: "ChatTyper" */
-  readonly insert_ChatTyper?: Maybe<ChatTyper_Mutation_Response>;
-  /** insert a single row into the table: "ChatTyper" */
-  readonly insert_ChatTyper_one?: Maybe<ChatTyper>;
-  /** insert data into the table: "ChatUnreadIndex" */
-  readonly insert_ChatUnreadIndex?: Maybe<ChatUnreadIndex_Mutation_Response>;
-  /** insert a single row into the table: "ChatUnreadIndex" */
-  readonly insert_ChatUnreadIndex_one?: Maybe<ChatUnreadIndex>;
-  /** insert data into the table: "ChatViewer" */
-  readonly insert_ChatViewer?: Maybe<ChatViewer_Mutation_Response>;
-  /** insert a single row into the table: "ChatViewer" */
-  readonly insert_ChatViewer_one?: Maybe<ChatViewer>;
-  /** insert a single row into the table: "Chat" */
-  readonly insert_Chat_one?: Maybe<Chat>;
   /** insert data into the table: "Conference" */
   readonly insert_Conference?: Maybe<Conference_Mutation_Response>;
   /** insert data into the table: "ConferenceConfiguration" */
@@ -17714,14 +18038,6 @@ export type Mutation_Root = {
   readonly insert_ExecutedTransitions?: Maybe<ExecutedTransitions_Mutation_Response>;
   /** insert a single row into the table: "ExecutedTransitions" */
   readonly insert_ExecutedTransitions_one?: Maybe<ExecutedTransitions>;
-  /** insert data into the table: "FlaggedChatMessage" */
-  readonly insert_FlaggedChatMessage?: Maybe<FlaggedChatMessage_Mutation_Response>;
-  /** insert a single row into the table: "FlaggedChatMessage" */
-  readonly insert_FlaggedChatMessage_one?: Maybe<FlaggedChatMessage>;
-  /** insert data into the table: "FollowedChat" */
-  readonly insert_FollowedChat?: Maybe<FollowedChat_Mutation_Response>;
-  /** insert a single row into the table: "FollowedChat" */
-  readonly insert_FollowedChat_one?: Maybe<FollowedChat>;
   /** insert data into the table: "Group" */
   readonly insert_Group?: Maybe<Group_Mutation_Response>;
   /** insert data into the table: "GroupAttendee" */
@@ -17766,10 +18082,6 @@ export type Mutation_Root = {
   readonly insert_Permission?: Maybe<Permission_Mutation_Response>;
   /** insert a single row into the table: "Permission" */
   readonly insert_Permission_one?: Maybe<Permission>;
-  /** insert data into the table: "PinnedChat" */
-  readonly insert_PinnedChat?: Maybe<PinnedChat_Mutation_Response>;
-  /** insert a single row into the table: "PinnedChat" */
-  readonly insert_PinnedChat_one?: Maybe<PinnedChat>;
   /** insert data into the table: "RequiredContentItem" */
   readonly insert_RequiredContentItem?: Maybe<RequiredContentItem_Mutation_Response>;
   /** insert a single row into the table: "RequiredContentItem" */
@@ -17830,6 +18142,50 @@ export type Mutation_Root = {
   readonly insert_VideoRenderJob?: Maybe<VideoRenderJob_Mutation_Response>;
   /** insert a single row into the table: "VideoRenderJob" */
   readonly insert_VideoRenderJob_one?: Maybe<VideoRenderJob>;
+  /** insert data into the table: "chat.Chat" */
+  readonly insert_chat_Chat?: Maybe<Chat_Chat_Mutation_Response>;
+  /** insert a single row into the table: "chat.Chat" */
+  readonly insert_chat_Chat_one?: Maybe<Chat_Chat>;
+  /** insert data into the table: "chat.Flag" */
+  readonly insert_chat_Flag?: Maybe<Chat_Flag_Mutation_Response>;
+  /** insert data into the table: "chat.FlagType" */
+  readonly insert_chat_FlagType?: Maybe<Chat_FlagType_Mutation_Response>;
+  /** insert a single row into the table: "chat.FlagType" */
+  readonly insert_chat_FlagType_one?: Maybe<Chat_FlagType>;
+  /** insert a single row into the table: "chat.Flag" */
+  readonly insert_chat_Flag_one?: Maybe<Chat_Flag>;
+  /** insert data into the table: "chat.Message" */
+  readonly insert_chat_Message?: Maybe<Chat_Message_Mutation_Response>;
+  /** insert data into the table: "chat.MessageType" */
+  readonly insert_chat_MessageType?: Maybe<Chat_MessageType_Mutation_Response>;
+  /** insert a single row into the table: "chat.MessageType" */
+  readonly insert_chat_MessageType_one?: Maybe<Chat_MessageType>;
+  /** insert a single row into the table: "chat.Message" */
+  readonly insert_chat_Message_one?: Maybe<Chat_Message>;
+  /** insert data into the table: "chat.Pin" */
+  readonly insert_chat_Pin?: Maybe<Chat_Pin_Mutation_Response>;
+  /** insert a single row into the table: "chat.Pin" */
+  readonly insert_chat_Pin_one?: Maybe<Chat_Pin>;
+  /** insert data into the table: "chat.Reaction" */
+  readonly insert_chat_Reaction?: Maybe<Chat_Reaction_Mutation_Response>;
+  /** insert data into the table: "chat.ReactionType" */
+  readonly insert_chat_ReactionType?: Maybe<Chat_ReactionType_Mutation_Response>;
+  /** insert a single row into the table: "chat.ReactionType" */
+  readonly insert_chat_ReactionType_one?: Maybe<Chat_ReactionType>;
+  /** insert a single row into the table: "chat.Reaction" */
+  readonly insert_chat_Reaction_one?: Maybe<Chat_Reaction>;
+  /** insert data into the table: "chat.ReadUpToIndex" */
+  readonly insert_chat_ReadUpToIndex?: Maybe<Chat_ReadUpToIndex_Mutation_Response>;
+  /** insert a single row into the table: "chat.ReadUpToIndex" */
+  readonly insert_chat_ReadUpToIndex_one?: Maybe<Chat_ReadUpToIndex>;
+  /** insert data into the table: "chat.Subscription" */
+  readonly insert_chat_Subscription?: Maybe<Chat_Subscription_Mutation_Response>;
+  /** insert a single row into the table: "chat.Subscription" */
+  readonly insert_chat_Subscription_one?: Maybe<Chat_Subscription>;
+  /** insert data into the table: "chat.Typer" */
+  readonly insert_chat_Typer?: Maybe<Chat_Typer_Mutation_Response>;
+  /** insert a single row into the table: "chat.Typer" */
+  readonly insert_chat_Typer_one?: Maybe<Chat_Typer>;
   /** insert data into the table: "job_queues.InvitationEmailJob" */
   readonly insert_job_queues_InvitationEmailJob?: Maybe<Job_Queues_InvitationEmailJob_Mutation_Response>;
   /** insert a single row into the table: "job_queues.InvitationEmailJob" */
@@ -17876,34 +18232,6 @@ export type Mutation_Root = {
   readonly update_BroadcastContentItem_by_pk?: Maybe<BroadcastContentItem>;
   /** update single row of the table: "Broadcast" */
   readonly update_Broadcast_by_pk?: Maybe<Broadcast>;
-  /** update data of the table: "Chat" */
-  readonly update_Chat?: Maybe<Chat_Mutation_Response>;
-  /** update data of the table: "ChatMember" */
-  readonly update_ChatMember?: Maybe<ChatMember_Mutation_Response>;
-  /** update single row of the table: "ChatMember" */
-  readonly update_ChatMember_by_pk?: Maybe<ChatMember>;
-  /** update data of the table: "ChatMessage" */
-  readonly update_ChatMessage?: Maybe<ChatMessage_Mutation_Response>;
-  /** update single row of the table: "ChatMessage" */
-  readonly update_ChatMessage_by_pk?: Maybe<ChatMessage>;
-  /** update data of the table: "ChatReaction" */
-  readonly update_ChatReaction?: Maybe<ChatReaction_Mutation_Response>;
-  /** update single row of the table: "ChatReaction" */
-  readonly update_ChatReaction_by_pk?: Maybe<ChatReaction>;
-  /** update data of the table: "ChatTyper" */
-  readonly update_ChatTyper?: Maybe<ChatTyper_Mutation_Response>;
-  /** update single row of the table: "ChatTyper" */
-  readonly update_ChatTyper_by_pk?: Maybe<ChatTyper>;
-  /** update data of the table: "ChatUnreadIndex" */
-  readonly update_ChatUnreadIndex?: Maybe<ChatUnreadIndex_Mutation_Response>;
-  /** update single row of the table: "ChatUnreadIndex" */
-  readonly update_ChatUnreadIndex_by_pk?: Maybe<ChatUnreadIndex>;
-  /** update data of the table: "ChatViewer" */
-  readonly update_ChatViewer?: Maybe<ChatViewer_Mutation_Response>;
-  /** update single row of the table: "ChatViewer" */
-  readonly update_ChatViewer_by_pk?: Maybe<ChatViewer>;
-  /** update single row of the table: "Chat" */
-  readonly update_Chat_by_pk?: Maybe<Chat>;
   /** update data of the table: "Conference" */
   readonly update_Conference?: Maybe<Conference_Mutation_Response>;
   /** update data of the table: "ConferenceConfiguration" */
@@ -17980,14 +18308,6 @@ export type Mutation_Root = {
   readonly update_ExecutedTransitions?: Maybe<ExecutedTransitions_Mutation_Response>;
   /** update single row of the table: "ExecutedTransitions" */
   readonly update_ExecutedTransitions_by_pk?: Maybe<ExecutedTransitions>;
-  /** update data of the table: "FlaggedChatMessage" */
-  readonly update_FlaggedChatMessage?: Maybe<FlaggedChatMessage_Mutation_Response>;
-  /** update single row of the table: "FlaggedChatMessage" */
-  readonly update_FlaggedChatMessage_by_pk?: Maybe<FlaggedChatMessage>;
-  /** update data of the table: "FollowedChat" */
-  readonly update_FollowedChat?: Maybe<FollowedChat_Mutation_Response>;
-  /** update single row of the table: "FollowedChat" */
-  readonly update_FollowedChat_by_pk?: Maybe<FollowedChat>;
   /** update data of the table: "Group" */
   readonly update_Group?: Maybe<Group_Mutation_Response>;
   /** update data of the table: "GroupAttendee" */
@@ -18032,10 +18352,6 @@ export type Mutation_Root = {
   readonly update_Permission?: Maybe<Permission_Mutation_Response>;
   /** update single row of the table: "Permission" */
   readonly update_Permission_by_pk?: Maybe<Permission>;
-  /** update data of the table: "PinnedChat" */
-  readonly update_PinnedChat?: Maybe<PinnedChat_Mutation_Response>;
-  /** update single row of the table: "PinnedChat" */
-  readonly update_PinnedChat_by_pk?: Maybe<PinnedChat>;
   /** update data of the table: "RequiredContentItem" */
   readonly update_RequiredContentItem?: Maybe<RequiredContentItem_Mutation_Response>;
   /** update single row of the table: "RequiredContentItem" */
@@ -18096,6 +18412,50 @@ export type Mutation_Root = {
   readonly update_VideoRenderJob?: Maybe<VideoRenderJob_Mutation_Response>;
   /** update single row of the table: "VideoRenderJob" */
   readonly update_VideoRenderJob_by_pk?: Maybe<VideoRenderJob>;
+  /** update data of the table: "chat.Chat" */
+  readonly update_chat_Chat?: Maybe<Chat_Chat_Mutation_Response>;
+  /** update single row of the table: "chat.Chat" */
+  readonly update_chat_Chat_by_pk?: Maybe<Chat_Chat>;
+  /** update data of the table: "chat.Flag" */
+  readonly update_chat_Flag?: Maybe<Chat_Flag_Mutation_Response>;
+  /** update data of the table: "chat.FlagType" */
+  readonly update_chat_FlagType?: Maybe<Chat_FlagType_Mutation_Response>;
+  /** update single row of the table: "chat.FlagType" */
+  readonly update_chat_FlagType_by_pk?: Maybe<Chat_FlagType>;
+  /** update single row of the table: "chat.Flag" */
+  readonly update_chat_Flag_by_pk?: Maybe<Chat_Flag>;
+  /** update data of the table: "chat.Message" */
+  readonly update_chat_Message?: Maybe<Chat_Message_Mutation_Response>;
+  /** update data of the table: "chat.MessageType" */
+  readonly update_chat_MessageType?: Maybe<Chat_MessageType_Mutation_Response>;
+  /** update single row of the table: "chat.MessageType" */
+  readonly update_chat_MessageType_by_pk?: Maybe<Chat_MessageType>;
+  /** update single row of the table: "chat.Message" */
+  readonly update_chat_Message_by_pk?: Maybe<Chat_Message>;
+  /** update data of the table: "chat.Pin" */
+  readonly update_chat_Pin?: Maybe<Chat_Pin_Mutation_Response>;
+  /** update single row of the table: "chat.Pin" */
+  readonly update_chat_Pin_by_pk?: Maybe<Chat_Pin>;
+  /** update data of the table: "chat.Reaction" */
+  readonly update_chat_Reaction?: Maybe<Chat_Reaction_Mutation_Response>;
+  /** update data of the table: "chat.ReactionType" */
+  readonly update_chat_ReactionType?: Maybe<Chat_ReactionType_Mutation_Response>;
+  /** update single row of the table: "chat.ReactionType" */
+  readonly update_chat_ReactionType_by_pk?: Maybe<Chat_ReactionType>;
+  /** update single row of the table: "chat.Reaction" */
+  readonly update_chat_Reaction_by_pk?: Maybe<Chat_Reaction>;
+  /** update data of the table: "chat.ReadUpToIndex" */
+  readonly update_chat_ReadUpToIndex?: Maybe<Chat_ReadUpToIndex_Mutation_Response>;
+  /** update single row of the table: "chat.ReadUpToIndex" */
+  readonly update_chat_ReadUpToIndex_by_pk?: Maybe<Chat_ReadUpToIndex>;
+  /** update data of the table: "chat.Subscription" */
+  readonly update_chat_Subscription?: Maybe<Chat_Subscription_Mutation_Response>;
+  /** update single row of the table: "chat.Subscription" */
+  readonly update_chat_Subscription_by_pk?: Maybe<Chat_Subscription>;
+  /** update data of the table: "chat.Typer" */
+  readonly update_chat_Typer?: Maybe<Chat_Typer_Mutation_Response>;
+  /** update single row of the table: "chat.Typer" */
+  readonly update_chat_Typer_by_pk?: Maybe<Chat_Typer>;
   /** update data of the table: "job_queues.InvitationEmailJob" */
   readonly update_job_queues_InvitationEmailJob?: Maybe<Job_Queues_InvitationEmailJob_Mutation_Response>;
   /** update single row of the table: "job_queues.InvitationEmailJob" */
@@ -18155,90 +18515,6 @@ export type Mutation_RootDelete_BroadcastContentItem_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Broadcast_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_ChatArgs = {
-  where: Chat_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_ChatMemberArgs = {
-  where: ChatMember_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_ChatMember_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_ChatMessageArgs = {
-  where: ChatMessage_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_ChatMessage_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_ChatReactionArgs = {
-  where: ChatReaction_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_ChatReaction_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_ChatTyperArgs = {
-  where: ChatTyper_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_ChatTyper_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_ChatUnreadIndexArgs = {
-  where: ChatUnreadIndex_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_ChatUnreadIndex_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_ChatViewerArgs = {
-  where: ChatViewer_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_ChatViewer_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Chat_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -18472,30 +18748,6 @@ export type Mutation_RootDelete_ExecutedTransitions_By_PkArgs = {
 
 
 /** mutation root */
-export type Mutation_RootDelete_FlaggedChatMessageArgs = {
-  where: FlaggedChatMessage_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_FlaggedChatMessage_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_FollowedChatArgs = {
-  where: FollowedChat_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_FollowedChat_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** mutation root */
 export type Mutation_RootDelete_GroupArgs = {
   where: Group_Bool_Exp;
 };
@@ -18624,18 +18876,6 @@ export type Mutation_RootDelete_PermissionArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Permission_By_PkArgs = {
   name: Scalars['String'];
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_PinnedChatArgs = {
-  where: PinnedChat_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_PinnedChat_By_PkArgs = {
-  id: Scalars['uuid'];
 };
 
 
@@ -18820,6 +19060,142 @@ export type Mutation_RootDelete_VideoRenderJob_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_Chat_ChatArgs = {
+  where: Chat_Chat_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Chat_Chat_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Chat_FlagArgs = {
+  where: Chat_Flag_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Chat_FlagTypeArgs = {
+  where: Chat_FlagType_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Chat_FlagType_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Chat_Flag_By_PkArgs = {
+  id: Scalars['Int'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Chat_MessageArgs = {
+  where: Chat_Message_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Chat_MessageTypeArgs = {
+  where: Chat_MessageType_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Chat_MessageType_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Chat_Message_By_PkArgs = {
+  id: Scalars['Int'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Chat_PinArgs = {
+  where: Chat_Pin_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Chat_Pin_By_PkArgs = {
+  attendeeId: Scalars['uuid'];
+  chatId: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Chat_ReactionArgs = {
+  where: Chat_Reaction_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Chat_ReactionTypeArgs = {
+  where: Chat_ReactionType_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Chat_ReactionType_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Chat_Reaction_By_PkArgs = {
+  id: Scalars['Int'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Chat_ReadUpToIndexArgs = {
+  where: Chat_ReadUpToIndex_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Chat_ReadUpToIndex_By_PkArgs = {
+  attendeeId: Scalars['uuid'];
+  chatId: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Chat_SubscriptionArgs = {
+  where: Chat_Subscription_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Chat_Subscription_By_PkArgs = {
+  attendeeId: Scalars['uuid'];
+  chatId: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Chat_TyperArgs = {
+  where: Chat_Typer_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Chat_Typer_By_PkArgs = {
+  attendeeId: Scalars['uuid'];
+  chatId: Scalars['uuid'];
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_Job_Queues_InvitationEmailJobArgs = {
   where: Job_Queues_InvitationEmailJob_Bool_Exp;
 };
@@ -18908,104 +19284,6 @@ export type Mutation_RootInsert_BroadcastContentItem_OneArgs = {
 export type Mutation_RootInsert_Broadcast_OneArgs = {
   object: Broadcast_Insert_Input;
   on_conflict?: Maybe<Broadcast_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_ChatArgs = {
-  objects: ReadonlyArray<Chat_Insert_Input>;
-  on_conflict?: Maybe<Chat_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_ChatMemberArgs = {
-  objects: ReadonlyArray<ChatMember_Insert_Input>;
-  on_conflict?: Maybe<ChatMember_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_ChatMember_OneArgs = {
-  object: ChatMember_Insert_Input;
-  on_conflict?: Maybe<ChatMember_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_ChatMessageArgs = {
-  objects: ReadonlyArray<ChatMessage_Insert_Input>;
-  on_conflict?: Maybe<ChatMessage_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_ChatMessage_OneArgs = {
-  object: ChatMessage_Insert_Input;
-  on_conflict?: Maybe<ChatMessage_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_ChatReactionArgs = {
-  objects: ReadonlyArray<ChatReaction_Insert_Input>;
-  on_conflict?: Maybe<ChatReaction_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_ChatReaction_OneArgs = {
-  object: ChatReaction_Insert_Input;
-  on_conflict?: Maybe<ChatReaction_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_ChatTyperArgs = {
-  objects: ReadonlyArray<ChatTyper_Insert_Input>;
-  on_conflict?: Maybe<ChatTyper_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_ChatTyper_OneArgs = {
-  object: ChatTyper_Insert_Input;
-  on_conflict?: Maybe<ChatTyper_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_ChatUnreadIndexArgs = {
-  objects: ReadonlyArray<ChatUnreadIndex_Insert_Input>;
-  on_conflict?: Maybe<ChatUnreadIndex_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_ChatUnreadIndex_OneArgs = {
-  object: ChatUnreadIndex_Insert_Input;
-  on_conflict?: Maybe<ChatUnreadIndex_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_ChatViewerArgs = {
-  objects: ReadonlyArray<ChatViewer_Insert_Input>;
-  on_conflict?: Maybe<ChatViewer_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_ChatViewer_OneArgs = {
-  object: ChatViewer_Insert_Input;
-  on_conflict?: Maybe<ChatViewer_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Chat_OneArgs = {
-  object: Chat_Insert_Input;
-  on_conflict?: Maybe<Chat_On_Conflict>;
 };
 
 
@@ -19276,34 +19554,6 @@ export type Mutation_RootInsert_ExecutedTransitions_OneArgs = {
 
 
 /** mutation root */
-export type Mutation_RootInsert_FlaggedChatMessageArgs = {
-  objects: ReadonlyArray<FlaggedChatMessage_Insert_Input>;
-  on_conflict?: Maybe<FlaggedChatMessage_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_FlaggedChatMessage_OneArgs = {
-  object: FlaggedChatMessage_Insert_Input;
-  on_conflict?: Maybe<FlaggedChatMessage_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_FollowedChatArgs = {
-  objects: ReadonlyArray<FollowedChat_Insert_Input>;
-  on_conflict?: Maybe<FollowedChat_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_FollowedChat_OneArgs = {
-  object: FollowedChat_Insert_Input;
-  on_conflict?: Maybe<FollowedChat_On_Conflict>;
-};
-
-
-/** mutation root */
 export type Mutation_RootInsert_GroupArgs = {
   objects: ReadonlyArray<Group_Insert_Input>;
   on_conflict?: Maybe<Group_On_Conflict>;
@@ -19454,20 +19704,6 @@ export type Mutation_RootInsert_PermissionArgs = {
 export type Mutation_RootInsert_Permission_OneArgs = {
   object: Permission_Insert_Input;
   on_conflict?: Maybe<Permission_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_PinnedChatArgs = {
-  objects: ReadonlyArray<PinnedChat_Insert_Input>;
-  on_conflict?: Maybe<PinnedChat_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_PinnedChat_OneArgs = {
-  object: PinnedChat_Insert_Input;
-  on_conflict?: Maybe<PinnedChat_On_Conflict>;
 };
 
 
@@ -19682,6 +19918,160 @@ export type Mutation_RootInsert_VideoRenderJob_OneArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_Chat_ChatArgs = {
+  objects: ReadonlyArray<Chat_Chat_Insert_Input>;
+  on_conflict?: Maybe<Chat_Chat_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Chat_Chat_OneArgs = {
+  object: Chat_Chat_Insert_Input;
+  on_conflict?: Maybe<Chat_Chat_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Chat_FlagArgs = {
+  objects: ReadonlyArray<Chat_Flag_Insert_Input>;
+  on_conflict?: Maybe<Chat_Flag_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Chat_FlagTypeArgs = {
+  objects: ReadonlyArray<Chat_FlagType_Insert_Input>;
+  on_conflict?: Maybe<Chat_FlagType_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Chat_FlagType_OneArgs = {
+  object: Chat_FlagType_Insert_Input;
+  on_conflict?: Maybe<Chat_FlagType_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Chat_Flag_OneArgs = {
+  object: Chat_Flag_Insert_Input;
+  on_conflict?: Maybe<Chat_Flag_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Chat_MessageArgs = {
+  objects: ReadonlyArray<Chat_Message_Insert_Input>;
+  on_conflict?: Maybe<Chat_Message_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Chat_MessageTypeArgs = {
+  objects: ReadonlyArray<Chat_MessageType_Insert_Input>;
+  on_conflict?: Maybe<Chat_MessageType_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Chat_MessageType_OneArgs = {
+  object: Chat_MessageType_Insert_Input;
+  on_conflict?: Maybe<Chat_MessageType_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Chat_Message_OneArgs = {
+  object: Chat_Message_Insert_Input;
+  on_conflict?: Maybe<Chat_Message_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Chat_PinArgs = {
+  objects: ReadonlyArray<Chat_Pin_Insert_Input>;
+  on_conflict?: Maybe<Chat_Pin_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Chat_Pin_OneArgs = {
+  object: Chat_Pin_Insert_Input;
+  on_conflict?: Maybe<Chat_Pin_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Chat_ReactionArgs = {
+  objects: ReadonlyArray<Chat_Reaction_Insert_Input>;
+  on_conflict?: Maybe<Chat_Reaction_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Chat_ReactionTypeArgs = {
+  objects: ReadonlyArray<Chat_ReactionType_Insert_Input>;
+  on_conflict?: Maybe<Chat_ReactionType_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Chat_ReactionType_OneArgs = {
+  object: Chat_ReactionType_Insert_Input;
+  on_conflict?: Maybe<Chat_ReactionType_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Chat_Reaction_OneArgs = {
+  object: Chat_Reaction_Insert_Input;
+  on_conflict?: Maybe<Chat_Reaction_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Chat_ReadUpToIndexArgs = {
+  objects: ReadonlyArray<Chat_ReadUpToIndex_Insert_Input>;
+  on_conflict?: Maybe<Chat_ReadUpToIndex_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Chat_ReadUpToIndex_OneArgs = {
+  object: Chat_ReadUpToIndex_Insert_Input;
+  on_conflict?: Maybe<Chat_ReadUpToIndex_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Chat_SubscriptionArgs = {
+  objects: ReadonlyArray<Chat_Subscription_Insert_Input>;
+  on_conflict?: Maybe<Chat_Subscription_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Chat_Subscription_OneArgs = {
+  object: Chat_Subscription_Insert_Input;
+  on_conflict?: Maybe<Chat_Subscription_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Chat_TyperArgs = {
+  objects: ReadonlyArray<Chat_Typer_Insert_Input>;
+  on_conflict?: Maybe<Chat_Typer_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Chat_Typer_OneArgs = {
+  object: Chat_Typer_Insert_Input;
+  on_conflict?: Maybe<Chat_Typer_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_Job_Queues_InvitationEmailJobArgs = {
   objects: ReadonlyArray<Job_Queues_InvitationEmailJob_Insert_Input>;
   on_conflict?: Maybe<Job_Queues_InvitationEmailJob_On_Conflict>;
@@ -19866,118 +20256,6 @@ export type Mutation_RootUpdate_Broadcast_By_PkArgs = {
   _prepend?: Maybe<Broadcast_Prepend_Input>;
   _set?: Maybe<Broadcast_Set_Input>;
   pk_columns: Broadcast_Pk_Columns_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_ChatArgs = {
-  _set?: Maybe<Chat_Set_Input>;
-  where: Chat_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_ChatMemberArgs = {
-  _set?: Maybe<ChatMember_Set_Input>;
-  where: ChatMember_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_ChatMember_By_PkArgs = {
-  _set?: Maybe<ChatMember_Set_Input>;
-  pk_columns: ChatMember_Pk_Columns_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_ChatMessageArgs = {
-  _append?: Maybe<ChatMessage_Append_Input>;
-  _delete_at_path?: Maybe<ChatMessage_Delete_At_Path_Input>;
-  _delete_elem?: Maybe<ChatMessage_Delete_Elem_Input>;
-  _delete_key?: Maybe<ChatMessage_Delete_Key_Input>;
-  _inc?: Maybe<ChatMessage_Inc_Input>;
-  _prepend?: Maybe<ChatMessage_Prepend_Input>;
-  _set?: Maybe<ChatMessage_Set_Input>;
-  where: ChatMessage_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_ChatMessage_By_PkArgs = {
-  _append?: Maybe<ChatMessage_Append_Input>;
-  _delete_at_path?: Maybe<ChatMessage_Delete_At_Path_Input>;
-  _delete_elem?: Maybe<ChatMessage_Delete_Elem_Input>;
-  _delete_key?: Maybe<ChatMessage_Delete_Key_Input>;
-  _inc?: Maybe<ChatMessage_Inc_Input>;
-  _prepend?: Maybe<ChatMessage_Prepend_Input>;
-  _set?: Maybe<ChatMessage_Set_Input>;
-  pk_columns: ChatMessage_Pk_Columns_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_ChatReactionArgs = {
-  _set?: Maybe<ChatReaction_Set_Input>;
-  where: ChatReaction_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_ChatReaction_By_PkArgs = {
-  _set?: Maybe<ChatReaction_Set_Input>;
-  pk_columns: ChatReaction_Pk_Columns_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_ChatTyperArgs = {
-  _set?: Maybe<ChatTyper_Set_Input>;
-  where: ChatTyper_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_ChatTyper_By_PkArgs = {
-  _set?: Maybe<ChatTyper_Set_Input>;
-  pk_columns: ChatTyper_Pk_Columns_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_ChatUnreadIndexArgs = {
-  _inc?: Maybe<ChatUnreadIndex_Inc_Input>;
-  _set?: Maybe<ChatUnreadIndex_Set_Input>;
-  where: ChatUnreadIndex_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_ChatUnreadIndex_By_PkArgs = {
-  _inc?: Maybe<ChatUnreadIndex_Inc_Input>;
-  _set?: Maybe<ChatUnreadIndex_Set_Input>;
-  pk_columns: ChatUnreadIndex_Pk_Columns_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_ChatViewerArgs = {
-  _set?: Maybe<ChatViewer_Set_Input>;
-  where: ChatViewer_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_ChatViewer_By_PkArgs = {
-  _set?: Maybe<ChatViewer_Set_Input>;
-  pk_columns: ChatViewer_Pk_Columns_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Chat_By_PkArgs = {
-  _set?: Maybe<Chat_Set_Input>;
-  pk_columns: Chat_Pk_Columns_Input;
 };
 
 
@@ -20286,34 +20564,6 @@ export type Mutation_RootUpdate_ExecutedTransitions_By_PkArgs = {
 
 
 /** mutation root */
-export type Mutation_RootUpdate_FlaggedChatMessageArgs = {
-  _set?: Maybe<FlaggedChatMessage_Set_Input>;
-  where: FlaggedChatMessage_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_FlaggedChatMessage_By_PkArgs = {
-  _set?: Maybe<FlaggedChatMessage_Set_Input>;
-  pk_columns: FlaggedChatMessage_Pk_Columns_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_FollowedChatArgs = {
-  _set?: Maybe<FollowedChat_Set_Input>;
-  where: FollowedChat_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_FollowedChat_By_PkArgs = {
-  _set?: Maybe<FollowedChat_Set_Input>;
-  pk_columns: FollowedChat_Pk_Columns_Input;
-};
-
-
-/** mutation root */
 export type Mutation_RootUpdate_GroupArgs = {
   _set?: Maybe<Group_Set_Input>;
   where: Group_Bool_Exp;
@@ -20476,20 +20726,6 @@ export type Mutation_RootUpdate_PermissionArgs = {
 export type Mutation_RootUpdate_Permission_By_PkArgs = {
   _set?: Maybe<Permission_Set_Input>;
   pk_columns: Permission_Pk_Columns_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_PinnedChatArgs = {
-  _set?: Maybe<PinnedChat_Set_Input>;
-  where: PinnedChat_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_PinnedChat_By_PkArgs = {
-  _set?: Maybe<PinnedChat_Set_Input>;
-  pk_columns: PinnedChat_Pk_Columns_Input;
 };
 
 
@@ -20720,6 +20956,188 @@ export type Mutation_RootUpdate_VideoRenderJob_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_Chat_ChatArgs = {
+  _set?: Maybe<Chat_Chat_Set_Input>;
+  where: Chat_Chat_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Chat_Chat_By_PkArgs = {
+  _set?: Maybe<Chat_Chat_Set_Input>;
+  pk_columns: Chat_Chat_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Chat_FlagArgs = {
+  _inc?: Maybe<Chat_Flag_Inc_Input>;
+  _set?: Maybe<Chat_Flag_Set_Input>;
+  where: Chat_Flag_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Chat_FlagTypeArgs = {
+  _set?: Maybe<Chat_FlagType_Set_Input>;
+  where: Chat_FlagType_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Chat_FlagType_By_PkArgs = {
+  _set?: Maybe<Chat_FlagType_Set_Input>;
+  pk_columns: Chat_FlagType_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Chat_Flag_By_PkArgs = {
+  _inc?: Maybe<Chat_Flag_Inc_Input>;
+  _set?: Maybe<Chat_Flag_Set_Input>;
+  pk_columns: Chat_Flag_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Chat_MessageArgs = {
+  _append?: Maybe<Chat_Message_Append_Input>;
+  _delete_at_path?: Maybe<Chat_Message_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<Chat_Message_Delete_Elem_Input>;
+  _delete_key?: Maybe<Chat_Message_Delete_Key_Input>;
+  _inc?: Maybe<Chat_Message_Inc_Input>;
+  _prepend?: Maybe<Chat_Message_Prepend_Input>;
+  _set?: Maybe<Chat_Message_Set_Input>;
+  where: Chat_Message_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Chat_MessageTypeArgs = {
+  _set?: Maybe<Chat_MessageType_Set_Input>;
+  where: Chat_MessageType_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Chat_MessageType_By_PkArgs = {
+  _set?: Maybe<Chat_MessageType_Set_Input>;
+  pk_columns: Chat_MessageType_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Chat_Message_By_PkArgs = {
+  _append?: Maybe<Chat_Message_Append_Input>;
+  _delete_at_path?: Maybe<Chat_Message_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<Chat_Message_Delete_Elem_Input>;
+  _delete_key?: Maybe<Chat_Message_Delete_Key_Input>;
+  _inc?: Maybe<Chat_Message_Inc_Input>;
+  _prepend?: Maybe<Chat_Message_Prepend_Input>;
+  _set?: Maybe<Chat_Message_Set_Input>;
+  pk_columns: Chat_Message_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Chat_PinArgs = {
+  _set?: Maybe<Chat_Pin_Set_Input>;
+  where: Chat_Pin_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Chat_Pin_By_PkArgs = {
+  _set?: Maybe<Chat_Pin_Set_Input>;
+  pk_columns: Chat_Pin_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Chat_ReactionArgs = {
+  _append?: Maybe<Chat_Reaction_Append_Input>;
+  _delete_at_path?: Maybe<Chat_Reaction_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<Chat_Reaction_Delete_Elem_Input>;
+  _delete_key?: Maybe<Chat_Reaction_Delete_Key_Input>;
+  _inc?: Maybe<Chat_Reaction_Inc_Input>;
+  _prepend?: Maybe<Chat_Reaction_Prepend_Input>;
+  _set?: Maybe<Chat_Reaction_Set_Input>;
+  where: Chat_Reaction_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Chat_ReactionTypeArgs = {
+  _set?: Maybe<Chat_ReactionType_Set_Input>;
+  where: Chat_ReactionType_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Chat_ReactionType_By_PkArgs = {
+  _set?: Maybe<Chat_ReactionType_Set_Input>;
+  pk_columns: Chat_ReactionType_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Chat_Reaction_By_PkArgs = {
+  _append?: Maybe<Chat_Reaction_Append_Input>;
+  _delete_at_path?: Maybe<Chat_Reaction_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<Chat_Reaction_Delete_Elem_Input>;
+  _delete_key?: Maybe<Chat_Reaction_Delete_Key_Input>;
+  _inc?: Maybe<Chat_Reaction_Inc_Input>;
+  _prepend?: Maybe<Chat_Reaction_Prepend_Input>;
+  _set?: Maybe<Chat_Reaction_Set_Input>;
+  pk_columns: Chat_Reaction_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Chat_ReadUpToIndexArgs = {
+  _inc?: Maybe<Chat_ReadUpToIndex_Inc_Input>;
+  _set?: Maybe<Chat_ReadUpToIndex_Set_Input>;
+  where: Chat_ReadUpToIndex_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Chat_ReadUpToIndex_By_PkArgs = {
+  _inc?: Maybe<Chat_ReadUpToIndex_Inc_Input>;
+  _set?: Maybe<Chat_ReadUpToIndex_Set_Input>;
+  pk_columns: Chat_ReadUpToIndex_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Chat_SubscriptionArgs = {
+  _set?: Maybe<Chat_Subscription_Set_Input>;
+  where: Chat_Subscription_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Chat_Subscription_By_PkArgs = {
+  _set?: Maybe<Chat_Subscription_Set_Input>;
+  pk_columns: Chat_Subscription_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Chat_TyperArgs = {
+  _set?: Maybe<Chat_Typer_Set_Input>;
+  where: Chat_Typer_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Chat_Typer_By_PkArgs = {
+  _set?: Maybe<Chat_Typer_Set_Input>;
+  pk_columns: Chat_Typer_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_Job_Queues_InvitationEmailJobArgs = {
   _append?: Maybe<Job_Queues_InvitationEmailJob_Append_Input>;
   _delete_at_path?: Maybe<Job_Queues_InvitationEmailJob_Delete_At_Path_Input>;
@@ -20813,48 +21231,6 @@ export type Query_Root = {
   readonly Broadcast_aggregate: Broadcast_Aggregate;
   /** fetch data from the table: "Broadcast" using primary key columns */
   readonly Broadcast_by_pk?: Maybe<Broadcast>;
-  /** fetch data from the table: "Chat" */
-  readonly Chat: ReadonlyArray<Chat>;
-  /** fetch data from the table: "ChatMember" */
-  readonly ChatMember: ReadonlyArray<ChatMember>;
-  /** fetch aggregated fields from the table: "ChatMember" */
-  readonly ChatMember_aggregate: ChatMember_Aggregate;
-  /** fetch data from the table: "ChatMember" using primary key columns */
-  readonly ChatMember_by_pk?: Maybe<ChatMember>;
-  /** fetch data from the table: "ChatMessage" */
-  readonly ChatMessage: ReadonlyArray<ChatMessage>;
-  /** fetch aggregated fields from the table: "ChatMessage" */
-  readonly ChatMessage_aggregate: ChatMessage_Aggregate;
-  /** fetch data from the table: "ChatMessage" using primary key columns */
-  readonly ChatMessage_by_pk?: Maybe<ChatMessage>;
-  /** fetch data from the table: "ChatReaction" */
-  readonly ChatReaction: ReadonlyArray<ChatReaction>;
-  /** fetch aggregated fields from the table: "ChatReaction" */
-  readonly ChatReaction_aggregate: ChatReaction_Aggregate;
-  /** fetch data from the table: "ChatReaction" using primary key columns */
-  readonly ChatReaction_by_pk?: Maybe<ChatReaction>;
-  /** fetch data from the table: "ChatTyper" */
-  readonly ChatTyper: ReadonlyArray<ChatTyper>;
-  /** fetch aggregated fields from the table: "ChatTyper" */
-  readonly ChatTyper_aggregate: ChatTyper_Aggregate;
-  /** fetch data from the table: "ChatTyper" using primary key columns */
-  readonly ChatTyper_by_pk?: Maybe<ChatTyper>;
-  /** fetch data from the table: "ChatUnreadIndex" */
-  readonly ChatUnreadIndex: ReadonlyArray<ChatUnreadIndex>;
-  /** fetch aggregated fields from the table: "ChatUnreadIndex" */
-  readonly ChatUnreadIndex_aggregate: ChatUnreadIndex_Aggregate;
-  /** fetch data from the table: "ChatUnreadIndex" using primary key columns */
-  readonly ChatUnreadIndex_by_pk?: Maybe<ChatUnreadIndex>;
-  /** fetch data from the table: "ChatViewer" */
-  readonly ChatViewer: ReadonlyArray<ChatViewer>;
-  /** fetch aggregated fields from the table: "ChatViewer" */
-  readonly ChatViewer_aggregate: ChatViewer_Aggregate;
-  /** fetch data from the table: "ChatViewer" using primary key columns */
-  readonly ChatViewer_by_pk?: Maybe<ChatViewer>;
-  /** fetch aggregated fields from the table: "Chat" */
-  readonly Chat_aggregate: Chat_Aggregate;
-  /** fetch data from the table: "Chat" using primary key columns */
-  readonly Chat_by_pk?: Maybe<Chat>;
   /** fetch data from the table: "Conference" */
   readonly Conference: ReadonlyArray<Conference>;
   /** fetch data from the table: "ConferenceConfiguration" */
@@ -20969,18 +21345,6 @@ export type Query_Root = {
   readonly ExecutedTransitions_aggregate: ExecutedTransitions_Aggregate;
   /** fetch data from the table: "ExecutedTransitions" using primary key columns */
   readonly ExecutedTransitions_by_pk?: Maybe<ExecutedTransitions>;
-  /** fetch data from the table: "FlaggedChatMessage" */
-  readonly FlaggedChatMessage: ReadonlyArray<FlaggedChatMessage>;
-  /** fetch aggregated fields from the table: "FlaggedChatMessage" */
-  readonly FlaggedChatMessage_aggregate: FlaggedChatMessage_Aggregate;
-  /** fetch data from the table: "FlaggedChatMessage" using primary key columns */
-  readonly FlaggedChatMessage_by_pk?: Maybe<FlaggedChatMessage>;
-  /** fetch data from the table: "FollowedChat" */
-  readonly FollowedChat: ReadonlyArray<FollowedChat>;
-  /** fetch aggregated fields from the table: "FollowedChat" */
-  readonly FollowedChat_aggregate: FollowedChat_Aggregate;
-  /** fetch data from the table: "FollowedChat" using primary key columns */
-  readonly FollowedChat_by_pk?: Maybe<FollowedChat>;
   /** fetch data from the table: "Group" */
   readonly Group: ReadonlyArray<Group>;
   /** fetch data from the table: "GroupAttendee" */
@@ -21047,12 +21411,6 @@ export type Query_Root = {
   readonly Permission_aggregate: Permission_Aggregate;
   /** fetch data from the table: "Permission" using primary key columns */
   readonly Permission_by_pk?: Maybe<Permission>;
-  /** fetch data from the table: "PinnedChat" */
-  readonly PinnedChat: ReadonlyArray<PinnedChat>;
-  /** fetch aggregated fields from the table: "PinnedChat" */
-  readonly PinnedChat_aggregate: PinnedChat_Aggregate;
-  /** fetch data from the table: "PinnedChat" using primary key columns */
-  readonly PinnedChat_by_pk?: Maybe<PinnedChat>;
   /** fetch data from the table: "RequiredContentItem" */
   readonly RequiredContentItem: ReadonlyArray<RequiredContentItem>;
   /** fetch aggregated fields from the table: "RequiredContentItem" */
@@ -21143,6 +21501,72 @@ export type Query_Root = {
   readonly VideoRenderJob_aggregate: VideoRenderJob_Aggregate;
   /** fetch data from the table: "VideoRenderJob" using primary key columns */
   readonly VideoRenderJob_by_pk?: Maybe<VideoRenderJob>;
+  /** fetch data from the table: "chat.Chat" */
+  readonly chat_Chat: ReadonlyArray<Chat_Chat>;
+  /** fetch aggregated fields from the table: "chat.Chat" */
+  readonly chat_Chat_aggregate: Chat_Chat_Aggregate;
+  /** fetch data from the table: "chat.Chat" using primary key columns */
+  readonly chat_Chat_by_pk?: Maybe<Chat_Chat>;
+  /** fetch data from the table: "chat.Flag" */
+  readonly chat_Flag: ReadonlyArray<Chat_Flag>;
+  /** fetch data from the table: "chat.FlagType" */
+  readonly chat_FlagType: ReadonlyArray<Chat_FlagType>;
+  /** fetch aggregated fields from the table: "chat.FlagType" */
+  readonly chat_FlagType_aggregate: Chat_FlagType_Aggregate;
+  /** fetch data from the table: "chat.FlagType" using primary key columns */
+  readonly chat_FlagType_by_pk?: Maybe<Chat_FlagType>;
+  /** fetch aggregated fields from the table: "chat.Flag" */
+  readonly chat_Flag_aggregate: Chat_Flag_Aggregate;
+  /** fetch data from the table: "chat.Flag" using primary key columns */
+  readonly chat_Flag_by_pk?: Maybe<Chat_Flag>;
+  /** fetch data from the table: "chat.Message" */
+  readonly chat_Message: ReadonlyArray<Chat_Message>;
+  /** fetch data from the table: "chat.MessageType" */
+  readonly chat_MessageType: ReadonlyArray<Chat_MessageType>;
+  /** fetch aggregated fields from the table: "chat.MessageType" */
+  readonly chat_MessageType_aggregate: Chat_MessageType_Aggregate;
+  /** fetch data from the table: "chat.MessageType" using primary key columns */
+  readonly chat_MessageType_by_pk?: Maybe<Chat_MessageType>;
+  /** fetch aggregated fields from the table: "chat.Message" */
+  readonly chat_Message_aggregate: Chat_Message_Aggregate;
+  /** fetch data from the table: "chat.Message" using primary key columns */
+  readonly chat_Message_by_pk?: Maybe<Chat_Message>;
+  /** fetch data from the table: "chat.Pin" */
+  readonly chat_Pin: ReadonlyArray<Chat_Pin>;
+  /** fetch aggregated fields from the table: "chat.Pin" */
+  readonly chat_Pin_aggregate: Chat_Pin_Aggregate;
+  /** fetch data from the table: "chat.Pin" using primary key columns */
+  readonly chat_Pin_by_pk?: Maybe<Chat_Pin>;
+  /** fetch data from the table: "chat.Reaction" */
+  readonly chat_Reaction: ReadonlyArray<Chat_Reaction>;
+  /** fetch data from the table: "chat.ReactionType" */
+  readonly chat_ReactionType: ReadonlyArray<Chat_ReactionType>;
+  /** fetch aggregated fields from the table: "chat.ReactionType" */
+  readonly chat_ReactionType_aggregate: Chat_ReactionType_Aggregate;
+  /** fetch data from the table: "chat.ReactionType" using primary key columns */
+  readonly chat_ReactionType_by_pk?: Maybe<Chat_ReactionType>;
+  /** fetch aggregated fields from the table: "chat.Reaction" */
+  readonly chat_Reaction_aggregate: Chat_Reaction_Aggregate;
+  /** fetch data from the table: "chat.Reaction" using primary key columns */
+  readonly chat_Reaction_by_pk?: Maybe<Chat_Reaction>;
+  /** fetch data from the table: "chat.ReadUpToIndex" */
+  readonly chat_ReadUpToIndex: ReadonlyArray<Chat_ReadUpToIndex>;
+  /** fetch aggregated fields from the table: "chat.ReadUpToIndex" */
+  readonly chat_ReadUpToIndex_aggregate: Chat_ReadUpToIndex_Aggregate;
+  /** fetch data from the table: "chat.ReadUpToIndex" using primary key columns */
+  readonly chat_ReadUpToIndex_by_pk?: Maybe<Chat_ReadUpToIndex>;
+  /** fetch data from the table: "chat.Subscription" */
+  readonly chat_Subscription: ReadonlyArray<Chat_Subscription>;
+  /** fetch aggregated fields from the table: "chat.Subscription" */
+  readonly chat_Subscription_aggregate: Chat_Subscription_Aggregate;
+  /** fetch data from the table: "chat.Subscription" using primary key columns */
+  readonly chat_Subscription_by_pk?: Maybe<Chat_Subscription>;
+  /** fetch data from the table: "chat.Typer" */
+  readonly chat_Typer: ReadonlyArray<Chat_Typer>;
+  /** fetch aggregated fields from the table: "chat.Typer" */
+  readonly chat_Typer_aggregate: Chat_Typer_Aggregate;
+  /** fetch data from the table: "chat.Typer" using primary key columns */
+  readonly chat_Typer_by_pk?: Maybe<Chat_Typer>;
   /** perform the action: "echo" */
   readonly echo?: Maybe<EchoOutput>;
   /** perform the action: "getContentItem" */
@@ -21272,188 +21696,6 @@ export type Query_RootBroadcast_AggregateArgs = {
 
 /** query root */
 export type Query_RootBroadcast_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** query root */
-export type Query_RootChatArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Chat_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Chat_Order_By>>;
-  where?: Maybe<Chat_Bool_Exp>;
-};
-
-
-/** query root */
-export type Query_RootChatMemberArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatMember_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatMember_Order_By>>;
-  where?: Maybe<ChatMember_Bool_Exp>;
-};
-
-
-/** query root */
-export type Query_RootChatMember_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatMember_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatMember_Order_By>>;
-  where?: Maybe<ChatMember_Bool_Exp>;
-};
-
-
-/** query root */
-export type Query_RootChatMember_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** query root */
-export type Query_RootChatMessageArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatMessage_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatMessage_Order_By>>;
-  where?: Maybe<ChatMessage_Bool_Exp>;
-};
-
-
-/** query root */
-export type Query_RootChatMessage_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatMessage_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatMessage_Order_By>>;
-  where?: Maybe<ChatMessage_Bool_Exp>;
-};
-
-
-/** query root */
-export type Query_RootChatMessage_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** query root */
-export type Query_RootChatReactionArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatReaction_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatReaction_Order_By>>;
-  where?: Maybe<ChatReaction_Bool_Exp>;
-};
-
-
-/** query root */
-export type Query_RootChatReaction_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatReaction_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatReaction_Order_By>>;
-  where?: Maybe<ChatReaction_Bool_Exp>;
-};
-
-
-/** query root */
-export type Query_RootChatReaction_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** query root */
-export type Query_RootChatTyperArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatTyper_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatTyper_Order_By>>;
-  where?: Maybe<ChatTyper_Bool_Exp>;
-};
-
-
-/** query root */
-export type Query_RootChatTyper_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatTyper_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatTyper_Order_By>>;
-  where?: Maybe<ChatTyper_Bool_Exp>;
-};
-
-
-/** query root */
-export type Query_RootChatTyper_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** query root */
-export type Query_RootChatUnreadIndexArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatUnreadIndex_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatUnreadIndex_Order_By>>;
-  where?: Maybe<ChatUnreadIndex_Bool_Exp>;
-};
-
-
-/** query root */
-export type Query_RootChatUnreadIndex_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatUnreadIndex_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatUnreadIndex_Order_By>>;
-  where?: Maybe<ChatUnreadIndex_Bool_Exp>;
-};
-
-
-/** query root */
-export type Query_RootChatUnreadIndex_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** query root */
-export type Query_RootChatViewerArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatViewer_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatViewer_Order_By>>;
-  where?: Maybe<ChatViewer_Bool_Exp>;
-};
-
-
-/** query root */
-export type Query_RootChatViewer_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatViewer_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatViewer_Order_By>>;
-  where?: Maybe<ChatViewer_Bool_Exp>;
-};
-
-
-/** query root */
-export type Query_RootChatViewer_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** query root */
-export type Query_RootChat_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Chat_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Chat_Order_By>>;
-  where?: Maybe<Chat_Bool_Exp>;
-};
-
-
-/** query root */
-export type Query_RootChat_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -21953,58 +22195,6 @@ export type Query_RootExecutedTransitions_By_PkArgs = {
 
 
 /** query root */
-export type Query_RootFlaggedChatMessageArgs = {
-  distinct_on?: Maybe<ReadonlyArray<FlaggedChatMessage_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<FlaggedChatMessage_Order_By>>;
-  where?: Maybe<FlaggedChatMessage_Bool_Exp>;
-};
-
-
-/** query root */
-export type Query_RootFlaggedChatMessage_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<FlaggedChatMessage_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<FlaggedChatMessage_Order_By>>;
-  where?: Maybe<FlaggedChatMessage_Bool_Exp>;
-};
-
-
-/** query root */
-export type Query_RootFlaggedChatMessage_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** query root */
-export type Query_RootFollowedChatArgs = {
-  distinct_on?: Maybe<ReadonlyArray<FollowedChat_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<FollowedChat_Order_By>>;
-  where?: Maybe<FollowedChat_Bool_Exp>;
-};
-
-
-/** query root */
-export type Query_RootFollowedChat_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<FollowedChat_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<FollowedChat_Order_By>>;
-  where?: Maybe<FollowedChat_Bool_Exp>;
-};
-
-
-/** query root */
-export type Query_RootFollowedChat_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** query root */
 export type Query_RootGroupArgs = {
   distinct_on?: Maybe<ReadonlyArray<Group_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -22287,32 +22477,6 @@ export type Query_RootPermission_AggregateArgs = {
 /** query root */
 export type Query_RootPermission_By_PkArgs = {
   name: Scalars['String'];
-};
-
-
-/** query root */
-export type Query_RootPinnedChatArgs = {
-  distinct_on?: Maybe<ReadonlyArray<PinnedChat_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<PinnedChat_Order_By>>;
-  where?: Maybe<PinnedChat_Bool_Exp>;
-};
-
-
-/** query root */
-export type Query_RootPinnedChat_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<PinnedChat_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<PinnedChat_Order_By>>;
-  where?: Maybe<PinnedChat_Bool_Exp>;
-};
-
-
-/** query root */
-export type Query_RootPinnedChat_By_PkArgs = {
-  id: Scalars['uuid'];
 };
 
 
@@ -22707,6 +22871,296 @@ export type Query_RootVideoRenderJob_By_PkArgs = {
 
 
 /** query root */
+export type Query_RootChat_ChatArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Chat_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Chat_Order_By>>;
+  where?: Maybe<Chat_Chat_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootChat_Chat_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Chat_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Chat_Order_By>>;
+  where?: Maybe<Chat_Chat_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootChat_Chat_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
+export type Query_RootChat_FlagArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Flag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Flag_Order_By>>;
+  where?: Maybe<Chat_Flag_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootChat_FlagTypeArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_FlagType_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_FlagType_Order_By>>;
+  where?: Maybe<Chat_FlagType_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootChat_FlagType_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_FlagType_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_FlagType_Order_By>>;
+  where?: Maybe<Chat_FlagType_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootChat_FlagType_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** query root */
+export type Query_RootChat_Flag_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Flag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Flag_Order_By>>;
+  where?: Maybe<Chat_Flag_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootChat_Flag_By_PkArgs = {
+  id: Scalars['Int'];
+};
+
+
+/** query root */
+export type Query_RootChat_MessageArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Message_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Message_Order_By>>;
+  where?: Maybe<Chat_Message_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootChat_MessageTypeArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_MessageType_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_MessageType_Order_By>>;
+  where?: Maybe<Chat_MessageType_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootChat_MessageType_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_MessageType_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_MessageType_Order_By>>;
+  where?: Maybe<Chat_MessageType_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootChat_MessageType_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** query root */
+export type Query_RootChat_Message_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Message_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Message_Order_By>>;
+  where?: Maybe<Chat_Message_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootChat_Message_By_PkArgs = {
+  id: Scalars['Int'];
+};
+
+
+/** query root */
+export type Query_RootChat_PinArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Pin_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Pin_Order_By>>;
+  where?: Maybe<Chat_Pin_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootChat_Pin_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Pin_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Pin_Order_By>>;
+  where?: Maybe<Chat_Pin_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootChat_Pin_By_PkArgs = {
+  attendeeId: Scalars['uuid'];
+  chatId: Scalars['uuid'];
+};
+
+
+/** query root */
+export type Query_RootChat_ReactionArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Reaction_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Reaction_Order_By>>;
+  where?: Maybe<Chat_Reaction_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootChat_ReactionTypeArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_ReactionType_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_ReactionType_Order_By>>;
+  where?: Maybe<Chat_ReactionType_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootChat_ReactionType_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_ReactionType_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_ReactionType_Order_By>>;
+  where?: Maybe<Chat_ReactionType_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootChat_ReactionType_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** query root */
+export type Query_RootChat_Reaction_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Reaction_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Reaction_Order_By>>;
+  where?: Maybe<Chat_Reaction_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootChat_Reaction_By_PkArgs = {
+  id: Scalars['Int'];
+};
+
+
+/** query root */
+export type Query_RootChat_ReadUpToIndexArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_ReadUpToIndex_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_ReadUpToIndex_Order_By>>;
+  where?: Maybe<Chat_ReadUpToIndex_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootChat_ReadUpToIndex_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_ReadUpToIndex_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_ReadUpToIndex_Order_By>>;
+  where?: Maybe<Chat_ReadUpToIndex_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootChat_ReadUpToIndex_By_PkArgs = {
+  attendeeId: Scalars['uuid'];
+  chatId: Scalars['uuid'];
+};
+
+
+/** query root */
+export type Query_RootChat_SubscriptionArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Subscription_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Subscription_Order_By>>;
+  where?: Maybe<Chat_Subscription_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootChat_Subscription_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Subscription_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Subscription_Order_By>>;
+  where?: Maybe<Chat_Subscription_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootChat_Subscription_By_PkArgs = {
+  attendeeId: Scalars['uuid'];
+  chatId: Scalars['uuid'];
+};
+
+
+/** query root */
+export type Query_RootChat_TyperArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Typer_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Typer_Order_By>>;
+  where?: Maybe<Chat_Typer_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootChat_Typer_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Typer_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Typer_Order_By>>;
+  where?: Maybe<Chat_Typer_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootChat_Typer_By_PkArgs = {
+  attendeeId: Scalars['uuid'];
+  chatId: Scalars['uuid'];
+};
+
+
+/** query root */
 export type Query_RootEchoArgs = {
   message: Scalars['String'];
 };
@@ -22834,48 +23288,6 @@ export type Subscription_Root = {
   readonly Broadcast_aggregate: Broadcast_Aggregate;
   /** fetch data from the table: "Broadcast" using primary key columns */
   readonly Broadcast_by_pk?: Maybe<Broadcast>;
-  /** fetch data from the table: "Chat" */
-  readonly Chat: ReadonlyArray<Chat>;
-  /** fetch data from the table: "ChatMember" */
-  readonly ChatMember: ReadonlyArray<ChatMember>;
-  /** fetch aggregated fields from the table: "ChatMember" */
-  readonly ChatMember_aggregate: ChatMember_Aggregate;
-  /** fetch data from the table: "ChatMember" using primary key columns */
-  readonly ChatMember_by_pk?: Maybe<ChatMember>;
-  /** fetch data from the table: "ChatMessage" */
-  readonly ChatMessage: ReadonlyArray<ChatMessage>;
-  /** fetch aggregated fields from the table: "ChatMessage" */
-  readonly ChatMessage_aggregate: ChatMessage_Aggregate;
-  /** fetch data from the table: "ChatMessage" using primary key columns */
-  readonly ChatMessage_by_pk?: Maybe<ChatMessage>;
-  /** fetch data from the table: "ChatReaction" */
-  readonly ChatReaction: ReadonlyArray<ChatReaction>;
-  /** fetch aggregated fields from the table: "ChatReaction" */
-  readonly ChatReaction_aggregate: ChatReaction_Aggregate;
-  /** fetch data from the table: "ChatReaction" using primary key columns */
-  readonly ChatReaction_by_pk?: Maybe<ChatReaction>;
-  /** fetch data from the table: "ChatTyper" */
-  readonly ChatTyper: ReadonlyArray<ChatTyper>;
-  /** fetch aggregated fields from the table: "ChatTyper" */
-  readonly ChatTyper_aggregate: ChatTyper_Aggregate;
-  /** fetch data from the table: "ChatTyper" using primary key columns */
-  readonly ChatTyper_by_pk?: Maybe<ChatTyper>;
-  /** fetch data from the table: "ChatUnreadIndex" */
-  readonly ChatUnreadIndex: ReadonlyArray<ChatUnreadIndex>;
-  /** fetch aggregated fields from the table: "ChatUnreadIndex" */
-  readonly ChatUnreadIndex_aggregate: ChatUnreadIndex_Aggregate;
-  /** fetch data from the table: "ChatUnreadIndex" using primary key columns */
-  readonly ChatUnreadIndex_by_pk?: Maybe<ChatUnreadIndex>;
-  /** fetch data from the table: "ChatViewer" */
-  readonly ChatViewer: ReadonlyArray<ChatViewer>;
-  /** fetch aggregated fields from the table: "ChatViewer" */
-  readonly ChatViewer_aggregate: ChatViewer_Aggregate;
-  /** fetch data from the table: "ChatViewer" using primary key columns */
-  readonly ChatViewer_by_pk?: Maybe<ChatViewer>;
-  /** fetch aggregated fields from the table: "Chat" */
-  readonly Chat_aggregate: Chat_Aggregate;
-  /** fetch data from the table: "Chat" using primary key columns */
-  readonly Chat_by_pk?: Maybe<Chat>;
   /** fetch data from the table: "Conference" */
   readonly Conference: ReadonlyArray<Conference>;
   /** fetch data from the table: "ConferenceConfiguration" */
@@ -22990,18 +23402,6 @@ export type Subscription_Root = {
   readonly ExecutedTransitions_aggregate: ExecutedTransitions_Aggregate;
   /** fetch data from the table: "ExecutedTransitions" using primary key columns */
   readonly ExecutedTransitions_by_pk?: Maybe<ExecutedTransitions>;
-  /** fetch data from the table: "FlaggedChatMessage" */
-  readonly FlaggedChatMessage: ReadonlyArray<FlaggedChatMessage>;
-  /** fetch aggregated fields from the table: "FlaggedChatMessage" */
-  readonly FlaggedChatMessage_aggregate: FlaggedChatMessage_Aggregate;
-  /** fetch data from the table: "FlaggedChatMessage" using primary key columns */
-  readonly FlaggedChatMessage_by_pk?: Maybe<FlaggedChatMessage>;
-  /** fetch data from the table: "FollowedChat" */
-  readonly FollowedChat: ReadonlyArray<FollowedChat>;
-  /** fetch aggregated fields from the table: "FollowedChat" */
-  readonly FollowedChat_aggregate: FollowedChat_Aggregate;
-  /** fetch data from the table: "FollowedChat" using primary key columns */
-  readonly FollowedChat_by_pk?: Maybe<FollowedChat>;
   /** fetch data from the table: "Group" */
   readonly Group: ReadonlyArray<Group>;
   /** fetch data from the table: "GroupAttendee" */
@@ -23068,12 +23468,6 @@ export type Subscription_Root = {
   readonly Permission_aggregate: Permission_Aggregate;
   /** fetch data from the table: "Permission" using primary key columns */
   readonly Permission_by_pk?: Maybe<Permission>;
-  /** fetch data from the table: "PinnedChat" */
-  readonly PinnedChat: ReadonlyArray<PinnedChat>;
-  /** fetch aggregated fields from the table: "PinnedChat" */
-  readonly PinnedChat_aggregate: PinnedChat_Aggregate;
-  /** fetch data from the table: "PinnedChat" using primary key columns */
-  readonly PinnedChat_by_pk?: Maybe<PinnedChat>;
   /** fetch data from the table: "RequiredContentItem" */
   readonly RequiredContentItem: ReadonlyArray<RequiredContentItem>;
   /** fetch aggregated fields from the table: "RequiredContentItem" */
@@ -23164,6 +23558,72 @@ export type Subscription_Root = {
   readonly VideoRenderJob_aggregate: VideoRenderJob_Aggregate;
   /** fetch data from the table: "VideoRenderJob" using primary key columns */
   readonly VideoRenderJob_by_pk?: Maybe<VideoRenderJob>;
+  /** fetch data from the table: "chat.Chat" */
+  readonly chat_Chat: ReadonlyArray<Chat_Chat>;
+  /** fetch aggregated fields from the table: "chat.Chat" */
+  readonly chat_Chat_aggregate: Chat_Chat_Aggregate;
+  /** fetch data from the table: "chat.Chat" using primary key columns */
+  readonly chat_Chat_by_pk?: Maybe<Chat_Chat>;
+  /** fetch data from the table: "chat.Flag" */
+  readonly chat_Flag: ReadonlyArray<Chat_Flag>;
+  /** fetch data from the table: "chat.FlagType" */
+  readonly chat_FlagType: ReadonlyArray<Chat_FlagType>;
+  /** fetch aggregated fields from the table: "chat.FlagType" */
+  readonly chat_FlagType_aggregate: Chat_FlagType_Aggregate;
+  /** fetch data from the table: "chat.FlagType" using primary key columns */
+  readonly chat_FlagType_by_pk?: Maybe<Chat_FlagType>;
+  /** fetch aggregated fields from the table: "chat.Flag" */
+  readonly chat_Flag_aggregate: Chat_Flag_Aggregate;
+  /** fetch data from the table: "chat.Flag" using primary key columns */
+  readonly chat_Flag_by_pk?: Maybe<Chat_Flag>;
+  /** fetch data from the table: "chat.Message" */
+  readonly chat_Message: ReadonlyArray<Chat_Message>;
+  /** fetch data from the table: "chat.MessageType" */
+  readonly chat_MessageType: ReadonlyArray<Chat_MessageType>;
+  /** fetch aggregated fields from the table: "chat.MessageType" */
+  readonly chat_MessageType_aggregate: Chat_MessageType_Aggregate;
+  /** fetch data from the table: "chat.MessageType" using primary key columns */
+  readonly chat_MessageType_by_pk?: Maybe<Chat_MessageType>;
+  /** fetch aggregated fields from the table: "chat.Message" */
+  readonly chat_Message_aggregate: Chat_Message_Aggregate;
+  /** fetch data from the table: "chat.Message" using primary key columns */
+  readonly chat_Message_by_pk?: Maybe<Chat_Message>;
+  /** fetch data from the table: "chat.Pin" */
+  readonly chat_Pin: ReadonlyArray<Chat_Pin>;
+  /** fetch aggregated fields from the table: "chat.Pin" */
+  readonly chat_Pin_aggregate: Chat_Pin_Aggregate;
+  /** fetch data from the table: "chat.Pin" using primary key columns */
+  readonly chat_Pin_by_pk?: Maybe<Chat_Pin>;
+  /** fetch data from the table: "chat.Reaction" */
+  readonly chat_Reaction: ReadonlyArray<Chat_Reaction>;
+  /** fetch data from the table: "chat.ReactionType" */
+  readonly chat_ReactionType: ReadonlyArray<Chat_ReactionType>;
+  /** fetch aggregated fields from the table: "chat.ReactionType" */
+  readonly chat_ReactionType_aggregate: Chat_ReactionType_Aggregate;
+  /** fetch data from the table: "chat.ReactionType" using primary key columns */
+  readonly chat_ReactionType_by_pk?: Maybe<Chat_ReactionType>;
+  /** fetch aggregated fields from the table: "chat.Reaction" */
+  readonly chat_Reaction_aggregate: Chat_Reaction_Aggregate;
+  /** fetch data from the table: "chat.Reaction" using primary key columns */
+  readonly chat_Reaction_by_pk?: Maybe<Chat_Reaction>;
+  /** fetch data from the table: "chat.ReadUpToIndex" */
+  readonly chat_ReadUpToIndex: ReadonlyArray<Chat_ReadUpToIndex>;
+  /** fetch aggregated fields from the table: "chat.ReadUpToIndex" */
+  readonly chat_ReadUpToIndex_aggregate: Chat_ReadUpToIndex_Aggregate;
+  /** fetch data from the table: "chat.ReadUpToIndex" using primary key columns */
+  readonly chat_ReadUpToIndex_by_pk?: Maybe<Chat_ReadUpToIndex>;
+  /** fetch data from the table: "chat.Subscription" */
+  readonly chat_Subscription: ReadonlyArray<Chat_Subscription>;
+  /** fetch aggregated fields from the table: "chat.Subscription" */
+  readonly chat_Subscription_aggregate: Chat_Subscription_Aggregate;
+  /** fetch data from the table: "chat.Subscription" using primary key columns */
+  readonly chat_Subscription_by_pk?: Maybe<Chat_Subscription>;
+  /** fetch data from the table: "chat.Typer" */
+  readonly chat_Typer: ReadonlyArray<Chat_Typer>;
+  /** fetch aggregated fields from the table: "chat.Typer" */
+  readonly chat_Typer_aggregate: Chat_Typer_Aggregate;
+  /** fetch data from the table: "chat.Typer" using primary key columns */
+  readonly chat_Typer_by_pk?: Maybe<Chat_Typer>;
   /** perform the action: "echo" */
   readonly echo?: Maybe<EchoOutput>;
   /** perform the action: "getContentItem" */
@@ -23293,188 +23753,6 @@ export type Subscription_RootBroadcast_AggregateArgs = {
 
 /** subscription root */
 export type Subscription_RootBroadcast_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** subscription root */
-export type Subscription_RootChatArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Chat_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Chat_Order_By>>;
-  where?: Maybe<Chat_Bool_Exp>;
-};
-
-
-/** subscription root */
-export type Subscription_RootChatMemberArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatMember_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatMember_Order_By>>;
-  where?: Maybe<ChatMember_Bool_Exp>;
-};
-
-
-/** subscription root */
-export type Subscription_RootChatMember_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatMember_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatMember_Order_By>>;
-  where?: Maybe<ChatMember_Bool_Exp>;
-};
-
-
-/** subscription root */
-export type Subscription_RootChatMember_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** subscription root */
-export type Subscription_RootChatMessageArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatMessage_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatMessage_Order_By>>;
-  where?: Maybe<ChatMessage_Bool_Exp>;
-};
-
-
-/** subscription root */
-export type Subscription_RootChatMessage_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatMessage_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatMessage_Order_By>>;
-  where?: Maybe<ChatMessage_Bool_Exp>;
-};
-
-
-/** subscription root */
-export type Subscription_RootChatMessage_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** subscription root */
-export type Subscription_RootChatReactionArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatReaction_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatReaction_Order_By>>;
-  where?: Maybe<ChatReaction_Bool_Exp>;
-};
-
-
-/** subscription root */
-export type Subscription_RootChatReaction_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatReaction_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatReaction_Order_By>>;
-  where?: Maybe<ChatReaction_Bool_Exp>;
-};
-
-
-/** subscription root */
-export type Subscription_RootChatReaction_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** subscription root */
-export type Subscription_RootChatTyperArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatTyper_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatTyper_Order_By>>;
-  where?: Maybe<ChatTyper_Bool_Exp>;
-};
-
-
-/** subscription root */
-export type Subscription_RootChatTyper_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatTyper_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatTyper_Order_By>>;
-  where?: Maybe<ChatTyper_Bool_Exp>;
-};
-
-
-/** subscription root */
-export type Subscription_RootChatTyper_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** subscription root */
-export type Subscription_RootChatUnreadIndexArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatUnreadIndex_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatUnreadIndex_Order_By>>;
-  where?: Maybe<ChatUnreadIndex_Bool_Exp>;
-};
-
-
-/** subscription root */
-export type Subscription_RootChatUnreadIndex_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatUnreadIndex_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatUnreadIndex_Order_By>>;
-  where?: Maybe<ChatUnreadIndex_Bool_Exp>;
-};
-
-
-/** subscription root */
-export type Subscription_RootChatUnreadIndex_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** subscription root */
-export type Subscription_RootChatViewerArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatViewer_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatViewer_Order_By>>;
-  where?: Maybe<ChatViewer_Bool_Exp>;
-};
-
-
-/** subscription root */
-export type Subscription_RootChatViewer_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<ChatViewer_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<ChatViewer_Order_By>>;
-  where?: Maybe<ChatViewer_Bool_Exp>;
-};
-
-
-/** subscription root */
-export type Subscription_RootChatViewer_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** subscription root */
-export type Subscription_RootChat_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Chat_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Chat_Order_By>>;
-  where?: Maybe<Chat_Bool_Exp>;
-};
-
-
-/** subscription root */
-export type Subscription_RootChat_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -23974,58 +24252,6 @@ export type Subscription_RootExecutedTransitions_By_PkArgs = {
 
 
 /** subscription root */
-export type Subscription_RootFlaggedChatMessageArgs = {
-  distinct_on?: Maybe<ReadonlyArray<FlaggedChatMessage_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<FlaggedChatMessage_Order_By>>;
-  where?: Maybe<FlaggedChatMessage_Bool_Exp>;
-};
-
-
-/** subscription root */
-export type Subscription_RootFlaggedChatMessage_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<FlaggedChatMessage_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<FlaggedChatMessage_Order_By>>;
-  where?: Maybe<FlaggedChatMessage_Bool_Exp>;
-};
-
-
-/** subscription root */
-export type Subscription_RootFlaggedChatMessage_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** subscription root */
-export type Subscription_RootFollowedChatArgs = {
-  distinct_on?: Maybe<ReadonlyArray<FollowedChat_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<FollowedChat_Order_By>>;
-  where?: Maybe<FollowedChat_Bool_Exp>;
-};
-
-
-/** subscription root */
-export type Subscription_RootFollowedChat_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<FollowedChat_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<FollowedChat_Order_By>>;
-  where?: Maybe<FollowedChat_Bool_Exp>;
-};
-
-
-/** subscription root */
-export type Subscription_RootFollowedChat_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** subscription root */
 export type Subscription_RootGroupArgs = {
   distinct_on?: Maybe<ReadonlyArray<Group_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -24308,32 +24534,6 @@ export type Subscription_RootPermission_AggregateArgs = {
 /** subscription root */
 export type Subscription_RootPermission_By_PkArgs = {
   name: Scalars['String'];
-};
-
-
-/** subscription root */
-export type Subscription_RootPinnedChatArgs = {
-  distinct_on?: Maybe<ReadonlyArray<PinnedChat_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<PinnedChat_Order_By>>;
-  where?: Maybe<PinnedChat_Bool_Exp>;
-};
-
-
-/** subscription root */
-export type Subscription_RootPinnedChat_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<PinnedChat_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<PinnedChat_Order_By>>;
-  where?: Maybe<PinnedChat_Bool_Exp>;
-};
-
-
-/** subscription root */
-export type Subscription_RootPinnedChat_By_PkArgs = {
-  id: Scalars['uuid'];
 };
 
 
@@ -24728,6 +24928,296 @@ export type Subscription_RootVideoRenderJob_By_PkArgs = {
 
 
 /** subscription root */
+export type Subscription_RootChat_ChatArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Chat_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Chat_Order_By>>;
+  where?: Maybe<Chat_Chat_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_Chat_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Chat_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Chat_Order_By>>;
+  where?: Maybe<Chat_Chat_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_Chat_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_FlagArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Flag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Flag_Order_By>>;
+  where?: Maybe<Chat_Flag_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_FlagTypeArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_FlagType_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_FlagType_Order_By>>;
+  where?: Maybe<Chat_FlagType_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_FlagType_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_FlagType_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_FlagType_Order_By>>;
+  where?: Maybe<Chat_FlagType_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_FlagType_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_Flag_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Flag_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Flag_Order_By>>;
+  where?: Maybe<Chat_Flag_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_Flag_By_PkArgs = {
+  id: Scalars['Int'];
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_MessageArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Message_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Message_Order_By>>;
+  where?: Maybe<Chat_Message_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_MessageTypeArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_MessageType_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_MessageType_Order_By>>;
+  where?: Maybe<Chat_MessageType_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_MessageType_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_MessageType_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_MessageType_Order_By>>;
+  where?: Maybe<Chat_MessageType_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_MessageType_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_Message_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Message_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Message_Order_By>>;
+  where?: Maybe<Chat_Message_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_Message_By_PkArgs = {
+  id: Scalars['Int'];
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_PinArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Pin_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Pin_Order_By>>;
+  where?: Maybe<Chat_Pin_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_Pin_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Pin_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Pin_Order_By>>;
+  where?: Maybe<Chat_Pin_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_Pin_By_PkArgs = {
+  attendeeId: Scalars['uuid'];
+  chatId: Scalars['uuid'];
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_ReactionArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Reaction_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Reaction_Order_By>>;
+  where?: Maybe<Chat_Reaction_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_ReactionTypeArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_ReactionType_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_ReactionType_Order_By>>;
+  where?: Maybe<Chat_ReactionType_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_ReactionType_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_ReactionType_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_ReactionType_Order_By>>;
+  where?: Maybe<Chat_ReactionType_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_ReactionType_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_Reaction_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Reaction_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Reaction_Order_By>>;
+  where?: Maybe<Chat_Reaction_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_Reaction_By_PkArgs = {
+  id: Scalars['Int'];
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_ReadUpToIndexArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_ReadUpToIndex_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_ReadUpToIndex_Order_By>>;
+  where?: Maybe<Chat_ReadUpToIndex_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_ReadUpToIndex_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_ReadUpToIndex_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_ReadUpToIndex_Order_By>>;
+  where?: Maybe<Chat_ReadUpToIndex_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_ReadUpToIndex_By_PkArgs = {
+  attendeeId: Scalars['uuid'];
+  chatId: Scalars['uuid'];
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_SubscriptionArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Subscription_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Subscription_Order_By>>;
+  where?: Maybe<Chat_Subscription_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_Subscription_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Subscription_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Subscription_Order_By>>;
+  where?: Maybe<Chat_Subscription_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_Subscription_By_PkArgs = {
+  attendeeId: Scalars['uuid'];
+  chatId: Scalars['uuid'];
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_TyperArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Typer_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Typer_Order_By>>;
+  where?: Maybe<Chat_Typer_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_Typer_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Typer_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Typer_Order_By>>;
+  where?: Maybe<Chat_Typer_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_Typer_By_PkArgs = {
+  attendeeId: Scalars['uuid'];
+  chatId: Scalars['uuid'];
+};
+
+
+/** subscription root */
 export type Subscription_RootEchoArgs = {
   message: Scalars['String'];
 };
@@ -24856,51 +25346,222 @@ export type Uuid_Comparison_Exp = {
   readonly _nin?: Maybe<ReadonlyArray<Scalars['uuid']>>;
 };
 
-export type SelectChatsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type SelectChatsQuery = { readonly __typename?: 'query_root', readonly Chat: ReadonlyArray<{ readonly __typename?: 'Chat', readonly id: any, readonly name: string, readonly description?: Maybe<string>, readonly mode: string, readonly members: ReadonlyArray<{ readonly __typename?: 'ChatMember', readonly userId: string }>, readonly viewers: ReadonlyArray<{ readonly __typename?: 'ChatViewer', readonly id: any, readonly lastSeen: any, readonly userId: string }> }> };
-
-export type SelectChatQueryVariables = Exact<{
+export type SendChatMessageMutationVariables = Exact<{
   chatId: Scalars['uuid'];
+  senderId: Scalars['uuid'];
+  type: Chat_MessageType_Enum;
+  message: Scalars['String'];
+  data?: Maybe<Scalars['jsonb']>;
+  isPinned?: Maybe<Scalars['Boolean']>;
 }>;
 
 
-export type SelectChatQuery = { readonly __typename?: 'query_root', readonly Chat: ReadonlyArray<{ readonly __typename?: 'Chat', readonly description?: Maybe<string>, readonly creatorId: string, readonly createdAt: any, readonly mode: string, readonly name: string, readonly isAutoNotify: boolean, readonly isAutoPin: boolean, readonly id: any, readonly updatedAt: any, readonly members: ReadonlyArray<{ readonly __typename?: 'ChatMember', readonly userId: string, readonly id: any, readonly invitationAcceptedAt?: Maybe<any>, readonly updatedAt: any, readonly createdAt: any }>, readonly creator: { readonly __typename?: 'User', readonly firstName: string, readonly lastName: string, readonly id: string } }> };
+export type SendChatMessageMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Message?: Maybe<{ readonly __typename?: 'chat_Message_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'chat_Message', readonly id: number }> }> };
 
-export type InsertMessageMutationVariables = Exact<{
+export type SendDuplicatedChatMessageMutationVariables = Exact<{
   chatId: Scalars['uuid'];
-  content: Scalars['jsonb'];
-  index: Scalars['Int'];
+  otherChatId: Scalars['uuid'];
+  senderId: Scalars['uuid'];
+  type: Chat_MessageType_Enum;
+  message: Scalars['String'];
+  data?: Maybe<Scalars['jsonb']>;
+  isPinned?: Maybe<Scalars['Boolean']>;
 }>;
 
 
-export type InsertMessageMutation = { readonly __typename?: 'mutation_root', readonly insert_ChatMessage?: Maybe<{ readonly __typename?: 'ChatMessage_mutation_response', readonly affected_rows: number }> };
+export type SendDuplicatedChatMessageMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Message?: Maybe<{ readonly __typename?: 'chat_Message_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'chat_Message', readonly id: number, readonly duplicatedMessageId?: Maybe<number> }> }> };
 
-export type LiveChatSubscriptionVariables = Exact<{
-  chatId: Scalars['uuid'];
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
+export type SendChatAnswerMutationVariables = Exact<{
+  data: Scalars['jsonb'];
+  senderId: Scalars['uuid'];
+  answeringId: Scalars['Int'];
 }>;
 
 
-export type LiveChatSubscription = { readonly __typename?: 'subscription_root', readonly Chat: ReadonlyArray<{ readonly __typename?: 'Chat', readonly id: any, readonly typers: ReadonlyArray<{ readonly __typename?: 'ChatTyper', readonly id: any, readonly userId: string, readonly updatedAt: any }>, readonly messages: ReadonlyArray<{ readonly __typename?: 'ChatMessage', readonly content: any, readonly createdAt: any, readonly id: any, readonly index: number, readonly isHighlighted: boolean, readonly senderId: string, readonly updatedAt: any, readonly reactions: ReadonlyArray<{ readonly __typename?: 'ChatReaction', readonly id: any, readonly createdAt: any, readonly reaction: string, readonly reactorId: string }> }>, readonly viewers: ReadonlyArray<{ readonly __typename?: 'ChatViewer', readonly id: any, readonly lastSeen: any, readonly userId: string }> }> };
+export type SendChatAnswerMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Reaction?: Maybe<{ readonly __typename?: 'chat_Reaction_mutation_response', readonly affected_rows: number }> };
 
-export type UpsertIsTypingMutationVariables = Exact<{
-  chatId: Scalars['uuid'];
-  updatedAt: Scalars['timestamptz'];
+export type CompleteDuplicatedMessageLoopMutationVariables = Exact<{
+  msgId1: Scalars['Int'];
+  msgId2: Scalars['Int'];
 }>;
 
 
-export type UpsertIsTypingMutation = { readonly __typename?: 'mutation_root', readonly insert_ChatTyper?: Maybe<{ readonly __typename?: 'ChatTyper_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ChatTyper', readonly id: any, readonly updatedAt: any, readonly chatId: any, readonly userId: string }> }> };
+export type CompleteDuplicatedMessageLoopMutation = { readonly __typename?: 'mutation_root', readonly update_chat_Message_by_pk?: Maybe<{ readonly __typename?: 'chat_Message', readonly id: number, readonly duplicatedMessageId?: Maybe<number> }> };
 
-export type DeleteIsTypingMutationVariables = Exact<{
-  chatId: Scalars['uuid'];
-  userId: Scalars['String'];
+export type AttendeesByIdQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  attendeeIds: ReadonlyArray<Scalars['uuid']>;
 }>;
 
 
-export type DeleteIsTypingMutation = { readonly __typename?: 'mutation_root', readonly delete_ChatTyper?: Maybe<{ readonly __typename?: 'ChatTyper_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ChatTyper', readonly id: any }> }> };
+export type AttendeesByIdQuery = { readonly __typename?: 'query_root', readonly Attendee: ReadonlyArray<(
+    { readonly __typename?: 'Attendee' }
+    & AttendeeDataFragment
+  )> };
+
+export type AddReactionMutationVariables = Exact<{
+  reaction: Chat_Reaction_Insert_Input;
+}>;
+
+
+export type AddReactionMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Reaction?: Maybe<{ readonly __typename?: 'chat_Reaction_mutation_response', readonly affected_rows: number }> };
+
+export type DeleteReactionMutationVariables = Exact<{
+  reactionId: Scalars['Int'];
+}>;
+
+
+export type DeleteReactionMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Reaction_by_pk?: Maybe<{ readonly __typename?: 'chat_Reaction', readonly id: number }> };
+
+export type ChatFlagDataFragment = { readonly __typename?: 'chat_Flag', readonly discussionChatId?: Maybe<any>, readonly flaggedById?: Maybe<any>, readonly id: number, readonly messageId: number, readonly notes?: Maybe<string>, readonly resolution?: Maybe<string>, readonly resolved_at?: Maybe<any>, readonly type: Chat_FlagType_Enum, readonly updated_at: any, readonly created_at: any };
+
+export type SenderDataFragment = { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string };
+
+export type ChatReactionDataFragment = { readonly __typename?: 'chat_Reaction', readonly data: any, readonly id: number, readonly senderId: any, readonly symbol: string, readonly type: Chat_ReactionType_Enum, readonly sender: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } };
+
+export type ChatMessageDataFragment = { readonly __typename?: 'chat_Message', readonly created_at: any, readonly data: any, readonly duplicatedMessageId?: Maybe<number>, readonly id: number, readonly isPinned: boolean, readonly message: string, readonly senderId?: Maybe<any>, readonly type: Chat_MessageType_Enum, readonly chatId: any, readonly reactions: ReadonlyArray<(
+    { readonly __typename?: 'chat_Reaction' }
+    & ChatReactionDataFragment
+  )>, readonly sender?: Maybe<{ readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string }> };
+
+export type SelectFirstMessagesPageQueryVariables = Exact<{
+  chatId: Scalars['uuid'];
+  maxCount: Scalars['Int'];
+}>;
+
+
+export type SelectFirstMessagesPageQuery = { readonly __typename?: 'query_root', readonly chat_Message: ReadonlyArray<(
+    { readonly __typename?: 'chat_Message' }
+    & ChatMessageDataFragment
+  )> };
+
+export type SelectMessagesPageQueryVariables = Exact<{
+  chatId: Scalars['uuid'];
+  startAtIndex: Scalars['Int'];
+  maxCount: Scalars['Int'];
+}>;
+
+
+export type SelectMessagesPageQuery = { readonly __typename?: 'query_root', readonly chat_Message: ReadonlyArray<(
+    { readonly __typename?: 'chat_Message' }
+    & ChatMessageDataFragment
+  )> };
+
+export type SelectSingleMessageQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type SelectSingleMessageQuery = { readonly __typename?: 'query_root', readonly chat_Message_by_pk?: Maybe<(
+    { readonly __typename?: 'chat_Message' }
+    & ChatMessageDataFragment
+  )> };
+
+export type DeleteMessageMutationVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type DeleteMessageMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Message_by_pk?: Maybe<{ readonly __typename?: 'chat_Message', readonly id: number }> };
+
+export type DeletePairOfMessagesMutationVariables = Exact<{
+  id1: Scalars['Int'];
+  id2: Scalars['Int'];
+}>;
+
+
+export type DeletePairOfMessagesMutation = { readonly __typename?: 'mutation_root', readonly msg1?: Maybe<{ readonly __typename?: 'chat_Message', readonly id: number }>, readonly msg2?: Maybe<{ readonly __typename?: 'chat_Message', readonly id: number }> };
+
+export type LatestMessagesSubscriptionVariables = Exact<{
+  chatId: Scalars['uuid'];
+  maxCount: Scalars['Int'];
+}>;
+
+
+export type LatestMessagesSubscription = { readonly __typename?: 'subscription_root', readonly chat_Message: ReadonlyArray<(
+    { readonly __typename?: 'chat_Message' }
+    & ChatMessageDataFragment
+  )> };
+
+export type PinDataFragment = { readonly __typename?: 'chat_Pin', readonly chatId: any, readonly attendeeId: any, readonly wasManuallyPinned: boolean };
+
+export type ChatPinConfigFragment = { readonly __typename?: 'chat_Chat', readonly id: any, readonly enableAutoPin: boolean, readonly enableMandatoryPin: boolean };
+
+export type SelectPinQueryVariables = Exact<{
+  chatId: Scalars['uuid'];
+  attendeeId: Scalars['uuid'];
+}>;
+
+
+export type SelectPinQuery = { readonly __typename?: 'query_root', readonly chat_Chat_by_pk?: Maybe<(
+    { readonly __typename?: 'chat_Chat' }
+    & ChatPinConfigFragment
+  )>, readonly chat_Pin: ReadonlyArray<(
+    { readonly __typename?: 'chat_Pin' }
+    & PinDataFragment
+  )> };
+
+export type PinChatMutationVariables = Exact<{
+  chatId: Scalars['uuid'];
+  attendeeId: Scalars['uuid'];
+}>;
+
+
+export type PinChatMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Pin?: Maybe<{ readonly __typename?: 'chat_Pin_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'chat_Pin' }
+      & PinDataFragment
+    )> }> };
+
+export type UnpinChatMutationVariables = Exact<{
+  chatId: Scalars['uuid'];
+  attendeeId: Scalars['uuid'];
+}>;
+
+
+export type UnpinChatMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Pin_by_pk?: Maybe<(
+    { readonly __typename?: 'chat_Pin' }
+    & PinDataFragment
+  )> };
+
+export type SubscriptionDataFragment = { readonly __typename?: 'chat_Subscription', readonly chatId: any, readonly attendeeId: any, readonly wasManuallySubscribed: boolean };
+
+export type ChatSubscriptionConfigFragment = { readonly __typename?: 'chat_Chat', readonly id: any, readonly enableAutoSubscribe: boolean, readonly enableMandatorySubscribe: boolean };
+
+export type SelectSubscriptionQueryVariables = Exact<{
+  chatId: Scalars['uuid'];
+  attendeeId: Scalars['uuid'];
+}>;
+
+
+export type SelectSubscriptionQuery = { readonly __typename?: 'query_root', readonly chat_Chat_by_pk?: Maybe<(
+    { readonly __typename?: 'chat_Chat' }
+    & ChatSubscriptionConfigFragment
+  )>, readonly chat_Subscription: ReadonlyArray<(
+    { readonly __typename?: 'chat_Subscription' }
+    & SubscriptionDataFragment
+  )> };
+
+export type SubscribeChatMutationVariables = Exact<{
+  chatId: Scalars['uuid'];
+  attendeeId: Scalars['uuid'];
+}>;
+
+
+export type SubscribeChatMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Subscription?: Maybe<{ readonly __typename?: 'chat_Subscription_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'chat_Subscription' }
+      & SubscriptionDataFragment
+    )> }> };
+
+export type UnsubscribeChatMutationVariables = Exact<{
+  chatId: Scalars['uuid'];
+  attendeeId: Scalars['uuid'];
+}>;
+
+
+export type UnsubscribeChatMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Subscription_by_pk?: Maybe<(
+    { readonly __typename?: 'chat_Subscription' }
+    & SubscriptionDataFragment
+  )> };
 
 export type SelectAttendeesQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -26034,6 +26695,87 @@ export type UpdateCurrentUserLastSeenMutationVariables = Exact<{
 
 export type UpdateCurrentUserLastSeenMutation = { readonly __typename?: 'mutation_root', readonly update_OnlineStatus?: Maybe<{ readonly __typename?: 'OnlineStatus_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'OnlineStatus', readonly id: any, readonly lastSeen: any }> }> };
 
+export const ChatFlagDataFragmentDoc = gql`
+    fragment ChatFlagData on chat_Flag {
+  discussionChatId
+  flaggedById
+  id
+  messageId
+  notes
+  resolution
+  resolved_at
+  type
+  updated_at
+  created_at
+}
+    `;
+export const SenderDataFragmentDoc = gql`
+    fragment SenderData on Attendee {
+  id
+  displayName
+}
+    `;
+export const ChatReactionDataFragmentDoc = gql`
+    fragment ChatReactionData on chat_Reaction {
+  data
+  id
+  senderId
+  sender {
+    id
+    displayName
+  }
+  symbol
+  type
+}
+    `;
+export const ChatMessageDataFragmentDoc = gql`
+    fragment ChatMessageData on chat_Message {
+  created_at
+  data
+  duplicatedMessageId
+  id
+  isPinned
+  message
+  reactions {
+    ...ChatReactionData
+  }
+  senderId
+  sender {
+    id
+    displayName
+  }
+  type
+  chatId
+}
+    ${ChatReactionDataFragmentDoc}`;
+export const PinDataFragmentDoc = gql`
+    fragment PinData on chat_Pin {
+  chatId
+  attendeeId
+  wasManuallyPinned
+}
+    `;
+export const ChatPinConfigFragmentDoc = gql`
+    fragment ChatPinConfig on chat_Chat {
+  id
+  enableAutoPin
+  enableMandatoryPin
+}
+    `;
+export const SubscriptionDataFragmentDoc = gql`
+    fragment SubscriptionData on chat_Subscription {
+  chatId
+  attendeeId
+  wasManuallySubscribed
+}
+    `;
+export const ChatSubscriptionConfigFragmentDoc = gql`
+    fragment ChatSubscriptionConfig on chat_Chat {
+  id
+  enableAutoSubscribe
+  enableMandatorySubscribe
+}
+    `;
 export const TagInfoFragmentDoc = gql`
     fragment TagInfo on Tag {
   id
@@ -26663,268 +27405,697 @@ export const AttendeeFieldsFragmentDoc = gql`
   }
 }
     `;
-export const SelectChatsDocument = gql`
-    query selectChats {
-  Chat {
-    id
-    name
-    description
-    mode
-    members {
-      userId
-    }
-    viewers {
-      id
-      lastSeen
-      userId
-    }
-  }
-}
-    `;
-
-/**
- * __useSelectChatsQuery__
- *
- * To run a query within a React component, call `useSelectChatsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectChatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectChatsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useSelectChatsQuery(baseOptions?: Apollo.QueryHookOptions<SelectChatsQuery, SelectChatsQueryVariables>) {
-        return Apollo.useQuery<SelectChatsQuery, SelectChatsQueryVariables>(SelectChatsDocument, baseOptions);
-      }
-export function useSelectChatsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectChatsQuery, SelectChatsQueryVariables>) {
-          return Apollo.useLazyQuery<SelectChatsQuery, SelectChatsQueryVariables>(SelectChatsDocument, baseOptions);
-        }
-export type SelectChatsQueryHookResult = ReturnType<typeof useSelectChatsQuery>;
-export type SelectChatsLazyQueryHookResult = ReturnType<typeof useSelectChatsLazyQuery>;
-export type SelectChatsQueryResult = Apollo.QueryResult<SelectChatsQuery, SelectChatsQueryVariables>;
-export const SelectChatDocument = gql`
-    query SelectChat($chatId: uuid!) {
-  Chat(where: {id: {_eq: $chatId}}) {
-    description
-    creatorId
-    createdAt
-    mode
-    name
-    isAutoNotify
-    isAutoPin
-    id
-    updatedAt
-    members {
-      userId
-      id
-      invitationAcceptedAt
-      updatedAt
-      createdAt
-    }
-    creator {
-      firstName
-      lastName
+export const SendChatMessageDocument = gql`
+    mutation SendChatMessage($chatId: uuid!, $senderId: uuid!, $type: chat_MessageType_enum!, $message: String!, $data: jsonb = {}, $isPinned: Boolean = false) {
+  insert_chat_Message(
+    objects: {chatId: $chatId, data: $data, isPinned: $isPinned, message: $message, senderId: $senderId, type: $type}
+  ) {
+    returning {
       id
     }
   }
 }
     `;
+export type SendChatMessageMutationFn = Apollo.MutationFunction<SendChatMessageMutation, SendChatMessageMutationVariables>;
 
 /**
- * __useSelectChatQuery__
+ * __useSendChatMessageMutation__
  *
- * To run a query within a React component, call `useSelectChatQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectChatQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectChatQuery({
- *   variables: {
- *      chatId: // value for 'chatId'
- *   },
- * });
- */
-export function useSelectChatQuery(baseOptions: Apollo.QueryHookOptions<SelectChatQuery, SelectChatQueryVariables>) {
-        return Apollo.useQuery<SelectChatQuery, SelectChatQueryVariables>(SelectChatDocument, baseOptions);
-      }
-export function useSelectChatLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectChatQuery, SelectChatQueryVariables>) {
-          return Apollo.useLazyQuery<SelectChatQuery, SelectChatQueryVariables>(SelectChatDocument, baseOptions);
-        }
-export type SelectChatQueryHookResult = ReturnType<typeof useSelectChatQuery>;
-export type SelectChatLazyQueryHookResult = ReturnType<typeof useSelectChatLazyQuery>;
-export type SelectChatQueryResult = Apollo.QueryResult<SelectChatQuery, SelectChatQueryVariables>;
-export const InsertMessageDocument = gql`
-    mutation InsertMessage($chatId: uuid!, $content: jsonb!, $index: Int!) {
-  insert_ChatMessage(objects: {chatId: $chatId, content: $content, index: $index}) {
-    affected_rows
-  }
-}
-    `;
-export type InsertMessageMutationFn = Apollo.MutationFunction<InsertMessageMutation, InsertMessageMutationVariables>;
-
-/**
- * __useInsertMessageMutation__
- *
- * To run a mutation, you first call `useInsertMessageMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInsertMessageMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useSendChatMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendChatMessageMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [insertMessageMutation, { data, loading, error }] = useInsertMessageMutation({
+ * const [sendChatMessageMutation, { data, loading, error }] = useSendChatMessageMutation({
  *   variables: {
  *      chatId: // value for 'chatId'
- *      content: // value for 'content'
- *      index: // value for 'index'
+ *      senderId: // value for 'senderId'
+ *      type: // value for 'type'
+ *      message: // value for 'message'
+ *      data: // value for 'data'
+ *      isPinned: // value for 'isPinned'
  *   },
  * });
  */
-export function useInsertMessageMutation(baseOptions?: Apollo.MutationHookOptions<InsertMessageMutation, InsertMessageMutationVariables>) {
-        return Apollo.useMutation<InsertMessageMutation, InsertMessageMutationVariables>(InsertMessageDocument, baseOptions);
+export function useSendChatMessageMutation(baseOptions?: Apollo.MutationHookOptions<SendChatMessageMutation, SendChatMessageMutationVariables>) {
+        return Apollo.useMutation<SendChatMessageMutation, SendChatMessageMutationVariables>(SendChatMessageDocument, baseOptions);
       }
-export type InsertMessageMutationHookResult = ReturnType<typeof useInsertMessageMutation>;
-export type InsertMessageMutationResult = Apollo.MutationResult<InsertMessageMutation>;
-export type InsertMessageMutationOptions = Apollo.BaseMutationOptions<InsertMessageMutation, InsertMessageMutationVariables>;
-export const LiveChatDocument = gql`
-    subscription LiveChat($chatId: uuid!, $limit: Int = 20, $offset: Int = 0) {
-  Chat(where: {id: {_eq: $chatId}}) {
-    id
-    typers {
+export type SendChatMessageMutationHookResult = ReturnType<typeof useSendChatMessageMutation>;
+export type SendChatMessageMutationResult = Apollo.MutationResult<SendChatMessageMutation>;
+export type SendChatMessageMutationOptions = Apollo.BaseMutationOptions<SendChatMessageMutation, SendChatMessageMutationVariables>;
+export const SendDuplicatedChatMessageDocument = gql`
+    mutation SendDuplicatedChatMessage($chatId: uuid!, $otherChatId: uuid!, $senderId: uuid!, $type: chat_MessageType_enum!, $message: String!, $data: jsonb = {}, $isPinned: Boolean = false) {
+  insert_chat_Message(
+    objects: {chatId: $chatId, data: $data, isPinned: $isPinned, message: $message, senderId: $senderId, type: $type, duplicateOutgoing: {data: {chatId: $otherChatId, data: $data, isPinned: $isPinned, message: $message, senderId: $senderId, type: $type}}}
+  ) {
+    returning {
       id
-      userId
-      updatedAt
-    }
-    messages(order_by: {index: desc}, limit: $limit, offset: $offset) {
-      content
-      createdAt
-      id
-      index
-      isHighlighted
-      senderId
-      updatedAt
-      reactions {
-        id
-        createdAt
-        reaction
-        reactorId
-      }
-    }
-    viewers {
-      id
-      lastSeen
-      userId
+      duplicatedMessageId
     }
   }
 }
     `;
+export type SendDuplicatedChatMessageMutationFn = Apollo.MutationFunction<SendDuplicatedChatMessageMutation, SendDuplicatedChatMessageMutationVariables>;
 
 /**
- * __useLiveChatSubscription__
+ * __useSendDuplicatedChatMessageMutation__
  *
- * To run a query within a React component, call `useLiveChatSubscription` and pass it any options that fit your needs.
- * When your component renders, `useLiveChatSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a mutation, you first call `useSendDuplicatedChatMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendDuplicatedChatMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendDuplicatedChatMessageMutation, { data, loading, error }] = useSendDuplicatedChatMessageMutation({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *      otherChatId: // value for 'otherChatId'
+ *      senderId: // value for 'senderId'
+ *      type: // value for 'type'
+ *      message: // value for 'message'
+ *      data: // value for 'data'
+ *      isPinned: // value for 'isPinned'
+ *   },
+ * });
+ */
+export function useSendDuplicatedChatMessageMutation(baseOptions?: Apollo.MutationHookOptions<SendDuplicatedChatMessageMutation, SendDuplicatedChatMessageMutationVariables>) {
+        return Apollo.useMutation<SendDuplicatedChatMessageMutation, SendDuplicatedChatMessageMutationVariables>(SendDuplicatedChatMessageDocument, baseOptions);
+      }
+export type SendDuplicatedChatMessageMutationHookResult = ReturnType<typeof useSendDuplicatedChatMessageMutation>;
+export type SendDuplicatedChatMessageMutationResult = Apollo.MutationResult<SendDuplicatedChatMessageMutation>;
+export type SendDuplicatedChatMessageMutationOptions = Apollo.BaseMutationOptions<SendDuplicatedChatMessageMutation, SendDuplicatedChatMessageMutationVariables>;
+export const SendChatAnswerDocument = gql`
+    mutation SendChatAnswer($data: jsonb!, $senderId: uuid!, $answeringId: Int!) {
+  insert_chat_Reaction(
+    objects: {messageId: $answeringId, senderId: $senderId, symbol: "ANSWER", type: ANSWER, data: $data}
+  ) {
+    affected_rows
+  }
+}
+    `;
+export type SendChatAnswerMutationFn = Apollo.MutationFunction<SendChatAnswerMutation, SendChatAnswerMutationVariables>;
+
+/**
+ * __useSendChatAnswerMutation__
+ *
+ * To run a mutation, you first call `useSendChatAnswerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendChatAnswerMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendChatAnswerMutation, { data, loading, error }] = useSendChatAnswerMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *      senderId: // value for 'senderId'
+ *      answeringId: // value for 'answeringId'
+ *   },
+ * });
+ */
+export function useSendChatAnswerMutation(baseOptions?: Apollo.MutationHookOptions<SendChatAnswerMutation, SendChatAnswerMutationVariables>) {
+        return Apollo.useMutation<SendChatAnswerMutation, SendChatAnswerMutationVariables>(SendChatAnswerDocument, baseOptions);
+      }
+export type SendChatAnswerMutationHookResult = ReturnType<typeof useSendChatAnswerMutation>;
+export type SendChatAnswerMutationResult = Apollo.MutationResult<SendChatAnswerMutation>;
+export type SendChatAnswerMutationOptions = Apollo.BaseMutationOptions<SendChatAnswerMutation, SendChatAnswerMutationVariables>;
+export const CompleteDuplicatedMessageLoopDocument = gql`
+    mutation CompleteDuplicatedMessageLoop($msgId1: Int!, $msgId2: Int!) {
+  update_chat_Message_by_pk(
+    pk_columns: {id: $msgId2}
+    _set: {duplicatedMessageId: $msgId1}
+  ) {
+    id
+    duplicatedMessageId
+  }
+}
+    `;
+export type CompleteDuplicatedMessageLoopMutationFn = Apollo.MutationFunction<CompleteDuplicatedMessageLoopMutation, CompleteDuplicatedMessageLoopMutationVariables>;
+
+/**
+ * __useCompleteDuplicatedMessageLoopMutation__
+ *
+ * To run a mutation, you first call `useCompleteDuplicatedMessageLoopMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCompleteDuplicatedMessageLoopMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [completeDuplicatedMessageLoopMutation, { data, loading, error }] = useCompleteDuplicatedMessageLoopMutation({
+ *   variables: {
+ *      msgId1: // value for 'msgId1'
+ *      msgId2: // value for 'msgId2'
+ *   },
+ * });
+ */
+export function useCompleteDuplicatedMessageLoopMutation(baseOptions?: Apollo.MutationHookOptions<CompleteDuplicatedMessageLoopMutation, CompleteDuplicatedMessageLoopMutationVariables>) {
+        return Apollo.useMutation<CompleteDuplicatedMessageLoopMutation, CompleteDuplicatedMessageLoopMutationVariables>(CompleteDuplicatedMessageLoopDocument, baseOptions);
+      }
+export type CompleteDuplicatedMessageLoopMutationHookResult = ReturnType<typeof useCompleteDuplicatedMessageLoopMutation>;
+export type CompleteDuplicatedMessageLoopMutationResult = Apollo.MutationResult<CompleteDuplicatedMessageLoopMutation>;
+export type CompleteDuplicatedMessageLoopMutationOptions = Apollo.BaseMutationOptions<CompleteDuplicatedMessageLoopMutation, CompleteDuplicatedMessageLoopMutationVariables>;
+export const AttendeesByIdDocument = gql`
+    query AttendeesById($conferenceId: uuid!, $attendeeIds: [uuid!]!) {
+  Attendee(where: {id: {_in: $attendeeIds}, conferenceId: {_eq: $conferenceId}}) {
+    ...AttendeeData
+  }
+}
+    ${AttendeeDataFragmentDoc}`;
+
+/**
+ * __useAttendeesByIdQuery__
+ *
+ * To run a query within a React component, call `useAttendeesByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAttendeesByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAttendeesByIdQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      attendeeIds: // value for 'attendeeIds'
+ *   },
+ * });
+ */
+export function useAttendeesByIdQuery(baseOptions: Apollo.QueryHookOptions<AttendeesByIdQuery, AttendeesByIdQueryVariables>) {
+        return Apollo.useQuery<AttendeesByIdQuery, AttendeesByIdQueryVariables>(AttendeesByIdDocument, baseOptions);
+      }
+export function useAttendeesByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AttendeesByIdQuery, AttendeesByIdQueryVariables>) {
+          return Apollo.useLazyQuery<AttendeesByIdQuery, AttendeesByIdQueryVariables>(AttendeesByIdDocument, baseOptions);
+        }
+export type AttendeesByIdQueryHookResult = ReturnType<typeof useAttendeesByIdQuery>;
+export type AttendeesByIdLazyQueryHookResult = ReturnType<typeof useAttendeesByIdLazyQuery>;
+export type AttendeesByIdQueryResult = Apollo.QueryResult<AttendeesByIdQuery, AttendeesByIdQueryVariables>;
+export const AddReactionDocument = gql`
+    mutation AddReaction($reaction: chat_Reaction_insert_input!) {
+  insert_chat_Reaction(objects: [$reaction]) {
+    affected_rows
+  }
+}
+    `;
+export type AddReactionMutationFn = Apollo.MutationFunction<AddReactionMutation, AddReactionMutationVariables>;
+
+/**
+ * __useAddReactionMutation__
+ *
+ * To run a mutation, you first call `useAddReactionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddReactionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addReactionMutation, { data, loading, error }] = useAddReactionMutation({
+ *   variables: {
+ *      reaction: // value for 'reaction'
+ *   },
+ * });
+ */
+export function useAddReactionMutation(baseOptions?: Apollo.MutationHookOptions<AddReactionMutation, AddReactionMutationVariables>) {
+        return Apollo.useMutation<AddReactionMutation, AddReactionMutationVariables>(AddReactionDocument, baseOptions);
+      }
+export type AddReactionMutationHookResult = ReturnType<typeof useAddReactionMutation>;
+export type AddReactionMutationResult = Apollo.MutationResult<AddReactionMutation>;
+export type AddReactionMutationOptions = Apollo.BaseMutationOptions<AddReactionMutation, AddReactionMutationVariables>;
+export const DeleteReactionDocument = gql`
+    mutation DeleteReaction($reactionId: Int!) {
+  delete_chat_Reaction_by_pk(id: $reactionId) {
+    id
+  }
+}
+    `;
+export type DeleteReactionMutationFn = Apollo.MutationFunction<DeleteReactionMutation, DeleteReactionMutationVariables>;
+
+/**
+ * __useDeleteReactionMutation__
+ *
+ * To run a mutation, you first call `useDeleteReactionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteReactionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteReactionMutation, { data, loading, error }] = useDeleteReactionMutation({
+ *   variables: {
+ *      reactionId: // value for 'reactionId'
+ *   },
+ * });
+ */
+export function useDeleteReactionMutation(baseOptions?: Apollo.MutationHookOptions<DeleteReactionMutation, DeleteReactionMutationVariables>) {
+        return Apollo.useMutation<DeleteReactionMutation, DeleteReactionMutationVariables>(DeleteReactionDocument, baseOptions);
+      }
+export type DeleteReactionMutationHookResult = ReturnType<typeof useDeleteReactionMutation>;
+export type DeleteReactionMutationResult = Apollo.MutationResult<DeleteReactionMutation>;
+export type DeleteReactionMutationOptions = Apollo.BaseMutationOptions<DeleteReactionMutation, DeleteReactionMutationVariables>;
+export const SelectFirstMessagesPageDocument = gql`
+    query SelectFirstMessagesPage($chatId: uuid!, $maxCount: Int!) {
+  chat_Message(
+    order_by: {id: desc}
+    where: {chatId: {_eq: $chatId}}
+    limit: $maxCount
+  ) {
+    ...ChatMessageData
+  }
+}
+    ${ChatMessageDataFragmentDoc}`;
+
+/**
+ * __useSelectFirstMessagesPageQuery__
+ *
+ * To run a query within a React component, call `useSelectFirstMessagesPageQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectFirstMessagesPageQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectFirstMessagesPageQuery({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *      maxCount: // value for 'maxCount'
+ *   },
+ * });
+ */
+export function useSelectFirstMessagesPageQuery(baseOptions: Apollo.QueryHookOptions<SelectFirstMessagesPageQuery, SelectFirstMessagesPageQueryVariables>) {
+        return Apollo.useQuery<SelectFirstMessagesPageQuery, SelectFirstMessagesPageQueryVariables>(SelectFirstMessagesPageDocument, baseOptions);
+      }
+export function useSelectFirstMessagesPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectFirstMessagesPageQuery, SelectFirstMessagesPageQueryVariables>) {
+          return Apollo.useLazyQuery<SelectFirstMessagesPageQuery, SelectFirstMessagesPageQueryVariables>(SelectFirstMessagesPageDocument, baseOptions);
+        }
+export type SelectFirstMessagesPageQueryHookResult = ReturnType<typeof useSelectFirstMessagesPageQuery>;
+export type SelectFirstMessagesPageLazyQueryHookResult = ReturnType<typeof useSelectFirstMessagesPageLazyQuery>;
+export type SelectFirstMessagesPageQueryResult = Apollo.QueryResult<SelectFirstMessagesPageQuery, SelectFirstMessagesPageQueryVariables>;
+export const SelectMessagesPageDocument = gql`
+    query SelectMessagesPage($chatId: uuid!, $startAtIndex: Int!, $maxCount: Int!) {
+  chat_Message(
+    order_by: {id: desc}
+    where: {id: {_lte: $startAtIndex}, chatId: {_eq: $chatId}}
+    limit: $maxCount
+  ) {
+    ...ChatMessageData
+  }
+}
+    ${ChatMessageDataFragmentDoc}`;
+
+/**
+ * __useSelectMessagesPageQuery__
+ *
+ * To run a query within a React component, call `useSelectMessagesPageQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectMessagesPageQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectMessagesPageQuery({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *      startAtIndex: // value for 'startAtIndex'
+ *      maxCount: // value for 'maxCount'
+ *   },
+ * });
+ */
+export function useSelectMessagesPageQuery(baseOptions: Apollo.QueryHookOptions<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>) {
+        return Apollo.useQuery<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>(SelectMessagesPageDocument, baseOptions);
+      }
+export function useSelectMessagesPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>) {
+          return Apollo.useLazyQuery<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>(SelectMessagesPageDocument, baseOptions);
+        }
+export type SelectMessagesPageQueryHookResult = ReturnType<typeof useSelectMessagesPageQuery>;
+export type SelectMessagesPageLazyQueryHookResult = ReturnType<typeof useSelectMessagesPageLazyQuery>;
+export type SelectMessagesPageQueryResult = Apollo.QueryResult<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>;
+export const SelectSingleMessageDocument = gql`
+    query SelectSingleMessage($id: Int!) {
+  chat_Message_by_pk(id: $id) {
+    ...ChatMessageData
+  }
+}
+    ${ChatMessageDataFragmentDoc}`;
+
+/**
+ * __useSelectSingleMessageQuery__
+ *
+ * To run a query within a React component, call `useSelectSingleMessageQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectSingleMessageQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectSingleMessageQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useSelectSingleMessageQuery(baseOptions: Apollo.QueryHookOptions<SelectSingleMessageQuery, SelectSingleMessageQueryVariables>) {
+        return Apollo.useQuery<SelectSingleMessageQuery, SelectSingleMessageQueryVariables>(SelectSingleMessageDocument, baseOptions);
+      }
+export function useSelectSingleMessageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectSingleMessageQuery, SelectSingleMessageQueryVariables>) {
+          return Apollo.useLazyQuery<SelectSingleMessageQuery, SelectSingleMessageQueryVariables>(SelectSingleMessageDocument, baseOptions);
+        }
+export type SelectSingleMessageQueryHookResult = ReturnType<typeof useSelectSingleMessageQuery>;
+export type SelectSingleMessageLazyQueryHookResult = ReturnType<typeof useSelectSingleMessageLazyQuery>;
+export type SelectSingleMessageQueryResult = Apollo.QueryResult<SelectSingleMessageQuery, SelectSingleMessageQueryVariables>;
+export const DeleteMessageDocument = gql`
+    mutation DeleteMessage($id: Int!) {
+  delete_chat_Message_by_pk(id: $id) {
+    id
+  }
+}
+    `;
+export type DeleteMessageMutationFn = Apollo.MutationFunction<DeleteMessageMutation, DeleteMessageMutationVariables>;
+
+/**
+ * __useDeleteMessageMutation__
+ *
+ * To run a mutation, you first call `useDeleteMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteMessageMutation, { data, loading, error }] = useDeleteMessageMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteMessageMutation(baseOptions?: Apollo.MutationHookOptions<DeleteMessageMutation, DeleteMessageMutationVariables>) {
+        return Apollo.useMutation<DeleteMessageMutation, DeleteMessageMutationVariables>(DeleteMessageDocument, baseOptions);
+      }
+export type DeleteMessageMutationHookResult = ReturnType<typeof useDeleteMessageMutation>;
+export type DeleteMessageMutationResult = Apollo.MutationResult<DeleteMessageMutation>;
+export type DeleteMessageMutationOptions = Apollo.BaseMutationOptions<DeleteMessageMutation, DeleteMessageMutationVariables>;
+export const DeletePairOfMessagesDocument = gql`
+    mutation DeletePairOfMessages($id1: Int!, $id2: Int!) {
+  msg1: delete_chat_Message_by_pk(id: $id1) {
+    id
+  }
+  msg2: delete_chat_Message_by_pk(id: $id2) {
+    id
+  }
+}
+    `;
+export type DeletePairOfMessagesMutationFn = Apollo.MutationFunction<DeletePairOfMessagesMutation, DeletePairOfMessagesMutationVariables>;
+
+/**
+ * __useDeletePairOfMessagesMutation__
+ *
+ * To run a mutation, you first call `useDeletePairOfMessagesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeletePairOfMessagesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deletePairOfMessagesMutation, { data, loading, error }] = useDeletePairOfMessagesMutation({
+ *   variables: {
+ *      id1: // value for 'id1'
+ *      id2: // value for 'id2'
+ *   },
+ * });
+ */
+export function useDeletePairOfMessagesMutation(baseOptions?: Apollo.MutationHookOptions<DeletePairOfMessagesMutation, DeletePairOfMessagesMutationVariables>) {
+        return Apollo.useMutation<DeletePairOfMessagesMutation, DeletePairOfMessagesMutationVariables>(DeletePairOfMessagesDocument, baseOptions);
+      }
+export type DeletePairOfMessagesMutationHookResult = ReturnType<typeof useDeletePairOfMessagesMutation>;
+export type DeletePairOfMessagesMutationResult = Apollo.MutationResult<DeletePairOfMessagesMutation>;
+export type DeletePairOfMessagesMutationOptions = Apollo.BaseMutationOptions<DeletePairOfMessagesMutation, DeletePairOfMessagesMutationVariables>;
+export const LatestMessagesDocument = gql`
+    subscription LatestMessages($chatId: uuid!, $maxCount: Int!) {
+  chat_Message(
+    order_by: {id: desc}
+    where: {chatId: {_eq: $chatId}}
+    limit: $maxCount
+  ) {
+    ...ChatMessageData
+  }
+}
+    ${ChatMessageDataFragmentDoc}`;
+
+/**
+ * __useLatestMessagesSubscription__
+ *
+ * To run a query within a React component, call `useLatestMessagesSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useLatestMessagesSubscription` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useLiveChatSubscription({
+ * const { data, loading, error } = useLatestMessagesSubscription({
  *   variables: {
  *      chatId: // value for 'chatId'
- *      limit: // value for 'limit'
- *      offset: // value for 'offset'
+ *      maxCount: // value for 'maxCount'
  *   },
  * });
  */
-export function useLiveChatSubscription(baseOptions: Apollo.SubscriptionHookOptions<LiveChatSubscription, LiveChatSubscriptionVariables>) {
-        return Apollo.useSubscription<LiveChatSubscription, LiveChatSubscriptionVariables>(LiveChatDocument, baseOptions);
+export function useLatestMessagesSubscription(baseOptions: Apollo.SubscriptionHookOptions<LatestMessagesSubscription, LatestMessagesSubscriptionVariables>) {
+        return Apollo.useSubscription<LatestMessagesSubscription, LatestMessagesSubscriptionVariables>(LatestMessagesDocument, baseOptions);
       }
-export type LiveChatSubscriptionHookResult = ReturnType<typeof useLiveChatSubscription>;
-export type LiveChatSubscriptionResult = Apollo.SubscriptionResult<LiveChatSubscription>;
-export const UpsertIsTypingDocument = gql`
-    mutation UpsertIsTyping($chatId: uuid!, $updatedAt: timestamptz!) {
-  insert_ChatTyper(
-    objects: {chatId: $chatId, updatedAt: $updatedAt}
-    on_conflict: {constraint: ChatTyper_chatId_userId_key, update_columns: updatedAt}
+export type LatestMessagesSubscriptionHookResult = ReturnType<typeof useLatestMessagesSubscription>;
+export type LatestMessagesSubscriptionResult = Apollo.SubscriptionResult<LatestMessagesSubscription>;
+export const SelectPinDocument = gql`
+    query SelectPin($chatId: uuid!, $attendeeId: uuid!) {
+  chat_Chat_by_pk(id: $chatId) {
+    ...ChatPinConfig
+  }
+  chat_Pin(
+    where: {chatId: {_eq: $chatId}, attendeeId: {_eq: $attendeeId}}
+    limit: 1
+  ) {
+    ...PinData
+  }
+}
+    ${ChatPinConfigFragmentDoc}
+${PinDataFragmentDoc}`;
+
+/**
+ * __useSelectPinQuery__
+ *
+ * To run a query within a React component, call `useSelectPinQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectPinQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectPinQuery({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *      attendeeId: // value for 'attendeeId'
+ *   },
+ * });
+ */
+export function useSelectPinQuery(baseOptions: Apollo.QueryHookOptions<SelectPinQuery, SelectPinQueryVariables>) {
+        return Apollo.useQuery<SelectPinQuery, SelectPinQueryVariables>(SelectPinDocument, baseOptions);
+      }
+export function useSelectPinLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectPinQuery, SelectPinQueryVariables>) {
+          return Apollo.useLazyQuery<SelectPinQuery, SelectPinQueryVariables>(SelectPinDocument, baseOptions);
+        }
+export type SelectPinQueryHookResult = ReturnType<typeof useSelectPinQuery>;
+export type SelectPinLazyQueryHookResult = ReturnType<typeof useSelectPinLazyQuery>;
+export type SelectPinQueryResult = Apollo.QueryResult<SelectPinQuery, SelectPinQueryVariables>;
+export const PinChatDocument = gql`
+    mutation PinChat($chatId: uuid!, $attendeeId: uuid!) {
+  insert_chat_Pin(
+    objects: {chatId: $chatId, attendeeId: $attendeeId}
+    on_conflict: {constraint: ChatPin_pkey, update_columns: wasManuallyPinned}
   ) {
     returning {
-      id
-      updatedAt
-      chatId
-      userId
+      ...PinData
     }
   }
 }
-    `;
-export type UpsertIsTypingMutationFn = Apollo.MutationFunction<UpsertIsTypingMutation, UpsertIsTypingMutationVariables>;
+    ${PinDataFragmentDoc}`;
+export type PinChatMutationFn = Apollo.MutationFunction<PinChatMutation, PinChatMutationVariables>;
 
 /**
- * __useUpsertIsTypingMutation__
+ * __usePinChatMutation__
  *
- * To run a mutation, you first call `useUpsertIsTypingMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpsertIsTypingMutation` returns a tuple that includes:
+ * To run a mutation, you first call `usePinChatMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `usePinChatMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [upsertIsTypingMutation, { data, loading, error }] = useUpsertIsTypingMutation({
+ * const [pinChatMutation, { data, loading, error }] = usePinChatMutation({
  *   variables: {
  *      chatId: // value for 'chatId'
- *      updatedAt: // value for 'updatedAt'
+ *      attendeeId: // value for 'attendeeId'
  *   },
  * });
  */
-export function useUpsertIsTypingMutation(baseOptions?: Apollo.MutationHookOptions<UpsertIsTypingMutation, UpsertIsTypingMutationVariables>) {
-        return Apollo.useMutation<UpsertIsTypingMutation, UpsertIsTypingMutationVariables>(UpsertIsTypingDocument, baseOptions);
+export function usePinChatMutation(baseOptions?: Apollo.MutationHookOptions<PinChatMutation, PinChatMutationVariables>) {
+        return Apollo.useMutation<PinChatMutation, PinChatMutationVariables>(PinChatDocument, baseOptions);
       }
-export type UpsertIsTypingMutationHookResult = ReturnType<typeof useUpsertIsTypingMutation>;
-export type UpsertIsTypingMutationResult = Apollo.MutationResult<UpsertIsTypingMutation>;
-export type UpsertIsTypingMutationOptions = Apollo.BaseMutationOptions<UpsertIsTypingMutation, UpsertIsTypingMutationVariables>;
-export const DeleteIsTypingDocument = gql`
-    mutation DeleteIsTyping($chatId: uuid!, $userId: String!) {
-  delete_ChatTyper(where: {chatId: {_eq: $chatId}, userId: {_eq: $userId}}) {
+export type PinChatMutationHookResult = ReturnType<typeof usePinChatMutation>;
+export type PinChatMutationResult = Apollo.MutationResult<PinChatMutation>;
+export type PinChatMutationOptions = Apollo.BaseMutationOptions<PinChatMutation, PinChatMutationVariables>;
+export const UnpinChatDocument = gql`
+    mutation UnpinChat($chatId: uuid!, $attendeeId: uuid!) {
+  delete_chat_Pin_by_pk(chatId: $chatId, attendeeId: $attendeeId) {
+    ...PinData
+  }
+}
+    ${PinDataFragmentDoc}`;
+export type UnpinChatMutationFn = Apollo.MutationFunction<UnpinChatMutation, UnpinChatMutationVariables>;
+
+/**
+ * __useUnpinChatMutation__
+ *
+ * To run a mutation, you first call `useUnpinChatMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnpinChatMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unpinChatMutation, { data, loading, error }] = useUnpinChatMutation({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *      attendeeId: // value for 'attendeeId'
+ *   },
+ * });
+ */
+export function useUnpinChatMutation(baseOptions?: Apollo.MutationHookOptions<UnpinChatMutation, UnpinChatMutationVariables>) {
+        return Apollo.useMutation<UnpinChatMutation, UnpinChatMutationVariables>(UnpinChatDocument, baseOptions);
+      }
+export type UnpinChatMutationHookResult = ReturnType<typeof useUnpinChatMutation>;
+export type UnpinChatMutationResult = Apollo.MutationResult<UnpinChatMutation>;
+export type UnpinChatMutationOptions = Apollo.BaseMutationOptions<UnpinChatMutation, UnpinChatMutationVariables>;
+export const SelectSubscriptionDocument = gql`
+    query SelectSubscription($chatId: uuid!, $attendeeId: uuid!) {
+  chat_Chat_by_pk(id: $chatId) {
+    ...ChatSubscriptionConfig
+  }
+  chat_Subscription(
+    where: {chatId: {_eq: $chatId}, attendeeId: {_eq: $attendeeId}}
+    limit: 1
+  ) {
+    ...SubscriptionData
+  }
+}
+    ${ChatSubscriptionConfigFragmentDoc}
+${SubscriptionDataFragmentDoc}`;
+
+/**
+ * __useSelectSubscriptionQuery__
+ *
+ * To run a query within a React component, call `useSelectSubscriptionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectSubscriptionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectSubscriptionQuery({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *      attendeeId: // value for 'attendeeId'
+ *   },
+ * });
+ */
+export function useSelectSubscriptionQuery(baseOptions: Apollo.QueryHookOptions<SelectSubscriptionQuery, SelectSubscriptionQueryVariables>) {
+        return Apollo.useQuery<SelectSubscriptionQuery, SelectSubscriptionQueryVariables>(SelectSubscriptionDocument, baseOptions);
+      }
+export function useSelectSubscriptionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectSubscriptionQuery, SelectSubscriptionQueryVariables>) {
+          return Apollo.useLazyQuery<SelectSubscriptionQuery, SelectSubscriptionQueryVariables>(SelectSubscriptionDocument, baseOptions);
+        }
+export type SelectSubscriptionQueryHookResult = ReturnType<typeof useSelectSubscriptionQuery>;
+export type SelectSubscriptionLazyQueryHookResult = ReturnType<typeof useSelectSubscriptionLazyQuery>;
+export type SelectSubscriptionQueryResult = Apollo.QueryResult<SelectSubscriptionQuery, SelectSubscriptionQueryVariables>;
+export const SubscribeChatDocument = gql`
+    mutation SubscribeChat($chatId: uuid!, $attendeeId: uuid!) {
+  insert_chat_Subscription(
+    objects: {chatId: $chatId, attendeeId: $attendeeId}
+    on_conflict: {constraint: Subscription_pkey, update_columns: wasManuallySubscribed}
+  ) {
     returning {
-      id
+      ...SubscriptionData
     }
   }
 }
-    `;
-export type DeleteIsTypingMutationFn = Apollo.MutationFunction<DeleteIsTypingMutation, DeleteIsTypingMutationVariables>;
+    ${SubscriptionDataFragmentDoc}`;
+export type SubscribeChatMutationFn = Apollo.MutationFunction<SubscribeChatMutation, SubscribeChatMutationVariables>;
 
 /**
- * __useDeleteIsTypingMutation__
+ * __useSubscribeChatMutation__
  *
- * To run a mutation, you first call `useDeleteIsTypingMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteIsTypingMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useSubscribeChatMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSubscribeChatMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [deleteIsTypingMutation, { data, loading, error }] = useDeleteIsTypingMutation({
+ * const [subscribeChatMutation, { data, loading, error }] = useSubscribeChatMutation({
  *   variables: {
  *      chatId: // value for 'chatId'
- *      userId: // value for 'userId'
+ *      attendeeId: // value for 'attendeeId'
  *   },
  * });
  */
-export function useDeleteIsTypingMutation(baseOptions?: Apollo.MutationHookOptions<DeleteIsTypingMutation, DeleteIsTypingMutationVariables>) {
-        return Apollo.useMutation<DeleteIsTypingMutation, DeleteIsTypingMutationVariables>(DeleteIsTypingDocument, baseOptions);
+export function useSubscribeChatMutation(baseOptions?: Apollo.MutationHookOptions<SubscribeChatMutation, SubscribeChatMutationVariables>) {
+        return Apollo.useMutation<SubscribeChatMutation, SubscribeChatMutationVariables>(SubscribeChatDocument, baseOptions);
       }
-export type DeleteIsTypingMutationHookResult = ReturnType<typeof useDeleteIsTypingMutation>;
-export type DeleteIsTypingMutationResult = Apollo.MutationResult<DeleteIsTypingMutation>;
-export type DeleteIsTypingMutationOptions = Apollo.BaseMutationOptions<DeleteIsTypingMutation, DeleteIsTypingMutationVariables>;
+export type SubscribeChatMutationHookResult = ReturnType<typeof useSubscribeChatMutation>;
+export type SubscribeChatMutationResult = Apollo.MutationResult<SubscribeChatMutation>;
+export type SubscribeChatMutationOptions = Apollo.BaseMutationOptions<SubscribeChatMutation, SubscribeChatMutationVariables>;
+export const UnsubscribeChatDocument = gql`
+    mutation UnsubscribeChat($chatId: uuid!, $attendeeId: uuid!) {
+  delete_chat_Subscription_by_pk(chatId: $chatId, attendeeId: $attendeeId) {
+    ...SubscriptionData
+  }
+}
+    ${SubscriptionDataFragmentDoc}`;
+export type UnsubscribeChatMutationFn = Apollo.MutationFunction<UnsubscribeChatMutation, UnsubscribeChatMutationVariables>;
+
+/**
+ * __useUnsubscribeChatMutation__
+ *
+ * To run a mutation, you first call `useUnsubscribeChatMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnsubscribeChatMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unsubscribeChatMutation, { data, loading, error }] = useUnsubscribeChatMutation({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *      attendeeId: // value for 'attendeeId'
+ *   },
+ * });
+ */
+export function useUnsubscribeChatMutation(baseOptions?: Apollo.MutationHookOptions<UnsubscribeChatMutation, UnsubscribeChatMutationVariables>) {
+        return Apollo.useMutation<UnsubscribeChatMutation, UnsubscribeChatMutationVariables>(UnsubscribeChatDocument, baseOptions);
+      }
+export type UnsubscribeChatMutationHookResult = ReturnType<typeof useUnsubscribeChatMutation>;
+export type UnsubscribeChatMutationResult = Apollo.MutationResult<UnsubscribeChatMutation>;
+export type UnsubscribeChatMutationOptions = Apollo.BaseMutationOptions<UnsubscribeChatMutation, UnsubscribeChatMutationVariables>;
 export const SelectAttendeesDocument = gql`
     query SelectAttendees($conferenceId: uuid!) {
   Attendee(

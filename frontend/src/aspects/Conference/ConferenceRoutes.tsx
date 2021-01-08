@@ -1,6 +1,9 @@
 import React from "react";
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import { Permission_Enum } from "../../generated/graphql";
+import { Chat } from "../Chat/Chat";
+import { ChatDuplicationFlags } from "../Chat/Configuration";
+import PageNotFound from "../Errors/PageNotFound";
 import PageNotImplemented from "../Errors/PageNotImplemented";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import AttendeeListPage from "./Attend/Attendee/AttendeeListPage";
@@ -33,6 +36,29 @@ function ConferenceRoutesInner({ rootUrl }: { rootUrl: string }): JSX.Element {
     const mAttendee = useMaybeCurrentAttendee();
     return (
         <Switch>
+            <Route path={`${rootUrl}/chat/demo`}>
+                <Chat
+                    sources={
+                        // {
+                        //     chatId: "3b3b426a-d6c3-414f-81cd-d06467ce9758",
+                        //     chatLabel: "Room",
+                        //     duplication: ChatDuplicationFlags.NONE,
+                        // }
+                        {
+                            chatIdL: "3b3b426a-d6c3-414f-81cd-d06467ce9758",
+                            chatIdR: "0f4f332e-bafe-4b6b-aa9a-ff4999a6b80c",
+                            chatLabelL: "Room",
+                            chatLabelR: "Paper",
+                            defaultSelected: "L",
+                            duplication: ChatDuplicationFlags.LEFT_INTO_RIGHT | ChatDuplicationFlags.RIGHT_INTO_LEFT,
+                        }
+                    }
+                    w="350px"
+                    h="80vh"
+                    p="4px"
+                />
+            </Route>
+
             <Route exact path={`${rootUrl}/profile/edit`} component={EditProfilePage} />
 
             <Route exact path={`${rootUrl}/profile/view`} component={ViewProfilePage} />
@@ -184,6 +210,10 @@ function ConferenceRoutesInner({ rootUrl }: { rootUrl: string }): JSX.Element {
                         <Redirect to={`/conference/${conference.slug}`} />
                     )
                 }
+            </Route>
+
+            <Route path={rootUrl}>
+                <PageNotFound />
             </Route>
         </Switch>
     );

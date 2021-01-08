@@ -1,0 +1,1 @@
+INSERT INTO chat."MessageType" (name) VALUES ('MESSAGE'), ('EMOTE'), ('QUESTION'), ('ANSWER'), ('POLL'), ('POLL_RESULTS'), ('DUPLICATION_MARKER');

@@ -12258,6 +12258,7 @@ export type RequiredContentItem = {
   readonly contentTypeName: ContentType_Enum;
   readonly createdAt: Scalars['timestamptz'];
   readonly id: Scalars['uuid'];
+  readonly isHidden: Scalars['Boolean'];
   readonly name: Scalars['String'];
   /** An object relationship */
   readonly originatingData?: Maybe<OriginatingData>;
@@ -12367,6 +12368,7 @@ export type RequiredContentItem_Bool_Exp = {
   readonly contentTypeName?: Maybe<ContentType_Enum_Comparison_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly isHidden?: Maybe<Boolean_Comparison_Exp>;
   readonly name?: Maybe<String_Comparison_Exp>;
   readonly originatingData?: Maybe<OriginatingData_Bool_Exp>;
   readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
@@ -12398,6 +12400,7 @@ export type RequiredContentItem_Insert_Input = {
   readonly contentTypeName?: Maybe<ContentType_Enum>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly isHidden?: Maybe<Scalars['Boolean']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingData?: Maybe<OriginatingData_Obj_Rel_Insert_Input>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
@@ -12494,6 +12497,7 @@ export type RequiredContentItem_Order_By = {
   readonly contentTypeName?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
+  readonly isHidden?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly originatingData?: Maybe<OriginatingData_Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
@@ -12522,6 +12526,8 @@ export enum RequiredContentItem_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
+  IsHidden = 'isHidden',
+  /** column name */
   Name = 'name',
   /** column name */
   OriginatingDataId = 'originatingDataId',
@@ -12539,6 +12545,7 @@ export type RequiredContentItem_Set_Input = {
   readonly contentTypeName?: Maybe<ContentType_Enum>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly isHidden?: Maybe<Scalars['Boolean']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
@@ -12603,6 +12610,8 @@ export enum RequiredContentItem_Update_Column {
   CreatedAt = 'createdAt',
   /** column name */
   Id = 'id',
+  /** column name */
+  IsHidden = 'isHidden',
   /** column name */
   Name = 'name',
   /** column name */

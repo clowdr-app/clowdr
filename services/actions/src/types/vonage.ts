@@ -42,3 +42,8 @@ interface StreamData {
     name: string;
     videoType?: "camera" | "screen";
 }
+
+export interface CustomConnectionData {
+    userId: string;
+    attendeeId: string;
+}

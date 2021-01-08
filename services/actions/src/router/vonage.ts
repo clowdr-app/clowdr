@@ -32,15 +32,16 @@ router.post("/sessionMonitoring/:token", bodyParser.json(), async (req: Request,
         return;
     }
 
+    let result = false;
     try {
-        await handleVonageSessionMonitoringWebhook(payload);
+        result = await handleVonageSessionMonitoringWebhook(payload);
     } catch (e) {
         console.error("Failure while handling Vonage SessionMonitoring webhook", e);
         res.status(200).json("Failure");
         return;
     }
 
-    res.status(200).json("OK");
+    res.status(200).json(result ? "OK" : "Failure");
 });
 
 // Protected routes

@@ -193,7 +193,6 @@ export function VonageRoom({
     const streamCreatedHandler = useCallback(
         (event: EventMap["streamCreated"]) => {
             console.log("Stream created", event.stream.streamId);
-            event.stream.connection.data;
             openTokMethods.subscribe({
                 stream: event.stream,
                 element: videoContainerRef.current ?? undefined,

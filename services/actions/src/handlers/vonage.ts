@@ -1,13 +1,9 @@
 import { gql } from "@apollo/client/core";
-import {
-    GetEventRolesForUserDocument,
-    GetRoomWhereUserAttendsConferenceDocument,
-    OngoingBroadcastableVideoRoomEventsDocument,
-} from "../generated/graphql";
+import { GetEventRolesForUserDocument, GetRoomWhereUserAttendsConferenceDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
+import { startBroadcastIfOngoingEvent } from "../lib/vonage/sessionMonitoring";
 import * as Vonage from "../lib/vonage/vonageClient";
-import { startEventBroadcast } from "../lib/vonage/vonageTools";
-import { WebhookReqBody } from "../types/vonage";
+import { CustomConnectionData, WebhookReqBody } from "../types/vonage";
 
 gql`
     query OngoingBroadcastableVideoRoomEvents($time: timestamptz!, $sessionId: String!) {
@@ -24,41 +20,17 @@ gql`
     }
 `;
 
-export async function handleVonageSessionMonitoringWebhook(payload: WebhookReqBody): Promise<void> {
-    const ongoingMatchingEvents = await apolloClient.query({
-        query: OngoingBroadcastableVideoRoomEventsDocument,
-        variables: {
-            sessionId: payload.sessionId,
-            time: new Date().toISOString(),
-        },
-    });
+export async function handleVonageSessionMonitoringWebhook(payload: WebhookReqBody): Promise<boolean> {
+    let success = true;
 
-    if (ongoingMatchingEvents.error || ongoingMatchingEvents.errors) {
-        console.error(
-            "Error while retrieving ongoing broadcast events related to a Vonage session.",
-            payload.sessionId,
-            ongoingMatchingEvents.error,
-            ongoingMatchingEvents.errors
-        );
-        return;
+    try {
+        success &&= await startBroadcastIfOngoingEvent(payload);
+    } catch (e) {
+        console.error("Error while starting broadcast if ongoing event", e);
+        success = false;
     }
 
-    if (ongoingMatchingEvents.data.Event.length === 0) {
-        console.log("No ongoing broadcast events connected to this session.", payload.sessionId);
-        return;
-    }
-
-    if (ongoingMatchingEvents.data.Event.length > 1) {
-        console.error(
-            "Unexpectedly found multiple ongoing broadcast events connected to this session. Aborting.",
-            payload.sessionId
-        );
-        return;
-    }
-
-    const ongoingMatchingEvent = ongoingMatchingEvents.data.Event[0];
-
-    await startEventBroadcast(ongoingMatchingEvent.id);
+    return success;
 }
 
 gql`
@@ -120,8 +92,20 @@ export async function handleJoinEvent(
         return {};
     }
 
+    if (!rolesResult.data.Event_by_pk.eventPeople[0].attendee) {
+        console.error("Could not find attendee for user", payload.eventId, userId);
+        return {};
+    }
+
+    const attendeeId = rolesResult.data.Event_by_pk.eventPeople[0].attendee.id;
+
+    const connectionData: CustomConnectionData = {
+        attendeeId,
+        userId,
+    };
+
     const accessToken = Vonage.vonage.generateToken(rolesResult.data.Event_by_pk.eventVonageSession.sessionId, {
-        data: JSON.stringify({ userId }),
+        data: JSON.stringify(connectionData),
         role: "moderator", // TODO: change depending on event person role
     });
 
@@ -135,6 +119,11 @@ gql`
         Room(where: { id: { _eq: $roomId }, conference: { attendees: { userId: { _eq: $userId } } } }) {
             id
             publicVonageSessionId
+            conference {
+                attendees(where: { userId: { _eq: $userId } }) {
+                    id
+                }
+            }
         }
     }
 `;
@@ -160,11 +149,24 @@ export async function handleJoinRoom(
     const room = roomResult.data.Room[0];
 
     if (!room.publicVonageSessionId) {
+        console.warn("Could not find Vonage session for room", payload.roomId, userId);
         throw new Error("No Vonage session exists for room");
     }
 
+    if (roomResult.data.Room[0].conference.attendees.length === 0) {
+        console.warn("Could not find attendee for the user", payload.roomId, userId);
+        throw new Error("Could not find attendee for the user");
+    }
+
+    const attendeeId = roomResult.data.Room[0].conference.attendees[0].id;
+
+    const connectionData: CustomConnectionData = {
+        attendeeId,
+        userId,
+    };
+
     const accessToken = Vonage.vonage.generateToken(room.publicVonageSessionId, {
-        data: JSON.stringify({ userId }),
+        data: JSON.stringify(connectionData),
         role: "publisher",
     });
 

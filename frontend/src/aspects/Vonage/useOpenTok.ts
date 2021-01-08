@@ -24,7 +24,7 @@ interface SessionOptions {
     ipWhitelist?: boolean;
 }
 
-interface OpenTokActions {
+export interface OpenTokActions {
     initSessionAndConnect({
         apiKey,
         sessionId,

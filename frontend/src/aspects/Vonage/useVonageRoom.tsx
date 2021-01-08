@@ -1,13 +1,14 @@
 import { useToast } from "@chakra-ui/react";
 import React, { Dispatch, useEffect, useMemo, useReducer, useRef } from "react";
 
-interface VonageRoomState {
+export interface VonageRoomState {
     preferredCameraId: string | null;
     cameraIntendedEnabled: boolean;
     cameraStream: MediaStream | null;
     preferredMicrophoneId: string | null;
     microphoneIntendedEnabled: boolean;
     microphoneStream: MediaStream | null;
+    screenIntendedEnabled: boolean;
 }
 
 const initialRoomState: VonageRoomState = {
@@ -17,6 +18,7 @@ const initialRoomState: VonageRoomState = {
     preferredMicrophoneId: null,
     microphoneIntendedEnabled: false,
     microphoneStream: null,
+    screenIntendedEnabled: false,
 };
 
 type VonageRoomStateAction =
@@ -25,7 +27,8 @@ type VonageRoomStateAction =
     | SetCameraIntendedState
     | SetCameraMediaStream
     | SetMicrophoneIntendedState
-    | SetMicrophoneMediaStream;
+    | SetMicrophoneMediaStream
+    | SetScreenIntendedState;
 
 export enum VonageRoomStateActionType {
     SetPreferredCamera,
@@ -34,6 +37,7 @@ export enum VonageRoomStateActionType {
     SetPreferredMicrophone,
     SetMicrophoneIntendedState,
     SetMicrophoneMediaStream,
+    SetScreenIntededState,
 }
 
 interface SetPreferredCamera {
@@ -66,7 +70,12 @@ interface SetMicrophoneMediaStream {
     mediaStream: MediaStream | null;
 }
 
-interface VonageRoomComputedState {
+interface SetScreenIntendedState {
+    type: VonageRoomStateActionType.SetScreenIntededState;
+    screenEnabled: boolean;
+}
+
+export interface VonageRoomComputedState {
     videoTrack: MediaStreamTrack | null;
     audioTrack: MediaStreamTrack | null;
 }
@@ -121,6 +130,9 @@ function reducer(state: VonageRoomState, action: VonageRoomStateAction): VonageR
                 state.microphoneStream?.getTracks().forEach((track) => track.stop());
             }
             return { ...state, microphoneStream: action.mediaStream };
+
+        case VonageRoomStateActionType.SetScreenIntededState:
+            return { ...state, screenIntendedEnabled: action.screenEnabled };
     }
 }
 

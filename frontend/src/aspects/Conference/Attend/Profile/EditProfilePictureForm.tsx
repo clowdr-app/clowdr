@@ -159,7 +159,7 @@ export default function EditProfilePitureForm({
                     <>
                         <UnsavedChangesWarning hasUnsavedChanges={dirty || files.length > 0} />
                         <Form style={{ width: "100%", maxWidth: "350px" }}>
-                            <FormControl isInvalid={!files} isRequired>
+                            <FormControl isInvalid={!files} isRequired color="white">
                                 <Box
                                     pos="relative"
                                     w={350}

@@ -76,7 +76,7 @@ export function AddRoomPersonModal({
         [addParticipantToRoomMutation, roomId]
     );
 
-    const ariaSearchResultStr = "todo";
+    const ariaSearchResultStr = `${options.length} people`;
 
     return (
         <Modal scrollBehavior="outside" onClose={onClose} isOpen={isOpen} motionPreset="scale">

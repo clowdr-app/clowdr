@@ -134,6 +134,14 @@ function ConferenceLandingPageInner(): JSX.Element {
                         <FAIcon iconStyle="s" icon="users" mr={2} /> Attendees
                     </LinkButton>
                 ) : undefined}
+                {[
+                    Permission_Enum.ConferenceViewAttendees,
+                    Permission_Enum.ConferenceManageSchedule,
+                ].some((permission) => activePermissions.has(permission)) ? (
+                    <LinkButton to={`/conference/${conference.slug}/rooms`} variant="outline" size="lg">
+                        <FAIcon iconStyle="s" icon="mug-hot" mr={2} /> Rooms
+                    </LinkButton>
+                ) : undefined}
             </HStack>
             <ConferenceLandingContent group={group} />
         </>

@@ -97,7 +97,11 @@ export default function RoomPage({ roomId }: { roomId: string }): JSX.Element {
 
     return (
         <RequireAtLeastOnePermissionWrapper
-            permissions={[Permission_Enum.ConferenceView, Permission_Enum.ConferenceViewAttendees]}
+            permissions={[
+                Permission_Enum.ConferenceView,
+                Permission_Enum.ConferenceViewAttendees,
+                Permission_Enum.ConferenceManageSchedule,
+            ]}
         >
             {title}
             <RoomMembersProvider roomId={roomId}>

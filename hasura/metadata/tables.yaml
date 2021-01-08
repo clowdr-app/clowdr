@@ -4357,8 +4357,11 @@
             - groupRoles:
                 role:
                   rolePermissions:
-                    permissionName:
-                      _eq: CONFERENCE_VIEW_ATTENDEES
+                    _or:
+                    - permissionName:
+                        _eq: CONFERENCE_VIEW_ATTENDEES
+                    - permissionName:
+                        _eq: CONFERENCE_MANAGE_SCHEDULE
             - _or:
               - includeUnauthenticated:
                   _eq: true
@@ -4370,6 +4373,7 @@
       - capacity
       - conferenceId
       - currentModeName
+      - id
       - name
       - originatingDataId
       - priority
@@ -4433,6 +4437,8 @@
                           _eq: CONFERENCE_VIEW
                       - permissionName:
                           _eq: CONFERENCE_MANAGE_SCHEDULE
+                      - permissionName:
+                          _eq: CONFERENCE_VIEW_ATTENDEES
               - _or:
                 - includeUnauthenticated:
                     _eq: true

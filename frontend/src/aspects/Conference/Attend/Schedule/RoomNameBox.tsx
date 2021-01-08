@@ -1,9 +1,10 @@
 import { Center, HStack, Link, Text } from "@chakra-ui/react";
 import React from "react";
 import { Link as ReactLink } from "react-router-dom";
-import { RoomMode_Enum, Timeline_RoomFragment } from "../../../../generated/graphql";
+import { Permission_Enum, RoomMode_Enum, Timeline_RoomFragment } from "../../../../generated/graphql";
 import FAIcon from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";
+import { useConferenceCurrentUserActivePermissions } from "../../useConferenceCurrentUserActivePermissions";
 
 export default function RoomNameBox({
     room,
@@ -21,6 +22,7 @@ export default function RoomNameBox({
     marginTop?: string;
 }): JSX.Element {
     const conference = useConference();
+    const activePermissions = useConferenceCurrentUserActivePermissions();
     let roomIcon: JSX.Element | undefined;
     if (typeof room !== "string") {
         switch (room.currentModeName) {
@@ -38,6 +40,11 @@ export default function RoomNameBox({
                 break;
         }
     }
+
+    const shouldLink = [
+        Permission_Enum.ConferenceViewAttendees,
+        Permission_Enum.ConferenceManageSchedule,
+    ].some((permission) => activePermissions.has(permission));
 
     return (
         <Center
@@ -59,7 +66,7 @@ export default function RoomNameBox({
         >
             {typeof room === "string" ? (
                 room
-            ) : (
+            ) : shouldLink ? (
                 <Link
                     as={ReactLink}
                     to={`/conference/${conference.slug}/room/${room.id}`}
@@ -71,6 +78,11 @@ export default function RoomNameBox({
                         <Text>{room.name}</Text>
                     </HStack>
                 </Link>
+            ) : (
+                <HStack aria-label={`${room.name} room`}>
+                    {roomIcon}
+                    <Text>{room.name}</Text>
+                </HStack>
             )}
         </Center>
     );

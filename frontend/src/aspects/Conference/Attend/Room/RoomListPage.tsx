@@ -19,7 +19,7 @@ import {
     useToast,
 } from "@chakra-ui/react";
 import { Field, FieldProps, Form, Formik } from "formik";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
     Permission_Enum,
     RoomListRoomDetailsFragment,
@@ -28,6 +28,7 @@ import {
     useGetAllRoomsQuery,
 } from "../../../../generated/graphql";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
+import usePrimaryMenuButtons from "../../../Menu/usePrimaryMenuButtons";
 import { normaliseName, validateShortName } from "../../NewConferenceForm";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../useConference";
@@ -49,6 +50,17 @@ gql`
 
 export default function RoomListPage(): JSX.Element {
     const conference = useConference();
+    const { setPrimaryMenuButtons } = usePrimaryMenuButtons();
+    useEffect(() => {
+        setPrimaryMenuButtons([
+            {
+                key: "conference-home",
+                action: `/conference/${conference.slug}`,
+                text: "Home",
+                label: "Home",
+            },
+        ]);
+    }, [conference.slug, setPrimaryMenuButtons]);
 
     const result = useGetAllRoomsQuery({
         variables: {
@@ -63,13 +75,21 @@ export default function RoomListPage(): JSX.Element {
     }, [result]);
 
     return (
-        <RequireAtLeastOnePermissionWrapper permissions={[Permission_Enum.ConferenceViewAttendees]}>
+        <RequireAtLeastOnePermissionWrapper
+            permissions={[
+                Permission_Enum.ConferenceViewAttendees,
+                Permission_Enum.ConferenceView,
+                Permission_Enum.ConferenceManageSchedule,
+            ]}
+        >
             <ApolloQueryWrapper getter={(data) => data.Room} queryResult={result}>
                 {(rooms: readonly RoomListRoomDetailsFragment[]) => (
                     <>
                         <Heading as="h2">Rooms</Heading>
+                        <Button onClick={onOpen} colorScheme="green">
+                            Create new room
+                        </Button>
                         <RoomList rooms={rooms} />
-                        <Button onClick={onOpen}>Create new room</Button>
                         <CreateRoomModal isOpen={isOpen} onClose={onClose} refetch={refetch} />
                     </>
                 )}

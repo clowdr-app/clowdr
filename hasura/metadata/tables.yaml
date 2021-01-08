@@ -2006,6 +2006,7 @@
     permission:
       columns:
       - affiliation
+      - attendeeId
       - conferenceId
       - email
       - id
@@ -2458,10 +2459,12 @@
     permission:
       columns:
       - affiliation
+      - attendeeId
       - conferenceId
       - eventId
       - id
       - name
+      - originatingDataId
       - roleName
       filter:
         conference:
@@ -4373,6 +4376,33 @@
       - roomPrivacyName
       backend_only: false
   select_permissions:
+  - role: unauthenticated
+    permission:
+      columns:
+      - capacity
+      - conferenceId
+      - currentModeName
+      - id
+      - name
+      - originatingDataId
+      - priority
+      - roomPrivacyName
+      filter:
+        _and:
+        - conference:
+            groups:
+              _and:
+              - enabled:
+                  _eq: true
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      permissionName:
+                        _eq: CONFERENCE_VIEW
+              - includeUnauthenticated:
+                  _eq: true
+        - roomPrivacyName:
+            _eq: PUBLIC
   - role: user
     permission:
       columns:

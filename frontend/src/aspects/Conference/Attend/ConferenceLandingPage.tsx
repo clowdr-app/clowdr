@@ -125,6 +125,7 @@ function ConferenceLandingPageInner(): JSX.Element {
                     <FAIcon iconStyle="r" icon="calendar" mr={2} /> Schedule
                 </LinkButton>
                 {[
+                    Permission_Enum.ConferenceViewAttendees,
                     Permission_Enum.ConferenceManageAttendees,
                     Permission_Enum.ConferenceManageGroups,
                     Permission_Enum.ConferenceManageRoles,

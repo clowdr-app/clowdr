@@ -151,6 +151,7 @@ export default function ConfigPanel({
                             customising standard templates).
                         </FormHelperText>
                         <Textarea
+                            transition="none"
                             fontFamily={
                                 // eslint-disable-next-line quotes
                                 'SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace'

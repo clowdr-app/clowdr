@@ -1,6 +1,6 @@
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import { Box, Spinner } from "@chakra-ui/react";
-import React, { ComponentType } from "react";
+import React from "react";
 import { Redirect, Route, RouteComponentProps, RouteProps } from "react-router-dom";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 
@@ -10,7 +10,7 @@ export default function ProtectedRoute({
     ...args
 }: {
     altIfNotAuthed?: JSX.Element;
-    component: RouteComponentProps<any> | ComponentType<any>;
+    component: React.ComponentType<RouteComponentProps<any>> | React.ComponentType<any>;
 } & RouteProps): JSX.Element {
     const { isAuthenticated, error } = useAuth0();
     const { user } = useMaybeCurrentUser();

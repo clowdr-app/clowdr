@@ -233,11 +233,11 @@
 //                     <Box fontSize="80%" minHeight="3ex" color="gray.500">
 //                         {typersCount > 1 ? (
 //                             <Text as="span">
-//                                 {typersStr.substr(2)} are typing...
+//                                 {typersStr.substr(2)} are typing&#8230;
 //                             </Text>
 //                         ) : typersCount > 0 ? (
 //                             <Text as="span">
-//                                 {typersStr.substr(2)} is typing...
+//                                 {typersStr.substr(2)} is typing&#8230;
 //                             </Text>
 //                         ) : undefined}
 //                     </Box>

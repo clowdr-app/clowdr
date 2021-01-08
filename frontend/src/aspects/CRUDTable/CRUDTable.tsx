@@ -657,7 +657,7 @@ function StringFilterInput({
     return (
         <Input
             value={value ?? ""}
-            placeholder={placeholder ?? "Filter..."}
+            placeholder={placeholder ?? "Filter…"}
             aria-label={label}
             onChange={onChange ? (ev) => onChange(ev.target.value) : undefined}
         />

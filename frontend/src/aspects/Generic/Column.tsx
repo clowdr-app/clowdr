@@ -71,7 +71,7 @@ export default function Column<I extends Item>({
                 ref={searchInputRef}
                 type="text"
                 borderLeftRadius="0"
-                placeholder={onCreate ? "Search or create..." : "Search..."}
+                placeholder={onCreate ? "Search or create…" : "Search…"}
                 value={search}
                 onChange={(ev) => {
                     setSearch(ev.target.value);

@@ -411,6 +411,9 @@
       - bio
       - country
       - github
+      - hasBeenEdited
+      - photoURL_350x350
+      - photoURL_50x50
       - pronouns
       - timezoneUTCOffset
       - twitter
@@ -443,10 +446,10 @@
       - bio
       - country
       - github
+      - hasBeenEdited
       - photoURL_350x350
       - photoURL_50x50
       - pronouns
-      - realName
       - timezoneUTCOffset
       - twitter
       - website
@@ -505,6 +508,7 @@
       - bio
       - country
       - github
+      - hasBeenEdited
       - pronouns
       - realName
       - timezoneUTCOffset

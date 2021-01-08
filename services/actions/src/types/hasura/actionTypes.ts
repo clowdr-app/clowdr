@@ -174,7 +174,7 @@ type submitContentItemArgs = {
 
 type updateProfilePhotoArgs = {
     attendeeId: uuid;
-    s3URL: string;
+    s3URL?: Maybe<string>;
 };
 
 type updateSubtitlesArgs = {

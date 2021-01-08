@@ -79,7 +79,7 @@ type Mutation {
 type Mutation {
   updateProfilePhoto (
     attendeeId: uuid!
-    s3URL: String!
+    s3URL: String
   ): UpdateProfilePhotoResponse
 }
 

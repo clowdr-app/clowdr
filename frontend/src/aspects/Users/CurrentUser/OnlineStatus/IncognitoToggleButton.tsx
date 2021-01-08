@@ -110,7 +110,7 @@ function IncognitoToggleButtonElements(props: {
     }
 
     if (props.isIncognito.loading) {
-        tooltip = "Please wait...";
+        tooltip = "Please wait…";
         icon = <Spinner />;
     } else {
         tooltip += " " + (props.isIncognito.value ? " active" : " inactive");

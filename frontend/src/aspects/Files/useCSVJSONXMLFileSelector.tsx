@@ -20,7 +20,7 @@ function normaliseFileType(name: string, type: string): "CSV" | "JSON" | "XML" |
     if (type.startsWith("application/zip") || name.endsWith(".zip")) {
         return "ZIP";
     }
-    // Systems suck at knowing the raw type of data...
+    // Systems suck at knowing the raw type of data…
     else if (
         type.startsWith("application/vnd.ms-excel") ||
         type.startsWith("application/vnd.oasis.opendocument.spreadsheet") ||

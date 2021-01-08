@@ -1,12 +1,11 @@
 import React from "react";
-import { Route, RouteComponentProps, Switch } from "react-router-dom";
-import ProtectedRoute from "../Auth/ProtectedRoute";
+import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import PageNotImplemented from "../Errors/PageNotImplemented";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
-import NewUserLandingPage from "../Users/NewUser/LandingPage";
 import ConferenceLandingPage from "./Attend/ConferenceLandingPage";
 import ContentGroupPage from "./Attend/Content/ContentGroupPage";
 import EditProfilePage from "./Attend/Profile/EditProfilePage";
+import ViewProfilePage from "./Attend/Profile/ViewProfilePage";
 import RoomPage from "./Attend/Room/RoomPage";
 import ConferenceTimeline from "./Attend/Schedule/ConferenceTimeline";
 import ManageConferenceBroadcastPage from "./Manage/ManageConferenceBroadcastPage";
@@ -22,12 +21,30 @@ import ManagerLandingPage from "./Manage/ManagerLandingPage";
 import ConferenceProvider, { useConference } from "./useConference";
 import ConferenceCurrentUserActivePermissionsProvider from "./useConferenceCurrentUserActivePermissions";
 import CurrentUserGroupsRolesPermissionsProvider from "./useConferenceCurrentUserGroups";
+import { CurrentAttendeeProvider, useMaybeCurrentAttendee } from "./useCurrentAttendee";
 
 function ConferenceRoutesInner({ rootUrl }: { rootUrl: string }): JSX.Element {
     const conference = useConference();
     const mUser = useMaybeCurrentUser();
+    const mAttendee = useMaybeCurrentAttendee();
     return (
         <Switch>
+            <Route exact path={`${rootUrl}/profile/edit`} component={EditProfilePage} />
+
+            <Route exact path={`${rootUrl}/profile/view`} component={ViewProfilePage} />
+
+            {mUser.user ? (
+                <Route exact path={`${rootUrl}/profile`}>
+                    <Redirect to={`${rootUrl}/profile/edit`} />
+                </Route>
+            ) : undefined}
+
+            {mAttendee && !mAttendee.profile.hasBeenEdited ? (
+                <Route path={rootUrl}>
+                    <Redirect to={`/conference/${conference.slug}/profile/edit`} />
+                </Route>
+            ) : undefined}
+
             <Route exact path={`${rootUrl}`}>
                 <ConferenceLandingPage />
             </Route>
@@ -102,18 +119,37 @@ function ConferenceRoutesInner({ rootUrl }: { rootUrl: string }): JSX.Element {
                 <ConferenceTimeline />
             </Route>
 
-            {mUser.user ? (
-                <ProtectedRoute
-                    altIfNotAuthed={
-                        <Route path={`${rootUrl}/profile`}>
-                            <NewUserLandingPage conferenceName={conference.name} />
-                        </Route>
-                    }
-                    exact
-                    path={`${rootUrl}/profile`}
-                    component={EditProfilePage}
-                />
-            ) : undefined}
+            <Route exact path={`${rootUrl}/profile/edit/:attendeeId`}>
+                {(props) =>
+                    props.match?.params.attendeeId ? (
+                        <EditProfilePage
+                            attendeeId={
+                                props.match?.params.attendeeId && props.match?.params.attendeeId.length > 0
+                                    ? props.match?.params.attendeeId
+                                    : undefined
+                            }
+                        />
+                    ) : (
+                        <Redirect to={`/conference/${conference.slug}`} />
+                    )
+                }
+            </Route>
+
+            <Route exact path={`${rootUrl}/profile/view/:attendeeId`}>
+                {(props) =>
+                    props.match?.params.attendeeId ? (
+                        <ViewProfilePage
+                            attendeeId={
+                                props.match?.params.attendeeId && props.match?.params.attendeeId.length > 0
+                                    ? props.match?.params.attendeeId
+                                    : undefined
+                            }
+                        />
+                    ) : (
+                        <Redirect to={`/conference/${conference.slug}`} />
+                    )
+                }
+            </Route>
         </Switch>
     );
 }
@@ -123,7 +159,9 @@ export default function ConferenceRoutes({ confSlug, rootUrl }: { confSlug: stri
         <ConferenceProvider confSlug={confSlug}>
             <CurrentUserGroupsRolesPermissionsProvider>
                 <ConferenceCurrentUserActivePermissionsProvider>
-                    <ConferenceRoutesInner rootUrl={rootUrl} />
+                    <CurrentAttendeeProvider>
+                        <ConferenceRoutesInner rootUrl={rootUrl} />
+                    </CurrentAttendeeProvider>
                 </ConferenceCurrentUserActivePermissionsProvider>
             </CurrentUserGroupsRolesPermissionsProvider>
         </ConferenceProvider>

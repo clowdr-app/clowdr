@@ -65,10 +65,15 @@ function getCoreProps(props: any) {
     return props["data-sourcepos"] ? { "data-sourcepos": props["data-sourcepos"] } : {};
 }
 
-export function Markdown(props?: { children?: string; className?: string; linkColour?: string }): JSX.Element {
+export function Markdown(elProps?: {
+    children?: string;
+    className?: string;
+    linkColour?: string;
+    restrictHeadingSize?: boolean;
+}): JSX.Element {
     return (
         <ReactMarkdown
-            className={props?.className}
+            className={elProps?.className}
             linkTarget="_blank"
             renderers={{
                 text: (props) => {
@@ -98,7 +103,7 @@ export function Markdown(props?: { children?: string; className?: string; linkCo
                     return (
                         <Link
                             href={href}
-                            color={props?.linkColour}
+                            color={elProps?.linkColour}
                             isExternal={true}
                             rel="external noopener noreferrer"
                         >
@@ -177,9 +182,17 @@ export function Markdown(props?: { children?: string; className?: string; linkCo
                 definition: () => null,
                 heading: (props) => {
                     const { level, children } = props;
-                    const sizes = ["2xl", "xl", "lg", "md", "sm", "xs"];
+                    const sizes = elProps?.restrictHeadingSize
+                        ? ["md", "sm", "xs", "xs", "xs", "xs"]
+                        : ["2xl", "xl", "lg", "md", "sm", "xs"];
                     return (
-                        <Heading my={4} as={`h${level}` as any} size={sizes[level - 1]} {...getCoreProps(props)}>
+                        <Heading
+                            my={4}
+                            textAlign="left"
+                            as={`h${level}` as any}
+                            size={sizes[level - 1]}
+                            {...getCoreProps(props)}
+                        >
                             {children}
                         </Heading>
                     );
@@ -190,7 +203,7 @@ export function Markdown(props?: { children?: string; className?: string; linkCo
                 },
             }}
             escapeHtml={true}
-            source={props?.children ?? ""}
+            source={elProps?.children ?? ""}
         />
     );
 }

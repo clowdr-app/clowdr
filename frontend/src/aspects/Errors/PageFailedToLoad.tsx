@@ -4,7 +4,7 @@ import GenericErrorPage from "./GenericErrorPage";
 
 export default function PageFailedToLoad({ children }: { children: JSX.Element | string }): JSX.Element {
     return (
-        <GenericErrorPage heading="Sorry, this page has failed to load...">
+        <GenericErrorPage heading="Sorry, this page has failed to load…">
             <>
                 {typeof children === "string" ? (
                     <Text fontSize="xl" lineHeight="revert" fontWeight="light">

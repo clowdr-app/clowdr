@@ -82,6 +82,7 @@ export const TextItemTemplate: ItemBaseTemplate = {
             );
             return (
                 <Textarea
+                    transition="none"
                     placeholder={placeholder}
                     value={latestVersion.data.text}
                     onChange={(ev) => {

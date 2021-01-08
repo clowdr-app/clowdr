@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Box, Button, Flex, FormControl, FormHelperText, Image, Spinner, Text, useToast } from "@chakra-ui/react";
+import { Box, Button, Flex, FormControl, FormHelperText, Image, Text, useToast } from "@chakra-ui/react";
 import AwsS3Multipart from "@uppy/aws-s3-multipart";
 import Uppy from "@uppy/core";
 import "@uppy/core/dist/style.css";
@@ -9,8 +9,9 @@ import "@uppy/status-bar/dist/style.css";
 import { Form, Formik } from "formik";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useSubmitProfilePhotoMutation } from "../../../../generated/graphql";
+import FAIcon from "../../../Icons/FAIcon";
 import UnsavedChangesWarning from "../../../LeavingPageWarnings/UnsavedChangesWarning";
-import useCurrentAttendee from "../../useCurrentAttendee";
+import type { AttendeeContextT } from "../../useCurrentAttendee";
 
 gql`
     mutation SubmitProfilePhoto($attendeeId: uuid!, $s3URL: String!) {
@@ -22,10 +23,11 @@ gql`
 
 export default function EditProfilePitureForm({
     handleFormSubmitted,
+    attendee,
 }: {
     handleFormSubmitted?: () => Promise<void>;
+    attendee: AttendeeContextT;
 }): JSX.Element {
-    const attendee = useCurrentAttendee();
     const toast = useToast();
     const [files, setFiles] = useState<Uppy.UppyFile[]>([]);
     const [submitProfilePhoto] = useSubmitProfilePhotoMutation();
@@ -59,6 +61,7 @@ export default function EditProfilePitureForm({
             const invalidFiles = uppy?.getFiles().filter((file) => !validNameRegex.test(file.name));
             for (const invalidFile of invalidFiles) {
                 toast({
+                    position: "top",
                     status: "error",
                     description:
                         "Invalid file name. File names must only contain letters, numbers, spaces and the following special characters: !*'()-_",
@@ -75,6 +78,8 @@ export default function EditProfilePitureForm({
         uppy?.on("file-removed", updateFiles);
     }, [attendee, toast, updateFiles, uppy]);
 
+    const [isDeleting, setIsDeleting] = useState<boolean>(false);
+
     return (
         <>
             <Formik
@@ -89,6 +94,7 @@ export default function EditProfilePitureForm({
                     } catch (e) {
                         console.error("Failed to upload file", e);
                         toast({
+                            position: "top",
                             status: "error",
                             description: "Failed to upload file. Please try again.",
                         });
@@ -99,6 +105,7 @@ export default function EditProfilePitureForm({
                     if (result.failed.length > 0 || result.successful.length < 1) {
                         console.error("Failed to upload file", result.failed);
                         toast({
+                            position: "top",
                             status: "error",
                             description: "Failed to upload file. Please try again later.",
                         });
@@ -118,12 +125,15 @@ export default function EditProfilePitureForm({
                             throw new Error("Upload failed.");
                         }
 
-                        await new Promise<void>((resolve) => setTimeout(async () => {
-                            await attendee.refetch();
-                            resolve();
-                        }, 1500));
+                        await new Promise<void>((resolve) =>
+                            setTimeout(async () => {
+                                await attendee.refetch();
+                                resolve();
+                            }, 1500)
+                        );
 
                         toast({
+                            position: "top",
                             status: "success",
                             description: "Uploaded file successfully.",
                         });
@@ -162,7 +172,7 @@ export default function EditProfilePitureForm({
                                     p={0}
                                     overflow="hidden"
                                 >
-                                    {files.length === 1 || attendee.profile?.photoURL_350x350 ? (
+                                    {files.length === 1 || attendee.profile.photoURL_350x350 ? (
                                         <Image
                                             mt={2}
                                             alt={
@@ -173,7 +183,7 @@ export default function EditProfilePitureForm({
                                             src={
                                                 (files.length === 1
                                                     ? URL.createObjectURL(files[0].data)
-                                                    : attendee.profile?.photoURL_350x350) as string
+                                                    : attendee.profile.photoURL_350x350) as string
                                             }
                                             objectFit="cover"
                                             w="100%"
@@ -195,10 +205,16 @@ export default function EditProfilePitureForm({
                                         flexDir="column"
                                         p={5}
                                     >
-                                        <Text as="span" mt={files.length === 1 ? 0 : 10} fontWeight="bold" fontSize="1.5em" textAlign="center">
+                                        <Text
+                                            as="span"
+                                            mt={files.length === 1 ? 0 : 10}
+                                            fontWeight="bold"
+                                            fontSize="1.5em"
+                                            textAlign="center"
+                                        >
                                             {files.length === 1
                                                 ? "Please press Upload when you're ready"
-                                                : !attendee.profile?.photoURL_350x350
+                                                : !attendee.profile.photoURL_350x350
                                                 ? "Please upload a picture."
                                                 : undefined}
                                         </Text>
@@ -211,6 +227,36 @@ export default function EditProfilePitureForm({
                                             allowMultipleFiles={false}
                                         />
                                     </Box>
+                                    {attendee.profile.photoURL_350x350 ? (
+                                        <Button
+                                            isLoading={isDeleting}
+                                            pos="absolute"
+                                            aria-label="Remove profile picture"
+                                            colorScheme="red"
+                                            top={2}
+                                            right={2}
+                                            onClick={(ev) => {
+                                                ev.stopPropagation();
+                                                setIsDeleting(true);
+
+                                                (async () => {
+                                                    try {
+                                                        await submitProfilePhoto({
+                                                            variables: {
+                                                                s3URL: "",
+                                                                attendeeId: attendee.id,
+                                                            },
+                                                        });
+                                                        await attendee.refetch();
+                                                    } finally {
+                                                        setIsDeleting(false);
+                                                    }
+                                                })();
+                                            }}
+                                        >
+                                            <FAIcon iconStyle="s" icon="trash-alt" />
+                                        </Button>
+                                    ) : undefined}
                                 </Box>
                                 <FormHelperText>
                                     File types: {allowedFileTypes.join(", ")}.<br />

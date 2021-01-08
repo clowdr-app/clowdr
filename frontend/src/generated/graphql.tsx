@@ -145,6 +145,7 @@ export type AttendeeProfile = {
   readonly country?: Maybe<Scalars['String']>;
   readonly created_at: Scalars['timestamptz'];
   readonly github?: Maybe<Scalars['String']>;
+  readonly hasBeenEdited: Scalars['Boolean'];
   readonly photoS3BucketName?: Maybe<Scalars['String']>;
   readonly photoS3BucketRegion?: Maybe<Scalars['String']>;
   readonly photoS3ObjectName?: Maybe<Scalars['String']>;
@@ -252,6 +253,7 @@ export type AttendeeProfile_Bool_Exp = {
   readonly country?: Maybe<String_Comparison_Exp>;
   readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
   readonly github?: Maybe<String_Comparison_Exp>;
+  readonly hasBeenEdited?: Maybe<Boolean_Comparison_Exp>;
   readonly photoS3BucketName?: Maybe<String_Comparison_Exp>;
   readonly photoS3BucketRegion?: Maybe<String_Comparison_Exp>;
   readonly photoS3ObjectName?: Maybe<String_Comparison_Exp>;
@@ -307,6 +309,7 @@ export type AttendeeProfile_Insert_Input = {
   readonly country?: Maybe<Scalars['String']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly github?: Maybe<Scalars['String']>;
+  readonly hasBeenEdited?: Maybe<Scalars['Boolean']>;
   readonly photoS3BucketName?: Maybe<Scalars['String']>;
   readonly photoS3BucketRegion?: Maybe<Scalars['String']>;
   readonly photoS3ObjectName?: Maybe<Scalars['String']>;
@@ -439,6 +442,7 @@ export type AttendeeProfile_Order_By = {
   readonly country?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly github?: Maybe<Order_By>;
+  readonly hasBeenEdited?: Maybe<Order_By>;
   readonly photoS3BucketName?: Maybe<Order_By>;
   readonly photoS3BucketRegion?: Maybe<Order_By>;
   readonly photoS3ObjectName?: Maybe<Order_By>;
@@ -482,6 +486,8 @@ export enum AttendeeProfile_Select_Column {
   /** column name */
   Github = 'github',
   /** column name */
+  HasBeenEdited = 'hasBeenEdited',
+  /** column name */
   PhotoS3BucketName = 'photoS3BucketName',
   /** column name */
   PhotoS3BucketRegion = 'photoS3BucketRegion',
@@ -515,6 +521,7 @@ export type AttendeeProfile_Set_Input = {
   readonly country?: Maybe<Scalars['String']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly github?: Maybe<Scalars['String']>;
+  readonly hasBeenEdited?: Maybe<Scalars['Boolean']>;
   readonly photoS3BucketName?: Maybe<Scalars['String']>;
   readonly photoS3BucketRegion?: Maybe<Scalars['String']>;
   readonly photoS3ObjectName?: Maybe<Scalars['String']>;
@@ -590,6 +597,8 @@ export enum AttendeeProfile_Update_Column {
   CreatedAt = 'created_at',
   /** column name */
   Github = 'github',
+  /** column name */
+  HasBeenEdited = 'hasBeenEdited',
   /** column name */
   PhotoS3BucketName = 'photoS3BucketName',
   /** column name */
@@ -19065,7 +19074,7 @@ export type Mutation_RootSubmitContentItemArgs = {
 /** mutation root */
 export type Mutation_RootUpdateProfilePhotoArgs = {
   attendeeId: Scalars['uuid'];
-  s3URL: Scalars['String'];
+  s3URL?: Maybe<Scalars['String']>;
 };
 
 
@@ -24022,6 +24031,22 @@ export type ContentGroupEventFragment = { readonly __typename?: 'Event', readonl
 
 export type ContentItemDataFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly contentTypeName: ContentType_Enum };
 
+export type UpdateAttendeeProfileMutationVariables = Exact<{
+  attendeeId: Scalars['uuid'];
+  profile?: Maybe<AttendeeProfile_Set_Input>;
+}>;
+
+
+export type UpdateAttendeeProfileMutation = { readonly __typename?: 'mutation_root', readonly update_AttendeeProfile_by_pk?: Maybe<{ readonly __typename?: 'AttendeeProfile', readonly attendeeId: any }> };
+
+export type UpdateAttendeeDisplayNameMutationVariables = Exact<{
+  attendeeId: Scalars['uuid'];
+  name: Scalars['String'];
+}>;
+
+
+export type UpdateAttendeeDisplayNameMutation = { readonly __typename?: 'mutation_root', readonly update_Attendee_by_pk?: Maybe<{ readonly __typename?: 'Attendee', readonly id: any }> };
+
 export type SubmitProfilePhotoMutationVariables = Exact<{
   attendeeId: Scalars['uuid'];
   s3URL: Scalars['String'];
@@ -24840,7 +24865,7 @@ export type PublicUserGroupsRolesPermissionsQuery = { readonly __typename?: 'que
     & GroupDataFragment
   )> };
 
-export type AttendeeProfileDataFragment = { readonly __typename?: 'AttendeeProfile', readonly attendeeId: any, readonly realName?: Maybe<string>, readonly badges?: Maybe<any>, readonly affiliation?: Maybe<string>, readonly affiliationURL?: Maybe<string>, readonly country?: Maybe<string>, readonly timezoneUTCOffset?: Maybe<number>, readonly bio?: Maybe<string>, readonly website?: Maybe<string>, readonly github?: Maybe<string>, readonly twitter?: Maybe<string>, readonly pronouns?: Maybe<any>, readonly photoURL_50x50?: Maybe<string>, readonly photoURL_350x350?: Maybe<string> };
+export type AttendeeProfileDataFragment = { readonly __typename?: 'AttendeeProfile', readonly attendeeId: any, readonly badges?: Maybe<any>, readonly affiliation?: Maybe<string>, readonly affiliationURL?: Maybe<string>, readonly country?: Maybe<string>, readonly timezoneUTCOffset?: Maybe<number>, readonly bio?: Maybe<string>, readonly website?: Maybe<string>, readonly github?: Maybe<string>, readonly twitter?: Maybe<string>, readonly pronouns?: Maybe<any>, readonly photoURL_50x50?: Maybe<string>, readonly photoURL_350x350?: Maybe<string>, readonly hasBeenEdited: boolean };
 
 export type AttendeeDataFragment = { readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly displayName: string, readonly profile?: Maybe<(
     { readonly __typename?: 'AttendeeProfile' }
@@ -24854,6 +24879,17 @@ export type AttendeeByUserIdConferenceIdQueryVariables = Exact<{
 
 
 export type AttendeeByUserIdConferenceIdQuery = { readonly __typename?: 'query_root', readonly Attendee: ReadonlyArray<(
+    { readonly __typename?: 'Attendee' }
+    & AttendeeDataFragment
+  )> };
+
+export type AttendeeByIdQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  attendeeId: Scalars['uuid'];
+}>;
+
+
+export type AttendeeByIdQuery = { readonly __typename?: 'query_root', readonly Attendee: ReadonlyArray<(
     { readonly __typename?: 'Attendee' }
     & AttendeeDataFragment
   )> };
@@ -25538,7 +25574,6 @@ export const GroupDataFragmentDoc = gql`
 export const AttendeeProfileDataFragmentDoc = gql`
     fragment AttendeeProfileData on AttendeeProfile {
   attendeeId
-  realName
   badges
   affiliation
   affiliationURL
@@ -25551,6 +25586,7 @@ export const AttendeeProfileDataFragmentDoc = gql`
   pronouns
   photoURL_50x50
   photoURL_350x350
+  hasBeenEdited
 }
     `;
 export const AttendeeDataFragmentDoc = gql`
@@ -25976,6 +26012,75 @@ export function useGetContentGroupLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type GetContentGroupQueryHookResult = ReturnType<typeof useGetContentGroupQuery>;
 export type GetContentGroupLazyQueryHookResult = ReturnType<typeof useGetContentGroupLazyQuery>;
 export type GetContentGroupQueryResult = Apollo.QueryResult<GetContentGroupQuery, GetContentGroupQueryVariables>;
+export const UpdateAttendeeProfileDocument = gql`
+    mutation UpdateAttendeeProfile($attendeeId: uuid!, $profile: AttendeeProfile_set_input = {}) {
+  update_AttendeeProfile_by_pk(
+    pk_columns: {attendeeId: $attendeeId}
+    _set: $profile
+  ) {
+    attendeeId
+  }
+}
+    `;
+export type UpdateAttendeeProfileMutationFn = Apollo.MutationFunction<UpdateAttendeeProfileMutation, UpdateAttendeeProfileMutationVariables>;
+
+/**
+ * __useUpdateAttendeeProfileMutation__
+ *
+ * To run a mutation, you first call `useUpdateAttendeeProfileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateAttendeeProfileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateAttendeeProfileMutation, { data, loading, error }] = useUpdateAttendeeProfileMutation({
+ *   variables: {
+ *      attendeeId: // value for 'attendeeId'
+ *      profile: // value for 'profile'
+ *   },
+ * });
+ */
+export function useUpdateAttendeeProfileMutation(baseOptions?: Apollo.MutationHookOptions<UpdateAttendeeProfileMutation, UpdateAttendeeProfileMutationVariables>) {
+        return Apollo.useMutation<UpdateAttendeeProfileMutation, UpdateAttendeeProfileMutationVariables>(UpdateAttendeeProfileDocument, baseOptions);
+      }
+export type UpdateAttendeeProfileMutationHookResult = ReturnType<typeof useUpdateAttendeeProfileMutation>;
+export type UpdateAttendeeProfileMutationResult = Apollo.MutationResult<UpdateAttendeeProfileMutation>;
+export type UpdateAttendeeProfileMutationOptions = Apollo.BaseMutationOptions<UpdateAttendeeProfileMutation, UpdateAttendeeProfileMutationVariables>;
+export const UpdateAttendeeDisplayNameDocument = gql`
+    mutation UpdateAttendeeDisplayName($attendeeId: uuid!, $name: String!) {
+  update_Attendee_by_pk(pk_columns: {id: $attendeeId}, _set: {displayName: $name}) {
+    id
+  }
+}
+    `;
+export type UpdateAttendeeDisplayNameMutationFn = Apollo.MutationFunction<UpdateAttendeeDisplayNameMutation, UpdateAttendeeDisplayNameMutationVariables>;
+
+/**
+ * __useUpdateAttendeeDisplayNameMutation__
+ *
+ * To run a mutation, you first call `useUpdateAttendeeDisplayNameMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateAttendeeDisplayNameMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateAttendeeDisplayNameMutation, { data, loading, error }] = useUpdateAttendeeDisplayNameMutation({
+ *   variables: {
+ *      attendeeId: // value for 'attendeeId'
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useUpdateAttendeeDisplayNameMutation(baseOptions?: Apollo.MutationHookOptions<UpdateAttendeeDisplayNameMutation, UpdateAttendeeDisplayNameMutationVariables>) {
+        return Apollo.useMutation<UpdateAttendeeDisplayNameMutation, UpdateAttendeeDisplayNameMutationVariables>(UpdateAttendeeDisplayNameDocument, baseOptions);
+      }
+export type UpdateAttendeeDisplayNameMutationHookResult = ReturnType<typeof useUpdateAttendeeDisplayNameMutation>;
+export type UpdateAttendeeDisplayNameMutationResult = Apollo.MutationResult<UpdateAttendeeDisplayNameMutation>;
+export type UpdateAttendeeDisplayNameMutationOptions = Apollo.BaseMutationOptions<UpdateAttendeeDisplayNameMutation, UpdateAttendeeDisplayNameMutationVariables>;
 export const SubmitProfilePhotoDocument = gql`
     mutation SubmitProfilePhoto($attendeeId: uuid!, $s3URL: String!) {
   updateProfilePhoto(attendeeId: $attendeeId, s3URL: $s3URL) {
@@ -28444,6 +28549,43 @@ export function useAttendeeByUserIdConferenceIdLazyQuery(baseOptions?: Apollo.La
 export type AttendeeByUserIdConferenceIdQueryHookResult = ReturnType<typeof useAttendeeByUserIdConferenceIdQuery>;
 export type AttendeeByUserIdConferenceIdLazyQueryHookResult = ReturnType<typeof useAttendeeByUserIdConferenceIdLazyQuery>;
 export type AttendeeByUserIdConferenceIdQueryResult = Apollo.QueryResult<AttendeeByUserIdConferenceIdQuery, AttendeeByUserIdConferenceIdQueryVariables>;
+export const AttendeeByIdDocument = gql`
+    query AttendeeById($conferenceId: uuid!, $attendeeId: uuid!) {
+  Attendee(
+    where: {id: {_eq: $attendeeId}, conferenceId: {_eq: $conferenceId}}
+    limit: 1
+  ) {
+    ...AttendeeData
+  }
+}
+    ${AttendeeDataFragmentDoc}`;
+
+/**
+ * __useAttendeeByIdQuery__
+ *
+ * To run a query within a React component, call `useAttendeeByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAttendeeByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAttendeeByIdQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      attendeeId: // value for 'attendeeId'
+ *   },
+ * });
+ */
+export function useAttendeeByIdQuery(baseOptions: Apollo.QueryHookOptions<AttendeeByIdQuery, AttendeeByIdQueryVariables>) {
+        return Apollo.useQuery<AttendeeByIdQuery, AttendeeByIdQueryVariables>(AttendeeByIdDocument, baseOptions);
+      }
+export function useAttendeeByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AttendeeByIdQuery, AttendeeByIdQueryVariables>) {
+          return Apollo.useLazyQuery<AttendeeByIdQuery, AttendeeByIdQueryVariables>(AttendeeByIdDocument, baseOptions);
+        }
+export type AttendeeByIdQueryHookResult = ReturnType<typeof useAttendeeByIdQuery>;
+export type AttendeeByIdLazyQueryHookResult = ReturnType<typeof useAttendeeByIdLazyQuery>;
+export type AttendeeByIdQueryResult = Apollo.QueryResult<AttendeeByIdQuery, AttendeeByIdQueryVariables>;
 export const UpdateSubtitlesDocument = gql`
     mutation UpdateSubtitles($contentItemId: String!, $magicToken: String!, $subtitleText: String!) {
   updateSubtitles(

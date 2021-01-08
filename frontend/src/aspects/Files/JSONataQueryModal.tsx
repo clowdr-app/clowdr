@@ -82,6 +82,7 @@ export default function JSONataQueryModal({
                             <FormLabel>Query script (JSONata)</FormLabel>
                             <FormHelperText>Provide a JSONata script to query the data.</FormHelperText>
                             <Textarea
+                                transition="none"
                                 fontFamily={
                                     // eslint-disable-next-line quotes
                                     'SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace'

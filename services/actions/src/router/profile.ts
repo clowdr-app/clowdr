@@ -39,7 +39,16 @@ gql`
         $photoURL_350x350: String = null
     ) {
         update_AttendeeProfile(
-            where: { _and: [{ attendeeId: { _eq: $attendeeId } }, { attendee: { userId: { _eq: $userId } } }] }
+            where: {
+                _and: [
+                    { attendeeId: { _eq: $attendeeId } }
+                    {
+                        attendee: {
+                            _or: [{ userId: { _eq: $userId } }, { conference: { createdBy: { _eq: $userId } } }]
+                        }
+                    }
+                ]
+            }
             _set: {
                 photoS3BucketName: $bucket
                 photoS3BucketRegion: $region
@@ -85,27 +94,47 @@ async function checkS3Url(
 async function handleUpdateProfilePhoto(
     userId: string,
     attendeeId: string,
-    s3URL: string
+    s3URL: Maybe<string> | undefined
 ): Promise<UpdateProfilePhotoResponse> {
-    const validatedS3URL = await checkS3Url(s3URL);
-    if (validatedS3URL.result === "error") {
-        throw new Error("Invalid S3 URL");
+    if (!s3URL || s3URL.length === 0) {
+        await apolloClient.mutate({
+            mutation: UpdateProfilePhotoDocument,
+            variables: {
+                attendeeId,
+                userId,
+                bucket: null,
+                objectName: null,
+                region: null,
+                photoURL_350x350: null,
+                photoURL_50x50: null,
+            },
+        });
+    } else {
+        const validatedS3URL = await checkS3Url(s3URL);
+        if (validatedS3URL.result === "error") {
+            throw new Error("Invalid S3 URL");
+        }
+
+        assert(process.env.AWS_CONTENT_BUCKET_ID);
+
+        await apolloClient.mutate({
+            mutation: UpdateProfilePhotoDocument,
+            variables: {
+                attendeeId,
+                userId,
+                bucket: process.env.AWS_CONTENT_BUCKET_ID,
+                objectName: validatedS3URL.key,
+                region: process.env.AWS_REGION,
+                photoURL_350x350: generateSignedImageURL(
+                    process.env.AWS_CONTENT_BUCKET_ID,
+                    validatedS3URL.key,
+                    350,
+                    350
+                ),
+                photoURL_50x50: generateSignedImageURL(process.env.AWS_CONTENT_BUCKET_ID, validatedS3URL.key, 50, 50),
+            },
+        });
     }
-
-    assert(process.env.AWS_CONTENT_BUCKET_ID);
-
-    await apolloClient.mutate({
-        mutation: UpdateProfilePhotoDocument,
-        variables: {
-            attendeeId,
-            userId,
-            bucket: process.env.AWS_CONTENT_BUCKET_ID,
-            objectName: validatedS3URL.key,
-            region: process.env.AWS_REGION,
-            photoURL_350x350: generateSignedImageURL(process.env.AWS_CONTENT_BUCKET_ID, validatedS3URL.key, 350, 350),
-            photoURL_50x50: generateSignedImageURL(process.env.AWS_CONTENT_BUCKET_ID, validatedS3URL.key, 50, 50),
-        },
-    });
 
     return {
         ok: true,

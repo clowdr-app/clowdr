@@ -17,7 +17,7 @@ export default function ProtectedEcho(): JSX.Element {
         },
     });
     if (query.loading) {
-        return <>Loading...</>;
+        return <>Loading&#8230;</>;
     } else if (query.error) {
         return <>Query error! {query.error.message}</>;
     } else if (query.data) {

@@ -4,6 +4,7 @@ import {
     CreateRoomParticipantDocument,
     GetRoomBySessionIdDocument,
     OngoingBroadcastableVideoRoomEventsDocument,
+    RemoveRoomParticipantDocument,
 } from "../../generated/graphql";
 import { apolloClient } from "../../graphqlClient";
 import { CustomConnectionData, WebhookReqBody } from "../../types/vonage";
@@ -48,9 +49,12 @@ export async function startBroadcastIfOngoingEvent(payload: WebhookReqBody): Pro
     return true;
 }
 
-export async function addAndRemoveRoomParticipants(payload: WebhookReqBody): Promise<void> {
+export async function addAndRemoveRoomParticipants(payload: WebhookReqBody): Promise<boolean> {
+    let success = true;
+
     if (payload.event === "connectionCreated") {
         try {
+            console.log("connectionCreated: adding participant to room", payload.sessionId, payload.connection.data);
             await addRoomParticipant(payload.sessionId, payload.connection.data);
         } catch (e) {
             console.error(
@@ -58,11 +62,17 @@ export async function addAndRemoveRoomParticipants(payload: WebhookReqBody): Pro
                 payload.sessionId,
                 payload.connection.data
             );
+            success = false;
         }
     }
 
     if (payload.event === "connectionDestroyed") {
         try {
+            console.log(
+                "connectionDestroyed: removing participant from room",
+                payload.sessionId,
+                payload.connection.data
+            );
             await removeRoomParticipant(payload.sessionId, payload.connection.data);
         } catch (e) {
             console.error(
@@ -70,8 +80,11 @@ export async function addAndRemoveRoomParticipants(payload: WebhookReqBody): Pro
                 payload.sessionId,
                 payload.connection.data
             );
+            success = false;
         }
     }
+
+    return success;
 }
 
 gql`
@@ -84,10 +97,18 @@ gql`
 
     mutation CreateRoomParticipant($attendeeId: uuid!, $conferenceId: uuid!, $roomId: uuid!) {
         insert_RoomParticipant_one(
-            object: { attendeeId: $attendeeId, conferenceId: $conferenceId, roomId: $roomId }
             on_conflict: { constraint: RoomParticipant_roomId_attendeeId_key, update_columns: updatedAt }
+            object: { attendeeId: $attendeeId, conferenceId: $conferenceId, roomId: $roomId }
         ) {
             id
+        }
+    }
+
+    mutation RemoveRoomParticipant($attendeeId: uuid!, $conferenceId: uuid!, $roomId: uuid!) {
+        delete_RoomParticipant(
+            where: { attendeeId: { _eq: $attendeeId }, conferenceId: { _eq: $conferenceId }, roomId: { _eq: $roomId } }
+        ) {
+            affected_rows
         }
     }
 `;
@@ -123,7 +144,33 @@ export async function addRoomParticipant(sessionId: string, connectionData: stri
     });
 }
 
-export async function removeRoomParticipant(_sessionId: string, connectionData: string): Promise<void> {
+export async function removeRoomParticipant(sessionId: string, connectionData: string): Promise<void> {
     const data = JSON.parse(connectionData);
-    assertType<CustomConnectionData>(data);
+    const { attendeeId } = assertType<CustomConnectionData>(data);
+
+    const result = await apolloClient.query({
+        query: GetRoomBySessionIdDocument,
+        variables: {
+            sessionId,
+        },
+    });
+
+    if (result.error || result.errors) {
+        console.error("Could not retrieve room from Vonage session ID", sessionId, attendeeId);
+        throw new Error("Could not retrieve room from Vonage session ID");
+    }
+
+    if (result.data.Room.length !== 1) {
+        console.error("Could not find room associated with Vonage session ID", sessionId, attendeeId);
+        throw new Error("Could not find room associated with Vonage session ID");
+    }
+
+    await apolloClient.mutate({
+        mutation: RemoveRoomParticipantDocument,
+        variables: {
+            attendeeId,
+            conferenceId: result.data.Room[0].conferenceId,
+            roomId: result.data.Room[0].id,
+        },
+    });
 }

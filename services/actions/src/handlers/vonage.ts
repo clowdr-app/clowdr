@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client/core";
 import { GetEventRolesForUserDocument, GetRoomWhereUserAttendsConferenceDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { startBroadcastIfOngoingEvent } from "../lib/vonage/sessionMonitoring";
+import { addAndRemoveRoomParticipants, startBroadcastIfOngoingEvent } from "../lib/vonage/sessionMonitoring";
 import * as Vonage from "../lib/vonage/vonageClient";
 import { CustomConnectionData, WebhookReqBody } from "../types/vonage";
 
@@ -27,6 +27,13 @@ export async function handleVonageSessionMonitoringWebhook(payload: WebhookReqBo
         success &&= await startBroadcastIfOngoingEvent(payload);
     } catch (e) {
         console.error("Error while starting broadcast if ongoing event", e);
+        success = false;
+    }
+
+    try {
+        success &&= await addAndRemoveRoomParticipants(payload);
+    } catch (e) {
+        console.error("Error while adding/removing room participants", e);
         success = false;
     }
 

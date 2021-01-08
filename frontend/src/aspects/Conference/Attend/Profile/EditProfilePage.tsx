@@ -40,6 +40,7 @@ import UnsavedChangesWarning from "../../../LeavingPageWarnings/UnsavedChangesWa
 import usePrimaryMenuButtons from "../../../Menu/usePrimaryMenuButtons";
 import PronounInput from "../../../Pronouns/PronounInput";
 import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
+import { useTitle } from "../../../Utils/useTitle";
 import { useConference } from "../../useConference";
 import { AttendeeContextT, AttendeeProfile, useMaybeCurrentAttendee } from "../../useCurrentAttendee";
 import EditProfilePitureForm from "./EditProfilePictureForm";
@@ -407,90 +408,100 @@ function EditProfilePageInner({ attendee }: { attendee: AttendeeContextT }): JSX
         }
     }, [attendee, editingAttendee.displayName, isEditingName, toast, updateAttendeeDisplayName]);
 
+    const title = useTitle(
+        currentUser.user.id === attendee.userId ? "Edit your profile" : `Edit ${attendee.displayName}`
+    );
+
     return (
-        <VStack maxW={450} spacing={6} m={2}>
-            <UnsavedChangesWarning hasUnsavedChanges={isDirty || displayNameIsDirty} />
-            {attendee.userId === currentUser.user.id && !attendee.profile.hasBeenEdited ? (
-                <Alert status="warning" variant="top-accent" flexWrap="wrap">
-                    <AlertIcon />
-                    <AlertTitle>Edit required</AlertTitle>
-                    <AlertDescription mt={2}>
-                        Please edit at least one part of your profile before proceeding to the rest of the conference.
-                    </AlertDescription>
-                </Alert>
-            ) : undefined}
-            {isEditingName ? (
-                <VStack alignItems="flex-start" w="100%" maxW={350}>
-                    <FormControl>
-                        <FormLabel fontWeight="bold" fontSize="1.2rem">
-                            Name
-                        </FormLabel>
-                        <Input
-                            minLength={2}
-                            value={editingAttendee.displayName}
-                            onChange={(ev) => {
-                                setEditingAttendee({
-                                    ...editingAttendee,
-                                    displayName: ev.target.value,
-                                });
-                            }}
+        <>
+            {title}
+            <VStack maxW={450} spacing={6} m={2}>
+                <UnsavedChangesWarning hasUnsavedChanges={isDirty || displayNameIsDirty} />
+                {attendee.userId === currentUser.user.id && !attendee.profile.hasBeenEdited ? (
+                    <Alert status="warning" variant="top-accent" flexWrap="wrap">
+                        <AlertIcon />
+                        <AlertTitle>Edit required</AlertTitle>
+                        <AlertDescription mt={2}>
+                            Please edit at least one part of your profile before proceeding to the rest of the
+                            conference.
+                        </AlertDescription>
+                    </Alert>
+                ) : undefined}
+                {isEditingName ? (
+                    <VStack alignItems="flex-start" w="100%" maxW={350}>
+                        <FormControl>
+                            <FormLabel fontWeight="bold" fontSize="1.2rem">
+                                Name
+                            </FormLabel>
+                            <Input
+                                minLength={2}
+                                value={editingAttendee.displayName}
+                                onChange={(ev) => {
+                                    setEditingAttendee({
+                                        ...editingAttendee,
+                                        displayName: ev.target.value,
+                                    });
+                                }}
+                            />
+                        </FormControl>
+                        <Button colorScheme="green" onClick={() => setIsEditingName(false)}>
+                            Save
+                        </Button>
+                    </VStack>
+                ) : (
+                    <Heading as="h1">
+                        <Text as="span" mr={2}>
+                            {editingAttendee.displayName}
+                        </Text>
+                        <IconButton
+                            verticalAlign="top"
+                            size="sm"
+                            aria-label="Edit name"
+                            icon={<EditIcon />}
+                            variant="outline"
+                            colorScheme="blue"
+                            onClick={() => setIsEditingName(true)}
                         />
-                    </FormControl>
-                    <Button colorScheme="green" onClick={() => setIsEditingName(false)}>
-                        Save
-                    </Button>
-                </VStack>
-            ) : (
-                <Heading as="h1">
-                    <Text as="span" mr={2}>
-                        {editingAttendee.displayName}
-                    </Text>
-                    <IconButton
-                        verticalAlign="top"
-                        size="sm"
-                        aria-label="Edit name"
-                        icon={<EditIcon />}
-                        variant="outline"
-                        colorScheme="blue"
-                        onClick={() => setIsEditingName(true)}
-                    />
-                </Heading>
-            )}
-            {errorUpdateAttendeeDisplayName || errorUpdateAttendeeProfile ? (
-                <Alert status="error">
-                    <AlertIcon />
-                    <AlertTitle mr={2}>Error saving changes</AlertTitle>
-                    <AlertDescription>{errorUpdateAttendeeProfile || errorUpdateAttendeeDisplayName}</AlertDescription>
-                </Alert>
-            ) : undefined}
-            <EditProfilePitureForm attendee={attendee} />
-            {bioField}
-            <PronounInput
-                pronouns={editingAttendee.profile.pronouns ?? []}
-                onChange={(newPronouns) => {
-                    setEditingAttendee({
-                        ...editingAttendee,
-                        profile: { ...editingAttendee.profile, pronouns: newPronouns },
-                    });
-                }}
-            />
-            <BadgeInput
-                badges={editingAttendee.profile.badges ?? []}
-                onChange={(newBadges) => {
-                    setEditingAttendee({
-                        ...editingAttendee,
-                        profile: { ...editingAttendee.profile, badges: newBadges },
-                    });
-                }}
-            />
-            {timezoneField}
-            {affiliationField}
-            {affiliationURLField}
-            {countryField}
-            {webPageField}
-            {twitterField}
-            {githubField}
-        </VStack>
+                    </Heading>
+                )}
+                {errorUpdateAttendeeDisplayName || errorUpdateAttendeeProfile ? (
+                    <Alert status="error">
+                        <AlertIcon />
+                        <AlertTitle mr={2}>Error saving changes</AlertTitle>
+                        <AlertDescription>
+                            {errorUpdateAttendeeProfile || errorUpdateAttendeeDisplayName}
+                        </AlertDescription>
+                    </Alert>
+                ) : undefined}
+                <EditProfilePitureForm attendee={attendee} />
+                {bioField}
+                <PronounInput
+                    pronouns={editingAttendee.profile.pronouns ?? []}
+                    onChange={(newPronouns) => {
+                        setEditingAttendee({
+                            ...editingAttendee,
+                            profile: { ...editingAttendee.profile, pronouns: newPronouns },
+                        });
+                    }}
+                />
+                <BadgeInput
+                    badges={editingAttendee.profile.badges ?? []}
+                    onChange={(newBadges) => {
+                        setEditingAttendee({
+                            ...editingAttendee,
+                            profile: { ...editingAttendee.profile, badges: newBadges },
+                        });
+                    }}
+                />
+                {timezoneField}
+                {affiliationField}
+                {affiliationURLField}
+                {countryField}
+                {webPageField}
+                {twitterField}
+                {githubField}
+            </VStack>
+        </>
     );
 }
 

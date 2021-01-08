@@ -1,12 +1,16 @@
 import { Link, Text } from "@chakra-ui/react";
 import React from "react";
 import LinkButton from "../Chakra/LinkButton";
+import { useTitle } from "../Utils/useTitle";
 import GenericErrorPage from "./GenericErrorPage";
 
 export default function PageNotImplemented(): JSX.Element {
+    const title = useTitle("Page not implemented");
+
     return (
         <GenericErrorPage heading="This page is coming soon!">
             <>
+                {title}
                 <Text fontSize="xl" lineHeight="revert" fontWeight="light">
                     <Link isExternal href="https://github.com/clowdr-app/">
                         Our team

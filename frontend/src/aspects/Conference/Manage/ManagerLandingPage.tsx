@@ -2,11 +2,13 @@ import { Flex, Heading } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 import { Permission_Enum } from "../../../generated/graphql";
 import usePrimaryMenuButtons from "../../Menu/usePrimaryMenuButtons";
+import { useTitle } from "../../Utils/useTitle";
 import { useConference } from "../useConference";
 import RestrictedDashboardButton from "./RestrictedDashboardButton";
 
 export default function ManagerLandingPage(): JSX.Element {
     const conference = useConference();
+    const title = useTitle(`Manage ${conference.shortName}`);
 
     const { setPrimaryMenuButtons } = usePrimaryMenuButtons();
     useEffect(() => {
@@ -22,6 +24,7 @@ export default function ManagerLandingPage(): JSX.Element {
 
     return (
         <>
+            {title}
             <Heading as="h1">Manage {conference.shortName}</Heading>
             <Flex
                 flexDirection="row"

@@ -29,6 +29,7 @@ import {
 } from "../../../../generated/graphql";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import usePrimaryMenuButtons from "../../../Menu/usePrimaryMenuButtons";
+import { useTitle } from "../../../Utils/useTitle";
 import { normaliseName, validateShortName } from "../../NewConferenceForm";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../useConference";
@@ -62,6 +63,8 @@ export default function RoomListPage(): JSX.Element {
         ]);
     }, [conference.slug, setPrimaryMenuButtons]);
 
+    const title = useTitle(`Rooms - ${conference.shortName}`);
+
     const result = useGetAllRoomsQuery({
         variables: {
             conferenceId: conference.id,
@@ -82,6 +85,7 @@ export default function RoomListPage(): JSX.Element {
                 Permission_Enum.ConferenceManageSchedule,
             ]}
         >
+            {title}
             <ApolloQueryWrapper getter={(data) => data.Room} queryResult={result}>
                 {(rooms: readonly RoomListRoomDetailsFragment[]) => (
                     <>

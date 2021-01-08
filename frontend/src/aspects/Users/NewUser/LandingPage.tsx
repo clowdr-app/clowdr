@@ -3,13 +3,17 @@ import React from "react";
 import LoginButton from "../../Auth/Buttons/LoginButton";
 import SignupButton from "../../Auth/Buttons/SignUpButton";
 import { useNoPrimaryMenuButtons } from "../../Menu/usePrimaryMenuButtons";
+import { useTitle } from "../../Utils/useTitle";
 import InviteCodeInput from "./InviteCodeInput";
 
 export default function NewUserLandingPage({ conferenceName }: { conferenceName?: string }): JSX.Element {
     useNoPrimaryMenuButtons();
 
+    const title = useTitle(conferenceName ?? "Clowdr");
+
     return (
         <>
+            {title}
             <Heading as="h1" fontSize="4.25rem" lineHeight="4.25rem" fontWeight="thin" marginBottom="4rem">
                 Clowdr
             </Heading>

@@ -49,6 +49,7 @@ import CRUDTable, {
 import PageNotFound from "../../Errors/PageNotFound";
 import FAIcon from "../../Icons/FAIcon";
 import isValidUUID from "../../Utils/isValidUUID";
+import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
 import ContentGroupHallwaysModal from "./Content/ContentGroupHallwaysModal";
@@ -76,6 +77,7 @@ const ContentGroupCRUDTable = (props: Readonly<CRUDTableProps<ContentGroupDescri
 
 export default function ManageConferenceContentPage(): JSX.Element {
     const conference = useConference();
+    const title = useTitle(`Manage content at ${conference.shortName}`);
 
     useDashboardPrimaryMenuButtons();
 
@@ -334,6 +336,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
             permissions={[Permission_Enum.ConferenceManageContent]}
             componentIfDenied={<PageNotFound />}
         >
+            {title}
             <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
             </Heading>

@@ -28,6 +28,7 @@ import { Permission_Enum, useUpdateConferenceMutation } from "../../../generated
 import PageNotFound from "../../Errors/PageNotFound";
 import FAIcon from "../../Icons/FAIcon";
 import UnsavedChangesWarning from "../../LeavingPageWarnings/UnsavedChangesWarning";
+import { useTitle } from "../../Utils/useTitle";
 import { validateName, validateShortName } from "../NewConferenceForm";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
@@ -65,6 +66,8 @@ export function validateSlug(inValue: string | null | undefined): string | undef
 
 export default function ManageConferenceNamePage(): JSX.Element {
     const conference = useConference();
+    const title = useTitle(`Manage name of ${conference.shortName}`);
+
     const [slugWarningAccepted, setSlugWarningAccepted] = useState<boolean>(false);
     const [updateConferenceMutation] = useUpdateConferenceMutation();
     const toast = useToast();
@@ -77,6 +80,7 @@ export default function ManageConferenceNamePage(): JSX.Element {
             permissions={[Permission_Enum.ConferenceManageName]}
             componentIfDenied={<PageNotFound />}
         >
+            {title}
             <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
             </Heading>

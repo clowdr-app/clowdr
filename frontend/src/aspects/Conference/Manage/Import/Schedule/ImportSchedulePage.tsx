@@ -7,6 +7,7 @@ import React, { useMemo, useState } from "react";
 import { Permission_Enum } from "../../../../../generated/graphql";
 import PageNotFound from "../../../../Errors/PageNotFound";
 import type { ParsedData } from "../../../../Files/useCSVJSONXMLParser";
+import { useTitle } from "../../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../../useConference";
 import useDashboardPrimaryMenuButtons from "../../useDashboardPrimaryMenuButtons";
@@ -137,6 +138,7 @@ const presetJSONata_ResearchrQuery_POPL2021 = `
 
 export default function ImportSchedulePage(): JSX.Element {
     const conference = useConference();
+    const title = useTitle(`Import schedule to ${conference.shortName}`);
     useDashboardPrimaryMenuButtons();
 
     const [data, setData] = useState<ParsedData<any[]>[]>();
@@ -166,6 +168,7 @@ export default function ImportSchedulePage(): JSX.Element {
             permissions={[Permission_Enum.ConferenceManageSchedule]}
             componentIfDenied={<PageNotFound />}
         >
+            {title}
             <Box mb="auto" w="100%" minH="100vh">
                 <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
                     Manage {conference.shortName}

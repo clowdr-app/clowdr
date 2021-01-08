@@ -27,6 +27,7 @@ import CRUDTable, {
 import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import isValidUUID from "../../Utils/isValidUUID";
+import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
 import type { AttendeeDescriptor } from "./People/Types";
@@ -125,6 +126,7 @@ const AttendeesCRUDTable = (props: Readonly<CRUDTableProps<AttendeeDescriptor, "
 
 export default function ManageConferencePeoplePage(): JSX.Element {
     const conference = useConference();
+    const title = useTitle(`Manage people at ${conference.shortName}`);
 
     useDashboardPrimaryMenuButtons();
 
@@ -321,6 +323,7 @@ export default function ManageConferencePeoplePage(): JSX.Element {
             permissions={[Permission_Enum.ConferenceManageRoles, Permission_Enum.ConferenceManageGroups]}
             componentIfDenied={<PageNotFound />}
         >
+            {title}
             <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
             </Heading>

@@ -24,6 +24,7 @@ import CRUDTable, {
 import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import isValidUUID from "../../Utils/isValidUUID";
+import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
 import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
@@ -113,6 +114,7 @@ const RolesCRUDTable = (props: Readonly<CRUDTableProps<RoleDescriptor, "id">>) =
 
 export default function ManageConferenceRolesPage(): JSX.Element {
     const conference = useConference();
+    const title = useTitle(`Manage roles at ${conference.shortName}`);
 
     useDashboardPrimaryMenuButtons();
 
@@ -250,6 +252,7 @@ export default function ManageConferenceRolesPage(): JSX.Element {
             permissions={[Permission_Enum.ConferenceManageRoles]}
             componentIfDenied={<PageNotFound />}
         >
+            {title}
             <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
             </Heading>

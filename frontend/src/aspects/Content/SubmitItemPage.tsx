@@ -22,6 +22,7 @@ import {
 } from "../../generated/graphql";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
 import { useNoPrimaryMenuButtons } from "../Menu/usePrimaryMenuButtons";
+import { useTitle } from "../Utils/useTitle";
 import UploadedContentItem from "./UploadedContentItem";
 import UploadFileForm from "./UploadFileForm";
 import UploadLinkForm from "./UploadLinkForm";
@@ -125,6 +126,8 @@ export default function SubmitItemPage({
         return data.RequiredContentItem[0];
     }, [data]);
 
+    const title = useTitle(requiredItem?.contentGroupTitle ? `Submit ${requiredItem.contentGroupTitle}` : "Clowdr");
+
     const uploadAgreement = useMemo(() => {
         return uploadAgreementData?.getUploadAgreement?.agreementText ?? undefined;
     }, [uploadAgreementData]);
@@ -197,6 +200,7 @@ export default function SubmitItemPage({
 
     return (
         <Center>
+            {title}
             <VStack spacing={4}>
                 <Container centerContent maxW="100%">
                     <VStack spacing={4}>

@@ -18,9 +18,11 @@ import { AttendeeFieldsFragment, Permission_Enum } from "../../../generated/grap
 import LinkButton from "../../Chakra/LinkButton";
 import UseInviteOrCreateView from "../../Conference/UseInviteOrCreateView";
 import usePrimaryMenuButtons from "../../Menu/usePrimaryMenuButtons";
+import { useTitle } from "../../Utils/useTitle";
 import useCurrentUser from "./useCurrentUser";
 
 export default function ListConferencesView(): JSX.Element {
+    const title = useTitle("My Conferences");
     const { isOpen: shouldShowUseInvite, onOpen: showUseInvite, onClose: hideUseInvite } = useDisclosure();
     const { setPrimaryMenuButtons } = usePrimaryMenuButtons();
     useEffect(() => {
@@ -156,17 +158,23 @@ export default function ListConferencesView(): JSX.Element {
     );
     const dividerColor = useColorModeValue("gray.200", "gray.700");
     return shouldShowUseInvite ? (
-        <UseInviteOrCreateView />
+        <>
+            {title}
+            <UseInviteOrCreateView />
+        </>
     ) : (
-        <Stack
-            direction={["column", "column", "row"]}
-            spacing={["2em", "2em", "4em"]}
-            width="100%"
-            maxWidth="1000px"
-            divider={<StackDivider orientation={["horizontal", "vertical"]} borderColor={dividerColor} />}
-        >
-            {attendingConferencesEl}
-            {organisingConferencesEl}
-        </Stack>
+        <>
+            {title}
+            <Stack
+                direction={["column", "column", "row"]}
+                spacing={["2em", "2em", "4em"]}
+                width="100%"
+                maxWidth="1000px"
+                divider={<StackDivider orientation={["horizontal", "vertical"]} borderColor={dividerColor} />}
+            >
+                {attendingConferencesEl}
+                {organisingConferencesEl}
+            </Stack>
+        </>
     );
 }

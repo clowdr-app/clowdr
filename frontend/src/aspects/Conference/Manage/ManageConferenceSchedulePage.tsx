@@ -25,6 +25,7 @@ import CRUDTable, {
 } from "../../CRUDTable/CRUDTable";
 import PageNotFound from "../../Errors/PageNotFound";
 import isValidUUID from "../../Utils/isValidUUID";
+import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
 import type { ContentGroupDescriptor } from "./Content/Types";
@@ -506,6 +507,7 @@ function EditableScheduleCRUDTable() {
 
 export default function ManageConferenceSchedulePage(): JSX.Element {
     const conference = useConference();
+    const title = useTitle(`Manage schedule of ${conference.shortName}`);
 
     useDashboardPrimaryMenuButtons();
 
@@ -514,6 +516,7 @@ export default function ManageConferenceSchedulePage(): JSX.Element {
             permissions={[Permission_Enum.ConferenceManageSchedule]}
             componentIfDenied={<PageNotFound />}
         >
+            {title}
             <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
             </Heading>

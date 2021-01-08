@@ -26,6 +26,7 @@ import {
 import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import FAIcon from "../../Icons/FAIcon";
+import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
 import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
@@ -157,6 +158,8 @@ function BroadcastRooms({ conferenceId }: { conferenceId: string }): JSX.Element
 
 export default function ManageConferenceBroadcastPage(): JSX.Element {
     const conference = useConference();
+    const title = useTitle(`Manage broadcasts at ${conference.shortName}`);
+
     useDashboardPrimaryMenuButtons();
     const [create, { loading, error }] = useCreateConferencePrepareJobMutation();
     useQueryErrorToast(error);
@@ -167,6 +170,7 @@ export default function ManageConferenceBroadcastPage(): JSX.Element {
             permissions={[Permission_Enum.ConferenceManageContent]}
             componentIfDenied={<PageNotFound />}
         >
+            {title}
             <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
             </Heading>

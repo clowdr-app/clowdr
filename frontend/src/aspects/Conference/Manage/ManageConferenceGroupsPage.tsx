@@ -25,6 +25,7 @@ import CRUDTable, {
 import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import isValidUUID from "../../Utils/isValidUUID";
+import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
 import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
@@ -120,6 +121,7 @@ const GroupsCRUDTable = (props: Readonly<CRUDTableProps<GroupDescriptor, "id">>)
 
 export default function ManageConferenceGroupsPage(): JSX.Element {
     const conference = useConference();
+    const title = useTitle(`Manage groups of ${conference.shortName}`);
 
     useDashboardPrimaryMenuButtons();
 
@@ -294,6 +296,7 @@ export default function ManageConferenceGroupsPage(): JSX.Element {
             permissions={[Permission_Enum.ConferenceManageRoles, Permission_Enum.ConferenceManageGroups]}
             componentIfDenied={<PageNotFound />}
         >
+            {title}
             <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
             </Heading>

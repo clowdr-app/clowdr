@@ -3,6 +3,7 @@ import React from "react";
 import { Route, Switch } from "react-router-dom";
 import { Permission_Enum } from "../../../generated/graphql";
 import PageNotFound from "../../Errors/PageNotFound";
+import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
 import ImportContentPage from "./Import/Content/ImportContentPage";
@@ -28,6 +29,7 @@ export default function ManageConferenceImportPage({ rootUrl }: { rootUrl: strin
 
 function InnerManageConferenceImportPage(): JSX.Element {
     const conference = useConference();
+    const title = useTitle(`Import to ${conference.shortName}`);
     useDashboardPrimaryMenuButtons();
 
     return (
@@ -35,6 +37,7 @@ function InnerManageConferenceImportPage(): JSX.Element {
             permissions={[Permission_Enum.ConferenceManageContent, Permission_Enum.ConferenceManageSchedule]}
             componentIfDenied={<PageNotFound />}
         >
+            {title}
             <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
             </Heading>

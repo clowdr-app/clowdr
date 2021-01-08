@@ -36,6 +36,7 @@ import useQueryErrorToast from "../GQL/useQueryErrorToast";
 import FAIcon from "../Icons/FAIcon";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import { getCachedInviteCode, setCachedInviteCode } from "../Users/NewUser/InviteCodeLocalStorage";
+import { useTitle } from "../Utils/useTitle";
 
 interface Props {
     inviteCode?: string;
@@ -91,6 +92,8 @@ async function digest(inviteCode: string, email: string) {
 }
 
 export default function AcceptInvitationPage(props: Props): JSX.Element {
+    const title = useTitle("Accept invitation");
+
     const toast = useToast();
 
     const inviteCode = (props.inviteCode ?? getCachedInviteCode())?.trim()?.toLowerCase();
@@ -193,6 +196,7 @@ export default function AcceptInvitationPage(props: Props): JSX.Element {
     if (loading || isUserLoading) {
         return (
             <Box>
+                {title}
                 <Spinner />
             </Box>
         );
@@ -201,26 +205,33 @@ export default function AcceptInvitationPage(props: Props): JSX.Element {
     if (user) {
         if (error || !data) {
             return (
-                <PageFailedToLoad>
-                    Sorry, we were unable to load the page due to an unrecognised error. Please try again later or
-                    contact our support teams if this error persists.
-                </PageFailedToLoad>
+                <>
+                    {title}
+                    <PageFailedToLoad>
+                        Sorry, we were unable to load the page due to an unrecognised error. Please try again later or
+                        contact our support teams if this error persists.
+                    </PageFailedToLoad>
+                </>
             );
         } else if (!data.Invitation.length) {
             setCachedInviteCode(null);
             return (
                 <GenericErrorPage heading="Invitation not found">
-                    <Text fontSize="xl" lineHeight="revert" fontWeight="light">
-                        Sorry, that invitation no longer exists. If you already accepted your invitation, please check{" "}
-                        <a href="/">your list of conferences</a>. Please also make sure you are logged in with the right
-                        email address.
-                    </Text>
+                    <>
+                        {title}
+                        <Text fontSize="xl" lineHeight="revert" fontWeight="light">
+                            Sorry, that invitation no longer exists. If you already accepted your invitation, please
+                            check <a href="/">your list of conferences</a>. Please also make sure you are logged in with
+                            the right email address.
+                        </Text>
+                    </>
                 </GenericErrorPage>
             );
         } else {
             if (hashOK === undefined) {
                 return (
                     <Box>
+                        {title}
                         <Spinner />
                     </Box>
                 );
@@ -228,6 +239,7 @@ export default function AcceptInvitationPage(props: Props): JSX.Element {
                 if (hashOK) {
                     return (
                         <>
+                            {title}
                             <Heading
                                 as="h1"
                                 fontSize="4.25rem"
@@ -246,6 +258,7 @@ export default function AcceptInvitationPage(props: Props): JSX.Element {
                 } else {
                     return (
                         <>
+                            {title}
                             <Heading
                                 as="h1"
                                 fontSize="4.25rem"
@@ -355,6 +368,7 @@ export default function AcceptInvitationPage(props: Props): JSX.Element {
     } else {
         return (
             <>
+                {title}
                 <Heading as="h1" fontSize="4.25rem" lineHeight="4.25rem" fontWeight="thin" marginBottom="2rem">
                     Accept an invitation
                 </Heading>

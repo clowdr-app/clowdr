@@ -16,6 +16,7 @@ import { useSearchAttendeesLazyQuery, useSelectAttendeesQuery } from "../../../.
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import FAIcon from "../../../Icons/FAIcon";
 import usePrimaryMenuButtons from "../../../Menu/usePrimaryMenuButtons";
+import { useTitle } from "../../../Utils/useTitle";
 import { useConference } from "../../useConference";
 import type { Attendee } from "../../useCurrentAttendee";
 import AttendeesList from "./AttendeesList";
@@ -51,6 +52,7 @@ export default function AttendeeListPage(): JSX.Element {
     const [search, setSearch] = useState<string>("");
 
     const conference = useConference();
+    const title = useTitle(`Attendees at ${conference.shortName}`);
 
     const { setPrimaryMenuButtons } = usePrimaryMenuButtons();
     useEffect(() => {
@@ -149,6 +151,7 @@ export default function AttendeeListPage(): JSX.Element {
 
     return (
         <>
+            {title}
             <Heading as="h1">Attendees</Heading>
             <FormControl maxW={400}>
                 <InputGroup>

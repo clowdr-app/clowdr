@@ -3,12 +3,16 @@ import React from "react";
 import LinkButton from "../Chakra/LinkButton";
 import FAIcon from "../Icons/FAIcon";
 import { useNoPrimaryMenuButtons } from "../Menu/usePrimaryMenuButtons";
+import { useTitle } from "../Utils/useTitle";
 
 export default function LoggedOutPage(): JSX.Element {
+    const title = useTitle("Logged Out");
+
     useNoPrimaryMenuButtons();
 
     return (
         <>
+            {title}
             <FAIcon iconStyle="s" icon="door-open" fontSize="6xl" />
             <Heading as="h1" fontSize="4xl" lineHeight="revert">
                 You have been logged out.

@@ -19,6 +19,7 @@ import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import FAIcon from "../../Icons/FAIcon";
 import { useNoPrimaryMenuButtons } from "../../Menu/usePrimaryMenuButtons";
 import { Markdown } from "../../Text/Markdown";
+import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
 import { useConferenceCurrentUserActivePermissions } from "../useConferenceCurrentUserActivePermissions";
@@ -67,6 +68,8 @@ function ConferenceLandingPageInner(): JSX.Element {
     const conference = useConference();
     const activePermissions = useConferenceCurrentUserActivePermissions();
 
+    const title = useTitle(conference.name);
+
     const { error, data } = useConferenceLandingPageContentGroupQuery({
         variables: {
             conferenceId: conference.id,
@@ -103,6 +106,7 @@ function ConferenceLandingPageInner(): JSX.Element {
     if (!group) {
         return (
             <Box>
+                {title}
                 <Spinner />
             </Box>
         );
@@ -110,15 +114,19 @@ function ConferenceLandingPageInner(): JSX.Element {
 
     if (error) {
         return (
-            <PageFailedToLoad>
-                Sorry, we were unable to load the page due to an unrecognised error. Please try again later or contact
-                our support teams if this error persists.
-            </PageFailedToLoad>
+            <>
+                {title}
+                <PageFailedToLoad>
+                    Sorry, we were unable to load the page due to an unrecognised error. Please try again later or
+                    contact our support teams if this error persists.
+                </PageFailedToLoad>
+            </>
         );
     }
 
     return (
         <>
+            {title}
             {!hasAbstract ? <Heading as="h1">{conference.shortName}</Heading> : undefined}
             <HStack>
                 <LinkButton to={`/conference/${conference.slug}/schedule`} variant="outline" size="lg">

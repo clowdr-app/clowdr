@@ -12,6 +12,7 @@ import {
 import PageNotFound from "../../../Errors/PageNotFound";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import usePrimaryMenuButtons from "../../../Menu/usePrimaryMenuButtons";
+import { useTitle } from "../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../useConference";
 import DayList from "./DayList";
@@ -290,8 +291,11 @@ function ConferenceTimelineInner({
         []
     );
 
+    const title = useTitle(`Schedule of ${conference.shortName}`);
+
     return (
         <>
+            {title}
             <Heading as="h1">Schedule</Heading>
             <Box w="100%" p={2}>
                 <Flex w="100%" direction="row" justify="center" alignItems="center">

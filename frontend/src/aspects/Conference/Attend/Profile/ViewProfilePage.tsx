@@ -12,6 +12,7 @@ import usePrimaryMenuButtons from "../../../Menu/usePrimaryMenuButtons";
 import PronounList from "../../../Pronouns/PronounList";
 import { Markdown } from "../../../Text/Markdown";
 import useMaybeCurrentUser from "../../../Users/CurrentUser/useMaybeCurrentUser";
+import { useTitle } from "../../../Utils/useTitle";
 import { useConference } from "../../useConference";
 import { useConferenceCurrentUserActivePermissions } from "../../useConferenceCurrentUserActivePermissions";
 import { Attendee, useMaybeCurrentAttendee } from "../../useCurrentAttendee";
@@ -67,44 +68,72 @@ function ViewProfilePageInner({ attendee }: { attendee: Attendee }): JSX.Element
         setPrimaryMenuButtons,
     ]);
 
+    const title = useTitle(`${attendee.displayName} at ${conference.shortName}`);
+
     return (
-        <VStack spacing={0} maxW={1100} w="100%">
-            <HStack justifyContent="center" flexWrap="wrap" alignItems="stretch" spacing={0} pr={4} pt={4} w="100%">
-                <Center
-                    ml={[2, 4]}
-                    mb={4}
-                    maxW={350}
-                    maxH={350}
-                    borderStyle="solid"
-                    borderWidth={2}
-                    borderColor="gray.400"
-                    overflow="hidden"
-                    p={0}
-                    borderRadius={10}
-                    flex="0 1 350px"
-                >
-                    {attendee.profile.photoURL_350x350 ? (
-                        <Image
-                            w="100%"
-                            h="100%"
-                            src={attendee.profile.photoURL_350x350}
-                            fallbackSrc="https://via.placeholder.com/350"
-                        />
-                    ) : (
-                        <FAIcon iconStyle="s" icon="cat" fontSize="150px" />
-                    )}
-                </Center>
-                <VStack pl={4} h="100%" justifyContent="flex-start" alignItems="flex-start" spacing={4} flex="1 1 50%">
-                    <Heading as="h1">{attendee.displayName}</Heading>
-                    {attendee.profile.pronouns ? (
-                        <Box>
-                            <PronounList pronouns={attendee.profile.pronouns} />
-                        </Box>
-                    ) : undefined}
-                    {attendee.profile.affiliation || attendee.profile.affiliationURL ? (
-                        <Box m={0}>
-                            {attendee.profile.affiliation && attendee.profile.affiliationURL ? (
-                                <Link h="auto" isExternal href={`https://${attendee.profile.affiliationURL}`}>
+        <>
+            {title}
+            <VStack spacing={0} maxW={1100} w="100%">
+                <HStack justifyContent="center" flexWrap="wrap" alignItems="stretch" spacing={0} pr={4} pt={4} w="100%">
+                    <Center
+                        ml={[2, 4]}
+                        mb={4}
+                        maxW={350}
+                        maxH={350}
+                        borderStyle="solid"
+                        borderWidth={2}
+                        borderColor="gray.400"
+                        overflow="hidden"
+                        p={0}
+                        borderRadius={10}
+                        flex="0 1 350px"
+                    >
+                        {attendee.profile.photoURL_350x350 ? (
+                            <Image
+                                w="100%"
+                                h="100%"
+                                src={attendee.profile.photoURL_350x350}
+                                fallbackSrc="https://via.placeholder.com/350"
+                            />
+                        ) : (
+                            <FAIcon iconStyle="s" icon="cat" fontSize="150px" />
+                        )}
+                    </Center>
+                    <VStack
+                        pl={4}
+                        h="100%"
+                        justifyContent="flex-start"
+                        alignItems="flex-start"
+                        spacing={4}
+                        flex="1 1 50%"
+                    >
+                        <Heading as="h1">{attendee.displayName}</Heading>
+                        {attendee.profile.pronouns ? (
+                            <Box>
+                                <PronounList pronouns={attendee.profile.pronouns} />
+                            </Box>
+                        ) : undefined}
+                        {attendee.profile.affiliation || attendee.profile.affiliationURL ? (
+                            <Box m={0}>
+                                {attendee.profile.affiliation && attendee.profile.affiliationURL ? (
+                                    <Link h="auto" isExternal href={`https://${attendee.profile.affiliationURL}`}>
+                                        <Badge
+                                            colorScheme="blue"
+                                            variant="outline"
+                                            fontSize="1rem"
+                                            pt={1}
+                                            pb={1}
+                                            pl={2}
+                                            pr={2}
+                                        >
+                                            <FAIcon iconStyle="s" icon="link" fontSize="0.8rem" mb={1} />{" "}
+                                            {attendee.profile.affiliation}{" "}
+                                            <chakra.sup>
+                                                <ExternalLinkIcon />
+                                            </chakra.sup>
+                                        </Badge>
+                                    </Link>
+                                ) : attendee.profile.affiliation ? (
                                     <Badge
                                         colorScheme="blue"
                                         variant="outline"
@@ -114,31 +143,23 @@ function ViewProfilePageInner({ attendee }: { attendee: Attendee }): JSX.Element
                                         pl={2}
                                         pr={2}
                                     >
-                                        <FAIcon iconStyle="s" icon="link" fontSize="0.8rem" mb={1} />{" "}
-                                        {attendee.profile.affiliation}{" "}
-                                        <chakra.sup>
-                                            <ExternalLinkIcon />
-                                        </chakra.sup>
+                                        {attendee.profile.affiliation}
                                     </Badge>
-                                </Link>
-                            ) : attendee.profile.affiliation ? (
-                                <Badge colorScheme="blue" variant="outline" fontSize="1rem" pt={1} pb={1} pl={2} pr={2}>
-                                    {attendee.profile.affiliation}
-                                </Badge>
+                                ) : undefined}
+                            </Box>
+                        ) : undefined}
+                        {attendee.profile.badges ? <BadgeList badges={attendee.profile.badges} /> : undefined}
+                        <Box alignSelf="flex-start" pb={4}>
+                            {attendee.profile.bio ? (
+                                <Markdown restrictHeadingSize>{attendee.profile.bio}</Markdown>
                             ) : undefined}
                         </Box>
-                    ) : undefined}
-                    {attendee.profile.badges ? <BadgeList badges={attendee.profile.badges} /> : undefined}
-                    <Box alignSelf="flex-start" pb={4}>
-                        {attendee.profile.bio ? (
-                            <Markdown restrictHeadingSize>{attendee.profile.bio}</Markdown>
-                        ) : undefined}
-                    </Box>
-                </VStack>
-            </HStack>
-            <Divider pt={4} />
-            <AttendeeExtraInfo pt={4} attendee={attendee} />
-        </VStack>
+                    </VStack>
+                </HStack>
+                <Divider pt={4} />
+                <AttendeeExtraInfo pt={4} attendee={attendee} />
+            </VStack>
+        </>
     );
 }
 

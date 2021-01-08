@@ -4,11 +4,13 @@ import React, { useEffect } from "react";
 import LinkButton from "../Chakra/LinkButton";
 import FAIcon from "../Icons/FAIcon";
 import { useNoPrimaryMenuButtons } from "../Menu/usePrimaryMenuButtons";
+import { useTitle } from "../Utils/useTitle";
 
 export default function EmailVerificationRequiredPage({ noRedirect }: { noRedirect: boolean }): JSX.Element {
     const { logout } = useAuth0();
 
     useNoPrimaryMenuButtons();
+    const title = useTitle("Email verification required");
 
     useEffect(() => {
         if (!noRedirect) {
@@ -23,6 +25,7 @@ export default function EmailVerificationRequiredPage({ noRedirect }: { noRedire
 
     return (
         <>
+            {title}
             <FAIcon iconStyle="s" icon="envelope" fontSize="6xl" />
             <Heading as="h1" fontSize="4xl" lineHeight="revert">
                 Please verify your email

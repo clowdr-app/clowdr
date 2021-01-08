@@ -151,7 +151,7 @@ function ViewProfilePageInner({ attendee }: { attendee: Attendee }): JSX.Element
             </HStack>
             <Divider pt={4} />
             <Grid pt={4} gridTemplateColumns="auto auto" gap={4} alignSelf="flex-start" pl={4}>
-                {attendee.profile.timezoneUTCOffset ? (
+                {attendee.profile.timezoneUTCOffset !== undefined && attendee.profile.timezoneUTCOffset !== null ? (
                     <>
                         <GridItem fontWeight="600">Timezone</GridItem>
                         <GridItem>

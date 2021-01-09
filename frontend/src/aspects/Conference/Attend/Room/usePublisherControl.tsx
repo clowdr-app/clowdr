@@ -133,42 +133,6 @@ export function usePublisherControl(
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [computedState.audioTrack]);
 
-    const streamCreatedHandler = useCallback(
-        (event: EventMap["streamCreated"]) => {
-            console.log("Stream created", event.stream.streamId);
-
-            const isScreenShare = event.stream.videoType === "screen";
-
-            openTokMethods.subscribe({
-                stream: event.stream,
-                element: isScreenShare
-                    ? screenContainerRef.current ?? undefined
-                    : videoContainerRef.current ?? undefined,
-                options: {
-                    insertMode: "append",
-                    height: isScreenShare ? "100%" : "300",
-                    width: isScreenShare ? "100%" : "300",
-                    style: {
-                        nameDisplayMode: "on",
-                    },
-                },
-            });
-        },
-        [openTokMethods, screenContainerRef, videoContainerRef]
-    );
-    useSessionEventHandler("streamCreated", streamCreatedHandler, openTokProps.session);
-
-    const streamDestroyedHandler = useCallback(
-        (event: EventMap["streamDestroyed"]) => {
-            console.log("Stream destroyed", event.stream.streamId);
-            openTokMethods.unsubscribe({
-                stream: event.stream,
-            });
-        },
-        [openTokMethods]
-    );
-    useSessionEventHandler("streamDestroyed", streamDestroyedHandler, openTokProps.session);
-
     const sessionConnectedHandler = useCallback(
         async (event: EventMap["sessionConnected"]) => {
             console.log("Session connected", event.target.sessionId);

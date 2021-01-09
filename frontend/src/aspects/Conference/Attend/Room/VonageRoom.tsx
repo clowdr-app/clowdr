@@ -14,6 +14,7 @@ import PlaceholderImage from "./PlaceholderImage";
 import { PreJoin } from "./PreJoin";
 import { usePublisherControl } from "./usePublisherControl";
 import { VonageRoomControlBar } from "./VonageRoomControlBar";
+import { VonageSubscriber } from "./VonageSubscriber";
 
 gql`
     mutation GetRoomVonageToken($roomId: uuid!) {
@@ -162,6 +163,21 @@ export function VonageRoom({
                     ) : (
                         <></>
                     )}
+                    {openTokProps.streams
+                        .filter(
+                            (stream) =>
+                                stream.videoType === "camera" &&
+                                !(
+                                    openTokProps.publisher["camera"] &&
+                                    stream.connection.connectionId ===
+                                        openTokProps.publisher["camera"].stream?.connection.connectionId
+                                )
+                        )
+                        .map((stream) => (
+                            <Box key={stream.streamId} w={300} h={300}>
+                                <VonageSubscriber stream={stream} />
+                            </Box>
+                        ))}
                     {openTokProps.connections
                         .filter(
                             (connection) =>
@@ -178,15 +194,13 @@ export function VonageRoom({
                             </Box>
                         ))}
                 </Flex>
-                <Box
-                    position="absolute"
-                    width="100%"
-                    height="100%"
-                    top="0"
-                    left="0"
-                    hidden={!receivingScreenShare}
-                    ref={screenContainerRef}
-                ></Box>
+                <Box position="absolute" width="100%" height="100%" top="0" left="0" hidden={!receivingScreenShare}>
+                    {openTokProps.streams
+                        .filter((stream) => stream.videoType === "screen")
+                        .map((stream) => (
+                            <VonageSubscriber key={stream.streamId} stream={stream} />
+                        ))}
+                </Box>
                 {openTokProps.session?.connection ? (
                     <></>
                 ) : (

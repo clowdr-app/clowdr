@@ -1,7 +1,8 @@
 import { SettingsIcon } from "@chakra-ui/icons";
-import { Button, HStack, useDisclosure } from "@chakra-ui/react";
+import { Box, Button, HStack, useDisclosure } from "@chakra-ui/react";
 import React, { useCallback } from "react";
 import FAIcon from "../../../Icons/FAIcon";
+import { useOpenTok } from "../../../Vonage/useOpenTok";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../Vonage/useVonageRoom";
 import DeviceChooserModal from "./DeviceChooserModal";
 
@@ -15,6 +16,7 @@ export function VonageRoomControlBar({
     inRoom: boolean;
 }): JSX.Element {
     const { state, dispatch } = useVonageRoom();
+    const [openTokProps, openTokMethods] = useOpenTok();
     const { isOpen, onClose, onOpen } = useDisclosure();
 
     const startCamera = useCallback(() => {
@@ -67,25 +69,39 @@ export function VonageRoomControlBar({
                 </Button>
                 {state.cameraStream ? (
                     <Button onClick={stopCamera}>
-                        <FAIcon icon="video-slash" iconStyle="s" mr="auto" />
+                        <FAIcon icon="video-slash" iconStyle="s" />
                         <span style={{ marginLeft: "1rem" }}>Stop video</span>
                     </Button>
                 ) : (
                     <Button onClick={startCamera}>
-                        <FAIcon icon="video" iconStyle="s" mr="auto" />
+                        <FAIcon icon="video" iconStyle="s" />
                         <span style={{ marginLeft: "1rem" }}>Start video</span>
                     </Button>
                 )}
                 {state.microphoneStream ? (
-                    <Button onClick={stopMicrophone} mr="auto">
-                        <FAIcon icon="microphone-slash" iconStyle="s" mr="auto" />
+                    <Button onClick={stopMicrophone}>
+                        <FAIcon icon="microphone-slash" iconStyle="s" />
                         <span style={{ marginLeft: "1rem" }}>Stop microphone</span>
                     </Button>
                 ) : (
-                    <Button onClick={startMicrophone} mr="auto">
-                        <FAIcon icon="microphone" iconStyle="s" mr="auto" />
+                    <Button onClick={startMicrophone}>
+                        <FAIcon icon="microphone" iconStyle="s" />
                         <span style={{ marginLeft: "1rem" }}>Start microphone</span>
                     </Button>
+                )}
+                {openTokProps.isSessionConnected ? (
+                    state.screenShareIntendedEnabled ? (
+                        <Button onClick={stopScreenShare} mr="auto" colorScheme="red">
+                            <span style={{ marginLeft: "1rem" }}>Stop sharing</span>
+                        </Button>
+                    ) : (
+                        <Button onClick={startScreenShare} mr="auto">
+                            <FAIcon icon="desktop" iconStyle="s" mr="auto" />
+                            <span style={{ marginLeft: "1rem" }}>Share screen</span>
+                        </Button>
+                    )
+                ) : (
+                    <Box mr="auto"></Box>
                 )}
                 {inRoom ? (
                     <Button colorScheme="green" onClick={onLeaveRoom}>

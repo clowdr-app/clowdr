@@ -8,7 +8,7 @@ export interface VonageRoomState {
     preferredMicrophoneId: string | null;
     microphoneIntendedEnabled: boolean;
     microphoneStream: MediaStream | null;
-    screenIntendedEnabled: boolean;
+    screenShareIntendedEnabled: boolean;
 }
 
 const initialRoomState: VonageRoomState = {
@@ -18,7 +18,7 @@ const initialRoomState: VonageRoomState = {
     preferredMicrophoneId: null,
     microphoneIntendedEnabled: false,
     microphoneStream: null,
-    screenIntendedEnabled: false,
+    screenShareIntendedEnabled: false,
 };
 
 type VonageRoomStateAction =
@@ -132,7 +132,7 @@ function reducer(state: VonageRoomState, action: VonageRoomStateAction): VonageR
             return { ...state, microphoneStream: action.mediaStream };
 
         case VonageRoomStateActionType.SetScreenShareIntendedState:
-            return { ...state, screenIntendedEnabled: action.screenEnabled };
+            return { ...state, screenShareIntendedEnabled: action.screenEnabled };
     }
 }
 
@@ -186,17 +186,24 @@ export function VonageRoomStateProvider({
                     video: {
                         ...deviceConstraints,
                     },
+                    audio: false,
                 });
                 dispatch({
                     type: VonageRoomStateActionType.SetCameraMediaStream,
                     mediaStream,
                 });
             } catch (e) {
+                dispatch({
+                    type: VonageRoomStateActionType.SetCameraIntendedState,
+                    cameraEnabled: false,
+                });
                 console.error("Failed to start camera preview", e);
                 toast({
-                    description: "Failed to start camera",
+                    title: "Failed to start camera",
+                    description: "Check that you have not denied permission to use the camera in your browser.",
                     status: "error",
                 });
+                return;
             }
         }
 
@@ -229,17 +236,24 @@ export function VonageRoomStateProvider({
                     audio: {
                         ...deviceConstraints,
                     },
+                    video: false,
                 });
                 dispatch({
                     type: VonageRoomStateActionType.SetMicrophoneMediaStream,
                     mediaStream,
                 });
             } catch (e) {
+                dispatch({
+                    type: VonageRoomStateActionType.SetMicrophoneIntendedState,
+                    microphoneEnabled: false,
+                });
                 console.error("Failed to start microphone preview", e);
                 toast({
-                    description: "Failed to start microphone",
+                    title: "Failed to start microphone",
+                    description: "Check that you have not denied permission to use the microphone in your web browser",
                     status: "error",
                 });
+                return;
             }
         }
 

@@ -7,7 +7,9 @@ import {
     useGetEventVonageTokenMutation,
     useGetRoomVonageTokenMutation,
 } from "../../../../generated/graphql";
-import useOpenTok from "../../../Vonage/useOpenTok";
+import { OpenTokProvider } from "../../../Vonage/OpenTokProvider";
+import { useOpenTok } from "../../../Vonage/useOpenTok";
+import PlaceholderImage from "./PlaceholderImage";
 import { PreJoin } from "./PreJoin";
 import { usePublisherControl } from "./usePublisherControl";
 import { VonageRoomControlBar } from "./VonageRoomControlBar";
@@ -43,7 +45,9 @@ export function BreakoutVonageRoom({ room }: { room: RoomDetailsFragment }): JSX
     }, [getRoomVonageToken]);
 
     return room.publicVonageSessionId ? (
-        <VonageRoom vonageSessionId={room.publicVonageSessionId} getAccessToken={getAccessToken} />
+        <OpenTokProvider>
+            <VonageRoom vonageSessionId={room.publicVonageSessionId} getAccessToken={getAccessToken} />
+        </OpenTokProvider>
     ) : (
         <>No breakout session exists </>
     );
@@ -65,7 +69,9 @@ export function EventVonageRoom({ event }: { event: RoomEventDetailsFragment }):
     }, [getEventVonageToken]);
 
     return event.eventVonageSession ? (
-        <VonageRoom vonageSessionId={event.eventVonageSession.sessionId} getAccessToken={getAccessToken} />
+        <OpenTokProvider>
+            <VonageRoom vonageSessionId={event.eventVonageSession.sessionId} getAccessToken={getAccessToken} />
+        </OpenTokProvider>
     ) : (
         <>No video session exists </>
     );
@@ -82,7 +88,7 @@ export function VonageRoom({
     const toast = useToast();
     const videoContainerRef = useRef<HTMLDivElement>(null);
     const cameraPreviewRef = useRef<HTMLVideoElement>(null);
-    usePublisherControl(openTokProps, openTokMethods, videoContainerRef);
+    usePublisherControl(videoContainerRef);
 
     useEffect(() => {
         async function initSession() {
@@ -141,7 +147,15 @@ export function VonageRoom({
     return (
         <Box display="grid" gridTemplateRows="1fr auto">
             <Box maxH="80vh" overflowY="auto">
-                <Flex width="100%" height="auto" flexWrap="wrap" ref={videoContainerRef} overflowY="auto" />
+                <Flex width="100%" height="auto" flexWrap="wrap" ref={videoContainerRef} overflowY="auto">
+                    {openTokProps.isSessionConnected && !openTokProps.publisher["camera"] ? (
+                        <Box position="relative" w={300} h={300}>
+                            <PlaceholderImage />
+                        </Box>
+                    ) : (
+                        <></>
+                    )}
+                </Flex>
                 {openTokProps.session?.connection ? (
                     <></>
                 ) : (

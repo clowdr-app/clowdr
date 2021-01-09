@@ -7,6 +7,7 @@ import {
     useGetEventVonageTokenMutation,
     useGetRoomVonageTokenMutation,
 } from "../../../../generated/graphql";
+import useUserId from "../../../Auth/useUserId";
 import { OpenTokProvider } from "../../../Vonage/OpenTokProvider";
 import { useOpenTok } from "../../../Vonage/useOpenTok";
 import PlaceholderImage from "./PlaceholderImage";
@@ -85,6 +86,7 @@ export function VonageRoom({
     getAccessToken: () => Promise<string>;
 }): JSX.Element {
     const [openTokProps, openTokMethods] = useOpenTok();
+    const userId = useUserId();
     const toast = useToast();
     const videoContainerRef = useRef<HTMLDivElement>(null);
     const cameraPreviewRef = useRef<HTMLVideoElement>(null);
@@ -155,6 +157,21 @@ export function VonageRoom({
                     ) : (
                         <></>
                     )}
+                    {openTokProps.connections
+                        .filter(
+                            (connection) =>
+                                userId &&
+                                !connection.data.includes(userId) &&
+                                !openTokProps.subscribers.find(
+                                    (subscriber) =>
+                                        subscriber.stream?.connection.connectionId === connection.connectionId
+                                )
+                        )
+                        .map((connection) => (
+                            <Box key={connection.connectionId} position="relative" w={300} h={300}>
+                                <PlaceholderImage />
+                            </Box>
+                        ))}
                 </Flex>
                 {openTokProps.session?.connection ? (
                     <></>

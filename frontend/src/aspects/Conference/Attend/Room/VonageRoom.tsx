@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 import { Box, Flex, useToast, VStack } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import {
     RoomDetailsFragment,
     RoomEventDetailsFragment,
@@ -89,8 +89,9 @@ export function VonageRoom({
     const userId = useUserId();
     const toast = useToast();
     const videoContainerRef = useRef<HTMLDivElement>(null);
+    const screenContainerRef = useRef<HTMLDivElement>(null);
     const cameraPreviewRef = useRef<HTMLVideoElement>(null);
-    usePublisherControl(videoContainerRef);
+    usePublisherControl(videoContainerRef, screenContainerRef);
 
     useEffect(() => {
         async function initSession() {
@@ -146,9 +147,13 @@ export function VonageRoom({
         }
     }, [openTokMethods, openTokProps.isSessionConnected]);
 
+    const receivingScreenShare = useMemo(() => openTokProps.streams.find((s) => s.videoType === "screen"), [
+        openTokProps.streams,
+    ]);
+
     return (
         <Box display="grid" gridTemplateRows="1fr auto">
-            <Box maxH="80vh" overflowY="auto">
+            <Box maxH="80vh" height={receivingScreenShare ? "70vh" : undefined} overflowY="auto" position="relative">
                 <Flex width="100%" height="auto" flexWrap="wrap" ref={videoContainerRef} overflowY="auto">
                     {openTokProps.isSessionConnected && !openTokProps.publisher["camera"] ? (
                         <Box position="relative" w={300} h={300}>
@@ -173,6 +178,15 @@ export function VonageRoom({
                             </Box>
                         ))}
                 </Flex>
+                <Box
+                    position="absolute"
+                    width="100%"
+                    height="100%"
+                    top="0"
+                    left="0"
+                    hidden={!receivingScreenShare}
+                    ref={screenContainerRef}
+                ></Box>
                 {openTokProps.session?.connection ? (
                     <></>
                 ) : (

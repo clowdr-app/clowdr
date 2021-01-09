@@ -1,6 +1,6 @@
 import { SettingsIcon } from "@chakra-ui/icons";
 import { Box, Button, HStack, useDisclosure } from "@chakra-ui/react";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import FAIcon from "../../../Icons/FAIcon";
 import { useOpenTok } from "../../../Vonage/useOpenTok";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../Vonage/useVonageRoom";
@@ -61,6 +61,10 @@ export function VonageRoomControlBar({
         });
     }, [dispatch]);
 
+    const receivingScreenShare = useMemo(() => openTokProps.streams.find((s) => s.videoType === "screen"), [
+        openTokProps.streams,
+    ]);
+
     return (
         <>
             <HStack p={2}>
@@ -89,7 +93,7 @@ export function VonageRoomControlBar({
                         <span style={{ marginLeft: "1rem" }}>Start microphone</span>
                     </Button>
                 )}
-                {openTokProps.isSessionConnected ? (
+                {openTokProps.isSessionConnected && (!receivingScreenShare || state.screenShareIntendedEnabled) ? (
                     state.screenShareIntendedEnabled ? (
                         <Button onClick={stopScreenShare} mr="auto" colorScheme="red">
                             <span style={{ marginLeft: "1rem" }}>Stop sharing</span>

@@ -4,7 +4,10 @@ import { useOpenTok } from "../../../Vonage/useOpenTok";
 import useSessionEventHandler, { EventMap } from "../../../Vonage/useSessionEventHandler";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../Vonage/useVonageRoom";
 
-export function usePublisherControl(videoContainerRef: React.RefObject<HTMLDivElement>): void {
+export function usePublisherControl(
+    videoContainerRef: React.RefObject<HTMLDivElement>,
+    screenContainerRef: React.RefObject<HTMLDivElement>
+): void {
     const { state, computedState, dispatch } = useVonageRoom();
     const [openTokProps, openTokMethods] = useOpenTok();
     const toast = useToast();
@@ -133,20 +136,25 @@ export function usePublisherControl(videoContainerRef: React.RefObject<HTMLDivEl
     const streamCreatedHandler = useCallback(
         (event: EventMap["streamCreated"]) => {
             console.log("Stream created", event.stream.streamId);
+
+            const isScreenShare = event.stream.videoType === "screen";
+
             openTokMethods.subscribe({
                 stream: event.stream,
-                element: videoContainerRef.current ?? undefined,
+                element: isScreenShare
+                    ? screenContainerRef.current ?? undefined
+                    : videoContainerRef.current ?? undefined,
                 options: {
                     insertMode: "append",
-                    height: "300",
-                    width: "300",
+                    height: isScreenShare ? "100%" : "300",
+                    width: isScreenShare ? "100%" : "300",
                     style: {
                         nameDisplayMode: "on",
                     },
                 },
             });
         },
-        [openTokMethods, videoContainerRef]
+        [openTokMethods, screenContainerRef, videoContainerRef]
     );
     useSessionEventHandler("streamCreated", streamCreatedHandler, openTokProps.session);
 

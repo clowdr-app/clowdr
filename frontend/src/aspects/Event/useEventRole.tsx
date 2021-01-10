@@ -1,19 +1,22 @@
 import { gql } from "@apollo/client";
 import { useMemo } from "react";
-import type { EventPersonRole_Enum, RoomEventDetailsFragment } from "../../generated/graphql";
+import { EventPersonRole_Enum, RoomEventDetailsFragment, useUserEventRolesSubscription } from "../../generated/graphql";
 
 interface Result {
     roles: EventPersonRole_Enum[];
 }
 
 export function useEventRoles(userId: string, eventDetails: RoomEventDetailsFragment | null): Result {
+    const { data: currentEventRolesData } = useUserEventRolesSubscription({
+        variables: {
+            eventId: eventDetails?.id,
+            userId: userId ?? "",
+        },
+    });
+
     const roles = useMemo(() => {
-        return (
-            eventDetails?.eventPeople
-                .filter((person) => person.attendee?.userId === userId)
-                .map((person) => person.roleName) ?? []
-        );
-    }, [eventDetails, userId]);
+        return currentEventRolesData?.Event_by_pk?.eventPeople.map((person) => person.roleName) ?? [];
+    }, [currentEventRolesData?.Event_by_pk?.eventPeople]);
 
     return {
         roles,

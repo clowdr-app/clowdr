@@ -1,16 +1,16 @@
 import * as R from "ramda";
 import { useCallback, useEffect, useState } from "react";
-import type { RoomEventDetailsFragment, RoomEventsFragment } from "../../../../generated/graphql";
+import type { RoomEventsFragment, RoomEventSummaryFragment } from "../../../../generated/graphql";
 import usePolling from "../../../Generic/usePolling";
 
 interface Result {
-    currentRoomEvent: RoomEventDetailsFragment | null;
-    nextRoomEvent: RoomEventDetailsFragment | null;
+    currentRoomEvent: RoomEventSummaryFragment | null;
+    nextRoomEvent: RoomEventSummaryFragment | null;
     withinThreeMinutesOfEvent: boolean;
 }
 
 export function useCurrentRoomEvent(roomEvents: RoomEventsFragment): Result {
-    const [currentRoomEvent, setCurrentRoomEvent] = useState<RoomEventDetailsFragment | null>(null);
+    const [currentRoomEvent, setCurrentRoomEvent] = useState<RoomEventSummaryFragment | null>(null);
     const getCurrentEvent = useCallback(() => {
         const now = new Date().getTime();
         const eventsNow = roomEvents.events.filter((event) => {
@@ -38,7 +38,7 @@ export function useCurrentRoomEvent(roomEvents: RoomEventsFragment): Result {
     }, [roomEvents.events]);
     usePolling(getWithinThreeMinutesOfEvent, 10000, true);
 
-    const [nextRoomEvent, setNextRoomEvent] = useState<RoomEventDetailsFragment | null>(null);
+    const [nextRoomEvent, setNextRoomEvent] = useState<RoomEventSummaryFragment | null>(null);
     const getNextEvent = useCallback(() => {
         const now = new Date().getTime();
         const sortedEvents = R.sortBy((event) => event.startTime, roomEvents.events);

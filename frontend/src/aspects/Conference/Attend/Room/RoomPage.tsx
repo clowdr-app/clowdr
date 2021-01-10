@@ -1,8 +1,14 @@
 import { gql } from "@apollo/client";
-import React, { useEffect, useMemo } from "react";
-import { Permission_Enum, RoomDetailsFragment, useGetRoomDetailsQuery } from "../../../../generated/graphql";
+import React, { useEffect } from "react";
+import {
+    Permission_Enum,
+    RoomDetailsFragment,
+    useEventPeopleForRoomSubscription,
+    useGetRoomDetailsQuery,
+} from "../../../../generated/graphql";
 import usePolling from "../../../Generic/usePolling";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
+import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import usePrimaryMenuButtons from "../../../Menu/usePrimaryMenuButtons";
 import RoomMembersProvider from "../../../Room/RoomMembersProvider";
 import { useTitle } from "../../../Utils/useTitle";
@@ -11,7 +17,24 @@ import { useConference } from "../../useConference";
 import { Room } from "./Room";
 
 gql`
-    query GetRoomDetails($roomId: uuid!, $eventsFrom: timestamptz!) {
+    subscription EventPeopleForRoom($roomId: uuid!) {
+        EventPerson(where: { event: { room: { id: { _eq: $roomId } } } }) {
+            ...EventPersonDetails
+        }
+    }
+
+    fragment EventPersonDetails on EventPerson {
+        id
+        name
+        roleName
+        eventId
+        attendee {
+            id
+            userId
+        }
+    }
+
+    query GetRoomDetails($roomId: uuid!) {
         Room_by_pk(id: $roomId) {
             ...RoomDetails
         }
@@ -33,18 +56,16 @@ gql`
     }
 
     fragment RoomEvents on Room {
-        events(where: { endTime: { _gt: $eventsFrom } }) {
-            ...RoomEventDetails
+        events {
+            ...RoomEventSummary
         }
     }
 
-    fragment RoomEventDetails on Event {
+    fragment RoomEventSummary on Event {
         id
         startTime
         name
-        durationSeconds
         endTime
-        intendedRoomModeName
         eventPeople {
             id
             roleName
@@ -57,30 +78,18 @@ gql`
         contentGroup {
             ...ContentGroupData
         }
-        eventVonageSession {
-            id
-            sessionId
-        }
     }
 `;
 
 export default function RoomPage({ roomId }: { roomId: string }): JSX.Element {
-    const currentTime = useMemo(() => new Date().toISOString(), []);
     const result = useGetRoomDetailsQuery({
         variables: {
             roomId,
-            eventsFrom: currentTime,
         },
     });
     const title = useTitle(result.loading ? "Loading room" : result.data?.Room_by_pk?.name ?? "Unknown room");
 
-    usePolling(
-        () => {
-            result.refetch({ eventsFrom: new Date().toISOString() });
-        },
-        10000,
-        true
-    );
+    usePolling(result.refetch, 30000, true);
 
     const conference = useConference();
     const { setPrimaryMenuButtons } = usePrimaryMenuButtons();
@@ -95,6 +104,14 @@ export default function RoomPage({ roomId }: { roomId: string }): JSX.Element {
         ]);
     }, [conference.slug, setPrimaryMenuButtons]);
 
+    const { data: eventPeopleData, error } = useEventPeopleForRoomSubscription({
+        variables: {
+            roomId,
+        },
+    });
+    eventPeopleData?.EventPerson;
+    useQueryErrorToast(error);
+
     return (
         <RequireAtLeastOnePermissionWrapper
             permissions={[
@@ -106,7 +123,9 @@ export default function RoomPage({ roomId }: { roomId: string }): JSX.Element {
             {title}
             <RoomMembersProvider roomId={roomId}>
                 <ApolloQueryWrapper getter={(data) => data.Room_by_pk} queryResult={result}>
-                    {(room: RoomDetailsFragment) => <Room roomDetails={room} />}
+                    {(room: RoomDetailsFragment) => (
+                        <Room roomDetails={room} eventPeople={eventPeopleData?.EventPerson ?? []} />
+                    )}
                 </ApolloQueryWrapper>
             </RoomMembersProvider>
         </RequireAtLeastOnePermissionWrapper>

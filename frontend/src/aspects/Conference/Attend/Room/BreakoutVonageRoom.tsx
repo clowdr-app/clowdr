@@ -2,6 +2,7 @@ import { gql } from "@apollo/client";
 import React, { useCallback } from "react";
 import { RoomDetailsFragment, useGetRoomVonageTokenMutation } from "../../../../generated/graphql";
 import { OpenTokProvider } from "../../../Vonage/OpenTokProvider";
+import { VonageRoomStateProvider } from "../../../Vonage/useVonageRoom";
 import { VonageRoom } from "./Vonage/VonageRoom";
 
 gql`
@@ -29,9 +30,11 @@ export function BreakoutVonageRoom({ room }: { room: RoomDetailsFragment }): JSX
     }, [getRoomVonageToken]);
 
     return room.publicVonageSessionId ? (
-        <OpenTokProvider>
-            <VonageRoom vonageSessionId={room.publicVonageSessionId} getAccessToken={getAccessToken} />
-        </OpenTokProvider>
+        <VonageRoomStateProvider>
+            <OpenTokProvider>
+                <VonageRoom vonageSessionId={room.publicVonageSessionId} getAccessToken={getAccessToken} />
+            </OpenTokProvider>
+        </VonageRoomStateProvider>
     ) : (
         <>No breakout session exists </>
     );

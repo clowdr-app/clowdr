@@ -23,7 +23,15 @@ import useRoomParticipants from "../../../Room/useRoomParticipants";
 import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
 import { AddRoomPersonModal } from "./AddRoomPersonModal";
 
-export function RoomControlBar({ roomDetails }: { roomDetails: RoomDetailsFragment }): JSX.Element {
+export function RoomControlBar({
+    roomDetails,
+    onSetBackstage,
+    backstage,
+}: {
+    roomDetails: RoomDetailsFragment;
+    onSetBackstage: (backstage: boolean) => void;
+    backstage: boolean;
+}): JSX.Element {
     const user = useCurrentUser();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const roomMembers = useRoomMembers();
@@ -78,6 +86,15 @@ export function RoomControlBar({ roomDetails }: { roomDetails: RoomDetailsFragme
 
     return (
         <HStack justifyContent="flex-end" m={4}>
+            {backstage ? (
+                <Button colorScheme="red" onClick={() => onSetBackstage(false)}>
+                    Exit backstage
+                </Button>
+            ) : (
+                <Button colorScheme="green" onClick={() => onSetBackstage(true)}>
+                    Go backstage
+                </Button>
+            )}
             {roomDetails.roomPeople.find(
                 (person) =>
                     user.user.attendees.find((myAttendee) => myAttendee.id === person.attendee.id) &&

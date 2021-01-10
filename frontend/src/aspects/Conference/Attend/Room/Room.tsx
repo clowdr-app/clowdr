@@ -9,34 +9,29 @@ import {
     TabPanel,
     TabPanels,
     Tabs,
-    Tag,
     Text,
     useBreakpointValue,
     useColorModeValue,
 } from "@chakra-ui/react";
 import React, { useCallback, useMemo, useState } from "react";
 import ReactPlayer from "react-player";
-import { RoomDetailsFragment, useUserEventRolesSubscription } from "../../../../generated/graphql";
-import useUserId from "../../../Auth/useUserId";
-import { VonageRoomStateProvider } from "../../../Vonage/useVonageRoom";
+import type { EventPersonDetailsFragment, RoomDetailsFragment } from "../../../../generated/graphql";
 import { ContentGroupSummary } from "../Content/ContentGroupSummary";
 import { BreakoutVonageRoom } from "./BreakoutVonageRoom";
-import { EventVonageRoom } from "./Event/EventVonageRoom";
+import { RoomBackstage } from "./RoomBackstage";
 import { RoomControlBar } from "./RoomControlBar";
 import { useCurrentRoomEvent } from "./useCurrentRoomEvent";
 
-export function Room({ roomDetails }: { roomDetails: RoomDetailsFragment }): JSX.Element {
+export function Room({
+    roomDetails,
+    eventPeople,
+}: {
+    roomDetails: RoomDetailsFragment;
+    eventPeople: readonly EventPersonDetailsFragment[];
+}): JSX.Element {
     const backgroundColor = useColorModeValue("gray.50", "gray.900");
     const stackColumns = useBreakpointValue({ base: true, lg: false });
-    const { currentRoomEvent, withinThreeMinutesOfEvent, nextRoomEvent } = useCurrentRoomEvent(roomDetails);
-    const userId = useUserId();
-
-    const { data: currentEventRolesData } = useUserEventRolesSubscription({
-        variables: {
-            eventId: currentRoomEvent?.id,
-            userId: userId ?? "",
-        },
-    });
+    const { currentRoomEvent, withinThreeMinutesOfEvent } = useCurrentRoomEvent(roomDetails);
 
     const hlsUri = useMemo(() => {
         if (!roomDetails.mediaLiveChannel) {
@@ -47,17 +42,6 @@ export function Room({ roomDetails }: { roomDetails: RoomDetailsFragment }): JSX
         return finalUri.toString();
     }, [roomDetails.mediaLiveChannel]);
 
-    const canJoinCurrentEventRoom = useMemo(() => {
-        return (
-            currentEventRolesData?.Event_by_pk?.eventPeople &&
-            currentEventRolesData?.Event_by_pk?.eventPeople.length > 0
-        );
-    }, [currentEventRolesData?.Event_by_pk?.eventPeople]);
-
-    const canJoinNextEventRoom = useMemo(() => {
-        return !!nextRoomEvent?.eventPeople.find((person) => person.attendee?.userId === userId);
-    }, [nextRoomEvent?.eventPeople, userId]);
-
     const [intendPlayStream, setIntendPlayStream] = useState<boolean>(true);
     const [currentTab, setCurrentTab] = useState<number>(0);
     const handleTabsChange = useCallback(
@@ -67,6 +51,8 @@ export function Room({ roomDetails }: { roomDetails: RoomDetailsFragment }): JSX
         [setCurrentTab]
     );
 
+    const [backstage, setBackstage] = useState<boolean>(false);
+
     return (
         <Grid
             width="100%"
@@ -75,26 +61,20 @@ export function Room({ roomDetails }: { roomDetails: RoomDetailsFragment }): JSX
             gridTemplateRows={["min-content 1fr 1fr", "min-content 1fr 1fr", "min-content 1fr"]}
         >
             <GridItem colSpan={[1, 1, 2]}>
-                <RoomControlBar roomDetails={roomDetails} />
+                <RoomControlBar roomDetails={roomDetails} onSetBackstage={setBackstage} backstage={backstage} />
             </GridItem>
             <GridItem textAlign="left" overflowY={stackColumns ? "visible" : "auto"} p={2}>
-                <Tabs width="100%" background={backgroundColor} index={currentTab} onChange={handleTabsChange}>
+                <RoomBackstage backstage={backstage} roomDetails={roomDetails} eventPeople={eventPeople} />
+                <Tabs
+                    width="100%"
+                    background={backgroundColor}
+                    index={currentTab}
+                    onChange={handleTabsChange}
+                    display={backstage ? "none" : "block"}
+                >
                     <TabList>
                         {hlsUri && withinThreeMinutesOfEvent && <Tab disabled={!withinThreeMinutesOfEvent}>Event</Tab>}
                         <Tab>Breakout Room</Tab>
-                        {canJoinCurrentEventRoom && currentRoomEvent && (
-                            <Tab>
-                                Event Room ({currentRoomEvent.name}){" "}
-                                <Tag ml={2} colorScheme="green">
-                                    Now
-                                </Tag>
-                            </Tab>
-                        )}
-                        {canJoinNextEventRoom && nextRoomEvent && (
-                            <Tab>
-                                Event Room ({nextRoomEvent.name}) <Tag ml={2}>Next</Tag>
-                            </Tab>
-                        )}
                     </TabList>
                     <TabPanels>
                         {hlsUri && withinThreeMinutesOfEvent && (
@@ -120,24 +100,8 @@ export function Room({ roomDetails }: { roomDetails: RoomDetailsFragment }): JSX
                             </TabPanel>
                         )}
                         <TabPanel>
-                            <VonageRoomStateProvider>
-                                <BreakoutVonageRoom room={roomDetails} />
-                            </VonageRoomStateProvider>
+                            <BreakoutVonageRoom room={roomDetails} />
                         </TabPanel>
-                        {canJoinCurrentEventRoom && currentRoomEvent && (
-                            <TabPanel>
-                                <VonageRoomStateProvider>
-                                    <EventVonageRoom event={currentRoomEvent} />
-                                </VonageRoomStateProvider>
-                            </TabPanel>
-                        )}
-                        {canJoinNextEventRoom && nextRoomEvent && (
-                            <TabPanel>
-                                <VonageRoomStateProvider>
-                                    <EventVonageRoom event={nextRoomEvent} />
-                                </VonageRoomStateProvider>
-                            </TabPanel>
-                        )}
                     </TabPanels>
                 </Tabs>
                 <Heading as="h2" textAlign="left" mt={5}>

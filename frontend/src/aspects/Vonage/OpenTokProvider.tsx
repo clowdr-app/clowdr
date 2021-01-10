@@ -83,7 +83,8 @@ export function OpenTokProvider({
         }): Promise<OT.Session> =>
             new Promise((resolve) => {
                 const session = OT.initSession(apiKey, sessionId, sessionOptions);
-                action.update({ session, isSessionInitialized: true });
+                const isSessionConnected = !!session.connection;
+                action.update({ session, isSessionInitialized: true, isSessionConnected });
                 resolve(session);
             }),
         [action]

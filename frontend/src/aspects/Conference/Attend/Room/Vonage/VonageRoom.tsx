@@ -1,5 +1,5 @@
 import { Box, Flex, useToast, VStack } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useMemo, useRef } from "react";
 import useUserId from "../../../../Auth/useUserId";
 import { useOpenTok } from "../../../../Vonage/useOpenTok";
 import PlaceholderImage from "../PlaceholderImage";
@@ -18,28 +18,10 @@ export function VonageRoom({
     const [openTokProps, openTokMethods] = useOpenTok();
     const userId = useUserId();
     const toast = useToast();
-    const videoContainerRef = useRef<HTMLDivElement>(null);
+    const cameraPublishContainerRef = useRef<HTMLDivElement>(null);
+    const screenPublishContainerRef = useRef<HTMLDivElement>(null);
     const cameraPreviewRef = useRef<HTMLVideoElement>(null);
-    usePublisherControl(videoContainerRef);
-
-    useEffect(() => {
-        async function initSession() {
-            if (!vonageSessionId) {
-                return;
-            }
-
-            if (openTokProps.isSessionInitialized) {
-                return;
-            }
-
-            await openTokMethods.initSession({
-                apiKey: import.meta.env.SNOWPACK_PUBLIC_OPENTOK_API_KEY,
-                sessionId: vonageSessionId,
-                sessionOptions: {},
-            });
-        }
-        initSession();
-    }, [openTokMethods, openTokProps.isSessionInitialized, vonageSessionId]);
+    usePublisherControl(cameraPublishContainerRef, screenPublishContainerRef);
 
     const joinRoom = useCallback(async () => {
         console.log("Joining room");
@@ -56,11 +38,12 @@ export function VonageRoom({
         }
 
         try {
-            if (!openTokProps.session) {
-                throw new Error("No session");
-            }
-
-            await openTokMethods.connectSession(accessToken, openTokProps.session);
+            await openTokMethods.initSessionAndConnect({
+                apiKey: import.meta.env.SNOWPACK_PUBLIC_OPENTOK_API_KEY,
+                sessionId: vonageSessionId,
+                sessionOptions: {},
+                token: accessToken,
+            });
         } catch (e) {
             console.error("Failed to join room", e);
             toast({
@@ -68,7 +51,7 @@ export function VonageRoom({
                 description: "Cannot connect to room",
             });
         }
-    }, [getAccessToken, openTokMethods, openTokProps.session, toast]);
+    }, [getAccessToken, openTokMethods, toast, vonageSessionId]);
 
     const leaveRoom = useCallback(() => {
         if (openTokProps.isSessionConnected) {
@@ -82,8 +65,9 @@ export function VonageRoom({
 
     return (
         <Box display="grid" gridTemplateRows="1fr auto">
+            <Box display="none" ref={screenPublishContainerRef} />
             <Box maxH="80vh" height={receivingScreenShare ? "70vh" : undefined} overflowY="auto" position="relative">
-                <Flex width="100%" height="auto" flexWrap="wrap" ref={videoContainerRef} overflowY="auto">
+                <Flex width="100%" height="auto" flexWrap="wrap" ref={cameraPublishContainerRef} overflowY="auto">
                     {openTokProps.isSessionConnected && !openTokProps.publisher["camera"] ? (
                         <Box position="relative" w={300} h={300}>
                             <PlaceholderImage />
@@ -129,7 +113,7 @@ export function VonageRoom({
                             <VonageSubscriber key={stream.streamId} stream={stream} />
                         ))}
                 </Box>
-                {openTokProps.session?.connection ? (
+                {openTokProps.isSessionConnected ? (
                     <></>
                 ) : (
                     <VStack justifyContent="center" height="100%" width="100%">

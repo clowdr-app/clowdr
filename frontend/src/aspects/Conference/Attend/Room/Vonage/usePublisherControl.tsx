@@ -4,13 +4,21 @@ import { useOpenTok } from "../../../../Vonage/useOpenTok";
 import useSessionEventHandler, { EventMap } from "../../../../Vonage/useSessionEventHandler";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
 
-export function usePublisherControl(videoContainerRef: React.RefObject<HTMLDivElement>): void {
+export function usePublisherControl(
+    cameraPublishContainerRef: React.RefObject<HTMLDivElement>,
+    screenPublishContainerRef: React.RefObject<HTMLDivElement>
+): void {
     const { state, computedState, dispatch } = useVonageRoom();
     const [openTokProps, openTokMethods] = useOpenTok();
     const toast = useToast();
 
     useEffect(() => {
         async function fn() {
+            if (!screenPublishContainerRef.current) {
+                console.error("No element to publish to");
+                return;
+            }
+
             if (
                 state.screenShareIntendedEnabled &&
                 !openTokProps.publisher["screen"] &&
@@ -19,9 +27,10 @@ export function usePublisherControl(videoContainerRef: React.RefObject<HTMLDivEl
                 try {
                     await openTokMethods.publish({
                         name: "screen",
+                        element: screenPublishContainerRef.current,
                         options: {
                             videoSource: "screen",
-                            insertMode: "append",
+                            insertMode: "replace",
                             resolution: "1280x720",
                         },
                     });
@@ -43,17 +52,17 @@ export function usePublisherControl(videoContainerRef: React.RefObject<HTMLDivEl
             }
         }
         fn();
-    }),
-        [state.screenShareIntendedEnabled];
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [state.screenShareIntendedEnabled]);
 
     const republish = useCallback(() => {
-        if (!videoContainerRef.current) {
+        if (!cameraPublishContainerRef.current) {
             throw new Error("No element to publish to");
         }
 
         openTokMethods.republish({
             name: "camera",
-            element: videoContainerRef.current,
+            element: cameraPublishContainerRef.current,
             options: {
                 videoSource: computedState.videoTrack?.getSettings().deviceId,
                 audioSource: computedState.audioTrack?.getSettings().deviceId ?? false,
@@ -75,7 +84,7 @@ export function usePublisherControl(videoContainerRef: React.RefObject<HTMLDivEl
         openTokMethods,
         state.cameraIntendedEnabled,
         state.microphoneIntendedEnabled,
-        videoContainerRef,
+        cameraPublishContainerRef,
     ]);
 
     useEffect(() => {
@@ -116,7 +125,7 @@ export function usePublisherControl(videoContainerRef: React.RefObject<HTMLDivEl
                 }
                 // Otherwise, publish from scratch with the audio source
             } else if (openTokProps.isSessionConnected && computedState.audioTrack) {
-                if (!videoContainerRef.current) {
+                if (!cameraPublishContainerRef.current) {
                     throw new Error("No element to publish to");
                 }
 
@@ -127,7 +136,7 @@ export function usePublisherControl(videoContainerRef: React.RefObject<HTMLDivEl
                     console.log("Publishing with audio track");
                     await openTokMethods.publish({
                         name: "camera",
-                        element: videoContainerRef.current,
+                        element: cameraPublishContainerRef.current,
                         options: {
                             videoSource: videoTrack ?? false,
                             audioSource: audioTrack ?? false,
@@ -153,7 +162,7 @@ export function usePublisherControl(videoContainerRef: React.RefObject<HTMLDivEl
         async (event: EventMap["sessionConnected"]) => {
             console.log("Session connected", event.target.sessionId);
 
-            if (!videoContainerRef.current) {
+            if (!cameraPublishContainerRef.current) {
                 throw new Error("No element to publish to");
             }
 
@@ -164,7 +173,7 @@ export function usePublisherControl(videoContainerRef: React.RefObject<HTMLDivEl
                 console.log("Publishing camera");
                 await openTokMethods.publish({
                     name: "camera",
-                    element: videoContainerRef.current,
+                    element: cameraPublishContainerRef.current,
                     options: {
                         videoSource: videoTrack ?? false,
                         audioSource: audioTrack ?? false,
@@ -182,7 +191,7 @@ export function usePublisherControl(videoContainerRef: React.RefObject<HTMLDivEl
             }
         },
         [
-            videoContainerRef,
+            cameraPublishContainerRef,
             openTokProps.publisher,
             openTokMethods,
             computedState.videoTrack,

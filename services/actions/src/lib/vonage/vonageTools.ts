@@ -1,15 +1,18 @@
 import { gql } from "@apollo/client/core";
 import { shortId } from "../../aws/awsClient";
 import {
+    CreateEventParticipantStreamDocument,
     CreateRoomParticipantDocument,
     GetEventBroadcastDetailsDocument,
+    GetEventByVonageSessionIdDocument,
     GetRoomBySessionIdDocument,
     GetRoomParticipantDetailsDocument,
+    RemoveEventParticipantStreamDocument,
     RemoveRoomParticipantDocument,
 } from "../../generated/graphql";
 import { apolloClient } from "../../graphqlClient";
-import * as Vonage from "./vonageClient";
-import { stopBroadcast } from "./vonageClient";
+import { StreamData } from "../../types/vonage";
+import Vonage from "./vonageClient";
 
 gql`
     query GetEventBroadcastDetails($eventId: uuid!) {
@@ -179,7 +182,7 @@ export async function stopEventBroadcasts(eventId: string): Promise<void> {
     for (const existingBroadcast of existingSessionBroadcasts) {
         try {
             if (existingBroadcast.status === "started") {
-                await stopBroadcast(existingBroadcast.id);
+                await Vonage.stopBroadcast(existingBroadcast.id);
             }
         } catch (e) {
             console.error("Could not stop existing session broadcast", eventId, existingBroadcast.id);
@@ -287,8 +290,8 @@ export async function addRoomParticipant(
     }
 
     if (roomResult.data.Room.length !== 1) {
-        console.error("Could not find room associated with Vonage session ID", sessionId, attendeeId);
-        throw new Error("Could not find room associated with Vonage session ID");
+        console.log("No room matching this session, skipping participant addition.", sessionId, attendeeId);
+        return;
     }
 
     try {
@@ -355,13 +358,13 @@ export async function removeRoomParticipant(
     });
 
     if (result.error || result.errors) {
-        console.error("Could not retrieve room from Vonage session ID", sessionId, attendeeId);
+        console.log("Could not retrieve room from Vonage session ID", sessionId, attendeeId);
         throw new Error("Could not retrieve room from Vonage session ID");
     }
 
     if (result.data.Room.length !== 1) {
-        console.error("Could not find room associated with Vonage session ID", sessionId, attendeeId);
-        throw new Error("Could not find room associated with Vonage session ID");
+        console.log("No room matching this session, skipping participant removal.", sessionId, attendeeId);
+        return;
     }
 
     const removeResult = await apolloClient.mutate({
@@ -378,6 +381,146 @@ export async function removeRoomParticipant(
         !removeResult.data?.delete_RoomParticipant?.affected_rows ||
         removeResult.data.delete_RoomParticipant.affected_rows === 0
     ) {
-        console.warn("Could not find participant to remove", sessionId, attendeeId);
+        console.warn("Could not find participant to remove for room", sessionId, attendeeId);
+    }
+}
+
+gql`
+    query GetEventByVonageSessionId($sessionId: String!) {
+        Event(where: { eventVonageSession: { sessionId: { _eq: $sessionId } } }) {
+            id
+            conferenceId
+        }
+    }
+
+    mutation CreateEventParticipantStream(
+        $attendeeId: uuid!
+        $conferenceId: uuid!
+        $eventId: uuid!
+        $vonageConnectionId: String!
+        $vonageStreamId: String!
+        $vonageStreamType: String!
+    ) {
+        insert_EventParticipantStream_one(
+            object: {
+                attendeeId: $attendeeId
+                conferenceId: $conferenceId
+                eventId: $eventId
+                vonageConnectionId: $vonageConnectionId
+                vonageStreamId: $vonageStreamId
+                vonageStreamType: $vonageStreamType
+            }
+        ) {
+            id
+        }
+    }
+`;
+
+export async function addEventParticipantStream(
+    sessionId: string,
+    attendeeId: string,
+    stream: StreamData
+): Promise<void> {
+    const eventResult = await apolloClient.query({
+        query: GetEventByVonageSessionIdDocument,
+        variables: {
+            sessionId,
+        },
+    });
+
+    if (eventResult.error || eventResult.errors) {
+        console.error("Error while retrieving event from Vonage session ID", sessionId, attendeeId);
+        throw new Error("Error while retrieving event from Vonage session ID");
+    }
+
+    if (eventResult.data.Event.length !== 1) {
+        console.log("No event matching this session, skipping participant addition.", sessionId, attendeeId);
+        return;
+    }
+
+    try {
+        await apolloClient.mutate({
+            mutation: CreateEventParticipantStreamDocument,
+            variables: {
+                attendeeId,
+                conferenceId: eventResult.data.Event[0].conferenceId,
+                eventId: eventResult.data.Event[0].id,
+                vonageConnectionId: stream.connection.id,
+                vonageStreamId: stream.id,
+                vonageStreamType: stream.videoType ?? "camera",
+            },
+        });
+    } catch (e) {
+        // If there is already a row for this event, kick the previous connection before recording the new one
+        console.error(
+            "Error while adding event participant stream",
+            eventResult.data.Event[0].id,
+            attendeeId,
+            stream.id
+        );
+        throw new Error("Error while adding event participant stream");
+    }
+}
+
+gql`
+    mutation RemoveEventParticipantStream(
+        $attendeeId: uuid!
+        $conferenceId: uuid!
+        $eventId: uuid!
+        $vonageConnectionId: String!
+        $vonageStreamId: String!
+    ) {
+        delete_EventParticipantStream(
+            where: {
+                attendeeId: { _eq: $attendeeId }
+                conferenceId: { _eq: $conferenceId }
+                eventId: { _eq: $eventId }
+                vonageConnectionId: { _eq: $vonageConnectionId }
+                vonageStreamId: { _eq: $vonageStreamId }
+            }
+        ) {
+            affected_rows
+        }
+    }
+`;
+
+export async function removeEventParticipantStream(
+    sessionId: string,
+    attendeeId: string,
+    stream: StreamData
+): Promise<void> {
+    const eventResult = await apolloClient.query({
+        query: GetEventByVonageSessionIdDocument,
+        variables: {
+            sessionId,
+        },
+    });
+
+    if (eventResult.error || eventResult.errors) {
+        console.log("Could not retrieve event from Vonage session ID", sessionId, attendeeId);
+        throw new Error("Could not retrieve event from Vonage session ID");
+    }
+
+    if (eventResult.data.Event.length !== 1) {
+        console.log("No event matching this session, skipping participant stream removal.", sessionId, attendeeId);
+        return;
+    }
+
+    const removeResult = await apolloClient.mutate({
+        mutation: RemoveEventParticipantStreamDocument,
+        variables: {
+            attendeeId,
+            conferenceId: eventResult.data.Event[0].conferenceId,
+            eventId: eventResult.data.Event[0].id,
+            vonageConnectionId: stream.connection.id,
+            vonageStreamId: stream.id,
+        },
+    });
+
+    if (
+        !removeResult.data?.delete_EventParticipantStream?.affected_rows ||
+        removeResult.data.delete_EventParticipantStream.affected_rows === 0
+    ) {
+        console.warn("Could not find participant stream to remove for event", sessionId, attendeeId, stream.id);
     }
 }

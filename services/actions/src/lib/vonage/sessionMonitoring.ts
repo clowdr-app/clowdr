@@ -2,7 +2,13 @@ import { assertType } from "typescript-is";
 import { OngoingBroadcastableVideoRoomEventsDocument } from "../../generated/graphql";
 import { apolloClient } from "../../graphqlClient";
 import { CustomConnectionData, WebhookReqBody } from "../../types/vonage";
-import { addRoomParticipant, removeRoomParticipant, startEventBroadcast } from "./vonageTools";
+import {
+    addEventParticipantStream,
+    addRoomParticipant,
+    removeEventParticipantStream,
+    removeRoomParticipant,
+    startEventBroadcast,
+} from "./vonageTools";
 
 export async function startBroadcastIfOngoingEvent(payload: WebhookReqBody): Promise<boolean> {
     const ongoingMatchingEvents = await apolloClient.query({
@@ -48,7 +54,11 @@ export async function addAndRemoveRoomParticipants(payload: WebhookReqBody): Pro
 
     if (payload.event === "connectionCreated") {
         try {
-            console.log("connectionCreated: adding participant to room", payload.sessionId, payload.connection.data);
+            console.log(
+                "connectionCreated: adding participant to room if necessary",
+                payload.sessionId,
+                payload.connection.data
+            );
             const data = JSON.parse(payload.connection.data);
             const { attendeeId } = assertType<CustomConnectionData>(data);
             await addRoomParticipant(payload.sessionId, payload.connection.id, attendeeId);
@@ -66,7 +76,7 @@ export async function addAndRemoveRoomParticipants(payload: WebhookReqBody): Pro
     if (payload.event === "connectionDestroyed") {
         try {
             console.log(
-                "connectionDestroyed: removing participant from room",
+                "connectionDestroyed: removing participant from room if necessary",
                 payload.sessionId,
                 payload.connection.data
             );
@@ -80,6 +90,44 @@ export async function addAndRemoveRoomParticipants(payload: WebhookReqBody): Pro
                 payload.connection.data,
                 e
             );
+            success = false;
+        }
+    }
+
+    return success;
+}
+
+export async function addAndRemoveEventParticipantStreams(payload: WebhookReqBody): Promise<boolean> {
+    let success = true;
+
+    if (payload.event === "streamCreated") {
+        try {
+            console.log(
+                "streamCreated: adding participant stream to event if necessary",
+                payload.sessionId,
+                payload.stream.id
+            );
+            const data = JSON.parse(payload.stream.connection.data);
+            const { attendeeId } = assertType<CustomConnectionData>(data);
+            await addEventParticipantStream(payload.sessionId, attendeeId, payload.stream);
+        } catch (e) {
+            console.error("Failed to handle Vonage streamCreated event", payload.sessionId, payload.stream.id, e);
+            success = false;
+        }
+    }
+
+    if (payload.event === "streamDestroyed") {
+        try {
+            console.log(
+                "streamCreated: removing participant stream from event if necessary",
+                payload.sessionId,
+                payload.stream.id
+            );
+            const data = JSON.parse(payload.stream.connection.data);
+            const { attendeeId } = assertType<CustomConnectionData>(data);
+            await removeEventParticipantStream(payload.sessionId, attendeeId, payload.stream);
+        } catch (e) {
+            console.error("Failed to handle Vonage streamDestroyed event", payload.sessionId, payload.stream.id, e);
             success = false;
         }
     }

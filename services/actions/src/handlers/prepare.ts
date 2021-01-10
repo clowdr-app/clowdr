@@ -23,7 +23,7 @@ import { failConferencePrepareJob } from "../lib/conferencePrepareJob";
 import { OpenShotClient } from "../lib/openshot/openshot";
 import { ChannelLayout } from "../lib/openshot/openshotProjects";
 import { createTransitions } from "../lib/transitions";
-import * as VonageClient from "../lib/vonage/vonageClient";
+import Vonage from "../lib/vonage/vonageClient";
 import { ConferencePrepareJobData, Payload } from "../types/hasura/event";
 
 gql`
@@ -521,7 +521,7 @@ async function createEventVonageSessionsBroadcastItems(conferenceId: string): Pr
     for (const room of eventsWithoutSessionResult.data.Event) {
         console.log("Creating Vonage session for event", room.id);
         try {
-            const sessionResult = await VonageClient.createSession({ mediaMode: "routed" });
+            const sessionResult = await Vonage.createSession({ mediaMode: "routed" });
 
             if (!sessionResult) {
                 throw new Error("No session ID returned from Vonage");

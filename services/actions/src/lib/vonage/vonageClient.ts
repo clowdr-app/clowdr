@@ -6,10 +6,14 @@ assert(process.env.OPENTOK_API_KEY, "OPENTOK_API_KEY environment variable must b
 assert(process.env.OPENTOK_API_SECRET, "OPENTOK_API_SECRET environment variable must be specified");
 
 const vonage = new OpenTok(process.env.OPENTOK_API_KEY, process.env.OPENTOK_API_SECRET);
-const createSession = promisify(vonage.createSession.bind(vonage));
-const startBroadcast = promisify(vonage.startBroadcast.bind(vonage));
-const stopBroadcast = promisify(vonage.stopBroadcast.bind(vonage));
-const listBroadcasts = promisify(vonage.listBroadcasts.bind(vonage));
-const forceDisconnect = promisify(vonage.forceDisconnect.bind(vonage));
 
-export { vonage, createSession, startBroadcast, listBroadcasts, stopBroadcast, forceDisconnect };
+export default {
+    vonage,
+    createSession: promisify(vonage.createSession.bind(vonage)),
+    startBroadcast: promisify(vonage.startBroadcast.bind(vonage)),
+    stopBroadcast: promisify(vonage.stopBroadcast.bind(vonage)),
+    listBroadcasts: promisify(vonage.listBroadcasts.bind(vonage)),
+    forceDisconnect: promisify(vonage.forceDisconnect.bind(vonage)),
+    setBroadcastLayout: promisify(vonage.setBroadcastLayout.bind(vonage)),
+    setStreamClassLists: promisify(vonage.setStreamClassLists.bind(vonage)),
+};

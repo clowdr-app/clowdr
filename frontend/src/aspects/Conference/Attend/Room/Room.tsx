@@ -20,9 +20,10 @@ import { RoomDetailsFragment, useUserEventRolesSubscription } from "../../../../
 import useUserId from "../../../Auth/useUserId";
 import { VonageRoomStateProvider } from "../../../Vonage/useVonageRoom";
 import { ContentGroupSummary } from "../Content/ContentGroupSummary";
+import { BreakoutVonageRoom } from "./BreakoutVonageRoom";
+import { EventVonageRoom } from "./Event/EventVonageRoom";
 import { RoomControlBar } from "./RoomControlBar";
 import { useCurrentRoomEvent } from "./useCurrentRoomEvent";
-import { BreakoutVonageRoom, EventVonageRoom } from "./VonageRoom";
 
 export function Room({ roomDetails }: { roomDetails: RoomDetailsFragment }): JSX.Element {
     const backgroundColor = useColorModeValue("gray.50", "gray.900");

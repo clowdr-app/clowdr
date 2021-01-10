@@ -35,7 +35,7 @@ interface ConnectionData {
     data: string;
 }
 
-interface StreamData {
+export interface StreamData {
     id: string;
     connection: ConnectionData;
     createdAt: number;

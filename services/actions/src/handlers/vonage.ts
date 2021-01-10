@@ -1,8 +1,12 @@
 import { gql } from "@apollo/client/core";
 import { GetEventRolesForUserDocument, GetRoomThatUserCanJoinDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { addAndRemoveRoomParticipants, startBroadcastIfOngoingEvent } from "../lib/vonage/sessionMonitoring";
-import * as Vonage from "../lib/vonage/vonageClient";
+import {
+    addAndRemoveEventParticipantStreams,
+    addAndRemoveRoomParticipants,
+    startBroadcastIfOngoingEvent,
+} from "../lib/vonage/sessionMonitoring";
+import Vonage from "../lib/vonage/vonageClient";
 import { CustomConnectionData, WebhookReqBody } from "../types/vonage";
 
 gql`
@@ -34,6 +38,13 @@ export async function handleVonageSessionMonitoringWebhook(payload: WebhookReqBo
         success &&= await addAndRemoveRoomParticipants(payload);
     } catch (e) {
         console.error("Error while adding/removing room participants", e);
+        success = false;
+    }
+
+    try {
+        success &&= await addAndRemoveEventParticipantStreams(payload);
+    } catch (e) {
+        console.error("Error while adding/removing event participant streams", e);
         success = false;
     }
 

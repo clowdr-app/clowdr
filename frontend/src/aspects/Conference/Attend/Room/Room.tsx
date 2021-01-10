@@ -14,7 +14,7 @@ import {
     useBreakpointValue,
     useColorModeValue,
 } from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import ReactPlayer from "react-player";
 import { RoomDetailsFragment, useUserEventRolesSubscription } from "../../../../generated/graphql";
 import useUserId from "../../../Auth/useUserId";
@@ -58,6 +58,15 @@ export function Room({ roomDetails }: { roomDetails: RoomDetailsFragment }): JSX
         return !!nextRoomEvent?.eventPeople.find((person) => person.attendee?.userId === userId);
     }, [nextRoomEvent?.eventPeople, userId]);
 
+    const [intendPlayStream, setIntendPlayStream] = useState<boolean>(true);
+    const [currentTab, setCurrentTab] = useState<number>(0);
+    const handleTabsChange = useCallback(
+        (tabIndex) => {
+            setCurrentTab(tabIndex);
+        },
+        [setCurrentTab]
+    );
+
     return (
         <Grid
             width="100%"
@@ -69,7 +78,7 @@ export function Room({ roomDetails }: { roomDetails: RoomDetailsFragment }): JSX
                 <RoomControlBar roomDetails={roomDetails} />
             </GridItem>
             <GridItem textAlign="left" overflowY={stackColumns ? "visible" : "auto"} p={2}>
-                <Tabs width="100%" background={backgroundColor}>
+                <Tabs width="100%" background={backgroundColor} index={currentTab} onChange={handleTabsChange}>
                     <TabList>
                         {hlsUri && withinThreeMinutesOfEvent && <Tab disabled={!withinThreeMinutesOfEvent}>Event</Tab>}
                         <Tab>Breakout Room</Tab>
@@ -99,8 +108,14 @@ export function Room({ roomDetails }: { roomDetails: RoomDetailsFragment }): JSX
                                             hlsOptions: {},
                                         },
                                     }}
-                                    playing={withinThreeMinutesOfEvent || !!currentRoomEvent}
+                                    playing={
+                                        (withinThreeMinutesOfEvent || !!currentRoomEvent) &&
+                                        currentTab === 0 &&
+                                        intendPlayStream
+                                    }
                                     controls={true}
+                                    onPause={() => setIntendPlayStream(false)}
+                                    onPlay={() => setIntendPlayStream(true)}
                                 />
                             </TabPanel>
                         )}

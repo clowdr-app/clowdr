@@ -128,7 +128,7 @@ export interface MediaLiveChannel {
 }
 
 const defaultH264Settings: Partial<H264Settings> = {
-    AfdSignaling: AfdSignaling.NONE,
+    AfdSignaling: AfdSignaling.AUTO,
     ColorMetadata: H264ColorMetadata.INSERT,
     AdaptiveQuantization: H264AdaptiveQuantization.MEDIUM,
     EntropyEncoding: H264EntropyEncoding.CABAC,

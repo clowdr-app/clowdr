@@ -118,7 +118,7 @@ export function RoomControlBar({
                     <Portal>
                         <PopoverContent>
                             <PopoverArrow />
-                            <PopoverHeader>Participants</PopoverHeader>
+                            <PopoverHeader>Breakout Participants</PopoverHeader>
                             <PopoverCloseButton />
                             <PopoverBody>{roomParticipantsList}</PopoverBody>
                         </PopoverContent>

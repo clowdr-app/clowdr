@@ -1,7 +1,7 @@
 import { Badge, Box, Heading, useColorModeValue, useToken } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import type { EventPersonDetailsFragment, RoomDetailsFragment } from "../../../../generated/graphql";
+import { EventPersonDetailsFragment, RoomDetailsFragment, RoomMode_Enum } from "../../../../generated/graphql";
 import usePolling from "../../../Generic/usePolling";
 import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
 import { EventVonageRoom } from "./Event/EventVonageRoom";
@@ -32,31 +32,35 @@ export function RoomBackstage({
     const updateEventTemporalBadges = useCallback(() => {
         setEventTemporalBadges(
             R.fromPairs(
-                roomDetails.events.map((event) => {
-                    const now = new Date().getTime();
-                    const startTime = Date.parse(event.startTime);
-                    const endTime = Date.parse(event.endTime);
+                roomDetails.events
+                    .filter((event) =>
+                        [RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(event.intendedRoomModeName)
+                    )
+                    .map((event) => {
+                        const now = new Date().getTime();
+                        const startTime = Date.parse(event.startTime);
+                        const endTime = Date.parse(event.endTime);
 
-                    if (now >= startTime && now <= endTime) {
-                        return [
-                            event.id,
-                            <Badge key={`badge-${event.id}`} colorScheme="green">
-                                Now
-                            </Badge>,
-                        ];
-                    }
+                        if (now >= startTime && now <= endTime) {
+                            return [
+                                event.id,
+                                <Badge key={`badge-${event.id}`} colorScheme="green">
+                                    Now
+                                </Badge>,
+                            ];
+                        }
 
-                    if (now >= startTime - 3 * 60 * 1000 && now <= startTime) {
-                        return [
-                            event.id,
-                            <Badge key={`badge-${event.id}`} colorScheme="blue">
-                                Soon
-                            </Badge>,
-                        ];
-                    }
+                        if (now >= startTime - 3 * 60 * 1000 && now <= startTime) {
+                            return [
+                                event.id,
+                                <Badge key={`badge-${event.id}`} colorScheme="blue">
+                                    Soon
+                                </Badge>,
+                            ];
+                        }
 
-                    return [event.id, <></>];
-                })
+                        return [event.id, <></>];
+                    })
             )
         );
     }, [roomDetails.events]);
@@ -79,7 +83,7 @@ export function RoomBackstage({
                         {haveAccessToEvent
                             ? "You have access to the backstage for this event."
                             : "You do not have access to the backstage for this event."}
-                        <Box display={haveAccessToEvent ? "block" : "none"}>
+                        <Box display={haveAccessToEvent ? "block" : "none"} mt={2}>
                             <EventVonageRoom eventId={event.id} />
                         </Box>
                     </Box>

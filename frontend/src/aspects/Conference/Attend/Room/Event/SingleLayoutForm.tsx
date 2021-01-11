@@ -61,8 +61,9 @@ export function SingleLayoutForm({
                         isLoading={props.isSubmitting}
                         type="submit"
                         isDisabled={!props.isValid}
+                        aria-label="Set layout to fullscreen mode"
                     >
-                        Use fullscreen layout
+                        Set layout
                     </Button>
                 </Form>
             )}

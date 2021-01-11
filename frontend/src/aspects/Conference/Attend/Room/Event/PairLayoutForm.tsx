@@ -82,8 +82,9 @@ export function PairLayoutForm({
                         isLoading={props.isSubmitting}
                         type="submit"
                         isDisabled={!props.isValid}
+                        aria-label="Set layout to side-by-side mode"
                     >
-                        Use side-by-side layout
+                        Set layout
                     </Button>
                 </Form>
             )}

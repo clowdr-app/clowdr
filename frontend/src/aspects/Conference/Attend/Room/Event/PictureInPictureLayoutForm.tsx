@@ -82,8 +82,9 @@ export function PictureInPictureLayoutForm({
                         isLoading={props.isSubmitting}
                         type="submit"
                         isDisabled={!props.isValid}
+                        aria-label="Set layout to picture-in-picture mode"
                     >
-                        Use picture-in-picture layout
+                        Set layout
                     </Button>
                 </Form>
             )}

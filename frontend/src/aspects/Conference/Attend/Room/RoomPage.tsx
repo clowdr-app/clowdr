@@ -79,6 +79,7 @@ gql`
         attendee {
             id
             userId
+            displayName
         }
     }
 `;

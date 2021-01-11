@@ -1,12 +1,13 @@
 import { gql } from "@apollo/client";
-import { Badge, Box, Spinner, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
-import React from "react";
+import { Badge, Box, HStack, Spinner, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from "@chakra-ui/react";
+import React, { useMemo } from "react";
 import {
     EventPersonDetailsFragment,
     RoomEventDetailsFragment,
     useGetEventParticipantStreamsSubscription,
     useUnapprovedEventRoomJoinRequestsSubscription,
 } from "../../../../../generated/graphql";
+import { FAIcon } from "../../../../Icons/FAIcon";
 import { BroadcastControlPanel } from "./BroadcastControlPanel";
 import { EventPeopleControlPanel } from "./EventPeopleControlPanel";
 import { LiveIndicator } from "./LiveIndicator";
@@ -79,6 +80,10 @@ export function EventRoomControlPanel({
         },
     });
 
+    const joinRequestCount = useMemo(() => joinRequestsData?.EventRoomJoinRequest.length ?? 0, [
+        joinRequestsData?.EventRoomJoinRequest.length,
+    ]);
+
     return (
         <Box height="100%" p={2}>
             <LiveIndicator event={event} />
@@ -86,9 +91,12 @@ export function EventRoomControlPanel({
                 <TabList>
                     <Tab>Broadcast layout</Tab>
                     <Tab>
-                        Raised hands
-                        <Badge ml={2} colorScheme="green">
-                            {joinRequestsData?.EventRoomJoinRequest.length ?? 0}
+                        People
+                        <Badge ml={2} colorScheme={joinRequestCount > 0 ? "red" : "blue"}>
+                            <HStack>
+                                <FAIcon icon="hand-paper" iconStyle="s" fontSize="md" />
+                                <Text>{joinRequestCount}</Text>
+                            </HStack>
                         </Badge>
                     </Tab>
                 </TabList>
@@ -112,6 +120,7 @@ export function EventRoomControlPanel({
                         ) : undefined}
                         <EventPeopleControlPanel
                             unapprovedJoinRequests={joinRequestsData?.EventRoomJoinRequest ?? []}
+                            eventPeople={eventPeople}
                         />
                     </TabPanel>
                 </TabPanels>

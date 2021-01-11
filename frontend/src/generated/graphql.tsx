@@ -25804,6 +25804,14 @@ export type GetRoomVonageTokenMutationVariables = Exact<{
 
 export type GetRoomVonageTokenMutation = { readonly __typename?: 'mutation_root', readonly joinRoomVonageSession?: Maybe<{ readonly __typename?: 'JoinRoomVonageSessionOutput', readonly accessToken?: Maybe<string>, readonly sessionId?: Maybe<string> }> };
 
+export type UpdateEventVonageSessionLayoutMutationVariables = Exact<{
+  eventVonageSessionId: Scalars['uuid'];
+  layoutData: Scalars['jsonb'];
+}>;
+
+
+export type UpdateEventVonageSessionLayoutMutation = { readonly __typename?: 'mutation_root', readonly update_EventVonageSession_by_pk?: Maybe<{ readonly __typename?: 'EventVonageSession', readonly id: any }> };
+
 export type GetEventParticipantStreamsSubscriptionVariables = Exact<{
   eventId: Scalars['uuid'];
 }>;
@@ -25815,14 +25823,6 @@ export type GetEventParticipantStreamsSubscription = { readonly __typename?: 'su
   )> };
 
 export type EventParticipantStreamDetailsFragment = { readonly __typename?: 'EventParticipantStream', readonly id: any, readonly attendeeId: any, readonly conferenceId: any, readonly eventId: any, readonly vonageStreamType: string, readonly vonageStreamId: string, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string, readonly profile?: Maybe<{ readonly __typename?: 'AttendeeProfile', readonly affiliation?: Maybe<string> }> } };
-
-export type UpdateEventVonageSessionLayoutMutationVariables = Exact<{
-  eventVonageSessionId: Scalars['uuid'];
-  layoutData: Scalars['jsonb'];
-}>;
-
-
-export type UpdateEventVonageSessionLayoutMutation = { readonly __typename?: 'mutation_root', readonly update_EventVonageSession_by_pk?: Maybe<{ readonly __typename?: 'EventVonageSession', readonly id: any }> };
 
 export type UnapprovedEventRoomJoinRequestsSubscriptionVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -25836,13 +25836,6 @@ export type UnapprovedEventRoomJoinRequestsSubscription = { readonly __typename?
   )> };
 
 export type EventRoomJoinRequestDetailsFragment = { readonly __typename?: 'EventRoomJoinRequest', readonly id: any, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } };
-
-export type ApproveEventRoomJoinRequestMutationVariables = Exact<{
-  eventRoomJoinRequestId: Scalars['uuid'];
-}>;
-
-
-export type ApproveEventRoomJoinRequestMutation = { readonly __typename?: 'mutation_root', readonly update_EventRoomJoinRequest_by_pk?: Maybe<{ readonly __typename?: 'EventRoomJoinRequest', readonly id: any }> };
 
 export type GetEventVonageTokenMutationVariables = Exact<{
   eventId: Scalars['uuid'];
@@ -25863,6 +25856,13 @@ export type GetEventDetailsQuery = { readonly __typename?: 'query_root', readonl
 
 export type RoomEventDetailsFragment = { readonly __typename?: 'Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum, readonly eventVonageSession?: Maybe<{ readonly __typename?: 'EventVonageSession', readonly id: any, readonly sessionId: string }> };
 
+export type ApproveEventRoomJoinRequestMutationVariables = Exact<{
+  eventRoomJoinRequestId: Scalars['uuid'];
+}>;
+
+
+export type ApproveEventRoomJoinRequestMutation = { readonly __typename?: 'mutation_root', readonly update_EventRoomJoinRequest_by_pk?: Maybe<{ readonly __typename?: 'EventRoomJoinRequest', readonly id: any }> };
+
 export type MakeEventRoomJoinRequestMutationVariables = Exact<{
   attendeeId: Scalars['uuid'];
   conferenceId: Scalars['uuid'];
@@ -25871,6 +25871,15 @@ export type MakeEventRoomJoinRequestMutationVariables = Exact<{
 
 
 export type MakeEventRoomJoinRequestMutation = { readonly __typename?: 'mutation_root', readonly insert_EventRoomJoinRequest_one?: Maybe<{ readonly __typename?: 'EventRoomJoinRequest', readonly id: any }> };
+
+export type MyEventRoomJoinRequestSubscriptionVariables = Exact<{
+  attendeeId: Scalars['uuid'];
+  conferenceId: Scalars['uuid'];
+  eventId: Scalars['uuid'];
+}>;
+
+
+export type MyEventRoomJoinRequestSubscription = { readonly __typename?: 'subscription_root', readonly EventRoomJoinRequest: ReadonlyArray<{ readonly __typename?: 'EventRoomJoinRequest', readonly id: any, readonly approved: boolean }> };
 
 export type AddParticipantToRoomMutationVariables = Exact<{
   attendeeId: Scalars['uuid'];
@@ -25937,7 +25946,7 @@ export type EventPeopleForRoomSubscription = { readonly __typename?: 'subscripti
     & EventPersonDetailsFragment
   )> };
 
-export type EventPersonDetailsFragment = { readonly __typename?: 'EventPerson', readonly id: any, readonly name: string, readonly roleName: EventPersonRole_Enum, readonly eventId: any, readonly attendee?: Maybe<{ readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string> }> };
+export type EventPersonDetailsFragment = { readonly __typename?: 'EventPerson', readonly id: any, readonly name: string, readonly roleName: EventPersonRole_Enum, readonly eventId: any, readonly attendee?: Maybe<{ readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly displayName: string }> };
 
 export type GetEventVonageDetailsQueryVariables = Exact<{
   eventId: Scalars['uuid'];
@@ -27101,6 +27110,7 @@ export const EventPersonDetailsFragmentDoc = gql`
   attendee {
     id
     userId
+    displayName
   }
 }
     `;
@@ -28175,35 +28185,6 @@ export function useGetRoomVonageTokenMutation(baseOptions?: Apollo.MutationHookO
 export type GetRoomVonageTokenMutationHookResult = ReturnType<typeof useGetRoomVonageTokenMutation>;
 export type GetRoomVonageTokenMutationResult = Apollo.MutationResult<GetRoomVonageTokenMutation>;
 export type GetRoomVonageTokenMutationOptions = Apollo.BaseMutationOptions<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>;
-export const GetEventParticipantStreamsDocument = gql`
-    subscription GetEventParticipantStreams($eventId: uuid!) {
-  EventParticipantStream(where: {eventId: {_eq: $eventId}}) {
-    ...EventParticipantStreamDetails
-  }
-}
-    ${EventParticipantStreamDetailsFragmentDoc}`;
-
-/**
- * __useGetEventParticipantStreamsSubscription__
- *
- * To run a query within a React component, call `useGetEventParticipantStreamsSubscription` and pass it any options that fit your needs.
- * When your component renders, `useGetEventParticipantStreamsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetEventParticipantStreamsSubscription({
- *   variables: {
- *      eventId: // value for 'eventId'
- *   },
- * });
- */
-export function useGetEventParticipantStreamsSubscription(baseOptions: Apollo.SubscriptionHookOptions<GetEventParticipantStreamsSubscription, GetEventParticipantStreamsSubscriptionVariables>) {
-        return Apollo.useSubscription<GetEventParticipantStreamsSubscription, GetEventParticipantStreamsSubscriptionVariables>(GetEventParticipantStreamsDocument, baseOptions);
-      }
-export type GetEventParticipantStreamsSubscriptionHookResult = ReturnType<typeof useGetEventParticipantStreamsSubscription>;
-export type GetEventParticipantStreamsSubscriptionResult = Apollo.SubscriptionResult<GetEventParticipantStreamsSubscription>;
 export const UpdateEventVonageSessionLayoutDocument = gql`
     mutation UpdateEventVonageSessionLayout($eventVonageSessionId: uuid!, $layoutData: jsonb!) {
   update_EventVonageSession_by_pk(
@@ -28240,6 +28221,35 @@ export function useUpdateEventVonageSessionLayoutMutation(baseOptions?: Apollo.M
 export type UpdateEventVonageSessionLayoutMutationHookResult = ReturnType<typeof useUpdateEventVonageSessionLayoutMutation>;
 export type UpdateEventVonageSessionLayoutMutationResult = Apollo.MutationResult<UpdateEventVonageSessionLayoutMutation>;
 export type UpdateEventVonageSessionLayoutMutationOptions = Apollo.BaseMutationOptions<UpdateEventVonageSessionLayoutMutation, UpdateEventVonageSessionLayoutMutationVariables>;
+export const GetEventParticipantStreamsDocument = gql`
+    subscription GetEventParticipantStreams($eventId: uuid!) {
+  EventParticipantStream(where: {eventId: {_eq: $eventId}}) {
+    ...EventParticipantStreamDetails
+  }
+}
+    ${EventParticipantStreamDetailsFragmentDoc}`;
+
+/**
+ * __useGetEventParticipantStreamsSubscription__
+ *
+ * To run a query within a React component, call `useGetEventParticipantStreamsSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useGetEventParticipantStreamsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetEventParticipantStreamsSubscription({
+ *   variables: {
+ *      eventId: // value for 'eventId'
+ *   },
+ * });
+ */
+export function useGetEventParticipantStreamsSubscription(baseOptions: Apollo.SubscriptionHookOptions<GetEventParticipantStreamsSubscription, GetEventParticipantStreamsSubscriptionVariables>) {
+        return Apollo.useSubscription<GetEventParticipantStreamsSubscription, GetEventParticipantStreamsSubscriptionVariables>(GetEventParticipantStreamsDocument, baseOptions);
+      }
+export type GetEventParticipantStreamsSubscriptionHookResult = ReturnType<typeof useGetEventParticipantStreamsSubscription>;
+export type GetEventParticipantStreamsSubscriptionResult = Apollo.SubscriptionResult<GetEventParticipantStreamsSubscription>;
 export const UnapprovedEventRoomJoinRequestsDocument = gql`
     subscription UnapprovedEventRoomJoinRequests($conferenceId: uuid!, $eventId: uuid!) {
   EventRoomJoinRequest(
@@ -28272,41 +28282,6 @@ export function useUnapprovedEventRoomJoinRequestsSubscription(baseOptions: Apol
       }
 export type UnapprovedEventRoomJoinRequestsSubscriptionHookResult = ReturnType<typeof useUnapprovedEventRoomJoinRequestsSubscription>;
 export type UnapprovedEventRoomJoinRequestsSubscriptionResult = Apollo.SubscriptionResult<UnapprovedEventRoomJoinRequestsSubscription>;
-export const ApproveEventRoomJoinRequestDocument = gql`
-    mutation ApproveEventRoomJoinRequest($eventRoomJoinRequestId: uuid!) {
-  update_EventRoomJoinRequest_by_pk(
-    pk_columns: {id: $eventRoomJoinRequestId}
-    _set: {approved: true}
-  ) {
-    id
-  }
-}
-    `;
-export type ApproveEventRoomJoinRequestMutationFn = Apollo.MutationFunction<ApproveEventRoomJoinRequestMutation, ApproveEventRoomJoinRequestMutationVariables>;
-
-/**
- * __useApproveEventRoomJoinRequestMutation__
- *
- * To run a mutation, you first call `useApproveEventRoomJoinRequestMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useApproveEventRoomJoinRequestMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [approveEventRoomJoinRequestMutation, { data, loading, error }] = useApproveEventRoomJoinRequestMutation({
- *   variables: {
- *      eventRoomJoinRequestId: // value for 'eventRoomJoinRequestId'
- *   },
- * });
- */
-export function useApproveEventRoomJoinRequestMutation(baseOptions?: Apollo.MutationHookOptions<ApproveEventRoomJoinRequestMutation, ApproveEventRoomJoinRequestMutationVariables>) {
-        return Apollo.useMutation<ApproveEventRoomJoinRequestMutation, ApproveEventRoomJoinRequestMutationVariables>(ApproveEventRoomJoinRequestDocument, baseOptions);
-      }
-export type ApproveEventRoomJoinRequestMutationHookResult = ReturnType<typeof useApproveEventRoomJoinRequestMutation>;
-export type ApproveEventRoomJoinRequestMutationResult = Apollo.MutationResult<ApproveEventRoomJoinRequestMutation>;
-export type ApproveEventRoomJoinRequestMutationOptions = Apollo.BaseMutationOptions<ApproveEventRoomJoinRequestMutation, ApproveEventRoomJoinRequestMutationVariables>;
 export const GetEventVonageTokenDocument = gql`
     mutation GetEventVonageToken($eventId: uuid!) {
   joinEventVonageSession(eventId: $eventId) {
@@ -28372,6 +28347,41 @@ export function useGetEventDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type GetEventDetailsQueryHookResult = ReturnType<typeof useGetEventDetailsQuery>;
 export type GetEventDetailsLazyQueryHookResult = ReturnType<typeof useGetEventDetailsLazyQuery>;
 export type GetEventDetailsQueryResult = Apollo.QueryResult<GetEventDetailsQuery, GetEventDetailsQueryVariables>;
+export const ApproveEventRoomJoinRequestDocument = gql`
+    mutation ApproveEventRoomJoinRequest($eventRoomJoinRequestId: uuid!) {
+  update_EventRoomJoinRequest_by_pk(
+    pk_columns: {id: $eventRoomJoinRequestId}
+    _set: {approved: true}
+  ) {
+    id
+  }
+}
+    `;
+export type ApproveEventRoomJoinRequestMutationFn = Apollo.MutationFunction<ApproveEventRoomJoinRequestMutation, ApproveEventRoomJoinRequestMutationVariables>;
+
+/**
+ * __useApproveEventRoomJoinRequestMutation__
+ *
+ * To run a mutation, you first call `useApproveEventRoomJoinRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useApproveEventRoomJoinRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [approveEventRoomJoinRequestMutation, { data, loading, error }] = useApproveEventRoomJoinRequestMutation({
+ *   variables: {
+ *      eventRoomJoinRequestId: // value for 'eventRoomJoinRequestId'
+ *   },
+ * });
+ */
+export function useApproveEventRoomJoinRequestMutation(baseOptions?: Apollo.MutationHookOptions<ApproveEventRoomJoinRequestMutation, ApproveEventRoomJoinRequestMutationVariables>) {
+        return Apollo.useMutation<ApproveEventRoomJoinRequestMutation, ApproveEventRoomJoinRequestMutationVariables>(ApproveEventRoomJoinRequestDocument, baseOptions);
+      }
+export type ApproveEventRoomJoinRequestMutationHookResult = ReturnType<typeof useApproveEventRoomJoinRequestMutation>;
+export type ApproveEventRoomJoinRequestMutationResult = Apollo.MutationResult<ApproveEventRoomJoinRequestMutation>;
+export type ApproveEventRoomJoinRequestMutationOptions = Apollo.BaseMutationOptions<ApproveEventRoomJoinRequestMutation, ApproveEventRoomJoinRequestMutationVariables>;
 export const MakeEventRoomJoinRequestDocument = gql`
     mutation MakeEventRoomJoinRequest($attendeeId: uuid!, $conferenceId: uuid!, $eventId: uuid!) {
   insert_EventRoomJoinRequest_one(
@@ -28408,6 +28418,40 @@ export function useMakeEventRoomJoinRequestMutation(baseOptions?: Apollo.Mutatio
 export type MakeEventRoomJoinRequestMutationHookResult = ReturnType<typeof useMakeEventRoomJoinRequestMutation>;
 export type MakeEventRoomJoinRequestMutationResult = Apollo.MutationResult<MakeEventRoomJoinRequestMutation>;
 export type MakeEventRoomJoinRequestMutationOptions = Apollo.BaseMutationOptions<MakeEventRoomJoinRequestMutation, MakeEventRoomJoinRequestMutationVariables>;
+export const MyEventRoomJoinRequestDocument = gql`
+    subscription MyEventRoomJoinRequest($attendeeId: uuid!, $conferenceId: uuid!, $eventId: uuid!) {
+  EventRoomJoinRequest(
+    where: {attendeeId: {_eq: $attendeeId}, conferenceId: {_eq: $conferenceId}, eventId: {_eq: $eventId}}
+  ) {
+    id
+    approved
+  }
+}
+    `;
+
+/**
+ * __useMyEventRoomJoinRequestSubscription__
+ *
+ * To run a query within a React component, call `useMyEventRoomJoinRequestSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useMyEventRoomJoinRequestSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMyEventRoomJoinRequestSubscription({
+ *   variables: {
+ *      attendeeId: // value for 'attendeeId'
+ *      conferenceId: // value for 'conferenceId'
+ *      eventId: // value for 'eventId'
+ *   },
+ * });
+ */
+export function useMyEventRoomJoinRequestSubscription(baseOptions: Apollo.SubscriptionHookOptions<MyEventRoomJoinRequestSubscription, MyEventRoomJoinRequestSubscriptionVariables>) {
+        return Apollo.useSubscription<MyEventRoomJoinRequestSubscription, MyEventRoomJoinRequestSubscriptionVariables>(MyEventRoomJoinRequestDocument, baseOptions);
+      }
+export type MyEventRoomJoinRequestSubscriptionHookResult = ReturnType<typeof useMyEventRoomJoinRequestSubscription>;
+export type MyEventRoomJoinRequestSubscriptionResult = Apollo.SubscriptionResult<MyEventRoomJoinRequestSubscription>;
 export const AddParticipantToRoomDocument = gql`
     mutation AddParticipantToRoom($attendeeId: uuid!, $roomId: uuid!) {
   insert_RoomPerson_one(

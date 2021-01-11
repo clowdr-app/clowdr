@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client/core";
 import assert from "assert";
-import { AddAttendeeToEventDocument } from "../generated/graphql";
+import { AddAttendeeToEventDocument, DeleteEventRoomJoinRequestDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { EventRoomJoinRequestData, Payload } from "../types/hasura/event";
 
@@ -16,6 +16,12 @@ gql`
             }
         ) {
             affected_rows
+        }
+    }
+
+    mutation DeleteEventRoomJoinRequest($eventRoomJoinRequestId: uuid!) {
+        delete_EventRoomJoinRequest_by_pk(id: $eventRoomJoinRequestId) {
+            id
         }
     }
 `;
@@ -41,5 +47,17 @@ export async function handleEventRoomJoinUpdated(payload: Payload<EventRoomJoinR
         });
     } catch (e) {
         console.error("Could not add attendee to event people", newRow.attendeeId, newRow.eventId, e);
+    }
+
+    console.log("Removing event room join request", newRow.attendeeId, newRow.eventId);
+    try {
+        await apolloClient.mutate({
+            mutation: DeleteEventRoomJoinRequestDocument,
+            variables: {
+                eventRoomJoinRequestId: newRow.id,
+            },
+        });
+    } catch (e) {
+        console.error("Could not remove event room join request", newRow.attendeeId, newRow.eventId);
     }
 }

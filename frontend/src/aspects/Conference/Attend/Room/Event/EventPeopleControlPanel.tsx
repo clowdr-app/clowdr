@@ -1,12 +1,14 @@
 import { Heading, List, ListItem } from "@chakra-ui/react";
 import React from "react";
-import type { EventRoomJoinRequestDetailsFragment } from "../../../../../generated/graphql";
+import type { EventPersonDetailsFragment, EventRoomJoinRequestDetailsFragment } from "../../../../../generated/graphql";
 import { JoinRequest } from "./JoinRequest";
 
 export function EventPeopleControlPanel({
     unapprovedJoinRequests,
+    eventPeople,
 }: {
     unapprovedJoinRequests: readonly EventRoomJoinRequestDetailsFragment[];
+    eventPeople: readonly EventPersonDetailsFragment[];
 }): JSX.Element {
     return (
         <>
@@ -18,6 +20,16 @@ export function EventPeopleControlPanel({
                 {unapprovedJoinRequests.map((joinRequest) => (
                     <ListItem key={joinRequest.id}>
                         <JoinRequest joinRequest={joinRequest} />
+                    </ListItem>
+                ))}
+            </List>
+            <Heading as="h3" size="sm" my={2}>
+                People
+            </Heading>
+            <List>
+                {eventPeople.map((person) => (
+                    <ListItem key={person.id}>
+                        {person.attendee?.displayName ?? "<Unknown>"} ({person.roleName})
                     </ListItem>
                 ))}
             </List>

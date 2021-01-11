@@ -87,7 +87,7 @@ export function EventVonageRoom({ eventId }: { eventId: string }): JSX.Element {
                                 (role) => role === EventPersonRole_Enum.Chair || role === EventPersonRole_Enum.Presenter
                             ) ? (
                                 <Box width="20%">
-                                    <EventRoomControlPanel event={event} eventPeople={eventPeople} />
+                                    <EventRoomControlPanel event={event} eventPeople={eventPeople} myRoles={myRoles} />
                                 </Box>
                             ) : (
                                 <></>

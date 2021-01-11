@@ -93,6 +93,7 @@ export function Room({
                                     playing={
                                         (withinThreeMinutesOfEvent || !!currentRoomEvent) &&
                                         currentTab === 0 &&
+                                        !backstage &&
                                         intendPlayStream
                                     }
                                     controls={true}

@@ -25812,6 +25812,13 @@ export type UpdateEventVonageSessionLayoutMutationVariables = Exact<{
 
 export type UpdateEventVonageSessionLayoutMutation = { readonly __typename?: 'mutation_root', readonly update_EventVonageSession_by_pk?: Maybe<{ readonly __typename?: 'EventVonageSession', readonly id: any }> };
 
+export type DeleteEventPersonMutationVariables = Exact<{
+  eventPersonId: Scalars['uuid'];
+}>;
+
+
+export type DeleteEventPersonMutation = { readonly __typename?: 'mutation_root', readonly delete_EventPerson_by_pk?: Maybe<{ readonly __typename?: 'EventPerson', readonly id: any }> };
+
 export type GetEventParticipantStreamsSubscriptionVariables = Exact<{
   eventId: Scalars['uuid'];
 }>;
@@ -28221,6 +28228,38 @@ export function useUpdateEventVonageSessionLayoutMutation(baseOptions?: Apollo.M
 export type UpdateEventVonageSessionLayoutMutationHookResult = ReturnType<typeof useUpdateEventVonageSessionLayoutMutation>;
 export type UpdateEventVonageSessionLayoutMutationResult = Apollo.MutationResult<UpdateEventVonageSessionLayoutMutation>;
 export type UpdateEventVonageSessionLayoutMutationOptions = Apollo.BaseMutationOptions<UpdateEventVonageSessionLayoutMutation, UpdateEventVonageSessionLayoutMutationVariables>;
+export const DeleteEventPersonDocument = gql`
+    mutation DeleteEventPerson($eventPersonId: uuid!) {
+  delete_EventPerson_by_pk(id: $eventPersonId) {
+    id
+  }
+}
+    `;
+export type DeleteEventPersonMutationFn = Apollo.MutationFunction<DeleteEventPersonMutation, DeleteEventPersonMutationVariables>;
+
+/**
+ * __useDeleteEventPersonMutation__
+ *
+ * To run a mutation, you first call `useDeleteEventPersonMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteEventPersonMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteEventPersonMutation, { data, loading, error }] = useDeleteEventPersonMutation({
+ *   variables: {
+ *      eventPersonId: // value for 'eventPersonId'
+ *   },
+ * });
+ */
+export function useDeleteEventPersonMutation(baseOptions?: Apollo.MutationHookOptions<DeleteEventPersonMutation, DeleteEventPersonMutationVariables>) {
+        return Apollo.useMutation<DeleteEventPersonMutation, DeleteEventPersonMutationVariables>(DeleteEventPersonDocument, baseOptions);
+      }
+export type DeleteEventPersonMutationHookResult = ReturnType<typeof useDeleteEventPersonMutation>;
+export type DeleteEventPersonMutationResult = Apollo.MutationResult<DeleteEventPersonMutation>;
+export type DeleteEventPersonMutationOptions = Apollo.BaseMutationOptions<DeleteEventPersonMutation, DeleteEventPersonMutationVariables>;
 export const GetEventParticipantStreamsDocument = gql`
     subscription GetEventParticipantStreams($eventId: uuid!) {
   EventParticipantStream(where: {eventId: {_eq: $eventId}}) {

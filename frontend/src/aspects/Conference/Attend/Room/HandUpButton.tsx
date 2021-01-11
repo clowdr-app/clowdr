@@ -41,7 +41,7 @@ export function HandUpButton({
 }: {
     currentRoomEvent: RoomEventSummaryFragment | null;
     eventPeople: readonly EventPersonDetailsFragment[];
-    onGoBackstage: () => void;
+    onGoBackstage?: () => void;
 }): JSX.Element {
     const [loading, setLoading] = useState<boolean>(false);
     const attendee = useCurrentAttendee();
@@ -78,8 +78,12 @@ export function HandUpButton({
     useQueryErrorToast(error);
 
     const myEventPeople = useMemo(
-        () => eventPeople?.filter((eventPerson) => attendee.id === eventPerson.attendee?.id) ?? [],
-        [attendee.id, eventPeople]
+        () =>
+            eventPeople?.filter(
+                (eventPerson) =>
+                    eventPerson.eventId === currentRoomEvent?.id && attendee.id === eventPerson.attendee?.id
+            ) ?? [],
+        [attendee.id, currentRoomEvent?.id, eventPeople]
     );
 
     const roomModeName = useMemo(() => {
@@ -100,9 +104,13 @@ export function HandUpButton({
     return currentRoomEvent &&
         [RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(currentRoomEvent.intendedRoomModeName) ? (
         myEventPeople.length > 0 ? (
-            <Button mt={5} onClick={onGoBackstage} colorScheme="green">
-                Go backstage to join {roomModeName} room
-            </Button>
+            onGoBackstage ? (
+                <Button mt={5} onClick={onGoBackstage} colorScheme="green">
+                    Go backstage to join {roomModeName} room
+                </Button>
+            ) : (
+                <></>
+            )
         ) : eventRoomJoinRequestData?.EventRoomJoinRequest &&
           eventRoomJoinRequestData.EventRoomJoinRequest.length > 0 ? (
             <Button mt={5} isDisabled={true} colorScheme="green">

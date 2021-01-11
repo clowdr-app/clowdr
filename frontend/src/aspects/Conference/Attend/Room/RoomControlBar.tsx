@@ -13,6 +13,7 @@ import {
     PopoverHeader,
     PopoverTrigger,
     Portal,
+    Tooltip,
     useDisclosure,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
@@ -88,12 +89,14 @@ export function RoomControlBar({
         <HStack justifyContent="flex-end" m={4}>
             {backstage ? (
                 <Button colorScheme="red" onClick={() => onSetBackstage(false)}>
-                    Exit backstage
+                    Hide backstage
                 </Button>
             ) : (
-                <Button colorScheme="green" onClick={() => onSetBackstage(true)}>
-                    Go backstage
-                </Button>
+                <Tooltip label="Backstage is where you can join events as a presenter, session chair or to ask questions.">
+                    <Button colorScheme="green" onClick={() => onSetBackstage(true)}>
+                        Show backstage
+                    </Button>
+                </Tooltip>
             )}
             {roomDetails.roomPeople.find(
                 (person) =>
@@ -110,10 +113,16 @@ export function RoomControlBar({
             {roomDetails.roomPrivacyName === RoomPrivacy_Enum.Public ? (
                 <Popover>
                     <PopoverTrigger>
-                        <Button aria-label="Current room participants" title="Current room participants">
-                            <FAIcon icon="users" iconStyle="s" />
-                            <Badge ml={2}>{roomParticipants ? roomParticipants.length : "0"} </Badge>
-                        </Button>
+                        <Tooltip label="People currently in the breakout room">
+                            <Button
+                                aria-label={`${
+                                    roomParticipants ? roomParticipants.length : "0"
+                                } People currently in the breakout room`}
+                            >
+                                <FAIcon icon="users" iconStyle="s" />
+                                <Badge ml={2}>{roomParticipants ? roomParticipants.length : "0"} </Badge>
+                            </Button>
+                        </Tooltip>
                     </PopoverTrigger>
                     <Portal>
                         <PopoverContent>

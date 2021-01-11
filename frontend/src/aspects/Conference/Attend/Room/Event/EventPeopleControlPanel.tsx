@@ -1,15 +1,27 @@
 import { Heading, List, ListItem } from "@chakra-ui/react";
-import React from "react";
-import type { EventPersonDetailsFragment, EventRoomJoinRequestDetailsFragment } from "../../../../../generated/graphql";
+import React, { useMemo } from "react";
+import {
+    EventPersonDetailsFragment,
+    EventPersonRole_Enum,
+    EventRoomJoinRequestDetailsFragment,
+} from "../../../../../generated/graphql";
+import { EventPerson } from "./EventPerson";
 import { JoinRequest } from "./JoinRequest";
 
 export function EventPeopleControlPanel({
     unapprovedJoinRequests,
     eventPeople,
+    myRoles,
 }: {
     unapprovedJoinRequests: readonly EventRoomJoinRequestDetailsFragment[];
     eventPeople: readonly EventPersonDetailsFragment[];
+    myRoles: EventPersonRole_Enum[];
 }): JSX.Element {
+    const canControlEventPeople = useMemo(
+        () => myRoles.includes(EventPersonRole_Enum.Chair) || myRoles.includes(EventPersonRole_Enum.Presenter),
+        [myRoles]
+    );
+
     return (
         <>
             <Heading as="h3" size="sm" my={2}>
@@ -19,7 +31,7 @@ export function EventPeopleControlPanel({
             <List>
                 {unapprovedJoinRequests.map((joinRequest) => (
                     <ListItem key={joinRequest.id}>
-                        <JoinRequest joinRequest={joinRequest} />
+                        <JoinRequest joinRequest={joinRequest} enableApproval={canControlEventPeople} />
                     </ListItem>
                 ))}
             </List>
@@ -28,8 +40,8 @@ export function EventPeopleControlPanel({
             </Heading>
             <List>
                 {eventPeople.map((person) => (
-                    <ListItem key={person.id}>
-                        {person.attendee?.displayName ?? "<Unknown>"} ({person.roleName})
+                    <ListItem key={person.id} mt={2}>
+                        <EventPerson eventPerson={person} enableDelete={canControlEventPeople} />
                     </ListItem>
                 ))}
             </List>

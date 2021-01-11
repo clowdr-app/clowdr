@@ -1,10 +1,11 @@
-import { Badge, Box, Heading, useColorModeValue, useToken } from "@chakra-ui/react";
+import { Badge, Box, Heading, Text, useColorModeValue, useToken } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { EventPersonDetailsFragment, RoomDetailsFragment, RoomMode_Enum } from "../../../../generated/graphql";
 import usePolling from "../../../Generic/usePolling";
 import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
 import { EventVonageRoom } from "./Event/EventVonageRoom";
+import { HandUpButton } from "./HandUpButton";
 
 export function RoomBackstage({
     backstage,
@@ -70,26 +71,35 @@ export function RoomBackstage({
 
     const eventRooms = useMemo(
         () =>
-            roomDetails.events.map((event) => {
-                const haveAccessToEvent = !!myEventPeople.find(
-                    (eventPerson) => user && eventPerson.eventId === event.id
-                );
-                return (
-                    <Box key={event.id}>
-                        <Heading as="h4" size="md" textAlign="left" mt={5} mb={3}>
-                            {event.name} {eventTemporalBadges[event.id]}
-                        </Heading>
+            roomDetails.events
+                .filter((event) =>
+                    [RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(event.intendedRoomModeName)
+                )
+                .map((event) => {
+                    const haveAccessToEvent = !!myEventPeople.find(
+                        (eventPerson) => user && eventPerson.eventId === event.id
+                    );
+                    return (
+                        <Box key={event.id}>
+                            <Heading as="h4" size="md" textAlign="left" mt={5} mb={3}>
+                                {event.name} {eventTemporalBadges[event.id]}
+                            </Heading>
 
-                        {haveAccessToEvent
-                            ? "You have access to the backstage for this event."
-                            : "You do not have access to the backstage for this event."}
-                        <Box display={haveAccessToEvent ? "block" : "none"} mt={2}>
-                            <EventVonageRoom eventId={event.id} />
+                            {haveAccessToEvent ? (
+                                "You have access to the backstage for this event."
+                            ) : (
+                                <>
+                                    <Text>You do not have access to the backstage for this event.</Text>
+                                    <HandUpButton currentRoomEvent={event} eventPeople={eventPeople} />
+                                </>
+                            )}
+                            <Box display={haveAccessToEvent ? "block" : "none"} mt={2}>
+                                <EventVonageRoom eventId={event.id} />
+                            </Box>
                         </Box>
-                    </Box>
-                );
-            }),
-        [eventTemporalBadges, myEventPeople, roomDetails.events, user]
+                    );
+                }),
+        [eventPeople, eventTemporalBadges, myEventPeople, roomDetails.events, user]
     );
 
     return (

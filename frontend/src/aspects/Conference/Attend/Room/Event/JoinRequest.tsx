@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Button, HStack, Text, useToast } from "@chakra-ui/react";
+import { Box, Button, HStack, Text, useToast } from "@chakra-ui/react";
 import React, { useCallback, useState } from "react";
 import {
     EventRoomJoinRequestDetailsFragment,
@@ -15,7 +15,13 @@ gql`
     }
 `;
 
-export function JoinRequest({ joinRequest }: { joinRequest: EventRoomJoinRequestDetailsFragment }): JSX.Element {
+export function JoinRequest({
+    joinRequest,
+    enableApproval,
+}: {
+    joinRequest: EventRoomJoinRequestDetailsFragment;
+    enableApproval: boolean;
+}): JSX.Element {
     const [loading, setLoading] = useState<boolean>(false);
     const [approveJoinRequestMutation] = useApproveEventRoomJoinRequestMutation();
     const toast = useToast();
@@ -29,7 +35,12 @@ export function JoinRequest({ joinRequest }: { joinRequest: EventRoomJoinRequest
                     eventRoomJoinRequestId: joinRequest.id,
                 },
             });
+            toast({
+                title: "Approved request to join",
+                status: "success",
+            });
         } catch (e) {
+            console.error("Could not approve join request", joinRequest.id);
             toast({
                 title: "Could not approve join request",
                 status: "error",
@@ -42,16 +53,22 @@ export function JoinRequest({ joinRequest }: { joinRequest: EventRoomJoinRequest
         <HStack my={2}>
             <FAIcon icon="hand-paper" iconStyle="s" />
             <Text>{joinRequest.attendee.displayName}</Text>
-            <Button
-                onClick={approveJoinRequest}
-                aria-label={`Add ${joinRequest.attendee.displayName} to the event room`}
-                isLoading={loading}
-                p={0}
-                colorScheme="green"
-                size="xs"
-            >
-                <FAIcon icon="check-circle" iconStyle="s" />{" "}
-            </Button>
+            {enableApproval ? (
+                <Box flexGrow={1} textAlign="right">
+                    <Button
+                        onClick={approveJoinRequest}
+                        aria-label={`Add ${joinRequest.attendee.displayName} to the event room`}
+                        isLoading={loading}
+                        p={0}
+                        colorScheme="green"
+                        size="xs"
+                    >
+                        <FAIcon icon="check-circle" iconStyle="s" />{" "}
+                    </Button>
+                </Box>
+            ) : (
+                <></>
+            )}
         </HStack>
     );
 }

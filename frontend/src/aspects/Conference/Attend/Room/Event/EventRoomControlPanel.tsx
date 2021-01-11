@@ -3,6 +3,7 @@ import { Badge, Box, HStack, Spinner, Tab, TabList, TabPanel, TabPanels, Tabs, T
 import React, { useMemo } from "react";
 import {
     EventPersonDetailsFragment,
+    EventPersonRole_Enum,
     RoomEventDetailsFragment,
     useGetEventParticipantStreamsSubscription,
     useUnapprovedEventRoomJoinRequestsSubscription,
@@ -15,9 +16,11 @@ import { LiveIndicator } from "./LiveIndicator";
 export function EventRoomControlPanel({
     event,
     eventPeople,
+    myRoles,
 }: {
     event: RoomEventDetailsFragment;
     eventPeople: readonly EventPersonDetailsFragment[];
+    myRoles: EventPersonRole_Enum[];
 }): JSX.Element {
     gql`
         subscription GetEventParticipantStreams($eventId: uuid!) {
@@ -121,6 +124,7 @@ export function EventRoomControlPanel({
                         <EventPeopleControlPanel
                             unapprovedJoinRequests={joinRequestsData?.EventRoomJoinRequest ?? []}
                             eventPeople={eventPeople}
+                            myRoles={myRoles}
                         />
                     </TabPanel>
                 </TabPanels>

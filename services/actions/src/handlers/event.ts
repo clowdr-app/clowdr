@@ -2,6 +2,7 @@ import { gql } from "@apollo/client/core";
 import { GetEventTimingsDocument, RoomMode_Enum } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { createEventEndTrigger, createEventStartTrigger } from "../lib/event";
+import { sendFailureEmail } from "../lib/logging/failureEmails";
 import { startEventBroadcast, stopEventBroadcasts } from "../lib/vonage/vonageTools";
 import { EventData, Payload } from "../types/hasura/event";
 
@@ -20,22 +21,26 @@ export async function handleEventUpdated(payload: Payload<EventData>): Promise<v
         return;
     }
 
-    if (oldRow) {
-        // Event was updated
+    try {
+        if (oldRow) {
+            // Event was updated
+            if (oldRow.startTime !== newRow.startTime) {
+                await createEventStartTrigger(newRow.id, newRow.startTime);
+            }
 
-        if (oldRow.startTime !== newRow.startTime) {
+            if (oldRow.endTime !== newRow.endTime && newRow.endTime) {
+                await createEventEndTrigger(newRow.id, newRow.endTime);
+            }
+        } else {
+            // Event was inserted
             await createEventStartTrigger(newRow.id, newRow.startTime);
+            if (newRow.endTime) {
+                await createEventEndTrigger(newRow.id, newRow.endTime);
+            }
         }
-
-        if (oldRow.endTime !== newRow.endTime && newRow.endTime) {
-            await createEventEndTrigger(newRow.id, newRow.endTime);
-        }
-    } else {
-        // Event was inserted
-        await createEventStartTrigger(newRow.id, newRow.startTime);
-        if (newRow.endTime) {
-            await createEventEndTrigger(newRow.id, newRow.endTime);
-        }
+    } catch (e) {
+        await sendFailureEmail("Could not insert event start/end triggers", e);
+        throw e;
     }
 }
 

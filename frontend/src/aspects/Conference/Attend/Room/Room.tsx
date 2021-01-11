@@ -1,20 +1,16 @@
 import {
+    Alert,
+    AlertIcon,
     Box,
     Grid,
     GridItem,
     Heading,
     SkeletonCircle,
     SkeletonText,
-    Tab,
-    TabList,
-    TabPanel,
-    TabPanels,
-    Tabs,
     Text,
     useBreakpointValue,
-    useColorModeValue,
 } from "@chakra-ui/react";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import ReactPlayer from "react-player";
 import type { EventPersonDetailsFragment, RoomDetailsFragment } from "../../../../generated/graphql";
 import { ContentGroupSummary } from "../Content/ContentGroupSummary";
@@ -31,9 +27,10 @@ export function Room({
     roomDetails: RoomDetailsFragment;
     eventPeople: readonly EventPersonDetailsFragment[];
 }): JSX.Element {
-    const backgroundColor = useColorModeValue("gray.50", "gray.900");
     const stackColumns = useBreakpointValue({ base: true, lg: false });
-    const { currentRoomEvent, withinThreeMinutesOfEvent } = useCurrentRoomEvent(roomDetails);
+    const { currentRoomEvent, withinThreeMinutesOfBroadcastEvent, secondsUntilBroadcastEvent } = useCurrentRoomEvent(
+        roomDetails
+    );
 
     const hlsUri = useMemo(() => {
         if (!roomDetails.mediaLiveChannel) {
@@ -45,13 +42,6 @@ export function Room({
     }, [roomDetails.mediaLiveChannel]);
 
     const [intendPlayStream, setIntendPlayStream] = useState<boolean>(true);
-    const [currentTab, setCurrentTab] = useState<number>(0);
-    const handleTabsChange = useCallback(
-        (tabIndex) => {
-            setCurrentTab(tabIndex);
-        },
-        [setCurrentTab]
-    );
 
     const [backstage, setBackstage] = useState<boolean>(false);
 
@@ -67,53 +57,65 @@ export function Room({
             </GridItem>
             <GridItem textAlign="left" overflowY={stackColumns ? "visible" : "auto"} p={2}>
                 <RoomBackstage backstage={backstage} roomDetails={roomDetails} eventPeople={eventPeople} />
-                <Tabs
-                    width="100%"
-                    background={backgroundColor}
-                    index={currentTab}
-                    onChange={handleTabsChange}
-                    display={backstage ? "none" : "block"}
-                >
-                    <TabList>
-                        {hlsUri && withinThreeMinutesOfEvent && <Tab disabled={!withinThreeMinutesOfEvent}>Event</Tab>}
-                        <Tab>Breakout Room</Tab>
-                    </TabList>
-                    <TabPanels>
-                        {hlsUri && withinThreeMinutesOfEvent && (
-                            <TabPanel>
-                                <ReactPlayer
-                                    width="100%"
-                                    height="auto"
-                                    url={hlsUri}
-                                    config={{
-                                        file: {
-                                            hlsOptions: {},
-                                        },
-                                    }}
-                                    playing={
-                                        (withinThreeMinutesOfEvent || !!currentRoomEvent) &&
-                                        currentTab === 0 &&
-                                        !backstage &&
-                                        intendPlayStream
-                                    }
-                                    controls={true}
-                                    onPause={() => setIntendPlayStream(false)}
-                                    onPlay={() => setIntendPlayStream(true)}
-                                />
-                                <Box textAlign="center">
-                                    <HandUpButton
-                                        currentRoomEvent={currentRoomEvent}
-                                        eventPeople={eventPeople}
-                                        onGoBackstage={() => setBackstage(true)}
-                                    />
-                                </Box>
-                            </TabPanel>
-                        )}
-                        <TabPanel>
-                            <BreakoutVonageRoom room={roomDetails} />
-                        </TabPanel>
-                    </TabPanels>
-                </Tabs>
+
+                {secondsUntilBroadcastEvent >= 180 && secondsUntilBroadcastEvent <= 300 ? (
+                    <Alert status="warning">
+                        <AlertIcon />
+                        Event starting soon. Breakout room closes in {Math.round(secondsUntilBroadcastEvent - 180)}{" "}
+                        seconds
+                    </Alert>
+                ) : (
+                    <></>
+                )}
+                {secondsUntilBroadcastEvent > 0 && secondsUntilBroadcastEvent < 180 ? (
+                    <Alert status="info">
+                        <AlertIcon />
+                        Event starting in {Math.round(secondsUntilBroadcastEvent)} seconds
+                    </Alert>
+                ) : (
+                    <></>
+                )}
+
+                {hlsUri && secondsUntilBroadcastEvent < 180 ? (
+                    <Box display={backstage ? "none" : "block"}>
+                        <ReactPlayer
+                            width="100%"
+                            height="auto"
+                            url={hlsUri}
+                            config={{
+                                file: {
+                                    hlsOptions: {},
+                                },
+                            }}
+                            playing={
+                                (withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent) &&
+                                !backstage &&
+                                intendPlayStream
+                            }
+                            controls={true}
+                            onPause={() => setIntendPlayStream(false)}
+                            onPlay={() => setIntendPlayStream(true)}
+                        />
+                        <Box textAlign="center">
+                            <HandUpButton
+                                currentRoomEvent={currentRoomEvent}
+                                eventPeople={eventPeople}
+                                onGoBackstage={() => setBackstage(true)}
+                            />
+                        </Box>
+                    </Box>
+                ) : (
+                    <></>
+                )}
+
+                {secondsUntilBroadcastEvent > 180 ? (
+                    <Box display={backstage ? "none" : "block"}>
+                        <BreakoutVonageRoom room={roomDetails} />
+                    </Box>
+                ) : (
+                    <></>
+                )}
+
                 <Heading as="h2" textAlign="left" mt={5}>
                     {roomDetails.name}
                 </Heading>

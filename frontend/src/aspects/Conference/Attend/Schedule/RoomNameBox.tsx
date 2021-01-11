@@ -26,6 +26,7 @@ export default function RoomNameBox({
     let roomIcon: JSX.Element | undefined;
     if (typeof room !== "string") {
         switch (room.currentModeName) {
+            case RoomMode_Enum.Zoom:
             case RoomMode_Enum.Breakout:
                 roomIcon = <FAIcon iconStyle="s" icon="users" />;
                 break;

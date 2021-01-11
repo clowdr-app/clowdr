@@ -71,11 +71,11 @@ export function HandUpButton({
     const { data: eventRoomJoinRequestData, error } = useMyEventRoomJoinRequestSubscription({
         variables: {
             attendeeId: attendee.id,
-            conferenceId: currentRoomEvent?.conferenceId,
+            conferenceId: currentRoomEvent?.conferenceId ?? "",
             eventId: currentRoomEvent?.id,
         },
     });
-    useQueryErrorToast(error);
+    useQueryErrorToast(error, "useMyEventRoomJoinRequestSubscription");
 
     const myEventPeople = useMemo(
         () =>
@@ -98,6 +98,8 @@ export function HandUpButton({
                 return "Q&A";
             case RoomMode_Enum.Presentation:
                 return "presentation";
+            case RoomMode_Enum.Zoom:
+                return "Zoom";
         }
     }, [currentRoomEvent?.intendedRoomModeName]);
 

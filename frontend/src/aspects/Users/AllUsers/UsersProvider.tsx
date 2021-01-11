@@ -38,7 +38,7 @@ function UsersProvider_IsAuthenticated({ children }: { children: string | JSX.El
     const { loading, error, data } = useSelectUsersQuery({
         pollInterval: 60 * 1000,
     });
-    useQueryErrorToast(error);
+    useQueryErrorToast(error, "useSelectUsersQuery");
 
     const value = loading ? undefined : error ? false : data;
 

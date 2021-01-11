@@ -13887,7 +13887,9 @@ export enum RoomMode_Enum {
   /** A live presentation should be delivered in the Q&A video chat. The breakout video chat may also be available to relevant users. */
   Presentation = 'PRESENTATION',
   /** A live Q&A/discussion should be delivered in the Q&A video chat. The breakout video chat may also be available to relevant users. */
-  QAndA = 'Q_AND_A'
+  QAndA = 'Q_AND_A',
+  /** Event is taking place in a Zoom room. */
+  Zoom = 'ZOOM'
 }
 
 /** expression to compare columns of type RoomMode_enum. All fields are combined with logical 'AND'. */

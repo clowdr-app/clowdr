@@ -89,7 +89,7 @@ function CurrentUserProvider_IsAuthenticated({
         },
         nextFetchPolicy: "cache-first",
     });
-    useQueryErrorToast(error);
+    useQueryErrorToast(error, "useSelectCurrentUserQuery");
 
     // TODO: Split out fetch of onlineStatus and use polling (and provider separate refetch function)
 

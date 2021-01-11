@@ -1,5 +1,5 @@
 import { useToast } from "@chakra-ui/react";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useOpenTok } from "../../../../Vonage/useOpenTok";
 import useSessionEventHandler, { EventMap } from "../../../../Vonage/useSessionEventHandler";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
@@ -11,6 +11,27 @@ export function usePublisherControl(
     const { state, computedState, dispatch } = useVonageRoom();
     const [openTokProps, openTokMethods] = useOpenTok();
     const toast = useToast();
+
+    const unmountRef = useRef<() => void>();
+    useEffect(() => {
+        function stop() {
+            if (openTokProps.isSessionConnected) {
+                openTokMethods.disconnectSession();
+            }
+        }
+
+        unmountRef.current = () => {
+            stop();
+        };
+    }, [openTokMethods, openTokProps.isSessionConnected]);
+
+    useEffect(() => {
+        return () => {
+            if (unmountRef && unmountRef.current) {
+                unmountRef.current();
+            }
+        };
+    }, []);
 
     useEffect(() => {
         async function fn() {

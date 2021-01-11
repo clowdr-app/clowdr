@@ -113,7 +113,7 @@ export default function RoomPage({ roomId }: { roomId: string }): JSX.Element {
         },
     });
     eventPeopleData?.EventPerson;
-    useQueryErrorToast(error);
+    useQueryErrorToast(error, "useEventPeopleForRoomSubscription");
 
     return (
         <RequireAtLeastOnePermissionWrapper

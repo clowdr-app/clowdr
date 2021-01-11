@@ -1,41 +1,48 @@
 import {
+    Alert,
+    AlertIcon,
+    Box,
     Grid,
     GridItem,
     Heading,
     SkeletonCircle,
     SkeletonText,
-    Tab,
-    TabList,
-    TabPanel,
-    TabPanels,
-    Tabs,
-    Tag,
     Text,
     useBreakpointValue,
     useColorModeValue,
+    useToken,
 } from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import type { ContentItemDataBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
+import * as R from "ramda";
+import React, { useMemo, useState } from "react";
 import ReactPlayer from "react-player";
-import { RoomDetailsFragment, useUserEventRolesSubscription } from "../../../../generated/graphql";
-import useUserId from "../../../Auth/useUserId";
-import { VonageRoomStateProvider } from "../../../Vonage/useVonageRoom";
+import { ContentType_Enum, EventPersonDetailsFragment, RoomDetailsFragment } from "../../../../generated/graphql";
+import LinkButton from "../../../Chakra/LinkButton";
 import { ContentGroupSummary } from "../Content/ContentGroupSummary";
+import { BreakoutVonageRoom } from "./BreakoutVonageRoom";
+import { HandUpButton } from "./HandUpButton";
+import { RoomBackstage } from "./RoomBackstage";
 import { RoomControlBar } from "./RoomControlBar";
 import { useCurrentRoomEvent } from "./useCurrentRoomEvent";
-import { BreakoutVonageRoom, EventVonageRoom } from "./VonageRoom";
 
-export function Room({ roomDetails }: { roomDetails: RoomDetailsFragment }): JSX.Element {
-    const backgroundColor = useColorModeValue("gray.50", "gray.900");
+export function Room({
+    roomDetails,
+    eventPeople,
+}: {
+    roomDetails: RoomDetailsFragment;
+    eventPeople: readonly EventPersonDetailsFragment[];
+}): JSX.Element {
     const stackColumns = useBreakpointValue({ base: true, lg: false });
-    const { currentRoomEvent, withinThreeMinutesOfEvent, nextRoomEvent } = useCurrentRoomEvent(roomDetails);
-    const userId = useUserId();
+    const {
+        currentRoomEvent,
+        nextRoomEvent,
+        withinThreeMinutesOfBroadcastEvent,
+        secondsUntilBroadcastEvent,
+        secondsUntilZoomEvent,
+    } = useCurrentRoomEvent(roomDetails);
 
-    const { data: currentEventRolesData } = useUserEventRolesSubscription({
-        variables: {
-            eventId: currentRoomEvent?.id,
-            userId: userId ?? "",
-        },
-    });
+    const [green100, green700] = useToken("colors", ["green.100", "green.700"]);
+    const bgColour = useColorModeValue(green100, green700);
 
     const hlsUri = useMemo(() => {
         if (!roomDetails.mediaLiveChannel) {
@@ -46,16 +53,28 @@ export function Room({ roomDetails }: { roomDetails: RoomDetailsFragment }): JSX
         return finalUri.toString();
     }, [roomDetails.mediaLiveChannel]);
 
-    const canJoinCurrentEventRoom = useMemo(() => {
-        return (
-            currentEventRolesData?.Event_by_pk?.eventPeople &&
-            currentEventRolesData?.Event_by_pk?.eventPeople.length > 0
-        );
-    }, [currentEventRolesData?.Event_by_pk?.eventPeople]);
+    const [intendPlayStream, setIntendPlayStream] = useState<boolean>(true);
 
-    const canJoinNextEventRoom = useMemo(() => {
-        return !!nextRoomEvent?.eventPeople.find((person) => person.attendee?.userId === userId);
-    }, [nextRoomEvent?.eventPeople, userId]);
+    const [backstage, setBackstage] = useState<boolean>(false);
+
+    const secondsUntilNonBreakoutEvent = useMemo(() => Math.min(secondsUntilBroadcastEvent, secondsUntilZoomEvent), [
+        secondsUntilBroadcastEvent,
+        secondsUntilZoomEvent,
+    ]);
+
+    const maybeCurrentEventZoomDetails = useMemo(() => {
+        const zoomItem = currentRoomEvent?.contentGroup?.contentItems.find(
+            (contentItem) => contentItem.contentTypeName === ContentType_Enum.Zoom
+        );
+
+        if (!zoomItem) {
+            return undefined;
+        }
+
+        const versions = zoomItem.data as ContentItemDataBlob;
+
+        return (R.last(versions)?.data as ZoomBlob).url;
+    }, [currentRoomEvent?.contentGroup?.contentItems]);
 
     return (
         <Grid
@@ -65,65 +84,89 @@ export function Room({ roomDetails }: { roomDetails: RoomDetailsFragment }): JSX
             gridTemplateRows={["min-content 1fr 1fr", "min-content 1fr 1fr", "min-content 1fr"]}
         >
             <GridItem colSpan={[1, 1, 2]}>
-                <RoomControlBar roomDetails={roomDetails} />
+                <RoomControlBar roomDetails={roomDetails} onSetBackstage={setBackstage} backstage={backstage} />
             </GridItem>
             <GridItem textAlign="left" overflowY={stackColumns ? "visible" : "auto"} p={2}>
-                <Tabs width="100%" background={backgroundColor}>
-                    <TabList>
-                        {hlsUri && withinThreeMinutesOfEvent && <Tab disabled={!withinThreeMinutesOfEvent}>Event</Tab>}
-                        <Tab>Breakout Room</Tab>
-                        {canJoinCurrentEventRoom && currentRoomEvent && (
-                            <Tab>
-                                Event Room ({currentRoomEvent.name}){" "}
-                                <Tag ml={2} colorScheme="green">
-                                    Now
-                                </Tag>
-                            </Tab>
-                        )}
-                        {canJoinNextEventRoom && nextRoomEvent && (
-                            <Tab>
-                                Event Room ({nextRoomEvent.name}) <Tag ml={2}>Next</Tag>
-                            </Tab>
-                        )}
-                    </TabList>
-                    <TabPanels>
-                        {hlsUri && withinThreeMinutesOfEvent && (
-                            <TabPanel>
-                                <ReactPlayer
-                                    width="100%"
-                                    height="auto"
-                                    url={hlsUri}
-                                    config={{
-                                        file: {
-                                            hlsOptions: {},
-                                        },
-                                    }}
-                                    playing={withinThreeMinutesOfEvent || !!currentRoomEvent}
-                                    controls={true}
-                                />
-                            </TabPanel>
-                        )}
-                        <TabPanel>
-                            <VonageRoomStateProvider>
-                                <BreakoutVonageRoom room={roomDetails} />
-                            </VonageRoomStateProvider>
-                        </TabPanel>
-                        {canJoinCurrentEventRoom && currentRoomEvent && (
-                            <TabPanel>
-                                <VonageRoomStateProvider>
-                                    <EventVonageRoom event={currentRoomEvent} />
-                                </VonageRoomStateProvider>
-                            </TabPanel>
-                        )}
-                        {canJoinNextEventRoom && nextRoomEvent && (
-                            <TabPanel>
-                                <VonageRoomStateProvider>
-                                    <EventVonageRoom event={nextRoomEvent} />
-                                </VonageRoomStateProvider>
-                            </TabPanel>
-                        )}
-                    </TabPanels>
-                </Tabs>
+                <RoomBackstage backstage={backstage} roomDetails={roomDetails} eventPeople={eventPeople} />
+
+                {secondsUntilNonBreakoutEvent >= 180 && secondsUntilNonBreakoutEvent <= 300 ? (
+                    <Alert status="warning">
+                        <AlertIcon />
+                        Event starting soon. Breakout room closes in {Math.round(
+                            secondsUntilNonBreakoutEvent - 180
+                        )}{" "}
+                        seconds
+                    </Alert>
+                ) : (
+                    <></>
+                )}
+
+                {secondsUntilBroadcastEvent > 0 && secondsUntilBroadcastEvent < 180 ? (
+                    <Alert status="info">
+                        <AlertIcon />
+                        Event starting in {Math.round(secondsUntilBroadcastEvent)} seconds
+                    </Alert>
+                ) : (
+                    <></>
+                )}
+
+                {secondsUntilZoomEvent > 0 && secondsUntilZoomEvent < 180 ? (
+                    <Alert status="info">
+                        <AlertIcon />
+                        Event starting in {Math.round(secondsUntilZoomEvent)} seconds
+                    </Alert>
+                ) : (
+                    <></>
+                )}
+
+                {maybeCurrentEventZoomDetails ? (
+                    <LinkButton to={maybeCurrentEventZoomDetails} isExternal={true} colorScheme="green" size="lg">
+                        Go to Zoom
+                    </LinkButton>
+                ) : (
+                    <></>
+                )}
+
+                {hlsUri && secondsUntilBroadcastEvent < 180 ? (
+                    <Box display={backstage ? "none" : "block"}>
+                        <ReactPlayer
+                            width="100%"
+                            height="auto"
+                            url={hlsUri}
+                            config={{
+                                file: {
+                                    hlsOptions: {},
+                                },
+                            }}
+                            playing={
+                                (withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent) &&
+                                !backstage &&
+                                intendPlayStream
+                            }
+                            controls={true}
+                            onPause={() => setIntendPlayStream(false)}
+                            onPlay={() => setIntendPlayStream(true)}
+                        />
+                        <Box textAlign="center">
+                            <HandUpButton
+                                currentRoomEvent={currentRoomEvent}
+                                eventPeople={eventPeople}
+                                onGoBackstage={() => setBackstage(true)}
+                            />
+                        </Box>
+                    </Box>
+                ) : (
+                    <></>
+                )}
+
+                {secondsUntilNonBreakoutEvent > 180 ? (
+                    <Box display={backstage ? "none" : "block"}>
+                        <BreakoutVonageRoom room={roomDetails} />
+                    </Box>
+                ) : (
+                    <></>
+                )}
+
                 <Heading as="h2" textAlign="left" mt={5}>
                     {roomDetails.name}
                 </Heading>
@@ -140,6 +183,21 @@ export function Room({ roomDetails }: { roomDetails: RoomDetailsFragment }): JSX
                             <></>
                         )}
                     </>
+                ) : (
+                    <></>
+                )}
+                {nextRoomEvent ? (
+                    <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
+                        <Heading as="h3" textAlign="left" size="md" mb={2}>
+                            Up next
+                        </Heading>
+                        <Text>{nextRoomEvent.name}</Text>
+                        {nextRoomEvent?.contentGroup ? (
+                            <ContentGroupSummary contentGroupData={nextRoomEvent.contentGroup} />
+                        ) : (
+                            <></>
+                        )}
+                    </Box>
                 ) : (
                     <></>
                 )}

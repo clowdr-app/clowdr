@@ -5526,6 +5526,263 @@ export type EventTransitions_AggregateArgs = {
   where?: Maybe<Transitions_Bool_Exp>;
 };
 
+/**
+ * Current streams in event Vonage sessions.
+ * 
+ * 
+ * columns and relationships of "EventParticipantStream"
+ */
+export type EventParticipantStream = {
+  readonly __typename?: 'EventParticipantStream';
+  /** An object relationship */
+  readonly attendee: Attendee;
+  readonly attendeeId: Scalars['uuid'];
+  /** An object relationship */
+  readonly conference: Conference;
+  readonly conferenceId: Scalars['uuid'];
+  readonly createdAt: Scalars['timestamptz'];
+  /** An object relationship */
+  readonly event: Event;
+  readonly eventId: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
+  readonly updatedAt: Scalars['timestamptz'];
+  readonly vonageConnectionId: Scalars['String'];
+  readonly vonageStreamId: Scalars['String'];
+  readonly vonageStreamType: Scalars['String'];
+};
+
+/** aggregated selection of "EventParticipantStream" */
+export type EventParticipantStream_Aggregate = {
+  readonly __typename?: 'EventParticipantStream_aggregate';
+  readonly aggregate?: Maybe<EventParticipantStream_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<EventParticipantStream>;
+};
+
+/** aggregate fields of "EventParticipantStream" */
+export type EventParticipantStream_Aggregate_Fields = {
+  readonly __typename?: 'EventParticipantStream_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<EventParticipantStream_Max_Fields>;
+  readonly min?: Maybe<EventParticipantStream_Min_Fields>;
+};
+
+
+/** aggregate fields of "EventParticipantStream" */
+export type EventParticipantStream_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<EventParticipantStream_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "EventParticipantStream" */
+export type EventParticipantStream_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<EventParticipantStream_Max_Order_By>;
+  readonly min?: Maybe<EventParticipantStream_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "EventParticipantStream" */
+export type EventParticipantStream_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<EventParticipantStream_Insert_Input>;
+  readonly on_conflict?: Maybe<EventParticipantStream_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "EventParticipantStream". All fields are combined with a logical 'AND'. */
+export type EventParticipantStream_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<EventParticipantStream_Bool_Exp>>>;
+  readonly _not?: Maybe<EventParticipantStream_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<EventParticipantStream_Bool_Exp>>>;
+  readonly attendee?: Maybe<Attendee_Bool_Exp>;
+  readonly attendeeId?: Maybe<Uuid_Comparison_Exp>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly event?: Maybe<Event_Bool_Exp>;
+  readonly eventId?: Maybe<Uuid_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly vonageConnectionId?: Maybe<String_Comparison_Exp>;
+  readonly vonageStreamId?: Maybe<String_Comparison_Exp>;
+  readonly vonageStreamType?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "EventParticipantStream" */
+export enum EventParticipantStream_Constraint {
+  /** unique or primary key constraint */
+  EventParticipantStreamEventIdAttendeeIdVonageStreamIdKey = 'EventParticipantStream_eventId_attendeeId_vonageStreamId_key',
+  /** unique or primary key constraint */
+  EventParticipantStreamPkey = 'EventParticipantStream_pkey'
+}
+
+/** input type for inserting data into table "EventParticipantStream" */
+export type EventParticipantStream_Insert_Input = {
+  readonly attendee?: Maybe<Attendee_Obj_Rel_Insert_Input>;
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly event?: Maybe<Event_Obj_Rel_Insert_Input>;
+  readonly eventId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly vonageConnectionId?: Maybe<Scalars['String']>;
+  readonly vonageStreamId?: Maybe<Scalars['String']>;
+  readonly vonageStreamType?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type EventParticipantStream_Max_Fields = {
+  readonly __typename?: 'EventParticipantStream_max_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly eventId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly vonageConnectionId?: Maybe<Scalars['String']>;
+  readonly vonageStreamId?: Maybe<Scalars['String']>;
+  readonly vonageStreamType?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "EventParticipantStream" */
+export type EventParticipantStream_Max_Order_By = {
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly eventId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly vonageConnectionId?: Maybe<Order_By>;
+  readonly vonageStreamId?: Maybe<Order_By>;
+  readonly vonageStreamType?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type EventParticipantStream_Min_Fields = {
+  readonly __typename?: 'EventParticipantStream_min_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly eventId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly vonageConnectionId?: Maybe<Scalars['String']>;
+  readonly vonageStreamId?: Maybe<Scalars['String']>;
+  readonly vonageStreamType?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "EventParticipantStream" */
+export type EventParticipantStream_Min_Order_By = {
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly eventId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly vonageConnectionId?: Maybe<Order_By>;
+  readonly vonageStreamId?: Maybe<Order_By>;
+  readonly vonageStreamType?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "EventParticipantStream" */
+export type EventParticipantStream_Mutation_Response = {
+  readonly __typename?: 'EventParticipantStream_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<EventParticipantStream>;
+};
+
+/** input type for inserting object relation for remote table "EventParticipantStream" */
+export type EventParticipantStream_Obj_Rel_Insert_Input = {
+  readonly data: EventParticipantStream_Insert_Input;
+  readonly on_conflict?: Maybe<EventParticipantStream_On_Conflict>;
+};
+
+/** on conflict condition type for table "EventParticipantStream" */
+export type EventParticipantStream_On_Conflict = {
+  readonly constraint: EventParticipantStream_Constraint;
+  readonly update_columns: ReadonlyArray<EventParticipantStream_Update_Column>;
+  readonly where?: Maybe<EventParticipantStream_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "EventParticipantStream" */
+export type EventParticipantStream_Order_By = {
+  readonly attendee?: Maybe<Attendee_Order_By>;
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly event?: Maybe<Event_Order_By>;
+  readonly eventId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly vonageConnectionId?: Maybe<Order_By>;
+  readonly vonageStreamId?: Maybe<Order_By>;
+  readonly vonageStreamType?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "EventParticipantStream" */
+export type EventParticipantStream_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "EventParticipantStream" */
+export enum EventParticipantStream_Select_Column {
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  EventId = 'eventId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  VonageConnectionId = 'vonageConnectionId',
+  /** column name */
+  VonageStreamId = 'vonageStreamId',
+  /** column name */
+  VonageStreamType = 'vonageStreamType'
+}
+
+/** input type for updating data in table "EventParticipantStream" */
+export type EventParticipantStream_Set_Input = {
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly eventId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly vonageConnectionId?: Maybe<Scalars['String']>;
+  readonly vonageStreamId?: Maybe<Scalars['String']>;
+  readonly vonageStreamType?: Maybe<Scalars['String']>;
+};
+
+/** update columns of table "EventParticipantStream" */
+export enum EventParticipantStream_Update_Column {
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  EventId = 'eventId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  VonageConnectionId = 'vonageConnectionId',
+  /** column name */
+  VonageStreamId = 'vonageStreamId',
+  /** column name */
+  VonageStreamType = 'vonageStreamType'
+}
+
 /** columns and relationships of "EventPerson" */
 export type EventPerson = {
   readonly __typename?: 'EventPerson';
@@ -5634,6 +5891,8 @@ export enum EventPersonRole_Constraint {
 export enum EventPersonRole_Enum {
   /** Chair/moderator of the event */
   Chair = 'CHAIR',
+  /** Viewer who has been given access to the event (e.g. to ask a question). */
+  Participant = 'PARTICIPANT',
   /** A presenter. */
   Presenter = 'PRESENTER'
 }
@@ -5960,6 +6219,242 @@ export enum EventPerson_Update_Column {
   RoleName = 'roleName'
 }
 
+/** columns and relationships of "EventRoomJoinRequest" */
+export type EventRoomJoinRequest = {
+  readonly __typename?: 'EventRoomJoinRequest';
+  readonly approved: Scalars['Boolean'];
+  /** An object relationship */
+  readonly attendee: Attendee;
+  readonly attendeeId: Scalars['uuid'];
+  /** An object relationship */
+  readonly conference: Conference;
+  readonly conferenceId: Scalars['uuid'];
+  readonly createdAt: Scalars['timestamptz'];
+  /** An object relationship */
+  readonly event: Event;
+  readonly eventId: Scalars['uuid'];
+  /** An object relationship */
+  readonly eventPersonRole: EventPersonRole;
+  readonly eventPersonRoleName: EventPersonRole_Enum;
+  readonly id: Scalars['uuid'];
+  readonly updatedAt: Scalars['timestamptz'];
+};
+
+/** aggregated selection of "EventRoomJoinRequest" */
+export type EventRoomJoinRequest_Aggregate = {
+  readonly __typename?: 'EventRoomJoinRequest_aggregate';
+  readonly aggregate?: Maybe<EventRoomJoinRequest_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<EventRoomJoinRequest>;
+};
+
+/** aggregate fields of "EventRoomJoinRequest" */
+export type EventRoomJoinRequest_Aggregate_Fields = {
+  readonly __typename?: 'EventRoomJoinRequest_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<EventRoomJoinRequest_Max_Fields>;
+  readonly min?: Maybe<EventRoomJoinRequest_Min_Fields>;
+};
+
+
+/** aggregate fields of "EventRoomJoinRequest" */
+export type EventRoomJoinRequest_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<EventRoomJoinRequest_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "EventRoomJoinRequest" */
+export type EventRoomJoinRequest_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<EventRoomJoinRequest_Max_Order_By>;
+  readonly min?: Maybe<EventRoomJoinRequest_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "EventRoomJoinRequest" */
+export type EventRoomJoinRequest_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<EventRoomJoinRequest_Insert_Input>;
+  readonly on_conflict?: Maybe<EventRoomJoinRequest_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "EventRoomJoinRequest". All fields are combined with a logical 'AND'. */
+export type EventRoomJoinRequest_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<EventRoomJoinRequest_Bool_Exp>>>;
+  readonly _not?: Maybe<EventRoomJoinRequest_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<EventRoomJoinRequest_Bool_Exp>>>;
+  readonly approved?: Maybe<Boolean_Comparison_Exp>;
+  readonly attendee?: Maybe<Attendee_Bool_Exp>;
+  readonly attendeeId?: Maybe<Uuid_Comparison_Exp>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly event?: Maybe<Event_Bool_Exp>;
+  readonly eventId?: Maybe<Uuid_Comparison_Exp>;
+  readonly eventPersonRole?: Maybe<EventPersonRole_Bool_Exp>;
+  readonly eventPersonRoleName?: Maybe<EventPersonRole_Enum_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "EventRoomJoinRequest" */
+export enum EventRoomJoinRequest_Constraint {
+  /** unique or primary key constraint */
+  EventRoomJoinRequestEventIdAttendeeIdKey = 'EventRoomJoinRequest_eventId_attendeeId_key',
+  /** unique or primary key constraint */
+  EventRoomJoinRequestPkey = 'EventRoomJoinRequest_pkey'
+}
+
+/** input type for inserting data into table "EventRoomJoinRequest" */
+export type EventRoomJoinRequest_Insert_Input = {
+  readonly approved?: Maybe<Scalars['Boolean']>;
+  readonly attendee?: Maybe<Attendee_Obj_Rel_Insert_Input>;
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly event?: Maybe<Event_Obj_Rel_Insert_Input>;
+  readonly eventId?: Maybe<Scalars['uuid']>;
+  readonly eventPersonRole?: Maybe<EventPersonRole_Obj_Rel_Insert_Input>;
+  readonly eventPersonRoleName?: Maybe<EventPersonRole_Enum>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type EventRoomJoinRequest_Max_Fields = {
+  readonly __typename?: 'EventRoomJoinRequest_max_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly eventId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "EventRoomJoinRequest" */
+export type EventRoomJoinRequest_Max_Order_By = {
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly eventId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type EventRoomJoinRequest_Min_Fields = {
+  readonly __typename?: 'EventRoomJoinRequest_min_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly eventId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "EventRoomJoinRequest" */
+export type EventRoomJoinRequest_Min_Order_By = {
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly eventId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "EventRoomJoinRequest" */
+export type EventRoomJoinRequest_Mutation_Response = {
+  readonly __typename?: 'EventRoomJoinRequest_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<EventRoomJoinRequest>;
+};
+
+/** input type for inserting object relation for remote table "EventRoomJoinRequest" */
+export type EventRoomJoinRequest_Obj_Rel_Insert_Input = {
+  readonly data: EventRoomJoinRequest_Insert_Input;
+  readonly on_conflict?: Maybe<EventRoomJoinRequest_On_Conflict>;
+};
+
+/** on conflict condition type for table "EventRoomJoinRequest" */
+export type EventRoomJoinRequest_On_Conflict = {
+  readonly constraint: EventRoomJoinRequest_Constraint;
+  readonly update_columns: ReadonlyArray<EventRoomJoinRequest_Update_Column>;
+  readonly where?: Maybe<EventRoomJoinRequest_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "EventRoomJoinRequest" */
+export type EventRoomJoinRequest_Order_By = {
+  readonly approved?: Maybe<Order_By>;
+  readonly attendee?: Maybe<Attendee_Order_By>;
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly event?: Maybe<Event_Order_By>;
+  readonly eventId?: Maybe<Order_By>;
+  readonly eventPersonRole?: Maybe<EventPersonRole_Order_By>;
+  readonly eventPersonRoleName?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "EventRoomJoinRequest" */
+export type EventRoomJoinRequest_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "EventRoomJoinRequest" */
+export enum EventRoomJoinRequest_Select_Column {
+  /** column name */
+  Approved = 'approved',
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  EventId = 'eventId',
+  /** column name */
+  EventPersonRoleName = 'eventPersonRoleName',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  UpdatedAt = 'updatedAt'
+}
+
+/** input type for updating data in table "EventRoomJoinRequest" */
+export type EventRoomJoinRequest_Set_Input = {
+  readonly approved?: Maybe<Scalars['Boolean']>;
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly eventId?: Maybe<Scalars['uuid']>;
+  readonly eventPersonRoleName?: Maybe<EventPersonRole_Enum>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "EventRoomJoinRequest" */
+export enum EventRoomJoinRequest_Update_Column {
+  /** column name */
+  Approved = 'approved',
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  EventId = 'eventId',
+  /** column name */
+  EventPersonRoleName = 'eventPersonRoleName',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  UpdatedAt = 'updatedAt'
+}
+
 /** columns and relationships of "EventTag" */
 export type EventTag = {
   readonly __typename?: 'EventTag';
@@ -6140,8 +6635,15 @@ export type EventVonageSession = {
   readonly event: Event;
   readonly eventId: Scalars['uuid'];
   readonly id: Scalars['uuid'];
+  readonly layoutData?: Maybe<Scalars['jsonb']>;
   readonly sessionId: Scalars['String'];
   readonly updatedAt: Scalars['timestamptz'];
+};
+
+
+/** columns and relationships of "EventVonageSession" */
+export type EventVonageSessionLayoutDataArgs = {
+  path?: Maybe<Scalars['String']>;
 };
 
 /** aggregated selection of "EventVonageSession" */
@@ -6173,6 +6675,11 @@ export type EventVonageSession_Aggregate_Order_By = {
   readonly min?: Maybe<EventVonageSession_Min_Order_By>;
 };
 
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type EventVonageSession_Append_Input = {
+  readonly layoutData?: Maybe<Scalars['jsonb']>;
+};
+
 /** input type for inserting array relation for remote table "EventVonageSession" */
 export type EventVonageSession_Arr_Rel_Insert_Input = {
   readonly data: ReadonlyArray<EventVonageSession_Insert_Input>;
@@ -6190,6 +6697,7 @@ export type EventVonageSession_Bool_Exp = {
   readonly event?: Maybe<Event_Bool_Exp>;
   readonly eventId?: Maybe<Uuid_Comparison_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly layoutData?: Maybe<Jsonb_Comparison_Exp>;
   readonly sessionId?: Maybe<String_Comparison_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
 };
@@ -6204,6 +6712,21 @@ export enum EventVonageSession_Constraint {
   EventVonageSessionSessionIdKey = 'EventVonageSession_sessionId_key'
 }
 
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type EventVonageSession_Delete_At_Path_Input = {
+  readonly layoutData?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type EventVonageSession_Delete_Elem_Input = {
+  readonly layoutData?: Maybe<Scalars['Int']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type EventVonageSession_Delete_Key_Input = {
+  readonly layoutData?: Maybe<Scalars['String']>;
+};
+
 /** input type for inserting data into table "EventVonageSession" */
 export type EventVonageSession_Insert_Input = {
   readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
@@ -6212,6 +6735,7 @@ export type EventVonageSession_Insert_Input = {
   readonly event?: Maybe<Event_Obj_Rel_Insert_Input>;
   readonly eventId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly layoutData?: Maybe<Scalars['jsonb']>;
   readonly sessionId?: Maybe<Scalars['String']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
@@ -6288,6 +6812,7 @@ export type EventVonageSession_Order_By = {
   readonly event?: Maybe<Event_Order_By>;
   readonly eventId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
+  readonly layoutData?: Maybe<Order_By>;
   readonly sessionId?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
@@ -6295,6 +6820,11 @@ export type EventVonageSession_Order_By = {
 /** primary key columns input for table: "EventVonageSession" */
 export type EventVonageSession_Pk_Columns_Input = {
   readonly id: Scalars['uuid'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type EventVonageSession_Prepend_Input = {
+  readonly layoutData?: Maybe<Scalars['jsonb']>;
 };
 
 /** select columns of table "EventVonageSession" */
@@ -6308,6 +6838,8 @@ export enum EventVonageSession_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
+  LayoutData = 'layoutData',
+  /** column name */
   SessionId = 'sessionId',
   /** column name */
   UpdatedAt = 'updatedAt'
@@ -6319,6 +6851,7 @@ export type EventVonageSession_Set_Input = {
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly eventId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly layoutData?: Maybe<Scalars['jsonb']>;
   readonly sessionId?: Maybe<Scalars['String']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
@@ -6333,6 +6866,8 @@ export enum EventVonageSession_Update_Column {
   EventId = 'eventId',
   /** column name */
   Id = 'id',
+  /** column name */
+  LayoutData = 'layoutData',
   /** column name */
   SessionId = 'sessionId',
   /** column name */
@@ -10960,7 +11495,9 @@ export enum RoomMode_Enum {
   /** A live presentation should be delivered in the Q&A video chat. The breakout video chat may also be available to relevant users. */
   Presentation = 'PRESENTATION',
   /** A live Q&A/discussion should be delivered in the Q&A video chat. The breakout video chat may also be available to relevant users. */
-  QAndA = 'Q_AND_A'
+  QAndA = 'Q_AND_A',
+  /** Event is taking place in a Zoom room. */
+  Zoom = 'ZOOM'
 }
 
 /** expression to compare columns of type RoomMode_enum. All fields are combined with logical 'AND'. */
@@ -11078,6 +11615,7 @@ export type RoomParticipant = {
   readonly room: Room;
   readonly roomId: Scalars['uuid'];
   readonly updatedAt: Scalars['timestamptz'];
+  readonly vonageConnectionId: Scalars['String'];
 };
 
 /** aggregated selection of "RoomParticipant" */
@@ -11129,6 +11667,7 @@ export type RoomParticipant_Bool_Exp = {
   readonly room?: Maybe<Room_Bool_Exp>;
   readonly roomId?: Maybe<Uuid_Comparison_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly vonageConnectionId?: Maybe<String_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "RoomParticipant" */
@@ -11150,6 +11689,7 @@ export type RoomParticipant_Insert_Input = {
   readonly room?: Maybe<Room_Obj_Rel_Insert_Input>;
   readonly roomId?: Maybe<Scalars['uuid']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly vonageConnectionId?: Maybe<Scalars['String']>;
 };
 
 /** aggregate max on columns */
@@ -11161,6 +11701,7 @@ export type RoomParticipant_Max_Fields = {
   readonly id?: Maybe<Scalars['uuid']>;
   readonly roomId?: Maybe<Scalars['uuid']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly vonageConnectionId?: Maybe<Scalars['String']>;
 };
 
 /** order by max() on columns of table "RoomParticipant" */
@@ -11171,6 +11712,7 @@ export type RoomParticipant_Max_Order_By = {
   readonly id?: Maybe<Order_By>;
   readonly roomId?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
+  readonly vonageConnectionId?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
@@ -11182,6 +11724,7 @@ export type RoomParticipant_Min_Fields = {
   readonly id?: Maybe<Scalars['uuid']>;
   readonly roomId?: Maybe<Scalars['uuid']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly vonageConnectionId?: Maybe<Scalars['String']>;
 };
 
 /** order by min() on columns of table "RoomParticipant" */
@@ -11192,6 +11735,7 @@ export type RoomParticipant_Min_Order_By = {
   readonly id?: Maybe<Order_By>;
   readonly roomId?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
+  readonly vonageConnectionId?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "RoomParticipant" */
@@ -11227,6 +11771,7 @@ export type RoomParticipant_Order_By = {
   readonly room?: Maybe<Room_Order_By>;
   readonly roomId?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
+  readonly vonageConnectionId?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: "RoomParticipant" */
@@ -11247,7 +11792,9 @@ export enum RoomParticipant_Select_Column {
   /** column name */
   RoomId = 'roomId',
   /** column name */
-  UpdatedAt = 'updatedAt'
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  VonageConnectionId = 'vonageConnectionId'
 }
 
 /** input type for updating data in table "RoomParticipant" */
@@ -11258,6 +11805,7 @@ export type RoomParticipant_Set_Input = {
   readonly id?: Maybe<Scalars['uuid']>;
   readonly roomId?: Maybe<Scalars['uuid']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly vonageConnectionId?: Maybe<Scalars['String']>;
 };
 
 /** update columns of table "RoomParticipant" */
@@ -11273,7 +11821,9 @@ export enum RoomParticipant_Update_Column {
   /** column name */
   RoomId = 'roomId',
   /** column name */
-  UpdatedAt = 'updatedAt'
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  VonageConnectionId = 'vonageConnectionId'
 }
 
 /** columns and relationships of "RoomPerson" */
@@ -17764,6 +18314,10 @@ export type Mutation_Root = {
   readonly delete_Email_by_pk?: Maybe<Email>;
   /** delete data from the table: "Event" */
   readonly delete_Event?: Maybe<Event_Mutation_Response>;
+  /** delete data from the table: "EventParticipantStream" */
+  readonly delete_EventParticipantStream?: Maybe<EventParticipantStream_Mutation_Response>;
+  /** delete single row from the table: "EventParticipantStream" */
+  readonly delete_EventParticipantStream_by_pk?: Maybe<EventParticipantStream>;
   /** delete data from the table: "EventPerson" */
   readonly delete_EventPerson?: Maybe<EventPerson_Mutation_Response>;
   /** delete data from the table: "EventPersonRole" */
@@ -17772,6 +18326,10 @@ export type Mutation_Root = {
   readonly delete_EventPersonRole_by_pk?: Maybe<EventPersonRole>;
   /** delete single row from the table: "EventPerson" */
   readonly delete_EventPerson_by_pk?: Maybe<EventPerson>;
+  /** delete data from the table: "EventRoomJoinRequest" */
+  readonly delete_EventRoomJoinRequest?: Maybe<EventRoomJoinRequest_Mutation_Response>;
+  /** delete single row from the table: "EventRoomJoinRequest" */
+  readonly delete_EventRoomJoinRequest_by_pk?: Maybe<EventRoomJoinRequest>;
   /** delete data from the table: "EventTag" */
   readonly delete_EventTag?: Maybe<EventTag_Mutation_Response>;
   /** delete single row from the table: "EventTag" */
@@ -18016,6 +18574,10 @@ export type Mutation_Root = {
   readonly insert_Email_one?: Maybe<Email>;
   /** insert data into the table: "Event" */
   readonly insert_Event?: Maybe<Event_Mutation_Response>;
+  /** insert data into the table: "EventParticipantStream" */
+  readonly insert_EventParticipantStream?: Maybe<EventParticipantStream_Mutation_Response>;
+  /** insert a single row into the table: "EventParticipantStream" */
+  readonly insert_EventParticipantStream_one?: Maybe<EventParticipantStream>;
   /** insert data into the table: "EventPerson" */
   readonly insert_EventPerson?: Maybe<EventPerson_Mutation_Response>;
   /** insert data into the table: "EventPersonRole" */
@@ -18024,6 +18586,10 @@ export type Mutation_Root = {
   readonly insert_EventPersonRole_one?: Maybe<EventPersonRole>;
   /** insert a single row into the table: "EventPerson" */
   readonly insert_EventPerson_one?: Maybe<EventPerson>;
+  /** insert data into the table: "EventRoomJoinRequest" */
+  readonly insert_EventRoomJoinRequest?: Maybe<EventRoomJoinRequest_Mutation_Response>;
+  /** insert a single row into the table: "EventRoomJoinRequest" */
+  readonly insert_EventRoomJoinRequest_one?: Maybe<EventRoomJoinRequest>;
   /** insert data into the table: "EventTag" */
   readonly insert_EventTag?: Maybe<EventTag_Mutation_Response>;
   /** insert a single row into the table: "EventTag" */
@@ -18286,6 +18852,10 @@ export type Mutation_Root = {
   readonly update_Email_by_pk?: Maybe<Email>;
   /** update data of the table: "Event" */
   readonly update_Event?: Maybe<Event_Mutation_Response>;
+  /** update data of the table: "EventParticipantStream" */
+  readonly update_EventParticipantStream?: Maybe<EventParticipantStream_Mutation_Response>;
+  /** update single row of the table: "EventParticipantStream" */
+  readonly update_EventParticipantStream_by_pk?: Maybe<EventParticipantStream>;
   /** update data of the table: "EventPerson" */
   readonly update_EventPerson?: Maybe<EventPerson_Mutation_Response>;
   /** update data of the table: "EventPersonRole" */
@@ -18294,6 +18864,10 @@ export type Mutation_Root = {
   readonly update_EventPersonRole_by_pk?: Maybe<EventPersonRole>;
   /** update single row of the table: "EventPerson" */
   readonly update_EventPerson_by_pk?: Maybe<EventPerson>;
+  /** update data of the table: "EventRoomJoinRequest" */
+  readonly update_EventRoomJoinRequest?: Maybe<EventRoomJoinRequest_Mutation_Response>;
+  /** update single row of the table: "EventRoomJoinRequest" */
+  readonly update_EventRoomJoinRequest_by_pk?: Maybe<EventRoomJoinRequest>;
   /** update data of the table: "EventTag" */
   readonly update_EventTag?: Maybe<EventTag_Mutation_Response>;
   /** update single row of the table: "EventTag" */
@@ -18682,6 +19256,18 @@ export type Mutation_RootDelete_EventArgs = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_EventParticipantStreamArgs = {
+  where: EventParticipantStream_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_EventParticipantStream_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_EventPersonArgs = {
   where: EventPerson_Bool_Exp;
 };
@@ -18701,6 +19287,18 @@ export type Mutation_RootDelete_EventPersonRole_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_EventPerson_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_EventRoomJoinRequestArgs = {
+  where: EventRoomJoinRequest_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_EventRoomJoinRequest_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -19477,6 +20075,20 @@ export type Mutation_RootInsert_EventArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_EventParticipantStreamArgs = {
+  objects: ReadonlyArray<EventParticipantStream_Insert_Input>;
+  on_conflict?: Maybe<EventParticipantStream_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_EventParticipantStream_OneArgs = {
+  object: EventParticipantStream_Insert_Input;
+  on_conflict?: Maybe<EventParticipantStream_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_EventPersonArgs = {
   objects: ReadonlyArray<EventPerson_Insert_Input>;
   on_conflict?: Maybe<EventPerson_On_Conflict>;
@@ -19501,6 +20113,20 @@ export type Mutation_RootInsert_EventPersonRole_OneArgs = {
 export type Mutation_RootInsert_EventPerson_OneArgs = {
   object: EventPerson_Insert_Input;
   on_conflict?: Maybe<EventPerson_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_EventRoomJoinRequestArgs = {
+  objects: ReadonlyArray<EventRoomJoinRequest_Insert_Input>;
+  on_conflict?: Maybe<EventRoomJoinRequest_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_EventRoomJoinRequest_OneArgs = {
+  object: EventRoomJoinRequest_Insert_Input;
+  on_conflict?: Maybe<EventRoomJoinRequest_On_Conflict>;
 };
 
 
@@ -20486,6 +21112,20 @@ export type Mutation_RootUpdate_EventArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_EventParticipantStreamArgs = {
+  _set?: Maybe<EventParticipantStream_Set_Input>;
+  where: EventParticipantStream_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_EventParticipantStream_By_PkArgs = {
+  _set?: Maybe<EventParticipantStream_Set_Input>;
+  pk_columns: EventParticipantStream_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_EventPersonArgs = {
   _set?: Maybe<EventPerson_Set_Input>;
   where: EventPerson_Bool_Exp;
@@ -20514,6 +21154,20 @@ export type Mutation_RootUpdate_EventPerson_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_EventRoomJoinRequestArgs = {
+  _set?: Maybe<EventRoomJoinRequest_Set_Input>;
+  where: EventRoomJoinRequest_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_EventRoomJoinRequest_By_PkArgs = {
+  _set?: Maybe<EventRoomJoinRequest_Set_Input>;
+  pk_columns: EventRoomJoinRequest_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_EventTagArgs = {
   _set?: Maybe<EventTag_Set_Input>;
   where: EventTag_Bool_Exp;
@@ -20529,6 +21183,11 @@ export type Mutation_RootUpdate_EventTag_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_EventVonageSessionArgs = {
+  _append?: Maybe<EventVonageSession_Append_Input>;
+  _delete_at_path?: Maybe<EventVonageSession_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<EventVonageSession_Delete_Elem_Input>;
+  _delete_key?: Maybe<EventVonageSession_Delete_Key_Input>;
+  _prepend?: Maybe<EventVonageSession_Prepend_Input>;
   _set?: Maybe<EventVonageSession_Set_Input>;
   where: EventVonageSession_Bool_Exp;
 };
@@ -20536,6 +21195,11 @@ export type Mutation_RootUpdate_EventVonageSessionArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_EventVonageSession_By_PkArgs = {
+  _append?: Maybe<EventVonageSession_Append_Input>;
+  _delete_at_path?: Maybe<EventVonageSession_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<EventVonageSession_Delete_Elem_Input>;
+  _delete_key?: Maybe<EventVonageSession_Delete_Key_Input>;
+  _prepend?: Maybe<EventVonageSession_Prepend_Input>;
   _set?: Maybe<EventVonageSession_Set_Input>;
   pk_columns: EventVonageSession_Pk_Columns_Input;
 };
@@ -21311,6 +21975,12 @@ export type Query_Root = {
   readonly Email_by_pk?: Maybe<Email>;
   /** fetch data from the table: "Event" */
   readonly Event: ReadonlyArray<Event>;
+  /** fetch data from the table: "EventParticipantStream" */
+  readonly EventParticipantStream: ReadonlyArray<EventParticipantStream>;
+  /** fetch aggregated fields from the table: "EventParticipantStream" */
+  readonly EventParticipantStream_aggregate: EventParticipantStream_Aggregate;
+  /** fetch data from the table: "EventParticipantStream" using primary key columns */
+  readonly EventParticipantStream_by_pk?: Maybe<EventParticipantStream>;
   /** fetch data from the table: "EventPerson" */
   readonly EventPerson: ReadonlyArray<EventPerson>;
   /** fetch data from the table: "EventPersonRole" */
@@ -21323,6 +21993,12 @@ export type Query_Root = {
   readonly EventPerson_aggregate: EventPerson_Aggregate;
   /** fetch data from the table: "EventPerson" using primary key columns */
   readonly EventPerson_by_pk?: Maybe<EventPerson>;
+  /** fetch data from the table: "EventRoomJoinRequest" */
+  readonly EventRoomJoinRequest: ReadonlyArray<EventRoomJoinRequest>;
+  /** fetch aggregated fields from the table: "EventRoomJoinRequest" */
+  readonly EventRoomJoinRequest_aggregate: EventRoomJoinRequest_Aggregate;
+  /** fetch data from the table: "EventRoomJoinRequest" using primary key columns */
+  readonly EventRoomJoinRequest_by_pk?: Maybe<EventRoomJoinRequest>;
   /** fetch data from the table: "EventTag" */
   readonly EventTag: ReadonlyArray<EventTag>;
   /** fetch aggregated fields from the table: "EventTag" */
@@ -22049,6 +22725,32 @@ export type Query_RootEventArgs = {
 
 
 /** query root */
+export type Query_RootEventParticipantStreamArgs = {
+  distinct_on?: Maybe<ReadonlyArray<EventParticipantStream_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<EventParticipantStream_Order_By>>;
+  where?: Maybe<EventParticipantStream_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootEventParticipantStream_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<EventParticipantStream_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<EventParticipantStream_Order_By>>;
+  where?: Maybe<EventParticipantStream_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootEventParticipantStream_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
 export type Query_RootEventPersonArgs = {
   distinct_on?: Maybe<ReadonlyArray<EventPerson_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -22096,6 +22798,32 @@ export type Query_RootEventPerson_AggregateArgs = {
 
 /** query root */
 export type Query_RootEventPerson_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
+export type Query_RootEventRoomJoinRequestArgs = {
+  distinct_on?: Maybe<ReadonlyArray<EventRoomJoinRequest_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<EventRoomJoinRequest_Order_By>>;
+  where?: Maybe<EventRoomJoinRequest_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootEventRoomJoinRequest_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<EventRoomJoinRequest_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<EventRoomJoinRequest_Order_By>>;
+  where?: Maybe<EventRoomJoinRequest_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootEventRoomJoinRequest_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -23368,6 +24096,12 @@ export type Subscription_Root = {
   readonly Email_by_pk?: Maybe<Email>;
   /** fetch data from the table: "Event" */
   readonly Event: ReadonlyArray<Event>;
+  /** fetch data from the table: "EventParticipantStream" */
+  readonly EventParticipantStream: ReadonlyArray<EventParticipantStream>;
+  /** fetch aggregated fields from the table: "EventParticipantStream" */
+  readonly EventParticipantStream_aggregate: EventParticipantStream_Aggregate;
+  /** fetch data from the table: "EventParticipantStream" using primary key columns */
+  readonly EventParticipantStream_by_pk?: Maybe<EventParticipantStream>;
   /** fetch data from the table: "EventPerson" */
   readonly EventPerson: ReadonlyArray<EventPerson>;
   /** fetch data from the table: "EventPersonRole" */
@@ -23380,6 +24114,12 @@ export type Subscription_Root = {
   readonly EventPerson_aggregate: EventPerson_Aggregate;
   /** fetch data from the table: "EventPerson" using primary key columns */
   readonly EventPerson_by_pk?: Maybe<EventPerson>;
+  /** fetch data from the table: "EventRoomJoinRequest" */
+  readonly EventRoomJoinRequest: ReadonlyArray<EventRoomJoinRequest>;
+  /** fetch aggregated fields from the table: "EventRoomJoinRequest" */
+  readonly EventRoomJoinRequest_aggregate: EventRoomJoinRequest_Aggregate;
+  /** fetch data from the table: "EventRoomJoinRequest" using primary key columns */
+  readonly EventRoomJoinRequest_by_pk?: Maybe<EventRoomJoinRequest>;
   /** fetch data from the table: "EventTag" */
   readonly EventTag: ReadonlyArray<EventTag>;
   /** fetch aggregated fields from the table: "EventTag" */
@@ -24106,6 +24846,32 @@ export type Subscription_RootEventArgs = {
 
 
 /** subscription root */
+export type Subscription_RootEventParticipantStreamArgs = {
+  distinct_on?: Maybe<ReadonlyArray<EventParticipantStream_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<EventParticipantStream_Order_By>>;
+  where?: Maybe<EventParticipantStream_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootEventParticipantStream_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<EventParticipantStream_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<EventParticipantStream_Order_By>>;
+  where?: Maybe<EventParticipantStream_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootEventParticipantStream_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
 export type Subscription_RootEventPersonArgs = {
   distinct_on?: Maybe<ReadonlyArray<EventPerson_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -24153,6 +24919,32 @@ export type Subscription_RootEventPerson_AggregateArgs = {
 
 /** subscription root */
 export type Subscription_RootEventPerson_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
+export type Subscription_RootEventRoomJoinRequestArgs = {
+  distinct_on?: Maybe<ReadonlyArray<EventRoomJoinRequest_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<EventRoomJoinRequest_Order_By>>;
+  where?: Maybe<EventRoomJoinRequest_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootEventRoomJoinRequest_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<EventRoomJoinRequest_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<EventRoomJoinRequest_Order_By>>;
+  where?: Maybe<EventRoomJoinRequest_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootEventRoomJoinRequest_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -25666,6 +26458,97 @@ export type SubmitProfilePhotoMutationVariables = Exact<{
 
 export type SubmitProfilePhotoMutation = { readonly __typename?: 'mutation_root', readonly updateProfilePhoto?: Maybe<{ readonly __typename?: 'UpdateProfilePhotoResponse', readonly ok: boolean }> };
 
+export type GetRoomVonageTokenMutationVariables = Exact<{
+  roomId: Scalars['uuid'];
+}>;
+
+
+export type GetRoomVonageTokenMutation = { readonly __typename?: 'mutation_root', readonly joinRoomVonageSession?: Maybe<{ readonly __typename?: 'JoinRoomVonageSessionOutput', readonly accessToken?: Maybe<string>, readonly sessionId?: Maybe<string> }> };
+
+export type UpdateEventVonageSessionLayoutMutationVariables = Exact<{
+  eventVonageSessionId: Scalars['uuid'];
+  layoutData: Scalars['jsonb'];
+}>;
+
+
+export type UpdateEventVonageSessionLayoutMutation = { readonly __typename?: 'mutation_root', readonly update_EventVonageSession_by_pk?: Maybe<{ readonly __typename?: 'EventVonageSession', readonly id: any }> };
+
+export type DeleteEventPersonMutationVariables = Exact<{
+  eventPersonId: Scalars['uuid'];
+}>;
+
+
+export type DeleteEventPersonMutation = { readonly __typename?: 'mutation_root', readonly delete_EventPerson_by_pk?: Maybe<{ readonly __typename?: 'EventPerson', readonly id: any }> };
+
+export type GetEventParticipantStreamsSubscriptionVariables = Exact<{
+  eventId: Scalars['uuid'];
+}>;
+
+
+export type GetEventParticipantStreamsSubscription = { readonly __typename?: 'subscription_root', readonly EventParticipantStream: ReadonlyArray<(
+    { readonly __typename?: 'EventParticipantStream' }
+    & EventParticipantStreamDetailsFragment
+  )> };
+
+export type EventParticipantStreamDetailsFragment = { readonly __typename?: 'EventParticipantStream', readonly id: any, readonly attendeeId: any, readonly conferenceId: any, readonly eventId: any, readonly vonageStreamType: string, readonly vonageStreamId: string, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string, readonly profile?: Maybe<{ readonly __typename?: 'AttendeeProfile', readonly affiliation?: Maybe<string> }> } };
+
+export type UnapprovedEventRoomJoinRequestsSubscriptionVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  eventId: Scalars['uuid'];
+}>;
+
+
+export type UnapprovedEventRoomJoinRequestsSubscription = { readonly __typename?: 'subscription_root', readonly EventRoomJoinRequest: ReadonlyArray<(
+    { readonly __typename?: 'EventRoomJoinRequest' }
+    & EventRoomJoinRequestDetailsFragment
+  )> };
+
+export type EventRoomJoinRequestDetailsFragment = { readonly __typename?: 'EventRoomJoinRequest', readonly id: any, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } };
+
+export type GetEventVonageTokenMutationVariables = Exact<{
+  eventId: Scalars['uuid'];
+}>;
+
+
+export type GetEventVonageTokenMutation = { readonly __typename?: 'mutation_root', readonly joinEventVonageSession?: Maybe<{ readonly __typename?: 'JoinEventVonageSessionOutput', readonly accessToken?: Maybe<string> }> };
+
+export type GetEventDetailsQueryVariables = Exact<{
+  eventId: Scalars['uuid'];
+}>;
+
+
+export type GetEventDetailsQuery = { readonly __typename?: 'query_root', readonly Event_by_pk?: Maybe<(
+    { readonly __typename?: 'Event' }
+    & RoomEventDetailsFragment
+  )> };
+
+export type RoomEventDetailsFragment = { readonly __typename?: 'Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum, readonly eventVonageSession?: Maybe<{ readonly __typename?: 'EventVonageSession', readonly id: any, readonly sessionId: string }> };
+
+export type ApproveEventRoomJoinRequestMutationVariables = Exact<{
+  eventRoomJoinRequestId: Scalars['uuid'];
+}>;
+
+
+export type ApproveEventRoomJoinRequestMutation = { readonly __typename?: 'mutation_root', readonly update_EventRoomJoinRequest_by_pk?: Maybe<{ readonly __typename?: 'EventRoomJoinRequest', readonly id: any }> };
+
+export type MakeEventRoomJoinRequestMutationVariables = Exact<{
+  attendeeId: Scalars['uuid'];
+  conferenceId: Scalars['uuid'];
+  eventId: Scalars['uuid'];
+}>;
+
+
+export type MakeEventRoomJoinRequestMutation = { readonly __typename?: 'mutation_root', readonly insert_EventRoomJoinRequest_one?: Maybe<{ readonly __typename?: 'EventRoomJoinRequest', readonly id: any }> };
+
+export type MyEventRoomJoinRequestSubscriptionVariables = Exact<{
+  attendeeId: Scalars['uuid'];
+  conferenceId: Scalars['uuid'];
+  eventId: Scalars['uuid'];
+}>;
+
+
+export type MyEventRoomJoinRequestSubscription = { readonly __typename?: 'subscription_root', readonly EventRoomJoinRequest: ReadonlyArray<{ readonly __typename?: 'EventRoomJoinRequest', readonly id: any, readonly approved: boolean }> };
+
 export type AddParticipantToRoomMutationVariables = Exact<{
   attendeeId: Scalars['uuid'];
   roomId: Scalars['uuid'];
@@ -25697,7 +26580,6 @@ export type AttendeeCreateRoomMutation = { readonly __typename?: 'mutation_root'
 
 export type GetRoomDetailsQueryVariables = Exact<{
   roomId: Scalars['uuid'];
-  eventsFrom: Scalars['timestamptz'];
 }>;
 
 
@@ -25714,20 +26596,25 @@ export type RoomDetailsFragment = (
 
 export type RoomEventsFragment = { readonly __typename?: 'Room', readonly events: ReadonlyArray<(
     { readonly __typename?: 'Event' }
-    & RoomEventDetailsFragment
+    & RoomEventSummaryFragment
   )> };
 
-export type RoomEventDetailsFragment = { readonly __typename?: 'Event', readonly id: any, readonly startTime: any, readonly name: string, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'EventPerson', readonly id: any, readonly roleName: EventPersonRole_Enum, readonly attendee?: Maybe<{ readonly __typename?: 'Attendee', readonly displayName: string, readonly id: any, readonly userId?: Maybe<string> }> }>, readonly contentGroup?: Maybe<(
+export type RoomEventSummaryFragment = { readonly __typename?: 'Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'EventPerson', readonly id: any, readonly roleName: EventPersonRole_Enum, readonly attendee?: Maybe<{ readonly __typename?: 'Attendee', readonly displayName: string, readonly id: any, readonly userId?: Maybe<string> }> }>, readonly contentGroup?: Maybe<(
     { readonly __typename?: 'ContentGroup' }
     & ContentGroupDataFragment
-  )>, readonly eventVonageSession?: Maybe<{ readonly __typename?: 'EventVonageSession', readonly id: any, readonly sessionId: string }> };
+  )> };
 
-export type GetEventVonageTokenMutationVariables = Exact<{
-  eventId: Scalars['uuid'];
+export type EventPeopleForRoomSubscriptionVariables = Exact<{
+  roomId: Scalars['uuid'];
 }>;
 
 
-export type GetEventVonageTokenMutation = { readonly __typename?: 'mutation_root', readonly joinEventVonageSession?: Maybe<{ readonly __typename?: 'JoinEventVonageSessionOutput', readonly accessToken?: Maybe<string> }> };
+export type EventPeopleForRoomSubscription = { readonly __typename?: 'subscription_root', readonly EventPerson: ReadonlyArray<(
+    { readonly __typename?: 'EventPerson' }
+    & EventPersonDetailsFragment
+  )> };
+
+export type EventPersonDetailsFragment = { readonly __typename?: 'EventPerson', readonly id: any, readonly name: string, readonly roleName: EventPersonRole_Enum, readonly eventId: any, readonly attendee?: Maybe<{ readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly displayName: string }> };
 
 export type GetEventVonageDetailsQueryVariables = Exact<{
   eventId: Scalars['uuid'];
@@ -25735,21 +26622,6 @@ export type GetEventVonageDetailsQueryVariables = Exact<{
 
 
 export type GetEventVonageDetailsQuery = { readonly __typename?: 'query_root', readonly Event_by_pk?: Maybe<{ readonly __typename?: 'Event', readonly id: any, readonly eventVonageSession?: Maybe<{ readonly __typename?: 'EventVonageSession', readonly sessionId: string, readonly id: any }> }> };
-
-export type GetRoomVonageTokenMutationVariables = Exact<{
-  roomId: Scalars['uuid'];
-}>;
-
-
-export type GetRoomVonageTokenMutation = { readonly __typename?: 'mutation_root', readonly joinRoomVonageSession?: Maybe<{ readonly __typename?: 'JoinRoomVonageSessionOutput', readonly accessToken?: Maybe<string>, readonly sessionId?: Maybe<string> }> };
-
-export type UserEventRolesSubscriptionVariables = Exact<{
-  eventId: Scalars['uuid'];
-  userId: Scalars['String'];
-}>;
-
-
-export type UserEventRolesSubscription = { readonly __typename?: 'subscription_root', readonly Event_by_pk?: Maybe<{ readonly __typename?: 'Event', readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'EventPerson', readonly roleName: EventPersonRole_Enum, readonly id: any }> }> };
 
 export type Timeline_TagFragment = { readonly __typename?: 'Tag', readonly id: any, readonly name: string, readonly colour: string };
 
@@ -26593,6 +27465,16 @@ export type ProtectedEchoQueryVariables = Exact<{
 
 export type ProtectedEchoQuery = { readonly __typename?: 'query_root', readonly protectedEcho?: Maybe<{ readonly __typename?: 'ProtectedEchoOutput', readonly message: string }> };
 
+export type UserEventRolesSubscriptionVariables = Exact<{
+  eventId: Scalars['uuid'];
+}>;
+
+
+export type UserEventRolesSubscription = { readonly __typename?: 'subscription_root', readonly Event_by_pk?: Maybe<{ readonly __typename?: 'Event', readonly eventPeople: ReadonlyArray<(
+      { readonly __typename?: 'EventPerson' }
+      & EventPersonDetailsFragment
+    )> }> };
+
 export type SelectInvitationForAcceptQueryVariables = Exact<{
   inviteCode: Scalars['uuid'];
 }>;
@@ -26640,6 +27522,18 @@ export type GetRoomMembersSubscription = { readonly __typename?: 'subscription_r
   )> };
 
 export type RoomPeopleFragment = { readonly __typename?: 'Room', readonly roomPeople: ReadonlyArray<{ readonly __typename?: 'RoomPerson', readonly id: any, readonly roomPersonRoleName: RoomPersonRole_Enum, readonly attendee: { readonly __typename?: 'Attendee', readonly displayName: string, readonly id: any } }> };
+
+export type GetRoomParticipantsSubscriptionVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type GetRoomParticipantsSubscription = { readonly __typename?: 'subscription_root', readonly RoomParticipant: ReadonlyArray<(
+    { readonly __typename?: 'RoomParticipant' }
+    & RoomParticipantDetailsFragment
+  )> };
+
+export type RoomParticipantDetailsFragment = { readonly __typename?: 'RoomParticipant', readonly attendeeId: any, readonly conferenceId: any, readonly id: any, readonly roomId: any, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } };
 
 export type SelectUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -26850,6 +27744,47 @@ export const ContentGroupEventsFragmentDoc = gql`
   }
 }
     ${ContentGroupEventFragmentDoc}`;
+export const EventParticipantStreamDetailsFragmentDoc = gql`
+    fragment EventParticipantStreamDetails on EventParticipantStream {
+  id
+  attendeeId
+  conferenceId
+  eventId
+  attendee {
+    id
+    displayName
+    profile {
+      affiliation
+    }
+  }
+  vonageStreamType
+  vonageStreamId
+}
+    `;
+export const EventRoomJoinRequestDetailsFragmentDoc = gql`
+    fragment EventRoomJoinRequestDetails on EventRoomJoinRequest {
+  id
+  attendee {
+    id
+    displayName
+  }
+}
+    `;
+export const RoomEventDetailsFragmentDoc = gql`
+    fragment RoomEventDetails on Event {
+  id
+  conferenceId
+  startTime
+  name
+  durationSeconds
+  endTime
+  intendedRoomModeName
+  eventVonageSession {
+    id
+    sessionId
+  }
+}
+    `;
 export const RoomListRoomDetailsFragmentDoc = gql`
     fragment RoomListRoomDetails on Room {
   id
@@ -26857,12 +27792,12 @@ export const RoomListRoomDetailsFragmentDoc = gql`
   roomPrivacyName
 }
     `;
-export const RoomEventDetailsFragmentDoc = gql`
-    fragment RoomEventDetails on Event {
+export const RoomEventSummaryFragmentDoc = gql`
+    fragment RoomEventSummary on Event {
   id
+  conferenceId
   startTime
   name
-  durationSeconds
   endTime
   intendedRoomModeName
   eventPeople {
@@ -26877,19 +27812,15 @@ export const RoomEventDetailsFragmentDoc = gql`
   contentGroup {
     ...ContentGroupData
   }
-  eventVonageSession {
-    id
-    sessionId
-  }
 }
     ${ContentGroupDataFragmentDoc}`;
 export const RoomEventsFragmentDoc = gql`
     fragment RoomEvents on Room {
-  events(where: {endTime: {_gt: $eventsFrom}}) {
-    ...RoomEventDetails
+  events(order_by: {startTime: asc}) {
+    ...RoomEventSummary
   }
 }
-    ${RoomEventDetailsFragmentDoc}`;
+    ${RoomEventSummaryFragmentDoc}`;
 export const RoomPeopleFragmentDoc = gql`
     fragment RoomPeople on Room {
   roomPeople(order_by: {attendee: {displayName: asc}}) {
@@ -26919,6 +27850,19 @@ export const RoomDetailsFragmentDoc = gql`
 }
     ${RoomEventsFragmentDoc}
 ${RoomPeopleFragmentDoc}`;
+export const EventPersonDetailsFragmentDoc = gql`
+    fragment EventPersonDetails on EventPerson {
+  id
+  name
+  roleName
+  eventId
+  attendee {
+    id
+    userId
+    displayName
+  }
+}
+    `;
 export const Timeline_TagFragmentDoc = gql`
     fragment Timeline_Tag on Tag {
   id
@@ -27368,6 +28312,18 @@ export const RequiredItemFieldsFragmentDoc = gql`
     name
   }
   contentGroupTitle
+}
+    `;
+export const RoomParticipantDetailsFragmentDoc = gql`
+    fragment RoomParticipantDetails on RoomParticipant {
+  attendeeId
+  conferenceId
+  id
+  roomId
+  attendee {
+    id
+    displayName
+  }
 }
     `;
 export const AttendeeFieldsFragmentDoc = gql`
@@ -28374,6 +29330,338 @@ export function useSubmitProfilePhotoMutation(baseOptions?: Apollo.MutationHookO
 export type SubmitProfilePhotoMutationHookResult = ReturnType<typeof useSubmitProfilePhotoMutation>;
 export type SubmitProfilePhotoMutationResult = Apollo.MutationResult<SubmitProfilePhotoMutation>;
 export type SubmitProfilePhotoMutationOptions = Apollo.BaseMutationOptions<SubmitProfilePhotoMutation, SubmitProfilePhotoMutationVariables>;
+export const GetRoomVonageTokenDocument = gql`
+    mutation GetRoomVonageToken($roomId: uuid!) {
+  joinRoomVonageSession(roomId: $roomId) {
+    accessToken
+    sessionId
+  }
+}
+    `;
+export type GetRoomVonageTokenMutationFn = Apollo.MutationFunction<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>;
+
+/**
+ * __useGetRoomVonageTokenMutation__
+ *
+ * To run a mutation, you first call `useGetRoomVonageTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGetRoomVonageTokenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [getRoomVonageTokenMutation, { data, loading, error }] = useGetRoomVonageTokenMutation({
+ *   variables: {
+ *      roomId: // value for 'roomId'
+ *   },
+ * });
+ */
+export function useGetRoomVonageTokenMutation(baseOptions?: Apollo.MutationHookOptions<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>) {
+        return Apollo.useMutation<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>(GetRoomVonageTokenDocument, baseOptions);
+      }
+export type GetRoomVonageTokenMutationHookResult = ReturnType<typeof useGetRoomVonageTokenMutation>;
+export type GetRoomVonageTokenMutationResult = Apollo.MutationResult<GetRoomVonageTokenMutation>;
+export type GetRoomVonageTokenMutationOptions = Apollo.BaseMutationOptions<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>;
+export const UpdateEventVonageSessionLayoutDocument = gql`
+    mutation UpdateEventVonageSessionLayout($eventVonageSessionId: uuid!, $layoutData: jsonb!) {
+  update_EventVonageSession_by_pk(
+    pk_columns: {id: $eventVonageSessionId}
+    _set: {layoutData: $layoutData}
+  ) {
+    id
+  }
+}
+    `;
+export type UpdateEventVonageSessionLayoutMutationFn = Apollo.MutationFunction<UpdateEventVonageSessionLayoutMutation, UpdateEventVonageSessionLayoutMutationVariables>;
+
+/**
+ * __useUpdateEventVonageSessionLayoutMutation__
+ *
+ * To run a mutation, you first call `useUpdateEventVonageSessionLayoutMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateEventVonageSessionLayoutMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateEventVonageSessionLayoutMutation, { data, loading, error }] = useUpdateEventVonageSessionLayoutMutation({
+ *   variables: {
+ *      eventVonageSessionId: // value for 'eventVonageSessionId'
+ *      layoutData: // value for 'layoutData'
+ *   },
+ * });
+ */
+export function useUpdateEventVonageSessionLayoutMutation(baseOptions?: Apollo.MutationHookOptions<UpdateEventVonageSessionLayoutMutation, UpdateEventVonageSessionLayoutMutationVariables>) {
+        return Apollo.useMutation<UpdateEventVonageSessionLayoutMutation, UpdateEventVonageSessionLayoutMutationVariables>(UpdateEventVonageSessionLayoutDocument, baseOptions);
+      }
+export type UpdateEventVonageSessionLayoutMutationHookResult = ReturnType<typeof useUpdateEventVonageSessionLayoutMutation>;
+export type UpdateEventVonageSessionLayoutMutationResult = Apollo.MutationResult<UpdateEventVonageSessionLayoutMutation>;
+export type UpdateEventVonageSessionLayoutMutationOptions = Apollo.BaseMutationOptions<UpdateEventVonageSessionLayoutMutation, UpdateEventVonageSessionLayoutMutationVariables>;
+export const DeleteEventPersonDocument = gql`
+    mutation DeleteEventPerson($eventPersonId: uuid!) {
+  delete_EventPerson_by_pk(id: $eventPersonId) {
+    id
+  }
+}
+    `;
+export type DeleteEventPersonMutationFn = Apollo.MutationFunction<DeleteEventPersonMutation, DeleteEventPersonMutationVariables>;
+
+/**
+ * __useDeleteEventPersonMutation__
+ *
+ * To run a mutation, you first call `useDeleteEventPersonMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteEventPersonMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteEventPersonMutation, { data, loading, error }] = useDeleteEventPersonMutation({
+ *   variables: {
+ *      eventPersonId: // value for 'eventPersonId'
+ *   },
+ * });
+ */
+export function useDeleteEventPersonMutation(baseOptions?: Apollo.MutationHookOptions<DeleteEventPersonMutation, DeleteEventPersonMutationVariables>) {
+        return Apollo.useMutation<DeleteEventPersonMutation, DeleteEventPersonMutationVariables>(DeleteEventPersonDocument, baseOptions);
+      }
+export type DeleteEventPersonMutationHookResult = ReturnType<typeof useDeleteEventPersonMutation>;
+export type DeleteEventPersonMutationResult = Apollo.MutationResult<DeleteEventPersonMutation>;
+export type DeleteEventPersonMutationOptions = Apollo.BaseMutationOptions<DeleteEventPersonMutation, DeleteEventPersonMutationVariables>;
+export const GetEventParticipantStreamsDocument = gql`
+    subscription GetEventParticipantStreams($eventId: uuid!) {
+  EventParticipantStream(where: {eventId: {_eq: $eventId}}) {
+    ...EventParticipantStreamDetails
+  }
+}
+    ${EventParticipantStreamDetailsFragmentDoc}`;
+
+/**
+ * __useGetEventParticipantStreamsSubscription__
+ *
+ * To run a query within a React component, call `useGetEventParticipantStreamsSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useGetEventParticipantStreamsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetEventParticipantStreamsSubscription({
+ *   variables: {
+ *      eventId: // value for 'eventId'
+ *   },
+ * });
+ */
+export function useGetEventParticipantStreamsSubscription(baseOptions: Apollo.SubscriptionHookOptions<GetEventParticipantStreamsSubscription, GetEventParticipantStreamsSubscriptionVariables>) {
+        return Apollo.useSubscription<GetEventParticipantStreamsSubscription, GetEventParticipantStreamsSubscriptionVariables>(GetEventParticipantStreamsDocument, baseOptions);
+      }
+export type GetEventParticipantStreamsSubscriptionHookResult = ReturnType<typeof useGetEventParticipantStreamsSubscription>;
+export type GetEventParticipantStreamsSubscriptionResult = Apollo.SubscriptionResult<GetEventParticipantStreamsSubscription>;
+export const UnapprovedEventRoomJoinRequestsDocument = gql`
+    subscription UnapprovedEventRoomJoinRequests($conferenceId: uuid!, $eventId: uuid!) {
+  EventRoomJoinRequest(
+    where: {conferenceId: {_eq: $conferenceId}, eventId: {_eq: $eventId}, approved: {_eq: false}}
+  ) {
+    ...EventRoomJoinRequestDetails
+  }
+}
+    ${EventRoomJoinRequestDetailsFragmentDoc}`;
+
+/**
+ * __useUnapprovedEventRoomJoinRequestsSubscription__
+ *
+ * To run a query within a React component, call `useUnapprovedEventRoomJoinRequestsSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useUnapprovedEventRoomJoinRequestsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUnapprovedEventRoomJoinRequestsSubscription({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      eventId: // value for 'eventId'
+ *   },
+ * });
+ */
+export function useUnapprovedEventRoomJoinRequestsSubscription(baseOptions: Apollo.SubscriptionHookOptions<UnapprovedEventRoomJoinRequestsSubscription, UnapprovedEventRoomJoinRequestsSubscriptionVariables>) {
+        return Apollo.useSubscription<UnapprovedEventRoomJoinRequestsSubscription, UnapprovedEventRoomJoinRequestsSubscriptionVariables>(UnapprovedEventRoomJoinRequestsDocument, baseOptions);
+      }
+export type UnapprovedEventRoomJoinRequestsSubscriptionHookResult = ReturnType<typeof useUnapprovedEventRoomJoinRequestsSubscription>;
+export type UnapprovedEventRoomJoinRequestsSubscriptionResult = Apollo.SubscriptionResult<UnapprovedEventRoomJoinRequestsSubscription>;
+export const GetEventVonageTokenDocument = gql`
+    mutation GetEventVonageToken($eventId: uuid!) {
+  joinEventVonageSession(eventId: $eventId) {
+    accessToken
+  }
+}
+    `;
+export type GetEventVonageTokenMutationFn = Apollo.MutationFunction<GetEventVonageTokenMutation, GetEventVonageTokenMutationVariables>;
+
+/**
+ * __useGetEventVonageTokenMutation__
+ *
+ * To run a mutation, you first call `useGetEventVonageTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGetEventVonageTokenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [getEventVonageTokenMutation, { data, loading, error }] = useGetEventVonageTokenMutation({
+ *   variables: {
+ *      eventId: // value for 'eventId'
+ *   },
+ * });
+ */
+export function useGetEventVonageTokenMutation(baseOptions?: Apollo.MutationHookOptions<GetEventVonageTokenMutation, GetEventVonageTokenMutationVariables>) {
+        return Apollo.useMutation<GetEventVonageTokenMutation, GetEventVonageTokenMutationVariables>(GetEventVonageTokenDocument, baseOptions);
+      }
+export type GetEventVonageTokenMutationHookResult = ReturnType<typeof useGetEventVonageTokenMutation>;
+export type GetEventVonageTokenMutationResult = Apollo.MutationResult<GetEventVonageTokenMutation>;
+export type GetEventVonageTokenMutationOptions = Apollo.BaseMutationOptions<GetEventVonageTokenMutation, GetEventVonageTokenMutationVariables>;
+export const GetEventDetailsDocument = gql`
+    query GetEventDetails($eventId: uuid!) {
+  Event_by_pk(id: $eventId) {
+    ...RoomEventDetails
+  }
+}
+    ${RoomEventDetailsFragmentDoc}`;
+
+/**
+ * __useGetEventDetailsQuery__
+ *
+ * To run a query within a React component, call `useGetEventDetailsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetEventDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetEventDetailsQuery({
+ *   variables: {
+ *      eventId: // value for 'eventId'
+ *   },
+ * });
+ */
+export function useGetEventDetailsQuery(baseOptions: Apollo.QueryHookOptions<GetEventDetailsQuery, GetEventDetailsQueryVariables>) {
+        return Apollo.useQuery<GetEventDetailsQuery, GetEventDetailsQueryVariables>(GetEventDetailsDocument, baseOptions);
+      }
+export function useGetEventDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetEventDetailsQuery, GetEventDetailsQueryVariables>) {
+          return Apollo.useLazyQuery<GetEventDetailsQuery, GetEventDetailsQueryVariables>(GetEventDetailsDocument, baseOptions);
+        }
+export type GetEventDetailsQueryHookResult = ReturnType<typeof useGetEventDetailsQuery>;
+export type GetEventDetailsLazyQueryHookResult = ReturnType<typeof useGetEventDetailsLazyQuery>;
+export type GetEventDetailsQueryResult = Apollo.QueryResult<GetEventDetailsQuery, GetEventDetailsQueryVariables>;
+export const ApproveEventRoomJoinRequestDocument = gql`
+    mutation ApproveEventRoomJoinRequest($eventRoomJoinRequestId: uuid!) {
+  update_EventRoomJoinRequest_by_pk(
+    pk_columns: {id: $eventRoomJoinRequestId}
+    _set: {approved: true}
+  ) {
+    id
+  }
+}
+    `;
+export type ApproveEventRoomJoinRequestMutationFn = Apollo.MutationFunction<ApproveEventRoomJoinRequestMutation, ApproveEventRoomJoinRequestMutationVariables>;
+
+/**
+ * __useApproveEventRoomJoinRequestMutation__
+ *
+ * To run a mutation, you first call `useApproveEventRoomJoinRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useApproveEventRoomJoinRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [approveEventRoomJoinRequestMutation, { data, loading, error }] = useApproveEventRoomJoinRequestMutation({
+ *   variables: {
+ *      eventRoomJoinRequestId: // value for 'eventRoomJoinRequestId'
+ *   },
+ * });
+ */
+export function useApproveEventRoomJoinRequestMutation(baseOptions?: Apollo.MutationHookOptions<ApproveEventRoomJoinRequestMutation, ApproveEventRoomJoinRequestMutationVariables>) {
+        return Apollo.useMutation<ApproveEventRoomJoinRequestMutation, ApproveEventRoomJoinRequestMutationVariables>(ApproveEventRoomJoinRequestDocument, baseOptions);
+      }
+export type ApproveEventRoomJoinRequestMutationHookResult = ReturnType<typeof useApproveEventRoomJoinRequestMutation>;
+export type ApproveEventRoomJoinRequestMutationResult = Apollo.MutationResult<ApproveEventRoomJoinRequestMutation>;
+export type ApproveEventRoomJoinRequestMutationOptions = Apollo.BaseMutationOptions<ApproveEventRoomJoinRequestMutation, ApproveEventRoomJoinRequestMutationVariables>;
+export const MakeEventRoomJoinRequestDocument = gql`
+    mutation MakeEventRoomJoinRequest($attendeeId: uuid!, $conferenceId: uuid!, $eventId: uuid!) {
+  insert_EventRoomJoinRequest_one(
+    object: {attendeeId: $attendeeId, conferenceId: $conferenceId, eventId: $eventId}
+  ) {
+    id
+  }
+}
+    `;
+export type MakeEventRoomJoinRequestMutationFn = Apollo.MutationFunction<MakeEventRoomJoinRequestMutation, MakeEventRoomJoinRequestMutationVariables>;
+
+/**
+ * __useMakeEventRoomJoinRequestMutation__
+ *
+ * To run a mutation, you first call `useMakeEventRoomJoinRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useMakeEventRoomJoinRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [makeEventRoomJoinRequestMutation, { data, loading, error }] = useMakeEventRoomJoinRequestMutation({
+ *   variables: {
+ *      attendeeId: // value for 'attendeeId'
+ *      conferenceId: // value for 'conferenceId'
+ *      eventId: // value for 'eventId'
+ *   },
+ * });
+ */
+export function useMakeEventRoomJoinRequestMutation(baseOptions?: Apollo.MutationHookOptions<MakeEventRoomJoinRequestMutation, MakeEventRoomJoinRequestMutationVariables>) {
+        return Apollo.useMutation<MakeEventRoomJoinRequestMutation, MakeEventRoomJoinRequestMutationVariables>(MakeEventRoomJoinRequestDocument, baseOptions);
+      }
+export type MakeEventRoomJoinRequestMutationHookResult = ReturnType<typeof useMakeEventRoomJoinRequestMutation>;
+export type MakeEventRoomJoinRequestMutationResult = Apollo.MutationResult<MakeEventRoomJoinRequestMutation>;
+export type MakeEventRoomJoinRequestMutationOptions = Apollo.BaseMutationOptions<MakeEventRoomJoinRequestMutation, MakeEventRoomJoinRequestMutationVariables>;
+export const MyEventRoomJoinRequestDocument = gql`
+    subscription MyEventRoomJoinRequest($attendeeId: uuid!, $conferenceId: uuid!, $eventId: uuid!) {
+  EventRoomJoinRequest(
+    where: {attendeeId: {_eq: $attendeeId}, conferenceId: {_eq: $conferenceId}, eventId: {_eq: $eventId}}
+  ) {
+    id
+    approved
+  }
+}
+    `;
+
+/**
+ * __useMyEventRoomJoinRequestSubscription__
+ *
+ * To run a query within a React component, call `useMyEventRoomJoinRequestSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useMyEventRoomJoinRequestSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMyEventRoomJoinRequestSubscription({
+ *   variables: {
+ *      attendeeId: // value for 'attendeeId'
+ *      conferenceId: // value for 'conferenceId'
+ *      eventId: // value for 'eventId'
+ *   },
+ * });
+ */
+export function useMyEventRoomJoinRequestSubscription(baseOptions: Apollo.SubscriptionHookOptions<MyEventRoomJoinRequestSubscription, MyEventRoomJoinRequestSubscriptionVariables>) {
+        return Apollo.useSubscription<MyEventRoomJoinRequestSubscription, MyEventRoomJoinRequestSubscriptionVariables>(MyEventRoomJoinRequestDocument, baseOptions);
+      }
+export type MyEventRoomJoinRequestSubscriptionHookResult = ReturnType<typeof useMyEventRoomJoinRequestSubscription>;
+export type MyEventRoomJoinRequestSubscriptionResult = Apollo.SubscriptionResult<MyEventRoomJoinRequestSubscription>;
 export const AddParticipantToRoomDocument = gql`
     mutation AddParticipantToRoom($attendeeId: uuid!, $roomId: uuid!) {
   insert_RoomPerson_one(
@@ -28479,7 +29767,7 @@ export type AttendeeCreateRoomMutationHookResult = ReturnType<typeof useAttendee
 export type AttendeeCreateRoomMutationResult = Apollo.MutationResult<AttendeeCreateRoomMutation>;
 export type AttendeeCreateRoomMutationOptions = Apollo.BaseMutationOptions<AttendeeCreateRoomMutation, AttendeeCreateRoomMutationVariables>;
 export const GetRoomDetailsDocument = gql`
-    query GetRoomDetails($roomId: uuid!, $eventsFrom: timestamptz!) {
+    query GetRoomDetails($roomId: uuid!) {
   Room_by_pk(id: $roomId) {
     ...RoomDetails
   }
@@ -28499,7 +29787,6 @@ export const GetRoomDetailsDocument = gql`
  * const { data, loading, error } = useGetRoomDetailsQuery({
  *   variables: {
  *      roomId: // value for 'roomId'
- *      eventsFrom: // value for 'eventsFrom'
  *   },
  * });
  */
@@ -28512,38 +29799,35 @@ export function useGetRoomDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type GetRoomDetailsQueryHookResult = ReturnType<typeof useGetRoomDetailsQuery>;
 export type GetRoomDetailsLazyQueryHookResult = ReturnType<typeof useGetRoomDetailsLazyQuery>;
 export type GetRoomDetailsQueryResult = Apollo.QueryResult<GetRoomDetailsQuery, GetRoomDetailsQueryVariables>;
-export const GetEventVonageTokenDocument = gql`
-    mutation GetEventVonageToken($eventId: uuid!) {
-  joinEventVonageSession(eventId: $eventId) {
-    accessToken
+export const EventPeopleForRoomDocument = gql`
+    subscription EventPeopleForRoom($roomId: uuid!) {
+  EventPerson(where: {event: {room: {id: {_eq: $roomId}}}}) {
+    ...EventPersonDetails
   }
 }
-    `;
-export type GetEventVonageTokenMutationFn = Apollo.MutationFunction<GetEventVonageTokenMutation, GetEventVonageTokenMutationVariables>;
+    ${EventPersonDetailsFragmentDoc}`;
 
 /**
- * __useGetEventVonageTokenMutation__
+ * __useEventPeopleForRoomSubscription__
  *
- * To run a mutation, you first call `useGetEventVonageTokenMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useGetEventVonageTokenMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
+ * To run a query within a React component, call `useEventPeopleForRoomSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useEventPeopleForRoomSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
  *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const [getEventVonageTokenMutation, { data, loading, error }] = useGetEventVonageTokenMutation({
+ * const { data, loading, error } = useEventPeopleForRoomSubscription({
  *   variables: {
- *      eventId: // value for 'eventId'
+ *      roomId: // value for 'roomId'
  *   },
  * });
  */
-export function useGetEventVonageTokenMutation(baseOptions?: Apollo.MutationHookOptions<GetEventVonageTokenMutation, GetEventVonageTokenMutationVariables>) {
-        return Apollo.useMutation<GetEventVonageTokenMutation, GetEventVonageTokenMutationVariables>(GetEventVonageTokenDocument, baseOptions);
+export function useEventPeopleForRoomSubscription(baseOptions: Apollo.SubscriptionHookOptions<EventPeopleForRoomSubscription, EventPeopleForRoomSubscriptionVariables>) {
+        return Apollo.useSubscription<EventPeopleForRoomSubscription, EventPeopleForRoomSubscriptionVariables>(EventPeopleForRoomDocument, baseOptions);
       }
-export type GetEventVonageTokenMutationHookResult = ReturnType<typeof useGetEventVonageTokenMutation>;
-export type GetEventVonageTokenMutationResult = Apollo.MutationResult<GetEventVonageTokenMutation>;
-export type GetEventVonageTokenMutationOptions = Apollo.BaseMutationOptions<GetEventVonageTokenMutation, GetEventVonageTokenMutationVariables>;
+export type EventPeopleForRoomSubscriptionHookResult = ReturnType<typeof useEventPeopleForRoomSubscription>;
+export type EventPeopleForRoomSubscriptionResult = Apollo.SubscriptionResult<EventPeopleForRoomSubscription>;
 export const GetEventVonageDetailsDocument = gql`
     query GetEventVonageDetails($eventId: uuid!) {
   Event_by_pk(id: $eventId) {
@@ -28581,72 +29865,6 @@ export function useGetEventVonageDetailsLazyQuery(baseOptions?: Apollo.LazyQuery
 export type GetEventVonageDetailsQueryHookResult = ReturnType<typeof useGetEventVonageDetailsQuery>;
 export type GetEventVonageDetailsLazyQueryHookResult = ReturnType<typeof useGetEventVonageDetailsLazyQuery>;
 export type GetEventVonageDetailsQueryResult = Apollo.QueryResult<GetEventVonageDetailsQuery, GetEventVonageDetailsQueryVariables>;
-export const GetRoomVonageTokenDocument = gql`
-    mutation GetRoomVonageToken($roomId: uuid!) {
-  joinRoomVonageSession(roomId: $roomId) {
-    accessToken
-    sessionId
-  }
-}
-    `;
-export type GetRoomVonageTokenMutationFn = Apollo.MutationFunction<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>;
-
-/**
- * __useGetRoomVonageTokenMutation__
- *
- * To run a mutation, you first call `useGetRoomVonageTokenMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useGetRoomVonageTokenMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [getRoomVonageTokenMutation, { data, loading, error }] = useGetRoomVonageTokenMutation({
- *   variables: {
- *      roomId: // value for 'roomId'
- *   },
- * });
- */
-export function useGetRoomVonageTokenMutation(baseOptions?: Apollo.MutationHookOptions<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>) {
-        return Apollo.useMutation<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>(GetRoomVonageTokenDocument, baseOptions);
-      }
-export type GetRoomVonageTokenMutationHookResult = ReturnType<typeof useGetRoomVonageTokenMutation>;
-export type GetRoomVonageTokenMutationResult = Apollo.MutationResult<GetRoomVonageTokenMutation>;
-export type GetRoomVonageTokenMutationOptions = Apollo.BaseMutationOptions<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>;
-export const UserEventRolesDocument = gql`
-    subscription UserEventRoles($eventId: uuid!, $userId: String!) {
-  Event_by_pk(id: $eventId) {
-    eventPeople(where: {attendee: {userId: {_eq: $userId}}}) {
-      roleName
-      id
-    }
-  }
-}
-    `;
-
-/**
- * __useUserEventRolesSubscription__
- *
- * To run a query within a React component, call `useUserEventRolesSubscription` and pass it any options that fit your needs.
- * When your component renders, `useUserEventRolesSubscription` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useUserEventRolesSubscription({
- *   variables: {
- *      eventId: // value for 'eventId'
- *      userId: // value for 'userId'
- *   },
- * });
- */
-export function useUserEventRolesSubscription(baseOptions: Apollo.SubscriptionHookOptions<UserEventRolesSubscription, UserEventRolesSubscriptionVariables>) {
-        return Apollo.useSubscription<UserEventRolesSubscription, UserEventRolesSubscriptionVariables>(UserEventRolesDocument, baseOptions);
-      }
-export type UserEventRolesSubscriptionHookResult = ReturnType<typeof useUserEventRolesSubscription>;
-export type UserEventRolesSubscriptionResult = Apollo.SubscriptionResult<UserEventRolesSubscription>;
 export const Timeline_SelectRoomsDocument = gql`
     query Timeline_SelectRooms($conferenceId: uuid!) {
   Room(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -31194,6 +32412,37 @@ export function useProtectedEchoLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type ProtectedEchoQueryHookResult = ReturnType<typeof useProtectedEchoQuery>;
 export type ProtectedEchoLazyQueryHookResult = ReturnType<typeof useProtectedEchoLazyQuery>;
 export type ProtectedEchoQueryResult = Apollo.QueryResult<ProtectedEchoQuery, ProtectedEchoQueryVariables>;
+export const UserEventRolesDocument = gql`
+    subscription UserEventRoles($eventId: uuid!) {
+  Event_by_pk(id: $eventId) {
+    eventPeople {
+      ...EventPersonDetails
+    }
+  }
+}
+    ${EventPersonDetailsFragmentDoc}`;
+
+/**
+ * __useUserEventRolesSubscription__
+ *
+ * To run a query within a React component, call `useUserEventRolesSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useUserEventRolesSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserEventRolesSubscription({
+ *   variables: {
+ *      eventId: // value for 'eventId'
+ *   },
+ * });
+ */
+export function useUserEventRolesSubscription(baseOptions: Apollo.SubscriptionHookOptions<UserEventRolesSubscription, UserEventRolesSubscriptionVariables>) {
+        return Apollo.useSubscription<UserEventRolesSubscription, UserEventRolesSubscriptionVariables>(UserEventRolesDocument, baseOptions);
+      }
+export type UserEventRolesSubscriptionHookResult = ReturnType<typeof useUserEventRolesSubscription>;
+export type UserEventRolesSubscriptionResult = Apollo.SubscriptionResult<UserEventRolesSubscription>;
 export const SelectInvitationForAcceptDocument = gql`
     query SelectInvitationForAccept($inviteCode: uuid!) {
   Invitation(where: {inviteCode: {_eq: $inviteCode}}) {
@@ -31389,6 +32638,35 @@ export function useGetRoomMembersSubscription(baseOptions: Apollo.SubscriptionHo
       }
 export type GetRoomMembersSubscriptionHookResult = ReturnType<typeof useGetRoomMembersSubscription>;
 export type GetRoomMembersSubscriptionResult = Apollo.SubscriptionResult<GetRoomMembersSubscription>;
+export const GetRoomParticipantsDocument = gql`
+    subscription GetRoomParticipants($conferenceId: uuid!) {
+  RoomParticipant(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...RoomParticipantDetails
+  }
+}
+    ${RoomParticipantDetailsFragmentDoc}`;
+
+/**
+ * __useGetRoomParticipantsSubscription__
+ *
+ * To run a query within a React component, call `useGetRoomParticipantsSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useGetRoomParticipantsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRoomParticipantsSubscription({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useGetRoomParticipantsSubscription(baseOptions: Apollo.SubscriptionHookOptions<GetRoomParticipantsSubscription, GetRoomParticipantsSubscriptionVariables>) {
+        return Apollo.useSubscription<GetRoomParticipantsSubscription, GetRoomParticipantsSubscriptionVariables>(GetRoomParticipantsDocument, baseOptions);
+      }
+export type GetRoomParticipantsSubscriptionHookResult = ReturnType<typeof useGetRoomParticipantsSubscription>;
+export type GetRoomParticipantsSubscriptionResult = Apollo.SubscriptionResult<GetRoomParticipantsSubscription>;
 export const SelectUsersDocument = gql`
     query selectUsers {
   User {

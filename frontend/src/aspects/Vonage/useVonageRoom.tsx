@@ -1,13 +1,16 @@
-import { useToast } from "@chakra-ui/react";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
+import { Link, ListIcon, ListItem, OrderedList, UnorderedList, useToast } from "@chakra-ui/react";
 import React, { Dispatch, useEffect, useMemo, useReducer, useRef } from "react";
+import FAIcon from "../Icons/FAIcon";
 
-interface VonageRoomState {
+export interface VonageRoomState {
     preferredCameraId: string | null;
     cameraIntendedEnabled: boolean;
     cameraStream: MediaStream | null;
     preferredMicrophoneId: string | null;
     microphoneIntendedEnabled: boolean;
     microphoneStream: MediaStream | null;
+    screenShareIntendedEnabled: boolean;
 }
 
 const initialRoomState: VonageRoomState = {
@@ -17,6 +20,7 @@ const initialRoomState: VonageRoomState = {
     preferredMicrophoneId: null,
     microphoneIntendedEnabled: false,
     microphoneStream: null,
+    screenShareIntendedEnabled: false,
 };
 
 type VonageRoomStateAction =
@@ -25,7 +29,8 @@ type VonageRoomStateAction =
     | SetCameraIntendedState
     | SetCameraMediaStream
     | SetMicrophoneIntendedState
-    | SetMicrophoneMediaStream;
+    | SetMicrophoneMediaStream
+    | SetScreenShareIntendedState;
 
 export enum VonageRoomStateActionType {
     SetPreferredCamera,
@@ -34,6 +39,7 @@ export enum VonageRoomStateActionType {
     SetPreferredMicrophone,
     SetMicrophoneIntendedState,
     SetMicrophoneMediaStream,
+    SetScreenShareIntendedState,
 }
 
 interface SetPreferredCamera {
@@ -66,7 +72,12 @@ interface SetMicrophoneMediaStream {
     mediaStream: MediaStream | null;
 }
 
-interface VonageRoomComputedState {
+interface SetScreenShareIntendedState {
+    type: VonageRoomStateActionType.SetScreenShareIntendedState;
+    screenEnabled: boolean;
+}
+
+export interface VonageRoomComputedState {
     videoTrack: MediaStreamTrack | null;
     audioTrack: MediaStreamTrack | null;
 }
@@ -121,6 +132,9 @@ function reducer(state: VonageRoomState, action: VonageRoomStateAction): VonageR
                 state.microphoneStream?.getTracks().forEach((track) => track.stop());
             }
             return { ...state, microphoneStream: action.mediaStream };
+
+        case VonageRoomStateActionType.SetScreenShareIntendedState:
+            return { ...state, screenShareIntendedEnabled: action.screenEnabled };
     }
 }
 
@@ -174,17 +188,40 @@ export function VonageRoomStateProvider({
                     video: {
                         ...deviceConstraints,
                     },
+                    audio: false,
                 });
                 dispatch({
                     type: VonageRoomStateActionType.SetCameraMediaStream,
                     mediaStream,
                 });
             } catch (e) {
+                dispatch({
+                    type: VonageRoomStateActionType.SetCameraIntendedState,
+                    cameraEnabled: false,
+                });
                 console.error("Failed to start camera preview", e);
                 toast({
-                    description: "Failed to start camera",
+                    title: "Failed to start camera",
+                    description: (
+                        <OrderedList>
+                            <ListItem>
+                                Check that you have allowed permission to use the camera in your browser.
+                                 <UnorderedList>
+                                    <ListItem><Link isExternal href="https://support.google.com/chrome/answer/2693767?co=GENIE.Platform%3DDesktop">Instructions for Google Chrome <ExternalLinkIcon /></Link></ListItem>
+                                    <ListItem><Link isExternal href="https://support.mozilla.org/en-US/kb/how-manage-your-camera-and-microphone-permissions">Instructions for Firefox <ExternalLinkIcon /></Link></ListItem>
+                                 </UnorderedList>
+                            </ListItem>
+                            <ListItem>
+                                Please also make sure you have fully quit/exited Zoom, Skype and any other tabs that may
+                                be using your camera.
+                            </ListItem>
+                        </OrderedList>
+                    ),
                     status: "error",
+                    isClosable: true,
+                    duration: 30000,
                 });
+                return;
             }
         }
 
@@ -217,17 +254,24 @@ export function VonageRoomStateProvider({
                     audio: {
                         ...deviceConstraints,
                     },
+                    video: false,
                 });
                 dispatch({
                     type: VonageRoomStateActionType.SetMicrophoneMediaStream,
                     mediaStream,
                 });
             } catch (e) {
+                dispatch({
+                    type: VonageRoomStateActionType.SetMicrophoneIntendedState,
+                    microphoneEnabled: false,
+                });
                 console.error("Failed to start microphone preview", e);
                 toast({
-                    description: "Failed to start microphone",
+                    title: "Failed to start microphone",
+                    description: "Check that you have not denied permission to use the microphone in your web browser",
                     status: "error",
                 });
+                return;
             }
         }
 

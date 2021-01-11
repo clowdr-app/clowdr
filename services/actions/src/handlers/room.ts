@@ -7,7 +7,7 @@ import {
     SetRoomVonageSessionIdDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import * as Vonage from "../lib/vonage/vonageClient";
+import Vonage from "../lib/vonage/vonageClient";
 import { Payload, RoomData } from "../types/hasura/event";
 
 export async function handleRoomCreated(payload: Payload<RoomData>): Promise<void> {

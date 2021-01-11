@@ -5,6 +5,7 @@ import { Chat } from "../Chat/Chat";
 import { ChatDuplicationFlags } from "../Chat/Configuration";
 import PageNotFound from "../Errors/PageNotFound";
 import PageNotImplemented from "../Errors/PageNotImplemented";
+import RoomParticipantsProvider from "../Room/RoomParticipantsProvider";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import AttendeeListPage from "./Attend/Attendee/AttendeeListPage";
 import ConferenceLandingPage from "./Attend/ConferenceLandingPage";
@@ -225,7 +226,9 @@ export default function ConferenceRoutes({ confSlug, rootUrl }: { confSlug: stri
             <CurrentUserGroupsRolesPermissionsProvider>
                 <ConferenceCurrentUserActivePermissionsProvider>
                     <CurrentAttendeeProvider>
-                        <ConferenceRoutesInner rootUrl={rootUrl} />
+                        <RoomParticipantsProvider>
+                            <ConferenceRoutesInner rootUrl={rootUrl} />
+                        </RoomParticipantsProvider>
                     </CurrentAttendeeProvider>
                 </ConferenceCurrentUserActivePermissionsProvider>
             </CurrentUserGroupsRolesPermissionsProvider>

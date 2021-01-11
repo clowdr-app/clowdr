@@ -23,9 +23,7 @@ export function PreJoin({ cameraPreviewRef }: { cameraPreviewRef: React.RefObjec
     return (
         <HStack>
             <Box position="relative">
-                <Box position="absolute" width="50%" top="50%" left="50%" transform="translate(-50%,-50%)">
-                    <PlaceholderImage colour={placeholderColour} />
-                </Box>
+                <PlaceholderImage />
                 <video
                     ref={cameraPreviewRef}
                     autoPlay={true}

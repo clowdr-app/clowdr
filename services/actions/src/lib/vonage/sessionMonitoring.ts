@@ -1,14 +1,14 @@
-import { gql } from "@apollo/client/core";
 import { assertType } from "typescript-is";
-import {
-    CreateRoomParticipantDocument,
-    GetRoomBySessionIdDocument,
-    OngoingBroadcastableVideoRoomEventsDocument,
-    RemoveRoomParticipantDocument,
-} from "../../generated/graphql";
+import { OngoingBroadcastableVideoRoomEventsDocument } from "../../generated/graphql";
 import { apolloClient } from "../../graphqlClient";
 import { CustomConnectionData, WebhookReqBody } from "../../types/vonage";
-import { startEventBroadcast } from "./vonageTools";
+import {
+    addEventParticipantStream,
+    addRoomParticipant,
+    removeEventParticipantStream,
+    removeRoomParticipant,
+    startEventBroadcast,
+} from "./vonageTools";
 
 export async function startBroadcastIfOngoingEvent(payload: WebhookReqBody): Promise<boolean> {
     const ongoingMatchingEvents = await apolloClient.query({
@@ -54,13 +54,20 @@ export async function addAndRemoveRoomParticipants(payload: WebhookReqBody): Pro
 
     if (payload.event === "connectionCreated") {
         try {
-            console.log("connectionCreated: adding participant to room", payload.sessionId, payload.connection.data);
-            await addRoomParticipant(payload.sessionId, payload.connection.data);
+            console.log(
+                "connectionCreated: adding participant to room if necessary",
+                payload.sessionId,
+                payload.connection.data
+            );
+            const data = JSON.parse(payload.connection.data);
+            const { attendeeId } = assertType<CustomConnectionData>(data);
+            await addRoomParticipant(payload.sessionId, payload.connection.id, attendeeId);
         } catch (e) {
             console.error(
                 "Failed to handle Vonage connectionCreated event",
                 payload.sessionId,
-                payload.connection.data
+                payload.connection.data,
+                e
             );
             success = false;
         }
@@ -69,16 +76,19 @@ export async function addAndRemoveRoomParticipants(payload: WebhookReqBody): Pro
     if (payload.event === "connectionDestroyed") {
         try {
             console.log(
-                "connectionDestroyed: removing participant from room",
+                "connectionDestroyed: removing participant from room if necessary",
                 payload.sessionId,
                 payload.connection.data
             );
-            await removeRoomParticipant(payload.sessionId, payload.connection.data);
+            const data = JSON.parse(payload.connection.data);
+            const { attendeeId } = assertType<CustomConnectionData>(data);
+            await removeRoomParticipant(payload.sessionId, attendeeId, payload.connection.id);
         } catch (e) {
             console.error(
                 "Failed to handle Vonage connectionDestroyed event",
                 payload.sessionId,
-                payload.connection.data
+                payload.connection.data,
+                e
             );
             success = false;
         }
@@ -87,90 +97,40 @@ export async function addAndRemoveRoomParticipants(payload: WebhookReqBody): Pro
     return success;
 }
 
-gql`
-    query GetRoomBySessionId($sessionId: String!) {
-        Room(where: { publicVonageSessionId: { _eq: $sessionId } }) {
-            id
-            conferenceId
+export async function addAndRemoveEventParticipantStreams(payload: WebhookReqBody): Promise<boolean> {
+    let success = true;
+
+    if (payload.event === "streamCreated") {
+        try {
+            console.log(
+                "streamCreated: adding participant stream to event if necessary",
+                payload.sessionId,
+                payload.stream.id
+            );
+            const data = JSON.parse(payload.stream.connection.data);
+            const { attendeeId } = assertType<CustomConnectionData>(data);
+            await addEventParticipantStream(payload.sessionId, attendeeId, payload.stream);
+        } catch (e) {
+            console.error("Failed to handle Vonage streamCreated event", payload.sessionId, payload.stream.id, e);
+            success = false;
         }
     }
 
-    mutation CreateRoomParticipant($attendeeId: uuid!, $conferenceId: uuid!, $roomId: uuid!) {
-        insert_RoomParticipant_one(
-            on_conflict: { constraint: RoomParticipant_roomId_attendeeId_key, update_columns: updatedAt }
-            object: { attendeeId: $attendeeId, conferenceId: $conferenceId, roomId: $roomId }
-        ) {
-            id
+    if (payload.event === "streamDestroyed") {
+        try {
+            console.log(
+                "streamCreated: removing participant stream from event if necessary",
+                payload.sessionId,
+                payload.stream.id
+            );
+            const data = JSON.parse(payload.stream.connection.data);
+            const { attendeeId } = assertType<CustomConnectionData>(data);
+            await removeEventParticipantStream(payload.sessionId, attendeeId, payload.stream);
+        } catch (e) {
+            console.error("Failed to handle Vonage streamDestroyed event", payload.sessionId, payload.stream.id, e);
+            success = false;
         }
     }
 
-    mutation RemoveRoomParticipant($attendeeId: uuid!, $conferenceId: uuid!, $roomId: uuid!) {
-        delete_RoomParticipant(
-            where: { attendeeId: { _eq: $attendeeId }, conferenceId: { _eq: $conferenceId }, roomId: { _eq: $roomId } }
-        ) {
-            affected_rows
-        }
-    }
-`;
-
-export async function addRoomParticipant(sessionId: string, connectionData: string): Promise<void> {
-    const data = JSON.parse(connectionData);
-    const { attendeeId } = assertType<CustomConnectionData>(data);
-
-    const result = await apolloClient.query({
-        query: GetRoomBySessionIdDocument,
-        variables: {
-            sessionId,
-        },
-    });
-
-    if (result.error || result.errors) {
-        console.error("Could not retrieve room from Vonage session ID", sessionId, attendeeId);
-        throw new Error("Could not retrieve room from Vonage session ID");
-    }
-
-    if (result.data.Room.length !== 1) {
-        console.error("Could not find room associated with Vonage session ID", sessionId, attendeeId);
-        throw new Error("Could not find room associated with Vonage session ID");
-    }
-
-    await apolloClient.mutate({
-        mutation: CreateRoomParticipantDocument,
-        variables: {
-            attendeeId,
-            conferenceId: result.data.Room[0].conferenceId,
-            roomId: result.data.Room[0].id,
-        },
-    });
-}
-
-export async function removeRoomParticipant(sessionId: string, connectionData: string): Promise<void> {
-    const data = JSON.parse(connectionData);
-    const { attendeeId } = assertType<CustomConnectionData>(data);
-
-    const result = await apolloClient.query({
-        query: GetRoomBySessionIdDocument,
-        variables: {
-            sessionId,
-        },
-    });
-
-    if (result.error || result.errors) {
-        console.error("Could not retrieve room from Vonage session ID", sessionId, attendeeId);
-        throw new Error("Could not retrieve room from Vonage session ID");
-    }
-
-    if (result.data.Room.length !== 1) {
-        console.error("Could not find room associated with Vonage session ID", sessionId, attendeeId);
-        throw new Error("Could not find room associated with Vonage session ID");
-    }
-
-    await apolloClient.mutate({
-        mutation: RemoveRoomParticipantDocument,
-        variables: {
-            attendeeId,
-            conferenceId: result.data.Room[0].conferenceId,
-            roomId: result.data.Room[0].id,
-        },
-    });
+    return success;
 }

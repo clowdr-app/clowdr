@@ -3488,6 +3488,83 @@
       value_from_env: EVENT_SECRET
 - table:
     schema: public
+    name: EventParticipantStream
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
+  object_relationships:
+  - name: attendee
+    using:
+      foreign_key_constraint_on: attendeeId
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  - name: event
+    using:
+      foreign_key_constraint_on: eventId
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - attendeeId
+      - conferenceId
+      - eventId
+      - id
+      - updated_at
+      - vonageStreamId
+      - vonageStreamType
+      filter:
+        _or:
+        - conference:
+            groups:
+              _and:
+              - enabled:
+                  _eq: true
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      permissionName:
+                        _eq: CONFERENCE_MANAGE_SCHEDULE
+              - _or:
+                - includeUnauthenticated:
+                    _eq: true
+                - groupAttendees:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
+        - _and:
+          - conference:
+              groups:
+                _and:
+                - enabled:
+                    _eq: true
+                - groupRoles:
+                    role:
+                      rolePermissions:
+                        permissionName:
+                          _eq: CONFERENCE_VIEW_ATTENDEES
+                - _or:
+                  - includeUnauthenticated:
+                      _eq: true
+                  - groupAttendees:
+                      attendee:
+                        userId:
+                          _eq: X-Hasura-User-Id
+          - event:
+              eventPeople:
+                _and:
+                - attendee:
+                    userId:
+                      _eq: X-Hasura-User-Id
+                - eventPersonRole:
+                    name:
+                      _in:
+                      - CHAIR
+                      - PRESENTER
+- table:
+    schema: public
     name: EventPerson
   object_relationships:
   - name: attendee
@@ -3509,23 +3586,53 @@
   - role: user
     permission:
       check:
-        conference:
-          groups:
-            _and:
-            - enabled:
-                _eq: true
-            - groupRoles:
-                role:
-                  rolePermissions:
-                    permissionName:
-                      _eq: CONFERENCE_MANAGE_SCHEDULE
-            - _or:
-              - includeUnauthenticated:
+        _or:
+        - conference:
+            groups:
+              _and:
+              - enabled:
                   _eq: true
-              - groupAttendees:
-                  attendee:
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      permissionName:
+                        _eq: CONFERENCE_MANAGE_SCHEDULE
+              - _or:
+                - includeUnauthenticated:
+                    _eq: true
+                - groupAttendees:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
+        - _and:
+          - conference:
+              groups:
+                _and:
+                - enabled:
+                    _eq: true
+                - groupRoles:
+                    role:
+                      rolePermissions:
+                        permissionName:
+                          _eq: CONFERENCE_VIEW_ATTENDEES
+                - _or:
+                  - includeUnauthenticated:
+                      _eq: true
+                  - groupAttendees:
+                      attendee:
+                        userId:
+                          _eq: X-Hasura-User-Id
+          - event:
+              eventPeople:
+                _and:
+                - attendee:
                     userId:
                       _eq: X-Hasura-User-Id
+                - eventPersonRole:
+                    name:
+                      _in:
+                      - CHAIR
+                      - PRESENTER
       columns:
       - id
       - eventId
@@ -3604,45 +3711,105 @@
       - originatingDataId
       - roleName
       filter:
-        conference:
-          groups:
-            _and:
-            - enabled:
-                _eq: true
-            - groupRoles:
-                role:
-                  rolePermissions:
-                    permissionName:
-                      _eq: CONFERENCE_MANAGE_SCHEDULE
-            - _or:
-              - includeUnauthenticated:
+        _or:
+        - conference:
+            groups:
+              _and:
+              - enabled:
                   _eq: true
-              - groupAttendees:
-                  attendee:
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      permissionName:
+                        _eq: CONFERENCE_MANAGE_SCHEDULE
+              - _or:
+                - includeUnauthenticated:
+                    _eq: true
+                - groupAttendees:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
+        - _and:
+          - conference:
+              groups:
+                _and:
+                - enabled:
+                    _eq: true
+                - groupRoles:
+                    role:
+                      rolePermissions:
+                        permissionName:
+                          _eq: CONFERENCE_VIEW_ATTENDEES
+                - _or:
+                  - includeUnauthenticated:
+                      _eq: true
+                  - groupAttendees:
+                      attendee:
+                        userId:
+                          _eq: X-Hasura-User-Id
+          - event:
+              eventPeople:
+                _and:
+                - attendee:
                     userId:
                       _eq: X-Hasura-User-Id
+                - eventPersonRole:
+                    name:
+                      _in:
+                      - CHAIR
+                      - PRESENTER
       check: null
   delete_permissions:
   - role: user
     permission:
       filter:
-        conference:
-          groups:
-            _and:
-            - enabled:
-                _eq: true
-            - groupRoles:
-                role:
-                  rolePermissions:
-                    permissionName:
-                      _eq: CONFERENCE_MANAGE_SCHEDULE
-            - _or:
-              - includeUnauthenticated:
+        _or:
+        - conference:
+            groups:
+              _and:
+              - enabled:
                   _eq: true
-              - groupAttendees:
-                  attendee:
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      permissionName:
+                        _eq: CONFERENCE_MANAGE_SCHEDULE
+              - _or:
+                - includeUnauthenticated:
+                    _eq: true
+                - groupAttendees:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
+        - _and:
+          - conference:
+              groups:
+                _and:
+                - enabled:
+                    _eq: true
+                - groupRoles:
+                    role:
+                      rolePermissions:
+                        permissionName:
+                          _eq: CONFERENCE_VIEW_ATTENDEES
+                - _or:
+                  - includeUnauthenticated:
+                      _eq: true
+                  - groupAttendees:
+                      attendee:
+                        userId:
+                          _eq: X-Hasura-User-Id
+          - event:
+              eventPeople:
+                _and:
+                - attendee:
                     userId:
                       _eq: X-Hasura-User-Id
+                - eventPersonRole:
+                    name:
+                      _in:
+                      - CHAIR
+                      - PRESENTER
 - table:
     schema: public
     name: EventPersonRole
@@ -3668,6 +3835,197 @@
       - description
       - name
       filter: {}
+- table:
+    schema: public
+    name: EventRoomJoinRequest
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
+  object_relationships:
+  - name: attendee
+    using:
+      foreign_key_constraint_on: attendeeId
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  - name: event
+    using:
+      foreign_key_constraint_on: eventId
+  - name: eventPersonRole
+    using:
+      foreign_key_constraint_on: eventPersonRoleName
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        _and:
+        - conference:
+            groups:
+              _and:
+              - enabled:
+                  _eq: true
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      permissionName:
+                        _eq: CONFERENCE_VIEW_ATTENDEES
+              - _or:
+                - includeUnauthenticated:
+                    _eq: true
+                - groupAttendees:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
+        - attendee:
+            userId:
+              _eq: X-Hasura-User-Id
+        - event:
+            conferenceId:
+              _ceq: conferenceId
+      set:
+        eventPersonRoleName: PARTICIPANT
+        approved: "false"
+      columns:
+      - attendeeId
+      - conferenceId
+      - eventId
+      backend_only: false
+  select_permissions:
+  - role: unauthenticated
+    permission:
+      columns:
+      - approved
+      - eventPersonRoleName
+      - created_at
+      - updated_at
+      - attendeeId
+      - conferenceId
+      - eventId
+      - id
+      filter:
+        _and:
+        - conference:
+            groups:
+              _and:
+              - enabled:
+                  _eq: true
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      permissionName:
+                        _eq: CONFERENCE_VIEW_ATTENDEES
+              - includeUnauthenticated:
+                  _eq: true
+        - event:
+            conferenceId:
+              _ceq: conferenceId
+  - role: user
+    permission:
+      columns:
+      - approved
+      - attendeeId
+      - conferenceId
+      - created_at
+      - eventId
+      - eventPersonRoleName
+      - id
+      - updated_at
+      filter:
+        _and:
+        - conference:
+            groups:
+              _and:
+              - enabled:
+                  _eq: true
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      permissionName:
+                        _eq: CONFERENCE_VIEW_ATTENDEES
+              - _or:
+                - includeUnauthenticated:
+                    _eq: true
+                - groupAttendees:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
+        - event:
+            conferenceId:
+              _ceq: conferenceId
+      allow_aggregations: true
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - approved
+      filter:
+        _or:
+        - conference:
+            groups:
+              _and:
+              - enabled:
+                  _eq: true
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      permissionName:
+                        _eq: CONFERENCE_MANAGE_SCHEDULE
+              - _or:
+                - includeUnauthenticated:
+                    _eq: true
+                - groupAttendees:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
+        - _and:
+          - conference:
+              groups:
+                _and:
+                - enabled:
+                    _eq: true
+                - groupRoles:
+                    role:
+                      rolePermissions:
+                        permissionName:
+                          _eq: CONFERENCE_VIEW_ATTENDEES
+                - _or:
+                  - includeUnauthenticated:
+                      _eq: true
+                  - groupAttendees:
+                      attendee:
+                        userId:
+                          _eq: X-Hasura-User-Id
+          - event:
+              eventPeople:
+                _and:
+                - attendee:
+                    userId:
+                      _eq: X-Hasura-User-Id
+                - eventPersonRole:
+                    name:
+                      _in:
+                      - CHAIR
+                      - PRESENTER
+      check: null
+  event_triggers:
+  - name: EventRoomJoinRequestUpdated
+    definition:
+      enable_manual: true
+      insert:
+        columns: '*'
+      update:
+        columns:
+        - approved
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{ACTION_BASE_URL}}/eventRoomJoinRequest/updated'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - table:
     schema: public
     name: EventTag
@@ -3823,6 +4181,75 @@
                     attendee:
                       userId:
                         _eq: X-Hasura-User-Id
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - layoutData
+      filter:
+        _or:
+        - conference:
+            groups:
+              _and:
+              - enabled:
+                  _eq: true
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      permissionName:
+                        _eq: CONFERENCE_MANAGE_SCHEDULE
+              - _or:
+                - includeUnauthenticated:
+                    _eq: true
+                - groupAttendees:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
+        - _and:
+          - conference:
+              groups:
+                _and:
+                - enabled:
+                    _eq: true
+                - groupRoles:
+                    role:
+                      rolePermissions:
+                        permissionName:
+                          _eq: CONFERENCE_VIEW_ATTENDEES
+                - _or:
+                  - includeUnauthenticated:
+                      _eq: true
+                  - groupAttendees:
+                      attendee:
+                        userId:
+                          _eq: X-Hasura-User-Id
+          - event:
+              eventPeople:
+                _and:
+                - attendee:
+                    userId:
+                      _eq: X-Hasura-User-Id
+                - eventPersonRole:
+                    name:
+                      _in:
+                      - CHAIR
+                      - PRESENTER
+      check: null
+  event_triggers:
+  - name: EventVonageSessionUpdated
+    definition:
+      enable_manual: true
+      update:
+        columns:
+        - layoutData
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{ACTION_BASE_URL}}/eventVonageSession/updated'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - table:
     schema: public
     name: ExecutedTransitions

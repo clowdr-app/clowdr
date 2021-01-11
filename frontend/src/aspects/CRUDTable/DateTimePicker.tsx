@@ -37,13 +37,23 @@ export function DateTimePicker({ value, editMode }: { value: Date; editMode: Edi
         return format(localDate, "HH:mm:ss");
     }, [localTimeZone, value]);
 
+    const parsedValue = useMemo(() => {
+        return typeof value === "string" ? new Date(Date.parse(value)) : value;
+    }, [value]);
+
     const [utcDateTime, setUtcDateTime] = useState<Date>(value);
 
     useEffect(() => {
-        if (utcDateTime && !isEqual(utcDateTime, value)) {
+        // For some reason the value sometimes ends up as a string
+        if (typeof utcDateTime === "string") {
+            setUtcDateTime(new Date(Date.parse(utcDateTime)));
+            return;
+        }
+
+        if (utcDateTime && utcDateTime.getTime() !== parsedValue.getTime()) {
             editMode.onChange(utcDateTime);
         }
-    }, [utcDateTime, editMode, value]);
+    }, [utcDateTime, editMode, parsedValue]);
 
     const setDateTime = useCallback(
         (newDateValue: string) => {

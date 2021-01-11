@@ -1,8 +1,12 @@
 import { gql } from "@apollo/client/core";
-import { GetEventRolesForUserDocument, GetRoomWhereUserAttendsConferenceDocument } from "../generated/graphql";
+import { GetEventRolesForUserDocument, GetRoomThatUserCanJoinDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { addAndRemoveRoomParticipants, startBroadcastIfOngoingEvent } from "../lib/vonage/sessionMonitoring";
-import * as Vonage from "../lib/vonage/vonageClient";
+import {
+    addAndRemoveEventParticipantStreams,
+    addAndRemoveRoomParticipants,
+    startBroadcastIfOngoingEvent,
+} from "../lib/vonage/sessionMonitoring";
+import Vonage from "../lib/vonage/vonageClient";
 import { CustomConnectionData, WebhookReqBody } from "../types/vonage";
 
 gql`
@@ -34,6 +38,13 @@ export async function handleVonageSessionMonitoringWebhook(payload: WebhookReqBo
         success &&= await addAndRemoveRoomParticipants(payload);
     } catch (e) {
         console.error("Error while adding/removing room participants", e);
+        success = false;
+    }
+
+    try {
+        success &&= await addAndRemoveEventParticipantStreams(payload);
+    } catch (e) {
+        console.error("Error while adding/removing event participant streams", e);
         success = false;
     }
 
@@ -122,8 +133,14 @@ export async function handleJoinEvent(
 }
 
 gql`
-    query GetRoomWhereUserAttendsConference($roomId: uuid, $userId: String) {
-        Room(where: { id: { _eq: $roomId }, conference: { attendees: { userId: { _eq: $userId } } } }) {
+    query GetRoomThatUserCanJoin($roomId: uuid, $userId: String) {
+        Room(
+            where: {
+                id: { _eq: $roomId }
+                conference: { attendees: { userId: { _eq: $userId } } }
+                _or: [{ roomPeople: { attendee: { userId: { _eq: $userId } } } }, { roomPrivacyName: { _eq: PUBLIC } }]
+            }
+        ) {
             id
             publicVonageSessionId
             conference {
@@ -141,7 +158,7 @@ export async function handleJoinRoom(
 ): Promise<JoinRoomVonageSessionOutput> {
     // TODO: check the user's roles explicitly, rather than just conference attendee-ship
     const roomResult = await apolloClient.query({
-        query: GetRoomWhereUserAttendsConferenceDocument,
+        query: GetRoomThatUserCanJoinDocument,
         variables: {
             roomId: payload.roomId,
             userId,

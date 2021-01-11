@@ -13,19 +13,30 @@ import {
     PopoverHeader,
     PopoverTrigger,
     Portal,
+    Tooltip,
     useDisclosure,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { RoomDetailsFragment, RoomPersonRole_Enum, RoomPrivacy_Enum } from "../../../../generated/graphql";
 import { FAIcon } from "../../../Icons/FAIcon";
 import useRoomMembers from "../../../Room/useRoomMembers";
+import useRoomParticipants from "../../../Room/useRoomParticipants";
 import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
 import { AddRoomPersonModal } from "./AddRoomPersonModal";
 
-export function RoomControlBar({ roomDetails }: { roomDetails: RoomDetailsFragment }): JSX.Element {
+export function RoomControlBar({
+    roomDetails,
+    onSetBackstage,
+    backstage,
+}: {
+    roomDetails: RoomDetailsFragment;
+    onSetBackstage: (backstage: boolean) => void;
+    backstage: boolean;
+}): JSX.Element {
     const user = useCurrentUser();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const roomMembers = useRoomMembers();
+    const roomParticipants = useRoomParticipants();
 
     const roomMembersList = useMemo(
         () => (
@@ -33,7 +44,18 @@ export function RoomControlBar({ roomDetails }: { roomDetails: RoomDetailsFragme
                 {roomMembers ? (
                     roomMembers.roomPeople.map((person) => (
                         <ListItem key={person.id}>
-                            <FAIcon icon="user" iconStyle="s" mr={5} />
+                            <FAIcon
+                                icon={
+                                    roomParticipants &&
+                                    roomParticipants.find(
+                                        (participant) => person.attendee.id === participant.attendeeId
+                                    )
+                                        ? "video"
+                                        : "user"
+                                }
+                                iconStyle="s"
+                                mr={5}
+                            />
                             {person.attendee.displayName}
                         </ListItem>
                     ))
@@ -42,11 +64,40 @@ export function RoomControlBar({ roomDetails }: { roomDetails: RoomDetailsFragme
                 )}
             </List>
         ),
-        [roomMembers]
+        [roomMembers, roomParticipants]
+    );
+
+    const roomParticipantsList = useMemo(
+        () => (
+            <List>
+                {roomParticipants ? (
+                    roomParticipants.map((participant) => (
+                        <ListItem key={participant.id}>
+                            <FAIcon icon="video" iconStyle="s" mr={5} />
+                            {participant.attendee.displayName}
+                        </ListItem>
+                    ))
+                ) : (
+                    <></>
+                )}
+            </List>
+        ),
+        [roomParticipants]
     );
 
     return (
         <HStack justifyContent="flex-end" m={4}>
+            {backstage ? (
+                <Button colorScheme="red" onClick={() => onSetBackstage(false)}>
+                    Hide backstage
+                </Button>
+            ) : (
+                <Tooltip label="Backstage is where you can join events as a presenter, session chair or to ask questions.">
+                    <Button colorScheme="green" onClick={() => onSetBackstage(true)}>
+                        Show backstage
+                    </Button>
+                </Tooltip>
+            )}
             {roomDetails.roomPeople.find(
                 (person) =>
                     user.user.attendees.find((myAttendee) => myAttendee.id === person.attendee.id) &&
@@ -59,7 +110,30 @@ export function RoomControlBar({ roomDetails }: { roomDetails: RoomDetailsFragme
             ) : (
                 <></>
             )}
-            {roomDetails.roomPrivacyName === RoomPrivacy_Enum.Private ? (
+            {roomDetails.roomPrivacyName === RoomPrivacy_Enum.Public ? (
+                <Popover>
+                    <PopoverTrigger>
+                        <Tooltip label="People currently in the breakout room">
+                            <Button
+                                aria-label={`${
+                                    roomParticipants ? roomParticipants.length : "0"
+                                } People currently in the breakout room`}
+                            >
+                                <FAIcon icon="users" iconStyle="s" />
+                                <Badge ml={2}>{roomParticipants ? roomParticipants.length : "0"} </Badge>
+                            </Button>
+                        </Tooltip>
+                    </PopoverTrigger>
+                    <Portal>
+                        <PopoverContent>
+                            <PopoverArrow />
+                            <PopoverHeader>Breakout Participants</PopoverHeader>
+                            <PopoverCloseButton />
+                            <PopoverBody>{roomParticipantsList}</PopoverBody>
+                        </PopoverContent>
+                    </Portal>
+                </Popover>
+            ) : (
                 <Popover>
                     <PopoverTrigger>
                         <Button aria-label="Members of this room" title="Members of this room">
@@ -76,8 +150,6 @@ export function RoomControlBar({ roomDetails }: { roomDetails: RoomDetailsFragme
                         </PopoverContent>
                     </Portal>
                 </Popover>
-            ) : (
-                <></>
             )}
             <AddRoomPersonModal roomId={roomDetails.id} isOpen={isOpen} onClose={onClose} />
         </HStack>

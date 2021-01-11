@@ -4,7 +4,6 @@ import { useMemo, useReducer } from "react";
 const initialState: OpenTokState = {
     // connection info
     isSessionInitialized: false,
-    connectionId: undefined,
     isSessionConnected: false,
 
     // connected data
@@ -17,7 +16,6 @@ const initialState: OpenTokState = {
 
 export interface OpenTokState {
     isSessionInitialized: boolean;
-    connectionId?: string | null;
     isSessionConnected: boolean;
     session?: OpenTok.Session;
     connections: OpenTok.Connection[];

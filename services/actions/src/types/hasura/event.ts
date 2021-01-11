@@ -1,6 +1,8 @@
 import { ContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
+import { VonageSessionLayoutData } from "@clowdr-app/shared-types/build/vonage";
 import {
     ContentType_Enum,
+    EventPersonRole_Enum,
     InputType_Enum,
     JobStatus_Enum,
     RoomMode_Enum,
@@ -153,4 +155,19 @@ export interface RoomData extends BaseData {
     mediaLiveChannelId: string | null;
     priority: number;
     roomPrivacyName: RoomPrivacy_Enum;
+}
+
+export interface EventVonageSessionData extends BaseData {
+    sessionId: string;
+    conferenceId: string;
+    eventId: string;
+    layoutData: VonageSessionLayoutData | null;
+}
+
+export interface EventRoomJoinRequestData extends BaseData {
+    eventId: string;
+    attendeeId: string;
+    eventPersonRoleName: EventPersonRole_Enum;
+    approved: boolean;
+    conferenceId: string;
 }

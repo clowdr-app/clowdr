@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 let shownJWTIssuedAtFutureReloadWarning = false;
 
-export default function useQueryErrorToast(error: string | false | ApolloError | undefined): void {
+export default function useQueryErrorToast(error: string | false | ApolloError | undefined, queryName?: string): void {
     const toast = useToast();
 
     useEffect(() => {
@@ -26,6 +26,7 @@ export default function useQueryErrorToast(error: string | false | ApolloError |
                     }, 3000);
                 }
             } else {
+                console.error("Query error", error, queryName);
                 toast({
                     isClosable: true,
                     duration: 20000,

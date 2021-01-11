@@ -122,7 +122,7 @@ function EditableScheduleCRUDTable() {
                 description: "Start time of the event",
                 isHidden: false,
                 isEditable: true,
-                defaultValue: addHours(startOfHour(new Date()), 1).toISOString(),
+                defaultValue: addHours(startOfHour(new Date()), 1),
                 insert: (item, v) => {
                     return {
                         ...item,
@@ -132,7 +132,7 @@ function EditableScheduleCRUDTable() {
                 extract: (v) => v.startTime,
                 spec: {
                     fieldType: FieldType.datetime,
-                    convertFromUI: (x) => x.toISOString(),
+                    convertFromUI: (x) => (typeof x === "string" ? x : x.toISOString()),
                     convertToUI: (x) => new Date(Date.parse(x)),
                     filter: defaultDateTimeFilter,
                 },
@@ -144,7 +144,7 @@ function EditableScheduleCRUDTable() {
                 description: "End time of the event",
                 isHidden: false,
                 isEditable: true,
-                defaultValue: addHours(startOfHour(new Date()), 2).toISOString(),
+                defaultValue: addHours(startOfHour(new Date()), 2),
                 insert: (item, v) => {
                     const endTime = Date.parse(v);
                     const modification =
@@ -278,7 +278,7 @@ function EditableScheduleCRUDTable() {
                         if (opt instanceof Array) {
                             return opt[0].value.length === 0 ? null : opt[0].value;
                         } else {
-                            return opt.value.length === 0 ? null : opt.value;
+                            return opt?.value && opt.value.length === 0 ? null : opt?.value ?? null;
                         }
                     },
                     convertToUI: (contentGroupId) => {

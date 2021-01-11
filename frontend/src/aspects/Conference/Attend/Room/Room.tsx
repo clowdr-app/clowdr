@@ -9,10 +9,15 @@ import {
     SkeletonText,
     Text,
     useBreakpointValue,
+    useColorModeValue,
+    useToken,
 } from "@chakra-ui/react";
+import type { ContentItemDataBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
+import * as R from "ramda";
 import React, { useMemo, useState } from "react";
 import ReactPlayer from "react-player";
-import type { EventPersonDetailsFragment, RoomDetailsFragment } from "../../../../generated/graphql";
+import { ContentType_Enum, EventPersonDetailsFragment, RoomDetailsFragment } from "../../../../generated/graphql";
+import LinkButton from "../../../Chakra/LinkButton";
 import { ContentGroupSummary } from "../Content/ContentGroupSummary";
 import { BreakoutVonageRoom } from "./BreakoutVonageRoom";
 import { HandUpButton } from "./HandUpButton";
@@ -28,9 +33,16 @@ export function Room({
     eventPeople: readonly EventPersonDetailsFragment[];
 }): JSX.Element {
     const stackColumns = useBreakpointValue({ base: true, lg: false });
-    const { currentRoomEvent, withinThreeMinutesOfBroadcastEvent, secondsUntilBroadcastEvent } = useCurrentRoomEvent(
-        roomDetails
-    );
+    const {
+        currentRoomEvent,
+        nextRoomEvent,
+        withinThreeMinutesOfBroadcastEvent,
+        secondsUntilBroadcastEvent,
+        secondsUntilZoomEvent,
+    } = useCurrentRoomEvent(roomDetails);
+
+    const [green100, green700] = useToken("colors", ["green.100", "green.700"]);
+    const bgColour = useColorModeValue(green100, green700);
 
     const hlsUri = useMemo(() => {
         if (!roomDetails.mediaLiveChannel) {
@@ -45,6 +57,25 @@ export function Room({
 
     const [backstage, setBackstage] = useState<boolean>(false);
 
+    const secondsUntilNonBreakoutEvent = useMemo(() => Math.min(secondsUntilBroadcastEvent, secondsUntilZoomEvent), [
+        secondsUntilBroadcastEvent,
+        secondsUntilZoomEvent,
+    ]);
+
+    const maybeCurrentEventZoomDetails = useMemo(() => {
+        const zoomItem = currentRoomEvent?.contentGroup?.contentItems.find(
+            (contentItem) => contentItem.contentTypeName === ContentType_Enum.Zoom
+        );
+
+        if (!zoomItem) {
+            return undefined;
+        }
+
+        const versions = zoomItem.data as ContentItemDataBlob;
+
+        return (R.last(versions)?.data as ZoomBlob).url;
+    }, [currentRoomEvent?.contentGroup?.contentItems]);
+
     return (
         <Grid
             width="100%"
@@ -58,20 +89,40 @@ export function Room({
             <GridItem textAlign="left" overflowY={stackColumns ? "visible" : "auto"} p={2}>
                 <RoomBackstage backstage={backstage} roomDetails={roomDetails} eventPeople={eventPeople} />
 
-                {secondsUntilBroadcastEvent >= 180 && secondsUntilBroadcastEvent <= 300 ? (
+                {secondsUntilNonBreakoutEvent >= 180 && secondsUntilNonBreakoutEvent <= 300 ? (
                     <Alert status="warning">
                         <AlertIcon />
-                        Event starting soon. Breakout room closes in {Math.round(secondsUntilBroadcastEvent - 180)}{" "}
+                        Event starting soon. Breakout room closes in {Math.round(
+                            secondsUntilNonBreakoutEvent - 180
+                        )}{" "}
                         seconds
                     </Alert>
                 ) : (
                     <></>
                 )}
+
                 {secondsUntilBroadcastEvent > 0 && secondsUntilBroadcastEvent < 180 ? (
                     <Alert status="info">
                         <AlertIcon />
                         Event starting in {Math.round(secondsUntilBroadcastEvent)} seconds
                     </Alert>
+                ) : (
+                    <></>
+                )}
+
+                {secondsUntilZoomEvent > 0 && secondsUntilZoomEvent < 180 ? (
+                    <Alert status="info">
+                        <AlertIcon />
+                        Event starting in {Math.round(secondsUntilZoomEvent)} seconds
+                    </Alert>
+                ) : (
+                    <></>
+                )}
+
+                {maybeCurrentEventZoomDetails ? (
+                    <LinkButton to={maybeCurrentEventZoomDetails} isExternal={true} colorScheme="green" size="lg">
+                        Go to Zoom
+                    </LinkButton>
                 ) : (
                     <></>
                 )}
@@ -108,7 +159,7 @@ export function Room({
                     <></>
                 )}
 
-                {secondsUntilBroadcastEvent > 180 ? (
+                {secondsUntilNonBreakoutEvent > 180 ? (
                     <Box display={backstage ? "none" : "block"}>
                         <BreakoutVonageRoom room={roomDetails} />
                     </Box>
@@ -132,6 +183,21 @@ export function Room({
                             <></>
                         )}
                     </>
+                ) : (
+                    <></>
+                )}
+                {nextRoomEvent ? (
+                    <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
+                        <Heading as="h3" textAlign="left" size="md" mb={2}>
+                            Up next
+                        </Heading>
+                        <Text>{nextRoomEvent.name}</Text>
+                        {nextRoomEvent?.contentGroup ? (
+                            <ContentGroupSummary contentGroupData={nextRoomEvent.contentGroup} />
+                        ) : (
+                            <></>
+                        )}
+                    </Box>
                 ) : (
                     <></>
                 )}

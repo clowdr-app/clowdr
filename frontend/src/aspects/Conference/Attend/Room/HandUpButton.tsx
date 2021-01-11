@@ -72,7 +72,7 @@ export function HandUpButton({
         variables: {
             attendeeId: attendee.id,
             conferenceId: currentRoomEvent?.conferenceId ?? "",
-            eventId: currentRoomEvent?.id,
+            eventId: currentRoomEvent?.id ?? "",
         },
     });
     useQueryErrorToast(error, "useMyEventRoomJoinRequestSubscription");

@@ -8,6 +8,7 @@ interface Result {
     nextRoomEvent: RoomEventSummaryFragment | null;
     withinThreeMinutesOfBroadcastEvent: boolean;
     secondsUntilBroadcastEvent: number;
+    secondsUntilZoomEvent: number;
 }
 
 export function useCurrentRoomEvent(roomEvents: RoomEventsFragment): Result {
@@ -18,6 +19,11 @@ export function useCurrentRoomEvent(roomEvents: RoomEventsFragment): Result {
                     event.intendedRoomModeName
                 )
             ),
+        [roomEvents.events]
+    );
+
+    const zoomEvents = useMemo(
+        () => roomEvents.events.filter((event) => event.intendedRoomModeName === RoomMode_Enum.Zoom),
         [roomEvents.events]
     );
 
@@ -78,6 +84,35 @@ export function useCurrentRoomEvent(roomEvents: RoomEventsFragment): Result {
     }, [broadcastEvents]);
     usePolling(computeSecondsUntilBroadcastEvent, 1000, true);
 
+    const [secondsUntilZoomEvent, setSecondsUntilZoomEvent] = useState<number>(Number.MAX_SAFE_INTEGER);
+    const computeSecondsUntilZoomEvent = useCallback(() => {
+        const now = new Date().getTime();
+
+        if (
+            zoomEvents.find((event) => {
+                const startTime = Date.parse(event.startTime);
+                const endTime = Date.parse(event.endTime);
+                return startTime < now && now < endTime;
+            })
+        ) {
+            setSecondsUntilZoomEvent(0);
+            return;
+        }
+
+        const futureEvents = R.sortBy(
+            (event) => event.startTime,
+            zoomEvents.filter((event) => Date.parse(event.startTime) > now)
+        );
+
+        if (futureEvents.length > 0) {
+            setSecondsUntilZoomEvent((Date.parse(futureEvents[0].startTime) - now) / 1000);
+            return;
+        }
+
+        setSecondsUntilZoomEvent(Number.MAX_SAFE_INTEGER);
+    }, [zoomEvents]);
+    usePolling(computeSecondsUntilZoomEvent, 1000, true);
+
     const [nextRoomEvent, setNextRoomEvent] = useState<RoomEventSummaryFragment | null>(null);
     const getNextEvent = useCallback(() => {
         const now = new Date().getTime();
@@ -94,5 +129,11 @@ export function useCurrentRoomEvent(roomEvents: RoomEventsFragment): Result {
         getNextEvent();
     }, [getCurrentEvent, getNextEvent, getWithinThreeMinutesOfEvent]);
 
-    return { currentRoomEvent, withinThreeMinutesOfBroadcastEvent, nextRoomEvent, secondsUntilBroadcastEvent };
+    return {
+        currentRoomEvent,
+        withinThreeMinutesOfBroadcastEvent,
+        nextRoomEvent,
+        secondsUntilBroadcastEvent,
+        secondsUntilZoomEvent,
+    };
 }

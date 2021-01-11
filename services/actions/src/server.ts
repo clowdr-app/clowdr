@@ -26,6 +26,7 @@ import { router as conferencePrepareJobRouter } from "./router/conferencePrepare
 import { router as contentItemRouter } from "./router/contentItem";
 import { router as elasticTranscoderRouter } from "./router/elasticTranscoder";
 import { router as eventRouter } from "./router/event";
+import { router as eventRoomJoinRequestRouter } from "./router/eventRoomJoinRequest";
 import { router as eventVonageSessionRouter } from "./router/eventVonageSession";
 import { router as mediaConvertRouter } from "./router/mediaConvert";
 import { router as mediaLiveRouter } from "./router/mediaLive";
@@ -78,6 +79,7 @@ app.use("/broadcastContentItem", broadcastContentItemRouter);
 app.use("/event", eventRouter);
 app.use("/room", roomRouter);
 app.use("/eventVonageSession", eventVonageSessionRouter);
+app.use("/eventRoomJoinRequest", eventRoomJoinRequestRouter);
 
 app.use("/channels", channelsRouter);
 

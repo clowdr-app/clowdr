@@ -17,23 +17,6 @@ import { useConference } from "../../useConference";
 import { Room } from "./Room";
 
 gql`
-    subscription EventPeopleForRoom($roomId: uuid!) {
-        EventPerson(where: { event: { room: { id: { _eq: $roomId } } } }) {
-            ...EventPersonDetails
-        }
-    }
-
-    fragment EventPersonDetails on EventPerson {
-        id
-        name
-        roleName
-        eventId
-        attendee {
-            id
-            userId
-        }
-    }
-
     query GetRoomDetails($roomId: uuid!) {
         Room_by_pk(id: $roomId) {
             ...RoomDetails
@@ -56,16 +39,18 @@ gql`
     }
 
     fragment RoomEvents on Room {
-        events {
+        events(order_by: { startTime: asc }) {
             ...RoomEventSummary
         }
     }
 
     fragment RoomEventSummary on Event {
         id
+        conferenceId
         startTime
         name
         endTime
+        intendedRoomModeName
         eventPeople {
             id
             roleName
@@ -77,6 +62,23 @@ gql`
         }
         contentGroup {
             ...ContentGroupData
+        }
+    }
+
+    subscription EventPeopleForRoom($roomId: uuid!) {
+        EventPerson(where: { event: { room: { id: { _eq: $roomId } } } }) {
+            ...EventPersonDetails
+        }
+    }
+
+    fragment EventPersonDetails on EventPerson {
+        id
+        name
+        roleName
+        eventId
+        attendee {
+            id
+            userId
         }
     }
 `;

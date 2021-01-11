@@ -8,7 +8,7 @@ import {
     useGetEventVonageTokenMutation,
 } from "../../../../../generated/graphql";
 import useUserId from "../../../../Auth/useUserId";
-import { useEventRoles } from "../../../../Event/useEventRole";
+import { useEventPeople } from "../../../../Event/useEventPeople";
 import ApolloQueryWrapper from "../../../../GQL/ApolloQueryWrapper";
 import { OpenTokProvider } from "../../../../Vonage/OpenTokProvider";
 import { VonageRoomStateProvider } from "../../../../Vonage/useVonageRoom";
@@ -30,6 +30,7 @@ gql`
 
     fragment RoomEventDetails on Event {
         id
+        conferenceId
         startTime
         name
         durationSeconds
@@ -56,7 +57,7 @@ export function EventVonageRoom({ eventId }: { eventId: string }): JSX.Element {
     });
 
     const userId = useUserId();
-    const { roles } = useEventRoles(userId ?? "", result.data?.Event_by_pk ?? null);
+    const { myRoles, eventPeople } = useEventPeople(userId ?? "", result.data?.Event_by_pk ?? null);
 
     const getAccessToken = useCallback(async () => {
         const result = await getEventVonageToken();
@@ -82,11 +83,11 @@ export function EventVonageRoom({ eventId }: { eventId: string }): JSX.Element {
                                     <>No room session available.</>
                                 )}
                             </Box>
-                            {roles.find(
+                            {myRoles.find(
                                 (role) => role === EventPersonRole_Enum.Chair || role === EventPersonRole_Enum.Presenter
                             ) ? (
                                 <Box width="20%">
-                                    <EventRoomControlPanel event={event} />
+                                    <EventRoomControlPanel event={event} eventPeople={eventPeople} />
                                 </Box>
                             ) : (
                                 <></>

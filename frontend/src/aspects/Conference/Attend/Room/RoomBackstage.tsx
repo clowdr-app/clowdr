@@ -1,4 +1,4 @@
-import { Badge, Box, Heading, useToken } from "@chakra-ui/react";
+import { Badge, Box, Heading, useColorModeValue, useToken } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import type { EventPersonDetailsFragment, RoomDetailsFragment } from "../../../../generated/graphql";
@@ -16,7 +16,8 @@ export function RoomBackstage({
     eventPeople: readonly EventPersonDetailsFragment[];
 }): JSX.Element {
     const user = useCurrentUser();
-    const [gray100] = useToken("colors", ["gray.100"]);
+    const [gray100, gray900] = useToken("colors", ["gray.100", "gray.900"]);
+    const backgroundColour = useColorModeValue(gray100, gray900);
 
     const myEventPeople = useMemo(
         () =>
@@ -88,8 +89,8 @@ export function RoomBackstage({
     );
 
     return (
-        <Box display={backstage ? "block" : "none"} background={gray100} p={5}>
-            <Heading as="h3" size="md">
+        <Box display={backstage ? "block" : "none"} background={backgroundColour} p={5}>
+            <Heading as="h3" size="lg">
                 Backstage
             </Heading>
             {eventRooms}

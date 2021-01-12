@@ -38,7 +38,7 @@ gql`
     }
 
     query CurrentUserGroupsRolesPermissions($userId: String, $conferenceId: uuid!) {
-        User_by_pk(where: { id: { _eq: $userId } }) {
+        User(where: { id: { _eq: $userId } }) {
             conferencesCreated(where: { id: { _eq: $conferenceId } }) {
                 id
             }

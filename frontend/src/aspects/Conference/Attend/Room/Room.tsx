@@ -2,15 +2,13 @@ import {
     Alert,
     AlertIcon,
     Box,
-    Grid,
-    GridItem,
     Heading,
-    SkeletonCircle,
-    SkeletonText,
+    HStack,
     Text,
     useBreakpointValue,
     useColorModeValue,
     useToken,
+    VStack,
 } from "@chakra-ui/react";
 import type { ContentItemDataBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
@@ -18,6 +16,8 @@ import React, { useMemo, useState } from "react";
 import ReactPlayer from "react-player";
 import { ContentType_Enum, EventPersonDetailsFragment, RoomDetailsFragment } from "../../../../generated/graphql";
 import { ExternalLinkButton } from "../../../Chakra/LinkButton";
+import { Chat } from "../../../Chat/Chat";
+import { ChatDuplicationFlags, ChatSources } from "../../../Chat/Configuration";
 import { ContentGroupSummary } from "../Content/ContentGroupSummary";
 import { BreakoutVonageRoom } from "./BreakoutVonageRoom";
 import { HandUpButton } from "./HandUpButton";
@@ -82,17 +82,41 @@ export function Room({
         return (R.last(versions)?.data as ZoomBlob).url;
     }, [currentRoomEvent?.contentGroup?.contentItems]);
 
+    const chatSources = useMemo((): ChatSources | undefined => {
+        if (currentRoomEvent?.contentGroup) {
+            return {
+                chatIdL: roomDetails.chatId ?? undefined,
+                chatIdR: currentRoomEvent?.contentGroup?.chatId ?? undefined,
+                chatLabelL: "Room",
+                chatLabelR: "Paper",
+                defaultSelected: "L",
+                duplication: currentRoomEvent?.contentGroup
+                    ? ChatDuplicationFlags.LEFT_INTO_RIGHT | ChatDuplicationFlags.RIGHT_INTO_LEFT
+                    : ChatDuplicationFlags.NONE,
+            };
+        } else if (roomDetails.chatId) {
+            return {
+                chatId: roomDetails.chatId,
+                chatLabel: "Room",
+                duplication: ChatDuplicationFlags.NONE,
+            };
+        } else {
+            return undefined;
+        }
+    }, [currentRoomEvent?.contentGroup, roomDetails.chatId]);
+
     return (
-        <Grid
-            width="100%"
-            gridColumnGap={5}
-            gridTemplateColumns={["1fr", "1fr", "1fr 25%"]}
-            gridTemplateRows={["min-content 1fr 1fr", "min-content 1fr 1fr", "min-content 1fr"]}
-        >
-            <GridItem colSpan={[1, 1, 2]}>
+        <HStack width="100%" flexWrap="wrap" alignItems="stretch">
+            <VStack
+                textAlign="left"
+                p={2}
+                flexGrow={2.5}
+                alignItems="stretch"
+                flexBasis={0}
+                minW={["100%", "100%", "100%", "700px"]}
+                maxW="100%"
+            >
                 <RoomControlBar roomDetails={roomDetails} onSetBackstage={setBackstage} backstage={backstage} />
-            </GridItem>
-            <GridItem textAlign="left" overflowY={stackColumns ? "visible" : "auto"} p={2}>
                 <RoomBackstage backstage={backstage} roomDetails={roomDetails} eventPeople={eventPeople} />
 
                 {secondsUntilNonBreakoutEvent >= 180 && secondsUntilNonBreakoutEvent <= 300 ? (
@@ -158,67 +182,83 @@ export function Room({
                             onPause={() => setIntendPlayStream(false)}
                             onPlay={() => setIntendPlayStream(true)}
                         />
-                        <Box textAlign="center">
-                            <HandUpButton
-                                currentRoomEvent={currentRoomEvent}
-                                eventPeople={eventPeople}
-                                onGoBackstage={() => setBackstage(true)}
-                            />
-                        </Box>
                     </Box>
                 ) : (
                     <></>
                 )}
 
                 {secondsUntilNonBreakoutEvent > 180 ? (
-                    <Box display={backstage ? "none" : "block"}>
+                    <Box display={backstage ? "none" : "block"} bgColor={bgColour} p={2} pt={5} borderRadius="md">
                         <BreakoutVonageRoom room={roomDetails} />
                     </Box>
                 ) : (
                     <></>
                 )}
 
-                <Heading as="h2" textAlign="left" mt={5}>
-                    {roomDetails.name}
-                </Heading>
-
-                {currentRoomEvent ? (
-                    <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
-                        <Heading as="h3" textAlign="left" size="md" mt={5}>
-                            Current event
+                <HStack alignItems="flex-start">
+                    <Box flexGrow={1}>
+                        <Heading as="h2" textAlign="left" mt={5} ml={5}>
+                            {roomDetails.name}
                         </Heading>
-                        <Text>{currentRoomEvent.name}</Text>
-                        {currentRoomEvent?.contentGroup ? (
-                            <ContentGroupSummary contentGroupData={currentRoomEvent.contentGroup} />
+
+                        {currentRoomEvent ? (
+                            <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
+                                <Heading as="h3" textAlign="left" size="md" mt={5}>
+                                    Current event
+                                </Heading>
+                                <Text>{currentRoomEvent.name}</Text>
+                                {currentRoomEvent?.contentGroup ? (
+                                    <ContentGroupSummary contentGroupData={currentRoomEvent.contentGroup} />
+                                ) : (
+                                    <></>
+                                )}
+                            </Box>
+                        ) : (
+                            <></>
+                        )}
+                        {nextRoomEvent ? (
+                            <Box backgroundColor={nextBgColour} borderRadius={5} px={5} py={3} my={5}>
+                                <Heading as="h3" textAlign="left" size="md" mb={2}>
+                                    Up next
+                                </Heading>
+                                <Text>{nextRoomEvent.name}</Text>
+                                {nextRoomEvent?.contentGroup ? (
+                                    <ContentGroupSummary contentGroupData={nextRoomEvent.contentGroup} />
+                                ) : (
+                                    <></>
+                                )}
+                            </Box>
+                        ) : (
+                            <></>
+                        )}
+
+                        {!currentRoomEvent && !nextRoomEvent ? (
+                            <Text my={2}>No current event in this room.</Text>
                         ) : (
                             <></>
                         )}
                     </Box>
-                ) : (
-                    <></>
-                )}
-                {nextRoomEvent ? (
-                    <Box backgroundColor={nextBgColour} borderRadius={5} px={5} py={3} my={5}>
-                        <Heading as="h3" textAlign="left" size="md" mb={2}>
-                            Up next
-                        </Heading>
-                        <Text>{nextRoomEvent.name}</Text>
-                        {nextRoomEvent?.contentGroup ? (
-                            <ContentGroupSummary contentGroupData={nextRoomEvent.contentGroup} />
-                        ) : (
-                            <></>
-                        )}
+                    <Box>
+                        <HandUpButton
+                            currentRoomEvent={currentRoomEvent}
+                            eventPeople={eventPeople}
+                            onGoBackstage={() => setBackstage(true)}
+                        />
                     </Box>
+                </HStack>
+            </VStack>
+            <VStack
+                flexGrow={1}
+                flexBasis={0}
+                minW={["100%", "100%", "100%", "300px"]}
+                maxHeight={["80vh", "80vh", "80vh", "850px"]}
+            >
+                {chatSources ? (
+                    <Chat sources={{ ...chatSources }} flexBasis={0} flexGrow={1} mr={4} />
                 ) : (
-                    <></>
+                    <>No chat found for this room.</>
                 )}
-
-                {!currentRoomEvent && !nextRoomEvent ? <Text my={2}>No current event in this room.</Text> : <></>}
-            </GridItem>
-            <GridItem border="1px solid white" p={5}>
-                <SkeletonCircle size="20" />
-                <SkeletonText mt={8} noOfLines={5} spacing={5} />
-            </GridItem>
-        </Grid>
+            </VStack>
+        </HStack>
     );
 }

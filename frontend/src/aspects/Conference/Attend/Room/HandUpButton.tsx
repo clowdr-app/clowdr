@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Button, useToast } from "@chakra-ui/react";
+import { Button, Stack, Text, useToast } from "@chakra-ui/react";
 import React, { useCallback, useMemo, useState } from "react";
 import {
     EventPersonDetailsFragment,
@@ -107,8 +107,11 @@ export function HandUpButton({
         [RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(currentRoomEvent.intendedRoomModeName) ? (
         myEventPeople.length > 0 ? (
             onGoBackstage ? (
-                <Button mt={5} onClick={onGoBackstage} colorScheme="green">
-                    Go backstage to join {roomModeName} room
+                <Button mt={5} size="lg" height="auto" py={5} onClick={onGoBackstage} colorScheme="green">
+                    <Stack>
+                        <Text fontSize="2xl">Join {roomModeName}</Text>
+                        <Text fontSize="md">Go backstage to join</Text>
+                    </Stack>
                 </Button>
             ) : (
                 <></>

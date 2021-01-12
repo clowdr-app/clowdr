@@ -1,4 +1,4 @@
-import { Box, Button, Center, Flex, FlexProps, Heading, Spinner } from "@chakra-ui/react";
+import { Box, Button, Center, Flex, FlexProps, Heading, Spinner, useColorModeValue, useToken } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from "react";
 
 interface LazyLoadingScrollerProps<T> {
@@ -247,6 +247,10 @@ export default function LazyLoadingScroller<T>({
         }
     }, [scrollInfo, state.stateName]);
 
+    const [gray200, gray500] = useToken("colors", ["gray.200", "gray.500"]);
+    const scrollbarColour = useColorModeValue(gray500, gray200);
+    const scrollbarBackground = useColorModeValue(gray200, gray500);
+
     return state.items === null ? (
         <Center h="100%">
             <Box>
@@ -285,6 +289,10 @@ export default function LazyLoadingScroller<T>({
                             }
                         }
                     }
+                }}
+                css={{
+                    ["scrollbar-width"]: "thin",
+                    ["scrollbar-color"]: `${scrollbarColour} ${scrollbarBackground}`,
                 }}
             >
                 {elements}

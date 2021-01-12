@@ -26417,7 +26417,7 @@ export type GetContentGroupQuery = { readonly __typename?: 'query_root', readonl
     & ContentGroupEventsFragment
   )> };
 
-export type ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly contentItems: ReadonlyArray<(
+export type ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly chatId?: Maybe<any>, readonly contentItems: ReadonlyArray<(
     { readonly __typename?: 'ContentItem' }
     & ContentItemDataFragment
   )>, readonly people: ReadonlyArray<(
@@ -26589,7 +26589,7 @@ export type GetRoomDetailsQuery = { readonly __typename?: 'query_root', readonly
   )> };
 
 export type RoomDetailsFragment = (
-  { readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly publicVonageSessionId?: Maybe<string>, readonly roomPrivacyName: RoomPrivacy_Enum, readonly mediaLiveChannel?: Maybe<{ readonly __typename?: 'MediaLiveChannel', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly id: any }> }
+  { readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly publicVonageSessionId?: Maybe<string>, readonly chatId?: Maybe<any>, readonly roomPrivacyName: RoomPrivacy_Enum, readonly mediaLiveChannel?: Maybe<{ readonly __typename?: 'MediaLiveChannel', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly id: any }> }
   & RoomEventsFragment
   & RoomPeopleFragment
 );
@@ -27704,6 +27704,7 @@ export const ContentGroupDataFragmentDoc = gql`
   id
   title
   contentGroupTypeName
+  chatId
   contentItems(where: {isHidden: {_eq: false}}) {
     ...ContentItemData
   }
@@ -27844,6 +27845,7 @@ export const RoomDetailsFragmentDoc = gql`
     id
   }
   publicVonageSessionId
+  chatId
   roomPrivacyName
   ...RoomEvents
   ...RoomPeople

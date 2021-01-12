@@ -1,5 +1,5 @@
 import { SettingsIcon } from "@chakra-ui/icons";
-import { Box, Button, HStack, useDisclosure } from "@chakra-ui/react";
+import { Box, Button, useDisclosure, Wrap, WrapItem } from "@chakra-ui/react";
 import React, { useCallback, useMemo } from "react";
 import FAIcon from "../../../../Icons/FAIcon";
 import { useOpenTok } from "../../../../Vonage/useOpenTok";
@@ -67,56 +67,74 @@ export function VonageRoomControlBar({
 
     return (
         <>
-            <HStack p={2}>
-                <Button leftIcon={<SettingsIcon />} onClick={onOpen}>
-                    Settings
-                </Button>
+            <Wrap p={2}>
+                <WrapItem>
+                    <Button leftIcon={<SettingsIcon />} onClick={onOpen}>
+                        Settings
+                    </Button>
+                </WrapItem>
                 {state.cameraStream ? (
-                    <Button onClick={stopCamera}>
-                        <FAIcon icon="video-slash" iconStyle="s" />
-                        <span style={{ marginLeft: "1rem" }}>Stop video</span>
-                    </Button>
+                    <WrapItem>
+                        <Button onClick={stopCamera}>
+                            <FAIcon icon="video-slash" iconStyle="s" />
+                            <span style={{ marginLeft: "1rem" }}>Stop video</span>
+                        </Button>
+                    </WrapItem>
                 ) : (
-                    <Button onClick={startCamera}>
-                        <FAIcon icon="video" iconStyle="s" />
-                        <span style={{ marginLeft: "1rem" }}>Start video</span>
-                    </Button>
+                    <WrapItem>
+                        <Button onClick={startCamera}>
+                            <FAIcon icon="video" iconStyle="s" />
+                            <span style={{ marginLeft: "1rem" }}>Start video</span>
+                        </Button>
+                    </WrapItem>
                 )}
                 {state.microphoneStream ? (
-                    <Button onClick={stopMicrophone}>
-                        <FAIcon icon="microphone-slash" iconStyle="s" />
-                        <span style={{ marginLeft: "1rem" }}>Stop microphone</span>
-                    </Button>
+                    <WrapItem>
+                        <Button onClick={stopMicrophone}>
+                            <FAIcon icon="microphone-slash" iconStyle="s" />
+                            <span style={{ marginLeft: "1rem" }}>Stop microphone</span>
+                        </Button>
+                    </WrapItem>
                 ) : (
-                    <Button onClick={startMicrophone}>
-                        <FAIcon icon="microphone" iconStyle="s" />
-                        <span style={{ marginLeft: "1rem" }}>Start microphone</span>
-                    </Button>
+                    <WrapItem>
+                        <Button onClick={startMicrophone}>
+                            <FAIcon icon="microphone" iconStyle="s" />
+                            <span style={{ marginLeft: "1rem" }}>Start microphone</span>
+                        </Button>
+                    </WrapItem>
                 )}
                 {openTokProps.isSessionConnected && (!receivingScreenShare || state.screenShareIntendedEnabled) ? (
                     state.screenShareIntendedEnabled ? (
-                        <Button onClick={stopScreenShare} mr="auto" colorScheme="red">
-                            <span style={{ marginLeft: "1rem" }}>Stop sharing</span>
-                        </Button>
+                        <WrapItem>
+                            <Button onClick={stopScreenShare} mr="auto" colorScheme="red">
+                                <span style={{ marginLeft: "1rem" }}>Stop sharing</span>
+                            </Button>
+                        </WrapItem>
                     ) : (
-                        <Button onClick={startScreenShare} mr="auto">
-                            <FAIcon icon="desktop" iconStyle="s" mr="auto" />
-                            <span style={{ marginLeft: "1rem" }}>Share screen</span>
-                        </Button>
+                        <WrapItem>
+                            <Button onClick={startScreenShare} mr="auto">
+                                <FAIcon icon="desktop" iconStyle="s" mr="auto" />
+                                <span style={{ marginLeft: "1rem" }}>Share screen</span>
+                            </Button>
+                        </WrapItem>
                     )
                 ) : (
                     <Box mr="auto"></Box>
                 )}
                 {inRoom ? (
-                    <Button colorScheme="green" onClick={onLeaveRoom}>
-                        Leave Room
-                    </Button>
+                    <WrapItem>
+                        <Button colorScheme="green" onClick={onLeaveRoom}>
+                            Leave Room
+                        </Button>
+                    </WrapItem>
                 ) : (
-                    <Button colorScheme="green" onClick={onJoinRoom}>
-                        Join Room
-                    </Button>
+                    <WrapItem>
+                        <Button colorScheme="green" onClick={onJoinRoom}>
+                            Join Room
+                        </Button>
+                    </WrapItem>
                 )}
-            </HStack>
+            </Wrap>
             <DeviceChooserModal
                 cameraId={
                     state.preferredCameraId ?? state.cameraStream?.getVideoTracks()[0].getSettings().deviceId ?? null

@@ -29,6 +29,7 @@ gql`
         id
         title
         contentGroupTypeName
+        chatId
         contentItems(where: { isHidden: { _eq: false } }) {
             ...ContentItemData
         }

@@ -33,6 +33,7 @@ gql`
             id
         }
         publicVonageSessionId
+        chatId
         roomPrivacyName
         ...RoomEvents
         ...RoomPeople

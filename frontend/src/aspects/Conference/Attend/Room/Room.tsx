@@ -239,11 +239,15 @@ export function Room({
                         )}
                     </Box>
                     <Box>
-                        <HandUpButton
-                            currentRoomEvent={currentRoomEvent}
-                            eventPeople={eventPeople}
-                            onGoBackstage={() => setBackstage(true)}
-                        />
+                        {backstage ? (
+                            <></>
+                        ) : (
+                            <HandUpButton
+                                currentRoomEvent={currentRoomEvent}
+                                eventPeople={eventPeople}
+                                onGoBackstage={() => setBackstage(true)}
+                            />
+                        )}
                     </Box>
                 </HStack>
             </VStack>

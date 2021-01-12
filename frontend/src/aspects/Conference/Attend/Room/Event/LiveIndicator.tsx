@@ -23,7 +23,7 @@ export function LiveIndicator({ event }: { event: RoomEventDetailsFragment }): J
         update();
     }, [update]);
 
-    usePolling(update, 500, true);
+    usePolling(update, 1000, true);
 
     return (
         <Box my={2}>

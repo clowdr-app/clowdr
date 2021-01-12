@@ -1,11 +1,32 @@
-import { Badge, Box, Heading, Text, useColorModeValue, useToken } from "@chakra-ui/react";
+import { Badge, Box, Divider, Heading, Text, useColorModeValue, useToken } from "@chakra-ui/react";
+import { formatRelative } from "date-fns";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { EventPersonDetailsFragment, RoomDetailsFragment, RoomMode_Enum } from "../../../../generated/graphql";
+import {
+    EventPersonDetailsFragment,
+    RoomDetailsFragment,
+    RoomEventSummaryFragment,
+    RoomMode_Enum,
+} from "../../../../generated/graphql";
 import usePolling from "../../../Generic/usePolling";
 import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
 import { EventVonageRoom } from "./Event/EventVonageRoom";
 import { HandUpButton } from "./HandUpButton";
+
+function isEventNow(event: RoomEventSummaryFragment): boolean {
+    const now = new Date().getTime();
+    const startTime = Date.parse(event.startTime);
+    const endTime = Date.parse(event.endTime);
+
+    return now >= startTime && now <= endTime;
+}
+
+function isEventSoon(event: RoomEventSummaryFragment): boolean {
+    const now = new Date().getTime();
+    const startTime = Date.parse(event.startTime);
+
+    return now >= startTime - 3 * 60 * 1000 && now <= startTime;
+}
 
 export function RoomBackstage({
     backstage,
@@ -28,21 +49,28 @@ export function RoomBackstage({
         [eventPeople, user.user.attendees]
     );
 
-    const [eventTemporalBadges, setEventTemporalBadges] = useState<{ [eventId: string]: JSX.Element }>({});
+    const sortedEvents = useMemo(
+        () =>
+            R.sortWith(
+                [R.descend(isEventNow), R.descend(isEventSoon), R.ascend(R.prop("startTime"))],
+                roomDetails.events
+            ),
+        [roomDetails.events]
+    );
+
+    const [eventTemporalBadges, setEventTemporalBadges] = useState<{
+        [eventId: string]: JSX.Element;
+    }>({});
 
     const updateEventTemporalBadges = useCallback(() => {
         setEventTemporalBadges(
             R.fromPairs(
-                roomDetails.events
+                sortedEvents
                     .filter((event) =>
                         [RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(event.intendedRoomModeName)
                     )
                     .map((event) => {
-                        const now = new Date().getTime();
-                        const startTime = Date.parse(event.startTime);
-                        const endTime = Date.parse(event.endTime);
-
-                        if (now >= startTime && now <= endTime) {
+                        if (isEventNow(event)) {
                             return [
                                 event.id,
                                 <Badge key={`badge-${event.id}`} colorScheme="green">
@@ -51,7 +79,7 @@ export function RoomBackstage({
                             ];
                         }
 
-                        if (now >= startTime - 3 * 60 * 1000 && now <= startTime) {
+                        if (isEventSoon(event)) {
                             return [
                                 event.id,
                                 <Badge key={`badge-${event.id}`} colorScheme="blue">
@@ -64,14 +92,17 @@ export function RoomBackstage({
                     })
             )
         );
-    }, [roomDetails.events]);
+    }, [sortedEvents]);
 
     usePolling(() => updateEventTemporalBadges(), 5000, true);
     useEffect(() => updateEventTemporalBadges(), [updateEventTemporalBadges]);
 
+    const [now, setNow] = useState<Date>(new Date());
+    usePolling(() => setNow(new Date()), 20000, true);
+
     const eventRooms = useMemo(
         () =>
-            roomDetails.events
+            sortedEvents
                 .filter((event) =>
                     [RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(event.intendedRoomModeName)
                 )
@@ -81,9 +112,13 @@ export function RoomBackstage({
                     );
                     return (
                         <Box key={event.id}>
-                            <Heading as="h4" size="md" textAlign="left" mt={5} mb={3}>
+                            <Heading as="h4" size="md" textAlign="left" mt={5} mb={1}>
                                 {event.name} {eventTemporalBadges[event.id]}
                             </Heading>
+
+                            <Text my={2} fontStyle="italic">
+                                {formatRelative(Date.parse(event.startTime), now)}
+                            </Text>
 
                             {haveAccessToEvent ? (
                                 "You have access to the backstage for this event."
@@ -96,10 +131,11 @@ export function RoomBackstage({
                             <Box display={haveAccessToEvent ? "block" : "none"} mt={2}>
                                 <EventVonageRoom eventId={event.id} />
                             </Box>
+                            <Divider my={4} />
                         </Box>
                     );
                 }),
-        [eventPeople, eventTemporalBadges, myEventPeople, roomDetails.events, user]
+        [eventPeople, eventTemporalBadges, myEventPeople, now, sortedEvents, user]
     );
 
     return (

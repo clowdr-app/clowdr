@@ -291,8 +291,8 @@ export default function LazyLoadingScroller<T>({
                     }
                 }}
                 css={{
-                    ["scrollbar-width"]: "thin",
-                    ["scrollbar-color"]: `${scrollbarColour} ${scrollbarBackground}`,
+                    ["scrollbarWidth"]: "thin",
+                    ["scrollbarColor"]: `${scrollbarColour} ${scrollbarBackground}`,
                 }}
             >
                 {elements}

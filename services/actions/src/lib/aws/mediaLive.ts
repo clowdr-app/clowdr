@@ -180,7 +180,7 @@ export async function createChannel(
     const video1080p30 = shortId();
     const audioHQDescriptorName = shortId();
     const video720p30 = shortId();
-    const video360p30 = shortId();
+    const video480p30 = shortId();
     const audioLQDescriptorName = shortId();
     const mp4CaptionSelectorName = shortId();
     const mp4CaptionDescriptorName = shortId();
@@ -320,7 +320,7 @@ export async function createChannel(
                         },
                         {
                             OutputName: "360p30",
-                            VideoDescriptionName: video360p30,
+                            VideoDescriptionName: video480p30,
                             AudioDescriptionNames: [audioLQDescriptorName],
                             OutputSettings: {
                                 MediaPackageOutputSettings: {},
@@ -386,12 +386,12 @@ export async function createChannel(
                             QvbrQualityLevel: 6,
                         },
                     },
-                    Height: 360,
-                    Name: video360p30,
+                    Height: 480,
+                    Name: video480p30,
                     RespondToAfd: VideoDescriptionRespondToAfd.PASSTHROUGH,
                     Sharpness: 50,
                     ScalingBehavior: VideoDescriptionScalingBehavior.DEFAULT,
-                    Width: 480,
+                    Width: 854,
                 },
             ],
             CaptionDescriptions: [

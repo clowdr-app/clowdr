@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Button, Heading } from "@chakra-ui/react";
-import type { VonageSessionLayoutData } from "@clowdr-app/shared-types/build/vonage";
+import { VonageSessionLayoutData, VonageSessionLayoutType } from "@clowdr-app/shared-types/build/vonage";
 import React, { useCallback } from "react";
 import {
     EventParticipantStreamDetailsFragment,
@@ -19,9 +19,11 @@ gql`
 `;
 
 export function BroadcastControlPanel({
+    live,
     streams,
     eventVonageSessionId,
 }: {
+    live: boolean;
     streams: readonly EventParticipantStreamDetailsFragment[] | null;
     eventVonageSessionId: string | null;
 }): JSX.Element {
@@ -48,7 +50,9 @@ export function BroadcastControlPanel({
             <Heading as="h3" size="sm" mt={2} mb={2}>
                 Broadcast controls
             </Heading>
-            {!streams ? undefined : streams.length === 0 ? (
+            {!live ? (
+                <>Broadcast controls not available while event is off air.</>
+            ) : !streams ? undefined : streams.length === 0 ? (
                 <>No streams that can be broadcast.</>
             ) : (
                 <>
@@ -56,7 +60,11 @@ export function BroadcastControlPanel({
                         <AccordionItem>
                             <AccordionButton>Auto layout</AccordionButton>
                             <AccordionPanel>
-                                <Button colorScheme="green" aria-label="Set stream layout to automatic mode">
+                                <Button
+                                    colorScheme="green"
+                                    aria-label="Set stream layout to automatic mode"
+                                    onClick={() => setLayout({ type: VonageSessionLayoutType.BestFit })}
+                                >
                                     Auto layout
                                 </Button>
                             </AccordionPanel>

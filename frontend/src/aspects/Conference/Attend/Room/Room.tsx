@@ -116,7 +116,12 @@ export function Room({
                 minW={["100%", "100%", "100%", "700px"]}
                 maxW="100%"
             >
-                <RoomControlBar roomDetails={roomDetails} onSetBackstage={setBackstage} backstage={backstage} />
+                <RoomControlBar
+                    roomDetails={roomDetails}
+                    onSetBackstage={setBackstage}
+                    backstage={backstage}
+                    hasBackstage={!!hlsUri}
+                />
                 <RoomBackstage backstage={backstage} roomDetails={roomDetails} eventPeople={eventPeople} />
 
                 {secondsUntilNonBreakoutEvent >= 180 && secondsUntilNonBreakoutEvent <= 300 ? (

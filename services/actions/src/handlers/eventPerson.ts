@@ -1,0 +1,64 @@
+import { gql } from "@apollo/client/core";
+import assert from "assert";
+import { FindEventConnectionsForParticipantDocument } from "../generated/graphql";
+import { apolloClient } from "../graphqlClient";
+import vonageClient from "../lib/vonage/vonageClient";
+import { EventPersonData, Payload } from "../types/hasura/event";
+
+gql`
+    query FindEventConnectionsForParticipant($attendeeId: uuid!, $conferenceId: uuid!, $eventId: uuid!) {
+        EventParticipantStream_aggregate(
+            distinct_on: vonageConnectionId
+            where: {
+                attendeeId: { _eq: $attendeeId }
+                conferenceId: { _eq: $conferenceId }
+                eventId: { _eq: $eventId }
+            }
+        ) {
+            nodes {
+                vonageConnectionId
+                id
+                event {
+                    eventVonageSession {
+                        id
+                        sessionId
+                    }
+                }
+            }
+        }
+    }
+`;
+
+export async function handleEventPersonDeleted(payload: Payload<EventPersonData>): Promise<void> {
+    assert(!payload.event.data.new, "Expected row to be deleted");
+    assert(payload.event.data.old, "Expected row to be deleted");
+
+    const oldRow = payload.event.data.old;
+
+    const result = await apolloClient.query({
+        query: FindEventConnectionsForParticipantDocument,
+        variables: {
+            attendeeId: oldRow.attendeeId,
+            conferenceId: oldRow.conferenceId,
+            eventId: oldRow.eventId,
+        },
+    });
+
+    for (const stream of result.data.EventParticipantStream_aggregate.nodes) {
+        if (stream.event.eventVonageSession?.sessionId) {
+            try {
+                console.log(
+                    "Forcing disconnection from event Vonage session",
+                    stream.id,
+                    stream.event.eventVonageSession.sessionId
+                );
+                await vonageClient.forceDisconnect(
+                    stream.event.eventVonageSession.sessionId,
+                    stream.vonageConnectionId
+                );
+            } catch (e) {
+                console.error("Failed to force disconnection of Vonage client", stream.id, stream.vonageConnectionId);
+            }
+        }
+    }
+}

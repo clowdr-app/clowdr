@@ -1984,14 +1984,6 @@
             _and:
             - enabled:
                 _eq: true
-            - groupRoles:
-                role:
-                  rolePermissions:
-                    _or:
-                    - permissionName:
-                        _eq: CONFERENCE_VIEW
-                    - permissionName:
-                        _eq: CONFERENCE_MANAGE_NAME
             - _or:
               - includeUnauthenticated:
                   _eq: true
@@ -4379,6 +4371,8 @@
                             _eq: CONFERENCE_MANAGE_ROLES
                         - permissionName:
                             _eq: CONFERENCE_MANAGE_GROUPS
+                        - permissionName:
+                            _eq: CONFERENCE_MANAGE_ATTENDEES
                 - groupAttendees:
                     attendee:
                       userId:
@@ -4905,8 +4899,12 @@
       computed_fields:
       - hash
       filter:
-        inviteCode:
-          _eq: X-Hasura-Invite-Code
+        _and:
+        - inviteCode:
+            _eq: X-Hasura-Invite-Code
+        - attendee:
+            userId:
+              _is_null: true
       limit: 1
   - role: user
     permission:

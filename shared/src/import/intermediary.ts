@@ -265,3 +265,33 @@ export function JSONataToIntermediarySchedule(data: any, query: string): Interme
         return undefined;
     }
 }
+
+
+
+export interface IntermediaryAttendeeData {
+    name: string;
+    email: string;
+    group: string;
+}
+
+function internalAttendeeConverter(data: any, query: string): IntermediaryAttendeeData[] | string {
+    const expression = jsonata(query);
+    const result = expression.evaluate(data);
+    if (assertType<IntermediaryAttendeeData[]>(result)) {
+        return result;
+    } else {
+        return "Unknown error";
+    }
+}
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export function JSONataToIntermediaryAttendee(data: any, query: string): IntermediaryAttendeeData[] | string | undefined {
+    try {
+        return internalAttendeeConverter(data, query);
+    } catch (e) {
+        if (e instanceof TypeGuardError) {
+            return e.message;
+        }
+        return undefined;
+    }
+}

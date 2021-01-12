@@ -27003,6 +27003,14 @@ export type UpdateHallwayMutation = { readonly __typename?: 'mutation_root', rea
     & HallwayInfoFragment
   )> };
 
+export type ImportAttendeesMutationVariables = Exact<{
+  insertAttendees: ReadonlyArray<Attendee_Insert_Input>;
+  insertInvitations: ReadonlyArray<Invitation_Insert_Input>;
+}>;
+
+
+export type ImportAttendeesMutation = { readonly __typename?: 'mutation_root', readonly insert_Attendee?: Maybe<{ readonly __typename?: 'Attendee_mutation_response', readonly affected_rows: number }>, readonly insert_Invitation?: Maybe<{ readonly __typename?: 'Invitation_mutation_response', readonly affected_rows: number }> };
+
 export type CreateConferencePrepareJobMutationVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
@@ -30748,6 +30756,42 @@ export function useUpdateHallwayMutation(baseOptions?: Apollo.MutationHookOption
 export type UpdateHallwayMutationHookResult = ReturnType<typeof useUpdateHallwayMutation>;
 export type UpdateHallwayMutationResult = Apollo.MutationResult<UpdateHallwayMutation>;
 export type UpdateHallwayMutationOptions = Apollo.BaseMutationOptions<UpdateHallwayMutation, UpdateHallwayMutationVariables>;
+export const ImportAttendeesDocument = gql`
+    mutation ImportAttendees($insertAttendees: [Attendee_insert_input!]!, $insertInvitations: [Invitation_insert_input!]!) {
+  insert_Attendee(objects: $insertAttendees) {
+    affected_rows
+  }
+  insert_Invitation(objects: $insertInvitations) {
+    affected_rows
+  }
+}
+    `;
+export type ImportAttendeesMutationFn = Apollo.MutationFunction<ImportAttendeesMutation, ImportAttendeesMutationVariables>;
+
+/**
+ * __useImportAttendeesMutation__
+ *
+ * To run a mutation, you first call `useImportAttendeesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useImportAttendeesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [importAttendeesMutation, { data, loading, error }] = useImportAttendeesMutation({
+ *   variables: {
+ *      insertAttendees: // value for 'insertAttendees'
+ *      insertInvitations: // value for 'insertInvitations'
+ *   },
+ * });
+ */
+export function useImportAttendeesMutation(baseOptions?: Apollo.MutationHookOptions<ImportAttendeesMutation, ImportAttendeesMutationVariables>) {
+        return Apollo.useMutation<ImportAttendeesMutation, ImportAttendeesMutationVariables>(ImportAttendeesDocument, baseOptions);
+      }
+export type ImportAttendeesMutationHookResult = ReturnType<typeof useImportAttendeesMutation>;
+export type ImportAttendeesMutationResult = Apollo.MutationResult<ImportAttendeesMutation>;
+export type ImportAttendeesMutationOptions = Apollo.BaseMutationOptions<ImportAttendeesMutation, ImportAttendeesMutationVariables>;
 export const CreateConferencePrepareJobDocument = gql`
     mutation CreateConferencePrepareJob($conferenceId: uuid!) {
   insert_ConferencePrepareJob_one(object: {conferenceId: $conferenceId}) {

@@ -17,7 +17,7 @@ import type {
 import React, { useEffect, useState } from "react";
 import type { ParsedData } from "../../../../Files/useCSVJSONXMLParser";
 
-export default function ConfigPanel({
+export default function ConfigPanel<T = IntermediaryContentData | IntermediaryScheduleData>({
     data,
     onChange,
     JSONataFunction,
@@ -27,11 +27,11 @@ export default function ConfigPanel({
     presetJSONataUnknownFileTypeQuery,
 }: {
     data: ParsedData<any[]>[];
-    onChange?: (data: Record<string, IntermediaryContentData | IntermediaryScheduleData>) => void;
+    onChange?: (data: Record<string, T>) => void;
     JSONataFunction: (
         data: any,
         query: string
-    ) => IntermediaryContentData | IntermediaryScheduleData | string | undefined;
+    ) => T | string | undefined;
     presetJSONataXMLQuery?: string;
     presetJSONataJSONQuery?: string;
     presetJSONataCSVQuery?: string;
@@ -73,7 +73,7 @@ export default function ConfigPanel({
     const [errors, setErrors] = useState<Map<string, string>>(new Map());
     useEffect(() => {
         const t = setTimeout(() => {
-            const outputData: Record<string, IntermediaryContentData | IntermediaryScheduleData> = {};
+            const outputData: Record<string, T> = {};
             const outputErrors = new Map<string, string>();
             for (const parsedData of data) {
                 if ("data" in parsedData) {

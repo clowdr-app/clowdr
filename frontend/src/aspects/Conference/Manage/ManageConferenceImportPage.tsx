@@ -7,6 +7,7 @@ import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
 import ImportContentPage from "./Import/Content/ImportContentPage";
+import ImportPeoplePage from "./Import/People/ImportPeoplePage";
 import ImportSchedulePage from "./Import/Schedule/ImportSchedulePage";
 import RestrictedDashboardButton from "./RestrictedDashboardButton";
 import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
@@ -19,6 +20,9 @@ export default function ManageConferenceImportPage({ rootUrl }: { rootUrl: strin
             </Route>
             <Route path={`${rootUrl}/schedule`}>
                 <ImportSchedulePage />
+            </Route>
+            <Route path={`${rootUrl}/people`}>
+                <ImportPeoplePage />
             </Route>
             <Route path={`${rootUrl}/`}>
                 <InnerManageConferenceImportPage />
@@ -66,6 +70,14 @@ function InnerManageConferenceImportPage(): JSX.Element {
                     description="Import your schedule including rooms and events."
                     permissions={[Permission_Enum.ConferenceManageSchedule]}
                     colorScheme="green"
+                />
+                <RestrictedDashboardButton
+                    to="import/people"
+                    name="People"
+                    icon="users"
+                    description="Import your attendees, organisers and other users."
+                    permissions={[Permission_Enum.ConferenceManageAttendees]}
+                    colorScheme="red"
                 />
             </Flex>
         </RequireAtLeastOnePermissionWrapper>

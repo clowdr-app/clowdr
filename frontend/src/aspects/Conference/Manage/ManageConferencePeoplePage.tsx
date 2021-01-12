@@ -320,7 +320,7 @@ export default function ManageConferencePeoplePage(): JSX.Element {
 
     return (
         <RequireAtLeastOnePermissionWrapper
-            permissions={[Permission_Enum.ConferenceManageRoles, Permission_Enum.ConferenceManageGroups]}
+            permissions={[Permission_Enum.ConferenceManageAttendees, Permission_Enum.ConferenceManageRoles, Permission_Enum.ConferenceManageGroups]}
             componentIfDenied={<PageNotFound />}
         >
             {title}
@@ -593,6 +593,17 @@ export default function ManageConferencePeoplePage(): JSX.Element {
                     otherFields: fields,
                 }}
                 customButtons={[
+                    {
+                        text: "Import",
+                        label: "Import",
+                        colorScheme: "green",
+                        action: `/conference/${conference.slug}/manage/import/people`,
+                        enabledWhenDirty: false,
+                        enabledWhenNothingSelected: true,
+                        isRunning: false,
+                        tooltipWhenDisabled: "",
+                        tooltipWhenEnabled: ""
+                    },
                     {
                         text: "Send initial invitations",
                         label: "Send initial invitations",

@@ -43,6 +43,7 @@ import { formatISO9075 } from "date-fns";
 import React, { Dispatch, SetStateAction, useCallback, useMemo, useState } from "react";
 import Select from "react-select";
 import { v4 as uuidv4 } from "uuid";
+import { LinkButton } from "../Chakra/LinkButton";
 import FAIcon from "../Icons/FAIcon";
 import UnsavedChangesWarning from "../LeavingPageWarnings/UnsavedChangesWarning";
 import { DateTimePicker } from "./DateTimePicker";
@@ -579,7 +580,7 @@ export interface CustomButton<T, PK extends keyof T> {
     enabledWhenDirty: boolean;
     tooltipWhenEnabled: string;
     tooltipWhenDisabled: string;
-    action: (keys: Set<T[PK]>) => Promise<void>;
+    action: string | ((keys: Set<T[PK]>) => Promise<void>);
     isRunning: boolean;
 }
 
@@ -1498,8 +1499,18 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
         const resultRowEls: Array<JSX.Element[]> = [];
         const resultVisibleKeys: Set<T[PK]> = new Set();
 
+        const sortedData = [...allRows.entries()].sort((x, y) => {
+            const itemX = data.get(x[0]);
+            const itemY = data.get(y[0]);
+
+            assert(itemX);
+            assert(itemY);
+
+            return primaryKeyField.getRowTitle(itemX).localeCompare(primaryKeyField.getRowTitle(itemY));
+        });
+
         if (!isFilterable) {
-            allRows.forEach((rowEl, key) => {
+            sortedData.forEach(([key, rowEl]) => {
                 const item = data.get(key);
                 if (item) {
                     const keyV = primaryKeyField.extract(item);
@@ -1533,12 +1544,12 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
                 }
             });
         } else {
-            data.forEach((item, key) => {
-                if (filterFields.every((field) => applyFieldFilter(field, item))) {
-                    const keyV = primaryKeyField.extract(item);
+            sortedData.forEach(([key, rowEl]) => {
+                const item = data.get(key);
+                if (item) {
+                    if (filterFields.every((field) => applyFieldFilter(field, item))) {
+                        const keyV = primaryKeyField.extract(item);
 
-                    const rowEl = allRows.get(key);
-                    if (rowEl) {
                         if (includeSelectorColumn) {
                             const isSelected = selectedKeys.has(keyV);
 
@@ -1777,17 +1788,31 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
                             >
                                 {/* This additional box is necessary otherwise the tooltip doesn't show on a disabled button */}
                                 <VStack align={["stretch", "flex-start"]}>
-                                    <Button
-                                        aria-label={button.label}
-                                        isDisabled={isDisabled}
-                                        colorScheme={button.colorScheme}
-                                        onClick={(_ev) => {
-                                            button.action(visibleSelectedKeys);
-                                        }}
-                                    >
-                                        {button.isRunning ? <Spinner /> : undefined}
-                                        {button.text}
-                                    </Button>
+                                    {typeof button.action === "string" ? (
+                                        <LinkButton
+                                            aria-label={button.label}
+                                            isDisabled={isDisabled}
+                                            colorScheme={button.colorScheme}
+                                            to={button.action}
+                                        >
+                                            {button.isRunning ? <Spinner /> : undefined}
+                                            {button.text}
+                                        </LinkButton>
+                                    ) : (
+                                        <Button
+                                            aria-label={button.label}
+                                            isDisabled={isDisabled}
+                                            colorScheme={button.colorScheme}
+                                            onClick={(_ev) => {
+                                                (button.action as (keys: Set<T[PK]>) => Promise<void>)(
+                                                    visibleSelectedKeys
+                                                );
+                                            }}
+                                        >
+                                            {button.isRunning ? <Spinner /> : undefined}
+                                            {button.text}
+                                        </Button>
+                                    )}
                                 </VStack>
                             </Tooltip>
                         );

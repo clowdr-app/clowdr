@@ -4,11 +4,11 @@ import React from "react";
 import JSONataQueryModal from "../../../../Files/JSONataQueryModal";
 import FAIcon from "../../../../Icons/FAIcon";
 
-export default function ReviewPanel({
+export default function ReviewPanel<T = IntermediaryContentData>({
     data,
     defaultQuery,
 }: {
-    data: Record<string, IntermediaryContentData>;
+    data: Record<string, T>;
     defaultQuery: string;
 }): JSX.Element {
     return (

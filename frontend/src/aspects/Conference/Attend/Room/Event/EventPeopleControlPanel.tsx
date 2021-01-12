@@ -5,6 +5,7 @@ import {
     EventPersonRole_Enum,
     EventRoomJoinRequestDetailsFragment,
 } from "../../../../../generated/graphql";
+import useUserId from "../../../../Auth/useUserId";
 import { EventPerson } from "./EventPerson";
 import { JoinRequest } from "./JoinRequest";
 
@@ -21,6 +22,7 @@ export function EventPeopleControlPanel({
         () => myRoles.includes(EventPersonRole_Enum.Chair) || myRoles.includes(EventPersonRole_Enum.Presenter),
         [myRoles]
     );
+    const userId = useUserId();
 
     return (
         <>
@@ -41,7 +43,10 @@ export function EventPeopleControlPanel({
             <List>
                 {eventPeople.map((person) => (
                     <ListItem key={person.id} mt={2}>
-                        <EventPerson eventPerson={person} enableDelete={canControlEventPeople} />
+                        <EventPerson
+                            eventPerson={person}
+                            enableDelete={canControlEventPeople && person.attendee?.userId !== userId}
+                        />
                     </ListItem>
                 ))}
             </List>

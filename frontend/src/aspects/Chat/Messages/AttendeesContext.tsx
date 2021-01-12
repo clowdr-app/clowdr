@@ -71,26 +71,29 @@ export default function AttendeesContextProvider({
 
     useEffect(() => {
         const tId = setInterval(async () => {
-            const subsToFetchFor: Subscription[] = [];
             const requiredAttendeeIds = new Set<string>();
             let now = Date.now();
             subscriptions.current.forEach((sub) => {
                 if (sub.lastNotifiedAt < now - fullRefetchInterval) {
-                    subsToFetchFor.push(sub);
-                    requiredAttendeeIds.add(sub.attendeeId);
+                    const existingAttendeeData = attendees.current.get(sub.attendeeId);
+                    if (!existingAttendeeData || existingAttendeeData.fetchedAt < now - fullRefetchInterval) {
+                        requiredAttendeeIds.add(sub.attendeeId);
+                    }
                 }
             });
 
             try {
-                const datas = await attendeesByIdQ.refetch({
-                    attendeeIds: [...requiredAttendeeIds.values()],
-                    conferenceId: conference.id,
-                });
+                if (requiredAttendeeIds.size > 0) {
+                    const datas = await attendeesByIdQ.refetch({
+                        attendeeIds: [...requiredAttendeeIds.values()],
+                        conferenceId: conference.id,
+                    });
 
-                now = Date.now();
-                datas.data.Attendee.forEach((attendee) => {
-                    attendees.current.set(attendee.id, { attendee, fetchedAt: now });
-                });
+                    now = Date.now();
+                    datas.data.Attendee.forEach((attendee) => {
+                        attendees.current.set(attendee.id, { attendee, fetchedAt: now });
+                    });
+                }
             } catch (e) {
                 console.error("Could not fetch attendees for chat!", e);
             }

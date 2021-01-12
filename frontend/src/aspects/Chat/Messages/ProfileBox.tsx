@@ -62,7 +62,8 @@ export default function ProfilePictureBox({ attendeeId, ...props }: { attendeeId
                     objectFit="cover"
                     objectPosition="center"
                     src={attendee.profile.photoURL_50x50}
-                    alt={`Profile picture of ${attendee.displayName}`}
+                    aria-label={`Profile picture of ${attendee.displayName}`}
+                    overflow="hidden"
                 />
             ) : config.messageConfig.showPlaceholderProfilePictures && attendee !== null ? (
                 <FAIcon iconStyle="s" icon="cat" fontSize={((props.w ?? 35) as number) * 0.8 + "px"} />

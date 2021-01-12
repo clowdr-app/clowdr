@@ -87,8 +87,6 @@
                     rolePermissions:
                       _or:
                       - permissionName:
-                          _eq: CONFERENCE_VIEW
-                      - permissionName:
                           _eq: CONFERENCE_MANAGE_SCHEDULE
                       - permissionName:
                           _eq: CONFERENCE_VIEW_ATTENDEES
@@ -430,8 +428,6 @@
                           rolePermissions:
                             _or:
                             - permissionName:
-                                _eq: CONFERENCE_VIEW
-                            - permissionName:
                                 _eq: CONFERENCE_VIEW_ATTENDEES
                             - permissionName:
                                 _eq: CONFERENCE_MANAGE_ATTENDEES
@@ -523,8 +519,6 @@
                       role:
                         rolePermissions:
                           _or:
-                          - permissionName:
-                              _eq: CONFERENCE_VIEW
                           - permissionName:
                               _eq: CONFERENCE_MANAGE_ATTENDEES
                           - permissionName:
@@ -761,8 +755,6 @@
                             rolePermissions:
                               _or:
                               - permissionName:
-                                  _eq: CONFERENCE_VIEW
-                              - permissionName:
                                   _eq: CONFERENCE_MANAGE_ATTENDEES
                               - permissionName:
                                   _eq: CONFERENCE_VIEW_ATTENDEES
@@ -851,8 +843,6 @@
                         role:
                           rolePermissions:
                             _or:
-                            - permissionName:
-                                _eq: CONFERENCE_VIEW
                             - permissionName:
                                 _eq: CONFERENCE_MANAGE_ATTENDEES
                             - permissionName:
@@ -1117,8 +1107,6 @@
                       role:
                         rolePermissions:
                           _or:
-                          - permissionName:
-                              _eq: CONFERENCE_VIEW
                           - permissionName:
                               _eq: CONFERENCE_MANAGE_ATTENDEES
                           - permissionName:

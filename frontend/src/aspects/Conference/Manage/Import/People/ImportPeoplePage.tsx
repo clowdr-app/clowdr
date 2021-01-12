@@ -1,6 +1,11 @@
 import { Box, Heading, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
+import {
+    IntermediaryAttendeeData,
+    JSONataToIntermediaryAttendee,
+} from "@clowdr-app/shared-types/build/import/intermediary";
 import React, { useMemo, useState } from "react";
 import { Permission_Enum } from "../../../../../generated/graphql";
+import { LinkButton } from "../../../../Chakra/LinkButton";
 import PageNotFound from "../../../../Errors/PageNotFound";
 import type { ParsedData } from "../../../../Files/useCSVJSONXMLParser";
 import { useTitle } from "../../../../Utils/useTitle";
@@ -10,12 +15,7 @@ import useDashboardPrimaryMenuButtons from "../../useDashboardPrimaryMenuButtons
 import ConfigPanel from "../Shared/ConfigPanel";
 import DataPanel from "../Shared/DataPanel";
 import ReviewPanel from "../Shared/ReviewPanel";
-import {
-    IntermediaryAttendeeData,
-    JSONataToIntermediaryAttendee,
-} from "@clowdr-app/shared-types/build/import/intermediary";
 import ImportPanel from "./ImportPanel";
-import { LinkButton } from "../../../../Chakra/LinkButton";
 
 const defaultReviewQuery = `
 $

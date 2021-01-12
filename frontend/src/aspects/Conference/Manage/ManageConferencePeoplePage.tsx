@@ -320,7 +320,11 @@ export default function ManageConferencePeoplePage(): JSX.Element {
 
     return (
         <RequireAtLeastOnePermissionWrapper
-            permissions={[Permission_Enum.ConferenceManageAttendees, Permission_Enum.ConferenceManageRoles, Permission_Enum.ConferenceManageGroups]}
+            permissions={[
+                Permission_Enum.ConferenceManageAttendees,
+                Permission_Enum.ConferenceManageRoles,
+                Permission_Enum.ConferenceManageGroups,
+            ]}
             componentIfDenied={<PageNotFound />}
         >
             {title}
@@ -602,7 +606,7 @@ export default function ManageConferencePeoplePage(): JSX.Element {
                         enabledWhenNothingSelected: true,
                         isRunning: false,
                         tooltipWhenDisabled: "",
-                        tooltipWhenEnabled: ""
+                        tooltipWhenEnabled: "",
                     },
                     {
                         text: "Send initial invitations",

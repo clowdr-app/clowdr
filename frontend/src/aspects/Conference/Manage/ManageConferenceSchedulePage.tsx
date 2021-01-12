@@ -60,7 +60,7 @@ function EditableScheduleCRUDTable() {
     const [allAttendeesMap, setAllAttendeesMap] = useState<Map<string, AttendeeDescriptor>>();
 
     // TODO: tags modal
-    const [dirtyTagIds, setDirtyTagIds] = useState<Set<string>>(new Set());
+    const [_dirtyTagIds, setDirtyTagIds] = useState<Set<string>>(new Set());
 
     const roomOptions: SelectOption[] = useMemo(() => {
         return allRoomsMap

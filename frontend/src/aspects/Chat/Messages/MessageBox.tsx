@@ -77,10 +77,11 @@ function MessageBody({ message }: { message: ChatMessageDataFragment }): JSX.Ele
                         hideReactions={message.type === Chat_MessageType_Enum.Emote}
                         fontSize={smallFontSize}
                         ml="auto"
-                        isOwnMessage={message.senderId === config.currentAttendeeId}
+                        isOwnMessage={!!config.currentAttendeeId && message.senderId === config.currentAttendeeId}
                         messageId={message.id}
                         usedReactions={message.reactions.reduce((acc, reaction) => {
                             if (
+                                config.currentAttendeeId &&
                                 reaction.type === Chat_ReactionType_Enum.Emoji &&
                                 reaction.senderId === config.currentAttendeeId
                             ) {

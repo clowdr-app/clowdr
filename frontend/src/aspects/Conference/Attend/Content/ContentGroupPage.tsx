@@ -7,6 +7,8 @@ import {
     Permission_Enum,
     useGetContentGroupQuery,
 } from "../../../../generated/graphql";
+import { Chat } from "../../../Chat/Chat";
+import { ChatDuplicationFlags } from "../../../Chat/Configuration";
 import PageNotFound from "../../../Errors/PageNotFound";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import usePrimaryMenuButtons from "../../../Menu/usePrimaryMenuButtons";
@@ -105,7 +107,19 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
                                         <ContentGroupEvents contentGroupEvents={contentGroupData} />
                                     </Box>
                                 </Box>
-                                {/* <Box width={stackColumns ? "100%" : "30%"} height="100%"></Box> */}
+                                {contentGroupData.chatId ? (
+                                    <Chat
+                                        sources={{
+                                            chatId: contentGroupData.chatId,
+                                            chatLabel: "Discussion",
+                                            duplication: ChatDuplicationFlags.NONE,
+                                        }}
+                                        width={stackColumns ? "100%" : "30%"}
+                                        height="100%"
+                                    />
+                                ) : (
+                                    <></>
+                                )}
                             </Flex>
                         </>
                     );

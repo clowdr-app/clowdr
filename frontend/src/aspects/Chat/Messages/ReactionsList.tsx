@@ -24,7 +24,7 @@ export default function ReactionsList({
         string,
         {
             count: number;
-            attendeeHasThis: number | false;
+            attendeeSentThisReactionId: number | false;
         }
     ]> = useMemo(() => {
         return [
@@ -32,13 +32,13 @@ export default function ReactionsList({
                 .reduce(
                     (acc, reaction) => {
                         if (reaction.type === Chat_ReactionType_Enum.Emoji) {
-                            const info = acc.get(reaction.symbol) ?? { count: 0, attendeeHasThis: false };
+                            const info = acc.get(reaction.symbol) ?? { count: 0, attendeeSentThisReactionId: false };
                             acc.set(reaction.symbol, {
                                 count: info.count + 1,
-                                attendeeHasThis:
-                                    info.attendeeHasThis !== false
-                                        ? info.attendeeHasThis
-                                        : reaction.senderId === currentAttendeeId
+                                attendeeSentThisReactionId:
+                                    info.attendeeSentThisReactionId !== false
+                                        ? info.attendeeSentThisReactionId
+                                        : currentAttendeeId && reaction.senderId === currentAttendeeId
                                         ? reaction.id
                                         : false,
                             });
@@ -49,7 +49,7 @@ export default function ReactionsList({
                         string,
                         {
                             count: number;
-                            attendeeHasThis: number | false;
+                            attendeeSentThisReactionId: number | false;
                         }
                     >()
                 )
@@ -67,8 +67,8 @@ export default function ReactionsList({
                     reaction={reaction}
                     count={info.count}
                     onClick={async () => {
-                        if (info.attendeeHasThis) {
-                            await reactionQs.deleteReaction(info.attendeeHasThis);
+                        if (info.attendeeSentThisReactionId) {
+                            await reactionQs.deleteReaction(info.attendeeSentThisReactionId);
                             // TODO: How do we delete the duplicated reaction???
                         } else {
                             await reactionQs.addReaction({

@@ -16,10 +16,7 @@ const _conferenceProviderQueries = gql`
     }
 `;
 
-export type ConferenceInfo = Pick<
-    Conference,
-    | "id" | "name" | "shortName" | "slug"
->;
+export type ConferenceInfo = Pick<Conference, "id" | "name" | "shortName" | "slug">;
 
 const ConferenceContext = React.createContext<ConferenceInfo | undefined>(undefined);
 

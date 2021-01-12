@@ -1,5 +1,7 @@
 import type { BoxProps } from "@chakra-ui/react";
 import React, { useMemo } from "react";
+import { Permission_Enum } from "../../generated/graphql";
+import RequireAtLeastOnePermissionWrapper from "../Conference/RequireAtLeastOnePermissionWrapper";
 import { useMaybeCurrentAttendee } from "../Conference/useCurrentAttendee";
 import { useRestorableState } from "../Generic/useRestorableState";
 import { ChatConfiguration, ChatConfigurationProvider, ChatSources, ChatSpacing } from "./Configuration";
@@ -152,10 +154,12 @@ export function Chat({ sources, onProfileModalOpened, onEmoteReceived, ...rest }
     );
 
     return (
-        <ChatConfigurationProvider config={config}>
-            <SelectedChatProvider>
-                <ChatFrame {...rest} />
-            </SelectedChatProvider>
-        </ChatConfigurationProvider>
+        <RequireAtLeastOnePermissionWrapper permissions={[Permission_Enum.ConferenceViewAttendees]}>
+            <ChatConfigurationProvider config={config}>
+                <SelectedChatProvider>
+                    <ChatFrame {...rest} />
+                </SelectedChatProvider>
+            </ChatConfigurationProvider>
+        </RequireAtLeastOnePermissionWrapper>
     );
 }

@@ -5,8 +5,8 @@ import {
     useSubscribeChatMutation,
     useUnsubscribeChatMutation,
 } from "../../../generated/graphql";
-import useCurrentAttendee from "../../Conference/useCurrentAttendee";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
+import { useChatConfiguration } from "../Configuration";
 import { useSelectedChat } from "../SelectedChat";
 import type { MutableQuery } from "../Types/Queries";
 
@@ -66,11 +66,11 @@ export function ChatSubscribedQueryProvider({
 }: {
     children: React.ReactNode | React.ReactNodeArray;
 }): JSX.Element {
-    const attendee = useCurrentAttendee();
+    const config = useChatConfiguration();
     const selectedChat = useSelectedChat();
     const subscriptionQ = useSelectSubscriptionQuery({
         variables: {
-            attendeeId: attendee.id,
+            attendeeId: config.currentAttendeeId,
             chatId: selectedChat.id,
         },
     });
@@ -78,15 +78,15 @@ export function ChatSubscribedQueryProvider({
     useEffect(() => {
         if (subscriptionQ.variables?.chatId !== selectedChat.id) {
             subscriptionQ.refetch({
-                attendeeId: attendee.id,
+                attendeeId: config.currentAttendeeId,
                 chatId: selectedChat.id,
             });
         }
-    }, [attendee.id, subscriptionQ, selectedChat.id]);
+    }, [subscriptionQ, selectedChat.id, config.currentAttendeeId]);
 
     const [subscribeChat, { loading: subscribeChatLoading }] = useSubscribeChatMutation({
         variables: {
-            attendeeId: attendee.id,
+            attendeeId: config.currentAttendeeId,
             chatId: selectedChat.id,
         },
     });
@@ -95,7 +95,7 @@ export function ChatSubscribedQueryProvider({
         { loading: unsubscribeChatLoading, error: unsubscribeChatError },
     ] = useUnsubscribeChatMutation({
         variables: {
-            attendeeId: attendee.id,
+            attendeeId: config.currentAttendeeId,
             chatId: selectedChat.id,
         },
     });

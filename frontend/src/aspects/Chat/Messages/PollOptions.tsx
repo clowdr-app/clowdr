@@ -71,10 +71,12 @@ export default function PollOptions({ message }: { message: ChatMessageDataFragm
     );
     const ownVoteCount = useMemo(
         () =>
-            message.reactions.filter(
-                (reaction) =>
-                    reaction.type === Chat_ReactionType_Enum.PollChoice && reaction.senderId === currentAttendeeId
-            ).length,
+            currentAttendeeId
+                ? message.reactions.filter(
+                      (reaction) =>
+                          reaction.type === Chat_ReactionType_Enum.PollChoice && reaction.senderId === currentAttendeeId
+                  ).length
+                : 0,
         [currentAttendeeId, message.reactions]
     );
 
@@ -90,19 +92,24 @@ export default function PollOptions({ message }: { message: ChatMessageDataFragm
                   ...new Set(
                       message.reactions
                           .filter(
-                              (x) =>
-                                  x.type === Chat_ReactionType_Enum.PollChoice &&
+                              (reaction) =>
+                                  reaction.type === Chat_ReactionType_Enum.PollChoice &&
                                   (isCompleted ||
                                       data.revealBeforeComplete ||
-                                      x.senderId === currentAttendeeId ||
-                                      (isClosed && message.senderId === currentAttendeeId))
+                                      (currentAttendeeId &&
+                                          (reaction.senderId === currentAttendeeId ||
+                                              (isClosed && message.senderId === currentAttendeeId))))
                           )
                           .map((x) => x.symbol)
                   ).values(),
               ]
             : [];
         const allOptions = [...providedOptions, ...userCreatedOptions];
-        if (isCompleted || data.revealBeforeComplete || (isClosed && message.senderId === currentAttendeeId)) {
+        if (
+            isCompleted ||
+            data.revealBeforeComplete ||
+            (currentAttendeeId && isClosed && message.senderId === currentAttendeeId)
+        ) {
             const optionsWithPopularity = new Map<string, number>(allOptions.map((x) => [x, 0]));
             message.reactions.forEach((reaction) => {
                 if (reaction.type === Chat_ReactionType_Enum.PollChoice) {
@@ -160,7 +167,7 @@ export default function PollOptions({ message }: { message: ChatMessageDataFragm
                             value={opt[0]}
                             count={opt[1]}
                             onClick={
-                                !isClosed && ownVoteCount < maxVotes
+                                currentAttendeeId && !isClosed && ownVoteCount < maxVotes
                                     ? async () => {
                                           if (message.duplicatedMessageId) {
                                               await Promise.all([

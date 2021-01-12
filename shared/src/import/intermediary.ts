@@ -266,8 +266,6 @@ export function JSONataToIntermediarySchedule(data: any, query: string): Interme
     }
 }
 
-
-
 export interface IntermediaryAttendeeData {
     name: string;
     email: string;
@@ -285,7 +283,10 @@ function internalAttendeeConverter(data: any, query: string): IntermediaryAttend
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function JSONataToIntermediaryAttendee(data: any, query: string): IntermediaryAttendeeData[] | string | undefined {
+export function JSONataToIntermediaryAttendee(
+    data: any,
+    query: string
+): IntermediaryAttendeeData[] | string | undefined {
     try {
         return internalAttendeeConverter(data, query);
     } catch (e) {

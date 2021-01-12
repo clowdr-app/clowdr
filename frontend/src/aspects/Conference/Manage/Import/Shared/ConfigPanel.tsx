@@ -28,10 +28,7 @@ export default function ConfigPanel<T = IntermediaryContentData | IntermediarySc
 }: {
     data: ParsedData<any[]>[];
     onChange?: (data: Record<string, T>) => void;
-    JSONataFunction: (
-        data: any,
-        query: string
-    ) => T | string | undefined;
+    JSONataFunction: (data: any, query: string) => T | string | undefined;
     presetJSONataXMLQuery?: string;
     presetJSONataJSONQuery?: string;
     presetJSONataCSVQuery?: string;

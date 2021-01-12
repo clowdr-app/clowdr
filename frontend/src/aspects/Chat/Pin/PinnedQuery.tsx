@@ -1,8 +1,8 @@
 import { ApolloError, gql } from "@apollo/client";
 import React, { createContext, useEffect, useMemo } from "react";
 import { usePinChatMutation, useSelectPinQuery, useUnpinChatMutation } from "../../../generated/graphql";
-import useCurrentAttendee from "../../Conference/useCurrentAttendee";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
+import { useChatConfiguration } from "../Configuration";
 import { useSelectedChat } from "../SelectedChat";
 import type { MutableQuery } from "../Types/Queries";
 
@@ -62,11 +62,11 @@ export function ChatPinnedQueryProvider({
 }: {
     children: React.ReactNode | React.ReactNodeArray;
 }): JSX.Element {
-    const attendee = useCurrentAttendee();
+    const config = useChatConfiguration();
     const selectedChat = useSelectedChat();
     const pinQ = useSelectPinQuery({
         variables: {
-            attendeeId: attendee.id,
+            attendeeId: config.currentAttendeeId,
             chatId: selectedChat.id,
         },
     });
@@ -74,21 +74,21 @@ export function ChatPinnedQueryProvider({
     useEffect(() => {
         if (pinQ.variables?.chatId !== selectedChat.id) {
             pinQ.refetch({
-                attendeeId: attendee.id,
+                attendeeId: config.currentAttendeeId,
                 chatId: selectedChat.id,
             });
         }
-    }, [attendee.id, pinQ, selectedChat.id]);
+    }, [config.currentAttendeeId, pinQ, selectedChat.id]);
 
     const [pinChat, { loading: pinChatLoading }] = usePinChatMutation({
         variables: {
-            attendeeId: attendee.id,
+            attendeeId: config.currentAttendeeId,
             chatId: selectedChat.id,
         },
     });
     const [unpinChat, { loading: unpinChatLoading, error: unpinChatError }] = useUnpinChatMutation({
         variables: {
-            attendeeId: attendee.id,
+            attendeeId: config.currentAttendeeId,
             chatId: selectedChat.id,
         },
     });

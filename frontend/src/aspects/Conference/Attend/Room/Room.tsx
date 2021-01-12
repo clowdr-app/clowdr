@@ -1,15 +1,4 @@
-import {
-    Alert,
-    AlertIcon,
-    Box,
-    Heading,
-    HStack,
-    Text,
-    useBreakpointValue,
-    useColorModeValue,
-    useToken,
-    VStack,
-} from "@chakra-ui/react";
+import { Alert, AlertIcon, Box, Heading, HStack, Text, useColorModeValue, useToken, VStack } from "@chakra-ui/react";
 import type { ContentItemDataBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
 import React, { useMemo, useState } from "react";
@@ -32,7 +21,6 @@ export function Room({
     roomDetails: RoomDetailsFragment;
     eventPeople: readonly EventPersonDetailsFragment[];
 }): JSX.Element {
-    const stackColumns = useBreakpointValue({ base: true, lg: false });
     const {
         currentRoomEvent,
         nextRoomEvent,

@@ -113,18 +113,21 @@ export function ChatFrame({ ...rest }: BoxProps): JSX.Element {
                         </EmojiPickerProvider>
                     </ReactionsProvider>
                 </ChatProfileModalProvider>
-                <ChatTypingIndicators flex="0 0 auto" />
-                {config.permissions.canMessage ||
-                config.permissions.canEmote ||
-                config.permissions.canReact ||
-                config.permissions.canQuestion ||
-                config.permissions.canAnswer ||
-                config.permissions.canPoll ? (
-                    <SendMessageQueriesProvider>
-                        <ComposeContextProvider setAnsweringQuestionIdRef={setAnsweringQuestionIdRef}>
-                            <ChatCompose role="region" aria-label="Compose message" flex="0 0 auto" />
-                        </ComposeContextProvider>
-                    </SendMessageQueriesProvider>
+                {config.currentAttendeeId &&
+                (config.permissions.canMessage ||
+                    config.permissions.canEmote ||
+                    config.permissions.canReact ||
+                    config.permissions.canQuestion ||
+                    config.permissions.canAnswer ||
+                    config.permissions.canPoll) ? (
+                    <>
+                        <ChatTypingIndicators flex="0 0 auto" />
+                        <SendMessageQueriesProvider>
+                            <ComposeContextProvider setAnsweringQuestionIdRef={setAnsweringQuestionIdRef}>
+                                <ChatCompose role="region" aria-label="Compose message" flex="0 0 auto" />
+                            </ComposeContextProvider>
+                        </SendMessageQueriesProvider>
+                    </>
                 ) : undefined}
             </VStack>
         </Box>

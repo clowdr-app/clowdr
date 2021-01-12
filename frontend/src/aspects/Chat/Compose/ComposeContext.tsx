@@ -1,7 +1,6 @@
 import assert from "assert";
 import React, { useCallback, useMemo, useState } from "react";
 import { Chat_MessageType_Enum } from "../../../generated/graphql";
-import useCurrentAttendee from "../../Conference/useCurrentAttendee";
 import { useRealTime } from "../../Generic/useRealTime";
 import { ChatConfiguration, ChatDuplicationFlags, useChatConfiguration } from "../Configuration";
 import { useSelectedChat } from "../SelectedChat";
@@ -79,7 +78,6 @@ export function ComposeContextProvider({
     const now = useRealTime(250);
     const sendQueries = useSendMessageQueries();
     const selectedChat = useSelectedChat();
-    const currentAttendee = useCurrentAttendee();
 
     const minLength =
         useMemo(() => {
@@ -213,11 +211,15 @@ export function ComposeContextProvider({
             send: (data?: MessageData) => {
                 setIsSending(true);
                 (async () => {
+                    if (!config.currentAttendeeId) {
+                        throw new Error("Not authorized.");
+                    }
+
                     try {
                         const isEmote = /^\p{Emoji}$/iu.test(newMessage);
                         await sendQueries.send(
                             selectedChat.id,
-                            currentAttendee.id,
+                            config.currentAttendeeId,
                             newMessageType === Chat_MessageType_Enum.Message && isEmote
                                 ? Chat_MessageType_Enum.Emote
                                 : newMessageType,
@@ -256,7 +258,7 @@ export function ComposeContextProvider({
         [
             blockedReason,
             config.sources.duplication,
-            currentAttendee.id,
+            config.currentAttendeeId,
             isSending,
             lastSendTime,
             maxLength,

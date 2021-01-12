@@ -94,6 +94,12 @@ export default function ApolloCustomProvider({
                     chat_Subscription: {
                         keyFields: ["chatId", "attendeeId"],
                     },
+                    chat_Typer: {
+                        keyFields: ["chatId", "attendeeId"],
+                    },
+                    chat_ReadUpToIndex: {
+                        keyFields: ["chatId"],
+                    },
                 },
             });
             // Apollo's local storage cache is a totally broken PoS...

@@ -72,7 +72,7 @@ gql`
     query SelectMessagesPage($chatId: uuid!, $startAtIndex: Int!, $maxCount: Int!) {
         chat_Message(
             order_by: { id: desc }
-            where: { id: { _lte: $startAtIndex }, chatId: { _eq: $chatId } }
+            where: { chatId: { _eq: $chatId }, id: { _lte: $startAtIndex } }
             limit: $maxCount
         ) {
             ...ChatMessageData

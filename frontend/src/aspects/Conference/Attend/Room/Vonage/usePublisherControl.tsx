@@ -89,13 +89,13 @@ export function usePublisherControl(
                 audioSource: computedState.audioTrack?.getSettings().deviceId ?? false,
                 publishAudio: state.microphoneIntendedEnabled,
                 publishVideo: state.cameraIntendedEnabled,
-                insertMode: "append",
+                insertMode: "replace",
                 style: {
                     nameDisplayMode: "on",
                 },
                 facingMode: "user",
-                height: 300,
-                width: 300,
+                height: "100%",
+                width: "100%",
                 resolution: "1280x720",
             },
         });
@@ -163,12 +163,12 @@ export function usePublisherControl(
                             audioSource: audioTrack ?? false,
                             publishAudio: state.microphoneIntendedEnabled,
                             publishVideo: state.cameraIntendedEnabled,
-                            insertMode: "append",
+                            insertMode: "replace",
                             style: {
                                 nameDisplayMode: "on",
                             },
-                            height: 300,
-                            width: 300,
+                            height: "100%",
+                            width: "100%",
                             resolution: "1280x720",
                         },
                     });
@@ -200,12 +200,12 @@ export function usePublisherControl(
                         audioSource: audioTrack ?? false,
                         publishAudio: state.microphoneIntendedEnabled,
                         publishVideo: state.cameraIntendedEnabled,
-                        insertMode: "append",
+                        insertMode: "replace",
                         style: {
                             nameDisplayMode: "on",
                         },
-                        height: 300,
-                        width: 300,
+                        height: "100%",
+                        width: "100%",
                         resolution: "1280x720",
                     },
                 });

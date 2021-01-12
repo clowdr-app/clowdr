@@ -113,16 +113,14 @@ export function RoomControlBar({
             {roomDetails.roomPrivacyName === RoomPrivacy_Enum.Public ? (
                 <Popover>
                     <PopoverTrigger>
-                        <Tooltip label="People currently in the breakout room">
-                            <Button
-                                aria-label={`${
-                                    roomParticipants ? roomParticipants.length : "0"
-                                } People currently in the breakout room`}
-                            >
-                                <FAIcon icon="users" iconStyle="s" />
-                                <Badge ml={2}>{roomParticipants ? roomParticipants.length : "0"} </Badge>
-                            </Button>
-                        </Tooltip>
+                        <Button
+                            aria-label={`${
+                                roomParticipants ? roomParticipants.length : "0"
+                            } People currently in the breakout room`}
+                        >
+                            <FAIcon icon="users" iconStyle="s" />
+                            <Badge ml={2}>{roomParticipants ? roomParticipants.length : "0"} </Badge>
+                        </Button>
                     </PopoverTrigger>
                     <Portal>
                         <PopoverContent>

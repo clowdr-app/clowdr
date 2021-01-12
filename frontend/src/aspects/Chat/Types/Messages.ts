@@ -20,7 +20,24 @@ export interface PollResultsMessageData {
     pollMessageId: string;
 }
 
-export interface DuplicationMarkerMessageData {}
+export interface DuplicationMarkerMessageData {
+    type: "start" | "end";
+    event: {
+        id: string;
+        startTime: number;
+        durationSeconds: number;
+    };
+    room: {
+        id: string;
+        name: string;
+        chatId: string;
+    };
+    contentGroup: {
+        id: string;
+        title: string;
+        chatId: string;
+    };
+}
 
 export type MessageData =
     | OrdinaryMessageData

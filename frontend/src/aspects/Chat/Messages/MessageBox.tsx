@@ -1,20 +1,82 @@
-import { Button, Center, Divider, Flex, HStack, Text, useColorModeValue, VStack } from "@chakra-ui/react";
+import {
+    Box,
+    Button,
+    Center,
+    chakra,
+    Divider,
+    Flex,
+    HStack,
+    Tag,
+    Text,
+    useColorModeValue,
+    VStack,
+} from "@chakra-ui/react";
 import React from "react";
 import { Twemoji } from "react-emoji-render";
 import { ChatMessageDataFragment, Chat_MessageType_Enum, Chat_ReactionType_Enum } from "../../../generated/graphql";
+import { defaultOutline_AsBoxShadow } from "../../Chakra/ChakraCustomProvider";
+import { LinkButton } from "../../Chakra/LinkButton";
+import { useConference } from "../../Conference/useConference";
 import { roundUpToNearest } from "../../Generic/MathUtils";
+import FAIcon from "../../Icons/FAIcon";
 import { Markdown } from "../../Text/Markdown";
 import { MessageTypeIndicator } from "../Compose/MessageTypeIndicator";
 import { ChatSpacing, useChatConfiguration } from "../Configuration";
+import { useReflectionInfoModal } from "../ReflectionInfoModal";
+import type { DuplicationMarkerMessageData } from "../Types/Messages";
 import MessageControls from "./MessageControls";
 import PollOptions from "./PollOptions";
 import ProfileBox from "./ProfileBox";
 import ReactionsList from "./ReactionsList";
 import { useReceiveMessageQueries } from "./ReceiveMessageQueries";
 
+function ReflectionButton({ children }: { children: React.ReactNode | React.ReactNodeArray }): JSX.Element {
+    const infoModal = useReflectionInfoModal();
+    return (
+        <Button
+            spacing={0}
+            alignItems="stretch"
+            fontSize="inherit"
+            p={0}
+            m={0}
+            h="auto"
+            minH="unset"
+            minW="unset"
+            opacity={0.7}
+            _hover={{
+                opacity: 1,
+            }}
+            _focus={{
+                opacity: 1,
+                boxShadow: defaultOutline_AsBoxShadow,
+            }}
+            _active={{
+                opacity: 1,
+                boxShadow: defaultOutline_AsBoxShadow,
+            }}
+            onClick={infoModal}
+        >
+            <Tag colorScheme="orange" variant="solid" borderRightRadius={0} fontSize="inherit">
+                {children}
+            </Tag>
+            <Tag
+                aria-label="Find out about chat reflection"
+                color="white"
+                backgroundColor="blue.700"
+                borderLeftRadius={0}
+                fontSize="inherit"
+                py={2}
+            >
+                <FAIcon iconStyle="s" icon="info-circle" />
+            </Tag>
+        </Button>
+    );
+}
+
 function MessageBody({ message }: { message: ChatMessageDataFragment }): JSX.Element {
     const config = useChatConfiguration();
     const messages = useReceiveMessageQueries();
+    const conference = useConference();
 
     const scaleFactor = config.spacing / ChatSpacing.RELAXED;
 
@@ -33,8 +95,71 @@ function MessageBody({ message }: { message: ChatMessageDataFragment }): JSX.Ele
     const smallFontSize = Math.max(config.fontSizeRange.value * 0.7, 10);
 
     if (message.type === Chat_MessageType_Enum.DuplicationMarker) {
-        // TODO
-        return <Divider w="100%" />;
+        const data = message.data as DuplicationMarkerMessageData;
+        return (
+            <Flex
+                w="100%"
+                spacing={0}
+                fontSize={smallFontSize * 1.1}
+                flexDir={data.type === "start" ? "column" : "column-reverse"}
+                alignItems="center"
+            >
+                <Divider my={config.spacing} borderColor="orange.400" w="100%" height="1px" />
+                {data.type === "start" ? (
+                    <ReflectionButton>Reflection started</ReflectionButton>
+                ) : (
+                    <ReflectionButton>Reflection ended</ReflectionButton>
+                )}
+                <HStack alignItems="stretch" justifyContent="center" py={0} px={1} my={2} opacity={0.8}>
+                    <LinkButton
+                        flex="0 0 min-content"
+                        backgroundColor="gray.700"
+                        p={0}
+                        m={0}
+                        minH={0}
+                        h="100%"
+                        borderRadius={5}
+                        fontFamily="monospace"
+                        noOfLines={1}
+                        to={`/conference/${conference.slug}/room/${data.room.id}`}
+                        fontSize="inherit"
+                        linkProps={{
+                            p: 0,
+                            m: 0,
+                        }}
+                    >
+                        <chakra.span mx={2}>{data.room.name}</chakra.span>
+                    </LinkButton>
+                    <Box>
+                        <FAIcon iconStyle="s" icon="arrows-alt-h" aria-label="reflected with" />
+                    </Box>
+                    <LinkButton
+                        p={0}
+                        m={0}
+                        minH={0}
+                        h="100%"
+                        to={`/conference/${conference.slug}/item/${data.contentGroup.id}`}
+                        fontSize="inherit"
+                        linkProps={{
+                            p: 0,
+                            m: 0,
+                        }}
+                        flex="0 1 auto"
+                        backgroundColor="gray.700"
+                        borderRadius={5}
+                        fontFamily="monospace"
+                        noOfLines={1}
+                    >
+                        <chakra.span mx={2}>{data.contentGroup.title}</chakra.span>
+                    </LinkButton>
+                </HStack>
+                {data.type === "start" ? (
+                    <FAIcon iconStyle="s" icon="angle-double-down" color="orange.400" aria-hidden />
+                ) : (
+                    <FAIcon iconStyle="s" icon="angle-double-up" color="orange.400" aria-hidden />
+                )}
+            </Flex>
+        );
     }
 
     return (

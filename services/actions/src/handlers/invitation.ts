@@ -456,7 +456,12 @@ export async function invitationConfirmSendRepeatEmailHandler(
     userId: string
 ): Promise<InvitationConfirmationEmailOutput> {
     const { invitation, user } = await getInvitationAndUser(args.inviteInput.inviteCode, userId);
-    if (!invitation.attendee.userId && invitation.linkToUserId && invitation.linkToUserId === user.id) {
+    if (
+        !invitation.attendee.userId &&
+        invitation.linkToUserId &&
+        invitation.linkToUserId === user.id &&
+        invitation.confirmationCode
+    ) {
         const sendEmailTo = invitation.invitedEmailAddress;
         const { htmlContents, plainTextContents } = generateEmailContents(
             invitation.confirmationCode,

@@ -5793,6 +5793,7 @@ export type EventPerson = {
   /** An object relationship */
   readonly conference: Conference;
   readonly conferenceId: Scalars['uuid'];
+  readonly createdAt: Scalars['timestamptz'];
   /** An object relationship */
   readonly event: Event;
   readonly eventId: Scalars['uuid'];
@@ -5804,6 +5805,7 @@ export type EventPerson = {
   readonly originatingData?: Maybe<OriginatingData>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
   readonly roleName: EventPersonRole_Enum;
+  readonly updatedAt: Scalars['timestamptz'];
 };
 
 /** columns and relationships of "EventPersonRole" */
@@ -6040,6 +6042,7 @@ export type EventPerson_Bool_Exp = {
   readonly attendeeId?: Maybe<Uuid_Comparison_Exp>;
   readonly conference?: Maybe<Conference_Bool_Exp>;
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly event?: Maybe<Event_Bool_Exp>;
   readonly eventId?: Maybe<Uuid_Comparison_Exp>;
   readonly eventPersonRole?: Maybe<EventPersonRole_Bool_Exp>;
@@ -6048,6 +6051,7 @@ export type EventPerson_Bool_Exp = {
   readonly originatingData?: Maybe<OriginatingData_Bool_Exp>;
   readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
   readonly roleName?: Maybe<EventPersonRole_Enum_Comparison_Exp>;
+  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "EventPerson" */
@@ -6067,6 +6071,7 @@ export type EventPerson_Insert_Input = {
   readonly attendeeId?: Maybe<Scalars['uuid']>;
   readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly event?: Maybe<Event_Obj_Rel_Insert_Input>;
   readonly eventId?: Maybe<Scalars['uuid']>;
   readonly eventPersonRole?: Maybe<EventPersonRole_Obj_Rel_Insert_Input>;
@@ -6075,6 +6080,7 @@ export type EventPerson_Insert_Input = {
   readonly originatingData?: Maybe<OriginatingData_Obj_Rel_Insert_Input>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
   readonly roleName?: Maybe<EventPersonRole_Enum>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
 /** aggregate max on columns */
@@ -6083,10 +6089,12 @@ export type EventPerson_Max_Fields = {
   readonly affiliation?: Maybe<Scalars['String']>;
   readonly attendeeId?: Maybe<Scalars['uuid']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly eventId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
 /** order by max() on columns of table "EventPerson" */
@@ -6094,10 +6102,12 @@ export type EventPerson_Max_Order_By = {
   readonly affiliation?: Maybe<Order_By>;
   readonly attendeeId?: Maybe<Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
   readonly eventId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
@@ -6106,10 +6116,12 @@ export type EventPerson_Min_Fields = {
   readonly affiliation?: Maybe<Scalars['String']>;
   readonly attendeeId?: Maybe<Scalars['uuid']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly eventId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
 /** order by min() on columns of table "EventPerson" */
@@ -6117,10 +6129,12 @@ export type EventPerson_Min_Order_By = {
   readonly affiliation?: Maybe<Order_By>;
   readonly attendeeId?: Maybe<Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
   readonly eventId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "EventPerson" */
@@ -6152,6 +6166,7 @@ export type EventPerson_Order_By = {
   readonly attendeeId?: Maybe<Order_By>;
   readonly conference?: Maybe<Conference_Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
   readonly event?: Maybe<Event_Order_By>;
   readonly eventId?: Maybe<Order_By>;
   readonly eventPersonRole?: Maybe<EventPersonRole_Order_By>;
@@ -6160,6 +6175,7 @@ export type EventPerson_Order_By = {
   readonly originatingData?: Maybe<OriginatingData_Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
   readonly roleName?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: "EventPerson" */
@@ -6176,6 +6192,8 @@ export enum EventPerson_Select_Column {
   /** column name */
   ConferenceId = 'conferenceId',
   /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
   EventId = 'eventId',
   /** column name */
   Id = 'id',
@@ -6184,7 +6202,9 @@ export enum EventPerson_Select_Column {
   /** column name */
   OriginatingDataId = 'originatingDataId',
   /** column name */
-  RoleName = 'roleName'
+  RoleName = 'roleName',
+  /** column name */
+  UpdatedAt = 'updatedAt'
 }
 
 /** input type for updating data in table "EventPerson" */
@@ -6192,11 +6212,13 @@ export type EventPerson_Set_Input = {
   readonly affiliation?: Maybe<Scalars['String']>;
   readonly attendeeId?: Maybe<Scalars['uuid']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly eventId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
   readonly roleName?: Maybe<EventPersonRole_Enum>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
 /** update columns of table "EventPerson" */
@@ -6208,6 +6230,8 @@ export enum EventPerson_Update_Column {
   /** column name */
   ConferenceId = 'conferenceId',
   /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
   EventId = 'eventId',
   /** column name */
   Id = 'id',
@@ -6216,7 +6240,9 @@ export enum EventPerson_Update_Column {
   /** column name */
   OriginatingDataId = 'originatingDataId',
   /** column name */
-  RoleName = 'roleName'
+  RoleName = 'roleName',
+  /** column name */
+  UpdatedAt = 'updatedAt'
 }
 
 /** columns and relationships of "EventRoomJoinRequest" */
@@ -15563,7 +15589,12 @@ export type Chat_Flag_Variance_Order_By = {
   readonly messageId?: Maybe<Order_By>;
 };
 
-/** columns and relationships of "chat.Message" */
+/**
+ * Chat messages. The systemId field is unique and can be used to prevent duplicate inserts of things like event start/end markers.
+ * 
+ * 
+ * columns and relationships of "chat.Message"
+ */
 export type Chat_Message = {
   readonly __typename?: 'chat_Message';
   /** An object relationship */
@@ -15590,18 +15621,29 @@ export type Chat_Message = {
   /** An object relationship */
   readonly sender?: Maybe<Attendee>;
   readonly senderId?: Maybe<Scalars['uuid']>;
+  readonly systemId?: Maybe<Scalars['String']>;
   readonly type: Chat_MessageType_Enum;
   readonly updated_at: Scalars['timestamptz'];
 };
 
 
-/** columns and relationships of "chat.Message" */
+/**
+ * Chat messages. The systemId field is unique and can be used to prevent duplicate inserts of things like event start/end markers.
+ * 
+ * 
+ * columns and relationships of "chat.Message"
+ */
 export type Chat_MessageDataArgs = {
   path?: Maybe<Scalars['String']>;
 };
 
 
-/** columns and relationships of "chat.Message" */
+/**
+ * Chat messages. The systemId field is unique and can be used to prevent duplicate inserts of things like event start/end markers.
+ * 
+ * 
+ * columns and relationships of "chat.Message"
+ */
 export type Chat_MessageFlagsArgs = {
   distinct_on?: Maybe<ReadonlyArray<Chat_Flag_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -15611,7 +15653,12 @@ export type Chat_MessageFlagsArgs = {
 };
 
 
-/** columns and relationships of "chat.Message" */
+/**
+ * Chat messages. The systemId field is unique and can be used to prevent duplicate inserts of things like event start/end markers.
+ * 
+ * 
+ * columns and relationships of "chat.Message"
+ */
 export type Chat_MessageFlags_AggregateArgs = {
   distinct_on?: Maybe<ReadonlyArray<Chat_Flag_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -15621,7 +15668,12 @@ export type Chat_MessageFlags_AggregateArgs = {
 };
 
 
-/** columns and relationships of "chat.Message" */
+/**
+ * Chat messages. The systemId field is unique and can be used to prevent duplicate inserts of things like event start/end markers.
+ * 
+ * 
+ * columns and relationships of "chat.Message"
+ */
 export type Chat_MessageReactionsArgs = {
   distinct_on?: Maybe<ReadonlyArray<Chat_Reaction_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -15631,7 +15683,12 @@ export type Chat_MessageReactionsArgs = {
 };
 
 
-/** columns and relationships of "chat.Message" */
+/**
+ * Chat messages. The systemId field is unique and can be used to prevent duplicate inserts of things like event start/end markers.
+ * 
+ * 
+ * columns and relationships of "chat.Message"
+ */
 export type Chat_MessageReactions_AggregateArgs = {
   distinct_on?: Maybe<ReadonlyArray<Chat_Reaction_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -15878,6 +15935,7 @@ export type Chat_Message_Bool_Exp = {
   readonly reactions?: Maybe<Chat_Reaction_Bool_Exp>;
   readonly sender?: Maybe<Attendee_Bool_Exp>;
   readonly senderId?: Maybe<Uuid_Comparison_Exp>;
+  readonly systemId?: Maybe<String_Comparison_Exp>;
   readonly type?: Maybe<Chat_MessageType_Enum_Comparison_Exp>;
   readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
 };
@@ -15887,7 +15945,9 @@ export enum Chat_Message_Constraint {
   /** unique or primary key constraint */
   MessageDuplicatedMessageIdKey = 'Message_duplicatedMessageId_key',
   /** unique or primary key constraint */
-  MessagePkey = 'Message_pkey'
+  MessagePkey = 'Message_pkey',
+  /** unique or primary key constraint */
+  MessageSystemIdKey = 'Message_systemId_key'
 }
 
 /** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
@@ -15927,6 +15987,7 @@ export type Chat_Message_Insert_Input = {
   readonly reactions?: Maybe<Chat_Reaction_Arr_Rel_Insert_Input>;
   readonly sender?: Maybe<Attendee_Obj_Rel_Insert_Input>;
   readonly senderId?: Maybe<Scalars['uuid']>;
+  readonly systemId?: Maybe<Scalars['String']>;
   readonly type?: Maybe<Chat_MessageType_Enum>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -15940,6 +16001,7 @@ export type Chat_Message_Max_Fields = {
   readonly id?: Maybe<Scalars['Int']>;
   readonly message?: Maybe<Scalars['String']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
+  readonly systemId?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -15951,6 +16013,7 @@ export type Chat_Message_Max_Order_By = {
   readonly id?: Maybe<Order_By>;
   readonly message?: Maybe<Order_By>;
   readonly senderId?: Maybe<Order_By>;
+  readonly systemId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
 
@@ -15963,6 +16026,7 @@ export type Chat_Message_Min_Fields = {
   readonly id?: Maybe<Scalars['Int']>;
   readonly message?: Maybe<Scalars['String']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
+  readonly systemId?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -15974,6 +16038,7 @@ export type Chat_Message_Min_Order_By = {
   readonly id?: Maybe<Order_By>;
   readonly message?: Maybe<Order_By>;
   readonly senderId?: Maybe<Order_By>;
+  readonly systemId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
 
@@ -16015,6 +16080,7 @@ export type Chat_Message_Order_By = {
   readonly reactions_aggregate?: Maybe<Chat_Reaction_Aggregate_Order_By>;
   readonly sender?: Maybe<Attendee_Order_By>;
   readonly senderId?: Maybe<Order_By>;
+  readonly systemId?: Maybe<Order_By>;
   readonly type?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
@@ -16048,6 +16114,8 @@ export enum Chat_Message_Select_Column {
   /** column name */
   SenderId = 'senderId',
   /** column name */
+  SystemId = 'systemId',
+  /** column name */
   Type = 'type',
   /** column name */
   UpdatedAt = 'updated_at'
@@ -16063,6 +16131,7 @@ export type Chat_Message_Set_Input = {
   readonly isPinned?: Maybe<Scalars['Boolean']>;
   readonly message?: Maybe<Scalars['String']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
+  readonly systemId?: Maybe<Scalars['String']>;
   readonly type?: Maybe<Chat_MessageType_Enum>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -16137,6 +16206,8 @@ export enum Chat_Message_Update_Column {
   Message = 'message',
   /** column name */
   SenderId = 'senderId',
+  /** column name */
+  SystemId = 'systemId',
   /** column name */
   Type = 'type',
   /** column name */

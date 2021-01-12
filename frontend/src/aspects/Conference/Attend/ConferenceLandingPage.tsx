@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Box, Flex, Heading, HStack, Spinner } from "@chakra-ui/react";
+import { Box, Flex, Heading, Spinner } from "@chakra-ui/react";
 import {
     assertIsContentItemDataBlob,
     ContentBaseType,
@@ -129,7 +129,13 @@ function ConferenceLandingPageInner(): JSX.Element {
             {title}
             {!hasAbstract ? <Heading as="h1">{conference.shortName}</Heading> : undefined}
             <Flex flexWrap="wrap" justifyContent="center">
-                <LinkButton mx={2} mb={[2,2,4]} to={`/conference/${conference.slug}/schedule`} variant="outline" size="lg">
+                <LinkButton
+                    mx={2}
+                    mb={[2, 2, 4]}
+                    to={`/conference/${conference.slug}/schedule`}
+                    variant="outline"
+                    size="lg"
+                >
                     <FAIcon iconStyle="r" icon="calendar" mr={2} /> Schedule
                 </LinkButton>
                 {[
@@ -138,7 +144,13 @@ function ConferenceLandingPageInner(): JSX.Element {
                     Permission_Enum.ConferenceManageGroups,
                     Permission_Enum.ConferenceManageRoles,
                 ].some((permission) => activePermissions.has(permission)) ? (
-                    <LinkButton mx={2} mb={[2,2,4]} to={`/conference/${conference.slug}/attendees`} variant="outline" size="lg">
+                    <LinkButton
+                        mx={2}
+                        mb={[2, 2, 4]}
+                        to={`/conference/${conference.slug}/attendees`}
+                        variant="outline"
+                        size="lg"
+                    >
                         <FAIcon iconStyle="s" icon="users" mr={2} /> Attendees
                     </LinkButton>
                 ) : undefined}
@@ -146,7 +158,13 @@ function ConferenceLandingPageInner(): JSX.Element {
                     Permission_Enum.ConferenceViewAttendees,
                     Permission_Enum.ConferenceManageSchedule,
                 ].some((permission) => activePermissions.has(permission)) ? (
-                    <LinkButton mx={2} mb={[2,2,4]} to={`/conference/${conference.slug}/rooms`} variant="outline" size="lg">
+                    <LinkButton
+                        mx={2}
+                        mb={[2, 2, 4]}
+                        to={`/conference/${conference.slug}/rooms`}
+                        variant="outline"
+                        size="lg"
+                    >
                         <FAIcon iconStyle="s" icon="mug-hot" mr={2} /> Rooms
                     </LinkButton>
                 ) : undefined}

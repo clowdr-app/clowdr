@@ -49,14 +49,20 @@ export function RoomBackstage({
         [eventPeople, user.user.attendees]
     );
 
-    const sortedEvents = useMemo(
-        () =>
+    const [sortedEvents, setSortedEvents] = useState<readonly RoomEventSummaryFragment[]>([]);
+    const computeSortedEvents = useCallback(() => {
+        setSortedEvents(
             R.sortWith(
                 [R.descend(isEventNow), R.descend(isEventSoon), R.ascend(R.prop("startTime"))],
                 roomDetails.events
-            ),
-        [roomDetails.events]
-    );
+            )
+        );
+    }, [roomDetails.events]);
+    usePolling(computeSortedEvents, 10000, true);
+    useEffect(() => {
+        computeSortedEvents();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const [eventTemporalBadges, setEventTemporalBadges] = useState<{
         [eventId: string]: JSX.Element;

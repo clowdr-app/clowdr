@@ -63,7 +63,13 @@ export async function handleEventStartNotification(eventId: string, startTime: s
     });
 
     if (result.data.Event_by_pk?.startTime && result.data.Event_by_pk.startTime === startTime) {
-        await startEventBroadcast(result.data.Event_by_pk.id);
+        const nowMillis = new Date().getTime();
+        const startTimeMillis = Date.parse(startTime);
+        const preloadMillis = 1000;
+        const waitForMillis = Math.max(startTimeMillis - nowMillis - preloadMillis, 0);
+        const eventId = result.data.Event_by_pk.id;
+
+        setTimeout(async () => await startEventBroadcast(eventId), waitForMillis);
     } else {
         console.log("Event start notification did not match current event start time, skipping.", eventId, startTime);
     }
@@ -78,7 +84,13 @@ export async function handleEventEndNotification(eventId: string, endTime: strin
     });
 
     if (result.data.Event_by_pk?.endTime && result.data.Event_by_pk.endTime === endTime) {
-        await stopEventBroadcasts(result.data.Event_by_pk.id);
+        const nowMillis = new Date().getTime();
+        const endTimeMillis = Date.parse(endTime);
+        const preloadMillis = 1000;
+        const waitForMillis = Math.max(endTimeMillis - nowMillis - preloadMillis, 0);
+        const eventId = result.data.Event_by_pk.id;
+
+        setTimeout(async () => await stopEventBroadcasts(eventId), waitForMillis);
     } else {
         console.log("Event stop notification did not match current event end time, skipping.", eventId, endTime);
     }

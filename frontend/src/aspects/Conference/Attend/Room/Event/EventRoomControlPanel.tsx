@@ -12,6 +12,7 @@ import { FAIcon } from "../../../../Icons/FAIcon";
 import { BroadcastControlPanel } from "./BroadcastControlPanel";
 import { EventPeopleControlPanel } from "./EventPeopleControlPanel";
 import { LiveIndicator } from "./LiveIndicator";
+import { useEventLiveStatus } from "./useEventLiveStatus";
 
 export function EventRoomControlPanel({
     event,
@@ -87,6 +88,8 @@ export function EventRoomControlPanel({
         joinRequestsData?.EventRoomJoinRequest.length,
     ]);
 
+    const { live } = useEventLiveStatus(event);
+
     return (
         <Box height="100%" p={2}>
             <LiveIndicator event={event} />
@@ -111,6 +114,7 @@ export function EventRoomControlPanel({
                             <>An error occured loading participants.</>
                         ) : undefined}
                         <BroadcastControlPanel
+                            live={live}
                             streams={streamsData?.EventParticipantStream ?? null}
                             eventVonageSessionId={event.eventVonageSession?.id ?? null}
                         />

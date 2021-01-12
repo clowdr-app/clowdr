@@ -121,6 +121,7 @@ export function Room({
                     onSetBackstage={setBackstage}
                     backstage={backstage}
                     hasBackstage={!!hlsUri}
+                    breakoutRoomEnabled={secondsUntilNonBreakoutEvent >= 180 || !hlsUri}
                 />
                 <RoomBackstage backstage={backstage} roomDetails={roomDetails} eventPeople={eventPeople} />
 

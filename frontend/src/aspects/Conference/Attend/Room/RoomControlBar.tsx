@@ -29,11 +29,13 @@ export function RoomControlBar({
     onSetBackstage,
     backstage,
     hasBackstage,
+    breakoutRoomEnabled,
 }: {
     roomDetails: RoomDetailsFragment;
     onSetBackstage: (backstage: boolean) => void;
     backstage: boolean;
     hasBackstage: boolean;
+    breakoutRoomEnabled: boolean;
 }): JSX.Element {
     const user = useCurrentUser();
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -116,7 +118,9 @@ export function RoomControlBar({
             ) : (
                 <></>
             )}
-            {roomDetails.roomPrivacyName === RoomPrivacy_Enum.Public ? (
+            {!breakoutRoomEnabled ? (
+                <></>
+            ) : roomDetails.roomPrivacyName === RoomPrivacy_Enum.Public ? (
                 <Popover>
                     <PopoverTrigger>
                         <Button

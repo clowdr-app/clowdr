@@ -16,7 +16,7 @@ export function VonageRoomControlBar({
     inRoom: boolean;
 }): JSX.Element {
     const { state, dispatch } = useVonageRoom();
-    const [openTokProps, openTokMethods] = useOpenTok();
+    const [openTokProps] = useOpenTok();
     const { isOpen, onClose, onOpen } = useDisclosure();
 
     const startCamera = useCallback(() => {

@@ -1,7 +1,7 @@
 import { ExternalLinkIcon } from "@chakra-ui/icons";
-import { Link, ListIcon, ListItem, OrderedList, UnorderedList, useToast } from "@chakra-ui/react";
+import { Link, ListItem, OrderedList, UnorderedList, useToast } from "@chakra-ui/react";
 import React, { Dispatch, useEffect, useMemo, useReducer, useRef } from "react";
-import FAIcon from "../Icons/FAIcon";
+import { useRestorableState } from "../Generic/useRestorableState";
 
 export interface VonageRoomState {
     preferredCameraId: string | null;
@@ -143,10 +143,44 @@ export function VonageRoomStateProvider({
 }: {
     children: React.ReactNode | React.ReactNodeArray;
 }): JSX.Element {
-    const [state, dispatch] = useReducer(reducer, initialRoomState);
+    const [preferredCamera, setPreferredCamera] = useRestorableState<string | null>(
+        "clowdr-preferredCamera",
+        null,
+        (x) => JSON.stringify(x),
+        (x) => JSON.parse(x)
+    );
+    const [preferredMicrophone, setPreferredMicrophone] = useRestorableState<string | null>(
+        "clowdr-preferredMicrophone",
+        null,
+        (x) => JSON.stringify(x),
+        (x) => JSON.parse(x)
+    );
+
+    const initialRoomState_ = {
+        ...initialRoomState,
+        preferredCameraId: preferredCamera,
+        preferredMicrophoneId: preferredMicrophone,
+    };
+
+    const [state, dispatch] = useReducer(reducer, initialRoomState_);
     const toast = useToast();
+
     const unmountRef = useRef<() => void>();
     const unloadRef = useRef<EventListener>();
+
+    useEffect(() => {
+        if (preferredCamera !== state.preferredCameraId) {
+            setPreferredCamera(state.preferredCameraId);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [setPreferredCamera, state.preferredCameraId]);
+
+    useEffect(() => {
+        if (preferredMicrophone !== state.preferredMicrophoneId) {
+            setPreferredMicrophone(state.preferredMicrophoneId);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [setPreferredMicrophone, state.preferredMicrophoneId]);
 
     useEffect(() => {
         function stop() {
@@ -206,10 +240,24 @@ export function VonageRoomStateProvider({
                         <OrderedList>
                             <ListItem>
                                 Check that you have allowed permission to use the camera in your browser.
-                                 <UnorderedList>
-                                    <ListItem><Link isExternal href="https://support.google.com/chrome/answer/2693767?co=GENIE.Platform%3DDesktop">Instructions for Google Chrome <ExternalLinkIcon /></Link></ListItem>
-                                    <ListItem><Link isExternal href="https://support.mozilla.org/en-US/kb/how-manage-your-camera-and-microphone-permissions">Instructions for Firefox <ExternalLinkIcon /></Link></ListItem>
-                                 </UnorderedList>
+                                <UnorderedList>
+                                    <ListItem>
+                                        <Link
+                                            isExternal
+                                            href="https://support.google.com/chrome/answer/2693767?co=GENIE.Platform%3DDesktop"
+                                        >
+                                            Instructions for Google Chrome <ExternalLinkIcon />
+                                        </Link>
+                                    </ListItem>
+                                    <ListItem>
+                                        <Link
+                                            isExternal
+                                            href="https://support.mozilla.org/en-US/kb/how-manage-your-camera-and-microphone-permissions"
+                                        >
+                                            Instructions for Firefox <ExternalLinkIcon />
+                                        </Link>
+                                    </ListItem>
+                                </UnorderedList>
                             </ListItem>
                             <ListItem>
                                 Please also make sure you have fully quit/exited Zoom, Skype and any other tabs that may

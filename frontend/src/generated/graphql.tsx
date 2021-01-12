@@ -26628,7 +26628,10 @@ export type VonageSubscriber_GetAttendeeQueryVariables = Exact<{
 }>;
 
 
-export type VonageSubscriber_GetAttendeeQuery = { readonly __typename?: 'query_root', readonly Attendee_by_pk?: Maybe<{ readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string, readonly profile?: Maybe<{ readonly __typename?: 'AttendeeProfile', readonly attendeeId: any, readonly photoURL_50x50?: Maybe<string> }> }> };
+export type VonageSubscriber_GetAttendeeQuery = { readonly __typename?: 'query_root', readonly Attendee_by_pk?: Maybe<(
+    { readonly __typename?: 'Attendee' }
+    & AttendeeDataFragment
+  )> };
 
 export type Timeline_TagFragment = { readonly __typename?: 'Tag', readonly id: any, readonly name: string, readonly colour: string };
 
@@ -29877,15 +29880,10 @@ export type GetEventVonageDetailsQueryResult = Apollo.QueryResult<GetEventVonage
 export const VonageSubscriber_GetAttendeeDocument = gql`
     query VonageSubscriber_GetAttendee($id: uuid!) {
   Attendee_by_pk(id: $id) {
-    id
-    displayName
-    profile {
-      attendeeId
-      photoURL_50x50
-    }
+    ...AttendeeData
   }
 }
-    `;
+    ${AttendeeDataFragmentDoc}`;
 
 /**
  * __useVonageSubscriber_GetAttendeeQuery__

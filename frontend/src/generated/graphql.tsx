@@ -27356,12 +27356,12 @@ export type ConferenceBySlugQuery = { readonly __typename?: 'query_root', readon
 export type GroupDataFragment = { readonly __typename?: 'Group', readonly enabled: boolean, readonly id: any, readonly includeUnauthenticated: boolean, readonly name: string, readonly conferenceId: any, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any, readonly role: { readonly __typename?: 'Role', readonly id: any, readonly name: string, readonly conferenceId: any, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly permissionName: Permission_Enum, readonly id: any, readonly roleId: any }> } }> };
 
 export type CurrentUserGroupsRolesPermissionsQueryVariables = Exact<{
-  userId?: Maybe<Scalars['String']>;
+  userId: Scalars['String'];
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type CurrentUserGroupsRolesPermissionsQuery = { readonly __typename?: 'query_root', readonly User: ReadonlyArray<{ readonly __typename?: 'User', readonly id: string, readonly conferencesCreated: ReadonlyArray<{ readonly __typename?: 'Conference', readonly id: any }>, readonly attendees: ReadonlyArray<{ readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly conferenceId: any, readonly displayName: string, readonly groupAttendees: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly id: any, readonly groupId: any, readonly attendeeId: any, readonly group: (
+export type CurrentUserGroupsRolesPermissionsQuery = { readonly __typename?: 'query_root', readonly User_by_pk?: Maybe<{ readonly __typename?: 'User', readonly id: string, readonly conferencesCreated: ReadonlyArray<{ readonly __typename?: 'Conference', readonly id: any }>, readonly attendees: ReadonlyArray<{ readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly conferenceId: any, readonly displayName: string, readonly groupAttendees: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly id: any, readonly groupId: any, readonly attendeeId: any, readonly group: (
           { readonly __typename?: 'Group' }
           & GroupDataFragment
         ) }> }> }>, readonly publicGroups: ReadonlyArray<(
@@ -27547,7 +27547,7 @@ export type SelectCurrentUserQueryVariables = Exact<{
 }>;
 
 
-export type SelectCurrentUserQuery = { readonly __typename?: 'query_root', readonly User: ReadonlyArray<{ readonly __typename?: 'User', readonly id: string, readonly email?: Maybe<string>, readonly lastName: string, readonly firstName: string, readonly attendees: ReadonlyArray<(
+export type SelectCurrentUserQuery = { readonly __typename?: 'query_root', readonly User_by_pk?: Maybe<{ readonly __typename?: 'User', readonly id: string, readonly email?: Maybe<string>, readonly lastName: string, readonly firstName: string, readonly attendees: ReadonlyArray<(
       { readonly __typename?: 'Attendee' }
       & AttendeeFieldsFragment
     )> }> };
@@ -28660,7 +28660,7 @@ export const SelectMessagesPageDocument = gql`
     query SelectMessagesPage($chatId: uuid!, $startAtIndex: Int!, $maxCount: Int!) {
   chat_Message(
     order_by: {id: desc}
-    where: {id: {_lte: $startAtIndex}, chatId: {_eq: $chatId}}
+    where: {chatId: {_eq: $chatId}, id: {_lte: $startAtIndex}}
     limit: $maxCount
   ) {
     ...ChatMessageData
@@ -32007,8 +32007,8 @@ export type ConferenceBySlugQueryHookResult = ReturnType<typeof useConferenceByS
 export type ConferenceBySlugLazyQueryHookResult = ReturnType<typeof useConferenceBySlugLazyQuery>;
 export type ConferenceBySlugQueryResult = Apollo.QueryResult<ConferenceBySlugQuery, ConferenceBySlugQueryVariables>;
 export const CurrentUserGroupsRolesPermissionsDocument = gql`
-    query CurrentUserGroupsRolesPermissions($userId: String, $conferenceId: uuid!) {
-  User(where: {id: {_eq: $userId}}) {
+    query CurrentUserGroupsRolesPermissions($userId: String!, $conferenceId: uuid!) {
+  User_by_pk(id: $userId) {
     conferencesCreated(where: {id: {_eq: $conferenceId}}) {
       id
     }
@@ -32710,7 +32710,7 @@ export type SelectUsersLazyQueryHookResult = ReturnType<typeof useSelectUsersLaz
 export type SelectUsersQueryResult = Apollo.QueryResult<SelectUsersQuery, SelectUsersQueryVariables>;
 export const SelectCurrentUserDocument = gql`
     query SelectCurrentUser($userId: String!) {
-  User(where: {id: {_eq: $userId}}) {
+  User_by_pk(id: $userId) {
     id
     email
     lastName

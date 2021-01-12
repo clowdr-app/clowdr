@@ -15,15 +15,15 @@ export default function UsersList(): JSX.Element {
                 User: _users?.User.filter((x) => x.id !== currentUser.id),
             };
 
-        if (users === undefined) {
+        if (users === false) {
+            return <Text>Error!</Text>;
+        }
+        if (users?.User === undefined || users?.User === null) {
             return (
                 <Box>
                     <Spinner />
                 </Box>
             );
-        }
-        if (users === false) {
-            return <Text>Error!</Text>;
         }
         return (
             <Column

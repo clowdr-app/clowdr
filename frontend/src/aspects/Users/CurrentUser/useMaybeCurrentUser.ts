@@ -3,7 +3,7 @@ import type { SelectCurrentUserQuery } from "../../../generated/graphql";
 
 export type UserInfo = {
     loading: boolean;
-    user: SelectCurrentUserQuery["User"][0] | false | undefined;
+    user: SelectCurrentUserQuery["User_by_pk"] | false | undefined;
     refetchUser: () => Promise<unknown>;
 };
 

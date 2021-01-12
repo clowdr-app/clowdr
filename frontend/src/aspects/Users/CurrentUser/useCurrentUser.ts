@@ -4,7 +4,7 @@ import type { SelectCurrentUserQuery } from "../../../generated/graphql";
 import { CurrentUserContext } from "./useMaybeCurrentUser";
 
 export default function useCurrentUser(): {
-    user: SelectCurrentUserQuery["User"][0];
+    user: NonNullable<SelectCurrentUserQuery["User_by_pk"]>;
     refetchUser: () => Promise<unknown>;
 } {
     const info = React.useContext(CurrentUserContext);

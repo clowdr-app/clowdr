@@ -8,13 +8,10 @@ import PageNotFound from "../Errors/PageNotFound";
 const _conferenceProviderQueries = gql`
     query ConferenceBySlug($slug: String!) {
         Conference(where: { slug: { _eq: $slug } }, limit: 1) {
-            createdBy
             id
             name
             shortName
             slug
-            updatedAt
-            createdAt
         }
     }
 `;

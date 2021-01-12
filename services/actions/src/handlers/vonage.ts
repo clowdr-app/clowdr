@@ -13,10 +13,10 @@ gql`
     query OngoingBroadcastableVideoRoomEvents($time: timestamptz!, $sessionId: String!) {
         Event(
             where: {
+                eventVonageSession: { sessionId: { _eq: $sessionId } }
+                intendedRoomModeName: { _in: [Q_AND_A, PRESENTATION] }
                 endTime: { _gt: $time }
                 startTime: { _lte: $time }
-                intendedRoomModeName: { _in: [Q_AND_A, PRESENTATION] }
-                eventVonageSession: { sessionId: { _eq: $sessionId } }
             }
         ) {
             id

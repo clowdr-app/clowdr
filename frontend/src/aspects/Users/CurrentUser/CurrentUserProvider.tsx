@@ -41,7 +41,7 @@ gql`
     }
 
     query SelectCurrentUser($userId: String!) {
-        User(where: { id: { _eq: $userId } }) {
+        User_by_pk(id: $userId) {
             id
             email
             lastName
@@ -101,7 +101,7 @@ function CurrentUserProvider_IsAuthenticated({
         <CurrentUserContext.Provider
             value={{
                 loading,
-                user: value ? value?.User[0] ?? false : value,
+                user: value ? value?.User_by_pk ?? false : value,
                 refetchUser: refetch,
             }}
         >

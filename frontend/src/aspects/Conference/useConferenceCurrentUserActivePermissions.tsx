@@ -37,41 +37,39 @@ export default function ConferenceCurrentUserActivePermissionsProvider({
             );
         });
 
-        if ("User" in groups) {
-            if (groups.User[0].conferencesCreated.length > 0) {
+        if ("User_by_pk" in groups && groups.User_by_pk) {
+            if (groups.User_by_pk.conferencesCreated.length > 0) {
                 return new Set(Object.values(Permission_Enum));
             } else {
-                if (groups.User.length > 0) {
-                    return reduceToSet(
-                        groups.User[0].attendees,
-                        (acc, attendee) => {
-                            return reduceToSet(
-                                attendee.groupAttendees,
-                                (acc, groupAttendee) => {
-                                    if (groupAttendee.group.enabled) {
-                                        return reduceToSet(
-                                            groupAttendee.group.groupRoles,
-                                            (acc, groupRole) => {
-                                                return reduceToSet(
-                                                    groupRole.role.rolePermissions,
-                                                    (acc, rolePermission) => {
-                                                        acc.add(rolePermission.permissionName);
-                                                        return acc;
-                                                    },
-                                                    acc
-                                                );
-                                            },
-                                            acc
-                                        );
-                                    }
-                                    return acc;
-                                },
-                                acc
-                            );
-                        },
-                        publicPermissions
-                    );
-                }
+                return reduceToSet(
+                    groups.User_by_pk.attendees,
+                    (acc, attendee) => {
+                        return reduceToSet(
+                            attendee.groupAttendees,
+                            (acc, groupAttendee) => {
+                                if (groupAttendee.group.enabled) {
+                                    return reduceToSet(
+                                        groupAttendee.group.groupRoles,
+                                        (acc, groupRole) => {
+                                            return reduceToSet(
+                                                groupRole.role.rolePermissions,
+                                                (acc, rolePermission) => {
+                                                    acc.add(rolePermission.permissionName);
+                                                    return acc;
+                                                },
+                                                acc
+                                            );
+                                        },
+                                        acc
+                                    );
+                                }
+                                return acc;
+                            },
+                            acc
+                        );
+                    },
+                    publicPermissions
+                );
             }
         }
 

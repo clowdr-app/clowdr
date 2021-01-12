@@ -32,6 +32,7 @@ export async function handleEventVonageSessionUpdated(payload: Payload<EventVona
 
             const startedBroadcastIds = await getStartedBroadcastIds(newRow.sessionId);
 
+            console.log("Setting broadcast layout to bestFit", newRow.sessionId);
             for (const startedBroadcastId of startedBroadcastIds) {
                 try {
                     await Vonage.setBroadcastLayout(startedBroadcastId, "bestFit", null);
@@ -48,7 +49,7 @@ export async function handleEventVonageSessionUpdated(payload: Payload<EventVona
         }
         case VonageSessionLayoutType.Pair: {
             console.log(
-                "Setting broadcast layout to Pair",
+                "Setting class lists for Pair broadcast layout",
                 newRow.sessionId,
                 layoutData.leftStreamId,
                 layoutData.rightStreamId
@@ -70,6 +71,7 @@ export async function handleEventVonageSessionUpdated(payload: Payload<EventVona
 
             const startedBroadcastIds = await getStartedBroadcastIds(newRow.sessionId);
 
+            console.log("Setting broadcast layout to Pair", newRow.sessionId);
             for (const startedBroadcastId of startedBroadcastIds) {
                 try {
                     await Vonage.setBroadcastLayout(
@@ -90,7 +92,7 @@ export async function handleEventVonageSessionUpdated(payload: Payload<EventVona
             return;
         }
         case VonageSessionLayoutType.Single: {
-            console.log("Setting broadcast layout to Single", newRow.sessionId, layoutData.focusStreamId);
+            console.log("Setting class lists for Single broadcast layout", newRow.sessionId, layoutData.focusStreamId);
             await Vonage.setStreamClassLists(newRow.sessionId, [
                 {
                     id: layoutData.focusStreamId,
@@ -104,6 +106,7 @@ export async function handleEventVonageSessionUpdated(payload: Payload<EventVona
 
             const startedBroadcastIds = await getStartedBroadcastIds(newRow.sessionId);
 
+            console.log("Setting broadcast layout to Single", newRow.sessionId, layoutData.focusStreamId);
             for (const startedBroadcastId of startedBroadcastIds) {
                 try {
                     await Vonage.setBroadcastLayout(
@@ -124,6 +127,7 @@ export async function handleEventVonageSessionUpdated(payload: Payload<EventVona
             return;
         }
         case VonageSessionLayoutType.PictureInPicture: {
+            console.log("Setting class lists for PIP broadcast layout", newRow.sessionId, layoutData.focusStreamId);
             await Vonage.setStreamClassLists(newRow.sessionId, [
                 {
                     id: layoutData.focusStreamId,
@@ -141,6 +145,7 @@ export async function handleEventVonageSessionUpdated(payload: Payload<EventVona
 
             const startedBroadcastIds = await getStartedBroadcastIds(newRow.sessionId);
 
+            console.log("Setting broadcast layout to PIP", newRow.sessionId, layoutData.focusStreamId);
             for (const startedBroadcastId of startedBroadcastIds) {
                 try {
                     await Vonage.setBroadcastLayout(

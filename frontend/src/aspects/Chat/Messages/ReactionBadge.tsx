@@ -47,7 +47,7 @@ export default function ReactionBadge({
             {...rest}
         >
             <Text as="span" fontSize="inherit" ml="2px">
-                <Twemoji className="twemoji-reaction" text={reaction} />
+                <Twemoji className="twemoji twemoji-reaction" text={reaction} />
             </Text>
             <Text as="span" mx="2px" fontSize="inherit">
                 {count}

@@ -106,7 +106,7 @@ function MessageBody({ message }: { message: ChatMessageDataFragment }): JSX.Ele
                 </Flex>
                 {message.type === Chat_MessageType_Enum.Emote ? (
                     <Center fontSize={pictureSize} w="100%" pt={config.spacing}>
-                        <Twemoji text={message.message} />
+                        <Twemoji className="twemoji" text={message.message} />
                     </Center>
                 ) : (
                     <Markdown restrictHeadingSize>{message.message}</Markdown>

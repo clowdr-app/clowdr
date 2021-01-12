@@ -53,7 +53,7 @@ export function parseYouTubeURL(youtubeURL: string): string | undefined {
 
 function emojify(text: string): JSX.Element {
     try {
-        const emojified = <Twemoji text={text} />;
+        const emojified = <Twemoji className="twemoji" text={text} />;
         return emojified;
     } catch (e) {
         console.error(`Could not emojify ${text}`);

@@ -233,7 +233,7 @@ export function Room({
                         )}
 
                         {!currentRoomEvent && !nextRoomEvent ? (
-                            <Text my={2}>No current event in this room.</Text>
+                            <Text p={5}>No current event in this room.</Text>
                         ) : (
                             <></>
                         )}

@@ -778,7 +778,7 @@ function CRUDRow<S, T, PK extends keyof S>({
         const cells: Array<JSX.Element> = [];
 
         visibleFields.forEach((field, fieldIdx) => {
-            const value = field.extract(item);
+            const inputValue = field.extract(item);
             cells.push(
                 <CRUDCell
                     key={`${key}-${fieldIdx}-row`}
@@ -791,7 +791,7 @@ function CRUDRow<S, T, PK extends keyof S>({
                     isDisabled={isDisabled && isSelected}
                 >
                     {defaultRenderers[field.spec.fieldType](
-                        field.spec.convertToUI(value),
+                        field.spec.convertToUI(inputValue),
                         enableUpdate && field.isEditable
                             ? {
                                   label: field.ariaLabel,

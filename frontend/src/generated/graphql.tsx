@@ -26623,6 +26623,16 @@ export type GetEventVonageDetailsQueryVariables = Exact<{
 
 export type GetEventVonageDetailsQuery = { readonly __typename?: 'query_root', readonly Event_by_pk?: Maybe<{ readonly __typename?: 'Event', readonly id: any, readonly eventVonageSession?: Maybe<{ readonly __typename?: 'EventVonageSession', readonly sessionId: string, readonly id: any }> }> };
 
+export type VonageSubscriber_GetAttendeeQueryVariables = Exact<{
+  id: Scalars['uuid'];
+}>;
+
+
+export type VonageSubscriber_GetAttendeeQuery = { readonly __typename?: 'query_root', readonly Attendee_by_pk?: Maybe<(
+    { readonly __typename?: 'Attendee' }
+    & AttendeeDataFragment
+  )> };
+
 export type Timeline_TagFragment = { readonly __typename?: 'Tag', readonly id: any, readonly name: string, readonly colour: string };
 
 export type Timeline_ContentGroupTagFragment = { readonly __typename?: 'ContentGroupTag', readonly id: any, readonly tag: (
@@ -29875,6 +29885,39 @@ export function useGetEventVonageDetailsLazyQuery(baseOptions?: Apollo.LazyQuery
 export type GetEventVonageDetailsQueryHookResult = ReturnType<typeof useGetEventVonageDetailsQuery>;
 export type GetEventVonageDetailsLazyQueryHookResult = ReturnType<typeof useGetEventVonageDetailsLazyQuery>;
 export type GetEventVonageDetailsQueryResult = Apollo.QueryResult<GetEventVonageDetailsQuery, GetEventVonageDetailsQueryVariables>;
+export const VonageSubscriber_GetAttendeeDocument = gql`
+    query VonageSubscriber_GetAttendee($id: uuid!) {
+  Attendee_by_pk(id: $id) {
+    ...AttendeeData
+  }
+}
+    ${AttendeeDataFragmentDoc}`;
+
+/**
+ * __useVonageSubscriber_GetAttendeeQuery__
+ *
+ * To run a query within a React component, call `useVonageSubscriber_GetAttendeeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useVonageSubscriber_GetAttendeeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useVonageSubscriber_GetAttendeeQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useVonageSubscriber_GetAttendeeQuery(baseOptions: Apollo.QueryHookOptions<VonageSubscriber_GetAttendeeQuery, VonageSubscriber_GetAttendeeQueryVariables>) {
+        return Apollo.useQuery<VonageSubscriber_GetAttendeeQuery, VonageSubscriber_GetAttendeeQueryVariables>(VonageSubscriber_GetAttendeeDocument, baseOptions);
+      }
+export function useVonageSubscriber_GetAttendeeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<VonageSubscriber_GetAttendeeQuery, VonageSubscriber_GetAttendeeQueryVariables>) {
+          return Apollo.useLazyQuery<VonageSubscriber_GetAttendeeQuery, VonageSubscriber_GetAttendeeQueryVariables>(VonageSubscriber_GetAttendeeDocument, baseOptions);
+        }
+export type VonageSubscriber_GetAttendeeQueryHookResult = ReturnType<typeof useVonageSubscriber_GetAttendeeQuery>;
+export type VonageSubscriber_GetAttendeeLazyQueryHookResult = ReturnType<typeof useVonageSubscriber_GetAttendeeLazyQuery>;
+export type VonageSubscriber_GetAttendeeQueryResult = Apollo.QueryResult<VonageSubscriber_GetAttendeeQuery, VonageSubscriber_GetAttendeeQueryVariables>;
 export const Timeline_SelectRoomsDocument = gql`
     query Timeline_SelectRooms($conferenceId: uuid!) {
   Room(where: {conferenceId: {_eq: $conferenceId}}) {

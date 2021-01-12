@@ -171,3 +171,13 @@ export interface EventRoomJoinRequestData extends BaseData {
     approved: boolean;
     conferenceId: string;
 }
+
+export interface EventPersonData extends BaseData {
+    eventId: string;
+    attendeeId: string | null;
+    name: string;
+    affiliation: string | null;
+    roleName: EventPersonRole_Enum;
+    originatingDataId: string | null;
+    conferenceId: string;
+}

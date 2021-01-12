@@ -28,10 +28,14 @@ export function RoomControlBar({
     roomDetails,
     onSetBackstage,
     backstage,
+    hasBackstage,
+    breakoutRoomEnabled,
 }: {
     roomDetails: RoomDetailsFragment;
     onSetBackstage: (backstage: boolean) => void;
     backstage: boolean;
+    hasBackstage: boolean;
+    breakoutRoomEnabled: boolean;
 }): JSX.Element {
     const user = useCurrentUser();
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -87,16 +91,20 @@ export function RoomControlBar({
 
     return (
         <HStack justifyContent="flex-end" m={4}>
-            {backstage ? (
-                <Button colorScheme="red" onClick={() => onSetBackstage(false)}>
-                    Hide backstage
-                </Button>
-            ) : (
-                <Tooltip label="Backstage is where you can join events as a presenter, session chair or to ask questions.">
-                    <Button colorScheme="green" onClick={() => onSetBackstage(true)}>
-                        Show backstage
+            {hasBackstage ? (
+                backstage ? (
+                    <Button colorScheme="red" onClick={() => onSetBackstage(false)}>
+                        Hide backstage
                     </Button>
-                </Tooltip>
+                ) : (
+                    <Tooltip label="Backstage is where you can join events as a presenter, session chair or to ask questions.">
+                        <Button colorScheme="green" onClick={() => onSetBackstage(true)}>
+                            Show backstage
+                        </Button>
+                    </Tooltip>
+                )
+            ) : (
+                <></>
             )}
             {roomDetails.roomPeople.find(
                 (person) =>
@@ -110,19 +118,19 @@ export function RoomControlBar({
             ) : (
                 <></>
             )}
-            {roomDetails.roomPrivacyName === RoomPrivacy_Enum.Public ? (
+            {!breakoutRoomEnabled ? (
+                <></>
+            ) : roomDetails.roomPrivacyName === RoomPrivacy_Enum.Public ? (
                 <Popover>
                     <PopoverTrigger>
-                        <Tooltip label="People currently in the breakout room">
-                            <Button
-                                aria-label={`${
-                                    roomParticipants ? roomParticipants.length : "0"
-                                } People currently in the breakout room`}
-                            >
-                                <FAIcon icon="users" iconStyle="s" />
-                                <Badge ml={2}>{roomParticipants ? roomParticipants.length : "0"} </Badge>
-                            </Button>
-                        </Tooltip>
+                        <Button
+                            aria-label={`${
+                                roomParticipants ? roomParticipants.length : "0"
+                            } People currently in the breakout room`}
+                        >
+                            <FAIcon icon="users" iconStyle="s" />
+                            <Badge ml={2}>{roomParticipants ? roomParticipants.length : "0"} </Badge>
+                        </Button>
                     </PopoverTrigger>
                     <Portal>
                         <PopoverContent>

@@ -18,7 +18,7 @@ const _conferenceProviderQueries = gql`
 
 export type ConferenceInfo = Pick<
     Conference,
-    "createdBy" | "id" | "name" | "shortName" | "slug" | "updatedAt" | "createdAt"
+    | "id" | "name" | "shortName" | "slug"
 >;
 
 const ConferenceContext = React.createContext<ConferenceInfo | undefined>(undefined);

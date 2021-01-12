@@ -158,11 +158,11 @@ function AuthedUserGroupsRolesPermissionsProvider({
 
     if (
         !data ||
-        !data.User_by_pk ||
-        ((data.User_by_pk.attendees.length === 0 ||
-            data.User_by_pk.attendees[0].groupAttendees.length === 0 ||
-            data.User_by_pk.attendees[0].groupAttendees[0].group.groupRoles.length === 0) &&
-            data.User_by_pk.conferencesCreated.length == 0 &&
+        data.User.length === 0 ||
+        ((data.User[0].attendees.length === 0 ||
+            data.User[0].attendees[0].groupAttendees.length === 0 ||
+            data.User[0].attendees[0].groupAttendees[0].group.groupRoles.length === 0) &&
+            data.User[0].conferencesCreated.length == 0 &&
             !data.publicGroups.length)
     ) {
         return <PageNotFound />;

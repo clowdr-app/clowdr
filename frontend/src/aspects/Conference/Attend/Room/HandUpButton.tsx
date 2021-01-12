@@ -71,8 +71,8 @@ export function HandUpButton({
     const { data: eventRoomJoinRequestData, error } = useMyEventRoomJoinRequestSubscription({
         variables: {
             attendeeId: attendee.id,
-            conferenceId: currentRoomEvent?.conferenceId ?? "",
-            eventId: currentRoomEvent?.id ?? "",
+            conferenceId: currentRoomEvent?.conferenceId ?? "00000000-0000-0000-0000-000000000000",
+            eventId: currentRoomEvent?.id ?? "00000000-0000-0000-0000-000000000000",
         },
     });
     useQueryErrorToast(error, "useMyEventRoomJoinRequestSubscription");

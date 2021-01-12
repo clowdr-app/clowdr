@@ -1,7 +1,7 @@
 import { GridItem, SimpleGrid, Text } from "@chakra-ui/react";
 import React from "react";
 import { RoomListRoomDetailsFragment, RoomPrivacy_Enum } from "../../../../generated/graphql";
-import LinkButton from "../../../Chakra/LinkButton";
+import { LinkButton } from "../../../Chakra/LinkButton";
 import FAIcon from "../../../Icons/FAIcon";
 import useRoomParticipants from "../../../Room/useRoomParticipants";
 import { useConference } from "../../useConference";

@@ -1,6 +1,6 @@
 import { Heading, Link, Text } from "@chakra-ui/react";
 import React from "react";
-import LinkButton from "../Chakra/LinkButton";
+import { LinkButton } from "../Chakra/LinkButton";
 import FAIcon from "../Icons/FAIcon";
 import { useNoPrimaryMenuButtons } from "../Menu/usePrimaryMenuButtons";
 import { useTitle } from "../Utils/useTitle";

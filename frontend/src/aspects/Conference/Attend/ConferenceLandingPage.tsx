@@ -12,7 +12,7 @@ import {
     Permission_Enum,
     useConferenceLandingPageContentGroupQuery,
 } from "../../../generated/graphql";
-import LinkButton from "../../Chakra/LinkButton";
+import { LinkButton } from "../../Chakra/LinkButton";
 import PageFailedToLoad from "../../Errors/PageFailedToLoad";
 import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";

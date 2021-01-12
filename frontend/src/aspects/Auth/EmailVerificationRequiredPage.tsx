@@ -1,7 +1,7 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { Heading, Text } from "@chakra-ui/react";
 import React, { useEffect } from "react";
-import LinkButton from "../Chakra/LinkButton";
+import { LinkButton } from "../Chakra/LinkButton";
 import FAIcon from "../Icons/FAIcon";
 import { useNoPrimaryMenuButtons } from "../Menu/usePrimaryMenuButtons";
 import { useTitle } from "../Utils/useTitle";

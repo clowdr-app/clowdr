@@ -13,7 +13,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React, { useCallback } from "react";
-import LinkButton from "../Chakra/LinkButton";
+import { LinkButton } from "../Chakra/LinkButton";
 import FAIcon from "../Icons/FAIcon";
 import IncognitoToggleButton from "../Users/CurrentUser/OnlineStatus/IncognitoToggleButton";
 

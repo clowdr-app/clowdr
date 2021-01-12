@@ -27,7 +27,7 @@ import {
     useSelectAllRoomsWithParticipantsQuery,
     useUpdateRoomMutation,
 } from "../../../generated/graphql";
-import LinkButton from "../../Chakra/LinkButton";
+import { LinkButton } from "../../Chakra/LinkButton";
 import CRUDTable, {
     CRUDTableProps,
     defaultIntegerFilter,

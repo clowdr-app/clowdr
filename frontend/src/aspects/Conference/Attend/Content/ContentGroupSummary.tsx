@@ -8,7 +8,7 @@ import {
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import { ContentGroupDataFragment, ContentType_Enum } from "../../../../generated/graphql";
-import LinkButton from "../../../Chakra/LinkButton";
+import { ExternalLinkButton } from "../../../Chakra/LinkButton";
 import { Markdown } from "../../../Text/Markdown";
 import { AuthorList } from "./AuthorList";
 
@@ -55,9 +55,9 @@ export function ContentGroupSummary({ contentGroupData }: { contentGroupData: Co
             </Heading>
             {<AuthorList contentPeopleData={contentGroupData.people ?? []} />}
             {maybeZoomDetails ? (
-                <LinkButton to={maybeZoomDetails} isExternal={true} colorScheme="green" mt={5}>
+                <ExternalLinkButton to={maybeZoomDetails} isExternal={true} colorScheme="green" mt={5}>
                     Go to Zoom
-                </LinkButton>
+                </ExternalLinkButton>
             ) : (
                 <></>
             )}

@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useMemo } from "react";
 import { AttendeeFieldsFragment, Permission_Enum } from "../../../generated/graphql";
-import LinkButton from "../../Chakra/LinkButton";
+import { LinkButton } from "../../Chakra/LinkButton";
 import UseInviteOrCreateView from "../../Conference/UseInviteOrCreateView";
 import usePrimaryMenuButtons from "../../Menu/usePrimaryMenuButtons";
 import { useTitle } from "../../Utils/useTitle";

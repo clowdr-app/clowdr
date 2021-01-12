@@ -35,7 +35,7 @@ import {
     Permission_Enum,
     useInsertSubmissionRequestEmailJobsMutation,
 } from "../../../generated/graphql";
-import LinkButton from "../../Chakra/LinkButton";
+import { LinkButton } from "../../Chakra/LinkButton";
 import CRUDTable, {
     CRUDTableProps,
     defaultSelectFilter,

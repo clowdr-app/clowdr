@@ -17,7 +17,7 @@ import * as R from "ramda";
 import React, { useMemo, useState } from "react";
 import ReactPlayer from "react-player";
 import { ContentType_Enum, EventPersonDetailsFragment, RoomDetailsFragment } from "../../../../generated/graphql";
-import LinkButton from "../../../Chakra/LinkButton";
+import { ExternalLinkButton } from "../../../Chakra/LinkButton";
 import { ContentGroupSummary } from "../Content/ContentGroupSummary";
 import { BreakoutVonageRoom } from "./BreakoutVonageRoom";
 import { HandUpButton } from "./HandUpButton";
@@ -41,8 +41,14 @@ export function Room({
         secondsUntilZoomEvent,
     } = useCurrentRoomEvent(roomDetails);
 
-    const [green100, green700] = useToken("colors", ["green.100", "green.700"]);
-    const bgColour = useColorModeValue(green100, green700);
+    const [green100, green700, gray100, gray800] = useToken("colors", [
+        "green.100",
+        "green.700",
+        "gray.100",
+        "gray.900",
+    ]);
+    const nextBgColour = useColorModeValue(green100, green700);
+    const bgColour = useColorModeValue(gray100, gray800);
 
     const hlsUri = useMemo(() => {
         if (!roomDetails.mediaLiveChannel) {
@@ -120,9 +126,14 @@ export function Room({
                 )}
 
                 {maybeCurrentEventZoomDetails ? (
-                    <LinkButton to={maybeCurrentEventZoomDetails} isExternal={true} colorScheme="green" size="lg">
-                        Go to Zoom
-                    </LinkButton>
+                    <ExternalLinkButton
+                        to={maybeCurrentEventZoomDetails}
+                        isExternal={true}
+                        colorScheme="green"
+                        size="lg"
+                    >
+                        Go to Zoom ({currentRoomEvent?.name})
+                    </ExternalLinkButton>
                 ) : (
                     <></>
                 )}
@@ -172,7 +183,7 @@ export function Room({
                 </Heading>
 
                 {currentRoomEvent ? (
-                    <>
+                    <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
                         <Heading as="h3" textAlign="left" size="md" mt={5}>
                             Current event
                         </Heading>
@@ -182,12 +193,12 @@ export function Room({
                         ) : (
                             <></>
                         )}
-                    </>
+                    </Box>
                 ) : (
                     <></>
                 )}
                 {nextRoomEvent ? (
-                    <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
+                    <Box backgroundColor={nextBgColour} borderRadius={5} px={5} py={3} my={5}>
                         <Heading as="h3" textAlign="left" size="md" mb={2}>
                             Up next
                         </Heading>
@@ -201,6 +212,8 @@ export function Room({
                 ) : (
                     <></>
                 )}
+
+                {!currentRoomEvent && !nextRoomEvent ? <Text my={2}>No current event in this room.</Text> : <></>}
             </GridItem>
             <GridItem border="1px solid white" p={5}>
                 <SkeletonCircle size="20" />

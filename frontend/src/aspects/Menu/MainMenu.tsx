@@ -4,7 +4,7 @@ import { Route, Switch } from "react-router-dom";
 import AuthenticationButton from "../Auth/Buttons/AuthenticationButton";
 import SignupButton from "../Auth/Buttons/SignUpButton";
 import ColorModeButton from "../Chakra/ColorModeButton";
-import LinkButton from "../Chakra/LinkButton";
+import { LinkButton } from "../Chakra/LinkButton";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import MenuDrawer from "./MenuDrawer";
 import usePrimaryMenuButtons from "./usePrimaryMenuButtons";

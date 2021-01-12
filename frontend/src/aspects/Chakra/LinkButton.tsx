@@ -8,13 +8,32 @@ export interface LinkButtonProps extends ButtonProps {
     linkProps?: Omit<LinkProps, "to" | "isExternal" | "tabIndex">;
 }
 
-export default function LinkButton(props: LinkButtonProps & { ref?: Ref<HTMLAnchorElement> }): JSX.Element {
+export function LinkButton(props: LinkButtonProps & { ref?: Ref<HTMLAnchorElement> }): JSX.Element {
     const { to, children, isExternal, linkProps, ref, ...remaining } = props;
 
     return (
         <Link
             as={ReactLink}
             to={to}
+            isExternal={isExternal}
+            textDecoration="none !important"
+            display="inline-block"
+            {...linkProps}
+            ref={ref}
+        >
+            <Button as="div" {...remaining}>
+                {children}
+            </Button>
+        </Link>
+    );
+}
+
+export function ExternalLinkButton(props: LinkButtonProps & { ref?: Ref<HTMLAnchorElement> }): JSX.Element {
+    const { to, children, isExternal, linkProps, ref, ...remaining } = props;
+
+    return (
+        <Link
+            href={to}
             isExternal={isExternal}
             textDecoration="none !important"
             display="inline-block"

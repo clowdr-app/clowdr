@@ -19,7 +19,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ContentGroupDataFragment, TagWithContentFragment, useContentByTagQuery } from "../../../../generated/graphql";
-import LinkButton from "../../../Chakra/LinkButton";
+import { LinkButton } from "../../../Chakra/LinkButton";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import FAIcon from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";

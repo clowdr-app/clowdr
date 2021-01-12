@@ -19,7 +19,7 @@ import { ContentBaseType, ContentItemDataBlob } from "@clowdr-app/shared-types/b
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { Link as ReactLink } from "react-router-dom";
 import { ContentType_Enum, Timeline_EventFragment } from "../../../../generated/graphql";
-import LinkButton from "../../../Chakra/LinkButton";
+import { LinkButton } from "../../../Chakra/LinkButton";
 import FAIcon from "../../../Icons/FAIcon";
 import { Markdown } from "../../../Text/Markdown";
 import { useConference } from "../../useConference";

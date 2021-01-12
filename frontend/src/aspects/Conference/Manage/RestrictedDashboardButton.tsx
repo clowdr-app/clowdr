@@ -1,7 +1,7 @@
 import { Heading, Text } from "@chakra-ui/react";
 import React from "react";
 import type { Permission_Enum } from "../../../generated/graphql";
-import LinkButton from "../../Chakra/LinkButton";
+import { LinkButton } from "../../Chakra/LinkButton";
 import FAIcon from "../../Icons/FAIcon";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";

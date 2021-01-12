@@ -18,7 +18,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import BadgeList from "../../../Badges/BadgeList";
-import LinkButton from "../../../Chakra/LinkButton";
+import { LinkButton } from "../../../Chakra/LinkButton";
 import FAIcon from "../../../Icons/FAIcon";
 import PronounList from "../../../Pronouns/PronounList";
 import { Markdown } from "../../../Text/Markdown";

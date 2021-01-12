@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Box, Flex, Heading, useBreakpointValue } from "@chakra-ui/react";
+import { Box, Flex, Heading, HStack, useBreakpointValue, VStack } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 import {
     ContentGroupDataFragment,
@@ -89,39 +89,55 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
             <ApolloQueryWrapper queryResult={result} getter={(data) => data.ContentGroup_by_pk}>
                 {(contentGroupData: ContentGroupDataFragment & ContentGroupEventsFragment) => {
                     return (
-                        <>
-                            {title}
-                            <Flex
-                                width="100%"
-                                height="100%"
-                                gridColumnGap={5}
-                                flexWrap={stackColumns ? "wrap" : "nowrap"}
+                        <HStack w="100%" flexWrap="wrap" alignItems="stretch">
+                            <VStack
+                                textAlign="left"
+                                p={2}
+                                flexGrow={2.5}
+                                alignItems="stretch"
+                                flexBasis={0}
+                                minW={["100%", "100%", "100%", "700px"]}
+                                maxW="100%"
                             >
-                                <Box textAlign="center" flexGrow={1} style={{ scrollbarWidth: "thin" }}>
-                                    <ContentGroupVideos contentGroupData={contentGroupData} />
-                                    <Box ml={5}>
-                                        <ContentGroupSummary contentGroupData={contentGroupData} />
-                                        <Heading as="h3" size="lg" textAlign="left">
-                                            Events
-                                        </Heading>
-                                        <ContentGroupEvents contentGroupEvents={contentGroupData} />
+                                {title}
+                                <Flex
+                                    width="100%"
+                                    height="100%"
+                                    gridColumnGap={5}
+                                    flexWrap={stackColumns ? "wrap" : "nowrap"}
+                                >
+                                    <Box textAlign="center" flexGrow={1} style={{ scrollbarWidth: "thin" }}>
+                                        <ContentGroupVideos contentGroupData={contentGroupData} />
+                                        <Box ml={5}>
+                                            <ContentGroupSummary contentGroupData={contentGroupData} />
+                                            <Heading as="h3" size="lg" textAlign="left">
+                                                Events
+                                            </Heading>
+                                            <ContentGroupEvents contentGroupEvents={contentGroupData} />
+                                        </Box>
                                     </Box>
-                                </Box>
-                                {contentGroupData.chatId ? (
+                                </Flex>
+                            </VStack>
+                            {contentGroupData.chatId ? (
+                                <VStack
+                                    flexGrow={1}
+                                    flexBasis={0}
+                                    minW={["90%", "90%", "90%", "300px"]}
+                                    maxHeight={["80vh", "80vh", "80vh", "850px"]}
+                                >
                                     <Chat
                                         sources={{
                                             chatId: contentGroupData.chatId,
                                             chatLabel: "Discussion",
                                             duplication: ChatDuplicationFlags.NONE,
                                         }}
-                                        width={stackColumns ? "100%" : "30%"}
                                         height="100%"
                                     />
-                                ) : (
-                                    <></>
-                                )}
-                            </Flex>
-                        </>
+                                </VStack>
+                            ) : (
+                                <></>
+                            )}
+                        </HStack>
                     );
                 }}
             </ApolloQueryWrapper>

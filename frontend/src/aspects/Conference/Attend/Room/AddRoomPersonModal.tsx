@@ -46,7 +46,7 @@ export function AddRoomPersonModal({
                 conferenceId: conference.id,
                 search: `%${searchTerm}%`,
             });
-            return result.data.Attendee.map((item) => ({
+            return result.data.Attendee.filter((item) => !!item.userId).map((item) => ({
                 value: item.id,
                 label: item.displayName,
                 inRoom: !!members && !!members.roomPeople.find((person) => person.attendee.id === item.id),

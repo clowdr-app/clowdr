@@ -148,9 +148,9 @@ export function ChatNotificationsProvider_WithAttendee({
                         newMsg.senderId !== attendeeId &&
                         (newMsg.type === Chat_MessageType_Enum.Message ||
                             newMsg.type === Chat_MessageType_Enum.Answer ||
-                            newMsg.type === Chat_MessageType_Enum.Question)
+                            newMsg.type === Chat_MessageType_Enum.Question) &&
                         // TODO: Remove this hack for avoiding the broken notification load-in behaviour
-                        && newMessages.data.chat_Message.length < 6
+                        newMessages.data.chat_Message.length < 6
                     ) {
                         const chatInfo = storedUnreadCounts.get(newMsg.chatId);
                         const chatName = chatInfo

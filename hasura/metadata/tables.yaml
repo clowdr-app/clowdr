@@ -6218,26 +6218,11 @@
   - role: user
     permission:
       check:
-        _or:
-        - room:
-            conference:
-              groups:
-                _and:
-                - enabled:
-                    _eq: true
-                - groupRoles:
-                    role:
-                      rolePermissions:
-                        permissionName:
-                          _eq: CONFERENCE_MANAGE_SCHEDULE
-                - _or:
-                  - includeUnauthenticated:
-                      _eq: true
-                  - groupAttendees:
-                      attendee:
-                        userId:
-                          _eq: X-Hasura-User-Id
-        - _and:
+        _and:
+        - attendee:
+            userId:
+              _is_null: false
+        - _or:
           - room:
               conference:
                 groups:
@@ -6248,7 +6233,7 @@
                       role:
                         rolePermissions:
                           permissionName:
-                            _eq: CONFERENCE_VIEW_ATTENDEES
+                            _eq: CONFERENCE_MANAGE_SCHEDULE
                   - _or:
                     - includeUnauthenticated:
                         _eq: true
@@ -6256,15 +6241,34 @@
                         attendee:
                           userId:
                             _eq: X-Hasura-User-Id
-          - room:
-              roomPeople:
-                _and:
-                - attendee:
-                    userId:
-                      _eq: X-Hasura-User-Id
-                - roomPersonRole:
-                    name:
-                      _eq: ADMIN
+          - _and:
+            - room:
+                conference:
+                  groups:
+                    _and:
+                    - enabled:
+                        _eq: true
+                    - groupRoles:
+                        role:
+                          rolePermissions:
+                            permissionName:
+                              _eq: CONFERENCE_VIEW_ATTENDEES
+                    - _or:
+                      - includeUnauthenticated:
+                          _eq: true
+                      - groupAttendees:
+                          attendee:
+                            userId:
+                              _eq: X-Hasura-User-Id
+            - room:
+                roomPeople:
+                  _and:
+                  - attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
+                  - roomPersonRole:
+                      name:
+                        _eq: ADMIN
       columns:
       - attendeeId
       - roomId

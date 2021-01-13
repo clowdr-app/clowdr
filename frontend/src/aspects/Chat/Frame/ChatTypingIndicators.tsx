@@ -1,4 +1,4 @@
-import { Flex, FlexProps, Text, useColorModeValue } from "@chakra-ui/react";
+import { Flex, FlexProps, useColorModeValue } from "@chakra-ui/react";
 import React from "react";
 import { useChatConfiguration } from "../Configuration";
 

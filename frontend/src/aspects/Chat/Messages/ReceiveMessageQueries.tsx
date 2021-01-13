@@ -253,9 +253,7 @@ export default function ReceiveMessageQueriesProvider({
                 setAnsweringQuestionId,
             }}
         >
-            <ReadUpToIndexProvider chatId={chatId}>
-                {children}
-            </ReadUpToIndexProvider>
+            <ReadUpToIndexProvider chatId={chatId}>{children}</ReadUpToIndexProvider>
         </ReceiveMessageQueriesContext.Provider>
     );
 }

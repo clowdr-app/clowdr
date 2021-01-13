@@ -70,8 +70,8 @@ function ReadUpToIndexProvider_UserExists({
                     variables: {
                         attendeeId,
                         chatId,
-                        messageId: [...messages.liveMessages.keys()].sort((x, y) => y - x)[0]
-                    }
+                        messageId: [...messages.liveMessages.keys()].sort((x, y) => y - x)[0],
+                    },
                 });
             }
         }
@@ -85,17 +85,23 @@ function ReadUpToIndexProvider_UserExists({
                 variables: {
                     attendeeId,
                     chatId,
-                    messageId: [...messages.liveMessages.keys()].sort((x, y) => y - x)[0]
-                }
+                    messageId: [...messages.liveMessages.keys()].sort((x, y) => y - x)[0],
+                },
             });
         }
     }, [attendeeId, chatId, messages.liveMessages, setUnread]);
 
-    return <ReadUpToIndexContext.Provider value={{
-        readUpToId: unreadQ.data?.chat_ReadUpToIndex_by_pk?.messageId,
-        readUpToMarkerSeen,
-        onScrollUp: () => setHasScrolledUp(true),
-    }}>{children}</ReadUpToIndexContext.Provider>;
+    return (
+        <ReadUpToIndexContext.Provider
+            value={{
+                readUpToId: unreadQ.data?.chat_ReadUpToIndex_by_pk?.messageId,
+                readUpToMarkerSeen,
+                onScrollUp: () => setHasScrolledUp(true),
+            }}
+        >
+            {children}
+        </ReadUpToIndexContext.Provider>
+    );
 }
 
 export function ReadUpToIndexProvider_NoUser({

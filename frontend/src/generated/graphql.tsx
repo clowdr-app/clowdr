@@ -26276,6 +26276,23 @@ export type DeleteReactionMutationVariables = Exact<{
 
 export type DeleteReactionMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Reaction_by_pk?: Maybe<{ readonly __typename?: 'chat_Reaction', readonly id: number }> };
 
+export type SelectReadUpToIndexQueryVariables = Exact<{
+  chatId: Scalars['uuid'];
+  attendeeId: Scalars['uuid'];
+}>;
+
+
+export type SelectReadUpToIndexQuery = { readonly __typename?: 'query_root', readonly chat_ReadUpToIndex_by_pk?: Maybe<{ readonly __typename?: 'chat_ReadUpToIndex', readonly chatId: any, readonly attendeeId: any, readonly messageId: number }> };
+
+export type SetReadUpToIndexMutationVariables = Exact<{
+  chatId: Scalars['uuid'];
+  attendeeId: Scalars['uuid'];
+  messageId: Scalars['Int'];
+}>;
+
+
+export type SetReadUpToIndexMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_ReadUpToIndex?: Maybe<{ readonly __typename?: 'chat_ReadUpToIndex_mutation_response', readonly affected_rows: number }> };
+
 export type ChatFlagDataFragment = { readonly __typename?: 'chat_Flag', readonly discussionChatId?: Maybe<any>, readonly flaggedById?: Maybe<any>, readonly id: number, readonly messageId: number, readonly notes?: Maybe<string>, readonly resolution?: Maybe<string>, readonly resolved_at?: Maybe<any>, readonly type: Chat_FlagType_Enum, readonly updated_at: any, readonly created_at: any };
 
 export type SenderDataFragment = { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string };
@@ -28707,6 +28724,79 @@ export function useDeleteReactionMutation(baseOptions?: Apollo.MutationHookOptio
 export type DeleteReactionMutationHookResult = ReturnType<typeof useDeleteReactionMutation>;
 export type DeleteReactionMutationResult = Apollo.MutationResult<DeleteReactionMutation>;
 export type DeleteReactionMutationOptions = Apollo.BaseMutationOptions<DeleteReactionMutation, DeleteReactionMutationVariables>;
+export const SelectReadUpToIndexDocument = gql`
+    query SelectReadUpToIndex($chatId: uuid!, $attendeeId: uuid!) {
+  chat_ReadUpToIndex_by_pk(chatId: $chatId, attendeeId: $attendeeId) {
+    chatId
+    attendeeId
+    messageId
+  }
+}
+    `;
+
+/**
+ * __useSelectReadUpToIndexQuery__
+ *
+ * To run a query within a React component, call `useSelectReadUpToIndexQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectReadUpToIndexQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectReadUpToIndexQuery({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *      attendeeId: // value for 'attendeeId'
+ *   },
+ * });
+ */
+export function useSelectReadUpToIndexQuery(baseOptions: Apollo.QueryHookOptions<SelectReadUpToIndexQuery, SelectReadUpToIndexQueryVariables>) {
+        return Apollo.useQuery<SelectReadUpToIndexQuery, SelectReadUpToIndexQueryVariables>(SelectReadUpToIndexDocument, baseOptions);
+      }
+export function useSelectReadUpToIndexLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectReadUpToIndexQuery, SelectReadUpToIndexQueryVariables>) {
+          return Apollo.useLazyQuery<SelectReadUpToIndexQuery, SelectReadUpToIndexQueryVariables>(SelectReadUpToIndexDocument, baseOptions);
+        }
+export type SelectReadUpToIndexQueryHookResult = ReturnType<typeof useSelectReadUpToIndexQuery>;
+export type SelectReadUpToIndexLazyQueryHookResult = ReturnType<typeof useSelectReadUpToIndexLazyQuery>;
+export type SelectReadUpToIndexQueryResult = Apollo.QueryResult<SelectReadUpToIndexQuery, SelectReadUpToIndexQueryVariables>;
+export const SetReadUpToIndexDocument = gql`
+    mutation SetReadUpToIndex($chatId: uuid!, $attendeeId: uuid!, $messageId: Int!) {
+  insert_chat_ReadUpToIndex(
+    objects: {attendeeId: $attendeeId, chatId: $chatId, messageId: $messageId}
+    on_conflict: {constraint: ReadUpToIndex_pkey, update_columns: [messageId]}
+  ) {
+    affected_rows
+  }
+}
+    `;
+export type SetReadUpToIndexMutationFn = Apollo.MutationFunction<SetReadUpToIndexMutation, SetReadUpToIndexMutationVariables>;
+
+/**
+ * __useSetReadUpToIndexMutation__
+ *
+ * To run a mutation, you first call `useSetReadUpToIndexMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetReadUpToIndexMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setReadUpToIndexMutation, { data, loading, error }] = useSetReadUpToIndexMutation({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *      attendeeId: // value for 'attendeeId'
+ *      messageId: // value for 'messageId'
+ *   },
+ * });
+ */
+export function useSetReadUpToIndexMutation(baseOptions?: Apollo.MutationHookOptions<SetReadUpToIndexMutation, SetReadUpToIndexMutationVariables>) {
+        return Apollo.useMutation<SetReadUpToIndexMutation, SetReadUpToIndexMutationVariables>(SetReadUpToIndexDocument, baseOptions);
+      }
+export type SetReadUpToIndexMutationHookResult = ReturnType<typeof useSetReadUpToIndexMutation>;
+export type SetReadUpToIndexMutationResult = Apollo.MutationResult<SetReadUpToIndexMutation>;
+export type SetReadUpToIndexMutationOptions = Apollo.BaseMutationOptions<SetReadUpToIndexMutation, SetReadUpToIndexMutationVariables>;
 export const SelectFirstMessagesPageDocument = gql`
     query SelectFirstMessagesPage($chatId: uuid!, $maxCount: Int!) {
   chat_Message(

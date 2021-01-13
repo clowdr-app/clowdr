@@ -107,7 +107,7 @@ export function ChatMessageList({ chatId: _chatId, ...rest }: ChatMessageListPro
     const messages = useReceiveMessageQueries();
 
     const renderItem = useCallback(
-        // Don't apply style changes etc here - they won't get propagated reliably
+        // Don't apply dynamic style changes etc here - they won't get propagated reliably
         (item: ChatMessageDataFragment) => <MessageBox key={"message-" + item.id} message={item} />,
         []
     );

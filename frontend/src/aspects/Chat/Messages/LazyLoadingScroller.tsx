@@ -1,5 +1,6 @@
 import { Box, Button, Center, Flex, FlexProps, Heading, Spinner, useColorModeValue, useToken } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from "react";
+import { useReadUpToIndex } from "./ReadUpToIndexProvider";
 
 interface LazyLoadingScrollerProps<T> {
     fixedBatchSize: number;
@@ -155,6 +156,8 @@ export default function LazyLoadingScroller<T>({
         isRunning: false,
     });
 
+    const readUpToIndex = useReadUpToIndex();
+
     const scrollInfo = useCallback(() => {
         const innerC = innerContainerRef.current;
         const outerC = outerContainerRef.current;
@@ -179,6 +182,15 @@ export default function LazyLoadingScroller<T>({
                         const newItems = next.newItems;
                         const nextIndex = next.nextIndex;
 
+                        if (
+                            newItems.size === 0 ||
+                            (nextIndex !== null &&
+                                readUpToIndex.readUpToId !== undefined &&
+                                nextIndex <= readUpToIndex.readUpToId)
+                        ) {
+                            readUpToIndex.readUpToMarkerSeen();
+                        }
+
                         act({
                             name: "render-items",
                             isEqual,
@@ -197,7 +209,7 @@ export default function LazyLoadingScroller<T>({
                 }
             })();
         }
-    }, [batchSize, isEqual, load, renderItem, state.nextIndex, state.stateName]);
+    }, [batchSize, isEqual, load, readUpToIndex, renderItem, state.nextIndex, state.stateName]);
 
     useEffect(() => {
         if (monitoredItems) {
@@ -278,15 +290,19 @@ export default function LazyLoadingScroller<T>({
                 flexDir="column-reverse"
                 minH="100%"
                 onScroll={() => {
-                    if (state.stateName === "idle") {
-                        const sc = scrollInfo();
-                        if (sc) {
-                            const offset = sc.scrollHeight - Math.abs(sc.scrollTop);
+                    const sc = scrollInfo();
+                    if (sc) {
+                        const offset = sc.scrollHeight - Math.abs(sc.scrollTop);
+                        if (state.stateName === "idle") {
                             if (isInRange(offset, sc.clientHeight)) {
                                 act({
                                     name: "start-load",
                                 });
                             }
+                        }
+
+                        if (Math.abs(offset) > 40) {
+                            readUpToIndex.onScrollUp();
                         }
                     }
                 }}

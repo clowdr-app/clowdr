@@ -12,6 +12,7 @@ import {
     useSelectSingleMessageQuery,
 } from "../../../generated/graphql";
 import { useChatConfiguration } from "../Configuration";
+import ReadUpToIndexProvider from "./ReadUpToIndexProvider";
 
 gql`
     fragment ChatFlagData on chat_Flag {
@@ -252,7 +253,9 @@ export default function ReceiveMessageQueriesProvider({
                 setAnsweringQuestionId,
             }}
         >
-            {children}
+            <ReadUpToIndexProvider chatId={chatId}>
+                {children}
+            </ReadUpToIndexProvider>
         </ReceiveMessageQueriesContext.Provider>
     );
 }

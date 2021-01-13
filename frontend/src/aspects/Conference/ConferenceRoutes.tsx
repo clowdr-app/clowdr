@@ -202,11 +202,7 @@ export default function ConferenceRoutes({ confSlug, rootUrl }: { confSlug: stri
             <CurrentUserGroupsRolesPermissionsProvider>
                 <ConferenceCurrentUserActivePermissionsProvider>
                     <CurrentAttendeeProvider>
-                        <ChatNotificationsProvider
-                            onUnreadCountsChange={() => {
-                                /* TODO */
-                            }}
-                        >
+                        <ChatNotificationsProvider>
                             <RoomParticipantsProvider>
                                 <ConferenceRoutesInner rootUrl={rootUrl} />
                             </RoomParticipantsProvider>

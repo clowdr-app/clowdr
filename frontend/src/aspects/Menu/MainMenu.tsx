@@ -10,15 +10,18 @@ import {
     Stack,
     useBreakpointValue,
     useDisclosure,
+    VStack,
 } from "@chakra-ui/react";
-import React from "react";
-import { Route, Switch, useHistory } from "react-router-dom";
+import React, { useMemo } from "react";
+import { createHtmlPortalNode, InPortal } from "react-reverse-portal";
+import { Route, RouteComponentProps, Switch, useHistory } from "react-router-dom";
 import AuthenticationButton from "../Auth/Buttons/AuthenticationButton";
 import SignupButton from "../Auth/Buttons/SignUpButton";
 import ColorModeButton from "../Chakra/ColorModeButton";
 import { LinkButton } from "../Chakra/LinkButton";
 import FAIcon from "../Icons/FAIcon";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
+import MainMenuConferenceSections from "./MainMenuConferenceSections";
 import MainMenuDrawer from "./MainMenuDrawer";
 import { MenuStateContext, useMainMenu } from "./MainMenuState";
 import usePrimaryMenuButtons, { PrimaryMenuButtonsProvider } from "./usePrimaryMenuButtons";
@@ -183,6 +186,26 @@ function MenuBar({ isOpen }: { isOpen?: boolean }): JSX.Element {
 export default function MainMenu({ children }: Props): JSX.Element {
     const { isOpen, onOpen, onClose, onToggle } = useDisclosure();
 
+    const sidebarContentsPortal = useMemo(() => createHtmlPortalNode(), []);
+
+    const sidebarContents = useMemo(
+        () => (
+            <VStack align="stretch" spacing={0}>
+                <Route
+                    path="/conference/:confSlug"
+                    component={(
+                        props: RouteComponentProps<{
+                            confSlug: string;
+                        }>
+                    ) => (
+                        <MainMenuConferenceSections rootUrl={props.match.url} confSlug={props.match.params.confSlug} />
+                    )}
+                />
+            </VStack>
+        ),
+        []
+    );
+
     return (
         <MenuStateContext.Provider
             value={{
@@ -195,7 +218,8 @@ export default function MainMenu({ children }: Props): JSX.Element {
                 {children}
                 <MenuBar isOpen={isOpen} />
             </PrimaryMenuButtonsProvider>
-            <MainMenuDrawer isOpen={isOpen} />
+            <MainMenuDrawer isOpen={isOpen} portalNode={sidebarContentsPortal} />
+            <InPortal node={sidebarContentsPortal}>{sidebarContents}</InPortal>
         </MenuStateContext.Provider>
     );
 }

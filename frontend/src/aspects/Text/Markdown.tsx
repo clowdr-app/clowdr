@@ -158,7 +158,7 @@ export function Markdown(elProps?: {
                     if (ordered) styleType = "decimal";
                     if (depth === 1) styleType = "circle";
                     return (
-                        <List spacing={24} as={ordered ? "ol" : "ul"} styleType={styleType} pl={4} {...attrs}>
+                        <List as={ordered ? "ol" : "ul"} styleType={styleType} pl={4} {...attrs}>
                             {children}
                         </List>
                     );

@@ -4,9 +4,6 @@ interface MenuState {
     onOpen: () => void;
     onClose: () => void;
     onToggle: () => void;
-
-    // TODO: Menu heading
-    // TODO: Menu sections
 }
 
 export const MenuStateContext = React.createContext<MenuState | undefined>(undefined);

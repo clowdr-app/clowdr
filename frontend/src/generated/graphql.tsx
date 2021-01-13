@@ -16991,8 +16991,6 @@ export type Chat_ReadUpToIndex = {
   /** An object relationship */
   readonly chat: Chat_Chat;
   readonly chatId: Scalars['uuid'];
-  /** An object relationship */
-  readonly message: Chat_Message;
   readonly messageId: Scalars['Int'];
   /** A computed field, executes function "chat.unreadCount" */
   readonly unreadCount?: Maybe<Scalars['Int']>;
@@ -17070,7 +17068,6 @@ export type Chat_ReadUpToIndex_Bool_Exp = {
   readonly attendeeId?: Maybe<Uuid_Comparison_Exp>;
   readonly chat?: Maybe<Chat_Chat_Bool_Exp>;
   readonly chatId?: Maybe<Uuid_Comparison_Exp>;
-  readonly message?: Maybe<Chat_Message_Bool_Exp>;
   readonly messageId?: Maybe<Int_Comparison_Exp>;
   readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
 };
@@ -17092,7 +17089,6 @@ export type Chat_ReadUpToIndex_Insert_Input = {
   readonly attendeeId?: Maybe<Scalars['uuid']>;
   readonly chat?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
   readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly message?: Maybe<Chat_Message_Obj_Rel_Insert_Input>;
   readonly messageId?: Maybe<Scalars['Int']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -17159,7 +17155,6 @@ export type Chat_ReadUpToIndex_Order_By = {
   readonly attendeeId?: Maybe<Order_By>;
   readonly chat?: Maybe<Chat_Chat_Order_By>;
   readonly chatId?: Maybe<Order_By>;
-  readonly message?: Maybe<Chat_Message_Order_By>;
   readonly messageId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
@@ -26209,12 +26204,17 @@ export type Uuid_Comparison_Exp = {
   readonly _nin?: Maybe<ReadonlyArray<Scalars['uuid']>>;
 };
 
+export type SubdChatInfoFragment = { readonly __typename?: 'chat_Chat', readonly id: any, readonly contentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string> }>, readonly room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string }>, readonly readUpToIndices: ReadonlyArray<{ readonly __typename?: 'chat_ReadUpToIndex', readonly attendeeId: any, readonly chatId: any, readonly messageId: number, readonly unreadCount?: Maybe<number> }> };
+
 export type SubdChatsUnreadCountsSubscriptionVariables = Exact<{
   attendeeId: Scalars['uuid'];
 }>;
 
 
-export type SubdChatsUnreadCountsSubscription = { readonly __typename?: 'subscription_root', readonly subscribedUnreadCounts: ReadonlyArray<{ readonly __typename?: 'chat_ReadUpToIndex', readonly chatId: any, readonly messageId: number, readonly unreadCount?: Maybe<number> }> };
+export type SubdChatsUnreadCountsSubscription = { readonly __typename?: 'subscription_root', readonly chat_Subscription: ReadonlyArray<{ readonly __typename?: 'chat_Subscription', readonly attendeeId: any, readonly chatId: any, readonly chat: (
+      { readonly __typename?: 'chat_Chat' }
+      & SubdChatInfoFragment
+    ) }> };
 
 export type SelectNewMessagesQueryVariables = Exact<{
   where: Chat_Message_Bool_Exp;
@@ -26447,7 +26447,7 @@ export type SubscribeChatMutationVariables = Exact<{
 export type SubscribeChatMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Subscription?: Maybe<{ readonly __typename?: 'chat_Subscription_mutation_response', readonly returning: ReadonlyArray<(
       { readonly __typename?: 'chat_Subscription' }
       & SubscriptionDataFragment
-    )> }> };
+    )> }>, readonly insert_chat_ReadUpToIndex?: Maybe<{ readonly __typename?: 'chat_ReadUpToIndex_mutation_response', readonly affected_rows: number }> };
 
 export type UnsubscribeChatMutationVariables = Exact<{
   chatId: Scalars['uuid'];
@@ -27634,6 +27634,18 @@ export type SendRepeatConfirmationEmailMutationVariables = Exact<{
 
 export type SendRepeatConfirmationEmailMutation = { readonly __typename?: 'mutation_root', readonly invitationConfirmSendRepeatEmail?: Maybe<{ readonly __typename?: 'InvitationConfirmationEmailOutput', readonly sent: boolean }> };
 
+export type SidebarChatInfoFragment = { readonly __typename?: 'chat_Chat', readonly id: any, readonly enableAutoPin: boolean, readonly enableAutoSubscribe: boolean, readonly enableMandatoryPin: boolean, readonly enableMandatorySubscribe: boolean, readonly contentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string> }>, readonly nonDMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly priority: number, readonly roomPrivacyName: RoomPrivacy_Enum }>, readonly DMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly roomPeople: ReadonlyArray<{ readonly __typename?: 'RoomPerson', readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } }> }>, readonly readUpToIndices: ReadonlyArray<{ readonly __typename?: 'chat_ReadUpToIndex', readonly attendeeId: any, readonly chatId: any, readonly unreadCount?: Maybe<number> }> };
+
+export type PinnedChatsWithUnreadCountsSubscriptionVariables = Exact<{
+  attendeeId: Scalars['uuid'];
+}>;
+
+
+export type PinnedChatsWithUnreadCountsSubscription = { readonly __typename?: 'subscription_root', readonly chat_Pin: ReadonlyArray<{ readonly __typename?: 'chat_Pin', readonly attendeeId: any, readonly chatId: any, readonly wasManuallyPinned: boolean, readonly chat: (
+      { readonly __typename?: 'chat_Chat' }
+      & SidebarChatInfoFragment
+    ) }> };
+
 export type GetRoomMembersSubscriptionVariables = Exact<{
   roomId: Scalars['uuid'];
 }>;
@@ -27712,6 +27724,26 @@ export type UpdateCurrentUserLastSeenMutationVariables = Exact<{
 
 export type UpdateCurrentUserLastSeenMutation = { readonly __typename?: 'mutation_root', readonly update_OnlineStatus?: Maybe<{ readonly __typename?: 'OnlineStatus_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'OnlineStatus', readonly id: any, readonly lastSeen: any }> }> };
 
+export const SubdChatInfoFragmentDoc = gql`
+    fragment SubdChatInfo on chat_Chat {
+  id
+  contentGroup {
+    id
+    title
+    shortTitle
+  }
+  room {
+    id
+    name
+  }
+  readUpToIndices(where: {attendeeId: {_eq: $attendeeId}}) {
+    attendeeId
+    chatId
+    messageId
+    unreadCount
+  }
+}
+    `;
 export const ChatFlagDataFragmentDoc = gql`
     fragment ChatFlagData on chat_Flag {
   discussionChatId
@@ -28439,6 +28471,41 @@ export const RequiredItemFieldsFragmentDoc = gql`
   contentGroupTitle
 }
     `;
+export const SidebarChatInfoFragmentDoc = gql`
+    fragment SidebarChatInfo on chat_Chat {
+  id
+  contentGroup {
+    id
+    title
+    shortTitle
+  }
+  nonDMRoom: room(where: {roomPrivacyName: {_neq: DM}}) {
+    id
+    name
+    priority
+    roomPrivacyName
+  }
+  DMRoom: room(where: {roomPrivacyName: {_eq: DM}}) {
+    id
+    name
+    roomPeople {
+      attendee {
+        id
+        displayName
+      }
+    }
+  }
+  enableAutoPin
+  enableAutoSubscribe
+  enableMandatoryPin
+  enableMandatorySubscribe
+  readUpToIndices(where: {attendeeId: {_eq: $attendeeId}}) {
+    attendeeId
+    chatId
+    unreadCount
+  }
+}
+    `;
 export const RoomParticipantDetailsFragmentDoc = gql`
     fragment RoomParticipantDetails on RoomParticipant {
   attendeeId
@@ -28488,16 +28555,15 @@ export const AttendeeFieldsFragmentDoc = gql`
     `;
 export const SubdChatsUnreadCountsDocument = gql`
     subscription SubdChatsUnreadCounts($attendeeId: uuid!) {
-  subscribedUnreadCounts: chat_ReadUpToIndex(
-    where: {attendeeId: {_eq: $attendeeId}, chat: {subscriptions: {attendeeId: {_eq: $attendeeId}}}}
-    limit: 30
-  ) {
+  chat_Subscription(where: {attendeeId: {_eq: $attendeeId}}) {
+    attendeeId
     chatId
-    messageId
-    unreadCount
+    chat {
+      ...SubdChatInfo
+    }
   }
 }
-    `;
+    ${SubdChatInfoFragmentDoc}`;
 
 /**
  * __useSubdChatsUnreadCountsSubscription__
@@ -29255,6 +29321,12 @@ export const SubscribeChatDocument = gql`
     returning {
       ...SubscriptionData
     }
+  }
+  insert_chat_ReadUpToIndex(
+    objects: {chatId: $chatId, attendeeId: $attendeeId, messageId: -1}
+    on_conflict: {constraint: ReadUpToIndex_pkey, update_columns: []}
+  ) {
+    affected_rows
   }
 }
     ${SubscriptionDataFragmentDoc}`;
@@ -32940,6 +33012,40 @@ export function useSendRepeatConfirmationEmailMutation(baseOptions?: Apollo.Muta
 export type SendRepeatConfirmationEmailMutationHookResult = ReturnType<typeof useSendRepeatConfirmationEmailMutation>;
 export type SendRepeatConfirmationEmailMutationResult = Apollo.MutationResult<SendRepeatConfirmationEmailMutation>;
 export type SendRepeatConfirmationEmailMutationOptions = Apollo.BaseMutationOptions<SendRepeatConfirmationEmailMutation, SendRepeatConfirmationEmailMutationVariables>;
+export const PinnedChatsWithUnreadCountsDocument = gql`
+    subscription PinnedChatsWithUnreadCounts($attendeeId: uuid!) {
+  chat_Pin(where: {attendeeId: {_eq: $attendeeId}}) {
+    attendeeId
+    chatId
+    wasManuallyPinned
+    chat {
+      ...SidebarChatInfo
+    }
+  }
+}
+    ${SidebarChatInfoFragmentDoc}`;
+
+/**
+ * __usePinnedChatsWithUnreadCountsSubscription__
+ *
+ * To run a query within a React component, call `usePinnedChatsWithUnreadCountsSubscription` and pass it any options that fit your needs.
+ * When your component renders, `usePinnedChatsWithUnreadCountsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePinnedChatsWithUnreadCountsSubscription({
+ *   variables: {
+ *      attendeeId: // value for 'attendeeId'
+ *   },
+ * });
+ */
+export function usePinnedChatsWithUnreadCountsSubscription(baseOptions: Apollo.SubscriptionHookOptions<PinnedChatsWithUnreadCountsSubscription, PinnedChatsWithUnreadCountsSubscriptionVariables>) {
+        return Apollo.useSubscription<PinnedChatsWithUnreadCountsSubscription, PinnedChatsWithUnreadCountsSubscriptionVariables>(PinnedChatsWithUnreadCountsDocument, baseOptions);
+      }
+export type PinnedChatsWithUnreadCountsSubscriptionHookResult = ReturnType<typeof usePinnedChatsWithUnreadCountsSubscription>;
+export type PinnedChatsWithUnreadCountsSubscriptionResult = Apollo.SubscriptionResult<PinnedChatsWithUnreadCountsSubscription>;
 export const GetRoomMembersDocument = gql`
     subscription GetRoomMembers($roomId: uuid!) {
   Room_by_pk(id: $roomId) {

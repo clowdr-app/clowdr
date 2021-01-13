@@ -963,9 +963,6 @@
   - name: chat
     using:
       foreign_key_constraint_on: chatId
-  - name: message
-    using:
-      foreign_key_constraint_on: messageId
   computed_fields:
   - name: unreadCount
     definition:

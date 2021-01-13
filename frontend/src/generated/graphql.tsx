@@ -17866,6 +17866,241 @@ export enum Job_Queues_InvitationEmailJob_Update_Column {
   UpdatedAt = 'updatedAt'
 }
 
+/** columns and relationships of "job_queues.MediaPackageHarvestJob" */
+export type Job_Queues_MediaPackageHarvestJob = {
+  readonly __typename?: 'job_queues_MediaPackageHarvestJob';
+  /** An object relationship */
+  readonly conference: Conference;
+  readonly conferenceId: Scalars['uuid'];
+  readonly created_at: Scalars['timestamptz'];
+  /** An object relationship */
+  readonly event: Event;
+  readonly eventId: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
+  /** An object relationship */
+  readonly jobStatus: JobStatus;
+  readonly jobStatusName: JobStatus_Enum;
+  readonly mediaPackageHarvestJobId?: Maybe<Scalars['String']>;
+  readonly message?: Maybe<Scalars['String']>;
+  readonly updated_at: Scalars['timestamptz'];
+};
+
+/** aggregated selection of "job_queues.MediaPackageHarvestJob" */
+export type Job_Queues_MediaPackageHarvestJob_Aggregate = {
+  readonly __typename?: 'job_queues_MediaPackageHarvestJob_aggregate';
+  readonly aggregate?: Maybe<Job_Queues_MediaPackageHarvestJob_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Job_Queues_MediaPackageHarvestJob>;
+};
+
+/** aggregate fields of "job_queues.MediaPackageHarvestJob" */
+export type Job_Queues_MediaPackageHarvestJob_Aggregate_Fields = {
+  readonly __typename?: 'job_queues_MediaPackageHarvestJob_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Job_Queues_MediaPackageHarvestJob_Max_Fields>;
+  readonly min?: Maybe<Job_Queues_MediaPackageHarvestJob_Min_Fields>;
+};
+
+
+/** aggregate fields of "job_queues.MediaPackageHarvestJob" */
+export type Job_Queues_MediaPackageHarvestJob_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Job_Queues_MediaPackageHarvestJob_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "job_queues.MediaPackageHarvestJob" */
+export type Job_Queues_MediaPackageHarvestJob_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Job_Queues_MediaPackageHarvestJob_Max_Order_By>;
+  readonly min?: Maybe<Job_Queues_MediaPackageHarvestJob_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "job_queues.MediaPackageHarvestJob" */
+export type Job_Queues_MediaPackageHarvestJob_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Job_Queues_MediaPackageHarvestJob_Insert_Input>;
+  readonly on_conflict?: Maybe<Job_Queues_MediaPackageHarvestJob_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "job_queues.MediaPackageHarvestJob". All fields are combined with a logical 'AND'. */
+export type Job_Queues_MediaPackageHarvestJob_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Job_Queues_MediaPackageHarvestJob_Bool_Exp>>>;
+  readonly _not?: Maybe<Job_Queues_MediaPackageHarvestJob_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Job_Queues_MediaPackageHarvestJob_Bool_Exp>>>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly event?: Maybe<Event_Bool_Exp>;
+  readonly eventId?: Maybe<Uuid_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly jobStatus?: Maybe<JobStatus_Bool_Exp>;
+  readonly jobStatusName?: Maybe<JobStatus_Enum_Comparison_Exp>;
+  readonly mediaPackageHarvestJobId?: Maybe<String_Comparison_Exp>;
+  readonly message?: Maybe<String_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "job_queues.MediaPackageHarvestJob" */
+export enum Job_Queues_MediaPackageHarvestJob_Constraint {
+  /** unique or primary key constraint */
+  MediaPackageHarvestJobMediaPackageHarvestJobIdKey = 'MediaPackageHarvestJob_mediaPackageHarvestJobId_key',
+  /** unique or primary key constraint */
+  MediaPackageHarvestJobPkey = 'MediaPackageHarvestJob_pkey'
+}
+
+/** input type for inserting data into table "job_queues.MediaPackageHarvestJob" */
+export type Job_Queues_MediaPackageHarvestJob_Insert_Input = {
+  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly event?: Maybe<Event_Obj_Rel_Insert_Input>;
+  readonly eventId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly jobStatus?: Maybe<JobStatus_Obj_Rel_Insert_Input>;
+  readonly jobStatusName?: Maybe<JobStatus_Enum>;
+  readonly mediaPackageHarvestJobId?: Maybe<Scalars['String']>;
+  readonly message?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Job_Queues_MediaPackageHarvestJob_Max_Fields = {
+  readonly __typename?: 'job_queues_MediaPackageHarvestJob_max_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly eventId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly mediaPackageHarvestJobId?: Maybe<Scalars['String']>;
+  readonly message?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "job_queues.MediaPackageHarvestJob" */
+export type Job_Queues_MediaPackageHarvestJob_Max_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly eventId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly mediaPackageHarvestJobId?: Maybe<Order_By>;
+  readonly message?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Job_Queues_MediaPackageHarvestJob_Min_Fields = {
+  readonly __typename?: 'job_queues_MediaPackageHarvestJob_min_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly eventId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly mediaPackageHarvestJobId?: Maybe<Scalars['String']>;
+  readonly message?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "job_queues.MediaPackageHarvestJob" */
+export type Job_Queues_MediaPackageHarvestJob_Min_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly eventId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly mediaPackageHarvestJobId?: Maybe<Order_By>;
+  readonly message?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "job_queues.MediaPackageHarvestJob" */
+export type Job_Queues_MediaPackageHarvestJob_Mutation_Response = {
+  readonly __typename?: 'job_queues_MediaPackageHarvestJob_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Job_Queues_MediaPackageHarvestJob>;
+};
+
+/** input type for inserting object relation for remote table "job_queues.MediaPackageHarvestJob" */
+export type Job_Queues_MediaPackageHarvestJob_Obj_Rel_Insert_Input = {
+  readonly data: Job_Queues_MediaPackageHarvestJob_Insert_Input;
+  readonly on_conflict?: Maybe<Job_Queues_MediaPackageHarvestJob_On_Conflict>;
+};
+
+/** on conflict condition type for table "job_queues.MediaPackageHarvestJob" */
+export type Job_Queues_MediaPackageHarvestJob_On_Conflict = {
+  readonly constraint: Job_Queues_MediaPackageHarvestJob_Constraint;
+  readonly update_columns: ReadonlyArray<Job_Queues_MediaPackageHarvestJob_Update_Column>;
+  readonly where?: Maybe<Job_Queues_MediaPackageHarvestJob_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "job_queues.MediaPackageHarvestJob" */
+export type Job_Queues_MediaPackageHarvestJob_Order_By = {
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly event?: Maybe<Event_Order_By>;
+  readonly eventId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly jobStatus?: Maybe<JobStatus_Order_By>;
+  readonly jobStatusName?: Maybe<Order_By>;
+  readonly mediaPackageHarvestJobId?: Maybe<Order_By>;
+  readonly message?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "job_queues.MediaPackageHarvestJob" */
+export type Job_Queues_MediaPackageHarvestJob_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "job_queues.MediaPackageHarvestJob" */
+export enum Job_Queues_MediaPackageHarvestJob_Select_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  EventId = 'eventId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  JobStatusName = 'jobStatusName',
+  /** column name */
+  MediaPackageHarvestJobId = 'mediaPackageHarvestJobId',
+  /** column name */
+  Message = 'message',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "job_queues.MediaPackageHarvestJob" */
+export type Job_Queues_MediaPackageHarvestJob_Set_Input = {
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly eventId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly jobStatusName?: Maybe<JobStatus_Enum>;
+  readonly mediaPackageHarvestJobId?: Maybe<Scalars['String']>;
+  readonly message?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "job_queues.MediaPackageHarvestJob" */
+export enum Job_Queues_MediaPackageHarvestJob_Update_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  EventId = 'eventId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  JobStatusName = 'jobStatusName',
+  /** column name */
+  MediaPackageHarvestJobId = 'mediaPackageHarvestJobId',
+  /** column name */
+  Message = 'message',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
 /** columns and relationships of "job_queues.PublishVideoJob" */
 export type Job_Queues_PublishVideoJob = {
   readonly __typename?: 'job_queues_PublishVideoJob';
@@ -18562,6 +18797,10 @@ export type Mutation_Root = {
   readonly delete_job_queues_InvitationEmailJob?: Maybe<Job_Queues_InvitationEmailJob_Mutation_Response>;
   /** delete single row from the table: "job_queues.InvitationEmailJob" */
   readonly delete_job_queues_InvitationEmailJob_by_pk?: Maybe<Job_Queues_InvitationEmailJob>;
+  /** delete data from the table: "job_queues.MediaPackageHarvestJob" */
+  readonly delete_job_queues_MediaPackageHarvestJob?: Maybe<Job_Queues_MediaPackageHarvestJob_Mutation_Response>;
+  /** delete single row from the table: "job_queues.MediaPackageHarvestJob" */
+  readonly delete_job_queues_MediaPackageHarvestJob_by_pk?: Maybe<Job_Queues_MediaPackageHarvestJob>;
   /** delete data from the table: "job_queues.PublishVideoJob" */
   readonly delete_job_queues_PublishVideoJob?: Maybe<Job_Queues_PublishVideoJob_Mutation_Response>;
   /** delete single row from the table: "job_queues.PublishVideoJob" */
@@ -18822,6 +19061,10 @@ export type Mutation_Root = {
   readonly insert_job_queues_InvitationEmailJob?: Maybe<Job_Queues_InvitationEmailJob_Mutation_Response>;
   /** insert a single row into the table: "job_queues.InvitationEmailJob" */
   readonly insert_job_queues_InvitationEmailJob_one?: Maybe<Job_Queues_InvitationEmailJob>;
+  /** insert data into the table: "job_queues.MediaPackageHarvestJob" */
+  readonly insert_job_queues_MediaPackageHarvestJob?: Maybe<Job_Queues_MediaPackageHarvestJob_Mutation_Response>;
+  /** insert a single row into the table: "job_queues.MediaPackageHarvestJob" */
+  readonly insert_job_queues_MediaPackageHarvestJob_one?: Maybe<Job_Queues_MediaPackageHarvestJob>;
   /** insert data into the table: "job_queues.PublishVideoJob" */
   readonly insert_job_queues_PublishVideoJob?: Maybe<Job_Queues_PublishVideoJob_Mutation_Response>;
   /** insert a single row into the table: "job_queues.PublishVideoJob" */
@@ -19100,6 +19343,10 @@ export type Mutation_Root = {
   readonly update_job_queues_InvitationEmailJob?: Maybe<Job_Queues_InvitationEmailJob_Mutation_Response>;
   /** update single row of the table: "job_queues.InvitationEmailJob" */
   readonly update_job_queues_InvitationEmailJob_by_pk?: Maybe<Job_Queues_InvitationEmailJob>;
+  /** update data of the table: "job_queues.MediaPackageHarvestJob" */
+  readonly update_job_queues_MediaPackageHarvestJob?: Maybe<Job_Queues_MediaPackageHarvestJob_Mutation_Response>;
+  /** update single row of the table: "job_queues.MediaPackageHarvestJob" */
+  readonly update_job_queues_MediaPackageHarvestJob_by_pk?: Maybe<Job_Queues_MediaPackageHarvestJob>;
   /** update data of the table: "job_queues.PublishVideoJob" */
   readonly update_job_queues_PublishVideoJob?: Maybe<Job_Queues_PublishVideoJob_Mutation_Response>;
   /** update single row of the table: "job_queues.PublishVideoJob" */
@@ -19867,6 +20114,18 @@ export type Mutation_RootDelete_Job_Queues_InvitationEmailJobArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Job_Queues_InvitationEmailJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Job_Queues_MediaPackageHarvestJobArgs = {
+  where: Job_Queues_MediaPackageHarvestJob_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Job_Queues_MediaPackageHarvestJob_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -20774,6 +21033,20 @@ export type Mutation_RootInsert_Job_Queues_InvitationEmailJobArgs = {
 export type Mutation_RootInsert_Job_Queues_InvitationEmailJob_OneArgs = {
   object: Job_Queues_InvitationEmailJob_Insert_Input;
   on_conflict?: Maybe<Job_Queues_InvitationEmailJob_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Job_Queues_MediaPackageHarvestJobArgs = {
+  objects: ReadonlyArray<Job_Queues_MediaPackageHarvestJob_Insert_Input>;
+  on_conflict?: Maybe<Job_Queues_MediaPackageHarvestJob_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Job_Queues_MediaPackageHarvestJob_OneArgs = {
+  object: Job_Queues_MediaPackageHarvestJob_Insert_Input;
+  on_conflict?: Maybe<Job_Queues_MediaPackageHarvestJob_On_Conflict>;
 };
 
 
@@ -21892,6 +22165,20 @@ export type Mutation_RootUpdate_Job_Queues_InvitationEmailJob_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_Job_Queues_MediaPackageHarvestJobArgs = {
+  _set?: Maybe<Job_Queues_MediaPackageHarvestJob_Set_Input>;
+  where: Job_Queues_MediaPackageHarvestJob_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Job_Queues_MediaPackageHarvestJob_By_PkArgs = {
+  _set?: Maybe<Job_Queues_MediaPackageHarvestJob_Set_Input>;
+  pk_columns: Job_Queues_MediaPackageHarvestJob_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_Job_Queues_PublishVideoJobArgs = {
   _set?: Maybe<Job_Queues_PublishVideoJob_Set_Input>;
   where: Job_Queues_PublishVideoJob_Bool_Exp;
@@ -22321,6 +22608,12 @@ export type Query_Root = {
   readonly job_queues_InvitationEmailJob_aggregate: Job_Queues_InvitationEmailJob_Aggregate;
   /** fetch data from the table: "job_queues.InvitationEmailJob" using primary key columns */
   readonly job_queues_InvitationEmailJob_by_pk?: Maybe<Job_Queues_InvitationEmailJob>;
+  /** fetch data from the table: "job_queues.MediaPackageHarvestJob" */
+  readonly job_queues_MediaPackageHarvestJob: ReadonlyArray<Job_Queues_MediaPackageHarvestJob>;
+  /** fetch aggregated fields from the table: "job_queues.MediaPackageHarvestJob" */
+  readonly job_queues_MediaPackageHarvestJob_aggregate: Job_Queues_MediaPackageHarvestJob_Aggregate;
+  /** fetch data from the table: "job_queues.MediaPackageHarvestJob" using primary key columns */
+  readonly job_queues_MediaPackageHarvestJob_by_pk?: Maybe<Job_Queues_MediaPackageHarvestJob>;
   /** fetch data from the table: "job_queues.PublishVideoJob" */
   readonly job_queues_PublishVideoJob: ReadonlyArray<Job_Queues_PublishVideoJob>;
   /** fetch aggregated fields from the table: "job_queues.PublishVideoJob" */
@@ -23999,6 +24292,32 @@ export type Query_RootJob_Queues_InvitationEmailJob_By_PkArgs = {
 
 
 /** query root */
+export type Query_RootJob_Queues_MediaPackageHarvestJobArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_MediaPackageHarvestJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_MediaPackageHarvestJob_Order_By>>;
+  where?: Maybe<Job_Queues_MediaPackageHarvestJob_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootJob_Queues_MediaPackageHarvestJob_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_MediaPackageHarvestJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_MediaPackageHarvestJob_Order_By>>;
+  where?: Maybe<Job_Queues_MediaPackageHarvestJob_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootJob_Queues_MediaPackageHarvestJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
 export type Query_RootJob_Queues_PublishVideoJobArgs = {
   distinct_on?: Maybe<ReadonlyArray<Job_Queues_PublishVideoJob_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -24442,6 +24761,12 @@ export type Subscription_Root = {
   readonly job_queues_InvitationEmailJob_aggregate: Job_Queues_InvitationEmailJob_Aggregate;
   /** fetch data from the table: "job_queues.InvitationEmailJob" using primary key columns */
   readonly job_queues_InvitationEmailJob_by_pk?: Maybe<Job_Queues_InvitationEmailJob>;
+  /** fetch data from the table: "job_queues.MediaPackageHarvestJob" */
+  readonly job_queues_MediaPackageHarvestJob: ReadonlyArray<Job_Queues_MediaPackageHarvestJob>;
+  /** fetch aggregated fields from the table: "job_queues.MediaPackageHarvestJob" */
+  readonly job_queues_MediaPackageHarvestJob_aggregate: Job_Queues_MediaPackageHarvestJob_Aggregate;
+  /** fetch data from the table: "job_queues.MediaPackageHarvestJob" using primary key columns */
+  readonly job_queues_MediaPackageHarvestJob_by_pk?: Maybe<Job_Queues_MediaPackageHarvestJob>;
   /** fetch data from the table: "job_queues.PublishVideoJob" */
   readonly job_queues_PublishVideoJob: ReadonlyArray<Job_Queues_PublishVideoJob>;
   /** fetch aggregated fields from the table: "job_queues.PublishVideoJob" */
@@ -26115,6 +26440,32 @@ export type Subscription_RootJob_Queues_InvitationEmailJob_AggregateArgs = {
 
 /** subscription root */
 export type Subscription_RootJob_Queues_InvitationEmailJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
+export type Subscription_RootJob_Queues_MediaPackageHarvestJobArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_MediaPackageHarvestJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_MediaPackageHarvestJob_Order_By>>;
+  where?: Maybe<Job_Queues_MediaPackageHarvestJob_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootJob_Queues_MediaPackageHarvestJob_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_MediaPackageHarvestJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_MediaPackageHarvestJob_Order_By>>;
+  where?: Maybe<Job_Queues_MediaPackageHarvestJob_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootJob_Queues_MediaPackageHarvestJob_By_PkArgs = {
   id: Scalars['uuid'];
 };
 

@@ -82,14 +82,14 @@ export function Chat({ sources, onProfileModalOpened, onEmoteReceived, ...rest }
                     min: 1,
                     max: 1120,
                 },
-                sendCooloffPeriodMs: 3000,
+                sendCooloffPeriodMs: 2000,
                 editTimeoutSeconds: 60, // Allow 60s to start editing a sent message before locking out
                 showProfilePictures: true,
                 showPlaceholderProfilePictures: true,
                 enableProfileModal: true,
             },
             emoteConfig: {
-                sendCooloffPeriodMs: 20000,
+                sendCooloffPeriodMs: 10000,
                 editTimeoutSeconds: 0, // Once an emote is sent, don't allow it to be edited
             },
             reactionConfig: {
@@ -103,7 +103,7 @@ export function Chat({ sources, onProfileModalOpened, onEmoteReceived, ...rest }
                     min: 10,
                     max: 1120,
                 },
-                sendCooloffPeriodMs: 30000,
+                sendCooloffPeriodMs: 10000,
                 editTimeoutSeconds: 30, // Allow 30s to start editing a sent message before locking out
             },
             answerConfig: {
@@ -115,7 +115,7 @@ export function Chat({ sources, onProfileModalOpened, onEmoteReceived, ...rest }
                 editTimeoutSeconds: 0, // Do not allow editing of answers
             },
             pollConfig: {
-                sendCooloffPeriodMs: 60000,
+                sendCooloffPeriodMs: 20000,
                 editTimeoutSeconds: 60, // Allow 60s to start editing a sent message before locking out
                 questionLength: {
                     min: 10,

@@ -101,15 +101,24 @@ function MenuBar({ isOpen }: { isOpen?: boolean }): JSX.Element {
                                         </MenuItem>
                                     ) : undefined}
                                     {user && user.attendees.length > 0 ? (
-                                        <MenuItem
-                                            onClick={() => {
-                                                history.push(
-                                                    `/conference/${user.attendees[0].conference.slug}/profile`
-                                                );
-                                            }}
-                                        >
-                                            My Profile
-                                        </MenuItem>
+                                        <Route
+                                            path="/conference/:confSlug"
+                                            component={(
+                                                props: RouteComponentProps<{
+                                                    confSlug: string;
+                                                }>
+                                            ) => (
+                                                <MenuItem
+                                                    onClick={() => {
+                                                        history.push(
+                                                            `/conference/${props.match.params.confSlug}/profile`
+                                                        );
+                                                    }}
+                                                >
+                                                    My Profile
+                                                </MenuItem>
+                                            )}
+                                        />
                                     ) : undefined}
                                     <AuthenticationButton asMenuItem />
                                     <SignupButton asMenuItem />
@@ -164,13 +173,22 @@ function MenuBar({ isOpen }: { isOpen?: boolean }): JSX.Element {
                                 </LinkButton>
                             ) : undefined}
                             {user && user.attendees.length > 0 ? (
-                                <LinkButton
-                                    to={`/conference/${user.attendees[0].conference.slug}/profile`}
-                                    size="sm"
-                                    role="menuitem"
-                                >
-                                    My Profile
-                                </LinkButton>
+                                <Route
+                                    path="/conference/:confSlug"
+                                    component={(
+                                        props: RouteComponentProps<{
+                                            confSlug: string;
+                                        }>
+                                    ) => (
+                                        <LinkButton
+                                            to={`/conference/${props.match.params.confSlug}/profile`}
+                                            size="sm"
+                                            role="menuitem"
+                                        >
+                                            My Profile
+                                        </LinkButton>
+                                    )}
+                                />
                             ) : undefined}
                             <AuthenticationButton />
                             <SignupButton />

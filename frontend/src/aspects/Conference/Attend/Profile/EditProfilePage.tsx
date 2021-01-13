@@ -113,8 +113,8 @@ function EditProfilePageInner({ attendee }: { attendee: AttendeeContextT }): JSX
             {
                 key: "conference-home",
                 action: `/conference/${conference.slug}`,
-                text: "Home",
-                label: "Home",
+                text: conference.shortName,
+                label: conference.shortName,
             },
             {
                 key: "view-profile",
@@ -127,7 +127,14 @@ function EditProfilePageInner({ attendee }: { attendee: AttendeeContextT }): JSX
                 colorScheme: "green",
             },
         ]);
-    }, [attendee.id, attendee.userId, conference.slug, currentUser.user.id, setPrimaryMenuButtons]);
+    }, [
+        attendee.id,
+        attendee.userId,
+        conference.shortName,
+        conference.slug,
+        currentUser.user.id,
+        setPrimaryMenuButtons,
+    ]);
 
     const [editingAttendee, setEditingAttendee] = useState<AttendeeContextT>(attendee);
 

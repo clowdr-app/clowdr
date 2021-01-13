@@ -75,11 +75,11 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
             {
                 key: "conference-home",
                 action: `/conference/${conference.slug}`,
-                text: "Home",
-                label: "Home",
+                text: conference.shortName,
+                label: conference.shortName,
             },
         ]);
-    }, [conference.slug, setPrimaryMenuButtons]);
+    }, [conference.shortName, conference.slug, setPrimaryMenuButtons]);
 
     return (
         <RequireAtLeastOnePermissionWrapper

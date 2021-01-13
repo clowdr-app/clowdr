@@ -167,11 +167,11 @@ function ConferenceTimelineInner({
             {
                 key: "conference-home",
                 action: `/conference/${conference.slug}`,
-                text: "Home",
-                label: "Home",
+                text: conference.shortName,
+                label: conference.shortName,
             },
         ]);
-    }, [conference.slug, setPrimaryMenuButtons]);
+    }, [conference.shortName, conference.slug, setPrimaryMenuButtons]);
 
     const rooms = useMemo(() => {
         return [...unsortedRooms].sort((x, y) => x.name.localeCompare(y.name)).sort((x, y) => x.priority - y.priority);

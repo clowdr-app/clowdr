@@ -127,6 +127,7 @@ function IncognitoToggleButtonElements(props: {
                 ev.stopPropagation();
                 props.toggleIsIncognito();
             }}
+            size="sm"
         >
             {icon}
         </Button>

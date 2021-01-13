@@ -102,11 +102,11 @@ export default function RoomPage({ roomId }: { roomId: string }): JSX.Element {
             {
                 key: "conference-home",
                 action: `/conference/${conference.slug}`,
-                text: "Home",
-                label: "Home",
+                text: conference.shortName,
+                label: conference.shortName,
             },
         ]);
-    }, [conference.slug, setPrimaryMenuButtons]);
+    }, [conference.shortName, conference.slug, setPrimaryMenuButtons]);
 
     const { data: eventPeopleData, error } = useEventPeopleForRoomSubscription({
         variables: {

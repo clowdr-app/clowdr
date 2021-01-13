@@ -4,7 +4,6 @@ import "./App.css";
 import Routing from "./AppRouting";
 import EmojiMartProvider from "./aspects/Emoji/EmojiMartContext";
 import MainMenu from "./aspects/Menu/MainMenu";
-import { PrimaryMenuButtonsProvider } from "./aspects/Menu/usePrimaryMenuButtons";
 import CurrentUserProvider from "./aspects/Users/CurrentUser/CurrentUserProvider";
 import LastSeenProvider from "./aspects/Users/CurrentUser/OnlineStatus/LastSeenProvider";
 
@@ -27,7 +26,7 @@ function App(_props: AppProps): JSX.Element {
                 justifyContent="center"
                 alignItems="center"
             >
-                <PrimaryMenuButtonsProvider>
+                <MainMenu>
                     <Box overflowX="hidden" overflowY="auto" width="100%" mt={2} mb="auto" pb="40px">
                         <VStack spacing={5} width="100%">
                             <Routing />
@@ -36,8 +35,7 @@ function App(_props: AppProps): JSX.Element {
                             </Box>
                         </VStack>
                     </Box>
-                    <MainMenu />
-                </PrimaryMenuButtonsProvider>
+                </MainMenu>
             </Flex>
         ),
         []

@@ -36,8 +36,8 @@ function ViewProfilePageInner({ attendee }: { attendee: Attendee }): JSX.Element
                 {
                     key: "conference-home",
                     action: `/conference/${conference.slug}`,
-                    text: "Home",
-                    label: "Home",
+                    text: conference.shortName,
+                    label: conference.shortName,
                 },
                 {
                     key: "edit-profile",
@@ -54,8 +54,8 @@ function ViewProfilePageInner({ attendee }: { attendee: Attendee }): JSX.Element
                 {
                     key: "conference-home",
                     action: `/conference/${conference.slug}`,
-                    text: "Home",
-                    label: "Home",
+                    text: conference.shortName,
+                    label: conference.shortName,
                 },
             ]);
         }
@@ -63,6 +63,7 @@ function ViewProfilePageInner({ attendee }: { attendee: Attendee }): JSX.Element
         activePermissions,
         attendee.id,
         attendee.userId,
+        conference.shortName,
         conference.slug,
         maybeCurrentUser.user,
         setPrimaryMenuButtons,

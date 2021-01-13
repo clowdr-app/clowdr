@@ -22,7 +22,7 @@ export const PrimaryMenuButtonsContext = React.createContext<PrimaryMenuButtonsC
 export function PrimaryMenuButtonsProvider({
     children,
 }: {
-    children: string | JSX.Element | Array<JSX.Element>;
+    children: React.ReactNode | React.ReactNodeArray;
 }): JSX.Element {
     const st = useState<PrimaryMenuButtons>([]);
     return <PrimaryMenuButtonsContext.Provider value={st}>{children}</PrimaryMenuButtonsContext.Provider>;

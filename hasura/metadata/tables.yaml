@@ -4615,7 +4615,9 @@
                     role:
                       rolePermissions:
                         permissionName:
-                          _eq: CONFERENCE_MANAGE_ROLES
+                          _in:
+                          - CONFERENCE_MANAGE_ROLES
+                          - CONFERENCE_MANAGE_GROUPS
                 - groupAttendees:
                     attendee:
                       userId:
@@ -4670,7 +4672,9 @@
                       role:
                         rolePermissions:
                           permissionName:
-                            _eq: CONFERENCE_MANAGE_ROLES
+                            _in:
+                            - CONFERENCE_MANAGE_ROLES
+                            - CONFERENCE_MANAGE_GROUPS
                   - groupAttendees:
                       attendee:
                         userId:
@@ -4692,7 +4696,9 @@
                     role:
                       rolePermissions:
                         permissionName:
-                          _eq: CONFERENCE_MANAGE_ROLES
+                          _in:
+                          - CONFERENCE_MANAGE_ROLES
+                          - CONFERENCE_MANAGE_GROUPS
                 - groupAttendees:
                     attendee:
                       userId:
@@ -5636,7 +5642,9 @@
                     role:
                       rolePermissions:
                         permissionName:
-                          _eq: CONFERENCE_MANAGE_ROLES
+                          _in:
+                          - CONFERENCE_MANAGE_ROLES
+                          - CONFERENCE_MANAGE_GROUPS
                 - groupAttendees:
                     attendee:
                       userId:

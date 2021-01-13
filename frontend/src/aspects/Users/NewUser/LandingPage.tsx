@@ -9,7 +9,7 @@ import InviteCodeInput from "./InviteCodeInput";
 export default function NewUserLandingPage({ conferenceName }: { conferenceName?: string }): JSX.Element {
     useNoPrimaryMenuButtons();
 
-    const title = useTitle(conferenceName ?? "Clowdr");
+    const title = useTitle(conferenceName ?? "");
 
     return (
         <>

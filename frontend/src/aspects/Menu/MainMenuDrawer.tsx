@@ -7,12 +7,14 @@ import {
     DrawerOverlay,
     Flex,
     Heading,
+    Link,
     Spacer,
 } from "@chakra-ui/react";
 import React, { useCallback } from "react";
 import { HtmlPortalNode, OutPortal } from "react-reverse-portal";
 import IncognitoToggleButton from "../Users/CurrentUser/OnlineStatus/IncognitoToggleButton";
 import { useMainMenu } from "./MainMenuState";
+import { Link as ReactLink } from "react-router-dom";
 
 interface Props {
     isOpen: boolean;
@@ -40,7 +42,7 @@ export default function MainMenuDrawer({ isOpen, portalNode }: Props): JSX.Eleme
                         <DrawerHeader borderBottomWidth="1px">
                             <Flex direction="row" align="center">
                                 <Heading as="h2" height="auto" fontSize="lg">
-                                    Clowdr
+                                    <Link as={ReactLink} to="/" textDecoration="none">Clowdr</Link>
                                 </Heading>
                                 <Spacer />
                                 <IncognitoToggleButton />

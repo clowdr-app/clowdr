@@ -100,7 +100,7 @@ gql`
                 groupId
             }
         }
-        delete_GroupAttendee(where: { groupId: { _in: $deleteGroupIds } }) {
+        delete_GroupAttendee(where: { attendeeId: { _eq: $attendeeId }, groupId: { _in: $deleteGroupIds } }) {
             returning {
                 id
             }

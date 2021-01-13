@@ -93,7 +93,7 @@ export default function ImportPanel({
     useEffect(() => {
         if (importData?.insert_Attendee) {
             toast({
-                title: `Imported ${importData.insert_Attendee.affected_rows} people`,
+                title: `Imported ${importData.insert_Attendee.affected_rows / 2} people`,
                 status: "success",
                 duration: 3000,
                 position: "bottom",

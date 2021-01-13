@@ -332,7 +332,7 @@ export default function ManageConferencePeoplePage(): JSX.Element {
                 Manage {conference.shortName}
             </Heading>
             <Heading as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
-                Attendees
+                People
             </Heading>
             {(loadingAllGroups && !allGroups) || (loadingAllAttendees && !allAttendeesMap) ? (
                 <Spinner />

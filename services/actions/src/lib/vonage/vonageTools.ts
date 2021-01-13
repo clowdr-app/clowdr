@@ -1,5 +1,4 @@
 import { gql } from "@apollo/client/core";
-import { shortId } from "../../aws/awsClient";
 import {
     CreateEventParticipantStreamDocument,
     CreateRoomParticipantDocument,
@@ -12,6 +11,7 @@ import {
 } from "../../generated/graphql";
 import { apolloClient } from "../../graphqlClient";
 import { StreamData } from "../../types/vonage";
+import { shortId } from "../aws/awsClient";
 import Vonage from "./vonageClient";
 
 gql`

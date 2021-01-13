@@ -7,13 +7,13 @@ import path from "path";
 import R from "ramda";
 import { assertType, is } from "typescript-is";
 import { v4 as uuidv4 } from "uuid";
-import { S3, Transcribe } from "../aws/awsClient";
 import {
     ContentItemAddNewVersionDocument,
     CreateTranscriptionJobDocument,
     GetTranscriptionJobDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
+import { S3, Transcribe } from "./aws/awsClient";
 import { getS3TextObject } from "./aws/s3";
 import { getLatestVersion } from "./contentItem";
 import { AmazonTranscribeOutput, convertJsonToSrt } from "./subtitleConvert";

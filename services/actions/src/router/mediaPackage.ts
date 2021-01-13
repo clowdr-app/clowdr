@@ -1,15 +1,14 @@
-import { MediaLiveEvent } from "@clowdr-app/shared-types/build/sns/mediaLive";
-import parseArn from "@unbounce/parse-aws-arn";
+import { MediaPackageEvent } from "@clowdr-app/shared-types/build/sns/mediaPackage";
 import bodyParser from "body-parser";
 import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
-import { switchToFillerVideo } from "../lib/channels";
+import { completeMediaPackageHarvestJob, failMediaPackageHarvestJob } from "../handlers/recording";
 import { tryConfirmSubscription, validateSNSNotification } from "../lib/sns/sns";
 
 export const router = express.Router();
 
 // Unprotected routes
-router.post("/notify", bodyParser.text(), async (req: Request, res: Response) => {
+router.post("/harvest/notify", bodyParser.text(), async (req: Request, res: Response) => {
     console.log(req.originalUrl);
 
     try {
@@ -19,7 +18,7 @@ router.post("/notify", bodyParser.text(), async (req: Request, res: Response) =>
             return;
         }
 
-        if (message.TopicArn !== process.env.AWS_MEDIALIVE_NOTIFICATIONS_TOPIC_ARN) {
+        if (message.TopicArn !== process.env.AWS_MEDIAPACKAGE_HARVEST_NOTIFICATIONS_TOPIC_ARN) {
             console.log(`${req.originalUrl}: received SNS notification for the wrong topic`, message.TopicArn);
             res.status(403).json("Access denied");
             return;
@@ -34,30 +33,28 @@ router.post("/notify", bodyParser.text(), async (req: Request, res: Response) =>
         if (message.Type === "Notification") {
             console.log(`${req.originalUrl}: received message`, message.MessageId, message.Message);
 
-            /*if ("alert_type" in message.Message && message.Message.alert_type === "Video Not Detected") {
-                console.log("Video not detected ");
-            }*/
-
-            let event: MediaLiveEvent;
+            let event: MediaPackageEvent;
             try {
                 event = JSON.parse(message.Message);
-                assertType<MediaLiveEvent>(event);
+                assertType<MediaPackageEvent>(event);
             } catch (err) {
                 console.error(`${req.originalUrl}: Unrecognised notification message`, err);
                 res.status(500).json("Unrecognised notification message");
                 return;
             }
 
-            if (event["detail-type"] === "MediaLive Channel State Change" && event.detail.state === "RUNNING") {
-                const { resourceId } = parseArn(event.detail.channel_arn);
-
-                if (!resourceId) {
-                    console.error("Could not parse MediaLive channel resource ID from ARN", event.detail.channel_arn);
-                    throw new Error("Could not parse MediaLive channel resource ID from ARN");
+            if (event["detail-type"] === "MediaPackage HarvestJob Notification") {
+                const eventDetail = event.detail;
+                if (eventDetail.harvest_job.status === "COMPLETED") {
+                    await completeMediaPackageHarvestJob(eventDetail.harvest_job.id);
                 }
 
-                console.log("Switching channel to filler video loop", resourceId);
-                await switchToFillerVideo(resourceId);
+                if (eventDetail.harvest_job.status === "FAILED") {
+                    await failMediaPackageHarvestJob(
+                        eventDetail.harvest_job.id,
+                        "message" in eventDetail ? eventDetail.message : "No message found"
+                    );
+                }
             }
         }
 

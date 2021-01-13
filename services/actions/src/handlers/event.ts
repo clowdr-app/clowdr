@@ -10,6 +10,7 @@ import { createEventEndTrigger, createEventStartTrigger } from "../lib/event";
 import { sendFailureEmail } from "../lib/logging/failureEmails";
 import { startEventBroadcast, stopEventBroadcasts } from "../lib/vonage/vonageTools";
 import { EventData, Payload } from "../types/hasura/event";
+import { createMediaPackageHarvestJob } from "./recording";
 
 export async function handleEventUpdated(payload: Payload<EventData>): Promise<void> {
     const oldRow = payload.event.data.old;
@@ -161,6 +162,7 @@ gql`
             id
             startTime
             endTime
+            conferenceId
             intendedRoomModeName
         }
     }
@@ -211,18 +213,39 @@ export async function handleEventEndNotification(eventId: string, endTime: strin
         const preloadMillis = 1000;
         const waitForMillis = Math.max(endTimeMillis - nowMillis - preloadMillis, 0);
         const eventId = result.data.Event_by_pk.id;
+        const conferenceId = result.data.Event_by_pk.conferenceId;
         const intendedRoomModeName = result.data.Event_by_pk.intendedRoomModeName;
 
         setTimeout(async () => {
-            insertChatDuplicationMarkers(eventId, false);
+            try {
+                insertChatDuplicationMarkers(eventId, false);
+            } catch (e) {
+                console.error("Failed to insert chat duplication markers", eventId, e);
+            }
 
             if (![RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(intendedRoomModeName)) {
                 // No RTMP broadcast to be stopped
                 return;
             }
 
-            await stopEventBroadcasts(eventId);
+            try {
+                await stopEventBroadcasts(eventId);
+            } catch (e) {
+                console.error("Failed to stop event broadcasts", eventId, e);
+            }
         }, waitForMillis);
+
+        const harvestJobWaitForMillis = Math.max(endTimeMillis - nowMillis + 5000, 0);
+
+        setTimeout(async () => {
+            try {
+                if ([RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(intendedRoomModeName)) {
+                    await createMediaPackageHarvestJob(eventId, conferenceId);
+                }
+            } catch (e) {
+                console.error("Failed to create MediaPackage harvest job", eventId, e);
+            }
+        }, harvestJobWaitForMillis);
     } else {
         console.log("Event stop notification did not match current event end time, skipping.", eventId, endTime);
     }

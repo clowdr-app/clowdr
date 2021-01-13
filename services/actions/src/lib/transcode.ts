@@ -22,9 +22,9 @@ import assert from "assert";
 import R from "ramda";
 import { is } from "typescript-is";
 import { v4 as uuidv4 } from "uuid";
-import { ElasticTranscoder, MediaConvert } from "../aws/awsClient";
 import { ContentItemAddNewVersionDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
+import { ElasticTranscoder, MediaConvert } from "./aws/awsClient";
 import { addNewContentItemVersion, createNewVersionFromPreviewTranscode, getLatestVersion } from "./contentItem";
 
 interface StartTranscodeOutput {

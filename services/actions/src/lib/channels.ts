@@ -3,7 +3,6 @@ import { FollowPoint, ScheduleAction } from "@aws-sdk/client-medialive";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
 import R from "ramda";
-import { CloudFront, MediaLive, MediaPackage, shortId } from "../aws/awsClient";
 import {
     CreateMediaLiveChannelDocument,
     DeleteMediaLiveChannelDocument,
@@ -27,6 +26,7 @@ import {
     getMediaLiveChannelState,
 } from "../lib/aws/mediaLive";
 import { createChannel as createMediaPackageChannel, createOriginEndpoint } from "../lib/aws/mediaPackage";
+import { CloudFront, MediaLive, MediaPackage, shortId } from "./aws/awsClient";
 import { getConferenceConfiguration } from "./conferenceConfiguration";
 
 gql`

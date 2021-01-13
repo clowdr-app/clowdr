@@ -14,7 +14,6 @@ import { htmlToText } from "html-to-text";
 import R from "ramda";
 import { is } from "typescript-is";
 import { v4 as uuidv4 } from "uuid";
-import { S3 } from "../aws/awsClient";
 import {
     ContentItemAddNewVersionDocument,
     CreateContentItemDocument,
@@ -29,6 +28,7 @@ import {
     UploaderPartsFragment,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
+import { S3 } from "../lib/aws/awsClient";
 import { getLatestVersion } from "../lib/contentItem";
 import { callWithRetry } from "../utils";
 import { insertEmails } from "./email";

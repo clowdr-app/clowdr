@@ -62,7 +62,7 @@ function areMessageDatasEqual(type: Chat_MessageType_Enum, x: MessageData, y: Me
     }
 }
 
-function areReactionsDataEqual(x: ReactionData, y: ReactionData): boolean {
+function areReactionsDataEqual(_x: ReactionData, _y: ReactionData): boolean {
     // TODO: Compare poll data
     return true;
 }

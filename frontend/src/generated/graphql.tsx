@@ -26209,6 +26209,23 @@ export type Uuid_Comparison_Exp = {
   readonly _nin?: Maybe<ReadonlyArray<Scalars['uuid']>>;
 };
 
+export type SubdChatsUnreadCountsSubscriptionVariables = Exact<{
+  attendeeId: Scalars['uuid'];
+}>;
+
+
+export type SubdChatsUnreadCountsSubscription = { readonly __typename?: 'subscription_root', readonly subscribedUnreadCounts: ReadonlyArray<{ readonly __typename?: 'chat_ReadUpToIndex', readonly chatId: any, readonly messageId: number, readonly unreadCount?: Maybe<number> }> };
+
+export type SelectNewMessagesQueryVariables = Exact<{
+  where: Chat_Message_Bool_Exp;
+}>;
+
+
+export type SelectNewMessagesQuery = { readonly __typename?: 'query_root', readonly chat_Message: ReadonlyArray<(
+    { readonly __typename?: 'chat_Message' }
+    & ChatMessageDataFragment
+  )> };
+
 export type SendChatMessageMutationVariables = Exact<{
   chatId: Scalars['uuid'];
   senderId: Scalars['uuid'];
@@ -28469,6 +28486,73 @@ export const AttendeeFieldsFragmentDoc = gql`
   }
 }
     `;
+export const SubdChatsUnreadCountsDocument = gql`
+    subscription SubdChatsUnreadCounts($attendeeId: uuid!) {
+  subscribedUnreadCounts: chat_ReadUpToIndex(
+    where: {attendeeId: {_eq: $attendeeId}, chat: {subscriptions: {attendeeId: {_eq: $attendeeId}}}}
+    limit: 30
+  ) {
+    chatId
+    messageId
+    unreadCount
+  }
+}
+    `;
+
+/**
+ * __useSubdChatsUnreadCountsSubscription__
+ *
+ * To run a query within a React component, call `useSubdChatsUnreadCountsSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useSubdChatsUnreadCountsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubdChatsUnreadCountsSubscription({
+ *   variables: {
+ *      attendeeId: // value for 'attendeeId'
+ *   },
+ * });
+ */
+export function useSubdChatsUnreadCountsSubscription(baseOptions: Apollo.SubscriptionHookOptions<SubdChatsUnreadCountsSubscription, SubdChatsUnreadCountsSubscriptionVariables>) {
+        return Apollo.useSubscription<SubdChatsUnreadCountsSubscription, SubdChatsUnreadCountsSubscriptionVariables>(SubdChatsUnreadCountsDocument, baseOptions);
+      }
+export type SubdChatsUnreadCountsSubscriptionHookResult = ReturnType<typeof useSubdChatsUnreadCountsSubscription>;
+export type SubdChatsUnreadCountsSubscriptionResult = Apollo.SubscriptionResult<SubdChatsUnreadCountsSubscription>;
+export const SelectNewMessagesDocument = gql`
+    query SelectNewMessages($where: chat_Message_bool_exp!) {
+  chat_Message(order_by: {id: desc}, where: $where) {
+    ...ChatMessageData
+  }
+}
+    ${ChatMessageDataFragmentDoc}`;
+
+/**
+ * __useSelectNewMessagesQuery__
+ *
+ * To run a query within a React component, call `useSelectNewMessagesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectNewMessagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectNewMessagesQuery({
+ *   variables: {
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useSelectNewMessagesQuery(baseOptions: Apollo.QueryHookOptions<SelectNewMessagesQuery, SelectNewMessagesQueryVariables>) {
+        return Apollo.useQuery<SelectNewMessagesQuery, SelectNewMessagesQueryVariables>(SelectNewMessagesDocument, baseOptions);
+      }
+export function useSelectNewMessagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectNewMessagesQuery, SelectNewMessagesQueryVariables>) {
+          return Apollo.useLazyQuery<SelectNewMessagesQuery, SelectNewMessagesQueryVariables>(SelectNewMessagesDocument, baseOptions);
+        }
+export type SelectNewMessagesQueryHookResult = ReturnType<typeof useSelectNewMessagesQuery>;
+export type SelectNewMessagesLazyQueryHookResult = ReturnType<typeof useSelectNewMessagesLazyQuery>;
+export type SelectNewMessagesQueryResult = Apollo.QueryResult<SelectNewMessagesQuery, SelectNewMessagesQueryVariables>;
 export const SendChatMessageDocument = gql`
     mutation SendChatMessage($chatId: uuid!, $senderId: uuid!, $type: chat_MessageType_enum!, $message: String!, $data: jsonb = {}, $isPinned: Boolean = false) {
   insert_chat_Message(

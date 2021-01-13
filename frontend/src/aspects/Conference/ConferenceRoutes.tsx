@@ -2,6 +2,7 @@ import React from "react";
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import { Permission_Enum } from "../../generated/graphql";
 import { Chat } from "../Chat/Chat";
+import { ChatNotificationsProvider } from "../Chat/ChatNotifications";
 import { ChatDuplicationFlags } from "../Chat/Configuration";
 import PageNotFound from "../Errors/PageNotFound";
 import PageNotImplemented from "../Errors/PageNotImplemented";
@@ -226,9 +227,11 @@ export default function ConferenceRoutes({ confSlug, rootUrl }: { confSlug: stri
             <CurrentUserGroupsRolesPermissionsProvider>
                 <ConferenceCurrentUserActivePermissionsProvider>
                     <CurrentAttendeeProvider>
-                        <RoomParticipantsProvider>
-                            <ConferenceRoutesInner rootUrl={rootUrl} />
-                        </RoomParticipantsProvider>
+                        <ChatNotificationsProvider onUnreadCountsChange={() => { /* TODO */ }}>
+                            <RoomParticipantsProvider>
+                                <ConferenceRoutesInner rootUrl={rootUrl} />
+                            </RoomParticipantsProvider>
+                        </ChatNotificationsProvider>
                     </CurrentAttendeeProvider>
                 </ConferenceCurrentUserActivePermissionsProvider>
             </CurrentUserGroupsRolesPermissionsProvider>

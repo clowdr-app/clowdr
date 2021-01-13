@@ -216,9 +216,10 @@ export default function MainMenuConferenceSections({
 }): JSX.Element {
     const user = useMaybeCurrentUser();
     if (user.user && user.user.attendees.length > 0) {
-        return (
-            <MainMenuConferenceSections_Inner rootUrl={rootUrl} confSlug={confSlug} attendee={user.user.attendees[0]} />
-        );
+        const attendee = user.user.attendees.find((x) => x.conference.slug === confSlug);
+        if (attendee) {
+            return <MainMenuConferenceSections_Inner rootUrl={rootUrl} confSlug={confSlug} attendee={attendee} />;
+        }
     }
     return <></>;
 }

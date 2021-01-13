@@ -1,4 +1,4 @@
-import { CloudFront, shortId } from "../../aws/awsClient";
+import { CloudFront, shortId } from "./awsClient";
 import { OriginEndpoint } from "./mediaPackage";
 
 export interface Distribution {

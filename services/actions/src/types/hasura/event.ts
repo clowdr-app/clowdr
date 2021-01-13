@@ -181,3 +181,11 @@ export interface EventPersonData extends BaseData {
     originatingDataId: string | null;
     conferenceId: string;
 }
+
+export interface MediaPackageHarvestJob extends BaseData {
+    eventId: string;
+    jobStatusName: JobStatus_Enum;
+    message: string | null;
+    mediaPackageHarvestJobId: string | null;
+    conferenceId: string;
+}

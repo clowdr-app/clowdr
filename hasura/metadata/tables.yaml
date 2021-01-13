@@ -1216,6 +1216,43 @@
       backend_only: false
 - table:
     schema: job_queues
+    name: MediaPackageHarvestJob
+  object_relationships:
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  - name: event
+    using:
+      foreign_key_constraint_on: eventId
+  - name: jobStatus
+    using:
+      foreign_key_constraint_on: jobStatusName
+  event_triggers:
+  - name: MediaPackageHarvestJobUpdated
+    definition:
+      enable_manual: true
+      insert:
+        columns: '*'
+      update:
+        columns:
+        - jobStatusName
+        - mediaPackageHarvestJobId
+        - message
+        - created_at
+        - updated_at
+        - conferenceId
+        - eventId
+        - id
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{ACTION_BASE_URL}}/mediaPackageHarvestJob/updated'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+- table:
+    schema: job_queues
     name: PublishVideoJob
   configuration:
     custom_root_fields: {}

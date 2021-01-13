@@ -11,7 +11,7 @@ import { Transcribe } from "@aws-sdk/client-transcribe";
 import { fromEnv } from "@aws-sdk/credential-provider-env";
 import assert from "assert";
 import { customAlphabet } from "nanoid";
-import { getHostUrl } from "../utils";
+import { getHostUrl } from "../../utils";
 
 assert(process.env.AWS_PREFIX, "Missing AWS_PREFIX environment variable");
 assert(process.env.AWS_ACCESS_KEY_ID, "Missing AWS_ACCESS_KEY_ID environment variable");
@@ -44,6 +44,11 @@ assert(
 assert(
     process.env.AWS_MEDIALIVE_INPUT_SECURITY_GROUP_ID,
     "Missing AWS_MEDIALIVE_INPUT_SECURITY_GROUP_ID environment variable"
+);
+assert(process.env.AWS_MEDIAPACKAGE_SERVICE_ROLE_ARN, "Missing AWS_MEDIAPACKAGE_SERVICE_ROLE_ARN environment variable");
+assert(
+    process.env.AWS_MEDIAPACKAGE_HARVEST_NOTIFICATIONS_TOPIC_ARN,
+    "Missing AWS_MEDIAPACKAGE_HARVEST_NOTIFICATIONS_TOPIC_ARN environment variable"
 );
 
 const credentials = fromEnv();
@@ -196,6 +201,22 @@ async function initialiseAwsClient(): Promise<void> {
 
     if (!mediaLiveSubscribeResult.SubscriptionArn) {
         throw new Error("Could not subscribe to MediaLive notifications");
+    }
+
+    // Subscribe to MediaPackage Harvest SNS topic
+    const mediaPackageHarvestNotificationUrl = new URL(getHostUrl());
+    mediaPackageHarvestNotificationUrl.pathname = "/mediaPackage/harvest/notify";
+
+    console.log("Subscribing to SNS topic: MediaPackage harvest job notifications");
+    const mediaPackageHarvestSubscribeResult = await sns.subscribe({
+        Protocol: "https",
+        TopicArn: process.env.AWS_MEDIAPACKAGE_HARVEST_NOTIFICATIONS_TOPIC_ARN,
+        Endpoint: mediaPackageHarvestNotificationUrl.toString(),
+    });
+    console.log("Subscribed to SNS topic: MediaPackage harvest notifications");
+
+    if (!mediaPackageHarvestSubscribeResult.SubscriptionArn) {
+        throw new Error("Could not subscribe to MediaPackage harvest notifications");
     }
 }
 

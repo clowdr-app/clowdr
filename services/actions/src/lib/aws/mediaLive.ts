@@ -34,10 +34,11 @@ import {
     H264TemporalAq,
     H264TimecodeInsertionBehavior,
     InputSourceEndBehavior,
+    TimecodeConfigSource,
     VideoDescriptionRespondToAfd,
     VideoDescriptionScalingBehavior,
 } from "@aws-sdk/client-medialive";
-import { MediaLive, shortId } from "../../aws/awsClient";
+import { MediaLive, shortId } from "./awsClient";
 
 export enum ChannelState {
     CREATE_FAILED = "CREATE_FAILED",
@@ -343,7 +344,7 @@ export async function createChannel(
                     },
                 },
             ],
-            TimecodeConfig: { Source: "EMBEDDED" },
+            TimecodeConfig: { Source: TimecodeConfigSource.SYSTEMCLOCK },
             VideoDescriptions: [
                 {
                     CodecSettings: {

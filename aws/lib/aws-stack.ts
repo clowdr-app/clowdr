@@ -119,6 +119,22 @@ export class AwsStack extends cdk.Stack {
         );
         mediaLiveAccessRole.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonSSMReadOnlyAccess"));
 
+        // Create a role to be used by MediaPackage
+        const mediaPackageAccessRole = new iam.Role(this, "MediaPackageRole", {
+            assumedBy: new iam.ServicePrincipal("mediapackage.amazonaws.com"),
+        });
+
+        // Allow the actions user to pass the MediaPackageRole to MediaPackage
+        mediaPackageAccessRole.grantPassRole(user);
+
+        mediaPackageAccessRole.addToPolicy(
+            new iam.PolicyStatement({
+                actions: ["s3:PutObject", "s3:ListBucket", "s3:GetBucketLocation"],
+                effect: iam.Effect.ALLOW,
+                resources: [bucket.bucketArn, `${bucket.bucketArn}/*`],
+            })
+        );
+
         // Create a role to be used by MediaConvert
         const mediaConvertAccessRole = new iam.Role(this, "MediaConvertRole", {
             assumedBy: new iam.ServicePrincipal("mediaconvert.amazonaws.com"),
@@ -269,6 +285,53 @@ export class AwsStack extends cdk.Stack {
         const mediaLiveLogGroup = new logs.LogGroup(this, "MediaLiveLogGroup", {});
         mediaLiveEventRule.addTarget(new targets.CloudWatchLogGroup(mediaLiveLogGroup));
 
+        // MediaPackage harvest notifications
+        const mediaPackageHarvestNotificationsTopic = new sns.Topic(this, "MediaPackageHarvestNotifications");
+        mediaPackageHarvestNotificationsTopic.grantPublish({
+            grantPrincipal: new iam.ArnPrincipal(mediaPackageAccessRole.roleArn),
+        });
+        mediaPackageHarvestNotificationsTopic.grantPublish({
+            grantPrincipal: new iam.ServicePrincipal("events.amazonaws.com"),
+        });
+        mediaPackageHarvestNotificationsTopic.addToResourcePolicy(
+            new iam.PolicyStatement({
+                actions: [
+                    "SNS:Subscribe",
+                    "SNS:ListSubscriptionsByTopic",
+                    "SNS:DeleteTopic",
+                    "SNS:GetTopicAttributes",
+                    "SNS:Publish",
+                    "SNS:RemovePermission",
+                    "SNS:AddPermission",
+                    "SNS:Receive",
+                    "SNS:SetTopicAttributes",
+                ],
+                principals: [
+                    new iam.ServicePrincipal("events.amazonaws.com"),
+                    new iam.ArnPrincipal(mediaPackageAccessRole.roleArn),
+                ],
+                resources: [mediaPackageHarvestNotificationsTopic.topicArn],
+                effect: iam.Effect.ALLOW,
+            })
+        );
+        mediaPackageHarvestNotificationsTopic.addToResourcePolicy(
+            new iam.PolicyStatement({
+                actions: ["SNS:Subscribe"],
+                principals: [new iam.ArnPrincipal(user.userArn)],
+                resources: [mediaPackageHarvestNotificationsTopic.topicArn],
+                effect: iam.Effect.ALLOW,
+            })
+        );
+        events.EventBus.grantPutEvents(new iam.ServicePrincipal("mediapackage.amazonaws.com"));
+        const mediaPackageHarvestEventRule = new events.Rule(this, "MediaPackageHarvestEventRule", {
+            enabled: true,
+        });
+        mediaPackageHarvestEventRule.addEventPattern({
+            source: ["aws.mediapackage"],
+            detailType: ["MediaPackage HarvestJob Notification"],
+        });
+        mediaPackageHarvestEventRule.addTarget(new targets.SnsTopic(mediaPackageHarvestNotificationsTopic));
+
         // Transcribe notifications
         const transcribeNotificationsTopic = new sns.Topic(this, "TranscribeNotifications");
         transcribeNotificationsTopic.grantPublish({
@@ -337,6 +400,10 @@ export class AwsStack extends cdk.Stack {
             value: mediaLiveAccessRole.roleArn,
         });
 
+        new cdk.CfnOutput(this, "MediaPackageRoleArn", {
+            value: mediaPackageAccessRole.roleArn,
+        });
+
         new cdk.CfnOutput(this, "TranscribeServiceRoleArn", {
             value: transcribeAccessRole.roleArn,
         });
@@ -360,6 +427,10 @@ export class AwsStack extends cdk.Stack {
 
         new cdk.CfnOutput(this, "MediaLiveNotificationsTopic", {
             value: mediaLiveNotificationsTopic.topicArn,
+        });
+
+        new cdk.CfnOutput(this, "MediaPackageHarvestNotificationsTopic", {
+            value: mediaPackageHarvestNotificationsTopic.topicArn,
         });
 
         // Elemental

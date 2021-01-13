@@ -2,7 +2,6 @@ import sgMail from "@sendgrid/mail";
 import assert from "assert";
 import bodyParser from "body-parser";
 import express, { Request, Response } from "express";
-import { initialiseAwsClient } from "./aws/awsClient";
 import { AuthenticatedRequest } from "./checkScopes";
 import handlerEcho from "./handlers/echo";
 import { processEmailsJobQueue } from "./handlers/email";
@@ -15,6 +14,7 @@ import {
 } from "./handlers/invitation";
 import protectedEchoHandler from "./handlers/protectedEcho";
 import { processSendSubmissionRequestsJobQueue } from "./handlers/upload";
+import { initialiseAwsClient } from "./lib/aws/awsClient";
 import { checkEventSecret } from "./middlewares/checkEventSecret";
 import { checkJwt } from "./middlewares/checkJwt";
 import { checkUserScopes } from "./middlewares/checkScopes";
@@ -31,6 +31,8 @@ import { router as eventRoomJoinRequestRouter } from "./router/eventRoomJoinRequ
 import { router as eventVonageSessionRouter } from "./router/eventVonageSession";
 import { router as mediaConvertRouter } from "./router/mediaConvert";
 import { router as mediaLiveRouter } from "./router/mediaLive";
+import { router as mediaPackageRouter } from "./router/mediaPackage";
+import { router as mediaPackageHarvestJobRouter } from "./router/mediaPackageHarvestJob";
 import { router as openshotRouter } from "./router/openshot";
 import { router as profileRouter } from "./router/profile";
 import { router as roomRouter } from "./router/room";
@@ -70,6 +72,7 @@ app.use("/mediaConvert", mediaConvertRouter);
 app.use("/amazonTranscribe", amazonTranscribeRouter);
 app.use("/elasticTranscoder", elasticTranscoderRouter);
 app.use("/mediaLive", mediaLiveRouter);
+app.use("/mediaPackage", mediaPackageRouter);
 
 app.use("/vonage", vonageRouter);
 
@@ -82,6 +85,7 @@ app.use("/room", roomRouter);
 app.use("/eventVonageSession", eventVonageSessionRouter);
 app.use("/eventRoomJoinRequest", eventRoomJoinRequestRouter);
 app.use("/eventPerson", eventPersonRouter);
+app.use("/mediaPackageHarvestJob", mediaPackageHarvestJobRouter);
 
 app.use("/channels", channelsRouter);
 

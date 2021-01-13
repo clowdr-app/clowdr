@@ -5832,6 +5832,9 @@
   - name: originatingData
     using:
       foreign_key_constraint_on: originatingDataId
+  - name: originatingEvent
+    using:
+      foreign_key_constraint_on: originatingEventId
   - name: roomPrivacy
     using:
       foreign_key_constraint_on: roomPrivacyName
@@ -5916,6 +5919,7 @@
       - id
       - name
       - originatingDataId
+      - originatingEventId
       - priority
       - roomPrivacyName
       filter:
@@ -5946,6 +5950,7 @@
       - mediaLiveChannelId
       - name
       - originatingDataId
+      - originatingEventId
       - priority
       - publicVonageSessionId
       - roomPrivacyName

@@ -9,6 +9,7 @@ import { Chat } from "../../../Chat/Chat";
 import { ChatDuplicationFlags, ChatSources } from "../../../Chat/Configuration";
 import { ContentGroupSummary } from "../Content/ContentGroupSummary";
 import { BreakoutVonageRoom } from "./BreakoutVonageRoom";
+import { EventEndControls } from "./EventEndControls";
 import { HandUpButton } from "./HandUpButton";
 import { RoomBackstage } from "./RoomBackstage";
 import { RoomControlBar } from "./RoomControlBar";
@@ -156,7 +157,7 @@ export function Room({
                     <></>
                 )}
 
-                {hlsUri && secondsUntilBroadcastEvent < 180 ? (
+                {hlsUri && withinThreeMinutesOfBroadcastEvent ? (
                     <Box display={backstage ? "none" : "block"}>
                         <ReactPlayer
                             width="100%"
@@ -164,7 +165,9 @@ export function Room({
                             url={hlsUri}
                             config={{
                                 file: {
-                                    hlsOptions: {},
+                                    hlsOptions: {
+                                        liveDurationInfinity: true,
+                                    },
                                 },
                             }}
                             playing={
@@ -181,7 +184,7 @@ export function Room({
                     <></>
                 )}
 
-                {secondsUntilNonBreakoutEvent > 180 ? (
+                {secondsUntilNonBreakoutEvent > 180 && !withinThreeMinutesOfBroadcastEvent ? (
                     <Box display={backstage ? "none" : "block"} bgColor={bgColour} p={2} pt={5} borderRadius="md">
                         <BreakoutVonageRoom room={roomDetails} />
                     </Box>
@@ -256,6 +259,7 @@ export function Room({
                 ) : (
                     <>No chat found for this room.</>
                 )}
+                <EventEndControls currentRoomEvent={currentRoomEvent} />
             </VStack>
         </HStack>
     );

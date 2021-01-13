@@ -13,12 +13,18 @@ import { Payload, RoomData } from "../types/hasura/event";
 export async function handleRoomCreated(payload: Payload<RoomData>): Promise<void> {
     assert(payload.event.data.new, "Expected new row data");
 
-    await createRoomVonageSession(payload.event.data.new.id);
-    await addUserToRoomPeople(
-        payload.event.session_variables["x-hasura-user-id"],
-        payload.event.data.new.id,
-        RoomPersonRole_Enum.Admin
-    );
+    if (!payload.event.data.new.publicVonageSessionId) {
+        await createRoomVonageSession(payload.event.data.new.id);
+    }
+
+    // If room was created by a user, add them as an admin
+    if ("x-hasura-user-id" in payload.event.session_variables) {
+        await addUserToRoomPeople(
+            payload.event.session_variables["x-hasura-user-id"],
+            payload.event.data.new.id,
+            RoomPersonRole_Enum.Admin
+        );
+    }
 }
 
 async function createRoomVonageSession(roomId: string): Promise<string> {

@@ -1,3 +1,6 @@
+import { gql } from "@apollo/client/core";
+import { CreateEventBreakoutRoomDocument } from "../generated/graphql";
+import { apolloClient } from "../graphqlClient";
 import { hasura } from "./hasura/hasuraMetadata";
 
 export async function createEventStartTrigger(eventId: string, startTime: string): Promise<void> {
@@ -36,6 +39,46 @@ export async function createEventEndTrigger(eventId: string, endTime: string): P
         payload: {
             eventId,
             endTime,
+        },
+    });
+}
+
+gql`
+    mutation CreateEventBreakoutRoom(
+        $name: String!
+        $publicVonageSessionId: String!
+        $originatingEventId: uuid!
+        $conferenceId: uuid!
+    ) {
+        insert_Room_one(
+            object: {
+                currentModeName: BREAKOUT
+                name: $name
+                publicVonageSessionId: $publicVonageSessionId
+                originatingEventId: $originatingEventId
+                roomPrivacyName: PUBLIC
+                conferenceId: $conferenceId
+            }
+        ) {
+            id
+        }
+    }
+`;
+
+export async function createEventBreakoutRoom(
+    conferenceId: string,
+    eventId: string,
+    eventName: string,
+    startTime: string,
+    vonageSessionId: string
+): Promise<void> {
+    await apolloClient.mutate({
+        mutation: CreateEventBreakoutRoomDocument,
+        variables: {
+            conferenceId,
+            name: `${eventName} ${startTime}`,
+            originatingEventId: eventId,
+            publicVonageSessionId: vonageSessionId,
         },
     });
 }

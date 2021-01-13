@@ -41,6 +41,14 @@ export function RoomBackstage({
     const [gray100, gray900] = useToken("colors", ["gray.100", "gray.900"]);
     const backgroundColour = useColorModeValue(gray100, gray900);
 
+    // Lazy-render the backstage
+    const [loaded, setLoaded] = useState<boolean>(false);
+    useEffect(() => {
+        if (backstage && !loaded) {
+            setLoaded(true);
+        }
+    }, [backstage, loaded]);
+
     const myEventPeople = useMemo(
         () =>
             eventPeople.filter((eventPerson) =>
@@ -108,40 +116,44 @@ export function RoomBackstage({
 
     const eventRooms = useMemo(
         () =>
-            sortedEvents
-                .filter((event) =>
-                    [RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(event.intendedRoomModeName)
-                )
-                .map((event) => {
-                    const haveAccessToEvent = !!myEventPeople.find(
-                        (eventPerson) => user && eventPerson.eventId === event.id
-                    );
-                    return (
-                        <Box key={event.id}>
-                            <Heading as="h4" size="md" textAlign="left" mt={5} mb={1}>
-                                {event.name} {eventTemporalBadges[event.id]}
-                            </Heading>
+            !loaded ? (
+                <></>
+            ) : (
+                sortedEvents
+                    .filter((event) =>
+                        [RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(event.intendedRoomModeName)
+                    )
+                    .map((event) => {
+                        const haveAccessToEvent = !!myEventPeople.find(
+                            (eventPerson) => user && eventPerson.eventId === event.id
+                        );
+                        return (
+                            <Box key={event.id}>
+                                <Heading as="h4" size="md" textAlign="left" mt={5} mb={1}>
+                                    {event.name} {eventTemporalBadges[event.id]}
+                                </Heading>
 
-                            <Text my={2} fontStyle="italic">
-                                {formatRelative(Date.parse(event.startTime), now)}
-                            </Text>
+                                <Text my={2} fontStyle="italic">
+                                    {formatRelative(Date.parse(event.startTime), now)}
+                                </Text>
 
-                            {haveAccessToEvent ? (
-                                "You have access to the backstage for this event."
-                            ) : (
-                                <>
-                                    <Text>You do not have access to the backstage for this event.</Text>
-                                    <HandUpButton currentRoomEvent={event} eventPeople={eventPeople} />
-                                </>
-                            )}
-                            <Box display={haveAccessToEvent ? "block" : "none"} mt={2}>
-                                <EventVonageRoom eventId={event.id} />
+                                {haveAccessToEvent ? (
+                                    "You have access to the backstage for this event."
+                                ) : (
+                                    <>
+                                        <Text>You do not have access to the backstage for this event.</Text>
+                                        <HandUpButton currentRoomEvent={event} eventPeople={eventPeople} />
+                                    </>
+                                )}
+                                <Box display={haveAccessToEvent ? "block" : "none"} mt={2}>
+                                    <EventVonageRoom eventId={event.id} />
+                                </Box>
+                                <Divider my={4} />
                             </Box>
-                            <Divider my={4} />
-                        </Box>
-                    );
-                }),
-        [eventPeople, eventTemporalBadges, myEventPeople, now, sortedEvents, user]
+                        );
+                    })
+            ),
+        [eventPeople, eventTemporalBadges, loaded, myEventPeople, now, sortedEvents, user]
     );
 
     return (

@@ -11286,6 +11286,9 @@ export type Room = {
   /** An object relationship */
   readonly originatingData?: Maybe<OriginatingData>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  /** An object relationship */
+  readonly originatingEvent?: Maybe<Event>;
+  readonly originatingEventId?: Maybe<Scalars['uuid']>;
   /** An array relationship */
   readonly participants: ReadonlyArray<RoomParticipant>;
   /** An aggregated array relationship */
@@ -12470,6 +12473,8 @@ export type Room_Bool_Exp = {
   readonly name?: Maybe<String_Comparison_Exp>;
   readonly originatingData?: Maybe<OriginatingData_Bool_Exp>;
   readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
+  readonly originatingEvent?: Maybe<Event_Bool_Exp>;
+  readonly originatingEventId?: Maybe<Uuid_Comparison_Exp>;
   readonly participants?: Maybe<RoomParticipant_Bool_Exp>;
   readonly priority?: Maybe<Int_Comparison_Exp>;
   readonly publicVonageSessionId?: Maybe<String_Comparison_Exp>;
@@ -12486,6 +12491,8 @@ export enum Room_Constraint {
   RoomConferenceIdNameKey = 'Room_conferenceId_name_key',
   /** unique or primary key constraint */
   RoomMediaLiveChannelIdKey = 'Room_mediaLiveChannelId_key',
+  /** unique or primary key constraint */
+  RoomOriginatingEventIdKey = 'Room_originatingEventId_key',
   /** unique or primary key constraint */
   RoomPkey = 'Room_pkey'
 }
@@ -12514,6 +12521,8 @@ export type Room_Insert_Input = {
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingData?: Maybe<OriginatingData_Obj_Rel_Insert_Input>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly originatingEvent?: Maybe<Event_Obj_Rel_Insert_Input>;
+  readonly originatingEventId?: Maybe<Scalars['uuid']>;
   readonly participants?: Maybe<RoomParticipant_Arr_Rel_Insert_Input>;
   readonly priority?: Maybe<Scalars['Int']>;
   readonly publicVonageSessionId?: Maybe<Scalars['String']>;
@@ -12535,6 +12544,7 @@ export type Room_Max_Fields = {
   readonly mediaLiveChannelId?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly originatingEventId?: Maybe<Scalars['uuid']>;
   readonly priority?: Maybe<Scalars['Int']>;
   readonly publicVonageSessionId?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
@@ -12550,6 +12560,7 @@ export type Room_Max_Order_By = {
   readonly mediaLiveChannelId?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
+  readonly originatingEventId?: Maybe<Order_By>;
   readonly priority?: Maybe<Order_By>;
   readonly publicVonageSessionId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
@@ -12566,6 +12577,7 @@ export type Room_Min_Fields = {
   readonly mediaLiveChannelId?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly originatingEventId?: Maybe<Scalars['uuid']>;
   readonly priority?: Maybe<Scalars['Int']>;
   readonly publicVonageSessionId?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
@@ -12581,6 +12593,7 @@ export type Room_Min_Order_By = {
   readonly mediaLiveChannelId?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
+  readonly originatingEventId?: Maybe<Order_By>;
   readonly priority?: Maybe<Order_By>;
   readonly publicVonageSessionId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
@@ -12626,6 +12639,8 @@ export type Room_Order_By = {
   readonly name?: Maybe<Order_By>;
   readonly originatingData?: Maybe<OriginatingData_Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
+  readonly originatingEvent?: Maybe<Event_Order_By>;
+  readonly originatingEventId?: Maybe<Order_By>;
   readonly participants_aggregate?: Maybe<RoomParticipant_Aggregate_Order_By>;
   readonly priority?: Maybe<Order_By>;
   readonly publicVonageSessionId?: Maybe<Order_By>;
@@ -12662,6 +12677,8 @@ export enum Room_Select_Column {
   /** column name */
   OriginatingDataId = 'originatingDataId',
   /** column name */
+  OriginatingEventId = 'originatingEventId',
+  /** column name */
   Priority = 'priority',
   /** column name */
   PublicVonageSessionId = 'publicVonageSessionId',
@@ -12682,6 +12699,7 @@ export type Room_Set_Input = {
   readonly mediaLiveChannelId?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly originatingEventId?: Maybe<Scalars['uuid']>;
   readonly priority?: Maybe<Scalars['Int']>;
   readonly publicVonageSessionId?: Maybe<Scalars['String']>;
   readonly roomPrivacyName?: Maybe<RoomPrivacy_Enum>;
@@ -12760,6 +12778,8 @@ export enum Room_Update_Column {
   Name = 'name',
   /** column name */
   OriginatingDataId = 'originatingDataId',
+  /** column name */
+  OriginatingEventId = 'originatingEventId',
   /** column name */
   Priority = 'priority',
   /** column name */
@@ -26987,6 +27007,13 @@ export type ApproveEventRoomJoinRequestMutationVariables = Exact<{
 
 export type ApproveEventRoomJoinRequestMutation = { readonly __typename?: 'mutation_root', readonly update_EventRoomJoinRequest_by_pk?: Maybe<{ readonly __typename?: 'EventRoomJoinRequest', readonly id: any }> };
 
+export type GetBreakoutRoomFromEventQueryVariables = Exact<{
+  originatingEventId: Scalars['uuid'];
+}>;
+
+
+export type GetBreakoutRoomFromEventQuery = { readonly __typename?: 'query_root', readonly Room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }> };
+
 export type MakeEventRoomJoinRequestMutationVariables = Exact<{
   attendeeId: Scalars['uuid'];
   conferenceId: Scalars['uuid'];
@@ -30280,6 +30307,39 @@ export function useApproveEventRoomJoinRequestMutation(baseOptions?: Apollo.Muta
 export type ApproveEventRoomJoinRequestMutationHookResult = ReturnType<typeof useApproveEventRoomJoinRequestMutation>;
 export type ApproveEventRoomJoinRequestMutationResult = Apollo.MutationResult<ApproveEventRoomJoinRequestMutation>;
 export type ApproveEventRoomJoinRequestMutationOptions = Apollo.BaseMutationOptions<ApproveEventRoomJoinRequestMutation, ApproveEventRoomJoinRequestMutationVariables>;
+export const GetBreakoutRoomFromEventDocument = gql`
+    query GetBreakoutRoomFromEvent($originatingEventId: uuid!) {
+  Room(where: {originatingEventId: {_eq: $originatingEventId}}) {
+    id
+  }
+}
+    `;
+
+/**
+ * __useGetBreakoutRoomFromEventQuery__
+ *
+ * To run a query within a React component, call `useGetBreakoutRoomFromEventQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetBreakoutRoomFromEventQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetBreakoutRoomFromEventQuery({
+ *   variables: {
+ *      originatingEventId: // value for 'originatingEventId'
+ *   },
+ * });
+ */
+export function useGetBreakoutRoomFromEventQuery(baseOptions: Apollo.QueryHookOptions<GetBreakoutRoomFromEventQuery, GetBreakoutRoomFromEventQueryVariables>) {
+        return Apollo.useQuery<GetBreakoutRoomFromEventQuery, GetBreakoutRoomFromEventQueryVariables>(GetBreakoutRoomFromEventDocument, baseOptions);
+      }
+export function useGetBreakoutRoomFromEventLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBreakoutRoomFromEventQuery, GetBreakoutRoomFromEventQueryVariables>) {
+          return Apollo.useLazyQuery<GetBreakoutRoomFromEventQuery, GetBreakoutRoomFromEventQueryVariables>(GetBreakoutRoomFromEventDocument, baseOptions);
+        }
+export type GetBreakoutRoomFromEventQueryHookResult = ReturnType<typeof useGetBreakoutRoomFromEventQuery>;
+export type GetBreakoutRoomFromEventLazyQueryHookResult = ReturnType<typeof useGetBreakoutRoomFromEventLazyQuery>;
+export type GetBreakoutRoomFromEventQueryResult = Apollo.QueryResult<GetBreakoutRoomFromEventQuery, GetBreakoutRoomFromEventQueryVariables>;
 export const MakeEventRoomJoinRequestDocument = gql`
     mutation MakeEventRoomJoinRequest($attendeeId: uuid!, $conferenceId: uuid!, $eventId: uuid!) {
   insert_EventRoomJoinRequest_one(

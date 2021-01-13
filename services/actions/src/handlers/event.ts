@@ -6,7 +6,7 @@ import {
     RoomMode_Enum,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { createEventEndTrigger, createEventStartTrigger } from "../lib/event";
+import { createEventBreakoutRoom, createEventEndTrigger, createEventStartTrigger } from "../lib/event";
 import { sendFailureEmail } from "../lib/logging/failureEmails";
 import { startEventBroadcast, stopEventBroadcasts } from "../lib/vonage/vonageTools";
 import { EventData, Payload } from "../types/hasura/event";
@@ -160,10 +160,15 @@ gql`
     query GetEventTimings($eventId: uuid!) {
         Event_by_pk(id: $eventId) {
             id
+            name
             startTime
             endTime
             conferenceId
             intendedRoomModeName
+            eventVonageSession {
+                id
+                sessionId
+            }
         }
     }
 `;
@@ -223,13 +228,10 @@ export async function handleEventEndNotification(eventId: string, endTime: strin
                 console.error("Failed to insert chat duplication markers", eventId, e);
             }
 
-            if (![RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(intendedRoomModeName)) {
-                // No RTMP broadcast to be stopped
-                return;
-            }
-
             try {
-                await stopEventBroadcasts(eventId);
+                if ([RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(intendedRoomModeName)) {
+                    await stopEventBroadcasts(eventId);
+                }
             } catch (e) {
                 console.error("Failed to stop event broadcasts", eventId, e);
             }
@@ -246,6 +248,24 @@ export async function handleEventEndNotification(eventId: string, endTime: strin
                 console.error("Failed to create MediaPackage harvest job", eventId, e);
             }
         }, harvestJobWaitForMillis);
+
+        try {
+            if ([RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(intendedRoomModeName)) {
+                const event = result.data.Event_by_pk;
+                if (!event.eventVonageSession) {
+                    throw new Error("Missing event Vonage session");
+                }
+                await createEventBreakoutRoom(
+                    event.conferenceId,
+                    event.id,
+                    event.name,
+                    event.startTime,
+                    event.eventVonageSession.sessionId
+                );
+            }
+        } catch (e) {
+            console.error("Failed to create breakout room at end of event", eventId, e);
+        }
     } else {
         console.log("Event stop notification did not match current event end time, skipping.", eventId, endTime);
     }

@@ -139,19 +139,24 @@ export async function startEventBroadcast(eventId: string): Promise<void> {
             eventId,
             rtmpId
         );
-        await Vonage.startBroadcast(broadcastDetails.vonageSessionId, {
-            layout: { type: "bestFit" },
-            outputs: {
-                rtmp: [
-                    {
-                        id: rtmpId,
-                        serverUrl: broadcastDetails.rtmpServerUrl,
-                        streamName: broadcastDetails.rtmpStreamName,
-                    },
-                ],
-            },
-            resolution: "1280x720",
-        });
+        try {
+            await Vonage.startBroadcast(broadcastDetails.vonageSessionId, {
+                layout: { type: "bestFit" },
+                outputs: {
+                    rtmp: [
+                        {
+                            id: rtmpId,
+                            serverUrl: broadcastDetails.rtmpServerUrl,
+                            streamName: broadcastDetails.rtmpStreamName,
+                        },
+                    ],
+                },
+                resolution: "1280x720",
+            });
+        } catch (e) {
+            console.error("Failed to start broadcast", broadcastDetails.vonageSessionId, eventId);
+            return;
+        }
     } else {
         console.log(
             "There is already an existing RTMP broadcast from the session to the ongoing event.",

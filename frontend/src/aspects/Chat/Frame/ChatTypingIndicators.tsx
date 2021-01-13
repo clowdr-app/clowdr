@@ -19,7 +19,7 @@ export function ChatTypingIndicators({ ...rest }: FlexProps): JSX.Element {
             w={`calc(100% - 1em - 15px - ${config.spacing}px)`}
             {...rest}
         >
-            <Text as="span">Chat typing indicators: TODO</Text>
+            {/* <Text as="span">Chat typing indicators: TODO</Text> */}
         </Flex>
     );
 }

@@ -32,6 +32,7 @@ import { router as eventVonageSessionRouter } from "./router/eventVonageSession"
 import { router as mediaConvertRouter } from "./router/mediaConvert";
 import { router as mediaLiveRouter } from "./router/mediaLive";
 import { router as mediaPackageRouter } from "./router/mediaPackage";
+import { router as mediaPackageHarvestJobRouter } from "./router/mediaPackageHarvestJob";
 import { router as openshotRouter } from "./router/openshot";
 import { router as profileRouter } from "./router/profile";
 import { router as roomRouter } from "./router/room";
@@ -84,6 +85,7 @@ app.use("/room", roomRouter);
 app.use("/eventVonageSession", eventVonageSessionRouter);
 app.use("/eventRoomJoinRequest", eventRoomJoinRequestRouter);
 app.use("/eventPerson", eventPersonRouter);
+app.use("/mediaPackageHarvestJob", mediaPackageHarvestJobRouter);
 
 app.use("/channels", channelsRouter);
 

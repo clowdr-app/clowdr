@@ -70,7 +70,7 @@ export async function createHarvestJob(
         OriginEndpointId: originEndpoint.Id,
         S3Destination: {
             BucketName: process.env.AWS_CONTENT_BUCKET_ID,
-            ManifestKey: `${id}.m3u8`,
+            ManifestKey: `${id}/index.m3u8`,
             RoleArn: process.env.AWS_MEDIAPACKAGE_SERVICE_ROLE_ARN,
         },
     });

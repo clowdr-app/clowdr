@@ -45,7 +45,7 @@ router.post("/harvest/notify", bodyParser.text(), async (req: Request, res: Resp
 
             if (event["detail-type"] === "MediaPackage HarvestJob Notification") {
                 const eventDetail = event.detail;
-                if (eventDetail.harvest_job.status === "COMPLETED") {
+                if (eventDetail.harvest_job.status === "SUCCEEDED") {
                     await completeMediaPackageHarvestJob(eventDetail.harvest_job.id);
                 }
 

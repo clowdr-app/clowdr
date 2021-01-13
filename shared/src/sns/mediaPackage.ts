@@ -21,7 +21,7 @@ interface HarvestJobDetail<TStatus extends string> {
 }
 
 interface MediaPackageEventHarvestJobCompletedDetail {
-    harvest_job: HarvestJobDetail<"COMPLETED">;
+    harvest_job: HarvestJobDetail<"SUCCEEDED">;
 }
 
 interface MediaPackageEventHarvestJobFailed extends MediaPackageEventBase {
@@ -35,9 +35,10 @@ interface MediaPackageEventHarvestJobFailedDetail {
 }
 
 export interface MediaPackageEventBase {
+    version: string;
     id: string;
     "detail-type": string;
-    source: string;
+    source: "aws.mediapackage";
     account: string;
     time: string;
     region: string;

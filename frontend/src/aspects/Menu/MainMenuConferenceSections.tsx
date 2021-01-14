@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { AtSignIcon, LockIcon, MinusIcon } from "@chakra-ui/icons";
+import { AtSignIcon, ChatIcon, LockIcon } from "@chakra-ui/icons";
 import {
     Accordion,
     AccordionButton,
@@ -7,19 +7,27 @@ import {
     AccordionItem,
     AccordionPanel,
     Box,
+    Button,
     HStack,
+    Link,
     List,
     ListIcon,
     ListItem,
     Text,
+    useDisclosure,
 } from "@chakra-ui/react";
 import React, { useEffect } from "react";
+import { Link as ReactLink, useHistory } from "react-router-dom";
 import {
     AttendeeFieldsFragment,
     RoomPrivacy_Enum,
     SidebarChatInfoFragment,
     usePinnedChatsWithUnreadCountsSubscription,
 } from "../../generated/graphql";
+import { LinkButton } from "../Chakra/LinkButton";
+import { CreateRoomModal } from "../Conference/Attend/Room/CreateRoomModal";
+import ConferenceProvider from "../Conference/useConference";
+import { FAIcon } from "../Icons/FAIcon";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 
 gql`
@@ -81,7 +89,17 @@ function computeChatName(chat: SidebarChatInfoFragment, attendeeId: string): str
         : undefined;
 }
 
-function ChatListItem({ chat, attendeeId }: { chat: SidebarChatInfoFragment; attendeeId: string }): JSX.Element {
+function ChatListItem({
+    chat,
+    attendeeId,
+    confSlug,
+    onClose,
+}: {
+    chat: SidebarChatInfoFragment;
+    attendeeId: string;
+    confSlug: string;
+    onClose: () => void;
+}): JSX.Element {
     const chatName = computeChatName(chat, attendeeId);
     const chatPath = chat
         ? chat.contentGroup.length > 0
@@ -101,12 +119,14 @@ function ChatListItem({ chat, attendeeId }: { chat: SidebarChatInfoFragment; att
 
     return (
         <ListItem key={chat.id} fontWeight={unreadCount ? "bold" : undefined}>
-            <HStack alignItems="flex-start">
-                <ListIcon mt="0.7ex" as={isDM ? AtSignIcon : isPrivate ? LockIcon : MinusIcon} />{" "}
-                <Text as="span">
-                    {unreadCount ? `(${unreadCount})` : undefined} {chatName}
-                </Text>
-            </HStack>
+            <Link as={ReactLink} to={`/conference/${confSlug}${chatPath}`} onClick={onClose} textDecoration="none">
+                <HStack alignItems="flex-start">
+                    <ListIcon mt="0.7ex" as={isDM ? AtSignIcon : isPrivate ? LockIcon : ChatIcon} />{" "}
+                    <Text as="span">
+                        {unreadCount ? `(${unreadCount})` : undefined} {chatName}
+                    </Text>
+                </HStack>
+            </Link>
         </ListItem>
     );
 }
@@ -144,10 +164,12 @@ export function MainMenuConferenceSections_Inner({
     rootUrl,
     confSlug,
     attendee,
+    onClose,
 }: {
     rootUrl: string;
     confSlug: string;
     attendee: AttendeeFieldsFragment;
+    onClose: () => void;
 }): JSX.Element {
     const pinnedChats = usePinnedChatsWithUnreadCountsSubscription({
         variables: {
@@ -159,33 +181,78 @@ export function MainMenuConferenceSections_Inner({
             console.log("Pinned chats", pinnedChats.data?.chat_Pin);
         }
     }, [pinnedChats.data?.chat_Pin]);
+
+    const { isOpen: isCreateRoomOpen, onClose: onCreateRoomClose, onOpen: onCreateRoomOpen } = useDisclosure();
+    const { isOpen: isCreateDmOpen, onClose: onCreateDmClose, onOpen: onCreateDmOpen } = useDisclosure();
+
+    const history = useHistory();
+
     return (
         <>
+            <LinkButton onClick={onClose} to={`/conference/${confSlug}`} mb={4} mt={4}>
+                <FAIcon icon="home" iconStyle="s" mr={3} />
+                Home
+            </LinkButton>
             <List m={0}>
                 {pinnedChats.data?.chat_Pin
                     .filter((chatPin) => chatPin.chat.enableMandatoryPin)
                     .sort((x, y) => sortChats(attendee.id, x.chat, y.chat))
                     .map((chatPin) => (
-                        <ChatListItem key={chatPin.chatId} chat={chatPin.chat} attendeeId={attendee.id} />
+                        <ChatListItem
+                            key={chatPin.chatId}
+                            chat={chatPin.chat}
+                            attendeeId={attendee.id}
+                            confSlug={confSlug}
+                            onClose={onClose}
+                        />
                     ))}
             </List>
             <Accordion defaultIndex={[0]} allowMultiple>
                 <AccordionItem>
                     <AccordionButton>
                         <Box flex="1" textAlign="left">
-                            Chats
+                            Rooms
                         </Box>
                         <AccordionIcon />
                     </AccordionButton>
                     <AccordionPanel pb={4}>
-                        <List>
+                        <HStack justifyContent="flex-end">
+                            <Button onClick={onCreateRoomOpen} colorScheme="green" size="sm">
+                                <FAIcon icon="plus-square" iconStyle="s" mr={3} /> New room
+                            </Button>
+                            <Button onClick={onCreateDmOpen} colorScheme="green" size="sm">
+                                <FAIcon icon="plus-square" iconStyle="s" mr={3} /> New DM
+                            </Button>
+                        </HStack>
+                        <CreateRoomModal
+                            isOpen={isCreateRoomOpen}
+                            onClose={onCreateRoomClose}
+                            onCreated={async (id: string) => {
+                                // Wait, because Vonage session creation is not instantaneous
+                                setTimeout(() => {
+                                    history.push(`/conference/${confSlug}/room/${id}`);
+                                    onClose();
+                                }, 2000);
+                            }}
+                        />
+                        <List my={4}>
                             {pinnedChats.data?.chat_Pin
                                 .filter((chatPin) => !chatPin.chat.enableMandatoryPin)
                                 .sort((x, y) => sortChats(attendee.id, x.chat, y.chat))
                                 .map((chatPin) => (
-                                    <ChatListItem key={chatPin.chatId} chat={chatPin.chat} attendeeId={attendee.id} />
+                                    <ChatListItem
+                                        key={chatPin.chatId}
+                                        chat={chatPin.chat}
+                                        attendeeId={attendee.id}
+                                        confSlug={confSlug}
+                                        onClose={onClose}
+                                    />
                                 ))}
+                            {!pinnedChats.data || pinnedChats.data.chat_Pin.length < 1 ? <>No pinned chats.</> : <></>}
                         </List>
+                        <LinkButton onClick={onClose} to={`/conference/${confSlug}/rooms`}>
+                            View all rooms
+                        </LinkButton>
                     </AccordionPanel>
                 </AccordionItem>
 
@@ -210,15 +277,26 @@ export function MainMenuConferenceSections_Inner({
 export default function MainMenuConferenceSections({
     rootUrl,
     confSlug,
+    onClose,
 }: {
     rootUrl: string;
     confSlug: string;
+    onClose: () => void;
 }): JSX.Element {
     const user = useMaybeCurrentUser();
     if (user.user && user.user.attendees.length > 0) {
         const attendee = user.user.attendees.find((x) => x.conference.slug === confSlug);
         if (attendee) {
-            return <MainMenuConferenceSections_Inner rootUrl={rootUrl} confSlug={confSlug} attendee={attendee} />;
+            return (
+                <ConferenceProvider confSlug={confSlug}>
+                    <MainMenuConferenceSections_Inner
+                        rootUrl={rootUrl}
+                        confSlug={confSlug}
+                        attendee={attendee}
+                        onClose={onClose}
+                    />
+                </ConferenceProvider>
+            );
         }
     }
     return <></>;

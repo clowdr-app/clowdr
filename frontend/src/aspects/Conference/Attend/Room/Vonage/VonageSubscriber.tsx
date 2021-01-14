@@ -4,11 +4,32 @@ import React, { useEffect, useRef, useState } from "react";
 import { useOpenTok } from "../../../../Vonage/useOpenTok";
 import { VonageOverlay } from "./VonageOverlay";
 
-export function VonageSubscriber({ stream }: { stream: OT.Stream }): JSX.Element {
-    const [_openTokProps, openTokMethods] = useOpenTok();
+export function VonageSubscriber({
+    stream,
+    onChangeActivity,
+    enableVideo,
+}: {
+    stream: OT.Stream;
+    onChangeActivity?: (active: boolean) => void;
+    enableVideo: boolean;
+}): JSX.Element {
+    const [, openTokMethods] = useOpenTok();
     const ref = useRef<HTMLDivElement>(null);
 
     const [talking, setTalking] = useState<boolean>(false);
+    const [subscriber, setSubscriber] = useState<OT.Subscriber | null>(null);
+
+    useEffect(() => {
+        if (onChangeActivity) {
+            onChangeActivity(talking);
+        }
+    }, [onChangeActivity, talking]);
+
+    useEffect(() => {
+        if (subscriber) {
+            subscriber.subscribeToVideo(enableVideo);
+        }
+    }, [enableVideo, subscriber]);
 
     useEffect(() => {
         if (!ref.current) {
@@ -24,6 +45,8 @@ export function VonageSubscriber({ stream }: { stream: OT.Stream }): JSX.Element
                 width: "100%",
             },
         });
+
+        setSubscriber(subscriber);
 
         let activity: null | { timestamp: number; talking: boolean } = null;
         subscriber.on("audioLevelUpdated", function (event) {
@@ -53,6 +76,7 @@ export function VonageSubscriber({ stream }: { stream: OT.Stream }): JSX.Element
                 openTokMethods.unsubscribe({
                     stream,
                 });
+                setSubscriber(null);
             } catch (e) {
                 console.log("Could not unsubscribe from stream");
             }

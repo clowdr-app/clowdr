@@ -1,9 +1,10 @@
 import { Box, Flex, useToast, VStack } from "@chakra-ui/react";
 import * as R from "ramda";
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as portals from "react-reverse-portal";
 import useUserId from "../../../../Auth/useUserId";
 import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";
+import usePolling from "../../../../Generic/usePolling";
 import { OpenTokProvider } from "../../../../Vonage/OpenTokProvider";
 import { useOpenTok } from "../../../../Vonage/useOpenTok";
 import { VonageRoomStateProvider } from "../../../../Vonage/useVonageRoom";
@@ -40,6 +41,7 @@ function VonageRoomInner({
     vonageSessionId: string;
     getAccessToken: () => Promise<string>;
 }): JSX.Element {
+    const maxVideoStreams = 1;
     const [openTokProps, openTokMethods] = useOpenTok();
     const userId = useUserId();
     const attendee = useCurrentAttendee();
@@ -96,16 +98,47 @@ function VonageRoomInner({
         openTokProps.streams,
     ]);
 
-    // R.descend(
-    //     (stream) => stream.streamId === openTokProps.publisher["camera"]?.stream?.streamId
-    // ),
+    const [streamLastActive, setStreamLastActive] = useState<{ [streamId: string]: number }>({});
+    const setStreamActivity = useCallback(
+        (streamId: string, activity: boolean) => {
+            if (activity) {
+                setStreamLastActive({
+                    ...streamLastActive,
+                    [streamId]: Date.now(),
+                });
+            }
+        },
+        [streamLastActive]
+    );
+
+    const [enableStreams, setEnableStreams] = useState<string[] | null>(null);
+    const updateEnabledStreams = useCallback(() => {
+        if (openTokProps.streams.filter((stream) => stream.videoType === "camera").length <= maxVideoStreams) {
+            setEnableStreams(null);
+        } else {
+            const activeStreams = R.sortWith([R.descend((pair) => pair[1])], R.toPairs(streamLastActive)).map(
+                (pair) => pair[0]
+            );
+            const selectedActiveStreams = activeStreams.slice(0, Math.min(activeStreams.length, maxVideoStreams));
+
+            // todo: fill up rest of the available video slots with inactive streams
+
+            setEnableStreams(selectedActiveStreams);
+        }
+    }, [openTokProps.streams, streamLastActive]);
+    useEffect(() => {
+        updateEnabledStreams();
+    }, [updateEnabledStreams]);
+    usePolling(updateEnabledStreams, 5000, true);
 
     const cameraPublisherPortal = useMemo(() => portals.createHtmlPortalNode(), []);
 
     return (
         <Box display="grid" gridTemplateRows="1fr auto">
             <portals.InPortal node={cameraPublisherPortal}>
-                <Box w={300} h={300} ref={cameraPublishContainerRef}></Box>
+                <Box w={300} h={300} ref={cameraPublishContainerRef}>
+                    <Box />
+                </Box>
             </portals.InPortal>
             <Box display="none" ref={screenPublishContainerRef} />
             <Box maxH="80vh" height={receivingScreenShare ? "70vh" : undefined} overflowY="auto" position="relative">
@@ -133,11 +166,18 @@ function VonageRoomInner({
                         <></>
                     )}
                     {R.sortWith(
-                        [R.ascend(R.prop("creationTime"))],
+                        [
+                            R.descend((stream) => !enableStreams || !!enableStreams.includes(stream.streamId)),
+                            R.ascend(R.prop("creationTime")),
+                        ],
                         openTokProps.streams.filter((s) => s.videoType === "camera")
                     ).map((stream) => (
                         <Box key={stream.streamId} w={300} h={300}>
-                            <VonageSubscriber stream={stream} />
+                            <VonageSubscriber
+                                stream={stream}
+                                onChangeActivity={(activity) => setStreamActivity(stream.streamId, activity)}
+                                enableVideo={!enableStreams || !!enableStreams.includes(stream.streamId)}
+                            />
                         </Box>
                     ))}
                     {openTokProps.connections
@@ -178,7 +218,7 @@ function VonageRoomInner({
                     {openTokProps.streams
                         .filter((stream) => stream.videoType === "screen")
                         .map((stream) => (
-                            <VonageSubscriber key={stream.streamId} stream={stream} />
+                            <VonageSubscriber key={stream.streamId} stream={stream} enableVideo={true} />
                         ))}
                 </Box>
                 {openTokProps.isSessionConnected ? (

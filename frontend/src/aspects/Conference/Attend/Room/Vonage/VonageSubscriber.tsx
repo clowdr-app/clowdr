@@ -1,6 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import type OT from "@opentok/client";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useOpenTok } from "../../../../Vonage/useOpenTok";
 import { VonageOverlay } from "./VonageOverlay";
 
@@ -8,12 +8,14 @@ export function VonageSubscriber({ stream }: { stream: OT.Stream }): JSX.Element
     const [_openTokProps, openTokMethods] = useOpenTok();
     const ref = useRef<HTMLDivElement>(null);
 
+    const [talking, setTalking] = useState<boolean>(false);
+
     useEffect(() => {
         if (!ref.current) {
             console.error("No element to inject stream into", stream.streamId);
             return;
         }
-        openTokMethods.subscribe({
+        const subscriber = openTokMethods.subscribe({
             stream,
             element: ref.current,
             options: {
@@ -21,6 +23,29 @@ export function VonageSubscriber({ stream }: { stream: OT.Stream }): JSX.Element
                 height: "100%",
                 width: "100%",
             },
+        });
+
+        let activity: null | { timestamp: number; talking: boolean } = null;
+        subscriber.on("audioLevelUpdated", function (event) {
+            const now = Date.now();
+            if (event.audioLevel > 0.2) {
+                if (!activity) {
+                    activity = { timestamp: now, talking: false };
+                } else if (activity.talking) {
+                    activity.timestamp = now;
+                } else if (now - activity.timestamp > 1000) {
+                    // detected audio activity for more than 1s
+                    // for the first time.
+                    activity.talking = true;
+                    setTalking(true);
+                }
+            } else if (activity && now - activity.timestamp > 3000) {
+                // detected low audio activity for more than 3s
+                if (activity.talking) {
+                    setTalking(false);
+                }
+                activity = null;
+            }
         });
 
         return () => {
@@ -38,7 +63,16 @@ export function VonageSubscriber({ stream }: { stream: OT.Stream }): JSX.Element
     return (
         <Box position="relative" height="100%" width="100%" overflow="hidden">
             <Box ref={ref} position="absolute" zIndex="100" left="0" top="0" height="100%" width="100%" />
-            <Box position="absolute" left="0.4rem" bottom="0.2rem" zIndex="200">
+            <Box
+                position="absolute"
+                zIndex="200"
+                left="0"
+                top="0"
+                height="100%"
+                width="100%"
+                border={talking ? "3px solid green" : "0 none"}
+            />
+            <Box position="absolute" left="0.4rem" bottom="0.35rem" zIndex="200">
                 <VonageOverlay connectionData={stream.connection.data} />
             </Box>
         </Box>

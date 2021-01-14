@@ -26984,7 +26984,7 @@ export type ContentGroupEventsFragment = { readonly __typename?: 'ContentGroup',
     & ContentGroupEventFragment
   )> };
 
-export type ContentGroupEventFragment = { readonly __typename?: 'Event', readonly startTime: any, readonly id: any, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly name: string, readonly room: { readonly __typename?: 'Room', readonly name: string, readonly id: any } };
+export type ContentGroupEventFragment = { readonly __typename?: 'Event', readonly startTime: any, readonly id: any, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly name: string, readonly intendedRoomModeName: RoomMode_Enum, readonly room: { readonly __typename?: 'Room', readonly name: string, readonly id: any } };
 
 export type ContentItemDataFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly contentTypeName: ContentType_Enum };
 
@@ -28347,6 +28347,7 @@ export const ContentGroupEventFragmentDoc = gql`
   durationSeconds
   endTime
   name
+  intendedRoomModeName
 }
     `;
 export const ContentGroupEventsFragmentDoc = gql`

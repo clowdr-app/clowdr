@@ -28,7 +28,7 @@ export async function handleRoomCreated(payload: Payload<RoomData>): Promise<voi
 }
 
 async function createRoomVonageSession(roomId: string): Promise<string> {
-    const sessionResult = await Vonage.createSession({ mediaMode: "relayed" });
+    const sessionResult = await Vonage.createSession({ mediaMode: "routed" });
 
     if (!sessionResult) {
         throw new Error("No session ID returned from Vonage");

@@ -89,7 +89,7 @@ export function usePublisherControl(
                 audioSource: computedState.audioTrack?.getSettings().deviceId ?? false,
                 publishAudio: state.microphoneIntendedEnabled,
                 publishVideo: state.cameraIntendedEnabled,
-                insertMode: "replace",
+                insertMode: "append",
                 style: {
                     nameDisplayMode: "on",
                 },
@@ -163,7 +163,7 @@ export function usePublisherControl(
                             audioSource: audioTrack ?? false,
                             publishAudio: state.microphoneIntendedEnabled,
                             publishVideo: state.cameraIntendedEnabled,
-                            insertMode: "replace",
+                            insertMode: "append",
                             style: {
                                 nameDisplayMode: "on",
                             },
@@ -200,7 +200,7 @@ export function usePublisherControl(
                         audioSource: audioTrack ?? false,
                         publishAudio: state.microphoneIntendedEnabled,
                         publishVideo: state.cameraIntendedEnabled,
-                        insertMode: "replace",
+                        insertMode: "append",
                         style: {
                             nameDisplayMode: "on",
                         },

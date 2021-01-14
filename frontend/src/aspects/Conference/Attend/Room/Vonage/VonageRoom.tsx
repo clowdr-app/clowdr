@@ -1,6 +1,7 @@
 import { Box, Flex, useToast, VStack } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import * as portals from "react-reverse-portal";
 import useUserId from "../../../../Auth/useUserId";
 import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";
 import { OpenTokProvider } from "../../../../Vonage/OpenTokProvider";
@@ -95,10 +96,18 @@ function VonageRoomInner({
         openTokProps.streams,
     ]);
 
+    // R.descend(
+    //     (stream) => stream.streamId === openTokProps.publisher["camera"]?.stream?.streamId
+    // ),
+
+    const cameraPublisherPortal = useMemo(() => portals.createHtmlPortalNode(), []);
+
     return (
         <Box display="grid" gridTemplateRows="1fr auto">
+            <portals.InPortal node={cameraPublisherPortal}>
+                <Box w={300} h={300} ref={cameraPublishContainerRef}></Box>
+            </portals.InPortal>
             <Box display="none" ref={screenPublishContainerRef} />
-            <Box display="none" ref={cameraPublishContainerRef} />
             <Box maxH="80vh" height={receivingScreenShare ? "70vh" : undefined} overflowY="auto" position="relative">
                 <Flex width="100%" height="auto" flexWrap="wrap" overflowY="auto">
                     {openTokProps.isSessionConnected && !openTokProps.publisher["camera"] ? (
@@ -118,14 +127,14 @@ function VonageRoomInner({
                     ) : (
                         <></>
                     )}
+                    {openTokProps.isSessionConnected && openTokProps.publisher["camera"] ? (
+                        <portals.OutPortal node={cameraPublisherPortal} />
+                    ) : (
+                        <></>
+                    )}
                     {R.sortWith(
-                        [
-                            R.descend(
-                                (stream) => stream.streamId === openTokProps.publisher["camera"]?.stream?.streamId
-                            ),
-                            R.ascend(R.prop("creationTime")),
-                        ],
-                        openTokProps.streams
+                        [R.ascend(R.prop("creationTime"))],
+                        openTokProps.streams.filter((s) => s.videoType === "camera")
                     ).map((stream) => (
                         <Box key={stream.streamId} w={300} h={300}>
                             <VonageSubscriber stream={stream} />

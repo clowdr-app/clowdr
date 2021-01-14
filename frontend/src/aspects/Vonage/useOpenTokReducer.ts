@@ -62,6 +62,11 @@ const reducer = (state: OpenTokState, action: Action) => {
             };
         }
         case ActionType.ADD_STREAM: {
+            // Don't subscribe to own stream
+            if (state.publisher["camera"] && payload.streamId === state.publisher["camera"].stream?.streamId) {
+                return state;
+            }
+
             return {
                 ...state,
                 streams: [...state.streams, payload],

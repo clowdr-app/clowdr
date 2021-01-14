@@ -110,7 +110,12 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
                                     <Box textAlign="center" flexGrow={1} style={{ scrollbarWidth: "thin" }}>
                                         <Box position="relative">
                                             <ContentGroupVideos contentGroupData={contentGroupData} />
-                                            <Box position={["static", "static", "absolute"]} top="1rem" right="1rem">
+                                            <Box
+                                                position={["static", "static", "absolute"]}
+                                                mt={[2, 2, 0]}
+                                                top="1rem"
+                                                right="1rem"
+                                            >
                                                 <ContentGroupLive contentGroupEvents={contentGroupData} />
                                             </Box>
                                         </Box>

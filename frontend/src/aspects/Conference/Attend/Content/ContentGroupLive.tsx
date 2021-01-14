@@ -1,9 +1,11 @@
-import { Button, Text, VStack } from "@chakra-ui/react";
+import { Text, VStack } from "@chakra-ui/react";
 import { formatRelative } from "date-fns";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useState } from "react";
 import { ContentGroupEventFragment, ContentGroupEventsFragment, RoomMode_Enum } from "../../../../generated/graphql";
+import { LinkButton } from "../../../Chakra/LinkButton";
 import usePolling from "../../../Generic/usePolling";
+import { useConference } from "../../useConference";
 
 function eventType(eventType: RoomMode_Enum): string {
     switch (eventType) {
@@ -27,7 +29,7 @@ export function ContentGroupLive({
 }): JSX.Element {
     const [liveEvents, setLiveEvents] = useState<ContentGroupEventFragment[] | null>(null);
     const [nextEvent, setNextEvent] = useState<ContentGroupEventFragment | null>(null);
-    const [now, setNow] = useState<Date>(new Date());
+    const [now, setNow] = useState<number>(Date.now());
     const computeLiveEvent = useCallback(() => {
         const now = Date.now();
         const currentEvents = contentGroupEvents.events.filter(
@@ -45,27 +47,40 @@ export function ContentGroupLive({
     usePolling(computeLiveEvent, 5000, true);
     useEffect(() => computeLiveEvent(), [computeLiveEvent]);
 
+    const conference = useConference();
+
     return (
         <VStack alignItems="stretch">
             {liveEvents?.map((event) => (
-                <Button key={event.id} size="lg" colorScheme="red">
+                <LinkButton
+                    width="100%"
+                    to={`/conference/${conference.slug}/room/${event.room.id}`}
+                    key={event.id}
+                    size="lg"
+                    colorScheme="red"
+                >
                     <VStack spacing={0}>
                         <Text>Live now ({eventType(event.intendedRoomModeName)})</Text>
                         <Text mt={0} fontSize="sm">
                             {event.room.name}
                         </Text>
                     </VStack>
-                </Button>
+                </LinkButton>
             ))}
             {nextEvent ? (
-                <Button size="lg" colorScheme="teal">
+                <LinkButton
+                    width="100%"
+                    to={`/conference/${conference.slug}/room/${nextEvent.room.id}`}
+                    size="lg"
+                    colorScheme="teal"
+                >
                     <VStack spacing={0}>
                         <Text>Next event ({eventType(nextEvent.intendedRoomModeName)})</Text>
                         <Text mt={0} fontSize="sm">
                             {formatRelative(Date.parse(nextEvent.startTime), now)}
                         </Text>
                     </VStack>
-                </Button>
+                </LinkButton>
             ) : (
                 <></>
             )}

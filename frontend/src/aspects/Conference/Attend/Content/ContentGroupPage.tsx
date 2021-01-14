@@ -15,6 +15,7 @@ import { useTitle } from "../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../useConference";
 import { ContentGroupEvents } from "./ContentGroupEvents";
+import { ContentGroupLive } from "./ContentGroupLive";
 import { ContentGroupSummary } from "./ContentGroupSummary";
 import { ContentGroupVideos } from "./ContentGroupVideos";
 
@@ -106,7 +107,12 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
                                     flexWrap={stackColumns ? "wrap" : "nowrap"}
                                 >
                                     <Box textAlign="center" flexGrow={1} style={{ scrollbarWidth: "thin" }}>
-                                        <ContentGroupVideos contentGroupData={contentGroupData} />
+                                        <Box position="relative">
+                                            <ContentGroupVideos contentGroupData={contentGroupData} />
+                                            <Box position="absolute" top="1rem" right="1rem">
+                                                <ContentGroupLive contentGroupEvents={contentGroupData} />
+                                            </Box>
+                                        </Box>
                                         <Box ml={5}>
                                             <ContentGroupSummary contentGroupData={contentGroupData} />
                                             <Heading as="h3" size="lg" textAlign="left">

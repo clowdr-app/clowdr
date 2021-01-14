@@ -2921,18 +2921,37 @@
       - name
       - originatingDataId
       filter:
-        conference:
-          groups:
-            _and:
-            - enabled:
-                _eq: true
-            - groupRoles:
-                role:
-                  rolePermissions:
-                    permissionName:
-                      _eq: CONFERENCE_VIEW
-            - includeUnauthenticated:
-                _eq: true
+        _and:
+        - conference:
+            groups:
+              _and:
+              - enabled:
+                  _eq: true
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      permissionName:
+                        _eq: CONFERENCE_VIEW
+              - includeUnauthenticated:
+                  _eq: true
+        - contentTypeName:
+            _in:
+            - ABSTRACT
+            - TEXT
+            - VIDEO_FILE
+            - VIDEO_URL
+            - VIDEO_LINK
+            - IMAGE_FILE
+            - IMAGE_URL
+            - PAPER_FILE
+            - PAPER_URL
+            - PAPER_LINK
+            - LINK
+            - LINK_BUTTON
+            - VIDEO_BROADCAST
+            - VIDEO_PREPUBLISH
+            - CONTENT_GROUP_LIST
+            - WHOLE_SCHEDULE
   - role: user
     permission:
       columns:

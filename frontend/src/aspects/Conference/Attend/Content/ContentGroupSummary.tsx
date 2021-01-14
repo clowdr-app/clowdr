@@ -9,9 +9,10 @@ import {
 } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
 import React, { useMemo } from "react";
-import { ContentGroupDataFragment, ContentType_Enum } from "../../../../generated/graphql";
+import { ContentGroupDataFragment, ContentType_Enum, Permission_Enum } from "../../../../generated/graphql";
 import { ExternalLinkButton } from "../../../Chakra/LinkButton";
 import { Markdown } from "../../../Text/Markdown";
+import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { AuthorList } from "./AuthorList";
 
 export function ContentGroupSummary({ contentGroupData }: { contentGroupData: ContentGroupDataFragment }): JSX.Element {
@@ -85,18 +86,22 @@ export function ContentGroupSummary({ contentGroupData }: { contentGroupData: Co
             </Heading>
             {<AuthorList contentPeopleData={contentGroupData.people ?? []} />}
             <VStack w="auto" alignItems="flex-start">
-                {maybeZoomDetails ? (
-                    <ExternalLinkButton
-                        to={maybeZoomDetails}
-                        isExternal={true}
-                        colorScheme="green"
-                        linkProps={{ mt: 5 }}
-                    >
-                        Go to Zoom
-                    </ExternalLinkButton>
-                ) : (
-                    <></>
-                )}
+                <RequireAtLeastOnePermissionWrapper
+                    permissions={[Permission_Enum.ConferenceViewAttendees]}
+                >
+                    {maybeZoomDetails ? (
+                        <ExternalLinkButton
+                            to={maybeZoomDetails}
+                            isExternal={true}
+                            colorScheme="green"
+                            linkProps={{ mt: 5 }}
+                        >
+                            Go to Zoom
+                        </ExternalLinkButton>
+                    ) : (
+                        <></>
+                        )}
+                </RequireAtLeastOnePermissionWrapper>
                 {maybePaperURL ? (
                     <ExternalLinkButton to={maybePaperURL} isExternal={true} colorScheme="red" linkProps={{ mt: 5 }}>
                         Read the PDF

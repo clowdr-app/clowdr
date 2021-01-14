@@ -1,7 +1,6 @@
 import { Box, Flex, useToast, VStack } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import * as portals from "react-reverse-portal";
 import useUserId from "../../../../Auth/useUserId";
 import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";
 import usePolling from "../../../../Generic/usePolling";
@@ -131,15 +130,8 @@ function VonageRoomInner({
     }, [updateEnabledStreams]);
     usePolling(updateEnabledStreams, 5000, true);
 
-    const cameraPublisherPortal = useMemo(() => portals.createHtmlPortalNode(), []);
-
     return (
         <Box display="grid" gridTemplateRows="1fr auto">
-            <portals.InPortal node={cameraPublisherPortal}>
-                <Box w={300} h={300} ref={cameraPublishContainerRef}>
-                    <Box />
-                </Box>
-            </portals.InPortal>
             <Box display="none" ref={screenPublishContainerRef} />
             <Box maxH="80vh" height={receivingScreenShare ? "70vh" : undefined} overflowY="auto" position="relative">
                 <Flex width="100%" height="auto" flexWrap="wrap" overflowY="auto">
@@ -160,11 +152,13 @@ function VonageRoomInner({
                     ) : (
                         <></>
                     )}
-                    {openTokProps.isSessionConnected && openTokProps.publisher["camera"] ? (
-                        <portals.OutPortal node={cameraPublisherPortal} />
-                    ) : (
-                        <></>
-                    )}
+                    <Box
+                        w={300}
+                        h={300}
+                        ref={cameraPublishContainerRef}
+                        display={openTokProps.isSessionConnected && openTokProps.publisher["camera"] ? "block" : "none"}
+                    ></Box>
+
                     {R.sortWith(
                         [
                             R.descend((stream) => !enableStreams || !!enableStreams.includes(stream.streamId)),

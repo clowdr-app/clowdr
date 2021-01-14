@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 import { Button, Stack, Text, useToast } from "@chakra-ui/react";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
     EventPersonDetailsFragment,
     RoomEventSummaryFragment,
@@ -77,14 +77,30 @@ export function HandUpButton({
     });
     useQueryErrorToast(error, "useMyEventRoomJoinRequestSubscription");
 
-    const myEventPeople = useMemo(
-        () =>
+    const [myEventPeople, setMyEventPeople] = useState<EventPersonDetailsFragment[] | null>(null);
+    useEffect(() => {
+        const people =
             eventPeople?.filter(
                 (eventPerson) =>
                     eventPerson.eventId === currentRoomEvent?.id && attendee.id === eventPerson.attendee?.id
-            ) ?? [],
-        [attendee.id, currentRoomEvent?.id, eventPeople]
-    );
+            ) ?? [];
+
+        if (myEventPeople && myEventPeople.length === 0 && people.length > 0) {
+            toast({
+                status: "success",
+                title: "You have been granted access to go backstage",
+                description: (
+                    <Button onClick={onGoBackstage} colorScheme="teal" mt={2}>
+                        Go backstage now
+                    </Button>
+                ),
+                position: "bottom-right",
+            });
+        }
+
+        setMyEventPeople(people);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [attendee.id, currentRoomEvent?.id, eventPeople]);
 
     const roomModeName = useMemo(() => {
         switch (currentRoomEvent?.intendedRoomModeName) {
@@ -105,7 +121,7 @@ export function HandUpButton({
 
     return currentRoomEvent &&
         [RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(currentRoomEvent.intendedRoomModeName) ? (
-        myEventPeople.length > 0 ? (
+        myEventPeople && myEventPeople.length > 0 ? (
             onGoBackstage ? (
                 <Button mt={5} size="lg" height="auto" py={5} onClick={onGoBackstage} colorScheme="green">
                     <Stack>

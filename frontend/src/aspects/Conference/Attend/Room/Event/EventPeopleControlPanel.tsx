@@ -1,5 +1,5 @@
-import { Heading, List, ListItem } from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import { Heading, List, ListItem, useToast } from "@chakra-ui/react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
     EventPersonDetailsFragment,
     EventPersonRole_Enum,
@@ -23,6 +23,22 @@ export function EventPeopleControlPanel({
         [myRoles]
     );
     const userId = useUserId();
+
+    const toast = useToast();
+
+    const [numUnapprovedJoinRequests, setNumUnapprovedJoinRequests] = useState<number | null>(null);
+    useEffect(() => {
+        if (numUnapprovedJoinRequests !== null && numUnapprovedJoinRequests < unapprovedJoinRequests.length) {
+            toast({
+                title: "Somebody asked to join the event room",
+                status: "info",
+            });
+        }
+        if (numUnapprovedJoinRequests !== unapprovedJoinRequests.length) {
+            setNumUnapprovedJoinRequests(unapprovedJoinRequests.length);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [unapprovedJoinRequests]);
 
     return (
         <>

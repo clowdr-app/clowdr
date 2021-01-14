@@ -216,7 +216,10 @@ export default function EventBox({
 }): JSX.Element | null {
     const event = sortedEvents[0];
     const eventStartMs = useMemo(() => Date.parse(event.startTime), [event.startTime]);
-    const durationSeconds = useMemo(() => sortedEvents.reduce((acc, e) => acc + e.durationSeconds, 0), [sortedEvents]);
+    const durationSeconds = useMemo(() => {
+        const lastEvent = sortedEvents[sortedEvents.length - 1];
+        return Date.parse(lastEvent.startTime) + lastEvent.durationSeconds - eventStartMs;
+    }, [eventStartMs, sortedEvents]);
 
     const timelineParams = useTimelineParameters();
 
@@ -286,7 +289,7 @@ export default function EventBox({
                 minW={0}
                 colorScheme="blue"
                 role="button"
-                aria-label={`${eventTitle} starts ${new Date(event.startTime).toLocaleString(undefined, {
+                aria-label={`${eventTitle} starts ${new Date(eventStartMs).toLocaleString(undefined, {
                     weekday: "long",
                     hour: "numeric",
                     minute: "numeric",

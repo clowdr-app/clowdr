@@ -75,7 +75,7 @@ function RoomTimelineInner({
         let currentEventsGroup: Timeline_EventFragment[] = [];
         for (let idx = 0; idx < sortedEvents.length; idx++) {
             const event = sortedEvents[idx];
-            const compareEvent = currentEventsGroup.length > 0 ? currentEventsGroup[0] : undefined;
+            const compareEvent = currentEventsGroup.length > 0 ? currentEventsGroup[currentEventsGroup.length - 1] : undefined;
             if (
                 !compareEvent ||
                 (compareEvent.contentGroup &&
@@ -84,7 +84,7 @@ function RoomTimelineInner({
                         Date.parse(event.startTime) -
                             (Date.parse(compareEvent.startTime) + compareEvent.durationSeconds * 1000)
                     ) <
-                        1000 * 600)
+                        1000 * 330)
             ) {
                 currentEventsGroup.push(event);
             } else {

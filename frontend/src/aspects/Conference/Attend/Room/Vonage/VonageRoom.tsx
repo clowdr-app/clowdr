@@ -7,7 +7,7 @@ import usePolling from "../../../../Generic/usePolling";
 import { OpenTokProvider } from "../../../../Vonage/OpenTokProvider";
 import { useOpenTok } from "../../../../Vonage/useOpenTok";
 import { VonageRoomStateProvider } from "../../../../Vonage/useVonageRoom";
-import useCurrentAttendee from "../../../useCurrentAttendee";
+import useCurrentAttendee, { useMaybeCurrentAttendee } from "../../../useCurrentAttendee";
 import PlaceholderImage from "../PlaceholderImage";
 import { PreJoin } from "../PreJoin";
 import { usePublisherControl } from "./usePublisherControl";
@@ -22,11 +22,13 @@ export function VonageRoom({
     vonageSessionId: string;
     getAccessToken: () => Promise<string>;
 }): JSX.Element {
+    const mAttendee = useMaybeCurrentAttendee();
+
     return (
         <VonageRoomStateProvider>
             <OpenTokProvider>
                 <ChatProfileModalProvider>
-                    <VonageRoomInner vonageSessionId={vonageSessionId} getAccessToken={getAccessToken} />
+                    {mAttendee ? <VonageRoomInner vonageSessionId={vonageSessionId} getAccessToken={getAccessToken} /> : undefined}
                 </ChatProfileModalProvider>
             </OpenTokProvider>
         </VonageRoomStateProvider>

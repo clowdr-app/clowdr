@@ -110,14 +110,18 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
                                     <Box textAlign="center" flexGrow={1} style={{ scrollbarWidth: "thin" }}>
                                         <Box position="relative">
                                             <ContentGroupVideos contentGroupData={contentGroupData} />
-                                            <Box
-                                                position={["static", "static", "absolute"]}
-                                                mt={[2, 2, 0]}
-                                                top="1rem"
-                                                right="1rem"
+                                            <RequireAtLeastOnePermissionWrapper
+                                                permissions={[Permission_Enum.ConferenceViewAttendees]}
                                             >
-                                                <ContentGroupLive contentGroupEvents={contentGroupData} />
-                                            </Box>
+                                                <Box
+                                                    position={["static", "static", "absolute"]}
+                                                    mt={[2, 2, 0]}
+                                                    top="1rem"
+                                                    right="1rem"
+                                                >
+                                                    <ContentGroupLive contentGroupEvents={contentGroupData} />
+                                                </Box>
+                                            </RequireAtLeastOnePermissionWrapper>
                                         </Box>
                                         <Box ml={5}>
                                             <ContentGroupSummary contentGroupData={contentGroupData} />

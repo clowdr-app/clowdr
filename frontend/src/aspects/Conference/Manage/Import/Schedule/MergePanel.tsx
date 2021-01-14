@@ -180,7 +180,7 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
                             mergedRoomsMap
                         );
 
-                        const failures: { [K: string]: string[] } = {
+                        const failures: { [K: string]: { k: string; v: any }[] } = {
                             events: [],
                             rooms: [],
                             originatingDatas: [],
@@ -188,22 +188,22 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
                         };
                         results.events.forEach((v, k) => {
                             if (!v) {
-                                failures.events.push(k);
+                                failures.events.push({ k, v: mergedEventsMap.get(k) });
                             }
                         });
                         results.rooms.forEach((v, k) => {
                             if (!v) {
-                                failures.rooms.push(k);
+                                failures.rooms.push({ k, v: mergedRoomsMap.get(k) });
                             }
                         });
                         results.originatingDatas.forEach((v, k) => {
                             if (!v) {
-                                failures.originatingDatas.push(k);
+                                failures.originatingDatas.push({ k, v: mergedOriginatingDatasMap.get(k) });
                             }
                         });
                         results.tags.forEach((v, k) => {
                             if (!v) {
-                                failures.tags.push(k);
+                                failures.tags.push({ k, v: mergedTagsMap.get(k) });
                             }
                         });
                         const failureCount =

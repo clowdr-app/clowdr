@@ -200,7 +200,7 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
                             mergedHallwaysMap
                         );
 
-                        const failures: { [K: string]: string[] } = {
+                        const failures: { [K: string]: { k: string; v: any }[] } = {
                             groups: [],
                             hallways: [],
                             originatingDatas: [],
@@ -209,27 +209,27 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
                         };
                         results.groups.forEach((v, k) => {
                             if (!v) {
-                                failures.groups.push(k);
+                                failures.groups.push({ k, v: mergedGroupsMap.get(k) });
                             }
                         });
                         results.hallways.forEach((v, k) => {
                             if (!v) {
-                                failures.hallways.push(k);
+                                failures.hallways.push({ k, v: mergedHallwaysMap.get(k) });
                             }
                         });
                         results.originatingDatas.forEach((v, k) => {
                             if (!v) {
-                                failures.originatingDatas.push(k);
+                                failures.originatingDatas.push({ k, v: mergedOriginatingDatasMap.get(k) });
                             }
                         });
                         results.people.forEach((v, k) => {
                             if (!v) {
-                                failures.people.push(k);
+                                failures.people.push({ k, v: mergedPeopleMap.get(k) });
                             }
                         });
                         results.tags.forEach((v, k) => {
                             if (!v) {
-                                failures.tags.push(k);
+                                failures.tags.push({ k, v: mergedTagsMap.get(k) });
                             }
                         });
                         const failureCount =

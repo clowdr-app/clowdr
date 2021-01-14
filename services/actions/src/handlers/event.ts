@@ -97,7 +97,6 @@ gql`
         }
     }
 
-    
     mutation EndChatDuplication(
         $chatId1: uuid!
         $chatId2: uuid!
@@ -165,13 +164,14 @@ async function insertChatDuplicationMarkers(eventId: string, isStart: boolean): 
                             "::" +
                             (Date.parse(chatInfo.data.Event_by_pk.startTime) +
                                 (isStart ? 0 : chatInfo.data.Event_by_pk.durationSeconds)),
-                        systemId2: !isStart ? 
-                            chatId2 +
-                            "::" +
-                            (isStart ? "start" : "end") +
-                            "::" +
-                            (Date.parse(chatInfo.data.Event_by_pk.startTime) +
-                                (isStart ? 0 : chatInfo.data.Event_by_pk.durationSeconds)) : undefined,
+                        systemId2: !isStart
+                            ? chatId2 +
+                              "::" +
+                              (isStart ? "start" : "end") +
+                              "::" +
+                              (Date.parse(chatInfo.data.Event_by_pk.startTime) +
+                                  (isStart ? 0 : chatInfo.data.Event_by_pk.durationSeconds))
+                            : undefined,
                         message: "<<<Duplication marker>>>",
                         data: {
                             type: isStart ? "start" : "end",

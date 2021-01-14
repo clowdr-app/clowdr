@@ -75,7 +75,8 @@ function RoomTimelineInner({
         let currentEventsGroup: Timeline_EventFragment[] = [];
         for (let idx = 0; idx < sortedEvents.length; idx++) {
             const event = sortedEvents[idx];
-            const compareEvent = currentEventsGroup.length > 0 ? currentEventsGroup[currentEventsGroup.length - 1] : undefined;
+            const compareEvent =
+                currentEventsGroup.length > 0 ? currentEventsGroup[currentEventsGroup.length - 1] : undefined;
             if (
                 !compareEvent ||
                 (compareEvent.contentGroup &&

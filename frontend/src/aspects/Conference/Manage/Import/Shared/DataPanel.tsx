@@ -23,12 +23,12 @@ function parser(data: any): ParserResult<any[]> {
         data = data.subevent;
     }
 
-    if (!(data instanceof Array)) {
-        return {
-            ok: false,
-            error: "Data should be a list of items.",
-        };
-    }
+    // if (!(data instanceof Array)) {
+    //     return {
+    //         ok: false,
+    //         error: "Data should be a list of items.",
+    //     };
+    // }
 
     return {
         ok: true,

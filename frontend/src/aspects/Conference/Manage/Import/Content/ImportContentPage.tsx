@@ -60,10 +60,17 @@ const presetJSONata_ResearchrQuery_POPL2021 = `
     "groups": $.$@$session.timeslot[event_id].(
         $roomName := $trim($split($session.room._text, "|")[-1]);
         $tagNames := [$session.tracks.track._text.$trim($)];
+        $typeName := $roomName = "CARES" or 
+                     $roomName = "POPL Meetups" or 
+                     $roomName = "Break" or 
+                     title._text = "Break" ? "OTHER" 
+                     : $roomName = "POPL" ? "KEYNOTE" 
+                     : $roomName = "POPL-A" or $roomName = "POPL-B" ? "PAPER" 
+                     : "WORKSHOP";
         {
         "originatingDataSourceId": slot_id._text,
-        "title": $contains(title._text, /^Structured Social$/i) ? "Structured Social" : $contains(title._text, /^Unstructured Social$/i) ? "Social Time" : title._text,
-        "typeName": $roomName = "Break" or title._text = "Break" ? "OTHER" : $roomName = "POPL" ? "KEYNOTE" : $roomName = "POPL-A" or $roomName = "POPL-B" ? "PAPER" : "WORKSHOP",
+        "title": title._text,
+        "typeName": $typeName,
         "items": [
             {
                 "typeName": "ABSTRACT",
@@ -80,7 +87,7 @@ const presetJSONata_ResearchrQuery_POPL2021 = `
                 }],
                 "originatingDataSourceId": slot_id._text
             },
-            ($roomName != "Break" and title._text != "Break" and $roomName != "POPL" and $roomName != "POPL-A" and $roomName != "POPL-B" 
+            ($typeName = "WORKSHOP"
                 ? {
                     "typeName": "ZOOM",
                     "isHidden": false,

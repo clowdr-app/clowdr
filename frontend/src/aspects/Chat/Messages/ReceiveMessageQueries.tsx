@@ -5,7 +5,6 @@ import {
     SelectFirstMessagesPageQuery,
     SelectMessagesPageQuery,
     useDeleteMessageMutation,
-    useDeletePairOfMessagesMutation,
     useLatestMessagesSubscription,
     useSelectFirstMessagesPageQuery,
     useSelectMessagesPageQuery,
@@ -92,15 +91,6 @@ gql`
         }
     }
 
-    mutation DeletePairOfMessages($id1: Int!, $id2: Int!) {
-        msg1: delete_chat_Message_by_pk(id: $id1) {
-            id
-        }
-        msg2: delete_chat_Message_by_pk(id: $id2) {
-            id
-        }
-    }
-
     subscription LatestMessages($chatId: uuid!, $maxCount: Int!) {
         chat_Message(order_by: { id: desc }, where: { chatId: { _eq: $chatId } }, limit: $maxCount) {
             ...ChatMessageData
@@ -116,7 +106,7 @@ type LoadF = (
 interface ReceiveMessageQueriesCtx {
     load: LoadF;
     refetch: (id: number) => Promise<void>;
-    delete: (id: number, duplicatedId: number | undefined) => Promise<void>;
+    delete: (id: number) => Promise<void>;
     liveMessages: Map<number, ChatMessageDataFragment> | null;
     deletedItems: Set<number>;
     setAnsweringQuestionId: React.RefObject<{ f: (ids: number[] | null) => void; answeringIds: number[] | null }>;
@@ -163,7 +153,6 @@ export default function ReceiveMessageQueriesProvider({
         fetchPolicy: "network-only",
     });
     const [deleteMessage] = useDeleteMessageMutation();
-    const [deleteMessagePair] = useDeletePairOfMessagesMutation();
 
     const load: LoadF = useCallback(
         async (index, count) => {
@@ -210,28 +199,20 @@ export default function ReceiveMessageQueriesProvider({
 
     const [deletedItems, setDeletedItems] = useState<Set<number>>(new Set());
     const deleteMsg = useCallback(
-        async (id: number, duplicatedId: number | undefined) => {
-            if (duplicatedId) {
-                await deleteMessagePair({
-                    variables: { id1: id, id2: duplicatedId },
-                });
-            } else {
-                await deleteMessage({
-                    variables: {
-                        id,
-                    },
-                });
-            }
+        async (id: number) => {
+            await deleteMessage({
+                variables: {
+                    id,
+                },
+            });
+
             setDeletedItems((old) => {
                 const newS = new Set(old);
                 newS.add(id);
-                if (duplicatedId) {
-                    newS.add(duplicatedId);
-                }
                 return newS;
             });
         },
-        [deleteMessage, deleteMessagePair]
+        [deleteMessage]
     );
     const liveMessages = useMemo(() => {
         setRefetchMsg(null);

@@ -14631,6 +14631,13 @@ export type Chat_Chat = {
   /** An aggregated array relationship */
   readonly contentGroup_aggregate: ContentGroup_Aggregate;
   readonly created_at: Scalars['timestamptz'];
+  /** An object relationship */
+  readonly duplicateTo?: Maybe<Chat_Chat>;
+  readonly duplicateToId?: Maybe<Scalars['uuid']>;
+  /** An array relationship */
+  readonly duplicatesFrom: ReadonlyArray<Chat_Chat>;
+  /** An aggregated array relationship */
+  readonly duplicatesFrom_aggregate: Chat_Chat_Aggregate;
   readonly enableAutoPin: Scalars['Boolean'];
   readonly enableAutoSubscribe: Scalars['Boolean'];
   readonly enableMandatoryPin: Scalars['Boolean'];
@@ -14686,6 +14693,26 @@ export type Chat_ChatContentGroup_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<ContentGroup_Order_By>>;
   where?: Maybe<ContentGroup_Bool_Exp>;
+};
+
+
+/** columns and relationships of "chat.Chat" */
+export type Chat_ChatDuplicatesFromArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Chat_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Chat_Order_By>>;
+  where?: Maybe<Chat_Chat_Bool_Exp>;
+};
+
+
+/** columns and relationships of "chat.Chat" */
+export type Chat_ChatDuplicatesFrom_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Chat_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Chat_Order_By>>;
+  where?: Maybe<Chat_Chat_Bool_Exp>;
 };
 
 
@@ -14872,6 +14899,9 @@ export type Chat_Chat_Bool_Exp = {
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly contentGroup?: Maybe<ContentGroup_Bool_Exp>;
   readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly duplicateTo?: Maybe<Chat_Chat_Bool_Exp>;
+  readonly duplicateToId?: Maybe<Uuid_Comparison_Exp>;
+  readonly duplicatesFrom?: Maybe<Chat_Chat_Bool_Exp>;
   readonly enableAutoPin?: Maybe<Boolean_Comparison_Exp>;
   readonly enableAutoSubscribe?: Maybe<Boolean_Comparison_Exp>;
   readonly enableMandatoryPin?: Maybe<Boolean_Comparison_Exp>;
@@ -14900,6 +14930,9 @@ export type Chat_Chat_Insert_Input = {
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly contentGroup?: Maybe<ContentGroup_Arr_Rel_Insert_Input>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly duplicateTo?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
+  readonly duplicateToId?: Maybe<Scalars['uuid']>;
+  readonly duplicatesFrom?: Maybe<Chat_Chat_Arr_Rel_Insert_Input>;
   readonly enableAutoPin?: Maybe<Scalars['Boolean']>;
   readonly enableAutoSubscribe?: Maybe<Scalars['Boolean']>;
   readonly enableMandatoryPin?: Maybe<Scalars['Boolean']>;
@@ -14921,6 +14954,7 @@ export type Chat_Chat_Max_Fields = {
   readonly __typename?: 'chat_Chat_max_fields';
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly duplicateToId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -14929,6 +14963,7 @@ export type Chat_Chat_Max_Fields = {
 export type Chat_Chat_Max_Order_By = {
   readonly conferenceId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
+  readonly duplicateToId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
@@ -14938,6 +14973,7 @@ export type Chat_Chat_Min_Fields = {
   readonly __typename?: 'chat_Chat_min_fields';
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly duplicateToId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -14946,6 +14982,7 @@ export type Chat_Chat_Min_Fields = {
 export type Chat_Chat_Min_Order_By = {
   readonly conferenceId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
+  readonly duplicateToId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
@@ -14978,6 +15015,9 @@ export type Chat_Chat_Order_By = {
   readonly conferenceId?: Maybe<Order_By>;
   readonly contentGroup_aggregate?: Maybe<ContentGroup_Aggregate_Order_By>;
   readonly created_at?: Maybe<Order_By>;
+  readonly duplicateTo?: Maybe<Chat_Chat_Order_By>;
+  readonly duplicateToId?: Maybe<Order_By>;
+  readonly duplicatesFrom_aggregate?: Maybe<Chat_Chat_Aggregate_Order_By>;
   readonly enableAutoPin?: Maybe<Order_By>;
   readonly enableAutoSubscribe?: Maybe<Order_By>;
   readonly enableMandatoryPin?: Maybe<Order_By>;
@@ -15006,6 +15046,8 @@ export enum Chat_Chat_Select_Column {
   /** column name */
   CreatedAt = 'created_at',
   /** column name */
+  DuplicateToId = 'duplicateToId',
+  /** column name */
   EnableAutoPin = 'enableAutoPin',
   /** column name */
   EnableAutoSubscribe = 'enableAutoSubscribe',
@@ -15025,6 +15067,7 @@ export enum Chat_Chat_Select_Column {
 export type Chat_Chat_Set_Input = {
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly duplicateToId?: Maybe<Scalars['uuid']>;
   readonly enableAutoPin?: Maybe<Scalars['Boolean']>;
   readonly enableAutoSubscribe?: Maybe<Scalars['Boolean']>;
   readonly enableMandatoryPin?: Maybe<Scalars['Boolean']>;
@@ -15040,6 +15083,8 @@ export enum Chat_Chat_Update_Column {
   ConferenceId = 'conferenceId',
   /** column name */
   CreatedAt = 'created_at',
+  /** column name */
+  DuplicateToId = 'duplicateToId',
   /** column name */
   EnableAutoPin = 'enableAutoPin',
   /** column name */
@@ -16460,6 +16505,13 @@ export type Chat_Reaction = {
   readonly __typename?: 'chat_Reaction';
   readonly created_at: Scalars['timestamptz'];
   readonly data: Scalars['jsonb'];
+  /** An object relationship */
+  readonly duplicate?: Maybe<Chat_Reaction>;
+  readonly duplicateId?: Maybe<Scalars['Int']>;
+  /** An array relationship */
+  readonly duplicates: ReadonlyArray<Chat_Reaction>;
+  /** An aggregated array relationship */
+  readonly duplicates_aggregate: Chat_Reaction_Aggregate;
   readonly id: Scalars['Int'];
   /** An object relationship */
   readonly message: Chat_Message;
@@ -16476,6 +16528,26 @@ export type Chat_Reaction = {
 /** columns and relationships of "chat.Reaction" */
 export type Chat_ReactionDataArgs = {
   path?: Maybe<Scalars['String']>;
+};
+
+
+/** columns and relationships of "chat.Reaction" */
+export type Chat_ReactionDuplicatesArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Reaction_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Reaction_Order_By>>;
+  where?: Maybe<Chat_Reaction_Bool_Exp>;
+};
+
+
+/** columns and relationships of "chat.Reaction" */
+export type Chat_ReactionDuplicates_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_Reaction_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_Reaction_Order_By>>;
+  where?: Maybe<Chat_Reaction_Bool_Exp>;
 };
 
 /** columns and relationships of "chat.ReactionType" */
@@ -16703,12 +16775,14 @@ export type Chat_Reaction_Arr_Rel_Insert_Input = {
 /** aggregate avg on columns */
 export type Chat_Reaction_Avg_Fields = {
   readonly __typename?: 'chat_Reaction_avg_fields';
+  readonly duplicateId?: Maybe<Scalars['Float']>;
   readonly id?: Maybe<Scalars['Float']>;
   readonly messageId?: Maybe<Scalars['Float']>;
 };
 
 /** order by avg() on columns of table "chat.Reaction" */
 export type Chat_Reaction_Avg_Order_By = {
+  readonly duplicateId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly messageId?: Maybe<Order_By>;
 };
@@ -16720,6 +16794,9 @@ export type Chat_Reaction_Bool_Exp = {
   readonly _or?: Maybe<ReadonlyArray<Maybe<Chat_Reaction_Bool_Exp>>>;
   readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
   readonly data?: Maybe<Jsonb_Comparison_Exp>;
+  readonly duplicate?: Maybe<Chat_Reaction_Bool_Exp>;
+  readonly duplicateId?: Maybe<Int_Comparison_Exp>;
+  readonly duplicates?: Maybe<Chat_Reaction_Bool_Exp>;
   readonly id?: Maybe<Int_Comparison_Exp>;
   readonly message?: Maybe<Chat_Message_Bool_Exp>;
   readonly messageId?: Maybe<Int_Comparison_Exp>;
@@ -16753,6 +16830,7 @@ export type Chat_Reaction_Delete_Key_Input = {
 
 /** input type for incrementing integer column in table "chat.Reaction" */
 export type Chat_Reaction_Inc_Input = {
+  readonly duplicateId?: Maybe<Scalars['Int']>;
   readonly id?: Maybe<Scalars['Int']>;
   readonly messageId?: Maybe<Scalars['Int']>;
 };
@@ -16761,6 +16839,9 @@ export type Chat_Reaction_Inc_Input = {
 export type Chat_Reaction_Insert_Input = {
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly data?: Maybe<Scalars['jsonb']>;
+  readonly duplicate?: Maybe<Chat_Reaction_Obj_Rel_Insert_Input>;
+  readonly duplicateId?: Maybe<Scalars['Int']>;
+  readonly duplicates?: Maybe<Chat_Reaction_Arr_Rel_Insert_Input>;
   readonly id?: Maybe<Scalars['Int']>;
   readonly message?: Maybe<Chat_Message_Obj_Rel_Insert_Input>;
   readonly messageId?: Maybe<Scalars['Int']>;
@@ -16775,6 +16856,7 @@ export type Chat_Reaction_Insert_Input = {
 export type Chat_Reaction_Max_Fields = {
   readonly __typename?: 'chat_Reaction_max_fields';
   readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly duplicateId?: Maybe<Scalars['Int']>;
   readonly id?: Maybe<Scalars['Int']>;
   readonly messageId?: Maybe<Scalars['Int']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
@@ -16785,6 +16867,7 @@ export type Chat_Reaction_Max_Fields = {
 /** order by max() on columns of table "chat.Reaction" */
 export type Chat_Reaction_Max_Order_By = {
   readonly created_at?: Maybe<Order_By>;
+  readonly duplicateId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly messageId?: Maybe<Order_By>;
   readonly senderId?: Maybe<Order_By>;
@@ -16796,6 +16879,7 @@ export type Chat_Reaction_Max_Order_By = {
 export type Chat_Reaction_Min_Fields = {
   readonly __typename?: 'chat_Reaction_min_fields';
   readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly duplicateId?: Maybe<Scalars['Int']>;
   readonly id?: Maybe<Scalars['Int']>;
   readonly messageId?: Maybe<Scalars['Int']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
@@ -16806,6 +16890,7 @@ export type Chat_Reaction_Min_Fields = {
 /** order by min() on columns of table "chat.Reaction" */
 export type Chat_Reaction_Min_Order_By = {
   readonly created_at?: Maybe<Order_By>;
+  readonly duplicateId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly messageId?: Maybe<Order_By>;
   readonly senderId?: Maybe<Order_By>;
@@ -16839,6 +16924,9 @@ export type Chat_Reaction_On_Conflict = {
 export type Chat_Reaction_Order_By = {
   readonly created_at?: Maybe<Order_By>;
   readonly data?: Maybe<Order_By>;
+  readonly duplicate?: Maybe<Chat_Reaction_Order_By>;
+  readonly duplicateId?: Maybe<Order_By>;
+  readonly duplicates_aggregate?: Maybe<Chat_Reaction_Aggregate_Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly message?: Maybe<Chat_Message_Order_By>;
   readonly messageId?: Maybe<Order_By>;
@@ -16866,6 +16954,8 @@ export enum Chat_Reaction_Select_Column {
   /** column name */
   Data = 'data',
   /** column name */
+  DuplicateId = 'duplicateId',
+  /** column name */
   Id = 'id',
   /** column name */
   MessageId = 'messageId',
@@ -16883,6 +16973,7 @@ export enum Chat_Reaction_Select_Column {
 export type Chat_Reaction_Set_Input = {
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly data?: Maybe<Scalars['jsonb']>;
+  readonly duplicateId?: Maybe<Scalars['Int']>;
   readonly id?: Maybe<Scalars['Int']>;
   readonly messageId?: Maybe<Scalars['Int']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
@@ -16894,12 +16985,14 @@ export type Chat_Reaction_Set_Input = {
 /** aggregate stddev on columns */
 export type Chat_Reaction_Stddev_Fields = {
   readonly __typename?: 'chat_Reaction_stddev_fields';
+  readonly duplicateId?: Maybe<Scalars['Float']>;
   readonly id?: Maybe<Scalars['Float']>;
   readonly messageId?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev() on columns of table "chat.Reaction" */
 export type Chat_Reaction_Stddev_Order_By = {
+  readonly duplicateId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly messageId?: Maybe<Order_By>;
 };
@@ -16907,12 +17000,14 @@ export type Chat_Reaction_Stddev_Order_By = {
 /** aggregate stddev_pop on columns */
 export type Chat_Reaction_Stddev_Pop_Fields = {
   readonly __typename?: 'chat_Reaction_stddev_pop_fields';
+  readonly duplicateId?: Maybe<Scalars['Float']>;
   readonly id?: Maybe<Scalars['Float']>;
   readonly messageId?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev_pop() on columns of table "chat.Reaction" */
 export type Chat_Reaction_Stddev_Pop_Order_By = {
+  readonly duplicateId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly messageId?: Maybe<Order_By>;
 };
@@ -16920,12 +17015,14 @@ export type Chat_Reaction_Stddev_Pop_Order_By = {
 /** aggregate stddev_samp on columns */
 export type Chat_Reaction_Stddev_Samp_Fields = {
   readonly __typename?: 'chat_Reaction_stddev_samp_fields';
+  readonly duplicateId?: Maybe<Scalars['Float']>;
   readonly id?: Maybe<Scalars['Float']>;
   readonly messageId?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev_samp() on columns of table "chat.Reaction" */
 export type Chat_Reaction_Stddev_Samp_Order_By = {
+  readonly duplicateId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly messageId?: Maybe<Order_By>;
 };
@@ -16933,12 +17030,14 @@ export type Chat_Reaction_Stddev_Samp_Order_By = {
 /** aggregate sum on columns */
 export type Chat_Reaction_Sum_Fields = {
   readonly __typename?: 'chat_Reaction_sum_fields';
+  readonly duplicateId?: Maybe<Scalars['Int']>;
   readonly id?: Maybe<Scalars['Int']>;
   readonly messageId?: Maybe<Scalars['Int']>;
 };
 
 /** order by sum() on columns of table "chat.Reaction" */
 export type Chat_Reaction_Sum_Order_By = {
+  readonly duplicateId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly messageId?: Maybe<Order_By>;
 };
@@ -16949,6 +17048,8 @@ export enum Chat_Reaction_Update_Column {
   CreatedAt = 'created_at',
   /** column name */
   Data = 'data',
+  /** column name */
+  DuplicateId = 'duplicateId',
   /** column name */
   Id = 'id',
   /** column name */
@@ -16966,12 +17067,14 @@ export enum Chat_Reaction_Update_Column {
 /** aggregate var_pop on columns */
 export type Chat_Reaction_Var_Pop_Fields = {
   readonly __typename?: 'chat_Reaction_var_pop_fields';
+  readonly duplicateId?: Maybe<Scalars['Float']>;
   readonly id?: Maybe<Scalars['Float']>;
   readonly messageId?: Maybe<Scalars['Float']>;
 };
 
 /** order by var_pop() on columns of table "chat.Reaction" */
 export type Chat_Reaction_Var_Pop_Order_By = {
+  readonly duplicateId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly messageId?: Maybe<Order_By>;
 };
@@ -16979,12 +17082,14 @@ export type Chat_Reaction_Var_Pop_Order_By = {
 /** aggregate var_samp on columns */
 export type Chat_Reaction_Var_Samp_Fields = {
   readonly __typename?: 'chat_Reaction_var_samp_fields';
+  readonly duplicateId?: Maybe<Scalars['Float']>;
   readonly id?: Maybe<Scalars['Float']>;
   readonly messageId?: Maybe<Scalars['Float']>;
 };
 
 /** order by var_samp() on columns of table "chat.Reaction" */
 export type Chat_Reaction_Var_Samp_Order_By = {
+  readonly duplicateId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly messageId?: Maybe<Order_By>;
 };
@@ -16992,12 +17097,14 @@ export type Chat_Reaction_Var_Samp_Order_By = {
 /** aggregate variance on columns */
 export type Chat_Reaction_Variance_Fields = {
   readonly __typename?: 'chat_Reaction_variance_fields';
+  readonly duplicateId?: Maybe<Scalars['Float']>;
   readonly id?: Maybe<Scalars['Float']>;
   readonly messageId?: Maybe<Scalars['Float']>;
 };
 
 /** order by variance() on columns of table "chat.Reaction" */
 export type Chat_Reaction_Variance_Order_By = {
+  readonly duplicateId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly messageId?: Maybe<Order_By>;
 };
@@ -26607,20 +26714,7 @@ export type SendChatMessageMutationVariables = Exact<{
 }>;
 
 
-export type SendChatMessageMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Message?: Maybe<{ readonly __typename?: 'chat_Message_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'chat_Message', readonly id: number }> }> };
-
-export type SendDuplicatedChatMessageMutationVariables = Exact<{
-  chatId: Scalars['uuid'];
-  otherChatId: Scalars['uuid'];
-  senderId: Scalars['uuid'];
-  type: Chat_MessageType_Enum;
-  message: Scalars['String'];
-  data?: Maybe<Scalars['jsonb']>;
-  isPinned?: Maybe<Scalars['Boolean']>;
-}>;
-
-
-export type SendDuplicatedChatMessageMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Message?: Maybe<{ readonly __typename?: 'chat_Message_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'chat_Message', readonly id: number, readonly duplicatedMessageId?: Maybe<number> }> }> };
+export type SendChatMessageMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Message?: Maybe<{ readonly __typename?: 'chat_Message_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'chat_Message', readonly id: number, readonly duplicatedMessageId?: Maybe<number> }> }> };
 
 export type SendChatAnswerMutationVariables = Exact<{
   data: Scalars['jsonb'];
@@ -26630,14 +26724,6 @@ export type SendChatAnswerMutationVariables = Exact<{
 
 
 export type SendChatAnswerMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Reaction?: Maybe<{ readonly __typename?: 'chat_Reaction_mutation_response', readonly affected_rows: number }> };
-
-export type CompleteDuplicatedMessageLoopMutationVariables = Exact<{
-  msgId1: Scalars['Int'];
-  msgId2: Scalars['Int'];
-}>;
-
-
-export type CompleteDuplicatedMessageLoopMutation = { readonly __typename?: 'mutation_root', readonly update_chat_Message_by_pk?: Maybe<{ readonly __typename?: 'chat_Message', readonly id: number, readonly duplicatedMessageId?: Maybe<number> }> };
 
 export type AttendeesByIdQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -26731,14 +26817,6 @@ export type DeleteMessageMutationVariables = Exact<{
 
 
 export type DeleteMessageMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Message_by_pk?: Maybe<{ readonly __typename?: 'chat_Message', readonly id: number }> };
-
-export type DeletePairOfMessagesMutationVariables = Exact<{
-  id1: Scalars['Int'];
-  id2: Scalars['Int'];
-}>;
-
-
-export type DeletePairOfMessagesMutation = { readonly __typename?: 'mutation_root', readonly msg1?: Maybe<{ readonly __typename?: 'chat_Message', readonly id: number }>, readonly msg2?: Maybe<{ readonly __typename?: 'chat_Message', readonly id: number }> };
 
 export type LatestMessagesSubscriptionVariables = Exact<{
   chatId: Scalars['uuid'];
@@ -29004,6 +29082,7 @@ export const SendChatMessageDocument = gql`
   ) {
     returning {
       id
+      duplicatedMessageId
     }
   }
 }
@@ -29038,49 +29117,6 @@ export function useSendChatMessageMutation(baseOptions?: Apollo.MutationHookOpti
 export type SendChatMessageMutationHookResult = ReturnType<typeof useSendChatMessageMutation>;
 export type SendChatMessageMutationResult = Apollo.MutationResult<SendChatMessageMutation>;
 export type SendChatMessageMutationOptions = Apollo.BaseMutationOptions<SendChatMessageMutation, SendChatMessageMutationVariables>;
-export const SendDuplicatedChatMessageDocument = gql`
-    mutation SendDuplicatedChatMessage($chatId: uuid!, $otherChatId: uuid!, $senderId: uuid!, $type: chat_MessageType_enum!, $message: String!, $data: jsonb = {}, $isPinned: Boolean = false) {
-  insert_chat_Message(
-    objects: {chatId: $chatId, data: $data, isPinned: $isPinned, message: $message, senderId: $senderId, type: $type, duplicateOutgoing: {data: {chatId: $otherChatId, data: $data, isPinned: $isPinned, message: $message, senderId: $senderId, type: $type}}}
-  ) {
-    returning {
-      id
-      duplicatedMessageId
-    }
-  }
-}
-    `;
-export type SendDuplicatedChatMessageMutationFn = Apollo.MutationFunction<SendDuplicatedChatMessageMutation, SendDuplicatedChatMessageMutationVariables>;
-
-/**
- * __useSendDuplicatedChatMessageMutation__
- *
- * To run a mutation, you first call `useSendDuplicatedChatMessageMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSendDuplicatedChatMessageMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [sendDuplicatedChatMessageMutation, { data, loading, error }] = useSendDuplicatedChatMessageMutation({
- *   variables: {
- *      chatId: // value for 'chatId'
- *      otherChatId: // value for 'otherChatId'
- *      senderId: // value for 'senderId'
- *      type: // value for 'type'
- *      message: // value for 'message'
- *      data: // value for 'data'
- *      isPinned: // value for 'isPinned'
- *   },
- * });
- */
-export function useSendDuplicatedChatMessageMutation(baseOptions?: Apollo.MutationHookOptions<SendDuplicatedChatMessageMutation, SendDuplicatedChatMessageMutationVariables>) {
-        return Apollo.useMutation<SendDuplicatedChatMessageMutation, SendDuplicatedChatMessageMutationVariables>(SendDuplicatedChatMessageDocument, baseOptions);
-      }
-export type SendDuplicatedChatMessageMutationHookResult = ReturnType<typeof useSendDuplicatedChatMessageMutation>;
-export type SendDuplicatedChatMessageMutationResult = Apollo.MutationResult<SendDuplicatedChatMessageMutation>;
-export type SendDuplicatedChatMessageMutationOptions = Apollo.BaseMutationOptions<SendDuplicatedChatMessageMutation, SendDuplicatedChatMessageMutationVariables>;
 export const SendChatAnswerDocument = gql`
     mutation SendChatAnswer($data: jsonb!, $senderId: uuid!, $answeringId: Int!) {
   insert_chat_Reaction(
@@ -29117,43 +29153,6 @@ export function useSendChatAnswerMutation(baseOptions?: Apollo.MutationHookOptio
 export type SendChatAnswerMutationHookResult = ReturnType<typeof useSendChatAnswerMutation>;
 export type SendChatAnswerMutationResult = Apollo.MutationResult<SendChatAnswerMutation>;
 export type SendChatAnswerMutationOptions = Apollo.BaseMutationOptions<SendChatAnswerMutation, SendChatAnswerMutationVariables>;
-export const CompleteDuplicatedMessageLoopDocument = gql`
-    mutation CompleteDuplicatedMessageLoop($msgId1: Int!, $msgId2: Int!) {
-  update_chat_Message_by_pk(
-    pk_columns: {id: $msgId2}
-    _set: {duplicatedMessageId: $msgId1}
-  ) {
-    id
-    duplicatedMessageId
-  }
-}
-    `;
-export type CompleteDuplicatedMessageLoopMutationFn = Apollo.MutationFunction<CompleteDuplicatedMessageLoopMutation, CompleteDuplicatedMessageLoopMutationVariables>;
-
-/**
- * __useCompleteDuplicatedMessageLoopMutation__
- *
- * To run a mutation, you first call `useCompleteDuplicatedMessageLoopMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCompleteDuplicatedMessageLoopMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [completeDuplicatedMessageLoopMutation, { data, loading, error }] = useCompleteDuplicatedMessageLoopMutation({
- *   variables: {
- *      msgId1: // value for 'msgId1'
- *      msgId2: // value for 'msgId2'
- *   },
- * });
- */
-export function useCompleteDuplicatedMessageLoopMutation(baseOptions?: Apollo.MutationHookOptions<CompleteDuplicatedMessageLoopMutation, CompleteDuplicatedMessageLoopMutationVariables>) {
-        return Apollo.useMutation<CompleteDuplicatedMessageLoopMutation, CompleteDuplicatedMessageLoopMutationVariables>(CompleteDuplicatedMessageLoopDocument, baseOptions);
-      }
-export type CompleteDuplicatedMessageLoopMutationHookResult = ReturnType<typeof useCompleteDuplicatedMessageLoopMutation>;
-export type CompleteDuplicatedMessageLoopMutationResult = Apollo.MutationResult<CompleteDuplicatedMessageLoopMutation>;
-export type CompleteDuplicatedMessageLoopMutationOptions = Apollo.BaseMutationOptions<CompleteDuplicatedMessageLoopMutation, CompleteDuplicatedMessageLoopMutationVariables>;
 export const AttendeesByIdDocument = gql`
     query AttendeesById($conferenceId: uuid!, $attendeeIds: [uuid!]!) {
   Attendee(where: {id: {_in: $attendeeIds}, conferenceId: {_eq: $conferenceId}}) {
@@ -29467,42 +29466,6 @@ export function useDeleteMessageMutation(baseOptions?: Apollo.MutationHookOption
 export type DeleteMessageMutationHookResult = ReturnType<typeof useDeleteMessageMutation>;
 export type DeleteMessageMutationResult = Apollo.MutationResult<DeleteMessageMutation>;
 export type DeleteMessageMutationOptions = Apollo.BaseMutationOptions<DeleteMessageMutation, DeleteMessageMutationVariables>;
-export const DeletePairOfMessagesDocument = gql`
-    mutation DeletePairOfMessages($id1: Int!, $id2: Int!) {
-  msg1: delete_chat_Message_by_pk(id: $id1) {
-    id
-  }
-  msg2: delete_chat_Message_by_pk(id: $id2) {
-    id
-  }
-}
-    `;
-export type DeletePairOfMessagesMutationFn = Apollo.MutationFunction<DeletePairOfMessagesMutation, DeletePairOfMessagesMutationVariables>;
-
-/**
- * __useDeletePairOfMessagesMutation__
- *
- * To run a mutation, you first call `useDeletePairOfMessagesMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeletePairOfMessagesMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deletePairOfMessagesMutation, { data, loading, error }] = useDeletePairOfMessagesMutation({
- *   variables: {
- *      id1: // value for 'id1'
- *      id2: // value for 'id2'
- *   },
- * });
- */
-export function useDeletePairOfMessagesMutation(baseOptions?: Apollo.MutationHookOptions<DeletePairOfMessagesMutation, DeletePairOfMessagesMutationVariables>) {
-        return Apollo.useMutation<DeletePairOfMessagesMutation, DeletePairOfMessagesMutationVariables>(DeletePairOfMessagesDocument, baseOptions);
-      }
-export type DeletePairOfMessagesMutationHookResult = ReturnType<typeof useDeletePairOfMessagesMutation>;
-export type DeletePairOfMessagesMutationResult = Apollo.MutationResult<DeletePairOfMessagesMutation>;
-export type DeletePairOfMessagesMutationOptions = Apollo.BaseMutationOptions<DeletePairOfMessagesMutation, DeletePairOfMessagesMutationVariables>;
 export const LatestMessagesDocument = gql`
     subscription LatestMessages($chatId: uuid!, $maxCount: Int!) {
   chat_Message(

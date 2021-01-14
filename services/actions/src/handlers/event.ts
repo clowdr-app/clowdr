@@ -1,9 +1,12 @@
 import { gql } from "@apollo/client/core";
 import {
+    EndChatDuplicationDocument,
+    EndChatDuplicationMutationVariables,
     GetEventChatInfoDocument,
     GetEventTimingsDocument,
-    InsertChatDuplicationMarkersDocument,
     RoomMode_Enum,
+    StartChatDuplicationDocument,
+    StartChatDuplicationMutationVariables,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { createEventBreakoutRoom, createEventEndTrigger, createEventStartTrigger } from "../lib/event";
@@ -62,7 +65,40 @@ gql`
             }
         }
     }
-    mutation InsertChatDuplicationMarkers(
+
+    mutation StartChatDuplication(
+        $chatId1: uuid!
+        $chatId2: uuid!
+        $data: jsonb!
+        $message: String!
+        $systemId1: String!
+    ) {
+        update_chat1: update_chat_Chat_by_pk(pk_columns: { id: $chatId1 }, _set: { duplicateToId: $chatId2 }) {
+            id
+        }
+        update_chat2: update_chat_Chat_by_pk(pk_columns: { id: $chatId2 }, _set: { duplicateToId: $chatId1 }) {
+            id
+        }
+        insert_chat_Message(
+            objects: [
+                {
+                    chatId: $chatId1
+                    data: $data
+                    isPinned: false
+                    message: $message
+                    senderId: null
+                    type: DUPLICATION_MARKER
+                    systemId: $systemId1
+                }
+            ]
+            on_conflict: { constraint: Message_systemId_key, update_columns: [] }
+        ) {
+            affected_rows
+        }
+    }
+
+    
+    mutation EndChatDuplication(
         $chatId1: uuid!
         $chatId2: uuid!
         $data: jsonb!
@@ -70,6 +106,12 @@ gql`
         $systemId1: String!
         $systemId2: String!
     ) {
+        update_chat1: update_chat_Chat_by_pk(pk_columns: { id: $chatId1 }, _set: { duplicateToId: null }) {
+            id
+        }
+        update_chat2: update_chat_Chat_by_pk(pk_columns: { id: $chatId2 }, _set: { duplicateToId: null }) {
+            id
+        }
         insert_chat_Message(
             objects: [
                 {
@@ -112,7 +154,7 @@ async function insertChatDuplicationMarkers(eventId: string, isStart: boolean): 
             const chatId2 = chatInfo.data.Event_by_pk.room.chatId;
             if (chatId1 && chatId2) {
                 await apolloClient.mutate({
-                    mutation: InsertChatDuplicationMarkersDocument,
+                    mutation: isStart ? StartChatDuplicationDocument : EndChatDuplicationDocument,
                     variables: {
                         chatId1,
                         chatId2,
@@ -123,13 +165,13 @@ async function insertChatDuplicationMarkers(eventId: string, isStart: boolean): 
                             "::" +
                             (Date.parse(chatInfo.data.Event_by_pk.startTime) +
                                 (isStart ? 0 : chatInfo.data.Event_by_pk.durationSeconds)),
-                        systemId2:
+                        systemId2: !isStart ? 
                             chatId2 +
                             "::" +
                             (isStart ? "start" : "end") +
                             "::" +
                             (Date.parse(chatInfo.data.Event_by_pk.startTime) +
-                                (isStart ? 0 : chatInfo.data.Event_by_pk.durationSeconds)),
+                                (isStart ? 0 : chatInfo.data.Event_by_pk.durationSeconds)) : undefined,
                         message: "<<<Duplication marker>>>",
                         data: {
                             type: isStart ? "start" : "end",
@@ -149,7 +191,7 @@ async function insertChatDuplicationMarkers(eventId: string, isStart: boolean): 
                                 chatId: chatInfo.data.Event_by_pk.contentGroup.chatId,
                             },
                         },
-                    },
+                    } as StartChatDuplicationMutationVariables | EndChatDuplicationMutationVariables,
                 });
             }
         }

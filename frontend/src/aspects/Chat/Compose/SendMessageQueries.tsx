@@ -2,10 +2,8 @@ import { gql } from "@apollo/client";
 import React, { useCallback } from "react";
 import {
     Chat_MessageType_Enum,
-    useCompleteDuplicatedMessageLoopMutation,
     useSendChatAnswerMutation,
     useSendChatMessageMutation,
-    useSendDuplicatedChatMessageMutation,
 } from "../../../generated/graphql";
 import type { AnswerMessageData, AnswerReactionData, MessageData } from "../Types/Messages";
 
@@ -30,41 +28,6 @@ gql`
         ) {
             returning {
                 id
-            }
-        }
-    }
-
-    mutation SendDuplicatedChatMessage(
-        $chatId: uuid!
-        $otherChatId: uuid!
-        $senderId: uuid!
-        $type: chat_MessageType_enum!
-        $message: String!
-        $data: jsonb = {}
-        $isPinned: Boolean = false
-    ) {
-        insert_chat_Message(
-            objects: {
-                chatId: $chatId
-                data: $data
-                isPinned: $isPinned
-                message: $message
-                senderId: $senderId
-                type: $type
-                duplicateOutgoing: {
-                    data: {
-                        chatId: $otherChatId
-                        data: $data
-                        isPinned: $isPinned
-                        message: $message
-                        senderId: $senderId
-                        type: $type
-                    }
-                }
-            }
-        ) {
-            returning {
-                id
                 duplicatedMessageId
             }
         }
@@ -77,13 +40,6 @@ gql`
             affected_rows
         }
     }
-
-    mutation CompleteDuplicatedMessageLoop($msgId1: Int!, $msgId2: Int!) {
-        update_chat_Message_by_pk(pk_columns: { id: $msgId2 }, _set: { duplicatedMessageId: $msgId1 }) {
-            id
-            duplicatedMessageId
-        }
-    }
 `;
 
 type SendMesasageCallback = (
@@ -92,8 +48,7 @@ type SendMesasageCallback = (
     type: Chat_MessageType_Enum,
     message: string,
     data: MessageData,
-    isPinned: boolean,
-    duplicateToChatId: string | undefined
+    isPinned: boolean
 ) => Promise<void>;
 
 interface SendMessageQueriesCtx {
@@ -116,84 +71,41 @@ export default function SendMessageQueriesProvider({
     children: React.ReactNode | React.ReactNodeArray;
 }): JSX.Element {
     const [sendMessageMutation] = useSendChatMessageMutation();
-    const [sendDuplicatedMessageMutation] = useSendDuplicatedChatMessageMutation();
-    const [completeDuplicatedMessageLoopMutation] = useCompleteDuplicatedMessageLoopMutation();
     const [sendAnswer] = useSendChatAnswerMutation();
 
     const send: SendMesasageCallback = useCallback(
-        async (chatId, senderId, type, message, data, isPinned, duplicateToChatId) => {
-            let newId: number | null | undefined = null;
-            if (duplicateToChatId !== undefined) {
-                const sentIds = await sendDuplicatedMessageMutation({
+        async (chatId, senderId, type, message, data, isPinned) => {
+            const newMsg = (
+                await sendMessageMutation({
                     variables: {
                         chatId,
-                        otherChatId: duplicateToChatId,
                         message,
                         senderId,
                         type,
                         data,
                         isPinned,
                     },
-                });
-                if (!sentIds.data?.insert_chat_Message?.returning[0]) {
-                    throw new Error("Send duplicated message query passed but returned no data!");
-                }
-                if (!sentIds.data.insert_chat_Message.returning[0].duplicatedMessageId) {
-                    throw new Error("Send duplicated message query passed but didn't return the duplicate's id!");
-                }
-                for (let idx = 0; idx < 3; idx++) {
-                    try {
-                        await completeDuplicatedMessageLoopMutation({
-                            variables: {
-                                msgId1: sentIds.data.insert_chat_Message.returning[0].id,
-                                msgId2: sentIds.data.insert_chat_Message.returning[0].duplicatedMessageId,
-                            },
-                        });
-                        break;
-                    } catch (e) {
-                        const errMsg = `Failed to complete the loop for duplicate message id: ${sentIds.data.insert_chat_Message.returning[0].id}`;
-                        if (idx === 2) {
-                            console.error(errMsg, e);
-                        } else {
-                            console.warn(errMsg, e);
-                        }
-                    }
-                }
-                newId = sentIds.data.insert_chat_Message.returning[0].id;
-            } else {
-                newId = (
-                    await sendMessageMutation({
-                        variables: {
-                            chatId,
-                            message,
-                            senderId,
-                            type,
-                            data,
-                            isPinned,
-                        },
-                    })
-                ).data?.insert_chat_Message?.returning[0].id;
-            }
+                })
+            ).data?.insert_chat_Message?.returning[0];
 
-            if (type === Chat_MessageType_Enum.Answer && newId) {
+            if (type === Chat_MessageType_Enum.Answer && newMsg) {
                 const answeringIds = (data as AnswerMessageData).questionMessagesIds;
-                for (const answeringId of answeringIds) {
+                if (answeringIds.length > 0) {
                     const reactionData: AnswerReactionData = {
-                        answerMessageId: newId,
+                        answerMessageId: newMsg.id,
+                        duplicateAnswerMessageId: newMsg.duplicatedMessageId ?? undefined,
                     };
-                    if (answeringId) {
-                        await sendAnswer({
-                            variables: {
-                                answeringId,
-                                data: reactionData,
-                                senderId,
-                            },
-                        });
-                    }
+                    await sendAnswer({
+                        variables: {
+                            answeringId: answeringIds[0],
+                            data: reactionData,
+                            senderId,
+                        },
+                    });
                 }
             }
         },
-        [completeDuplicatedMessageLoopMutation, sendAnswer, sendDuplicatedMessageMutation, sendMessageMutation]
+        [sendAnswer, sendMessageMutation]
     );
 
     return (

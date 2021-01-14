@@ -2,7 +2,7 @@ import assert from "assert";
 import React, { useCallback, useMemo, useState } from "react";
 import { Chat_MessageType_Enum } from "../../../generated/graphql";
 import { useRealTime } from "../../Generic/useRealTime";
-import { ChatConfiguration, ChatDuplicationFlags, useChatConfiguration } from "../Configuration";
+import { ChatConfiguration, useChatConfiguration } from "../Configuration";
 import { useSelectedChat } from "../SelectedChat";
 import type { MinMax } from "../Types/Base";
 import type { AnswerMessageData, MessageData, OrdinaryMessageData } from "../Types/Messages";
@@ -225,13 +225,7 @@ export function ComposeContextProvider({
                                 : newMessageType,
                             newMessage,
                             data ?? newMessageData,
-                            false,
-                            (selectedChat.selectedSide === "L" &&
-                                (config.sources.duplication & ChatDuplicationFlags.LEFT_INTO_RIGHT) !== 0) ||
-                                (selectedChat.selectedSide === "R" &&
-                                    (config.sources.duplication & ChatDuplicationFlags.RIGHT_INTO_LEFT) !== 0)
-                                ? selectedChat.nonSelectedId
-                                : undefined
+                            false
                         );
 
                         setNewMessage("");
@@ -257,7 +251,6 @@ export function ComposeContextProvider({
         }),
         [
             blockedReason,
-            config.sources.duplication,
             config.currentAttendeeId,
             isSending,
             lastSendTime,
@@ -267,8 +260,6 @@ export function ComposeContextProvider({
             newMessageData,
             newMessageType,
             selectedChat.id,
-            selectedChat.nonSelectedId,
-            selectedChat.selectedSide,
             sendError,
             sendQueries,
             setAnsweringQuestionId,

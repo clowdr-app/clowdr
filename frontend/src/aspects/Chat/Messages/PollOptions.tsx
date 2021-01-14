@@ -169,37 +169,14 @@ export default function PollOptions({ message }: { message: ChatMessageDataFragm
                             onClick={
                                 currentAttendeeId && !isClosed && ownVoteCount < maxVotes
                                     ? async () => {
-                                          if (message.duplicatedMessageId) {
-                                              await Promise.all([
-                                                  reactionsQ.addReaction({
-                                                      data: {},
-                                                      messageId: message.id,
-                                                      senderId: currentAttendeeId,
-                                                      symbol: opt[0],
-                                                      type: Chat_ReactionType_Enum.PollChoice,
-                                                  }),
-                                                  reactionsQ.addReaction({
-                                                      data: {},
-                                                      messageId: message.duplicatedMessageId,
-                                                      senderId: currentAttendeeId,
-                                                      symbol: opt[0],
-                                                      type: Chat_ReactionType_Enum.PollChoice,
-                                                  }),
-                                              ]);
-                                              await Promise.all([
-                                                  messagesQ.refetch(message.id),
-                                                  messagesQ.refetch(message.duplicatedMessageId),
-                                              ]);
-                                          } else {
-                                              await reactionsQ.addReaction({
-                                                  data: {},
-                                                  messageId: message.id,
-                                                  senderId: currentAttendeeId,
-                                                  symbol: opt[0],
-                                                  type: Chat_ReactionType_Enum.PollChoice,
-                                              });
-                                              await messagesQ.refetch(message.id);
-                                          }
+                                          await reactionsQ.addReaction({
+                                              data: {},
+                                              messageId: message.id,
+                                              senderId: currentAttendeeId,
+                                              symbol: opt[0],
+                                              type: Chat_ReactionType_Enum.PollChoice,
+                                          });
+                                          await messagesQ.refetch(message.id);
                                       }
                                     : undefined
                             }
@@ -220,37 +197,14 @@ export default function PollOptions({ message }: { message: ChatMessageDataFragm
                                             val.length <
                                                 (config.pollConfig.answerLength?.max ?? Number.POSITIVE_INFINITY)
                                         ) {
-                                            if (message.duplicatedMessageId) {
-                                                await Promise.all([
-                                                    reactionsQ.addReaction({
-                                                        data: {},
-                                                        messageId: message.id,
-                                                        senderId: currentAttendeeId,
-                                                        symbol: val,
-                                                        type: Chat_ReactionType_Enum.PollChoice,
-                                                    }),
-                                                    reactionsQ.addReaction({
-                                                        data: {},
-                                                        messageId: message.duplicatedMessageId,
-                                                        senderId: currentAttendeeId,
-                                                        symbol: val,
-                                                        type: Chat_ReactionType_Enum.PollChoice,
-                                                    }),
-                                                ]);
-                                                await Promise.all([
-                                                    messagesQ.refetch(message.id),
-                                                    messagesQ.refetch(message.duplicatedMessageId),
-                                                ]);
-                                            } else {
-                                                await reactionsQ.addReaction({
-                                                    data: {},
-                                                    messageId: message.id,
-                                                    senderId: currentAttendeeId,
-                                                    symbol: val,
-                                                    type: Chat_ReactionType_Enum.PollChoice,
-                                                });
-                                                await messagesQ.refetch(message.id);
-                                            }
+                                            await reactionsQ.addReaction({
+                                                data: {},
+                                                messageId: message.id,
+                                                senderId: currentAttendeeId,
+                                                symbol: val,
+                                                type: Chat_ReactionType_Enum.PollChoice,
+                                            });
+                                            await messagesQ.refetch(message.id);
                                         }
                                     }
                                 }

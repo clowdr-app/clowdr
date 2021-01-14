@@ -198,7 +198,6 @@ function MessageBody({ message }: { message: ChatMessageDataFragment }): JSX.Ele
                     ) : undefined}
                     {/* TODO: Permissions */}
                     <MessageControls
-                        duplicatedMessageId={message.duplicatedMessageId ?? undefined}
                         hideReactions={message.type === Chat_MessageType_Enum.Emote}
                         fontSize={smallFontSize}
                         ml="auto"
@@ -238,7 +237,6 @@ function MessageBody({ message }: { message: ChatMessageDataFragment }): JSX.Ele
                     <Markdown restrictHeadingSize>{message.message}</Markdown>
                 )}
                 <ReactionsList
-                    duplicatedMessageId={message.duplicatedMessageId ?? undefined}
                     reactions={message.reactions}
                     currentAttendeeId={config.currentAttendeeId}
                     messageId={message.id}

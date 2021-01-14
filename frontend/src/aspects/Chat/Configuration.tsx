@@ -2,17 +2,6 @@ import React, { Dispatch, SetStateAction } from "react";
 import type { Maybe, MinMax, MinMaxWithValue } from "./Types/Base";
 import type { EmoteMessageData } from "./Types/Messages";
 
-/**
- * These can be bitwise-or'd together to get bi-directional duplication.
- *
- * https://timdeschryver.dev/blog/flagged-enum-what-why-and-how
- */
-export enum ChatDuplicationFlags {
-    NONE = 0,
-    LEFT_INTO_RIGHT = 1,
-    RIGHT_INTO_LEFT = 2,
-}
-
 export enum ChatSpacing {
     COMPACT = 1,
     COMFORTABLE = 2,
@@ -23,7 +12,6 @@ export type ChatSources =
     | {
           chatId: string;
           chatLabel: string;
-          duplication: ChatDuplicationFlags.NONE;
       }
     | {
           chatIdL: string;
@@ -31,7 +19,6 @@ export type ChatSources =
           chatIdR: string;
           chatLabelR: string;
           defaultSelected: "L" | "R";
-          duplication: ChatDuplicationFlags;
       };
 
 export interface ChatPermissions {

@@ -9,7 +9,6 @@ import { useReceiveMessageQueries } from "./ReceiveMessageQueries";
 export default function MessageControls({
     hideReactions,
     messageId,
-    duplicatedMessageId,
     isOwnMessage,
     canEdit,
     canDelete,
@@ -20,7 +19,6 @@ export default function MessageControls({
     ...props
 }: StackProps & {
     messageId: number;
-    duplicatedMessageId: number | undefined;
     isOwnMessage: boolean;
     canEdit?: boolean;
     canDelete?: boolean;
@@ -88,15 +86,6 @@ export default function MessageControls({
                           type: Chat_ReactionType_Enum.PollClosed,
                       });
                       messages.refetch(messageId);
-                      if (duplicatedMessageId) {
-                          await reactions.addReaction({
-                              data: {},
-                              messageId: duplicatedMessageId,
-                              symbol: "<Poll Closed>",
-                              type: Chat_ReactionType_Enum.PollClosed,
-                          });
-                          messages.refetch(duplicatedMessageId);
-                      }
                   })
                 : undefined}
             {(isOwnMessage || canEdit) && !isPollOpen && isPollIncomplete
@@ -108,15 +97,6 @@ export default function MessageControls({
                           type: Chat_ReactionType_Enum.PollComplete,
                       });
                       messages.refetch(messageId);
-                      if (duplicatedMessageId) {
-                          await reactions.addReaction({
-                              data: {},
-                              messageId: duplicatedMessageId,
-                              symbol: "<Poll Complete>",
-                              type: Chat_ReactionType_Enum.PollComplete,
-                          });
-                          messages.refetch(duplicatedMessageId);
-                      }
                       // TODO: Publish results as a message
                   })
                 : undefined}
@@ -132,15 +112,6 @@ export default function MessageControls({
                                   type: Chat_ReactionType_Enum.Emoji,
                               });
                               messages.refetch(messageId);
-                              if (duplicatedMessageId) {
-                                  await reactions.addReaction({
-                                      data: {},
-                                      messageId: duplicatedMessageId,
-                                      symbol: emoji,
-                                      type: Chat_ReactionType_Enum.Emoji,
-                                  });
-                                  messages.refetch(duplicatedMessageId);
-                              }
                           }
                       });
                   })
@@ -153,7 +124,7 @@ export default function MessageControls({
             {isOwnMessage || canDelete
                 ? buttonF("Delete message", "trash-alt", "red.400", async () => {
                       try {
-                          await messages.delete(messageId, duplicatedMessageId);
+                          await messages.delete(messageId);
                           toast({
                               title: "Deleted",
                               status: "success",

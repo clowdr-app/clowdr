@@ -6,7 +6,7 @@ import ReactPlayer from "react-player";
 import { ContentType_Enum, EventPersonDetailsFragment, RoomDetailsFragment } from "../../../../generated/graphql";
 import { ExternalLinkButton } from "../../../Chakra/LinkButton";
 import { Chat } from "../../../Chat/Chat";
-import { ChatDuplicationFlags, ChatSources } from "../../../Chat/Configuration";
+import type { ChatSources } from "../../../Chat/Configuration";
 import { ContentGroupSummary } from "../Content/ContentGroupSummary";
 import { BreakoutVonageRoom } from "./BreakoutVonageRoom";
 import { EventEndControls } from "./EventEndControls";
@@ -79,15 +79,11 @@ export function Room({
                 chatLabelL: "Room",
                 chatLabelR: "Paper",
                 defaultSelected: "L",
-                duplication: currentRoomEvent?.contentGroup
-                    ? ChatDuplicationFlags.LEFT_INTO_RIGHT | ChatDuplicationFlags.RIGHT_INTO_LEFT
-                    : ChatDuplicationFlags.NONE,
             };
         } else if (roomDetails.chatId) {
             return {
                 chatId: roomDetails.chatId,
                 chatLabel: "Room",
-                duplication: ChatDuplicationFlags.NONE,
             };
         } else {
             return undefined;

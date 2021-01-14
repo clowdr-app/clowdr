@@ -9,12 +9,10 @@ export default function ReactionsList({
     reactions,
     currentAttendeeId,
     messageId,
-    duplicatedMessageId,
     ...rest
 }: {
     currentAttendeeId?: string;
     messageId: number;
-    duplicatedMessageId: number | undefined;
     reactions: readonly ChatReactionDataFragment[];
 } & BoxProps): JSX.Element {
     const reactionQs = useReactions();
@@ -69,7 +67,6 @@ export default function ReactionsList({
                     onClick={async () => {
                         if (info.attendeeSentThisReactionId) {
                             await reactionQs.deleteReaction(info.attendeeSentThisReactionId);
-                            // TODO: How do we delete the duplicated reaction???
                         } else {
                             await reactionQs.addReaction({
                                 data: {},
@@ -77,14 +74,6 @@ export default function ReactionsList({
                                 symbol: reaction,
                                 type: Chat_ReactionType_Enum.Emoji,
                             });
-                            if (duplicatedMessageId) {
-                                await reactionQs.addReaction({
-                                    data: {},
-                                    messageId: duplicatedMessageId,
-                                    symbol: reaction,
-                                    type: Chat_ReactionType_Enum.Emoji,
-                                });
-                            }
                         }
                         messageQs.refetch(messageId);
                     }}

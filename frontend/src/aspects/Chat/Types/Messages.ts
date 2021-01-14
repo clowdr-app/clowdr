@@ -50,6 +50,7 @@ export type MessageData =
 
 export interface AnswerReactionData {
     answerMessageId: number;
+    duplicateAnswerMessageId: number | undefined;
 }
 
 export interface EmojiReactionData {}

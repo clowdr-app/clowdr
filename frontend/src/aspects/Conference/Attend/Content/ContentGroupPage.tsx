@@ -8,7 +8,6 @@ import {
     useGetContentGroupQuery,
 } from "../../../../generated/graphql";
 import { Chat } from "../../../Chat/Chat";
-import { ChatDuplicationFlags } from "../../../Chat/Configuration";
 import PageNotFound from "../../../Errors/PageNotFound";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import usePrimaryMenuButtons from "../../../Menu/usePrimaryMenuButtons";
@@ -129,7 +128,6 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
                                         sources={{
                                             chatId: contentGroupData.chatId,
                                             chatLabel: "Discussion",
-                                            duplication: ChatDuplicationFlags.NONE,
                                         }}
                                         height="100%"
                                     />

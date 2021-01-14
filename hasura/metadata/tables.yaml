@@ -5,6 +5,9 @@
   - name: conference
     using:
       foreign_key_constraint_on: conferenceId
+  - name: duplicateTo
+    using:
+      foreign_key_constraint_on: duplicateToId
   array_relationships:
   - name: contentGroup
     using:
@@ -13,6 +16,13 @@
         table:
           schema: public
           name: ContentGroup
+  - name: duplicatesFrom
+    using:
+      foreign_key_constraint_on:
+        column: duplicateToId
+        table:
+          schema: chat
+          name: Chat
   - name: flags
     using:
       foreign_key_constraint_on:
@@ -725,12 +735,23 @@
     schema: chat
     name: Reaction
   object_relationships:
+  - name: duplicate
+    using:
+      foreign_key_constraint_on: duplicateId
   - name: message
     using:
       foreign_key_constraint_on: messageId
   - name: sender
     using:
       foreign_key_constraint_on: senderId
+  array_relationships:
+  - name: duplicates
+    using:
+      foreign_key_constraint_on:
+        column: duplicateId
+        table:
+          schema: chat
+          name: Reaction
   insert_permissions:
   - role: user
     permission:

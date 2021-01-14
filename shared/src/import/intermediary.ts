@@ -11,6 +11,8 @@ declare enum RoomMode_Enum {
     Presentation = "PRESENTATION",
     /** A live Q&A/discussion should be delivered in the Q&A video chat. The breakout video chat may also be available to relevant users. */
     QAndA = "Q_AND_A",
+    /** Event is taking place in a Zoom room. */
+    Zoom = "ZOOM",
 }
 
 declare enum ContentType_Enum {
@@ -65,6 +67,8 @@ declare enum ContentType_Enum {
 declare enum ContentGroupType_Enum {
     /** A keynote. */
     Keynote = "KEYNOTE",
+    /** Conference main landing page. */
+    LandingPage = "LANDING_PAGE",
     /** A generic group type - use sparingly. */
     Other = "OTHER",
     /** A paper. */
@@ -82,6 +86,8 @@ declare enum ContentGroupType_Enum {
 declare enum EventPersonRole_Enum {
     /** Chair/moderator of the event */
     Chair = "CHAIR",
+    /** Viewer who has been given access to the event (e.g. to ask a question). */
+    Participant = "PARTICIPANT",
     /** A presenter. */
     Presenter = "PRESENTER",
 }

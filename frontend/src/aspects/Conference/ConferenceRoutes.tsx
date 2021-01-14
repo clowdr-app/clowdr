@@ -5,6 +5,7 @@ import { ChatNotificationsProvider } from "../Chat/ChatNotifications";
 import PageNotFound from "../Errors/PageNotFound";
 import PageNotImplemented from "../Errors/PageNotImplemented";
 import RoomParticipantsProvider from "../Room/RoomParticipantsProvider";
+import { SharedRoomContextProvider } from "../Room/SharedRoomContextProvider";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import AttendeeListPage from "./Attend/Attendee/AttendeeListPage";
 import ConferenceLandingPage from "./Attend/ConferenceLandingPage";
@@ -136,14 +137,7 @@ function ConferenceRoutesInner({ rootUrl }: { rootUrl: string }): JSX.Element {
                 component={(
                     props: RouteComponentProps<{
                         roomId: string;
-                    }>
-                ) => <RoomPage roomId={props.match.params.roomId} />}
-            />
-            <Route
-                path={`${rootUrl}/room/:roomId`}
-                component={(
-                    props: RouteComponentProps<{
-                        roomId: string;
+                        eventId?: string;
                     }>
                 ) => <RoomPage roomId={props.match.params.roomId} />}
             />
@@ -204,7 +198,9 @@ export default function ConferenceRoutes({ confSlug, rootUrl }: { confSlug: stri
                     <CurrentAttendeeProvider>
                         <ChatNotificationsProvider>
                             <RoomParticipantsProvider>
-                                <ConferenceRoutesInner rootUrl={rootUrl} />
+                                <SharedRoomContextProvider>
+                                    <ConferenceRoutesInner rootUrl={rootUrl} />
+                                </SharedRoomContextProvider>
                             </RoomParticipantsProvider>
                         </ChatNotificationsProvider>
                     </CurrentAttendeeProvider>

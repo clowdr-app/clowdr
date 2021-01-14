@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client";
 import { Box, HStack } from "@chakra-ui/react";
 import React, { useCallback } from "react";
+import * as portals from "react-reverse-portal";
 import {
     EventPersonRole_Enum,
     RoomEventDetailsFragment,
@@ -10,9 +11,7 @@ import {
 import useUserId from "../../../../Auth/useUserId";
 import { useEventPeople } from "../../../../Event/useEventPeople";
 import ApolloQueryWrapper from "../../../../GQL/ApolloQueryWrapper";
-import { OpenTokProvider } from "../../../../Vonage/OpenTokProvider";
-import { VonageRoomStateProvider } from "../../../../Vonage/useVonageRoom";
-import { VonageRoom } from "../Vonage/VonageRoom";
+import { useSharedRoomContext } from "../../../../Room/useSharedRoomContext";
 import { EventRoomControlPanel } from "./EventRoomControlPanel";
 
 gql`
@@ -67,34 +66,33 @@ export function EventVonageRoom({ eventId }: { eventId: string }): JSX.Element {
         return result.data?.joinEventVonageSession.accessToken;
     }, [getEventVonageToken]);
 
+    const sharedRoomContext = useSharedRoomContext();
+
     return (
         <ApolloQueryWrapper queryResult={result} getter={(data) => data.Event_by_pk}>
             {(event: RoomEventDetailsFragment) => (
-                <VonageRoomStateProvider>
-                    <OpenTokProvider>
-                        <HStack alignItems="stretch">
-                            <Box flexGrow={1}>
-                                {event.eventVonageSession ? (
-                                    <VonageRoom
-                                        vonageSessionId={event.eventVonageSession.sessionId}
-                                        getAccessToken={getAccessToken}
-                                    />
-                                ) : (
-                                    <>No room session available.</>
-                                )}
-                            </Box>
-                            {myRoles.find(
-                                (role) => role === EventPersonRole_Enum.Chair || role === EventPersonRole_Enum.Presenter
-                            ) ? (
-                                <Box width="20%">
-                                    <EventRoomControlPanel event={event} eventPeople={eventPeople} myRoles={myRoles} />
-                                </Box>
-                            ) : (
-                                <></>
-                            )}
-                        </HStack>
-                    </OpenTokProvider>
-                </VonageRoomStateProvider>
+                <HStack alignItems="stretch">
+                    <Box flexGrow={1}>
+                        {event.eventVonageSession && sharedRoomContext ? (
+                            <portals.OutPortal
+                                node={sharedRoomContext.portalNode}
+                                vonageSessionId={event.eventVonageSession.sessionId}
+                                getAccessToken={getAccessToken}
+                            />
+                        ) : (
+                            <>No room session available.</>
+                        )}
+                    </Box>
+                    {myRoles.find(
+                        (role) => role === EventPersonRole_Enum.Chair || role === EventPersonRole_Enum.Presenter
+                    ) ? (
+                        <Box width="20%">
+                            <EventRoomControlPanel event={event} eventPeople={eventPeople} myRoles={myRoles} />
+                        </Box>
+                    ) : (
+                        <></>
+                    )}
+                </HStack>
             )}
         </ApolloQueryWrapper>
     );

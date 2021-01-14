@@ -184,7 +184,7 @@ export function Room({
                     <></>
                 )}
 
-                {secondsUntilNonBreakoutEvent > 180 && !withinThreeMinutesOfBroadcastEvent ? (
+                {secondsUntilNonBreakoutEvent > 180 && !withinThreeMinutesOfBroadcastEvent && !backstage ? (
                     <Box display={backstage ? "none" : "block"} bgColor={bgColour} p={2} pt={5} borderRadius="md">
                         <BreakoutVonageRoom room={roomDetails} />
                     </Box>

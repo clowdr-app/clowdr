@@ -1,4 +1,4 @@
-import { Badge, Box, Divider, Heading, Text, useColorModeValue, useToken } from "@chakra-ui/react";
+import { Badge, Box, Button, Divider, Heading, Text, useColorModeValue, useToken } from "@chakra-ui/react";
 import { formatRelative } from "date-fns";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
@@ -114,6 +114,8 @@ export function RoomBackstage({
     const [now, setNow] = useState<Date>(new Date());
     usePolling(() => setNow(new Date()), 20000, true);
 
+    const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+
     const eventRooms = useMemo(
         () =>
             !loaded ? (
@@ -138,30 +140,42 @@ export function RoomBackstage({
                                 </Text>
 
                                 {haveAccessToEvent ? (
-                                    "You have access to the backstage for this event."
+                                    selectedEventId !== event.id ? (
+                                        <Button colorScheme="green" onClick={() => setSelectedEventId(event.id)}>
+                                            Open backstage room
+                                        </Button>
+                                    ) : (
+                                        <></>
+                                    )
                                 ) : (
                                     <>
                                         <Text>You do not have access to the backstage for this event.</Text>
                                         <HandUpButton currentRoomEvent={event} eventPeople={eventPeople} />
                                     </>
                                 )}
-                                <Box display={haveAccessToEvent ? "block" : "none"} mt={2}>
-                                    <EventVonageRoom eventId={event.id} />
-                                </Box>
+                                {selectedEventId === event.id ? (
+                                    <Box display={haveAccessToEvent ? "block" : "none"} mt={2}>
+                                        <EventVonageRoom eventId={event.id} />
+                                    </Box>
+                                ) : (
+                                    <></>
+                                )}
                                 <Divider my={4} />
                             </Box>
                         );
                     })
             ),
-        [eventPeople, eventTemporalBadges, loaded, myEventPeople, now, sortedEvents, user]
+        [eventPeople, eventTemporalBadges, loaded, myEventPeople, now, selectedEventId, sortedEvents, user]
     );
 
-    return (
+    return backstage ? (
         <Box display={backstage ? "block" : "none"} background={backgroundColour} p={5}>
             <Heading as="h3" size="lg">
                 Backstage
             </Heading>
             {eventRooms}
         </Box>
+    ) : (
+        <></>
     );
 }

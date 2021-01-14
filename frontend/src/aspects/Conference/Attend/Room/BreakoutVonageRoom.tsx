@@ -1,9 +1,8 @@
 import { gql } from "@apollo/client";
 import React, { useCallback } from "react";
+import * as portals from "react-reverse-portal";
 import { RoomDetailsFragment, useGetRoomVonageTokenMutation } from "../../../../generated/graphql";
-import { OpenTokProvider } from "../../../Vonage/OpenTokProvider";
-import { VonageRoomStateProvider } from "../../../Vonage/useVonageRoom";
-import { VonageRoom } from "./Vonage/VonageRoom";
+import { useSharedRoomContext } from "../../../Room/useSharedRoomContext";
 
 gql`
     mutation GetRoomVonageToken($roomId: uuid!) {
@@ -15,6 +14,8 @@ gql`
 `;
 
 export function BreakoutVonageRoom({ room }: { room: RoomDetailsFragment }): JSX.Element {
+    const sharedRoomContext = useSharedRoomContext();
+
     const [getRoomVonageToken] = useGetRoomVonageTokenMutation({
         variables: {
             roomId: room.id,
@@ -29,12 +30,12 @@ export function BreakoutVonageRoom({ room }: { room: RoomDetailsFragment }): JSX
         return result.data?.joinRoomVonageSession.accessToken;
     }, [getRoomVonageToken]);
 
-    return room.publicVonageSessionId ? (
-        <VonageRoomStateProvider>
-            <OpenTokProvider>
-                <VonageRoom vonageSessionId={room.publicVonageSessionId} getAccessToken={getAccessToken} />
-            </OpenTokProvider>
-        </VonageRoomStateProvider>
+    return room.publicVonageSessionId && sharedRoomContext ? (
+        <portals.OutPortal
+            node={sharedRoomContext.portalNode}
+            vonageSessionId={room.publicVonageSessionId}
+            getAccessToken={getAccessToken}
+        />
     ) : (
         <>No breakout session exists </>
     );

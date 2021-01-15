@@ -34415,7 +34415,7 @@ export type MenuSchedule_EventsInOneHourQueryResult = Apollo.QueryResult<MenuSch
 export const MenuSchedule_SearchEventsDocument = gql`
     query MenuSchedule_SearchEvents($conferenceId: uuid!, $search: String!) {
   Event(
-    where: {conferenceId: {_eq: $conferenceId}, _or: [{name: {_ilike: $search}}, {eventPeople: {attendee: {displayName: {_ilike: $search}}}}, {eventTags: {tag: {name: {_ilike: $search}}}}]}
+    where: {conferenceId: {_eq: $conferenceId}, _or: [{name: {_ilike: $search}}, {contentGroup: {_or: [{title: {_like: $search}}, {people: {person: {_or: [{name: {_ilike: $search}}, {affiliation: {_ilike: $search}}]}}}]}}, {eventPeople: {attendee: {displayName: {_ilike: $search}}}}, {eventTags: {tag: {name: {_ilike: $search}}}}]}
     limit: 10
     order_by: {startTime: asc}
   ) {

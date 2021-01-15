@@ -30,7 +30,7 @@ export function ChatFrame({ ...rest }: BoxProps): JSX.Element {
     });
 
     return (
-        <Box h="100%" w="100%" pos="relative" m={0} p={0} {...rest}>
+        <Box h="100%" w="100%" maxH="90vh" pos="relative" m={0} p={0} {...rest}>
             <VStack
                 minH="100%"
                 h="100%"

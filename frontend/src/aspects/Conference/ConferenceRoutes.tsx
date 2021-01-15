@@ -38,8 +38,6 @@ function ConferenceRoutesInner({ rootUrl }: { rootUrl: string }): JSX.Element {
     const mUser = useMaybeCurrentUser();
     const mAttendee = useMaybeCurrentAttendee();
 
-    useTabTracker(mAttendee?.id);
-
     return (
         <Switch>
             <Route exact path={`${rootUrl}/profile/edit`} component={EditProfilePage} />
@@ -195,6 +193,12 @@ function ConferenceRoutesInner({ rootUrl }: { rootUrl: string }): JSX.Element {
     );
 }
 
+function TabTracker(): JSX.Element {
+    const mAttendee = useMaybeCurrentAttendee();
+    useTabTracker(mAttendee?.id);
+    return <></>;
+}
+
 export default function ConferenceRoutes({ confSlug, rootUrl }: { confSlug: string; rootUrl: string }): JSX.Element {
     return (
         <ConferenceProvider confSlug={confSlug}>
@@ -202,6 +206,7 @@ export default function ConferenceRoutes({ confSlug, rootUrl }: { confSlug: stri
                 <CurrentUserGroupsRolesPermissionsProvider>
                     <ConferenceCurrentUserActivePermissionsProvider>
                         <CurrentAttendeeProvider>
+                            <TabTracker />
                             <ChatNotificationsProvider>
                                 <RoomParticipantsProvider>
                                     <SharedRoomContextProvider>

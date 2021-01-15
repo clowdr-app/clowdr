@@ -56,6 +56,20 @@ gql`
                 conferenceId: { _eq: $conferenceId }
                 _or: [
                     { name: { _ilike: $search } }
+                    {
+                        contentGroup: {
+                            _or: [
+                                { title: { _like: $search } }
+                                {
+                                    people: {
+                                        person: {
+                                            _or: [{ name: { _ilike: $search } }, { affiliation: { _ilike: $search } }]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
                     { eventPeople: { attendee: { displayName: { _ilike: $search } } } }
                     { eventTags: { tag: { name: { _ilike: $search } } } }
                 ]
@@ -247,11 +261,11 @@ export function MainMenuProgramInner({
                                         {event.eventTags.map((tag) => (
                                             <Badge
                                                 key={tag.tag.id}
-                                                color={tag.tag.colour}
+                                                color="gray.50"
+                                                backgroundColor={tag.tag.colour}
                                                 ml={1}
                                                 p={1}
                                                 borderRadius={4}
-                                                backgroundColor="gray.800"
                                             >
                                                 {tag.tag.name}
                                             </Badge>

@@ -88,18 +88,26 @@ export function ContentGroupSummary({
     }, [contentGroupData.contentItems]);
 
     return (
-        <Box alignItems="left" textAlign="left" my={5}>
+        <Box alignItems="left" textAlign="left" my={5} maxW="100%" overflow="hidden">
             {linkToItem ? (
                 <LinkButton
                     to={`/conference/${conference.slug}/item/${contentGroupData.id}`}
                     width="auto"
                     height="auto"
                     p={3}
-                    linkProps={{ mb: 5 }}
+                    linkProps={{ mb: 5, maxW: "100%" }}
+                    maxW="100%"
                 >
-                    <VStack alignItems="left">
+                    <VStack alignItems="left" maxW="100%">
                         <Text colorScheme="green">{contentGroupData.contentGroupTypeName}</Text>
-                        <Heading as="h2" size="md" textAlign="left">
+                        <Heading
+                            as="h2"
+                            size="md"
+                            textAlign="left"
+                            maxW="100%"
+                            overflowWrap="break-word"
+                            whiteSpace="normal"
+                        >
                             {contentGroupData.title}
                         </Heading>
                     </VStack>

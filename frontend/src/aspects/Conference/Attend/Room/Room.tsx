@@ -163,9 +163,7 @@ export function Room({
                             url={hlsUri}
                             config={{
                                 file: {
-                                    hlsOptions: {
-                                        liveDurationInfinity: true,
-                                    },
+                                    hlsOptions: {},
                                 },
                             }}
                             playing={

@@ -129,7 +129,7 @@ function Panel({ tag, isExpanded }: { tag: TagWithContentFragment; isExpanded: b
         );
     });
 
-    const resultCountStr = `${filteredElements.length} ${filteredElements.length !== 1 ? "items" : "items"}`;
+    const resultCountStr = `${filteredElements.length} ${filteredElements.length !== 1 ? "items" : "item"}`;
     const [ariaSearchResultStr, setAriaSearchResultStr] = useState<string>(resultCountStr);
     useEffect(() => {
         const tId = setTimeout(() => {

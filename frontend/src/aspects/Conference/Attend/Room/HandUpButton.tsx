@@ -94,6 +94,8 @@ export function HandUpButton({
                         Go backstage now
                     </Button>
                 ),
+                duration: 30000,
+                isClosable: true,
                 position: "bottom-right",
             });
         }

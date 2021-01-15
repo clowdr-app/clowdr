@@ -1,5 +1,6 @@
 import { Alert, AlertIcon, Box, Heading, HStack, Text, useColorModeValue, useToken, VStack } from "@chakra-ui/react";
 import type { ContentItemDataBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
+import { formatRelative } from "date-fns";
 import * as R from "ramda";
 import React, { useMemo, useState } from "react";
 import ReactPlayer from "react-player";
@@ -12,6 +13,7 @@ import {
 import { ExternalLinkButton } from "../../../Chakra/LinkButton";
 import { Chat } from "../../../Chat/Chat";
 import type { ChatSources } from "../../../Chat/Configuration";
+import usePolling from "../../../Generic/usePolling";
 import { ContentGroupSummary } from "../Content/ContentGroupSummary";
 import { BreakoutVonageRoom } from "./BreakoutVonageRoom";
 import { EventEndControls } from "./EventEndControls";
@@ -34,6 +36,9 @@ export function Room({
         secondsUntilBroadcastEvent,
         secondsUntilZoomEvent,
     } = useCurrentRoomEvent(roomDetails);
+
+    const [now, setNow] = useState<Date>(new Date());
+    usePolling(() => setNow(new Date()), 5000, true);
 
     const currentEventIsLive = useMemo(
         () =>
@@ -208,12 +213,15 @@ export function Room({
 
                         {currentRoomEvent ? (
                             <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
-                                <Heading as="h3" textAlign="left" size="md" mt={5}>
-                                    Current event
+                                <Text>Started {formatRelative(Date.parse(currentRoomEvent.startTime), now)}</Text>
+                                <Heading as="h3" textAlign="left" size="lg" mb={2}>
+                                    {currentRoomEvent.name}
                                 </Heading>
-                                <Text>{currentRoomEvent.name}</Text>
                                 {currentRoomEvent?.contentGroup ? (
-                                    <ContentGroupSummary contentGroupData={currentRoomEvent.contentGroup} />
+                                    <ContentGroupSummary
+                                        contentGroupData={currentRoomEvent.contentGroup}
+                                        linkToItem={true}
+                                    />
                                 ) : (
                                     <></>
                                 )}
@@ -223,12 +231,15 @@ export function Room({
                         )}
                         {nextRoomEvent ? (
                             <Box backgroundColor={nextBgColour} borderRadius={5} px={5} py={3} my={5}>
-                                <Heading as="h3" textAlign="left" size="md" mb={2}>
-                                    Up next
+                                <Text>Starts {formatRelative(Date.parse(nextRoomEvent.startTime), now)}</Text>
+                                <Heading as="h3" textAlign="left" size="lg" mb={2}>
+                                    {nextRoomEvent.name}
                                 </Heading>
-                                <Text>{nextRoomEvent.name}</Text>
                                 {nextRoomEvent?.contentGroup ? (
-                                    <ContentGroupSummary contentGroupData={nextRoomEvent.contentGroup} />
+                                    <ContentGroupSummary
+                                        contentGroupData={nextRoomEvent.contentGroup}
+                                        linkToItem={true}
+                                    />
                                 ) : (
                                     <></>
                                 )}

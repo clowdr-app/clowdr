@@ -10,12 +10,19 @@ import {
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import { ContentGroupDataFragment, ContentType_Enum, Permission_Enum } from "../../../../generated/graphql";
-import { ExternalLinkButton } from "../../../Chakra/LinkButton";
+import { ExternalLinkButton, LinkButton } from "../../../Chakra/LinkButton";
 import { Markdown } from "../../../Text/Markdown";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import { useConference } from "../../useConference";
 import { AuthorList } from "./AuthorList";
 
-export function ContentGroupSummary({ contentGroupData }: { contentGroupData: ContentGroupDataFragment }): JSX.Element {
+export function ContentGroupSummary({
+    contentGroupData,
+    linkToItem,
+}: {
+    contentGroupData: ContentGroupDataFragment;
+    linkToItem?: boolean;
+}): JSX.Element {
     const abstractContentItem = useMemo(() => {
         const abstractItem = contentGroupData.contentItems.find(
             (contentItem) => contentItem.contentTypeName === ContentType_Enum.Abstract
@@ -35,6 +42,8 @@ export function ContentGroupSummary({ contentGroupData }: { contentGroupData: Co
             return <></>;
         }
     }, [contentGroupData.contentItems]);
+
+    const conference = useConference();
 
     const maybeZoomDetails = useMemo(() => {
         const zoomItem = contentGroupData.contentItems.find(
@@ -80,15 +89,32 @@ export function ContentGroupSummary({ contentGroupData }: { contentGroupData: Co
 
     return (
         <Box alignItems="left" textAlign="left" my={5}>
-            <Text colorScheme="green">{contentGroupData.contentGroupTypeName}</Text>
-            <Heading as="h2" size="md" mb={5} textAlign="left">
-                {contentGroupData.title}
-            </Heading>
+            {linkToItem ? (
+                <LinkButton
+                    to={`/conference/${conference.slug}/item/${contentGroupData.id}`}
+                    width="auto"
+                    height="auto"
+                    p={3}
+                    linkProps={{ mb: 5 }}
+                >
+                    <VStack alignItems="left">
+                        <Text colorScheme="green">{contentGroupData.contentGroupTypeName}</Text>
+                        <Heading as="h2" size="md" textAlign="left">
+                            {contentGroupData.title}
+                        </Heading>
+                    </VStack>
+                </LinkButton>
+            ) : (
+                <>
+                    <Text colorScheme="green">{contentGroupData.contentGroupTypeName}</Text>
+                    <Heading as="h2" size="md" mb={5} textAlign="left">
+                        {contentGroupData.title}
+                    </Heading>
+                </>
+            )}
             {<AuthorList contentPeopleData={contentGroupData.people ?? []} />}
             <VStack w="auto" alignItems="flex-start">
-                <RequireAtLeastOnePermissionWrapper
-                    permissions={[Permission_Enum.ConferenceViewAttendees]}
-                >
+                <RequireAtLeastOnePermissionWrapper permissions={[Permission_Enum.ConferenceViewAttendees]}>
                     {maybeZoomDetails ? (
                         <ExternalLinkButton
                             to={maybeZoomDetails}
@@ -100,7 +126,7 @@ export function ContentGroupSummary({ contentGroupData }: { contentGroupData: Co
                         </ExternalLinkButton>
                     ) : (
                         <></>
-                        )}
+                    )}
                 </RequireAtLeastOnePermissionWrapper>
                 {maybePaperURL ? (
                     <ExternalLinkButton to={maybePaperURL} isExternal={true} colorScheme="red" linkProps={{ mt: 5 }}>

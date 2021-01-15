@@ -28,5 +28,7 @@ export default function PageCountText({ path, ...props }: { path: string } & Tex
                 </chakra.span>
             </chakra.span>
         </Tooltip>
-    ) : <></>;
+    ) : (
+        <></>
+    );
 }

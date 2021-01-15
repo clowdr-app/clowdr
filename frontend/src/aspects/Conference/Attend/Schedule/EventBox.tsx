@@ -218,7 +218,7 @@ export default function EventBox({
     const eventStartMs = useMemo(() => Date.parse(event.startTime), [event.startTime]);
     const durationSeconds = useMemo(() => {
         const lastEvent = sortedEvents[sortedEvents.length - 1];
-        return (Date.parse(lastEvent.startTime) + (lastEvent.durationSeconds * 1000) - eventStartMs) / 1000;
+        return (Date.parse(lastEvent.startTime) + lastEvent.durationSeconds * 1000 - eventStartMs) / 1000;
     }, [eventStartMs, sortedEvents]);
 
     const timelineParams = useTimelineParameters();

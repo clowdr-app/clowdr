@@ -204,7 +204,9 @@ function convertEvent(context: Context, item: IntermediaryEventDescriptor | Even
         const srcId = item.contentGroupSourceId;
         const groups = context.contentGroups.filter((g) => {
             if (g.originatingDataId) {
-                const od = context.originatingDatas.find((x) => isMatch_Id_Generalised("OriginatingData", "id", "originatingDataId")(context, x, g));
+                const od = context.originatingDatas.find((x) =>
+                    isMatch_Id_Generalised("OriginatingData", "id", "originatingDataId")(context, x, g)
+                );
                 if (od) {
                     if (sourceIdsEquivalent(od.sourceId, srcId)) {
                         return true;
@@ -216,15 +218,12 @@ function convertEvent(context: Context, item: IntermediaryEventDescriptor | Even
         if (groups.length === 1) {
             result.contentGroupId = groups[0].id;
         } else if (groups.length > 1) {
-            console.error(
-                "Multiple possible content groups could match this event",
-                { item, groups }
-            );
+            console.error("Multiple possible content groups could match this event", { item, groups });
             throw new Error(
                 "Multiple possible content groups could match this event:\n" + JSON.stringify({ item, groups }, null, 2)
             );
         } else {
-            console.error("No content groups match this event",{ item, groups });
+            console.error("No content groups match this event", { item, groups });
             throw new Error("No content groups match this event!:\n" + JSON.stringify({ item, groups }, null, 2));
         }
     }
@@ -381,10 +380,7 @@ function findExistingRoom(
     items: RoomDescriptor[],
     item: IntermediaryRoomDescriptor | RoomDescriptor
 ): number | undefined {
-    return (
-        findMatch(ctx, items, item, isMatch_Id("Room")) ??
-        findMatch(ctx, items, item, isMatch_String_Exact("name"))
-    );
+    return findMatch(ctx, items, item, isMatch_Id("Room")) ?? findMatch(ctx, items, item, isMatch_String_Exact("name"));
 }
 
 function convertTag(context: Context, item: IntermediaryTagDescriptor | TagDescriptor): TagDescriptor {

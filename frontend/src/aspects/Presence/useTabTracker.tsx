@@ -27,27 +27,31 @@ export default function useTabTracker(attendeeId?: string): void {
     const updatePresence = useCallback(() => {
         let tId: number | undefined;
         if (attendeeId) {
-            tId = setTimeout((async () => {
-                try {
-                    if (oldId.current) {
-                        await deleteOpenTab({
-                            variables: {
-                                oldId: oldId.current
-                            }
-                        });
-                    }
-                    oldId.current = (await insertOpenTab({
-                        variables: {
-                            attendeeId,
-                            path: location.pathname,
-                            oldId: oldId.current
+            tId = setTimeout(
+                (async () => {
+                    try {
+                        if (oldId.current) {
+                            await deleteOpenTab({
+                                variables: {
+                                    oldId: oldId.current,
+                                },
+                            });
                         }
-                    })).data?.insert_presence_OpenTab_one?.id;
-                }
-                catch (e) {
-                    // Do nothing - might fail if in Incognito
-                }
-            }) as TimerHandler, 1000);
+                        oldId.current = (
+                            await insertOpenTab({
+                                variables: {
+                                    attendeeId,
+                                    path: location.pathname,
+                                    oldId: oldId.current,
+                                },
+                            })
+                        ).data?.insert_presence_OpenTab_one?.id;
+                    } catch (e) {
+                        // Do nothing - might fail if in Incognito
+                    }
+                }) as TimerHandler,
+                1000
+            );
         }
         return () => {
             if (tId) {

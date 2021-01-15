@@ -1,8 +1,6 @@
-import { Box, BoxProps, ButtonGroup, chakra, HStack, Spacer, Tooltip } from "@chakra-ui/react";
+import { Box, BoxProps, ButtonGroup, HStack, Spacer } from "@chakra-ui/react";
 import React from "react";
-import FAIcon from "../../Icons/FAIcon";
 import PageCountBox from "../../Presence/PageCountBox";
-import { usePresenceCount } from "../../Presence/PresenceCountProvider";
 import { useChatConfiguration } from "../Configuration";
 import { PinnedButton } from "../Pin/PinnedButton";
 import { ChatPinnedQueryProvider } from "../Pin/PinnedQuery";

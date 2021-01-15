@@ -1,4 +1,4 @@
-import type { QueryResult } from "@apollo/client";
+import type { LazyQueryResult, QueryResult } from "@apollo/client";
 import { Spinner } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import useQueryErrorToast from "./useQueryErrorToast";
@@ -8,7 +8,7 @@ export default function ApolloQueryWrapper<TData, TVariables, TInnerData>({
     getter,
     children,
 }: {
-    queryResult: QueryResult<TData, TVariables>;
+    queryResult: QueryResult<TData, TVariables> | LazyQueryResult<TData, TVariables>;
     getter: (data: TData) => TInnerData | undefined | null;
     children: (data: TInnerData) => React.ReactNode | React.ReactNodeArray;
 }): JSX.Element {

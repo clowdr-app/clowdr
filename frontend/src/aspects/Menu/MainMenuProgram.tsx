@@ -1,16 +1,35 @@
 import { gql } from "@apollo/client";
-import { Badge, Box, Heading, HStack, List, ListItem, Text } from "@chakra-ui/react";
-import React, { useState } from "react";
+import {
+    Badge,
+    Box,
+    FormControl,
+    FormHelperText,
+    FormLabel,
+    Heading,
+    HStack,
+    Input,
+    InputGroup,
+    InputLeftAddon,
+    InputRightElement,
+    List,
+    ListItem,
+    Text,
+} from "@chakra-ui/react";
+import { formatRFC7231 } from "date-fns";
+import React, { useEffect, useState } from "react";
 import {
     MenuSchedule_EventFragment,
     useMenuSchedule_CurrentEventsQuery,
     useMenuSchedule_EventsIn30MinutesQuery,
     useMenuSchedule_EventsInOneHourQuery,
+    useMenuSchedule_SearchEventsLazyQuery,
 } from "../../generated/graphql";
 import { LinkButton } from "../Chakra/LinkButton";
 import { useConference } from "../Conference/useConference";
+import useDebouncedState from "../CRUDTable/useDebouncedState";
 import usePolling from "../Generic/usePolling";
 import ApolloQueryWrapper from "../GQL/ApolloQueryWrapper";
+import { FAIcon } from "../Icons/FAIcon";
 
 gql`
     query MenuSchedule_CurrentEvents($now: timestamptz!, $conferenceId: uuid!) {
@@ -31,9 +50,27 @@ gql`
         }
     }
 
+    query MenuSchedule_SearchEvents($conferenceId: uuid!, $search: String!) {
+        Event(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                _or: [
+                    { name: { _ilike: $search } }
+                    { eventPeople: { attendee: { displayName: { _ilike: $search } } } }
+                    { eventTags: { tag: { name: { _ilike: $search } } } }
+                ]
+            }
+            limit: 10
+            order_by: { startTime: asc }
+        ) {
+            ...MenuSchedule_Event
+        }
+    }
+
     fragment MenuSchedule_Event on Event {
         id
         name
+        startTime
         room {
             id
             name
@@ -86,23 +123,82 @@ export function MainMenuProgram(): JSX.Element {
         },
     });
 
+    const [search, debouncedSearch, setSearch] = useDebouncedState<string>("", 1000);
+
+    const [performSearch, searchResult] = useMenuSchedule_SearchEventsLazyQuery({
+        variables: {
+            conferenceId: conference.id,
+            search: `%${debouncedSearch}%`,
+        },
+    });
+
+    useEffect(() => {
+        if (debouncedSearch.length) performSearch();
+    }, [debouncedSearch, performSearch]);
+
+    const resultCountStr = `showing ${
+        debouncedSearch.length > 0 ? searchResult.data?.Event.length ?? 0 : "upcoming"
+    } events`;
+    const [ariaSearchResultStr, setAriaSearchResultStr] = useState<string>(resultCountStr);
+    useEffect(() => {
+        const tId = setTimeout(() => {
+            setAriaSearchResultStr(resultCountStr);
+        }, 250);
+        return () => {
+            clearTimeout(tId);
+        };
+    }, [resultCountStr]);
+
     return (
         <>
-            <ApolloQueryWrapper getter={(data) => data.Event} queryResult={currentResult}>
-                {(events: readonly MenuSchedule_EventFragment[]) => (
-                    <MainMenuProgramInner events={events} title="Happening now" />
-                )}
-            </ApolloQueryWrapper>
-            <ApolloQueryWrapper getter={(data) => data.Event} queryResult={in30MinutesResult}>
-                {(events: readonly MenuSchedule_EventFragment[]) => (
-                    <MainMenuProgramInner events={events} title="Starting in the next 30 minutes" />
-                )}
-            </ApolloQueryWrapper>
-            <ApolloQueryWrapper getter={(data) => data.Event} queryResult={inOneHourResult}>
-                {(events: readonly MenuSchedule_EventFragment[]) => (
-                    <MainMenuProgramInner events={events} title="Starting in the next hour" />
-                )}
-            </ApolloQueryWrapper>
+            <FormControl mb={4} maxW={400}>
+                <FormLabel mt={4} textAlign="center">
+                    {resultCountStr}
+                </FormLabel>
+                <InputGroup>
+                    <InputLeftAddon aria-hidden>Search</InputLeftAddon>
+                    <Input
+                        aria-label={"Search found " + ariaSearchResultStr}
+                        type="text"
+                        placeholder="Search"
+                        value={search}
+                        onChange={(ev) => {
+                            setSearch(ev.target.value);
+                        }}
+                    />
+                    <InputRightElement>
+                        <FAIcon iconStyle="s" icon="search" />
+                    </InputRightElement>
+                </InputGroup>
+                <FormHelperText>Search for an event.</FormHelperText>
+            </FormControl>
+            {debouncedSearch.length > 0 ? (
+                <>
+                    <ApolloQueryWrapper getter={(data) => data.Event} queryResult={searchResult}>
+                        {(events: readonly MenuSchedule_EventFragment[]) => (
+                            <MainMenuProgramInner events={events} title="Search results" showTime={true} />
+                        )}
+                    </ApolloQueryWrapper>
+                </>
+            ) : (
+                <>
+                    <ApolloQueryWrapper getter={(data) => data.Event} queryResult={currentResult}>
+                        {(events: readonly MenuSchedule_EventFragment[]) => (
+                            <MainMenuProgramInner events={events} title="Happening now" />
+                        )}
+                    </ApolloQueryWrapper>
+                    <ApolloQueryWrapper getter={(data) => data.Event} queryResult={in30MinutesResult}>
+                        {(events: readonly MenuSchedule_EventFragment[]) => (
+                            <MainMenuProgramInner events={events} title="Starting in the next 30 minutes" />
+                        )}
+                    </ApolloQueryWrapper>
+                    <ApolloQueryWrapper getter={(data) => data.Event} queryResult={inOneHourResult}>
+                        {(events: readonly MenuSchedule_EventFragment[]) => (
+                            <MainMenuProgramInner events={events} title="Starting in the next hour" />
+                        )}
+                    </ApolloQueryWrapper>
+                </>
+            )}
         </>
     );
 }
@@ -110,9 +206,11 @@ export function MainMenuProgram(): JSX.Element {
 export function MainMenuProgramInner({
     events,
     title,
+    showTime,
 }: {
     events: readonly MenuSchedule_EventFragment[];
     title: string;
+    showTime?: boolean;
 }): JSX.Element {
     const conference = useConference();
 
@@ -125,6 +223,11 @@ export function MainMenuProgramInner({
                 <List>
                     {events.map((event) => (
                         <ListItem key={event.id} width="100%" my={2}>
+                            {showTime ? (
+                                <Text fontSize="sm" mb={1} mt={2}>
+                                    {formatRFC7231(Date.parse(event.startTime))}
+                                </Text>
+                            ) : undefined}
                             <LinkButton
                                 to={`/conference/${conference.slug}/room/${event.room.id}`}
                                 width="100%"
@@ -160,7 +263,7 @@ export function MainMenuProgramInner({
                     ))}
                 </List>
             ) : (
-                <>No events happening now.</>
+                <>No events.</>
             )}
         </Box>
     );

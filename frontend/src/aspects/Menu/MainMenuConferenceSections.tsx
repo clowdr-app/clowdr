@@ -20,15 +20,20 @@ import React, { useEffect } from "react";
 import { Link as ReactLink, useHistory } from "react-router-dom";
 import {
     AttendeeFieldsFragment,
+    RoomListRoomDetailsFragment,
     RoomPrivacy_Enum,
     SidebarChatInfoFragment,
+    useGetAllRoomsQuery,
     usePinnedChatsWithUnreadCountsSubscription,
 } from "../../generated/graphql";
 import { LinkButton } from "../Chakra/LinkButton";
 import { CreateDmModal } from "../Conference/Attend/Room/CreateDmModal";
 import { CreateRoomModal } from "../Conference/Attend/Room/CreateRoomModal";
-import ConferenceProvider from "../Conference/useConference";
+import { RoomList } from "../Conference/Attend/Room/RoomList";
+import ConferenceProvider, { useConference } from "../Conference/useConference";
+import ApolloQueryWrapper from "../GQL/ApolloQueryWrapper";
 import { FAIcon } from "../Icons/FAIcon";
+import RoomParticipantsProvider from "../Room/RoomParticipantsProvider";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 
 gql`
@@ -187,10 +192,17 @@ export function MainMenuConferenceSections_Inner({
     const { isOpen: isCreateDmOpen, onClose: onCreateDmClose, onOpen: onCreateDmOpen } = useDisclosure();
 
     const history = useHistory();
+    const conference = useConference();
+
+    const result = useGetAllRoomsQuery({
+        variables: {
+            conferenceId: conference.id,
+        },
+    });
 
     return (
         <>
-            <LinkButton onClick={onClose} to={`/conference/${confSlug}`} mb={4} mt={4}>
+            <LinkButton onClick={onClose} to={`/conference/${confSlug}`} linkProps={{ my: 4 }} width="100%">
                 <FAIcon icon="home" iconStyle="s" mr={3} />
                 Home
             </LinkButton>
@@ -212,7 +224,7 @@ export function MainMenuConferenceSections_Inner({
                 <AccordionItem>
                     <AccordionButton>
                         <Box flex="1" textAlign="left">
-                            Rooms
+                            Chats
                         </Box>
                         <AccordionIcon />
                     </AccordionButton>
@@ -262,7 +274,29 @@ export function MainMenuConferenceSections_Inner({
                                 ))}
                             {!pinnedChats.data || pinnedChats.data.chat_Pin.length < 1 ? <>No pinned chats.</> : <></>}
                         </List>
-                        <LinkButton onClick={onClose} to={`/conference/${confSlug}/rooms`}>
+                    </AccordionPanel>
+                </AccordionItem>
+
+                <AccordionItem>
+                    <AccordionButton>
+                        <Box flex="1" textAlign="left">
+                            Rooms
+                        </Box>
+                        <AccordionIcon />
+                    </AccordionButton>
+                    <AccordionPanel pb={4}>
+                        <ApolloQueryWrapper getter={(data) => data.Room} queryResult={result}>
+                            {(rooms: readonly RoomListRoomDetailsFragment[]) => (
+                                <RoomList rooms={rooms} layout="list" limit={5} onClick={onClose} />
+                            )}
+                        </ApolloQueryWrapper>
+                        <LinkButton
+                            onClick={onClose}
+                            to={`/conference/${confSlug}/rooms`}
+                            colorScheme="green"
+                            linkProps={{ mt: 4, width: "100%" }}
+                            w="100%"
+                        >
                             View all rooms
                         </LinkButton>
                     </AccordionPanel>
@@ -271,15 +305,11 @@ export function MainMenuConferenceSections_Inner({
                 <AccordionItem>
                     <AccordionButton>
                         <Box flex="1" textAlign="left">
-                            Section 2 title
+                            Schedule
                         </Box>
                         <AccordionIcon />
+                        <AccordionPanel pb={4}>todo</AccordionPanel>
                     </AccordionButton>
-                    <AccordionPanel pb={4}>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                        labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                        laboris nisi ut aliquip ex ea commodo consequat.
-                    </AccordionPanel>
                 </AccordionItem>
             </Accordion>
         </>
@@ -301,12 +331,14 @@ export default function MainMenuConferenceSections({
         if (attendee) {
             return (
                 <ConferenceProvider confSlug={confSlug}>
-                    <MainMenuConferenceSections_Inner
-                        rootUrl={rootUrl}
-                        confSlug={confSlug}
-                        attendee={attendee}
-                        onClose={onClose}
-                    />
+                    <RoomParticipantsProvider>
+                        <MainMenuConferenceSections_Inner
+                            rootUrl={rootUrl}
+                            confSlug={confSlug}
+                            attendee={attendee}
+                            onClose={onClose}
+                        />
+                    </RoomParticipantsProvider>
                 </ConferenceProvider>
             );
         }

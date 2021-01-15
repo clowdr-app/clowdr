@@ -68,7 +68,7 @@ export default function RoomListPage(): JSX.Element {
                         <Button onClick={onOpen} colorScheme="green">
                             Create new room
                         </Button>
-                        <RoomList rooms={rooms} />
+                        <RoomList rooms={rooms} layout="grid" />
                         <CreateRoomModal isOpen={isOpen} onClose={onClose} onCreated={refetch} />
                     </>
                 )}

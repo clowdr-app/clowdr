@@ -15,7 +15,7 @@ import {
     ListItem,
     Text,
 } from "@chakra-ui/react";
-import { formatRFC7231 } from "date-fns";
+import { formatRelative, formatRFC7231 } from "date-fns";
 import React, { useEffect, useState } from "react";
 import {
     MenuSchedule_EventFragment,
@@ -95,6 +95,9 @@ gql`
                 colour
                 name
             }
+        }
+        contentGroup {
+            title
         }
     }
 `;
@@ -235,46 +238,51 @@ export function MainMenuProgramInner({
             </Heading>
             {events.length > 0 ? (
                 <List>
-                    {events.map((event) => (
-                        <ListItem key={event.id} width="100%" my={2}>
-                            {showTime ? (
-                                <Text fontSize="sm" mb={1} mt={2}>
-                                    {formatRFC7231(Date.parse(event.startTime))}
-                                </Text>
-                            ) : undefined}
-                            <LinkButton
-                                to={`/conference/${conference.slug}/room/${event.room.id}`}
-                                width="100%"
-                                linkProps={{ width: "100%" }}
-                            >
-                                <HStack width="100%" justifyContent="space-between">
-                                    <Text
-                                        flex="0 1 1"
-                                        overflow="hidden"
-                                        title={event.name}
-                                        whiteSpace="nowrap"
-                                        textOverflow="ellipsis"
-                                    >
-                                        {event.name}
+                    {events.map((event) => {
+                        const eventName = event.name + (event.contentGroup ? ": " + event.contentGroup.title : "");
+
+                        return (
+                            <ListItem key={event.id} width="100%" my={2}>
+                                {showTime ? (
+                                    <Text fontSize="sm" mb={1} mt={2}>
+                                        {formatRelative(Date.parse(event.startTime), new Date())}
                                     </Text>
-                                    <Text flex="0 1 1">
-                                        {event.eventTags.map((tag) => (
-                                            <Badge
-                                                key={tag.tag.id}
-                                                color="gray.50"
-                                                backgroundColor={tag.tag.colour}
-                                                ml={1}
-                                                p={1}
-                                                borderRadius={4}
-                                            >
-                                                {tag.tag.name}
-                                            </Badge>
-                                        ))}
-                                    </Text>
-                                </HStack>
-                            </LinkButton>
-                        </ListItem>
-                    ))}
+                                ) : undefined}
+                                <LinkButton
+                                    to={`/conference/${conference.slug}/room/${event.room.id}`}
+                                    width="100%"
+                                    linkProps={{ width: "100%" }}
+                                    h="auto"
+                                    py={2}
+                                >
+                                    <HStack width="100%" justifyContent="space-between">
+                                        <Text
+                                            flex="0 1 1"
+                                            overflow="hidden"
+                                            title={eventName}
+                                            whiteSpace="normal"
+                                        >
+                                            {eventName}
+                                        </Text>
+                                        <Text flex="0 1 1">
+                                            {event.eventTags.map((tag) => (
+                                                <Badge
+                                                    key={tag.tag.id}
+                                                    color="gray.50"
+                                                    backgroundColor={tag.tag.colour}
+                                                    ml={1}
+                                                    p={1}
+                                                    borderRadius={4}
+                                                >
+                                                    {tag.tag.name}
+                                                </Badge>
+                                            ))}
+                                        </Text>
+                                    </HStack>
+                                </LinkButton>
+                            </ListItem>
+                        );
+                    })}
                 </List>
             ) : (
                 <>No events.</>

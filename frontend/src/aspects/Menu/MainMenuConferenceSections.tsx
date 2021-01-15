@@ -224,7 +224,7 @@ export function MainMenuConferenceSections_Inner({
                         </Box>
                         <AccordionIcon />
                     </AccordionButton>
-                    <AccordionPanel pb={4}>
+                    <AccordionPanel pb={4} px={"3px"}>
                         <HStack justifyContent="flex-end">
                             <Button onClick={onCreateRoomOpen} colorScheme="green" size="sm">
                                 <FAIcon icon="plus-square" iconStyle="s" mr={3} /> New room
@@ -280,7 +280,7 @@ export function MainMenuConferenceSections_Inner({
                         </Box>
                         <AccordionIcon />
                     </AccordionButton>
-                    <AccordionPanel pb={4}>
+                    <AccordionPanel pb={4} px={"3px"}>
                         <ApolloQueryWrapper getter={(data) => data.Room} queryResult={result}>
                             {(rooms: readonly RoomListRoomDetailsFragment[]) => (
                                 <RoomList rooms={rooms} layout="list" limit={5} onClick={onClose} />
@@ -305,7 +305,7 @@ export function MainMenuConferenceSections_Inner({
                         </Box>
                         <AccordionIcon />
                     </AccordionButton>
-                    <AccordionPanel pb={4}>
+                    <AccordionPanel pb={4} px={"3px"}>
                         <MainMenuProgram />
                     </AccordionPanel>
                 </AccordionItem>

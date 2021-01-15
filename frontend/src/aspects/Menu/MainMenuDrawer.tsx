@@ -51,7 +51,7 @@ export default function MainMenuDrawer({ isOpen, portalNode }: Props): JSX.Eleme
                                 <CloseButton ref={initialFocusRef} ml={2} onClick={onClose} title="Close main menu" />
                             </Flex>
                         </DrawerHeader>
-                        <DrawerBody>
+                        <DrawerBody p="3px">
                             <OutPortal node={portalNode} />
                         </DrawerBody>
                     </DrawerContent>

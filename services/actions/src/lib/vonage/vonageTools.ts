@@ -154,7 +154,7 @@ export async function startEventBroadcast(eventId: string): Promise<void> {
                 resolution: "1280x720",
             });
         } catch (e) {
-            console.error("Failed to start broadcast", broadcastDetails.vonageSessionId, eventId);
+            console.error("Failed to start broadcast", broadcastDetails.vonageSessionId, eventId, e);
             return;
         }
     } else {

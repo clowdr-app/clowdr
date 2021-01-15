@@ -28,7 +28,9 @@ export function VonageRoom({
         <VonageRoomStateProvider>
             <OpenTokProvider>
                 <ChatProfileModalProvider>
-                    {mAttendee ? <VonageRoomInner vonageSessionId={vonageSessionId} getAccessToken={getAccessToken} /> : undefined}
+                    {mAttendee ? (
+                        <VonageRoomInner vonageSessionId={vonageSessionId} getAccessToken={getAccessToken} />
+                    ) : undefined}
                 </ChatProfileModalProvider>
             </OpenTokProvider>
         </VonageRoomStateProvider>
@@ -159,7 +161,7 @@ function VonageRoomInner({
                         h={300}
                         ref={cameraPublishContainerRef}
                         display={openTokProps.isSessionConnected && openTokProps.publisher["camera"] ? "block" : "none"}
-                    ></Box>
+                    />
 
                     {R.sortWith(
                         [

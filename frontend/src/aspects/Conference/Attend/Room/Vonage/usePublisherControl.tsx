@@ -15,6 +15,9 @@ export function usePublisherControl(
     const unmountRef = useRef<() => void>();
     useEffect(() => {
         function stop() {
+            if (openTokProps.publisher["camera"]) {
+                openTokMethods.unpublish({ name: "camera" });
+            }
             if (openTokProps.isSessionConnected) {
                 openTokMethods.disconnectSession();
             }
@@ -23,7 +26,7 @@ export function usePublisherControl(
         unmountRef.current = () => {
             stop();
         };
-    }, [openTokMethods, openTokProps.isSessionConnected]);
+    }, [openTokMethods, openTokProps.isSessionConnected, openTokProps.publisher]);
 
     useEffect(() => {
         return () => {
@@ -77,19 +80,19 @@ export function usePublisherControl(
     }, [state.screenShareIntendedEnabled]);
 
     const republish = useCallback(() => {
-        if (!cameraPublishContainerRef.current?.children || cameraPublishContainerRef.current.children.length < 1) {
+        if (!cameraPublishContainerRef.current) {
             throw new Error("No element to publish to");
         }
 
         openTokMethods.republish({
             name: "camera",
-            element: cameraPublishContainerRef.current.children[0] as HTMLElement,
+            element: cameraPublishContainerRef.current,
             options: {
                 videoSource: computedState.videoTrack?.getSettings().deviceId,
                 audioSource: computedState.audioTrack?.getSettings().deviceId ?? false,
                 publishAudio: state.microphoneIntendedEnabled,
                 publishVideo: state.cameraIntendedEnabled,
-                insertMode: "replace",
+                insertMode: "append",
                 style: {
                     nameDisplayMode: "on",
                 },
@@ -146,10 +149,7 @@ export function usePublisherControl(
                 }
                 // Otherwise, publish from scratch with the audio source
             } else if (openTokProps.isSessionConnected && computedState.audioTrack) {
-                if (
-                    !cameraPublishContainerRef.current?.children ||
-                    cameraPublishContainerRef.current.children.length < 1
-                ) {
+                if (!cameraPublishContainerRef.current) {
                     throw new Error("No element to publish to");
                 }
 
@@ -160,13 +160,13 @@ export function usePublisherControl(
                     console.log("Publishing with audio track");
                     await openTokMethods.publish({
                         name: "camera",
-                        element: cameraPublishContainerRef.current.children[0] as HTMLElement,
+                        element: cameraPublishContainerRef.current,
                         options: {
                             videoSource: videoTrack ?? false,
                             audioSource: audioTrack ?? false,
                             publishAudio: state.microphoneIntendedEnabled,
                             publishVideo: state.cameraIntendedEnabled,
-                            insertMode: "replace",
+                            insertMode: "append",
                             style: {
                                 nameDisplayMode: "on",
                             },
@@ -186,7 +186,7 @@ export function usePublisherControl(
         async (event: EventMap["sessionConnected"]) => {
             console.log("Session connected", event.target.sessionId);
 
-            if (!cameraPublishContainerRef.current?.children || cameraPublishContainerRef.current.children.length < 1) {
+            if (!cameraPublishContainerRef.current) {
                 throw new Error("No element to publish to");
             }
 
@@ -197,13 +197,13 @@ export function usePublisherControl(
                 console.log("Publishing camera");
                 await openTokMethods.publish({
                     name: "camera",
-                    element: cameraPublishContainerRef.current.children[0] as HTMLElement,
+                    element: cameraPublishContainerRef.current,
                     options: {
                         videoSource: videoTrack ?? false,
                         audioSource: audioTrack ?? false,
                         publishAudio: state.microphoneIntendedEnabled,
                         publishVideo: state.cameraIntendedEnabled,
-                        insertMode: "replace",
+                        insertMode: "append",
                         style: {
                             nameDisplayMode: "on",
                         },

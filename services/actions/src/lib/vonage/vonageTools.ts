@@ -341,8 +341,7 @@ gql`
             where: {
                 attendeeId: { _eq: $attendeeId }
                 conferenceId: { _eq: $conferenceId }
-                roomId: { _eq: $roomId }
-                vonageConnectionId: { _eq: $vonageConnectionId }
+                _or: [{ roomId: { _eq: $roomId } }, { vonageConnectionId: { _eq: $vonageConnectionId } }]
             }
         ) {
             affected_rows

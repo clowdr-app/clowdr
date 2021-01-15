@@ -216,12 +216,16 @@ export default function MainMenu({ children }: Props): JSX.Element {
                             confSlug: string;
                         }>
                     ) => (
-                        <MainMenuConferenceSections rootUrl={props.match.url} confSlug={props.match.params.confSlug} />
+                        <MainMenuConferenceSections
+                            rootUrl={props.match.url}
+                            confSlug={props.match.params.confSlug}
+                            onClose={onClose}
+                        />
                     )}
                 />
             </VStack>
         ),
-        []
+        [onClose]
     );
 
     return (

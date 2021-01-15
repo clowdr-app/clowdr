@@ -4973,6 +4973,13 @@ export enum ContentType_Update_Column {
   Name = 'name'
 }
 
+export type CreateRoomDmOutput = {
+  readonly __typename?: 'CreateRoomDmOutput';
+  readonly message?: Maybe<Scalars['String']>;
+  readonly room?: Maybe<Room>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+};
+
 export type EchoInput = {
   readonly message: Scalars['String'];
 };
@@ -18672,6 +18679,8 @@ export type Jsonb_Comparison_Exp = {
 /** mutation root */
 export type Mutation_Root = {
   readonly __typename?: 'mutation_root';
+  /** perform the action: "createRoomDm" */
+  readonly createRoomDm?: Maybe<CreateRoomDmOutput>;
   /** delete data from the table: "Attendee" */
   readonly delete_Attendee?: Maybe<Attendee_Mutation_Response>;
   /** delete data from the table: "AttendeeProfile" */
@@ -19482,6 +19491,13 @@ export type Mutation_Root = {
   readonly update_job_queues_SubmissionRequestEmailJob?: Maybe<Job_Queues_SubmissionRequestEmailJob_Mutation_Response>;
   /** update single row of the table: "job_queues.SubmissionRequestEmailJob" */
   readonly update_job_queues_SubmissionRequestEmailJob_by_pk?: Maybe<Job_Queues_SubmissionRequestEmailJob>;
+};
+
+
+/** mutation root */
+export type Mutation_RootCreateRoomDmArgs = {
+  attendeeIds: ReadonlyArray<Maybe<Scalars['uuid']>>;
+  conferenceId: Scalars['uuid'];
 };
 
 
@@ -27019,6 +27035,23 @@ export type GetRoomVonageTokenMutationVariables = Exact<{
 
 export type GetRoomVonageTokenMutation = { readonly __typename?: 'mutation_root', readonly joinRoomVonageSession?: Maybe<{ readonly __typename?: 'JoinRoomVonageSessionOutput', readonly accessToken?: Maybe<string>, readonly sessionId?: Maybe<string> }> };
 
+export type CreateDmMutationVariables = Exact<{
+  attendeeIds: ReadonlyArray<Maybe<Scalars['uuid']>>;
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type CreateDmMutation = { readonly __typename?: 'mutation_root', readonly createRoomDm?: Maybe<{ readonly __typename?: 'CreateRoomDmOutput', readonly message?: Maybe<string>, readonly roomId?: Maybe<any> }> };
+
+export type AttendeeCreateRoomMutationVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  name: Scalars['String'];
+  roomPrivacyName: RoomPrivacy_Enum;
+}>;
+
+
+export type AttendeeCreateRoomMutation = { readonly __typename?: 'mutation_root', readonly insert_Room_one?: Maybe<{ readonly __typename?: 'Room', readonly id: any }> };
+
 export type UpdateEventVonageSessionLayoutMutationVariables = Exact<{
   eventVonageSessionId: Scalars['uuid'];
   layoutData: Scalars['jsonb'];
@@ -27129,15 +27162,6 @@ export type GetAllRoomsQuery = { readonly __typename?: 'query_root', readonly Ro
   )> };
 
 export type RoomListRoomDetailsFragment = { readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly roomPrivacyName: RoomPrivacy_Enum };
-
-export type AttendeeCreateRoomMutationVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-  name: Scalars['String'];
-  roomPrivacyName: RoomPrivacy_Enum;
-}>;
-
-
-export type AttendeeCreateRoomMutation = { readonly __typename?: 'mutation_root', readonly insert_Room_one?: Maybe<{ readonly __typename?: 'Room', readonly id: any }> };
 
 export type GetRoomDetailsQueryVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -30042,6 +30066,76 @@ export function useGetRoomVonageTokenMutation(baseOptions?: Apollo.MutationHookO
 export type GetRoomVonageTokenMutationHookResult = ReturnType<typeof useGetRoomVonageTokenMutation>;
 export type GetRoomVonageTokenMutationResult = Apollo.MutationResult<GetRoomVonageTokenMutation>;
 export type GetRoomVonageTokenMutationOptions = Apollo.BaseMutationOptions<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>;
+export const CreateDmDocument = gql`
+    mutation CreateDm($attendeeIds: [uuid]!, $conferenceId: uuid!) {
+  createRoomDm(attendeeIds: $attendeeIds, conferenceId: $conferenceId) {
+    message
+    roomId
+  }
+}
+    `;
+export type CreateDmMutationFn = Apollo.MutationFunction<CreateDmMutation, CreateDmMutationVariables>;
+
+/**
+ * __useCreateDmMutation__
+ *
+ * To run a mutation, you first call `useCreateDmMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateDmMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createDmMutation, { data, loading, error }] = useCreateDmMutation({
+ *   variables: {
+ *      attendeeIds: // value for 'attendeeIds'
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useCreateDmMutation(baseOptions?: Apollo.MutationHookOptions<CreateDmMutation, CreateDmMutationVariables>) {
+        return Apollo.useMutation<CreateDmMutation, CreateDmMutationVariables>(CreateDmDocument, baseOptions);
+      }
+export type CreateDmMutationHookResult = ReturnType<typeof useCreateDmMutation>;
+export type CreateDmMutationResult = Apollo.MutationResult<CreateDmMutation>;
+export type CreateDmMutationOptions = Apollo.BaseMutationOptions<CreateDmMutation, CreateDmMutationVariables>;
+export const AttendeeCreateRoomDocument = gql`
+    mutation AttendeeCreateRoom($conferenceId: uuid!, $name: String!, $roomPrivacyName: RoomPrivacy_enum!) {
+  insert_Room_one(
+    object: {capacity: 50, conferenceId: $conferenceId, currentModeName: BREAKOUT, name: $name, roomPrivacyName: $roomPrivacyName}
+  ) {
+    id
+  }
+}
+    `;
+export type AttendeeCreateRoomMutationFn = Apollo.MutationFunction<AttendeeCreateRoomMutation, AttendeeCreateRoomMutationVariables>;
+
+/**
+ * __useAttendeeCreateRoomMutation__
+ *
+ * To run a mutation, you first call `useAttendeeCreateRoomMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAttendeeCreateRoomMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [attendeeCreateRoomMutation, { data, loading, error }] = useAttendeeCreateRoomMutation({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      name: // value for 'name'
+ *      roomPrivacyName: // value for 'roomPrivacyName'
+ *   },
+ * });
+ */
+export function useAttendeeCreateRoomMutation(baseOptions?: Apollo.MutationHookOptions<AttendeeCreateRoomMutation, AttendeeCreateRoomMutationVariables>) {
+        return Apollo.useMutation<AttendeeCreateRoomMutation, AttendeeCreateRoomMutationVariables>(AttendeeCreateRoomDocument, baseOptions);
+      }
+export type AttendeeCreateRoomMutationHookResult = ReturnType<typeof useAttendeeCreateRoomMutation>;
+export type AttendeeCreateRoomMutationResult = Apollo.MutationResult<AttendeeCreateRoomMutation>;
+export type AttendeeCreateRoomMutationOptions = Apollo.BaseMutationOptions<AttendeeCreateRoomMutation, AttendeeCreateRoomMutationVariables>;
 export const UpdateEventVonageSessionLayoutDocument = gql`
     mutation UpdateEventVonageSessionLayout($eventVonageSessionId: uuid!, $layoutData: jsonb!) {
   update_EventVonageSession_by_pk(
@@ -30442,42 +30536,6 @@ export function useGetAllRoomsLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetAllRoomsQueryHookResult = ReturnType<typeof useGetAllRoomsQuery>;
 export type GetAllRoomsLazyQueryHookResult = ReturnType<typeof useGetAllRoomsLazyQuery>;
 export type GetAllRoomsQueryResult = Apollo.QueryResult<GetAllRoomsQuery, GetAllRoomsQueryVariables>;
-export const AttendeeCreateRoomDocument = gql`
-    mutation AttendeeCreateRoom($conferenceId: uuid!, $name: String!, $roomPrivacyName: RoomPrivacy_enum!) {
-  insert_Room_one(
-    object: {capacity: 50, conferenceId: $conferenceId, currentModeName: BREAKOUT, name: $name, roomPrivacyName: $roomPrivacyName}
-  ) {
-    id
-  }
-}
-    `;
-export type AttendeeCreateRoomMutationFn = Apollo.MutationFunction<AttendeeCreateRoomMutation, AttendeeCreateRoomMutationVariables>;
-
-/**
- * __useAttendeeCreateRoomMutation__
- *
- * To run a mutation, you first call `useAttendeeCreateRoomMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAttendeeCreateRoomMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [attendeeCreateRoomMutation, { data, loading, error }] = useAttendeeCreateRoomMutation({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      name: // value for 'name'
- *      roomPrivacyName: // value for 'roomPrivacyName'
- *   },
- * });
- */
-export function useAttendeeCreateRoomMutation(baseOptions?: Apollo.MutationHookOptions<AttendeeCreateRoomMutation, AttendeeCreateRoomMutationVariables>) {
-        return Apollo.useMutation<AttendeeCreateRoomMutation, AttendeeCreateRoomMutationVariables>(AttendeeCreateRoomDocument, baseOptions);
-      }
-export type AttendeeCreateRoomMutationHookResult = ReturnType<typeof useAttendeeCreateRoomMutation>;
-export type AttendeeCreateRoomMutationResult = Apollo.MutationResult<AttendeeCreateRoomMutation>;
-export type AttendeeCreateRoomMutationOptions = Apollo.BaseMutationOptions<AttendeeCreateRoomMutation, AttendeeCreateRoomMutationVariables>;
 export const GetRoomDetailsDocument = gql`
     query GetRoomDetails($roomId: uuid!) {
   Room_by_pk(id: $roomId) {

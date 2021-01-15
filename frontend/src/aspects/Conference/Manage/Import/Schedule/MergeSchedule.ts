@@ -216,11 +216,16 @@ function convertEvent(context: Context, item: IntermediaryEventDescriptor | Even
         if (groups.length === 1) {
             result.contentGroupId = groups[0].id;
         } else if (groups.length > 1) {
+            console.error(
+                "Multiple possible content groups could match this event",
+                { item, groups }
+            );
             throw new Error(
                 "Multiple possible content groups could match this event:\n" + JSON.stringify({ item, groups }, null, 2)
             );
         } else {
-            throw new Error("No content groups match this event!");
+            console.error("No content groups match this event",{ item, groups });
+            throw new Error("No content groups match this event!:\n" + JSON.stringify({ item, groups }, null, 2));
         }
     }
 

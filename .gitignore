@@ -112,3 +112,4 @@ dist
 # Windows
 desktop.ini
 ngrok.yml
+frontend/x.env.local

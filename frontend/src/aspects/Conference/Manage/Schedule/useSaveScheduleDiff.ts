@@ -5,6 +5,7 @@ import {
     EventPerson_Insert_Input,
     Event_Insert_Input,
     OriginatingData_Insert_Input,
+    RoomMode_Enum,
     Room_Insert_Input,
     Tag_Insert_Input,
     useDeleteOriginatingDatasMutation,
@@ -542,6 +543,7 @@ export function useSaveScheduleDiff():
                                         originatingDataId: room.originatingDataId,
                                         capacity: room.capacity,
                                         priority: room.priority,
+                                        currentModeName: RoomMode_Enum.Breakout,
                                     })
                                 ),
                             },

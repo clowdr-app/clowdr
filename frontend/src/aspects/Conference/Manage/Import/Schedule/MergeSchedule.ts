@@ -204,7 +204,7 @@ function convertEvent(context: Context, item: IntermediaryEventDescriptor | Even
         const srcId = item.contentGroupSourceId;
         const groups = context.contentGroups.filter((g) => {
             if (g.originatingDataId) {
-                const od = context.originatingDatas.find((x) => x.id === g.originatingDataId);
+                const od = context.originatingDatas.find((x) => isMatch_Id_Generalised("OriginatingData", "id", "originatingDataId")(context, x, g));
                 if (od) {
                     if (sourceIdsEquivalent(od.sourceId, srcId)) {
                         return true;
@@ -331,6 +331,7 @@ function convertRoom(context: Context, item: IntermediaryRoomDescriptor | RoomDe
 
         name: item.name,
         capacity: item.capacity,
+        priority: item.priority ?? 0,
         participants: new Set(),
     } as RoomDescriptor;
 
@@ -359,6 +360,7 @@ function mergeRoom(
     mergeOriginatingDataIdInPlace(context, changes, result, item1, item2);
     mergeFieldInPlace(context, changes, result, "name", item1, item2);
     mergeFieldInPlace(context, changes, result, "capacity", item1, item2);
+    mergeFieldInPlace(context, changes, result, "priority", item1, item2);
 
     changes.push({
         location: "Room",
@@ -381,8 +383,7 @@ function findExistingRoom(
 ): number | undefined {
     return (
         findMatch(ctx, items, item, isMatch_Id("Room")) ??
-        findMatch(ctx, items, item, isMatch_String_Exact("name")) ??
-        findMatch(ctx, items, item, isMatch_String_EditDistance("name"))
+        findMatch(ctx, items, item, isMatch_String_Exact("name"))
     );
 }
 

@@ -6033,6 +6033,7 @@
       - capacity
       - name
       - originatingDataId
+      - priority
       filter:
         _or:
         - conference:

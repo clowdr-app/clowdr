@@ -64,29 +64,42 @@ export function CreateRoomModal({
                     }}
                     onSubmit={async (values) => {
                         const name = normaliseName(values.new_room_name);
-                        const result = await createAttendeeRoomMutation({
-                            variables: {
-                                conferenceId: conference.id,
-                                name,
-                                roomPrivacyName: values.new_room_private
-                                    ? RoomPrivacy_Enum.Private
-                                    : RoomPrivacy_Enum.Public,
-                            },
-                        });
-
-                        if (result.errors || !result.data?.insert_Room_one?.id) {
-                            toast({
-                                title: "Could not create room",
-                                status: "error",
+                        try {
+                            const result = await createAttendeeRoomMutation({
+                                variables: {
+                                    conferenceId: conference.id,
+                                    name,
+                                    roomPrivacyName: values.new_room_private
+                                        ? RoomPrivacy_Enum.Private
+                                        : RoomPrivacy_Enum.Public,
+                                },
                             });
-                            console.error("Could not create room", result.errors);
-                        } else {
+
+                            if (!result.data?.insert_Room_one?.id) {
+                                throw new Error("Missing return data");
+                            }
+
                             toast({
                                 title: `Created new room '${name}'`,
                                 status: "success",
                             });
                             onCreated(result.data.insert_Room_one.id);
                             onClose();
+                        } catch (e) {
+                            if ("message" in e && (e.message as string).includes("duplicate")) {
+                                toast({
+                                    title: "Could not create room",
+                                    description: "There is already a room with this name",
+                                    status: "error",
+                                });
+                            } else {
+                                toast({
+                                    title: "Could not create room",
+                                    status: "error",
+                                });
+                            }
+                            console.error("Could not create room", e);
+                            return;
                         }
                     }}
                 >

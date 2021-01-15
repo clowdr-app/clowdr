@@ -2,10 +2,6 @@ import { gql } from "@apollo/client";
 import {
     Box,
     Button,
-    FormControl,
-    FormErrorMessage,
-    FormLabel,
-    Input,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -13,32 +9,24 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
-    Switch,
     useToast,
 } from "@chakra-ui/react";
-import { Field, FieldProps, Form, Formik } from "formik";
+import { Field, FieldArray, Form, Formik } from "formik";
 import React from "react";
-import { RoomPrivacy_Enum, useAttendeeCreateRoomMutation } from "../../../../generated/graphql";
-import { normaliseName, validateShortName } from "../../NewConferenceForm";
+import { useCreateDmMutation } from "../../../../generated/graphql";
 import { useConference } from "../../useConference";
+import { AttendeeSearch } from "./AttendeeSearch";
 
 gql`
-    mutation AttendeeCreateRoom($conferenceId: uuid!, $name: String!, $roomPrivacyName: RoomPrivacy_enum!) {
-        insert_Room_one(
-            object: {
-                capacity: 50
-                conferenceId: $conferenceId
-                currentModeName: BREAKOUT
-                name: $name
-                roomPrivacyName: $roomPrivacyName
-            }
-        ) {
-            id
+    mutation CreateDm($attendeeIds: [uuid]!, $conferenceId: uuid!) {
+        createRoomDm(attendeeIds: $attendeeIds, conferenceId: $conferenceId) {
+            message
+            roomId
         }
     }
 `;
 
-export function CreateRoomModal({
+export function CreateDmModal({
     isOpen,
     onClose,
     onCreated,
@@ -47,7 +35,7 @@ export function CreateRoomModal({
     onClose: () => void;
     onCreated: (id: string) => Promise<void>;
 }): JSX.Element {
-    const [createAttendeeRoomMutation] = useAttendeeCreateRoomMutation();
+    const [createDmMutation] = useCreateDmMutation();
     const conference = useConference();
     const toast = useToast();
 
@@ -57,90 +45,70 @@ export function CreateRoomModal({
             <ModalContent>
                 <ModalHeader pb={0}>Create new DM</ModalHeader>
                 <ModalCloseButton />
-                <Formik<{ new_room_name: string; new_room_private: boolean }>
+                <Formik<{ new_dm_attendees: string[] }>
                     initialValues={{
-                        new_room_name: "",
-                        new_room_private: false,
+                        new_dm_attendees: [],
                     }}
                     onSubmit={async (values) => {
-                        const name = normaliseName(values.new_room_name);
-                        const result = await createAttendeeRoomMutation({
-                            variables: {
-                                conferenceId: conference.id,
-                                name,
-                                roomPrivacyName: values.new_room_private
-                                    ? RoomPrivacy_Enum.Private
-                                    : RoomPrivacy_Enum.Public,
-                            },
-                        });
-
-                        if (result.errors || !result.data?.insert_Room_one?.id) {
+                        try {
+                            const result = await createDmMutation({
+                                variables: {
+                                    attendeeIds: values.new_dm_attendees,
+                                    conferenceId: conference.id,
+                                },
+                            });
+                            if (result.errors || !result.data?.createRoomDm?.roomId) {
+                                console.error("Failed to create DM", result.errors);
+                                throw new Error("Failed to create DM");
+                            } else {
+                                toast({
+                                    title: result.data.createRoomDm.message ?? "Created new DM",
+                                    status: "success",
+                                });
+                                onCreated(result.data.createRoomDm.roomId);
+                                onClose();
+                            }
+                        } catch (e) {
                             toast({
-                                title: "Could not create room",
+                                title: "Could not create DM",
                                 status: "error",
                             });
-                            console.error("Could not create room", result.errors);
-                        } else {
-                            toast({
-                                title: `Created new room '${name}'`,
-                                status: "success",
-                            });
-                            onCreated(result.data.insert_Room_one.id);
-                            onClose();
+                            console.error("Could not create DM", e);
                         }
                     }}
                 >
-                    {(props) => (
+                    {({ values, isSubmitting, isValid }) => (
                         <>
                             <Form>
                                 <ModalBody>
                                     <Box>
-                                        <Field name="new_room_name" validate={validateShortName}>
-                                            {({ field, form }: FieldProps<string>) => (
-                                                <FormControl
-                                                    isInvalid={
-                                                        !!form.errors.new_room_name && !!form.touched.new_room_name
-                                                    }
-                                                    isRequired
-                                                >
-                                                    <FormLabel htmlFor="new_room_name">Room Name</FormLabel>
-                                                    <Input
-                                                        {...{
-                                                            ...field,
-                                                            value: normaliseName(field.value, false),
+                                        <FieldArray name="new_dm_attendees">
+                                            {(arrayHelpers) => (
+                                                <>
+                                                    <AttendeeSearch
+                                                        selectedAttendeeIds={values.new_dm_attendees}
+                                                        onSelect={async (attendeeId) => {
+                                                            arrayHelpers.push(attendeeId);
                                                         }}
-                                                        id="new_room_name"
-                                                        placeholder="Room name"
                                                     />
-                                                    <FormErrorMessage>{form.errors.new_room_name}</FormErrorMessage>
-                                                </FormControl>
+
+                                                    {values.new_dm_attendees.map((attendeeId, index) => (
+                                                        <div key={index}>
+                                                            <Field name={`new_dm_attendees.${index}`} hidden />
+                                                        </div>
+                                                    ))}
+                                                </>
                                             )}
-                                        </Field>
-                                        <Field name="new_room_private">
-                                            {({ field, form }: FieldProps<string>) => (
-                                                <FormControl
-                                                    isInvalid={
-                                                        !!form.errors.new_room_private &&
-                                                        !!form.touched.new_room_private
-                                                    }
-                                                    isRequired
-                                                    mt="1em"
-                                                >
-                                                    <FormLabel htmlFor="new_room_private">Private?</FormLabel>
-                                                    <Switch {...field} id="new_room_private" />
-                                                    <FormErrorMessage>{form.errors.new_room_private}</FormErrorMessage>
-                                                </FormControl>
-                                            )}
-                                        </Field>
+                                        </FieldArray>
                                     </Box>
                                 </ModalBody>
                                 <ModalFooter>
                                     <Button
                                         mt={4}
                                         colorScheme="green"
-                                        isLoading={props.isSubmitting}
+                                        isLoading={isSubmitting}
                                         type="submit"
-                                        isDisabled={!props.isValid}
+                                        isDisabled={!isValid}
                                     >
                                         Create
                                     </Button>

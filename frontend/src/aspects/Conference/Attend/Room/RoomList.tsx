@@ -27,7 +27,13 @@ export function RoomList({ rooms }: { rooms: readonly RoomListRoomDetailsFragmen
                     width="100%"
                     height="100%"
                 >
-                    {room.roomPrivacyName === RoomPrivacy_Enum.Private ? <FAIcon icon="lock" iconStyle="s" /> : <></>}
+                    {room.roomPrivacyName === RoomPrivacy_Enum.Private ? (
+                        <FAIcon icon="lock" iconStyle="s" />
+                    ) : room.roomPrivacyName === RoomPrivacy_Enum.Dm ? (
+                        <FAIcon icon="envelope" iconStyle="s" />
+                    ) : (
+                        <></>
+                    )}
                     <Text p={5}>{room.name}</Text>
                     {roomParticipants ? (
                         <SimpleGrid fontSize="sm" maxH="3rem" overflowY="hidden">

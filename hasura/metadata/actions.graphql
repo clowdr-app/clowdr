@@ -1,3 +1,11 @@
+type Mutation {
+  createRoomDm (
+    conferenceId: uuid!
+    attendeeIds: [uuid]!
+  ): CreateRoomDmOutput
+}
+
+
 type Query {
   echo (
     message: String!
@@ -197,5 +205,10 @@ type ProfilePhotoURLResponse {
 
 type UpdateProfilePhotoResponse {
   ok : Boolean!
+}
+
+type CreateRoomDmOutput {
+  roomId : uuid
+  message : String
 }
 

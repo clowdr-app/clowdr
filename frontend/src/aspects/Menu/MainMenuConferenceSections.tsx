@@ -25,6 +25,7 @@ import {
     usePinnedChatsWithUnreadCountsSubscription,
 } from "../../generated/graphql";
 import { LinkButton } from "../Chakra/LinkButton";
+import { CreateDmModal } from "../Conference/Attend/Room/CreateDmModal";
 import { CreateRoomModal } from "../Conference/Attend/Room/CreateRoomModal";
 import ConferenceProvider from "../Conference/useConference";
 import { FAIcon } from "../Icons/FAIcon";
@@ -227,6 +228,17 @@ export function MainMenuConferenceSections_Inner({
                         <CreateRoomModal
                             isOpen={isCreateRoomOpen}
                             onClose={onCreateRoomClose}
+                            onCreated={async (id: string) => {
+                                // Wait, because Vonage session creation is not instantaneous
+                                setTimeout(() => {
+                                    history.push(`/conference/${confSlug}/room/${id}`);
+                                    onClose();
+                                }, 2000);
+                            }}
+                        />
+                        <CreateDmModal
+                            isOpen={isCreateDmOpen}
+                            onClose={onCreateDmClose}
                             onCreated={async (id: string) => {
                                 // Wait, because Vonage session creation is not instantaneous
                                 setTimeout(() => {

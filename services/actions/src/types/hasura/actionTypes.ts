@@ -80,6 +80,11 @@ type UpdateProfilePhotoResponse = {
     ok: boolean;
 };
 
+type CreateRoomDmOutput = {
+    roomId?: Maybe<uuid>;
+    message?: Maybe<string>;
+};
+
 type SampleInput = {
     username: string;
     password: string;
@@ -116,6 +121,7 @@ type Query = {
 };
 
 type Mutation = {
+    createRoomDm?: Maybe<CreateRoomDmOutput>;
     invitationConfirmCurrent?: Maybe<ConfirmInvitationOutput>;
     invitationConfirmSendInitialEmail?: Maybe<InvitationConfirmationEmailOutput>;
     invitationConfirmSendRepeatEmail?: Maybe<InvitationConfirmationEmailOutput>;
@@ -141,6 +147,11 @@ type getUploadAgreementArgs = {
 
 type protectedEchoArgs = {
     message: string;
+};
+
+type createRoomDmArgs = {
+    conferenceId: uuid;
+    attendeeIds: Array<uuid>;
 };
 
 type invitationConfirmCurrentArgs = {

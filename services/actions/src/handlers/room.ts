@@ -1,7 +1,12 @@
 import { gql } from "@apollo/client/core";
 import assert from "assert";
+import * as R from "ramda";
 import {
     AddAttendeeToRoomPeopleDocument,
+    CreateDmRoomDocument,
+    CreateDmRoom_GetAttendeeDocument,
+    CreateDmRoom_GetAttendeesDocument,
+    CreateDmRoom_GetExistingRoomsDocument,
     GetAttendeesForRoomAndUserDocument,
     RoomPersonRole_Enum,
     SetRoomVonageSessionIdDocument,
@@ -115,4 +120,155 @@ export async function addUserToRoomPeople(userId: string, roomId: string, role: 
             roomPersonRoleName: role,
         },
     });
+}
+
+export async function handleCreateDmRoom(params: createRoomDmArgs, userId: string): Promise<CreateRoomDmOutput> {
+    gql`
+        query CreateDmRoom_GetAttendee($userId: String!, $conferenceId: uuid!) {
+            Attendee(where: { userId: { _eq: $userId }, conferenceId: { _eq: $conferenceId } }) {
+                id
+                displayName
+            }
+        }
+    `;
+
+    // Check that the requesting user actually attends the conference
+    const myAttendeeResult = await apolloClient.query({
+        query: CreateDmRoom_GetAttendeeDocument,
+        variables: {
+            userId,
+            conferenceId: params.conferenceId,
+        },
+    });
+
+    if (myAttendeeResult.data.Attendee.length !== 1) {
+        throw new Error("Could not find an attendee for the user at the specified conference");
+    }
+
+    const myAttendee = myAttendeeResult.data.Attendee[0];
+
+    gql`
+        query CreateDmRoom_GetAttendees($attendeeIds: [uuid!], $conferenceId: uuid!) {
+            Attendee(where: { conferenceId: { _eq: $conferenceId }, id: { _in: $attendeeIds } }) {
+                id
+                displayName
+            }
+        }
+    `;
+
+    const filteredAttendees = R.union(
+        params.attendeeIds.filter((attendeeId) => attendeeId !== myAttendee.id),
+        []
+    );
+
+    if (filteredAttendees.length < 1) {
+        throw new Error("Must have at least one other attendee in the DM");
+    }
+
+    // Check that the other attendees also attend the conference
+    const otherAttendeesResult = await apolloClient.query({
+        query: CreateDmRoom_GetAttendeesDocument,
+        variables: {
+            attendeeIds: filteredAttendees,
+            conferenceId: params.conferenceId,
+        },
+    });
+
+    if (otherAttendeesResult.data.Attendee.length !== filteredAttendees.length) {
+        throw new Error("Attendees must all be part of the specified conference");
+    }
+
+    // Check for an existing DM with these participants
+    gql`
+        query CreateDmRoom_GetExistingRooms($conferenceId: uuid!, $attendeeIds: [uuid!]) {
+            Room(
+                where: {
+                    conferenceId: { _eq: $conferenceId }
+                    roomPeople: { attendeeId: { _in: $attendeeIds }, _not: { attendeeId: { _nin: $attendeeIds } } }
+                    roomPrivacyName: { _eq: DM }
+                }
+            ) {
+                id
+                roomPeople {
+                    attendeeId
+                    id
+                }
+            }
+        }
+    `;
+
+    const existingRoomsResult = await apolloClient.query({
+        query: CreateDmRoom_GetExistingRoomsDocument,
+        variables: {
+            conferenceId: params.conferenceId,
+            attendeeIds: filteredAttendees,
+        },
+    });
+
+    const fullMatch = existingRoomsResult.data.Room.find((room) =>
+        R.isEmpty(
+            R.symmetricDifference(
+                room.roomPeople.map((person) => person.attendeeId),
+                [...filteredAttendees, myAttendee.id]
+            )
+        )
+    );
+
+    if (fullMatch) {
+        return {
+            message: "DM already exists",
+            roomId: fullMatch.id,
+        };
+    }
+
+    // Otherwise, create a new room and add the participants
+    gql`
+        mutation CreateDmRoom(
+            $capacity: Int!
+            $conferenceId: uuid!
+            $name: String!
+            $data: [RoomPerson_insert_input!]!
+        ) {
+            insert_Room_one(
+                object: {
+                    capacity: $capacity
+                    conferenceId: $conferenceId
+                    currentModeName: BREAKOUT
+                    name: $name
+                    roomPrivacyName: DM
+                    roomPeople: { data: $data }
+                }
+            ) {
+                id
+            }
+        }
+    `;
+
+    const result = await apolloClient.mutate({
+        mutation: CreateDmRoomDocument,
+        variables: {
+            capacity: filteredAttendees.length + 1,
+            conferenceId: params.conferenceId,
+            data: [
+                { attendeeId: myAttendee.id, roomPersonRoleName: RoomPersonRole_Enum.Participant },
+                ...filteredAttendees.map((attendeeId) => ({
+                    attendeeId: attendeeId,
+                    roomPersonRoleName: RoomPersonRole_Enum.Participant,
+                })),
+            ],
+            name: [
+                myAttendee.displayName,
+                ...otherAttendeesResult.data.Attendee.map((attendee) => attendee.displayName),
+            ].join(", "),
+        },
+    });
+
+    if (!result.data?.insert_Room_one?.id) {
+        throw new Error("Failed to create room");
+    }
+
+    return {
+        roomId: result.data.insert_Room_one.id,
+        message: "Created new DM",
+    };
 }

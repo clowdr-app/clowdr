@@ -2,6 +2,7 @@ import {
     FormControl,
     FormHelperText,
     FormLabel,
+    Grid,
     Input,
     InputGroup,
     InputLeftAddon,
@@ -10,7 +11,7 @@ import {
     Text,
 } from "@chakra-ui/react";
 import * as R from "ramda";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { RoomListRoomDetailsFragment, RoomPrivacy_Enum } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import FAIcon from "../../../Icons/FAIcon";
@@ -46,6 +47,44 @@ export function RoomList({
         [roomParticipants, rooms]
     );
 
+    const toButtonContents = useCallback(
+        (room: RoomListRoomDetailsFragment) => {
+            const contents = (
+                <>
+                    {room.roomPrivacyName === RoomPrivacy_Enum.Private ? (
+                        <FAIcon icon="lock" iconStyle="s" textAlign="center" />
+                    ) : room.roomPrivacyName === RoomPrivacy_Enum.Dm ? (
+                        <FAIcon icon="envelope" iconStyle="s" textAlign="center" />
+                    ) : (
+                        <FAIcon icon="video" iconStyle="s" textAlign="center" />
+                    )}
+                    <Text
+                        p={layout === "grid" ? 5 : 2}
+                        textAlign="left"
+                        textOverflow="ellipsis"
+                        whiteSpace="nowrap"
+                        overflow="hidden"
+                        title={room.name}
+                    >
+                        {room.name}
+                    </Text>
+                    <RoomParticipants roomId={room.id} />
+                </>
+            );
+
+            if (layout === "grid") {
+                return contents;
+            } else {
+                return (
+                    <Grid templateColumns="10% 50% 40%" justifyContent="flex-start" alignItems="center" w="100%">
+                        {contents}
+                    </Grid>
+                );
+            }
+        },
+        [layout]
+    );
+
     const roomElements = useMemo(
         () =>
             sortedRooms.map((room) => ({
@@ -62,19 +101,11 @@ export function RoomList({
                         height="100%"
                         onClick={onClick}
                     >
-                        {room.roomPrivacyName === RoomPrivacy_Enum.Private ? (
-                            <FAIcon icon="lock" iconStyle="s" />
-                        ) : room.roomPrivacyName === RoomPrivacy_Enum.Dm ? (
-                            <FAIcon icon="envelope" iconStyle="s" />
-                        ) : (
-                            <></>
-                        )}
-                        <Text p={layout === "grid" ? 5 : 2}>{room.name}</Text>
-                        <RoomParticipants roomId={room.id} />
+                        {toButtonContents(room)}
                     </LinkButton>
                 ),
             })),
-        [conference.slug, layout, onClick, sortedRooms]
+        [conference.slug, layout, onClick, sortedRooms, toButtonContents]
     );
 
     const s = search.toLowerCase();
@@ -86,9 +117,9 @@ export function RoomList({
         ? filteredElements.slice(0, Math.min(limit, filteredElements.length))
         : filteredElements;
 
-    const resultCountStr = `showing ${Math.min(limit, filteredElements.length)} of ${filteredElements.length} ${
-        filteredElements.length !== 1 ? "rooms" : "room"
-    }`;
+    const resultCountStr = `showing ${Math.min(limit ?? Number.MAX_SAFE_INTEGER, filteredElements.length)} of ${
+        filteredElements.length
+    } ${filteredElements.length !== 1 ? "rooms" : "room"}`;
     const [ariaSearchResultStr, setAriaSearchResultStr] = useState<string>(resultCountStr);
     useEffect(() => {
         const tId = setTimeout(() => {
@@ -125,7 +156,7 @@ export function RoomList({
             <SimpleGrid
                 columns={layout === "grid" ? [1, Math.min(2, rooms.length), Math.min(3, rooms.length)] : 1}
                 autoRows="min-content"
-                spacing={[2, 2, 4]}
+                spacing={layout === "grid" ? [2, 2, 4] : 2}
             >
                 {limitedElements.map((e) => e.el)}
             </SimpleGrid>

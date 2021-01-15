@@ -529,7 +529,12 @@ export async function syncChannelSchedule(roomId: string): Promise<boolean> {
 
     // Generate a simplified representation of what the channel schedule 'ought' to be
     const transitions = allTransitionsResult.data.Transitions;
-    const fillerVideoKey = await getFillerVideo(channelResult.data.Room_by_pk?.conferenceId);
+    let fillerVideoKey;
+    try {
+        fillerVideoKey = await getFillerVideo(channelResult.data.Room_by_pk?.conferenceId);
+    } catch (e) {
+        console.warn("Could not retrieve filler video", channelResult.data.Room_by_pk.conferenceId);
+    }
     const expectedSchedule = R.flatten(
         transitions.map((transition) => {
             const input: BroadcastContentItemInput = transition.broadcastContentItem.input;
@@ -717,21 +722,23 @@ export async function syncChannelSchedule(roomId: string): Promise<boolean> {
                     },
                 });
 
-                newScheduleActions.push({
-                    ActionName: `${transition.id}-follow`,
-                    ScheduleActionSettings: {
-                        InputSwitchSettings: {
-                            InputAttachmentNameReference: channel.loopingMp4InputAttachmentName,
-                            UrlPath: [fillerVideoKey],
+                if (fillerVideoKey) {
+                    newScheduleActions.push({
+                        ActionName: `${transition.id}-follow`,
+                        ScheduleActionSettings: {
+                            InputSwitchSettings: {
+                                InputAttachmentNameReference: channel.loopingMp4InputAttachmentName,
+                                UrlPath: [fillerVideoKey],
+                            },
                         },
-                    },
-                    ScheduleActionStartSettings: {
-                        FollowModeScheduleActionStartSettings: {
-                            FollowPoint: FollowPoint.END,
-                            ReferenceActionName: `${transition.id}`,
+                        ScheduleActionStartSettings: {
+                            FollowModeScheduleActionStartSettings: {
+                                FollowPoint: FollowPoint.END,
+                                ReferenceActionName: `${transition.id}`,
+                            },
                         },
-                    },
-                });
+                    });
+                }
             }
         } else if (
             transition.broadcastContentItem.inputTypeName === InputType_Enum.VonageSession &&
@@ -815,7 +822,13 @@ export async function switchToFillerVideo(channelResourceId: string): Promise<vo
 
     const conferenceId = conferenceIdResult.data.MediaLiveChannel[0].room.conferenceId;
 
-    const fillerVideoKey = await getFillerVideo(conferenceId);
+    let fillerVideoKey;
+    try {
+        fillerVideoKey = await getFillerVideo(conferenceId);
+    } catch (e) {
+        console.warn("Could not find filler video, will not switch to it.");
+        return;
+    }
 
     // Determine which input is the looping one
     const channelDescription = await MediaLive.describeChannel({

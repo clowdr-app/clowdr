@@ -55,6 +55,7 @@ gql`
                 photoS3ObjectName: $objectName
                 photoURL_50x50: $photoURL_50x50
                 photoURL_350x350: $photoURL_350x350
+                hasBeenEdited: true
             }
         ) {
             affected_rows

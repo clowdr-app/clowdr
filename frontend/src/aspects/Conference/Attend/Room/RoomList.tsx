@@ -2,7 +2,7 @@ import {
     FormControl,
     FormHelperText,
     FormLabel,
-    Grid,
+    HStack,
     Input,
     InputGroup,
     InputLeftAddon,
@@ -73,12 +73,51 @@ export function RoomList({
             );
 
             if (layout === "grid") {
-                return contents;
+                return (
+                    <>
+                        {room.roomPrivacyName === RoomPrivacy_Enum.Private ? (
+                            <FAIcon icon="lock" iconStyle="s" textAlign="center" />
+                        ) : room.roomPrivacyName === RoomPrivacy_Enum.Dm ? (
+                            <FAIcon icon="envelope" iconStyle="s" textAlign="center" />
+                        ) : (
+                            <FAIcon icon="video" iconStyle="s" textAlign="center" />
+                        )}
+                        <Text
+                            p={5}
+                            textAlign="left"
+                            textOverflow="ellipsis"
+                            whiteSpace="nowrap"
+                            overflow="hidden"
+                            title={room.name}
+                        >
+                            {room.name}
+                        </Text>
+                        <RoomParticipants roomId={room.id} />
+                    </>
+                );
             } else {
                 return (
-                    <Grid templateColumns="10% 50% 40%" justifyContent="flex-start" alignItems="center" w="100%">
-                        {contents}
-                    </Grid>
+                    <HStack flexWrap="wrap" width="100%">
+                        {room.roomPrivacyName === RoomPrivacy_Enum.Private ? (
+                            <FAIcon icon="lock" iconStyle="s" textAlign="center" width="10%" />
+                        ) : room.roomPrivacyName === RoomPrivacy_Enum.Dm ? (
+                            <FAIcon icon="envelope" iconStyle="s" textAlign="center" width="10%" />
+                        ) : (
+                            <FAIcon icon="video" iconStyle="s" textAlign="center" width="10%" />
+                        )}
+                        <Text
+                            p={2}
+                            textAlign="left"
+                            textOverflow="ellipsis"
+                            whiteSpace="nowrap"
+                            overflow="hidden"
+                            title={room.name}
+                            width="60%"
+                        >
+                            {room.name}
+                        </Text>
+                        <RoomParticipants roomId={room.id} />
+                    </HStack>
                 );
             }
         },

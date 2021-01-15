@@ -14,10 +14,10 @@ export function RoomParticipants({ roomId }: { roomId: string }): JSX.Element {
     );
 
     return roomParticipants ? (
-        <SimpleGrid fontSize="sm" maxH="3rem" overflowY="hidden" columns={3} columnGap={3}>
+        <SimpleGrid fontSize="sm" maxH="3rem" overflowY="hidden" columns={3} columnGap={3} width="100%">
             {thisRoomParticipants.slice(0, Math.min(thisRoomParticipants.length, numberToShow)).map((participant) => (
                 <GridItem key={participant.id} fontWeight="light">
-                    <FAIcon icon="circle" iconStyle="s" fontSize="xs" color="green.400" mr={2} />
+                    <FAIcon icon="circle" iconStyle="s" fontSize="0.5rem" color="green.400" mr={2} mb={1} />
                     {participant.attendee.displayName}
                 </GridItem>
             ))}

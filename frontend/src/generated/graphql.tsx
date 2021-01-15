@@ -18945,6 +18945,14 @@ export type Mutation_Root = {
   readonly delete_job_queues_SubmissionRequestEmailJob?: Maybe<Job_Queues_SubmissionRequestEmailJob_Mutation_Response>;
   /** delete single row from the table: "job_queues.SubmissionRequestEmailJob" */
   readonly delete_job_queues_SubmissionRequestEmailJob_by_pk?: Maybe<Job_Queues_SubmissionRequestEmailJob>;
+  /** delete data from the table: "presence.OpenTab" */
+  readonly delete_presence_OpenTab?: Maybe<Presence_OpenTab_Mutation_Response>;
+  /** delete single row from the table: "presence.OpenTab" */
+  readonly delete_presence_OpenTab_by_pk?: Maybe<Presence_OpenTab>;
+  /** delete data from the table: "presence.Page" */
+  readonly delete_presence_Page?: Maybe<Presence_Page_Mutation_Response>;
+  /** delete single row from the table: "presence.Page" */
+  readonly delete_presence_Page_by_pk?: Maybe<Presence_Page>;
   /** insert data into the table: "Attendee" */
   readonly insert_Attendee?: Maybe<Attendee_Mutation_Response>;
   /** insert data into the table: "AttendeeProfile" */
@@ -19209,6 +19217,14 @@ export type Mutation_Root = {
   readonly insert_job_queues_SubmissionRequestEmailJob?: Maybe<Job_Queues_SubmissionRequestEmailJob_Mutation_Response>;
   /** insert a single row into the table: "job_queues.SubmissionRequestEmailJob" */
   readonly insert_job_queues_SubmissionRequestEmailJob_one?: Maybe<Job_Queues_SubmissionRequestEmailJob>;
+  /** insert data into the table: "presence.OpenTab" */
+  readonly insert_presence_OpenTab?: Maybe<Presence_OpenTab_Mutation_Response>;
+  /** insert a single row into the table: "presence.OpenTab" */
+  readonly insert_presence_OpenTab_one?: Maybe<Presence_OpenTab>;
+  /** insert data into the table: "presence.Page" */
+  readonly insert_presence_Page?: Maybe<Presence_Page_Mutation_Response>;
+  /** insert a single row into the table: "presence.Page" */
+  readonly insert_presence_Page_one?: Maybe<Presence_Page>;
   /** perform the action: "invitationConfirmCurrent" */
   readonly invitationConfirmCurrent?: Maybe<ConfirmInvitationOutput>;
   /** perform the action: "invitationConfirmSendInitialEmail" */
@@ -19491,6 +19507,14 @@ export type Mutation_Root = {
   readonly update_job_queues_SubmissionRequestEmailJob?: Maybe<Job_Queues_SubmissionRequestEmailJob_Mutation_Response>;
   /** update single row of the table: "job_queues.SubmissionRequestEmailJob" */
   readonly update_job_queues_SubmissionRequestEmailJob_by_pk?: Maybe<Job_Queues_SubmissionRequestEmailJob>;
+  /** update data of the table: "presence.OpenTab" */
+  readonly update_presence_OpenTab?: Maybe<Presence_OpenTab_Mutation_Response>;
+  /** update single row of the table: "presence.OpenTab" */
+  readonly update_presence_OpenTab_by_pk?: Maybe<Presence_OpenTab>;
+  /** update data of the table: "presence.Page" */
+  readonly update_presence_Page?: Maybe<Presence_Page_Mutation_Response>;
+  /** update single row of the table: "presence.Page" */
+  readonly update_presence_Page_by_pk?: Maybe<Presence_Page>;
 };
 
 
@@ -20294,6 +20318,31 @@ export type Mutation_RootDelete_Job_Queues_SubmissionRequestEmailJobArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Job_Queues_SubmissionRequestEmailJob_By_PkArgs = {
   id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Presence_OpenTabArgs = {
+  where: Presence_OpenTab_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Presence_OpenTab_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Presence_PageArgs = {
+  where: Presence_Page_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Presence_Page_By_PkArgs = {
+  conferenceId: Scalars['uuid'];
+  path: Scalars['String'];
 };
 
 
@@ -21218,6 +21267,34 @@ export type Mutation_RootInsert_Job_Queues_SubmissionRequestEmailJobArgs = {
 export type Mutation_RootInsert_Job_Queues_SubmissionRequestEmailJob_OneArgs = {
   object: Job_Queues_SubmissionRequestEmailJob_Insert_Input;
   on_conflict?: Maybe<Job_Queues_SubmissionRequestEmailJob_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Presence_OpenTabArgs = {
+  objects: ReadonlyArray<Presence_OpenTab_Insert_Input>;
+  on_conflict?: Maybe<Presence_OpenTab_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Presence_OpenTab_OneArgs = {
+  object: Presence_OpenTab_Insert_Input;
+  on_conflict?: Maybe<Presence_OpenTab_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Presence_PageArgs = {
+  objects: ReadonlyArray<Presence_Page_Insert_Input>;
+  on_conflict?: Maybe<Presence_Page_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Presence_Page_OneArgs = {
+  object: Presence_Page_Insert_Input;
+  on_conflict?: Maybe<Presence_Page_On_Conflict>;
 };
 
 
@@ -22348,6 +22425,36 @@ export type Mutation_RootUpdate_Job_Queues_SubmissionRequestEmailJob_By_PkArgs =
   pk_columns: Job_Queues_SubmissionRequestEmailJob_Pk_Columns_Input;
 };
 
+
+/** mutation root */
+export type Mutation_RootUpdate_Presence_OpenTabArgs = {
+  _set?: Maybe<Presence_OpenTab_Set_Input>;
+  where: Presence_OpenTab_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Presence_OpenTab_By_PkArgs = {
+  _set?: Maybe<Presence_OpenTab_Set_Input>;
+  pk_columns: Presence_OpenTab_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Presence_PageArgs = {
+  _inc?: Maybe<Presence_Page_Inc_Input>;
+  _set?: Maybe<Presence_Page_Set_Input>;
+  where: Presence_Page_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Presence_Page_By_PkArgs = {
+  _inc?: Maybe<Presence_Page_Inc_Input>;
+  _set?: Maybe<Presence_Page_Set_Input>;
+  pk_columns: Presence_Page_Pk_Columns_Input;
+};
+
 /** column ordering options */
 export enum Order_By {
   /** in the ascending order, nulls last */
@@ -22363,6 +22470,492 @@ export enum Order_By {
   /** in the descending order, nulls last */
   DescNullsLast = 'desc_nulls_last'
 }
+
+/** columns and relationships of "presence.OpenTab" */
+export type Presence_OpenTab = {
+  readonly __typename?: 'presence_OpenTab';
+  /** An object relationship */
+  readonly attendee: Attendee;
+  readonly attendeeId: Scalars['uuid'];
+  readonly created_at: Scalars['timestamptz'];
+  readonly id: Scalars['uuid'];
+  readonly path: Scalars['String'];
+  readonly updated_at: Scalars['timestamptz'];
+};
+
+/** aggregated selection of "presence.OpenTab" */
+export type Presence_OpenTab_Aggregate = {
+  readonly __typename?: 'presence_OpenTab_aggregate';
+  readonly aggregate?: Maybe<Presence_OpenTab_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Presence_OpenTab>;
+};
+
+/** aggregate fields of "presence.OpenTab" */
+export type Presence_OpenTab_Aggregate_Fields = {
+  readonly __typename?: 'presence_OpenTab_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Presence_OpenTab_Max_Fields>;
+  readonly min?: Maybe<Presence_OpenTab_Min_Fields>;
+};
+
+
+/** aggregate fields of "presence.OpenTab" */
+export type Presence_OpenTab_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Presence_OpenTab_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "presence.OpenTab" */
+export type Presence_OpenTab_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Presence_OpenTab_Max_Order_By>;
+  readonly min?: Maybe<Presence_OpenTab_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "presence.OpenTab" */
+export type Presence_OpenTab_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Presence_OpenTab_Insert_Input>;
+  readonly on_conflict?: Maybe<Presence_OpenTab_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "presence.OpenTab". All fields are combined with a logical 'AND'. */
+export type Presence_OpenTab_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Presence_OpenTab_Bool_Exp>>>;
+  readonly _not?: Maybe<Presence_OpenTab_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Presence_OpenTab_Bool_Exp>>>;
+  readonly attendee?: Maybe<Attendee_Bool_Exp>;
+  readonly attendeeId?: Maybe<Uuid_Comparison_Exp>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly path?: Maybe<String_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "presence.OpenTab" */
+export enum Presence_OpenTab_Constraint {
+  /** unique or primary key constraint */
+  OpenTabPkey = 'OpenTab_pkey'
+}
+
+/** input type for inserting data into table "presence.OpenTab" */
+export type Presence_OpenTab_Insert_Input = {
+  readonly attendee?: Maybe<Attendee_Obj_Rel_Insert_Input>;
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly path?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Presence_OpenTab_Max_Fields = {
+  readonly __typename?: 'presence_OpenTab_max_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly path?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "presence.OpenTab" */
+export type Presence_OpenTab_Max_Order_By = {
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly path?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Presence_OpenTab_Min_Fields = {
+  readonly __typename?: 'presence_OpenTab_min_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly path?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "presence.OpenTab" */
+export type Presence_OpenTab_Min_Order_By = {
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly path?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "presence.OpenTab" */
+export type Presence_OpenTab_Mutation_Response = {
+  readonly __typename?: 'presence_OpenTab_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Presence_OpenTab>;
+};
+
+/** input type for inserting object relation for remote table "presence.OpenTab" */
+export type Presence_OpenTab_Obj_Rel_Insert_Input = {
+  readonly data: Presence_OpenTab_Insert_Input;
+  readonly on_conflict?: Maybe<Presence_OpenTab_On_Conflict>;
+};
+
+/** on conflict condition type for table "presence.OpenTab" */
+export type Presence_OpenTab_On_Conflict = {
+  readonly constraint: Presence_OpenTab_Constraint;
+  readonly update_columns: ReadonlyArray<Presence_OpenTab_Update_Column>;
+  readonly where?: Maybe<Presence_OpenTab_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "presence.OpenTab" */
+export type Presence_OpenTab_Order_By = {
+  readonly attendee?: Maybe<Attendee_Order_By>;
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly path?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "presence.OpenTab" */
+export type Presence_OpenTab_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "presence.OpenTab" */
+export enum Presence_OpenTab_Select_Column {
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Path = 'path',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "presence.OpenTab" */
+export type Presence_OpenTab_Set_Input = {
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly path?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "presence.OpenTab" */
+export enum Presence_OpenTab_Update_Column {
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Path = 'path',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** columns and relationships of "presence.Page" */
+export type Presence_Page = {
+  readonly __typename?: 'presence_Page';
+  /** An object relationship */
+  readonly conference: Conference;
+  readonly conferenceId: Scalars['uuid'];
+  readonly count: Scalars['Int'];
+  readonly created_at: Scalars['timestamptz'];
+  readonly path: Scalars['String'];
+  readonly updated_at: Scalars['timestamptz'];
+};
+
+/** aggregated selection of "presence.Page" */
+export type Presence_Page_Aggregate = {
+  readonly __typename?: 'presence_Page_aggregate';
+  readonly aggregate?: Maybe<Presence_Page_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Presence_Page>;
+};
+
+/** aggregate fields of "presence.Page" */
+export type Presence_Page_Aggregate_Fields = {
+  readonly __typename?: 'presence_Page_aggregate_fields';
+  readonly avg?: Maybe<Presence_Page_Avg_Fields>;
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Presence_Page_Max_Fields>;
+  readonly min?: Maybe<Presence_Page_Min_Fields>;
+  readonly stddev?: Maybe<Presence_Page_Stddev_Fields>;
+  readonly stddev_pop?: Maybe<Presence_Page_Stddev_Pop_Fields>;
+  readonly stddev_samp?: Maybe<Presence_Page_Stddev_Samp_Fields>;
+  readonly sum?: Maybe<Presence_Page_Sum_Fields>;
+  readonly var_pop?: Maybe<Presence_Page_Var_Pop_Fields>;
+  readonly var_samp?: Maybe<Presence_Page_Var_Samp_Fields>;
+  readonly variance?: Maybe<Presence_Page_Variance_Fields>;
+};
+
+
+/** aggregate fields of "presence.Page" */
+export type Presence_Page_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Presence_Page_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "presence.Page" */
+export type Presence_Page_Aggregate_Order_By = {
+  readonly avg?: Maybe<Presence_Page_Avg_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Presence_Page_Max_Order_By>;
+  readonly min?: Maybe<Presence_Page_Min_Order_By>;
+  readonly stddev?: Maybe<Presence_Page_Stddev_Order_By>;
+  readonly stddev_pop?: Maybe<Presence_Page_Stddev_Pop_Order_By>;
+  readonly stddev_samp?: Maybe<Presence_Page_Stddev_Samp_Order_By>;
+  readonly sum?: Maybe<Presence_Page_Sum_Order_By>;
+  readonly var_pop?: Maybe<Presence_Page_Var_Pop_Order_By>;
+  readonly var_samp?: Maybe<Presence_Page_Var_Samp_Order_By>;
+  readonly variance?: Maybe<Presence_Page_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "presence.Page" */
+export type Presence_Page_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Presence_Page_Insert_Input>;
+  readonly on_conflict?: Maybe<Presence_Page_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Presence_Page_Avg_Fields = {
+  readonly __typename?: 'presence_Page_avg_fields';
+  readonly count?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "presence.Page" */
+export type Presence_Page_Avg_Order_By = {
+  readonly count?: Maybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "presence.Page". All fields are combined with a logical 'AND'. */
+export type Presence_Page_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Presence_Page_Bool_Exp>>>;
+  readonly _not?: Maybe<Presence_Page_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Presence_Page_Bool_Exp>>>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly count?: Maybe<Int_Comparison_Exp>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly path?: Maybe<String_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "presence.Page" */
+export enum Presence_Page_Constraint {
+  /** unique or primary key constraint */
+  PagePkey = 'Page_pkey'
+}
+
+/** input type for incrementing integer column in table "presence.Page" */
+export type Presence_Page_Inc_Input = {
+  readonly count?: Maybe<Scalars['Int']>;
+};
+
+/** input type for inserting data into table "presence.Page" */
+export type Presence_Page_Insert_Input = {
+  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly path?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Presence_Page_Max_Fields = {
+  readonly __typename?: 'presence_Page_max_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly path?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "presence.Page" */
+export type Presence_Page_Max_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly path?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Presence_Page_Min_Fields = {
+  readonly __typename?: 'presence_Page_min_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly path?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "presence.Page" */
+export type Presence_Page_Min_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly path?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "presence.Page" */
+export type Presence_Page_Mutation_Response = {
+  readonly __typename?: 'presence_Page_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Presence_Page>;
+};
+
+/** input type for inserting object relation for remote table "presence.Page" */
+export type Presence_Page_Obj_Rel_Insert_Input = {
+  readonly data: Presence_Page_Insert_Input;
+  readonly on_conflict?: Maybe<Presence_Page_On_Conflict>;
+};
+
+/** on conflict condition type for table "presence.Page" */
+export type Presence_Page_On_Conflict = {
+  readonly constraint: Presence_Page_Constraint;
+  readonly update_columns: ReadonlyArray<Presence_Page_Update_Column>;
+  readonly where?: Maybe<Presence_Page_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "presence.Page" */
+export type Presence_Page_Order_By = {
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly path?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "presence.Page" */
+export type Presence_Page_Pk_Columns_Input = {
+  readonly conferenceId: Scalars['uuid'];
+  readonly path: Scalars['String'];
+};
+
+/** select columns of table "presence.Page" */
+export enum Presence_Page_Select_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  Count = 'count',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Path = 'path',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "presence.Page" */
+export type Presence_Page_Set_Input = {
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly path?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate stddev on columns */
+export type Presence_Page_Stddev_Fields = {
+  readonly __typename?: 'presence_Page_stddev_fields';
+  readonly count?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "presence.Page" */
+export type Presence_Page_Stddev_Order_By = {
+  readonly count?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Presence_Page_Stddev_Pop_Fields = {
+  readonly __typename?: 'presence_Page_stddev_pop_fields';
+  readonly count?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "presence.Page" */
+export type Presence_Page_Stddev_Pop_Order_By = {
+  readonly count?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Presence_Page_Stddev_Samp_Fields = {
+  readonly __typename?: 'presence_Page_stddev_samp_fields';
+  readonly count?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "presence.Page" */
+export type Presence_Page_Stddev_Samp_Order_By = {
+  readonly count?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Presence_Page_Sum_Fields = {
+  readonly __typename?: 'presence_Page_sum_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "presence.Page" */
+export type Presence_Page_Sum_Order_By = {
+  readonly count?: Maybe<Order_By>;
+};
+
+/** update columns of table "presence.Page" */
+export enum Presence_Page_Update_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  Count = 'count',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Path = 'path',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** aggregate var_pop on columns */
+export type Presence_Page_Var_Pop_Fields = {
+  readonly __typename?: 'presence_Page_var_pop_fields';
+  readonly count?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "presence.Page" */
+export type Presence_Page_Var_Pop_Order_By = {
+  readonly count?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Presence_Page_Var_Samp_Fields = {
+  readonly __typename?: 'presence_Page_var_samp_fields';
+  readonly count?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "presence.Page" */
+export type Presence_Page_Var_Samp_Order_By = {
+  readonly count?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Presence_Page_Variance_Fields = {
+  readonly __typename?: 'presence_Page_variance_fields';
+  readonly count?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "presence.Page" */
+export type Presence_Page_Variance_Order_By = {
+  readonly count?: Maybe<Order_By>;
+};
 
 /** query root */
 export type Query_Root = {
@@ -22769,6 +23362,18 @@ export type Query_Root = {
   readonly job_queues_SubmissionRequestEmailJob_aggregate: Job_Queues_SubmissionRequestEmailJob_Aggregate;
   /** fetch data from the table: "job_queues.SubmissionRequestEmailJob" using primary key columns */
   readonly job_queues_SubmissionRequestEmailJob_by_pk?: Maybe<Job_Queues_SubmissionRequestEmailJob>;
+  /** fetch data from the table: "presence.OpenTab" */
+  readonly presence_OpenTab: ReadonlyArray<Presence_OpenTab>;
+  /** fetch aggregated fields from the table: "presence.OpenTab" */
+  readonly presence_OpenTab_aggregate: Presence_OpenTab_Aggregate;
+  /** fetch data from the table: "presence.OpenTab" using primary key columns */
+  readonly presence_OpenTab_by_pk?: Maybe<Presence_OpenTab>;
+  /** fetch data from the table: "presence.Page" */
+  readonly presence_Page: ReadonlyArray<Presence_Page>;
+  /** fetch aggregated fields from the table: "presence.Page" */
+  readonly presence_Page_aggregate: Presence_Page_Aggregate;
+  /** fetch data from the table: "presence.Page" using primary key columns */
+  readonly presence_Page_by_pk?: Maybe<Presence_Page>;
   /** perform the action: "protectedEcho" */
   readonly protectedEcho?: Maybe<ProtectedEchoOutput>;
 };
@@ -24513,6 +25118,59 @@ export type Query_RootJob_Queues_SubmissionRequestEmailJob_By_PkArgs = {
 
 
 /** query root */
+export type Query_RootPresence_OpenTabArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Presence_OpenTab_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Presence_OpenTab_Order_By>>;
+  where?: Maybe<Presence_OpenTab_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootPresence_OpenTab_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Presence_OpenTab_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Presence_OpenTab_Order_By>>;
+  where?: Maybe<Presence_OpenTab_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootPresence_OpenTab_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
+export type Query_RootPresence_PageArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Presence_Page_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Presence_Page_Order_By>>;
+  where?: Maybe<Presence_Page_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootPresence_Page_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Presence_Page_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Presence_Page_Order_By>>;
+  where?: Maybe<Presence_Page_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootPresence_Page_By_PkArgs = {
+  conferenceId: Scalars['uuid'];
+  path: Scalars['String'];
+};
+
+
+/** query root */
 export type Query_RootProtectedEchoArgs = {
   message: Scalars['String'];
 };
@@ -24922,6 +25580,18 @@ export type Subscription_Root = {
   readonly job_queues_SubmissionRequestEmailJob_aggregate: Job_Queues_SubmissionRequestEmailJob_Aggregate;
   /** fetch data from the table: "job_queues.SubmissionRequestEmailJob" using primary key columns */
   readonly job_queues_SubmissionRequestEmailJob_by_pk?: Maybe<Job_Queues_SubmissionRequestEmailJob>;
+  /** fetch data from the table: "presence.OpenTab" */
+  readonly presence_OpenTab: ReadonlyArray<Presence_OpenTab>;
+  /** fetch aggregated fields from the table: "presence.OpenTab" */
+  readonly presence_OpenTab_aggregate: Presence_OpenTab_Aggregate;
+  /** fetch data from the table: "presence.OpenTab" using primary key columns */
+  readonly presence_OpenTab_by_pk?: Maybe<Presence_OpenTab>;
+  /** fetch data from the table: "presence.Page" */
+  readonly presence_Page: ReadonlyArray<Presence_Page>;
+  /** fetch aggregated fields from the table: "presence.Page" */
+  readonly presence_Page_aggregate: Presence_Page_Aggregate;
+  /** fetch data from the table: "presence.Page" using primary key columns */
+  readonly presence_Page_by_pk?: Maybe<Presence_Page>;
   /** perform the action: "protectedEcho" */
   readonly protectedEcho?: Maybe<ProtectedEchoOutput>;
 };
@@ -26666,6 +27336,59 @@ export type Subscription_RootJob_Queues_SubmissionRequestEmailJob_By_PkArgs = {
 
 
 /** subscription root */
+export type Subscription_RootPresence_OpenTabArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Presence_OpenTab_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Presence_OpenTab_Order_By>>;
+  where?: Maybe<Presence_OpenTab_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootPresence_OpenTab_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Presence_OpenTab_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Presence_OpenTab_Order_By>>;
+  where?: Maybe<Presence_OpenTab_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootPresence_OpenTab_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
+export type Subscription_RootPresence_PageArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Presence_Page_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Presence_Page_Order_By>>;
+  where?: Maybe<Presence_Page_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootPresence_Page_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Presence_Page_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Presence_Page_Order_By>>;
+  where?: Maybe<Presence_Page_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootPresence_Page_By_PkArgs = {
+  conferenceId: Scalars['uuid'];
+  path: Scalars['String'];
+};
+
+
+/** subscription root */
 export type Subscription_RootProtectedEchoArgs = {
   message: Scalars['String'];
 };
@@ -28162,6 +28885,38 @@ export type MenuSchedule_EventsInOneHourQuery = { readonly __typename?: 'query_r
   )> };
 
 export type MenuSchedule_EventFragment = { readonly __typename?: 'Event', readonly id: any, readonly name: string, readonly room: { readonly __typename?: 'Room', readonly id: any, readonly name: string }, readonly eventTags: ReadonlyArray<{ readonly __typename?: 'EventTag', readonly tag: { readonly __typename?: 'Tag', readonly id: any, readonly colour: string, readonly name: string } }> };
+
+export type PresenceCountSubscriptionVariables = Exact<{
+  path: Scalars['String'];
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type PresenceCountSubscription = { readonly __typename?: 'subscription_root', readonly presence_Page_by_pk?: Maybe<{ readonly __typename?: 'presence_Page', readonly path: string, readonly conferenceId: any, readonly count: number }> };
+
+export type GetPresenceCountOfQueryVariables = Exact<{
+  path: Scalars['String'];
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type GetPresenceCountOfQuery = { readonly __typename?: 'query_root', readonly presence_Page_by_pk?: Maybe<{ readonly __typename?: 'presence_Page', readonly path: string, readonly conferenceId: any, readonly count: number }> };
+
+export type DeleteOpenTabMutationVariables = Exact<{
+  oldId: Scalars['uuid'];
+}>;
+
+
+export type DeleteOpenTabMutation = { readonly __typename?: 'mutation_root', readonly delete_presence_OpenTab_by_pk?: Maybe<{ readonly __typename?: 'presence_OpenTab', readonly id: any }> };
+
+export type InsertOpenTabMutationVariables = Exact<{
+  oldId?: Maybe<Scalars['uuid']>;
+  path: Scalars['String'];
+  attendeeId: Scalars['uuid'];
+}>;
+
+
+export type InsertOpenTabMutation = { readonly __typename?: 'mutation_root', readonly insert_presence_OpenTab_one?: Maybe<{ readonly __typename?: 'presence_OpenTab', readonly id: any }> };
 
 export type GetRoomMembersSubscriptionVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -33645,6 +34400,140 @@ export function useMenuSchedule_EventsInOneHourLazyQuery(baseOptions?: Apollo.La
 export type MenuSchedule_EventsInOneHourQueryHookResult = ReturnType<typeof useMenuSchedule_EventsInOneHourQuery>;
 export type MenuSchedule_EventsInOneHourLazyQueryHookResult = ReturnType<typeof useMenuSchedule_EventsInOneHourLazyQuery>;
 export type MenuSchedule_EventsInOneHourQueryResult = Apollo.QueryResult<MenuSchedule_EventsInOneHourQuery, MenuSchedule_EventsInOneHourQueryVariables>;
+export const PresenceCountDocument = gql`
+    subscription PresenceCount($path: String!, $conferenceId: uuid!) {
+  presence_Page_by_pk(path: $path, conferenceId: $conferenceId) {
+    path
+    conferenceId
+    count
+  }
+}
+    `;
+
+/**
+ * __usePresenceCountSubscription__
+ *
+ * To run a query within a React component, call `usePresenceCountSubscription` and pass it any options that fit your needs.
+ * When your component renders, `usePresenceCountSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePresenceCountSubscription({
+ *   variables: {
+ *      path: // value for 'path'
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function usePresenceCountSubscription(baseOptions: Apollo.SubscriptionHookOptions<PresenceCountSubscription, PresenceCountSubscriptionVariables>) {
+        return Apollo.useSubscription<PresenceCountSubscription, PresenceCountSubscriptionVariables>(PresenceCountDocument, baseOptions);
+      }
+export type PresenceCountSubscriptionHookResult = ReturnType<typeof usePresenceCountSubscription>;
+export type PresenceCountSubscriptionResult = Apollo.SubscriptionResult<PresenceCountSubscription>;
+export const GetPresenceCountOfDocument = gql`
+    query GetPresenceCountOf($path: String!, $conferenceId: uuid!) {
+  presence_Page_by_pk(path: $path, conferenceId: $conferenceId) {
+    path
+    conferenceId
+    count
+  }
+}
+    `;
+
+/**
+ * __useGetPresenceCountOfQuery__
+ *
+ * To run a query within a React component, call `useGetPresenceCountOfQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPresenceCountOfQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPresenceCountOfQuery({
+ *   variables: {
+ *      path: // value for 'path'
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useGetPresenceCountOfQuery(baseOptions: Apollo.QueryHookOptions<GetPresenceCountOfQuery, GetPresenceCountOfQueryVariables>) {
+        return Apollo.useQuery<GetPresenceCountOfQuery, GetPresenceCountOfQueryVariables>(GetPresenceCountOfDocument, baseOptions);
+      }
+export function useGetPresenceCountOfLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPresenceCountOfQuery, GetPresenceCountOfQueryVariables>) {
+          return Apollo.useLazyQuery<GetPresenceCountOfQuery, GetPresenceCountOfQueryVariables>(GetPresenceCountOfDocument, baseOptions);
+        }
+export type GetPresenceCountOfQueryHookResult = ReturnType<typeof useGetPresenceCountOfQuery>;
+export type GetPresenceCountOfLazyQueryHookResult = ReturnType<typeof useGetPresenceCountOfLazyQuery>;
+export type GetPresenceCountOfQueryResult = Apollo.QueryResult<GetPresenceCountOfQuery, GetPresenceCountOfQueryVariables>;
+export const DeleteOpenTabDocument = gql`
+    mutation DeleteOpenTab($oldId: uuid!) {
+  delete_presence_OpenTab_by_pk(id: $oldId) {
+    id
+  }
+}
+    `;
+export type DeleteOpenTabMutationFn = Apollo.MutationFunction<DeleteOpenTabMutation, DeleteOpenTabMutationVariables>;
+
+/**
+ * __useDeleteOpenTabMutation__
+ *
+ * To run a mutation, you first call `useDeleteOpenTabMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteOpenTabMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteOpenTabMutation, { data, loading, error }] = useDeleteOpenTabMutation({
+ *   variables: {
+ *      oldId: // value for 'oldId'
+ *   },
+ * });
+ */
+export function useDeleteOpenTabMutation(baseOptions?: Apollo.MutationHookOptions<DeleteOpenTabMutation, DeleteOpenTabMutationVariables>) {
+        return Apollo.useMutation<DeleteOpenTabMutation, DeleteOpenTabMutationVariables>(DeleteOpenTabDocument, baseOptions);
+      }
+export type DeleteOpenTabMutationHookResult = ReturnType<typeof useDeleteOpenTabMutation>;
+export type DeleteOpenTabMutationResult = Apollo.MutationResult<DeleteOpenTabMutation>;
+export type DeleteOpenTabMutationOptions = Apollo.BaseMutationOptions<DeleteOpenTabMutation, DeleteOpenTabMutationVariables>;
+export const InsertOpenTabDocument = gql`
+    mutation InsertOpenTab($oldId: uuid = null, $path: String!, $attendeeId: uuid!) {
+  insert_presence_OpenTab_one(object: {path: $path, attendeeId: $attendeeId}) {
+    id
+  }
+}
+    `;
+export type InsertOpenTabMutationFn = Apollo.MutationFunction<InsertOpenTabMutation, InsertOpenTabMutationVariables>;
+
+/**
+ * __useInsertOpenTabMutation__
+ *
+ * To run a mutation, you first call `useInsertOpenTabMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInsertOpenTabMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [insertOpenTabMutation, { data, loading, error }] = useInsertOpenTabMutation({
+ *   variables: {
+ *      oldId: // value for 'oldId'
+ *      path: // value for 'path'
+ *      attendeeId: // value for 'attendeeId'
+ *   },
+ * });
+ */
+export function useInsertOpenTabMutation(baseOptions?: Apollo.MutationHookOptions<InsertOpenTabMutation, InsertOpenTabMutationVariables>) {
+        return Apollo.useMutation<InsertOpenTabMutation, InsertOpenTabMutationVariables>(InsertOpenTabDocument, baseOptions);
+      }
+export type InsertOpenTabMutationHookResult = ReturnType<typeof useInsertOpenTabMutation>;
+export type InsertOpenTabMutationResult = Apollo.MutationResult<InsertOpenTabMutation>;
+export type InsertOpenTabMutationOptions = Apollo.BaseMutationOptions<InsertOpenTabMutation, InsertOpenTabMutationVariables>;
 export const GetRoomMembersDocument = gql`
     subscription GetRoomMembers($roomId: uuid!) {
   Room_by_pk(id: $roomId) {

@@ -16,7 +16,7 @@ import {
     Text,
     useDisclosure,
 } from "@chakra-ui/react";
-import React, { useEffect } from "react";
+import React from "react";
 import { Link as ReactLink, useHistory } from "react-router-dom";
 import {
     AttendeeFieldsFragment,
@@ -33,6 +33,7 @@ import { RoomList } from "../Conference/Attend/Room/RoomList";
 import ConferenceProvider, { useConference } from "../Conference/useConference";
 import ApolloQueryWrapper from "../GQL/ApolloQueryWrapper";
 import { FAIcon } from "../Icons/FAIcon";
+import PresenceCountProvider from "../Presence/PresenceCountProvider";
 import RoomParticipantsProvider from "../Room/RoomParticipantsProvider";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import { MainMenuProgram } from "./MainMenuProgram";
@@ -183,11 +184,6 @@ export function MainMenuConferenceSections_Inner({
             attendeeId: attendee.id,
         },
     });
-    useEffect(() => {
-        if (pinnedChats.data?.chat_Pin.length) {
-            console.log("Pinned chats", pinnedChats.data?.chat_Pin);
-        }
-    }, [pinnedChats.data?.chat_Pin]);
 
     const { isOpen: isCreateRoomOpen, onClose: onCreateRoomClose, onOpen: onCreateRoomOpen } = useDisclosure();
     const { isOpen: isCreateDmOpen, onClose: onCreateDmClose, onOpen: onCreateDmOpen } = useDisclosure();
@@ -334,14 +330,16 @@ export default function MainMenuConferenceSections({
         if (attendee) {
             return (
                 <ConferenceProvider confSlug={confSlug}>
-                    <RoomParticipantsProvider>
-                        <MainMenuConferenceSections_Inner
-                            rootUrl={rootUrl}
-                            confSlug={confSlug}
-                            attendee={attendee}
-                            onClose={onClose}
-                        />
-                    </RoomParticipantsProvider>
+                    <PresenceCountProvider disableSubscription>
+                        <RoomParticipantsProvider>
+                            <MainMenuConferenceSections_Inner
+                                rootUrl={rootUrl}
+                                confSlug={confSlug}
+                                attendee={attendee}
+                                onClose={onClose}
+                            />
+                        </RoomParticipantsProvider>
+                    </PresenceCountProvider>
                 </ConferenceProvider>
             );
         }

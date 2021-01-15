@@ -1,4 +1,6 @@
 import {
+    Center,
+    Flex,
     FormControl,
     FormHelperText,
     FormLabel,
@@ -15,6 +17,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { RoomListRoomDetailsFragment, RoomPrivacy_Enum } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import FAIcon from "../../../Icons/FAIcon";
+import PageCountText from "../../../Presence/PageCountText";
 import useRoomParticipants from "../../../Room/useRoomParticipants";
 import { useConference } from "../../useConference";
 import { RoomParticipants } from "./RoomParticipants";
@@ -49,49 +52,29 @@ export function RoomList({
 
     const toButtonContents = useCallback(
         (room: RoomListRoomDetailsFragment) => {
-            const contents = (
-                <>
-                    {room.roomPrivacyName === RoomPrivacy_Enum.Private ? (
-                        <FAIcon icon="lock" iconStyle="s" textAlign="center" />
-                    ) : room.roomPrivacyName === RoomPrivacy_Enum.Dm ? (
-                        <FAIcon icon="envelope" iconStyle="s" textAlign="center" />
-                    ) : (
-                        <FAIcon icon="video" iconStyle="s" textAlign="center" />
-                    )}
-                    <Text
-                        p={layout === "grid" ? 5 : 2}
-                        textAlign="left"
-                        textOverflow="ellipsis"
-                        whiteSpace="nowrap"
-                        overflow="hidden"
-                        title={room.name}
-                    >
-                        {room.name}
-                    </Text>
-                    <RoomParticipants roomId={room.id} />
-                </>
-            );
-
             if (layout === "grid") {
                 return (
                     <>
-                        {room.roomPrivacyName === RoomPrivacy_Enum.Private ? (
-                            <FAIcon icon="lock" iconStyle="s" textAlign="center" />
-                        ) : room.roomPrivacyName === RoomPrivacy_Enum.Dm ? (
-                            <FAIcon icon="envelope" iconStyle="s" textAlign="center" />
-                        ) : (
-                            <FAIcon icon="video" iconStyle="s" textAlign="center" />
-                        )}
-                        <Text
-                            p={5}
-                            textAlign="left"
-                            textOverflow="ellipsis"
-                            whiteSpace="nowrap"
-                            overflow="hidden"
-                            title={room.name}
-                        >
-                            {room.name}
-                        </Text>
+                        <Center flexWrap="wrap" my={3} mx={3}>
+                            {room.roomPrivacyName === RoomPrivacy_Enum.Private ? (
+                                <FAIcon icon="lock" iconStyle="s" textAlign="center" />
+                            ) : room.roomPrivacyName === RoomPrivacy_Enum.Dm ? (
+                                <FAIcon icon="envelope" iconStyle="s" textAlign="center" />
+                            ) : (
+                                <FAIcon icon="video" iconStyle="s" textAlign="center" />
+                            )}
+                            <Text
+                                p={5}
+                                textAlign="left"
+                                textOverflow="ellipsis"
+                                whiteSpace="nowrap"
+                                overflow="hidden"
+                                title={room.name}
+                            >
+                                {room.name}
+                            </Text>
+                            <PageCountText path={`/conference/${conference.slug}/room/${room.id}`} />
+                        </Center>
                         <RoomParticipants roomId={room.id} />
                     </>
                 );
@@ -112,16 +95,17 @@ export function RoomList({
                             whiteSpace="nowrap"
                             overflow="hidden"
                             title={room.name}
-                            width="60%"
+                            width="70%"
                         >
                             {room.name}
                         </Text>
+                        <PageCountText width="10%" path={`/conference/${conference.slug}/room/${room.id}`} />
                         <RoomParticipants roomId={room.id} />
                     </HStack>
                 );
             }
         },
-        [layout]
+        [conference.slug, layout]
     );
 
     const roomElements = useMemo(

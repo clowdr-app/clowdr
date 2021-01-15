@@ -100,6 +100,9 @@ export default function ApolloCustomProvider({
                     chat_ReadUpToIndex: {
                         keyFields: ["chatId"],
                     },
+                    presence_Page: {
+                        keyFields: ["path", "conferenceId"],
+                    },
                 },
             });
             // Apollo's local storage cache is a totally broken PoS...

@@ -43,7 +43,6 @@ export function EventEndControls({
 
     useEffect(() => {
         async function fn() {
-            console.log("fn", currentRoomEvent?.id);
             if (eventId && currentRoomEvent?.id !== eventId && choice === "breakout") {
                 try {
                     const breakoutRoom = await refetch({ originatingEventId: eventId });

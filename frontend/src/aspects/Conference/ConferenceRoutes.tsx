@@ -4,6 +4,8 @@ import { Permission_Enum } from "../../generated/graphql";
 import { ChatNotificationsProvider } from "../Chat/ChatNotifications";
 import PageNotFound from "../Errors/PageNotFound";
 import PageNotImplemented from "../Errors/PageNotImplemented";
+import PresenceCountProvider from "../Presence/PresenceCountProvider";
+import useTabTracker from "../Presence/useTabTracker";
 import RoomParticipantsProvider from "../Room/RoomParticipantsProvider";
 import { SharedRoomContextProvider } from "../Room/SharedRoomContextProvider";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
@@ -35,6 +37,9 @@ function ConferenceRoutesInner({ rootUrl }: { rootUrl: string }): JSX.Element {
     const conference = useConference();
     const mUser = useMaybeCurrentUser();
     const mAttendee = useMaybeCurrentAttendee();
+
+    useTabTracker(mAttendee?.id);
+
     return (
         <Switch>
             <Route exact path={`${rootUrl}/profile/edit`} component={EditProfilePage} />
@@ -193,19 +198,21 @@ function ConferenceRoutesInner({ rootUrl }: { rootUrl: string }): JSX.Element {
 export default function ConferenceRoutes({ confSlug, rootUrl }: { confSlug: string; rootUrl: string }): JSX.Element {
     return (
         <ConferenceProvider confSlug={confSlug}>
-            <CurrentUserGroupsRolesPermissionsProvider>
-                <ConferenceCurrentUserActivePermissionsProvider>
-                    <CurrentAttendeeProvider>
-                        <ChatNotificationsProvider>
-                            <RoomParticipantsProvider>
-                                <SharedRoomContextProvider>
-                                    <ConferenceRoutesInner rootUrl={rootUrl} />
-                                </SharedRoomContextProvider>
-                            </RoomParticipantsProvider>
-                        </ChatNotificationsProvider>
-                    </CurrentAttendeeProvider>
-                </ConferenceCurrentUserActivePermissionsProvider>
-            </CurrentUserGroupsRolesPermissionsProvider>
+            <PresenceCountProvider>
+                <CurrentUserGroupsRolesPermissionsProvider>
+                    <ConferenceCurrentUserActivePermissionsProvider>
+                        <CurrentAttendeeProvider>
+                            <ChatNotificationsProvider>
+                                <RoomParticipantsProvider>
+                                    <SharedRoomContextProvider>
+                                        <ConferenceRoutesInner rootUrl={rootUrl} />
+                                    </SharedRoomContextProvider>
+                                </RoomParticipantsProvider>
+                            </ChatNotificationsProvider>
+                        </CurrentAttendeeProvider>
+                    </ConferenceCurrentUserActivePermissionsProvider>
+                </CurrentUserGroupsRolesPermissionsProvider>
+            </PresenceCountProvider>
         </ConferenceProvider>
     );
 }

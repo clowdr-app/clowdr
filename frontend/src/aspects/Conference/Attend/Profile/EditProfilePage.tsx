@@ -35,6 +35,7 @@ import {
 } from "../../../../generated/graphql";
 import BadgeInput from "../../../Badges/BadgeInput";
 import type { BadgeData } from "../../../Badges/ProfileBadge";
+import { LinkButton } from "../../../Chakra/LinkButton";
 import PageNotFound from "../../../Errors/PageNotFound";
 import UnsavedChangesWarning from "../../../LeavingPageWarnings/UnsavedChangesWarning";
 import usePrimaryMenuButtons from "../../../Menu/usePrimaryMenuButtons";
@@ -433,7 +434,11 @@ function EditProfilePageInner({ attendee }: { attendee: AttendeeContextT }): JSX
                             conference.
                         </AlertDescription>
                     </Alert>
-                ) : undefined}
+                ) : (
+                    <LinkButton to={`/conference/${conference.slug}`} colorScheme="green">
+                        Continue to {conference.shortName}
+                    </LinkButton>
+                )}
                 {isEditingName ? (
                     <VStack alignItems="flex-start" w="100%" maxW={350}>
                         <FormControl>
@@ -507,6 +512,11 @@ function EditProfilePageInner({ attendee }: { attendee: AttendeeContextT }): JSX
                 {webPageField}
                 {twitterField}
                 {githubField}
+                {attendee.profile.hasBeenEdited ? (
+                    <LinkButton to={`/conference/${conference.slug}`} colorScheme="green">
+                        Continue to {conference.shortName}
+                    </LinkButton>
+                ) : undefined}
             </VStack>
         </>
     );

@@ -3,7 +3,12 @@ import type { ContentItemDataBlob, ZoomBlob } from "@clowdr-app/shared-types/bui
 import * as R from "ramda";
 import React, { useMemo, useState } from "react";
 import ReactPlayer from "react-player";
-import { ContentType_Enum, EventPersonDetailsFragment, RoomDetailsFragment } from "../../../../generated/graphql";
+import {
+    ContentType_Enum,
+    EventPersonDetailsFragment,
+    RoomDetailsFragment,
+    RoomMode_Enum,
+} from "../../../../generated/graphql";
 import { ExternalLinkButton } from "../../../Chakra/LinkButton";
 import { Chat } from "../../../Chat/Chat";
 import type { ChatSources } from "../../../Chat/Configuration";
@@ -29,6 +34,13 @@ export function Room({
         secondsUntilBroadcastEvent,
         secondsUntilZoomEvent,
     } = useCurrentRoomEvent(roomDetails);
+
+    const currentEventIsLive = useMemo(
+        () =>
+            currentRoomEvent &&
+            [RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(currentRoomEvent.intendedRoomModeName),
+        [currentRoomEvent]
+    );
 
     const [green100, green700, gray100, gray800] = useToken("colors", [
         "green.100",
@@ -255,7 +267,10 @@ export function Room({
                 ) : (
                     <>No chat found for this room.</>
                 )}
-                <EventEndControls currentRoomEvent={currentRoomEvent} />
+
+                <Box display={currentEventIsLive ? "block" : "none"}>
+                    <EventEndControls currentRoomEvent={currentRoomEvent} />
+                </Box>
             </VStack>
         </HStack>
     );

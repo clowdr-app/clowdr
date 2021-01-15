@@ -3,7 +3,11 @@ import { Box, HStack, Text, useRadio, useRadioGroup, UseRadioProps, useToast, VS
 import { formatDistanceToNow } from "date-fns";
 import React, { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { RoomEventSummaryFragment, useGetBreakoutRoomFromEventQuery } from "../../../../generated/graphql";
+import {
+    RoomEventSummaryFragment,
+    RoomMode_Enum,
+    useGetBreakoutRoomFromEventQuery,
+} from "../../../../generated/graphql";
 import usePolling from "../../../Generic/usePolling";
 import { useConference } from "../../useConference";
 
@@ -25,6 +29,15 @@ export function EventEndControls({
     const history = useHistory();
     const conference = useConference();
     const toast = useToast();
+
+    useEffect(() => {
+        if (
+            !currentRoomEvent ||
+            ![RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(currentRoomEvent.intendedRoomModeName)
+        ) {
+            setChoice("continue");
+        }
+    }, [currentRoomEvent]);
 
     const { refetch } = useGetBreakoutRoomFromEventQuery({});
 

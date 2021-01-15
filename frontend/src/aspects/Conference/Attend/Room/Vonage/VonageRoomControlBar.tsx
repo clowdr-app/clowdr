@@ -77,14 +77,14 @@ export function VonageRoomControlBar({
                     <WrapItem>
                         <Button onClick={stopCamera}>
                             <FAIcon icon="video-slash" iconStyle="s" />
-                            <span style={{ marginLeft: "1rem" }}>Stop video</span>
+                            <span style={{ marginLeft: "1rem" }}>Stop camera</span>
                         </Button>
                     </WrapItem>
                 ) : (
                     <WrapItem>
                         <Button onClick={startCamera}>
                             <FAIcon icon="video" iconStyle="s" />
-                            <span style={{ marginLeft: "1rem" }}>Start video</span>
+                            <span style={{ marginLeft: "1rem" }}>Start camera</span>
                         </Button>
                     </WrapItem>
                 )}

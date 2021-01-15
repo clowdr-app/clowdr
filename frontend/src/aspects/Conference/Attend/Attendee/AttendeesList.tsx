@@ -11,9 +11,11 @@ function AttendeeTile({ attendee, onClick }: { attendee: Attendee; onClick: () =
             borderRadius={0}
             p={0}
             w="auto"
-            h="50px"
+            h="auto"
+            minH="50px"
             justifyContent="flex-start"
             onClick={onClick}
+            overflow="hidden"
         >
             {attendee.profile.photoURL_50x50 ? (
                 <Image
@@ -26,8 +28,14 @@ function AttendeeTile({ attendee, onClick }: { attendee: Attendee; onClick: () =
                     <FAIcon iconStyle="s" icon="cat" />
                 </Center>
             )}
-            <Center flex="1 0 auto" mx={4}>
-                <Text as="span" id={`attendee-trigger-${attendee.id}`}>
+            <Center maxH="100%" flex="0 1 auto" py={2} mx={4} overflow="hidden">
+                <Text
+                    as="span"
+                    id={`attendee-trigger-${attendee.id}`}
+                    maxW="100%"
+                    whiteSpace="normal"
+                    overflowWrap="anywhere"
+                >
                     {attendee.displayName}
                 </Text>
             </Center>

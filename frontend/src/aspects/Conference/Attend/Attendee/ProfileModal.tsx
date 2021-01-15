@@ -1,5 +1,6 @@
 import {
     Box,
+    Button,
     Heading,
     HStack,
     Image,
@@ -14,16 +15,20 @@ import {
     Spacer,
     Spinner,
     Text,
+    useToast,
     VStack,
 } from "@chakra-ui/react";
-import React from "react";
+import assert from "assert";
+import React, { useCallback } from "react";
+import { useHistory } from "react-router-dom";
+import { useCreateDmMutation } from "../../../../generated/graphql";
 import BadgeList from "../../../Badges/BadgeList";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import FAIcon from "../../../Icons/FAIcon";
 import PronounList from "../../../Pronouns/PronounList";
 import { Markdown } from "../../../Text/Markdown";
 import { useConference } from "../../useConference";
-import type { Attendee } from "../../useCurrentAttendee";
+import useCurrentAttendee, { Attendee } from "../../useCurrentAttendee";
 import AttendeeExtraInfo from "../Profile/AttendeeExtraInfo";
 
 export default function ProfileModal({
@@ -36,12 +41,51 @@ export default function ProfileModal({
     onClose: () => void;
 }): JSX.Element {
     const conference = useConference();
+    const currentAttendee = useCurrentAttendee();
+    const history = useHistory();
+
+    const [createDmMutation, { loading: creatingDM }] = useCreateDmMutation();
+    const toast = useToast();
+    const createDM = useCallback(async () => {
+        try {
+            assert(attendee);
+            const result = await createDmMutation({
+                variables: {
+                    attendeeIds: [attendee.id],
+                    conferenceId: conference.id,
+                },
+            });
+            if (result.errors || !result.data?.createRoomDm?.roomId) {
+                console.error("Failed to create DM", result.errors);
+                throw new Error("Failed to create DM");
+            } else {
+                toast({
+                    title: result.data.createRoomDm.message ?? "Created new DM",
+                    status: "success",
+                });
+
+                // Wait, because Vonage session creation is not instantaneous
+                setTimeout(() => {
+                    history.push(`/conference/${conference.slug}/room/${result.data?.createRoomDm?.roomId}`);
+                    onClose();
+                }, 2000);
+
+                onClose();
+            }
+        } catch (e) {
+            toast({
+                title: "Could not create DM",
+                status: "error",
+            });
+            console.error("Could not create DM", e);
+        }
+    }, [attendee, conference.id, conference.slug, createDmMutation, history, onClose, toast]);
+
     return (
         <Portal>
             <Modal isOpen={isOpen} onClose={onClose} isCentered scrollBehavior="inside">
                 <ModalOverlay />
                 <ModalContent maxW={350}>
-                    <ModalCloseButton />
                     <ModalHeader>
                         {attendee ? (
                             <>
@@ -57,6 +101,7 @@ export default function ProfileModal({
                             </>
                         ) : undefined}
                     </ModalHeader>
+                    <ModalCloseButton />
                     <ModalBody px={0}>
                         {attendee ? (
                             <VStack spacing={4}>
@@ -85,15 +130,27 @@ export default function ProfileModal({
                                         ) : undefined}
                                     </VStack>
                                     <Spacer />
-                                    <LinkButton
-                                        to={`/conference/${conference.slug}/profile/view/${attendee.id}`}
-                                        size="sm"
-                                        variant="outline"
-                                        colorScheme="green"
-                                    >
-                                        <FAIcon iconStyle="s" icon="link" mr={2} />
-                                        View profile
-                                    </LinkButton>
+                                    <VStack alignItems="stretch">
+                                        {currentAttendee.id !== attendee.id ? (
+                                            <Button
+                                                onClick={createDM}
+                                                isLoading={creatingDM}
+                                                colorScheme="green"
+                                                size="sm"
+                                            >
+                                                <FAIcon icon="comment" iconStyle="s" mr={3} /> New DM
+                                            </Button>
+                                        ) : undefined}
+                                        <LinkButton
+                                            to={`/conference/${conference.slug}/profile/view/${attendee.id}`}
+                                            size="sm"
+                                            variant="outline"
+                                            colorScheme="green"
+                                        >
+                                            <FAIcon iconStyle="s" icon="link" mr={2} />
+                                            View profile
+                                        </LinkButton>
+                                    </VStack>
                                 </HStack>
                                 {attendee.profile.photoURL_350x350 ? (
                                     <Image

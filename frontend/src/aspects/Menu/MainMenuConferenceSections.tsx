@@ -169,7 +169,6 @@ function sortChats(attendeeId: string, x: SidebarChatInfoFragment, y: SidebarCha
 }
 
 export function MainMenuConferenceSections_Inner({
-    rootUrl,
     confSlug,
     attendee,
     onClose,

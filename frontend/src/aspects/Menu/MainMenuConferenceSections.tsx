@@ -35,6 +35,7 @@ import ApolloQueryWrapper from "../GQL/ApolloQueryWrapper";
 import { FAIcon } from "../Icons/FAIcon";
 import RoomParticipantsProvider from "../Room/RoomParticipantsProvider";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
+import { MainMenuProgram } from "./MainMenuProgram";
 
 gql`
     fragment SidebarChatInfo on chat_Chat {
@@ -308,8 +309,10 @@ export function MainMenuConferenceSections_Inner({
                             Schedule
                         </Box>
                         <AccordionIcon />
-                        <AccordionPanel pb={4}>todo</AccordionPanel>
                     </AccordionButton>
+                    <AccordionPanel pb={4}>
+                        <MainMenuProgram />
+                    </AccordionPanel>
                 </AccordionItem>
             </Accordion>
         </>

@@ -222,7 +222,7 @@ function ChatsPanel({
                     }, 2000);
                 }}
             />
-            <List m={0}>
+            <List m={0} ml={4}>
                 {pinnedChats.data?.chat_Pin
                     .filter((chatPin) => chatPin.chat.enableMandatoryPin)
                     .sort((x, y) => sortChats(attendeeId, x.chat, y.chat))
@@ -236,7 +236,7 @@ function ChatsPanel({
                         />
                     ))}
             </List>
-            <List my={4}>
+            <List my={4} ml={4}>
                 {pinnedChats.data?.chat_Pin
                     .filter((chatPin) => !chatPin.chat.enableMandatoryPin)
                     .sort((x, y) => sortChats(attendeeId, x.chat, y.chat))

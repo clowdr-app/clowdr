@@ -28,7 +28,7 @@ import FAIcon from "../../../Icons/FAIcon";
 import PronounList from "../../../Pronouns/PronounList";
 import { Markdown } from "../../../Text/Markdown";
 import { useConference } from "../../useConference";
-import useCurrentAttendee, { Attendee } from "../../useCurrentAttendee";
+import { Attendee, useMaybeCurrentAttendee } from "../../useCurrentAttendee";
 import AttendeeExtraInfo from "../Profile/AttendeeExtraInfo";
 
 export default function ProfileModal({
@@ -41,7 +41,7 @@ export default function ProfileModal({
     onClose: () => void;
 }): JSX.Element {
     const conference = useConference();
-    const currentAttendee = useCurrentAttendee();
+    const mCurrentAttendee = useMaybeCurrentAttendee();
     const history = useHistory();
 
     const [createDmMutation, { loading: creatingDM }] = useCreateDmMutation();
@@ -131,7 +131,7 @@ export default function ProfileModal({
                                     </VStack>
                                     <Spacer />
                                     <VStack alignItems="stretch">
-                                        {currentAttendee.id !== attendee.id ? (
+                                        {mCurrentAttendee && mCurrentAttendee?.id !== attendee.id ? (
                                             <Button
                                                 onClick={createDM}
                                                 isLoading={creatingDM}

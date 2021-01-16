@@ -1582,6 +1582,11 @@
         - conference:
             createdBy:
               _eq: X-Hasura-User-Id
+        - _and:
+          - userId:
+              _is_null: false
+          - userId:
+              _eq: X-Hasura-User-Id
   update_permissions:
   - role: user
     permission:

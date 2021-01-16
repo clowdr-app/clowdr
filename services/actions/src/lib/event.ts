@@ -49,6 +49,7 @@ gql`
         $publicVonageSessionId: String!
         $originatingEventId: uuid!
         $conferenceId: uuid!
+        $chatId: uuid = null
     ) {
         insert_Room_one(
             object: {
@@ -58,6 +59,7 @@ gql`
                 originatingEventId: $originatingEventId
                 roomPrivacyName: PUBLIC
                 conferenceId: $conferenceId
+                chatId: $chatId
             }
         ) {
             id
@@ -70,15 +72,19 @@ export async function createEventBreakoutRoom(
     eventId: string,
     eventName: string,
     startTime: string,
-    vonageSessionId: string
+    vonageSessionId: string,
+    _contentGroupId?: string,
+    contentGroupTitle?: string,
+    contentGroupChatId?: string,
 ): Promise<void> {
     await apolloClient.mutate({
         mutation: CreateEventBreakoutRoomDocument,
         variables: {
             conferenceId,
-            name: `${eventName} ${startTime}`,
+            name: contentGroupTitle ? `${eventName}: ${contentGroupTitle} ${startTime}` : `${eventName} ${startTime}`,
             originatingEventId: eventId,
             publicVonageSessionId: vonageSessionId,
+            chatId: contentGroupChatId,
         },
     });
 }

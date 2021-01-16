@@ -211,6 +211,11 @@ gql`
                 id
                 sessionId
             }
+            contentGroup {
+                id
+                title
+                chatId
+            }
         }
     }
 `;
@@ -302,7 +307,10 @@ export async function handleEventEndNotification(eventId: string, endTime: strin
                     event.id,
                     event.name,
                     event.startTime,
-                    event.eventVonageSession.sessionId
+                    event.eventVonageSession.sessionId,
+                    event.contentGroup?.id,
+                    event.contentGroup?.title,
+                    event.contentGroup?.chatId,
                 );
             }
         } catch (e) {

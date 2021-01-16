@@ -51,13 +51,21 @@ export default function ApolloCustomProvider({
                     const magicToken = headers ? headers["x-hasura-magic-token"] : undefined;
                     delete newHeaders["x-hasura-magic-token"];
 
+                    const oneTimeRefreshVar = window.localStorage.getItem("LAST_FORCE_REFRESH_TOKEN");
                     const authTokenConferenceId = window.localStorage.getItem("CLOWDR_AUTH_CONF_SLUG");
-                    const ignoreCache = !!magicToken || (!!conferenceSlug && conferenceSlug !== authTokenConferenceId);
+                    const ignoreCache =
+                        !oneTimeRefreshVar ||
+                        parseInt(oneTimeRefreshVar, 10) + 6 * 60 * 60 * 1000 < Date.now() ||
+                        !!magicToken ||
+                        (!!conferenceSlug && conferenceSlug !== authTokenConferenceId);
                     const token = await getAccessTokenSilently({
                         ignoreCache,
                         "magic-token": magicToken,
                         "conference-slug": conferenceSlug ?? undefined,
                     });
+                    if (ignoreCache) {
+                        window.localStorage.setItem("LAST_FORCE_REFRESH_TOKEN", Date.now().toString());
+                    }
                     if (conferenceSlug) {
                         window.localStorage.setItem("CLOWDR_AUTH_CONF_SLUG", conferenceSlug);
                     }
@@ -73,8 +81,7 @@ export default function ApolloCustomProvider({
                     //     });
                     // }
                     newHeaders.Authorization = `Bearer ${token}`;
-                }
-                else {
+                } else {
                     if (conferenceSlug) {
                         newHeaders["X-Hasura-Conference-Slug"] = conferenceSlug;
                     }

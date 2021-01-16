@@ -3695,53 +3695,47 @@
   - role: user
     permission:
       check:
-        _or:
+        _and:
         - conference:
-            groups:
-              _and:
-              - enabled:
-                  _eq: true
-              - groupRoles:
-                  role:
-                    rolePermissions:
-                      permissionName:
-                        _eq: CONFERENCE_MANAGE_SCHEDULE
-              - _or:
-                - includeUnauthenticated:
-                    _eq: true
-                - groupAttendees:
-                    attendee:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+        - _or:
+          - _exists:
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _eq: CONFERENCE_MANAGE_SCHEDULE
+              _table:
+                schema: public
+                name: FlatUserPermission
+          - _and:
+            - _exists:
+                _where:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - slug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permission_name:
+                      _eq: CONFERENCE_VIEW_ATTENDEES
+                _table:
+                  schema: public
+                  name: FlatUserPermission
+            - event:
+                eventPeople:
+                  _and:
+                  - attendee:
                       userId:
                         _eq: X-Hasura-User-Id
-        - _and:
-          - conference:
-              groups:
-                _and:
-                - enabled:
-                    _eq: true
-                - groupRoles:
-                    role:
-                      rolePermissions:
-                        permissionName:
-                          _eq: CONFERENCE_VIEW_ATTENDEES
-                - _or:
-                  - includeUnauthenticated:
-                      _eq: true
-                  - groupAttendees:
-                      attendee:
-                        userId:
-                          _eq: X-Hasura-User-Id
-          - event:
-              eventPeople:
-                _and:
-                - attendee:
-                    userId:
-                      _eq: X-Hasura-User-Id
-                - eventPersonRole:
-                    name:
-                      _in:
-                      - CHAIR
-                      - PRESENTER
+                  - eventPersonRole:
+                      name:
+                        _in:
+                        - CHAIR
+                        - PRESENTER
       columns:
       - id
       - eventId
@@ -3765,18 +3759,20 @@
       - originatingDataId
       - roleName
       filter:
-        conference:
-          groups:
-            _and:
-            - enabled:
-                _eq: true
-            - groupRoles:
-                role:
-                  rolePermissions:
-                    permissionName:
-                      _eq: CONFERENCE_VIEW
-            - includeUnauthenticated:
-                _eq: true
+        _and:
+        - conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+        - _exists:
+            _where:
+              _and:
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _eq: CONFERENCE_VIEW
+            _table:
+              schema: public
+              name: FlatUnauthPermission
   - role: user
     permission:
       columns:
@@ -3789,27 +3785,24 @@
       - originatingDataId
       - roleName
       filter:
-        _or:
+        _and:
         - conference:
-            groups:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+        - _exists:
+            _where:
               _and:
-              - enabled:
-                  _eq: true
-              - groupRoles:
-                  role:
-                    rolePermissions:
-                      _or:
-                      - permissionName:
-                          _eq: CONFERENCE_VIEW_ATTENDEES
-                      - permissionName:
-                          _eq: CONFERENCE_MANAGE_SCHEDULE
-              - _or:
-                - includeUnauthenticated:
-                    _eq: true
-                - groupAttendees:
-                    attendee:
-                      userId:
-                        _eq: X-Hasura-User-Id
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _in:
+                  - CONFERENCE_VIEW
+                  - CONFERENCE_MANAGE_SCHEDULE
+            _table:
+              schema: public
+              name: FlatUserPermission
   update_permissions:
   - role: user
     permission:
@@ -3820,105 +3813,93 @@
       - originatingDataId
       - roleName
       filter:
-        _or:
+        _and:
         - conference:
-            groups:
-              _and:
-              - enabled:
-                  _eq: true
-              - groupRoles:
-                  role:
-                    rolePermissions:
-                      permissionName:
-                        _eq: CONFERENCE_MANAGE_SCHEDULE
-              - _or:
-                - includeUnauthenticated:
-                    _eq: true
-                - groupAttendees:
-                    attendee:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+        - _or:
+          - _exists:
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _eq: CONFERENCE_MANAGE_SCHEDULE
+              _table:
+                schema: public
+                name: FlatUserPermission
+          - _and:
+            - _exists:
+                _where:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - slug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permission_name:
+                      _eq: CONFERENCE_VIEW_ATTENDEES
+                _table:
+                  schema: public
+                  name: FlatUserPermission
+            - event:
+                eventPeople:
+                  _and:
+                  - attendee:
                       userId:
                         _eq: X-Hasura-User-Id
-        - _and:
-          - conference:
-              groups:
-                _and:
-                - enabled:
-                    _eq: true
-                - groupRoles:
-                    role:
-                      rolePermissions:
-                        permissionName:
-                          _eq: CONFERENCE_VIEW_ATTENDEES
-                - _or:
-                  - includeUnauthenticated:
-                      _eq: true
-                  - groupAttendees:
-                      attendee:
-                        userId:
-                          _eq: X-Hasura-User-Id
-          - event:
-              eventPeople:
-                _and:
-                - attendee:
-                    userId:
-                      _eq: X-Hasura-User-Id
-                - eventPersonRole:
-                    name:
-                      _in:
-                      - CHAIR
-                      - PRESENTER
+                  - eventPersonRole:
+                      name:
+                        _in:
+                        - CHAIR
+                        - PRESENTER
       check: null
   delete_permissions:
   - role: user
     permission:
       filter:
-        _or:
+        _and:
         - conference:
-            groups:
-              _and:
-              - enabled:
-                  _eq: true
-              - groupRoles:
-                  role:
-                    rolePermissions:
-                      permissionName:
-                        _eq: CONFERENCE_MANAGE_SCHEDULE
-              - _or:
-                - includeUnauthenticated:
-                    _eq: true
-                - groupAttendees:
-                    attendee:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+        - _or:
+          - _exists:
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _eq: CONFERENCE_MANAGE_SCHEDULE
+              _table:
+                schema: public
+                name: FlatUserPermission
+          - _and:
+            - _exists:
+                _where:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - slug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permission_name:
+                      _eq: CONFERENCE_VIEW_ATTENDEES
+                _table:
+                  schema: public
+                  name: FlatUserPermission
+            - event:
+                eventPeople:
+                  _and:
+                  - attendee:
                       userId:
                         _eq: X-Hasura-User-Id
-        - _and:
-          - conference:
-              groups:
-                _and:
-                - enabled:
-                    _eq: true
-                - groupRoles:
-                    role:
-                      rolePermissions:
-                        permissionName:
-                          _eq: CONFERENCE_VIEW_ATTENDEES
-                - _or:
-                  - includeUnauthenticated:
-                      _eq: true
-                  - groupAttendees:
-                      attendee:
-                        userId:
-                          _eq: X-Hasura-User-Id
-          - event:
-              eventPeople:
-                _and:
-                - attendee:
-                    userId:
-                      _eq: X-Hasura-User-Id
-                - eventPersonRole:
-                    name:
-                      _in:
-                      - CHAIR
-                      - PRESENTER
+                  - eventPersonRole:
+                      name:
+                        _in:
+                        - CHAIR
+                        - PRESENTER
   event_triggers:
   - name: EventPersonDeleted
     definition:

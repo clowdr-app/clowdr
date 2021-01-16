@@ -1,7 +1,7 @@
 import { AppState as Auth0State, Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import assert from "assert";
 import React from "react";
-import { useHistory, useLocation } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import AppLoadingScreen from "../../AppLoadingScreen";
 
 export default function Auth0CustomProvider({ children }: { children: JSX.Element | Array<JSX.Element> }): JSX.Element {

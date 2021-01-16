@@ -1,4 +1,4 @@
-import { Button, Text } from "@chakra-ui/react";
+import { Text } from "@chakra-ui/react";
 import React from "react";
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import EmailVerificationRequiredPage from "./aspects/Auth/EmailVerificationRequiredPage";
@@ -71,10 +71,7 @@ export default function Routing(): JSX.Element {
                         <Text fontSize="xl" lineHeight="revert" fontWeight="light">
                             Please try again later
                         </Text>
-                        <LinkButton
-                            aria-label="Go to home"
-                            to="/"
-                        >
+                        <LinkButton aria-label="Go to home" to="/">
                             Go to home
                         </LinkButton>
                     </>
@@ -83,10 +80,7 @@ export default function Routing(): JSX.Element {
             <Route exact path="/auth0/blocked">
                 <GenericErrorPage heading="Sorry, your account has been blocked…">
                     <>
-                        <LinkButton
-                            aria-label="Go to home"
-                            to="/"
-                        >
+                        <LinkButton aria-label="Go to home" to="/">
                             Go to home
                         </LinkButton>
                     </>

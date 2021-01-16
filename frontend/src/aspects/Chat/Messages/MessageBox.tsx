@@ -127,6 +127,7 @@ function MessageBody({ message }: { message: ChatMessageDataFragment }): JSX.Ele
                             p: 0,
                             m: 0,
                         }}
+                        color="white"
                     >
                         <chakra.span mx={2}>{data.room.name}</chakra.span>
                     </LinkButton>
@@ -149,6 +150,7 @@ function MessageBody({ message }: { message: ChatMessageDataFragment }): JSX.Ele
                         borderRadius={5}
                         fontFamily="monospace"
                         noOfLines={1}
+                        color="white"
                     >
                         <chakra.span mx={2}>{data.contentGroup.title}</chakra.span>
                     </LinkButton>

@@ -61,15 +61,16 @@ function ConferenceRoutesInner({ rootUrl }: { rootUrl: string }): JSX.Element {
             </Route>
 
             <Route exact path={`${rootUrl}/manage`}>
-                <RequireAtLeastOnePermissionWrapper permissions={[
-                    Permission_Enum.ConferenceManageAttendees,
-                    Permission_Enum.ConferenceManageContent,
-                    Permission_Enum.ConferenceManageGroups,
-                    Permission_Enum.ConferenceManageName,
-                    Permission_Enum.ConferenceManageRoles,
-                    Permission_Enum.ConferenceManageSchedule,
-                    Permission_Enum.ConferenceModerateAttendees,
-                ]}
+                <RequireAtLeastOnePermissionWrapper
+                    permissions={[
+                        Permission_Enum.ConferenceManageAttendees,
+                        Permission_Enum.ConferenceManageContent,
+                        Permission_Enum.ConferenceManageGroups,
+                        Permission_Enum.ConferenceManageName,
+                        Permission_Enum.ConferenceManageRoles,
+                        Permission_Enum.ConferenceManageSchedule,
+                        Permission_Enum.ConferenceModerateAttendees,
+                    ]}
                     componentIfDenied={<PageNotFound />}
                 >
                     <ManagerLandingPage />

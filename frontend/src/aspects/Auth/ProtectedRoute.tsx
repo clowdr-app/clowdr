@@ -45,7 +45,7 @@ export default function ProtectedRoute({
                 },
                 returnTo: () => {
                     return redirectTo ?? window.location.href;
-                }
+                },
             })}
             {...args}
         />

@@ -66,7 +66,7 @@ function ReadUpToIndexProvider_UserExists({
     useEffect(() => {
         if (messages.liveMessages && messages.liveMessages.size > 0) {
             const nextUnreadId = [...messages.liveMessages.keys()].sort((x, y) => y - x)[0];
-            if (/*hasScrolledUp &&*/lastUnreadId.current !== nextUnreadId && lastUpdateTime < now - 5000) {
+            if (/*hasScrolledUp &&*/ lastUnreadId.current !== nextUnreadId && lastUpdateTime < now - 5000) {
                 lastUnreadId.current = nextUnreadId;
                 setLastUpdateTime(Date.now());
                 setUnread({

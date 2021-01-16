@@ -49,22 +49,22 @@ export function RoomControlBar({
                     [...roomMembers.roomPeople]
                         .sort((x, y) => x.attendee.displayName.localeCompare(y.attendee.displayName))
                         .map((person) => (
-                        <ListItem key={person.id}>
-                            <FAIcon
-                                icon={
-                                    roomParticipants &&
-                                    roomParticipants.find(
-                                        (participant) => person.attendee.id === participant.attendeeId
-                                    )
-                                        ? "video"
-                                        : "user"
-                                }
-                                iconStyle="s"
-                                mr={5}
-                            />
-                            {person.attendee.displayName}
-                        </ListItem>
-                    ))
+                            <ListItem key={person.id}>
+                                <FAIcon
+                                    icon={
+                                        roomParticipants &&
+                                        roomParticipants.find(
+                                            (participant) => person.attendee.id === participant.attendeeId
+                                        )
+                                            ? "video"
+                                            : "user"
+                                    }
+                                    iconStyle="s"
+                                    mr={5}
+                                />
+                                {person.attendee.displayName}
+                            </ListItem>
+                        ))
                 ) : (
                     <></>
                 )}

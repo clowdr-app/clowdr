@@ -92,7 +92,9 @@ export async function createEventBreakoutRoom(
         mutation: CreateEventBreakoutRoomDocument,
         variables: {
             conferenceId,
-            name: contentGroupTitle ? `${eventName}: ${contentGroupTitle} ${startTimeStr}` : `${eventName} ${startTimeStr}`,
+            name: contentGroupTitle
+                ? `${eventName}: ${contentGroupTitle} ${startTimeStr}`
+                : `${eventName} ${startTimeStr}`,
             originatingEventId: eventId,
             publicVonageSessionId: vonageSessionId,
             chatId: contentGroupChatId,

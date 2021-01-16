@@ -310,7 +310,7 @@ export async function handleEventEndNotification(eventId: string, endTime: strin
                     event.eventVonageSession.sessionId,
                     event.contentGroup?.id,
                     event.contentGroup?.title,
-                    event.contentGroup?.chatId,
+                    event.contentGroup?.chatId
                 );
             }
         } catch (e) {

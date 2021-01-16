@@ -164,7 +164,7 @@ function (user, context, callback) {
       // do some custom logic to decide allowed roles
       'x-hasura-allowed-roles': ['user','moderator','organiser'],
       'x-hasura-user-id': user.user_id,
-    	'x-hasura-magic-token': magicToken
+      'x-hasura-magic-token': magicToken
     };
   callback(null, user, context);
 }

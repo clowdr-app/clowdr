@@ -3,13 +3,19 @@ import { detect } from "detect-browser";
 import React from "react";
 
 const browser = detect();
-const browserOK = !(!browser || browser.name.includes("safari") || browser.name === "ios" || browser.name === "ios-webview");
+const browserOK = !(
+    !browser ||
+    browser.name.includes("safari") ||
+    browser.name === "ios" ||
+    browser.name === "ios-webview"
+);
 
 const toast = createStandaloneToast();
 if (!browserOK) {
     toast({
-        description: `Your browser (${browser?.name ?? "unknown browser"
-            }) is officially Unsupported. We expect Clowdr to be unusable in your browser. Please switch to using a supported browser: Firefox, Chrome, Edge or Opera.`,
+        description: `Your browser (${
+            browser?.name ?? "unknown browser"
+        }) is officially Unsupported. We expect Clowdr to be unusable in your browser. Please switch to using a supported browser: Firefox, Chrome, Edge or Opera.`,
         isClosable: false,
         duration: 60 * 60 * 1000,
         position: "top",

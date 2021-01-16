@@ -28849,37 +28849,21 @@ export type PinnedChatsWithUnreadCountsSubscription = { readonly __typename?: 's
       & SidebarChatInfoFragment
     ) }> };
 
-export type MenuSchedule_CurrentEventsQueryVariables = Exact<{
+export type MenuScheduleQueryVariables = Exact<{
   now: Scalars['timestamptz'];
-  conferenceId: Scalars['uuid'];
-}>;
-
-
-export type MenuSchedule_CurrentEventsQuery = { readonly __typename?: 'query_root', readonly Event: ReadonlyArray<(
-    { readonly __typename?: 'Event' }
-    & MenuSchedule_EventFragment
-  )> };
-
-export type MenuSchedule_EventsIn30MinutesQueryVariables = Exact<{
-  now: Scalars['timestamptz'];
-  in30Minutes: Scalars['timestamptz'];
-  conferenceId: Scalars['uuid'];
-}>;
-
-
-export type MenuSchedule_EventsIn30MinutesQuery = { readonly __typename?: 'query_root', readonly Event: ReadonlyArray<(
-    { readonly __typename?: 'Event' }
-    & MenuSchedule_EventFragment
-  )> };
-
-export type MenuSchedule_EventsInOneHourQueryVariables = Exact<{
   in30Minutes: Scalars['timestamptz'];
   inOneHour: Scalars['timestamptz'];
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type MenuSchedule_EventsInOneHourQuery = { readonly __typename?: 'query_root', readonly Event: ReadonlyArray<(
+export type MenuScheduleQuery = { readonly __typename?: 'query_root', readonly eventsNow: ReadonlyArray<(
+    { readonly __typename?: 'Event' }
+    & MenuSchedule_EventFragment
+  )>, readonly eventsIn30mins: ReadonlyArray<(
+    { readonly __typename?: 'Event' }
+    & MenuSchedule_EventFragment
+  )>, readonly eventsIn1Hour: ReadonlyArray<(
     { readonly __typename?: 'Event' }
     & MenuSchedule_EventFragment
   )> };
@@ -34312,82 +34296,19 @@ export function usePinnedChatsWithUnreadCountsSubscription(baseOptions: Apollo.S
       }
 export type PinnedChatsWithUnreadCountsSubscriptionHookResult = ReturnType<typeof usePinnedChatsWithUnreadCountsSubscription>;
 export type PinnedChatsWithUnreadCountsSubscriptionResult = Apollo.SubscriptionResult<PinnedChatsWithUnreadCountsSubscription>;
-export const MenuSchedule_CurrentEventsDocument = gql`
-    query MenuSchedule_CurrentEvents($now: timestamptz!, $conferenceId: uuid!) {
-  Event(
+export const MenuScheduleDocument = gql`
+    query MenuSchedule($now: timestamptz!, $in30Minutes: timestamptz!, $inOneHour: timestamptz!, $conferenceId: uuid!) {
+  eventsNow: Event(
     where: {startTime: {_lte: $now}, endTime: {_gte: $now}, conferenceId: {_eq: $conferenceId}}
   ) {
     ...MenuSchedule_Event
   }
-}
-    ${MenuSchedule_EventFragmentDoc}`;
-
-/**
- * __useMenuSchedule_CurrentEventsQuery__
- *
- * To run a query within a React component, call `useMenuSchedule_CurrentEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useMenuSchedule_CurrentEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useMenuSchedule_CurrentEventsQuery({
- *   variables: {
- *      now: // value for 'now'
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useMenuSchedule_CurrentEventsQuery(baseOptions: Apollo.QueryHookOptions<MenuSchedule_CurrentEventsQuery, MenuSchedule_CurrentEventsQueryVariables>) {
-        return Apollo.useQuery<MenuSchedule_CurrentEventsQuery, MenuSchedule_CurrentEventsQueryVariables>(MenuSchedule_CurrentEventsDocument, baseOptions);
-      }
-export function useMenuSchedule_CurrentEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MenuSchedule_CurrentEventsQuery, MenuSchedule_CurrentEventsQueryVariables>) {
-          return Apollo.useLazyQuery<MenuSchedule_CurrentEventsQuery, MenuSchedule_CurrentEventsQueryVariables>(MenuSchedule_CurrentEventsDocument, baseOptions);
-        }
-export type MenuSchedule_CurrentEventsQueryHookResult = ReturnType<typeof useMenuSchedule_CurrentEventsQuery>;
-export type MenuSchedule_CurrentEventsLazyQueryHookResult = ReturnType<typeof useMenuSchedule_CurrentEventsLazyQuery>;
-export type MenuSchedule_CurrentEventsQueryResult = Apollo.QueryResult<MenuSchedule_CurrentEventsQuery, MenuSchedule_CurrentEventsQueryVariables>;
-export const MenuSchedule_EventsIn30MinutesDocument = gql`
-    query MenuSchedule_EventsIn30Minutes($now: timestamptz!, $in30Minutes: timestamptz!, $conferenceId: uuid!) {
-  Event(
+  eventsIn30mins: Event(
     where: {startTime: {_gt: $now, _lte: $in30Minutes}, conferenceId: {_eq: $conferenceId}}
   ) {
     ...MenuSchedule_Event
   }
-}
-    ${MenuSchedule_EventFragmentDoc}`;
-
-/**
- * __useMenuSchedule_EventsIn30MinutesQuery__
- *
- * To run a query within a React component, call `useMenuSchedule_EventsIn30MinutesQuery` and pass it any options that fit your needs.
- * When your component renders, `useMenuSchedule_EventsIn30MinutesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useMenuSchedule_EventsIn30MinutesQuery({
- *   variables: {
- *      now: // value for 'now'
- *      in30Minutes: // value for 'in30Minutes'
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useMenuSchedule_EventsIn30MinutesQuery(baseOptions: Apollo.QueryHookOptions<MenuSchedule_EventsIn30MinutesQuery, MenuSchedule_EventsIn30MinutesQueryVariables>) {
-        return Apollo.useQuery<MenuSchedule_EventsIn30MinutesQuery, MenuSchedule_EventsIn30MinutesQueryVariables>(MenuSchedule_EventsIn30MinutesDocument, baseOptions);
-      }
-export function useMenuSchedule_EventsIn30MinutesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MenuSchedule_EventsIn30MinutesQuery, MenuSchedule_EventsIn30MinutesQueryVariables>) {
-          return Apollo.useLazyQuery<MenuSchedule_EventsIn30MinutesQuery, MenuSchedule_EventsIn30MinutesQueryVariables>(MenuSchedule_EventsIn30MinutesDocument, baseOptions);
-        }
-export type MenuSchedule_EventsIn30MinutesQueryHookResult = ReturnType<typeof useMenuSchedule_EventsIn30MinutesQuery>;
-export type MenuSchedule_EventsIn30MinutesLazyQueryHookResult = ReturnType<typeof useMenuSchedule_EventsIn30MinutesLazyQuery>;
-export type MenuSchedule_EventsIn30MinutesQueryResult = Apollo.QueryResult<MenuSchedule_EventsIn30MinutesQuery, MenuSchedule_EventsIn30MinutesQueryVariables>;
-export const MenuSchedule_EventsInOneHourDocument = gql`
-    query MenuSchedule_EventsInOneHour($in30Minutes: timestamptz!, $inOneHour: timestamptz!, $conferenceId: uuid!) {
-  Event(
+  eventsIn1Hour: Event(
     where: {startTime: {_gt: $in30Minutes, _lte: $inOneHour}, conferenceId: {_eq: $conferenceId}}
   ) {
     ...MenuSchedule_Event
@@ -34396,32 +34317,33 @@ export const MenuSchedule_EventsInOneHourDocument = gql`
     ${MenuSchedule_EventFragmentDoc}`;
 
 /**
- * __useMenuSchedule_EventsInOneHourQuery__
+ * __useMenuScheduleQuery__
  *
- * To run a query within a React component, call `useMenuSchedule_EventsInOneHourQuery` and pass it any options that fit your needs.
- * When your component renders, `useMenuSchedule_EventsInOneHourQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useMenuScheduleQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMenuScheduleQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useMenuSchedule_EventsInOneHourQuery({
+ * const { data, loading, error } = useMenuScheduleQuery({
  *   variables: {
+ *      now: // value for 'now'
  *      in30Minutes: // value for 'in30Minutes'
  *      inOneHour: // value for 'inOneHour'
  *      conferenceId: // value for 'conferenceId'
  *   },
  * });
  */
-export function useMenuSchedule_EventsInOneHourQuery(baseOptions: Apollo.QueryHookOptions<MenuSchedule_EventsInOneHourQuery, MenuSchedule_EventsInOneHourQueryVariables>) {
-        return Apollo.useQuery<MenuSchedule_EventsInOneHourQuery, MenuSchedule_EventsInOneHourQueryVariables>(MenuSchedule_EventsInOneHourDocument, baseOptions);
+export function useMenuScheduleQuery(baseOptions: Apollo.QueryHookOptions<MenuScheduleQuery, MenuScheduleQueryVariables>) {
+        return Apollo.useQuery<MenuScheduleQuery, MenuScheduleQueryVariables>(MenuScheduleDocument, baseOptions);
       }
-export function useMenuSchedule_EventsInOneHourLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MenuSchedule_EventsInOneHourQuery, MenuSchedule_EventsInOneHourQueryVariables>) {
-          return Apollo.useLazyQuery<MenuSchedule_EventsInOneHourQuery, MenuSchedule_EventsInOneHourQueryVariables>(MenuSchedule_EventsInOneHourDocument, baseOptions);
+export function useMenuScheduleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MenuScheduleQuery, MenuScheduleQueryVariables>) {
+          return Apollo.useLazyQuery<MenuScheduleQuery, MenuScheduleQueryVariables>(MenuScheduleDocument, baseOptions);
         }
-export type MenuSchedule_EventsInOneHourQueryHookResult = ReturnType<typeof useMenuSchedule_EventsInOneHourQuery>;
-export type MenuSchedule_EventsInOneHourLazyQueryHookResult = ReturnType<typeof useMenuSchedule_EventsInOneHourLazyQuery>;
-export type MenuSchedule_EventsInOneHourQueryResult = Apollo.QueryResult<MenuSchedule_EventsInOneHourQuery, MenuSchedule_EventsInOneHourQueryVariables>;
+export type MenuScheduleQueryHookResult = ReturnType<typeof useMenuScheduleQuery>;
+export type MenuScheduleLazyQueryHookResult = ReturnType<typeof useMenuScheduleLazyQuery>;
+export type MenuScheduleQueryResult = Apollo.QueryResult<MenuScheduleQuery, MenuScheduleQueryVariables>;
 export const MenuSchedule_SearchEventsDocument = gql`
     query MenuSchedule_SearchEvents($conferenceId: uuid!, $search: String!) {
   Event(

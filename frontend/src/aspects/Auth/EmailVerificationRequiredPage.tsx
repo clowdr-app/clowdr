@@ -27,7 +27,9 @@ export default function EmailVerificationRequiredPage({
             {title}
             <FAIcon iconStyle="s" icon="envelope" fontSize="6xl" />
             <Heading as="h1" fontSize="3xl" lineHeight="revert">
-                {success ? "Your email was verified. You can now log in." : message ?? "Please verify your email address"}
+                {success
+                    ? "Your email was verified. You can now log in."
+                    : message ?? "Please verify your email address"}
             </Heading>
             {!message ? (
                 <Text fontSize="xl" lineHeight="revert" fontWeight="light" maxW={600}>

@@ -90,7 +90,7 @@ export function Room({
 
     const chatSources = useMemo((): ChatSources | undefined => {
         if (currentRoomEvent?.contentGroup) {
-            const rightHandTypeName = (currentRoomEvent?.contentGroup?.contentGroupTypeName ?? "PAPER");
+            const rightHandTypeName = currentRoomEvent?.contentGroup?.contentGroupTypeName ?? "PAPER";
             const rightHandLabel = rightHandTypeName[0] + rightHandTypeName.slice(1).toLowerCase();
             return {
                 chatIdL: roomDetails.chatId ?? undefined,

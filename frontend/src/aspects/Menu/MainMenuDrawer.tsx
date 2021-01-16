@@ -42,9 +42,7 @@ export default function MainMenuDrawer({ isOpen, portalNode }: Props): JSX.Eleme
                         <DrawerHeader borderBottomWidth="1px">
                             <Flex direction="row" align="center">
                                 <Heading as="h2" height="auto" fontSize="lg">
-                                    <Link as={ReactLink} to="/" textDecoration="none">
-                                        Clowdr
-                                    </Link>
+                                    Clowdr
                                 </Heading>
                                 <Spacer />
                                 <IncognitoToggleButton />

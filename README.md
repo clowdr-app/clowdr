@@ -158,13 +158,14 @@ function (user, context, callback) {
   const namespace = configuration.HASURA_NAMESPACE;
   console.log(`Upgrading access token for ${user.user_id}`);
   const magicToken = context.request && context.request.query && context.request.query["magic-token"];
+  const confSlug = context.request && context.request.query && context.request.query["conference-slug"];
   context.accessToken[namespace] =
     {
       'x-hasura-default-role': 'user',
-      // do some custom logic to decide allowed roles
-      'x-hasura-allowed-roles': ['user','moderator','organiser'],
+      'x-hasura-allowed-roles': ['user'],
       'x-hasura-user-id': user.user_id,
-      'x-hasura-magic-token': magicToken
+      'x-hasura-magic-token': magicToken,
+      'x-hasura-conference-slug': confSlug,
     };
   callback(null, user, context);
 }

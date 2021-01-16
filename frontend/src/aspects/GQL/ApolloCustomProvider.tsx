@@ -3,8 +3,21 @@ import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { setContext } from "@apollo/link-context";
 import { useAuth0 } from "@auth0/auth0-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
 import AppLoadingScreen from "../../AppLoadingScreen";
+
+interface ConferenceAuthCtx {
+    setConferenceId: (value: string | null) => void;
+    currentConferenceId: string | null;
+}
+
+export const ConferenceAuthContext = React.createContext<ConferenceAuthCtx>({
+    setConferenceId: () => {
+        /* EMPTY */
+    },
+    currentConferenceId: null,
+});
 
 export default function ApolloCustomProvider({
     children,
@@ -13,6 +26,14 @@ export default function ApolloCustomProvider({
 }): JSX.Element {
     const { isAuthenticated, getAccessTokenSilently } = useAuth0();
     const [client, setClient] = useState<ApolloClient<NormalizedCacheObject>>();
+    const location = useLocation();
+    const conferenceSlug = useMemo(() => {
+        const matches = location.pathname.match(/^\/conference\/([^/]+)/);
+        if (matches && matches.length > 1) {
+            return matches[1];
+        }
+        return undefined;
+    }, [location.pathname]);
 
     useEffect(() => {
         (async () => {
@@ -30,22 +51,27 @@ export default function ApolloCustomProvider({
                     const magicToken = headers ? headers["x-hasura-magic-token"] : undefined;
                     delete newHeaders["x-hasura-magic-token"];
 
-                    const ignoreCache = !!magicToken;
+                    const authTokenConferenceId = window.localStorage.getItem("CLOWDR_AUTH_CONF_SLUG");
+                    const ignoreCache = !!magicToken || (!!conferenceSlug && conferenceSlug !== authTokenConferenceId);
                     const token = await getAccessTokenSilently({
                         ignoreCache,
                         "magic-token": magicToken,
+                        "conference-slug": conferenceSlug ?? undefined,
                     });
-                    // Auth0 issues tokens a few seconds in the future
-                    // so we wait a brief period before using a definitely-fresh
-                    // token.
-                    // (The error may still occur if ignoreCache was false but a
-                    //  new token was required anyway. The `useQueryErrorResult`
-                    //  handles that case.)
-                    if (ignoreCache) {
-                        await new Promise((resolve) => {
-                            setTimeout(resolve, 3000);
-                        });
+                    if (conferenceSlug) {
+                        window.localStorage.setItem("CLOWDR_AUTH_CONF_SLUG", conferenceSlug);
                     }
+                    // // Auth0 issues tokens a few seconds in the future
+                    // // so we wait a brief period before using a definitely-fresh
+                    // // token.
+                    // // (The error may still occur if ignoreCache was false but a
+                    // //  new token was required anyway. The `useQueryErrorResult`
+                    // //  handles that case.)
+                    // if (ignoreCache) {
+                    //     await new Promise((resolve) => {
+                    //         setTimeout(resolve, 3000);
+                    //     });
+                    // }
                     newHeaders.Authorization = `Bearer ${token}`;
                 }
                 return {
@@ -130,7 +156,7 @@ export default function ApolloCustomProvider({
 
             setClient(client);
         })();
-    }, [getAccessTokenSilently, isAuthenticated]);
+    }, [conferenceSlug, getAccessTokenSilently, isAuthenticated]);
 
     if (client === undefined) {
         return <AppLoadingScreen />;

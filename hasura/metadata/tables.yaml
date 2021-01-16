@@ -4433,6 +4433,44 @@
       foreign_key_constraint_on: roomId
 - table:
     schema: public
+    name: FlatUserPermission
+  object_relationships:
+  - name: conference
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Conference
+        column_mapping:
+          slug: slug
+  - name: permission
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Permission
+        column_mapping:
+          permission_name: name
+  - name: user
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: User
+        column_mapping:
+          user_id: id
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - permission_name
+      - slug
+      - user_id
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+- table:
+    schema: public
     name: Group
   configuration:
     custom_root_fields: {}

@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSelectReadUpToIndexQuery, useSetReadUpToIndexMutation } from "../../../generated/graphql";
 import { useRealTime } from "../../Generic/useRealTime";
 import { useChatConfiguration } from "../Configuration";
@@ -58,19 +58,22 @@ function ReadUpToIndexProvider_UserExists({
     const [setUnread] = useSetReadUpToIndexMutation();
     const [lastUpdateTime, setLastUpdateTime] = useState<number>(Date.now());
     const [_hasScrolledUp, setHasScrolledUp] = useState<boolean>(false);
-    const now = useRealTime(60000);
+    const now = useRealTime(5000);
 
     const messages = useReceiveMessageQueries();
 
+    const lastUnreadId = useRef<number | null>(null);
     useEffect(() => {
         if (messages.liveMessages && messages.liveMessages.size > 0) {
-            if (/*hasScrolledUp &&*/ lastUpdateTime < now - 5000) {
+            const nextUnreadId = [...messages.liveMessages.keys()].sort((x, y) => y - x)[0];
+            if (/*hasScrolledUp &&*/lastUnreadId.current !== nextUnreadId && lastUpdateTime < now - 5000) {
+                lastUnreadId.current = nextUnreadId;
                 setLastUpdateTime(Date.now());
                 setUnread({
                     variables: {
                         attendeeId,
                         chatId,
-                        messageId: [...messages.liveMessages.keys()].sort((x, y) => y - x)[0],
+                        messageId: nextUnreadId,
                     },
                 });
             }

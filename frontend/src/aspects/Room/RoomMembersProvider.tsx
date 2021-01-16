@@ -11,7 +11,7 @@ gql`
     }
 
     fragment RoomPeople on Room {
-        roomPeople(order_by: { attendee: { displayName: asc } }) {
+        roomPeople {
             id
             roomPersonRoleName
             attendee {

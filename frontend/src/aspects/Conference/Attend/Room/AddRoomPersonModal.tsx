@@ -16,9 +16,15 @@ export function AddRoomPersonModal({
     const [addParticipantToRoomMutation] = useAddParticipantToRoomMutation();
     const members = useRoomMembers();
 
-    const selectedAttendeeIds = useMemo(() => (members ? members.roomPeople.map((person) => person.attendee.id) : []), [
-        members,
-    ]);
+    const selectedAttendeeIds = useMemo(
+        () =>
+            members
+                ? [...members.roomPeople]
+                      .sort((x, y) => x.attendee.displayName.localeCompare(y.attendee.displayName))
+                      .map((person) => person.attendee.id)
+                : [],
+        [members]
+    );
 
     const addMember = useCallback(
         async (attendeeId: string) => {

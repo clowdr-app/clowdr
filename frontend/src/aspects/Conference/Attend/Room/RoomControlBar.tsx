@@ -46,7 +46,9 @@ export function RoomControlBar({
         () => (
             <List>
                 {roomMembers ? (
-                    roomMembers.roomPeople.map((person) => (
+                    [...roomMembers.roomPeople]
+                        .sort((x, y) => x.attendee.displayName.localeCompare(y.attendee.displayName))
+                        .map((person) => (
                         <ListItem key={person.id}>
                             <FAIcon
                                 icon={

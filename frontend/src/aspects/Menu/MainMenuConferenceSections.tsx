@@ -8,6 +8,7 @@ import {
     AccordionPanel,
     Box,
     Button,
+    Flex,
     HStack,
     Link,
     List,
@@ -198,10 +199,48 @@ export function MainMenuConferenceSections_Inner({
 
     return (
         <>
-            <LinkButton onClick={onClose} to={`/conference/${confSlug}`} linkProps={{ my: 4 }} width="100%">
-                <FAIcon icon="home" iconStyle="s" mr={3} />
-                Home
-            </LinkButton>
+            <Flex my={4} justifyContent="space-evenly" alignItems="center" flexWrap="wrap" gridGap={2}>
+                <LinkButton
+                    linkProps={{ flexBasis: ["40%", "40%", "min-content"], flexGrow: 0, flexShrink: [0, 1] }}
+                    size="sm"
+                    onClick={onClose}
+                    to={`/conference/${confSlug}`}
+                    width="100%"
+                >
+                    <FAIcon icon="home" iconStyle="s" mr={3} />
+                    Home
+                </LinkButton>
+                <LinkButton
+                    linkProps={{ flexBasis: ["40%", "40%", "min-content"], flexGrow: 0, flexShrink: [0, 1] }}
+                    size="sm"
+                    onClick={onClose}
+                    to={`/conference/${confSlug}/schedule`}
+                    width="100%"
+                >
+                    <FAIcon icon="calendar" iconStyle="r" mr={3} />
+                    Schedule
+                </LinkButton>
+                <LinkButton
+                    linkProps={{ flexBasis: ["40%", "40%", "min-content"], flexGrow: 0, flexShrink: [0, 1] }}
+                    size="sm"
+                    onClick={onClose}
+                    to={`/conference/${confSlug}/attendees`}
+                    width="100%"
+                >
+                    <FAIcon icon="mug-hot" iconStyle="s" mr={3} />
+                    Attendees
+                </LinkButton>
+                <LinkButton
+                    linkProps={{ flexBasis: ["40%", "40%", "min-content"], flexGrow: 0, flexShrink: [0, 1] }}
+                    size="sm"
+                    onClick={onClose}
+                    to={`/conference/${confSlug}/rooms`}
+                    width="100%"
+                >
+                    <FAIcon icon="mug-hot" iconStyle="s" mr={3} />
+                    Rooms
+                </LinkButton>
+            </Flex>
             <List m={0}>
                 {pinnedChats.data?.chat_Pin
                     .filter((chatPin) => chatPin.chat.enableMandatoryPin)

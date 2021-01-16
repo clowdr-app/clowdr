@@ -1,18 +1,41 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { Button, MenuItem } from "@chakra-ui/react";
 import React from "react";
+import { useLocation } from "react-router-dom";
 
-export default function SignupButton({ asMenuItem }: { asMenuItem?: boolean }): JSX.Element {
+export default function SignupButton({
+    asMenuItem,
+    redirectTo,
+    size,
+}: {
+    size?: string;
+    asMenuItem?: boolean;
+    redirectTo?: string;
+}): JSX.Element {
     const { isAuthenticated, loginWithRedirect } = useAuth0();
+    const location = useLocation();
+    const redirectUri =
+        import.meta.env.SNOWPACK_PUBLIC_AUTH_CALLBACK_URL +
+        "/email-verification/result?redirectTo=" +
+        encodeURI(redirectTo ?? location.pathname);
     return isAuthenticated ? (
         <></>
     ) : asMenuItem ? (
-        <MenuItem size="sm" onClick={() => loginWithRedirect({ screen_hint: "signup" })} colorScheme="blue">
+        <MenuItem
+            size={size ?? "sm"}
+            onClick={() =>
+                loginWithRedirect({
+                    screen_hint: "signup",
+                    redirectUri,
+                })
+            }
+            colorScheme="blue"
+        >
             Sign Up
         </MenuItem>
     ) : (
         <Button
-            size="sm"
+            size={size ?? "sm"}
             onClick={() => loginWithRedirect({ screen_hint: "signup" })}
             colorScheme="blue"
             role="menuitem"

@@ -77,8 +77,13 @@ Now, configure the application in the _Settings_ tab.
 
    For example, you should include `localhost` and optionally your Netlify app url(s), if you have set up Netlify:
 
+   - `http://localhost:3000/auth0/`
+   - `https://<netlify-subdomain>.netlify.app/auth0/`
    - `http://localhost:3000/auth0/logged-in`
    - `https://<netlify-subdomain>.netlify.app/auth0/logged-in`
+
+   FOR PRODUCTION: The first URL MUST be the `auth0` address
+   (See [the auth0 documentation on Email Templates / Redirect URLs](https://auth0.com/docs/auth0-email-services/customize-email-templates#configuring-the-redirect-to-url)).
 
 1. Configure `Allowed Logout URLs` (comma-separated)
    (The format/suffix of these urls should not be altered.)
@@ -86,9 +91,9 @@ Now, configure the application in the _Settings_ tab.
    E.g.
 
    - `http://localhost:3000/auth0/logged-out`
-   - `http://localhost:3000/auth0/email-verification-required/no-redirect`
+   - `http://localhost:3000/auth0/email-verification/required/no-redirect`
    - `https://<netlify-subdomain>.netlify.app/auth0/logged-out`
-   - `https://<netlify-subdomain>.netlify.app/auth0/email-verification-required/no-redirect`
+   - `https://<netlify-subdomain>.netlify.app/auth0/email-verification/required/no-redirect`
 
 1. Configure `Allowed Web Origins` (comma-separated)
 

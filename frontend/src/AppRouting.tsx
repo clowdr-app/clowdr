@@ -18,15 +18,25 @@ import NewUserLandingPage from "./aspects/Users/NewUser/LandingPage";
 export default function Routing(): JSX.Element {
     return (
         <Switch>
-            <Route exact path="/auth0/email-verification-required/:noRedirect?">
-                {(props) => <EmailVerificationRequiredPage noRedirect={props.match?.params.noRedirect ?? false} />}
+            <Route exact path="/auth0/email-verification/result">
+                {(props) => {
+                    const searchParams = new URLSearchParams(props.location.search);
+                    const success = searchParams.get("success");
+                    const message = searchParams.get("message");
+                    if (success === "true" || message === "This account is already verified.") {
+                        return <EmailVerificationRequiredPage success={true} message={message} />;
+                    }
+                    return <EmailVerificationRequiredPage success={false} message={message} />;
+                }}
             </Route>
             <Route
                 path="/auth0/logged-in"
                 render={(props) => {
+                    const searchParams = new URLSearchParams(props.location.search);
+
                     if (props.location.search.includes("error")) {
                         if (props.location.search.includes("verify")) {
-                            return <Redirect to="/auth0/email-verification-required" />;
+                            return <Redirect to="/auth0/email-verification/result" />;
                         } else {
                             return (
                                 <GenericErrorPage heading="Authentication error">
@@ -37,7 +47,13 @@ export default function Routing(): JSX.Element {
                             );
                         }
                     } else {
-                        return <Redirect to="/user" />;
+                        const redirecToRaw = searchParams.get("redirectTo");
+                        const redirectTo = redirecToRaw ? decodeURI(redirecToRaw) : null;
+                        if (redirectTo) {
+                            return <Redirect to={redirectTo} />;
+                        } else {
+                            return <Redirect to="/user" />;
+                        }
                     }
                 }}
             />

@@ -36,5 +36,5 @@ export default function useQueryErrorToast(error: string | false | ApolloError |
                 });
             }
         }
-    }, [error, toast]);
+    }, [error, queryName, toast]);
 }

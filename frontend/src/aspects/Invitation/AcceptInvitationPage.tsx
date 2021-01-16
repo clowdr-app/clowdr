@@ -16,6 +16,7 @@ import {
     Spinner as UnboxedSpinner,
     Text,
     useToast,
+    VStack,
 } from "@chakra-ui/react";
 import assert from "assert";
 import { Field, FieldProps, Form, Formik } from "formik";
@@ -91,17 +92,16 @@ async function digest(inviteCode: string, email: string) {
     return hashHex;
 }
 
-export default function AcceptInvitationPage(props: Props): JSX.Element {
+export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element {
     const title = useTitle("Accept invitation");
 
     const toast = useToast();
 
-    const inviteCode = (props.inviteCode ?? getCachedInviteCode())?.trim()?.toLowerCase();
     useEffect(() => {
-        if (props.inviteCode) {
-            setCachedInviteCode(props.inviteCode);
+        if (inviteCode) {
+            setCachedInviteCode(inviteCode);
         }
-    }, [props.inviteCode]);
+    }, [inviteCode]);
 
     const { user, loading: isUserLoading } = useMaybeCurrentUser();
 
@@ -383,17 +383,20 @@ export default function AcceptInvitationPage(props: Props): JSX.Element {
                 <Heading as="h2" fontSize="2.25rem" lineHeight="2.75rem" fontWeight="thin" maxW={650}>
                     Welcome to Clowdr, you&apos;re almost ready to join your conference.
                 </Heading>
-                <Text maxW={650}>
-                    To accept your invitation please sign in to your existing Clowdr account or create a new one by
-                    signing up.
-                </Text>
+                <Text maxW={650}>To accept your invitation please sign up to a new Clowdr account.</Text>
                 <List maxW={650} spacing={5}>
+                    <ListItem>
+                        <HStack spacing={3}>
+                            <FAIcon iconStyle="s" icon="circle" />
+                            <Text>When you sign up, you will be asked to verify ownership of your email address.</Text>
+                        </HStack>
+                    </ListItem>
                     <ListItem>
                         <HStack spacing={3}>
                             <FAIcon iconStyle="s" icon="check" />
                             <Text>
-                                If you use the same email address as your invitation, you&apos;ll be ready to go right
-                                away.
+                                After verifying ownership of your address, if you used the same email address as your
+                                invitation, you&apos;ll be ready to go right away.
                             </Text>
                         </HStack>
                     </ListItem>
@@ -401,16 +404,30 @@ export default function AcceptInvitationPage(props: Props): JSX.Element {
                         <HStack spacing={3}>
                             <FAIcon iconStyle="s" icon="envelope" />
                             <Text>
-                                If you use a different email address, we will send a confirmation email to your
-                                invitation address, just to check it&apos;s you.
+                                After verifying ownership of your address, if you used a different email address to your
+                                invitation, we will send a second confirmation email to your invitation address, just to
+                                check it&apos;s you.
                             </Text>
                         </HStack>
                     </ListItem>
                 </List>
-                <HStack>
-                    <LoginButton />
-                    <SignupButton />
-                </HStack>
+                <VStack pt={5} maxW={650} spacing={4}>
+                    <SignupButton redirectTo={`/invitation/accept/${inviteCode}}`} size="lg" />
+                    <Text maxW={650} fontSize="sm">
+                        <i>
+                            Unless you created a Clowdr account AFTER 1<sup>st</sup> Jan 2021, please sign up for a new
+                            one.
+                        </i>
+                    </Text>
+                </VStack>
+                <VStack pt={20} maxW={650}>
+                    <Text>
+                        If you understand that you need a new Clowdr account since 1<sup>st</sup> Jan 2021 <em>and</em>{" "}
+                        you signed up for Clowdr prior to receiving your invitation, then you can log in to the account
+                        you created using the button below.
+                    </Text>
+                    <LoginButton size="xs" redirectTo={`/invitation/accept/${inviteCode}}`} />
+                </VStack>
             </>
         );
     }

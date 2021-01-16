@@ -124,8 +124,7 @@ variables in the build which start with `SNOWPACK_PUBLIC_`.
 | SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN           | The domain and port of the GraphQL server                                            | Yes      |
 | SNOWPACK_PUBLIC_GRAPHQL_API_SECURE_PROTOCOLS | Boolean. Default: true. Whether to use https/wss or not.                             | Yes      |
 | _Auth0_                                      |                                                                                      |          |
-| SNOWPACK_PUBLIC_AUTH_LOGIN_CALLBACK_URL      | `http(s)://<frontend-url>/auth0/logged-in`                                           | Yes      |
-| SNOWPACK_PUBLIC_AUTH_LOGOUT_CALLBACK_URL     | `http(s)://<frontend-url>/auth0/logged-out`                                          | Yes      |
+| SNOWPACK_PUBLIC_AUTH_CALLBACK_URL            | `http(s)://<frontend-url>/auth0` (no trailing slash)                                 | Yes      |
 | SNOWPACK_PUBLIC_AUTH_DOMAIN                  | <auth0-domain> e.g. `something.eu.auth0.com`                                         | Yes      |
 | SNOWPACK_PUBLIC_AUTH_CLIENT_ID               | <auth0-client-id> as shown in Auth0 Application                                      | Yes      |
 | _AWS_                                        |                                                                                      |          |

@@ -5,5 +5,6 @@ export type AttendeeDescriptor = {
     displayName: string;
     invitedEmailAddress?: string;
     inviteSent: boolean;
+    inviteCode?: string;
     groupIds: Set<string>;
 };

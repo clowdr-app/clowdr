@@ -50,6 +50,7 @@ gql`
             linkToUserId
             createdAt
             updatedAt
+            hash
         }
         userId
         updatedAt
@@ -175,6 +176,7 @@ export default function ManageConferencePeoplePage(): JSX.Element {
                 displayName: attendee.displayName,
                 invitedEmailAddress: attendee.invitation?.invitedEmailAddress,
                 inviteSent: attendee.inviteSent ?? true,
+                inviteCode: attendee.invitation?.inviteCode,
                 groupIds,
             });
         }
@@ -268,6 +270,22 @@ export default function ManageConferencePeoplePage(): JSX.Element {
                     };
                 },
                 extract: (v) => v.invitedEmailAddress ?? "N/A",
+                spec: {
+                    fieldType: FieldType.string,
+                    convertFromUI: (x) => x,
+                    convertToUI: (x) => x,
+                    filter: defaultStringFilter,
+                },
+                validate: (_v) => true, // TODO: Validation
+            },
+            inviteCode: {
+                heading: "Invitation code",
+                ariaLabel: "Invitation code",
+                description: "The code for this attendee's invitation. May change after certain operations.",
+                isHidden: false,
+                isEditable: false,
+                defaultValue: "",
+                extract: (v) => v.inviteCode ?? "N/A",
                 spec: {
                     fieldType: FieldType.string,
                     convertFromUI: (x) => x,

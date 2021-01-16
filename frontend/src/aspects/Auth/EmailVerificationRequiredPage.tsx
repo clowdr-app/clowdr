@@ -1,44 +1,51 @@
-import { useAuth0 } from "@auth0/auth0-react";
 import { Heading, Text } from "@chakra-ui/react";
-import React, { useEffect } from "react";
-import { LinkButton } from "../Chakra/LinkButton";
+import React from "react";
 import FAIcon from "../Icons/FAIcon";
 import { useNoPrimaryMenuButtons } from "../Menu/usePrimaryMenuButtons";
+import { getCachedInviteCode } from "../Users/NewUser/InviteCodeLocalStorage";
 import { useTitle } from "../Utils/useTitle";
+import LoginButton from "./Buttons/LoginButton";
 
-export default function EmailVerificationRequiredPage({ noRedirect }: { noRedirect: boolean }): JSX.Element {
-    const { logout } = useAuth0();
-
+export default function EmailVerificationRequiredPage({
+    message,
+    success,
+}: {
+    success: boolean;
+    message: string | null;
+}): JSX.Element {
     useNoPrimaryMenuButtons();
     const title = useTitle("Email verification required");
 
-    useEffect(() => {
-        if (!noRedirect) {
-            let returnTo = import.meta.env.SNOWPACK_PUBLIC_AUTH_LOGOUT_CALLBACK_URL;
-            returnTo =
-                returnTo.substr(0, returnTo.length - "logged-out".length) + "email-verification-required/no-redirect";
-            logout({
-                returnTo,
-            });
-        }
-    }, [logout, noRedirect]);
+    const cachedInviteCode = getCachedInviteCode();
+    let continuationPath: string | undefined;
+    if (cachedInviteCode) {
+        continuationPath = `/invitation/accept/${cachedInviteCode}`;
+    }
 
     return (
         <>
             {title}
             <FAIcon iconStyle="s" icon="envelope" fontSize="6xl" />
-            <Heading as="h1" fontSize="4xl" lineHeight="revert">
-                Please verify your email
+            <Heading as="h1" fontSize="3xl" lineHeight="revert">
+                {success ? "Your email was verified. You can now log in." : message ?? "Please verify your email address"}
             </Heading>
-            <Text fontSize="xl" lineHeight="revert" fontWeight="light" maxW={600}>
-                Before you can login you must verify your email address.{" "}
-                <b>
-                    You should have received an email from&nbsp;
-                    <i>no-reply@auth0user.net</i>
-                </b>
-                &nbsp;with your verification link. After verifying your email, please log in again.
+            {!message ? (
+                <Text fontSize="xl" lineHeight="revert" fontWeight="light" maxW={600}>
+                    Before you can login you must verify your email address.{" "}
+                    <b>
+                        You should have received an email from&nbsp;
+                        <i>welcome@clowdr.org</i>
+                    </b>
+                    &nbsp;with your verification link. After verifying your email, please log in to continue.
+                </Text>
+            ) : undefined}
+            <Text>
+                {success ? (
+                    <LoginButton size="lg" redirectTo={continuationPath ?? "/"} />
+                ) : (
+                    <i>You can now close this page while you wait for your verification email.</i>
+                )}
             </Text>
-            <LinkButton to="/">Go to home page</LinkButton>
         </>
     );
 }

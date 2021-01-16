@@ -28387,7 +28387,7 @@ export type UpdateConferenceMutationVariables = Exact<{
 
 export type UpdateConferenceMutation = { readonly __typename?: 'mutation_root', readonly update_Conference?: Maybe<{ readonly __typename?: 'Conference_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string }> }> };
 
-export type AttendeePartsFragment = { readonly __typename?: 'Attendee', readonly conferenceId: any, readonly id: any, readonly userId?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly displayName: string, readonly inviteSent?: Maybe<boolean>, readonly groupAttendees: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly attendeeId: any, readonly id: any, readonly groupId: any }>, readonly invitation?: Maybe<{ readonly __typename?: 'Invitation', readonly attendeeId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any }> };
+export type AttendeePartsFragment = { readonly __typename?: 'Attendee', readonly conferenceId: any, readonly id: any, readonly userId?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly displayName: string, readonly inviteSent?: Maybe<boolean>, readonly groupAttendees: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly attendeeId: any, readonly id: any, readonly groupId: any }>, readonly invitation?: Maybe<{ readonly __typename?: 'Invitation', readonly attendeeId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> }> };
 
 export type SelectAllAttendeesQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -29568,6 +29568,7 @@ export const AttendeePartsFragmentDoc = gql`
     linkToUserId
     createdAt
     updatedAt
+    hash
   }
   userId
   updatedAt

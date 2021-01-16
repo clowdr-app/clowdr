@@ -4,7 +4,7 @@ import React from "react";
 
 export default function LogoutButton({ asMenuItem }: { asMenuItem?: boolean }): JSX.Element {
     const { logout } = useAuth0();
-    const returnTo = import.meta.env.SNOWPACK_PUBLIC_AUTH_LOGOUT_CALLBACK_URL;
+    const returnTo = import.meta.env.SNOWPACK_PUBLIC_AUTH_CALLBACK_URL + "/logged-out";
 
     return asMenuItem ? (
         <MenuItem size="sm" onClick={() => logout({ returnTo })} colorScheme="red">

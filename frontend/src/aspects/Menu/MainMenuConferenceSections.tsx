@@ -255,7 +255,7 @@ export function MainMenuConferenceSections_Inner({
                         />
                     ))}
             </List>
-            <Accordion defaultIndex={[0]} allowMultiple>
+            <Accordion defaultIndex={[2]}>
                 <AccordionItem>
                     <AccordionButton>
                         <Box flex="1" textAlign="left">

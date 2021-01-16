@@ -8,7 +8,7 @@ export default function PageCountBox(): JSX.Element {
     const pageCountLabel = pageCount ? `${pageCount} user${pageCount !== 1 ? "s" : ""} on this page now` : undefined;
 
     return pageCountLabel ? (
-        <Box background="black" px={4} py={2} borderRadius={10}>
+        <Box color="white" background="black" px={4} py={2} borderRadius={10}>
             <Tooltip label={pageCountLabel}>
                 <chakra.span fontSize="1.2rem">
                     <FAIcon aria-label={pageCountLabel} iconStyle="s" icon="users" verticalAlign="middle" />

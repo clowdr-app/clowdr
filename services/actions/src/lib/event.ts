@@ -75,13 +75,24 @@ export async function createEventBreakoutRoom(
     vonageSessionId: string,
     _contentGroupId?: string,
     contentGroupTitle?: string,
-    contentGroupChatId?: string,
+    contentGroupChatId?: string
 ): Promise<void> {
+    const startTimeD = new Date(startTime);
+    // e.g. toUTCString() == "Wed, 14 Jun 2017 07:00:00 GMT"
+    const startTimeParts = startTimeD.toUTCString().split(",")[1].split(" ");
+    // e.g. ["14", "Jun", "2017", "07:00:00", "GMT"]
+    //        0      1       2         3
+    const startTimeStr = `${startTimeParts[0]} ${startTimeParts[1]} ${startTimeParts[3].slice(
+        0,
+        startTimeParts[3].length - 3
+    )}`;
+    // Results in: "14 Jun 07:00"
+
     await apolloClient.mutate({
         mutation: CreateEventBreakoutRoomDocument,
         variables: {
             conferenceId,
-            name: contentGroupTitle ? `${eventName}: ${contentGroupTitle} ${startTime}` : `${eventName} ${startTime}`,
+            name: contentGroupTitle ? `${eventName}: ${contentGroupTitle} ${startTimeStr}` : `${eventName} ${startTimeStr}`,
             originatingEventId: eventId,
             publicVonageSessionId: vonageSessionId,
             chatId: contentGroupChatId,

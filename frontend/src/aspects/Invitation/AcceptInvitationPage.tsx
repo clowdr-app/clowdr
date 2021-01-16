@@ -421,7 +421,7 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
                     </ListItem>
                 </List>
                 <VStack pt={5} maxW={650} spacing={4}>
-                    <SignupButton redirectTo={`/invitation/accept/${inviteCode}}`} size="lg" />
+                    <SignupButton redirectTo={`/invitation/accept/${inviteCode}`} size="lg" />
                     <Text maxW={650} fontSize="sm">
                         <i>
                             Unless you created a Clowdr account AFTER 1<sup>st</sup> Jan 2021, please sign up for a new
@@ -435,7 +435,7 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
                         <em>but</em> you have in fact already signed up for Clowdr since that date, then you can log in
                         to the account you created using the button below.
                     </Text>
-                    <LoginButton size="xs" redirectTo={`/invitation/accept/${inviteCode}}`} />
+                    <LoginButton size="xs" redirectTo={`/invitation/accept/${inviteCode}`} />
                 </VStack>
             </>
         );

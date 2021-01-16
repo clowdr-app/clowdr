@@ -95,9 +95,17 @@ export default function ApolloCustomProvider({
                     reconnect: true,
                     connectionParams: async () => {
                         if (isAuthenticated) {
+                            const authTokenConferenceId = window.localStorage.getItem("CLOWDR_AUTH_CONF_SLUG_WSS");
+                            const ignoreCache = !!conferenceSlug && conferenceSlug !== authTokenConferenceId;
+                            if (conferenceSlug) {
+                                window.localStorage.setItem("CLOWDR_AUTH_CONF_SLUG_WSS", conferenceSlug);
+                            }
                             return {
                                 headers: {
-                                    Authorization: `Bearer ${await getAccessTokenSilently()}`,
+                                    Authorization: `Bearer ${await getAccessTokenSilently({
+                                        ignoreCache,
+                                        "conference-slug": conferenceSlug ?? undefined,
+                                    })}`,
                                 },
                             };
                         } else {

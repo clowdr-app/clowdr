@@ -29,7 +29,7 @@ gql`
     }
 
     query GetPresenceCountOf($path: String!, $conferenceId: uuid!) {
-        presence_Page_by_pk(path: $path, conferenceId: $conferenceId) {
+        presence_Page(where: { path: { _eq: $path }, conferenceId: { _eq: $conferenceId } }, limit: 1) {
             path
             conferenceId
             count
@@ -68,12 +68,13 @@ export default function PresenceCountProvider({
 
             try {
                 previousErrorPath.current = null;
-                return (
-                    await getPresenceCountOfQ({
-                        conferenceId: conference.id,
-                        path,
-                    })
-                ).data?.presence_Page_by_pk?.count;
+                const r = await getPresenceCountOfQ({
+                    conferenceId: conference.id,
+                    path,
+                });
+                return r.data?.presence_Page && r.data?.presence_Page.length > 0
+                    ? r.data?.presence_Page[0].count
+                    : undefined;
             } catch {
                 previousErrorPath.current = path;
                 return undefined;

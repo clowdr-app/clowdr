@@ -7547,6 +7547,197 @@ export enum ExecutedTransitions_Update_Column {
   UpdatedAt = 'updatedAt'
 }
 
+/** columns and relationships of "FlatUnauthPermission" */
+export type FlatUnauthPermission = {
+  readonly __typename?: 'FlatUnauthPermission';
+  readonly permission_name?: Maybe<Scalars['String']>;
+  readonly slug?: Maybe<Scalars['String']>;
+};
+
+/** aggregated selection of "FlatUnauthPermission" */
+export type FlatUnauthPermission_Aggregate = {
+  readonly __typename?: 'FlatUnauthPermission_aggregate';
+  readonly aggregate?: Maybe<FlatUnauthPermission_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<FlatUnauthPermission>;
+};
+
+/** aggregate fields of "FlatUnauthPermission" */
+export type FlatUnauthPermission_Aggregate_Fields = {
+  readonly __typename?: 'FlatUnauthPermission_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<FlatUnauthPermission_Max_Fields>;
+  readonly min?: Maybe<FlatUnauthPermission_Min_Fields>;
+};
+
+
+/** aggregate fields of "FlatUnauthPermission" */
+export type FlatUnauthPermission_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<FlatUnauthPermission_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "FlatUnauthPermission" */
+export type FlatUnauthPermission_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<FlatUnauthPermission_Max_Order_By>;
+  readonly min?: Maybe<FlatUnauthPermission_Min_Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "FlatUnauthPermission". All fields are combined with a logical 'AND'. */
+export type FlatUnauthPermission_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<FlatUnauthPermission_Bool_Exp>>>;
+  readonly _not?: Maybe<FlatUnauthPermission_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<FlatUnauthPermission_Bool_Exp>>>;
+  readonly permission_name?: Maybe<String_Comparison_Exp>;
+  readonly slug?: Maybe<String_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type FlatUnauthPermission_Max_Fields = {
+  readonly __typename?: 'FlatUnauthPermission_max_fields';
+  readonly permission_name?: Maybe<Scalars['String']>;
+  readonly slug?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "FlatUnauthPermission" */
+export type FlatUnauthPermission_Max_Order_By = {
+  readonly permission_name?: Maybe<Order_By>;
+  readonly slug?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type FlatUnauthPermission_Min_Fields = {
+  readonly __typename?: 'FlatUnauthPermission_min_fields';
+  readonly permission_name?: Maybe<Scalars['String']>;
+  readonly slug?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "FlatUnauthPermission" */
+export type FlatUnauthPermission_Min_Order_By = {
+  readonly permission_name?: Maybe<Order_By>;
+  readonly slug?: Maybe<Order_By>;
+};
+
+/** ordering options when selecting data from "FlatUnauthPermission" */
+export type FlatUnauthPermission_Order_By = {
+  readonly permission_name?: Maybe<Order_By>;
+  readonly slug?: Maybe<Order_By>;
+};
+
+/** select columns of table "FlatUnauthPermission" */
+export enum FlatUnauthPermission_Select_Column {
+  /** column name */
+  PermissionName = 'permission_name',
+  /** column name */
+  Slug = 'slug'
+}
+
+/** columns and relationships of "FlatUserPermission" */
+export type FlatUserPermission = {
+  readonly __typename?: 'FlatUserPermission';
+  /** An object relationship */
+  readonly conference?: Maybe<Conference>;
+  /** An object relationship */
+  readonly permission?: Maybe<Permission>;
+  readonly permission_name?: Maybe<Scalars['String']>;
+  readonly slug?: Maybe<Scalars['String']>;
+  /** An object relationship */
+  readonly user?: Maybe<User>;
+  readonly user_id?: Maybe<Scalars['String']>;
+};
+
+/** aggregated selection of "FlatUserPermission" */
+export type FlatUserPermission_Aggregate = {
+  readonly __typename?: 'FlatUserPermission_aggregate';
+  readonly aggregate?: Maybe<FlatUserPermission_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<FlatUserPermission>;
+};
+
+/** aggregate fields of "FlatUserPermission" */
+export type FlatUserPermission_Aggregate_Fields = {
+  readonly __typename?: 'FlatUserPermission_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<FlatUserPermission_Max_Fields>;
+  readonly min?: Maybe<FlatUserPermission_Min_Fields>;
+};
+
+
+/** aggregate fields of "FlatUserPermission" */
+export type FlatUserPermission_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<FlatUserPermission_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "FlatUserPermission" */
+export type FlatUserPermission_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<FlatUserPermission_Max_Order_By>;
+  readonly min?: Maybe<FlatUserPermission_Min_Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "FlatUserPermission". All fields are combined with a logical 'AND'. */
+export type FlatUserPermission_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<FlatUserPermission_Bool_Exp>>>;
+  readonly _not?: Maybe<FlatUserPermission_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<FlatUserPermission_Bool_Exp>>>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly permission?: Maybe<Permission_Bool_Exp>;
+  readonly permission_name?: Maybe<String_Comparison_Exp>;
+  readonly slug?: Maybe<String_Comparison_Exp>;
+  readonly user?: Maybe<User_Bool_Exp>;
+  readonly user_id?: Maybe<String_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type FlatUserPermission_Max_Fields = {
+  readonly __typename?: 'FlatUserPermission_max_fields';
+  readonly permission_name?: Maybe<Scalars['String']>;
+  readonly slug?: Maybe<Scalars['String']>;
+  readonly user_id?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "FlatUserPermission" */
+export type FlatUserPermission_Max_Order_By = {
+  readonly permission_name?: Maybe<Order_By>;
+  readonly slug?: Maybe<Order_By>;
+  readonly user_id?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type FlatUserPermission_Min_Fields = {
+  readonly __typename?: 'FlatUserPermission_min_fields';
+  readonly permission_name?: Maybe<Scalars['String']>;
+  readonly slug?: Maybe<Scalars['String']>;
+  readonly user_id?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "FlatUserPermission" */
+export type FlatUserPermission_Min_Order_By = {
+  readonly permission_name?: Maybe<Order_By>;
+  readonly slug?: Maybe<Order_By>;
+  readonly user_id?: Maybe<Order_By>;
+};
+
+/** ordering options when selecting data from "FlatUserPermission" */
+export type FlatUserPermission_Order_By = {
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly permission?: Maybe<Permission_Order_By>;
+  readonly permission_name?: Maybe<Order_By>;
+  readonly slug?: Maybe<Order_By>;
+  readonly user?: Maybe<User_Order_By>;
+  readonly user_id?: Maybe<Order_By>;
+};
+
+/** select columns of table "FlatUserPermission" */
+export enum FlatUserPermission_Select_Column {
+  /** column name */
+  PermissionName = 'permission_name',
+  /** column name */
+  Slug = 'slug',
+  /** column name */
+  UserId = 'user_id'
+}
+
 export type GetContentItemOutput = {
   readonly __typename?: 'GetContentItemOutput';
   readonly contentGroupTitle: Scalars['String'];
@@ -23110,6 +23301,14 @@ export type Query_Root = {
   readonly ExecutedTransitions_aggregate: ExecutedTransitions_Aggregate;
   /** fetch data from the table: "ExecutedTransitions" using primary key columns */
   readonly ExecutedTransitions_by_pk?: Maybe<ExecutedTransitions>;
+  /** fetch data from the table: "FlatUnauthPermission" */
+  readonly FlatUnauthPermission: ReadonlyArray<FlatUnauthPermission>;
+  /** fetch aggregated fields from the table: "FlatUnauthPermission" */
+  readonly FlatUnauthPermission_aggregate: FlatUnauthPermission_Aggregate;
+  /** fetch data from the table: "FlatUserPermission" */
+  readonly FlatUserPermission: ReadonlyArray<FlatUserPermission>;
+  /** fetch aggregated fields from the table: "FlatUserPermission" */
+  readonly FlatUserPermission_aggregate: FlatUserPermission_Aggregate;
   /** fetch data from the table: "Group" */
   readonly Group: ReadonlyArray<Group>;
   /** fetch data from the table: "GroupAttendee" */
@@ -24026,6 +24225,46 @@ export type Query_RootExecutedTransitions_AggregateArgs = {
 /** query root */
 export type Query_RootExecutedTransitions_By_PkArgs = {
   id: Scalars['uuid'];
+};
+
+
+/** query root */
+export type Query_RootFlatUnauthPermissionArgs = {
+  distinct_on?: Maybe<ReadonlyArray<FlatUnauthPermission_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<FlatUnauthPermission_Order_By>>;
+  where?: Maybe<FlatUnauthPermission_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootFlatUnauthPermission_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<FlatUnauthPermission_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<FlatUnauthPermission_Order_By>>;
+  where?: Maybe<FlatUnauthPermission_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootFlatUserPermissionArgs = {
+  distinct_on?: Maybe<ReadonlyArray<FlatUserPermission_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<FlatUserPermission_Order_By>>;
+  where?: Maybe<FlatUserPermission_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootFlatUserPermission_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<FlatUserPermission_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<FlatUserPermission_Order_By>>;
+  where?: Maybe<FlatUserPermission_Bool_Exp>;
 };
 
 
@@ -25328,6 +25567,14 @@ export type Subscription_Root = {
   readonly ExecutedTransitions_aggregate: ExecutedTransitions_Aggregate;
   /** fetch data from the table: "ExecutedTransitions" using primary key columns */
   readonly ExecutedTransitions_by_pk?: Maybe<ExecutedTransitions>;
+  /** fetch data from the table: "FlatUnauthPermission" */
+  readonly FlatUnauthPermission: ReadonlyArray<FlatUnauthPermission>;
+  /** fetch aggregated fields from the table: "FlatUnauthPermission" */
+  readonly FlatUnauthPermission_aggregate: FlatUnauthPermission_Aggregate;
+  /** fetch data from the table: "FlatUserPermission" */
+  readonly FlatUserPermission: ReadonlyArray<FlatUserPermission>;
+  /** fetch aggregated fields from the table: "FlatUserPermission" */
+  readonly FlatUserPermission_aggregate: FlatUserPermission_Aggregate;
   /** fetch data from the table: "Group" */
   readonly Group: ReadonlyArray<Group>;
   /** fetch data from the table: "GroupAttendee" */
@@ -26244,6 +26491,46 @@ export type Subscription_RootExecutedTransitions_AggregateArgs = {
 /** subscription root */
 export type Subscription_RootExecutedTransitions_By_PkArgs = {
   id: Scalars['uuid'];
+};
+
+
+/** subscription root */
+export type Subscription_RootFlatUnauthPermissionArgs = {
+  distinct_on?: Maybe<ReadonlyArray<FlatUnauthPermission_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<FlatUnauthPermission_Order_By>>;
+  where?: Maybe<FlatUnauthPermission_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootFlatUnauthPermission_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<FlatUnauthPermission_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<FlatUnauthPermission_Order_By>>;
+  where?: Maybe<FlatUnauthPermission_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootFlatUserPermissionArgs = {
+  distinct_on?: Maybe<ReadonlyArray<FlatUserPermission_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<FlatUserPermission_Order_By>>;
+  where?: Maybe<FlatUserPermission_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootFlatUserPermission_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<FlatUserPermission_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<FlatUserPermission_Order_By>>;
+  where?: Maybe<FlatUserPermission_Bool_Exp>;
 };
 
 
@@ -28895,7 +29182,7 @@ export type GetPresenceCountOfQueryVariables = Exact<{
 }>;
 
 
-export type GetPresenceCountOfQuery = { readonly __typename?: 'query_root', readonly presence_Page_by_pk?: Maybe<{ readonly __typename?: 'presence_Page', readonly path: string, readonly conferenceId: any, readonly count: number }> };
+export type GetPresenceCountOfQuery = { readonly __typename?: 'query_root', readonly presence_Page: ReadonlyArray<{ readonly __typename?: 'presence_Page', readonly path: string, readonly conferenceId: any, readonly count: number }> };
 
 export type DeleteOpenTabMutationVariables = Exact<{
   oldId: Scalars['uuid'];
@@ -34416,7 +34703,10 @@ export type PresenceCountSubscriptionHookResult = ReturnType<typeof usePresenceC
 export type PresenceCountSubscriptionResult = Apollo.SubscriptionResult<PresenceCountSubscription>;
 export const GetPresenceCountOfDocument = gql`
     query GetPresenceCountOf($path: String!, $conferenceId: uuid!) {
-  presence_Page_by_pk(path: $path, conferenceId: $conferenceId) {
+  presence_Page(
+    where: {path: {_eq: $path}, conferenceId: {_eq: $conferenceId}}
+    limit: 1
+  ) {
     path
     conferenceId
     count

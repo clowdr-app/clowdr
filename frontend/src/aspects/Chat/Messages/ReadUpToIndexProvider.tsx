@@ -57,14 +57,14 @@ function ReadUpToIndexProvider_UserExists({
     });
     const [setUnread] = useSetReadUpToIndexMutation();
     const [lastUpdateTime, setLastUpdateTime] = useState<number>(Date.now());
-    const [hasScrolledUp, setHasScrolledUp] = useState<boolean>(false);
+    const [_hasScrolledUp, setHasScrolledUp] = useState<boolean>(false);
     const now = useRealTime(60000);
 
     const messages = useReceiveMessageQueries();
 
     useEffect(() => {
         if (messages.liveMessages && messages.liveMessages.size > 0) {
-            if (hasScrolledUp && lastUpdateTime < now - 30000) {
+            if (/*hasScrolledUp &&*/ lastUpdateTime < now - 5000) {
                 setLastUpdateTime(Date.now());
                 setUnread({
                     variables: {
@@ -75,7 +75,7 @@ function ReadUpToIndexProvider_UserExists({
                 });
             }
         }
-    }, [attendeeId, chatId, hasScrolledUp, lastUpdateTime, messages.liveMessages, now, setUnread]);
+    }, [attendeeId, chatId, lastUpdateTime, messages.liveMessages, now, setUnread]);
 
     const readUpToMarkerSeen = useCallback(() => {
         if (messages.liveMessages && messages.liveMessages.size > 0) {

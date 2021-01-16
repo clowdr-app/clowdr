@@ -9,9 +9,10 @@ import {
     InputRightElement,
 } from "@chakra-ui/react";
 import React, { useEffect, useRef, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { Redirect, useHistory } from "react-router-dom";
 import FAIcon from "../../Icons/FAIcon";
 import isValidUUID from "../../Utils/isValidUUID";
+import { getCachedInviteCode, setCachedInviteCode } from "./InviteCodeLocalStorage";
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function InviteCodeInput({
@@ -31,6 +32,12 @@ export default function InviteCodeInput({
             inviteCodeButtonRef.current?.focus();
         }
     }, [isInviteCodeValid]);
+
+    const cachedInviteCode = getCachedInviteCode();
+    if (cachedInviteCode) {
+        setCachedInviteCode(null);
+        return <Redirect to={`/invitation/accept/${cachedInviteCode}`} />;
+    }
 
     return (
         <form

@@ -7,9 +7,11 @@ import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 export default function ProtectedRoute({
     component,
     altIfNotAuthed,
+    redirectTo,
     ...args
 }: {
     altIfNotAuthed?: JSX.Element;
+    redirectTo?: string;
     component: React.ComponentType<RouteComponentProps<any>> | React.ComponentType<any>;
 } & RouteProps): JSX.Element {
     const { isAuthenticated, error } = useAuth0();
@@ -41,6 +43,9 @@ export default function ProtectedRoute({
                         </Box>
                     );
                 },
+                returnTo: () => {
+                    return redirectTo ?? window.location.href;
+                }
             })}
             {...args}
         />

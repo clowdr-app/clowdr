@@ -97,12 +97,6 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
 
     const toast = useToast();
 
-    useEffect(() => {
-        if (inviteCode) {
-            setCachedInviteCode(inviteCode);
-        }
-    }, [inviteCode]);
-
     const { user, loading: isUserLoading } = useMaybeCurrentUser();
 
     const { loading, error, data } = useSelectInvitationForAcceptQuery({
@@ -379,6 +373,8 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
             }
         }
     } else {
+        setCachedInviteCode(inviteCode);
+
         return (
             <>
                 {title}

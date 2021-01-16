@@ -14,32 +14,24 @@ export default function SignupButton({
 }): JSX.Element {
     const { isAuthenticated, loginWithRedirect } = useAuth0();
     const location = useLocation();
-    const redirectUri =
-        import.meta.env.SNOWPACK_PUBLIC_AUTH_CALLBACK_URL +
-        "/email-verification/result?redirectTo=" +
-        encodeURI(redirectTo ?? location.pathname);
+    const redirectUri = import.meta.env.SNOWPACK_PUBLIC_AUTH_CALLBACK_URL + "/email-verification/result";
+
+    const opts = {
+        screen_hint: "signup",
+        redirectUri,
+        appState: {
+            returnTo: redirectTo ?? location.pathname,
+        },
+    };
+
     return isAuthenticated ? (
         <></>
     ) : asMenuItem ? (
-        <MenuItem
-            size={size ?? "sm"}
-            onClick={() =>
-                loginWithRedirect({
-                    screen_hint: "signup",
-                    redirectUri,
-                })
-            }
-            colorScheme="blue"
-        >
+        <MenuItem size={size ?? "sm"} onClick={() => loginWithRedirect(opts)} colorScheme="blue">
             Sign Up
         </MenuItem>
     ) : (
-        <Button
-            size={size ?? "sm"}
-            onClick={() => loginWithRedirect({ screen_hint: "signup" })}
-            colorScheme="blue"
-            role="menuitem"
-        >
+        <Button size={size ?? "sm"} onClick={() => loginWithRedirect(opts)} colorScheme="blue" role="menuitem">
             Sign Up
         </Button>
     );

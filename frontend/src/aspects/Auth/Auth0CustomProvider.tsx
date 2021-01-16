@@ -23,7 +23,7 @@ export default function Auth0CustomProvider({ children }: { children: JSX.Elemen
         <Auth0Provider
             domain={domain}
             clientId={clientId}
-            redirectUri={redirectUri + "/logged-in?redirectTo=" + encodeURI(window.location.href)}
+            redirectUri={redirectUri + "/logged-in"}
             onRedirectCallback={onRedirectCallback}
             useRefreshTokens={true}
             cacheLocation={"localstorage"}

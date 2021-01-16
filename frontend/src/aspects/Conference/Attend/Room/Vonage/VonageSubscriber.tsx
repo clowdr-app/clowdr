@@ -23,7 +23,8 @@ export function VonageSubscriber({
         if (onChangeActivity) {
             onChangeActivity(talking);
         }
-    }, [onChangeActivity, talking]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [talking]);
 
     useEffect(() => {
         if (subscriber) {
@@ -49,7 +50,7 @@ export function VonageSubscriber({
         setSubscriber(subscriber);
 
         let activity: null | { timestamp: number; talking: boolean } = null;
-        subscriber.on("audioLevelUpdated", function (event) {
+        subscriber.on("audioLevelUpdated", (event) => {
             const now = Date.now();
             if (event.audioLevel > 0.2) {
                 if (!activity) {

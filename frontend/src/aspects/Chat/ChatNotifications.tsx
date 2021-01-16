@@ -93,7 +93,7 @@ export function ChatNotificationsProvider_WithAttendee({
                 const newMap = new Map(old);
                 data.forEach((x) => {
                     const prev = newMap.get(x.chatId);
-                    if (x.chat.readUpToIndices.length > 0) {
+                    if (x.chat && x.chat.readUpToIndices.length > 0) {
                         newMap.set(x.chatId, {
                             old:
                                 prev?.new.readUpToIndices && prev.new.readUpToIndices.length > 0

@@ -81,6 +81,8 @@ Now, configure the application in the _Settings_ tab.
    - `https://<netlify-subdomain>.netlify.app/auth0/`
    - `http://localhost:3000/auth0/logged-in`
    - `https://<netlify-subdomain>.netlify.app/auth0/logged-in`
+   - `http://localhost:3000/auth0/email-verification/result`
+   - `https://<netlify-subdomain>.netlify.app/auth0/email-verification/result`
 
    FOR PRODUCTION: The first URL MUST be the `auth0` address
    (See [the auth0 documentation on Email Templates / Redirect URLs](https://auth0.com/docs/auth0-email-services/customize-email-templates#configuring-the-redirect-to-url)).

@@ -90,11 +90,13 @@ export function Room({
 
     const chatSources = useMemo((): ChatSources | undefined => {
         if (currentRoomEvent?.contentGroup) {
+            const rightHandTypeName = (currentRoomEvent?.contentGroup?.contentGroupTypeName ?? "PAPER");
+            const rightHandLabel = rightHandTypeName[0] + rightHandTypeName.slice(1).toLowerCase();
             return {
                 chatIdL: roomDetails.chatId ?? undefined,
                 chatIdR: currentRoomEvent?.contentGroup?.chatId ?? undefined,
                 chatLabelL: "Room",
-                chatLabelR: "Paper",
+                chatLabelR: rightHandLabel,
                 defaultSelected: "L",
             };
         } else if (roomDetails.chatId) {

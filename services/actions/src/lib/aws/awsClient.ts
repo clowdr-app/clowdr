@@ -145,7 +145,7 @@ async function initialiseAwsClient(): Promise<void> {
 
     console.log("Subscribing to SNS topic: transcode notifications");
     const transcodeSubscribeResult = await sns.subscribe({
-        Protocol: "https",
+        Protocol: process.env.HOST_SECURE_PROTOCOLS !== "false" ? "https" : "http",
         TopicArn: process.env.AWS_TRANSCODE_NOTIFICATIONS_TOPIC_ARN,
         Endpoint: transcodeNotificationUrl.toString(),
     });
@@ -161,7 +161,7 @@ async function initialiseAwsClient(): Promise<void> {
 
     console.log("Subscribing to SNS topic: transcribe notifications");
     const transcribeSubscribeResult = await sns.subscribe({
-        Protocol: "https",
+        Protocol: process.env.HOST_SECURE_PROTOCOLS !== "false" ? "https" : "http",
         TopicArn: process.env.AWS_TRANSCRIBE_NOTIFICATIONS_TOPIC_ARN,
         Endpoint: transcribeNotificationUrl.toString(),
     });
@@ -177,7 +177,7 @@ async function initialiseAwsClient(): Promise<void> {
 
     console.log("Subscribing to SNS topic: Elastic Transcoder notifications");
     const elasticTranscoderSubscribeResult = await sns.subscribe({
-        Protocol: "https",
+        Protocol: process.env.HOST_SECURE_PROTOCOLS !== "false" ? "https" : "http",
         TopicArn: process.env.AWS_ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN,
         Endpoint: elasticTranscoderNotificationUrl.toString(),
     });
@@ -193,7 +193,7 @@ async function initialiseAwsClient(): Promise<void> {
 
     console.log("Subscribing to SNS topic: MediaLive notifications");
     const mediaLiveSubscribeResult = await sns.subscribe({
-        Protocol: "https",
+        Protocol: process.env.HOST_SECURE_PROTOCOLS !== "false" ? "https" : "http",
         TopicArn: process.env.AWS_MEDIALIVE_NOTIFICATIONS_TOPIC_ARN,
         Endpoint: mediaLiveNotificationUrl.toString(),
     });
@@ -209,7 +209,7 @@ async function initialiseAwsClient(): Promise<void> {
 
     console.log("Subscribing to SNS topic: MediaPackage harvest job notifications");
     const mediaPackageHarvestSubscribeResult = await sns.subscribe({
-        Protocol: "https",
+        Protocol: process.env.HOST_SECURE_PROTOCOLS !== "false" ? "https" : "http",
         TopicArn: process.env.AWS_MEDIAPACKAGE_HARVEST_NOTIFICATIONS_TOPIC_ARN,
         Endpoint: mediaPackageHarvestNotificationUrl.toString(),
     });

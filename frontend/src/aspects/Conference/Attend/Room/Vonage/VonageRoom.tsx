@@ -44,7 +44,7 @@ function VonageRoomInner({
     vonageSessionId: string;
     getAccessToken: () => Promise<string>;
 }): JSX.Element {
-    const maxVideoStreams = 1;
+    const maxVideoStreams = 10;
     const [openTokProps, openTokMethods] = useOpenTok();
     const userId = useUserId();
     const attendee = useCurrentAttendee();
@@ -102,37 +102,38 @@ function VonageRoomInner({
     ]);
 
     const [streamLastActive, setStreamLastActive] = useState<{ [streamId: string]: number }>({});
-    const setStreamActivity = useCallback(
-        (streamId: string, activity: boolean) => {
-            if (activity) {
-                setStreamLastActive({
-                    ...streamLastActive,
-                    [streamId]: Date.now(),
-                });
-            }
-        },
-        [streamLastActive]
-    );
+    const setStreamActivity = useCallback((streamId: string, activity: boolean) => {
+        if (activity) {
+            setStreamLastActive((streamLastActiveData) => ({
+                ...streamLastActiveData,
+                [streamId]: Date.now(),
+            }));
+        }
+    }, []);
 
     const [enableStreams, setEnableStreams] = useState<string[] | null>(null);
     const updateEnabledStreams = useCallback(() => {
         if (openTokProps.streams.filter((stream) => stream.videoType === "camera").length <= maxVideoStreams) {
             setEnableStreams(null);
         } else {
-            const activeStreams = R.sortWith([R.descend((pair) => pair[1])], R.toPairs(streamLastActive)).map(
-                (pair) => pair[0]
-            );
+            const activeStreams = R.sortWith(
+                [R.descend((pair) => pair[1]), R.ascend((pair) => pair[0])],
+                R.toPairs(streamLastActive)
+            ).map((pair) => pair[0]);
             const selectedActiveStreams = activeStreams.slice(0, Math.min(activeStreams.length, maxVideoStreams));
 
             // todo: fill up rest of the available video slots with inactive streams
+
+            console.log("Enabled streams", selectedActiveStreams);
 
             setEnableStreams(selectedActiveStreams);
         }
     }, [openTokProps.streams, streamLastActive]);
     useEffect(() => {
         updateEnabledStreams();
-    }, [updateEnabledStreams]);
-    usePolling(updateEnabledStreams, 5000, true);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+    usePolling(updateEnabledStreams, 3000, true);
 
     return (
         <Box display="grid" gridTemplateRows="1fr auto">

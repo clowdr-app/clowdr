@@ -15,13 +15,11 @@ import {
     ListItem,
     Text,
 } from "@chakra-ui/react";
-import { formatRelative, formatRFC7231 } from "date-fns";
+import { formatRelative } from "date-fns";
 import React, { useEffect, useState } from "react";
 import {
     MenuSchedule_EventFragment,
-    useMenuSchedule_CurrentEventsQuery,
-    useMenuSchedule_EventsIn30MinutesQuery,
-    useMenuSchedule_EventsInOneHourQuery,
+    useMenuScheduleQuery,
     useMenuSchedule_SearchEventsLazyQuery,
 } from "../../generated/graphql";
 import { LinkButton } from "../Chakra/LinkButton";
@@ -32,20 +30,22 @@ import ApolloQueryWrapper from "../GQL/ApolloQueryWrapper";
 import { FAIcon } from "../Icons/FAIcon";
 
 gql`
-    query MenuSchedule_CurrentEvents($now: timestamptz!, $conferenceId: uuid!) {
-        Event(where: { startTime: { _lte: $now }, endTime: { _gte: $now }, conferenceId: { _eq: $conferenceId } }) {
+    query MenuSchedule($now: timestamptz!, $in30Minutes: timestamptz!, $inOneHour: timestamptz!, $conferenceId: uuid!) {
+        eventsNow: Event(
+            where: { startTime: { _lte: $now }, endTime: { _gte: $now }, conferenceId: { _eq: $conferenceId } }
+        ) {
             ...MenuSchedule_Event
         }
-    }
 
-    query MenuSchedule_EventsIn30Minutes($now: timestamptz!, $in30Minutes: timestamptz!, $conferenceId: uuid!) {
-        Event(where: { startTime: { _gt: $now, _lte: $in30Minutes }, conferenceId: { _eq: $conferenceId } }) {
+        eventsIn30mins: Event(
+            where: { startTime: { _gt: $now, _lte: $in30Minutes }, conferenceId: { _eq: $conferenceId } }
+        ) {
             ...MenuSchedule_Event
         }
-    }
 
-    query MenuSchedule_EventsInOneHour($in30Minutes: timestamptz!, $inOneHour: timestamptz!, $conferenceId: uuid!) {
-        Event(where: { startTime: { _gt: $in30Minutes, _lte: $inOneHour }, conferenceId: { _eq: $conferenceId } }) {
+        eventsIn1Hour: Event(
+            where: { startTime: { _gt: $in30Minutes, _lte: $inOneHour }, conferenceId: { _eq: $conferenceId } }
+        ) {
             ...MenuSchedule_Event
         }
     }
@@ -117,24 +117,10 @@ export function MainMenuProgram(): JSX.Element {
         true
     );
 
-    const currentResult = useMenuSchedule_CurrentEventsQuery({
+    const scheduleResult = useMenuScheduleQuery({
         variables: {
             conferenceId: conference.id,
             now,
-        },
-    });
-
-    const in30MinutesResult = useMenuSchedule_EventsIn30MinutesQuery({
-        variables: {
-            conferenceId: conference.id,
-            now,
-            in30Minutes,
-        },
-    });
-
-    const inOneHourResult = useMenuSchedule_EventsInOneHourQuery({
-        variables: {
-            conferenceId: conference.id,
             in30Minutes,
             inOneHour,
         },
@@ -199,17 +185,17 @@ export function MainMenuProgram(): JSX.Element {
                 </>
             ) : (
                 <>
-                    <ApolloQueryWrapper getter={(data) => data.Event} queryResult={currentResult}>
+                    <ApolloQueryWrapper getter={(data) => data.eventsNow} queryResult={scheduleResult}>
                         {(events: readonly MenuSchedule_EventFragment[]) => (
                             <MainMenuProgramInner events={events} title="Happening now" />
                         )}
                     </ApolloQueryWrapper>
-                    <ApolloQueryWrapper getter={(data) => data.Event} queryResult={in30MinutesResult}>
+                    <ApolloQueryWrapper getter={(data) => data.eventsIn30mins} queryResult={scheduleResult}>
                         {(events: readonly MenuSchedule_EventFragment[]) => (
                             <MainMenuProgramInner events={events} title="Starting in the next 30 minutes" />
                         )}
                     </ApolloQueryWrapper>
-                    <ApolloQueryWrapper getter={(data) => data.Event} queryResult={inOneHourResult}>
+                    <ApolloQueryWrapper getter={(data) => data.eventsIn1Hour} queryResult={scheduleResult}>
                         {(events: readonly MenuSchedule_EventFragment[]) => (
                             <MainMenuProgramInner events={events} title="Starting in the next hour" />
                         )}
@@ -256,12 +242,7 @@ export function MainMenuProgramInner({
                                     py={2}
                                 >
                                     <HStack width="100%" justifyContent="space-between">
-                                        <Text
-                                            flex="0 1 1"
-                                            overflow="hidden"
-                                            title={eventName}
-                                            whiteSpace="normal"
-                                        >
+                                        <Text flex="0 1 1" overflow="hidden" title={eventName} whiteSpace="normal">
                                             {eventName}
                                         </Text>
                                         <Text flex="0 1 1">

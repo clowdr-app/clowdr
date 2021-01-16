@@ -37,6 +37,7 @@ import { FAIcon } from "../Icons/FAIcon";
 import PresenceCountProvider from "../Presence/PresenceCountProvider";
 import RoomParticipantsProvider from "../Room/RoomParticipantsProvider";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
+import useLazyRenderAndRetain from "./LazyRenderAndRetain";
 import { MainMenuProgram } from "./MainMenuProgram";
 
 gql`
@@ -169,6 +170,161 @@ function sortChats(attendeeId: string, x: SidebarChatInfoFragment, y: SidebarCha
     }
 }
 
+function ChatsPanel({
+    attendeeId,
+    onClose,
+    confSlug,
+}: {
+    attendeeId: string;
+    onClose: () => void;
+    confSlug: string;
+}): JSX.Element {
+    const pinnedChats = usePinnedChatsWithUnreadCountsSubscription({
+        variables: {
+            attendeeId,
+        },
+    });
+
+    const { isOpen: isCreateRoomOpen, onClose: onCreateRoomClose, onOpen: onCreateRoomOpen } = useDisclosure();
+    const { isOpen: isCreateDmOpen, onClose: onCreateDmClose, onOpen: onCreateDmOpen } = useDisclosure();
+
+    const history = useHistory();
+
+    return (
+        <AccordionPanel pb={4} px={"3px"}>
+            <HStack justifyContent="flex-end">
+                <Button onClick={onCreateRoomOpen} colorScheme="green" size="sm">
+                    <FAIcon icon="plus-square" iconStyle="s" mr={3} /> New room
+                </Button>
+                <Button onClick={onCreateDmOpen} colorScheme="green" size="sm">
+                    <FAIcon icon="plus-square" iconStyle="s" mr={3} /> DM
+                </Button>
+            </HStack>
+            <CreateRoomModal
+                isOpen={isCreateRoomOpen}
+                onClose={onCreateRoomClose}
+                onCreated={async (id: string) => {
+                    // Wait, because Vonage session creation is not instantaneous
+                    setTimeout(() => {
+                        history.push(`/conference/${confSlug}/room/${id}`);
+                        onClose();
+                    }, 2000);
+                }}
+            />
+            <CreateDmModal
+                isOpen={isCreateDmOpen}
+                onClose={onCreateDmClose}
+                onCreated={async (id: string) => {
+                    // Wait, because Vonage session creation is not instantaneous
+                    setTimeout(() => {
+                        history.push(`/conference/${confSlug}/room/${id}`);
+                        onClose();
+                    }, 2000);
+                }}
+            />
+            <List m={0}>
+                {pinnedChats.data?.chat_Pin
+                    .filter((chatPin) => chatPin.chat.enableMandatoryPin)
+                    .sort((x, y) => sortChats(attendeeId, x.chat, y.chat))
+                    .map((chatPin) => (
+                        <ChatListItem
+                            key={chatPin.chatId}
+                            chat={chatPin.chat}
+                            attendeeId={attendeeId}
+                            confSlug={confSlug}
+                            onClose={onClose}
+                        />
+                    ))}
+            </List>
+            <List my={4}>
+                {pinnedChats.data?.chat_Pin
+                    .filter((chatPin) => !chatPin.chat.enableMandatoryPin)
+                    .sort((x, y) => sortChats(attendeeId, x.chat, y.chat))
+                    .map((chatPin) => (
+                        <ChatListItem
+                            key={chatPin.chatId}
+                            chat={chatPin.chat}
+                            attendeeId={attendeeId}
+                            confSlug={confSlug}
+                            onClose={onClose}
+                        />
+                    ))}
+                {!pinnedChats.data || pinnedChats.data.chat_Pin.length < 1 ? <>No pinned chats.</> : <></>}
+            </List>
+        </AccordionPanel>
+    );
+}
+
+function LazyChatsPanel({
+    isExpanded,
+    attendeeId,
+    onClose,
+    confSlug,
+}: {
+    isExpanded: boolean;
+    attendeeId: string;
+    onClose: () => void;
+    confSlug: string;
+}): JSX.Element {
+    return useLazyRenderAndRetain(
+        () => <ChatsPanel attendeeId={attendeeId} onClose={onClose} confSlug={confSlug} />,
+        isExpanded
+    );
+}
+
+function RoomsPanel({ onClose, confSlug }: { onClose: () => void; confSlug: string }): JSX.Element {
+    const conference = useConference();
+
+    const result = useGetAllRoomsQuery({
+        variables: {
+            conferenceId: conference.id,
+        },
+    });
+
+    return (
+        <AccordionPanel pb={4} px={"3px"}>
+            <ApolloQueryWrapper getter={(data) => data.Room} queryResult={result}>
+                {(rooms: readonly RoomListRoomDetailsFragment[]) => (
+                    <RoomList rooms={rooms} layout="list" limit={5} onClick={onClose} />
+                )}
+            </ApolloQueryWrapper>
+            <LinkButton
+                onClick={onClose}
+                to={`/conference/${confSlug}/rooms`}
+                colorScheme="green"
+                linkProps={{ mt: 4, width: "100%" }}
+                w="100%"
+            >
+                View all rooms
+            </LinkButton>
+        </AccordionPanel>
+    );
+}
+
+function LazyRoomsPanel({
+    isExpanded,
+    onClose,
+    confSlug,
+}: {
+    isExpanded: boolean;
+    onClose: () => void;
+    confSlug: string;
+}): JSX.Element {
+    return useLazyRenderAndRetain(() => <RoomsPanel onClose={onClose} confSlug={confSlug} />, isExpanded);
+}
+
+function SchedulePanel(): JSX.Element {
+    return (
+        <AccordionPanel pb={4} px={"3px"}>
+            <MainMenuProgram />
+        </AccordionPanel>
+    );
+}
+
+function LazySchedulePanel({ isExpanded }: { isExpanded: boolean }): JSX.Element {
+    return useLazyRenderAndRetain(() => <SchedulePanel />, isExpanded);
+}
+
 export function MainMenuConferenceSections_Inner({
     confSlug,
     attendee,
@@ -179,24 +335,6 @@ export function MainMenuConferenceSections_Inner({
     attendee: AttendeeFieldsFragment;
     onClose: () => void;
 }): JSX.Element {
-    const pinnedChats = usePinnedChatsWithUnreadCountsSubscription({
-        variables: {
-            attendeeId: attendee.id,
-        },
-    });
-
-    const { isOpen: isCreateRoomOpen, onClose: onCreateRoomClose, onOpen: onCreateRoomOpen } = useDisclosure();
-    const { isOpen: isCreateDmOpen, onClose: onCreateDmClose, onOpen: onCreateDmOpen } = useDisclosure();
-
-    const history = useHistory();
-    const conference = useConference();
-
-    const result = useGetAllRoomsQuery({
-        variables: {
-            conferenceId: conference.id,
-        },
-    });
-
     return (
         <>
             <Flex my={4} justifyContent="space-evenly" alignItems="center" flexWrap="wrap" gridGap={2}>
@@ -241,112 +379,52 @@ export function MainMenuConferenceSections_Inner({
                     Rooms
                 </LinkButton>
             </Flex>
-            <List m={0}>
-                {pinnedChats.data?.chat_Pin
-                    .filter((chatPin) => chatPin.chat.enableMandatoryPin)
-                    .sort((x, y) => sortChats(attendee.id, x.chat, y.chat))
-                    .map((chatPin) => (
-                        <ChatListItem
-                            key={chatPin.chatId}
-                            chat={chatPin.chat}
-                            attendeeId={attendee.id}
-                            confSlug={confSlug}
-                            onClose={onClose}
-                        />
-                    ))}
-            </List>
-            <Accordion defaultIndex={[2]}>
+            <Accordion defaultIndex={[0]}>
                 <AccordionItem>
-                    <AccordionButton>
-                        <Box flex="1" textAlign="left">
-                            Chats
-                        </Box>
-                        <AccordionIcon />
-                    </AccordionButton>
-                    <AccordionPanel pb={4} px={"3px"}>
-                        <HStack justifyContent="flex-end">
-                            <Button onClick={onCreateRoomOpen} colorScheme="green" size="sm">
-                                <FAIcon icon="plus-square" iconStyle="s" mr={3} /> New room
-                            </Button>
-                            <Button onClick={onCreateDmOpen} colorScheme="green" size="sm">
-                                <FAIcon icon="plus-square" iconStyle="s" mr={3} /> DM
-                            </Button>
-                        </HStack>
-                        <CreateRoomModal
-                            isOpen={isCreateRoomOpen}
-                            onClose={onCreateRoomClose}
-                            onCreated={async (id: string) => {
-                                // Wait, because Vonage session creation is not instantaneous
-                                setTimeout(() => {
-                                    history.push(`/conference/${confSlug}/room/${id}`);
-                                    onClose();
-                                }, 2000);
-                            }}
-                        />
-                        <CreateDmModal
-                            isOpen={isCreateDmOpen}
-                            onClose={onCreateDmClose}
-                            onCreated={async (id: string) => {
-                                // Wait, because Vonage session creation is not instantaneous
-                                setTimeout(() => {
-                                    history.push(`/conference/${confSlug}/room/${id}`);
-                                    onClose();
-                                }, 2000);
-                            }}
-                        />
-                        <List my={4}>
-                            {pinnedChats.data?.chat_Pin
-                                .filter((chatPin) => !chatPin.chat.enableMandatoryPin)
-                                .sort((x, y) => sortChats(attendee.id, x.chat, y.chat))
-                                .map((chatPin) => (
-                                    <ChatListItem
-                                        key={chatPin.chatId}
-                                        chat={chatPin.chat}
-                                        attendeeId={attendee.id}
-                                        confSlug={confSlug}
-                                        onClose={onClose}
-                                    />
-                                ))}
-                            {!pinnedChats.data || pinnedChats.data.chat_Pin.length < 1 ? <>No pinned chats.</> : <></>}
-                        </List>
-                    </AccordionPanel>
+                    {({ isExpanded }) => (
+                        <>
+                            <AccordionButton>
+                                <Box flex="1" textAlign="left">
+                                    Chats
+                                </Box>
+                                <AccordionIcon />
+                            </AccordionButton>
+                            <LazyChatsPanel
+                                isExpanded={isExpanded}
+                                attendeeId={attendee.id}
+                                onClose={onClose}
+                                confSlug={confSlug}
+                            />
+                        </>
+                    )}
                 </AccordionItem>
 
                 <AccordionItem>
-                    <AccordionButton>
-                        <Box flex="1" textAlign="left">
-                            Rooms
-                        </Box>
-                        <AccordionIcon />
-                    </AccordionButton>
-                    <AccordionPanel pb={4} px={"3px"}>
-                        <ApolloQueryWrapper getter={(data) => data.Room} queryResult={result}>
-                            {(rooms: readonly RoomListRoomDetailsFragment[]) => (
-                                <RoomList rooms={rooms} layout="list" limit={5} onClick={onClose} />
-                            )}
-                        </ApolloQueryWrapper>
-                        <LinkButton
-                            onClick={onClose}
-                            to={`/conference/${confSlug}/rooms`}
-                            colorScheme="green"
-                            linkProps={{ mt: 4, width: "100%" }}
-                            w="100%"
-                        >
-                            View all rooms
-                        </LinkButton>
-                    </AccordionPanel>
+                    {({ isExpanded }) => (
+                        <>
+                            <AccordionButton>
+                                <Box flex="1" textAlign="left">
+                                    Rooms
+                                </Box>
+                                <AccordionIcon />
+                            </AccordionButton>
+                            <LazyRoomsPanel isExpanded={isExpanded} onClose={onClose} confSlug={confSlug} />
+                        </>
+                    )}
                 </AccordionItem>
 
                 <AccordionItem>
-                    <AccordionButton>
-                        <Box flex="1" textAlign="left">
-                            Schedule
-                        </Box>
-                        <AccordionIcon />
-                    </AccordionButton>
-                    <AccordionPanel pb={4} px={"3px"}>
-                        <MainMenuProgram />
-                    </AccordionPanel>
+                    {({ isExpanded }) => (
+                        <>
+                            <AccordionButton>
+                                <Box flex="1" textAlign="left">
+                                    Schedule
+                                </Box>
+                                <AccordionIcon />
+                            </AccordionButton>
+                            <LazySchedulePanel isExpanded={isExpanded} />
+                        </>
+                    )}
                 </AccordionItem>
             </Accordion>
         </>

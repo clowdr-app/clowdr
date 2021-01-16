@@ -74,6 +74,12 @@ export default function ApolloCustomProvider({
                     // }
                     newHeaders.Authorization = `Bearer ${token}`;
                 }
+                else {
+                    if (conferenceSlug) {
+                        newHeaders["X-Hasura-Conference-Slug"] = conferenceSlug;
+                    }
+                }
+
                 return {
                     headers: newHeaders,
                 };

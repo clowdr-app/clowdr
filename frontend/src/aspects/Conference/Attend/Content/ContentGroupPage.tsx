@@ -32,6 +32,12 @@ gql`
         title
         contentGroupTypeName
         chatId
+        chat {
+            room {
+                id
+                name
+            }
+        }
         contentItems(where: { isHidden: { _eq: false } }) {
             ...ContentItemData
         }
@@ -119,7 +125,7 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
                                                     top="1rem"
                                                     right="1rem"
                                                 >
-                                                    <ContentGroupLive contentGroupEvents={contentGroupData} />
+                                                    <ContentGroupLive contentGroupData={contentGroupData} />
                                                 </Box>
                                             </RequireAtLeastOnePermissionWrapper>
                                         </Box>

@@ -27710,7 +27710,7 @@ export type GetContentGroupQuery = { readonly __typename?: 'query_root', readonl
     & ContentGroupEventsFragment
   )> };
 
-export type ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly chatId?: Maybe<any>, readonly contentItems: ReadonlyArray<(
+export type ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string }> }>, readonly contentItems: ReadonlyArray<(
     { readonly __typename?: 'ContentItem' }
     & ContentItemDataFragment
   )>, readonly people: ReadonlyArray<(
@@ -29143,6 +29143,12 @@ export const ContentGroupDataFragmentDoc = gql`
   title
   contentGroupTypeName
   chatId
+  chat {
+    room {
+      id
+      name
+    }
+  }
   contentItems(where: {isHidden: {_eq: false}}) {
     ...ContentItemData
   }

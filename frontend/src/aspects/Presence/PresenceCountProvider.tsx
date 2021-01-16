@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import React, { useCallback } from "react";
+import React, { useCallback, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useGetPresenceCountOfQuery, usePresenceCountSubscription } from "../../generated/graphql";
 import { useConference } from "../Conference/useConference";
@@ -56,12 +56,18 @@ export default function PresenceCountProvider({
     const { refetch: getPresenceCountOfQ } = useGetPresenceCountOfQuery({
         skip: true,
     });
+    const previousErrorPath = useRef<string | null>(null);
 
     const pageCount = presenceCount.data?.presence_Page_by_pk?.count;
 
     const getPageCountOf = useCallback(
         async (path: string) => {
+            if (path === previousErrorPath.current) {
+                return undefined;
+            }
+
             try {
+                previousErrorPath.current = null;
                 return (
                     await getPresenceCountOfQ({
                         conferenceId: conference.id,
@@ -69,6 +75,7 @@ export default function PresenceCountProvider({
                     })
                 ).data?.presence_Page_by_pk?.count;
             } catch {
+                previousErrorPath.current = path;
                 return undefined;
             }
         },

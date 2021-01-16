@@ -53,6 +53,7 @@
         "apollo3-cache-persist": "^0.8.0",
         "date-fns": "^2.16.1",
         "date-fns-tz": "^1.0.12",
+        "detect-browser": "^5.2.0",
         "emoji-mart": "^3.0.0",
         "formik": "^2.2.6",
         "framer-motion": "^3.1.4",

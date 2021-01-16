@@ -29,7 +29,7 @@ export function AuthorList({
     }, [contentPeopleData, hideRole]);
 
     return (
-        <HStack spacing="0" gridGap="4" wrap="wrap">
+        <HStack spacing="0" gridGap="8" wrap="wrap">
             {authorElements}
         </HStack>
     );

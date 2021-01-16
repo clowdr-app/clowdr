@@ -2021,17 +2021,19 @@
       - slug
       - updated_at
       filter:
-        groups:
-          _and:
-          - enabled:
-              _eq: true
-          - includeUnauthenticated:
-              _eq: true
-          - groupRoles:
-              role:
-                rolePermissions:
-                  permissionName:
-                    _eq: CONFERENCE_VIEW
+        _and:
+        - slug:
+            _eq: X-Hasura-Conference-Slug
+        - _exists:
+            _where:
+              _and:
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _eq: CONFERENCE_VIEW
+            _table:
+              schema: public
+              name: FlatUnauthPermission
   - role: user
     permission:
       columns:
@@ -2068,19 +2070,21 @@
         _or:
         - createdBy:
             _eq: X-Hasura-User-Id
-        - groups:
-            _and:
-            - enabled:
-                _eq: true
-            - groupRoles:
-                role:
-                  rolePermissions:
-                    permissionName:
-                      _eq: CONFERENCE_MANAGE_NAME
-            - groupAttendees:
-                attendee:
-                  userId:
+        - _and:
+          - slug:
+              _eq: X-Hasura-Conference-Slug
+          - _exists:
+              _where:
+                _and:
+                - user_id:
                     _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _eq: CONFERENCE_MANAGE_NAME
+              _table:
+                schema: public
+                name: FlatUserPermission
       check: null
   delete_permissions:
   - role: user

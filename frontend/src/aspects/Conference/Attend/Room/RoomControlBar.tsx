@@ -42,6 +42,11 @@ export function RoomControlBar({
     const roomMembers = useRoomMembers();
     const roomParticipants = useRoomParticipants();
 
+    const thisRoomParticipants = useMemo(
+        () => (roomParticipants ? roomParticipants.filter((participant) => participant.roomId === roomDetails.id) : []),
+        [roomDetails.id, roomParticipants]
+    );
+
     const roomMembersList = useMemo(
         () => (
             <List>
@@ -52,8 +57,8 @@ export function RoomControlBar({
                             <ListItem key={person.id}>
                                 <FAIcon
                                     icon={
-                                        roomParticipants &&
-                                        roomParticipants.find(
+                                        thisRoomParticipants &&
+                                        thisRoomParticipants.find(
                                             (participant) => person.attendee.id === participant.attendeeId
                                         )
                                             ? "video"
@@ -70,14 +75,14 @@ export function RoomControlBar({
                 )}
             </List>
         ),
-        [roomMembers, roomParticipants]
+        [roomMembers, thisRoomParticipants]
     );
 
     const roomParticipantsList = useMemo(
         () => (
             <List>
-                {roomParticipants ? (
-                    roomParticipants.map((participant) => (
+                {thisRoomParticipants ? (
+                    thisRoomParticipants.map((participant) => (
                         <ListItem key={participant.id}>
                             <FAIcon icon="video" iconStyle="s" mr={5} />
                             {participant.attendee.displayName}
@@ -88,7 +93,7 @@ export function RoomControlBar({
                 )}
             </List>
         ),
-        [roomParticipants]
+        [thisRoomParticipants]
     );
 
     return (
@@ -127,11 +132,11 @@ export function RoomControlBar({
                     <PopoverTrigger>
                         <Button
                             aria-label={`${
-                                roomParticipants ? roomParticipants.length : "0"
+                                thisRoomParticipants ? thisRoomParticipants.length : "0"
                             } People currently in the breakout room`}
                         >
                             <FAIcon icon="users" iconStyle="s" />
-                            <Badge ml={2}>{roomParticipants ? roomParticipants.length : "0"} </Badge>
+                            <Badge ml={2}>{thisRoomParticipants ? thisRoomParticipants.length : "0"} </Badge>
                         </Button>
                     </PopoverTrigger>
                     <Portal>

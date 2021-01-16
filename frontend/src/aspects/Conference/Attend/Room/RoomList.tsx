@@ -54,7 +54,7 @@ export function RoomList({
             if (layout === "grid") {
                 return (
                     <>
-                        <Center flexWrap="wrap" my={3} mx={3}>
+                        <Center flexWrap="wrap" my={2} mx={2}>
                             {room.roomPrivacyName === RoomPrivacy_Enum.Private ? (
                                 <FAIcon icon="lock" iconStyle="s" textAlign="center" />
                             ) : room.roomPrivacyName === RoomPrivacy_Enum.Dm ? (
@@ -66,7 +66,7 @@ export function RoomList({
                                 p={5}
                                 textAlign="left"
                                 textOverflow="ellipsis"
-                                whiteSpace="nowrap"
+                                whiteSpace="normal"
                                 overflow="hidden"
                                 title={room.name}
                             >
@@ -91,7 +91,7 @@ export function RoomList({
                             p={2}
                             textAlign="left"
                             textOverflow="ellipsis"
-                            whiteSpace="nowrap"
+                            whiteSpace="normal"
                             overflow="hidden"
                             title={room.name}
                             width="70%"
@@ -121,6 +121,7 @@ export function RoomList({
                         flexDir="column"
                         width="100%"
                         height="100%"
+                        linkProps={{ m: "3px" }}
                         onClick={onClick}
                     >
                         {toButtonContents(room)}
@@ -178,7 +179,8 @@ export function RoomList({
             <SimpleGrid
                 columns={layout === "grid" ? [1, Math.min(2, rooms.length), Math.min(3, rooms.length)] : 1}
                 autoRows="min-content"
-                spacing={layout === "grid" ? [2, 2, 4] : 2}
+                spacing={layout === "grid" ? [1, 1, 3] : 1}
+                maxW="100%"
             >
                 {limitedElements.map((e) => e.el)}
             </SimpleGrid>

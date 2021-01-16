@@ -269,7 +269,7 @@ export function MainMenuConferenceSections_Inner({
                                 <FAIcon icon="plus-square" iconStyle="s" mr={3} /> New room
                             </Button>
                             <Button onClick={onCreateDmOpen} colorScheme="green" size="sm">
-                                <FAIcon icon="plus-square" iconStyle="s" mr={3} /> New DM
+                                <FAIcon icon="plus-square" iconStyle="s" mr={3} /> DM
                             </Button>
                         </HStack>
                         <CreateRoomModal

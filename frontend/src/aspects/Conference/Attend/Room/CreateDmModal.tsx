@@ -61,10 +61,12 @@ export function CreateDmModal({
                                 console.error("Failed to create DM", result.errors);
                                 throw new Error("Failed to create DM");
                             } else {
-                                toast({
-                                    title: result.data.createRoomDm.message ?? "Created new DM",
-                                    status: "success",
-                                });
+                                if (result.data.createRoomDm.message !== "DM already exists") {
+                                    toast({
+                                        title: result.data.createRoomDm.message ?? "Created new DM",
+                                        status: "success",
+                                    });
+                                }
                                 onCreated(result.data.createRoomDm.roomId);
                                 onClose();
                             }

@@ -59,10 +59,12 @@ export default function ProfileModal({
                 console.error("Failed to create DM", result.errors);
                 throw new Error("Failed to create DM");
             } else {
-                toast({
-                    title: result.data.createRoomDm.message ?? "Created new DM",
-                    status: "success",
-                });
+                if (result.data.createRoomDm.message !== "DM already exists") {
+                    toast({
+                        title: result.data.createRoomDm.message ?? "Created new DM",
+                        status: "success",
+                    });
+                }
 
                 // Wait, because Vonage session creation is not instantaneous
                 setTimeout(() => {
@@ -138,7 +140,7 @@ export default function ProfileModal({
                                                 colorScheme="green"
                                                 size="sm"
                                             >
-                                                <FAIcon icon="comment" iconStyle="s" mr={3} /> New DM
+                                                <FAIcon icon="comment" iconStyle="s" mr={3} /> DM
                                             </Button>
                                         ) : undefined}
                                         <LinkButton

@@ -6407,9 +6407,6 @@
                   - attendee:
                       userId:
                         _eq: X-Hasura-User-Id
-                  - roomPersonRole:
-                      name:
-                        _eq: ADMIN
   update_permissions:
   - role: user
     permission:

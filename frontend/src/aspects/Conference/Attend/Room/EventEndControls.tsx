@@ -39,7 +39,9 @@ export function EventEndControls({
         }
     }, [currentRoomEvent]);
 
-    const { refetch } = useGetBreakoutRoomFromEventQuery({});
+    const { refetch } = useGetBreakoutRoomFromEventQuery({
+        skip: true
+    });
 
     useEffect(() => {
         async function fn() {

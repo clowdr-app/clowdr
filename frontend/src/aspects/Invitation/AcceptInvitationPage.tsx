@@ -431,9 +431,9 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
                 </VStack>
                 <VStack pt={20} maxW={650}>
                     <Text>
-                        If you understand that you need a new Clowdr account since 1<sup>st</sup> Jan 2021 <em>and</em>{" "}
-                        you signed up for Clowdr prior to receiving your invitation, then you can log in to the account
-                        you created using the button below.
+                        If you understand that since 1<sup>st</sup> Jan 2021 new Clowdr accounts are required{" "}
+                        <em>but</em> you have in fact already signed up for Clowdr since that date, then you can log in
+                        to the account you created using the button below.
                     </Text>
                     <LoginButton size="xs" redirectTo={`/invitation/accept/${inviteCode}}`} />
                 </VStack>

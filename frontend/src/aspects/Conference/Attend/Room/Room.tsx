@@ -267,14 +267,15 @@ export function Room({
                     </Box>
                 </HStack>
             </VStack>
-            <VStack
-                flexGrow={1}
-                flexBasis={0}
-                minW={["100%", "100%", "100%", "300px"]}
-                maxHeight={["80vh", "80vh", "80vh", "850px"]}
-            >
+            <VStack flexGrow={1} flexBasis={0} minW={["100%", "100%", "100%", "300px"]}>
                 {chatSources ? (
-                    <Chat sources={{ ...chatSources }} flexBasis={0} flexGrow={1} mr={4} />
+                    <Chat
+                        sources={{ ...chatSources }}
+                        flexBasis={0}
+                        flexGrow={1}
+                        mr={4}
+                        maxHeight={["80vh", "80vh", "80vh", "850px"]}
+                    />
                 ) : (
                     <>No chat found for this room.</>
                 )}

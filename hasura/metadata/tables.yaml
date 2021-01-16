@@ -4004,7 +4004,7 @@
                   _where:
                     _and:
                     - user_id:
-                        _eq: ""
+                        _eq: X-Hasura-User-Id
                     - slug:
                         _eq: X-Hasura-Conference-Slug
                     - permission_name:

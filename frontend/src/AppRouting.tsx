@@ -1,9 +1,11 @@
-import { Text } from "@chakra-ui/react";
+import { Button, Text } from "@chakra-ui/react";
 import React from "react";
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import EmailVerificationRequiredPage from "./aspects/Auth/EmailVerificationRequiredPage";
 import LoggedOutPage from "./aspects/Auth/LoggedOutPage";
+import PasswordResetResultPage from "./aspects/Auth/PasswordResetResultPage";
 import ProtectedRoute from "./aspects/Auth/ProtectedRoute";
+import { LinkButton } from "./aspects/Chakra/LinkButton";
 import ConferenceRoutes from "./aspects/Conference/ConferenceRoutes";
 import UseInviteOrCreateView from "./aspects/Conference/UseInviteOrCreateView";
 import SubmitItemPage from "./aspects/Content/SubmitItemPage";
@@ -62,6 +64,41 @@ export default function Routing(): JSX.Element {
             </Route>
             <Route exact path="/auth0/logged-out">
                 <Redirect to="/logged-out" />
+            </Route>
+            <Route exact path="/auth0/error">
+                <GenericErrorPage heading="Sorry, an authentication error occurred…">
+                    <>
+                        <Text fontSize="xl" lineHeight="revert" fontWeight="light">
+                            Please try again later
+                        </Text>
+                        <LinkButton
+                            aria-label="Go to home"
+                            to="/"
+                        >
+                            Go to home
+                        </LinkButton>
+                    </>
+                </GenericErrorPage>
+            </Route>
+            <Route exact path="/auth0/blocked">
+                <GenericErrorPage heading="Sorry, your account has been blocked…">
+                    <>
+                        <LinkButton
+                            aria-label="Go to home"
+                            to="/"
+                        >
+                            Go to home
+                        </LinkButton>
+                    </>
+                </GenericErrorPage>
+            </Route>
+            <Route exact path="/auth0/password/reset/result">
+                {(props) => {
+                    const searchParams = new URLSearchParams(props.location.search);
+                    const success = searchParams.get("success");
+                    const message = searchParams.get("message");
+                    return <PasswordResetResultPage message={message} success={success === "true"} />;
+                }}
             </Route>
             <Route exact path="/logged-out">
                 <LoggedOutPage />

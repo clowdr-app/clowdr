@@ -36,7 +36,7 @@ import PageFailedToLoad from "../Errors/PageFailedToLoad";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
 import FAIcon from "../Icons/FAIcon";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
-import { getCachedInviteCode, setCachedInviteCode } from "../Users/NewUser/InviteCodeLocalStorage";
+import { setCachedInviteCode } from "../Users/NewUser/InviteCodeLocalStorage";
 import { useTitle } from "../Utils/useTitle";
 
 interface Props {
@@ -215,18 +215,31 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
             );
         } else if (!data.Invitation.length) {
             setCachedInviteCode(null);
-            return (
-                <GenericErrorPage heading="Invitation not found">
-                    <>
-                        {title}
-                        <Text fontSize="xl" lineHeight="revert" fontWeight="light">
-                            Sorry, that invitation no longer exists. If you already accepted your invitation, please
-                            check <a href="/">your list of conferences</a>. Please also make sure you are logged in with
-                            the right email address.
-                        </Text>
-                    </>
-                </GenericErrorPage>
-            );
+            if (user.attendees.length > 0) {
+                toast({
+                    description:
+                        "Invitation code not found - did you already use it? You might see your conference listed below.",
+                    status: "info",
+                    title: "Invite code not found",
+                    duration: 5000,
+                    isClosable: true,
+                    position: "top",
+                });
+                return <Redirect to="/user" />;
+            } else {
+                return (
+                    <GenericErrorPage heading="Invitation not found">
+                        <>
+                            {title}
+                            <Text fontSize="xl" lineHeight="revert" fontWeight="light">
+                                Sorry, that invitation no longer exists. If you already accepted your invitation, please
+                                check <a href="/">your list of conferences</a>. Please also make sure you are logged in
+                                with the right email address.
+                            </Text>
+                        </>
+                    </GenericErrorPage>
+                );
+            }
         } else {
             if (hashOK === undefined) {
                 return (

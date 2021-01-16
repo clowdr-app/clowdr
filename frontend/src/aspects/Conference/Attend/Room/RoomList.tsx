@@ -60,7 +60,7 @@ export function RoomList({
                             ) : room.roomPrivacyName === RoomPrivacy_Enum.Dm ? (
                                 <FAIcon icon="envelope" iconStyle="s" textAlign="center" />
                             ) : (
-                                <FAIcon icon="video" iconStyle="s" textAlign="center" />
+                                <FAIcon icon="mug-hot" iconStyle="s" textAlign="center" />
                             )}
                             <Text
                                 p={5}
@@ -85,7 +85,7 @@ export function RoomList({
                         ) : room.roomPrivacyName === RoomPrivacy_Enum.Dm ? (
                             <FAIcon icon="envelope" iconStyle="s" textAlign="center" width="10%" />
                         ) : (
-                            <FAIcon icon="video" iconStyle="s" textAlign="center" width="10%" />
+                            <FAIcon icon="mug-hot" iconStyle="s" textAlign="center" width="10%" />
                         )}
                         <Text
                             p={2}

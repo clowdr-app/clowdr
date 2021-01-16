@@ -7,12 +7,10 @@ import {
     DrawerOverlay,
     Flex,
     Heading,
-    Link,
     Spacer,
 } from "@chakra-ui/react";
-import React, { useCallback } from "react";
+import React from "react";
 import { HtmlPortalNode, OutPortal } from "react-reverse-portal";
-import { Link as ReactLink } from "react-router-dom";
 import IncognitoToggleButton from "../Users/CurrentUser/OnlineStatus/IncognitoToggleButton";
 import { useMainMenu } from "./MainMenuState";
 
@@ -24,7 +22,6 @@ interface Props {
 export default function MainMenuDrawer({ isOpen, portalNode }: Props): JSX.Element {
     const { onClose } = useMainMenu();
 
-    const menuItemClicked = useCallback(() => onClose(), [onClose]);
     const initialFocusRef = React.createRef<HTMLButtonElement>();
 
     return (

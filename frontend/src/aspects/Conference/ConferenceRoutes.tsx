@@ -1,11 +1,9 @@
-import { gql } from "@apollo/client";
-import React, { useCallback, useEffect, useState } from "react";
+import React from "react";
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
-import { Permission_Enum, useSelectActiveShufflePeriodsQuery } from "../../generated/graphql";
+import { Permission_Enum } from "../../generated/graphql";
 import { ChatNotificationsProvider } from "../Chat/ChatNotifications";
 import PageNotFound from "../Errors/PageNotFound";
 import PageNotImplemented from "../Errors/PageNotImplemented";
-import usePolling from "../Generic/usePolling";
 import PresenceCountProvider from "../Presence/PresenceCountProvider";
 import useTabTracker from "../Presence/useTabTracker";
 import RoomParticipantsProvider from "../Room/RoomParticipantsProvider";
@@ -229,6 +227,47 @@ function TabTracker(): JSX.Element {
     return <></>;
 }
 
+// gql`
+//     query SelectActiveShufflePeriods(
+//         $conferenceId: uuid!
+//         $start: timestamptz!
+//         $end: timestamptz!
+//         $attendeeId: uuid!
+//     ) {
+//         room_ShufflePeriod(
+//             where: { conferenceId: { _eq: $conferenceId }, startAt: { _lte: $start }, endAt: { _gte: $end } }
+//         ) {
+//             ...ShufflePeriodData
+//         }
+//     }
+// `;
+
+// function ShuffleRoomsQueueMonitor(): JSX.Element {
+//     const conference = useConference();
+//     const periods = useSelectActiveShufflePeriodsQuery({
+//         skip: true,
+//     });
+//     const fetchShuffleRooms = useCallback(() => {
+//         periods.refetch({
+//             conferenceId: conference.id,
+//             start: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
+//             end: new Date().toISOString(),
+//         });
+//     }, [conference.id, periods]);
+//     usePolling(fetchShuffleRooms, 15000, true);
+
+//     // const [seenAllocatedRooms, setSeenAllocatedRooms] = useState<Set<number>>();
+//     // useEffect(() => {
+//     //     if (periods.data?.room_ShufflePeriod) {
+//     //         for (const period of periods.data.room_ShufflePeriod) {
+//     //             // period.queueEntries
+//     //         }
+//     //     }
+//     // }, [periods.data.room_ShufflePeriod]);
+
+//     return <></>;
+// }
+
 export default function ConferenceRoutes({ confSlug, rootUrl }: { confSlug: string; rootUrl: string }): JSX.Element {
     return (
         <ConferenceProvider confSlug={confSlug}>
@@ -237,6 +276,7 @@ export default function ConferenceRoutes({ confSlug, rootUrl }: { confSlug: stri
                     <ConferenceCurrentUserActivePermissionsProvider>
                         <CurrentAttendeeProvider>
                             <TabTracker />
+                            {/* <ShuffleRoomsQueueMonitor /> */}
                             <ChatNotificationsProvider>
                                 <RoomParticipantsProvider>
                                     <SharedRoomContextProvider>

@@ -30039,19 +30039,6 @@ export type Timeline_SelectRoomQuery = { readonly __typename?: 'query_root', rea
     & Timeline_RoomFragment
   )> };
 
-export type SelectActiveShufflePeriodsQueryVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-  start: Scalars['timestamptz'];
-  end: Scalars['timestamptz'];
-  attendeeId: Scalars['uuid'];
-}>;
-
-
-export type SelectActiveShufflePeriodsQuery = { readonly __typename?: 'query_root', readonly room_ShufflePeriod: ReadonlyArray<(
-    { readonly __typename?: 'room_ShufflePeriod' }
-    & ShufflePeriodDataFragment
-  )> };
-
 export type InsertSubmissionRequestEmailJobsMutationVariables = Exact<{
   objs: ReadonlyArray<Job_Queues_SubmissionRequestEmailJob_Insert_Input>;
 }>;
@@ -33748,44 +33735,6 @@ export function useTimeline_SelectRoomLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type Timeline_SelectRoomQueryHookResult = ReturnType<typeof useTimeline_SelectRoomQuery>;
 export type Timeline_SelectRoomLazyQueryHookResult = ReturnType<typeof useTimeline_SelectRoomLazyQuery>;
 export type Timeline_SelectRoomQueryResult = Apollo.QueryResult<Timeline_SelectRoomQuery, Timeline_SelectRoomQueryVariables>;
-export const SelectActiveShufflePeriodsDocument = gql`
-    query SelectActiveShufflePeriods($conferenceId: uuid!, $start: timestamptz!, $end: timestamptz!, $attendeeId: uuid!) {
-  room_ShufflePeriod(
-    where: {conferenceId: {_eq: $conferenceId}, startAt: {_lte: $start}, endAt: {_gte: $end}}
-  ) {
-    ...ShufflePeriodData
-  }
-}
-    ${ShufflePeriodDataFragmentDoc}`;
-
-/**
- * __useSelectActiveShufflePeriodsQuery__
- *
- * To run a query within a React component, call `useSelectActiveShufflePeriodsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectActiveShufflePeriodsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectActiveShufflePeriodsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      start: // value for 'start'
- *      end: // value for 'end'
- *      attendeeId: // value for 'attendeeId'
- *   },
- * });
- */
-export function useSelectActiveShufflePeriodsQuery(baseOptions: Apollo.QueryHookOptions<SelectActiveShufflePeriodsQuery, SelectActiveShufflePeriodsQueryVariables>) {
-        return Apollo.useQuery<SelectActiveShufflePeriodsQuery, SelectActiveShufflePeriodsQueryVariables>(SelectActiveShufflePeriodsDocument, baseOptions);
-      }
-export function useSelectActiveShufflePeriodsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectActiveShufflePeriodsQuery, SelectActiveShufflePeriodsQueryVariables>) {
-          return Apollo.useLazyQuery<SelectActiveShufflePeriodsQuery, SelectActiveShufflePeriodsQueryVariables>(SelectActiveShufflePeriodsDocument, baseOptions);
-        }
-export type SelectActiveShufflePeriodsQueryHookResult = ReturnType<typeof useSelectActiveShufflePeriodsQuery>;
-export type SelectActiveShufflePeriodsLazyQueryHookResult = ReturnType<typeof useSelectActiveShufflePeriodsLazyQuery>;
-export type SelectActiveShufflePeriodsQueryResult = Apollo.QueryResult<SelectActiveShufflePeriodsQuery, SelectActiveShufflePeriodsQueryVariables>;
 export const InsertSubmissionRequestEmailJobsDocument = gql`
     mutation InsertSubmissionRequestEmailJobs($objs: [job_queues_SubmissionRequestEmailJob_insert_input!]!) {
   insert_job_queues_SubmissionRequestEmailJob(objects: $objs) {

@@ -253,30 +253,12 @@ export default function WaitingPage(): JSX.Element {
         ]);
     }, [conference.shortName, conference.slug, setPrimaryMenuButtons]);
 
-    // const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [data, setData] = useState<ShufflePeriodDataFragment[] | null>(null);
-    useEffect(() => {
-        if (periods.data) {
-            setData([...periods.data.room_ShufflePeriod]);
-            // setIsLoading(false);
-        }
-    }, [periods.data]);
-
-    // useEffect(() => {
-    //     const tId = setTimeout(() => {
-    //         setIsLoading(false);
-    //     }, 10000);
-    //     return () => {
-    //         clearTimeout(tId);
-    //     };
-    // }, []);
-
     return (
         <Grid maxW="800px">
-            {data?.map((period) => (
+            {periods.data?.room_ShufflePeriod.map((period) => (
                 <ShufflePeriodBox key={period.id} period={period} />
             ))}
-            {!data || data.length === 0 ? <GridItem>No shuffle spaces at the moment.</GridItem> : undefined}
+            {!periods.data?.room_ShufflePeriod ? <GridItem>No shuffle spaces at the moment.</GridItem> : undefined}
         </Grid>
     );
 }

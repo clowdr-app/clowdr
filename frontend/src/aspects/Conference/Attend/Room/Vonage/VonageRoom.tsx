@@ -169,7 +169,7 @@ function VonageRoomInner({
                             R.descend((stream) => !enableStreams || !!enableStreams.includes(stream.streamId)),
                             R.ascend(R.prop("creationTime")),
                         ],
-                        openTokProps.streams.filter((s) => s.videoType === "camera")
+                        openTokProps.streams.filter((s) => s.videoType === "camera" || !s.videoType)
                     ).map((stream) => (
                         <Box key={stream.streamId} w={300} h={300}>
                             <VonageSubscriber

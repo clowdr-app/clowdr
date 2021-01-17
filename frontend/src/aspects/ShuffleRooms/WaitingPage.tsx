@@ -113,7 +113,7 @@ function ShufflePeriodBox({ period }: { period: ShufflePeriodDataFragment }): JS
             ) : (
                 <Text>Starts in {Math.round((startAt - now) / 1000)} seconds</Text>
             );
-        if (endAt - now < period.roomDurationMinutes * 60 * 1000) {
+        if (endAt - now < 0.1 * period.roomDurationMinutes * 60 * 1000) {
             return <Text>This shuffle period is coming to an end.</Text>;
         } else if (ownQueueEntries.length > 0) {
             const lastEntry = ownQueueEntries[ownQueueEntries.length - 1];

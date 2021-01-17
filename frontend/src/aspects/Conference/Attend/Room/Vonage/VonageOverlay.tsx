@@ -72,7 +72,7 @@ export function VonageOverlay({ connectionData }: { connectionData: string }): J
                 ) : (
                     <></>
                 )}
-                <Text>{data?.Attendee_by_pk?.displayName}</Text>
+                <Text color={"gray.100"}>{data?.Attendee_by_pk?.displayName}</Text>
             </HStack>
         </Button>
     );

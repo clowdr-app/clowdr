@@ -2216,14 +2216,6 @@
   - name: originatingData
     using:
       foreign_key_constraint_on: originatingDataId
-  - name: room
-    using:
-      manual_configuration:
-        remote_table:
-          schema: public
-          name: Room
-        column_mapping:
-          id: originatingContentGroupId
   array_relationships:
   - name: contentGroupTags
     using:

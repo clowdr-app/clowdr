@@ -30902,6 +30902,18 @@ export type MenuSchedule_SearchEventsQuery = { readonly __typename?: 'query_root
 
 export type MenuSchedule_EventFragment = { readonly __typename?: 'Event', readonly id: any, readonly name: string, readonly startTime: any, readonly room: { readonly __typename?: 'Room', readonly id: any, readonly name: string }, readonly eventTags: ReadonlyArray<{ readonly __typename?: 'EventTag', readonly tag: { readonly __typename?: 'Tag', readonly id: any, readonly colour: string, readonly name: string } }>, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly title: string }> };
 
+export type MainMenuSponsors_GetSponsorsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type MainMenuSponsors_GetSponsorsQuery = { readonly __typename?: 'query_root', readonly ContentGroup: ReadonlyArray<(
+    { readonly __typename?: 'ContentGroup' }
+    & MainMenuSponsors_ContentGroupDataFragment
+  )> };
+
+export type MainMenuSponsors_ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly rooms: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }>, readonly logo: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly data: any }> };
+
 export type PresenceCountSubscriptionVariables = Exact<{
   path: Scalars['String'];
   conferenceId: Scalars['uuid'];
@@ -31869,6 +31881,27 @@ export const MenuSchedule_EventFragmentDoc = gql`
   contentGroup {
     title
   }
+}
+    `;
+export const MainMenuSponsors_ContentGroupDataFragmentDoc = gql`
+    fragment MainMenuSponsors_ContentGroupData on ContentGroup {
+  id
+  rooms(
+    limit: 1
+    order_by: {created_at: asc}
+    where: {conferenceId: {_eq: $conferenceId}}
+  ) {
+    id
+  }
+  logo: contentItems(
+    where: {contentTypeName: {_eq: IMAGE_URL}, layoutData: {_contains: {isLogo: true}}}
+    order_by: {updatedAt: desc}
+    limit: 1
+  ) {
+    id
+    data
+  }
+  title
 }
     `;
 export const RoomParticipantDetailsFragmentDoc = gql`
@@ -36587,6 +36620,42 @@ export function useMenuSchedule_SearchEventsLazyQuery(baseOptions?: Apollo.LazyQ
 export type MenuSchedule_SearchEventsQueryHookResult = ReturnType<typeof useMenuSchedule_SearchEventsQuery>;
 export type MenuSchedule_SearchEventsLazyQueryHookResult = ReturnType<typeof useMenuSchedule_SearchEventsLazyQuery>;
 export type MenuSchedule_SearchEventsQueryResult = Apollo.QueryResult<MenuSchedule_SearchEventsQuery, MenuSchedule_SearchEventsQueryVariables>;
+export const MainMenuSponsors_GetSponsorsDocument = gql`
+    query MainMenuSponsors_GetSponsors($conferenceId: uuid!) {
+  ContentGroup(
+    where: {conferenceId: {_eq: $conferenceId}, contentGroupTypeName: {_eq: SPONSOR}}
+    order_by: {title: asc}
+  ) {
+    ...MainMenuSponsors_ContentGroupData
+  }
+}
+    ${MainMenuSponsors_ContentGroupDataFragmentDoc}`;
+
+/**
+ * __useMainMenuSponsors_GetSponsorsQuery__
+ *
+ * To run a query within a React component, call `useMainMenuSponsors_GetSponsorsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMainMenuSponsors_GetSponsorsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMainMenuSponsors_GetSponsorsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useMainMenuSponsors_GetSponsorsQuery(baseOptions: Apollo.QueryHookOptions<MainMenuSponsors_GetSponsorsQuery, MainMenuSponsors_GetSponsorsQueryVariables>) {
+        return Apollo.useQuery<MainMenuSponsors_GetSponsorsQuery, MainMenuSponsors_GetSponsorsQueryVariables>(MainMenuSponsors_GetSponsorsDocument, baseOptions);
+      }
+export function useMainMenuSponsors_GetSponsorsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MainMenuSponsors_GetSponsorsQuery, MainMenuSponsors_GetSponsorsQueryVariables>) {
+          return Apollo.useLazyQuery<MainMenuSponsors_GetSponsorsQuery, MainMenuSponsors_GetSponsorsQueryVariables>(MainMenuSponsors_GetSponsorsDocument, baseOptions);
+        }
+export type MainMenuSponsors_GetSponsorsQueryHookResult = ReturnType<typeof useMainMenuSponsors_GetSponsorsQuery>;
+export type MainMenuSponsors_GetSponsorsLazyQueryHookResult = ReturnType<typeof useMainMenuSponsors_GetSponsorsLazyQuery>;
+export type MainMenuSponsors_GetSponsorsQueryResult = Apollo.QueryResult<MainMenuSponsors_GetSponsorsQuery, MainMenuSponsors_GetSponsorsQueryVariables>;
 export const PresenceCountDocument = gql`
     subscription PresenceCount($path: String!, $conferenceId: uuid!) {
   presence_Page_by_pk(path: $path, conferenceId: $conferenceId) {

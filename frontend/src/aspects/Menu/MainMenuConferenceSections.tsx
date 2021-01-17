@@ -365,7 +365,7 @@ export function MainMenuConferenceSections_Inner({
                     to={`/conference/${confSlug}/attendees`}
                     width="100%"
                 >
-                    <FAIcon icon="mug-hot" iconStyle="s" mr={3} />
+                    <FAIcon icon="cat" iconStyle="s" mr={3} />
                     Attendees
                 </LinkButton>
                 <LinkButton

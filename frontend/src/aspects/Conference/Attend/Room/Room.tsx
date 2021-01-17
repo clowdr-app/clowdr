@@ -281,6 +281,17 @@ export function Room({
                         ) : (
                             <></>
                         )}
+
+                        {roomDetails.originatingContentGroupId ? (
+                            <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
+                                <ContentGroupSummaryWrapper
+                                    contentGroupId={roomDetails.originatingContentGroupId}
+                                    linkToItem={true}
+                                />
+                            </Box>
+                        ) : (
+                            <></>
+                        )}
                     </Box>
                     <Box>
                         {backstage ? (

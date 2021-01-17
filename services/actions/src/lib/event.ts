@@ -48,7 +48,7 @@ gql`
         $name: String!
         $publicVonageSessionId: String!
         $originatingEventId: uuid!
-        $originatingContentGroupId: uuid
+        $originatingContentGroupId: uuid = null
         $conferenceId: uuid!
         $chatId: uuid = null
     ) {

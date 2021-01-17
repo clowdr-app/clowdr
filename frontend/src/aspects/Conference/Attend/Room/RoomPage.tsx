@@ -34,6 +34,7 @@ gql`
         }
         publicVonageSessionId
         chatId
+        originatingContentGroupId
         roomPrivacyName
         ...RoomEvents
         ...RoomPeople

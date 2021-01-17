@@ -11481,6 +11481,8 @@ export type Room = {
   readonly mediaLiveChannel?: Maybe<MediaLiveChannel>;
   readonly mediaLiveChannelId?: Maybe<Scalars['uuid']>;
   readonly name: Scalars['String'];
+  /** An object relationship */
+  readonly originatingContentGroup?: Maybe<ContentGroup>;
   readonly originatingContentGroupId?: Maybe<Scalars['uuid']>;
   /** An object relationship */
   readonly originatingData?: Maybe<OriginatingData>;
@@ -12670,6 +12672,7 @@ export type Room_Bool_Exp = {
   readonly mediaLiveChannel?: Maybe<MediaLiveChannel_Bool_Exp>;
   readonly mediaLiveChannelId?: Maybe<Uuid_Comparison_Exp>;
   readonly name?: Maybe<String_Comparison_Exp>;
+  readonly originatingContentGroup?: Maybe<ContentGroup_Bool_Exp>;
   readonly originatingContentGroupId?: Maybe<Uuid_Comparison_Exp>;
   readonly originatingData?: Maybe<OriginatingData_Bool_Exp>;
   readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
@@ -12721,6 +12724,7 @@ export type Room_Insert_Input = {
   readonly mediaLiveChannel?: Maybe<MediaLiveChannel_Obj_Rel_Insert_Input>;
   readonly mediaLiveChannelId?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
+  readonly originatingContentGroup?: Maybe<ContentGroup_Obj_Rel_Insert_Input>;
   readonly originatingContentGroupId?: Maybe<Scalars['uuid']>;
   readonly originatingData?: Maybe<OriginatingData_Obj_Rel_Insert_Input>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
@@ -12844,6 +12848,7 @@ export type Room_Order_By = {
   readonly mediaLiveChannel?: Maybe<MediaLiveChannel_Order_By>;
   readonly mediaLiveChannelId?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
+  readonly originatingContentGroup?: Maybe<ContentGroup_Order_By>;
   readonly originatingContentGroupId?: Maybe<Order_By>;
   readonly originatingData?: Maybe<OriginatingData_Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
@@ -28224,7 +28229,7 @@ export type GetRoomDetailsQuery = { readonly __typename?: 'query_root', readonly
   )> };
 
 export type RoomDetailsFragment = (
-  { readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly publicVonageSessionId?: Maybe<string>, readonly chatId?: Maybe<any>, readonly roomPrivacyName: RoomPrivacy_Enum, readonly mediaLiveChannel?: Maybe<{ readonly __typename?: 'MediaLiveChannel', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly id: any }> }
+  { readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly publicVonageSessionId?: Maybe<string>, readonly chatId?: Maybe<any>, readonly originatingContentGroupId?: Maybe<any>, readonly roomPrivacyName: RoomPrivacy_Enum, readonly mediaLiveChannel?: Maybe<{ readonly __typename?: 'MediaLiveChannel', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly id: any }> }
   & RoomEventsFragment
   & RoomPeopleFragment
 );
@@ -29609,6 +29614,7 @@ export const RoomDetailsFragmentDoc = gql`
   }
   publicVonageSessionId
   chatId
+  originatingContentGroupId
   roomPrivacyName
   ...RoomEvents
   ...RoomPeople

@@ -5904,6 +5904,9 @@
   - name: mediaLiveChannel
     using:
       foreign_key_constraint_on: mediaLiveChannelId
+  - name: originatingContentGroup
+    using:
+      foreign_key_constraint_on: originatingContentGroupId
   - name: originatingData
     using:
       foreign_key_constraint_on: originatingDataId
@@ -5977,6 +5980,7 @@
       - currentModeName
       - id
       - name
+      - originatingContentGroupId
       - originatingDataId
       - priority
       - roomPrivacyName
@@ -6024,6 +6028,7 @@
       - id
       - mediaLiveChannelId
       - name
+      - originatingContentGroupId
       - originatingDataId
       - originatingEventId
       - priority

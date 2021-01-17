@@ -125,7 +125,7 @@ export function VonageRoomControlBar({
                 )}
                 {inRoom ? (
                     <WrapItem ml="auto">
-                        <Button colorScheme="green" onClick={onLeaveRoom}>
+                        <Button colorScheme="green" onClick={onLeaveRoom} size="lg">
                             Leave Room
                         </Button>
                     </WrapItem>
@@ -133,6 +133,7 @@ export function VonageRoomControlBar({
                     <WrapItem ml="auto">
                         <Button
                             colorScheme="green"
+                            size="lg"
                             onClick={onJoinRoom}
                             isLoading={joining && !openTokProps.isSessionConnected}
                         >

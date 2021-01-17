@@ -1,7 +1,8 @@
 import { Optional } from "@ahanapediatrics/ahana-fp";
 import { VmShape, VolumeMeter } from "@ahanapediatrics/react-volume-meter";
-import { Box, HStack, useColorModeValue, useToast } from "@chakra-ui/react";
+import { Alert, AlertIcon, Box, CloseButton, useToast, VStack } from "@chakra-ui/react";
 import React, { useEffect } from "react";
+import { useRestorableState } from "../../../Generic/useRestorableState";
 import { useVonageRoom } from "../../../Vonage/useVonageRoom";
 import PlaceholderImage from "./PlaceholderImage";
 
@@ -10,7 +11,12 @@ export const AudioContext = new (window.AudioContext || (window as any).webkitAu
 export function PreJoin({ cameraPreviewRef }: { cameraPreviewRef: React.RefObject<HTMLVideoElement> }): JSX.Element {
     const { state, dispatch } = useVonageRoom();
     const toast = useToast();
-    const placeholderColour = useColorModeValue("black", "white");
+    const [dismissHelpMessage, setDismissHelpMessage] = useRestorableState<boolean>(
+        "clowdr-dismissCameraPreviewMessage",
+        false,
+        (x) => JSON.stringify(x),
+        (x) => JSON.parse(x)
+    );
 
     useEffect(() => {
         if (cameraPreviewRef.current) {
@@ -21,7 +27,7 @@ export function PreJoin({ cameraPreviewRef }: { cameraPreviewRef: React.RefObjec
     }, [cameraPreviewRef, state.cameraStream, toast]);
 
     return (
-        <HStack>
+        <VStack>
             <Box position="relative">
                 <PlaceholderImage />
                 <video
@@ -49,6 +55,20 @@ export function PreJoin({ cameraPreviewRef }: { cameraPreviewRef: React.RefObjec
                     )}
                 </Box>
             </Box>
-        </HStack>
+            {!dismissHelpMessage ? (
+                <Alert status="info" maxW="300px" borderRadius="md" pr={8} position="relative">
+                    <AlertIcon />
+                    Preview your camera here before joining! 🤳
+                    <CloseButton
+                        position="absolute"
+                        right="8px"
+                        top="8px"
+                        onClick={() => setDismissHelpMessage(true)}
+                    />
+                </Alert>
+            ) : (
+                <></>
+            )}
+        </VStack>
     );
 }

@@ -97,7 +97,10 @@ function ContentGroupButton({ group }: { group: ContentGroupDataFragment }): JSX
                 {group.title}
             </Text>
             <Text as="p" fontSize="0.9em" textColor={textColour} whiteSpace="normal" lineHeight="3ex">
-                {group.people.reduce((acc, person) => `${acc}, ${person.person.name}`, "").substr(2)}
+                {group.people
+                    .filter((x) => x.roleName.toLowerCase() !== "chair")
+                    .reduce((acc, person) => `${acc}, ${person.person.name}`, "")
+                    .substr(2)}
             </Text>
         </LinkButton>
     );

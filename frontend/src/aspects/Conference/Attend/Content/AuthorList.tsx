@@ -18,15 +18,18 @@ gql`
 export function AuthorList({
     contentPeopleData,
     hideRole,
+    hiddenRoles,
 }: {
     contentPeopleData: readonly ContentPersonDataFragment[];
     hideRole?: boolean;
+    hiddenRoles?: string[];
 }): JSX.Element {
     const authorElements = useMemo(() => {
-        return contentPeopleData.map((contentPersonData) => {
+        const data = hiddenRoles && hiddenRoles.length > 0 ? contentPeopleData.filter((x) => !hiddenRoles.includes(x.roleName.toLowerCase())) : contentPeopleData;
+        return data.map((contentPersonData) => {
             return <Author contentPersonData={contentPersonData} key={contentPersonData.id} hideRole={hideRole} />;
         });
-    }, [contentPeopleData, hideRole]);
+    }, [contentPeopleData, hiddenRoles, hideRole]);
 
     return (
         <HStack spacing="0" gridGap="8" wrap="wrap">

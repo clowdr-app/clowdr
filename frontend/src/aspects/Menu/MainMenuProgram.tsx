@@ -59,7 +59,7 @@ gql`
                     {
                         contentGroup: {
                             _or: [
-                                { title: { _like: $search } }
+                                { title: { _ilike: $search } }
                                 {
                                     people: {
                                         person: {

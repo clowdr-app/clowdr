@@ -185,6 +185,7 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
                                                             isLoading={creatingBreakout}
                                                             onClick={createBreakout}
                                                             width="100%"
+                                                            mt={2}
                                                         >
                                                             Create breakout room
                                                         </Button>

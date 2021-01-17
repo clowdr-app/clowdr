@@ -11481,6 +11481,7 @@ export type Room = {
   readonly mediaLiveChannel?: Maybe<MediaLiveChannel>;
   readonly mediaLiveChannelId?: Maybe<Scalars['uuid']>;
   readonly name: Scalars['String'];
+  readonly originatingContentGroupId?: Maybe<Scalars['uuid']>;
   /** An object relationship */
   readonly originatingData?: Maybe<OriginatingData>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
@@ -12669,6 +12670,7 @@ export type Room_Bool_Exp = {
   readonly mediaLiveChannel?: Maybe<MediaLiveChannel_Bool_Exp>;
   readonly mediaLiveChannelId?: Maybe<Uuid_Comparison_Exp>;
   readonly name?: Maybe<String_Comparison_Exp>;
+  readonly originatingContentGroupId?: Maybe<Uuid_Comparison_Exp>;
   readonly originatingData?: Maybe<OriginatingData_Bool_Exp>;
   readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
   readonly originatingEvent?: Maybe<Event_Bool_Exp>;
@@ -12689,6 +12691,8 @@ export enum Room_Constraint {
   RoomConferenceIdNameKey = 'Room_conferenceId_name_key',
   /** unique or primary key constraint */
   RoomMediaLiveChannelIdKey = 'Room_mediaLiveChannelId_key',
+  /** unique or primary key constraint */
+  RoomOriginatingContentGroupIdKey = 'Room_originatingContentGroupId_key',
   /** unique or primary key constraint */
   RoomOriginatingEventIdKey = 'Room_originatingEventId_key',
   /** unique or primary key constraint */
@@ -12717,6 +12721,7 @@ export type Room_Insert_Input = {
   readonly mediaLiveChannel?: Maybe<MediaLiveChannel_Obj_Rel_Insert_Input>;
   readonly mediaLiveChannelId?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
+  readonly originatingContentGroupId?: Maybe<Scalars['uuid']>;
   readonly originatingData?: Maybe<OriginatingData_Obj_Rel_Insert_Input>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
   readonly originatingEvent?: Maybe<Event_Obj_Rel_Insert_Input>;
@@ -12741,6 +12746,7 @@ export type Room_Max_Fields = {
   readonly id?: Maybe<Scalars['uuid']>;
   readonly mediaLiveChannelId?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
+  readonly originatingContentGroupId?: Maybe<Scalars['uuid']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
   readonly originatingEventId?: Maybe<Scalars['uuid']>;
   readonly priority?: Maybe<Scalars['Int']>;
@@ -12757,6 +12763,7 @@ export type Room_Max_Order_By = {
   readonly id?: Maybe<Order_By>;
   readonly mediaLiveChannelId?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
+  readonly originatingContentGroupId?: Maybe<Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
   readonly originatingEventId?: Maybe<Order_By>;
   readonly priority?: Maybe<Order_By>;
@@ -12774,6 +12781,7 @@ export type Room_Min_Fields = {
   readonly id?: Maybe<Scalars['uuid']>;
   readonly mediaLiveChannelId?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
+  readonly originatingContentGroupId?: Maybe<Scalars['uuid']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
   readonly originatingEventId?: Maybe<Scalars['uuid']>;
   readonly priority?: Maybe<Scalars['Int']>;
@@ -12790,6 +12798,7 @@ export type Room_Min_Order_By = {
   readonly id?: Maybe<Order_By>;
   readonly mediaLiveChannelId?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
+  readonly originatingContentGroupId?: Maybe<Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
   readonly originatingEventId?: Maybe<Order_By>;
   readonly priority?: Maybe<Order_By>;
@@ -12835,6 +12844,7 @@ export type Room_Order_By = {
   readonly mediaLiveChannel?: Maybe<MediaLiveChannel_Order_By>;
   readonly mediaLiveChannelId?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
+  readonly originatingContentGroupId?: Maybe<Order_By>;
   readonly originatingData?: Maybe<OriginatingData_Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
   readonly originatingEvent?: Maybe<Event_Order_By>;
@@ -12873,6 +12883,8 @@ export enum Room_Select_Column {
   /** column name */
   Name = 'name',
   /** column name */
+  OriginatingContentGroupId = 'originatingContentGroupId',
+  /** column name */
   OriginatingDataId = 'originatingDataId',
   /** column name */
   OriginatingEventId = 'originatingEventId',
@@ -12896,6 +12908,7 @@ export type Room_Set_Input = {
   readonly id?: Maybe<Scalars['uuid']>;
   readonly mediaLiveChannelId?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
+  readonly originatingContentGroupId?: Maybe<Scalars['uuid']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
   readonly originatingEventId?: Maybe<Scalars['uuid']>;
   readonly priority?: Maybe<Scalars['Int']>;
@@ -12974,6 +12987,8 @@ export enum Room_Update_Column {
   MediaLiveChannelId = 'mediaLiveChannelId',
   /** column name */
   Name = 'name',
+  /** column name */
+  OriginatingContentGroupId = 'originatingContentGroupId',
   /** column name */
   OriginatingDataId = 'originatingDataId',
   /** column name */
@@ -28012,6 +28027,24 @@ export type ContentGroupEventsFragment = { readonly __typename?: 'ContentGroup',
 
 export type ContentGroupEventFragment = { readonly __typename?: 'Event', readonly startTime: any, readonly id: any, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly name: string, readonly intendedRoomModeName: RoomMode_Enum, readonly room: { readonly __typename?: 'Room', readonly name: string, readonly id: any } };
 
+export type ContentGroupSummary_GetContentGroupQueryVariables = Exact<{
+  contentGroupId: Scalars['uuid'];
+}>;
+
+
+export type ContentGroupSummary_GetContentGroupQuery = { readonly __typename?: 'query_root', readonly ContentGroup_by_pk?: Maybe<(
+    { readonly __typename?: 'ContentGroup' }
+    & ContentGroupSummary_ContentGroupDataFragment
+  )> };
+
+export type ContentGroupSummary_ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string }> }>, readonly contentItems: ReadonlyArray<(
+    { readonly __typename?: 'ContentItem' }
+    & ContentItemDataFragment
+  )>, readonly people: ReadonlyArray<(
+    { readonly __typename?: 'ContentGroupPerson' }
+    & ContentPersonDataFragment
+  )> };
+
 export type ContentItemDataFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly contentTypeName: ContentType_Enum };
 
 export type UpdateAttendeeProfileMutationVariables = Exact<{
@@ -28153,6 +28186,13 @@ export type MyEventRoomJoinRequestSubscriptionVariables = Exact<{
 
 export type MyEventRoomJoinRequestSubscription = { readonly __typename?: 'subscription_root', readonly EventRoomJoinRequest: ReadonlyArray<{ readonly __typename?: 'EventRoomJoinRequest', readonly id: any, readonly approved: boolean }> };
 
+export type Room_GetCurrentEventQueryVariables = Exact<{
+  currentEventId: Scalars['uuid'];
+}>;
+
+
+export type Room_GetCurrentEventQuery = { readonly __typename?: 'query_root', readonly Event_by_pk?: Maybe<{ readonly __typename?: 'Event', readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly contentGroupTypeName: ContentGroupType_Enum, readonly chatId?: Maybe<any>, readonly contentItems: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly data: any }> }> }> };
+
 export type AddParticipantToRoomMutationVariables = Exact<{
   attendeeId: Scalars['uuid'];
   roomId: Scalars['uuid'];
@@ -28194,10 +28234,7 @@ export type RoomEventsFragment = { readonly __typename?: 'Room', readonly events
     & RoomEventSummaryFragment
   )> };
 
-export type RoomEventSummaryFragment = { readonly __typename?: 'Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'EventPerson', readonly id: any, readonly roleName: EventPersonRole_Enum, readonly attendee?: Maybe<{ readonly __typename?: 'Attendee', readonly displayName: string, readonly id: any, readonly userId?: Maybe<string> }> }>, readonly contentGroup?: Maybe<(
-    { readonly __typename?: 'ContentGroup' }
-    & ContentGroupDataFragment
-  )> };
+export type RoomEventSummaryFragment = { readonly __typename?: 'Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum, readonly contentGroupId?: Maybe<any> };
 
 export type EventPeopleForRoomSubscriptionVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -29461,6 +29498,27 @@ export const ContentGroupEventsFragmentDoc = gql`
   }
 }
     ${ContentGroupEventFragmentDoc}`;
+export const ContentGroupSummary_ContentGroupDataFragmentDoc = gql`
+    fragment ContentGroupSummary_ContentGroupData on ContentGroup {
+  id
+  title
+  contentGroupTypeName
+  chatId
+  chat {
+    room {
+      id
+      name
+    }
+  }
+  contentItems(where: {isHidden: {_eq: false}}) {
+    ...ContentItemData
+  }
+  people(order_by: {priority: asc}) {
+    ...ContentPersonData
+  }
+}
+    ${ContentItemDataFragmentDoc}
+${ContentPersonDataFragmentDoc}`;
 export const EventParticipantStreamDetailsFragmentDoc = gql`
     fragment EventParticipantStreamDetails on EventParticipantStream {
   id
@@ -29517,20 +29575,9 @@ export const RoomEventSummaryFragmentDoc = gql`
   name
   endTime
   intendedRoomModeName
-  eventPeople {
-    id
-    roleName
-    attendee {
-      displayName
-      id
-      userId
-    }
-  }
-  contentGroup {
-    ...ContentGroupData
-  }
+  contentGroupId
 }
-    ${ContentGroupDataFragmentDoc}`;
+    `;
 export const RoomEventsFragmentDoc = gql`
     fragment RoomEvents on Room {
   events(order_by: {startTime: asc}) {
@@ -31033,6 +31080,39 @@ export function useGetContentGroupLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type GetContentGroupQueryHookResult = ReturnType<typeof useGetContentGroupQuery>;
 export type GetContentGroupLazyQueryHookResult = ReturnType<typeof useGetContentGroupLazyQuery>;
 export type GetContentGroupQueryResult = Apollo.QueryResult<GetContentGroupQuery, GetContentGroupQueryVariables>;
+export const ContentGroupSummary_GetContentGroupDocument = gql`
+    query ContentGroupSummary_GetContentGroup($contentGroupId: uuid!) {
+  ContentGroup_by_pk(id: $contentGroupId) {
+    ...ContentGroupSummary_ContentGroupData
+  }
+}
+    ${ContentGroupSummary_ContentGroupDataFragmentDoc}`;
+
+/**
+ * __useContentGroupSummary_GetContentGroupQuery__
+ *
+ * To run a query within a React component, call `useContentGroupSummary_GetContentGroupQuery` and pass it any options that fit your needs.
+ * When your component renders, `useContentGroupSummary_GetContentGroupQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useContentGroupSummary_GetContentGroupQuery({
+ *   variables: {
+ *      contentGroupId: // value for 'contentGroupId'
+ *   },
+ * });
+ */
+export function useContentGroupSummary_GetContentGroupQuery(baseOptions: Apollo.QueryHookOptions<ContentGroupSummary_GetContentGroupQuery, ContentGroupSummary_GetContentGroupQueryVariables>) {
+        return Apollo.useQuery<ContentGroupSummary_GetContentGroupQuery, ContentGroupSummary_GetContentGroupQueryVariables>(ContentGroupSummary_GetContentGroupDocument, baseOptions);
+      }
+export function useContentGroupSummary_GetContentGroupLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ContentGroupSummary_GetContentGroupQuery, ContentGroupSummary_GetContentGroupQueryVariables>) {
+          return Apollo.useLazyQuery<ContentGroupSummary_GetContentGroupQuery, ContentGroupSummary_GetContentGroupQueryVariables>(ContentGroupSummary_GetContentGroupDocument, baseOptions);
+        }
+export type ContentGroupSummary_GetContentGroupQueryHookResult = ReturnType<typeof useContentGroupSummary_GetContentGroupQuery>;
+export type ContentGroupSummary_GetContentGroupLazyQueryHookResult = ReturnType<typeof useContentGroupSummary_GetContentGroupLazyQuery>;
+export type ContentGroupSummary_GetContentGroupQueryResult = Apollo.QueryResult<ContentGroupSummary_GetContentGroupQuery, ContentGroupSummary_GetContentGroupQueryVariables>;
 export const UpdateAttendeeProfileDocument = gql`
     mutation UpdateAttendeeProfile($attendeeId: uuid!, $profile: AttendeeProfile_set_input = {}) {
   update_AttendeeProfile_by_pk(
@@ -31570,6 +31650,47 @@ export function useMyEventRoomJoinRequestSubscription(baseOptions: Apollo.Subscr
       }
 export type MyEventRoomJoinRequestSubscriptionHookResult = ReturnType<typeof useMyEventRoomJoinRequestSubscription>;
 export type MyEventRoomJoinRequestSubscriptionResult = Apollo.SubscriptionResult<MyEventRoomJoinRequestSubscription>;
+export const Room_GetCurrentEventDocument = gql`
+    query Room_GetCurrentEvent($currentEventId: uuid!) {
+  Event_by_pk(id: $currentEventId) {
+    contentGroup {
+      id
+      contentGroupTypeName
+      contentItems(where: {contentTypeName: {_eq: ZOOM}}, limit: 1) {
+        id
+        data
+      }
+      chatId
+    }
+  }
+}
+    `;
+
+/**
+ * __useRoom_GetCurrentEventQuery__
+ *
+ * To run a query within a React component, call `useRoom_GetCurrentEventQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRoom_GetCurrentEventQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRoom_GetCurrentEventQuery({
+ *   variables: {
+ *      currentEventId: // value for 'currentEventId'
+ *   },
+ * });
+ */
+export function useRoom_GetCurrentEventQuery(baseOptions: Apollo.QueryHookOptions<Room_GetCurrentEventQuery, Room_GetCurrentEventQueryVariables>) {
+        return Apollo.useQuery<Room_GetCurrentEventQuery, Room_GetCurrentEventQueryVariables>(Room_GetCurrentEventDocument, baseOptions);
+      }
+export function useRoom_GetCurrentEventLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Room_GetCurrentEventQuery, Room_GetCurrentEventQueryVariables>) {
+          return Apollo.useLazyQuery<Room_GetCurrentEventQuery, Room_GetCurrentEventQueryVariables>(Room_GetCurrentEventDocument, baseOptions);
+        }
+export type Room_GetCurrentEventQueryHookResult = ReturnType<typeof useRoom_GetCurrentEventQuery>;
+export type Room_GetCurrentEventLazyQueryHookResult = ReturnType<typeof useRoom_GetCurrentEventLazyQuery>;
+export type Room_GetCurrentEventQueryResult = Apollo.QueryResult<Room_GetCurrentEventQuery, Room_GetCurrentEventQueryVariables>;
 export const AddParticipantToRoomDocument = gql`
     mutation AddParticipantToRoom($attendeeId: uuid!, $roomId: uuid!) {
   insert_RoomPerson_one(

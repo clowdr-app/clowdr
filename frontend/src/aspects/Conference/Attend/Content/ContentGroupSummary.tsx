@@ -1,3 +1,4 @@
+import { gql } from "@apollo/client";
 import { Box, Container, Heading, Text, VStack } from "@chakra-ui/react";
 import {
     assertIsContentItemDataBlob,
@@ -9,18 +10,73 @@ import {
 } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
 import React, { useMemo } from "react";
-import { ContentGroupDataFragment, ContentType_Enum, Permission_Enum } from "../../../../generated/graphql";
+import {
+    ContentGroupSummary_ContentGroupDataFragment,
+    ContentType_Enum,
+    Permission_Enum,
+    useContentGroupSummary_GetContentGroupQuery,
+} from "../../../../generated/graphql";
 import { ExternalLinkButton, LinkButton } from "../../../Chakra/LinkButton";
+import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import { Markdown } from "../../../Text/Markdown";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../useConference";
 import { AuthorList } from "./AuthorList";
 
+gql`
+    query ContentGroupSummary_GetContentGroup($contentGroupId: uuid!) {
+        ContentGroup_by_pk(id: $contentGroupId) {
+            ...ContentGroupSummary_ContentGroupData
+        }
+    }
+
+    fragment ContentGroupSummary_ContentGroupData on ContentGroup {
+        id
+        title
+        contentGroupTypeName
+        chatId
+        chat {
+            room {
+                id
+                name
+            }
+        }
+        contentItems(where: { isHidden: { _eq: false } }) {
+            ...ContentItemData
+        }
+        people(order_by: { priority: asc }) {
+            ...ContentPersonData
+        }
+    }
+`;
+
+export function ContentGroupSummaryWrapper({
+    contentGroupId,
+    linkToItem,
+}: {
+    contentGroupId: string;
+    linkToItem?: boolean;
+}): JSX.Element {
+    const result = useContentGroupSummary_GetContentGroupQuery({
+        variables: {
+            contentGroupId,
+        },
+    });
+
+    return (
+        <ApolloQueryWrapper getter={(data) => data.ContentGroup_by_pk} queryResult={result}>
+            {(contentGroup: ContentGroupSummary_ContentGroupDataFragment) => (
+                <ContentGroupSummary contentGroupData={contentGroup} linkToItem={linkToItem} />
+            )}
+        </ApolloQueryWrapper>
+    );
+}
+
 export function ContentGroupSummary({
     contentGroupData,
     linkToItem,
 }: {
-    contentGroupData: ContentGroupDataFragment;
+    contentGroupData: ContentGroupSummary_ContentGroupDataFragment;
     linkToItem?: boolean;
 }): JSX.Element {
     const abstractContentItem = useMemo(() => {

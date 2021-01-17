@@ -52,18 +52,7 @@ gql`
         name
         endTime
         intendedRoomModeName
-        eventPeople {
-            id
-            roleName
-            attendee {
-                displayName
-                id
-                userId
-            }
-        }
-        contentGroup {
-            ...ContentGroupData
-        }
+        contentGroupId
     }
 
     subscription EventPeopleForRoom($roomId: uuid!) {

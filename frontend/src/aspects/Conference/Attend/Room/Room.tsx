@@ -1,3 +1,4 @@
+import { gql } from "@apollo/client";
 import { Alert, AlertIcon, Box, Heading, HStack, Text, useColorModeValue, useToken, VStack } from "@chakra-ui/react";
 import type { ContentItemDataBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
 import { formatRelative } from "date-fns";
@@ -5,22 +6,38 @@ import * as R from "ramda";
 import React, { useMemo, useState } from "react";
 import ReactPlayer from "react-player";
 import {
-    ContentType_Enum,
     EventPersonDetailsFragment,
     RoomDetailsFragment,
     RoomMode_Enum,
+    useRoom_GetCurrentEventQuery,
 } from "../../../../generated/graphql";
 import { ExternalLinkButton } from "../../../Chakra/LinkButton";
 import { Chat } from "../../../Chat/Chat";
 import type { ChatSources } from "../../../Chat/Configuration";
 import usePolling from "../../../Generic/usePolling";
-import { ContentGroupSummary } from "../Content/ContentGroupSummary";
+import { ContentGroupSummaryWrapper } from "../Content/ContentGroupSummary";
 import { BreakoutVonageRoom } from "./BreakoutVonageRoom";
 import { EventEndControls } from "./EventEndControls";
 import { HandUpButton } from "./HandUpButton";
 import { RoomBackstage } from "./RoomBackstage";
 import { RoomControlBar } from "./RoomControlBar";
 import { useCurrentRoomEvent } from "./useCurrentRoomEvent";
+
+gql`
+    query Room_GetCurrentEvent($currentEventId: uuid!) {
+        Event_by_pk(id: $currentEventId) {
+            contentGroup {
+                id
+                contentGroupTypeName
+                contentItems(where: { contentTypeName: { _eq: ZOOM } }, limit: 1) {
+                    id
+                    data
+                }
+                chatId
+            }
+        }
+    }
+`;
 
 export function Room({
     roomDetails,
@@ -74,27 +91,36 @@ export function Room({
         secondsUntilZoomEvent,
     ]);
 
-    const maybeCurrentEventZoomDetails = useMemo(() => {
-        const zoomItem = currentRoomEvent?.contentGroup?.contentItems.find(
-            (contentItem) => contentItem.contentTypeName === ContentType_Enum.Zoom
-        );
+    const { data: currentEventData } = useRoom_GetCurrentEventQuery({
+        variables: {
+            currentEventId: currentRoomEvent?.id ?? "00000000-0000-0000-0000-000000000000",
+        },
+    });
 
-        if (!zoomItem) {
+    const maybeCurrentEventZoomDetails = useMemo(() => {
+        try {
+            const zoomItems = currentEventData?.Event_by_pk?.contentGroup?.contentItems;
+
+            if (!zoomItems || zoomItems.length < 1) {
+                return undefined;
+            }
+
+            const versions = zoomItems[0].data as ContentItemDataBlob;
+
+            return (R.last(versions)?.data as ZoomBlob).url;
+        } catch (e) {
+            console.error("Error finding current event Zoom details", e);
             return undefined;
         }
-
-        const versions = zoomItem.data as ContentItemDataBlob;
-
-        return (R.last(versions)?.data as ZoomBlob).url;
-    }, [currentRoomEvent?.contentGroup?.contentItems]);
+    }, [currentEventData?.Event_by_pk?.contentGroup?.contentItems]);
 
     const chatSources = useMemo((): ChatSources | undefined => {
-        if (currentRoomEvent?.contentGroup) {
-            const rightHandTypeName = currentRoomEvent?.contentGroup?.contentGroupTypeName ?? "PAPER";
+        if (currentEventData?.Event_by_pk?.contentGroup) {
+            const rightHandTypeName = currentEventData.Event_by_pk.contentGroup?.contentGroupTypeName ?? "PAPER";
             const rightHandLabel = rightHandTypeName[0] + rightHandTypeName.slice(1).toLowerCase();
             return {
                 chatIdL: roomDetails.chatId ?? undefined,
-                chatIdR: currentRoomEvent?.contentGroup?.chatId ?? undefined,
+                chatIdR: currentEventData.Event_by_pk.contentGroup?.chatId ?? undefined,
                 chatLabelL: "Room",
                 chatLabelR: rightHandLabel,
                 defaultSelected: "L",
@@ -107,7 +133,7 @@ export function Room({
         } else {
             return undefined;
         }
-    }, [currentRoomEvent?.contentGroup, roomDetails.chatId]);
+    }, [currentEventData?.Event_by_pk?.contentGroup, roomDetails.chatId]);
 
     return (
         <HStack width="100%" flexWrap="wrap" alignItems="stretch">
@@ -219,9 +245,9 @@ export function Room({
                                 <Heading as="h3" textAlign="left" size="lg" mb={2}>
                                     {currentRoomEvent.name}
                                 </Heading>
-                                {currentRoomEvent?.contentGroup ? (
-                                    <ContentGroupSummary
-                                        contentGroupData={currentRoomEvent.contentGroup}
+                                {currentRoomEvent?.contentGroupId ? (
+                                    <ContentGroupSummaryWrapper
+                                        contentGroupId={currentRoomEvent.contentGroupId}
                                         linkToItem={true}
                                     />
                                 ) : (
@@ -237,9 +263,9 @@ export function Room({
                                 <Heading as="h3" textAlign="left" size="lg" mb={2}>
                                     {nextRoomEvent.name}
                                 </Heading>
-                                {nextRoomEvent?.contentGroup ? (
-                                    <ContentGroupSummary
-                                        contentGroupData={nextRoomEvent.contentGroup}
+                                {nextRoomEvent?.contentGroupId ? (
+                                    <ContentGroupSummaryWrapper
+                                        contentGroupId={nextRoomEvent.contentGroupId}
                                         linkToItem={true}
                                     />
                                 ) : (

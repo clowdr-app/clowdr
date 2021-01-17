@@ -156,6 +156,7 @@ gql`
     query GetRoomsWithNoEvents($from: timestamptz, $to: timestamptz) {
         Room(
             where: {
+                mediaLiveChannelId: { _is_null: false }
                 _not: { events: { startTime: { _gte: $from, _lte: $to } } }
                 _and: { _not: { events: { startTime: { _lte: $from }, endTime: { _gte: $from } } } }
             }

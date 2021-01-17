@@ -23,6 +23,7 @@ import { LinkButton } from "../../../Chakra/LinkButton";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import FAIcon from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";
+import { sortAuthors } from "./AuthorList";
 
 gql`
     fragment TagWithContent on Tag {
@@ -99,6 +100,7 @@ function ContentGroupButton({ group }: { group: ContentGroupDataFragment }): JSX
             <Text as="p" fontSize="0.9em" textColor={textColour} whiteSpace="normal" lineHeight="3ex">
                 {group.people
                     .filter((x) => x.roleName.toLowerCase() !== "chair")
+                    .sort(sortAuthors)
                     .reduce((acc, person) => `${acc}, ${person.person.name}`, "")
                     .substr(2)}
             </Text>

@@ -12,8 +12,24 @@ gql`
             affiliation
         }
         roleName
+        priority
     }
 `;
+
+export function sortAuthors(x: ContentPersonDataFragment, y: ContentPersonDataFragment): number {
+    if (typeof x.priority === "number") {
+        if (typeof y.priority === "number") {
+            return x.priority - y.priority;
+        }
+        else {
+            return -1;
+        }
+    }
+    else if (typeof y.priority === "number") {
+        return 1;
+    }
+    return 0;
+}
 
 export function AuthorList({
     contentPeopleData,
@@ -25,10 +41,15 @@ export function AuthorList({
     hiddenRoles?: string[];
 }): JSX.Element {
     const authorElements = useMemo(() => {
-        const data = hiddenRoles && hiddenRoles.length > 0 ? contentPeopleData.filter((x) => !hiddenRoles.includes(x.roleName.toLowerCase())) : contentPeopleData;
-        return data.map((contentPersonData) => {
-            return <Author contentPersonData={contentPersonData} key={contentPersonData.id} hideRole={hideRole} />;
-        });
+        const data =
+            hiddenRoles && hiddenRoles.length > 0
+                ? contentPeopleData.filter((x) => !hiddenRoles.includes(x.roleName.toLowerCase()))
+                : contentPeopleData;
+        return [...data]
+            .sort(sortAuthors)
+            .map((contentPersonData) => {
+                return <Author contentPersonData={contentPersonData} key={contentPersonData.id} hideRole={hideRole} />;
+            });
     }, [contentPeopleData, hiddenRoles, hideRole]);
 
     return (

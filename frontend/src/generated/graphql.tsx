@@ -25806,7 +25806,7 @@ export type Room_ShufflePeriod = {
   readonly startAt: Scalars['timestamptz'];
   readonly targetAttendeesPerRoom: Scalars['Int'];
   readonly updated_at: Scalars['timestamptz'];
-  readonly waitRoomMaxDuration: Scalars['Int'];
+  readonly waitRoomMaxDurationSeconds: Scalars['Int'];
 };
 
 
@@ -25906,7 +25906,7 @@ export type Room_ShufflePeriod_Avg_Fields = {
   readonly maxAttendeesPerRoom?: Maybe<Scalars['Float']>;
   readonly roomDurationMinutes?: Maybe<Scalars['Float']>;
   readonly targetAttendeesPerRoom?: Maybe<Scalars['Float']>;
-  readonly waitRoomMaxDuration?: Maybe<Scalars['Float']>;
+  readonly waitRoomMaxDurationSeconds?: Maybe<Scalars['Float']>;
 };
 
 /** order by avg() on columns of table "room.ShufflePeriod" */
@@ -25914,7 +25914,7 @@ export type Room_ShufflePeriod_Avg_Order_By = {
   readonly maxAttendeesPerRoom?: Maybe<Order_By>;
   readonly roomDurationMinutes?: Maybe<Order_By>;
   readonly targetAttendeesPerRoom?: Maybe<Order_By>;
-  readonly waitRoomMaxDuration?: Maybe<Order_By>;
+  readonly waitRoomMaxDurationSeconds?: Maybe<Order_By>;
 };
 
 /** Boolean expression to filter rows from the table "room.ShufflePeriod". All fields are combined with a logical 'AND'. */
@@ -25937,7 +25937,7 @@ export type Room_ShufflePeriod_Bool_Exp = {
   readonly startAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly targetAttendeesPerRoom?: Maybe<Int_Comparison_Exp>;
   readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
-  readonly waitRoomMaxDuration?: Maybe<Int_Comparison_Exp>;
+  readonly waitRoomMaxDurationSeconds?: Maybe<Int_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "room.ShufflePeriod" */
@@ -25951,7 +25951,7 @@ export type Room_ShufflePeriod_Inc_Input = {
   readonly maxAttendeesPerRoom?: Maybe<Scalars['Int']>;
   readonly roomDurationMinutes?: Maybe<Scalars['Int']>;
   readonly targetAttendeesPerRoom?: Maybe<Scalars['Int']>;
-  readonly waitRoomMaxDuration?: Maybe<Scalars['Int']>;
+  readonly waitRoomMaxDurationSeconds?: Maybe<Scalars['Int']>;
 };
 
 /** input type for inserting data into table "room.ShufflePeriod" */
@@ -25971,7 +25971,7 @@ export type Room_ShufflePeriod_Insert_Input = {
   readonly startAt?: Maybe<Scalars['timestamptz']>;
   readonly targetAttendeesPerRoom?: Maybe<Scalars['Int']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
-  readonly waitRoomMaxDuration?: Maybe<Scalars['Int']>;
+  readonly waitRoomMaxDurationSeconds?: Maybe<Scalars['Int']>;
 };
 
 /** aggregate max on columns */
@@ -25988,7 +25988,7 @@ export type Room_ShufflePeriod_Max_Fields = {
   readonly startAt?: Maybe<Scalars['timestamptz']>;
   readonly targetAttendeesPerRoom?: Maybe<Scalars['Int']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
-  readonly waitRoomMaxDuration?: Maybe<Scalars['Int']>;
+  readonly waitRoomMaxDurationSeconds?: Maybe<Scalars['Int']>;
 };
 
 /** order by max() on columns of table "room.ShufflePeriod" */
@@ -26004,7 +26004,7 @@ export type Room_ShufflePeriod_Max_Order_By = {
   readonly startAt?: Maybe<Order_By>;
   readonly targetAttendeesPerRoom?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
-  readonly waitRoomMaxDuration?: Maybe<Order_By>;
+  readonly waitRoomMaxDurationSeconds?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
@@ -26021,7 +26021,7 @@ export type Room_ShufflePeriod_Min_Fields = {
   readonly startAt?: Maybe<Scalars['timestamptz']>;
   readonly targetAttendeesPerRoom?: Maybe<Scalars['Int']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
-  readonly waitRoomMaxDuration?: Maybe<Scalars['Int']>;
+  readonly waitRoomMaxDurationSeconds?: Maybe<Scalars['Int']>;
 };
 
 /** order by min() on columns of table "room.ShufflePeriod" */
@@ -26037,7 +26037,7 @@ export type Room_ShufflePeriod_Min_Order_By = {
   readonly startAt?: Maybe<Order_By>;
   readonly targetAttendeesPerRoom?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
-  readonly waitRoomMaxDuration?: Maybe<Order_By>;
+  readonly waitRoomMaxDurationSeconds?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "room.ShufflePeriod" */
@@ -26079,7 +26079,7 @@ export type Room_ShufflePeriod_Order_By = {
   readonly startAt?: Maybe<Order_By>;
   readonly targetAttendeesPerRoom?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
-  readonly waitRoomMaxDuration?: Maybe<Order_By>;
+  readonly waitRoomMaxDurationSeconds?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: "room.ShufflePeriod" */
@@ -26112,7 +26112,7 @@ export enum Room_ShufflePeriod_Select_Column {
   /** column name */
   UpdatedAt = 'updated_at',
   /** column name */
-  WaitRoomMaxDuration = 'waitRoomMaxDuration'
+  WaitRoomMaxDurationSeconds = 'waitRoomMaxDurationSeconds'
 }
 
 /** input type for updating data in table "room.ShufflePeriod" */
@@ -26128,7 +26128,7 @@ export type Room_ShufflePeriod_Set_Input = {
   readonly startAt?: Maybe<Scalars['timestamptz']>;
   readonly targetAttendeesPerRoom?: Maybe<Scalars['Int']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
-  readonly waitRoomMaxDuration?: Maybe<Scalars['Int']>;
+  readonly waitRoomMaxDurationSeconds?: Maybe<Scalars['Int']>;
 };
 
 /** aggregate stddev on columns */
@@ -26137,7 +26137,7 @@ export type Room_ShufflePeriod_Stddev_Fields = {
   readonly maxAttendeesPerRoom?: Maybe<Scalars['Float']>;
   readonly roomDurationMinutes?: Maybe<Scalars['Float']>;
   readonly targetAttendeesPerRoom?: Maybe<Scalars['Float']>;
-  readonly waitRoomMaxDuration?: Maybe<Scalars['Float']>;
+  readonly waitRoomMaxDurationSeconds?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev() on columns of table "room.ShufflePeriod" */
@@ -26145,7 +26145,7 @@ export type Room_ShufflePeriod_Stddev_Order_By = {
   readonly maxAttendeesPerRoom?: Maybe<Order_By>;
   readonly roomDurationMinutes?: Maybe<Order_By>;
   readonly targetAttendeesPerRoom?: Maybe<Order_By>;
-  readonly waitRoomMaxDuration?: Maybe<Order_By>;
+  readonly waitRoomMaxDurationSeconds?: Maybe<Order_By>;
 };
 
 /** aggregate stddev_pop on columns */
@@ -26154,7 +26154,7 @@ export type Room_ShufflePeriod_Stddev_Pop_Fields = {
   readonly maxAttendeesPerRoom?: Maybe<Scalars['Float']>;
   readonly roomDurationMinutes?: Maybe<Scalars['Float']>;
   readonly targetAttendeesPerRoom?: Maybe<Scalars['Float']>;
-  readonly waitRoomMaxDuration?: Maybe<Scalars['Float']>;
+  readonly waitRoomMaxDurationSeconds?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev_pop() on columns of table "room.ShufflePeriod" */
@@ -26162,7 +26162,7 @@ export type Room_ShufflePeriod_Stddev_Pop_Order_By = {
   readonly maxAttendeesPerRoom?: Maybe<Order_By>;
   readonly roomDurationMinutes?: Maybe<Order_By>;
   readonly targetAttendeesPerRoom?: Maybe<Order_By>;
-  readonly waitRoomMaxDuration?: Maybe<Order_By>;
+  readonly waitRoomMaxDurationSeconds?: Maybe<Order_By>;
 };
 
 /** aggregate stddev_samp on columns */
@@ -26171,7 +26171,7 @@ export type Room_ShufflePeriod_Stddev_Samp_Fields = {
   readonly maxAttendeesPerRoom?: Maybe<Scalars['Float']>;
   readonly roomDurationMinutes?: Maybe<Scalars['Float']>;
   readonly targetAttendeesPerRoom?: Maybe<Scalars['Float']>;
-  readonly waitRoomMaxDuration?: Maybe<Scalars['Float']>;
+  readonly waitRoomMaxDurationSeconds?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev_samp() on columns of table "room.ShufflePeriod" */
@@ -26179,7 +26179,7 @@ export type Room_ShufflePeriod_Stddev_Samp_Order_By = {
   readonly maxAttendeesPerRoom?: Maybe<Order_By>;
   readonly roomDurationMinutes?: Maybe<Order_By>;
   readonly targetAttendeesPerRoom?: Maybe<Order_By>;
-  readonly waitRoomMaxDuration?: Maybe<Order_By>;
+  readonly waitRoomMaxDurationSeconds?: Maybe<Order_By>;
 };
 
 /** aggregate sum on columns */
@@ -26188,7 +26188,7 @@ export type Room_ShufflePeriod_Sum_Fields = {
   readonly maxAttendeesPerRoom?: Maybe<Scalars['Int']>;
   readonly roomDurationMinutes?: Maybe<Scalars['Int']>;
   readonly targetAttendeesPerRoom?: Maybe<Scalars['Int']>;
-  readonly waitRoomMaxDuration?: Maybe<Scalars['Int']>;
+  readonly waitRoomMaxDurationSeconds?: Maybe<Scalars['Int']>;
 };
 
 /** order by sum() on columns of table "room.ShufflePeriod" */
@@ -26196,7 +26196,7 @@ export type Room_ShufflePeriod_Sum_Order_By = {
   readonly maxAttendeesPerRoom?: Maybe<Order_By>;
   readonly roomDurationMinutes?: Maybe<Order_By>;
   readonly targetAttendeesPerRoom?: Maybe<Order_By>;
-  readonly waitRoomMaxDuration?: Maybe<Order_By>;
+  readonly waitRoomMaxDurationSeconds?: Maybe<Order_By>;
 };
 
 /** update columns of table "room.ShufflePeriod" */
@@ -26224,7 +26224,7 @@ export enum Room_ShufflePeriod_Update_Column {
   /** column name */
   UpdatedAt = 'updated_at',
   /** column name */
-  WaitRoomMaxDuration = 'waitRoomMaxDuration'
+  WaitRoomMaxDurationSeconds = 'waitRoomMaxDurationSeconds'
 }
 
 /** aggregate var_pop on columns */
@@ -26233,7 +26233,7 @@ export type Room_ShufflePeriod_Var_Pop_Fields = {
   readonly maxAttendeesPerRoom?: Maybe<Scalars['Float']>;
   readonly roomDurationMinutes?: Maybe<Scalars['Float']>;
   readonly targetAttendeesPerRoom?: Maybe<Scalars['Float']>;
-  readonly waitRoomMaxDuration?: Maybe<Scalars['Float']>;
+  readonly waitRoomMaxDurationSeconds?: Maybe<Scalars['Float']>;
 };
 
 /** order by var_pop() on columns of table "room.ShufflePeriod" */
@@ -26241,7 +26241,7 @@ export type Room_ShufflePeriod_Var_Pop_Order_By = {
   readonly maxAttendeesPerRoom?: Maybe<Order_By>;
   readonly roomDurationMinutes?: Maybe<Order_By>;
   readonly targetAttendeesPerRoom?: Maybe<Order_By>;
-  readonly waitRoomMaxDuration?: Maybe<Order_By>;
+  readonly waitRoomMaxDurationSeconds?: Maybe<Order_By>;
 };
 
 /** aggregate var_samp on columns */
@@ -26250,7 +26250,7 @@ export type Room_ShufflePeriod_Var_Samp_Fields = {
   readonly maxAttendeesPerRoom?: Maybe<Scalars['Float']>;
   readonly roomDurationMinutes?: Maybe<Scalars['Float']>;
   readonly targetAttendeesPerRoom?: Maybe<Scalars['Float']>;
-  readonly waitRoomMaxDuration?: Maybe<Scalars['Float']>;
+  readonly waitRoomMaxDurationSeconds?: Maybe<Scalars['Float']>;
 };
 
 /** order by var_samp() on columns of table "room.ShufflePeriod" */
@@ -26258,7 +26258,7 @@ export type Room_ShufflePeriod_Var_Samp_Order_By = {
   readonly maxAttendeesPerRoom?: Maybe<Order_By>;
   readonly roomDurationMinutes?: Maybe<Order_By>;
   readonly targetAttendeesPerRoom?: Maybe<Order_By>;
-  readonly waitRoomMaxDuration?: Maybe<Order_By>;
+  readonly waitRoomMaxDurationSeconds?: Maybe<Order_By>;
 };
 
 /** aggregate variance on columns */
@@ -26267,7 +26267,7 @@ export type Room_ShufflePeriod_Variance_Fields = {
   readonly maxAttendeesPerRoom?: Maybe<Scalars['Float']>;
   readonly roomDurationMinutes?: Maybe<Scalars['Float']>;
   readonly targetAttendeesPerRoom?: Maybe<Scalars['Float']>;
-  readonly waitRoomMaxDuration?: Maybe<Scalars['Float']>;
+  readonly waitRoomMaxDurationSeconds?: Maybe<Scalars['Float']>;
 };
 
 /** order by variance() on columns of table "room.ShufflePeriod" */
@@ -26275,7 +26275,7 @@ export type Room_ShufflePeriod_Variance_Order_By = {
   readonly maxAttendeesPerRoom?: Maybe<Order_By>;
   readonly roomDurationMinutes?: Maybe<Order_By>;
   readonly targetAttendeesPerRoom?: Maybe<Order_By>;
-  readonly waitRoomMaxDuration?: Maybe<Order_By>;
+  readonly waitRoomMaxDurationSeconds?: Maybe<Order_By>;
 };
 
 /** columns and relationships of "room.ShuffleQueueEntry" */
@@ -29653,7 +29653,7 @@ export type ConferenceLandingPageContentGroupQuery = { readonly __typename?: 'qu
     & ContentGroupDataFragment
   )> };
 
-export type ContentPersonDataFragment = { readonly __typename?: 'ContentGroupPerson', readonly id: any, readonly roleName: string, readonly person: { readonly __typename?: 'ContentPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string> } };
+export type ContentPersonDataFragment = { readonly __typename?: 'ContentGroupPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'ContentPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string> } };
 
 export type TagWithContentFragment = (
   { readonly __typename?: 'Tag', readonly contentGroupTags: ReadonlyArray<{ readonly __typename?: 'ContentGroupTag', readonly contentGroup: (
@@ -31123,6 +31123,7 @@ export const ContentPersonDataFragmentDoc = gql`
     affiliation
   }
   roleName
+  priority
 }
     `;
 export const ContentGroupDataFragmentDoc = gql`

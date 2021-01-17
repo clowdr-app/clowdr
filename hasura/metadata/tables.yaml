@@ -2309,10 +2309,12 @@
       - chatId
       - conferenceId
       - contentGroupTypeName
+      - created_at
       - id
       - originatingDataId
       - shortTitle
       - title
+      - updated_at
       filter:
         conference:
           _and:
@@ -6014,6 +6016,7 @@
       - capacity
       - chatId
       - conferenceId
+      - created_at
       - currentModeName
       - id
       - name
@@ -6021,6 +6024,7 @@
       - originatingEventId
       - priority
       - roomPrivacyName
+      - updated_at
       filter:
         _and:
         - conference:

@@ -17,7 +17,7 @@ import {
     useDisclosure,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import { RoomDetailsFragment, RoomPersonRole_Enum, RoomPrivacy_Enum } from "../../../../generated/graphql";
+import { RoomPage_RoomDetailsFragment, RoomPersonRole_Enum, RoomPrivacy_Enum } from "../../../../generated/graphql";
 import { FAIcon } from "../../../Icons/FAIcon";
 import useRoomMembers from "../../../Room/useRoomMembers";
 import useRoomParticipants from "../../../Room/useRoomParticipants";
@@ -31,7 +31,7 @@ export function RoomControlBar({
     hasBackstage,
     breakoutRoomEnabled,
 }: {
-    roomDetails: RoomDetailsFragment;
+    roomDetails: RoomPage_RoomDetailsFragment;
     onSetBackstage: (backstage: boolean) => void;
     backstage: boolean;
     hasBackstage: boolean;

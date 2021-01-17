@@ -1,11 +1,15 @@
 import * as R from "ramda";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { RoomEventsFragment, RoomEventSummaryFragment, RoomMode_Enum } from "../../../../generated/graphql";
+import {
+    RoomMode_Enum,
+    RoomPage_RoomEventsFragment,
+    RoomPage_RoomEventSummaryFragment,
+} from "../../../../generated/graphql";
 import usePolling from "../../../Generic/usePolling";
 
 interface Result {
-    currentRoomEvent: RoomEventSummaryFragment | null;
-    nextRoomEvent: RoomEventSummaryFragment | null;
+    currentRoomEvent: RoomPage_RoomEventSummaryFragment | null;
+    nextRoomEvent: RoomPage_RoomEventSummaryFragment | null;
     withinThreeMinutesOfBroadcastEvent: boolean;
     secondsUntilBroadcastEvent: number;
     secondsUntilZoomEvent: number;
@@ -66,7 +70,7 @@ interface Result {
 //     }
 // `;
 
-export function useCurrentRoomEvent(roomEvents: RoomEventsFragment): Result {
+export function useCurrentRoomEvent(roomEvents: RoomPage_RoomEventsFragment): Result {
     const broadcastEvents = useMemo(
         () =>
             roomEvents.events.filter((event) =>
@@ -82,7 +86,7 @@ export function useCurrentRoomEvent(roomEvents: RoomEventsFragment): Result {
         [roomEvents.events]
     );
 
-    const [currentRoomEvent, setCurrentRoomEvent] = useState<RoomEventSummaryFragment | null>(null);
+    const [currentRoomEvent, setCurrentRoomEvent] = useState<RoomPage_RoomEventSummaryFragment | null>(null);
     const getCurrentEvent = useCallback(() => {
         const now = new Date().getTime();
         const eventsNow = roomEvents.events.filter((event) => {
@@ -168,7 +172,7 @@ export function useCurrentRoomEvent(roomEvents: RoomEventsFragment): Result {
     }, [zoomEvents]);
     usePolling(computeSecondsUntilZoomEvent, 1000, true);
 
-    const [nextRoomEvent, setNextRoomEvent] = useState<RoomEventSummaryFragment | null>(null);
+    const [nextRoomEvent, setNextRoomEvent] = useState<RoomPage_RoomEventSummaryFragment | null>(null);
     const getNextEvent = useCallback(() => {
         const now = new Date().getTime();
         const sortedEvents = R.sortBy((event) => event.startTime, roomEvents.events);

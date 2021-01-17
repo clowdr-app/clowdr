@@ -7,8 +7,8 @@ import React, { useMemo, useState } from "react";
 import ReactPlayer from "react-player";
 import {
     EventPersonDetailsFragment,
-    RoomDetailsFragment,
     RoomMode_Enum,
+    RoomPage_RoomDetailsFragment,
     useRoom_GetCurrentEventQuery,
 } from "../../../../generated/graphql";
 import { ExternalLinkButton } from "../../../Chakra/LinkButton";
@@ -43,7 +43,7 @@ export function Room({
     roomDetails,
     eventPeople,
 }: {
-    roomDetails: RoomDetailsFragment;
+    roomDetails: RoomPage_RoomDetailsFragment;
     eventPeople: readonly EventPersonDetailsFragment[];
 }): JSX.Element {
     const {

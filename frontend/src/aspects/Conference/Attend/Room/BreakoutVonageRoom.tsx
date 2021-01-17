@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 import React, { useCallback } from "react";
 import * as portals from "react-reverse-portal";
-import { RoomDetailsFragment, useGetRoomVonageTokenMutation } from "../../../../generated/graphql";
+import { RoomPage_RoomDetailsFragment, useGetRoomVonageTokenMutation } from "../../../../generated/graphql";
 import { useSharedRoomContext } from "../../../Room/useSharedRoomContext";
 
 gql`
@@ -13,7 +13,7 @@ gql`
     }
 `;
 
-export function BreakoutVonageRoom({ room }: { room: RoomDetailsFragment }): JSX.Element {
+export function BreakoutVonageRoom({ room }: { room: RoomPage_RoomDetailsFragment }): JSX.Element {
     const sharedRoomContext = useSharedRoomContext();
 
     const [getRoomVonageToken] = useGetRoomVonageTokenMutation({

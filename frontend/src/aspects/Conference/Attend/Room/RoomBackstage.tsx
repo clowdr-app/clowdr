@@ -4,16 +4,16 @@ import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
     EventPersonDetailsFragment,
-    RoomDetailsFragment,
-    RoomEventSummaryFragment,
     RoomMode_Enum,
+    RoomPage_RoomDetailsFragment,
+    RoomPage_RoomEventSummaryFragment,
 } from "../../../../generated/graphql";
 import usePolling from "../../../Generic/usePolling";
 import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
 import { EventVonageRoom } from "./Event/EventVonageRoom";
 import { HandUpButton } from "./HandUpButton";
 
-function isEventNow(event: RoomEventSummaryFragment): boolean {
+function isEventNow(event: RoomPage_RoomEventSummaryFragment): boolean {
     const now = new Date().getTime();
     const startTime = Date.parse(event.startTime);
     const endTime = Date.parse(event.endTime);
@@ -21,7 +21,7 @@ function isEventNow(event: RoomEventSummaryFragment): boolean {
     return now >= startTime && now <= endTime;
 }
 
-function isEventSoon(event: RoomEventSummaryFragment): boolean {
+function isEventSoon(event: RoomPage_RoomEventSummaryFragment): boolean {
     const now = new Date().getTime();
     const startTime = Date.parse(event.startTime);
 
@@ -34,7 +34,7 @@ export function RoomBackstage({
     eventPeople,
 }: {
     backstage: boolean;
-    roomDetails: RoomDetailsFragment;
+    roomDetails: RoomPage_RoomDetailsFragment;
     eventPeople: readonly EventPersonDetailsFragment[];
 }): JSX.Element {
     const user = useCurrentUser();
@@ -57,7 +57,7 @@ export function RoomBackstage({
         [eventPeople, user.user.attendees]
     );
 
-    const [sortedEvents, setSortedEvents] = useState<readonly RoomEventSummaryFragment[]>([]);
+    const [sortedEvents, setSortedEvents] = useState<readonly RoomPage_RoomEventSummaryFragment[]>([]);
     const computeSortedEvents = useCallback(() => {
         setSortedEvents(
             R.sortWith(

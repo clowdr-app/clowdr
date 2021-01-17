@@ -20,6 +20,18 @@ gql`
             }
         }
     }
+
+    fragment EventPersonDetails on EventPerson {
+        id
+        name
+        roleName
+        eventId
+        attendee {
+            id
+            userId
+            displayName
+        }
+    }
 `;
 
 export function useEventPeople(userId: string, eventDetails: RoomEventDetailsFragment | null): Result {

@@ -39,6 +39,7 @@ import { router as profileRouter } from "./router/profile";
 import { router as roomRouter } from "./router/room";
 import { router as videoRenderJobRouter } from "./router/videoRenderJob";
 import { router as vonageRouter } from "./router/vonage";
+import { router as shuffleRoomsRouter } from "./router/shuffleRooms";
 
 if (process.env.NODE_ENV !== "test") {
     assert(process.env.AUTH0_API_DOMAIN, "AUTH0_API_DOMAIN environment variable not provided.");
@@ -92,6 +93,7 @@ app.use("/channels", channelsRouter);
 
 app.use("/profile", profileRouter);
 app.use("/presence", presenceRouter);
+app.use("/shuffle", shuffleRoomsRouter);
 
 app.get("/", function (_req, res) {
     res.send("Clowdr");

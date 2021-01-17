@@ -120,7 +120,7 @@ export function ChatNotificationsProvider_WithAttendee({
             for (const [chatId, indexes] of storedUnreadCounts) {
                 if (
                     !excludedChatIds.includes(chatId) &&
-                    indexes.new.readUpToIndices &&
+                    indexes.new?.readUpToIndices &&
                     indexes.new.readUpToIndices.length > 0 &&
                     indexes.new.readUpToIndices[0].unreadCount !== undefined &&
                     indexes.new.readUpToIndices[0].unreadCount !== null &&

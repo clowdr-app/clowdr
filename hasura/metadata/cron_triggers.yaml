@@ -63,3 +63,16 @@
   headers:
   - name: x-hasura-event-secret
     value_from_env: EVENT_SECRET
+- name: ProcessShuffleQueues
+  webhook: '{{ACTION_BASE_URL}}/shuffle/process'
+  schedule: '* * * * *'
+  include_in_metadata: true
+  payload: {}
+  retry_conf:
+    num_retries: 0
+    timeout_seconds: 60
+    tolerance_seconds: 70
+    retry_interval_seconds: 10
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET

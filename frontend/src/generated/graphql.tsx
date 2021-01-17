@@ -9,6 +9,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  bigint: any;
   json: any;
   jsonb: any;
   timestamptz: any;
@@ -1529,6 +1530,10 @@ export type Conference = {
   /** An aggregated array relationship */
   readonly rooms_aggregate: Room_Aggregate;
   readonly shortName: Scalars['String'];
+  /** An array relationship */
+  readonly shufflePeriods: ReadonlyArray<Room_ShufflePeriod>;
+  /** An aggregated array relationship */
+  readonly shufflePeriods_aggregate: Room_ShufflePeriod_Aggregate;
   readonly slug: Scalars['String'];
   /** An array relationship */
   readonly tags: ReadonlyArray<Tag>;
@@ -1735,6 +1740,26 @@ export type ConferenceRooms_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Room_Order_By>>;
   where?: Maybe<Room_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Conference" */
+export type ConferenceShufflePeriodsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_ShufflePeriod_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_ShufflePeriod_Order_By>>;
+  where?: Maybe<Room_ShufflePeriod_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Conference" */
+export type ConferenceShufflePeriods_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_ShufflePeriod_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_ShufflePeriod_Order_By>>;
+  where?: Maybe<Room_ShufflePeriod_Bool_Exp>;
 };
 
 
@@ -2473,6 +2498,7 @@ export type Conference_Bool_Exp = {
   readonly roles?: Maybe<Role_Bool_Exp>;
   readonly rooms?: Maybe<Room_Bool_Exp>;
   readonly shortName?: Maybe<String_Comparison_Exp>;
+  readonly shufflePeriods?: Maybe<Room_ShufflePeriod_Bool_Exp>;
   readonly slug?: Maybe<String_Comparison_Exp>;
   readonly tags?: Maybe<Tag_Bool_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
@@ -2512,6 +2538,7 @@ export type Conference_Insert_Input = {
   readonly roles?: Maybe<Role_Arr_Rel_Insert_Input>;
   readonly rooms?: Maybe<Room_Arr_Rel_Insert_Input>;
   readonly shortName?: Maybe<Scalars['String']>;
+  readonly shufflePeriods?: Maybe<Room_ShufflePeriod_Arr_Rel_Insert_Input>;
   readonly slug?: Maybe<Scalars['String']>;
   readonly tags?: Maybe<Tag_Arr_Rel_Insert_Input>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
@@ -2609,6 +2636,7 @@ export type Conference_Order_By = {
   readonly roles_aggregate?: Maybe<Role_Aggregate_Order_By>;
   readonly rooms_aggregate?: Maybe<Room_Aggregate_Order_By>;
   readonly shortName?: Maybe<Order_By>;
+  readonly shufflePeriods_aggregate?: Maybe<Room_ShufflePeriod_Aggregate_Order_By>;
   readonly slug?: Maybe<Order_By>;
   readonly tags_aggregate?: Maybe<Tag_Aggregate_Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
@@ -14875,6 +14903,20 @@ export enum VideoRenderJob_Update_Column {
   UpdatedAt = 'updated_at'
 }
 
+
+/** expression to compare columns of type bigint. All fields are combined with logical 'AND'. */
+export type Bigint_Comparison_Exp = {
+  readonly _eq?: Maybe<Scalars['bigint']>;
+  readonly _gt?: Maybe<Scalars['bigint']>;
+  readonly _gte?: Maybe<Scalars['bigint']>;
+  readonly _in?: Maybe<ReadonlyArray<Scalars['bigint']>>;
+  readonly _is_null?: Maybe<Scalars['Boolean']>;
+  readonly _lt?: Maybe<Scalars['bigint']>;
+  readonly _lte?: Maybe<Scalars['bigint']>;
+  readonly _neq?: Maybe<Scalars['bigint']>;
+  readonly _nin?: Maybe<ReadonlyArray<Scalars['bigint']>>;
+};
+
 /** columns and relationships of "chat.Chat" */
 export type Chat_Chat = {
   readonly __typename?: 'chat_Chat';
@@ -19203,6 +19245,18 @@ export type Mutation_Root = {
   readonly delete_presence_Page?: Maybe<Presence_Page_Mutation_Response>;
   /** delete single row from the table: "presence.Page" */
   readonly delete_presence_Page_by_pk?: Maybe<Presence_Page>;
+  /** delete data from the table: "room.ShufflePeriod" */
+  readonly delete_room_ShufflePeriod?: Maybe<Room_ShufflePeriod_Mutation_Response>;
+  /** delete single row from the table: "room.ShufflePeriod" */
+  readonly delete_room_ShufflePeriod_by_pk?: Maybe<Room_ShufflePeriod>;
+  /** delete data from the table: "room.ShuffleQueueEntry" */
+  readonly delete_room_ShuffleQueueEntry?: Maybe<Room_ShuffleQueueEntry_Mutation_Response>;
+  /** delete single row from the table: "room.ShuffleQueueEntry" */
+  readonly delete_room_ShuffleQueueEntry_by_pk?: Maybe<Room_ShuffleQueueEntry>;
+  /** delete data from the table: "room.ShuffleRoom" */
+  readonly delete_room_ShuffleRoom?: Maybe<Room_ShuffleRoom_Mutation_Response>;
+  /** delete single row from the table: "room.ShuffleRoom" */
+  readonly delete_room_ShuffleRoom_by_pk?: Maybe<Room_ShuffleRoom>;
   /** insert data into the table: "Attendee" */
   readonly insert_Attendee?: Maybe<Attendee_Mutation_Response>;
   /** insert data into the table: "AttendeeProfile" */
@@ -19475,6 +19529,18 @@ export type Mutation_Root = {
   readonly insert_presence_Page?: Maybe<Presence_Page_Mutation_Response>;
   /** insert a single row into the table: "presence.Page" */
   readonly insert_presence_Page_one?: Maybe<Presence_Page>;
+  /** insert data into the table: "room.ShufflePeriod" */
+  readonly insert_room_ShufflePeriod?: Maybe<Room_ShufflePeriod_Mutation_Response>;
+  /** insert a single row into the table: "room.ShufflePeriod" */
+  readonly insert_room_ShufflePeriod_one?: Maybe<Room_ShufflePeriod>;
+  /** insert data into the table: "room.ShuffleQueueEntry" */
+  readonly insert_room_ShuffleQueueEntry?: Maybe<Room_ShuffleQueueEntry_Mutation_Response>;
+  /** insert a single row into the table: "room.ShuffleQueueEntry" */
+  readonly insert_room_ShuffleQueueEntry_one?: Maybe<Room_ShuffleQueueEntry>;
+  /** insert data into the table: "room.ShuffleRoom" */
+  readonly insert_room_ShuffleRoom?: Maybe<Room_ShuffleRoom_Mutation_Response>;
+  /** insert a single row into the table: "room.ShuffleRoom" */
+  readonly insert_room_ShuffleRoom_one?: Maybe<Room_ShuffleRoom>;
   /** perform the action: "invitationConfirmCurrent" */
   readonly invitationConfirmCurrent?: Maybe<ConfirmInvitationOutput>;
   /** perform the action: "invitationConfirmSendInitialEmail" */
@@ -19765,6 +19831,18 @@ export type Mutation_Root = {
   readonly update_presence_Page?: Maybe<Presence_Page_Mutation_Response>;
   /** update single row of the table: "presence.Page" */
   readonly update_presence_Page_by_pk?: Maybe<Presence_Page>;
+  /** update data of the table: "room.ShufflePeriod" */
+  readonly update_room_ShufflePeriod?: Maybe<Room_ShufflePeriod_Mutation_Response>;
+  /** update single row of the table: "room.ShufflePeriod" */
+  readonly update_room_ShufflePeriod_by_pk?: Maybe<Room_ShufflePeriod>;
+  /** update data of the table: "room.ShuffleQueueEntry" */
+  readonly update_room_ShuffleQueueEntry?: Maybe<Room_ShuffleQueueEntry_Mutation_Response>;
+  /** update single row of the table: "room.ShuffleQueueEntry" */
+  readonly update_room_ShuffleQueueEntry_by_pk?: Maybe<Room_ShuffleQueueEntry>;
+  /** update data of the table: "room.ShuffleRoom" */
+  readonly update_room_ShuffleRoom?: Maybe<Room_ShuffleRoom_Mutation_Response>;
+  /** update single row of the table: "room.ShuffleRoom" */
+  readonly update_room_ShuffleRoom_by_pk?: Maybe<Room_ShuffleRoom>;
 };
 
 
@@ -20600,6 +20678,42 @@ export type Mutation_RootDelete_Presence_PageArgs = {
 export type Mutation_RootDelete_Presence_Page_By_PkArgs = {
   conferenceId: Scalars['uuid'];
   path: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Room_ShufflePeriodArgs = {
+  where: Room_ShufflePeriod_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Room_ShufflePeriod_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Room_ShuffleQueueEntryArgs = {
+  where: Room_ShuffleQueueEntry_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Room_ShuffleQueueEntry_By_PkArgs = {
+  id: Scalars['bigint'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Room_ShuffleRoomArgs = {
+  where: Room_ShuffleRoom_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Room_ShuffleRoom_By_PkArgs = {
+  id: Scalars['bigint'];
 };
 
 
@@ -21552,6 +21666,48 @@ export type Mutation_RootInsert_Presence_PageArgs = {
 export type Mutation_RootInsert_Presence_Page_OneArgs = {
   object: Presence_Page_Insert_Input;
   on_conflict?: Maybe<Presence_Page_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Room_ShufflePeriodArgs = {
+  objects: ReadonlyArray<Room_ShufflePeriod_Insert_Input>;
+  on_conflict?: Maybe<Room_ShufflePeriod_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Room_ShufflePeriod_OneArgs = {
+  object: Room_ShufflePeriod_Insert_Input;
+  on_conflict?: Maybe<Room_ShufflePeriod_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Room_ShuffleQueueEntryArgs = {
+  objects: ReadonlyArray<Room_ShuffleQueueEntry_Insert_Input>;
+  on_conflict?: Maybe<Room_ShuffleQueueEntry_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Room_ShuffleQueueEntry_OneArgs = {
+  object: Room_ShuffleQueueEntry_Insert_Input;
+  on_conflict?: Maybe<Room_ShuffleQueueEntry_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Room_ShuffleRoomArgs = {
+  objects: ReadonlyArray<Room_ShuffleRoom_Insert_Input>;
+  on_conflict?: Maybe<Room_ShuffleRoom_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Room_ShuffleRoom_OneArgs = {
+  object: Room_ShuffleRoom_Insert_Input;
+  on_conflict?: Maybe<Room_ShuffleRoom_On_Conflict>;
 };
 
 
@@ -22712,6 +22868,54 @@ export type Mutation_RootUpdate_Presence_Page_By_PkArgs = {
   pk_columns: Presence_Page_Pk_Columns_Input;
 };
 
+
+/** mutation root */
+export type Mutation_RootUpdate_Room_ShufflePeriodArgs = {
+  _inc?: Maybe<Room_ShufflePeriod_Inc_Input>;
+  _set?: Maybe<Room_ShufflePeriod_Set_Input>;
+  where: Room_ShufflePeriod_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Room_ShufflePeriod_By_PkArgs = {
+  _inc?: Maybe<Room_ShufflePeriod_Inc_Input>;
+  _set?: Maybe<Room_ShufflePeriod_Set_Input>;
+  pk_columns: Room_ShufflePeriod_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Room_ShuffleQueueEntryArgs = {
+  _inc?: Maybe<Room_ShuffleQueueEntry_Inc_Input>;
+  _set?: Maybe<Room_ShuffleQueueEntry_Set_Input>;
+  where: Room_ShuffleQueueEntry_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Room_ShuffleQueueEntry_By_PkArgs = {
+  _inc?: Maybe<Room_ShuffleQueueEntry_Inc_Input>;
+  _set?: Maybe<Room_ShuffleQueueEntry_Set_Input>;
+  pk_columns: Room_ShuffleQueueEntry_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Room_ShuffleRoomArgs = {
+  _inc?: Maybe<Room_ShuffleRoom_Inc_Input>;
+  _set?: Maybe<Room_ShuffleRoom_Set_Input>;
+  where: Room_ShuffleRoom_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Room_ShuffleRoom_By_PkArgs = {
+  _inc?: Maybe<Room_ShuffleRoom_Inc_Input>;
+  _set?: Maybe<Room_ShuffleRoom_Set_Input>;
+  pk_columns: Room_ShuffleRoom_Pk_Columns_Input;
+};
+
 /** column ordering options */
 export enum Order_By {
   /** in the ascending order, nulls last */
@@ -23641,6 +23845,24 @@ export type Query_Root = {
   readonly presence_Page_by_pk?: Maybe<Presence_Page>;
   /** perform the action: "protectedEcho" */
   readonly protectedEcho?: Maybe<ProtectedEchoOutput>;
+  /** fetch data from the table: "room.ShufflePeriod" */
+  readonly room_ShufflePeriod: ReadonlyArray<Room_ShufflePeriod>;
+  /** fetch aggregated fields from the table: "room.ShufflePeriod" */
+  readonly room_ShufflePeriod_aggregate: Room_ShufflePeriod_Aggregate;
+  /** fetch data from the table: "room.ShufflePeriod" using primary key columns */
+  readonly room_ShufflePeriod_by_pk?: Maybe<Room_ShufflePeriod>;
+  /** fetch data from the table: "room.ShuffleQueueEntry" */
+  readonly room_ShuffleQueueEntry: ReadonlyArray<Room_ShuffleQueueEntry>;
+  /** fetch aggregated fields from the table: "room.ShuffleQueueEntry" */
+  readonly room_ShuffleQueueEntry_aggregate: Room_ShuffleQueueEntry_Aggregate;
+  /** fetch data from the table: "room.ShuffleQueueEntry" using primary key columns */
+  readonly room_ShuffleQueueEntry_by_pk?: Maybe<Room_ShuffleQueueEntry>;
+  /** fetch data from the table: "room.ShuffleRoom" */
+  readonly room_ShuffleRoom: ReadonlyArray<Room_ShuffleRoom>;
+  /** fetch aggregated fields from the table: "room.ShuffleRoom" */
+  readonly room_ShuffleRoom_aggregate: Room_ShuffleRoom_Aggregate;
+  /** fetch data from the table: "room.ShuffleRoom" using primary key columns */
+  readonly room_ShuffleRoom_by_pk?: Maybe<Room_ShuffleRoom>;
 };
 
 
@@ -25480,6 +25702,1309 @@ export type Query_RootProtectedEchoArgs = {
   message: Scalars['String'];
 };
 
+
+/** query root */
+export type Query_RootRoom_ShufflePeriodArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_ShufflePeriod_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_ShufflePeriod_Order_By>>;
+  where?: Maybe<Room_ShufflePeriod_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootRoom_ShufflePeriod_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_ShufflePeriod_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_ShufflePeriod_Order_By>>;
+  where?: Maybe<Room_ShufflePeriod_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootRoom_ShufflePeriod_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
+export type Query_RootRoom_ShuffleQueueEntryArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_ShuffleQueueEntry_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_ShuffleQueueEntry_Order_By>>;
+  where?: Maybe<Room_ShuffleQueueEntry_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootRoom_ShuffleQueueEntry_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_ShuffleQueueEntry_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_ShuffleQueueEntry_Order_By>>;
+  where?: Maybe<Room_ShuffleQueueEntry_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootRoom_ShuffleQueueEntry_By_PkArgs = {
+  id: Scalars['bigint'];
+};
+
+
+/** query root */
+export type Query_RootRoom_ShuffleRoomArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_ShuffleRoom_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_ShuffleRoom_Order_By>>;
+  where?: Maybe<Room_ShuffleRoom_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootRoom_ShuffleRoom_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_ShuffleRoom_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_ShuffleRoom_Order_By>>;
+  where?: Maybe<Room_ShuffleRoom_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootRoom_ShuffleRoom_By_PkArgs = {
+  id: Scalars['bigint'];
+};
+
+/** columns and relationships of "room.ShufflePeriod" */
+export type Room_ShufflePeriod = {
+  readonly __typename?: 'room_ShufflePeriod';
+  /** An object relationship */
+  readonly conference: Conference;
+  readonly conferenceId: Scalars['uuid'];
+  readonly created_at: Scalars['timestamptz'];
+  readonly endAt: Scalars['timestamptz'];
+  readonly id: Scalars['uuid'];
+  readonly maxAttendeesPerRoom: Scalars['Int'];
+  readonly name: Scalars['String'];
+  /** An object relationship */
+  readonly organiser: Attendee;
+  readonly organiserId: Scalars['uuid'];
+  /** An array relationship */
+  readonly queueEntries: ReadonlyArray<Room_ShuffleQueueEntry>;
+  /** An aggregated array relationship */
+  readonly queueEntries_aggregate: Room_ShuffleQueueEntry_Aggregate;
+  readonly roomDurationMinutes: Scalars['Int'];
+  /** An array relationship */
+  readonly shuffleRooms: ReadonlyArray<Room_ShuffleRoom>;
+  /** An aggregated array relationship */
+  readonly shuffleRooms_aggregate: Room_ShuffleRoom_Aggregate;
+  readonly startAt: Scalars['timestamptz'];
+  readonly targetAttendeesPerRoom: Scalars['Int'];
+  readonly updated_at: Scalars['timestamptz'];
+  readonly waitRoomMaxDuration: Scalars['Int'];
+};
+
+
+/** columns and relationships of "room.ShufflePeriod" */
+export type Room_ShufflePeriodQueueEntriesArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_ShuffleQueueEntry_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_ShuffleQueueEntry_Order_By>>;
+  where?: Maybe<Room_ShuffleQueueEntry_Bool_Exp>;
+};
+
+
+/** columns and relationships of "room.ShufflePeriod" */
+export type Room_ShufflePeriodQueueEntries_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_ShuffleQueueEntry_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_ShuffleQueueEntry_Order_By>>;
+  where?: Maybe<Room_ShuffleQueueEntry_Bool_Exp>;
+};
+
+
+/** columns and relationships of "room.ShufflePeriod" */
+export type Room_ShufflePeriodShuffleRoomsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_ShuffleRoom_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_ShuffleRoom_Order_By>>;
+  where?: Maybe<Room_ShuffleRoom_Bool_Exp>;
+};
+
+
+/** columns and relationships of "room.ShufflePeriod" */
+export type Room_ShufflePeriodShuffleRooms_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_ShuffleRoom_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_ShuffleRoom_Order_By>>;
+  where?: Maybe<Room_ShuffleRoom_Bool_Exp>;
+};
+
+/** aggregated selection of "room.ShufflePeriod" */
+export type Room_ShufflePeriod_Aggregate = {
+  readonly __typename?: 'room_ShufflePeriod_aggregate';
+  readonly aggregate?: Maybe<Room_ShufflePeriod_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Room_ShufflePeriod>;
+};
+
+/** aggregate fields of "room.ShufflePeriod" */
+export type Room_ShufflePeriod_Aggregate_Fields = {
+  readonly __typename?: 'room_ShufflePeriod_aggregate_fields';
+  readonly avg?: Maybe<Room_ShufflePeriod_Avg_Fields>;
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Room_ShufflePeriod_Max_Fields>;
+  readonly min?: Maybe<Room_ShufflePeriod_Min_Fields>;
+  readonly stddev?: Maybe<Room_ShufflePeriod_Stddev_Fields>;
+  readonly stddev_pop?: Maybe<Room_ShufflePeriod_Stddev_Pop_Fields>;
+  readonly stddev_samp?: Maybe<Room_ShufflePeriod_Stddev_Samp_Fields>;
+  readonly sum?: Maybe<Room_ShufflePeriod_Sum_Fields>;
+  readonly var_pop?: Maybe<Room_ShufflePeriod_Var_Pop_Fields>;
+  readonly var_samp?: Maybe<Room_ShufflePeriod_Var_Samp_Fields>;
+  readonly variance?: Maybe<Room_ShufflePeriod_Variance_Fields>;
+};
+
+
+/** aggregate fields of "room.ShufflePeriod" */
+export type Room_ShufflePeriod_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Room_ShufflePeriod_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "room.ShufflePeriod" */
+export type Room_ShufflePeriod_Aggregate_Order_By = {
+  readonly avg?: Maybe<Room_ShufflePeriod_Avg_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Room_ShufflePeriod_Max_Order_By>;
+  readonly min?: Maybe<Room_ShufflePeriod_Min_Order_By>;
+  readonly stddev?: Maybe<Room_ShufflePeriod_Stddev_Order_By>;
+  readonly stddev_pop?: Maybe<Room_ShufflePeriod_Stddev_Pop_Order_By>;
+  readonly stddev_samp?: Maybe<Room_ShufflePeriod_Stddev_Samp_Order_By>;
+  readonly sum?: Maybe<Room_ShufflePeriod_Sum_Order_By>;
+  readonly var_pop?: Maybe<Room_ShufflePeriod_Var_Pop_Order_By>;
+  readonly var_samp?: Maybe<Room_ShufflePeriod_Var_Samp_Order_By>;
+  readonly variance?: Maybe<Room_ShufflePeriod_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "room.ShufflePeriod" */
+export type Room_ShufflePeriod_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Room_ShufflePeriod_Insert_Input>;
+  readonly on_conflict?: Maybe<Room_ShufflePeriod_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Room_ShufflePeriod_Avg_Fields = {
+  readonly __typename?: 'room_ShufflePeriod_avg_fields';
+  readonly maxAttendeesPerRoom?: Maybe<Scalars['Float']>;
+  readonly roomDurationMinutes?: Maybe<Scalars['Float']>;
+  readonly targetAttendeesPerRoom?: Maybe<Scalars['Float']>;
+  readonly waitRoomMaxDuration?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "room.ShufflePeriod" */
+export type Room_ShufflePeriod_Avg_Order_By = {
+  readonly maxAttendeesPerRoom?: Maybe<Order_By>;
+  readonly roomDurationMinutes?: Maybe<Order_By>;
+  readonly targetAttendeesPerRoom?: Maybe<Order_By>;
+  readonly waitRoomMaxDuration?: Maybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "room.ShufflePeriod". All fields are combined with a logical 'AND'. */
+export type Room_ShufflePeriod_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Room_ShufflePeriod_Bool_Exp>>>;
+  readonly _not?: Maybe<Room_ShufflePeriod_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Room_ShufflePeriod_Bool_Exp>>>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly endAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly maxAttendeesPerRoom?: Maybe<Int_Comparison_Exp>;
+  readonly name?: Maybe<String_Comparison_Exp>;
+  readonly organiser?: Maybe<Attendee_Bool_Exp>;
+  readonly organiserId?: Maybe<Uuid_Comparison_Exp>;
+  readonly queueEntries?: Maybe<Room_ShuffleQueueEntry_Bool_Exp>;
+  readonly roomDurationMinutes?: Maybe<Int_Comparison_Exp>;
+  readonly shuffleRooms?: Maybe<Room_ShuffleRoom_Bool_Exp>;
+  readonly startAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly targetAttendeesPerRoom?: Maybe<Int_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly waitRoomMaxDuration?: Maybe<Int_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "room.ShufflePeriod" */
+export enum Room_ShufflePeriod_Constraint {
+  /** unique or primary key constraint */
+  ShufflePeriodPkey = 'ShufflePeriod_pkey'
+}
+
+/** input type for incrementing integer column in table "room.ShufflePeriod" */
+export type Room_ShufflePeriod_Inc_Input = {
+  readonly maxAttendeesPerRoom?: Maybe<Scalars['Int']>;
+  readonly roomDurationMinutes?: Maybe<Scalars['Int']>;
+  readonly targetAttendeesPerRoom?: Maybe<Scalars['Int']>;
+  readonly waitRoomMaxDuration?: Maybe<Scalars['Int']>;
+};
+
+/** input type for inserting data into table "room.ShufflePeriod" */
+export type Room_ShufflePeriod_Insert_Input = {
+  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly endAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly maxAttendeesPerRoom?: Maybe<Scalars['Int']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly organiser?: Maybe<Attendee_Obj_Rel_Insert_Input>;
+  readonly organiserId?: Maybe<Scalars['uuid']>;
+  readonly queueEntries?: Maybe<Room_ShuffleQueueEntry_Arr_Rel_Insert_Input>;
+  readonly roomDurationMinutes?: Maybe<Scalars['Int']>;
+  readonly shuffleRooms?: Maybe<Room_ShuffleRoom_Arr_Rel_Insert_Input>;
+  readonly startAt?: Maybe<Scalars['timestamptz']>;
+  readonly targetAttendeesPerRoom?: Maybe<Scalars['Int']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly waitRoomMaxDuration?: Maybe<Scalars['Int']>;
+};
+
+/** aggregate max on columns */
+export type Room_ShufflePeriod_Max_Fields = {
+  readonly __typename?: 'room_ShufflePeriod_max_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly endAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly maxAttendeesPerRoom?: Maybe<Scalars['Int']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly organiserId?: Maybe<Scalars['uuid']>;
+  readonly roomDurationMinutes?: Maybe<Scalars['Int']>;
+  readonly startAt?: Maybe<Scalars['timestamptz']>;
+  readonly targetAttendeesPerRoom?: Maybe<Scalars['Int']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly waitRoomMaxDuration?: Maybe<Scalars['Int']>;
+};
+
+/** order by max() on columns of table "room.ShufflePeriod" */
+export type Room_ShufflePeriod_Max_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly endAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly maxAttendeesPerRoom?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+  readonly organiserId?: Maybe<Order_By>;
+  readonly roomDurationMinutes?: Maybe<Order_By>;
+  readonly startAt?: Maybe<Order_By>;
+  readonly targetAttendeesPerRoom?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+  readonly waitRoomMaxDuration?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Room_ShufflePeriod_Min_Fields = {
+  readonly __typename?: 'room_ShufflePeriod_min_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly endAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly maxAttendeesPerRoom?: Maybe<Scalars['Int']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly organiserId?: Maybe<Scalars['uuid']>;
+  readonly roomDurationMinutes?: Maybe<Scalars['Int']>;
+  readonly startAt?: Maybe<Scalars['timestamptz']>;
+  readonly targetAttendeesPerRoom?: Maybe<Scalars['Int']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly waitRoomMaxDuration?: Maybe<Scalars['Int']>;
+};
+
+/** order by min() on columns of table "room.ShufflePeriod" */
+export type Room_ShufflePeriod_Min_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly endAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly maxAttendeesPerRoom?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+  readonly organiserId?: Maybe<Order_By>;
+  readonly roomDurationMinutes?: Maybe<Order_By>;
+  readonly startAt?: Maybe<Order_By>;
+  readonly targetAttendeesPerRoom?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+  readonly waitRoomMaxDuration?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "room.ShufflePeriod" */
+export type Room_ShufflePeriod_Mutation_Response = {
+  readonly __typename?: 'room_ShufflePeriod_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Room_ShufflePeriod>;
+};
+
+/** input type for inserting object relation for remote table "room.ShufflePeriod" */
+export type Room_ShufflePeriod_Obj_Rel_Insert_Input = {
+  readonly data: Room_ShufflePeriod_Insert_Input;
+  readonly on_conflict?: Maybe<Room_ShufflePeriod_On_Conflict>;
+};
+
+/** on conflict condition type for table "room.ShufflePeriod" */
+export type Room_ShufflePeriod_On_Conflict = {
+  readonly constraint: Room_ShufflePeriod_Constraint;
+  readonly update_columns: ReadonlyArray<Room_ShufflePeriod_Update_Column>;
+  readonly where?: Maybe<Room_ShufflePeriod_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "room.ShufflePeriod" */
+export type Room_ShufflePeriod_Order_By = {
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly endAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly maxAttendeesPerRoom?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+  readonly organiser?: Maybe<Attendee_Order_By>;
+  readonly organiserId?: Maybe<Order_By>;
+  readonly queueEntries_aggregate?: Maybe<Room_ShuffleQueueEntry_Aggregate_Order_By>;
+  readonly roomDurationMinutes?: Maybe<Order_By>;
+  readonly shuffleRooms_aggregate?: Maybe<Room_ShuffleRoom_Aggregate_Order_By>;
+  readonly startAt?: Maybe<Order_By>;
+  readonly targetAttendeesPerRoom?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+  readonly waitRoomMaxDuration?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "room.ShufflePeriod" */
+export type Room_ShufflePeriod_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "room.ShufflePeriod" */
+export enum Room_ShufflePeriod_Select_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  EndAt = 'endAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  MaxAttendeesPerRoom = 'maxAttendeesPerRoom',
+  /** column name */
+  Name = 'name',
+  /** column name */
+  OrganiserId = 'organiserId',
+  /** column name */
+  RoomDurationMinutes = 'roomDurationMinutes',
+  /** column name */
+  StartAt = 'startAt',
+  /** column name */
+  TargetAttendeesPerRoom = 'targetAttendeesPerRoom',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  WaitRoomMaxDuration = 'waitRoomMaxDuration'
+}
+
+/** input type for updating data in table "room.ShufflePeriod" */
+export type Room_ShufflePeriod_Set_Input = {
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly endAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly maxAttendeesPerRoom?: Maybe<Scalars['Int']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly organiserId?: Maybe<Scalars['uuid']>;
+  readonly roomDurationMinutes?: Maybe<Scalars['Int']>;
+  readonly startAt?: Maybe<Scalars['timestamptz']>;
+  readonly targetAttendeesPerRoom?: Maybe<Scalars['Int']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly waitRoomMaxDuration?: Maybe<Scalars['Int']>;
+};
+
+/** aggregate stddev on columns */
+export type Room_ShufflePeriod_Stddev_Fields = {
+  readonly __typename?: 'room_ShufflePeriod_stddev_fields';
+  readonly maxAttendeesPerRoom?: Maybe<Scalars['Float']>;
+  readonly roomDurationMinutes?: Maybe<Scalars['Float']>;
+  readonly targetAttendeesPerRoom?: Maybe<Scalars['Float']>;
+  readonly waitRoomMaxDuration?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "room.ShufflePeriod" */
+export type Room_ShufflePeriod_Stddev_Order_By = {
+  readonly maxAttendeesPerRoom?: Maybe<Order_By>;
+  readonly roomDurationMinutes?: Maybe<Order_By>;
+  readonly targetAttendeesPerRoom?: Maybe<Order_By>;
+  readonly waitRoomMaxDuration?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Room_ShufflePeriod_Stddev_Pop_Fields = {
+  readonly __typename?: 'room_ShufflePeriod_stddev_pop_fields';
+  readonly maxAttendeesPerRoom?: Maybe<Scalars['Float']>;
+  readonly roomDurationMinutes?: Maybe<Scalars['Float']>;
+  readonly targetAttendeesPerRoom?: Maybe<Scalars['Float']>;
+  readonly waitRoomMaxDuration?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "room.ShufflePeriod" */
+export type Room_ShufflePeriod_Stddev_Pop_Order_By = {
+  readonly maxAttendeesPerRoom?: Maybe<Order_By>;
+  readonly roomDurationMinutes?: Maybe<Order_By>;
+  readonly targetAttendeesPerRoom?: Maybe<Order_By>;
+  readonly waitRoomMaxDuration?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Room_ShufflePeriod_Stddev_Samp_Fields = {
+  readonly __typename?: 'room_ShufflePeriod_stddev_samp_fields';
+  readonly maxAttendeesPerRoom?: Maybe<Scalars['Float']>;
+  readonly roomDurationMinutes?: Maybe<Scalars['Float']>;
+  readonly targetAttendeesPerRoom?: Maybe<Scalars['Float']>;
+  readonly waitRoomMaxDuration?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "room.ShufflePeriod" */
+export type Room_ShufflePeriod_Stddev_Samp_Order_By = {
+  readonly maxAttendeesPerRoom?: Maybe<Order_By>;
+  readonly roomDurationMinutes?: Maybe<Order_By>;
+  readonly targetAttendeesPerRoom?: Maybe<Order_By>;
+  readonly waitRoomMaxDuration?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Room_ShufflePeriod_Sum_Fields = {
+  readonly __typename?: 'room_ShufflePeriod_sum_fields';
+  readonly maxAttendeesPerRoom?: Maybe<Scalars['Int']>;
+  readonly roomDurationMinutes?: Maybe<Scalars['Int']>;
+  readonly targetAttendeesPerRoom?: Maybe<Scalars['Int']>;
+  readonly waitRoomMaxDuration?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "room.ShufflePeriod" */
+export type Room_ShufflePeriod_Sum_Order_By = {
+  readonly maxAttendeesPerRoom?: Maybe<Order_By>;
+  readonly roomDurationMinutes?: Maybe<Order_By>;
+  readonly targetAttendeesPerRoom?: Maybe<Order_By>;
+  readonly waitRoomMaxDuration?: Maybe<Order_By>;
+};
+
+/** update columns of table "room.ShufflePeriod" */
+export enum Room_ShufflePeriod_Update_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  EndAt = 'endAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  MaxAttendeesPerRoom = 'maxAttendeesPerRoom',
+  /** column name */
+  Name = 'name',
+  /** column name */
+  OrganiserId = 'organiserId',
+  /** column name */
+  RoomDurationMinutes = 'roomDurationMinutes',
+  /** column name */
+  StartAt = 'startAt',
+  /** column name */
+  TargetAttendeesPerRoom = 'targetAttendeesPerRoom',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  WaitRoomMaxDuration = 'waitRoomMaxDuration'
+}
+
+/** aggregate var_pop on columns */
+export type Room_ShufflePeriod_Var_Pop_Fields = {
+  readonly __typename?: 'room_ShufflePeriod_var_pop_fields';
+  readonly maxAttendeesPerRoom?: Maybe<Scalars['Float']>;
+  readonly roomDurationMinutes?: Maybe<Scalars['Float']>;
+  readonly targetAttendeesPerRoom?: Maybe<Scalars['Float']>;
+  readonly waitRoomMaxDuration?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "room.ShufflePeriod" */
+export type Room_ShufflePeriod_Var_Pop_Order_By = {
+  readonly maxAttendeesPerRoom?: Maybe<Order_By>;
+  readonly roomDurationMinutes?: Maybe<Order_By>;
+  readonly targetAttendeesPerRoom?: Maybe<Order_By>;
+  readonly waitRoomMaxDuration?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Room_ShufflePeriod_Var_Samp_Fields = {
+  readonly __typename?: 'room_ShufflePeriod_var_samp_fields';
+  readonly maxAttendeesPerRoom?: Maybe<Scalars['Float']>;
+  readonly roomDurationMinutes?: Maybe<Scalars['Float']>;
+  readonly targetAttendeesPerRoom?: Maybe<Scalars['Float']>;
+  readonly waitRoomMaxDuration?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "room.ShufflePeriod" */
+export type Room_ShufflePeriod_Var_Samp_Order_By = {
+  readonly maxAttendeesPerRoom?: Maybe<Order_By>;
+  readonly roomDurationMinutes?: Maybe<Order_By>;
+  readonly targetAttendeesPerRoom?: Maybe<Order_By>;
+  readonly waitRoomMaxDuration?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Room_ShufflePeriod_Variance_Fields = {
+  readonly __typename?: 'room_ShufflePeriod_variance_fields';
+  readonly maxAttendeesPerRoom?: Maybe<Scalars['Float']>;
+  readonly roomDurationMinutes?: Maybe<Scalars['Float']>;
+  readonly targetAttendeesPerRoom?: Maybe<Scalars['Float']>;
+  readonly waitRoomMaxDuration?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "room.ShufflePeriod" */
+export type Room_ShufflePeriod_Variance_Order_By = {
+  readonly maxAttendeesPerRoom?: Maybe<Order_By>;
+  readonly roomDurationMinutes?: Maybe<Order_By>;
+  readonly targetAttendeesPerRoom?: Maybe<Order_By>;
+  readonly waitRoomMaxDuration?: Maybe<Order_By>;
+};
+
+/** columns and relationships of "room.ShuffleQueueEntry" */
+export type Room_ShuffleQueueEntry = {
+  readonly __typename?: 'room_ShuffleQueueEntry';
+  readonly allocatedShuffleRoomId?: Maybe<Scalars['Int']>;
+  /** An object relationship */
+  readonly attendee: Attendee;
+  readonly attendeeId: Scalars['uuid'];
+  readonly created_at: Scalars['timestamptz'];
+  readonly id: Scalars['bigint'];
+  /** An object relationship */
+  readonly shufflePeriod: Room_ShufflePeriod;
+  readonly shufflePeriodId: Scalars['uuid'];
+  /** An object relationship */
+  readonly shuffleRoom?: Maybe<Room_ShuffleRoom>;
+  readonly updated_at: Scalars['timestamptz'];
+};
+
+/** aggregated selection of "room.ShuffleQueueEntry" */
+export type Room_ShuffleQueueEntry_Aggregate = {
+  readonly __typename?: 'room_ShuffleQueueEntry_aggregate';
+  readonly aggregate?: Maybe<Room_ShuffleQueueEntry_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Room_ShuffleQueueEntry>;
+};
+
+/** aggregate fields of "room.ShuffleQueueEntry" */
+export type Room_ShuffleQueueEntry_Aggregate_Fields = {
+  readonly __typename?: 'room_ShuffleQueueEntry_aggregate_fields';
+  readonly avg?: Maybe<Room_ShuffleQueueEntry_Avg_Fields>;
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Room_ShuffleQueueEntry_Max_Fields>;
+  readonly min?: Maybe<Room_ShuffleQueueEntry_Min_Fields>;
+  readonly stddev?: Maybe<Room_ShuffleQueueEntry_Stddev_Fields>;
+  readonly stddev_pop?: Maybe<Room_ShuffleQueueEntry_Stddev_Pop_Fields>;
+  readonly stddev_samp?: Maybe<Room_ShuffleQueueEntry_Stddev_Samp_Fields>;
+  readonly sum?: Maybe<Room_ShuffleQueueEntry_Sum_Fields>;
+  readonly var_pop?: Maybe<Room_ShuffleQueueEntry_Var_Pop_Fields>;
+  readonly var_samp?: Maybe<Room_ShuffleQueueEntry_Var_Samp_Fields>;
+  readonly variance?: Maybe<Room_ShuffleQueueEntry_Variance_Fields>;
+};
+
+
+/** aggregate fields of "room.ShuffleQueueEntry" */
+export type Room_ShuffleQueueEntry_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Room_ShuffleQueueEntry_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "room.ShuffleQueueEntry" */
+export type Room_ShuffleQueueEntry_Aggregate_Order_By = {
+  readonly avg?: Maybe<Room_ShuffleQueueEntry_Avg_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Room_ShuffleQueueEntry_Max_Order_By>;
+  readonly min?: Maybe<Room_ShuffleQueueEntry_Min_Order_By>;
+  readonly stddev?: Maybe<Room_ShuffleQueueEntry_Stddev_Order_By>;
+  readonly stddev_pop?: Maybe<Room_ShuffleQueueEntry_Stddev_Pop_Order_By>;
+  readonly stddev_samp?: Maybe<Room_ShuffleQueueEntry_Stddev_Samp_Order_By>;
+  readonly sum?: Maybe<Room_ShuffleQueueEntry_Sum_Order_By>;
+  readonly var_pop?: Maybe<Room_ShuffleQueueEntry_Var_Pop_Order_By>;
+  readonly var_samp?: Maybe<Room_ShuffleQueueEntry_Var_Samp_Order_By>;
+  readonly variance?: Maybe<Room_ShuffleQueueEntry_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "room.ShuffleQueueEntry" */
+export type Room_ShuffleQueueEntry_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Room_ShuffleQueueEntry_Insert_Input>;
+  readonly on_conflict?: Maybe<Room_ShuffleQueueEntry_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Room_ShuffleQueueEntry_Avg_Fields = {
+  readonly __typename?: 'room_ShuffleQueueEntry_avg_fields';
+  readonly allocatedShuffleRoomId?: Maybe<Scalars['Float']>;
+  readonly id?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "room.ShuffleQueueEntry" */
+export type Room_ShuffleQueueEntry_Avg_Order_By = {
+  readonly allocatedShuffleRoomId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "room.ShuffleQueueEntry". All fields are combined with a logical 'AND'. */
+export type Room_ShuffleQueueEntry_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Room_ShuffleQueueEntry_Bool_Exp>>>;
+  readonly _not?: Maybe<Room_ShuffleQueueEntry_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Room_ShuffleQueueEntry_Bool_Exp>>>;
+  readonly allocatedShuffleRoomId?: Maybe<Int_Comparison_Exp>;
+  readonly attendee?: Maybe<Attendee_Bool_Exp>;
+  readonly attendeeId?: Maybe<Uuid_Comparison_Exp>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly id?: Maybe<Bigint_Comparison_Exp>;
+  readonly shufflePeriod?: Maybe<Room_ShufflePeriod_Bool_Exp>;
+  readonly shufflePeriodId?: Maybe<Uuid_Comparison_Exp>;
+  readonly shuffleRoom?: Maybe<Room_ShuffleRoom_Bool_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "room.ShuffleQueueEntry" */
+export enum Room_ShuffleQueueEntry_Constraint {
+  /** unique or primary key constraint */
+  ShuffleQueueEntryPkey = 'ShuffleQueueEntry_pkey'
+}
+
+/** input type for incrementing integer column in table "room.ShuffleQueueEntry" */
+export type Room_ShuffleQueueEntry_Inc_Input = {
+  readonly allocatedShuffleRoomId?: Maybe<Scalars['Int']>;
+  readonly id?: Maybe<Scalars['bigint']>;
+};
+
+/** input type for inserting data into table "room.ShuffleQueueEntry" */
+export type Room_ShuffleQueueEntry_Insert_Input = {
+  readonly allocatedShuffleRoomId?: Maybe<Scalars['Int']>;
+  readonly attendee?: Maybe<Attendee_Obj_Rel_Insert_Input>;
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['bigint']>;
+  readonly shufflePeriod?: Maybe<Room_ShufflePeriod_Obj_Rel_Insert_Input>;
+  readonly shufflePeriodId?: Maybe<Scalars['uuid']>;
+  readonly shuffleRoom?: Maybe<Room_ShuffleRoom_Obj_Rel_Insert_Input>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Room_ShuffleQueueEntry_Max_Fields = {
+  readonly __typename?: 'room_ShuffleQueueEntry_max_fields';
+  readonly allocatedShuffleRoomId?: Maybe<Scalars['Int']>;
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['bigint']>;
+  readonly shufflePeriodId?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "room.ShuffleQueueEntry" */
+export type Room_ShuffleQueueEntry_Max_Order_By = {
+  readonly allocatedShuffleRoomId?: Maybe<Order_By>;
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly shufflePeriodId?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Room_ShuffleQueueEntry_Min_Fields = {
+  readonly __typename?: 'room_ShuffleQueueEntry_min_fields';
+  readonly allocatedShuffleRoomId?: Maybe<Scalars['Int']>;
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['bigint']>;
+  readonly shufflePeriodId?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "room.ShuffleQueueEntry" */
+export type Room_ShuffleQueueEntry_Min_Order_By = {
+  readonly allocatedShuffleRoomId?: Maybe<Order_By>;
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly shufflePeriodId?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "room.ShuffleQueueEntry" */
+export type Room_ShuffleQueueEntry_Mutation_Response = {
+  readonly __typename?: 'room_ShuffleQueueEntry_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Room_ShuffleQueueEntry>;
+};
+
+/** input type for inserting object relation for remote table "room.ShuffleQueueEntry" */
+export type Room_ShuffleQueueEntry_Obj_Rel_Insert_Input = {
+  readonly data: Room_ShuffleQueueEntry_Insert_Input;
+  readonly on_conflict?: Maybe<Room_ShuffleQueueEntry_On_Conflict>;
+};
+
+/** on conflict condition type for table "room.ShuffleQueueEntry" */
+export type Room_ShuffleQueueEntry_On_Conflict = {
+  readonly constraint: Room_ShuffleQueueEntry_Constraint;
+  readonly update_columns: ReadonlyArray<Room_ShuffleQueueEntry_Update_Column>;
+  readonly where?: Maybe<Room_ShuffleQueueEntry_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "room.ShuffleQueueEntry" */
+export type Room_ShuffleQueueEntry_Order_By = {
+  readonly allocatedShuffleRoomId?: Maybe<Order_By>;
+  readonly attendee?: Maybe<Attendee_Order_By>;
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly shufflePeriod?: Maybe<Room_ShufflePeriod_Order_By>;
+  readonly shufflePeriodId?: Maybe<Order_By>;
+  readonly shuffleRoom?: Maybe<Room_ShuffleRoom_Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "room.ShuffleQueueEntry" */
+export type Room_ShuffleQueueEntry_Pk_Columns_Input = {
+  readonly id: Scalars['bigint'];
+};
+
+/** select columns of table "room.ShuffleQueueEntry" */
+export enum Room_ShuffleQueueEntry_Select_Column {
+  /** column name */
+  AllocatedShuffleRoomId = 'allocatedShuffleRoomId',
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  ShufflePeriodId = 'shufflePeriodId',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "room.ShuffleQueueEntry" */
+export type Room_ShuffleQueueEntry_Set_Input = {
+  readonly allocatedShuffleRoomId?: Maybe<Scalars['Int']>;
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['bigint']>;
+  readonly shufflePeriodId?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate stddev on columns */
+export type Room_ShuffleQueueEntry_Stddev_Fields = {
+  readonly __typename?: 'room_ShuffleQueueEntry_stddev_fields';
+  readonly allocatedShuffleRoomId?: Maybe<Scalars['Float']>;
+  readonly id?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "room.ShuffleQueueEntry" */
+export type Room_ShuffleQueueEntry_Stddev_Order_By = {
+  readonly allocatedShuffleRoomId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Room_ShuffleQueueEntry_Stddev_Pop_Fields = {
+  readonly __typename?: 'room_ShuffleQueueEntry_stddev_pop_fields';
+  readonly allocatedShuffleRoomId?: Maybe<Scalars['Float']>;
+  readonly id?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "room.ShuffleQueueEntry" */
+export type Room_ShuffleQueueEntry_Stddev_Pop_Order_By = {
+  readonly allocatedShuffleRoomId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Room_ShuffleQueueEntry_Stddev_Samp_Fields = {
+  readonly __typename?: 'room_ShuffleQueueEntry_stddev_samp_fields';
+  readonly allocatedShuffleRoomId?: Maybe<Scalars['Float']>;
+  readonly id?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "room.ShuffleQueueEntry" */
+export type Room_ShuffleQueueEntry_Stddev_Samp_Order_By = {
+  readonly allocatedShuffleRoomId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Room_ShuffleQueueEntry_Sum_Fields = {
+  readonly __typename?: 'room_ShuffleQueueEntry_sum_fields';
+  readonly allocatedShuffleRoomId?: Maybe<Scalars['Int']>;
+  readonly id?: Maybe<Scalars['bigint']>;
+};
+
+/** order by sum() on columns of table "room.ShuffleQueueEntry" */
+export type Room_ShuffleQueueEntry_Sum_Order_By = {
+  readonly allocatedShuffleRoomId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+};
+
+/** update columns of table "room.ShuffleQueueEntry" */
+export enum Room_ShuffleQueueEntry_Update_Column {
+  /** column name */
+  AllocatedShuffleRoomId = 'allocatedShuffleRoomId',
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  ShufflePeriodId = 'shufflePeriodId',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** aggregate var_pop on columns */
+export type Room_ShuffleQueueEntry_Var_Pop_Fields = {
+  readonly __typename?: 'room_ShuffleQueueEntry_var_pop_fields';
+  readonly allocatedShuffleRoomId?: Maybe<Scalars['Float']>;
+  readonly id?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "room.ShuffleQueueEntry" */
+export type Room_ShuffleQueueEntry_Var_Pop_Order_By = {
+  readonly allocatedShuffleRoomId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Room_ShuffleQueueEntry_Var_Samp_Fields = {
+  readonly __typename?: 'room_ShuffleQueueEntry_var_samp_fields';
+  readonly allocatedShuffleRoomId?: Maybe<Scalars['Float']>;
+  readonly id?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "room.ShuffleQueueEntry" */
+export type Room_ShuffleQueueEntry_Var_Samp_Order_By = {
+  readonly allocatedShuffleRoomId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Room_ShuffleQueueEntry_Variance_Fields = {
+  readonly __typename?: 'room_ShuffleQueueEntry_variance_fields';
+  readonly allocatedShuffleRoomId?: Maybe<Scalars['Float']>;
+  readonly id?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "room.ShuffleQueueEntry" */
+export type Room_ShuffleQueueEntry_Variance_Order_By = {
+  readonly allocatedShuffleRoomId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+};
+
+/** columns and relationships of "room.ShuffleRoom" */
+export type Room_ShuffleRoom = {
+  readonly __typename?: 'room_ShuffleRoom';
+  readonly created_at: Scalars['timestamptz'];
+  readonly durationMinutes: Scalars['Int'];
+  readonly id: Scalars['bigint'];
+  readonly isEnded: Scalars['Boolean'];
+  /** An array relationship */
+  readonly queueEntries: ReadonlyArray<Room_ShuffleQueueEntry>;
+  /** An aggregated array relationship */
+  readonly queueEntries_aggregate: Room_ShuffleQueueEntry_Aggregate;
+  readonly reshuffleUponEnd: Scalars['Boolean'];
+  /** An object relationship */
+  readonly room: Room;
+  readonly roomId: Scalars['uuid'];
+  /** An object relationship */
+  readonly shufflePeriod: Room_ShufflePeriod;
+  readonly shufflePeriodId: Scalars['uuid'];
+  readonly startedAt: Scalars['timestamptz'];
+  readonly updated_at: Scalars['timestamptz'];
+};
+
+
+/** columns and relationships of "room.ShuffleRoom" */
+export type Room_ShuffleRoomQueueEntriesArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_ShuffleQueueEntry_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_ShuffleQueueEntry_Order_By>>;
+  where?: Maybe<Room_ShuffleQueueEntry_Bool_Exp>;
+};
+
+
+/** columns and relationships of "room.ShuffleRoom" */
+export type Room_ShuffleRoomQueueEntries_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_ShuffleQueueEntry_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_ShuffleQueueEntry_Order_By>>;
+  where?: Maybe<Room_ShuffleQueueEntry_Bool_Exp>;
+};
+
+/** aggregated selection of "room.ShuffleRoom" */
+export type Room_ShuffleRoom_Aggregate = {
+  readonly __typename?: 'room_ShuffleRoom_aggregate';
+  readonly aggregate?: Maybe<Room_ShuffleRoom_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Room_ShuffleRoom>;
+};
+
+/** aggregate fields of "room.ShuffleRoom" */
+export type Room_ShuffleRoom_Aggregate_Fields = {
+  readonly __typename?: 'room_ShuffleRoom_aggregate_fields';
+  readonly avg?: Maybe<Room_ShuffleRoom_Avg_Fields>;
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Room_ShuffleRoom_Max_Fields>;
+  readonly min?: Maybe<Room_ShuffleRoom_Min_Fields>;
+  readonly stddev?: Maybe<Room_ShuffleRoom_Stddev_Fields>;
+  readonly stddev_pop?: Maybe<Room_ShuffleRoom_Stddev_Pop_Fields>;
+  readonly stddev_samp?: Maybe<Room_ShuffleRoom_Stddev_Samp_Fields>;
+  readonly sum?: Maybe<Room_ShuffleRoom_Sum_Fields>;
+  readonly var_pop?: Maybe<Room_ShuffleRoom_Var_Pop_Fields>;
+  readonly var_samp?: Maybe<Room_ShuffleRoom_Var_Samp_Fields>;
+  readonly variance?: Maybe<Room_ShuffleRoom_Variance_Fields>;
+};
+
+
+/** aggregate fields of "room.ShuffleRoom" */
+export type Room_ShuffleRoom_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Room_ShuffleRoom_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "room.ShuffleRoom" */
+export type Room_ShuffleRoom_Aggregate_Order_By = {
+  readonly avg?: Maybe<Room_ShuffleRoom_Avg_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Room_ShuffleRoom_Max_Order_By>;
+  readonly min?: Maybe<Room_ShuffleRoom_Min_Order_By>;
+  readonly stddev?: Maybe<Room_ShuffleRoom_Stddev_Order_By>;
+  readonly stddev_pop?: Maybe<Room_ShuffleRoom_Stddev_Pop_Order_By>;
+  readonly stddev_samp?: Maybe<Room_ShuffleRoom_Stddev_Samp_Order_By>;
+  readonly sum?: Maybe<Room_ShuffleRoom_Sum_Order_By>;
+  readonly var_pop?: Maybe<Room_ShuffleRoom_Var_Pop_Order_By>;
+  readonly var_samp?: Maybe<Room_ShuffleRoom_Var_Samp_Order_By>;
+  readonly variance?: Maybe<Room_ShuffleRoom_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "room.ShuffleRoom" */
+export type Room_ShuffleRoom_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Room_ShuffleRoom_Insert_Input>;
+  readonly on_conflict?: Maybe<Room_ShuffleRoom_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Room_ShuffleRoom_Avg_Fields = {
+  readonly __typename?: 'room_ShuffleRoom_avg_fields';
+  readonly durationMinutes?: Maybe<Scalars['Float']>;
+  readonly id?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "room.ShuffleRoom" */
+export type Room_ShuffleRoom_Avg_Order_By = {
+  readonly durationMinutes?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "room.ShuffleRoom". All fields are combined with a logical 'AND'. */
+export type Room_ShuffleRoom_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Room_ShuffleRoom_Bool_Exp>>>;
+  readonly _not?: Maybe<Room_ShuffleRoom_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Room_ShuffleRoom_Bool_Exp>>>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly durationMinutes?: Maybe<Int_Comparison_Exp>;
+  readonly id?: Maybe<Bigint_Comparison_Exp>;
+  readonly isEnded?: Maybe<Boolean_Comparison_Exp>;
+  readonly queueEntries?: Maybe<Room_ShuffleQueueEntry_Bool_Exp>;
+  readonly reshuffleUponEnd?: Maybe<Boolean_Comparison_Exp>;
+  readonly room?: Maybe<Room_Bool_Exp>;
+  readonly roomId?: Maybe<Uuid_Comparison_Exp>;
+  readonly shufflePeriod?: Maybe<Room_ShufflePeriod_Bool_Exp>;
+  readonly shufflePeriodId?: Maybe<Uuid_Comparison_Exp>;
+  readonly startedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "room.ShuffleRoom" */
+export enum Room_ShuffleRoom_Constraint {
+  /** unique or primary key constraint */
+  ShuffleRoomPkey = 'ShuffleRoom_pkey'
+}
+
+/** input type for incrementing integer column in table "room.ShuffleRoom" */
+export type Room_ShuffleRoom_Inc_Input = {
+  readonly durationMinutes?: Maybe<Scalars['Int']>;
+  readonly id?: Maybe<Scalars['bigint']>;
+};
+
+/** input type for inserting data into table "room.ShuffleRoom" */
+export type Room_ShuffleRoom_Insert_Input = {
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly durationMinutes?: Maybe<Scalars['Int']>;
+  readonly id?: Maybe<Scalars['bigint']>;
+  readonly isEnded?: Maybe<Scalars['Boolean']>;
+  readonly queueEntries?: Maybe<Room_ShuffleQueueEntry_Arr_Rel_Insert_Input>;
+  readonly reshuffleUponEnd?: Maybe<Scalars['Boolean']>;
+  readonly room?: Maybe<Room_Obj_Rel_Insert_Input>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly shufflePeriod?: Maybe<Room_ShufflePeriod_Obj_Rel_Insert_Input>;
+  readonly shufflePeriodId?: Maybe<Scalars['uuid']>;
+  readonly startedAt?: Maybe<Scalars['timestamptz']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Room_ShuffleRoom_Max_Fields = {
+  readonly __typename?: 'room_ShuffleRoom_max_fields';
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly durationMinutes?: Maybe<Scalars['Int']>;
+  readonly id?: Maybe<Scalars['bigint']>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly shufflePeriodId?: Maybe<Scalars['uuid']>;
+  readonly startedAt?: Maybe<Scalars['timestamptz']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "room.ShuffleRoom" */
+export type Room_ShuffleRoom_Max_Order_By = {
+  readonly created_at?: Maybe<Order_By>;
+  readonly durationMinutes?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly roomId?: Maybe<Order_By>;
+  readonly shufflePeriodId?: Maybe<Order_By>;
+  readonly startedAt?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Room_ShuffleRoom_Min_Fields = {
+  readonly __typename?: 'room_ShuffleRoom_min_fields';
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly durationMinutes?: Maybe<Scalars['Int']>;
+  readonly id?: Maybe<Scalars['bigint']>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly shufflePeriodId?: Maybe<Scalars['uuid']>;
+  readonly startedAt?: Maybe<Scalars['timestamptz']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "room.ShuffleRoom" */
+export type Room_ShuffleRoom_Min_Order_By = {
+  readonly created_at?: Maybe<Order_By>;
+  readonly durationMinutes?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly roomId?: Maybe<Order_By>;
+  readonly shufflePeriodId?: Maybe<Order_By>;
+  readonly startedAt?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "room.ShuffleRoom" */
+export type Room_ShuffleRoom_Mutation_Response = {
+  readonly __typename?: 'room_ShuffleRoom_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Room_ShuffleRoom>;
+};
+
+/** input type for inserting object relation for remote table "room.ShuffleRoom" */
+export type Room_ShuffleRoom_Obj_Rel_Insert_Input = {
+  readonly data: Room_ShuffleRoom_Insert_Input;
+  readonly on_conflict?: Maybe<Room_ShuffleRoom_On_Conflict>;
+};
+
+/** on conflict condition type for table "room.ShuffleRoom" */
+export type Room_ShuffleRoom_On_Conflict = {
+  readonly constraint: Room_ShuffleRoom_Constraint;
+  readonly update_columns: ReadonlyArray<Room_ShuffleRoom_Update_Column>;
+  readonly where?: Maybe<Room_ShuffleRoom_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "room.ShuffleRoom" */
+export type Room_ShuffleRoom_Order_By = {
+  readonly created_at?: Maybe<Order_By>;
+  readonly durationMinutes?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly isEnded?: Maybe<Order_By>;
+  readonly queueEntries_aggregate?: Maybe<Room_ShuffleQueueEntry_Aggregate_Order_By>;
+  readonly reshuffleUponEnd?: Maybe<Order_By>;
+  readonly room?: Maybe<Room_Order_By>;
+  readonly roomId?: Maybe<Order_By>;
+  readonly shufflePeriod?: Maybe<Room_ShufflePeriod_Order_By>;
+  readonly shufflePeriodId?: Maybe<Order_By>;
+  readonly startedAt?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "room.ShuffleRoom" */
+export type Room_ShuffleRoom_Pk_Columns_Input = {
+  readonly id: Scalars['bigint'];
+};
+
+/** select columns of table "room.ShuffleRoom" */
+export enum Room_ShuffleRoom_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  DurationMinutes = 'durationMinutes',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  IsEnded = 'isEnded',
+  /** column name */
+  ReshuffleUponEnd = 'reshuffleUponEnd',
+  /** column name */
+  RoomId = 'roomId',
+  /** column name */
+  ShufflePeriodId = 'shufflePeriodId',
+  /** column name */
+  StartedAt = 'startedAt',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "room.ShuffleRoom" */
+export type Room_ShuffleRoom_Set_Input = {
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly durationMinutes?: Maybe<Scalars['Int']>;
+  readonly id?: Maybe<Scalars['bigint']>;
+  readonly isEnded?: Maybe<Scalars['Boolean']>;
+  readonly reshuffleUponEnd?: Maybe<Scalars['Boolean']>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly shufflePeriodId?: Maybe<Scalars['uuid']>;
+  readonly startedAt?: Maybe<Scalars['timestamptz']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate stddev on columns */
+export type Room_ShuffleRoom_Stddev_Fields = {
+  readonly __typename?: 'room_ShuffleRoom_stddev_fields';
+  readonly durationMinutes?: Maybe<Scalars['Float']>;
+  readonly id?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "room.ShuffleRoom" */
+export type Room_ShuffleRoom_Stddev_Order_By = {
+  readonly durationMinutes?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Room_ShuffleRoom_Stddev_Pop_Fields = {
+  readonly __typename?: 'room_ShuffleRoom_stddev_pop_fields';
+  readonly durationMinutes?: Maybe<Scalars['Float']>;
+  readonly id?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "room.ShuffleRoom" */
+export type Room_ShuffleRoom_Stddev_Pop_Order_By = {
+  readonly durationMinutes?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Room_ShuffleRoom_Stddev_Samp_Fields = {
+  readonly __typename?: 'room_ShuffleRoom_stddev_samp_fields';
+  readonly durationMinutes?: Maybe<Scalars['Float']>;
+  readonly id?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "room.ShuffleRoom" */
+export type Room_ShuffleRoom_Stddev_Samp_Order_By = {
+  readonly durationMinutes?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Room_ShuffleRoom_Sum_Fields = {
+  readonly __typename?: 'room_ShuffleRoom_sum_fields';
+  readonly durationMinutes?: Maybe<Scalars['Int']>;
+  readonly id?: Maybe<Scalars['bigint']>;
+};
+
+/** order by sum() on columns of table "room.ShuffleRoom" */
+export type Room_ShuffleRoom_Sum_Order_By = {
+  readonly durationMinutes?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+};
+
+/** update columns of table "room.ShuffleRoom" */
+export enum Room_ShuffleRoom_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  DurationMinutes = 'durationMinutes',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  IsEnded = 'isEnded',
+  /** column name */
+  ReshuffleUponEnd = 'reshuffleUponEnd',
+  /** column name */
+  RoomId = 'roomId',
+  /** column name */
+  ShufflePeriodId = 'shufflePeriodId',
+  /** column name */
+  StartedAt = 'startedAt',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** aggregate var_pop on columns */
+export type Room_ShuffleRoom_Var_Pop_Fields = {
+  readonly __typename?: 'room_ShuffleRoom_var_pop_fields';
+  readonly durationMinutes?: Maybe<Scalars['Float']>;
+  readonly id?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "room.ShuffleRoom" */
+export type Room_ShuffleRoom_Var_Pop_Order_By = {
+  readonly durationMinutes?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Room_ShuffleRoom_Var_Samp_Fields = {
+  readonly __typename?: 'room_ShuffleRoom_var_samp_fields';
+  readonly durationMinutes?: Maybe<Scalars['Float']>;
+  readonly id?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "room.ShuffleRoom" */
+export type Room_ShuffleRoom_Var_Samp_Order_By = {
+  readonly durationMinutes?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Room_ShuffleRoom_Variance_Fields = {
+  readonly __typename?: 'room_ShuffleRoom_variance_fields';
+  readonly durationMinutes?: Maybe<Scalars['Float']>;
+  readonly id?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "room.ShuffleRoom" */
+export type Room_ShuffleRoom_Variance_Order_By = {
+  readonly durationMinutes?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+};
+
 /** subscription root */
 export type Subscription_Root = {
   readonly __typename?: 'subscription_root';
@@ -25907,6 +27432,24 @@ export type Subscription_Root = {
   readonly presence_Page_by_pk?: Maybe<Presence_Page>;
   /** perform the action: "protectedEcho" */
   readonly protectedEcho?: Maybe<ProtectedEchoOutput>;
+  /** fetch data from the table: "room.ShufflePeriod" */
+  readonly room_ShufflePeriod: ReadonlyArray<Room_ShufflePeriod>;
+  /** fetch aggregated fields from the table: "room.ShufflePeriod" */
+  readonly room_ShufflePeriod_aggregate: Room_ShufflePeriod_Aggregate;
+  /** fetch data from the table: "room.ShufflePeriod" using primary key columns */
+  readonly room_ShufflePeriod_by_pk?: Maybe<Room_ShufflePeriod>;
+  /** fetch data from the table: "room.ShuffleQueueEntry" */
+  readonly room_ShuffleQueueEntry: ReadonlyArray<Room_ShuffleQueueEntry>;
+  /** fetch aggregated fields from the table: "room.ShuffleQueueEntry" */
+  readonly room_ShuffleQueueEntry_aggregate: Room_ShuffleQueueEntry_Aggregate;
+  /** fetch data from the table: "room.ShuffleQueueEntry" using primary key columns */
+  readonly room_ShuffleQueueEntry_by_pk?: Maybe<Room_ShuffleQueueEntry>;
+  /** fetch data from the table: "room.ShuffleRoom" */
+  readonly room_ShuffleRoom: ReadonlyArray<Room_ShuffleRoom>;
+  /** fetch aggregated fields from the table: "room.ShuffleRoom" */
+  readonly room_ShuffleRoom_aggregate: Room_ShuffleRoom_Aggregate;
+  /** fetch data from the table: "room.ShuffleRoom" using primary key columns */
+  readonly room_ShuffleRoom_by_pk?: Maybe<Room_ShuffleRoom>;
 };
 
 
@@ -27744,6 +29287,84 @@ export type Subscription_RootPresence_Page_By_PkArgs = {
 /** subscription root */
 export type Subscription_RootProtectedEchoArgs = {
   message: Scalars['String'];
+};
+
+
+/** subscription root */
+export type Subscription_RootRoom_ShufflePeriodArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_ShufflePeriod_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_ShufflePeriod_Order_By>>;
+  where?: Maybe<Room_ShufflePeriod_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootRoom_ShufflePeriod_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_ShufflePeriod_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_ShufflePeriod_Order_By>>;
+  where?: Maybe<Room_ShufflePeriod_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootRoom_ShufflePeriod_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
+export type Subscription_RootRoom_ShuffleQueueEntryArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_ShuffleQueueEntry_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_ShuffleQueueEntry_Order_By>>;
+  where?: Maybe<Room_ShuffleQueueEntry_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootRoom_ShuffleQueueEntry_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_ShuffleQueueEntry_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_ShuffleQueueEntry_Order_By>>;
+  where?: Maybe<Room_ShuffleQueueEntry_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootRoom_ShuffleQueueEntry_By_PkArgs = {
+  id: Scalars['bigint'];
+};
+
+
+/** subscription root */
+export type Subscription_RootRoom_ShuffleRoomArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_ShuffleRoom_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_ShuffleRoom_Order_By>>;
+  where?: Maybe<Room_ShuffleRoom_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootRoom_ShuffleRoom_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_ShuffleRoom_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_ShuffleRoom_Order_By>>;
+  where?: Maybe<Room_ShuffleRoom_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootRoom_ShuffleRoom_By_PkArgs = {
+  id: Scalars['bigint'];
 };
 
 

@@ -189,3 +189,12 @@ export interface MediaPackageHarvestJob extends BaseData {
     mediaPackageHarvestJobId: string | null;
     conferenceId: string;
 }
+
+export interface ShuffleQueueEntryData {
+    created_at: string;
+    updated_at: string;
+    id: number;
+    shufflePeriodId: string;
+    attendeeId: string;
+    allocatedShuffleRoomId?: number | null;
+}

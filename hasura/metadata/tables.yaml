@@ -1943,6 +1943,13 @@
         table:
           schema: public
           name: Room
+  - name: shufflePeriods
+    using:
+      foreign_key_constraint_on:
+        column: conferenceId
+        table:
+          schema: room
+          name: ShufflePeriod
   - name: tags
     using:
       foreign_key_constraint_on:
@@ -7050,3 +7057,348 @@
     headers:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
+- table:
+    schema: room
+    name: ShufflePeriod
+  object_relationships:
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  - name: organiser
+    using:
+      foreign_key_constraint_on: organiserId
+  array_relationships:
+  - name: queueEntries
+    using:
+      foreign_key_constraint_on:
+        column: shufflePeriodId
+        table:
+          schema: room
+          name: ShuffleQueueEntry
+  - name: shuffleRooms
+    using:
+      foreign_key_constraint_on:
+        column: shufflePeriodId
+        table:
+          schema: room
+          name: ShuffleRoom
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        _and:
+        - conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+        - organiser:
+            userId:
+              _eq: X-Hasura-User-Id
+        - _exists:
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _in:
+                  - CONFERENCE_MANAGE_SCHEDULE
+                  - CONFERENCE_MANAGE_ATTENDEES
+                  - CONFERENCE_MODERATE_ATTENDEES
+            _table:
+              schema: public
+              name: FlatUserPermission
+      set:
+        organiserId: x-hasura-User-Id
+      columns:
+      - endAt
+      - id
+      - maxAttendeesPerRoom
+      - name
+      - roomDurationMinutes
+      - startAt
+      - targetAttendeesPerRoom
+      - waitRoomMaxDurationSeconds
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - maxAttendeesPerRoom
+      - roomDurationMinutes
+      - targetAttendeesPerRoom
+      - waitRoomMaxDurationSeconds
+      - name
+      - created_at
+      - endAt
+      - startAt
+      - updated_at
+      - conferenceId
+      - id
+      - organiserId
+      filter:
+        _and:
+        - conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+        - _exists:
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _in:
+                  - CONFERENCE_MANAGE_SCHEDULE
+                  - CONFERENCE_MANAGE_ATTENDEES
+                  - CONFERENCE_MODERATE_ATTENDEES
+                  - CONFERENCE_VIEW_ATTENDEES
+            _table:
+              schema: public
+              name: FlatUserPermission
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - created_at
+      - endAt
+      - maxAttendeesPerRoom
+      - name
+      - roomDurationMinutes
+      - startAt
+      - targetAttendeesPerRoom
+      - updated_at
+      - waitRoomMaxDurationSeconds
+      filter:
+        _and:
+        - conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+        - _exists:
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _in:
+                  - CONFERENCE_MANAGE_SCHEDULE
+                  - CONFERENCE_MANAGE_ATTENDEES
+                  - CONFERENCE_MODERATE_ATTENDEES
+            _table:
+              schema: public
+              name: FlatUserPermission
+      check: null
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        _and:
+        - conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+        - _exists:
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _in:
+                  - CONFERENCE_MANAGE_SCHEDULE
+                  - CONFERENCE_MANAGE_ATTENDEES
+                  - CONFERENCE_MODERATE_ATTENDEES
+            _table:
+              schema: public
+              name: FlatUserPermission
+- table:
+    schema: room
+    name: ShuffleQueueEntry
+  object_relationships:
+  - name: attendee
+    using:
+      foreign_key_constraint_on: attendeeId
+  - name: shufflePeriod
+    using:
+      foreign_key_constraint_on: shufflePeriodId
+  - name: shuffleRoom
+    using:
+      foreign_key_constraint_on: allocatedShuffleRoomId
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        _and:
+        - shufflePeriod:
+            conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
+        - _exists:
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _in:
+                  - CONFERENCE_MANAGE_SCHEDULE
+                  - CONFERENCE_MANAGE_ATTENDEES
+                  - CONFERENCE_MODERATE_ATTENDEES
+                  - CONFERENCE_VIEW_ATTENDEES
+            _table:
+              schema: public
+              name: FlatUserPermission
+        - attendee:
+            userId:
+              _eq: X-Hasura-User-Id
+      columns:
+      - allocatedShuffleRoomId
+      - attendeeId
+      - id
+      - shufflePeriodId
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - allocatedShuffleRoomId
+      - attendeeId
+      - created_at
+      - id
+      - shufflePeriodId
+      - updated_at
+      filter:
+        _and:
+        - shufflePeriod:
+            conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
+        - _exists:
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _in:
+                  - CONFERENCE_MANAGE_SCHEDULE
+                  - CONFERENCE_MANAGE_ATTENDEES
+                  - CONFERENCE_MODERATE_ATTENDEES
+                  - CONFERENCE_VIEW_ATTENDEES
+            _table:
+              schema: public
+              name: FlatUserPermission
+      allow_aggregations: true
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        _and:
+        - shufflePeriod:
+            conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
+        - _or:
+          - _and:
+            - _exists:
+                _where:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - slug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permission_name:
+                      _eq: CONFERENCE_VIEW_ATTENDEES
+                _table:
+                  schema: public
+                  name: FlatUserPermission
+            - attendee:
+                userId:
+                  _eq: X-Hasura-User-Id
+          - _exists:
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _in:
+                    - CONFERENCE_MANAGE_SCHEDULE
+                    - CONFERENCE_MANAGE_ATTENDEES
+                    - CONFERENCE_MODERATE_ATTENDEES
+              _table:
+                schema: public
+                name: FlatUserPermission
+  event_triggers:
+  - name: ShuffleQueueEntered
+    definition:
+      enable_manual: false
+      insert:
+        columns: '*'
+    retry_conf:
+      num_retries: 1
+      interval_sec: 30
+      timeout_sec: 20
+    webhook: '{{ACTION_BASE_URL}}/shuffle/entered'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+- table:
+    schema: room
+    name: ShuffleRoom
+  object_relationships:
+  - name: room
+    using:
+      foreign_key_constraint_on: roomId
+  - name: shufflePeriod
+    using:
+      foreign_key_constraint_on: shufflePeriodId
+  array_relationships:
+  - name: queueEntries
+    using:
+      foreign_key_constraint_on:
+        column: allocatedShuffleRoomId
+        table:
+          schema: room
+          name: ShuffleQueueEntry
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - id
+      - created_at
+      - updated_at
+      - shufflePeriodId
+      - roomId
+      - durationMinutes
+      - startedAt
+      - reshuffleUponEnd
+      - isEnded
+      filter:
+        _and:
+        - shufflePeriod:
+            conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
+        - _exists:
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _in:
+                  - CONFERENCE_MANAGE_SCHEDULE
+                  - CONFERENCE_MANAGE_ATTENDEES
+                  - CONFERENCE_MODERATE_ATTENDEES
+                  - CONFERENCE_VIEW_ATTENDEES
+            _table:
+              schema: public
+              name: FlatUserPermission

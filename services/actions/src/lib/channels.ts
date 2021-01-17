@@ -201,8 +201,8 @@ export async function stopChannelsWithoutUpcomingOrCurrentEvents(): Promise<void
     console.log(`Found ${roomsResult.data.Room.length} rooms without upcoming or ongoing events`);
 
     for (const room of roomsResult.data.Room) {
-        console.log("Ensuring channel for room is stopped", room.id);
         if (room.mediaLiveChannel) {
+            console.log("Ensuring channel for room is stopped", room.id);
             const channelState = await getMediaLiveChannelState(room.mediaLiveChannel.mediaLiveChannelId);
 
             if (channelState === ChannelState.RUNNING) {

@@ -5,11 +5,14 @@ import {
     InsertManagedRoomDocument,
     InsertShuffleRoomDocument,
     RoomPersonRole_Enum,
+    RoomsToEndOfShufflePeriodFragment,
     SelectActiveShufflePeriodsDocument,
     SelectShufflePeriodDocument,
+    SetShuffleRoomsEndedDocument,
     UnallocatedShuffleQueueEntryFragment,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
+import { kickAttendeeFromRoom } from "../lib/vonage/vonageTools";
 import { Payload, ShuffleQueueEntryData } from "../types/hasura/event";
 
 gql`
@@ -51,15 +54,40 @@ gql`
         }
     }
 
+    fragment RoomsToEndOfShufflePeriod on room_ShufflePeriod {
+        id
+        roomsToEnd: shuffleRooms(
+            where: { startedAt: { _lte: $atLatest }, durationMinutes: { _lte: $maxDuration }, isEnded: { _eq: false } }
+        ) {
+            id
+            room {
+                id
+                participants {
+                    id
+                    attendeeId
+                }
+            }
+        }
+    }
+
     query SelectShufflePeriod($id: uuid!) {
         room_ShufflePeriod_by_pk(id: $id) {
             ...ActiveShufflePeriod
         }
     }
 
-    query SelectActiveShufflePeriods($from: timestamptz!, $until: timestamptz!) {
-        room_ShufflePeriod(where: { startAt: { _lte: $from }, endAt: { _gte: $until } }) {
+    query SelectActiveShufflePeriods(
+        $from: timestamptz!
+        $until: timestamptz!
+        $untilExtended: timestamptz!
+        $atLatest: timestamptz!
+        $maxDuration: Int!
+    ) {
+        active: room_ShufflePeriod(where: { startAt: { _lte: $from }, endAt: { _gte: $until } }) {
             ...ActiveShufflePeriod
+        }
+        ending: room_ShufflePeriod(where: { startAt: { _lte: $from }, endAt: { _gte: $untilExtended } }) {
+            ...RoomsToEndOfShufflePeriod
         }
     }
 
@@ -114,6 +142,15 @@ gql`
             }
         ) {
             id
+        }
+    }
+
+    mutation SetShuffleRoomsEnded($ids: [bigint!]!) {
+        update_room_ShuffleRoom(where: { id: { _in: $ids } }, _set: { isEnded: true }) {
+            affected_rows
+            returning {
+                id
+            }
         }
     }
 `;
@@ -282,7 +319,7 @@ async function attemptToMatchEntries(activePeriod: ActiveShufflePeriodFragment, 
                     break;
                 }
             } catch (e) {
-                console.error(`Error processing queue entry. Entry: ${entry.id}. Error: ${e.toString()}`);
+                console.error(`Error processing queue entry. Entry: ${entry.id}`, e);
             }
         }
     }
@@ -308,6 +345,31 @@ export async function handleShuffleQueueEntered(payload: Payload<ShuffleQueueEnt
     await attemptToMatchEntries(result.data.room_ShufflePeriod_by_pk, [entry.id]);
 }
 
+async function endRooms(period: RoomsToEndOfShufflePeriodFragment): Promise<void> {
+    try {
+        await Promise.all(period.roomsToEnd.map(async shuffleRoom => {
+            await Promise.all(shuffleRoom.room.participants.map(async participant => {
+                try {
+                    await kickAttendeeFromRoom(shuffleRoom.room.id, participant.attendeeId);
+                }
+                catch (e) {
+                    console.error(`Failed to kick participant while terminating shuffle room. Participant: ${participant.id}`, e);
+                }
+            }));
+        }));
+
+        await apolloClient.mutate({
+            mutation: SetShuffleRoomsEndedDocument,
+            variables: {
+                ids: period.roomsToEnd.map(x => x.id),
+            }
+        });
+    }
+    catch (e) {
+        console.error(`Failed to terminate shuffle rooms. Period: ${period.id}`, e);
+    }
+}
+
 export async function processShuffleQueues(): Promise<void> {
     const now = Date.now();
     const from = now - 30000;
@@ -318,15 +380,21 @@ export async function processShuffleQueues(): Promise<void> {
         variables: {
             from: new Date(from).toISOString(),
             until: new Date(until).toISOString(),
+            untilExtended: new Date(until + 5 * 60 * 1000).toISOString(),
+            atLatest: new Date(now - 2 * 60 * 1000).toISOString(),
+            maxDuration: 2,
         },
     });
 
-    await Promise.all(
-        result.data.room_ShufflePeriod.map(async (period) => {
+    await Promise.all([
+        ...result.data.active.map(async (period) => {
             await attemptToMatchEntries(
                 period,
                 period.unallocatedQueueEntries.map((x) => x.id)
             );
-        })
-    );
+        }),
+        ...result.data.ending.map(async (period) => {
+            await endRooms(period);
+        }),
+    ]);
 }

@@ -154,7 +154,7 @@ export type AttendeeProfile = {
   readonly photoURL_50x50?: Maybe<Scalars['String']>;
   readonly pronouns?: Maybe<Scalars['jsonb']>;
   readonly realName?: Maybe<Scalars['String']>;
-  readonly timezoneUTCOffset?: Maybe<Scalars['Int']>;
+  readonly timezoneUTCOffset?: Maybe<Scalars['Float']>;
   readonly twitter?: Maybe<Scalars['String']>;
   readonly updated_at: Scalars['timestamptz'];
   readonly website?: Maybe<Scalars['String']>;
@@ -262,7 +262,7 @@ export type AttendeeProfile_Bool_Exp = {
   readonly photoURL_50x50?: Maybe<String_Comparison_Exp>;
   readonly pronouns?: Maybe<Jsonb_Comparison_Exp>;
   readonly realName?: Maybe<String_Comparison_Exp>;
-  readonly timezoneUTCOffset?: Maybe<Int_Comparison_Exp>;
+  readonly timezoneUTCOffset?: Maybe<Float_Comparison_Exp>;
   readonly twitter?: Maybe<String_Comparison_Exp>;
   readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
   readonly website?: Maybe<String_Comparison_Exp>;
@@ -296,7 +296,7 @@ export type AttendeeProfile_Delete_Key_Input = {
 
 /** input type for incrementing integer column in table "AttendeeProfile" */
 export type AttendeeProfile_Inc_Input = {
-  readonly timezoneUTCOffset?: Maybe<Scalars['Int']>;
+  readonly timezoneUTCOffset?: Maybe<Scalars['Float']>;
 };
 
 /** input type for inserting data into table "AttendeeProfile" */
@@ -318,7 +318,7 @@ export type AttendeeProfile_Insert_Input = {
   readonly photoURL_50x50?: Maybe<Scalars['String']>;
   readonly pronouns?: Maybe<Scalars['jsonb']>;
   readonly realName?: Maybe<Scalars['String']>;
-  readonly timezoneUTCOffset?: Maybe<Scalars['Int']>;
+  readonly timezoneUTCOffset?: Maybe<Scalars['Float']>;
   readonly twitter?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
   readonly website?: Maybe<Scalars['String']>;
@@ -340,7 +340,7 @@ export type AttendeeProfile_Max_Fields = {
   readonly photoURL_350x350?: Maybe<Scalars['String']>;
   readonly photoURL_50x50?: Maybe<Scalars['String']>;
   readonly realName?: Maybe<Scalars['String']>;
-  readonly timezoneUTCOffset?: Maybe<Scalars['Int']>;
+  readonly timezoneUTCOffset?: Maybe<Scalars['Float']>;
   readonly twitter?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
   readonly website?: Maybe<Scalars['String']>;
@@ -383,7 +383,7 @@ export type AttendeeProfile_Min_Fields = {
   readonly photoURL_350x350?: Maybe<Scalars['String']>;
   readonly photoURL_50x50?: Maybe<Scalars['String']>;
   readonly realName?: Maybe<Scalars['String']>;
-  readonly timezoneUTCOffset?: Maybe<Scalars['Int']>;
+  readonly timezoneUTCOffset?: Maybe<Scalars['Float']>;
   readonly twitter?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
   readonly website?: Maybe<Scalars['String']>;
@@ -530,7 +530,7 @@ export type AttendeeProfile_Set_Input = {
   readonly photoURL_50x50?: Maybe<Scalars['String']>;
   readonly pronouns?: Maybe<Scalars['jsonb']>;
   readonly realName?: Maybe<Scalars['String']>;
-  readonly timezoneUTCOffset?: Maybe<Scalars['Int']>;
+  readonly timezoneUTCOffset?: Maybe<Scalars['Float']>;
   readonly twitter?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
   readonly website?: Maybe<Scalars['String']>;
@@ -572,7 +572,7 @@ export type AttendeeProfile_Stddev_Samp_Order_By = {
 /** aggregate sum on columns */
 export type AttendeeProfile_Sum_Fields = {
   readonly __typename?: 'AttendeeProfile_sum_fields';
-  readonly timezoneUTCOffset?: Maybe<Scalars['Int']>;
+  readonly timezoneUTCOffset?: Maybe<Scalars['Float']>;
 };
 
 /** order by sum() on columns of table "AttendeeProfile" */
@@ -7804,6 +7804,19 @@ export enum FlatUserPermission_Select_Column {
   /** column name */
   UserId = 'user_id'
 }
+
+/** expression to compare columns of type Float. All fields are combined with logical 'AND'. */
+export type Float_Comparison_Exp = {
+  readonly _eq?: Maybe<Scalars['Float']>;
+  readonly _gt?: Maybe<Scalars['Float']>;
+  readonly _gte?: Maybe<Scalars['Float']>;
+  readonly _in?: Maybe<ReadonlyArray<Scalars['Float']>>;
+  readonly _is_null?: Maybe<Scalars['Boolean']>;
+  readonly _lt?: Maybe<Scalars['Float']>;
+  readonly _lte?: Maybe<Scalars['Float']>;
+  readonly _neq?: Maybe<Scalars['Float']>;
+  readonly _nin?: Maybe<ReadonlyArray<Scalars['Float']>>;
+};
 
 export type GetContentItemOutput = {
   readonly __typename?: 'GetContentItemOutput';
@@ -26378,7 +26391,9 @@ export type Room_ShuffleQueueEntry_Bool_Exp = {
 /** unique or primary key constraints on table "room.ShuffleQueueEntry" */
 export enum Room_ShuffleQueueEntry_Constraint {
   /** unique or primary key constraint */
-  ShuffleQueueEntryPkey = 'ShuffleQueueEntry_pkey'
+  ShuffleQueueEntryPkey = 'ShuffleQueueEntry_pkey',
+  /** unique or primary key constraint */
+  IndexIswaiting = 'index_iswaiting'
 }
 
 /** input type for incrementing integer column in table "room.ShuffleQueueEntry" */

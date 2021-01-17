@@ -106,6 +106,7 @@ export function Markdown(elProps?: {
                             color={elProps?.linkColour}
                             isExternal={true}
                             rel="external noopener noreferrer"
+                            textDecoration="underline"
                         >
                             {children}
                             <sup>

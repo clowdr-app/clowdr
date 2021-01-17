@@ -263,6 +263,15 @@ export default function WaitingPage(): JSX.Element {
         }
     }, [periods.data]);
 
+    useEffect(() => {
+        const tId = setTimeout(() => {
+            setIsLoading(false);
+        }, 10000);
+        return () => {
+            clearTimeout(tId);
+        };
+    }, []);
+
     return !data || isLoading ? (
         <Spinner label="Loading shuffle room times" />
     ) : (

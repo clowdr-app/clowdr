@@ -10,10 +10,12 @@ export function VonageRoomControlBar({
     onJoinRoom,
     onLeaveRoom,
     inRoom,
+    joining,
 }: {
     onJoinRoom: () => void;
     onLeaveRoom: () => void;
     inRoom: boolean;
+    joining: boolean;
 }): JSX.Element {
     const { state, dispatch } = useVonageRoom();
     const [openTokProps] = useOpenTok();
@@ -122,14 +124,18 @@ export function VonageRoomControlBar({
                     <Box mr="auto"></Box>
                 )}
                 {inRoom ? (
-                    <WrapItem>
+                    <WrapItem ml="auto">
                         <Button colorScheme="green" onClick={onLeaveRoom}>
                             Leave Room
                         </Button>
                     </WrapItem>
                 ) : (
-                    <WrapItem>
-                        <Button colorScheme="green" onClick={onJoinRoom}>
+                    <WrapItem ml="auto">
+                        <Button
+                            colorScheme="green"
+                            onClick={onJoinRoom}
+                            isLoading={joining && !openTokProps.isSessionConnected}
+                        >
                             Join Room
                         </Button>
                     </WrapItem>

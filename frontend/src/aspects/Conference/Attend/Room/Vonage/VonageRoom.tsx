@@ -54,6 +54,8 @@ function VonageRoomInner({
     const cameraPreviewRef = useRef<HTMLVideoElement>(null);
     usePublisherControl(cameraPublishContainerRef, screenPublishContainerRef);
 
+    const [joining, setJoining] = useState<boolean>(false);
+
     useEffect(() => {
         if (openTokProps.isSessionConnected) {
             openTokMethods.disconnectSession();
@@ -63,6 +65,7 @@ function VonageRoomInner({
 
     const joinRoom = useCallback(async () => {
         console.log("Joining room");
+        setJoining(true);
         let accessToken;
         try {
             accessToken = await getAccessToken();
@@ -72,6 +75,7 @@ function VonageRoomInner({
                 title: "Failed to join room",
                 description: "Could not retrieve access token",
             });
+            setJoining(false);
             return;
         }
 
@@ -89,12 +93,14 @@ function VonageRoomInner({
                 description: "Cannot connect to room",
             });
         }
+        setJoining(false);
     }, [getAccessToken, openTokMethods, toast, vonageSessionId]);
 
     const leaveRoom = useCallback(() => {
         if (openTokProps.isSessionConnected) {
             openTokMethods.disconnectSession();
         }
+        setJoining(false);
     }, [openTokMethods, openTokProps.isSessionConnected]);
 
     const receivingScreenShare = useMemo(() => openTokProps.streams.find((s) => s.videoType === "screen"), [
@@ -232,6 +238,7 @@ function VonageRoomInner({
                 onJoinRoom={joinRoom}
                 onLeaveRoom={leaveRoom}
                 inRoom={openTokProps.isSessionConnected}
+                joining={joining}
             />
         </Box>
     );

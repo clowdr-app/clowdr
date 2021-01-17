@@ -6,6 +6,7 @@ import {
     Grid,
     GridItem,
     Heading,
+    Spinner,
     Text,
     useColorModeValue,
     VStack,
@@ -14,7 +15,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
     ShufflePeriodDataFragment,
     useJoinShuffleQueueMutation,
-    useShufflePeriodsSubscription,
+    useShufflePeriodsQuery,
 } from "../../generated/graphql";
 import { LinkButton } from "../Chakra/LinkButton";
 import { useConference } from "../Conference/useConference";
@@ -46,7 +47,7 @@ gql`
         waitRoomMaxDurationSeconds
     }
 
-    subscription ShufflePeriods($conferenceId: uuid!, $start: timestamptz!, $end: timestamptz!) {
+    query ShufflePeriods($conferenceId: uuid!, $start: timestamptz!, $end: timestamptz!) {
         room_ShufflePeriod(
             where: { conferenceId: { _eq: $conferenceId }, startAt: { _lte: $start }, endAt: { _gte: $end } }
         ) {
@@ -233,13 +234,24 @@ function ShufflePeriodBox({ period }: { period: ShufflePeriodDataFragment }): JS
 
 export default function WaitingPage(): JSX.Element {
     const conference = useConference();
-    const periods = useShufflePeriodsSubscription({
-        variables: {
-            conferenceId: conference.id,
-            start: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
-            end: new Date().toISOString(),
-        },
+    const periods = useShufflePeriodsQuery({
+        fetchPolicy: "network-only",
+        skip: true
     });
+
+    const now = useRealTime(3000);
+    const [data, setData] = useState<ShufflePeriodDataFragment[] | null>(null);
+    useEffect(() => {
+        (async () => {
+            const data = await periods.refetch({
+                conferenceId: conference.id,
+                start: new Date(now + 5 * 60 * 1000).toISOString(),
+                end: new Date(now).toISOString(),
+            });
+            setData(data.data.room_ShufflePeriod ? [...data.data.room_ShufflePeriod] : null);
+        })();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [conference.id, now, periods.refetch]);
 
     const { setPrimaryMenuButtons } = usePrimaryMenuButtons();
     useEffect(() => {
@@ -253,12 +265,14 @@ export default function WaitingPage(): JSX.Element {
         ]);
     }, [conference.shortName, conference.slug, setPrimaryMenuButtons]);
 
-    return (
+    return !data ? (
+        <Spinner label="Loading shuffle room times" />
+    ) : (
         <Grid maxW="800px">
-            {periods.data?.room_ShufflePeriod.map((period) => (
+            {data?.map((period) => (
                 <ShufflePeriodBox key={period.id} period={period} />
             ))}
-            {!periods.data?.room_ShufflePeriod ? <GridItem>No shuffle spaces at the moment.</GridItem> : undefined}
+            {!data?.length ? <GridItem>No shuffle spaces at the moment.</GridItem> : undefined}
         </Grid>
     );
 }

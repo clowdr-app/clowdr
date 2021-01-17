@@ -30043,6 +30043,7 @@ export type SelectActiveShufflePeriodsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
   start: Scalars['timestamptz'];
   end: Scalars['timestamptz'];
+  attendeeId: Scalars['uuid'];
 }>;
 
 
@@ -30969,14 +30970,14 @@ export type RoomParticipantDetailsFragment = { readonly __typename?: 'RoomPartic
 
 export type ShufflePeriodDataFragment = { readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly conferenceId: any, readonly endAt: any, readonly maxAttendeesPerRoom: number, readonly name: string, readonly roomDurationMinutes: number, readonly startAt: any, readonly targetAttendeesPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly queueEntries: ReadonlyArray<{ readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly attendeeId: any, readonly created_at: any, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly isEnded: boolean, readonly roomId: any }> }> };
 
-export type ShufflePeriodsSubscriptionVariables = Exact<{
+export type ShufflePeriodsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
   start: Scalars['timestamptz'];
   end: Scalars['timestamptz'];
 }>;
 
 
-export type ShufflePeriodsSubscription = { readonly __typename?: 'subscription_root', readonly room_ShufflePeriod: ReadonlyArray<(
+export type ShufflePeriodsQuery = { readonly __typename?: 'query_root', readonly room_ShufflePeriod: ReadonlyArray<(
     { readonly __typename?: 'room_ShufflePeriod' }
     & ShufflePeriodDataFragment
   )> };
@@ -33748,7 +33749,7 @@ export type Timeline_SelectRoomQueryHookResult = ReturnType<typeof useTimeline_S
 export type Timeline_SelectRoomLazyQueryHookResult = ReturnType<typeof useTimeline_SelectRoomLazyQuery>;
 export type Timeline_SelectRoomQueryResult = Apollo.QueryResult<Timeline_SelectRoomQuery, Timeline_SelectRoomQueryVariables>;
 export const SelectActiveShufflePeriodsDocument = gql`
-    query SelectActiveShufflePeriods($conferenceId: uuid!, $start: timestamptz!, $end: timestamptz!) {
+    query SelectActiveShufflePeriods($conferenceId: uuid!, $start: timestamptz!, $end: timestamptz!, $attendeeId: uuid!) {
   room_ShufflePeriod(
     where: {conferenceId: {_eq: $conferenceId}, startAt: {_lte: $start}, endAt: {_gte: $end}}
   ) {
@@ -33772,6 +33773,7 @@ export const SelectActiveShufflePeriodsDocument = gql`
  *      conferenceId: // value for 'conferenceId'
  *      start: // value for 'start'
  *      end: // value for 'end'
+ *      attendeeId: // value for 'attendeeId'
  *   },
  * });
  */
@@ -36813,7 +36815,7 @@ export function useGetRoomParticipantsSubscription(baseOptions: Apollo.Subscript
 export type GetRoomParticipantsSubscriptionHookResult = ReturnType<typeof useGetRoomParticipantsSubscription>;
 export type GetRoomParticipantsSubscriptionResult = Apollo.SubscriptionResult<GetRoomParticipantsSubscription>;
 export const ShufflePeriodsDocument = gql`
-    subscription ShufflePeriods($conferenceId: uuid!, $start: timestamptz!, $end: timestamptz!) {
+    query ShufflePeriods($conferenceId: uuid!, $start: timestamptz!, $end: timestamptz!) {
   room_ShufflePeriod(
     where: {conferenceId: {_eq: $conferenceId}, startAt: {_lte: $start}, endAt: {_gte: $end}}
   ) {
@@ -36823,16 +36825,16 @@ export const ShufflePeriodsDocument = gql`
     ${ShufflePeriodDataFragmentDoc}`;
 
 /**
- * __useShufflePeriodsSubscription__
+ * __useShufflePeriodsQuery__
  *
- * To run a query within a React component, call `useShufflePeriodsSubscription` and pass it any options that fit your needs.
- * When your component renders, `useShufflePeriodsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useShufflePeriodsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useShufflePeriodsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useShufflePeriodsSubscription({
+ * const { data, loading, error } = useShufflePeriodsQuery({
  *   variables: {
  *      conferenceId: // value for 'conferenceId'
  *      start: // value for 'start'
@@ -36840,11 +36842,15 @@ export const ShufflePeriodsDocument = gql`
  *   },
  * });
  */
-export function useShufflePeriodsSubscription(baseOptions: Apollo.SubscriptionHookOptions<ShufflePeriodsSubscription, ShufflePeriodsSubscriptionVariables>) {
-        return Apollo.useSubscription<ShufflePeriodsSubscription, ShufflePeriodsSubscriptionVariables>(ShufflePeriodsDocument, baseOptions);
+export function useShufflePeriodsQuery(baseOptions: Apollo.QueryHookOptions<ShufflePeriodsQuery, ShufflePeriodsQueryVariables>) {
+        return Apollo.useQuery<ShufflePeriodsQuery, ShufflePeriodsQueryVariables>(ShufflePeriodsDocument, baseOptions);
       }
-export type ShufflePeriodsSubscriptionHookResult = ReturnType<typeof useShufflePeriodsSubscription>;
-export type ShufflePeriodsSubscriptionResult = Apollo.SubscriptionResult<ShufflePeriodsSubscription>;
+export function useShufflePeriodsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ShufflePeriodsQuery, ShufflePeriodsQueryVariables>) {
+          return Apollo.useLazyQuery<ShufflePeriodsQuery, ShufflePeriodsQueryVariables>(ShufflePeriodsDocument, baseOptions);
+        }
+export type ShufflePeriodsQueryHookResult = ReturnType<typeof useShufflePeriodsQuery>;
+export type ShufflePeriodsLazyQueryHookResult = ReturnType<typeof useShufflePeriodsLazyQuery>;
+export type ShufflePeriodsQueryResult = Apollo.QueryResult<ShufflePeriodsQuery, ShufflePeriodsQueryVariables>;
 export const JoinShuffleQueueDocument = gql`
     mutation JoinShuffleQueue($shufflePeriodId: uuid!, $attendeeId: uuid!) {
   insert_room_ShuffleQueueEntry_one(

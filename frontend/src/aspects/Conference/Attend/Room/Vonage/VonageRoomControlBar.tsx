@@ -122,13 +122,13 @@ export function VonageRoomControlBar({
                     <Box mr="auto"></Box>
                 )}
                 {inRoom ? (
-                    <WrapItem ml="auto">
+                    <WrapItem>
                         <Button colorScheme="green" onClick={onLeaveRoom}>
                             Leave Room
                         </Button>
                     </WrapItem>
                 ) : (
-                    <WrapItem ml="auto">
+                    <WrapItem>
                         <Button colorScheme="green" onClick={onJoinRoom}>
                             Join Room
                         </Button>

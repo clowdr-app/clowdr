@@ -5,6 +5,7 @@ import { useHistory } from "react-router-dom";
 import {
     ContentGroupDataFragment,
     ContentGroupEventsFragment,
+    ContentGroupPage_ContentGroupRoomsFragment,
     Permission_Enum,
     useContentGroup_CreateRoomMutation,
     useGetContentGroupQuery,
@@ -26,6 +27,7 @@ gql`
         ContentGroup_by_pk(id: $contentGroupId) {
             ...ContentGroupData
             ...ContentGroupEvents
+            ...ContentGroupPage_ContentGroupRooms
         }
     }
 
@@ -40,14 +42,17 @@ gql`
                 name
             }
         }
-        rooms(where: { name: { _like: "Breakout:%" } }, order_by: { created_at: asc }) {
-            id
-        }
         contentItems(where: { isHidden: { _eq: false } }) {
             ...ContentItemData
         }
         people(order_by: { priority: asc }) {
             ...ContentPersonData
+        }
+    }
+
+    fragment ContentGroupPage_ContentGroupRooms on ContentGroup {
+        rooms(where: { name: { _like: "Breakout:%" } }, order_by: { created_at: asc }) {
+            id
         }
     }
 
@@ -146,7 +151,11 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
             permissions={[Permission_Enum.ConferenceView]}
         >
             <ApolloQueryWrapper queryResult={result} getter={(data) => data.ContentGroup_by_pk}>
-                {(contentGroupData: ContentGroupDataFragment & ContentGroupEventsFragment) => {
+                {(
+                    contentGroupData: ContentGroupDataFragment &
+                        ContentGroupEventsFragment &
+                        ContentGroupPage_ContentGroupRoomsFragment
+                ) => {
                     return (
                         <HStack w="100%" flexWrap="wrap" alignItems="stretch">
                             <VStack

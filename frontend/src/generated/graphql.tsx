@@ -2751,8 +2751,6 @@ export type ContentGroup = {
   readonly requiredContentItems: ReadonlyArray<RequiredContentItem>;
   /** An aggregated array relationship */
   readonly requiredContentItems_aggregate: RequiredContentItem_Aggregate;
-  /** An object relationship */
-  readonly room?: Maybe<Room>;
   /** An array relationship */
   readonly rooms: ReadonlyArray<Room>;
   /** An aggregated array relationship */
@@ -3995,7 +3993,6 @@ export type ContentGroup_Bool_Exp = {
   readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
   readonly people?: Maybe<ContentGroupPerson_Bool_Exp>;
   readonly requiredContentItems?: Maybe<RequiredContentItem_Bool_Exp>;
-  readonly room?: Maybe<Room_Bool_Exp>;
   readonly rooms?: Maybe<Room_Bool_Exp>;
   readonly shortTitle?: Maybe<String_Comparison_Exp>;
   readonly title?: Maybe<String_Comparison_Exp>;
@@ -4026,7 +4023,6 @@ export type ContentGroup_Insert_Input = {
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
   readonly people?: Maybe<ContentGroupPerson_Arr_Rel_Insert_Input>;
   readonly requiredContentItems?: Maybe<RequiredContentItem_Arr_Rel_Insert_Input>;
-  readonly room?: Maybe<Room_Obj_Rel_Insert_Input>;
   readonly rooms?: Maybe<Room_Arr_Rel_Insert_Input>;
   readonly shortTitle?: Maybe<Scalars['String']>;
   readonly title?: Maybe<Scalars['String']>;
@@ -4123,7 +4119,6 @@ export type ContentGroup_Order_By = {
   readonly originatingDataId?: Maybe<Order_By>;
   readonly people_aggregate?: Maybe<ContentGroupPerson_Aggregate_Order_By>;
   readonly requiredContentItems_aggregate?: Maybe<RequiredContentItem_Aggregate_Order_By>;
-  readonly room?: Maybe<Room_Order_By>;
   readonly rooms_aggregate?: Maybe<Room_Aggregate_Order_By>;
   readonly shortTitle?: Maybe<Order_By>;
   readonly title?: Maybe<Order_By>;
@@ -29697,15 +29692,18 @@ export type GetContentGroupQuery = { readonly __typename?: 'query_root', readonl
     { readonly __typename?: 'ContentGroup' }
     & ContentGroupDataFragment
     & ContentGroupEventsFragment
+    & ContentGroupPage_ContentGroupRoomsFragment
   )> };
 
-export type ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string }> }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }>, readonly contentItems: ReadonlyArray<(
+export type ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string }> }>, readonly contentItems: ReadonlyArray<(
     { readonly __typename?: 'ContentItem' }
     & ContentItemDataFragment
   )>, readonly people: ReadonlyArray<(
     { readonly __typename?: 'ContentGroupPerson' }
     & ContentPersonDataFragment
   )> };
+
+export type ContentGroupPage_ContentGroupRoomsFragment = { readonly __typename?: 'ContentGroup', readonly rooms: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }> };
 
 export type ContentGroupEventsFragment = { readonly __typename?: 'ContentGroup', readonly events: ReadonlyArray<(
     { readonly __typename?: 'Event' }
@@ -31174,9 +31172,6 @@ export const ContentGroupDataFragmentDoc = gql`
       name
     }
   }
-  rooms(where: {name: {_like: "Breakout:%"}}, order_by: {created_at: asc}) {
-    id
-  }
   contentItems(where: {isHidden: {_eq: false}}) {
     ...ContentItemData
   }
@@ -31197,6 +31192,13 @@ export const TagWithContentFragmentDoc = gql`
 }
     ${TagInfoFragmentDoc}
 ${ContentGroupDataFragmentDoc}`;
+export const ContentGroupPage_ContentGroupRoomsFragmentDoc = gql`
+    fragment ContentGroupPage_ContentGroupRooms on ContentGroup {
+  rooms(where: {name: {_like: "Breakout:%"}}, order_by: {created_at: asc}) {
+    id
+  }
+}
+    `;
 export const ContentGroupEventFragmentDoc = gql`
     fragment ContentGroupEvent on Event {
   startTime
@@ -32791,10 +32793,12 @@ export const GetContentGroupDocument = gql`
   ContentGroup_by_pk(id: $contentGroupId) {
     ...ContentGroupData
     ...ContentGroupEvents
+    ...ContentGroupPage_ContentGroupRooms
   }
 }
     ${ContentGroupDataFragmentDoc}
-${ContentGroupEventsFragmentDoc}`;
+${ContentGroupEventsFragmentDoc}
+${ContentGroupPage_ContentGroupRoomsFragmentDoc}`;
 
 /**
  * __useGetContentGroupQuery__

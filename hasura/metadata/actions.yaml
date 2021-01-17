@@ -1,4 +1,14 @@
 actions:
+- name: createContentGroupRoom
+  definition:
+    kind: synchronous
+    handler: '{{ACTION_BASE_URL}}/room/createForContentGroup'
+    forward_client_headers: true
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+  permissions:
+  - role: user
 - name: createRoomDm
   definition:
     kind: synchronous
@@ -170,6 +180,15 @@ custom_types:
   - name: ProfilePhotoURLResponse
   - name: UpdateProfilePhotoResponse
   - name: CreateRoomDmOutput
+    relationships:
+    - remote_table:
+        schema: public
+        name: Room
+      name: room
+      type: object
+      field_mapping:
+        roomId: id
+  - name: CreateContentGroupRoomOutput
     relationships:
     - remote_table:
         schema: public

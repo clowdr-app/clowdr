@@ -85,6 +85,11 @@ type CreateRoomDmOutput = {
     message?: Maybe<string>;
 };
 
+type CreateContentGroupRoomOutput = {
+    roomId?: Maybe<string>;
+    message?: Maybe<string>;
+};
+
 type SampleInput = {
     username: string;
     password: string;
@@ -121,6 +126,7 @@ type Query = {
 };
 
 type Mutation = {
+    createContentGroupRoom?: Maybe<CreateContentGroupRoomOutput>;
     createRoomDm?: Maybe<CreateRoomDmOutput>;
     invitationConfirmCurrent?: Maybe<ConfirmInvitationOutput>;
     invitationConfirmSendInitialEmail?: Maybe<InvitationConfirmationEmailOutput>;
@@ -147,6 +153,11 @@ type getUploadAgreementArgs = {
 
 type protectedEchoArgs = {
     message: string;
+};
+
+type createContentGroupRoomArgs = {
+    contentGroupId: uuid;
+    conferenceId: uuid;
 };
 
 type createRoomDmArgs = {

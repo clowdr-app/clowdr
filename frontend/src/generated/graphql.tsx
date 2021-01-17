@@ -2723,6 +2723,12 @@ export type ContentGroup = {
   readonly requiredContentItems: ReadonlyArray<RequiredContentItem>;
   /** An aggregated array relationship */
   readonly requiredContentItems_aggregate: RequiredContentItem_Aggregate;
+  /** An object relationship */
+  readonly room?: Maybe<Room>;
+  /** An array relationship */
+  readonly rooms: ReadonlyArray<Room>;
+  /** An aggregated array relationship */
+  readonly rooms_aggregate: Room_Aggregate;
   readonly shortTitle?: Maybe<Scalars['String']>;
   readonly title: Scalars['String'];
   readonly updatedAt: Scalars['timestamptz'];
@@ -2846,6 +2852,26 @@ export type ContentGroupRequiredContentItems_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<RequiredContentItem_Order_By>>;
   where?: Maybe<RequiredContentItem_Bool_Exp>;
+};
+
+
+/** columns and relationships of "ContentGroup" */
+export type ContentGroupRoomsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_Order_By>>;
+  where?: Maybe<Room_Bool_Exp>;
+};
+
+
+/** columns and relationships of "ContentGroup" */
+export type ContentGroupRooms_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_Order_By>>;
+  where?: Maybe<Room_Bool_Exp>;
 };
 
 /** columns and relationships of "ContentGroupHallway" */
@@ -3941,6 +3967,8 @@ export type ContentGroup_Bool_Exp = {
   readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
   readonly people?: Maybe<ContentGroupPerson_Bool_Exp>;
   readonly requiredContentItems?: Maybe<RequiredContentItem_Bool_Exp>;
+  readonly room?: Maybe<Room_Bool_Exp>;
+  readonly rooms?: Maybe<Room_Bool_Exp>;
   readonly shortTitle?: Maybe<String_Comparison_Exp>;
   readonly title?: Maybe<String_Comparison_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
@@ -3970,6 +3998,8 @@ export type ContentGroup_Insert_Input = {
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
   readonly people?: Maybe<ContentGroupPerson_Arr_Rel_Insert_Input>;
   readonly requiredContentItems?: Maybe<RequiredContentItem_Arr_Rel_Insert_Input>;
+  readonly room?: Maybe<Room_Obj_Rel_Insert_Input>;
+  readonly rooms?: Maybe<Room_Arr_Rel_Insert_Input>;
   readonly shortTitle?: Maybe<Scalars['String']>;
   readonly title?: Maybe<Scalars['String']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
@@ -4065,6 +4095,8 @@ export type ContentGroup_Order_By = {
   readonly originatingDataId?: Maybe<Order_By>;
   readonly people_aggregate?: Maybe<ContentGroupPerson_Aggregate_Order_By>;
   readonly requiredContentItems_aggregate?: Maybe<RequiredContentItem_Aggregate_Order_By>;
+  readonly room?: Maybe<Room_Order_By>;
+  readonly rooms_aggregate?: Maybe<Room_Aggregate_Order_By>;
   readonly shortTitle?: Maybe<Order_By>;
   readonly title?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
@@ -4972,6 +5004,13 @@ export enum ContentType_Update_Column {
   /** column name */
   Name = 'name'
 }
+
+export type CreateContentGroupRoomOutput = {
+  readonly __typename?: 'CreateContentGroupRoomOutput';
+  readonly message?: Maybe<Scalars['String']>;
+  readonly room?: Maybe<Room>;
+  readonly roomId?: Maybe<Scalars['String']>;
+};
 
 export type CreateRoomDmOutput = {
   readonly __typename?: 'CreateRoomDmOutput';
@@ -12695,8 +12734,6 @@ export enum Room_Constraint {
   /** unique or primary key constraint */
   RoomMediaLiveChannelIdKey = 'Room_mediaLiveChannelId_key',
   /** unique or primary key constraint */
-  RoomOriginatingContentGroupIdKey = 'Room_originatingContentGroupId_key',
-  /** unique or primary key constraint */
   RoomOriginatingEventIdKey = 'Room_originatingEventId_key',
   /** unique or primary key constraint */
   RoomPkey = 'Room_pkey'
@@ -18890,6 +18927,8 @@ export type Jsonb_Comparison_Exp = {
 /** mutation root */
 export type Mutation_Root = {
   readonly __typename?: 'mutation_root';
+  /** perform the action: "createContentGroupRoom" */
+  readonly createContentGroupRoom?: Maybe<CreateContentGroupRoomOutput>;
   /** perform the action: "createRoomDm" */
   readonly createRoomDm?: Maybe<CreateRoomDmOutput>;
   /** delete data from the table: "Attendee" */
@@ -19726,6 +19765,13 @@ export type Mutation_Root = {
   readonly update_presence_Page?: Maybe<Presence_Page_Mutation_Response>;
   /** update single row of the table: "presence.Page" */
   readonly update_presence_Page_by_pk?: Maybe<Presence_Page>;
+};
+
+
+/** mutation root */
+export type Mutation_RootCreateContentGroupRoomArgs = {
+  conferenceId: Scalars['uuid'];
+  contentGroupId: Scalars['uuid'];
 };
 
 
@@ -28017,7 +28063,7 @@ export type GetContentGroupQuery = { readonly __typename?: 'query_root', readonl
     & ContentGroupEventsFragment
   )> };
 
-export type ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string }> }>, readonly contentItems: ReadonlyArray<(
+export type ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string }> }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }>, readonly contentItems: ReadonlyArray<(
     { readonly __typename?: 'ContentItem' }
     & ContentItemDataFragment
   )>, readonly people: ReadonlyArray<(
@@ -28031,6 +28077,14 @@ export type ContentGroupEventsFragment = { readonly __typename?: 'ContentGroup',
   )> };
 
 export type ContentGroupEventFragment = { readonly __typename?: 'Event', readonly startTime: any, readonly id: any, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly name: string, readonly intendedRoomModeName: RoomMode_Enum, readonly room: { readonly __typename?: 'Room', readonly name: string, readonly id: any } };
+
+export type ContentGroup_CreateRoomMutationVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  contentGroupId: Scalars['uuid'];
+}>;
+
+
+export type ContentGroup_CreateRoomMutation = { readonly __typename?: 'mutation_root', readonly createContentGroupRoom?: Maybe<{ readonly __typename?: 'CreateContentGroupRoomOutput', readonly roomId?: Maybe<string>, readonly message?: Maybe<string> }> };
 
 export type ContentGroupSummary_GetContentGroupQueryVariables = Exact<{
   contentGroupId: Scalars['uuid'];
@@ -29461,6 +29515,9 @@ export const ContentGroupDataFragmentDoc = gql`
       id
       name
     }
+  }
+  rooms(where: {name: {_like: "Breakout:%"}}, order_by: {created_at: asc}) {
+    id
   }
   contentItems(where: {isHidden: {_eq: false}}) {
     ...ContentItemData
@@ -31086,6 +31143,43 @@ export function useGetContentGroupLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type GetContentGroupQueryHookResult = ReturnType<typeof useGetContentGroupQuery>;
 export type GetContentGroupLazyQueryHookResult = ReturnType<typeof useGetContentGroupLazyQuery>;
 export type GetContentGroupQueryResult = Apollo.QueryResult<GetContentGroupQuery, GetContentGroupQueryVariables>;
+export const ContentGroup_CreateRoomDocument = gql`
+    mutation ContentGroup_CreateRoom($conferenceId: uuid!, $contentGroupId: uuid!) {
+  createContentGroupRoom(
+    conferenceId: $conferenceId
+    contentGroupId: $contentGroupId
+  ) {
+    roomId
+    message
+  }
+}
+    `;
+export type ContentGroup_CreateRoomMutationFn = Apollo.MutationFunction<ContentGroup_CreateRoomMutation, ContentGroup_CreateRoomMutationVariables>;
+
+/**
+ * __useContentGroup_CreateRoomMutation__
+ *
+ * To run a mutation, you first call `useContentGroup_CreateRoomMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useContentGroup_CreateRoomMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [contentGroupCreateRoomMutation, { data, loading, error }] = useContentGroup_CreateRoomMutation({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      contentGroupId: // value for 'contentGroupId'
+ *   },
+ * });
+ */
+export function useContentGroup_CreateRoomMutation(baseOptions?: Apollo.MutationHookOptions<ContentGroup_CreateRoomMutation, ContentGroup_CreateRoomMutationVariables>) {
+        return Apollo.useMutation<ContentGroup_CreateRoomMutation, ContentGroup_CreateRoomMutationVariables>(ContentGroup_CreateRoomDocument, baseOptions);
+      }
+export type ContentGroup_CreateRoomMutationHookResult = ReturnType<typeof useContentGroup_CreateRoomMutation>;
+export type ContentGroup_CreateRoomMutationResult = Apollo.MutationResult<ContentGroup_CreateRoomMutation>;
+export type ContentGroup_CreateRoomMutationOptions = Apollo.BaseMutationOptions<ContentGroup_CreateRoomMutation, ContentGroup_CreateRoomMutationVariables>;
 export const ContentGroupSummary_GetContentGroupDocument = gql`
     query ContentGroupSummary_GetContentGroup($contentGroupId: uuid!) {
   ContentGroup_by_pk(id: $contentGroupId) {

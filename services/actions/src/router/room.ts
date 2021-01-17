@@ -1,7 +1,7 @@
 import bodyParser from "body-parser";
 import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
-import { handleCreateDmRoom, handleRoomCreated } from "../handlers/room";
+import { handleCreateDmRoom, handleCreateForContentGroup, handleRoomCreated } from "../handlers/room";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
 import { checkJwt } from "../middlewares/checkJwt";
 import { checkUserScopes } from "../middlewares/checkScopes";
@@ -39,6 +39,20 @@ router.post("/createDm", async (req: Request, res: Response<CreateRoomDmOutput>)
         const params = req.body.input;
         assertType<createRoomDmArgs>(params);
         const result = await handleCreateDmRoom(params, req.body.session_variables["x-hasura-user-id"]);
+        return res.status(200).json(result);
+    } catch (e) {
+        console.error(`${req.originalUrl}: invalid request`, req.body, e);
+        return res.status(200).json({
+            message: "Invalid request",
+        });
+    }
+});
+
+router.post("/createForContentGroup", async (req: Request, res: Response<CreateContentGroupRoomOutput>) => {
+    try {
+        const params = req.body.input;
+        assertType<createContentGroupRoomArgs>(params);
+        const result = await handleCreateForContentGroup(params, req.body.session_variables["x-hasura-user-id"]);
         return res.status(200).json(result);
     } catch (e) {
         console.error(`${req.originalUrl}: invalid request`, req.body, e);

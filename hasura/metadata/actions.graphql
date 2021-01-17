@@ -1,4 +1,12 @@
 type Mutation {
+  createContentGroupRoom (
+    contentGroupId: uuid!
+    conferenceId: uuid!
+  ): CreateContentGroupRoomOutput
+}
+
+
+type Mutation {
   createRoomDm (
     conferenceId: uuid!
     attendeeIds: [uuid]!
@@ -209,6 +217,11 @@ type UpdateProfilePhotoResponse {
 
 type CreateRoomDmOutput {
   roomId : uuid
+  message : String
+}
+
+type CreateContentGroupRoomOutput {
+  roomId : String
   message : String
 }
 

@@ -2209,6 +2209,14 @@
   - name: originatingData
     using:
       foreign_key_constraint_on: originatingDataId
+  - name: room
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Room
+        column_mapping:
+          id: originatingContentGroupId
   array_relationships:
   - name: contentGroupTags
     using:
@@ -2252,6 +2260,13 @@
         table:
           schema: public
           name: RequiredContentItem
+  - name: rooms
+    using:
+      foreign_key_constraint_on:
+        column: originatingContentGroupId
+        table:
+          schema: public
+          name: Room
   insert_permissions:
   - role: user
     permission:

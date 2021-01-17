@@ -1,10 +1,12 @@
 import { gql } from "@apollo/client";
-import { Box, Flex, Heading, HStack, useBreakpointValue, VStack } from "@chakra-ui/react";
-import React, { useEffect } from "react";
+import { Box, Button, Flex, Heading, HStack, useBreakpointValue, useToast, VStack } from "@chakra-ui/react";
+import React, { useCallback, useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import {
     ContentGroupDataFragment,
     ContentGroupEventsFragment,
     Permission_Enum,
+    useContentGroup_CreateRoomMutation,
     useGetContentGroupQuery,
 } from "../../../../generated/graphql";
 import { Chat } from "../../../Chat/Chat";
@@ -38,6 +40,9 @@ gql`
                 name
             }
         }
+        rooms(where: { name: { _like: "Breakout:%" } }, order_by: { created_at: asc }) {
+            id
+        }
         contentItems(where: { isHidden: { _eq: false } }) {
             ...ContentItemData
         }
@@ -64,6 +69,13 @@ gql`
         name
         intendedRoomModeName
     }
+
+    mutation ContentGroup_CreateRoom($conferenceId: uuid!, $contentGroupId: uuid!) {
+        createContentGroupRoom(conferenceId: $conferenceId, contentGroupId: $contentGroupId) {
+            roomId
+            message
+        }
+    }
 `;
 
 export default function ContentGroupPage({ contentGroupId }: { contentGroupId: string }): JSX.Element {
@@ -75,6 +87,8 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
     const stackColumns = useBreakpointValue({ base: true, lg: false });
     const conference = useConference();
     const title = useTitle(result.data?.ContentGroup_by_pk?.title ?? "Unknown content item");
+    const toast = useToast();
+    const history = useHistory();
 
     const { setPrimaryMenuButtons } = usePrimaryMenuButtons();
     useEffect(() => {
@@ -87,6 +101,44 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
             },
         ]);
     }, [conference.shortName, conference.slug, setPrimaryMenuButtons]);
+
+    const [createBreakoutMutation] = useContentGroup_CreateRoomMutation();
+    const [creatingBreakout, setCreatingBreakout] = useState<boolean>(false);
+
+    const createBreakout = useCallback(async () => {
+        if (!result.data?.ContentGroup_by_pk) {
+            return;
+        }
+
+        const contentGroup = result.data.ContentGroup_by_pk;
+
+        try {
+            setCreatingBreakout(true);
+            const { data } = await createBreakoutMutation({
+                variables: {
+                    conferenceId: conference.id,
+                    contentGroupId: contentGroup.id,
+                },
+            });
+
+            if (!data?.createContentGroupRoom || !data.createContentGroupRoom.roomId) {
+                throw new Error(`No data returned: ${data?.createContentGroupRoom?.message}`);
+            }
+
+            const roomId = data.createContentGroupRoom.roomId;
+
+            // Wait so that breakout session has a chance to be created
+            setTimeout(() => history.push(`/conference/${conference.slug}/room/${roomId}`), 2000);
+        } catch (e) {
+            toast({
+                status: "error",
+                title: "Failed to create room.",
+                description: e?.message,
+            });
+        } finally {
+            setCreatingBreakout(false);
+        }
+    }, [conference.id, conference.slug, createBreakoutMutation, history, result.data?.ContentGroup_by_pk, toast]);
 
     return (
         <RequireAtLeastOnePermissionWrapper
@@ -126,6 +178,18 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
                                                     right="1rem"
                                                 >
                                                     <ContentGroupLive contentGroupData={contentGroupData} />
+                                                    {contentGroupData.rooms.length === 0 ? (
+                                                        <Button
+                                                            colorScheme="green"
+                                                            isLoading={creatingBreakout}
+                                                            onClick={createBreakout}
+                                                            width="100%"
+                                                        >
+                                                            Create breakout room
+                                                        </Button>
+                                                    ) : (
+                                                        <></>
+                                                    )}
                                                 </Box>
                                             </RequireAtLeastOnePermissionWrapper>
                                         </Box>

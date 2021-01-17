@@ -29957,7 +29957,12 @@ export type Timeline_EventTagFragment = { readonly __typename?: 'EventTag', read
     & Timeline_TagFragment
   ) };
 
-export type Timeline_ContentItemFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly contentTypeName: ContentType_Enum, readonly name: string, readonly data: any, readonly isHidden: boolean, readonly layoutData?: Maybe<any> };
+export type Timeline_ContentItemFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly contentTypeName: ContentType_Enum, readonly name: string, readonly isHidden: boolean, readonly layoutData?: Maybe<any> };
+
+export type Timeline_ContentItem_WithDataFragment = (
+  { readonly __typename?: 'ContentItem', readonly data: any }
+  & Timeline_ContentItemFragment
+);
 
 export type Timeline_HallwayFragment = { readonly __typename?: 'Hallway', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number };
 
@@ -29975,15 +29980,9 @@ export type Timeline_ContentGroupPersonFragment = { readonly __typename?: 'Conte
 
 export type Timeline_EventPersonFragment = { readonly __typename?: 'EventPerson', readonly id: any, readonly attendeeId?: Maybe<any>, readonly name: string, readonly affiliation?: Maybe<string>, readonly roleName: EventPersonRole_Enum };
 
-export type Timeline_ContentGroupFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly contentGroupTypeName: ContentGroupType_Enum, readonly title: string, readonly shortTitle?: Maybe<string>, readonly contentGroupTags: ReadonlyArray<(
-    { readonly __typename?: 'ContentGroupTag' }
-    & Timeline_ContentGroupTagFragment
-  )>, readonly contentItems: ReadonlyArray<(
+export type Timeline_ContentGroupFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly contentGroupTypeName: ContentGroupType_Enum, readonly title: string, readonly shortTitle?: Maybe<string>, readonly abstractContentItems: ReadonlyArray<(
     { readonly __typename?: 'ContentItem' }
-    & Timeline_ContentItemFragment
-  )>, readonly hallways: ReadonlyArray<(
-    { readonly __typename?: 'ContentGroupHallway' }
-    & Timeline_ContentGroupHallwayFragment
+    & Timeline_ContentItem_WithDataFragment
   )>, readonly people: ReadonlyArray<(
     { readonly __typename?: 'ContentGroupPerson' }
     & Timeline_ContentGroupPersonFragment
@@ -31328,16 +31327,6 @@ export const Timeline_ContentGroupTagFragmentDoc = gql`
   }
 }
     ${Timeline_TagFragmentDoc}`;
-export const Timeline_ContentItemFragmentDoc = gql`
-    fragment Timeline_ContentItem on ContentItem {
-  id
-  contentTypeName
-  name
-  data
-  isHidden
-  layoutData
-}
-    `;
 export const Timeline_HallwayFragmentDoc = gql`
     fragment Timeline_Hallway on Hallway {
   id
@@ -31356,6 +31345,21 @@ export const Timeline_ContentGroupHallwayFragmentDoc = gql`
   }
 }
     ${Timeline_HallwayFragmentDoc}`;
+export const Timeline_ContentItemFragmentDoc = gql`
+    fragment Timeline_ContentItem on ContentItem {
+  id
+  contentTypeName
+  name
+  isHidden
+  layoutData
+}
+    `;
+export const Timeline_ContentItem_WithDataFragmentDoc = gql`
+    fragment Timeline_ContentItem_WithData on ContentItem {
+  ...Timeline_ContentItem
+  data
+}
+    ${Timeline_ContentItemFragmentDoc}`;
 export const Timeline_ContentPersonFragmentDoc = gql`
     fragment Timeline_ContentPerson on ContentPerson {
   id
@@ -31380,22 +31384,14 @@ export const Timeline_ContentGroupFragmentDoc = gql`
   contentGroupTypeName
   title
   shortTitle
-  contentGroupTags {
-    ...Timeline_ContentGroupTag
-  }
-  contentItems {
-    ...Timeline_ContentItem
-  }
-  hallways {
-    ...Timeline_ContentGroupHallway
+  abstractContentItems: contentItems(where: {contentTypeName: {_eq: ABSTRACT}}) {
+    ...Timeline_ContentItem_WithData
   }
   people {
     ...Timeline_ContentGroupPerson
   }
 }
-    ${Timeline_ContentGroupTagFragmentDoc}
-${Timeline_ContentItemFragmentDoc}
-${Timeline_ContentGroupHallwayFragmentDoc}
+    ${Timeline_ContentItem_WithDataFragmentDoc}
 ${Timeline_ContentGroupPersonFragmentDoc}`;
 export const Timeline_EventPersonFragmentDoc = gql`
     fragment Timeline_EventPerson on EventPerson {

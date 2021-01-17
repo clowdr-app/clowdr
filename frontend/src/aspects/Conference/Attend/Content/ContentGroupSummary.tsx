@@ -217,11 +217,7 @@ export function ContentGroupSummary({
                 )}
                 {maybeVideoURL ? (
                     <Box maxW="100%">
-                        <ReactPlayer
-                            style={{ maxWidth: "100%" }}
-                            url={maybeVideoURL.url}
-                            controls={true}
-                        />
+                        <ReactPlayer style={{ maxWidth: "100%" }} url={maybeVideoURL.url} controls={true} />
                     </Box>
                 ) : undefined}
             </VStack>

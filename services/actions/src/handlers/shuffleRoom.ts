@@ -263,7 +263,9 @@ async function attemptToMatchEntry(
     }
 
     // We failed to match :(
-    console.log(`[This is not an error]: Unable to match shuffle queue entry: ${entry.id} (Probably not enough people online!)`);
+    console.log(
+        `[This is not an error]: Unable to match shuffle queue entry: ${entry.id} (Probably not enough people online!)`
+    );
     return false;
 }
 

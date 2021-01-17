@@ -58,7 +58,7 @@ function EventBoxPopover({
     const now = Date.now();
     const isLive = eventStartMs < now && now < eventStartMs + durationSeconds * 1000;
 
-    const abstractData: ContentItemDataBlob | undefined = event.contentGroup?.contentItems.find(
+    const abstractData: ContentItemDataBlob | undefined = event.contentGroup?.abstractContentItems?.find(
         (x) => x.contentTypeName === ContentType_Enum.Abstract
     )?.data;
     let abstractText: string | undefined;

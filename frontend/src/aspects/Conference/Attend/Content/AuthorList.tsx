@@ -20,12 +20,10 @@ export function sortAuthors(x: ContentPersonDataFragment, y: ContentPersonDataFr
     if (typeof x.priority === "number") {
         if (typeof y.priority === "number") {
             return x.priority - y.priority;
-        }
-        else {
+        } else {
             return -1;
         }
-    }
-    else if (typeof y.priority === "number") {
+    } else if (typeof y.priority === "number") {
         return 1;
     }
     return 0;
@@ -45,11 +43,9 @@ export function AuthorList({
             hiddenRoles && hiddenRoles.length > 0
                 ? contentPeopleData.filter((x) => !hiddenRoles.includes(x.roleName.toLowerCase()))
                 : contentPeopleData;
-        return [...data]
-            .sort(sortAuthors)
-            .map((contentPersonData) => {
-                return <Author contentPersonData={contentPersonData} key={contentPersonData.id} hideRole={hideRole} />;
-            });
+        return [...data].sort(sortAuthors).map((contentPersonData) => {
+            return <Author contentPersonData={contentPersonData} key={contentPersonData.id} hideRole={hideRole} />;
+        });
     }, [contentPeopleData, hiddenRoles, hideRole]);
 
     return (

@@ -37,9 +37,9 @@ import { router as openshotRouter } from "./router/openshot";
 import { router as presenceRouter } from "./router/presence";
 import { router as profileRouter } from "./router/profile";
 import { router as roomRouter } from "./router/room";
+import { router as shuffleRoomsRouter } from "./router/shuffleRooms";
 import { router as videoRenderJobRouter } from "./router/videoRenderJob";
 import { router as vonageRouter } from "./router/vonage";
-import { router as shuffleRoomsRouter } from "./router/shuffleRooms";
 
 if (process.env.NODE_ENV !== "test") {
     assert(process.env.AUTH0_API_DOMAIN, "AUTH0_API_DOMAIN environment variable not provided.");

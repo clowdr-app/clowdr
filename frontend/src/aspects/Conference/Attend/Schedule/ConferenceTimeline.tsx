@@ -49,9 +49,13 @@ gql`
         id
         contentTypeName
         name
-        data
         isHidden
         layoutData
+    }
+
+    fragment Timeline_ContentItem_WithData on ContentItem {
+        ...Timeline_ContentItem
+        data
     }
 
     fragment Timeline_Hallway on Hallway {
@@ -99,15 +103,18 @@ gql`
         contentGroupTypeName
         title
         shortTitle
-        contentGroupTags {
-            ...Timeline_ContentGroupTag
+        # contentGroupTags {
+        #     ...Timeline_ContentGroupTag
+        # }
+        # nonAbstractContentItems: contentItems(where: { contentTypeName: { _neq: ABSTRACT } }) {
+        #     ...Timeline_ContentItem
+        # }
+        abstractContentItems: contentItems(where: { contentTypeName: { _eq: ABSTRACT } }) {
+            ...Timeline_ContentItem_WithData
         }
-        contentItems {
-            ...Timeline_ContentItem
-        }
-        hallways {
-            ...Timeline_ContentGroupHallway
-        }
+        # hallways {
+        #     ...Timeline_ContentGroupHallway
+        # }
         people {
             ...Timeline_ContentGroupPerson
         }

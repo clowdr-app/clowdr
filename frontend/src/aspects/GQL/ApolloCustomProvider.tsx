@@ -54,9 +54,9 @@ export default function ApolloCustomProvider({
                     const oneTimeRefreshVar = window.localStorage.getItem("LAST_FORCE_REFRESH_TOKEN");
                     const authTokenConferenceId = window.localStorage.getItem("CLOWDR_AUTH_CONF_SLUG");
                     const ignoreCache =
-                        (conferenceSlug && (!oneTimeRefreshVar ||
-                            parseInt(oneTimeRefreshVar, 10) + 6 * 60 * 60 * 1000 < Date.now()
-                        )) ||
+                        (conferenceSlug &&
+                            (!oneTimeRefreshVar ||
+                                parseInt(oneTimeRefreshVar, 10) + 6 * 60 * 60 * 1000 < Date.now())) ||
                         !!magicToken ||
                         (!!conferenceSlug && conferenceSlug !== authTokenConferenceId);
                     const token = await getAccessTokenSilently({

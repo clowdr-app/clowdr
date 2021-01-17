@@ -164,8 +164,9 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
                                     height="100%"
                                     gridColumnGap={5}
                                     flexWrap={stackColumns ? "wrap" : "nowrap"}
+                                    maxW="100%"
                                 >
-                                    <Box textAlign="center" flexGrow={1} style={{ scrollbarWidth: "thin" }}>
+                                    <Box maxW="100%" textAlign="center" flexGrow={1} style={{ scrollbarWidth: "thin" }}>
                                         <Box position="relative">
                                             <ContentGroupVideos contentGroupData={contentGroupData} />
                                             <RequireAtLeastOnePermissionWrapper
@@ -193,7 +194,7 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
                                                 </Box>
                                             </RequireAtLeastOnePermissionWrapper>
                                         </Box>
-                                        <Box ml={5}>
+                                        <Box ml={5} maxW="100%">
                                             <ContentGroupSummary contentGroupData={contentGroupData} />
                                             <Heading as="h3" size="lg" textAlign="left">
                                                 Events

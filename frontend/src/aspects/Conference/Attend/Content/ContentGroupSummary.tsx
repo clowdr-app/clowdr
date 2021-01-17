@@ -6,10 +6,12 @@ import {
     ContentItemDataBlob,
     PaperLinkBlob,
     PaperUrlBlob,
+    VideoUrlBlob,
     ZoomBlob,
 } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
 import React, { useMemo } from "react";
+import ReactPlayer from "react-player";
 import {
     ContentGroupSummary_ContentGroupDataFragment,
     ContentType_Enum,
@@ -105,13 +107,10 @@ export function ContentGroupSummary({
         const zoomItem = contentGroupData.contentItems.find(
             (contentItem) => contentItem.contentTypeName === ContentType_Enum.Zoom
         );
-
         if (!zoomItem) {
             return undefined;
         }
-
         const versions = zoomItem.data as ContentItemDataBlob;
-
         return (R.last(versions)?.data as ZoomBlob).url;
     }, [contentGroupData.contentItems]);
 
@@ -119,13 +118,10 @@ export function ContentGroupSummary({
         const item = contentGroupData.contentItems.find(
             (contentItem) => contentItem.contentTypeName === ContentType_Enum.PaperUrl
         );
-
         if (!item) {
             return undefined;
         }
-
         const versions = item.data as ContentItemDataBlob;
-
         return (R.last(versions)?.data as PaperUrlBlob).url;
     }, [contentGroupData.contentItems]);
 
@@ -133,14 +129,22 @@ export function ContentGroupSummary({
         const item = contentGroupData.contentItems.find(
             (contentItem) => contentItem.contentTypeName === ContentType_Enum.PaperLink
         );
-
         if (!item) {
             return undefined;
         }
-
         const versions = item.data as ContentItemDataBlob;
-
         return R.last(versions)?.data as PaperLinkBlob;
+    }, [contentGroupData.contentItems]);
+
+    const maybeVideoURL = useMemo(() => {
+        const item = contentGroupData.contentItems.find(
+            (contentItem) => contentItem.contentTypeName === ContentType_Enum.VideoUrl
+        );
+        if (!item) {
+            return undefined;
+        }
+        const versions = item.data as ContentItemDataBlob;
+        return R.last(versions)?.data as VideoUrlBlob;
     }, [contentGroupData.contentItems]);
 
     return (
@@ -211,6 +215,15 @@ export function ContentGroupSummary({
                 ) : (
                     <></>
                 )}
+                {maybeVideoURL ? (
+                    <Box maxW="100%">
+                        <ReactPlayer
+                            style={{ maxWidth: "100%" }}
+                            url={maybeVideoURL.url}
+                            controls={true}
+                        />
+                    </Box>
+                ) : undefined}
             </VStack>
             <Container width="100%" mt={5} ml={0} pl={0}>
                 {abstractContentItem}

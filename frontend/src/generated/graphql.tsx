@@ -30039,6 +30039,18 @@ export type Timeline_SelectRoomQuery = { readonly __typename?: 'query_root', rea
     & Timeline_RoomFragment
   )> };
 
+export type SelectActiveShufflePeriodsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  start: Scalars['timestamptz'];
+  end: Scalars['timestamptz'];
+}>;
+
+
+export type SelectActiveShufflePeriodsQuery = { readonly __typename?: 'query_root', readonly room_ShufflePeriod: ReadonlyArray<(
+    { readonly __typename?: 'room_ShufflePeriod' }
+    & ShufflePeriodDataFragment
+  )> };
+
 export type InsertSubmissionRequestEmailJobsMutationVariables = Exact<{
   objs: ReadonlyArray<Job_Queues_SubmissionRequestEmailJob_Insert_Input>;
 }>;
@@ -30955,6 +30967,28 @@ export type GetRoomParticipantsSubscription = { readonly __typename?: 'subscript
 
 export type RoomParticipantDetailsFragment = { readonly __typename?: 'RoomParticipant', readonly attendeeId: any, readonly conferenceId: any, readonly id: any, readonly roomId: any, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } };
 
+export type ShufflePeriodDataFragment = { readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly conferenceId: any, readonly endAt: any, readonly maxAttendeesPerRoom: number, readonly name: string, readonly roomDurationMinutes: number, readonly startAt: any, readonly targetAttendeesPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly queueEntries: ReadonlyArray<{ readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly attendeeId: any, readonly created_at: any, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly isEnded: boolean, readonly roomId: any }> }> };
+
+export type ShufflePeriodsSubscriptionVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  start: Scalars['timestamptz'];
+  end: Scalars['timestamptz'];
+}>;
+
+
+export type ShufflePeriodsSubscription = { readonly __typename?: 'subscription_root', readonly room_ShufflePeriod: ReadonlyArray<(
+    { readonly __typename?: 'room_ShufflePeriod' }
+    & ShufflePeriodDataFragment
+  )> };
+
+export type JoinShuffleQueueMutationVariables = Exact<{
+  shufflePeriodId: Scalars['uuid'];
+  attendeeId: Scalars['uuid'];
+}>;
+
+
+export type JoinShuffleQueueMutation = { readonly __typename?: 'mutation_root', readonly insert_room_ShuffleQueueEntry_one?: Maybe<{ readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any }> };
+
 export type SelectUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -31842,6 +31876,29 @@ export const RoomParticipantDetailsFragmentDoc = gql`
     id
     displayName
   }
+}
+    `;
+export const ShufflePeriodDataFragmentDoc = gql`
+    fragment ShufflePeriodData on room_ShufflePeriod {
+  id
+  conferenceId
+  endAt
+  maxAttendeesPerRoom
+  name
+  queueEntries {
+    id
+    attendeeId
+    created_at
+    shuffleRoom {
+      id
+      isEnded
+      roomId
+    }
+  }
+  roomDurationMinutes
+  startAt
+  targetAttendeesPerRoom
+  waitRoomMaxDurationSeconds
 }
     `;
 export const AttendeeFieldsFragmentDoc = gql`
@@ -33690,6 +33747,43 @@ export function useTimeline_SelectRoomLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type Timeline_SelectRoomQueryHookResult = ReturnType<typeof useTimeline_SelectRoomQuery>;
 export type Timeline_SelectRoomLazyQueryHookResult = ReturnType<typeof useTimeline_SelectRoomLazyQuery>;
 export type Timeline_SelectRoomQueryResult = Apollo.QueryResult<Timeline_SelectRoomQuery, Timeline_SelectRoomQueryVariables>;
+export const SelectActiveShufflePeriodsDocument = gql`
+    query SelectActiveShufflePeriods($conferenceId: uuid!, $start: timestamptz!, $end: timestamptz!) {
+  room_ShufflePeriod(
+    where: {conferenceId: {_eq: $conferenceId}, startAt: {_lte: $start}, endAt: {_gte: $end}}
+  ) {
+    ...ShufflePeriodData
+  }
+}
+    ${ShufflePeriodDataFragmentDoc}`;
+
+/**
+ * __useSelectActiveShufflePeriodsQuery__
+ *
+ * To run a query within a React component, call `useSelectActiveShufflePeriodsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectActiveShufflePeriodsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectActiveShufflePeriodsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      start: // value for 'start'
+ *      end: // value for 'end'
+ *   },
+ * });
+ */
+export function useSelectActiveShufflePeriodsQuery(baseOptions: Apollo.QueryHookOptions<SelectActiveShufflePeriodsQuery, SelectActiveShufflePeriodsQueryVariables>) {
+        return Apollo.useQuery<SelectActiveShufflePeriodsQuery, SelectActiveShufflePeriodsQueryVariables>(SelectActiveShufflePeriodsDocument, baseOptions);
+      }
+export function useSelectActiveShufflePeriodsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectActiveShufflePeriodsQuery, SelectActiveShufflePeriodsQueryVariables>) {
+          return Apollo.useLazyQuery<SelectActiveShufflePeriodsQuery, SelectActiveShufflePeriodsQueryVariables>(SelectActiveShufflePeriodsDocument, baseOptions);
+        }
+export type SelectActiveShufflePeriodsQueryHookResult = ReturnType<typeof useSelectActiveShufflePeriodsQuery>;
+export type SelectActiveShufflePeriodsLazyQueryHookResult = ReturnType<typeof useSelectActiveShufflePeriodsLazyQuery>;
+export type SelectActiveShufflePeriodsQueryResult = Apollo.QueryResult<SelectActiveShufflePeriodsQuery, SelectActiveShufflePeriodsQueryVariables>;
 export const InsertSubmissionRequestEmailJobsDocument = gql`
     mutation InsertSubmissionRequestEmailJobs($objs: [job_queues_SubmissionRequestEmailJob_insert_input!]!) {
   insert_job_queues_SubmissionRequestEmailJob(objects: $objs) {
@@ -36718,6 +36812,74 @@ export function useGetRoomParticipantsSubscription(baseOptions: Apollo.Subscript
       }
 export type GetRoomParticipantsSubscriptionHookResult = ReturnType<typeof useGetRoomParticipantsSubscription>;
 export type GetRoomParticipantsSubscriptionResult = Apollo.SubscriptionResult<GetRoomParticipantsSubscription>;
+export const ShufflePeriodsDocument = gql`
+    subscription ShufflePeriods($conferenceId: uuid!, $start: timestamptz!, $end: timestamptz!) {
+  room_ShufflePeriod(
+    where: {conferenceId: {_eq: $conferenceId}, startAt: {_lte: $start}, endAt: {_gte: $end}}
+  ) {
+    ...ShufflePeriodData
+  }
+}
+    ${ShufflePeriodDataFragmentDoc}`;
+
+/**
+ * __useShufflePeriodsSubscription__
+ *
+ * To run a query within a React component, call `useShufflePeriodsSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useShufflePeriodsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useShufflePeriodsSubscription({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      start: // value for 'start'
+ *      end: // value for 'end'
+ *   },
+ * });
+ */
+export function useShufflePeriodsSubscription(baseOptions: Apollo.SubscriptionHookOptions<ShufflePeriodsSubscription, ShufflePeriodsSubscriptionVariables>) {
+        return Apollo.useSubscription<ShufflePeriodsSubscription, ShufflePeriodsSubscriptionVariables>(ShufflePeriodsDocument, baseOptions);
+      }
+export type ShufflePeriodsSubscriptionHookResult = ReturnType<typeof useShufflePeriodsSubscription>;
+export type ShufflePeriodsSubscriptionResult = Apollo.SubscriptionResult<ShufflePeriodsSubscription>;
+export const JoinShuffleQueueDocument = gql`
+    mutation JoinShuffleQueue($shufflePeriodId: uuid!, $attendeeId: uuid!) {
+  insert_room_ShuffleQueueEntry_one(
+    object: {attendeeId: $attendeeId, shufflePeriodId: $shufflePeriodId}
+  ) {
+    id
+  }
+}
+    `;
+export type JoinShuffleQueueMutationFn = Apollo.MutationFunction<JoinShuffleQueueMutation, JoinShuffleQueueMutationVariables>;
+
+/**
+ * __useJoinShuffleQueueMutation__
+ *
+ * To run a mutation, you first call `useJoinShuffleQueueMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useJoinShuffleQueueMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [joinShuffleQueueMutation, { data, loading, error }] = useJoinShuffleQueueMutation({
+ *   variables: {
+ *      shufflePeriodId: // value for 'shufflePeriodId'
+ *      attendeeId: // value for 'attendeeId'
+ *   },
+ * });
+ */
+export function useJoinShuffleQueueMutation(baseOptions?: Apollo.MutationHookOptions<JoinShuffleQueueMutation, JoinShuffleQueueMutationVariables>) {
+        return Apollo.useMutation<JoinShuffleQueueMutation, JoinShuffleQueueMutationVariables>(JoinShuffleQueueDocument, baseOptions);
+      }
+export type JoinShuffleQueueMutationHookResult = ReturnType<typeof useJoinShuffleQueueMutation>;
+export type JoinShuffleQueueMutationResult = Apollo.MutationResult<JoinShuffleQueueMutation>;
+export type JoinShuffleQueueMutationOptions = Apollo.BaseMutationOptions<JoinShuffleQueueMutation, JoinShuffleQueueMutationVariables>;
 export const SelectUsersDocument = gql`
     query selectUsers {
   User {

@@ -168,6 +168,22 @@ function ConferenceLandingPageInner(): JSX.Element {
                         <FAIcon iconStyle="s" icon="mug-hot" mr={2} /> Rooms
                     </LinkButton>
                 ) : undefined}
+                {[
+                    Permission_Enum.ConferenceViewAttendees,
+                    Permission_Enum.ConferenceManageSchedule,
+                    Permission_Enum.ConferenceModerateAttendees,
+                    Permission_Enum.ConferenceManageAttendees,
+                ].some((permission) => activePermissions.has(permission)) ? (
+                    <LinkButton
+                        mx={2}
+                        mb={[2, 2, 4]}
+                        to={`/conference/${conference.slug}/shuffle`}
+                        variant="outline"
+                        size="lg"
+                    >
+                        <FAIcon iconStyle="s" icon="mug-hot" mr={2} /> Shuffle Rooms
+                    </LinkButton>
+                ) : undefined}
             </Flex>
             <ConferenceLandingContent group={group} />
         </>

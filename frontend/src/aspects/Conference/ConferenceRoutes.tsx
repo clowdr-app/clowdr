@@ -1,13 +1,16 @@
-import React from "react";
+import { gql } from "@apollo/client";
+import React, { useCallback, useEffect, useState } from "react";
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
-import { Permission_Enum } from "../../generated/graphql";
+import { Permission_Enum, useSelectActiveShufflePeriodsQuery } from "../../generated/graphql";
 import { ChatNotificationsProvider } from "../Chat/ChatNotifications";
 import PageNotFound from "../Errors/PageNotFound";
 import PageNotImplemented from "../Errors/PageNotImplemented";
+import usePolling from "../Generic/usePolling";
 import PresenceCountProvider from "../Presence/PresenceCountProvider";
 import useTabTracker from "../Presence/useTabTracker";
 import RoomParticipantsProvider from "../Room/RoomParticipantsProvider";
 import { SharedRoomContextProvider } from "../Room/SharedRoomContextProvider";
+import WaitingPage from "../ShuffleRooms/WaitingPage";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import AttendeeListPage from "./Attend/Attendee/AttendeeListPage";
 import ConferenceLandingPage from "./Attend/ConferenceLandingPage";
@@ -197,6 +200,20 @@ function ConferenceRoutesInner({ rootUrl }: { rootUrl: string }): JSX.Element {
                         <Redirect to={`/conference/${conference.slug}`} />
                     )
                 }
+            </Route>
+
+            <Route path={`${rootUrl}/shuffle`}>
+                <RequireAtLeastOnePermissionWrapper
+                    componentIfDenied={<Redirect to={`/conference/${conference.slug}`} />}
+                    permissions={[
+                        Permission_Enum.ConferenceViewAttendees,
+                        Permission_Enum.ConferenceManageAttendees,
+                        Permission_Enum.ConferenceModerateAttendees,
+                        Permission_Enum.ConferenceManageSchedule,
+                    ]}
+                >
+                    <WaitingPage />
+                </RequireAtLeastOnePermissionWrapper>
             </Route>
 
             <Route path={rootUrl}>

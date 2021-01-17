@@ -48,6 +48,7 @@ gql`
         $name: String!
         $publicVonageSessionId: String!
         $originatingEventId: uuid!
+        $originatingContentGroupId: uuid
         $conferenceId: uuid!
         $chatId: uuid = null
     ) {
@@ -60,6 +61,7 @@ gql`
                 roomPrivacyName: PUBLIC
                 conferenceId: $conferenceId
                 chatId: $chatId
+                originatingContentGroupId: $originatingContentGroupId
             }
         ) {
             id
@@ -73,7 +75,7 @@ export async function createEventBreakoutRoom(
     eventName: string,
     startTime: string,
     vonageSessionId: string,
-    _contentGroupId?: string,
+    contentGroupId?: string,
     contentGroupTitle?: string,
     contentGroupChatId?: string
 ): Promise<void> {
@@ -98,6 +100,7 @@ export async function createEventBreakoutRoom(
             originatingEventId: eventId,
             publicVonageSessionId: vonageSessionId,
             chatId: contentGroupChatId,
+            originatingContentGroupId: contentGroupId,
         },
     });
 }

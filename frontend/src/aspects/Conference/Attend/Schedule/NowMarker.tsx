@@ -39,7 +39,7 @@ export default function NowMarker({
             <div
                 ref={ref}
                 style={{
-                    zIndex: 2,
+                    zIndex: 10,
                     position: "absolute",
                     left: percent + "%",
                     width: "auto",

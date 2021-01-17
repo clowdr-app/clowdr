@@ -254,25 +254,25 @@ export default function WaitingPage(): JSX.Element {
         ]);
     }, [conference.shortName, conference.slug, setPrimaryMenuButtons]);
 
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+    // const [isLoading, setIsLoading] = useState<boolean>(true);
     const [data, setData] = useState<ShufflePeriodDataFragment[] | null>(null);
     useEffect(() => {
         if (periods.data) {
             setData([...periods.data.room_ShufflePeriod]);
-            setIsLoading(false);
+            // setIsLoading(false);
         }
     }, [periods.data]);
 
-    useEffect(() => {
-        const tId = setTimeout(() => {
-            setIsLoading(false);
-        }, 10000);
-        return () => {
-            clearTimeout(tId);
-        };
-    }, []);
+    // useEffect(() => {
+    //     const tId = setTimeout(() => {
+    //         setIsLoading(false);
+    //     }, 10000);
+    //     return () => {
+    //         clearTimeout(tId);
+    //     };
+    // }, []);
 
-    return !data || isLoading ? (
+    return !data ? (
         <Spinner label="Loading shuffle room times" />
     ) : (
         <Grid maxW="800px">

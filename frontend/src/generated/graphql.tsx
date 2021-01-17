@@ -29668,7 +29668,7 @@ export type ContentPersonDataFragment = { readonly __typename?: 'ContentGroupPer
 export type TagWithContentFragment = (
   { readonly __typename?: 'Tag', readonly contentGroupTags: ReadonlyArray<{ readonly __typename?: 'ContentGroupTag', readonly contentGroup: (
       { readonly __typename?: 'ContentGroup' }
-      & ContentGroupDataFragment
+      & ContentGroupList_ContentGroupDataFragment
     ) }> }
   & TagInfoFragment
 );
@@ -29681,6 +29681,11 @@ export type ContentByTagQueryVariables = Exact<{
 export type ContentByTagQuery = { readonly __typename?: 'query_root', readonly Tag: ReadonlyArray<(
     { readonly __typename?: 'Tag' }
     & TagWithContentFragment
+  )> };
+
+export type ContentGroupList_ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly people: ReadonlyArray<(
+    { readonly __typename?: 'ContentGroupPerson' }
+    & ContentPersonDataFragment
   )> };
 
 export type GetContentGroupQueryVariables = Exact<{
@@ -31139,15 +31144,6 @@ export const TagInfoFragmentDoc = gql`
   originatingDataId
 }
     `;
-export const ContentItemDataFragmentDoc = gql`
-    fragment ContentItemData on ContentItem {
-  id
-  data
-  layoutData
-  name
-  contentTypeName
-}
-    `;
 export const ContentPersonDataFragmentDoc = gql`
     fragment ContentPersonData on ContentGroupPerson {
   id
@@ -31158,6 +31154,36 @@ export const ContentPersonDataFragmentDoc = gql`
   }
   roleName
   priority
+}
+    `;
+export const ContentGroupList_ContentGroupDataFragmentDoc = gql`
+    fragment ContentGroupList_ContentGroupData on ContentGroup {
+  id
+  title
+  contentGroupTypeName
+  people(order_by: {priority: asc}) {
+    ...ContentPersonData
+  }
+}
+    ${ContentPersonDataFragmentDoc}`;
+export const TagWithContentFragmentDoc = gql`
+    fragment TagWithContent on Tag {
+  ...TagInfo
+  contentGroupTags {
+    contentGroup {
+      ...ContentGroupList_ContentGroupData
+    }
+  }
+}
+    ${TagInfoFragmentDoc}
+${ContentGroupList_ContentGroupDataFragmentDoc}`;
+export const ContentItemDataFragmentDoc = gql`
+    fragment ContentItemData on ContentItem {
+  id
+  data
+  layoutData
+  name
+  contentTypeName
 }
     `;
 export const ContentGroupDataFragmentDoc = gql`
@@ -31181,17 +31207,6 @@ export const ContentGroupDataFragmentDoc = gql`
 }
     ${ContentItemDataFragmentDoc}
 ${ContentPersonDataFragmentDoc}`;
-export const TagWithContentFragmentDoc = gql`
-    fragment TagWithContent on Tag {
-  ...TagInfo
-  contentGroupTags {
-    contentGroup {
-      ...ContentGroupData
-    }
-  }
-}
-    ${TagInfoFragmentDoc}
-${ContentGroupDataFragmentDoc}`;
 export const ContentGroupPage_ContentGroupRoomsFragmentDoc = gql`
     fragment ContentGroupPage_ContentGroupRooms on ContentGroup {
   rooms(where: {name: {_like: "Breakout:%"}}, order_by: {created_at: asc}) {

@@ -6,7 +6,6 @@ import {
     Grid,
     GridItem,
     Heading,
-    Spinner,
     Text,
     useColorModeValue,
     VStack,
@@ -272,9 +271,7 @@ export default function WaitingPage(): JSX.Element {
     //     };
     // }, []);
 
-    return !data ? (
-        <Spinner label="Loading shuffle room times" />
-    ) : (
+    return (
         <Grid maxW="800px">
             {data?.map((period) => (
                 <ShufflePeriodBox key={period.id} period={period} />

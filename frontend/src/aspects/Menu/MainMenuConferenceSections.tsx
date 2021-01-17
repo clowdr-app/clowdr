@@ -157,13 +157,13 @@ function sortChats(attendeeId: string, x: SidebarChatInfoFragment, y: SidebarCha
             return 0;
         }
     }
-    if (x.readUpToIndices?.length && x.readUpToIndices[0].unreadCount) {
-        if (y.readUpToIndices?.length && y.readUpToIndices[0].unreadCount) {
+    if (x && x.readUpToIndices?.length && x.readUpToIndices[0].unreadCount) {
+        if (y && y.readUpToIndices?.length && y.readUpToIndices[0].unreadCount) {
             return compareNames();
         } else {
             return -1;
         }
-    } else if (y.readUpToIndices?.length && y.readUpToIndices[0].unreadCount) {
+    } else if (y && y.readUpToIndices?.length && y.readUpToIndices[0].unreadCount) {
         return 1;
     } else {
         return compareNames();

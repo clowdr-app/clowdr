@@ -378,6 +378,16 @@ export function MainMenuConferenceSections_Inner({
                     <FAIcon icon="mug-hot" iconStyle="s" mr={3} />
                     Rooms
                 </LinkButton>
+                <LinkButton
+                    linkProps={{ flexBasis: ["40%", "40%", "min-content"], flexGrow: 0, flexShrink: [0, 1] }}
+                    size="sm"
+                    onClick={onClose}
+                    to={`/conference/${confSlug}/shuffle`}
+                    width="100%"
+                >
+                    <FAIcon icon="mug-hot" iconStyle="s" mr={3} />
+                    Shuffle Rooms
+                </LinkButton>
             </Flex>
             <Accordion defaultIndex={[0]}>
                 <AccordionItem>

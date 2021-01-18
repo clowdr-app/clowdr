@@ -11,6 +11,7 @@ import { LinkButton } from "../Chakra/LinkButton";
 import { useConference } from "../Conference/useConference";
 import ApolloQueryWrapper from "../GQL/ApolloQueryWrapper";
 import FAIcon from "../Icons/FAIcon";
+import PageCountText from "../Presence/PageCountText";
 
 gql`
     query MainMenuSponsors_GetSponsors($conferenceId: uuid!) {
@@ -78,14 +79,13 @@ export function MainMenuSponsors(): JSX.Element {
                 <>
                     <List>
                         {sponsorContentGroups.map((sponsorContentGroup) => {
+                            const url = sponsorContentGroup.rooms.length
+                                ? `/conference/${conference.slug}/room/${sponsorContentGroup.rooms[0].id}`
+                                : `/conference/${conference.slug}/item/${sponsorContentGroup.id}`;
                             return (
                                 <ListItem key={sponsorContentGroup.id} mb={2} h={12} width="100%">
                                     <LinkButton
-                                        to={
-                                            sponsorContentGroup.rooms.length
-                                                ? `/conference/${conference.slug}/room/${sponsorContentGroup.rooms[0].id}`
-                                                : `/conference/${conference.slug}/item/${sponsorContentGroup.id}`
-                                        }
+                                        to={url}
                                         h="100%"
                                         width="100%"
                                         pl={0}
@@ -107,8 +107,14 @@ export function MainMenuSponsors(): JSX.Element {
                                                     <FAIcon icon="cat" iconStyle="s" />
                                                 )}
                                             </GridItem>
-                                            <GridItem minH="0" display="flex" alignItems="center">
+                                            <GridItem
+                                                minH="0"
+                                                display="flex"
+                                                alignItems="center"
+                                                justifyContent="space-between"
+                                            >
                                                 <Text fontSize="lg">{sponsorContentGroup.title}</Text>
+                                                <PageCountText width="10%" path={url} />
                                             </GridItem>
                                         </Grid>
                                     </LinkButton>

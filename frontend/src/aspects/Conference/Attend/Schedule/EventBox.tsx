@@ -10,6 +10,7 @@ import {
     PopoverHeader,
     PopoverTrigger,
     Portal,
+    Spinner,
     Text,
     useColorModeValue,
     useDisclosure,
@@ -18,7 +19,12 @@ import {
 import { ContentBaseType, ContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { Link as ReactLink } from "react-router-dom";
-import { ContentType_Enum, Timeline_EventFragment } from "../../../../generated/graphql";
+import {
+    ContentType_Enum,
+    Timeline_EventFragment,
+    Timeline_Event_FullInfoFragment,
+    useTimeline_SelectEventLazyQuery,
+} from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import FAIcon from "../../../Icons/FAIcon";
 import { Markdown } from "../../../Text/Markdown";
@@ -35,6 +41,7 @@ function EventBoxPopover({
     durationSeconds,
     roomName,
     events,
+    fullEvent,
     isOpen,
     onClose,
 }: {
@@ -44,21 +51,21 @@ function EventBoxPopover({
     durationSeconds: number;
     roomName: string;
     events: ReadonlyArray<Timeline_EventFragment>;
+    fullEvent: Timeline_Event_FullInfoFragment | null | undefined;
     isOpen: boolean;
     onClose: () => void;
 }): JSX.Element {
     const conference = useConference();
-    const event = events[0];
-    const eventTitle = event.contentGroup
+    const eventTitle = fullEvent?.contentGroup
         ? events.length > 1
-            ? event.contentGroup.title
-            : `${event.contentGroup.title}`
-        : event.name;
+            ? fullEvent.contentGroup.title
+            : `${fullEvent.contentGroup.title}`
+        : fullEvent?.name;
 
     const now = Date.now();
     const isLive = eventStartMs < now && now < eventStartMs + durationSeconds * 1000;
 
-    const abstractData: ContentItemDataBlob | undefined = event.contentGroup?.abstractContentItems?.find(
+    const abstractData: ContentItemDataBlob | undefined = fullEvent?.contentGroup?.abstractContentItems?.find(
         (x) => x.contentTypeName === ContentType_Enum.Abstract
     )?.data;
     let abstractText: string | undefined;
@@ -70,7 +77,7 @@ function EventBoxPopover({
     }
     const eventUrl =
         `/conference/${conference.slug}` +
-        (event.contentGroup && !isLive ? `/item/${event.contentGroup.id}` : `/room/${event.roomId}`);
+        (fullEvent?.contentGroup && !isLive ? `/item/${fullEvent.contentGroup.id}` : `/room/${fullEvent?.roomId}`);
 
     const ref = useRef<HTMLAnchorElement>(null);
     useEffect(() => {
@@ -127,78 +134,86 @@ function EventBoxPopover({
                     maxH="30vh"
                     width={Math.min(window.innerWidth * 0.8, 500)}
                 >
-                    <PopoverHeader fontWeight="semibold" pr={1}>
-                        <Flex direction="row">
-                            <Text>
-                                <Link ref={ref} as={ReactLink} to={eventUrl} textDecoration="none">
-                                    {eventTitle}
-                                </Link>
-                            </Text>
-                            <Flex direction="row" justifyContent="flex-end" alignItems="start" ml="auto">
-                                <LinkButton
-                                    ml={1}
-                                    mr={1}
-                                    size="sm"
-                                    colorScheme={isLive ? "red" : "green"}
-                                    to={eventUrl}
-                                    title={
-                                        isLive
-                                            ? `Event is happening now. Go to room ${roomName}`
-                                            : event.contentGroup
-                                            ? "View this event"
-                                            : `Go to room ${roomName}`
-                                    }
-                                    textDecoration="none"
-                                >
-                                    {isLive ? (
-                                        <>
-                                            <FAIcon iconStyle="s" icon="link" mr={2} /> LIVE
-                                        </>
-                                    ) : (
-                                        <FAIcon iconStyle="s" icon="link" />
-                                    )}
-                                    <Text as="span" ml={1}>
-                                        View
+                    {fullEvent ? (
+                        <>
+                            <PopoverHeader fontWeight="semibold" pr={1}>
+                                <Flex direction="row">
+                                    <Text>
+                                        <Link ref={ref} as={ReactLink} to={eventUrl} textDecoration="none">
+                                            {eventTitle}
+                                        </Link>
                                     </Text>
-                                    {/* TODO: Time until event starts */}
-                                </LinkButton>
-                                {/* <Button colorScheme="gray" size="sm" onClick={onClose}>
+                                    <Flex direction="row" justifyContent="flex-end" alignItems="start" ml="auto">
+                                        <LinkButton
+                                            ml={1}
+                                            mr={1}
+                                            size="sm"
+                                            colorScheme={isLive ? "red" : "green"}
+                                            to={eventUrl}
+                                            title={
+                                                isLive
+                                                    ? `Event is happening now. Go to room ${roomName}`
+                                                    : fullEvent.contentGroup
+                                                    ? "View this event"
+                                                    : `Go to room ${roomName}`
+                                            }
+                                            textDecoration="none"
+                                        >
+                                            {isLive ? (
+                                                <>
+                                                    <FAIcon iconStyle="s" icon="link" mr={2} /> LIVE
+                                                </>
+                                            ) : (
+                                                <FAIcon iconStyle="s" icon="link" />
+                                            )}
+                                            <Text as="span" ml={1}>
+                                                View
+                                            </Text>
+                                            {/* TODO: Time until event starts */}
+                                        </LinkButton>
+                                        {/* <Button colorScheme="gray" size="sm" onClick={onClose}>
                                     <FAIcon iconStyle="s" icon="times" />
                                 </Button> */}
-                            </Flex>
-                        </Flex>
-                        <Text
-                            aria-label={`Starts at ${new Date(event.startTime).toLocaleString(undefined, {
-                                weekday: "long",
-                                hour: "numeric",
-                                minute: "numeric",
-                            })} and lasts ${Math.round(durationSeconds / 60)} minutes.`}
-                            mb={2}
-                        >
-                            {new Date(eventStartMs).toLocaleString(undefined, {
-                                hour: "numeric",
-                                minute: "numeric",
-                                hour12: false,
-                            })}{" "}
-                            -{" "}
-                            {new Date(eventStartMs + durationSeconds * 1000).toLocaleString(undefined, {
-                                hour: "numeric",
-                                minute: "numeric",
-                                hour12: false,
-                            })}
-                        </Text>
-                        <EventTagList tags={event.eventTags} />
-                    </PopoverHeader>
-                    <PopoverArrow />
-                    <PopoverBody as={VStack} spacing={4} justifyContent="flex-start" alignItems="start">
-                        {event.eventPeople.length > 0 ? <EventPersonList people={event.eventPeople} /> : undefined}
-                        {event.contentGroup?.people && event.contentGroup?.people.length > 0 ? (
-                            <AuthorList contentPeopleData={event.contentGroup.people} />
-                        ) : undefined}
-                        <Box>
-                            <Markdown>{abstractText}</Markdown>
-                        </Box>
-                    </PopoverBody>
+                                    </Flex>
+                                </Flex>
+                                <Text
+                                    aria-label={`Starts at ${new Date(fullEvent.startTime).toLocaleString(undefined, {
+                                        weekday: "long",
+                                        hour: "numeric",
+                                        minute: "numeric",
+                                    })} and lasts ${Math.round(durationSeconds / 60)} minutes.`}
+                                    mb={2}
+                                >
+                                    {new Date(eventStartMs).toLocaleString(undefined, {
+                                        hour: "numeric",
+                                        minute: "numeric",
+                                        hour12: false,
+                                    })}{" "}
+                                    -{" "}
+                                    {new Date(eventStartMs + durationSeconds * 1000).toLocaleString(undefined, {
+                                        hour: "numeric",
+                                        minute: "numeric",
+                                        hour12: false,
+                                    })}
+                                </Text>
+                                <EventTagList tags={fullEvent.eventTags} />
+                            </PopoverHeader>
+                            <PopoverArrow />
+                            <PopoverBody as={VStack} spacing={4} justifyContent="flex-start" alignItems="start">
+                                {fullEvent.eventPeople.length > 0 ? (
+                                    <EventPersonList people={fullEvent.eventPeople} />
+                                ) : undefined}
+                                {fullEvent.contentGroup?.people && fullEvent.contentGroup?.people.length > 0 ? (
+                                    <AuthorList contentPeopleData={fullEvent.contentGroup.people} />
+                                ) : undefined}
+                                <Box>
+                                    <Markdown>{abstractText}</Markdown>
+                                </Box>
+                            </PopoverBody>
+                        </>
+                    ) : (
+                        <Spinner label="Loading event info" />
+                    )}
                 </PopoverContent>
             </Portal>
         </Popover>
@@ -256,6 +271,17 @@ export default function EventBox({
         setScrollToEvent?.(scrollToEvent);
     }, [scrollToEvent, setScrollToEvent]);
 
+    const [getFullEventInfo, fullEventInfo] = useTimeline_SelectEventLazyQuery();
+    useEffect(() => {
+        if (isOpen && !fullEventInfo.data) {
+            getFullEventInfo({
+                variables: {
+                    id: event.id,
+                },
+            });
+        }
+    }, [event.id, fullEventInfo.data, getFullEventInfo, isOpen]);
+
     const borderColour = useColorModeValue("blue.200", "blue.800");
     return (
         <>
@@ -305,6 +331,7 @@ export default function EventBox({
                     durationSeconds={durationSeconds}
                     roomName={roomName}
                     events={sortedEvents}
+                    fullEvent={fullEventInfo.data?.Event_by_pk}
                     isOpen={isOpen}
                     onClose={onClose}
                 />

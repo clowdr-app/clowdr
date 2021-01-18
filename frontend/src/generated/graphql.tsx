@@ -30064,7 +30064,7 @@ export type Timeline_ContentGroupPersonFragment = { readonly __typename?: 'Conte
 
 export type Timeline_EventPersonFragment = { readonly __typename?: 'EventPerson', readonly id: any, readonly attendeeId?: Maybe<any>, readonly name: string, readonly affiliation?: Maybe<string>, readonly roleName: EventPersonRole_Enum };
 
-export type Timeline_ContentGroupFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly contentGroupTypeName: ContentGroupType_Enum, readonly title: string, readonly shortTitle?: Maybe<string>, readonly abstractContentItems: ReadonlyArray<(
+export type Timeline_ContentGroupFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly contentGroupTypeName: ContentGroupType_Enum, readonly title: string, readonly abstractContentItems: ReadonlyArray<(
     { readonly __typename?: 'ContentItem' }
     & Timeline_ContentItem_WithDataFragment
   )>, readonly people: ReadonlyArray<(
@@ -30072,7 +30072,7 @@ export type Timeline_ContentGroupFragment = { readonly __typename?: 'ContentGrou
     & Timeline_ContentGroupPersonFragment
   )> };
 
-export type Timeline_EventFragment = { readonly __typename?: 'Event', readonly id: any, readonly roomId: any, readonly intendedRoomModeName: RoomMode_Enum, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly contentGroup?: Maybe<(
+export type Timeline_Event_FullInfoFragment = { readonly __typename?: 'Event', readonly id: any, readonly roomId: any, readonly intendedRoomModeName: RoomMode_Enum, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly contentGroup?: Maybe<(
     { readonly __typename?: 'ContentGroup' }
     & Timeline_ContentGroupFragment
   )>, readonly eventPeople: ReadonlyArray<(
@@ -30083,9 +30083,21 @@ export type Timeline_EventFragment = { readonly __typename?: 'Event', readonly i
     & Timeline_EventTagFragment
   )> };
 
+export type Timeline_EventFragment = { readonly __typename?: 'Event', readonly id: any, readonly roomId: any, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string }> };
+
 export type Timeline_RoomFragment = { readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly priority: number, readonly events: ReadonlyArray<(
     { readonly __typename?: 'Event' }
     & Timeline_EventFragment
+  )> };
+
+export type Timeline_SelectEventQueryVariables = Exact<{
+  id: Scalars['uuid'];
+}>;
+
+
+export type Timeline_SelectEventQuery = { readonly __typename?: 'query_root', readonly Event_by_pk?: Maybe<(
+    { readonly __typename?: 'Event' }
+    & Timeline_Event_FullInfoFragment
   )> };
 
 export type Timeline_SelectRoomsQueryVariables = Exact<{
@@ -31559,7 +31571,6 @@ export const Timeline_ContentGroupFragmentDoc = gql`
   id
   contentGroupTypeName
   title
-  shortTitle
   abstractContentItems: contentItems(where: {contentTypeName: {_eq: ABSTRACT}}) {
     ...Timeline_ContentItem_WithData
   }
@@ -31586,8 +31597,8 @@ export const Timeline_EventTagFragmentDoc = gql`
   }
 }
     ${Timeline_TagFragmentDoc}`;
-export const Timeline_EventFragmentDoc = gql`
-    fragment Timeline_Event on Event {
+export const Timeline_Event_FullInfoFragmentDoc = gql`
+    fragment Timeline_Event_FullInfo on Event {
   id
   roomId
   intendedRoomModeName
@@ -31607,6 +31618,19 @@ export const Timeline_EventFragmentDoc = gql`
     ${Timeline_ContentGroupFragmentDoc}
 ${Timeline_EventPersonFragmentDoc}
 ${Timeline_EventTagFragmentDoc}`;
+export const Timeline_EventFragmentDoc = gql`
+    fragment Timeline_Event on Event {
+  id
+  roomId
+  name
+  startTime
+  durationSeconds
+  contentGroup {
+    id
+    title
+  }
+}
+    `;
 export const Timeline_RoomFragmentDoc = gql`
     fragment Timeline_Room on Room {
   id
@@ -33939,9 +33963,44 @@ export function useVonageSubscriber_GetAttendeeLazyQuery(baseOptions?: Apollo.La
 export type VonageSubscriber_GetAttendeeQueryHookResult = ReturnType<typeof useVonageSubscriber_GetAttendeeQuery>;
 export type VonageSubscriber_GetAttendeeLazyQueryHookResult = ReturnType<typeof useVonageSubscriber_GetAttendeeLazyQuery>;
 export type VonageSubscriber_GetAttendeeQueryResult = Apollo.QueryResult<VonageSubscriber_GetAttendeeQuery, VonageSubscriber_GetAttendeeQueryVariables>;
+export const Timeline_SelectEventDocument = gql`
+    query Timeline_SelectEvent($id: uuid!) {
+  Event_by_pk(id: $id) {
+    ...Timeline_Event_FullInfo
+  }
+}
+    ${Timeline_Event_FullInfoFragmentDoc}`;
+
+/**
+ * __useTimeline_SelectEventQuery__
+ *
+ * To run a query within a React component, call `useTimeline_SelectEventQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTimeline_SelectEventQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTimeline_SelectEventQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useTimeline_SelectEventQuery(baseOptions: Apollo.QueryHookOptions<Timeline_SelectEventQuery, Timeline_SelectEventQueryVariables>) {
+        return Apollo.useQuery<Timeline_SelectEventQuery, Timeline_SelectEventQueryVariables>(Timeline_SelectEventDocument, baseOptions);
+      }
+export function useTimeline_SelectEventLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Timeline_SelectEventQuery, Timeline_SelectEventQueryVariables>) {
+          return Apollo.useLazyQuery<Timeline_SelectEventQuery, Timeline_SelectEventQueryVariables>(Timeline_SelectEventDocument, baseOptions);
+        }
+export type Timeline_SelectEventQueryHookResult = ReturnType<typeof useTimeline_SelectEventQuery>;
+export type Timeline_SelectEventLazyQueryHookResult = ReturnType<typeof useTimeline_SelectEventLazyQuery>;
+export type Timeline_SelectEventQueryResult = Apollo.QueryResult<Timeline_SelectEventQuery, Timeline_SelectEventQueryVariables>;
 export const Timeline_SelectRoomsDocument = gql`
     query Timeline_SelectRooms($conferenceId: uuid!) {
-  Room(where: {conferenceId: {_eq: $conferenceId}}) {
+  Room(
+    where: {conferenceId: {_eq: $conferenceId}, roomPrivacyName: {_eq: PUBLIC}, events: {}}
+  ) {
     ...Timeline_Room
   }
 }

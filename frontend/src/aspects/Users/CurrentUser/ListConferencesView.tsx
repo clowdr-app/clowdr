@@ -93,7 +93,7 @@ export default function ListConferencesView(): JSX.Element {
 
         return (
             <>
-                <List spacing={0}>
+                <List spacing={2} display="flex" flexDir="column" alignItems="stretch">
                     {attendees.map((attendee) => {
                         return (
                             <ListItem key={attendee.id} display="list-item">
@@ -102,9 +102,13 @@ export default function ListConferencesView(): JSX.Element {
                                         <Icon as={icon} color="green.500" fontSize="50%" verticalAlign="middle" />
                                     }
                                     to={`/conference/${attendee.conference.slug}/${subPath}`}
-                                    border={0}
                                     background="none"
                                     color={buttonTextColour}
+                                    border="1px solid"
+                                    borderColor="gray.500"
+                                    linkProps={{ w: "100%" }}
+                                    w="100%"
+                                    justifyContent="flex-start"
                                 >
                                     <Text as="span" verticalAlign="middle">
                                         {attendee.conference.shortName}
@@ -118,6 +122,7 @@ export default function ListConferencesView(): JSX.Element {
             </>
         );
     };
+
     const attendingConferencesEl = (
         <VStack
             width={["100%", "100%", "50%"]}
@@ -127,6 +132,9 @@ export default function ListConferencesView(): JSX.Element {
             spacing={5}
         >
             <Heading as="h1">Attend</Heading>
+            <Text maxW="300px" fontSize="sm">
+                Choose a conference to attend or use an invite code to join a new one.
+            </Text>
             {renderConferenceList(
                 ViewIcon,
                 attending,
@@ -146,6 +154,9 @@ export default function ListConferencesView(): JSX.Element {
             spacing={5}
         >
             <Heading as="h1">Organise</Heading>
+            <Text maxW="300px" fontSize="sm">
+                Choose a conference you are organising or use a demo code to create one.
+            </Text>
             {renderConferenceList(
                 SettingsIcon,
                 organising,

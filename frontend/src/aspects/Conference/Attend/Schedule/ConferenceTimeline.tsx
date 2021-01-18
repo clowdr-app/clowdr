@@ -102,7 +102,6 @@ gql`
         id
         contentGroupTypeName
         title
-        shortTitle
         # contentGroupTags {
         #     ...Timeline_ContentGroupTag
         # }
@@ -120,7 +119,7 @@ gql`
         }
     }
 
-    fragment Timeline_Event on Event {
+    fragment Timeline_Event_FullInfo on Event {
         id
         roomId
         intendedRoomModeName
@@ -139,6 +138,19 @@ gql`
         }
     }
 
+    fragment Timeline_Event on Event {
+        id
+        roomId
+        name
+        startTime
+        durationSeconds
+
+        contentGroup {
+            id
+            title
+        }
+    }
+
     fragment Timeline_Room on Room {
         id
         name
@@ -149,8 +161,14 @@ gql`
         }
     }
 
+    query Timeline_SelectEvent($id: uuid!) {
+        Event_by_pk(id: $id) {
+            ...Timeline_Event_FullInfo
+        }
+    }
+
     query Timeline_SelectRooms($conferenceId: uuid!) {
-        Room(where: { conferenceId: { _eq: $conferenceId } }) {
+        Room(where: { conferenceId: { _eq: $conferenceId }, roomPrivacyName: { _eq: PUBLIC }, events: {} }) {
             ...Timeline_Room
         }
     }

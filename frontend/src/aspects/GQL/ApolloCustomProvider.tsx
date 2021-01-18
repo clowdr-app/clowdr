@@ -51,36 +51,19 @@ export default function ApolloCustomProvider({
                     const magicToken = headers ? headers["x-hasura-magic-token"] : undefined;
                     delete newHeaders["x-hasura-magic-token"];
 
-                    const oneTimeRefreshVar = window.localStorage.getItem("LAST_FORCE_REFRESH_TOKEN");
                     const authTokenConferenceId = window.localStorage.getItem("CLOWDR_AUTH_CONF_SLUG");
-                    const ignoreCache =
-                        (conferenceSlug &&
-                            (!oneTimeRefreshVar ||
-                                parseInt(oneTimeRefreshVar, 10) + 6 * 60 * 60 * 1000 < Date.now())) ||
-                        !!magicToken ||
-                        (!!conferenceSlug && conferenceSlug !== authTokenConferenceId);
+                    const ignoreCache = !!magicToken || (!!conferenceSlug && conferenceSlug !== authTokenConferenceId);
+                    if (conferenceSlug) {
+                        window.localStorage.setItem("CLOWDR_AUTH_CONF_SLUG", conferenceSlug);
+                    } else {
+                        window.localStorage.removeItem("CLOWDR_AUTH_CONF_SLUG");
+                    }
                     const token = await getAccessTokenSilently({
                         ignoreCache,
                         "magic-token": magicToken,
                         "conference-slug": conferenceSlug ?? undefined,
                     });
-                    if (ignoreCache) {
-                        window.localStorage.setItem("LAST_FORCE_REFRESH_TOKEN", Date.now().toString());
-                    }
-                    if (conferenceSlug) {
-                        window.localStorage.setItem("CLOWDR_AUTH_CONF_SLUG", conferenceSlug);
-                    }
-                    // // Auth0 issues tokens a few seconds in the future
-                    // // so we wait a brief period before using a definitely-fresh
-                    // // token.
-                    // // (The error may still occur if ignoreCache was false but a
-                    // //  new token was required anyway. The `useQueryErrorResult`
-                    // //  handles that case.)
-                    // if (ignoreCache) {
-                    //     await new Promise((resolve) => {
-                    //         setTimeout(resolve, 3000);
-                    //     });
-                    // }
+
                     newHeaders.Authorization = `Bearer ${token}`;
                 } else {
                     if (conferenceSlug) {
@@ -97,42 +80,53 @@ export default function ApolloCustomProvider({
                 uri: `${httpProtocol}://${import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN}/v1/graphql`,
             });
 
-            const wsLink = new WebSocketLink({
-                uri: `${wsProtocol}://${import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN}/v1/graphql`, // use wss for a secure endpoint
-                options: {
-                    reconnect: true,
-                    connectionParams: async () => {
-                        if (isAuthenticated) {
-                            const authTokenConferenceId = window.localStorage.getItem("CLOWDR_AUTH_CONF_SLUG_WSS");
-                            const ignoreCache = !!conferenceSlug && conferenceSlug !== authTokenConferenceId;
-                            if (conferenceSlug) {
-                                window.localStorage.setItem("CLOWDR_AUTH_CONF_SLUG_WSS", conferenceSlug);
-                            }
-                            return {
-                                headers: {
-                                    Authorization: `Bearer ${await getAccessTokenSilently({
-                                        ignoreCache,
-                                        "conference-slug": conferenceSlug ?? undefined,
-                                    })}`,
-                                },
-                            };
-                        } else {
-                            return {};
-                        }
-                    },
-                },
-            });
+            const wsLink = conferenceSlug
+                ? new WebSocketLink({
+                      uri: `${wsProtocol}://${import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN}/v1/graphql`, // use wss for a secure endpoint
+                      options: {
+                          reconnect: true,
+                          connectionParams: async () => {
+                              if (isAuthenticated) {
+                                  const authTokenConferenceId = window.localStorage.getItem(
+                                      "CLOWDR_AUTH_CONF_SLUG_WSS"
+                                  );
+                                  const ignoreCache = !!conferenceSlug && conferenceSlug !== authTokenConferenceId;
+                                  if (conferenceSlug) {
+                                      window.localStorage.setItem("CLOWDR_AUTH_CONF_SLUG_WSS", conferenceSlug);
+                                  } else {
+                                      window.localStorage.removeItem("CLOWDR_AUTH_CONF_SLUG_WSS");
+                                  }
+                                  const token = await getAccessTokenSilently({
+                                      ignoreCache,
+                                      "conference-slug": conferenceSlug ?? undefined,
+                                  });
+                                  return {
+                                      headers: {
+                                          Authorization: `Bearer ${token}`,
+                                      },
+                                  };
+                              } else {
+                                  return {};
+                              }
+                          },
+                      },
+                  })
+                : undefined;
 
-            const link = authLink.concat(
-                split(
-                    ({ query }) => {
-                        const definition = getMainDefinition(query);
-                        return definition.kind === "OperationDefinition" && definition.operation === "subscription";
-                    },
-                    wsLink,
-                    httpLink
-                )
-            );
+            const link = wsLink
+                ? authLink.concat(
+                      split(
+                          ({ query }) => {
+                              const definition = getMainDefinition(query);
+                              return (
+                                  definition.kind === "OperationDefinition" && definition.operation === "subscription"
+                              );
+                          },
+                          wsLink,
+                          httpLink
+                      )
+                  )
+                : authLink.concat(httpLink);
 
             const cache = new InMemoryCache({
                 typePolicies: {

@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client";
-import { Box, Button, CloseButton, Heading, RenderProps, useToast, VStack } from "@chakra-ui/react";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
+import { Box, Button, ButtonGroup, CloseButton, Heading, RenderProps, useToast, VStack } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import {
@@ -81,6 +82,7 @@ export function ChatNotificationsProvider_WithAttendee({
     const history = useHistory();
     const location = useLocation();
     const toast = useToast();
+    console.log(subscription.data?.chat_Subscription);
     useEffect(() => {
         (async () => {
             if (subscription.data?.chat_Subscription) {
@@ -183,16 +185,35 @@ export function ChatNotificationsProvider_WithAttendee({
                                                 <Box maxW="250px" maxH="200px" overflow="hidden" noOfLines={10}>
                                                     <Markdown restrictHeadingSize>{newMsg.message}</Markdown>
                                                 </Box>
-                                                {chatPath ? (
-                                                    <Button
-                                                        colorScheme="green"
-                                                        onClick={() => {
-                                                            history.push(`/conference/${conference.slug}${chatPath}`);
-                                                        }}
-                                                    >
-                                                        Go to chat
-                                                    </Button>
-                                                ) : undefined}
+                                                <ButtonGroup isAttached>
+                                                    {chatPath ? (
+                                                        <Button
+                                                            colorScheme="green"
+                                                            variant="outline"
+                                                            onClick={() => {
+                                                                history.push(
+                                                                    `/conference/${conference.slug}${chatPath}`
+                                                                );
+                                                            }}
+                                                        >
+                                                            Go to chat
+                                                        </Button>
+                                                    ) : undefined}
+                                                    {chatPath ? (
+                                                        <Button
+                                                            colorScheme="blue"
+                                                            variant="outline"
+                                                            onClick={() => {
+                                                                window.open(
+                                                                    `/conference/${conference.slug}${chatPath}`,
+                                                                    "_blank"
+                                                                );
+                                                            }}
+                                                        >
+                                                            <ExternalLinkIcon />
+                                                        </Button>
+                                                    ) : undefined}
+                                                </ButtonGroup>
                                             </VStack>
                                         );
                                     },
@@ -203,7 +224,15 @@ export function ChatNotificationsProvider_WithAttendee({
                 }
             }
         })();
-    }, [conference.slug, history, location.pathname, subscription.data?.chat_Subscription, toast]);
+    }, [
+        attendeeId,
+        conference.slug,
+        history,
+        location.pathname,
+        setNotifiedUpTo,
+        subscription.data?.chat_Subscription,
+        toast,
+    ]);
 
     return <>{children}</>;
 }

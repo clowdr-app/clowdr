@@ -82,7 +82,6 @@ export function ChatNotificationsProvider_WithAttendee({
     const history = useHistory();
     const location = useLocation();
     const toast = useToast();
-    console.log(subscription.data?.chat_Subscription);
     useEffect(() => {
         (async () => {
             if (subscription.data?.chat_Subscription) {

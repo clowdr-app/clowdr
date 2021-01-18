@@ -57,7 +57,7 @@ function reduce<T>(oldState: ReducerState<T>, action: ReducerActions<T>) {
     if (newState.stateName === "idle" && action.name === "start-load") {
         newState.stateName = "loading";
         newState.lastError = null;
-    } else if (newState.stateName === "loading" && action.name === "render-items") {
+    } else if (action.name === "render-items") {
         if (action.newItems.size > 0) {
             newState.stateName = "idle";
             newState.lastError = null;

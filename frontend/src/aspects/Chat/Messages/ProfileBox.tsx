@@ -1,27 +1,17 @@
 import { Button, ButtonProps, Image, useToast } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import type { AttendeeDataFragment } from "../../../generated/graphql";
 import FAIcon from "../../Icons/FAIcon";
 import { useChatConfiguration } from "../Configuration";
 import { useChatProfileModal } from "../Frame/ChatProfileModalProvider";
-import { useAttendeesContext } from "./AttendeesContext";
 
-export default function ProfilePictureBox({ attendeeId, ...props }: { attendeeId: string } & ButtonProps): JSX.Element {
+export default function ProfilePictureBox({
+    attendee,
+    ...props
+}: { attendee: AttendeeDataFragment | null } & ButtonProps): JSX.Element {
     const config = useChatConfiguration();
-    const [attendee, setAttendee] = useState<AttendeeDataFragment | null>(null);
-    const attendees = useAttendeesContext();
     const profileModal = useChatProfileModal();
     const toast = useToast();
-
-    useEffect(() => {
-        const sub = attendees.subscribe(attendeeId, setAttendee);
-        if (sub.attendee) {
-            setAttendee(sub.attendee);
-        }
-        return () => {
-            attendees.unsubscribe(sub.id);
-        };
-    }, [attendeeId, attendees]);
 
     return (
         <Button

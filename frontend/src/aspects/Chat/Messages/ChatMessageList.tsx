@@ -97,7 +97,6 @@ function areMessagesEqual(x: ChatMessageDataFragment, y: ChatMessageDataFragment
         x.message === y.message &&
         areMessageDatasEqual(x.type, x.data, y.data) &&
         x.duplicatedMessageId === y.duplicatedMessageId &&
-        x.isPinned === y.isPinned &&
         areReactionsEqual(x.reactions, y.reactions)
     );
 }

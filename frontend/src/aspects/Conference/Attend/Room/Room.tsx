@@ -15,7 +15,7 @@ import {
 import { ExternalLinkButton } from "../../../Chakra/LinkButton";
 import { Chat } from "../../../Chat/Chat";
 import type { ChatSources } from "../../../Chat/Configuration";
-import usePolling from "../../../Generic/usePolling";
+import { useRealTime } from "../../../Generic/useRealTime";
 import { ContentGroupSummaryWrapper } from "../Content/ContentGroupSummary";
 import { BreakoutVonageRoom } from "./BreakoutVonageRoom";
 import { EventEndControls } from "./EventEndControls";
@@ -57,8 +57,7 @@ export function Room({
         secondsUntilZoomEvent,
     } = useCurrentRoomEvent(roomDetails);
 
-    const [now, setNow] = useState<Date>(new Date());
-    usePolling(() => setNow(new Date()), 5000, true);
+    const now = useRealTime(5000);
 
     const currentEventIsLive = useMemo(
         () =>
@@ -138,6 +137,139 @@ export function Room({
         }
     }, [currentEventData?.Event_by_pk?.contentGroup, roomDetails.chatId]);
 
+    const chatEl = useMemo(
+        () =>
+            chatSources ? (
+                <Chat
+                    sources={{ ...chatSources }}
+                    flexBasis={0}
+                    flexGrow={1}
+                    mr={4}
+                    maxHeight={["80vh", "80vh", "80vh", "850px"]}
+                />
+            ) : (
+                <>No chat found for this room.</>
+            ),
+        [chatSources]
+    );
+
+    const controlBarEl = useMemo(
+        () => (
+            <RoomControlBar
+                roomDetails={roomDetails}
+                onSetBackstage={setBackstage}
+                backstage={backstage}
+                hasBackstage={!!hlsUri}
+                breakoutRoomEnabled={
+                    secondsUntilNonBreakoutEvent > 180 && !withinThreeMinutesOfBroadcastEvent && !backstage
+                }
+            />
+        ),
+        [backstage, hlsUri, roomDetails, secondsUntilNonBreakoutEvent, withinThreeMinutesOfBroadcastEvent]
+    );
+
+    const backStageEl = useMemo(
+        () => <RoomBackstage backstage={backstage} roomDetails={roomDetails} eventPeople={eventPeople} />,
+        [backstage, eventPeople, roomDetails]
+    );
+
+    const playerEl = useMemo(
+        () =>
+            hlsUri && withinThreeMinutesOfBroadcastEvent ? (
+                <Box display={backstage ? "none" : "block"}>
+                    <ReactPlayer
+                        width="100%"
+                        height="auto"
+                        url={hlsUri}
+                        config={{
+                            file: {
+                                hlsOptions: {},
+                            },
+                        }}
+                        playing={
+                            (withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent) && !backstage && intendPlayStream
+                        }
+                        controls={true}
+                        onPause={() => setIntendPlayStream(false)}
+                        onPlay={() => setIntendPlayStream(true)}
+                    />
+                </Box>
+            ) : (
+                <></>
+            ),
+        [backstage, currentRoomEvent, hlsUri, intendPlayStream, withinThreeMinutesOfBroadcastEvent]
+    );
+
+    const breakoutVonageRoomEl = useMemo(() => <BreakoutVonageRoom room={roomDetails} />, [roomDetails]);
+
+    const contentEl = useMemo(
+        () => (
+            <Box flexGrow={1}>
+                <RoomTitle roomDetails={roomDetails} />
+
+                {currentRoomEvent ? (
+                    <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
+                        <Text>Started {formatRelative(Date.parse(currentRoomEvent.startTime), now)}</Text>
+                        <Heading as="h3" textAlign="left" size="lg" mb={2}>
+                            {currentRoomEvent.name}
+                        </Heading>
+                        {currentRoomEvent?.contentGroupId ? (
+                            <ContentGroupSummaryWrapper
+                                contentGroupId={currentRoomEvent.contentGroupId}
+                                linkToItem={true}
+                            />
+                        ) : (
+                            <></>
+                        )}
+                    </Box>
+                ) : (
+                    <></>
+                )}
+                {nextRoomEvent ? (
+                    <Box backgroundColor={nextBgColour} borderRadius={5} px={5} py={3} my={5}>
+                        <Text>Starts {formatRelative(Date.parse(nextRoomEvent.startTime), now)}</Text>
+                        <Heading as="h3" textAlign="left" size="lg" mb={2}>
+                            {nextRoomEvent.name}
+                        </Heading>
+                        {nextRoomEvent?.contentGroupId ? (
+                            <ContentGroupSummaryWrapper
+                                contentGroupId={nextRoomEvent.contentGroupId}
+                                linkToItem={true}
+                            />
+                        ) : (
+                            <></>
+                        )}
+                    </Box>
+                ) : (
+                    <></>
+                )}
+
+                {!currentRoomEvent && !nextRoomEvent ? <Text p={5}>No current event in this room.</Text> : <></>}
+
+                {roomDetails.originatingContentGroup?.id &&
+                roomDetails.originatingContentGroup.contentGroupTypeName !== ContentGroupType_Enum.Sponsor ? (
+                    <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
+                        <ContentGroupSummaryWrapper
+                            contentGroupId={roomDetails.originatingContentGroup.id}
+                            linkToItem={true}
+                        />
+                    </Box>
+                ) : (
+                    <></>
+                )}
+
+                {roomDetails.originatingContentGroup ? (
+                    <RoomSponsorContent contentGroupId={roomDetails.originatingContentGroup.id} />
+                ) : (
+                    <></>
+                )}
+            </Box>
+        ),
+        [bgColour, currentRoomEvent, nextBgColour, nextRoomEvent, now, roomDetails]
+    );
+
+    const eventEndControls = useMemo(() => <EventEndControls currentRoomEvent={currentRoomEvent} />, [currentRoomEvent]);
+
     return (
         <HStack width="100%" flexWrap="wrap" alignItems="stretch">
             <VStack
@@ -149,16 +281,8 @@ export function Room({
                 minW={["100%", "100%", "100%", "700px"]}
                 maxW="100%"
             >
-                <RoomControlBar
-                    roomDetails={roomDetails}
-                    onSetBackstage={setBackstage}
-                    backstage={backstage}
-                    hasBackstage={!!hlsUri}
-                    breakoutRoomEnabled={
-                        secondsUntilNonBreakoutEvent > 180 && !withinThreeMinutesOfBroadcastEvent && !backstage
-                    }
-                />
-                <RoomBackstage backstage={backstage} roomDetails={roomDetails} eventPeople={eventPeople} />
+                {controlBarEl}
+                {backStageEl}
 
                 {secondsUntilNonBreakoutEvent >= 180 && secondsUntilNonBreakoutEvent <= 300 ? (
                     <Alert status="warning">
@@ -203,104 +327,18 @@ export function Room({
                     <></>
                 )}
 
-                {hlsUri && withinThreeMinutesOfBroadcastEvent ? (
-                    <Box display={backstage ? "none" : "block"}>
-                        <ReactPlayer
-                            width="100%"
-                            height="auto"
-                            url={hlsUri}
-                            config={{
-                                file: {
-                                    hlsOptions: {},
-                                },
-                            }}
-                            playing={
-                                (withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent) &&
-                                !backstage &&
-                                intendPlayStream
-                            }
-                            controls={true}
-                            onPause={() => setIntendPlayStream(false)}
-                            onPlay={() => setIntendPlayStream(true)}
-                        />
-                    </Box>
-                ) : (
-                    <></>
-                )}
+                {playerEl}
 
                 {secondsUntilNonBreakoutEvent > 180 && !withinThreeMinutesOfBroadcastEvent && !backstage ? (
                     <Box display={backstage ? "none" : "block"} bgColor={bgColour} p={2} pt={5} borderRadius="md">
-                        <BreakoutVonageRoom room={roomDetails} />
+                        {breakoutVonageRoomEl}
                     </Box>
                 ) : (
                     <></>
                 )}
 
                 <HStack alignItems="flex-start">
-                    <Box flexGrow={1}>
-                        <RoomTitle roomDetails={roomDetails} />
-
-                        {currentRoomEvent ? (
-                            <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
-                                <Text>Started {formatRelative(Date.parse(currentRoomEvent.startTime), now)}</Text>
-                                <Heading as="h3" textAlign="left" size="lg" mb={2}>
-                                    {currentRoomEvent.name}
-                                </Heading>
-                                {currentRoomEvent?.contentGroupId ? (
-                                    <ContentGroupSummaryWrapper
-                                        contentGroupId={currentRoomEvent.contentGroupId}
-                                        linkToItem={true}
-                                    />
-                                ) : (
-                                    <></>
-                                )}
-                            </Box>
-                        ) : (
-                            <></>
-                        )}
-                        {nextRoomEvent ? (
-                            <Box backgroundColor={nextBgColour} borderRadius={5} px={5} py={3} my={5}>
-                                <Text>Starts {formatRelative(Date.parse(nextRoomEvent.startTime), now)}</Text>
-                                <Heading as="h3" textAlign="left" size="lg" mb={2}>
-                                    {nextRoomEvent.name}
-                                </Heading>
-                                {nextRoomEvent?.contentGroupId ? (
-                                    <ContentGroupSummaryWrapper
-                                        contentGroupId={nextRoomEvent.contentGroupId}
-                                        linkToItem={true}
-                                    />
-                                ) : (
-                                    <></>
-                                )}
-                            </Box>
-                        ) : (
-                            <></>
-                        )}
-
-                        {!currentRoomEvent && !nextRoomEvent ? (
-                            <Text p={5}>No current event in this room.</Text>
-                        ) : (
-                            <></>
-                        )}
-
-                        {roomDetails.originatingContentGroup?.id &&
-                        roomDetails.originatingContentGroup.contentGroupTypeName !== ContentGroupType_Enum.Sponsor ? (
-                            <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
-                                <ContentGroupSummaryWrapper
-                                    contentGroupId={roomDetails.originatingContentGroup.id}
-                                    linkToItem={true}
-                                />
-                            </Box>
-                        ) : (
-                            <></>
-                        )}
-
-                        {roomDetails.originatingContentGroup ? (
-                            <RoomSponsorContent contentGroupId={roomDetails.originatingContentGroup.id} />
-                        ) : (
-                            <></>
-                        )}
-                    </Box>
+                    {contentEl}
                     <Box>
                         {backstage ? (
                             <></>
@@ -315,20 +353,10 @@ export function Room({
                 </HStack>
             </VStack>
             <VStack flexGrow={1} flexBasis={0} minW={["100%", "100%", "100%", "300px"]}>
-                {chatSources ? (
-                    <Chat
-                        sources={{ ...chatSources }}
-                        flexBasis={0}
-                        flexGrow={1}
-                        mr={4}
-                        maxHeight={["80vh", "80vh", "80vh", "850px"]}
-                    />
-                ) : (
-                    <>No chat found for this room.</>
-                )}
+                {chatEl}
 
                 <Box display={currentEventIsLive ? "block" : "none"}>
-                    <EventEndControls currentRoomEvent={currentRoomEvent} />
+                    {eventEndControls}
                 </Box>
             </VStack>
         </HStack>

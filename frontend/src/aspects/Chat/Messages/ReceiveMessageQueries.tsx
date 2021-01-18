@@ -1,16 +1,16 @@
 import { ApolloQueryResult, gql } from "@apollo/client";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
     ChatMessageDataFragment,
     SelectFirstMessagesPageQuery,
     SelectMessagesPageQuery,
     useDeleteMessageMutation,
-    useLatestMessagesSubscription,
+    useNextMessageSubscription,
+    useNextReactionsQuery,
     useSelectFirstMessagesPageQuery,
     useSelectMessagesPageQuery,
     useSelectSingleMessageQuery,
 } from "../../../generated/graphql";
-import { useChatConfiguration } from "../Configuration";
 import ReadUpToIndexProvider from "./ReadUpToIndexProvider";
 
 gql`
@@ -36,10 +36,6 @@ gql`
         data
         id
         senderId
-        sender {
-            id
-            displayName
-        }
         symbol
         type
     }
@@ -49,16 +45,31 @@ gql`
         data
         duplicatedMessageId
         id
-        isPinned
         message
         reactions {
             ...ChatReactionData
         }
         senderId
-        sender {
-            id
-            displayName
-        }
+        type
+        chatId
+    }
+
+    fragment SubscribedChatReactionData on chat_Reaction {
+        data
+        id
+        senderId
+        symbol
+        type
+        messageId
+    }
+
+    fragment SubscribedChatMessageData on chat_Message {
+        created_at
+        data
+        duplicatedMessageId
+        id
+        message
+        senderId
         type
         chatId
     }
@@ -91,9 +102,15 @@ gql`
         }
     }
 
-    subscription LatestMessages($chatId: uuid!, $maxCount: Int!) {
-        chat_Message(order_by: { id: desc }, where: { chatId: { _eq: $chatId } }, limit: $maxCount) {
-            ...ChatMessageData
+    subscription NextMessage($prevId: Int!, $chatId: uuid!) {
+        chat_Message(order_by: { id: desc }, where: { id: { _gt: $prevId }, chatId: { _eq: $chatId } }, limit: 1) {
+            ...SubscribedChatMessageData
+        }
+    }
+
+    query NextReactions($messageIds: [Int!]!) {
+        chat_Reaction(where: { messageId: { _in: $messageIds } }) {
+            ...SubscribedChatReactionData
         }
     }
 `;
@@ -131,21 +148,12 @@ export default function ReceiveMessageQueriesProvider({
     chatId: string;
     setAnsweringQuestionId: React.RefObject<{ f: (ids: number[] | null) => void; answeringIds: number[] | null }>;
 }): JSX.Element {
-    const config = useChatConfiguration();
-
     const selectMessagesPageQ = useSelectMessagesPageQuery({
         skip: true,
         fetchPolicy: "network-only",
     });
     const selectFirstMessagesPageQ = useSelectFirstMessagesPageQuery({
         skip: true,
-        fetchPolicy: "network-only",
-    });
-    const latestMessagesSub = useLatestMessagesSubscription({
-        variables: {
-            chatId,
-            maxCount: config.messageLiveBatchSize ?? 30,
-        },
         fetchPolicy: "network-only",
     });
     const refetchSingleMessageQ = useSelectSingleMessageQuery({
@@ -214,14 +222,78 @@ export default function ReceiveMessageQueriesProvider({
         },
         [deleteMessage]
     );
-    const liveMessages = useMemo(() => {
+
+    const [prevMaxId, setPrevMaxId] = useState<number>(-1);
+    const [liveMessages, setLiveMessages] = useState<{
+        msgs: Map<number, ChatMessageDataFragment>;
+        maxId: number;
+    }>({
+        msgs: new Map(),
+        maxId: -1,
+    });
+    const nextMessageSub = useNextMessageSubscription({
+        variables: {
+            chatId,
+            prevId: liveMessages.maxId,
+        },
+        fetchPolicy: "network-only",
+    });
+    const nextReactionsSub = useNextReactionsQuery({
+        variables: {
+            messageIds: [...liveMessages.msgs.keys()],
+        },
+        fetchPolicy: "network-only",
+        pollInterval: 3000,
+    });
+    useEffect(() => {
+        setPrevMaxId(liveMessages.maxId);
+    }, [liveMessages.maxId]);
+    useEffect(() => {
         setRefetchMsg(null);
-        return refetchMsg
-            ? new Map<number, ChatMessageDataFragment>([[refetchMsg.id, refetchMsg]])
-            : latestMessagesSub.data?.chat_Message
-            ? new Map(latestMessagesSub.data.chat_Message.map((item) => [item.id, item]))
-            : null;
-    }, [latestMessagesSub.data?.chat_Message, refetchMsg]);
+        setLiveMessages((prevLiveMessages) => {
+            const newLiveMessages = new Map(prevLiveMessages.msgs.entries());
+            let maxId = prevLiveMessages.maxId;
+
+            if (refetchMsg) {
+                newLiveMessages.set(refetchMsg.id, refetchMsg);
+            }
+
+            if (nextMessageSub.data?.chat_Message && nextMessageSub.data?.chat_Message.length > 0) {
+                const nextMessage = nextMessageSub.data.chat_Message[0];
+                newLiveMessages.set(nextMessage.id, {
+                    ...nextMessage,
+                    reactions: [],
+                });
+                maxId = Math.max(maxId, nextMessage.id);
+            }
+
+            if (nextReactionsSub.data?.chat_Reaction) {
+                const freshMsgs = new Map<number, ChatMessageDataFragment>();
+                for (const reaction of nextReactionsSub.data.chat_Reaction) {
+                    let msg = freshMsgs.get(reaction.messageId);
+                    if (msg) {
+                        freshMsgs.set(reaction.messageId, {
+                            ...msg,
+                            reactions: [...msg.reactions, reaction],
+                        });
+                    } else {
+                        msg = newLiveMessages.get(reaction.messageId);
+                        if (msg) {
+                            freshMsgs.set(reaction.messageId, {
+                                ...msg,
+                                reactions: [reaction],
+                            });
+                        }
+                    }
+                }
+            }
+
+            return {
+                msgs: newLiveMessages,
+                maxId,
+            };
+        });
+    }, [nextMessageSub.data?.chat_Message, nextReactionsSub.data?.chat_Reaction, refetchMsg]);
 
     return (
         <ReceiveMessageQueriesContext.Provider
@@ -229,7 +301,7 @@ export default function ReceiveMessageQueriesProvider({
                 load,
                 refetch,
                 delete: deleteMsg,
-                liveMessages,
+                liveMessages: liveMessages.msgs,
                 deletedItems,
                 setAnsweringQuestionId,
             }}

@@ -11,9 +11,9 @@ import {
     useColorModeValue,
     VStack,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Twemoji } from "react-emoji-render";
-import { ChatMessageDataFragment, Chat_MessageType_Enum, Chat_ReactionType_Enum } from "../../../generated/graphql";
+import { AttendeeDataFragment, ChatMessageDataFragment, Chat_MessageType_Enum, Chat_ReactionType_Enum } from "../../../generated/graphql";
 import { defaultOutline_AsBoxShadow } from "../../Chakra/ChakraCustomProvider";
 import { LinkButton } from "../../Chakra/LinkButton";
 import { useConference } from "../../Conference/useConference";
@@ -24,6 +24,7 @@ import { MessageTypeIndicator } from "../Compose/MessageTypeIndicator";
 import { ChatSpacing, useChatConfiguration } from "../Configuration";
 import { useReflectionInfoModal } from "../ReflectionInfoModal";
 import type { DuplicationMarkerMessageData } from "../Types/Messages";
+import { useAttendeesContext } from "./AttendeesContext";
 import MessageControls from "./MessageControls";
 import PollOptions from "./PollOptions";
 import ProfileBox from "./ProfileBox";
@@ -73,7 +74,7 @@ function ReflectionButton({ children }: { children: React.ReactNode | React.Reac
     );
 }
 
-function MessageBody({ message }: { message: ChatMessageDataFragment }): JSX.Element {
+function MessageBody({ message, attendee }: { message: ChatMessageDataFragment; attendee: AttendeeDataFragment | null }): JSX.Element {
     const config = useChatConfiguration();
     const messages = useReceiveMessageQueries();
     const conference = useConference();
@@ -179,7 +180,7 @@ function MessageBody({ message }: { message: ChatMessageDataFragment }): JSX.Ele
                 {message.type !== Chat_MessageType_Enum.Message && message.type !== Chat_MessageType_Enum.Emote ? (
                     <MessageTypeIndicator messageType={message.type} fontSize={pictureSize * 0.8} opacity={0.7} />
                 ) : message.senderId ? (
-                    <ProfileBox attendeeId={message.senderId} w={pictureSize} />
+                    <ProfileBox attendee={attendee} w={pictureSize} />
                 ) : undefined}
             </VStack>
             <VStack
@@ -195,7 +196,7 @@ function MessageBody({ message }: { message: ChatMessageDataFragment }): JSX.Ele
                 <Flex flexDir="row" w="100%">
                     {message.type !== Chat_MessageType_Enum.Emote ? (
                         <Text as="span" fontSize={smallFontSize} color={timeColour}>
-                            {message.sender?.displayName ?? "<Unknown>"}
+                            {attendee?.displayName ?? " "}
                         </Text>
                     ) : undefined}
                     {/* TODO: Permissions */}
@@ -320,6 +321,18 @@ export default function MessageBox({ message }: { message: ChatMessageDataFragme
         hour12: false,
     };
 
+    const [attendee, setAttendee] = useState<AttendeeDataFragment | null>(null);
+    const attendees = useAttendeesContext();
+    useEffect(() => {
+        const sub = attendees.subscribe(message.senderId, setAttendee);
+        if (sub.attendee) {
+            setAttendee(sub.attendee);
+        }
+        return () => {
+            attendees.unsubscribe(sub.id);
+        };
+    }, [attendees, message.senderId]);
+
     return (
         <HStack
             role="listitem"
@@ -336,10 +349,13 @@ export default function MessageBox({ message }: { message: ChatMessageDataFragme
             _hover={{}}
             tabIndex={0}
             aria-label={`Message sent at ${createdAt.toLocaleString(undefined, timeFormat)} by ${
-                message.sender?.displayName ?? "<Unknown>"
+                attendee?.displayName ?? ""
             }. ${message.message}`}
         >
-            <MessageBody message={message} />
+            <MessageBody
+                attendee={attendee}
+                message={message}
+            />
         </HStack>
     );
 }

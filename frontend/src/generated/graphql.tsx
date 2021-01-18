@@ -29530,12 +29530,16 @@ export type ChatFlagDataFragment = { readonly __typename?: 'chat_Flag', readonly
 
 export type SenderDataFragment = { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string };
 
-export type ChatReactionDataFragment = { readonly __typename?: 'chat_Reaction', readonly data: any, readonly id: number, readonly senderId: any, readonly symbol: string, readonly type: Chat_ReactionType_Enum, readonly sender: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } };
+export type ChatReactionDataFragment = { readonly __typename?: 'chat_Reaction', readonly data: any, readonly id: number, readonly senderId: any, readonly symbol: string, readonly type: Chat_ReactionType_Enum };
 
-export type ChatMessageDataFragment = { readonly __typename?: 'chat_Message', readonly created_at: any, readonly data: any, readonly duplicatedMessageId?: Maybe<number>, readonly id: number, readonly isPinned: boolean, readonly message: string, readonly senderId?: Maybe<any>, readonly type: Chat_MessageType_Enum, readonly chatId: any, readonly reactions: ReadonlyArray<(
+export type ChatMessageDataFragment = { readonly __typename?: 'chat_Message', readonly created_at: any, readonly data: any, readonly duplicatedMessageId?: Maybe<number>, readonly id: number, readonly message: string, readonly senderId?: Maybe<any>, readonly type: Chat_MessageType_Enum, readonly chatId: any, readonly reactions: ReadonlyArray<(
     { readonly __typename?: 'chat_Reaction' }
     & ChatReactionDataFragment
-  )>, readonly sender?: Maybe<{ readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string }> };
+  )> };
+
+export type SubscribedChatReactionDataFragment = { readonly __typename?: 'chat_Reaction', readonly data: any, readonly id: number, readonly senderId: any, readonly symbol: string, readonly type: Chat_ReactionType_Enum, readonly messageId: number };
+
+export type SubscribedChatMessageDataFragment = { readonly __typename?: 'chat_Message', readonly created_at: any, readonly data: any, readonly duplicatedMessageId?: Maybe<number>, readonly id: number, readonly message: string, readonly senderId?: Maybe<any>, readonly type: Chat_MessageType_Enum, readonly chatId: any };
 
 export type SelectFirstMessagesPageQueryVariables = Exact<{
   chatId: Scalars['uuid'];
@@ -29577,15 +29581,25 @@ export type DeleteMessageMutationVariables = Exact<{
 
 export type DeleteMessageMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Message_by_pk?: Maybe<{ readonly __typename?: 'chat_Message', readonly id: number }> };
 
-export type LatestMessagesSubscriptionVariables = Exact<{
+export type NextMessageSubscriptionVariables = Exact<{
+  prevId: Scalars['Int'];
   chatId: Scalars['uuid'];
-  maxCount: Scalars['Int'];
 }>;
 
 
-export type LatestMessagesSubscription = { readonly __typename?: 'subscription_root', readonly chat_Message: ReadonlyArray<(
+export type NextMessageSubscription = { readonly __typename?: 'subscription_root', readonly chat_Message: ReadonlyArray<(
     { readonly __typename?: 'chat_Message' }
-    & ChatMessageDataFragment
+    & SubscribedChatMessageDataFragment
+  )> };
+
+export type NextReactionsQueryVariables = Exact<{
+  messageIds: ReadonlyArray<Scalars['Int']>;
+}>;
+
+
+export type NextReactionsQuery = { readonly __typename?: 'query_root', readonly chat_Reaction: ReadonlyArray<(
+    { readonly __typename?: 'chat_Reaction' }
+    & SubscribedChatReactionDataFragment
   )> };
 
 export type PinDataFragment = { readonly __typename?: 'chat_Pin', readonly chatId: any, readonly attendeeId: any, readonly wasManuallyPinned: boolean };
@@ -31180,10 +31194,6 @@ export const ChatReactionDataFragmentDoc = gql`
   data
   id
   senderId
-  sender {
-    id
-    displayName
-  }
   symbol
   type
 }
@@ -31194,20 +31204,37 @@ export const ChatMessageDataFragmentDoc = gql`
   data
   duplicatedMessageId
   id
-  isPinned
   message
   reactions {
     ...ChatReactionData
   }
   senderId
-  sender {
-    id
-    displayName
-  }
   type
   chatId
 }
     ${ChatReactionDataFragmentDoc}`;
+export const SubscribedChatReactionDataFragmentDoc = gql`
+    fragment SubscribedChatReactionData on chat_Reaction {
+  data
+  id
+  senderId
+  symbol
+  type
+  messageId
+}
+    `;
+export const SubscribedChatMessageDataFragmentDoc = gql`
+    fragment SubscribedChatMessageData on chat_Message {
+  created_at
+  data
+  duplicatedMessageId
+  id
+  message
+  senderId
+  type
+  chatId
+}
+    `;
 export const PinDataFragmentDoc = gql`
     fragment PinData on chat_Pin {
   chatId
@@ -32605,40 +32632,73 @@ export function useDeleteMessageMutation(baseOptions?: Apollo.MutationHookOption
 export type DeleteMessageMutationHookResult = ReturnType<typeof useDeleteMessageMutation>;
 export type DeleteMessageMutationResult = Apollo.MutationResult<DeleteMessageMutation>;
 export type DeleteMessageMutationOptions = Apollo.BaseMutationOptions<DeleteMessageMutation, DeleteMessageMutationVariables>;
-export const LatestMessagesDocument = gql`
-    subscription LatestMessages($chatId: uuid!, $maxCount: Int!) {
+export const NextMessageDocument = gql`
+    subscription NextMessage($prevId: Int!, $chatId: uuid!) {
   chat_Message(
     order_by: {id: desc}
-    where: {chatId: {_eq: $chatId}}
-    limit: $maxCount
+    where: {id: {_gt: $prevId}, chatId: {_eq: $chatId}}
+    limit: 1
   ) {
-    ...ChatMessageData
+    ...SubscribedChatMessageData
   }
 }
-    ${ChatMessageDataFragmentDoc}`;
+    ${SubscribedChatMessageDataFragmentDoc}`;
 
 /**
- * __useLatestMessagesSubscription__
+ * __useNextMessageSubscription__
  *
- * To run a query within a React component, call `useLatestMessagesSubscription` and pass it any options that fit your needs.
- * When your component renders, `useLatestMessagesSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useNextMessageSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useNextMessageSubscription` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useLatestMessagesSubscription({
+ * const { data, loading, error } = useNextMessageSubscription({
  *   variables: {
+ *      prevId: // value for 'prevId'
  *      chatId: // value for 'chatId'
- *      maxCount: // value for 'maxCount'
  *   },
  * });
  */
-export function useLatestMessagesSubscription(baseOptions: Apollo.SubscriptionHookOptions<LatestMessagesSubscription, LatestMessagesSubscriptionVariables>) {
-        return Apollo.useSubscription<LatestMessagesSubscription, LatestMessagesSubscriptionVariables>(LatestMessagesDocument, baseOptions);
+export function useNextMessageSubscription(baseOptions: Apollo.SubscriptionHookOptions<NextMessageSubscription, NextMessageSubscriptionVariables>) {
+        return Apollo.useSubscription<NextMessageSubscription, NextMessageSubscriptionVariables>(NextMessageDocument, baseOptions);
       }
-export type LatestMessagesSubscriptionHookResult = ReturnType<typeof useLatestMessagesSubscription>;
-export type LatestMessagesSubscriptionResult = Apollo.SubscriptionResult<LatestMessagesSubscription>;
+export type NextMessageSubscriptionHookResult = ReturnType<typeof useNextMessageSubscription>;
+export type NextMessageSubscriptionResult = Apollo.SubscriptionResult<NextMessageSubscription>;
+export const NextReactionsDocument = gql`
+    query NextReactions($messageIds: [Int!]!) {
+  chat_Reaction(where: {messageId: {_in: $messageIds}}) {
+    ...SubscribedChatReactionData
+  }
+}
+    ${SubscribedChatReactionDataFragmentDoc}`;
+
+/**
+ * __useNextReactionsQuery__
+ *
+ * To run a query within a React component, call `useNextReactionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNextReactionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNextReactionsQuery({
+ *   variables: {
+ *      messageIds: // value for 'messageIds'
+ *   },
+ * });
+ */
+export function useNextReactionsQuery(baseOptions: Apollo.QueryHookOptions<NextReactionsQuery, NextReactionsQueryVariables>) {
+        return Apollo.useQuery<NextReactionsQuery, NextReactionsQueryVariables>(NextReactionsDocument, baseOptions);
+      }
+export function useNextReactionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NextReactionsQuery, NextReactionsQueryVariables>) {
+          return Apollo.useLazyQuery<NextReactionsQuery, NextReactionsQueryVariables>(NextReactionsDocument, baseOptions);
+        }
+export type NextReactionsQueryHookResult = ReturnType<typeof useNextReactionsQuery>;
+export type NextReactionsLazyQueryHookResult = ReturnType<typeof useNextReactionsLazyQuery>;
+export type NextReactionsQueryResult = Apollo.QueryResult<NextReactionsQuery, NextReactionsQueryVariables>;
 export const SelectPinDocument = gql`
     query SelectPin($chatId: uuid!, $attendeeId: uuid!) {
   chat_Chat_by_pk(id: $chatId) {

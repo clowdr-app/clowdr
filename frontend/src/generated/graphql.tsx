@@ -17430,6 +17430,8 @@ export type Chat_ReadUpToIndex = {
   readonly chatId: Scalars['uuid'];
   readonly messageId: Scalars['Int'];
   readonly notifiedUpToMessageId: Scalars['Int'];
+  /** A computed field, executes function "chat.unnotifiedCount" */
+  readonly unnotifiedCount?: Maybe<Scalars['Int']>;
   /** A computed field, executes function "chat.unreadCount" */
   readonly unreadCount?: Maybe<Scalars['Int']>;
   readonly updated_at: Scalars['timestamptz'];
@@ -29440,7 +29442,7 @@ export type Uuid_Comparison_Exp = {
   readonly _nin?: Maybe<ReadonlyArray<Scalars['uuid']>>;
 };
 
-export type SubdChatInfoFragment = { readonly __typename?: 'chat_Chat', readonly id: any, readonly contentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string> }>, readonly room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string }>, readonly readUpToIndices: ReadonlyArray<{ readonly __typename?: 'chat_ReadUpToIndex', readonly attendeeId: any, readonly chatId: any, readonly messageId: number, readonly unreadCount?: Maybe<number> }> };
+export type SubdChatInfoFragment = { readonly __typename?: 'chat_Chat', readonly id: any, readonly contentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string> }>, readonly room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly roomPrivacyName: RoomPrivacy_Enum }>, readonly messages: ReadonlyArray<{ readonly __typename?: 'chat_Message', readonly id: number, readonly message: string, readonly type: Chat_MessageType_Enum, readonly sender?: Maybe<{ readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string }> }>, readonly readUpToIndices: ReadonlyArray<{ readonly __typename?: 'chat_ReadUpToIndex', readonly attendeeId: any, readonly chatId: any, readonly notifiedUpToMessageId: number }> };
 
 export type SubdChatsUnreadCountsSubscriptionVariables = Exact<{
   attendeeId: Scalars['uuid'];
@@ -29452,15 +29454,14 @@ export type SubdChatsUnreadCountsSubscription = { readonly __typename?: 'subscri
       & SubdChatInfoFragment
     ) }> };
 
-export type SelectNewMessagesQueryVariables = Exact<{
-  where: Chat_Message_Bool_Exp;
+export type SetNotifiedUpToIndexMutationVariables = Exact<{
+  attendeeId: Scalars['uuid'];
+  chatId: Scalars['uuid'];
+  msgId: Scalars['Int'];
 }>;
 
 
-export type SelectNewMessagesQuery = { readonly __typename?: 'query_root', readonly chat_Message: ReadonlyArray<(
-    { readonly __typename?: 'chat_Message' }
-    & ChatMessageDataFragment
-  )> };
+export type SetNotifiedUpToIndexMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_ReadUpToIndex_one?: Maybe<{ readonly __typename?: 'chat_ReadUpToIndex', readonly chatId: any, readonly attendeeId: any, readonly notifiedUpToMessageId: number }> };
 
 export type SendChatMessageMutationVariables = Exact<{
   chatId: Scalars['uuid'];
@@ -30916,12 +30917,12 @@ export type SendRepeatConfirmationEmailMutation = { readonly __typename?: 'mutat
 
 export type SidebarChatInfoFragment = { readonly __typename?: 'chat_Chat', readonly id: any, readonly enableAutoPin: boolean, readonly enableAutoSubscribe: boolean, readonly enableMandatoryPin: boolean, readonly enableMandatorySubscribe: boolean, readonly contentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string> }>, readonly nonDMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly priority: number, readonly roomPrivacyName: RoomPrivacy_Enum }>, readonly DMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly roomPeople: ReadonlyArray<{ readonly __typename?: 'RoomPerson', readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } }> }>, readonly readUpToIndices: ReadonlyArray<{ readonly __typename?: 'chat_ReadUpToIndex', readonly attendeeId: any, readonly chatId: any, readonly unreadCount?: Maybe<number> }> };
 
-export type PinnedChatsWithUnreadCountsSubscriptionVariables = Exact<{
+export type PinnedChatsWithUnreadCountsQueryVariables = Exact<{
   attendeeId: Scalars['uuid'];
 }>;
 
 
-export type PinnedChatsWithUnreadCountsSubscription = { readonly __typename?: 'subscription_root', readonly chat_Pin: ReadonlyArray<{ readonly __typename?: 'chat_Pin', readonly attendeeId: any, readonly chatId: any, readonly wasManuallyPinned: boolean, readonly chat: (
+export type PinnedChatsWithUnreadCountsQuery = { readonly __typename?: 'query_root', readonly chat_Pin: ReadonlyArray<{ readonly __typename?: 'chat_Pin', readonly attendeeId: any, readonly chatId: any, readonly chat: (
       { readonly __typename?: 'chat_Chat' }
       & SidebarChatInfoFragment
     ) }> };
@@ -31113,12 +31114,21 @@ export const SubdChatInfoFragmentDoc = gql`
   room {
     id
     name
+    roomPrivacyName
+  }
+  messages(limit: 1, order_by: {id: desc}) {
+    id
+    message
+    type
+    sender {
+      id
+      displayName
+    }
   }
   readUpToIndices(where: {attendeeId: {_eq: $attendeeId}}) {
     attendeeId
     chatId
-    messageId
-    unreadCount
+    notifiedUpToMessageId
   }
 }
     `;
@@ -32117,39 +32127,45 @@ export function useSubdChatsUnreadCountsSubscription(baseOptions: Apollo.Subscri
       }
 export type SubdChatsUnreadCountsSubscriptionHookResult = ReturnType<typeof useSubdChatsUnreadCountsSubscription>;
 export type SubdChatsUnreadCountsSubscriptionResult = Apollo.SubscriptionResult<SubdChatsUnreadCountsSubscription>;
-export const SelectNewMessagesDocument = gql`
-    query SelectNewMessages($where: chat_Message_bool_exp!) {
-  chat_Message(order_by: {id: desc}, where: $where) {
-    ...ChatMessageData
+export const SetNotifiedUpToIndexDocument = gql`
+    mutation SetNotifiedUpToIndex($attendeeId: uuid!, $chatId: uuid!, $msgId: Int!) {
+  insert_chat_ReadUpToIndex_one(
+    object: {attendeeId: $attendeeId, chatId: $chatId, messageId: -1, notifiedUpToMessageId: $msgId}
+    on_conflict: {constraint: ReadUpToIndex_pkey, update_columns: [notifiedUpToMessageId]}
+  ) {
+    chatId
+    attendeeId
+    notifiedUpToMessageId
   }
 }
-    ${ChatMessageDataFragmentDoc}`;
+    `;
+export type SetNotifiedUpToIndexMutationFn = Apollo.MutationFunction<SetNotifiedUpToIndexMutation, SetNotifiedUpToIndexMutationVariables>;
 
 /**
- * __useSelectNewMessagesQuery__
+ * __useSetNotifiedUpToIndexMutation__
  *
- * To run a query within a React component, call `useSelectNewMessagesQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectNewMessagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
+ * To run a mutation, you first call `useSetNotifiedUpToIndexMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetNotifiedUpToIndexMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
  *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const { data, loading, error } = useSelectNewMessagesQuery({
+ * const [setNotifiedUpToIndexMutation, { data, loading, error }] = useSetNotifiedUpToIndexMutation({
  *   variables: {
- *      where: // value for 'where'
+ *      attendeeId: // value for 'attendeeId'
+ *      chatId: // value for 'chatId'
+ *      msgId: // value for 'msgId'
  *   },
  * });
  */
-export function useSelectNewMessagesQuery(baseOptions: Apollo.QueryHookOptions<SelectNewMessagesQuery, SelectNewMessagesQueryVariables>) {
-        return Apollo.useQuery<SelectNewMessagesQuery, SelectNewMessagesQueryVariables>(SelectNewMessagesDocument, baseOptions);
+export function useSetNotifiedUpToIndexMutation(baseOptions?: Apollo.MutationHookOptions<SetNotifiedUpToIndexMutation, SetNotifiedUpToIndexMutationVariables>) {
+        return Apollo.useMutation<SetNotifiedUpToIndexMutation, SetNotifiedUpToIndexMutationVariables>(SetNotifiedUpToIndexDocument, baseOptions);
       }
-export function useSelectNewMessagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectNewMessagesQuery, SelectNewMessagesQueryVariables>) {
-          return Apollo.useLazyQuery<SelectNewMessagesQuery, SelectNewMessagesQueryVariables>(SelectNewMessagesDocument, baseOptions);
-        }
-export type SelectNewMessagesQueryHookResult = ReturnType<typeof useSelectNewMessagesQuery>;
-export type SelectNewMessagesLazyQueryHookResult = ReturnType<typeof useSelectNewMessagesLazyQuery>;
-export type SelectNewMessagesQueryResult = Apollo.QueryResult<SelectNewMessagesQuery, SelectNewMessagesQueryVariables>;
+export type SetNotifiedUpToIndexMutationHookResult = ReturnType<typeof useSetNotifiedUpToIndexMutation>;
+export type SetNotifiedUpToIndexMutationResult = Apollo.MutationResult<SetNotifiedUpToIndexMutation>;
+export type SetNotifiedUpToIndexMutationOptions = Apollo.BaseMutationOptions<SetNotifiedUpToIndexMutation, SetNotifiedUpToIndexMutationVariables>;
 export const SendChatMessageDocument = gql`
     mutation SendChatMessage($chatId: uuid!, $senderId: uuid!, $type: chat_MessageType_enum!, $message: String!, $data: jsonb = {}, $isPinned: Boolean = false) {
   insert_chat_Message(
@@ -36646,11 +36662,10 @@ export type SendRepeatConfirmationEmailMutationHookResult = ReturnType<typeof us
 export type SendRepeatConfirmationEmailMutationResult = Apollo.MutationResult<SendRepeatConfirmationEmailMutation>;
 export type SendRepeatConfirmationEmailMutationOptions = Apollo.BaseMutationOptions<SendRepeatConfirmationEmailMutation, SendRepeatConfirmationEmailMutationVariables>;
 export const PinnedChatsWithUnreadCountsDocument = gql`
-    subscription PinnedChatsWithUnreadCounts($attendeeId: uuid!) {
+    query PinnedChatsWithUnreadCounts($attendeeId: uuid!) {
   chat_Pin(where: {attendeeId: {_eq: $attendeeId}}) {
     attendeeId
     chatId
-    wasManuallyPinned
     chat {
       ...SidebarChatInfo
     }
@@ -36659,26 +36674,30 @@ export const PinnedChatsWithUnreadCountsDocument = gql`
     ${SidebarChatInfoFragmentDoc}`;
 
 /**
- * __usePinnedChatsWithUnreadCountsSubscription__
+ * __usePinnedChatsWithUnreadCountsQuery__
  *
- * To run a query within a React component, call `usePinnedChatsWithUnreadCountsSubscription` and pass it any options that fit your needs.
- * When your component renders, `usePinnedChatsWithUnreadCountsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `usePinnedChatsWithUnreadCountsQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePinnedChatsWithUnreadCountsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = usePinnedChatsWithUnreadCountsSubscription({
+ * const { data, loading, error } = usePinnedChatsWithUnreadCountsQuery({
  *   variables: {
  *      attendeeId: // value for 'attendeeId'
  *   },
  * });
  */
-export function usePinnedChatsWithUnreadCountsSubscription(baseOptions: Apollo.SubscriptionHookOptions<PinnedChatsWithUnreadCountsSubscription, PinnedChatsWithUnreadCountsSubscriptionVariables>) {
-        return Apollo.useSubscription<PinnedChatsWithUnreadCountsSubscription, PinnedChatsWithUnreadCountsSubscriptionVariables>(PinnedChatsWithUnreadCountsDocument, baseOptions);
+export function usePinnedChatsWithUnreadCountsQuery(baseOptions: Apollo.QueryHookOptions<PinnedChatsWithUnreadCountsQuery, PinnedChatsWithUnreadCountsQueryVariables>) {
+        return Apollo.useQuery<PinnedChatsWithUnreadCountsQuery, PinnedChatsWithUnreadCountsQueryVariables>(PinnedChatsWithUnreadCountsDocument, baseOptions);
       }
-export type PinnedChatsWithUnreadCountsSubscriptionHookResult = ReturnType<typeof usePinnedChatsWithUnreadCountsSubscription>;
-export type PinnedChatsWithUnreadCountsSubscriptionResult = Apollo.SubscriptionResult<PinnedChatsWithUnreadCountsSubscription>;
+export function usePinnedChatsWithUnreadCountsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PinnedChatsWithUnreadCountsQuery, PinnedChatsWithUnreadCountsQueryVariables>) {
+          return Apollo.useLazyQuery<PinnedChatsWithUnreadCountsQuery, PinnedChatsWithUnreadCountsQueryVariables>(PinnedChatsWithUnreadCountsDocument, baseOptions);
+        }
+export type PinnedChatsWithUnreadCountsQueryHookResult = ReturnType<typeof usePinnedChatsWithUnreadCountsQuery>;
+export type PinnedChatsWithUnreadCountsLazyQueryHookResult = ReturnType<typeof usePinnedChatsWithUnreadCountsLazyQuery>;
+export type PinnedChatsWithUnreadCountsQueryResult = Apollo.QueryResult<PinnedChatsWithUnreadCountsQuery, PinnedChatsWithUnreadCountsQueryVariables>;
 export const MenuScheduleDocument = gql`
     query MenuSchedule($now: timestamptz!, $in30Minutes: timestamptz!, $inOneHour: timestamptz!, $conferenceId: uuid!) {
   eventsNow: Event(

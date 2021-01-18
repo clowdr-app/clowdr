@@ -137,8 +137,8 @@ export function Chat({ sources, onProfileModalOpened, onEmoteReceived, ...rest }
                 setFontSize((old) =>
                     Math.min(fontSizeMax, Math.max(fontSizeMin, typeof next === "function" ? next(old) : next))
                 ),
-            messageBatchSize: 30,
-            messageLiveBatchSize: 30,
+            messageBatchSize: 20,
+            messageLiveBatchSize: 20,
             onProfileModalOpened,
             onEmoteReceived,
         }),

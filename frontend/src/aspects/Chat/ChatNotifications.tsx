@@ -1,11 +1,11 @@
 import { gql } from "@apollo/client";
-import { Button, Heading, useToast, VStack } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import { Box, Button, CloseButton, Heading, RenderProps, useToast, VStack } from "@chakra-ui/react";
+import React, { useEffect } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import {
     Chat_MessageType_Enum,
-    SubdChatInfoFragment,
-    useSelectNewMessagesQuery,
+    RoomPrivacy_Enum,
+    useSetNotifiedUpToIndexMutation,
     useSubdChatsUnreadCountsSubscription,
 } from "../../generated/graphql";
 import { useConference } from "../Conference/useConference";
@@ -23,12 +23,21 @@ gql`
         room {
             id
             name
+            roomPrivacyName
+        }
+        messages(limit: 1, order_by: { id: desc }) {
+            id
+            message
+            type
+            sender {
+                id
+                displayName
+            }
         }
         readUpToIndices(where: { attendeeId: { _eq: $attendeeId } }) {
             attendeeId
             chatId
-            messageId
-            unreadCount
+            notifiedUpToMessageId
         }
     }
 
@@ -42,26 +51,17 @@ gql`
         }
     }
 
-    query SelectNewMessages($where: chat_Message_bool_exp!) {
-        chat_Message(order_by: { id: desc }, where: $where) {
-            ...ChatMessageData
+    mutation SetNotifiedUpToIndex($attendeeId: uuid!, $chatId: uuid!, $msgId: Int!) {
+        insert_chat_ReadUpToIndex_one(
+            object: { attendeeId: $attendeeId, chatId: $chatId, messageId: -1, notifiedUpToMessageId: $msgId }
+            on_conflict: { constraint: ReadUpToIndex_pkey, update_columns: [notifiedUpToMessageId] }
+        ) {
+            chatId
+            attendeeId
+            notifiedUpToMessageId
         }
     }
 `;
-
-interface ChatNotificationsCtx {
-    setExcludedChatIds: (ids: string[]) => void;
-}
-
-const ChatNotificationsContext = React.createContext<ChatNotificationsCtx | undefined>(undefined);
-
-export function useChatNotifications(): ChatNotificationsCtx {
-    const ctx = React.useContext(ChatNotificationsContext);
-    if (!ctx) {
-        throw new Error("Context not available - are you outside the provider?");
-    }
-    return ctx;
-}
 
 export function ChatNotificationsProvider_WithAttendee({
     children,
@@ -70,180 +70,142 @@ export function ChatNotificationsProvider_WithAttendee({
     children: React.ReactNode | React.ReactNodeArray;
     attendeeId: string;
 }): JSX.Element {
-    const [excludedChatIds, setExcludedChatIds] = useState<string[]>([]);
-
-    const { refetch: fetchMessages } = useSelectNewMessagesQuery({
-        skip: true,
-        fetchPolicy: "network-only",
-    });
     const subscription = useSubdChatsUnreadCountsSubscription({
         variables: {
             attendeeId,
         },
     });
-
-    const [storedUnreadCounts, setStoredUnreadCounts] = useState<
-        Map<string, { old: number | undefined; new: SubdChatInfoFragment }>
-    >(new Map());
-    const [loadInTime] = useState<number>(Date.now());
-    useEffect(() => {
-        if (subscription.data?.chat_Subscription) {
-            const data = subscription.data.chat_Subscription;
-            setStoredUnreadCounts((old) => {
-                const newMap = new Map(old);
-                data.forEach((x) => {
-                    const prev = newMap.get(x.chatId);
-                    if (x.chat && x.chat.readUpToIndices.length > 0) {
-                        newMap.set(x.chatId, {
-                            old:
-                                prev?.new.readUpToIndices && prev.new.readUpToIndices.length > 0
-                                    ? prev?.new.readUpToIndices[0].unreadCount ?? undefined
-                                    : undefined,
-                            new: x.chat,
-                        });
-                    }
-                });
-                return newMap;
-            });
-        }
-    }, [excludedChatIds, subscription.data?.chat_Subscription]);
+    const [setNotifiedUpTo] = useSetNotifiedUpToIndexMutation();
 
     const conference = useConference();
     const history = useHistory();
     const location = useLocation();
     const toast = useToast();
-    const notifiedMessages = React.useRef(new Set<number>());
     useEffect(() => {
         (async () => {
-            const or: any[] = [];
-            const where = { _or: or };
-            for (const [chatId, indexes] of storedUnreadCounts) {
-                if (
-                    !excludedChatIds.includes(chatId) &&
-                    indexes.new?.readUpToIndices &&
-                    indexes.new.readUpToIndices.length > 0 &&
-                    indexes.new.readUpToIndices[0].unreadCount !== undefined &&
-                    indexes.new.readUpToIndices[0].unreadCount !== null &&
-                    indexes.old !== indexes.new.readUpToIndices[0].unreadCount
-                ) {
-                    or.push({
-                        chatId: { _eq: chatId },
-                        id: { _gt: indexes.new.readUpToIndices[0].messageId },
-                    });
-                }
-            }
-            const newMessages = await fetchMessages({
-                where,
-            });
+            if (subscription.data?.chat_Subscription) {
+                const data = subscription.data.chat_Subscription;
+                for (const subscription of data) {
+                    if (subscription.chat && subscription.chat.messages && subscription.chat.messages.length > 0) {
+                        const latestMessage = subscription.chat.messages[0];
+                        if (
+                            !subscription.chat.readUpToIndices ||
+                            subscription.chat.readUpToIndices.length === 0 ||
+                            subscription.chat.readUpToIndices[0].notifiedUpToMessageId !== latestMessage.id
+                        ) {
+                            const chatInfo = subscription.chat;
 
-            const now = Date.now();
-            let notifiedCount = 0;
-            for (let idx = 0; idx < newMessages.data.chat_Message.length; idx++) {
-                const newMsg = newMessages.data.chat_Message[idx];
-                if (!notifiedMessages.current.has(newMsg.id)) {
-                    notifiedMessages.current.add(newMsg.id);
+                            setTimeout(() => {
+                                setNotifiedUpTo({
+                                    variables: {
+                                        attendeeId,
+                                        chatId: chatInfo.id,
+                                        msgId: latestMessage.id,
+                                    },
+                                });
+                            }, Math.random() * 2500);
 
-                    if (
-                        now - loadInTime > 1500 &&
-                        newMsg.senderId !== attendeeId &&
-                        (newMsg.type === Chat_MessageType_Enum.Message ||
-                            newMsg.type === Chat_MessageType_Enum.Answer ||
-                            newMsg.type === Chat_MessageType_Enum.Question) &&
-                        // TODO: Remove this hack for avoiding the broken notification load-in behaviour
-                        newMessages.data.chat_Message.length < 6
-                    ) {
-                        const chatInfo = storedUnreadCounts.get(newMsg.chatId);
-                        const chatName = chatInfo
-                            ? chatInfo.new.contentGroup.length > 0
-                                ? chatInfo.new.contentGroup[0].shortTitle ?? chatInfo.new.contentGroup[0].title
-                                : chatInfo.new.room.length > 0
-                                ? chatInfo.new.room[0].name
-                                : undefined
-                            : undefined;
-                        const chatPath = chatInfo
-                            ? chatInfo.new.contentGroup.length > 0
-                                ? `/item/${chatInfo.new.contentGroup[0].id}`
-                                : chatInfo.new.room.length > 0
-                                ? `/room/${chatInfo.new.room[0].id}`
-                                : undefined
-                            : undefined;
+                            const chatName = chatInfo
+                                ? chatInfo.contentGroup.length > 0
+                                    ? chatInfo.contentGroup[0].shortTitle ?? chatInfo.contentGroup[0].title
+                                    : chatInfo.room.length > 0 &&
+                                      chatInfo.room[0].roomPrivacyName !== RoomPrivacy_Enum.Dm
+                                    ? chatInfo.room[0].name
+                                    : undefined
+                                : undefined;
+                            const chatPath = chatInfo
+                                ? chatInfo.contentGroup.length > 0
+                                    ? `/item/${chatInfo.contentGroup[0].id}`
+                                    : chatInfo.room.length > 0
+                                    ? `/room/${chatInfo.room[0].id}`
+                                    : undefined
+                                : undefined;
 
-                        if (!chatPath || !location.pathname.endsWith(chatPath)) {
-                            toast({
-                                position: "top-right",
-                                description: newMsg.message,
-                                isClosable: true,
-                                duration: 8000,
-                                render: function ChatNotification() {
-                                    return (
-                                        <VStack
-                                            alignItems="flex-start"
-                                            background="black"
-                                            color="gray.50"
-                                            w="auto"
-                                            h="auto"
-                                            p={5}
-                                            opacity={0.95}
-                                            borderRadius={10}
-                                        >
-                                            <Heading as="h2" fontSize="1.2rem">
-                                                New{" "}
-                                                {newMsg.type === Chat_MessageType_Enum.Message
-                                                    ? "message"
-                                                    : newMsg.type === Chat_MessageType_Enum.Answer
-                                                    ? "answer"
-                                                    : newMsg.type === Chat_MessageType_Enum.Question
-                                                    ? "question"
-                                                    : "message"}
-                                            </Heading>
-                                            {chatName ? (
-                                                <Heading as="h3" fontSize="0.9rem" fontStyle="italic">
-                                                    in {chatName}
+                            const newMsg = chatInfo.messages[0];
+                            if (!chatPath || !location.pathname.endsWith(chatPath)) {
+                                toast({
+                                    position: "top-right",
+                                    description: newMsg.message,
+                                    isClosable: true,
+                                    duration: 8000,
+                                    render: function ChatNotification(props: RenderProps) {
+                                        return (
+                                            <VStack
+                                                alignItems="flex-start"
+                                                background="black"
+                                                color="gray.50"
+                                                w="auto"
+                                                h="auto"
+                                                p={5}
+                                                opacity={0.95}
+                                                borderRadius={10}
+                                                position="relative"
+                                                pt={2}
+                                            >
+                                                <CloseButton
+                                                    position="absolute"
+                                                    top={2}
+                                                    right={2}
+                                                    onClick={props.onClose}
+                                                />
+                                                <Heading textAlign="left" as="h2" fontSize="1rem" my={0} py={0}>
+                                                    New{" "}
+                                                    {newMsg.type === Chat_MessageType_Enum.Message
+                                                        ? "message"
+                                                        : newMsg.type === Chat_MessageType_Enum.Answer
+                                                        ? "answer"
+                                                        : newMsg.type === Chat_MessageType_Enum.Question
+                                                        ? "question"
+                                                        : "message"}
                                                 </Heading>
-                                            ) : undefined}
-                                            <Heading as="h3" fontSize="0.9rem" fontStyle="italic">
-                                                from {newMsg.sender?.displayName ?? "Unknown sender"}
-                                            </Heading>
-                                            <Markdown restrictHeadingSize>{newMsg.message}</Markdown>
-                                            {chatPath ? (
-                                                <Button
-                                                    colorScheme="green"
-                                                    onClick={() => {
-                                                        history.push(`/conference/${conference.slug}${chatPath}`);
-                                                    }}
+                                                {chatName ? (
+                                                    <Heading
+                                                        textAlign="left"
+                                                        as="h3"
+                                                        fontSize="0.9rem"
+                                                        fontStyle="italic"
+                                                        maxW="250px"
+                                                        noOfLines={1}
+                                                    >
+                                                        in {chatName}
+                                                    </Heading>
+                                                ) : undefined}
+                                                <Heading
+                                                    textAlign="left"
+                                                    as="h3"
+                                                    fontSize="0.9rem"
+                                                    fontStyle="italic"
+                                                    maxW="250px"
+                                                    noOfLines={1}
                                                 >
-                                                    Go to chat
-                                                </Button>
-                                            ) : undefined}
-                                        </VStack>
-                                    );
-                                },
-                            });
-
-                            notifiedCount++;
-                            if (notifiedCount % 3 === 0) {
-                                await new Promise((resolve) => setTimeout(resolve, 2000));
+                                                    from {newMsg.sender?.displayName ?? "Unknown sender"}
+                                                </Heading>
+                                                <Box maxW="250px" maxH="200px" overflow="hidden" noOfLines={10}>
+                                                    <Markdown restrictHeadingSize>{newMsg.message}</Markdown>
+                                                </Box>
+                                                {chatPath ? (
+                                                    <Button
+                                                        colorScheme="green"
+                                                        onClick={() => {
+                                                            history.push(`/conference/${conference.slug}${chatPath}`);
+                                                        }}
+                                                    >
+                                                        Go to chat
+                                                    </Button>
+                                                ) : undefined}
+                                            </VStack>
+                                        );
+                                    },
+                                });
                             }
                         }
                     }
                 }
             }
         })();
-    }, [
-        fetchMessages,
-        toast,
-        storedUnreadCounts,
-        excludedChatIds,
-        attendeeId,
-        location.pathname,
-        history,
-        conference.slug,
-        loadInTime,
-    ]);
+    }, [conference.slug, history, location.pathname, subscription.data?.chat_Subscription, toast]);
 
-    return (
-        <ChatNotificationsContext.Provider value={{ setExcludedChatIds }}>{children}</ChatNotificationsContext.Provider>
-    );
+    return <>{children}</>;
 }
 
 export function ChatNotificationsProvider({
@@ -260,16 +222,6 @@ export function ChatNotificationsProvider({
             </ChatNotificationsProvider_WithAttendee>
         );
     } else {
-        return (
-            <ChatNotificationsContext.Provider
-                value={{
-                    setExcludedChatIds: (_ids) => {
-                        /* EMPTY */
-                    },
-                }}
-            >
-                {children}
-            </ChatNotificationsContext.Provider>
-        );
+        return <>{children}</>;
     }
 }

@@ -25,7 +25,7 @@ import {
     RoomPrivacy_Enum,
     SidebarChatInfoFragment,
     useGetAllRoomsQuery,
-    usePinnedChatsWithUnreadCountsSubscription,
+    usePinnedChatsWithUnreadCountsQuery,
 } from "../../generated/graphql";
 import { LinkButton } from "../Chakra/LinkButton";
 import { CreateDmModal } from "../Conference/Attend/Room/CreateDmModal";
@@ -76,11 +76,10 @@ gql`
         }
     }
 
-    subscription PinnedChatsWithUnreadCounts($attendeeId: uuid!) {
+    query PinnedChatsWithUnreadCounts($attendeeId: uuid!) {
         chat_Pin(where: { attendeeId: { _eq: $attendeeId } }) {
             attendeeId
             chatId
-            wasManuallyPinned
             chat {
                 ...SidebarChatInfo
             }
@@ -180,10 +179,11 @@ function ChatsPanel({
     onClose: () => void;
     confSlug: string;
 }): JSX.Element {
-    const pinnedChats = usePinnedChatsWithUnreadCountsSubscription({
+    const pinnedChats = usePinnedChatsWithUnreadCountsQuery({
         variables: {
             attendeeId,
         },
+        pollInterval: 30000,
     });
 
     const { isOpen: isCreateRoomOpen, onClose: onCreateRoomClose, onOpen: onCreateRoomOpen } = useDisclosure();

@@ -947,6 +947,12 @@
         schema: chat
         name: unreadCount
     comment: ""
+  - name: unnotifiedCount
+    definition:
+      function:
+        schema: chat
+        name: unnotifiedCount
+    comment: ""
   insert_permissions:
   - role: user
     permission:

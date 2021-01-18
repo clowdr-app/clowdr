@@ -236,7 +236,7 @@ export default function WaitingPage(): JSX.Element {
     const conference = useConference();
     const periods = useShufflePeriodsQuery({
         fetchPolicy: "network-only",
-        skip: true
+        skip: true,
     });
 
     const now = useRealTime(3000);

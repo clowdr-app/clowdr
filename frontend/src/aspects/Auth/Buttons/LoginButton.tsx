@@ -19,7 +19,7 @@ export default function LoginButton({
     const opts = {
         redirectUri,
         appState: {
-            returnTo: redirectTo ?? location.pathname,
+            returnTo: redirectTo ?? location.pathname.startsWith("/logged-out") ? "/user" : location.pathname,
         },
     };
 

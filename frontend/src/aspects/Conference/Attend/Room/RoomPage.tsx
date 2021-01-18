@@ -6,6 +6,7 @@ import {
     useRoomPage_EventPeopleForRoomSubscription,
     useRoomPage_GetRoomDetailsQuery,
 } from "../../../../generated/graphql";
+import PageNotFound from "../../../Errors/PageNotFound";
 import usePolling from "../../../Generic/usePolling";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
@@ -131,6 +132,7 @@ export default function RoomPage({ roomId }: { roomId: string }): JSX.Element {
 
     return (
         <RequireAtLeastOnePermissionWrapper
+            componentIfDenied={<PageNotFound />}
             permissions={[Permission_Enum.ConferenceViewAttendees, Permission_Enum.ConferenceManageSchedule]}
         >
             {title}

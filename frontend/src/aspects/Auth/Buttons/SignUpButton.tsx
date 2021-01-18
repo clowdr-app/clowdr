@@ -20,7 +20,7 @@ export default function SignupButton({
         screen_hint: "signup",
         redirectUri,
         appState: {
-            returnTo: redirectTo ?? location.pathname,
+            returnTo: redirectTo ?? location.pathname.startsWith("/logged-out") ? "/user" : location.pathname,
         },
     };
 

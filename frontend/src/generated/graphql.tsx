@@ -29922,7 +29922,7 @@ export type RoomPage_GetRoomDetailsQuery = { readonly __typename?: 'query_root',
   )> };
 
 export type RoomPage_RoomDetailsFragment = (
-  { readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly publicVonageSessionId?: Maybe<string>, readonly chatId?: Maybe<any>, readonly originatingContentGroupId?: Maybe<any>, readonly roomPrivacyName: RoomPrivacy_Enum, readonly mediaLiveChannel?: Maybe<{ readonly __typename?: 'MediaLiveChannel', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly id: any }> }
+  { readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly publicVonageSessionId?: Maybe<string>, readonly chatId?: Maybe<any>, readonly roomPrivacyName: RoomPrivacy_Enum, readonly mediaLiveChannel?: Maybe<{ readonly __typename?: 'MediaLiveChannel', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly id: any }>, readonly originatingContentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly contentGroupTypeName: ContentGroupType_Enum, readonly title: string, readonly contentItems: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly data: any }> }> }
   & RoomPage_RoomEventsFragment
   & RoomPage_RoomPeopleFragment
 );
@@ -29954,6 +29954,23 @@ export type GetEventVonageDetailsQueryVariables = Exact<{
 
 
 export type GetEventVonageDetailsQuery = { readonly __typename?: 'query_root', readonly Event_by_pk?: Maybe<{ readonly __typename?: 'Event', readonly id: any, readonly eventVonageSession?: Maybe<{ readonly __typename?: 'EventVonageSession', readonly sessionId: string, readonly id: any }> }> };
+
+export type RoomSponsorContent_GetContentItemsQueryVariables = Exact<{
+  contentGroupId: Scalars['uuid'];
+}>;
+
+
+export type RoomSponsorContent_GetContentItemsQuery = { readonly __typename?: 'query_root', readonly ContentGroup: ReadonlyArray<(
+    { readonly __typename?: 'ContentGroup' }
+    & RoomSponsorContent_ContentGroupDataFragment
+  )> };
+
+export type RoomSponsorContent_ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly contentItems: ReadonlyArray<(
+    { readonly __typename?: 'ContentItem' }
+    & RoomSponsorContent_ContentItemDataFragment
+  )> };
+
+export type RoomSponsorContent_ContentItemDataFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly contentTypeName: ContentType_Enum, readonly data: any, readonly layoutData?: Maybe<any> };
 
 export type VonageSubscriber_GetAttendeeQueryVariables = Exact<{
   id: Scalars['uuid'];
@@ -31362,7 +31379,19 @@ export const RoomPage_RoomDetailsFragmentDoc = gql`
   }
   publicVonageSessionId
   chatId
-  originatingContentGroupId
+  originatingContentGroup {
+    id
+    contentGroupTypeName
+    contentItems(
+      where: {contentTypeName: {_eq: IMAGE_URL}, layoutData: {_contains: {isLogo: true}}}
+      limit: 1
+      order_by: {updatedAt: desc}
+    ) {
+      id
+      data
+    }
+    title
+  }
   roomPrivacyName
   ...RoomPage_RoomEvents
   ...RoomPage_RoomPeople
@@ -31382,6 +31411,23 @@ export const RoomPage_EventPersonDetailsFragmentDoc = gql`
   }
 }
     `;
+export const RoomSponsorContent_ContentItemDataFragmentDoc = gql`
+    fragment RoomSponsorContent_ContentItemData on ContentItem {
+  id
+  name
+  contentTypeName
+  data
+  layoutData
+}
+    `;
+export const RoomSponsorContent_ContentGroupDataFragmentDoc = gql`
+    fragment RoomSponsorContent_ContentGroupData on ContentGroup {
+  id
+  contentItems {
+    ...RoomSponsorContent_ContentItemData
+  }
+}
+    ${RoomSponsorContent_ContentItemDataFragmentDoc}`;
 export const Timeline_TagFragmentDoc = gql`
     fragment Timeline_Tag on Tag {
   id
@@ -33717,6 +33763,41 @@ export function useGetEventVonageDetailsLazyQuery(baseOptions?: Apollo.LazyQuery
 export type GetEventVonageDetailsQueryHookResult = ReturnType<typeof useGetEventVonageDetailsQuery>;
 export type GetEventVonageDetailsLazyQueryHookResult = ReturnType<typeof useGetEventVonageDetailsLazyQuery>;
 export type GetEventVonageDetailsQueryResult = Apollo.QueryResult<GetEventVonageDetailsQuery, GetEventVonageDetailsQueryVariables>;
+export const RoomSponsorContent_GetContentItemsDocument = gql`
+    query RoomSponsorContent_GetContentItems($contentGroupId: uuid!) {
+  ContentGroup(
+    where: {id: {_eq: $contentGroupId}, contentGroupTypeName: {_eq: SPONSOR}}
+  ) {
+    ...RoomSponsorContent_ContentGroupData
+  }
+}
+    ${RoomSponsorContent_ContentGroupDataFragmentDoc}`;
+
+/**
+ * __useRoomSponsorContent_GetContentItemsQuery__
+ *
+ * To run a query within a React component, call `useRoomSponsorContent_GetContentItemsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRoomSponsorContent_GetContentItemsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRoomSponsorContent_GetContentItemsQuery({
+ *   variables: {
+ *      contentGroupId: // value for 'contentGroupId'
+ *   },
+ * });
+ */
+export function useRoomSponsorContent_GetContentItemsQuery(baseOptions: Apollo.QueryHookOptions<RoomSponsorContent_GetContentItemsQuery, RoomSponsorContent_GetContentItemsQueryVariables>) {
+        return Apollo.useQuery<RoomSponsorContent_GetContentItemsQuery, RoomSponsorContent_GetContentItemsQueryVariables>(RoomSponsorContent_GetContentItemsDocument, baseOptions);
+      }
+export function useRoomSponsorContent_GetContentItemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RoomSponsorContent_GetContentItemsQuery, RoomSponsorContent_GetContentItemsQueryVariables>) {
+          return Apollo.useLazyQuery<RoomSponsorContent_GetContentItemsQuery, RoomSponsorContent_GetContentItemsQueryVariables>(RoomSponsorContent_GetContentItemsDocument, baseOptions);
+        }
+export type RoomSponsorContent_GetContentItemsQueryHookResult = ReturnType<typeof useRoomSponsorContent_GetContentItemsQuery>;
+export type RoomSponsorContent_GetContentItemsLazyQueryHookResult = ReturnType<typeof useRoomSponsorContent_GetContentItemsLazyQuery>;
+export type RoomSponsorContent_GetContentItemsQueryResult = Apollo.QueryResult<RoomSponsorContent_GetContentItemsQuery, RoomSponsorContent_GetContentItemsQueryVariables>;
 export const VonageSubscriber_GetAttendeeDocument = gql`
     query VonageSubscriber_GetAttendee($id: uuid!) {
   Attendee_by_pk(id: $id) {

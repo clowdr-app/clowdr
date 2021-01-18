@@ -34,7 +34,19 @@ gql`
         }
         publicVonageSessionId
         chatId
-        originatingContentGroupId
+        originatingContentGroup {
+            id
+            contentGroupTypeName
+            contentItems(
+                where: { contentTypeName: { _eq: IMAGE_URL }, layoutData: { _contains: { isLogo: true } } }
+                limit: 1
+                order_by: { updatedAt: desc }
+            ) {
+                id
+                data
+            }
+            title
+        }
         roomPrivacyName
         ...RoomPage_RoomEvents
         ...RoomPage_RoomPeople

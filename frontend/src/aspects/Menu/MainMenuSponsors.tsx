@@ -77,7 +77,7 @@ export function MainMenuSponsors(): JSX.Element {
                     <List>
                         {sponsorContentGroups.map((sponsorContentGroup) => {
                             return (
-                                <ListItem key={sponsorContentGroup.id} mb={2} h={12}>
+                                <ListItem key={sponsorContentGroup.id} mb={2} h={12} width="100%">
                                     <LinkButton
                                         to={
                                             sponsorContentGroup.rooms.length
@@ -85,11 +85,12 @@ export function MainMenuSponsors(): JSX.Element {
                                                 : `/conference/${conference.slug}/item/${sponsorContentGroup.id}`
                                         }
                                         h="100%"
+                                        width="100%"
                                         py={2}
                                         px={4}
-                                        linkProps={{ h: "100%" }}
+                                        linkProps={{ h: "100%", w: "100%" }}
                                     >
-                                        <Grid templateColumns="20% 80%" columnGap={4} h="100%">
+                                        <Grid templateColumns="20% 80%" columnGap={4} h="100%" w="100%">
                                             <GridItem minH="0">
                                                 {sponsorLogos[sponsorContentGroup.id] ? (
                                                     <Image

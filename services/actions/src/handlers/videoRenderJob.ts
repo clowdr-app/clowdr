@@ -233,7 +233,7 @@ async function startVideoRenderJob(job: VideoRenderJobDataFragment): Promise<Vid
 
 gql`
     query SelectNewVideoRenderJobs {
-        VideoRenderJob(limit: 20, where: { jobStatusName: { _eq: NEW } }, order_by: { created_at: asc }) {
+        VideoRenderJob(limit: 10, where: { jobStatusName: { _eq: NEW } }, order_by: { created_at: asc }) {
             id
         }
     }
@@ -278,10 +278,13 @@ export async function handleProcessVideoRenderJobQueue(): Promise<void> {
     });
     assert(videoRenderJobs.data?.update_VideoRenderJob, "Failed to fetch new VideoRenderJobs");
 
+    const snooze = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
     const unsuccessfulVideoRenderJobs: (string | undefined)[] = await Promise.all(
         videoRenderJobs.data.update_VideoRenderJob.returning.map(async (job) => {
             try {
                 if (job.retriesCount < 3) {
+                    await snooze(Math.floor(Math.random() * 5 * 1000));
                     await callWithRetry(async () => {
                         const data = await startVideoRenderJob(job);
                         updateVideoRenderJob(job.id, data);

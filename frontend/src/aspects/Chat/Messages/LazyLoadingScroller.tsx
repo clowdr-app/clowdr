@@ -1,5 +1,7 @@
 import { Box, Button, Center, Flex, FlexProps, Heading, Spinner, useColorModeValue, useToken } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useMemo, useReducer, useState } from "react";
+import Observer from "@researchgate/react-intersection-observer";
+import "intersection-observer"; // optional polyfill
+import React, { useEffect, useMemo, useReducer, useState } from "react";
 import { useReadUpToIndex } from "./ReadUpToIndexProvider";
 
 interface LazyLoadingScrollerProps<T> {
@@ -148,8 +150,6 @@ export default function LazyLoadingScroller<T>({
         lastError: null,
         renderedItems: new Map(),
     });
-    const outerContainerRef = React.createRef<HTMLDivElement>();
-    const innerContainerRef = React.createRef<HTMLDivElement>();
     const runningStateRef = React.useRef<{
         isRunning: boolean;
     }>({
@@ -157,19 +157,6 @@ export default function LazyLoadingScroller<T>({
     });
 
     const readUpToIndex = useReadUpToIndex();
-
-    const scrollInfo = useCallback(() => {
-        const innerC = innerContainerRef.current;
-        const outerC = outerContainerRef.current;
-        if (innerC && outerC) {
-            return {
-                clientHeight: innerC.clientHeight,
-                scrollHeight: innerC.scrollHeight,
-                scrollTop: innerC.scrollTop,
-            };
-        }
-        return null;
-    }, [innerContainerRef, outerContainerRef]);
 
     useEffect(() => {
         if (state.stateName === "loading" && !runningStateRef.current.isRunning) {
@@ -209,7 +196,8 @@ export default function LazyLoadingScroller<T>({
                 }
             })();
         }
-    }, [batchSize, isEqual, load, readUpToIndex, renderItem, state.nextIndex, state.stateName]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [batchSize, isEqual, load, renderItem, state.nextIndex, state.stateName]);
 
     useEffect(() => {
         if (monitoredItems) {
@@ -232,7 +220,20 @@ export default function LazyLoadingScroller<T>({
         }
     }, [isEqual, deletedItems, renderItem]);
 
+    const innerRef = React.useRef<HTMLDivElement | null>(null);
     const elements = useMemo(() => {
+        if (innerRef.current) {
+            const c = innerRef.current;
+            if (Math.abs(c.scrollTop) < 130) {
+                setTimeout(() => {
+                    c.scroll({
+                        behavior: "smooth",
+                        top: 0
+                    });
+                }, 100);
+            }
+        }
+
         return [...state.renderedItems.keys()]
             .sort((x, y) => y - x)
             .map((key) => {
@@ -245,20 +246,6 @@ export default function LazyLoadingScroller<T>({
 
     // TODO: Display error
 
-    useEffect(() => {
-        if (state.stateName === "idle") {
-            const sc = scrollInfo();
-            if (sc) {
-                const offset = sc.scrollHeight - Math.abs(sc.scrollTop);
-                if (isInRange(offset, sc.clientHeight)) {
-                    act({
-                        name: "start-load",
-                    });
-                }
-            }
-        }
-    }, [scrollInfo, state.stateName]);
-
     const [gray200, gray500] = useToken("colors", ["gray.200", "gray.500"]);
     const scrollbarColour = useColorModeValue(gray500, gray200);
     const scrollbarBackground = useColorModeValue(gray200, gray500);
@@ -270,46 +257,21 @@ export default function LazyLoadingScroller<T>({
             </Box>
         </Center>
     ) : (
-        <Flex
-            ref={outerContainerRef}
-            w="100%"
-            h="100%"
-            overflowX="hidden"
-            overflowY="auto"
-            flexDir="column"
-            justifyContent="flex-end"
-        >
+        <Flex w="100%" h="100%" overflowX="hidden" overflowY="auto" flexDir="column" justifyContent="flex-end">
             <Flex
                 role="list"
                 {...props}
-                ref={innerContainerRef}
                 w="100%"
                 h="auto"
                 overflowX="hidden"
                 overflowY="scroll"
                 flexDir="column-reverse"
                 minH="100%"
-                onScroll={() => {
-                    const sc = scrollInfo();
-                    if (sc) {
-                        const offset = sc.scrollHeight - Math.abs(sc.scrollTop);
-                        if (state.stateName === "idle") {
-                            if (isInRange(offset, sc.clientHeight)) {
-                                act({
-                                    name: "start-load",
-                                });
-                            }
-                        }
-
-                        if (Math.abs(offset) > 40) {
-                            readUpToIndex.onScrollUp();
-                        }
-                    }
-                }}
                 css={{
                     ["scrollbarWidth"]: "thin",
                     ["scrollbarColor"]: `${scrollbarColour} ${scrollbarBackground}`,
                 }}
+                ref={innerRef}
             >
                 {elements}
                 {state.stateName === "loading" ? (
@@ -330,33 +292,43 @@ export default function LazyLoadingScroller<T>({
                         (No more messages)
                     </Heading>
                 ) : (
-                    <Center
-                        py={5}
-                        mb={1}
-                        h="auto"
-                        fontStyle="italic"
-                        borderBottomWidth={1}
-                        borderBottomStyle="solid"
-                        borderBottomColor="gray.400"
-                    >
-                        <Button
-                            size="xs"
-                            variant="outline"
-                            onClick={() => {
+                    <Observer
+                        onChange={(props) => {
+                            if (props.intersectionRatio > 0) {
                                 act({
                                     name: "start-load",
                                 });
-                            }}
-                            fontSize="90%"
+                            }
+                        }}
+                    >
+                        <Center
+                            py={5}
+                            mb={1}
                             h="auto"
-                            p={2}
-                            lineHeight="130%"
+                            fontStyle="italic"
+                            borderBottomWidth={1}
+                            borderBottomStyle="solid"
+                            borderBottomColor="gray.400"
                         >
-                            Infinite scroller not working?
-                            <br />
-                            Click to load more messages.
-                        </Button>
-                    </Center>
+                            <Button
+                                size="xs"
+                                variant="outline"
+                                onClick={() => {
+                                    act({
+                                        name: "start-load",
+                                    });
+                                }}
+                                fontSize="90%"
+                                h="auto"
+                                p={2}
+                                lineHeight="130%"
+                            >
+                                Infinite scroller not working?
+                                <br />
+                                Click to load more messages.
+                            </Button>
+                        </Center>
+                    </Observer>
                 )}
             </Flex>
         </Flex>

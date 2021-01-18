@@ -15,7 +15,7 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
     const cappedSpacing = Math.min(config.spacing, ChatSpacing.COMFORTABLE);
 
     const composeCtx = useComposeContext();
-    const composeBoxRef = React.createRef<HTMLTextAreaElement>();
+    const composeBoxRef = React.useRef<HTMLTextAreaElement | null>(null);
 
     const messageTypeMoniker =
         composeCtx.newMessageType === Chat_MessageType_Enum.Poll
@@ -73,6 +73,14 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
             composeBoxRef.current?.focus();
         }
     }, [composeBoxRef, composeCtx.newMessageData, composeCtx.newMessageType]);
+
+    const [wasSending, setWasSending] = useState<boolean>(true);
+    useEffect(() => {
+        if (wasSending && !composeCtx.isSending) {
+            composeBoxRef.current?.focus();
+        }
+        setWasSending(composeCtx.isSending);
+    }, [composeCtx.isSending, wasSending]);
 
     return (
         <VStack spacing={0} justifyContent="center" alignItems="flex-start" pos="relative" p="1px" {...rest}>

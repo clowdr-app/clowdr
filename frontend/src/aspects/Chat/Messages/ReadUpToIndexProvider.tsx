@@ -1,7 +1,6 @@
 import { gql } from "@apollo/client";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { useSelectReadUpToIndexQuery, useSetReadUpToIndexMutation } from "../../../generated/graphql";
-import { useRealTime } from "../../Generic/useRealTime";
 import { useChatConfiguration } from "../Configuration";
 import { useReceiveMessageQueries } from "./ReceiveMessageQueries";
 
@@ -27,7 +26,6 @@ gql`
 interface ReadUpToIndexCtx {
     readUpToId: number | undefined;
     readUpToMarkerSeen: () => void;
-    onScrollUp: () => void;
 }
 
 const ReadUpToIndexContext = React.createContext<ReadUpToIndexCtx | undefined>(undefined);
@@ -56,19 +54,13 @@ function ReadUpToIndexProvider_UserExists({
         },
     });
     const [setUnread] = useSetReadUpToIndexMutation();
-    const [lastUpdateTime, setLastUpdateTime] = useState<number>(Date.now());
-    const [_hasScrolledUp, setHasScrolledUp] = useState<boolean>(false);
-    const now = useRealTime(5000);
-
     const messages = useReceiveMessageQueries();
-
     const lastUnreadId = useRef<number | null>(null);
     useEffect(() => {
         if (messages.liveMessages && messages.liveMessages.size > 0) {
             const nextUnreadId = [...messages.liveMessages.keys()].sort((x, y) => y - x)[0];
-            if (/*hasScrolledUp &&*/ lastUnreadId.current !== nextUnreadId && lastUpdateTime < now - 5000) {
+            if (lastUnreadId.current !== nextUnreadId) {
                 lastUnreadId.current = nextUnreadId;
-                setLastUpdateTime(Date.now());
                 setUnread({
                     variables: {
                         attendeeId,
@@ -78,12 +70,10 @@ function ReadUpToIndexProvider_UserExists({
                 });
             }
         }
-    }, [attendeeId, chatId, lastUpdateTime, messages.liveMessages, now, setUnread]);
+    }, [attendeeId, chatId, messages.liveMessages, setUnread]);
 
     const readUpToMarkerSeen = useCallback(() => {
         if (messages.liveMessages && messages.liveMessages.size > 0) {
-            setHasScrolledUp(true);
-            setLastUpdateTime(Date.now());
             setUnread({
                 variables: {
                     attendeeId,
@@ -94,17 +84,15 @@ function ReadUpToIndexProvider_UserExists({
         }
     }, [attendeeId, chatId, messages.liveMessages, setUnread]);
 
-    return (
-        <ReadUpToIndexContext.Provider
-            value={{
-                readUpToId: unreadQ.data?.chat_ReadUpToIndex_by_pk?.messageId,
-                readUpToMarkerSeen,
-                onScrollUp: () => setHasScrolledUp(true),
-            }}
-        >
-            {children}
-        </ReadUpToIndexContext.Provider>
+    const st = useMemo(
+        () => ({
+            readUpToId: unreadQ.data?.chat_ReadUpToIndex_by_pk?.messageId,
+            readUpToMarkerSeen,
+        }),
+        [readUpToMarkerSeen, unreadQ.data?.chat_ReadUpToIndex_by_pk?.messageId]
     );
+
+    return <ReadUpToIndexContext.Provider value={st}>{children}</ReadUpToIndexContext.Provider>;
 }
 
 export function ReadUpToIndexProvider_NoUser({
@@ -117,9 +105,6 @@ export function ReadUpToIndexProvider_NoUser({
             value={{
                 readUpToId: undefined,
                 readUpToMarkerSeen: () => {
-                    /* EMPTY */
-                },
-                onScrollUp: () => {
                     /* EMPTY */
                 },
             }}

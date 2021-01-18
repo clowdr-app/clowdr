@@ -39,6 +39,7 @@ import RoomParticipantsProvider from "../Room/RoomParticipantsProvider";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import useLazyRenderAndRetain from "./LazyRenderAndRetain";
 import { MainMenuProgram } from "./MainMenuProgram";
+import { MainMenuSponsors } from "./MainMenuSponsors";
 
 gql`
     fragment SidebarChatInfo on chat_Chat {
@@ -325,6 +326,18 @@ function LazySchedulePanel({ isExpanded }: { isExpanded: boolean }): JSX.Element
     return useLazyRenderAndRetain(() => <SchedulePanel />, isExpanded);
 }
 
+function SponsorsPanel(): JSX.Element {
+    return (
+        <AccordionPanel pb={4} px={"3px"}>
+            <MainMenuSponsors />
+        </AccordionPanel>
+    );
+}
+
+function LazySponsorsPanel({ isExpanded }: { isExpanded: boolean }): JSX.Element {
+    return useLazyRenderAndRetain(() => <SponsorsPanel />, isExpanded);
+}
+
 export function MainMenuConferenceSections_Inner({
     confSlug,
     attendee,
@@ -378,7 +391,7 @@ export function MainMenuConferenceSections_Inner({
                     <FAIcon icon="mug-hot" iconStyle="s" mr={3} />
                     Rooms
                 </LinkButton>
-                <LinkButton
+                {/* <LinkButton
                     linkProps={{ flexBasis: ["40%", "40%", "min-content"], flexGrow: 0, flexShrink: [0, 1] }}
                     size="sm"
                     onClick={onClose}
@@ -387,9 +400,9 @@ export function MainMenuConferenceSections_Inner({
                 >
                     <FAIcon icon="mug-hot" iconStyle="s" mr={3} />
                     Shuffle Rooms
-                </LinkButton>
+                </LinkButton> */}
             </Flex>
-            <Accordion defaultIndex={[0]}>
+            <Accordion defaultIndex={[0, 3]} allowMultiple allowToggle>
                 <AccordionItem>
                     {({ isExpanded }) => (
                         <>
@@ -433,6 +446,20 @@ export function MainMenuConferenceSections_Inner({
                                 <AccordionIcon />
                             </AccordionButton>
                             <LazySchedulePanel isExpanded={isExpanded} />
+                        </>
+                    )}
+                </AccordionItem>
+
+                <AccordionItem>
+                    {({ isExpanded }) => (
+                        <>
+                            <AccordionButton>
+                                <Box flex="1" textAlign="left">
+                                    Sponsors
+                                </Box>
+                                <AccordionIcon />
+                            </AccordionButton>
+                            <LazySponsorsPanel isExpanded={isExpanded} />
                         </>
                     )}
                 </AccordionItem>

@@ -6,9 +6,10 @@ import * as R from "ramda";
 import React, { useMemo, useState } from "react";
 import ReactPlayer from "react-player";
 import {
+    ContentGroupType_Enum,
     EventPersonDetailsFragment,
-    RoomDetailsFragment,
     RoomMode_Enum,
+    RoomPage_RoomDetailsFragment,
     useRoom_GetCurrentEventQuery,
 } from "../../../../generated/graphql";
 import { ExternalLinkButton } from "../../../Chakra/LinkButton";
@@ -21,6 +22,8 @@ import { EventEndControls } from "./EventEndControls";
 import { HandUpButton } from "./HandUpButton";
 import { RoomBackstage } from "./RoomBackstage";
 import { RoomControlBar } from "./RoomControlBar";
+import { RoomTitle } from "./RoomTitle";
+import { RoomSponsorContent } from "./Sponsor/RoomSponsorContent";
 import { useCurrentRoomEvent } from "./useCurrentRoomEvent";
 
 gql`
@@ -43,7 +46,7 @@ export function Room({
     roomDetails,
     eventPeople,
 }: {
-    roomDetails: RoomDetailsFragment;
+    roomDetails: RoomPage_RoomDetailsFragment;
     eventPeople: readonly EventPersonDetailsFragment[];
 }): JSX.Element {
     const {
@@ -235,9 +238,7 @@ export function Room({
 
                 <HStack alignItems="flex-start">
                     <Box flexGrow={1}>
-                        <Heading as="h2" textAlign="left" mt={5} ml={5}>
-                            {roomDetails.name}
-                        </Heading>
+                        <RoomTitle roomDetails={roomDetails} />
 
                         {currentRoomEvent ? (
                             <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
@@ -282,13 +283,20 @@ export function Room({
                             <></>
                         )}
 
-                        {roomDetails.originatingContentGroupId ? (
+                        {roomDetails.originatingContentGroup?.id &&
+                        roomDetails.originatingContentGroup.contentGroupTypeName !== ContentGroupType_Enum.Sponsor ? (
                             <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
                                 <ContentGroupSummaryWrapper
-                                    contentGroupId={roomDetails.originatingContentGroupId}
+                                    contentGroupId={roomDetails.originatingContentGroup.id}
                                     linkToItem={true}
                                 />
                             </Box>
+                        ) : (
+                            <></>
+                        )}
+
+                        {roomDetails.originatingContentGroup ? (
+                            <RoomSponsorContent contentGroupId={roomDetails.originatingContentGroup.id} />
                         ) : (
                             <></>
                         )}

@@ -4,8 +4,8 @@ import { formatDistanceToNow } from "date-fns";
 import React, { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import {
-    RoomEventSummaryFragment,
     RoomMode_Enum,
+    RoomPage_RoomEventSummaryFragment,
     useGetBreakoutRoomFromEventQuery,
 } from "../../../../generated/graphql";
 import usePolling from "../../../Generic/usePolling";
@@ -22,7 +22,7 @@ gql`
 export function EventEndControls({
     currentRoomEvent,
 }: {
-    currentRoomEvent: RoomEventSummaryFragment | null;
+    currentRoomEvent: RoomPage_RoomEventSummaryFragment | null;
 }): JSX.Element {
     const [eventId, setEventId] = useState<string | undefined>(currentRoomEvent?.id);
     const [choice, setChoice] = useState<"breakout" | "continue">("continue");
@@ -82,7 +82,7 @@ export function EventEndButtons({
     choice,
     onChange,
 }: {
-    currentRoomEvent: RoomEventSummaryFragment;
+    currentRoomEvent: RoomPage_RoomEventSummaryFragment;
     choice: "breakout" | "continue";
     onChange: (choice: "breakout" | "continue") => void;
 }): JSX.Element {

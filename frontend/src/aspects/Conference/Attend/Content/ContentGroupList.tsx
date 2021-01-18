@@ -18,7 +18,11 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { ContentGroupDataFragment, TagWithContentFragment, useContentByTagQuery } from "../../../../generated/graphql";
+import {
+    ContentGroupList_ContentGroupDataFragment,
+    TagWithContentFragment,
+    useContentByTagQuery,
+} from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import FAIcon from "../../../Icons/FAIcon";
@@ -30,7 +34,7 @@ gql`
         ...TagInfo
         contentGroupTags {
             contentGroup {
-                ...ContentGroupData
+                ...ContentGroupList_ContentGroupData
             }
         }
     }
@@ -38,6 +42,15 @@ gql`
     query ContentByTag($conferenceId: uuid!) {
         Tag(where: { conferenceId: { _eq: $conferenceId } }) {
             ...TagWithContent
+        }
+    }
+
+    fragment ContentGroupList_ContentGroupData on ContentGroup {
+        id
+        title
+        contentGroupTypeName
+        people(order_by: { priority: asc }) {
+            ...ContentPersonData
         }
     }
 `;
@@ -81,7 +94,7 @@ function TagButton({
     );
 }
 
-function ContentGroupButton({ group }: { group: ContentGroupDataFragment }): JSX.Element {
+function ContentGroupButton({ group }: { group: ContentGroupList_ContentGroupDataFragment }): JSX.Element {
     const conference = useConference();
     const textColour = useColorModeValue("gray.500", "gray.400");
     return (

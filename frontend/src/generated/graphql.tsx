@@ -2751,8 +2751,6 @@ export type ContentGroup = {
   readonly requiredContentItems: ReadonlyArray<RequiredContentItem>;
   /** An aggregated array relationship */
   readonly requiredContentItems_aggregate: RequiredContentItem_Aggregate;
-  /** An object relationship */
-  readonly room?: Maybe<Room>;
   /** An array relationship */
   readonly rooms: ReadonlyArray<Room>;
   /** An aggregated array relationship */
@@ -3995,7 +3993,6 @@ export type ContentGroup_Bool_Exp = {
   readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
   readonly people?: Maybe<ContentGroupPerson_Bool_Exp>;
   readonly requiredContentItems?: Maybe<RequiredContentItem_Bool_Exp>;
-  readonly room?: Maybe<Room_Bool_Exp>;
   readonly rooms?: Maybe<Room_Bool_Exp>;
   readonly shortTitle?: Maybe<String_Comparison_Exp>;
   readonly title?: Maybe<String_Comparison_Exp>;
@@ -4026,7 +4023,6 @@ export type ContentGroup_Insert_Input = {
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
   readonly people?: Maybe<ContentGroupPerson_Arr_Rel_Insert_Input>;
   readonly requiredContentItems?: Maybe<RequiredContentItem_Arr_Rel_Insert_Input>;
-  readonly room?: Maybe<Room_Obj_Rel_Insert_Input>;
   readonly rooms?: Maybe<Room_Arr_Rel_Insert_Input>;
   readonly shortTitle?: Maybe<Scalars['String']>;
   readonly title?: Maybe<Scalars['String']>;
@@ -4123,7 +4119,6 @@ export type ContentGroup_Order_By = {
   readonly originatingDataId?: Maybe<Order_By>;
   readonly people_aggregate?: Maybe<ContentGroupPerson_Aggregate_Order_By>;
   readonly requiredContentItems_aggregate?: Maybe<RequiredContentItem_Aggregate_Order_By>;
-  readonly room?: Maybe<Room_Order_By>;
   readonly rooms_aggregate?: Maybe<Room_Aggregate_Order_By>;
   readonly shortTitle?: Maybe<Order_By>;
   readonly title?: Maybe<Order_By>;
@@ -29673,7 +29668,7 @@ export type ContentPersonDataFragment = { readonly __typename?: 'ContentGroupPer
 export type TagWithContentFragment = (
   { readonly __typename?: 'Tag', readonly contentGroupTags: ReadonlyArray<{ readonly __typename?: 'ContentGroupTag', readonly contentGroup: (
       { readonly __typename?: 'ContentGroup' }
-      & ContentGroupDataFragment
+      & ContentGroupList_ContentGroupDataFragment
     ) }> }
   & TagInfoFragment
 );
@@ -29688,6 +29683,11 @@ export type ContentByTagQuery = { readonly __typename?: 'query_root', readonly T
     & TagWithContentFragment
   )> };
 
+export type ContentGroupList_ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly people: ReadonlyArray<(
+    { readonly __typename?: 'ContentGroupPerson' }
+    & ContentPersonDataFragment
+  )> };
+
 export type GetContentGroupQueryVariables = Exact<{
   contentGroupId: Scalars['uuid'];
 }>;
@@ -29697,15 +29697,18 @@ export type GetContentGroupQuery = { readonly __typename?: 'query_root', readonl
     { readonly __typename?: 'ContentGroup' }
     & ContentGroupDataFragment
     & ContentGroupEventsFragment
+    & ContentGroupPage_ContentGroupRoomsFragment
   )> };
 
-export type ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string }> }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }>, readonly contentItems: ReadonlyArray<(
+export type ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string }> }>, readonly contentItems: ReadonlyArray<(
     { readonly __typename?: 'ContentItem' }
     & ContentItemDataFragment
   )>, readonly people: ReadonlyArray<(
     { readonly __typename?: 'ContentGroupPerson' }
     & ContentPersonDataFragment
   )> };
+
+export type ContentGroupPage_ContentGroupRoomsFragment = { readonly __typename?: 'ContentGroup', readonly rooms: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }> };
 
 export type ContentGroupEventsFragment = { readonly __typename?: 'ContentGroup', readonly events: ReadonlyArray<(
     { readonly __typename?: 'Event' }
@@ -29908,40 +29911,42 @@ export type GetAllRoomsQuery = { readonly __typename?: 'query_root', readonly Ro
 
 export type RoomListRoomDetailsFragment = { readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly roomPrivacyName: RoomPrivacy_Enum };
 
-export type GetRoomDetailsQueryVariables = Exact<{
+export type RoomPage_GetRoomDetailsQueryVariables = Exact<{
   roomId: Scalars['uuid'];
 }>;
 
 
-export type GetRoomDetailsQuery = { readonly __typename?: 'query_root', readonly Room_by_pk?: Maybe<(
+export type RoomPage_GetRoomDetailsQuery = { readonly __typename?: 'query_root', readonly Room_by_pk?: Maybe<(
     { readonly __typename?: 'Room' }
-    & RoomDetailsFragment
+    & RoomPage_RoomDetailsFragment
   )> };
 
-export type RoomDetailsFragment = (
-  { readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly publicVonageSessionId?: Maybe<string>, readonly chatId?: Maybe<any>, readonly originatingContentGroupId?: Maybe<any>, readonly roomPrivacyName: RoomPrivacy_Enum, readonly mediaLiveChannel?: Maybe<{ readonly __typename?: 'MediaLiveChannel', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly id: any }> }
-  & RoomEventsFragment
-  & RoomPeopleFragment
+export type RoomPage_RoomDetailsFragment = (
+  { readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly publicVonageSessionId?: Maybe<string>, readonly chatId?: Maybe<any>, readonly roomPrivacyName: RoomPrivacy_Enum, readonly mediaLiveChannel?: Maybe<{ readonly __typename?: 'MediaLiveChannel', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly id: any }>, readonly originatingContentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly contentGroupTypeName: ContentGroupType_Enum, readonly title: string, readonly contentItems: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly data: any }> }> }
+  & RoomPage_RoomEventsFragment
+  & RoomPage_RoomPeopleFragment
 );
 
-export type RoomEventsFragment = { readonly __typename?: 'Room', readonly events: ReadonlyArray<(
+export type RoomPage_RoomEventsFragment = { readonly __typename?: 'Room', readonly events: ReadonlyArray<(
     { readonly __typename?: 'Event' }
-    & RoomEventSummaryFragment
+    & RoomPage_RoomEventSummaryFragment
   )> };
 
-export type RoomEventSummaryFragment = { readonly __typename?: 'Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum, readonly contentGroupId?: Maybe<any> };
+export type RoomPage_RoomEventSummaryFragment = { readonly __typename?: 'Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum, readonly contentGroupId?: Maybe<any> };
 
-export type EventPeopleForRoomSubscriptionVariables = Exact<{
+export type RoomPage_RoomPeopleFragment = { readonly __typename?: 'Room', readonly roomPeople: ReadonlyArray<{ readonly __typename?: 'RoomPerson', readonly id: any, readonly roomPersonRoleName: RoomPersonRole_Enum, readonly attendee: { readonly __typename?: 'Attendee', readonly displayName: string, readonly id: any } }> };
+
+export type RoomPage_EventPeopleForRoomSubscriptionVariables = Exact<{
   roomId: Scalars['uuid'];
 }>;
 
 
-export type EventPeopleForRoomSubscription = { readonly __typename?: 'subscription_root', readonly EventPerson: ReadonlyArray<(
+export type RoomPage_EventPeopleForRoomSubscription = { readonly __typename?: 'subscription_root', readonly EventPerson: ReadonlyArray<(
     { readonly __typename?: 'EventPerson' }
-    & EventPersonDetailsFragment
+    & RoomPage_EventPersonDetailsFragment
   )> };
 
-export type EventPersonDetailsFragment = { readonly __typename?: 'EventPerson', readonly id: any, readonly name: string, readonly roleName: EventPersonRole_Enum, readonly eventId: any, readonly attendee?: Maybe<{ readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly displayName: string }> };
+export type RoomPage_EventPersonDetailsFragment = { readonly __typename?: 'EventPerson', readonly id: any, readonly name: string, readonly roleName: EventPersonRole_Enum, readonly eventId: any, readonly attendee?: Maybe<{ readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly displayName: string }> };
 
 export type GetEventVonageDetailsQueryVariables = Exact<{
   eventId: Scalars['uuid'];
@@ -29949,6 +29954,23 @@ export type GetEventVonageDetailsQueryVariables = Exact<{
 
 
 export type GetEventVonageDetailsQuery = { readonly __typename?: 'query_root', readonly Event_by_pk?: Maybe<{ readonly __typename?: 'Event', readonly id: any, readonly eventVonageSession?: Maybe<{ readonly __typename?: 'EventVonageSession', readonly sessionId: string, readonly id: any }> }> };
+
+export type RoomSponsorContent_GetContentItemsQueryVariables = Exact<{
+  contentGroupId: Scalars['uuid'];
+}>;
+
+
+export type RoomSponsorContent_GetContentItemsQuery = { readonly __typename?: 'query_root', readonly ContentGroup: ReadonlyArray<(
+    { readonly __typename?: 'ContentGroup' }
+    & RoomSponsorContent_ContentGroupDataFragment
+  )> };
+
+export type RoomSponsorContent_ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly contentItems: ReadonlyArray<(
+    { readonly __typename?: 'ContentItem' }
+    & RoomSponsorContent_ContentItemDataFragment
+  )> };
+
+export type RoomSponsorContent_ContentItemDataFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly contentTypeName: ContentType_Enum, readonly data: any, readonly layoutData?: Maybe<any> };
 
 export type VonageSubscriber_GetAttendeeQueryVariables = Exact<{
   id: Scalars['uuid'];
@@ -30819,6 +30841,8 @@ export type UserEventRolesSubscription = { readonly __typename?: 'subscription_r
       & EventPersonDetailsFragment
     )> }> };
 
+export type EventPersonDetailsFragment = { readonly __typename?: 'EventPerson', readonly id: any, readonly name: string, readonly roleName: EventPersonRole_Enum, readonly eventId: any, readonly attendee?: Maybe<{ readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly displayName: string }> };
+
 export type SelectInvitationForAcceptQueryVariables = Exact<{
   inviteCode: Scalars['uuid'];
 }>;
@@ -30898,6 +30922,18 @@ export type MenuSchedule_SearchEventsQuery = { readonly __typename?: 'query_root
   )> };
 
 export type MenuSchedule_EventFragment = { readonly __typename?: 'Event', readonly id: any, readonly name: string, readonly startTime: any, readonly room: { readonly __typename?: 'Room', readonly id: any, readonly name: string }, readonly eventTags: ReadonlyArray<{ readonly __typename?: 'EventTag', readonly tag: { readonly __typename?: 'Tag', readonly id: any, readonly colour: string, readonly name: string } }>, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly title: string }> };
+
+export type MainMenuSponsors_GetSponsorsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type MainMenuSponsors_GetSponsorsQuery = { readonly __typename?: 'query_root', readonly ContentGroup: ReadonlyArray<(
+    { readonly __typename?: 'ContentGroup' }
+    & MainMenuSponsors_ContentGroupDataFragment
+  )> };
+
+export type MainMenuSponsors_ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly rooms: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }>, readonly logo: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly data: any }> };
 
 export type PresenceCountSubscriptionVariables = Exact<{
   path: Scalars['String'];
@@ -31141,15 +31177,6 @@ export const TagInfoFragmentDoc = gql`
   originatingDataId
 }
     `;
-export const ContentItemDataFragmentDoc = gql`
-    fragment ContentItemData on ContentItem {
-  id
-  data
-  layoutData
-  name
-  contentTypeName
-}
-    `;
 export const ContentPersonDataFragmentDoc = gql`
     fragment ContentPersonData on ContentGroupPerson {
   id
@@ -31160,6 +31187,36 @@ export const ContentPersonDataFragmentDoc = gql`
   }
   roleName
   priority
+}
+    `;
+export const ContentGroupList_ContentGroupDataFragmentDoc = gql`
+    fragment ContentGroupList_ContentGroupData on ContentGroup {
+  id
+  title
+  contentGroupTypeName
+  people(order_by: {priority: asc}) {
+    ...ContentPersonData
+  }
+}
+    ${ContentPersonDataFragmentDoc}`;
+export const TagWithContentFragmentDoc = gql`
+    fragment TagWithContent on Tag {
+  ...TagInfo
+  contentGroupTags {
+    contentGroup {
+      ...ContentGroupList_ContentGroupData
+    }
+  }
+}
+    ${TagInfoFragmentDoc}
+${ContentGroupList_ContentGroupDataFragmentDoc}`;
+export const ContentItemDataFragmentDoc = gql`
+    fragment ContentItemData on ContentItem {
+  id
+  data
+  layoutData
+  name
+  contentTypeName
 }
     `;
 export const ContentGroupDataFragmentDoc = gql`
@@ -31174,9 +31231,6 @@ export const ContentGroupDataFragmentDoc = gql`
       name
     }
   }
-  rooms(where: {name: {_like: "Breakout:%"}}, order_by: {created_at: asc}) {
-    id
-  }
   contentItems(where: {isHidden: {_eq: false}}) {
     ...ContentItemData
   }
@@ -31186,17 +31240,13 @@ export const ContentGroupDataFragmentDoc = gql`
 }
     ${ContentItemDataFragmentDoc}
 ${ContentPersonDataFragmentDoc}`;
-export const TagWithContentFragmentDoc = gql`
-    fragment TagWithContent on Tag {
-  ...TagInfo
-  contentGroupTags {
-    contentGroup {
-      ...ContentGroupData
-    }
+export const ContentGroupPage_ContentGroupRoomsFragmentDoc = gql`
+    fragment ContentGroupPage_ContentGroupRooms on ContentGroup {
+  rooms(where: {name: {_like: "Breakout:%"}}, order_by: {created_at: asc}) {
+    id
   }
 }
-    ${TagInfoFragmentDoc}
-${ContentGroupDataFragmentDoc}`;
+    `;
 export const ContentGroupEventFragmentDoc = gql`
     fragment ContentGroupEvent on Event {
   startTime
@@ -31287,8 +31337,8 @@ export const RoomListRoomDetailsFragmentDoc = gql`
   roomPrivacyName
 }
     `;
-export const RoomEventSummaryFragmentDoc = gql`
-    fragment RoomEventSummary on Event {
+export const RoomPage_RoomEventSummaryFragmentDoc = gql`
+    fragment RoomPage_RoomEventSummary on Event {
   id
   conferenceId
   startTime
@@ -31298,15 +31348,15 @@ export const RoomEventSummaryFragmentDoc = gql`
   contentGroupId
 }
     `;
-export const RoomEventsFragmentDoc = gql`
-    fragment RoomEvents on Room {
+export const RoomPage_RoomEventsFragmentDoc = gql`
+    fragment RoomPage_RoomEvents on Room {
   events(order_by: {startTime: asc}) {
-    ...RoomEventSummary
+    ...RoomPage_RoomEventSummary
   }
 }
-    ${RoomEventSummaryFragmentDoc}`;
-export const RoomPeopleFragmentDoc = gql`
-    fragment RoomPeople on Room {
+    ${RoomPage_RoomEventSummaryFragmentDoc}`;
+export const RoomPage_RoomPeopleFragmentDoc = gql`
+    fragment RoomPage_RoomPeople on Room {
   roomPeople {
     id
     roomPersonRoleName
@@ -31317,8 +31367,8 @@ export const RoomPeopleFragmentDoc = gql`
   }
 }
     `;
-export const RoomDetailsFragmentDoc = gql`
-    fragment RoomDetails on Room {
+export const RoomPage_RoomDetailsFragmentDoc = gql`
+    fragment RoomPage_RoomDetails on Room {
   id
   name
   currentModeName
@@ -31329,15 +31379,27 @@ export const RoomDetailsFragmentDoc = gql`
   }
   publicVonageSessionId
   chatId
-  originatingContentGroupId
+  originatingContentGroup {
+    id
+    contentGroupTypeName
+    contentItems(
+      where: {contentTypeName: {_eq: IMAGE_URL}, layoutData: {_contains: {isLogo: true}}}
+      limit: 1
+      order_by: {updatedAt: desc}
+    ) {
+      id
+      data
+    }
+    title
+  }
   roomPrivacyName
-  ...RoomEvents
-  ...RoomPeople
+  ...RoomPage_RoomEvents
+  ...RoomPage_RoomPeople
 }
-    ${RoomEventsFragmentDoc}
-${RoomPeopleFragmentDoc}`;
-export const EventPersonDetailsFragmentDoc = gql`
-    fragment EventPersonDetails on EventPerson {
+    ${RoomPage_RoomEventsFragmentDoc}
+${RoomPage_RoomPeopleFragmentDoc}`;
+export const RoomPage_EventPersonDetailsFragmentDoc = gql`
+    fragment RoomPage_EventPersonDetails on EventPerson {
   id
   name
   roleName
@@ -31349,6 +31411,23 @@ export const EventPersonDetailsFragmentDoc = gql`
   }
 }
     `;
+export const RoomSponsorContent_ContentItemDataFragmentDoc = gql`
+    fragment RoomSponsorContent_ContentItemData on ContentItem {
+  id
+  name
+  contentTypeName
+  data
+  layoutData
+}
+    `;
+export const RoomSponsorContent_ContentGroupDataFragmentDoc = gql`
+    fragment RoomSponsorContent_ContentGroupData on ContentGroup {
+  id
+  contentItems {
+    ...RoomSponsorContent_ContentItemData
+  }
+}
+    ${RoomSponsorContent_ContentItemDataFragmentDoc}`;
 export const Timeline_TagFragmentDoc = gql`
     fragment Timeline_Tag on Tag {
   id
@@ -31798,6 +31877,19 @@ export const RequiredItemFieldsFragmentDoc = gql`
   contentGroupTitle
 }
     `;
+export const EventPersonDetailsFragmentDoc = gql`
+    fragment EventPersonDetails on EventPerson {
+  id
+  name
+  roleName
+  eventId
+  attendee {
+    id
+    userId
+    displayName
+  }
+}
+    `;
 export const SidebarChatInfoFragmentDoc = gql`
     fragment SidebarChatInfo on chat_Chat {
   id
@@ -31851,6 +31943,39 @@ export const MenuSchedule_EventFragmentDoc = gql`
   }
   contentGroup {
     title
+  }
+}
+    `;
+export const MainMenuSponsors_ContentGroupDataFragmentDoc = gql`
+    fragment MainMenuSponsors_ContentGroupData on ContentGroup {
+  id
+  rooms(
+    limit: 1
+    order_by: {created_at: asc}
+    where: {conferenceId: {_eq: $conferenceId}}
+  ) {
+    id
+  }
+  logo: contentItems(
+    where: {contentTypeName: {_eq: IMAGE_URL}, layoutData: {_contains: {isLogo: true}}}
+    order_by: {updatedAt: desc}
+    limit: 1
+  ) {
+    id
+    data
+  }
+  title
+}
+    `;
+export const RoomPeopleFragmentDoc = gql`
+    fragment RoomPeople on Room {
+  roomPeople {
+    id
+    roomPersonRoleName
+    attendee {
+      displayName
+      id
+    }
   }
 }
     `;
@@ -32791,10 +32916,12 @@ export const GetContentGroupDocument = gql`
   ContentGroup_by_pk(id: $contentGroupId) {
     ...ContentGroupData
     ...ContentGroupEvents
+    ...ContentGroupPage_ContentGroupRooms
   }
 }
     ${ContentGroupDataFragmentDoc}
-${ContentGroupEventsFragmentDoc}`;
+${ContentGroupEventsFragmentDoc}
+${ContentGroupPage_ContentGroupRoomsFragmentDoc}`;
 
 /**
  * __useGetContentGroupQuery__
@@ -33537,68 +33664,68 @@ export function useGetAllRoomsLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetAllRoomsQueryHookResult = ReturnType<typeof useGetAllRoomsQuery>;
 export type GetAllRoomsLazyQueryHookResult = ReturnType<typeof useGetAllRoomsLazyQuery>;
 export type GetAllRoomsQueryResult = Apollo.QueryResult<GetAllRoomsQuery, GetAllRoomsQueryVariables>;
-export const GetRoomDetailsDocument = gql`
-    query GetRoomDetails($roomId: uuid!) {
+export const RoomPage_GetRoomDetailsDocument = gql`
+    query RoomPage_GetRoomDetails($roomId: uuid!) {
   Room_by_pk(id: $roomId) {
-    ...RoomDetails
+    ...RoomPage_RoomDetails
   }
 }
-    ${RoomDetailsFragmentDoc}`;
+    ${RoomPage_RoomDetailsFragmentDoc}`;
 
 /**
- * __useGetRoomDetailsQuery__
+ * __useRoomPage_GetRoomDetailsQuery__
  *
- * To run a query within a React component, call `useGetRoomDetailsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetRoomDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useRoomPage_GetRoomDetailsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRoomPage_GetRoomDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetRoomDetailsQuery({
+ * const { data, loading, error } = useRoomPage_GetRoomDetailsQuery({
  *   variables: {
  *      roomId: // value for 'roomId'
  *   },
  * });
  */
-export function useGetRoomDetailsQuery(baseOptions: Apollo.QueryHookOptions<GetRoomDetailsQuery, GetRoomDetailsQueryVariables>) {
-        return Apollo.useQuery<GetRoomDetailsQuery, GetRoomDetailsQueryVariables>(GetRoomDetailsDocument, baseOptions);
+export function useRoomPage_GetRoomDetailsQuery(baseOptions: Apollo.QueryHookOptions<RoomPage_GetRoomDetailsQuery, RoomPage_GetRoomDetailsQueryVariables>) {
+        return Apollo.useQuery<RoomPage_GetRoomDetailsQuery, RoomPage_GetRoomDetailsQueryVariables>(RoomPage_GetRoomDetailsDocument, baseOptions);
       }
-export function useGetRoomDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRoomDetailsQuery, GetRoomDetailsQueryVariables>) {
-          return Apollo.useLazyQuery<GetRoomDetailsQuery, GetRoomDetailsQueryVariables>(GetRoomDetailsDocument, baseOptions);
+export function useRoomPage_GetRoomDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RoomPage_GetRoomDetailsQuery, RoomPage_GetRoomDetailsQueryVariables>) {
+          return Apollo.useLazyQuery<RoomPage_GetRoomDetailsQuery, RoomPage_GetRoomDetailsQueryVariables>(RoomPage_GetRoomDetailsDocument, baseOptions);
         }
-export type GetRoomDetailsQueryHookResult = ReturnType<typeof useGetRoomDetailsQuery>;
-export type GetRoomDetailsLazyQueryHookResult = ReturnType<typeof useGetRoomDetailsLazyQuery>;
-export type GetRoomDetailsQueryResult = Apollo.QueryResult<GetRoomDetailsQuery, GetRoomDetailsQueryVariables>;
-export const EventPeopleForRoomDocument = gql`
-    subscription EventPeopleForRoom($roomId: uuid!) {
+export type RoomPage_GetRoomDetailsQueryHookResult = ReturnType<typeof useRoomPage_GetRoomDetailsQuery>;
+export type RoomPage_GetRoomDetailsLazyQueryHookResult = ReturnType<typeof useRoomPage_GetRoomDetailsLazyQuery>;
+export type RoomPage_GetRoomDetailsQueryResult = Apollo.QueryResult<RoomPage_GetRoomDetailsQuery, RoomPage_GetRoomDetailsQueryVariables>;
+export const RoomPage_EventPeopleForRoomDocument = gql`
+    subscription RoomPage_EventPeopleForRoom($roomId: uuid!) {
   EventPerson(where: {event: {room: {id: {_eq: $roomId}}}}) {
-    ...EventPersonDetails
+    ...RoomPage_EventPersonDetails
   }
 }
-    ${EventPersonDetailsFragmentDoc}`;
+    ${RoomPage_EventPersonDetailsFragmentDoc}`;
 
 /**
- * __useEventPeopleForRoomSubscription__
+ * __useRoomPage_EventPeopleForRoomSubscription__
  *
- * To run a query within a React component, call `useEventPeopleForRoomSubscription` and pass it any options that fit your needs.
- * When your component renders, `useEventPeopleForRoomSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useRoomPage_EventPeopleForRoomSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useRoomPage_EventPeopleForRoomSubscription` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useEventPeopleForRoomSubscription({
+ * const { data, loading, error } = useRoomPage_EventPeopleForRoomSubscription({
  *   variables: {
  *      roomId: // value for 'roomId'
  *   },
  * });
  */
-export function useEventPeopleForRoomSubscription(baseOptions: Apollo.SubscriptionHookOptions<EventPeopleForRoomSubscription, EventPeopleForRoomSubscriptionVariables>) {
-        return Apollo.useSubscription<EventPeopleForRoomSubscription, EventPeopleForRoomSubscriptionVariables>(EventPeopleForRoomDocument, baseOptions);
+export function useRoomPage_EventPeopleForRoomSubscription(baseOptions: Apollo.SubscriptionHookOptions<RoomPage_EventPeopleForRoomSubscription, RoomPage_EventPeopleForRoomSubscriptionVariables>) {
+        return Apollo.useSubscription<RoomPage_EventPeopleForRoomSubscription, RoomPage_EventPeopleForRoomSubscriptionVariables>(RoomPage_EventPeopleForRoomDocument, baseOptions);
       }
-export type EventPeopleForRoomSubscriptionHookResult = ReturnType<typeof useEventPeopleForRoomSubscription>;
-export type EventPeopleForRoomSubscriptionResult = Apollo.SubscriptionResult<EventPeopleForRoomSubscription>;
+export type RoomPage_EventPeopleForRoomSubscriptionHookResult = ReturnType<typeof useRoomPage_EventPeopleForRoomSubscription>;
+export type RoomPage_EventPeopleForRoomSubscriptionResult = Apollo.SubscriptionResult<RoomPage_EventPeopleForRoomSubscription>;
 export const GetEventVonageDetailsDocument = gql`
     query GetEventVonageDetails($eventId: uuid!) {
   Event_by_pk(id: $eventId) {
@@ -33636,6 +33763,41 @@ export function useGetEventVonageDetailsLazyQuery(baseOptions?: Apollo.LazyQuery
 export type GetEventVonageDetailsQueryHookResult = ReturnType<typeof useGetEventVonageDetailsQuery>;
 export type GetEventVonageDetailsLazyQueryHookResult = ReturnType<typeof useGetEventVonageDetailsLazyQuery>;
 export type GetEventVonageDetailsQueryResult = Apollo.QueryResult<GetEventVonageDetailsQuery, GetEventVonageDetailsQueryVariables>;
+export const RoomSponsorContent_GetContentItemsDocument = gql`
+    query RoomSponsorContent_GetContentItems($contentGroupId: uuid!) {
+  ContentGroup(
+    where: {id: {_eq: $contentGroupId}, contentGroupTypeName: {_eq: SPONSOR}}
+  ) {
+    ...RoomSponsorContent_ContentGroupData
+  }
+}
+    ${RoomSponsorContent_ContentGroupDataFragmentDoc}`;
+
+/**
+ * __useRoomSponsorContent_GetContentItemsQuery__
+ *
+ * To run a query within a React component, call `useRoomSponsorContent_GetContentItemsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRoomSponsorContent_GetContentItemsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRoomSponsorContent_GetContentItemsQuery({
+ *   variables: {
+ *      contentGroupId: // value for 'contentGroupId'
+ *   },
+ * });
+ */
+export function useRoomSponsorContent_GetContentItemsQuery(baseOptions: Apollo.QueryHookOptions<RoomSponsorContent_GetContentItemsQuery, RoomSponsorContent_GetContentItemsQueryVariables>) {
+        return Apollo.useQuery<RoomSponsorContent_GetContentItemsQuery, RoomSponsorContent_GetContentItemsQueryVariables>(RoomSponsorContent_GetContentItemsDocument, baseOptions);
+      }
+export function useRoomSponsorContent_GetContentItemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RoomSponsorContent_GetContentItemsQuery, RoomSponsorContent_GetContentItemsQueryVariables>) {
+          return Apollo.useLazyQuery<RoomSponsorContent_GetContentItemsQuery, RoomSponsorContent_GetContentItemsQueryVariables>(RoomSponsorContent_GetContentItemsDocument, baseOptions);
+        }
+export type RoomSponsorContent_GetContentItemsQueryHookResult = ReturnType<typeof useRoomSponsorContent_GetContentItemsQuery>;
+export type RoomSponsorContent_GetContentItemsLazyQueryHookResult = ReturnType<typeof useRoomSponsorContent_GetContentItemsLazyQuery>;
+export type RoomSponsorContent_GetContentItemsQueryResult = Apollo.QueryResult<RoomSponsorContent_GetContentItemsQuery, RoomSponsorContent_GetContentItemsQueryVariables>;
 export const VonageSubscriber_GetAttendeeDocument = gql`
     query VonageSubscriber_GetAttendee($id: uuid!) {
   Attendee_by_pk(id: $id) {
@@ -36568,6 +36730,42 @@ export function useMenuSchedule_SearchEventsLazyQuery(baseOptions?: Apollo.LazyQ
 export type MenuSchedule_SearchEventsQueryHookResult = ReturnType<typeof useMenuSchedule_SearchEventsQuery>;
 export type MenuSchedule_SearchEventsLazyQueryHookResult = ReturnType<typeof useMenuSchedule_SearchEventsLazyQuery>;
 export type MenuSchedule_SearchEventsQueryResult = Apollo.QueryResult<MenuSchedule_SearchEventsQuery, MenuSchedule_SearchEventsQueryVariables>;
+export const MainMenuSponsors_GetSponsorsDocument = gql`
+    query MainMenuSponsors_GetSponsors($conferenceId: uuid!) {
+  ContentGroup(
+    where: {conferenceId: {_eq: $conferenceId}, contentGroupTypeName: {_eq: SPONSOR}}
+    order_by: {title: asc}
+  ) {
+    ...MainMenuSponsors_ContentGroupData
+  }
+}
+    ${MainMenuSponsors_ContentGroupDataFragmentDoc}`;
+
+/**
+ * __useMainMenuSponsors_GetSponsorsQuery__
+ *
+ * To run a query within a React component, call `useMainMenuSponsors_GetSponsorsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMainMenuSponsors_GetSponsorsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMainMenuSponsors_GetSponsorsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useMainMenuSponsors_GetSponsorsQuery(baseOptions: Apollo.QueryHookOptions<MainMenuSponsors_GetSponsorsQuery, MainMenuSponsors_GetSponsorsQueryVariables>) {
+        return Apollo.useQuery<MainMenuSponsors_GetSponsorsQuery, MainMenuSponsors_GetSponsorsQueryVariables>(MainMenuSponsors_GetSponsorsDocument, baseOptions);
+      }
+export function useMainMenuSponsors_GetSponsorsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MainMenuSponsors_GetSponsorsQuery, MainMenuSponsors_GetSponsorsQueryVariables>) {
+          return Apollo.useLazyQuery<MainMenuSponsors_GetSponsorsQuery, MainMenuSponsors_GetSponsorsQueryVariables>(MainMenuSponsors_GetSponsorsDocument, baseOptions);
+        }
+export type MainMenuSponsors_GetSponsorsQueryHookResult = ReturnType<typeof useMainMenuSponsors_GetSponsorsQuery>;
+export type MainMenuSponsors_GetSponsorsLazyQueryHookResult = ReturnType<typeof useMainMenuSponsors_GetSponsorsLazyQuery>;
+export type MainMenuSponsors_GetSponsorsQueryResult = Apollo.QueryResult<MainMenuSponsors_GetSponsorsQuery, MainMenuSponsors_GetSponsorsQueryVariables>;
 export const PresenceCountDocument = gql`
     subscription PresenceCount($path: String!, $conferenceId: uuid!) {
   presence_Page_by_pk(path: $path, conferenceId: $conferenceId) {

@@ -3,8 +3,8 @@ import { Button, Stack, Text, useToast } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
     EventPersonDetailsFragment,
-    RoomEventSummaryFragment,
     RoomMode_Enum,
+    RoomPage_RoomEventSummaryFragment,
     useMakeEventRoomJoinRequestMutation,
     useMyEventRoomJoinRequestSubscription,
 } from "../../../../generated/graphql";
@@ -39,7 +39,7 @@ export function HandUpButton({
     eventPeople,
     onGoBackstage,
 }: {
-    currentRoomEvent: RoomEventSummaryFragment | null;
+    currentRoomEvent: RoomPage_RoomEventSummaryFragment | null;
     eventPeople: readonly EventPersonDetailsFragment[];
     onGoBackstage?: () => void;
 }): JSX.Element {

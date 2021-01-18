@@ -168,7 +168,7 @@ function ConferenceLandingPageInner(): JSX.Element {
                         <FAIcon iconStyle="s" icon="mug-hot" mr={2} /> Rooms
                     </LinkButton>
                 ) : undefined}
-                {[
+                {/* {[
                     Permission_Enum.ConferenceViewAttendees,
                     Permission_Enum.ConferenceManageSchedule,
                     Permission_Enum.ConferenceModerateAttendees,
@@ -183,7 +183,7 @@ function ConferenceLandingPageInner(): JSX.Element {
                     >
                         <FAIcon iconStyle="s" icon="mug-hot" mr={2} /> Shuffle Rooms
                     </LinkButton>
-                ) : undefined}
+                ) : undefined} */}
             </Flex>
             <ConferenceLandingContent group={group} />
         </>

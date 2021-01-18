@@ -31052,12 +31052,12 @@ export type GetRoomMembersSubscription = { readonly __typename?: 'subscription_r
 
 export type RoomPeopleFragment = { readonly __typename?: 'Room', readonly roomPeople: ReadonlyArray<{ readonly __typename?: 'RoomPerson', readonly id: any, readonly roomPersonRoleName: RoomPersonRole_Enum, readonly attendee: { readonly __typename?: 'Attendee', readonly displayName: string, readonly id: any } }> };
 
-export type GetRoomParticipantsSubscriptionVariables = Exact<{
+export type GetRoomParticipantsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type GetRoomParticipantsSubscription = { readonly __typename?: 'subscription_root', readonly RoomParticipant: ReadonlyArray<(
+export type GetRoomParticipantsQuery = { readonly __typename?: 'query_root', readonly RoomParticipant: ReadonlyArray<(
     { readonly __typename?: 'RoomParticipant' }
     & RoomParticipantDetailsFragment
   )> };
@@ -37163,7 +37163,7 @@ export function useGetRoomMembersSubscription(baseOptions: Apollo.SubscriptionHo
 export type GetRoomMembersSubscriptionHookResult = ReturnType<typeof useGetRoomMembersSubscription>;
 export type GetRoomMembersSubscriptionResult = Apollo.SubscriptionResult<GetRoomMembersSubscription>;
 export const GetRoomParticipantsDocument = gql`
-    subscription GetRoomParticipants($conferenceId: uuid!) {
+    query GetRoomParticipants($conferenceId: uuid!) {
   RoomParticipant(where: {conferenceId: {_eq: $conferenceId}}) {
     ...RoomParticipantDetails
   }
@@ -37171,26 +37171,30 @@ export const GetRoomParticipantsDocument = gql`
     ${RoomParticipantDetailsFragmentDoc}`;
 
 /**
- * __useGetRoomParticipantsSubscription__
+ * __useGetRoomParticipantsQuery__
  *
- * To run a query within a React component, call `useGetRoomParticipantsSubscription` and pass it any options that fit your needs.
- * When your component renders, `useGetRoomParticipantsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetRoomParticipantsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRoomParticipantsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetRoomParticipantsSubscription({
+ * const { data, loading, error } = useGetRoomParticipantsQuery({
  *   variables: {
  *      conferenceId: // value for 'conferenceId'
  *   },
  * });
  */
-export function useGetRoomParticipantsSubscription(baseOptions: Apollo.SubscriptionHookOptions<GetRoomParticipantsSubscription, GetRoomParticipantsSubscriptionVariables>) {
-        return Apollo.useSubscription<GetRoomParticipantsSubscription, GetRoomParticipantsSubscriptionVariables>(GetRoomParticipantsDocument, baseOptions);
+export function useGetRoomParticipantsQuery(baseOptions: Apollo.QueryHookOptions<GetRoomParticipantsQuery, GetRoomParticipantsQueryVariables>) {
+        return Apollo.useQuery<GetRoomParticipantsQuery, GetRoomParticipantsQueryVariables>(GetRoomParticipantsDocument, baseOptions);
       }
-export type GetRoomParticipantsSubscriptionHookResult = ReturnType<typeof useGetRoomParticipantsSubscription>;
-export type GetRoomParticipantsSubscriptionResult = Apollo.SubscriptionResult<GetRoomParticipantsSubscription>;
+export function useGetRoomParticipantsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRoomParticipantsQuery, GetRoomParticipantsQueryVariables>) {
+          return Apollo.useLazyQuery<GetRoomParticipantsQuery, GetRoomParticipantsQueryVariables>(GetRoomParticipantsDocument, baseOptions);
+        }
+export type GetRoomParticipantsQueryHookResult = ReturnType<typeof useGetRoomParticipantsQuery>;
+export type GetRoomParticipantsLazyQueryHookResult = ReturnType<typeof useGetRoomParticipantsLazyQuery>;
+export type GetRoomParticipantsQueryResult = Apollo.QueryResult<GetRoomParticipantsQuery, GetRoomParticipantsQueryVariables>;
 export const ShufflePeriodsDocument = gql`
     query ShufflePeriods($conferenceId: uuid!, $start: timestamptz!, $end: timestamptz!) {
   room_ShufflePeriod(

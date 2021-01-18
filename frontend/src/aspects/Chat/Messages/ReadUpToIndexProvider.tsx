@@ -72,17 +72,18 @@ function ReadUpToIndexProvider_UserExists({
         }
     }, [attendeeId, chatId, messages.liveMessages, setUnread]);
 
-    const readUpToMarkerSeen = useCallback(() => {
-        if (messages.liveMessages && messages.liveMessages.size > 0) {
-            setUnread({
-                variables: {
-                    attendeeId,
-                    chatId,
-                    messageId: [...messages.liveMessages.keys()].sort((x, y) => y - x)[0],
-                },
-            });
-        }
-    }, [attendeeId, chatId, messages.liveMessages, setUnread]);
+    const readUpToMarkerSeen = useCallback(() => { /* EMPTY */ }, []);
+    // const readUpToMarkerSeen = useCallback(() => {
+    //     if (messages.liveMessages && messages.liveMessages.size > 0) {
+    //         setUnread({
+    //             variables: {
+    //                 attendeeId,
+    //                 chatId,
+    //                 messageId: [...messages.liveMessages.keys()].sort((x, y) => y - x)[0],
+    //             },
+    //         });
+    //     }
+    // }, [attendeeId, chatId, messages.liveMessages, setUnread]);
 
     const st = useMemo(
         () => ({

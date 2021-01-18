@@ -1,7 +1,6 @@
 import { gql } from "@apollo/client";
 import React, { useCallback, useRef } from "react";
-import { useLocation } from "react-router-dom";
-import { useGetPresenceCountOfQuery, usePresenceCountSubscription } from "../../generated/graphql";
+import { useGetPresenceCountOfQuery } from "../../generated/graphql";
 import { useConference } from "../Conference/useConference";
 
 interface PresenceCount {
@@ -39,29 +38,31 @@ gql`
 
 export default function PresenceCountProvider({
     children,
-    disableSubscription,
-}: {
+}: // disableSubscription,
+{
     children: React.ReactNode | React.ReactNodeArray;
     disableSubscription?: boolean;
 }): JSX.Element {
-    const location = useLocation();
+    // const location = useLocation();
     const conference = useConference();
-    const presenceCount = usePresenceCountSubscription({
-        skip: disableSubscription,
-        variables: {
-            conferenceId: conference.id,
-            path: location.pathname,
-        },
-    });
+    // const presenceCount = usePresenceCountSubscription({
+    //     skip: disableSubscription,
+    //     variables: {
+    //         conferenceId: conference.id,
+    //         path: location.pathname,
+    //     },
+    // });
     const { refetch: getPresenceCountOfQ } = useGetPresenceCountOfQuery({
         skip: true,
     });
     const previousErrorPath = useRef<string | null>(null);
 
-    const pageCount = presenceCount.data?.presence_Page_by_pk?.count;
+    // const pageCount = presenceCount.data?.presence_Page_by_pk?.count;
 
     const getPageCountOf = useCallback(
         async (path: string) => {
+            return undefined;
+
             if (path === previousErrorPath.current) {
                 return undefined;
             }
@@ -86,7 +87,7 @@ export default function PresenceCountProvider({
     return (
         <PresenceCountContext.Provider
             value={{
-                pageCount,
+                pageCount: undefined,
                 getPageCountOf,
             }}
         >

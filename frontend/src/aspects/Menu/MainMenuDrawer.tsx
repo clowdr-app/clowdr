@@ -53,7 +53,7 @@ export default function MainMenuDrawer({ isOpen, portalNode }: Props): JSX.Eleme
                             {portalNode ? (
                                 <OutPortal node={portalNode} />
                             ) : (
-                                <VStack align="stretch" spacing={0}>
+                                <VStack align="stretch" spacing={0} mb="80px">
                                     <Route
                                         path="/conference/:confSlug"
                                         component={(

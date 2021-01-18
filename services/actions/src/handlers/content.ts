@@ -37,6 +37,7 @@ export async function handleContentItemUpdated(payload: Payload<ContentItemData>
 
     if (newRow.data.length === 0) {
         console.log("handleContentItemUpdated: content item does not have any versions yet, ignoring", newRow.id);
+        return;
     }
 
     const oldVersion = oldRow?.data[oldRow.data.length - 1];

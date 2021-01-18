@@ -118,11 +118,11 @@ export function Markdown(elProps?: {
 
                 paragraph: (props) => {
                     const { children } = props;
-                    return <Text mb={2} whiteSpace="normal" wordBreak="break-all">{children}</Text>;
+                    return <Text mb={2} whiteSpace="normal" wordBreak="break-word">{children}</Text>;
                 },
                 emphasis: (props) => {
                     const { children } = props;
-                    return <Text as="em" whiteSpace="normal" wordBreak="break-all">{children}</Text>;
+                    return <Text as="em" whiteSpace="normal" wordBreak="break-word">{children}</Text>;
                 },
                 blockquote: (props) => {
                     const { children } = props;
@@ -141,7 +141,7 @@ export function Markdown(elProps?: {
                 },
                 delete: (props) => {
                     const { children } = props;
-                    return <Text as="del" whiteSpace="normal" wordBreak="break-all">{children}</Text>;
+                    return <Text as="del" whiteSpace="normal" wordBreak="break-word">{children}</Text>;
                 },
                 thematicBreak: Divider,
                 img: Image,
@@ -194,7 +194,7 @@ export function Markdown(elProps?: {
                             size={sizes[level - 1]}
                             {...getCoreProps(props)}
                             whiteSpace="normal"
-                            wordBreak="break-all"
+                            wordBreak="break-word"
                         >
                             {children}
                         </Heading>

@@ -36,7 +36,11 @@ export function RoomTitle({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFr
 
     return roomDetails.originatingContentGroup ? (
         <>
-            {sponsorLogoUrl ? <Image src={sponsorLogoUrl} ml={5} maxWidth="20rem" mt={5} /> : <></>}
+            {sponsorLogoUrl ? (
+                <Image src={sponsorLogoUrl} ml={5} maxWidth="20rem" mt={5} bgColor="white" p={5} borderRadius="md" />
+            ) : (
+                <></>
+            )}
             <Heading as="h2" textAlign="left" mt={5} ml={5}>
                 {roomDetails.originatingContentGroup.title}
             </Heading>

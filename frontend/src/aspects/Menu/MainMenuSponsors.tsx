@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Grid, GridItem, Image, List, ListItem, Text } from "@chakra-ui/react";
+import { Grid, GridItem, Image, List, ListItem, Text, useToken } from "@chakra-ui/react";
 import { ContentItemDataBlob, ContentType_Enum, isContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
 import React, { useMemo } from "react";
@@ -70,6 +70,8 @@ export function MainMenuSponsors(): JSX.Element {
         return R.fromPairs(pairs);
     }, [sponsorsResult.data?.ContentGroup]);
 
+    const borderColour = useToken("colors", ["gray.300"]);
+
     return (
         <ApolloQueryWrapper getter={(data) => data.ContentGroup} queryResult={sponsorsResult}>
             {(sponsorContentGroups: readonly MainMenuSponsors_ContentGroupDataFragment[]) => (
@@ -86,12 +88,13 @@ export function MainMenuSponsors(): JSX.Element {
                                         }
                                         h="100%"
                                         width="100%"
-                                        py={2}
-                                        px={4}
+                                        pl={0}
+                                        overflow="hidden"
                                         linkProps={{ h: "100%", w: "100%" }}
+                                        border={`1px solid ${borderColour}`}
                                     >
-                                        <Grid templateColumns="20% 80%" columnGap={4} h="100%" w="100%">
-                                            <GridItem minH="0">
+                                        <Grid templateColumns="25% 75%" columnGap={4} h="100%" w="100%" pr={4}>
+                                            <GridItem minH="0" py={2} px={4} bgColor="white">
                                                 {sponsorLogos[sponsorContentGroup.id] ? (
                                                     <Image
                                                         src={sponsorLogos[sponsorContentGroup.id] ?? undefined}

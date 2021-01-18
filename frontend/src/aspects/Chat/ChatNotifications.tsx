@@ -10,7 +10,7 @@ import {
     useSubdChatsUnreadCountsSubscription,
 } from "../../generated/graphql";
 import { useConference } from "../Conference/useConference";
-import { useMaybeCurrentAttendee } from "../Conference/useCurrentAttendee";
+import useCurrentAttendee, { useMaybeCurrentAttendee } from "../Conference/useCurrentAttendee";
 import { Markdown } from "../Text/Markdown";
 
 gql`
@@ -71,6 +71,7 @@ export function ChatNotificationsProvider_WithAttendee({
     children: React.ReactNode | React.ReactNodeArray;
     attendeeId: string;
 }): JSX.Element {
+    const currentAttendee = useCurrentAttendee();
     const subscription = useSubdChatsUnreadCountsSubscription({
         variables: {
             attendeeId,
@@ -123,7 +124,10 @@ export function ChatNotificationsProvider_WithAttendee({
                                 : undefined;
 
                             const newMsg = chatInfo.messages[0];
-                            if (!chatPath || !location.pathname.endsWith(chatPath)) {
+                            if (
+                                currentAttendee.id !== newMsg.sender?.id &&
+                                (!chatPath || !location.pathname.endsWith(chatPath))
+                            ) {
                                 toast({
                                     position: "top-right",
                                     description: newMsg.message,

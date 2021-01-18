@@ -17,11 +17,13 @@ import {
     useColorModeValue,
     VStack,
 } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
     ContentGroupList_ContentGroupDataFragment,
-    TagWithContentFragment,
-    useContentByTagQuery,
+    ContentGroupList_ContentGroupTagDataFragment,
+    ContentGroupList_TagInfoFragment,
+    useContentOfTagQuery,
+    useTagsQuery,
 } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
@@ -30,27 +32,45 @@ import { useConference } from "../../useConference";
 import { sortAuthors } from "./AuthorList";
 
 gql`
-    fragment TagWithContent on Tag {
-        ...TagInfo
-        contentGroupTags {
-            contentGroup {
-                ...ContentGroupList_ContentGroupData
-            }
+    fragment ContentGroupList_ContentPersonData on ContentGroupPerson {
+        id
+        person {
+            id
+            affiliation
+            name
         }
-    }
-
-    query ContentByTag($conferenceId: uuid!) {
-        Tag(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...TagWithContent
-        }
+        priority
     }
 
     fragment ContentGroupList_ContentGroupData on ContentGroup {
         id
         title
-        contentGroupTypeName
-        people(order_by: { priority: asc }) {
-            ...ContentPersonData
+        people(where: { roleName: { _nilike: "chair" } }) {
+            ...ContentGroupList_ContentPersonData
+        }
+    }
+
+    fragment ContentGroupList_ContentGroupTagData on ContentGroupTag {
+        contentGroup {
+            ...ContentGroupList_ContentGroupData
+        }
+    }
+
+    fragment ContentGroupList_TagInfo on Tag {
+        id
+        colour
+        name
+    }
+
+    query ContentOfTag($id: uuid!) {
+        ContentGroupTag(where: { tagId: { _eq: $id } }) {
+            ...ContentGroupList_ContentGroupTagData
+        }
+    }
+
+    query Tags($conferenceId: uuid!) {
+        Tag(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...ContentGroupList_TagInfo
         }
     }
 `;
@@ -60,7 +80,7 @@ function TagButton({
     isExpanded,
     setOpenId,
 }: {
-    tag: TagWithContentFragment;
+    tag: ContentGroupList_TagInfoFragment;
     isExpanded: boolean;
     setOpenId: (id: string) => void;
 }): JSX.Element {
@@ -111,8 +131,7 @@ function ContentGroupButton({ group }: { group: ContentGroupList_ContentGroupDat
                 {group.title}
             </Text>
             <Text as="p" fontSize="0.9em" textColor={textColour} whiteSpace="normal" lineHeight="3ex">
-                {group.people
-                    .filter((x) => x.roleName.toLowerCase() !== "chair")
+                {[...group.people]
                     .sort(sortAuthors)
                     .reduce((acc, person) => `${acc}, ${person.person.name}`, "")
                     .substr(2)}
@@ -121,16 +140,31 @@ function ContentGroupButton({ group }: { group: ContentGroupList_ContentGroupDat
     );
 }
 
-function Panel({ tag, isExpanded }: { tag: TagWithContentFragment; isExpanded: boolean }): JSX.Element {
+function Panel({ tag, isExpanded }: { tag: ContentGroupList_TagInfoFragment; isExpanded: boolean }): JSX.Element {
     const [search, setSearch] = useState<string>("");
 
+    const contentOfTag = useContentOfTagQuery({
+        skip: true,
+    });
+    const [content, setContent] = useState<ContentGroupList_ContentGroupTagDataFragment[] | null>(null);
+    useEffect(() => {
+        if (isExpanded && !content) {
+            (async () => {
+                const data = await contentOfTag.refetch({
+                    id: tag.id,
+                });
+                setContent(data.data?.ContentGroupTag ? [...data.data.ContentGroupTag] : []);
+            })();
+        }
+    }, [content, contentOfTag, isExpanded, tag.id]);
+
     const sortedGroups = useMemo(
-        () => tag.contentGroupTags.map((x) => x.contentGroup).sort((x, y) => x.title.localeCompare(y.title)),
-        [tag.contentGroupTags]
+        () => content?.map((x) => x.contentGroup).sort((x, y) => x.title.localeCompare(y.title)),
+        [content]
     );
     const groupElements = useMemo(
         () =>
-            sortedGroups.map((group) => ({
+            sortedGroups?.map((group) => ({
                 title: group.title.toLowerCase(),
                 names: group.people.map((person) => person.person.name.toLowerCase()),
                 affiliations: group.people.map((person) => person.person.affiliation?.toLowerCase() ?? ""),
@@ -139,7 +173,7 @@ function Panel({ tag, isExpanded }: { tag: TagWithContentFragment; isExpanded: b
         [sortedGroups]
     );
     const s = search.toLowerCase();
-    const filteredElements = groupElements.filter((g) => {
+    const filteredElements = groupElements?.filter((g) => {
         return (
             g.title.includes(s) ||
             g.names.some((name) => name.includes(s)) ||
@@ -147,7 +181,9 @@ function Panel({ tag, isExpanded }: { tag: TagWithContentFragment; isExpanded: b
         );
     });
 
-    const resultCountStr = `${filteredElements.length} ${filteredElements.length !== 1 ? "items" : "item"}`;
+    const resultCountStr = filteredElements
+        ? `${filteredElements.length} ${filteredElements.length !== 1 ? "items" : "item"}`
+        : "Loading content";
     const [ariaSearchResultStr, setAriaSearchResultStr] = useState<string>(resultCountStr);
     useEffect(() => {
         const tId = setTimeout(() => {
@@ -195,44 +231,48 @@ function Panel({ tag, isExpanded }: { tag: TagWithContentFragment; isExpanded: b
                 </InputGroup>
                 <FormHelperText>Search for an item by title or a person&apos;s name or affiliation.</FormHelperText>
             </FormControl>
-            <SimpleGrid
-                columns={[1, Math.min(2, filteredElements.length), Math.min(3, filteredElements.length)]}
-                autoRows="min-content"
-                spacing={[2, 2, 4]}
-            >
-                {filteredElements.map((g) => g.el)}
-            </SimpleGrid>
+            {!filteredElements ? (
+                <Spinner label="Loading content" />
+            ) : (
+                <SimpleGrid
+                    columns={[1, Math.min(2, filteredElements.length), Math.min(3, filteredElements.length)]}
+                    autoRows="min-content"
+                    spacing={[2, 2, 4]}
+                >
+                    {filteredElements.map((g) => g.el)}
+                </SimpleGrid>
+            )}
         </Center>
     );
 }
 
 export default function ContentGroupList(): JSX.Element {
     const conference = useConference();
-    const { loading, data, error } = useContentByTagQuery({
+    const { loading, data, error } = useTagsQuery({
         variables: {
             conferenceId: conference.id,
         },
     });
     useQueryErrorToast(error);
 
-    const previousOpenPanelId = window.localStorage.getItem("ContentGroupList-OpenPanelId");
-    const [openPanelId, setOpenPanelId] = useState<string | null>(previousOpenPanelId ?? null);
-    const setOpenId = useCallback((id: string) => {
-        setOpenPanelId((oldId) => {
-            const newId = oldId === id ? null : id;
-            if (newId) {
-                window.localStorage.setItem("ContentGroupList-OpenPanelId", newId);
-            } else {
-                window.localStorage.removeItem("ContentGroupList-OpenPanelId");
-            }
-            return newId;
-        });
-    }, []);
+    // const previousOpenPanelId = window.localStorage.getItem("ContentGroupList-OpenPanelId");
+    const [openPanelId, setOpenPanelId] = useState<string | null>(null);
+    const setOpenId = setOpenPanelId;
+    // const setOpenId = useCallback((id: string) => {
+    //     setOpenPanelId((oldId) => {
+    //         const newId = oldId === id ? null : id;
+    //         if (newId) {
+    //             window.localStorage.setItem("ContentGroupList-OpenPanelId", newId);
+    //         } else {
+    //             window.localStorage.removeItem("ContentGroupList-OpenPanelId");
+    //         }
+    //         return newId;
+    //     });
+    // }, []);
 
-    const sortedTags = useMemo(
-        () => data?.Tag.filter((tag) => tag.contentGroupTags.length > 0).sort((x, y) => x.name.localeCompare(y.name)),
-        [data?.Tag]
-    );
+    const sortedTags = useMemo(() => (data?.Tag ? [...data.Tag].sort((x, y) => x.name.localeCompare(y.name)) : []), [
+        data?.Tag,
+    ]);
 
     if (loading && !sortedTags) {
         return (
@@ -248,9 +288,6 @@ export default function ContentGroupList(): JSX.Element {
 
     return (
         <VStack spacing={4}>
-            <Heading as="h2" fontSize="1.4em" id="content-groups-accordion-header">
-                Pre-published content
-            </Heading>
             <Center flexDirection="column">
                 <SimpleGrid
                     aria-describedby="content-groups-accordion-header"

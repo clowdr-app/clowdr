@@ -1,7 +1,10 @@
 import { gql } from "@apollo/client";
 import { Badge, HStack, Text, VStack } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import type { ContentPersonDataFragment } from "../../../../generated/graphql";
+import type {
+    ContentGroupList_ContentPersonDataFragment,
+    ContentPersonDataFragment,
+} from "../../../../generated/graphql";
 
 gql`
     fragment ContentPersonData on ContentGroupPerson {
@@ -16,7 +19,7 @@ gql`
     }
 `;
 
-export function sortAuthors(x: ContentPersonDataFragment, y: ContentPersonDataFragment): number {
+export function sortAuthors<T extends ContentGroupList_ContentPersonDataFragment>(x: T, y: T): number {
     if (typeof x.priority === "number") {
         if (typeof y.priority === "number") {
             return x.priority - y.priority;

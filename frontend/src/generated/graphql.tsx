@@ -29701,27 +29701,38 @@ export type ConferenceLandingPageContentGroupQuery = { readonly __typename?: 'qu
 
 export type ContentPersonDataFragment = { readonly __typename?: 'ContentGroupPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'ContentPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string> } };
 
-export type TagWithContentFragment = (
-  { readonly __typename?: 'Tag', readonly contentGroupTags: ReadonlyArray<{ readonly __typename?: 'ContentGroupTag', readonly contentGroup: (
-      { readonly __typename?: 'ContentGroup' }
-      & ContentGroupList_ContentGroupDataFragment
-    ) }> }
-  & TagInfoFragment
-);
+export type ContentGroupList_ContentPersonDataFragment = { readonly __typename?: 'ContentGroupPerson', readonly id: any, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'ContentPerson', readonly id: any, readonly affiliation?: Maybe<string>, readonly name: string } };
 
-export type ContentByTagQueryVariables = Exact<{
+export type ContentGroupList_ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly people: ReadonlyArray<(
+    { readonly __typename?: 'ContentGroupPerson' }
+    & ContentGroupList_ContentPersonDataFragment
+  )> };
+
+export type ContentGroupList_ContentGroupTagDataFragment = { readonly __typename?: 'ContentGroupTag', readonly contentGroup: (
+    { readonly __typename?: 'ContentGroup' }
+    & ContentGroupList_ContentGroupDataFragment
+  ) };
+
+export type ContentGroupList_TagInfoFragment = { readonly __typename?: 'Tag', readonly id: any, readonly colour: string, readonly name: string };
+
+export type ContentOfTagQueryVariables = Exact<{
+  id: Scalars['uuid'];
+}>;
+
+
+export type ContentOfTagQuery = { readonly __typename?: 'query_root', readonly ContentGroupTag: ReadonlyArray<(
+    { readonly __typename?: 'ContentGroupTag' }
+    & ContentGroupList_ContentGroupTagDataFragment
+  )> };
+
+export type TagsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type ContentByTagQuery = { readonly __typename?: 'query_root', readonly Tag: ReadonlyArray<(
+export type TagsQuery = { readonly __typename?: 'query_root', readonly Tag: ReadonlyArray<(
     { readonly __typename?: 'Tag' }
-    & TagWithContentFragment
-  )> };
-
-export type ContentGroupList_ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly people: ReadonlyArray<(
-    { readonly __typename?: 'ContentGroupPerson' }
-    & ContentPersonDataFragment
+    & ContentGroupList_TagInfoFragment
   )> };
 
 export type GetContentGroupQueryVariables = Exact<{
@@ -31213,13 +31224,47 @@ export const ChatSubscriptionConfigFragmentDoc = gql`
   enableMandatorySubscribe
 }
     `;
-export const TagInfoFragmentDoc = gql`
-    fragment TagInfo on Tag {
+export const ContentGroupList_ContentPersonDataFragmentDoc = gql`
+    fragment ContentGroupList_ContentPersonData on ContentGroupPerson {
   id
-  conferenceId
+  person {
+    id
+    affiliation
+    name
+  }
+  priority
+}
+    `;
+export const ContentGroupList_ContentGroupDataFragmentDoc = gql`
+    fragment ContentGroupList_ContentGroupData on ContentGroup {
+  id
+  title
+  people(where: {roleName: {_nilike: "chair"}}) {
+    ...ContentGroupList_ContentPersonData
+  }
+}
+    ${ContentGroupList_ContentPersonDataFragmentDoc}`;
+export const ContentGroupList_ContentGroupTagDataFragmentDoc = gql`
+    fragment ContentGroupList_ContentGroupTagData on ContentGroupTag {
+  contentGroup {
+    ...ContentGroupList_ContentGroupData
+  }
+}
+    ${ContentGroupList_ContentGroupDataFragmentDoc}`;
+export const ContentGroupList_TagInfoFragmentDoc = gql`
+    fragment ContentGroupList_TagInfo on Tag {
+  id
   colour
   name
-  originatingDataId
+}
+    `;
+export const ContentItemDataFragmentDoc = gql`
+    fragment ContentItemData on ContentItem {
+  id
+  data
+  layoutData
+  name
+  contentTypeName
 }
     `;
 export const ContentPersonDataFragmentDoc = gql`
@@ -31232,36 +31277,6 @@ export const ContentPersonDataFragmentDoc = gql`
   }
   roleName
   priority
-}
-    `;
-export const ContentGroupList_ContentGroupDataFragmentDoc = gql`
-    fragment ContentGroupList_ContentGroupData on ContentGroup {
-  id
-  title
-  contentGroupTypeName
-  people(order_by: {priority: asc}) {
-    ...ContentPersonData
-  }
-}
-    ${ContentPersonDataFragmentDoc}`;
-export const TagWithContentFragmentDoc = gql`
-    fragment TagWithContent on Tag {
-  ...TagInfo
-  contentGroupTags {
-    contentGroup {
-      ...ContentGroupList_ContentGroupData
-    }
-  }
-}
-    ${TagInfoFragmentDoc}
-${ContentGroupList_ContentGroupDataFragmentDoc}`;
-export const ContentItemDataFragmentDoc = gql`
-    fragment ContentItemData on ContentItem {
-  id
-  data
-  layoutData
-  name
-  contentTypeName
 }
     `;
 export const ContentGroupDataFragmentDoc = gql`
@@ -31708,6 +31723,15 @@ ${ContentItemInfoFragmentDoc}
 ${ContentGroupTagInfoFragmentDoc}
 ${ContentGroupHallwayInfoFragmentDoc}
 ${ContentGroupPersonInfoFragmentDoc}`;
+export const TagInfoFragmentDoc = gql`
+    fragment TagInfo on Tag {
+  id
+  conferenceId
+  colour
+  name
+  originatingDataId
+}
+    `;
 export const HallwayInfoFragmentDoc = gql`
     fragment HallwayInfo on Hallway {
   id
@@ -32929,39 +32953,72 @@ export function useConferenceLandingPageContentGroupLazyQuery(baseOptions?: Apol
 export type ConferenceLandingPageContentGroupQueryHookResult = ReturnType<typeof useConferenceLandingPageContentGroupQuery>;
 export type ConferenceLandingPageContentGroupLazyQueryHookResult = ReturnType<typeof useConferenceLandingPageContentGroupLazyQuery>;
 export type ConferenceLandingPageContentGroupQueryResult = Apollo.QueryResult<ConferenceLandingPageContentGroupQuery, ConferenceLandingPageContentGroupQueryVariables>;
-export const ContentByTagDocument = gql`
-    query ContentByTag($conferenceId: uuid!) {
-  Tag(where: {conferenceId: {_eq: $conferenceId}}) {
-    ...TagWithContent
+export const ContentOfTagDocument = gql`
+    query ContentOfTag($id: uuid!) {
+  ContentGroupTag(where: {tagId: {_eq: $id}}) {
+    ...ContentGroupList_ContentGroupTagData
   }
 }
-    ${TagWithContentFragmentDoc}`;
+    ${ContentGroupList_ContentGroupTagDataFragmentDoc}`;
 
 /**
- * __useContentByTagQuery__
+ * __useContentOfTagQuery__
  *
- * To run a query within a React component, call `useContentByTagQuery` and pass it any options that fit your needs.
- * When your component renders, `useContentByTagQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useContentOfTagQuery` and pass it any options that fit your needs.
+ * When your component renders, `useContentOfTagQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useContentByTagQuery({
+ * const { data, loading, error } = useContentOfTagQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useContentOfTagQuery(baseOptions: Apollo.QueryHookOptions<ContentOfTagQuery, ContentOfTagQueryVariables>) {
+        return Apollo.useQuery<ContentOfTagQuery, ContentOfTagQueryVariables>(ContentOfTagDocument, baseOptions);
+      }
+export function useContentOfTagLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ContentOfTagQuery, ContentOfTagQueryVariables>) {
+          return Apollo.useLazyQuery<ContentOfTagQuery, ContentOfTagQueryVariables>(ContentOfTagDocument, baseOptions);
+        }
+export type ContentOfTagQueryHookResult = ReturnType<typeof useContentOfTagQuery>;
+export type ContentOfTagLazyQueryHookResult = ReturnType<typeof useContentOfTagLazyQuery>;
+export type ContentOfTagQueryResult = Apollo.QueryResult<ContentOfTagQuery, ContentOfTagQueryVariables>;
+export const TagsDocument = gql`
+    query Tags($conferenceId: uuid!) {
+  Tag(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...ContentGroupList_TagInfo
+  }
+}
+    ${ContentGroupList_TagInfoFragmentDoc}`;
+
+/**
+ * __useTagsQuery__
+ *
+ * To run a query within a React component, call `useTagsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTagsQuery({
  *   variables: {
  *      conferenceId: // value for 'conferenceId'
  *   },
  * });
  */
-export function useContentByTagQuery(baseOptions: Apollo.QueryHookOptions<ContentByTagQuery, ContentByTagQueryVariables>) {
-        return Apollo.useQuery<ContentByTagQuery, ContentByTagQueryVariables>(ContentByTagDocument, baseOptions);
+export function useTagsQuery(baseOptions: Apollo.QueryHookOptions<TagsQuery, TagsQueryVariables>) {
+        return Apollo.useQuery<TagsQuery, TagsQueryVariables>(TagsDocument, baseOptions);
       }
-export function useContentByTagLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ContentByTagQuery, ContentByTagQueryVariables>) {
-          return Apollo.useLazyQuery<ContentByTagQuery, ContentByTagQueryVariables>(ContentByTagDocument, baseOptions);
+export function useTagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TagsQuery, TagsQueryVariables>) {
+          return Apollo.useLazyQuery<TagsQuery, TagsQueryVariables>(TagsDocument, baseOptions);
         }
-export type ContentByTagQueryHookResult = ReturnType<typeof useContentByTagQuery>;
-export type ContentByTagLazyQueryHookResult = ReturnType<typeof useContentByTagLazyQuery>;
-export type ContentByTagQueryResult = Apollo.QueryResult<ContentByTagQuery, ContentByTagQueryVariables>;
+export type TagsQueryHookResult = ReturnType<typeof useTagsQuery>;
+export type TagsLazyQueryHookResult = ReturnType<typeof useTagsLazyQuery>;
+export type TagsQueryResult = Apollo.QueryResult<TagsQuery, TagsQueryVariables>;
 export const GetContentGroupDocument = gql`
     query GetContentGroup($contentGroupId: uuid!) {
   ContentGroup_by_pk(id: $contentGroupId) {

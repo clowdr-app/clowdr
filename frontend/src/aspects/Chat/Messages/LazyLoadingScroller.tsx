@@ -228,7 +228,7 @@ export default function LazyLoadingScroller<T>({
                 setTimeout(() => {
                     c.scroll({
                         behavior: "smooth",
-                        top: 0
+                        top: 0,
                     });
                 }, 100);
             }

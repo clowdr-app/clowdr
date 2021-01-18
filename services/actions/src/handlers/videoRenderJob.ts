@@ -1,7 +1,15 @@
 import { gql } from "@apollo/client/core";
 import assert from "assert";
+import { assertType } from "typescript-is";
 import { v4 as uuidv4 } from "uuid";
-import { GetContentItemIdForVideoRenderJobDocument, JobStatus_Enum } from "../generated/graphql";
+import {
+    GetContentItemIdForVideoRenderJobDocument,
+    JobStatus_Enum,
+    MarkAndSelectNewVideoRenderJobsDocument,
+    SelectNewVideoRenderJobsDocument,
+    UnmarkVideoRenderJobsDocument,
+    VideoRenderJobDataFragment,
+} from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import * as BroadcastContentItem from "../lib/broadcastContentItem";
 import * as ConferencePrepareJob from "../lib/conferencePrepareJob";
@@ -9,7 +17,9 @@ import { OpenShotClient } from "../lib/openshot/openshot";
 import { ExportParameters } from "../lib/openshot/openshotExports";
 import * as Transcode from "../lib/transcode";
 import * as VideoRenderJob from "../lib/videoRenderJob";
+import { updateVideoRenderJob } from "../lib/videoRenderJob";
 import { Payload, VideoRenderJobData } from "../types/hasura/event";
+import { callWithRetry } from "../utils";
 
 gql`
     query GetContentItemIdForVideoRenderJob($videoRenderJobId: uuid!) {
@@ -48,37 +58,8 @@ export async function handleVideoRenderJobUpdated(payload: Payload<VideoRenderJo
     switch (payload.event.data.new.data.type) {
         case "BroadcastRenderJob": {
             switch (payload.event.data.new.jobStatusName) {
-                case JobStatus_Enum.New: {
-                    console.log(`New broadcast render job ${payload.event.data.new.id}`);
-                    const result = await apolloClient.query({
-                        query: GetContentItemIdForVideoRenderJobDocument,
-                        variables: {
-                            videoRenderJobId: payload.event.data.new.id,
-                        },
-                    });
-                    if (!result.data.VideoRenderJob_by_pk?.broadcastContentItem.contentItemId) {
-                        throw new Error(
-                            `Could not determine associated content item for broadcast video render job (${payload.event.data.new.id})`
-                        );
-                    }
-                    try {
-                        const broadcastTranscodeOutput = await Transcode.startElasticBroadcastTranscode(
-                            payload.event.data.new.data.videoS3Url,
-                            payload.event.data.new.data.subtitlesS3Url ?? null,
-                            payload.event.data.new.id
-                        );
-
-                        await VideoRenderJob.startBroadcastVideoRenderJob(
-                            payload.event.data.new.id,
-                            payload.event.data.new.data,
-                            broadcastTranscodeOutput.jobId
-                        );
-                    } catch (e) {
-                        console.error("Failed to start broadcast transcode", e);
-                        await VideoRenderJob.failVideoRenderJob(payload.event.data.new.id, e.toString());
-                    }
+                case JobStatus_Enum.New:
                     break;
-                }
                 case JobStatus_Enum.Completed: {
                     console.log("Completed broadcast render job", payload.event.data.new.id);
                     try {
@@ -125,48 +106,8 @@ export async function handleVideoRenderJobUpdated(payload: Payload<VideoRenderJo
         }
         case "TitleRenderJob": {
             switch (payload.event.data.new.jobStatusName) {
-                case JobStatus_Enum.New: {
-                    console.log(`New title render job ${payload.event.data.new.id}`);
-                    try {
-                        const exportKey = `${uuidv4()}.mp4`;
-                        const webhookKey = uuidv4();
-                        assert(
-                            process.env.AWS_CONTENT_BUCKET_ID,
-                            "AWS_CONTENT_BUCKET_ID environment variable must be defined"
-                        );
-
-                        const exportParams: ExportParameters = {
-                            ...defaultExportParameters,
-                            export_type: "video",
-                            json: {
-                                bucket: process.env.AWS_CONTENT_BUCKET_ID,
-                                url: exportKey,
-                                acl: "private",
-                                webhookKey,
-                            },
-                            project: OpenShotClient.projects.toUrl(payload.event.data.new.data.openShotProjectId),
-                            webhook: `${process.env.HOST_SECURE_PROTOCOLS !== "false" ? "https" : "http"}://${
-                                process.env.HOST_DOMAIN
-                            }/openshot/notifyExport/${payload.event.data.new.id}`,
-                        };
-
-                        const exportResult = await OpenShotClient.exports.createExport(exportParams);
-
-                        await VideoRenderJob.startTitlesVideoRenderJob(
-                            payload.event.data.new.id,
-                            payload.event.data.new.data,
-                            exportResult.id,
-                            webhookKey
-                        );
-                    } catch (e) {
-                        console.error("Failure while processing new title render job", payload.event.data.new.id, e);
-                        await VideoRenderJob.failVideoRenderJob(
-                            payload.event.data.new.id,
-                            e.message ?? "Unknown failure while processing new render job"
-                        );
-                    }
+                case JobStatus_Enum.New:
                     break;
-                }
                 case JobStatus_Enum.Completed: {
                     console.log(`Completed title render job ${payload.event.data.new.id}`);
                     try {
@@ -228,5 +169,142 @@ export async function handleVideoRenderJobUpdated(payload: Payload<VideoRenderJo
             }
             return;
         }
+    }
+}
+
+async function startVideoRenderJob(job: VideoRenderJobDataFragment): Promise<VideoRenderJobDataBlob> {
+    const data: VideoRenderJobDataBlob = job.data;
+    assertType<VideoRenderJobDataBlob>(data);
+
+    switch (data.type) {
+        case "BroadcastRenderJob": {
+            console.log(`New broadcast render job ${job.id}`);
+            const result = await apolloClient.query({
+                query: GetContentItemIdForVideoRenderJobDocument,
+                variables: {
+                    videoRenderJobId: job.id,
+                },
+            });
+            if (!result.data.VideoRenderJob_by_pk?.broadcastContentItem.contentItemId) {
+                throw new Error(
+                    `Could not determine associated content item for broadcast video render job (${job.id})`
+                );
+            }
+            const broadcastTranscodeOutput = await Transcode.startElasticBroadcastTranscode(
+                data.videoS3Url,
+                data.subtitlesS3Url ?? null,
+                job.id
+            );
+
+            data["elasticTranscoderJobId"] = broadcastTranscodeOutput.jobId;
+            return data;
+        }
+
+        case "TitleRenderJob": {
+            console.log(`New title render job ${job.id}`);
+            const exportKey = `${uuidv4()}.mp4`;
+            const webhookKey = uuidv4();
+            assert(process.env.AWS_CONTENT_BUCKET_ID, "AWS_CONTENT_BUCKET_ID environment variable must be defined");
+
+            const exportParams: ExportParameters = {
+                ...defaultExportParameters,
+                export_type: "video",
+                json: {
+                    bucket: process.env.AWS_CONTENT_BUCKET_ID,
+                    url: exportKey,
+                    acl: "private",
+                    webhookKey,
+                },
+                project: OpenShotClient.projects.toUrl(data.openShotProjectId),
+                webhook: `${process.env.HOST_SECURE_PROTOCOLS !== "false" ? "https" : "http"}://${
+                    process.env.HOST_DOMAIN
+                }/openshot/notifyExport/${job.id}`,
+            };
+
+            const exportResult = await OpenShotClient.exports.createExport(exportParams);
+
+            data["openShotExportId"] = exportResult.id;
+            data["webhookKey"] = webhookKey;
+
+            return data;
+        }
+    }
+}
+
+gql`
+    query SelectNewVideoRenderJobs {
+        VideoRenderJob(limit: 20, where: { jobStatusName: { _eq: NEW } }, order_by: { created_at: asc }) {
+            id
+        }
+    }
+
+    mutation MarkAndSelectNewVideoRenderJobs($ids: [uuid!]!) {
+        update_VideoRenderJob(
+            where: { id: { _in: $ids }, jobStatusName: { _eq: NEW } }
+            _set: { jobStatusName: IN_PROGRESS }
+            _inc: { retriesCount: 1 }
+        ) {
+            returning {
+                ...VideoRenderJobData
+            }
+        }
+    }
+
+    fragment VideoRenderJobData on VideoRenderJob {
+        id
+        jobStatusName
+        data
+        retriesCount
+    }
+
+    mutation UnmarkVideoRenderJobs($ids: [uuid!]!) {
+        update_VideoRenderJob(where: { id: { _in: $ids } }, _set: { jobStatusName: FAILED }) {
+            affected_rows
+        }
+    }
+`;
+
+export async function handleProcessVideoRenderJobQueue(): Promise<void> {
+    console.log("Processing VideoRenderJob queue");
+
+    const newVideoRenderJobIds = await apolloClient.query({
+        query: SelectNewVideoRenderJobsDocument,
+    });
+    const videoRenderJobs = await apolloClient.mutate({
+        mutation: MarkAndSelectNewVideoRenderJobsDocument,
+        variables: {
+            ids: newVideoRenderJobIds.data.VideoRenderJob.map((x) => x.id),
+        },
+    });
+    assert(videoRenderJobs.data?.update_VideoRenderJob, "Failed to fetch new VideoRenderJobs");
+
+    const unsuccessfulVideoRenderJobs: (string | undefined)[] = await Promise.all(
+        videoRenderJobs.data.update_VideoRenderJob.returning.map(async (job) => {
+            try {
+                if (job.retriesCount < 3) {
+                    await callWithRetry(async () => {
+                        const data = await startVideoRenderJob(job);
+                        updateVideoRenderJob(job.id, data);
+                    });
+                }
+            } catch (e) {
+                console.error("Could not start VideoRenderJob", job.id, e);
+                return job.id;
+            }
+            return undefined;
+        })
+    );
+
+    try {
+        await callWithRetry(async () => {
+            await apolloClient.mutate({
+                mutation: UnmarkVideoRenderJobsDocument,
+                variables: {
+                    ids: unsuccessfulVideoRenderJobs.filter((x) => !!x),
+                },
+            });
+        });
+    } catch (e) {
+        console.error("Could not failed VideoRenderJobs", e);
     }
 }

@@ -6,7 +6,7 @@ import {
     FailVideoRenderJobDocument,
     GetBroadcastVideoRenderJobDetailsDocument,
     JobStatus_Enum,
-    StartVideoRenderJobDocument,
+    UpdateVideoRenderJobDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 
@@ -146,49 +146,55 @@ export async function expireVideoRenderJob(videoRenderJobId: string, message: st
 }
 
 gql`
-    mutation StartVideoRenderJob($videoRenderJobId: uuid!, $data: jsonb!) {
-        update_VideoRenderJob_by_pk(
-            pk_columns: { id: $videoRenderJobId }
-            _set: { jobStatusName: IN_PROGRESS }
-            _append: { data: $data }
-        ) {
+    mutation UpdateVideoRenderJob($videoRenderJobId: uuid!, $data: jsonb!) {
+        update_VideoRenderJob_by_pk(pk_columns: { id: $videoRenderJobId }, _append: { data: $data }) {
             id
         }
     }
 `;
 
-export async function startTitlesVideoRenderJob(
-    videoRenderJobId: string,
-    titleRenderJobData: TitleRenderJobDataBlob,
-    openShotExportId: number,
-    webhookKey: string
-): Promise<void> {
-    titleRenderJobData["openShotExportId"] = openShotExportId;
-    titleRenderJobData["webhookKey"] = webhookKey;
-
+export async function updateVideoRenderJob(videoRenderJobId: string, data: VideoRenderJobDataBlob): Promise<void> {
     await apolloClient.mutate({
-        mutation: StartVideoRenderJobDocument,
+        mutation: UpdateVideoRenderJobDocument,
         variables: {
-            data: titleRenderJobData,
             videoRenderJobId,
+            data,
         },
     });
 }
 
-export async function startBroadcastVideoRenderJob(
-    videoRenderJobId: string,
-    broadcastRenderJobData: BroadcastRenderJobDataBlob,
-    elasticTranscoderJobId: string
-): Promise<void> {
-    broadcastRenderJobData["elasticTranscoderJobId"] = elasticTranscoderJobId;
-    await apolloClient.mutate({
-        mutation: StartVideoRenderJobDocument,
-        variables: {
-            data: broadcastRenderJobData,
-            videoRenderJobId,
-        },
-    });
-}
+// export async function startTitlesVideoRenderJob(
+//     videoRenderJobId: string,
+//     titleRenderJobData: TitleRenderJobDataBlob,
+//     openShotExportId: number,
+//     webhookKey: string
+// ): Promise<void> {
+//     titleRenderJobData["openShotExportId"] = openShotExportId;
+//     titleRenderJobData["webhookKey"] = webhookKey;
+
+//     await apolloClient.mutate({
+//         mutation: StartVideoRenderJobDocument,
+//         variables: {
+//             data: titleRenderJobData,
+//             videoRenderJobId,
+//         },
+//     });
+// }
+
+// export async function startBroadcastVideoRenderJob(
+//     videoRenderJobId: string,
+//     broadcastRenderJobData: BroadcastRenderJobDataBlob,
+//     elasticTranscoderJobId: string
+// ): Promise<void> {
+//     broadcastRenderJobData["elasticTranscoderJobId"] = elasticTranscoderJobId;
+//     await apolloClient.mutate({
+//         mutation: StartVideoRenderJobDocument,
+//         variables: {
+//             data: broadcastRenderJobData,
+//             videoRenderJobId,
+//         },
+//     });
+// }
 
 gql`
     query CountUnfinishedVideoRenderJobs($conferencePrepareJobId: uuid!) {
@@ -212,6 +218,12 @@ export async function allVideoRenderJobsCompleted(conferencePrepareJobId: string
             conferencePrepareJobId,
         },
     });
+
+    if (result.data.VideoRenderJob_aggregate.aggregate?.count) {
+        console.log(
+            `Conference prepare job ${conferencePrepareJobId}: ${result.data.VideoRenderJob_aggregate.aggregate.count} jobs remaining`
+        );
+    }
 
     return !result.data.VideoRenderJob_aggregate.aggregate?.count;
 }

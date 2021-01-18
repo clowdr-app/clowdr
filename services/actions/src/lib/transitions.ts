@@ -103,22 +103,22 @@ export async function createTransitionsForRoom(conferenceId: string, roomId: str
         switch (event.intendedRoomModeName) {
             case RoomMode_Enum.Prerecorded:
                 {
-                    console.log("Creating transitions for prerecorded event", event.id);
-                    const titleContentItem = event.contentGroup?.contentItems.find(
-                        (contentItem) => contentItem.contentTypeName === ContentType_Enum.VideoTitles
-                    );
+                    // console.log("Creating transitions for prerecorded event", event.id);
+                    // const titleContentItem = event.contentGroup?.contentItems.find(
+                    //     (contentItem) => contentItem.contentTypeName === ContentType_Enum.VideoTitles
+                    // );
 
-                    if (titleContentItem && titleContentItem.broadcastContentItem) {
-                        await createTransition(
-                            titleContentItem.broadcastContentItem.id,
-                            event.id,
-                            roomId,
-                            conferenceId,
-                            new Date(startTimeMillis - 10000)
-                        );
-                    } else {
-                        console.warn("No titles found for event", event.id, event.contentGroup?.id);
-                    }
+                    // if (titleContentItem && titleContentItem.broadcastContentItem) {
+                    //     await createTransition(
+                    //         titleContentItem.broadcastContentItem.id,
+                    //         event.id,
+                    //         roomId,
+                    //         conferenceId,
+                    //         new Date(startTimeMillis - 10000)
+                    //     );
+                    // } else {
+                    //     console.warn("No titles found for event", event.id, event.contentGroup?.id);
+                    // }
 
                     const broadcastContentItem = event.contentGroup?.contentItems.find(
                         (contentItem) => contentItem.contentTypeName === ContentType_Enum.VideoBroadcast

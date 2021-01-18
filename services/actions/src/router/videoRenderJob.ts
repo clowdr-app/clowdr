@@ -1,7 +1,7 @@
 import bodyParser from "body-parser";
 import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
-import { handleVideoRenderJobUpdated } from "../handlers/videoRenderJob";
+import { handleProcessVideoRenderJobQueue, handleVideoRenderJobUpdated } from "../handlers/videoRenderJob";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
 import { Payload, VideoRenderJobData } from "../types/hasura/event";
 
@@ -24,6 +24,18 @@ router.post("/updated", bodyParser.json(), async (req: Request, res: Response) =
     } catch (e) {
         console.error("Failure while handling ConferencePrepareJob inserted", e);
         res.status(500).json("Failure while handling event");
+        return;
+    }
+
+    res.status(200).json("OK");
+});
+
+router.post("/processQueue", bodyParser.json(), async (_req: Request, res: Response) => {
+    try {
+        await handleProcessVideoRenderJobQueue();
+    } catch (e) {
+        console.error("Failure while processing VideoRenderJob queue", e);
+        res.status(500).json("Failure while processing VideoRenderJob queue");
         return;
     }
 

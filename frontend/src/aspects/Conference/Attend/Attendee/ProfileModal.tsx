@@ -133,7 +133,7 @@ export default function ProfileModal({
                                     </VStack>
                                     <Spacer />
                                     <VStack alignItems="stretch">
-                                        {mCurrentAttendee && mCurrentAttendee?.id !== attendee.id ? (
+                                        {mCurrentAttendee && mCurrentAttendee?.id !== attendee.id && attendee.userId ? (
                                             <Button
                                                 onClick={createDM}
                                                 isLoading={creatingDM}

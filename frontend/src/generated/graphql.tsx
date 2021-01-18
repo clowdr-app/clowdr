@@ -2751,6 +2751,8 @@ export type ContentGroup = {
   readonly requiredContentItems: ReadonlyArray<RequiredContentItem>;
   /** An aggregated array relationship */
   readonly requiredContentItems_aggregate: RequiredContentItem_Aggregate;
+  /** An object relationship */
+  readonly room?: Maybe<Room>;
   /** An array relationship */
   readonly rooms: ReadonlyArray<Room>;
   /** An aggregated array relationship */
@@ -3993,6 +3995,7 @@ export type ContentGroup_Bool_Exp = {
   readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
   readonly people?: Maybe<ContentGroupPerson_Bool_Exp>;
   readonly requiredContentItems?: Maybe<RequiredContentItem_Bool_Exp>;
+  readonly room?: Maybe<Room_Bool_Exp>;
   readonly rooms?: Maybe<Room_Bool_Exp>;
   readonly shortTitle?: Maybe<String_Comparison_Exp>;
   readonly title?: Maybe<String_Comparison_Exp>;
@@ -4023,6 +4026,7 @@ export type ContentGroup_Insert_Input = {
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
   readonly people?: Maybe<ContentGroupPerson_Arr_Rel_Insert_Input>;
   readonly requiredContentItems?: Maybe<RequiredContentItem_Arr_Rel_Insert_Input>;
+  readonly room?: Maybe<Room_Obj_Rel_Insert_Input>;
   readonly rooms?: Maybe<Room_Arr_Rel_Insert_Input>;
   readonly shortTitle?: Maybe<Scalars['String']>;
   readonly title?: Maybe<Scalars['String']>;
@@ -4119,6 +4123,7 @@ export type ContentGroup_Order_By = {
   readonly originatingDataId?: Maybe<Order_By>;
   readonly people_aggregate?: Maybe<ContentGroupPerson_Aggregate_Order_By>;
   readonly requiredContentItems_aggregate?: Maybe<RequiredContentItem_Aggregate_Order_By>;
+  readonly room?: Maybe<Room_Order_By>;
   readonly rooms_aggregate?: Maybe<Room_Aggregate_Order_By>;
   readonly shortTitle?: Maybe<Order_By>;
   readonly title?: Maybe<Order_By>;
@@ -14964,7 +14969,7 @@ export type Chat_Chat = {
   readonly readUpToIndices: ReadonlyArray<Chat_ReadUpToIndex>;
   /** An aggregated array relationship */
   readonly readUpToIndices_aggregate: Chat_ReadUpToIndex_Aggregate;
-  readonly restrictToAdmins?: Maybe<Scalars['Boolean']>;
+  readonly restrictToAdmins: Scalars['Boolean'];
   /** An array relationship */
   readonly room: ReadonlyArray<Room>;
   /** An aggregated array relationship */
@@ -17424,6 +17429,7 @@ export type Chat_ReadUpToIndex = {
   readonly chat: Chat_Chat;
   readonly chatId: Scalars['uuid'];
   readonly messageId: Scalars['Int'];
+  readonly notifiedUpToMessageId: Scalars['Int'];
   /** A computed field, executes function "chat.unreadCount" */
   readonly unreadCount?: Maybe<Scalars['Int']>;
   readonly updated_at: Scalars['timestamptz'];
@@ -17484,11 +17490,13 @@ export type Chat_ReadUpToIndex_Arr_Rel_Insert_Input = {
 export type Chat_ReadUpToIndex_Avg_Fields = {
   readonly __typename?: 'chat_ReadUpToIndex_avg_fields';
   readonly messageId?: Maybe<Scalars['Float']>;
+  readonly notifiedUpToMessageId?: Maybe<Scalars['Float']>;
 };
 
 /** order by avg() on columns of table "chat.ReadUpToIndex" */
 export type Chat_ReadUpToIndex_Avg_Order_By = {
   readonly messageId?: Maybe<Order_By>;
+  readonly notifiedUpToMessageId?: Maybe<Order_By>;
 };
 
 /** Boolean expression to filter rows from the table "chat.ReadUpToIndex". All fields are combined with a logical 'AND'. */
@@ -17501,6 +17509,7 @@ export type Chat_ReadUpToIndex_Bool_Exp = {
   readonly chat?: Maybe<Chat_Chat_Bool_Exp>;
   readonly chatId?: Maybe<Uuid_Comparison_Exp>;
   readonly messageId?: Maybe<Int_Comparison_Exp>;
+  readonly notifiedUpToMessageId?: Maybe<Int_Comparison_Exp>;
   readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -17513,6 +17522,7 @@ export enum Chat_ReadUpToIndex_Constraint {
 /** input type for incrementing integer column in table "chat.ReadUpToIndex" */
 export type Chat_ReadUpToIndex_Inc_Input = {
   readonly messageId?: Maybe<Scalars['Int']>;
+  readonly notifiedUpToMessageId?: Maybe<Scalars['Int']>;
 };
 
 /** input type for inserting data into table "chat.ReadUpToIndex" */
@@ -17522,6 +17532,7 @@ export type Chat_ReadUpToIndex_Insert_Input = {
   readonly chat?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
   readonly chatId?: Maybe<Scalars['uuid']>;
   readonly messageId?: Maybe<Scalars['Int']>;
+  readonly notifiedUpToMessageId?: Maybe<Scalars['Int']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -17531,6 +17542,7 @@ export type Chat_ReadUpToIndex_Max_Fields = {
   readonly attendeeId?: Maybe<Scalars['uuid']>;
   readonly chatId?: Maybe<Scalars['uuid']>;
   readonly messageId?: Maybe<Scalars['Int']>;
+  readonly notifiedUpToMessageId?: Maybe<Scalars['Int']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -17539,6 +17551,7 @@ export type Chat_ReadUpToIndex_Max_Order_By = {
   readonly attendeeId?: Maybe<Order_By>;
   readonly chatId?: Maybe<Order_By>;
   readonly messageId?: Maybe<Order_By>;
+  readonly notifiedUpToMessageId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
 
@@ -17548,6 +17561,7 @@ export type Chat_ReadUpToIndex_Min_Fields = {
   readonly attendeeId?: Maybe<Scalars['uuid']>;
   readonly chatId?: Maybe<Scalars['uuid']>;
   readonly messageId?: Maybe<Scalars['Int']>;
+  readonly notifiedUpToMessageId?: Maybe<Scalars['Int']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -17556,6 +17570,7 @@ export type Chat_ReadUpToIndex_Min_Order_By = {
   readonly attendeeId?: Maybe<Order_By>;
   readonly chatId?: Maybe<Order_By>;
   readonly messageId?: Maybe<Order_By>;
+  readonly notifiedUpToMessageId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
 
@@ -17588,6 +17603,7 @@ export type Chat_ReadUpToIndex_Order_By = {
   readonly chat?: Maybe<Chat_Chat_Order_By>;
   readonly chatId?: Maybe<Order_By>;
   readonly messageId?: Maybe<Order_By>;
+  readonly notifiedUpToMessageId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
 
@@ -17606,6 +17622,8 @@ export enum Chat_ReadUpToIndex_Select_Column {
   /** column name */
   MessageId = 'messageId',
   /** column name */
+  NotifiedUpToMessageId = 'notifiedUpToMessageId',
+  /** column name */
   UpdatedAt = 'updated_at'
 }
 
@@ -17614,6 +17632,7 @@ export type Chat_ReadUpToIndex_Set_Input = {
   readonly attendeeId?: Maybe<Scalars['uuid']>;
   readonly chatId?: Maybe<Scalars['uuid']>;
   readonly messageId?: Maybe<Scalars['Int']>;
+  readonly notifiedUpToMessageId?: Maybe<Scalars['Int']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -17621,44 +17640,52 @@ export type Chat_ReadUpToIndex_Set_Input = {
 export type Chat_ReadUpToIndex_Stddev_Fields = {
   readonly __typename?: 'chat_ReadUpToIndex_stddev_fields';
   readonly messageId?: Maybe<Scalars['Float']>;
+  readonly notifiedUpToMessageId?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev() on columns of table "chat.ReadUpToIndex" */
 export type Chat_ReadUpToIndex_Stddev_Order_By = {
   readonly messageId?: Maybe<Order_By>;
+  readonly notifiedUpToMessageId?: Maybe<Order_By>;
 };
 
 /** aggregate stddev_pop on columns */
 export type Chat_ReadUpToIndex_Stddev_Pop_Fields = {
   readonly __typename?: 'chat_ReadUpToIndex_stddev_pop_fields';
   readonly messageId?: Maybe<Scalars['Float']>;
+  readonly notifiedUpToMessageId?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev_pop() on columns of table "chat.ReadUpToIndex" */
 export type Chat_ReadUpToIndex_Stddev_Pop_Order_By = {
   readonly messageId?: Maybe<Order_By>;
+  readonly notifiedUpToMessageId?: Maybe<Order_By>;
 };
 
 /** aggregate stddev_samp on columns */
 export type Chat_ReadUpToIndex_Stddev_Samp_Fields = {
   readonly __typename?: 'chat_ReadUpToIndex_stddev_samp_fields';
   readonly messageId?: Maybe<Scalars['Float']>;
+  readonly notifiedUpToMessageId?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev_samp() on columns of table "chat.ReadUpToIndex" */
 export type Chat_ReadUpToIndex_Stddev_Samp_Order_By = {
   readonly messageId?: Maybe<Order_By>;
+  readonly notifiedUpToMessageId?: Maybe<Order_By>;
 };
 
 /** aggregate sum on columns */
 export type Chat_ReadUpToIndex_Sum_Fields = {
   readonly __typename?: 'chat_ReadUpToIndex_sum_fields';
   readonly messageId?: Maybe<Scalars['Int']>;
+  readonly notifiedUpToMessageId?: Maybe<Scalars['Int']>;
 };
 
 /** order by sum() on columns of table "chat.ReadUpToIndex" */
 export type Chat_ReadUpToIndex_Sum_Order_By = {
   readonly messageId?: Maybe<Order_By>;
+  readonly notifiedUpToMessageId?: Maybe<Order_By>;
 };
 
 /** update columns of table "chat.ReadUpToIndex" */
@@ -17670,6 +17697,8 @@ export enum Chat_ReadUpToIndex_Update_Column {
   /** column name */
   MessageId = 'messageId',
   /** column name */
+  NotifiedUpToMessageId = 'notifiedUpToMessageId',
+  /** column name */
   UpdatedAt = 'updated_at'
 }
 
@@ -17677,33 +17706,39 @@ export enum Chat_ReadUpToIndex_Update_Column {
 export type Chat_ReadUpToIndex_Var_Pop_Fields = {
   readonly __typename?: 'chat_ReadUpToIndex_var_pop_fields';
   readonly messageId?: Maybe<Scalars['Float']>;
+  readonly notifiedUpToMessageId?: Maybe<Scalars['Float']>;
 };
 
 /** order by var_pop() on columns of table "chat.ReadUpToIndex" */
 export type Chat_ReadUpToIndex_Var_Pop_Order_By = {
   readonly messageId?: Maybe<Order_By>;
+  readonly notifiedUpToMessageId?: Maybe<Order_By>;
 };
 
 /** aggregate var_samp on columns */
 export type Chat_ReadUpToIndex_Var_Samp_Fields = {
   readonly __typename?: 'chat_ReadUpToIndex_var_samp_fields';
   readonly messageId?: Maybe<Scalars['Float']>;
+  readonly notifiedUpToMessageId?: Maybe<Scalars['Float']>;
 };
 
 /** order by var_samp() on columns of table "chat.ReadUpToIndex" */
 export type Chat_ReadUpToIndex_Var_Samp_Order_By = {
   readonly messageId?: Maybe<Order_By>;
+  readonly notifiedUpToMessageId?: Maybe<Order_By>;
 };
 
 /** aggregate variance on columns */
 export type Chat_ReadUpToIndex_Variance_Fields = {
   readonly __typename?: 'chat_ReadUpToIndex_variance_fields';
   readonly messageId?: Maybe<Scalars['Float']>;
+  readonly notifiedUpToMessageId?: Maybe<Scalars['Float']>;
 };
 
 /** order by variance() on columns of table "chat.ReadUpToIndex" */
 export type Chat_ReadUpToIndex_Variance_Order_By = {
   readonly messageId?: Maybe<Order_By>;
+  readonly notifiedUpToMessageId?: Maybe<Order_By>;
 };
 
 /**

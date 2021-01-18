@@ -1,0 +1,1 @@
+ALTER TABLE ONLY "chat"."ReadUpToIndex" ALTER COLUMN "messageId" DROP DEFAULT;

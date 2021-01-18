@@ -958,15 +958,17 @@
       - attendeeId
       - chatId
       - messageId
+      - notifiedUpToMessageId
       backend_only: false
   select_permissions:
   - role: user
     permission:
       columns:
-      - messageId
-      - updated_at
       - attendeeId
       - chatId
+      - messageId
+      - notifiedUpToMessageId
+      - updated_at
       computed_fields:
       - unreadCount
       filter:
@@ -978,6 +980,7 @@
     permission:
       columns:
       - messageId
+      - notifiedUpToMessageId
       filter:
         attendee:
           userId:
@@ -986,7 +989,10 @@
   delete_permissions:
   - role: user
     permission:
-      filter: {}
+      filter:
+        attendee:
+          userId:
+            _eq: X-Hasura-User-Id
 - table:
     schema: chat
     name: Subscription
@@ -2216,6 +2222,14 @@
   - name: originatingData
     using:
       foreign_key_constraint_on: originatingDataId
+  - name: room
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Room
+        column_mapping:
+          id: originatingContentGroupId
   array_relationships:
   - name: contentGroupTags
     using:

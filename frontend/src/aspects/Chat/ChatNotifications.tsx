@@ -132,7 +132,7 @@ export function ChatNotificationsProvider_WithAttendee({
                                     position: "top-right",
                                     description: newMsg.message,
                                     isClosable: true,
-                                    duration: 8000,
+                                    duration: 5000,
                                     render: function ChatNotification(props: RenderProps) {
                                         return (
                                             <VStack
@@ -194,6 +194,7 @@ export function ChatNotificationsProvider_WithAttendee({
                                                             colorScheme="green"
                                                             variant="outline"
                                                             onClick={() => {
+                                                                props.onClose();
                                                                 history.push(
                                                                     `/conference/${conference.slug}${chatPath}`
                                                                 );
@@ -207,6 +208,7 @@ export function ChatNotificationsProvider_WithAttendee({
                                                             colorScheme="blue"
                                                             variant="outline"
                                                             onClick={() => {
+                                                                props.onClose();
                                                                 window.open(
                                                                     `/conference/${conference.slug}${chatPath}`,
                                                                     "_blank"

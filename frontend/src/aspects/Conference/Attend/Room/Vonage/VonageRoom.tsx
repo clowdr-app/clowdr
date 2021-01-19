@@ -275,7 +275,7 @@ function VonageRoomInner({
                             <VonageSubscriber key={stream.streamId} stream={stream} enableVideo={true} />
                         ))}
                 </Box>
-                {connected ? (
+                {joining || connected ? (
                     <></>
                 ) : (
                     <VStack justifyContent="center" height="100%" width="100%">

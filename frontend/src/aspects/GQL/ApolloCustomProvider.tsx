@@ -269,7 +269,7 @@ export default function ApolloCustomProvider({
             );
             setClient(client);
         })();
-    }, [conferenceSlug, getAccessTokenSilently, isAuthenticated, user.sub]);
+    }, [conferenceSlug, getAccessTokenSilently, isAuthenticated, user?.sub]);
 
     if (client === undefined) {
         return <AppLoadingScreen />;

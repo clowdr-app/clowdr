@@ -48,6 +48,11 @@ class AuthTokenCache {
             console.log("Failed to initialise token cache!");
             this.clearAllLocalStorage();
         }
+
+        // This is a dirty hack for now
+        setTimeout(() => {
+            window.location.reload();
+        }, AuthTokenCache.TokenExpiryTime);
     }
 
     clearAllLocalStorage() {
@@ -110,6 +115,135 @@ class AuthTokenCache {
     }
 }
 
+async function createApolloClient(isAuthenticated: boolean, conferenceSlug: string | undefined, userId: string | undefined, getAccessTokenSilently: (options?: any) => Promise<string>, tokenCache: AuthTokenCache): Promise<ApolloClient<NormalizedCacheObject>> {
+    const useSecureProtocols = import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API_SECURE_PROTOCOLS !== "false";
+    const httpProtocol = useSecureProtocols ? "https" : "http";
+    const wsProtocol = useSecureProtocols ? "wss" : "ws";
+
+    const authLink = setContext(async (_, { headers }) => {
+        const newHeaders: any = { ...headers };
+
+        const sendRequestUnauthenticated = headers ? headers["SEND-WITHOUT-AUTH"] === true : false;
+        delete newHeaders["SEND-WITHOUT-AUTH"];
+
+        if (isAuthenticated && !sendRequestUnauthenticated) {
+            const magicToken = headers ? headers["x-hasura-magic-token"] : undefined;
+            delete newHeaders["x-hasura-magic-token"];
+
+            let token: string;
+            if (magicToken) {
+                token = await getAccessTokenSilently({
+                    ignoreCache: true,
+                    "magic-token": magicToken,
+                });
+            } else {
+                token = await tokenCache.getToken(userId ?? null, conferenceSlug, getAccessTokenSilently);
+            }
+
+            newHeaders.Authorization = `Bearer ${token}`;
+        } else {
+            if (conferenceSlug) {
+                newHeaders["X-Hasura-Conference-Slug"] = conferenceSlug;
+            }
+        }
+
+        return {
+            headers: newHeaders,
+        };
+    });
+
+    const httpLink = new HttpLink({
+        uri: `${httpProtocol}://${import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN}/v1/graphql`,
+    });
+
+    const wsConnectionParams = await (async () => {
+        if (isAuthenticated) {
+            const token = await tokenCache.getToken(
+                userId ?? null,
+                conferenceSlug,
+                getAccessTokenSilently
+            );
+            return {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            };
+        } else {
+            return {};
+        }
+    })();
+
+    const wsLink = conferenceSlug
+        ? new WebSocketLink({
+              uri: `${wsProtocol}://${import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN}/v1/graphql`,
+              options: {
+                  reconnect: true,
+                  connectionParams: wsConnectionParams,
+              },
+          })
+        : undefined;
+
+    const link = wsLink
+        ? authLink.concat(
+              split(
+                  ({ query }) => {
+                      const definition = getMainDefinition(query);
+                      return (
+                          definition.kind === "OperationDefinition" && definition.operation === "subscription"
+                      );
+                  },
+                  wsLink,
+                  httpLink
+              )
+          )
+        : authLink.concat(httpLink);
+
+    const cache = new InMemoryCache({
+        typePolicies: {
+            chat_Pin: {
+                keyFields: ["chatId", "attendeeId"],
+            },
+            chat_Subscription: {
+                keyFields: ["chatId", "attendeeId"],
+            },
+            chat_Typer: {
+                keyFields: ["chatId", "attendeeId"],
+            },
+            chat_ReadUpToIndex: {
+                keyFields: ["chatId"],
+            },
+            presence_Page: {
+                keyFields: ["path", "conferenceId"],
+            },
+        },
+    });
+
+    // Apollo's local storage cache is a totally broken PoS...
+    //  if you hit the memory limit, it crashes your whole website
+    //  with a quoto-exceeded error. It also doesn't handle switching
+    //  accounts (i.e. auth tokens).
+
+    // if (import.meta.env.MODE !== "development") {
+    // await persistCache({
+    //     cache,
+    //     storage: window.localStorage,
+    //     maxSize: 1048576 * 3, // 3 MiB
+    // });
+    // }
+
+    const client = new ApolloClient({
+        link,
+        cache,
+        defaultOptions: {
+            query: {
+                partialRefetch: true,
+            },
+        },
+    });
+
+    return client;
+}
+
 export default function ApolloCustomProvider({
     children,
 }: {
@@ -130,132 +264,12 @@ export default function ApolloCustomProvider({
 
     useEffect(() => {
         (async () => {
-            const useSecureProtocols = import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API_SECURE_PROTOCOLS !== "false";
-            const httpProtocol = useSecureProtocols ? "https" : "http";
-            const wsProtocol = useSecureProtocols ? "wss" : "ws";
-
-            const authLink = setContext(async (_, { headers }) => {
-                const newHeaders: any = { ...headers };
-
-                const sendRequestUnauthenticated = headers ? headers["SEND-WITHOUT-AUTH"] === true : false;
-                delete newHeaders["SEND-WITHOUT-AUTH"];
-
-                if (isAuthenticated && !sendRequestUnauthenticated) {
-                    const magicToken = headers ? headers["x-hasura-magic-token"] : undefined;
-                    delete newHeaders["x-hasura-magic-token"];
-
-                    let token: string;
-                    if (magicToken) {
-                        token = await getAccessTokenSilently({
-                            ignoreCache: true,
-                            "magic-token": magicToken,
-                        });
-                    } else {
-                        token = await tokenCache.current.getToken(user?.sub, conferenceSlug, getAccessTokenSilently);
-                    }
-
-                    newHeaders.Authorization = `Bearer ${token}`;
-                } else {
-                    if (conferenceSlug) {
-                        newHeaders["X-Hasura-Conference-Slug"] = conferenceSlug;
-                    }
-                }
-
-                return {
-                    headers: newHeaders,
-                };
-            });
-
-            const httpLink = new HttpLink({
-                uri: `${httpProtocol}://${import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN}/v1/graphql`,
-            });
-
-            const wsLink = conferenceSlug
-                ? new WebSocketLink({
-                      uri: `${wsProtocol}://${import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN}/v1/graphql`, // use wss for a secure endpoint
-                      options: {
-                          reconnect: true,
-                          connectionParams: async () => {
-                              if (isAuthenticated) {
-                                  const token = await tokenCache.current.getToken(
-                                      user?.sub,
-                                      conferenceSlug,
-                                      getAccessTokenSilently
-                                  );
-                                  return {
-                                      headers: {
-                                          Authorization: `Bearer ${token}`,
-                                      },
-                                  };
-                              } else {
-                                  return {};
-                              }
-                          },
-                      },
-                  })
-                : undefined;
-
-            const link = wsLink
-                ? authLink.concat(
-                      split(
-                          ({ query }) => {
-                              const definition = getMainDefinition(query);
-                              return (
-                                  definition.kind === "OperationDefinition" && definition.operation === "subscription"
-                              );
-                          },
-                          wsLink,
-                          httpLink
-                      )
-                  )
-                : authLink.concat(httpLink);
-
-            const cache = new InMemoryCache({
-                typePolicies: {
-                    chat_Pin: {
-                        keyFields: ["chatId", "attendeeId"],
-                    },
-                    chat_Subscription: {
-                        keyFields: ["chatId", "attendeeId"],
-                    },
-                    chat_Typer: {
-                        keyFields: ["chatId", "attendeeId"],
-                    },
-                    chat_ReadUpToIndex: {
-                        keyFields: ["chatId"],
-                    },
-                    presence_Page: {
-                        keyFields: ["path", "conferenceId"],
-                    },
-                },
-            });
-
-            // Apollo's local storage cache is a totally broken PoS...
-            //  if you hit the memory limit, it crashes your whole website
-            //  with a quoto-exceeded error. It also doesn't handle switching
-            //  accounts (i.e. auth tokens).
-
-            // if (import.meta.env.MODE !== "development") {
-            // await persistCache({
-            //     cache,
-            //     storage: window.localStorage,
-            //     maxSize: 1048576 * 3, // 3 MiB
-            // });
-            // }
-
-            const client = new ApolloClient({
-                link,
-                cache,
-                defaultOptions: {
-                    query: {
-                        partialRefetch: true,
-                    },
-                },
-            });
-
+            const client = await createApolloClient(
+                isAuthenticated, conferenceSlug, user?.sub, getAccessTokenSilently, tokenCache.current
+            );
             setClient(client);
         })();
-    }, [conferenceSlug, getAccessTokenSilently, isAuthenticated, user?.sub]);
+    }, [conferenceSlug, getAccessTokenSilently, isAuthenticated, user.sub]);
 
     if (client === undefined) {
         return <AppLoadingScreen />;

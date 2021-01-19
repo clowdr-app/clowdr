@@ -292,6 +292,76 @@ export class VonageGlobalState {
         }
     }
 
+    public async publishScreen(screenPublishContainerRef: HTMLElement | string): Promise<void> {
+        const release = await this.mutex.acquire();
+        let _publisher: OT.Publisher | undefined;
+        try {
+            if (this.state.type !== StateType.Connected) {
+                throw new Error("Invalid state transition: must be connected to publish screen");
+            }
+
+            const state = this.state;
+
+            if (this.state.screen) {
+                throw new Error("Screen is already published");
+            }
+
+            const publisher = OT.initPublisher(screenPublishContainerRef, {
+                videoSource: "screen",
+                resolution: "1280x720",
+                width: "100%",
+                height: "100%",
+                insertMode: "append",
+                showControls: false,
+            });
+
+            _publisher = publisher;
+
+            await new Promise<void>((resolve, reject) => {
+                state.session.publish(publisher, (error: OT.OTError | undefined) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve();
+                    }
+                });
+            });
+
+            this.state = {
+                ...this.state,
+                screen: publisher,
+            };
+        } catch (e) {
+            if (_publisher) {
+                _publisher.destroy();
+            }
+        } finally {
+            release();
+        }
+    }
+
+    public async unpublishScreen(): Promise<void> {
+        const release = await this.mutex.acquire();
+        try {
+            if (this.state.type !== StateType.Connected) {
+                throw new Error("Invalid state transition: must be connected to unpublish screen");
+            }
+
+            if (!this.state.screen) {
+                throw new Error("Screen is already unpublished");
+            }
+
+            this.state.session.unpublish(this.state.screen);
+
+            this.state = {
+                ...this.state,
+                screen: null,
+            };
+        } finally {
+            release();
+        }
+    }
+
     public async disconnect(): Promise<void> {
         const release = await this.mutex.acquire();
         try {
@@ -302,6 +372,11 @@ export class VonageGlobalState {
             if (this.state.camera) {
                 this.state.session.unpublish(this.state.camera.publisher);
                 this.state.camera.publisher.destroy();
+            }
+
+            if (this.state.screen) {
+                this.state.session.unpublish(this.state.screen);
+                this.state.screen.destroy();
             }
 
             this.state.session.off();

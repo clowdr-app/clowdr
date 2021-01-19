@@ -3,6 +3,7 @@ import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import useUserId from "../../../../Auth/useUserId";
 import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";
+import usePolling from "../../../../Generic/usePolling";
 import { useVonageRoom, VonageRoomStateProvider } from "../../../../Vonage/useVonageRoom";
 import useCurrentAttendee, { useMaybeCurrentAttendee } from "../../../useCurrentAttendee";
 import PlaceholderImage from "../PlaceholderImage";
@@ -150,41 +151,57 @@ function VonageRoomInner({
         vonage,
     ]);
 
+    useEffect(() => {
+        async function fn() {
+            if (connected) {
+                if (
+                    state.screenShareIntendedEnabled &&
+                    !(vonage.state.type === StateType.Connected && vonage.state.screen)
+                ) {
+                    vonage.publishScreen(screenPublishContainerRef.current as HTMLElement);
+                } else if (vonage.state.type === StateType.Connected && !!vonage.state.screen) {
+                    vonage.unpublishScreen();
+                }
+            }
+        }
+        fn();
+    }, [connected, state.screenShareIntendedEnabled, vonage]);
+
     const receivingScreenShare = useMemo(() => streams.find((s) => s.videoType === "screen"), [streams]);
 
-    // const [streamLastActive, setStreamLastActive] = useState<{ [streamId: string]: number }>({});
-    // const setStreamActivity = useCallback((streamId: string, activity: boolean) => {
-    //     if (activity) {
-    //         setStreamLastActive((streamLastActiveData) => ({
-    //             ...streamLastActiveData,
-    //             [streamId]: Date.now(),
-    //         }));
-    //     }
-    // }, []);
+    const [streamLastActive, setStreamLastActive] = useState<{ [streamId: string]: number }>({});
+    const setStreamActivity = useCallback((streamId: string, activity: boolean) => {
+        if (activity) {
+            setStreamLastActive((streamLastActiveData) => ({
+                ...streamLastActiveData,
+                [streamId]: Date.now(),
+            }));
+        }
+    }, []);
 
-    // const [enableStreams, setEnableStreams] = useState<string[] | null>(null);
-    // const updateEnabledStreams = useCallback(() => {
-    //     if (openTokProps.streams.filter((stream) => stream.videoType === "camera").length <= maxVideoStreams) {
-    //         setEnableStreams(null);
-    //     } else {
-    //         const activeStreams = R.sortWith(
-    //             [R.descend((pair) => pair[1]), R.ascend((pair) => pair[0])],
-    //             R.toPairs(streamLastActive)
-    //         ).map((pair) => pair[0]);
-    //         const selectedActiveStreams = activeStreams.slice(0, Math.min(activeStreams.length, maxVideoStreams));
+    const [enableStreams, setEnableStreams] = useState<string[] | null>(null);
+    const updateEnabledStreams = useCallback(() => {
+        if (streams.filter((stream) => stream.videoType === "camera").length <= maxVideoStreams) {
+            setEnableStreams(null);
+        } else {
+            const activeStreams = R.sortWith(
+                [R.descend((pair) => pair[1]), R.ascend((pair) => pair[0])],
+                R.toPairs(streamLastActive)
+            ).map((pair) => pair[0]);
+            const selectedActiveStreams = activeStreams.slice(0, Math.min(activeStreams.length, maxVideoStreams));
 
-    //         // todo: fill up rest of the available video slots with inactive streams
+            // todo: fill up rest of the available video slots with inactive streams
 
-    //         console.log("Enabled streams", selectedActiveStreams);
+            console.log("Enabled streams", selectedActiveStreams);
 
-    //         setEnableStreams(selectedActiveStreams);
-    //     }
-    // }, [openTokProps.streams, streamLastActive]);
-    // useEffect(() => {
-    //     updateEnabledStreams();
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, []);
-    // usePolling(updateEnabledStreams, 3000, true);
+            setEnableStreams(selectedActiveStreams);
+        }
+    }, [streams, streamLastActive]);
+    useEffect(() => {
+        updateEnabledStreams();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+    usePolling(updateEnabledStreams, 3000, true);
 
     return (
         <Box display="grid" gridTemplateRows="1fr auto">
@@ -222,17 +239,16 @@ function VonageRoomInner({
 
                     {R.sortWith(
                         [
-                            // R.descend((stream) => !enableStreams || !!enableStreams.includes(stream.streamId)),
-                            // R.ascend(R.prop("creationTime")),
+                            R.descend((stream) => !enableStreams || !!enableStreams.includes(stream.streamId)),
+                            R.ascend(R.prop("creationTime")),
                         ],
                         streams.filter((s) => s.videoType === "camera" || !s.videoType)
                     ).map((stream) => (
                         <Box key={stream.streamId} w={300} h={300}>
                             <VonageSubscriber
                                 stream={stream}
-                                // onChangeActivity={(activity) => setStreamActivity(stream.streamId, activity)}
-                                // enableVideo={!enableStreams || !!enableStreams.includes(stream.streamId)}
-                                enableVideo={true}
+                                onChangeActivity={(activity) => setStreamActivity(stream.streamId, activity)}
+                                enableVideo={!enableStreams || !!enableStreams.includes(stream.streamId)}
                             />
                         </Box>
                     ))}

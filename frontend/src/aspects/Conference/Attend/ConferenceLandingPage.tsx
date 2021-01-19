@@ -75,7 +75,7 @@ function ConferenceLandingPageInner(): JSX.Element {
             conferenceId: conference.id,
         },
     });
-    useQueryErrorToast(error);
+    useQueryErrorToast(error, "ConferenceLandingPage.tsx");
 
     const group = useMemo(() => {
         if (data && data.ContentGroup.length > 0) {

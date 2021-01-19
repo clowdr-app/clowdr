@@ -19,7 +19,7 @@ export default function ApolloQueryWrapper<TData, TVariables, TInnerData>({
             return undefined;
         }
     }, [getter, queryResult.data]);
-    useQueryErrorToast(queryResult.error);
+    useQueryErrorToast(queryResult.error, "ApolloQueryWrapper");
 
     return (
         <>

@@ -70,14 +70,14 @@ export default function AttendeeListPage(): JSX.Element {
         searchQuery,
         { loading: loadingSearch, error: errorSearch, data: dataSearch },
     ] = useSearchAttendeesLazyQuery();
-    useQueryErrorToast(errorSearch);
+    useQueryErrorToast(errorSearch, "AttendeeListPage.tsx -- search");
 
     const { loading: loadingAttendees, error: errorAttendees, data: dataAttendees } = useSelectAttendeesQuery({
         variables: {
             conferenceId: conference.id,
         },
     });
-    useQueryErrorToast(errorAttendees);
+    useQueryErrorToast(errorAttendees, "AttendeeListPage.tsx -- attendees");
 
     const [isLoadingMore, setIsLoadingMore] = useState<boolean>(true);
     const [loadedCount, setLoadedCount] = useState<number>(30);

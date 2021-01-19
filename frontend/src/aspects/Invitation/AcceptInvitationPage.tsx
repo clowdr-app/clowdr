@@ -110,7 +110,7 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
             inviteCode,
         },
     });
-    useQueryErrorToast(error);
+    useQueryErrorToast(error, "AcceptInvitationPage");
 
     const [hashOK, setHashOK] = useState<boolean>();
     useEffect(() => {

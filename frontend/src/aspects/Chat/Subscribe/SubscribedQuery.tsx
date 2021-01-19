@@ -115,7 +115,7 @@ export function ChatSubscribedQueryProvider({
         [subscriptionQ.data]
     );
 
-    useQueryErrorToast(subscriptionQ.error ?? unsubscribeChatError);
+    useQueryErrorToast(subscriptionQ.error ?? unsubscribeChatError, "SubscribedQuery.tsx");
 
     const value: SubscribedQuery = useMemo(
         () => ({

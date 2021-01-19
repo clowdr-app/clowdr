@@ -103,7 +103,7 @@ export default function SubmitItemPage({
             magicToken,
         },
     });
-    useQueryErrorToast(error);
+    useQueryErrorToast(error, "SubmitItemPage -- upload agreement");
 
     const {
         loading: loadingContentItem,
@@ -116,7 +116,7 @@ export default function SubmitItemPage({
         },
         fetchPolicy: "network-only",
     });
-    useQueryErrorToast(error);
+    useQueryErrorToast(error, "SubmitItemPage -- content item");
 
     const requiredItem = useMemo(() => {
         if (!data?.RequiredContentItem || data.RequiredContentItem.length !== 1) {

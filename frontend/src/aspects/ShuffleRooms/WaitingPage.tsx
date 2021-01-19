@@ -68,7 +68,7 @@ function ShufflePeriodBox({ period }: { period: ShufflePeriodDataFragment }): JS
     const conference = useConference();
 
     const [joinShuffleQueueMutation, { loading: isJoiningMut, error: joinError }] = useJoinShuffleQueueMutation();
-    useQueryErrorToast(joinError);
+    useQueryErrorToast(joinError, "WaitingPage");
     const [isJoiningOverride, setIsJoiningOverride] = useState<number | null>(null);
     const isJoining = isJoiningOverride !== null || isJoiningMut;
 

@@ -101,7 +101,7 @@ export function ChatPinnedQueryProvider({
         [pinQ.data]
     );
 
-    useQueryErrorToast(pinQ.error ?? unpinChatError);
+    useQueryErrorToast(pinQ.error ?? unpinChatError, "PinnedQuery.tsx");
 
     const value: PinnedQuery = useMemo(
         () => ({

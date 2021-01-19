@@ -253,7 +253,7 @@ export default function ContentGroupList(): JSX.Element {
             conferenceId: conference.id,
         },
     });
-    useQueryErrorToast(error);
+    useQueryErrorToast(error, "ContentGroupList.tsx");
 
     // const previousOpenPanelId = window.localStorage.getItem("ContentGroupList-OpenPanelId");
     const [openPanelId, setOpenPanelId] = useState<string | null>(null);

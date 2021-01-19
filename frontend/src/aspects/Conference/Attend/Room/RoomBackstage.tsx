@@ -108,11 +108,14 @@ export function RoomBackstage({
         );
     }, [sortedEvents]);
 
-    usePolling(() => updateEventTemporalBadges(), 5000, true);
-    useEffect(() => updateEventTemporalBadges(), [updateEventTemporalBadges]);
+    usePolling(updateEventTemporalBadges, 5000, true);
+    useEffect(updateEventTemporalBadges, [updateEventTemporalBadges]);
 
     const [now, setNow] = useState<Date>(new Date());
-    usePolling(() => setNow(new Date()), 20000, true);
+    const updateNow = useCallback(() => {
+        setNow(new Date());
+    }, []);
+    usePolling(updateNow, 20000, true);
 
     const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
 

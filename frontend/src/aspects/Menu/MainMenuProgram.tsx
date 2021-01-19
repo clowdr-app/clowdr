@@ -16,7 +16,7 @@ import {
     Text,
 } from "@chakra-ui/react";
 import { formatRelative } from "date-fns";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
     MenuSchedule_EventFragment,
     useMenuScheduleQuery,
@@ -107,15 +107,12 @@ export function MainMenuProgram(): JSX.Element {
     const [now, setNow] = useState<Date>(new Date());
     const [in30Minutes, setIn30Minutes] = useState<Date>(new Date(Date.now() + 30 * 60 * 1000));
     const [inOneHour, setInOneHour] = useState<Date>(new Date(Date.now() + 60 * 60 * 1000));
-    usePolling(
-        () => {
-            setNow(new Date());
-            setIn30Minutes(new Date(Date.now() + 30 * 60 * 1000));
-            setInOneHour(new Date(Date.now() + 60 * 60 * 1000));
-        },
-        60000,
-        true
-    );
+    const updateTimes = useCallback(() => {
+        setNow(new Date());
+        setIn30Minutes(new Date(Date.now() + 30 * 60 * 1000));
+        setInOneHour(new Date(Date.now() + 60 * 60 * 1000));
+    }, []);
+    usePolling(updateTimes, 60000, true);
 
     const scheduleResult = useMenuScheduleQuery({
         variables: {

@@ -4,6 +4,7 @@ import {
     ChatMessageDataFragment,
     SelectFirstMessagesPageQuery,
     SelectMessagesPageQuery,
+    SubscribedChatReactionDataFragment,
     useDeleteMessageMutation,
     useNextMessageSubscription,
     useNextReactionsQuery,
@@ -11,6 +12,7 @@ import {
     useSelectMessagesPageQuery,
     useSelectSingleMessageQuery,
 } from "../../../generated/graphql";
+import usePolling from "../../Generic/usePolling";
 import ReadUpToIndexProvider from "./ReadUpToIndexProvider";
 
 gql`
@@ -230,12 +232,19 @@ export default function ReceiveMessageQueriesProvider({
         },
     });
     const nextReactionsSub = useNextReactionsQuery({
-        variables: {
-            messageIds: [...liveMessages.msgs.keys()],
-        },
+        skip: true,
         fetchPolicy: "network-only",
-        pollInterval: 5000,
     });
+    const [liveReactions, setLiveReactions] = useState<readonly SubscribedChatReactionDataFragment[]>([]);
+    const pollCb = useCallback(() => {
+        (async () => {
+            const data = await nextReactionsSub.refetch({
+                messageIds: [...liveMessages.msgs.keys()],
+            });
+            setLiveReactions(data.data.chat_Reaction);
+        })();
+    }, [liveMessages.msgs, nextReactionsSub]);
+    usePolling(pollCb, 2000, true);
     useEffect(() => {
         setRefetchMsg(null);
         setLiveMessages((prevLiveMessages) => {
@@ -256,25 +265,26 @@ export default function ReceiveMessageQueriesProvider({
                 maxId = Math.max(maxId, nextMessage.id);
             }
 
-            if (nextReactionsSub.data?.chat_Reaction) {
-                const freshMsgs = new Map<number, ChatMessageDataFragment>();
-                for (const reaction of nextReactionsSub.data.chat_Reaction) {
-                    let msg = freshMsgs.get(reaction.messageId);
+            const freshMsgs = new Map<number, ChatMessageDataFragment>();
+            for (const reaction of liveReactions) {
+                let msg = freshMsgs.get(reaction.messageId);
+                if (msg) {
+                    freshMsgs.set(reaction.messageId, {
+                        ...msg,
+                        reactions: [...msg.reactions, reaction],
+                    });
+                } else {
+                    msg = newLiveMessages.get(reaction.messageId);
                     if (msg) {
                         freshMsgs.set(reaction.messageId, {
                             ...msg,
-                            reactions: [...msg.reactions, reaction],
+                            reactions: [reaction],
                         });
-                    } else {
-                        msg = newLiveMessages.get(reaction.messageId);
-                        if (msg) {
-                            freshMsgs.set(reaction.messageId, {
-                                ...msg,
-                                reactions: [reaction],
-                            });
-                        }
                     }
                 }
+            }
+            for (const [id, msg] of freshMsgs) {
+                newLiveMessages.set(id, msg);
             }
 
             return {
@@ -282,7 +292,7 @@ export default function ReceiveMessageQueriesProvider({
                 maxId,
             };
         });
-    }, [nextMessageSub.data?.chat_Message, nextReactionsSub.data?.chat_Reaction, refetchMsg]);
+    }, [liveReactions, nextMessageSub.data?.chat_Message, refetchMsg]);
 
     return (
         <ReceiveMessageQueriesContext.Provider

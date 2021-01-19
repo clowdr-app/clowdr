@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
     useGetCurrentUserLastSeenQuery,
     useInsertCurrentUserOnlineStatusMutation,
@@ -100,14 +100,15 @@ function LastSeenProvider_UserIdExists({
         }
     }, [insertCurrentUserLastSeenMutation, lastSeen, getLastSeenLoading, refetchGetLastSeen]);
 
-    usePolling(() => {
+    const updateCb = useCallback(() => {
         updateCurrentUserLastSeenMutation({
             variables: {
                 userId,
                 lastSeen: new Date().toISOString(),
             },
         });
-    }, 300 * 1000);
+    }, [updateCurrentUserLastSeenMutation, userId]);
+    usePolling(updateCb, 60 * 1000);
 
     const value = lastSeen && (loading ? undefined : new Date(lastSeen));
     return <LastSeenContext.Provider value={value}>{children}</LastSeenContext.Provider>;

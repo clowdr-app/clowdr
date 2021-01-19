@@ -4,6 +4,7 @@ import { useChatConfiguration } from "./Configuration";
 interface SelectedChat {
     id: string;
     label: string;
+    title: string;
     selectedSide: "L" | "R";
     setSelectedSide: Dispatch<SetStateAction<"L" | "R">>;
 
@@ -32,6 +33,12 @@ export function SelectedChatProvider({ children }: { children: React.ReactNode |
                         : selectedSide === "L"
                         ? config.sources.chatLabelL
                         : config.sources.chatLabelR,
+                title:
+                    "chatId" in config.sources
+                        ? config.sources.chatTitle
+                        : selectedSide === "L"
+                        ? config.sources.chatTitleL
+                        : config.sources.chatTitleR,
                 selectedSide,
                 setSelectedSide,
 

@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 import React, { useCallback, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import { useGetPresenceCountOfQuery } from "../../generated/graphql";
 import { useConference } from "../Conference/useConference";
-import { useLocation } from "react-router-dom";
 
 interface PresenceCount {
     pageCount: number | undefined;

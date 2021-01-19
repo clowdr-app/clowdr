@@ -16097,6 +16097,7 @@ export type Chat_Message = {
   /** An object relationship */
   readonly chat: Chat_Chat;
   readonly chatId: Scalars['uuid'];
+  readonly chatTitle: Scalars['String'];
   readonly created_at: Scalars['timestamptz'];
   readonly data: Scalars['jsonb'];
   /** An object relationship */
@@ -16118,6 +16119,7 @@ export type Chat_Message = {
   /** An object relationship */
   readonly sender?: Maybe<Attendee>;
   readonly senderId?: Maybe<Scalars['uuid']>;
+  readonly senderName: Scalars['String'];
   readonly systemId?: Maybe<Scalars['String']>;
   readonly type: Chat_MessageType_Enum;
   readonly updated_at: Scalars['timestamptz'];
@@ -16420,6 +16422,7 @@ export type Chat_Message_Bool_Exp = {
   readonly _or?: Maybe<ReadonlyArray<Maybe<Chat_Message_Bool_Exp>>>;
   readonly chat?: Maybe<Chat_Chat_Bool_Exp>;
   readonly chatId?: Maybe<Uuid_Comparison_Exp>;
+  readonly chatTitle?: Maybe<String_Comparison_Exp>;
   readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
   readonly data?: Maybe<Jsonb_Comparison_Exp>;
   readonly duplicateIncoming?: Maybe<Chat_Message_Bool_Exp>;
@@ -16432,6 +16435,7 @@ export type Chat_Message_Bool_Exp = {
   readonly reactions?: Maybe<Chat_Reaction_Bool_Exp>;
   readonly sender?: Maybe<Attendee_Bool_Exp>;
   readonly senderId?: Maybe<Uuid_Comparison_Exp>;
+  readonly senderName?: Maybe<String_Comparison_Exp>;
   readonly systemId?: Maybe<String_Comparison_Exp>;
   readonly type?: Maybe<Chat_MessageType_Enum_Comparison_Exp>;
   readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
@@ -16472,6 +16476,7 @@ export type Chat_Message_Inc_Input = {
 export type Chat_Message_Insert_Input = {
   readonly chat?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
   readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly chatTitle?: Maybe<Scalars['String']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly data?: Maybe<Scalars['jsonb']>;
   readonly duplicateIncoming?: Maybe<Chat_Message_Obj_Rel_Insert_Input>;
@@ -16484,6 +16489,7 @@ export type Chat_Message_Insert_Input = {
   readonly reactions?: Maybe<Chat_Reaction_Arr_Rel_Insert_Input>;
   readonly sender?: Maybe<Attendee_Obj_Rel_Insert_Input>;
   readonly senderId?: Maybe<Scalars['uuid']>;
+  readonly senderName?: Maybe<Scalars['String']>;
   readonly systemId?: Maybe<Scalars['String']>;
   readonly type?: Maybe<Chat_MessageType_Enum>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
@@ -16493,11 +16499,13 @@ export type Chat_Message_Insert_Input = {
 export type Chat_Message_Max_Fields = {
   readonly __typename?: 'chat_Message_max_fields';
   readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly chatTitle?: Maybe<Scalars['String']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly duplicatedMessageId?: Maybe<Scalars['Int']>;
   readonly id?: Maybe<Scalars['Int']>;
   readonly message?: Maybe<Scalars['String']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
+  readonly senderName?: Maybe<Scalars['String']>;
   readonly systemId?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -16505,11 +16513,13 @@ export type Chat_Message_Max_Fields = {
 /** order by max() on columns of table "chat.Message" */
 export type Chat_Message_Max_Order_By = {
   readonly chatId?: Maybe<Order_By>;
+  readonly chatTitle?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly duplicatedMessageId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly message?: Maybe<Order_By>;
   readonly senderId?: Maybe<Order_By>;
+  readonly senderName?: Maybe<Order_By>;
   readonly systemId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
@@ -16518,11 +16528,13 @@ export type Chat_Message_Max_Order_By = {
 export type Chat_Message_Min_Fields = {
   readonly __typename?: 'chat_Message_min_fields';
   readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly chatTitle?: Maybe<Scalars['String']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly duplicatedMessageId?: Maybe<Scalars['Int']>;
   readonly id?: Maybe<Scalars['Int']>;
   readonly message?: Maybe<Scalars['String']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
+  readonly senderName?: Maybe<Scalars['String']>;
   readonly systemId?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -16530,11 +16542,13 @@ export type Chat_Message_Min_Fields = {
 /** order by min() on columns of table "chat.Message" */
 export type Chat_Message_Min_Order_By = {
   readonly chatId?: Maybe<Order_By>;
+  readonly chatTitle?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly duplicatedMessageId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly message?: Maybe<Order_By>;
   readonly senderId?: Maybe<Order_By>;
+  readonly senderName?: Maybe<Order_By>;
   readonly systemId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
@@ -16565,6 +16579,7 @@ export type Chat_Message_On_Conflict = {
 export type Chat_Message_Order_By = {
   readonly chat?: Maybe<Chat_Chat_Order_By>;
   readonly chatId?: Maybe<Order_By>;
+  readonly chatTitle?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly data?: Maybe<Order_By>;
   readonly duplicateIncoming?: Maybe<Chat_Message_Order_By>;
@@ -16577,6 +16592,7 @@ export type Chat_Message_Order_By = {
   readonly reactions_aggregate?: Maybe<Chat_Reaction_Aggregate_Order_By>;
   readonly sender?: Maybe<Attendee_Order_By>;
   readonly senderId?: Maybe<Order_By>;
+  readonly senderName?: Maybe<Order_By>;
   readonly systemId?: Maybe<Order_By>;
   readonly type?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
@@ -16597,6 +16613,8 @@ export enum Chat_Message_Select_Column {
   /** column name */
   ChatId = 'chatId',
   /** column name */
+  ChatTitle = 'chatTitle',
+  /** column name */
   CreatedAt = 'created_at',
   /** column name */
   Data = 'data',
@@ -16611,6 +16629,8 @@ export enum Chat_Message_Select_Column {
   /** column name */
   SenderId = 'senderId',
   /** column name */
+  SenderName = 'senderName',
+  /** column name */
   SystemId = 'systemId',
   /** column name */
   Type = 'type',
@@ -16621,6 +16641,7 @@ export enum Chat_Message_Select_Column {
 /** input type for updating data in table "chat.Message" */
 export type Chat_Message_Set_Input = {
   readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly chatTitle?: Maybe<Scalars['String']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly data?: Maybe<Scalars['jsonb']>;
   readonly duplicatedMessageId?: Maybe<Scalars['Int']>;
@@ -16628,6 +16649,7 @@ export type Chat_Message_Set_Input = {
   readonly isPinned?: Maybe<Scalars['Boolean']>;
   readonly message?: Maybe<Scalars['String']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
+  readonly senderName?: Maybe<Scalars['String']>;
   readonly systemId?: Maybe<Scalars['String']>;
   readonly type?: Maybe<Chat_MessageType_Enum>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
@@ -16690,6 +16712,8 @@ export enum Chat_Message_Update_Column {
   /** column name */
   ChatId = 'chatId',
   /** column name */
+  ChatTitle = 'chatTitle',
+  /** column name */
   CreatedAt = 'created_at',
   /** column name */
   Data = 'data',
@@ -16703,6 +16727,8 @@ export enum Chat_Message_Update_Column {
   Message = 'message',
   /** column name */
   SenderId = 'senderId',
+  /** column name */
+  SenderName = 'senderName',
   /** column name */
   SystemId = 'systemId',
   /** column name */
@@ -29566,14 +29592,14 @@ export type Uuid_Comparison_Exp = {
   readonly _nin?: Maybe<ReadonlyArray<Scalars['uuid']>>;
 };
 
-export type SubdChatInfoFragment = { readonly __typename?: 'chat_Chat', readonly id: any, readonly contentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string> }>, readonly room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly roomPrivacyName: RoomPrivacy_Enum }>, readonly messages: ReadonlyArray<{ readonly __typename?: 'chat_Message', readonly id: number, readonly message: string, readonly type: Chat_MessageType_Enum, readonly sender?: Maybe<{ readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string }> }>, readonly readUpToIndices: ReadonlyArray<{ readonly __typename?: 'chat_ReadUpToIndex', readonly attendeeId: any, readonly chatId: any, readonly notifiedUpToMessageId: number }> };
+export type SubdChatInfoFragment = { readonly __typename?: 'chat_Chat', readonly id: any, readonly messages: ReadonlyArray<{ readonly __typename?: 'chat_Message', readonly id: number, readonly message: string, readonly type: Chat_MessageType_Enum, readonly senderId?: Maybe<any>, readonly senderName: string, readonly chatTitle: string }> };
 
-export type SubdChatsUnreadCountsSubscriptionVariables = Exact<{
+export type SubdChatsSubscriptionVariables = Exact<{
   attendeeId: Scalars['uuid'];
 }>;
 
 
-export type SubdChatsUnreadCountsSubscription = { readonly __typename?: 'subscription_root', readonly chat_Subscription: ReadonlyArray<{ readonly __typename?: 'chat_Subscription', readonly attendeeId: any, readonly chatId: any, readonly chat: (
+export type SubdChatsSubscription = { readonly __typename?: 'subscription_root', readonly chat_Subscription: ReadonlyArray<{ readonly __typename?: 'chat_Subscription', readonly attendeeId: any, readonly chatId: any, readonly chat: (
       { readonly __typename?: 'chat_Chat' }
       & SubdChatInfoFragment
     ) }> };
@@ -29587,6 +29613,13 @@ export type SetNotifiedUpToIndexMutationVariables = Exact<{
 
 export type SetNotifiedUpToIndexMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_ReadUpToIndex_one?: Maybe<{ readonly __typename?: 'chat_ReadUpToIndex', readonly chatId: any, readonly attendeeId: any, readonly notifiedUpToMessageId: number }> };
 
+export type GetChatPathQueryVariables = Exact<{
+  chatId: Scalars['uuid'];
+}>;
+
+
+export type GetChatPathQuery = { readonly __typename?: 'query_root', readonly chat_Chat_by_pk?: Maybe<{ readonly __typename?: 'chat_Chat', readonly id: any, readonly room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }>, readonly contentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any }> }> };
+
 export type SendChatMessageMutationVariables = Exact<{
   chatId: Scalars['uuid'];
   senderId: Scalars['uuid'];
@@ -29594,6 +29627,8 @@ export type SendChatMessageMutationVariables = Exact<{
   message: Scalars['String'];
   data?: Maybe<Scalars['jsonb']>;
   isPinned?: Maybe<Scalars['Boolean']>;
+  chatTitle?: Maybe<Scalars['String']>;
+  senderName?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -30061,7 +30096,7 @@ export type Room_GetCurrentEventQueryVariables = Exact<{
 }>;
 
 
-export type Room_GetCurrentEventQuery = { readonly __typename?: 'query_root', readonly Event_by_pk?: Maybe<{ readonly __typename?: 'Event', readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly contentGroupTypeName: ContentGroupType_Enum, readonly chatId?: Maybe<any>, readonly contentItems: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly data: any }> }> }> };
+export type Room_GetCurrentEventQuery = { readonly __typename?: 'query_root', readonly Event_by_pk?: Maybe<{ readonly __typename?: 'Event', readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly chatId?: Maybe<any>, readonly contentItems: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly data: any }> }> }> };
 
 export type AddParticipantToRoomMutationVariables = Exact<{
   attendeeId: Scalars['uuid'];
@@ -31219,11 +31254,6 @@ export type JoinShuffleQueueMutationVariables = Exact<{
 
 export type JoinShuffleQueueMutation = { readonly __typename?: 'mutation_root', readonly insert_room_ShuffleQueueEntry_one?: Maybe<{ readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any }> };
 
-export type SelectUsersQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type SelectUsersQuery = { readonly __typename?: 'query_root', readonly User: ReadonlyArray<{ readonly __typename?: 'User', readonly id: string, readonly lastName: string, readonly firstName: string, readonly onlineStatus?: Maybe<{ readonly __typename?: 'OnlineStatus', readonly id: any, readonly lastSeen: any, readonly isIncognito: boolean }> }> };
-
 export type AttendeeFieldsFragment = { readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly conferenceId: any, readonly displayName: string, readonly createdAt: any, readonly updatedAt: any, readonly conference: { readonly __typename?: 'Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string }, readonly groupAttendees: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly id: any, readonly group: { readonly __typename?: 'Group', readonly id: any, readonly enabled: boolean, readonly name: string, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly role: { readonly __typename?: 'Role', readonly id: any, readonly name: string, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly id: any, readonly permissionName: Permission_Enum }> } }> } }> };
 
 export type SelectCurrentUserQueryVariables = Exact<{
@@ -31276,29 +31306,13 @@ export type UpdateCurrentUserLastSeenMutation = { readonly __typename?: 'mutatio
 export const SubdChatInfoFragmentDoc = gql`
     fragment SubdChatInfo on chat_Chat {
   id
-  contentGroup {
-    id
-    title
-    shortTitle
-  }
-  room {
-    id
-    name
-    roomPrivacyName
-  }
   messages(limit: 1, order_by: {id: desc}) {
     id
     message
     type
-    sender {
-      id
-      displayName
-    }
-  }
-  readUpToIndices(where: {attendeeId: {_eq: $attendeeId}}) {
-    attendeeId
-    chatId
-    notifiedUpToMessageId
+    senderId
+    senderName
+    chatTitle
   }
 }
     `;
@@ -32272,8 +32286,8 @@ export const AttendeeFieldsFragmentDoc = gql`
   }
 }
     `;
-export const SubdChatsUnreadCountsDocument = gql`
-    subscription SubdChatsUnreadCounts($attendeeId: uuid!) {
+export const SubdChatsDocument = gql`
+    subscription SubdChats($attendeeId: uuid!) {
   chat_Subscription(where: {attendeeId: {_eq: $attendeeId}}) {
     attendeeId
     chatId
@@ -32285,26 +32299,26 @@ export const SubdChatsUnreadCountsDocument = gql`
     ${SubdChatInfoFragmentDoc}`;
 
 /**
- * __useSubdChatsUnreadCountsSubscription__
+ * __useSubdChatsSubscription__
  *
- * To run a query within a React component, call `useSubdChatsUnreadCountsSubscription` and pass it any options that fit your needs.
- * When your component renders, `useSubdChatsUnreadCountsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useSubdChatsSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useSubdChatsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useSubdChatsUnreadCountsSubscription({
+ * const { data, loading, error } = useSubdChatsSubscription({
  *   variables: {
  *      attendeeId: // value for 'attendeeId'
  *   },
  * });
  */
-export function useSubdChatsUnreadCountsSubscription(baseOptions: Apollo.SubscriptionHookOptions<SubdChatsUnreadCountsSubscription, SubdChatsUnreadCountsSubscriptionVariables>) {
-        return Apollo.useSubscription<SubdChatsUnreadCountsSubscription, SubdChatsUnreadCountsSubscriptionVariables>(SubdChatsUnreadCountsDocument, baseOptions);
+export function useSubdChatsSubscription(baseOptions: Apollo.SubscriptionHookOptions<SubdChatsSubscription, SubdChatsSubscriptionVariables>) {
+        return Apollo.useSubscription<SubdChatsSubscription, SubdChatsSubscriptionVariables>(SubdChatsDocument, baseOptions);
       }
-export type SubdChatsUnreadCountsSubscriptionHookResult = ReturnType<typeof useSubdChatsUnreadCountsSubscription>;
-export type SubdChatsUnreadCountsSubscriptionResult = Apollo.SubscriptionResult<SubdChatsUnreadCountsSubscription>;
+export type SubdChatsSubscriptionHookResult = ReturnType<typeof useSubdChatsSubscription>;
+export type SubdChatsSubscriptionResult = Apollo.SubscriptionResult<SubdChatsSubscription>;
 export const SetNotifiedUpToIndexDocument = gql`
     mutation SetNotifiedUpToIndex($attendeeId: uuid!, $chatId: uuid!, $msgId: Int!) {
   insert_chat_ReadUpToIndex_one(
@@ -32344,10 +32358,49 @@ export function useSetNotifiedUpToIndexMutation(baseOptions?: Apollo.MutationHoo
 export type SetNotifiedUpToIndexMutationHookResult = ReturnType<typeof useSetNotifiedUpToIndexMutation>;
 export type SetNotifiedUpToIndexMutationResult = Apollo.MutationResult<SetNotifiedUpToIndexMutation>;
 export type SetNotifiedUpToIndexMutationOptions = Apollo.BaseMutationOptions<SetNotifiedUpToIndexMutation, SetNotifiedUpToIndexMutationVariables>;
+export const GetChatPathDocument = gql`
+    query GetChatPath($chatId: uuid!) {
+  chat_Chat_by_pk(id: $chatId) {
+    id
+    room {
+      id
+    }
+    contentGroup {
+      id
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetChatPathQuery__
+ *
+ * To run a query within a React component, call `useGetChatPathQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetChatPathQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetChatPathQuery({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *   },
+ * });
+ */
+export function useGetChatPathQuery(baseOptions: Apollo.QueryHookOptions<GetChatPathQuery, GetChatPathQueryVariables>) {
+        return Apollo.useQuery<GetChatPathQuery, GetChatPathQueryVariables>(GetChatPathDocument, baseOptions);
+      }
+export function useGetChatPathLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetChatPathQuery, GetChatPathQueryVariables>) {
+          return Apollo.useLazyQuery<GetChatPathQuery, GetChatPathQueryVariables>(GetChatPathDocument, baseOptions);
+        }
+export type GetChatPathQueryHookResult = ReturnType<typeof useGetChatPathQuery>;
+export type GetChatPathLazyQueryHookResult = ReturnType<typeof useGetChatPathLazyQuery>;
+export type GetChatPathQueryResult = Apollo.QueryResult<GetChatPathQuery, GetChatPathQueryVariables>;
 export const SendChatMessageDocument = gql`
-    mutation SendChatMessage($chatId: uuid!, $senderId: uuid!, $type: chat_MessageType_enum!, $message: String!, $data: jsonb = {}, $isPinned: Boolean = false) {
+    mutation SendChatMessage($chatId: uuid!, $senderId: uuid!, $type: chat_MessageType_enum!, $message: String!, $data: jsonb = {}, $isPinned: Boolean = false, $chatTitle: String = " ", $senderName: String = " ") {
   insert_chat_Message(
-    objects: {chatId: $chatId, data: $data, isPinned: $isPinned, message: $message, senderId: $senderId, type: $type}
+    objects: {chatId: $chatId, data: $data, isPinned: $isPinned, message: $message, senderId: $senderId, type: $type, chatTitle: $chatTitle, senderName: $senderName}
   ) {
     returning {
       id
@@ -32377,6 +32430,8 @@ export type SendChatMessageMutationFn = Apollo.MutationFunction<SendChatMessageM
  *      message: // value for 'message'
  *      data: // value for 'data'
  *      isPinned: // value for 'isPinned'
+ *      chatTitle: // value for 'chatTitle'
+ *      senderName: // value for 'senderName'
  *   },
  * });
  */
@@ -33821,6 +33876,7 @@ export const Room_GetCurrentEventDocument = gql`
   Event_by_pk(id: $currentEventId) {
     contentGroup {
       id
+      title
       contentGroupTypeName
       contentItems(where: {contentTypeName: {_eq: ZOOM}}, limit: 1) {
         id
@@ -37402,45 +37458,6 @@ export function useJoinShuffleQueueMutation(baseOptions?: Apollo.MutationHookOpt
 export type JoinShuffleQueueMutationHookResult = ReturnType<typeof useJoinShuffleQueueMutation>;
 export type JoinShuffleQueueMutationResult = Apollo.MutationResult<JoinShuffleQueueMutation>;
 export type JoinShuffleQueueMutationOptions = Apollo.BaseMutationOptions<JoinShuffleQueueMutation, JoinShuffleQueueMutationVariables>;
-export const SelectUsersDocument = gql`
-    query selectUsers {
-  User {
-    id
-    lastName
-    firstName
-    onlineStatus {
-      id
-      lastSeen
-      isIncognito
-    }
-  }
-}
-    `;
-
-/**
- * __useSelectUsersQuery__
- *
- * To run a query within a React component, call `useSelectUsersQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectUsersQuery({
- *   variables: {
- *   },
- * });
- */
-export function useSelectUsersQuery(baseOptions?: Apollo.QueryHookOptions<SelectUsersQuery, SelectUsersQueryVariables>) {
-        return Apollo.useQuery<SelectUsersQuery, SelectUsersQueryVariables>(SelectUsersDocument, baseOptions);
-      }
-export function useSelectUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectUsersQuery, SelectUsersQueryVariables>) {
-          return Apollo.useLazyQuery<SelectUsersQuery, SelectUsersQueryVariables>(SelectUsersDocument, baseOptions);
-        }
-export type SelectUsersQueryHookResult = ReturnType<typeof useSelectUsersQuery>;
-export type SelectUsersLazyQueryHookResult = ReturnType<typeof useSelectUsersLazyQuery>;
-export type SelectUsersQueryResult = Apollo.QueryResult<SelectUsersQuery, SelectUsersQueryVariables>;
 export const SelectCurrentUserDocument = gql`
     query SelectCurrentUser($userId: String!) {
   User_by_pk(id: $userId) {

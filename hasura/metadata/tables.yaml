@@ -487,12 +487,14 @@
                     room: {}
       columns:
       - chatId
+      - chatTitle
       - data
       - duplicatedMessageId
       - id
       - isPinned
       - message
       - senderId
+      - senderName
       - type
       backend_only: false
   select_permissions:
@@ -503,7 +505,10 @@
       - duplicatedMessageId
       - id
       - data
+      - chatTitle
       - message
+      - senderName
+      - systemId
       - type
       - created_at
       - updated_at

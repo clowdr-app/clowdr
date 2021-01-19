@@ -2,6 +2,7 @@ import React from "react";
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import { Permission_Enum } from "../../generated/graphql";
 import { ChatNotificationsProvider } from "../Chat/ChatNotifications";
+import ChatRedirectPage from "../Chat/ChatRedirectPage";
 import PageNotFound from "../Errors/PageNotFound";
 import PageNotImplemented from "../Errors/PageNotImplemented";
 import PresenceCountProvider from "../Presence/PresenceCountProvider";
@@ -200,6 +201,15 @@ function ConferenceRoutesInner({ rootUrl }: { rootUrl: string }): JSX.Element {
                 }
             </Route>
 
+            <Route path={`${rootUrl}/chat/:chatId`}>
+                {(props) =>
+                    props.match?.params.chatId ? (
+                        <ChatRedirectPage chatId={props.match.params.chatId} />
+                    ) : (
+                        <Redirect to={`/conference/${conference.slug}`} />
+                    )
+                }
+            </Route>
             <Route path={`${rootUrl}/shuffle`}>
                 <RequireAtLeastOnePermissionWrapper
                     componentIfDenied={<Redirect to={`/conference/${conference.slug}`} />}

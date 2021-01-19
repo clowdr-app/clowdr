@@ -211,7 +211,7 @@ export function ComposeContextProvider({
             send: (data?: MessageData) => {
                 setIsSending(true);
                 (async () => {
-                    if (!config.currentAttendeeId) {
+                    if (!config.currentAttendeeId || !config.currentAttendeeName) {
                         throw new Error("Not authorized.");
                     }
 
@@ -220,12 +220,14 @@ export function ComposeContextProvider({
                         await sendQueries.send(
                             selectedChat.id,
                             config.currentAttendeeId,
+                            config.currentAttendeeName,
                             newMessageType === Chat_MessageType_Enum.Message && isEmote
                                 ? Chat_MessageType_Enum.Emote
                                 : newMessageType,
                             newMessage,
                             data ?? newMessageData,
-                            false
+                            false,
+                            selectedChat.title
                         );
 
                         setNewMessage("");
@@ -252,6 +254,7 @@ export function ComposeContextProvider({
         [
             blockedReason,
             config.currentAttendeeId,
+            config.currentAttendeeName,
             isSending,
             lastSendTime,
             maxLength,

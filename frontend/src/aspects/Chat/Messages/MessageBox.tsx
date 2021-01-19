@@ -336,12 +336,17 @@ export default function MessageBox({ message }: { message: ChatMessageDataFragme
     const [attendee, setAttendee] = useState<AttendeeDataFragment | null>(null);
     const attendees = useAttendeesContext();
     useEffect(() => {
-        const sub = attendees.subscribe(message.senderId, setAttendee);
-        if (sub.attendee) {
-            setAttendee(sub.attendee);
+        let sub: any;
+        if (message.senderId) {
+            sub = attendees.subscribe(message.senderId, setAttendee);
+            if (sub.attendee) {
+                setAttendee(sub.attendee);
+            }
         }
         return () => {
-            attendees.unsubscribe(sub.id);
+            if (sub) {
+                attendees.unsubscribe(sub.id);
+            }
         };
     }, [attendees, message.senderId]);
 

@@ -52,7 +52,11 @@ export default function RoomMembersProvider({
         if (error) {
             setValue(false);
         } else if (!loading && data) {
-            data.RoomPerson.map((person) => attendeesCtx.subscribe(person.attendeeId, onAttendeeUpdated));
+            data.RoomPerson.forEach((person) => {
+                if (person.attendeeId) {
+                    attendeesCtx.subscribe(person.attendeeId, onAttendeeUpdated);
+                }
+            });
 
             setValue((oldVals) => {
                 if (oldVals) {

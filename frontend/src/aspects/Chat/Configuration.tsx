@@ -12,12 +12,15 @@ export type ChatSources =
     | {
           chatId: string;
           chatLabel: string;
+          chatTitle: string;
       }
     | {
           chatIdL: string;
           chatLabelL: string;
+          chatTitleL: string;
           chatIdR: string;
           chatLabelR: string;
+          chatTitleR: string;
           defaultSelected: "L" | "R";
       };
 
@@ -101,6 +104,7 @@ export interface ChatConfiguration {
     pollConfig: ChatPollConfiguration; // TODO
 
     currentAttendeeId: Maybe<string>;
+    currentAttendeeName: Maybe<string>;
 
     fontSizeRange: MinMaxWithValue;
     setFontSize: Dispatch<SetStateAction<number>>;

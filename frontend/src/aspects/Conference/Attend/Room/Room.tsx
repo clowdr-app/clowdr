@@ -32,6 +32,7 @@ gql`
         Event_by_pk(id: $currentEventId) {
             contentGroup {
                 id
+                title
                 contentGroupTypeName
                 contentItems(where: { contentTypeName: { _eq: ZOOM } }, limit: 1) {
                     id
@@ -124,20 +125,23 @@ export function Room({
             const rightHandLabel = rightHandTypeName[0] + rightHandTypeName.slice(1).toLowerCase();
             return {
                 chatIdL: roomDetails.chatId ?? undefined,
-                chatIdR: currentEventData.Event_by_pk.contentGroup?.chatId ?? undefined,
+                chatIdR: currentEventData.Event_by_pk.contentGroup?.chatId ?? "Unknown chat",
                 chatLabelL: "Room",
                 chatLabelR: rightHandLabel,
+                chatTitleL: roomDetails.name,
+                chatTitleR: currentEventData.Event_by_pk.contentGroup?.title ?? "Unknown chat",
                 defaultSelected: "L",
             };
         } else if (roomDetails.chatId) {
             return {
                 chatId: roomDetails.chatId,
                 chatLabel: "Room",
+                chatTitle: roomDetails.name,
             };
         } else {
             return undefined;
         }
-    }, [currentEventData?.Event_by_pk?.contentGroup, roomDetails.chatId]);
+    }, [currentEventData?.Event_by_pk?.contentGroup, roomDetails.chatId, roomDetails.name]);
 
     const chatEl = useMemo(
         () =>

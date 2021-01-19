@@ -234,8 +234,7 @@ export default function ReceiveMessageQueriesProvider({
             messageIds: [...liveMessages.msgs.keys()],
         },
         fetchPolicy: "network-only",
-        pollInterval: 10000,
-        skip: liveMessages.msgs.size === 0,
+        pollInterval: 5000,
     });
     useEffect(() => {
         setRefetchMsg(null);
@@ -249,9 +248,10 @@ export default function ReceiveMessageQueriesProvider({
 
             if (nextMessageSub.data?.chat_Message && nextMessageSub.data?.chat_Message.length > 0) {
                 const nextMessage = nextMessageSub.data.chat_Message[0];
+                const existingMessage = newLiveMessages.get(nextMessage.id);
                 newLiveMessages.set(nextMessage.id, {
                     ...nextMessage,
-                    reactions: [],
+                    reactions: existingMessage?.reactions ?? [],
                 });
                 maxId = Math.max(maxId, nextMessage.id);
             }

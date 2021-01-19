@@ -131,6 +131,7 @@ export function Chat({ sources, onProfileModalOpened, onEmoteReceived, ...rest }
                 },
             },
             currentAttendeeId: currentAttendee?.id,
+            currentAttendeeName: currentAttendee?.displayName,
             spacing,
             setSpacing,
             setFontSize: (next) =>
@@ -143,6 +144,7 @@ export function Chat({ sources, onProfileModalOpened, onEmoteReceived, ...rest }
             onEmoteReceived,
         }),
         [
+            currentAttendee?.displayName,
             currentAttendee?.id,
             fontSize,
             onEmoteReceived,

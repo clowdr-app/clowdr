@@ -15,6 +15,8 @@ gql`
         $message: String!
         $data: jsonb = {}
         $isPinned: Boolean = false
+        $chatTitle: String = " "
+        $senderName: String = " "
     ) {
         insert_chat_Message(
             objects: {
@@ -24,6 +26,8 @@ gql`
                 message: $message
                 senderId: $senderId
                 type: $type
+                chatTitle: $chatTitle
+                senderName: $senderName
             }
         ) {
             returning {
@@ -45,10 +49,12 @@ gql`
 type SendMesasageCallback = (
     chatId: string,
     senderId: string,
+    senderName: string,
     type: Chat_MessageType_Enum,
     message: string,
     data: MessageData,
-    isPinned: boolean
+    isPinned: boolean,
+    chatTitle: string
 ) => Promise<void>;
 
 interface SendMessageQueriesCtx {
@@ -74,7 +80,7 @@ export default function SendMessageQueriesProvider({
     const [sendAnswer] = useSendChatAnswerMutation();
 
     const send: SendMesasageCallback = useCallback(
-        async (chatId, senderId, type, message, data, isPinned) => {
+        async (chatId, senderId, senderName, type, message, data, isPinned, chatTitle) => {
             const newMsg = (
                 await sendMessageMutation({
                     variables: {
@@ -84,6 +90,8 @@ export default function SendMessageQueriesProvider({
                         type,
                         data,
                         isPinned,
+                        senderName,
+                        chatTitle,
                     },
                 })
             ).data?.insert_chat_Message?.returning[0];

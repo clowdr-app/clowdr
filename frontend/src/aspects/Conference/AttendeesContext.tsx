@@ -109,7 +109,7 @@ export default function AttendeesContextProvider({
             try {
                 if (requiredAttendeeIds.size > 0) {
                     const datas = await attendeesByIdQ.refetch({
-                        attendeeIds: [...requiredAttendeeIds.values()],
+                        attendeeIds: [...requiredAttendeeIds.values()].filter((x) => x !== undefined && x !== null),
                         conferenceId: conference.id,
                     });
 

@@ -3,7 +3,6 @@ import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { setContext } from "@apollo/link-context";
 import { useAuth0 } from "@auth0/auth0-react";
-import { persistCache } from "apollo3-cache-persist";
 import { Mutex } from "async-mutex";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -237,11 +236,11 @@ export default function ApolloCustomProvider({
             //  accounts (i.e. auth tokens).
 
             // if (import.meta.env.MODE !== "development") {
-                await persistCache({
-                    cache,
-                    storage: window.localStorage,
-                    maxSize: 1048576 * 3, // 3 MiB
-                });
+            // await persistCache({
+            //     cache,
+            //     storage: window.localStorage,
+            //     maxSize: 1048576 * 3, // 3 MiB
+            // });
             // }
 
             const client = new ApolloClient({

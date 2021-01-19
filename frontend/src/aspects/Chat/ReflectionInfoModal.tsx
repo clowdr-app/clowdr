@@ -19,7 +19,7 @@ const ReflectionInfoModalContext = React.createContext<(() => void) | undefined>
 
 export function useReflectionInfoModal(): () => void {
     const ctx = React.useContext(ReflectionInfoModalContext);
-    assert(ctx);
+    assert(ctx, "useReflectionInfoModal: Context not available");
     return ctx;
 }
 

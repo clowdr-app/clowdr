@@ -22,7 +22,7 @@ const ConferenceContext = React.createContext<ConferenceInfo | undefined>(undefi
 
 export function useConference(): ConferenceInfo {
     const conf = React.useContext(ConferenceContext);
-    assert(conf);
+    assert(conf, "useConference: Context not available");
     return conf;
 }
 

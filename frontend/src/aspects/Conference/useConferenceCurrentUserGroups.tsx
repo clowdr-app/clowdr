@@ -90,7 +90,7 @@ export function useCurrentUserGroupsRolesPermissions():
     | CurrentUserGroupsRolesPermissionsQuery
     | PublicUserGroupsRolesPermissionsQuery {
     const conf = React.useContext(CurrentUserGroupsRolesPermissionsContext);
-    assert(conf);
+    assert(conf, "useCurrentUserGroupsRolesPermissions: Context not available");
     return conf;
 }
 

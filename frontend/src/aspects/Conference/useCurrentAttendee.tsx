@@ -81,7 +81,7 @@ const CurrentAttendeeContext = React.createContext<AttendeeContextT | undefined>
 
 export default function useCurrentAttendee(): AttendeeContextT {
     const ctx = React.useContext(CurrentAttendeeContext);
-    assert(ctx);
+    assert(ctx, "useCurrentAttendee: Context not available");
     return ctx;
 }
 

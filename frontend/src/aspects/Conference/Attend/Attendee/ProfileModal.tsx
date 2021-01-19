@@ -18,7 +18,6 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
-import assert from "assert";
 import React, { useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { useCreateDmMutation } from "../../../../generated/graphql";
@@ -47,39 +46,40 @@ export default function ProfileModal({
     const [createDmMutation, { loading: creatingDM }] = useCreateDmMutation();
     const toast = useToast();
     const createDM = useCallback(async () => {
-        try {
-            assert(attendee);
-            const result = await createDmMutation({
-                variables: {
-                    attendeeIds: [attendee.id],
-                    conferenceId: conference.id,
-                },
-            });
-            if (result.errors || !result.data?.createRoomDm?.roomId) {
-                console.error("Failed to create DM", result.errors);
-                throw new Error("Failed to create DM");
-            } else {
-                if (result.data.createRoomDm.message !== "DM already exists") {
-                    toast({
-                        title: result.data.createRoomDm.message ?? "Created new DM",
-                        status: "success",
-                    });
-                }
+        if (attendee) {
+            try {
+                const result = await createDmMutation({
+                    variables: {
+                        attendeeIds: [attendee.id],
+                        conferenceId: conference.id,
+                    },
+                });
+                if (result.errors || !result.data?.createRoomDm?.roomId) {
+                    console.error("Failed to create DM", result.errors);
+                    throw new Error("Failed to create DM");
+                } else {
+                    if (result.data.createRoomDm.message !== "DM already exists") {
+                        toast({
+                            title: result.data.createRoomDm.message ?? "Created new DM",
+                            status: "success",
+                        });
+                    }
 
-                // Wait, because Vonage session creation is not instantaneous
-                setTimeout(() => {
-                    history.push(`/conference/${conference.slug}/room/${result.data?.createRoomDm?.roomId}`);
+                    // Wait, because Vonage session creation is not instantaneous
+                    setTimeout(() => {
+                        history.push(`/conference/${conference.slug}/room/${result.data?.createRoomDm?.roomId}`);
+                        onClose();
+                    }, 2000);
+
                     onClose();
-                }, 2000);
-
-                onClose();
+                }
+            } catch (e) {
+                toast({
+                    title: "Could not create DM",
+                    status: "error",
+                });
+                console.error("Could not create DM", e);
             }
-        } catch (e) {
-            toast({
-                title: "Could not create DM",
-                status: "error",
-            });
-            console.error("Could not create DM", e);
         }
     }, [attendee, conference.id, conference.slug, createDmMutation, history, onClose, toast]);
 

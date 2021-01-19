@@ -25,7 +25,7 @@ gql`
         chat_Message(
             limit: 1
             order_by: { id: desc }
-            where: { chatId: { _in: $chatIds }, senderId: { _neq: $attendeeId } }
+            where: { chatId: { _in: $chatIds } }
         ) {
             id
             chatId

@@ -3,7 +3,8 @@ import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { setContext } from "@apollo/link-context";
 import { useAuth0 } from "@auth0/auth0-react";
-import React, { useEffect, useMemo, useState } from "react";
+import { Mutex } from "async-mutex";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import AppLoadingScreen from "../../AppLoadingScreen";
 
@@ -19,12 +20,104 @@ export const ConferenceAuthContext = React.createContext<ConferenceAuthCtx>({
     currentConferenceId: null,
 });
 
+interface TokenCacheEntry {
+    token: string;
+    expiresAt: number;
+}
+
+class AuthTokenCache {
+    static readonly CacheKey = "CLOWDR_AUTH_CACHE";
+    static readonly TokenExpiryTime = 36000 * 1000;
+
+    mutex: Mutex;
+    tokens: Map<string, TokenCacheEntry>;
+
+    constructor() {
+        this.tokens = new Map();
+        this.mutex = new Mutex();
+
+        try {
+            const tokenCacheStr = window.localStorage.getItem(AuthTokenCache.CacheKey);
+            if (tokenCacheStr) {
+                const tokenCache = JSON.parse(tokenCacheStr);
+                this.tokens = new Map<string, TokenCacheEntry>(tokenCache);
+            } else {
+                this.clearAllLocalStorage();
+            }
+        } catch (e) {
+            console.log("Failed to initialise token cache!");
+            this.clearAllLocalStorage();
+        }
+    }
+
+    clearAllLocalStorage() {
+        window.localStorage.clear();
+        this.tokens = new Map<string, TokenCacheEntry>();
+        this.saveCache();
+    }
+
+    saveCache() {
+        const serialisableCache = [...this.tokens.entries()];
+        window.localStorage.setItem(AuthTokenCache.CacheKey, JSON.stringify(serialisableCache));
+    }
+
+    async sha256(message: string): Promise<string> {
+        const msgBuffer = new TextEncoder().encode(message);
+        const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map((b) => ("00" + b.toString(16)).slice(-2)).join("");
+        return hashHex;
+    }
+
+    public async getToken(
+        userId: string | null,
+        conferenceSlug: string | null | undefined,
+        getAccessTokenSilently: (options?: any) => Promise<string>
+    ) {
+        const release = await this.mutex.acquire();
+
+        try {
+            const cacheKey = (await this.sha256(conferenceSlug ?? "<<NO-CONF>>")) + ">" + (userId ?? "<<NO-USER>>");
+            let cacheEntry = this.tokens.get(cacheKey);
+            if (cacheEntry) {
+                if (cacheEntry.expiresAt < Date.now()) {
+                    this.tokens.delete(cacheKey);
+                    cacheEntry = undefined;
+                }
+            }
+
+            if (!cacheEntry) {
+                const token = await getAccessTokenSilently({
+                    ignoreCache: true,
+                    "conference-slug": conferenceSlug ?? undefined,
+                });
+                cacheEntry = {
+                    token,
+                    expiresAt: Date.now() + AuthTokenCache.TokenExpiryTime,
+                };
+            }
+
+            this.tokens.set(cacheKey, cacheEntry);
+            this.saveCache();
+
+            return cacheEntry.token;
+        } catch (e) {
+            console.error("Major error! Failed to get authentication token!", e);
+            throw e;
+        } finally {
+            release();
+        }
+    }
+}
+
 export default function ApolloCustomProvider({
     children,
 }: {
     children: string | JSX.Element | Array<JSX.Element>;
 }): JSX.Element {
-    const { isAuthenticated, getAccessTokenSilently } = useAuth0();
+    const { isAuthenticated, user, getAccessTokenSilently } = useAuth0();
+    const tokenCache = useRef<AuthTokenCache>(new AuthTokenCache());
+
     const [client, setClient] = useState<ApolloClient<NormalizedCacheObject>>();
     const location = useLocation();
     const conferenceSlug = useMemo(() => {
@@ -51,18 +144,15 @@ export default function ApolloCustomProvider({
                     const magicToken = headers ? headers["x-hasura-magic-token"] : undefined;
                     delete newHeaders["x-hasura-magic-token"];
 
-                    const authTokenConferenceId = window.localStorage.getItem("CLOWDR_AUTH_CONF_SLUG");
-                    const ignoreCache = !!magicToken || (!!conferenceSlug && conferenceSlug !== authTokenConferenceId);
-                    if (conferenceSlug) {
-                        window.localStorage.setItem("CLOWDR_AUTH_CONF_SLUG", conferenceSlug);
+                    let token: string;
+                    if (magicToken) {
+                        token = await getAccessTokenSilently({
+                            ignoreCache: true,
+                            "magic-token": magicToken,
+                        });
                     } else {
-                        window.localStorage.removeItem("CLOWDR_AUTH_CONF_SLUG");
+                        token = await tokenCache.current.getToken(user?.sub, conferenceSlug, getAccessTokenSilently);
                     }
-                    const token = await getAccessTokenSilently({
-                        ignoreCache,
-                        "magic-token": magicToken,
-                        "conference-slug": conferenceSlug ?? undefined,
-                    });
 
                     newHeaders.Authorization = `Bearer ${token}`;
                 } else {
@@ -87,19 +177,11 @@ export default function ApolloCustomProvider({
                           reconnect: true,
                           connectionParams: async () => {
                               if (isAuthenticated) {
-                                  const authTokenConferenceId = window.localStorage.getItem(
-                                      "CLOWDR_AUTH_CONF_SLUG_WSS"
+                                  const token = await tokenCache.current.getToken(
+                                      user?.sub,
+                                      conferenceSlug,
+                                      getAccessTokenSilently
                                   );
-                                  const ignoreCache = !!conferenceSlug && conferenceSlug !== authTokenConferenceId;
-                                  if (conferenceSlug) {
-                                      window.localStorage.setItem("CLOWDR_AUTH_CONF_SLUG_WSS", conferenceSlug);
-                                  } else {
-                                      window.localStorage.removeItem("CLOWDR_AUTH_CONF_SLUG_WSS");
-                                  }
-                                  const token = await getAccessTokenSilently({
-                                      ignoreCache,
-                                      "conference-slug": conferenceSlug ?? undefined,
-                                  });
                                   return {
                                       headers: {
                                           Authorization: `Bearer ${token}`,
@@ -172,7 +254,7 @@ export default function ApolloCustomProvider({
 
             setClient(client);
         })();
-    }, [conferenceSlug, getAccessTokenSilently, isAuthenticated]);
+    }, [conferenceSlug, getAccessTokenSilently, isAuthenticated, user?.id]);
 
     if (client === undefined) {
         return <AppLoadingScreen />;

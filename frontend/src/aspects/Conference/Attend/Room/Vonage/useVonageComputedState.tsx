@@ -42,7 +42,7 @@ export function useVonageComputedState(
     const onScreenStreamDestroyed = useCallback(
         (reason: string) => {
             setScreen(vonage.screen);
-            if (reason !== "mediaStopped") {
+            if (reason === "mediaStopped") {
                 dispatch({
                     type: VonageRoomStateActionType.SetScreenShareIntendedState,
                     screenEnabled: false,

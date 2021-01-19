@@ -166,7 +166,7 @@ function VonageRoomInner({
     }, []);
     usePolling(updateEnabledStreams, 3000, true);
 
-    const screenSharingActive = receivingScreenShare || state.screenShareIntendedEnabled;
+    const screenSharingActive = receivingScreenShare || screen;
     const participantWidth = screenSharingActive ? 150 : 300;
 
     return (
@@ -176,8 +176,7 @@ function VonageRoomInner({
                 <Box
                     position="relative"
                     maxH="80vh"
-                    /* TODO: use the actual state rather than intended state */
-                    hidden={!state.screenShareIntendedEnabled}
+                    hidden={!screen}
                     height={"70vh"}
                     width="100%"
                     mb={2}
@@ -229,11 +228,7 @@ function VonageRoomInner({
                     overflowX={screenSharingActive ? "auto" : "hidden"}
                     overflowY={screenSharingActive ? "hidden" : "auto"}
                 >
-                    {/* TODO: use the actual state rather than intended state */}
-                    {connected &&
-                    !state.cameraIntendedEnabled &&
-                    !state.microphoneIntendedEnabled &&
-                    !state.screenShareIntendedEnabled ? (
+                    {connected && !camera && !screen ? (
                         <Box position="relative" w={participantWidth} h={participantWidth}>
                             <Box position="absolute" left="0" bottom="0" zIndex="200" width="100%" overflow="hidden">
                                 <VonageOverlay connectionData={JSON.stringify({ attendeeId: attendee.id })} />
@@ -248,11 +243,7 @@ function VonageRoomInner({
                         w={participantWidth}
                         h={participantWidth}
                         ref={cameraPublishContainerRef}
-                        display={
-                            connected && (state.cameraIntendedEnabled || state.microphoneIntendedEnabled)
-                                ? "block"
-                                : "none"
-                        }
+                        display={connected && camera ? "block" : "none"}
                     >
                         <Box position="relative" height="100%" width="100%" overflow="hidden">
                             <Box

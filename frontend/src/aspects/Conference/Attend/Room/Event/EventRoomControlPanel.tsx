@@ -32,18 +32,15 @@ export function EventRoomControlPanel({
 
         fragment EventParticipantStreamDetails on EventParticipantStream {
             id
-            attendeeId
-            conferenceId
-            eventId
             attendee {
                 id
                 displayName
-                profile {
-                    affiliation
-                }
             }
+            conferenceId
+            eventId
             vonageStreamType
             vonageStreamId
+            attendeeId
         }
 
         subscription UnapprovedEventRoomJoinRequests($conferenceId: uuid!, $eventId: uuid!) {
@@ -56,10 +53,7 @@ export function EventRoomControlPanel({
 
         fragment EventRoomJoinRequestDetails on EventRoomJoinRequest {
             id
-            attendee {
-                id
-                displayName
-            }
+            attendeeId
         }
     `;
 

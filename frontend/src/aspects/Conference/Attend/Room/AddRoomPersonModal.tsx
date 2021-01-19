@@ -2,6 +2,7 @@ import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOve
 import React, { useCallback, useMemo } from "react";
 import { useAddParticipantToRoomMutation } from "../../../../generated/graphql";
 import useRoomMembers from "../../../Room/useRoomMembers";
+import { maybeCompare } from "../../../Utils/maybeSort";
 import { AttendeeSearch } from "./AttendeeSearch";
 
 export function AddRoomPersonModal({
@@ -19,9 +20,11 @@ export function AddRoomPersonModal({
     const selectedAttendeeIds = useMemo(
         () =>
             members
-                ? [...members.roomPeople]
-                      .sort((x, y) => x.attendee.displayName.localeCompare(y.attendee.displayName))
-                      .map((person) => person.attendee.id)
+                ? members
+                      .sort((x, y) =>
+                          maybeCompare(x.attendee, y.attendee, (a, b) => a.displayName.localeCompare(b.displayName))
+                      )
+                      .map((person) => person.member.attendeeId)
                 : [],
         [members]
     );

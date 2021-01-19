@@ -13,15 +13,18 @@ import {
     PopoverHeader,
     PopoverTrigger,
     Portal,
+    Spinner,
     Tooltip,
     useDisclosure,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { RoomPage_RoomDetailsFragment, RoomPersonRole_Enum, RoomPrivacy_Enum } from "../../../../generated/graphql";
-import { FAIcon } from "../../../Icons/FAIcon";
+import FAIcon from "../../../Icons/FAIcon";
 import useRoomMembers from "../../../Room/useRoomMembers";
 import useRoomParticipants from "../../../Room/useRoomParticipants";
 import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
+import { maybeCompare } from "../../../Utils/maybeSort";
+import { useAttendee } from "../../AttendeesContext";
 import { AddRoomPersonModal } from "./AddRoomPersonModal";
 
 export function RoomControlBar({
@@ -51,15 +54,17 @@ export function RoomControlBar({
         () => (
             <List>
                 {roomMembers ? (
-                    [...roomMembers.roomPeople]
-                        .sort((x, y) => x.attendee.displayName.localeCompare(y.attendee.displayName))
+                    roomMembers
+                        .sort((x, y) =>
+                            maybeCompare(x.attendee, y.attendee, (a, b) => a.displayName.localeCompare(b.displayName))
+                        )
                         .map((person) => (
-                            <ListItem key={person.id}>
+                            <ListItem key={person.member.id}>
                                 <FAIcon
                                     icon={
                                         thisRoomParticipants &&
                                         thisRoomParticipants.find(
-                                            (participant) => person.attendee.id === participant.attendeeId
+                                            (participant) => person.member.attendeeId === participant.attendeeId
                                         )
                                             ? "video"
                                             : "user"
@@ -67,7 +72,7 @@ export function RoomControlBar({
                                     iconStyle="s"
                                     mr={5}
                                 />
-                                {person.attendee.displayName}
+                                {person.attendee?.displayName ?? "<Loading name>"}
                             </ListItem>
                         ))
                 ) : (
@@ -83,10 +88,7 @@ export function RoomControlBar({
             <List>
                 {thisRoomParticipants ? (
                     thisRoomParticipants.map((participant) => (
-                        <ListItem key={participant.id}>
-                            <FAIcon icon="video" iconStyle="s" mr={5} />
-                            {participant.attendee.displayName}
-                        </ListItem>
+                        <RoomParticipantListItem key={participant.id} attendeeId={participant.attendeeId} />
                     ))
                 ) : (
                     <></>
@@ -115,7 +117,7 @@ export function RoomControlBar({
             )}
             {roomDetails.roomPeople.find(
                 (person) =>
-                    user.user.attendees.find((myAttendee) => myAttendee.id === person.attendee.id) &&
+                    user.user.attendees.find((myAttendee) => myAttendee.id === person.attendeeId) &&
                     person.roomPersonRoleName === RoomPersonRole_Enum.Admin
             ) ? (
                 <Button colorScheme="green" aria-label="Add people to room" title="Add people to room" onClick={onOpen}>
@@ -153,7 +155,9 @@ export function RoomControlBar({
                     <PopoverTrigger>
                         <Button aria-label="Members of this room" title="Members of this room">
                             <FAIcon icon="users" iconStyle="s" />
-                            <Badge ml={2}>{roomMembers ? roomMembers.roomPeople.length : "0"} </Badge>
+                            <Badge ml={2}>
+                                {roomMembers ? roomMembers.length : <Spinner label="Loading members" size="sm" />}{" "}
+                            </Badge>
                         </Button>
                     </PopoverTrigger>
                     <Portal>
@@ -178,3 +182,13 @@ gql`
         }
     }
 `;
+
+function RoomParticipantListItem({ attendeeId }: { attendeeId: string }): JSX.Element {
+    const attendee = useAttendee(attendeeId);
+    return (
+        <ListItem>
+            <FAIcon icon="video" iconStyle="s" mr={5} />
+            {attendee?.displayName ?? "<Loading name>"}
+        </ListItem>
+    );
+}

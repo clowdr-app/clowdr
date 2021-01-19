@@ -31,6 +31,7 @@ import { LinkButton } from "../Chakra/LinkButton";
 import { CreateDmModal } from "../Conference/Attend/Room/CreateDmModal";
 import { CreateRoomModal } from "../Conference/Attend/Room/CreateRoomModal";
 import { RoomList } from "../Conference/Attend/Room/RoomList";
+import AttendeesContextProvider from "../Conference/AttendeesContext";
 import ConferenceProvider, { useConference } from "../Conference/useConference";
 import ApolloQueryWrapper from "../GQL/ApolloQueryWrapper";
 import { FAIcon } from "../Icons/FAIcon";
@@ -59,6 +60,7 @@ gql`
             id
             name
             roomPeople {
+                id
                 attendee {
                     id
                     displayName
@@ -94,7 +96,7 @@ function computeChatName(chat: SidebarChatInfoFragment, attendeeId: string): str
             : chat.nonDMRoom.length > 0
             ? chat.nonDMRoom[0].name
             : chat.DMRoom.length > 0
-            ? chat.DMRoom[0].roomPeople.find((x) => x.attendee.id !== attendeeId)?.attendee.displayName
+            ? chat.DMRoom[0].roomPeople.find((x) => x?.attendee?.id !== attendeeId)?.attendee?.displayName
             : undefined
         : undefined;
 }
@@ -483,15 +485,17 @@ export default function MainMenuConferenceSections({
         if (attendee) {
             return (
                 <ConferenceProvider confSlug={confSlug}>
-                    <PresenceCountProvider disableSubscription>
-                        <RoomParticipantsProvider>
-                            <MainMenuConferenceSections_Inner
-                                rootUrl={rootUrl}
-                                confSlug={confSlug}
-                                attendee={attendee}
-                                onClose={onClose}
-                            />
-                        </RoomParticipantsProvider>
+                    <PresenceCountProvider>
+                        <AttendeesContextProvider>
+                            <RoomParticipantsProvider>
+                                <MainMenuConferenceSections_Inner
+                                    rootUrl={rootUrl}
+                                    confSlug={confSlug}
+                                    attendee={attendee}
+                                    onClose={onClose}
+                                />
+                            </RoomParticipantsProvider>
+                        </AttendeesContextProvider>
                     </PresenceCountProvider>
                 </ConferenceProvider>
             );

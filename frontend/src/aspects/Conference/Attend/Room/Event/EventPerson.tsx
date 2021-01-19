@@ -7,6 +7,7 @@ import {
     useDeleteEventPersonMutation,
 } from "../../../../../generated/graphql";
 import { FAIcon } from "../../../../Icons/FAIcon";
+import { useAttendee } from "../../../AttendeesContext";
 
 gql`
     mutation DeleteEventPerson($eventPersonId: uuid!) {
@@ -46,9 +47,11 @@ export function EventPerson({
         }
     }, [deleteEventPersonMutation, eventPerson.id, toast]);
 
+    const attendee = useAttendee(eventPerson.attendeeId);
+
     return (
         <HStack>
-            <Text>{eventPerson.attendee?.displayName ?? "<Unknown>"}</Text>
+            <Text>{attendee?.displayName ?? "<Unknown>"}</Text>
             <Badge colorScheme={eventPerson.roleName === EventPersonRole_Enum.Participant ? "blue" : "red"}>
                 {eventPerson.roleName}
             </Badge>
@@ -56,7 +59,7 @@ export function EventPerson({
                 <Box flexGrow={1} textAlign="right">
                     <Button
                         onClick={deleteEventPerson}
-                        aria-label={`Remove ${eventPerson.attendee?.displayName} from the event room`}
+                        aria-label={`Remove ${attendee?.displayName ?? "<Loading name>"} from the event room`}
                         p={0}
                         colorScheme="red"
                         size="xs"

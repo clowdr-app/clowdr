@@ -52,7 +52,7 @@ export function RoomBackstage({
     const myEventPeople = useMemo(
         () =>
             eventPeople.filter((eventPerson) =>
-                user.user.attendees.find((attendee) => attendee.id && attendee.id === eventPerson.attendee?.id)
+                user.user.attendees.find((attendee) => attendee.id && attendee.id === eventPerson.attendeeId)
             ) ?? [],
         [eventPeople, user.user.attendees]
     );

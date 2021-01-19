@@ -16,6 +16,7 @@ import { ExternalLinkButton } from "../../../Chakra/LinkButton";
 import { Chat } from "../../../Chat/Chat";
 import type { ChatSources } from "../../../Chat/Configuration";
 import { useRealTime } from "../../../Generic/useRealTime";
+import RoomParticipantsProvider from "../../../Room/RoomParticipantsProvider";
 import { ContentGroupSummaryWrapper } from "../Content/ContentGroupSummary";
 import { BreakoutVonageRoom } from "./BreakoutVonageRoom";
 import { EventEndControls } from "./EventEndControls";
@@ -155,15 +156,17 @@ export function Room({
 
     const controlBarEl = useMemo(
         () => (
-            <RoomControlBar
-                roomDetails={roomDetails}
-                onSetBackstage={setBackstage}
-                backstage={backstage}
-                hasBackstage={!!hlsUri}
-                breakoutRoomEnabled={
-                    secondsUntilNonBreakoutEvent > 180 && !withinThreeMinutesOfBroadcastEvent && !backstage
-                }
-            />
+            <RoomParticipantsProvider roomId={roomDetails.id}>
+                <RoomControlBar
+                    roomDetails={roomDetails}
+                    onSetBackstage={setBackstage}
+                    backstage={backstage}
+                    hasBackstage={!!hlsUri}
+                    breakoutRoomEnabled={
+                        secondsUntilNonBreakoutEvent > 180 && !withinThreeMinutesOfBroadcastEvent && !backstage
+                    }
+                />
+            </RoomParticipantsProvider>
         ),
         [backstage, hlsUri, roomDetails, secondsUntilNonBreakoutEvent, withinThreeMinutesOfBroadcastEvent]
     );
@@ -268,7 +271,9 @@ export function Room({
         [bgColour, currentRoomEvent, nextBgColour, nextRoomEvent, now, roomDetails]
     );
 
-    const eventEndControls = useMemo(() => <EventEndControls currentRoomEvent={currentRoomEvent} />, [currentRoomEvent]);
+    const eventEndControls = useMemo(() => <EventEndControls currentRoomEvent={currentRoomEvent} />, [
+        currentRoomEvent,
+    ]);
 
     return (
         <HStack width="100%" flexWrap="wrap" alignItems="stretch">
@@ -355,9 +360,7 @@ export function Room({
             <VStack flexGrow={1} flexBasis={0} minW={["100%", "100%", "100%", "300px"]}>
                 {chatEl}
 
-                <Box display={currentEventIsLive ? "block" : "none"}>
-                    {eventEndControls}
-                </Box>
+                <Box display={currentEventIsLive ? "block" : "none"}>{eventEndControls}</Box>
             </VStack>
         </HStack>
     );

@@ -72,7 +72,9 @@ function ReadUpToIndexProvider_UserExists({
         }
     }, [attendeeId, chatId, messages.liveMessages, setUnread]);
 
-    const readUpToMarkerSeen = useCallback(() => { /* EMPTY */ }, []);
+    const readUpToMarkerSeen = useCallback(() => {
+        /* EMPTY */
+    }, []);
     // const readUpToMarkerSeen = useCallback(() => {
     //     if (messages.liveMessages && messages.liveMessages.size > 0) {
     //         setUnread({

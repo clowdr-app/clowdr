@@ -27,11 +27,6 @@ gql`
         created_at
     }
 
-    fragment SenderData on Attendee {
-        id
-        displayName
-    }
-
     fragment ChatReactionData on chat_Reaction {
         data
         id
@@ -223,7 +218,6 @@ export default function ReceiveMessageQueriesProvider({
         [deleteMessage]
     );
 
-    const [prevMaxId, setPrevMaxId] = useState<number>(-1);
     const [liveMessages, setLiveMessages] = useState<{
         msgs: Map<number, ChatMessageDataFragment>;
         maxId: number;
@@ -243,11 +237,9 @@ export default function ReceiveMessageQueriesProvider({
             messageIds: [...liveMessages.msgs.keys()],
         },
         fetchPolicy: "network-only",
-        pollInterval: 3000,
+        pollInterval: 10000,
+        skip: liveMessages.msgs.size === 0,
     });
-    useEffect(() => {
-        setPrevMaxId(liveMessages.maxId);
-    }, [liveMessages.maxId]);
     useEffect(() => {
         setRefetchMsg(null);
         setLiveMessages((prevLiveMessages) => {

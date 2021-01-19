@@ -239,11 +239,7 @@ function VonageRoomInner({
                         <></>
                     )}
 
-                    <Box
-                        w={participantWidth}
-                        h={participantWidth}
-                        display={connected && camera ? "block" : "none"}
-                    >
+                    <Box w={participantWidth} h={participantWidth} display={connected && camera ? "block" : "none"}>
                         <Box position="relative" height="100%" width="100%" overflow="hidden">
                             <Box
                                 ref={cameraPublishContainerRef}

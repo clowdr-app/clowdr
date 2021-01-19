@@ -6,7 +6,6 @@ import PageNotFound from "../Errors/PageNotFound";
 import PageNotImplemented from "../Errors/PageNotImplemented";
 import PresenceCountProvider from "../Presence/PresenceCountProvider";
 import useTabTracker from "../Presence/useTabTracker";
-import RoomParticipantsProvider from "../Room/RoomParticipantsProvider";
 import { SharedRoomContextProvider } from "../Room/SharedRoomContextProvider";
 import WaitingPage from "../ShuffleRooms/WaitingPage";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
@@ -18,6 +17,7 @@ import ViewProfilePage from "./Attend/Profile/ViewProfilePage";
 import RoomListPage from "./Attend/Room/RoomListPage";
 import RoomPage from "./Attend/Room/RoomPage";
 import ConferenceTimeline from "./Attend/Schedule/ConferenceTimeline";
+import AttendeesContextProvider from "./AttendeesContext";
 import ManageConferenceBroadcastPage from "./Manage/ManageConferenceBroadcastPage";
 import ManageConferenceContentPage from "./Manage/ManageConferenceContentPage";
 import ManageConferenceGroupsPage from "./Manage/ManageConferenceGroupsPage";
@@ -275,15 +275,15 @@ export default function ConferenceRoutes({ confSlug, rootUrl }: { confSlug: stri
                 <CurrentUserGroupsRolesPermissionsProvider>
                     <ConferenceCurrentUserActivePermissionsProvider>
                         <CurrentAttendeeProvider>
-                            <TabTracker />
-                            {/* <ShuffleRoomsQueueMonitor /> */}
-                            <ChatNotificationsProvider>
-                                <RoomParticipantsProvider>
+                            <AttendeesContextProvider>
+                                <TabTracker />
+                                {/* <ShuffleRoomsQueueMonitor /> */}
+                                <ChatNotificationsProvider>
                                     <SharedRoomContextProvider>
                                         <ConferenceRoutesInner rootUrl={rootUrl} />
                                     </SharedRoomContextProvider>
-                                </RoomParticipantsProvider>
-                            </ChatNotificationsProvider>
+                                </ChatNotificationsProvider>
+                            </AttendeesContextProvider>
                         </CurrentAttendeeProvider>
                     </ConferenceCurrentUserActivePermissionsProvider>
                 </CurrentUserGroupsRolesPermissionsProvider>

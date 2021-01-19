@@ -73,10 +73,7 @@ gql`
         roomPeople {
             id
             roomPersonRoleName
-            attendee {
-                displayName
-                id
-            }
+            attendeeId
         }
     }
 
@@ -91,11 +88,7 @@ gql`
         name
         roleName
         eventId
-        attendee {
-            id
-            userId
-            displayName
-        }
+        attendeeId
     }
 `;
 

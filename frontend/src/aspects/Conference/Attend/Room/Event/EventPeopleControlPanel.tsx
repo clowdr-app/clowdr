@@ -6,6 +6,7 @@ import {
     EventRoomJoinRequestDetailsFragment,
 } from "../../../../../generated/graphql";
 import useUserId from "../../../../Auth/useUserId";
+import { useAttendee } from "../../../AttendeesContext";
 import { EventPerson } from "./EventPerson";
 import { JoinRequest } from "./JoinRequest";
 
@@ -58,14 +59,34 @@ export function EventPeopleControlPanel({
             </Heading>
             <List>
                 {eventPeople.map((person) => (
-                    <ListItem key={person.id} mt={2}>
-                        <EventPerson
-                            eventPerson={person}
-                            enableDelete={canControlEventPeople && person.attendee?.userId !== userId}
-                        />
-                    </ListItem>
+                    <EventPersonListItem
+                        key={person.id}
+                        person={person}
+                        canControlEventPeople={canControlEventPeople}
+                        userId={userId}
+                    />
                 ))}
             </List>
         </>
+    );
+}
+
+function EventPersonListItem({
+    person,
+    canControlEventPeople,
+    userId,
+}: {
+    userId: string | null;
+    person: EventPersonDetailsFragment;
+    canControlEventPeople: boolean;
+}): JSX.Element {
+    const attendee = useAttendee(person.attendeeId);
+    return (
+        <ListItem mt={2}>
+            <EventPerson
+                eventPerson={person}
+                enableDelete={canControlEventPeople && (attendee?.userId ?? null) !== userId}
+            />
+        </ListItem>
     );
 }

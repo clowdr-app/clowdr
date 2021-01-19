@@ -98,18 +98,14 @@ export default function PollOptions({ message }: { message: ChatMessageDataFragm
                                       data.revealBeforeComplete ||
                                       (currentAttendeeId &&
                                           (reaction.senderId === currentAttendeeId ||
-                                              (isClosed && message.senderId === currentAttendeeId))))
+                                              message.senderId === currentAttendeeId)))
                           )
                           .map((x) => x.symbol)
                   ).values(),
               ]
             : [];
         const allOptions = [...providedOptions, ...userCreatedOptions];
-        if (
-            isCompleted ||
-            data.revealBeforeComplete ||
-            (currentAttendeeId && isClosed && message.senderId === currentAttendeeId)
-        ) {
+        if (isCompleted || data.revealBeforeComplete || (currentAttendeeId && message.senderId === currentAttendeeId)) {
             const optionsWithPopularity = new Map<string, number>(allOptions.map((x) => [x, 0]));
             message.reactions.forEach((reaction) => {
                 if (reaction.type === Chat_ReactionType_Enum.PollChoice) {

@@ -14657,6 +14657,7 @@ export type VideoRenderJob = {
   readonly jobStatus: JobStatus;
   readonly jobStatusName: JobStatus_Enum;
   readonly message?: Maybe<Scalars['String']>;
+  readonly retriesCount: Scalars['Int'];
   readonly updated_at: Scalars['timestamptz'];
 };
 
@@ -14676,9 +14677,17 @@ export type VideoRenderJob_Aggregate = {
 /** aggregate fields of "VideoRenderJob" */
 export type VideoRenderJob_Aggregate_Fields = {
   readonly __typename?: 'VideoRenderJob_aggregate_fields';
+  readonly avg?: Maybe<VideoRenderJob_Avg_Fields>;
   readonly count?: Maybe<Scalars['Int']>;
   readonly max?: Maybe<VideoRenderJob_Max_Fields>;
   readonly min?: Maybe<VideoRenderJob_Min_Fields>;
+  readonly stddev?: Maybe<VideoRenderJob_Stddev_Fields>;
+  readonly stddev_pop?: Maybe<VideoRenderJob_Stddev_Pop_Fields>;
+  readonly stddev_samp?: Maybe<VideoRenderJob_Stddev_Samp_Fields>;
+  readonly sum?: Maybe<VideoRenderJob_Sum_Fields>;
+  readonly var_pop?: Maybe<VideoRenderJob_Var_Pop_Fields>;
+  readonly var_samp?: Maybe<VideoRenderJob_Var_Samp_Fields>;
+  readonly variance?: Maybe<VideoRenderJob_Variance_Fields>;
 };
 
 
@@ -14690,9 +14699,17 @@ export type VideoRenderJob_Aggregate_FieldsCountArgs = {
 
 /** order by aggregate values of table "VideoRenderJob" */
 export type VideoRenderJob_Aggregate_Order_By = {
+  readonly avg?: Maybe<VideoRenderJob_Avg_Order_By>;
   readonly count?: Maybe<Order_By>;
   readonly max?: Maybe<VideoRenderJob_Max_Order_By>;
   readonly min?: Maybe<VideoRenderJob_Min_Order_By>;
+  readonly stddev?: Maybe<VideoRenderJob_Stddev_Order_By>;
+  readonly stddev_pop?: Maybe<VideoRenderJob_Stddev_Pop_Order_By>;
+  readonly stddev_samp?: Maybe<VideoRenderJob_Stddev_Samp_Order_By>;
+  readonly sum?: Maybe<VideoRenderJob_Sum_Order_By>;
+  readonly var_pop?: Maybe<VideoRenderJob_Var_Pop_Order_By>;
+  readonly var_samp?: Maybe<VideoRenderJob_Var_Samp_Order_By>;
+  readonly variance?: Maybe<VideoRenderJob_Variance_Order_By>;
 };
 
 /** append existing jsonb value of filtered columns with new jsonb value */
@@ -14704,6 +14721,17 @@ export type VideoRenderJob_Append_Input = {
 export type VideoRenderJob_Arr_Rel_Insert_Input = {
   readonly data: ReadonlyArray<VideoRenderJob_Insert_Input>;
   readonly on_conflict?: Maybe<VideoRenderJob_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type VideoRenderJob_Avg_Fields = {
+  readonly __typename?: 'VideoRenderJob_avg_fields';
+  readonly retriesCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "VideoRenderJob" */
+export type VideoRenderJob_Avg_Order_By = {
+  readonly retriesCount?: Maybe<Order_By>;
 };
 
 /** Boolean expression to filter rows from the table "VideoRenderJob". All fields are combined with a logical 'AND'. */
@@ -14723,6 +14751,7 @@ export type VideoRenderJob_Bool_Exp = {
   readonly jobStatus?: Maybe<JobStatus_Bool_Exp>;
   readonly jobStatusName?: Maybe<JobStatus_Enum_Comparison_Exp>;
   readonly message?: Maybe<String_Comparison_Exp>;
+  readonly retriesCount?: Maybe<Int_Comparison_Exp>;
   readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -14747,6 +14776,11 @@ export type VideoRenderJob_Delete_Key_Input = {
   readonly data?: Maybe<Scalars['String']>;
 };
 
+/** input type for incrementing integer column in table "VideoRenderJob" */
+export type VideoRenderJob_Inc_Input = {
+  readonly retriesCount?: Maybe<Scalars['Int']>;
+};
+
 /** input type for inserting data into table "VideoRenderJob" */
 export type VideoRenderJob_Insert_Input = {
   readonly broadcastContentItem?: Maybe<BroadcastContentItem_Obj_Rel_Insert_Input>;
@@ -14761,6 +14795,7 @@ export type VideoRenderJob_Insert_Input = {
   readonly jobStatus?: Maybe<JobStatus_Obj_Rel_Insert_Input>;
   readonly jobStatusName?: Maybe<JobStatus_Enum>;
   readonly message?: Maybe<Scalars['String']>;
+  readonly retriesCount?: Maybe<Scalars['Int']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -14773,6 +14808,7 @@ export type VideoRenderJob_Max_Fields = {
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly message?: Maybe<Scalars['String']>;
+  readonly retriesCount?: Maybe<Scalars['Int']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -14784,6 +14820,7 @@ export type VideoRenderJob_Max_Order_By = {
   readonly created_at?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly message?: Maybe<Order_By>;
+  readonly retriesCount?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
 
@@ -14796,6 +14833,7 @@ export type VideoRenderJob_Min_Fields = {
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly message?: Maybe<Scalars['String']>;
+  readonly retriesCount?: Maybe<Scalars['Int']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -14807,6 +14845,7 @@ export type VideoRenderJob_Min_Order_By = {
   readonly created_at?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly message?: Maybe<Order_By>;
+  readonly retriesCount?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
 
@@ -14846,6 +14885,7 @@ export type VideoRenderJob_Order_By = {
   readonly jobStatus?: Maybe<JobStatus_Order_By>;
   readonly jobStatusName?: Maybe<Order_By>;
   readonly message?: Maybe<Order_By>;
+  readonly retriesCount?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
 
@@ -14878,6 +14918,8 @@ export enum VideoRenderJob_Select_Column {
   /** column name */
   Message = 'message',
   /** column name */
+  RetriesCount = 'retriesCount',
+  /** column name */
   UpdatedAt = 'updated_at'
 }
 
@@ -14891,7 +14933,52 @@ export type VideoRenderJob_Set_Input = {
   readonly id?: Maybe<Scalars['uuid']>;
   readonly jobStatusName?: Maybe<JobStatus_Enum>;
   readonly message?: Maybe<Scalars['String']>;
+  readonly retriesCount?: Maybe<Scalars['Int']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate stddev on columns */
+export type VideoRenderJob_Stddev_Fields = {
+  readonly __typename?: 'VideoRenderJob_stddev_fields';
+  readonly retriesCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "VideoRenderJob" */
+export type VideoRenderJob_Stddev_Order_By = {
+  readonly retriesCount?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type VideoRenderJob_Stddev_Pop_Fields = {
+  readonly __typename?: 'VideoRenderJob_stddev_pop_fields';
+  readonly retriesCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "VideoRenderJob" */
+export type VideoRenderJob_Stddev_Pop_Order_By = {
+  readonly retriesCount?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type VideoRenderJob_Stddev_Samp_Fields = {
+  readonly __typename?: 'VideoRenderJob_stddev_samp_fields';
+  readonly retriesCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "VideoRenderJob" */
+export type VideoRenderJob_Stddev_Samp_Order_By = {
+  readonly retriesCount?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type VideoRenderJob_Sum_Fields = {
+  readonly __typename?: 'VideoRenderJob_sum_fields';
+  readonly retriesCount?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "VideoRenderJob" */
+export type VideoRenderJob_Sum_Order_By = {
+  readonly retriesCount?: Maybe<Order_By>;
 };
 
 /** update columns of table "VideoRenderJob" */
@@ -14913,8 +15000,43 @@ export enum VideoRenderJob_Update_Column {
   /** column name */
   Message = 'message',
   /** column name */
+  RetriesCount = 'retriesCount',
+  /** column name */
   UpdatedAt = 'updated_at'
 }
+
+/** aggregate var_pop on columns */
+export type VideoRenderJob_Var_Pop_Fields = {
+  readonly __typename?: 'VideoRenderJob_var_pop_fields';
+  readonly retriesCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "VideoRenderJob" */
+export type VideoRenderJob_Var_Pop_Order_By = {
+  readonly retriesCount?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type VideoRenderJob_Var_Samp_Fields = {
+  readonly __typename?: 'VideoRenderJob_var_samp_fields';
+  readonly retriesCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "VideoRenderJob" */
+export type VideoRenderJob_Var_Samp_Order_By = {
+  readonly retriesCount?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type VideoRenderJob_Variance_Fields = {
+  readonly __typename?: 'VideoRenderJob_variance_fields';
+  readonly retriesCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "VideoRenderJob" */
+export type VideoRenderJob_Variance_Order_By = {
+  readonly retriesCount?: Maybe<Order_By>;
+};
 
 
 /** expression to compare columns of type bigint. All fields are combined with logical 'AND'. */
@@ -22618,6 +22740,7 @@ export type Mutation_RootUpdate_VideoRenderJobArgs = {
   _delete_at_path?: Maybe<VideoRenderJob_Delete_At_Path_Input>;
   _delete_elem?: Maybe<VideoRenderJob_Delete_Elem_Input>;
   _delete_key?: Maybe<VideoRenderJob_Delete_Key_Input>;
+  _inc?: Maybe<VideoRenderJob_Inc_Input>;
   _prepend?: Maybe<VideoRenderJob_Prepend_Input>;
   _set?: Maybe<VideoRenderJob_Set_Input>;
   where: VideoRenderJob_Bool_Exp;
@@ -22630,6 +22753,7 @@ export type Mutation_RootUpdate_VideoRenderJob_By_PkArgs = {
   _delete_at_path?: Maybe<VideoRenderJob_Delete_At_Path_Input>;
   _delete_elem?: Maybe<VideoRenderJob_Delete_Elem_Input>;
   _delete_key?: Maybe<VideoRenderJob_Delete_Key_Input>;
+  _inc?: Maybe<VideoRenderJob_Inc_Input>;
   _prepend?: Maybe<VideoRenderJob_Prepend_Input>;
   _set?: Maybe<VideoRenderJob_Set_Input>;
   pk_columns: VideoRenderJob_Pk_Columns_Input;
@@ -29484,17 +29608,6 @@ export type SendChatAnswerMutationVariables = Exact<{
 
 export type SendChatAnswerMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Reaction?: Maybe<{ readonly __typename?: 'chat_Reaction_mutation_response', readonly affected_rows: number }> };
 
-export type AttendeesByIdQueryVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-  attendeeIds: ReadonlyArray<Scalars['uuid']>;
-}>;
-
-
-export type AttendeesByIdQuery = { readonly __typename?: 'query_root', readonly Attendee: ReadonlyArray<(
-    { readonly __typename?: 'Attendee' }
-    & AttendeeDataFragment
-  )> };
-
 export type AddReactionMutationVariables = Exact<{
   reaction: Chat_Reaction_Insert_Input;
 }>;
@@ -29527,8 +29640,6 @@ export type SetReadUpToIndexMutationVariables = Exact<{
 export type SetReadUpToIndexMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_ReadUpToIndex?: Maybe<{ readonly __typename?: 'chat_ReadUpToIndex_mutation_response', readonly affected_rows: number }> };
 
 export type ChatFlagDataFragment = { readonly __typename?: 'chat_Flag', readonly discussionChatId?: Maybe<any>, readonly flaggedById?: Maybe<any>, readonly id: number, readonly messageId: number, readonly notes?: Maybe<string>, readonly resolution?: Maybe<string>, readonly resolved_at?: Maybe<any>, readonly type: Chat_FlagType_Enum, readonly updated_at: any, readonly created_at: any };
-
-export type SenderDataFragment = { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string };
 
 export type ChatReactionDataFragment = { readonly __typename?: 'chat_Reaction', readonly data: any, readonly id: number, readonly senderId: any, readonly symbol: string, readonly type: Chat_ReactionType_Enum };
 
@@ -29879,7 +29990,7 @@ export type GetEventParticipantStreamsSubscription = { readonly __typename?: 'su
     & EventParticipantStreamDetailsFragment
   )> };
 
-export type EventParticipantStreamDetailsFragment = { readonly __typename?: 'EventParticipantStream', readonly id: any, readonly attendeeId: any, readonly conferenceId: any, readonly eventId: any, readonly vonageStreamType: string, readonly vonageStreamId: string, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string, readonly profile?: Maybe<{ readonly __typename?: 'AttendeeProfile', readonly affiliation?: Maybe<string> }> } };
+export type EventParticipantStreamDetailsFragment = { readonly __typename?: 'EventParticipantStream', readonly id: any, readonly conferenceId: any, readonly eventId: any, readonly vonageStreamType: string, readonly vonageStreamId: string, readonly attendeeId: any, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } };
 
 export type UnapprovedEventRoomJoinRequestsSubscriptionVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -29892,7 +30003,7 @@ export type UnapprovedEventRoomJoinRequestsSubscription = { readonly __typename?
     & EventRoomJoinRequestDetailsFragment
   )> };
 
-export type EventRoomJoinRequestDetailsFragment = { readonly __typename?: 'EventRoomJoinRequest', readonly id: any, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } };
+export type EventRoomJoinRequestDetailsFragment = { readonly __typename?: 'EventRoomJoinRequest', readonly id: any, readonly attendeeId: any };
 
 export type GetEventVonageTokenMutationVariables = Exact<{
   eventId: Scalars['uuid'];
@@ -29995,7 +30106,7 @@ export type RoomPage_RoomEventsFragment = { readonly __typename?: 'Room', readon
 
 export type RoomPage_RoomEventSummaryFragment = { readonly __typename?: 'Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum, readonly contentGroupId?: Maybe<any> };
 
-export type RoomPage_RoomPeopleFragment = { readonly __typename?: 'Room', readonly roomPeople: ReadonlyArray<{ readonly __typename?: 'RoomPerson', readonly id: any, readonly roomPersonRoleName: RoomPersonRole_Enum, readonly attendee: { readonly __typename?: 'Attendee', readonly displayName: string, readonly id: any } }> };
+export type RoomPage_RoomPeopleFragment = { readonly __typename?: 'Room', readonly roomPeople: ReadonlyArray<{ readonly __typename?: 'RoomPerson', readonly id: any, readonly roomPersonRoleName: RoomPersonRole_Enum, readonly attendeeId: any }> };
 
 export type RoomPage_EventPeopleForRoomSubscriptionVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -30007,7 +30118,7 @@ export type RoomPage_EventPeopleForRoomSubscription = { readonly __typename?: 's
     & RoomPage_EventPersonDetailsFragment
   )> };
 
-export type RoomPage_EventPersonDetailsFragment = { readonly __typename?: 'EventPerson', readonly id: any, readonly name: string, readonly roleName: EventPersonRole_Enum, readonly eventId: any, readonly attendee?: Maybe<{ readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly displayName: string }> };
+export type RoomPage_EventPersonDetailsFragment = { readonly __typename?: 'EventPerson', readonly id: any, readonly name: string, readonly roleName: EventPersonRole_Enum, readonly eventId: any, readonly attendeeId?: Maybe<any> };
 
 export type GetEventVonageDetailsQueryVariables = Exact<{
   eventId: Scalars['uuid'];
@@ -30132,6 +30243,17 @@ export type Timeline_SelectRoomQueryVariables = Exact<{
 export type Timeline_SelectRoomQuery = { readonly __typename?: 'query_root', readonly Room_by_pk?: Maybe<(
     { readonly __typename?: 'Room' }
     & Timeline_RoomFragment
+  )> };
+
+export type AttendeesByIdQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  attendeeIds: ReadonlyArray<Scalars['uuid']>;
+}>;
+
+
+export type AttendeesByIdQuery = { readonly __typename?: 'query_root', readonly Attendee: ReadonlyArray<(
+    { readonly __typename?: 'Attendee' }
+    & AttendeeDataFragment
   )> };
 
 export type InsertSubmissionRequestEmailJobsMutationVariables = Exact<{
@@ -30914,7 +31036,7 @@ export type UserEventRolesSubscription = { readonly __typename?: 'subscription_r
       & EventPersonDetailsFragment
     )> }> };
 
-export type EventPersonDetailsFragment = { readonly __typename?: 'EventPerson', readonly id: any, readonly name: string, readonly roleName: EventPersonRole_Enum, readonly eventId: any, readonly attendee?: Maybe<{ readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly displayName: string }> };
+export type EventPersonDetailsFragment = { readonly __typename?: 'EventPerson', readonly id: any, readonly name: string, readonly roleName: EventPersonRole_Enum, readonly eventId: any, readonly attendeeId?: Maybe<any> };
 
 export type SelectInvitationForAcceptQueryVariables = Exact<{
   inviteCode: Scalars['uuid'];
@@ -30952,7 +31074,7 @@ export type SendRepeatConfirmationEmailMutationVariables = Exact<{
 
 export type SendRepeatConfirmationEmailMutation = { readonly __typename?: 'mutation_root', readonly invitationConfirmSendRepeatEmail?: Maybe<{ readonly __typename?: 'InvitationConfirmationEmailOutput', readonly sent: boolean }> };
 
-export type SidebarChatInfoFragment = { readonly __typename?: 'chat_Chat', readonly id: any, readonly enableAutoPin: boolean, readonly enableAutoSubscribe: boolean, readonly enableMandatoryPin: boolean, readonly enableMandatorySubscribe: boolean, readonly contentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string> }>, readonly nonDMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly priority: number, readonly roomPrivacyName: RoomPrivacy_Enum }>, readonly DMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly roomPeople: ReadonlyArray<{ readonly __typename?: 'RoomPerson', readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } }> }>, readonly readUpToIndices: ReadonlyArray<{ readonly __typename?: 'chat_ReadUpToIndex', readonly attendeeId: any, readonly chatId: any, readonly unreadCount?: Maybe<number> }> };
+export type SidebarChatInfoFragment = { readonly __typename?: 'chat_Chat', readonly id: any, readonly enableAutoPin: boolean, readonly enableAutoSubscribe: boolean, readonly enableMandatoryPin: boolean, readonly enableMandatorySubscribe: boolean, readonly contentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string> }>, readonly nonDMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly priority: number, readonly roomPrivacyName: RoomPrivacy_Enum }>, readonly DMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly roomPeople: ReadonlyArray<{ readonly __typename?: 'RoomPerson', readonly id: any, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } }> }>, readonly readUpToIndices: ReadonlyArray<{ readonly __typename?: 'chat_ReadUpToIndex', readonly attendeeId: any, readonly chatId: any, readonly unreadCount?: Maybe<number> }> };
 
 export type PinnedChatsWithUnreadCountsQueryVariables = Exact<{
   attendeeId: Scalars['uuid'];
@@ -31045,24 +31167,35 @@ export type GetRoomMembersSubscriptionVariables = Exact<{
 }>;
 
 
-export type GetRoomMembersSubscription = { readonly __typename?: 'subscription_root', readonly Room_by_pk?: Maybe<(
-    { readonly __typename?: 'Room' }
-    & RoomPeopleFragment
+export type GetRoomMembersSubscription = { readonly __typename?: 'subscription_root', readonly RoomPerson: ReadonlyArray<(
+    { readonly __typename?: 'RoomPerson' }
+    & RoomMemberFragment
   )> };
 
-export type RoomPeopleFragment = { readonly __typename?: 'Room', readonly roomPeople: ReadonlyArray<{ readonly __typename?: 'RoomPerson', readonly id: any, readonly roomPersonRoleName: RoomPersonRole_Enum, readonly attendee: { readonly __typename?: 'Attendee', readonly displayName: string, readonly id: any } }> };
+export type RoomMemberFragment = { readonly __typename?: 'RoomPerson', readonly id: any, readonly roomPersonRoleName: RoomPersonRole_Enum, readonly attendeeId: any };
 
-export type GetRoomParticipantsQueryVariables = Exact<{
+export type GetRoomParticipantsSubscriptionVariables = Exact<{
   conferenceId: Scalars['uuid'];
+  roomId: Scalars['uuid'];
 }>;
 
 
-export type GetRoomParticipantsQuery = { readonly __typename?: 'query_root', readonly RoomParticipant: ReadonlyArray<(
+export type GetRoomParticipantsSubscription = { readonly __typename?: 'subscription_root', readonly RoomParticipant: ReadonlyArray<(
     { readonly __typename?: 'RoomParticipant' }
     & RoomParticipantDetailsFragment
   )> };
 
-export type RoomParticipantDetailsFragment = { readonly __typename?: 'RoomParticipant', readonly attendeeId: any, readonly conferenceId: any, readonly id: any, readonly roomId: any, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } };
+export type GetAllRoomParticipantsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type GetAllRoomParticipantsQuery = { readonly __typename?: 'query_root', readonly RoomParticipant: ReadonlyArray<(
+    { readonly __typename?: 'RoomParticipant' }
+    & RoomParticipantDetailsFragment
+  )> };
+
+export type RoomParticipantDetailsFragment = { readonly __typename?: 'RoomParticipant', readonly attendeeId: any, readonly conferenceId: any, readonly id: any, readonly roomId: any };
 
 export type ShufflePeriodDataFragment = { readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly conferenceId: any, readonly endAt: any, readonly maxAttendeesPerRoom: number, readonly name: string, readonly roomDurationMinutes: number, readonly startAt: any, readonly targetAttendeesPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly queueEntries: ReadonlyArray<{ readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly attendeeId: any, readonly created_at: any, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly isEnded: boolean, readonly roomId: any }> }> };
 
@@ -31181,12 +31314,6 @@ export const ChatFlagDataFragmentDoc = gql`
   type
   updated_at
   created_at
-}
-    `;
-export const SenderDataFragmentDoc = gql`
-    fragment SenderData on Attendee {
-  id
-  displayName
 }
     `;
 export const ChatReactionDataFragmentDoc = gql`
@@ -31391,27 +31518,21 @@ ${ContentPersonDataFragmentDoc}`;
 export const EventParticipantStreamDetailsFragmentDoc = gql`
     fragment EventParticipantStreamDetails on EventParticipantStream {
   id
-  attendeeId
-  conferenceId
-  eventId
   attendee {
     id
     displayName
-    profile {
-      affiliation
-    }
   }
+  conferenceId
+  eventId
   vonageStreamType
   vonageStreamId
+  attendeeId
 }
     `;
 export const EventRoomJoinRequestDetailsFragmentDoc = gql`
     fragment EventRoomJoinRequestDetails on EventRoomJoinRequest {
   id
-  attendee {
-    id
-    displayName
-  }
+  attendeeId
 }
     `;
 export const RoomEventDetailsFragmentDoc = gql`
@@ -31459,10 +31580,7 @@ export const RoomPage_RoomPeopleFragmentDoc = gql`
   roomPeople {
     id
     roomPersonRoleName
-    attendee {
-      displayName
-      id
-    }
+    attendeeId
   }
 }
     `;
@@ -31503,11 +31621,7 @@ export const RoomPage_EventPersonDetailsFragmentDoc = gql`
   name
   roleName
   eventId
-  attendee {
-    id
-    userId
-    displayName
-  }
+  attendeeId
 }
     `;
 export const RoomSponsorContent_ContentItemDataFragmentDoc = gql`
@@ -32003,11 +32117,7 @@ export const EventPersonDetailsFragmentDoc = gql`
   name
   roleName
   eventId
-  attendee {
-    id
-    userId
-    displayName
-  }
+  attendeeId
 }
     `;
 export const SidebarChatInfoFragmentDoc = gql`
@@ -32028,6 +32138,7 @@ export const SidebarChatInfoFragmentDoc = gql`
     id
     name
     roomPeople {
+      id
       attendee {
         id
         displayName
@@ -32087,16 +32198,11 @@ export const MainMenuSponsors_ContentGroupDataFragmentDoc = gql`
   title
 }
     `;
-export const RoomPeopleFragmentDoc = gql`
-    fragment RoomPeople on Room {
-  roomPeople {
-    id
-    roomPersonRoleName
-    attendee {
-      displayName
-      id
-    }
-  }
+export const RoomMemberFragmentDoc = gql`
+    fragment RoomMember on RoomPerson {
+  id
+  roomPersonRoleName
+  attendeeId
 }
     `;
 export const RoomParticipantDetailsFragmentDoc = gql`
@@ -32105,10 +32211,7 @@ export const RoomParticipantDetailsFragmentDoc = gql`
   conferenceId
   id
   roomId
-  attendee {
-    id
-    displayName
-  }
+  attendeeId
 }
     `;
 export const ShufflePeriodDataFragmentDoc = gql`
@@ -32319,40 +32422,6 @@ export function useSendChatAnswerMutation(baseOptions?: Apollo.MutationHookOptio
 export type SendChatAnswerMutationHookResult = ReturnType<typeof useSendChatAnswerMutation>;
 export type SendChatAnswerMutationResult = Apollo.MutationResult<SendChatAnswerMutation>;
 export type SendChatAnswerMutationOptions = Apollo.BaseMutationOptions<SendChatAnswerMutation, SendChatAnswerMutationVariables>;
-export const AttendeesByIdDocument = gql`
-    query AttendeesById($conferenceId: uuid!, $attendeeIds: [uuid!]!) {
-  Attendee(where: {id: {_in: $attendeeIds}, conferenceId: {_eq: $conferenceId}}) {
-    ...AttendeeData
-  }
-}
-    ${AttendeeDataFragmentDoc}`;
-
-/**
- * __useAttendeesByIdQuery__
- *
- * To run a query within a React component, call `useAttendeesByIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useAttendeesByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAttendeesByIdQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      attendeeIds: // value for 'attendeeIds'
- *   },
- * });
- */
-export function useAttendeesByIdQuery(baseOptions: Apollo.QueryHookOptions<AttendeesByIdQuery, AttendeesByIdQueryVariables>) {
-        return Apollo.useQuery<AttendeesByIdQuery, AttendeesByIdQueryVariables>(AttendeesByIdDocument, baseOptions);
-      }
-export function useAttendeesByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AttendeesByIdQuery, AttendeesByIdQueryVariables>) {
-          return Apollo.useLazyQuery<AttendeesByIdQuery, AttendeesByIdQueryVariables>(AttendeesByIdDocument, baseOptions);
-        }
-export type AttendeesByIdQueryHookResult = ReturnType<typeof useAttendeesByIdQuery>;
-export type AttendeesByIdLazyQueryHookResult = ReturnType<typeof useAttendeesByIdLazyQuery>;
-export type AttendeesByIdQueryResult = Apollo.QueryResult<AttendeesByIdQuery, AttendeesByIdQueryVariables>;
 export const AddReactionDocument = gql`
     mutation AddReaction($reaction: chat_Reaction_insert_input!) {
   insert_chat_Reaction(objects: [$reaction]) {
@@ -34124,6 +34193,40 @@ export function useTimeline_SelectRoomLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type Timeline_SelectRoomQueryHookResult = ReturnType<typeof useTimeline_SelectRoomQuery>;
 export type Timeline_SelectRoomLazyQueryHookResult = ReturnType<typeof useTimeline_SelectRoomLazyQuery>;
 export type Timeline_SelectRoomQueryResult = Apollo.QueryResult<Timeline_SelectRoomQuery, Timeline_SelectRoomQueryVariables>;
+export const AttendeesByIdDocument = gql`
+    query AttendeesById($conferenceId: uuid!, $attendeeIds: [uuid!]!) {
+  Attendee(where: {id: {_in: $attendeeIds}, conferenceId: {_eq: $conferenceId}}) {
+    ...AttendeeData
+  }
+}
+    ${AttendeeDataFragmentDoc}`;
+
+/**
+ * __useAttendeesByIdQuery__
+ *
+ * To run a query within a React component, call `useAttendeesByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAttendeesByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAttendeesByIdQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      attendeeIds: // value for 'attendeeIds'
+ *   },
+ * });
+ */
+export function useAttendeesByIdQuery(baseOptions: Apollo.QueryHookOptions<AttendeesByIdQuery, AttendeesByIdQueryVariables>) {
+        return Apollo.useQuery<AttendeesByIdQuery, AttendeesByIdQueryVariables>(AttendeesByIdDocument, baseOptions);
+      }
+export function useAttendeesByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AttendeesByIdQuery, AttendeesByIdQueryVariables>) {
+          return Apollo.useLazyQuery<AttendeesByIdQuery, AttendeesByIdQueryVariables>(AttendeesByIdDocument, baseOptions);
+        }
+export type AttendeesByIdQueryHookResult = ReturnType<typeof useAttendeesByIdQuery>;
+export type AttendeesByIdLazyQueryHookResult = ReturnType<typeof useAttendeesByIdLazyQuery>;
+export type AttendeesByIdQueryResult = Apollo.QueryResult<AttendeesByIdQuery, AttendeesByIdQueryVariables>;
 export const InsertSubmissionRequestEmailJobsDocument = gql`
     mutation InsertSubmissionRequestEmailJobs($objs: [job_queues_SubmissionRequestEmailJob_insert_input!]!) {
   insert_job_queues_SubmissionRequestEmailJob(objects: $objs) {
@@ -37135,11 +37238,11 @@ export type InsertOpenTabMutationResult = Apollo.MutationResult<InsertOpenTabMut
 export type InsertOpenTabMutationOptions = Apollo.BaseMutationOptions<InsertOpenTabMutation, InsertOpenTabMutationVariables>;
 export const GetRoomMembersDocument = gql`
     subscription GetRoomMembers($roomId: uuid!) {
-  Room_by_pk(id: $roomId) {
-    ...RoomPeople
+  RoomPerson(where: {roomId: {_eq: $roomId}}) {
+    ...RoomMember
   }
 }
-    ${RoomPeopleFragmentDoc}`;
+    ${RoomMemberFragmentDoc}`;
 
 /**
  * __useGetRoomMembersSubscription__
@@ -37163,7 +37266,39 @@ export function useGetRoomMembersSubscription(baseOptions: Apollo.SubscriptionHo
 export type GetRoomMembersSubscriptionHookResult = ReturnType<typeof useGetRoomMembersSubscription>;
 export type GetRoomMembersSubscriptionResult = Apollo.SubscriptionResult<GetRoomMembersSubscription>;
 export const GetRoomParticipantsDocument = gql`
-    query GetRoomParticipants($conferenceId: uuid!) {
+    subscription GetRoomParticipants($conferenceId: uuid!, $roomId: uuid!) {
+  RoomParticipant(
+    where: {conferenceId: {_eq: $conferenceId}, roomId: {_eq: $roomId}}
+  ) {
+    ...RoomParticipantDetails
+  }
+}
+    ${RoomParticipantDetailsFragmentDoc}`;
+
+/**
+ * __useGetRoomParticipantsSubscription__
+ *
+ * To run a query within a React component, call `useGetRoomParticipantsSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useGetRoomParticipantsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRoomParticipantsSubscription({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      roomId: // value for 'roomId'
+ *   },
+ * });
+ */
+export function useGetRoomParticipantsSubscription(baseOptions: Apollo.SubscriptionHookOptions<GetRoomParticipantsSubscription, GetRoomParticipantsSubscriptionVariables>) {
+        return Apollo.useSubscription<GetRoomParticipantsSubscription, GetRoomParticipantsSubscriptionVariables>(GetRoomParticipantsDocument, baseOptions);
+      }
+export type GetRoomParticipantsSubscriptionHookResult = ReturnType<typeof useGetRoomParticipantsSubscription>;
+export type GetRoomParticipantsSubscriptionResult = Apollo.SubscriptionResult<GetRoomParticipantsSubscription>;
+export const GetAllRoomParticipantsDocument = gql`
+    query GetAllRoomParticipants($conferenceId: uuid!) {
   RoomParticipant(where: {conferenceId: {_eq: $conferenceId}}) {
     ...RoomParticipantDetails
   }
@@ -37171,30 +37306,30 @@ export const GetRoomParticipantsDocument = gql`
     ${RoomParticipantDetailsFragmentDoc}`;
 
 /**
- * __useGetRoomParticipantsQuery__
+ * __useGetAllRoomParticipantsQuery__
  *
- * To run a query within a React component, call `useGetRoomParticipantsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetRoomParticipantsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetAllRoomParticipantsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllRoomParticipantsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetRoomParticipantsQuery({
+ * const { data, loading, error } = useGetAllRoomParticipantsQuery({
  *   variables: {
  *      conferenceId: // value for 'conferenceId'
  *   },
  * });
  */
-export function useGetRoomParticipantsQuery(baseOptions: Apollo.QueryHookOptions<GetRoomParticipantsQuery, GetRoomParticipantsQueryVariables>) {
-        return Apollo.useQuery<GetRoomParticipantsQuery, GetRoomParticipantsQueryVariables>(GetRoomParticipantsDocument, baseOptions);
+export function useGetAllRoomParticipantsQuery(baseOptions: Apollo.QueryHookOptions<GetAllRoomParticipantsQuery, GetAllRoomParticipantsQueryVariables>) {
+        return Apollo.useQuery<GetAllRoomParticipantsQuery, GetAllRoomParticipantsQueryVariables>(GetAllRoomParticipantsDocument, baseOptions);
       }
-export function useGetRoomParticipantsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRoomParticipantsQuery, GetRoomParticipantsQueryVariables>) {
-          return Apollo.useLazyQuery<GetRoomParticipantsQuery, GetRoomParticipantsQueryVariables>(GetRoomParticipantsDocument, baseOptions);
+export function useGetAllRoomParticipantsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllRoomParticipantsQuery, GetAllRoomParticipantsQueryVariables>) {
+          return Apollo.useLazyQuery<GetAllRoomParticipantsQuery, GetAllRoomParticipantsQueryVariables>(GetAllRoomParticipantsDocument, baseOptions);
         }
-export type GetRoomParticipantsQueryHookResult = ReturnType<typeof useGetRoomParticipantsQuery>;
-export type GetRoomParticipantsLazyQueryHookResult = ReturnType<typeof useGetRoomParticipantsLazyQuery>;
-export type GetRoomParticipantsQueryResult = Apollo.QueryResult<GetRoomParticipantsQuery, GetRoomParticipantsQueryVariables>;
+export type GetAllRoomParticipantsQueryHookResult = ReturnType<typeof useGetAllRoomParticipantsQuery>;
+export type GetAllRoomParticipantsLazyQueryHookResult = ReturnType<typeof useGetAllRoomParticipantsLazyQuery>;
+export type GetAllRoomParticipantsQueryResult = Apollo.QueryResult<GetAllRoomParticipantsQuery, GetAllRoomParticipantsQueryVariables>;
 export const ShufflePeriodsDocument = gql`
     query ShufflePeriods($conferenceId: uuid!, $start: timestamptz!, $end: timestamptz!) {
   room_ShufflePeriod(

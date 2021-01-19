@@ -26,15 +26,11 @@ gql`
         name
         roleName
         eventId
-        attendee {
-            id
-            userId
-            displayName
-        }
+        attendeeId
     }
 `;
 
-export function useEventPeople(userId: string, eventDetails: RoomEventDetailsFragment | null): Result {
+export function useEventPeople(attendeeId: string, eventDetails: RoomEventDetailsFragment | null): Result {
     const { data: currentEventRolesData } = useUserEventRolesSubscription({
         variables: {
             eventId: eventDetails?.id,
@@ -44,10 +40,10 @@ export function useEventPeople(userId: string, eventDetails: RoomEventDetailsFra
     const myRoles = useMemo(() => {
         return (
             currentEventRolesData?.Event_by_pk?.eventPeople
-                .filter((person) => person.attendee?.userId === userId)
+                .filter((person) => person.attendeeId === attendeeId)
                 .map((person) => person.roleName) ?? []
         );
-    }, [currentEventRolesData?.Event_by_pk?.eventPeople, userId]);
+    }, [currentEventRolesData?.Event_by_pk?.eventPeople, attendeeId]);
 
     const eventPeople = useMemo(() => {
         return currentEventRolesData?.Event_by_pk?.eventPeople ?? [];

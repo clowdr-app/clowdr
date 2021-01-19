@@ -13,9 +13,15 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { Twemoji } from "react-emoji-render";
-import { AttendeeDataFragment, ChatMessageDataFragment, Chat_MessageType_Enum, Chat_ReactionType_Enum } from "../../../generated/graphql";
+import {
+    AttendeeDataFragment,
+    ChatMessageDataFragment,
+    Chat_MessageType_Enum,
+    Chat_ReactionType_Enum,
+} from "../../../generated/graphql";
 import { defaultOutline_AsBoxShadow } from "../../Chakra/ChakraCustomProvider";
 import { LinkButton } from "../../Chakra/LinkButton";
+import { useAttendeesContext } from "../../Conference/AttendeesContext";
 import { useConference } from "../../Conference/useConference";
 import { roundUpToNearest } from "../../Generic/MathUtils";
 import FAIcon from "../../Icons/FAIcon";
@@ -24,7 +30,6 @@ import { MessageTypeIndicator } from "../Compose/MessageTypeIndicator";
 import { ChatSpacing, useChatConfiguration } from "../Configuration";
 import { useReflectionInfoModal } from "../ReflectionInfoModal";
 import type { DuplicationMarkerMessageData } from "../Types/Messages";
-import { useAttendeesContext } from "./AttendeesContext";
 import MessageControls from "./MessageControls";
 import PollOptions from "./PollOptions";
 import ProfileBox from "./ProfileBox";
@@ -74,7 +79,13 @@ function ReflectionButton({ children }: { children: React.ReactNode | React.Reac
     );
 }
 
-function MessageBody({ message, attendee }: { message: ChatMessageDataFragment; attendee: AttendeeDataFragment | null }): JSX.Element {
+function MessageBody({
+    message,
+    attendee,
+}: {
+    message: ChatMessageDataFragment;
+    attendee: AttendeeDataFragment | null;
+}): JSX.Element {
     const config = useChatConfiguration();
     const messages = useReceiveMessageQueries();
     const conference = useConference();
@@ -89,6 +100,7 @@ function MessageBody({ message, attendee }: { message: ChatMessageDataFragment; 
     const createdAt = new Date(message.created_at);
     const timeColour = useColorModeValue("gray.600", "gray.400");
     const timeFormat: Intl.DateTimeFormatOptions = {
+        weekday: "short",
         hour: "2-digit",
         minute: "2-digit",
         hour12: false,
@@ -174,7 +186,7 @@ function MessageBody({ message, attendee }: { message: ChatMessageDataFragment; 
                 m={0}
                 minW={pictureSize}
             >
-                <Text as="div" fontSize={smallFontSize} color={timeColour} w="100%" textAlign="left">
+                <Text as="div" fontSize={smallFontSize} color={timeColour} w="100%" textAlign="left" lineHeight="2.7ex">
                     {createdAt.toLocaleString(undefined, timeFormat)}
                 </Text>
                 {message.type !== Chat_MessageType_Enum.Message && message.type !== Chat_MessageType_Enum.Emote ? (
@@ -291,7 +303,6 @@ function MessageBody({ message, attendee }: { message: ChatMessageDataFragment; 
                     )
                 ) : undefined}
                 {message.type === Chat_MessageType_Enum.Poll ? <PollOptions message={message} /> : undefined}
-                {/* TODO Render poll results*/}
             </VStack>
         </>
     );
@@ -316,6 +327,7 @@ export default function MessageBox({ message }: { message: ChatMessageDataFragme
 
     const createdAt = new Date(message.created_at);
     const timeFormat: Intl.DateTimeFormatOptions = {
+        weekday: "short",
         hour: "2-digit",
         minute: "2-digit",
         hour12: false,
@@ -349,13 +361,10 @@ export default function MessageBox({ message }: { message: ChatMessageDataFragme
             _hover={{}}
             tabIndex={0}
             aria-label={`Message sent at ${createdAt.toLocaleString(undefined, timeFormat)} by ${
-                attendee?.displayName ?? ""
+                attendee?.displayName ?? "<Loading name>"
             }. ${message.message}`}
         >
-            <MessageBody
-                attendee={attendee}
-                message={message}
-            />
+            <MessageBody attendee={attendee} message={message} />
         </HStack>
     );
 }

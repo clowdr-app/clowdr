@@ -45,24 +45,22 @@ export default function PresenceCountProvider({
 }): JSX.Element {
     // const location = useLocation();
     const conference = useConference();
-    // const presenceCount = usePresenceCountSubscription({
-    //     skip: disableSubscription,
-    //     variables: {
-    //         conferenceId: conference.id,
-    //         path: location.pathname,
-    //     },
-    // });
+    const presenceCount = useGetPresenceCountOfQuery({
+        variables: {
+            conferenceId: conference.id,
+            path: location.pathname,
+        },
+        pollInterval: 30000,
+    });
     const { refetch: getPresenceCountOfQ } = useGetPresenceCountOfQuery({
         skip: true,
     });
     const previousErrorPath = useRef<string | null>(null);
 
-    // const pageCount = presenceCount.data?.presence_Page_by_pk?.count;
+    const pageCount = presenceCount.data?.presence_Page[0]?.count;
 
     const getPageCountOf = useCallback(
         async (path: string) => {
-            return undefined;
-
             if (path === previousErrorPath.current) {
                 return undefined;
             }
@@ -87,7 +85,7 @@ export default function PresenceCountProvider({
     return (
         <PresenceCountContext.Provider
             value={{
-                pageCount: undefined,
+                pageCount,
                 getPageCountOf,
             }}
         >

@@ -232,6 +232,7 @@ export function ChatNotificationsProvider_WithAttendee({
     }, [
         attendeeId,
         conference.slug,
+        currentAttendee.id,
         history,
         location.pathname,
         setNotifiedUpTo,

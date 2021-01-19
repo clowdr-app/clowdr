@@ -1,24 +1,20 @@
 import { gql } from "@apollo/client";
-import React from "react";
-import { useGetRoomMembersSubscription } from "../../generated/graphql";
-import { RoomMembersContext } from "./useRoomMembers";
+import React, { useCallback, useEffect, useState } from "react";
+import { AttendeeDataFragment, useGetRoomMembersSubscription } from "../../generated/graphql";
+import { useAttendeesContext } from "../Conference/AttendeesContext";
+import { RoomMembersContext, RoomMembersInfo, RoomMembersInfos } from "./useRoomMembers";
 
 gql`
     subscription GetRoomMembers($roomId: uuid!) {
-        Room_by_pk(id: $roomId) {
-            ...RoomPeople
+        RoomPerson(where: { roomId: { _eq: $roomId } }) {
+            ...RoomMember
         }
     }
 
-    fragment RoomPeople on Room {
-        roomPeople {
-            id
-            roomPersonRoleName
-            attendee {
-                displayName
-                id
-            }
-        }
+    fragment RoomMember on RoomPerson {
+        id
+        roomPersonRoleName
+        attendeeId
     }
 `;
 
@@ -35,7 +31,58 @@ export default function RoomMembersProvider({
         },
     });
 
-    const value = loading ? undefined : error ? false : data?.Room_by_pk ?? false;
+    const attendeesCtx = useAttendeesContext();
+    const [value, setValue] = useState<RoomMembersInfos | false>(false);
+    const onAttendeeUpdated = useCallback((data: AttendeeDataFragment) => {
+        setValue((oldVals) => {
+            return oldVals
+                ? oldVals.map((x) =>
+                      x.member.attendeeId === data.id
+                          ? {
+                                ...x,
+                                attendee: data,
+                            }
+                          : x
+                  )
+                : oldVals;
+        });
+    }, []);
+
+    useEffect(() => {
+        if (error) {
+            setValue(false);
+        } else if (!loading && data) {
+            data.RoomPerson.map((person) => attendeesCtx.subscribe(person.attendeeId, onAttendeeUpdated));
+
+            setValue((oldVals) => {
+                if (oldVals) {
+                    const addedMembers = data.RoomPerson.filter((x) => !oldVals.some((y) => y.member.id === x.id));
+                    return [
+                        ...addedMembers.map((member) => ({ member })),
+                        ...(oldVals
+                            ? oldVals.reduce<RoomMembersInfo[]>((acc, member) => {
+                                  const updated = data.RoomPerson.find((y) => y.id === member.member.id);
+                                  if (updated) {
+                                      return [
+                                          ...acc,
+                                          {
+                                              attendee: member.attendee,
+                                              member: updated,
+                                          },
+                                      ];
+                                  }
+                                  return acc;
+                              }, [])
+                            : []),
+                    ];
+                } else {
+                    return data.RoomPerson.map((member) => ({
+                        member,
+                    }));
+                }
+            });
+        }
+    }, [attendeesCtx, data, error, loading, onAttendeeUpdated]);
 
     return <RoomMembersContext.Provider value={value}>{children}</RoomMembersContext.Provider>;
 }

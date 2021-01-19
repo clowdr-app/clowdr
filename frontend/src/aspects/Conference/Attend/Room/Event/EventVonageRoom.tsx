@@ -8,10 +8,10 @@ import {
     useGetEventDetailsQuery,
     useGetEventVonageTokenMutation,
 } from "../../../../../generated/graphql";
-import useUserId from "../../../../Auth/useUserId";
 import { useEventPeople } from "../../../../Event/useEventPeople";
 import ApolloQueryWrapper from "../../../../GQL/ApolloQueryWrapper";
 import { useSharedRoomContext } from "../../../../Room/useSharedRoomContext";
+import { useMaybeCurrentAttendee } from "../../../useCurrentAttendee";
 import { EventRoomControlPanel } from "./EventRoomControlPanel";
 
 gql`
@@ -55,8 +55,8 @@ export function EventVonageRoom({ eventId }: { eventId: string }): JSX.Element {
         },
     });
 
-    const userId = useUserId();
-    const { myRoles, eventPeople } = useEventPeople(userId ?? "", result.data?.Event_by_pk ?? null);
+    const mAttendee = useMaybeCurrentAttendee();
+    const { myRoles, eventPeople } = useEventPeople(mAttendee?.id ?? "", result.data?.Event_by_pk ?? null);
 
     const getAccessToken = useCallback(async () => {
         const result = await getEventVonageToken();

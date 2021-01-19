@@ -45,7 +45,7 @@ export function VonageOverlay({ connectionData }: { connectionData: string }): J
             borderRadius={5}
             overflow="hidden"
             display="block"
-            aria-label={`View ${data?.Attendee_by_pk?.displayName}'s profile`}
+            aria-label={`View ${data?.Attendee_by_pk?.displayName ?? "<Loading name>"}'s profile`}
             onClick={() => {
                 if (data?.Attendee_by_pk?.profile) {
                     profileModal.open({
@@ -77,7 +77,9 @@ export function VonageOverlay({ connectionData }: { connectionData: string }): J
                 ) : (
                     <></>
                 )}
-                <Text display="block" color={"gray.100"} noOfLines={1} width="100%">{data?.Attendee_by_pk?.displayName}</Text>
+                <Text display="block" color={"gray.100"} noOfLines={1} width="100%">
+                    {data?.Attendee_by_pk?.displayName ?? "<Loading name>"}
+                </Text>
             </HStack>
         </Button>
     );

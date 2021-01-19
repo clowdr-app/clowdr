@@ -1,7 +1,9 @@
 import React from "react";
-import type { RoomPeopleFragment } from "../../generated/graphql";
+import type { AttendeeDataFragment, RoomMemberFragment } from "../../generated/graphql";
 
-type RoomMembersInfos = RoomPeopleFragment | false | undefined;
+export type RoomMembersInfo = { member: RoomMemberFragment; attendee?: AttendeeDataFragment | null };
+
+export type RoomMembersInfos = RoomMembersInfo[] | false | undefined;
 
 export const RoomMembersContext = React.createContext<RoomMembersInfos>(undefined);
 

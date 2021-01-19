@@ -19,7 +19,9 @@ interface InitialisedStateData {
     sessionId: string;
     onStreamsChanged: (streams: OT.Stream[]) => void;
     onConnectionsChanged: (connections: OT.Connection[]) => void;
-    onSessionDisconnected: () => void;
+    onSessionConnected: (isConnected: boolean) => void;
+    onCameraStreamDestroyed: (reason: string) => void;
+    onScreenStreamDestroyed: (reason: string) => void;
     screenSharingSupported: boolean;
 }
 
@@ -49,7 +51,9 @@ export class VonageGlobalState {
         sessionId: string,
         onStreamsChanged: (streams: OT.Stream[]) => void,
         onConnectionsChanged: (connections: OT.Connection[]) => void,
-        onSessionDisconnected: () => void
+        onSessionConnected: (isConnected: boolean) => void,
+        onCameraStreamDestroyed: (reason: string) => void,
+        onScreenStreamDestroyed: (reason: string) => void
     ): Promise<void> {
         const release = await this.mutex.acquire();
         try {
@@ -74,7 +78,9 @@ export class VonageGlobalState {
                 sessionId,
                 onStreamsChanged,
                 onConnectionsChanged,
-                onSessionDisconnected,
+                onSessionConnected,
+                onCameraStreamDestroyed,
+                onScreenStreamDestroyed,
                 screenSharingSupported,
             };
         } finally {
@@ -82,37 +88,37 @@ export class VonageGlobalState {
         }
     }
 
-    public async updateCallbacks(
-        onStreamsChanged: () => void,
-        onConnectionsChanged: () => void,
-        onSessionDisconnected: () => void
-    ): Promise<void> {
-        const release = await this.mutex.acquire();
-        try {
-            if (this.state.type === StateType.Initialised) {
-                this.state = {
-                    ...this.state,
-                    onStreamsChanged,
-                    onConnectionsChanged,
-                    onSessionDisconnected,
-                };
-            } else if (this.state.type === StateType.Connected) {
-                this.state = {
-                    ...this.state,
-                    initialisedState: {
-                        ...this.state.initialisedState,
-                        onStreamsChanged,
-                        onConnectionsChanged,
-                        onSessionDisconnected,
-                    },
-                };
-            } else {
-                throw new Error("Invalid state transition: must be initialised or connected");
-            }
-        } finally {
-            release();
-        }
-    }
+    // public async updateCallbacks(
+    //     onStreamsChanged: () => void,
+    //     onConnectionsChanged: () => void,
+    //     onSessionDisconnected: () => void
+    // ): Promise<void> {
+    //     const release = await this.mutex.acquire();
+    //     try {
+    //         if (this.state.type === StateType.Initialised) {
+    //             this.state = {
+    //                 ...this.state,
+    //                 onStreamsChanged,
+    //                 onConnectionsChanged,
+    //                 onSessionConnected: onSessionDisconnected,
+    //             };
+    //         } else if (this.state.type === StateType.Connected) {
+    //             this.state = {
+    //                 ...this.state,
+    //                 initialisedState: {
+    //                     ...this.state.initialisedState,
+    //                     onStreamsChanged,
+    //                     onConnectionsChanged,
+    //                     onSessionConnected: onSessionDisconnected,
+    //                 },
+    //             };
+    //         } else {
+    //             throw new Error("Invalid state transition: must be initialised or connected");
+    //         }
+    //     } finally {
+    //         release();
+    //     }
+    // }
 
     public async connectToSession(): Promise<void> {
         const release = await this.mutex.acquire();
@@ -128,6 +134,7 @@ export class VonageGlobalState {
             session.on("streamDestroyed", (event) => this.onStreamDestroyed(event));
             session.on("connectionCreated", (event) => this.onConnectionCreated(event));
             session.on("connectionDestroyed", (event) => this.onConnectionDestroyed(event));
+            session.on("sessionConnected", (event) => this.onSessionConnected(event));
             session.on("sessionDisconnected", (event) => this.onSessionDisconnected(event));
 
             await new Promise<void>((resolve, reject) => {
@@ -218,6 +225,7 @@ export class VonageGlobalState {
                             }
                         });
                     });
+                    publisher.on("streamDestroyed", (event) => this.onCameraStreamDestroyed(event));
 
                     this.state = {
                         ...state,
@@ -282,6 +290,7 @@ export class VonageGlobalState {
                         }
                     });
                 });
+                publisher.on("streamDestroyed", (event) => this.onCameraStreamDestroyed(event));
 
                 this.state = {
                     ...state,
@@ -338,6 +347,7 @@ export class VonageGlobalState {
                     }
                 });
             });
+            publisher.on("streamDestroyed", (event) => this.onScreenStreamDestroyed(event));
 
             this.state = {
                 ...this.state,
@@ -394,14 +404,14 @@ export class VonageGlobalState {
             this.state.session.off();
             this.state.session.disconnect();
 
-            const callback = this.state.initialisedState.onSessionDisconnected;
+            const callback = this.state.initialisedState.onSessionConnected;
             // TODO: handle exceptions
 
             this.state = {
                 ...this.state.initialisedState,
             };
 
-            callback();
+            callback(false);
         } finally {
             release();
         }
@@ -497,7 +507,7 @@ export class VonageGlobalState {
 
             event.preventDefault();
 
-            const callback = this.state.initialisedState.onSessionDisconnected;
+            const callback = this.state.initialisedState.onSessionConnected;
             this.state.session.off();
 
             this.state = {
@@ -505,7 +515,57 @@ export class VonageGlobalState {
                 type: StateType.Initialised,
             };
 
-            callback();
+            callback(false);
+        } finally {
+            release();
+        }
+    }
+
+    private async onSessionConnected(_event: OT.Event<"sessionConnected", OT.Session>): Promise<void> {
+        const release = await this.mutex.acquire();
+        try {
+            if (this.state.type === StateType.Uninitialised) {
+                throw new Error("Invalid state transition: must be connected to disconnect");
+            }
+
+            let callback;
+            if (this.state.type === StateType.Initialised) {
+                callback = this.state.onSessionConnected;
+            } else {
+                callback = this.state.initialisedState.onSessionConnected;
+            }
+
+            callback(true);
+        } finally {
+            release();
+        }
+    }
+
+    private async onCameraStreamDestroyed(
+        event: OT.Event<"streamDestroyed", OT.Publisher> & { stream: OT.Stream; reason: string }
+    ): Promise<void> {
+        const release = await this.mutex.acquire();
+        try {
+            if (this.state.type === StateType.Initialised) {
+                this.state.onCameraStreamDestroyed(event.reason);
+            } else if (this.state.type === StateType.Connected) {
+                this.state.initialisedState.onCameraStreamDestroyed(event.reason);
+            }
+        } finally {
+            release();
+        }
+    }
+
+    private async onScreenStreamDestroyed(
+        event: OT.Event<"streamDestroyed", OT.Publisher> & { stream: OT.Stream; reason: string }
+    ): Promise<void> {
+        const release = await this.mutex.acquire();
+        try {
+            if (this.state.type === StateType.Initialised) {
+                this.state.onScreenStreamDestroyed(event.reason);
+            } else if (this.state.type === StateType.Connected) {
+                this.state.initialisedState.onScreenStreamDestroyed(event.reason);
+            }
         } finally {
             release();
         }

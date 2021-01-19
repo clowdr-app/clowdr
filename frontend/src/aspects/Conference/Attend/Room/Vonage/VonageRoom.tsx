@@ -4,12 +4,12 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import useUserId from "../../../../Auth/useUserId";
 import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";
 import usePolling from "../../../../Generic/usePolling";
-import { useVonageRoom, VonageRoomStateProvider } from "../../../../Vonage/useVonageRoom";
+import { useVonageRoom, VonageRoomStateActionType, VonageRoomStateProvider } from "../../../../Vonage/useVonageRoom";
 import useCurrentAttendee, { useMaybeCurrentAttendee } from "../../../useCurrentAttendee";
 import PlaceholderImage from "../PlaceholderImage";
 import { PreJoin } from "../PreJoin";
+import { useVonageComputedState } from "./useVonageComputedState";
 import { StateType } from "./VonageGlobalState";
-import { useVonageGlobalState } from "./VonageGlobalStateProvider";
 import { VonageOverlay } from "./VonageOverlay";
 import { VonageRoomControlBar } from "./VonageRoomControlBar";
 import { VonageSubscriber } from "./VonageSubscriber";
@@ -42,54 +42,51 @@ function VonageRoomInner({
     getAccessToken: () => Promise<string>;
 }): JSX.Element {
     const maxVideoStreams = 10;
-    const { state } = useVonageRoom();
-    const vonage = useVonageGlobalState();
+    const { state, dispatch } = useVonageRoom();
+    const onCameraStreamDestroyed = useCallback(
+        (reason: string) => {
+            if (reason !== "mediaStopped") {
+                return;
+            }
+            dispatch({
+                type: VonageRoomStateActionType.SetCameraIntendedState,
+                cameraEnabled: false,
+            });
+            dispatch({
+                type: VonageRoomStateActionType.SetMicrophoneIntendedState,
+                microphoneEnabled: false,
+            });
+        },
+        [dispatch]
+    );
+    const onScreenStreamDestroyed = useCallback(
+        (reason: string) => {
+            if (reason !== "mediaStopped") {
+                return;
+            }
+            dispatch({
+                type: VonageRoomStateActionType.SetScreenShareIntendedState,
+                screenEnabled: false,
+            });
+        },
+        [dispatch]
+    );
+    const { vonage, connected, connections, streams } = useVonageComputedState(
+        getAccessToken,
+        vonageSessionId,
+        onCameraStreamDestroyed,
+        onScreenStreamDestroyed
+    );
+
     const userId = useUserId();
     const attendee = useCurrentAttendee();
     const toast = useToast();
+
     const cameraPublishContainerRef = useRef<HTMLDivElement>(null);
     const screenPublishContainerRef = useRef<HTMLDivElement>(null);
     const cameraPreviewRef = useRef<HTMLVideoElement>(null);
 
     const [joining, setJoining] = useState<boolean>(false);
-
-    const [streams, setStreams] = useState<OT.Stream[]>([]);
-    const [connections, setConnections] = useState<OT.Connection[]>([]);
-    const [connected, setConnected] = useState<boolean>(false);
-
-    useEffect(() => {
-        async function fn() {
-            try {
-                if (vonage.state.type === StateType.Connected) {
-                    await vonage.disconnect();
-                }
-            } catch (e) {
-                console.warn("Failed to disconnect from session", e);
-            }
-
-            try {
-                await vonage.initialiseState(
-                    getAccessToken,
-                    vonageSessionId,
-                    (streams) => {
-                        setStreams(streams);
-                    },
-                    (connections) => {
-                        setConnections(connections);
-                    },
-                    () => {
-                        setConnected(false);
-                        setStreams([]);
-                        setConnections([]);
-                    }
-                );
-            } catch (e) {
-                console.warn("Failed to initialise session", e);
-            }
-        }
-        fn();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [vonageSessionId]);
 
     const joinRoom = useCallback(async () => {
         console.log("Joining room");
@@ -102,15 +99,15 @@ function VonageRoomInner({
                 state.cameraIntendedEnabled ? state.preferredCameraId : null,
                 state.microphoneIntendedEnabled ? state.preferredMicrophoneId : null
             );
-            setConnected(true);
         } catch (e) {
             console.error("Failed to join room", e);
             toast({
                 status: "error",
                 description: "Cannot connect to room",
             });
+        } finally {
+            setJoining(false);
         }
-        setJoining(false);
     }, [
         vonage,
         state.cameraIntendedEnabled,

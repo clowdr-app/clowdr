@@ -20,6 +20,7 @@ interface InitialisedStateData {
     onStreamsChanged: (streams: OT.Stream[]) => void;
     onConnectionsChanged: (connections: OT.Connection[]) => void;
     onSessionDisconnected: () => void;
+    screenSharingSupported: boolean;
 }
 
 interface ConnectedStateData {
@@ -57,6 +58,16 @@ export class VonageGlobalState {
                 throw new Error("Invalid state transition: must not be connected when initialising");
             }
 
+            const screenSharingSupported = await new Promise<boolean>((resolve) => {
+                OT.checkScreenSharingCapability((response) => {
+                    if (!response.supported || response.extensionRegistered === false) {
+                        // This browser does not support screen sharing
+                        return resolve(false);
+                    }
+                    return resolve(true);
+                });
+            });
+
             this.state = {
                 type: StateType.Initialised,
                 getToken,
@@ -64,6 +75,7 @@ export class VonageGlobalState {
                 onStreamsChanged,
                 onConnectionsChanged,
                 onSessionDisconnected,
+                screenSharingSupported,
             };
         } finally {
             release();

@@ -1,4 +1,4 @@
-import { Box, Flex, useToast, VStack } from "@chakra-ui/react";
+import { Alert, AlertIcon, AlertTitle, Box, Flex, useToast, VStack } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import useUserId from "../../../../Auth/useUserId";
@@ -203,22 +203,76 @@ function VonageRoomInner({
     }, []);
     usePolling(updateEnabledStreams, 3000, true);
 
+    const screenSharingActive = receivingScreenShare || state.screenShareIntendedEnabled;
+    const participantWidth = screenSharingActive ? 150 : 300;
+
     return (
-        <Box display="grid" gridTemplateRows="1fr auto">
-            <Box display="none" ref={screenPublishContainerRef} />
-            <Box maxH="80vh" height={receivingScreenShare ? "70vh" : undefined} overflowY="auto" position="relative">
-                <Flex width="100%" height="auto" flexWrap="wrap" overflowY="auto">
+        <Box>
+            <VonageRoomControlBar onJoinRoom={joinRoom} onLeaveRoom={leaveRoom} joining={joining} />
+            <Box position="relative" mb={8} width="100%">
+                <Box
+                    position="relative"
+                    maxH="80vh"
+                    /* TODO: use the actual state rather than intended state */
+                    hidden={!state.screenShareIntendedEnabled}
+                    height={"70vh"}
+                    width="100%"
+                    mb={2}
+                    zIndex={300}
+                    overflow="hidden"
+                >
+                    <Box
+                        ref={screenPublishContainerRef}
+                        position="absolute"
+                        zIndex="100"
+                        left="0"
+                        top="0"
+                        height="100%"
+                        width="100%"
+                    />
+                    <Box
+                        position="absolute"
+                        zIndex="200"
+                        left="0"
+                        top="0"
+                        height="100%"
+                        width="100%"
+                        pointerEvents="none"
+                    />
+                    <Box position="absolute" left="0.4rem" bottom="0.35rem" zIndex="200">
+                        <VonageOverlay connectionData={JSON.stringify({ attendeeId: attendee.id })} />
+                    </Box>
+                </Box>
+
+                <Box
+                    maxH="80vh"
+                    height={receivingScreenShare ? "70vh" : undefined}
+                    width="100%"
+                    mb={2}
+                    zIndex={300}
+                    hidden={!receivingScreenShare}
+                >
+                    {streams
+                        .filter((stream) => stream.videoType === "screen")
+                        .map((stream) => (
+                            <VonageSubscriber key={stream.streamId} stream={stream} enableVideo={true} />
+                        ))}
+                </Box>
+
+                <Flex
+                    width="100%"
+                    height="auto"
+                    flexWrap={screenSharingActive ? "nowrap" : "wrap"}
+                    overflowX={screenSharingActive ? "auto" : "hidden"}
+                    overflowY={screenSharingActive ? "hidden" : "auto"}
+                >
                     {/* TODO: use the actual state rather than intended state */}
-                    {connected && !state.cameraIntendedEnabled && !state.microphoneIntendedEnabled ? (
-                        <Box position="relative" w={300} h={300}>
-                            <Box
-                                position="absolute"
-                                left="0"
-                                bottom="0"
-                                zIndex="200"
-                                width="100%"
-                                overflow="hidden"
-                            >
+                    {connected &&
+                    !state.cameraIntendedEnabled &&
+                    !state.microphoneIntendedEnabled &&
+                    !state.screenShareIntendedEnabled ? (
+                        <Box position="relative" w={participantWidth} h={participantWidth}>
+                            <Box position="absolute" left="0" bottom="0" zIndex="200" width="100%" overflow="hidden">
                                 <VonageOverlay connectionData={JSON.stringify({ attendeeId: attendee.id })} />
                             </Box>
                             <PlaceholderImage />
@@ -226,16 +280,41 @@ function VonageRoomInner({
                     ) : (
                         <></>
                     )}
+
                     <Box
-                        w={300}
-                        h={300}
+                        w={participantWidth}
+                        h={participantWidth}
                         ref={cameraPublishContainerRef}
                         display={
                             connected && (state.cameraIntendedEnabled || state.microphoneIntendedEnabled)
                                 ? "block"
                                 : "none"
                         }
-                    />
+                    >
+                        <Box position="relative" height="100%" width="100%" overflow="hidden">
+                            <Box
+                                ref={cameraPublishContainerRef}
+                                position="absolute"
+                                zIndex="100"
+                                left="0"
+                                top="0"
+                                height="100%"
+                                width="100%"
+                            />
+                            <Box
+                                position="absolute"
+                                zIndex="200"
+                                left="0"
+                                top="0"
+                                height="100%"
+                                width="100%"
+                                pointerEvents="none"
+                            />
+                            <Box position="absolute" left="0.4rem" bottom="0.35rem" zIndex="200">
+                                <VonageOverlay connectionData={JSON.stringify({ attendeeId: attendee.id })} />
+                            </Box>
+                        </Box>
+                    </Box>
 
                     {R.sortWith(
                         [
@@ -244,7 +323,7 @@ function VonageRoomInner({
                         ],
                         streams.filter((s) => s.videoType === "camera" || !s.videoType)
                     ).map((stream) => (
-                        <Box key={stream.streamId} w={300} h={300}>
+                        <Box key={stream.streamId} w={participantWidth} h={participantWidth}>
                             <VonageSubscriber
                                 stream={stream}
                                 onChangeActivity={(activity) => setStreamActivity(stream.streamId, activity)}
@@ -260,7 +339,7 @@ function VonageRoomInner({
                                 !streams.find((stream) => stream.connection.connectionId === connection.connectionId)
                         )
                         .map((connection) => (
-                            <Box key={connection.connectionId} position="relative" w={300} h={300}>
+                            <Box key={connection.connectionId} position="relative" w={participantWidth} h={participantWidth}>
                                 <Box
                                     position="absolute"
                                     left="0.4rem"
@@ -274,23 +353,16 @@ function VonageRoomInner({
                                 <PlaceholderImage />
                             </Box>
                         ))}
+                    {connected && connections.length <= 1 ? (
+                        <Alert status="info">
+                            <AlertIcon />
+                            <AlertTitle>Nobody else has joined the room at the moment</AlertTitle>
+                        </Alert>
+                    ) : (
+                        <></>
+                    )}
                 </Flex>
 
-                <Box
-                    position="absolute"
-                    width="100%"
-                    height="100%"
-                    top="0"
-                    left="0"
-                    zIndex={300}
-                    hidden={!receivingScreenShare}
-                >
-                    {streams
-                        .filter((stream) => stream.videoType === "screen")
-                        .map((stream) => (
-                            <VonageSubscriber key={stream.streamId} stream={stream} enableVideo={true} />
-                        ))}
-                </Box>
                 {joining || connected ? (
                     <></>
                 ) : (
@@ -299,7 +371,6 @@ function VonageRoomInner({
                     </VStack>
                 )}
             </Box>
-            <VonageRoomControlBar onJoinRoom={joinRoom} onLeaveRoom={leaveRoom} joining={joining} />
         </Box>
     );
 }

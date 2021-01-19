@@ -104,7 +104,7 @@ export function VonageSubscriber({
                 pointerEvents="none"
                 border={talking ? "3px solid green" : "0 none"}
             />
-            <Box position="absolute" left="0.4rem" bottom="0.35rem" zIndex="200">
+            <Box position="absolute" left="0.4rem" bottom="0.35rem" zIndex="200" width="100%">
                 <VonageOverlay connectionData={stream.connection.data} />
             </Box>
         </Box>

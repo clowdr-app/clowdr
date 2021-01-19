@@ -38,8 +38,13 @@ export function VonageOverlay({ connectionData }: { connectionData: string }): J
             minH="unset"
             h="auto"
             p={0}
-            m={0}
+            m="3px"
+            size="sm"
+            maxW="calc(100% - 6px - 0.8rem)"
             background="none"
+            borderRadius={5}
+            overflow="hidden"
+            display="block"
             aria-label={`View ${data?.Attendee_by_pk?.displayName}'s profile`}
             onClick={() => {
                 if (data?.Attendee_by_pk?.profile) {
@@ -56,7 +61,7 @@ export function VonageOverlay({ connectionData }: { connectionData: string }): J
                 }
             }}
         >
-            <HStack pr={2} bgColor="rgba(0,0,0,0.6)" borderRadius="sm" width="max-content">
+            <HStack pr={2} bgColor="rgba(0,0,0,0.6)" borderRadius="sm">
                 {data?.Attendee_by_pk?.profile?.photoURL_50x50 ? (
                     <Image
                         borderRadius={5}
@@ -72,7 +77,7 @@ export function VonageOverlay({ connectionData }: { connectionData: string }): J
                 ) : (
                     <></>
                 )}
-                <Text color={"gray.100"}>{data?.Attendee_by_pk?.displayName}</Text>
+                <Text display="block" color={"gray.100"} noOfLines={1} width="100%">{data?.Attendee_by_pk?.displayName}</Text>
             </HStack>
         </Button>
     );

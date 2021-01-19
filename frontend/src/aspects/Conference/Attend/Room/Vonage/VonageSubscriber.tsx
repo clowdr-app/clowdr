@@ -1,7 +1,8 @@
 import { Box } from "@chakra-ui/react";
 import type OT from "@opentok/client";
 import React, { useEffect, useRef, useState } from "react";
-import { useOpenTok } from "../../../../Vonage/useOpenTok";
+import { StateType } from "./VonageGlobalState";
+import { useVonageGlobalState } from "./VonageGlobalStateProvider";
 import { VonageOverlay } from "./VonageOverlay";
 
 export function VonageSubscriber({
@@ -13,9 +14,9 @@ export function VonageSubscriber({
     onChangeActivity?: (active: boolean) => void;
     enableVideo: boolean;
 }): JSX.Element {
-    const [, openTokMethods] = useOpenTok();
     const ref = useRef<HTMLDivElement>(null);
 
+    const vonage = useVonageGlobalState();
     const [talking, setTalking] = useState<boolean>(false);
     const [subscriber, setSubscriber] = useState<OT.Subscriber | null>(null);
 
@@ -37,14 +38,16 @@ export function VonageSubscriber({
             console.error("No element to inject stream into", stream.streamId);
             return;
         }
-        const subscriber = openTokMethods.subscribe({
-            stream,
-            element: ref.current,
-            options: {
-                insertMode: "append",
-                height: "100%",
-                width: "100%",
-            },
+
+        if (vonage.state.type !== StateType.Connected) {
+            console.error("Must be connected to session before subscribing");
+            return;
+        }
+
+        const subscriber = vonage.state.session.subscribe(stream, ref.current, {
+            insertMode: "append",
+            height: "100%",
+            width: "100%",
         });
 
         setSubscriber(subscriber);
@@ -74,9 +77,12 @@ export function VonageSubscriber({
 
         return () => {
             try {
-                openTokMethods.unsubscribe({
-                    stream,
-                });
+                if (vonage.state.type !== StateType.Connected) {
+                    throw new Error("Cannot unsubscribe from stream unless session is connected");
+                }
+                if (vonage.state.session.connection) {
+                    vonage.state.session.unsubscribe(subscriber);
+                }
                 setSubscriber(null);
             } catch (e) {
                 console.log("Could not unsubscribe from stream");
@@ -95,6 +101,7 @@ export function VonageSubscriber({
                 top="0"
                 height="100%"
                 width="100%"
+                pointerEvents="none"
                 border={talking ? "3px solid green" : "0 none"}
             />
             <Box position="absolute" left="0.4rem" bottom="0.35rem" zIndex="200">

@@ -2,23 +2,22 @@ import { SettingsIcon } from "@chakra-ui/icons";
 import { Box, Button, useDisclosure, VStack, Wrap, WrapItem } from "@chakra-ui/react";
 import React, { useCallback, useMemo } from "react";
 import FAIcon from "../../../../Icons/FAIcon";
-import { useOpenTok } from "../../../../Vonage/useOpenTok";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
 import DeviceChooserModal from "./DeviceChooserModal";
+import { StateType } from "./VonageGlobalState";
+import { useVonageGlobalState } from "./VonageGlobalStateProvider";
 
 export function VonageRoomControlBar({
     onJoinRoom,
     onLeaveRoom,
-    inRoom,
     joining,
 }: {
     onJoinRoom: () => void;
     onLeaveRoom: () => void;
-    inRoom: boolean;
     joining: boolean;
 }): JSX.Element {
     const { state, dispatch } = useVonageRoom();
-    const [openTokProps] = useOpenTok();
+    const vonage = useVonageGlobalState();
     const { isOpen, onClose, onOpen } = useDisclosure();
 
     const startCamera = useCallback(() => {
@@ -63,25 +62,24 @@ export function VonageRoomControlBar({
         });
     }, [dispatch]);
 
-    const receivingScreenShare = useMemo(() => openTokProps.streams.find((s) => s.videoType === "screen"), [
-        openTokProps.streams,
-    ]);
+    const receivingScreenShare = useMemo(
+        () =>
+            vonage.state.type === StateType.Connected
+                ? vonage.state.streams.find((s) => s.videoType === "screen")
+                : false,
+        [vonage.state]
+    );
 
     return (
         <>
             <VStack my={4}>
                 <Box>
-                    {inRoom ? (
+                    {vonage.state.type === StateType.Connected ? (
                         <Button colorScheme="green" onClick={onLeaveRoom} size="lg">
                             Leave Room
                         </Button>
                     ) : (
-                        <Button
-                            colorScheme="green"
-                            size="lg"
-                            onClick={onJoinRoom}
-                            isLoading={joining && !openTokProps.isSessionConnected}
-                        >
+                        <Button colorScheme="green" size="lg" onClick={onJoinRoom} isLoading={joining}>
                             Join Room
                         </Button>
                     )}
@@ -122,7 +120,8 @@ export function VonageRoomControlBar({
                             </Button>
                         </WrapItem>
                     )}
-                    {openTokProps.isSessionConnected && (!receivingScreenShare || state.screenShareIntendedEnabled) ? (
+                    {vonage.state.type === StateType.Connected &&
+                    (!receivingScreenShare || state.screenShareIntendedEnabled) ? (
                         state.screenShareIntendedEnabled ? (
                             <WrapItem>
                                 <Button onClick={stopScreenShare} mr="auto" colorScheme="red">

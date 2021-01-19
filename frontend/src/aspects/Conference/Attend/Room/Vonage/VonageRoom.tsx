@@ -3,14 +3,12 @@ import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import useUserId from "../../../../Auth/useUserId";
 import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";
-import usePolling from "../../../../Generic/usePolling";
-import { OpenTokProvider } from "../../../../Vonage/OpenTokProvider";
-import { useOpenTok } from "../../../../Vonage/useOpenTok";
-import { VonageRoomStateProvider } from "../../../../Vonage/useVonageRoom";
+import { useVonageRoom, VonageRoomStateProvider } from "../../../../Vonage/useVonageRoom";
 import useCurrentAttendee, { useMaybeCurrentAttendee } from "../../../useCurrentAttendee";
 import PlaceholderImage from "../PlaceholderImage";
 import { PreJoin } from "../PreJoin";
-import { usePublisherControl } from "./usePublisherControl";
+import { StateType } from "./VonageGlobalState";
+import { useVonageGlobalState } from "./VonageGlobalStateProvider";
 import { VonageOverlay } from "./VonageOverlay";
 import { VonageRoomControlBar } from "./VonageRoomControlBar";
 import { VonageSubscriber } from "./VonageSubscriber";
@@ -26,13 +24,11 @@ export function VonageRoom({
 
     return (
         <VonageRoomStateProvider>
-            <OpenTokProvider>
-                <ChatProfileModalProvider>
-                    {mAttendee ? (
-                        <VonageRoomInner vonageSessionId={vonageSessionId} getAccessToken={getAccessToken} />
-                    ) : undefined}
-                </ChatProfileModalProvider>
-            </OpenTokProvider>
+            <ChatProfileModalProvider>
+                {mAttendee ? (
+                    <VonageRoomInner vonageSessionId={vonageSessionId} getAccessToken={getAccessToken} />
+                ) : undefined}
+            </ChatProfileModalProvider>
         </VonageRoomStateProvider>
     );
 }
@@ -45,47 +41,67 @@ function VonageRoomInner({
     getAccessToken: () => Promise<string>;
 }): JSX.Element {
     const maxVideoStreams = 10;
-    const [openTokProps, openTokMethods] = useOpenTok();
+    const { state, dispatch } = useVonageRoom();
+    const vonage = useVonageGlobalState();
     const userId = useUserId();
     const attendee = useCurrentAttendee();
     const toast = useToast();
     const cameraPublishContainerRef = useRef<HTMLDivElement>(null);
     const screenPublishContainerRef = useRef<HTMLDivElement>(null);
     const cameraPreviewRef = useRef<HTMLVideoElement>(null);
-    usePublisherControl(cameraPublishContainerRef, screenPublishContainerRef);
 
     const [joining, setJoining] = useState<boolean>(false);
 
+    const [streams, setStreams] = useState<OT.Stream[]>([]);
+    const [connections, setConnections] = useState<OT.Connection[]>([]);
+    const [connected, setConnected] = useState<boolean>(false);
+
     useEffect(() => {
-        if (openTokProps.isSessionConnected) {
-            openTokMethods.disconnectSession();
+        async function fn() {
+            try {
+                if (vonage.state.type === StateType.Connected) {
+                    await vonage.disconnect();
+                }
+            } catch (e) {
+                console.warn("Failed to disconnect from session", e);
+            }
+
+            try {
+                await vonage.initialiseState(
+                    getAccessToken,
+                    vonageSessionId,
+                    (streams) => {
+                        setStreams(streams);
+                    },
+                    (connections) => {
+                        setConnections(connections);
+                    },
+                    () => {
+                        setConnected(false);
+                        setStreams([]);
+                        setConnections([]);
+                    }
+                );
+            } catch (e) {
+                console.warn("Failed to initialise session", e);
+            }
         }
+        fn();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [vonageSessionId]);
 
     const joinRoom = useCallback(async () => {
         console.log("Joining room");
         setJoining(true);
-        let accessToken;
-        try {
-            accessToken = await getAccessToken();
-        } catch (e) {
-            toast({
-                status: "error",
-                title: "Failed to join room",
-                description: "Could not retrieve access token",
-            });
-            setJoining(false);
-            return;
-        }
 
         try {
-            await openTokMethods.initSessionAndConnect({
-                apiKey: import.meta.env.SNOWPACK_PUBLIC_OPENTOK_API_KEY,
-                sessionId: vonageSessionId,
-                sessionOptions: {},
-                token: accessToken,
-            });
+            await vonage.connectToSession();
+            await vonage.publishCamera(
+                cameraPublishContainerRef.current as HTMLElement,
+                state.cameraIntendedEnabled ? state.preferredCameraId : null,
+                state.microphoneIntendedEnabled ? state.preferredMicrophoneId : null
+            );
+            setConnected(true);
         } catch (e) {
             console.error("Failed to join room", e);
             toast({
@@ -94,59 +110,89 @@ function VonageRoomInner({
             });
         }
         setJoining(false);
-    }, [getAccessToken, openTokMethods, toast, vonageSessionId]);
-
-    const leaveRoom = useCallback(() => {
-        if (openTokProps.isSessionConnected) {
-            openTokMethods.disconnectSession();
-        }
-        setJoining(false);
-    }, [openTokMethods, openTokProps.isSessionConnected]);
-
-    const receivingScreenShare = useMemo(() => openTokProps.streams.find((s) => s.videoType === "screen"), [
-        openTokProps.streams,
+    }, [
+        vonage,
+        state.cameraIntendedEnabled,
+        state.preferredCameraId,
+        state.microphoneIntendedEnabled,
+        state.preferredMicrophoneId,
+        toast,
     ]);
 
-    const [streamLastActive, setStreamLastActive] = useState<{ [streamId: string]: number }>({});
-    const setStreamActivity = useCallback((streamId: string, activity: boolean) => {
-        if (activity) {
-            setStreamLastActive((streamLastActiveData) => ({
-                ...streamLastActiveData,
-                [streamId]: Date.now(),
-            }));
+    const leaveRoom = useCallback(() => {
+        if (connected) {
+            try {
+                vonage.disconnect();
+            } catch (e) {
+                console.warn("Failed to leave room", e);
+            }
         }
-    }, []);
+        setJoining(false);
+    }, [connected, vonage]);
 
-    const [enableStreams, setEnableStreams] = useState<string[] | null>(null);
-    const updateEnabledStreams = useCallback(() => {
-        if (openTokProps.streams.filter((stream) => stream.videoType === "camera").length <= maxVideoStreams) {
-            setEnableStreams(null);
-        } else {
-            const activeStreams = R.sortWith(
-                [R.descend((pair) => pair[1]), R.ascend((pair) => pair[0])],
-                R.toPairs(streamLastActive)
-            ).map((pair) => pair[0]);
-            const selectedActiveStreams = activeStreams.slice(0, Math.min(activeStreams.length, maxVideoStreams));
-
-            // todo: fill up rest of the available video slots with inactive streams
-
-            console.log("Enabled streams", selectedActiveStreams);
-
-            setEnableStreams(selectedActiveStreams);
-        }
-    }, [openTokProps.streams, streamLastActive]);
     useEffect(() => {
-        updateEnabledStreams();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-    usePolling(updateEnabledStreams, 3000, true);
+        async function fn() {
+            if (connected) {
+                vonage.publishCamera(
+                    cameraPublishContainerRef.current as HTMLElement,
+                    state.cameraIntendedEnabled ? state.preferredCameraId : null,
+                    state.microphoneIntendedEnabled ? state.preferredMicrophoneId : null
+                );
+            }
+        }
+        fn();
+    }, [
+        connected,
+        state.cameraIntendedEnabled,
+        state.microphoneIntendedEnabled,
+        state.preferredCameraId,
+        state.preferredMicrophoneId,
+        vonage,
+    ]);
+
+    const receivingScreenShare = useMemo(() => streams.find((s) => s.videoType === "screen"), [streams]);
+
+    // const [streamLastActive, setStreamLastActive] = useState<{ [streamId: string]: number }>({});
+    // const setStreamActivity = useCallback((streamId: string, activity: boolean) => {
+    //     if (activity) {
+    //         setStreamLastActive((streamLastActiveData) => ({
+    //             ...streamLastActiveData,
+    //             [streamId]: Date.now(),
+    //         }));
+    //     }
+    // }, []);
+
+    // const [enableStreams, setEnableStreams] = useState<string[] | null>(null);
+    // const updateEnabledStreams = useCallback(() => {
+    //     if (openTokProps.streams.filter((stream) => stream.videoType === "camera").length <= maxVideoStreams) {
+    //         setEnableStreams(null);
+    //     } else {
+    //         const activeStreams = R.sortWith(
+    //             [R.descend((pair) => pair[1]), R.ascend((pair) => pair[0])],
+    //             R.toPairs(streamLastActive)
+    //         ).map((pair) => pair[0]);
+    //         const selectedActiveStreams = activeStreams.slice(0, Math.min(activeStreams.length, maxVideoStreams));
+
+    //         // todo: fill up rest of the available video slots with inactive streams
+
+    //         console.log("Enabled streams", selectedActiveStreams);
+
+    //         setEnableStreams(selectedActiveStreams);
+    //     }
+    // }, [openTokProps.streams, streamLastActive]);
+    // useEffect(() => {
+    //     updateEnabledStreams();
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, []);
+    // usePolling(updateEnabledStreams, 3000, true);
 
     return (
         <Box display="grid" gridTemplateRows="1fr auto">
             <Box display="none" ref={screenPublishContainerRef} />
             <Box maxH="80vh" height={receivingScreenShare ? "70vh" : undefined} overflowY="auto" position="relative">
                 <Flex width="100%" height="auto" flexWrap="wrap" overflowY="auto">
-                    {openTokProps.isSessionConnected && !openTokProps.publisher["camera"] ? (
+                    {/* TODO: use the actual state rather than intended state */}
+                    {connected && !state.cameraIntendedEnabled && !state.microphoneIntendedEnabled ? (
                         <Box position="relative" w={300} h={300}>
                             <Box
                                 position="absolute"
@@ -167,32 +213,35 @@ function VonageRoomInner({
                         w={300}
                         h={300}
                         ref={cameraPublishContainerRef}
-                        display={openTokProps.isSessionConnected && openTokProps.publisher["camera"] ? "block" : "none"}
+                        display={
+                            connected && (state.cameraIntendedEnabled || state.microphoneIntendedEnabled)
+                                ? "block"
+                                : "none"
+                        }
                     />
 
                     {R.sortWith(
                         [
-                            R.descend((stream) => !enableStreams || !!enableStreams.includes(stream.streamId)),
-                            R.ascend(R.prop("creationTime")),
+                            // R.descend((stream) => !enableStreams || !!enableStreams.includes(stream.streamId)),
+                            // R.ascend(R.prop("creationTime")),
                         ],
-                        openTokProps.streams.filter((s) => s.videoType === "camera" || !s.videoType)
+                        streams.filter((s) => s.videoType === "camera" || !s.videoType)
                     ).map((stream) => (
                         <Box key={stream.streamId} w={300} h={300}>
                             <VonageSubscriber
                                 stream={stream}
-                                onChangeActivity={(activity) => setStreamActivity(stream.streamId, activity)}
-                                enableVideo={!enableStreams || !!enableStreams.includes(stream.streamId)}
+                                // onChangeActivity={(activity) => setStreamActivity(stream.streamId, activity)}
+                                // enableVideo={!enableStreams || !!enableStreams.includes(stream.streamId)}
+                                enableVideo={true}
                             />
                         </Box>
                     ))}
-                    {openTokProps.connections
+                    {(connected ? connections : [])
                         .filter(
                             (connection) =>
                                 userId &&
                                 !connection.data.includes(userId) &&
-                                !openTokProps.streams.find(
-                                    (stream) => stream.connection.connectionId === connection.connectionId
-                                )
+                                !streams.find((stream) => stream.connection.connectionId === connection.connectionId)
                         )
                         .map((connection) => (
                             <Box key={connection.connectionId} position="relative" w={300} h={300}>
@@ -220,13 +269,13 @@ function VonageRoomInner({
                     zIndex={300}
                     hidden={!receivingScreenShare}
                 >
-                    {openTokProps.streams
+                    {streams
                         .filter((stream) => stream.videoType === "screen")
                         .map((stream) => (
                             <VonageSubscriber key={stream.streamId} stream={stream} enableVideo={true} />
                         ))}
                 </Box>
-                {openTokProps.isSessionConnected ? (
+                {connected ? (
                     <></>
                 ) : (
                     <VStack justifyContent="center" height="100%" width="100%">
@@ -234,12 +283,7 @@ function VonageRoomInner({
                     </VStack>
                 )}
             </Box>
-            <VonageRoomControlBar
-                onJoinRoom={joinRoom}
-                onLeaveRoom={leaveRoom}
-                inRoom={openTokProps.isSessionConnected}
-                joining={joining}
-            />
+            <VonageRoomControlBar onJoinRoom={joinRoom} onLeaveRoom={leaveRoom} joining={joining} />
         </Box>
     );
 }

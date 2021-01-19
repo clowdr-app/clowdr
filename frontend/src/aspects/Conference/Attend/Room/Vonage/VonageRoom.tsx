@@ -42,7 +42,7 @@ function VonageRoomInner({
     getAccessToken: () => Promise<string>;
 }): JSX.Element {
     const maxVideoStreams = 10;
-    const { state, dispatch } = useVonageRoom();
+    const { state } = useVonageRoom();
     const vonage = useVonageGlobalState();
     const userId = useUserId();
     const attendee = useCurrentAttendee();
@@ -213,8 +213,8 @@ function VonageRoomInner({
                         <Box position="relative" w={300} h={300}>
                             <Box
                                 position="absolute"
-                                left="0.4rem"
-                                bottom="0.2rem"
+                                left="0"
+                                bottom="0"
                                 zIndex="200"
                                 width="100%"
                                 overflow="hidden"

@@ -177,6 +177,7 @@ export function VonageRoomControlBar({
                         state.screenShareIntendedEnabled ? (
                             <WrapItem>
                                 <Button onClick={stopScreenShare} mr="auto" colorScheme="red">
+                                    <FAIcon icon="desktop" iconStyle="s" mr="auto" />
                                     <span style={{ marginLeft: "1rem" }}>Stop sharing</span>
                                 </Button>
                             </WrapItem>

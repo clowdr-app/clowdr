@@ -38,8 +38,10 @@ export function VonageOverlay({ connectionData }: { connectionData: string }): J
             minH="unset"
             h="auto"
             p={0}
-            m={0}
+            m="3px"
             background="none"
+            borderRadius={5}
+            overflow="hidden"
             aria-label={`View ${data?.Attendee_by_pk?.displayName}'s profile`}
             onClick={() => {
                 if (data?.Attendee_by_pk?.profile) {

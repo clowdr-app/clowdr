@@ -76,7 +76,7 @@ export async function handleConferencePrepareJobInserted(payload: Payload<Confer
         console.log("Conference prepare: finished initialising job", newRow.id);
 
         if (!createdJob) {
-            callWithRetry(async () => {
+            await callWithRetry(async () => {
                 await apolloClient.mutate({
                     mutation: CompleteConferencePrepareJobDocument,
                     variables: {
@@ -88,7 +88,7 @@ export async function handleConferencePrepareJobInserted(payload: Payload<Confer
         }
     } catch (e) {
         console.error("Conference prepare: fatal error while initialising job", e);
-        callWithRetry(async () => {
+        await callWithRetry(async () => {
             await failConferencePrepareJob(newRow.id, e.message ?? "Unknown error while initialising job");
         });
     }
@@ -158,7 +158,7 @@ async function createVideoBroadcastItems(conferencePrepareJobId: string, confere
 
             let broadcastContentItemId;
             try {
-                broadcastContentItemId = callWithRetry(
+                broadcastContentItemId = await callWithRetry(
                     async () =>
                         await upsertPendingMP4BroadcastContentItem(
                             conferencePrepareJobId,

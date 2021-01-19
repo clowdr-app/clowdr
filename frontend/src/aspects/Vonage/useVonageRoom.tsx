@@ -316,8 +316,38 @@ export function VonageRoomStateProvider({
                 console.error("Failed to start microphone preview", e);
                 toast({
                     title: "Failed to start microphone",
-                    description: "Check that you have not denied permission to use the microphone in your web browser",
+                    description: (
+                        <OrderedList>
+                            <ListItem>
+                                Check that you have allowed permission to use the microphone in your browser.
+                                <UnorderedList>
+                                    <ListItem>
+                                        <Link
+                                            isExternal
+                                            href="https://support.google.com/chrome/answer/2693767?co=GENIE.Platform%3DDesktop"
+                                        >
+                                            Instructions for Google Chrome <ExternalLinkIcon />
+                                        </Link>
+                                    </ListItem>
+                                    <ListItem>
+                                        <Link
+                                            isExternal
+                                            href="https://support.mozilla.org/en-US/kb/how-manage-your-camera-and-microphone-permissions"
+                                        >
+                                            Instructions for Firefox <ExternalLinkIcon />
+                                        </Link>
+                                    </ListItem>
+                                </UnorderedList>
+                            </ListItem>
+                            <ListItem>
+                                Please also make sure you have fully quit/exited Zoom, Skype and any other tabs that may
+                                be using your microphone.
+                            </ListItem>
+                        </OrderedList>
+                    ),
                     status: "error",
+                    isClosable: true,
+                    duration: 30000,
                 });
                 return;
             }

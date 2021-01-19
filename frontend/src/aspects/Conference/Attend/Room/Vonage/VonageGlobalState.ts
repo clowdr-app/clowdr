@@ -22,6 +22,8 @@ interface InitialisedStateData {
     onSessionConnected: (isConnected: boolean) => void;
     onCameraStreamDestroyed: (reason: string) => void;
     onScreenStreamDestroyed: (reason: string) => void;
+    onCameraStreamCreated: () => void;
+    onScreenStreamCreated: () => void;
 }
 
 interface ConnectedStateData {
@@ -45,6 +47,14 @@ export class VonageGlobalState {
 
     public state: StateData = { type: StateType.Uninitialised };
 
+    public get camera(): OT.Publisher | null {
+        return this.state.type === StateType.Connected ? this.state.camera?.publisher ?? null : null;
+    }
+
+    public get screen(): OT.Publisher | null {
+        return this.state.type === StateType.Connected ? this.state.screen : null;
+    }
+
     public async initialiseState(
         getToken: (sessionId: string) => Promise<string>,
         sessionId: string,
@@ -52,7 +62,9 @@ export class VonageGlobalState {
         onConnectionsChanged: (connections: OT.Connection[]) => void,
         onSessionConnected: (isConnected: boolean) => void,
         onCameraStreamDestroyed: (reason: string) => void,
-        onScreenStreamDestroyed: (reason: string) => void
+        onScreenStreamDestroyed: (reason: string) => void,
+        onCameraStreamCreated: () => void,
+        onScreenStreamCreated: () => void
     ): Promise<void> {
         const release = await this.mutex.acquire();
         try {
@@ -70,43 +82,13 @@ export class VonageGlobalState {
                 onSessionConnected,
                 onCameraStreamDestroyed,
                 onScreenStreamDestroyed,
+                onCameraStreamCreated,
+                onScreenStreamCreated,
             };
         } finally {
             release();
         }
     }
-
-    // public async updateCallbacks(
-    //     onStreamsChanged: () => void,
-    //     onConnectionsChanged: () => void,
-    //     onSessionDisconnected: () => void
-    // ): Promise<void> {
-    //     const release = await this.mutex.acquire();
-    //     try {
-    //         if (this.state.type === StateType.Initialised) {
-    //             this.state = {
-    //                 ...this.state,
-    //                 onStreamsChanged,
-    //                 onConnectionsChanged,
-    //                 onSessionConnected: onSessionDisconnected,
-    //             };
-    //         } else if (this.state.type === StateType.Connected) {
-    //             this.state = {
-    //                 ...this.state,
-    //                 initialisedState: {
-    //                     ...this.state.initialisedState,
-    //                     onStreamsChanged,
-    //                     onConnectionsChanged,
-    //                     onSessionConnected: onSessionDisconnected,
-    //                 },
-    //             };
-    //         } else {
-    //             throw new Error("Invalid state transition: must be initialised or connected");
-    //         }
-    //     } finally {
-    //         release();
-    //     }
-    // }
 
     public async connectToSession(): Promise<void> {
         const release = await this.mutex.acquire();
@@ -172,6 +154,7 @@ export class VonageGlobalState {
                         ...this.state,
                         camera: null,
                     };
+                    state.initialisedState.onCameraStreamDestroyed("mediaStopped");
                 }
             } else if (state.camera) {
                 if (state.camera.audioDeviceId === audioDeviceId && state.camera.videoDeviceId === videoDeviceId) {
@@ -225,6 +208,7 @@ export class VonageGlobalState {
                             publisher,
                         },
                     };
+                    this.state.initialisedState.onCameraStreamCreated();
                 } else {
                     // Otherwise, we can simply switch the sources
                     if (audioDeviceId !== state.camera.audioDeviceId) {
@@ -290,10 +274,14 @@ export class VonageGlobalState {
                         publisher,
                     },
                 };
+                this.state.initialisedState.onCameraStreamCreated();
             }
         } catch (e) {
             if (_publisher) {
                 _publisher.destroy();
+            }
+            if (this.state.type === StateType.Connected) {
+                this.state.initialisedState.onCameraStreamDestroyed("mediaStopped");
             }
             throw e;
         } finally {
@@ -341,9 +329,13 @@ export class VonageGlobalState {
                 ...this.state,
                 screen: publisher,
             };
+            this.state.initialisedState.onScreenStreamCreated();
         } catch (e) {
             if (_publisher) {
                 _publisher.destroy();
+            }
+            if (this.state.type === StateType.Connected) {
+                this.state.initialisedState.onScreenStreamDestroyed("mediaStopped");
             }
         } finally {
             release();

@@ -4,12 +4,11 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import useUserId from "../../../../Auth/useUserId";
 import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";
 import usePolling from "../../../../Generic/usePolling";
-import { useVonageRoom, VonageRoomStateActionType, VonageRoomStateProvider } from "../../../../Vonage/useVonageRoom";
+import { useVonageRoom, VonageRoomStateProvider } from "../../../../Vonage/useVonageRoom";
 import useCurrentAttendee, { useMaybeCurrentAttendee } from "../../../useCurrentAttendee";
 import PlaceholderImage from "../PlaceholderImage";
 import { PreJoin } from "../PreJoin";
 import { useVonageComputedState } from "./useVonageComputedState";
-import { StateType } from "./VonageGlobalState";
 import { VonageOverlay } from "./VonageOverlay";
 import { VonageRoomControlBar } from "./VonageRoomControlBar";
 import { VonageSubscriber } from "./VonageSubscriber";
@@ -43,39 +42,9 @@ function VonageRoomInner({
 }): JSX.Element {
     const maxVideoStreams = 10;
     const { state, dispatch } = useVonageRoom();
-    const onCameraStreamDestroyed = useCallback(
-        (reason: string) => {
-            if (reason !== "mediaStopped") {
-                return;
-            }
-            dispatch({
-                type: VonageRoomStateActionType.SetCameraIntendedState,
-                cameraEnabled: false,
-            });
-            dispatch({
-                type: VonageRoomStateActionType.SetMicrophoneIntendedState,
-                microphoneEnabled: false,
-            });
-        },
-        [dispatch]
-    );
-    const onScreenStreamDestroyed = useCallback(
-        (reason: string) => {
-            if (reason !== "mediaStopped") {
-                return;
-            }
-            dispatch({
-                type: VonageRoomStateActionType.SetScreenShareIntendedState,
-                screenEnabled: false,
-            });
-        },
-        [dispatch]
-    );
-    const { vonage, connected, connections, streams } = useVonageComputedState(
+    const { vonage, connected, connections, streams, screen, camera } = useVonageComputedState(
         getAccessToken,
-        vonageSessionId,
-        onCameraStreamDestroyed,
-        onScreenStreamDestroyed
+        vonageSessionId
     );
 
     const userId = useUserId();
@@ -151,18 +120,15 @@ function VonageRoomInner({
     useEffect(() => {
         async function fn() {
             if (connected) {
-                if (
-                    state.screenShareIntendedEnabled &&
-                    !(vonage.state.type === StateType.Connected && vonage.state.screen)
-                ) {
+                if (state.screenShareIntendedEnabled && !screen) {
                     vonage.publishScreen(screenPublishContainerRef.current as HTMLElement);
-                } else if (vonage.state.type === StateType.Connected && !!vonage.state.screen) {
+                } else if (screen) {
                     vonage.unpublishScreen();
                 }
             }
         }
         fn();
-    }, [connected, state.screenShareIntendedEnabled, vonage]);
+    }, [connected, screen, state.screenShareIntendedEnabled, vonage]);
 
     const receivingScreenShare = useMemo(() => streams.find((s) => s.videoType === "screen"), [streams]);
 
@@ -205,8 +171,7 @@ function VonageRoomInner({
             <Box display="none" ref={screenPublishContainerRef} />
             <Box maxH="80vh" height={receivingScreenShare ? "70vh" : undefined} overflowY="auto" position="relative">
                 <Flex width="100%" height="auto" flexWrap="wrap" overflowY="auto">
-                    {/* TODO: use the actual state rather than intended state */}
-                    {connected && !state.cameraIntendedEnabled && !state.microphoneIntendedEnabled ? (
+                    {connected && !camera ? (
                         <Box position="relative" w={300} h={300}>
                             <Box
                                 position="absolute"
@@ -227,11 +192,7 @@ function VonageRoomInner({
                         w={300}
                         h={300}
                         ref={cameraPublishContainerRef}
-                        display={
-                            connected && (state.cameraIntendedEnabled || state.microphoneIntendedEnabled)
-                                ? "block"
-                                : "none"
-                        }
+                        display={connected && camera ? "block" : "none"}
                     />
 
                     {R.sortWith(

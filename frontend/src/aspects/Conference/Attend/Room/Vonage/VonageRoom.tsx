@@ -228,7 +228,7 @@ function VonageRoomInner({
                     overflowX={screenSharingActive ? "auto" : "hidden"}
                     overflowY={screenSharingActive ? "hidden" : "auto"}
                 >
-                    {connected && !camera && !screen ? (
+                    {connected && !camera ? (
                         <Box position="relative" w={participantWidth} h={participantWidth}>
                             <Box position="absolute" left="0" bottom="0" zIndex="200" width="100%" overflow="hidden">
                                 <VonageOverlay connectionData={JSON.stringify({ attendeeId: attendee.id })} />
@@ -242,7 +242,6 @@ function VonageRoomInner({
                     <Box
                         w={participantWidth}
                         h={participantWidth}
-                        ref={cameraPublishContainerRef}
                         display={connected && camera ? "block" : "none"}
                     >
                         <Box position="relative" height="100%" width="100%" overflow="hidden">
@@ -264,7 +263,14 @@ function VonageRoomInner({
                                 width="100%"
                                 pointerEvents="none"
                             />
-                            <Box position="absolute" left="0.4rem" bottom="0.4rem" zIndex="200" width="100%">
+                            <Box
+                                position="absolute"
+                                left="0.4rem"
+                                bottom="0.2rem"
+                                zIndex="200"
+                                width="100%"
+                                overflow="hidden"
+                            >
                                 <VonageOverlay connectionData={JSON.stringify({ attendeeId: attendee.id })} />
                             </Box>
                         </Box>
@@ -312,15 +318,15 @@ function VonageRoomInner({
                                 <PlaceholderImage />
                             </Box>
                         ))}
-                    {connected && connections.length <= 1 ? (
-                        <Alert status="info">
-                            <AlertIcon />
-                            <AlertTitle>Nobody else has joined the room at the moment</AlertTitle>
-                        </Alert>
-                    ) : (
-                        <></>
-                    )}
                 </Flex>
+                {connected && connections.length <= 1 ? (
+                    <Alert status="info">
+                        <AlertIcon />
+                        <AlertTitle>Nobody else has joined the room at the moment</AlertTitle>
+                    </Alert>
+                ) : (
+                    <></>
+                )}
 
                 {joining || connected ? (
                     <></>

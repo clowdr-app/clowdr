@@ -122,7 +122,7 @@ function VonageRoomInner({
             if (connected) {
                 if (state.screenShareIntendedEnabled && !screen) {
                     vonage.publishScreen(screenPublishContainerRef.current as HTMLElement);
-                } else if (screen) {
+                } else if (!state.screenShareIntendedEnabled && screen) {
                     vonage.unpublishScreen();
                 }
             }
@@ -302,7 +302,12 @@ function VonageRoomInner({
                                 !streams.find((stream) => stream.connection.connectionId === connection.connectionId)
                         )
                         .map((connection) => (
-                            <Box key={connection.connectionId} position="relative" w={participantWidth} h={participantWidth}>
+                            <Box
+                                key={connection.connectionId}
+                                position="relative"
+                                w={participantWidth}
+                                h={participantWidth}
+                            >
                                 <Box
                                     position="absolute"
                                     left="0.4rem"

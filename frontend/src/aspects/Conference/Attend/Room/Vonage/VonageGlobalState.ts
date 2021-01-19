@@ -371,6 +371,7 @@ export class VonageGlobalState {
                 ...this.state,
                 screen: null,
             };
+            this.state.initialisedState.onScreenStreamDestroyed("unpublished");
         } finally {
             release();
         }

@@ -15,7 +15,7 @@ export function useVonageComputedState(
     camera: OT.Publisher | null;
 } {
     const vonage = useVonageGlobalState();
-    const { state, dispatch } = useVonageRoom();
+    const { dispatch } = useVonageRoom();
 
     const [connected, setConnected] = useState<boolean>(false);
     const [streams, setStreams] = useState<OT.Stream[]>([]);
@@ -77,6 +77,11 @@ export function useVonageComputedState(
                             setConnected(false);
                             setStreams([]);
                             setConnections([]);
+
+                            dispatch({
+                                type: VonageRoomStateActionType.SetScreenShareIntendedState,
+                                screenEnabled: false,
+                            });
                         } else {
                             setConnected(true);
                         }

@@ -41,7 +41,7 @@ function VonageRoomInner({
     getAccessToken: () => Promise<string>;
 }): JSX.Element {
     const maxVideoStreams = 10;
-    const { state, dispatch } = useVonageRoom();
+    const { state } = useVonageRoom();
     const { vonage, connected, connections, streams, screen, camera } = useVonageComputedState(
         getAccessToken,
         vonageSessionId

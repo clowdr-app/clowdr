@@ -18,14 +18,21 @@ interface Props {
     onClose: (madeSelection: boolean, cameraId?: string | null, microphoneId?: string | null) => void;
     cameraId: string | null;
     microphoneId: string | null;
+    showCamera: boolean;
+    showMicrophone: boolean;
 }
 
-export default function DeviceChooserModal({ isOpen, onClose, cameraId, microphoneId }: Props): JSX.Element {
+export default function DeviceChooserModal({
+    isOpen,
+    onClose,
+    cameraId,
+    microphoneId,
+    showCamera,
+    showMicrophone,
+}: Props): JSX.Element {
     const [mediaDevices, setMediaDevices] = useState<MediaDeviceInfo[]>([]);
     const [selectedCamera, setSelectedCamera] = useState<string | null>(cameraId);
     const [selectedMicrophone, setSelectedMicrophone] = useState<string | null>(microphoneId);
-
-    const [key, setKey] = useState<number>(0);
 
     useEffect(() => {
         async function effect() {
@@ -35,7 +42,7 @@ export default function DeviceChooserModal({ isOpen, onClose, cameraId, micropho
         if (isOpen) {
             effect();
         }
-    }, [isOpen, key]);
+    }, [isOpen]);
 
     function doClose() {
         onClose(true, selectedCamera, selectedMicrophone);
@@ -54,51 +61,55 @@ export default function DeviceChooserModal({ isOpen, onClose, cameraId, micropho
                 <ModalContent>
                     <ModalHeader>
                         <Heading as="h3" size="lg">
-                            Microphone and Camera
+                            {showMicrophone ? "Microphone" : ""}
+                            {showMicrophone && showCamera ? " and " : ""}
+                            {showCamera ? "Camera" : ""}
                         </Heading>
                     </ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        <Heading as="h4" size="sm" textAlign="left" my={4}>
-                            Camera
-                        </Heading>
-                        <Select
-                            placeholder="Choose camera"
-                            value={selectedCamera ?? undefined}
-                            onChange={(e) => (e.target.value === "" ? null : setSelectedCamera(e.target.value))}
-                            onMouseDown={async () => {
-                                await navigator.mediaDevices.getUserMedia({ video: true });
-                                setKey((k) => k + 1);
-                            }}
-                        >
-                            {mediaDevices
-                                .filter((device) => device.kind === "videoinput")
-                                .map((device) => (
-                                    <option key={device.deviceId} value={device.deviceId}>
-                                        {device.label}
-                                    </option>
-                                ))}
-                        </Select>
-                        <Heading as="h4" size="sm" textAlign="left" my={4}>
-                            Microphone
-                        </Heading>
-                        <Select
-                            placeholder="Choose microphone"
-                            value={selectedMicrophone ?? undefined}
-                            onChange={(e) => (e.target.value === "" ? null : setSelectedMicrophone(e.target.value))}
-                            onMouseDown={async () => {
-                                await navigator.mediaDevices.getUserMedia({ audio: true });
-                                setKey((k) => k + 1);
-                            }}
-                        >
-                            {mediaDevices
-                                .filter((device) => device.kind === "audioinput")
-                                .map((device) => (
-                                    <option key={device.deviceId} value={device.deviceId}>
-                                        {device.label}
-                                    </option>
-                                ))}
-                        </Select>
+                        {showCamera ? (
+                            <>
+                                <Heading as="h4" size="sm" textAlign="left" my={4}>
+                                    Camera
+                                </Heading>
+                                <Select
+                                    placeholder="Choose camera"
+                                    value={selectedCamera ?? undefined}
+                                    onChange={(e) => (e.target.value === "" ? null : setSelectedCamera(e.target.value))}
+                                >
+                                    {mediaDevices
+                                        .filter((device) => device.kind === "videoinput")
+                                        .map((device) => (
+                                            <option key={device.deviceId} value={device.deviceId}>
+                                                {device.label}
+                                            </option>
+                                        ))}
+                                </Select>
+                            </>
+                        ) : undefined}
+                        {showMicrophone ? (
+                            <>
+                                <Heading as="h4" size="sm" textAlign="left" my={4}>
+                                    Microphone
+                                </Heading>
+                                <Select
+                                    placeholder="Choose microphone"
+                                    value={selectedMicrophone ?? undefined}
+                                    onChange={(e) =>
+                                        e.target.value === "" ? null : setSelectedMicrophone(e.target.value)
+                                    }
+                                >
+                                    {mediaDevices
+                                        .filter((device) => device.kind === "audioinput")
+                                        .map((device) => (
+                                            <option key={device.deviceId} value={device.deviceId}>
+                                                {device.label}
+                                            </option>
+                                        ))}
+                                </Select>
+                            </>
+                        ) : undefined}
                     </ModalBody>
                     <ModalFooter>
                         <Button onClick={doClose} colorScheme="green" mt={5}>

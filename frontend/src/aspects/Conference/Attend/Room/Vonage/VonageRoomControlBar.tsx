@@ -1,5 +1,5 @@
 import { CheckCircleIcon, NotAllowedIcon, SettingsIcon } from "@chakra-ui/icons";
-import { Box, Button, Tag, TagLabel, TagLeftIcon, useDisclosure, VStack, Wrap, WrapItem } from "@chakra-ui/react";
+import { Box, Button, Tag, TagLabel, TagLeftIcon, useToast, VStack, Wrap, WrapItem } from "@chakra-ui/react";
 import React, { useCallback, useMemo, useState } from "react";
 import FAIcon from "../../../../Icons/FAIcon";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
@@ -18,9 +18,30 @@ export function VonageRoomControlBar({
 }): JSX.Element {
     const { state, dispatch } = useVonageRoom();
     const vonage = useVonageGlobalState();
-    const { isOpen, onClose: innerOnClose, onOpen } = useDisclosure();
+
+    const [isOpening, setIsOpening] = useState<boolean>(false);
+    const [userMediaPermissionGranted, setUserMediaPermissionGranted] = useState<{
+        camera: boolean;
+        microphone: boolean;
+    }>({
+        camera: false,
+        microphone: false,
+    });
+    const [deviceModalState, setDeviceModalState] = useState<{
+        isOpen: boolean;
+        showCamera: boolean;
+        showMicrophone: boolean;
+    }>({
+        isOpen: false,
+        showCamera: false,
+        showMicrophone: false,
+    });
+
     const [startCameraOnClose, setStartCameraOnClose] = useState<boolean>(false);
     const [startMicrophoneOnClose, setStartMicrophoneOnClose] = useState<boolean>(false);
+
+    const toast = useToast();
+
     const onClose = useCallback(
         (madeSelection: boolean, cameraId: string | null = null, microphoneId: string | null = null) => {
             if (madeSelection) {
@@ -50,22 +71,65 @@ export function VonageRoomControlBar({
             setStartCameraOnClose(false);
             setStartMicrophoneOnClose(false);
 
-            innerOnClose();
+            setDeviceModalState({
+                ...deviceModalState,
+                isOpen: false,
+            });
         },
         [
+            deviceModalState,
             dispatch,
-            innerOnClose,
             startCameraOnClose,
             startMicrophoneOnClose,
             state.preferredCameraId,
             state.preferredMicrophoneId,
         ]
     );
+    const onOpen = useCallback(
+        (video: boolean, audio: boolean) => {
+            setIsOpening(true);
+            (async () => {
+                try {
+                    if (
+                        (video && !userMediaPermissionGranted.camera) ||
+                        (audio && !userMediaPermissionGranted.microphone)
+                    ) {
+                        await navigator.mediaDevices.getUserMedia({ video, audio });
+                        setUserMediaPermissionGranted({
+                            camera: userMediaPermissionGranted.camera || video,
+                            microphone: userMediaPermissionGranted.microphone || audio,
+                        });
+                    }
+                    setDeviceModalState({
+                        isOpen: true,
+                        showCamera: video,
+                        showMicrophone: audio,
+                    });
+                } catch (e) {
+                    toast({
+                        status: "error",
+                        title: "Unable to get media devices - was permission denied?",
+                        description: e.message ?? e.toString(),
+                        isClosable: true,
+                        duration: 15000,
+                        position: "bottom",
+                    });
+                    setUserMediaPermissionGranted({
+                        camera: video ? false : userMediaPermissionGranted.camera,
+                        microphone: audio ? false : userMediaPermissionGranted.microphone,
+                    });
+                } finally {
+                    setIsOpening(false);
+                }
+            })();
+        },
+        [toast, userMediaPermissionGranted.camera, userMediaPermissionGranted.microphone]
+    );
 
     const startCamera = useCallback(() => {
         if (!state.preferredCameraId) {
             setStartCameraOnClose(true);
-            onOpen();
+            onOpen(true, false);
         } else {
             dispatch({
                 type: VonageRoomStateActionType.SetCameraIntendedState,
@@ -84,7 +148,7 @@ export function VonageRoomControlBar({
     const startMicrophone = useCallback(() => {
         if (!state.preferredMicrophoneId) {
             setStartMicrophoneOnClose(true);
-            onOpen();
+            onOpen(false, true);
         } else {
             dispatch({
                 type: VonageRoomStateActionType.SetMicrophoneIntendedState,
@@ -147,7 +211,7 @@ export function VonageRoomControlBar({
                         </Box>
                     </WrapItem>
                     <WrapItem>
-                        <Button leftIcon={<SettingsIcon />} onClick={onOpen}>
+                        <Button isLoading={isOpening} leftIcon={<SettingsIcon />} onClick={() => onOpen(true, true)}>
                             Settings
                         </Button>
                     </WrapItem>
@@ -160,7 +224,7 @@ export function VonageRoomControlBar({
                         </WrapItem>
                     ) : (
                         <WrapItem>
-                            <Button onClick={startCamera}>
+                            <Button isLoading={isOpening} onClick={startCamera}>
                                 <FAIcon icon="video" iconStyle="s" />
                                 <span style={{ marginLeft: "1rem" }}>Start camera</span>
                             </Button>
@@ -175,7 +239,7 @@ export function VonageRoomControlBar({
                         </WrapItem>
                     ) : (
                         <WrapItem>
-                            <Button onClick={startMicrophone}>
+                            <Button isLoading={isOpening} onClick={startMicrophone}>
                                 <FAIcon icon="microphone" iconStyle="s" />
                                 <span style={{ marginLeft: "1rem" }}>Start microphone</span>
                             </Button>
@@ -258,9 +322,11 @@ export function VonageRoomControlBar({
                     state.preferredMicrophoneId ??
                     null
                 }
-                isOpen={isOpen}
+                isOpen={deviceModalState.isOpen}
+                showCamera={deviceModalState.showCamera}
+                showMicrophone={deviceModalState.showMicrophone}
                 onClose={onClose}
-                onOpen={onOpen}
+                onOpen={() => onOpen(true, true)}
             />
         </>
     );

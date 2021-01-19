@@ -19,13 +19,11 @@ router.post("/inserted", bodyParser.json(), async (req: Request, res: Response) 
         return;
     }
 
-    try {
-        await handleConferencePrepareJobInserted(req.body);
-    } catch (e) {
-        console.error("Failure while handling ConferencePrepareJob inserted", e);
-        res.status(500).json("Failure while handling event");
-        return;
-    }
-
-    res.status(200).json("OK");
+    const params: Payload<ConferencePrepareJobData> = req.body;
+    handleConferencePrepareJobInserted(params).then(() => {
+        console.log("Finished handling new ConferencePrepareJob", params.id, params.event.data.new?.id)
+    }).catch((e) => {
+        console.error("Failure while handling ConferencePrepareJob inserted", params.id, params.event.data.new?.id, e);
+    });
+    return res.status(200).json("OK");
 });

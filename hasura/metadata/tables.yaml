@@ -2207,7 +2207,7 @@
     retry_conf:
       num_retries: 0
       interval_sec: 10
-      timeout_sec: 60
+      timeout_sec: 300
     webhook: '{{ACTION_BASE_URL}}/conferencePrepareJob/inserted'
     headers:
     - name: x-hasura-event-secret

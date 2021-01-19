@@ -2,6 +2,7 @@ import { gql } from "@apollo/client/core";
 import { ContentItemDataBlob, ContentType_Enum } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
 import {
+    CompleteConferencePrepareJobDocument,
     CreateBroadcastContentItemDocument,
     CreateVideoRenderJobDocument,
     CreateVonageBroadcastContentItemDocument,
@@ -16,6 +17,7 @@ import { failConferencePrepareJob } from "../lib/conferencePrepareJob";
 import { createTransitions } from "../lib/transitions";
 import Vonage from "../lib/vonage/vonageClient";
 import { ConferencePrepareJobData, Payload } from "../types/hasura/event";
+import { callWithRetry } from "../utils";
 
 gql`
     query OtherConferencePrepareJobs($conferenceId: uuid!, $conferencePrepareJobId: uuid!) {
@@ -42,15 +44,17 @@ gql`
 export async function handleConferencePrepareJobInserted(payload: Payload<ConferencePrepareJobData>): Promise<void> {
     assert(payload.event.data.new, "Payload must contain new row data");
 
-    console.log("Conference prepare: job triggered", payload.event.data.new.id, payload.event.data.new.conferenceId);
+    const newRow = payload.event.data.new;
+
+    console.log("Conference prepare: job triggered", newRow.id, newRow.conferenceId);
 
     try {
         // get list of other in-progress jobs. If any are in progress, set this new one to failed and return.
         const otherJobs = await apolloClient.query({
             query: OtherConferencePrepareJobsDocument,
             variables: {
-                conferenceId: payload.event.data.new.conferenceId,
-                conferencePrepareJobId: payload.event.data.new.id,
+                conferenceId: newRow.conferenceId,
+                conferencePrepareJobId: newRow.id,
             },
         });
 
@@ -58,25 +62,39 @@ export async function handleConferencePrepareJobInserted(payload: Payload<Confer
             console.log(
                 "Conference prepare: another job in progress, aborting.",
                 otherJobs.data.ConferencePrepareJob[0].id,
-                payload.event.data.new.id
+                newRow.id
             );
             throw new Error(
                 `Another conference prepare job (${otherJobs.data.ConferencePrepareJob[0].id}) is already in progress`
             );
         }
 
-        await createVideoBroadcastItems(payload.event.data.new.id, payload.event.data.new.conferenceId);
+        const createdJob = await createVideoBroadcastItems(newRow.id, newRow.conferenceId);
         // await createEventTitleSlideBroadcastItems(payload.event.data.new.id, payload.event.data.new.conferenceId);
-        await createEventVonageSessionsBroadcastItems(payload.event.data.new.conferenceId);
+        await createEventVonageSessionsBroadcastItems(newRow.conferenceId);
 
-        console.log("Conference prepare: finished initialising job", payload.event.data.new.id);
+        console.log("Conference prepare: finished initialising job", newRow.id);
+
+        if (!createdJob) {
+            callWithRetry(async () => {
+                await apolloClient.mutate({
+                    mutation: CompleteConferencePrepareJobDocument,
+                    variables: {
+                        id: newRow.id,
+                    },
+                });
+            });
+            console.log("Conference prepare: job completed without needing to render broadcast items", newRow.id);
+        }
     } catch (e) {
         console.error("Conference prepare: fatal error while initialising job", e);
-        await failConferencePrepareJob(payload.event.data.new.id, e.message ?? "Unknown error while initialising job");
+        callWithRetry(async () => {
+            await failConferencePrepareJob(newRow.id, e.message ?? "Unknown error while initialising job");
+        });
     }
 }
 
-async function createVideoBroadcastItems(conferencePrepareJobId: string, conferenceId: string): Promise<void> {
+async function createVideoBroadcastItems(conferencePrepareJobId: string, conferenceId: string): Promise<boolean> {
     const videoBroadcastItems = await apolloClient.query({
         query: GetVideoBroadcastContentItemsDocument,
         variables: {
@@ -87,6 +105,8 @@ async function createVideoBroadcastItems(conferencePrepareJobId: string, confere
         `Conference prepare: found ${videoBroadcastItems.data.ContentItem.length} video broadcast items`,
         conferencePrepareJobId
     );
+
+    let createdJob = false;
 
     // For each video broadcast, add a broadcast content item if the item
     // has already been transcoded for broadcast. Else fire off a transcoding job.
@@ -138,12 +158,20 @@ async function createVideoBroadcastItems(conferencePrepareJobId: string, confere
 
             let broadcastContentItemId;
             try {
-                broadcastContentItemId = await upsertPendingMP4BroadcastContentItem(
-                    conferencePrepareJobId,
-                    conferenceId,
-                    videoBroadcastItem.id
+                broadcastContentItemId = callWithRetry(
+                    async () =>
+                        await upsertPendingMP4BroadcastContentItem(
+                            conferencePrepareJobId,
+                            conferenceId,
+                            videoBroadcastItem.id
+                        )
                 );
             } catch (e) {
+                console.error(
+                    "Failed to upsert pending MP4 broadcast content item",
+                    conferencePrepareJobId,
+                    videoBroadcastItem.id
+                );
                 continue;
             }
 
@@ -163,8 +191,11 @@ async function createVideoBroadcastItems(conferencePrepareJobId: string, confere
                     broadcastContentItemId,
                 },
             });
+            createdJob = true;
         }
     }
+
+    return createdJob;
 }
 
 async function upsertPendingMP4BroadcastContentItem(

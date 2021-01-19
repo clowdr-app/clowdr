@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Button, Heading } from "@chakra-ui/react";
+import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Button, Heading, useToast } from "@chakra-ui/react";
 import { VonageSessionLayoutData, VonageSessionLayoutType } from "@clowdr-app/shared-types/build/vonage";
 import React, { useCallback } from "react";
 import {
@@ -28,6 +28,7 @@ export function BroadcastControlPanel({
     eventVonageSessionId: string | null;
 }): JSX.Element {
     const [updateLayout] = useUpdateEventVonageSessionLayoutMutation();
+    const toast = useToast();
 
     const setLayout = useCallback(
         async (layoutData: VonageSessionLayoutData) => {
@@ -36,12 +37,21 @@ export function BroadcastControlPanel({
                 throw new Error("No Vonage session available for layout update");
             }
 
-            await updateLayout({
-                variables: {
-                    eventVonageSessionId,
-                    layoutData,
-                },
-            });
+            try {
+                await updateLayout({
+                    variables: {
+                        eventVonageSessionId,
+                        layoutData,
+                    },
+                });
+            } catch (e) {
+                console.error("Failed to update layout of Vonage broadcast", e);
+                toast({
+                    status: "error",
+                    title: "Could not set the broadcast layout",
+                    description: "If this error persists, you may need to leave and re-enter the room.",
+                });
+            }
         },
         [eventVonageSessionId, updateLayout]
     );

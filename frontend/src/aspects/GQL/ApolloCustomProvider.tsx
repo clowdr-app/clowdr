@@ -27,7 +27,7 @@ interface TokenCacheEntry {
 
 class AuthTokenCache {
     static readonly CacheKey = "CLOWDR_AUTH_CACHE";
-    static readonly TokenExpiryTime = 36000 * 1000;
+    static readonly TokenExpiryTime = (36000 - 60) * 1000;
 
     mutex: Mutex;
     tokens: Map<string, TokenCacheEntry>;

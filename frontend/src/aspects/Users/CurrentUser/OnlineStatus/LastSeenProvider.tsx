@@ -65,6 +65,7 @@ function LastSeenProvider_UserIdExists({
         refetch: refetchGetLastSeen,
     } = useGetCurrentUserLastSeenQuery({
         variables: { userId },
+        fetchPolicy: "network-only",
     });
     const lastSeen = lastSeenData?.OnlineStatus[0]?.lastSeen;
 
@@ -106,7 +107,7 @@ function LastSeenProvider_UserIdExists({
                 lastSeen: new Date().toISOString(),
             },
         });
-    }, 60 * 1000);
+    }, 300 * 1000);
 
     const value = lastSeen && (loading ? undefined : new Date(lastSeen));
     return <LastSeenContext.Provider value={value}>{children}</LastSeenContext.Provider>;

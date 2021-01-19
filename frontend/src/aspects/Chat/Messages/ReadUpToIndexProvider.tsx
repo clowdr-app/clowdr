@@ -52,6 +52,8 @@ function ReadUpToIndexProvider_UserExists({
             attendeeId,
             chatId,
         },
+        pollInterval: 120000,
+        fetchPolicy: "cache-and-network"
     });
     const [setUnread] = useSetReadUpToIndexMutation();
     const messages = useReceiveMessageQueries();

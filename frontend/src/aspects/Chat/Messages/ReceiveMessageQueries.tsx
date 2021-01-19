@@ -145,11 +145,9 @@ export default function ReceiveMessageQueriesProvider({
 }): JSX.Element {
     const selectMessagesPageQ = useSelectMessagesPageQuery({
         skip: true,
-        fetchPolicy: "network-only",
     });
     const selectFirstMessagesPageQ = useSelectFirstMessagesPageQuery({
         skip: true,
-        fetchPolicy: "network-only",
     });
     const refetchSingleMessageQ = useSelectSingleMessageQuery({
         skip: true,
@@ -230,7 +228,6 @@ export default function ReceiveMessageQueriesProvider({
             chatId,
             prevId: liveMessages.maxId,
         },
-        fetchPolicy: "network-only",
     });
     const nextReactionsSub = useNextReactionsQuery({
         variables: {

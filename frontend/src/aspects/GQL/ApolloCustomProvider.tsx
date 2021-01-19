@@ -3,6 +3,7 @@ import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { setContext } from "@apollo/link-context";
 import { useAuth0 } from "@auth0/auth0-react";
+import { persistCache } from "apollo3-cache-persist";
 import { Mutex } from "async-mutex";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -229,17 +230,18 @@ export default function ApolloCustomProvider({
                     },
                 },
             });
+
             // Apollo's local storage cache is a totally broken PoS...
             //  if you hit the memory limit, it crashes your whole website
             //  with a quoto-exceeded error. It also doesn't handle switching
             //  accounts (i.e. auth tokens).
-            //
+
             // if (import.meta.env.MODE !== "development") {
-            //     await persistCache({
-            //         cache,
-            //         storage: window.localStorage,
-            //         maxSize: 1048576 * 50, // 50 MiB
-            //     });
+                await persistCache({
+                    cache,
+                    storage: window.localStorage,
+                    maxSize: 1048576 * 3, // 3 MiB
+                });
             // }
 
             const client = new ApolloClient({
@@ -254,7 +256,7 @@ export default function ApolloCustomProvider({
 
             setClient(client);
         })();
-    }, [conferenceSlug, getAccessTokenSilently, isAuthenticated, user?.id]);
+    }, [conferenceSlug, getAccessTokenSilently, isAuthenticated, user?.sub]);
 
     if (client === undefined) {
         return <AppLoadingScreen />;

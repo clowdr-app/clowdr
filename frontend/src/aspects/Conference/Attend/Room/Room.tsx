@@ -98,6 +98,7 @@ export function Room({
         variables: {
             currentEventId: currentRoomEvent?.id ?? "00000000-0000-0000-0000-000000000000",
         },
+        fetchPolicy: "network-only",
     });
 
     const maybeCurrentEventZoomDetails = useMemo(() => {

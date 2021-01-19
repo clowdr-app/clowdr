@@ -97,6 +97,7 @@ export default function RoomPage({ roomId }: { roomId: string }): JSX.Element {
         variables: {
             roomId,
         },
+        fetchPolicy: "network-only",
     });
     const title = useTitle(result.loading ? "Loading room" : result.data?.Room_by_pk?.name ?? "Unknown room");
 

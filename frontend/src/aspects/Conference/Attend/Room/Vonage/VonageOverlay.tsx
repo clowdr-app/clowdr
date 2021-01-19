@@ -28,6 +28,7 @@ export function VonageOverlay({ connectionData }: { connectionData: string }): J
         variables: {
             id: attendeeId,
         },
+        fetchPolicy: "network-only",
     });
     const profileModal = useChatProfileModal();
     const toast = useToast();

@@ -109,6 +109,7 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
         variables: {
             inviteCode,
         },
+        fetchPolicy: "network-only",
     });
     useQueryErrorToast(error, "AcceptInvitationPage");
 

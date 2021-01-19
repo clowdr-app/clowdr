@@ -57,6 +57,7 @@ function RoomParticipantsProvider_Polling({
             conferenceId: conference.id,
         },
         pollInterval: 30000,
+        fetchPolicy: "network-only",
     });
 
     const value = loading ? undefined : error ? false : data?.RoomParticipant ?? false;

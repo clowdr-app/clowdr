@@ -41,6 +41,7 @@ export function EventEndControls({
 
     const { refetch } = useGetBreakoutRoomFromEventQuery({
         skip: true,
+        fetchPolicy: "network-only",
     });
 
     useEffect(() => {

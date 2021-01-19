@@ -53,6 +53,7 @@ export function EventVonageRoom({ eventId }: { eventId: string }): JSX.Element {
         variables: {
             eventId,
         },
+        fetchPolicy: "network-only",
     });
 
     const mAttendee = useMaybeCurrentAttendee();

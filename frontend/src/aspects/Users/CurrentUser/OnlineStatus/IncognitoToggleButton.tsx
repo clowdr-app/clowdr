@@ -43,6 +43,7 @@ function IncognitoToggleButton_WithUserId({ userId }: { userId: string }) {
         data: isIncognitoData,
     } = useGetCurrentUserIsIncognitoQuery({
         variables: { userId },
+        fetchPolicy: "network-only",
     });
     const isIncognito = isIncognitoData?.OnlineStatus[0]?.isIncognito;
 

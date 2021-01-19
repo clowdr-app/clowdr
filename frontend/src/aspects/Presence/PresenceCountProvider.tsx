@@ -52,9 +52,11 @@ export default function PresenceCountProvider({
             path: location.pathname,
         },
         pollInterval: 30000,
+        fetchPolicy: "network-only",
     });
     const { refetch: getPresenceCountOfQ } = useGetPresenceCountOfQuery({
         skip: true,
+        fetchPolicy: "network-only",
     });
     const previousErrorPath = useRef<string | null>(null);
 

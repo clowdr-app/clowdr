@@ -236,7 +236,7 @@ function VonageRoomInner({
                         width="100%"
                         pointerEvents="none"
                     />
-                    <Box position="absolute" left="0.4rem" bottom="0.35rem" zIndex="200">
+                    <Box position="absolute" left="0.4rem" bottom="0.35rem" zIndex="200" width="100%">
                         <VonageOverlay connectionData={JSON.stringify({ attendeeId: attendee.id })} />
                     </Box>
                 </Box>
@@ -307,7 +307,7 @@ function VonageRoomInner({
                                 width="100%"
                                 pointerEvents="none"
                             />
-                            <Box position="absolute" left="0.4rem" bottom="0.35rem" zIndex="200">
+                            <Box position="absolute" left="0.4rem" bottom="0.4rem" zIndex="200" width="100%">
                                 <VonageOverlay connectionData={JSON.stringify({ attendeeId: attendee.id })} />
                             </Box>
                         </Box>

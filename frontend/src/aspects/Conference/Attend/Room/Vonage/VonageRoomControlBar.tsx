@@ -1,6 +1,6 @@
 import { SettingsIcon } from "@chakra-ui/icons";
 import { Box, Button, useDisclosure, VStack, Wrap, WrapItem } from "@chakra-ui/react";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import FAIcon from "../../../../Icons/FAIcon";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
 import DeviceChooserModal from "./DeviceChooserModal";
@@ -18,14 +18,47 @@ export function VonageRoomControlBar({
 }): JSX.Element {
     const { state, dispatch } = useVonageRoom();
     const vonage = useVonageGlobalState();
-    const { isOpen, onClose, onOpen } = useDisclosure();
+    const { isOpen, onClose: innerOnClose, onOpen } = useDisclosure();
+    const [startCameraOnClose, setStartCameraOnClose] = useState<boolean>(false);
+    const [startMicrophoneOnClose, setStartMicrophoneOnClose] = useState<boolean>(false);
+    const onClose = useCallback(() => {
+        if (startCameraOnClose && state.preferredCameraId) {
+            dispatch({
+                type: VonageRoomStateActionType.SetCameraIntendedState,
+                cameraEnabled: true,
+            });
+        }
+        if (startMicrophoneOnClose && state.preferredMicrophoneId) {
+            dispatch({
+                type: VonageRoomStateActionType.SetMicrophoneIntendedState,
+                microphoneEnabled: true,
+            });
+        }
+
+        setStartCameraOnClose(false);
+        setStartMicrophoneOnClose(false);
+
+        innerOnClose();
+    }, [
+        dispatch,
+        innerOnClose,
+        startCameraOnClose,
+        startMicrophoneOnClose,
+        state.preferredCameraId,
+        state.preferredMicrophoneId,
+    ]);
 
     const startCamera = useCallback(() => {
-        dispatch({
-            type: VonageRoomStateActionType.SetCameraIntendedState,
-            cameraEnabled: true,
-        });
-    }, [dispatch]);
+        if (!state.preferredCameraId) {
+            setStartCameraOnClose(true);
+            onOpen();
+        } else {
+            dispatch({
+                type: VonageRoomStateActionType.SetCameraIntendedState,
+                cameraEnabled: true,
+            });
+        }
+    }, [dispatch, onOpen, state.preferredCameraId]);
 
     const stopCamera = useCallback(() => {
         dispatch({
@@ -35,11 +68,16 @@ export function VonageRoomControlBar({
     }, [dispatch]);
 
     const startMicrophone = useCallback(() => {
-        dispatch({
-            type: VonageRoomStateActionType.SetMicrophoneIntendedState,
-            microphoneEnabled: true,
-        });
-    }, [dispatch]);
+        if (!state.preferredMicrophoneId) {
+            setStartMicrophoneOnClose(true);
+            onOpen();
+        } else {
+            dispatch({
+                type: VonageRoomStateActionType.SetMicrophoneIntendedState,
+                microphoneEnabled: true,
+            });
+        }
+    }, [dispatch, onOpen, state.preferredMicrophoneId]);
 
     const stopMicrophone = useCallback(() => {
         dispatch({

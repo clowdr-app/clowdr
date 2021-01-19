@@ -225,6 +225,7 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
                                         sources={{
                                             chatId: contentGroupData.chatId,
                                             chatLabel: "Discussion",
+                                            chatTitle: contentGroupData.title,
                                         }}
                                         height="100%"
                                     />

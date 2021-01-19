@@ -15,9 +15,7 @@ import React, { useEffect, useState } from "react";
 interface Props {
     isOpen: boolean;
     onOpen: () => void;
-    onClose: () => void;
-    onChangeCamera: (cameraId: string) => void;
-    onChangeMicrophone: (microphoneId: string) => void;
+    onClose: (madeSelection: boolean, cameraId?: string | null, microphoneId?: string | null) => void;
     cameraId: string | null;
     microphoneId: string | null;
 }
@@ -25,14 +23,12 @@ interface Props {
 export default function DeviceChooserModal({
     isOpen,
     onClose,
-    onChangeCamera,
-    onChangeMicrophone,
     cameraId,
     microphoneId,
 }: Props): JSX.Element {
     const [mediaDevices, setMediaDevices] = useState<MediaDeviceInfo[]>([]);
-    const [selectedCamera, setSelectedCamera] = useState<string | null>();
-    const [selectedMicrophone, setSelectedMicrophone] = useState<string | null>();
+    const [selectedCamera, setSelectedCamera] = useState<string | null>(cameraId);
+    const [selectedMicrophone, setSelectedMicrophone] = useState<string | null>(microphoneId);
 
     useEffect(() => {
         async function effect() {
@@ -44,9 +40,19 @@ export default function DeviceChooserModal({
         }
     }, [isOpen]);
 
+    function doClose() {
+        onClose(true, selectedCamera, selectedMicrophone);
+    }
+    
+    function doCancel() {
+        onClose(false);
+        setSelectedCamera(cameraId);
+        setSelectedMicrophone(microphoneId);
+    }
+
     return (
         <>
-            <Modal scrollBehavior="inside" onClose={onClose} isOpen={isOpen} motionPreset="scale">
+            <Modal scrollBehavior="inside" onClose={doCancel} isOpen={isOpen} motionPreset="scale">
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>
@@ -61,8 +67,8 @@ export default function DeviceChooserModal({
                         </Heading>
                         <Select
                             placeholder="Choose camera"
-                            value={selectedCamera ?? cameraId ?? undefined}
-                            onChange={(e) => setSelectedCamera(e.target.value)}
+                            value={selectedCamera ?? undefined}
+                            onChange={(e) => e.target.value === "" ? null : setSelectedCamera(e.target.value)}
                         >
                             {mediaDevices
                                 .filter((device) => device.kind === "videoinput")
@@ -77,8 +83,8 @@ export default function DeviceChooserModal({
                         </Heading>
                         <Select
                             placeholder="Choose microphone"
-                            value={selectedMicrophone ?? microphoneId ?? undefined}
-                            onChange={(e) => setSelectedMicrophone(e.target.value)}
+                            value={selectedMicrophone ?? undefined}
+                            onChange={(e) => e.target.value === "" ? null : setSelectedMicrophone(e.target.value)}
                         >
                             {mediaDevices
                                 .filter((device) => device.kind === "audioinput")
@@ -91,17 +97,7 @@ export default function DeviceChooserModal({
                     </ModalBody>
                     <ModalFooter>
                         <Button
-                            onClick={() => {
-                                if (selectedCamera && selectedCamera !== cameraId) {
-                                    onChangeCamera(selectedCamera);
-                                }
-                                if (selectedMicrophone && selectedMicrophone !== microphoneId) {
-                                    onChangeMicrophone(selectedMicrophone);
-                                }
-                                onClose();
-                                setSelectedCamera(null);
-                                setSelectedMicrophone(null);
-                            }}
+                            onClick={doClose}
                             colorScheme="green"
                             mt={5}
                         >

@@ -21,32 +21,46 @@ export function VonageRoomControlBar({
     const { isOpen, onClose: innerOnClose, onOpen } = useDisclosure();
     const [startCameraOnClose, setStartCameraOnClose] = useState<boolean>(false);
     const [startMicrophoneOnClose, setStartMicrophoneOnClose] = useState<boolean>(false);
-    const onClose = useCallback(() => {
-        if (startCameraOnClose && state.preferredCameraId) {
-            dispatch({
-                type: VonageRoomStateActionType.SetCameraIntendedState,
-                cameraEnabled: true,
-            });
-        }
-        if (startMicrophoneOnClose && state.preferredMicrophoneId) {
-            dispatch({
-                type: VonageRoomStateActionType.SetMicrophoneIntendedState,
-                microphoneEnabled: true,
-            });
-        }
+    const onClose = useCallback(
+        (madeSelection: boolean, cameraId: string | null = null, microphoneId: string | null = null) => {
+            if (madeSelection) {
+                if (cameraId && cameraId !== state.preferredCameraId) {
+                    dispatch({ type: VonageRoomStateActionType.SetPreferredCamera, cameraId });
+                }
 
-        setStartCameraOnClose(false);
-        setStartMicrophoneOnClose(false);
+                if (microphoneId && microphoneId !== state.preferredMicrophoneId) {
+                    dispatch({ type: VonageRoomStateActionType.SetPreferredMicrophone, microphoneId });
+                }
 
-        innerOnClose();
-    }, [
-        dispatch,
-        innerOnClose,
-        startCameraOnClose,
-        startMicrophoneOnClose,
-        state.preferredCameraId,
-        state.preferredMicrophoneId,
-    ]);
+                if (startCameraOnClose && cameraId) {
+                    dispatch({
+                        type: VonageRoomStateActionType.SetCameraIntendedState,
+                        cameraEnabled: true,
+                    });
+                }
+
+                if (startMicrophoneOnClose && microphoneId) {
+                    dispatch({
+                        type: VonageRoomStateActionType.SetMicrophoneIntendedState,
+                        microphoneEnabled: true,
+                    });
+                }
+            }
+
+            setStartCameraOnClose(false);
+            setStartMicrophoneOnClose(false);
+
+            innerOnClose();
+        },
+        [
+            dispatch,
+            innerOnClose,
+            startCameraOnClose,
+            startMicrophoneOnClose,
+            state.preferredCameraId,
+            state.preferredMicrophoneId,
+        ]
+    );
 
     const startCamera = useCallback(() => {
         if (!state.preferredCameraId) {
@@ -179,20 +193,14 @@ export function VonageRoomControlBar({
             </VStack>
             <DeviceChooserModal
                 cameraId={
-                    state.preferredCameraId ?? state.cameraStream?.getVideoTracks()[0].getSettings().deviceId ?? null
+                    state.cameraStream?.getVideoTracks()[0].getSettings().deviceId ?? state.preferredCameraId ?? null
                 }
                 microphoneId={
-                    state.preferredMicrophoneId ??
                     state.microphoneStream?.getAudioTracks()[0].getSettings().deviceId ??
+                    state.preferredMicrophoneId ??
                     null
                 }
                 isOpen={isOpen}
-                onChangeCamera={(cameraId) =>
-                    dispatch({ type: VonageRoomStateActionType.SetPreferredCamera, cameraId })
-                }
-                onChangeMicrophone={(microphoneId) =>
-                    dispatch({ type: VonageRoomStateActionType.SetPreferredMicrophone, microphoneId })
-                }
                 onClose={onClose}
                 onOpen={onOpen}
             />

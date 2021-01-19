@@ -2,6 +2,7 @@ import { assertType } from "typescript-is";
 import { OngoingBroadcastableVideoRoomEventsDocument } from "../../generated/graphql";
 import { apolloClient } from "../../graphqlClient";
 import { CustomConnectionData, WebhookReqBody } from "../../types/vonage";
+import { callWithRetry } from "../../utils";
 import {
     addEventParticipantStream,
     addRoomParticipant,
@@ -61,7 +62,9 @@ export async function addAndRemoveRoomParticipants(payload: WebhookReqBody): Pro
             );
             const data = JSON.parse(payload.connection.data);
             const { attendeeId } = assertType<CustomConnectionData>(data);
-            await addRoomParticipant(payload.sessionId, payload.connection.id, attendeeId);
+            await callWithRetry(
+                async () => await addRoomParticipant(payload.sessionId, payload.connection.id, attendeeId)
+            );
         } catch (e) {
             console.error(
                 "Failed to handle Vonage connectionCreated event",
@@ -82,7 +85,9 @@ export async function addAndRemoveRoomParticipants(payload: WebhookReqBody): Pro
             );
             const data = JSON.parse(payload.connection.data);
             const { attendeeId } = assertType<CustomConnectionData>(data);
-            await removeRoomParticipant(payload.sessionId, attendeeId, payload.connection.id);
+            await callWithRetry(
+                async () => await removeRoomParticipant(payload.sessionId, attendeeId, payload.connection.id)
+            );
         } catch (e) {
             console.error(
                 "Failed to handle Vonage connectionDestroyed event",
@@ -109,7 +114,9 @@ export async function addAndRemoveEventParticipantStreams(payload: WebhookReqBod
             );
             const data = JSON.parse(payload.stream.connection.data);
             const { attendeeId } = assertType<CustomConnectionData>(data);
-            await addEventParticipantStream(payload.sessionId, attendeeId, payload.stream);
+            await callWithRetry(
+                async () => await addEventParticipantStream(payload.sessionId, attendeeId, payload.stream)
+            );
         } catch (e) {
             console.error("Failed to handle Vonage streamCreated event", payload.sessionId, payload.stream.id, e);
             success = false;
@@ -125,7 +132,9 @@ export async function addAndRemoveEventParticipantStreams(payload: WebhookReqBod
             );
             const data = JSON.parse(payload.stream.connection.data);
             const { attendeeId } = assertType<CustomConnectionData>(data);
-            await removeEventParticipantStream(payload.sessionId, attendeeId, payload.stream);
+            await callWithRetry(
+                async () => await removeEventParticipantStream(payload.sessionId, attendeeId, payload.stream)
+            );
         } catch (e) {
             console.error("Failed to handle Vonage streamDestroyed event", payload.sessionId, payload.stream.id, e);
             success = false;

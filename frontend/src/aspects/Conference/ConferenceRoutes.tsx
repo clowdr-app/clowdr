@@ -281,10 +281,10 @@ function TabTracker(): JSX.Element {
 export default function ConferenceRoutes({ confSlug, rootUrl }: { confSlug: string; rootUrl: string }): JSX.Element {
     return (
         <ConferenceProvider confSlug={confSlug}>
-            <PresenceCountProvider>
-                <CurrentUserGroupsRolesPermissionsProvider>
-                    <ConferenceCurrentUserActivePermissionsProvider>
-                        <CurrentAttendeeProvider>
+            <CurrentUserGroupsRolesPermissionsProvider>
+                <ConferenceCurrentUserActivePermissionsProvider>
+                    <CurrentAttendeeProvider>
+                        <PresenceCountProvider>
                             <AttendeesContextProvider>
                                 <TabTracker />
                                 {/* <ShuffleRoomsQueueMonitor /> */}
@@ -294,10 +294,10 @@ export default function ConferenceRoutes({ confSlug, rootUrl }: { confSlug: stri
                                     </SharedRoomContextProvider>
                                 </ChatNotificationsProvider>
                             </AttendeesContextProvider>
-                        </CurrentAttendeeProvider>
-                    </ConferenceCurrentUserActivePermissionsProvider>
-                </CurrentUserGroupsRolesPermissionsProvider>
-            </PresenceCountProvider>
+                        </PresenceCountProvider>
+                    </CurrentAttendeeProvider>
+                </ConferenceCurrentUserActivePermissionsProvider>
+            </CurrentUserGroupsRolesPermissionsProvider>
         </ConferenceProvider>
     );
 }

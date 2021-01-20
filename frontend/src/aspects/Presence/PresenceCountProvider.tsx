@@ -3,6 +3,7 @@ import React, { useCallback, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useGetPresenceCountOfQuery } from "../../generated/graphql";
 import { useConference } from "../Conference/useConference";
+import { useMaybeCurrentAttendee } from "../Conference/useCurrentAttendee";
 
 interface PresenceCount {
     pageCount: number | undefined;
@@ -46,13 +47,15 @@ export default function PresenceCountProvider({
 }): JSX.Element {
     const location = useLocation();
     const conference = useConference();
+    const mAttendee = useMaybeCurrentAttendee();
     const presenceCount = useGetPresenceCountOfQuery({
         variables: {
             conferenceId: conference.id,
             path: location.pathname,
         },
-        pollInterval: 30000,
+        pollInterval: 120000,
         fetchPolicy: "network-only",
+        skip: !mAttendee
     });
     const { refetch: getPresenceCountOfQ } = useGetPresenceCountOfQuery({
         skip: true,
@@ -64,7 +67,7 @@ export default function PresenceCountProvider({
 
     const getPageCountOf = useCallback(
         async (path: string) => {
-            if (path === previousErrorPath.current) {
+            if (path === previousErrorPath.current || !mAttendee) {
                 return undefined;
             }
 
@@ -82,7 +85,7 @@ export default function PresenceCountProvider({
                 return undefined;
             }
         },
-        [conference.id, getPresenceCountOfQ]
+        [conference.id, getPresenceCountOfQ, mAttendee]
     );
 
     return (

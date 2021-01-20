@@ -108,15 +108,18 @@ export default function AttendeesContextProvider({
 
             try {
                 if (requiredAttendeeIds.size > 0) {
-                    const datas = await attendeesByIdQ.refetch({
-                        attendeeIds: [...requiredAttendeeIds.values()].filter((x) => x !== undefined && x !== null),
-                        conferenceId: conference.id,
-                    });
+                    const filteredIds = [...requiredAttendeeIds.values()].filter((x) => x !== undefined && x !== null);
+                    if (filteredIds.length > 0) {
+                        const datas = await attendeesByIdQ.refetch({
+                            attendeeIds: filteredIds,
+                            conferenceId: conference.id,
+                        });
 
-                    now = Date.now();
-                    datas.data.Attendee.forEach((attendee) => {
-                        attendees.current.set(attendee.id, { attendee, fetchedAt: now });
-                    });
+                        now = Date.now();
+                        datas.data.Attendee.forEach((attendee) => {
+                            attendees.current.set(attendee.id, { attendee, fetchedAt: now });
+                        });
+                    }
                 }
             } catch (e) {
                 console.error("Could not fetch attendees for chat!", e);

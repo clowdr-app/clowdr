@@ -80,7 +80,7 @@ function reduce<T>(oldState: ReducerState<T>, action: ReducerActions<T>) {
                 }
             });
         } else {
-            newState.stateName = "end-of-feed";
+            // newState.stateName = "end-of-feed";
             newState.lastError = null;
             newState.nextIndex = action.nextIndex;
         }

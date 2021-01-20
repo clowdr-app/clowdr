@@ -23,14 +23,12 @@ export function VonageRoom({
 }): JSX.Element {
     const mAttendee = useMaybeCurrentAttendee();
 
-    console.log(`Session id: "${vonageSessionId}"`);
     const location = useLocation();
     const locationParts = (location.pathname.startsWith("/") ? location.pathname.substr(1) : location.pathname).split(
         "/"
     );
     // Array(5) [ "conference", "demo2021", "room", "96b73184-a5ae-4356-81d7-5f99689d1413" ]
     const roomCouldBeInUse = locationParts[0] === "conference" && locationParts[2] === "room";
-    console.log(locationParts);
 
     return (
         <VonageRoomStateProvider>

@@ -244,7 +244,7 @@ export default function ReceiveMessageQueriesProvider({
             setLiveReactions(data.data.chat_Reaction);
         })();
     }, [liveMessages.msgs, nextReactionsSub]);
-    usePolling(pollCb, 2000, true);
+    usePolling(pollCb, 5000, true);
     useEffect(() => {
         setRefetchMsg(null);
         setLiveMessages((prevLiveMessages) => {

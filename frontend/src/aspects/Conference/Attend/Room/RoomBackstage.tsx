@@ -145,7 +145,7 @@ export function RoomBackstage({
                         </>
                     )}
                     {selectedEventId === event.id ? (
-                        <Box display={haveAccessToEvent ? "block" : "none"} mt={2}>
+                        <Box mt={2}>
                             <EventVonageRoom eventId={event.id} />
                         </Box>
                     ) : (

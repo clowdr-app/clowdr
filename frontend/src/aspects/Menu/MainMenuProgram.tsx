@@ -16,6 +16,7 @@ import {
     Text,
 } from "@chakra-ui/react";
 import { formatRelative } from "date-fns";
+import * as R from "ramda";
 import React, { useCallback, useEffect, useState } from "react";
 import {
     MenuSchedule_EventFragment,
@@ -30,15 +31,25 @@ import ApolloQueryWrapper from "../GQL/ApolloQueryWrapper";
 import { FAIcon } from "../Icons/FAIcon";
 
 gql`
-    query MenuSchedule($now: timestamptz!, $in30Minutes: timestamptz!, $inOneHour: timestamptz!, $conferenceId: uuid!) {
+    query MenuSchedule(
+        $now: timestamptz!
+        $inThreeMinutes: timestamptz!
+        $in30Minutes: timestamptz!
+        $inOneHour: timestamptz!
+        $conferenceId: uuid!
+    ) {
         eventsNow: Event(
-            where: { startTime: { _lte: $now }, endTime: { _gte: $now }, conferenceId: { _eq: $conferenceId } }
+            where: {
+                startTime: { _lte: $inThreeMinutes }
+                endTime: { _gte: $now }
+                conferenceId: { _eq: $conferenceId }
+            }
         ) {
             ...MenuSchedule_Event
         }
 
         eventsIn30mins: Event(
-            where: { startTime: { _gt: $now, _lte: $in30Minutes }, conferenceId: { _eq: $conferenceId } }
+            where: { startTime: { _gt: $inThreeMinutes, _lte: $in30Minutes }, conferenceId: { _eq: $conferenceId } }
         ) {
             ...MenuSchedule_Event
         }
@@ -105,10 +116,12 @@ gql`
 export function MainMenuProgram(): JSX.Element {
     const conference = useConference();
     const [now, setNow] = useState<Date>(new Date());
+    const [inThreeMinutes, setInThreeMinutes] = useState<Date>(new Date(Date.now() + 3 * 60 * 1000));
     const [in30Minutes, setIn30Minutes] = useState<Date>(new Date(Date.now() + 30 * 60 * 1000));
     const [inOneHour, setInOneHour] = useState<Date>(new Date(Date.now() + 60 * 60 * 1000));
     const updateTimes = useCallback(() => {
         setNow(new Date());
+        setInThreeMinutes(new Date(Date.now() + 3 * 60 * 1000));
         setIn30Minutes(new Date(Date.now() + 30 * 60 * 1000));
         setInOneHour(new Date(Date.now() + 60 * 60 * 1000));
     }, []);
@@ -118,6 +131,7 @@ export function MainMenuProgram(): JSX.Element {
         variables: {
             conferenceId: conference.id,
             now,
+            inThreeMinutes,
             in30Minutes,
             inOneHour,
         },
@@ -221,7 +235,7 @@ export function MainMenuProgramInner({
             </Heading>
             {events.length > 0 ? (
                 <List>
-                    {events.map((event) => {
+                    {R.sortBy((e) => e.startTime, events).map((event) => {
                         const eventName = event.name + (event.contentGroup ? ": " + event.contentGroup.title : "");
 
                         return (

@@ -17693,7 +17693,9 @@ export type Chat_ReadUpToIndex_Bool_Exp = {
 /** unique or primary key constraints on table "chat.ReadUpToIndex" */
 export enum Chat_ReadUpToIndex_Constraint {
   /** unique or primary key constraint */
-  ReadUpToIndexPkey = 'ReadUpToIndex_pkey'
+  ReadUpToIndexPkey = 'ReadUpToIndex_pkey',
+  /** unique or primary key constraint */
+  ChatReadUpToIndexPkIndex = 'chat_ReadUpToIndex_pk_index'
 }
 
 /** input type for incrementing integer column in table "chat.ReadUpToIndex" */
@@ -31165,6 +31167,7 @@ export type PinnedChatsWithUnreadCountsQuery = { readonly __typename?: 'query_ro
 
 export type MenuScheduleQueryVariables = Exact<{
   now: Scalars['timestamptz'];
+  inThreeMinutes: Scalars['timestamptz'];
   in30Minutes: Scalars['timestamptz'];
   inOneHour: Scalars['timestamptz'];
   conferenceId: Scalars['uuid'];
@@ -31691,7 +31694,7 @@ export const RoomPage_RoomDetailsFragmentDoc = gql`
   roomPrivacyName
   ...RoomPage_RoomEvents
   ...RoomPage_RoomPeople
-  shuffleRooms {
+  shuffleRooms(limit: 1, order_by: {id: desc}) {
     id
     startedAt
     durationMinutes
@@ -37191,14 +37194,14 @@ export type PinnedChatsWithUnreadCountsQueryHookResult = ReturnType<typeof usePi
 export type PinnedChatsWithUnreadCountsLazyQueryHookResult = ReturnType<typeof usePinnedChatsWithUnreadCountsLazyQuery>;
 export type PinnedChatsWithUnreadCountsQueryResult = Apollo.QueryResult<PinnedChatsWithUnreadCountsQuery, PinnedChatsWithUnreadCountsQueryVariables>;
 export const MenuScheduleDocument = gql`
-    query MenuSchedule($now: timestamptz!, $in30Minutes: timestamptz!, $inOneHour: timestamptz!, $conferenceId: uuid!) {
+    query MenuSchedule($now: timestamptz!, $inThreeMinutes: timestamptz!, $in30Minutes: timestamptz!, $inOneHour: timestamptz!, $conferenceId: uuid!) {
   eventsNow: Event(
-    where: {startTime: {_lte: $now}, endTime: {_gte: $now}, conferenceId: {_eq: $conferenceId}}
+    where: {startTime: {_lte: $inThreeMinutes}, endTime: {_gte: $now}, conferenceId: {_eq: $conferenceId}}
   ) {
     ...MenuSchedule_Event
   }
   eventsIn30mins: Event(
-    where: {startTime: {_gt: $now, _lte: $in30Minutes}, conferenceId: {_eq: $conferenceId}}
+    where: {startTime: {_gt: $inThreeMinutes, _lte: $in30Minutes}, conferenceId: {_eq: $conferenceId}}
   ) {
     ...MenuSchedule_Event
   }
@@ -37223,6 +37226,7 @@ export const MenuScheduleDocument = gql`
  * const { data, loading, error } = useMenuScheduleQuery({
  *   variables: {
  *      now: // value for 'now'
+ *      inThreeMinutes: // value for 'inThreeMinutes'
  *      in30Minutes: // value for 'in30Minutes'
  *      inOneHour: // value for 'inOneHour'
  *      conferenceId: // value for 'conferenceId'

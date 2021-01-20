@@ -108,7 +108,9 @@ export default function AttendeesContextProvider({
 
             try {
                 if (requiredAttendeeIds.size > 0) {
-                    const filteredIds = [...requiredAttendeeIds.values()].filter((x) => x !== undefined && x !== null && x !== "");
+                    const filteredIds = [...requiredAttendeeIds.values()].filter(
+                        (x) => x !== undefined && x !== null && x !== ""
+                    );
                     if (filteredIds.length > 0) {
                         const datas = await attendeesByIdQ.refetch({
                             attendeeIds: filteredIds,

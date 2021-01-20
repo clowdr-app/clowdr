@@ -22,11 +22,7 @@ gql`
     }
 
     subscription SubdMessages_2021_01_19T16_04($attendeeId: uuid!, $chatIds: [uuid!]!) {
-        chat_Message(
-            limit: 1
-            order_by: { id: desc }
-            where: { chatId: { _in: $chatIds } }
-        ) {
+        chat_Message(limit: 1, order_by: { id: desc }, where: { chatId: { _in: $chatIds } }) {
             id
             chatId
             message

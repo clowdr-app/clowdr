@@ -13,7 +13,10 @@ import { RoomList } from "./RoomList";
 
 gql`
     query GetAllRooms($conferenceId: uuid!) {
-        Room(where: { conferenceId: { _eq: $conferenceId } }, order_by: { name: asc }) {
+        Room(
+            where: { conferenceId: { _eq: $conferenceId }, roomPrivacyName: { _neq: MANAGED } }
+            order_by: { name: asc }
+        ) {
             ...RoomListRoomDetails
         }
     }

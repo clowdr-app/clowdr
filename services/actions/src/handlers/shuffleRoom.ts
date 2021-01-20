@@ -55,10 +55,10 @@ gql`
 
     fragment RoomsToEndOfShufflePeriod on room_ShufflePeriod {
         id
-        roomsToEnd: shuffleRooms(
-            where: { startedAt: { _lte: $atLatest }, durationMinutes: { _lte: $maxDuration }, isEnded: { _eq: false } }
-        ) {
+        roomsToEnd: shuffleRooms(where: { startedAt: { _lte: $atLatest }, isEnded: { _eq: false } }) {
             id
+            startedAt
+            durationMinutes
             room {
                 id
                 participants {
@@ -80,12 +80,11 @@ gql`
         $until: timestamptz!
         $untilExtended: timestamptz!
         $atLatest: timestamptz!
-        $maxDuration: Int!
     ) {
         active: room_ShufflePeriod(where: { startAt: { _lte: $from }, endAt: { _gte: $until } }) {
             ...ActiveShufflePeriod
         }
-        ending: room_ShufflePeriod(where: { startAt: { _lte: $from }, endAt: { _gte: $untilExtended } }) {
+        ending: room_ShufflePeriod(where: { endAt: { _lte: $untilExtended } }) {
             ...RoomsToEndOfShufflePeriod
         }
     }
@@ -355,21 +354,32 @@ export async function handleShuffleQueueEntered(payload: Payload<ShuffleQueueEnt
 
 async function endRooms(period: RoomsToEndOfShufflePeriodFragment): Promise<void> {
     try {
+        const now = Date.now();
         await Promise.all(
-            period.roomsToEnd.map(async (shuffleRoom) => {
-                await Promise.all(
-                    shuffleRoom.room.participants.map(async (participant) => {
-                        try {
-                            await kickAttendeeFromRoom(shuffleRoom.room.id, participant.attendeeId);
-                        } catch (e) {
-                            console.error(
-                                `Failed to kick participant while terminating shuffle room. Participant: ${participant.id}`,
-                                e
-                            );
-                        }
-                    })
-                );
-            })
+            period.roomsToEnd
+                .filter((shuffleRoom) => {
+                    const startedAt = Date.parse(shuffleRoom.startedAt);
+                    const duration = shuffleRoom.durationMinutes * 60 * 1000;
+                    return startedAt + duration < now - 5000;
+                })
+                .map(async (shuffleRoom) => {
+                    console.log(`Ending shuffle room: ${shuffleRoom.id}`);
+                    await Promise.all(
+                        shuffleRoom.room.participants.map(async (participant) => {
+                            try {
+                                console.log(
+                                    `Kicking shuffle room participant: ${participant.id} from ${shuffleRoom.id}`
+                                );
+                                await kickAttendeeFromRoom(shuffleRoom.room.id, participant.attendeeId);
+                            } catch (e) {
+                                console.error(
+                                    `Failed to kick participant while terminating shuffle room. Participant: ${participant.id}`,
+                                    e
+                                );
+                            }
+                        })
+                    );
+                })
         );
 
         await apolloClient.mutate({
@@ -388,14 +398,15 @@ export async function processShuffleQueues(): Promise<void> {
     const from = now - 30000;
     const until = now + 30000;
 
+    console.log("Processing end of shuffle rooms");
+
     const result = await apolloClient.query({
         query: SelectActiveShufflePeriodsDocument,
         variables: {
             from: new Date(from).toISOString(),
             until: new Date(until).toISOString(),
-            untilExtended: new Date(until + 5 * 60 * 1000).toISOString(),
-            atLatest: new Date(now - 2 * 60 * 1000).toISOString(),
-            maxDuration: 2,
+            untilExtended: new Date(until + 30000).toISOString(),
+            atLatest: new Date(now - 30 * 1000).toISOString(),
         },
     });
 

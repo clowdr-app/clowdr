@@ -1,10 +1,11 @@
 import { gql } from "@apollo/client";
-import { Alert, AlertIcon, Box, Heading, HStack, Text, useColorModeValue, useToken, VStack } from "@chakra-ui/react";
+import { Alert, AlertIcon, Box, Heading, HStack, Text, useColorModeValue, useToast, useToken, VStack } from "@chakra-ui/react";
 import type { ContentItemDataBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
 import { formatRelative } from "date-fns";
 import * as R from "ramda";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import ReactPlayer from "react-player";
+import { Redirect } from "react-router-dom";
 import {
     ContentGroupType_Enum,
     EventPersonDetailsFragment,
@@ -17,6 +18,7 @@ import { Chat } from "../../../Chat/Chat";
 import type { ChatSources } from "../../../Chat/Configuration";
 import { useRealTime } from "../../../Generic/useRealTime";
 import RoomParticipantsProvider from "../../../Room/RoomParticipantsProvider";
+import { useConference } from "../../useConference";
 import { ContentGroupSummaryWrapper } from "../Content/ContentGroupSummary";
 import { BreakoutVonageRoom } from "./BreakoutVonageRoom";
 import { EventEndControls } from "./EventEndControls";
@@ -43,6 +45,19 @@ gql`
         }
     }
 `;
+
+function hasShuffleRoomEnded({ startedAt, durationMinutes }: { startedAt: string; durationMinutes: number }): boolean {
+    const startedAtMs = Date.parse(startedAt);
+    const durationMs = durationMinutes * 60 * 1000;
+    const now = Date.now();
+    return startedAtMs + durationMs < now;
+}
+
+function isShuffleRoomEndingSoon({ startedAt, durationMinutes }: { startedAt: string; durationMinutes: number }, now: number): boolean {
+    const startedAtMs = Date.parse(startedAt);
+    const durationMs = durationMinutes * 60 * 1000;
+    return startedAtMs + durationMs < now + 30000;
+}
 
 export function Room({
     roomDetails,
@@ -280,7 +295,35 @@ export function Room({
         currentRoomEvent,
     ]);
 
-    return (
+    const [sendShuffleRoomNotification, setSendShuffleRoomNotification] = useState<boolean>(false);
+    useEffect(() => {
+        if (roomDetails.shuffleRooms.length > 0 && isShuffleRoomEndingSoon(roomDetails.shuffleRooms[0], now)) {
+            setSendShuffleRoomNotification(true);
+        }
+    }, [roomDetails.shuffleRooms, now]);
+
+    const toast = useToast();
+    useEffect(() => {
+        if (sendShuffleRoomNotification) {
+            toast({
+                title: "30 seconds left...",
+                description: "...then you'll be moved back to the shuffle home page",
+                status: "warning",
+                duration: 27000,
+                isClosable: true,
+                position: "top-right",
+            });
+        }
+    }, [sendShuffleRoomNotification, toast]);
+
+    const conference = useConference();
+    return roomDetails.shuffleRooms.length > 0 && hasShuffleRoomEnded(roomDetails.shuffleRooms[0]) ? (
+        <Redirect
+            to={`/conference/${conference.slug}/shuffle${
+                !roomDetails.shuffleRooms[0].reshuffleUponEnd ? "/ended" : ""
+            }`}
+        />
+    ) : (
         <HStack width="100%" flexWrap="wrap" alignItems="stretch">
             <VStack
                 textAlign="left"

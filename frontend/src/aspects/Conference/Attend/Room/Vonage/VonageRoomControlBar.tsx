@@ -94,7 +94,15 @@ export function VonageRoomControlBar({
                         (video && !userMediaPermissionGranted.camera) ||
                         (audio && !userMediaPermissionGranted.microphone)
                     ) {
-                        await navigator.mediaDevices.getUserMedia({ video, audio });
+                        try {
+                            await navigator.mediaDevices.getUserMedia({ video, audio });
+                        } catch (e) {
+                            // if you try to get user media while mic/cam are active, you run into an error
+                            const msg = e.toString();
+                            if (!msg.includes("Concurrent") || !msg.includes("limit")) {
+                                throw e;
+                            }
+                        }
                         setUserMediaPermissionGranted({
                             camera: userMediaPermissionGranted.camera || video,
                             microphone: userMediaPermissionGranted.microphone || audio,
@@ -217,30 +225,30 @@ export function VonageRoomControlBar({
                     </WrapItem>
                     {state.cameraStream ? (
                         <WrapItem>
-                            <Button onClick={stopCamera}>
-                                <FAIcon icon="video-slash" iconStyle="s" />
+                            <Button onClick={stopCamera} colorScheme="purple">
+                                <FAIcon icon="video" iconStyle="s" />
                                 <span style={{ marginLeft: "1rem" }}>Stop camera</span>
                             </Button>
                         </WrapItem>
                     ) : (
                         <WrapItem>
                             <Button isLoading={isOpening} onClick={startCamera}>
-                                <FAIcon icon="video" iconStyle="s" />
+                                <FAIcon icon="video-slash" iconStyle="s" />
                                 <span style={{ marginLeft: "1rem" }}>Start camera</span>
                             </Button>
                         </WrapItem>
                     )}
                     {state.microphoneStream ? (
                         <WrapItem>
-                            <Button onClick={stopMicrophone}>
-                                <FAIcon icon="microphone-slash" iconStyle="s" />
+                            <Button onClick={stopMicrophone} colorScheme="purple">
+                                <FAIcon icon="microphone" iconStyle="s" />
                                 <span style={{ marginLeft: "1rem" }}>Stop microphone</span>
                             </Button>
                         </WrapItem>
                     ) : (
                         <WrapItem>
                             <Button isLoading={isOpening} onClick={startMicrophone}>
-                                <FAIcon icon="microphone" iconStyle="s" />
+                                <FAIcon icon="microphone-slash" iconStyle="s" />
                                 <span style={{ marginLeft: "1rem" }}>Start microphone</span>
                             </Button>
                         </WrapItem>

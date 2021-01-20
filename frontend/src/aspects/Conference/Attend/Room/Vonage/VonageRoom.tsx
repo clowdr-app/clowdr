@@ -1,6 +1,7 @@
 import { Alert, AlertIcon, AlertTitle, Box, Flex, useToast, VStack } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 import useUserId from "../../../../Auth/useUserId";
 import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";
 import usePolling from "../../../../Generic/usePolling";
@@ -22,11 +23,24 @@ export function VonageRoom({
 }): JSX.Element {
     const mAttendee = useMaybeCurrentAttendee();
 
+    console.log(`Session id: "${vonageSessionId}"`);
+    const location = useLocation();
+    const locationParts = (location.pathname.startsWith("/") ? location.pathname.substr(1) : location.pathname).split(
+        "/"
+    );
+    // Array(5) [ "conference", "demo2021", "room", "96b73184-a5ae-4356-81d7-5f99689d1413" ]
+    const roomCouldBeInUse = locationParts[0] === "conference" && locationParts[2] === "room";
+    console.log(locationParts);
+
     return (
         <VonageRoomStateProvider>
             <ChatProfileModalProvider>
                 {mAttendee ? (
-                    <VonageRoomInner vonageSessionId={vonageSessionId} getAccessToken={getAccessToken} />
+                    <VonageRoomInner
+                        vonageSessionId={vonageSessionId}
+                        stop={!roomCouldBeInUse}
+                        getAccessToken={getAccessToken}
+                    />
                 ) : undefined}
             </ChatProfileModalProvider>
         </VonageRoomStateProvider>
@@ -36,9 +50,11 @@ export function VonageRoom({
 function VonageRoomInner({
     vonageSessionId,
     getAccessToken,
+    stop,
 }: {
     vonageSessionId: string;
     getAccessToken: () => Promise<string>;
+    stop: boolean;
 }): JSX.Element {
     const maxVideoStreams = 10;
     const { state } = useVonageRoom();
@@ -96,6 +112,12 @@ function VonageRoomInner({
         }
         setJoining(false);
     }, [connected, vonage]);
+
+    useEffect(() => {
+        if (stop) {
+            leaveRoom();
+        }
+    }, [leaveRoom, stop]);
 
     useEffect(() => {
         async function fn() {

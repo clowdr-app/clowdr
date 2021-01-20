@@ -115,7 +115,13 @@ class AuthTokenCache {
     }
 }
 
-async function createApolloClient(isAuthenticated: boolean, conferenceSlug: string | undefined, userId: string | undefined, getAccessTokenSilently: (options?: any) => Promise<string>, tokenCache: AuthTokenCache): Promise<ApolloClient<NormalizedCacheObject>> {
+async function createApolloClient(
+    isAuthenticated: boolean,
+    conferenceSlug: string | undefined,
+    userId: string | undefined,
+    getAccessTokenSilently: (options?: any) => Promise<string>,
+    tokenCache: AuthTokenCache
+): Promise<ApolloClient<NormalizedCacheObject>> {
     const useSecureProtocols = import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API_SECURE_PROTOCOLS !== "false";
     const httpProtocol = useSecureProtocols ? "https" : "http";
     const wsProtocol = useSecureProtocols ? "wss" : "ws";
@@ -158,11 +164,7 @@ async function createApolloClient(isAuthenticated: boolean, conferenceSlug: stri
 
     const wsConnectionParams = await (async () => {
         if (isAuthenticated) {
-            const token = await tokenCache.getToken(
-                userId ?? null,
-                conferenceSlug,
-                getAccessTokenSilently
-            );
+            const token = await tokenCache.getToken(userId ?? null, conferenceSlug, getAccessTokenSilently);
             return {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -188,9 +190,7 @@ async function createApolloClient(isAuthenticated: boolean, conferenceSlug: stri
               split(
                   ({ query }) => {
                       const definition = getMainDefinition(query);
-                      return (
-                          definition.kind === "OperationDefinition" && definition.operation === "subscription"
-                      );
+                      return definition.kind === "OperationDefinition" && definition.operation === "subscription";
                   },
                   wsLink,
                   httpLink
@@ -265,7 +265,11 @@ export default function ApolloCustomProvider({
     useEffect(() => {
         (async () => {
             const client = await createApolloClient(
-                isAuthenticated, conferenceSlug, user?.sub, getAccessTokenSilently, tokenCache.current
+                isAuthenticated,
+                conferenceSlug,
+                user?.sub,
+                getAccessTokenSilently,
+                tokenCache.current
             );
             setClient(client);
         })();

@@ -5986,6 +5986,13 @@
         table:
           schema: public
           name: RoomPerson
+  - name: shuffleRooms
+    using:
+      foreign_key_constraint_on:
+        column: roomId
+        table:
+          schema: room
+          name: ShuffleRoom
   - name: transitions
     using:
       foreign_key_constraint_on:

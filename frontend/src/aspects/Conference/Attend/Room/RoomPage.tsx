@@ -51,6 +51,12 @@ gql`
         roomPrivacyName
         ...RoomPage_RoomEvents
         ...RoomPage_RoomPeople
+        shuffleRooms(limit: 1, order_by: { id: desc }) {
+            id
+            startedAt
+            durationMinutes
+            reshuffleUponEnd
+        }
     }
 
     fragment RoomPage_RoomEvents on Room {

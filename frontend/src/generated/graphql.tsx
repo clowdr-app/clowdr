@@ -11584,6 +11584,10 @@ export type Room = {
   readonly roomPrivacy: RoomPrivacy;
   readonly roomPrivacyName: RoomPrivacy_Enum;
   /** An array relationship */
+  readonly shuffleRooms: ReadonlyArray<Room_ShuffleRoom>;
+  /** An aggregated array relationship */
+  readonly shuffleRooms_aggregate: Room_ShuffleRoom_Aggregate;
+  /** An array relationship */
   readonly transitions: ReadonlyArray<Transitions>;
   /** An aggregated array relationship */
   readonly transitions_aggregate: Transitions_Aggregate;
@@ -11668,6 +11672,26 @@ export type RoomRoomPeople_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<RoomPerson_Order_By>>;
   where?: Maybe<RoomPerson_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Room" */
+export type RoomShuffleRoomsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_ShuffleRoom_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_ShuffleRoom_Order_By>>;
+  where?: Maybe<Room_ShuffleRoom_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Room" */
+export type RoomShuffleRooms_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_ShuffleRoom_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_ShuffleRoom_Order_By>>;
+  where?: Maybe<Room_ShuffleRoom_Bool_Exp>;
 };
 
 
@@ -12764,6 +12788,7 @@ export type Room_Bool_Exp = {
   readonly roomPeople?: Maybe<RoomPerson_Bool_Exp>;
   readonly roomPrivacy?: Maybe<RoomPrivacy_Bool_Exp>;
   readonly roomPrivacyName?: Maybe<RoomPrivacy_Enum_Comparison_Exp>;
+  readonly shuffleRooms?: Maybe<Room_ShuffleRoom_Bool_Exp>;
   readonly transitions?: Maybe<Transitions_Bool_Exp>;
   readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
 };
@@ -12814,6 +12839,7 @@ export type Room_Insert_Input = {
   readonly roomPeople?: Maybe<RoomPerson_Arr_Rel_Insert_Input>;
   readonly roomPrivacy?: Maybe<RoomPrivacy_Obj_Rel_Insert_Input>;
   readonly roomPrivacyName?: Maybe<RoomPrivacy_Enum>;
+  readonly shuffleRooms?: Maybe<Room_ShuffleRoom_Arr_Rel_Insert_Input>;
   readonly transitions?: Maybe<Transitions_Arr_Rel_Insert_Input>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -12938,6 +12964,7 @@ export type Room_Order_By = {
   readonly roomPeople_aggregate?: Maybe<RoomPerson_Aggregate_Order_By>;
   readonly roomPrivacy?: Maybe<RoomPrivacy_Order_By>;
   readonly roomPrivacyName?: Maybe<Order_By>;
+  readonly shuffleRooms_aggregate?: Maybe<Room_ShuffleRoom_Aggregate_Order_By>;
   readonly transitions_aggregate?: Maybe<Transitions_Aggregate_Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
@@ -17666,9 +17693,7 @@ export type Chat_ReadUpToIndex_Bool_Exp = {
 /** unique or primary key constraints on table "chat.ReadUpToIndex" */
 export enum Chat_ReadUpToIndex_Constraint {
   /** unique or primary key constraint */
-  ReadUpToIndexPkey = 'ReadUpToIndex_pkey',
-  /** unique or primary key constraint */
-  ChatReadUpToIndexPkIndex = 'chat_ReadUpToIndex_pk_index'
+  ReadUpToIndexPkey = 'ReadUpToIndex_pkey'
 }
 
 /** input type for incrementing integer column in table "chat.ReadUpToIndex" */
@@ -30146,7 +30171,7 @@ export type RoomPage_GetRoomDetailsQuery = { readonly __typename?: 'query_root',
   )> };
 
 export type RoomPage_RoomDetailsFragment = (
-  { readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly publicVonageSessionId?: Maybe<string>, readonly chatId?: Maybe<any>, readonly roomPrivacyName: RoomPrivacy_Enum, readonly mediaLiveChannel?: Maybe<{ readonly __typename?: 'MediaLiveChannel', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly id: any }>, readonly originatingContentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly contentGroupTypeName: ContentGroupType_Enum, readonly title: string, readonly contentItems: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly data: any }> }> }
+  { readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly publicVonageSessionId?: Maybe<string>, readonly chatId?: Maybe<any>, readonly roomPrivacyName: RoomPrivacy_Enum, readonly mediaLiveChannel?: Maybe<{ readonly __typename?: 'MediaLiveChannel', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly id: any }>, readonly originatingContentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly contentGroupTypeName: ContentGroupType_Enum, readonly title: string, readonly contentItems: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly data: any }> }>, readonly shuffleRooms: ReadonlyArray<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly durationMinutes: number, readonly reshuffleUponEnd: boolean }> }
   & RoomPage_RoomEventsFragment
   & RoomPage_RoomPeopleFragment
 );
@@ -31249,7 +31274,31 @@ export type GetAllRoomParticipantsQuery = { readonly __typename?: 'query_root', 
 
 export type RoomParticipantDetailsFragment = { readonly __typename?: 'RoomParticipant', readonly attendeeId: any, readonly conferenceId: any, readonly id: any, readonly roomId: any };
 
-export type ShufflePeriodDataFragment = { readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly conferenceId: any, readonly endAt: any, readonly maxAttendeesPerRoom: number, readonly name: string, readonly roomDurationMinutes: number, readonly startAt: any, readonly targetAttendeesPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly queueEntries: ReadonlyArray<{ readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly attendeeId: any, readonly created_at: any, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly isEnded: boolean, readonly roomId: any }> }> };
+export type ShufflePeriodDataFragment = { readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly conferenceId: any, readonly endAt: any, readonly maxAttendeesPerRoom: number, readonly name: string, readonly roomDurationMinutes: number, readonly startAt: any, readonly targetAttendeesPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly queueEntries: ReadonlyArray<(
+    { readonly __typename?: 'room_ShuffleQueueEntry' }
+    & PrefetchShuffleQueueEntryDataFragment
+  )> };
+
+export type PrefetchShuffleQueueEntryDataFragment = { readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly attendeeId: any, readonly created_at: any, readonly updated_at: any, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly isEnded: boolean, readonly roomId: any }> };
+
+export type SubdShuffleQueueEntryDataFragment = { readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly allocatedShuffleRoomId?: Maybe<number> };
+
+export type MyShuffleQueueEntrySubscriptionVariables = Exact<{
+  id: Scalars['bigint'];
+}>;
+
+
+export type MyShuffleQueueEntrySubscription = { readonly __typename?: 'subscription_root', readonly room_ShuffleQueueEntry_by_pk?: Maybe<(
+    { readonly __typename?: 'room_ShuffleQueueEntry' }
+    & SubdShuffleQueueEntryDataFragment
+  )> };
+
+export type GetShuffleRoomQueryVariables = Exact<{
+  id: Scalars['bigint'];
+}>;
+
+
+export type GetShuffleRoomQuery = { readonly __typename?: 'query_root', readonly room_ShuffleRoom_by_pk?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly roomId: any }> };
 
 export type ShufflePeriodsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -31269,7 +31318,10 @@ export type JoinShuffleQueueMutationVariables = Exact<{
 }>;
 
 
-export type JoinShuffleQueueMutation = { readonly __typename?: 'mutation_root', readonly insert_room_ShuffleQueueEntry_one?: Maybe<{ readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any }> };
+export type JoinShuffleQueueMutation = { readonly __typename?: 'mutation_root', readonly insert_room_ShuffleQueueEntry_one?: Maybe<(
+    { readonly __typename?: 'room_ShuffleQueueEntry' }
+    & PrefetchShuffleQueueEntryDataFragment
+  )> };
 
 export type AttendeeFieldsFragment = { readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly conferenceId: any, readonly displayName: string, readonly createdAt: any, readonly updatedAt: any, readonly conference: { readonly __typename?: 'Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string }, readonly groupAttendees: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly id: any, readonly group: { readonly __typename?: 'Group', readonly id: any, readonly enabled: boolean, readonly name: string, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly role: { readonly __typename?: 'Role', readonly id: any, readonly name: string, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly id: any, readonly permissionName: Permission_Enum }> } }> } }> };
 
@@ -31639,6 +31691,12 @@ export const RoomPage_RoomDetailsFragmentDoc = gql`
   roomPrivacyName
   ...RoomPage_RoomEvents
   ...RoomPage_RoomPeople
+  shuffleRooms {
+    id
+    startedAt
+    durationMinutes
+    reshuffleUponEnd
+  }
 }
     ${RoomPage_RoomEventsFragmentDoc}
 ${RoomPage_RoomPeopleFragmentDoc}`;
@@ -32241,6 +32299,20 @@ export const RoomParticipantDetailsFragmentDoc = gql`
   attendeeId
 }
     `;
+export const PrefetchShuffleQueueEntryDataFragmentDoc = gql`
+    fragment PrefetchShuffleQueueEntryData on room_ShuffleQueueEntry {
+  id
+  attendeeId
+  created_at
+  updated_at
+  shuffleRoom {
+    id
+    startedAt
+    isEnded
+    roomId
+  }
+}
+    `;
 export const ShufflePeriodDataFragmentDoc = gql`
     fragment ShufflePeriodData on room_ShufflePeriod {
   id
@@ -32248,20 +32320,19 @@ export const ShufflePeriodDataFragmentDoc = gql`
   endAt
   maxAttendeesPerRoom
   name
-  queueEntries {
-    id
-    attendeeId
-    created_at
-    shuffleRoom {
-      id
-      isEnded
-      roomId
-    }
+  queueEntries(distinct_on: [attendeeId], order_by: {attendeeId: asc, id: desc}) {
+    ...PrefetchShuffleQueueEntryData
   }
   roomDurationMinutes
   startAt
   targetAttendeesPerRoom
   waitRoomMaxDurationSeconds
+}
+    ${PrefetchShuffleQueueEntryDataFragmentDoc}`;
+export const SubdShuffleQueueEntryDataFragmentDoc = gql`
+    fragment SubdShuffleQueueEntryData on room_ShuffleQueueEntry {
+  id
+  allocatedShuffleRoomId
 }
     `;
 export const AttendeeFieldsFragmentDoc = gql`
@@ -34033,7 +34104,10 @@ export type AddParticipantToRoomMutationResult = Apollo.MutationResult<AddPartic
 export type AddParticipantToRoomMutationOptions = Apollo.BaseMutationOptions<AddParticipantToRoomMutation, AddParticipantToRoomMutationVariables>;
 export const GetAllRoomsDocument = gql`
     query GetAllRooms($conferenceId: uuid!) {
-  Room(where: {conferenceId: {_eq: $conferenceId}}, order_by: {name: asc}) {
+  Room(
+    where: {conferenceId: {_eq: $conferenceId}, roomPrivacyName: {_neq: MANAGED}}
+    order_by: {name: asc}
+  ) {
     ...RoomListRoomDetails
   }
 }
@@ -37469,6 +37543,69 @@ export function useGetAllRoomParticipantsLazyQuery(baseOptions?: Apollo.LazyQuer
 export type GetAllRoomParticipantsQueryHookResult = ReturnType<typeof useGetAllRoomParticipantsQuery>;
 export type GetAllRoomParticipantsLazyQueryHookResult = ReturnType<typeof useGetAllRoomParticipantsLazyQuery>;
 export type GetAllRoomParticipantsQueryResult = Apollo.QueryResult<GetAllRoomParticipantsQuery, GetAllRoomParticipantsQueryVariables>;
+export const MyShuffleQueueEntryDocument = gql`
+    subscription MyShuffleQueueEntry($id: bigint!) {
+  room_ShuffleQueueEntry_by_pk(id: $id) {
+    ...SubdShuffleQueueEntryData
+  }
+}
+    ${SubdShuffleQueueEntryDataFragmentDoc}`;
+
+/**
+ * __useMyShuffleQueueEntrySubscription__
+ *
+ * To run a query within a React component, call `useMyShuffleQueueEntrySubscription` and pass it any options that fit your needs.
+ * When your component renders, `useMyShuffleQueueEntrySubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMyShuffleQueueEntrySubscription({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useMyShuffleQueueEntrySubscription(baseOptions: Apollo.SubscriptionHookOptions<MyShuffleQueueEntrySubscription, MyShuffleQueueEntrySubscriptionVariables>) {
+        return Apollo.useSubscription<MyShuffleQueueEntrySubscription, MyShuffleQueueEntrySubscriptionVariables>(MyShuffleQueueEntryDocument, baseOptions);
+      }
+export type MyShuffleQueueEntrySubscriptionHookResult = ReturnType<typeof useMyShuffleQueueEntrySubscription>;
+export type MyShuffleQueueEntrySubscriptionResult = Apollo.SubscriptionResult<MyShuffleQueueEntrySubscription>;
+export const GetShuffleRoomDocument = gql`
+    query GetShuffleRoom($id: bigint!) {
+  room_ShuffleRoom_by_pk(id: $id) {
+    id
+    roomId
+  }
+}
+    `;
+
+/**
+ * __useGetShuffleRoomQuery__
+ *
+ * To run a query within a React component, call `useGetShuffleRoomQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetShuffleRoomQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetShuffleRoomQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetShuffleRoomQuery(baseOptions: Apollo.QueryHookOptions<GetShuffleRoomQuery, GetShuffleRoomQueryVariables>) {
+        return Apollo.useQuery<GetShuffleRoomQuery, GetShuffleRoomQueryVariables>(GetShuffleRoomDocument, baseOptions);
+      }
+export function useGetShuffleRoomLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetShuffleRoomQuery, GetShuffleRoomQueryVariables>) {
+          return Apollo.useLazyQuery<GetShuffleRoomQuery, GetShuffleRoomQueryVariables>(GetShuffleRoomDocument, baseOptions);
+        }
+export type GetShuffleRoomQueryHookResult = ReturnType<typeof useGetShuffleRoomQuery>;
+export type GetShuffleRoomLazyQueryHookResult = ReturnType<typeof useGetShuffleRoomLazyQuery>;
+export type GetShuffleRoomQueryResult = Apollo.QueryResult<GetShuffleRoomQuery, GetShuffleRoomQueryVariables>;
 export const ShufflePeriodsDocument = gql`
     query ShufflePeriods($conferenceId: uuid!, $start: timestamptz!, $end: timestamptz!) {
   room_ShufflePeriod(
@@ -37511,10 +37648,10 @@ export const JoinShuffleQueueDocument = gql`
   insert_room_ShuffleQueueEntry_one(
     object: {attendeeId: $attendeeId, shufflePeriodId: $shufflePeriodId}
   ) {
-    id
+    ...PrefetchShuffleQueueEntryData
   }
 }
-    `;
+    ${PrefetchShuffleQueueEntryDataFragmentDoc}`;
 export type JoinShuffleQueueMutationFn = Apollo.MutationFunction<JoinShuffleQueueMutation, JoinShuffleQueueMutationVariables>;
 
 /**

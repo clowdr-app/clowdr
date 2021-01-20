@@ -131,7 +131,7 @@ export function ChatNotificationsProvider_WithAttendeeInner({
                                     position: "top-right",
                                     description: latestMessage.message,
                                     isClosable: true,
-                                    duration: 5000,
+                                    duration: null,
                                     render: function ChatNotification(props: RenderProps) {
                                         return (
                                             <VStack

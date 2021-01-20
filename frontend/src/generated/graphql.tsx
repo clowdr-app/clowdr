@@ -17666,7 +17666,9 @@ export type Chat_ReadUpToIndex_Bool_Exp = {
 /** unique or primary key constraints on table "chat.ReadUpToIndex" */
 export enum Chat_ReadUpToIndex_Constraint {
   /** unique or primary key constraint */
-  ReadUpToIndexPkey = 'ReadUpToIndex_pkey'
+  ReadUpToIndexPkey = 'ReadUpToIndex_pkey',
+  /** unique or primary key constraint */
+  ChatReadUpToIndexPkIndex = 'chat_ReadUpToIndex_pk_index'
 }
 
 /** input type for incrementing integer column in table "chat.ReadUpToIndex" */
@@ -32312,11 +32314,7 @@ export type SubscribedChatsLazyQueryHookResult = ReturnType<typeof useSubscribed
 export type SubscribedChatsQueryResult = Apollo.QueryResult<SubscribedChatsQuery, SubscribedChatsQueryVariables>;
 export const SubdMessages_2021_01_19T16_04Document = gql`
     subscription SubdMessages_2021_01_19T16_04($attendeeId: uuid!, $chatIds: [uuid!]!) {
-  chat_Message(
-    limit: 1
-    order_by: {id: desc}
-    where: {chatId: {_in: $chatIds}, senderId: {_neq: $attendeeId}}
-  ) {
+  chat_Message(limit: 1, order_by: {id: desc}, where: {chatId: {_in: $chatIds}}) {
     id
     chatId
     message

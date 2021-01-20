@@ -4,38 +4,11 @@ import assert from "assert";
 import * as R from "ramda";
 import {
     EventVonageSession_RemoveInvalidStreamsDocument,
-    EventVonageSession_SetLayoutMessageDocument,
     GetEventParticipantStreamsDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import Vonage from "../lib/vonage/vonageClient";
 import { EventVonageSessionData, Payload } from "../types/hasura/event";
-import { callWithRetry } from "../utils";
-
-async function reportLayoutError(eventVonageSessionId: string, layoutError: string): Promise<void> {
-    gql`
-        mutation EventVonageSession_SetLayoutMessage($id: uuid!, $layoutMessage: String!) {
-            update_EventVonageSession_by_pk(pk_columns: { id: $id }, _set: { layoutMessage: $layoutMessage }) {
-                id
-            }
-        }
-    `;
-
-    try {
-        await callWithRetry(
-            async () =>
-                await apolloClient.mutate({
-                    mutation: EventVonageSession_SetLayoutMessageDocument,
-                    variables: {
-                        id: eventVonageSessionId,
-                        layoutMessage: layoutError,
-                    },
-                })
-        );
-    } catch (e) {
-        console.error("Could not log broadcast layout error to database", eventVonageSessionId, layoutError, e);
-    }
-}
 
 async function findInvalidStreamsForSession(vonageSessionId: string, streamIds: string[]): Promise<string[]> {
     const streams = await Vonage.listStreams(vonageSessionId);

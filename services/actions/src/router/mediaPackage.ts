@@ -46,7 +46,11 @@ router.post("/harvest/notify", bodyParser.text(), async (req: Request, res: Resp
             if (event["detail-type"] === "MediaPackage HarvestJob Notification") {
                 const eventDetail = event.detail;
                 if (eventDetail.harvest_job.status === "SUCCEEDED") {
-                    await completeMediaPackageHarvestJob(eventDetail.harvest_job.id);
+                    await completeMediaPackageHarvestJob(
+                        eventDetail.harvest_job.id,
+                        eventDetail.harvest_job.s3_destination.bucket_name,
+                        eventDetail.harvest_job.s3_destination.manifest_key
+                    );
                 }
 
                 if (eventDetail.harvest_job.status === "FAILED") {
@@ -61,6 +65,6 @@ router.post("/harvest/notify", bodyParser.text(), async (req: Request, res: Resp
         res.status(200).json("OK");
     } catch (e) {
         console.error(`${req.originalUrl}: failed to handle request`, e);
-        res.status(500).json("Failure");
+        res.status(200).json("Failure");
     }
 });

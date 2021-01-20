@@ -17666,7 +17666,9 @@ export type Chat_ReadUpToIndex_Bool_Exp = {
 /** unique or primary key constraints on table "chat.ReadUpToIndex" */
 export enum Chat_ReadUpToIndex_Constraint {
   /** unique or primary key constraint */
-  ReadUpToIndexPkey = 'ReadUpToIndex_pkey'
+  ReadUpToIndexPkey = 'ReadUpToIndex_pkey',
+  /** unique or primary key constraint */
+  ChatReadUpToIndexPkIndex = 'chat_ReadUpToIndex_pk_index'
 }
 
 /** input type for incrementing integer column in table "chat.ReadUpToIndex" */
@@ -30101,6 +30103,18 @@ export type Room_GetCurrentEventQueryVariables = Exact<{
 
 export type Room_GetCurrentEventQuery = { readonly __typename?: 'query_root', readonly Event_by_pk?: Maybe<{ readonly __typename?: 'Event', readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly chatId?: Maybe<any>, readonly contentItems: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly data: any }> }> }> };
 
+export type RoomBackstage_GetEventsQueryVariables = Exact<{
+  eventIds: ReadonlyArray<Scalars['uuid']>;
+}>;
+
+
+export type RoomBackstage_GetEventsQuery = { readonly __typename?: 'query_root', readonly Event: ReadonlyArray<(
+    { readonly __typename?: 'Event' }
+    & RoomBackstage_EventFragment
+  )> };
+
+export type RoomBackstage_EventFragment = { readonly __typename?: 'Event', readonly id: any, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string }> };
+
 export type AddParticipantToRoomMutationVariables = Exact<{
   attendeeId: Scalars['uuid'];
   roomId: Scalars['uuid'];
@@ -31554,6 +31568,15 @@ export const RoomEventDetailsFragmentDoc = gql`
   }
 }
     `;
+export const RoomBackstage_EventFragmentDoc = gql`
+    fragment RoomBackstage_Event on Event {
+  id
+  contentGroup {
+    id
+    title
+  }
+}
+    `;
 export const RoomListRoomDetailsFragmentDoc = gql`
     fragment RoomListRoomDetails on Room {
   id
@@ -32312,11 +32335,7 @@ export type SubscribedChatsLazyQueryHookResult = ReturnType<typeof useSubscribed
 export type SubscribedChatsQueryResult = Apollo.QueryResult<SubscribedChatsQuery, SubscribedChatsQueryVariables>;
 export const SubdMessages_2021_01_19T16_04Document = gql`
     subscription SubdMessages_2021_01_19T16_04($attendeeId: uuid!, $chatIds: [uuid!]!) {
-  chat_Message(
-    limit: 1
-    order_by: {id: desc}
-    where: {chatId: {_in: $chatIds}, senderId: {_neq: $attendeeId}}
-  ) {
+  chat_Message(limit: 1, order_by: {id: desc}, where: {chatId: {_in: $chatIds}}) {
     id
     chatId
     message
@@ -33944,6 +33963,39 @@ export function useRoom_GetCurrentEventLazyQuery(baseOptions?: Apollo.LazyQueryH
 export type Room_GetCurrentEventQueryHookResult = ReturnType<typeof useRoom_GetCurrentEventQuery>;
 export type Room_GetCurrentEventLazyQueryHookResult = ReturnType<typeof useRoom_GetCurrentEventLazyQuery>;
 export type Room_GetCurrentEventQueryResult = Apollo.QueryResult<Room_GetCurrentEventQuery, Room_GetCurrentEventQueryVariables>;
+export const RoomBackstage_GetEventsDocument = gql`
+    query RoomBackstage_GetEvents($eventIds: [uuid!]!) {
+  Event(where: {id: {_in: $eventIds}}) {
+    ...RoomBackstage_Event
+  }
+}
+    ${RoomBackstage_EventFragmentDoc}`;
+
+/**
+ * __useRoomBackstage_GetEventsQuery__
+ *
+ * To run a query within a React component, call `useRoomBackstage_GetEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRoomBackstage_GetEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRoomBackstage_GetEventsQuery({
+ *   variables: {
+ *      eventIds: // value for 'eventIds'
+ *   },
+ * });
+ */
+export function useRoomBackstage_GetEventsQuery(baseOptions: Apollo.QueryHookOptions<RoomBackstage_GetEventsQuery, RoomBackstage_GetEventsQueryVariables>) {
+        return Apollo.useQuery<RoomBackstage_GetEventsQuery, RoomBackstage_GetEventsQueryVariables>(RoomBackstage_GetEventsDocument, baseOptions);
+      }
+export function useRoomBackstage_GetEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RoomBackstage_GetEventsQuery, RoomBackstage_GetEventsQueryVariables>) {
+          return Apollo.useLazyQuery<RoomBackstage_GetEventsQuery, RoomBackstage_GetEventsQueryVariables>(RoomBackstage_GetEventsDocument, baseOptions);
+        }
+export type RoomBackstage_GetEventsQueryHookResult = ReturnType<typeof useRoomBackstage_GetEventsQuery>;
+export type RoomBackstage_GetEventsLazyQueryHookResult = ReturnType<typeof useRoomBackstage_GetEventsLazyQuery>;
+export type RoomBackstage_GetEventsQueryResult = Apollo.QueryResult<RoomBackstage_GetEventsQuery, RoomBackstage_GetEventsQueryVariables>;
 export const AddParticipantToRoomDocument = gql`
     mutation AddParticipantToRoom($attendeeId: uuid!, $roomId: uuid!) {
   insert_RoomPerson_one(

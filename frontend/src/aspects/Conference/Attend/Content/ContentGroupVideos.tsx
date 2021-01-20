@@ -3,20 +3,29 @@ import { assertIsContentItemDataBlob, VideoContentBlob } from "@clowdr-app/share
 import { WebVTTConverter } from "@clowdr-app/srt-webvtt";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { useAsync } from "react-async-hook";
 import ReactPlayer, { Config, TrackProps } from "react-player";
 import { ContentGroupDataFragment, ContentType_Enum } from "../../../../generated/graphql";
+import usePolling from "../../../Generic/usePolling";
 
 export function ContentGroupVideos({ contentGroupData }: { contentGroupData: ContentGroupDataFragment }): JSX.Element {
     const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
+    const [slowSelectedVideoId, setSlowSelectedVideoId] = useState<string | null>(null);
+
+    const updateSlowSelectedVideoId = useCallback(() => {
+        setSlowSelectedVideoId(selectedVideoId);
+    }, [selectedVideoId]);
+
+    usePolling(updateSlowSelectedVideoId, 1500, true);
 
     const videoContentItems = useMemo(() => {
         return contentGroupData.contentItems
             .filter(
                 (contentItem) =>
                     contentItem.contentTypeName === ContentType_Enum.VideoBroadcast ||
-                    contentItem.contentTypeName === ContentType_Enum.VideoPrepublish
+                    contentItem.contentTypeName === ContentType_Enum.VideoPrepublish ||
+                    contentItem.contentTypeName === ContentType_Enum.VideoFile
             )
             .sort((x, y) => x.contentTypeName.localeCompare(y.contentTypeName))
             .map((contentItem) => {
@@ -34,7 +43,7 @@ export function ContentGroupVideos({ contentGroupData }: { contentGroupData: Con
                                 maxWidth={[
                                     "100%",
                                     "100%",
-                                    selectedVideoId === contentItem.id ? "70%" : selectedVideoId ? "0%" : "50%",
+                                    slowSelectedVideoId === contentItem.id ? "70%" : slowSelectedVideoId ? "0%" : "50%",
                                 ]}
                                 flexBasis={0}
                                 mx={5}
@@ -42,7 +51,9 @@ export function ContentGroupVideos({ contentGroupData }: { contentGroupData: Con
                                 visibility={[
                                     "visible",
                                     "visible",
-                                    !selectedVideoId || selectedVideoId === contentItem.id ? "visible" : "hidden",
+                                    !slowSelectedVideoId || slowSelectedVideoId === contentItem.id
+                                        ? "visible"
+                                        : "hidden",
                                 ]}
                                 overflow={["visible", "visible", "hidden"]}
                             >
@@ -61,7 +72,7 @@ export function ContentGroupVideos({ contentGroupData }: { contentGroupData: Con
                     return <></>;
                 }
             });
-    }, [contentGroupData.contentItems, selectedVideoId]);
+    }, [contentGroupData.contentItems, slowSelectedVideoId]);
     return videoContentItems.length === 0 ? (
         <>(This item does not have any videos at the moment.)</>
     ) : (
@@ -91,13 +102,22 @@ export function ContentGroupVideo({
     onPause?: () => void;
 }): JSX.Element {
     const previewTranscodeUrl = useMemo(() => {
-        if (!videoContentItemData.transcode?.s3Url) {
+        let s3Url;
+
+        // Special case to handle recordings for now
+        if (videoContentItemData.s3Url.endsWith(".m3u8")) {
+            s3Url = videoContentItemData.s3Url;
+        } else {
+            s3Url = videoContentItemData.transcode?.s3Url;
+        }
+
+        if (!s3Url) {
             return undefined;
         }
-        const { bucket, key } = new AmazonS3URI(videoContentItemData.transcode.s3Url);
+        const { bucket, key } = new AmazonS3URI(s3Url);
 
         return `https://s3.${import.meta.env.SNOWPACK_PUBLIC_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
-    }, [videoContentItemData.transcode?.s3Url]);
+    }, [videoContentItemData.s3Url, videoContentItemData.transcode?.s3Url]);
 
     const { result: subtitlesUrl, loading, error } = useAsync(async () => {
         if (!videoContentItemData.subtitles["en_US"] || !videoContentItemData.subtitles["en_US"].s3Url) {

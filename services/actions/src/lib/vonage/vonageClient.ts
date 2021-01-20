@@ -16,4 +16,5 @@ export default {
     forceDisconnect: promisify(vonage.forceDisconnect.bind(vonage)),
     setBroadcastLayout: promisify(vonage.setBroadcastLayout.bind(vonage)),
     setStreamClassLists: promisify(vonage.setStreamClassLists.bind(vonage)),
+    listStreams: promisify(vonage.listStreams.bind(vonage)),
 };

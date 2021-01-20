@@ -2,10 +2,83 @@ import { gql } from "@apollo/client/core";
 import { VonageSessionLayoutType } from "@clowdr-app/shared-types/build/vonage";
 import assert from "assert";
 import * as R from "ramda";
-import { GetEventParticipantStreamsDocument } from "../generated/graphql";
+import {
+    EventVonageSession_RemoveInvalidStreamsDocument,
+    EventVonageSession_SetLayoutMessageDocument,
+    GetEventParticipantStreamsDocument,
+} from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import Vonage from "../lib/vonage/vonageClient";
 import { EventVonageSessionData, Payload } from "../types/hasura/event";
+import { callWithRetry } from "../utils";
+
+async function reportLayoutError(eventVonageSessionId: string, layoutError: string): Promise<void> {
+    gql`
+        mutation EventVonageSession_SetLayoutMessage($id: uuid!, $layoutMessage: String!) {
+            update_EventVonageSession_by_pk(pk_columns: { id: $id }, _set: { layoutMessage: $layoutMessage }) {
+                id
+            }
+        }
+    `;
+
+    try {
+        await callWithRetry(
+            async () =>
+                await apolloClient.mutate({
+                    mutation: EventVonageSession_SetLayoutMessageDocument,
+                    variables: {
+                        id: eventVonageSessionId,
+                        layoutMessage: layoutError,
+                    },
+                })
+        );
+    } catch (e) {
+        console.error("Could not log broadcast layout error to database", eventVonageSessionId, layoutError, e);
+    }
+}
+
+async function findInvalidStreamsForSession(vonageSessionId: string, streamIds: string[]): Promise<string[]> {
+    const streams = await Vonage.listStreams(vonageSessionId);
+    if (!streams) {
+        console.error("Could not retrieve list of streams in session from Vonage", vonageSessionId);
+        throw new Error("Could not retrieve list of streams in session from Vonage");
+    }
+    return R.difference(
+        streamIds,
+        streams.map((stream) => stream.id)
+    );
+}
+
+async function tryRemoveInvalidStreams(eventId: string, vonageSessionId: string): Promise<void> {
+    gql`
+        mutation EventVonageSession_RemoveInvalidStreams($validStreamIds: [String!]!, $eventId: uuid) {
+            delete_EventParticipantStream(
+                where: { vonageStreamId: { _nin: $validStreamIds }, eventId: { _eq: $eventId } }
+            ) {
+                affected_rows
+            }
+        }
+    `;
+
+    try {
+        console.log("Attempting to remove invalid EventParticipantStreams", eventId, vonageSessionId);
+        const streams = await Vonage.listStreams(vonageSessionId);
+
+        if (!streams) {
+            throw new Error("Did not get list of streams from Vonage");
+        }
+
+        await apolloClient.mutate({
+            mutation: EventVonageSession_RemoveInvalidStreamsDocument,
+            variables: {
+                validStreamIds: streams.map((stream) => stream.id),
+                eventId,
+            },
+        });
+    } catch (e) {
+        console.error("Failed to remove invalid EventParticipantStreams", eventId, vonageSessionId, e);
+    }
+}
 
 export async function handleEventVonageSessionUpdated(payload: Payload<EventVonageSessionData>): Promise<void> {
     assert(payload.event.data.new, "Expected payload to have new row");
@@ -16,19 +89,29 @@ export async function handleEventVonageSessionUpdated(payload: Payload<EventVona
 
     const layoutData = newRow.layoutData;
 
-    if (!layoutData) {
+    if (!layoutData || (payload.event.data.old && R.equals(payload.event.data.old.layoutData, layoutData))) {
         return;
     }
 
     switch (layoutData.type) {
         case VonageSessionLayoutType.BestFit: {
-            await Vonage.setStreamClassLists(
-                newRow.sessionId,
-                streamIds.map((streamId) => ({
-                    id: streamId,
-                    layoutClassList: [],
-                }))
-            );
+            try {
+                const streams = await Vonage.listStreams(newRow.sessionId);
+
+                if (!streams) {
+                    throw new Error("Could not retrieve list of stream IDs from Vonage");
+                }
+
+                await Vonage.setStreamClassLists(
+                    newRow.sessionId,
+                    streams.map((stream) => ({
+                        id: stream.id,
+                        layoutClassList: [],
+                    }))
+                );
+            } catch (e) {
+                console.error("Failed to unset stream class IDs. Continuing anyway.", newRow.sessionId, e);
+            }
 
             const startedBroadcastIds = await getStartedBroadcastIds(newRow.sessionId);
 
@@ -48,26 +131,48 @@ export async function handleEventVonageSessionUpdated(payload: Payload<EventVona
             return;
         }
         case VonageSessionLayoutType.Pair: {
-            console.log(
-                "Setting class lists for Pair broadcast layout",
-                newRow.sessionId,
+            const invalidStreams = await findInvalidStreamsForSession(newRow.sessionId, [
                 layoutData.leftStreamId,
-                layoutData.rightStreamId
-            );
-            await Vonage.setStreamClassLists(newRow.sessionId, [
-                {
-                    id: layoutData.leftStreamId,
-                    layoutClassList: ["left"],
-                },
-                {
-                    id: layoutData.rightStreamId,
-                    layoutClassList: ["right"],
-                },
-                ...R.without([layoutData.leftStreamId, layoutData.rightStreamId], streamIds).map((streamId) => ({
-                    id: streamId,
-                    layoutClassList: [],
-                })),
+                layoutData.rightStreamId,
             ]);
+
+            if (invalidStreams.length > 0) {
+                console.error("Not all streams exist in the Vonage session", newRow.sessionId, invalidStreams);
+                await tryRemoveInvalidStreams(newRow.eventId, newRow.sessionId);
+                throw new Error("Not all streams exist in the Vonage session");
+            }
+
+            try {
+                console.log(
+                    "Setting class lists for Pair broadcast layout",
+                    newRow.sessionId,
+                    layoutData.leftStreamId,
+                    layoutData.rightStreamId
+                );
+                await Vonage.setStreamClassLists(newRow.sessionId, [
+                    {
+                        id: layoutData.leftStreamId,
+                        layoutClassList: ["left"],
+                    },
+                    {
+                        id: layoutData.rightStreamId,
+                        layoutClassList: ["right"],
+                    },
+                    ...R.without([layoutData.leftStreamId, layoutData.rightStreamId], streamIds).map((streamId) => ({
+                        id: streamId,
+                        layoutClassList: [],
+                    })),
+                ]);
+            } catch (e) {
+                console.error(
+                    "Could not set class lists for Pair broadcast layout",
+                    newRow.sessionId,
+                    layoutData.leftStreamId,
+                    layoutData.rightStreamId,
+                    e
+                );
+                return;
+            }
 
             const startedBroadcastIds = await getStartedBroadcastIds(newRow.sessionId);
 
@@ -92,17 +197,39 @@ export async function handleEventVonageSessionUpdated(payload: Payload<EventVona
             return;
         }
         case VonageSessionLayoutType.Single: {
-            console.log("Setting class lists for Single broadcast layout", newRow.sessionId, layoutData.focusStreamId);
-            await Vonage.setStreamClassLists(newRow.sessionId, [
-                {
-                    id: layoutData.focusStreamId,
-                    layoutClassList: ["focus"],
-                },
-                ...R.without([layoutData.focusStreamId], streamIds).map((streamId) => ({
-                    id: streamId,
-                    layoutClassList: [],
-                })),
-            ]);
+            const invalidStreams = await findInvalidStreamsForSession(newRow.sessionId, [layoutData.focusStreamId]);
+
+            if (invalidStreams.length > 0) {
+                console.error("Not all streams exist in the Vonage session", newRow.sessionId, invalidStreams);
+                await tryRemoveInvalidStreams(newRow.eventId, newRow.sessionId);
+                throw new Error("Not all streams exist in the Vonage session");
+            }
+
+            try {
+                console.log(
+                    "Setting class lists for Single broadcast layout",
+                    newRow.sessionId,
+                    layoutData.focusStreamId
+                );
+                await Vonage.setStreamClassLists(newRow.sessionId, [
+                    {
+                        id: layoutData.focusStreamId,
+                        layoutClassList: ["focus"],
+                    },
+                    ...R.without([layoutData.focusStreamId], streamIds).map((streamId) => ({
+                        id: streamId,
+                        layoutClassList: [],
+                    })),
+                ]);
+            } catch (e) {
+                console.error(
+                    "Could not set class lists for Single broadcast layout",
+                    newRow.sessionId,
+                    layoutData.focusStreamId,
+                    e
+                );
+                return;
+            }
 
             const startedBroadcastIds = await getStartedBroadcastIds(newRow.sessionId);
 
@@ -127,21 +254,43 @@ export async function handleEventVonageSessionUpdated(payload: Payload<EventVona
             return;
         }
         case VonageSessionLayoutType.PictureInPicture: {
-            console.log("Setting class lists for PIP broadcast layout", newRow.sessionId, layoutData.focusStreamId);
-            await Vonage.setStreamClassLists(newRow.sessionId, [
-                {
-                    id: layoutData.focusStreamId,
-                    layoutClassList: ["focus"],
-                },
-                {
-                    id: layoutData.cornerStreamId,
-                    layoutClassList: ["corner"],
-                },
-                ...R.without([layoutData.focusStreamId, layoutData.cornerStreamId], streamIds).map((streamId) => ({
-                    id: streamId,
-                    layoutClassList: [],
-                })),
+            const invalidStreams = await findInvalidStreamsForSession(newRow.sessionId, [
+                layoutData.focusStreamId,
+                layoutData.cornerStreamId,
             ]);
+
+            if (invalidStreams.length > 0) {
+                console.error("Not all streams exist in the Vonage session", newRow.sessionId, invalidStreams);
+                await tryRemoveInvalidStreams(newRow.eventId, newRow.sessionId);
+                throw new Error("Not all streams exist in the Vonage session");
+            }
+
+            try {
+                console.log("Setting class lists for PIP broadcast layout", newRow.sessionId, layoutData.focusStreamId);
+                await Vonage.setStreamClassLists(newRow.sessionId, [
+                    {
+                        id: layoutData.focusStreamId,
+                        layoutClassList: ["focus"],
+                    },
+                    {
+                        id: layoutData.cornerStreamId,
+                        layoutClassList: ["corner"],
+                    },
+                    ...R.without([layoutData.focusStreamId, layoutData.cornerStreamId], streamIds).map((streamId) => ({
+                        id: streamId,
+                        layoutClassList: [],
+                    })),
+                ]);
+            } catch (e) {
+                console.error(
+                    "Could not set class lists for PIP broadcast layout",
+                    newRow.sessionId,
+                    layoutData.cornerStreamId,
+                    layoutData.focusStreamId,
+                    e
+                );
+                return;
+            }
 
             const startedBroadcastIds = await getStartedBroadcastIds(newRow.sessionId);
 

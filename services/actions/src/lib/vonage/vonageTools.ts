@@ -82,15 +82,18 @@ export async function getEventBroadcastDetails(eventId: string): Promise<EventBr
 export async function startEventBroadcast(eventId: string): Promise<void> {
     let broadcastDetails: EventBroadcastDetails;
     try {
-        broadcastDetails = await getEventBroadcastDetails(eventId);
+        broadcastDetails = await callWithRetry(async () => await getEventBroadcastDetails(eventId));
     } catch (e) {
         console.error("Error retrieving Vonage broadcast details for event", e);
         return;
     }
 
-    const existingSessionBroadcasts = await Vonage.listBroadcasts({
-        sessionId: broadcastDetails.vonageSessionId,
-    });
+    const existingSessionBroadcasts = await callWithRetry(
+        async () =>
+            await Vonage.listBroadcasts({
+                sessionId: broadcastDetails.vonageSessionId,
+            })
+    );
 
     if (!existingSessionBroadcasts) {
         console.error("Could not retrieve existing session broadcasts.", broadcastDetails.vonageSessionId);

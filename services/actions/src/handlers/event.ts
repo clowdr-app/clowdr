@@ -238,7 +238,11 @@ export async function handleEventStartNotification(eventId: string, startTime: s
         const intendedRoomModeName = result.data.Event_by_pk.intendedRoomModeName;
 
         setTimeout(async () => {
-            insertChatDuplicationMarkers(eventId, true);
+            try {
+                insertChatDuplicationMarkers(eventId, true);
+            } catch (e) {
+                console.error("Failed to insert chat duplication start markers", eventId, e);
+            }
 
             if (![RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(intendedRoomModeName)) {
                 // No RTMP broadcast to be started
@@ -276,7 +280,7 @@ export async function handleEventEndNotification(eventId: string, endTime: strin
             try {
                 insertChatDuplicationMarkers(eventId, false);
             } catch (e) {
-                console.error("Failed to insert chat duplication markers", eventId, e);
+                console.error("Failed to insert chat duplication end markers", eventId, e);
             }
 
             try {

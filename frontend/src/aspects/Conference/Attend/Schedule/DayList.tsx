@@ -1,6 +1,10 @@
 import { Button, ButtonGroup, Text } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import type { Timeline_EventFragment, Timeline_RoomFragment } from "../../../../generated/graphql";
+import type {
+    Timeline_ContentGroup_PartialInfoFragment,
+    Timeline_EventFragment,
+    Timeline_RoomFragment,
+} from "../../../../generated/graphql";
 import { roundDownToNearest } from "../../../Generic/MathUtils";
 import { useRealTime } from "../../../Generic/useRealTime";
 import { useTimelineParameters } from "./useTimelineParameters";
@@ -10,19 +14,29 @@ type FirstEventInfo = {
     startTime: number;
 };
 
+export interface TimelineEvent extends Timeline_EventFragment {
+    contentGroup?: Timeline_ContentGroup_PartialInfoFragment;
+}
+
+export interface TimelineRoom extends Timeline_RoomFragment {
+    events: TimelineEvent[];
+}
+
 export default function DayList({
     rooms,
+    events,
     scrollToEvent,
     scrollToNow,
 }: {
     rooms: readonly Timeline_RoomFragment[];
+    events: readonly Timeline_EventFragment[];
     scrollToEvent: (event: Timeline_EventFragment) => void;
     scrollToNow: () => void;
 }): JSX.Element {
     const distinctDates = useMemo(() => {
         const result = new Map<number, FirstEventInfo>();
         for (const room of rooms) {
-            for (const event of room.events) {
+            for (const event of events.filter((x) => x.roomId === room.id)) {
                 const startTime = Date.parse(event.startTime);
                 const startDate = roundDownToNearest(startTime, 24 * 60 * 60 * 1000);
 
@@ -39,7 +53,7 @@ export default function DayList({
         return [...result.entries()]
             .sort((x, y) => x[0] - y[0])
             .map((x) => [new Date(x[0]), x[1]] as [Date, FirstEventInfo]);
-    }, [rooms]);
+    }, [events, rooms]);
 
     const now = useRealTime(60000);
     const timelineParams = useTimelineParameters();

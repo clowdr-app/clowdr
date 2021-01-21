@@ -30,6 +30,7 @@ import FAIcon from "../../../Icons/FAIcon";
 import { Markdown } from "../../../Text/Markdown";
 import { useConference } from "../../useConference";
 import { AuthorList } from "../Content/AuthorList";
+import type { TimelineEvent } from "./DayList";
 import { useTimelineParameters } from "./useTimelineParameters";
 
 function EventBoxPopover({
@@ -222,7 +223,7 @@ export default function EventBox({
     roomName,
     setScrollToEvent,
 }: {
-    sortedEvents: ReadonlyArray<Timeline_EventFragment>;
+    sortedEvents: ReadonlyArray<TimelineEvent>;
     roomName: string;
     setScrollToEvent?: (f: () => void) => void;
 }): JSX.Element | null {

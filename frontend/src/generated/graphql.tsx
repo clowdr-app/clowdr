@@ -30251,12 +30251,11 @@ export type Timeline_Event_FullInfoFragment = { readonly __typename?: 'Event', r
     & Timeline_ContentGroupFragment
   )> };
 
-export type Timeline_EventFragment = { readonly __typename?: 'Event', readonly id: any, readonly roomId: any, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string }> };
+export type Timeline_EventFragment = { readonly __typename?: 'Event', readonly id: any, readonly roomId: any, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly contentGroupId?: Maybe<any> };
 
-export type Timeline_RoomFragment = { readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly priority: number, readonly events: ReadonlyArray<(
-    { readonly __typename?: 'Event' }
-    & Timeline_EventFragment
-  )> };
+export type Timeline_RoomFragment = { readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly priority: number };
+
+export type Timeline_ContentGroup_PartialInfoFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string };
 
 export type Timeline_SelectEventQueryVariables = Exact<{
   id: Scalars['uuid'];
@@ -30276,16 +30275,12 @@ export type Timeline_SelectRoomsQueryVariables = Exact<{
 export type Timeline_SelectRoomsQuery = { readonly __typename?: 'query_root', readonly Room: ReadonlyArray<(
     { readonly __typename?: 'Room' }
     & Timeline_RoomFragment
-  )> };
-
-export type Timeline_SelectRoomQueryVariables = Exact<{
-  id: Scalars['uuid'];
-}>;
-
-
-export type Timeline_SelectRoomQuery = { readonly __typename?: 'query_root', readonly Room_by_pk?: Maybe<(
-    { readonly __typename?: 'Room' }
-    & Timeline_RoomFragment
+  )>, readonly Event: ReadonlyArray<(
+    { readonly __typename?: 'Event' }
+    & Timeline_EventFragment
+  )>, readonly ContentGroup: ReadonlyArray<(
+    { readonly __typename?: 'ContentGroup' }
+    & Timeline_ContentGroup_PartialInfoFragment
   )> };
 
 export type Timeline_TagFragment = { readonly __typename?: 'Tag', readonly id: any, readonly name: string, readonly colour: string };
@@ -31761,10 +31756,7 @@ export const Timeline_EventFragmentDoc = gql`
   name
   startTime
   durationSeconds
-  contentGroup {
-    id
-    title
-  }
+  contentGroupId
 }
     `;
 export const Timeline_RoomFragmentDoc = gql`
@@ -31773,11 +31765,14 @@ export const Timeline_RoomFragmentDoc = gql`
   name
   currentModeName
   priority
-  events {
-    ...Timeline_Event
-  }
 }
-    ${Timeline_EventFragmentDoc}`;
+    `;
+export const Timeline_ContentGroup_PartialInfoFragmentDoc = gql`
+    fragment Timeline_ContentGroup_PartialInfo on ContentGroup {
+  id
+  title
+}
+    `;
 export const Timeline_TagFragmentDoc = gql`
     fragment Timeline_Tag on Tag {
   id
@@ -34252,12 +34247,20 @@ export type Timeline_SelectEventQueryResult = Apollo.QueryResult<Timeline_Select
 export const Timeline_SelectRoomsDocument = gql`
     query Timeline_SelectRooms($conferenceId: uuid!) {
   Room(
-    where: {conferenceId: {_eq: $conferenceId}, roomPrivacyName: {_eq: PUBLIC}, events: {}}
+    where: {conferenceId: {_eq: $conferenceId}, roomPrivacyName: {_eq: PUBLIC}, events: {id: {_is_null: false}}}
   ) {
     ...Timeline_Room
   }
+  Event(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...Timeline_Event
+  }
+  ContentGroup(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...Timeline_ContentGroup_PartialInfo
+  }
 }
-    ${Timeline_RoomFragmentDoc}`;
+    ${Timeline_RoomFragmentDoc}
+${Timeline_EventFragmentDoc}
+${Timeline_ContentGroup_PartialInfoFragmentDoc}`;
 
 /**
  * __useTimeline_SelectRoomsQuery__
@@ -34284,39 +34287,6 @@ export function useTimeline_SelectRoomsLazyQuery(baseOptions?: Apollo.LazyQueryH
 export type Timeline_SelectRoomsQueryHookResult = ReturnType<typeof useTimeline_SelectRoomsQuery>;
 export type Timeline_SelectRoomsLazyQueryHookResult = ReturnType<typeof useTimeline_SelectRoomsLazyQuery>;
 export type Timeline_SelectRoomsQueryResult = Apollo.QueryResult<Timeline_SelectRoomsQuery, Timeline_SelectRoomsQueryVariables>;
-export const Timeline_SelectRoomDocument = gql`
-    query Timeline_SelectRoom($id: uuid!) {
-  Room_by_pk(id: $id) {
-    ...Timeline_Room
-  }
-}
-    ${Timeline_RoomFragmentDoc}`;
-
-/**
- * __useTimeline_SelectRoomQuery__
- *
- * To run a query within a React component, call `useTimeline_SelectRoomQuery` and pass it any options that fit your needs.
- * When your component renders, `useTimeline_SelectRoomQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useTimeline_SelectRoomQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useTimeline_SelectRoomQuery(baseOptions: Apollo.QueryHookOptions<Timeline_SelectRoomQuery, Timeline_SelectRoomQueryVariables>) {
-        return Apollo.useQuery<Timeline_SelectRoomQuery, Timeline_SelectRoomQueryVariables>(Timeline_SelectRoomDocument, baseOptions);
-      }
-export function useTimeline_SelectRoomLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Timeline_SelectRoomQuery, Timeline_SelectRoomQueryVariables>) {
-          return Apollo.useLazyQuery<Timeline_SelectRoomQuery, Timeline_SelectRoomQueryVariables>(Timeline_SelectRoomDocument, baseOptions);
-        }
-export type Timeline_SelectRoomQueryHookResult = ReturnType<typeof useTimeline_SelectRoomQuery>;
-export type Timeline_SelectRoomLazyQueryHookResult = ReturnType<typeof useTimeline_SelectRoomLazyQuery>;
-export type Timeline_SelectRoomQueryResult = Apollo.QueryResult<Timeline_SelectRoomQuery, Timeline_SelectRoomQueryVariables>;
 export const AttendeesByIdDocument = gql`
     query AttendeesById($conferenceId: uuid!, $attendeeIds: [uuid!]!) {
   Attendee(where: {id: {_in: $attendeeIds}, conferenceId: {_eq: $conferenceId}}) {

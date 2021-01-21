@@ -233,7 +233,7 @@ export default function ReceiveMessageQueriesProvider({
         fetchPolicy: "network-only",
         variables: {
             messageIds: [...liveMessages.msgs.keys()],
-        }
+        },
     });
     // const [liveReactions, setLiveReactions] = useState<readonly SubscribedChatReactionDataFragment[]>([]);
     // const pollCb = useCallback(() => {

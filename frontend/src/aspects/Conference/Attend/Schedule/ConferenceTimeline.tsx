@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import ScrollContainer from "react-indiana-drag-scroll";
 import {
     Permission_Enum,
+    Timeline_ContentGroup_PartialInfoFragment,
     Timeline_EventFragment,
     Timeline_RoomFragment,
     Timeline_SelectRoomsQuery,
@@ -72,7 +73,6 @@ gql`
         name
         startTime
         durationSeconds
-
         contentGroup {
             ...Timeline_ContentGroup
         }
@@ -84,11 +84,7 @@ gql`
         name
         startTime
         durationSeconds
-
-        contentGroup {
-            id
-            title
-        }
+        contentGroupId
     }
 
     fragment Timeline_Room on Room {
@@ -96,9 +92,11 @@ gql`
         name
         currentModeName
         priority
-        events {
-            ...Timeline_Event
-        }
+    }
+
+    fragment Timeline_ContentGroup_PartialInfo on ContentGroup {
+        id
+        title
     }
 
     query Timeline_SelectEvent($id: uuid!) {
@@ -108,22 +106,32 @@ gql`
     }
 
     query Timeline_SelectRooms($conferenceId: uuid!) {
-        Room(where: { conferenceId: { _eq: $conferenceId }, roomPrivacyName: { _eq: PUBLIC }, events: {} }) {
+        Room(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                roomPrivacyName: { _eq: PUBLIC }
+                events: { id: { _is_null: false } }
+            }
+        ) {
             ...Timeline_Room
         }
-    }
-
-    query Timeline_SelectRoom($id: uuid!) {
-        Room_by_pk(id: $id) {
-            ...Timeline_Room
+        Event(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...Timeline_Event
+        }
+        ContentGroup(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...Timeline_ContentGroup_PartialInfo
         }
     }
 `;
 
 function ConferenceTimelineInner({
     rooms: unsortedRooms,
+    events,
+    contentGroups,
 }: {
     rooms: ReadonlyArray<Timeline_RoomFragment>;
+    events: ReadonlyArray<Timeline_EventFragment>;
+    contentGroups: ReadonlyArray<Timeline_ContentGroup_PartialInfoFragment>;
 }): JSX.Element {
     const conference = useConference();
     const { setPrimaryMenuButtons } = usePrimaryMenuButtons();
@@ -220,12 +228,14 @@ function ConferenceTimelineInner({
                                     return newMap;
                                 });
                             }}
+                            events={events}
+                            contentGroups={contentGroups}
                         />
                     </Box>,
                 ],
                 [] as (JSX.Element | undefined)[]
             ),
-        [borderColour, rooms, rowInterval, timeBarF]
+        [borderColour, contentGroups, events, rooms, rowInterval, timeBarF]
     );
 
     const roomMarkers = useGenerateMarkers(`calc(100% - ${timeBarHeight}px)`, "", true, false, false);
@@ -264,7 +274,7 @@ function ConferenceTimelineInner({
             <Heading as="h1">Schedule</Heading>
             <Box w="100%" p={2}>
                 <Flex w="100%" direction="row" justify="center" alignItems="center">
-                    <DayList rooms={rooms} scrollToEvent={scrollToEvent} scrollToNow={scrollToNow.f} />
+                    <DayList rooms={rooms} events={events} scrollToEvent={scrollToEvent} scrollToNow={scrollToNow.f} />
                     <TimelineZoomControls />
                 </Flex>
                 <Box
@@ -313,67 +323,46 @@ function ConferenceTimelineInner({
 
 function ConferenceTimelineIntermediaryWrapper({
     rooms,
+    events,
+    contentGroups,
 }: {
     rooms: ReadonlyArray<Timeline_RoomFragment>;
+    events: ReadonlyArray<Timeline_EventFragment>;
+    contentGroups: ReadonlyArray<Timeline_ContentGroup_PartialInfoFragment>;
 }): JSX.Element {
-    const { earliestStart, latestEnd } = useMemo(() => {
-        return rooms.reduce(
-            (vals, room) => {
-                const { roomEarliest, roomLatest } = room.events.reduce(
-                    (x, event) => {
-                        const startT = Date.parse(event.startTime);
-                        const endT = startT + event.durationSeconds * 1000;
-                        if (startT < x.roomEarliest) {
-                            if (endT > x.roomLatest) {
-                                return {
-                                    roomEarliest: startT,
-                                    roomLatest: endT,
-                                };
-                            } else {
-                                return {
-                                    roomEarliest: startT,
-                                    roomLatest: x.roomLatest,
-                                };
-                            }
-                        } else if (endT > x.roomLatest) {
-                            return {
-                                roomEarliest: x.roomEarliest,
-                                roomLatest: endT,
-                            };
-                        }
-                        return x;
-                    },
-                    { roomEarliest: Number.POSITIVE_INFINITY, roomLatest: Number.NEGATIVE_INFINITY }
-                );
-
-                if (roomEarliest < vals.earliestStart) {
-                    if (roomLatest > vals.latestEnd) {
+    const { earliestStart, latestEnd } = useMemo<{ earliestStart: number; latestEnd: number }>(() => {
+        return events.reduce<{ earliestStart: number; latestEnd: number }>(
+            (x, event) => {
+                const startT = Date.parse(event.startTime);
+                const endT = startT + event.durationSeconds * 1000;
+                if (startT < x.earliestStart) {
+                    if (endT > x.latestEnd) {
                         return {
-                            earliestStart: roomEarliest,
-                            latestEnd: roomLatest,
+                            earliestStart: startT,
+                            latestEnd: endT,
                         };
                     } else {
                         return {
-                            earliestStart: roomEarliest,
-                            latestEnd: vals.latestEnd,
+                            earliestStart: startT,
+                            latestEnd: x.latestEnd,
                         };
                     }
-                } else if (roomLatest > vals.latestEnd) {
+                } else if (endT > x.latestEnd) {
                     return {
-                        earliestStart: vals.earliestStart,
-                        latestEnd: roomLatest,
+                        earliestStart: x.earliestStart,
+                        latestEnd: endT,
                     };
                 }
-                return vals;
+                return x;
             },
             { earliestStart: Number.POSITIVE_INFINITY, latestEnd: Number.NEGATIVE_INFINITY }
         );
-    }, [rooms]);
+    }, [events]);
 
     return (
         <TimelineParameters earliestEventStart={earliestStart} latestEventEnd={latestEnd}>
             <ScrollerProvider>
-                <ConferenceTimelineInner rooms={rooms} />
+                <ConferenceTimelineInner rooms={rooms} events={events} contentGroups={contentGroups} />
             </ScrollerProvider>
         </TimelineParameters>
     );
@@ -387,11 +376,19 @@ function ConferenceTimelineFetchWrapper(): JSX.Element {
         },
     });
     return (
-        <ApolloQueryWrapper<Timeline_SelectRoomsQuery, unknown, ReadonlyArray<Timeline_RoomFragment>>
-            queryResult={roomsResult}
-            getter={(x) => x.Room}
+        <ApolloQueryWrapper<
+            Timeline_SelectRoomsQuery,
+            unknown,
+            {
+                rooms: ReadonlyArray<Timeline_RoomFragment>;
+                events: ReadonlyArray<Timeline_EventFragment>;
+                contentGroups: ReadonlyArray<Timeline_ContentGroup_PartialInfoFragment>;
+            }
         >
-            {(rooms) => <ConferenceTimelineIntermediaryWrapper rooms={rooms} />}
+            queryResult={roomsResult}
+            getter={(x) => ({ rooms: x.Room, events: x.Event, contentGroups: x.ContentGroup })}
+        >
+            {(data) => <ConferenceTimelineIntermediaryWrapper {...data} />}
         </ApolloQueryWrapper>
     );
 }

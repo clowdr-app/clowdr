@@ -67,7 +67,7 @@ export default function Scroller({
             <div
                 style={{
                     width: innerWidthPx,
-                    height: "auto",
+                    height: "100%",
                     boxSizing: "border-box",
                     transition: "none",
                     overflow: "hidden",

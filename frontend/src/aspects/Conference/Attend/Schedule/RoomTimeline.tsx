@@ -1,12 +1,11 @@
 import { Box } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import {
+import type {
+    Timeline_ContentGroup_PartialInfoFragment,
     Timeline_EventFragment,
     Timeline_RoomFragment,
-    Timeline_SelectRoomQuery,
-    useTimeline_SelectRoomQuery,
 } from "../../../../generated/graphql";
-import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
+import type { TimelineEvent, TimelineRoom } from "./DayList";
 import EventBox from "./EventBox";
 import Scroller from "./Scroller";
 import TimelineZoomControls from "./TimelineZoomControls";
@@ -61,18 +60,18 @@ function RoomTimelineInner({
     backgroundColor,
     setScrollToEvent,
 }: {
-    room: Timeline_RoomFragment;
+    room: TimelineRoom;
     hideTimeZoomButtons?: boolean;
     useScroller?: boolean;
     height?: number;
     backgroundColor?: string;
-    setScrollToEvent?: (f: (event: Timeline_EventFragment) => void) => void;
+    setScrollToEvent?: (f: (event: TimelineEvent) => void) => void;
 }): JSX.Element {
     const groupedEvents = useMemo(() => {
-        const result: Timeline_EventFragment[][] = [];
+        const result: TimelineEvent[][] = [];
         const sortedEvents = [...room.events].sort((x, y) => Date.parse(x.startTime) - Date.parse(y.startTime));
 
-        let currentEventsGroup: Timeline_EventFragment[] = [];
+        let currentEventsGroup: TimelineEvent[] = [];
         for (let idx = 0; idx < sortedEvents.length; idx++) {
             const event = sortedEvents[idx];
             const compareEvent =
@@ -130,94 +129,70 @@ function RoomTimelineInner({
 }
 
 function RoomTimelineFetchWrapper({
-    roomId,
+    room,
     hideTimeZoomButtons = false,
     useScroller = true,
     height,
     backgroundColor,
     setScrollToEvent,
+    events,
+    contentGroups,
 }: {
-    roomId: string;
+    room: Timeline_RoomFragment;
     hideTimeZoomButtons?: boolean;
     useScroller?: boolean;
     height?: number;
     backgroundColor?: string;
-    setScrollToEvent?: (f: (event: Timeline_EventFragment) => void) => void;
+    setScrollToEvent?: (f: (event: TimelineEvent) => void) => void;
+    events: ReadonlyArray<Timeline_EventFragment>;
+    contentGroups: ReadonlyArray<Timeline_ContentGroup_PartialInfoFragment>;
 }): JSX.Element {
-    const roomResult = useTimeline_SelectRoomQuery({
-        variables: {
-            id: roomId,
-        },
-    });
+    const roomEvents = useMemo(() => {
+        const result: TimelineEvent[] = [];
 
-    const eventInfo = useMemo(
-        () =>
-            roomResult.data?.Room_by_pk?.events.reduce(
-                (x, event) => {
-                    const startT = Date.parse(event.startTime);
-                    const endT = startT + event.durationSeconds * 1000;
-                    if (startT < x.roomEarliest) {
-                        if (endT > x.roomLatest) {
-                            return {
-                                roomEarliest: startT,
-                                roomLatest: endT,
-                            };
-                        } else {
-                            return {
-                                roomEarliest: startT,
-                                roomLatest: x.roomLatest,
-                            };
-                        }
-                    } else if (endT > x.roomLatest) {
-                        return {
-                            roomEarliest: x.roomEarliest,
-                            roomLatest: endT,
-                        };
-                    }
-                    return x;
-                },
-                { roomEarliest: Number.POSITIVE_INFINITY, roomLatest: Number.NEGATIVE_INFINITY }
-            ),
-        [roomResult.data?.Room_by_pk?.events]
-    );
+        events.forEach((event) => {
+            if (event.roomId === room.id) {
+                const contentGroup = event.contentGroupId
+                    ? contentGroups.find((x) => x.id === event.contentGroupId)
+                    : undefined;
+                result.push({
+                    ...event,
+                    contentGroup,
+                });
+            }
+        });
 
-    return (
-        <ApolloQueryWrapper<Timeline_SelectRoomQuery, unknown, Timeline_RoomFragment>
-            queryResult={roomResult}
-            getter={(x) => x.Room_by_pk}
-        >
-            {(room) => (
-                <TimelineParameters
-                    earliestEventStart={eventInfo?.roomEarliest ?? 0}
-                    latestEventEnd={eventInfo?.roomLatest ?? 0}
-                >
-                    <RoomTimelineInner
-                        room={room}
-                        hideTimeZoomButtons={hideTimeZoomButtons}
-                        useScroller={useScroller}
-                        height={height}
-                        backgroundColor={backgroundColor}
-                        setScrollToEvent={setScrollToEvent}
-                    />
-                </TimelineParameters>
-            )}
-        </ApolloQueryWrapper>
+        return result;
+    }, [contentGroups, events, room.id]);
+
+    return room ? (
+        <RoomTimelineInner
+            room={{
+                ...room,
+                events: roomEvents,
+            }}
+            hideTimeZoomButtons={hideTimeZoomButtons}
+            useScroller={useScroller}
+            height={height}
+            backgroundColor={backgroundColor}
+            setScrollToEvent={setScrollToEvent}
+        />
+    ) : (
+        <></>
     );
 }
 
 type Props = {
-    room: string | Timeline_RoomFragment;
+    room: Timeline_RoomFragment;
     hideTimeShiftButtons?: boolean;
     hideTimeZoomButtons?: boolean;
     useScroller?: boolean;
     height?: number;
-    setScrollToEvent?: (f: (event: Timeline_EventFragment) => void) => void;
+    setScrollToEvent?: (f: (event: TimelineEvent) => void) => void;
+    events: ReadonlyArray<Timeline_EventFragment>;
+    contentGroups: ReadonlyArray<Timeline_ContentGroup_PartialInfoFragment>;
 };
 
-export default function RoomTimeline({ room, ...props }: Props): JSX.Element {
-    if (typeof room === "string") {
-        return <RoomTimelineFetchWrapper roomId={room} {...props} />;
-    } else {
-        return <RoomTimelineInner room={room} {...props} />;
-    }
+export default function RoomTimeline({ ...props }: Props): JSX.Element {
+    return <RoomTimelineFetchWrapper {...props} />;
 }

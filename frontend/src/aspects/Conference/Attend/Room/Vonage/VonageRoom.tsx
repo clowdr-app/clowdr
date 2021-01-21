@@ -210,13 +210,11 @@ function VonageRoomInner({
                     height={"70vh"}
                     width="100%"
                     mb={2}
-                    zIndex={300}
                     overflow="hidden"
                 >
                     <Box
                         ref={screenPublishContainerRef}
                         position="absolute"
-                        zIndex="100"
                         left="0"
                         top="0"
                         height="100%"

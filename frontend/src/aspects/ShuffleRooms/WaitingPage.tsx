@@ -15,14 +15,17 @@ import {
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Redirect } from "react-router-dom";
 import {
+    Permission_Enum,
     PrefetchShuffleQueueEntryDataFragment,
     ShufflePeriodDataFragment,
     useGetShuffleRoomQuery,
+    useGetShuffleRoomsParticipantsCountQuery,
     useJoinShuffleQueueMutation,
     useMyShuffleQueueEntrySubscription,
     useShufflePeriodsQuery,
 } from "../../generated/graphql";
 import { LinkButton } from "../Chakra/LinkButton";
+import RequireAtLeastOnePermissionWrapper from "../Conference/RequireAtLeastOnePermissionWrapper";
 import { ConferenceInfo, useConference } from "../Conference/useConference";
 import useCurrentAttendee from "../Conference/useCurrentAttendee";
 import { useRealTime } from "../Generic/useRealTime";
@@ -87,6 +90,16 @@ gql`
     mutation JoinShuffleQueue($shufflePeriodId: uuid!, $attendeeId: uuid!) {
         insert_room_ShuffleQueueEntry_one(object: { attendeeId: $attendeeId, shufflePeriodId: $shufflePeriodId }) {
             ...PrefetchShuffleQueueEntryData
+        }
+    }
+
+    query GetShuffleRoomsParticipantsCount($conferenceId: uuid!) {
+        RoomParticipant_aggregate(
+            where: { conferenceId: { _eq: $conferenceId }, room: { shuffleRooms: { isEnded: { _eq: false } } } }
+        ) {
+            aggregate {
+                count
+            }
         }
     }
 `;
@@ -340,7 +353,7 @@ function ShufflePeriodBox({ period }: { period: ShufflePeriodDataFragment }): JS
         }
     }, [endAt, isJoining, joinShuffleQueue, now, period.roomDurationMinutes, queuedEntryBox, startAt]);
 
-    const borderColour = useColorModeValue("gray.500", "gray.500");
+    const borderColour = "gray.500";
     return (
         <GridItem border="1px solid" borderColor={borderColour} borderRadius={10}>
             <VStack w="100%" overflow="hidden" p={4} spacing={4}>
@@ -349,9 +362,27 @@ function ShufflePeriodBox({ period }: { period: ShufflePeriodDataFragment }): JS
                 </Heading>
                 {button}
                 {numberOfQueued > 0 ? <Text>{numberOfQueued} people queued</Text> : undefined}
-                {numberOfQueued > 0 ? <Text>{numberInRooms} in rooms</Text> : undefined}
+                {numberOfQueued > 0 ? <Text>{numberInRooms} allocated to rooms</Text> : undefined}
             </VStack>
         </GridItem>
+    );
+}
+
+function ShuffleRoomParticipantsCount(): JSX.Element {
+    const conference = useConference();
+    const count = useGetShuffleRoomsParticipantsCountQuery({
+        variables: {
+            conferenceId: conference.id,
+        },
+        pollInterval: 60000,
+    });
+    return typeof count.data?.RoomParticipant_aggregate?.aggregate?.count === "number" ? (
+        <>
+            {count.data.RoomParticipant_aggregate.aggregate.count} people actively participating in shuffle rooms at the
+            moment.<br />(Updates every 60s - please help preserve our DB by not refreshing!)
+        </>
+    ) : (
+        <>Loading active participant count</>
     );
 }
 
@@ -391,10 +422,21 @@ export default function WaitingPage(): JSX.Element {
     return periods.loading && !periods.data ? (
         <Spinner label="Loading shuffle room times" />
     ) : (
-        <Grid maxW="800px">
+        <Grid maxW="800px" gap={4}>
             {data?.map((period) => (
                 <ShufflePeriodBox key={period.id} period={period} />
             ))}
+            <RequireAtLeastOnePermissionWrapper
+                permissions={[
+                    Permission_Enum.ConferenceManageSchedule,
+                    Permission_Enum.ConferenceModerateAttendees,
+                    Permission_Enum.ConferenceManageAttendees,
+                ]}
+            >
+                <GridItem border="1px solid" borderColor="gray.500" borderRadius={10} p={4}>
+                    <ShuffleRoomParticipantsCount />
+                </GridItem>
+            </RequireAtLeastOnePermissionWrapper>
             {!data?.length ? <GridItem>No shuffle spaces at the moment, please come back later.</GridItem> : undefined}
         </Grid>
     );

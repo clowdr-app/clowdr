@@ -31286,6 +31286,13 @@ export type JoinShuffleQueueMutation = { readonly __typename?: 'mutation_root', 
     & PrefetchShuffleQueueEntryDataFragment
   )> };
 
+export type GetShuffleRoomsParticipantsCountQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type GetShuffleRoomsParticipantsCountQuery = { readonly __typename?: 'query_root', readonly RoomParticipant_aggregate: { readonly __typename?: 'RoomParticipant_aggregate', readonly aggregate?: Maybe<{ readonly __typename?: 'RoomParticipant_aggregate_fields', readonly count?: Maybe<number> }> } };
+
 export type AttendeeFieldsFragment = { readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly conferenceId: any, readonly displayName: string, readonly createdAt: any, readonly updatedAt: any, readonly conference: { readonly __typename?: 'Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string }, readonly groupAttendees: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly id: any, readonly group: { readonly __typename?: 'Group', readonly id: any, readonly enabled: boolean, readonly name: string, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly role: { readonly __typename?: 'Role', readonly id: any, readonly name: string, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly id: any, readonly permissionName: Permission_Enum }> } }> } }> };
 
 export type SelectCurrentUserQueryVariables = Exact<{
@@ -37526,6 +37533,43 @@ export function useJoinShuffleQueueMutation(baseOptions?: Apollo.MutationHookOpt
 export type JoinShuffleQueueMutationHookResult = ReturnType<typeof useJoinShuffleQueueMutation>;
 export type JoinShuffleQueueMutationResult = Apollo.MutationResult<JoinShuffleQueueMutation>;
 export type JoinShuffleQueueMutationOptions = Apollo.BaseMutationOptions<JoinShuffleQueueMutation, JoinShuffleQueueMutationVariables>;
+export const GetShuffleRoomsParticipantsCountDocument = gql`
+    query GetShuffleRoomsParticipantsCount($conferenceId: uuid!) {
+  RoomParticipant_aggregate(
+    where: {conferenceId: {_eq: $conferenceId}, room: {shuffleRooms: {isEnded: {_eq: false}}}}
+  ) {
+    aggregate {
+      count
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetShuffleRoomsParticipantsCountQuery__
+ *
+ * To run a query within a React component, call `useGetShuffleRoomsParticipantsCountQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetShuffleRoomsParticipantsCountQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetShuffleRoomsParticipantsCountQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useGetShuffleRoomsParticipantsCountQuery(baseOptions: Apollo.QueryHookOptions<GetShuffleRoomsParticipantsCountQuery, GetShuffleRoomsParticipantsCountQueryVariables>) {
+        return Apollo.useQuery<GetShuffleRoomsParticipantsCountQuery, GetShuffleRoomsParticipantsCountQueryVariables>(GetShuffleRoomsParticipantsCountDocument, baseOptions);
+      }
+export function useGetShuffleRoomsParticipantsCountLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetShuffleRoomsParticipantsCountQuery, GetShuffleRoomsParticipantsCountQueryVariables>) {
+          return Apollo.useLazyQuery<GetShuffleRoomsParticipantsCountQuery, GetShuffleRoomsParticipantsCountQueryVariables>(GetShuffleRoomsParticipantsCountDocument, baseOptions);
+        }
+export type GetShuffleRoomsParticipantsCountQueryHookResult = ReturnType<typeof useGetShuffleRoomsParticipantsCountQuery>;
+export type GetShuffleRoomsParticipantsCountLazyQueryHookResult = ReturnType<typeof useGetShuffleRoomsParticipantsCountLazyQuery>;
+export type GetShuffleRoomsParticipantsCountQueryResult = Apollo.QueryResult<GetShuffleRoomsParticipantsCountQuery, GetShuffleRoomsParticipantsCountQueryVariables>;
 export const SelectCurrentUserDocument = gql`
     query SelectCurrentUser($userId: String!) {
   User_by_pk(id: $userId) {

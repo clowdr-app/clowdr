@@ -2,6 +2,7 @@ import { gql } from "@apollo/client";
 import React from "react";
 import { useGetAllRoomParticipantsQuery, useGetRoomParticipantsSubscription } from "../../generated/graphql";
 import { useConference } from "../Conference/useConference";
+import { useMaybeCurrentAttendee } from "../Conference/useCurrentAttendee";
 import { RoomParticipantsContext } from "./useRoomParticipants";
 
 gql`
@@ -72,6 +73,11 @@ export default function RoomParticipantsProvider({
     children: string | React.ReactNode | React.ReactNodeArray;
     roomId?: string;
 }): JSX.Element {
+    const mAttendee = useMaybeCurrentAttendee();
+    if (!mAttendee) {
+        return <RoomParticipantsContext.Provider value={[]}>{children}</RoomParticipantsContext.Provider>;
+    }
+
     if (roomId) {
         return <RoomParticipantsProvider_Subd roomId={roomId}>{children}</RoomParticipantsProvider_Subd>;
     } else {

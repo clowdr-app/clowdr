@@ -17693,9 +17693,7 @@ export type Chat_ReadUpToIndex_Bool_Exp = {
 /** unique or primary key constraints on table "chat.ReadUpToIndex" */
 export enum Chat_ReadUpToIndex_Constraint {
   /** unique or primary key constraint */
-  ReadUpToIndexPkey = 'ReadUpToIndex_pkey',
-  /** unique or primary key constraint */
-  ChatReadUpToIndexPkIndex = 'chat_ReadUpToIndex_pk_index'
+  ReadUpToIndexPkey = 'ReadUpToIndex_pkey'
 }
 
 /** input type for incrementing integer column in table "chat.ReadUpToIndex" */
@@ -29629,7 +29627,6 @@ export type SubscribedChatsQueryVariables = Exact<{
 export type SubscribedChatsQuery = { readonly __typename?: 'query_root', readonly chat_Subscription: ReadonlyArray<{ readonly __typename?: 'chat_Subscription', readonly attendeeId: any, readonly chatId: any }> };
 
 export type SubdMessages_2021_01_19T16_04SubscriptionVariables = Exact<{
-  attendeeId: Scalars['uuid'];
   chatIds: ReadonlyArray<Scalars['uuid']>;
 }>;
 
@@ -29770,12 +29767,12 @@ export type NextMessageSubscription = { readonly __typename?: 'subscription_root
     & SubscribedChatMessageDataFragment
   )> };
 
-export type NextReactionsQueryVariables = Exact<{
+export type NextReactionsSubscriptionVariables = Exact<{
   messageIds: ReadonlyArray<Scalars['Int']>;
 }>;
 
 
-export type NextReactionsQuery = { readonly __typename?: 'query_root', readonly chat_Reaction: ReadonlyArray<(
+export type NextReactionsSubscription = { readonly __typename?: 'subscription_root', readonly chat_Reaction: ReadonlyArray<(
     { readonly __typename?: 'chat_Reaction' }
     & SubscribedChatReactionDataFragment
   )> };
@@ -32392,7 +32389,7 @@ export type SubscribedChatsQueryHookResult = ReturnType<typeof useSubscribedChat
 export type SubscribedChatsLazyQueryHookResult = ReturnType<typeof useSubscribedChatsLazyQuery>;
 export type SubscribedChatsQueryResult = Apollo.QueryResult<SubscribedChatsQuery, SubscribedChatsQueryVariables>;
 export const SubdMessages_2021_01_19T16_04Document = gql`
-    subscription SubdMessages_2021_01_19T16_04($attendeeId: uuid!, $chatIds: [uuid!]!) {
+    subscription SubdMessages_2021_01_19T16_04($chatIds: [uuid!]!) {
   chat_Message(limit: 1, order_by: {id: desc}, where: {chatId: {_in: $chatIds}}) {
     id
     chatId
@@ -32417,7 +32414,6 @@ export const SubdMessages_2021_01_19T16_04Document = gql`
  * @example
  * const { data, loading, error } = useSubdMessages_2021_01_19T16_04Subscription({
  *   variables: {
- *      attendeeId: // value for 'attendeeId'
  *      chatIds: // value for 'chatIds'
  *   },
  * });
@@ -32899,7 +32895,7 @@ export function useNextMessageSubscription(baseOptions: Apollo.SubscriptionHookO
 export type NextMessageSubscriptionHookResult = ReturnType<typeof useNextMessageSubscription>;
 export type NextMessageSubscriptionResult = Apollo.SubscriptionResult<NextMessageSubscription>;
 export const NextReactionsDocument = gql`
-    query NextReactions($messageIds: [Int!]!) {
+    subscription NextReactions($messageIds: [Int!]!) {
   chat_Reaction(where: {messageId: {_in: $messageIds}}) {
     ...SubscribedChatReactionData
   }
@@ -32907,30 +32903,26 @@ export const NextReactionsDocument = gql`
     ${SubscribedChatReactionDataFragmentDoc}`;
 
 /**
- * __useNextReactionsQuery__
+ * __useNextReactionsSubscription__
  *
- * To run a query within a React component, call `useNextReactionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useNextReactionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useNextReactionsSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useNextReactionsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useNextReactionsQuery({
+ * const { data, loading, error } = useNextReactionsSubscription({
  *   variables: {
  *      messageIds: // value for 'messageIds'
  *   },
  * });
  */
-export function useNextReactionsQuery(baseOptions: Apollo.QueryHookOptions<NextReactionsQuery, NextReactionsQueryVariables>) {
-        return Apollo.useQuery<NextReactionsQuery, NextReactionsQueryVariables>(NextReactionsDocument, baseOptions);
+export function useNextReactionsSubscription(baseOptions: Apollo.SubscriptionHookOptions<NextReactionsSubscription, NextReactionsSubscriptionVariables>) {
+        return Apollo.useSubscription<NextReactionsSubscription, NextReactionsSubscriptionVariables>(NextReactionsDocument, baseOptions);
       }
-export function useNextReactionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NextReactionsQuery, NextReactionsQueryVariables>) {
-          return Apollo.useLazyQuery<NextReactionsQuery, NextReactionsQueryVariables>(NextReactionsDocument, baseOptions);
-        }
-export type NextReactionsQueryHookResult = ReturnType<typeof useNextReactionsQuery>;
-export type NextReactionsLazyQueryHookResult = ReturnType<typeof useNextReactionsLazyQuery>;
-export type NextReactionsQueryResult = Apollo.QueryResult<NextReactionsQuery, NextReactionsQueryVariables>;
+export type NextReactionsSubscriptionHookResult = ReturnType<typeof useNextReactionsSubscription>;
+export type NextReactionsSubscriptionResult = Apollo.SubscriptionResult<NextReactionsSubscription>;
 export const SelectPinDocument = gql`
     query SelectPin($chatId: uuid!, $attendeeId: uuid!) {
   chat_Chat_by_pk(id: $chatId) {

@@ -3,15 +3,12 @@ import { Box, HStack } from "@chakra-ui/react";
 import React, { useCallback } from "react";
 import * as portals from "react-reverse-portal";
 import {
-    EventPersonRole_Enum,
     RoomEventDetailsFragment,
     useGetEventDetailsQuery,
     useGetEventVonageTokenMutation,
 } from "../../../../../generated/graphql";
-import { useEventPeople } from "../../../../Event/useEventPeople";
 import ApolloQueryWrapper from "../../../../GQL/ApolloQueryWrapper";
 import { useSharedRoomContext } from "../../../../Room/useSharedRoomContext";
-import { useMaybeCurrentAttendee } from "../../../useCurrentAttendee";
 import { EventRoomControlPanel } from "./EventRoomControlPanel";
 
 gql`
@@ -56,9 +53,6 @@ export function EventVonageRoom({ eventId }: { eventId: string }): JSX.Element {
         fetchPolicy: "network-only",
     });
 
-    const mAttendee = useMaybeCurrentAttendee();
-    const { myRoles, eventPeople } = useEventPeople(mAttendee?.id ?? "", result.data?.Event_by_pk ?? null);
-
     const getAccessToken = useCallback(async () => {
         const result = await getEventVonageToken();
         if (!result.data?.joinEventVonageSession?.accessToken) {
@@ -72,7 +66,7 @@ export function EventVonageRoom({ eventId }: { eventId: string }): JSX.Element {
     return (
         <ApolloQueryWrapper queryResult={result} getter={(data) => data.Event_by_pk}>
             {(event: RoomEventDetailsFragment) => (
-                <HStack alignItems="stretch">
+                <HStack alignItems="stretch" flexWrap="wrap">
                     <Box flexGrow={1}>
                         {event.eventVonageSession && sharedRoomContext ? (
                             <portals.OutPortal
@@ -85,15 +79,9 @@ export function EventVonageRoom({ eventId }: { eventId: string }): JSX.Element {
                             <>No room session available.</>
                         )}
                     </Box>
-                    {myRoles.find(
-                        (role) => role === EventPersonRole_Enum.Chair || role === EventPersonRole_Enum.Presenter
-                    ) ? (
-                        <Box width="20%">
-                            <EventRoomControlPanel event={event} eventPeople={eventPeople} myRoles={myRoles} />
-                        </Box>
-                    ) : (
-                        <></>
-                    )}
+                    <Box>
+                        <EventRoomControlPanel event={event} />
+                    </Box>
                 </HStack>
             )}
         </ApolloQueryWrapper>

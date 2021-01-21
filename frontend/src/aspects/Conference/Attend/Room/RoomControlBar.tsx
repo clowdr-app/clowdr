@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
 import {
     Badge,
     Button,
@@ -19,12 +20,14 @@ import {
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { RoomPage_RoomDetailsFragment, RoomPersonRole_Enum, RoomPrivacy_Enum } from "../../../../generated/graphql";
+import { LinkButton } from "../../../Chakra/LinkButton";
 import FAIcon from "../../../Icons/FAIcon";
 import useRoomMembers from "../../../Room/useRoomMembers";
 import useRoomParticipants from "../../../Room/useRoomParticipants";
 import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
 import { maybeCompare } from "../../../Utils/maybeSort";
 import { useAttendee } from "../../AttendeesContext";
+import { useConference } from "../../useConference";
 import { AddRoomPersonModal } from "./AddRoomPersonModal";
 
 export function RoomControlBar({
@@ -98,17 +101,25 @@ export function RoomControlBar({
         [thisRoomParticipants]
     );
 
+    const conference = useConference();
+
     return (
         <HStack justifyContent="flex-end" m={4}>
+            <LinkButton to={`/conference/${conference.slug}/schedule`} width="100%" linkProps={{ target: "_blank" }}>
+                <FAIcon icon="calendar" iconStyle="r" mr={3} />
+                Schedule
+                <ExternalLinkIcon ml={2} />
+            </LinkButton>
+
             {hasBackstage ? (
                 backstage ? (
                     <Button colorScheme="red" onClick={() => onSetBackstage(false)}>
-                        Hide backstage
+                        Return to stream
                     </Button>
                 ) : (
-                    <Tooltip label="Backstage is where you can join events as a presenter, session chair or to ask questions.">
+                    <Tooltip label="Join events as a presenter, session chair or to ask questions.">
                         <Button colorScheme="green" onClick={() => onSetBackstage(true)}>
-                            Show backstage
+                            Join live Q&amp;A sessions
                         </Button>
                     </Tooltip>
                 )

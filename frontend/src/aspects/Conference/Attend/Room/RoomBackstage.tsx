@@ -1,3 +1,4 @@
+import { gql } from "@apollo/client";
 import {
     Alert,
     AlertDescription,
@@ -10,26 +11,43 @@ import {
     HStack,
     Text,
     useColorModeValue,
+    useToast,
     useToken,
     VStack,
 } from "@chakra-ui/react";
 import { formatRelative } from "date-fns";
 import * as R from "ramda";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import * as portals from "react-reverse-portal";
-import { RoomMode_Enum, Room_EventSummaryFragment } from "../../../../generated/graphql";
+import { useHistory } from "react-router-dom";
+import {
+    RoomMode_Enum,
+    Room_EventSummaryFragment,
+    useRoomBackstage_GetEventBreakoutRoomQuery,
+} from "../../../../generated/graphql";
 import usePolling from "../../../Generic/usePolling";
 import { useSharedRoomContext } from "../../../Room/useSharedRoomContext";
+import { useConference } from "../../useConference";
 import { EventVonageRoom } from "./Event/EventVonageRoom";
+
+gql`
+    query RoomBackstage_GetEventBreakoutRoom($originatingEventId: uuid!) {
+        Room(where: { originatingEventId: { _eq: $originatingEventId } }) {
+            id
+        }
+    }
+`;
 
 export function RoomBackstage({
     backstage,
     roomName,
     roomEvents,
+    currentRoomEventId,
 }: {
     backstage: boolean;
     roomName: string;
     roomEvents: readonly Room_EventSummaryFragment[];
+    currentRoomEventId: string | null;
 }): JSX.Element {
     const [gray100, gray900] = useToken("colors", ["gray.100", "gray.900"]);
     const backgroundColour = useColorModeValue(gray100, gray900);
@@ -116,6 +134,11 @@ export function RoomBackstage({
                     {selectedEventId === event.id ? (
                         <Box mt={2}>
                             <EventVonageRoom eventId={event.id} />
+                            <Alert status="info" mb={8}>
+                                <AlertIcon />
+                                Once this event ends, you will be automatically taken to a breakout room to continue the
+                                conversation.
+                            </Alert>
                         </Box>
                     ) : undefined}
                 </>
@@ -161,26 +184,70 @@ export function RoomBackstage({
                 ) : undefined}
             </Box>
         ),
-        [isEventNow, isEventSoon, makeEventEl, selectedEventId, sortedEvents]
+        [borderColour, isEventNow, isEventSoon, makeEventEl, selectedEventId, sortedEvents]
     );
+
+    const { refetch } = useRoomBackstage_GetEventBreakoutRoomQuery({
+        skip: true,
+        fetchPolicy: "network-only",
+    });
+
+    const [existingCurrentRoomEventId, setExistingCurrentRoomEventId] = useState<string | null>(currentRoomEventId);
+    const conference = useConference();
+    const history = useHistory();
+    const toast = useToast();
+
+    useEffect(() => {
+        async function fn() {
+            try {
+                if (
+                    backstage &&
+                    selectedEventId &&
+                    selectedEventId === existingCurrentRoomEventId &&
+                    existingCurrentRoomEventId !== currentRoomEventId
+                ) {
+                    try {
+                        const breakoutRoom = await refetch({ originatingEventId: selectedEventId });
+
+                        if (!breakoutRoom.data || !breakoutRoom.data.Room || breakoutRoom.data.Room.length < 1) {
+                            throw new Error("No matching room found");
+                        }
+
+                        history.push(`/conference/${conference.slug}/room/${breakoutRoom.data.Room[0].id}`);
+                    } catch (e) {
+                        console.error("Error while moving to breakout room at end of event", selectedEventId, e);
+                        toast({
+                            status: "error",
+                            title: "Could not find breakout room to move to at end of the event",
+                        });
+                        return;
+                    }
+                }
+            } finally {
+                setExistingCurrentRoomEventId(currentRoomEventId);
+            }
+        }
+        fn();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentRoomEventId]);
 
     const sharedRoomContext = useSharedRoomContext();
 
     return backstage ? (
         <Box display={backstage ? "block" : "none"} background={backgroundColour} p={5}>
             <Heading as="h3" size="lg">
-                {roomName}: Backstage
+                {roomName}: Live Q&amp;A
             </Heading>
             <Alert status="info" my={4}>
                 <AlertIcon />
                 <Box flex="1">
                     <AlertTitle>Welcome to the backstage area for {roomName}</AlertTitle>
                     <AlertDescription display="block">
+                        <p>You can join a room here to ask and answer questions live on air.</p>
                         <p>
-                            Are you an author or a session chair? You can join your room here to answer questions live
-                            on air.
+                            If you are a presenter, author or session chair, keep an eye on the chat to see any
+                            questions that are asked!
                         </p>
-                        <p>Keep an eye on the chat to see any questions that are asked!</p>
                     </AlertDescription>
                 </Box>
             </Alert>

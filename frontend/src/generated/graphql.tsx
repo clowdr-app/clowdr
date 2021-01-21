@@ -30147,6 +30147,13 @@ export type Room_GetEventsQuery = { readonly __typename?: 'query_root', readonly
 
 export type Room_EventSummaryFragment = { readonly __typename?: 'Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum, readonly contentGroupId?: Maybe<any>, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string }> };
 
+export type RoomBackstage_GetEventBreakoutRoomQueryVariables = Exact<{
+  originatingEventId: Scalars['uuid'];
+}>;
+
+
+export type RoomBackstage_GetEventBreakoutRoomQuery = { readonly __typename?: 'query_root', readonly Room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }> };
+
 export type AddParticipantToRoomMutationVariables = Exact<{
   attendeeId: Scalars['uuid'];
   roomId: Scalars['uuid'];
@@ -34038,6 +34045,39 @@ export function useRoom_GetEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type Room_GetEventsQueryHookResult = ReturnType<typeof useRoom_GetEventsQuery>;
 export type Room_GetEventsLazyQueryHookResult = ReturnType<typeof useRoom_GetEventsLazyQuery>;
 export type Room_GetEventsQueryResult = Apollo.QueryResult<Room_GetEventsQuery, Room_GetEventsQueryVariables>;
+export const RoomBackstage_GetEventBreakoutRoomDocument = gql`
+    query RoomBackstage_GetEventBreakoutRoom($originatingEventId: uuid!) {
+  Room(where: {originatingEventId: {_eq: $originatingEventId}}) {
+    id
+  }
+}
+    `;
+
+/**
+ * __useRoomBackstage_GetEventBreakoutRoomQuery__
+ *
+ * To run a query within a React component, call `useRoomBackstage_GetEventBreakoutRoomQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRoomBackstage_GetEventBreakoutRoomQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRoomBackstage_GetEventBreakoutRoomQuery({
+ *   variables: {
+ *      originatingEventId: // value for 'originatingEventId'
+ *   },
+ * });
+ */
+export function useRoomBackstage_GetEventBreakoutRoomQuery(baseOptions: Apollo.QueryHookOptions<RoomBackstage_GetEventBreakoutRoomQuery, RoomBackstage_GetEventBreakoutRoomQueryVariables>) {
+        return Apollo.useQuery<RoomBackstage_GetEventBreakoutRoomQuery, RoomBackstage_GetEventBreakoutRoomQueryVariables>(RoomBackstage_GetEventBreakoutRoomDocument, baseOptions);
+      }
+export function useRoomBackstage_GetEventBreakoutRoomLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RoomBackstage_GetEventBreakoutRoomQuery, RoomBackstage_GetEventBreakoutRoomQueryVariables>) {
+          return Apollo.useLazyQuery<RoomBackstage_GetEventBreakoutRoomQuery, RoomBackstage_GetEventBreakoutRoomQueryVariables>(RoomBackstage_GetEventBreakoutRoomDocument, baseOptions);
+        }
+export type RoomBackstage_GetEventBreakoutRoomQueryHookResult = ReturnType<typeof useRoomBackstage_GetEventBreakoutRoomQuery>;
+export type RoomBackstage_GetEventBreakoutRoomLazyQueryHookResult = ReturnType<typeof useRoomBackstage_GetEventBreakoutRoomLazyQuery>;
+export type RoomBackstage_GetEventBreakoutRoomQueryResult = Apollo.QueryResult<RoomBackstage_GetEventBreakoutRoomQuery, RoomBackstage_GetEventBreakoutRoomQueryVariables>;
 export const AddParticipantToRoomDocument = gql`
     mutation AddParticipantToRoom($attendeeId: uuid!, $roomId: uuid!) {
   insert_RoomPerson_one(

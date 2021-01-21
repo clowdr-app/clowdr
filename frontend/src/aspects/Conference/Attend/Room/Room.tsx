@@ -261,8 +261,15 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
     );
 
     const backStageEl = useMemo(
-        () => <RoomBackstage backstage={backstage} roomName={roomDetails.name} roomEvents={roomEvents} />,
-        [backstage, roomDetails.name, roomEvents]
+        () => (
+            <RoomBackstage
+                backstage={backstage}
+                roomName={roomDetails.name}
+                roomEvents={roomEvents}
+                currentRoomEventId={currentRoomEvent?.id}
+            />
+        ),
+        [backstage, currentRoomEvent?.id, roomDetails.name, roomEvents]
     );
 
     const playerEl = useMemo(

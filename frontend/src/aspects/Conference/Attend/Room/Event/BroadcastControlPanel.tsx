@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Button, Heading, useToast } from "@chakra-ui/react";
+import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Button, useToast } from "@chakra-ui/react";
 import { VonageSessionLayoutData, VonageSessionLayoutType } from "@clowdr-app/shared-types/build/vonage";
 import React, { useCallback } from "react";
 import {
@@ -53,13 +53,10 @@ export function BroadcastControlPanel({
                 });
             }
         },
-        [eventVonageSessionId, updateLayout]
+        [eventVonageSessionId, toast, updateLayout]
     );
     return (
         <>
-            <Heading as="h3" size="sm" mt={2} mb={2}>
-                Broadcast controls
-            </Heading>
             {!live ? (
                 <>Broadcast controls not available while event is off air.</>
             ) : !streams ? undefined : streams.length === 0 ? (

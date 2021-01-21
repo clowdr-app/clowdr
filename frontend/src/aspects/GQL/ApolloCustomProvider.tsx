@@ -4,7 +4,7 @@ import { getMainDefinition } from "@apollo/client/utilities";
 import { setContext } from "@apollo/link-context";
 import { useAuth0 } from "@auth0/auth0-react";
 import { Mutex } from "async-mutex";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import AppLoadingScreen from "../../AppLoadingScreen";
 
@@ -120,7 +120,8 @@ async function createApolloClient(
     conferenceSlug: string | undefined,
     userId: string | undefined,
     getAccessTokenSilently: (options?: any) => Promise<string>,
-    tokenCache: AuthTokenCache
+    tokenCache: AuthTokenCache,
+    existingClient?: ApolloClient<NormalizedCacheObject>
 ): Promise<ApolloClient<NormalizedCacheObject>> {
     const useSecureProtocols = import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API_SECURE_PROTOCOLS !== "false";
     const httpProtocol = useSecureProtocols ? "https" : "http";
@@ -244,12 +245,26 @@ async function createApolloClient(
     return client;
 }
 
+interface ApolloCustomCtx {
+    reconnect: () => Promise<void>;
+}
+
+const ApolloCustomContext = React.createContext<ApolloCustomCtx | null>(null);
+
+export function useApolloCustomContext(): ApolloCustomCtx {
+    const ctx = React.useContext(ApolloCustomContext);
+    if (!ctx) {
+        throw new Error("Context not available - are you outside the provider? (useApolloCustomContext)");
+    }
+    return ctx;
+}
+
 export default function ApolloCustomProvider({
     children,
 }: {
     children: string | JSX.Element | Array<JSX.Element>;
 }): JSX.Element {
-    const { isAuthenticated, user, getAccessTokenSilently } = useAuth0();
+    const { isLoading, isAuthenticated, user, getAccessTokenSilently } = useAuth0();
     const tokenCache = useRef<AuthTokenCache>(new AuthTokenCache());
 
     const [client, setClient] = useState<ApolloClient<NormalizedCacheObject>>();
@@ -262,22 +277,36 @@ export default function ApolloCustomProvider({
         return undefined;
     }, [location.pathname]);
 
-    useEffect(() => {
-        (async () => {
-            const client = await createApolloClient(
-                isAuthenticated,
-                conferenceSlug,
-                user?.sub,
-                getAccessTokenSilently,
-                tokenCache.current
-            );
-            setClient(client);
-        })();
-    }, [conferenceSlug, getAccessTokenSilently, isAuthenticated, user?.sub]);
+    const _reconnect = useCallback(
+        async (websocketOnly?: boolean) => {
+            if (!isLoading) {
+                const newClient = await createApolloClient(
+                    isAuthenticated,
+                    conferenceSlug,
+                    user?.sub,
+                    getAccessTokenSilently,
+                    tokenCache.current,
+                    websocketOnly ? client : undefined
+                );
+                setClient(newClient);
+            }
+        },
+        [client, conferenceSlug, getAccessTokenSilently, isAuthenticated, isLoading, user?.sub]
+    );
+
+    const reconnect = useCallback(async () => {
+        _reconnect(true);
+    }, [_reconnect]);
 
     if (client === undefined) {
+        _reconnect();
         return <AppLoadingScreen />;
     }
 
-    return <ApolloProvider client={client}>{children}</ApolloProvider>;
+    // TODO: ApolloCustomContext
+    return (
+        <ApolloCustomContext.Provider value={{ reconnect }}>
+            <ApolloProvider client={client}>{children}</ApolloProvider>
+        </ApolloCustomContext.Provider>
+    );
 }

@@ -30,8 +30,6 @@ import FAIcon from "../../../Icons/FAIcon";
 import { Markdown } from "../../../Text/Markdown";
 import { useConference } from "../../useConference";
 import { AuthorList } from "../Content/AuthorList";
-import { EventPersonList } from "../Content/EventPersonList";
-import EventTagList from "./EventTagList";
 import { useTimelineParameters } from "./useTimelineParameters";
 
 function EventBoxPopover({
@@ -181,6 +179,7 @@ function EventBoxPopover({
                                         weekday: "long",
                                         hour: "numeric",
                                         minute: "numeric",
+                                        timeZone: "CET",
                                     })} and lasts ${Math.round(durationSeconds / 60)} minutes.`}
                                     mb={2}
                                 >
@@ -188,21 +187,19 @@ function EventBoxPopover({
                                         hour: "numeric",
                                         minute: "numeric",
                                         hour12: false,
+                                        timeZone: "CET",
                                     })}{" "}
                                     -{" "}
                                     {new Date(eventStartMs + durationSeconds * 1000).toLocaleString(undefined, {
                                         hour: "numeric",
                                         minute: "numeric",
                                         hour12: false,
+                                        timeZone: "CET",
                                     })}
                                 </Text>
-                                <EventTagList tags={fullEvent.eventTags} />
                             </PopoverHeader>
                             <PopoverArrow />
                             <PopoverBody as={VStack} spacing={4} justifyContent="flex-start" alignItems="start">
-                                {fullEvent.eventPeople.length > 0 ? (
-                                    <EventPersonList people={fullEvent.eventPeople} />
-                                ) : undefined}
                                 {fullEvent.contentGroup?.people && fullEvent.contentGroup?.people.length > 0 ? (
                                     <AuthorList contentPeopleData={fullEvent.contentGroup.people} />
                                 ) : undefined}
@@ -319,6 +316,7 @@ export default function EventBox({
                     weekday: "long",
                     hour: "numeric",
                     minute: "numeric",
+                    timeZone: "CET",
                 })} and lasts ${Math.round(durationSeconds / 60)} minutes.`}
             >
                 {buttonContents}

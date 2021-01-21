@@ -100,10 +100,12 @@ export default function DayList({
                     onClick={() => {
                         scrollToEvent(date[1].event);
                     }}
+                    // TODO: Set the timezone for the conference
                     aria-label={`Scroll schedule to ${date[0].toLocaleString(undefined, {
                         weekday: "long",
                         day: "numeric",
                         month: "long",
+                        timeZone: "CET",
                     })}`}
                 >
                     {idx === 0 ||
@@ -113,11 +115,12 @@ export default function DayList({
                             {date[0].toLocaleDateString(undefined, {
                                 day: "2-digit",
                                 month: "2-digit",
+                                timeZone: "CET",
                             })}
                         </Text>
                     ) : undefined}
                     <Text w="100%" display="block" as="span" mt="3px">
-                        {date[0].toLocaleString(undefined, { weekday: "long" })}
+                        {date[0].toLocaleString(undefined, { weekday: "long", timeZone: "CET" })}
                     </Text>
                 </Button>
             ))}

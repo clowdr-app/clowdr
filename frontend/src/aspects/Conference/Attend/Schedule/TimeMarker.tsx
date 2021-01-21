@@ -57,11 +57,13 @@ export default function TimeMarker({
                                   hour: "2-digit",
                                   minute: "2-digit",
                                   hour12: false,
+                                  timeZone: "CET",
                               })
                             : new Date(time).toLocaleTimeString(undefined, {
                                   hour: "2-digit",
                                   minute: "2-digit",
                                   hour12: false,
+                                  timeZone: "CET",
                               })
                         : undefined}
                 </div>
@@ -102,11 +104,13 @@ export default function TimeMarker({
                                   hour: "2-digit",
                                   minute: "2-digit",
                                   hour12: false,
+                                  timeZone: "CET",
                               })
                             : new Date(time).toLocaleTimeString(undefined, {
                                   hour: "2-digit",
                                   minute: "2-digit",
                                   hour12: false,
+                                  timeZone: "CET",
                               })
                         : undefined}
                 </div>

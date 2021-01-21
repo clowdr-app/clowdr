@@ -29981,6 +29981,8 @@ export type ContentGroupSummary_ContentGroupDataFragment = { readonly __typename
 
 export type ContentItemDataFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly contentTypeName: ContentType_Enum };
 
+export type Timeline_EventPersonFragment = { readonly __typename?: 'EventPerson', readonly id: any, readonly attendeeId?: Maybe<any>, readonly name: string, readonly affiliation?: Maybe<string>, readonly roleName: EventPersonRole_Enum };
+
 export type UpdateAttendeeProfileMutationVariables = Exact<{
   attendeeId: Scalars['uuid'];
   profile?: Maybe<AttendeeProfile_Set_Input>;
@@ -30222,18 +30224,6 @@ export type VonageSubscriber_GetAttendeeQuery = { readonly __typename?: 'query_r
     & AttendeeDataFragment
   )> };
 
-export type Timeline_TagFragment = { readonly __typename?: 'Tag', readonly id: any, readonly name: string, readonly colour: string };
-
-export type Timeline_ContentGroupTagFragment = { readonly __typename?: 'ContentGroupTag', readonly id: any, readonly tag: (
-    { readonly __typename?: 'Tag' }
-    & Timeline_TagFragment
-  ) };
-
-export type Timeline_EventTagFragment = { readonly __typename?: 'EventTag', readonly id: any, readonly tag: (
-    { readonly __typename?: 'Tag' }
-    & Timeline_TagFragment
-  ) };
-
 export type Timeline_ContentItemFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly contentTypeName: ContentType_Enum, readonly name: string, readonly isHidden: boolean, readonly layoutData?: Maybe<any> };
 
 export type Timeline_ContentItem_WithDataFragment = (
@@ -30241,21 +30231,12 @@ export type Timeline_ContentItem_WithDataFragment = (
   & Timeline_ContentItemFragment
 );
 
-export type Timeline_HallwayFragment = { readonly __typename?: 'Hallway', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number };
-
-export type Timeline_ContentGroupHallwayFragment = { readonly __typename?: 'ContentGroupHallway', readonly id: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any>, readonly hallway: (
-    { readonly __typename?: 'Hallway' }
-    & Timeline_HallwayFragment
-  ) };
-
-export type Timeline_ContentPersonFragment = { readonly __typename?: 'ContentPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly attendeeId?: Maybe<any> };
+export type Timeline_ContentPersonFragment = { readonly __typename?: 'ContentPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string> };
 
 export type Timeline_ContentGroupPersonFragment = { readonly __typename?: 'ContentGroupPerson', readonly id: any, readonly priority?: Maybe<number>, readonly roleName: string, readonly person: (
     { readonly __typename?: 'ContentPerson' }
     & Timeline_ContentPersonFragment
   ) };
-
-export type Timeline_EventPersonFragment = { readonly __typename?: 'EventPerson', readonly id: any, readonly attendeeId?: Maybe<any>, readonly name: string, readonly affiliation?: Maybe<string>, readonly roleName: EventPersonRole_Enum };
 
 export type Timeline_ContentGroupFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly contentGroupTypeName: ContentGroupType_Enum, readonly title: string, readonly abstractContentItems: ReadonlyArray<(
     { readonly __typename?: 'ContentItem' }
@@ -30268,12 +30249,6 @@ export type Timeline_ContentGroupFragment = { readonly __typename?: 'ContentGrou
 export type Timeline_Event_FullInfoFragment = { readonly __typename?: 'Event', readonly id: any, readonly roomId: any, readonly intendedRoomModeName: RoomMode_Enum, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly contentGroup?: Maybe<(
     { readonly __typename?: 'ContentGroup' }
     & Timeline_ContentGroupFragment
-  )>, readonly eventPeople: ReadonlyArray<(
-    { readonly __typename?: 'EventPerson' }
-    & Timeline_EventPersonFragment
-  )>, readonly eventTags: ReadonlyArray<(
-    { readonly __typename?: 'EventTag' }
-    & Timeline_EventTagFragment
   )> };
 
 export type Timeline_EventFragment = { readonly __typename?: 'Event', readonly id: any, readonly roomId: any, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string }> };
@@ -30312,6 +30287,13 @@ export type Timeline_SelectRoomQuery = { readonly __typename?: 'query_root', rea
     { readonly __typename?: 'Room' }
     & Timeline_RoomFragment
   )> };
+
+export type Timeline_TagFragment = { readonly __typename?: 'Tag', readonly id: any, readonly name: string, readonly colour: string };
+
+export type Timeline_EventTagFragment = { readonly __typename?: 'EventTag', readonly id: any, readonly tag: (
+    { readonly __typename?: 'Tag' }
+    & Timeline_TagFragment
+  ) };
 
 export type AttendeesByIdQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -31571,6 +31553,15 @@ export const ContentGroupSummary_ContentGroupDataFragmentDoc = gql`
 }
     ${ContentItemDataFragmentDoc}
 ${ContentPersonDataFragmentDoc}`;
+export const Timeline_EventPersonFragmentDoc = gql`
+    fragment Timeline_EventPerson on EventPerson {
+  id
+  attendeeId
+  name
+  affiliation
+  roleName
+}
+    `;
 export const EventParticipantStreamDetailsFragmentDoc = gql`
     fragment EventParticipantStreamDetails on EventParticipantStream {
   id
@@ -31704,39 +31695,6 @@ export const RoomSponsorContent_ContentGroupDataFragmentDoc = gql`
   }
 }
     ${RoomSponsorContent_ContentItemDataFragmentDoc}`;
-export const Timeline_TagFragmentDoc = gql`
-    fragment Timeline_Tag on Tag {
-  id
-  name
-  colour
-}
-    `;
-export const Timeline_ContentGroupTagFragmentDoc = gql`
-    fragment Timeline_ContentGroupTag on ContentGroupTag {
-  id
-  tag {
-    ...Timeline_Tag
-  }
-}
-    ${Timeline_TagFragmentDoc}`;
-export const Timeline_HallwayFragmentDoc = gql`
-    fragment Timeline_Hallway on Hallway {
-  id
-  name
-  colour
-  priority
-}
-    `;
-export const Timeline_ContentGroupHallwayFragmentDoc = gql`
-    fragment Timeline_ContentGroupHallway on ContentGroupHallway {
-  id
-  priority
-  layout
-  hallway {
-    ...Timeline_Hallway
-  }
-}
-    ${Timeline_HallwayFragmentDoc}`;
 export const Timeline_ContentItemFragmentDoc = gql`
     fragment Timeline_ContentItem on ContentItem {
   id
@@ -31757,7 +31715,6 @@ export const Timeline_ContentPersonFragmentDoc = gql`
   id
   name
   affiliation
-  attendeeId
 }
     `;
 export const Timeline_ContentGroupPersonFragmentDoc = gql`
@@ -31784,23 +31741,6 @@ export const Timeline_ContentGroupFragmentDoc = gql`
 }
     ${Timeline_ContentItem_WithDataFragmentDoc}
 ${Timeline_ContentGroupPersonFragmentDoc}`;
-export const Timeline_EventPersonFragmentDoc = gql`
-    fragment Timeline_EventPerson on EventPerson {
-  id
-  attendeeId
-  name
-  affiliation
-  roleName
-}
-    `;
-export const Timeline_EventTagFragmentDoc = gql`
-    fragment Timeline_EventTag on EventTag {
-  id
-  tag {
-    ...Timeline_Tag
-  }
-}
-    ${Timeline_TagFragmentDoc}`;
 export const Timeline_Event_FullInfoFragmentDoc = gql`
     fragment Timeline_Event_FullInfo on Event {
   id
@@ -31812,16 +31752,8 @@ export const Timeline_Event_FullInfoFragmentDoc = gql`
   contentGroup {
     ...Timeline_ContentGroup
   }
-  eventPeople {
-    ...Timeline_EventPerson
-  }
-  eventTags {
-    ...Timeline_EventTag
-  }
 }
-    ${Timeline_ContentGroupFragmentDoc}
-${Timeline_EventPersonFragmentDoc}
-${Timeline_EventTagFragmentDoc}`;
+    ${Timeline_ContentGroupFragmentDoc}`;
 export const Timeline_EventFragmentDoc = gql`
     fragment Timeline_Event on Event {
   id
@@ -31846,6 +31778,21 @@ export const Timeline_RoomFragmentDoc = gql`
   }
 }
     ${Timeline_EventFragmentDoc}`;
+export const Timeline_TagFragmentDoc = gql`
+    fragment Timeline_Tag on Tag {
+  id
+  name
+  colour
+}
+    `;
+export const Timeline_EventTagFragmentDoc = gql`
+    fragment Timeline_EventTag on EventTag {
+  id
+  tag {
+    ...Timeline_Tag
+  }
+}
+    ${Timeline_TagFragmentDoc}`;
 export const ContentPersonInfoFragmentDoc = gql`
     fragment ContentPersonInfo on ContentPerson {
   id

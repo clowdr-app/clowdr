@@ -1,6 +1,17 @@
+import { gql } from "@apollo/client";
 import { Badge, HStack, Text, VStack } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import type { Timeline_EventPersonFragment } from "../../../../generated/graphql";
+
+gql`
+    fragment Timeline_EventPerson on EventPerson {
+        id
+        attendeeId
+        name
+        affiliation
+        roleName
+    }
+`;
 
 export function EventPersonList({ people }: { people: readonly Timeline_EventPersonFragment[] }): JSX.Element {
     const authorElements = useMemo(() => {

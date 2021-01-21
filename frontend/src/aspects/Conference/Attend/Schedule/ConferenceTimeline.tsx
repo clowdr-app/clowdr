@@ -25,26 +25,6 @@ import TimelineZoomControls from "./TimelineZoomControls";
 import { TimelineParameters } from "./useTimelineParameters";
 
 gql`
-    fragment Timeline_Tag on Tag {
-        id
-        name
-        colour
-    }
-
-    fragment Timeline_ContentGroupTag on ContentGroupTag {
-        id
-        tag {
-            ...Timeline_Tag
-        }
-    }
-
-    fragment Timeline_EventTag on EventTag {
-        id
-        tag {
-            ...Timeline_Tag
-        }
-    }
-
     fragment Timeline_ContentItem on ContentItem {
         id
         contentTypeName
@@ -58,27 +38,10 @@ gql`
         data
     }
 
-    fragment Timeline_Hallway on Hallway {
-        id
-        name
-        colour
-        priority
-    }
-
-    fragment Timeline_ContentGroupHallway on ContentGroupHallway {
-        id
-        priority
-        layout
-        hallway {
-            ...Timeline_Hallway
-        }
-    }
-
     fragment Timeline_ContentPerson on ContentPerson {
         id
         name
         affiliation
-        attendeeId
     }
 
     fragment Timeline_ContentGroupPerson on ContentGroupPerson {
@@ -90,30 +53,13 @@ gql`
         }
     }
 
-    fragment Timeline_EventPerson on EventPerson {
-        id
-        attendeeId
-        name
-        affiliation
-        roleName
-    }
-
     fragment Timeline_ContentGroup on ContentGroup {
         id
         contentGroupTypeName
         title
-        # contentGroupTags {
-        #     ...Timeline_ContentGroupTag
-        # }
-        # nonAbstractContentItems: contentItems(where: { contentTypeName: { _neq: ABSTRACT } }) {
-        #     ...Timeline_ContentItem
-        # }
         abstractContentItems: contentItems(where: { contentTypeName: { _eq: ABSTRACT } }) {
             ...Timeline_ContentItem_WithData
         }
-        # hallways {
-        #     ...Timeline_ContentGroupHallway
-        # }
         people {
             ...Timeline_ContentGroupPerson
         }
@@ -129,12 +75,6 @@ gql`
 
         contentGroup {
             ...Timeline_ContentGroup
-        }
-        eventPeople {
-            ...Timeline_EventPerson
-        }
-        eventTags {
-            ...Timeline_EventTag
         }
     }
 

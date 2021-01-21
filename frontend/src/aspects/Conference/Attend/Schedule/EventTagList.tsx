@@ -1,6 +1,22 @@
+import { gql } from "@apollo/client";
 import { HStack, Tag, useColorModeValue } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import type { Timeline_EventTagFragment } from "../../../../generated/graphql";
+
+gql`
+    fragment Timeline_Tag on Tag {
+        id
+        name
+        colour
+    }
+
+    fragment Timeline_EventTag on EventTag {
+        id
+        tag {
+            ...Timeline_Tag
+        }
+    }
+`;
 
 export default function EventTagList({ tags }: { tags: readonly Timeline_EventTagFragment[] }): JSX.Element {
     const sortedTags = useMemo(() => {

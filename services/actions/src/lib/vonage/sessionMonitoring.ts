@@ -45,6 +45,7 @@ export async function startBroadcastIfOngoingEvent(payload: WebhookReqBody): Pro
 
     const ongoingMatchingEvent = ongoingMatchingEvents.data.Event[0];
 
+    console.log("Vonage session has ongoing matching event, ensuring broadcast is started", payload.sessionId);
     await startEventBroadcast(ongoingMatchingEvent.id);
 
     return true;

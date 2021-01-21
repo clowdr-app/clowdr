@@ -222,14 +222,19 @@ gql`
 `;
 
 export async function handleEventStartNotification(eventId: string, startTime: string): Promise<void> {
-    const result = await apolloClient.query({
-        query: GetEventTimingsDocument,
-        variables: {
-            eventId,
-        },
-    });
+    console.log("Handling event start", eventId, startTime);
+    const result = await callWithRetry(
+        async () =>
+            await apolloClient.query({
+                query: GetEventTimingsDocument,
+                variables: {
+                    eventId,
+                },
+            })
+    );
 
     if (result.data.Event_by_pk && result.data.Event_by_pk.startTime === startTime) {
+        console.log("Handling event start: matched expected startTime", result.data.Event_by_pk.id, startTime);
         const nowMillis = new Date().getTime();
         const startTimeMillis = Date.parse(startTime);
         const preloadMillis = 1000;
@@ -257,6 +262,7 @@ export async function handleEventStartNotification(eventId: string, startTime: s
 }
 
 export async function handleEventEndNotification(eventId: string, endTime: string): Promise<void> {
+    console.log("Handling event end", eventId, endTime);
     const result = await callWithRetry(
         async () =>
             await apolloClient.query({
@@ -268,6 +274,7 @@ export async function handleEventEndNotification(eventId: string, endTime: strin
     );
 
     if (result.data.Event_by_pk && result.data.Event_by_pk.endTime === endTime) {
+        console.log("Handling event end: matched expected endTime", result.data.Event_by_pk.id, endTime);
         const nowMillis = new Date().getTime();
         const endTimeMillis = Date.parse(endTime);
         const preloadMillis = 1000;

@@ -5,7 +5,7 @@ import { useLocation } from "react-router-dom";
 import useUserId from "../../../../Auth/useUserId";
 import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";
 import usePolling from "../../../../Generic/usePolling";
-import { useVonageRoom, VonageRoomStateProvider } from "../../../../Vonage/useVonageRoom";
+import { useVonageRoom, VonageRoomStateActionType, VonageRoomStateProvider } from "../../../../Vonage/useVonageRoom";
 import useCurrentAttendee, { useMaybeCurrentAttendee } from "../../../useCurrentAttendee";
 import PlaceholderImage from "../PlaceholderImage";
 import { PreJoin } from "../PreJoin";
@@ -57,7 +57,7 @@ function VonageRoomInner({
     stop: boolean;
 }): JSX.Element {
     const maxVideoStreams = 10;
-    const { state } = useVonageRoom();
+    const { state, dispatch } = useVonageRoom();
     const { vonage, connected, connections, streams, screen, camera } = useVonageComputedState(
         getAccessToken,
         vonageSessionId
@@ -111,7 +111,15 @@ function VonageRoomInner({
             }
         }
         setJoining(false);
-    }, [connected, vonage]);
+        dispatch({
+            type: VonageRoomStateActionType.SetMicrophoneIntendedState,
+            microphoneEnabled: false,
+        });
+        dispatch({
+            type: VonageRoomStateActionType.SetCameraIntendedState,
+            cameraEnabled: false,
+        });
+    }, [connected, dispatch, vonage]);
 
     useEffect(() => {
         if (stop) {

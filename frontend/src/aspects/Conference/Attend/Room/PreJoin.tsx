@@ -9,7 +9,7 @@ import PlaceholderImage from "./PlaceholderImage";
 export const AudioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
 
 export function PreJoin({ cameraPreviewRef }: { cameraPreviewRef: React.RefObject<HTMLVideoElement> }): JSX.Element {
-    const { state, dispatch } = useVonageRoom();
+    const { state } = useVonageRoom();
     const toast = useToast();
     const [dismissHelpMessage, setDismissHelpMessage] = useRestorableState<boolean>(
         "clowdr-dismissCameraPreviewMessage",

@@ -117,6 +117,7 @@ function RoomListInner({ rooms, layout, limit, onClick }: Props): JSX.Element {
         () =>
             sortedRooms.map((room) => ({
                 name: room.name.toLowerCase(),
+                showByDefault: !room.originatingEventId && !room.originatingContentGroupId,
                 el: (
                     <LinkButton
                         key={room.id}
@@ -138,17 +139,19 @@ function RoomListInner({ rooms, layout, limit, onClick }: Props): JSX.Element {
     );
 
     const s = search.toLowerCase();
-    const filteredElements = roomElements.filter((e) => {
-        return e.name.includes(s);
-    });
+    const filteredElements = s.length
+        ? roomElements.filter((e) => {
+              return e.name.includes(s);
+          })
+        : roomElements.filter((e) => e.showByDefault);
 
     const limitedElements = limit
         ? filteredElements.slice(0, Math.min(limit, filteredElements.length))
         : filteredElements;
 
     const resultCountStr = `showing ${Math.min(limit ?? Number.MAX_SAFE_INTEGER, filteredElements.length)} of ${
-        filteredElements.length
-    } ${filteredElements.length !== 1 ? "rooms" : "room"}`;
+        sortedRooms.length
+    } ${sortedRooms.length !== 1 ? "rooms" : "room"}`;
     const [ariaSearchResultStr, setAriaSearchResultStr] = useState<string>(resultCountStr);
     useEffect(() => {
         const tId = setTimeout(() => {
@@ -180,7 +183,9 @@ function RoomListInner({ rooms, layout, limit, onClick }: Props): JSX.Element {
                         <FAIcon iconStyle="s" icon="search" />
                     </InputRightElement>
                 </InputGroup>
-                <FormHelperText>Search for a room.</FormHelperText>
+                <FormHelperText>
+                    Only key rooms are shown by default. Enter a search term to search all rooms.
+                </FormHelperText>
             </FormControl>
             <SimpleGrid
                 columns={layout === "grid" ? [1, Math.min(2, rooms.length), Math.min(3, rooms.length)] : 1}

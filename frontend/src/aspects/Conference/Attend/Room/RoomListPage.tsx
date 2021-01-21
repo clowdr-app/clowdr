@@ -25,6 +25,8 @@ gql`
         id
         name
         roomPrivacyName
+        originatingContentGroupId
+        originatingEventId
     }
 `;
 

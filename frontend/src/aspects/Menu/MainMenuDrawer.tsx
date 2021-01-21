@@ -13,7 +13,6 @@ import {
 import React from "react";
 import { HtmlPortalNode, OutPortal } from "react-reverse-portal";
 import { Route, RouteComponentProps } from "react-router-dom";
-import IncognitoToggleButton from "../Users/CurrentUser/OnlineStatus/IncognitoToggleButton";
 import MainMenuConferenceSections from "./MainMenuConferenceSections";
 import { useMainMenu } from "./MainMenuState";
 
@@ -45,7 +44,7 @@ export default function MainMenuDrawer({ isOpen, portalNode }: Props): JSX.Eleme
                                     Clowdr
                                 </Heading>
                                 <Spacer />
-                                <IncognitoToggleButton />
+                                {/* <IncognitoToggleButton /> */}
                                 <CloseButton ref={initialFocusRef} ml={2} onClick={onClose} title="Close main menu" />
                             </Flex>
                         </DrawerHeader>

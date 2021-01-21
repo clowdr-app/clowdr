@@ -55,7 +55,7 @@ export default function PresenceCountProvider({
         },
         pollInterval: 120000,
         fetchPolicy: "network-only",
-        skip: !mAttendee
+        skip: !mAttendee,
     });
     const { refetch: getPresenceCountOfQ } = useGetPresenceCountOfQuery({
         skip: true,

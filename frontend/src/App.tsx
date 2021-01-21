@@ -5,7 +5,7 @@ import Routing from "./AppRouting";
 import EmojiMartProvider from "./aspects/Emoji/EmojiMartContext";
 import MainMenu from "./aspects/Menu/MainMenu";
 import CurrentUserProvider from "./aspects/Users/CurrentUser/CurrentUserProvider";
-import LastSeenProvider from "./aspects/Users/CurrentUser/OnlineStatus/LastSeenProvider";
+// import LastSeenProvider from "./aspects/Users/CurrentUser/OnlineStatus/LastSeenProvider";
 
 interface AppProps {}
 
@@ -42,7 +42,7 @@ function App(_props: AppProps): JSX.Element {
     );
     return (
         <EmojiMartProvider>
-            <LastSeenProvider />
+            {/* <LastSeenProvider /> */}
             <CurrentUserProvider>{page}</CurrentUserProvider>
         </EmojiMartProvider>
     );

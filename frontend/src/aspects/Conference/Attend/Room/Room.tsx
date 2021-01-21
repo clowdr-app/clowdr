@@ -3,6 +3,7 @@ import {
     Alert,
     AlertIcon,
     Box,
+    Button,
     Heading,
     HStack,
     Text,
@@ -16,12 +17,14 @@ import { formatRelative } from "date-fns";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
 import ReactPlayer from "react-player";
-import { Redirect } from "react-router-dom";
+import { Redirect, useHistory } from "react-router-dom";
 import {
     ContentGroupType_Enum,
+    RoomMode_Enum,
     RoomPage_RoomDetailsFragment,
     Room_CurrentEventSummaryFragment,
     Room_EventSummaryFragment,
+    useRoomBackstage_GetEventBreakoutRoomQuery,
     useRoom_GetCurrentEventQuery,
     useRoom_GetEventsQuery,
 } from "../../../../generated/graphql";
@@ -374,7 +377,72 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
         }
     }, [sendShuffleRoomNotification, toast]);
 
+    // Q&A spinoff
+    const [existingCurrentRoomEvent, setExistingCurrentRoomEvent] = useState<Room_EventSummaryFragment | null>(
+        currentRoomEvent
+    );
     const conference = useConference();
+    const { refetch: refetchBreakout } = useRoomBackstage_GetEventBreakoutRoomQuery({
+        skip: true,
+        fetchPolicy: "network-only",
+    });
+    const history = useHistory();
+    useEffect(() => {
+        async function fn() {
+            try {
+                if (
+                    !backstage &&
+                    existingCurrentRoomEvent &&
+                    (existingCurrentRoomEvent.intendedRoomModeName === RoomMode_Enum.Presentation ||
+                        existingCurrentRoomEvent.intendedRoomModeName === RoomMode_Enum.QAndA) &&
+                    existingCurrentRoomEvent.id !== currentRoomEvent?.id
+                ) {
+                    try {
+                        const breakoutRoom = await refetchBreakout({ originatingEventId: existingCurrentRoomEvent.id });
+
+                        if (!breakoutRoom.data || !breakoutRoom.data.Room || breakoutRoom.data.Room.length < 1) {
+                            throw new Error("No matching room found");
+                        }
+
+                        toast({
+                            status: "info",
+                            duration: 15000,
+                            isClosable: true,
+                            position: "bottom-right",
+                            title: "Spinoff room created",
+                            description: (
+                                <VStack alignItems="flex-start">
+                                    <Text>You can continue the discussion asynchronously in a spinoff room.</Text>
+                                    <Button
+                                        onClick={() =>
+                                            history.push(
+                                                `/conference/${conference.slug}/room/${breakoutRoom.data.Room[0].id}`
+                                            )
+                                        }
+                                        colorScheme="green"
+                                    >
+                                        Join the spinoff room
+                                    </Button>
+                                </VStack>
+                            ),
+                        });
+                    } catch (e) {
+                        console.error(
+                            "Error while moving to breakout room at end of event",
+                            existingCurrentRoomEvent.id,
+                            e
+                        );
+                        return;
+                    }
+                }
+            } finally {
+                setExistingCurrentRoomEvent(currentRoomEvent);
+            }
+        }
+        fn();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentRoomEvent]);
+
     return roomDetails.shuffleRooms.length > 0 && hasShuffleRoomEnded(roomDetails.shuffleRooms[0]) ? (
         <Redirect
             to={`/conference/${conference.slug}/shuffle${

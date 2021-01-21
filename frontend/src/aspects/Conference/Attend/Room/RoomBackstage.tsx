@@ -115,7 +115,7 @@ export function RoomBackstage({
                             py={4}
                         >
                             <VStack>
-                                <Text fontSize="lg">{isSelected ? "Close backstage room" : "Open backstage room"}</Text>
+                                <Text fontSize="lg">{isSelected ? "Close Q&A room" : "Open Q&A room"}</Text>
                                 <Text>{title}</Text>
                             </VStack>
                         </Button>
@@ -241,7 +241,7 @@ export function RoomBackstage({
             <Alert status="info" my={4}>
                 <AlertIcon />
                 <Box flex="1">
-                    <AlertTitle>Welcome to the backstage area for {roomName}</AlertTitle>
+                    <AlertTitle>Welcome to the Q&amp;A area for {roomName}</AlertTitle>
                     <AlertDescription display="block">
                         <p>You can join a room here to ask and answer questions live on air.</p>
                         <p>

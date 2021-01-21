@@ -109,7 +109,7 @@ export function RoomControlBar({
                         Return to stream
                     </Button>
                 ) : (
-                    <Tooltip label="Join events as a presenter, session chair or to ask questions.">
+                    <Tooltip label="Authors click here to join the stream and answer questions live.">
                         <Button colorScheme="green" onClick={() => onSetBackstage(true)}>
                             Host live Q&amp;A sessions
                         </Button>

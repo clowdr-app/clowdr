@@ -17693,7 +17693,9 @@ export type Chat_ReadUpToIndex_Bool_Exp = {
 /** unique or primary key constraints on table "chat.ReadUpToIndex" */
 export enum Chat_ReadUpToIndex_Constraint {
   /** unique or primary key constraint */
-  ReadUpToIndexPkey = 'ReadUpToIndex_pkey'
+  ReadUpToIndexPkey = 'ReadUpToIndex_pkey',
+  /** unique or primary key constraint */
+  ChatReadUpToIndexPkIndex = 'chat_ReadUpToIndex_pk_index'
 }
 
 /** input type for incrementing integer column in table "chat.ReadUpToIndex" */
@@ -30171,7 +30173,7 @@ export type GetAllRoomsQuery = { readonly __typename?: 'query_root', readonly Ro
     & RoomListRoomDetailsFragment
   )> };
 
-export type RoomListRoomDetailsFragment = { readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly roomPrivacyName: RoomPrivacy_Enum };
+export type RoomListRoomDetailsFragment = { readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly roomPrivacyName: RoomPrivacy_Enum, readonly originatingContentGroupId?: Maybe<any>, readonly originatingEventId?: Maybe<any> };
 
 export type RoomPage_GetRoomDetailsQueryVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -31632,6 +31634,8 @@ export const RoomListRoomDetailsFragmentDoc = gql`
   id
   name
   roomPrivacyName
+  originatingContentGroupId
+  originatingEventId
 }
     `;
 export const RoomPage_RoomPeopleFragmentDoc = gql`

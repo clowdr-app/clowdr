@@ -248,6 +248,7 @@ export function RoomBackstage({
                             If you are a presenter, author or session chair, keep an eye on the chat to see any
                             questions that are asked!
                         </p>
+                        <p>Event rooms become available to join ten minutes before the event itself starts.</p>
                     </AlertDescription>
                 </Box>
             </Alert>

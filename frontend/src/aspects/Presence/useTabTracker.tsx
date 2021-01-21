@@ -32,7 +32,7 @@ export default function useTabTracker(attendeeId?: string): void {
                                 variables: {
                                     attendeeId,
                                     path: location.pathname,
-                                    oldId: oldId.current,
+                                    oldId: oldId.current ?? attendeeId, // Give it any old id if it's not going to be used!
                                     delete: !!oldId.current,
                                 },
                             })

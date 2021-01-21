@@ -4,15 +4,13 @@ import {
     ChatMessageDataFragment,
     SelectFirstMessagesPageQuery,
     SelectMessagesPageQuery,
-    SubscribedChatReactionDataFragment,
     useDeleteMessageMutation,
     useNextMessageSubscription,
-    useNextReactionsQuery,
+    useNextReactionsSubscription,
     useSelectFirstMessagesPageQuery,
     useSelectMessagesPageQuery,
     useSelectSingleMessageQuery,
 } from "../../../generated/graphql";
-import usePolling from "../../Generic/usePolling";
 import ReadUpToIndexProvider from "./ReadUpToIndexProvider";
 
 gql`
@@ -105,7 +103,7 @@ gql`
         }
     }
 
-    query NextReactions($messageIds: [Int!]!) {
+    subscription NextReactions($messageIds: [Int!]!) {
         chat_Reaction(where: { messageId: { _in: $messageIds } }) {
             ...SubscribedChatReactionData
         }
@@ -231,20 +229,20 @@ export default function ReceiveMessageQueriesProvider({
             prevId: liveMessages.maxId,
         },
     });
-    const nextReactionsSub = useNextReactionsQuery({
+    const liveReactions = useNextReactionsSubscription({
         skip: true,
         fetchPolicy: "network-only",
     });
-    const [liveReactions, setLiveReactions] = useState<readonly SubscribedChatReactionDataFragment[]>([]);
-    const pollCb = useCallback(() => {
-        (async () => {
-            const data = await nextReactionsSub.refetch({
-                messageIds: [...liveMessages.msgs.keys()],
-            });
-            setLiveReactions(data.data.chat_Reaction);
-        })();
-    }, [liveMessages.msgs, nextReactionsSub]);
-    usePolling(pollCb, 5000, true);
+    // const [liveReactions, setLiveReactions] = useState<readonly SubscribedChatReactionDataFragment[]>([]);
+    // const pollCb = useCallback(() => {
+    //     (async () => {
+    //         const data = await nextReactionsSub.refetch({
+    //             messageIds: [...liveMessages.msgs.keys()],
+    //         });
+    //         setLiveReactions(data.data.chat_Reaction);
+    //     })();
+    // }, [liveMessages.msgs, nextReactionsSub]);
+    // usePolling(pollCb, 5000, true);
     useEffect(() => {
         setRefetchMsg(null);
         setLiveMessages((prevLiveMessages) => {
@@ -265,26 +263,28 @@ export default function ReceiveMessageQueriesProvider({
                 maxId = Math.max(maxId, nextMessage.id);
             }
 
-            const freshMsgs = new Map<number, ChatMessageDataFragment>();
-            for (const reaction of liveReactions) {
-                let msg = freshMsgs.get(reaction.messageId);
-                if (msg) {
-                    freshMsgs.set(reaction.messageId, {
-                        ...msg,
-                        reactions: [...msg.reactions, reaction],
-                    });
-                } else {
-                    msg = newLiveMessages.get(reaction.messageId);
+            if (liveReactions.data?.chat_Reaction && liveReactions.data.chat_Reaction.length > 0) {
+                const freshMsgs = new Map<number, ChatMessageDataFragment>();
+                for (const reaction of liveReactions.data.chat_Reaction) {
+                    let msg = freshMsgs.get(reaction.messageId);
                     if (msg) {
                         freshMsgs.set(reaction.messageId, {
                             ...msg,
-                            reactions: [reaction],
+                            reactions: [...msg.reactions, reaction],
                         });
+                    } else {
+                        msg = newLiveMessages.get(reaction.messageId);
+                        if (msg) {
+                            freshMsgs.set(reaction.messageId, {
+                                ...msg,
+                                reactions: [reaction],
+                            });
+                        }
                     }
                 }
-            }
-            for (const [id, msg] of freshMsgs) {
-                newLiveMessages.set(id, msg);
+                for (const [id, msg] of freshMsgs) {
+                    newLiveMessages.set(id, msg);
+                }
             }
 
             return {

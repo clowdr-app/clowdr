@@ -230,8 +230,10 @@ export default function ReceiveMessageQueriesProvider({
         },
     });
     const liveReactions = useNextReactionsSubscription({
-        skip: true,
         fetchPolicy: "network-only",
+        variables: {
+            messageIds: [...liveMessages.msgs.keys()],
+        }
     });
     // const [liveReactions, setLiveReactions] = useState<readonly SubscribedChatReactionDataFragment[]>([]);
     // const pollCb = useCallback(() => {
@@ -292,7 +294,7 @@ export default function ReceiveMessageQueriesProvider({
                 maxId,
             };
         });
-    }, [liveReactions, nextMessageSub.data?.chat_Message, refetchMsg]);
+    }, [liveReactions.data?.chat_Reaction, nextMessageSub.data?.chat_Message, refetchMsg]);
 
     return (
         <ReceiveMessageQueriesContext.Provider

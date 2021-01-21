@@ -21,7 +21,7 @@ gql`
         }
     }
 
-    subscription SubdMessages_2021_01_19T16_04($attendeeId: uuid!, $chatIds: [uuid!]!) {
+    subscription SubdMessages_2021_01_19T16_04($chatIds: [uuid!]!) {
         chat_Message(limit: 1, order_by: { id: desc }, where: { chatId: { _in: $chatIds } }) {
             id
             chatId
@@ -86,7 +86,6 @@ export function ChatNotificationsProvider_WithAttendeeInner({
     const currentAttendee = useCurrentAttendee();
     const subscription = useSubdMessages_2021_01_19T16_04Subscription({
         variables: {
-            attendeeId,
             chatIds,
         },
     });

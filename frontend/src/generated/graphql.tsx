@@ -32922,10 +32922,7 @@ export const SelectPinDocument = gql`
   chat_Chat_by_pk(id: $chatId) {
     ...ChatPinConfig
   }
-  chat_Pin(
-    where: {chatId: {_eq: $chatId}, attendeeId: {_eq: $attendeeId}}
-    limit: 1
-  ) {
+  chat_Pin(where: {chatId: {_eq: $chatId}, attendeeId: {_eq: $attendeeId}}) {
     ...PinData
   }
 }
@@ -33036,7 +33033,6 @@ export const SelectSubscriptionDocument = gql`
   }
   chat_Subscription(
     where: {chatId: {_eq: $chatId}, attendeeId: {_eq: $attendeeId}}
-    limit: 1
   ) {
     ...SubscriptionData
   }
@@ -36327,7 +36323,6 @@ export const ConferenceTakenDocument = gql`
     query ConferenceTaken($name: String!, $shortName: String!, $slug: String!) {
   Conference(
     where: {_or: [{name: {_eq: $name}}, {shortName: {_eq: $shortName}}, {slug: {_eq: $slug}}]}
-    limit: 1
   ) {
     id
     name
@@ -36482,7 +36477,7 @@ export type CreateNewConferenceMetaStructureMutationResult = Apollo.MutationResu
 export type CreateNewConferenceMetaStructureMutationOptions = Apollo.BaseMutationOptions<CreateNewConferenceMetaStructureMutation, CreateNewConferenceMetaStructureMutationVariables>;
 export const ConferenceBySlugDocument = gql`
     query ConferenceBySlug($slug: String!) {
-  Conference(where: {slug: {_eq: $slug}}, limit: 1) {
+  Conference(where: {slug: {_eq: $slug}}) {
     id
     name
     shortName
@@ -36611,7 +36606,6 @@ export const AttendeeByUserIdConferenceIdDocument = gql`
     query AttendeeByUserIdConferenceId($conferenceId: uuid!, $userId: String!) {
   Attendee(
     where: {_and: [{conferenceId: {_eq: $conferenceId}}, {userId: {_eq: $userId}}]}
-    limit: 1
   ) {
     ...AttendeeData
   }
@@ -36646,10 +36640,7 @@ export type AttendeeByUserIdConferenceIdLazyQueryHookResult = ReturnType<typeof 
 export type AttendeeByUserIdConferenceIdQueryResult = Apollo.QueryResult<AttendeeByUserIdConferenceIdQuery, AttendeeByUserIdConferenceIdQueryVariables>;
 export const AttendeeByIdDocument = gql`
     query AttendeeById($conferenceId: uuid!, $attendeeId: uuid!) {
-  Attendee(
-    where: {id: {_eq: $attendeeId}, conferenceId: {_eq: $conferenceId}}
-    limit: 1
-  ) {
+  Attendee(where: {id: {_eq: $attendeeId}, conferenceId: {_eq: $conferenceId}}) {
     ...AttendeeData
   }
 }
@@ -37315,10 +37306,7 @@ export type PresenceCountSubscriptionHookResult = ReturnType<typeof usePresenceC
 export type PresenceCountSubscriptionResult = Apollo.SubscriptionResult<PresenceCountSubscription>;
 export const GetPresenceCountOfDocument = gql`
     query GetPresenceCountOf($path: String!, $conferenceId: uuid!) {
-  presence_Page(
-    where: {path: {_eq: $path}, conferenceId: {_eq: $conferenceId}}
-    limit: 1
-  ) {
+  presence_Page(where: {path: {_eq: $path}, conferenceId: {_eq: $conferenceId}}) {
     path
     conferenceId
     count

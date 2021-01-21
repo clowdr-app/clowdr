@@ -36,13 +36,13 @@ gql`
     }
 
     query AttendeeByUserIdConferenceId($conferenceId: uuid!, $userId: String!) {
-        Attendee(where: { _and: [{ conferenceId: { _eq: $conferenceId } }, { userId: { _eq: $userId } }] }, limit: 1) {
+        Attendee(where: { _and: [{ conferenceId: { _eq: $conferenceId } }, { userId: { _eq: $userId } }] }) {
             ...AttendeeData
         }
     }
 
     query AttendeeById($conferenceId: uuid!, $attendeeId: uuid!) {
-        Attendee(where: { id: { _eq: $attendeeId }, conferenceId: { _eq: $conferenceId } }, limit: 1) {
+        Attendee(where: { id: { _eq: $attendeeId }, conferenceId: { _eq: $conferenceId } }) {
             ...AttendeeData
         }
     }

@@ -28,7 +28,6 @@ gql`
     query ConferenceTaken($name: String!, $shortName: String!, $slug: String!) {
         Conference(
             where: { _or: [{ name: { _eq: $name } }, { shortName: { _eq: $shortName } }, { slug: { _eq: $slug } }] }
-            limit: 1
         ) {
             id
             name

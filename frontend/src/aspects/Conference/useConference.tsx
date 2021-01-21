@@ -7,7 +7,7 @@ import PageNotFound from "../Errors/PageNotFound";
 
 const _conferenceProviderQueries = gql`
     query ConferenceBySlug($slug: String!) {
-        Conference(where: { slug: { _eq: $slug } }, limit: 1) {
+        Conference(where: { slug: { _eq: $slug } }) {
             id
             name
             shortName

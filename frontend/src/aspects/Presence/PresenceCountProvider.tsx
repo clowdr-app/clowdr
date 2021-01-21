@@ -30,7 +30,7 @@ gql`
     }
 
     query GetPresenceCountOf($path: String!, $conferenceId: uuid!) {
-        presence_Page(where: { path: { _eq: $path }, conferenceId: { _eq: $conferenceId } }, limit: 1) {
+        presence_Page(where: { path: { _eq: $path }, conferenceId: { _eq: $conferenceId } }) {
             path
             conferenceId
             count

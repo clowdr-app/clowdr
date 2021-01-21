@@ -34,7 +34,7 @@ gql`
         chat_Chat_by_pk(id: $chatId) {
             ...ChatPinConfig
         }
-        chat_Pin(where: { chatId: { _eq: $chatId }, attendeeId: { _eq: $attendeeId } }, limit: 1) {
+        chat_Pin(where: { chatId: { _eq: $chatId }, attendeeId: { _eq: $attendeeId } }) {
             ...PinData
         }
     }

@@ -38,7 +38,7 @@ gql`
         chat_Chat_by_pk(id: $chatId) {
             ...ChatSubscriptionConfig
         }
-        chat_Subscription(where: { chatId: { _eq: $chatId }, attendeeId: { _eq: $attendeeId } }, limit: 1) {
+        chat_Subscription(where: { chatId: { _eq: $chatId }, attendeeId: { _eq: $attendeeId } }) {
             ...SubscriptionData
         }
     }

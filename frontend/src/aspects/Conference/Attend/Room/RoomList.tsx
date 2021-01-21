@@ -117,7 +117,10 @@ function RoomListInner({ rooms, layout, limit, onClick }: Props): JSX.Element {
         () =>
             sortedRooms.map((room) => ({
                 name: room.name.toLowerCase(),
-                showByDefault: !room.originatingEventId && !room.originatingContentGroupId,
+                showByDefault:
+                    !room.originatingEventId &&
+                    !room.originatingContentGroupId &&
+                    room.roomPrivacyName !== RoomPrivacy_Enum.Dm,
                 el: (
                     <LinkButton
                         key={room.id}

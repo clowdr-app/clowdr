@@ -31215,21 +31215,15 @@ export type GetPresenceCountOfQueryVariables = Exact<{
 
 export type GetPresenceCountOfQuery = { readonly __typename?: 'query_root', readonly presence_Page: ReadonlyArray<{ readonly __typename?: 'presence_Page', readonly path: string, readonly conferenceId: any, readonly count: number }> };
 
-export type DeleteOpenTabMutationVariables = Exact<{
+export type UpdateOpenTabMutationVariables = Exact<{
+  delete: Scalars['Boolean'];
   oldId: Scalars['uuid'];
-}>;
-
-
-export type DeleteOpenTabMutation = { readonly __typename?: 'mutation_root', readonly delete_presence_OpenTab_by_pk?: Maybe<{ readonly __typename?: 'presence_OpenTab', readonly id: any }> };
-
-export type InsertOpenTabMutationVariables = Exact<{
-  oldId?: Maybe<Scalars['uuid']>;
   path: Scalars['String'];
   attendeeId: Scalars['uuid'];
 }>;
 
 
-export type InsertOpenTabMutation = { readonly __typename?: 'mutation_root', readonly insert_presence_OpenTab_one?: Maybe<{ readonly __typename?: 'presence_OpenTab', readonly id: any }> };
+export type UpdateOpenTabMutation = { readonly __typename?: 'mutation_root', readonly insert_presence_OpenTab_one?: Maybe<{ readonly __typename?: 'presence_OpenTab', readonly id: any }>, readonly delete_presence_OpenTab_by_pk?: Maybe<{ readonly __typename?: 'presence_OpenTab', readonly id: any }> };
 
 export type GetRoomMembersSubscriptionVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -37358,72 +37352,44 @@ export function useGetPresenceCountOfLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type GetPresenceCountOfQueryHookResult = ReturnType<typeof useGetPresenceCountOfQuery>;
 export type GetPresenceCountOfLazyQueryHookResult = ReturnType<typeof useGetPresenceCountOfLazyQuery>;
 export type GetPresenceCountOfQueryResult = Apollo.QueryResult<GetPresenceCountOfQuery, GetPresenceCountOfQueryVariables>;
-export const DeleteOpenTabDocument = gql`
-    mutation DeleteOpenTab($oldId: uuid!) {
-  delete_presence_OpenTab_by_pk(id: $oldId) {
-    id
-  }
-}
-    `;
-export type DeleteOpenTabMutationFn = Apollo.MutationFunction<DeleteOpenTabMutation, DeleteOpenTabMutationVariables>;
-
-/**
- * __useDeleteOpenTabMutation__
- *
- * To run a mutation, you first call `useDeleteOpenTabMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteOpenTabMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteOpenTabMutation, { data, loading, error }] = useDeleteOpenTabMutation({
- *   variables: {
- *      oldId: // value for 'oldId'
- *   },
- * });
- */
-export function useDeleteOpenTabMutation(baseOptions?: Apollo.MutationHookOptions<DeleteOpenTabMutation, DeleteOpenTabMutationVariables>) {
-        return Apollo.useMutation<DeleteOpenTabMutation, DeleteOpenTabMutationVariables>(DeleteOpenTabDocument, baseOptions);
-      }
-export type DeleteOpenTabMutationHookResult = ReturnType<typeof useDeleteOpenTabMutation>;
-export type DeleteOpenTabMutationResult = Apollo.MutationResult<DeleteOpenTabMutation>;
-export type DeleteOpenTabMutationOptions = Apollo.BaseMutationOptions<DeleteOpenTabMutation, DeleteOpenTabMutationVariables>;
-export const InsertOpenTabDocument = gql`
-    mutation InsertOpenTab($oldId: uuid = null, $path: String!, $attendeeId: uuid!) {
+export const UpdateOpenTabDocument = gql`
+    mutation UpdateOpenTab($delete: Boolean!, $oldId: uuid!, $path: String!, $attendeeId: uuid!) {
   insert_presence_OpenTab_one(object: {path: $path, attendeeId: $attendeeId}) {
     id
   }
+  delete_presence_OpenTab_by_pk(id: $oldId) @include(if: $delete) {
+    id
+  }
 }
     `;
-export type InsertOpenTabMutationFn = Apollo.MutationFunction<InsertOpenTabMutation, InsertOpenTabMutationVariables>;
+export type UpdateOpenTabMutationFn = Apollo.MutationFunction<UpdateOpenTabMutation, UpdateOpenTabMutationVariables>;
 
 /**
- * __useInsertOpenTabMutation__
+ * __useUpdateOpenTabMutation__
  *
- * To run a mutation, you first call `useInsertOpenTabMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInsertOpenTabMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useUpdateOpenTabMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateOpenTabMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [insertOpenTabMutation, { data, loading, error }] = useInsertOpenTabMutation({
+ * const [updateOpenTabMutation, { data, loading, error }] = useUpdateOpenTabMutation({
  *   variables: {
+ *      delete: // value for 'delete'
  *      oldId: // value for 'oldId'
  *      path: // value for 'path'
  *      attendeeId: // value for 'attendeeId'
  *   },
  * });
  */
-export function useInsertOpenTabMutation(baseOptions?: Apollo.MutationHookOptions<InsertOpenTabMutation, InsertOpenTabMutationVariables>) {
-        return Apollo.useMutation<InsertOpenTabMutation, InsertOpenTabMutationVariables>(InsertOpenTabDocument, baseOptions);
+export function useUpdateOpenTabMutation(baseOptions?: Apollo.MutationHookOptions<UpdateOpenTabMutation, UpdateOpenTabMutationVariables>) {
+        return Apollo.useMutation<UpdateOpenTabMutation, UpdateOpenTabMutationVariables>(UpdateOpenTabDocument, baseOptions);
       }
-export type InsertOpenTabMutationHookResult = ReturnType<typeof useInsertOpenTabMutation>;
-export type InsertOpenTabMutationResult = Apollo.MutationResult<InsertOpenTabMutation>;
-export type InsertOpenTabMutationOptions = Apollo.BaseMutationOptions<InsertOpenTabMutation, InsertOpenTabMutationVariables>;
+export type UpdateOpenTabMutationHookResult = ReturnType<typeof useUpdateOpenTabMutation>;
+export type UpdateOpenTabMutationResult = Apollo.MutationResult<UpdateOpenTabMutation>;
+export type UpdateOpenTabMutationOptions = Apollo.BaseMutationOptions<UpdateOpenTabMutation, UpdateOpenTabMutationVariables>;
 export const GetRoomMembersDocument = gql`
     subscription GetRoomMembers($roomId: uuid!) {
   RoomPerson(where: {roomId: {_eq: $roomId}}) {

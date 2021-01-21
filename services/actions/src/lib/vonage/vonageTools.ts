@@ -467,7 +467,8 @@ export async function addEventParticipantStream(
             "Error while adding event participant stream",
             eventResult.data.Event[0].id,
             attendeeId,
-            stream.id
+            stream.id,
+            e
         );
         throw new Error("Error while adding event participant stream");
     }

@@ -1,5 +1,4 @@
 import { gql } from "@apollo/client";
-import { ExternalLinkIcon } from "@chakra-ui/icons";
 import {
     Badge,
     Button,
@@ -20,7 +19,6 @@ import {
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { RoomPage_RoomDetailsFragment, RoomPersonRole_Enum, RoomPrivacy_Enum } from "../../../../generated/graphql";
-import { LinkButton } from "../../../Chakra/LinkButton";
 import FAIcon from "../../../Icons/FAIcon";
 import useRoomMembers from "../../../Room/useRoomMembers";
 import useRoomParticipants from "../../../Room/useRoomParticipants";
@@ -105,12 +103,6 @@ export function RoomControlBar({
 
     return (
         <HStack justifyContent="flex-end" m={4}>
-            <LinkButton to={`/conference/${conference.slug}/schedule`} width="100%" linkProps={{ target: "_blank" }}>
-                <FAIcon icon="calendar" iconStyle="r" mr={3} />
-                Schedule
-                <ExternalLinkIcon ml={2} />
-            </LinkButton>
-
             {hasBackstage ? (
                 backstage ? (
                     <Button colorScheme="red" onClick={() => onSetBackstage(false)}>
@@ -119,7 +111,7 @@ export function RoomControlBar({
                 ) : (
                     <Tooltip label="Join events as a presenter, session chair or to ask questions.">
                         <Button colorScheme="green" onClick={() => onSetBackstage(true)}>
-                            Join live Q&amp;A sessions
+                            Host live Q&amp;A sessions
                         </Button>
                     </Tooltip>
                 )

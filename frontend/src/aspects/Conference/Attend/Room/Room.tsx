@@ -205,16 +205,10 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
 
     const chatSources = useMemo((): ChatSources | undefined => {
         if (currentEventData?.contentGroup) {
-            const rightHandTypeName = currentEventData.contentGroup?.contentGroupTypeName ?? "PAPER";
-            const rightHandLabel = rightHandTypeName[0] + rightHandTypeName.slice(1).toLowerCase();
             return {
-                chatIdL: roomDetails.chatId ?? undefined,
-                chatIdR: currentEventData.contentGroup?.chatId ?? "Unknown chat",
-                chatLabelL: "Room",
-                chatLabelR: rightHandLabel,
-                chatTitleL: roomDetails.name,
-                chatTitleR: currentEventData.contentGroup?.title ?? "Unknown chat",
-                defaultSelected: "L",
+                chatId: roomDetails.chatId ?? undefined,
+                chatLabel: "Room",
+                chatTitle: roomDetails.name,
             };
         } else if (roomDetails.chatId) {
             return {
@@ -464,7 +458,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
 
                 {contentEl}
             </VStack>
-            <VStack flexGrow={1} flexBasis={0} minW={["100%", "100%", "100%", "300px"]}>
+            <VStack flexGrow={1} flexBasis={0} minW={["100%", "100%", "100%", "40vw"]}>
                 {chatEl}
             </VStack>
         </HStack>

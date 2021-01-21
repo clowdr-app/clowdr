@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client/core";
-import { GetEventRolesForUserDocument, GetRoomThatUserCanJoinDocument } from "../generated/graphql";
+import { GetRoomThatUserCanJoinDocument, Vonage_GetEventDetailsDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
+import { getAttendee } from "../lib/authorisation";
 import {
     addAndRemoveEventParticipantStreams,
     addAndRemoveRoomParticipants,
@@ -52,21 +53,14 @@ export async function handleVonageSessionMonitoringWebhook(payload: WebhookReqBo
 }
 
 gql`
-    query GetEventRolesForUser($eventId: uuid!, $userId: String!) {
+    query Vonage_GetEventDetails($eventId: uuid!) {
         Event_by_pk(id: $eventId) {
-            eventPeople(where: { attendee: { userId: { _eq: $userId } } }) {
-                id
-                roleName
-                attendee {
-                    id
-                    displayName
-                }
-            }
-            eventVonageSession {
-                sessionId
-                id
-            }
+            conferenceId
             id
+            eventVonageSession {
+                id
+                sessionId
+            }
         }
     }
 `;
@@ -75,61 +69,57 @@ export async function handleJoinEvent(
     payload: joinEventVonageSessionArgs,
     userId: string
 ): Promise<{ accessToken?: string }> {
-    const rolesResult = await apolloClient.query({
-        query: GetEventRolesForUserDocument,
+    const result = await apolloClient.query({
+        query: Vonage_GetEventDetailsDocument,
         variables: {
             eventId: payload.eventId,
-            userId,
         },
     });
 
-    if (rolesResult.error || rolesResult.errors) {
+    if (!result.data || !result.data.Event_by_pk || result.error) {
+        console.error("Could not retrieve event information", payload.eventId);
+        return {};
+    }
+
+    if (!result.data.Event_by_pk.eventVonageSession) {
+        console.error("Could not retrieve Vonage session associated with event", payload.eventId);
+        return {};
+    }
+
+    let attendee;
+    try {
+        attendee = await getAttendee(userId, result.data.Event_by_pk.conferenceId);
+    } catch (e) {
         console.error(
-            "Could not retrieve event roles for user",
-            payload.eventId,
+            "User does not have attendee at conference, refusing event join token",
             userId,
-            rolesResult.error,
-            rolesResult.errors
+            payload.eventId,
+            e
         );
         return {};
     }
 
-    if (!rolesResult.data.Event_by_pk) {
-        console.error("Could not find event", payload.eventId);
-        return {};
-    }
-
-    if (rolesResult.data.Event_by_pk.eventPeople.length < 1) {
-        console.log("User denied access to event Vonage session: has no event roles", payload.eventId, userId);
-        return {};
-    }
-
-    if (!rolesResult.data.Event_by_pk.eventVonageSession) {
-        console.error("No Vonage session has been created for event", payload.eventId, userId);
-        // TODO: generate a session on the fly
-        return {};
-    }
-
-    if (!rolesResult.data.Event_by_pk.eventPeople[0].attendee) {
-        console.error("Could not find attendee for user", payload.eventId, userId);
-        return {};
-    }
-
-    const attendeeId = rolesResult.data.Event_by_pk.eventPeople[0].attendee.id;
-
     const connectionData: CustomConnectionData = {
-        attendeeId,
+        attendeeId: attendee.id,
         userId,
     };
 
-    const accessToken = Vonage.vonage.generateToken(rolesResult.data.Event_by_pk.eventVonageSession.sessionId, {
-        data: JSON.stringify(connectionData),
-        role: "moderator", // TODO: change depending on event person role
-    });
+    try {
+        const accessToken = Vonage.vonage.generateToken(result.data.Event_by_pk.eventVonageSession.sessionId, {
+            data: JSON.stringify(connectionData),
+            role: "publisher",
+        });
+        return { accessToken };
+    } catch (e) {
+        console.error(
+            "Failure while generating event Vonage session token",
+            payload.eventId,
+            result.data.Event_by_pk.eventVonageSession.sessionId,
+            e
+        );
+    }
 
-    return {
-        accessToken,
-    };
+    return {};
 }
 
 gql`

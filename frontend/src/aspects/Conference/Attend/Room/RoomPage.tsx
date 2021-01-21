@@ -3,13 +3,11 @@ import React, { useEffect } from "react";
 import {
     Permission_Enum,
     RoomPage_RoomDetailsFragment,
-    useRoomPage_EventPeopleForRoomSubscription,
     useRoomPage_GetRoomDetailsQuery,
 } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
 import usePolling from "../../../Generic/usePolling";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
-import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import usePrimaryMenuButtons from "../../../Menu/usePrimaryMenuButtons";
 import RoomMembersProvider from "../../../Room/RoomMembersProvider";
 import { useTitle } from "../../../Utils/useTitle";
@@ -49,7 +47,6 @@ gql`
             title
         }
         roomPrivacyName
-        ...RoomPage_RoomEvents
         ...RoomPage_RoomPeople
         shuffleRooms(limit: 1, order_by: { id: desc }) {
             id
@@ -59,42 +56,12 @@ gql`
         }
     }
 
-    fragment RoomPage_RoomEvents on Room {
-        events(order_by: { startTime: asc }) {
-            ...RoomPage_RoomEventSummary
-        }
-    }
-
-    fragment RoomPage_RoomEventSummary on Event {
-        id
-        conferenceId
-        startTime
-        name
-        endTime
-        intendedRoomModeName
-        contentGroupId
-    }
-
     fragment RoomPage_RoomPeople on Room {
         roomPeople {
             id
             roomPersonRoleName
             attendeeId
         }
-    }
-
-    subscription RoomPage_EventPeopleForRoom($roomId: uuid!) {
-        EventPerson(where: { event: { room: { id: { _eq: $roomId } } } }) {
-            ...RoomPage_EventPersonDetails
-        }
-    }
-
-    fragment RoomPage_EventPersonDetails on EventPerson {
-        id
-        name
-        roleName
-        eventId
-        attendeeId
     }
 `;
 
@@ -107,7 +74,7 @@ export default function RoomPage({ roomId }: { roomId: string }): JSX.Element {
     });
     const title = useTitle(result.loading ? "Loading room" : result.data?.Room_by_pk?.name ?? "Unknown room");
 
-    usePolling(result.refetch, 30000, true);
+    usePolling(result.refetch, 60000, true);
 
     const conference = useConference();
     const { setPrimaryMenuButtons } = usePrimaryMenuButtons();
@@ -122,14 +89,6 @@ export default function RoomPage({ roomId }: { roomId: string }): JSX.Element {
         ]);
     }, [conference.shortName, conference.slug, setPrimaryMenuButtons]);
 
-    const { data: eventPeopleData, error } = useRoomPage_EventPeopleForRoomSubscription({
-        variables: {
-            roomId,
-        },
-    });
-    eventPeopleData?.EventPerson;
-    useQueryErrorToast(error, "useEventPeopleForRoomSubscription");
-
     return (
         <RequireAtLeastOnePermissionWrapper
             componentIfDenied={<PageNotFound />}
@@ -138,9 +97,7 @@ export default function RoomPage({ roomId }: { roomId: string }): JSX.Element {
             {title}
             <RoomMembersProvider roomId={roomId}>
                 <ApolloQueryWrapper getter={(data) => data.Room_by_pk} queryResult={result}>
-                    {(room: RoomPage_RoomDetailsFragment) => (
-                        <Room roomDetails={room} eventPeople={eventPeopleData?.EventPerson ?? []} />
-                    )}
+                    {(room: RoomPage_RoomDetailsFragment) => <Room roomDetails={room} />}
                 </ApolloQueryWrapper>
             </RoomMembersProvider>
         </RequireAtLeastOnePermissionWrapper>

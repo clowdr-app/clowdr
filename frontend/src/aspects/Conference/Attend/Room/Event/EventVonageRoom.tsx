@@ -79,6 +79,7 @@ export function EventVonageRoom({ eventId }: { eventId: string }): JSX.Element {
                                 node={sharedRoomContext.portalNode}
                                 vonageSessionId={event.eventVonageSession.sessionId}
                                 getAccessToken={getAccessToken}
+                                disable={false}
                             />
                         ) : (
                             <>No room session available.</>

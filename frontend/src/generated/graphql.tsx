@@ -30128,19 +30128,24 @@ export type Room_GetCurrentEventQueryVariables = Exact<{
 }>;
 
 
-export type Room_GetCurrentEventQuery = { readonly __typename?: 'query_root', readonly Event_by_pk?: Maybe<{ readonly __typename?: 'Event', readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly chatId?: Maybe<any>, readonly contentItems: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly data: any }> }> }> };
+export type Room_GetCurrentEventQuery = { readonly __typename?: 'query_root', readonly Event_by_pk?: Maybe<(
+    { readonly __typename?: 'Event' }
+    & Room_CurrentEventSummaryFragment
+  )> };
 
-export type RoomBackstage_GetEventsQueryVariables = Exact<{
-  eventIds: ReadonlyArray<Scalars['uuid']>;
+export type Room_CurrentEventSummaryFragment = { readonly __typename?: 'Event', readonly id: any, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly chatId?: Maybe<any>, readonly contentItems: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly data: any }> }> };
+
+export type Room_GetEventsQueryVariables = Exact<{
+  roomId: Scalars['uuid'];
 }>;
 
 
-export type RoomBackstage_GetEventsQuery = { readonly __typename?: 'query_root', readonly Event: ReadonlyArray<(
+export type Room_GetEventsQuery = { readonly __typename?: 'query_root', readonly Event: ReadonlyArray<(
     { readonly __typename?: 'Event' }
-    & RoomBackstage_EventFragment
+    & Room_EventSummaryFragment
   )> };
 
-export type RoomBackstage_EventFragment = { readonly __typename?: 'Event', readonly id: any, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string }> };
+export type Room_EventSummaryFragment = { readonly __typename?: 'Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum, readonly contentGroupId?: Maybe<any>, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string }> };
 
 export type AddParticipantToRoomMutationVariables = Exact<{
   attendeeId: Scalars['uuid'];
@@ -30174,30 +30179,10 @@ export type RoomPage_GetRoomDetailsQuery = { readonly __typename?: 'query_root',
 
 export type RoomPage_RoomDetailsFragment = (
   { readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly publicVonageSessionId?: Maybe<string>, readonly chatId?: Maybe<any>, readonly roomPrivacyName: RoomPrivacy_Enum, readonly mediaLiveChannel?: Maybe<{ readonly __typename?: 'MediaLiveChannel', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly id: any }>, readonly originatingContentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly contentGroupTypeName: ContentGroupType_Enum, readonly title: string, readonly contentItems: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly data: any }> }>, readonly shuffleRooms: ReadonlyArray<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly durationMinutes: number, readonly reshuffleUponEnd: boolean }> }
-  & RoomPage_RoomEventsFragment
   & RoomPage_RoomPeopleFragment
 );
 
-export type RoomPage_RoomEventsFragment = { readonly __typename?: 'Room', readonly events: ReadonlyArray<(
-    { readonly __typename?: 'Event' }
-    & RoomPage_RoomEventSummaryFragment
-  )> };
-
-export type RoomPage_RoomEventSummaryFragment = { readonly __typename?: 'Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum, readonly contentGroupId?: Maybe<any> };
-
 export type RoomPage_RoomPeopleFragment = { readonly __typename?: 'Room', readonly roomPeople: ReadonlyArray<{ readonly __typename?: 'RoomPerson', readonly id: any, readonly roomPersonRoleName: RoomPersonRole_Enum, readonly attendeeId: any }> };
-
-export type RoomPage_EventPeopleForRoomSubscriptionVariables = Exact<{
-  roomId: Scalars['uuid'];
-}>;
-
-
-export type RoomPage_EventPeopleForRoomSubscription = { readonly __typename?: 'subscription_root', readonly EventPerson: ReadonlyArray<(
-    { readonly __typename?: 'EventPerson' }
-    & RoomPage_EventPersonDetailsFragment
-  )> };
-
-export type RoomPage_EventPersonDetailsFragment = { readonly __typename?: 'EventPerson', readonly id: any, readonly name: string, readonly roleName: EventPersonRole_Enum, readonly eventId: any, readonly attendeeId?: Maybe<any> };
 
 export type GetEventVonageDetailsQueryVariables = Exact<{
   eventId: Scalars['uuid'];
@@ -31623,9 +31608,30 @@ export const RoomEventDetailsFragmentDoc = gql`
   }
 }
     `;
-export const RoomBackstage_EventFragmentDoc = gql`
-    fragment RoomBackstage_Event on Event {
+export const Room_CurrentEventSummaryFragmentDoc = gql`
+    fragment Room_CurrentEventSummary on Event {
   id
+  contentGroup {
+    id
+    title
+    contentGroupTypeName
+    contentItems(where: {contentTypeName: {_eq: ZOOM}}, limit: 1) {
+      id
+      data
+    }
+    chatId
+  }
+}
+    `;
+export const Room_EventSummaryFragmentDoc = gql`
+    fragment Room_EventSummary on Event {
+  id
+  conferenceId
+  startTime
+  name
+  endTime
+  intendedRoomModeName
+  contentGroupId
   contentGroup {
     id
     title
@@ -31639,24 +31645,6 @@ export const RoomListRoomDetailsFragmentDoc = gql`
   roomPrivacyName
 }
     `;
-export const RoomPage_RoomEventSummaryFragmentDoc = gql`
-    fragment RoomPage_RoomEventSummary on Event {
-  id
-  conferenceId
-  startTime
-  name
-  endTime
-  intendedRoomModeName
-  contentGroupId
-}
-    `;
-export const RoomPage_RoomEventsFragmentDoc = gql`
-    fragment RoomPage_RoomEvents on Room {
-  events(order_by: {startTime: asc}) {
-    ...RoomPage_RoomEventSummary
-  }
-}
-    ${RoomPage_RoomEventSummaryFragmentDoc}`;
 export const RoomPage_RoomPeopleFragmentDoc = gql`
     fragment RoomPage_RoomPeople on Room {
   roomPeople {
@@ -31692,7 +31680,6 @@ export const RoomPage_RoomDetailsFragmentDoc = gql`
     title
   }
   roomPrivacyName
-  ...RoomPage_RoomEvents
   ...RoomPage_RoomPeople
   shuffleRooms(limit: 1, order_by: {id: desc}) {
     id
@@ -31701,17 +31688,7 @@ export const RoomPage_RoomDetailsFragmentDoc = gql`
     reshuffleUponEnd
   }
 }
-    ${RoomPage_RoomEventsFragmentDoc}
-${RoomPage_RoomPeopleFragmentDoc}`;
-export const RoomPage_EventPersonDetailsFragmentDoc = gql`
-    fragment RoomPage_EventPersonDetails on EventPerson {
-  id
-  name
-  roleName
-  eventId
-  attendeeId
-}
-    `;
+    ${RoomPage_RoomPeopleFragmentDoc}`;
 export const RoomSponsorContent_ContentItemDataFragmentDoc = gql`
     fragment RoomSponsorContent_ContentItemData on ContentItem {
   id
@@ -33998,19 +33975,10 @@ export type MyEventRoomJoinRequestSubscriptionResult = Apollo.SubscriptionResult
 export const Room_GetCurrentEventDocument = gql`
     query Room_GetCurrentEvent($currentEventId: uuid!) {
   Event_by_pk(id: $currentEventId) {
-    contentGroup {
-      id
-      title
-      contentGroupTypeName
-      contentItems(where: {contentTypeName: {_eq: ZOOM}}, limit: 1) {
-        id
-        data
-      }
-      chatId
-    }
+    ...Room_CurrentEventSummary
   }
 }
-    `;
+    ${Room_CurrentEventSummaryFragmentDoc}`;
 
 /**
  * __useRoom_GetCurrentEventQuery__
@@ -34037,39 +34005,39 @@ export function useRoom_GetCurrentEventLazyQuery(baseOptions?: Apollo.LazyQueryH
 export type Room_GetCurrentEventQueryHookResult = ReturnType<typeof useRoom_GetCurrentEventQuery>;
 export type Room_GetCurrentEventLazyQueryHookResult = ReturnType<typeof useRoom_GetCurrentEventLazyQuery>;
 export type Room_GetCurrentEventQueryResult = Apollo.QueryResult<Room_GetCurrentEventQuery, Room_GetCurrentEventQueryVariables>;
-export const RoomBackstage_GetEventsDocument = gql`
-    query RoomBackstage_GetEvents($eventIds: [uuid!]!) {
-  Event(where: {id: {_in: $eventIds}}) {
-    ...RoomBackstage_Event
+export const Room_GetEventsDocument = gql`
+    query Room_GetEvents($roomId: uuid!) {
+  Event(where: {roomId: {_eq: $roomId}}) {
+    ...Room_EventSummary
   }
 }
-    ${RoomBackstage_EventFragmentDoc}`;
+    ${Room_EventSummaryFragmentDoc}`;
 
 /**
- * __useRoomBackstage_GetEventsQuery__
+ * __useRoom_GetEventsQuery__
  *
- * To run a query within a React component, call `useRoomBackstage_GetEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useRoomBackstage_GetEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useRoom_GetEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRoom_GetEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useRoomBackstage_GetEventsQuery({
+ * const { data, loading, error } = useRoom_GetEventsQuery({
  *   variables: {
- *      eventIds: // value for 'eventIds'
+ *      roomId: // value for 'roomId'
  *   },
  * });
  */
-export function useRoomBackstage_GetEventsQuery(baseOptions: Apollo.QueryHookOptions<RoomBackstage_GetEventsQuery, RoomBackstage_GetEventsQueryVariables>) {
-        return Apollo.useQuery<RoomBackstage_GetEventsQuery, RoomBackstage_GetEventsQueryVariables>(RoomBackstage_GetEventsDocument, baseOptions);
+export function useRoom_GetEventsQuery(baseOptions: Apollo.QueryHookOptions<Room_GetEventsQuery, Room_GetEventsQueryVariables>) {
+        return Apollo.useQuery<Room_GetEventsQuery, Room_GetEventsQueryVariables>(Room_GetEventsDocument, baseOptions);
       }
-export function useRoomBackstage_GetEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RoomBackstage_GetEventsQuery, RoomBackstage_GetEventsQueryVariables>) {
-          return Apollo.useLazyQuery<RoomBackstage_GetEventsQuery, RoomBackstage_GetEventsQueryVariables>(RoomBackstage_GetEventsDocument, baseOptions);
+export function useRoom_GetEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Room_GetEventsQuery, Room_GetEventsQueryVariables>) {
+          return Apollo.useLazyQuery<Room_GetEventsQuery, Room_GetEventsQueryVariables>(Room_GetEventsDocument, baseOptions);
         }
-export type RoomBackstage_GetEventsQueryHookResult = ReturnType<typeof useRoomBackstage_GetEventsQuery>;
-export type RoomBackstage_GetEventsLazyQueryHookResult = ReturnType<typeof useRoomBackstage_GetEventsLazyQuery>;
-export type RoomBackstage_GetEventsQueryResult = Apollo.QueryResult<RoomBackstage_GetEventsQuery, RoomBackstage_GetEventsQueryVariables>;
+export type Room_GetEventsQueryHookResult = ReturnType<typeof useRoom_GetEventsQuery>;
+export type Room_GetEventsLazyQueryHookResult = ReturnType<typeof useRoom_GetEventsLazyQuery>;
+export type Room_GetEventsQueryResult = Apollo.QueryResult<Room_GetEventsQuery, Room_GetEventsQueryVariables>;
 export const AddParticipantToRoomDocument = gql`
     mutation AddParticipantToRoom($attendeeId: uuid!, $roomId: uuid!) {
   insert_RoomPerson_one(
@@ -34174,35 +34142,6 @@ export function useRoomPage_GetRoomDetailsLazyQuery(baseOptions?: Apollo.LazyQue
 export type RoomPage_GetRoomDetailsQueryHookResult = ReturnType<typeof useRoomPage_GetRoomDetailsQuery>;
 export type RoomPage_GetRoomDetailsLazyQueryHookResult = ReturnType<typeof useRoomPage_GetRoomDetailsLazyQuery>;
 export type RoomPage_GetRoomDetailsQueryResult = Apollo.QueryResult<RoomPage_GetRoomDetailsQuery, RoomPage_GetRoomDetailsQueryVariables>;
-export const RoomPage_EventPeopleForRoomDocument = gql`
-    subscription RoomPage_EventPeopleForRoom($roomId: uuid!) {
-  EventPerson(where: {event: {room: {id: {_eq: $roomId}}}}) {
-    ...RoomPage_EventPersonDetails
-  }
-}
-    ${RoomPage_EventPersonDetailsFragmentDoc}`;
-
-/**
- * __useRoomPage_EventPeopleForRoomSubscription__
- *
- * To run a query within a React component, call `useRoomPage_EventPeopleForRoomSubscription` and pass it any options that fit your needs.
- * When your component renders, `useRoomPage_EventPeopleForRoomSubscription` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useRoomPage_EventPeopleForRoomSubscription({
- *   variables: {
- *      roomId: // value for 'roomId'
- *   },
- * });
- */
-export function useRoomPage_EventPeopleForRoomSubscription(baseOptions: Apollo.SubscriptionHookOptions<RoomPage_EventPeopleForRoomSubscription, RoomPage_EventPeopleForRoomSubscriptionVariables>) {
-        return Apollo.useSubscription<RoomPage_EventPeopleForRoomSubscription, RoomPage_EventPeopleForRoomSubscriptionVariables>(RoomPage_EventPeopleForRoomDocument, baseOptions);
-      }
-export type RoomPage_EventPeopleForRoomSubscriptionHookResult = ReturnType<typeof useRoomPage_EventPeopleForRoomSubscription>;
-export type RoomPage_EventPeopleForRoomSubscriptionResult = Apollo.SubscriptionResult<RoomPage_EventPeopleForRoomSubscription>;
 export const GetEventVonageDetailsDocument = gql`
     query GetEventVonageDetails($eventId: uuid!) {
   Event_by_pk(id: $eventId) {

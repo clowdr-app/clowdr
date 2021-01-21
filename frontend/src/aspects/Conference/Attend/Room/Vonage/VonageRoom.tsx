@@ -17,9 +17,11 @@ import { VonageSubscriber } from "./VonageSubscriber";
 export function VonageRoom({
     vonageSessionId,
     getAccessToken,
+    disable,
 }: {
     vonageSessionId: string;
     getAccessToken: () => Promise<string>;
+    disable: boolean;
 }): JSX.Element {
     const mAttendee = useMaybeCurrentAttendee();
 
@@ -36,7 +38,7 @@ export function VonageRoom({
                 {mAttendee ? (
                     <VonageRoomInner
                         vonageSessionId={vonageSessionId}
-                        stop={!roomCouldBeInUse}
+                        stop={!roomCouldBeInUse || disable}
                         getAccessToken={getAccessToken}
                     />
                 ) : undefined}

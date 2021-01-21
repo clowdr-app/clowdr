@@ -1,5 +1,16 @@
 import { gql } from "@apollo/client";
-import { Alert, AlertIcon, Box, Heading, HStack, Text, useColorModeValue, useToast, useToken, VStack } from "@chakra-ui/react";
+import {
+    Alert,
+    AlertIcon,
+    Box,
+    Heading,
+    HStack,
+    Text,
+    useColorModeValue,
+    useToast,
+    useToken,
+    VStack,
+} from "@chakra-ui/react";
 import type { ContentItemDataBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
 import { formatRelative } from "date-fns";
 import * as R from "ramda";
@@ -8,21 +19,22 @@ import ReactPlayer from "react-player";
 import { Redirect } from "react-router-dom";
 import {
     ContentGroupType_Enum,
-    EventPersonDetailsFragment,
     RoomMode_Enum,
     RoomPage_RoomDetailsFragment,
+    Room_CurrentEventSummaryFragment,
+    Room_EventSummaryFragment,
     useRoom_GetCurrentEventQuery,
+    useRoom_GetEventsQuery,
 } from "../../../../generated/graphql";
 import { ExternalLinkButton } from "../../../Chakra/LinkButton";
 import { Chat } from "../../../Chat/Chat";
 import type { ChatSources } from "../../../Chat/Configuration";
+import usePolling from "../../../Generic/usePolling";
 import { useRealTime } from "../../../Generic/useRealTime";
 import RoomParticipantsProvider from "../../../Room/RoomParticipantsProvider";
 import { useConference } from "../../useConference";
 import { ContentGroupSummaryWrapper } from "../Content/ContentGroupSummary";
 import { BreakoutVonageRoom } from "./BreakoutVonageRoom";
-import { EventEndControls } from "./EventEndControls";
-import { HandUpButton } from "./HandUpButton";
 import { RoomBackstage } from "./RoomBackstage";
 import { RoomControlBar } from "./RoomControlBar";
 import { RoomTitle } from "./RoomTitle";
@@ -32,16 +44,41 @@ import { useCurrentRoomEvent } from "./useCurrentRoomEvent";
 gql`
     query Room_GetCurrentEvent($currentEventId: uuid!) {
         Event_by_pk(id: $currentEventId) {
-            contentGroup {
+            ...Room_CurrentEventSummary
+        }
+    }
+
+    fragment Room_CurrentEventSummary on Event {
+        id
+        contentGroup {
+            id
+            title
+            contentGroupTypeName
+            contentItems(where: { contentTypeName: { _eq: ZOOM } }, limit: 1) {
                 id
-                title
-                contentGroupTypeName
-                contentItems(where: { contentTypeName: { _eq: ZOOM } }, limit: 1) {
-                    id
-                    data
-                }
-                chatId
+                data
             }
+            chatId
+        }
+    }
+
+    query Room_GetEvents($roomId: uuid!) {
+        Event(where: { roomId: { _eq: $roomId } }) {
+            ...Room_EventSummary
+        }
+    }
+
+    fragment Room_EventSummary on Event {
+        id
+        conferenceId
+        startTime
+        name
+        endTime
+        intendedRoomModeName
+        contentGroupId
+        contentGroup {
+            id
+            title
         }
     }
 `;
@@ -53,26 +90,37 @@ function hasShuffleRoomEnded({ startedAt, durationMinutes }: { startedAt: string
     return startedAtMs + durationMs < now;
 }
 
-function isShuffleRoomEndingSoon({ startedAt, durationMinutes }: { startedAt: string; durationMinutes: number }, now: number): boolean {
+function isShuffleRoomEndingSoon(
+    { startedAt, durationMinutes }: { startedAt: string; durationMinutes: number },
+    now: number
+): boolean {
     const startedAtMs = Date.parse(startedAt);
     const durationMs = durationMinutes * 60 * 1000;
     return startedAtMs + durationMs < now + 30000;
 }
 
-export function Room({
-    roomDetails,
-    eventPeople,
-}: {
-    roomDetails: RoomPage_RoomDetailsFragment;
-    eventPeople: readonly EventPersonDetailsFragment[];
-}): JSX.Element {
+export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragment }): JSX.Element {
+    const [roomEvents, setRoomEvents] = useState<readonly Room_EventSummaryFragment[]>([]);
+    const { data, refetch } = useRoom_GetEventsQuery({
+        variables: {
+            roomId: roomDetails.id,
+        },
+    });
+
+    useEffect(() => {
+        if (data) {
+            setRoomEvents(data.Event);
+        }
+    }, [data]);
+    usePolling(refetch, 120000, true);
+
     const {
         currentRoomEvent,
         nextRoomEvent,
         withinThreeMinutesOfBroadcastEvent,
         secondsUntilBroadcastEvent,
         secondsUntilZoomEvent,
-    } = useCurrentRoomEvent(roomDetails);
+    } = useCurrentRoomEvent(roomEvents);
 
     const now = useRealTime(5000);
 
@@ -110,16 +158,37 @@ export function Room({
         secondsUntilZoomEvent,
     ]);
 
-    const { data: currentEventData } = useRoom_GetCurrentEventQuery({
-        variables: {
-            currentEventId: currentRoomEvent?.id ?? "00000000-0000-0000-0000-000000000000",
-        },
+    const [currentEventData, setCurrentEventData] = useState<Room_CurrentEventSummaryFragment | null>(null);
+    const { refetch: refetchCurrentEventData } = useRoom_GetCurrentEventQuery({
+        skip: true,
         fetchPolicy: "network-only",
     });
 
+    useEffect(() => {
+        async function fn() {
+            if (currentRoomEvent) {
+                try {
+                    const { data } = await refetchCurrentEventData({
+                        currentEventId: currentRoomEvent.id,
+                    });
+
+                    if (data) {
+                        setCurrentEventData(data.Event_by_pk ?? null);
+                    }
+                } catch (e) {
+                    console.error("Could not fetch current event data");
+                }
+            } else {
+                setCurrentEventData(null);
+            }
+        }
+        fn();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentRoomEvent]);
+
     const maybeCurrentEventZoomDetails = useMemo(() => {
         try {
-            const zoomItems = currentEventData?.Event_by_pk?.contentGroup?.contentItems;
+            const zoomItems = currentEventData?.contentGroup?.contentItems;
 
             if (!zoomItems || zoomItems.length < 1) {
                 return undefined;
@@ -132,19 +201,19 @@ export function Room({
             console.error("Error finding current event Zoom details", e);
             return undefined;
         }
-    }, [currentEventData?.Event_by_pk?.contentGroup?.contentItems]);
+    }, [currentEventData?.contentGroup?.contentItems]);
 
     const chatSources = useMemo((): ChatSources | undefined => {
-        if (currentEventData?.Event_by_pk?.contentGroup) {
-            const rightHandTypeName = currentEventData.Event_by_pk.contentGroup?.contentGroupTypeName ?? "PAPER";
+        if (currentEventData?.contentGroup) {
+            const rightHandTypeName = currentEventData.contentGroup?.contentGroupTypeName ?? "PAPER";
             const rightHandLabel = rightHandTypeName[0] + rightHandTypeName.slice(1).toLowerCase();
             return {
                 chatIdL: roomDetails.chatId ?? undefined,
-                chatIdR: currentEventData.Event_by_pk.contentGroup?.chatId ?? "Unknown chat",
+                chatIdR: currentEventData.contentGroup?.chatId ?? "Unknown chat",
                 chatLabelL: "Room",
                 chatLabelR: rightHandLabel,
                 chatTitleL: roomDetails.name,
-                chatTitleR: currentEventData.Event_by_pk.contentGroup?.title ?? "Unknown chat",
+                chatTitleR: currentEventData.contentGroup?.title ?? "Unknown chat",
                 defaultSelected: "L",
             };
         } else if (roomDetails.chatId) {
@@ -156,7 +225,7 @@ export function Room({
         } else {
             return undefined;
         }
-    }, [currentEventData?.Event_by_pk?.contentGroup, roomDetails.chatId, roomDetails.name]);
+    }, [currentEventData?.contentGroup, roomDetails.chatId, roomDetails.name]);
 
     const chatEl = useMemo(
         () =>
@@ -192,8 +261,8 @@ export function Room({
     );
 
     const backStageEl = useMemo(
-        () => <RoomBackstage backstage={backstage} roomDetails={roomDetails} eventPeople={eventPeople} />,
-        [backstage, eventPeople, roomDetails]
+        () => <RoomBackstage backstage={backstage} roomName={roomDetails.name} roomEvents={roomEvents} />,
+        [backstage, roomDetails.name, roomEvents]
     );
 
     const playerEl = useMemo(
@@ -291,10 +360,6 @@ export function Room({
         [bgColour, currentRoomEvent, nextBgColour, nextRoomEvent, now, roomDetails]
     );
 
-    const eventEndControls = useMemo(() => <EventEndControls currentRoomEvent={currentRoomEvent} />, [
-        currentRoomEvent,
-    ]);
-
     const [sendShuffleRoomNotification, setSendShuffleRoomNotification] = useState<boolean>(false);
     useEffect(() => {
         if (roomDetails.shuffleRooms.length > 0 && isShuffleRoomEndingSoon(roomDetails.shuffleRooms[0], now)) {
@@ -390,25 +455,10 @@ export function Room({
                     <></>
                 )}
 
-                <HStack alignItems="flex-start">
-                    {contentEl}
-                    <Box>
-                        {backstage ? (
-                            <></>
-                        ) : (
-                            <HandUpButton
-                                currentRoomEvent={currentRoomEvent}
-                                eventPeople={eventPeople}
-                                onGoBackstage={() => setBackstage(true)}
-                            />
-                        )}
-                    </Box>
-                </HStack>
+                {contentEl}
             </VStack>
             <VStack flexGrow={1} flexBasis={0} minW={["100%", "100%", "100%", "300px"]}>
                 {chatEl}
-
-                <Box display={currentEventIsLive ? "block" : "none"}>{eventEndControls}</Box>
             </VStack>
         </HStack>
     );

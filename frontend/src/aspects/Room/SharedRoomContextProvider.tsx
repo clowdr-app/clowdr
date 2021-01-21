@@ -13,7 +13,7 @@ export function SharedRoomContextProvider({
     return (
         <>
             <portals.InPortal node={roomNode}>
-                <VonageRoom getAccessToken={async () => ""} vonageSessionId="" />
+                <VonageRoom getAccessToken={async () => ""} vonageSessionId="" disable={false} />
             </portals.InPortal>
             <SharedRoomContext.Provider value={{ portalNode: roomNode }}>{children}</SharedRoomContext.Provider>
         </>

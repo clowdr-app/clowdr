@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
     EventPersonDetailsFragment,
     RoomMode_Enum,
-    RoomPage_RoomEventSummaryFragment,
+    Room_EventSummaryFragment,
     useMakeEventRoomJoinRequestMutation,
     useMyEventRoomJoinRequestSubscription,
 } from "../../../../generated/graphql";
@@ -39,7 +39,7 @@ export function HandUpButton({
     eventPeople,
     onGoBackstage,
 }: {
-    currentRoomEvent: RoomPage_RoomEventSummaryFragment | null;
+    currentRoomEvent: Room_EventSummaryFragment | null;
     eventPeople: readonly EventPersonDetailsFragment[];
     onGoBackstage?: () => void;
 }): JSX.Element {

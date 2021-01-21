@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import {
     RoomMode_Enum,
-    RoomPage_RoomEventSummaryFragment,
+    Room_EventSummaryFragment,
     useGetBreakoutRoomFromEventQuery,
 } from "../../../../generated/graphql";
 import usePolling from "../../../Generic/usePolling";
@@ -22,7 +22,7 @@ gql`
 export function EventEndControls({
     currentRoomEvent,
 }: {
-    currentRoomEvent: RoomPage_RoomEventSummaryFragment | null;
+    currentRoomEvent: Room_EventSummaryFragment | null;
 }): JSX.Element {
     const [eventId, setEventId] = useState<string | undefined>(currentRoomEvent?.id);
     const [choice, setChoice] = useState<"breakout" | "continue">("continue");
@@ -83,7 +83,7 @@ export function EventEndButtons({
     choice,
     onChange,
 }: {
-    currentRoomEvent: RoomPage_RoomEventSummaryFragment;
+    currentRoomEvent: Room_EventSummaryFragment;
     choice: "breakout" | "continue";
     onChange: (choice: "breakout" | "continue") => void;
 }): JSX.Element {

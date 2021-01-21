@@ -1,15 +1,11 @@
 import * as R from "ramda";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-    RoomMode_Enum,
-    RoomPage_RoomEventsFragment,
-    RoomPage_RoomEventSummaryFragment,
-} from "../../../../generated/graphql";
+import { RoomMode_Enum, Room_EventSummaryFragment } from "../../../../generated/graphql";
 import usePolling from "../../../Generic/usePolling";
 
 interface Result {
-    currentRoomEvent: RoomPage_RoomEventSummaryFragment | null;
-    nextRoomEvent: RoomPage_RoomEventSummaryFragment | null;
+    currentRoomEvent: Room_EventSummaryFragment | null;
+    nextRoomEvent: Room_EventSummaryFragment | null;
     withinThreeMinutesOfBroadcastEvent: boolean;
     secondsUntilBroadcastEvent: number;
     secondsUntilZoomEvent: number;
@@ -70,26 +66,25 @@ interface Result {
 //     }
 // `;
 
-export function useCurrentRoomEvent(roomEvents: RoomPage_RoomEventsFragment): Result {
+export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragment[]): Result {
     const broadcastEvents = useMemo(
         () =>
-            roomEvents.events.filter((event) =>
+            roomEvents.filter((event) =>
                 [RoomMode_Enum.Prerecorded, RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(
                     event.intendedRoomModeName
                 )
             ),
-        [roomEvents.events]
+        [roomEvents]
     );
 
-    const zoomEvents = useMemo(
-        () => roomEvents.events.filter((event) => event.intendedRoomModeName === RoomMode_Enum.Zoom),
-        [roomEvents.events]
-    );
+    const zoomEvents = useMemo(() => roomEvents.filter((event) => event.intendedRoomModeName === RoomMode_Enum.Zoom), [
+        roomEvents,
+    ]);
 
-    const [currentRoomEvent, setCurrentRoomEvent] = useState<RoomPage_RoomEventSummaryFragment | null>(null);
+    const [currentRoomEvent, setCurrentRoomEvent] = useState<Room_EventSummaryFragment | null>(null);
     const getCurrentEvent = useCallback(() => {
         const now = new Date().getTime();
-        const eventsNow = roomEvents.events.filter((event) => {
+        const eventsNow = roomEvents.filter((event) => {
             const startTime = Date.parse(event.startTime);
             const endTime = Date.parse(event.endTime);
             return startTime < now && now < endTime;
@@ -99,7 +94,7 @@ export function useCurrentRoomEvent(roomEvents: RoomPage_RoomEventsFragment): Re
         } else {
             setCurrentRoomEvent(null);
         }
-    }, [roomEvents.events]);
+    }, [roomEvents]);
     usePolling(getCurrentEvent, 10000, true);
 
     const [withinThreeMinutesOfBroadcastEvent, setWithinThreeMinutesOfBroadcastEvent] = useState<boolean>(false);
@@ -172,13 +167,13 @@ export function useCurrentRoomEvent(roomEvents: RoomPage_RoomEventsFragment): Re
     }, [zoomEvents]);
     usePolling(computeSecondsUntilZoomEvent, 1000, true);
 
-    const [nextRoomEvent, setNextRoomEvent] = useState<RoomPage_RoomEventSummaryFragment | null>(null);
+    const [nextRoomEvent, setNextRoomEvent] = useState<Room_EventSummaryFragment | null>(null);
     const getNextEvent = useCallback(() => {
         const now = new Date().getTime();
-        const sortedEvents = R.sortBy((event) => event.startTime, roomEvents.events);
+        const sortedEvents = R.sortBy((event) => event.startTime, roomEvents);
         const futureEvents = sortedEvents.filter((event) => Date.parse(event.startTime) > now);
         setNextRoomEvent(futureEvents.length > 0 ? futureEvents[0] : null);
-    }, [roomEvents.events]);
+    }, [roomEvents]);
 
     usePolling(getNextEvent, 10000, true);
 

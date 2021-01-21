@@ -13,6 +13,7 @@ import { createEventBreakoutRoom, createEventEndTrigger, createEventStartTrigger
 import { sendFailureEmail } from "../lib/logging/failureEmails";
 import { startEventBroadcast, stopEventBroadcasts } from "../lib/vonage/vonageTools";
 import { EventData, Payload } from "../types/hasura/event";
+import { callWithRetry } from "../utils";
 import { createMediaPackageHarvestJob } from "./recording";
 
 export async function handleEventUpdated(payload: Payload<EventData>): Promise<void> {
@@ -252,12 +253,15 @@ export async function handleEventStartNotification(eventId: string, startTime: s
 }
 
 export async function handleEventEndNotification(eventId: string, endTime: string): Promise<void> {
-    const result = await apolloClient.query({
-        query: GetEventTimingsDocument,
-        variables: {
-            eventId,
-        },
-    });
+    const result = await callWithRetry(
+        async () =>
+            await apolloClient.query({
+                query: GetEventTimingsDocument,
+                variables: {
+                    eventId,
+                },
+            })
+    );
 
     if (result.data.Event_by_pk && result.data.Event_by_pk.endTime === endTime) {
         const nowMillis = new Date().getTime();

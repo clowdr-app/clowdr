@@ -11,6 +11,7 @@ import {
 } from "../../generated/graphql";
 import { apolloClient } from "../../graphqlClient";
 import { StreamData } from "../../types/vonage";
+import { callWithRetry } from "../../utils";
 import { shortId } from "../aws/awsClient";
 import Vonage from "./vonageClient";
 
@@ -169,15 +170,18 @@ export async function startEventBroadcast(eventId: string): Promise<void> {
 export async function stopEventBroadcasts(eventId: string): Promise<void> {
     let broadcastDetails: EventBroadcastDetails;
     try {
-        broadcastDetails = await getEventBroadcastDetails(eventId);
+        broadcastDetails = await callWithRetry(async () => await getEventBroadcastDetails(eventId));
     } catch (e) {
         console.error("Error retrieving Vonage broadcast details for event", e);
         return;
     }
 
-    const existingSessionBroadcasts = await Vonage.listBroadcasts({
-        sessionId: broadcastDetails.vonageSessionId,
-    });
+    const existingSessionBroadcasts = await callWithRetry(
+        async () =>
+            await Vonage.listBroadcasts({
+                sessionId: broadcastDetails.vonageSessionId,
+            })
+    );
 
     if (!existingSessionBroadcasts) {
         console.error("Could not retrieve existing session broadcasts.", broadcastDetails.vonageSessionId);
@@ -187,7 +191,7 @@ export async function stopEventBroadcasts(eventId: string): Promise<void> {
     for (const existingBroadcast of existingSessionBroadcasts) {
         try {
             if (existingBroadcast.status === "started") {
-                await Vonage.stopBroadcast(existingBroadcast.id);
+                await callWithRetry(async () => await Vonage.stopBroadcast(existingBroadcast.id));
             }
         } catch (e) {
             console.error("Could not stop existing session broadcast", eventId, existingBroadcast.id);

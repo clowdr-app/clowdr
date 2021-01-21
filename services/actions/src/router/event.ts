@@ -61,7 +61,7 @@ router.post("/notifyEnd", bodyParser.json(), async (req: Request, res: Response)
     try {
         await handleEventEndNotification(req.body.payload.eventId, req.body.payload.endTime);
     } catch (e) {
-        console.error("Failure while handling event/notifyStart", e);
+        console.error("Failure while handling event/notifyEnd", e);
         res.status(500).json("Failure while handling scheduled trigger");
         return;
     }

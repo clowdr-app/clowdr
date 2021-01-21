@@ -9,7 +9,6 @@ import type { TimelineEvent, TimelineRoom } from "./DayList";
 import EventBox from "./EventBox";
 import Scroller from "./Scroller";
 import TimelineZoomControls from "./TimelineZoomControls";
-import { TimelineParameters } from "./useTimelineParameters";
 
 function RoomTimelineContents({
     groupedEvents,

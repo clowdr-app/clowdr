@@ -326,7 +326,7 @@ export function useSaveScheduleDiff():
             conferenceId: conference.id,
         },
     });
-    useQueryErrorToast(errorContent);
+    useQueryErrorToast(errorContent, false);
 
     const [original, setOriginal] = useState<WholeScheduleStateT>();
     useEffect(() => {

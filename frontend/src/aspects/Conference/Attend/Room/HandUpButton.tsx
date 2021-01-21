@@ -75,7 +75,7 @@ export function HandUpButton({
             eventId: currentRoomEvent?.id ?? "00000000-0000-0000-0000-000000000000",
         },
     });
-    useQueryErrorToast(error, "useMyEventRoomJoinRequestSubscription");
+    useQueryErrorToast(error, true, "useMyEventRoomJoinRequestSubscription");
 
     const [myEventPeople, setMyEventPeople] = useState<EventPersonDetailsFragment[] | null>(null);
     useEffect(() => {

@@ -92,7 +92,7 @@ function LastSeenProvider_UserIdExists({
         ? "Error creating online status record! " + insertLastSeenError
         : false;
 
-    useQueryErrorToast(error, "Last seen provider");
+    useQueryErrorToast(error, false, "Last seen provider");
 
     useEffect(() => {
         if (!getLastSeenLoading && lastSeen === undefined) {

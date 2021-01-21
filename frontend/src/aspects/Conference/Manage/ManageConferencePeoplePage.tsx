@@ -137,7 +137,7 @@ export default function ManageConferencePeoplePage(): JSX.Element {
             conferenceId: conference.id,
         },
     });
-    useQueryErrorToast(errorAllGroups);
+    useQueryErrorToast(errorAllGroups, false);
 
     const {
         loading: loadingAllAttendees,
@@ -150,7 +150,7 @@ export default function ManageConferencePeoplePage(): JSX.Element {
             conferenceId: conference.id,
         },
     });
-    useQueryErrorToast(errorAllAttendees);
+    useQueryErrorToast(errorAllAttendees, false);
 
     const [createDeleteAttendeesMutation] = useCreateDeleteAttendeesMutation();
     const [updateAttendeeMutation] = useUpdateAttendeeMutation();

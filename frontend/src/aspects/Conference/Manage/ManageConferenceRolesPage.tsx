@@ -123,7 +123,7 @@ export default function ManageConferenceRolesPage(): JSX.Element {
         error: errorAllPermissions,
         data: allPermissions,
     } = useSelectAllPermissionsQuery();
-    useQueryErrorToast(errorAllPermissions);
+    useQueryErrorToast(errorAllPermissions, false);
 
     const {
         loading: loadingAllRoles,
@@ -136,7 +136,7 @@ export default function ManageConferenceRolesPage(): JSX.Element {
             conferenceId: conference.id,
         },
     });
-    useQueryErrorToast(errorAllRoles);
+    useQueryErrorToast(errorAllRoles, false);
 
     const [createDeleteRolesMutation] = useCreateDeleteRolesMutation();
     const [updateRoleMutation] = useUpdateRoleMutation();

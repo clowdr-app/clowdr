@@ -62,7 +62,7 @@ gql`
 
 function PrepareJobsList({ conferenceId }: { conferenceId: string }): JSX.Element {
     const { data, loading, error } = useConferencePrepareJobSubscriptionSubscription({ variables: { conferenceId } });
-    useQueryErrorToast(error);
+    useQueryErrorToast(error, false);
 
     return loading && !data ? (
         <Spinner />
@@ -109,7 +109,7 @@ gql`
 
 function BroadcastRooms({ conferenceId }: { conferenceId: string }): JSX.Element {
     const { data, loading, error, refetch } = useGetMediaLiveChannelsQuery({ variables: { conferenceId } });
-    useQueryErrorToast(error);
+    useQueryErrorToast(error, false);
 
     const toStreamingEndpoint = useCallback((endpointUri: string, cloudFrontDomain: string): string => {
         const url = new URL(endpointUri);
@@ -162,7 +162,7 @@ export default function ManageConferenceBroadcastPage(): JSX.Element {
 
     useDashboardPrimaryMenuButtons();
     const [create, { loading, error }] = useCreateConferencePrepareJobMutation();
-    useQueryErrorToast(error);
+    useQueryErrorToast(error, false);
     const toast = useToast();
 
     return (

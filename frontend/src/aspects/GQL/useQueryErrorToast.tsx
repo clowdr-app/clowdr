@@ -2,12 +2,18 @@ import type { ApolloError } from "@apollo/client";
 import { Box, useToast } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 import FAIcon from "../Icons/FAIcon";
+import { useApolloCustomContext } from "./ApolloCustomProvider";
 
 let shownJWTIssuedAtFutureReloadWarning = false;
 let errorToastId: string | number | undefined = undefined;
 
-export default function useQueryErrorToast(error: string | false | ApolloError | undefined, queryName?: string): void {
+export default function useQueryErrorToast(
+    error: string | false | ApolloError | undefined,
+    reconnectOnError: boolean,
+    queryName?: string
+): void {
     const toast = useToast();
+    const ctx = useApolloCustomContext();
 
     useEffect(() => {
         let tId: number | undefined;
@@ -24,15 +30,14 @@ export default function useQueryErrorToast(error: string | false | ApolloError |
                         duration: 5000,
                         description: "We just need to refresh for a moment to finalise your login…",
                     });
-                    // TODO Recover from failure
+                    ctx.reconnect();
                 }
             } else {
                 console.error("Query error", error, queryName);
                 if (errorToastId === null || errorToastId === undefined) {
                     errorToastId = toast({
                         isClosable: false,
-                        duration: 10000,
-                        title: "Error",
+                        title: "Disconnected",
                         status: "error",
                         description: message,
                         position: "bottom-right",
@@ -50,7 +55,29 @@ export default function useQueryErrorToast(error: string | false | ApolloError |
                         }) as TimerHandler,
                         11000
                     );
-                    // TODO Recover from failure
+                    if (reconnectOnError) {
+                        ctx.reconnect(() => {
+                            if (errorToastId) {
+                                toast.close(errorToastId);
+                            }
+
+                            toast({
+                                isClosable: false,
+                                duration: 3000,
+                                title: "Reconnected",
+                                status: "success",
+                                description: "Successfully reconnected to the server.",
+                                position: "bottom-right",
+                                render: function QueryError(_props): JSX.Element {
+                                    return (
+                                        <Box w="100%" textAlign="right">
+                                            <FAIcon color="green.500" opacity={0.8} iconStyle="s" icon="heartbeat" />
+                                        </Box>
+                                    );
+                                },
+                            });
+                        });
+                    }
                 }
             }
         }
@@ -59,5 +86,5 @@ export default function useQueryErrorToast(error: string | false | ApolloError |
                 clearTimeout(tId);
             }
         };
-    }, [error, queryName, toast]);
+    }, [ctx, error, queryName, reconnectOnError, toast]);
 }

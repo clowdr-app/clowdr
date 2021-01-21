@@ -6,11 +6,12 @@ import { useHistory, useLocation } from "react-router-dom";
 import {
     Chat_MessageType_Enum,
     useSetNotifiedUpToIndexMutation,
-    useSubdMessages_2021_01_19T16_04Subscription,
+    useSubdMessages_2021_01_21T08_24Subscription,
     useSubscribedChatsQuery,
 } from "../../generated/graphql";
 import { useConference } from "../Conference/useConference";
 import useCurrentAttendee, { useMaybeCurrentAttendee } from "../Conference/useCurrentAttendee";
+import useQueryErrorToast from "../GQL/useQueryErrorToast";
 import { Markdown } from "../Text/Markdown";
 
 gql`
@@ -21,7 +22,7 @@ gql`
         }
     }
 
-    subscription SubdMessages_2021_01_19T16_04($chatIds: [uuid!]!) {
+    subscription SubdMessages_2021_01_21T08_24($chatIds: [uuid!]!) {
         chat_Message(limit: 1, order_by: { id: desc }, where: { chatId: { _in: $chatIds } }) {
             id
             chatId
@@ -84,11 +85,12 @@ export function ChatNotificationsProvider_WithAttendeeInner({
     chatIds: string[];
 }): JSX.Element {
     const currentAttendee = useCurrentAttendee();
-    const subscription = useSubdMessages_2021_01_19T16_04Subscription({
+    const subscription = useSubdMessages_2021_01_21T08_24Subscription({
         variables: {
             chatIds,
         },
     });
+    useQueryErrorToast(subscription.error, true, "ChatNotifications:SubdMessages_2021_01_21T08_24");
     const [setNotifiedUpTo] = useSetNotifiedUpToIndexMutation();
 
     const conference = useConference();

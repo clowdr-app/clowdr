@@ -131,7 +131,7 @@ export default function ManageConferenceGroupsPage(): JSX.Element {
             conferenceId: conference.id,
         },
     });
-    useQueryErrorToast(errorAllRoles);
+    useQueryErrorToast(errorAllRoles, false);
 
     const {
         loading: loadingAllGroups,
@@ -144,7 +144,7 @@ export default function ManageConferenceGroupsPage(): JSX.Element {
             conferenceId: conference.id,
         },
     });
-    useQueryErrorToast(errorAllGroups);
+    useQueryErrorToast(errorAllGroups, false);
 
     const [createDeleteGroupsMutation] = useCreateDeleteGroupsMutation();
     const [updateGroupMutation] = useUpdateGroupMutation();

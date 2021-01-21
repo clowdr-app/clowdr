@@ -2,6 +2,7 @@ import { gql } from "@apollo/client";
 import React, { useCallback, useEffect, useState } from "react";
 import { AttendeeDataFragment, useGetRoomMembersSubscription } from "../../generated/graphql";
 import { useAttendeesContext } from "../Conference/AttendeesContext";
+import useQueryErrorToast from "../GQL/useQueryErrorToast";
 import { RoomMembersContext, RoomMembersInfo, RoomMembersInfos } from "./useRoomMembers";
 
 gql`
@@ -30,6 +31,7 @@ export default function RoomMembersProvider({
             roomId,
         },
     });
+    useQueryErrorToast(error, true, "RoomMembersProvider:GetRoomMembers");
 
     const attendeesCtx = useAttendeesContext();
     const [value, setValue] = useState<RoomMembersInfos | false>(false);

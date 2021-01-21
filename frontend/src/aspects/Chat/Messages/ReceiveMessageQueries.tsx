@@ -11,6 +11,7 @@ import {
     useSelectMessagesPageQuery,
     useSelectSingleMessageQuery,
 } from "../../../generated/graphql";
+import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import ReadUpToIndexProvider from "./ReadUpToIndexProvider";
 
 gql`
@@ -235,6 +236,9 @@ export default function ReceiveMessageQueriesProvider({
             messageIds: [...liveMessages.msgs.keys()],
         },
     });
+
+    useQueryErrorToast(nextMessageSub.error, true, "ReceiveMessageQueries:NextMessage subscription");
+    useQueryErrorToast(liveReactions.error, true, "ReceiveMessageQueries:NextReactions subscription");
     // const [liveReactions, setLiveReactions] = useState<readonly SubscribedChatReactionDataFragment[]>([]);
     // const pollCb = useCallback(() => {
     //     (async () => {

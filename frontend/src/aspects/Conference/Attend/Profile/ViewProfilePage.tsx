@@ -172,7 +172,7 @@ function ViewProfilePage_FetchAttendee({ attendeeId }: { attendeeId: string }): 
             conferenceId: conference.id,
         },
     });
-    useQueryErrorToast(error, "ViewProfilePage_FetchAttendee");
+    useQueryErrorToast(error, false, "ViewProfilePage_FetchAttendee");
 
     if (loading && !data) {
         return (

@@ -119,12 +119,12 @@ function QueuedShufflePeriodBox({
             id: lastEntry.id,
         },
     });
-    useQueryErrorToast(liveEntry.error);
+    useQueryErrorToast(liveEntry.error, true, "WaitingPage:useMyShuffleQueueEntrySubscription");
 
     const allocatedShuffleRoom = useGetShuffleRoomQuery({
         skip: true,
     });
-    useQueryErrorToast(allocatedShuffleRoom.error);
+    useQueryErrorToast(allocatedShuffleRoom.error, false);
 
     const triggeredFetchRoom = useRef<boolean>(false);
     const [allocatedRoomId, setAllocatedRoomId] = useState<string | null>(null);
@@ -254,7 +254,7 @@ function ShufflePeriodBox({ period }: { period: ShufflePeriodDataFragment }): JS
     const conference = useConference();
 
     const [joinShuffleQueueMutation, { loading: isJoiningMut, error: joinError }] = useJoinShuffleQueueMutation();
-    useQueryErrorToast(joinError, "WaitingPage");
+    useQueryErrorToast(joinError, false, "WaitingPage");
     const [isJoiningOverride, setIsJoiningOverride] = useState<boolean>(false);
     const isJoining = isJoiningOverride || isJoiningMut;
     const [isWaitingForAllocatedRoom, setIsWaitingForAllocatedRoom] = useState<boolean>(false);

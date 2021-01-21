@@ -69,7 +69,7 @@ export default function ImportPanel({
             conferenceId: conference.id,
         },
     });
-    useQueryErrorToast(groupsError);
+    useQueryErrorToast(groupsError, false);
 
     const {
         loading: attendeesLoading,
@@ -81,13 +81,13 @@ export default function ImportPanel({
             conferenceId: conference.id,
         },
     });
-    useQueryErrorToast(attendeesError);
+    useQueryErrorToast(attendeesError, false);
 
     const [
         importMutation,
         { loading: importLoading, error: importError, data: importData },
     ] = useImportAttendeesMutation();
-    useQueryErrorToast(importError);
+    useQueryErrorToast(importError, false);
 
     const toast = useToast();
     useEffect(() => {

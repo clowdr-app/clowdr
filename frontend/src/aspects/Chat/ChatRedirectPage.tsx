@@ -26,7 +26,7 @@ export default function ChatRedirectPage({ chatId }: { chatId: string }): JSX.El
             chatId,
         },
     });
-    useQueryErrorToast(error, "Get chat path");
+    useQueryErrorToast(error, false, "Get chat path");
 
     const conference = useConference();
 

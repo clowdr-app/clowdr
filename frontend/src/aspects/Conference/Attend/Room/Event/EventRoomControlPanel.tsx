@@ -18,6 +18,7 @@ import {
     RoomEventDetailsFragment,
     useGetEventParticipantStreamsSubscription,
 } from "../../../../../generated/graphql";
+import useQueryErrorToast from "../../../../GQL/useQueryErrorToast";
 import { FAIcon } from "../../../../Icons/FAIcon";
 import RequireAtLeastOnePermissionWrapper from "../../../RequireAtLeastOnePermissionWrapper";
 import { BroadcastControlPanel } from "./BroadcastControlPanel";
@@ -68,6 +69,7 @@ export function EventRoomControlPanel({ event }: { event: RoomEventDetailsFragme
             eventId: event.id,
         },
     });
+    useQueryErrorToast(streamsError, true, "EventRoomControlBar:GetEventParticipantStreams");
 
     const { live } = useEventLiveStatus(event);
 

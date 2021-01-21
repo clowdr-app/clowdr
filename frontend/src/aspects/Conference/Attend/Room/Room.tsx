@@ -19,7 +19,6 @@ import ReactPlayer from "react-player";
 import { Redirect } from "react-router-dom";
 import {
     ContentGroupType_Enum,
-    RoomMode_Enum,
     RoomPage_RoomDetailsFragment,
     Room_CurrentEventSummaryFragment,
     Room_EventSummaryFragment,
@@ -123,13 +122,6 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
     } = useCurrentRoomEvent(roomEvents);
 
     const now = useRealTime(5000);
-
-    const currentEventIsLive = useMemo(
-        () =>
-            currentRoomEvent &&
-            [RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(currentRoomEvent.intendedRoomModeName),
-        [currentRoomEvent]
-    );
 
     const [green100, green700, gray100, gray800] = useToken("colors", [
         "green.100",

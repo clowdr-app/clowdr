@@ -111,20 +111,40 @@ export class PresenceState {
     }
 
     private oldPath: string | undefined;
+    private observedPaths: {
+        [k: string]: "currentPage" | "observe";
+    } = {};
+
     public pageChanged(newPath: string): void {
-        if (this.oldPath) {
+        const oldPath = this.oldPath;
+        if (oldPath && this.observedPaths[oldPath] && this.observedPaths[oldPath] === "currentPage") {
             this.socket?.emit("leavePage", this.oldPath);
+            delete this.observedPaths[oldPath];
         }
         this.oldPath = newPath;
-        this.socket?.emit("enterPage", this.oldPath);
+        if (!this.observedPaths[newPath]) {
+            this.socket?.emit("enterPage", this.oldPath);
+            this.observedPaths[newPath] = "currentPage";
+        }
     }
 
     public observePage(path: string): void {
-        this.socket?.emit("observePage", path);
+        if (!this.observedPaths[path]) {
+            this.socket?.emit("observePage", path);
+        }
+        this.observedPaths[path] = "observe";
     }
     
     public unobservePage(path: string): void {
-        this.socket?.emit("unobservePage", path);
+        if (this.observedPaths[path]) {
+            if (this.observedPaths[path] !== "currentPage" && path !== this.oldPath) {
+                this.socket?.emit("unobservePage", path);
+                delete this.observedPaths[path];
+            }
+            else {
+                this.observedPaths[path] = "currentPage";
+            }
+        }
     }
 }
 

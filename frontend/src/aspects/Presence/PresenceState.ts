@@ -111,38 +111,47 @@ export class PresenceState {
     }
 
     private oldPath: string | undefined;
-    private observedPaths: {
-        [k: string]: "currentPage" | "observe";
+    private oldPathObserverKey: number | undefined;
+    private observerKeys: {
+        [k: string]: number[];
     } = {};
+    private observerKeyGenerator = 1;
 
     public pageChanged(newPath: string): void {
         const oldPath = this.oldPath;
-        if (oldPath && this.observedPaths[oldPath] && this.observedPaths[oldPath] === "currentPage") {
-            this.socket?.emit("leavePage", this.oldPath);
-            delete this.observedPaths[oldPath];
+        const oldPathKey = this.oldPathObserverKey;
+        if (oldPath && oldPathKey) {
+            this.observerKeys[oldPath] = this.observerKeys[oldPath].filter(x => x !== oldPathKey);
+            if (this.observerKeys[oldPath].length === 0) {
+                this.socket?.emit("leavePage", oldPath);
+            }
         }
+
+        if (!this.observerKeys[newPath] || this.observerKeys[newPath].length === 0) {
+            this.observerKeys[newPath] = [];
+            this.socket?.emit("enterPage", newPath);
+        }
+        const newKey = this.observerKeyGenerator++;
+        this.observerKeys[newPath].push(newKey);
+        this.oldPathObserverKey = newKey;
         this.oldPath = newPath;
-        if (!this.observedPaths[newPath]) {
-            this.socket?.emit("enterPage", this.oldPath);
-            this.observedPaths[newPath] = "currentPage";
-        }
     }
 
-    public observePage(path: string): void {
-        if (!this.observedPaths[path]) {
+    public observePage(path: string): number {
+        if (!this.observerKeys[path] || this.observerKeys[path].length === 0) {
+            this.observerKeys[path] = [];
             this.socket?.emit("observePage", path);
         }
-        this.observedPaths[path] = "observe";
+        const newKey = this.observerKeyGenerator++;
+        this.observerKeys[path].push(newKey);
+        return newKey;
     }
     
-    public unobservePage(path: string): void {
-        if (this.observedPaths[path]) {
-            if (this.observedPaths[path] !== "currentPage" && path !== this.oldPath) {
+    public unobservePage(key: number, path: string): void {
+        if (this.observerKeys[path]) {
+            this.observerKeys[path] = this.observerKeys[path].filter(x => x !== key);
+            if (this.observerKeys[path].length === 0) {
                 this.socket?.emit("unobservePage", path);
-                delete this.observedPaths[path];
-            }
-            else {
-                this.observedPaths[path] = "currentPage";
             }
         }
     }

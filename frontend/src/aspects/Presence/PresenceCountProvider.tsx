@@ -5,8 +5,8 @@ import { usePresenceState } from "./PresenceStateProvider";
 interface PresenceCount {
     pageCount: number | undefined;
     pageCounts: { [k: string]: number | undefined };
-    observePageCount: (path: string) => void;
-    unobservePageCount: (path: string) => void;
+    observePageCount: (path: string) => number;
+    unobservePageCount: (path: string, key: number) => void;
 }
 
 const PresenceCountContext = React.createContext<PresenceCount | undefined>(undefined);
@@ -39,14 +39,14 @@ export default function PresenceCountProvider({
 
     const observePageCount = useCallback(
         (path: string) => {
-            presenceState.observePage(path);
+            return presenceState.observePage(path);
         },
         [presenceState]
     );
     
     const unobservePageCount = useCallback(
-        (path: string) => {
-            presenceState.unobservePage(path);
+        (path: string, key: number) => {
+            presenceState.unobservePage(key, path);
         },
         [presenceState]
     );

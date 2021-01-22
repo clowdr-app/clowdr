@@ -128,10 +128,6 @@ function reduce<T>(oldState: ReducerState<T>, action: ReducerActions<T>) {
     return newState;
 }
 
-function isInRange(offset: number, clientHeight: number): boolean {
-    return Math.abs(offset) < 10 || Math.abs(offset - clientHeight) < 10;
-}
-
 export default function LazyLoadingScroller<T>({
     fixedBatchSize,
     load,

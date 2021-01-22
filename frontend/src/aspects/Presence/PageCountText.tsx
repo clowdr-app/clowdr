@@ -9,10 +9,10 @@ export default function PageCountText({ path, ...props }: { path: string } & Tex
     const [pageCount, setPageCount] = useState<number | null>(null);
 
     useEffect(() => {
-        observePageCount(path);
+        const observationKey = observePageCount(path);
 
         return () => {
-            unobservePageCount(path);
+            unobservePageCount(path, observationKey);
         };
     }, [observePageCount, path, unobservePageCount]);
 

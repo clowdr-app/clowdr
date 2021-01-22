@@ -63,7 +63,7 @@ io.on("connection", function (socket: Socket) {
     socket.on("enterPage", async (path: string) => {
         // console.log(`Entered page: ${path}`);
 
-        if (typeof path === "string") {
+        if (typeof path === "string" && conferenceSlug) {
             const pageKey = getPageKey(conferenceSlug, path);
             await socket.join(pageKey);
 
@@ -77,7 +77,7 @@ io.on("connection", function (socket: Socket) {
     socket.on("leavePage", async (path: string) => {
         // console.log(`Left page: ${path}`);
 
-        if (typeof path === "string") {
+        if (typeof path === "string" && conferenceSlug) {
             const pageKey = getPageKey(conferenceSlug, path);
             await socket.leave(pageKey);
         }
@@ -86,7 +86,7 @@ io.on("connection", function (socket: Socket) {
     socket.on("observePage", async (path: string) => {
         // console.log(`Observe page: ${path}`);
 
-        if (typeof path === "string") {
+        if (typeof path === "string" && conferenceSlug) {
             const pageKey = getPageKey(conferenceSlug, path);
             await socket.join(pageKey);
         }
@@ -95,7 +95,7 @@ io.on("connection", function (socket: Socket) {
     socket.on("unobservePage", async (path: string) => {
         // console.log(`Unobserve page: ${path}`);
 
-        if (typeof path === "string") {
+        if (typeof path === "string" && conferenceSlug) {
             const pageKey = getPageKey(conferenceSlug, path);
             await socket.leave(pageKey);
         }
@@ -104,7 +104,7 @@ io.on("connection", function (socket: Socket) {
     socket.on("present", (data: { utcMillis: number; path: string }) => {
         // console.log(`Present: ${userId} for ${data.path}`);
 
-        if (data && data.path && typeof data.path === "string") {
+        if (data && data.path && typeof data.path === "string" && conferenceSlug) {
             const pageKey = getPageKey(conferenceSlug, data.path);
             socket.to(pageKey).emit("present", {
                 utcMillis: data.utcMillis,

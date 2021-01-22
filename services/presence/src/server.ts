@@ -7,6 +7,7 @@ import socketIO, { Socket } from "socket.io";
 import redis from "socket.io-redis";
 
 assert(process.env.REDIS_URL, "REDIS_URL env var not defined.");
+assert(process.env.REDIS_KEY, "REDIS_KEY env var not defined.");
 assert(process.env.AUTH0_API_DOMAIN, "AUTH0_API_DOMAIN env var not defined");
 assert(process.env.CORS_ORIGIN, "CORS_ORIGIN env var not provided.");
 
@@ -30,7 +31,7 @@ const io = new socketIO.Server(server, {
         methods: ["GET", "POST"],
     },
 });
-io.adapter(redis.createAdapter(process.env.REDIS_URL));
+io.adapter(redis.createAdapter(process.env.REDIS_URL, { key: REDIS_KEY }));
 
 io.use(
     authorize({

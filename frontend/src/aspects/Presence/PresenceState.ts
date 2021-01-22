@@ -42,19 +42,22 @@ export class PresenceState {
             clearInterval(this.intervalId);
         }
 
-        this.intervalId = setInterval((() => {
-            if (this.oldPath) {
-                this.socket?.emit("present", { utcMillis: Date.now(), path: this.oldPath });
-            }
-
-            for (const path in this.presences) {
-                const cutoff = Date.now() - (1.03 * PresenceState.PERIOD_MS);
-                if (!this.presences[path]) {
-                    this.presences[path] = [];
+        this.intervalId = setInterval(
+            (() => {
+                if (this.oldPath) {
+                    this.socket?.emit("present", { utcMillis: Date.now(), path: this.oldPath });
                 }
-                this.presences[path] = this.presences[path].filter(x => x >= cutoff);
-            }
-        }) as TimerHandler, PresenceState.PERIOD_MS);
+
+                for (const path in this.presences) {
+                    const cutoff = Date.now() - 1.03 * PresenceState.PERIOD_MS;
+                    if (!this.presences[path]) {
+                        this.presences[path] = [];
+                    }
+                    this.presences[path] = this.presences[path].filter((x) => x >= cutoff);
+                }
+            }) as TimerHandler,
+            PresenceState.PERIOD_MS
+        );
 
         this.pageChanged(window.location.pathname);
     }
@@ -76,14 +79,13 @@ export class PresenceState {
         if (error.data.type == "UnauthorizedError" || error.data.code == "invalid_token") {
             // TODO
             console.warn("User token has expired");
-        }
-        else {
+        } else {
             console.error("Error connecting to presence servie", error);
         }
     }
 
     private presences: {
-        [k: string]: number[]
+        [k: string]: number[];
     } = {};
     public getPresenceCount(path?: string): number {
         path = path ?? this.oldPath;
@@ -102,12 +104,10 @@ export class PresenceState {
         return result;
     }
 
-    private onPresent(data: {
-        utcMillis: number;
-        path: string;
-    }) {
+    private onPresent(data: { utcMillis: number; path: string }) {
         // console.log(`Presence received ${data.utcMillis} for ${data.path}`);
-        this.presences[data.path] = [...(this.presences[data.path] ?? []), data.utcMillis];
+        const cutoff = Date.now() - 1.03 * PresenceState.PERIOD_MS;
+        this.presences[data.path] = [...(this.presences[data.path] ?? []).filter((x) => x >= cutoff), data.utcMillis];
     }
 
     private oldPath: string | undefined;
@@ -121,7 +121,7 @@ export class PresenceState {
         const oldPath = this.oldPath;
         const oldPathKey = this.oldPathObserverKey;
         if (oldPath && oldPathKey) {
-            this.observerKeys[oldPath] = this.observerKeys[oldPath].filter(x => x !== oldPathKey);
+            this.observerKeys[oldPath] = this.observerKeys[oldPath].filter((x) => x !== oldPathKey);
             if (this.observerKeys[oldPath].length === 0) {
                 this.socket?.emit("leavePage", oldPath);
             }
@@ -146,10 +146,10 @@ export class PresenceState {
         this.observerKeys[path].push(newKey);
         return newKey;
     }
-    
+
     public unobservePage(key: number, path: string): void {
         if (this.observerKeys[path]) {
-            this.observerKeys[path] = this.observerKeys[path].filter(x => x !== key);
+            this.observerKeys[path] = this.observerKeys[path].filter((x) => x !== key);
             if (this.observerKeys[path].length === 0) {
                 this.socket?.emit("unobservePage", path);
             }

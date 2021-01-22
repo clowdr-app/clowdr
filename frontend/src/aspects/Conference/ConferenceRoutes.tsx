@@ -6,7 +6,6 @@ import ChatRedirectPage from "../Chat/ChatRedirectPage";
 import PageNotFound from "../Errors/PageNotFound";
 import PageNotImplemented from "../Errors/PageNotImplemented";
 import PresenceCountProvider from "../Presence/PresenceCountProvider";
-import useTabTracker from "../Presence/useTabTracker";
 import { SharedRoomContextProvider } from "../Room/SharedRoomContextProvider";
 import WaitingPage from "../ShuffleRooms/WaitingPage";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
@@ -231,12 +230,6 @@ function ConferenceRoutesInner({ rootUrl }: { rootUrl: string }): JSX.Element {
     );
 }
 
-function TabTracker(): JSX.Element {
-    const mAttendee = useMaybeCurrentAttendee();
-    useTabTracker(mAttendee?.id);
-    return <></>;
-}
-
 // gql`
 //     query SelectActiveShufflePeriods(
 //         $conferenceId: uuid!
@@ -286,7 +279,6 @@ export default function ConferenceRoutes({ confSlug, rootUrl }: { confSlug: stri
                     <CurrentAttendeeProvider>
                         <PresenceCountProvider>
                             <AttendeesContextProvider>
-                                <TabTracker />
                                 {/* <ShuffleRoomsQueueMonitor /> */}
                                 <ChatNotificationsProvider>
                                     <SharedRoomContextProvider>

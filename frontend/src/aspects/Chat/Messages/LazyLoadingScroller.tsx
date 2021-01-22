@@ -80,7 +80,7 @@ function reduce<T>(oldState: ReducerState<T>, action: ReducerActions<T>) {
                 }
             });
         } else {
-            // newState.stateName = "end-of-feed";
+            newState.stateName = "end-of-feed";
             newState.lastError = null;
             newState.nextIndex = action.nextIndex;
         }
@@ -107,9 +107,9 @@ function reduce<T>(oldState: ReducerState<T>, action: ReducerActions<T>) {
             });
         }
 
-        if (action.items.size < action.batchSize) {
-            newState.stateName = "end-of-feed";
-        }
+        // if (action.items.size < action.batchSize) {
+        //     newState.stateName = "end-of-feed";
+        // }
     } else if (action.name === "deleted-items") {
         if (action.items.size > 0) {
             newState.renderedItems = new Map(newState.renderedItems ?? []);

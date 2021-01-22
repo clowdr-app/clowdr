@@ -136,8 +136,9 @@ export default function AttendeesContextProvider({
                 }
             });
 
-            if (checkInterval < 10000) {
-                setCheckInterval((old) => Math.min(old * 1.5, 10000));
+            const limit = 1000;
+            if (checkInterval < limit) {
+                setCheckInterval((old) => Math.min(old * 1.5, limit));
             }
         }, checkInterval);
         return () => {

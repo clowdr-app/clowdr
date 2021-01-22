@@ -119,6 +119,26 @@ Now, configure the application in the _Settings_ tab.
 
 #### 4. Create Rules
 
+Order of the rules matters.
+
+1. Create a new _Rule_
+
+   - Select `Empty rule`
+   - `Name` it something like `Setup isNew app meatdata`
+   - Replace the `Script` with the code from `Setup isNew app metadata` below
+   - Don't forget to `Save changes`
+
+   This rule sets up the tracking of new user accounts so we only insert them into the db once.
+
+1. Create a new _Rule_
+
+   - Select `Empty rule`
+   - `Name` it something like `Force Verified Email Before Login`
+   - Replace the `Script` with the code from `Force Verified Email Before Login Rule` below
+   - Don't forget to `Save changes`
+
+   This rule prevents users from logging in before they have verified their account.
+
 1. Create a new _Rule_
 
    - Select `Empty rule`
@@ -144,14 +164,38 @@ Now, configure the application in the _Settings_ tab.
    blank value when there is a constraint conflict results in it reflecting the
    last logged in time._
 
-1. Create a new _Rule_
+##### Setup isNew app metadata
 
-   - Select `Empty rule`
-   - `Name` it something like `Force Verified Email Before Login`
-   - Replace the `Script` with the code from `Force Verified Email Before Login Rule` below
-   - Don't forget to `Save changes`
+```js
+function (user, context, callback) {
+  user.app_metadata = user.app_metadata || {};
+  if (!("isNew" in user.app_metadata)) {
+    user.app_metadata.isNew = true;
+    auth0.users.updateAppMetadata(user.user_id, user.app_metadata)
+        .then(function(){
+          callback(null, user, context);
+        })
+        .catch(function(err){
+          callback(err);
+        });
+  }
+  else {
+    callback(null, user, context);
+  }
+}
+```
 
-   This rule prevents users from logging in before they have verified their account.
+##### Force Verified Email Before Login Rule
+
+```js
+function emailVerified(user, context, callback) {
+  if (!user.email_verified) {
+    return callback(new UnauthorizedError("Please verify your email before logging in."));
+  } else {
+    return callback(null, user, context);
+  }
+}
+```
 
 ##### Hasura JWT Rule
 
@@ -177,47 +221,54 @@ function (user, context, callback) {
 
 ```js
 function (user, context, callback) {
-  const userId = user.user_id;
-  const given_name = user.given_name && user.given_name.length > 0 ? user.given_name : "<Unknown>";
-  const family_name = user.family_name && user.family_name.length > 0 ? user.family_name : "<Unknown>";
-  const email = user.email;
-  const upsertUserQuery = `mutation CreateUser($userId: String!, $firstName: String!, $lastName: String!, $email: String!) {
-  insert_User(objects: {id: $userId, firstName: $firstName, lastName: $lastName, email: $email}, on_conflict: {constraint: user_pkey, update_columns: [firstName,lastName,email,lastLoggedInAt]}) {
-    affected_rows
-  }
-}`;
-  const graphqlReq = { "query": upsertUserQuery, "variables": { "userId": userId, "firstName": given_name, "lastName": family_name, "email": email } };
+    if (user.app_metadata.isNew) {
+        console.log("Inserting new user");
+        const userId = user.user_id;
+        const given_name = user.given_name && user.given_name.length > 0 ? user.given_name : "<Unknown>";
+        const family_name = user.family_name && user.family_name.length > 0 ? user.family_name : "<Unknown>";
+        const email = user.email;
+        const upsertUserQuery = `mutation Auth0_CreateUser($userId: String!, $firstName: String!, $lastName: String!, $email: String!) {
+        insert_User(objects: {id: $userId, firstName: $firstName, lastName: $lastName, email: $email}, on_conflict: {constraint: user_pkey, update_columns: []}) {
+            affected_rows
+        }
+        }`;
+        const graphqlReq = { "query": upsertUserQuery, "variables": { "userId": userId, "firstName": given_name, "lastName": family_name, "email": email } };
 
-  // console.log("url", url);
-  // console.log("graphqlReq", JSON.stringify(graphqlReq, null, 2));
+        // console.log("url", url);
+        // console.log("graphqlReq", JSON.stringify(graphqlReq, null, 2));
 
-  function sendRequest(url, adminSecret) {
-    request.post({
-        headers: {'content-type' : 'application/json', 'x-hasura-admin-secret': adminSecret},
-        url:   url,
-        body:  JSON.stringify(graphqlReq)
-    }, function(error, response, body){
-         console.log(body);
-         callback(null, user, context);
-    });
-  }
+        const sendRequest = (url, adminSecret) => {
+            request.post({
+                headers: {'content-type' : 'application/json', 'x-hasura-admin-secret': adminSecret},
+                url:   url,
+                body:  JSON.stringify(graphqlReq)
+            }, function(error, response, body){
+                console.log(body);
+                if (!error) {
+                  user.app_metadata.isNew = false;
+                  auth0.users.updateAppMetadata(user.user_id, user.app_metadata)
+                      .then(function(){
+                        callback(null, user, context);
+                      })
+                      .catch(function(err){
+                        callback(err);
+                      });
+                }
+                else {
+                    callback(null, user, context);
+                }
+            });
+        };
 
-  sendRequest(configuration.HASURA_URL, configuration.HASURA_ADMIN_SECRET);
-  if (configuration.HASURA_URL_LOCAL && configuration.HASURA_ADMIN_SECRET_LOCAL) {
-  	sendRequest(configuration.HASURA_URL_LOCAL, configuration.HASURA_ADMIN_SECRET_LOCAL);
-  }
-}
-```
-
-##### Force Verified Email Before Login Rule
-
-```js
-function emailVerified(user, context, callback) {
-  if (!user.email_verified) {
-    return callback(new UnauthorizedError("Please verify your email before logging in."));
-  } else {
-    return callback(null, user, context);
-  }
+        sendRequest(configuration.HASURA_URL, configuration.HASURA_ADMIN_SECRET);
+        if (configuration.HASURA_URL_LOCAL && configuration.HASURA_ADMIN_SECRET_LOCAL) {
+            sendRequest(configuration.HASURA_URL_LOCAL, configuration.HASURA_ADMIN_SECRET_LOCAL);
+        }
+    }
+    else {
+        console.log("Ignoring existing new user");
+        callback(null, user, context);
+    }
 }
 ```
 

@@ -4,7 +4,7 @@ export class PresenceState {
     private socket: SocketIOClient.Socket | undefined;
     private mutex: Mutex = new Mutex();
 
-    private static readonly PERIOD_MS = 5000;
+    private static readonly PERIOD_MS = 30000;
 
     async begin(token: string): Promise<void> {
         const release = await this.mutex.acquire();

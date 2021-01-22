@@ -1,13 +1,12 @@
-import { gql } from "@apollo/client";
-import React, { useCallback, useRef } from "react";
-import { useLocation } from "react-router-dom";
-import { useGetPresenceCountOfQuery } from "../../generated/graphql";
-import { useConference } from "../Conference/useConference";
-import { useMaybeCurrentAttendee } from "../Conference/useCurrentAttendee";
+import React, { useCallback, useState } from "react";
+import usePolling from "../Generic/usePolling";
+import { usePresenceState } from "./PresenceStateProvider";
 
 interface PresenceCount {
     pageCount: number | undefined;
-    getPageCountOf: (path: string) => Promise<number | undefined>;
+    pageCounts: { [k: string]: number | undefined };
+    observePageCount: (path: string) => void;
+    unobservePageCount: (path: string) => void;
 }
 
 const PresenceCountContext = React.createContext<PresenceCount | undefined>(undefined);
@@ -20,23 +19,6 @@ export function usePresenceCount(): PresenceCount {
     return ctx;
 }
 
-gql`
-    subscription PresenceCount($path: String!, $conferenceId: uuid!) {
-        presence_Page_by_pk(path: $path, conferenceId: $conferenceId) {
-            path
-            conferenceId
-            count
-        }
-    }
-
-    query GetPresenceCountOf($path: String!, $conferenceId: uuid!) {
-        presence_Page(where: { path: { _eq: $path }, conferenceId: { _eq: $conferenceId } }) {
-            path
-            conferenceId
-            count
-        }
-    }
-`;
 
 export default function PresenceCountProvider({
     children,
@@ -45,54 +27,37 @@ export default function PresenceCountProvider({
     children: React.ReactNode | React.ReactNodeArray;
     disableSubscription?: boolean;
 }): JSX.Element {
-    const location = useLocation();
-    const conference = useConference();
-    const mAttendee = useMaybeCurrentAttendee();
-    const presenceCount = useGetPresenceCountOfQuery({
-        variables: {
-            conferenceId: conference.id,
-            path: location.pathname,
+    const presenceState = usePresenceState();
+
+    const [pageCount, setPageCount] = useState<number>(presenceState.getPresenceCount());
+    const [pageCounts, setPageCounts] = useState(presenceState.getAllPresenceCounts());
+    usePolling(() => {
+        setPageCount(presenceState.getPresenceCount());
+        setPageCounts(presenceState.getAllPresenceCounts());
+    }, 5000, true);
+    
+
+    const observePageCount = useCallback(
+        (path: string) => {
+            presenceState.observePage(path);
         },
-        pollInterval: 120000,
-        fetchPolicy: "network-only",
-        skip: !mAttendee,
-    });
-    const { refetch: getPresenceCountOfQ } = useGetPresenceCountOfQuery({
-        skip: true,
-        fetchPolicy: "network-only",
-    });
-    const previousErrorPath = useRef<string | null>(null);
-
-    const pageCount = presenceCount.data?.presence_Page[0]?.count;
-
-    const getPageCountOf = useCallback(
-        async (path: string) => {
-            if (path === previousErrorPath.current || !mAttendee) {
-                return undefined;
-            }
-
-            try {
-                previousErrorPath.current = null;
-                const r = await getPresenceCountOfQ({
-                    conferenceId: conference.id,
-                    path,
-                });
-                return r.data?.presence_Page && r.data?.presence_Page.length > 0
-                    ? r.data?.presence_Page[0].count
-                    : undefined;
-            } catch {
-                previousErrorPath.current = path;
-                return undefined;
-            }
+        [presenceState]
+    );
+    
+    const unobservePageCount = useCallback(
+        (path: string) => {
+            presenceState.unobservePage(path);
         },
-        [conference.id, getPresenceCountOfQ, mAttendee]
+        [presenceState]
     );
 
     return (
         <PresenceCountContext.Provider
             value={{
                 pageCount,
-                getPageCountOf,
+                pageCounts,
+                observePageCount,
+                unobservePageCount,
             }}
         >
             {children}

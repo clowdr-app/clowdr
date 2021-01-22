@@ -7,6 +7,7 @@ import { Mutex } from "async-mutex";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import AppLoadingScreen from "../../AppLoadingScreen";
+import { PresenceStateProvider } from "../Presence/PresenceStateProvider";
 
 interface ConferenceAuthCtx {
     setConferenceId: (value: string | null) => void;
@@ -274,6 +275,8 @@ function ApolloCustomProviderInner({
     conferenceSlug: string | undefined;
 }): JSX.Element {
     const [client, setClient] = useState<ApolloClient<NormalizedCacheObject> | null>(null);
+    const [presenceToken, setPresenceToken] = useState<string | null>(null);
+
     const mutex = useRef(new Mutex());
     const isReconnecting = useRef(false);
 
@@ -291,6 +294,14 @@ function ApolloCustomProviderInner({
                         tokenCache
                     );
                     setClient(newClient);
+
+                    const newPresenceToken = await tokenCache.getToken(
+                        user?.sub,
+                        conferenceSlug,
+                        getAccessTokenSilently
+                    );
+                    setPresenceToken(newPresenceToken);
+
                     cb?.();
                 } catch (e) {
                     console.error("Failed to set up Apollo client.", e);
@@ -320,7 +331,13 @@ function ApolloCustomProviderInner({
 
     return (
         <ApolloCustomContext.Provider value={{ reconnect }}>
-            <ApolloProvider client={client}>{children}</ApolloProvider>
+            {presenceToken ? (
+                <PresenceStateProvider token={presenceToken}>
+                    <ApolloProvider client={client}>{children}</ApolloProvider>
+                </PresenceStateProvider>
+            ) : (
+                <ApolloProvider client={client}>{children}</ApolloProvider>
+            )}
         </ApolloCustomContext.Provider>
     );
 }

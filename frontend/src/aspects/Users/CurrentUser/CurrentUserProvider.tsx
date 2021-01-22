@@ -91,10 +91,6 @@ function CurrentUserProvider_IsAuthenticated({
     });
     useQueryErrorToast(error, false, "useSelectCurrentUserQuery");
 
-    // TODO: Split out fetch of onlineStatus and use polling (and provider separate refetch function)
-
-    // TODO: Split out subscription to pinned chats, followed chats, unread indices
-
     const value = loading ? undefined : error ? false : data;
 
     return (

@@ -25,7 +25,6 @@ import useRoomParticipants from "../../../Room/useRoomParticipants";
 import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
 import { maybeCompare } from "../../../Utils/maybeSort";
 import { useAttendee } from "../../AttendeesContext";
-import { useConference } from "../../useConference";
 import { AddRoomPersonModal } from "./AddRoomPersonModal";
 
 export function RoomControlBar({
@@ -98,8 +97,6 @@ export function RoomControlBar({
         ),
         [thisRoomParticipants]
     );
-
-    const conference = useConference();
 
     return (
         <HStack justifyContent="flex-end" m={4}>

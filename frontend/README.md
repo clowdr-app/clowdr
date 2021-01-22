@@ -133,3 +133,4 @@ variables in the build which start with `SNOWPACK_PUBLIC_`.
 | NODE_VERSION                                 | `15.4` (only required in Netlify)                                                    | Only     |
 | _Vonage Video API_                           |                                                                                      |
 | SNOWPACK_PUBLIC_OPENTOK_API_KEY              | API key for the Vonage Video API project                                             |          |
+| SNOWPACK_PRESENCE_SERVICE_URL                | URL to the presence service.                                                         |

@@ -5,13 +5,21 @@ import FAIcon from "../Icons/FAIcon";
 import { usePresenceCount } from "./PresenceCountProvider";
 
 export default function PageCountText({ path, ...props }: { path: string } & TextProps): JSX.Element {
-    const { getPageCountOf } = usePresenceCount();
+    const { pageCounts, observePageCount, unobservePageCount } = usePresenceCount();
     const [pageCount, setPageCount] = useState<number | null>(null);
 
+    useEffect(() => {
+        observePageCount(path);
+
+        return () => {
+            unobservePageCount(path);
+        };
+    }, [observePageCount, path, unobservePageCount]);
+
     const cb = useCallback(async () => {
-        const count = await getPageCountOf(path);
+        const count = pageCounts[path];
         setPageCount(count ?? null);
-    }, [getPageCountOf, path]);
+    }, [pageCounts, path]);
     useEffect(() => {
         cb();
     }, [cb]);

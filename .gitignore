@@ -114,3 +114,4 @@ desktop.ini
 ngrok.yml
 frontend/x.env.local
 *.local
+services/presence/build/

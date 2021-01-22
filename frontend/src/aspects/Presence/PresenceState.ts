@@ -106,7 +106,7 @@ export class PresenceState {
         utcMillis: number;
         path: string;
     }) {
-        console.log(`Presence received ${data.utcMillis} for ${data.path}`);
+        // console.log(`Presence received ${data.utcMillis} for ${data.path}`);
         this.presences[data.path] = [...(this.presences[data.path] ?? []), data.utcMillis];
     }
 

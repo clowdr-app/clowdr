@@ -96,7 +96,7 @@ io.on("connection", function (socket: Socket) {
     });
 
     socket.on("present", (data: { utcMillis: number; path: string }) => {
-        console.log(`Present: ${userId} for ${data.path}`);
+        // console.log(`Present: ${userId} for ${data.path}`);
 
         const pageKey = getPageKey(conferenceSlug, data.path);
         socket.to(pageKey).emit("present", {

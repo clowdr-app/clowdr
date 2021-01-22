@@ -2,6 +2,7 @@ import { gql } from "@apollo/client/core";
 import {
     EndChatDuplicationDocument,
     EndChatDuplicationMutationVariables,
+    Event_GetEventVonageSessionDocument,
     GetEventChatInfoDocument,
     GetEventTimingsDocument,
     RoomMode_Enum,
@@ -11,6 +12,7 @@ import {
 import { apolloClient } from "../graphqlClient";
 import { createEventBreakoutRoom, createEventEndTrigger, createEventStartTrigger } from "../lib/event";
 import { sendFailureEmail } from "../lib/logging/failureEmails";
+import Vonage from "../lib/vonage/vonageClient";
 import { startEventBroadcast, stopEventBroadcasts } from "../lib/vonage/vonageTools";
 import { EventData, Payload } from "../types/hasura/event";
 import { callWithRetry } from "../utils";
@@ -334,4 +336,59 @@ export async function handleEventEndNotification(eventId: string, endTime: strin
     } else {
         console.log("Event stop notification did not match current event end time, skipping.", eventId, endTime);
     }
+}
+
+gql`
+    query Event_GetEventVonageSession($eventId: uuid!) {
+        Event_by_pk(id: $eventId) {
+            id
+            eventVonageSession {
+                id
+                sessionId
+            }
+        }
+    }
+`;
+
+export async function handleStopEventBroadcasts(params: stopEventBroadcastArgs): Promise<StopEventBroadcastOutput> {
+    console.log("Stopping broadcasts for event", params.eventId);
+
+    const eventDetails = await apolloClient.query({
+        query: Event_GetEventVonageSessionDocument,
+        variables: {
+            eventId: params.eventId,
+        },
+    });
+
+    if (!eventDetails.data.Event_by_pk) {
+        console.error("Could not retrieve event", params.eventId);
+        throw new Error("Could not retrieve event");
+    }
+
+    if (!eventDetails.data.Event_by_pk.eventVonageSession) {
+        console.log("Event has no associated Vonage session", params.eventId);
+        return { broadcastsStopped: 0 };
+    }
+
+    const broadcasts = await Vonage.listBroadcasts({
+        sessionId: eventDetails.data.Event_by_pk.eventVonageSession.sessionId,
+    });
+
+    if (!broadcasts) {
+        console.log("No broadcasts return for Vonage session", params.eventId);
+        return { broadcastsStopped: 0 };
+    }
+
+    let broadcastsStopped = 0;
+    for (const broadcast of broadcasts) {
+        try {
+            console.log("Attempting to stop broadcast", params.eventId, broadcast.id);
+            await Vonage.stopBroadcast(broadcast.id);
+            broadcastsStopped++;
+        } catch (e) {
+            console.warn("Failure while trying to stop broadcast", params.eventId, broadcast.id, e);
+        }
+    }
+
+    return { broadcastsStopped };
 }

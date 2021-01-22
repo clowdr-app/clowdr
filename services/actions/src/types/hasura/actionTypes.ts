@@ -90,6 +90,10 @@ type CreateContentGroupRoomOutput = {
     message?: Maybe<string>;
 };
 
+type StopEventBroadcastOutput = {
+    broadcastsStopped: number;
+};
+
 type SampleInput = {
     username: string;
     password: string;
@@ -134,6 +138,7 @@ type Mutation = {
     invitationConfirmWithCode?: Maybe<ConfirmInvitationOutput>;
     joinEventVonageSession?: Maybe<JoinEventVonageSessionOutput>;
     joinRoomVonageSession?: Maybe<JoinRoomVonageSessionOutput>;
+    stopEventBroadcast?: Maybe<StopEventBroadcastOutput>;
     submitContentItem?: Maybe<SubmitContentItemOutput>;
     updateProfilePhoto?: Maybe<UpdateProfilePhotoResponse>;
     updateSubtitles?: Maybe<SubmitUpdatedSubtitlesOutput>;
@@ -187,6 +192,10 @@ type joinEventVonageSessionArgs = {
 
 type joinRoomVonageSessionArgs = {
     roomId: uuid;
+};
+
+type stopEventBroadcastArgs = {
+    eventId: uuid;
 };
 
 type submitContentItemArgs = {

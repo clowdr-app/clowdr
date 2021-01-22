@@ -121,6 +121,16 @@ actions:
       value_from_env: EVENT_SECRET
   permissions:
   - role: user
+- name: stopEventBroadcast
+  definition:
+    kind: synchronous
+    handler: '{{ACTION_BASE_URL}}/event/stopBroadcasts'
+    forward_client_headers: true
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+  permissions:
+  - role: user
 - name: submitContentItem
   definition:
     kind: synchronous
@@ -197,4 +207,5 @@ custom_types:
       type: object
       field_mapping:
         roomId: id
+  - name: StopEventBroadcastOutput
   scalars: []

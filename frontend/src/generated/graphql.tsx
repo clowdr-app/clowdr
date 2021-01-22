@@ -13162,6 +13162,11 @@ export type SampleOutput = {
   readonly accessToken: Scalars['String'];
 };
 
+export type StopEventBroadcastOutput = {
+  readonly __typename?: 'StopEventBroadcastOutput';
+  readonly broadcastsStopped: Scalars['Int'];
+};
+
 /** expression to compare columns of type String. All fields are combined with logical 'AND'. */
 export type String_Comparison_Exp = {
   readonly _eq?: Maybe<Scalars['String']>;
@@ -17693,7 +17698,9 @@ export type Chat_ReadUpToIndex_Bool_Exp = {
 /** unique or primary key constraints on table "chat.ReadUpToIndex" */
 export enum Chat_ReadUpToIndex_Constraint {
   /** unique or primary key constraint */
-  ReadUpToIndexPkey = 'ReadUpToIndex_pkey'
+  ReadUpToIndexPkey = 'ReadUpToIndex_pkey',
+  /** unique or primary key constraint */
+  ChatReadUpToIndexPkIndex = 'chat_ReadUpToIndex_pk_index'
 }
 
 /** input type for incrementing integer column in table "chat.ReadUpToIndex" */
@@ -19773,6 +19780,8 @@ export type Mutation_Root = {
   readonly joinEventVonageSession?: Maybe<JoinEventVonageSessionOutput>;
   /** perform the action: "joinRoomVonageSession" */
   readonly joinRoomVonageSession?: Maybe<JoinRoomVonageSessionOutput>;
+  /** perform the action: "stopEventBroadcast" */
+  readonly stopEventBroadcast?: Maybe<StopEventBroadcastOutput>;
   /** perform the action: "submitContentItem" */
   readonly submitContentItem?: Maybe<SubmitContentItemOutput>;
   /** perform the action: "updateProfilePhoto" */
@@ -21964,6 +21973,12 @@ export type Mutation_RootJoinEventVonageSessionArgs = {
 /** mutation root */
 export type Mutation_RootJoinRoomVonageSessionArgs = {
   roomId: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootStopEventBroadcastArgs = {
+  eventId: Scalars['uuid'];
 };
 
 
@@ -30630,6 +30645,20 @@ export type GetMediaLiveChannelsQueryVariables = Exact<{
 
 export type GetMediaLiveChannelsQuery = { readonly __typename?: 'query_root', readonly Room: ReadonlyArray<{ readonly __typename?: 'Room', readonly name: string, readonly id: any, readonly mediaLiveChannel?: Maybe<{ readonly __typename?: 'MediaLiveChannel', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly id: any }> }> };
 
+export type EventVonageControls_GetEventsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type EventVonageControls_GetEventsQuery = { readonly __typename?: 'query_root', readonly Event: ReadonlyArray<{ readonly __typename?: 'Event', readonly id: any, readonly name: string, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string }> }> };
+
+export type EventVonageControls_StopEventBroadcastMutationVariables = Exact<{
+  eventId: Scalars['uuid'];
+}>;
+
+
+export type EventVonageControls_StopEventBroadcastMutation = { readonly __typename?: 'mutation_root', readonly stopEventBroadcast?: Maybe<{ readonly __typename?: 'StopEventBroadcastOutput', readonly broadcastsStopped: number }> };
+
 export type SelectAllGroupsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
@@ -35296,6 +35325,78 @@ export function useGetMediaLiveChannelsLazyQuery(baseOptions?: Apollo.LazyQueryH
 export type GetMediaLiveChannelsQueryHookResult = ReturnType<typeof useGetMediaLiveChannelsQuery>;
 export type GetMediaLiveChannelsLazyQueryHookResult = ReturnType<typeof useGetMediaLiveChannelsLazyQuery>;
 export type GetMediaLiveChannelsQueryResult = Apollo.QueryResult<GetMediaLiveChannelsQuery, GetMediaLiveChannelsQueryVariables>;
+export const EventVonageControls_GetEventsDocument = gql`
+    query EventVonageControls_GetEvents($conferenceId: uuid!) {
+  Event(
+    where: {conferenceId: {_eq: $conferenceId}, intendedRoomModeName: {_in: [Q_AND_A, PRESENTATION]}}
+  ) {
+    id
+    name
+    contentGroup {
+      id
+      title
+    }
+  }
+}
+    `;
+
+/**
+ * __useEventVonageControls_GetEventsQuery__
+ *
+ * To run a query within a React component, call `useEventVonageControls_GetEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEventVonageControls_GetEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useEventVonageControls_GetEventsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useEventVonageControls_GetEventsQuery(baseOptions: Apollo.QueryHookOptions<EventVonageControls_GetEventsQuery, EventVonageControls_GetEventsQueryVariables>) {
+        return Apollo.useQuery<EventVonageControls_GetEventsQuery, EventVonageControls_GetEventsQueryVariables>(EventVonageControls_GetEventsDocument, baseOptions);
+      }
+export function useEventVonageControls_GetEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EventVonageControls_GetEventsQuery, EventVonageControls_GetEventsQueryVariables>) {
+          return Apollo.useLazyQuery<EventVonageControls_GetEventsQuery, EventVonageControls_GetEventsQueryVariables>(EventVonageControls_GetEventsDocument, baseOptions);
+        }
+export type EventVonageControls_GetEventsQueryHookResult = ReturnType<typeof useEventVonageControls_GetEventsQuery>;
+export type EventVonageControls_GetEventsLazyQueryHookResult = ReturnType<typeof useEventVonageControls_GetEventsLazyQuery>;
+export type EventVonageControls_GetEventsQueryResult = Apollo.QueryResult<EventVonageControls_GetEventsQuery, EventVonageControls_GetEventsQueryVariables>;
+export const EventVonageControls_StopEventBroadcastDocument = gql`
+    mutation EventVonageControls_StopEventBroadcast($eventId: uuid!) {
+  stopEventBroadcast(eventId: $eventId) {
+    broadcastsStopped
+  }
+}
+    `;
+export type EventVonageControls_StopEventBroadcastMutationFn = Apollo.MutationFunction<EventVonageControls_StopEventBroadcastMutation, EventVonageControls_StopEventBroadcastMutationVariables>;
+
+/**
+ * __useEventVonageControls_StopEventBroadcastMutation__
+ *
+ * To run a mutation, you first call `useEventVonageControls_StopEventBroadcastMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEventVonageControls_StopEventBroadcastMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [eventVonageControlsStopEventBroadcastMutation, { data, loading, error }] = useEventVonageControls_StopEventBroadcastMutation({
+ *   variables: {
+ *      eventId: // value for 'eventId'
+ *   },
+ * });
+ */
+export function useEventVonageControls_StopEventBroadcastMutation(baseOptions?: Apollo.MutationHookOptions<EventVonageControls_StopEventBroadcastMutation, EventVonageControls_StopEventBroadcastMutationVariables>) {
+        return Apollo.useMutation<EventVonageControls_StopEventBroadcastMutation, EventVonageControls_StopEventBroadcastMutationVariables>(EventVonageControls_StopEventBroadcastDocument, baseOptions);
+      }
+export type EventVonageControls_StopEventBroadcastMutationHookResult = ReturnType<typeof useEventVonageControls_StopEventBroadcastMutation>;
+export type EventVonageControls_StopEventBroadcastMutationResult = Apollo.MutationResult<EventVonageControls_StopEventBroadcastMutation>;
+export type EventVonageControls_StopEventBroadcastMutationOptions = Apollo.BaseMutationOptions<EventVonageControls_StopEventBroadcastMutation, EventVonageControls_StopEventBroadcastMutationVariables>;
 export const SelectAllGroupsDocument = gql`
     query SelectAllGroups($conferenceId: uuid!) {
   Group(where: {conferenceId: {_eq: $conferenceId}}) {

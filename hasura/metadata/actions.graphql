@@ -85,6 +85,13 @@ type Query {
 
 
 type Mutation {
+  stopEventBroadcast (
+    eventId: uuid!
+  ): StopEventBroadcastOutput
+}
+
+
+type Mutation {
   submitContentItem (
     data: jsonb!
     magicToken: String!
@@ -223,5 +230,9 @@ type CreateRoomDmOutput {
 type CreateContentGroupRoomOutput {
   roomId : String
   message : String
+}
+
+type StopEventBroadcastOutput {
+  broadcastsStopped : Int!
 }
 

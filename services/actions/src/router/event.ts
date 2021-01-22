@@ -1,7 +1,12 @@
 import bodyParser from "body-parser";
 import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
-import { handleEventEndNotification, handleEventStartNotification, handleEventUpdated } from "../handlers/event";
+import {
+    handleEventEndNotification,
+    handleEventStartNotification,
+    handleEventUpdated,
+    handleStopEventBroadcasts,
+} from "../handlers/event";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
 import { EventData, Payload, ScheduledEventPayload } from "../types/hasura/event";
 
@@ -66,4 +71,23 @@ router.post("/notifyEnd", bodyParser.json(), async (req: Request, res: Response)
         return;
     }
     res.status(200).json("OK");
+});
+
+router.post("/stopBroadcasts", bodyParser.json(), async (req: Request, res: Response<StopEventBroadcastOutput>) => {
+    console.log(req.originalUrl);
+    const params = req.body.input;
+    try {
+        assertType<stopEventBroadcastArgs>(params);
+    } catch (e) {
+        console.error(`${req.originalUrl}: invalid request`, req.body, e);
+        return res.status(500).json({ broadcastsStopped: 0 });
+    }
+
+    try {
+        const result = await handleStopEventBroadcasts(params);
+        return res.status(200).json(result);
+    } catch (e) {
+        console.error(`${req.originalUrl}: failed to stop event broadcasts`, params, e);
+        return res.status(500).json({ broadcastsStopped: 0 });
+    }
 });

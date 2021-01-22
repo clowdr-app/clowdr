@@ -31,7 +31,7 @@ const io = new socketIO.Server(server, {
         methods: ["GET", "POST"],
     },
 });
-io.adapter(redis.createAdapter(process.env.REDIS_URL, { key: REDIS_KEY }));
+io.adapter(redis.createAdapter(process.env.REDIS_URL, { key: process.env.REDIS_KEY }));
 
 io.use(
     authorize({
@@ -56,53 +56,60 @@ function getPageKey(confSlug: string, path: string) {
 io.on("connection", function (socket: Socket) {
     const userId = socket.decodedToken["https://hasura.io/jwt/claims"]["x-hasura-user-id"];
     const conferenceSlug = socket.decodedToken["https://hasura.io/jwt/claims"]["x-hasura-conference-slug"];
-    console.log(`Authorized client connected:
-    User Id         : ${userId}
-    Conference slug : ${conferenceSlug}
-`);
+    console.log(`Authorized client connected: ${userId} / ${conferenceSlug}`);
 
     socket.on("disconnect", () => console.log("Client disconnected"));
 
     socket.on("enterPage", async (path: string) => {
         // console.log(`Entered page: ${path}`);
 
-        const pageKey = getPageKey(conferenceSlug, path);
-        await socket.join(pageKey);
+        if (typeof path === "string") {
+            const pageKey = getPageKey(conferenceSlug, path);
+            await socket.join(pageKey);
 
-        socket.to(pageKey).emit("present", {
-            utcMillis: Date.now(),
-            path,
-        });
+            socket.to(pageKey).emit("present", {
+                utcMillis: Date.now(),
+                path,
+            });
+        }
     });
 
     socket.on("leavePage", async (path: string) => {
         // console.log(`Left page: ${path}`);
 
-        const pageKey = getPageKey(conferenceSlug, path);
-        await socket.leave(pageKey);
+        if (typeof path === "string") {
+            const pageKey = getPageKey(conferenceSlug, path);
+            await socket.leave(pageKey);
+        }
     });
 
     socket.on("observePage", async (path: string) => {
         // console.log(`Observe page: ${path}`);
 
-        const pageKey = getPageKey(conferenceSlug, path);
-        await socket.join(pageKey);
+        if (typeof path === "string") {
+            const pageKey = getPageKey(conferenceSlug, path);
+            await socket.join(pageKey);
+        }
     });
 
     socket.on("unobservePage", async (path: string) => {
         // console.log(`Unobserve page: ${path}`);
 
-        const pageKey = getPageKey(conferenceSlug, path);
-        await socket.leave(pageKey);
+        if (typeof path === "string") {
+            const pageKey = getPageKey(conferenceSlug, path);
+            await socket.leave(pageKey);
+        }
     });
 
     socket.on("present", (data: { utcMillis: number; path: string }) => {
         // console.log(`Present: ${userId} for ${data.path}`);
 
-        const pageKey = getPageKey(conferenceSlug, data.path);
-        socket.to(pageKey).emit("present", {
-            utcMillis: data.utcMillis,
-            path: data.path,
-        });
+        if (data && data.path && typeof data.path === "string") {
+            const pageKey = getPageKey(conferenceSlug, data.path);
+            socket.to(pageKey).emit("present", {
+                utcMillis: data.utcMillis,
+                path: data.path,
+            });
+        }
     });
 });

@@ -5,13 +5,12 @@ Version 3 of Clowdr - this time it's scalable.
 If you want to contribute to Clowdr, please read our [contribution guidelines](CONTRIBUTING).
 
 ## Structure
-
-| Folder           | Contents                                                         | ReadMe                                 |
-| ---------------- | ---------------------------------------------------------------- | -------------------------------------- |
-| frontend         | The frontend React web app                                       | [ReadMe here](frontend/README)         |
-| hasura           | The Hasura GraphQL configuration, actions and seed data.         | [ReadMe here](hasura/README)           |
-| services         | Micro-services                                                   |                                        |
-| services/actions | At the moment, a "general" service for handling any/all actions. | [ReadMe here](services/actions/README) |
+| Folder           | Contents                                                         | ReadMe                                   |
+| ---------------- | ---------------------------------------------------------------- | --------------------------------------   |
+| frontend         | The frontend React web app                                       | [ReadMe here](frontend/README.md)        |
+| hasura           | The Hasura GraphQL configuration, actions and seed data.         | [ReadMe here](hasura/README.md)          |
+| services         | Micro-services                                                   |                                          |
+| services/actions | At the moment, a "general" service for handling any/all actions. | [ReadMe here](services/actions/README.md)|
 
 ## Pre-requisites
 
@@ -19,9 +18,9 @@ If you want to contribute to Clowdr, please read our [contribution guidelines](C
    - We also recommend you install the "recommended extensions" listed in the
      `.vscode/extensions` folder.
 1. [Node.js](https://nodejs.org/en/) (and NPM)
-1. [Hasura pre-requisites](hasura/README#Pre-requisites)
-1. [Actions Service pre-requsities](services/actions/README#Pre-requisites)
-1. [Frontend pre-requsities](frontend/README#Pre-requisites)
+1. [Hasura pre-requisites](hasura/README.md#Pre-requisites)
+1. [Actions Service pre-requsities](services/actions/README.md#Pre-requisites)
+1. [Frontend pre-requsities](frontend/README.md#Pre-requisites)
 
 ## Setting Up
 
@@ -40,12 +39,12 @@ If you want to contribute to Clowdr, please read our [contribution guidelines](C
    clowdr> npm i
    ```
 
-1. Follow the AWS setup: [Clowdr AWS ReadMe](aws/README#Setting-up)
-1. Follow the Hasura setup: [Clowdr Hasura ReadMe](hasura/README#Setting-up)
+1. Follow the AWS setup: [Clowdr AWS ReadMe](aws/README.md#Setting-up)
+1. Follow the Hasura setup: [Clowdr Hasura ReadMe](hasura/README.md#Setting-up)
 1. Follow the Actions Service setup: [Clowdr Actions Service
-   ReadMe](services/actions/README#Setting-up)
+   ReadMe](services/actions/README.md#Setting-up)
 1. Follow the Frontend setup: [Clowdr Frontend
-   ReadMe](frontend/README#Setting-up)
+   ReadMe](frontend/README.md#Setting-up)
 1. Follow the Auth0 setup below
 
 ### Auth0 Setup
@@ -331,7 +330,7 @@ properly.)
 #### 10. Configure your environment
 
 You can now resume the frontend setup by configuring your [Frontend environment
-variables](/frontend/README#frontend-configuration).
+variables](/frontend/README.md#frontend-configuration).
 
 ## Local Development
 

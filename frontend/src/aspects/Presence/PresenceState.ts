@@ -115,9 +115,6 @@ export class PresenceState {
         if (this.oldPath) {
             this.socket?.emit("leavePage", this.oldPath);
         }
-
-        this.presences[newPath] = [Date.now()];
-
         this.oldPath = newPath;
         this.socket?.emit("enterPage", this.oldPath);
     }

@@ -67,7 +67,7 @@ io.on("connection", function (socket: Socket) {
             const pageKey = getPageKey(conferenceSlug, path);
             await socket.join(pageKey);
 
-            socket.to(pageKey).emit("present", {
+            io.in(pageKey).emit("present", {
                 utcMillis: Date.now(),
                 path,
             });
@@ -106,7 +106,7 @@ io.on("connection", function (socket: Socket) {
 
         if (data && data.path && typeof data.path === "string" && conferenceSlug) {
             const pageKey = getPageKey(conferenceSlug, data.path);
-            socket.to(pageKey).emit("present", {
+            io.in(pageKey).emit("present", {
                 utcMillis: data.utcMillis,
                 path: data.path,
             });

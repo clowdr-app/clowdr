@@ -213,9 +213,6 @@ async function createApolloClient(
             chat_ReadUpToIndex: {
                 keyFields: ["chatId"],
             },
-            presence_Page: {
-                keyFields: ["path", "conferenceId"],
-            },
         },
     });
 

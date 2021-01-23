@@ -299,8 +299,7 @@ function ApolloCustomProviderInner({
                             getAccessTokenSilently
                         );
                         setPresenceToken(newPresenceToken);
-                    }
-                    else {
+                    } else {
                         setPresenceToken(null);
                     }
 

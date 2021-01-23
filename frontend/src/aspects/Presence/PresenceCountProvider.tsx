@@ -19,7 +19,6 @@ export function usePresenceCount(): PresenceCount {
     return ctx;
 }
 
-
 export default function PresenceCountProvider({
     children,
 }: // disableSubscription,
@@ -31,11 +30,14 @@ export default function PresenceCountProvider({
 
     const [pageCount, setPageCount] = useState<number>(presenceState.getPresenceCount());
     const [pageCounts, setPageCounts] = useState(presenceState.getAllPresenceCounts());
-    usePolling(() => {
-        setPageCount(presenceState.getPresenceCount());
-        setPageCounts(presenceState.getAllPresenceCounts());
-    }, 5000, true);
-    
+    usePolling(
+        () => {
+            setPageCount(presenceState.getPresenceCount());
+            setPageCounts(presenceState.getAllPresenceCounts());
+        },
+        5000,
+        true
+    );
 
     const observePageCount = useCallback(
         (path: string) => {
@@ -43,7 +45,7 @@ export default function PresenceCountProvider({
         },
         [presenceState]
     );
-    
+
     const unobservePageCount = useCallback(
         (path: string, key: number) => {
             presenceState.unobservePage(key, path);

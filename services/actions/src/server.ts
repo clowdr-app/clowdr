@@ -34,7 +34,6 @@ import { router as mediaLiveRouter } from "./router/mediaLive";
 import { router as mediaPackageRouter } from "./router/mediaPackage";
 import { router as mediaPackageHarvestJobRouter } from "./router/mediaPackageHarvestJob";
 import { router as openshotRouter } from "./router/openshot";
-import { router as presenceRouter } from "./router/presence";
 import { router as profileRouter } from "./router/profile";
 import { router as roomRouter } from "./router/room";
 import { router as shuffleRoomsRouter } from "./router/shuffleRooms";
@@ -92,7 +91,6 @@ app.use("/mediaPackageHarvestJob", mediaPackageHarvestJobRouter);
 app.use("/channels", channelsRouter);
 
 app.use("/profile", profileRouter);
-app.use("/presence", presenceRouter);
 app.use("/shuffle", shuffleRoomsRouter);
 
 app.get("/", function (_req, res) {

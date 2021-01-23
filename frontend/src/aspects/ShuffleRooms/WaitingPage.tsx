@@ -379,7 +379,9 @@ function ShuffleRoomParticipantsCount(): JSX.Element {
     return typeof count.data?.RoomParticipant_aggregate?.aggregate?.count === "number" ? (
         <>
             {count.data.RoomParticipant_aggregate.aggregate.count} people actively participating in shuffle rooms at the
-            moment.<br />(Updates every 60s - please help preserve our DB by not refreshing!)
+            moment.
+            <br />
+            (Updates every 60s - please help preserve our DB by not refreshing!)
         </>
     ) : (
         <>Loading active participant count</>

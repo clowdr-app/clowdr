@@ -292,12 +292,17 @@ function ApolloCustomProviderInner({
                     );
                     setClient(newClient);
 
-                    const newPresenceToken = await tokenCache.getToken(
-                        user?.sub,
-                        conferenceSlug,
-                        getAccessTokenSilently
-                    );
-                    setPresenceToken(newPresenceToken);
+                    if (isAuthenticated) {
+                        const newPresenceToken = await tokenCache.getToken(
+                            user?.sub,
+                            conferenceSlug,
+                            getAccessTokenSilently
+                        );
+                        setPresenceToken(newPresenceToken);
+                    }
+                    else {
+                        setPresenceToken(null);
+                    }
 
                     cb?.();
                 } catch (e) {

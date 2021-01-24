@@ -13,4 +13,4 @@ jobs:
         run: npx prettier --check .
       - name: Run Prettier for failure info
         if: ${{ failure() }}
-        run: npx prettier .
+        run: npx prettier --write .

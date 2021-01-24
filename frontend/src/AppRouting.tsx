@@ -13,6 +13,7 @@ import CRUDTestPage from "./aspects/CRUDTable/CRUDTestPage";
 import GenericErrorPage from "./aspects/Errors/GenericErrorPage";
 import PageNotFound from "./aspects/Errors/PageNotFound";
 import AcceptInvitationPage from "./aspects/Invitation/AcceptInvitationPage";
+import DownForMaintenancePage from "./aspects/Maintenance/DownForMaintenancePage";
 import CurrentUserPage from "./aspects/Users/CurrentUser/CurrentUserPage";
 import ExistingUserLandingPage from "./aspects/Users/ExistingUser/LandingPage";
 import NewUserLandingPage from "./aspects/Users/NewUser/LandingPage";
@@ -20,6 +21,10 @@ import NewUserLandingPage from "./aspects/Users/NewUser/LandingPage";
 export default function Routing(): JSX.Element {
     return (
         <Switch>
+            <Route path="/">
+                <DownForMaintenancePage />
+            </Route>
+
             <Route exact path="/auth0/email-verification/result">
                 {(props) => {
                     const searchParams = new URLSearchParams(props.location.search);

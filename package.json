@@ -37,7 +37,8 @@
         }
     },
     "lint-staged": {
-        "*.{js,css,md}": "prettier --write"
+        "*.js": "eslint --cache --fix",
+        "*.{js,jsx,ts,tsx,css,json,md}": "prettier --write"
     },
     "engines": {
         "node": "15.4.0",

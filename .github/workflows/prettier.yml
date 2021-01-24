@@ -11,3 +11,6 @@ jobs:
         run: npm install prettier
       - name: Run Prettier check
         run: npx prettier --check .
+      - name: Run Prettier for failure info
+        if: ${{ failure() }}
+        run: npx prettier .

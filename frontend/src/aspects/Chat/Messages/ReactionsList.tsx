@@ -16,6 +16,7 @@ export default function ReactionsList({
     reactions: readonly ChatReactionDataFragment[];
 } & BoxProps): JSX.Element {
     const reactionQs = useReactions();
+
     const messageQs = useReceiveMessageQueries();
 
     const reactionsGrouped: Array<[

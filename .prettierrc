@@ -3,6 +3,7 @@
     "tabWidth": 4,
     "useTabs": false,
     "printWidth": 120,
+    "endOfLine": "lf",
     "overrides": [
         {
             "files": ["*.yml", "*.yaml"],

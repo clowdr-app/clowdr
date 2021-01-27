@@ -124,7 +124,7 @@ Order of the rules matters.
 1. Create a new _Rule_
 
    - Select `Empty rule`
-   - `Name` it something like `Setup isNew app meatdata`
+   - `Name` it something like `Setup isNew app metadata`
    - Replace the `Script` with the code from `Setup isNew app metadata` below
    - Don't forget to `Save changes`
 

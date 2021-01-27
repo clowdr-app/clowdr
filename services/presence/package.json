@@ -12,7 +12,8 @@
         "build-shared": "npm run --prefix=../../shared/ --cwd=../../shared/ build",
         "copy-resources": "rimraf build/resources && cpy --cwd=src/resources \"**/*\" ../../build/resources --parents",
         "start": "node build/server.js",
-        "dev": "node-env-run -E .env build/server.js"
+        "dev-stage2": "tsc-watch --compiler \"ttypescript/bin/tsc\" --onSuccess \"npm run-script --prefix=../../ --cwd=../../ run-services-presence\"",
+        "dev": "npm run build-shared && node-env-run -E ./.env -e \"npm run dev-stage2\""
     },
     "repository": {
         "type": "git",
@@ -34,12 +35,15 @@
         "rimraf": "^3.0.2",
         "socket.io": "^3.1.0",
         "socket.io-redis": "^6.0.1",
+        "ttypescript": "^1.5.12",
+        "typescript": "^4.1.3",
         "utf-8-validate": "^5.0.4"
     },
     "devDependencies": {
         "@types/express": "^4.17.11",
         "@types/socket.io": "^2.1.12",
         "@types/socket.io-redis": "^1.0.26",
-        "node-env-run": "^4.0.2"
+        "node-env-run": "^4.0.2",
+        "tsc-watch": "^4.2.9"
     }
 }

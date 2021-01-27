@@ -96,6 +96,21 @@
             },
             "args": ["run", "gql-cdg"]
         },
+        // Presence service -- Local Development
+        {
+            "label": "Presence Service -- Local Development",
+            "type": "shell",
+            "isBackground": true,
+            "command": "npm",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/services/presence"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": ["run", "dev"]
+        },
         // Shared -- GraphQL Codegen
         {
             "label": "Shared -- GraphQL Codegen",
@@ -137,19 +152,6 @@
                 "instanceLimit": 1
             },
             "args": ["start"]
-        },
-        // Run All -- Local Development
-        {
-            "label": "Run All -- Local Development",
-            "dependsOn": [
-                "Hasura Console -- Local Development",
-                "Actions Service -- Local Development",
-                "Frontend -- Local Development",
-                "Ngrok"
-            ],
-            "dependsOrder": "parallel",
-            "isBackground": true,
-            "problemMatcher": []
         },
         // Frontend -- Production Build
         {
@@ -201,6 +203,20 @@
                 "instanceLimit": 1
             },
             "args": ["start", "-config", "./ngrok.yml", "--all"]
+        },
+        // Run All -- Local Development
+        {
+            "label": "Run All -- Local Development",
+            "dependsOn": [
+                "Hasura Console -- Local Development",
+                "Actions Service -- Local Development",
+                "Presence Service -- Local Development",
+                "Frontend -- Local Development",
+                "Ngrok"
+            ],
+            "dependsOrder": "parallel",
+            "isBackground": true,
+            "problemMatcher": []
         }
     ]
 }

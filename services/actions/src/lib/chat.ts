@@ -65,10 +65,15 @@ export async function sendEmailUnnotifiedMessageNotifications(): Promise<void> {
         query: AllUnnotifiedSubscriptionsDocument,
     });
 
+    // Remove subscriptions that are for empty chats or where the attendee is not yet linked to a user
     const filteredSubs = allSubs.data.chat_SubscriptionsWithUnnotifiedMessages.filter(
         (sub) => sub.chat && sub.attendee && sub.attendee.user && sub.chat?.messages.length > 0
     );
+    // Subscriptions are returned ordered by user id
+    // Group subscriptions by attendee so we only send one email to each attendee
+    // with a list of all the chats relevant to them
     const groupedSubs = filteredSubs.reduce<SubWithUnnotifMsgsFragment[][]>((acc, sub) => {
+        // Ignore chats where we can't identify where to link the user to
         if (
             (!sub.chat?.contentGroup || sub.chat?.contentGroup.length === 0) &&
             (!sub.chat?.room || sub.chat?.room.length === 0)
@@ -88,6 +93,7 @@ export async function sendEmailUnnotifiedMessageNotifications(): Promise<void> {
         }
     }, [] as SubWithUnnotifMsgsFragment[][]);
 
+    // Insert or update read-up-to indices
     const upsertObjects = filteredSubs.map(
         (x) =>
             ({
@@ -103,11 +109,15 @@ export async function sendEmailUnnotifiedMessageNotifications(): Promise<void> {
         },
     });
 
+    // Send out the emails notifying users
     await insertEmails(
         groupedSubs.reduce<Email_Insert_Input[]>((acc, rawSubGroup) => {
+            // Ignore subscriptions where the most recent message was sent by this subscriber
             const subGroup = rawSubGroup.filter((sub) => sub.chat?.messages[0].senderId !== sub.attendeeId);
             if (subGroup.length > 0) {
+                // Use the first subscription for extracting common information like attendee name/email
                 const sub0 = subGroup[0];
+
                 const contents = `<p>Dear ${sub0.attendee?.displayName},</p>
 <p>You have received new messages on Clowdr in the following chats:</p>
 <ul>

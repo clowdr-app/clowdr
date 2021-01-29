@@ -76,3 +76,8 @@
   headers:
   - name: x-hasura-event-secret
     value_from_env: EVENT_SECRET
+- name: SendEmailUnnotifiedMessageNotifications
+  webhook: '{{ACTION_BASE_URL}}/chat/sendEmailUnnotifiedMessageNotifications'
+  schedule: 23 */1 * * *
+  include_in_metadata: true
+  payload: {}

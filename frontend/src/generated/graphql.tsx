@@ -18105,6 +18105,132 @@ export enum Chat_Subscription_Update_Column {
   WasManuallySubscribed = 'wasManuallySubscribed'
 }
 
+/** columns and relationships of "chat.SubscriptionsWithUnnotifiedMessages" */
+export type Chat_SubscriptionsWithUnnotifiedMessages = {
+  readonly __typename?: 'chat_SubscriptionsWithUnnotifiedMessages';
+  /** An object relationship */
+  readonly attendee?: Maybe<Attendee>;
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  /** An object relationship */
+  readonly chat?: Maybe<Chat_Chat>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+};
+
+/** aggregated selection of "chat.SubscriptionsWithUnnotifiedMessages" */
+export type Chat_SubscriptionsWithUnnotifiedMessages_Aggregate = {
+  readonly __typename?: 'chat_SubscriptionsWithUnnotifiedMessages_aggregate';
+  readonly aggregate?: Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Chat_SubscriptionsWithUnnotifiedMessages>;
+};
+
+/** aggregate fields of "chat.SubscriptionsWithUnnotifiedMessages" */
+export type Chat_SubscriptionsWithUnnotifiedMessages_Aggregate_Fields = {
+  readonly __typename?: 'chat_SubscriptionsWithUnnotifiedMessages_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Max_Fields>;
+  readonly min?: Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Min_Fields>;
+};
+
+
+/** aggregate fields of "chat.SubscriptionsWithUnnotifiedMessages" */
+export type Chat_SubscriptionsWithUnnotifiedMessages_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Chat_SubscriptionsWithUnnotifiedMessages_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "chat.SubscriptionsWithUnnotifiedMessages" */
+export type Chat_SubscriptionsWithUnnotifiedMessages_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Max_Order_By>;
+  readonly min?: Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "chat.SubscriptionsWithUnnotifiedMessages" */
+export type Chat_SubscriptionsWithUnnotifiedMessages_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Chat_SubscriptionsWithUnnotifiedMessages_Insert_Input>;
+};
+
+/** Boolean expression to filter rows from the table "chat.SubscriptionsWithUnnotifiedMessages". All fields are combined with a logical 'AND'. */
+export type Chat_SubscriptionsWithUnnotifiedMessages_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Bool_Exp>>>;
+  readonly _not?: Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Bool_Exp>>>;
+  readonly attendee?: Maybe<Attendee_Bool_Exp>;
+  readonly attendeeId?: Maybe<Uuid_Comparison_Exp>;
+  readonly chat?: Maybe<Chat_Chat_Bool_Exp>;
+  readonly chatId?: Maybe<Uuid_Comparison_Exp>;
+};
+
+/** input type for inserting data into table "chat.SubscriptionsWithUnnotifiedMessages" */
+export type Chat_SubscriptionsWithUnnotifiedMessages_Insert_Input = {
+  readonly attendee?: Maybe<Attendee_Obj_Rel_Insert_Input>;
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly chat?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+};
+
+/** aggregate max on columns */
+export type Chat_SubscriptionsWithUnnotifiedMessages_Max_Fields = {
+  readonly __typename?: 'chat_SubscriptionsWithUnnotifiedMessages_max_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+};
+
+/** order by max() on columns of table "chat.SubscriptionsWithUnnotifiedMessages" */
+export type Chat_SubscriptionsWithUnnotifiedMessages_Max_Order_By = {
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Chat_SubscriptionsWithUnnotifiedMessages_Min_Fields = {
+  readonly __typename?: 'chat_SubscriptionsWithUnnotifiedMessages_min_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+};
+
+/** order by min() on columns of table "chat.SubscriptionsWithUnnotifiedMessages" */
+export type Chat_SubscriptionsWithUnnotifiedMessages_Min_Order_By = {
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "chat.SubscriptionsWithUnnotifiedMessages" */
+export type Chat_SubscriptionsWithUnnotifiedMessages_Mutation_Response = {
+  readonly __typename?: 'chat_SubscriptionsWithUnnotifiedMessages_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Chat_SubscriptionsWithUnnotifiedMessages>;
+};
+
+/** input type for inserting object relation for remote table "chat.SubscriptionsWithUnnotifiedMessages" */
+export type Chat_SubscriptionsWithUnnotifiedMessages_Obj_Rel_Insert_Input = {
+  readonly data: Chat_SubscriptionsWithUnnotifiedMessages_Insert_Input;
+};
+
+/** ordering options when selecting data from "chat.SubscriptionsWithUnnotifiedMessages" */
+export type Chat_SubscriptionsWithUnnotifiedMessages_Order_By = {
+  readonly attendee?: Maybe<Attendee_Order_By>;
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly chat?: Maybe<Chat_Chat_Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+};
+
+/** select columns of table "chat.SubscriptionsWithUnnotifiedMessages" */
+export enum Chat_SubscriptionsWithUnnotifiedMessages_Select_Column {
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  ChatId = 'chatId'
+}
+
+/** input type for updating data in table "chat.SubscriptionsWithUnnotifiedMessages" */
+export type Chat_SubscriptionsWithUnnotifiedMessages_Set_Input = {
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+};
+
 /** columns and relationships of "chat.Typer" */
 export type Chat_Typer = {
   readonly __typename?: 'chat_Typer';
@@ -19442,6 +19568,8 @@ export type Mutation_Root = {
   readonly delete_chat_Subscription?: Maybe<Chat_Subscription_Mutation_Response>;
   /** delete single row from the table: "chat.Subscription" */
   readonly delete_chat_Subscription_by_pk?: Maybe<Chat_Subscription>;
+  /** delete data from the table: "chat.SubscriptionsWithUnnotifiedMessages" */
+  readonly delete_chat_SubscriptionsWithUnnotifiedMessages?: Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Mutation_Response>;
   /** delete data from the table: "chat.Typer" */
   readonly delete_chat_Typer?: Maybe<Chat_Typer_Mutation_Response>;
   /** delete single row from the table: "chat.Typer" */
@@ -19718,6 +19846,10 @@ export type Mutation_Root = {
   readonly insert_chat_Subscription?: Maybe<Chat_Subscription_Mutation_Response>;
   /** insert a single row into the table: "chat.Subscription" */
   readonly insert_chat_Subscription_one?: Maybe<Chat_Subscription>;
+  /** insert data into the table: "chat.SubscriptionsWithUnnotifiedMessages" */
+  readonly insert_chat_SubscriptionsWithUnnotifiedMessages?: Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Mutation_Response>;
+  /** insert a single row into the table: "chat.SubscriptionsWithUnnotifiedMessages" */
+  readonly insert_chat_SubscriptionsWithUnnotifiedMessages_one?: Maybe<Chat_SubscriptionsWithUnnotifiedMessages>;
   /** insert data into the table: "chat.Typer" */
   readonly insert_chat_Typer?: Maybe<Chat_Typer_Mutation_Response>;
   /** insert a single row into the table: "chat.Typer" */
@@ -20014,6 +20146,8 @@ export type Mutation_Root = {
   readonly update_chat_Subscription?: Maybe<Chat_Subscription_Mutation_Response>;
   /** update single row of the table: "chat.Subscription" */
   readonly update_chat_Subscription_by_pk?: Maybe<Chat_Subscription>;
+  /** update data of the table: "chat.SubscriptionsWithUnnotifiedMessages" */
+  readonly update_chat_SubscriptionsWithUnnotifiedMessages?: Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Mutation_Response>;
   /** update data of the table: "chat.Typer" */
   readonly update_chat_Typer?: Maybe<Chat_Typer_Mutation_Response>;
   /** update single row of the table: "chat.Typer" */
@@ -20795,6 +20929,12 @@ export type Mutation_RootDelete_Chat_SubscriptionArgs = {
 export type Mutation_RootDelete_Chat_Subscription_By_PkArgs = {
   attendeeId: Scalars['uuid'];
   chatId: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Chat_SubscriptionsWithUnnotifiedMessagesArgs = {
+  where: Chat_SubscriptionsWithUnnotifiedMessages_Bool_Exp;
 };
 
 
@@ -21746,6 +21886,18 @@ export type Mutation_RootInsert_Chat_SubscriptionArgs = {
 export type Mutation_RootInsert_Chat_Subscription_OneArgs = {
   object: Chat_Subscription_Insert_Input;
   on_conflict?: Maybe<Chat_Subscription_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Chat_SubscriptionsWithUnnotifiedMessagesArgs = {
+  objects: ReadonlyArray<Chat_SubscriptionsWithUnnotifiedMessages_Insert_Input>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Chat_SubscriptionsWithUnnotifiedMessages_OneArgs = {
+  object: Chat_SubscriptionsWithUnnotifiedMessages_Insert_Input;
 };
 
 
@@ -22918,6 +23070,13 @@ export type Mutation_RootUpdate_Chat_Subscription_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_Chat_SubscriptionsWithUnnotifiedMessagesArgs = {
+  _set?: Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Set_Input>;
+  where: Chat_SubscriptionsWithUnnotifiedMessages_Bool_Exp;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_Chat_TyperArgs = {
   _set?: Maybe<Chat_Typer_Set_Input>;
   where: Chat_Typer_Bool_Exp;
@@ -23437,6 +23596,10 @@ export type Query_Root = {
   readonly chat_Subscription_aggregate: Chat_Subscription_Aggregate;
   /** fetch data from the table: "chat.Subscription" using primary key columns */
   readonly chat_Subscription_by_pk?: Maybe<Chat_Subscription>;
+  /** fetch data from the table: "chat.SubscriptionsWithUnnotifiedMessages" */
+  readonly chat_SubscriptionsWithUnnotifiedMessages: ReadonlyArray<Chat_SubscriptionsWithUnnotifiedMessages>;
+  /** fetch aggregated fields from the table: "chat.SubscriptionsWithUnnotifiedMessages" */
+  readonly chat_SubscriptionsWithUnnotifiedMessages_aggregate: Chat_SubscriptionsWithUnnotifiedMessages_Aggregate;
   /** fetch data from the table: "chat.Typer" */
   readonly chat_Typer: ReadonlyArray<Chat_Typer>;
   /** fetch aggregated fields from the table: "chat.Typer" */
@@ -25122,6 +25285,26 @@ export type Query_RootChat_Subscription_AggregateArgs = {
 export type Query_RootChat_Subscription_By_PkArgs = {
   attendeeId: Scalars['uuid'];
   chatId: Scalars['uuid'];
+};
+
+
+/** query root */
+export type Query_RootChat_SubscriptionsWithUnnotifiedMessagesArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_SubscriptionsWithUnnotifiedMessages_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_SubscriptionsWithUnnotifiedMessages_Order_By>>;
+  where?: Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootChat_SubscriptionsWithUnnotifiedMessages_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_SubscriptionsWithUnnotifiedMessages_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_SubscriptionsWithUnnotifiedMessages_Order_By>>;
+  where?: Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Bool_Exp>;
 };
 
 
@@ -26961,6 +27144,10 @@ export type Subscription_Root = {
   readonly chat_Subscription_aggregate: Chat_Subscription_Aggregate;
   /** fetch data from the table: "chat.Subscription" using primary key columns */
   readonly chat_Subscription_by_pk?: Maybe<Chat_Subscription>;
+  /** fetch data from the table: "chat.SubscriptionsWithUnnotifiedMessages" */
+  readonly chat_SubscriptionsWithUnnotifiedMessages: ReadonlyArray<Chat_SubscriptionsWithUnnotifiedMessages>;
+  /** fetch aggregated fields from the table: "chat.SubscriptionsWithUnnotifiedMessages" */
+  readonly chat_SubscriptionsWithUnnotifiedMessages_aggregate: Chat_SubscriptionsWithUnnotifiedMessages_Aggregate;
   /** fetch data from the table: "chat.Typer" */
   readonly chat_Typer: ReadonlyArray<Chat_Typer>;
   /** fetch aggregated fields from the table: "chat.Typer" */
@@ -28646,6 +28833,26 @@ export type Subscription_RootChat_Subscription_AggregateArgs = {
 export type Subscription_RootChat_Subscription_By_PkArgs = {
   attendeeId: Scalars['uuid'];
   chatId: Scalars['uuid'];
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_SubscriptionsWithUnnotifiedMessagesArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_SubscriptionsWithUnnotifiedMessages_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_SubscriptionsWithUnnotifiedMessages_Order_By>>;
+  where?: Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_SubscriptionsWithUnnotifiedMessages_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_SubscriptionsWithUnnotifiedMessages_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_SubscriptionsWithUnnotifiedMessages_Order_By>>;
+  where?: Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Bool_Exp>;
 };
 
 

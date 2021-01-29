@@ -1056,6 +1056,26 @@
             _eq: X-Hasura-User-Id
 - table:
     schema: chat
+    name: SubscriptionsWithUnnotifiedMessages
+  object_relationships:
+  - name: attendee
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Attendee
+        column_mapping:
+          attendeeId: id
+  - name: chat
+    using:
+      manual_configuration:
+        remote_table:
+          schema: chat
+          name: Chat
+        column_mapping:
+          chatId: id
+- table:
+    schema: chat
     name: Typer
   object_relationships:
   - name: attendee

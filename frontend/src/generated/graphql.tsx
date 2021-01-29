@@ -18425,6 +18425,279 @@ export enum Chat_Typer_Update_Column {
   UpdatedAt = 'updated_at'
 }
 
+/** columns and relationships of "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJob = {
+  readonly __typename?: 'job_queues_CombineVideosJob';
+  /** An object relationship */
+  readonly attendee?: Maybe<Attendee>;
+  /** An object relationship */
+  readonly conference: Conference;
+  readonly conferenceId: Scalars['uuid'];
+  readonly createdByAttendeeId?: Maybe<Scalars['uuid']>;
+  readonly created_at: Scalars['timestamptz'];
+  readonly data: Scalars['jsonb'];
+  readonly id: Scalars['uuid'];
+  /** An object relationship */
+  readonly jobStatus: JobStatus;
+  readonly jobStatusName: JobStatus_Enum;
+  readonly mediaConvertJobId?: Maybe<Scalars['String']>;
+  readonly message?: Maybe<Scalars['String']>;
+  readonly updated_at: Scalars['timestamptz'];
+};
+
+
+/** columns and relationships of "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJobDataArgs = {
+  path?: Maybe<Scalars['String']>;
+};
+
+/** aggregated selection of "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJob_Aggregate = {
+  readonly __typename?: 'job_queues_CombineVideosJob_aggregate';
+  readonly aggregate?: Maybe<Job_Queues_CombineVideosJob_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Job_Queues_CombineVideosJob>;
+};
+
+/** aggregate fields of "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJob_Aggregate_Fields = {
+  readonly __typename?: 'job_queues_CombineVideosJob_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Job_Queues_CombineVideosJob_Max_Fields>;
+  readonly min?: Maybe<Job_Queues_CombineVideosJob_Min_Fields>;
+};
+
+
+/** aggregate fields of "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJob_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Job_Queues_CombineVideosJob_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJob_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Job_Queues_CombineVideosJob_Max_Order_By>;
+  readonly min?: Maybe<Job_Queues_CombineVideosJob_Min_Order_By>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Job_Queues_CombineVideosJob_Append_Input = {
+  readonly data?: Maybe<Scalars['jsonb']>;
+};
+
+/** input type for inserting array relation for remote table "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJob_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Job_Queues_CombineVideosJob_Insert_Input>;
+  readonly on_conflict?: Maybe<Job_Queues_CombineVideosJob_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "job_queues.CombineVideosJob". All fields are combined with a logical 'AND'. */
+export type Job_Queues_CombineVideosJob_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Job_Queues_CombineVideosJob_Bool_Exp>>>;
+  readonly _not?: Maybe<Job_Queues_CombineVideosJob_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Job_Queues_CombineVideosJob_Bool_Exp>>>;
+  readonly attendee?: Maybe<Attendee_Bool_Exp>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly createdByAttendeeId?: Maybe<Uuid_Comparison_Exp>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly data?: Maybe<Jsonb_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly jobStatus?: Maybe<JobStatus_Bool_Exp>;
+  readonly jobStatusName?: Maybe<JobStatus_Enum_Comparison_Exp>;
+  readonly mediaConvertJobId?: Maybe<String_Comparison_Exp>;
+  readonly message?: Maybe<String_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "job_queues.CombineVideosJob" */
+export enum Job_Queues_CombineVideosJob_Constraint {
+  /** unique or primary key constraint */
+  CombineVideosJobPkey = 'CombineVideosJob_pkey'
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Job_Queues_CombineVideosJob_Delete_At_Path_Input = {
+  readonly data?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Job_Queues_CombineVideosJob_Delete_Elem_Input = {
+  readonly data?: Maybe<Scalars['Int']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Job_Queues_CombineVideosJob_Delete_Key_Input = {
+  readonly data?: Maybe<Scalars['String']>;
+};
+
+/** input type for inserting data into table "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJob_Insert_Input = {
+  readonly attendee?: Maybe<Attendee_Obj_Rel_Insert_Input>;
+  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdByAttendeeId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly data?: Maybe<Scalars['jsonb']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly jobStatus?: Maybe<JobStatus_Obj_Rel_Insert_Input>;
+  readonly jobStatusName?: Maybe<JobStatus_Enum>;
+  readonly mediaConvertJobId?: Maybe<Scalars['String']>;
+  readonly message?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Job_Queues_CombineVideosJob_Max_Fields = {
+  readonly __typename?: 'job_queues_CombineVideosJob_max_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdByAttendeeId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly mediaConvertJobId?: Maybe<Scalars['String']>;
+  readonly message?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJob_Max_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly createdByAttendeeId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly mediaConvertJobId?: Maybe<Order_By>;
+  readonly message?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Job_Queues_CombineVideosJob_Min_Fields = {
+  readonly __typename?: 'job_queues_CombineVideosJob_min_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdByAttendeeId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly mediaConvertJobId?: Maybe<Scalars['String']>;
+  readonly message?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJob_Min_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly createdByAttendeeId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly mediaConvertJobId?: Maybe<Order_By>;
+  readonly message?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJob_Mutation_Response = {
+  readonly __typename?: 'job_queues_CombineVideosJob_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Job_Queues_CombineVideosJob>;
+};
+
+/** input type for inserting object relation for remote table "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJob_Obj_Rel_Insert_Input = {
+  readonly data: Job_Queues_CombineVideosJob_Insert_Input;
+  readonly on_conflict?: Maybe<Job_Queues_CombineVideosJob_On_Conflict>;
+};
+
+/** on conflict condition type for table "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJob_On_Conflict = {
+  readonly constraint: Job_Queues_CombineVideosJob_Constraint;
+  readonly update_columns: ReadonlyArray<Job_Queues_CombineVideosJob_Update_Column>;
+  readonly where?: Maybe<Job_Queues_CombineVideosJob_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJob_Order_By = {
+  readonly attendee?: Maybe<Attendee_Order_By>;
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly createdByAttendeeId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly data?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly jobStatus?: Maybe<JobStatus_Order_By>;
+  readonly jobStatusName?: Maybe<Order_By>;
+  readonly mediaConvertJobId?: Maybe<Order_By>;
+  readonly message?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJob_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Job_Queues_CombineVideosJob_Prepend_Input = {
+  readonly data?: Maybe<Scalars['jsonb']>;
+};
+
+/** select columns of table "job_queues.CombineVideosJob" */
+export enum Job_Queues_CombineVideosJob_Select_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedByAttendeeId = 'createdByAttendeeId',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Data = 'data',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  JobStatusName = 'jobStatusName',
+  /** column name */
+  MediaConvertJobId = 'mediaConvertJobId',
+  /** column name */
+  Message = 'message',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJob_Set_Input = {
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdByAttendeeId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly data?: Maybe<Scalars['jsonb']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly jobStatusName?: Maybe<JobStatus_Enum>;
+  readonly mediaConvertJobId?: Maybe<Scalars['String']>;
+  readonly message?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "job_queues.CombineVideosJob" */
+export enum Job_Queues_CombineVideosJob_Update_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedByAttendeeId = 'createdByAttendeeId',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Data = 'data',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  JobStatusName = 'jobStatusName',
+  /** column name */
+  MediaConvertJobId = 'mediaConvertJobId',
+  /** column name */
+  Message = 'message',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
 /** columns and relationships of "job_queues.InvitationEmailJob" */
 export type Job_Queues_InvitationEmailJob = {
   readonly __typename?: 'job_queues_InvitationEmailJob';
@@ -19591,6 +19864,10 @@ export type Mutation_Root = {
   readonly delete_chat_Typer?: Maybe<Chat_Typer_Mutation_Response>;
   /** delete single row from the table: "chat.Typer" */
   readonly delete_chat_Typer_by_pk?: Maybe<Chat_Typer>;
+  /** delete data from the table: "job_queues.CombineVideosJob" */
+  readonly delete_job_queues_CombineVideosJob?: Maybe<Job_Queues_CombineVideosJob_Mutation_Response>;
+  /** delete single row from the table: "job_queues.CombineVideosJob" */
+  readonly delete_job_queues_CombineVideosJob_by_pk?: Maybe<Job_Queues_CombineVideosJob>;
   /** delete data from the table: "job_queues.InvitationEmailJob" */
   readonly delete_job_queues_InvitationEmailJob?: Maybe<Job_Queues_InvitationEmailJob_Mutation_Response>;
   /** delete single row from the table: "job_queues.InvitationEmailJob" */
@@ -19871,6 +20148,10 @@ export type Mutation_Root = {
   readonly insert_chat_Typer?: Maybe<Chat_Typer_Mutation_Response>;
   /** insert a single row into the table: "chat.Typer" */
   readonly insert_chat_Typer_one?: Maybe<Chat_Typer>;
+  /** insert data into the table: "job_queues.CombineVideosJob" */
+  readonly insert_job_queues_CombineVideosJob?: Maybe<Job_Queues_CombineVideosJob_Mutation_Response>;
+  /** insert a single row into the table: "job_queues.CombineVideosJob" */
+  readonly insert_job_queues_CombineVideosJob_one?: Maybe<Job_Queues_CombineVideosJob>;
   /** insert data into the table: "job_queues.InvitationEmailJob" */
   readonly insert_job_queues_InvitationEmailJob?: Maybe<Job_Queues_InvitationEmailJob_Mutation_Response>;
   /** insert a single row into the table: "job_queues.InvitationEmailJob" */
@@ -20169,6 +20450,10 @@ export type Mutation_Root = {
   readonly update_chat_Typer?: Maybe<Chat_Typer_Mutation_Response>;
   /** update single row of the table: "chat.Typer" */
   readonly update_chat_Typer_by_pk?: Maybe<Chat_Typer>;
+  /** update data of the table: "job_queues.CombineVideosJob" */
+  readonly update_job_queues_CombineVideosJob?: Maybe<Job_Queues_CombineVideosJob_Mutation_Response>;
+  /** update single row of the table: "job_queues.CombineVideosJob" */
+  readonly update_job_queues_CombineVideosJob_by_pk?: Maybe<Job_Queues_CombineVideosJob>;
   /** update data of the table: "job_queues.InvitationEmailJob" */
   readonly update_job_queues_InvitationEmailJob?: Maybe<Job_Queues_InvitationEmailJob_Mutation_Response>;
   /** update single row of the table: "job_queues.InvitationEmailJob" */
@@ -20965,6 +21250,18 @@ export type Mutation_RootDelete_Chat_TyperArgs = {
 export type Mutation_RootDelete_Chat_Typer_By_PkArgs = {
   attendeeId: Scalars['uuid'];
   chatId: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Job_Queues_CombineVideosJobArgs = {
+  where: Job_Queues_CombineVideosJob_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Job_Queues_CombineVideosJob_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -21929,6 +22226,20 @@ export type Mutation_RootInsert_Chat_TyperArgs = {
 export type Mutation_RootInsert_Chat_Typer_OneArgs = {
   object: Chat_Typer_Insert_Input;
   on_conflict?: Maybe<Chat_Typer_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Job_Queues_CombineVideosJobArgs = {
+  objects: ReadonlyArray<Job_Queues_CombineVideosJob_Insert_Input>;
+  on_conflict?: Maybe<Job_Queues_CombineVideosJob_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Job_Queues_CombineVideosJob_OneArgs = {
+  object: Job_Queues_CombineVideosJob_Insert_Input;
+  on_conflict?: Maybe<Job_Queues_CombineVideosJob_On_Conflict>;
 };
 
 
@@ -23108,6 +23419,30 @@ export type Mutation_RootUpdate_Chat_Typer_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_Job_Queues_CombineVideosJobArgs = {
+  _append?: Maybe<Job_Queues_CombineVideosJob_Append_Input>;
+  _delete_at_path?: Maybe<Job_Queues_CombineVideosJob_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<Job_Queues_CombineVideosJob_Delete_Elem_Input>;
+  _delete_key?: Maybe<Job_Queues_CombineVideosJob_Delete_Key_Input>;
+  _prepend?: Maybe<Job_Queues_CombineVideosJob_Prepend_Input>;
+  _set?: Maybe<Job_Queues_CombineVideosJob_Set_Input>;
+  where: Job_Queues_CombineVideosJob_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Job_Queues_CombineVideosJob_By_PkArgs = {
+  _append?: Maybe<Job_Queues_CombineVideosJob_Append_Input>;
+  _delete_at_path?: Maybe<Job_Queues_CombineVideosJob_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<Job_Queues_CombineVideosJob_Delete_Elem_Input>;
+  _delete_key?: Maybe<Job_Queues_CombineVideosJob_Delete_Key_Input>;
+  _prepend?: Maybe<Job_Queues_CombineVideosJob_Prepend_Input>;
+  _set?: Maybe<Job_Queues_CombineVideosJob_Set_Input>;
+  pk_columns: Job_Queues_CombineVideosJob_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_Job_Queues_InvitationEmailJobArgs = {
   _append?: Maybe<Job_Queues_InvitationEmailJob_Append_Input>;
   _delete_at_path?: Maybe<Job_Queues_InvitationEmailJob_Delete_At_Path_Input>;
@@ -23629,6 +23964,12 @@ export type Query_Root = {
   readonly getContentItem?: Maybe<ReadonlyArray<Maybe<GetContentItemOutput>>>;
   /** perform the action: "getUploadAgreement" */
   readonly getUploadAgreement?: Maybe<GetUploadAgreementOutput>;
+  /** fetch data from the table: "job_queues.CombineVideosJob" */
+  readonly job_queues_CombineVideosJob: ReadonlyArray<Job_Queues_CombineVideosJob>;
+  /** fetch aggregated fields from the table: "job_queues.CombineVideosJob" */
+  readonly job_queues_CombineVideosJob_aggregate: Job_Queues_CombineVideosJob_Aggregate;
+  /** fetch data from the table: "job_queues.CombineVideosJob" using primary key columns */
+  readonly job_queues_CombineVideosJob_by_pk?: Maybe<Job_Queues_CombineVideosJob>;
   /** fetch data from the table: "job_queues.InvitationEmailJob" */
   readonly job_queues_InvitationEmailJob: ReadonlyArray<Job_Queues_InvitationEmailJob>;
   /** fetch aggregated fields from the table: "job_queues.InvitationEmailJob" */
@@ -25367,6 +25708,32 @@ export type Query_RootGetContentItemArgs = {
 /** query root */
 export type Query_RootGetUploadAgreementArgs = {
   magicToken: Scalars['String'];
+};
+
+
+/** query root */
+export type Query_RootJob_Queues_CombineVideosJobArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_CombineVideosJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_CombineVideosJob_Order_By>>;
+  where?: Maybe<Job_Queues_CombineVideosJob_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootJob_Queues_CombineVideosJob_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_CombineVideosJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_CombineVideosJob_Order_By>>;
+  where?: Maybe<Job_Queues_CombineVideosJob_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootJob_Queues_CombineVideosJob_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -27177,6 +27544,12 @@ export type Subscription_Root = {
   readonly getContentItem?: Maybe<ReadonlyArray<Maybe<GetContentItemOutput>>>;
   /** perform the action: "getUploadAgreement" */
   readonly getUploadAgreement?: Maybe<GetUploadAgreementOutput>;
+  /** fetch data from the table: "job_queues.CombineVideosJob" */
+  readonly job_queues_CombineVideosJob: ReadonlyArray<Job_Queues_CombineVideosJob>;
+  /** fetch aggregated fields from the table: "job_queues.CombineVideosJob" */
+  readonly job_queues_CombineVideosJob_aggregate: Job_Queues_CombineVideosJob_Aggregate;
+  /** fetch data from the table: "job_queues.CombineVideosJob" using primary key columns */
+  readonly job_queues_CombineVideosJob_by_pk?: Maybe<Job_Queues_CombineVideosJob>;
   /** fetch data from the table: "job_queues.InvitationEmailJob" */
   readonly job_queues_InvitationEmailJob: ReadonlyArray<Job_Queues_InvitationEmailJob>;
   /** fetch aggregated fields from the table: "job_queues.InvitationEmailJob" */
@@ -28919,6 +29292,32 @@ export type Subscription_RootGetUploadAgreementArgs = {
 
 
 /** subscription root */
+export type Subscription_RootJob_Queues_CombineVideosJobArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_CombineVideosJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_CombineVideosJob_Order_By>>;
+  where?: Maybe<Job_Queues_CombineVideosJob_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootJob_Queues_CombineVideosJob_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_CombineVideosJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_CombineVideosJob_Order_By>>;
+  where?: Maybe<Job_Queues_CombineVideosJob_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootJob_Queues_CombineVideosJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
 export type Subscription_RootJob_Queues_InvitationEmailJobArgs = {
   distinct_on?: Maybe<ReadonlyArray<Job_Queues_InvitationEmailJob_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -29815,6 +30214,22 @@ export type AttendeesByIdQuery = { readonly __typename?: 'query_root', readonly 
     & AttendeeDataFragment
   )> };
 
+export type CombineVideosModal_CreateCombineVideosJobMutationVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  createdByAttendeeId: Scalars['uuid'];
+  data: Scalars['jsonb'];
+}>;
+
+
+export type CombineVideosModal_CreateCombineVideosJobMutation = { readonly __typename?: 'mutation_root', readonly insert_job_queues_CombineVideosJob_one?: Maybe<{ readonly __typename?: 'job_queues_CombineVideosJob', readonly id: any }> };
+
+export type CombineVideosModal_GetCombineVideosJobQueryVariables = Exact<{
+  id: Scalars['uuid'];
+}>;
+
+
+export type CombineVideosModal_GetCombineVideosJobQuery = { readonly __typename?: 'query_root', readonly job_queues_CombineVideosJob_by_pk?: Maybe<{ readonly __typename?: 'job_queues_CombineVideosJob', readonly id: any, readonly message?: Maybe<string>, readonly jobStatusName: JobStatus_Enum }> };
+
 export type InsertSubmissionRequestEmailJobsMutationVariables = Exact<{
   objs: ReadonlyArray<Job_Queues_SubmissionRequestEmailJob_Insert_Input>;
 }>;
@@ -30157,18 +30572,6 @@ export type EventVonageControls_StopEventBroadcastMutationVariables = Exact<{
 
 
 export type EventVonageControls_StopEventBroadcastMutation = { readonly __typename?: 'mutation_root', readonly stopEventBroadcast?: Maybe<{ readonly __typename?: 'StopEventBroadcastOutput', readonly broadcastsStopped: number }> };
-
-export type ManageConferenceExportPage_GetVideoFilesQueryVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-}>;
-
-
-export type ManageConferenceExportPage_GetVideoFilesQuery = { readonly __typename?: 'query_root', readonly ContentItem: ReadonlyArray<(
-    { readonly __typename?: 'ContentItem' }
-    & ManageConferenceExportPage_ContentItemDataFragment
-  )> };
-
-export type ManageConferenceExportPage_ContentItemDataFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly data: any, readonly name: string, readonly contentGroup: { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string } };
 
 export type SelectAllGroupsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -31512,17 +31915,6 @@ export const HallwayInfoFragmentDoc = gql`
   colour
   name
   priority
-}
-    `;
-export const ManageConferenceExportPage_ContentItemDataFragmentDoc = gql`
-    fragment ManageConferenceExportPage_ContentItemData on ContentItem {
-  id
-  data
-  name
-  contentGroup {
-    id
-    title
-  }
 }
     `;
 export const AttendeePartsFragmentDoc = gql`
@@ -33935,6 +34327,77 @@ export function useAttendeesByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type AttendeesByIdQueryHookResult = ReturnType<typeof useAttendeesByIdQuery>;
 export type AttendeesByIdLazyQueryHookResult = ReturnType<typeof useAttendeesByIdLazyQuery>;
 export type AttendeesByIdQueryResult = Apollo.QueryResult<AttendeesByIdQuery, AttendeesByIdQueryVariables>;
+export const CombineVideosModal_CreateCombineVideosJobDocument = gql`
+    mutation CombineVideosModal_CreateCombineVideosJob($conferenceId: uuid!, $createdByAttendeeId: uuid!, $data: jsonb!) {
+  insert_job_queues_CombineVideosJob_one(
+    object: {conferenceId: $conferenceId, createdByAttendeeId: $createdByAttendeeId, data: $data}
+  ) {
+    id
+  }
+}
+    `;
+export type CombineVideosModal_CreateCombineVideosJobMutationFn = Apollo.MutationFunction<CombineVideosModal_CreateCombineVideosJobMutation, CombineVideosModal_CreateCombineVideosJobMutationVariables>;
+
+/**
+ * __useCombineVideosModal_CreateCombineVideosJobMutation__
+ *
+ * To run a mutation, you first call `useCombineVideosModal_CreateCombineVideosJobMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCombineVideosModal_CreateCombineVideosJobMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [combineVideosModalCreateCombineVideosJobMutation, { data, loading, error }] = useCombineVideosModal_CreateCombineVideosJobMutation({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      createdByAttendeeId: // value for 'createdByAttendeeId'
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useCombineVideosModal_CreateCombineVideosJobMutation(baseOptions?: Apollo.MutationHookOptions<CombineVideosModal_CreateCombineVideosJobMutation, CombineVideosModal_CreateCombineVideosJobMutationVariables>) {
+        return Apollo.useMutation<CombineVideosModal_CreateCombineVideosJobMutation, CombineVideosModal_CreateCombineVideosJobMutationVariables>(CombineVideosModal_CreateCombineVideosJobDocument, baseOptions);
+      }
+export type CombineVideosModal_CreateCombineVideosJobMutationHookResult = ReturnType<typeof useCombineVideosModal_CreateCombineVideosJobMutation>;
+export type CombineVideosModal_CreateCombineVideosJobMutationResult = Apollo.MutationResult<CombineVideosModal_CreateCombineVideosJobMutation>;
+export type CombineVideosModal_CreateCombineVideosJobMutationOptions = Apollo.BaseMutationOptions<CombineVideosModal_CreateCombineVideosJobMutation, CombineVideosModal_CreateCombineVideosJobMutationVariables>;
+export const CombineVideosModal_GetCombineVideosJobDocument = gql`
+    query CombineVideosModal_GetCombineVideosJob($id: uuid!) {
+  job_queues_CombineVideosJob_by_pk(id: $id) {
+    id
+    message
+    jobStatusName
+  }
+}
+    `;
+
+/**
+ * __useCombineVideosModal_GetCombineVideosJobQuery__
+ *
+ * To run a query within a React component, call `useCombineVideosModal_GetCombineVideosJobQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCombineVideosModal_GetCombineVideosJobQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCombineVideosModal_GetCombineVideosJobQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useCombineVideosModal_GetCombineVideosJobQuery(baseOptions: Apollo.QueryHookOptions<CombineVideosModal_GetCombineVideosJobQuery, CombineVideosModal_GetCombineVideosJobQueryVariables>) {
+        return Apollo.useQuery<CombineVideosModal_GetCombineVideosJobQuery, CombineVideosModal_GetCombineVideosJobQueryVariables>(CombineVideosModal_GetCombineVideosJobDocument, baseOptions);
+      }
+export function useCombineVideosModal_GetCombineVideosJobLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CombineVideosModal_GetCombineVideosJobQuery, CombineVideosModal_GetCombineVideosJobQueryVariables>) {
+          return Apollo.useLazyQuery<CombineVideosModal_GetCombineVideosJobQuery, CombineVideosModal_GetCombineVideosJobQueryVariables>(CombineVideosModal_GetCombineVideosJobDocument, baseOptions);
+        }
+export type CombineVideosModal_GetCombineVideosJobQueryHookResult = ReturnType<typeof useCombineVideosModal_GetCombineVideosJobQuery>;
+export type CombineVideosModal_GetCombineVideosJobLazyQueryHookResult = ReturnType<typeof useCombineVideosModal_GetCombineVideosJobLazyQuery>;
+export type CombineVideosModal_GetCombineVideosJobQueryResult = Apollo.QueryResult<CombineVideosModal_GetCombineVideosJobQuery, CombineVideosModal_GetCombineVideosJobQueryVariables>;
 export const InsertSubmissionRequestEmailJobsDocument = gql`
     mutation InsertSubmissionRequestEmailJobs($objs: [job_queues_SubmissionRequestEmailJob_insert_input!]!) {
   insert_job_queues_SubmissionRequestEmailJob(objects: $objs) {
@@ -34973,41 +35436,6 @@ export function useEventVonageControls_StopEventBroadcastMutation(baseOptions?: 
 export type EventVonageControls_StopEventBroadcastMutationHookResult = ReturnType<typeof useEventVonageControls_StopEventBroadcastMutation>;
 export type EventVonageControls_StopEventBroadcastMutationResult = Apollo.MutationResult<EventVonageControls_StopEventBroadcastMutation>;
 export type EventVonageControls_StopEventBroadcastMutationOptions = Apollo.BaseMutationOptions<EventVonageControls_StopEventBroadcastMutation, EventVonageControls_StopEventBroadcastMutationVariables>;
-export const ManageConferenceExportPage_GetVideoFilesDocument = gql`
-    query ManageConferenceExportPage_GetVideoFiles($conferenceId: uuid!) {
-  ContentItem(
-    where: {conferenceId: {_eq: $conferenceId}, contentTypeName: {_in: VIDEO_FILE}}
-  ) {
-    ...ManageConferenceExportPage_ContentItemData
-  }
-}
-    ${ManageConferenceExportPage_ContentItemDataFragmentDoc}`;
-
-/**
- * __useManageConferenceExportPage_GetVideoFilesQuery__
- *
- * To run a query within a React component, call `useManageConferenceExportPage_GetVideoFilesQuery` and pass it any options that fit your needs.
- * When your component renders, `useManageConferenceExportPage_GetVideoFilesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useManageConferenceExportPage_GetVideoFilesQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useManageConferenceExportPage_GetVideoFilesQuery(baseOptions: Apollo.QueryHookOptions<ManageConferenceExportPage_GetVideoFilesQuery, ManageConferenceExportPage_GetVideoFilesQueryVariables>) {
-        return Apollo.useQuery<ManageConferenceExportPage_GetVideoFilesQuery, ManageConferenceExportPage_GetVideoFilesQueryVariables>(ManageConferenceExportPage_GetVideoFilesDocument, baseOptions);
-      }
-export function useManageConferenceExportPage_GetVideoFilesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageConferenceExportPage_GetVideoFilesQuery, ManageConferenceExportPage_GetVideoFilesQueryVariables>) {
-          return Apollo.useLazyQuery<ManageConferenceExportPage_GetVideoFilesQuery, ManageConferenceExportPage_GetVideoFilesQueryVariables>(ManageConferenceExportPage_GetVideoFilesDocument, baseOptions);
-        }
-export type ManageConferenceExportPage_GetVideoFilesQueryHookResult = ReturnType<typeof useManageConferenceExportPage_GetVideoFilesQuery>;
-export type ManageConferenceExportPage_GetVideoFilesLazyQueryHookResult = ReturnType<typeof useManageConferenceExportPage_GetVideoFilesLazyQuery>;
-export type ManageConferenceExportPage_GetVideoFilesQueryResult = Apollo.QueryResult<ManageConferenceExportPage_GetVideoFilesQuery, ManageConferenceExportPage_GetVideoFilesQueryVariables>;
 export const SelectAllGroupsDocument = gql`
     query SelectAllGroups($conferenceId: uuid!) {
   Group(where: {conferenceId: {_eq: $conferenceId}}) {

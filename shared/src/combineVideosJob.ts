@@ -2,7 +2,7 @@ export interface CombineVideosJobDataBlob {
     inputContentItems: InputContentItem[];
 }
 
-interface InputContentItem {
+export interface InputContentItem {
     contentItemId: string;
     includeSubtitles: boolean;
 }

@@ -22,6 +22,7 @@ import { router as amazonTranscribeRouter } from "./router/amazonTranscribe";
 import { router as broadcastContentItemRouter } from "./router/broadcastContentItem";
 import { router as channelsRouter } from "./router/channels";
 import { router as chatRouter } from "./router/chat";
+import { router as combineVideosJobRouter } from "./router/combineVideosJob";
 import { router as companionRouter } from "./router/companion";
 import { router as conferencePrepareJobRouter } from "./router/conferencePrepareJob";
 import { router as contentItemRouter } from "./router/contentItem";
@@ -88,6 +89,7 @@ app.use("/eventVonageSession", eventVonageSessionRouter);
 app.use("/eventRoomJoinRequest", eventRoomJoinRequestRouter);
 app.use("/eventPerson", eventPersonRouter);
 app.use("/mediaPackageHarvestJob", mediaPackageHarvestJobRouter);
+app.use("/combineVideosJob", combineVideosJobRouter);
 
 app.use("/channels", channelsRouter);
 

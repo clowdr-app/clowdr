@@ -1,5 +1,6 @@
 import { ContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
 import { VonageSessionLayoutData } from "@clowdr-app/shared-types/build/vonage";
+import { CombineVideosJobDataBlob } from "@clowdr-app/shared-types/src/combineVideosJob";
 import {
     ContentType_Enum,
     EventPersonRole_Enum,
@@ -8,7 +9,6 @@ import {
     RoomMode_Enum,
     RoomPrivacy_Enum,
 } from "../../generated/graphql";
-import { CombineVideosJobDataBlob } from "../combineVideosJob";
 
 export interface Payload<T = any> {
     event: {

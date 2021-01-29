@@ -1,12 +1,14 @@
 import { gql } from "@apollo/client/core";
 import {
     AudioSelectorType,
+    CaptionSourceType,
     ContainerType,
     EmbeddedConvert608To708,
     Input,
     OutputGroupType,
 } from "@aws-sdk/client-mediaconvert";
 import { ContentBaseType, ContentItemDataBlob, ContentType_Enum } from "@clowdr-app/shared-types/build/content";
+import { TranscodeMode } from "@clowdr-app/shared-types/build/sns/mediaconvert";
 import assert from "assert";
 import * as R from "ramda";
 import { assertType } from "typescript-is";
@@ -55,7 +57,8 @@ export async function handleCombineVideosJobInserted(payload: Payload<CombineVid
 
         const contentGroupIds = R.uniq(result.data.ContentItem.map((item) => item.contentGroupId));
 
-        if (contentGroupIds.length > 0 || contentGroupIds.length === 0) {
+        if (contentGroupIds.length > 1 || contentGroupIds.length === 0) {
+            console.error("Can only combine content items from exactly one content group", newRow.id, contentGroupIds);
             throw new Error("Can only combine content items from exactly one content group");
         }
 
@@ -85,6 +88,7 @@ export async function handleCombineVideosJobInserted(payload: Payload<CombineVid
                             EmbeddedSourceSettings: {
                                 Convert608To708: EmbeddedConvert608To708.UPCONVERT,
                             },
+                            SourceType: CaptionSourceType.EMBEDDED,
                         },
                     },
                 },
@@ -99,6 +103,7 @@ export async function handleCombineVideosJobInserted(payload: Payload<CombineVid
         const mediaConvertJobResult = await MediaConvert.createJob({
             Role: process.env.AWS_MEDIACONVERT_SERVICE_ROLE_ARN,
             UserMetadata: {
+                mode: TranscodeMode.COMBINE,
                 combineVideosJobId: newRow.id,
                 contentGroupId: contentGroupIds[0],
                 environment: process.env.AWS_PREFIX ?? "unknown",

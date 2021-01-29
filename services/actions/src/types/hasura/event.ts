@@ -8,6 +8,7 @@ import {
     RoomMode_Enum,
     RoomPrivacy_Enum,
 } from "../../generated/graphql";
+import { CombineVideosJobDataBlob } from "../combineVideosJob";
 
 export interface Payload<T = any> {
     event: {
@@ -99,6 +100,14 @@ export interface VideoRenderJobData extends BaseData {
     conferenceId: string;
     broadcastContentItemId: string;
     data: VideoRenderJobDataBlob;
+    message: string | null;
+}
+
+export interface CombineVideosJobData extends BaseData {
+    data: CombineVideosJobDataBlob;
+    createdByAttendeeId: string | null;
+    jobStatusName: JobStatus_Enum;
+    conferenceId: string;
     message: string | null;
 }
 

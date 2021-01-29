@@ -17713,7 +17713,9 @@ export type Chat_ReadUpToIndex_Bool_Exp = {
 /** unique or primary key constraints on table "chat.ReadUpToIndex" */
 export enum Chat_ReadUpToIndex_Constraint {
   /** unique or primary key constraint */
-  ReadUpToIndexPkey = 'ReadUpToIndex_pkey'
+  ReadUpToIndexPkey = 'ReadUpToIndex_pkey',
+  /** unique or primary key constraint */
+  ChatReadUpToIndexPkIndex = 'chat_ReadUpToIndex_pk_index'
 }
 
 /** input type for incrementing integer column in table "chat.ReadUpToIndex" */
@@ -30156,6 +30158,18 @@ export type EventVonageControls_StopEventBroadcastMutationVariables = Exact<{
 
 export type EventVonageControls_StopEventBroadcastMutation = { readonly __typename?: 'mutation_root', readonly stopEventBroadcast?: Maybe<{ readonly __typename?: 'StopEventBroadcastOutput', readonly broadcastsStopped: number }> };
 
+export type ManageConferenceExportPage_GetVideoFilesQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type ManageConferenceExportPage_GetVideoFilesQuery = { readonly __typename?: 'query_root', readonly ContentItem: ReadonlyArray<(
+    { readonly __typename?: 'ContentItem' }
+    & ManageConferenceExportPage_ContentItemDataFragment
+  )> };
+
+export type ManageConferenceExportPage_ContentItemDataFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly data: any, readonly name: string, readonly contentGroup: { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string } };
+
 export type SelectAllGroupsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
@@ -31498,6 +31512,17 @@ export const HallwayInfoFragmentDoc = gql`
   colour
   name
   priority
+}
+    `;
+export const ManageConferenceExportPage_ContentItemDataFragmentDoc = gql`
+    fragment ManageConferenceExportPage_ContentItemData on ContentItem {
+  id
+  data
+  name
+  contentGroup {
+    id
+    title
+  }
 }
     `;
 export const AttendeePartsFragmentDoc = gql`
@@ -34948,6 +34973,41 @@ export function useEventVonageControls_StopEventBroadcastMutation(baseOptions?: 
 export type EventVonageControls_StopEventBroadcastMutationHookResult = ReturnType<typeof useEventVonageControls_StopEventBroadcastMutation>;
 export type EventVonageControls_StopEventBroadcastMutationResult = Apollo.MutationResult<EventVonageControls_StopEventBroadcastMutation>;
 export type EventVonageControls_StopEventBroadcastMutationOptions = Apollo.BaseMutationOptions<EventVonageControls_StopEventBroadcastMutation, EventVonageControls_StopEventBroadcastMutationVariables>;
+export const ManageConferenceExportPage_GetVideoFilesDocument = gql`
+    query ManageConferenceExportPage_GetVideoFiles($conferenceId: uuid!) {
+  ContentItem(
+    where: {conferenceId: {_eq: $conferenceId}, contentTypeName: {_in: VIDEO_FILE}}
+  ) {
+    ...ManageConferenceExportPage_ContentItemData
+  }
+}
+    ${ManageConferenceExportPage_ContentItemDataFragmentDoc}`;
+
+/**
+ * __useManageConferenceExportPage_GetVideoFilesQuery__
+ *
+ * To run a query within a React component, call `useManageConferenceExportPage_GetVideoFilesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useManageConferenceExportPage_GetVideoFilesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useManageConferenceExportPage_GetVideoFilesQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useManageConferenceExportPage_GetVideoFilesQuery(baseOptions: Apollo.QueryHookOptions<ManageConferenceExportPage_GetVideoFilesQuery, ManageConferenceExportPage_GetVideoFilesQueryVariables>) {
+        return Apollo.useQuery<ManageConferenceExportPage_GetVideoFilesQuery, ManageConferenceExportPage_GetVideoFilesQueryVariables>(ManageConferenceExportPage_GetVideoFilesDocument, baseOptions);
+      }
+export function useManageConferenceExportPage_GetVideoFilesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageConferenceExportPage_GetVideoFilesQuery, ManageConferenceExportPage_GetVideoFilesQueryVariables>) {
+          return Apollo.useLazyQuery<ManageConferenceExportPage_GetVideoFilesQuery, ManageConferenceExportPage_GetVideoFilesQueryVariables>(ManageConferenceExportPage_GetVideoFilesDocument, baseOptions);
+        }
+export type ManageConferenceExportPage_GetVideoFilesQueryHookResult = ReturnType<typeof useManageConferenceExportPage_GetVideoFilesQuery>;
+export type ManageConferenceExportPage_GetVideoFilesLazyQueryHookResult = ReturnType<typeof useManageConferenceExportPage_GetVideoFilesLazyQuery>;
+export type ManageConferenceExportPage_GetVideoFilesQueryResult = Apollo.QueryResult<ManageConferenceExportPage_GetVideoFilesQuery, ManageConferenceExportPage_GetVideoFilesQueryVariables>;
 export const SelectAllGroupsDocument = gql`
     query SelectAllGroups($conferenceId: uuid!) {
   Group(where: {conferenceId: {_eq: $conferenceId}}) {

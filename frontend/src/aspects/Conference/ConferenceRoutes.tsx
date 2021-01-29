@@ -20,6 +20,7 @@ import ConferenceTimeline from "./Attend/Schedule/ConferenceTimeline";
 import AttendeesContextProvider from "./AttendeesContext";
 import ManageConferenceBroadcastPage from "./Manage/ManageConferenceBroadcastPage";
 import ManageConferenceContentPage from "./Manage/ManageConferenceContentPage";
+import ManageConferenceExportPage from "./Manage/ManageConferenceExportPage";
 import ManageConferenceGroupsPage from "./Manage/ManageConferenceGroupsPage";
 import ManageConferenceImportPage from "./Manage/ManageConferenceImportPage";
 import ManageConferenceNamePage from "./Manage/ManageConferenceNamePage";
@@ -106,7 +107,7 @@ function ConferenceRoutesInner({ rootUrl }: { rootUrl: string }): JSX.Element {
             </Route>
 
             <Route path={`${rootUrl}/manage/export`}>
-                <PageNotImplemented />
+                <ManageConferenceExportPage />
             </Route>
             <Route path={`${rootUrl}/manage/schedule`}>
                 <ManageConferenceSchedulePage />

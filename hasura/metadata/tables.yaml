@@ -1187,6 +1187,100 @@
       filter: {}
 - table:
     schema: job_queues
+    name: CombineVideosJob
+  object_relationships:
+  - name: attendee
+    using:
+      foreign_key_constraint_on: createdByAttendeeId
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  - name: jobStatus
+    using:
+      foreign_key_constraint_on: jobStatusName
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        _and:
+        - attendee:
+            userId:
+              _eq: X-Hasura-User-Id
+        - _exists:
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - permission_name:
+                  _eq: CONFERENCE_MANAGE_CONTENT
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+            _table:
+              schema: public
+              name: FlatUserPermission
+        - conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+      columns:
+      - conferenceId
+      - createdByAttendeeId
+      - data
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - conferenceId
+      - createdByAttendeeId
+      - created_at
+      - data
+      - id
+      - jobStatusName
+      - message
+      - updated_at
+      filter:
+        _and:
+        - _exists:
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - permission_name:
+                  _eq: CONFERENCE_MANAGE_CONTENT
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+            _table:
+              schema: public
+              name: FlatUserPermission
+        - conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+  event_triggers:
+  - name: CombineVideosJobCreated
+    definition:
+      enable_manual: true
+      insert:
+        columns: '*'
+      update:
+        columns:
+        - data
+        - jobStatusName
+        - message
+        - created_at
+        - updated_at
+        - conferenceId
+        - createdByAttendeeId
+        - id
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{ACTION_BASE_URL}}/combineVideosJob/inserted'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+- table:
+    schema: job_queues
     name: InvitationEmailJob
   configuration:
     custom_root_fields: {}

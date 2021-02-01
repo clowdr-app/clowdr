@@ -133,6 +133,254 @@ export type AttendeeRoomParticipants_AggregateArgs = {
   where?: Maybe<RoomParticipant_Bool_Exp>;
 };
 
+/** columns and relationships of "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccount = {
+  readonly __typename?: 'AttendeeGoogleAccount';
+  /** An object relationship */
+  readonly attendee: Attendee;
+  readonly attendeeId: Scalars['uuid'];
+  /** An object relationship */
+  readonly conference: Conference;
+  readonly conferenceId: Scalars['uuid'];
+  readonly createdAt: Scalars['timestamptz'];
+  readonly googleAccountEmail: Scalars['String'];
+  readonly id: Scalars['uuid'];
+  readonly tokenData: Scalars['jsonb'];
+  readonly updatedAt: Scalars['timestamptz'];
+};
+
+
+/** columns and relationships of "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccountTokenDataArgs = {
+  path?: Maybe<Scalars['String']>;
+};
+
+/** aggregated selection of "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccount_Aggregate = {
+  readonly __typename?: 'AttendeeGoogleAccount_aggregate';
+  readonly aggregate?: Maybe<AttendeeGoogleAccount_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<AttendeeGoogleAccount>;
+};
+
+/** aggregate fields of "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccount_Aggregate_Fields = {
+  readonly __typename?: 'AttendeeGoogleAccount_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<AttendeeGoogleAccount_Max_Fields>;
+  readonly min?: Maybe<AttendeeGoogleAccount_Min_Fields>;
+};
+
+
+/** aggregate fields of "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccount_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<AttendeeGoogleAccount_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccount_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<AttendeeGoogleAccount_Max_Order_By>;
+  readonly min?: Maybe<AttendeeGoogleAccount_Min_Order_By>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type AttendeeGoogleAccount_Append_Input = {
+  readonly tokenData?: Maybe<Scalars['jsonb']>;
+};
+
+/** input type for inserting array relation for remote table "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccount_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<AttendeeGoogleAccount_Insert_Input>;
+  readonly on_conflict?: Maybe<AttendeeGoogleAccount_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "AttendeeGoogleAccount". All fields are combined with a logical 'AND'. */
+export type AttendeeGoogleAccount_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<AttendeeGoogleAccount_Bool_Exp>>>;
+  readonly _not?: Maybe<AttendeeGoogleAccount_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<AttendeeGoogleAccount_Bool_Exp>>>;
+  readonly attendee?: Maybe<Attendee_Bool_Exp>;
+  readonly attendeeId?: Maybe<Uuid_Comparison_Exp>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly googleAccountEmail?: Maybe<String_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly tokenData?: Maybe<Jsonb_Comparison_Exp>;
+  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "AttendeeGoogleAccount" */
+export enum AttendeeGoogleAccount_Constraint {
+  /** unique or primary key constraint */
+  AttendeeGoogleAccountAttendeeIdGoogleAccountEmailKey = 'AttendeeGoogleAccount_attendeeId_googleAccountEmail_key',
+  /** unique or primary key constraint */
+  AttendeeGoogleAccountPkey = 'AttendeeGoogleAccount_pkey'
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type AttendeeGoogleAccount_Delete_At_Path_Input = {
+  readonly tokenData?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type AttendeeGoogleAccount_Delete_Elem_Input = {
+  readonly tokenData?: Maybe<Scalars['Int']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type AttendeeGoogleAccount_Delete_Key_Input = {
+  readonly tokenData?: Maybe<Scalars['String']>;
+};
+
+/** input type for inserting data into table "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccount_Insert_Input = {
+  readonly attendee?: Maybe<Attendee_Obj_Rel_Insert_Input>;
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly googleAccountEmail?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly tokenData?: Maybe<Scalars['jsonb']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type AttendeeGoogleAccount_Max_Fields = {
+  readonly __typename?: 'AttendeeGoogleAccount_max_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly googleAccountEmail?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccount_Max_Order_By = {
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly googleAccountEmail?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type AttendeeGoogleAccount_Min_Fields = {
+  readonly __typename?: 'AttendeeGoogleAccount_min_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly googleAccountEmail?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccount_Min_Order_By = {
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly googleAccountEmail?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccount_Mutation_Response = {
+  readonly __typename?: 'AttendeeGoogleAccount_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<AttendeeGoogleAccount>;
+};
+
+/** input type for inserting object relation for remote table "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccount_Obj_Rel_Insert_Input = {
+  readonly data: AttendeeGoogleAccount_Insert_Input;
+  readonly on_conflict?: Maybe<AttendeeGoogleAccount_On_Conflict>;
+};
+
+/** on conflict condition type for table "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccount_On_Conflict = {
+  readonly constraint: AttendeeGoogleAccount_Constraint;
+  readonly update_columns: ReadonlyArray<AttendeeGoogleAccount_Update_Column>;
+  readonly where?: Maybe<AttendeeGoogleAccount_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccount_Order_By = {
+  readonly attendee?: Maybe<Attendee_Order_By>;
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly googleAccountEmail?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly tokenData?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccount_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type AttendeeGoogleAccount_Prepend_Input = {
+  readonly tokenData?: Maybe<Scalars['jsonb']>;
+};
+
+/** select columns of table "AttendeeGoogleAccount" */
+export enum AttendeeGoogleAccount_Select_Column {
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  GoogleAccountEmail = 'googleAccountEmail',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  TokenData = 'tokenData',
+  /** column name */
+  UpdatedAt = 'updatedAt'
+}
+
+/** input type for updating data in table "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccount_Set_Input = {
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly googleAccountEmail?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly tokenData?: Maybe<Scalars['jsonb']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "AttendeeGoogleAccount" */
+export enum AttendeeGoogleAccount_Update_Column {
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  GoogleAccountEmail = 'googleAccountEmail',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  TokenData = 'tokenData',
+  /** column name */
+  UpdatedAt = 'updatedAt'
+}
+
 /** columns and relationships of "AttendeeProfile" */
 export type AttendeeProfile = {
   readonly __typename?: 'AttendeeProfile';
@@ -7828,6 +8076,11 @@ export type GetContentItemOutput = {
   readonly name: Scalars['String'];
 };
 
+export type GetGoogleOAuthUrlOutput = {
+  readonly __typename?: 'GetGoogleOAuthUrlOutput';
+  readonly url: Scalars['String'];
+};
+
 export type GetUploadAgreementOutput = {
   readonly __typename?: 'GetUploadAgreementOutput';
   readonly agreementText?: Maybe<Scalars['String']>;
@@ -13208,6 +13461,18 @@ export type SubmitContentItemInput = {
 export type SubmitContentItemOutput = {
   readonly __typename?: 'SubmitContentItemOutput';
   readonly message: Scalars['String'];
+  readonly success: Scalars['Boolean'];
+};
+
+export type SubmitGoogleOAuthCodeOutput = {
+  readonly __typename?: 'SubmitGoogleOAuthCodeOutput';
+  readonly message?: Maybe<Scalars['String']>;
+  readonly success: Scalars['Boolean'];
+};
+
+export type SubmitGoogleOAuthTokenOutput = {
+  readonly __typename?: 'SubmitGoogleOAuthTokenOutput';
+  readonly message?: Maybe<Scalars['String']>;
   readonly success: Scalars['Boolean'];
 };
 
@@ -19616,6 +19881,10 @@ export type Mutation_Root = {
   readonly createRoomDm?: Maybe<CreateRoomDmOutput>;
   /** delete data from the table: "Attendee" */
   readonly delete_Attendee?: Maybe<Attendee_Mutation_Response>;
+  /** delete data from the table: "AttendeeGoogleAccount" */
+  readonly delete_AttendeeGoogleAccount?: Maybe<AttendeeGoogleAccount_Mutation_Response>;
+  /** delete single row from the table: "AttendeeGoogleAccount" */
+  readonly delete_AttendeeGoogleAccount_by_pk?: Maybe<AttendeeGoogleAccount>;
   /** delete data from the table: "AttendeeProfile" */
   readonly delete_AttendeeProfile?: Maybe<AttendeeProfile_Mutation_Response>;
   /** delete single row from the table: "AttendeeProfile" */
@@ -19896,8 +20165,14 @@ export type Mutation_Root = {
   readonly delete_room_ShuffleRoom?: Maybe<Room_ShuffleRoom_Mutation_Response>;
   /** delete single row from the table: "room.ShuffleRoom" */
   readonly delete_room_ShuffleRoom_by_pk?: Maybe<Room_ShuffleRoom>;
+  /** perform the action: "getGoogleOAuthUrl" */
+  readonly getGoogleOAuthUrl?: Maybe<GetGoogleOAuthUrlOutput>;
   /** insert data into the table: "Attendee" */
   readonly insert_Attendee?: Maybe<Attendee_Mutation_Response>;
+  /** insert data into the table: "AttendeeGoogleAccount" */
+  readonly insert_AttendeeGoogleAccount?: Maybe<AttendeeGoogleAccount_Mutation_Response>;
+  /** insert a single row into the table: "AttendeeGoogleAccount" */
+  readonly insert_AttendeeGoogleAccount_one?: Maybe<AttendeeGoogleAccount>;
   /** insert data into the table: "AttendeeProfile" */
   readonly insert_AttendeeProfile?: Maybe<AttendeeProfile_Mutation_Response>;
   /** insert a single row into the table: "AttendeeProfile" */
@@ -20196,12 +20471,18 @@ export type Mutation_Root = {
   readonly stopEventBroadcast?: Maybe<StopEventBroadcastOutput>;
   /** perform the action: "submitContentItem" */
   readonly submitContentItem?: Maybe<SubmitContentItemOutput>;
+  /** perform the action: "submitGoogleOAuthCode" */
+  readonly submitGoogleOAuthCode?: Maybe<SubmitGoogleOAuthCodeOutput>;
   /** perform the action: "updateProfilePhoto" */
   readonly updateProfilePhoto?: Maybe<UpdateProfilePhotoResponse>;
   /** perform the action: "updateSubtitles" */
   readonly updateSubtitles?: Maybe<SubmitUpdatedSubtitlesOutput>;
   /** update data of the table: "Attendee" */
   readonly update_Attendee?: Maybe<Attendee_Mutation_Response>;
+  /** update data of the table: "AttendeeGoogleAccount" */
+  readonly update_AttendeeGoogleAccount?: Maybe<AttendeeGoogleAccount_Mutation_Response>;
+  /** update single row of the table: "AttendeeGoogleAccount" */
+  readonly update_AttendeeGoogleAccount_by_pk?: Maybe<AttendeeGoogleAccount>;
   /** update data of the table: "AttendeeProfile" */
   readonly update_AttendeeProfile?: Maybe<AttendeeProfile_Mutation_Response>;
   /** update single row of the table: "AttendeeProfile" */
@@ -20502,6 +20783,18 @@ export type Mutation_RootCreateRoomDmArgs = {
 /** mutation root */
 export type Mutation_RootDelete_AttendeeArgs = {
   where: Attendee_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_AttendeeGoogleAccountArgs = {
+  where: AttendeeGoogleAccount_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_AttendeeGoogleAccount_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -21350,9 +21643,29 @@ export type Mutation_RootDelete_Room_ShuffleRoom_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootGetGoogleOAuthUrlArgs = {
+  scopes: ReadonlyArray<Scalars['String']>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_AttendeeArgs = {
   objects: ReadonlyArray<Attendee_Insert_Input>;
   on_conflict?: Maybe<Attendee_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_AttendeeGoogleAccountArgs = {
+  objects: ReadonlyArray<AttendeeGoogleAccount_Insert_Input>;
+  on_conflict?: Maybe<AttendeeGoogleAccount_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_AttendeeGoogleAccount_OneArgs = {
+  object: AttendeeGoogleAccount_Insert_Input;
+  on_conflict?: Maybe<AttendeeGoogleAccount_On_Conflict>;
 };
 
 
@@ -22391,6 +22704,13 @@ export type Mutation_RootSubmitContentItemArgs = {
 
 
 /** mutation root */
+export type Mutation_RootSubmitGoogleOAuthCodeArgs = {
+  code: Scalars['String'];
+  state: Scalars['String'];
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdateProfilePhotoArgs = {
   attendeeId: Scalars['uuid'];
   s3URL?: Maybe<Scalars['String']>;
@@ -22409,6 +22729,30 @@ export type Mutation_RootUpdateSubtitlesArgs = {
 export type Mutation_RootUpdate_AttendeeArgs = {
   _set?: Maybe<Attendee_Set_Input>;
   where: Attendee_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_AttendeeGoogleAccountArgs = {
+  _append?: Maybe<AttendeeGoogleAccount_Append_Input>;
+  _delete_at_path?: Maybe<AttendeeGoogleAccount_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<AttendeeGoogleAccount_Delete_Elem_Input>;
+  _delete_key?: Maybe<AttendeeGoogleAccount_Delete_Key_Input>;
+  _prepend?: Maybe<AttendeeGoogleAccount_Prepend_Input>;
+  _set?: Maybe<AttendeeGoogleAccount_Set_Input>;
+  where: AttendeeGoogleAccount_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_AttendeeGoogleAccount_By_PkArgs = {
+  _append?: Maybe<AttendeeGoogleAccount_Append_Input>;
+  _delete_at_path?: Maybe<AttendeeGoogleAccount_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<AttendeeGoogleAccount_Delete_Elem_Input>;
+  _delete_key?: Maybe<AttendeeGoogleAccount_Delete_Key_Input>;
+  _prepend?: Maybe<AttendeeGoogleAccount_Prepend_Input>;
+  _set?: Maybe<AttendeeGoogleAccount_Set_Input>;
+  pk_columns: AttendeeGoogleAccount_Pk_Columns_Input;
 };
 
 
@@ -23576,6 +23920,12 @@ export type Query_Root = {
   readonly __typename?: 'query_root';
   /** fetch data from the table: "Attendee" */
   readonly Attendee: ReadonlyArray<Attendee>;
+  /** fetch data from the table: "AttendeeGoogleAccount" */
+  readonly AttendeeGoogleAccount: ReadonlyArray<AttendeeGoogleAccount>;
+  /** fetch aggregated fields from the table: "AttendeeGoogleAccount" */
+  readonly AttendeeGoogleAccount_aggregate: AttendeeGoogleAccount_Aggregate;
+  /** fetch data from the table: "AttendeeGoogleAccount" using primary key columns */
+  readonly AttendeeGoogleAccount_by_pk?: Maybe<AttendeeGoogleAccount>;
   /** fetch data from the table: "AttendeeProfile" */
   readonly AttendeeProfile: ReadonlyArray<AttendeeProfile>;
   /** fetch aggregated fields from the table: "AttendeeProfile" */
@@ -24024,6 +24374,32 @@ export type Query_RootAttendeeArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Attendee_Order_By>>;
   where?: Maybe<Attendee_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootAttendeeGoogleAccountArgs = {
+  distinct_on?: Maybe<ReadonlyArray<AttendeeGoogleAccount_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<AttendeeGoogleAccount_Order_By>>;
+  where?: Maybe<AttendeeGoogleAccount_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootAttendeeGoogleAccount_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<AttendeeGoogleAccount_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<AttendeeGoogleAccount_Order_By>>;
+  where?: Maybe<AttendeeGoogleAccount_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootAttendeeGoogleAccount_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -27156,6 +27532,12 @@ export type Subscription_Root = {
   readonly __typename?: 'subscription_root';
   /** fetch data from the table: "Attendee" */
   readonly Attendee: ReadonlyArray<Attendee>;
+  /** fetch data from the table: "AttendeeGoogleAccount" */
+  readonly AttendeeGoogleAccount: ReadonlyArray<AttendeeGoogleAccount>;
+  /** fetch aggregated fields from the table: "AttendeeGoogleAccount" */
+  readonly AttendeeGoogleAccount_aggregate: AttendeeGoogleAccount_Aggregate;
+  /** fetch data from the table: "AttendeeGoogleAccount" using primary key columns */
+  readonly AttendeeGoogleAccount_by_pk?: Maybe<AttendeeGoogleAccount>;
   /** fetch data from the table: "AttendeeProfile" */
   readonly AttendeeProfile: ReadonlyArray<AttendeeProfile>;
   /** fetch aggregated fields from the table: "AttendeeProfile" */
@@ -27604,6 +27986,32 @@ export type Subscription_RootAttendeeArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Attendee_Order_By>>;
   where?: Maybe<Attendee_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootAttendeeGoogleAccountArgs = {
+  distinct_on?: Maybe<ReadonlyArray<AttendeeGoogleAccount_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<AttendeeGoogleAccount_Order_By>>;
+  where?: Maybe<AttendeeGoogleAccount_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootAttendeeGoogleAccount_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<AttendeeGoogleAccount_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<AttendeeGoogleAccount_Order_By>>;
+  where?: Maybe<AttendeeGoogleAccount_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootAttendeeGoogleAccount_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -30573,6 +30981,13 @@ export type EventVonageControls_StopEventBroadcastMutationVariables = Exact<{
 
 export type EventVonageControls_StopEventBroadcastMutation = { readonly __typename?: 'mutation_root', readonly stopEventBroadcast?: Maybe<{ readonly __typename?: 'StopEventBroadcastOutput', readonly broadcastsStopped: number }> };
 
+export type ManageConferenceExportPage_GetGoogleOAuthUrlMutationVariables = Exact<{
+  scopes: ReadonlyArray<Scalars['String']>;
+}>;
+
+
+export type ManageConferenceExportPage_GetGoogleOAuthUrlMutation = { readonly __typename?: 'mutation_root', readonly getGoogleOAuthUrl?: Maybe<{ readonly __typename?: 'GetGoogleOAuthUrlOutput', readonly url: string }> };
+
 export type SelectAllGroupsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
@@ -31105,6 +31520,14 @@ export type UserEventRolesSubscription = { readonly __typename?: 'subscription_r
     )> }> };
 
 export type EventPersonDetailsFragment = { readonly __typename?: 'EventPerson', readonly id: any, readonly name: string, readonly roleName: EventPersonRole_Enum, readonly eventId: any, readonly attendeeId?: Maybe<any> };
+
+export type GoogleOAuth_SubmitGoogleOAuthCodeMutationVariables = Exact<{
+  code: Scalars['String'];
+  state: Scalars['String'];
+}>;
+
+
+export type GoogleOAuth_SubmitGoogleOAuthCodeMutation = { readonly __typename?: 'mutation_root', readonly submitGoogleOAuthCode?: Maybe<{ readonly __typename?: 'SubmitGoogleOAuthCodeOutput', readonly message?: Maybe<string>, readonly success: boolean }> };
 
 export type SelectInvitationForAcceptQueryVariables = Exact<{
   inviteCode: Scalars['uuid'];
@@ -35436,6 +35859,38 @@ export function useEventVonageControls_StopEventBroadcastMutation(baseOptions?: 
 export type EventVonageControls_StopEventBroadcastMutationHookResult = ReturnType<typeof useEventVonageControls_StopEventBroadcastMutation>;
 export type EventVonageControls_StopEventBroadcastMutationResult = Apollo.MutationResult<EventVonageControls_StopEventBroadcastMutation>;
 export type EventVonageControls_StopEventBroadcastMutationOptions = Apollo.BaseMutationOptions<EventVonageControls_StopEventBroadcastMutation, EventVonageControls_StopEventBroadcastMutationVariables>;
+export const ManageConferenceExportPage_GetGoogleOAuthUrlDocument = gql`
+    mutation ManageConferenceExportPage_GetGoogleOAuthUrl($scopes: [String!]!) {
+  getGoogleOAuthUrl(scopes: $scopes) {
+    url
+  }
+}
+    `;
+export type ManageConferenceExportPage_GetGoogleOAuthUrlMutationFn = Apollo.MutationFunction<ManageConferenceExportPage_GetGoogleOAuthUrlMutation, ManageConferenceExportPage_GetGoogleOAuthUrlMutationVariables>;
+
+/**
+ * __useManageConferenceExportPage_GetGoogleOAuthUrlMutation__
+ *
+ * To run a mutation, you first call `useManageConferenceExportPage_GetGoogleOAuthUrlMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageConferenceExportPage_GetGoogleOAuthUrlMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageConferenceExportPageGetGoogleOAuthUrlMutation, { data, loading, error }] = useManageConferenceExportPage_GetGoogleOAuthUrlMutation({
+ *   variables: {
+ *      scopes: // value for 'scopes'
+ *   },
+ * });
+ */
+export function useManageConferenceExportPage_GetGoogleOAuthUrlMutation(baseOptions?: Apollo.MutationHookOptions<ManageConferenceExportPage_GetGoogleOAuthUrlMutation, ManageConferenceExportPage_GetGoogleOAuthUrlMutationVariables>) {
+        return Apollo.useMutation<ManageConferenceExportPage_GetGoogleOAuthUrlMutation, ManageConferenceExportPage_GetGoogleOAuthUrlMutationVariables>(ManageConferenceExportPage_GetGoogleOAuthUrlDocument, baseOptions);
+      }
+export type ManageConferenceExportPage_GetGoogleOAuthUrlMutationHookResult = ReturnType<typeof useManageConferenceExportPage_GetGoogleOAuthUrlMutation>;
+export type ManageConferenceExportPage_GetGoogleOAuthUrlMutationResult = Apollo.MutationResult<ManageConferenceExportPage_GetGoogleOAuthUrlMutation>;
+export type ManageConferenceExportPage_GetGoogleOAuthUrlMutationOptions = Apollo.BaseMutationOptions<ManageConferenceExportPage_GetGoogleOAuthUrlMutation, ManageConferenceExportPage_GetGoogleOAuthUrlMutationVariables>;
 export const SelectAllGroupsDocument = gql`
     query SelectAllGroups($conferenceId: uuid!) {
   Group(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -37263,6 +37718,40 @@ export function useUserEventRolesSubscription(baseOptions: Apollo.SubscriptionHo
       }
 export type UserEventRolesSubscriptionHookResult = ReturnType<typeof useUserEventRolesSubscription>;
 export type UserEventRolesSubscriptionResult = Apollo.SubscriptionResult<UserEventRolesSubscription>;
+export const GoogleOAuth_SubmitGoogleOAuthCodeDocument = gql`
+    mutation GoogleOAuth_SubmitGoogleOAuthCode($code: String!, $state: String!) {
+  submitGoogleOAuthCode(code: $code, state: $state) {
+    message
+    success
+  }
+}
+    `;
+export type GoogleOAuth_SubmitGoogleOAuthCodeMutationFn = Apollo.MutationFunction<GoogleOAuth_SubmitGoogleOAuthCodeMutation, GoogleOAuth_SubmitGoogleOAuthCodeMutationVariables>;
+
+/**
+ * __useGoogleOAuth_SubmitGoogleOAuthCodeMutation__
+ *
+ * To run a mutation, you first call `useGoogleOAuth_SubmitGoogleOAuthCodeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGoogleOAuth_SubmitGoogleOAuthCodeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [googleOAuthSubmitGoogleOAuthCodeMutation, { data, loading, error }] = useGoogleOAuth_SubmitGoogleOAuthCodeMutation({
+ *   variables: {
+ *      code: // value for 'code'
+ *      state: // value for 'state'
+ *   },
+ * });
+ */
+export function useGoogleOAuth_SubmitGoogleOAuthCodeMutation(baseOptions?: Apollo.MutationHookOptions<GoogleOAuth_SubmitGoogleOAuthCodeMutation, GoogleOAuth_SubmitGoogleOAuthCodeMutationVariables>) {
+        return Apollo.useMutation<GoogleOAuth_SubmitGoogleOAuthCodeMutation, GoogleOAuth_SubmitGoogleOAuthCodeMutationVariables>(GoogleOAuth_SubmitGoogleOAuthCodeDocument, baseOptions);
+      }
+export type GoogleOAuth_SubmitGoogleOAuthCodeMutationHookResult = ReturnType<typeof useGoogleOAuth_SubmitGoogleOAuthCodeMutation>;
+export type GoogleOAuth_SubmitGoogleOAuthCodeMutationResult = Apollo.MutationResult<GoogleOAuth_SubmitGoogleOAuthCodeMutation>;
+export type GoogleOAuth_SubmitGoogleOAuthCodeMutationOptions = Apollo.BaseMutationOptions<GoogleOAuth_SubmitGoogleOAuthCodeMutation, GoogleOAuth_SubmitGoogleOAuthCodeMutationVariables>;
 export const SelectInvitationForAcceptDocument = gql`
     query SelectInvitationForAccept($inviteCode: uuid!) {
   Invitation(where: {inviteCode: {_eq: $inviteCode}}) {

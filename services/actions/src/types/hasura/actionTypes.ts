@@ -94,6 +94,20 @@ type StopEventBroadcastOutput = {
     broadcastsStopped: number;
 };
 
+type GetGoogleOAuthUrlOutput = {
+    url: string;
+};
+
+type SubmitGoogleOAuthTokenOutput = {
+    success: boolean;
+    message?: Maybe<string>;
+};
+
+type SubmitGoogleOAuthCodeOutput = {
+    success: boolean;
+    message?: Maybe<string>;
+};
+
 type SampleInput = {
     username: string;
     password: string;
@@ -132,6 +146,7 @@ type Query = {
 type Mutation = {
     createContentGroupRoom?: Maybe<CreateContentGroupRoomOutput>;
     createRoomDm?: Maybe<CreateRoomDmOutput>;
+    getGoogleOAuthUrl?: Maybe<GetGoogleOAuthUrlOutput>;
     invitationConfirmCurrent?: Maybe<ConfirmInvitationOutput>;
     invitationConfirmSendInitialEmail?: Maybe<InvitationConfirmationEmailOutput>;
     invitationConfirmSendRepeatEmail?: Maybe<InvitationConfirmationEmailOutput>;
@@ -140,6 +155,7 @@ type Mutation = {
     joinRoomVonageSession?: Maybe<JoinRoomVonageSessionOutput>;
     stopEventBroadcast?: Maybe<StopEventBroadcastOutput>;
     submitContentItem?: Maybe<SubmitContentItemOutput>;
+    submitGoogleOAuthCode?: Maybe<SubmitGoogleOAuthCodeOutput>;
     updateProfilePhoto?: Maybe<UpdateProfilePhotoResponse>;
     updateSubtitles?: Maybe<SubmitUpdatedSubtitlesOutput>;
 };
@@ -168,6 +184,10 @@ type createContentGroupRoomArgs = {
 type createRoomDmArgs = {
     conferenceId: uuid;
     attendeeIds: Array<uuid>;
+};
+
+type getGoogleOAuthUrlArgs = {
+    scopes: Array<string>;
 };
 
 type invitationConfirmCurrentArgs = {
@@ -201,6 +221,11 @@ type stopEventBroadcastArgs = {
 type submitContentItemArgs = {
     data: jsonb;
     magicToken: string;
+};
+
+type submitGoogleOAuthCodeArgs = {
+    code: string;
+    state: string;
 };
 
 type updateProfilePhotoArgs = {

@@ -28,6 +28,13 @@ type Query {
 }
 
 
+type Mutation {
+  getGoogleOAuthUrl (
+    scopes: [String!]!
+  ): GetGoogleOAuthUrlOutput
+}
+
+
 type Query {
   getUploadAgreement (
     magicToken: String!
@@ -96,6 +103,14 @@ type Mutation {
     data: jsonb!
     magicToken: String!
   ): SubmitContentItemOutput
+}
+
+
+type Mutation {
+  submitGoogleOAuthCode (
+    code: String!
+    state: String!
+  ): SubmitGoogleOAuthCodeOutput
 }
 
 
@@ -234,5 +249,19 @@ type CreateContentGroupRoomOutput {
 
 type StopEventBroadcastOutput {
   broadcastsStopped : Int!
+}
+
+type GetGoogleOAuthUrlOutput {
+  url : String!
+}
+
+type SubmitGoogleOAuthTokenOutput {
+  success : Boolean!
+  message : String
+}
+
+type SubmitGoogleOAuthCodeOutput {
+  success : Boolean!
+  message : String
 }
 

@@ -1695,6 +1695,21 @@
                 name: FlatUserPermission
 - table:
     schema: public
+    name: AttendeeGoogleAccount
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
+  object_relationships:
+  - name: attendee
+    using:
+      foreign_key_constraint_on: attendeeId
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+- table:
+    schema: public
     name: AttendeeProfile
   object_relationships:
   - name: attendee

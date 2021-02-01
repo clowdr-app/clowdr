@@ -31,6 +31,7 @@ import { router as eventRouter } from "./router/event";
 import { router as eventPersonRouter } from "./router/eventPerson";
 import { router as eventRoomJoinRequestRouter } from "./router/eventRoomJoinRequest";
 import { router as eventVonageSessionRouter } from "./router/eventVonageSession";
+import { router as googleRouter } from "./router/google";
 import { router as mediaConvertRouter } from "./router/mediaConvert";
 import { router as mediaLiveRouter } from "./router/mediaLive";
 import { router as mediaPackageRouter } from "./router/mediaPackage";
@@ -76,6 +77,7 @@ app.use("/amazonTranscribe", amazonTranscribeRouter);
 app.use("/elasticTranscoder", elasticTranscoderRouter);
 app.use("/mediaLive", mediaLiveRouter);
 app.use("/mediaPackage", mediaPackageRouter);
+app.use("/google", googleRouter);
 
 app.use("/vonage", vonageRouter);
 

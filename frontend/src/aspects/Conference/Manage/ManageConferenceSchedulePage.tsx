@@ -944,7 +944,7 @@ function EditableScheduleTable(): JSX.Element {
                     hasChanged = updated.intendedRoomModeName !== original.intendedRoomModeName;
                     break;
                 case ColumnId.Content:
-                    updated.contentGroupId = value.length > 0 ? value : undefined;
+                    updated.contentGroupId = value && value.length > 0 ? value : undefined;
                     hasChanged = updated.contentGroupId !== original.contentGroupId;
                     break;
             }

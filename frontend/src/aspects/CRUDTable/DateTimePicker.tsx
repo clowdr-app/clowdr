@@ -7,7 +7,6 @@ import {
     getMonth,
     getSeconds,
     getYear,
-    isEqual,
     isValid,
     parse,
     setDate,
@@ -18,11 +17,21 @@ import {
     setYear,
 } from "date-fns";
 import { utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo } from "react";
 import FAIcon from "../Icons/FAIcon";
 import type { EditMode } from "./CRUDTable";
 
-export function DateTimePicker({ value, editMode }: { value: Date; editMode: EditMode }): JSX.Element {
+export function DateTimePicker({
+    value,
+    editMode,
+    onChange,
+    onBlur,
+}: {
+    value: Date;
+    onChange?: (value: Date) => void;
+    onBlur?: () => void;
+    editMode?: EditMode;
+}): JSX.Element {
     const localTimeZone = useMemo(() => {
         return Intl.DateTimeFormat().resolvedOptions().timeZone;
     }, []);
@@ -41,27 +50,13 @@ export function DateTimePicker({ value, editMode }: { value: Date; editMode: Edi
         return typeof value === "string" ? new Date(Date.parse(value)) : value;
     }, [value]);
 
-    const [utcDateTime, setUtcDateTime] = useState<Date>(value);
-
-    useEffect(() => {
-        // For some reason the value sometimes ends up as a string
-        if (typeof utcDateTime === "string") {
-            setUtcDateTime(new Date(Date.parse(utcDateTime)));
-            return;
-        }
-
-        if (utcDateTime && utcDateTime.getTime() !== parsedValue.getTime()) {
-            editMode.onChange(utcDateTime);
-        }
-    }, [utcDateTime, editMode, parsedValue]);
-
     const setDateTime = useCallback(
         (newDateValue: string) => {
             const newDate = parse(newDateValue, "yyyy-MM-dd", value);
             if (!isValid(newDate)) {
                 return;
             }
-            const existingLocalDateTime = utcToZonedTime(utcDateTime, localTimeZone);
+            const existingLocalDateTime = utcToZonedTime(value, localTimeZone);
             const year = getYear(newDate);
             const month = getMonth(newDate);
             const day = getDate(newDate);
@@ -70,11 +65,12 @@ export function DateTimePicker({ value, editMode }: { value: Date; editMode: Edi
                 localTimeZone
             );
 
-            if (!utcDateTime || !isEqual(newUtcDateTime, utcDateTime)) {
-                setUtcDateTime(newUtcDateTime);
+            if (newUtcDateTime.getTime() !== parsedValue.getTime()) {
+                editMode?.onChange(newUtcDateTime);
+                onChange?.(newUtcDateTime);
             }
         },
-        [localTimeZone, utcDateTime, value]
+        [editMode, localTimeZone, onChange, parsedValue, value]
     );
 
     const setTime = useCallback(
@@ -83,7 +79,7 @@ export function DateTimePicker({ value, editMode }: { value: Date; editMode: Edi
             if (!isValid(newTime)) {
                 return;
             }
-            const existingLocalDateTime = utcToZonedTime(utcDateTime, localTimeZone);
+            const existingLocalDateTime = utcToZonedTime(value, localTimeZone);
             const hours = getHours(newTime);
             const minutes = getMinutes(newTime);
             const seconds = getSeconds(newTime);
@@ -92,17 +88,24 @@ export function DateTimePicker({ value, editMode }: { value: Date; editMode: Edi
                 localTimeZone
             );
 
-            if (!utcDateTime || !isEqual(newUtcDateTime, utcDateTime)) {
-                setUtcDateTime(newUtcDateTime);
+            if (newUtcDateTime.getTime() !== parsedValue.getTime()) {
+                editMode?.onChange(newUtcDateTime);
+                onChange?.(newUtcDateTime);
             }
         },
-        [localTimeZone, utcDateTime, value]
+        [editMode, localTimeZone, onChange, parsedValue, value]
     );
 
     return (
-        <HStack>
-            <Input type="date" value={localDateValue} onChange={(e) => setDateTime(e.target.value)} />
-            <Input type="time" value={localTimeValue} onChange={(e) => setTime(e.target.value)} step="1" />
+        <HStack onBlur={onBlur}>
+            <Input flex="0 0 10em" type="date" value={localDateValue} onChange={(e) => setDateTime(e.target.value)} />
+            <Input
+                flex="0 0 9em"
+                type="time"
+                value={localTimeValue}
+                onChange={(e) => setTime(e.target.value)}
+                step="1"
+            />
             <Tooltip label={`Timezone: ${localTimeZone}`}>
                 <FAIcon icon="user-clock" iconStyle="s" />
             </Tooltip>

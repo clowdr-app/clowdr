@@ -197,6 +197,7 @@ gql`
                 name: $name
                 startTime: $startTime
                 durationSeconds: $durationSeconds
+                contentGroupId: $contentGroupId
             }
         ) {
             ...EventInfo

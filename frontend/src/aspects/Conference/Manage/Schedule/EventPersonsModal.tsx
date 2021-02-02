@@ -11,62 +11,40 @@ import {
     ModalOverlay,
     Text,
 } from "@chakra-ui/react";
-import assert from "assert";
 import React, { useMemo } from "react";
-import { v4 as uuidv4 } from "uuid";
-import { EventPersonRole_Enum } from "../../../../generated/graphql";
-import CRUDTable, {
-    CRUDTableProps,
-    defaultSelectFilter,
-    defaultStringFilter,
-    FieldType,
-    SelectOption,
-    UpdateResult,
-} from "../../../CRUDTable/CRUDTable";
-import isValidUUID from "../../../Utils/isValidUUID";
-import type { AttendeeDescriptor, EventDescriptor, EventPersonDescriptor } from "./Types";
-
-const EventPersonsCRUDTable = (props: Readonly<CRUDTableProps<EventPersonDescriptor, "id">>) => CRUDTable(props);
+import {
+    AttendeeInfoFragment,
+    EventInfoFragment,
+    EventPersonInfoFragment,
+    EventPersonRole_Enum,
+} from "../../../../generated/graphql";
+import type { SelectOption } from "../../../CRUDTable/CRUDTable";
 
 interface Props {
     isOpen: boolean;
     onOpen: () => void;
     onClose: () => void;
-    isEventDirty: boolean;
-    event: EventDescriptor;
-    attendeeMap: Map<string, AttendeeDescriptor>;
-    insertEventPerson: (eventPerson: EventPersonDescriptor) => void;
-    updateEventPerson: (eventPerson: EventPersonDescriptor) => void;
-    deleteEventPerson: (eventPersonId: string) => void;
+    event: EventInfoFragment;
+    attendees: readonly AttendeeInfoFragment[];
 }
 
-export function EventPersonsModal({
-    isOpen,
-    onOpen,
-    onClose,
-    isEventDirty,
-    event,
-    attendeeMap,
-    insertEventPerson,
-    updateEventPerson,
-    deleteEventPerson,
-}: Props): JSX.Element {
+export function EventPersonsModal({ isOpen, onOpen, onClose, event, attendees }: Props): JSX.Element {
     const eventPersonsMap = useMemo(() => {
-        const results = new Map<string, EventPersonDescriptor>();
+        const results = new Map<string, EventPersonInfoFragment>();
 
-        event.people.forEach((eventPerson) => {
+        event.eventPeople.forEach((eventPerson) => {
             results.set(eventPerson.id, eventPerson);
         });
 
         return results;
-    }, [event.people]);
+    }, [event.eventPeople]);
 
     const attendeeOptions = useMemo(() => {
-        return Array.from(attendeeMap.values()).map((attendee) => ({
+        return attendees.map((attendee) => ({
             label: `${attendee.displayName}`,
             value: attendee.id,
         }));
-    }, [attendeeMap]);
+    }, [attendees]);
 
     const roleOptions: SelectOption[] = useMemo(() => {
         return Object.keys(EventPersonRole_Enum)
@@ -100,7 +78,8 @@ export function EventPersonsModal({
                     <ModalCloseButton />
                     <ModalBody>
                         <Box>
-                            <EventPersonsCRUDTable
+                            TODO
+                            {/* <EventPersonsCRUDTable
                                 data={eventPersonsMap}
                                 externalUnsavedChanges={isEventDirty}
                                 primaryFields={{
@@ -272,7 +251,7 @@ export function EventPersonsModal({
                                         },
                                     },
                                 }}
-                            />
+                            /> */}
                         </Box>
                     </ModalBody>
                     <ModalFooter>

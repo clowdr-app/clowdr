@@ -1,514 +1,1366 @@
+// TODO: Switch these back on
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-unused-vars */
+
+import { gql, Reference } from "@apollo/client";
 import {
     Accordion,
     AccordionButton,
     AccordionIcon,
     AccordionItem,
     AccordionPanel,
+    Alert,
+    AlertDescription,
+    AlertTitle,
     Box,
+    Button,
+    ButtonGroup,
+    Center,
+    chakra,
+    Checkbox,
+    Code,
+    Drawer,
+    DrawerBody,
+    DrawerCloseButton,
+    DrawerContent,
+    DrawerHeader,
+    DrawerOverlay,
+    Flex,
     Heading,
+    HStack,
+    Input,
+    NumberInput,
+    NumberInputField,
+    Select,
+    Spacer,
+    Spinner,
+    Table,
+    Tbody,
+    Td,
+    Text,
+    Th,
+    Thead,
+    Tr,
     useDisclosure,
+    VStack,
 } from "@chakra-ui/react";
-import assert from "assert";
-import { addHours, addSeconds, differenceInSeconds, startOfHour } from "date-fns";
-import React, { useEffect, useMemo, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
-import { Permission_Enum, RoomMode_Enum } from "../../../generated/graphql";
-import CRUDTable, {
-    CRUDTableProps,
-    defaultDateTimeFilter,
-    defaultSelectFilter,
-    defaultStringFilter,
-    FieldType,
-    PrimaryField,
-    SelectOption,
-    UpdateResult,
-} from "../../CRUDTable/CRUDTable";
+import { matchSorter } from "match-sorter";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import {
+    CellProps,
+    Column,
+    defaultGroupByFn,
+    FilterProps,
+    FilterType,
+    FilterTypes,
+    HeaderProps,
+    Row,
+    useExpanded,
+    useFilters,
+    useFlexLayout,
+    useGroupBy,
+    usePagination,
+    useResizeColumns,
+    useRowSelect,
+    useSortBy,
+    useTable,
+} from "react-table";
+import {
+    AttendeeInfoFragment,
+    EventInfoFragment,
+    EventInfoFragmentDoc,
+    Permission_Enum,
+    RoomMode_Enum,
+    useDeleteEventInfoMutation,
+    useDeleteEventInfosMutation,
+    useInsertEventInfoMutation,
+    useSelectWholeScheduleQuery,
+    useUpdateEventInfoMutation,
+} from "../../../generated/graphql";
+import { DateTimePicker } from "../../CRUDTable/DateTimePicker";
 import PageNotFound from "../../Errors/PageNotFound";
-import isValidUUID from "../../Utils/isValidUUID";
+import { useRestorableState } from "../../Generic/useRestorableState";
+import FAIcon from "../../Icons/FAIcon";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
-import type { ContentGroupDescriptor } from "./Content/Types";
 import { EventPersonsModal } from "./Schedule/EventPersonsModal";
-import type { AttendeeDescriptor, EventDescriptor, RoomDescriptor } from "./Schedule/Types";
-import { useSaveScheduleDiff } from "./Schedule/useSaveScheduleDiff";
-import type { OriginatingDataDescriptor, TagDescriptor } from "./Shared/Types";
 import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
-const ScheduleCRUDTable = (props: Readonly<CRUDTableProps<EventDescriptor, "id">>) => CRUDTable(props);
-
-function EditableScheduleCRUDTable() {
-    const saveScheduleDiff = useSaveScheduleDiff();
-
-    const roomModeOptions: SelectOption[] = useMemo(() => {
-        return Object.keys(RoomMode_Enum)
-            .filter((key) => typeof (RoomMode_Enum as any)[key] === "string")
-            .map((key) => {
-                const v = (RoomMode_Enum as any)[key] as string;
-                return {
-                    label: key,
-                    value: v,
-                };
-            });
-    }, []);
-
-    const [allContentGroupsMap, setAllContentGroupsMap] = useState<Map<string, ContentGroupDescriptor>>();
-    const [allEventsMap, setAllEventsMap] = useState<Map<string, EventDescriptor>>();
-    const [allTagsMap, setAllTagsMap] = useState<Map<string, TagDescriptor>>();
-    const [allRoomsMap, setAllRoomsMap] = useState<Map<string, RoomDescriptor>>();
-    const [allOriginatingDatasMap, setAllOriginatingDatasMap] = useState<Map<string, OriginatingDataDescriptor>>();
-    const [allAttendeesMap, setAllAttendeesMap] = useState<Map<string, AttendeeDescriptor>>();
-
-    // TODO: tags modal
-    const [_dirtyTagIds, setDirtyTagIds] = useState<Set<string>>(new Set());
-
-    const roomOptions: SelectOption[] = useMemo(() => {
-        return allRoomsMap
-            ? Array.from(allRoomsMap, ([key, value]) => ({
-                  label: value.name,
-                  value: key,
-              }))
-            : [];
-    }, [allRoomsMap]);
-
-    const contentGroupOptions: SelectOption[] = useMemo(() => {
-        if (allContentGroupsMap) {
-            const options = Array.from(
-                allContentGroupsMap,
-                ([key, value]): SelectOption => ({
-                    label: value.title,
-                    value: key,
-                })
-            );
-            options.unshift({
-                label: "None",
-                value: "",
-            });
-            return options;
+gql`
+    mutation InsertEventInfo(
+        $roomId: uuid!
+        $conferenceId: uuid!
+        $intendedRoomModeName: RoomMode_enum!
+        $originatingDataId: uuid = null
+        $name: String!
+        $startTime: timestamptz!
+        $durationSeconds: Int!
+        $contentGroupId: uuid = null
+    ) {
+        insert_Event_one(
+            object: {
+                roomId: $roomId
+                conferenceId: $conferenceId
+                intendedRoomModeName: $intendedRoomModeName
+                originatingDataId: $originatingDataId
+                name: $name
+                startTime: $startTime
+                durationSeconds: $durationSeconds
+                contentGroupId: $contentGroupId
+            }
+        ) {
+            ...EventInfo
         }
+    }
 
-        return [];
-    }, [allContentGroupsMap]);
+    mutation UpdateEventInfo(
+        $eventId: uuid!
+        $roomId: uuid!
+        $intendedRoomModeName: RoomMode_enum!
+        $originatingDataId: uuid = null
+        $name: String!
+        $startTime: timestamptz!
+        $durationSeconds: Int!
+        $contentGroupId: uuid = null
+    ) {
+        update_Event_by_pk(
+            pk_columns: { id: $eventId }
+            _set: {
+                roomId: $roomId
+                intendedRoomModeName: $intendedRoomModeName
+                originatingDataId: $originatingDataId
+                name: $name
+                startTime: $startTime
+                durationSeconds: $durationSeconds
+                contentGroupId: $contentGroupId
+            }
+        ) {
+            ...EventInfo
+        }
+    }
 
-    const fields = useMemo(() => {
-        const result: {
-            [K: string]: Readonly<PrimaryField<EventDescriptor, any>>;
-        } = {
-            name: {
-                heading: "Name",
-                ariaLabel: "Name",
-                description: "Name of the event",
-                isHidden: false,
-                isEditable: true,
-                defaultValue: "New event name",
-                insert: (item, v) => {
-                    return {
-                        ...item,
-                        name: v,
-                    };
-                },
-                extract: (v) => v.name,
-                spec: {
-                    fieldType: FieldType.string,
-                    convertFromUI: (x) => x,
-                    convertToUI: (x) => x,
-                    filter: defaultStringFilter,
-                },
-                validate: (v) => v.length >= 3 || ["Name must be at least 3 characters"],
-            },
-            startTime: {
-                heading: "Start Time",
-                ariaLabel: "Start Time",
-                description: "Start time of the event",
-                isHidden: false,
-                isEditable: true,
-                defaultValue: addHours(startOfHour(new Date()), 1),
-                insert: (item, v) => {
-                    return {
-                        ...item,
-                        startTime: v,
-                    };
-                },
-                extract: (v) => v.startTime,
-                spec: {
-                    fieldType: FieldType.datetime,
-                    convertFromUI: (x) => (typeof x === "string" ? x : x.toISOString()),
-                    convertToUI: (x) => new Date(Date.parse(x)),
-                    filter: defaultDateTimeFilter,
-                },
-                validate: (v) => !!v || ["Date must be valid"],
-            },
-            endTime: {
-                heading: "End Time",
-                ariaLabel: "End Time",
-                description: "End time of the event",
-                isHidden: false,
-                isEditable: true,
-                defaultValue: addHours(startOfHour(new Date()), 2),
-                insert: (item, v) => {
-                    const endTime = Date.parse(v);
-                    const modification =
-                        item.startTime && !isNaN(endTime)
-                            ? {
-                                  durationSeconds: differenceInSeconds(endTime, Date.parse(item.startTime)),
-                              }
-                            : {};
-                    return {
-                        ...item,
-                        ...modification,
-                    };
-                },
-                extract: (v) => {
-                    const startTime = Date.parse(v.startTime);
-                    if (isNaN(startTime)) {
-                        return "";
-                    } else {
-                        return addSeconds(startTime, v.durationSeconds).toISOString();
-                    }
-                },
-                spec: {
-                    fieldType: FieldType.datetime,
-                    convertFromUI: (x) => x.toISOString(),
-                    convertToUI: (x) => new Date(Date.parse(x)),
-                    filter: defaultDateTimeFilter,
-                },
-                validate: (v) => !!v || ["Date must be valid ISO8601 string"],
-            },
-            roomMode: {
-                heading: "Room Mode",
-                ariaLabel: "Room Mode",
-                description: "Mode of the room during this event",
-                isHidden: false,
-                isEditable: true,
-                defaultValue: RoomMode_Enum.Breakout,
-                insert: (item, v) => {
-                    return {
-                        ...item,
-                        intendedRoomModeName: v,
-                    };
-                },
-                extract: (item) => item.intendedRoomModeName,
-                spec: {
-                    fieldType: FieldType.select,
-                    convertFromUI: (opt) => {
-                        assert(!(opt instanceof Array) || opt.length === 1);
-                        if (opt instanceof Array) {
-                            return opt[0].value;
-                        } else {
-                            return opt.value;
-                        }
-                    },
-                    convertToUI: (modeName) => {
-                        const opt = roomModeOptions.find((x) => x.value === modeName);
-                        if (opt) {
-                            return opt;
-                        } else {
-                            return {
-                                label: `<Unsupported (${modeName})>`,
-                                value: modeName,
-                            };
-                        }
-                    },
-                    multiSelect: false,
-                    options: () => roomModeOptions,
-                    filter: defaultSelectFilter,
-                },
-                validate: (v) => !!roomModeOptions.find((x) => x.value === v) || ["Must choose a room mode"],
-            },
-            room: {
-                heading: "Room",
-                ariaLabel: "Room",
-                description: "Room in which the event takes place",
-                isHidden: false,
-                isEditable: true,
-                insert: (item, v) => {
-                    return {
-                        ...item,
-                        roomId: v,
-                    };
-                },
-                extract: (item) => item.roomId,
-                spec: {
-                    fieldType: FieldType.select,
-                    convertFromUI: (opt) => {
-                        assert(!(opt instanceof Array) || opt.length === 1);
-                        if (opt instanceof Array) {
-                            return opt[0].value;
-                        } else {
-                            return opt.value;
-                        }
-                    },
-                    convertToUI: (roomId) => {
-                        const name = allRoomsMap?.get(roomId)?.name;
-                        if (name) {
-                            return {
-                                label: name,
-                                value: roomId,
-                            };
-                        } else {
-                            return {
-                                label: `Unknown room ${roomId}`,
-                                value: roomId,
-                            };
-                        }
-                    },
-                    multiSelect: false,
-                    options: () => roomOptions,
-                    filter: defaultSelectFilter,
-                },
-                validate: (v) => !!roomOptions.find((x) => x.value === v) || ["Must choose a room mode"],
-            },
-            contentGroup: {
-                heading: "Associated content",
-                ariaLabel: "Associated content",
-                description: "Content associated with this event",
-                isHidden: false,
-                isEditable: true,
-                insert: (item, v) => {
-                    return {
-                        ...item,
-                        contentGroupId: v,
-                    };
-                },
-                extract: (item) => item.contentGroupId,
-                spec: {
-                    fieldType: FieldType.select,
-                    convertFromUI: (opt) => {
-                        assert(!(opt instanceof Array) || opt.length === 1);
-                        if (opt instanceof Array) {
-                            return opt[0].value.length === 0 ? null : opt[0].value;
-                        } else {
-                            return opt?.value && opt.value.length === 0 ? null : opt?.value ?? null;
-                        }
-                    },
-                    convertToUI: (contentGroupId) => {
-                        if (!contentGroupId) {
-                            return {
-                                label: "No content selected",
-                                value: null,
-                            };
-                        }
-                        const title = allContentGroupsMap?.get(contentGroupId)?.title;
-                        if (title) {
-                            return {
-                                label: title,
-                                value: contentGroupId,
-                            };
-                        } else {
-                            return {
-                                label: `Unknown content ${contentGroupId}`,
-                                value: contentGroupId,
-                            };
-                        }
-                    },
-                    multiSelect: false,
-                    options: () => contentGroupOptions,
-                    filter: defaultSelectFilter,
-                },
-                validate: (v) =>
-                    !v || !!contentGroupOptions.find((x) => x.value === v) || ["Must choose a valid content group"],
-            },
-        };
-        return result;
-    }, [allContentGroupsMap, allRoomsMap, contentGroupOptions, roomModeOptions, roomOptions]);
+    mutation DeleteEventInfo($eventId: uuid!) {
+        delete_Event_by_pk(id: $eventId) {
+            id
+        }
+    }
 
+    mutation DeleteEventInfos($eventIds: [uuid!]!) {
+        delete_Event(where: { id: { _in: $eventIds } }) {
+            returning {
+                id
+            }
+        }
+    }
+`;
+
+// Create an editable cell renderer
+function useEditableValue<V>(
+    initialValue: V,
+    update: (value: V) => V
+): {
+    value: V;
+    setValue: (value: V) => void;
+    onBlur: () => void;
+} {
+    const [value, setValue] = React.useState(initialValue);
+    const onBlur = () => {
+        setValue(update(value));
+    };
     useEffect(() => {
-        if (!saveScheduleDiff.loadingContent && !saveScheduleDiff.errorContent && saveScheduleDiff.originalEvents) {
-            const newEventsMap = new Map<string, EventDescriptor>();
-            const newGroupsMap = new Map<string, ContentGroupDescriptor>();
-            const newTagsMap = new Map<string, TagDescriptor>();
-            const newOriginatingDatasMap = new Map<string, OriginatingDataDescriptor>();
-            const newRoomsMap = new Map<string, RoomDescriptor>();
-            const newAttendeesMap = new Map<string, AttendeeDescriptor>();
+        setValue(initialValue);
+    }, [initialValue]);
+    return {
+        value,
+        setValue,
+        onBlur,
+    };
+}
 
-            for (const [key, value] of saveScheduleDiff.originalEvents) {
-                newEventsMap.set(key, { ...value });
-            }
-
-            for (const [key, value] of saveScheduleDiff.originalTags) {
-                newTagsMap.set(key, { ...value });
-            }
-
-            for (const [key, value] of saveScheduleDiff.originalOriginatingDatas) {
-                newOriginatingDatasMap.set(key, { ...value });
-            }
-
-            for (const [key, value] of saveScheduleDiff.originalRooms) {
-                newRoomsMap.set(key, { ...value });
-            }
-
-            for (const group of saveScheduleDiff.contentGroups) {
-                newGroupsMap.set(group.id, { ...group });
-            }
-
-            for (const [key, value] of saveScheduleDiff.originalAttendees) {
-                newAttendeesMap.set(key, { ...value });
-            }
-
-            setAllEventsMap(newEventsMap);
-            setAllContentGroupsMap(newGroupsMap);
-            setAllTagsMap(newTagsMap);
-            setAllRoomsMap(newRoomsMap);
-            setAllOriginatingDatasMap(newOriginatingDatasMap);
-            setAllAttendeesMap(newAttendeesMap);
-        }
-    }, [
-        saveScheduleDiff.contentGroups,
-        saveScheduleDiff.errorContent,
-        saveScheduleDiff.loadingContent,
-        saveScheduleDiff.originalAttendees,
-        saveScheduleDiff.originalEvents,
-        saveScheduleDiff.originalOriginatingDatas,
-        saveScheduleDiff.originalRooms,
-        saveScheduleDiff.originalTags,
-    ]);
+// Define a default UI for filtering
+function DefaultColumnFilter({ column: { filterValue, preFilteredRows, setFilter } }: FilterProps<EventInfoFragment>) {
+    const count = preFilteredRows.length;
 
     return (
-        <ScheduleCRUDTable
-            key="crud-table"
-            data={allEventsMap ?? new Map()}
-            csud={{
-                cudCallbacks: {
-                    generateTemporaryKey: () => uuidv4(),
-                    create: (tempKey, event) => {
-                        const newEvent = {
-                            ...event,
-                            durationSeconds: event.endTime
-                                ? differenceInSeconds(
-                                      Date.parse(event.endTime),
-                                      event.startTime ? Date.parse(event.startTime) : new Date()
-                                  )
-                                : 300,
-                            isNew: true,
-                            id: tempKey,
-                            people: [],
-                            tagIds: new Set(),
-                        } as EventDescriptor;
-                        setAllEventsMap((oldData) => {
-                            const newData = new Map(oldData ? oldData.entries() : []);
-                            newData.set(tempKey, newEvent);
-                            return newData;
-                        });
-                        return true;
-                    },
-                    update: (events) => {
-                        const results: Map<string, UpdateResult> = new Map();
-                        events.forEach((item, key) => {
-                            results.set(key, true);
-                        });
-
-                        setAllEventsMap((oldData) => {
-                            if (oldData) {
-                                const newData = new Map(oldData.entries());
-                                events.forEach((item, key) => {
-                                    newData.set(key, item);
-                                });
-                                return newData;
-                            }
-                            return undefined;
-                        });
-
-                        return results;
-                    },
-                    delete: (keys) => {
-                        const results: Map<string, boolean> = new Map();
-                        keys.forEach((key) => {
-                            results.set(key, true);
-                        });
-
-                        setAllEventsMap((oldData) => {
-                            const newData = new Map(oldData ? oldData.entries() : []);
-                            keys.forEach((key) => {
-                                newData.delete(key);
-                            });
-                            return newData;
-                        });
-
-                        return results;
-                    },
-                    save: async (keys) => {
-                        assert(allEventsMap);
-                        assert(allContentGroupsMap);
-                        assert(allOriginatingDatasMap);
-                        assert(allTagsMap);
-                        assert(allRoomsMap);
-                        assert(!saveScheduleDiff.loadingContent);
-                        assert(!saveScheduleDiff.errorContent);
-                        assert(saveScheduleDiff.originalEvents);
-                        const results = await saveScheduleDiff.saveScheduleDiff(
-                            {
-                                eventKeys: keys,
-                                originatingDataKeys: new Set(),
-                                roomKeys: new Set(),
-                                tagKeys: new Set(),
-                            },
-                            allTagsMap,
-                            allOriginatingDatasMap,
-                            allEventsMap,
-                            allRoomsMap
-                        );
-
-                        setDirtyTagIds((oldTagIds) => {
-                            const newTagIds = new Set(oldTagIds);
-                            for (const [tagId, result] of results.tags) {
-                                if (result) {
-                                    newTagIds.delete(tagId);
-                                }
-                            }
-                            return newTagIds;
-                        });
-
-                        // TODO: update other dirty IDs
-
-                        return results.events;
-                    },
-                },
+        <Input
+            value={filterValue || ""}
+            onChange={(e) => {
+                setFilter(e.target.value || undefined); // Set undefined to remove the filter entirely
             }}
-            primaryFields={{
-                keyField: {
-                    heading: "Id",
-                    ariaLabel: "Unique identifier",
-                    description: "Unique identifier",
-                    isHidden: true,
-                    insert: (item, v) => {
-                        return {
-                            ...item,
-                            id: v,
-                        };
-                    },
-                    extract: (v) => v.id,
-                    spec: {
-                        fieldType: FieldType.string,
-                        convertToUI: (x) => x,
-                        disallowSpaces: true,
-                    },
-                    validate: (v) => isValidUUID(v) || ["Invalid UUID"],
-                    getRowTitle: (v) => v.name,
-                },
-                otherFields: fields,
-            }}
-            secondaryFields={{
-                editSingle: (key, onClose, isDirty, markDirty) => {
-                    assert(allEventsMap);
-                    assert(allAttendeesMap);
-                    return EventSecondaryEditor(
-                        allEventsMap,
-                        allAttendeesMap,
-                        key,
-                        markDirty,
-                        isDirty,
-                        setAllEventsMap
-                    );
-                },
-            }}
+            placeholder={`Search ${count} records...`}
         />
+    );
+}
+
+// This is a custom filter UI for selecting
+// a unique option from a list
+function SelectColumnFilter({
+    column: { filterValue, setFilter, preFilteredRows, id },
+}: FilterProps<EventInfoFragment>) {
+    // Calculate the options for filtering
+    // using the preFilteredRows
+    const options = React.useMemo(() => {
+        const options = new Set<string>();
+        preFilteredRows.forEach((row) => {
+            options.add(row.values[id]);
+        });
+        return [...options.values()];
+    }, [id, preFilteredRows]);
+
+    // Render a multi-select box
+    return (
+        <Select
+            value={filterValue}
+            onChange={(e) => {
+                setFilter(e.target.value || undefined);
+            }}
+        >
+            <option value="">All</option>
+            {options.map((option, i) => (
+                <option key={i} value={option}>
+                    {option}
+                </option>
+            ))}
+        </Select>
+    );
+}
+
+// This is a custom filter UI that uses a
+// slider to set the filter value between a column's
+// min and max values
+function SliderColumnFilter({
+    column: { filterValue, setFilter, preFilteredRows, id },
+}: FilterProps<EventInfoFragment>) {
+    // Calculate the min and max
+    // using the preFilteredRows
+
+    const [min, max] = React.useMemo(() => {
+        let min = preFilteredRows.length ? preFilteredRows[0].values[id] : 0;
+        let max = preFilteredRows.length ? preFilteredRows[0].values[id] : 0;
+        preFilteredRows.forEach((row) => {
+            min = Math.min(row.values[id], min);
+            max = Math.max(row.values[id], max);
+        });
+        return [min, max];
+    }, [id, preFilteredRows]);
+
+    return (
+        <>
+            <Input
+                type="range"
+                min={min}
+                max={max}
+                value={filterValue || min}
+                onChange={(e) => {
+                    setFilter(parseInt(e.target.value, 10));
+                }}
+            />
+            <Button onClick={() => setFilter(undefined)}>Off</Button>
+        </>
+    );
+}
+
+// This is a custom UI for our 'between' or number range
+// filter. It uses two number boxes and filters rows to
+// ones that have values between the two
+function NumberRangeColumnFilter({
+    column: { filterValue = [], preFilteredRows, setFilter, id },
+}: FilterProps<EventInfoFragment>) {
+    const [min, max] = React.useMemo(() => {
+        let min = preFilteredRows.length ? preFilteredRows[0].values[id] : 0;
+        let max = preFilteredRows.length ? preFilteredRows[0].values[id] : 0;
+        preFilteredRows.forEach((row) => {
+            min = Math.min(row.values[id], min);
+            max = Math.max(row.values[id], max);
+        });
+        return [min, max];
+    }, [id, preFilteredRows]);
+
+    return (
+        <Flex>
+            <NumberInput>
+                <NumberInputField
+                    value={filterValue[0] || ""}
+                    onChange={(e) => {
+                        const val = e.target.value;
+                        setFilter((old = []) => [val ? parseInt(val, 10) : undefined, old[1]]);
+                    }}
+                    placeholder={`Min (${min})`}
+                    style={{
+                        width: "70px",
+                        marginRight: "0.5rem",
+                    }}
+                />
+            </NumberInput>
+            to
+            <NumberInput>
+                <NumberInputField
+                    value={filterValue[1] || ""}
+                    onChange={(e) => {
+                        const val = e.target.value;
+                        setFilter((old = []) => [old[0], val ? parseInt(val, 10) : undefined]);
+                    }}
+                    placeholder={`Max (${max})`}
+                    style={{
+                        width: "70px",
+                        marginLeft: "0.5rem",
+                    }}
+                />
+            </NumberInput>
+        </Flex>
+    );
+}
+
+const startsWithTextFilerFn: FilterType<EventInfoFragment> = (rows, columnIds, filterValue) => {
+    return rows.filter((row) => {
+        return columnIds.every((id) => {
+            const rowValue = row.values[id];
+            return rowValue !== undefined
+                ? String(rowValue).toLowerCase().startsWith(String(filterValue).toLowerCase())
+                : true;
+        });
+    });
+};
+
+const fuzzyTextFilterFn: FilterType<EventInfoFragment> = (rows, columnIds, filterValue) => {
+    return columnIds.reduce((acc, id) => matchSorter(acc, filterValue, { keys: [(row) => row.values[id]] }), rows);
+};
+
+// Let the table remove the filter if the string is empty
+fuzzyTextFilterFn.autoRemove = (val: string) => !val;
+
+// Define a custom filter filter function!
+const filterGreaterThan: FilterType<EventInfoFragment> = (rows, columnIds, filterValue) => {
+    return columnIds.reduce(
+        (acc, id) =>
+            acc.filter((row) => {
+                const rowValue = row.values[id];
+                return rowValue >= filterValue;
+            }),
+        rows
+    );
+};
+
+// This is an autoRemove method on the filter function that
+// when given the new filter value and returns true, the filter
+// will be automatically removed. Normally this is just an undefined
+// check, but here, we want to remove the filter if it's not a number
+filterGreaterThan.autoRemove = (val: any) => typeof val !== "number";
+
+// This is a custom aggregator that
+// takes in an array of leaf values and
+// returns the rounded median
+function roundedMedian(leafValues: number[]) {
+    let min = leafValues[0] || 0;
+    let max = leafValues[0] || 0;
+
+    leafValues.forEach((value) => {
+        min = Math.min(min, value);
+        max = Math.max(max, value);
+    });
+
+    return Math.round((min + max) / 2);
+}
+
+function DateTimeCell(props: CellProps<EventInfoFragment> & { onChange?: (value: Date) => void; onBlur: () => void }) {
+    return <DateTimePicker value={new Date(props.value)} onChange={props.onChange} onBlur={props.onBlur} />;
+}
+
+function fomratEnumValuePart(part: string): string {
+    if (part.length === 0) {
+        return "";
+    }
+    return part[0] + part.substr(1).toLowerCase();
+}
+
+function formatEnumValue(key: string): string {
+    const parts = key.split("_");
+    return parts.reduce((acc, part) => `${acc} ${fomratEnumValuePart(part)}`, "").substr(1);
+}
+
+enum ColumnId {
+    StartTime = "startTime",
+    EndTime = "endTime",
+    Room = "room",
+    RoomMode = "roomMode",
+    Content = "content",
+}
+
+function EditableScheduleTable(): JSX.Element {
+    const conference = useConference();
+    const wholeSchedule = useSelectWholeScheduleQuery({
+        variables: {
+            conferenceId: conference.id,
+        },
+        fetchPolicy: "cache-and-network",
+        nextFetchPolicy: "cache-first",
+    });
+    const data = useMemo(() => [...(wholeSchedule.data?.Event ?? [])], [wholeSchedule.data?.Event]);
+
+    const roomOptions = useMemo(
+        () =>
+            wholeSchedule.data?.Room.map((room) => {
+                return (
+                    <option key={room.id} value={room.id}>
+                        {room.name}
+                    </option>
+                );
+            }),
+        [wholeSchedule.data?.Room]
+    );
+
+    const roomModeOptions = useMemo(
+        () =>
+            Object.keys(RoomMode_Enum).map((x) => {
+                const v = (RoomMode_Enum as any)[x];
+                return (
+                    <option key={x} value={v}>
+                        {formatEnumValue(v)}
+                    </option>
+                );
+            }),
+        []
+    );
+
+    const contentGroupOptions = useMemo(
+        () =>
+            wholeSchedule.data?.ContentGroup.map((content) => {
+                return (
+                    <option key={content.id} value={content.id}>
+                        {content.title}
+                    </option>
+                );
+            }),
+        [wholeSchedule.data?.ContentGroup]
+    );
+
+    const {
+        isOpen: isSecondaryPanelOpen,
+        onOpen: onSecondaryPanelOpen,
+        onClose: onSecondaryPanelClose,
+    } = useDisclosure();
+    const [editingIndex, setEditingIndex] = useState<number | null>(null);
+
+    const [insertEvent, insertEventResponse] = useInsertEventInfoMutation();
+    const [updateEvent, updateEventResponse] = useUpdateEventInfoMutation();
+    const [deleteEvent, deleteEventResponse] = useDeleteEventInfoMutation();
+    const [deleteEvents, deleteEventsResponse] = useDeleteEventInfosMutation();
+    const isIndexAffectingEditOngoing =
+        insertEventResponse.loading || deleteEventResponse.loading || deleteEventsResponse.loading;
+
+    const columns: Array<Column<EventInfoFragment>> = React.useMemo(
+        () => [
+            {
+                id: "selection-group",
+                Header: "",
+                disableResizing: true,
+                columns: [
+                    {
+                        id: "selection",
+                        // Make this column a groupByBoundary. This ensures that groupBy columns
+                        // are placed after it
+                        groupByBoundary: true,
+                        // The header can use the table's getToggleAllRowsSelectedProps method
+                        // to render a checkbox
+                        Header: function ColumnHeader({
+                            getToggleAllRowsSelectedProps,
+                        }: HeaderProps<EventInfoFragment>) {
+                            const props = getToggleAllRowsSelectedProps();
+                            const isIndeterminate = props.indeterminate;
+                            const isChecked = props.checked;
+                            delete props.indeterminate;
+                            delete props.checked;
+                            return (
+                                <Center w="100%" h="100%">
+                                    <Checkbox
+                                        {...props}
+                                        isDisabled={isIndexAffectingEditOngoing}
+                                        isIndeterminate={isIndeterminate}
+                                        isChecked={isChecked}
+                                    />
+                                </Center>
+                            );
+                        },
+                        // The cell can use the individual row's getToggleRowSelectedProps method
+                        // to the render a checkbox
+                        Cell: function ColumnCell({ row }: CellProps<EventInfoFragment>) {
+                            const props = row.getToggleRowSelectedProps();
+                            const isIndeterminate = props.indeterminate;
+                            const isChecked = props.checked;
+                            delete props.indeterminate;
+                            delete props.checked;
+                            return (
+                                <Center w="100%" h="100%">
+                                    <Checkbox
+                                        {...props}
+                                        isDisabled={isIndexAffectingEditOngoing}
+                                        isIndeterminate={isIndeterminate}
+                                        isChecked={isChecked}
+                                    />
+                                </Center>
+                            );
+                        },
+
+                        width: 30,
+                        disableResizing: true,
+                    },
+                ],
+            },
+            {
+                id: "edit-group",
+                Header: "",
+                disableResizing: true,
+                columns: [
+                    {
+                        id: "edit",
+                        groupByBoundary: true,
+                        Header: function ColumnHeader(props: HeaderProps<EventInfoFragment>) {
+                            return (
+                                <Center w="100%" h="100%" padding={0}>
+                                    <Button
+                                        isDisabled={!wholeSchedule.data?.Room || isIndexAffectingEditOngoing}
+                                        aria-label="Create new event"
+                                        onClick={() => {
+                                            if (wholeSchedule.data?.Room && wholeSchedule.data.Room.length !== 0) {
+                                                // TODO: Find a non-overlapping room/time
+
+                                                insertEvent({
+                                                    variables: {
+                                                        durationSeconds: 300,
+                                                        conferenceId: conference.id,
+                                                        intendedRoomModeName: RoomMode_Enum.Breakout,
+                                                        name: "New event",
+                                                        roomId: wholeSchedule.data.Room[0].id,
+                                                        startTime: new Date().toISOString(),
+                                                        contentGroupId: null,
+                                                        originatingDataId: null,
+                                                    },
+                                                    update: (cache, { data: _data }) => {
+                                                        if (_data?.insert_Event_one) {
+                                                            const data = _data.insert_Event_one;
+                                                            cache.modify({
+                                                                fields: {
+                                                                    Event(
+                                                                        existingRefs: Reference[] = [],
+                                                                        { readField }
+                                                                    ) {
+                                                                        const newRef = cache.writeFragment({
+                                                                            data,
+                                                                            fragment: EventInfoFragmentDoc,
+                                                                            fragmentName: "EventInfo",
+                                                                        });
+                                                                        if (
+                                                                            existingRefs.some(
+                                                                                (ref) =>
+                                                                                    readField("id", ref) === data.id
+                                                                            )
+                                                                        ) {
+                                                                            return existingRefs;
+                                                                        }
+
+                                                                        return [...existingRefs, newRef];
+                                                                    },
+                                                                },
+                                                            });
+                                                        }
+                                                    },
+                                                });
+                                                // TODO: Focus on the new event
+                                            }
+                                        }}
+                                        size="xs"
+                                        colorScheme="green"
+                                    >
+                                        <FAIcon iconStyle="s" icon="plus" />
+                                    </Button>
+                                </Center>
+                            );
+                        },
+                        Cell: function ColumnCell({ row }: CellProps<EventInfoFragment>) {
+                            return (
+                                <Center w="100%" h="100%" padding={0}>
+                                    <Button
+                                        isDisabled={isIndexAffectingEditOngoing}
+                                        aria-label={`Edit row ${row.index}`}
+                                        onClick={() => {
+                                            setEditingIndex(row.index);
+                                            onSecondaryPanelOpen();
+                                        }}
+                                        size="xs"
+                                        colorScheme="blue"
+                                    >
+                                        <FAIcon iconStyle="s" icon="edit" />
+                                    </Button>
+                                </Center>
+                            );
+                        },
+
+                        width: 35,
+                        disableResizing: true,
+                    },
+                ],
+            },
+            {
+                Header: "Time",
+                disableResizing: true,
+                columns: [
+                    {
+                        id: ColumnId.StartTime,
+                        Header: "Start Time",
+                        accessor: (row) => Date.parse(row.startTime),
+                        Cell: function StartTimeCell(props: CellProps<EventInfoFragment>) {
+                            const { value, setValue, onBlur } = useEditableValue(props.value, (newValue) => {
+                                return props.updateMyData(props.row.index, props.column.id, newValue);
+                            });
+
+                            if (props.row.isGrouped && !props.column.isGrouped) {
+                                return <></>;
+                            }
+
+                            return (
+                                <DateTimeCell
+                                    {...props}
+                                    value={value}
+                                    onChange={(v) => setValue(v.getTime())}
+                                    onBlur={onBlur}
+                                />
+                            );
+                        },
+                        minWidth: 385,
+                    },
+                    {
+                        id: ColumnId.EndTime,
+                        Header: "End Time",
+                        accessor: (row) => Date.parse(row.startTime) + row.durationSeconds * 1000,
+                        Cell: function EndTimeCell(props: CellProps<EventInfoFragment>) {
+                            const { value, setValue, onBlur } = useEditableValue(props.value, (newValue) => {
+                                return props.updateMyData(props.row.index, props.column.id, newValue);
+                            });
+
+                            if (props.row.isGrouped && !props.column.isGrouped) {
+                                return <></>;
+                            }
+
+                            return (
+                                <DateTimeCell
+                                    {...props}
+                                    value={value}
+                                    onChange={(v) => setValue(v.getTime())}
+                                    onBlur={onBlur}
+                                />
+                            );
+                        },
+                        minWidth: 395,
+                    },
+                ],
+            },
+            {
+                Header: "Room",
+                disableResizing: true,
+                columns: [
+                    {
+                        id: ColumnId.Room,
+                        Header: "Room",
+                        accessor: (data) => wholeSchedule.data?.Room.find((room) => room.id === data.roomId),
+                        sortType: (rowA: Row, rowB: Row) => {
+                            const roomA = wholeSchedule.data?.Room.find((x) => x.id === rowA.values[ColumnId.Room]);
+                            const roomB = wholeSchedule.data?.Room.find((x) => x.id === rowB.values[ColumnId.Room]);
+                            const compared =
+                                roomA && roomB ? roomA.name.localeCompare(roomB.name) : roomA ? 1 : roomB ? -1 : 0;
+                            return compared;
+                        },
+                        filter: (rows: Array<Row>, _columnIds: Array<string>, filterValue: string): Array<Row> => {
+                            return rows.filter((row) => {
+                                return (
+                                    row.values[ColumnId.Room]?.name.toLowerCase().includes(filterValue.toLowerCase()) ??
+                                    false
+                                );
+                            });
+                        },
+                        Cell: function RoomCell(props: CellProps<EventInfoFragment>) {
+                            const { value, setValue, onBlur } = useEditableValue(props.value?.id, (newValue) => {
+                                return props.updateMyData(props.row.index, props.column.id, newValue);
+                            });
+
+                            if (props.row.isGrouped && !props.column.isGrouped) {
+                                return <></>;
+                            }
+
+                            return (
+                                <Select
+                                    value={value ?? ""}
+                                    onChange={(ev) => setValue(ev.target.value)}
+                                    onBlur={onBlur}
+                                >
+                                    {roomOptions}
+                                </Select>
+                            );
+                        },
+                        minWidth: 200,
+                    },
+                    {
+                        id: ColumnId.RoomMode,
+                        Header: "Mode",
+                        accessor: "intendedRoomModeName",
+                        Filter: SelectColumnFilter,
+                        Cell: function RoomModeCell(props: CellProps<EventInfoFragment>) {
+                            const { value, setValue, onBlur } = useEditableValue(props.value, (newValue) => {
+                                return props.updateMyData(props.row.index, props.column.id, newValue);
+                            });
+
+                            if (props.row.isGrouped && !props.column.isGrouped) {
+                                return <></>;
+                            }
+
+                            return (
+                                <Select
+                                    value={value ?? ""}
+                                    onChange={(ev) => setValue(ev.target.value)}
+                                    onBlur={onBlur}
+                                >
+                                    {roomModeOptions}
+                                </Select>
+                            );
+                        },
+                        minWidth: 180,
+                    },
+                ],
+            },
+            {
+                id: "content-group",
+                Header: "Content",
+                disableResizing: true,
+                columns: [
+                    {
+                        id: ColumnId.Content,
+                        Header: "Content",
+                        accessor: (data) =>
+                            wholeSchedule.data?.ContentGroup.find((room) => room.id === data.contentGroupId),
+                        sortType: (rowA: Row, rowB: Row) => {
+                            const compared =
+                                rowA.values[ColumnId.Content] && rowB.values[ColumnId.Content]
+                                    ? rowA.values[ColumnId.Content].title.localeCompare(
+                                          rowB.values[ColumnId.Content].title
+                                      )
+                                    : rowA.values[ColumnId.Content]
+                                    ? 1
+                                    : rowB.values[ColumnId.Content]
+                                    ? -1
+                                    : 0;
+                            return compared;
+                        },
+                        filter: (rows: Array<Row>, _columnIds: Array<string>, filterValue: string): Array<Row> => {
+                            return rows.filter((row) => {
+                                return (
+                                    row.values[ColumnId.Content]?.title
+                                        .toLowerCase()
+                                        .includes(filterValue.toLowerCase()) ?? false
+                                );
+                            });
+                        },
+                        Cell: function ContentCell(props: CellProps<EventInfoFragment>) {
+                            const { value, setValue, onBlur } = useEditableValue(props.value?.id, (newValue) => {
+                                return props.updateMyData(props.row.index, props.column.id, newValue);
+                            });
+
+                            if (props.row.isGrouped && !props.column.isGrouped) {
+                                return <></>;
+                            }
+
+                            return (
+                                <Select
+                                    value={value ?? ""}
+                                    onChange={(ev) => setValue(ev.target.value)}
+                                    onBlur={onBlur}
+                                >
+                                    <option value={""}>{"<None selected>"}</option>
+                                    {contentGroupOptions}
+                                </Select>
+                            );
+                        },
+                        minWidth: 400,
+                    },
+                ],
+            },
+            {
+                id: "delete-group",
+                Header: "",
+                disableResizing: true,
+                columns: [
+                    {
+                        id: "delete",
+                        groupByBoundary: true,
+                        Header: function ColumnHeader(props: HeaderProps<EventInfoFragment>) {
+                            return (
+                                <Center w="100%" h="100%" padding={0}>
+                                    <Button
+                                        aria-label="Delete selected rows"
+                                        onClick={() => {
+                                            // TODO: Delete all selected
+                                        }}
+                                        size="xs"
+                                        colorScheme="red"
+                                        isDisabled={isIndexAffectingEditOngoing}
+                                    >
+                                        <FAIcon iconStyle="s" icon="trash-alt" />
+                                    </Button>
+                                </Center>
+                            );
+                        },
+                        Cell: function ColumnCell({ row }: CellProps<EventInfoFragment>) {
+                            return (
+                                <Center w="100%" h="100%" padding={0}>
+                                    <Button
+                                        aria-label={`Delete row ${row.index}`}
+                                        isDisabled={isIndexAffectingEditOngoing}
+                                        onClick={() => {
+                                            if (wholeSchedule.data?.Event) {
+                                                deleteEvent({
+                                                    variables: {
+                                                        eventId: wholeSchedule.data.Event[row.index].id,
+                                                    },
+                                                    update: (cache, { data: _data }) => {
+                                                        if (_data?.delete_Event_by_pk) {
+                                                            const data = _data.delete_Event_by_pk;
+                                                            cache.modify({
+                                                                fields: {
+                                                                    Event(
+                                                                        existingRefs: Reference[] = [],
+                                                                        { readField }
+                                                                    ) {
+                                                                        cache.evict({
+                                                                            id: data.id,
+                                                                            fieldName: "EventInfo",
+                                                                            broadcast: true,
+                                                                        });
+                                                                        return existingRefs.filter(
+                                                                            (ref) => readField("id", ref) !== data.id
+                                                                        );
+                                                                    },
+                                                                },
+                                                            });
+                                                        }
+                                                    },
+                                                });
+                                            }
+                                        }}
+                                        size="xs"
+                                        colorScheme="red"
+                                    >
+                                        <FAIcon iconStyle="s" icon="trash-alt" />
+                                    </Button>
+                                </Center>
+                            );
+                        },
+
+                        width: 40,
+                        disableResizing: true,
+                    },
+                ],
+            },
+        ],
+        [
+            conference.id,
+            contentGroupOptions,
+            deleteEvent,
+            insertEvent,
+            isIndexAffectingEditOngoing,
+            onSecondaryPanelOpen,
+            roomModeOptions,
+            roomOptions,
+            wholeSchedule.data?.ContentGroup,
+            wholeSchedule.data?.Event,
+            wholeSchedule.data?.Room,
+        ]
+    );
+
+    const filterTypes: FilterTypes<EventInfoFragment> = React.useMemo(
+        () => ({
+            // Add a new fuzzyTextFilterFn filter type.
+            fuzzyText: fuzzyTextFilterFn,
+            // Or, override the default text filter to use
+            // "startWith"
+            text: startsWithTextFilerFn,
+        }),
+        []
+    );
+
+    const defaultColumn = React.useMemo(
+        () => ({
+            // Let's set up our default Filter UI
+            Filter: DefaultColumnFilter,
+            // And also our default editable cell
+            Cell: function DefaultCell(props: CellProps<EventInfoFragment>) {
+                return <>{props.value}</>;
+            },
+        }),
+        []
+    );
+
+    // We need to keep the table from resetting the pageIndex when we
+    // Update data. So we can keep track of that flag with a ref.
+    const skipResetRef = React.useRef(false);
+    const skipReset = skipResetRef.current;
+
+    // When our cell renderer calls updateMyData, we'll use
+    // the rowIndex, columnId and new value to update the
+    // original data
+    const updateMyData = (rowIndex: number, columnId: ColumnId, value: any) => {
+        let finalValue = value;
+        if (wholeSchedule.data) {
+            // We also turn on the flag to not reset the page
+            skipResetRef.current = true;
+
+            const original = wholeSchedule.data.Event[rowIndex];
+            const updated = { ...original };
+            let hasChanged = false;
+            switch (columnId) {
+                case ColumnId.StartTime:
+                    {
+                        const originalStart = Date.parse(original.startTime);
+                        const originalEnd = originalStart + 1000 * original.durationSeconds;
+                        updated.startTime = new Date(value).toISOString();
+                        updated.durationSeconds = Math.max(Math.round((originalEnd - value) / 1000), 30);
+                        // Make sure we're comparing numeric timestamp, because
+                        // string formats differ between client side and server side.
+                        hasChanged = value !== originalStart;
+                    }
+                    break;
+                case ColumnId.EndTime:
+                    {
+                        const startTime = Date.parse(updated.startTime);
+                        updated.durationSeconds = Math.max(Math.round((value - startTime) / 1000), 30);
+                        hasChanged = updated.durationSeconds !== original.durationSeconds;
+                        finalValue = startTime + 1000 * updated.durationSeconds;
+                    }
+                    break;
+                case ColumnId.Room:
+                    updated.roomId = value;
+                    hasChanged = updated.roomId !== original.roomId;
+                    break;
+                case ColumnId.RoomMode:
+                    updated.intendedRoomModeName = value;
+                    hasChanged = updated.intendedRoomModeName !== original.intendedRoomModeName;
+                    break;
+                case ColumnId.Content:
+                    updated.contentGroupId = value.length > 0 ? value : undefined;
+                    hasChanged = updated.contentGroupId !== original.contentGroupId;
+                    break;
+            }
+
+            if (hasChanged) {
+                updateEvent({
+                    variables: {
+                        eventId: updated.id,
+                        name: updated.name,
+                        startTime: updated.startTime,
+                        durationSeconds: updated.durationSeconds,
+                        roomId: updated.roomId,
+                        intendedRoomModeName: updated.intendedRoomModeName,
+                        contentGroupId: updated.contentGroupId,
+                        originatingDataId: updated.originatingDataId,
+                    },
+                    update: (cache, { data: _data }) => {
+                        if (_data?.update_Event_by_pk) {
+                            const data = _data.update_Event_by_pk;
+                            cache.modify({
+                                fields: {
+                                    Event(existingRefs: Reference[] = [], { readField }) {
+                                        const newRef = cache.writeFragment({
+                                            data,
+                                            fragment: EventInfoFragmentDoc,
+                                            fragmentName: "EventInfo",
+                                        });
+                                        if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
+                                            return existingRefs;
+                                        }
+
+                                        return [...existingRefs, newRef];
+                                    },
+                                },
+                            });
+                        }
+                    },
+                });
+            }
+        }
+        return finalValue;
+    };
+
+    // After data changes, we turn the flag back off
+    // so that if data actually changes when we're not
+    // editing it, the page is reset
+    React.useEffect(() => {
+        skipResetRef.current = false;
+    }, [data]);
+
+    const [defaultPageSize, setDefaultPageSize] = useRestorableState<number>(
+        "MANAGE_CONFERENCE_SCHEDULE_PAGE_SIZE",
+        10,
+        (x) => x.toString(),
+        (x) => parseInt(x, 10)
+    );
+    const {
+        getTableProps,
+        getTableBodyProps,
+        headerGroups,
+        prepareRow,
+        page, // Instead of using 'rows', we'll use page,
+        // which has only the rows for the active page
+
+        // The rest of these things are super handy, too ;)
+        canPreviousPage,
+        canNextPage,
+        pageOptions,
+        pageCount,
+        gotoPage,
+        nextPage,
+        previousPage,
+        setPageSize: _setPageSize,
+        state: { pageIndex, pageSize, sortBy, groupBy, expanded, filters, selectedRowIds },
+    } = useTable<EventInfoFragment>(
+        {
+            columns,
+            data,
+            defaultColumn,
+            filterTypes,
+            // updateMyData isn't part of the API, but
+            // anything we put into these options will
+            // automatically be available on the instance.
+            // That way we can call this function from our
+            // cell renderer!
+            updateMyData,
+            // We also need to pass this so the page doesn't change
+            // when we edit the data.
+            autoResetPage: !skipReset,
+            autoResetSelectedRows: !skipReset,
+            disableMultiSort: true,
+
+            groupByFn: (rows: Array<Row<any>>, columnId: string): Record<string, Array<Row<any>>> => {
+                if (columnId === ColumnId.Room || columnId === ColumnId.Content) {
+                    return defaultGroupByFn(
+                        rows.map((row) => {
+                            const newRow = { ...row, values: { ...row.values } };
+                            row.values[columnId + "_id"] = row.values[columnId]?.id ?? "";
+                            return newRow;
+                        }),
+                        columnId + "_id"
+                    );
+                }
+
+                return defaultGroupByFn(rows, columnId);
+            },
+
+            initialState: {
+                pageSize: defaultPageSize,
+                sortBy: [
+                    {
+                        id: "startTime",
+                        desc: false,
+                    },
+                    {
+                        id: "endTime",
+                        desc: false,
+                    },
+                ],
+            },
+        },
+        useFilters,
+        useGroupBy,
+        useSortBy,
+        useExpanded,
+        usePagination,
+        useRowSelect,
+        useResizeColumns,
+        useFlexLayout
+    );
+
+    const setPageSize = useCallback(
+        (v) => {
+            setDefaultPageSize(v);
+            _setPageSize(v);
+        },
+        [_setPageSize, setDefaultPageSize]
+    );
+
+    const tableProps = getTableProps();
+    delete tableProps.style;
+
+    return (
+        <>
+            {wholeSchedule.loading ? <Spinner label="Loading schedule data" /> : undefined}
+            {wholeSchedule.error ? (
+                <Alert status="error">
+                    <AlertTitle>Error</AlertTitle>
+                    <AlertDescription>
+                        <Text>Error loading data.</Text>
+                        <Code>{wholeSchedule.error.message}</Code>
+                    </AlertDescription>
+                </Alert>
+            ) : undefined}
+            {insertEventResponse.loading ? <Spinner label="Creating" /> : undefined}
+            {insertEventResponse.error ? (
+                <Alert status="error">
+                    <AlertTitle>Error</AlertTitle>
+                    <AlertDescription>
+                        <Text>Error creating event.</Text>
+                        <Code>{insertEventResponse.error.message}</Code>
+                    </AlertDescription>
+                </Alert>
+            ) : undefined}
+            {updateEventResponse.loading ? <Spinner label="Saving" /> : undefined}
+            {updateEventResponse.error ? (
+                <Alert status="error">
+                    <AlertTitle>Error</AlertTitle>
+                    <AlertDescription>
+                        <Text>Error saving changes.</Text>
+                        <Code>{updateEventResponse.error.message}</Code>
+                    </AlertDescription>
+                </Alert>
+            ) : undefined}
+            {deleteEventResponse.loading ? <Spinner label="Deleting one" /> : undefined}
+            {deleteEventResponse.error ? (
+                <Alert status="error">
+                    <AlertTitle>Error</AlertTitle>
+                    <AlertDescription>
+                        <Text>Error deleting event.</Text>
+                        <Code>{deleteEventResponse.error.message}</Code>
+                    </AlertDescription>
+                </Alert>
+            ) : undefined}
+            {deleteEventsResponse.loading ? <Spinner label="Deleting selected" /> : undefined}
+            {deleteEventsResponse.error ? (
+                <Alert status="error">
+                    <AlertTitle>Error</AlertTitle>
+                    <AlertDescription>
+                        <Text>Error deleting events.</Text>
+                        <Code>{deleteEventsResponse.error.message}</Code>
+                    </AlertDescription>
+                </Alert>
+            ) : undefined}
+            <Table
+                {...tableProps}
+                display="block"
+                maxWidth="100%"
+                width="auto"
+                size="sm"
+                variant="striped"
+                overflow="auto"
+            >
+                <Thead>
+                    {headerGroups.map((headerGroup) => (
+                        // eslint-disable-next-line react/jsx-key
+                        <Tr {...headerGroup.getHeaderGroupProps()}>
+                            {headerGroup.headers.map((column) => (
+                                // eslint-disable-next-line react/jsx-key
+                                <Th
+                                    {...column.getHeaderProps()}
+                                    paddingLeft={
+                                        column.id.startsWith("selection-group") ||
+                                        column.id === "selection" ||
+                                        column.id.startsWith("edit-group") ||
+                                        column.id === "edit" ||
+                                        column.id.startsWith("delete-group") ||
+                                        column.id === "delete"
+                                            ? 0
+                                            : column.id.startsWith("Time") || column.id === "startTime"
+                                            ? 2
+                                            : undefined
+                                    }
+                                    paddingRight={
+                                        column.id.startsWith("selection-group") ||
+                                        column.id === "selection" ||
+                                        column.id.startsWith("edit-group") ||
+                                        column.id === "edit"
+                                            ? 0
+                                            : undefined
+                                    }
+                                >
+                                    <VStack alignItems="flex-start" h="100%">
+                                        <HStack
+                                            h="100%"
+                                            w="100%"
+                                            spacing={2}
+                                            alignItems="center"
+                                            justifyContent={
+                                                column.id.startsWith("selection-group") ||
+                                                column.id === "selection" ||
+                                                column.id.startsWith("edit-group") ||
+                                                column.id === "edit"
+                                                    ? "center"
+                                                    : "flex-start"
+                                            }
+                                        >
+                                            {column.canGroupBy ? (
+                                                // If the column can be grouped, let's add a toggle
+                                                <Box {...column.getGroupByToggleProps()}>
+                                                    {column.isGrouped ? (
+                                                        <FAIcon iconStyle="s" icon="object-ungroup" />
+                                                    ) : (
+                                                        <FAIcon iconStyle="s" icon="object-group" />
+                                                    )}
+                                                </Box>
+                                            ) : null}
+                                            <HStack {...column.getSortByToggleProps()} spacing={2} alignItems="center">
+                                                <Box>{column.render("Header")}</Box>
+                                                {/* Add a sort direction indicator */}
+                                                {column.isSorted ? (
+                                                    column.isSortedDesc ? (
+                                                        <FAIcon iconStyle="s" icon="sort-down" />
+                                                    ) : (
+                                                        <FAIcon iconStyle="s" icon="sort-up" />
+                                                    )
+                                                ) : (
+                                                    ""
+                                                )}
+                                            </HStack>
+                                            {/* Use column.getResizerProps to hook up the events correctly */}
+                                            {column.canResize && (
+                                                <>
+                                                    <Spacer />
+                                                    <Box
+                                                        {...column.getResizerProps()}
+                                                        style={{ touchAction: "none" }}
+                                                        userSelect="none"
+                                                        cursor="pointer"
+                                                        color={column.isResizing ? "blue.400" : undefined}
+                                                    >
+                                                        <FAIcon iconStyle="s" icon="arrows-alt-h" />
+                                                    </Box>
+                                                </>
+                                            )}
+                                        </HStack>
+                                        {/* Render the columns filter UI */}
+                                        <Box>{column.canFilter ? column.render("Filter") : null}</Box>
+                                    </VStack>
+                                </Th>
+                            ))}
+                        </Tr>
+                    ))}
+                </Thead>
+                <Tbody {...getTableBodyProps()}>
+                    {page.map((row) => {
+                        prepareRow(row);
+                        return (
+                            // eslint-disable-next-line react/jsx-key
+                            <Tr {...row.getRowProps()}>
+                                {row.cells.map((cell) => {
+                                    return (
+                                        // eslint-disable-next-line react/jsx-key
+                                        <Td
+                                            {...cell.getCellProps()}
+                                            paddingLeft={
+                                                cell.column.id === "selection" ||
+                                                cell.column.id === "edit" ||
+                                                cell.column.id === "delete"
+                                                    ? 0
+                                                    : cell.column.id === "startTime"
+                                                    ? 2
+                                                    : undefined
+                                            }
+                                            paddingRight={
+                                                cell.column.id === "selection" || cell.column.id === "edit"
+                                                    ? 0
+                                                    : undefined
+                                            }
+                                        >
+                                            {cell.isGrouped ? (
+                                                // If it's a grouped cell, add an expander and row count
+                                                <HStack>
+                                                    <chakra.span minW="min-content">({row.subRows.length})</chakra.span>
+                                                    <chakra.span {...row.getToggleRowExpandedProps()}>
+                                                        {row.isExpanded ? (
+                                                            <FAIcon iconStyle="s" icon="caret-down" />
+                                                        ) : (
+                                                            <FAIcon iconStyle="s" icon="caret-right" />
+                                                        )}
+                                                    </chakra.span>{" "}
+                                                    {cell.render("Cell", { editable: false })}
+                                                </HStack>
+                                            ) : cell.isAggregated ? (
+                                                // If the cell is aggregated, use the Aggregated
+                                                // renderer for cell
+                                                cell.render("Aggregated")
+                                            ) : cell.isPlaceholder ? null : ( // For cells with repeated values, render null
+                                                // Otherwise, just render the regular cell
+                                                cell.render("Cell", { editable: true })
+                                            )}
+                                        </Td>
+                                    );
+                                })}
+                            </Tr>
+                        );
+                    })}
+                </Tbody>
+            </Table>
+            <Flex justifyContent="center" alignItems="center" gridGap={2} flexDir="row" flexWrap="wrap">
+                <ButtonGroup>
+                    <Button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+                        {"<<"}
+                    </Button>
+                    <Button onClick={() => previousPage()} disabled={!canPreviousPage}>
+                        {"<"}
+                    </Button>
+                    <Button onClick={() => nextPage()} disabled={!canNextPage}>
+                        {">"}
+                    </Button>
+                    <Button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
+                        {">>"}
+                    </Button>
+                </ButtonGroup>
+                <Box flexBasis="auto" flexShrink={0}>
+                    Page{" "}
+                    <chakra.strong>
+                        {pageIndex + 1} of {pageOptions.length}
+                    </chakra.strong>
+                </Box>
+                <HStack alignItems="center">
+                    <chakra.span flexBasis="auto" flexShrink={0}>
+                        | Go to page:{" "}
+                    </chakra.span>
+                    <NumberInput>
+                        <NumberInputField
+                            defaultValue={pageIndex + 1}
+                            onChange={(e) => {
+                                const page = e.target.value ? Number(e.target.value) - 1 : 0;
+                                gotoPage(page);
+                            }}
+                            style={{ width: "100px" }}
+                        />
+                    </NumberInput>
+                </HStack>
+                <Select
+                    value={pageSize}
+                    onChange={(e) => {
+                        setPageSize(Number(e.target.value));
+                    }}
+                    maxW={125}
+                >
+                    {[10, 20, 30, 40, 50].map((pageSize) => (
+                        <option key={pageSize} value={pageSize}>
+                            Show {pageSize}
+                        </option>
+                    ))}
+                </Select>
+            </Flex>
+            <EventSecondaryEditor
+                attendees={wholeSchedule.data?.Attendee ?? []}
+                events={wholeSchedule.data?.Event ?? []}
+                index={editingIndex}
+                isSecondaryPanelOpen={isSecondaryPanelOpen}
+                onSecondaryPanelClose={() => {
+                    onSecondaryPanelClose();
+                    setEditingIndex(null);
+                }}
+            />
+        </>
     );
 }
 
 export default function ManageConferenceSchedulePage(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage schedule of ${conference.shortName}`);
-
     useDashboardPrimaryMenuButtons();
 
     return (
@@ -523,125 +1375,74 @@ export default function ManageConferenceSchedulePage(): JSX.Element {
             <Heading as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                 Events
             </Heading>
-
-            <EditableScheduleCRUDTable />
+            <EditableScheduleTable />
         </RequireAtLeastOnePermissionWrapper>
     );
 }
 
-function EventSecondaryEditor(
-    allEventsMap: Map<string, EventDescriptor>,
-    allAttendeesMap: Map<string, AttendeeDescriptor>,
-    key: string,
-    markDirty: () => void,
-    isDirty: boolean,
-    setAllEventsMap: React.Dispatch<React.SetStateAction<Map<string, EventDescriptor> | undefined>>
-) {
-    const event = allEventsMap.get(key);
+function EventSecondaryEditor({
+    events,
+    attendees,
+    isSecondaryPanelOpen,
+    index,
+    onSecondaryPanelClose,
+}: {
+    events: readonly EventInfoFragment[];
+    attendees: readonly AttendeeInfoFragment[];
+    isSecondaryPanelOpen: boolean;
+    index: number | null;
+    onSecondaryPanelClose: () => void;
+}): JSX.Element {
+    const event = index !== null ? events[index] : null;
 
-    const editor = (
-        <>
-            {event ? (
-                <Accordion defaultIndex={[0]}>
-                    <AccordionItem key="people">
-                        <AccordionButton>
-                            <Box flex="1" textAlign="left">
-                                People
-                            </Box>
-                            <AccordionIcon />
-                        </AccordionButton>
-                        <AccordionPanel>
-                            <EventPeopleEditorModal
-                                event={event}
-                                isDirty={isDirty}
-                                markDirty={markDirty}
-                                attendeeMap={allAttendeesMap}
-                                setAllEventsMap={setAllEventsMap}
-                            />
-                        </AccordionPanel>
-                    </AccordionItem>
-                </Accordion>
-            ) : (
-                <>No event found.</>
-            )}
-        </>
+    return (
+        <Drawer
+            isOpen={isSecondaryPanelOpen}
+            placement="right"
+            onClose={onSecondaryPanelClose}
+            // finalFocusRef={btnRef} // TODO: Ref to the edit button
+            size="lg"
+        >
+            <DrawerOverlay>
+                <DrawerContent>
+                    <DrawerCloseButton />
+                    <DrawerHeader>Edit</DrawerHeader>
+
+                    <DrawerBody>
+                        {event ? (
+                            <Accordion defaultIndex={[0]}>
+                                <AccordionItem key="people">
+                                    <AccordionButton>
+                                        <Box flex="1" textAlign="left">
+                                            People
+                                        </Box>
+                                        <AccordionIcon />
+                                    </AccordionButton>
+                                    <AccordionPanel>
+                                        <EventPeopleEditorModal event={event} attendees={attendees} />
+                                    </AccordionPanel>
+                                </AccordionItem>
+                            </Accordion>
+                        ) : (
+                            <>No event found.</>
+                        )}
+                    </DrawerBody>
+                </DrawerContent>
+            </DrawerOverlay>
+        </Drawer>
     );
-
-    return {
-        includeCloseButton: true,
-        editorElement: editor,
-        footerButtons: [],
-    };
 }
 
 function EventPeopleEditorModal({
     event,
-    attendeeMap,
-    isDirty,
-    markDirty,
-    setAllEventsMap,
+    attendees,
 }: {
-    event: EventDescriptor;
-    attendeeMap: Map<string, AttendeeDescriptor>;
-    isDirty: boolean;
-    markDirty: () => void;
-    setAllEventsMap: React.Dispatch<React.SetStateAction<Map<string, EventDescriptor> | undefined>>;
+    event: EventInfoFragment;
+    attendees: readonly AttendeeInfoFragment[];
 }) {
-    const { isOpen: isUploadersOpen, onOpen: onUploadersOpen, onClose: onUploadersClose } = useDisclosure();
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const accordionContents = (
-        <>
-            <EventPersonsModal
-                isEventDirty={isDirty}
-                isOpen={isUploadersOpen}
-                onOpen={onUploadersOpen}
-                onClose={onUploadersClose}
-                event={event}
-                attendeeMap={attendeeMap}
-                insertEventPerson={(eventPerson) => {
-                    markDirty();
-                    setAllEventsMap((oldEvents) => {
-                        const newEvents: Map<string, EventDescriptor> = oldEvents ? new Map(oldEvents) : new Map();
-                        const existingEvent = newEvents.get(event.id);
-                        assert(existingEvent);
-                        newEvents.set(event.id, {
-                            ...existingEvent,
-                            people: [...existingEvent.people, eventPerson],
-                        });
-                        return newEvents;
-                    });
-                }}
-                updateEventPerson={(eventPerson) => {
-                    markDirty();
-                    setAllEventsMap((oldEvents) => {
-                        const newEvents: Map<string, EventDescriptor> = oldEvents ? new Map(oldEvents) : new Map();
-                        const existingEvent = newEvents.get(event.id);
-                        assert(existingEvent);
-                        newEvents.set(event.id, {
-                            ...existingEvent,
-                            people: existingEvent.people.map((existingEventPerson) =>
-                                existingEventPerson.id === eventPerson.id ? eventPerson : existingEventPerson
-                            ),
-                        });
-                        return newEvents;
-                    });
-                }}
-                deleteEventPerson={(eventPersonId) => {
-                    markDirty();
-                    setAllEventsMap((oldEvents) => {
-                        const newEvents: Map<string, EventDescriptor> = oldEvents ? new Map(oldEvents) : new Map();
-                        const existingEvent = newEvents.get(event.id);
-                        assert(existingEvent);
-                        newEvents.set(event.id, {
-                            ...existingEvent,
-                            people: existingEvent.people.filter(
-                                (existingEventPerson) => existingEventPerson.id !== eventPersonId
-                            ),
-                        });
-                        return newEvents;
-                    });
-                }}
-            />
-        </>
+        <EventPersonsModal isOpen={isOpen} onOpen={onOpen} onClose={onClose} event={event} attendees={attendees} />
     );
     return accordionContents;
 }

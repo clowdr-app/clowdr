@@ -400,38 +400,48 @@ function EditableScheduleTable(): JSX.Element {
 
     const roomOptions = useMemo(
         () =>
-            wholeSchedule.data?.Room.map((room) => {
-                return (
-                    <option key={room.id} value={room.id}>
-                        {room.name}
-                    </option>
-                );
-            }),
+            wholeSchedule.data?.Room
+                ? [...wholeSchedule.data.Room]
+                      .sort((x, y) => x.name.localeCompare(y.name))
+                      .map((room) => {
+                          return (
+                              <option key={room.id} value={room.id}>
+                                  {room.name}
+                              </option>
+                          );
+                      })
+                : undefined,
         [wholeSchedule.data?.Room]
     );
 
     const roomModeOptions = useMemo(
         () =>
-            Object.keys(RoomMode_Enum).map((x) => {
-                const v = (RoomMode_Enum as any)[x];
-                return (
-                    <option key={x} value={v}>
-                        {formatEnumValue(v)}
-                    </option>
-                );
-            }),
+            Object.keys(RoomMode_Enum)
+                .sort((x, y) => x.localeCompare(y))
+                .map((x) => {
+                    const v = (RoomMode_Enum as any)[x];
+                    return (
+                        <option key={x} value={v}>
+                            {formatEnumValue(v)}
+                        </option>
+                    );
+                }),
         []
     );
 
     const contentGroupOptions = useMemo(
         () =>
-            wholeSchedule.data?.ContentGroup.map((content) => {
-                return (
-                    <option key={content.id} value={content.id}>
-                        {content.title}
-                    </option>
-                );
-            }),
+            wholeSchedule.data?.ContentGroup
+                ? [...wholeSchedule.data.ContentGroup]
+                      .sort((x, y) => x.title.localeCompare(y.title))
+                      .map((content) => {
+                          return (
+                              <option key={content.id} value={content.id}>
+                                  {content.title}
+                              </option>
+                          );
+                      })
+                : undefined,
         [wholeSchedule.data?.ContentGroup]
     );
 

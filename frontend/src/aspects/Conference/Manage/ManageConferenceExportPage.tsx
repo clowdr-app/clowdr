@@ -1,11 +1,20 @@
 import { gql } from "@apollo/client";
-import { Button, Heading, Tab, TabList, TabPanel, TabPanels, Tabs, useToast } from "@chakra-ui/react";
+import { Button, Heading, List, ListItem, Tab, TabList, TabPanel, TabPanels, Tabs, useToast } from "@chakra-ui/react";
 import React from "react";
-import { Permission_Enum, useManageConferenceExportPage_GetGoogleOAuthUrlMutation } from "../../../generated/graphql";
+import {
+    ManageConferenceExportPage_AttendeeGoogleAccountFragment,
+    Permission_Enum,
+    useManageConferenceExportPage_GetAttendeeGoogleAccountsQuery,
+    useManageConferenceExportPage_GetGoogleOAuthUrlMutation,
+} from "../../../generated/graphql";
 import PageNotFound from "../../Errors/PageNotFound";
+import ApolloQueryWrapper from "../../GQL/ApolloQueryWrapper";
+import FAIcon from "../../Icons/FAIcon";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
+import useCurrentAttendee from "../useCurrentAttendee";
+import { UploadYouTubeVideos } from "./Export/UploadYouTubeVideos";
 import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
 gql`
@@ -13,6 +22,17 @@ gql`
         getGoogleOAuthUrl(scopes: $scopes) {
             url
         }
+    }
+
+    query ManageConferenceExportPage_GetAttendeeGoogleAccounts($attendeeId: uuid!) {
+        AttendeeGoogleAccount(where: { attendeeId: { _eq: $attendeeId } }) {
+            ...ManageConferenceExportPage_AttendeeGoogleAccount
+        }
+    }
+
+    fragment ManageConferenceExportPage_AttendeeGoogleAccount on AttendeeGoogleAccount {
+        id
+        googleAccountEmail
     }
 `;
 
@@ -25,6 +45,13 @@ export default function ManageConferenceExportPage(): JSX.Element {
     const toast = useToast();
 
     const [mutation] = useManageConferenceExportPage_GetGoogleOAuthUrlMutation();
+
+    const attendee = useCurrentAttendee();
+    const result = useManageConferenceExportPage_GetAttendeeGoogleAccountsQuery({
+        variables: {
+            attendeeId: attendee?.id,
+        },
+    });
 
     return (
         <RequireAtLeastOnePermissionWrapper
@@ -40,16 +67,32 @@ export default function ManageConferenceExportPage(): JSX.Element {
             </Heading>
             <Tabs width="100%">
                 <TabList>
-                    <Tab>Export videos to YouTube</Tab>
+                    <Tab>Connected YouTube accounts</Tab>
+                    <Tab>Upload videos to YouTube</Tab>
                 </TabList>
                 <TabPanels>
                     <TabPanel>
+                        <Heading as="h3" size="md" textAlign="left" mb={2}>
+                            Connected accounts
+                        </Heading>
+                        <ApolloQueryWrapper getter={(data) => data.AttendeeGoogleAccount} queryResult={result}>
+                            {(accounts: readonly ManageConferenceExportPage_AttendeeGoogleAccountFragment[]) => (
+                                <List>
+                                    {accounts.map((account) => (
+                                        <ListItem key={account.id}>{account.googleAccountEmail}</ListItem>
+                                    ))}
+                                </List>
+                            )}
+                        </ApolloQueryWrapper>
                         <Button
                             onClick={async () => {
                                 try {
                                     const urlResult = await mutation({
                                         variables: {
-                                            scopes: ["https://www.googleapis.com/auth/youtube.upload"],
+                                            scopes: [
+                                                "https://www.googleapis.com/auth/youtube.upload",
+                                                "https://www.googleapis.com/auth/youtube.readonly",
+                                            ],
                                         },
                                     });
 
@@ -66,9 +109,14 @@ export default function ManageConferenceExportPage(): JSX.Element {
                                     });
                                 }
                             }}
+                            mt={2}
                         >
+                            <FAIcon icon="plus" iconStyle="s" mr={2} />
                             Connect to YouTube
                         </Button>
+                    </TabPanel>
+                    <TabPanel>
+                        <UploadYouTubeVideos />
                     </TabPanel>
                 </TabPanels>
             </Tabs>

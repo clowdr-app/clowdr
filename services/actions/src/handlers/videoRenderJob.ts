@@ -308,6 +308,6 @@ export async function handleProcessVideoRenderJobQueue(): Promise<void> {
             });
         });
     } catch (e) {
-        console.error("Could not failed VideoRenderJobs", e);
+        console.error("Could not record failed VideoRenderJobs", e);
     }
 }

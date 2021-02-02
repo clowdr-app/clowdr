@@ -1,7 +1,11 @@
 import bodyParser from "body-parser";
 import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
-import { handleGetGoogleOAuthUrl, handleSubmitGoogleOAuthToken } from "../handlers/google";
+import {
+    handleGetGoogleOAuthUrl,
+    handleSubmitGoogleOAuthToken,
+    handleUploadYouTubeVideoJobQueue,
+} from "../handlers/google";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
 
 export const router = express.Router();
@@ -56,3 +60,15 @@ router.post(
         }
     }
 );
+
+router.post("/processUploadYouTubeVideoQueue", bodyParser.json(), async (_req: Request, res: Response) => {
+    try {
+        await handleUploadYouTubeVideoJobQueue();
+    } catch (e) {
+        console.error("Failure while processing UploadYouTubeVideoJob queue", e);
+        res.status(500).json("Failure while processing UploadYouTubeVideoJob queue");
+        return;
+    }
+
+    res.status(200).json("OK");
+});

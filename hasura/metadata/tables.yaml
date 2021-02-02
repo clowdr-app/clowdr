@@ -1474,6 +1474,93 @@
       - uploaderId
       backend_only: false
 - table:
+    schema: job_queues
+    name: UploadYouTubeVideoJob
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
+  object_relationships:
+  - name: attendeeGoogleAccount
+    using:
+      foreign_key_constraint_on: attendeeGoogleAccountId
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  - name: contentItem
+    using:
+      foreign_key_constraint_on: contentItemId
+  - name: jobStatus
+    using:
+      foreign_key_constraint_on: jobStatusName
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        _and:
+        - _exists:
+            _where:
+              _and:
+              - permission_name:
+                  _eq: CONFERENCE_MANAGE_CONTENT
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+            _table:
+              schema: public
+              name: FlatUserPermission
+        - contentItem:
+            conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
+        - attendeeGoogleAccount:
+            attendee:
+              userId:
+                _eq: X-Hasura-User-Id
+        - conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+      columns:
+      - attendeeGoogleAccountId
+      - conferenceId
+      - contentItemId
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - attendeeGoogleAccountId
+      - conferenceId
+      - contentItemId
+      - created_at
+      - id
+      - jobStatusName
+      - message
+      - updated_at
+      filter:
+        _and:
+        - _exists:
+            _where:
+              _and:
+              - permission_name:
+                  _eq: CONFERENCE_MANAGE_CONTENT
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+            _table:
+              schema: public
+              name: FlatUserPermission
+        - contentItem:
+            conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
+        - conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+- table:
     schema: public
     name: Attendee
   configuration:
@@ -1708,6 +1795,36 @@
   - name: conference
     using:
       foreign_key_constraint_on: conferenceId
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - attendeeId
+      - conferenceId
+      - created_at
+      - googleAccountEmail
+      - id
+      - updated_at
+      filter:
+        _and:
+        - attendee:
+            userId:
+              _eq: X-Hasura-User-Id
+        - _exists:
+            _where:
+              _and:
+              - permission_name:
+                  _eq: CONFERENCE_MANAGE_CONTENT
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - user_id:
+                  _eq: X-Hasura-User-Id
+            _table:
+              schema: public
+              name: FlatUserPermission
+        - conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
 - table:
     schema: public
     name: AttendeeProfile

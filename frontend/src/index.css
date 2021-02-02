@@ -29,7 +29,13 @@ code {
     display: none;
 }
 
-.twemoji,
+.twemoji {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    vertical-align: baseline;
+}
+
 .twemoji-reaction {
     display: inline-block;
     margin: 0;

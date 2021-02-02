@@ -78,7 +78,11 @@ export function Markdown(elProps?: {
             renderers={{
                 text: (props) => {
                     const { value } = props;
-                    return <Text as="span">{emojify(value)}</Text>;
+                    return (
+                        <Text as="span" whiteSpace="pre-wrap">
+                            {emojify(value)}
+                        </Text>
+                    );
                 },
                 image: ({ src, alt }) => {
                     const youtubeVideoId = parseYouTubeURL(src);

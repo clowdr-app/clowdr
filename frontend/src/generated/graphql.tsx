@@ -30345,6 +30345,38 @@ export type DeleteEventInfosMutationVariables = Exact<{
 
 export type DeleteEventInfosMutation = { readonly __typename?: 'mutation_root', readonly delete_Event?: Maybe<{ readonly __typename?: 'Event_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Event', readonly id: any }> }> };
 
+export type InsertEventPersonMutationVariables = Exact<{
+  newEventPerson: EventPerson_Insert_Input;
+}>;
+
+
+export type InsertEventPersonMutation = { readonly __typename?: 'mutation_root', readonly insert_EventPerson_one?: Maybe<(
+    { readonly __typename?: 'EventPerson' }
+    & EventPersonInfoFragment
+  )> };
+
+export type DeleteEventPersonsMutationVariables = Exact<{
+  deleteEventPeopleIds: ReadonlyArray<Scalars['uuid']>;
+}>;
+
+
+export type DeleteEventPersonsMutation = { readonly __typename?: 'mutation_root', readonly delete_EventPerson?: Maybe<{ readonly __typename?: 'EventPerson_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'EventPerson', readonly id: any }> }> };
+
+export type UpdateEventPersonInfoMutationVariables = Exact<{
+  id: Scalars['uuid'];
+  attendeeId?: Maybe<Scalars['uuid']>;
+  name: Scalars['String'];
+  affiliation?: Maybe<Scalars['String']>;
+  roleName: EventPersonRole_Enum;
+  originatingDataId?: Maybe<Scalars['uuid']>;
+}>;
+
+
+export type UpdateEventPersonInfoMutation = { readonly __typename?: 'mutation_root', readonly update_EventPerson_by_pk?: Maybe<(
+    { readonly __typename?: 'EventPerson' }
+    & EventPersonInfoFragment
+  )> };
+
 export type RoomInfoFragment = { readonly __typename?: 'Room', readonly capacity?: Maybe<number>, readonly conferenceId: any, readonly currentModeName: RoomMode_Enum, readonly id: any, readonly name: string, readonly priority: number, readonly originatingDataId?: Maybe<any>, readonly originatingData?: Maybe<(
     { readonly __typename?: 'OriginatingData' }
     & OriginatingDataInfoFragment
@@ -35691,6 +35723,112 @@ export function useDeleteEventInfosMutation(baseOptions?: Apollo.MutationHookOpt
 export type DeleteEventInfosMutationHookResult = ReturnType<typeof useDeleteEventInfosMutation>;
 export type DeleteEventInfosMutationResult = Apollo.MutationResult<DeleteEventInfosMutation>;
 export type DeleteEventInfosMutationOptions = Apollo.BaseMutationOptions<DeleteEventInfosMutation, DeleteEventInfosMutationVariables>;
+export const InsertEventPersonDocument = gql`
+    mutation InsertEventPerson($newEventPerson: EventPerson_insert_input!) {
+  insert_EventPerson_one(object: $newEventPerson) {
+    ...EventPersonInfo
+  }
+}
+    ${EventPersonInfoFragmentDoc}`;
+export type InsertEventPersonMutationFn = Apollo.MutationFunction<InsertEventPersonMutation, InsertEventPersonMutationVariables>;
+
+/**
+ * __useInsertEventPersonMutation__
+ *
+ * To run a mutation, you first call `useInsertEventPersonMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInsertEventPersonMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [insertEventPersonMutation, { data, loading, error }] = useInsertEventPersonMutation({
+ *   variables: {
+ *      newEventPerson: // value for 'newEventPerson'
+ *   },
+ * });
+ */
+export function useInsertEventPersonMutation(baseOptions?: Apollo.MutationHookOptions<InsertEventPersonMutation, InsertEventPersonMutationVariables>) {
+        return Apollo.useMutation<InsertEventPersonMutation, InsertEventPersonMutationVariables>(InsertEventPersonDocument, baseOptions);
+      }
+export type InsertEventPersonMutationHookResult = ReturnType<typeof useInsertEventPersonMutation>;
+export type InsertEventPersonMutationResult = Apollo.MutationResult<InsertEventPersonMutation>;
+export type InsertEventPersonMutationOptions = Apollo.BaseMutationOptions<InsertEventPersonMutation, InsertEventPersonMutationVariables>;
+export const DeleteEventPersonsDocument = gql`
+    mutation DeleteEventPersons($deleteEventPeopleIds: [uuid!]!) {
+  delete_EventPerson(where: {id: {_in: $deleteEventPeopleIds}}) {
+    returning {
+      id
+    }
+  }
+}
+    `;
+export type DeleteEventPersonsMutationFn = Apollo.MutationFunction<DeleteEventPersonsMutation, DeleteEventPersonsMutationVariables>;
+
+/**
+ * __useDeleteEventPersonsMutation__
+ *
+ * To run a mutation, you first call `useDeleteEventPersonsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteEventPersonsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteEventPersonsMutation, { data, loading, error }] = useDeleteEventPersonsMutation({
+ *   variables: {
+ *      deleteEventPeopleIds: // value for 'deleteEventPeopleIds'
+ *   },
+ * });
+ */
+export function useDeleteEventPersonsMutation(baseOptions?: Apollo.MutationHookOptions<DeleteEventPersonsMutation, DeleteEventPersonsMutationVariables>) {
+        return Apollo.useMutation<DeleteEventPersonsMutation, DeleteEventPersonsMutationVariables>(DeleteEventPersonsDocument, baseOptions);
+      }
+export type DeleteEventPersonsMutationHookResult = ReturnType<typeof useDeleteEventPersonsMutation>;
+export type DeleteEventPersonsMutationResult = Apollo.MutationResult<DeleteEventPersonsMutation>;
+export type DeleteEventPersonsMutationOptions = Apollo.BaseMutationOptions<DeleteEventPersonsMutation, DeleteEventPersonsMutationVariables>;
+export const UpdateEventPersonInfoDocument = gql`
+    mutation UpdateEventPersonInfo($id: uuid!, $attendeeId: uuid = null, $name: String!, $affiliation: String = null, $roleName: EventPersonRole_enum!, $originatingDataId: uuid = null) {
+  update_EventPerson_by_pk(
+    pk_columns: {id: $id}
+    _set: {attendeeId: $attendeeId, name: $name, affiliation: $affiliation, roleName: $roleName, originatingDataId: $originatingDataId}
+  ) {
+    ...EventPersonInfo
+  }
+}
+    ${EventPersonInfoFragmentDoc}`;
+export type UpdateEventPersonInfoMutationFn = Apollo.MutationFunction<UpdateEventPersonInfoMutation, UpdateEventPersonInfoMutationVariables>;
+
+/**
+ * __useUpdateEventPersonInfoMutation__
+ *
+ * To run a mutation, you first call `useUpdateEventPersonInfoMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateEventPersonInfoMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateEventPersonInfoMutation, { data, loading, error }] = useUpdateEventPersonInfoMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      attendeeId: // value for 'attendeeId'
+ *      name: // value for 'name'
+ *      affiliation: // value for 'affiliation'
+ *      roleName: // value for 'roleName'
+ *      originatingDataId: // value for 'originatingDataId'
+ *   },
+ * });
+ */
+export function useUpdateEventPersonInfoMutation(baseOptions?: Apollo.MutationHookOptions<UpdateEventPersonInfoMutation, UpdateEventPersonInfoMutationVariables>) {
+        return Apollo.useMutation<UpdateEventPersonInfoMutation, UpdateEventPersonInfoMutationVariables>(UpdateEventPersonInfoDocument, baseOptions);
+      }
+export type UpdateEventPersonInfoMutationHookResult = ReturnType<typeof useUpdateEventPersonInfoMutation>;
+export type UpdateEventPersonInfoMutationResult = Apollo.MutationResult<UpdateEventPersonInfoMutation>;
+export type UpdateEventPersonInfoMutationOptions = Apollo.BaseMutationOptions<UpdateEventPersonInfoMutation, UpdateEventPersonInfoMutationVariables>;
 export const SelectWholeScheduleDocument = gql`
     query SelectWholeSchedule($conferenceId: uuid!) {
   Room(where: {conferenceId: {_eq: $conferenceId}}) {

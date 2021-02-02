@@ -975,7 +975,6 @@ function EditableScheduleTable(): JSX.Element {
                                         if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
                                             return existingRefs;
                                         }
-
                                         return [...existingRefs, newRef];
                                     },
                                 },

@@ -1,3 +1,4 @@
+import { gql, Reference } from "@apollo/client";
 import {
     Box,
     Button,
@@ -11,14 +12,29 @@ import {
     ModalOverlay,
     Text,
 } from "@chakra-ui/react";
+import assert from "assert";
 import React, { useMemo } from "react";
+import { v4 as uuidv4 } from "uuid";
 import {
     AttendeeInfoFragment,
     EventInfoFragment,
-    EventPersonInfoFragment,
+    EventInfoFragmentDoc,
+    EventPersonInfoFragmentDoc,
     EventPersonRole_Enum,
+    EventPerson_Insert_Input,
+    useDeleteEventPersonsMutation,
+    useInsertEventPersonMutation,
+    useUpdateEventPersonMutation,
 } from "../../../../generated/graphql";
-import type { SelectOption } from "../../../CRUDTable/CRUDTable";
+import CRUDTable, {
+    defaultSelectFilter,
+    defaultStringFilter,
+    FieldType,
+    SelectOption,
+    UpdateResult,
+} from "../../../CRUDTable/CRUDTable";
+import isValidUUID from "../../../Utils/isValidUUID";
+import type { EventPersonDescriptor } from "./Types";
 
 interface Props {
     isOpen: boolean;
@@ -28,9 +44,47 @@ interface Props {
     attendees: readonly AttendeeInfoFragment[];
 }
 
+gql`
+    mutation InsertEventPerson($newEventPerson: EventPerson_insert_input!) {
+        insert_EventPerson_one(object: $newEventPerson) {
+            ...EventPersonInfo
+        }
+    }
+
+    mutation DeleteEventPersons($deleteEventPeopleIds: [uuid!]!) {
+        delete_EventPerson(where: { id: { _in: $deleteEventPeopleIds } }) {
+            returning {
+                id
+            }
+        }
+    }
+
+    mutation UpdateEventPersonInfo(
+        $id: uuid!
+        $attendeeId: uuid = null
+        $name: String!
+        $affiliation: String = null
+        $roleName: EventPersonRole_enum!
+        $originatingDataId: uuid = null
+    ) {
+        update_EventPerson_by_pk(
+            pk_columns: { id: $id }
+            _set: {
+                attendeeId: $attendeeId
+                name: $name
+                affiliation: $affiliation
+                roleName: $roleName
+                originatingDataId: $originatingDataId
+            }
+        ) {
+            ...EventPersonInfo
+        }
+    }
+`;
+
 export function EventPersonsModal({ isOpen, onOpen, onClose, event, attendees }: Props): JSX.Element {
     const eventPersonsMap = useMemo(() => {
-        const results = new Map<string, EventPersonInfoFragment>();
+        const results = new Map<string, EventPersonDescriptor>();
 
         event.eventPeople.forEach((eventPerson) => {
             results.set(eventPerson.id, eventPerson);
@@ -58,6 +112,10 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, attendees }:
             });
     }, []);
 
+    const [insertEventPerson] = useInsertEventPersonMutation();
+    const [updateEventPerson] = useUpdateEventPersonMutation();
+    const [deleteEventPersons] = useDeleteEventPersonsMutation();
+
     return (
         <>
             <Box>
@@ -78,10 +136,8 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, attendees }:
                     <ModalCloseButton />
                     <ModalBody>
                         <Box>
-                            TODO
-                            {/* <EventPersonsCRUDTable
+                            <CRUDTable<EventPersonDescriptor, "id">
                                 data={eventPersonsMap}
-                                externalUnsavedChanges={isEventDirty}
                                 primaryFields={{
                                     keyField: {
                                         heading: "Id",
@@ -222,36 +278,211 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, attendees }:
                                             partialEventPerson: Partial<EventPersonDescriptor>
                                         ): Promise<string | null> => {
                                             assert(partialEventPerson.roleName);
-                                            const newEventPerson: EventPersonDescriptor = {
+                                            const newEventPerson: EventPerson_Insert_Input = {
                                                 id: uuidv4(),
-                                                isNew: true,
                                                 eventId: event.id,
+                                                conferenceId: event.conferenceId,
                                                 name: partialEventPerson.roleName.toString(),
                                                 attendeeId: partialEventPerson.attendeeId,
                                                 roleName: partialEventPerson.roleName,
+                                                affiliation: partialEventPerson.affiliation,
+                                                originatingDataId: partialEventPerson.originatingDataId,
                                             };
-                                            insertEventPerson(newEventPerson);
+                                            await insertEventPerson({
+                                                variables: {
+                                                    newEventPerson,
+                                                },
+                                                update: (cache, { data: _data }) => {
+                                                    if (_data?.insert_EventPerson_one) {
+                                                        const data = _data.insert_EventPerson_one;
+                                                        cache.modify({
+                                                            fields: {
+                                                                Event: (
+                                                                    existingRefs: Reference[] = [],
+                                                                    { readField }
+                                                                ) => {
+                                                                    const eventRef = existingRefs.find(
+                                                                        (ref) => readField("id", ref) === event.id
+                                                                    );
+                                                                    assert(eventRef);
+
+                                                                    const frag = cache.readFragment<EventInfoFragment>({
+                                                                        fragment: EventInfoFragmentDoc,
+                                                                        fragmentName: "EventInfo",
+                                                                        id: eventRef.__ref,
+                                                                    });
+                                                                    console.log(frag);
+                                                                    if (
+                                                                        frag &&
+                                                                        !frag.eventPeople.some((p) => p.id === data.id)
+                                                                    ) {
+                                                                        cache.writeFragment<EventInfoFragment>({
+                                                                            fragment: EventInfoFragmentDoc,
+                                                                            fragmentName: "EventInfo",
+                                                                            data: {
+                                                                                ...frag,
+                                                                                eventPeople: [
+                                                                                    ...frag.eventPeople,
+                                                                                    data,
+                                                                                ],
+                                                                            },
+                                                                        });
+                                                                    }
+                                                                    return existingRefs;
+                                                                },
+                                                                EventPerson(
+                                                                    existingRefs: Reference[] = [],
+                                                                    { readField }
+                                                                ) {
+                                                                    const newRef = cache.writeFragment({
+                                                                        data,
+                                                                        fragment: EventPersonInfoFragmentDoc,
+                                                                        fragmentName: "EventPersonInfo",
+                                                                    });
+                                                                    if (
+                                                                        existingRefs.some(
+                                                                            (ref) => readField("id", ref) === data.id
+                                                                        )
+                                                                    ) {
+                                                                        return existingRefs;
+                                                                    }
+
+                                                                    return [...existingRefs, newRef];
+                                                                },
+                                                            },
+                                                        });
+                                                    }
+                                                },
+                                            });
                                             return newEventPerson.id;
                                         },
                                         update: async (eventPersons): Promise<Map<string, UpdateResult>> => {
                                             const results = new Map<string, UpdateResult>();
                                             for (const [key, eventPerson] of eventPersons) {
-                                                results.set(key, true);
-                                                updateEventPerson(eventPerson);
+                                                try {
+                                                    await updateEventPerson({
+                                                        variables: {
+                                                            id: eventPerson.id,
+                                                            name: eventPerson.name,
+                                                            roleName: eventPerson.roleName,
+                                                            affiliation: eventPerson.affiliation,
+                                                            attendeeId: eventPerson.attendeeId,
+                                                            originatingDataId: eventPerson.originatingDataId,
+                                                        },
+                                                        update: (cache, { data: _data }) => {
+                                                            if (_data?.update_EventPerson_by_pk) {
+                                                                const data = _data.update_EventPerson_by_pk;
+                                                                cache.modify({
+                                                                    fields: {
+                                                                        EventPerson(
+                                                                            existingRefs: Reference[] = [],
+                                                                            { readField }
+                                                                        ) {
+                                                                            const newRef = cache.writeFragment({
+                                                                                data,
+                                                                                fragment: EventPersonInfoFragmentDoc,
+                                                                                fragmentName: "EventPersonInfo",
+                                                                            });
+                                                                            if (
+                                                                                existingRefs.some(
+                                                                                    (ref) =>
+                                                                                        readField("id", ref) === data.id
+                                                                                )
+                                                                            ) {
+                                                                                return existingRefs;
+                                                                            }
+                                                                            return [...existingRefs, newRef];
+                                                                        },
+                                                                    },
+                                                                });
+                                                            }
+                                                        },
+                                                    });
+                                                    results.set(key, true);
+                                                } catch (e) {
+                                                    results.set(key, e.toString());
+                                                }
                                             }
                                             return results;
                                         },
                                         delete: async (keys): Promise<Map<string, boolean>> => {
+                                            let ok = false;
+                                            try {
+                                                await deleteEventPersons({
+                                                    variables: {
+                                                        deleteEventPeopleIds: [...keys.values()],
+                                                    },
+                                                    update: (cache, { data: _data }) => {
+                                                        if (_data?.delete_EventPerson) {
+                                                            const datas = _data.delete_EventPerson;
+                                                            const ids = datas.returning.map((x) => x.id);
+                                                            cache.modify({
+                                                                fields: {
+                                                                    Event: (
+                                                                        existingRefs: Reference[] = [],
+                                                                        { readField }
+                                                                    ) => {
+                                                                        const eventRef = existingRefs.find(
+                                                                            (ref) => readField("id", ref) === event.id
+                                                                        );
+                                                                        assert(eventRef);
+
+                                                                        const frag = cache.readFragment<
+                                                                            EventInfoFragment
+                                                                        >({
+                                                                            fragment: EventInfoFragmentDoc,
+                                                                            fragmentName: "EventInfo",
+                                                                            id: eventRef.__ref,
+                                                                        });
+                                                                        console.log(frag);
+                                                                        if (frag) {
+                                                                            cache.writeFragment<EventInfoFragment>({
+                                                                                fragment: EventInfoFragmentDoc,
+                                                                                fragmentName: "EventInfo",
+                                                                                data: {
+                                                                                    ...frag,
+                                                                                    eventPeople: frag.eventPeople.filter(
+                                                                                        (p) => !ids.includes(p.id)
+                                                                                    ),
+                                                                                },
+                                                                            });
+                                                                        }
+                                                                        return existingRefs;
+                                                                    },
+                                                                    EventPerson(
+                                                                        existingRefs: Reference[] = [],
+                                                                        { readField }
+                                                                    ) {
+                                                                        for (const id of ids) {
+                                                                            cache.evict({
+                                                                                id,
+                                                                                fieldName: "EventPersonInfo",
+                                                                                broadcast: true,
+                                                                            });
+                                                                        }
+
+                                                                        return existingRefs.filter(
+                                                                            (ref) => !ids.includes(readField("id", ref))
+                                                                        );
+                                                                    },
+                                                                },
+                                                            });
+                                                        }
+                                                    },
+                                                });
+                                                ok = true;
+                                            } catch (e) {
+                                                ok = false;
+                                            }
                                             const results = new Map<string, boolean>();
                                             for (const key of keys) {
-                                                results.set(key, true);
-                                                deleteEventPerson(key);
+                                                results.set(key, ok);
                                             }
                                             return results;
                                         },
                                     },
                                 }}
-                            /> */}
+                            />
                         </Box>
                     </ModalBody>
                     <ModalFooter>

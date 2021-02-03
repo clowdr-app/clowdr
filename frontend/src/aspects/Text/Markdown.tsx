@@ -79,7 +79,7 @@ export function Markdown(elProps?: {
                 text: (props) => {
                     const { value } = props;
                     return (
-                        <Text as="span" whiteSpace="pre-wrap">
+                        <Text as="span" textDecoration="inherit">
                             {emojify(value)}
                         </Text>
                     );

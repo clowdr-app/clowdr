@@ -30,10 +30,11 @@ code {
 }
 
 .twemoji {
-    display: inline-block;
+    display: inline;
     margin: 0;
     padding: 0;
     vertical-align: baseline;
+    text-decoration: inherit;
 }
 
 .twemoji-reaction {
@@ -43,6 +44,7 @@ code {
     margin-left: 1px;
     margin-right: 1px;
     vertical-align: baseline;
+    text-decoration: inherit;
 }
 
 .twemoji > img,

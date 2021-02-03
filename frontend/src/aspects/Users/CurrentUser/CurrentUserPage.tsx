@@ -9,6 +9,6 @@ export default function CurrentUserPage(): JSX.Element {
     if (user.attendees.length > 0) {
         return <ListConferencesView />;
     } else {
-        return <Redirect to="/conference/joinOrCreate" />;
+        return <Redirect to="/join" />;
     }
 }

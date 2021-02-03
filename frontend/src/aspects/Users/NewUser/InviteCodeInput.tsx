@@ -16,7 +16,7 @@ import { getCachedInviteCode, setCachedInviteCode } from "./InviteCodeLocalStora
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function InviteCodeInput({
-    message = "Enter an invite code to begin.",
+    message = "Enter an invite code to join a conference.",
     marginBottom,
 }: {
     message?: string;

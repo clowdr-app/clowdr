@@ -27,6 +27,7 @@ interface TokenCacheEntry {
 }
 
 class AuthTokenCache {
+    static readonly CacheVersion = "1.0";
     static readonly CacheKey = "CLOWDR_AUTH_CACHE";
     static readonly TokenExpiryTime = (36000 - 60) * 1000;
 
@@ -38,15 +39,20 @@ class AuthTokenCache {
         this.mutex = new Mutex();
 
         try {
-            const tokenCacheStr = window.localStorage.getItem(AuthTokenCache.CacheKey);
-            if (tokenCacheStr) {
-                const tokenCache = JSON.parse(tokenCacheStr);
-                this.tokens = new Map<string, TokenCacheEntry>(tokenCache);
+            if (this.validateCache()) {
+                const tokenCacheStr = window.localStorage.getItem(AuthTokenCache.CacheKey);
+                if (tokenCacheStr) {
+                    const tokenCache = JSON.parse(tokenCacheStr);
+                    this.tokens = new Map<string, TokenCacheEntry>(tokenCache);
+                } else {
+                    this.clearAllLocalStorage();
+                }
             } else {
+                console.log("Token cache version out of date. Clearing cache to upgrade...");
                 this.clearAllLocalStorage();
             }
         } catch (e) {
-            console.log("Failed to initialise token cache!");
+            console.warn("Failed to initialise token cache!");
             this.clearAllLocalStorage();
         }
 
@@ -54,6 +60,14 @@ class AuthTokenCache {
         setTimeout(() => {
             window.location.reload();
         }, AuthTokenCache.TokenExpiryTime);
+    }
+
+    validateCache() {
+        const version = window.localStorage.getItem(AuthTokenCache.CacheKey + "_VERSION");
+        if (!version || version !== AuthTokenCache.CacheVersion) {
+            return false;
+        }
+        return true;
     }
 
     clearAllLocalStorage() {
@@ -65,6 +79,7 @@ class AuthTokenCache {
     saveCache() {
         const serialisableCache = [...this.tokens.entries()];
         window.localStorage.setItem(AuthTokenCache.CacheKey, JSON.stringify(serialisableCache));
+        window.localStorage.setItem(AuthTokenCache.CacheKey + "_VERSION", AuthTokenCache.CacheVersion);
     }
 
     async sha256(message: string): Promise<string> {
@@ -95,7 +110,7 @@ class AuthTokenCache {
             if (!cacheEntry) {
                 const token = await getAccessTokenSilently({
                     ignoreCache: true,
-                    "conference-slug": conferenceSlug ?? undefined,
+                    "conference-slug": conferenceSlug ?? "/NONE",
                 });
                 cacheEntry = {
                     token,
@@ -149,9 +164,7 @@ async function createApolloClient(
 
             newHeaders.Authorization = `Bearer ${token}`;
         } else {
-            if (conferenceSlug) {
-                newHeaders["X-Hasura-Conference-Slug"] = conferenceSlug;
-            }
+            newHeaders["X-Hasura-Conference-Slug"] = conferenceSlug ?? "/NONE";
         }
 
         return {

@@ -164,7 +164,7 @@ type SubmitContentItemOutput {
 }
 
 type ConfirmInvitationOutput {
-  ok : Boolean!
+  ok : String!
   confSlug : String
 }
 

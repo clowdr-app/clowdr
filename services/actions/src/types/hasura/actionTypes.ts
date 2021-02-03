@@ -22,7 +22,7 @@ type SubmitContentItemOutput = {
 };
 
 type ConfirmInvitationOutput = {
-    ok: boolean;
+    ok: string;
     confSlug?: Maybe<string>;
 };
 

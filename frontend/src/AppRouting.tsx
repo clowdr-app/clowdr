@@ -127,12 +127,7 @@ export default function Routing(): JSX.Element {
 
             <Route exact path="/crud/test" component={CRUDTestPage} />
 
-            <ProtectedRoute
-                altIfNotAuthed={<Redirect to="/" />}
-                exact
-                path="/conference/joinOrCreate"
-                component={UseInviteOrCreateView}
-            />
+            <ProtectedRoute altIfNotAuthed={<Redirect to="/" />} exact path="/join" component={UseInviteOrCreateView} />
 
             <Route
                 path="/conference/:confSlug"

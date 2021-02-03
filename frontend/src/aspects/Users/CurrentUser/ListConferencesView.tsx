@@ -138,7 +138,7 @@ export default function ListConferencesView(): JSX.Element {
             {renderConferenceList(
                 ViewIcon,
                 attending,
-                <LinkButton to="/conference/joinOrCreate" colorScheme="blue" onClick={showUseInvite} marginRight={0}>
+                <LinkButton to="/join" colorScheme="blue" onClick={showUseInvite} marginRight={0}>
                     Use invite code
                 </LinkButton>,
                 ""
@@ -160,7 +160,7 @@ export default function ListConferencesView(): JSX.Element {
             {renderConferenceList(
                 SettingsIcon,
                 organising,
-                <LinkButton to="/conference/joinOrCreate" colorScheme="green" onClick={showUseInvite} marginRight={0}>
+                <LinkButton to="/join" colorScheme="green" onClick={showUseInvite} marginRight={0}>
                     Create a conference
                 </LinkButton>,
                 "manage"

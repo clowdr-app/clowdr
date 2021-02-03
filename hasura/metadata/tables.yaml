@@ -1961,17 +1961,9 @@
         _or:
         - createdBy:
             _eq: X-Hasura-User-Id
-        - groups:
-            _and:
-            - enabled:
-                _eq: true
-            - _or:
-              - includeUnauthenticated:
-                  _eq: true
-              - groupAttendees:
-                  attendee:
-                    userId:
-                      _eq: X-Hasura-User-Id
+        - attendees:
+            userId:
+              _eq: X-Hasura-User-Id
   update_permissions:
   - role: user
     permission:
@@ -2017,6 +2009,18 @@
   - name: conference
     using:
       foreign_key_constraint_on: conferenceId
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        conference:
+          createdBy:
+            _eq: X-Hasura-User-Id
+      columns:
+      - conferenceId
+      - key
+      - value
+      backend_only: false
 - table:
     schema: public
     name: ConferenceDemoCode
@@ -2228,22 +2232,26 @@
   - role: user
     permission:
       check:
-        _and:
+        _or:
+        - _and:
+          - conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
+          - _exists:
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _eq: CONFERENCE_MANAGE_CONTENT
+              _table:
+                schema: public
+                name: FlatUserPermission
         - conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
-        - _exists:
-            _where:
-              _and:
-              - user_id:
-                  _eq: X-Hasura-User-Id
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - permission_name:
-                  _eq: CONFERENCE_MANAGE_CONTENT
-            _table:
-              schema: public
-              name: FlatUserPermission
+            createdBy:
+              _eq: X-Hasura-User-Id
       columns:
       - conferenceId
       - contentGroupTypeName
@@ -2843,22 +2851,26 @@
   - role: user
     permission:
       check:
-        _and:
+        _or:
+        - _and:
+          - conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
+          - _exists:
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _eq: CONFERENCE_MANAGE_CONTENT
+              _table:
+                schema: public
+                name: FlatUserPermission
         - conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
-        - _exists:
-            _where:
-              _and:
-              - user_id:
-                  _eq: X-Hasura-User-Id
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - permission_name:
-                  _eq: CONFERENCE_MANAGE_CONTENT
-            _table:
-              schema: public
-              name: FlatUserPermission
+            createdBy:
+              _eq: X-Hasura-User-Id
       columns:
       - conferenceId
       - contentGroupId
@@ -4963,6 +4975,72 @@
   - role: user
     permission:
       check:
+        _exists:
+          _where:
+            _and:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - slug:
+                _eq: X-Hasura-Conference-Slug
+            - permission:
+                rolePermissions:
+                  permissionName:
+                    _in:
+                    - CONFERENCE_MANAGE_ROLES
+                    - CONFERENCE_MANAGE_GROUPS
+                    - CONFERENCE_MANAGE_ATTENDEES
+          _table:
+            schema: public
+            name: FlatUserPermission
+      columns:
+      - attendeeId
+      - invitedEmailAddress
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - attendeeId
+      - confirmationCode
+      - created_at
+      - id
+      - inviteCode
+      - invitedEmailAddress
+      - linkToUserId
+      - updated_at
+      computed_fields:
+      - hash
+      filter:
+        _or:
+        - _exists:
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission:
+                  rolePermissions:
+                    permissionName:
+                      _in:
+                      - CONFERENCE_MANAGE_ROLES
+                      - CONFERENCE_MANAGE_GROUPS
+                      - CONFERENCE_MANAGE_ATTENDEES
+            _table:
+              schema: public
+              name: FlatUserPermission
+        - attendee:
+            userId:
+              _eq: X-Hasura-User-Id
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - confirmationCode
+      - inviteCode
+      - invitedEmailAddress
+      - linkToUserId
+      filter:
         attendee:
           conference:
             _or:
@@ -4986,128 +5064,28 @@
                     attendee:
                       userId:
                         _eq: X-Hasura-User-Id
-      columns:
-      - attendeeId
-      - invitedEmailAddress
-      backend_only: false
-  select_permissions:
-  - role: unauthenticated
-    permission:
-      columns:
-      - inviteCode
-      computed_fields:
-      - hash
-      filter:
-        _and:
-        - inviteCode:
-            _eq: X-Hasura-Invite-Code
-        - attendee:
-            userId:
-              _is_null: true
-      limit: 1
-  - role: user
-    permission:
-      columns:
-      - attendeeId
-      - confirmationCode
-      - created_at
-      - id
-      - inviteCode
-      - invitedEmailAddress
-      - linkToUserId
-      - updated_at
-      computed_fields:
-      - hash
-      filter:
-        attendee:
-          _or:
-          - _and:
-            - conference:
-                groups:
-                  _and:
-                  - enabled:
-                      _eq: true
-                  - groupRoles:
-                      role:
-                        rolePermissions:
-                          _or:
-                          - permissionName:
-                              _eq: CONFERENCE_MANAGE_ATTENDEES
-                          - permissionName:
-                              _eq: CONFERENCE_MANAGE_GROUPS
-                          - permissionName:
-                              _eq: CONFERENCE_MANAGE_ROLES
-                  - _or:
-                    - includeUnauthenticated:
-                        _eq: true
-                    - groupAttendees:
-                        attendee:
-                          userId:
-                            _eq: X-Hasura-User-Id
-  update_permissions:
-  - role: user
-    permission:
-      columns:
-      - confirmationCode
-      - inviteCode
-      - invitedEmailAddress
-      - linkToUserId
-      filter:
-        attendee:
-          _or:
-          - _and:
-            - conference:
-                groups:
-                  _and:
-                  - enabled:
-                      _eq: true
-                  - groupRoles:
-                      role:
-                        rolePermissions:
-                          _or:
-                          - permissionName:
-                              _eq: CONFERENCE_MANAGE_ATTENDEES
-                          - permissionName:
-                              _eq: CONFERENCE_MANAGE_GROUPS
-                          - permissionName:
-                              _eq: CONFERENCE_MANAGE_ROLES
-                  - _or:
-                    - includeUnauthenticated:
-                        _eq: true
-                    - groupAttendees:
-                        attendee:
-                          userId:
-                            _eq: X-Hasura-User-Id
       check: null
   delete_permissions:
   - role: user
     permission:
       filter:
-        attendee:
-          _or:
-          - _and:
-            - conference:
-                groups:
-                  _and:
-                  - enabled:
-                      _eq: true
-                  - groupRoles:
-                      role:
-                        rolePermissions:
-                          _or:
-                          - permissionName:
-                              _eq: CONFERENCE_MANAGE_ATTENDEES
-                          - permissionName:
-                              _eq: CONFERENCE_MANAGE_GROUPS
-                          - permissionName:
-                              _eq: CONFERENCE_MANAGE_ROLES
-                  - _or:
-                    - includeUnauthenticated:
-                        _eq: true
-                    - groupAttendees:
-                        attendee:
-                          userId:
-                            _eq: X-Hasura-User-Id
+        _exists:
+          _where:
+            _and:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - slug:
+                _eq: X-Hasura-Conference-Slug
+            - permission:
+                rolePermissions:
+                  permissionName:
+                    _in:
+                    - CONFERENCE_MANAGE_ROLES
+                    - CONFERENCE_MANAGE_GROUPS
+                    - CONFERENCE_MANAGE_ATTENDEES
+          _table:
+            schema: public
+            name: FlatUserPermission
 - table:
     schema: public
     name: JobStatus
@@ -5536,11 +5514,6 @@
                     attendee:
                       userId:
                         _eq: X-Hasura-User-Id
-        - _and:
-          - accessToken:
-              _is_null: false
-          - accessToken:
-              _eq: X-Hasura-Magic-Token
   update_permissions:
   - role: user
     permission:

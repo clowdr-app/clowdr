@@ -2707,7 +2707,7 @@ export type ConfirmInvitationInput = {
 export type ConfirmInvitationOutput = {
   readonly __typename?: 'ConfirmInvitationOutput';
   readonly confSlug?: Maybe<Scalars['String']>;
-  readonly ok: Scalars['Boolean'];
+  readonly ok: Scalars['String'];
 };
 
 /** columns and relationships of "ContentGroup" */
@@ -30686,7 +30686,7 @@ export type Invitation_ConfirmCurrentMutationVariables = Exact<{
 }>;
 
 
-export type Invitation_ConfirmCurrentMutation = { readonly __typename?: 'mutation_root', readonly invitationConfirmCurrent?: Maybe<{ readonly __typename?: 'ConfirmInvitationOutput', readonly confSlug?: Maybe<string>, readonly ok: boolean }> };
+export type Invitation_ConfirmCurrentMutation = { readonly __typename?: 'mutation_root', readonly invitationConfirmCurrent?: Maybe<{ readonly __typename?: 'ConfirmInvitationOutput', readonly confSlug?: Maybe<string>, readonly ok: string }> };
 
 export type Invitation_ConfirmWithCodeMutationVariables = Exact<{
   inviteCode: Scalars['uuid'];
@@ -30694,7 +30694,7 @@ export type Invitation_ConfirmWithCodeMutationVariables = Exact<{
 }>;
 
 
-export type Invitation_ConfirmWithCodeMutation = { readonly __typename?: 'mutation_root', readonly invitationConfirmWithCode?: Maybe<{ readonly __typename?: 'ConfirmInvitationOutput', readonly confSlug?: Maybe<string>, readonly ok: boolean }> };
+export type Invitation_ConfirmWithCodeMutation = { readonly __typename?: 'mutation_root', readonly invitationConfirmWithCode?: Maybe<{ readonly __typename?: 'ConfirmInvitationOutput', readonly confSlug?: Maybe<string>, readonly ok: string }> };
 
 export type SendInitialConfirmationEmailMutationVariables = Exact<{
   inviteCode: Scalars['uuid'];

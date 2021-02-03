@@ -274,14 +274,13 @@ async function getInvitationAndUser(
 async function confirmUser(
     inviteCode: string,
     userId: string,
-    validate: (invitation: InvitationPartsFragment, user: InvitedUserPartsFragment) => Promise<boolean>
+    validate: (invitation: InvitationPartsFragment, user: InvitedUserPartsFragment) => Promise<true | string>
 ): Promise<ConfirmInvitationOutput> {
     const { invitation, user } = await getInvitationAndUser(inviteCode, userId);
 
     let ok = await validate(invitation, user);
 
-    let confSlug: string | undefined;
-    if (ok) {
+    if (ok === true) {
         try {
             await apolloClient.mutate({
                 mutation: SetAttendeeUserIdDocument,
@@ -290,17 +289,15 @@ async function confirmUser(
                     userId,
                 },
             });
-
-            confSlug = invitation.attendee.conference.slug;
         } catch (e) {
-            ok = false;
+            ok = e.message || e.toString();
             console.error(`Failed to link user to invitation (${user.id}, ${invitation.id})`, e);
         }
     }
 
     return {
-        ok,
-        confSlug,
+        ok: ok === true ? "true" : ok,
+        confSlug: invitation.attendee.conference.slug,
     };
 }
 
@@ -308,16 +305,26 @@ export async function invitationConfirmCurrentHandler(
     args: invitationConfirmCurrentArgs,
     userId: string
 ): Promise<ConfirmInvitationOutput> {
-    return confirmUser(args.inviteCode, userId, async (invitation, user) => {
-        return (
-            !!invitation.invitedEmailAddress &&
-            !!user.email &&
-            !invitation.attendee.userId &&
-            invitation.invitedEmailAddress.toLowerCase() === user.email.toLowerCase()
-        );
-    });
+    return confirmUser(
+        args.inviteCode,
+        userId,
+        async (invitation, user): Promise<true | string> => {
+            return !invitation.invitedEmailAddress
+                ? "No invited email address"
+                : !user.email
+                ? "User does not have an email address"
+                : invitation.attendee.userId
+                ? `Invitation already used${invitation.attendee.userId === user.id ? " (same user)" : ""}`
+                : true;
+            // Dead code
+            // TODO: (Noted 2021-02-02 by Ed): Delete this at some point once we know it's not needed
+            // TODO: Re-instate if using extra confirm-email step: && invitation.invitedEmailAddress.toLowerCase() === user.email.toLowerCase()
+        }
+    );
 }
 
+// Dead function
+// TODO: (Noted 2021-02-02 by Ed): Delete this at some point once we know it's not needed
 function generateExternalConfirmationCode(invitation: {
     confirmationCode: string;
     invitedEmailAddress: string;
@@ -329,6 +336,8 @@ function generateExternalConfirmationCode(invitation: {
         .toLowerCase();
 }
 
+// Dead function
+// TODO: (Noted 2021-02-02 by Ed): Delete this at some point once we know it's not needed
 export async function invitationConfirmWithCodeHandler(
     args: invitationConfirmWithCodeArgs,
     userId: string
@@ -346,12 +355,14 @@ export async function invitationConfirmWithCodeHandler(
                 invitedEmailAddress: invitation.invitedEmailAddress,
             });
             const inputCode = args.inviteInput.confirmationCode.toLowerCase();
-            return goldenCode === inputCode;
+            return goldenCode === inputCode || "Confirmation code invalid";
         }
-        return false;
+        return "Invitation or use state invalid";
     });
 }
 
+// Dead function
+// TODO: (Noted 2021-02-02 by Ed): Delete this at some point once we know it's not needed
 function generateEmailContents(
     confirmationCode: string,
     invitation: InvitationPartsFragment,
@@ -404,6 +415,8 @@ received this email in error, please contact us via ${process.env.STOP_EMAILS_CO
     };
 }
 
+// Dead function
+// TODO: (Noted 2021-02-02 by Ed): Delete this at some point once we know it's not needed
 export async function invitationConfirmSendInitialEmailHandler(
     args: invitationConfirmSendInitialEmailArgs,
     userId: string
@@ -451,6 +464,8 @@ export async function invitationConfirmSendInitialEmailHandler(
     };
 }
 
+// Dead function
+// TODO: (Noted 2021-02-02 by Ed): Delete this at some point once we know it's not needed
 export async function invitationConfirmSendRepeatEmailHandler(
     args: invitationConfirmSendRepeatEmailArgs,
     userId: string

@@ -66,6 +66,7 @@
         "jsonata": "^1.8.4",
         "jszip": "^3.5.0",
         "levenshtein-edit-distance": "^2.0.5",
+        "luxon": "^1.25.0",
         "match-sorter": "^6.1.0",
         "papaparse": "^5.3.0",
         "ramda": "^0.27.1",

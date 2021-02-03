@@ -1,3 +1,4 @@
+import { DateTime } from "luxon";
 import React from "react";
 import { useTimelineParameters } from "./useTimelineParameters";
 
@@ -51,19 +52,17 @@ export default function TimeMarker({
                 >
                     {showTimeLabel
                         ? showDate
-                            ? new Date(time).toLocaleString(undefined, {
+                            ? DateTime.fromMillis(time).setZone(timelineParams.timezone).toLocaleString({
                                   day: "2-digit",
                                   month: "short",
                                   hour: "2-digit",
                                   minute: "2-digit",
                                   hour12: false,
-                                  timeZone: "CET",
                               })
-                            : new Date(time).toLocaleTimeString(undefined, {
+                            : DateTime.fromMillis(time).setZone(timelineParams.timezone).toLocaleString({
                                   hour: "2-digit",
                                   minute: "2-digit",
                                   hour12: false,
-                                  timeZone: "CET",
                               })
                         : undefined}
                 </div>
@@ -98,19 +97,17 @@ export default function TimeMarker({
                 >
                     {showTimeLabel
                         ? showDate
-                            ? new Date(time).toLocaleString(undefined, {
+                            ? DateTime.fromMillis(time).setZone(timelineParams.timezone).toLocaleString({
                                   day: "2-digit",
                                   month: "short",
                                   hour: "2-digit",
                                   minute: "2-digit",
                                   hour12: false,
-                                  timeZone: "CET",
                               })
-                            : new Date(time).toLocaleTimeString(undefined, {
+                            : DateTime.fromMillis(time).setZone(timelineParams.timezone).toLocaleString({
                                   hour: "2-digit",
                                   minute: "2-digit",
                                   hour12: false,
-                                  timeZone: "CET",
                               })
                         : undefined}
                 </div>

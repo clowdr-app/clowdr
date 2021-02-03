@@ -18,19 +18,19 @@ export default function NowMarker({
 
     const ref = useRef<HTMLDivElement>(null);
     const scrollToNow = useCallback(() => {
-        if (offsetSeconds >= 0) {
+        if (offsetSeconds >= 0 && offsetSeconds < timelineParams.fullTimeSpanSeconds) {
             ref.current?.scrollIntoView({
                 behavior: "smooth",
                 block: "end",
                 inline: "center",
             });
         }
-    }, [offsetSeconds]);
+    }, [offsetSeconds, timelineParams.fullTimeSpanSeconds]);
     useEffect(() => {
         setScrollToNow?.(scrollToNow);
     }, [scrollToNow, setScrollToNow]);
 
-    if (offsetSeconds < 0) {
+    if (offsetSeconds < 0 || offsetSeconds > timelineParams.fullTimeSpanSeconds) {
         return <></>;
     }
 

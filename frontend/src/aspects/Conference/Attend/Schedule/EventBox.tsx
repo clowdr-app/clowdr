@@ -17,6 +17,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { ContentBaseType, ContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
+import { DateTime } from "luxon";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { Link as ReactLink } from "react-router-dom";
 import {
@@ -95,6 +96,9 @@ function EventBoxPopover({
             }
         };
     }, [isOpen]);
+
+    const timelineParams = useTimelineParameters();
+
     return (
         <Popover
             variant="responsive"
@@ -176,27 +180,28 @@ function EventBoxPopover({
                                     </Flex>
                                 </Flex>
                                 <Text
-                                    aria-label={`Starts at ${new Date(fullEvent.startTime).toLocaleString(undefined, {
-                                        weekday: "long",
-                                        hour: "numeric",
-                                        minute: "numeric",
-                                        timeZone: "CET",
-                                    })} and lasts ${Math.round(durationSeconds / 60)} minutes.`}
+                                    aria-label={`Starts at ${DateTime.fromISO(fullEvent.startTime)
+                                        .setZone(timelineParams.timezone)
+                                        .toLocaleString({
+                                            weekday: "long",
+                                            hour: "numeric",
+                                            minute: "numeric",
+                                        })} and lasts ${Math.round(durationSeconds / 60)} minutes.`}
                                     mb={2}
                                 >
-                                    {new Date(eventStartMs).toLocaleString(undefined, {
+                                    {DateTime.fromMillis(eventStartMs).setZone(timelineParams.timezone).toLocaleString({
                                         hour: "numeric",
                                         minute: "numeric",
                                         hour12: false,
-                                        timeZone: "CET",
                                     })}{" "}
                                     -{" "}
-                                    {new Date(eventStartMs + durationSeconds * 1000).toLocaleString(undefined, {
-                                        hour: "numeric",
-                                        minute: "numeric",
-                                        hour12: false,
-                                        timeZone: "CET",
-                                    })}
+                                    {DateTime.fromMillis(eventStartMs + durationSeconds * 1000)
+                                        .setZone(timelineParams.timezone)
+                                        .toLocaleString({
+                                            hour: "numeric",
+                                            minute: "numeric",
+                                            hour12: false,
+                                        })}
                                 </Text>
                             </PopoverHeader>
                             <PopoverArrow />
@@ -313,12 +318,13 @@ export default function EventBox({
                 minW={0}
                 colorScheme="blue"
                 role="button"
-                aria-label={`${eventTitle} starts ${new Date(eventStartMs).toLocaleString(undefined, {
-                    weekday: "long",
-                    hour: "numeric",
-                    minute: "numeric",
-                    timeZone: "CET",
-                })} and lasts ${Math.round(durationSeconds / 60)} minutes.`}
+                aria-label={`${eventTitle} starts ${DateTime.fromMillis(eventStartMs)
+                    .setZone(timelineParams.timezone)
+                    .toLocaleString({
+                        weekday: "long",
+                        hour: "numeric",
+                        minute: "numeric",
+                    })} and lasts ${Math.round(durationSeconds / 60)} minutes.`}
             >
                 {buttonContents}
             </Button>

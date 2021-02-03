@@ -1,4 +1,5 @@
 import { Button, ButtonGroup, Text } from "@chakra-ui/react";
+import { DateTime } from "luxon";
 import React, { useMemo } from "react";
 import type {
     Timeline_ContentGroup_PartialInfoFragment,
@@ -72,7 +73,7 @@ export default function DayList({
             borderTopRightRadius={5}
             overflow="hidden"
         >
-            {nowOffsetSeconds >= 0 ? (
+            {nowOffsetSeconds >= 0 && nowOffsetSeconds < timelineParams.fullTimeSpanSeconds ? (
                 <Button
                     m={0}
                     borderRadius={0}
@@ -115,26 +116,28 @@ export default function DayList({
                         scrollToEvent(date[1].event);
                     }}
                     // TODO: Set the timezone for the conference
-                    aria-label={`Scroll schedule to ${date[0].toLocaleString(undefined, {
-                        weekday: "long",
-                        day: "numeric",
-                        month: "long",
-                        timeZone: "CET",
-                    })}`}
+                    aria-label={`Scroll schedule to ${DateTime.fromJSDate(date[0])
+                        .setZone(timelineParams.timezone)
+                        .toLocaleString({
+                            weekday: "long",
+                            day: "numeric",
+                            month: "long",
+                        })}`}
                 >
                     {idx === 0 ||
                     idx === distinctDates.length - 1 ||
                     (idx > 0 && date[0].getDay() < distinctDates[idx - 1][0].getDay()) ? (
                         <Text display="block" as="span" fontSize="0.7em" w="100%" textAlign="center" fontStyle="italic">
-                            {date[0].toLocaleDateString(undefined, {
+                            {DateTime.fromJSDate(date[0]).setZone(timelineParams.timezone).toLocaleString({
                                 day: "2-digit",
                                 month: "2-digit",
-                                timeZone: "CET",
                             })}
                         </Text>
                     ) : undefined}
                     <Text w="100%" display="block" as="span" mt="3px">
-                        {date[0].toLocaleString(undefined, { weekday: "long", timeZone: "CET" })}
+                        {DateTime.fromJSDate(date[0])
+                            .setZone(timelineParams.timezone)
+                            .toLocaleString({ weekday: "long" })}
                     </Text>
                 </Button>
             ))}

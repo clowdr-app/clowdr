@@ -384,6 +384,7 @@ enum ColumnId {
     EndTime = "endTime",
     Room = "room",
     RoomMode = "roomMode",
+    Name = "name",
     Content = "content",
 }
 
@@ -529,7 +530,11 @@ function EditableScheduleTable(): JSX.Element {
                             return (
                                 <Center w="100%" h="100%" padding={0}>
                                     <Button
-                                        isDisabled={!wholeSchedule.data?.Room || isIndexAffectingEditOngoing}
+                                        isDisabled={
+                                            !wholeSchedule.data?.Room ||
+                                            wholeSchedule.data.Room.length === 0 ||
+                                            isIndexAffectingEditOngoing
+                                        }
                                         aria-label="Create new event"
                                         onClick={() => {
                                             if (wholeSchedule.data?.Room && wholeSchedule.data.Room.length !== 0) {
@@ -540,7 +545,7 @@ function EditableScheduleTable(): JSX.Element {
                                                         durationSeconds: 300,
                                                         conferenceId: conference.id,
                                                         intendedRoomModeName: RoomMode_Enum.Breakout,
-                                                        name: "New event",
+                                                        name: "Innominate event",
                                                         roomId: wholeSchedule.data.Room[0].id,
                                                         startTime: new Date().toISOString(),
                                                         contentGroupId: null,
@@ -742,6 +747,32 @@ function EditableScheduleTable(): JSX.Element {
                 Header: "Content",
                 disableResizing: true,
                 columns: [
+                    {
+                        id: ColumnId.Name,
+                        Header: "Name",
+                        accessor: "name",
+                        Cell: function ContentCell(props: CellProps<EventInfoFragment>) {
+                            const { value, setValue, onBlur } = useEditableValue(props.value, (newValue) => {
+                                return props.updateMyData(props.row.index, props.column.id, newValue);
+                            });
+
+                            if (props.row.isGrouped && !props.column.isGrouped) {
+                                return <></>;
+                            }
+
+                            return (
+                                <Input
+                                    type="text"
+                                    value={value ?? ""}
+                                    onChange={(ev) => setValue(ev.target.value)}
+                                    onBlur={onBlur}
+                                    border="1px solid"
+                                    borderColor="rgba(255, 255, 255, 0.16)"
+                                />
+                            );
+                        },
+                        minWidth: 200,
+                    },
                     {
                         id: ColumnId.Content,
                         Header: "Content",
@@ -953,9 +984,14 @@ function EditableScheduleTable(): JSX.Element {
                     updated.intendedRoomModeName = value;
                     hasChanged = updated.intendedRoomModeName !== original.intendedRoomModeName;
                     break;
+                case ColumnId.Name:
+                    updated.name = value;
+                    hasChanged = updated.name !== original.name;
+                    break;
                 case ColumnId.Content:
                     updated.contentGroupId = value && value.length > 0 ? value : undefined;
-                    hasChanged = updated.contentGroupId !== original.contentGroupId;
+                    // Yes, I mean "!=" and not "!==" in this instance /Ed
+                    hasChanged = updated.contentGroupId != original.contentGroupId;
                     break;
             }
 

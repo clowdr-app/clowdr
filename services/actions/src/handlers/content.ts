@@ -86,6 +86,7 @@ export async function handleContentItemUpdated(payload: Payload<ContentItemData>
         (oldVersion &&
             oldVersion.data.baseType === "video" &&
             currentVersion.data.transcode?.s3Url &&
+            !currentVersion.data.sourceHasEmbeddedSubtitles &&
             oldVersion.data.transcode?.s3Url !== currentVersion.data.transcode.s3Url) ||
         (!oldVersion && currentVersion.data.transcode?.s3Url)
     ) {

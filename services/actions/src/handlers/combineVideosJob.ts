@@ -115,7 +115,7 @@ export async function handleCombineVideosJobInserted(payload: Payload<CombineVid
                         CustomName: "File Group",
                         OutputGroupSettings: {
                             FileGroupSettings: {
-                                Destination: `s3://${process.env.AWS_CONTENT_BUCKET_ID}/${destinationKey}.mp4`,
+                                Destination: `s3://${process.env.AWS_CONTENT_BUCKET_ID}/${destinationKey}`,
                             },
                             Type: OutputGroupType.FILE_GROUP_SETTINGS,
                         },
@@ -265,6 +265,7 @@ export async function completeCombineVideosJob(
                 data: {
                     baseType: ContentBaseType.Video,
                     s3Url: transcodeS3Url,
+                    sourceHasEmbeddedSubtitles: true,
                     subtitles: {},
                     type: ContentType_Enum.VideoFile,
                     broadcastTranscode: {

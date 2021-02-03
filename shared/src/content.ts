@@ -255,6 +255,7 @@ export interface LinkContentBlob extends BaseContentBlob {
 export interface VideoContentBlob extends BaseContentBlob {
     baseType: ContentBaseType.Video;
     s3Url: string;
+    sourceHasEmbeddedSubtitles?: boolean;
     transcode?: TranscodeDetails;
     subtitles: Record<LanguageCode, SubtitleDetails>;
     broadcastTranscode?: BroadcastTranscodeDetails;

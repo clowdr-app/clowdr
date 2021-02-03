@@ -10,6 +10,7 @@ import stream from "stream";
 import { assertType } from "typescript-is";
 import {
     CompleteUploadYouTubeVideoJobDocument,
+    CreateYouTubeUploadDocument,
     FailUploadYouTubeVideoJobDocument,
     Google_CreateAttendeeGoogleAccountDocument,
     MarkAndSelectNewUploadYouTubeVideoJobsDocument,
@@ -130,6 +131,32 @@ export async function handleSubmitGoogleOAuthToken(
     }
 }
 
+gql`
+    mutation CreateYouTubeUpload(
+        $contentItemId: uuid!
+        $videoId: String!
+        $videoTitle: String!
+        $videoStatus: String!
+        $uploadYouTubeVideoJobId: uuid!
+        $conferenceId: uuid!
+        $videoPrivacyStatus: String!
+    ) {
+        insert_YouTubeUpload_one(
+            object: {
+                contentItemId: $contentItemId
+                videoId: $videoId
+                videoStatus: $videoStatus
+                videoTitle: $videoTitle
+                videoPrivacyStatus: $videoPrivacyStatus
+                uploadYouTubeVideoJobId: $uploadYouTubeVideoJobId
+                conferenceId: $conferenceId
+            }
+        ) {
+            id
+        }
+    }
+`;
+
 async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment): Promise<void> {
     try {
         const contentItemDataBlob = assertType<ContentItemDataBlob>(job.contentItem.data);
@@ -139,8 +166,13 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
         assert(latestVersion, "Could not find any versions of content item");
         assert(latestVersion.data.baseType === ContentBaseType.Video, "Cannot upload non-video content to YouTube");
 
-        // TODO: use broadcast version if available? Or somehow upload subtitles.
-        const { bucket, key } = new AmazonS3Uri(latestVersion.data.s3Url);
+        const useEmbeddedSubtitles =
+            !latestVersion.data.subtitles["en_US"] || latestVersion.data.sourceHasEmbeddedSubtitles;
+        const { bucket, key } = new AmazonS3Uri(
+            latestVersion.data.sourceHasEmbeddedSubtitles
+                ? latestVersion.data.s3Url
+                : latestVersion.data.broadcastTranscode?.s3Url ?? latestVersion.data.s3Url
+        );
         assert(bucket && key, `Could not parse S3 URI of video item: ${latestVersion.data.s3Url}`);
         const object = await S3.getObject({
             Bucket: bucket,
@@ -162,13 +194,18 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
         const client = createOAuth2Client();
         client.setCredentials(job.attendeeGoogleAccount.tokenData);
 
+        let bytesRead = 0;
+        const totalBytes = object.ContentLength ?? 0;
         const youtubeClient = google.youtube({
             auth: client,
             version: "v3",
             onUploadProgress: (event) => {
-                if (event.bytesRead % 1000 === 0) {
-                    console.log("YouTube upload progress", event.bytesRead, job.id);
+                const previousPercentage = Math.floor((bytesRead / totalBytes) * 100);
+                const newPercentage = Math.floor((event.bytesRead / totalBytes) * 100);
+                if (previousPercentage < newPercentage && newPercentage % 10 === 0) {
+                    console.log(`YouTube upload: ${newPercentage}%`, job.id);
                 }
+                bytesRead = event.bytesRead;
             },
         });
 
@@ -178,8 +215,14 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
                     mimeType: object.ContentType,
                     body: object.Body,
                 },
-                part: ["snippet", "id"],
+                part: ["snippet", "id", "status", "contentDetails"],
                 requestBody: {
+                    contentDetails: {
+                        caption: useEmbeddedSubtitles ? "true" : "false",
+                    },
+                    status: {
+                        privacyStatus: "unlisted",
+                    },
                     snippet: {
                         title: job.contentItem.contentGroup.title,
                     },
@@ -198,15 +241,60 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
                 });
             })
             .then(async (result) => {
-                console.log("Finished uploading YouTube video", job.id, result);
-                await callWithRetry(async () => {
-                    await apolloClient.mutate({
-                        mutation: CompleteUploadYouTubeVideoJobDocument,
-                        variables: {
-                            id: job.id,
-                        },
+                try {
+                    if (!result || !result.data.id || !result.data.snippet || !result.data.status) {
+                        console.error("Missing data from YouTube API on completion of video upload", job.id, result);
+                        await callWithRetry(async () => {
+                            await apolloClient.mutate({
+                                mutation: FailUploadYouTubeVideoJobDocument,
+                                variables: {
+                                    id: job.id,
+                                    message: "No data returned from YouTube API",
+                                },
+                            });
+                        });
+                        return;
+                    }
+
+                    console.log("Finished uploading YouTube video", job.id, result.data);
+
+                    await callWithRetry(async () => {
+                        await apolloClient.mutate({
+                            mutation: CompleteUploadYouTubeVideoJobDocument,
+                            variables: {
+                                id: job.id,
+                            },
+                        });
                     });
-                });
+                    await callWithRetry(async () => {
+                        assert(result.data.id);
+                        assert(result.data.snippet);
+                        assert(result.data.status);
+                        await apolloClient.mutate({
+                            mutation: CreateYouTubeUploadDocument,
+                            variables: {
+                                contentItemId: job.contentItem.id,
+                                videoId: result.data.id,
+                                videoStatus: result.data.status.uploadStatus,
+                                videoTitle: result.data.snippet.title,
+                                videoPrivacyStatus: result.data.status.privacyStatus,
+                                uploadYouTubeVideoJobId: job.id,
+                                conferenceId: job.conferenceId,
+                            },
+                        });
+                    });
+                } catch (e) {
+                    console.error("Failure while recording completion of YouTube upload", job.id, e);
+                    await callWithRetry(async () => {
+                        await apolloClient.mutate({
+                            mutation: FailUploadYouTubeVideoJobDocument,
+                            variables: {
+                                id: job.id,
+                                message: `Failure while recording completion of YouTube upload: ${e}`,
+                            },
+                        });
+                    });
+                }
             });
     } catch (e) {
         console.error("Failure starting UploadYouTubeVideoJob", job.id, e);
@@ -239,6 +327,7 @@ gql`
 
     fragment UploadYouTubeVideoJobData on job_queues_UploadYouTubeVideoJob {
         id
+        conferenceId
         jobStatusName
         retriesCount
         attendeeGoogleAccount {
@@ -259,6 +348,9 @@ gql`
     mutation UnmarkUploadYouTubeVideoJobs($ids: [uuid!]!) {
         update_job_queues_UploadYouTubeVideoJob(where: { id: { _in: $ids } }, _set: { jobStatusName: FAILED }) {
             affected_rows
+            returning {
+                id
+            }
         }
     }
 

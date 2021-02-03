@@ -260,6 +260,9 @@ gql`
     mutation UnmarkVideoRenderJobs($ids: [uuid!]!) {
         update_VideoRenderJob(where: { id: { _in: $ids } }, _set: { jobStatusName: FAILED }) {
             affected_rows
+            returning {
+                id
+            }
         }
     }
 `;

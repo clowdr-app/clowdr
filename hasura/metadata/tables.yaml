@@ -7219,6 +7219,55 @@
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
 - table:
+    schema: public
+    name: YouTubeUpload
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
+  object_relationships:
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  - name: contentItem
+    using:
+      foreign_key_constraint_on: contentItemId
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - conferenceId
+      - contentItemId
+      - created_at
+      - id
+      - updated_at
+      - videoId
+      - videoPrivacyStatus
+      - videoStatus
+      - videoTitle
+      filter:
+        _and:
+        - _exists:
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _eq: CONFERENCE_MANAGE_CONTENT
+            _table:
+              schema: public
+              name: FlatUserPermission
+        - contentItem:
+            conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
+        - conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+- table:
     schema: room
     name: ShufflePeriod
   object_relationships:

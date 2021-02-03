@@ -1,14 +1,32 @@
 import { gql } from "@apollo/client";
-import { Button, FormControl, FormLabel, Heading, List, ListItem, Select, Text, useToast } from "@chakra-ui/react";
+import {
+    Button,
+    FormControl,
+    FormLabel,
+    Heading,
+    List,
+    ListItem,
+    Select,
+    Table,
+    Tbody,
+    Td,
+    Text,
+    Th,
+    Thead,
+    Tr,
+    useToast,
+} from "@chakra-ui/react";
 import { Field, FieldProps, Form, Formik } from "formik";
 import React, { useMemo, useState } from "react";
 import {
     UploadYouTubeVideos_UploadYouTubeVideoJobFragment,
+    UploadYouTubeVideos_YouTubeUploadFragment,
     useUploadYouTubeVideos_CreateUploadYouTubeVideoJobMutation,
     useUploadYouTubeVideos_GetAttendeeGoogleAccountsQuery,
     useUploadYouTubeVideos_GetContentGroupsQuery,
     useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery,
     useUploadYouTubeVideos_GetVideoContentItemsQuery,
+    useUploadYouTubeVideos_GetYouTubeUploadsQuery,
 } from "../../../../generated/graphql";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import { useConference } from "../../useConference";
@@ -17,7 +35,7 @@ import useCurrentAttendee from "../../useCurrentAttendee";
 gql`
     query UploadYouTubeVideos_GetUploadYouTubeVideoJobs($conferenceId: uuid!) {
         job_queues_UploadYouTubeVideoJob(
-            where: { conferenceId: { _eq: $conferenceId } }
+            where: { conferenceId: { _eq: $conferenceId }, jobStatusName: { _neq: COMPLETED } }
             order_by: { createdAt: desc }
         ) {
             ...UploadYouTubeVideos_UploadYouTubeVideoJob
@@ -79,6 +97,28 @@ gql`
             id
         }
     }
+
+    query UploadYouTubeVideos_GetYouTubeUploads($conferenceId: uuid!) {
+        YouTubeUpload(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...UploadYouTubeVideos_YouTubeUpload
+        }
+    }
+
+    fragment UploadYouTubeVideos_YouTubeUpload on YouTubeUpload {
+        id
+        videoId
+        videoPrivacyStatus
+        videoStatus
+        videoTitle
+        contentItem {
+            id
+            name
+            contentGroup {
+                id
+                title
+            }
+        }
+    }
 `;
 
 export function UploadYouTubeVideos(): JSX.Element {
@@ -90,6 +130,7 @@ export function UploadYouTubeVideos(): JSX.Element {
         variables: {
             conferenceId: conference.id,
         },
+        pollInterval: 10000,
     });
 
     const contentGroupsResult = useUploadYouTubeVideos_GetContentGroupsQuery({
@@ -138,10 +179,16 @@ export function UploadYouTubeVideos(): JSX.Element {
 
     const [mutation] = useUploadYouTubeVideos_CreateUploadYouTubeVideoJobMutation();
 
+    const youtubeUploadsResult = useUploadYouTubeVideos_GetYouTubeUploadsQuery({
+        variables: {
+            conferenceId: conference.id,
+        },
+    });
+
     return (
         <>
-            <Heading as="h2" size="md" textAlign="left" mb={2}>
-                Existing uploads
+            <Heading as="h2" size="md" textAlign="left" mt={4} mb={2}>
+                Upload jobs
             </Heading>
             <ApolloQueryWrapper
                 queryResult={existingJobsResult}
@@ -161,7 +208,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                     </List>
                 )}
             </ApolloQueryWrapper>
-            <Heading as="h2" size="md" textAlign="left" my={2}>
+            <Heading as="h2" size="md" textAlign="left" mt={4} mb={2}>
                 Upload a video
             </Heading>
             <Formik<{ contentItemId: string | null; attendeeGoogleAccountId: string | null }>
@@ -197,7 +244,9 @@ export function UploadYouTubeVideos(): JSX.Element {
                                     isInvalid={!!form.errors.contentItemId && !!form.touched.attendeeGoogleAccountId}
                                     isRequired
                                 >
-                                    <FormLabel htmlFor="contentItemId">Content Item</FormLabel>
+                                    <FormLabel htmlFor="contentItemId" mt={2}>
+                                        Content Item
+                                    </FormLabel>
                                     <Select
                                         placeholder="Choose item"
                                         onChange={(event) => setContentGroupId(event.target.value)}
@@ -218,19 +267,48 @@ export function UploadYouTubeVideos(): JSX.Element {
                                     }
                                     isRequired
                                 >
-                                    <FormLabel htmlFor="attendeeGoogleAccountId">Google Account</FormLabel>
+                                    <FormLabel htmlFor="attendeeGoogleAccountId" mt={2}>
+                                        Google Account
+                                    </FormLabel>
                                     <Select {...field} id="contentItemId" placeholder="Choose Google account" mt={2}>
                                         {googleAccountOptions}
                                     </Select>
                                 </FormControl>
                             )}
                         </Field>
-                        <Button type="submit" isLoading={isSubmitting} mt={4}>
+                        <Button type="submit" isLoading={isSubmitting} mt={4} colorScheme="green">
                             Upload video to YouTube
                         </Button>
                     </Form>
                 )}
             </Formik>
+
+            <Heading as="h2" size="md" textAlign="left" mt={4} mb={2}>
+                Uploaded videos
+            </Heading>
+
+            <ApolloQueryWrapper queryResult={youtubeUploadsResult} getter={(result) => result.YouTubeUpload}>
+                {(uploads: readonly UploadYouTubeVideos_YouTubeUploadFragment[]) => (
+                    <Table>
+                        <Thead>
+                            <Tr>
+                                <Th>YouTube ID</Th>
+                                <Th>Privacy</Th>
+                                <Th>Status</Th>
+                            </Tr>
+                        </Thead>
+                        <Tbody>
+                            {uploads.map((upload) => (
+                                <Tr key={upload.id}>
+                                    <Td>{upload.id}</Td>
+                                    <Td>{upload.videoPrivacyStatus}</Td>
+                                    <Td>{upload.videoStatus}</Td>
+                                </Tr>
+                            ))}
+                        </Tbody>
+                    </Table>
+                )}
+            </ApolloQueryWrapper>
         </>
     );
 }

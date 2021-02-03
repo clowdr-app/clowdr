@@ -15350,6 +15350,266 @@ export type VideoRenderJob_Variance_Order_By = {
   readonly retriesCount?: Maybe<Order_By>;
 };
 
+/** columns and relationships of "YouTubeUpload" */
+export type YouTubeUpload = {
+  readonly __typename?: 'YouTubeUpload';
+  /** An object relationship */
+  readonly conference: Conference;
+  readonly conferenceId: Scalars['uuid'];
+  /** An object relationship */
+  readonly contentItem?: Maybe<ContentItem>;
+  readonly contentItemId?: Maybe<Scalars['uuid']>;
+  readonly createdAt: Scalars['timestamptz'];
+  readonly id: Scalars['uuid'];
+  readonly updatedAt: Scalars['timestamptz'];
+  readonly uploadYouTubeVideoJobId?: Maybe<Scalars['uuid']>;
+  readonly videoId: Scalars['String'];
+  readonly videoPrivacyStatus: Scalars['String'];
+  readonly videoStatus: Scalars['String'];
+  readonly videoTitle: Scalars['String'];
+};
+
+/** aggregated selection of "YouTubeUpload" */
+export type YouTubeUpload_Aggregate = {
+  readonly __typename?: 'YouTubeUpload_aggregate';
+  readonly aggregate?: Maybe<YouTubeUpload_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<YouTubeUpload>;
+};
+
+/** aggregate fields of "YouTubeUpload" */
+export type YouTubeUpload_Aggregate_Fields = {
+  readonly __typename?: 'YouTubeUpload_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<YouTubeUpload_Max_Fields>;
+  readonly min?: Maybe<YouTubeUpload_Min_Fields>;
+};
+
+
+/** aggregate fields of "YouTubeUpload" */
+export type YouTubeUpload_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<YouTubeUpload_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "YouTubeUpload" */
+export type YouTubeUpload_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<YouTubeUpload_Max_Order_By>;
+  readonly min?: Maybe<YouTubeUpload_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "YouTubeUpload" */
+export type YouTubeUpload_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<YouTubeUpload_Insert_Input>;
+  readonly on_conflict?: Maybe<YouTubeUpload_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "YouTubeUpload". All fields are combined with a logical 'AND'. */
+export type YouTubeUpload_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<YouTubeUpload_Bool_Exp>>>;
+  readonly _not?: Maybe<YouTubeUpload_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<YouTubeUpload_Bool_Exp>>>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly contentItem?: Maybe<ContentItem_Bool_Exp>;
+  readonly contentItemId?: Maybe<Uuid_Comparison_Exp>;
+  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly uploadYouTubeVideoJobId?: Maybe<Uuid_Comparison_Exp>;
+  readonly videoId?: Maybe<String_Comparison_Exp>;
+  readonly videoPrivacyStatus?: Maybe<String_Comparison_Exp>;
+  readonly videoStatus?: Maybe<String_Comparison_Exp>;
+  readonly videoTitle?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "YouTubeUpload" */
+export enum YouTubeUpload_Constraint {
+  /** unique or primary key constraint */
+  YouTubeUploadPkey = 'YouTubeUpload_pkey',
+  /** unique or primary key constraint */
+  YouTubeUploadVideoIdKey = 'YouTubeUpload_videoId_key'
+}
+
+/** input type for inserting data into table "YouTubeUpload" */
+export type YouTubeUpload_Insert_Input = {
+  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly contentItem?: Maybe<ContentItem_Obj_Rel_Insert_Input>;
+  readonly contentItemId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly uploadYouTubeVideoJobId?: Maybe<Scalars['uuid']>;
+  readonly videoId?: Maybe<Scalars['String']>;
+  readonly videoPrivacyStatus?: Maybe<Scalars['String']>;
+  readonly videoStatus?: Maybe<Scalars['String']>;
+  readonly videoTitle?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type YouTubeUpload_Max_Fields = {
+  readonly __typename?: 'YouTubeUpload_max_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly contentItemId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly uploadYouTubeVideoJobId?: Maybe<Scalars['uuid']>;
+  readonly videoId?: Maybe<Scalars['String']>;
+  readonly videoPrivacyStatus?: Maybe<Scalars['String']>;
+  readonly videoStatus?: Maybe<Scalars['String']>;
+  readonly videoTitle?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "YouTubeUpload" */
+export type YouTubeUpload_Max_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly contentItemId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly uploadYouTubeVideoJobId?: Maybe<Order_By>;
+  readonly videoId?: Maybe<Order_By>;
+  readonly videoPrivacyStatus?: Maybe<Order_By>;
+  readonly videoStatus?: Maybe<Order_By>;
+  readonly videoTitle?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type YouTubeUpload_Min_Fields = {
+  readonly __typename?: 'YouTubeUpload_min_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly contentItemId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly uploadYouTubeVideoJobId?: Maybe<Scalars['uuid']>;
+  readonly videoId?: Maybe<Scalars['String']>;
+  readonly videoPrivacyStatus?: Maybe<Scalars['String']>;
+  readonly videoStatus?: Maybe<Scalars['String']>;
+  readonly videoTitle?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "YouTubeUpload" */
+export type YouTubeUpload_Min_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly contentItemId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly uploadYouTubeVideoJobId?: Maybe<Order_By>;
+  readonly videoId?: Maybe<Order_By>;
+  readonly videoPrivacyStatus?: Maybe<Order_By>;
+  readonly videoStatus?: Maybe<Order_By>;
+  readonly videoTitle?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "YouTubeUpload" */
+export type YouTubeUpload_Mutation_Response = {
+  readonly __typename?: 'YouTubeUpload_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<YouTubeUpload>;
+};
+
+/** input type for inserting object relation for remote table "YouTubeUpload" */
+export type YouTubeUpload_Obj_Rel_Insert_Input = {
+  readonly data: YouTubeUpload_Insert_Input;
+  readonly on_conflict?: Maybe<YouTubeUpload_On_Conflict>;
+};
+
+/** on conflict condition type for table "YouTubeUpload" */
+export type YouTubeUpload_On_Conflict = {
+  readonly constraint: YouTubeUpload_Constraint;
+  readonly update_columns: ReadonlyArray<YouTubeUpload_Update_Column>;
+  readonly where?: Maybe<YouTubeUpload_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "YouTubeUpload" */
+export type YouTubeUpload_Order_By = {
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly contentItem?: Maybe<ContentItem_Order_By>;
+  readonly contentItemId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly uploadYouTubeVideoJobId?: Maybe<Order_By>;
+  readonly videoId?: Maybe<Order_By>;
+  readonly videoPrivacyStatus?: Maybe<Order_By>;
+  readonly videoStatus?: Maybe<Order_By>;
+  readonly videoTitle?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "YouTubeUpload" */
+export type YouTubeUpload_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "YouTubeUpload" */
+export enum YouTubeUpload_Select_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  ContentItemId = 'contentItemId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  UploadYouTubeVideoJobId = 'uploadYouTubeVideoJobId',
+  /** column name */
+  VideoId = 'videoId',
+  /** column name */
+  VideoPrivacyStatus = 'videoPrivacyStatus',
+  /** column name */
+  VideoStatus = 'videoStatus',
+  /** column name */
+  VideoTitle = 'videoTitle'
+}
+
+/** input type for updating data in table "YouTubeUpload" */
+export type YouTubeUpload_Set_Input = {
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly contentItemId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly uploadYouTubeVideoJobId?: Maybe<Scalars['uuid']>;
+  readonly videoId?: Maybe<Scalars['String']>;
+  readonly videoPrivacyStatus?: Maybe<Scalars['String']>;
+  readonly videoStatus?: Maybe<Scalars['String']>;
+  readonly videoTitle?: Maybe<Scalars['String']>;
+};
+
+/** update columns of table "YouTubeUpload" */
+export enum YouTubeUpload_Update_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  ContentItemId = 'contentItemId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  UploadYouTubeVideoJobId = 'uploadYouTubeVideoJobId',
+  /** column name */
+  VideoId = 'videoId',
+  /** column name */
+  VideoPrivacyStatus = 'videoPrivacyStatus',
+  /** column name */
+  VideoStatus = 'videoStatus',
+  /** column name */
+  VideoTitle = 'videoTitle'
+}
+
 
 /** expression to compare columns of type bigint. All fields are combined with logical 'AND'. */
 export type Bigint_Comparison_Exp = {
@@ -20447,6 +20707,10 @@ export type Mutation_Root = {
   readonly delete_VideoRenderJob?: Maybe<VideoRenderJob_Mutation_Response>;
   /** delete single row from the table: "VideoRenderJob" */
   readonly delete_VideoRenderJob_by_pk?: Maybe<VideoRenderJob>;
+  /** delete data from the table: "YouTubeUpload" */
+  readonly delete_YouTubeUpload?: Maybe<YouTubeUpload_Mutation_Response>;
+  /** delete single row from the table: "YouTubeUpload" */
+  readonly delete_YouTubeUpload_by_pk?: Maybe<YouTubeUpload>;
   /** delete data from the table: "chat.Chat" */
   readonly delete_chat_Chat?: Maybe<Chat_Chat_Mutation_Response>;
   /** delete single row from the table: "chat.Chat" */
@@ -20739,6 +21003,10 @@ export type Mutation_Root = {
   readonly insert_VideoRenderJob?: Maybe<VideoRenderJob_Mutation_Response>;
   /** insert a single row into the table: "VideoRenderJob" */
   readonly insert_VideoRenderJob_one?: Maybe<VideoRenderJob>;
+  /** insert data into the table: "YouTubeUpload" */
+  readonly insert_YouTubeUpload?: Maybe<YouTubeUpload_Mutation_Response>;
+  /** insert a single row into the table: "YouTubeUpload" */
+  readonly insert_YouTubeUpload_one?: Maybe<YouTubeUpload>;
   /** insert data into the table: "chat.Chat" */
   readonly insert_chat_Chat?: Maybe<Chat_Chat_Mutation_Response>;
   /** insert a single row into the table: "chat.Chat" */
@@ -21053,6 +21321,10 @@ export type Mutation_Root = {
   readonly update_VideoRenderJob?: Maybe<VideoRenderJob_Mutation_Response>;
   /** update single row of the table: "VideoRenderJob" */
   readonly update_VideoRenderJob_by_pk?: Maybe<VideoRenderJob>;
+  /** update data of the table: "YouTubeUpload" */
+  readonly update_YouTubeUpload?: Maybe<YouTubeUpload_Mutation_Response>;
+  /** update single row of the table: "YouTubeUpload" */
+  readonly update_YouTubeUpload_by_pk?: Maybe<YouTubeUpload>;
   /** update data of the table: "chat.Chat" */
   readonly update_chat_Chat?: Maybe<Chat_Chat_Mutation_Response>;
   /** update single row of the table: "chat.Chat" */
@@ -21772,6 +22044,18 @@ export type Mutation_RootDelete_VideoRenderJobArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_VideoRenderJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_YouTubeUploadArgs = {
+  where: YouTubeUpload_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_YouTubeUpload_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -22757,6 +23041,20 @@ export type Mutation_RootInsert_VideoRenderJobArgs = {
 export type Mutation_RootInsert_VideoRenderJob_OneArgs = {
   object: VideoRenderJob_Insert_Input;
   on_conflict?: Maybe<VideoRenderJob_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_YouTubeUploadArgs = {
+  objects: ReadonlyArray<YouTubeUpload_Insert_Input>;
+  on_conflict?: Maybe<YouTubeUpload_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_YouTubeUpload_OneArgs = {
+  object: YouTubeUpload_Insert_Input;
+  on_conflict?: Maybe<YouTubeUpload_On_Conflict>;
 };
 
 
@@ -23972,6 +24270,20 @@ export type Mutation_RootUpdate_VideoRenderJob_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_YouTubeUploadArgs = {
+  _set?: Maybe<YouTubeUpload_Set_Input>;
+  where: YouTubeUpload_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_YouTubeUpload_By_PkArgs = {
+  _set?: Maybe<YouTubeUpload_Set_Input>;
+  pk_columns: YouTubeUpload_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_Chat_ChatArgs = {
   _set?: Maybe<Chat_Chat_Set_Input>;
   where: Chat_Chat_Bool_Exp;
@@ -24652,6 +24964,12 @@ export type Query_Root = {
   readonly VideoRenderJob_aggregate: VideoRenderJob_Aggregate;
   /** fetch data from the table: "VideoRenderJob" using primary key columns */
   readonly VideoRenderJob_by_pk?: Maybe<VideoRenderJob>;
+  /** fetch data from the table: "YouTubeUpload" */
+  readonly YouTubeUpload: ReadonlyArray<YouTubeUpload>;
+  /** fetch aggregated fields from the table: "YouTubeUpload" */
+  readonly YouTubeUpload_aggregate: YouTubeUpload_Aggregate;
+  /** fetch data from the table: "YouTubeUpload" using primary key columns */
+  readonly YouTubeUpload_by_pk?: Maybe<YouTubeUpload>;
   /** fetch data from the table: "chat.Chat" */
   readonly chat_Chat: ReadonlyArray<Chat_Chat>;
   /** fetch aggregated fields from the table: "chat.Chat" */
@@ -26175,6 +26493,32 @@ export type Query_RootVideoRenderJob_AggregateArgs = {
 
 /** query root */
 export type Query_RootVideoRenderJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
+export type Query_RootYouTubeUploadArgs = {
+  distinct_on?: Maybe<ReadonlyArray<YouTubeUpload_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<YouTubeUpload_Order_By>>;
+  where?: Maybe<YouTubeUpload_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootYouTubeUpload_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<YouTubeUpload_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<YouTubeUpload_Order_By>>;
+  where?: Maybe<YouTubeUpload_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootYouTubeUpload_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -28296,6 +28640,12 @@ export type Subscription_Root = {
   readonly VideoRenderJob_aggregate: VideoRenderJob_Aggregate;
   /** fetch data from the table: "VideoRenderJob" using primary key columns */
   readonly VideoRenderJob_by_pk?: Maybe<VideoRenderJob>;
+  /** fetch data from the table: "YouTubeUpload" */
+  readonly YouTubeUpload: ReadonlyArray<YouTubeUpload>;
+  /** fetch aggregated fields from the table: "YouTubeUpload" */
+  readonly YouTubeUpload_aggregate: YouTubeUpload_Aggregate;
+  /** fetch data from the table: "YouTubeUpload" using primary key columns */
+  readonly YouTubeUpload_by_pk?: Maybe<YouTubeUpload>;
   /** fetch data from the table: "chat.Chat" */
   readonly chat_Chat: ReadonlyArray<Chat_Chat>;
   /** fetch aggregated fields from the table: "chat.Chat" */
@@ -29819,6 +30169,32 @@ export type Subscription_RootVideoRenderJob_AggregateArgs = {
 
 /** subscription root */
 export type Subscription_RootVideoRenderJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
+export type Subscription_RootYouTubeUploadArgs = {
+  distinct_on?: Maybe<ReadonlyArray<YouTubeUpload_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<YouTubeUpload_Order_By>>;
+  where?: Maybe<YouTubeUpload_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootYouTubeUpload_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<YouTubeUpload_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<YouTubeUpload_Order_By>>;
+  where?: Maybe<YouTubeUpload_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootYouTubeUpload_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -31458,6 +31834,18 @@ export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobMutationVariables = E
 
 export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobMutation = { readonly __typename?: 'mutation_root', readonly insert_job_queues_UploadYouTubeVideoJob_one?: Maybe<{ readonly __typename?: 'job_queues_UploadYouTubeVideoJob', readonly id: any }> };
 
+export type UploadYouTubeVideos_GetYouTubeUploadsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type UploadYouTubeVideos_GetYouTubeUploadsQuery = { readonly __typename?: 'query_root', readonly YouTubeUpload: ReadonlyArray<(
+    { readonly __typename?: 'YouTubeUpload' }
+    & UploadYouTubeVideos_YouTubeUploadFragment
+  )> };
+
+export type UploadYouTubeVideos_YouTubeUploadFragment = { readonly __typename?: 'YouTubeUpload', readonly id: any, readonly videoId: string, readonly videoPrivacyStatus: string, readonly videoStatus: string, readonly videoTitle: string, readonly contentItem?: Maybe<{ readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly contentGroup: { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string } }> };
+
 export type ImportAttendeesMutationVariables = Exact<{
   insertAttendees: ReadonlyArray<Attendee_Insert_Input>;
   insertInvitations: ReadonlyArray<Invitation_Insert_Input>;
@@ -32883,6 +33271,23 @@ export const UploadYouTubeVideos_UploadYouTubeVideoJobFragmentDoc = gql`
       title
     }
     name
+  }
+}
+    `;
+export const UploadYouTubeVideos_YouTubeUploadFragmentDoc = gql`
+    fragment UploadYouTubeVideos_YouTubeUpload on YouTubeUpload {
+  id
+  videoId
+  videoPrivacyStatus
+  videoStatus
+  videoTitle
+  contentItem {
+    id
+    name
+    contentGroup {
+      id
+      title
+    }
   }
 }
     `;
@@ -36191,7 +36596,7 @@ export type UpdateHallwayMutationOptions = Apollo.BaseMutationOptions<UpdateHall
 export const UploadYouTubeVideos_GetUploadYouTubeVideoJobsDocument = gql`
     query UploadYouTubeVideos_GetUploadYouTubeVideoJobs($conferenceId: uuid!) {
   job_queues_UploadYouTubeVideoJob(
-    where: {conferenceId: {_eq: $conferenceId}}
+    where: {conferenceId: {_eq: $conferenceId}, jobStatusName: {_neq: COMPLETED}}
     order_by: {createdAt: desc}
   ) {
     ...UploadYouTubeVideos_UploadYouTubeVideoJob
@@ -36368,6 +36773,39 @@ export function useUploadYouTubeVideos_CreateUploadYouTubeVideoJobMutation(baseO
 export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobMutationHookResult = ReturnType<typeof useUploadYouTubeVideos_CreateUploadYouTubeVideoJobMutation>;
 export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobMutationResult = Apollo.MutationResult<UploadYouTubeVideos_CreateUploadYouTubeVideoJobMutation>;
 export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobMutationOptions = Apollo.BaseMutationOptions<UploadYouTubeVideos_CreateUploadYouTubeVideoJobMutation, UploadYouTubeVideos_CreateUploadYouTubeVideoJobMutationVariables>;
+export const UploadYouTubeVideos_GetYouTubeUploadsDocument = gql`
+    query UploadYouTubeVideos_GetYouTubeUploads($conferenceId: uuid!) {
+  YouTubeUpload(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...UploadYouTubeVideos_YouTubeUpload
+  }
+}
+    ${UploadYouTubeVideos_YouTubeUploadFragmentDoc}`;
+
+/**
+ * __useUploadYouTubeVideos_GetYouTubeUploadsQuery__
+ *
+ * To run a query within a React component, call `useUploadYouTubeVideos_GetYouTubeUploadsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUploadYouTubeVideos_GetYouTubeUploadsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUploadYouTubeVideos_GetYouTubeUploadsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useUploadYouTubeVideos_GetYouTubeUploadsQuery(baseOptions: Apollo.QueryHookOptions<UploadYouTubeVideos_GetYouTubeUploadsQuery, UploadYouTubeVideos_GetYouTubeUploadsQueryVariables>) {
+        return Apollo.useQuery<UploadYouTubeVideos_GetYouTubeUploadsQuery, UploadYouTubeVideos_GetYouTubeUploadsQueryVariables>(UploadYouTubeVideos_GetYouTubeUploadsDocument, baseOptions);
+      }
+export function useUploadYouTubeVideos_GetYouTubeUploadsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UploadYouTubeVideos_GetYouTubeUploadsQuery, UploadYouTubeVideos_GetYouTubeUploadsQueryVariables>) {
+          return Apollo.useLazyQuery<UploadYouTubeVideos_GetYouTubeUploadsQuery, UploadYouTubeVideos_GetYouTubeUploadsQueryVariables>(UploadYouTubeVideos_GetYouTubeUploadsDocument, baseOptions);
+        }
+export type UploadYouTubeVideos_GetYouTubeUploadsQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetYouTubeUploadsQuery>;
+export type UploadYouTubeVideos_GetYouTubeUploadsLazyQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetYouTubeUploadsLazyQuery>;
+export type UploadYouTubeVideos_GetYouTubeUploadsQueryResult = Apollo.QueryResult<UploadYouTubeVideos_GetYouTubeUploadsQuery, UploadYouTubeVideos_GetYouTubeUploadsQueryVariables>;
 export const ImportAttendeesDocument = gql`
     mutation ImportAttendees($insertAttendees: [Attendee_insert_input!]!, $insertInvitations: [Invitation_insert_input!]!) {
   insert_Attendee(objects: $insertAttendees) {

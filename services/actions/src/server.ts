@@ -155,16 +155,28 @@ app.post("/invitation/confirm/current", jsonParser, checkJwt, checkUserScopes, a
     const req = _req as AuthenticatedRequest;
     const params: invitationConfirmCurrentArgs = req.body.input;
     console.log("Invitation/confirm/current", params);
-    const result = await invitationConfirmCurrentHandler(params, req.userId);
-    return res.json(result);
+    try {
+        const result = await invitationConfirmCurrentHandler(params, req.userId);
+        return res.json(result);
+    } catch (e) {
+        console.error("Failure while processing /invitation/confirm/current", e);
+        res.status(500).json("Failure");
+        return;
+    }
 });
 
 app.post("/invitation/confirm/code", jsonParser, checkJwt, checkUserScopes, async (_req: Request, res: Response) => {
     const req = _req as AuthenticatedRequest;
     const params: invitationConfirmWithCodeArgs = req.body.input;
     console.log("Invitation/confirm/code", params);
-    const result = await invitationConfirmWithCodeHandler(params, req.userId);
-    return res.json(result);
+    try {
+        const result = await invitationConfirmWithCodeHandler(params, req.userId);
+        return res.json(result);
+    } catch (e) {
+        console.error("Failure while processing /invitation/confirm/code", e);
+        res.status(500).json("Failure");
+        return;
+    }
 });
 
 app.post(
@@ -176,8 +188,14 @@ app.post(
         const req = _req as AuthenticatedRequest;
         const params: invitationConfirmSendInitialEmailArgs = req.body.input;
         console.log("Invitation/confirm/send/initial", params);
-        const result = await invitationConfirmSendInitialEmailHandler(params, req.userId);
-        return res.json(result);
+        try {
+            const result = await invitationConfirmSendInitialEmailHandler(params, req.userId);
+            return res.json(result);
+        } catch (e) {
+            console.error("Failure while processing /invitation/confirm/send/initial", e);
+            res.status(500).json("Failure");
+            return;
+        }
     }
 );
 
@@ -190,8 +208,14 @@ app.post(
         const req = _req as AuthenticatedRequest;
         const params: invitationConfirmSendRepeatEmailArgs = req.body.input;
         console.log("Invitation/confirm/send/repeat", params);
-        const result = await invitationConfirmSendRepeatEmailHandler(params, req.userId);
-        return res.json(result);
+        try {
+            const result = await invitationConfirmSendRepeatEmailHandler(params, req.userId);
+            return res.json(result);
+        } catch (e) {
+            console.error("Failure while processing /invitation/confirm/send/repeat", e);
+            res.status(500).json("Failure");
+            return;
+        }
     }
 );
 

@@ -1,6 +1,5 @@
 import { DateTime, Zone } from "luxon";
 import React, { createContext, useContext } from "react";
-import { roundDownToNearest, roundUpToNearest } from "../../../Generic/MathUtils";
 
 export interface TimelineParameters {
     earliestMs: number;
@@ -28,15 +27,17 @@ export function TimelineParameters({
     earliestEventStart: number;
     latestEventEnd: number;
 }): JSX.Element {
-    const earliestMs = roundDownToNearest(earliestEventStart, 60 * 60 * 1000);
-    const latestMs = roundUpToNearest(latestEventEnd, 60 * 60 * 1000);
+    const timezone = DateTime.local().zone; // E.g. 8 hours behind (PST): FixedOffsetZone.instance(-8 * 60)
+    // const timezone = FixedOffsetZone.instance(-1 * 60);
+    const earliestMs = DateTime.fromMillis(earliestEventStart).setZone(timezone).startOf("hour").toMillis();
+    const latestMs = DateTime.fromMillis(latestEventEnd).setZone(timezone).endOf("hour").toMillis();
     return (
         <TimelineContext.Provider
             value={{
                 earliestMs,
                 latestMs,
                 fullTimeSpanSeconds: Math.max(1000, latestMs - earliestMs) / 1000,
-                timezone: DateTime.local().zone, // E.g. 8 hours behind (PST): FixedOffsetZone.instance(-8 * 60)
+                timezone,
             }}
         >
             {children}

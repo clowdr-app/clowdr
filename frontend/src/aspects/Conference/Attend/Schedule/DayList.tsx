@@ -6,7 +6,6 @@ import type {
     Timeline_EventFragment,
     Timeline_RoomFragment,
 } from "../../../../generated/graphql";
-import { roundDownToNearest } from "../../../Generic/MathUtils";
 import { useRealTime } from "../../../Generic/useRealTime";
 import { useTimelineParameters } from "./useTimelineParameters";
 
@@ -34,30 +33,34 @@ export default function DayList({
     scrollToEvent: (event: Timeline_EventFragment) => void;
     scrollToNow: () => void;
 }): JSX.Element {
+    const timelineParams = useTimelineParameters();
+
     const distinctDates = useMemo(() => {
         const result = new Map<number, FirstEventInfo>();
         for (const room of rooms) {
             for (const event of events.filter((x) => x.roomId === room.id)) {
-                const startTime = Date.parse(event.startTime);
-                const startDate = roundDownToNearest(startTime, 24 * 60 * 60 * 1000);
+                // TODO: How to handle multi-year calendars?
+                const startDate = DateTime.fromISO(event.startTime).setZone(timelineParams.timezone);
+                const day = startDate.startOf("day");
 
-                const existingStartEv = result.get(startDate);
+                const existingStartEv = result.get(day.toMillis());
                 if (existingStartEv) {
-                    if (startTime < existingStartEv.startTime) {
-                        result.set(startDate, { event, startTime });
+                    if (startDate.toMillis() < existingStartEv.startTime) {
+                        result.set(day.toMillis(), { event, startTime: startDate.toMillis() });
                     }
                 } else {
-                    result.set(startDate, { event, startTime });
+                    result.set(day.toMillis(), { event, startTime: startDate.toMillis() });
                 }
             }
         }
         return [...result.entries()]
             .sort((x, y) => x[0] - y[0])
-            .map((x) => [new Date(x[0]), x[1]] as [Date, FirstEventInfo]);
-    }, [events, rooms]);
+            .map(
+                (x) => [DateTime.fromMillis(x[0]).setZone(timelineParams.timezone), x[1]] as [DateTime, FirstEventInfo]
+            );
+    }, [events, rooms, timelineParams.timezone]);
 
     const now = useRealTime(60000);
-    const timelineParams = useTimelineParameters();
     const nowOffsetMs = now - timelineParams.earliestMs;
     const nowOffsetSeconds = nowOffsetMs / 1000;
 
@@ -97,50 +100,56 @@ export default function DayList({
                     </Text>
                 </Button>
             ) : undefined}
-            {distinctDates.map((date, idx) => (
-                <Button
-                    m={0}
-                    key={date[0].toISOString()}
-                    borderRadius={0}
-                    colorScheme="blue"
-                    borderWidth={1}
-                    borderStyle="solid"
-                    size="lg"
-                    flex="1 1 auto"
-                    position="relative"
-                    height="auto"
-                    p={3}
-                    flexDirection="column"
-                    justifyContent="flex-end"
-                    onClick={() => {
-                        scrollToEvent(date[1].event);
-                    }}
-                    // TODO: Set the timezone for the conference
-                    aria-label={`Scroll schedule to ${DateTime.fromJSDate(date[0])
-                        .setZone(timelineParams.timezone)
-                        .toLocaleString({
+            {distinctDates.map((date, idx) => {
+                const date0 = date[0];
+                return (
+                    <Button
+                        m={0}
+                        key={date0.toISO()}
+                        borderRadius={0}
+                        colorScheme="blue"
+                        borderWidth={1}
+                        borderStyle="solid"
+                        size="lg"
+                        flex="1 1 auto"
+                        position="relative"
+                        height="auto"
+                        p={3}
+                        flexDirection="column"
+                        justifyContent="flex-end"
+                        onClick={() => {
+                            scrollToEvent(date[1].event);
+                        }}
+                        // TODO: Set the timezone for the conference
+                        aria-label={`Scroll schedule to ${date0.toLocaleString({
                             weekday: "long",
                             day: "numeric",
                             month: "long",
                         })}`}
-                >
-                    {idx === 0 ||
-                    idx === distinctDates.length - 1 ||
-                    (idx > 0 && date[0].getDay() < distinctDates[idx - 1][0].getDay()) ? (
-                        <Text display="block" as="span" fontSize="0.7em" w="100%" textAlign="center" fontStyle="italic">
-                            {DateTime.fromJSDate(date[0]).setZone(timelineParams.timezone).toLocaleString({
-                                day: "2-digit",
-                                month: "2-digit",
-                            })}
+                    >
+                        {idx === 0 ||
+                        idx === distinctDates.length - 1 ||
+                        (idx > 0 && date0.weekNumber !== distinctDates[idx - 1][0].weekNumber) ? (
+                            <Text
+                                display="block"
+                                as="span"
+                                fontSize="0.7em"
+                                w="100%"
+                                textAlign="center"
+                                fontStyle="italic"
+                            >
+                                {date0.toLocaleString({
+                                    day: "2-digit",
+                                    month: "2-digit",
+                                })}
+                            </Text>
+                        ) : undefined}
+                        <Text w="100%" display="block" as="span" mt="3px">
+                            {date0.toLocaleString({ weekday: "long" })}
                         </Text>
-                    ) : undefined}
-                    <Text w="100%" display="block" as="span" mt="3px">
-                        {DateTime.fromJSDate(date[0])
-                            .setZone(timelineParams.timezone)
-                            .toLocaleString({ weekday: "long" })}
-                    </Text>
-                </Button>
-            ))}
+                    </Button>
+                );
+            })}
         </ButtonGroup>
     );
 }

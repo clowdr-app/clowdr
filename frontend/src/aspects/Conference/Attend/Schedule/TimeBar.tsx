@@ -1,6 +1,6 @@
 import { Box, useColorModeValue } from "@chakra-ui/react";
+import { DateTime } from "luxon";
 import React, { useMemo } from "react";
-import { distanceToBoundary } from "../../../Generic/MathUtils";
 import { useScrollerParams } from "./Scroller";
 import TimeMarker from "./TimeMarker";
 import { useTimelineParameters } from "./useTimelineParameters";
@@ -53,31 +53,33 @@ export function useGenerateMarkers(
         const markerSpacing = (4 * 60 * 60 * 1000) / markerDivisions;
         const submarkerSpacing = markerSpacing / markerSubdivisions;
 
-        let prevHalfDay = Number.POSITIVE_INFINITY;
+        let prevOrdinal = Number.POSITIVE_INFINITY;
+        let prevHour = Number.POSITIVE_INFINITY;
         for (let currentMarkerTime = start; currentMarkerTime <= end; currentMarkerTime += markerSpacing) {
-            const currHalfDay = currentMarkerTime % (12 * 60 * 60 * 1000);
+            const currDate = DateTime.fromMillis(currentMarkerTime).setZone(timeline.timezone);
             if (includeMarkers || showTimeLabel) {
                 results.push(
                     <TimeMarker
                         height={markerHeight}
                         showTimeLabel={showTimeLabel}
-                        showDate={currHalfDay < prevHalfDay}
+                        showDate={currDate.ordinal > prevOrdinal || (currDate.hour >= 12 && prevHour < 12)}
                         time={currentMarkerTime}
                         key={`marker-${currentMarkerTime}`}
                         roundTop={false}
                         colour={
                             !includeMarkers
                                 ? "transparent"
-                                : distanceToBoundary(currentMarkerTime, 12 * 60 * 60 * 1000) < 5
+                                : currDate.ordinal > prevOrdinal || (currDate.hour >= 12 && prevHour < 12)
                                 ? orange
-                                : distanceToBoundary(currentMarkerTime, 4 * 60 * 60 * 1000) < 5
+                                : currDate.hour % 4 === 0 && prevHour % 4 !== 0
                                 ? purple
                                 : undefined
                         }
                     />
                 );
             }
-            prevHalfDay = currHalfDay;
+            prevOrdinal = currDate.ordinal;
+            prevHour = currDate.hour;
             if (includeSubMarkers) {
                 const currentMarkerEndTime = currentMarkerTime + markerSpacing;
                 for (
@@ -109,6 +111,7 @@ export function useGenerateMarkers(
         submarkerHeight,
         timeline.earliestMs,
         timeline.latestMs,
+        timeline.timezone,
     ]);
 }
 

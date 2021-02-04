@@ -9,6 +9,7 @@ import {
     PopoverContent,
     PopoverHeader,
     PopoverTrigger,
+    Portal,
     Spinner,
     VStack,
 } from "@chakra-ui/react";
@@ -91,19 +92,27 @@ export function EventRoomControlPanel({ event }: { event: RoomEventDetailsFragme
                             </Button>
                         </VStack>
                     </PopoverTrigger>
-                    <PopoverContent>
-                        <PopoverArrow />
-                        <PopoverCloseButton />
-                        <PopoverHeader>Broadcast controls</PopoverHeader>
-                        <PopoverBody>
-                            {streamsError ? <>Error loading streams.</> : streamsLoading ? <Spinner /> : undefined}
-                            <BroadcastControlPanel
-                                live={live}
-                                streams={streamsData?.EventParticipantStream ?? null}
-                                eventVonageSessionId={event.eventVonageSession?.id ?? null}
-                            />
-                        </PopoverBody>
-                    </PopoverContent>
+                    <Portal>
+                        <Box zIndex="500" position="relative">
+                            <PopoverContent>
+                                <PopoverArrow />
+                                <PopoverCloseButton />
+                                <PopoverHeader>Broadcast controls</PopoverHeader>
+                                <PopoverBody>
+                                    {streamsError ? (
+                                        <>Error loading streams.</>
+                                    ) : streamsLoading ? (
+                                        <Spinner />
+                                    ) : undefined}
+                                    <BroadcastControlPanel
+                                        live={live}
+                                        streams={streamsData?.EventParticipantStream ?? null}
+                                        eventVonageSessionId={event.eventVonageSession?.id ?? null}
+                                    />
+                                </PopoverBody>
+                            </PopoverContent>
+                        </Box>
+                    </Portal>
                 </Popover>
             </RequireAtLeastOnePermissionWrapper>
         </Box>

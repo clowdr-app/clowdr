@@ -102,13 +102,13 @@ export function RoomControlBar({
         <HStack justifyContent="flex-end" m={4}>
             {hasBackstage ? (
                 backstage ? (
-                    <Button colorScheme="red" onClick={() => onSetBackstage(false)}>
-                        Return to stream
+                    <Button size="sm" colorScheme="red" onClick={() => onSetBackstage(false)}>
+                        View stream
                     </Button>
                 ) : (
                     <Tooltip label="Authors click here to join the stream and answer questions live.">
                         <Button colorScheme="green" onClick={() => onSetBackstage(true)}>
-                            Host live Q&amp;A sessions
+                            Join stream
                         </Button>
                     </Tooltip>
                 )

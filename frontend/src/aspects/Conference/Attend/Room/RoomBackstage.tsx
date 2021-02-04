@@ -115,7 +115,9 @@ export function RoomBackstage({
                             py={4}
                         >
                             <VStack>
-                                <Text fontSize="lg">{isSelected ? "Close Q&A room" : "Open Q&A room"}</Text>
+                                <Text fontSize="lg">
+                                    {isSelected ? "Leave streaming room" : "Reveal streaming room"}
+                                </Text>
                                 <Text>{title}</Text>
                             </VStack>
                         </Button>

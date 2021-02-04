@@ -122,8 +122,7 @@ type GroupOption = SelectOption;
 const AttendeesCRUDTable = (props: Readonly<CRUDTableProps<AttendeeDescriptor, "id">>) => CRUDTable(props);
 
 // TODO: Email validation
-// TODO: Client-side de-duplication/validation
-// TODO: Import/export
+// TODO: Export
 
 export default function ManageConferencePeoplePage(): JSX.Element {
     const conference = useConference();
@@ -366,6 +365,15 @@ export default function ManageConferencePeoplePage(): JSX.Element {
                     cudCallbacks: {
                         generateTemporaryKey: () => uuidv4(),
                         create: (tempKey, item) => {
+                            assert(allAttendeesMap);
+                            if (
+                                [...allAttendeesMap.values()].some(
+                                    (x) => x.invitedEmailAddress === item.invitedEmailAddress?.toLowerCase().trim()
+                                )
+                            ) {
+                                return false;
+                            }
+
                             const newItem = {
                                 ...item,
                                 isNew: true,
@@ -384,6 +392,9 @@ export default function ManageConferencePeoplePage(): JSX.Element {
                                 results.set(key, true);
                             });
 
+                            // Duplicate email addresses cannot be set because
+                            // a) The database prevents it and
+                            // b) The UI doesn't allow editing email addresses after insertion
                             setAllAttendeesMap((oldData) => {
                                 if (oldData) {
                                     const newData = new Map(oldData.entries());

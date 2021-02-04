@@ -77,6 +77,7 @@ export default function ImportPanel({
         error: attendeesError,
         refetch: refetchAttendees,
     } = useSelectAllAttendeesQuery({
+        fetchPolicy: "network-only",
         variables: {
             conferenceId: conference.id,
         },
@@ -103,7 +104,7 @@ export default function ImportPanel({
     }, [importData?.insert_Attendee, refetchAttendees, toast]);
 
     const finalData = useMemo(() => {
-        return Object.values(inputData).reduce(
+        const firstPass = Object.values(inputData).reduce(
             (acc, input) => [
                 ...acc,
                 ...input
@@ -112,6 +113,7 @@ export default function ImportPanel({
                         name: row.name.trim(),
                         email: row.email.trim().toLowerCase(),
                     }))
+                    // Remove duplicates as compared to the existing data
                     .filter(
                         (row) =>
                             attendeesData?.Attendee &&
@@ -127,6 +129,11 @@ export default function ImportPanel({
                     })),
             ],
             [] as AttendeeFinalData[]
+        );
+
+        // Remove duplicates as compared to the provided data
+        return firstPass.filter(
+            (row1, index1) => !firstPass.some((row2, index2) => index2 < index1 && row2.email === row1.email)
         );
     }, [attendeesData?.Attendee, groupsData?.Group, inputData]);
 

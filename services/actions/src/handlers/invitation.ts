@@ -261,8 +261,12 @@ async function getInvitationAndUser(
             userId,
         },
     });
-    assert(invitationQ.data.Invitation[0]);
-    assert(invitationQ.data.User_by_pk);
+    if (!invitationQ.data.Invitation[0]) {
+        throw new Error("Invitation not found");
+    }
+    if (!invitationQ.data.User_by_pk) {
+        throw new Error("User not found");
+    }
     const invitation = invitationQ.data.Invitation[0];
     const user = invitationQ.data.User_by_pk;
     return {
@@ -276,29 +280,36 @@ async function confirmUser(
     userId: string,
     validate: (invitation: InvitationPartsFragment, user: InvitedUserPartsFragment) => Promise<true | string>
 ): Promise<ConfirmInvitationOutput> {
-    const { invitation, user } = await getInvitationAndUser(inviteCode, userId);
+    try {
+        const { invitation, user } = await getInvitationAndUser(inviteCode, userId);
 
-    let ok = await validate(invitation, user);
+        let ok = await validate(invitation, user);
 
-    if (ok === true) {
-        try {
-            await apolloClient.mutate({
-                mutation: SetAttendeeUserIdDocument,
-                variables: {
-                    attendeeId: invitation.attendeeId,
-                    userId,
-                },
-            });
-        } catch (e) {
-            ok = e.message || e.toString();
-            console.error(`Failed to link user to invitation (${user.id}, ${invitation.id})`, e);
+        if (ok === true) {
+            try {
+                await apolloClient.mutate({
+                    mutation: SetAttendeeUserIdDocument,
+                    variables: {
+                        attendeeId: invitation.attendeeId,
+                        userId,
+                    },
+                });
+            } catch (e) {
+                ok = e.message || e.toString();
+                console.error(`Failed to link user to invitation (${user.id}, ${invitation.id})`, e);
+            }
         }
-    }
 
-    return {
-        ok: ok === true ? "true" : ok,
-        confSlug: invitation.attendee.conference.slug,
-    };
+        return {
+            ok: ok === true ? "true" : ok,
+            confSlug: invitation.attendee.conference.slug,
+        };
+    } catch (e) {
+        return {
+            ok: e.message || e.toString(),
+            confSlug: "<UNKNOWN>",
+        };
+    }
 }
 
 export async function invitationConfirmCurrentHandler(

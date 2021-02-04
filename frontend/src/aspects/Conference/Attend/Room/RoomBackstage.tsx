@@ -238,12 +238,12 @@ export function RoomBackstage({
     return backstage ? (
         <Box display={backstage ? "block" : "none"} background={backgroundColour} p={5}>
             <Heading as="h3" size="lg">
-                {roomName}: Live Q&amp;A
+                {roomName}: Live stream
             </Heading>
             <Alert status="info" my={4}>
                 <AlertIcon />
                 <Box flex="1">
-                    <AlertTitle>Welcome to the Q&amp;A area for {roomName}</AlertTitle>
+                    <AlertTitle>Welcome to the live-stream area for {roomName}</AlertTitle>
                     <AlertDescription display="block">
                         <p>You can join a room here to ask and answer questions live on air.</p>
                         <p>

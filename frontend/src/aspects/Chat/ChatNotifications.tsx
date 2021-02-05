@@ -122,7 +122,9 @@ export function ChatNotificationsProvider_WithAttendeeInner({
 
                             if (
                                 currentAttendee.id !== latestMessage.senderId &&
-                                (!chatPath || !location.pathname.endsWith(chatPath))
+                                (!chatPath || !location.pathname.endsWith(chatPath)) &&
+                                latestMessage.type !== Chat_MessageType_Enum.DuplicationMarker &&
+                                latestMessage.type !== Chat_MessageType_Enum.Emote
                             ) {
                                 toast({
                                     position: "top-right",

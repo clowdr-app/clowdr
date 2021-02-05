@@ -100,7 +100,7 @@ export function RoomControlBar({
 
     return (
         <HStack justifyContent="flex-end" m={4}>
-            {hasBackstage ? (
+            {hasBackstage && !breakoutRoomEnabled ? (
                 backstage ? (
                     <Button size="sm" colorScheme="red" onClick={() => onSetBackstage(false)}>
                         View stream

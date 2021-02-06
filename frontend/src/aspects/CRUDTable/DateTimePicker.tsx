@@ -85,7 +85,11 @@ export function DateTimePicker<D extends Date | undefined = Date | undefined>({
             if (newTimeValue === "" && allowUndefined) {
                 onChange?.(undefined as D);
             } else {
-                const newTime = parse(newTimeValue, "HH:mm:ss", value ?? new Date());
+                const newTime = parse(
+                    newTimeValue,
+                    newTimeValue.split(":").length === 2 ? "HH:mm" : "HH:mm:ss",
+                    value ?? new Date()
+                );
                 if (!isValid(newTime)) {
                     return;
                 }

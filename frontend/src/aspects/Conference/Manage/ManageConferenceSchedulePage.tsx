@@ -745,7 +745,7 @@ function EditableScheduleTable(): JSX.Element {
                                 />
                             );
                         },
-                        minWidth: 355,
+                        minWidth: 365,
                     },
                     {
                         id: ColumnId.EndTime,
@@ -771,7 +771,7 @@ function EditableScheduleTable(): JSX.Element {
                                 />
                             );
                         },
-                        minWidth: 355,
+                        minWidth: 375,
                     },
                 ],
             },

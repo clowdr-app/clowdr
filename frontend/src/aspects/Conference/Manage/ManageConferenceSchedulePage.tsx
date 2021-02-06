@@ -808,13 +808,25 @@ function EditableScheduleTable(): JSX.Element {
                             }
 
                             return (
-                                <Select
-                                    value={value ?? ""}
-                                    onChange={(ev) => setValue(ev.target.value)}
-                                    onBlur={onBlur}
-                                >
-                                    {roomOptions}
-                                </Select>
+                                <HStack>
+                                    <LinkButton
+                                        linkProps={{ target: "_blank" }}
+                                        to={`/conference/${conference.slug}/room/${value}`}
+                                        size="xs"
+                                        aria-label="Go to room in new tab"
+                                    >
+                                        <Tooltip label="Go to room in new tab">
+                                            <FAIcon iconStyle="s" icon="link" />
+                                        </Tooltip>
+                                    </LinkButton>
+                                    <Select
+                                        value={value ?? ""}
+                                        onChange={(ev) => setValue(ev.target.value)}
+                                        onBlur={onBlur}
+                                    >
+                                        {roomOptions}
+                                    </Select>
+                                </HStack>
                             );
                         },
                         minWidth: 200,
@@ -915,14 +927,26 @@ function EditableScheduleTable(): JSX.Element {
                             }
 
                             return (
-                                <Select
-                                    value={value ?? ""}
-                                    onChange={(ev) => setValue(ev.target.value)}
-                                    onBlur={onBlur}
-                                >
-                                    <option value={""}>{"<None selected>"}</option>
-                                    {contentGroupOptions}
-                                </Select>
+                                <HStack>
+                                    <LinkButton
+                                        linkProps={{ target: "_blank" }}
+                                        to={`/conference/${conference.slug}/item/${value}`}
+                                        size="xs"
+                                        aria-label="Go to content in new tab"
+                                    >
+                                        <Tooltip label="Go to content in new tab">
+                                            <FAIcon iconStyle="s" icon="link" />
+                                        </Tooltip>
+                                    </LinkButton>
+                                    <Select
+                                        value={value ?? ""}
+                                        onChange={(ev) => setValue(ev.target.value)}
+                                        onBlur={onBlur}
+                                    >
+                                        <option value={""}>{"<None selected>"}</option>
+                                        {contentGroupOptions}
+                                    </Select>
+                                </HStack>
                             );
                         },
                         minWidth: 400,

@@ -346,6 +346,30 @@ const filterGreaterThan: FilterType<EventInfoFragment> = (rows, columnIds, filte
     );
 };
 
+const dateTimeFilterFn: FilterType<EventInfoFragment> = (
+    rows,
+    columnIds,
+    {
+        value: valueD,
+        mode,
+    }: {
+        value: Date;
+        mode: "after" | "before" | "exact";
+    }
+): Array<Row<EventInfoFragment>> => {
+    return columnIds.reduce((acc, id) => {
+        let value = valueD.getTime();
+        if (mode === "after") {
+            return acc.filter((row) => row.values[id] >= value);
+        } else if (mode === "before") {
+            return acc.filter((row) => row.values[id] <= value);
+        } else {
+            value = Math.round(value / 1000);
+            return acc.filter((row) => Math.round(row.values[id] / 1000) === value);
+        }
+    }, rows);
+};
+
 // This is an autoRemove method on the filter function that
 // when given the new filter value and returns true, the filter
 // will be automatically removed. Normally this is just an undefined
@@ -369,6 +393,52 @@ function roundedMedian(leafValues: number[]) {
 
 function DateTimeCell(props: CellProps<EventInfoFragment> & { onChange?: (value: Date) => void; onBlur: () => void }) {
     return <DateTimePicker value={new Date(props.value)} onChange={props.onChange} onBlur={props.onBlur} />;
+}
+
+function DateTimeColumnFilter({ column: { filterValue, setFilter } }: FilterProps<EventInfoFragment>) {
+    return (
+        <HStack flexWrap="wrap" justifyContent="flex-start" alignItems="flex-start" gridRowGap={2}>
+            <Select
+                size="sm"
+                width="auto"
+                value={filterValue?.mode ?? ""}
+                onChange={(ev) => {
+                    setFilter(
+                        ev.target.value === ""
+                            ? undefined
+                            : filterValue
+                            ? { ...filterValue, mode: ev.target.value }
+                            : {
+                                  value: new Date(),
+                                  mode: ev.target.value,
+                              }
+                    );
+                }}
+            >
+                <option value="">🗙</option>
+                <option value="after">≥</option>
+                <option value="exact">=</option>
+                <option value="before">≤</option>
+            </Select>
+            <DateTimePicker
+                size="sm"
+                allowUndefined={true}
+                value={filterValue?.value}
+                onChange={(d) =>
+                    setFilter(
+                        !d
+                            ? undefined
+                            : filterValue
+                            ? { ...filterValue, value: d }
+                            : {
+                                  value: d,
+                                  mode: "after",
+                              }
+                    )
+                }
+            />
+        </HStack>
+    );
 }
 
 function fomratEnumValuePart(part: string): string {
@@ -649,6 +719,8 @@ function EditableScheduleTable(): JSX.Element {
                         id: ColumnId.StartTime,
                         Header: "Start Time",
                         accessor: (row) => Date.parse(row.startTime),
+                        filter: dateTimeFilterFn,
+                        Filter: DateTimeColumnFilter,
                         Cell: function StartTimeCell(props: CellProps<EventInfoFragment>) {
                             const { value, setValue, onBlur } = useEditableValue(props.value, (newValue) => {
                                 return props.updateMyData(props.row.index, props.column.id, newValue);
@@ -673,6 +745,8 @@ function EditableScheduleTable(): JSX.Element {
                         id: ColumnId.EndTime,
                         Header: "End Time",
                         accessor: (row) => Date.parse(row.startTime) + row.durationSeconds * 1000,
+                        filter: dateTimeFilterFn,
+                        Filter: DateTimeColumnFilter,
                         Cell: function EndTimeCell(props: CellProps<EventInfoFragment>) {
                             const { value, setValue, onBlur } = useEditableValue(props.value, (newValue) => {
                                 return props.updateMyData(props.row.index, props.column.id, newValue);

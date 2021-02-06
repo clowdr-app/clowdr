@@ -48,6 +48,7 @@ import {
     VisuallyHidden,
     VStack,
 } from "@chakra-ui/react";
+import { DateTime } from "luxon";
 import { matchSorter } from "match-sorter";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
@@ -84,6 +85,7 @@ import {
 import { LinkButton } from "../../Chakra/LinkButton";
 import { DateTimePicker } from "../../CRUDTable/DateTimePicker";
 import PageNotFound from "../../Errors/PageNotFound";
+import { useRealTime } from "../../Generic/useRealTime";
 import { useRestorableState } from "../../Generic/useRestorableState";
 import FAIcon from "../../Icons/FAIcon";
 import { useTitle } from "../../Utils/useTitle";
@@ -392,8 +394,17 @@ function roundedMedian(leafValues: number[]) {
     return Math.round((min + max) / 2);
 }
 
-function DateTimeCell(props: CellProps<EventInfoFragment> & { onChange?: (value: Date) => void; onBlur: () => void }) {
-    return <DateTimePicker value={new Date(props.value)} onChange={props.onChange} onBlur={props.onBlur} />;
+function DateTimeCell(
+    props: CellProps<EventInfoFragment> & { onChange?: (value: Date) => void; onBlur: () => void; isDisabled: boolean }
+) {
+    return (
+        <DateTimePicker
+            value={new Date(props.value)}
+            onChange={props.onChange}
+            onBlur={props.onBlur}
+            isDisabled={props.isDisabled}
+        />
+    );
 }
 
 function DateTimeColumnFilter({ column: { filterValue, setFilter } }: FilterProps<EventInfoFragment>) {
@@ -470,6 +481,16 @@ function rowWarning(row: Row<EventInfoFragment>) {
     return undefined;
 }
 
+function isOngoing(now: number, startLeeway: number, endLeeway: number, row: Row<any>): boolean {
+    return row.values[ColumnId.StartTime] - startLeeway <= now && now <= row.values[ColumnId.EndTime] + endLeeway;
+}
+
+const liveStreamRoomModes: RoomMode_Enum[] = [
+    RoomMode_Enum.Prerecorded,
+    RoomMode_Enum.Presentation,
+    RoomMode_Enum.QAndA,
+];
+
 function EditableScheduleTable(): JSX.Element {
     const conference = useConference();
     const wholeSchedule = useSelectWholeScheduleQuery({
@@ -503,11 +524,7 @@ function EditableScheduleTable(): JSX.Element {
                 .sort((x, y) => x.localeCompare(y))
                 .map((x) => {
                     const v = (RoomMode_Enum as any)[x];
-                    return (
-                        <option key={x} value={v}>
-                            {formatEnumValue(v)}
-                        </option>
-                    );
+                    return { value: v, label: formatEnumValue(v) };
                 }),
         []
     );
@@ -633,7 +650,15 @@ function EditableScheduleTable(): JSX.Element {
                                                                 intendedRoomModeName: RoomMode_Enum.Breakout,
                                                                 name: "Innominate event",
                                                                 roomId: wholeSchedule.data.Room[0].id,
-                                                                startTime: new Date().toISOString(),
+                                                                startTime: DateTime.local()
+                                                                    .plus({
+                                                                        minutes: 10,
+                                                                    })
+                                                                    .endOf("hour")
+                                                                    .plus({
+                                                                        milliseconds: 1,
+                                                                    })
+                                                                    .toISO(),
                                                                 contentGroupId: null,
                                                                 originatingDataId: null,
                                                             },
@@ -732,20 +757,33 @@ function EditableScheduleTable(): JSX.Element {
                                 return props.updateMyData(props.row.index, props.column.id, newValue);
                             });
 
+                            const now = useRealTime(10000);
+                            const ongoing = isOngoing(now, 1 * 60 * 1000, 1 * 60 * 1000, props.row);
+
                             if (props.row.isGrouped && !props.column.isGrouped) {
                                 return <></>;
                             }
 
                             return (
-                                <DateTimeCell
-                                    {...props}
-                                    value={value}
-                                    onChange={(v) => setValue(v.getTime())}
-                                    onBlur={onBlur}
-                                />
+                                <HStack>
+                                    {ongoing && liveStreamRoomModes.includes(props.row.values[ColumnId.RoomMode]) ? (
+                                        <Tooltip label="You cannot edit the start time of an ongoing live-stream event.">
+                                            <FAIcon color={"blue.400"} iconStyle="s" icon="info-circle" />
+                                        </Tooltip>
+                                    ) : undefined}
+                                    <DateTimeCell
+                                        {...props}
+                                        value={value}
+                                        onChange={(v) => setValue(v.getTime())}
+                                        onBlur={onBlur}
+                                        isDisabled={
+                                            ongoing && liveStreamRoomModes.includes(props.row.values[ColumnId.RoomMode])
+                                        }
+                                    />
+                                </HStack>
                             );
                         },
-                        minWidth: 365,
+                        minWidth: 395,
                     },
                     {
                         id: ColumnId.EndTime,
@@ -758,20 +796,33 @@ function EditableScheduleTable(): JSX.Element {
                                 return props.updateMyData(props.row.index, props.column.id, newValue);
                             });
 
+                            const now = useRealTime(10000);
+                            const ongoing = isOngoing(now, 1 * 60 * 1000, 1 * 60 * 1000, props.row);
+
                             if (props.row.isGrouped && !props.column.isGrouped) {
                                 return <></>;
                             }
 
                             return (
-                                <DateTimeCell
-                                    {...props}
-                                    value={value}
-                                    onChange={(v) => setValue(v.getTime())}
-                                    onBlur={onBlur}
-                                />
+                                <HStack>
+                                    {ongoing && liveStreamRoomModes.includes(props.row.values[ColumnId.RoomMode]) ? (
+                                        <Tooltip label="You cannot edit the end time of an ongoing live-stream event.">
+                                            <FAIcon color={"blue.400"} iconStyle="s" icon="info-circle" />
+                                        </Tooltip>
+                                    ) : undefined}
+                                    <DateTimeCell
+                                        {...props}
+                                        value={value}
+                                        onChange={(v) => setValue(v.getTime())}
+                                        onBlur={onBlur}
+                                        isDisabled={
+                                            ongoing && liveStreamRoomModes.includes(props.row.values[ColumnId.RoomMode])
+                                        }
+                                    />
+                                </HStack>
                             );
                         },
-                        minWidth: 375,
+                        minWidth: 395,
                     },
                 ],
             },
@@ -841,18 +892,44 @@ function EditableScheduleTable(): JSX.Element {
                                 return props.updateMyData(props.row.index, props.column.id, newValue);
                             });
 
+                            const now = useRealTime(10000);
+                            const ongoing = isOngoing(now, 5 * 60 * 1000, 1 * 60 * 1000, props.row);
+
                             if (props.row.isGrouped && !props.column.isGrouped) {
                                 return <></>;
                             }
 
                             return (
-                                <Select
-                                    value={value ?? ""}
-                                    onChange={(ev) => setValue(ev.target.value)}
-                                    onBlur={onBlur}
-                                >
-                                    {roomModeOptions}
-                                </Select>
+                                <HStack>
+                                    {ongoing ? (
+                                        <Tooltip label="Live-stream modes must be set at least 10 minutes in advance of an event.">
+                                            <FAIcon color={"blue.400"} iconStyle="s" icon="info-circle" />
+                                        </Tooltip>
+                                    ) : undefined}
+                                    <Select
+                                        value={value ?? ""}
+                                        onChange={(ev) => setValue(ev.target.value)}
+                                        onBlur={onBlur}
+                                    >
+                                        {roomModeOptions.map((option) => {
+                                            return (
+                                                <option
+                                                    key={option.value}
+                                                    value={option.value}
+                                                    disabled={
+                                                        ongoing &&
+                                                        liveStreamRoomModes.includes(option.value) &&
+                                                        option.value !== props.row.values[ColumnId.RoomMode]
+                                                            ? true
+                                                            : undefined
+                                                    }
+                                                >
+                                                    {option.label}
+                                                </option>
+                                            );
+                                        })}
+                                    </Select>
+                                </HStack>
                             );
                         },
                         minWidth: 180,

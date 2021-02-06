@@ -27,6 +27,7 @@ export function DateTimePicker<D extends Date | undefined = Date | undefined>({
     onBlur,
     allowUndefined = false,
     size,
+    isDisabled = false,
 }: {
     value?: Date;
     onBlur?: () => void;
@@ -34,6 +35,7 @@ export function DateTimePicker<D extends Date | undefined = Date | undefined>({
     onChange?: (value: D) => void;
     allowUndefined?: boolean;
     size?: string;
+    isDisabled?: boolean;
 }): JSX.Element {
     const localTimeZone = useMemo(() => {
         return Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -121,6 +123,7 @@ export function DateTimePicker<D extends Date | undefined = Date | undefined>({
                 value={localDateValue ?? ""}
                 onChange={(e) => setDateTime(e.target.value)}
                 mr={2}
+                isDisabled={isDisabled}
             />
             <Input
                 size={size}
@@ -130,6 +133,7 @@ export function DateTimePicker<D extends Date | undefined = Date | undefined>({
                 value={localTimeValue ?? ""}
                 onChange={(e) => setTime(e.target.value)}
                 step="1"
+                isDisabled={isDisabled}
             />
         </Box>
     );

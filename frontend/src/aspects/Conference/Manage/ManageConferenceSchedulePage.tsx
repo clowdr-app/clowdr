@@ -40,8 +40,11 @@ import {
     Text,
     Th,
     Thead,
+    Tooltip,
     Tr,
+    useColorModeValue,
     useDisclosure,
+    useToken,
     VStack,
 } from "@chakra-ui/react";
 import { matchSorter } from "match-sorter";
@@ -84,7 +87,7 @@ import FAIcon from "../../Icons/FAIcon";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
-import { EventPersonsModal } from "./Schedule/EventPersonsModal";
+import { EventPersonsModal, requiresEventPeople } from "./Schedule/EventPersonsModal";
 import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
 gql`
@@ -388,6 +391,13 @@ enum ColumnId {
     Content = "content",
 }
 
+function rowWarning(row: Row<EventInfoFragment>) {
+    if (requiresEventPeople(row.original)) {
+        return "This event will be live streamed but no Event People have been assigned to manage the broadcast layout.";
+    }
+    return undefined;
+}
+
 function EditableScheduleTable(): JSX.Element {
     const conference = useConference();
     const wholeSchedule = useSelectWholeScheduleQuery({
@@ -593,25 +603,35 @@ function EditableScheduleTable(): JSX.Element {
                             );
                         },
                         Cell: function ColumnCell({ row }: CellProps<EventInfoFragment>) {
+                            const warning = rowWarning(row);
                             return (
                                 <Center w="100%" h="100%" padding={0}>
-                                    <Button
-                                        isDisabled={isIndexAffectingEditOngoing}
-                                        aria-label={`Edit row ${row.index}`}
-                                        onClick={() => {
-                                            setEditingIndex(row.index);
-                                            onSecondaryPanelOpen();
-                                        }}
-                                        size="xs"
-                                        colorScheme="blue"
-                                    >
-                                        <FAIcon iconStyle="s" icon="edit" />
-                                    </Button>
+                                    <Tooltip label={warning}>
+                                        <Button
+                                            isDisabled={isIndexAffectingEditOngoing}
+                                            aria-label={`Edit row ${row.index}`}
+                                            onClick={() => {
+                                                setEditingIndex(row.index);
+                                                onSecondaryPanelOpen();
+                                            }}
+                                            size="xs"
+                                            colorScheme={warning ? "orange" : "blue"}
+                                        >
+                                            {warning ? (
+                                                <>
+                                                    <FAIcon iconStyle="s" icon="exclamation-triangle" mr={1} />
+                                                    <FAIcon iconStyle="s" icon="edit" />
+                                                </>
+                                            ) : (
+                                                <FAIcon iconStyle="s" icon="edit" />
+                                            )}
+                                        </Button>
+                                    </Tooltip>
                                 </Center>
                             );
                         },
 
-                        width: 35,
+                        width: 45,
                         disableResizing: true,
                     },
                 ],
@@ -1132,6 +1152,9 @@ function EditableScheduleTable(): JSX.Element {
     const tableProps = getTableProps();
     delete tableProps.style;
 
+    const yellowC = useColorModeValue("yellow.300", "yellow.700");
+    const [yellow] = useToken("colors", [yellowC]);
+
     return (
         <>
             {wholeSchedule.loading ? <Spinner label="Loading schedule data" /> : undefined}
@@ -1291,10 +1314,18 @@ function EditableScheduleTable(): JSX.Element {
                             // eslint-disable-next-line react/jsx-key
                             <Tr {...row.getRowProps()}>
                                 {row.cells.map((cell) => {
+                                    const bgColour = rowWarning(row) ? yellow : undefined;
+                                    const cellProps = cell.getCellProps();
+                                    if (bgColour) {
+                                        cellProps.style = {
+                                            ...(cellProps.style ?? {}),
+                                            backgroundColor: bgColour ?? cellProps.style?.backgroundColor,
+                                        };
+                                    }
                                     return (
                                         // eslint-disable-next-line react/jsx-key
                                         <Td
-                                            {...cell.getCellProps()}
+                                            {...cellProps}
                                             paddingLeft={
                                                 cell.column.id === "selection" ||
                                                 cell.column.id === "edit" ||
@@ -1390,6 +1421,7 @@ function EditableScheduleTable(): JSX.Element {
                 </Select>
             </Flex>
             <EventSecondaryEditor
+                yellowC={yellowC}
                 attendees={wholeSchedule.data?.Attendee ?? []}
                 events={wholeSchedule.data?.Event ?? []}
                 index={editingIndex}
@@ -1431,12 +1463,14 @@ function EventSecondaryEditor({
     isSecondaryPanelOpen,
     index,
     onSecondaryPanelClose,
+    yellowC,
 }: {
     events: readonly EventInfoFragment[];
     attendees: readonly AttendeeInfoFragment[];
     isSecondaryPanelOpen: boolean;
     index: number | null;
     onSecondaryPanelClose: () => void;
+    yellowC: string;
 }): JSX.Element {
     const event = index !== null ? events[index] : null;
 
@@ -1464,7 +1498,7 @@ function EventSecondaryEditor({
                                         <AccordionIcon />
                                     </AccordionButton>
                                     <AccordionPanel>
-                                        <EventPeopleEditorModal event={event} attendees={attendees} />
+                                        <EventPeopleEditorModal yellowC={yellowC} event={event} attendees={attendees} />
                                     </AccordionPanel>
                                 </AccordionItem>
                             </Accordion>
@@ -1481,13 +1515,22 @@ function EventSecondaryEditor({
 function EventPeopleEditorModal({
     event,
     attendees,
+    yellowC,
 }: {
     event: EventInfoFragment;
     attendees: readonly AttendeeInfoFragment[];
+    yellowC: string;
 }) {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const accordionContents = (
-        <EventPersonsModal isOpen={isOpen} onOpen={onOpen} onClose={onClose} event={event} attendees={attendees} />
+        <EventPersonsModal
+            yellow={yellowC}
+            isOpen={isOpen}
+            onOpen={onOpen}
+            onClose={onClose}
+            event={event}
+            attendees={attendees}
+        />
     );
     return accordionContents;
 }

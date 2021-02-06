@@ -22,6 +22,7 @@ import {
     EventPersonInfoFragmentDoc,
     EventPersonRole_Enum,
     EventPerson_Insert_Input,
+    RoomMode_Enum,
     useDeleteEventPersonsMutation,
     useInsertEventPersonMutation,
     useUpdateEventPersonMutation,
@@ -33,6 +34,7 @@ import CRUDTable, {
     SelectOption,
     UpdateResult,
 } from "../../../CRUDTable/CRUDTable";
+import FAIcon from "../../../Icons/FAIcon";
 import isValidUUID from "../../../Utils/isValidUUID";
 import type { EventPersonDescriptor } from "./Types";
 
@@ -42,6 +44,7 @@ interface Props {
     onClose: () => void;
     event: EventInfoFragment;
     attendees: readonly AttendeeInfoFragment[];
+    yellow: string;
 }
 
 gql`
@@ -82,6 +85,14 @@ gql`
     }
 `;
 
+export function requiresEventPeople(event: EventInfoFragment): boolean {
+    return (
+        event.eventPeople.length === 0 &&
+        (event.intendedRoomModeName === RoomMode_Enum.Presentation ||
+            event.intendedRoomModeName === RoomMode_Enum.QAndA)
+    );
+}
+
 export function EventPersonsModal({ isOpen, onOpen, onClose, event, attendees }: Props): JSX.Element {
     const eventPersonsMap = useMemo(() => {
         const results = new Map<string, EventPersonDescriptor>();
@@ -116,14 +127,18 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, attendees }:
     const [updateEventPerson] = useUpdateEventPersonMutation();
     const [deleteEventPersons] = useDeleteEventPersonsMutation();
 
+    const eventPeopleRequired = requiresEventPeople(event);
     return (
         <>
             <Box>
                 <Center flexDir="column">
-                    <Button onClick={onOpen} colorScheme="blue">
+                    <Button onClick={onOpen} colorScheme={eventPeopleRequired ? "orange" : "blue"}>
+                        {eventPeopleRequired ? <FAIcon iconStyle="s" icon="exclamation-triangle" mr={1} /> : undefined}{" "}
                         Manage Event People
                     </Button>
-                    <Text as="p">(People can be listed as presenters or chairs of events.)</Text>
+                    <Text as="p" mt={2}>
+                        (People can be listed as presenters or chairs of events.)
+                    </Text>
                 </Center>
             </Box>
             <Modal scrollBehavior="inside" onClose={onClose} isOpen={isOpen} motionPreset="scale" size="full">

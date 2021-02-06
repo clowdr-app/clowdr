@@ -81,6 +81,7 @@ import {
     useSelectWholeScheduleQuery,
     useUpdateEventInfoMutation,
 } from "../../../generated/graphql";
+import { LinkButton } from "../../Chakra/LinkButton";
 import { DateTimePicker } from "../../CRUDTable/DateTimePicker";
 import PageNotFound from "../../Errors/PageNotFound";
 import { useRestorableState } from "../../Generic/useRestorableState";
@@ -610,69 +611,74 @@ function EditableScheduleTable(): JSX.Element {
                         id: "edit",
                         groupByBoundary: true,
                         Header: function ColumnHeader(props: HeaderProps<EventInfoFragment>) {
+                            const noRooms = !wholeSchedule.data?.Room || wholeSchedule.data.Room.length === 0;
                             return (
                                 <Center w="100%" h="100%" padding={0}>
-                                    <Button
-                                        isDisabled={
-                                            !wholeSchedule.data?.Room ||
-                                            wholeSchedule.data.Room.length === 0 ||
-                                            isIndexAffectingEditOngoing
-                                        }
-                                        aria-label="Create new event"
-                                        onClick={() => {
-                                            if (wholeSchedule.data?.Room && wholeSchedule.data.Room.length !== 0) {
-                                                // TODO: Find a non-overlapping room/time
+                                    <Tooltip label={noRooms ? "Please create a room." : undefined}>
+                                        <Box>
+                                            <Button
+                                                isDisabled={noRooms || isIndexAffectingEditOngoing}
+                                                aria-label="Create new event"
+                                                onClick={() => {
+                                                    if (
+                                                        wholeSchedule.data?.Room &&
+                                                        wholeSchedule.data.Room.length !== 0
+                                                    ) {
+                                                        // TODO: Find a non-overlapping room/time
 
-                                                insertEvent({
-                                                    variables: {
-                                                        durationSeconds: 300,
-                                                        conferenceId: conference.id,
-                                                        intendedRoomModeName: RoomMode_Enum.Breakout,
-                                                        name: "Innominate event",
-                                                        roomId: wholeSchedule.data.Room[0].id,
-                                                        startTime: new Date().toISOString(),
-                                                        contentGroupId: null,
-                                                        originatingDataId: null,
-                                                    },
-                                                    update: (cache, { data: _data }) => {
-                                                        if (_data?.insert_Event_one) {
-                                                            const data = _data.insert_Event_one;
-                                                            cache.modify({
-                                                                fields: {
-                                                                    Event(
-                                                                        existingRefs: Reference[] = [],
-                                                                        { readField }
-                                                                    ) {
-                                                                        const newRef = cache.writeFragment({
-                                                                            data,
-                                                                            fragment: EventInfoFragmentDoc,
-                                                                            fragmentName: "EventInfo",
-                                                                        });
-                                                                        if (
-                                                                            existingRefs.some(
-                                                                                (ref) =>
-                                                                                    readField("id", ref) === data.id
-                                                                            )
-                                                                        ) {
-                                                                            return existingRefs;
-                                                                        }
+                                                        insertEvent({
+                                                            variables: {
+                                                                durationSeconds: 300,
+                                                                conferenceId: conference.id,
+                                                                intendedRoomModeName: RoomMode_Enum.Breakout,
+                                                                name: "Innominate event",
+                                                                roomId: wholeSchedule.data.Room[0].id,
+                                                                startTime: new Date().toISOString(),
+                                                                contentGroupId: null,
+                                                                originatingDataId: null,
+                                                            },
+                                                            update: (cache, { data: _data }) => {
+                                                                if (_data?.insert_Event_one) {
+                                                                    const data = _data.insert_Event_one;
+                                                                    cache.modify({
+                                                                        fields: {
+                                                                            Event(
+                                                                                existingRefs: Reference[] = [],
+                                                                                { readField }
+                                                                            ) {
+                                                                                const newRef = cache.writeFragment({
+                                                                                    data,
+                                                                                    fragment: EventInfoFragmentDoc,
+                                                                                    fragmentName: "EventInfo",
+                                                                                });
+                                                                                if (
+                                                                                    existingRefs.some(
+                                                                                        (ref) =>
+                                                                                            readField("id", ref) ===
+                                                                                            data.id
+                                                                                    )
+                                                                                ) {
+                                                                                    return existingRefs;
+                                                                                }
 
-                                                                        return [...existingRefs, newRef];
-                                                                    },
-                                                                },
-                                                            });
-                                                        }
-                                                    },
-                                                });
-                                                // TODO: Focus on the new event
-                                            }
-                                        }}
-                                        size="xs"
-                                        colorScheme="green"
-                                        isLoading={insertEventResponse.loading}
-                                    >
-                                        <FAIcon iconStyle="s" icon="plus" />
-                                    </Button>
+                                                                                return [...existingRefs, newRef];
+                                                                            },
+                                                                        },
+                                                                    });
+                                                                }
+                                                            },
+                                                        });
+                                                        // TODO: Focus on the new event
+                                                    }
+                                                }}
+                                                size="xs"
+                                                colorScheme="green"
+                                                isLoading={insertEventResponse.loading}
+                                            >
+                                                <FAIcon iconStyle="s" icon="plus" />
+                                            </Button>
+                                        </Box>
+                                    </Tooltip>
                                 </Center>
                             );
                         },
@@ -1284,6 +1290,8 @@ function EditableScheduleTable(): JSX.Element {
         return Intl.DateTimeFormat().resolvedOptions().timeZone;
     }, []);
 
+    const grey = useColorModeValue("gray.200", "gray.600");
+
     return (
         <>
             {wholeSchedule.error ? (
@@ -1331,10 +1339,19 @@ function EditableScheduleTable(): JSX.Element {
                     </AlertDescription>
                 </Alert>
             ) : undefined}
-            <Center>
-                <FAIcon icon="clock" iconStyle="s" mr={2} />
-                <Text as="span">Timezone: {localTimeZone}</Text>
-            </Center>
+            <HStack>
+                <Center borderStyle="solid" borderWidth={1} borderColor={grey} borderRadius={5} p={2}>
+                    <FAIcon icon="clock" iconStyle="s" mr={2} />
+                    <Text as="span">Timezone: {localTimeZone}</Text>
+                </Center>
+                <LinkButton
+                    linkProps={{ m: "3px" }}
+                    to={`/conference/${conference.slug}/manage/rooms`}
+                    colorScheme="yellow"
+                >
+                    Manage Rooms
+                </LinkButton>
+            </HStack>
             <VisuallyHidden>Timezone is {localTimeZone}</VisuallyHidden>
             <Table
                 {...tableProps}

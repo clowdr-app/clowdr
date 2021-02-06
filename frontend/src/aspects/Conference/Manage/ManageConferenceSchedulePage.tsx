@@ -1213,7 +1213,9 @@ function EditableScheduleTable(): JSX.Element {
                         const originalStart = Date.parse(original.startTime);
                         const originalEnd = originalStart + 1000 * original.durationSeconds;
                         updated.startTime = new Date(value).toISOString();
-                        updated.durationSeconds = Math.max(Math.round((originalEnd - value) / 1000), 30);
+                        if (value < originalEnd) {
+                            updated.durationSeconds = Math.max(Math.round((originalEnd - value) / 1000), 30);
+                        }
                         // Make sure we're comparing numeric timestamp, because
                         // string formats differ between client side and server side.
                         hasChanged = value !== originalStart;
@@ -1221,9 +1223,16 @@ function EditableScheduleTable(): JSX.Element {
                     break;
                 case ColumnId.EndTime:
                     {
-                        const startTime = Date.parse(updated.startTime);
-                        updated.durationSeconds = Math.max(Math.round((value - startTime) / 1000), 30);
-                        hasChanged = updated.durationSeconds !== original.durationSeconds;
+                        const origStartTime = Date.parse(updated.startTime);
+                        let startTime = origStartTime;
+                        if (value < startTime) {
+                            startTime = value - 1000 * updated.durationSeconds;
+                            updated.startTime = new Date(startTime).toISOString();
+                        } else {
+                            updated.durationSeconds = Math.max(Math.round((value - startTime) / 1000), 30);
+                        }
+                        hasChanged =
+                            updated.durationSeconds !== original.durationSeconds || origStartTime !== startTime;
                         finalValue = startTime + 1000 * updated.durationSeconds;
                     }
                     break;

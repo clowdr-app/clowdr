@@ -33,7 +33,6 @@ CREATE OR REPLACE FUNCTION chat.attendee_has_access_to_chat(i_attendeeId uuid, i
     AS
 $$
 DECLARE
-    l_room "Room";
     l_contentExists boolean;
     l_hasAccessToRoom boolean;
     l_matching_conferences boolean;

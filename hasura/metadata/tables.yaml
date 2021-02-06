@@ -5976,21 +5976,21 @@
   - role: user
     permission:
       columns:
-      - capacity
-      - chatId
-      - conferenceId
-      - created_at
-      - currentModeName
       - id
-      - mediaLiveChannelId
-      - name
-      - originatingContentGroupId
-      - originatingDataId
-      - originatingEventId
-      - priority
-      - publicVonageSessionId
-      - roomPrivacyName
+      - created_at
       - updated_at
+      - conferenceId
+      - name
+      - currentModeName
+      - originatingDataId
+      - capacity
+      - publicVonageSessionId
+      - mediaLiveChannelId
+      - priority
+      - roomPrivacyName
+      - chatId
+      - originatingEventId
+      - originatingContentGroupId
       filter:
         _and:
         - _and:

@@ -12,6 +12,7 @@ import {
     Spinner,
     Text,
     UnorderedList,
+    useToast,
 } from "@chakra-ui/react";
 import assert from "assert";
 import React, { useMemo } from "react";
@@ -189,6 +190,7 @@ function EditableRoomsCRUDTable({
     const [createRoom] = useCreateRoomMutation();
     const [deleteRooms] = useDeleteRoomsMutation();
     const [updateRoom] = useUpdateRoomMutation();
+    const toast = useToast();
 
     return (
         <RoomsCRUDTable
@@ -344,13 +346,51 @@ function EditableRoomsCRUDTable({
                     },
                     delete: async (values: Set<string>): Promise<Map<string, boolean>> => {
                         const ids = Array.from(values.values());
-                        await deleteRooms({
-                            variables: {
-                                deleteRoomIds: ids,
-                            },
-                        });
+                        let ok = false;
+                        try {
+                            const result = await deleteRooms({
+                                variables: {
+                                    deleteRoomIds: ids,
+                                },
+                            });
+                            if (!result.errors || result.errors.length === 0) {
+                                ok = true;
+                            } else if (
+                                result.errors[0].message.includes(
+                                    // eslint-disable-next-line quotes
+                                    'Foreign key violation. update or delete on table "Room" violates foreign key constraint "Event_roomId_fkey" on table "Event"'
+                                )
+                            ) {
+                                toast({
+                                    status: "error",
+                                    title: "Error deleting room",
+                                    description:
+                                        "Events are scheduled in this room. Please delete them before deleting this room.",
+                                    duration: 7000,
+                                    isClosable: true,
+                                    position: "bottom",
+                                });
+                            }
+                        } catch (e) {
+                            if (
+                                e.toString().includes(
+                                    // eslint-disable-next-line quotes
+                                    'Foreign key violation. update or delete on table "Room" violates foreign key constraint "Event_roomId_fkey" on table "Event"'
+                                )
+                            ) {
+                                toast({
+                                    status: "error",
+                                    title: "Error deleting room",
+                                    description:
+                                        "Events are scheduled in this room. Please delete them before deleting this room.",
+                                    duration: 7000,
+                                    isClosable: true,
+                                    position: "bottom",
+                                });
+                            }
+                        }
                         await refetch();
-                        return new Map(ids.map((id) => [id, true]));
+                        return new Map(ids.map((id) => [id, ok]));
                     },
                 },
             }}

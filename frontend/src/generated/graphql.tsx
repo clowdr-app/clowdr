@@ -9051,6 +9051,7 @@ export type Invitation = {
   /** An object relationship */
   readonly attendee: Attendee;
   readonly attendeeId: Scalars['uuid'];
+  readonly conferenceId: Scalars['uuid'];
   readonly confirmationCode?: Maybe<Scalars['uuid']>;
   readonly createdAt: Scalars['timestamptz'];
   /** An array relationship */
@@ -9145,6 +9146,7 @@ export type Invitation_Bool_Exp = {
   readonly _or?: Maybe<ReadonlyArray<Maybe<Invitation_Bool_Exp>>>;
   readonly attendee?: Maybe<Attendee_Bool_Exp>;
   readonly attendeeId?: Maybe<Uuid_Comparison_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly confirmationCode?: Maybe<Uuid_Comparison_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly emails?: Maybe<Email_Bool_Exp>;
@@ -9165,13 +9167,16 @@ export enum Invitation_Constraint {
   /** unique or primary key constraint */
   InivitationInviteCodeKey = 'Inivitation_inviteCode_key',
   /** unique or primary key constraint */
-  InivitationPkey = 'Inivitation_pkey'
+  InivitationPkey = 'Inivitation_pkey',
+  /** unique or primary key constraint */
+  InvitationInvitedEmailAddressConferenceIdKey = 'Invitation_invitedEmailAddress_conferenceId_key'
 }
 
 /** input type for inserting data into table "Invitation" */
 export type Invitation_Insert_Input = {
   readonly attendee?: Maybe<Attendee_Obj_Rel_Insert_Input>;
   readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly confirmationCode?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly emails?: Maybe<Email_Arr_Rel_Insert_Input>;
@@ -9187,6 +9192,7 @@ export type Invitation_Insert_Input = {
 export type Invitation_Max_Fields = {
   readonly __typename?: 'Invitation_max_fields';
   readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly confirmationCode?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
@@ -9199,6 +9205,7 @@ export type Invitation_Max_Fields = {
 /** order by max() on columns of table "Invitation" */
 export type Invitation_Max_Order_By = {
   readonly attendeeId?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
   readonly confirmationCode?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
@@ -9212,6 +9219,7 @@ export type Invitation_Max_Order_By = {
 export type Invitation_Min_Fields = {
   readonly __typename?: 'Invitation_min_fields';
   readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly confirmationCode?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
@@ -9224,6 +9232,7 @@ export type Invitation_Min_Fields = {
 /** order by min() on columns of table "Invitation" */
 export type Invitation_Min_Order_By = {
   readonly attendeeId?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
   readonly confirmationCode?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
@@ -9259,6 +9268,7 @@ export type Invitation_On_Conflict = {
 export type Invitation_Order_By = {
   readonly attendee?: Maybe<Attendee_Order_By>;
   readonly attendeeId?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
   readonly confirmationCode?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly emails_aggregate?: Maybe<Email_Aggregate_Order_By>;
@@ -9280,6 +9290,8 @@ export enum Invitation_Select_Column {
   /** column name */
   AttendeeId = 'attendeeId',
   /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
   ConfirmationCode = 'confirmationCode',
   /** column name */
   CreatedAt = 'createdAt',
@@ -9298,6 +9310,7 @@ export enum Invitation_Select_Column {
 /** input type for updating data in table "Invitation" */
 export type Invitation_Set_Input = {
   readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly confirmationCode?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
@@ -9311,6 +9324,8 @@ export type Invitation_Set_Input = {
 export enum Invitation_Update_Column {
   /** column name */
   AttendeeId = 'attendeeId',
+  /** column name */
+  ConferenceId = 'conferenceId',
   /** column name */
   ConfirmationCode = 'confirmationCode',
   /** column name */

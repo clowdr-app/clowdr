@@ -1,4 +1,4 @@
-import { HStack, Input, Tooltip, VisuallyHidden } from "@chakra-ui/react";
+import { HStack, Input } from "@chakra-ui/react";
 import {
     format,
     getDate,
@@ -18,7 +18,6 @@ import {
 } from "date-fns";
 import { utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
 import React, { useCallback, useMemo } from "react";
-import FAIcon from "../Icons/FAIcon";
 import type { EditMode } from "./CRUDTable";
 
 export function DateTimePicker({
@@ -106,10 +105,6 @@ export function DateTimePicker({
                 onChange={(e) => setTime(e.target.value)}
                 step="1"
             />
-            <Tooltip label={`Timezone: ${localTimeZone}`}>
-                <FAIcon icon="user-clock" iconStyle="s" />
-            </Tooltip>
-            <VisuallyHidden>Timezone is {localTimeZone}</VisuallyHidden>
         </HStack>
     );
 }

@@ -45,6 +45,7 @@ import {
     useColorModeValue,
     useDisclosure,
     useToken,
+    VisuallyHidden,
     VStack,
 } from "@chakra-ui/react";
 import { matchSorter } from "match-sorter";
@@ -393,7 +394,7 @@ enum ColumnId {
 
 function rowWarning(row: Row<EventInfoFragment>) {
     if (requiresEventPeople(row.original)) {
-        return "This event will be live streamed but no Event People have been assigned to manage the broadcast layout.";
+        return "This event will be live streamed but no Event People have been assigned to manage it.";
     }
     return undefined;
 }
@@ -666,7 +667,7 @@ function EditableScheduleTable(): JSX.Element {
                                 />
                             );
                         },
-                        minWidth: 385,
+                        minWidth: 355,
                     },
                     {
                         id: ColumnId.EndTime,
@@ -690,7 +691,7 @@ function EditableScheduleTable(): JSX.Element {
                                 />
                             );
                         },
-                        minWidth: 395,
+                        minWidth: 355,
                     },
                 ],
             },
@@ -971,12 +972,14 @@ function EditableScheduleTable(): JSX.Element {
             deleteEvents,
             deleteEventsResponse.loading,
             eventBeingDeleted,
+            eventBeingUpdated,
             insertEvent,
             insertEventResponse.loading,
             isIndexAffectingEditOngoing,
             onSecondaryPanelOpen,
             roomModeOptions,
             roomOptions,
+            updateEventResponse.loading,
             wholeSchedule.data?.ContentGroup,
             wholeSchedule.data?.Event,
             wholeSchedule.data?.Room,
@@ -1203,6 +1206,10 @@ function EditableScheduleTable(): JSX.Element {
     const yellowC = useColorModeValue("yellow.300", "yellow.700");
     const [yellow] = useToken("colors", [yellowC]);
 
+    const localTimeZone = useMemo(() => {
+        return Intl.DateTimeFormat().resolvedOptions().timeZone;
+    }, []);
+
     return (
         <>
             {wholeSchedule.error ? (
@@ -1250,6 +1257,11 @@ function EditableScheduleTable(): JSX.Element {
                     </AlertDescription>
                 </Alert>
             ) : undefined}
+            <Center>
+                <FAIcon icon="clock" iconStyle="s" mr={2} />
+                <Text as="span">Timezone: {localTimeZone}</Text>
+            </Center>
+            <VisuallyHidden>Timezone is {localTimeZone}</VisuallyHidden>
             <Table
                 {...tableProps}
                 display="block"

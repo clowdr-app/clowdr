@@ -470,6 +470,8 @@ function EditableScheduleTable(): JSX.Element {
     const isIndexAffectingEditOngoing =
         insertEventResponse.loading || deleteEventResponse.loading || deleteEventsResponse.loading;
 
+    const [eventBeingDeleted, setEventBeingDeleted] = useState<number | null>(null);
+    const [eventBeingUpdated, setEventBeingUpdated] = useState<number | null>(null);
     const columns: Array<Column<EventInfoFragment>> = React.useMemo(
         () => [
             {
@@ -596,6 +598,7 @@ function EditableScheduleTable(): JSX.Element {
                                         }}
                                         size="xs"
                                         colorScheme="green"
+                                        isLoading={insertEventResponse.loading}
                                     >
                                         <FAIcon iconStyle="s" icon="plus" />
                                     </Button>
@@ -609,6 +612,7 @@ function EditableScheduleTable(): JSX.Element {
                                     <Tooltip label={warning}>
                                         <Button
                                             isDisabled={isIndexAffectingEditOngoing}
+                                            isLoading={eventBeingUpdated === row.index && updateEventResponse.loading}
                                             aria-label={`Edit row ${row.index}`}
                                             onClick={() => {
                                                 setEditingIndex(row.index);
@@ -853,12 +857,48 @@ function EditableScheduleTable(): JSX.Element {
                         id: "delete",
                         groupByBoundary: true,
                         Header: function ColumnHeader(props: HeaderProps<EventInfoFragment>) {
+                            const selectedRowIds = props.selectedFlatRows.map((x) => x.original.id);
                             return (
                                 <Center w="100%" h="100%" padding={0}>
                                     <Button
                                         aria-label="Delete selected rows"
+                                        isLoading={deleteEventsResponse.loading}
                                         onClick={() => {
-                                            // TODO: Delete all selected
+                                            if (wholeSchedule.data?.Event) {
+                                                deleteEvents({
+                                                    variables: {
+                                                        eventIds: selectedRowIds,
+                                                    },
+                                                    update: (cache, { data: _data }) => {
+                                                        if (_data?.delete_Event) {
+                                                            const data = _data.delete_Event;
+                                                            const deletedIds = data.returning.map((x) => x.id);
+                                                            cache.modify({
+                                                                fields: {
+                                                                    Event(
+                                                                        existingRefs: Reference[] = [],
+                                                                        { readField }
+                                                                    ) {
+                                                                        deletedIds.forEach((x) => {
+                                                                            cache.evict({
+                                                                                id: x.id,
+                                                                                fieldName: "EventInfo",
+                                                                                broadcast: true,
+                                                                            });
+                                                                        });
+                                                                        return existingRefs.filter(
+                                                                            (ref) =>
+                                                                                !deletedIds.includes(
+                                                                                    readField("id", ref)
+                                                                                )
+                                                                        );
+                                                                    },
+                                                                },
+                                                            });
+                                                        }
+                                                    },
+                                                });
+                                            }
                                         }}
                                         size="xs"
                                         colorScheme="red"
@@ -875,8 +915,10 @@ function EditableScheduleTable(): JSX.Element {
                                     <Button
                                         aria-label={`Delete row ${row.index}`}
                                         isDisabled={isIndexAffectingEditOngoing}
+                                        isLoading={eventBeingDeleted === row.index && deleteEventResponse.loading}
                                         onClick={() => {
                                             if (wholeSchedule.data?.Event) {
+                                                setEventBeingDeleted(row.index);
                                                 deleteEvent({
                                                     variables: {
                                                         eventId: wholeSchedule.data.Event[row.index].id,
@@ -925,7 +967,12 @@ function EditableScheduleTable(): JSX.Element {
             conference.id,
             contentGroupOptions,
             deleteEvent,
+            deleteEventResponse.loading,
+            deleteEvents,
+            deleteEventsResponse.loading,
+            eventBeingDeleted,
             insertEvent,
+            insertEventResponse.loading,
             isIndexAffectingEditOngoing,
             onSecondaryPanelOpen,
             roomModeOptions,
@@ -1016,6 +1063,7 @@ function EditableScheduleTable(): JSX.Element {
             }
 
             if (hasChanged) {
+                setEventBeingUpdated(rowIndex);
                 updateEvent({
                     variables: {
                         eventId: updated.id,
@@ -1157,7 +1205,6 @@ function EditableScheduleTable(): JSX.Element {
 
     return (
         <>
-            {wholeSchedule.loading ? <Spinner label="Loading schedule data" /> : undefined}
             {wholeSchedule.error ? (
                 <Alert status="error">
                     <AlertTitle>Error</AlertTitle>
@@ -1167,7 +1214,6 @@ function EditableScheduleTable(): JSX.Element {
                     </AlertDescription>
                 </Alert>
             ) : undefined}
-            {insertEventResponse.loading ? <Spinner label="Creating" /> : undefined}
             {insertEventResponse.error ? (
                 <Alert status="error">
                     <AlertTitle>Error</AlertTitle>
@@ -1177,7 +1223,6 @@ function EditableScheduleTable(): JSX.Element {
                     </AlertDescription>
                 </Alert>
             ) : undefined}
-            {updateEventResponse.loading ? <Spinner label="Saving" /> : undefined}
             {updateEventResponse.error ? (
                 <Alert status="error">
                     <AlertTitle>Error</AlertTitle>
@@ -1187,7 +1232,6 @@ function EditableScheduleTable(): JSX.Element {
                     </AlertDescription>
                 </Alert>
             ) : undefined}
-            {deleteEventResponse.loading ? <Spinner label="Deleting one" /> : undefined}
             {deleteEventResponse.error ? (
                 <Alert status="error">
                     <AlertTitle>Error</AlertTitle>
@@ -1197,7 +1241,6 @@ function EditableScheduleTable(): JSX.Element {
                     </AlertDescription>
                 </Alert>
             ) : undefined}
-            {deleteEventsResponse.loading ? <Spinner label="Deleting selected" /> : undefined}
             {deleteEventsResponse.error ? (
                 <Alert status="error">
                     <AlertTitle>Error</AlertTitle>
@@ -1368,6 +1411,15 @@ function EditableScheduleTable(): JSX.Element {
                             </Tr>
                         );
                     })}
+                    {wholeSchedule.loading ? (
+                        <Tr>
+                            <Td colSpan={9}>
+                                <Center m={2}>
+                                    <Spinner label="Loading schedule data" />
+                                </Center>
+                            </Td>
+                        </Tr>
+                    ) : undefined}
                 </Tbody>
             </Table>
             <Flex justifyContent="center" alignItems="center" gridGap={2} flexDir="row" flexWrap="wrap">

@@ -66,6 +66,17 @@ gql`
 `;
 
 export default function RoomPage({ roomId }: { roomId: string }): JSX.Element {
+    return (
+        <RequireAtLeastOnePermissionWrapper
+            componentIfDenied={<PageNotFound />}
+            permissions={[Permission_Enum.ConferenceViewAttendees, Permission_Enum.ConferenceManageSchedule]}
+        >
+            <RoomPageInner roomId={roomId} />
+        </RequireAtLeastOnePermissionWrapper>
+    );
+}
+
+function RoomPageInner({ roomId }: { roomId: string }): JSX.Element {
     const result = useRoomPage_GetRoomDetailsQuery({
         variables: {
             roomId,
@@ -90,17 +101,14 @@ export default function RoomPage({ roomId }: { roomId: string }): JSX.Element {
     }, [conference.shortName, conference.slug, setPrimaryMenuButtons]);
 
     return (
-        <RequireAtLeastOnePermissionWrapper
-            componentIfDenied={<PageNotFound />}
-            permissions={[Permission_Enum.ConferenceViewAttendees, Permission_Enum.ConferenceManageSchedule]}
-        >
+        <>
             {title}
             <RoomMembersProvider roomId={roomId}>
                 <ApolloQueryWrapper getter={(data) => data.Room_by_pk} queryResult={result}>
                     {(room: RoomPage_RoomDetailsFragment) => <Room roomDetails={room} />}
                 </ApolloQueryWrapper>
             </RoomMembersProvider>
-        </RequireAtLeastOnePermissionWrapper>
+        </>
     );
 }
 

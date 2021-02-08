@@ -269,18 +269,21 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
                         latestVersion.data.baseType === ContentBaseType.Video &&
                         latestVersion.data.subtitles["en_US"]
                     ) {
-                        const { bucket, key } = new AmazonS3Uri(
-                            latestVersion.data.transcode?.s3Url ?? latestVersion.data.s3Url
+                        const { bucket: subtitlesBucket, key: subtitlesKey } = new AmazonS3Uri(
+                            latestVersion.data.subtitles["en_US"].s3Url
                         );
-                        assert(bucket && key, `Could not parse S3 URI of video item: ${latestVersion.data.s3Url}`);
+                        assert(
+                            subtitlesBucket && subtitlesKey,
+                            `Could not parse S3 URI of video item: ${latestVersion.data.subtitles["en_US"].s3Url}`
+                        );
                         const subtitlesObject = await S3.getObject({
-                            Bucket: bucket,
-                            Key: key,
+                            Bucket: subtitlesBucket,
+                            Key: subtitlesKey,
                         });
 
                         await youtubeClient.captions.insert({
                             media: {
-                                mimeType: "application/octet-stream",
+                                mimeType: "*/*",
                                 body: subtitlesObject.Body,
                             },
                             part: ["snippet", "id"],

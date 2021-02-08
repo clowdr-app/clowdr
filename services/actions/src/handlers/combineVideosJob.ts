@@ -1,13 +1,20 @@
 import { gql } from "@apollo/client/core";
 import {
     AudioSelectorType,
+    CaptionDestinationType,
     CaptionSourceType,
     ContainerType,
     EmbeddedConvert608To708,
     Input,
+    LanguageCode,
     OutputGroupType,
 } from "@aws-sdk/client-mediaconvert";
-import { ContentBaseType, ContentItemDataBlob, ContentType_Enum } from "@clowdr-app/shared-types/build/content";
+import {
+    AWSJobStatus,
+    ContentBaseType,
+    ContentItemDataBlob,
+    ContentType_Enum,
+} from "@clowdr-app/shared-types/build/content";
 import { TranscodeMode } from "@clowdr-app/shared-types/build/sns/mediaconvert";
 import assert from "assert";
 import * as R from "ramda";
@@ -62,40 +69,49 @@ export async function handleCombineVideosJobInserted(payload: Payload<CombineVid
             throw new Error("Can only combine content items from exactly one content group");
         }
 
-        const inputs = result.data.ContentItem.map((item) => {
-            const blob = assertType<ContentItemDataBlob>(item.data);
+        const inputs = R.sortBy(
+            (x) => newRow.data.inputContentItems.findIndex((y) => y.contentItemId === x.id),
+            result.data.ContentItem
+        )
+            .sort((a, b) => {
+                const aIndex = newRow.data.inputContentItems.findIndex((x) => x.contentItemId === a.id);
+                const bIndex = newRow.data.inputContentItems.findIndex((x) => x.contentItemId === b.id);
+                return aIndex - bIndex;
+            })
+            .map((item) => {
+                const blob = assertType<ContentItemDataBlob>(item.data);
 
-            const latestVersion = R.last(blob);
+                const latestVersion = R.last(blob);
 
-            if (!latestVersion) {
-                throw new Error(`Missing latest version of content item ${item.id}`);
-            }
+                if (!latestVersion) {
+                    throw new Error(`Missing latest version of content item ${item.id}`);
+                }
 
-            if (latestVersion.data.baseType !== ContentBaseType.Video) {
-                throw new Error(`Content item ${item.id} is not a video`);
-            }
+                if (latestVersion.data.baseType !== ContentBaseType.Video) {
+                    throw new Error(`Content item ${item.id} is not a video`);
+                }
 
-            const input: Input = {
-                FileInput: latestVersion.data.broadcastTranscode?.s3Url ?? latestVersion.data.s3Url,
-                AudioSelectors: {
-                    "Audio Selector 1": {
-                        SelectorType: AudioSelectorType.TRACK,
-                    },
-                },
-                CaptionSelectors: {
-                    "Caption Selector 1": {
-                        SourceSettings: {
-                            EmbeddedSourceSettings: {
-                                Convert608To708: EmbeddedConvert608To708.UPCONVERT,
-                            },
-                            SourceType: CaptionSourceType.EMBEDDED,
+                const input: Input = {
+                    FileInput: latestVersion.data.broadcastTranscode?.s3Url ?? latestVersion.data.s3Url,
+                    AudioSelectors: {
+                        "Audio Selector 1": {
+                            SelectorType: AudioSelectorType.TRACK,
                         },
                     },
-                },
-            };
+                    CaptionSelectors: {
+                        "Caption Selector 1": {
+                            SourceSettings: {
+                                EmbeddedSourceSettings: {
+                                    Convert608To708: EmbeddedConvert608To708.UPCONVERT,
+                                },
+                                SourceType: CaptionSourceType.EMBEDDED,
+                            },
+                        },
+                    },
+                };
 
-            return input;
-        });
+                return input;
+            });
 
         const destinationKey = uuidv4();
 
@@ -127,6 +143,20 @@ export async function handleCombineVideosJobInserted(payload: Payload<CombineVid
                                 },
                                 AudioDescriptions: [audioDescription],
                                 VideoDescription: videoDescription,
+                            },
+                            {
+                                ContainerSettings: {
+                                    Container: ContainerType.RAW,
+                                },
+                                CaptionDescriptions: [
+                                    {
+                                        CaptionSelectorName: "Caption Selector 1",
+                                        DestinationSettings: {
+                                            DestinationType: CaptionDestinationType.SRT,
+                                        },
+                                        LanguageCode: LanguageCode.ENG,
+                                    },
+                                ],
                             },
                         ],
                     },
@@ -211,6 +241,7 @@ gql`
         job_queues_CombineVideosJob_by_pk(id: $combineVideosJobId) {
             id
             conferenceId
+            outputName
         }
     }
 
@@ -238,6 +269,7 @@ gql`
 export async function completeCombineVideosJob(
     combineVideosJobId: string,
     transcodeS3Url: string,
+    subtitleS3Url: string,
     contentGroupId: string
 ): Promise<void> {
     console.log("Recording CombineVideosJob as completed", combineVideosJobId);
@@ -258,18 +290,31 @@ export async function completeCombineVideosJob(
             throw new Error("Could not find related CombineVideosJob");
         }
 
+        const now = Date.now();
+
         const data: ContentItemDataBlob = [
             {
-                createdAt: Date.now(),
+                createdAt: now,
                 createdBy: "system",
                 data: {
                     baseType: ContentBaseType.Video,
                     s3Url: transcodeS3Url,
-                    sourceHasEmbeddedSubtitles: true,
-                    subtitles: {},
+                    transcode: {
+                        jobId: combineVideosJobId,
+                        status: AWSJobStatus.Completed,
+                        updatedTimestamp: now,
+                        s3Url: transcodeS3Url,
+                    },
+                    subtitles: {
+                        en_US: {
+                            s3Url: subtitleS3Url,
+                            status: AWSJobStatus.Completed,
+                            message: "Generate while combining videos.",
+                        },
+                    },
                     type: ContentType_Enum.VideoFile,
                     broadcastTranscode: {
-                        updatedTimestamp: Date.now(),
+                        updatedTimestamp: now,
                         s3Url: transcodeS3Url,
                     },
                 },
@@ -284,7 +329,9 @@ export async function completeCombineVideosJob(
                         conferenceId: combineVideosJobResult.data.job_queues_CombineVideosJob_by_pk?.conferenceId,
                         contentGroupId,
                         data,
-                        name: "Combined video",
+                        name:
+                            combineVideosJobResult.data.job_queues_CombineVideosJob_by_pk?.outputName ??
+                            "Combined video",
                     },
                 })
         );

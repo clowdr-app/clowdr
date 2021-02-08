@@ -43,6 +43,8 @@ export const videoDescription: VideoDescription = {
             },
         },
     },
+    Height: 1080,
+    Width: 1920,
 };
 
 export const audioDescription: AudioDescription = {

@@ -8,6 +8,7 @@ import {
     FormHelperText,
     FormLabel,
     Heading,
+    Input,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -20,7 +21,7 @@ import {
     useToast,
 } from "@chakra-ui/react";
 import type { CombineVideosJobDataBlob, InputContentItem } from "@clowdr-app/shared-types/build/combineVideosJob";
-import { FieldArray, Form, Formik } from "formik";
+import { Field, FieldArray, FieldProps, Form, Formik } from "formik";
 import React, { useEffect, useMemo, useState } from "react";
 import Select from "react-select";
 import {
@@ -37,10 +38,16 @@ gql`
     mutation CombineVideosModal_CreateCombineVideosJob(
         $conferenceId: uuid!
         $createdByAttendeeId: uuid!
+        $outputName: String!
         $data: jsonb!
     ) {
         insert_job_queues_CombineVideosJob_one(
-            object: { conferenceId: $conferenceId, createdByAttendeeId: $createdByAttendeeId, data: $data }
+            object: {
+                conferenceId: $conferenceId
+                createdByAttendeeId: $createdByAttendeeId
+                outputName: $outputName
+                data: $data
+            }
         ) {
             id
         }
@@ -113,7 +120,7 @@ export function CombineVideosModal({
     return (
         <Modal scrollBehavior="inside" onClose={onClose} isOpen={isOpen} motionPreset="scale" size="full">
             <Formik
-                initialValues={{ contentItemIds: [] }}
+                initialValues={{ contentItemIds: [], outputName: "Combined video" }}
                 onSubmit={async (values, actions) => {
                     console.log(values.contentItemIds);
                     const items: InputContentItem[] = values.contentItemIds.map((id) => ({
@@ -129,6 +136,7 @@ export function CombineVideosModal({
                             variables: {
                                 conferenceId: conference.id,
                                 createdByAttendeeId: user.user.attendees[0].id,
+                                outputName: values.outputName,
                                 data,
                             },
                         });
@@ -158,6 +166,18 @@ export function CombineVideosModal({
                             <ModalCloseButton />
                             <ModalBody>
                                 <Box>
+                                    <Field name="outputName" validate={validateName}>
+                                        {({ field, form }: FieldProps<string>) => (
+                                            <FormControl
+                                                isInvalid={!!form.errors.outputName && !form.touched.outputName}
+                                                isRequired
+                                            >
+                                                <FormLabel htmlFor="outputName">Output file name</FormLabel>
+                                                <Input {...field} id="outputName" placeholder="Name of output file" />
+                                                <FormErrorMessage>{form.errors.outputName}</FormErrorMessage>
+                                            </FormControl>
+                                        )}
+                                    </Field>
                                     <FieldArray name="contentItemIds">
                                         {({ form, name }) => (
                                             <FormControl
@@ -280,4 +300,17 @@ export function CombineVideosModal({
             </Formik>
         </Modal>
     );
+}
+
+/**
+ * Returns error message or undefined if no errors.
+ */
+export function validateName(value: string | null | undefined): string | undefined {
+    let error;
+    if (!value || value.length === 0) {
+        error = "Name is required";
+    } else if (value.length < 3) {
+        error = "Name must be at least 3 characters.";
+    }
+    return error;
 }

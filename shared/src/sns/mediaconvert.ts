@@ -117,5 +117,5 @@ interface OutputGroupDetail {
 interface OutputDetail {
     outputFilePaths: string[];
     durationInMs: number;
-    videoDetails: { widthInPx: number; heightInPx: number };
+    videoDetails?: { widthInPx: number; heightInPx: number };
 }

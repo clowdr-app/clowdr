@@ -6,7 +6,6 @@ import { Credentials } from "google-auth-library";
 import { google } from "googleapis";
 import jwt_decode from "jwt-decode";
 import * as R from "ramda";
-import stream from "stream";
 import { assertType } from "typescript-is";
 import {
     CompleteUploadYouTubeVideoJobDocument,
@@ -166,28 +165,12 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
         assert(latestVersion, "Could not find any versions of content item");
         assert(latestVersion.data.baseType === ContentBaseType.Video, "Cannot upload non-video content to YouTube");
 
-        const useEmbeddedSubtitles =
-            !latestVersion.data.subtitles["en_US"] || latestVersion.data.sourceHasEmbeddedSubtitles;
-        const { bucket, key } = new AmazonS3Uri(
-            latestVersion.data.sourceHasEmbeddedSubtitles
-                ? latestVersion.data.s3Url
-                : latestVersion.data.broadcastTranscode?.s3Url ?? latestVersion.data.s3Url
-        );
+        const { bucket, key } = new AmazonS3Uri(latestVersion.data.transcode?.s3Url ?? latestVersion.data.s3Url);
         assert(bucket && key, `Could not parse S3 URI of video item: ${latestVersion.data.s3Url}`);
         const object = await S3.getObject({
             Bucket: bucket,
             Key: key,
         });
-
-        if (object.Body instanceof stream.Readable) {
-            console.log("stream.Readable");
-        } else if (object.Body instanceof ReadableStream) {
-            console.log("ReadableStream");
-        } else if (object.Body instanceof Blob) {
-            console.log("Blob");
-        } else {
-            throw new Error("Could not parse S3 object");
-        }
 
         assertType<Credentials>(job.attendeeGoogleAccount.tokenData);
 
@@ -217,9 +200,6 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
                 },
                 part: ["snippet", "id", "status", "contentDetails"],
                 requestBody: {
-                    contentDetails: {
-                        caption: useEmbeddedSubtitles ? "true" : "false",
-                    },
                     status: {
                         privacyStatus: "unlisted",
                     },
@@ -283,6 +263,37 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
                             },
                         });
                     });
+
+                    console.log("Starting YouTube caption upload", job.id, result.data);
+                    if (
+                        latestVersion.data.baseType === ContentBaseType.Video &&
+                        latestVersion.data.subtitles["en_US"]
+                    ) {
+                        const { bucket, key } = new AmazonS3Uri(
+                            latestVersion.data.transcode?.s3Url ?? latestVersion.data.s3Url
+                        );
+                        assert(bucket && key, `Could not parse S3 URI of video item: ${latestVersion.data.s3Url}`);
+                        const subtitlesObject = await S3.getObject({
+                            Bucket: bucket,
+                            Key: key,
+                        });
+
+                        await youtubeClient.captions.insert({
+                            media: {
+                                mimeType: "application/octet-stream",
+                                body: subtitlesObject.Body,
+                            },
+                            part: ["snippet", "id"],
+                            requestBody: {
+                                snippet: {
+                                    videoId: result.data.id,
+                                    language: "en-US",
+                                    name: "English",
+                                },
+                            },
+                        });
+                        console.log("Finished uploading YouTube caption", job.id);
+                    }
                 } catch (e) {
                     console.error("Failure while recording completion of YouTube upload", job.id, e);
                     await callWithRetry(async () => {

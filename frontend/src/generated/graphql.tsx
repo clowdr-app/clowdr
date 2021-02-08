@@ -18967,6 +18967,7 @@ export type Job_Queues_CombineVideosJob = {
   readonly jobStatusName: JobStatus_Enum;
   readonly mediaConvertJobId?: Maybe<Scalars['String']>;
   readonly message?: Maybe<Scalars['String']>;
+  readonly outputName: Scalars['String'];
   readonly updated_at: Scalars['timestamptz'];
 };
 
@@ -19032,6 +19033,7 @@ export type Job_Queues_CombineVideosJob_Bool_Exp = {
   readonly jobStatusName?: Maybe<JobStatus_Enum_Comparison_Exp>;
   readonly mediaConvertJobId?: Maybe<String_Comparison_Exp>;
   readonly message?: Maybe<String_Comparison_Exp>;
+  readonly outputName?: Maybe<String_Comparison_Exp>;
   readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -19069,6 +19071,7 @@ export type Job_Queues_CombineVideosJob_Insert_Input = {
   readonly jobStatusName?: Maybe<JobStatus_Enum>;
   readonly mediaConvertJobId?: Maybe<Scalars['String']>;
   readonly message?: Maybe<Scalars['String']>;
+  readonly outputName?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -19081,6 +19084,7 @@ export type Job_Queues_CombineVideosJob_Max_Fields = {
   readonly id?: Maybe<Scalars['uuid']>;
   readonly mediaConvertJobId?: Maybe<Scalars['String']>;
   readonly message?: Maybe<Scalars['String']>;
+  readonly outputName?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -19092,6 +19096,7 @@ export type Job_Queues_CombineVideosJob_Max_Order_By = {
   readonly id?: Maybe<Order_By>;
   readonly mediaConvertJobId?: Maybe<Order_By>;
   readonly message?: Maybe<Order_By>;
+  readonly outputName?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
 
@@ -19104,6 +19109,7 @@ export type Job_Queues_CombineVideosJob_Min_Fields = {
   readonly id?: Maybe<Scalars['uuid']>;
   readonly mediaConvertJobId?: Maybe<Scalars['String']>;
   readonly message?: Maybe<Scalars['String']>;
+  readonly outputName?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -19115,6 +19121,7 @@ export type Job_Queues_CombineVideosJob_Min_Order_By = {
   readonly id?: Maybe<Order_By>;
   readonly mediaConvertJobId?: Maybe<Order_By>;
   readonly message?: Maybe<Order_By>;
+  readonly outputName?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
 
@@ -19153,6 +19160,7 @@ export type Job_Queues_CombineVideosJob_Order_By = {
   readonly jobStatusName?: Maybe<Order_By>;
   readonly mediaConvertJobId?: Maybe<Order_By>;
   readonly message?: Maybe<Order_By>;
+  readonly outputName?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
 
@@ -19185,6 +19193,8 @@ export enum Job_Queues_CombineVideosJob_Select_Column {
   /** column name */
   Message = 'message',
   /** column name */
+  OutputName = 'outputName',
+  /** column name */
   UpdatedAt = 'updated_at'
 }
 
@@ -19198,6 +19208,7 @@ export type Job_Queues_CombineVideosJob_Set_Input = {
   readonly jobStatusName?: Maybe<JobStatus_Enum>;
   readonly mediaConvertJobId?: Maybe<Scalars['String']>;
   readonly message?: Maybe<Scalars['String']>;
+  readonly outputName?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -19219,6 +19230,8 @@ export enum Job_Queues_CombineVideosJob_Update_Column {
   MediaConvertJobId = 'mediaConvertJobId',
   /** column name */
   Message = 'message',
+  /** column name */
+  OutputName = 'outputName',
   /** column name */
   UpdatedAt = 'updated_at'
 }
@@ -31479,6 +31492,7 @@ export type AttendeesByIdQuery = { readonly __typename?: 'query_root', readonly 
 export type CombineVideosModal_CreateCombineVideosJobMutationVariables = Exact<{
   conferenceId: Scalars['uuid'];
   createdByAttendeeId: Scalars['uuid'];
+  outputName: Scalars['String'];
   data: Scalars['jsonb'];
 }>;
 
@@ -35708,9 +35722,9 @@ export type AttendeesByIdQueryHookResult = ReturnType<typeof useAttendeesByIdQue
 export type AttendeesByIdLazyQueryHookResult = ReturnType<typeof useAttendeesByIdLazyQuery>;
 export type AttendeesByIdQueryResult = Apollo.QueryResult<AttendeesByIdQuery, AttendeesByIdQueryVariables>;
 export const CombineVideosModal_CreateCombineVideosJobDocument = gql`
-    mutation CombineVideosModal_CreateCombineVideosJob($conferenceId: uuid!, $createdByAttendeeId: uuid!, $data: jsonb!) {
+    mutation CombineVideosModal_CreateCombineVideosJob($conferenceId: uuid!, $createdByAttendeeId: uuid!, $outputName: String!, $data: jsonb!) {
   insert_job_queues_CombineVideosJob_one(
-    object: {conferenceId: $conferenceId, createdByAttendeeId: $createdByAttendeeId, data: $data}
+    object: {conferenceId: $conferenceId, createdByAttendeeId: $createdByAttendeeId, outputName: $outputName, data: $data}
   ) {
     id
   }
@@ -35733,6 +35747,7 @@ export type CombineVideosModal_CreateCombineVideosJobMutationFn = Apollo.Mutatio
  *   variables: {
  *      conferenceId: // value for 'conferenceId'
  *      createdByAttendeeId: // value for 'createdByAttendeeId'
+ *      outputName: // value for 'outputName'
  *      data: // value for 'data'
  *   },
  * });

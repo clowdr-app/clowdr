@@ -1225,6 +1225,7 @@
       - conferenceId
       - createdByAttendeeId
       - data
+      - outputName
       backend_only: false
   select_permissions:
   - role: user
@@ -1237,6 +1238,7 @@
       - id
       - jobStatusName
       - message
+      - outputName
       - updated_at
       filter:
         _and:

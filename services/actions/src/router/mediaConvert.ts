@@ -74,12 +74,15 @@ router.post("/notify", bodyParser.text(), async (req: Request, res: Response) =>
                                 new Date(event.detail.timestamp)
                             );
                             break;
-                        case TranscodeMode.COMBINE:
+                        case TranscodeMode.COMBINE: {
+                            const subtitleS3Url = `${event.detail.outputGroupDetails[0].outputDetails[1].outputFilePaths[0]}.srt`;
                             await completeCombineVideosJob(
                                 event.detail.userMetadata.combineVideosJobId,
                                 transcodeS3Url,
+                                subtitleS3Url,
                                 event.detail.userMetadata.contentGroupId
                             );
+                        }
                     }
                 } catch (e) {
                     console.error("Failed to complete transcode", e);

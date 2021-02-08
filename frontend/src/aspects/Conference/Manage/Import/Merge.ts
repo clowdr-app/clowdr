@@ -336,19 +336,27 @@ function isMatch_OriginatingData<
 }
 
 export function isMatch_OriginatingDataId<
-    C,
+    C extends IdRemappingContext<"OriginatingData"> & {
+        originatingDatas: OriginatingDataDescriptor[];
+    },
     T extends { originatingDataId?: string; originatingDataSourceId?: string },
     S extends { originatingDataId?: string; originatingDataSourceId?: string }
->(_ctx: C, item1: S, item2: T): boolean {
-    const id1 = item1.originatingDataSourceId || item1.originatingDataId;
-    const id2 = item2.originatingDataSourceId || item2.originatingDataId;
+>(ctx: C, item1: S, item2: T): boolean {
+    const id1Index = item1.originatingDataSourceId
+        ? findExistingOriginatingData(ctx, ctx.originatingDatas, item1)
+        : undefined;
+    const id1 = id1Index !== undefined ? ctx.originatingDatas[id1Index].id : item1.originatingDataId;
+
+    const id2Index = item2.originatingDataSourceId
+        ? findExistingOriginatingData(ctx, ctx.originatingDatas, item2)
+        : undefined;
+    const id2 = id2Index !== undefined ? ctx.originatingDatas[id2Index].id : item2.originatingDataId;
+
     if (!id1 || !id2) {
         return false;
     }
 
-    const parts1 = id1.split("¬");
-    const parts2 = id2.split("¬");
-    return parts1.some((part) => parts2.includes(part));
+    return id1 === id2;
 }
 
 export function isMatch_String_Exact<C, T, S extends T>(k?: keyof (S | T)): (ctx: C, item1: S, item2: T) => boolean {

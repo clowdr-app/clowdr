@@ -30472,16 +30472,22 @@ export type UpdateRoomMutation = { readonly __typename?: 'mutation_root', readon
     & RoomInfoFragment
   )> };
 
-export type InsertDeleteEventsMutationVariables = Exact<{
-  newEvents: ReadonlyArray<Event_Insert_Input>;
+export type DeleteEventsMutationVariables = Exact<{
   deleteEventIds: ReadonlyArray<Scalars['uuid']>;
 }>;
 
 
-export type InsertDeleteEventsMutation = { readonly __typename?: 'mutation_root', readonly insert_Event?: Maybe<{ readonly __typename?: 'Event_mutation_response', readonly returning: ReadonlyArray<(
-      { readonly __typename?: 'Event' }
-      & EventInfoFragment
-    )> }>, readonly delete_Event?: Maybe<{ readonly __typename?: 'Event_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Event', readonly id: any }> }> };
+export type DeleteEventsMutation = { readonly __typename?: 'mutation_root', readonly delete_Event?: Maybe<{ readonly __typename?: 'Event_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Event', readonly id: any }> }> };
+
+export type InsertEventMutationVariables = Exact<{
+  newEvent: Event_Insert_Input;
+}>;
+
+
+export type InsertEventMutation = { readonly __typename?: 'mutation_root', readonly insert_Event_one?: Maybe<(
+    { readonly __typename?: 'Event' }
+    & EventInfoFragment
+  )> };
 
 export type UpdateEventMutationVariables = Exact<{
   eventId: Scalars['uuid'];
@@ -35849,7 +35855,10 @@ export const SelectWholeScheduleDocument = gql`
   Room(where: {conferenceId: {_eq: $conferenceId}}) {
     ...RoomInfo
   }
-  Event(where: {conferenceId: {_eq: $conferenceId}}) {
+  Event(
+    where: {conferenceId: {_eq: $conferenceId}}
+    order_by: {startTime: asc, endTime: asc}
+  ) {
     ...EventInfo
   }
   OriginatingData(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -36004,46 +36013,72 @@ export function useUpdateRoomMutation(baseOptions?: Apollo.MutationHookOptions<U
 export type UpdateRoomMutationHookResult = ReturnType<typeof useUpdateRoomMutation>;
 export type UpdateRoomMutationResult = Apollo.MutationResult<UpdateRoomMutation>;
 export type UpdateRoomMutationOptions = Apollo.BaseMutationOptions<UpdateRoomMutation, UpdateRoomMutationVariables>;
-export const InsertDeleteEventsDocument = gql`
-    mutation InsertDeleteEvents($newEvents: [Event_insert_input!]!, $deleteEventIds: [uuid!]!) {
-  insert_Event(objects: $newEvents) {
-    returning {
-      ...EventInfo
-    }
-  }
+export const DeleteEventsDocument = gql`
+    mutation DeleteEvents($deleteEventIds: [uuid!]!) {
   delete_Event(where: {id: {_in: $deleteEventIds}}) {
     returning {
       id
     }
   }
 }
-    ${EventInfoFragmentDoc}`;
-export type InsertDeleteEventsMutationFn = Apollo.MutationFunction<InsertDeleteEventsMutation, InsertDeleteEventsMutationVariables>;
+    `;
+export type DeleteEventsMutationFn = Apollo.MutationFunction<DeleteEventsMutation, DeleteEventsMutationVariables>;
 
 /**
- * __useInsertDeleteEventsMutation__
+ * __useDeleteEventsMutation__
  *
- * To run a mutation, you first call `useInsertDeleteEventsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInsertDeleteEventsMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useDeleteEventsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteEventsMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [insertDeleteEventsMutation, { data, loading, error }] = useInsertDeleteEventsMutation({
+ * const [deleteEventsMutation, { data, loading, error }] = useDeleteEventsMutation({
  *   variables: {
- *      newEvents: // value for 'newEvents'
  *      deleteEventIds: // value for 'deleteEventIds'
  *   },
  * });
  */
-export function useInsertDeleteEventsMutation(baseOptions?: Apollo.MutationHookOptions<InsertDeleteEventsMutation, InsertDeleteEventsMutationVariables>) {
-        return Apollo.useMutation<InsertDeleteEventsMutation, InsertDeleteEventsMutationVariables>(InsertDeleteEventsDocument, baseOptions);
+export function useDeleteEventsMutation(baseOptions?: Apollo.MutationHookOptions<DeleteEventsMutation, DeleteEventsMutationVariables>) {
+        return Apollo.useMutation<DeleteEventsMutation, DeleteEventsMutationVariables>(DeleteEventsDocument, baseOptions);
       }
-export type InsertDeleteEventsMutationHookResult = ReturnType<typeof useInsertDeleteEventsMutation>;
-export type InsertDeleteEventsMutationResult = Apollo.MutationResult<InsertDeleteEventsMutation>;
-export type InsertDeleteEventsMutationOptions = Apollo.BaseMutationOptions<InsertDeleteEventsMutation, InsertDeleteEventsMutationVariables>;
+export type DeleteEventsMutationHookResult = ReturnType<typeof useDeleteEventsMutation>;
+export type DeleteEventsMutationResult = Apollo.MutationResult<DeleteEventsMutation>;
+export type DeleteEventsMutationOptions = Apollo.BaseMutationOptions<DeleteEventsMutation, DeleteEventsMutationVariables>;
+export const InsertEventDocument = gql`
+    mutation InsertEvent($newEvent: Event_insert_input!) {
+  insert_Event_one(object: $newEvent) {
+    ...EventInfo
+  }
+}
+    ${EventInfoFragmentDoc}`;
+export type InsertEventMutationFn = Apollo.MutationFunction<InsertEventMutation, InsertEventMutationVariables>;
+
+/**
+ * __useInsertEventMutation__
+ *
+ * To run a mutation, you first call `useInsertEventMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInsertEventMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [insertEventMutation, { data, loading, error }] = useInsertEventMutation({
+ *   variables: {
+ *      newEvent: // value for 'newEvent'
+ *   },
+ * });
+ */
+export function useInsertEventMutation(baseOptions?: Apollo.MutationHookOptions<InsertEventMutation, InsertEventMutationVariables>) {
+        return Apollo.useMutation<InsertEventMutation, InsertEventMutationVariables>(InsertEventDocument, baseOptions);
+      }
+export type InsertEventMutationHookResult = ReturnType<typeof useInsertEventMutation>;
+export type InsertEventMutationResult = Apollo.MutationResult<InsertEventMutation>;
+export type InsertEventMutationOptions = Apollo.BaseMutationOptions<InsertEventMutation, InsertEventMutationVariables>;
 export const UpdateEventDocument = gql`
     mutation UpdateEvent($eventId: uuid!, $roomId: uuid!, $intendedRoomModeName: RoomMode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $contentGroupId: uuid = null, $newEventTags: [EventTag_insert_input!]!, $deleteEventTagIds: [uuid!]!, $newEventPeople: [EventPerson_insert_input!]!, $deleteEventPeopleIds: [uuid!]!) {
   insert_EventTag(objects: $newEventTags) {

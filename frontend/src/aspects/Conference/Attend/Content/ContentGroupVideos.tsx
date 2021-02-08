@@ -74,7 +74,7 @@ export function ContentGroupVideos({ contentGroupData }: { contentGroupData: Con
             });
     }, [contentGroupData.contentItems, slowSelectedVideoId]);
     return videoContentItems.length === 0 ? (
-        <>(This item does not have any videos at the moment.)</>
+        <></>
     ) : (
         <Flex
             justifyContent={["flex-start", "flex-start", "center"]}

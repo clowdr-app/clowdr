@@ -31832,6 +31832,21 @@ export type UpdateHallwayMutation = { readonly __typename?: 'mutation_root', rea
     & HallwayInfoFragment
   )> };
 
+export type ChooseContentItemByTagModal_GetTagsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type ChooseContentItemByTagModal_GetTagsQuery = { readonly __typename?: 'query_root', readonly Tag: ReadonlyArray<{ readonly __typename?: 'Tag', readonly id: any, readonly name: string }> };
+
+export type ChooseContentItemByTagModal_GetVideoContentItemsQueryVariables = Exact<{
+  tagId: Scalars['uuid'];
+  name: Scalars['String'];
+}>;
+
+
+export type ChooseContentItemByTagModal_GetVideoContentItemsQuery = { readonly __typename?: 'query_root', readonly ContentItem: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly contentGroup: { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string } }> };
+
 export type ChooseContentItemModal_GetContentGroupsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
@@ -36664,6 +36679,82 @@ export function useUpdateHallwayMutation(baseOptions?: Apollo.MutationHookOption
 export type UpdateHallwayMutationHookResult = ReturnType<typeof useUpdateHallwayMutation>;
 export type UpdateHallwayMutationResult = Apollo.MutationResult<UpdateHallwayMutation>;
 export type UpdateHallwayMutationOptions = Apollo.BaseMutationOptions<UpdateHallwayMutation, UpdateHallwayMutationVariables>;
+export const ChooseContentItemByTagModal_GetTagsDocument = gql`
+    query ChooseContentItemByTagModal_GetTags($conferenceId: uuid!) {
+  Tag(where: {conferenceId: {_eq: $conferenceId}}, order_by: {name: asc}) {
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useChooseContentItemByTagModal_GetTagsQuery__
+ *
+ * To run a query within a React component, call `useChooseContentItemByTagModal_GetTagsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useChooseContentItemByTagModal_GetTagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useChooseContentItemByTagModal_GetTagsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useChooseContentItemByTagModal_GetTagsQuery(baseOptions: Apollo.QueryHookOptions<ChooseContentItemByTagModal_GetTagsQuery, ChooseContentItemByTagModal_GetTagsQueryVariables>) {
+        return Apollo.useQuery<ChooseContentItemByTagModal_GetTagsQuery, ChooseContentItemByTagModal_GetTagsQueryVariables>(ChooseContentItemByTagModal_GetTagsDocument, baseOptions);
+      }
+export function useChooseContentItemByTagModal_GetTagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ChooseContentItemByTagModal_GetTagsQuery, ChooseContentItemByTagModal_GetTagsQueryVariables>) {
+          return Apollo.useLazyQuery<ChooseContentItemByTagModal_GetTagsQuery, ChooseContentItemByTagModal_GetTagsQueryVariables>(ChooseContentItemByTagModal_GetTagsDocument, baseOptions);
+        }
+export type ChooseContentItemByTagModal_GetTagsQueryHookResult = ReturnType<typeof useChooseContentItemByTagModal_GetTagsQuery>;
+export type ChooseContentItemByTagModal_GetTagsLazyQueryHookResult = ReturnType<typeof useChooseContentItemByTagModal_GetTagsLazyQuery>;
+export type ChooseContentItemByTagModal_GetTagsQueryResult = Apollo.QueryResult<ChooseContentItemByTagModal_GetTagsQuery, ChooseContentItemByTagModal_GetTagsQueryVariables>;
+export const ChooseContentItemByTagModal_GetVideoContentItemsDocument = gql`
+    query ChooseContentItemByTagModal_GetVideoContentItems($tagId: uuid!, $name: String!) {
+  ContentItem(
+    where: {contentTypeName: {_in: [VIDEO_FILE, VIDEO_BROADCAST, VIDEO_PREPUBLISH]}, contentGroup: {contentGroupTags: {tag: {id: {_eq: $tagId}}}}, name: {_ilike: $name}}
+    order_by: {contentGroup: {title: asc}, name: asc}
+  ) {
+    id
+    name
+    contentGroup {
+      id
+      title
+    }
+  }
+}
+    `;
+
+/**
+ * __useChooseContentItemByTagModal_GetVideoContentItemsQuery__
+ *
+ * To run a query within a React component, call `useChooseContentItemByTagModal_GetVideoContentItemsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useChooseContentItemByTagModal_GetVideoContentItemsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useChooseContentItemByTagModal_GetVideoContentItemsQuery({
+ *   variables: {
+ *      tagId: // value for 'tagId'
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useChooseContentItemByTagModal_GetVideoContentItemsQuery(baseOptions: Apollo.QueryHookOptions<ChooseContentItemByTagModal_GetVideoContentItemsQuery, ChooseContentItemByTagModal_GetVideoContentItemsQueryVariables>) {
+        return Apollo.useQuery<ChooseContentItemByTagModal_GetVideoContentItemsQuery, ChooseContentItemByTagModal_GetVideoContentItemsQueryVariables>(ChooseContentItemByTagModal_GetVideoContentItemsDocument, baseOptions);
+      }
+export function useChooseContentItemByTagModal_GetVideoContentItemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ChooseContentItemByTagModal_GetVideoContentItemsQuery, ChooseContentItemByTagModal_GetVideoContentItemsQueryVariables>) {
+          return Apollo.useLazyQuery<ChooseContentItemByTagModal_GetVideoContentItemsQuery, ChooseContentItemByTagModal_GetVideoContentItemsQueryVariables>(ChooseContentItemByTagModal_GetVideoContentItemsDocument, baseOptions);
+        }
+export type ChooseContentItemByTagModal_GetVideoContentItemsQueryHookResult = ReturnType<typeof useChooseContentItemByTagModal_GetVideoContentItemsQuery>;
+export type ChooseContentItemByTagModal_GetVideoContentItemsLazyQueryHookResult = ReturnType<typeof useChooseContentItemByTagModal_GetVideoContentItemsLazyQuery>;
+export type ChooseContentItemByTagModal_GetVideoContentItemsQueryResult = Apollo.QueryResult<ChooseContentItemByTagModal_GetVideoContentItemsQuery, ChooseContentItemByTagModal_GetVideoContentItemsQueryVariables>;
 export const ChooseContentItemModal_GetContentGroupsDocument = gql`
     query ChooseContentItemModal_GetContentGroups($conferenceId: uuid!) {
   ContentGroup(

@@ -101,6 +101,7 @@ export function ConnectYouTubeAccount(): JSX.Element {
                 )}
             </ApolloQueryWrapper>
             <Button
+                display="block"
                 onClick={async () => {
                     try {
                         const urlResult = await mutation({

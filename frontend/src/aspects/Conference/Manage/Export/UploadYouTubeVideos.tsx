@@ -35,6 +35,7 @@ import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";
 import useCurrentAttendee from "../../useCurrentAttendee";
+import { ChooseContentItemByTagModal } from "./ChooseContentItemByTagModal";
 import { ChooseContentItemModal } from "./ChooseContentItemModal";
 
 gql`
@@ -144,7 +145,8 @@ export function UploadYouTubeVideos(): JSX.Element {
 
     const [createJobs] = useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation();
 
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const chooseVideoDisclosure = useDisclosure();
+    const chooseByTagDisclosure = useDisclosure();
 
     const [contentItemIds, setContentItemIds] = useState<string[]>([]);
     const { data } = useUploadYouTubeVideos_GetContentItemsQuery({
@@ -306,7 +308,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                 <Button
                                                     aria-label="add a single video"
                                                     size="sm"
-                                                    onClick={() => onOpen()}
+                                                    onClick={() => chooseVideoDisclosure.onOpen()}
                                                 >
                                                     <FAIcon icon="plus-square" iconStyle="s" mr={2} />
                                                     Add a video
@@ -318,12 +320,37 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                             R.union(form.values.contentItemIds, [contentItemId])
                                                         )
                                                     }
-                                                    isOpen={isOpen}
-                                                    onClose={onClose}
+                                                    isOpen={chooseVideoDisclosure.isOpen}
+                                                    onClose={chooseVideoDisclosure.onClose}
                                                 />
-                                                <Button aria-label="add a single video" size="sm" ml={4}>
+                                                <Button
+                                                    aria-label="add a videos by tag"
+                                                    size="sm"
+                                                    ml={4}
+                                                    onClick={() => chooseByTagDisclosure.onOpen()}
+                                                >
                                                     <FAIcon icon="plus-square" iconStyle="s" mr={2} />
                                                     Add videos by tag
+                                                </Button>
+                                                <ChooseContentItemByTagModal
+                                                    chooseItems={(contentItemIds) =>
+                                                        form.setFieldValue(
+                                                            field.name,
+                                                            R.union(form.values.contentItemIds, contentItemIds)
+                                                        )
+                                                    }
+                                                    isOpen={chooseByTagDisclosure.isOpen}
+                                                    onClose={chooseByTagDisclosure.onClose}
+                                                />
+
+                                                <Button
+                                                    aria-label="clear all videos"
+                                                    size="sm"
+                                                    ml={4}
+                                                    onClick={() => form.setFieldValue(field.name, [])}
+                                                >
+                                                    <FAIcon icon="trash-alt" iconStyle="r" mr={2} />
+                                                    Clear all
                                                 </Button>
 
                                                 <List mt={4} spacing={2}>

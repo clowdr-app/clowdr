@@ -182,7 +182,7 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
         const youtubeClient = google.youtube({
             auth: client,
             version: "v3",
-            onUploadProgress: (event) => {
+            onUploadProgress: (event: { bytesRead: number }) => {
                 const previousPercentage = Math.floor((bytesRead / totalBytes) * 100);
                 const newPercentage = Math.floor((event.bytesRead / totalBytes) * 100);
                 if (previousPercentage < newPercentage && newPercentage % 10 === 0) {
@@ -204,7 +204,8 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
                         privacyStatus: "unlisted",
                     },
                     snippet: {
-                        title: job.contentItem.contentGroup.title,
+                        title: job.videoTitle,
+                        description: job.videoDescription,
                     },
                 },
             })
@@ -357,6 +358,8 @@ gql`
                 title
             }
         }
+        videoTitle
+        videoDescription
     }
 
     mutation UnmarkUploadYouTubeVideoJobs($ids: [uuid!]!) {

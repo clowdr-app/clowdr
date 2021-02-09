@@ -20127,6 +20127,8 @@ export type Job_Queues_UploadYouTubeVideoJob = {
   readonly message?: Maybe<Scalars['String']>;
   readonly retriesCount: Scalars['Int'];
   readonly updatedAt: Scalars['timestamptz'];
+  readonly videoDescription: Scalars['String'];
+  readonly videoTitle: Scalars['String'];
 };
 
 /** aggregated selection of "job_queues.UploadYouTubeVideoJob" */
@@ -20209,6 +20211,8 @@ export type Job_Queues_UploadYouTubeVideoJob_Bool_Exp = {
   readonly message?: Maybe<String_Comparison_Exp>;
   readonly retriesCount?: Maybe<Int_Comparison_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly videoDescription?: Maybe<String_Comparison_Exp>;
+  readonly videoTitle?: Maybe<String_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "job_queues.UploadYouTubeVideoJob" */
@@ -20237,6 +20241,8 @@ export type Job_Queues_UploadYouTubeVideoJob_Insert_Input = {
   readonly message?: Maybe<Scalars['String']>;
   readonly retriesCount?: Maybe<Scalars['Int']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly videoDescription?: Maybe<Scalars['String']>;
+  readonly videoTitle?: Maybe<Scalars['String']>;
 };
 
 /** aggregate max on columns */
@@ -20250,6 +20256,8 @@ export type Job_Queues_UploadYouTubeVideoJob_Max_Fields = {
   readonly message?: Maybe<Scalars['String']>;
   readonly retriesCount?: Maybe<Scalars['Int']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly videoDescription?: Maybe<Scalars['String']>;
+  readonly videoTitle?: Maybe<Scalars['String']>;
 };
 
 /** order by max() on columns of table "job_queues.UploadYouTubeVideoJob" */
@@ -20262,6 +20270,8 @@ export type Job_Queues_UploadYouTubeVideoJob_Max_Order_By = {
   readonly message?: Maybe<Order_By>;
   readonly retriesCount?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
+  readonly videoDescription?: Maybe<Order_By>;
+  readonly videoTitle?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
@@ -20275,6 +20285,8 @@ export type Job_Queues_UploadYouTubeVideoJob_Min_Fields = {
   readonly message?: Maybe<Scalars['String']>;
   readonly retriesCount?: Maybe<Scalars['Int']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly videoDescription?: Maybe<Scalars['String']>;
+  readonly videoTitle?: Maybe<Scalars['String']>;
 };
 
 /** order by min() on columns of table "job_queues.UploadYouTubeVideoJob" */
@@ -20287,6 +20299,8 @@ export type Job_Queues_UploadYouTubeVideoJob_Min_Order_By = {
   readonly message?: Maybe<Order_By>;
   readonly retriesCount?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
+  readonly videoDescription?: Maybe<Order_By>;
+  readonly videoTitle?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "job_queues.UploadYouTubeVideoJob" */
@@ -20326,6 +20340,8 @@ export type Job_Queues_UploadYouTubeVideoJob_Order_By = {
   readonly message?: Maybe<Order_By>;
   readonly retriesCount?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
+  readonly videoDescription?: Maybe<Order_By>;
+  readonly videoTitle?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: "job_queues.UploadYouTubeVideoJob" */
@@ -20352,7 +20368,11 @@ export enum Job_Queues_UploadYouTubeVideoJob_Select_Column {
   /** column name */
   RetriesCount = 'retriesCount',
   /** column name */
-  UpdatedAt = 'updatedAt'
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  VideoDescription = 'videoDescription',
+  /** column name */
+  VideoTitle = 'videoTitle'
 }
 
 /** input type for updating data in table "job_queues.UploadYouTubeVideoJob" */
@@ -20366,6 +20386,8 @@ export type Job_Queues_UploadYouTubeVideoJob_Set_Input = {
   readonly message?: Maybe<Scalars['String']>;
   readonly retriesCount?: Maybe<Scalars['Int']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly videoDescription?: Maybe<Scalars['String']>;
+  readonly videoTitle?: Maybe<Scalars['String']>;
 };
 
 /** aggregate stddev on columns */
@@ -20431,7 +20453,11 @@ export enum Job_Queues_UploadYouTubeVideoJob_Update_Column {
   /** column name */
   RetriesCount = 'retriesCount',
   /** column name */
-  UpdatedAt = 'updatedAt'
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  VideoDescription = 'videoDescription',
+  /** column name */
+  VideoTitle = 'videoTitle'
 }
 
 /** aggregate var_pop on columns */
@@ -31806,6 +31832,46 @@ export type UpdateHallwayMutation = { readonly __typename?: 'mutation_root', rea
     & HallwayInfoFragment
   )> };
 
+export type ChooseContentItemModal_GetContentGroupsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type ChooseContentItemModal_GetContentGroupsQuery = { readonly __typename?: 'query_root', readonly ContentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string }> };
+
+export type ChooseContentItemModal_GetVideoContentItemsQueryVariables = Exact<{
+  contentGroupId?: Maybe<Scalars['uuid']>;
+}>;
+
+
+export type ChooseContentItemModal_GetVideoContentItemsQuery = { readonly __typename?: 'query_root', readonly ContentItem: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly name: string }> };
+
+export type ManageConferenceExportPage_GetGoogleOAuthUrlMutationVariables = Exact<{
+  scopes: ReadonlyArray<Scalars['String']>;
+}>;
+
+
+export type ManageConferenceExportPage_GetGoogleOAuthUrlMutation = { readonly __typename?: 'mutation_root', readonly getGoogleOAuthUrl?: Maybe<{ readonly __typename?: 'GetGoogleOAuthUrlOutput', readonly url: string }> };
+
+export type ManageConferenceExportPage_GetAttendeeGoogleAccountsQueryVariables = Exact<{
+  attendeeId: Scalars['uuid'];
+}>;
+
+
+export type ManageConferenceExportPage_GetAttendeeGoogleAccountsQuery = { readonly __typename?: 'query_root', readonly AttendeeGoogleAccount: ReadonlyArray<(
+    { readonly __typename?: 'AttendeeGoogleAccount' }
+    & ManageConferenceExportPage_AttendeeGoogleAccountFragment
+  )> };
+
+export type ManageConferenceExportPage_AttendeeGoogleAccountFragment = { readonly __typename?: 'AttendeeGoogleAccount', readonly id: any, readonly googleAccountEmail: string };
+
+export type ManageConferenceExportPage_DeleteAttendeeGoogleAccountMutationVariables = Exact<{
+  attendeeGoogleAccountId: Scalars['uuid'];
+}>;
+
+
+export type ManageConferenceExportPage_DeleteAttendeeGoogleAccountMutation = { readonly __typename?: 'mutation_root', readonly delete_AttendeeGoogleAccount_by_pk?: Maybe<{ readonly __typename?: 'AttendeeGoogleAccount', readonly id: any }> };
+
 export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
@@ -31818,20 +31884,6 @@ export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery = { readonly __ty
 
 export type UploadYouTubeVideos_UploadYouTubeVideoJobFragment = { readonly __typename?: 'job_queues_UploadYouTubeVideoJob', readonly id: any, readonly jobStatusName: JobStatus_Enum, readonly contentItem: { readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly contentGroup: { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string } } };
 
-export type UploadYouTubeVideos_GetContentGroupsQueryVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-}>;
-
-
-export type UploadYouTubeVideos_GetContentGroupsQuery = { readonly __typename?: 'query_root', readonly ContentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string }> };
-
-export type UploadYouTubeVideos_GetVideoContentItemsQueryVariables = Exact<{
-  contentGroupId?: Maybe<Scalars['uuid']>;
-}>;
-
-
-export type UploadYouTubeVideos_GetVideoContentItemsQuery = { readonly __typename?: 'query_root', readonly ContentItem: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly name: string }> };
-
 export type UploadYouTubeVideos_GetAttendeeGoogleAccountsQueryVariables = Exact<{
   attendeeId: Scalars['uuid'];
 }>;
@@ -31839,14 +31891,31 @@ export type UploadYouTubeVideos_GetAttendeeGoogleAccountsQueryVariables = Exact<
 
 export type UploadYouTubeVideos_GetAttendeeGoogleAccountsQuery = { readonly __typename?: 'query_root', readonly AttendeeGoogleAccount: ReadonlyArray<{ readonly __typename?: 'AttendeeGoogleAccount', readonly id: any, readonly googleAccountEmail: string }> };
 
-export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobMutationVariables = Exact<{
-  attendeeGoogleAccountId: Scalars['uuid'];
-  conferenceId: Scalars['uuid'];
-  contentItemId: Scalars['uuid'];
+export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutationVariables = Exact<{
+  objects: ReadonlyArray<Job_Queues_UploadYouTubeVideoJob_Insert_Input>;
 }>;
 
 
-export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobMutation = { readonly __typename?: 'mutation_root', readonly insert_job_queues_UploadYouTubeVideoJob_one?: Maybe<{ readonly __typename?: 'job_queues_UploadYouTubeVideoJob', readonly id: any }> };
+export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation = { readonly __typename?: 'mutation_root', readonly insert_job_queues_UploadYouTubeVideoJob?: Maybe<{ readonly __typename?: 'job_queues_UploadYouTubeVideoJob_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'job_queues_UploadYouTubeVideoJob', readonly id: any }> }> };
+
+export type UploadYouTubeVideos_GetContentItemsQueryVariables = Exact<{
+  contentItemIds: ReadonlyArray<Scalars['uuid']>;
+}>;
+
+
+export type UploadYouTubeVideos_GetContentItemsQuery = { readonly __typename?: 'query_root', readonly ContentItem: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly contentGroup: { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string } }> };
+
+export type UploadYouTubeVideos_GetTemplateDataQueryVariables = Exact<{
+  contentItemIds: ReadonlyArray<Scalars['uuid']>;
+}>;
+
+
+export type UploadYouTubeVideos_GetTemplateDataQuery = { readonly __typename?: 'query_root', readonly ContentItem: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly contentGroup: { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly abstractContentItems: ReadonlyArray<(
+        { readonly __typename?: 'ContentItem' }
+        & UploadYouTubeVideos_AbstractContentItemFragment
+      )> } }> };
+
+export type UploadYouTubeVideos_AbstractContentItemFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly data: any };
 
 export type UploadYouTubeVideos_GetYouTubeUploadsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -31902,25 +31971,6 @@ export type EventVonageControls_StopEventBroadcastMutationVariables = Exact<{
 
 
 export type EventVonageControls_StopEventBroadcastMutation = { readonly __typename?: 'mutation_root', readonly stopEventBroadcast?: Maybe<{ readonly __typename?: 'StopEventBroadcastOutput', readonly broadcastsStopped: number }> };
-
-export type ManageConferenceExportPage_GetGoogleOAuthUrlMutationVariables = Exact<{
-  scopes: ReadonlyArray<Scalars['String']>;
-}>;
-
-
-export type ManageConferenceExportPage_GetGoogleOAuthUrlMutation = { readonly __typename?: 'mutation_root', readonly getGoogleOAuthUrl?: Maybe<{ readonly __typename?: 'GetGoogleOAuthUrlOutput', readonly url: string }> };
-
-export type ManageConferenceExportPage_GetAttendeeGoogleAccountsQueryVariables = Exact<{
-  attendeeId: Scalars['uuid'];
-}>;
-
-
-export type ManageConferenceExportPage_GetAttendeeGoogleAccountsQuery = { readonly __typename?: 'query_root', readonly AttendeeGoogleAccount: ReadonlyArray<(
-    { readonly __typename?: 'AttendeeGoogleAccount' }
-    & ManageConferenceExportPage_AttendeeGoogleAccountFragment
-  )> };
-
-export type ManageConferenceExportPage_AttendeeGoogleAccountFragment = { readonly __typename?: 'AttendeeGoogleAccount', readonly id: any, readonly googleAccountEmail: string };
 
 export type SelectAllGroupsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -33274,6 +33324,12 @@ export const HallwayInfoFragmentDoc = gql`
   priority
 }
     `;
+export const ManageConferenceExportPage_AttendeeGoogleAccountFragmentDoc = gql`
+    fragment ManageConferenceExportPage_AttendeeGoogleAccount on AttendeeGoogleAccount {
+  id
+  googleAccountEmail
+}
+    `;
 export const UploadYouTubeVideos_UploadYouTubeVideoJobFragmentDoc = gql`
     fragment UploadYouTubeVideos_UploadYouTubeVideoJob on job_queues_UploadYouTubeVideoJob {
   id
@@ -33286,6 +33342,12 @@ export const UploadYouTubeVideos_UploadYouTubeVideoJobFragmentDoc = gql`
     }
     name
   }
+}
+    `;
+export const UploadYouTubeVideos_AbstractContentItemFragmentDoc = gql`
+    fragment UploadYouTubeVideos_AbstractContentItem on ContentItem {
+  id
+  data
 }
     `;
 export const UploadYouTubeVideos_YouTubeUploadFragmentDoc = gql`
@@ -33303,12 +33365,6 @@ export const UploadYouTubeVideos_YouTubeUploadFragmentDoc = gql`
       title
     }
   }
-}
-    `;
-export const ManageConferenceExportPage_AttendeeGoogleAccountFragmentDoc = gql`
-    fragment ManageConferenceExportPage_AttendeeGoogleAccount on AttendeeGoogleAccount {
-  id
-  googleAccountEmail
 }
     `;
 export const AttendeePartsFragmentDoc = gql`
@@ -36608,6 +36664,177 @@ export function useUpdateHallwayMutation(baseOptions?: Apollo.MutationHookOption
 export type UpdateHallwayMutationHookResult = ReturnType<typeof useUpdateHallwayMutation>;
 export type UpdateHallwayMutationResult = Apollo.MutationResult<UpdateHallwayMutation>;
 export type UpdateHallwayMutationOptions = Apollo.BaseMutationOptions<UpdateHallwayMutation, UpdateHallwayMutationVariables>;
+export const ChooseContentItemModal_GetContentGroupsDocument = gql`
+    query ChooseContentItemModal_GetContentGroups($conferenceId: uuid!) {
+  ContentGroup(
+    where: {conferenceId: {_eq: $conferenceId}}
+    order_by: {title: asc}
+  ) {
+    id
+    title
+  }
+}
+    `;
+
+/**
+ * __useChooseContentItemModal_GetContentGroupsQuery__
+ *
+ * To run a query within a React component, call `useChooseContentItemModal_GetContentGroupsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useChooseContentItemModal_GetContentGroupsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useChooseContentItemModal_GetContentGroupsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useChooseContentItemModal_GetContentGroupsQuery(baseOptions: Apollo.QueryHookOptions<ChooseContentItemModal_GetContentGroupsQuery, ChooseContentItemModal_GetContentGroupsQueryVariables>) {
+        return Apollo.useQuery<ChooseContentItemModal_GetContentGroupsQuery, ChooseContentItemModal_GetContentGroupsQueryVariables>(ChooseContentItemModal_GetContentGroupsDocument, baseOptions);
+      }
+export function useChooseContentItemModal_GetContentGroupsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ChooseContentItemModal_GetContentGroupsQuery, ChooseContentItemModal_GetContentGroupsQueryVariables>) {
+          return Apollo.useLazyQuery<ChooseContentItemModal_GetContentGroupsQuery, ChooseContentItemModal_GetContentGroupsQueryVariables>(ChooseContentItemModal_GetContentGroupsDocument, baseOptions);
+        }
+export type ChooseContentItemModal_GetContentGroupsQueryHookResult = ReturnType<typeof useChooseContentItemModal_GetContentGroupsQuery>;
+export type ChooseContentItemModal_GetContentGroupsLazyQueryHookResult = ReturnType<typeof useChooseContentItemModal_GetContentGroupsLazyQuery>;
+export type ChooseContentItemModal_GetContentGroupsQueryResult = Apollo.QueryResult<ChooseContentItemModal_GetContentGroupsQuery, ChooseContentItemModal_GetContentGroupsQueryVariables>;
+export const ChooseContentItemModal_GetVideoContentItemsDocument = gql`
+    query ChooseContentItemModal_GetVideoContentItems($contentGroupId: uuid) {
+  ContentItem(
+    where: {contentGroupId: {_eq: $contentGroupId}, contentTypeName: {_in: [VIDEO_FILE, VIDEO_BROADCAST, VIDEO_PREPUBLISH]}}
+    order_by: {name: asc}
+  ) {
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useChooseContentItemModal_GetVideoContentItemsQuery__
+ *
+ * To run a query within a React component, call `useChooseContentItemModal_GetVideoContentItemsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useChooseContentItemModal_GetVideoContentItemsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useChooseContentItemModal_GetVideoContentItemsQuery({
+ *   variables: {
+ *      contentGroupId: // value for 'contentGroupId'
+ *   },
+ * });
+ */
+export function useChooseContentItemModal_GetVideoContentItemsQuery(baseOptions?: Apollo.QueryHookOptions<ChooseContentItemModal_GetVideoContentItemsQuery, ChooseContentItemModal_GetVideoContentItemsQueryVariables>) {
+        return Apollo.useQuery<ChooseContentItemModal_GetVideoContentItemsQuery, ChooseContentItemModal_GetVideoContentItemsQueryVariables>(ChooseContentItemModal_GetVideoContentItemsDocument, baseOptions);
+      }
+export function useChooseContentItemModal_GetVideoContentItemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ChooseContentItemModal_GetVideoContentItemsQuery, ChooseContentItemModal_GetVideoContentItemsQueryVariables>) {
+          return Apollo.useLazyQuery<ChooseContentItemModal_GetVideoContentItemsQuery, ChooseContentItemModal_GetVideoContentItemsQueryVariables>(ChooseContentItemModal_GetVideoContentItemsDocument, baseOptions);
+        }
+export type ChooseContentItemModal_GetVideoContentItemsQueryHookResult = ReturnType<typeof useChooseContentItemModal_GetVideoContentItemsQuery>;
+export type ChooseContentItemModal_GetVideoContentItemsLazyQueryHookResult = ReturnType<typeof useChooseContentItemModal_GetVideoContentItemsLazyQuery>;
+export type ChooseContentItemModal_GetVideoContentItemsQueryResult = Apollo.QueryResult<ChooseContentItemModal_GetVideoContentItemsQuery, ChooseContentItemModal_GetVideoContentItemsQueryVariables>;
+export const ManageConferenceExportPage_GetGoogleOAuthUrlDocument = gql`
+    mutation ManageConferenceExportPage_GetGoogleOAuthUrl($scopes: [String!]!) {
+  getGoogleOAuthUrl(scopes: $scopes) {
+    url
+  }
+}
+    `;
+export type ManageConferenceExportPage_GetGoogleOAuthUrlMutationFn = Apollo.MutationFunction<ManageConferenceExportPage_GetGoogleOAuthUrlMutation, ManageConferenceExportPage_GetGoogleOAuthUrlMutationVariables>;
+
+/**
+ * __useManageConferenceExportPage_GetGoogleOAuthUrlMutation__
+ *
+ * To run a mutation, you first call `useManageConferenceExportPage_GetGoogleOAuthUrlMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageConferenceExportPage_GetGoogleOAuthUrlMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageConferenceExportPageGetGoogleOAuthUrlMutation, { data, loading, error }] = useManageConferenceExportPage_GetGoogleOAuthUrlMutation({
+ *   variables: {
+ *      scopes: // value for 'scopes'
+ *   },
+ * });
+ */
+export function useManageConferenceExportPage_GetGoogleOAuthUrlMutation(baseOptions?: Apollo.MutationHookOptions<ManageConferenceExportPage_GetGoogleOAuthUrlMutation, ManageConferenceExportPage_GetGoogleOAuthUrlMutationVariables>) {
+        return Apollo.useMutation<ManageConferenceExportPage_GetGoogleOAuthUrlMutation, ManageConferenceExportPage_GetGoogleOAuthUrlMutationVariables>(ManageConferenceExportPage_GetGoogleOAuthUrlDocument, baseOptions);
+      }
+export type ManageConferenceExportPage_GetGoogleOAuthUrlMutationHookResult = ReturnType<typeof useManageConferenceExportPage_GetGoogleOAuthUrlMutation>;
+export type ManageConferenceExportPage_GetGoogleOAuthUrlMutationResult = Apollo.MutationResult<ManageConferenceExportPage_GetGoogleOAuthUrlMutation>;
+export type ManageConferenceExportPage_GetGoogleOAuthUrlMutationOptions = Apollo.BaseMutationOptions<ManageConferenceExportPage_GetGoogleOAuthUrlMutation, ManageConferenceExportPage_GetGoogleOAuthUrlMutationVariables>;
+export const ManageConferenceExportPage_GetAttendeeGoogleAccountsDocument = gql`
+    query ManageConferenceExportPage_GetAttendeeGoogleAccounts($attendeeId: uuid!) {
+  AttendeeGoogleAccount(where: {attendeeId: {_eq: $attendeeId}}) {
+    ...ManageConferenceExportPage_AttendeeGoogleAccount
+  }
+}
+    ${ManageConferenceExportPage_AttendeeGoogleAccountFragmentDoc}`;
+
+/**
+ * __useManageConferenceExportPage_GetAttendeeGoogleAccountsQuery__
+ *
+ * To run a query within a React component, call `useManageConferenceExportPage_GetAttendeeGoogleAccountsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useManageConferenceExportPage_GetAttendeeGoogleAccountsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useManageConferenceExportPage_GetAttendeeGoogleAccountsQuery({
+ *   variables: {
+ *      attendeeId: // value for 'attendeeId'
+ *   },
+ * });
+ */
+export function useManageConferenceExportPage_GetAttendeeGoogleAccountsQuery(baseOptions: Apollo.QueryHookOptions<ManageConferenceExportPage_GetAttendeeGoogleAccountsQuery, ManageConferenceExportPage_GetAttendeeGoogleAccountsQueryVariables>) {
+        return Apollo.useQuery<ManageConferenceExportPage_GetAttendeeGoogleAccountsQuery, ManageConferenceExportPage_GetAttendeeGoogleAccountsQueryVariables>(ManageConferenceExportPage_GetAttendeeGoogleAccountsDocument, baseOptions);
+      }
+export function useManageConferenceExportPage_GetAttendeeGoogleAccountsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageConferenceExportPage_GetAttendeeGoogleAccountsQuery, ManageConferenceExportPage_GetAttendeeGoogleAccountsQueryVariables>) {
+          return Apollo.useLazyQuery<ManageConferenceExportPage_GetAttendeeGoogleAccountsQuery, ManageConferenceExportPage_GetAttendeeGoogleAccountsQueryVariables>(ManageConferenceExportPage_GetAttendeeGoogleAccountsDocument, baseOptions);
+        }
+export type ManageConferenceExportPage_GetAttendeeGoogleAccountsQueryHookResult = ReturnType<typeof useManageConferenceExportPage_GetAttendeeGoogleAccountsQuery>;
+export type ManageConferenceExportPage_GetAttendeeGoogleAccountsLazyQueryHookResult = ReturnType<typeof useManageConferenceExportPage_GetAttendeeGoogleAccountsLazyQuery>;
+export type ManageConferenceExportPage_GetAttendeeGoogleAccountsQueryResult = Apollo.QueryResult<ManageConferenceExportPage_GetAttendeeGoogleAccountsQuery, ManageConferenceExportPage_GetAttendeeGoogleAccountsQueryVariables>;
+export const ManageConferenceExportPage_DeleteAttendeeGoogleAccountDocument = gql`
+    mutation ManageConferenceExportPage_DeleteAttendeeGoogleAccount($attendeeGoogleAccountId: uuid!) {
+  delete_AttendeeGoogleAccount_by_pk(id: $attendeeGoogleAccountId) {
+    id
+  }
+}
+    `;
+export type ManageConferenceExportPage_DeleteAttendeeGoogleAccountMutationFn = Apollo.MutationFunction<ManageConferenceExportPage_DeleteAttendeeGoogleAccountMutation, ManageConferenceExportPage_DeleteAttendeeGoogleAccountMutationVariables>;
+
+/**
+ * __useManageConferenceExportPage_DeleteAttendeeGoogleAccountMutation__
+ *
+ * To run a mutation, you first call `useManageConferenceExportPage_DeleteAttendeeGoogleAccountMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageConferenceExportPage_DeleteAttendeeGoogleAccountMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageConferenceExportPageDeleteAttendeeGoogleAccountMutation, { data, loading, error }] = useManageConferenceExportPage_DeleteAttendeeGoogleAccountMutation({
+ *   variables: {
+ *      attendeeGoogleAccountId: // value for 'attendeeGoogleAccountId'
+ *   },
+ * });
+ */
+export function useManageConferenceExportPage_DeleteAttendeeGoogleAccountMutation(baseOptions?: Apollo.MutationHookOptions<ManageConferenceExportPage_DeleteAttendeeGoogleAccountMutation, ManageConferenceExportPage_DeleteAttendeeGoogleAccountMutationVariables>) {
+        return Apollo.useMutation<ManageConferenceExportPage_DeleteAttendeeGoogleAccountMutation, ManageConferenceExportPage_DeleteAttendeeGoogleAccountMutationVariables>(ManageConferenceExportPage_DeleteAttendeeGoogleAccountDocument, baseOptions);
+      }
+export type ManageConferenceExportPage_DeleteAttendeeGoogleAccountMutationHookResult = ReturnType<typeof useManageConferenceExportPage_DeleteAttendeeGoogleAccountMutation>;
+export type ManageConferenceExportPage_DeleteAttendeeGoogleAccountMutationResult = Apollo.MutationResult<ManageConferenceExportPage_DeleteAttendeeGoogleAccountMutation>;
+export type ManageConferenceExportPage_DeleteAttendeeGoogleAccountMutationOptions = Apollo.BaseMutationOptions<ManageConferenceExportPage_DeleteAttendeeGoogleAccountMutation, ManageConferenceExportPage_DeleteAttendeeGoogleAccountMutationVariables>;
 export const UploadYouTubeVideos_GetUploadYouTubeVideoJobsDocument = gql`
     query UploadYouTubeVideos_GetUploadYouTubeVideoJobs($conferenceId: uuid!) {
   job_queues_UploadYouTubeVideoJob(
@@ -36644,80 +36871,6 @@ export function useUploadYouTubeVideos_GetUploadYouTubeVideoJobsLazyQuery(baseOp
 export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery>;
 export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsLazyQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetUploadYouTubeVideoJobsLazyQuery>;
 export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryResult = Apollo.QueryResult<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery, UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables>;
-export const UploadYouTubeVideos_GetContentGroupsDocument = gql`
-    query UploadYouTubeVideos_GetContentGroups($conferenceId: uuid!) {
-  ContentGroup(
-    where: {conferenceId: {_eq: $conferenceId}}
-    order_by: {title: asc}
-  ) {
-    id
-    title
-  }
-}
-    `;
-
-/**
- * __useUploadYouTubeVideos_GetContentGroupsQuery__
- *
- * To run a query within a React component, call `useUploadYouTubeVideos_GetContentGroupsQuery` and pass it any options that fit your needs.
- * When your component renders, `useUploadYouTubeVideos_GetContentGroupsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useUploadYouTubeVideos_GetContentGroupsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useUploadYouTubeVideos_GetContentGroupsQuery(baseOptions: Apollo.QueryHookOptions<UploadYouTubeVideos_GetContentGroupsQuery, UploadYouTubeVideos_GetContentGroupsQueryVariables>) {
-        return Apollo.useQuery<UploadYouTubeVideos_GetContentGroupsQuery, UploadYouTubeVideos_GetContentGroupsQueryVariables>(UploadYouTubeVideos_GetContentGroupsDocument, baseOptions);
-      }
-export function useUploadYouTubeVideos_GetContentGroupsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UploadYouTubeVideos_GetContentGroupsQuery, UploadYouTubeVideos_GetContentGroupsQueryVariables>) {
-          return Apollo.useLazyQuery<UploadYouTubeVideos_GetContentGroupsQuery, UploadYouTubeVideos_GetContentGroupsQueryVariables>(UploadYouTubeVideos_GetContentGroupsDocument, baseOptions);
-        }
-export type UploadYouTubeVideos_GetContentGroupsQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetContentGroupsQuery>;
-export type UploadYouTubeVideos_GetContentGroupsLazyQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetContentGroupsLazyQuery>;
-export type UploadYouTubeVideos_GetContentGroupsQueryResult = Apollo.QueryResult<UploadYouTubeVideos_GetContentGroupsQuery, UploadYouTubeVideos_GetContentGroupsQueryVariables>;
-export const UploadYouTubeVideos_GetVideoContentItemsDocument = gql`
-    query UploadYouTubeVideos_GetVideoContentItems($contentGroupId: uuid) {
-  ContentItem(
-    where: {contentGroupId: {_eq: $contentGroupId}, contentTypeName: {_in: [VIDEO_FILE, VIDEO_BROADCAST, VIDEO_PREPUBLISH]}}
-    order_by: {name: asc}
-  ) {
-    id
-    name
-  }
-}
-    `;
-
-/**
- * __useUploadYouTubeVideos_GetVideoContentItemsQuery__
- *
- * To run a query within a React component, call `useUploadYouTubeVideos_GetVideoContentItemsQuery` and pass it any options that fit your needs.
- * When your component renders, `useUploadYouTubeVideos_GetVideoContentItemsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useUploadYouTubeVideos_GetVideoContentItemsQuery({
- *   variables: {
- *      contentGroupId: // value for 'contentGroupId'
- *   },
- * });
- */
-export function useUploadYouTubeVideos_GetVideoContentItemsQuery(baseOptions?: Apollo.QueryHookOptions<UploadYouTubeVideos_GetVideoContentItemsQuery, UploadYouTubeVideos_GetVideoContentItemsQueryVariables>) {
-        return Apollo.useQuery<UploadYouTubeVideos_GetVideoContentItemsQuery, UploadYouTubeVideos_GetVideoContentItemsQueryVariables>(UploadYouTubeVideos_GetVideoContentItemsDocument, baseOptions);
-      }
-export function useUploadYouTubeVideos_GetVideoContentItemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UploadYouTubeVideos_GetVideoContentItemsQuery, UploadYouTubeVideos_GetVideoContentItemsQueryVariables>) {
-          return Apollo.useLazyQuery<UploadYouTubeVideos_GetVideoContentItemsQuery, UploadYouTubeVideos_GetVideoContentItemsQueryVariables>(UploadYouTubeVideos_GetVideoContentItemsDocument, baseOptions);
-        }
-export type UploadYouTubeVideos_GetVideoContentItemsQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetVideoContentItemsQuery>;
-export type UploadYouTubeVideos_GetVideoContentItemsLazyQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetVideoContentItemsLazyQuery>;
-export type UploadYouTubeVideos_GetVideoContentItemsQueryResult = Apollo.QueryResult<UploadYouTubeVideos_GetVideoContentItemsQuery, UploadYouTubeVideos_GetVideoContentItemsQueryVariables>;
 export const UploadYouTubeVideos_GetAttendeeGoogleAccountsDocument = gql`
     query UploadYouTubeVideos_GetAttendeeGoogleAccounts($attendeeId: uuid!) {
   AttendeeGoogleAccount(where: {attendeeId: {_eq: $attendeeId}}) {
@@ -36752,42 +36905,123 @@ export function useUploadYouTubeVideos_GetAttendeeGoogleAccountsLazyQuery(baseOp
 export type UploadYouTubeVideos_GetAttendeeGoogleAccountsQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetAttendeeGoogleAccountsQuery>;
 export type UploadYouTubeVideos_GetAttendeeGoogleAccountsLazyQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetAttendeeGoogleAccountsLazyQuery>;
 export type UploadYouTubeVideos_GetAttendeeGoogleAccountsQueryResult = Apollo.QueryResult<UploadYouTubeVideos_GetAttendeeGoogleAccountsQuery, UploadYouTubeVideos_GetAttendeeGoogleAccountsQueryVariables>;
-export const UploadYouTubeVideos_CreateUploadYouTubeVideoJobDocument = gql`
-    mutation UploadYouTubeVideos_CreateUploadYouTubeVideoJob($attendeeGoogleAccountId: uuid!, $conferenceId: uuid!, $contentItemId: uuid!) {
-  insert_job_queues_UploadYouTubeVideoJob_one(
-    object: {attendeeGoogleAccountId: $attendeeGoogleAccountId, conferenceId: $conferenceId, contentItemId: $contentItemId}
-  ) {
-    id
+export const UploadYouTubeVideos_CreateUploadYouTubeVideoJobsDocument = gql`
+    mutation UploadYouTubeVideos_CreateUploadYouTubeVideoJobs($objects: [job_queues_UploadYouTubeVideoJob_insert_input!]!) {
+  insert_job_queues_UploadYouTubeVideoJob(objects: $objects) {
+    returning {
+      id
+    }
   }
 }
     `;
-export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobMutationFn = Apollo.MutationFunction<UploadYouTubeVideos_CreateUploadYouTubeVideoJobMutation, UploadYouTubeVideos_CreateUploadYouTubeVideoJobMutationVariables>;
+export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutationFn = Apollo.MutationFunction<UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation, UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutationVariables>;
 
 /**
- * __useUploadYouTubeVideos_CreateUploadYouTubeVideoJobMutation__
+ * __useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation__
  *
- * To run a mutation, you first call `useUploadYouTubeVideos_CreateUploadYouTubeVideoJobMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUploadYouTubeVideos_CreateUploadYouTubeVideoJobMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [uploadYouTubeVideosCreateUploadYouTubeVideoJobMutation, { data, loading, error }] = useUploadYouTubeVideos_CreateUploadYouTubeVideoJobMutation({
+ * const [uploadYouTubeVideosCreateUploadYouTubeVideoJobsMutation, { data, loading, error }] = useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation({
  *   variables: {
- *      attendeeGoogleAccountId: // value for 'attendeeGoogleAccountId'
- *      conferenceId: // value for 'conferenceId'
- *      contentItemId: // value for 'contentItemId'
+ *      objects: // value for 'objects'
  *   },
  * });
  */
-export function useUploadYouTubeVideos_CreateUploadYouTubeVideoJobMutation(baseOptions?: Apollo.MutationHookOptions<UploadYouTubeVideos_CreateUploadYouTubeVideoJobMutation, UploadYouTubeVideos_CreateUploadYouTubeVideoJobMutationVariables>) {
-        return Apollo.useMutation<UploadYouTubeVideos_CreateUploadYouTubeVideoJobMutation, UploadYouTubeVideos_CreateUploadYouTubeVideoJobMutationVariables>(UploadYouTubeVideos_CreateUploadYouTubeVideoJobDocument, baseOptions);
+export function useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation(baseOptions?: Apollo.MutationHookOptions<UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation, UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutationVariables>) {
+        return Apollo.useMutation<UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation, UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutationVariables>(UploadYouTubeVideos_CreateUploadYouTubeVideoJobsDocument, baseOptions);
       }
-export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobMutationHookResult = ReturnType<typeof useUploadYouTubeVideos_CreateUploadYouTubeVideoJobMutation>;
-export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobMutationResult = Apollo.MutationResult<UploadYouTubeVideos_CreateUploadYouTubeVideoJobMutation>;
-export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobMutationOptions = Apollo.BaseMutationOptions<UploadYouTubeVideos_CreateUploadYouTubeVideoJobMutation, UploadYouTubeVideos_CreateUploadYouTubeVideoJobMutationVariables>;
+export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutationHookResult = ReturnType<typeof useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation>;
+export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutationResult = Apollo.MutationResult<UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation>;
+export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutationOptions = Apollo.BaseMutationOptions<UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation, UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutationVariables>;
+export const UploadYouTubeVideos_GetContentItemsDocument = gql`
+    query UploadYouTubeVideos_GetContentItems($contentItemIds: [uuid!]!) {
+  ContentItem(where: {id: {_in: $contentItemIds}}) {
+    id
+    name
+    contentGroup {
+      id
+      title
+    }
+  }
+}
+    `;
+
+/**
+ * __useUploadYouTubeVideos_GetContentItemsQuery__
+ *
+ * To run a query within a React component, call `useUploadYouTubeVideos_GetContentItemsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUploadYouTubeVideos_GetContentItemsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUploadYouTubeVideos_GetContentItemsQuery({
+ *   variables: {
+ *      contentItemIds: // value for 'contentItemIds'
+ *   },
+ * });
+ */
+export function useUploadYouTubeVideos_GetContentItemsQuery(baseOptions: Apollo.QueryHookOptions<UploadYouTubeVideos_GetContentItemsQuery, UploadYouTubeVideos_GetContentItemsQueryVariables>) {
+        return Apollo.useQuery<UploadYouTubeVideos_GetContentItemsQuery, UploadYouTubeVideos_GetContentItemsQueryVariables>(UploadYouTubeVideos_GetContentItemsDocument, baseOptions);
+      }
+export function useUploadYouTubeVideos_GetContentItemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UploadYouTubeVideos_GetContentItemsQuery, UploadYouTubeVideos_GetContentItemsQueryVariables>) {
+          return Apollo.useLazyQuery<UploadYouTubeVideos_GetContentItemsQuery, UploadYouTubeVideos_GetContentItemsQueryVariables>(UploadYouTubeVideos_GetContentItemsDocument, baseOptions);
+        }
+export type UploadYouTubeVideos_GetContentItemsQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetContentItemsQuery>;
+export type UploadYouTubeVideos_GetContentItemsLazyQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetContentItemsLazyQuery>;
+export type UploadYouTubeVideos_GetContentItemsQueryResult = Apollo.QueryResult<UploadYouTubeVideos_GetContentItemsQuery, UploadYouTubeVideos_GetContentItemsQueryVariables>;
+export const UploadYouTubeVideos_GetTemplateDataDocument = gql`
+    query UploadYouTubeVideos_GetTemplateData($contentItemIds: [uuid!]!) {
+  ContentItem(where: {id: {_in: $contentItemIds}}) {
+    id
+    name
+    contentGroup {
+      id
+      title
+      abstractContentItems: contentItems(
+        where: {contentTypeName: {_eq: ABSTRACT}}
+        order_by: {updatedAt: desc}
+        limit: 1
+      ) {
+        ...UploadYouTubeVideos_AbstractContentItem
+      }
+    }
+  }
+}
+    ${UploadYouTubeVideos_AbstractContentItemFragmentDoc}`;
+
+/**
+ * __useUploadYouTubeVideos_GetTemplateDataQuery__
+ *
+ * To run a query within a React component, call `useUploadYouTubeVideos_GetTemplateDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUploadYouTubeVideos_GetTemplateDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUploadYouTubeVideos_GetTemplateDataQuery({
+ *   variables: {
+ *      contentItemIds: // value for 'contentItemIds'
+ *   },
+ * });
+ */
+export function useUploadYouTubeVideos_GetTemplateDataQuery(baseOptions: Apollo.QueryHookOptions<UploadYouTubeVideos_GetTemplateDataQuery, UploadYouTubeVideos_GetTemplateDataQueryVariables>) {
+        return Apollo.useQuery<UploadYouTubeVideos_GetTemplateDataQuery, UploadYouTubeVideos_GetTemplateDataQueryVariables>(UploadYouTubeVideos_GetTemplateDataDocument, baseOptions);
+      }
+export function useUploadYouTubeVideos_GetTemplateDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UploadYouTubeVideos_GetTemplateDataQuery, UploadYouTubeVideos_GetTemplateDataQueryVariables>) {
+          return Apollo.useLazyQuery<UploadYouTubeVideos_GetTemplateDataQuery, UploadYouTubeVideos_GetTemplateDataQueryVariables>(UploadYouTubeVideos_GetTemplateDataDocument, baseOptions);
+        }
+export type UploadYouTubeVideos_GetTemplateDataQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetTemplateDataQuery>;
+export type UploadYouTubeVideos_GetTemplateDataLazyQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetTemplateDataLazyQuery>;
+export type UploadYouTubeVideos_GetTemplateDataQueryResult = Apollo.QueryResult<UploadYouTubeVideos_GetTemplateDataQuery, UploadYouTubeVideos_GetTemplateDataQueryVariables>;
 export const UploadYouTubeVideos_GetYouTubeUploadsDocument = gql`
     query UploadYouTubeVideos_GetYouTubeUploads($conferenceId: uuid!) {
   YouTubeUpload(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -37044,71 +37278,6 @@ export function useEventVonageControls_StopEventBroadcastMutation(baseOptions?: 
 export type EventVonageControls_StopEventBroadcastMutationHookResult = ReturnType<typeof useEventVonageControls_StopEventBroadcastMutation>;
 export type EventVonageControls_StopEventBroadcastMutationResult = Apollo.MutationResult<EventVonageControls_StopEventBroadcastMutation>;
 export type EventVonageControls_StopEventBroadcastMutationOptions = Apollo.BaseMutationOptions<EventVonageControls_StopEventBroadcastMutation, EventVonageControls_StopEventBroadcastMutationVariables>;
-export const ManageConferenceExportPage_GetGoogleOAuthUrlDocument = gql`
-    mutation ManageConferenceExportPage_GetGoogleOAuthUrl($scopes: [String!]!) {
-  getGoogleOAuthUrl(scopes: $scopes) {
-    url
-  }
-}
-    `;
-export type ManageConferenceExportPage_GetGoogleOAuthUrlMutationFn = Apollo.MutationFunction<ManageConferenceExportPage_GetGoogleOAuthUrlMutation, ManageConferenceExportPage_GetGoogleOAuthUrlMutationVariables>;
-
-/**
- * __useManageConferenceExportPage_GetGoogleOAuthUrlMutation__
- *
- * To run a mutation, you first call `useManageConferenceExportPage_GetGoogleOAuthUrlMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageConferenceExportPage_GetGoogleOAuthUrlMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageConferenceExportPageGetGoogleOAuthUrlMutation, { data, loading, error }] = useManageConferenceExportPage_GetGoogleOAuthUrlMutation({
- *   variables: {
- *      scopes: // value for 'scopes'
- *   },
- * });
- */
-export function useManageConferenceExportPage_GetGoogleOAuthUrlMutation(baseOptions?: Apollo.MutationHookOptions<ManageConferenceExportPage_GetGoogleOAuthUrlMutation, ManageConferenceExportPage_GetGoogleOAuthUrlMutationVariables>) {
-        return Apollo.useMutation<ManageConferenceExportPage_GetGoogleOAuthUrlMutation, ManageConferenceExportPage_GetGoogleOAuthUrlMutationVariables>(ManageConferenceExportPage_GetGoogleOAuthUrlDocument, baseOptions);
-      }
-export type ManageConferenceExportPage_GetGoogleOAuthUrlMutationHookResult = ReturnType<typeof useManageConferenceExportPage_GetGoogleOAuthUrlMutation>;
-export type ManageConferenceExportPage_GetGoogleOAuthUrlMutationResult = Apollo.MutationResult<ManageConferenceExportPage_GetGoogleOAuthUrlMutation>;
-export type ManageConferenceExportPage_GetGoogleOAuthUrlMutationOptions = Apollo.BaseMutationOptions<ManageConferenceExportPage_GetGoogleOAuthUrlMutation, ManageConferenceExportPage_GetGoogleOAuthUrlMutationVariables>;
-export const ManageConferenceExportPage_GetAttendeeGoogleAccountsDocument = gql`
-    query ManageConferenceExportPage_GetAttendeeGoogleAccounts($attendeeId: uuid!) {
-  AttendeeGoogleAccount(where: {attendeeId: {_eq: $attendeeId}}) {
-    ...ManageConferenceExportPage_AttendeeGoogleAccount
-  }
-}
-    ${ManageConferenceExportPage_AttendeeGoogleAccountFragmentDoc}`;
-
-/**
- * __useManageConferenceExportPage_GetAttendeeGoogleAccountsQuery__
- *
- * To run a query within a React component, call `useManageConferenceExportPage_GetAttendeeGoogleAccountsQuery` and pass it any options that fit your needs.
- * When your component renders, `useManageConferenceExportPage_GetAttendeeGoogleAccountsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useManageConferenceExportPage_GetAttendeeGoogleAccountsQuery({
- *   variables: {
- *      attendeeId: // value for 'attendeeId'
- *   },
- * });
- */
-export function useManageConferenceExportPage_GetAttendeeGoogleAccountsQuery(baseOptions: Apollo.QueryHookOptions<ManageConferenceExportPage_GetAttendeeGoogleAccountsQuery, ManageConferenceExportPage_GetAttendeeGoogleAccountsQueryVariables>) {
-        return Apollo.useQuery<ManageConferenceExportPage_GetAttendeeGoogleAccountsQuery, ManageConferenceExportPage_GetAttendeeGoogleAccountsQueryVariables>(ManageConferenceExportPage_GetAttendeeGoogleAccountsDocument, baseOptions);
-      }
-export function useManageConferenceExportPage_GetAttendeeGoogleAccountsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageConferenceExportPage_GetAttendeeGoogleAccountsQuery, ManageConferenceExportPage_GetAttendeeGoogleAccountsQueryVariables>) {
-          return Apollo.useLazyQuery<ManageConferenceExportPage_GetAttendeeGoogleAccountsQuery, ManageConferenceExportPage_GetAttendeeGoogleAccountsQueryVariables>(ManageConferenceExportPage_GetAttendeeGoogleAccountsDocument, baseOptions);
-        }
-export type ManageConferenceExportPage_GetAttendeeGoogleAccountsQueryHookResult = ReturnType<typeof useManageConferenceExportPage_GetAttendeeGoogleAccountsQuery>;
-export type ManageConferenceExportPage_GetAttendeeGoogleAccountsLazyQueryHookResult = ReturnType<typeof useManageConferenceExportPage_GetAttendeeGoogleAccountsLazyQuery>;
-export type ManageConferenceExportPage_GetAttendeeGoogleAccountsQueryResult = Apollo.QueryResult<ManageConferenceExportPage_GetAttendeeGoogleAccountsQuery, ManageConferenceExportPage_GetAttendeeGoogleAccountsQueryVariables>;
 export const SelectAllGroupsDocument = gql`
     query SelectAllGroups($conferenceId: uuid!) {
   Group(where: {conferenceId: {_eq: $conferenceId}}) {

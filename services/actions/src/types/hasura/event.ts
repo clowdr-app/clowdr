@@ -1,6 +1,7 @@
 import { ContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
 import { VonageSessionLayoutData } from "@clowdr-app/shared-types/build/vonage";
 import { CombineVideosJobDataBlob } from "@clowdr-app/shared-types/src/combineVideosJob";
+import { Credentials } from "google-auth-library/build/src/auth/credentials";
 import {
     ContentType_Enum,
     EventPersonRole_Enum,
@@ -206,4 +207,11 @@ export interface ShuffleQueueEntryData {
     shufflePeriodId: string;
     attendeeId: string;
     allocatedShuffleRoomId?: number | null;
+}
+
+export interface AttendeeGoogleAccountData extends BaseData {
+    tokenData: Credentials;
+    attendeeId: string;
+    googleAccountEmail: string;
+    conferenceId: string;
 }

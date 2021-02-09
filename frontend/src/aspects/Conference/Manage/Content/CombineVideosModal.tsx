@@ -169,7 +169,7 @@ export function CombineVideosModal({
                                     <Field name="outputName" validate={validateName}>
                                         {({ field, form }: FieldProps<string>) => (
                                             <FormControl
-                                                isInvalid={!!form.errors.outputName && !form.touched.outputName}
+                                                isInvalid={!!form.errors.outputName && !!form.touched.outputName}
                                                 isRequired
                                             >
                                                 <FormLabel htmlFor="outputName">Output file name</FormLabel>

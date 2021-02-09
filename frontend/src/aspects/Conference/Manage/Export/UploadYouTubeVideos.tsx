@@ -2,35 +2,40 @@ import { gql } from "@apollo/client";
 import {
     Button,
     FormControl,
+    FormErrorMessage,
     FormLabel,
     Heading,
+    HStack,
+    Input,
     List,
+    ListIcon,
     ListItem,
     Select,
-    Table,
-    Tbody,
-    Td,
+    Spinner,
     Text,
-    Th,
-    Thead,
-    Tr,
+    Textarea,
+    useDisclosure,
     useToast,
+    VStack,
 } from "@chakra-ui/react";
+import { ContentBaseType, ContentItemDataBlob, isContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
 import { Field, FieldProps, Form, Formik } from "formik";
-import React, { useMemo, useState } from "react";
+import Mustache from "mustache";
+import * as R from "ramda";
+import React, { useCallback, useMemo, useState } from "react";
 import {
     UploadYouTubeVideos_UploadYouTubeVideoJobFragment,
-    UploadYouTubeVideos_YouTubeUploadFragment,
-    useUploadYouTubeVideos_CreateUploadYouTubeVideoJobMutation,
+    useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation,
     useUploadYouTubeVideos_GetAttendeeGoogleAccountsQuery,
-    useUploadYouTubeVideos_GetContentGroupsQuery,
+    useUploadYouTubeVideos_GetContentItemsQuery,
+    useUploadYouTubeVideos_GetTemplateDataQuery,
     useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery,
-    useUploadYouTubeVideos_GetVideoContentItemsQuery,
-    useUploadYouTubeVideos_GetYouTubeUploadsQuery,
 } from "../../../../generated/graphql";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
+import { FAIcon } from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";
 import useCurrentAttendee from "../../useCurrentAttendee";
+import { ChooseContentItemModal } from "./ChooseContentItemModal";
 
 gql`
     query UploadYouTubeVideos_GetUploadYouTubeVideoJobs($conferenceId: uuid!) {
@@ -55,26 +60,6 @@ gql`
         }
     }
 
-    query UploadYouTubeVideos_GetContentGroups($conferenceId: uuid!) {
-        ContentGroup(where: { conferenceId: { _eq: $conferenceId } }, order_by: { title: asc }) {
-            id
-            title
-        }
-    }
-
-    query UploadYouTubeVideos_GetVideoContentItems($contentGroupId: uuid) {
-        ContentItem(
-            where: {
-                contentGroupId: { _eq: $contentGroupId }
-                contentTypeName: { _in: [VIDEO_FILE, VIDEO_BROADCAST, VIDEO_PREPUBLISH] }
-            }
-            order_by: { name: asc }
-        ) {
-            id
-            name
-        }
-    }
-
     query UploadYouTubeVideos_GetAttendeeGoogleAccounts($attendeeId: uuid!) {
         AttendeeGoogleAccount(where: { attendeeId: { _eq: $attendeeId } }) {
             id
@@ -82,35 +67,18 @@ gql`
         }
     }
 
-    mutation UploadYouTubeVideos_CreateUploadYouTubeVideoJob(
-        $attendeeGoogleAccountId: uuid!
-        $conferenceId: uuid!
-        $contentItemId: uuid!
+    mutation UploadYouTubeVideos_CreateUploadYouTubeVideoJobs(
+        $objects: [job_queues_UploadYouTubeVideoJob_insert_input!]!
     ) {
-        insert_job_queues_UploadYouTubeVideoJob_one(
-            object: {
-                attendeeGoogleAccountId: $attendeeGoogleAccountId
-                conferenceId: $conferenceId
-                contentItemId: $contentItemId
+        insert_job_queues_UploadYouTubeVideoJob(objects: $objects) {
+            returning {
+                id
             }
-        ) {
-            id
         }
     }
 
-    query UploadYouTubeVideos_GetYouTubeUploads($conferenceId: uuid!) {
-        YouTubeUpload(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...UploadYouTubeVideos_YouTubeUpload
-        }
-    }
-
-    fragment UploadYouTubeVideos_YouTubeUpload on YouTubeUpload {
-        id
-        videoId
-        videoPrivacyStatus
-        videoStatus
-        videoTitle
-        contentItem {
+    query UploadYouTubeVideos_GetContentItems($contentItemIds: [uuid!]!) {
+        ContentItem(where: { id: { _in: $contentItemIds } }) {
             id
             name
             contentGroup {
@@ -119,7 +87,34 @@ gql`
             }
         }
     }
+
+    query UploadYouTubeVideos_GetTemplateData($contentItemIds: [uuid!]!) {
+        ContentItem(where: { id: { _in: $contentItemIds } }) {
+            id
+            name
+            contentGroup {
+                id
+                title
+                abstractContentItems: contentItems(
+                    where: { contentTypeName: { _eq: ABSTRACT } }
+                    order_by: { updatedAt: desc }
+                    limit: 1
+                ) {
+                    ...UploadYouTubeVideos_AbstractContentItem
+                }
+            }
+        }
+    }
+
+    fragment UploadYouTubeVideos_AbstractContentItem on ContentItem {
+        id
+        data
+    }
 `;
+
+function VideoIcon() {
+    return <FAIcon icon="video" iconStyle="s" />;
+}
 
 export function UploadYouTubeVideos(): JSX.Element {
     const conference = useConference();
@@ -132,36 +127,6 @@ export function UploadYouTubeVideos(): JSX.Element {
         },
         pollInterval: 10000,
     });
-
-    const contentGroupsResult = useUploadYouTubeVideos_GetContentGroupsQuery({
-        variables: {
-            conferenceId: conference.id,
-        },
-    });
-
-    const [contentGroupId, setContentGroupId] = useState<string | null>(null);
-
-    const contentGroupOptions = useMemo(() => {
-        return contentGroupsResult.data?.ContentGroup.map((contentGroup) => (
-            <option key={contentGroup.id} value={contentGroup.id}>
-                {contentGroup.title}
-            </option>
-        ));
-    }, [contentGroupsResult.data?.ContentGroup]);
-
-    const contentItemsResult = useUploadYouTubeVideos_GetVideoContentItemsQuery({
-        variables: {
-            contentGroupId,
-        },
-    });
-
-    const contentItemOptions = useMemo(() => {
-        return contentItemsResult.data?.ContentItem.map((contentItem) => (
-            <option key={contentItem.id} value={contentItem.id}>
-                {contentItem.name}
-            </option>
-        ));
-    }, [contentItemsResult.data?.ContentItem]);
 
     const googleAccountsResult = useUploadYouTubeVideos_GetAttendeeGoogleAccountsQuery({
         variables: {
@@ -177,138 +142,340 @@ export function UploadYouTubeVideos(): JSX.Element {
         ));
     }, [googleAccountsResult.data?.AttendeeGoogleAccount]);
 
-    const [mutation] = useUploadYouTubeVideos_CreateUploadYouTubeVideoJobMutation();
+    const [createJobs] = useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation();
 
-    const youtubeUploadsResult = useUploadYouTubeVideos_GetYouTubeUploadsQuery({
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
+    const [contentItemIds, setContentItemIds] = useState<string[]>([]);
+    const { data } = useUploadYouTubeVideos_GetContentItemsQuery({
         variables: {
-            conferenceId: conference.id,
+            contentItemIds,
         },
     });
 
+    const contentItems = useMemo(() => {
+        const pairs: [string, { name: string; contentGroupTitle: string }][] =
+            data?.ContentItem.map((contentItem) => [
+                contentItem.id,
+                { name: contentItem.name, contentGroupTitle: contentItem.contentGroup.title },
+            ]) ?? [];
+
+        return R.fromPairs(pairs);
+    }, [data]);
+
+    const { refetch: refetchTemplateData } = useUploadYouTubeVideos_GetTemplateDataQuery({ skip: true });
+
+    const compileTemplates = useCallback(
+        async (
+            contentItemIds: string[],
+            titleTemplateString: string,
+            descriptionTemplateString: string
+        ): Promise<{ [contentItemId: string]: { title: string; description: string } }> => {
+            const result = await refetchTemplateData({ contentItemIds });
+
+            if (!result.data) {
+                console.error("Could not retrieve data for content item templates", result.error, result.errors);
+                throw new Error("Could not retrieve data for content item templates");
+            }
+
+            const pairs = contentItemIds.map((contentItemId): [string, { title: string; description: string }] => {
+                const contentItem = result.data.ContentItem.find((x) => x.id === contentItemId);
+
+                if (!contentItem) {
+                    return [
+                        contentItemId,
+                        {
+                            title: titleTemplateString,
+                            description: descriptionTemplateString,
+                        },
+                    ];
+                }
+
+                const fileName = contentItem.name;
+                const itemTitle = contentItem.contentGroup.title;
+                const abstractContentItem = contentItem.contentGroup.abstractContentItems.length
+                    ? contentItem.contentGroup.abstractContentItems[0]
+                    : undefined;
+                const abstractContentItemData = isContentItemDataBlob(abstractContentItem?.data)
+                    ? (abstractContentItem?.data as ContentItemDataBlob)
+                    : undefined;
+                const abstractContentItemDataLatest = abstractContentItemData
+                    ? R.last(abstractContentItemData)
+                    : undefined;
+                const abstract =
+                    abstractContentItemDataLatest?.data.baseType === ContentBaseType.Text
+                        ? abstractContentItemDataLatest.data.text
+                        : "";
+
+                const view = {
+                    fileId: contentItemId,
+                    fileName,
+                    itemId: contentItem.contentGroup.id,
+                    itemTitle,
+                    abstract,
+                };
+
+                return [
+                    contentItemId,
+                    {
+                        title: Mustache.render(titleTemplateString, view),
+                        description: Mustache.render(descriptionTemplateString, view),
+                    },
+                ];
+            });
+
+            return R.fromPairs(pairs);
+        },
+        [refetchTemplateData]
+    );
+
     return (
         <>
-            <Heading as="h2" size="md" textAlign="left" mt={4} mb={2}>
-                Upload jobs
-            </Heading>
-            <ApolloQueryWrapper
-                queryResult={existingJobsResult}
-                getter={(result) => result.job_queues_UploadYouTubeVideoJob}
-            >
-                {(jobs: readonly UploadYouTubeVideos_UploadYouTubeVideoJobFragment[]) => (
-                    <List>
-                        {jobs.length > 0 ? (
-                            jobs.map((job) => (
-                                <ListItem key={job.id}>
-                                    {job.id}: {job.contentItem.name} ({job.jobStatusName})
-                                </ListItem>
-                            ))
-                        ) : (
-                            <Text>No upload jobs.</Text>
-                        )}
-                    </List>
-                )}
-            </ApolloQueryWrapper>
-            <Heading as="h2" size="md" textAlign="left" mt={4} mb={2}>
-                Upload a video
-            </Heading>
-            <Formik<{ contentItemId: string | null; attendeeGoogleAccountId: string | null }>
-                initialValues={{ contentItemId: null, attendeeGoogleAccountId: null }}
-                onSubmit={async (values, actions) => {
-                    try {
-                        await mutation({
-                            variables: {
-                                attendeeGoogleAccountId: values.attendeeGoogleAccountId,
-                                conferenceId: conference.id,
-                                contentItemId: values.contentItemId,
-                            },
-                        });
-                        toast({
-                            status: "success",
-                            title: "Starting upload to YouTube",
-                        });
-                        actions.resetForm();
-                        await existingJobsResult.refetch();
-                    } catch (e) {
-                        toast({
-                            status: "error",
-                            title: "Failed to create YouTube upload job",
-                        });
-                    }
-                }}
-            >
-                {({ isSubmitting }) => (
-                    <Form>
-                        <Field name="contentItemId">
-                            {({ field, form }: FieldProps<string>) => (
-                                <FormControl
-                                    isInvalid={!!form.errors.contentItemId && !!form.touched.attendeeGoogleAccountId}
-                                    isRequired
-                                >
-                                    <FormLabel htmlFor="contentItemId" mt={2}>
-                                        Content Item
-                                    </FormLabel>
-                                    <Select
-                                        placeholder="Choose item"
-                                        onChange={(event) => setContentGroupId(event.target.value)}
+            <HStack>
+                <VStack alignItems="flex-start" flexGrow={1}>
+                    <Formik<{
+                        contentItemIds: string[];
+                        attendeeGoogleAccountId: string | null;
+                        titleTemplate: string;
+                        descriptionTemplate: string;
+                    }>
+                        initialValues={{
+                            contentItemIds: [],
+                            attendeeGoogleAccountId: null,
+                            titleTemplate: "{{fileName}}",
+                            descriptionTemplate: "{{abstract}}",
+                        }}
+                        onSubmit={async (values, actions) => {
+                            try {
+                                const details = await compileTemplates(
+                                    values.contentItemIds,
+                                    values.titleTemplate,
+                                    values.descriptionTemplate
+                                );
+
+                                await createJobs({
+                                    variables: {
+                                        objects: values.contentItemIds.map((id) => ({
+                                            contentItemId: id,
+                                            attendeeGoogleAccountId: values.attendeeGoogleAccountId,
+                                            conferenceId: conference.id,
+                                            videoTitle: details[id]?.title ?? id,
+                                            videoDescription: details[id]?.description ?? "",
+                                        })),
+                                    },
+                                });
+                                toast({
+                                    status: "success",
+                                    title: "Starting upload to YouTube",
+                                });
+                                actions.resetForm();
+                                await existingJobsResult.refetch();
+                            } catch (e) {
+                                console.error("Error while creating YouTube upload jobs", e);
+                                toast({
+                                    status: "error",
+                                    title: "Failed to create YouTube upload job",
+                                    description: e.message,
+                                });
+                            }
+                        }}
+                    >
+                        {({ isSubmitting, values }) => {
+                            if (!R.isEmpty(R.symmetricDifference(values.contentItemIds, contentItemIds))) {
+                                setContentItemIds(values.contentItemIds);
+                            }
+
+                            return (
+                                <Form>
+                                    <Heading as="h2" size="md" textAlign="left" my={4}>
+                                        Choose videos to upload
+                                    </Heading>
+                                    <Field
+                                        name="contentItemIds"
+                                        validate={(ids: string[]) =>
+                                            ids.length > 0 ? undefined : "Must choose at least one video"
+                                        }
                                     >
-                                        {contentGroupOptions}
-                                    </Select>
-                                    <Select {...field} id="contentItemId" placeholder="Choose file" mt={2}>
-                                        {contentItemOptions}
-                                    </Select>
-                                </FormControl>
-                            )}
-                        </Field>
-                        <Field name="attendeeGoogleAccountId">
-                            {({ field, form }: FieldProps<string>) => (
-                                <FormControl
-                                    isInvalid={
-                                        !!form.errors.attendeeGoogleAccountId && !!form.touched.attendeeGoogleAccountId
-                                    }
-                                    isRequired
-                                >
-                                    <FormLabel htmlFor="attendeeGoogleAccountId" mt={2}>
-                                        Google Account
-                                    </FormLabel>
-                                    <Select {...field} id="contentItemId" placeholder="Choose Google account" mt={2}>
-                                        {googleAccountOptions}
-                                    </Select>
-                                </FormControl>
-                            )}
-                        </Field>
-                        <Button type="submit" isLoading={isSubmitting} mt={4} colorScheme="green">
-                            Upload video to YouTube
-                        </Button>
-                    </Form>
-                )}
-            </Formik>
+                                        {({ field, form }: FieldProps<string[]>) => (
+                                            <FormControl
+                                                isInvalid={
+                                                    !!form.errors.contentItemIds && !!form.touched.contentItemIds
+                                                }
+                                                isRequired
+                                            >
+                                                <Button
+                                                    aria-label="add a single video"
+                                                    size="sm"
+                                                    onClick={() => onOpen()}
+                                                >
+                                                    <FAIcon icon="plus-square" iconStyle="s" mr={2} />
+                                                    Add a video
+                                                </Button>
+                                                <ChooseContentItemModal
+                                                    chooseItem={(contentItemId) =>
+                                                        form.setFieldValue(
+                                                            field.name,
+                                                            R.union(form.values.contentItemIds, [contentItemId])
+                                                        )
+                                                    }
+                                                    isOpen={isOpen}
+                                                    onClose={onClose}
+                                                />
+                                                <Button aria-label="add a single video" size="sm" ml={4}>
+                                                    <FAIcon icon="plus-square" iconStyle="s" mr={2} />
+                                                    Add videos by tag
+                                                </Button>
 
-            <Heading as="h2" size="md" textAlign="left" mt={4} mb={2}>
-                Uploaded videos
-            </Heading>
+                                                <List mt={4} spacing={2}>
+                                                    {form.values.contentItemIds.map((id: string) => (
+                                                        <ListItem key={id}>
+                                                            <HStack>
+                                                                <ListIcon as={VideoIcon} />
+                                                                {contentItems[id] ? (
+                                                                    <Text pr={4}>
+                                                                        {contentItems[id].name} (
+                                                                        {contentItems[id].contentGroupTitle})
+                                                                    </Text>
+                                                                ) : (
+                                                                    <Spinner />
+                                                                )}
+                                                                <Button
+                                                                    size="xs"
+                                                                    aria-label="remove video"
+                                                                    colorScheme="red"
+                                                                    style={{ marginLeft: "auto" }}
+                                                                    onClick={() => {
+                                                                        form.setFieldValue(
+                                                                            field.name,
+                                                                            R.without([id], form.values.contentItemIds)
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    <FAIcon
+                                                                        icon="trash-alt"
+                                                                        iconStyle="r"
+                                                                        fontSize="xs"
+                                                                    />
+                                                                </Button>
+                                                            </HStack>
+                                                        </ListItem>
+                                                    ))}
+                                                    {form.values.contentItemIds.length === 0 ? (
+                                                        <Text>No videos selected.</Text>
+                                                    ) : undefined}
+                                                </List>
+                                                <FormErrorMessage>{form.errors.contentItemIds}</FormErrorMessage>
+                                            </FormControl>
+                                        )}
+                                    </Field>
 
-            <ApolloQueryWrapper queryResult={youtubeUploadsResult} getter={(result) => result.YouTubeUpload}>
-                {(uploads: readonly UploadYouTubeVideos_YouTubeUploadFragment[]) => (
-                    <Table>
-                        <Thead>
-                            <Tr>
-                                <Th>YouTube ID</Th>
-                                <Th>Privacy</Th>
-                                <Th>Status</Th>
-                            </Tr>
-                        </Thead>
-                        <Tbody>
-                            {uploads.map((upload) => (
-                                <Tr key={upload.id}>
-                                    <Td>{upload.id}</Td>
-                                    <Td>{upload.videoPrivacyStatus}</Td>
-                                    <Td>{upload.videoStatus}</Td>
-                                </Tr>
-                            ))}
-                        </Tbody>
-                    </Table>
-                )}
-            </ApolloQueryWrapper>
+                                    <Heading as="h2" size="md" textAlign="left" my={4}>
+                                        Set video titles and descriptions
+                                    </Heading>
+                                    <Field name="titleTemplate">
+                                        {({ field, form }: FieldProps<string>) => (
+                                            <FormControl
+                                                isInvalid={!!form.errors.titleTemplate && !!form.touched.titleTemplate}
+                                                isRequired
+                                            >
+                                                <FormLabel htmlFor="titleTemplate" mt={2}>
+                                                    Video title template
+                                                </FormLabel>
+                                                <Input
+                                                    {...field}
+                                                    id="titleTemplate"
+                                                    placeholder="{{fileName}}"
+                                                    mt={2}
+                                                />
+                                                <FormErrorMessage>{form.errors.titleTemplate}</FormErrorMessage>
+                                            </FormControl>
+                                        )}
+                                    </Field>
+                                    <Field name="descriptionTemplate">
+                                        {({ field, form }: FieldProps<string>) => (
+                                            <FormControl
+                                                isInvalid={
+                                                    !!form.errors.descriptionTemplate &&
+                                                    !!form.touched.descriptionTemplate
+                                                }
+                                                isRequired
+                                            >
+                                                <FormLabel htmlFor="descriptionTemplate" mt={2}>
+                                                    Video description template
+                                                </FormLabel>
+                                                <Textarea
+                                                    {...field}
+                                                    id="descriptionTemplate"
+                                                    placeholder="{{abstract}}"
+                                                    mt={2}
+                                                />
+                                                <FormErrorMessage>{form.errors.descriptionTemplate}</FormErrorMessage>
+                                            </FormControl>
+                                        )}
+                                    </Field>
+
+                                    <Heading as="h2" size="md" textAlign="left" my={4}>
+                                        Choose target channel
+                                    </Heading>
+                                    <Field name="attendeeGoogleAccountId">
+                                        {({ field, form }: FieldProps<string>) => (
+                                            <FormControl
+                                                isInvalid={
+                                                    !!form.errors.attendeeGoogleAccountId &&
+                                                    !!form.touched.attendeeGoogleAccountId
+                                                }
+                                                isRequired
+                                            >
+                                                <FormLabel htmlFor="attendeeGoogleAccountId" mt={2}>
+                                                    Google Account
+                                                </FormLabel>
+                                                <Select
+                                                    {...field}
+                                                    id="attendeeGoogleAccountId"
+                                                    placeholder="Choose Google account"
+                                                    mt={2}
+                                                >
+                                                    {googleAccountOptions}
+                                                </Select>
+                                                <FormErrorMessage>
+                                                    {form.errors.attendeeGoogleAccountId}
+                                                </FormErrorMessage>
+                                            </FormControl>
+                                        )}
+                                    </Field>
+
+                                    <Button type="submit" isLoading={isSubmitting} mt={4} colorScheme="green">
+                                        Upload videos
+                                    </Button>
+                                </Form>
+                            );
+                        }}
+                    </Formik>
+                </VStack>
+                <ApolloQueryWrapper
+                    queryResult={existingJobsResult}
+                    getter={(result) => result.job_queues_UploadYouTubeVideoJob}
+                >
+                    {(jobs: readonly UploadYouTubeVideos_UploadYouTubeVideoJobFragment[]) => (
+                        <VStack display={jobs.length ? "block" : "none"} maxWidth="30em">
+                            <Heading as="h2" size="md" textAlign="left" mt={4} mb={2}>
+                                Upload jobs
+                            </Heading>
+                            <List>
+                                {jobs.length > 0 ? (
+                                    jobs.map((job) => (
+                                        <ListItem key={job.id}>
+                                            {job.id}: {job.contentItem.name} ({job.jobStatusName})
+                                        </ListItem>
+                                    ))
+                                ) : (
+                                    <Text>No upload jobs.</Text>
+                                )}
+                            </List>
+                        </VStack>
+                    )}
+                </ApolloQueryWrapper>
+            </HStack>
         </>
     );
 }

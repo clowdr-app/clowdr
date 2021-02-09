@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client";
 import {
+    Box,
     Button,
     FormControl,
     FormErrorMessage,
@@ -14,6 +15,7 @@ import {
     Spinner,
     Text,
     Textarea,
+    Tooltip,
     useDisclosure,
     useToast,
     VStack,
@@ -24,6 +26,7 @@ import Mustache from "mustache";
 import * as R from "ramda";
 import React, { useCallback, useMemo, useState } from "react";
 import {
+    JobStatus_Enum,
     UploadYouTubeVideos_UploadYouTubeVideoJobFragment,
     useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation,
     useUploadYouTubeVideos_GetAttendeeGoogleAccountsQuery,
@@ -231,9 +234,30 @@ export function UploadYouTubeVideos(): JSX.Element {
         [refetchTemplateData]
     );
 
+    const jobStatus = useCallback((jobStatusName: JobStatus_Enum) => {
+        switch (jobStatusName) {
+            case JobStatus_Enum.Completed:
+                return (
+                    <Tooltip label="Upload completed">
+                        <FAIcon icon="check-circle" iconStyle="s" aria-label="completed" />
+                    </Tooltip>
+                );
+            case JobStatus_Enum.Expired:
+            case JobStatus_Enum.Failed:
+                return (
+                    <Tooltip label="Upload failed">
+                        <FAIcon icon="exclamation-circle" iconStyle="s" aria-label="error" />
+                    </Tooltip>
+                );
+            case JobStatus_Enum.InProgress:
+            case JobStatus_Enum.New:
+                return <Spinner size="sm" aria-label="in progress" />;
+        }
+    }, []);
+
     return (
         <>
-            <HStack>
+            <HStack alignItems="flex-start">
                 <VStack alignItems="flex-start" flexGrow={1}>
                     <Formik<{
                         contentItemIds: string[];
@@ -348,6 +372,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                     size="sm"
                                                     ml={4}
                                                     onClick={() => form.setFieldValue(field.name, [])}
+                                                    isDisabled={form.values.contentItemIds.length === 0}
                                                 >
                                                     <FAIcon icon="trash-alt" iconStyle="r" mr={2} />
                                                     Clear all
@@ -492,7 +517,12 @@ export function UploadYouTubeVideos(): JSX.Element {
                                 {jobs.length > 0 ? (
                                     jobs.map((job) => (
                                         <ListItem key={job.id}>
-                                            {job.id}: {job.contentItem.name} ({job.jobStatusName})
+                                            <HStack>
+                                                <Text>
+                                                    {job.contentItem.contentGroup.title} ({job.contentItem.name})
+                                                </Text>
+                                                <Box ml={2}>{jobStatus(job.jobStatusName)}</Box>
+                                            </HStack>
                                         </ListItem>
                                     ))
                                 ) : (

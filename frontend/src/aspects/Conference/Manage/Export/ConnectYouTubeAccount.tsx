@@ -2,12 +2,14 @@ import { gql } from "@apollo/client";
 import { Button, Heading, HStack, List, ListItem, Text, useColorModeValue, useToast } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 import {
     ManageConferenceExportPage_AttendeeGoogleAccountFragment,
     useManageConferenceExportPage_DeleteAttendeeGoogleAccountMutation,
     useManageConferenceExportPage_GetAttendeeGoogleAccountsQuery,
     useManageConferenceExportPage_GetGoogleOAuthUrlMutation,
 } from "../../../../generated/graphql";
+import { useGoogleOAuthRedirectPath } from "../../../Google/useGoogleOAuthRedirectUrl";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import { FAIcon } from "../../../Icons/FAIcon";
 import useCurrentAttendee from "../../useCurrentAttendee";
@@ -51,6 +53,9 @@ export function ConnectYouTubeAccount(): JSX.Element {
 
     const [deleteAccount] = useManageConferenceExportPage_DeleteAttendeeGoogleAccountMutation();
     const [deleting, setDeleting] = useState<{ [key: string]: boolean }>({});
+
+    const history = useHistory();
+    const [, setGoogleOAuthRedirectUrl] = useGoogleOAuthRedirectPath();
 
     return (
         <>
@@ -118,6 +123,7 @@ export function ConnectYouTubeAccount(): JSX.Element {
                             throw new Error("Could not retrieve Google OAuth URL");
                         }
 
+                        setGoogleOAuthRedirectUrl(history.location.pathname);
                         window.location.href = urlResult.data?.getGoogleOAuthUrl?.url;
                     } catch (e) {
                         console.error("Failed to connect to YouTube", e);

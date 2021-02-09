@@ -3,6 +3,7 @@ import { Spinner, useToast } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useGoogleOAuth_SubmitGoogleOAuthCodeMutation } from "../../generated/graphql";
+import { useGoogleOAuthRedirectPath } from "./useGoogleOAuthRedirectUrl";
 
 gql`
     mutation GoogleOAuth_SubmitGoogleOAuthCode($code: String!, $state: String!) {
@@ -46,8 +47,8 @@ export function GoogleOAuth(): JSX.Element {
     const location = useLocation();
 
     const [submit] = useGoogleOAuth_SubmitGoogleOAuthCodeMutation();
-
     const [message, setMessage] = useState<string | null>(null);
+    const [, , follow] = useGoogleOAuthRedirectPath();
 
     useEffect(() => {
         async function fn() {
@@ -69,6 +70,7 @@ export function GoogleOAuth(): JSX.Element {
                     }
 
                     setMessage("Successfully connected to Google Account");
+                    follow();
                 } else {
                     throw new Error("Invalid token returned from Google");
                 }

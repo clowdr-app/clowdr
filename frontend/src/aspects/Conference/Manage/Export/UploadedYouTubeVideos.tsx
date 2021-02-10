@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client";
 import { Heading, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
 import { default as React } from "react";
+import ReactPlayer from "react-player";
 import {
     UploadYouTubeVideos_YouTubeUploadFragment,
     useUploadYouTubeVideos_GetYouTubeUploadsQuery,
@@ -52,15 +53,21 @@ export function UploadedYouTubeVideos(): JSX.Element {
                             <Tr>
                                 <Th>YouTube ID</Th>
                                 <Th>Privacy</Th>
-                                <Th>Status</Th>
+                                <Th>Preview</Th>
                             </Tr>
                         </Thead>
                         <Tbody>
                             {uploads.map((upload) => (
                                 <Tr key={upload.id}>
-                                    <Td>{upload.id}</Td>
+                                    <Td>{upload.videoTitle}</Td>
                                     <Td>{upload.videoPrivacyStatus}</Td>
-                                    <Td>{upload.videoStatus}</Td>
+                                    <Td>
+                                        <ReactPlayer
+                                            url={`https://youtube.com/watch?v=${upload.videoId}`}
+                                            width="300px"
+                                            height="auto"
+                                        />
+                                    </Td>
                                 </Tr>
                             ))}
                         </Tbody>

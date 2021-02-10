@@ -667,7 +667,7 @@ export function UploadYouTubeVideos(): JSX.Element {
 
                                                             toast({
                                                                 status: "success",
-                                                                title: "Refresh YouTube channel details",
+                                                                title: "Refreshed YouTube channel details",
                                                             });
                                                         } catch (e) {
                                                             console.error(

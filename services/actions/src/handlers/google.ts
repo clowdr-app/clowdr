@@ -268,7 +268,7 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
                     if (job.playlistId) {
                         console.log("Adding YouTube video to playlist", job.id);
                         await youtubeClient.playlistItems.insert({
-                            part: ["id"],
+                            part: ["id", "snippet"],
                             requestBody: {
                                 snippet: {
                                     playlistId: job.playlistId,

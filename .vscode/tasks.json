@@ -170,7 +170,7 @@
             "label": "Frontend -- Serve Production Build",
             "type": "shell",
             "command": "serve",
-            "args": ["-s", "build"],
+            "args": ["-s", "build", "-l", "3000"],
             "problemMatcher": [],
             "options": {
                 "cwd": "${workspaceFolder}/frontend"

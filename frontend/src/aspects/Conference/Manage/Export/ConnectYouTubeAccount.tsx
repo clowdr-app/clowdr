@@ -39,7 +39,7 @@ gql`
     }
 `;
 export function ConnectYouTubeAccount(): JSX.Element {
-    const listItemBgColour = useColorModeValue("gray.200", "gray.700");
+    const listItemBgColour = useColorModeValue("gray.100", "gray.700");
     const toast = useToast();
 
     const [mutation] = useManageConferenceExportPage_GetGoogleOAuthUrlMutation();
@@ -66,7 +66,15 @@ export function ConnectYouTubeAccount(): JSX.Element {
                 {(accounts: readonly ManageConferenceExportPage_AttendeeGoogleAccountFragment[]) => (
                     <List>
                         {accounts.map((account) => (
-                            <ListItem key={account.id} p={2} pl={4} my={2} bgColor={listItemBgColour}>
+                            <ListItem
+                                key={account.id}
+                                p={2}
+                                pl={4}
+                                my={2}
+                                bgColor={listItemBgColour}
+                                borderRadius="sm"
+                                overflow="hidden"
+                            >
                                 <HStack>
                                     <FAIcon icon="youtube" iconStyle="b" />
                                     <Text>{account.googleAccountEmail}</Text>

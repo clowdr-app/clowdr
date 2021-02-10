@@ -92,6 +92,13 @@ type Query {
 
 
 type Mutation {
+  refreshYouTubeData (
+    attendeeGoogleAccountId: uuid!
+  ): RefreshYouTubeDataOutput
+}
+
+
+type Mutation {
   stopEventBroadcast (
     eventId: uuid!
   ): StopEventBroadcastOutput
@@ -261,6 +268,11 @@ type SubmitGoogleOAuthTokenOutput {
 }
 
 type SubmitGoogleOAuthCodeOutput {
+  success : Boolean!
+  message : String
+}
+
+type RefreshYouTubeDataOutput {
   success : Boolean!
   message : String
 }

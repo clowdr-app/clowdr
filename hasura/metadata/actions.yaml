@@ -131,6 +131,16 @@ actions:
       value_from_env: EVENT_SECRET
   permissions:
   - role: user
+- name: refreshYouTubeData
+  definition:
+    kind: synchronous
+    handler: '{{ACTION_BASE_URL}}/attendeeGoogleAccount/refreshYouTubeData'
+    forward_client_headers: true
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+  permissions:
+  - role: user
 - name: stopEventBroadcast
   definition:
     kind: synchronous
@@ -231,4 +241,5 @@ custom_types:
   - name: GetGoogleOAuthUrlOutput
   - name: SubmitGoogleOAuthTokenOutput
   - name: SubmitGoogleOAuthCodeOutput
+  - name: RefreshYouTubeDataOutput
   scalars: []

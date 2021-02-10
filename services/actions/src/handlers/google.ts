@@ -100,7 +100,7 @@ export async function handleSubmitGoogleOAuthToken(
         console.log("Retrieved Google auth token", userId);
 
         console.log("Verifying Google JWT", userId, params.state);
-        oauth2Client.verifyIdToken({
+        await oauth2Client.verifyIdToken({
             idToken: token.tokens.id_token,
             audience: oauth2Client._clientId,
         });
@@ -265,11 +265,27 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
                         });
                     });
 
-                    console.log("Starting YouTube caption upload", job.id, result.data);
+                    if (job.playlistId) {
+                        console.log("Adding YouTube video to playlist", job.id);
+                        await youtubeClient.playlistItems.insert({
+                            part: ["id"],
+                            requestBody: {
+                                snippet: {
+                                    playlistId: job.playlistId,
+                                    resourceId: {
+                                        videoId: result.data.id,
+                                        kind: "youtube#video",
+                                    },
+                                },
+                            },
+                        });
+                    }
+
                     if (
                         latestVersion.data.baseType === ContentBaseType.Video &&
                         latestVersion.data.subtitles["en_US"]
                     ) {
+                        console.log("Starting YouTube caption upload", job.id);
                         const { bucket: subtitlesBucket, key: subtitlesKey } = new AmazonS3Uri(
                             latestVersion.data.subtitles["en_US"].s3Url
                         );
@@ -297,6 +313,8 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
                             },
                         });
                         console.log("Finished uploading YouTube caption", job.id);
+                    } else {
+                        console.log("No YouTube captions to upload", job.id);
                     }
                 } catch (e) {
                     console.error("Failure while recording completion of YouTube upload", job.id, e);
@@ -360,6 +378,7 @@ gql`
         }
         videoTitle
         videoDescription
+        playlistId
     }
 
     mutation UnmarkUploadYouTubeVideoJobs($ids: [uuid!]!) {

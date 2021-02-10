@@ -20,6 +20,7 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
+import { isYouTubeDataBlob, YouTubeDataBlob } from "@clowdr-app/shared-types/build/attendeeGoogleAccount";
 import { ContentBaseType, ContentItemDataBlob, isContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
 import { Field, FieldProps, Form, Formik } from "formik";
 import Mustache from "mustache";
@@ -33,6 +34,7 @@ import {
     useUploadYouTubeVideos_GetContentItemsQuery,
     useUploadYouTubeVideos_GetTemplateDataQuery,
     useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery,
+    useUploadYouTubeVideos_RefreshYouTubeDataMutation,
 } from "../../../../generated/graphql";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import { FAIcon } from "../../../Icons/FAIcon";
@@ -68,6 +70,7 @@ gql`
         AttendeeGoogleAccount(where: { attendeeId: { _eq: $attendeeId } }) {
             id
             googleAccountEmail
+            youTubeData
         }
     }
 
@@ -114,6 +117,13 @@ gql`
         id
         data
     }
+
+    mutation UploadYouTubeVideos_RefreshYouTubeData($attendeeGoogleAccountId: uuid!) {
+        refreshYouTubeData(attendeeGoogleAccountId: $attendeeGoogleAccountId) {
+            message
+            success
+        }
+    }
 `;
 
 function VideoIcon() {
@@ -145,6 +155,50 @@ export function UploadYouTubeVideos(): JSX.Element {
             </option>
         ));
     }, [googleAccountsResult.data?.AttendeeGoogleAccount]);
+
+    const [attendeeGoogleAccountId, setAttendeeGoogleAccountId] = useState<string | null>(null);
+    const channelOptions = useMemo(() => {
+        const attendeeGoogleAccount = googleAccountsResult.data?.AttendeeGoogleAccount.find(
+            (a) => a.id === attendeeGoogleAccountId
+        );
+
+        if (!isYouTubeDataBlob(attendeeGoogleAccount?.youTubeData)) {
+            return [];
+        }
+
+        const youTubeData = attendeeGoogleAccount?.youTubeData as YouTubeDataBlob;
+
+        return (
+            youTubeData.channels.map((channel) => (
+                <option key={channel.id} value={channel.id}>
+                    {channel.title}
+                </option>
+            )) ?? []
+        );
+    }, [attendeeGoogleAccountId, googleAccountsResult.data?.AttendeeGoogleAccount]);
+
+    const [channelId, setChannelId] = useState<string | null>(null);
+    const playlistOptions = useMemo(() => {
+        const attendeeGoogleAccount = googleAccountsResult.data?.AttendeeGoogleAccount.find(
+            (a) => a.id === attendeeGoogleAccountId
+        );
+
+        if (!isYouTubeDataBlob(attendeeGoogleAccount?.youTubeData)) {
+            return [];
+        }
+
+        const youTubeData = attendeeGoogleAccount?.youTubeData as YouTubeDataBlob;
+
+        return (
+            youTubeData.channels
+                .find((c) => c.id === channelId)
+                ?.playlists.map((playlist) => (
+                    <option key={playlist.id} value={playlist.id}>
+                        {playlist.title}
+                    </option>
+                )) ?? []
+        );
+    }, [attendeeGoogleAccountId, channelId, googleAccountsResult.data?.AttendeeGoogleAccount]);
 
     const [createJobs] = useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation();
 
@@ -255,6 +309,8 @@ export function UploadYouTubeVideos(): JSX.Element {
         }
     }, []);
 
+    const [refreshYouTubeData] = useUploadYouTubeVideos_RefreshYouTubeDataMutation();
+
     return (
         <>
             <HStack alignItems="flex-start">
@@ -264,12 +320,16 @@ export function UploadYouTubeVideos(): JSX.Element {
                         attendeeGoogleAccountId: string | null;
                         titleTemplate: string;
                         descriptionTemplate: string;
+                        channelId: string | null;
+                        playlistId: string | null;
                     }>
                         initialValues={{
                             contentItemIds: [],
                             attendeeGoogleAccountId: null,
                             titleTemplate: "{{fileName}}",
                             descriptionTemplate: "{{abstract}}",
+                            channelId: null,
+                            playlistId: null,
                         }}
                         onSubmit={async (values, actions) => {
                             try {
@@ -287,6 +347,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                                             conferenceId: conference.id,
                                             videoTitle: details[id]?.title ?? id,
                                             videoDescription: details[id]?.description ?? "",
+                                            playlistId: values.playlistId,
                                         })),
                                     },
                                 });
@@ -467,32 +528,138 @@ export function UploadYouTubeVideos(): JSX.Element {
                                     </Field>
 
                                     <Heading as="h2" size="md" textAlign="left" my={4}>
-                                        Choose target channel
+                                        Choose upload location
                                     </Heading>
                                     <Field name="attendeeGoogleAccountId">
                                         {({ field, form }: FieldProps<string>) => (
-                                            <FormControl
-                                                isInvalid={
-                                                    !!form.errors.attendeeGoogleAccountId &&
-                                                    !!form.touched.attendeeGoogleAccountId
-                                                }
-                                                isRequired
-                                            >
-                                                <FormLabel htmlFor="attendeeGoogleAccountId" mt={2}>
-                                                    Google Account
-                                                </FormLabel>
-                                                <Select
-                                                    {...field}
-                                                    id="attendeeGoogleAccountId"
-                                                    placeholder="Choose Google account"
-                                                    mt={2}
+                                            <>
+                                                <FormControl
+                                                    isInvalid={
+                                                        !!form.errors.attendeeGoogleAccountId &&
+                                                        !!form.touched.attendeeGoogleAccountId
+                                                    }
+                                                    isRequired
                                                 >
-                                                    {googleAccountOptions}
-                                                </Select>
-                                                <FormErrorMessage>
-                                                    {form.errors.attendeeGoogleAccountId}
-                                                </FormErrorMessage>
-                                            </FormControl>
+                                                    <FormLabel htmlFor="attendeeGoogleAccountId" mt={2}>
+                                                        Google Account
+                                                    </FormLabel>
+                                                    <Select
+                                                        {...field}
+                                                        id="attendeeGoogleAccountId"
+                                                        placeholder="Choose Google account"
+                                                        mt={2}
+                                                        onChange={(event) => {
+                                                            setAttendeeGoogleAccountId(event.target.value);
+                                                            field.onChange(event);
+                                                        }}
+                                                    >
+                                                        {googleAccountOptions}
+                                                    </Select>
+                                                    <FormErrorMessage>
+                                                        {form.errors.attendeeGoogleAccountId}
+                                                    </FormErrorMessage>
+                                                </FormControl>
+                                                <Button
+                                                    display="block"
+                                                    my={2}
+                                                    size="sm"
+                                                    aria-label="refresh playlists"
+                                                    isDisabled={!form.values.attendeeGoogleAccountId}
+                                                    onClick={async () => {
+                                                        try {
+                                                            const result = await refreshYouTubeData({
+                                                                variables: {
+                                                                    attendeeGoogleAccountId:
+                                                                        form.values.attendeeGoogleAccountId,
+                                                                },
+                                                            });
+                                                            if (!result.data?.refreshYouTubeData?.success) {
+                                                                throw new Error(
+                                                                    result.data?.refreshYouTubeData?.message ??
+                                                                        "Unknown reason"
+                                                                );
+                                                            }
+
+                                                            await googleAccountsResult.refetch({
+                                                                attendeeId: attendee.id,
+                                                            });
+
+                                                            toast({
+                                                                status: "success",
+                                                                title: "Refresh YouTube channel details",
+                                                            });
+                                                        } catch (e) {
+                                                            console.error(
+                                                                "Failed to refresh YouTube channel details",
+                                                                e
+                                                            );
+                                                            toast({
+                                                                status: "error",
+                                                                title: "Failed to refresh YouTube channel details",
+                                                                description: e.message,
+                                                            });
+                                                        }
+                                                    }}
+                                                >
+                                                    <HStack>
+                                                        <FAIcon icon="sync" iconStyle="s" />
+                                                        <Text ml={2}>Refresh</Text>
+                                                    </HStack>
+                                                </Button>
+                                            </>
+                                        )}
+                                    </Field>
+
+                                    <Field name="channelId">
+                                        {({ field, form }: FieldProps<string>) => (
+                                            <>
+                                                <FormControl
+                                                    isInvalid={!!form.errors.channelId && !!form.touched.channelId}
+                                                    isRequired
+                                                >
+                                                    <FormLabel htmlFor="channelId" mt={2}>
+                                                        Channel
+                                                    </FormLabel>
+                                                    <Select
+                                                        {...field}
+                                                        id="channelId"
+                                                        placeholder="Choose channel"
+                                                        mt={2}
+                                                        isDisabled={!form.values.attendeeGoogleAccountId}
+                                                        onChange={(event) => {
+                                                            setChannelId(event.target.value);
+                                                            field.onChange(event);
+                                                        }}
+                                                    >
+                                                        {channelOptions}
+                                                    </Select>
+                                                    <FormErrorMessage>{form.errors.channelId}</FormErrorMessage>
+                                                </FormControl>
+                                            </>
+                                        )}
+                                    </Field>
+
+                                    <Field name="playlistId">
+                                        {({ field, form }: FieldProps<string>) => (
+                                            <>
+                                                <FormControl
+                                                    isInvalid={!!form.errors.playlistId && !!form.touched.playlistId}
+                                                >
+                                                    <FormLabel htmlFor="playlistId" mt={2}>
+                                                        Playlist
+                                                    </FormLabel>
+                                                    <Select
+                                                        {...field}
+                                                        id="playlistId"
+                                                        placeholder="Choose playlist"
+                                                        isDisabled={!form.values.attendeeGoogleAccountId}
+                                                        mt={2}
+                                                    >
+                                                        {playlistOptions}
+                                                    </Select>
+                                                    <FormErrorMessage>{form.errors.playlistId}</FormErrorMessage>
+                                                </FormControl>
+                                            </>
                                         )}
                                     </Field>
 

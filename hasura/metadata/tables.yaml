@@ -1809,6 +1809,7 @@
       - googleAccountEmail
       - id
       - updated_at
+      - youTubeData
       filter:
         _and:
         - attendee:

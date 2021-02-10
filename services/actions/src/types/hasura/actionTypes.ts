@@ -108,6 +108,11 @@ type SubmitGoogleOAuthCodeOutput = {
     message?: Maybe<string>;
 };
 
+type RefreshYouTubeDataOutput = {
+    success: boolean;
+    message?: Maybe<string>;
+};
+
 type SampleInput = {
     username: string;
     password: string;
@@ -153,6 +158,7 @@ type Mutation = {
     invitationConfirmWithCode?: Maybe<ConfirmInvitationOutput>;
     joinEventVonageSession?: Maybe<JoinEventVonageSessionOutput>;
     joinRoomVonageSession?: Maybe<JoinRoomVonageSessionOutput>;
+    refreshYouTubeData?: Maybe<RefreshYouTubeDataOutput>;
     stopEventBroadcast?: Maybe<StopEventBroadcastOutput>;
     submitContentItem?: Maybe<SubmitContentItemOutput>;
     submitGoogleOAuthCode?: Maybe<SubmitGoogleOAuthCodeOutput>;
@@ -212,6 +218,10 @@ type joinEventVonageSessionArgs = {
 
 type joinRoomVonageSessionArgs = {
     roomId: uuid;
+};
+
+type refreshYouTubeDataArgs = {
+    attendeeGoogleAccountId: uuid;
 };
 
 type stopEventBroadcastArgs = {

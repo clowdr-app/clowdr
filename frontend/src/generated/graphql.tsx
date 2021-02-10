@@ -147,11 +147,18 @@ export type AttendeeGoogleAccount = {
   readonly id: Scalars['uuid'];
   readonly tokenData: Scalars['jsonb'];
   readonly updatedAt: Scalars['timestamptz'];
+  readonly youTubeData?: Maybe<Scalars['jsonb']>;
 };
 
 
 /** columns and relationships of "AttendeeGoogleAccount" */
 export type AttendeeGoogleAccountTokenDataArgs = {
+  path?: Maybe<Scalars['String']>;
+};
+
+
+/** columns and relationships of "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccountYouTubeDataArgs = {
   path?: Maybe<Scalars['String']>;
 };
 
@@ -187,6 +194,7 @@ export type AttendeeGoogleAccount_Aggregate_Order_By = {
 /** append existing jsonb value of filtered columns with new jsonb value */
 export type AttendeeGoogleAccount_Append_Input = {
   readonly tokenData?: Maybe<Scalars['jsonb']>;
+  readonly youTubeData?: Maybe<Scalars['jsonb']>;
 };
 
 /** input type for inserting array relation for remote table "AttendeeGoogleAccount" */
@@ -209,6 +217,7 @@ export type AttendeeGoogleAccount_Bool_Exp = {
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly tokenData?: Maybe<Jsonb_Comparison_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly youTubeData?: Maybe<Jsonb_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "AttendeeGoogleAccount" */
@@ -222,16 +231,19 @@ export enum AttendeeGoogleAccount_Constraint {
 /** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
 export type AttendeeGoogleAccount_Delete_At_Path_Input = {
   readonly tokenData?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+  readonly youTubeData?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
 };
 
 /** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
 export type AttendeeGoogleAccount_Delete_Elem_Input = {
   readonly tokenData?: Maybe<Scalars['Int']>;
+  readonly youTubeData?: Maybe<Scalars['Int']>;
 };
 
 /** delete key/value pair or string element. key/value pairs are matched based on their key value */
 export type AttendeeGoogleAccount_Delete_Key_Input = {
   readonly tokenData?: Maybe<Scalars['String']>;
+  readonly youTubeData?: Maybe<Scalars['String']>;
 };
 
 /** input type for inserting data into table "AttendeeGoogleAccount" */
@@ -245,6 +257,7 @@ export type AttendeeGoogleAccount_Insert_Input = {
   readonly id?: Maybe<Scalars['uuid']>;
   readonly tokenData?: Maybe<Scalars['jsonb']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly youTubeData?: Maybe<Scalars['jsonb']>;
 };
 
 /** aggregate max on columns */
@@ -322,6 +335,7 @@ export type AttendeeGoogleAccount_Order_By = {
   readonly id?: Maybe<Order_By>;
   readonly tokenData?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
+  readonly youTubeData?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: "AttendeeGoogleAccount" */
@@ -332,6 +346,7 @@ export type AttendeeGoogleAccount_Pk_Columns_Input = {
 /** prepend existing jsonb value of filtered columns with new jsonb value */
 export type AttendeeGoogleAccount_Prepend_Input = {
   readonly tokenData?: Maybe<Scalars['jsonb']>;
+  readonly youTubeData?: Maybe<Scalars['jsonb']>;
 };
 
 /** select columns of table "AttendeeGoogleAccount" */
@@ -349,7 +364,9 @@ export enum AttendeeGoogleAccount_Select_Column {
   /** column name */
   TokenData = 'tokenData',
   /** column name */
-  UpdatedAt = 'updatedAt'
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  YouTubeData = 'youTubeData'
 }
 
 /** input type for updating data in table "AttendeeGoogleAccount" */
@@ -361,6 +378,7 @@ export type AttendeeGoogleAccount_Set_Input = {
   readonly id?: Maybe<Scalars['uuid']>;
   readonly tokenData?: Maybe<Scalars['jsonb']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly youTubeData?: Maybe<Scalars['jsonb']>;
 };
 
 /** update columns of table "AttendeeGoogleAccount" */
@@ -378,7 +396,9 @@ export enum AttendeeGoogleAccount_Update_Column {
   /** column name */
   TokenData = 'tokenData',
   /** column name */
-  UpdatedAt = 'updatedAt'
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  YouTubeData = 'youTubeData'
 }
 
 /** columns and relationships of "AttendeeProfile" */
@@ -10951,6 +10971,12 @@ export type ProtectedEchoOutput = {
   readonly message: Scalars['String'];
 };
 
+export type RefreshYouTubeDataOutput = {
+  readonly __typename?: 'RefreshYouTubeDataOutput';
+  readonly message?: Maybe<Scalars['String']>;
+  readonly success: Scalars['Boolean'];
+};
+
 /** columns and relationships of "RequiredContentItem" */
 export type RequiredContentItem = {
   readonly __typename?: 'RequiredContentItem';
@@ -21142,6 +21168,8 @@ export type Mutation_Root = {
   readonly joinEventVonageSession?: Maybe<JoinEventVonageSessionOutput>;
   /** perform the action: "joinRoomVonageSession" */
   readonly joinRoomVonageSession?: Maybe<JoinRoomVonageSessionOutput>;
+  /** perform the action: "refreshYouTubeData" */
+  readonly refreshYouTubeData?: Maybe<RefreshYouTubeDataOutput>;
   /** perform the action: "stopEventBroadcast" */
   readonly stopEventBroadcast?: Maybe<StopEventBroadcastOutput>;
   /** perform the action: "submitContentItem" */
@@ -23422,6 +23450,12 @@ export type Mutation_RootJoinEventVonageSessionArgs = {
 /** mutation root */
 export type Mutation_RootJoinRoomVonageSessionArgs = {
   roomId: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootRefreshYouTubeDataArgs = {
+  attendeeGoogleAccountId: Scalars['uuid'];
 };
 
 
@@ -31904,7 +31938,7 @@ export type UploadYouTubeVideos_GetAttendeeGoogleAccountsQueryVariables = Exact<
 }>;
 
 
-export type UploadYouTubeVideos_GetAttendeeGoogleAccountsQuery = { readonly __typename?: 'query_root', readonly AttendeeGoogleAccount: ReadonlyArray<{ readonly __typename?: 'AttendeeGoogleAccount', readonly id: any, readonly googleAccountEmail: string }> };
+export type UploadYouTubeVideos_GetAttendeeGoogleAccountsQuery = { readonly __typename?: 'query_root', readonly AttendeeGoogleAccount: ReadonlyArray<{ readonly __typename?: 'AttendeeGoogleAccount', readonly id: any, readonly googleAccountEmail: string, readonly youTubeData?: Maybe<any> }> };
 
 export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutationVariables = Exact<{
   objects: ReadonlyArray<Job_Queues_UploadYouTubeVideoJob_Insert_Input>;
@@ -31931,6 +31965,13 @@ export type UploadYouTubeVideos_GetTemplateDataQuery = { readonly __typename?: '
       )> } }> };
 
 export type UploadYouTubeVideos_AbstractContentItemFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly data: any };
+
+export type UploadYouTubeVideos_RefreshYouTubeDataMutationVariables = Exact<{
+  attendeeGoogleAccountId: Scalars['uuid'];
+}>;
+
+
+export type UploadYouTubeVideos_RefreshYouTubeDataMutation = { readonly __typename?: 'mutation_root', readonly refreshYouTubeData?: Maybe<{ readonly __typename?: 'RefreshYouTubeDataOutput', readonly message?: Maybe<string>, readonly success: boolean }> };
 
 export type UploadYouTubeVideos_GetYouTubeUploadsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -36967,6 +37008,7 @@ export const UploadYouTubeVideos_GetAttendeeGoogleAccountsDocument = gql`
   AttendeeGoogleAccount(where: {attendeeId: {_eq: $attendeeId}}) {
     id
     googleAccountEmail
+    youTubeData
   }
 }
     `;
@@ -37113,6 +37155,39 @@ export function useUploadYouTubeVideos_GetTemplateDataLazyQuery(baseOptions?: Ap
 export type UploadYouTubeVideos_GetTemplateDataQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetTemplateDataQuery>;
 export type UploadYouTubeVideos_GetTemplateDataLazyQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetTemplateDataLazyQuery>;
 export type UploadYouTubeVideos_GetTemplateDataQueryResult = Apollo.QueryResult<UploadYouTubeVideos_GetTemplateDataQuery, UploadYouTubeVideos_GetTemplateDataQueryVariables>;
+export const UploadYouTubeVideos_RefreshYouTubeDataDocument = gql`
+    mutation UploadYouTubeVideos_RefreshYouTubeData($attendeeGoogleAccountId: uuid!) {
+  refreshYouTubeData(attendeeGoogleAccountId: $attendeeGoogleAccountId) {
+    message
+    success
+  }
+}
+    `;
+export type UploadYouTubeVideos_RefreshYouTubeDataMutationFn = Apollo.MutationFunction<UploadYouTubeVideos_RefreshYouTubeDataMutation, UploadYouTubeVideos_RefreshYouTubeDataMutationVariables>;
+
+/**
+ * __useUploadYouTubeVideos_RefreshYouTubeDataMutation__
+ *
+ * To run a mutation, you first call `useUploadYouTubeVideos_RefreshYouTubeDataMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadYouTubeVideos_RefreshYouTubeDataMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uploadYouTubeVideosRefreshYouTubeDataMutation, { data, loading, error }] = useUploadYouTubeVideos_RefreshYouTubeDataMutation({
+ *   variables: {
+ *      attendeeGoogleAccountId: // value for 'attendeeGoogleAccountId'
+ *   },
+ * });
+ */
+export function useUploadYouTubeVideos_RefreshYouTubeDataMutation(baseOptions?: Apollo.MutationHookOptions<UploadYouTubeVideos_RefreshYouTubeDataMutation, UploadYouTubeVideos_RefreshYouTubeDataMutationVariables>) {
+        return Apollo.useMutation<UploadYouTubeVideos_RefreshYouTubeDataMutation, UploadYouTubeVideos_RefreshYouTubeDataMutationVariables>(UploadYouTubeVideos_RefreshYouTubeDataDocument, baseOptions);
+      }
+export type UploadYouTubeVideos_RefreshYouTubeDataMutationHookResult = ReturnType<typeof useUploadYouTubeVideos_RefreshYouTubeDataMutation>;
+export type UploadYouTubeVideos_RefreshYouTubeDataMutationResult = Apollo.MutationResult<UploadYouTubeVideos_RefreshYouTubeDataMutation>;
+export type UploadYouTubeVideos_RefreshYouTubeDataMutationOptions = Apollo.BaseMutationOptions<UploadYouTubeVideos_RefreshYouTubeDataMutation, UploadYouTubeVideos_RefreshYouTubeDataMutationVariables>;
 export const UploadYouTubeVideos_GetYouTubeUploadsDocument = gql`
     query UploadYouTubeVideos_GetYouTubeUploads($conferenceId: uuid!) {
   YouTubeUpload(where: {conferenceId: {_eq: $conferenceId}}) {

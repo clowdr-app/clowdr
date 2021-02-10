@@ -322,6 +322,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                         descriptionTemplate: string;
                         channelId: string | null;
                         playlistId: string | null;
+                        videoPrivacyStatus: string;
                     }>
                         initialValues={{
                             contentItemIds: [],
@@ -330,6 +331,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                             descriptionTemplate: "{{abstract}}",
                             channelId: null,
                             playlistId: null,
+                            videoPrivacyStatus: "unlisted",
                         }}
                         onSubmit={async (values, actions) => {
                             try {
@@ -347,6 +349,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                                             conferenceId: conference.id,
                                             videoTitle: details[id]?.title ?? id,
                                             videoDescription: details[id]?.description ?? "",
+                                            videoPrivacyStatus: values.videoPrivacyStatus,
                                             playlistId: values.playlistId,
                                         })),
                                     },
@@ -478,6 +481,28 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                     ) : undefined}
                                                 </List>
                                                 <FormErrorMessage>{form.errors.contentItemIds}</FormErrorMessage>
+                                            </FormControl>
+                                        )}
+                                    </Field>
+
+                                    <Field name="videoPrivacyStatus">
+                                        {({ field, form }: FieldProps<string>) => (
+                                            <FormControl
+                                                isInvalid={
+                                                    !!form.errors.videoPrivacyStatus &&
+                                                    !!form.touched.videoPrivacyStatus
+                                                }
+                                                isRequired
+                                            >
+                                                <FormLabel htmlFor="videoPrivacyStatus" mt={2}>
+                                                    Video privacy
+                                                </FormLabel>
+                                                <Select {...field} id="videoPrivacyStatus" mt={2}>
+                                                    <option value="private">Private</option>
+                                                    <option value="public">Public</option>
+                                                    <option value="unlisted">Unlisted</option>
+                                                </Select>
+                                                <FormErrorMessage>{form.errors.videoPrivacyStatus}</FormErrorMessage>
                                             </FormControl>
                                         )}
                                     </Field>

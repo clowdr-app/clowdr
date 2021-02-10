@@ -201,7 +201,7 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
                 part: ["snippet", "id", "status", "contentDetails"],
                 requestBody: {
                     status: {
-                        privacyStatus: "unlisted",
+                        privacyStatus: job.videoPrivacyStatus,
                     },
                     snippet: {
                         title: job.videoTitle,
@@ -378,6 +378,7 @@ gql`
         }
         videoTitle
         videoDescription
+        videoPrivacyStatus
         playlistId
     }
 

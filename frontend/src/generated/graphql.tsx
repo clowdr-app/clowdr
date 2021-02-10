@@ -20151,9 +20151,11 @@ export type Job_Queues_UploadYouTubeVideoJob = {
   readonly jobStatus: JobStatus;
   readonly jobStatusName: JobStatus_Enum;
   readonly message?: Maybe<Scalars['String']>;
+  readonly playlistId?: Maybe<Scalars['String']>;
   readonly retriesCount: Scalars['Int'];
   readonly updatedAt: Scalars['timestamptz'];
   readonly videoDescription: Scalars['String'];
+  readonly videoPrivacyStatus: Scalars['String'];
   readonly videoTitle: Scalars['String'];
 };
 
@@ -20235,9 +20237,11 @@ export type Job_Queues_UploadYouTubeVideoJob_Bool_Exp = {
   readonly jobStatus?: Maybe<JobStatus_Bool_Exp>;
   readonly jobStatusName?: Maybe<JobStatus_Enum_Comparison_Exp>;
   readonly message?: Maybe<String_Comparison_Exp>;
+  readonly playlistId?: Maybe<String_Comparison_Exp>;
   readonly retriesCount?: Maybe<Int_Comparison_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly videoDescription?: Maybe<String_Comparison_Exp>;
+  readonly videoPrivacyStatus?: Maybe<String_Comparison_Exp>;
   readonly videoTitle?: Maybe<String_Comparison_Exp>;
 };
 
@@ -20265,9 +20269,11 @@ export type Job_Queues_UploadYouTubeVideoJob_Insert_Input = {
   readonly jobStatus?: Maybe<JobStatus_Obj_Rel_Insert_Input>;
   readonly jobStatusName?: Maybe<JobStatus_Enum>;
   readonly message?: Maybe<Scalars['String']>;
+  readonly playlistId?: Maybe<Scalars['String']>;
   readonly retriesCount?: Maybe<Scalars['Int']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
   readonly videoDescription?: Maybe<Scalars['String']>;
+  readonly videoPrivacyStatus?: Maybe<Scalars['String']>;
   readonly videoTitle?: Maybe<Scalars['String']>;
 };
 
@@ -20280,9 +20286,11 @@ export type Job_Queues_UploadYouTubeVideoJob_Max_Fields = {
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly message?: Maybe<Scalars['String']>;
+  readonly playlistId?: Maybe<Scalars['String']>;
   readonly retriesCount?: Maybe<Scalars['Int']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
   readonly videoDescription?: Maybe<Scalars['String']>;
+  readonly videoPrivacyStatus?: Maybe<Scalars['String']>;
   readonly videoTitle?: Maybe<Scalars['String']>;
 };
 
@@ -20294,9 +20302,11 @@ export type Job_Queues_UploadYouTubeVideoJob_Max_Order_By = {
   readonly createdAt?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly message?: Maybe<Order_By>;
+  readonly playlistId?: Maybe<Order_By>;
   readonly retriesCount?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
   readonly videoDescription?: Maybe<Order_By>;
+  readonly videoPrivacyStatus?: Maybe<Order_By>;
   readonly videoTitle?: Maybe<Order_By>;
 };
 
@@ -20309,9 +20319,11 @@ export type Job_Queues_UploadYouTubeVideoJob_Min_Fields = {
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly message?: Maybe<Scalars['String']>;
+  readonly playlistId?: Maybe<Scalars['String']>;
   readonly retriesCount?: Maybe<Scalars['Int']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
   readonly videoDescription?: Maybe<Scalars['String']>;
+  readonly videoPrivacyStatus?: Maybe<Scalars['String']>;
   readonly videoTitle?: Maybe<Scalars['String']>;
 };
 
@@ -20323,9 +20335,11 @@ export type Job_Queues_UploadYouTubeVideoJob_Min_Order_By = {
   readonly createdAt?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly message?: Maybe<Order_By>;
+  readonly playlistId?: Maybe<Order_By>;
   readonly retriesCount?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
   readonly videoDescription?: Maybe<Order_By>;
+  readonly videoPrivacyStatus?: Maybe<Order_By>;
   readonly videoTitle?: Maybe<Order_By>;
 };
 
@@ -20364,9 +20378,11 @@ export type Job_Queues_UploadYouTubeVideoJob_Order_By = {
   readonly jobStatus?: Maybe<JobStatus_Order_By>;
   readonly jobStatusName?: Maybe<Order_By>;
   readonly message?: Maybe<Order_By>;
+  readonly playlistId?: Maybe<Order_By>;
   readonly retriesCount?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
   readonly videoDescription?: Maybe<Order_By>;
+  readonly videoPrivacyStatus?: Maybe<Order_By>;
   readonly videoTitle?: Maybe<Order_By>;
 };
 
@@ -20392,11 +20408,15 @@ export enum Job_Queues_UploadYouTubeVideoJob_Select_Column {
   /** column name */
   Message = 'message',
   /** column name */
+  PlaylistId = 'playlistId',
+  /** column name */
   RetriesCount = 'retriesCount',
   /** column name */
   UpdatedAt = 'updatedAt',
   /** column name */
   VideoDescription = 'videoDescription',
+  /** column name */
+  VideoPrivacyStatus = 'videoPrivacyStatus',
   /** column name */
   VideoTitle = 'videoTitle'
 }
@@ -20410,9 +20430,11 @@ export type Job_Queues_UploadYouTubeVideoJob_Set_Input = {
   readonly id?: Maybe<Scalars['uuid']>;
   readonly jobStatusName?: Maybe<JobStatus_Enum>;
   readonly message?: Maybe<Scalars['String']>;
+  readonly playlistId?: Maybe<Scalars['String']>;
   readonly retriesCount?: Maybe<Scalars['Int']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
   readonly videoDescription?: Maybe<Scalars['String']>;
+  readonly videoPrivacyStatus?: Maybe<Scalars['String']>;
   readonly videoTitle?: Maybe<Scalars['String']>;
 };
 
@@ -20477,11 +20499,15 @@ export enum Job_Queues_UploadYouTubeVideoJob_Update_Column {
   /** column name */
   Message = 'message',
   /** column name */
+  PlaylistId = 'playlistId',
+  /** column name */
   RetriesCount = 'retriesCount',
   /** column name */
   UpdatedAt = 'updatedAt',
   /** column name */
   VideoDescription = 'videoDescription',
+  /** column name */
+  VideoPrivacyStatus = 'videoPrivacyStatus',
   /** column name */
   VideoTitle = 'videoTitle'
 }
@@ -31959,12 +31985,18 @@ export type UploadYouTubeVideos_GetTemplateDataQueryVariables = Exact<{
 }>;
 
 
-export type UploadYouTubeVideos_GetTemplateDataQuery = { readonly __typename?: 'query_root', readonly ContentItem: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly contentGroup: { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly abstractContentItems: ReadonlyArray<(
+export type UploadYouTubeVideos_GetTemplateDataQuery = { readonly __typename?: 'query_root', readonly ContentItem: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly contentGroup: { readonly __typename?: 'ContentGroup', readonly id: any, readonly shortTitle?: Maybe<string>, readonly title: string, readonly abstractContentItems: ReadonlyArray<(
         { readonly __typename?: 'ContentItem' }
-        & UploadYouTubeVideos_AbstractContentItemFragment
+        & UploadYouTubeVideos_ContentItemFragment
+      )>, readonly paperLinkContentItems: ReadonlyArray<(
+        { readonly __typename?: 'ContentItem' }
+        & UploadYouTubeVideos_ContentItemFragment
+      )>, readonly paperUrlContentItems: ReadonlyArray<(
+        { readonly __typename?: 'ContentItem' }
+        & UploadYouTubeVideos_ContentItemFragment
       )> } }> };
 
-export type UploadYouTubeVideos_AbstractContentItemFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly data: any };
+export type UploadYouTubeVideos_ContentItemFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly data: any };
 
 export type UploadYouTubeVideos_RefreshYouTubeDataMutationVariables = Exact<{
   attendeeGoogleAccountId: Scalars['uuid'];
@@ -33400,8 +33432,8 @@ export const UploadYouTubeVideos_UploadYouTubeVideoJobFragmentDoc = gql`
   }
 }
     `;
-export const UploadYouTubeVideos_AbstractContentItemFragmentDoc = gql`
-    fragment UploadYouTubeVideos_AbstractContentItem on ContentItem {
+export const UploadYouTubeVideos_ContentItemFragmentDoc = gql`
+    fragment UploadYouTubeVideos_ContentItem on ContentItem {
   id
   data
 }
@@ -37117,18 +37149,25 @@ export const UploadYouTubeVideos_GetTemplateDataDocument = gql`
     name
     contentGroup {
       id
+      shortTitle
       title
       abstractContentItems: contentItems(
         where: {contentTypeName: {_eq: ABSTRACT}}
         order_by: {updatedAt: desc}
         limit: 1
       ) {
-        ...UploadYouTubeVideos_AbstractContentItem
+        ...UploadYouTubeVideos_ContentItem
+      }
+      paperLinkContentItems: contentItems(where: {contentTypeName: {_eq: PAPER_LINK}}) {
+        ...UploadYouTubeVideos_ContentItem
+      }
+      paperUrlContentItems: contentItems(where: {contentTypeName: {_eq: PAPER_URL}}) {
+        ...UploadYouTubeVideos_ContentItem
       }
     }
   }
 }
-    ${UploadYouTubeVideos_AbstractContentItemFragmentDoc}`;
+    ${UploadYouTubeVideos_ContentItemFragmentDoc}`;
 
 /**
  * __useUploadYouTubeVideos_GetTemplateDataQuery__

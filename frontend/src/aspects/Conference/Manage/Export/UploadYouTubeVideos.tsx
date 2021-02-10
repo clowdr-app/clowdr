@@ -28,6 +28,7 @@ import * as R from "ramda";
 import React, { useCallback, useMemo, useState } from "react";
 import {
     JobStatus_Enum,
+    Job_Queues_UploadYouTubeVideoJob_Insert_Input,
     UploadYouTubeVideos_UploadYouTubeVideoJobFragment,
     useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation,
     useUploadYouTubeVideos_GetAttendeeGoogleAccountsQuery,
@@ -101,19 +102,26 @@ gql`
             name
             contentGroup {
                 id
+                shortTitle
                 title
                 abstractContentItems: contentItems(
                     where: { contentTypeName: { _eq: ABSTRACT } }
                     order_by: { updatedAt: desc }
                     limit: 1
                 ) {
-                    ...UploadYouTubeVideos_AbstractContentItem
+                    ...UploadYouTubeVideos_ContentItem
+                }
+                paperLinkContentItems: contentItems(where: { contentTypeName: { _eq: PAPER_LINK } }) {
+                    ...UploadYouTubeVideos_ContentItem
+                }
+                paperUrlContentItems: contentItems(where: { contentTypeName: { _eq: PAPER_URL } }) {
+                    ...UploadYouTubeVideos_ContentItem
                 }
             }
         }
     }
 
-    fragment UploadYouTubeVideos_AbstractContentItem on ContentItem {
+    fragment UploadYouTubeVideos_ContentItem on ContentItem {
         id
         data
     }
@@ -252,6 +260,7 @@ export function UploadYouTubeVideos(): JSX.Element {
 
                 const fileName = contentItem.name;
                 const itemTitle = contentItem.contentGroup.title;
+                const itemShortTitle = contentItem.contentGroup.shortTitle;
                 const abstractContentItem = contentItem.contentGroup.abstractContentItems.length
                     ? contentItem.contentGroup.abstractContentItems[0]
                     : undefined;
@@ -266,12 +275,57 @@ export function UploadYouTubeVideos(): JSX.Element {
                         ? abstractContentItemDataLatest.data.text
                         : "";
 
+                const paperUrls = R.flatten(
+                    contentItem.contentGroup.paperUrlContentItems.map((item) => {
+                        if (!isContentItemDataBlob(item.data)) {
+                            return [];
+                        }
+
+                        const dataBlob = item.data as ContentItemDataBlob;
+                        const latest = R.last(dataBlob);
+
+                        if (!latest) {
+                            return [];
+                        }
+
+                        if (latest.data.baseType === ContentBaseType.URL) {
+                            return [latest.data.url];
+                        } else {
+                            return [];
+                        }
+                    })
+                );
+
+                const paperLinks = R.flatten(
+                    contentItem.contentGroup.paperLinkContentItems.map((item) => {
+                        if (!isContentItemDataBlob(item.data)) {
+                            return [];
+                        }
+
+                        const dataBlob = item.data as ContentItemDataBlob;
+                        const latest = R.last(dataBlob);
+
+                        if (!latest) {
+                            return [];
+                        }
+
+                        if (latest.data.baseType === ContentBaseType.Link) {
+                            return [{ url: latest.data.url, text: latest.data.text }];
+                        } else {
+                            return [];
+                        }
+                    })
+                );
+
                 const view = {
                     fileId: contentItemId,
                     fileName,
                     itemId: contentItem.contentGroup.id,
                     itemTitle,
                     abstract,
+                    itemShortTitle,
+                    paperUrls,
+                    paperLinks,
                 };
 
                 return [
@@ -343,15 +397,17 @@ export function UploadYouTubeVideos(): JSX.Element {
 
                                 await createJobs({
                                     variables: {
-                                        objects: values.contentItemIds.map((id) => ({
-                                            contentItemId: id,
-                                            attendeeGoogleAccountId: values.attendeeGoogleAccountId,
-                                            conferenceId: conference.id,
-                                            videoTitle: details[id]?.title ?? id,
-                                            videoDescription: details[id]?.description ?? "",
-                                            videoPrivacyStatus: values.videoPrivacyStatus,
-                                            playlistId: values.playlistId,
-                                        })),
+                                        objects: values.contentItemIds.map(
+                                            (id): Job_Queues_UploadYouTubeVideoJob_Insert_Input => ({
+                                                contentItemId: id,
+                                                attendeeGoogleAccountId: values.attendeeGoogleAccountId,
+                                                conferenceId: conference.id,
+                                                videoTitle: details[id]?.title ?? id,
+                                                videoDescription: details[id]?.description ?? "",
+                                                videoPrivacyStatus: values.videoPrivacyStatus,
+                                                playlistId: values.playlistId,
+                                            })
+                                        ),
                                     },
                                 });
                                 toast({

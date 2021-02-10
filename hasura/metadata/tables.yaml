@@ -1528,7 +1528,9 @@
       - attendeeGoogleAccountId
       - conferenceId
       - contentItemId
+      - playlistId
       - videoDescription
+      - videoPrivacyStatus
       - videoTitle
       backend_only: false
   select_permissions:

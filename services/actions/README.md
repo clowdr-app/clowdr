@@ -10,6 +10,7 @@ Eventually this may be split into multiple microservices.
 1. You have created a [SendGrid](https://www.sendgrid.com) account and an API key for it.
 1. You have create a [Vonage Video API](https://www.vonage.co.uk/communications-apis/video/) account and an API key for it.
 1. You have deployed the [Image Handler](#deploying-the-image-handler) stack.
+1. You have created a [Google Cloud](#creating-a-google-cloud-project) project.
 
 ## Deploying the image handler
 
@@ -33,6 +34,15 @@ We use the AWS `serverless-image-handler` template for processing uploaded profi
 
 1. Deploy the stack and wait for creation to copmlete.
 1. Make a note of the `ApiEndpoint` output.
+
+# Creating a Google Cloud project
+
+We use a Google Cloud project to provide access to the YouTube Data API with OAuth2.
+
+1. Create a new project in Google Cloud Platform.
+1. Create a mew [OAuth 2.0 Client ID](https://console.cloud.google.com/apis/credentials)
+1. Set the _Authorised JavaScript origins_ `URIs` to the URI at which the frontend is hosted.
+1. Set _Authorised redirect URIs_ `URIs` to the `<frontend uri>/googleoauth`.
 
 ## Setting Up
 
@@ -133,3 +143,5 @@ Note: `AWS_` values come from the outputs of your AWS deployment. See [`aws/READ
 | OPENTOK_API_KEY                                  | Your Vonage Video API key                                                                                                     |          |
 | OPENTOK_API_SECRET                               | Your Vonage Video API secret                                                                                                  |          |
 | VONAGE_WEBHOOK_SECRET                            | A random token (your choice!) to be sent with Vonage webhook calls                                                            |          |
+| GOOGLE_CLIENT_ID                                 | The OAuth Client ID from your Google Cloud Platform project                                                                   |          |
+| GOOGLE_CLIENT_SECRET                             | The OAuth Client secret form your Google Cloud Platform project                                                               |          |

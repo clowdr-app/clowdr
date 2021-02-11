@@ -91,7 +91,7 @@ export async function handleEventVonageSessionUpdated(payload: Payload<EventVona
             console.log("Setting broadcast layout to bestFit", newRow.sessionId);
             for (const startedBroadcastId of startedBroadcastIds) {
                 try {
-                    await Vonage.setBroadcastLayout(startedBroadcastId, "bestFit", null, "pip");
+                    await Vonage.setBroadcastLayout(startedBroadcastId, "bestFit", null, "horizontalPresentation");
                 } catch (e) {
                     console.error(
                         "Failed to set broadcast layout for broadcast",

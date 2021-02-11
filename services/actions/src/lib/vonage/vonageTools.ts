@@ -147,7 +147,7 @@ export async function startEventBroadcast(eventId: string): Promise<void> {
             const broadcast = await Vonage.startBroadcast(broadcastDetails.vonageSessionId, {
                 layout: {
                     type: "bestFit",
-                    screenshareType: "pip",
+                    screenshareType: "horizontalPresentation",
                 },
                 outputs: {
                     rtmp: [

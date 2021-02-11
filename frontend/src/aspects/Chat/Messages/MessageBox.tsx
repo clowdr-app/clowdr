@@ -358,7 +358,7 @@ export default function MessageBox({ message }: { message: ChatMessageDataFragme
             px="4px"
             pt="1px"
             pb="4px"
-            bgColor={bgColour}
+            bgColor={isQuestion || isAnswer ? bgColour : undefined}
             mt={config.spacing}
             id={`message-${message.id}`}
             alignItems="flex-start"

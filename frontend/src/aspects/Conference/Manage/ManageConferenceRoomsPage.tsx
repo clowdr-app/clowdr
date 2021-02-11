@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql, Reference } from "@apollo/client";
 import {
     Accordion,
     AccordionButton,
@@ -6,40 +6,50 @@ import {
     AccordionItem,
     AccordionPanel,
     Box,
+    Button,
     Code,
+    Drawer,
+    DrawerBody,
+    DrawerCloseButton,
+    DrawerContent,
+    DrawerHeader,
+    DrawerOverlay,
+    FormLabel,
     Heading,
+    Input,
     ListItem,
-    Spinner,
+    NumberDecrementStepper,
+    NumberIncrementStepper,
+    NumberInput,
+    NumberInputField,
+    NumberInputStepper,
     Text,
     UnorderedList,
-    useToast,
+    useDisclosure,
 } from "@chakra-ui/react";
-import assert from "assert";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import {
-    Maybe,
     Permission_Enum,
     RoomMode_Enum,
-    RoomParticipantWithAttendeeInfoFragment,
     RoomWithParticipantInfoFragment,
-    SelectAllRoomsWithParticipantsQuery,
+    RoomWithParticipantInfoFragmentDoc,
     useCreateRoomMutation,
     useDeleteRoomsMutation,
     useSelectAllRoomsWithParticipantsQuery,
     useUpdateRoomMutation,
 } from "../../../generated/graphql";
 import { LinkButton } from "../../Chakra/LinkButton";
+import { NumberRangeColumnFilter, SelectColumnFilter, TextColumnFilter } from "../../CRUDTable2/CRUDComponents";
 import CRUDTable, {
-    CRUDTableProps,
-    defaultIntegerFilter,
-    defaultStringFilter,
-    FieldType,
-    UpdateResult,
-} from "../../CRUDTable/CRUDTable";
+    CellProps,
+    ColumnHeaderProps,
+    ColumnSpecification,
+    RowSpecification,
+    SortDirection,
+} from "../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../Errors/PageNotFound";
-import ApolloQueryWrapper from "../../GQL/ApolloQueryWrapper";
 import FAIcon from "../../Icons/FAIcon";
-import isValidUUID from "../../Utils/isValidUUID";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
@@ -79,10 +89,8 @@ gql`
     }
 
     mutation CreateRoom($room: Room_insert_input!) {
-        insert_Room(objects: [$room]) {
-            returning {
-                ...RoomWithParticipantInfo
-            }
+        insert_Room_one(object: $room) {
+            ...RoomWithParticipantInfo
         }
     }
 
@@ -93,326 +101,466 @@ gql`
     }
 `;
 
-interface RoomWithParticipantInfo {
-    id: string;
-    conferenceId: string;
-    name: string;
-    currentModeName: RoomMode_Enum;
-    capacity?: Maybe<number>;
-    priority: number;
-    participants: ReadonlyArray<RoomParticipantWithAttendeeInfoFragment>;
-}
-
-const RoomsCRUDTable = (props: Readonly<CRUDTableProps<RoomWithParticipantInfo, "id">>) => CRUDTable(props);
-
-function RoomSecondaryEditor({ room }: { room: RoomWithParticipantInfoFragment }): JSX.Element {
+function RoomSecondaryEditor({
+    room,
+    isSecondaryPanelOpen,
+    onSecondaryPanelClose,
+}: {
+    room: RoomWithParticipantInfoFragment | null;
+    isSecondaryPanelOpen: boolean;
+    onSecondaryPanelClose: () => void;
+}): JSX.Element {
     const conference = useConference();
     return (
-        <>
-            <LinkButton
-                to={`/conference/${conference.slug}/room/${room.id}`}
-                colorScheme="green"
-                mb={4}
-                isExternal={true}
-                aria-label={`View ${room.name} as an attendee`}
-                title={`View ${room.name} as an attendee`}
-            >
-                <FAIcon icon="external-link-alt" iconStyle="s" mr={3} />
-                View room
-            </LinkButton>
-            <Accordion>
-                <AccordionItem>
-                    <AccordionButton>
-                        <Box flex="1" textAlign="left">
-                            Participants
-                        </Box>
-                        <AccordionIcon />
-                    </AccordionButton>
-                    <AccordionPanel pt={4} pb={4}>
-                        {room.participants.length === 0 ? (
-                            "Room is currently empty."
-                        ) : (
-                            <UnorderedList>
-                                {room.participants.map((participant) => (
-                                    <ListItem key={participant.id}>{participant.attendee.displayName}</ListItem>
-                                ))}
-                            </UnorderedList>
-                        )}
-                    </AccordionPanel>
-                </AccordionItem>
+        <Drawer
+            isOpen={isSecondaryPanelOpen}
+            placement="right"
+            onClose={onSecondaryPanelClose}
+            // finalFocusRef={btnRef} // TODO: Ref to the edit button
+            size="lg"
+        >
+            <DrawerOverlay>
+                <DrawerContent>
+                    <DrawerCloseButton />
+                    <DrawerHeader>Edit</DrawerHeader>
 
-                {room.originatingData ? (
-                    <AccordionItem>
-                        <AccordionButton>
-                            <Box flex="1" textAlign="left">
-                                Section 2 title
-                            </Box>
-                            <AccordionIcon />
-                        </AccordionButton>
-                        <AccordionPanel pt={4} pb={4}>
+                    <DrawerBody>
+                        {room ? (
                             <>
-                                <Text>The following shows the raw data received when this room was imported.</Text>
-                                <Text as="pre" w="100%" overflowWrap="break-word" whiteSpace="pre-wrap" mt={2}>
-                                    <Code w="100%" p={2}>
-                                        Source Ids: {JSON.stringify(room.originatingData.sourceId.split("¬"), null, 2)}
-                                    </Code>
-                                </Text>
-                                <Text as="pre" w="100%" overflowWrap="break-word" whiteSpace="pre-wrap" mt={2}>
-                                    <Code w="100%" p={2}>
-                                        {JSON.stringify(room.originatingData.data, null, 2)}
-                                    </Code>
-                                </Text>
+                                <LinkButton
+                                    to={`/conference/${conference.slug}/room/${room.id}`}
+                                    colorScheme="green"
+                                    mb={4}
+                                    isExternal={true}
+                                    aria-label={`View ${room.name} as an attendee`}
+                                    title={`View ${room.name} as an attendee`}
+                                >
+                                    <FAIcon icon="external-link-alt" iconStyle="s" mr={3} />
+                                    View room
+                                </LinkButton>
+                                <Accordion>
+                                    <AccordionItem>
+                                        <AccordionButton>
+                                            <Box flex="1" textAlign="left">
+                                                Participants
+                                            </Box>
+                                            <AccordionIcon />
+                                        </AccordionButton>
+                                        <AccordionPanel pt={4} pb={4}>
+                                            {room.participants.length === 0 ? (
+                                                "Room is currently empty."
+                                            ) : (
+                                                <UnorderedList>
+                                                    {room.participants.map((participant) => (
+                                                        <ListItem key={participant.id}>
+                                                            {participant.attendee.displayName}
+                                                        </ListItem>
+                                                    ))}
+                                                </UnorderedList>
+                                            )}
+                                        </AccordionPanel>
+                                    </AccordionItem>
+
+                                    {room.originatingData ? (
+                                        <AccordionItem>
+                                            <AccordionButton>
+                                                <Box flex="1" textAlign="left">
+                                                    Section 2 title
+                                                </Box>
+                                                <AccordionIcon />
+                                            </AccordionButton>
+                                            <AccordionPanel pt={4} pb={4}>
+                                                <>
+                                                    <Text>
+                                                        The following shows the raw data received when this room was
+                                                        imported.
+                                                    </Text>
+                                                    <Text
+                                                        as="pre"
+                                                        w="100%"
+                                                        overflowWrap="break-word"
+                                                        whiteSpace="pre-wrap"
+                                                        mt={2}
+                                                    >
+                                                        <Code w="100%" p={2}>
+                                                            Source Ids:{" "}
+                                                            {JSON.stringify(
+                                                                room.originatingData.sourceId.split("¬"),
+                                                                null,
+                                                                2
+                                                            )}
+                                                        </Code>
+                                                    </Text>
+                                                    <Text
+                                                        as="pre"
+                                                        w="100%"
+                                                        overflowWrap="break-word"
+                                                        whiteSpace="pre-wrap"
+                                                        mt={2}
+                                                    >
+                                                        <Code w="100%" p={2}>
+                                                            {JSON.stringify(room.originatingData.data, null, 2)}
+                                                        </Code>
+                                                    </Text>
+                                                </>
+                                            </AccordionPanel>
+                                        </AccordionItem>
+                                    ) : undefined}
+                                </Accordion>
                             </>
-                        </AccordionPanel>
-                    </AccordionItem>
-                ) : undefined}
-            </Accordion>
-        </>
+                        ) : (
+                            <>No room found.</>
+                        )}
+                    </DrawerBody>
+                </DrawerContent>
+            </DrawerOverlay>
+        </Drawer>
     );
 }
 
-function EditableRoomsCRUDTable({
-    originalData,
-    refetch,
-}: {
-    originalData: ReadonlyArray<RoomWithParticipantInfoFragment>;
-    refetch: () => Promise<void>;
-}) {
-    const data = useMemo(() => {
-        return new Map<string, RoomWithParticipantInfo>(
-            originalData.map((room): [string, RoomWithParticipantInfo] => {
-                return [room.id, { ...room }];
-            })
-        );
-    }, [originalData]);
-
+function EditableRoomsCRUDTable() {
     const conference = useConference();
-    const [createRoom] = useCreateRoomMutation();
-    const [deleteRooms] = useDeleteRoomsMutation();
-    const [updateRoom] = useUpdateRoomMutation();
-    const toast = useToast();
+    const [insertRoom, insertRoomResponse] = useCreateRoomMutation();
+    const [deleteRooms, deleteRoomsResponse] = useDeleteRoomsMutation();
+    const [updateRoom, updateRoomResponse] = useUpdateRoomMutation();
+
+    const selectAllRoomsResult = useSelectAllRoomsWithParticipantsQuery({
+        variables: {
+            conferenceId: conference.id,
+        },
+    });
+    const data = useMemo(() => [...(selectAllRoomsResult.data?.Room ?? [])], [selectAllRoomsResult.data?.Room]);
+
+    const {
+        isOpen: isSecondaryPanelOpen,
+        onOpen: onSecondaryPanelOpen,
+        onClose: onSecondaryPanelClose,
+    } = useDisclosure();
+    const [editingRoom, setEditingRoom] = useState<RoomWithParticipantInfoFragment | null>(null);
+
+    const row: RowSpecification<RoomWithParticipantInfoFragment> = useMemo(
+        () => ({
+            getKey: (record) => record.id,
+            canSelect: (_record) => true,
+            pages: {
+                defaultToLast: false,
+            },
+        }),
+        []
+    );
+
+    const columns: ColumnSpecification<RoomWithParticipantInfoFragment>[] = useMemo(
+        () => [
+            {
+                id: "name",
+                defaultSortDirection: SortDirection.Asc,
+                header: function NameHeader(props: ColumnHeaderProps<RoomWithParticipantInfoFragment>) {
+                    return props.isInCreate ? (
+                        <FormLabel>Name</FormLabel>
+                    ) : (
+                        <Button size="xs" onClick={props.onClick}>
+                            Name{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        </Button>
+                    );
+                },
+                get: (data) => data.name,
+                set: (record, value: string) => {
+                    record.name = value;
+                },
+                sort: (x: string, y: string) => x.localeCompare(y),
+                filterFn: (rows: Array<RoomWithParticipantInfoFragment>, filterValue: string) => {
+                    return rows.filter((row) => row.name.toLowerCase().includes(filterValue.toLowerCase()));
+                },
+                filterEl: TextColumnFilter,
+                cell: function EventNameCell(props: CellProps<Partial<RoomWithParticipantInfoFragment>>) {
+                    return (
+                        <Input
+                            type="text"
+                            value={props.value ?? ""}
+                            onChange={(ev) => props.onChange?.(ev.target.value)}
+                            onBlur={props.onBlur}
+                            border="1px solid"
+                            borderColor="rgba(255, 255, 255, 0.16)"
+                        />
+                    );
+                },
+            },
+            {
+                id: "capacity",
+                header: function CapacityHeader(props: ColumnHeaderProps<RoomWithParticipantInfoFragment>) {
+                    return props.isInCreate ? (
+                        <FormLabel>Capacity</FormLabel>
+                    ) : (
+                        <Button size="xs" onClick={props.onClick}>
+                            Capacity{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        </Button>
+                    );
+                },
+                get: (data) => data.capacity,
+                set: (record, value: number) => {
+                    record.capacity = value;
+                },
+                sort: (x: number, y: number) => x - y,
+                filterFn: (
+                    rows: Array<RoomWithParticipantInfoFragment>,
+                    filterValue: { min?: number; max?: number }
+                ) => {
+                    return rows.filter(
+                        (row) =>
+                            (filterValue.min === undefined && filterValue.max === undefined) ||
+                            (row.capacity &&
+                                (filterValue.min === undefined || filterValue.min <= row.capacity) &&
+                                (filterValue.max === undefined || filterValue.max >= row.capacity))
+                    );
+                },
+                filterEl: NumberRangeColumnFilter(0, 3000),
+                cell: function EventNameCell(props: CellProps<Partial<RoomWithParticipantInfoFragment>>) {
+                    return (
+                        <NumberInput
+                            border="1px solid"
+                            borderColor="rgba(255, 255, 255, 0.16)"
+                            value={props.value ?? 3000}
+                            min={0}
+                            max={3000}
+                            onChange={(vStr, v) => props.onChange?.(vStr === "" ? undefined : v)}
+                            onBlur={props.onBlur}
+                        >
+                            <NumberInputField />
+                            <NumberInputStepper>
+                                <NumberIncrementStepper />
+                                <NumberDecrementStepper />
+                            </NumberInputStepper>
+                        </NumberInput>
+                    );
+                },
+            },
+            {
+                id: "priority",
+                header: function PriorityHeader(props: ColumnHeaderProps<RoomWithParticipantInfoFragment>) {
+                    return props.isInCreate ? (
+                        <FormLabel>Priority</FormLabel>
+                    ) : (
+                        <Button size="xs" onClick={props.onClick}>
+                            Priority{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        </Button>
+                    );
+                },
+                get: (data) => data.priority,
+                set: (record, value: number) => {
+                    record.priority = value;
+                },
+                sort: (x: number, y: number) => x - y,
+                filterFn: (
+                    rows: Array<RoomWithParticipantInfoFragment>,
+                    filterValue: { min?: number; max?: number }
+                ) => {
+                    return rows.filter(
+                        (row) =>
+                            (filterValue.min === undefined && filterValue.max === undefined) ||
+                            (row.priority &&
+                                (filterValue.min === undefined || filterValue.min <= row.priority) &&
+                                (filterValue.max === undefined || filterValue.max >= row.priority))
+                    );
+                },
+                filterEl: NumberRangeColumnFilter(0, 3000),
+                cell: function EventNameCell(props: CellProps<Partial<RoomWithParticipantInfoFragment>>) {
+                    return (
+                        <NumberInput
+                            border="1px solid"
+                            borderColor="rgba(255, 255, 255, 0.16)"
+                            value={props.value ?? 3000}
+                            min={0}
+                            max={3000}
+                            onChange={(vStr, v) => props.onChange?.(vStr === "" ? 10 : v)}
+                            onBlur={props.onBlur}
+                        >
+                            <NumberInputField />
+                            <NumberInputStepper>
+                                <NumberIncrementStepper />
+                                <NumberDecrementStepper />
+                            </NumberInputStepper>
+                        </NumberInput>
+                    );
+                },
+            },
+            {
+                id: "mode",
+                header: function ModeHeader(props: ColumnHeaderProps<RoomWithParticipantInfoFragment>) {
+                    return props.isInCreate ? (
+                        <FormLabel>Current mode</FormLabel>
+                    ) : (
+                        <Button size="xs" onClick={props.onClick}>
+                            Current mode{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        </Button>
+                    );
+                },
+                get: (data) => data.currentModeName,
+                sort: (x: string, y: string) => x.localeCompare(y),
+                filterFn: (rows, v: RoomMode_Enum) => rows.filter((r) => r.currentModeName === v),
+                filterEl: SelectColumnFilter(Object.values(RoomMode_Enum)),
+                cell: function EventNameCell(props: CellProps<Partial<RoomWithParticipantInfoFragment>>) {
+                    return <Text>{props.value}</Text>;
+                },
+            },
+        ],
+        []
+    );
 
     return (
-        <RoomsCRUDTable
-            data={data}
-            primaryFields={{
-                keyField: {
-                    heading: "Id",
-                    ariaLabel: "Unique identifier",
-                    description: "Unique identifier",
-                    isHidden: true,
-                    insert: (item, v) => {
-                        return {
-                            ...item,
-                            id: v,
-                        };
+        <>
+            <CRUDTable
+                data={!selectAllRoomsResult.loading && (selectAllRoomsResult.data?.Room ? data : null)}
+                tableUniqueName="ManageConferenceRooms"
+                row={row}
+                columns={columns}
+                edit={{
+                    open: (key) => {
+                        setEditingRoom(data.find((x) => x.id === key) ?? null);
+                        onSecondaryPanelOpen();
                     },
-                    extract: (v) => v.id,
-                    spec: {
-                        fieldType: FieldType.string,
-                        convertToUI: (x) => x,
-                        disallowSpaces: true,
-                    },
-                    validate: (v) => isValidUUID(v) || ["Invalid UUID"],
-                    getRowTitle: (v) => v.name,
-                },
-                otherFields: {
-                    name: {
-                        heading: "Name",
-                        ariaLabel: "Name",
-                        description: "Name of the room",
-                        isHidden: false,
-                        isEditable: true,
-                        defaultValue: "New room name",
-                        insert: (room, v) => {
-                            return {
-                                ...room,
-                                name: v,
-                            };
-                        },
-                        extract: (v) => v.name,
-                        spec: {
-                            fieldType: FieldType.string,
-                            convertFromUI: (x) => x,
-                            convertToUI: (x) => x,
-                            filter: defaultStringFilter,
-                        },
-                        validate: (v) => v.length >= 3 || ["Name must be at least 3 characters"],
-                    },
-                    capacity: {
-                        heading: "Capacity",
-                        ariaLabel: "Capacity",
-                        description: "The maximum number of attendees that can participate in the room at once.",
-                        isHidden: false,
-                        isEditable: true,
-                        defaultValue: null,
-                        insert: (item, v) => {
-                            return {
-                                ...item,
-                                capacity: v,
-                            };
-                        },
-                        extract: (v) => v.capacity,
-                        spec: {
-                            fieldType: FieldType.integer,
-                            convertToUI: (x) => (x === -1 || x === null ? 3000 : x),
-                            convertFromUI: (x) => (x === -1 || x === 3000 ? null : x),
-                            filter: defaultIntegerFilter,
-                            max: 3000,
-                            min: -1,
-                        },
-                    },
-                    priority: {
-                        heading: "Priority",
-                        ariaLabel: "Priority",
-                        description:
-                            "Priority determines the order rooms are listed in the schedule. Ascending sort (lowest first).",
-                        isHidden: false,
-                        isEditable: true,
-                        defaultValue: 10,
-                        insert: (item, v) => {
-                            return {
-                                ...item,
-                                priority: v,
-                            };
-                        },
-                        extract: (v) => v.priority,
-                        spec: {
-                            fieldType: FieldType.integer,
-                            convertToUI: (x) => x,
-                            convertFromUI: (x) => x,
-                            filter: defaultIntegerFilter,
-                        },
-                    },
-                    currentModeName: {
-                        heading: "Current Mode",
-                        ariaLabel: "Current Mode",
-                        description: "Current mode of the room",
-                        isHidden: false,
-                        extract: (v) => v.currentModeName,
-                        spec: {
-                            fieldType: FieldType.string,
-                            convertToUI: (x) => x[0] + x.substr(1).toLowerCase(),
-                            filter: defaultStringFilter,
-                        },
-                    },
-                },
-            }}
-            csud={{
-                cudCallbacks: {
-                    create: async (value: Partial<RoomWithParticipantInfo>): Promise<string | null> => {
-                        assert(value.name);
-                        assert(value.priority !== undefined);
-                        const newRoom = await createRoom({
+                }}
+                insert={{
+                    ongoing: insertRoomResponse.loading,
+                    generateDefaults: () => ({
+                        id: uuidv4(),
+                        conferenceId: conference.id,
+                        capacity: undefined,
+                        priority: 10,
+                        currentModeName: RoomMode_Enum.Breakout,
+                        name: "New room " + (data.length + 1),
+                        participants: [],
+                    }),
+                    makeWhole: (d) => d as RoomWithParticipantInfoFragment,
+                    start: (record) => {
+                        insertRoom({
                             variables: {
                                 room: {
-                                    conferenceId: conference.id,
-                                    capacity: value.capacity,
-                                    priority: value.priority,
-                                    currentModeName: RoomMode_Enum.Breakout,
-                                    name: value.name,
+                                    id: record.id,
+                                    conferenceId: record.conferenceId,
+                                    capacity: record.capacity,
+                                    priority: record.priority,
+                                    currentModeName: record.currentModeName,
+                                    name: record.name,
                                 },
                             },
+                            update: (cache, { data: _data }) => {
+                                if (_data?.insert_Room_one) {
+                                    const data = _data.insert_Room_one;
+                                    cache.modify({
+                                        fields: {
+                                            Room(existingRefs: Reference[] = [], { readField }) {
+                                                const newRef = cache.writeFragment({
+                                                    data: {
+                                                        ...data,
+                                                    },
+                                                    fragment: RoomWithParticipantInfoFragmentDoc,
+                                                    fragmentName: "RoomWithParticipantInfo",
+                                                });
+                                                if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
+                                                    return existingRefs;
+                                                }
+
+                                                return [...existingRefs, newRef];
+                                            },
+                                        },
+                                    });
+                                }
+                            },
                         });
-                        if (newRoom.data?.insert_Room?.returning && newRoom.data.insert_Room.returning.length > 0) {
-                            await refetch();
-                            return newRoom.data.insert_Room.returning[0].id;
-                        }
-                        return null;
                     },
-                    update: async (
-                        values: Map<string, RoomWithParticipantInfo>
-                    ): Promise<Map<string, UpdateResult>> => {
-                        const results = new Map<string, UpdateResult>();
-
-                        for (const [key, value] of values) {
-                            results.set(key, ["Not attempted"]);
-                            try {
-                                await updateRoom({
-                                    variables: {
-                                        id: value.id,
-                                        name: value.name,
-                                        capacity: value.capacity,
-                                        priority: value.priority,
-                                    },
-                                });
-                                results.set(key, true);
-                            } catch (e) {
-                                results.set(key, [e.toString()]);
-                            }
-                        }
-
-                        return results;
+                }}
+                update={{
+                    ongoing: updateRoomResponse.loading,
+                    start: (record) => {
+                        updateRoom({
+                            variables: {
+                                id: record.id,
+                                name: record.name,
+                                priority: record.priority,
+                                capacity: record.capacity,
+                            },
+                            optimisticResponse: {
+                                update_Room_by_pk: record,
+                            },
+                            update: (cache, { data: _data }) => {
+                                if (_data?.update_Room_by_pk) {
+                                    const data = _data.update_Room_by_pk;
+                                    cache.modify({
+                                        fields: {
+                                            Room(existingRefs: Reference[] = [], { readField }) {
+                                                const newRef = cache.writeFragment({
+                                                    data,
+                                                    fragment: RoomWithParticipantInfoFragmentDoc,
+                                                    fragmentName: "RoomWithParticipantInfo",
+                                                });
+                                                if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
+                                                    return existingRefs;
+                                                }
+                                                return [...existingRefs, newRef];
+                                            },
+                                        },
+                                    });
+                                }
+                            },
+                        });
                     },
-                    delete: async (values: Set<string>): Promise<Map<string, boolean>> => {
-                        const ids = Array.from(values.values());
-                        let ok = false;
-                        try {
-                            const result = await deleteRooms({
-                                variables: {
-                                    deleteRoomIds: ids,
-                                },
-                            });
-                            if (!result.errors || result.errors.length === 0) {
-                                ok = true;
-                            } else if (
-                                result.errors[0].message.includes(
-                                    // eslint-disable-next-line quotes
-                                    'Foreign key violation. update or delete on table "Room" violates foreign key constraint "Event_roomId_fkey" on table "Event"'
-                                )
-                            ) {
-                                toast({
-                                    status: "error",
-                                    title: "Error deleting room",
-                                    description:
-                                        "Events are scheduled in this room. Please delete them before deleting this room.",
-                                    duration: 7000,
-                                    isClosable: true,
-                                    position: "bottom",
-                                });
-                            }
-                        } catch (e) {
-                            if (
-                                e.toString().includes(
-                                    // eslint-disable-next-line quotes
-                                    'Foreign key violation. update or delete on table "Room" violates foreign key constraint "Event_roomId_fkey" on table "Event"'
-                                )
-                            ) {
-                                toast({
-                                    status: "error",
-                                    title: "Error deleting room",
-                                    description:
-                                        "Events are scheduled in this room. Please delete them before deleting this room.",
-                                    duration: 7000,
-                                    isClosable: true,
-                                    position: "bottom",
-                                });
-                            }
-                        }
-                        await refetch();
-                        return new Map(ids.map((id) => [id, ok]));
+                }}
+                delete={{
+                    ongoing: deleteRoomsResponse.loading,
+                    start: (keys) => {
+                        deleteRooms({
+                            variables: {
+                                deleteRoomIds: keys,
+                            },
+                            update: (cache, { data: _data }) => {
+                                if (_data?.delete_Room) {
+                                    const data = _data.delete_Room;
+                                    const deletedIds = data.returning.map((x) => x.id);
+                                    cache.modify({
+                                        fields: {
+                                            Room(existingRefs: Reference[] = [], { readField }) {
+                                                deletedIds.forEach((x) => {
+                                                    cache.evict({
+                                                        id: x.id,
+                                                        fieldName: "RoomWithParticipantInfo",
+                                                        broadcast: true,
+                                                    });
+                                                });
+                                                return existingRefs.filter(
+                                                    (ref) => !deletedIds.includes(readField("id", ref))
+                                                );
+                                            },
+                                        },
+                                    });
+                                }
+                            },
+                        });
                     },
-                },
-            }}
-            secondaryFields={{
-                editSingle: (key, _onClose, _isDirty, _markDirty) => {
-                    const room = data.get(key);
-                    if (room) {
-                        return {
-                            editorElement: <RoomSecondaryEditor room={room} />,
-                            footerButtons: [],
-                            includeCloseButton: true,
-                        };
-                    } else {
-                        return {
-                            editorElement: <Spinner />,
-                            footerButtons: [],
-                            includeCloseButton: true,
-                        };
-                    }
-                },
-            }}
-        />
+                }}
+                alert={
+                    insertRoomResponse.error || updateRoomResponse.error || deleteRoomsResponse.error
+                        ? {
+                              status: "error",
+                              title: "Error saving changes",
+                              description:
+                                  insertRoomResponse.error?.message ??
+                                  updateRoomResponse.error?.message ??
+                                  deleteRoomsResponse.error?.message.includes(
+                                      // eslint-disable-next-line quotes
+                                      'Foreign key violation. update or delete on table "Room" violates foreign key constraint "Event_roomId_fkey" on table "Event"'
+                                  )
+                                      ? "Events are scheduled in this room. Please delete them before deleting this room."
+                                      : deleteRoomsResponse.error?.message ?? "Unknown error",
+                          }
+                        : undefined
+                }
+            />
+            <RoomSecondaryEditor
+                room={editingRoom}
+                isSecondaryPanelOpen={isSecondaryPanelOpen}
+                onSecondaryPanelClose={onSecondaryPanelClose}
+            />
+        </>
     );
 }
 
@@ -421,12 +569,6 @@ export default function ManageConferenceRoomsPage(): JSX.Element {
     const title = useTitle(`Manage rooms at ${conference.shortName}`);
 
     useDashboardPrimaryMenuButtons();
-
-    const selectAllRoomsResult = useSelectAllRoomsWithParticipantsQuery({
-        variables: {
-            conferenceId: conference.id,
-        },
-    });
 
     return (
         <RequireAtLeastOnePermissionWrapper
@@ -440,25 +582,7 @@ export default function ManageConferenceRoomsPage(): JSX.Element {
             <Heading as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                 Rooms
             </Heading>
-            <ApolloQueryWrapper<
-                SelectAllRoomsWithParticipantsQuery,
-                unknown,
-                ReadonlyArray<RoomWithParticipantInfoFragment>
-            >
-                getter={(x) => x.Room}
-                queryResult={selectAllRoomsResult}
-            >
-                {(data) => {
-                    return (
-                        <EditableRoomsCRUDTable
-                            originalData={data}
-                            refetch={async () => {
-                                await selectAllRoomsResult.refetch();
-                            }}
-                        />
-                    );
-                }}
-            </ApolloQueryWrapper>
+            <EditableRoomsCRUDTable />
         </RequireAtLeastOnePermissionWrapper>
     );
 }

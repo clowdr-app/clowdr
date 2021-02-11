@@ -30294,10 +30294,10 @@ export type CreateRoomMutationVariables = Exact<{
 }>;
 
 
-export type CreateRoomMutation = { readonly __typename?: 'mutation_root', readonly insert_Room?: Maybe<{ readonly __typename?: 'Room_mutation_response', readonly returning: ReadonlyArray<(
-      { readonly __typename?: 'Room' }
-      & RoomWithParticipantInfoFragment
-    )> }> };
+export type CreateRoomMutation = { readonly __typename?: 'mutation_root', readonly insert_Room_one?: Maybe<(
+    { readonly __typename?: 'Room' }
+    & RoomWithParticipantInfoFragment
+  )> };
 
 export type UpdateRoomsWithParticipantsMutationVariables = Exact<{
   id: Scalars['uuid'];
@@ -30313,6 +30313,7 @@ export type UpdateRoomsWithParticipantsMutation = { readonly __typename?: 'mutat
   )> };
 
 export type InsertEventInfoMutationVariables = Exact<{
+  id: Scalars['uuid'];
   roomId: Scalars['uuid'];
   conferenceId: Scalars['uuid'];
   intendedRoomModeName: RoomMode_Enum;
@@ -30345,13 +30346,6 @@ export type UpdateEventInfoMutation = { readonly __typename?: 'mutation_root', r
     { readonly __typename?: 'Event' }
     & EventInfoFragment
   )> };
-
-export type DeleteEventInfoMutationVariables = Exact<{
-  eventId: Scalars['uuid'];
-}>;
-
-
-export type DeleteEventInfoMutation = { readonly __typename?: 'mutation_root', readonly delete_Event_by_pk?: Maybe<{ readonly __typename?: 'Event', readonly id: any }> };
 
 export type DeleteEventInfosMutationVariables = Exact<{
   eventIds: ReadonlyArray<Scalars['uuid']>;
@@ -35519,10 +35513,8 @@ export type SelectAllRoomsWithParticipantsLazyQueryHookResult = ReturnType<typeo
 export type SelectAllRoomsWithParticipantsQueryResult = Apollo.QueryResult<SelectAllRoomsWithParticipantsQuery, SelectAllRoomsWithParticipantsQueryVariables>;
 export const CreateRoomDocument = gql`
     mutation CreateRoom($room: Room_insert_input!) {
-  insert_Room(objects: [$room]) {
-    returning {
-      ...RoomWithParticipantInfo
-    }
+  insert_Room_one(object: $room) {
+    ...RoomWithParticipantInfo
   }
 }
     ${RoomWithParticipantInfoFragmentDoc}`;
@@ -35590,9 +35582,9 @@ export type UpdateRoomsWithParticipantsMutationHookResult = ReturnType<typeof us
 export type UpdateRoomsWithParticipantsMutationResult = Apollo.MutationResult<UpdateRoomsWithParticipantsMutation>;
 export type UpdateRoomsWithParticipantsMutationOptions = Apollo.BaseMutationOptions<UpdateRoomsWithParticipantsMutation, UpdateRoomsWithParticipantsMutationVariables>;
 export const InsertEventInfoDocument = gql`
-    mutation InsertEventInfo($roomId: uuid!, $conferenceId: uuid!, $intendedRoomModeName: RoomMode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $contentGroupId: uuid = null) {
+    mutation InsertEventInfo($id: uuid!, $roomId: uuid!, $conferenceId: uuid!, $intendedRoomModeName: RoomMode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $contentGroupId: uuid = null) {
   insert_Event_one(
-    object: {roomId: $roomId, conferenceId: $conferenceId, intendedRoomModeName: $intendedRoomModeName, originatingDataId: $originatingDataId, name: $name, startTime: $startTime, durationSeconds: $durationSeconds, contentGroupId: $contentGroupId}
+    object: {id: $id, roomId: $roomId, conferenceId: $conferenceId, intendedRoomModeName: $intendedRoomModeName, originatingDataId: $originatingDataId, name: $name, startTime: $startTime, durationSeconds: $durationSeconds, contentGroupId: $contentGroupId}
   ) {
     ...EventInfo
   }
@@ -35613,6 +35605,7 @@ export type InsertEventInfoMutationFn = Apollo.MutationFunction<InsertEventInfoM
  * @example
  * const [insertEventInfoMutation, { data, loading, error }] = useInsertEventInfoMutation({
  *   variables: {
+ *      id: // value for 'id'
  *      roomId: // value for 'roomId'
  *      conferenceId: // value for 'conferenceId'
  *      intendedRoomModeName: // value for 'intendedRoomModeName'
@@ -35672,38 +35665,6 @@ export function useUpdateEventInfoMutation(baseOptions?: Apollo.MutationHookOpti
 export type UpdateEventInfoMutationHookResult = ReturnType<typeof useUpdateEventInfoMutation>;
 export type UpdateEventInfoMutationResult = Apollo.MutationResult<UpdateEventInfoMutation>;
 export type UpdateEventInfoMutationOptions = Apollo.BaseMutationOptions<UpdateEventInfoMutation, UpdateEventInfoMutationVariables>;
-export const DeleteEventInfoDocument = gql`
-    mutation DeleteEventInfo($eventId: uuid!) {
-  delete_Event_by_pk(id: $eventId) {
-    id
-  }
-}
-    `;
-export type DeleteEventInfoMutationFn = Apollo.MutationFunction<DeleteEventInfoMutation, DeleteEventInfoMutationVariables>;
-
-/**
- * __useDeleteEventInfoMutation__
- *
- * To run a mutation, you first call `useDeleteEventInfoMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteEventInfoMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteEventInfoMutation, { data, loading, error }] = useDeleteEventInfoMutation({
- *   variables: {
- *      eventId: // value for 'eventId'
- *   },
- * });
- */
-export function useDeleteEventInfoMutation(baseOptions?: Apollo.MutationHookOptions<DeleteEventInfoMutation, DeleteEventInfoMutationVariables>) {
-        return Apollo.useMutation<DeleteEventInfoMutation, DeleteEventInfoMutationVariables>(DeleteEventInfoDocument, baseOptions);
-      }
-export type DeleteEventInfoMutationHookResult = ReturnType<typeof useDeleteEventInfoMutation>;
-export type DeleteEventInfoMutationResult = Apollo.MutationResult<DeleteEventInfoMutation>;
-export type DeleteEventInfoMutationOptions = Apollo.BaseMutationOptions<DeleteEventInfoMutation, DeleteEventInfoMutationVariables>;
 export const DeleteEventInfosDocument = gql`
     mutation DeleteEventInfos($eventIds: [uuid!]!) {
   delete_Event(where: {id: {_in: $eventIds}}) {

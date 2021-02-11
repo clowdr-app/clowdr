@@ -87,7 +87,7 @@ gql`
 
 export function requiresEventPeople(event: EventInfoFragment): boolean {
     return (
-        event.eventPeople.length === 0 &&
+        (!event.eventPeople || event.eventPeople.length === 0) &&
         (event.intendedRoomModeName === RoomMode_Enum.Presentation ||
             event.intendedRoomModeName === RoomMode_Enum.QAndA)
     );

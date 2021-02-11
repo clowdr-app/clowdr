@@ -25,12 +25,14 @@ export function DateTimePicker<D extends Date | undefined = Date | undefined>({
     editMode,
     onChange,
     onBlur,
+    onFocus,
     allowUndefined = false,
     size,
     isDisabled = false,
 }: {
     value?: Date;
     onBlur?: () => void;
+    onFocus?: () => void;
     editMode?: EditMode;
     onChange?: (value: D) => void;
     allowUndefined?: boolean;
@@ -114,7 +116,7 @@ export function DateTimePicker<D extends Date | undefined = Date | undefined>({
     );
 
     return (
-        <Box onBlur={onBlur} width="auto" display="block">
+        <Box onBlur={onBlur} onFocus={onFocus} width="auto" display="block" minW="max-content">
             <Input
                 size={size}
                 flex="0 0 10em"

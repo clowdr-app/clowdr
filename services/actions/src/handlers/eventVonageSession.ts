@@ -91,7 +91,7 @@ export async function handleEventVonageSessionUpdated(payload: Payload<EventVona
             console.log("Setting broadcast layout to bestFit", newRow.sessionId);
             for (const startedBroadcastId of startedBroadcastIds) {
                 try {
-                    await Vonage.setBroadcastLayout(startedBroadcastId, "bestFit", null);
+                    await Vonage.setBroadcastLayout(startedBroadcastId, "bestFit", null, "pip");
                 } catch (e) {
                     console.error(
                         "Failed to set broadcast layout for broadcast",
@@ -155,7 +155,8 @@ export async function handleEventVonageSessionUpdated(payload: Payload<EventVona
                     await Vonage.setBroadcastLayout(
                         startedBroadcastId,
                         "custom",
-                        "stream.left {display: block; position: absolute; width: 50%; height: 100%; left: 0;} stream.right {position: absolute; width: 50%; height: 100%; right: 0;}"
+                        "stream.left {display: block; position: absolute; width: 50%; height: 100%; left: 0;} stream.right {position: absolute; width: 50%; height: 100%; right: 0;}",
+                        null
                     );
                 } catch (e) {
                     console.error(
@@ -212,7 +213,8 @@ export async function handleEventVonageSessionUpdated(payload: Payload<EventVona
                     await Vonage.setBroadcastLayout(
                         startedBroadcastId,
                         "custom",
-                        "stream.focus {display: block; position: absolute; width: 100%; height: 100%; left: 0;}"
+                        "stream.focus {display: block; position: absolute; width: 100%; height: 100%; left: 0;}",
+                        null
                     );
                 } catch (e) {
                     console.error(
@@ -273,7 +275,8 @@ export async function handleEventVonageSessionUpdated(payload: Payload<EventVona
                     await Vonage.setBroadcastLayout(
                         startedBroadcastId,
                         "custom",
-                        "stream.focus {display: block; position: absolute; width: 100%; height: 100%; left: 0; z-index: 100;} stream.corner {display: block; position: absolute; width: 20%; height: 20%; right: 10%; bottom: 10%; z-index: 200;}"
+                        "stream.focus {display: block; position: absolute; width: 100%; height: 100%; left: 0; z-index: 100;} stream.corner {display: block; position: absolute; width: 20%; height: 20%; right: 10%; bottom: 10%; z-index: 200;}",
+                        null
                     );
                 } catch (e) {
                     console.error(

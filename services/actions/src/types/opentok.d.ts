@@ -1,4 +1,4 @@
-// Type definitions for opentok v2.10.0
+// Type definitions for opentok v2.11.0
 // Project: https://github.com/opentok/opentok-node
 // Definitions by: Seth Westphal <https://github.com/westy92>
 //                 Anthony Messerschmidt <https://github.com/CatGuardian>
@@ -29,6 +29,10 @@ declare module "opentok" {
             url: string;
         }
 
+        export type LayoutType = "bestFit" | "pip" | "verticalPresentation" | "horizontalPresentation" | "focus";
+
+        export type ScreenShareType = "bestFit" | "pip" | "verticalPresentation" | "horizontalPresentation";
+
         export interface ArchiveOptions {
             name?: string;
             hasAudio?: boolean;
@@ -41,7 +45,8 @@ declare module "opentok" {
         export type ArchiveLayoutOptions = PredefinedArchiveLayoutOptions | CustomArchiveLayoutOptions;
 
         export interface PredefinedArchiveLayoutOptions {
-            type: "bestFit" | "pip" | "verticalPresentation" | "horizontalPresentation" | "focus";
+            type: LayoutType;
+            screenshareType?: ScreenShareType;
         }
 
         export interface CustomArchiveLayoutOptions {
@@ -87,15 +92,9 @@ declare module "opentok" {
             sessionId?: string;
         }
 
-        export type BroadcastLayoutType =
-            | "bestFit"
-            | "pip"
-            | "verticalPresentation"
-            | "horizontalPresentation"
-            | "focus";
-
         export interface BroadcastLayoutOptions {
-            type?: BroadcastLayoutType;
+            type?: LayoutType;
+            screenshareType?: ScreenShareType;
         }
 
         export interface CustomBroadcastLayoutOptions {
@@ -217,14 +216,16 @@ declare module "opentok" {
         ): void;
         public setArchiveLayout(
             archiveId: string,
-            type: OpenTok.BroadcastLayoutType | "custom",
+            type: OpenTok.LayoutType | "custom",
             stylesheet: string | null,
+            screenshareType: OpenTok.ScreenShareType | null,
             callback: (error: Error | null) => void
         ): void;
         public setBroadcastLayout(
             broadcastId: string,
-            type: OpenTok.BroadcastLayoutType | "custom",
+            type: OpenTok.LayoutType | "custom",
             stylesheet: string | null,
+            screenshareType: OpenTok.ScreenShareType | null,
             callback: (error: Error | null) => void
         ): void;
         public setStreamClassLists(

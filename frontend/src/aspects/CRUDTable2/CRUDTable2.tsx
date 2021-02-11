@@ -626,7 +626,6 @@ function RenderedCRUDTable<T>({
                               row={row}
                               columns={columns}
                               beginInsert={beginInsert}
-                              // TODO: Should these be wrapped somehow to avoid accidental re-renders?
                               onSelectChange={
                                   enableSelection
                                       ? (isSelected) => {

@@ -17,6 +17,7 @@ gql`
 
         chat {
             created_at
+
             conference {
                 slug
             }
@@ -45,7 +46,9 @@ gql`
     }
 
     query AllUnnotifiedSubscriptions {
-        chat_SubscriptionsWithUnnotifiedMessages(where: { attendee: { user: {} } }) {
+        chat_SubscriptionsWithUnnotifiedMessages(
+            where: { _and: [{ attendee: { user: {} } }, { chat: { room: { roomPrivacyName: { _eq: DM } } } }] }
+        ) {
             ...SubWithUnnotifMsgs
         }
     }

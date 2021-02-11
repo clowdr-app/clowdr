@@ -3,15 +3,15 @@ import assert from "assert";
 import { useEffect, useState } from "react";
 import {
     EventPerson_Insert_Input,
-    Event_Insert_Input,
     OriginatingData_Insert_Input,
     RoomMode_Enum,
     Room_Insert_Input,
     Tag_Insert_Input,
+    useDeleteEventsMutation,
     useDeleteOriginatingDatasMutation,
     useDeleteRoomsMutation,
     useDeleteTagsMutation,
-    useInsertDeleteEventsMutation,
+    useInsertEventMutation,
     useInsertOriginatingDatasMutation,
     useInsertRoomsMutation,
     useInsertTagsMutation,
@@ -103,7 +103,7 @@ gql`
         Room(where: { conferenceId: { _eq: $conferenceId } }) {
             ...RoomInfo
         }
-        Event(where: { conferenceId: { _eq: $conferenceId } }) {
+        Event(where: { conferenceId: { _eq: $conferenceId } }, order_by: { startTime: asc, endTime: asc }) {
             ...EventInfo
         }
         OriginatingData(where: { conferenceId: { _eq: $conferenceId } }) {
@@ -151,16 +151,17 @@ gql`
         }
     }
 
-    mutation InsertDeleteEvents($newEvents: [Event_insert_input!]!, $deleteEventIds: [uuid!]!) {
-        insert_Event(objects: $newEvents) {
-            returning {
-                ...EventInfo
-            }
-        }
+    mutation DeleteEvents($deleteEventIds: [uuid!]!) {
         delete_Event(where: { id: { _in: $deleteEventIds } }) {
             returning {
                 id
             }
+        }
+    }
+
+    mutation InsertEvent($newEvent: Event_insert_input!) {
+        insert_Event_one(object: $newEvent) {
+            ...EventInfo
         }
     }
 
@@ -317,7 +318,8 @@ export function useSaveScheduleDiff():
     const [deleteTagsMutation] = useDeleteTagsMutation();
     const [updateTagMutation] = useUpdateTagMutation();
 
-    const [insertDeleteEventsMutation] = useInsertDeleteEventsMutation();
+    const [deleteEventsMutation] = useDeleteEventsMutation();
+    const [insertEventMutation] = useInsertEventMutation();
     const [updateEventMutation] = useUpdateEventMutation();
     const [updateEventPersonMutation] = useUpdateEventPersonMutation();
 
@@ -581,44 +583,49 @@ export function useSaveScheduleDiff():
                     }
 
                     if (deletedEventKeys.size > 0 || newEvents.size > 0) {
-                        await insertDeleteEventsMutation({
+                        await deleteEventsMutation({
                             variables: {
                                 deleteEventIds: Array.from(deletedEventKeys.values()),
-                                newEvents: Array.from(newEvents.values()).map((event) => {
-                                    const eventResult: Event_Insert_Input = {
-                                        id: event.id,
-                                        conferenceId: conference.id,
-                                        roomId: event.roomId,
-                                        intendedRoomModeName: event.intendedRoomModeName,
-                                        contentGroupId: event.contentGroupId,
-                                        name: event.name,
-                                        startTime: new Date(event.startTime).toISOString(),
-                                        durationSeconds: event.durationSeconds,
-                                        originatingDataId: event.originatingDataId,
-                                        eventTags: {
-                                            data: Array.from(event.tagIds.values()).map((tagId) => ({
-                                                tagId,
-                                            })),
-                                        },
-                                        eventPeople: {
-                                            data: event.people.map((eventPerson) => {
-                                                const eventPersonResult: EventPerson_Insert_Input = {
-                                                    id: eventPerson.id,
-                                                    conferenceId: conference.id,
-                                                    originatingDataId: eventPerson.originatingDataId,
-                                                    attendeeId: eventPerson.attendeeId,
-                                                    name: eventPerson.name,
-                                                    affiliation: eventPerson.affiliation,
-                                                    roleName: eventPerson.roleName,
-                                                };
-                                                return eventPersonResult;
-                                            }),
-                                        },
-                                    };
-                                    return eventResult;
-                                }),
                             },
                         });
+                        await Promise.all(
+                            Array.from(newEvents.values()).map((event) =>
+                                insertEventMutation({
+                                    variables: {
+                                        newEvent: {
+                                            id: event.id,
+                                            conferenceId: conference.id,
+                                            roomId: event.roomId,
+                                            intendedRoomModeName: event.intendedRoomModeName,
+                                            contentGroupId: event.contentGroupId,
+                                            name: event.name,
+                                            startTime: new Date(event.startTime).toISOString(),
+                                            durationSeconds: event.durationSeconds,
+                                            originatingDataId: event.originatingDataId,
+                                            eventTags: {
+                                                data: Array.from(event.tagIds.values()).map((tagId) => ({
+                                                    tagId,
+                                                })),
+                                            },
+                                            eventPeople: {
+                                                data: event.people.map((eventPerson) => {
+                                                    const eventPersonResult: EventPerson_Insert_Input = {
+                                                        id: eventPerson.id,
+                                                        conferenceId: conference.id,
+                                                        originatingDataId: eventPerson.originatingDataId,
+                                                        attendeeId: eventPerson.attendeeId,
+                                                        name: eventPerson.name,
+                                                        affiliation: eventPerson.affiliation,
+                                                        roleName: eventPerson.roleName,
+                                                    };
+                                                    return eventPersonResult;
+                                                }),
+                                            },
+                                        },
+                                    },
+                                })
+                            )
+                        );
 
                         for (const key of newEvents.keys()) {
                             eventResults.set(key, true);

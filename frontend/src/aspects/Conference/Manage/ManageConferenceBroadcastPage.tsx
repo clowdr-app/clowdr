@@ -6,6 +6,12 @@ import {
     FormControl,
     FormLabel,
     Heading,
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalHeader,
+    ModalOverlay,
     Select,
     Spinner,
     Tab,
@@ -22,10 +28,12 @@ import {
     Thead,
     Tooltip,
     Tr,
+    useDisclosure,
     useToast,
 } from "@chakra-ui/react";
 import { Field, FieldProps, Form, Formik } from "formik";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
+import ReactPlayer from "react-player";
 import {
     Permission_Enum,
     useConferencePrepareJobSubscriptionSubscription,
@@ -128,6 +136,9 @@ function BroadcastRooms({ conferenceId }: { conferenceId: string }): JSX.Element
         return url.toString();
     }, []);
 
+    const [streamUri, setStreamUri] = useState<string | null>(null);
+    const streamDisclosure = useDisclosure();
+
     return loading && !data ? (
         <Spinner />
     ) : error ? (
@@ -152,17 +163,58 @@ function BroadcastRooms({ conferenceId }: { conferenceId: string }): JSX.Element
                         <Tr key={room.id}>
                             <Td>{room.name}</Td>
                             <Td>
-                                {room.mediaLiveChannel
-                                    ? toStreamingEndpoint(
-                                          room.mediaLiveChannel.endpointUri,
-                                          room.mediaLiveChannel.cloudFrontDomain
-                                      )
-                                    : "No channel"}
+                                <Button
+                                    isDisabled={!room.mediaLiveChannel}
+                                    onClick={() => {
+                                        if (room.mediaLiveChannel) {
+                                            setStreamUri(
+                                                toStreamingEndpoint(
+                                                    room.mediaLiveChannel.endpointUri,
+                                                    room.mediaLiveChannel.cloudFrontDomain
+                                                )
+                                            );
+                                            streamDisclosure.onOpen();
+                                        }
+                                    }}
+                                >
+                                    Preview stream
+                                </Button>
                             </Td>
                         </Tr>
                     ))}
                 </Tbody>
             </Table>
+            <Modal isCentered isOpen={streamDisclosure.isOpen} onClose={streamDisclosure.onClose}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Stream preview</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        {streamUri ? (
+                            <>
+                                <Text mb={2} fontSize="sm">
+                                    {streamUri}
+                                </Text>
+                                <Box mb={2}>
+                                    <ReactPlayer
+                                        width="600"
+                                        height="auto"
+                                        url={streamUri}
+                                        config={{
+                                            file: {
+                                                hlsOptions: {},
+                                            },
+                                        }}
+                                        controls={true}
+                                    />
+                                </Box>
+                            </>
+                        ) : (
+                            <Text>No stream preview available.</Text>
+                        )}
+                    </ModalBody>
+                </ModalContent>
+            </Modal>
         </>
     );
 }

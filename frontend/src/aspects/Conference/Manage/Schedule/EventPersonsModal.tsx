@@ -194,7 +194,7 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, attendees }:
             },
             {
                 id: "affiliation",
-                header: function AffiliationHeader(props: ColumnHeaderProps<EventInfoFragment>) {
+                header: function AffiliationHeader(props: ColumnHeaderProps<EventPersonInfoFragment>) {
                     return props.isInCreate ? (
                         <FormLabel>Affiliation</FormLabel>
                     ) : (
@@ -209,7 +209,7 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, attendees }:
                 },
                 sort: (x: string | undefined, y: string | undefined) =>
                     x && y ? x.localeCompare(y) : x ? 1 : y ? -1 : 0,
-                cell: function AffiliationCell(props: CellProps<Partial<EventInfoFragment>>) {
+                cell: function AffiliationCell(props: CellProps<Partial<EventPersonInfoFragment>>) {
                     return (
                         <Input
                             type="text"

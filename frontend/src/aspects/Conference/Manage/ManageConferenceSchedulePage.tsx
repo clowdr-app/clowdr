@@ -26,7 +26,7 @@ import {
     VisuallyHidden,
 } from "@chakra-ui/react";
 import { DateTime } from "luxon";
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
     AttendeeInfoFragment,
@@ -795,6 +795,12 @@ function EditableScheduleTable(): JSX.Element {
     const forceReloadRef = useRef<() => void>(() => {
         /* EMPTY */
     });
+
+    useEffect(() => {
+        if (insertEventResponse.error || updateEventResponse.error || deleteEventsResponse.error) {
+            forceReloadRef.current?.();
+        }
+    }, [deleteEventsResponse.error, insertEventResponse.error, updateEventResponse.error]);
 
     return (
         <>

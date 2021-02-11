@@ -27,7 +27,7 @@ import {
     UnorderedList,
     useDisclosure,
 } from "@chakra-ui/react";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
     Permission_Enum,
@@ -406,6 +406,16 @@ function EditableRoomsCRUDTable() {
         []
     );
 
+    const forceReloadRef = useRef<() => void>(() => {
+        /* EMPTY */
+    });
+
+    useEffect(() => {
+        if (insertRoomResponse.error || updateRoomResponse.error || deleteRoomsResponse.error) {
+            forceReloadRef.current?.();
+        }
+    }, [deleteRoomsResponse.error, insertRoomResponse.error, updateRoomResponse.error]);
+
     return (
         <>
             <CRUDTable
@@ -554,6 +564,7 @@ function EditableRoomsCRUDTable() {
                           }
                         : undefined
                 }
+                forceReload={forceReloadRef}
             />
             <RoomSecondaryEditor
                 room={editingRoom}

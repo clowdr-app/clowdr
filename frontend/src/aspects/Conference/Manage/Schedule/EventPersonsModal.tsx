@@ -3,6 +3,9 @@ import {
     Box,
     Button,
     Center,
+    FormLabel,
+    HStack,
+    Input,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -10,15 +13,18 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
+    Select,
     Text,
+    Tooltip,
 } from "@chakra-ui/react";
 import assert from "assert";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
     AttendeeInfoFragment,
     EventInfoFragment,
     EventInfoFragmentDoc,
+    EventPersonInfoFragment,
     EventPersonInfoFragmentDoc,
     EventPersonRole_Enum,
     EventPerson_Insert_Input,
@@ -27,16 +33,17 @@ import {
     useInsertEventPersonMutation,
     useUpdateEventPersonMutation,
 } from "../../../../generated/graphql";
+import { LinkButton } from "../../../Chakra/LinkButton";
+import { formatEnumValue } from "../../../CRUDTable2/CRUDComponents";
 import CRUDTable, {
-    defaultSelectFilter,
-    defaultStringFilter,
-    FieldType,
-    SelectOption,
-    UpdateResult,
-} from "../../../CRUDTable/CRUDTable";
+    CellProps,
+    ColumnHeaderProps,
+    ColumnSpecification,
+    RowSpecification,
+    SortDirection,
+} from "../../../CRUDTable2/CRUDTable2";
 import FAIcon from "../../../Icons/FAIcon";
-import isValidUUID from "../../../Utils/isValidUUID";
-import type { EventPersonDescriptor } from "./Types";
+import { useConference } from "../../useConference";
 
 interface Props {
     isOpen: boolean;
@@ -94,38 +101,174 @@ export function requiresEventPeople(event: EventInfoFragment): boolean {
 }
 
 export function EventPersonsModal({ isOpen, onOpen, onClose, event, attendees }: Props): JSX.Element {
-    const eventPersonsMap = useMemo(() => {
-        const results = new Map<string, EventPersonDescriptor>();
-
-        event.eventPeople.forEach((eventPerson) => {
-            results.set(eventPerson.id, eventPerson);
-        });
-
-        return results;
-    }, [event.eventPeople]);
+    const data = useMemo(() => [...event.eventPeople], [event.eventPeople]);
 
     const attendeeOptions = useMemo(() => {
-        return attendees.map((attendee) => ({
-            label: `${attendee.displayName}`,
-            value: attendee.id,
-        }));
+        return attendees.map((attendee) => (
+            <option key={attendee.id} value={attendee.id}>
+                {attendee.displayName}
+            </option>
+        ));
     }, [attendees]);
 
-    const roleOptions: SelectOption[] = useMemo(() => {
-        return Object.keys(EventPersonRole_Enum)
-            .filter((key) => typeof (EventPersonRole_Enum as any)[key] === "string")
-            .map((key) => {
-                const v = (EventPersonRole_Enum as any)[key] as string;
-                return {
-                    label: key,
-                    value: v,
-                };
-            });
-    }, []);
+    const [insertEventPerson, insertEventPersonResponse] = useInsertEventPersonMutation();
+    const [updateEventPerson, updateEventPersonResponse] = useUpdateEventPersonMutation();
+    const [deleteEventPersons, deleteEventPersonsResponse] = useDeleteEventPersonsMutation();
 
-    const [insertEventPerson] = useInsertEventPersonMutation();
-    const [updateEventPerson] = useUpdateEventPersonMutation();
-    const [deleteEventPersons] = useDeleteEventPersonsMutation();
+    const row: RowSpecification<EventPersonInfoFragment> = useMemo(
+        () => ({
+            getKey: (record) => record.id,
+            canSelect: (_record) => true,
+            pages: {
+                defaultToLast: false,
+            },
+        }),
+        []
+    );
+
+    const conference = useConference();
+
+    const roleOptions = useMemo(
+        () =>
+            Object.keys(EventPersonRole_Enum)
+                .sort((x, y) => x.localeCompare(y))
+                .map((x) => {
+                    const v = (EventPersonRole_Enum as any)[x];
+                    return { value: v, label: formatEnumValue(v) };
+                }),
+        []
+    );
+
+    const columns: ColumnSpecification<EventPersonInfoFragment>[] = useMemo(
+        () => [
+            {
+                id: "Attendee",
+                defaultSortDirection: SortDirection.Asc,
+                header: function NameHeader(props: ColumnHeaderProps<EventPersonInfoFragment>) {
+                    return props.isInCreate ? (
+                        <FormLabel>Attendee</FormLabel>
+                    ) : (
+                        <Button size="xs" onClick={props.onClick}>
+                            Attendee{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        </Button>
+                    );
+                },
+                get: (data) => attendees.find((x) => x.id === data.attendeeId),
+                set: (record, value: AttendeeInfoFragment | undefined) => {
+                    record.attendeeId = value?.id;
+                },
+                sort: (x: AttendeeInfoFragment | undefined, y: AttendeeInfoFragment | undefined) =>
+                    x && y ? x.displayName.localeCompare(y.displayName) : x ? 1 : y ? -1 : 0,
+                cell: function AttendeeCell(
+                    props: CellProps<Partial<EventPersonInfoFragment>, AttendeeInfoFragment | undefined>
+                ) {
+                    if (props.isInCreate) {
+                        return (
+                            <HStack>
+                                {props.value ? (
+                                    <LinkButton
+                                        linkProps={{ target: "_blank" }}
+                                        to={`/conference/${conference.slug}/profile/view/${props.value.id}`}
+                                        size="xs"
+                                        aria-label="Go to attendee in new tab"
+                                    >
+                                        <Tooltip label="Go to attendee in new tab">
+                                            <FAIcon iconStyle="s" icon="link" />
+                                        </Tooltip>
+                                    </LinkButton>
+                                ) : undefined}
+                                <Select
+                                    value={props.value?.id ?? ""}
+                                    onChange={(ev) => props.onChange?.(attendees.find((x) => x.id === ev.target.value))}
+                                    onBlur={props.onBlur}
+                                >
+                                    <option value="">Select an attendee</option>
+                                    {attendeeOptions}
+                                </Select>
+                            </HStack>
+                        );
+                    } else {
+                        return <>{props.value?.displayName ?? "Attendee not found"}</>;
+                    }
+                },
+            },
+            {
+                id: "affiliation",
+                header: function AffiliationHeader(props: ColumnHeaderProps<EventInfoFragment>) {
+                    return props.isInCreate ? (
+                        <FormLabel>Affiliation</FormLabel>
+                    ) : (
+                        <Button size="xs" onClick={props.onClick}>
+                            Affiliation{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        </Button>
+                    );
+                },
+                get: (data) => data.affiliation,
+                set: (record, value: string) => {
+                    record.affiliation = value;
+                },
+                sort: (x: string | undefined, y: string | undefined) =>
+                    x && y ? x.localeCompare(y) : x ? 1 : y ? -1 : 0,
+                cell: function AffiliationCell(props: CellProps<Partial<EventInfoFragment>>) {
+                    return (
+                        <Input
+                            type="text"
+                            value={props.value ?? ""}
+                            onChange={(ev) => props.onChange?.(ev.target.value)}
+                            onBlur={props.onBlur}
+                            border="1px solid"
+                            borderColor="rgba(255, 255, 255, 0.16)"
+                        />
+                    );
+                },
+            },
+            {
+                id: "role",
+                header: function RoleHeader(props: ColumnHeaderProps<EventPersonInfoFragment>) {
+                    return props.isInCreate ? (
+                        <FormLabel>Role</FormLabel>
+                    ) : (
+                        <Button size="xs" onClick={props.onClick}>
+                            Role{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        </Button>
+                    );
+                },
+                get: (data) => data.roleName,
+                set: (record, value) => {
+                    record.roleName = value;
+                },
+                sort: (x: RoomMode_Enum, y: RoomMode_Enum) => x.localeCompare(y),
+                cell: function EventNameCell(props: CellProps<Partial<EventPersonInfoFragment>>) {
+                    return (
+                        <Select
+                            value={props.value ?? ""}
+                            onChange={(ev) => props.onChange?.(ev.target.value as RoomMode_Enum)}
+                            onBlur={props.onBlur}
+                        >
+                            {roleOptions.map((option) => {
+                                return (
+                                    <option key={option.value} value={option.value}>
+                                        {option.label}
+                                    </option>
+                                );
+                            })}
+                        </Select>
+                    );
+                },
+            },
+        ],
+        [attendeeOptions, attendees, conference.slug, roleOptions]
+    );
+
+    const forceReloadRef = useRef<() => void>(() => {
+        /* EMPTY */
+    });
+
+    useEffect(() => {
+        if (insertEventPersonResponse.error || updateEventPersonResponse.error || deleteEventPersonsResponse.error) {
+            forceReloadRef.current?.();
+        }
+    }, [deleteEventPersonsResponse.error, insertEventPersonResponse.error, updateEventPersonResponse.error]);
 
     const eventPeopleRequired = requiresEventPeople(event);
     return (
@@ -151,352 +294,209 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, attendees }:
                     <ModalCloseButton />
                     <ModalBody>
                         <Box>
-                            <CRUDTable<EventPersonDescriptor, "id">
-                                data={eventPersonsMap}
-                                primaryFields={{
-                                    keyField: {
-                                        heading: "Id",
-                                        ariaLabel: "Unique identifier",
-                                        description: "Unique identifier",
-                                        isHidden: true,
-                                        insert: (item, v) => {
-                                            return {
-                                                ...item,
-                                                id: v,
-                                            };
-                                        },
-                                        extract: (v) => v.id,
-                                        spec: {
-                                            fieldType: FieldType.string,
-                                            convertToUI: (x) => x,
-                                            disallowSpaces: true,
-                                        },
-                                        validate: (v) => isValidUUID(v) || ["Invalid UUID"],
-                                        getRowTitle: (v) => v.name,
-                                    },
-                                    otherFields: {
-                                        attendee: {
-                                            heading: "Attendee",
-                                            ariaLabel: "Attendee",
-                                            description: "Attendee",
-                                            isHidden: false,
-                                            isEditable: false,
-                                            isEditableAtCreate: true,
-                                            defaultValue: null,
-                                            insert: (item, v) => {
-                                                return {
-                                                    ...item,
-                                                    attendeeId: v,
-                                                };
+                            <CRUDTable
+                                data={data}
+                                tableUniqueName="ManageConferenceSchedule_EventPersonsModal"
+                                row={row}
+                                columns={columns}
+                                insert={{
+                                    ongoing: insertEventPersonResponse.loading,
+                                    generateDefaults: () => ({
+                                        id: uuidv4(),
+                                        conferenceId: event.conferenceId,
+                                        eventId: event.id,
+                                        name: "",
+                                        attendeeId: undefined,
+                                        roleName: EventPersonRole_Enum.Presenter,
+                                        affiliation: undefined,
+                                        originatingDataId: undefined,
+                                    }),
+                                    makeWhole: (d) => d.attendeeId && (d as EventPersonInfoFragment),
+                                    start: (record) => {
+                                        assert(record.roleName);
+                                        const newEventPerson: EventPerson_Insert_Input = {
+                                            id: uuidv4(),
+                                            eventId: event.id,
+                                            conferenceId: event.conferenceId,
+                                            name: record.roleName.toString(),
+                                            attendeeId: record.attendeeId,
+                                            roleName: record.roleName,
+                                            affiliation: record.affiliation,
+                                            originatingDataId: record.originatingDataId,
+                                        };
+                                        insertEventPerson({
+                                            variables: {
+                                                newEventPerson,
                                             },
-                                            extract: (item) => item.attendeeId,
-                                            spec: {
-                                                fieldType: FieldType.select,
-                                                convertFromUI: (opt) => {
-                                                    assert(!(opt instanceof Array) || opt.length === 1);
-                                                    if (opt instanceof Array) {
-                                                        return opt[0].value;
-                                                    } else {
-                                                        return opt.value;
-                                                    }
-                                                },
-                                                convertToUI: (attendeeId) => {
-                                                    if (!attendeeId) {
-                                                        return {
-                                                            label: "None selected",
-                                                            value: null,
-                                                        };
-                                                    }
-                                                    const opt = attendeeOptions.find((x) => x.value === attendeeId);
-                                                    if (opt) {
-                                                        return opt;
-                                                    } else {
-                                                        return {
-                                                            label: `<Unknown (${attendeeId})>`,
-                                                            value: attendeeId,
-                                                        };
-                                                    }
-                                                },
-                                                multiSelect: false,
-                                                options: () => attendeeOptions,
-                                                filter: defaultSelectFilter,
-                                            },
-                                        },
-                                        role: {
-                                            heading: "Role",
-                                            ariaLabel: "Role",
-                                            description: "Role",
-                                            isHidden: false,
-                                            isEditable: true,
-                                            defaultValue: null,
-                                            insert: (item, v) => {
-                                                return {
-                                                    ...item,
-                                                    roleName: v,
-                                                };
-                                            },
-                                            extract: (item) => item.roleName,
-                                            spec: {
-                                                fieldType: FieldType.select,
-                                                convertFromUI: (opt) => {
-                                                    assert(!(opt instanceof Array) || opt.length === 1);
-                                                    if (opt instanceof Array) {
-                                                        return opt[0].value;
-                                                    } else {
-                                                        return opt.value;
-                                                    }
-                                                },
-                                                convertToUI: (roleName) => {
-                                                    const opt = roleOptions.find((x) => x.value === roleName);
-                                                    if (opt) {
-                                                        return opt;
-                                                    } else {
-                                                        return {
-                                                            label: `<Unknown (${roleName})>`,
-                                                            value: roleName,
-                                                        };
-                                                    }
-                                                },
-                                                multiSelect: false,
-                                                options: () => roleOptions,
-                                                filter: defaultSelectFilter,
-                                            },
-                                        },
-                                        affiliation: {
-                                            heading: "Affiliation",
-                                            ariaLabel: "Affiliation",
-                                            description: "Affiliation",
-                                            isHidden: false,
-                                            isEditable: true,
-                                            defaultValue: null,
-                                            insert: (item, v) => {
-                                                return {
-                                                    ...item,
-                                                    affiliation: v,
-                                                };
-                                            },
-                                            extract: (item) => item.affiliation,
-                                            spec: {
-                                                fieldType: FieldType.string,
-                                                convertFromUI: (x) => (!x || x?.length === 0 ? null : x),
-                                                convertToUI: (x) => x,
-                                                filter: defaultStringFilter,
-                                            },
-                                            validate: (v) =>
-                                                !v || v.length >= 3 || ["Affiliaton must be at least 3 characters"],
-                                        },
-                                    },
-                                }}
-                                csud={{
-                                    cudCallbacks: {
-                                        create: async (
-                                            partialEventPerson: Partial<EventPersonDescriptor>
-                                        ): Promise<string | null> => {
-                                            assert(partialEventPerson.roleName);
-                                            const newEventPerson: EventPerson_Insert_Input = {
-                                                id: uuidv4(),
-                                                eventId: event.id,
-                                                conferenceId: event.conferenceId,
-                                                name: partialEventPerson.roleName.toString(),
-                                                attendeeId: partialEventPerson.attendeeId,
-                                                roleName: partialEventPerson.roleName,
-                                                affiliation: partialEventPerson.affiliation,
-                                                originatingDataId: partialEventPerson.originatingDataId,
-                                            };
-                                            await insertEventPerson({
-                                                variables: {
-                                                    newEventPerson,
-                                                },
-                                                update: (cache, { data: _data }) => {
-                                                    if (_data?.insert_EventPerson_one) {
-                                                        const data = _data.insert_EventPerson_one;
-                                                        cache.modify({
-                                                            fields: {
-                                                                Event: (
-                                                                    existingRefs: Reference[] = [],
-                                                                    { readField }
-                                                                ) => {
-                                                                    const eventRef = existingRefs.find(
-                                                                        (ref) => readField("id", ref) === event.id
-                                                                    );
-                                                                    assert(eventRef);
+                                            update: (cache, { data: _data }) => {
+                                                if (_data?.insert_EventPerson_one) {
+                                                    const data = _data.insert_EventPerson_one;
+                                                    cache.modify({
+                                                        fields: {
+                                                            Event: (existingRefs: Reference[] = [], { readField }) => {
+                                                                const eventRef = existingRefs.find(
+                                                                    (ref) => readField("id", ref) === event.id
+                                                                );
+                                                                assert(eventRef);
 
-                                                                    const frag = cache.readFragment<EventInfoFragment>({
+                                                                const frag = cache.readFragment<EventInfoFragment>({
+                                                                    fragment: EventInfoFragmentDoc,
+                                                                    fragmentName: "EventInfo",
+                                                                    id: eventRef.__ref,
+                                                                });
+                                                                console.log(frag);
+                                                                if (
+                                                                    frag &&
+                                                                    !frag.eventPeople.some((p) => p.id === data.id)
+                                                                ) {
+                                                                    cache.writeFragment<EventInfoFragment>({
                                                                         fragment: EventInfoFragmentDoc,
                                                                         fragmentName: "EventInfo",
-                                                                        id: eventRef.__ref,
-                                                                    });
-                                                                    console.log(frag);
-                                                                    if (
-                                                                        frag &&
-                                                                        !frag.eventPeople.some((p) => p.id === data.id)
-                                                                    ) {
-                                                                        cache.writeFragment<EventInfoFragment>({
-                                                                            fragment: EventInfoFragmentDoc,
-                                                                            fragmentName: "EventInfo",
-                                                                            data: {
-                                                                                ...frag,
-                                                                                eventPeople: [
-                                                                                    ...frag.eventPeople,
-                                                                                    data,
-                                                                                ],
-                                                                            },
-                                                                        });
-                                                                    }
-                                                                    return existingRefs;
-                                                                },
-                                                                EventPerson(
-                                                                    existingRefs: Reference[] = [],
-                                                                    { readField }
-                                                                ) {
-                                                                    const newRef = cache.writeFragment({
-                                                                        data,
-                                                                        fragment: EventPersonInfoFragmentDoc,
-                                                                        fragmentName: "EventPersonInfo",
-                                                                    });
-                                                                    if (
-                                                                        existingRefs.some(
-                                                                            (ref) => readField("id", ref) === data.id
-                                                                        )
-                                                                    ) {
-                                                                        return existingRefs;
-                                                                    }
-
-                                                                    return [...existingRefs, newRef];
-                                                                },
-                                                            },
-                                                        });
-                                                    }
-                                                },
-                                            });
-                                            return newEventPerson.id;
-                                        },
-                                        update: async (eventPersons): Promise<Map<string, UpdateResult>> => {
-                                            const results = new Map<string, UpdateResult>();
-                                            for (const [key, eventPerson] of eventPersons) {
-                                                try {
-                                                    await updateEventPerson({
-                                                        variables: {
-                                                            id: eventPerson.id,
-                                                            name: eventPerson.name,
-                                                            roleName: eventPerson.roleName,
-                                                            affiliation: eventPerson.affiliation,
-                                                            attendeeId: eventPerson.attendeeId,
-                                                            originatingDataId: eventPerson.originatingDataId,
-                                                        },
-                                                        update: (cache, { data: _data }) => {
-                                                            if (_data?.update_EventPerson_by_pk) {
-                                                                const data = _data.update_EventPerson_by_pk;
-                                                                cache.modify({
-                                                                    fields: {
-                                                                        EventPerson(
-                                                                            existingRefs: Reference[] = [],
-                                                                            { readField }
-                                                                        ) {
-                                                                            const newRef = cache.writeFragment({
-                                                                                data,
-                                                                                fragment: EventPersonInfoFragmentDoc,
-                                                                                fragmentName: "EventPersonInfo",
-                                                                            });
-                                                                            if (
-                                                                                existingRefs.some(
-                                                                                    (ref) =>
-                                                                                        readField("id", ref) === data.id
-                                                                                )
-                                                                            ) {
-                                                                                return existingRefs;
-                                                                            }
-                                                                            return [...existingRefs, newRef];
+                                                                        data: {
+                                                                            ...frag,
+                                                                            eventPeople: [...frag.eventPeople, data],
                                                                         },
-                                                                    },
+                                                                    });
+                                                                }
+                                                                return existingRefs;
+                                                            },
+                                                            EventPerson(existingRefs: Reference[] = [], { readField }) {
+                                                                const newRef = cache.writeFragment({
+                                                                    data,
+                                                                    fragment: EventPersonInfoFragmentDoc,
+                                                                    fragmentName: "EventPersonInfo",
                                                                 });
-                                                            }
+                                                                if (
+                                                                    existingRefs.some(
+                                                                        (ref) => readField("id", ref) === data.id
+                                                                    )
+                                                                ) {
+                                                                    return existingRefs;
+                                                                }
+
+                                                                return [...existingRefs, newRef];
+                                                            },
                                                         },
                                                     });
-                                                    results.set(key, true);
-                                                } catch (e) {
-                                                    results.set(key, e.toString());
                                                 }
-                                            }
-                                            return results;
-                                        },
-                                        delete: async (keys): Promise<Map<string, boolean>> => {
-                                            let ok = false;
-                                            try {
-                                                await deleteEventPersons({
-                                                    variables: {
-                                                        deleteEventPeopleIds: [...keys.values()],
-                                                    },
-                                                    update: (cache, { data: _data }) => {
-                                                        if (_data?.delete_EventPerson) {
-                                                            const datas = _data.delete_EventPerson;
-                                                            const ids = datas.returning.map((x) => x.id);
-                                                            cache.modify({
-                                                                fields: {
-                                                                    Event: (
-                                                                        existingRefs: Reference[] = [],
-                                                                        { readField }
-                                                                    ) => {
-                                                                        const eventRef = existingRefs.find(
-                                                                            (ref) => readField("id", ref) === event.id
-                                                                        );
-                                                                        assert(eventRef);
-
-                                                                        const frag = cache.readFragment<
-                                                                            EventInfoFragment
-                                                                        >({
-                                                                            fragment: EventInfoFragmentDoc,
-                                                                            fragmentName: "EventInfo",
-                                                                            id: eventRef.__ref,
-                                                                        });
-                                                                        console.log(frag);
-                                                                        if (frag) {
-                                                                            cache.writeFragment<EventInfoFragment>({
-                                                                                fragment: EventInfoFragmentDoc,
-                                                                                fragmentName: "EventInfo",
-                                                                                data: {
-                                                                                    ...frag,
-                                                                                    eventPeople: frag.eventPeople.filter(
-                                                                                        (p) => !ids.includes(p.id)
-                                                                                    ),
-                                                                                },
-                                                                            });
-                                                                        }
-                                                                        return existingRefs;
-                                                                    },
-                                                                    EventPerson(
-                                                                        existingRefs: Reference[] = [],
-                                                                        { readField }
-                                                                    ) {
-                                                                        for (const id of ids) {
-                                                                            cache.evict({
-                                                                                id,
-                                                                                fieldName: "EventPersonInfo",
-                                                                                broadcast: true,
-                                                                            });
-                                                                        }
-
-                                                                        return existingRefs.filter(
-                                                                            (ref) => !ids.includes(readField("id", ref))
-                                                                        );
-                                                                    },
-                                                                },
-                                                            });
-                                                        }
-                                                    },
-                                                });
-                                                ok = true;
-                                            } catch (e) {
-                                                ok = false;
-                                            }
-                                            const results = new Map<string, boolean>();
-                                            for (const key of keys) {
-                                                results.set(key, ok);
-                                            }
-                                            return results;
-                                        },
+                                            },
+                                        });
                                     },
                                 }}
+                                update={{
+                                    ongoing: updateEventPersonResponse.loading,
+                                    start: (record) => {
+                                        updateEventPerson({
+                                            variables: {
+                                                id: record.id,
+                                                name: record.name,
+                                                roleName: record.roleName,
+                                                affiliation: record.affiliation,
+                                                attendeeId: record.attendeeId,
+                                                originatingDataId: record.originatingDataId,
+                                            },
+                                            update: (cache, { data: _data }) => {
+                                                if (_data?.update_EventPerson_by_pk) {
+                                                    const data = _data.update_EventPerson_by_pk;
+                                                    cache.modify({
+                                                        fields: {
+                                                            EventPerson(existingRefs: Reference[] = [], { readField }) {
+                                                                const newRef = cache.writeFragment({
+                                                                    data,
+                                                                    fragment: EventPersonInfoFragmentDoc,
+                                                                    fragmentName: "EventPersonInfo",
+                                                                });
+                                                                if (
+                                                                    existingRefs.some(
+                                                                        (ref) => readField("id", ref) === data.id
+                                                                    )
+                                                                ) {
+                                                                    return existingRefs;
+                                                                }
+                                                                return [...existingRefs, newRef];
+                                                            },
+                                                        },
+                                                    });
+                                                }
+                                            },
+                                        });
+                                    },
+                                }}
+                                delete={{
+                                    ongoing: deleteEventPersonsResponse.loading,
+                                    start: (keys) => {
+                                        deleteEventPersons({
+                                            variables: {
+                                                deleteEventPeopleIds: keys,
+                                            },
+                                            update: (cache, { data: _data }) => {
+                                                if (_data?.delete_EventPerson) {
+                                                    const datas = _data.delete_EventPerson;
+                                                    const ids = datas.returning.map((x) => x.id);
+                                                    cache.modify({
+                                                        fields: {
+                                                            Event: (existingRefs: Reference[] = [], { readField }) => {
+                                                                const eventRef = existingRefs.find(
+                                                                    (ref) => readField("id", ref) === event.id
+                                                                );
+                                                                assert(eventRef);
+
+                                                                const frag = cache.readFragment<EventInfoFragment>({
+                                                                    fragment: EventInfoFragmentDoc,
+                                                                    fragmentName: "EventInfo",
+                                                                    id: eventRef.__ref,
+                                                                });
+                                                                console.log(frag);
+                                                                if (frag) {
+                                                                    cache.writeFragment<EventInfoFragment>({
+                                                                        fragment: EventInfoFragmentDoc,
+                                                                        fragmentName: "EventInfo",
+                                                                        data: {
+                                                                            ...frag,
+                                                                            eventPeople: frag.eventPeople.filter(
+                                                                                (p) => !ids.includes(p.id)
+                                                                            ),
+                                                                        },
+                                                                    });
+                                                                }
+                                                                return existingRefs;
+                                                            },
+                                                            EventPerson(existingRefs: Reference[] = [], { readField }) {
+                                                                for (const id of ids) {
+                                                                    cache.evict({
+                                                                        id,
+                                                                        fieldName: "EventPersonInfo",
+                                                                        broadcast: true,
+                                                                    });
+                                                                }
+
+                                                                return existingRefs.filter(
+                                                                    (ref) => !ids.includes(readField("id", ref))
+                                                                );
+                                                            },
+                                                        },
+                                                    });
+                                                }
+                                            },
+                                        });
+                                    },
+                                }}
+                                alert={
+                                    insertEventPersonResponse.error ||
+                                    updateEventPersonResponse.error ||
+                                    deleteEventPersonsResponse.error
+                                        ? {
+                                              status: "error",
+                                              title: "Error saving changes",
+                                              description:
+                                                  insertEventPersonResponse.error?.message ??
+                                                  updateEventPersonResponse.error?.message ??
+                                                  deleteEventPersonsResponse.error?.message ??
+                                                  "Unknown error",
+                                          }
+                                        : undefined
+                                }
+                                forceReload={forceReloadRef}
                             />
                         </Box>
                     </ModalBody>

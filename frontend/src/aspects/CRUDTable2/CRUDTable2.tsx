@@ -533,7 +533,7 @@ function RenderedCRUDTable<T>({
     const selectColumnEl = useMemo(
         () =>
             enableSelection ? (
-                <Th padding={0}>
+                <Th padding={1}>
                     <Center w="100%" h="100%" padding={0}>
                         <Checkbox
                             isIndeterminate={!!data && selectedKeys.size > 0 && selectedKeys.size < data.length}
@@ -561,7 +561,7 @@ function RenderedCRUDTable<T>({
     const editColumnEl = useMemo(
         () =>
             beginInsert ? (
-                <Th padding={0}>
+                <Th padding={1}>
                     <Center w="100%" h="100%" padding={0}>
                         <Button
                             aria-label="Create row"
@@ -582,7 +582,7 @@ function RenderedCRUDTable<T>({
     const deleteColumnEl = useMemo(
         () =>
             onDelete ? (
-                <Th padding={0}>
+                <Th padding={1}>
                     <Center w="100%" h="100%" padding={0}>
                         <Tooltip label={"Delete selected"}>
                             <Button
@@ -804,15 +804,18 @@ function mergeData<T>(
     data: T[] | null | false,
     updatedData: React.MutableRefObject<Record<string, T>>
 ) {
-    return !data
+    const keys = new Set(Object.keys(updatedData.current));
+    const result = !data
         ? data
         : data.map((record) => {
               const key = row.getKey(record);
               if (updatedData.current[key]) {
+                  keys.delete(key);
                   return updatedData.current[key];
               }
               return record;
           });
+    return result ? [...result, ...[...keys.values()].map((key) => updatedData.current[key])] : result;
 }
 
 function CRUDInsertModal<T>({
@@ -1161,10 +1164,10 @@ export default function CRUDTable<T>({
     const deleteRecords = useCallback(() => {
         const keys = keysToDelete.current;
         keysToDelete.current = [];
-        setCurrentData((old) => (old ? old.filter((x) => !keys.includes(row.getKey(x))) : old));
         keys.forEach((key) => {
             delete updatedData.current[key];
         });
+        setCurrentData((old) => (old ? old.filter((x) => !keys.includes(row.getKey(x))) : old));
         setDependentData((old) => {
             const dependentColumns = columns.filter((x) => x.isDataDependency);
             if (dependentColumns.length > 0) {

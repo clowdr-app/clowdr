@@ -28,6 +28,7 @@ import ManageConferencePeoplePage from "./Manage/ManageConferencePeoplePage";
 import ManageConferenceRolesPage from "./Manage/ManageConferenceRolesPage";
 import ManageConferenceRoomsPage from "./Manage/ManageConferenceRoomsPage";
 import ManageConferenceSchedulePage from "./Manage/ManageConferenceSchedulePage";
+import { ManageConferenceSponsorsPage } from "./Manage/ManageConferenceSponsorsPage";
 import ManagerLandingPage from "./Manage/ManagerLandingPage";
 import RequireAtLeastOnePermissionWrapper from "./RequireAtLeastOnePermissionWrapper";
 import ConferenceProvider, { useConference } from "./useConference";
@@ -116,7 +117,7 @@ function ConferenceRoutesInner({ rootUrl }: { rootUrl: string }): JSX.Element {
                 <PageNotImplemented />
             </Route>
             <Route path={`${rootUrl}/manage/sponsors`}>
-                <PageNotImplemented />
+                <ManageConferenceSponsorsPage />
             </Route>
             <Route path={`${rootUrl}/manage/analytics`}>
                 <PageNotImplemented />

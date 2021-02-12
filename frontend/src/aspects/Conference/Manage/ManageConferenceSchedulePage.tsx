@@ -1003,10 +1003,10 @@ export default function ManageConferenceSchedulePage(): JSX.Element {
             componentIfDenied={<PageNotFound />}
         >
             {title}
-            <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
+            <Heading as="h1" fontSize="4xl">
                 Manage {conference.shortName}
             </Heading>
-            <Heading as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
+            <Heading as="h2" fontSize="2xl" fontStyle="italic">
                 Events
             </Heading>
             <EditableScheduleTable />

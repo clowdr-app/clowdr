@@ -2,6 +2,8 @@ import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -5870,8 +5872,8 @@ export type EventTransitions_AggregateArgs = {
 
 /**
  * Current streams in event Vonage sessions.
- * 
- * 
+ *
+ *
  * columns and relationships of "EventParticipantStream"
  */
 export type EventParticipantStream = {
@@ -16686,8 +16688,8 @@ export type Chat_Flag_Variance_Order_By = {
 
 /**
  * Chat messages. The systemId field is unique and can be used to prevent duplicate inserts of things like event start/end markers.
- * 
- * 
+ *
+ *
  * columns and relationships of "chat.Message"
  */
 export type Chat_Message = {
@@ -16726,8 +16728,8 @@ export type Chat_Message = {
 
 /**
  * Chat messages. The systemId field is unique and can be used to prevent duplicate inserts of things like event start/end markers.
- * 
- * 
+ *
+ *
  * columns and relationships of "chat.Message"
  */
 export type Chat_MessageDataArgs = {
@@ -16737,8 +16739,8 @@ export type Chat_MessageDataArgs = {
 
 /**
  * Chat messages. The systemId field is unique and can be used to prevent duplicate inserts of things like event start/end markers.
- * 
- * 
+ *
+ *
  * columns and relationships of "chat.Message"
  */
 export type Chat_MessageFlagsArgs = {
@@ -16752,8 +16754,8 @@ export type Chat_MessageFlagsArgs = {
 
 /**
  * Chat messages. The systemId field is unique and can be used to prevent duplicate inserts of things like event start/end markers.
- * 
- * 
+ *
+ *
  * columns and relationships of "chat.Message"
  */
 export type Chat_MessageFlags_AggregateArgs = {
@@ -16767,8 +16769,8 @@ export type Chat_MessageFlags_AggregateArgs = {
 
 /**
  * Chat messages. The systemId field is unique and can be used to prevent duplicate inserts of things like event start/end markers.
- * 
- * 
+ *
+ *
  * columns and relationships of "chat.Message"
  */
 export type Chat_MessageReactionsArgs = {
@@ -16782,8 +16784,8 @@ export type Chat_MessageReactionsArgs = {
 
 /**
  * Chat messages. The systemId field is unique and can be used to prevent duplicate inserts of things like event start/end markers.
- * 
- * 
+ *
+ *
  * columns and relationships of "chat.Message"
  */
 export type Chat_MessageReactions_AggregateArgs = {
@@ -17376,8 +17378,8 @@ export type Chat_Message_Variance_Order_By = {
 
 /**
  * Pin a chat to the sidebar.
- * 
- * 
+ *
+ *
  * columns and relationships of "chat.Pin"
  */
 export type Chat_Pin = {
@@ -18493,8 +18495,8 @@ export type Chat_ReadUpToIndex_Variance_Order_By = {
 
 /**
  * Subscribe to chat notifications.
- * 
- * 
+ *
+ *
  * columns and relationships of "chat.Subscription"
  */
 export type Chat_Subscription = {
@@ -30901,7 +30903,7 @@ export type SubscribedChatsQueryVariables = Exact<{
 export type SubscribedChatsQuery = { readonly __typename?: 'query_root', readonly chat_Subscription: ReadonlyArray<{ readonly __typename?: 'chat_Subscription', readonly attendeeId: any, readonly chatId: any }> };
 
 export type SubdMessages_2021_01_21T08_24SubscriptionVariables = Exact<{
-  chatIds: ReadonlyArray<Scalars['uuid']>;
+  chatIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
@@ -31042,7 +31044,7 @@ export type NextMessageSubscription = { readonly __typename?: 'subscription_root
   )> };
 
 export type NextReactionsSubscriptionVariables = Exact<{
-  messageIds: ReadonlyArray<Scalars['Int']>;
+  messageIds: ReadonlyArray<Scalars['Int']> | Scalars['Int'];
 }>;
 
 
@@ -31289,7 +31291,7 @@ export type GetRoomVonageTokenMutationVariables = Exact<{
 export type GetRoomVonageTokenMutation = { readonly __typename?: 'mutation_root', readonly joinRoomVonageSession?: Maybe<{ readonly __typename?: 'JoinRoomVonageSessionOutput', readonly accessToken?: Maybe<string>, readonly sessionId?: Maybe<string> }> };
 
 export type CreateDmMutationVariables = Exact<{
-  attendeeIds: ReadonlyArray<Maybe<Scalars['uuid']>>;
+  attendeeIds: ReadonlyArray<Maybe<Scalars['uuid']>> | Maybe<Scalars['uuid']>;
   conferenceId: Scalars['uuid'];
 }>;
 
@@ -31566,7 +31568,7 @@ export type Timeline_EventTagFragment = { readonly __typename?: 'EventTag', read
 
 export type AttendeesByIdQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
-  attendeeIds: ReadonlyArray<Scalars['uuid']>;
+  attendeeIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
@@ -31593,7 +31595,7 @@ export type CombineVideosModal_GetCombineVideosJobQueryVariables = Exact<{
 export type CombineVideosModal_GetCombineVideosJobQuery = { readonly __typename?: 'query_root', readonly job_queues_CombineVideosJob_by_pk?: Maybe<{ readonly __typename?: 'job_queues_CombineVideosJob', readonly id: any, readonly message?: Maybe<string>, readonly jobStatusName: JobStatus_Enum }> };
 
 export type InsertSubmissionRequestEmailJobsMutationVariables = Exact<{
-  objs: ReadonlyArray<Job_Queues_SubmissionRequestEmailJob_Insert_Input>;
+  objs: ReadonlyArray<Job_Queues_SubmissionRequestEmailJob_Insert_Input> | Job_Queues_SubmissionRequestEmailJob_Insert_Input;
 }>;
 
 
@@ -31662,8 +31664,8 @@ export type SelectAllContentQuery = { readonly __typename?: 'query_root', readon
   )> };
 
 export type InsertDeleteContentGroupsMutationVariables = Exact<{
-  newGroups: ReadonlyArray<ContentGroup_Insert_Input>;
-  deleteGroupIds: ReadonlyArray<Scalars['uuid']>;
+  newGroups: ReadonlyArray<ContentGroup_Insert_Input> | ContentGroup_Insert_Input;
+  deleteGroupIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
@@ -31673,7 +31675,7 @@ export type InsertDeleteContentGroupsMutation = { readonly __typename?: 'mutatio
     )> }>, readonly delete_ContentGroup?: Maybe<{ readonly __typename?: 'ContentGroup_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any }> }> };
 
 export type InsertOriginatingDatasMutationVariables = Exact<{
-  newDatas: ReadonlyArray<OriginatingData_Insert_Input>;
+  newDatas: ReadonlyArray<OriginatingData_Insert_Input> | OriginatingData_Insert_Input;
 }>;
 
 
@@ -31683,14 +31685,14 @@ export type InsertOriginatingDatasMutation = { readonly __typename?: 'mutation_r
     )> }> };
 
 export type DeleteOriginatingDatasMutationVariables = Exact<{
-  deleteDataIds: ReadonlyArray<Scalars['uuid']>;
+  deleteDataIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
 export type DeleteOriginatingDatasMutation = { readonly __typename?: 'mutation_root', readonly delete_OriginatingData?: Maybe<{ readonly __typename?: 'OriginatingData_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'OriginatingData', readonly id: any }> }> };
 
 export type InsertTagsMutationVariables = Exact<{
-  newTags: ReadonlyArray<Tag_Insert_Input>;
+  newTags: ReadonlyArray<Tag_Insert_Input> | Tag_Insert_Input;
 }>;
 
 
@@ -31700,7 +31702,7 @@ export type InsertTagsMutation = { readonly __typename?: 'mutation_root', readon
     )> }> };
 
 export type InsertHallwaysMutationVariables = Exact<{
-  newHallways: ReadonlyArray<Hallway_Insert_Input>;
+  newHallways: ReadonlyArray<Hallway_Insert_Input> | Hallway_Insert_Input;
 }>;
 
 
@@ -31710,21 +31712,21 @@ export type InsertHallwaysMutation = { readonly __typename?: 'mutation_root', re
     )> }> };
 
 export type DeleteTagsMutationVariables = Exact<{
-  deleteTagIds: ReadonlyArray<Scalars['uuid']>;
+  deleteTagIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
 export type DeleteTagsMutation = { readonly __typename?: 'mutation_root', readonly delete_Tag?: Maybe<{ readonly __typename?: 'Tag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Tag', readonly id: any }> }> };
 
 export type DeleteHallwaysMutationVariables = Exact<{
-  deleteHallwayIds: ReadonlyArray<Scalars['uuid']>;
+  deleteHallwayIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
 export type DeleteHallwaysMutation = { readonly __typename?: 'mutation_root', readonly delete_Hallway?: Maybe<{ readonly __typename?: 'Hallway_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Hallway', readonly id: any }> }> };
 
 export type InsertContentPeopleMutationVariables = Exact<{
-  newPeople: ReadonlyArray<ContentPerson_Insert_Input>;
+  newPeople: ReadonlyArray<ContentPerson_Insert_Input> | ContentPerson_Insert_Input;
 }>;
 
 
@@ -31734,30 +31736,30 @@ export type InsertContentPeopleMutation = { readonly __typename?: 'mutation_root
     )> }> };
 
 export type DeleteContentPeopleMutationVariables = Exact<{
-  deletePersonIds: ReadonlyArray<Scalars['uuid']>;
+  deletePersonIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
 export type DeleteContentPeopleMutation = { readonly __typename?: 'mutation_root', readonly delete_ContentPerson?: Maybe<{ readonly __typename?: 'ContentPerson_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ContentPerson', readonly id: any }> }> };
 
 export type UpdateContentGroupMutationVariables = Exact<{
-  newItems: ReadonlyArray<ContentItem_Insert_Input>;
-  newRequiredItems: ReadonlyArray<RequiredContentItem_Insert_Input>;
-  newGroupTags: ReadonlyArray<ContentGroupTag_Insert_Input>;
-  newGroupHallways: ReadonlyArray<ContentGroupHallway_Insert_Input>;
+  newItems: ReadonlyArray<ContentItem_Insert_Input> | ContentItem_Insert_Input;
+  newRequiredItems: ReadonlyArray<RequiredContentItem_Insert_Input> | RequiredContentItem_Insert_Input;
+  newGroupTags: ReadonlyArray<ContentGroupTag_Insert_Input> | ContentGroupTag_Insert_Input;
+  newGroupHallways: ReadonlyArray<ContentGroupHallway_Insert_Input> | ContentGroupHallway_Insert_Input;
   groupId: Scalars['uuid'];
   contentGroupTypeName: ContentGroupType_Enum;
   originatingDataId?: Maybe<Scalars['uuid']>;
   shortTitle?: Maybe<Scalars['String']>;
   title: Scalars['String'];
-  deleteItemIds: ReadonlyArray<Scalars['uuid']>;
-  deleteRequiredItemIds: ReadonlyArray<Scalars['uuid']>;
-  deleteGroupTagIds: ReadonlyArray<Scalars['uuid']>;
-  deleteGroupHallwayIds: ReadonlyArray<Scalars['uuid']>;
-  newUploaders: ReadonlyArray<Uploader_Insert_Input>;
-  deleteUploaderIds: ReadonlyArray<Scalars['uuid']>;
-  newGroupPeople: ReadonlyArray<ContentGroupPerson_Insert_Input>;
-  deleteGroupPeopleIds: ReadonlyArray<Scalars['uuid']>;
+  deleteItemIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+  deleteRequiredItemIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+  deleteGroupTagIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+  deleteGroupHallwayIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+  newUploaders: ReadonlyArray<Uploader_Insert_Input> | Uploader_Insert_Input;
+  deleteUploaderIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+  newGroupPeople: ReadonlyArray<ContentGroupPerson_Insert_Input> | ContentGroupPerson_Insert_Input;
+  deleteGroupPeopleIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
@@ -31922,7 +31924,7 @@ export type ChooseContentItemModal_GetVideoContentItemsQueryVariables = Exact<{
 export type ChooseContentItemModal_GetVideoContentItemsQuery = { readonly __typename?: 'query_root', readonly ContentItem: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly name: string }> };
 
 export type ManageConferenceExportPage_GetGoogleOAuthUrlMutationVariables = Exact<{
-  scopes: ReadonlyArray<Scalars['String']>;
+  scopes: ReadonlyArray<Scalars['String']> | Scalars['String'];
 }>;
 
 
@@ -31967,21 +31969,21 @@ export type UploadYouTubeVideos_GetAttendeeGoogleAccountsQueryVariables = Exact<
 export type UploadYouTubeVideos_GetAttendeeGoogleAccountsQuery = { readonly __typename?: 'query_root', readonly AttendeeGoogleAccount: ReadonlyArray<{ readonly __typename?: 'AttendeeGoogleAccount', readonly id: any, readonly googleAccountEmail: string, readonly youTubeData?: Maybe<any> }> };
 
 export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutationVariables = Exact<{
-  objects: ReadonlyArray<Job_Queues_UploadYouTubeVideoJob_Insert_Input>;
+  objects: ReadonlyArray<Job_Queues_UploadYouTubeVideoJob_Insert_Input> | Job_Queues_UploadYouTubeVideoJob_Insert_Input;
 }>;
 
 
 export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation = { readonly __typename?: 'mutation_root', readonly insert_job_queues_UploadYouTubeVideoJob?: Maybe<{ readonly __typename?: 'job_queues_UploadYouTubeVideoJob_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'job_queues_UploadYouTubeVideoJob', readonly id: any }> }> };
 
 export type UploadYouTubeVideos_GetContentItemsQueryVariables = Exact<{
-  contentItemIds: ReadonlyArray<Scalars['uuid']>;
+  contentItemIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
 export type UploadYouTubeVideos_GetContentItemsQuery = { readonly __typename?: 'query_root', readonly ContentItem: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly contentGroup: { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string } }> };
 
 export type UploadYouTubeVideos_GetTemplateDataQueryVariables = Exact<{
-  contentItemIds: ReadonlyArray<Scalars['uuid']>;
+  contentItemIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
@@ -32018,8 +32020,8 @@ export type UploadYouTubeVideos_GetYouTubeUploadsQuery = { readonly __typename?:
 export type UploadYouTubeVideos_YouTubeUploadFragment = { readonly __typename?: 'YouTubeUpload', readonly id: any, readonly videoId: string, readonly videoPrivacyStatus: string, readonly videoStatus: string, readonly videoTitle: string, readonly contentItem?: Maybe<{ readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly contentGroup: { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string } }> };
 
 export type ImportAttendeesMutationVariables = Exact<{
-  insertAttendees: ReadonlyArray<Attendee_Insert_Input>;
-  insertInvitations: ReadonlyArray<Invitation_Insert_Input>;
+  insertAttendees: ReadonlyArray<Attendee_Insert_Input> | Attendee_Insert_Input;
+  insertInvitations: ReadonlyArray<Invitation_Insert_Input> | Invitation_Insert_Input;
 }>;
 
 
@@ -32068,8 +32070,8 @@ export type SelectAllGroupsQueryVariables = Exact<{
 export type SelectAllGroupsQuery = { readonly __typename?: 'query_root', readonly Group: ReadonlyArray<{ readonly __typename?: 'Group', readonly conferenceId: any, readonly enabled: boolean, readonly id: any, readonly includeUnauthenticated: boolean, readonly name: string, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any }> }> };
 
 export type CreateDeleteGroupsMutationVariables = Exact<{
-  deleteGroupIds?: Maybe<ReadonlyArray<Scalars['uuid']>>;
-  insertGroups: ReadonlyArray<Group_Insert_Input>;
+  deleteGroupIds?: Maybe<ReadonlyArray<Scalars['uuid']> | Scalars['uuid']>;
+  insertGroups: ReadonlyArray<Group_Insert_Input> | Group_Insert_Input;
 }>;
 
 
@@ -32080,8 +32082,8 @@ export type UpdateGroupMutationVariables = Exact<{
   groupName: Scalars['String'];
   enabled: Scalars['Boolean'];
   includeUnauthenticated: Scalars['Boolean'];
-  insertRoles: ReadonlyArray<GroupRole_Insert_Input>;
-  deleteRoleIds?: Maybe<ReadonlyArray<Scalars['uuid']>>;
+  insertRoles: ReadonlyArray<GroupRole_Insert_Input> | GroupRole_Insert_Input;
+  deleteRoleIds?: Maybe<ReadonlyArray<Scalars['uuid']> | Scalars['uuid']>;
 }>;
 
 
@@ -32110,9 +32112,9 @@ export type SelectAllAttendeesQuery = { readonly __typename?: 'query_root', read
   )> };
 
 export type CreateDeleteAttendeesMutationVariables = Exact<{
-  deleteAttendeeIds?: Maybe<ReadonlyArray<Scalars['uuid']>>;
-  insertAttendees: ReadonlyArray<Attendee_Insert_Input>;
-  insertInvitations: ReadonlyArray<Invitation_Insert_Input>;
+  deleteAttendeeIds?: Maybe<ReadonlyArray<Scalars['uuid']> | Scalars['uuid']>;
+  insertAttendees: ReadonlyArray<Attendee_Insert_Input> | Attendee_Insert_Input;
+  insertInvitations: ReadonlyArray<Invitation_Insert_Input> | Invitation_Insert_Input;
 }>;
 
 
@@ -32124,8 +32126,8 @@ export type CreateDeleteAttendeesMutation = { readonly __typename?: 'mutation_ro
 export type UpdateAttendeeMutationVariables = Exact<{
   attendeeId: Scalars['uuid'];
   attendeeName: Scalars['String'];
-  insertGroups: ReadonlyArray<GroupAttendee_Insert_Input>;
-  deleteGroupIds?: Maybe<ReadonlyArray<Scalars['uuid']>>;
+  insertGroups: ReadonlyArray<GroupAttendee_Insert_Input> | GroupAttendee_Insert_Input;
+  deleteGroupIds?: Maybe<ReadonlyArray<Scalars['uuid']> | Scalars['uuid']>;
 }>;
 
 
@@ -32156,8 +32158,8 @@ export type SelectAllRolesQueryVariables = Exact<{
 export type SelectAllRolesQuery = { readonly __typename?: 'query_root', readonly Role: ReadonlyArray<{ readonly __typename?: 'Role', readonly conferenceId: any, readonly id: any, readonly name: string, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly id: any, readonly permissionName: Permission_Enum, readonly roleId: any }> }> };
 
 export type CreateDeleteRolesMutationVariables = Exact<{
-  deleteRoleIds?: Maybe<ReadonlyArray<Scalars['uuid']>>;
-  insertRoles: ReadonlyArray<Role_Insert_Input>;
+  deleteRoleIds?: Maybe<ReadonlyArray<Scalars['uuid']> | Scalars['uuid']>;
+  insertRoles: ReadonlyArray<Role_Insert_Input> | Role_Insert_Input;
 }>;
 
 
@@ -32166,8 +32168,8 @@ export type CreateDeleteRolesMutation = { readonly __typename?: 'mutation_root',
 export type UpdateRoleMutationVariables = Exact<{
   roleId: Scalars['uuid'];
   roleName: Scalars['String'];
-  insertPermissions: ReadonlyArray<RolePermission_Insert_Input>;
-  deletePermissionNames?: Maybe<ReadonlyArray<Permission_Enum>>;
+  insertPermissions: ReadonlyArray<RolePermission_Insert_Input> | RolePermission_Insert_Input;
+  deletePermissionNames?: Maybe<ReadonlyArray<Permission_Enum> | Permission_Enum>;
 }>;
 
 
@@ -32252,7 +32254,7 @@ export type UpdateEventInfoMutation = { readonly __typename?: 'mutation_root', r
   )> };
 
 export type DeleteEventInfosMutationVariables = Exact<{
-  eventIds: ReadonlyArray<Scalars['uuid']>;
+  eventIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
@@ -32269,7 +32271,7 @@ export type InsertEventPersonMutation = { readonly __typename?: 'mutation_root',
   )> };
 
 export type DeleteEventPersonsMutationVariables = Exact<{
-  deleteEventPeopleIds: ReadonlyArray<Scalars['uuid']>;
+  deleteEventPeopleIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
@@ -32340,7 +32342,7 @@ export type SelectWholeScheduleQuery = { readonly __typename?: 'query_root', rea
   )> };
 
 export type InsertRoomsMutationVariables = Exact<{
-  newRooms: ReadonlyArray<Room_Insert_Input>;
+  newRooms: ReadonlyArray<Room_Insert_Input> | Room_Insert_Input;
 }>;
 
 
@@ -32350,7 +32352,7 @@ export type InsertRoomsMutation = { readonly __typename?: 'mutation_root', reado
     )> }> };
 
 export type DeleteRoomsMutationVariables = Exact<{
-  deleteRoomIds: ReadonlyArray<Scalars['uuid']>;
+  deleteRoomIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
@@ -32371,7 +32373,7 @@ export type UpdateRoomMutation = { readonly __typename?: 'mutation_root', readon
   )> };
 
 export type DeleteEventsMutationVariables = Exact<{
-  deleteEventIds: ReadonlyArray<Scalars['uuid']>;
+  deleteEventIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
@@ -32396,10 +32398,10 @@ export type UpdateEventMutationVariables = Exact<{
   startTime: Scalars['timestamptz'];
   durationSeconds: Scalars['Int'];
   contentGroupId?: Maybe<Scalars['uuid']>;
-  newEventTags: ReadonlyArray<EventTag_Insert_Input>;
-  deleteEventTagIds: ReadonlyArray<Scalars['uuid']>;
-  newEventPeople: ReadonlyArray<EventPerson_Insert_Input>;
-  deleteEventPeopleIds: ReadonlyArray<Scalars['uuid']>;
+  newEventTags: ReadonlyArray<EventTag_Insert_Input> | EventTag_Insert_Input;
+  deleteEventTagIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+  newEventPeople: ReadonlyArray<EventPerson_Insert_Input> | EventPerson_Insert_Input;
+  deleteEventPeopleIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
@@ -32428,6 +32430,43 @@ export type UpdateEventPersonMutation = { readonly __typename?: 'mutation_root',
     { readonly __typename?: 'EventPerson' }
     & EventPersonInfoFragment
   )> };
+
+export type EditableSponsorsTable_GetAllSponsorsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type EditableSponsorsTable_GetAllSponsorsQuery = { readonly __typename?: 'query_root', readonly ContentGroup: ReadonlyArray<(
+    { readonly __typename?: 'ContentGroup' }
+    & EditableSponsorsTable_ContentGroupInfoFragment
+  )> };
+
+export type EditableSponsorsTable_InsertSponsorMutationVariables = Exact<{
+  contentGroup: ContentGroup_Insert_Input;
+}>;
+
+
+export type EditableSponsorsTable_InsertSponsorMutation = { readonly __typename?: 'mutation_root', readonly insert_ContentGroup_one?: Maybe<(
+    { readonly __typename?: 'ContentGroup' }
+    & EditableSponsorsTable_ContentGroupInfoFragment
+  )> };
+
+export type EditableSponsorsTable_UpdateSponsorMutationVariables = Exact<{
+  contentGroupId: Scalars['uuid'];
+  object: ContentGroup_Set_Input;
+}>;
+
+
+export type EditableSponsorsTable_UpdateSponsorMutation = { readonly __typename?: 'mutation_root', readonly update_ContentGroup_by_pk?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any }> };
+
+export type EditableSponsorsTable_DeleteSponsorMutationVariables = Exact<{
+  contentGroupIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+}>;
+
+
+export type EditableSponsorsTable_DeleteSponsorMutation = { readonly __typename?: 'mutation_root', readonly delete_ContentGroup?: Maybe<{ readonly __typename?: 'ContentGroup_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any }> }> };
+
+export type EditableSponsorsTable_ContentGroupInfoFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string> };
 
 export type ConferenceTakenQueryVariables = Exact<{
   name: Scalars['String'];
@@ -33593,6 +33632,13 @@ export const AttendeeInfoFragmentDoc = gql`
     fragment AttendeeInfo on Attendee {
   id
   displayName
+}
+    `;
+export const EditableSponsorsTable_ContentGroupInfoFragmentDoc = gql`
+    fragment EditableSponsorsTable_ContentGroupInfo on ContentGroup {
+  id
+  title
+  shortTitle
 }
     `;
 export const GroupDataFragmentDoc = gql`
@@ -38683,6 +38729,140 @@ export function useUpdateEventPersonMutation(baseOptions?: Apollo.MutationHookOp
 export type UpdateEventPersonMutationHookResult = ReturnType<typeof useUpdateEventPersonMutation>;
 export type UpdateEventPersonMutationResult = Apollo.MutationResult<UpdateEventPersonMutation>;
 export type UpdateEventPersonMutationOptions = Apollo.BaseMutationOptions<UpdateEventPersonMutation, UpdateEventPersonMutationVariables>;
+export const EditableSponsorsTable_GetAllSponsorsDocument = gql`
+    query EditableSponsorsTable_GetAllSponsors($conferenceId: uuid!) {
+  ContentGroup(
+    where: {contentGroupTypeName: {_eq: SPONSOR}, conferenceId: {_eq: $conferenceId}}
+  ) {
+    ...EditableSponsorsTable_ContentGroupInfo
+  }
+}
+    ${EditableSponsorsTable_ContentGroupInfoFragmentDoc}`;
+
+/**
+ * __useEditableSponsorsTable_GetAllSponsorsQuery__
+ *
+ * To run a query within a React component, call `useEditableSponsorsTable_GetAllSponsorsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEditableSponsorsTable_GetAllSponsorsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useEditableSponsorsTable_GetAllSponsorsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useEditableSponsorsTable_GetAllSponsorsQuery(baseOptions: Apollo.QueryHookOptions<EditableSponsorsTable_GetAllSponsorsQuery, EditableSponsorsTable_GetAllSponsorsQueryVariables>) {
+        return Apollo.useQuery<EditableSponsorsTable_GetAllSponsorsQuery, EditableSponsorsTable_GetAllSponsorsQueryVariables>(EditableSponsorsTable_GetAllSponsorsDocument, baseOptions);
+      }
+export function useEditableSponsorsTable_GetAllSponsorsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EditableSponsorsTable_GetAllSponsorsQuery, EditableSponsorsTable_GetAllSponsorsQueryVariables>) {
+          return Apollo.useLazyQuery<EditableSponsorsTable_GetAllSponsorsQuery, EditableSponsorsTable_GetAllSponsorsQueryVariables>(EditableSponsorsTable_GetAllSponsorsDocument, baseOptions);
+        }
+export type EditableSponsorsTable_GetAllSponsorsQueryHookResult = ReturnType<typeof useEditableSponsorsTable_GetAllSponsorsQuery>;
+export type EditableSponsorsTable_GetAllSponsorsLazyQueryHookResult = ReturnType<typeof useEditableSponsorsTable_GetAllSponsorsLazyQuery>;
+export type EditableSponsorsTable_GetAllSponsorsQueryResult = Apollo.QueryResult<EditableSponsorsTable_GetAllSponsorsQuery, EditableSponsorsTable_GetAllSponsorsQueryVariables>;
+export const EditableSponsorsTable_InsertSponsorDocument = gql`
+    mutation EditableSponsorsTable_InsertSponsor($contentGroup: ContentGroup_insert_input!) {
+  insert_ContentGroup_one(object: $contentGroup) {
+    ...EditableSponsorsTable_ContentGroupInfo
+  }
+}
+    ${EditableSponsorsTable_ContentGroupInfoFragmentDoc}`;
+export type EditableSponsorsTable_InsertSponsorMutationFn = Apollo.MutationFunction<EditableSponsorsTable_InsertSponsorMutation, EditableSponsorsTable_InsertSponsorMutationVariables>;
+
+/**
+ * __useEditableSponsorsTable_InsertSponsorMutation__
+ *
+ * To run a mutation, you first call `useEditableSponsorsTable_InsertSponsorMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditableSponsorsTable_InsertSponsorMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editableSponsorsTableInsertSponsorMutation, { data, loading, error }] = useEditableSponsorsTable_InsertSponsorMutation({
+ *   variables: {
+ *      contentGroup: // value for 'contentGroup'
+ *   },
+ * });
+ */
+export function useEditableSponsorsTable_InsertSponsorMutation(baseOptions?: Apollo.MutationHookOptions<EditableSponsorsTable_InsertSponsorMutation, EditableSponsorsTable_InsertSponsorMutationVariables>) {
+        return Apollo.useMutation<EditableSponsorsTable_InsertSponsorMutation, EditableSponsorsTable_InsertSponsorMutationVariables>(EditableSponsorsTable_InsertSponsorDocument, baseOptions);
+      }
+export type EditableSponsorsTable_InsertSponsorMutationHookResult = ReturnType<typeof useEditableSponsorsTable_InsertSponsorMutation>;
+export type EditableSponsorsTable_InsertSponsorMutationResult = Apollo.MutationResult<EditableSponsorsTable_InsertSponsorMutation>;
+export type EditableSponsorsTable_InsertSponsorMutationOptions = Apollo.BaseMutationOptions<EditableSponsorsTable_InsertSponsorMutation, EditableSponsorsTable_InsertSponsorMutationVariables>;
+export const EditableSponsorsTable_UpdateSponsorDocument = gql`
+    mutation EditableSponsorsTable_UpdateSponsor($contentGroupId: uuid!, $object: ContentGroup_set_input!) {
+  update_ContentGroup_by_pk(pk_columns: {id: $contentGroupId}, _set: $object) {
+    id
+  }
+}
+    `;
+export type EditableSponsorsTable_UpdateSponsorMutationFn = Apollo.MutationFunction<EditableSponsorsTable_UpdateSponsorMutation, EditableSponsorsTable_UpdateSponsorMutationVariables>;
+
+/**
+ * __useEditableSponsorsTable_UpdateSponsorMutation__
+ *
+ * To run a mutation, you first call `useEditableSponsorsTable_UpdateSponsorMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditableSponsorsTable_UpdateSponsorMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editableSponsorsTableUpdateSponsorMutation, { data, loading, error }] = useEditableSponsorsTable_UpdateSponsorMutation({
+ *   variables: {
+ *      contentGroupId: // value for 'contentGroupId'
+ *      object: // value for 'object'
+ *   },
+ * });
+ */
+export function useEditableSponsorsTable_UpdateSponsorMutation(baseOptions?: Apollo.MutationHookOptions<EditableSponsorsTable_UpdateSponsorMutation, EditableSponsorsTable_UpdateSponsorMutationVariables>) {
+        return Apollo.useMutation<EditableSponsorsTable_UpdateSponsorMutation, EditableSponsorsTable_UpdateSponsorMutationVariables>(EditableSponsorsTable_UpdateSponsorDocument, baseOptions);
+      }
+export type EditableSponsorsTable_UpdateSponsorMutationHookResult = ReturnType<typeof useEditableSponsorsTable_UpdateSponsorMutation>;
+export type EditableSponsorsTable_UpdateSponsorMutationResult = Apollo.MutationResult<EditableSponsorsTable_UpdateSponsorMutation>;
+export type EditableSponsorsTable_UpdateSponsorMutationOptions = Apollo.BaseMutationOptions<EditableSponsorsTable_UpdateSponsorMutation, EditableSponsorsTable_UpdateSponsorMutationVariables>;
+export const EditableSponsorsTable_DeleteSponsorDocument = gql`
+    mutation EditableSponsorsTable_DeleteSponsor($contentGroupIds: [uuid!]!) {
+  delete_ContentGroup(where: {id: {_in: $contentGroupIds}}) {
+    returning {
+      id
+    }
+  }
+}
+    `;
+export type EditableSponsorsTable_DeleteSponsorMutationFn = Apollo.MutationFunction<EditableSponsorsTable_DeleteSponsorMutation, EditableSponsorsTable_DeleteSponsorMutationVariables>;
+
+/**
+ * __useEditableSponsorsTable_DeleteSponsorMutation__
+ *
+ * To run a mutation, you first call `useEditableSponsorsTable_DeleteSponsorMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditableSponsorsTable_DeleteSponsorMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editableSponsorsTableDeleteSponsorMutation, { data, loading, error }] = useEditableSponsorsTable_DeleteSponsorMutation({
+ *   variables: {
+ *      contentGroupIds: // value for 'contentGroupIds'
+ *   },
+ * });
+ */
+export function useEditableSponsorsTable_DeleteSponsorMutation(baseOptions?: Apollo.MutationHookOptions<EditableSponsorsTable_DeleteSponsorMutation, EditableSponsorsTable_DeleteSponsorMutationVariables>) {
+        return Apollo.useMutation<EditableSponsorsTable_DeleteSponsorMutation, EditableSponsorsTable_DeleteSponsorMutationVariables>(EditableSponsorsTable_DeleteSponsorDocument, baseOptions);
+      }
+export type EditableSponsorsTable_DeleteSponsorMutationHookResult = ReturnType<typeof useEditableSponsorsTable_DeleteSponsorMutation>;
+export type EditableSponsorsTable_DeleteSponsorMutationResult = Apollo.MutationResult<EditableSponsorsTable_DeleteSponsorMutation>;
+export type EditableSponsorsTable_DeleteSponsorMutationOptions = Apollo.BaseMutationOptions<EditableSponsorsTable_DeleteSponsorMutation, EditableSponsorsTable_DeleteSponsorMutationVariables>;
 export const ConferenceTakenDocument = gql`
     query ConferenceTaken($name: String!, $shortName: String!, $slug: String!) {
   Conference(

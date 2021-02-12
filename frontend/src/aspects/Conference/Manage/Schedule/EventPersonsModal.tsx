@@ -104,11 +104,13 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, attendees }:
     const data = useMemo(() => [...event.eventPeople], [event.eventPeople]);
 
     const attendeeOptions = useMemo(() => {
-        return attendees.map((attendee) => (
-            <option key={attendee.id} value={attendee.id}>
-                {attendee.displayName}
-            </option>
-        ));
+        return [...attendees]
+            .sort((x, y) => x.displayName.localeCompare(y.displayName))
+            .map((attendee) => (
+                <option key={attendee.id} value={attendee.id}>
+                    {attendee.displayName}
+                </option>
+            ));
     }, [attendees]);
 
     const [insertEventPerson, insertEventPersonResponse] = useInsertEventPersonMutation();

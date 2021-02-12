@@ -1,5 +1,17 @@
 import { gql, Reference } from "@apollo/client";
-import { Button, FormLabel, Input, useColorModeValue, useDisclosure } from "@chakra-ui/react";
+import {
+    Button,
+    Drawer,
+    DrawerBody,
+    DrawerCloseButton,
+    DrawerContent,
+    DrawerHeader,
+    DrawerOverlay,
+    FormLabel,
+    Input,
+    useColorModeValue,
+    useDisclosure,
+} from "@chakra-ui/react";
 import React, { useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -333,6 +345,39 @@ export function EditableSponsorsTable(): JSX.Element {
                 }
                 forceReload={forceReloadRef}
             />
+            <SponsorSecondaryEditor
+                sponsors={sponsors.data?.ContentGroup ?? []}
+                index={editingIndex}
+                isSecondaryPanelOpen={isSecondaryPanelOpen}
+                onSecondaryPanelClose={() => {
+                    onSecondaryPanelClose();
+                    setEditingIndex(null);
+                }}
+            />
         </>
+    );
+}
+
+function SponsorSecondaryEditor({
+    sponsors,
+    isSecondaryPanelOpen,
+    onSecondaryPanelClose,
+    index,
+}: {
+    sponsors: readonly SponsorInfoFragment[];
+    isSecondaryPanelOpen: boolean;
+    onSecondaryPanelClose: () => void;
+    index: number | null;
+}): JSX.Element {
+    return (
+        <Drawer isOpen={isSecondaryPanelOpen} onClose={onSecondaryPanelClose} size="lg">
+            <DrawerOverlay>
+                <DrawerContent>
+                    <DrawerCloseButton />
+                    <DrawerHeader>Edit</DrawerHeader>
+                    <DrawerBody>todo</DrawerBody>
+                </DrawerContent>
+            </DrawerOverlay>
+        </Drawer>
     );
 }

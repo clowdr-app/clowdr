@@ -1,4 +1,3 @@
-import { CloudFormation } from "@aws-sdk/client-cloudformation";
 import { CloudFront } from "@aws-sdk/client-cloudfront";
 import { ElasticTranscoder } from "@aws-sdk/client-elastic-transcoder";
 import { IAM } from "@aws-sdk/client-iam";
@@ -53,12 +52,6 @@ assert(
 
 const credentials = fromEnv();
 const region = process.env.AWS_REGION;
-
-const cf = new CloudFormation({
-    apiVersion: "2010-05-15",
-    credentials,
-    region,
-});
 
 const iam = new IAM({
     apiVersion: "2010-05-08",
@@ -221,7 +214,6 @@ async function initialiseAwsClient(): Promise<void> {
 }
 
 export {
-    cf as CloudFormation,
     iam as IAM,
     s3 as S3,
     mediaconvert as MediaConvert,

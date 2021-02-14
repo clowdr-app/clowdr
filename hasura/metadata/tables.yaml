@@ -3206,6 +3206,7 @@
       - conferenceId
       - contentGroupId
       - contentTypeName
+      - created_at
       - data
       - id
       - isHidden

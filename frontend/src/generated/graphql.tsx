@@ -32468,6 +32468,18 @@ export type EditableSponsorsTable_DeleteSponsorMutation = { readonly __typename?
 
 export type EditableSponsorsTable_ContentGroupInfoFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string> };
 
+export type SponsorSecondaryEditor_GetSponsorContentItemsQueryVariables = Exact<{
+  contentGroupId: Scalars['uuid'];
+}>;
+
+
+export type SponsorSecondaryEditor_GetSponsorContentItemsQuery = { readonly __typename?: 'query_root', readonly ContentItem: ReadonlyArray<(
+    { readonly __typename?: 'ContentItem' }
+    & SponsorSecondaryEditor_ContentItemFragment
+  )> };
+
+export type SponsorSecondaryEditor_ContentItemFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly contentTypeName: ContentType_Enum, readonly data: any, readonly isHidden: boolean, readonly layoutData?: Maybe<any>, readonly updatedAt: any };
+
 export type ConferenceTakenQueryVariables = Exact<{
   name: Scalars['String'];
   shortName: Scalars['String'];
@@ -33639,6 +33651,17 @@ export const EditableSponsorsTable_ContentGroupInfoFragmentDoc = gql`
   id
   title
   shortTitle
+}
+    `;
+export const SponsorSecondaryEditor_ContentItemFragmentDoc = gql`
+    fragment SponsorSecondaryEditor_ContentItem on ContentItem {
+  id
+  name
+  contentTypeName
+  data
+  isHidden
+  layoutData
+  updatedAt
 }
     `;
 export const GroupDataFragmentDoc = gql`
@@ -38863,6 +38886,39 @@ export function useEditableSponsorsTable_DeleteSponsorMutation(baseOptions?: Apo
 export type EditableSponsorsTable_DeleteSponsorMutationHookResult = ReturnType<typeof useEditableSponsorsTable_DeleteSponsorMutation>;
 export type EditableSponsorsTable_DeleteSponsorMutationResult = Apollo.MutationResult<EditableSponsorsTable_DeleteSponsorMutation>;
 export type EditableSponsorsTable_DeleteSponsorMutationOptions = Apollo.BaseMutationOptions<EditableSponsorsTable_DeleteSponsorMutation, EditableSponsorsTable_DeleteSponsorMutationVariables>;
+export const SponsorSecondaryEditor_GetSponsorContentItemsDocument = gql`
+    query SponsorSecondaryEditor_GetSponsorContentItems($contentGroupId: uuid!) {
+  ContentItem(where: {contentGroupId: {_eq: $contentGroupId}}) {
+    ...SponsorSecondaryEditor_ContentItem
+  }
+}
+    ${SponsorSecondaryEditor_ContentItemFragmentDoc}`;
+
+/**
+ * __useSponsorSecondaryEditor_GetSponsorContentItemsQuery__
+ *
+ * To run a query within a React component, call `useSponsorSecondaryEditor_GetSponsorContentItemsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSponsorSecondaryEditor_GetSponsorContentItemsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSponsorSecondaryEditor_GetSponsorContentItemsQuery({
+ *   variables: {
+ *      contentGroupId: // value for 'contentGroupId'
+ *   },
+ * });
+ */
+export function useSponsorSecondaryEditor_GetSponsorContentItemsQuery(baseOptions: Apollo.QueryHookOptions<SponsorSecondaryEditor_GetSponsorContentItemsQuery, SponsorSecondaryEditor_GetSponsorContentItemsQueryVariables>) {
+        return Apollo.useQuery<SponsorSecondaryEditor_GetSponsorContentItemsQuery, SponsorSecondaryEditor_GetSponsorContentItemsQueryVariables>(SponsorSecondaryEditor_GetSponsorContentItemsDocument, baseOptions);
+      }
+export function useSponsorSecondaryEditor_GetSponsorContentItemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SponsorSecondaryEditor_GetSponsorContentItemsQuery, SponsorSecondaryEditor_GetSponsorContentItemsQueryVariables>) {
+          return Apollo.useLazyQuery<SponsorSecondaryEditor_GetSponsorContentItemsQuery, SponsorSecondaryEditor_GetSponsorContentItemsQueryVariables>(SponsorSecondaryEditor_GetSponsorContentItemsDocument, baseOptions);
+        }
+export type SponsorSecondaryEditor_GetSponsorContentItemsQueryHookResult = ReturnType<typeof useSponsorSecondaryEditor_GetSponsorContentItemsQuery>;
+export type SponsorSecondaryEditor_GetSponsorContentItemsLazyQueryHookResult = ReturnType<typeof useSponsorSecondaryEditor_GetSponsorContentItemsLazyQuery>;
+export type SponsorSecondaryEditor_GetSponsorContentItemsQueryResult = Apollo.QueryResult<SponsorSecondaryEditor_GetSponsorContentItemsQuery, SponsorSecondaryEditor_GetSponsorContentItemsQueryVariables>;
 export const ConferenceTakenDocument = gql`
     query ConferenceTaken($name: String!, $shortName: String!, $slug: String!) {
   Conference(

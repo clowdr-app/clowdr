@@ -659,11 +659,11 @@ function EditableScheduleTable(): JSX.Element {
                 }
 
                 if (record.roomId) {
-                    const eventsInSameRoom = [...dependentData.values()].filter(
-                        (x) => x[ColumnId.Room]?.id === record.roomId
+                    const eventsInSameRoom = [...dependentData.entries()].filter(
+                        ([id, x]) => x[ColumnId.Room]?.id === record.roomId && id !== record.id
                     );
                     if (
-                        eventsInSameRoom.some((event) => {
+                        eventsInSameRoom.some(([_, event]) => {
                             const startE = event.startTime ? Date.parse(event.startTime) : Date.now();
                             const endE = startE + 1000 * (event.durationSeconds ?? 300);
                             return areOverlapping(start, end, startE, endE);

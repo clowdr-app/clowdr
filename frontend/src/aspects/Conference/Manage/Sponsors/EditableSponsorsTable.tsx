@@ -224,13 +224,13 @@ export function EditableSponsorsTable(): JSX.Element {
                                     const data = _data.insert_ContentGroup_one;
                                     cache.modify({
                                         fields: {
-                                            Sponsor(existingRefs: Reference[] = [], { readField }) {
+                                            ContentGroup(existingRefs: Reference[] = [], { readField }) {
                                                 const newRef = cache.writeFragment({
                                                     data: {
                                                         ...data,
                                                     },
                                                     fragment: SponsorInfoFragmentDoc,
-                                                    fragmentName: "SponsorInfo",
+                                                    fragmentName: "EditableSponsorsTable_ContentGroupInfo",
                                                 });
                                                 if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
                                                     return existingRefs;
@@ -265,11 +265,11 @@ export function EditableSponsorsTable(): JSX.Element {
                                     const data = _data.update_ContentGroup_by_pk;
                                     cache.modify({
                                         fields: {
-                                            Sponsor(existingRefs: Reference[] = [], { readField }) {
+                                            ContentGroup(existingRefs: Reference[] = [], { readField }) {
                                                 const newRef = cache.writeFragment({
                                                     data,
                                                     fragment: SponsorInfoFragmentDoc,
-                                                    fragmentName: "SponsorInfo",
+                                                    fragmentName: "EditableSponsorsTable_ContentGroupInfo",
                                                 });
                                                 if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
                                                     return existingRefs;
@@ -296,11 +296,11 @@ export function EditableSponsorsTable(): JSX.Element {
                                     const deletedIds = data.returning.map((x) => x.id);
                                     cache.modify({
                                         fields: {
-                                            Sponsor(existingRefs: Reference[] = [], { readField }) {
+                                            ContentGroup(existingRefs: Reference[] = [], { readField }) {
                                                 deletedIds.forEach((x) => {
                                                     cache.evict({
                                                         id: x.id,
-                                                        fieldName: "SponsorInfo",
+                                                        fieldName: "EditableSponsorsTable_ContentGroupInfo",
                                                         broadcast: true,
                                                     });
                                                 });

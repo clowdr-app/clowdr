@@ -94,29 +94,31 @@ export default function ListConferencesView(): JSX.Element {
         return (
             <>
                 <List spacing={2} display="flex" flexDir="column" alignItems="stretch">
-                    {attendees.map((attendee) => {
-                        return (
-                            <ListItem key={attendee.id} display="list-item">
-                                <LinkButton
-                                    leftIcon={
-                                        <Icon as={icon} color="green.500" fontSize="50%" verticalAlign="middle" />
-                                    }
-                                    to={`/conference/${attendee.conference.slug}/${subPath}`}
-                                    background="none"
-                                    color={buttonTextColour}
-                                    border="1px solid"
-                                    borderColor="gray.500"
-                                    linkProps={{ w: "100%" }}
-                                    w="100%"
-                                    justifyContent="flex-start"
-                                >
-                                    <Text as="span" verticalAlign="middle">
-                                        {attendee.conference.shortName}
-                                    </Text>
-                                </LinkButton>
-                            </ListItem>
-                        );
-                    })}
+                    {attendees
+                        .sort((x, y) => x.conference.shortName.localeCompare(y.conference.shortName))
+                        .map((attendee) => {
+                            return (
+                                <ListItem key={attendee.id} display="list-item">
+                                    <LinkButton
+                                        leftIcon={
+                                            <Icon as={icon} color="green.500" fontSize="50%" verticalAlign="middle" />
+                                        }
+                                        to={`/conference/${attendee.conference.slug}/${subPath}`}
+                                        background="none"
+                                        color={buttonTextColour}
+                                        border="1px solid"
+                                        borderColor="gray.500"
+                                        linkProps={{ w: "100%" }}
+                                        w="100%"
+                                        justifyContent="flex-start"
+                                    >
+                                        <Text as="span" verticalAlign="middle">
+                                            {attendee.conference.shortName}
+                                        </Text>
+                                    </LinkButton>
+                                </ListItem>
+                            );
+                        })}
                 </List>
                 {button}
             </>

@@ -2,6 +2,7 @@ import { ContentBaseType, ItemBaseTypes } from "@clowdr-app/shared-types/build/c
 import assert from "assert";
 import { ContentGroupType_Enum, ContentType_Enum } from "../../../../generated/graphql";
 import { ComponentItemTemplate } from "./ComponentItem";
+import { FileItemTemplate } from "./FileItem";
 import { LinkItemTemplate } from "./LinkItem";
 import { TextItemTemplate } from "./TextItem";
 import type { ContentGroupDescriptor, ItemBaseTemplate } from "./Types";
@@ -9,7 +10,7 @@ import { URLItemTemplate } from "./URLItem";
 import { VideoItemTemplate } from "./VideoItem";
 
 export const ItemBaseTemplates: { [K in ContentBaseType]: ItemBaseTemplate } = {
-    [ContentBaseType.File]: { supported: false },
+    [ContentBaseType.File]: FileItemTemplate,
     [ContentBaseType.Component]: ComponentItemTemplate,
     [ContentBaseType.Link]: LinkItemTemplate,
     [ContentBaseType.Text]: TextItemTemplate,

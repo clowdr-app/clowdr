@@ -1,12 +1,15 @@
-import { gql } from "@apollo/client";
+import { gql, Reference } from "@apollo/client";
 import {
     Accordion,
     AccordionButton,
     AccordionIcon,
     AccordionItem,
     AccordionPanel,
+    Alert,
+    AlertDescription,
+    AlertIcon,
+    AlertTitle,
     Box,
-    Button,
     Drawer,
     DrawerBody,
     DrawerCloseButton,
@@ -18,19 +21,19 @@ import {
     FormLabel,
     HStack,
     IconButton,
+    Spinner,
     Switch,
     Text,
     useToast,
 } from "@chakra-ui/react";
 import { ItemBaseTypes } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import {
-    SponsorContentItem_ContentItemFragment,
     SponsorSecondaryEditor_ContentItemFragment,
+    SponsorSecondaryEditor_ContentItemFragmentDoc,
     useSponsorContentItemInner_UpdateContentItemMutation,
     useSponsorContentItem_DeleteContentItemMutation,
-    useSponsorContentItem_GetSponsorContentItemQuery,
     useSponsorContentItem_SetContentItemIsHiddenMutation,
     useSponsorSecondaryEditor_GetSponsorContentItemsQuery,
 } from "../../../../generated/graphql";
@@ -53,6 +56,9 @@ gql`
         id
         name
         contentTypeName
+        data
+        layoutData
+        isHidden
         updatedAt
     }
 `;
@@ -70,9 +76,9 @@ export function SponsorSecondaryEditor({
 }): JSX.Element {
     const contentItemsResult = useSponsorSecondaryEditor_GetSponsorContentItemsQuery({
         variables: {
-            contentGroupId: index && sponsors.length > index ? sponsors[index].id : "",
+            contentGroupId: index !== null && index < sponsors.length ? sponsors[index].id : "",
         },
-        skip: !index || sponsors.length <= index,
+        skip: index === null || index >= sponsors.length,
     });
 
     return (
@@ -82,7 +88,7 @@ export function SponsorSecondaryEditor({
                     <DrawerCloseButton />
                     <DrawerHeader>Edit</DrawerHeader>
                     <DrawerBody>
-                        {index ? (
+                        {index !== null ? (
                             <AddSponsorContentMenu
                                 contentGroupId={sponsors[index].id}
                                 refetch={async () => {
@@ -117,22 +123,6 @@ export function SponsorContentItems({
 }
 
 gql`
-    query SponsorContentItem_GetSponsorContentItem($contentItemId: uuid!) {
-        ContentItem_by_pk(id: $contentItemId) {
-            ...SponsorContentItem_ContentItem
-        }
-    }
-
-    fragment SponsorContentItem_ContentItem on ContentItem {
-        id
-        name
-        contentTypeName
-        data
-        layoutData
-        isHidden
-        updatedAt
-    }
-
     mutation SponsorContentItem_DeleteContentItem($contentItemId: uuid!) {
         delete_ContentItem_by_pk(id: $contentItemId) {
             id
@@ -157,12 +147,6 @@ export function SponsorContentItem({
 }: {
     contentItem: SponsorSecondaryEditor_ContentItemFragment;
 }): JSX.Element {
-    const contentItemResult = useSponsorContentItem_GetSponsorContentItemQuery({
-        variables: {
-            contentItemId: contentItem.id,
-        },
-    });
-
     return (
         <AccordionItem>
             <AccordionButton>
@@ -172,16 +156,7 @@ export function SponsorContentItem({
                 <AccordionIcon />
             </AccordionButton>
             <AccordionPanel pb={4}>
-                <ApolloQueryWrapper getter={(result) => result.ContentItem_by_pk} queryResult={contentItemResult}>
-                    {(item: SponsorContentItem_ContentItemFragment) => (
-                        <SponsorContentItemInner
-                            contentItem={item}
-                            refetch={async () => {
-                                await contentItemResult.refetch();
-                            }}
-                        />
-                    )}
-                </ApolloQueryWrapper>
+                <SponsorContentItemInner contentItem={contentItem} />
             </AccordionPanel>
         </AccordionItem>
     );
@@ -189,45 +164,85 @@ export function SponsorContentItem({
 
 function SponsorContentItemInner({
     contentItem,
-    refetch,
 }: {
-    contentItem: SponsorContentItem_ContentItemFragment;
-    refetch: () => Promise<void>;
+    contentItem: SponsorSecondaryEditor_ContentItemFragment;
 }): JSX.Element {
     const [deleteContentItem] = useSponsorContentItem_DeleteContentItemMutation();
-    const [setIsHidden] = useSponsorContentItem_SetContentItemIsHiddenMutation();
-    const [updateContentItem] = useSponsorContentItemInner_UpdateContentItemMutation();
+    const [setIsHidden, setIsHiddenResponse] = useSponsorContentItem_SetContentItemIsHiddenMutation();
+    const [updateContentItem, updateContentItemResponse] = useSponsorContentItemInner_UpdateContentItemMutation();
     const toast = useToast();
-
-    const [updatedState, setUpdatedState] = useState<ContentItemDescriptor | null>(null);
 
     const itemType = contentItem.contentTypeName;
     const baseType = ItemBaseTypes[itemType];
     const itemTemplate = useMemo(() => ItemBaseTemplates[baseType], [baseType]);
     const descriptor = useMemo<ContentItemDescriptor>(
-        () =>
-            updatedState ?? {
-                ...contentItem,
-                typeName: contentItem.contentTypeName,
-                layoutData: contentItem.layoutData ?? null,
-            },
-        [contentItem, updatedState]
+        () => ({
+            ...contentItem,
+            typeName: contentItem.contentTypeName,
+            layoutData: contentItem.layoutData ?? null,
+        }),
+        [contentItem]
     );
 
     const editor = useMemo(() => {
         return itemTemplate.supported ? (
             itemTemplate.renderEditor({ type: "item-only", item: descriptor }, (updated) => {
                 if (updated.type === "item-only") {
-                    setUpdatedState(updated.item);
+                    const updatedItem = {
+                        data: updated.item.data,
+                        layoutData: updated.item.layoutData,
+                    };
+                    updateContentItem({
+                        variables: {
+                            contentItemId: updated.item.id,
+                            contentItem: updatedItem,
+                        },
+                        update: (cache, { data: _data }) => {
+                            if (_data?.update_ContentItem_by_pk) {
+                                const data = _data.update_ContentItem_by_pk;
+                                cache.modify({
+                                    fields: {
+                                        ContentItem(existingRefs: Reference[] = [], { readField }) {
+                                            const newRef = cache.writeFragment({
+                                                data: updated.item,
+                                                fragment: SponsorSecondaryEditor_ContentItemFragmentDoc,
+                                                fragmentName: "SponsorSecondaryEditor_ContentItem",
+                                            });
+                                            if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
+                                                return existingRefs;
+                                            }
+                                            return [...existingRefs, newRef];
+                                        },
+                                    },
+                                });
+                            }
+                        },
+                    });
                 }
             })
         ) : (
             <Text>Cannot edit {itemType} items.</Text>
         );
-    }, [descriptor, itemTemplate, itemType]);
+    }, [descriptor, itemTemplate, itemType, updateContentItem]);
 
     return (
         <>
+            {updateContentItemResponse.loading ? <Spinner label="Saving changes" /> : undefined}
+            {updateContentItemResponse.error ? (
+                <Alert status="error">
+                    <AlertIcon />
+                    <AlertTitle>Error saving changes</AlertTitle>
+                    <AlertDescription>{updateContentItemResponse.error.message}</AlertDescription>
+                </Alert>
+            ) : undefined}
+            {setIsHiddenResponse.loading ? <Spinner label="Saving changes" /> : undefined}
+            {setIsHiddenResponse.error ? (
+                <Alert status="error">
+                    <AlertIcon />
+                    <AlertTitle>Error saving changes</AlertTitle>
+                    <AlertDescription>{setIsHiddenResponse.error.message}</AlertDescription>
+                </Alert>
+            ) : undefined}
             <HStack pb={4} justifyContent="flex-end">
                 <FormControl display="flex" flexDir="row" alignItems="flex-start" justifyContent="flex-start">
                     <FormLabel m={0} p={0} fontSize="0.9em">
@@ -241,20 +256,37 @@ function SponsorContentItemInner({
                         size="sm"
                         isChecked={contentItem.isHidden}
                         onChange={async (event) => {
-                            try {
-                                await setIsHidden({
-                                    variables: {
-                                        contentItemId: contentItem.id,
-                                        isHidden: event.target.checked,
-                                    },
-                                });
-                                await refetch();
-                            } catch (e) {
-                                toast({
-                                    status: "error",
-                                    title: `Could not ${event.target.checked ? "hide" : "unhide"} item`,
-                                });
-                            }
+                            const isHidden = event.target.checked;
+                            setIsHidden({
+                                variables: {
+                                    contentItemId: contentItem.id,
+                                    isHidden,
+                                },
+                                update: (cache, { data: _data }) => {
+                                    if (_data?.update_ContentItem_by_pk) {
+                                        const data = _data.update_ContentItem_by_pk;
+                                        cache.modify({
+                                            fields: {
+                                                ContentItem(existingRefs: Reference[] = [], { readField }) {
+                                                    const newRef = cache.writeFragment({
+                                                        data: {
+                                                            __typename: "ContentItem",
+                                                            id: data.id,
+                                                            isHidden,
+                                                        },
+                                                        fragment: SponsorSecondaryEditor_ContentItemFragmentDoc,
+                                                        fragmentName: "SponsorSecondaryEditor_ContentItem",
+                                                    });
+                                                    if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
+                                                        return existingRefs;
+                                                    }
+                                                    return [...existingRefs, newRef];
+                                                },
+                                            },
+                                        });
+                                    }
+                                },
+                            });
                         }}
                     />
                     <FormHelperText m={0} ml={2} p={0}>
@@ -272,6 +304,25 @@ function SponsorContentItemInner({
                                 await deleteContentItem({
                                     variables: {
                                         contentItemId: contentItem.id,
+                                    },
+                                    update: (cache, { data: _data }) => {
+                                        if (_data?.delete_ContentItem_by_pk) {
+                                            const data = _data.delete_ContentItem_by_pk;
+                                            cache.modify({
+                                                fields: {
+                                                    ContentItem(existingRefs: Reference[] = [], { readField }) {
+                                                        cache.evict({
+                                                            id: data.id,
+                                                            fieldName: "SponsorSecondaryEditor_ContentItemFragment",
+                                                            broadcast: true,
+                                                        });
+                                                        return existingRefs.filter(
+                                                            (ref) => data.id !== readField("id", ref)
+                                                        );
+                                                    },
+                                                },
+                                            });
+                                        }
                                     },
                                 });
                             } catch (e) {
@@ -293,40 +344,37 @@ function SponsorContentItemInner({
                         ...descriptor,
                         layoutData,
                     };
-                    setUpdatedState(newState);
+                    updateContentItem({
+                        variables: {
+                            contentItemId: contentItem.id,
+                            contentItem: {
+                                data: newState.data,
+                                layoutData: newState.layoutData,
+                            },
+                        },
+                        update: (cache, { data: _data }) => {
+                            if (_data?.update_ContentItem_by_pk) {
+                                const data = _data.update_ContentItem_by_pk;
+                                cache.modify({
+                                    fields: {
+                                        ContentItem(existingRefs: Reference[] = [], { readField }) {
+                                            const newRef = cache.writeFragment({
+                                                data: newState,
+                                                fragment: SponsorSecondaryEditor_ContentItemFragmentDoc,
+                                                fragmentName: "SponsorSecondaryEditor_ContentItem",
+                                            });
+                                            if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
+                                                return existingRefs;
+                                            }
+                                            return [...existingRefs, newRef];
+                                        },
+                                    },
+                                });
+                            }
+                        },
+                    });
                 }}
             />
-            <Button
-                colorScheme="green"
-                size="sm"
-                mt={2}
-                aria-label="Save content"
-                isDisabled={!updatedState}
-                onClick={async () => {
-                    try {
-                        if (updatedState) {
-                            await updateContentItem({
-                                variables: {
-                                    contentItemId: contentItem.id,
-                                    contentItem: {
-                                        data: updatedState.data,
-                                        layoutData: updatedState.layoutData,
-                                    },
-                                },
-                            });
-                            await refetch();
-                            setUpdatedState(null);
-                        }
-                    } catch (e) {
-                        toast({
-                            status: "error",
-                            title: "Could not save content",
-                        });
-                    }
-                }}
-            >
-                Save
-            </Button>
         </>
     );
 }

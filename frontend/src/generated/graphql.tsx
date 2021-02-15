@@ -32483,19 +32483,7 @@ export type SponsorSecondaryEditor_GetSponsorContentItemsQuery = { readonly __ty
     & SponsorSecondaryEditor_ContentItemFragment
   )> };
 
-export type SponsorSecondaryEditor_ContentItemFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly contentTypeName: ContentType_Enum, readonly updatedAt: any };
-
-export type SponsorContentItem_GetSponsorContentItemQueryVariables = Exact<{
-  contentItemId: Scalars['uuid'];
-}>;
-
-
-export type SponsorContentItem_GetSponsorContentItemQuery = { readonly __typename?: 'query_root', readonly ContentItem_by_pk?: Maybe<(
-    { readonly __typename?: 'ContentItem' }
-    & SponsorContentItem_ContentItemFragment
-  )> };
-
-export type SponsorContentItem_ContentItemFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly contentTypeName: ContentType_Enum, readonly data: any, readonly layoutData?: Maybe<any>, readonly isHidden: boolean, readonly updatedAt: any };
+export type SponsorSecondaryEditor_ContentItemFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly contentTypeName: ContentType_Enum, readonly data: any, readonly layoutData?: Maybe<any>, readonly isHidden: boolean, readonly updatedAt: any };
 
 export type SponsorContentItem_DeleteContentItemMutationVariables = Exact<{
   contentItemId: Scalars['uuid'];
@@ -33246,7 +33234,7 @@ export const RoomPage_RoomDetailsFragmentDoc = gql`
     id
     contentGroupTypeName
     contentItems(
-      where: {contentTypeName: {_eq: IMAGE_URL}, layoutData: {_contains: {isLogo: true}}}
+      where: {contentTypeName: {_in: [IMAGE_URL, IMAGE_FILE]}, layoutData: {_contains: {isLogo: true}}}
       limit: 1
       order_by: {updatedAt: desc}
     ) {
@@ -33705,14 +33693,6 @@ export const SponsorSecondaryEditor_ContentItemFragmentDoc = gql`
   id
   name
   contentTypeName
-  updatedAt
-}
-    `;
-export const SponsorContentItem_ContentItemFragmentDoc = gql`
-    fragment SponsorContentItem_ContentItem on ContentItem {
-  id
-  name
-  contentTypeName
   data
   layoutData
   isHidden
@@ -33861,7 +33841,7 @@ export const MainMenuSponsors_ContentGroupDataFragmentDoc = gql`
     id
   }
   logo: contentItems(
-    where: {contentTypeName: {_eq: IMAGE_URL}, layoutData: {_contains: {isLogo: true}}}
+    where: {contentTypeName: {_in: [IMAGE_URL, IMAGE_FILE]}, layoutData: {_contains: {isLogo: true}}}
     order_by: {updatedAt: desc}
     limit: 1
   ) {
@@ -39006,39 +38986,6 @@ export function useSponsorSecondaryEditor_GetSponsorContentItemsLazyQuery(baseOp
 export type SponsorSecondaryEditor_GetSponsorContentItemsQueryHookResult = ReturnType<typeof useSponsorSecondaryEditor_GetSponsorContentItemsQuery>;
 export type SponsorSecondaryEditor_GetSponsorContentItemsLazyQueryHookResult = ReturnType<typeof useSponsorSecondaryEditor_GetSponsorContentItemsLazyQuery>;
 export type SponsorSecondaryEditor_GetSponsorContentItemsQueryResult = Apollo.QueryResult<SponsorSecondaryEditor_GetSponsorContentItemsQuery, SponsorSecondaryEditor_GetSponsorContentItemsQueryVariables>;
-export const SponsorContentItem_GetSponsorContentItemDocument = gql`
-    query SponsorContentItem_GetSponsorContentItem($contentItemId: uuid!) {
-  ContentItem_by_pk(id: $contentItemId) {
-    ...SponsorContentItem_ContentItem
-  }
-}
-    ${SponsorContentItem_ContentItemFragmentDoc}`;
-
-/**
- * __useSponsorContentItem_GetSponsorContentItemQuery__
- *
- * To run a query within a React component, call `useSponsorContentItem_GetSponsorContentItemQuery` and pass it any options that fit your needs.
- * When your component renders, `useSponsorContentItem_GetSponsorContentItemQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSponsorContentItem_GetSponsorContentItemQuery({
- *   variables: {
- *      contentItemId: // value for 'contentItemId'
- *   },
- * });
- */
-export function useSponsorContentItem_GetSponsorContentItemQuery(baseOptions: Apollo.QueryHookOptions<SponsorContentItem_GetSponsorContentItemQuery, SponsorContentItem_GetSponsorContentItemQueryVariables>) {
-        return Apollo.useQuery<SponsorContentItem_GetSponsorContentItemQuery, SponsorContentItem_GetSponsorContentItemQueryVariables>(SponsorContentItem_GetSponsorContentItemDocument, baseOptions);
-      }
-export function useSponsorContentItem_GetSponsorContentItemLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SponsorContentItem_GetSponsorContentItemQuery, SponsorContentItem_GetSponsorContentItemQueryVariables>) {
-          return Apollo.useLazyQuery<SponsorContentItem_GetSponsorContentItemQuery, SponsorContentItem_GetSponsorContentItemQueryVariables>(SponsorContentItem_GetSponsorContentItemDocument, baseOptions);
-        }
-export type SponsorContentItem_GetSponsorContentItemQueryHookResult = ReturnType<typeof useSponsorContentItem_GetSponsorContentItemQuery>;
-export type SponsorContentItem_GetSponsorContentItemLazyQueryHookResult = ReturnType<typeof useSponsorContentItem_GetSponsorContentItemLazyQuery>;
-export type SponsorContentItem_GetSponsorContentItemQueryResult = Apollo.QueryResult<SponsorContentItem_GetSponsorContentItemQuery, SponsorContentItem_GetSponsorContentItemQueryVariables>;
 export const SponsorContentItem_DeleteContentItemDocument = gql`
     mutation SponsorContentItem_DeleteContentItem($contentItemId: uuid!) {
   delete_ContentItem_by_pk(id: $contentItemId) {

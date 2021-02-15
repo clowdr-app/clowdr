@@ -161,16 +161,19 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, attendees }:
                 },
                 sort: (x: AttendeeInfoFragment | undefined, y: AttendeeInfoFragment | undefined) =>
                     x && y ? x.displayName.localeCompare(y.displayName) : x ? 1 : y ? -1 : 0,
-                cell: function AttendeeCell(
-                    props: CellProps<Partial<EventPersonInfoFragment>, AttendeeInfoFragment | undefined>
-                ) {
-                    if (props.isInCreate) {
+                cell: function AttendeeCell({
+                    isInCreate,
+                    value,
+                    onChange,
+                    onBlur,
+                }: CellProps<Partial<EventPersonInfoFragment>, AttendeeInfoFragment | undefined>) {
+                    if (isInCreate) {
                         return (
                             <HStack>
-                                {props.value ? (
+                                {value ? (
                                     <LinkButton
                                         linkProps={{ target: "_blank" }}
-                                        to={`/conference/${conference.slug}/profile/view/${props.value.id}`}
+                                        to={`/conference/${conference.slug}/profile/view/${value.id}`}
                                         size="xs"
                                         aria-label="Go to attendee in new tab"
                                     >
@@ -180,9 +183,9 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, attendees }:
                                     </LinkButton>
                                 ) : undefined}
                                 <Select
-                                    value={props.value?.id ?? ""}
-                                    onChange={(ev) => props.onChange?.(attendees.find((x) => x.id === ev.target.value))}
-                                    onBlur={props.onBlur}
+                                    value={value?.id ?? ""}
+                                    onChange={(ev) => onChange?.(attendees.find((x) => x.id === ev.target.value))}
+                                    onBlur={onBlur}
                                 >
                                     <option value="">Select an attendee</option>
                                     {attendeeOptions}
@@ -190,7 +193,7 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, attendees }:
                             </HStack>
                         );
                     } else {
-                        return <>{props.value?.displayName ?? "Attendee not found"}</>;
+                        return <>{value?.displayName ?? "Attendee not found"}</>;
                     }
                 },
             },
@@ -346,7 +349,6 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, attendees }:
                                                                     fragmentName: "EventInfo",
                                                                     id: eventRef.__ref,
                                                                 });
-                                                                console.log(frag);
                                                                 if (
                                                                     frag &&
                                                                     !frag.eventPeople.some((p) => p.id === data.id)
@@ -448,7 +450,6 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, attendees }:
                                                                     fragmentName: "EventInfo",
                                                                     id: eventRef.__ref,
                                                                 });
-                                                                console.log(frag);
                                                                 if (frag) {
                                                                     cache.writeFragment<EventInfoFragment>({
                                                                         fragment: EventInfoFragmentDoc,

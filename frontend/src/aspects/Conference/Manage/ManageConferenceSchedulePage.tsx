@@ -254,7 +254,6 @@ function EditableScheduleTable(): JSX.Element {
                 },
                 get: (record) => (record.startTime ? new Date(record.startTime) : new Date()),
                 set: (record, v: Date) => {
-                    // TODO: Make this match updateMyData
                     record.startTime = v.toISOString() as any;
                 },
                 filterFn: dateTimeFilterFn(["startTime"]),
@@ -315,7 +314,6 @@ function EditableScheduleTable(): JSX.Element {
                         ? new Date(Date.parse(record.startTime) + 1000 * (record.durationSeconds ?? 300))
                         : new Date(Date.now() + 1000 * (record.durationSeconds ?? 300)),
                 set: (record, v: Date) => {
-                    // TODO: Make this match updateMyData
                     const start = record.startTime ? Date.parse((record.startTime as unknown) as string) : Date.now();
                     record.durationSeconds = Math.max(60, Math.round((v.getTime() - start) / 1000));
                 },
@@ -374,7 +372,6 @@ function EditableScheduleTable(): JSX.Element {
                 },
                 get: (data) => wholeSchedule.data?.Room.find((room) => room.id === data.roomId),
                 set: (record, v: RoomInfoFragment | undefined) => {
-                    // TODO: Make this match updateMyData
                     record.roomId = v?.id;
                 },
                 sort: (x: RoomInfoFragment | undefined, y: RoomInfoFragment | undefined) => {
@@ -450,7 +447,6 @@ function EditableScheduleTable(): JSX.Element {
                 },
                 get: (data) => data.intendedRoomModeName,
                 set: (record, v: RoomMode_Enum) => {
-                    // TODO: Make this match updateMyData
                     record.intendedRoomModeName = v;
                 },
                 filterFn: (rows, v: RoomMode_Enum) => rows.filter((r) => r.intendedRoomModeName === v),

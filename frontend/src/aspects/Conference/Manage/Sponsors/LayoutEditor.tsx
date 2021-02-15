@@ -15,6 +15,7 @@ export function LayoutEditor({
     const newLayoutData = useCallback((contentType: ContentType_Enum): LayoutDataBlob => {
         switch (contentType) {
             case ContentType_Enum.ImageUrl:
+            case ContentType_Enum.ImageFile:
                 return {
                     contentType,
                     wide: false,
@@ -40,8 +41,9 @@ export function LayoutEditor({
 
     return (
         <>
-            {layoutData.contentType === ContentType_Enum.ImageUrl ? (
-                <FormControl>
+            {layoutData.contentType === ContentType_Enum.ImageUrl ||
+            layoutData.contentType === ContentType_Enum.ImageFile ? (
+                <FormControl mt={4}>
                     <FormLabel>Is logo?</FormLabel>
                     <Switch
                         size="sm"

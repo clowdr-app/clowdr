@@ -56,6 +56,7 @@ export interface TextLayoutDataBlob extends BaseLayoutDataBlob {
 
 export interface ImageFileLayoutDataBlob extends BaseLayoutDataBlob {
     contentType: ContentType_Enum.ImageFile;
+    isLogo: boolean;
 }
 
 export interface PaperFileLayoutDataBlob extends BaseLayoutDataBlob {

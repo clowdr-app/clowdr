@@ -106,12 +106,12 @@ export function AddSponsorContentMenu({
     return (
         <Flex flexWrap="wrap">
             <LinkButton
-                to={"todo"}
+                to={`/conference/${conference.slug}/item/${contentGroupId}`}
                 colorScheme="green"
                 mb={4}
                 isExternal={true}
-                aria-label={"todo"}
-                title={"todo"}
+                aria-label={"View sponsor"}
+                title={"View sponsor"}
                 linkProps={{ flex: "0 0 auto", margin: 1 }}
             >
                 <FAIcon icon="link" iconStyle="s" mr={3} />

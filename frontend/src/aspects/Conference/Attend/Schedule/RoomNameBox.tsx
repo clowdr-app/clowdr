@@ -8,18 +8,18 @@ import { useConferenceCurrentUserActivePermissions } from "../../useConferenceCu
 
 export default function RoomNameBox({
     room,
-    height,
+    width,
     showBottomBorder,
     borderColour,
     backgroundColor,
-    marginTop,
+    marginLeft,
 }: {
     room: Timeline_RoomFragment | string;
-    height: number | string;
+    width: number | string;
     showBottomBorder: boolean;
     borderColour: string;
     backgroundColor?: string;
-    marginTop?: string;
+    marginLeft?: string;
 }): JSX.Element {
     const conference = useConference();
     const activePermissions = useConferenceCurrentUserActivePermissions();
@@ -50,20 +50,20 @@ export default function RoomNameBox({
     return (
         <Center
             p={4}
-            h={height + "px"}
-            borderRightWidth={1}
-            borderRightStyle="solid"
-            borderRightColor={borderColour}
-            borderBottomWidth={showBottomBorder ? 1 : 0}
+            w={width + "px"}
+            borderBottomWidth={1}
             borderBottomStyle="solid"
             borderBottomColor={borderColour}
+            borderRightWidth={showBottomBorder ? 1 : 0}
+            borderRightStyle="solid"
+            borderRightColor={borderColour}
             justifyContent="flex-start"
             backgroundColor={backgroundColor}
             role={typeof room === "string" ? "none" : "listitem"}
-            mt={marginTop}
-            borderTopWidth={marginTop ? 1 : 0}
-            borderTopStyle="solid"
-            borderTopColor={borderColour}
+            ml={marginLeft}
+            borderLeftWidth={marginLeft ? 1 : 0}
+            borderLeftStyle="solid"
+            borderLeftColor={borderColour}
         >
             {typeof room === "string" ? (
                 room

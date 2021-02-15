@@ -35907,7 +35907,7 @@ export type Timeline_SelectEventQueryResult = Apollo.QueryResult<Timeline_Select
 export const Timeline_SelectRoomsDocument = gql`
     query Timeline_SelectRooms($conferenceId: uuid!) {
   Room(
-    where: {conferenceId: {_eq: $conferenceId}, roomPrivacyName: {_eq: PUBLIC}, events: {id: {_is_null: false}}}
+    where: {conferenceId: {_eq: $conferenceId}, roomPrivacyName: {_eq: PUBLIC}, events: {}}
   ) {
     ...Timeline_Room
   }

@@ -28,8 +28,8 @@ function findMarkerBoundary(width: number): number[] {
 }
 
 export function useGenerateMarkers(
-    markerHeight: string | number,
-    submarkerHeight: string | number,
+    markerWidth: string | number,
+    submarkerWidth: string | number,
     includeMarkers = true,
     includeSubMarkers = true,
     showTimeLabel = true
@@ -60,7 +60,7 @@ export function useGenerateMarkers(
             if (includeMarkers || showTimeLabel) {
                 results.push(
                     <TimeMarker
-                        height={markerHeight}
+                        width={markerWidth}
                         showTimeLabel={showTimeLabel}
                         showDate={currDate.ordinal > prevOrdinal || (currDate.hour >= 12 && prevHour < 12)}
                         time={currentMarkerTime}
@@ -90,7 +90,7 @@ export function useGenerateMarkers(
                     results.push(
                         <TimeMarker
                             roundTop={true}
-                            height={submarkerHeight}
+                            width={submarkerWidth}
                             showTimeLabel={false}
                             time={currentSubmarkerTime}
                             key={`submarker-${currentSubmarkerTime}`}
@@ -104,11 +104,11 @@ export function useGenerateMarkers(
     }, [
         includeMarkers,
         includeSubMarkers,
-        markerHeight,
+        markerWidth,
         scroller.visibleTimeSpanSeconds,
         showTimeLabel,
         submarkerColour,
-        submarkerHeight,
+        submarkerWidth,
         timeline.earliestMs,
         timeline.latestMs,
         timeline.timezone,
@@ -116,11 +116,11 @@ export function useGenerateMarkers(
 }
 
 export default function TimeBar({
-    height,
+    width,
     borderColour,
     marginTop,
 }: {
-    height: number | string;
+    width: number | string;
     borderColour: string;
     marginTop?: string;
 }): JSX.Element {
@@ -130,8 +130,8 @@ export default function TimeBar({
     return (
         <Box
             position="relative"
-            w="100%"
-            h={height + "px"}
+            h="100%"
+            w={width + "px"}
             borderBottomWidth={1}
             borderBottomStyle="solid"
             borderBottomColor={borderColour}
@@ -140,7 +140,7 @@ export default function TimeBar({
             borderTopColor={borderColour}
             overflow="hidden"
             backgroundColor={bgColor}
-            mt={marginTop}
+            ml={marginTop}
         >
             {markers}
         </Box>

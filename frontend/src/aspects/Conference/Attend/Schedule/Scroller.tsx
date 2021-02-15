@@ -44,21 +44,21 @@ export function ScrollerProvider({ children }: { children: React.ReactNode | Rea
 
 export default function Scroller({
     children,
-    height,
+    width,
 }: {
     children: React.ReactNode | React.ReactNodeArray;
-    height?: number;
+    width?: number;
 }): JSX.Element {
     const { visibleTimeSpanSeconds } = useScrollerParams();
     const { fullTimeSpanSeconds } = useTimelineParameters();
 
-    const innerWidthPx = (1920 * fullTimeSpanSeconds) / visibleTimeSpanSeconds;
+    const innerHeightPx = (1920 * fullTimeSpanSeconds) / visibleTimeSpanSeconds;
 
     return (
         <Box
             as={ScrollContainer}
-            w="100%"
-            h={height}
+            h={innerHeightPx + "px"}
+            w={width}
             vertical={false}
             hideScrollbars={false}
             role="region"
@@ -66,12 +66,13 @@ export default function Scroller({
         >
             <div
                 style={{
-                    width: innerWidthPx,
+                    width: "100%",
                     height: "100%",
                     boxSizing: "border-box",
                     transition: "none",
                     overflow: "hidden",
                     position: "relative",
+                    display: "flex",
                 }}
             >
                 {children}

@@ -94,9 +94,19 @@ export const FileItemTemplate: ItemBaseTemplate = {
                 `File Item Template mistakenly used for base type ${latestVersion.data.baseType}.`
             );
             let imageSrc = undefined;
-            if (latestVersion && latestVersion.data.baseType === ContentBaseType.File) {
-                const { bucket, key } = new AmazonS3URI(latestVersion.data.s3Url);
-                imageSrc = `https://s3.${import.meta.env.SNOWPACK_PUBLIC_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
+            if (
+                latestVersion &&
+                latestVersion.data.baseType === ContentBaseType.File &&
+                latestVersion.data.s3Url !== ""
+            ) {
+                try {
+                    const { bucket, key } = new AmazonS3URI(latestVersion.data.s3Url);
+                    imageSrc = `https://s3.${
+                        import.meta.env.SNOWPACK_PUBLIC_AWS_REGION
+                    }.amazonaws.com/${bucket}/${key}`;
+                } catch {
+                    /* Ignore */
+                }
             }
             return (
                 <>

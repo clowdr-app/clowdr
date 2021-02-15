@@ -37,6 +37,9 @@ gql`
         name
         priority
         originatingDataId
+        originatingEventId
+        originatingContentGroupId
+        roomPrivacyName
         originatingData {
             ...OriginatingDataInfo
         }

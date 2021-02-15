@@ -18266,9 +18266,7 @@ export type Chat_ReadUpToIndex_Bool_Exp = {
 /** unique or primary key constraints on table "chat.ReadUpToIndex" */
 export enum Chat_ReadUpToIndex_Constraint {
   /** unique or primary key constraint */
-  ReadUpToIndexPkey = 'ReadUpToIndex_pkey',
-  /** unique or primary key constraint */
-  ChatReadUpToIndexPkIndex = 'chat_ReadUpToIndex_pk_index'
+  ReadUpToIndexPkey = 'ReadUpToIndex_pkey'
 }
 
 /** input type for incrementing integer column in table "chat.ReadUpToIndex" */
@@ -32177,7 +32175,7 @@ export type UpdateRoleMutation = { readonly __typename?: 'mutation_root', readon
 
 export type RoomParticipantWithAttendeeInfoFragment = { readonly __typename?: 'RoomParticipant', readonly id: any, readonly conferenceId: any, readonly attendeeId: any, readonly roomId: any, readonly attendee: { readonly __typename?: 'Attendee', readonly displayName: string } };
 
-export type RoomWithParticipantInfoFragment = { readonly __typename?: 'Room', readonly id: any, readonly conferenceId: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly capacity?: Maybe<number>, readonly priority: number, readonly participants: ReadonlyArray<(
+export type RoomWithParticipantInfoFragment = { readonly __typename?: 'Room', readonly id: any, readonly conferenceId: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly capacity?: Maybe<number>, readonly priority: number, readonly originatingEventId?: Maybe<any>, readonly originatingContentGroupId?: Maybe<any>, readonly roomPrivacyName: RoomPrivacy_Enum, readonly participants: ReadonlyArray<(
     { readonly __typename?: 'RoomParticipant' }
     & RoomParticipantWithAttendeeInfoFragment
   )>, readonly originatingData?: Maybe<(
@@ -32292,7 +32290,7 @@ export type UpdateEventPersonInfoMutation = { readonly __typename?: 'mutation_ro
     & EventPersonInfoFragment
   )> };
 
-export type RoomInfoFragment = { readonly __typename?: 'Room', readonly capacity?: Maybe<number>, readonly conferenceId: any, readonly currentModeName: RoomMode_Enum, readonly id: any, readonly name: string, readonly priority: number, readonly originatingDataId?: Maybe<any>, readonly originatingData?: Maybe<(
+export type RoomInfoFragment = { readonly __typename?: 'Room', readonly capacity?: Maybe<number>, readonly conferenceId: any, readonly currentModeName: RoomMode_Enum, readonly id: any, readonly name: string, readonly priority: number, readonly originatingDataId?: Maybe<any>, readonly originatingEventId?: Maybe<any>, readonly originatingContentGroupId?: Maybe<any>, readonly roomPrivacyName: RoomPrivacy_Enum, readonly originatingData?: Maybe<(
     { readonly __typename?: 'OriginatingData' }
     & OriginatingDataInfoFragment
   )>, readonly participants: ReadonlyArray<(
@@ -33594,6 +33592,9 @@ export const RoomWithParticipantInfoFragmentDoc = gql`
   currentModeName
   capacity
   priority
+  originatingEventId
+  originatingContentGroupId
+  roomPrivacyName
   participants {
     ...RoomParticipantWithAttendeeInfo
   }
@@ -33620,6 +33621,9 @@ export const RoomInfoFragmentDoc = gql`
   name
   priority
   originatingDataId
+  originatingEventId
+  originatingContentGroupId
+  roomPrivacyName
   originatingData {
     ...OriginatingDataInfo
   }

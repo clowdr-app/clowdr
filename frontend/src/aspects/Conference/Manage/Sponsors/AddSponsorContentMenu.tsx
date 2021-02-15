@@ -100,7 +100,7 @@ export function AddSponsorContentMenu({
                 </MenuList>
             </Menu>
         ),
-        [contentTypeOptions, createItem, refetch, toast]
+        [conference.id, contentGroupId, contentTypeOptions, createItem, refetch, toast]
     );
 
     return (

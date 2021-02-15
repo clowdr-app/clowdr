@@ -22,7 +22,7 @@ function createDefaultText(type: ContentType_Enum.Abstract | ContentType_Enum.Te
 
 export const TextItemTemplate: ItemBaseTemplate = {
     supported: true,
-    createDefault: (group, type, required) => {
+    createDefault: (type, required) => {
         assert(
             type === ContentType_Enum.Abstract || type === ContentType_Enum.Text,
             `Text Item Template mistakenly used for type ${type}.`
@@ -51,7 +51,7 @@ export const TextItemTemplate: ItemBaseTemplate = {
                     typeName: type,
                     isHidden: false,
                     data: [],
-                    layoutData: {},
+                    layoutData: null,
                 },
             };
         }

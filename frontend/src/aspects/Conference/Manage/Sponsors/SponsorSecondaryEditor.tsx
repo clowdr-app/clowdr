@@ -39,6 +39,7 @@ import FAIcon from "../../../Icons/FAIcon";
 import { ItemBaseTemplates } from "../Content/Templates";
 import type { ContentItemDescriptor } from "../Content/Types";
 import { AddSponsorContentMenu } from "./AddSponsorContentMenu";
+import { LayoutEditor } from "./LayoutEditor";
 import type { SponsorInfoFragment } from "./Types";
 
 gql`
@@ -81,7 +82,14 @@ export function SponsorSecondaryEditor({
                     <DrawerCloseButton />
                     <DrawerHeader>Edit</DrawerHeader>
                     <DrawerBody>
-                        <AddSponsorContentMenu />
+                        {index ? (
+                            <AddSponsorContentMenu
+                                contentGroupId={sponsors[index].id}
+                                refetch={async () => {
+                                    await contentItemsResult.refetch();
+                                }}
+                            />
+                        ) : undefined}
                         <ApolloQueryWrapper getter={(result) => result.ContentItem} queryResult={contentItemsResult}>
                             {(contentItems: readonly SponsorSecondaryEditor_ContentItemFragment[]) => (
                                 <SponsorContentItems contentItems={contentItems} />
@@ -277,6 +285,17 @@ function SponsorContentItemInner({
                 </Box>
             </HStack>
             {editor}
+            <LayoutEditor
+                layoutDataBlob={descriptor.layoutData}
+                contentItemType={contentItem.contentTypeName}
+                update={(layoutData) => {
+                    const newState: ContentItemDescriptor = {
+                        ...descriptor,
+                        layoutData,
+                    };
+                    setUpdatedState(newState);
+                }}
+            />
             <Button
                 colorScheme="green"
                 size="sm"
@@ -291,6 +310,7 @@ function SponsorContentItemInner({
                                     contentItemId: contentItem.id,
                                     contentItem: {
                                         data: updatedState.data,
+                                        layoutData: updatedState.layoutData,
                                     },
                                 },
                             });

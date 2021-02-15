@@ -97,7 +97,7 @@ export function ContentGroupSecondaryEditor(
                                         assert(existingGroup);
                                         const template = ItemBaseTemplates[ItemBaseTypes[typeOpt.value]];
                                         assert(template.supported);
-                                        const newContent = template.createDefault(existingGroup, typeOpt.value, false);
+                                        const newContent = template.createDefault(typeOpt.value, false);
                                         assert(newContent.type === "item-only");
                                         newGroups.set(group.id, {
                                             ...existingGroup,
@@ -135,7 +135,7 @@ export function ContentGroupSecondaryEditor(
                                         assert(existingGroup);
                                         const template = ItemBaseTemplates[ItemBaseTypes[typeOpt.value]];
                                         assert(template.supported);
-                                        const newContent = template.createDefault(existingGroup, typeOpt.value, true);
+                                        const newContent = template.createDefault(typeOpt.value, true);
                                         if (newContent.type === "required-only") {
                                             newGroups.set(group.id, {
                                                 ...existingGroup,

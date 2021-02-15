@@ -87,7 +87,7 @@ export function fitGroupToTemplate(group: ContentGroupDescriptor): void {
                 const baseType = ItemBaseTypes[itemType];
                 const itemTemplate = ItemBaseTemplates[baseType];
                 assert(itemTemplate.supported);
-                const newItemDesc = itemTemplate.createDefault(group, itemType, false);
+                const newItemDesc = itemTemplate.createDefault(itemType, false);
                 assert(newItemDesc.type === "item-only");
                 return newItemDesc.item;
             }),
@@ -104,7 +104,7 @@ export function fitGroupToTemplate(group: ContentGroupDescriptor): void {
                 const baseType = ItemBaseTypes[itemType];
                 const itemTemplate = ItemBaseTemplates[baseType];
                 assert(itemTemplate.supported);
-                const newItemDesc = itemTemplate.createDefault(group, itemType, true);
+                const newItemDesc = itemTemplate.createDefault(itemType, true);
                 assert(newItemDesc.type === "required-only");
                 return newItemDesc.requiredItem;
             }),

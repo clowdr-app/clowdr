@@ -31486,7 +31486,7 @@ export type RoomSponsorContent_ContentGroupDataFragment = { readonly __typename?
     & RoomSponsorContent_ContentItemDataFragment
   )> };
 
-export type RoomSponsorContent_ContentItemDataFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly contentTypeName: ContentType_Enum, readonly data: any, readonly layoutData?: Maybe<any> };
+export type RoomSponsorContent_ContentItemDataFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly isHidden: boolean, readonly contentTypeName: ContentType_Enum, readonly data: any, readonly layoutData?: Maybe<any> };
 
 export type VonageSubscriber_GetAttendeeQueryVariables = Exact<{
   id: Scalars['uuid'];
@@ -32429,6 +32429,13 @@ export type UpdateEventPersonMutation = { readonly __typename?: 'mutation_root',
     & EventPersonInfoFragment
   )> };
 
+export type AddSponsorContentMenu_CreateContentItemMutationVariables = Exact<{
+  object: ContentItem_Insert_Input;
+}>;
+
+
+export type AddSponsorContentMenu_CreateContentItemMutation = { readonly __typename?: 'mutation_root', readonly insert_ContentItem_one?: Maybe<{ readonly __typename?: 'ContentItem', readonly id: any }> };
+
 export type EditableSponsorsTable_GetAllSponsorsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
@@ -33262,6 +33269,7 @@ export const RoomSponsorContent_ContentItemDataFragmentDoc = gql`
     fragment RoomSponsorContent_ContentItemData on ContentItem {
   id
   name
+  isHidden
   contentTypeName
   data
   layoutData
@@ -38799,6 +38807,38 @@ export function useUpdateEventPersonMutation(baseOptions?: Apollo.MutationHookOp
 export type UpdateEventPersonMutationHookResult = ReturnType<typeof useUpdateEventPersonMutation>;
 export type UpdateEventPersonMutationResult = Apollo.MutationResult<UpdateEventPersonMutation>;
 export type UpdateEventPersonMutationOptions = Apollo.BaseMutationOptions<UpdateEventPersonMutation, UpdateEventPersonMutationVariables>;
+export const AddSponsorContentMenu_CreateContentItemDocument = gql`
+    mutation AddSponsorContentMenu_CreateContentItem($object: ContentItem_insert_input!) {
+  insert_ContentItem_one(object: $object) {
+    id
+  }
+}
+    `;
+export type AddSponsorContentMenu_CreateContentItemMutationFn = Apollo.MutationFunction<AddSponsorContentMenu_CreateContentItemMutation, AddSponsorContentMenu_CreateContentItemMutationVariables>;
+
+/**
+ * __useAddSponsorContentMenu_CreateContentItemMutation__
+ *
+ * To run a mutation, you first call `useAddSponsorContentMenu_CreateContentItemMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddSponsorContentMenu_CreateContentItemMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addSponsorContentMenuCreateContentItemMutation, { data, loading, error }] = useAddSponsorContentMenu_CreateContentItemMutation({
+ *   variables: {
+ *      object: // value for 'object'
+ *   },
+ * });
+ */
+export function useAddSponsorContentMenu_CreateContentItemMutation(baseOptions?: Apollo.MutationHookOptions<AddSponsorContentMenu_CreateContentItemMutation, AddSponsorContentMenu_CreateContentItemMutationVariables>) {
+        return Apollo.useMutation<AddSponsorContentMenu_CreateContentItemMutation, AddSponsorContentMenu_CreateContentItemMutationVariables>(AddSponsorContentMenu_CreateContentItemDocument, baseOptions);
+      }
+export type AddSponsorContentMenu_CreateContentItemMutationHookResult = ReturnType<typeof useAddSponsorContentMenu_CreateContentItemMutation>;
+export type AddSponsorContentMenu_CreateContentItemMutationResult = Apollo.MutationResult<AddSponsorContentMenu_CreateContentItemMutation>;
+export type AddSponsorContentMenu_CreateContentItemMutationOptions = Apollo.BaseMutationOptions<AddSponsorContentMenu_CreateContentItemMutation, AddSponsorContentMenu_CreateContentItemMutationVariables>;
 export const EditableSponsorsTable_GetAllSponsorsDocument = gql`
     query EditableSponsorsTable_GetAllSponsors($conferenceId: uuid!) {
   ContentGroup(
@@ -39219,7 +39259,7 @@ export const CreateNewConferenceMetaStructureDocument = gql`
     }
   }
   insert_ContentGroup(
-    objects: {conferenceId: $conferenceId, contentGroupTypeName: LANDING_PAGE, contentItems: {data: [{conferenceId: $conferenceId, contentTypeName: ABSTRACT, data: $abstractData, isHidden: false, layoutData: {}, name: "Welcome text"}, {conferenceId: $conferenceId, contentTypeName: CONTENT_GROUP_LIST, data: $contentGroupListData, isHidden: false, layoutData: {}, name: "Content group list"}]}, shortTitle: "Landing", title: "Landing page"}
+    objects: {conferenceId: $conferenceId, contentGroupTypeName: LANDING_PAGE, contentItems: {data: [{conferenceId: $conferenceId, contentTypeName: ABSTRACT, data: $abstractData, isHidden: false, layoutData: null, name: "Welcome text"}, {conferenceId: $conferenceId, contentTypeName: CONTENT_GROUP_LIST, data: $contentGroupListData, isHidden: false, layoutData: null, name: "Content group list"}]}, shortTitle: "Landing", title: "Landing page"}
   ) {
     returning {
       ...ContentGroupData

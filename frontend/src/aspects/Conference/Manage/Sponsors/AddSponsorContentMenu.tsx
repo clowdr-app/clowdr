@@ -1,13 +1,39 @@
+import { gql } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
-import { Button, Flex, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
+import { Button, Flex, Menu, MenuButton, MenuItem, MenuList, useToast } from "@chakra-ui/react";
 import { ItemBaseTypes } from "@clowdr-app/shared-types/build/content";
+import assert from "assert";
 import React, { useMemo } from "react";
-import { ContentType_Enum } from "../../../../generated/graphql";
+import {
+    ContentItem_Insert_Input,
+    ContentType_Enum,
+    useAddSponsorContentMenu_CreateContentItemMutation,
+} from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import FAIcon from "../../../Icons/FAIcon";
+import { useConference } from "../../useConference";
 import { ItemBaseTemplates } from "../Content/Templates";
 
-export function AddSponsorContentMenu(): JSX.Element {
+gql`
+    mutation AddSponsorContentMenu_CreateContentItem($object: ContentItem_insert_input!) {
+        insert_ContentItem_one(object: $object) {
+            id
+        }
+    }
+`;
+
+export function AddSponsorContentMenu({
+    contentGroupId,
+    refetch,
+}: {
+    contentGroupId: string;
+    refetch: () => void;
+}): JSX.Element {
+    const toast = useToast();
+    const conference = useConference();
+
+    const [createItem] = useAddSponsorContentMenu_CreateContentItemMutation();
+
     const contentTypeOptions: { label: string; value: ContentType_Enum }[] = useMemo(
         () =>
             Object.keys(ContentType_Enum)
@@ -39,8 +65,33 @@ export function AddSponsorContentMenu(): JSX.Element {
                     {contentTypeOptions.map((typeOpt) => (
                         <MenuItem
                             key={typeOpt.value}
-                            onClick={() => {
-                                //todo
+                            onClick={async () => {
+                                try {
+                                    const template = ItemBaseTemplates[ItemBaseTypes[typeOpt.value]];
+                                    assert(template.supported);
+                                    const newContent = template.createDefault(typeOpt.value, false);
+                                    assert(newContent.type === "item-only");
+                                    const obj: ContentItem_Insert_Input = {
+                                        conferenceId: conference.id,
+                                        contentGroupId,
+                                        data: newContent.item.data,
+                                        contentTypeName: newContent.item.typeName,
+                                        name: newContent.item.name,
+                                    };
+                                    await createItem({
+                                        variables: {
+                                            object: obj,
+                                        },
+                                    });
+                                    refetch();
+                                } catch (e) {
+                                    console.error("Could not create new ContenItem", e);
+                                    toast({
+                                        status: "error",
+                                        title: "Could not create new content",
+                                        description: e.message,
+                                    });
+                                }
                             }}
                         >
                             {typeOpt.label}
@@ -49,7 +100,7 @@ export function AddSponsorContentMenu(): JSX.Element {
                 </MenuList>
             </Menu>
         ),
-        [contentTypeOptions]
+        [contentTypeOptions, createItem, refetch, toast]
     );
 
     return (

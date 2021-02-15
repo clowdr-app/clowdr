@@ -952,11 +952,7 @@ export function RequiredItemEditorModal({
     group: ContentGroupDescriptor;
     itemTemplate: {
         supported: true;
-        createDefault: (
-            group: ContentGroupDescriptor,
-            itemType: ContentType_Enum,
-            required: boolean
-        ) => ContentDescriptor;
+        createDefault: (itemType: ContentType_Enum, required: boolean) => ContentDescriptor;
         renderEditorHeading: (data: ContentDescriptor) => JSX.Element;
         renderEditor: (data: ContentDescriptor, update: (updated: ContentDescriptor) => void) => JSX.Element;
     };

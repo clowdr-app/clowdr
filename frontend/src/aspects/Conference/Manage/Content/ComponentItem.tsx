@@ -6,7 +6,7 @@ import type { ItemBaseTemplate } from "./Types";
 
 export const ComponentItemTemplate: ItemBaseTemplate = {
     supported: true,
-    createDefault: (_group, type, _required) => {
+    createDefault: (type, _required) => {
         assert(
             type === ContentType_Enum.ContentGroupList || type === ContentType_Enum.WholeSchedule,
             `Component Item Template mistakenly used for type ${type}.`
@@ -21,7 +21,7 @@ export const ComponentItemTemplate: ItemBaseTemplate = {
                 typeName: type,
                 isHidden: false,
                 data: [],
-                layoutData: {},
+                layoutData: null,
             },
         };
     },

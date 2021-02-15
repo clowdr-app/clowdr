@@ -32478,7 +32478,42 @@ export type SponsorSecondaryEditor_GetSponsorContentItemsQuery = { readonly __ty
     & SponsorSecondaryEditor_ContentItemFragment
   )> };
 
-export type SponsorSecondaryEditor_ContentItemFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly contentTypeName: ContentType_Enum, readonly data: any, readonly isHidden: boolean, readonly layoutData?: Maybe<any>, readonly updatedAt: any };
+export type SponsorSecondaryEditor_ContentItemFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly contentTypeName: ContentType_Enum, readonly updatedAt: any };
+
+export type SponsorContentItem_GetSponsorContentItemQueryVariables = Exact<{
+  contentItemId: Scalars['uuid'];
+}>;
+
+
+export type SponsorContentItem_GetSponsorContentItemQuery = { readonly __typename?: 'query_root', readonly ContentItem_by_pk?: Maybe<(
+    { readonly __typename?: 'ContentItem' }
+    & SponsorContentItem_ContentItemFragment
+  )> };
+
+export type SponsorContentItem_ContentItemFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly contentTypeName: ContentType_Enum, readonly data: any, readonly layoutData?: Maybe<any>, readonly isHidden: boolean, readonly updatedAt: any };
+
+export type SponsorContentItem_DeleteContentItemMutationVariables = Exact<{
+  contentItemId: Scalars['uuid'];
+}>;
+
+
+export type SponsorContentItem_DeleteContentItemMutation = { readonly __typename?: 'mutation_root', readonly delete_ContentItem_by_pk?: Maybe<{ readonly __typename?: 'ContentItem', readonly id: any }> };
+
+export type SponsorContentItem_SetContentItemIsHiddenMutationVariables = Exact<{
+  contentItemId: Scalars['uuid'];
+  isHidden: Scalars['Boolean'];
+}>;
+
+
+export type SponsorContentItem_SetContentItemIsHiddenMutation = { readonly __typename?: 'mutation_root', readonly update_ContentItem_by_pk?: Maybe<{ readonly __typename?: 'ContentItem', readonly id: any }> };
+
+export type SponsorContentItemInner_UpdateContentItemMutationVariables = Exact<{
+  contentItemId: Scalars['uuid'];
+  contentItem: ContentItem_Set_Input;
+}>;
+
+
+export type SponsorContentItemInner_UpdateContentItemMutation = { readonly __typename?: 'mutation_root', readonly update_ContentItem_by_pk?: Maybe<{ readonly __typename?: 'ContentItem', readonly id: any }> };
 
 export type ConferenceTakenQueryVariables = Exact<{
   name: Scalars['String'];
@@ -33658,9 +33693,17 @@ export const SponsorSecondaryEditor_ContentItemFragmentDoc = gql`
   id
   name
   contentTypeName
+  updatedAt
+}
+    `;
+export const SponsorContentItem_ContentItemFragmentDoc = gql`
+    fragment SponsorContentItem_ContentItem on ContentItem {
+  id
+  name
+  contentTypeName
   data
-  isHidden
   layoutData
+  isHidden
   updatedAt
 }
     `;
@@ -38919,6 +38962,140 @@ export function useSponsorSecondaryEditor_GetSponsorContentItemsLazyQuery(baseOp
 export type SponsorSecondaryEditor_GetSponsorContentItemsQueryHookResult = ReturnType<typeof useSponsorSecondaryEditor_GetSponsorContentItemsQuery>;
 export type SponsorSecondaryEditor_GetSponsorContentItemsLazyQueryHookResult = ReturnType<typeof useSponsorSecondaryEditor_GetSponsorContentItemsLazyQuery>;
 export type SponsorSecondaryEditor_GetSponsorContentItemsQueryResult = Apollo.QueryResult<SponsorSecondaryEditor_GetSponsorContentItemsQuery, SponsorSecondaryEditor_GetSponsorContentItemsQueryVariables>;
+export const SponsorContentItem_GetSponsorContentItemDocument = gql`
+    query SponsorContentItem_GetSponsorContentItem($contentItemId: uuid!) {
+  ContentItem_by_pk(id: $contentItemId) {
+    ...SponsorContentItem_ContentItem
+  }
+}
+    ${SponsorContentItem_ContentItemFragmentDoc}`;
+
+/**
+ * __useSponsorContentItem_GetSponsorContentItemQuery__
+ *
+ * To run a query within a React component, call `useSponsorContentItem_GetSponsorContentItemQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSponsorContentItem_GetSponsorContentItemQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSponsorContentItem_GetSponsorContentItemQuery({
+ *   variables: {
+ *      contentItemId: // value for 'contentItemId'
+ *   },
+ * });
+ */
+export function useSponsorContentItem_GetSponsorContentItemQuery(baseOptions: Apollo.QueryHookOptions<SponsorContentItem_GetSponsorContentItemQuery, SponsorContentItem_GetSponsorContentItemQueryVariables>) {
+        return Apollo.useQuery<SponsorContentItem_GetSponsorContentItemQuery, SponsorContentItem_GetSponsorContentItemQueryVariables>(SponsorContentItem_GetSponsorContentItemDocument, baseOptions);
+      }
+export function useSponsorContentItem_GetSponsorContentItemLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SponsorContentItem_GetSponsorContentItemQuery, SponsorContentItem_GetSponsorContentItemQueryVariables>) {
+          return Apollo.useLazyQuery<SponsorContentItem_GetSponsorContentItemQuery, SponsorContentItem_GetSponsorContentItemQueryVariables>(SponsorContentItem_GetSponsorContentItemDocument, baseOptions);
+        }
+export type SponsorContentItem_GetSponsorContentItemQueryHookResult = ReturnType<typeof useSponsorContentItem_GetSponsorContentItemQuery>;
+export type SponsorContentItem_GetSponsorContentItemLazyQueryHookResult = ReturnType<typeof useSponsorContentItem_GetSponsorContentItemLazyQuery>;
+export type SponsorContentItem_GetSponsorContentItemQueryResult = Apollo.QueryResult<SponsorContentItem_GetSponsorContentItemQuery, SponsorContentItem_GetSponsorContentItemQueryVariables>;
+export const SponsorContentItem_DeleteContentItemDocument = gql`
+    mutation SponsorContentItem_DeleteContentItem($contentItemId: uuid!) {
+  delete_ContentItem_by_pk(id: $contentItemId) {
+    id
+  }
+}
+    `;
+export type SponsorContentItem_DeleteContentItemMutationFn = Apollo.MutationFunction<SponsorContentItem_DeleteContentItemMutation, SponsorContentItem_DeleteContentItemMutationVariables>;
+
+/**
+ * __useSponsorContentItem_DeleteContentItemMutation__
+ *
+ * To run a mutation, you first call `useSponsorContentItem_DeleteContentItemMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSponsorContentItem_DeleteContentItemMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sponsorContentItemDeleteContentItemMutation, { data, loading, error }] = useSponsorContentItem_DeleteContentItemMutation({
+ *   variables: {
+ *      contentItemId: // value for 'contentItemId'
+ *   },
+ * });
+ */
+export function useSponsorContentItem_DeleteContentItemMutation(baseOptions?: Apollo.MutationHookOptions<SponsorContentItem_DeleteContentItemMutation, SponsorContentItem_DeleteContentItemMutationVariables>) {
+        return Apollo.useMutation<SponsorContentItem_DeleteContentItemMutation, SponsorContentItem_DeleteContentItemMutationVariables>(SponsorContentItem_DeleteContentItemDocument, baseOptions);
+      }
+export type SponsorContentItem_DeleteContentItemMutationHookResult = ReturnType<typeof useSponsorContentItem_DeleteContentItemMutation>;
+export type SponsorContentItem_DeleteContentItemMutationResult = Apollo.MutationResult<SponsorContentItem_DeleteContentItemMutation>;
+export type SponsorContentItem_DeleteContentItemMutationOptions = Apollo.BaseMutationOptions<SponsorContentItem_DeleteContentItemMutation, SponsorContentItem_DeleteContentItemMutationVariables>;
+export const SponsorContentItem_SetContentItemIsHiddenDocument = gql`
+    mutation SponsorContentItem_SetContentItemIsHidden($contentItemId: uuid!, $isHidden: Boolean!) {
+  update_ContentItem_by_pk(
+    pk_columns: {id: $contentItemId}
+    _set: {isHidden: $isHidden}
+  ) {
+    id
+  }
+}
+    `;
+export type SponsorContentItem_SetContentItemIsHiddenMutationFn = Apollo.MutationFunction<SponsorContentItem_SetContentItemIsHiddenMutation, SponsorContentItem_SetContentItemIsHiddenMutationVariables>;
+
+/**
+ * __useSponsorContentItem_SetContentItemIsHiddenMutation__
+ *
+ * To run a mutation, you first call `useSponsorContentItem_SetContentItemIsHiddenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSponsorContentItem_SetContentItemIsHiddenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sponsorContentItemSetContentItemIsHiddenMutation, { data, loading, error }] = useSponsorContentItem_SetContentItemIsHiddenMutation({
+ *   variables: {
+ *      contentItemId: // value for 'contentItemId'
+ *      isHidden: // value for 'isHidden'
+ *   },
+ * });
+ */
+export function useSponsorContentItem_SetContentItemIsHiddenMutation(baseOptions?: Apollo.MutationHookOptions<SponsorContentItem_SetContentItemIsHiddenMutation, SponsorContentItem_SetContentItemIsHiddenMutationVariables>) {
+        return Apollo.useMutation<SponsorContentItem_SetContentItemIsHiddenMutation, SponsorContentItem_SetContentItemIsHiddenMutationVariables>(SponsorContentItem_SetContentItemIsHiddenDocument, baseOptions);
+      }
+export type SponsorContentItem_SetContentItemIsHiddenMutationHookResult = ReturnType<typeof useSponsorContentItem_SetContentItemIsHiddenMutation>;
+export type SponsorContentItem_SetContentItemIsHiddenMutationResult = Apollo.MutationResult<SponsorContentItem_SetContentItemIsHiddenMutation>;
+export type SponsorContentItem_SetContentItemIsHiddenMutationOptions = Apollo.BaseMutationOptions<SponsorContentItem_SetContentItemIsHiddenMutation, SponsorContentItem_SetContentItemIsHiddenMutationVariables>;
+export const SponsorContentItemInner_UpdateContentItemDocument = gql`
+    mutation SponsorContentItemInner_UpdateContentItem($contentItemId: uuid!, $contentItem: ContentItem_set_input!) {
+  update_ContentItem_by_pk(pk_columns: {id: $contentItemId}, _set: $contentItem) {
+    id
+  }
+}
+    `;
+export type SponsorContentItemInner_UpdateContentItemMutationFn = Apollo.MutationFunction<SponsorContentItemInner_UpdateContentItemMutation, SponsorContentItemInner_UpdateContentItemMutationVariables>;
+
+/**
+ * __useSponsorContentItemInner_UpdateContentItemMutation__
+ *
+ * To run a mutation, you first call `useSponsorContentItemInner_UpdateContentItemMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSponsorContentItemInner_UpdateContentItemMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sponsorContentItemInnerUpdateContentItemMutation, { data, loading, error }] = useSponsorContentItemInner_UpdateContentItemMutation({
+ *   variables: {
+ *      contentItemId: // value for 'contentItemId'
+ *      contentItem: // value for 'contentItem'
+ *   },
+ * });
+ */
+export function useSponsorContentItemInner_UpdateContentItemMutation(baseOptions?: Apollo.MutationHookOptions<SponsorContentItemInner_UpdateContentItemMutation, SponsorContentItemInner_UpdateContentItemMutationVariables>) {
+        return Apollo.useMutation<SponsorContentItemInner_UpdateContentItemMutation, SponsorContentItemInner_UpdateContentItemMutationVariables>(SponsorContentItemInner_UpdateContentItemDocument, baseOptions);
+      }
+export type SponsorContentItemInner_UpdateContentItemMutationHookResult = ReturnType<typeof useSponsorContentItemInner_UpdateContentItemMutation>;
+export type SponsorContentItemInner_UpdateContentItemMutationResult = Apollo.MutationResult<SponsorContentItemInner_UpdateContentItemMutation>;
+export type SponsorContentItemInner_UpdateContentItemMutationOptions = Apollo.BaseMutationOptions<SponsorContentItemInner_UpdateContentItemMutation, SponsorContentItemInner_UpdateContentItemMutationVariables>;
 export const ConferenceTakenDocument = gql`
     query ConferenceTaken($name: String!, $shortName: String!, $slug: String!) {
   Conference(

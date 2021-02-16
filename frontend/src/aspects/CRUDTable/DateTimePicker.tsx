@@ -31,7 +31,7 @@ export function DateTimePicker<D extends Date | undefined = Date | undefined>({
     isDisabled = false,
 }: {
     value?: Date;
-    onBlur?: () => void;
+    onBlur?: (ev: React.FocusEvent) => void;
     onFocus?: () => void;
     editMode?: EditMode;
     onChange?: (value: D) => void;

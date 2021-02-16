@@ -2,6 +2,7 @@ import { MediaConvertEvent, TranscodeMode } from "@clowdr-app/shared-types/build
 import bodyParser from "body-parser";
 import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
+import { completeCombineVideosJob, failCombineVideosJob } from "../handlers/combineVideosJob";
 import { tryConfirmSubscription, validateSNSNotification } from "../lib/sns/sns";
 import { completePreviewTranscode, failPreviewTranscode } from "../lib/transcode";
 
@@ -73,6 +74,15 @@ router.post("/notify", bodyParser.text(), async (req: Request, res: Response) =>
                                 new Date(event.detail.timestamp)
                             );
                             break;
+                        case TranscodeMode.COMBINE: {
+                            const subtitleS3Url = `${event.detail.outputGroupDetails[0].outputDetails[1].outputFilePaths[0]}.srt`;
+                            await completeCombineVideosJob(
+                                event.detail.userMetadata.combineVideosJobId,
+                                transcodeS3Url,
+                                subtitleS3Url,
+                                event.detail.userMetadata.contentGroupId
+                            );
+                        }
                     }
                 } catch (e) {
                     console.error("Failed to complete transcode", e);
@@ -95,6 +105,16 @@ router.post("/notify", bodyParser.text(), async (req: Request, res: Response) =>
                                 event.detail.errorMessage
                             );
                             break;
+                        case TranscodeMode.COMBINE:
+                            console.log(
+                                "Received MediaConvert notification of failed CombineVideosJob",
+                                event.detail.jobId,
+                                event.detail.userMetadata.combineVideosJobId
+                            );
+                            await failCombineVideosJob(
+                                event.detail.userMetadata.combineVideosJobId,
+                                event.detail.errorMessage
+                            );
                     }
                 } catch (e) {
                     console.error("Failed to record failed transcode", e);

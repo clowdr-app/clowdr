@@ -37,6 +37,7 @@ import {
     Thead,
     Tooltip,
     Tr,
+    useColorModeValue,
     useDisclosure,
     useToken,
     VStack,
@@ -81,7 +82,7 @@ export interface CellProps<T, V = any> {
     staleRecord: T;
     ref: ((instance: HTMLElement | null) => void) | MutableRefObject<HTMLElement | null> | null;
     onChange?: (newValue: V) => void;
-    onBlur?: () => void;
+    onBlur?: (ev: React.FocusEvent) => void;
     onKeyUp?: (ev: React.KeyboardEvent) => void;
     isInCreate: boolean;
     dependentData: Map<string, Record<string, any>>;
@@ -107,8 +108,10 @@ export interface RowSpecification<T> {
     getKey: (record: T) => string;
     colour?: (record: T) => string | undefined;
 
-    canSelect?: (record: T) => boolean;
+    canSelect?: (record: T) => true | string;
+    canDelete?: (record: T) => true | string;
 
+    invalid?: (record: Partial<T>, isNew: boolean, dependentData: Map<string, Record<string, any>>) => string | false;
     warning?: (record: T) => string | undefined;
 
     pages?: {
@@ -128,7 +131,7 @@ const CRUDCell = React.forwardRef(function CRUDCell(
     }: {
         isInCreate: boolean;
         initialValue: any;
-        onUpdate?: (newValue: unknown) => void;
+        onUpdate?: (newValue: unknown, relatedTarget?: Element | null) => void;
         column: ColumnSpecification<unknown, unknown, unknown>;
         dependentData: Map<string, Record<string, any>>;
         record: unknown;
@@ -166,14 +169,15 @@ const CRUDCell = React.forwardRef(function CRUDCell(
         onBlur:
             onUpdate &&
             column.set &&
-            (() => {
+            ((ev) => {
                 if (value !== initialValue) {
                     if (updateTimeoutId.current !== null) {
                         clearTimeout(updateTimeoutId.current);
                         updateTimeoutId.current = null;
                     }
 
-                    onUpdate(value);
+                    onUpdate(value, ev.relatedTarget as HTMLElement);
+                    ev.stopPropagation();
                 }
             }),
         onChange:
@@ -262,6 +266,33 @@ function CRUDRow<T>({
     useEffect(() => {
         setLocalRecord(record);
     }, [record]);
+    const rowRef = useRef<HTMLTableRowElement>(null);
+
+    const [invalidReason, setInvalidReason] = useState<string>("");
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const onBlur = useCallback(
+        (newRecord: T, relatedTarget?: Element | null) => {
+            if (
+                document.hasFocus() &&
+                (!relatedTarget || !rowRef.current?.contains(relatedTarget)) &&
+                !rowRef.current?.contains(document.activeElement)
+            ) {
+                if (record !== newRecord) {
+                    const invld = row.invalid?.(newRecord, false, dependentData);
+                    if (!invld) {
+                        setLocalRecord(newRecord);
+                        onUpdate?.(newRecord);
+                    } else {
+                        setInvalidReason(invld);
+                        onOpen();
+                    }
+                }
+            }
+        },
+        [dependentData, onOpen, onUpdate, record, row]
+    );
+
+    const green = useColorModeValue("green.100", "green.700");
 
     const cellEls = useMemo(
         () =>
@@ -277,20 +308,20 @@ function CRUDRow<T>({
                         onUpdate={
                             onUpdate &&
                             colSet &&
-                            ((newValue) => {
+                            ((newValue, relatedTarget) => {
                                 const modified = { ...localRecord };
                                 colSet(modified, newValue);
                                 setLocalRecord(modified);
-                                onUpdate(modified);
+                                onBlur(modified, relatedTarget);
                             })
                         }
                         dependentData={dependentData}
                         record={localRecord}
-                        backgroundColor={row.colour?.(localRecord)}
+                        backgroundColor={record !== localRecord ? green : row.colour?.(localRecord)}
                     />
                 );
             }),
-        [columns, dependentData, localRecord, onUpdate, refs, row]
+        [columns, dependentData, green, localRecord, onBlur, onUpdate, record, refs, row]
     );
 
     const [isSelected, setIsSelected] = useState<boolean>(false);
@@ -301,10 +332,11 @@ function CRUDRow<T>({
     if (setIsSelectedRef) {
         setIsSelectedRef.current = setIsSelected;
     }
-    const selectEl = useMemo(
-        () =>
-            onSelectChange || getIsSelectedRef || setIsSelectedRef ? (
-                <Td size="sm" padding={1}>
+    const selectEl = useMemo(() => {
+        const canSelect = row.canSelect?.(record) ?? true;
+        return onSelectChange || getIsSelectedRef || setIsSelectedRef ? (
+            <Td size="sm" padding={1}>
+                <Tooltip label={canSelect !== true ? canSelect : undefined}>
                     <Center w="100%" h="100%" padding={0}>
                         <Checkbox
                             aria-label="Select row"
@@ -313,12 +345,13 @@ function CRUDRow<T>({
                                 setIsSelected(ev.target.checked);
                                 onSelectChange?.(ev.target.checked);
                             }}
+                            isDisabled={canSelect !== true}
                         />
                     </Center>
-                </Td>
-            ) : undefined,
-        [getIsSelectedRef, isSelected, onSelectChange, setIsSelectedRef]
-    );
+                </Tooltip>
+            </Td>
+        ) : undefined;
+    }, [getIsSelectedRef, isSelected, onSelectChange, record, row, setIsSelectedRef]);
 
     const warning = useMemo(() => row.warning?.(localRecord), [localRecord, row]);
     const editEl = useMemo(
@@ -351,27 +384,73 @@ function CRUDRow<T>({
         [beginInsert, onSecondaryEdit, warning]
     );
 
-    const deleteEl = useMemo(
-        () =>
-            onDelete ? (
-                <Td size="sm" padding={1}>
+    const deleteEl = useMemo(() => {
+        const canDelete = row.canDelete?.(record) ?? true;
+        return onDelete ? (
+            <Td size="sm" padding={1}>
+                <Tooltip label={canDelete !== true ? canDelete : undefined}>
                     <Center w="100%" h="100%" padding={0}>
-                        <Button aria-label="Delete row" colorScheme="red" size="xs" onClick={() => onDelete()}>
+                        <Button
+                            aria-label="Delete row"
+                            colorScheme="red"
+                            size="xs"
+                            onClick={() => onDelete()}
+                            isDisabled={canDelete !== true}
+                        >
                             <FAIcon iconStyle="s" icon="trash-alt" />
                         </Button>
                     </Center>
-                </Td>
-            ) : undefined,
-        [onDelete]
+                </Tooltip>
+            </Td>
+        ) : undefined;
+    }, [onDelete, record, row]);
+
+    const leastDestructiveRef = useRef<HTMLButtonElement>(null);
+
+    const onCloseAlert = useCallback(
+        (reset: boolean) => {
+            if (reset) {
+                setLocalRecord(record);
+            }
+            onClose();
+        },
+        [onClose, record]
+    );
+
+    const alertDlg = useMemo(
+        () => (
+            <AlertDialog isOpen={isOpen} onClose={() => onCloseAlert(true)} leastDestructiveRef={leastDestructiveRef}>
+                <AlertDialogOverlay>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>Changes are invalid</AlertDialogHeader>
+                        <AlertDialogBody>{invalidReason}</AlertDialogBody>
+                        <AlertDialogFooter>
+                            <Button onClick={() => onCloseAlert(true)}>Reset</Button>
+                            <Button colorScheme="green" onClick={() => onCloseAlert(false)} ref={leastDestructiveRef}>
+                                Continue editing
+                            </Button>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialogOverlay>
+            </AlertDialog>
+        ),
+        [invalidReason, isOpen, onCloseAlert]
     );
 
     return (
-        <>
+        <Tr
+            size="sm"
+            onBlur={(ev) => {
+                onBlur(localRecord, ev.relatedTarget as Element);
+            }}
+            ref={rowRef}
+        >
             {selectEl}
             {editEl}
             {deleteEl}
             {cellEls}
-        </>
+            {alertDlg}
+        </Tr>
     );
 }
 
@@ -560,13 +639,14 @@ function RenderedCRUDTable<T>({
 
     const editColumnEl = useMemo(
         () =>
-            beginInsert ? (
+            beginInsert || onEdit ? (
                 <Th padding={1}>
                     <Center w="100%" h="100%" padding={0}>
                         <Button
                             aria-label="Create row"
+                            isDisabled={!beginInsert}
                             onClick={() => {
-                                beginInsert();
+                                beginInsert?.();
                             }}
                             size="xs"
                             colorScheme="green"
@@ -576,7 +656,7 @@ function RenderedCRUDTable<T>({
                     </Center>
                 </Th>
             ) : undefined,
-        [beginInsert]
+        [beginInsert, onEdit]
     );
 
     const deleteColumnEl = useMemo(
@@ -620,42 +700,41 @@ function RenderedCRUDTable<T>({
         () =>
             data
                 ? data.map((record, index) => (
-                      <Tr key={row.getKey(record)} size="sm">
-                          <CRUDRow
-                              record={record}
-                              row={row}
-                              columns={columns}
-                              beginInsert={beginInsert}
-                              onSelectChange={
-                                  enableSelection
-                                      ? (isSelected) => {
-                                            const key = row.getKey(record);
-                                            setSelectedKeys((old) => {
-                                                const newKeys = new Set(old);
-                                                if (isSelected) {
-                                                    newKeys.add(key);
-                                                } else {
-                                                    newKeys.delete(key);
-                                                }
-                                                return newKeys;
-                                            });
-                                        }
-                                      : undefined
-                              }
-                              onSecondaryEdit={onEdit && (() => onEdit(row.getKey(record)))}
-                              onUpdate={onUpdate}
-                              onDelete={
-                                  onDelete &&
-                                  (() => {
-                                      onDelete([row.getKey(record)]);
-                                  })
-                              }
-                              focusOnColumn={rowFocusRefs[index]}
-                              getIsSelected={getIsSelectedRefs[index]}
-                              setIsSelected={setIsSelectedRefs[index]}
-                              dependentData={dependentData}
-                          />
-                      </Tr>
+                      <CRUDRow
+                          key={row.getKey(record)}
+                          record={record}
+                          row={row}
+                          columns={columns}
+                          beginInsert={beginInsert}
+                          onSelectChange={
+                              enableSelection
+                                  ? (isSelected) => {
+                                        const key = row.getKey(record);
+                                        setSelectedKeys((old) => {
+                                            const newKeys = new Set(old);
+                                            if (isSelected) {
+                                                newKeys.add(key);
+                                            } else {
+                                                newKeys.delete(key);
+                                            }
+                                            return newKeys;
+                                        });
+                                    }
+                                  : undefined
+                          }
+                          onSecondaryEdit={onEdit && (() => onEdit(row.getKey(record)))}
+                          onUpdate={onUpdate}
+                          onDelete={
+                              onDelete &&
+                              (() => {
+                                  onDelete([row.getKey(record)]);
+                              })
+                          }
+                          focusOnColumn={rowFocusRefs[index]}
+                          getIsSelected={getIsSelectedRefs[index]}
+                          setIsSelected={setIsSelectedRefs[index]}
+                          dependentData={dependentData}
+                      />
                   ))
                 : undefined,
         [
@@ -880,6 +959,7 @@ function CRUDInsertModal<T>({
         [columns, dependentData, newData, row]
     );
 
+    const invld = useMemo(() => row.invalid?.(newData, true, dependentData), [dependentData, newData, row]);
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
@@ -894,16 +974,21 @@ function CRUDInsertModal<T>({
                 <ModalFooter>
                     <ButtonGroup>
                         <Button onClick={onClose}>Cancel</Button>
-                        <Button
-                            colorScheme="green"
-                            onClick={() => {
-                                if (onCreate(newData)) {
-                                    onClose();
-                                }
-                            }}
-                        >
-                            Create
-                        </Button>
+                        <Tooltip label={invld}>
+                            <Box>
+                                <Button
+                                    colorScheme="green"
+                                    onClick={() => {
+                                        if (!row.invalid?.(newData, true, dependentData) && onCreate(newData)) {
+                                            onClose();
+                                        }
+                                    }}
+                                    isDisabled={!!invld}
+                                >
+                                    Create
+                                </Button>
+                            </Box>
+                        </Tooltip>
                     </ButtonGroup>
                 </ModalFooter>
             </ModalContent>
@@ -1203,7 +1288,7 @@ export default function CRUDTable<T>({
                 columns={columns}
                 applySorting={applySorting}
                 applyFilter={applyFilter}
-                beginInsert={beginInsert}
+                beginInsert={insertProps && beginInsert}
                 onEdit={editProps?.open}
                 onUpdate={updateRecord}
                 onDelete={beginDeleteRecords}
@@ -1212,16 +1297,17 @@ export default function CRUDTable<T>({
             />
         ),
         [
-            applyFilter,
-            applySorting,
-            beginInsert,
-            columns,
-            beginDeleteRecords,
-            dependentData,
-            editProps?.open,
             paginatedData,
             row,
+            columns,
+            applySorting,
+            applyFilter,
+            insertProps,
+            beginInsert,
+            editProps?.open,
             updateRecord,
+            beginDeleteRecords,
+            dependentData,
         ]
     );
 

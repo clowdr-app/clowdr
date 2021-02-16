@@ -6,14 +6,14 @@ export default function TimeMarker({
     time,
     showTimeLabel,
     showDate = false,
-    height = "100%",
+    width = "100%",
     colour = "#3333ff",
     roundTop,
 }: {
     time: number;
     showTimeLabel: boolean;
     showDate?: boolean;
-    height?: string | number;
+    width?: string | number;
     colour?: string;
     roundTop: boolean;
 }): JSX.Element | null {
@@ -29,29 +29,29 @@ export default function TimeMarker({
                 style={{
                     zIndex: 2,
                     position: "absolute",
-                    left: `calc(${percent}% - 5px)`,
+                    top: `calc(${percent}% - 5px)`,
                     width: "10px",
                     height: "10px",
-                    bottom: "-5px",
+                    right: "-5px",
                     backgroundColor: colour,
-                    paddingLeft: "0.5em",
+                    paddingTop: "0.5em",
                     overflow: "visible",
                     whiteSpace: "nowrap",
                     borderRadius: "1000px",
                 }}
                 aria-hidden="true"
             >
-                <div
-                    style={{
-                        display: "inline-block",
-                        fontSize: "1.2em",
-                        marginLeft: "-50%",
-                        width: "auto",
-                        paddingTop: "8px",
-                    }}
-                >
-                    {showTimeLabel
-                        ? showDate
+                {showTimeLabel ? (
+                    <div
+                        style={{
+                            display: "inline-block",
+                            fontSize: "1.2em",
+                            marginTop: "-50%",
+                            height: "auto",
+                            paddingLeft: "8px",
+                        }}
+                    >
+                        {showDate
                             ? DateTime.fromMillis(time).setZone(timelineParams.timezone).toLocaleString({
                                   day: "2-digit",
                                   month: "short",
@@ -63,9 +63,9 @@ export default function TimeMarker({
                                   hour: "2-digit",
                                   minute: "2-digit",
                                   hour12: false,
-                              })
-                        : undefined}
-                </div>
+                              })}
+                    </div>
+                ) : undefined}
             </div>
         );
     } else {
@@ -74,29 +74,31 @@ export default function TimeMarker({
                 style={{
                     zIndex: 2,
                     position: "absolute",
-                    left: percent + "%",
-                    width: showTimeLabel ? "auto" : "1px",
-                    height: height,
-                    bottom: 0,
-                    borderLeftColor: colour,
-                    borderLeftWidth: 1,
-                    borderLeftStyle: "solid",
+                    top: percent + "%",
+                    height: showTimeLabel ? "auto" : "1px",
+                    width,
+                    left: 0,
+                    borderTopColor: colour,
+                    borderTopWidth: 1,
+                    borderTopStyle: "solid",
                     overflow: "visible",
                     whiteSpace: "nowrap",
                 }}
                 aria-hidden="true"
             >
-                <div
-                    style={{
-                        display: "inline-block",
-                        fontSize: "1.2em",
-                        marginLeft: "-50%",
-                        width: "auto",
-                        paddingTop: "8px",
-                    }}
-                >
-                    {showTimeLabel
-                        ? showDate
+                {showTimeLabel ? (
+                    <div
+                        style={{
+                            display: "inline-block",
+                            fontSize: "1.2em",
+                            height: "auto",
+                            paddingLeft: "8px",
+                            maxWidth: "100%",
+                            whiteSpace: "normal",
+                            marginTop: "-50%",
+                        }}
+                    >
+                        {showDate
                             ? DateTime.fromMillis(time).setZone(timelineParams.timezone).toLocaleString({
                                   day: "2-digit",
                                   month: "short",
@@ -108,9 +110,9 @@ export default function TimeMarker({
                                   hour: "2-digit",
                                   minute: "2-digit",
                                   hour12: false,
-                              })
-                        : undefined}
-                </div>
+                              })}
+                    </div>
+                ) : undefined}
             </div>
         );
     }

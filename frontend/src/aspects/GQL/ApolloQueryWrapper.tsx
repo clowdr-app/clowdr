@@ -1,5 +1,5 @@
 import type { LazyQueryResult, QueryResult } from "@apollo/client";
-import { Spinner } from "@chakra-ui/react";
+import { Spinner, Text } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import useQueryErrorToast from "./useQueryErrorToast";
 
@@ -26,9 +26,9 @@ export default function ApolloQueryWrapper<TData, TVariables, TInnerData>({
             {queryResult.loading ? (
                 <Spinner />
             ) : queryResult.error ? (
-                <>An error occurred loading in data - please see further information in notifications.</>
+                <Text>An error occurred loading in data - please see further information in notifications.</Text>
             ) : undefined}
-            {queryResult.loading && !innerData ? <></> : !innerData ? <>No data found</> : children(innerData)}
+            {queryResult.loading && !innerData ? <></> : !innerData ? <Text>No data found</Text> : children(innerData)}
         </>
     );
 }

@@ -200,7 +200,7 @@ export async function completeMediaPackageHarvestJob(
     ];
 
     console.log("Completing MediaPackage harvest job", job.event.id, job.id);
-    callWithRetry(
+    await callWithRetry(
         async () =>
             await apolloClient.mutate({
                 mutation: Recording_CompleteMediaPackageHarvestJobDocument,

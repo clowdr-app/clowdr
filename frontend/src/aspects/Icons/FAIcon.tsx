@@ -3,7 +3,7 @@ import { cx, __DEV__ } from "@chakra-ui/utils";
 import * as React from "react";
 
 export interface IconProps extends ChakraProps, ChakraProps {
-    iconStyle: "s" | "r";
+    iconStyle: "s" | "r" | "b";
     icon: string;
     inline?: boolean;
 }

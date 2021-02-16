@@ -5,7 +5,8 @@ import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
 import React, { useCallback, useMemo, useState } from "react";
 import { useAsync } from "react-async-hook";
-import ReactPlayer, { Config, TrackProps } from "react-player";
+import ReactPlayer, { Config } from "react-player";
+import type { TrackProps } from "react-player/file";
 import { ContentGroupDataFragment, ContentType_Enum } from "../../../../generated/graphql";
 import usePolling from "../../../Generic/usePolling";
 

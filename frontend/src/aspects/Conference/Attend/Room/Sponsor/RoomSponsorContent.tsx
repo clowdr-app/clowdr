@@ -27,6 +27,7 @@ gql`
     fragment RoomSponsorContent_ContentItemData on ContentItem {
         id
         name
+        isHidden
         contentTypeName
         data
         layoutData
@@ -52,6 +53,7 @@ export function RoomSponsorContent({ contentGroupId }: { contentGroupId: string 
             blob: ContentItemDataBlob;
             layoutBlob: LayoutDataBlob;
         }[] = contentGroup.contentItems
+            .filter((item) => !item.isHidden)
             .filter((item) => isLayoutDataBlob(item.layoutData))
             .filter((item) => isContentItemDataBlob(item.data))
             .map((item) => {

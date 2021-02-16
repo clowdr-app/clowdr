@@ -232,7 +232,7 @@ gql`
                             contentTypeName: ABSTRACT
                             data: $abstractData
                             isHidden: false
-                            layoutData: {}
+                            layoutData: null
                             name: "Welcome text"
                         }
                         {
@@ -240,7 +240,7 @@ gql`
                             contentTypeName: CONTENT_GROUP_LIST
                             data: $contentGroupListData
                             isHidden: false
-                            layoutData: {}
+                            layoutData: null
                             name: "Content group list"
                         }
                     ]

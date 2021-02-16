@@ -1,6 +1,7 @@
 export enum TranscodeMode {
     PREVIEW = "preview",
     BROADCAST = "broadcast",
+    COMBINE = "combine",
 }
 
 export interface MediaConvertEvent {
@@ -46,7 +47,10 @@ interface MediaConvertEventDetail_OTHER extends MediaConvertEventDetailsBase {
     status: "STATUS_UPDATE" | "NEW_WARNING" | "QUEUE_HOP";
 }
 
-type MediaConvertEventUserMetadata = MediaConvertEventBroadcastUserMetadata | MediaConvertEventPreviewUserMetadata;
+type MediaConvertEventUserMetadata =
+    | MediaConvertEventBroadcastUserMetadata
+    | MediaConvertEventPreviewUserMetadata
+    | MediaConvertEventCombineUserMetadata;
 
 interface MediaConvertEventBroadcastUserMetadata {
     mode: TranscodeMode.BROADCAST;
@@ -57,6 +61,13 @@ interface MediaConvertEventBroadcastUserMetadata {
 interface MediaConvertEventPreviewUserMetadata {
     mode: TranscodeMode.PREVIEW;
     contentItemId: string;
+    environment?: string;
+}
+
+interface MediaConvertEventCombineUserMetadata {
+    mode: TranscodeMode.COMBINE;
+    combineVideosJobId: string;
+    contentGroupId: string;
     environment?: string;
 }
 
@@ -106,5 +117,5 @@ interface OutputGroupDetail {
 interface OutputDetail {
     outputFilePaths: string[];
     durationInMs: number;
-    videoDetails: { widthInPx: number; heightInPx: number };
+    videoDetails?: { widthInPx: number; heightInPx: number };
 }

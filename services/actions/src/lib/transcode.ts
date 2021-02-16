@@ -32,7 +32,7 @@ interface StartTranscodeOutput {
     timestamp: Date;
 }
 
-const videoDescription: VideoDescription = {
+export const videoDescription: VideoDescription = {
     CodecSettings: {
         Codec: VideoCodec.H_264,
         H264Settings: {
@@ -43,9 +43,11 @@ const videoDescription: VideoDescription = {
             },
         },
     },
+    Height: 1080,
+    Width: 1920,
 };
 
-const audioDescription: AudioDescription = {
+export const audioDescription: AudioDescription = {
     CodecSettings: {
         Codec: AudioCodec.AAC,
         AacSettings: {

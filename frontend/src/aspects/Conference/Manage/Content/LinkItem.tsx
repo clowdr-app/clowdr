@@ -23,7 +23,7 @@ function createDefaultLink(
 
 export const LinkItemTemplate: ItemBaseTemplate = {
     supported: true,
-    createDefault: (group, type, required) => {
+    createDefault: (type, required) => {
         assert(
             type === ContentType_Enum.Link ||
                 type === ContentType_Enum.LinkButton ||
@@ -62,7 +62,7 @@ export const LinkItemTemplate: ItemBaseTemplate = {
                     typeName: type,
                     isHidden: false,
                     data: [],
-                    layoutData: {},
+                    layoutData: null,
                 },
             };
         }

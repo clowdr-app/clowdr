@@ -43,9 +43,6 @@ const theme = extendTheme({
         outline: defaultOutline_AsBoxShadow,
     },
     components: {
-        body: {
-            bgColor: "black",
-        },
         Heading: {
             baseStyle: {
                 textAlign: "center",

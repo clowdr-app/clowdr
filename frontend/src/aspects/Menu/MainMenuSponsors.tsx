@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client";
 import { Grid, GridItem, Image, List, ListItem, Text, useToken } from "@chakra-ui/react";
 import { ContentItemDataBlob, ContentType_Enum, isContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
+import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import {
@@ -29,7 +30,7 @@ gql`
             id
         }
         logo: contentItems(
-            where: { contentTypeName: { _eq: IMAGE_URL }, layoutData: { _contains: { isLogo: true } } }
+            where: { contentTypeName: { _in: [IMAGE_URL, IMAGE_FILE] }, layoutData: { _contains: { isLogo: true } } }
             order_by: { updatedAt: desc }
             limit: 1
         ) {
@@ -57,6 +58,9 @@ export function MainMenuSponsors(): JSX.Element {
 
                 if (latestData?.type === ContentType_Enum.ImageUrl) {
                     return latestData.url;
+                } else if (latestData?.type === ContentType_Enum.ImageFile) {
+                    const { bucket, key } = new AmazonS3URI(latestData.s3Url);
+                    return `https://s3.${import.meta.env.SNOWPACK_PUBLIC_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
                 }
             }
 

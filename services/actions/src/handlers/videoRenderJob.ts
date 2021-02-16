@@ -260,6 +260,9 @@ gql`
     mutation UnmarkVideoRenderJobs($ids: [uuid!]!) {
         update_VideoRenderJob(where: { id: { _in: $ids } }, _set: { jobStatusName: FAILED }) {
             affected_rows
+            returning {
+                id
+            }
         }
     }
 `;
@@ -308,6 +311,6 @@ export async function handleProcessVideoRenderJobQueue(): Promise<void> {
             });
         });
     } catch (e) {
-        console.error("Could not failed VideoRenderJobs", e);
+        console.error("Could not record failed VideoRenderJobs", e);
     }
 }

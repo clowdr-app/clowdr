@@ -74,6 +74,9 @@ gql`
         currentModeName
         capacity
         priority
+        originatingEventId
+        originatingContentGroupId
+        roomPrivacyName
         participants {
             ...RoomParticipantWithAttendeeInfo
         }

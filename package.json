@@ -5,7 +5,8 @@
     "main": "index.js",
     "scripts": {
         "heroku-postbuild": "cd shared && npm ci && cd ../services/presence && npm ci && npm run build && cd ../../services/actions && npm ci && npm run build",
-        "run-services-actions": "heroku local -p 3001 web"
+        "run-services-actions": "heroku local -p 3001 web",
+        "run-services-presence": "heroku local -p 3002 -f Presence.Procfile web"
     },
     "repository": {
         "type": "git",
@@ -18,18 +19,18 @@
     },
     "homepage": "https://github.com/clowdr-app/clowdr#readme",
     "devDependencies": {
-        "@types/jest": "^26.0.15",
-        "@typescript-eslint/eslint-plugin": "^4.8.1",
-        "@typescript-eslint/parser": "^4.8.1",
-        "eslint": "^7.13.0",
+        "@types/jest": "^26.0.20",
+        "@typescript-eslint/eslint-plugin": "^4.15.0",
+        "@typescript-eslint/parser": "^4.15.0",
+        "eslint": "^7.19.0",
         "eslint-plugin-jest": "^24.1.3",
-        "eslint-plugin-react": "^7.21.5",
+        "eslint-plugin-react": "^7.22.0",
         "eslint-plugin-react-hooks": "^4.2.0",
-        "husky": "^4.3.0",
-        "lint-staged": "^10.5.1",
-        "prettier": "^2.1.2",
+        "husky": "^4.3.8",
+        "lint-staged": "^10.5.4",
+        "prettier": "^2.2.1",
         "prettier-plugin-organize-imports": "^1.1.1",
-        "typescript": "^4.1.2"
+        "typescript": "^4.1.5"
     },
     "husky": {
         "hooks": {
@@ -48,8 +49,8 @@
         "shared"
     ],
     "dependencies": {
-        "@types/ramda": "^0.27.34",
+        "@types/ramda": "^0.27.38",
         "ramda": "^0.27.1",
-        "typescript-is": "^0.17.0"
+        "typescript-is": "^0.17.1"
     }
 }

@@ -18,6 +18,10 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
   graphql-engine:
     image: hasura/graphql-engine:latest.cli-migrations-v2
     ports:

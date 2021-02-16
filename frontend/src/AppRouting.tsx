@@ -12,6 +12,7 @@ import SubmitItemPage from "./aspects/Content/SubmitItemPage";
 import CRUDTestPage from "./aspects/CRUDTable/CRUDTestPage";
 import GenericErrorPage from "./aspects/Errors/GenericErrorPage";
 import PageNotFound from "./aspects/Errors/PageNotFound";
+import { GoogleOAuth, GoogleOAuthRedirect } from "./aspects/Google/GoogleOAuth";
 import AcceptInvitationPage from "./aspects/Invitation/AcceptInvitationPage";
 import CurrentUserPage from "./aspects/Users/CurrentUser/CurrentUserPage";
 import ExistingUserLandingPage from "./aspects/Users/ExistingUser/LandingPage";
@@ -129,6 +130,8 @@ export default function Routing(): JSX.Element {
 
             <ProtectedRoute altIfNotAuthed={<Redirect to="/" />} exact path="/join" component={UseInviteOrCreateView} />
 
+            <ProtectedRoute altIfNotAuthed={<Redirect to="/" />} exact path="/googleoauth2" component={GoogleOAuth} />
+
             <Route
                 path="/conference/:confSlug"
                 component={(
@@ -152,6 +155,8 @@ export default function Routing(): JSX.Element {
                     />
                 )}
             />
+
+            <Route exact path="/googleoauth" component={GoogleOAuthRedirect} />
 
             {/*
 

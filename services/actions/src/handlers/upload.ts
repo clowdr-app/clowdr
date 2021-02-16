@@ -347,7 +347,7 @@ export async function handleContentItemSubmitted(args: submitContentItemArgs): P
                     contentTypeName: requiredContentItem.contentTypeName,
                     data,
                     isHidden: requiredContentItem.isHidden,
-                    layoutData: {},
+                    layoutData: null,
                     name: requiredContentItem.name,
                     requiredContentId: requiredContentItem.id,
                 },

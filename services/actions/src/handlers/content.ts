@@ -51,8 +51,9 @@ export async function handleContentItemUpdated(payload: Payload<ContentItemData>
 
     // If there is a new video source URL, start transcoding
     if (
-        (oldVersion && oldVersion.data.baseType === "video" && oldVersion.data.s3Url !== currentVersion.data.s3Url) ||
-        (!oldVersion && currentVersion.data.s3Url)
+        ((oldVersion && oldVersion.data.baseType === "video" && oldVersion.data.s3Url !== currentVersion.data.s3Url) ||
+            (!oldVersion && currentVersion.data.s3Url)) &&
+        (!currentVersion.data.transcode || currentVersion.data.transcode.updatedTimestamp < currentVersion.createdAt)
     ) {
         const transcodeResult = await startPreviewTranscode(currentVersion.data.s3Url, newRow.id);
 
@@ -86,8 +87,9 @@ export async function handleContentItemUpdated(payload: Payload<ContentItemData>
         (oldVersion &&
             oldVersion.data.baseType === "video" &&
             currentVersion.data.transcode?.s3Url &&
+            !currentVersion.data.sourceHasEmbeddedSubtitles &&
             oldVersion.data.transcode?.s3Url !== currentVersion.data.transcode.s3Url) ||
-        (!oldVersion && currentVersion.data.transcode?.s3Url)
+        (!oldVersion && currentVersion.data.transcode?.s3Url && !currentVersion.data.subtitles["en_US"]?.s3Url)
     ) {
         await startTranscribe(currentVersion.data.transcode.s3Url, newRow.id);
     }

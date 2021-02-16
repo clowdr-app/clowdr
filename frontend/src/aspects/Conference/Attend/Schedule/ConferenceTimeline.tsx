@@ -20,10 +20,10 @@ import DayList from "./DayList";
 import NowMarker from "./NowMarker";
 import RoomNameBox from "./RoomNameBox";
 import RoomTimeline from "./RoomTimeline";
-import Scroller, { ScrollerProvider } from "./Scroller";
+import { ScrollerProvider, useScrollerParams } from "./Scroller";
 import TimeBar, { useGenerateMarkers } from "./TimeBar";
 import TimelineZoomControls from "./TimelineZoomControls";
-import { TimelineParameters } from "./useTimelineParameters";
+import { TimelineParameters, useTimelineParameters } from "./useTimelineParameters";
 
 gql`
     fragment Timeline_ContentItem on ContentItem {
@@ -106,13 +106,7 @@ gql`
     }
 
     query Timeline_SelectRooms($conferenceId: uuid!) {
-        Room(
-            where: {
-                conferenceId: { _eq: $conferenceId }
-                roomPrivacyName: { _eq: PUBLIC }
-                events: { id: { _is_null: false } }
-            }
-        ) {
+        Room(where: { conferenceId: { _eq: $conferenceId }, roomPrivacyName: { _eq: PUBLIC }, events: {} }) {
             ...Timeline_Room
         }
         Event(where: { conferenceId: { _eq: $conferenceId } }) {
@@ -150,20 +144,20 @@ function ConferenceTimelineInner({
         return [...unsortedRooms].sort((x, y) => x.name.localeCompare(y.name)).sort((x, y) => x.priority - y.priority);
     }, [unsortedRooms]);
 
-    const roomRowHeight = 70;
-    const timeBarHeight = 5 + roomRowHeight / 2;
+    const timeBarWidth = 90;
+    const roomRowWidth = Math.min(500, Math.max(200, window.innerWidth / rooms.length - timeBarWidth - 70));
     const borderColour = useColorModeValue("gray.400", "gray.400");
 
     const timeBarF = useCallback(
         (key: string, mt?: string) => (
-            <TimeBar key={key} height={timeBarHeight} borderColour={borderColour} marginTop={mt} />
+            <TimeBar key={key} width={timeBarWidth} borderColour={borderColour} marginTop={mt} />
         ),
-        [borderColour, timeBarHeight]
+        [borderColour, timeBarWidth]
     );
 
     const alternateBgColor = useColorModeValue("blue.100", "blue.700");
 
-    const rowInterval = Math.round((window.innerHeight - 250) / roomRowHeight);
+    const rowInterval = Math.max(1, Math.round((window.innerWidth - 340) / roomRowWidth));
     const timeBarSeparation = "2em";
 
     const roomNameBoxes = useMemo(
@@ -175,17 +169,17 @@ function ConferenceTimelineInner({
                         <RoomNameBox
                             key={"filler-" + idx}
                             room={""}
-                            height={timeBarHeight}
+                            width={timeBarWidth}
                             showBottomBorder={true}
                             borderColour={borderColour}
                             backgroundColor={alternateBgColor}
-                            marginTop={timeBarSeparation}
+                            marginLeft={timeBarSeparation}
                         />
                     ) : undefined,
                     <RoomNameBox
                         key={room.id}
                         room={room}
-                        height={roomRowHeight}
+                        width={roomRowWidth}
                         showBottomBorder={true}
                         borderColour={borderColour}
                         backgroundColor={idx % 2 === 1 ? alternateBgColor : undefined}
@@ -193,13 +187,24 @@ function ConferenceTimelineInner({
                 ],
                 [] as (JSX.Element | undefined)[]
             ),
-        [alternateBgColor, borderColour, rooms, rowInterval, timeBarHeight]
+        [alternateBgColor, borderColour, roomRowWidth, rooms, rowInterval, timeBarWidth]
     );
 
     const [scrollCallbacks, setScrollCallbacks] = useState<Map<string, (ev: Timeline_EventFragment) => void>>(
         new Map()
     );
 
+    const totalW =
+        50 +
+        useMemo(
+            () =>
+                rooms.reduce(
+                    (acc, _room, idx) =>
+                        idx % rowInterval === 0 ? acc + timeBarWidth + roomRowWidth : acc + roomRowWidth,
+                    0
+                ),
+            [roomRowWidth, rooms, rowInterval]
+        );
     const roomTimelines = useMemo(
         () =>
             rooms.reduce(
@@ -210,8 +215,8 @@ function ConferenceTimelineInner({
                         : undefined,
                     <Box
                         key={room.id}
-                        w="100%"
-                        h={roomRowHeight + "px"}
+                        h="100%"
+                        w={roomRowWidth + "px"}
                         borderBottomWidth={idx !== rooms.length - 1 ? 1 : 0}
                         borderBottomStyle="solid"
                         borderBottomColor={borderColour}
@@ -220,7 +225,7 @@ function ConferenceTimelineInner({
                             room={room}
                             hideTimeShiftButtons={true}
                             hideTimeZoomButtons={true}
-                            height={roomRowHeight}
+                            width={roomRowWidth}
                             setScrollToEvent={(cb) => {
                                 setScrollCallbacks((old) => {
                                     const newMap = new Map(old);
@@ -235,10 +240,10 @@ function ConferenceTimelineInner({
                 ],
                 [] as (JSX.Element | undefined)[]
             ),
-        [borderColour, contentGroups, events, rooms, rowInterval, timeBarF]
+        [borderColour, contentGroups, events, roomRowWidth, rooms, rowInterval, timeBarF]
     );
 
-    const roomMarkers = useGenerateMarkers(`calc(100% - ${timeBarHeight}px)`, "", true, false, false);
+    const roomMarkers = useGenerateMarkers("100%", "", true, false, false);
 
     const scrollToEvent = useCallback(
         (ev: Timeline_EventFragment) => {
@@ -268,12 +273,19 @@ function ConferenceTimelineInner({
 
     const title = useTitle(`Schedule of ${conference.shortName}`);
 
+    const { visibleTimeSpanSeconds } = useScrollerParams();
+    const { fullTimeSpanSeconds } = useTimelineParameters();
+
+    const innerHeightPx = (1920 * fullTimeSpanSeconds) / visibleTimeSpanSeconds;
+
     return (
-        <>
+        <Box h="calc(100vh - 150px)" w="100%" maxW={totalW}>
             {title}
-            <Heading as="h1">Schedule</Heading>
-            <Box w="100%" p={2}>
+            <Flex w="100%" h="100%" flexDir="column" p={2}>
                 <Flex w="100%" direction="row" justify="center" alignItems="center">
+                    <Heading as="h1" mr={4}>
+                        Schedule
+                    </Heading>
                     <DayList rooms={rooms} events={events} scrollToEvent={scrollToEvent} scrollToNow={scrollToNow.f} />
                     <TimelineZoomControls />
                 </Flex>
@@ -281,43 +293,58 @@ function ConferenceTimelineInner({
                     cursor="pointer"
                     as={ScrollContainer}
                     w="100%"
-                    maxHeight="calc(100vh - 300px)"
-                    horizontal={false}
                     borderColor={borderColour}
                     borderWidth={1}
                     borderStyle="solid"
                     hideScrollbars={false}
                 >
                     <Flex
-                        direction="row"
+                        direction="column"
                         w="100%"
                         justifyContent="stretch"
                         alignItems="flex-start"
                         role="region"
                         aria-label="Conference schedule"
                     >
-                        {window.innerWidth > 500 ? (
-                            <Box flex="1 0 max-content" role="list" aria-label="Rooms">
-                                <RoomNameBox
-                                    room="Rooms"
-                                    height={timeBarHeight}
-                                    showBottomBorder={true}
-                                    borderColour={borderColour}
-                                    backgroundColor={alternateBgColor}
-                                />
-                                {roomNameBoxes}
-                            </Box>
-                        ) : undefined}
-                        <Scroller>
-                            {roomMarkers}
-                            <NowMarker />
-                            {labeledNowMarker}
-                            {roomTimelines}
-                        </Scroller>
+                        <Box
+                            flex="1 0 max-content"
+                            role="list"
+                            aria-label="Rooms"
+                            display="flex"
+                            justifyContent="stretch"
+                            alignItems="stretch"
+                        >
+                            <RoomNameBox
+                                room="Rooms"
+                                width={timeBarWidth}
+                                showBottomBorder={true}
+                                borderColour={borderColour}
+                                backgroundColor={alternateBgColor}
+                            />
+                            {roomNameBoxes}
+                        </Box>
+                        <Box h={innerHeightPx + "px"} role="region" aria-label="Room schedules">
+                            <div
+                                style={{
+                                    width: "100%",
+                                    height: "100%",
+                                    boxSizing: "border-box",
+                                    transition: "none",
+                                    overflow: "hidden",
+                                    position: "relative",
+                                    display: "flex",
+                                }}
+                            >
+                                {roomMarkers}
+                                <NowMarker />
+                                {labeledNowMarker}
+                                {roomTimelines}
+                            </div>
+                        </Box>
                     </Flex>
                 </Box>
-            </Box>
-        </>
+            </Flex>
+        </Box>
     );
 }
 

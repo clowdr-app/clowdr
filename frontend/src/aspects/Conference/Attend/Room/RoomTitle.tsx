@@ -1,5 +1,6 @@
 import { Heading, Image } from "@chakra-ui/react";
 import { ContentItemDataBlob, ContentType_Enum, isContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
+import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import type { RoomPage_RoomDetailsFragment } from "../../../../generated/graphql";
@@ -27,11 +28,19 @@ export function RoomTitle({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFr
             return null;
         }
 
-        if (latestVersion.data.type !== ContentType_Enum.ImageUrl) {
+        if (
+            latestVersion.data.type !== ContentType_Enum.ImageUrl &&
+            latestVersion.data.type !== ContentType_Enum.ImageFile
+        ) {
             return null;
         }
 
-        return latestVersion.data.url;
+        if (latestVersion.data.type === ContentType_Enum.ImageUrl) {
+            return latestVersion.data.url;
+        } else {
+            const { bucket, key } = new AmazonS3URI(latestVersion.data.s3Url);
+            return `https://s3.${import.meta.env.SNOWPACK_PUBLIC_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
+        }
     }, [roomDetails.originatingContentGroup?.contentItems]);
 
     return roomDetails.originatingContentGroup ? (

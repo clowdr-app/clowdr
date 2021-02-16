@@ -2,6 +2,8 @@ import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -132,6 +134,274 @@ export type AttendeeRoomParticipants_AggregateArgs = {
   order_by?: Maybe<ReadonlyArray<RoomParticipant_Order_By>>;
   where?: Maybe<RoomParticipant_Bool_Exp>;
 };
+
+/** columns and relationships of "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccount = {
+  readonly __typename?: 'AttendeeGoogleAccount';
+  /** An object relationship */
+  readonly attendee: Attendee;
+  readonly attendeeId: Scalars['uuid'];
+  /** An object relationship */
+  readonly conference: Conference;
+  readonly conferenceId: Scalars['uuid'];
+  readonly createdAt: Scalars['timestamptz'];
+  readonly googleAccountEmail: Scalars['String'];
+  readonly id: Scalars['uuid'];
+  readonly tokenData: Scalars['jsonb'];
+  readonly updatedAt: Scalars['timestamptz'];
+  readonly youTubeData?: Maybe<Scalars['jsonb']>;
+};
+
+
+/** columns and relationships of "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccountTokenDataArgs = {
+  path?: Maybe<Scalars['String']>;
+};
+
+
+/** columns and relationships of "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccountYouTubeDataArgs = {
+  path?: Maybe<Scalars['String']>;
+};
+
+/** aggregated selection of "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccount_Aggregate = {
+  readonly __typename?: 'AttendeeGoogleAccount_aggregate';
+  readonly aggregate?: Maybe<AttendeeGoogleAccount_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<AttendeeGoogleAccount>;
+};
+
+/** aggregate fields of "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccount_Aggregate_Fields = {
+  readonly __typename?: 'AttendeeGoogleAccount_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<AttendeeGoogleAccount_Max_Fields>;
+  readonly min?: Maybe<AttendeeGoogleAccount_Min_Fields>;
+};
+
+
+/** aggregate fields of "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccount_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<AttendeeGoogleAccount_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccount_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<AttendeeGoogleAccount_Max_Order_By>;
+  readonly min?: Maybe<AttendeeGoogleAccount_Min_Order_By>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type AttendeeGoogleAccount_Append_Input = {
+  readonly tokenData?: Maybe<Scalars['jsonb']>;
+  readonly youTubeData?: Maybe<Scalars['jsonb']>;
+};
+
+/** input type for inserting array relation for remote table "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccount_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<AttendeeGoogleAccount_Insert_Input>;
+  readonly on_conflict?: Maybe<AttendeeGoogleAccount_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "AttendeeGoogleAccount". All fields are combined with a logical 'AND'. */
+export type AttendeeGoogleAccount_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<AttendeeGoogleAccount_Bool_Exp>>>;
+  readonly _not?: Maybe<AttendeeGoogleAccount_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<AttendeeGoogleAccount_Bool_Exp>>>;
+  readonly attendee?: Maybe<Attendee_Bool_Exp>;
+  readonly attendeeId?: Maybe<Uuid_Comparison_Exp>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly googleAccountEmail?: Maybe<String_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly tokenData?: Maybe<Jsonb_Comparison_Exp>;
+  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly youTubeData?: Maybe<Jsonb_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "AttendeeGoogleAccount" */
+export enum AttendeeGoogleAccount_Constraint {
+  /** unique or primary key constraint */
+  AttendeeGoogleAccountAttendeeIdGoogleAccountEmailKey = 'AttendeeGoogleAccount_attendeeId_googleAccountEmail_key',
+  /** unique or primary key constraint */
+  AttendeeGoogleAccountPkey = 'AttendeeGoogleAccount_pkey'
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type AttendeeGoogleAccount_Delete_At_Path_Input = {
+  readonly tokenData?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+  readonly youTubeData?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type AttendeeGoogleAccount_Delete_Elem_Input = {
+  readonly tokenData?: Maybe<Scalars['Int']>;
+  readonly youTubeData?: Maybe<Scalars['Int']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type AttendeeGoogleAccount_Delete_Key_Input = {
+  readonly tokenData?: Maybe<Scalars['String']>;
+  readonly youTubeData?: Maybe<Scalars['String']>;
+};
+
+/** input type for inserting data into table "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccount_Insert_Input = {
+  readonly attendee?: Maybe<Attendee_Obj_Rel_Insert_Input>;
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly googleAccountEmail?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly tokenData?: Maybe<Scalars['jsonb']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly youTubeData?: Maybe<Scalars['jsonb']>;
+};
+
+/** aggregate max on columns */
+export type AttendeeGoogleAccount_Max_Fields = {
+  readonly __typename?: 'AttendeeGoogleAccount_max_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly googleAccountEmail?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccount_Max_Order_By = {
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly googleAccountEmail?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type AttendeeGoogleAccount_Min_Fields = {
+  readonly __typename?: 'AttendeeGoogleAccount_min_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly googleAccountEmail?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccount_Min_Order_By = {
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly googleAccountEmail?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccount_Mutation_Response = {
+  readonly __typename?: 'AttendeeGoogleAccount_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<AttendeeGoogleAccount>;
+};
+
+/** input type for inserting object relation for remote table "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccount_Obj_Rel_Insert_Input = {
+  readonly data: AttendeeGoogleAccount_Insert_Input;
+  readonly on_conflict?: Maybe<AttendeeGoogleAccount_On_Conflict>;
+};
+
+/** on conflict condition type for table "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccount_On_Conflict = {
+  readonly constraint: AttendeeGoogleAccount_Constraint;
+  readonly update_columns: ReadonlyArray<AttendeeGoogleAccount_Update_Column>;
+  readonly where?: Maybe<AttendeeGoogleAccount_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccount_Order_By = {
+  readonly attendee?: Maybe<Attendee_Order_By>;
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly googleAccountEmail?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly tokenData?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly youTubeData?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccount_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type AttendeeGoogleAccount_Prepend_Input = {
+  readonly tokenData?: Maybe<Scalars['jsonb']>;
+  readonly youTubeData?: Maybe<Scalars['jsonb']>;
+};
+
+/** select columns of table "AttendeeGoogleAccount" */
+export enum AttendeeGoogleAccount_Select_Column {
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  GoogleAccountEmail = 'googleAccountEmail',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  TokenData = 'tokenData',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  YouTubeData = 'youTubeData'
+}
+
+/** input type for updating data in table "AttendeeGoogleAccount" */
+export type AttendeeGoogleAccount_Set_Input = {
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly googleAccountEmail?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly tokenData?: Maybe<Scalars['jsonb']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly youTubeData?: Maybe<Scalars['jsonb']>;
+};
+
+/** update columns of table "AttendeeGoogleAccount" */
+export enum AttendeeGoogleAccount_Update_Column {
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  GoogleAccountEmail = 'googleAccountEmail',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  TokenData = 'tokenData',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  YouTubeData = 'youTubeData'
+}
 
 /** columns and relationships of "AttendeeProfile" */
 export type AttendeeProfile = {
@@ -4219,6 +4489,10 @@ export type ContentItem = {
   /** An object relationship */
   readonly requiredContentItem?: Maybe<RequiredContentItem>;
   readonly updatedAt: Scalars['timestamptz'];
+  /** An array relationship */
+  readonly youTubeUploads: ReadonlyArray<YouTubeUpload>;
+  /** An aggregated array relationship */
+  readonly youTubeUploads_aggregate: YouTubeUpload_Aggregate;
 };
 
 
@@ -4231,6 +4505,26 @@ export type ContentItemDataArgs = {
 /** columns and relationships of "ContentItem" */
 export type ContentItemLayoutDataArgs = {
   path?: Maybe<Scalars['String']>;
+};
+
+
+/** columns and relationships of "ContentItem" */
+export type ContentItemYouTubeUploadsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<YouTubeUpload_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<YouTubeUpload_Order_By>>;
+  where?: Maybe<YouTubeUpload_Bool_Exp>;
+};
+
+
+/** columns and relationships of "ContentItem" */
+export type ContentItemYouTubeUploads_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<YouTubeUpload_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<YouTubeUpload_Order_By>>;
+  where?: Maybe<YouTubeUpload_Bool_Exp>;
 };
 
 /** aggregated selection of "ContentItem" */
@@ -4297,6 +4591,7 @@ export type ContentItem_Bool_Exp = {
   readonly requiredContentId?: Maybe<Uuid_Comparison_Exp>;
   readonly requiredContentItem?: Maybe<RequiredContentItem_Bool_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly youTubeUploads?: Maybe<YouTubeUpload_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "ContentItem" */
@@ -4345,6 +4640,7 @@ export type ContentItem_Insert_Input = {
   readonly requiredContentId?: Maybe<Scalars['uuid']>;
   readonly requiredContentItem?: Maybe<RequiredContentItem_Obj_Rel_Insert_Input>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly youTubeUploads?: Maybe<YouTubeUpload_Arr_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -4439,6 +4735,7 @@ export type ContentItem_Order_By = {
   readonly requiredContentId?: Maybe<Order_By>;
   readonly requiredContentItem?: Maybe<RequiredContentItem_Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
+  readonly youTubeUploads_aggregate?: Maybe<YouTubeUpload_Aggregate_Order_By>;
 };
 
 /** primary key columns input for table: "ContentItem" */
@@ -5602,8 +5899,8 @@ export type EventTransitions_AggregateArgs = {
 
 /**
  * Current streams in event Vonage sessions.
- * 
- * 
+ *
+ *
  * columns and relationships of "EventParticipantStream"
  */
 export type EventParticipantStream = {
@@ -7826,6 +8123,11 @@ export type GetContentItemOutput = {
   readonly id: Scalars['String'];
   readonly layoutData?: Maybe<Scalars['jsonb']>;
   readonly name: Scalars['String'];
+};
+
+export type GetGoogleOAuthUrlOutput = {
+  readonly __typename?: 'GetGoogleOAuthUrlOutput';
+  readonly url: Scalars['String'];
 };
 
 export type GetUploadAgreementOutput = {
@@ -10698,6 +11000,12 @@ export type ProtectedEchoOutput = {
   readonly message: Scalars['String'];
 };
 
+export type RefreshYouTubeDataOutput = {
+  readonly __typename?: 'RefreshYouTubeDataOutput';
+  readonly message?: Maybe<Scalars['String']>;
+  readonly success: Scalars['Boolean'];
+};
+
 /** columns and relationships of "RequiredContentItem" */
 export type RequiredContentItem = {
   readonly __typename?: 'RequiredContentItem';
@@ -13211,6 +13519,18 @@ export type SubmitContentItemOutput = {
   readonly success: Scalars['Boolean'];
 };
 
+export type SubmitGoogleOAuthCodeOutput = {
+  readonly __typename?: 'SubmitGoogleOAuthCodeOutput';
+  readonly message?: Maybe<Scalars['String']>;
+  readonly success: Scalars['Boolean'];
+};
+
+export type SubmitGoogleOAuthTokenOutput = {
+  readonly __typename?: 'SubmitGoogleOAuthTokenOutput';
+  readonly message?: Maybe<Scalars['String']>;
+  readonly success: Scalars['Boolean'];
+};
+
 export type SubmitUpdatedSubtitlesInput = {
   readonly accessToken: Scalars['String'];
   readonly contentItemId: Scalars['String'];
@@ -15085,6 +15405,266 @@ export type VideoRenderJob_Variance_Order_By = {
   readonly retriesCount?: Maybe<Order_By>;
 };
 
+/** columns and relationships of "YouTubeUpload" */
+export type YouTubeUpload = {
+  readonly __typename?: 'YouTubeUpload';
+  /** An object relationship */
+  readonly conference: Conference;
+  readonly conferenceId: Scalars['uuid'];
+  /** An object relationship */
+  readonly contentItem?: Maybe<ContentItem>;
+  readonly contentItemId?: Maybe<Scalars['uuid']>;
+  readonly createdAt: Scalars['timestamptz'];
+  readonly id: Scalars['uuid'];
+  readonly updatedAt: Scalars['timestamptz'];
+  readonly uploadYouTubeVideoJobId?: Maybe<Scalars['uuid']>;
+  readonly videoId: Scalars['String'];
+  readonly videoPrivacyStatus: Scalars['String'];
+  readonly videoStatus: Scalars['String'];
+  readonly videoTitle: Scalars['String'];
+};
+
+/** aggregated selection of "YouTubeUpload" */
+export type YouTubeUpload_Aggregate = {
+  readonly __typename?: 'YouTubeUpload_aggregate';
+  readonly aggregate?: Maybe<YouTubeUpload_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<YouTubeUpload>;
+};
+
+/** aggregate fields of "YouTubeUpload" */
+export type YouTubeUpload_Aggregate_Fields = {
+  readonly __typename?: 'YouTubeUpload_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<YouTubeUpload_Max_Fields>;
+  readonly min?: Maybe<YouTubeUpload_Min_Fields>;
+};
+
+
+/** aggregate fields of "YouTubeUpload" */
+export type YouTubeUpload_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<YouTubeUpload_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "YouTubeUpload" */
+export type YouTubeUpload_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<YouTubeUpload_Max_Order_By>;
+  readonly min?: Maybe<YouTubeUpload_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "YouTubeUpload" */
+export type YouTubeUpload_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<YouTubeUpload_Insert_Input>;
+  readonly on_conflict?: Maybe<YouTubeUpload_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "YouTubeUpload". All fields are combined with a logical 'AND'. */
+export type YouTubeUpload_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<YouTubeUpload_Bool_Exp>>>;
+  readonly _not?: Maybe<YouTubeUpload_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<YouTubeUpload_Bool_Exp>>>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly contentItem?: Maybe<ContentItem_Bool_Exp>;
+  readonly contentItemId?: Maybe<Uuid_Comparison_Exp>;
+  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly uploadYouTubeVideoJobId?: Maybe<Uuid_Comparison_Exp>;
+  readonly videoId?: Maybe<String_Comparison_Exp>;
+  readonly videoPrivacyStatus?: Maybe<String_Comparison_Exp>;
+  readonly videoStatus?: Maybe<String_Comparison_Exp>;
+  readonly videoTitle?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "YouTubeUpload" */
+export enum YouTubeUpload_Constraint {
+  /** unique or primary key constraint */
+  YouTubeUploadPkey = 'YouTubeUpload_pkey',
+  /** unique or primary key constraint */
+  YouTubeUploadVideoIdKey = 'YouTubeUpload_videoId_key'
+}
+
+/** input type for inserting data into table "YouTubeUpload" */
+export type YouTubeUpload_Insert_Input = {
+  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly contentItem?: Maybe<ContentItem_Obj_Rel_Insert_Input>;
+  readonly contentItemId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly uploadYouTubeVideoJobId?: Maybe<Scalars['uuid']>;
+  readonly videoId?: Maybe<Scalars['String']>;
+  readonly videoPrivacyStatus?: Maybe<Scalars['String']>;
+  readonly videoStatus?: Maybe<Scalars['String']>;
+  readonly videoTitle?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type YouTubeUpload_Max_Fields = {
+  readonly __typename?: 'YouTubeUpload_max_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly contentItemId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly uploadYouTubeVideoJobId?: Maybe<Scalars['uuid']>;
+  readonly videoId?: Maybe<Scalars['String']>;
+  readonly videoPrivacyStatus?: Maybe<Scalars['String']>;
+  readonly videoStatus?: Maybe<Scalars['String']>;
+  readonly videoTitle?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "YouTubeUpload" */
+export type YouTubeUpload_Max_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly contentItemId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly uploadYouTubeVideoJobId?: Maybe<Order_By>;
+  readonly videoId?: Maybe<Order_By>;
+  readonly videoPrivacyStatus?: Maybe<Order_By>;
+  readonly videoStatus?: Maybe<Order_By>;
+  readonly videoTitle?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type YouTubeUpload_Min_Fields = {
+  readonly __typename?: 'YouTubeUpload_min_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly contentItemId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly uploadYouTubeVideoJobId?: Maybe<Scalars['uuid']>;
+  readonly videoId?: Maybe<Scalars['String']>;
+  readonly videoPrivacyStatus?: Maybe<Scalars['String']>;
+  readonly videoStatus?: Maybe<Scalars['String']>;
+  readonly videoTitle?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "YouTubeUpload" */
+export type YouTubeUpload_Min_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly contentItemId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly uploadYouTubeVideoJobId?: Maybe<Order_By>;
+  readonly videoId?: Maybe<Order_By>;
+  readonly videoPrivacyStatus?: Maybe<Order_By>;
+  readonly videoStatus?: Maybe<Order_By>;
+  readonly videoTitle?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "YouTubeUpload" */
+export type YouTubeUpload_Mutation_Response = {
+  readonly __typename?: 'YouTubeUpload_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<YouTubeUpload>;
+};
+
+/** input type for inserting object relation for remote table "YouTubeUpload" */
+export type YouTubeUpload_Obj_Rel_Insert_Input = {
+  readonly data: YouTubeUpload_Insert_Input;
+  readonly on_conflict?: Maybe<YouTubeUpload_On_Conflict>;
+};
+
+/** on conflict condition type for table "YouTubeUpload" */
+export type YouTubeUpload_On_Conflict = {
+  readonly constraint: YouTubeUpload_Constraint;
+  readonly update_columns: ReadonlyArray<YouTubeUpload_Update_Column>;
+  readonly where?: Maybe<YouTubeUpload_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "YouTubeUpload" */
+export type YouTubeUpload_Order_By = {
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly contentItem?: Maybe<ContentItem_Order_By>;
+  readonly contentItemId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly uploadYouTubeVideoJobId?: Maybe<Order_By>;
+  readonly videoId?: Maybe<Order_By>;
+  readonly videoPrivacyStatus?: Maybe<Order_By>;
+  readonly videoStatus?: Maybe<Order_By>;
+  readonly videoTitle?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "YouTubeUpload" */
+export type YouTubeUpload_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "YouTubeUpload" */
+export enum YouTubeUpload_Select_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  ContentItemId = 'contentItemId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  UploadYouTubeVideoJobId = 'uploadYouTubeVideoJobId',
+  /** column name */
+  VideoId = 'videoId',
+  /** column name */
+  VideoPrivacyStatus = 'videoPrivacyStatus',
+  /** column name */
+  VideoStatus = 'videoStatus',
+  /** column name */
+  VideoTitle = 'videoTitle'
+}
+
+/** input type for updating data in table "YouTubeUpload" */
+export type YouTubeUpload_Set_Input = {
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly contentItemId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly uploadYouTubeVideoJobId?: Maybe<Scalars['uuid']>;
+  readonly videoId?: Maybe<Scalars['String']>;
+  readonly videoPrivacyStatus?: Maybe<Scalars['String']>;
+  readonly videoStatus?: Maybe<Scalars['String']>;
+  readonly videoTitle?: Maybe<Scalars['String']>;
+};
+
+/** update columns of table "YouTubeUpload" */
+export enum YouTubeUpload_Update_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  ContentItemId = 'contentItemId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  UploadYouTubeVideoJobId = 'uploadYouTubeVideoJobId',
+  /** column name */
+  VideoId = 'videoId',
+  /** column name */
+  VideoPrivacyStatus = 'videoPrivacyStatus',
+  /** column name */
+  VideoStatus = 'videoStatus',
+  /** column name */
+  VideoTitle = 'videoTitle'
+}
+
 
 /** expression to compare columns of type bigint. All fields are combined with logical 'AND'. */
 export type Bigint_Comparison_Exp = {
@@ -16135,8 +16715,8 @@ export type Chat_Flag_Variance_Order_By = {
 
 /**
  * Chat messages. The systemId field is unique and can be used to prevent duplicate inserts of things like event start/end markers.
- * 
- * 
+ *
+ *
  * columns and relationships of "chat.Message"
  */
 export type Chat_Message = {
@@ -16175,8 +16755,8 @@ export type Chat_Message = {
 
 /**
  * Chat messages. The systemId field is unique and can be used to prevent duplicate inserts of things like event start/end markers.
- * 
- * 
+ *
+ *
  * columns and relationships of "chat.Message"
  */
 export type Chat_MessageDataArgs = {
@@ -16186,8 +16766,8 @@ export type Chat_MessageDataArgs = {
 
 /**
  * Chat messages. The systemId field is unique and can be used to prevent duplicate inserts of things like event start/end markers.
- * 
- * 
+ *
+ *
  * columns and relationships of "chat.Message"
  */
 export type Chat_MessageFlagsArgs = {
@@ -16201,8 +16781,8 @@ export type Chat_MessageFlagsArgs = {
 
 /**
  * Chat messages. The systemId field is unique and can be used to prevent duplicate inserts of things like event start/end markers.
- * 
- * 
+ *
+ *
  * columns and relationships of "chat.Message"
  */
 export type Chat_MessageFlags_AggregateArgs = {
@@ -16216,8 +16796,8 @@ export type Chat_MessageFlags_AggregateArgs = {
 
 /**
  * Chat messages. The systemId field is unique and can be used to prevent duplicate inserts of things like event start/end markers.
- * 
- * 
+ *
+ *
  * columns and relationships of "chat.Message"
  */
 export type Chat_MessageReactionsArgs = {
@@ -16231,8 +16811,8 @@ export type Chat_MessageReactionsArgs = {
 
 /**
  * Chat messages. The systemId field is unique and can be used to prevent duplicate inserts of things like event start/end markers.
- * 
- * 
+ *
+ *
  * columns and relationships of "chat.Message"
  */
 export type Chat_MessageReactions_AggregateArgs = {
@@ -16825,8 +17405,8 @@ export type Chat_Message_Variance_Order_By = {
 
 /**
  * Pin a chat to the sidebar.
- * 
- * 
+ *
+ *
  * columns and relationships of "chat.Pin"
  */
 export type Chat_Pin = {
@@ -17713,7 +18293,9 @@ export type Chat_ReadUpToIndex_Bool_Exp = {
 /** unique or primary key constraints on table "chat.ReadUpToIndex" */
 export enum Chat_ReadUpToIndex_Constraint {
   /** unique or primary key constraint */
-  ReadUpToIndexPkey = 'ReadUpToIndex_pkey'
+  ReadUpToIndexPkey = 'ReadUpToIndex_pkey',
+  /** unique or primary key constraint */
+  ChatReadUpToIndexPkIndex = 'chat_ReadUpToIndex_pk_index'
 }
 
 /** input type for incrementing integer column in table "chat.ReadUpToIndex" */
@@ -17940,8 +18522,8 @@ export type Chat_ReadUpToIndex_Variance_Order_By = {
 
 /**
  * Subscribe to chat notifications.
- * 
- * 
+ *
+ *
  * columns and relationships of "chat.Subscription"
  */
 export type Chat_Subscription = {
@@ -18419,6 +19001,292 @@ export enum Chat_Typer_Update_Column {
   ChatId = 'chatId',
   /** column name */
   MessageTypeName = 'messageTypeName',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** columns and relationships of "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJob = {
+  readonly __typename?: 'job_queues_CombineVideosJob';
+  /** An object relationship */
+  readonly attendee?: Maybe<Attendee>;
+  /** An object relationship */
+  readonly conference: Conference;
+  readonly conferenceId: Scalars['uuid'];
+  readonly createdByAttendeeId?: Maybe<Scalars['uuid']>;
+  readonly created_at: Scalars['timestamptz'];
+  readonly data: Scalars['jsonb'];
+  readonly id: Scalars['uuid'];
+  /** An object relationship */
+  readonly jobStatus: JobStatus;
+  readonly jobStatusName: JobStatus_Enum;
+  readonly mediaConvertJobId?: Maybe<Scalars['String']>;
+  readonly message?: Maybe<Scalars['String']>;
+  readonly outputName: Scalars['String'];
+  readonly updated_at: Scalars['timestamptz'];
+};
+
+
+/** columns and relationships of "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJobDataArgs = {
+  path?: Maybe<Scalars['String']>;
+};
+
+/** aggregated selection of "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJob_Aggregate = {
+  readonly __typename?: 'job_queues_CombineVideosJob_aggregate';
+  readonly aggregate?: Maybe<Job_Queues_CombineVideosJob_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Job_Queues_CombineVideosJob>;
+};
+
+/** aggregate fields of "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJob_Aggregate_Fields = {
+  readonly __typename?: 'job_queues_CombineVideosJob_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Job_Queues_CombineVideosJob_Max_Fields>;
+  readonly min?: Maybe<Job_Queues_CombineVideosJob_Min_Fields>;
+};
+
+
+/** aggregate fields of "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJob_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Job_Queues_CombineVideosJob_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJob_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Job_Queues_CombineVideosJob_Max_Order_By>;
+  readonly min?: Maybe<Job_Queues_CombineVideosJob_Min_Order_By>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Job_Queues_CombineVideosJob_Append_Input = {
+  readonly data?: Maybe<Scalars['jsonb']>;
+};
+
+/** input type for inserting array relation for remote table "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJob_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Job_Queues_CombineVideosJob_Insert_Input>;
+  readonly on_conflict?: Maybe<Job_Queues_CombineVideosJob_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "job_queues.CombineVideosJob". All fields are combined with a logical 'AND'. */
+export type Job_Queues_CombineVideosJob_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Job_Queues_CombineVideosJob_Bool_Exp>>>;
+  readonly _not?: Maybe<Job_Queues_CombineVideosJob_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Job_Queues_CombineVideosJob_Bool_Exp>>>;
+  readonly attendee?: Maybe<Attendee_Bool_Exp>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly createdByAttendeeId?: Maybe<Uuid_Comparison_Exp>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly data?: Maybe<Jsonb_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly jobStatus?: Maybe<JobStatus_Bool_Exp>;
+  readonly jobStatusName?: Maybe<JobStatus_Enum_Comparison_Exp>;
+  readonly mediaConvertJobId?: Maybe<String_Comparison_Exp>;
+  readonly message?: Maybe<String_Comparison_Exp>;
+  readonly outputName?: Maybe<String_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "job_queues.CombineVideosJob" */
+export enum Job_Queues_CombineVideosJob_Constraint {
+  /** unique or primary key constraint */
+  CombineVideosJobPkey = 'CombineVideosJob_pkey'
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Job_Queues_CombineVideosJob_Delete_At_Path_Input = {
+  readonly data?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Job_Queues_CombineVideosJob_Delete_Elem_Input = {
+  readonly data?: Maybe<Scalars['Int']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Job_Queues_CombineVideosJob_Delete_Key_Input = {
+  readonly data?: Maybe<Scalars['String']>;
+};
+
+/** input type for inserting data into table "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJob_Insert_Input = {
+  readonly attendee?: Maybe<Attendee_Obj_Rel_Insert_Input>;
+  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdByAttendeeId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly data?: Maybe<Scalars['jsonb']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly jobStatus?: Maybe<JobStatus_Obj_Rel_Insert_Input>;
+  readonly jobStatusName?: Maybe<JobStatus_Enum>;
+  readonly mediaConvertJobId?: Maybe<Scalars['String']>;
+  readonly message?: Maybe<Scalars['String']>;
+  readonly outputName?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Job_Queues_CombineVideosJob_Max_Fields = {
+  readonly __typename?: 'job_queues_CombineVideosJob_max_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdByAttendeeId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly mediaConvertJobId?: Maybe<Scalars['String']>;
+  readonly message?: Maybe<Scalars['String']>;
+  readonly outputName?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJob_Max_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly createdByAttendeeId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly mediaConvertJobId?: Maybe<Order_By>;
+  readonly message?: Maybe<Order_By>;
+  readonly outputName?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Job_Queues_CombineVideosJob_Min_Fields = {
+  readonly __typename?: 'job_queues_CombineVideosJob_min_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdByAttendeeId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly mediaConvertJobId?: Maybe<Scalars['String']>;
+  readonly message?: Maybe<Scalars['String']>;
+  readonly outputName?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJob_Min_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly createdByAttendeeId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly mediaConvertJobId?: Maybe<Order_By>;
+  readonly message?: Maybe<Order_By>;
+  readonly outputName?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJob_Mutation_Response = {
+  readonly __typename?: 'job_queues_CombineVideosJob_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Job_Queues_CombineVideosJob>;
+};
+
+/** input type for inserting object relation for remote table "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJob_Obj_Rel_Insert_Input = {
+  readonly data: Job_Queues_CombineVideosJob_Insert_Input;
+  readonly on_conflict?: Maybe<Job_Queues_CombineVideosJob_On_Conflict>;
+};
+
+/** on conflict condition type for table "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJob_On_Conflict = {
+  readonly constraint: Job_Queues_CombineVideosJob_Constraint;
+  readonly update_columns: ReadonlyArray<Job_Queues_CombineVideosJob_Update_Column>;
+  readonly where?: Maybe<Job_Queues_CombineVideosJob_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJob_Order_By = {
+  readonly attendee?: Maybe<Attendee_Order_By>;
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly createdByAttendeeId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly data?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly jobStatus?: Maybe<JobStatus_Order_By>;
+  readonly jobStatusName?: Maybe<Order_By>;
+  readonly mediaConvertJobId?: Maybe<Order_By>;
+  readonly message?: Maybe<Order_By>;
+  readonly outputName?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJob_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Job_Queues_CombineVideosJob_Prepend_Input = {
+  readonly data?: Maybe<Scalars['jsonb']>;
+};
+
+/** select columns of table "job_queues.CombineVideosJob" */
+export enum Job_Queues_CombineVideosJob_Select_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedByAttendeeId = 'createdByAttendeeId',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Data = 'data',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  JobStatusName = 'jobStatusName',
+  /** column name */
+  MediaConvertJobId = 'mediaConvertJobId',
+  /** column name */
+  Message = 'message',
+  /** column name */
+  OutputName = 'outputName',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "job_queues.CombineVideosJob" */
+export type Job_Queues_CombineVideosJob_Set_Input = {
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdByAttendeeId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly data?: Maybe<Scalars['jsonb']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly jobStatusName?: Maybe<JobStatus_Enum>;
+  readonly mediaConvertJobId?: Maybe<Scalars['String']>;
+  readonly message?: Maybe<Scalars['String']>;
+  readonly outputName?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "job_queues.CombineVideosJob" */
+export enum Job_Queues_CombineVideosJob_Update_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedByAttendeeId = 'createdByAttendeeId',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Data = 'data',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  JobStatusName = 'jobStatusName',
+  /** column name */
+  MediaConvertJobId = 'mediaConvertJobId',
+  /** column name */
+  Message = 'message',
+  /** column name */
+  OutputName = 'outputName',
   /** column name */
   UpdatedAt = 'updated_at'
 }
@@ -19294,6 +20162,418 @@ export enum Job_Queues_SubmissionRequestEmailJob_Update_Column {
   UploaderId = 'uploaderId'
 }
 
+/** columns and relationships of "job_queues.UploadYouTubeVideoJob" */
+export type Job_Queues_UploadYouTubeVideoJob = {
+  readonly __typename?: 'job_queues_UploadYouTubeVideoJob';
+  /** An object relationship */
+  readonly attendeeGoogleAccount: AttendeeGoogleAccount;
+  readonly attendeeGoogleAccountId: Scalars['uuid'];
+  /** An object relationship */
+  readonly conference: Conference;
+  readonly conferenceId: Scalars['uuid'];
+  /** An object relationship */
+  readonly contentItem: ContentItem;
+  readonly contentItemId: Scalars['uuid'];
+  readonly createdAt: Scalars['timestamptz'];
+  readonly id: Scalars['uuid'];
+  /** An object relationship */
+  readonly jobStatus: JobStatus;
+  readonly jobStatusName: JobStatus_Enum;
+  readonly message?: Maybe<Scalars['String']>;
+  readonly playlistId?: Maybe<Scalars['String']>;
+  readonly retriesCount: Scalars['Int'];
+  readonly updatedAt: Scalars['timestamptz'];
+  readonly videoDescription: Scalars['String'];
+  readonly videoPrivacyStatus: Scalars['String'];
+  readonly videoTitle: Scalars['String'];
+};
+
+/** aggregated selection of "job_queues.UploadYouTubeVideoJob" */
+export type Job_Queues_UploadYouTubeVideoJob_Aggregate = {
+  readonly __typename?: 'job_queues_UploadYouTubeVideoJob_aggregate';
+  readonly aggregate?: Maybe<Job_Queues_UploadYouTubeVideoJob_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Job_Queues_UploadYouTubeVideoJob>;
+};
+
+/** aggregate fields of "job_queues.UploadYouTubeVideoJob" */
+export type Job_Queues_UploadYouTubeVideoJob_Aggregate_Fields = {
+  readonly __typename?: 'job_queues_UploadYouTubeVideoJob_aggregate_fields';
+  readonly avg?: Maybe<Job_Queues_UploadYouTubeVideoJob_Avg_Fields>;
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Job_Queues_UploadYouTubeVideoJob_Max_Fields>;
+  readonly min?: Maybe<Job_Queues_UploadYouTubeVideoJob_Min_Fields>;
+  readonly stddev?: Maybe<Job_Queues_UploadYouTubeVideoJob_Stddev_Fields>;
+  readonly stddev_pop?: Maybe<Job_Queues_UploadYouTubeVideoJob_Stddev_Pop_Fields>;
+  readonly stddev_samp?: Maybe<Job_Queues_UploadYouTubeVideoJob_Stddev_Samp_Fields>;
+  readonly sum?: Maybe<Job_Queues_UploadYouTubeVideoJob_Sum_Fields>;
+  readonly var_pop?: Maybe<Job_Queues_UploadYouTubeVideoJob_Var_Pop_Fields>;
+  readonly var_samp?: Maybe<Job_Queues_UploadYouTubeVideoJob_Var_Samp_Fields>;
+  readonly variance?: Maybe<Job_Queues_UploadYouTubeVideoJob_Variance_Fields>;
+};
+
+
+/** aggregate fields of "job_queues.UploadYouTubeVideoJob" */
+export type Job_Queues_UploadYouTubeVideoJob_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Job_Queues_UploadYouTubeVideoJob_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "job_queues.UploadYouTubeVideoJob" */
+export type Job_Queues_UploadYouTubeVideoJob_Aggregate_Order_By = {
+  readonly avg?: Maybe<Job_Queues_UploadYouTubeVideoJob_Avg_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Job_Queues_UploadYouTubeVideoJob_Max_Order_By>;
+  readonly min?: Maybe<Job_Queues_UploadYouTubeVideoJob_Min_Order_By>;
+  readonly stddev?: Maybe<Job_Queues_UploadYouTubeVideoJob_Stddev_Order_By>;
+  readonly stddev_pop?: Maybe<Job_Queues_UploadYouTubeVideoJob_Stddev_Pop_Order_By>;
+  readonly stddev_samp?: Maybe<Job_Queues_UploadYouTubeVideoJob_Stddev_Samp_Order_By>;
+  readonly sum?: Maybe<Job_Queues_UploadYouTubeVideoJob_Sum_Order_By>;
+  readonly var_pop?: Maybe<Job_Queues_UploadYouTubeVideoJob_Var_Pop_Order_By>;
+  readonly var_samp?: Maybe<Job_Queues_UploadYouTubeVideoJob_Var_Samp_Order_By>;
+  readonly variance?: Maybe<Job_Queues_UploadYouTubeVideoJob_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "job_queues.UploadYouTubeVideoJob" */
+export type Job_Queues_UploadYouTubeVideoJob_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Job_Queues_UploadYouTubeVideoJob_Insert_Input>;
+  readonly on_conflict?: Maybe<Job_Queues_UploadYouTubeVideoJob_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Job_Queues_UploadYouTubeVideoJob_Avg_Fields = {
+  readonly __typename?: 'job_queues_UploadYouTubeVideoJob_avg_fields';
+  readonly retriesCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "job_queues.UploadYouTubeVideoJob" */
+export type Job_Queues_UploadYouTubeVideoJob_Avg_Order_By = {
+  readonly retriesCount?: Maybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "job_queues.UploadYouTubeVideoJob". All fields are combined with a logical 'AND'. */
+export type Job_Queues_UploadYouTubeVideoJob_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Job_Queues_UploadYouTubeVideoJob_Bool_Exp>>>;
+  readonly _not?: Maybe<Job_Queues_UploadYouTubeVideoJob_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Job_Queues_UploadYouTubeVideoJob_Bool_Exp>>>;
+  readonly attendeeGoogleAccount?: Maybe<AttendeeGoogleAccount_Bool_Exp>;
+  readonly attendeeGoogleAccountId?: Maybe<Uuid_Comparison_Exp>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly contentItem?: Maybe<ContentItem_Bool_Exp>;
+  readonly contentItemId?: Maybe<Uuid_Comparison_Exp>;
+  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly jobStatus?: Maybe<JobStatus_Bool_Exp>;
+  readonly jobStatusName?: Maybe<JobStatus_Enum_Comparison_Exp>;
+  readonly message?: Maybe<String_Comparison_Exp>;
+  readonly playlistId?: Maybe<String_Comparison_Exp>;
+  readonly retriesCount?: Maybe<Int_Comparison_Exp>;
+  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly videoDescription?: Maybe<String_Comparison_Exp>;
+  readonly videoPrivacyStatus?: Maybe<String_Comparison_Exp>;
+  readonly videoTitle?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "job_queues.UploadYouTubeVideoJob" */
+export enum Job_Queues_UploadYouTubeVideoJob_Constraint {
+  /** unique or primary key constraint */
+  UploadYouTubeVideoJobPkey = 'UploadYouTubeVideoJob_pkey'
+}
+
+/** input type for incrementing integer column in table "job_queues.UploadYouTubeVideoJob" */
+export type Job_Queues_UploadYouTubeVideoJob_Inc_Input = {
+  readonly retriesCount?: Maybe<Scalars['Int']>;
+};
+
+/** input type for inserting data into table "job_queues.UploadYouTubeVideoJob" */
+export type Job_Queues_UploadYouTubeVideoJob_Insert_Input = {
+  readonly attendeeGoogleAccount?: Maybe<AttendeeGoogleAccount_Obj_Rel_Insert_Input>;
+  readonly attendeeGoogleAccountId?: Maybe<Scalars['uuid']>;
+  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly contentItem?: Maybe<ContentItem_Obj_Rel_Insert_Input>;
+  readonly contentItemId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly jobStatus?: Maybe<JobStatus_Obj_Rel_Insert_Input>;
+  readonly jobStatusName?: Maybe<JobStatus_Enum>;
+  readonly message?: Maybe<Scalars['String']>;
+  readonly playlistId?: Maybe<Scalars['String']>;
+  readonly retriesCount?: Maybe<Scalars['Int']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly videoDescription?: Maybe<Scalars['String']>;
+  readonly videoPrivacyStatus?: Maybe<Scalars['String']>;
+  readonly videoTitle?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Job_Queues_UploadYouTubeVideoJob_Max_Fields = {
+  readonly __typename?: 'job_queues_UploadYouTubeVideoJob_max_fields';
+  readonly attendeeGoogleAccountId?: Maybe<Scalars['uuid']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly contentItemId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly message?: Maybe<Scalars['String']>;
+  readonly playlistId?: Maybe<Scalars['String']>;
+  readonly retriesCount?: Maybe<Scalars['Int']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly videoDescription?: Maybe<Scalars['String']>;
+  readonly videoPrivacyStatus?: Maybe<Scalars['String']>;
+  readonly videoTitle?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "job_queues.UploadYouTubeVideoJob" */
+export type Job_Queues_UploadYouTubeVideoJob_Max_Order_By = {
+  readonly attendeeGoogleAccountId?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly contentItemId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly message?: Maybe<Order_By>;
+  readonly playlistId?: Maybe<Order_By>;
+  readonly retriesCount?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly videoDescription?: Maybe<Order_By>;
+  readonly videoPrivacyStatus?: Maybe<Order_By>;
+  readonly videoTitle?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Job_Queues_UploadYouTubeVideoJob_Min_Fields = {
+  readonly __typename?: 'job_queues_UploadYouTubeVideoJob_min_fields';
+  readonly attendeeGoogleAccountId?: Maybe<Scalars['uuid']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly contentItemId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly message?: Maybe<Scalars['String']>;
+  readonly playlistId?: Maybe<Scalars['String']>;
+  readonly retriesCount?: Maybe<Scalars['Int']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly videoDescription?: Maybe<Scalars['String']>;
+  readonly videoPrivacyStatus?: Maybe<Scalars['String']>;
+  readonly videoTitle?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "job_queues.UploadYouTubeVideoJob" */
+export type Job_Queues_UploadYouTubeVideoJob_Min_Order_By = {
+  readonly attendeeGoogleAccountId?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly contentItemId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly message?: Maybe<Order_By>;
+  readonly playlistId?: Maybe<Order_By>;
+  readonly retriesCount?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly videoDescription?: Maybe<Order_By>;
+  readonly videoPrivacyStatus?: Maybe<Order_By>;
+  readonly videoTitle?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "job_queues.UploadYouTubeVideoJob" */
+export type Job_Queues_UploadYouTubeVideoJob_Mutation_Response = {
+  readonly __typename?: 'job_queues_UploadYouTubeVideoJob_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Job_Queues_UploadYouTubeVideoJob>;
+};
+
+/** input type for inserting object relation for remote table "job_queues.UploadYouTubeVideoJob" */
+export type Job_Queues_UploadYouTubeVideoJob_Obj_Rel_Insert_Input = {
+  readonly data: Job_Queues_UploadYouTubeVideoJob_Insert_Input;
+  readonly on_conflict?: Maybe<Job_Queues_UploadYouTubeVideoJob_On_Conflict>;
+};
+
+/** on conflict condition type for table "job_queues.UploadYouTubeVideoJob" */
+export type Job_Queues_UploadYouTubeVideoJob_On_Conflict = {
+  readonly constraint: Job_Queues_UploadYouTubeVideoJob_Constraint;
+  readonly update_columns: ReadonlyArray<Job_Queues_UploadYouTubeVideoJob_Update_Column>;
+  readonly where?: Maybe<Job_Queues_UploadYouTubeVideoJob_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "job_queues.UploadYouTubeVideoJob" */
+export type Job_Queues_UploadYouTubeVideoJob_Order_By = {
+  readonly attendeeGoogleAccount?: Maybe<AttendeeGoogleAccount_Order_By>;
+  readonly attendeeGoogleAccountId?: Maybe<Order_By>;
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly contentItem?: Maybe<ContentItem_Order_By>;
+  readonly contentItemId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly jobStatus?: Maybe<JobStatus_Order_By>;
+  readonly jobStatusName?: Maybe<Order_By>;
+  readonly message?: Maybe<Order_By>;
+  readonly playlistId?: Maybe<Order_By>;
+  readonly retriesCount?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+  readonly videoDescription?: Maybe<Order_By>;
+  readonly videoPrivacyStatus?: Maybe<Order_By>;
+  readonly videoTitle?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "job_queues.UploadYouTubeVideoJob" */
+export type Job_Queues_UploadYouTubeVideoJob_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "job_queues.UploadYouTubeVideoJob" */
+export enum Job_Queues_UploadYouTubeVideoJob_Select_Column {
+  /** column name */
+  AttendeeGoogleAccountId = 'attendeeGoogleAccountId',
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  ContentItemId = 'contentItemId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  JobStatusName = 'jobStatusName',
+  /** column name */
+  Message = 'message',
+  /** column name */
+  PlaylistId = 'playlistId',
+  /** column name */
+  RetriesCount = 'retriesCount',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  VideoDescription = 'videoDescription',
+  /** column name */
+  VideoPrivacyStatus = 'videoPrivacyStatus',
+  /** column name */
+  VideoTitle = 'videoTitle'
+}
+
+/** input type for updating data in table "job_queues.UploadYouTubeVideoJob" */
+export type Job_Queues_UploadYouTubeVideoJob_Set_Input = {
+  readonly attendeeGoogleAccountId?: Maybe<Scalars['uuid']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly contentItemId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly jobStatusName?: Maybe<JobStatus_Enum>;
+  readonly message?: Maybe<Scalars['String']>;
+  readonly playlistId?: Maybe<Scalars['String']>;
+  readonly retriesCount?: Maybe<Scalars['Int']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly videoDescription?: Maybe<Scalars['String']>;
+  readonly videoPrivacyStatus?: Maybe<Scalars['String']>;
+  readonly videoTitle?: Maybe<Scalars['String']>;
+};
+
+/** aggregate stddev on columns */
+export type Job_Queues_UploadYouTubeVideoJob_Stddev_Fields = {
+  readonly __typename?: 'job_queues_UploadYouTubeVideoJob_stddev_fields';
+  readonly retriesCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "job_queues.UploadYouTubeVideoJob" */
+export type Job_Queues_UploadYouTubeVideoJob_Stddev_Order_By = {
+  readonly retriesCount?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Job_Queues_UploadYouTubeVideoJob_Stddev_Pop_Fields = {
+  readonly __typename?: 'job_queues_UploadYouTubeVideoJob_stddev_pop_fields';
+  readonly retriesCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "job_queues.UploadYouTubeVideoJob" */
+export type Job_Queues_UploadYouTubeVideoJob_Stddev_Pop_Order_By = {
+  readonly retriesCount?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Job_Queues_UploadYouTubeVideoJob_Stddev_Samp_Fields = {
+  readonly __typename?: 'job_queues_UploadYouTubeVideoJob_stddev_samp_fields';
+  readonly retriesCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "job_queues.UploadYouTubeVideoJob" */
+export type Job_Queues_UploadYouTubeVideoJob_Stddev_Samp_Order_By = {
+  readonly retriesCount?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Job_Queues_UploadYouTubeVideoJob_Sum_Fields = {
+  readonly __typename?: 'job_queues_UploadYouTubeVideoJob_sum_fields';
+  readonly retriesCount?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "job_queues.UploadYouTubeVideoJob" */
+export type Job_Queues_UploadYouTubeVideoJob_Sum_Order_By = {
+  readonly retriesCount?: Maybe<Order_By>;
+};
+
+/** update columns of table "job_queues.UploadYouTubeVideoJob" */
+export enum Job_Queues_UploadYouTubeVideoJob_Update_Column {
+  /** column name */
+  AttendeeGoogleAccountId = 'attendeeGoogleAccountId',
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  ContentItemId = 'contentItemId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  JobStatusName = 'jobStatusName',
+  /** column name */
+  Message = 'message',
+  /** column name */
+  PlaylistId = 'playlistId',
+  /** column name */
+  RetriesCount = 'retriesCount',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  VideoDescription = 'videoDescription',
+  /** column name */
+  VideoPrivacyStatus = 'videoPrivacyStatus',
+  /** column name */
+  VideoTitle = 'videoTitle'
+}
+
+/** aggregate var_pop on columns */
+export type Job_Queues_UploadYouTubeVideoJob_Var_Pop_Fields = {
+  readonly __typename?: 'job_queues_UploadYouTubeVideoJob_var_pop_fields';
+  readonly retriesCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "job_queues.UploadYouTubeVideoJob" */
+export type Job_Queues_UploadYouTubeVideoJob_Var_Pop_Order_By = {
+  readonly retriesCount?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Job_Queues_UploadYouTubeVideoJob_Var_Samp_Fields = {
+  readonly __typename?: 'job_queues_UploadYouTubeVideoJob_var_samp_fields';
+  readonly retriesCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "job_queues.UploadYouTubeVideoJob" */
+export type Job_Queues_UploadYouTubeVideoJob_Var_Samp_Order_By = {
+  readonly retriesCount?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Job_Queues_UploadYouTubeVideoJob_Variance_Fields = {
+  readonly __typename?: 'job_queues_UploadYouTubeVideoJob_variance_fields';
+  readonly retriesCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "job_queues.UploadYouTubeVideoJob" */
+export type Job_Queues_UploadYouTubeVideoJob_Variance_Order_By = {
+  readonly retriesCount?: Maybe<Order_By>;
+};
+
 
 /** expression to compare columns of type json. All fields are combined with logical 'AND'. */
 export type Json_Comparison_Exp = {
@@ -19341,6 +20621,10 @@ export type Mutation_Root = {
   readonly createRoomDm?: Maybe<CreateRoomDmOutput>;
   /** delete data from the table: "Attendee" */
   readonly delete_Attendee?: Maybe<Attendee_Mutation_Response>;
+  /** delete data from the table: "AttendeeGoogleAccount" */
+  readonly delete_AttendeeGoogleAccount?: Maybe<AttendeeGoogleAccount_Mutation_Response>;
+  /** delete single row from the table: "AttendeeGoogleAccount" */
+  readonly delete_AttendeeGoogleAccount_by_pk?: Maybe<AttendeeGoogleAccount>;
   /** delete data from the table: "AttendeeProfile" */
   readonly delete_AttendeeProfile?: Maybe<AttendeeProfile_Mutation_Response>;
   /** delete single row from the table: "AttendeeProfile" */
@@ -19543,6 +20827,10 @@ export type Mutation_Root = {
   readonly delete_VideoRenderJob?: Maybe<VideoRenderJob_Mutation_Response>;
   /** delete single row from the table: "VideoRenderJob" */
   readonly delete_VideoRenderJob_by_pk?: Maybe<VideoRenderJob>;
+  /** delete data from the table: "YouTubeUpload" */
+  readonly delete_YouTubeUpload?: Maybe<YouTubeUpload_Mutation_Response>;
+  /** delete single row from the table: "YouTubeUpload" */
+  readonly delete_YouTubeUpload_by_pk?: Maybe<YouTubeUpload>;
   /** delete data from the table: "chat.Chat" */
   readonly delete_chat_Chat?: Maybe<Chat_Chat_Mutation_Response>;
   /** delete single row from the table: "chat.Chat" */
@@ -19589,6 +20877,10 @@ export type Mutation_Root = {
   readonly delete_chat_Typer?: Maybe<Chat_Typer_Mutation_Response>;
   /** delete single row from the table: "chat.Typer" */
   readonly delete_chat_Typer_by_pk?: Maybe<Chat_Typer>;
+  /** delete data from the table: "job_queues.CombineVideosJob" */
+  readonly delete_job_queues_CombineVideosJob?: Maybe<Job_Queues_CombineVideosJob_Mutation_Response>;
+  /** delete single row from the table: "job_queues.CombineVideosJob" */
+  readonly delete_job_queues_CombineVideosJob_by_pk?: Maybe<Job_Queues_CombineVideosJob>;
   /** delete data from the table: "job_queues.InvitationEmailJob" */
   readonly delete_job_queues_InvitationEmailJob?: Maybe<Job_Queues_InvitationEmailJob_Mutation_Response>;
   /** delete single row from the table: "job_queues.InvitationEmailJob" */
@@ -19605,6 +20897,10 @@ export type Mutation_Root = {
   readonly delete_job_queues_SubmissionRequestEmailJob?: Maybe<Job_Queues_SubmissionRequestEmailJob_Mutation_Response>;
   /** delete single row from the table: "job_queues.SubmissionRequestEmailJob" */
   readonly delete_job_queues_SubmissionRequestEmailJob_by_pk?: Maybe<Job_Queues_SubmissionRequestEmailJob>;
+  /** delete data from the table: "job_queues.UploadYouTubeVideoJob" */
+  readonly delete_job_queues_UploadYouTubeVideoJob?: Maybe<Job_Queues_UploadYouTubeVideoJob_Mutation_Response>;
+  /** delete single row from the table: "job_queues.UploadYouTubeVideoJob" */
+  readonly delete_job_queues_UploadYouTubeVideoJob_by_pk?: Maybe<Job_Queues_UploadYouTubeVideoJob>;
   /** delete data from the table: "room.ShufflePeriod" */
   readonly delete_room_ShufflePeriod?: Maybe<Room_ShufflePeriod_Mutation_Response>;
   /** delete single row from the table: "room.ShufflePeriod" */
@@ -19617,8 +20913,14 @@ export type Mutation_Root = {
   readonly delete_room_ShuffleRoom?: Maybe<Room_ShuffleRoom_Mutation_Response>;
   /** delete single row from the table: "room.ShuffleRoom" */
   readonly delete_room_ShuffleRoom_by_pk?: Maybe<Room_ShuffleRoom>;
+  /** perform the action: "getGoogleOAuthUrl" */
+  readonly getGoogleOAuthUrl?: Maybe<GetGoogleOAuthUrlOutput>;
   /** insert data into the table: "Attendee" */
   readonly insert_Attendee?: Maybe<Attendee_Mutation_Response>;
+  /** insert data into the table: "AttendeeGoogleAccount" */
+  readonly insert_AttendeeGoogleAccount?: Maybe<AttendeeGoogleAccount_Mutation_Response>;
+  /** insert a single row into the table: "AttendeeGoogleAccount" */
+  readonly insert_AttendeeGoogleAccount_one?: Maybe<AttendeeGoogleAccount>;
   /** insert data into the table: "AttendeeProfile" */
   readonly insert_AttendeeProfile?: Maybe<AttendeeProfile_Mutation_Response>;
   /** insert a single row into the table: "AttendeeProfile" */
@@ -19821,6 +21123,10 @@ export type Mutation_Root = {
   readonly insert_VideoRenderJob?: Maybe<VideoRenderJob_Mutation_Response>;
   /** insert a single row into the table: "VideoRenderJob" */
   readonly insert_VideoRenderJob_one?: Maybe<VideoRenderJob>;
+  /** insert data into the table: "YouTubeUpload" */
+  readonly insert_YouTubeUpload?: Maybe<YouTubeUpload_Mutation_Response>;
+  /** insert a single row into the table: "YouTubeUpload" */
+  readonly insert_YouTubeUpload_one?: Maybe<YouTubeUpload>;
   /** insert data into the table: "chat.Chat" */
   readonly insert_chat_Chat?: Maybe<Chat_Chat_Mutation_Response>;
   /** insert a single row into the table: "chat.Chat" */
@@ -19869,6 +21175,10 @@ export type Mutation_Root = {
   readonly insert_chat_Typer?: Maybe<Chat_Typer_Mutation_Response>;
   /** insert a single row into the table: "chat.Typer" */
   readonly insert_chat_Typer_one?: Maybe<Chat_Typer>;
+  /** insert data into the table: "job_queues.CombineVideosJob" */
+  readonly insert_job_queues_CombineVideosJob?: Maybe<Job_Queues_CombineVideosJob_Mutation_Response>;
+  /** insert a single row into the table: "job_queues.CombineVideosJob" */
+  readonly insert_job_queues_CombineVideosJob_one?: Maybe<Job_Queues_CombineVideosJob>;
   /** insert data into the table: "job_queues.InvitationEmailJob" */
   readonly insert_job_queues_InvitationEmailJob?: Maybe<Job_Queues_InvitationEmailJob_Mutation_Response>;
   /** insert a single row into the table: "job_queues.InvitationEmailJob" */
@@ -19885,6 +21195,10 @@ export type Mutation_Root = {
   readonly insert_job_queues_SubmissionRequestEmailJob?: Maybe<Job_Queues_SubmissionRequestEmailJob_Mutation_Response>;
   /** insert a single row into the table: "job_queues.SubmissionRequestEmailJob" */
   readonly insert_job_queues_SubmissionRequestEmailJob_one?: Maybe<Job_Queues_SubmissionRequestEmailJob>;
+  /** insert data into the table: "job_queues.UploadYouTubeVideoJob" */
+  readonly insert_job_queues_UploadYouTubeVideoJob?: Maybe<Job_Queues_UploadYouTubeVideoJob_Mutation_Response>;
+  /** insert a single row into the table: "job_queues.UploadYouTubeVideoJob" */
+  readonly insert_job_queues_UploadYouTubeVideoJob_one?: Maybe<Job_Queues_UploadYouTubeVideoJob>;
   /** insert data into the table: "room.ShufflePeriod" */
   readonly insert_room_ShufflePeriod?: Maybe<Room_ShufflePeriod_Mutation_Response>;
   /** insert a single row into the table: "room.ShufflePeriod" */
@@ -19909,16 +21223,24 @@ export type Mutation_Root = {
   readonly joinEventVonageSession?: Maybe<JoinEventVonageSessionOutput>;
   /** perform the action: "joinRoomVonageSession" */
   readonly joinRoomVonageSession?: Maybe<JoinRoomVonageSessionOutput>;
+  /** perform the action: "refreshYouTubeData" */
+  readonly refreshYouTubeData?: Maybe<RefreshYouTubeDataOutput>;
   /** perform the action: "stopEventBroadcast" */
   readonly stopEventBroadcast?: Maybe<StopEventBroadcastOutput>;
   /** perform the action: "submitContentItem" */
   readonly submitContentItem?: Maybe<SubmitContentItemOutput>;
+  /** perform the action: "submitGoogleOAuthCode" */
+  readonly submitGoogleOAuthCode?: Maybe<SubmitGoogleOAuthCodeOutput>;
   /** perform the action: "updateProfilePhoto" */
   readonly updateProfilePhoto?: Maybe<UpdateProfilePhotoResponse>;
   /** perform the action: "updateSubtitles" */
   readonly updateSubtitles?: Maybe<SubmitUpdatedSubtitlesOutput>;
   /** update data of the table: "Attendee" */
   readonly update_Attendee?: Maybe<Attendee_Mutation_Response>;
+  /** update data of the table: "AttendeeGoogleAccount" */
+  readonly update_AttendeeGoogleAccount?: Maybe<AttendeeGoogleAccount_Mutation_Response>;
+  /** update single row of the table: "AttendeeGoogleAccount" */
+  readonly update_AttendeeGoogleAccount_by_pk?: Maybe<AttendeeGoogleAccount>;
   /** update data of the table: "AttendeeProfile" */
   readonly update_AttendeeProfile?: Maybe<AttendeeProfile_Mutation_Response>;
   /** update single row of the table: "AttendeeProfile" */
@@ -20121,6 +21443,10 @@ export type Mutation_Root = {
   readonly update_VideoRenderJob?: Maybe<VideoRenderJob_Mutation_Response>;
   /** update single row of the table: "VideoRenderJob" */
   readonly update_VideoRenderJob_by_pk?: Maybe<VideoRenderJob>;
+  /** update data of the table: "YouTubeUpload" */
+  readonly update_YouTubeUpload?: Maybe<YouTubeUpload_Mutation_Response>;
+  /** update single row of the table: "YouTubeUpload" */
+  readonly update_YouTubeUpload_by_pk?: Maybe<YouTubeUpload>;
   /** update data of the table: "chat.Chat" */
   readonly update_chat_Chat?: Maybe<Chat_Chat_Mutation_Response>;
   /** update single row of the table: "chat.Chat" */
@@ -20167,6 +21493,10 @@ export type Mutation_Root = {
   readonly update_chat_Typer?: Maybe<Chat_Typer_Mutation_Response>;
   /** update single row of the table: "chat.Typer" */
   readonly update_chat_Typer_by_pk?: Maybe<Chat_Typer>;
+  /** update data of the table: "job_queues.CombineVideosJob" */
+  readonly update_job_queues_CombineVideosJob?: Maybe<Job_Queues_CombineVideosJob_Mutation_Response>;
+  /** update single row of the table: "job_queues.CombineVideosJob" */
+  readonly update_job_queues_CombineVideosJob_by_pk?: Maybe<Job_Queues_CombineVideosJob>;
   /** update data of the table: "job_queues.InvitationEmailJob" */
   readonly update_job_queues_InvitationEmailJob?: Maybe<Job_Queues_InvitationEmailJob_Mutation_Response>;
   /** update single row of the table: "job_queues.InvitationEmailJob" */
@@ -20183,6 +21513,10 @@ export type Mutation_Root = {
   readonly update_job_queues_SubmissionRequestEmailJob?: Maybe<Job_Queues_SubmissionRequestEmailJob_Mutation_Response>;
   /** update single row of the table: "job_queues.SubmissionRequestEmailJob" */
   readonly update_job_queues_SubmissionRequestEmailJob_by_pk?: Maybe<Job_Queues_SubmissionRequestEmailJob>;
+  /** update data of the table: "job_queues.UploadYouTubeVideoJob" */
+  readonly update_job_queues_UploadYouTubeVideoJob?: Maybe<Job_Queues_UploadYouTubeVideoJob_Mutation_Response>;
+  /** update single row of the table: "job_queues.UploadYouTubeVideoJob" */
+  readonly update_job_queues_UploadYouTubeVideoJob_by_pk?: Maybe<Job_Queues_UploadYouTubeVideoJob>;
   /** update data of the table: "room.ShufflePeriod" */
   readonly update_room_ShufflePeriod?: Maybe<Room_ShufflePeriod_Mutation_Response>;
   /** update single row of the table: "room.ShufflePeriod" */
@@ -20215,6 +21549,18 @@ export type Mutation_RootCreateRoomDmArgs = {
 /** mutation root */
 export type Mutation_RootDelete_AttendeeArgs = {
   where: Attendee_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_AttendeeGoogleAccountArgs = {
+  where: AttendeeGoogleAccount_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_AttendeeGoogleAccount_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -20825,6 +22171,18 @@ export type Mutation_RootDelete_VideoRenderJob_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_YouTubeUploadArgs = {
+  where: YouTubeUpload_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_YouTubeUpload_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_Chat_ChatArgs = {
   where: Chat_Chat_Bool_Exp;
 };
@@ -20967,6 +22325,18 @@ export type Mutation_RootDelete_Chat_Typer_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_Job_Queues_CombineVideosJobArgs = {
+  where: Job_Queues_CombineVideosJob_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Job_Queues_CombineVideosJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_Job_Queues_InvitationEmailJobArgs = {
   where: Job_Queues_InvitationEmailJob_Bool_Exp;
 };
@@ -21015,6 +22385,18 @@ export type Mutation_RootDelete_Job_Queues_SubmissionRequestEmailJob_By_PkArgs =
 
 
 /** mutation root */
+export type Mutation_RootDelete_Job_Queues_UploadYouTubeVideoJobArgs = {
+  where: Job_Queues_UploadYouTubeVideoJob_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Job_Queues_UploadYouTubeVideoJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_Room_ShufflePeriodArgs = {
   where: Room_ShufflePeriod_Bool_Exp;
 };
@@ -21051,9 +22433,29 @@ export type Mutation_RootDelete_Room_ShuffleRoom_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootGetGoogleOAuthUrlArgs = {
+  scopes: ReadonlyArray<Scalars['String']>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_AttendeeArgs = {
   objects: ReadonlyArray<Attendee_Insert_Input>;
   on_conflict?: Maybe<Attendee_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_AttendeeGoogleAccountArgs = {
+  objects: ReadonlyArray<AttendeeGoogleAccount_Insert_Input>;
+  on_conflict?: Maybe<AttendeeGoogleAccount_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_AttendeeGoogleAccount_OneArgs = {
+  object: AttendeeGoogleAccount_Insert_Input;
+  on_conflict?: Maybe<AttendeeGoogleAccount_On_Conflict>;
 };
 
 
@@ -21765,6 +23167,20 @@ export type Mutation_RootInsert_VideoRenderJob_OneArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_YouTubeUploadArgs = {
+  objects: ReadonlyArray<YouTubeUpload_Insert_Input>;
+  on_conflict?: Maybe<YouTubeUpload_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_YouTubeUpload_OneArgs = {
+  object: YouTubeUpload_Insert_Input;
+  on_conflict?: Maybe<YouTubeUpload_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_Chat_ChatArgs = {
   objects: ReadonlyArray<Chat_Chat_Insert_Input>;
   on_conflict?: Maybe<Chat_Chat_On_Conflict>;
@@ -21931,6 +23347,20 @@ export type Mutation_RootInsert_Chat_Typer_OneArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_Job_Queues_CombineVideosJobArgs = {
+  objects: ReadonlyArray<Job_Queues_CombineVideosJob_Insert_Input>;
+  on_conflict?: Maybe<Job_Queues_CombineVideosJob_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Job_Queues_CombineVideosJob_OneArgs = {
+  object: Job_Queues_CombineVideosJob_Insert_Input;
+  on_conflict?: Maybe<Job_Queues_CombineVideosJob_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_Job_Queues_InvitationEmailJobArgs = {
   objects: ReadonlyArray<Job_Queues_InvitationEmailJob_Insert_Input>;
   on_conflict?: Maybe<Job_Queues_InvitationEmailJob_On_Conflict>;
@@ -21983,6 +23413,20 @@ export type Mutation_RootInsert_Job_Queues_SubmissionRequestEmailJobArgs = {
 export type Mutation_RootInsert_Job_Queues_SubmissionRequestEmailJob_OneArgs = {
   object: Job_Queues_SubmissionRequestEmailJob_Insert_Input;
   on_conflict?: Maybe<Job_Queues_SubmissionRequestEmailJob_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Job_Queues_UploadYouTubeVideoJobArgs = {
+  objects: ReadonlyArray<Job_Queues_UploadYouTubeVideoJob_Insert_Input>;
+  on_conflict?: Maybe<Job_Queues_UploadYouTubeVideoJob_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Job_Queues_UploadYouTubeVideoJob_OneArgs = {
+  object: Job_Queues_UploadYouTubeVideoJob_Insert_Input;
+  on_conflict?: Maybe<Job_Queues_UploadYouTubeVideoJob_On_Conflict>;
 };
 
 
@@ -22065,6 +23509,12 @@ export type Mutation_RootJoinRoomVonageSessionArgs = {
 
 
 /** mutation root */
+export type Mutation_RootRefreshYouTubeDataArgs = {
+  attendeeGoogleAccountId: Scalars['uuid'];
+};
+
+
+/** mutation root */
 export type Mutation_RootStopEventBroadcastArgs = {
   eventId: Scalars['uuid'];
 };
@@ -22074,6 +23524,13 @@ export type Mutation_RootStopEventBroadcastArgs = {
 export type Mutation_RootSubmitContentItemArgs = {
   data: Scalars['jsonb'];
   magicToken: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootSubmitGoogleOAuthCodeArgs = {
+  code: Scalars['String'];
+  state: Scalars['String'];
 };
 
 
@@ -22096,6 +23553,30 @@ export type Mutation_RootUpdateSubtitlesArgs = {
 export type Mutation_RootUpdate_AttendeeArgs = {
   _set?: Maybe<Attendee_Set_Input>;
   where: Attendee_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_AttendeeGoogleAccountArgs = {
+  _append?: Maybe<AttendeeGoogleAccount_Append_Input>;
+  _delete_at_path?: Maybe<AttendeeGoogleAccount_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<AttendeeGoogleAccount_Delete_Elem_Input>;
+  _delete_key?: Maybe<AttendeeGoogleAccount_Delete_Key_Input>;
+  _prepend?: Maybe<AttendeeGoogleAccount_Prepend_Input>;
+  _set?: Maybe<AttendeeGoogleAccount_Set_Input>;
+  where: AttendeeGoogleAccount_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_AttendeeGoogleAccount_By_PkArgs = {
+  _append?: Maybe<AttendeeGoogleAccount_Append_Input>;
+  _delete_at_path?: Maybe<AttendeeGoogleAccount_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<AttendeeGoogleAccount_Delete_Elem_Input>;
+  _delete_key?: Maybe<AttendeeGoogleAccount_Delete_Key_Input>;
+  _prepend?: Maybe<AttendeeGoogleAccount_Prepend_Input>;
+  _set?: Maybe<AttendeeGoogleAccount_Set_Input>;
+  pk_columns: AttendeeGoogleAccount_Pk_Columns_Input;
 };
 
 
@@ -22917,6 +24398,20 @@ export type Mutation_RootUpdate_VideoRenderJob_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_YouTubeUploadArgs = {
+  _set?: Maybe<YouTubeUpload_Set_Input>;
+  where: YouTubeUpload_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_YouTubeUpload_By_PkArgs = {
+  _set?: Maybe<YouTubeUpload_Set_Input>;
+  pk_columns: YouTubeUpload_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_Chat_ChatArgs = {
   _set?: Maybe<Chat_Chat_Set_Input>;
   where: Chat_Chat_Bool_Exp;
@@ -23106,6 +24601,30 @@ export type Mutation_RootUpdate_Chat_Typer_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_Job_Queues_CombineVideosJobArgs = {
+  _append?: Maybe<Job_Queues_CombineVideosJob_Append_Input>;
+  _delete_at_path?: Maybe<Job_Queues_CombineVideosJob_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<Job_Queues_CombineVideosJob_Delete_Elem_Input>;
+  _delete_key?: Maybe<Job_Queues_CombineVideosJob_Delete_Key_Input>;
+  _prepend?: Maybe<Job_Queues_CombineVideosJob_Prepend_Input>;
+  _set?: Maybe<Job_Queues_CombineVideosJob_Set_Input>;
+  where: Job_Queues_CombineVideosJob_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Job_Queues_CombineVideosJob_By_PkArgs = {
+  _append?: Maybe<Job_Queues_CombineVideosJob_Append_Input>;
+  _delete_at_path?: Maybe<Job_Queues_CombineVideosJob_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<Job_Queues_CombineVideosJob_Delete_Elem_Input>;
+  _delete_key?: Maybe<Job_Queues_CombineVideosJob_Delete_Key_Input>;
+  _prepend?: Maybe<Job_Queues_CombineVideosJob_Prepend_Input>;
+  _set?: Maybe<Job_Queues_CombineVideosJob_Set_Input>;
+  pk_columns: Job_Queues_CombineVideosJob_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_Job_Queues_InvitationEmailJobArgs = {
   _append?: Maybe<Job_Queues_InvitationEmailJob_Append_Input>;
   _delete_at_path?: Maybe<Job_Queues_InvitationEmailJob_Delete_At_Path_Input>;
@@ -23168,6 +24687,22 @@ export type Mutation_RootUpdate_Job_Queues_SubmissionRequestEmailJobArgs = {
 export type Mutation_RootUpdate_Job_Queues_SubmissionRequestEmailJob_By_PkArgs = {
   _set?: Maybe<Job_Queues_SubmissionRequestEmailJob_Set_Input>;
   pk_columns: Job_Queues_SubmissionRequestEmailJob_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Job_Queues_UploadYouTubeVideoJobArgs = {
+  _inc?: Maybe<Job_Queues_UploadYouTubeVideoJob_Inc_Input>;
+  _set?: Maybe<Job_Queues_UploadYouTubeVideoJob_Set_Input>;
+  where: Job_Queues_UploadYouTubeVideoJob_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Job_Queues_UploadYouTubeVideoJob_By_PkArgs = {
+  _inc?: Maybe<Job_Queues_UploadYouTubeVideoJob_Inc_Input>;
+  _set?: Maybe<Job_Queues_UploadYouTubeVideoJob_Set_Input>;
+  pk_columns: Job_Queues_UploadYouTubeVideoJob_Pk_Columns_Input;
 };
 
 
@@ -23239,6 +24774,12 @@ export type Query_Root = {
   readonly __typename?: 'query_root';
   /** fetch data from the table: "Attendee" */
   readonly Attendee: ReadonlyArray<Attendee>;
+  /** fetch data from the table: "AttendeeGoogleAccount" */
+  readonly AttendeeGoogleAccount: ReadonlyArray<AttendeeGoogleAccount>;
+  /** fetch aggregated fields from the table: "AttendeeGoogleAccount" */
+  readonly AttendeeGoogleAccount_aggregate: AttendeeGoogleAccount_Aggregate;
+  /** fetch data from the table: "AttendeeGoogleAccount" using primary key columns */
+  readonly AttendeeGoogleAccount_by_pk?: Maybe<AttendeeGoogleAccount>;
   /** fetch data from the table: "AttendeeProfile" */
   readonly AttendeeProfile: ReadonlyArray<AttendeeProfile>;
   /** fetch aggregated fields from the table: "AttendeeProfile" */
@@ -23551,6 +25092,12 @@ export type Query_Root = {
   readonly VideoRenderJob_aggregate: VideoRenderJob_Aggregate;
   /** fetch data from the table: "VideoRenderJob" using primary key columns */
   readonly VideoRenderJob_by_pk?: Maybe<VideoRenderJob>;
+  /** fetch data from the table: "YouTubeUpload" */
+  readonly YouTubeUpload: ReadonlyArray<YouTubeUpload>;
+  /** fetch aggregated fields from the table: "YouTubeUpload" */
+  readonly YouTubeUpload_aggregate: YouTubeUpload_Aggregate;
+  /** fetch data from the table: "YouTubeUpload" using primary key columns */
+  readonly YouTubeUpload_by_pk?: Maybe<YouTubeUpload>;
   /** fetch data from the table: "chat.Chat" */
   readonly chat_Chat: ReadonlyArray<Chat_Chat>;
   /** fetch aggregated fields from the table: "chat.Chat" */
@@ -23627,6 +25174,12 @@ export type Query_Root = {
   readonly getContentItem?: Maybe<ReadonlyArray<Maybe<GetContentItemOutput>>>;
   /** perform the action: "getUploadAgreement" */
   readonly getUploadAgreement?: Maybe<GetUploadAgreementOutput>;
+  /** fetch data from the table: "job_queues.CombineVideosJob" */
+  readonly job_queues_CombineVideosJob: ReadonlyArray<Job_Queues_CombineVideosJob>;
+  /** fetch aggregated fields from the table: "job_queues.CombineVideosJob" */
+  readonly job_queues_CombineVideosJob_aggregate: Job_Queues_CombineVideosJob_Aggregate;
+  /** fetch data from the table: "job_queues.CombineVideosJob" using primary key columns */
+  readonly job_queues_CombineVideosJob_by_pk?: Maybe<Job_Queues_CombineVideosJob>;
   /** fetch data from the table: "job_queues.InvitationEmailJob" */
   readonly job_queues_InvitationEmailJob: ReadonlyArray<Job_Queues_InvitationEmailJob>;
   /** fetch aggregated fields from the table: "job_queues.InvitationEmailJob" */
@@ -23651,6 +25204,12 @@ export type Query_Root = {
   readonly job_queues_SubmissionRequestEmailJob_aggregate: Job_Queues_SubmissionRequestEmailJob_Aggregate;
   /** fetch data from the table: "job_queues.SubmissionRequestEmailJob" using primary key columns */
   readonly job_queues_SubmissionRequestEmailJob_by_pk?: Maybe<Job_Queues_SubmissionRequestEmailJob>;
+  /** fetch data from the table: "job_queues.UploadYouTubeVideoJob" */
+  readonly job_queues_UploadYouTubeVideoJob: ReadonlyArray<Job_Queues_UploadYouTubeVideoJob>;
+  /** fetch aggregated fields from the table: "job_queues.UploadYouTubeVideoJob" */
+  readonly job_queues_UploadYouTubeVideoJob_aggregate: Job_Queues_UploadYouTubeVideoJob_Aggregate;
+  /** fetch data from the table: "job_queues.UploadYouTubeVideoJob" using primary key columns */
+  readonly job_queues_UploadYouTubeVideoJob_by_pk?: Maybe<Job_Queues_UploadYouTubeVideoJob>;
   /** perform the action: "protectedEcho" */
   readonly protectedEcho?: Maybe<ProtectedEchoOutput>;
   /** fetch data from the table: "room.ShufflePeriod" */
@@ -23681,6 +25240,32 @@ export type Query_RootAttendeeArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Attendee_Order_By>>;
   where?: Maybe<Attendee_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootAttendeeGoogleAccountArgs = {
+  distinct_on?: Maybe<ReadonlyArray<AttendeeGoogleAccount_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<AttendeeGoogleAccount_Order_By>>;
+  where?: Maybe<AttendeeGoogleAccount_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootAttendeeGoogleAccount_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<AttendeeGoogleAccount_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<AttendeeGoogleAccount_Order_By>>;
+  where?: Maybe<AttendeeGoogleAccount_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootAttendeeGoogleAccount_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -25041,6 +26626,32 @@ export type Query_RootVideoRenderJob_By_PkArgs = {
 
 
 /** query root */
+export type Query_RootYouTubeUploadArgs = {
+  distinct_on?: Maybe<ReadonlyArray<YouTubeUpload_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<YouTubeUpload_Order_By>>;
+  where?: Maybe<YouTubeUpload_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootYouTubeUpload_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<YouTubeUpload_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<YouTubeUpload_Order_By>>;
+  where?: Maybe<YouTubeUpload_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootYouTubeUpload_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
 export type Query_RootChat_ChatArgs = {
   distinct_on?: Maybe<ReadonlyArray<Chat_Chat_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -25369,6 +26980,32 @@ export type Query_RootGetUploadAgreementArgs = {
 
 
 /** query root */
+export type Query_RootJob_Queues_CombineVideosJobArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_CombineVideosJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_CombineVideosJob_Order_By>>;
+  where?: Maybe<Job_Queues_CombineVideosJob_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootJob_Queues_CombineVideosJob_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_CombineVideosJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_CombineVideosJob_Order_By>>;
+  where?: Maybe<Job_Queues_CombineVideosJob_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootJob_Queues_CombineVideosJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
 export type Query_RootJob_Queues_InvitationEmailJobArgs = {
   distinct_on?: Maybe<ReadonlyArray<Job_Queues_InvitationEmailJob_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -25468,6 +27105,32 @@ export type Query_RootJob_Queues_SubmissionRequestEmailJob_AggregateArgs = {
 
 /** query root */
 export type Query_RootJob_Queues_SubmissionRequestEmailJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
+export type Query_RootJob_Queues_UploadYouTubeVideoJobArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_UploadYouTubeVideoJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_UploadYouTubeVideoJob_Order_By>>;
+  where?: Maybe<Job_Queues_UploadYouTubeVideoJob_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootJob_Queues_UploadYouTubeVideoJob_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_UploadYouTubeVideoJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_UploadYouTubeVideoJob_Order_By>>;
+  where?: Maybe<Job_Queues_UploadYouTubeVideoJob_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootJob_Queues_UploadYouTubeVideoJob_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -26787,6 +28450,12 @@ export type Subscription_Root = {
   readonly __typename?: 'subscription_root';
   /** fetch data from the table: "Attendee" */
   readonly Attendee: ReadonlyArray<Attendee>;
+  /** fetch data from the table: "AttendeeGoogleAccount" */
+  readonly AttendeeGoogleAccount: ReadonlyArray<AttendeeGoogleAccount>;
+  /** fetch aggregated fields from the table: "AttendeeGoogleAccount" */
+  readonly AttendeeGoogleAccount_aggregate: AttendeeGoogleAccount_Aggregate;
+  /** fetch data from the table: "AttendeeGoogleAccount" using primary key columns */
+  readonly AttendeeGoogleAccount_by_pk?: Maybe<AttendeeGoogleAccount>;
   /** fetch data from the table: "AttendeeProfile" */
   readonly AttendeeProfile: ReadonlyArray<AttendeeProfile>;
   /** fetch aggregated fields from the table: "AttendeeProfile" */
@@ -27099,6 +28768,12 @@ export type Subscription_Root = {
   readonly VideoRenderJob_aggregate: VideoRenderJob_Aggregate;
   /** fetch data from the table: "VideoRenderJob" using primary key columns */
   readonly VideoRenderJob_by_pk?: Maybe<VideoRenderJob>;
+  /** fetch data from the table: "YouTubeUpload" */
+  readonly YouTubeUpload: ReadonlyArray<YouTubeUpload>;
+  /** fetch aggregated fields from the table: "YouTubeUpload" */
+  readonly YouTubeUpload_aggregate: YouTubeUpload_Aggregate;
+  /** fetch data from the table: "YouTubeUpload" using primary key columns */
+  readonly YouTubeUpload_by_pk?: Maybe<YouTubeUpload>;
   /** fetch data from the table: "chat.Chat" */
   readonly chat_Chat: ReadonlyArray<Chat_Chat>;
   /** fetch aggregated fields from the table: "chat.Chat" */
@@ -27175,6 +28850,12 @@ export type Subscription_Root = {
   readonly getContentItem?: Maybe<ReadonlyArray<Maybe<GetContentItemOutput>>>;
   /** perform the action: "getUploadAgreement" */
   readonly getUploadAgreement?: Maybe<GetUploadAgreementOutput>;
+  /** fetch data from the table: "job_queues.CombineVideosJob" */
+  readonly job_queues_CombineVideosJob: ReadonlyArray<Job_Queues_CombineVideosJob>;
+  /** fetch aggregated fields from the table: "job_queues.CombineVideosJob" */
+  readonly job_queues_CombineVideosJob_aggregate: Job_Queues_CombineVideosJob_Aggregate;
+  /** fetch data from the table: "job_queues.CombineVideosJob" using primary key columns */
+  readonly job_queues_CombineVideosJob_by_pk?: Maybe<Job_Queues_CombineVideosJob>;
   /** fetch data from the table: "job_queues.InvitationEmailJob" */
   readonly job_queues_InvitationEmailJob: ReadonlyArray<Job_Queues_InvitationEmailJob>;
   /** fetch aggregated fields from the table: "job_queues.InvitationEmailJob" */
@@ -27199,6 +28880,12 @@ export type Subscription_Root = {
   readonly job_queues_SubmissionRequestEmailJob_aggregate: Job_Queues_SubmissionRequestEmailJob_Aggregate;
   /** fetch data from the table: "job_queues.SubmissionRequestEmailJob" using primary key columns */
   readonly job_queues_SubmissionRequestEmailJob_by_pk?: Maybe<Job_Queues_SubmissionRequestEmailJob>;
+  /** fetch data from the table: "job_queues.UploadYouTubeVideoJob" */
+  readonly job_queues_UploadYouTubeVideoJob: ReadonlyArray<Job_Queues_UploadYouTubeVideoJob>;
+  /** fetch aggregated fields from the table: "job_queues.UploadYouTubeVideoJob" */
+  readonly job_queues_UploadYouTubeVideoJob_aggregate: Job_Queues_UploadYouTubeVideoJob_Aggregate;
+  /** fetch data from the table: "job_queues.UploadYouTubeVideoJob" using primary key columns */
+  readonly job_queues_UploadYouTubeVideoJob_by_pk?: Maybe<Job_Queues_UploadYouTubeVideoJob>;
   /** perform the action: "protectedEcho" */
   readonly protectedEcho?: Maybe<ProtectedEchoOutput>;
   /** fetch data from the table: "room.ShufflePeriod" */
@@ -27229,6 +28916,32 @@ export type Subscription_RootAttendeeArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Attendee_Order_By>>;
   where?: Maybe<Attendee_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootAttendeeGoogleAccountArgs = {
+  distinct_on?: Maybe<ReadonlyArray<AttendeeGoogleAccount_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<AttendeeGoogleAccount_Order_By>>;
+  where?: Maybe<AttendeeGoogleAccount_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootAttendeeGoogleAccount_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<AttendeeGoogleAccount_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<AttendeeGoogleAccount_Order_By>>;
+  where?: Maybe<AttendeeGoogleAccount_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootAttendeeGoogleAccount_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -28589,6 +30302,32 @@ export type Subscription_RootVideoRenderJob_By_PkArgs = {
 
 
 /** subscription root */
+export type Subscription_RootYouTubeUploadArgs = {
+  distinct_on?: Maybe<ReadonlyArray<YouTubeUpload_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<YouTubeUpload_Order_By>>;
+  where?: Maybe<YouTubeUpload_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootYouTubeUpload_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<YouTubeUpload_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<YouTubeUpload_Order_By>>;
+  where?: Maybe<YouTubeUpload_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootYouTubeUpload_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
 export type Subscription_RootChat_ChatArgs = {
   distinct_on?: Maybe<ReadonlyArray<Chat_Chat_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -28917,6 +30656,32 @@ export type Subscription_RootGetUploadAgreementArgs = {
 
 
 /** subscription root */
+export type Subscription_RootJob_Queues_CombineVideosJobArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_CombineVideosJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_CombineVideosJob_Order_By>>;
+  where?: Maybe<Job_Queues_CombineVideosJob_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootJob_Queues_CombineVideosJob_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_CombineVideosJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_CombineVideosJob_Order_By>>;
+  where?: Maybe<Job_Queues_CombineVideosJob_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootJob_Queues_CombineVideosJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
 export type Subscription_RootJob_Queues_InvitationEmailJobArgs = {
   distinct_on?: Maybe<ReadonlyArray<Job_Queues_InvitationEmailJob_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -29016,6 +30781,32 @@ export type Subscription_RootJob_Queues_SubmissionRequestEmailJob_AggregateArgs 
 
 /** subscription root */
 export type Subscription_RootJob_Queues_SubmissionRequestEmailJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
+export type Subscription_RootJob_Queues_UploadYouTubeVideoJobArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_UploadYouTubeVideoJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_UploadYouTubeVideoJob_Order_By>>;
+  where?: Maybe<Job_Queues_UploadYouTubeVideoJob_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootJob_Queues_UploadYouTubeVideoJob_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_UploadYouTubeVideoJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_UploadYouTubeVideoJob_Order_By>>;
+  where?: Maybe<Job_Queues_UploadYouTubeVideoJob_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootJob_Queues_UploadYouTubeVideoJob_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -29139,7 +30930,7 @@ export type SubscribedChatsQueryVariables = Exact<{
 export type SubscribedChatsQuery = { readonly __typename?: 'query_root', readonly chat_Subscription: ReadonlyArray<{ readonly __typename?: 'chat_Subscription', readonly attendeeId: any, readonly chatId: any }> };
 
 export type SubdMessages_2021_01_21T08_24SubscriptionVariables = Exact<{
-  chatIds: ReadonlyArray<Scalars['uuid']>;
+  chatIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
@@ -29280,7 +31071,7 @@ export type NextMessageSubscription = { readonly __typename?: 'subscription_root
   )> };
 
 export type NextReactionsSubscriptionVariables = Exact<{
-  messageIds: ReadonlyArray<Scalars['Int']>;
+  messageIds: ReadonlyArray<Scalars['Int']> | Scalars['Int'];
 }>;
 
 
@@ -29527,7 +31318,7 @@ export type GetRoomVonageTokenMutationVariables = Exact<{
 export type GetRoomVonageTokenMutation = { readonly __typename?: 'mutation_root', readonly joinRoomVonageSession?: Maybe<{ readonly __typename?: 'JoinRoomVonageSessionOutput', readonly accessToken?: Maybe<string>, readonly sessionId?: Maybe<string> }> };
 
 export type CreateDmMutationVariables = Exact<{
-  attendeeIds: ReadonlyArray<Maybe<Scalars['uuid']>>;
+  attendeeIds: ReadonlyArray<Maybe<Scalars['uuid']>> | Maybe<Scalars['uuid']>;
   conferenceId: Scalars['uuid'];
 }>;
 
@@ -29724,7 +31515,7 @@ export type RoomSponsorContent_ContentGroupDataFragment = { readonly __typename?
     & RoomSponsorContent_ContentItemDataFragment
   )> };
 
-export type RoomSponsorContent_ContentItemDataFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly contentTypeName: ContentType_Enum, readonly data: any, readonly layoutData?: Maybe<any> };
+export type RoomSponsorContent_ContentItemDataFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly isHidden: boolean, readonly contentTypeName: ContentType_Enum, readonly data: any, readonly layoutData?: Maybe<any> };
 
 export type VonageSubscriber_GetAttendeeQueryVariables = Exact<{
   id: Scalars['uuid'];
@@ -29804,7 +31595,7 @@ export type Timeline_EventTagFragment = { readonly __typename?: 'EventTag', read
 
 export type AttendeesByIdQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
-  attendeeIds: ReadonlyArray<Scalars['uuid']>;
+  attendeeIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
@@ -29813,8 +31604,25 @@ export type AttendeesByIdQuery = { readonly __typename?: 'query_root', readonly 
     & AttendeeDataFragment
   )> };
 
+export type CombineVideosModal_CreateCombineVideosJobMutationVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  createdByAttendeeId: Scalars['uuid'];
+  outputName: Scalars['String'];
+  data: Scalars['jsonb'];
+}>;
+
+
+export type CombineVideosModal_CreateCombineVideosJobMutation = { readonly __typename?: 'mutation_root', readonly insert_job_queues_CombineVideosJob_one?: Maybe<{ readonly __typename?: 'job_queues_CombineVideosJob', readonly id: any }> };
+
+export type CombineVideosModal_GetCombineVideosJobQueryVariables = Exact<{
+  id: Scalars['uuid'];
+}>;
+
+
+export type CombineVideosModal_GetCombineVideosJobQuery = { readonly __typename?: 'query_root', readonly job_queues_CombineVideosJob_by_pk?: Maybe<{ readonly __typename?: 'job_queues_CombineVideosJob', readonly id: any, readonly message?: Maybe<string>, readonly jobStatusName: JobStatus_Enum }> };
+
 export type InsertSubmissionRequestEmailJobsMutationVariables = Exact<{
-  objs: ReadonlyArray<Job_Queues_SubmissionRequestEmailJob_Insert_Input>;
+  objs: ReadonlyArray<Job_Queues_SubmissionRequestEmailJob_Insert_Input> | Job_Queues_SubmissionRequestEmailJob_Insert_Input;
 }>;
 
 
@@ -29883,8 +31691,8 @@ export type SelectAllContentQuery = { readonly __typename?: 'query_root', readon
   )> };
 
 export type InsertDeleteContentGroupsMutationVariables = Exact<{
-  newGroups: ReadonlyArray<ContentGroup_Insert_Input>;
-  deleteGroupIds: ReadonlyArray<Scalars['uuid']>;
+  newGroups: ReadonlyArray<ContentGroup_Insert_Input> | ContentGroup_Insert_Input;
+  deleteGroupIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
@@ -29894,7 +31702,7 @@ export type InsertDeleteContentGroupsMutation = { readonly __typename?: 'mutatio
     )> }>, readonly delete_ContentGroup?: Maybe<{ readonly __typename?: 'ContentGroup_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any }> }> };
 
 export type InsertOriginatingDatasMutationVariables = Exact<{
-  newDatas: ReadonlyArray<OriginatingData_Insert_Input>;
+  newDatas: ReadonlyArray<OriginatingData_Insert_Input> | OriginatingData_Insert_Input;
 }>;
 
 
@@ -29904,14 +31712,14 @@ export type InsertOriginatingDatasMutation = { readonly __typename?: 'mutation_r
     )> }> };
 
 export type DeleteOriginatingDatasMutationVariables = Exact<{
-  deleteDataIds: ReadonlyArray<Scalars['uuid']>;
+  deleteDataIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
 export type DeleteOriginatingDatasMutation = { readonly __typename?: 'mutation_root', readonly delete_OriginatingData?: Maybe<{ readonly __typename?: 'OriginatingData_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'OriginatingData', readonly id: any }> }> };
 
 export type InsertTagsMutationVariables = Exact<{
-  newTags: ReadonlyArray<Tag_Insert_Input>;
+  newTags: ReadonlyArray<Tag_Insert_Input> | Tag_Insert_Input;
 }>;
 
 
@@ -29921,7 +31729,7 @@ export type InsertTagsMutation = { readonly __typename?: 'mutation_root', readon
     )> }> };
 
 export type InsertHallwaysMutationVariables = Exact<{
-  newHallways: ReadonlyArray<Hallway_Insert_Input>;
+  newHallways: ReadonlyArray<Hallway_Insert_Input> | Hallway_Insert_Input;
 }>;
 
 
@@ -29931,21 +31739,21 @@ export type InsertHallwaysMutation = { readonly __typename?: 'mutation_root', re
     )> }> };
 
 export type DeleteTagsMutationVariables = Exact<{
-  deleteTagIds: ReadonlyArray<Scalars['uuid']>;
+  deleteTagIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
 export type DeleteTagsMutation = { readonly __typename?: 'mutation_root', readonly delete_Tag?: Maybe<{ readonly __typename?: 'Tag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Tag', readonly id: any }> }> };
 
 export type DeleteHallwaysMutationVariables = Exact<{
-  deleteHallwayIds: ReadonlyArray<Scalars['uuid']>;
+  deleteHallwayIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
 export type DeleteHallwaysMutation = { readonly __typename?: 'mutation_root', readonly delete_Hallway?: Maybe<{ readonly __typename?: 'Hallway_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Hallway', readonly id: any }> }> };
 
 export type InsertContentPeopleMutationVariables = Exact<{
-  newPeople: ReadonlyArray<ContentPerson_Insert_Input>;
+  newPeople: ReadonlyArray<ContentPerson_Insert_Input> | ContentPerson_Insert_Input;
 }>;
 
 
@@ -29955,30 +31763,30 @@ export type InsertContentPeopleMutation = { readonly __typename?: 'mutation_root
     )> }> };
 
 export type DeleteContentPeopleMutationVariables = Exact<{
-  deletePersonIds: ReadonlyArray<Scalars['uuid']>;
+  deletePersonIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
 export type DeleteContentPeopleMutation = { readonly __typename?: 'mutation_root', readonly delete_ContentPerson?: Maybe<{ readonly __typename?: 'ContentPerson_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ContentPerson', readonly id: any }> }> };
 
 export type UpdateContentGroupMutationVariables = Exact<{
-  newItems: ReadonlyArray<ContentItem_Insert_Input>;
-  newRequiredItems: ReadonlyArray<RequiredContentItem_Insert_Input>;
-  newGroupTags: ReadonlyArray<ContentGroupTag_Insert_Input>;
-  newGroupHallways: ReadonlyArray<ContentGroupHallway_Insert_Input>;
+  newItems: ReadonlyArray<ContentItem_Insert_Input> | ContentItem_Insert_Input;
+  newRequiredItems: ReadonlyArray<RequiredContentItem_Insert_Input> | RequiredContentItem_Insert_Input;
+  newGroupTags: ReadonlyArray<ContentGroupTag_Insert_Input> | ContentGroupTag_Insert_Input;
+  newGroupHallways: ReadonlyArray<ContentGroupHallway_Insert_Input> | ContentGroupHallway_Insert_Input;
   groupId: Scalars['uuid'];
   contentGroupTypeName: ContentGroupType_Enum;
   originatingDataId?: Maybe<Scalars['uuid']>;
   shortTitle?: Maybe<Scalars['String']>;
   title: Scalars['String'];
-  deleteItemIds: ReadonlyArray<Scalars['uuid']>;
-  deleteRequiredItemIds: ReadonlyArray<Scalars['uuid']>;
-  deleteGroupTagIds: ReadonlyArray<Scalars['uuid']>;
-  deleteGroupHallwayIds: ReadonlyArray<Scalars['uuid']>;
-  newUploaders: ReadonlyArray<Uploader_Insert_Input>;
-  deleteUploaderIds: ReadonlyArray<Scalars['uuid']>;
-  newGroupPeople: ReadonlyArray<ContentGroupPerson_Insert_Input>;
-  deleteGroupPeopleIds: ReadonlyArray<Scalars['uuid']>;
+  deleteItemIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+  deleteRequiredItemIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+  deleteGroupTagIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+  deleteGroupHallwayIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+  newUploaders: ReadonlyArray<Uploader_Insert_Input> | Uploader_Insert_Input;
+  deleteUploaderIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+  newGroupPeople: ReadonlyArray<ContentGroupPerson_Insert_Input> | ContentGroupPerson_Insert_Input;
+  deleteGroupPeopleIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
@@ -30113,9 +31921,134 @@ export type UpdateHallwayMutation = { readonly __typename?: 'mutation_root', rea
     & HallwayInfoFragment
   )> };
 
+export type ChooseContentItemByTagModal_GetTagsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type ChooseContentItemByTagModal_GetTagsQuery = { readonly __typename?: 'query_root', readonly Tag: ReadonlyArray<{ readonly __typename?: 'Tag', readonly id: any, readonly name: string }> };
+
+export type ChooseContentItemByTagModal_GetVideoContentItemsQueryVariables = Exact<{
+  tagId: Scalars['uuid'];
+  name: Scalars['String'];
+}>;
+
+
+export type ChooseContentItemByTagModal_GetVideoContentItemsQuery = { readonly __typename?: 'query_root', readonly ContentItem: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly contentGroup: { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string } }> };
+
+export type ChooseContentItemModal_GetContentGroupsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type ChooseContentItemModal_GetContentGroupsQuery = { readonly __typename?: 'query_root', readonly ContentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string }> };
+
+export type ChooseContentItemModal_GetVideoContentItemsQueryVariables = Exact<{
+  contentGroupId?: Maybe<Scalars['uuid']>;
+}>;
+
+
+export type ChooseContentItemModal_GetVideoContentItemsQuery = { readonly __typename?: 'query_root', readonly ContentItem: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly name: string }> };
+
+export type ManageConferenceExportPage_GetGoogleOAuthUrlMutationVariables = Exact<{
+  scopes: ReadonlyArray<Scalars['String']> | Scalars['String'];
+}>;
+
+
+export type ManageConferenceExportPage_GetGoogleOAuthUrlMutation = { readonly __typename?: 'mutation_root', readonly getGoogleOAuthUrl?: Maybe<{ readonly __typename?: 'GetGoogleOAuthUrlOutput', readonly url: string }> };
+
+export type ManageConferenceExportPage_GetAttendeeGoogleAccountsQueryVariables = Exact<{
+  attendeeId: Scalars['uuid'];
+}>;
+
+
+export type ManageConferenceExportPage_GetAttendeeGoogleAccountsQuery = { readonly __typename?: 'query_root', readonly AttendeeGoogleAccount: ReadonlyArray<(
+    { readonly __typename?: 'AttendeeGoogleAccount' }
+    & ManageConferenceExportPage_AttendeeGoogleAccountFragment
+  )> };
+
+export type ManageConferenceExportPage_AttendeeGoogleAccountFragment = { readonly __typename?: 'AttendeeGoogleAccount', readonly id: any, readonly googleAccountEmail: string };
+
+export type ManageConferenceExportPage_DeleteAttendeeGoogleAccountMutationVariables = Exact<{
+  attendeeGoogleAccountId: Scalars['uuid'];
+}>;
+
+
+export type ManageConferenceExportPage_DeleteAttendeeGoogleAccountMutation = { readonly __typename?: 'mutation_root', readonly delete_AttendeeGoogleAccount_by_pk?: Maybe<{ readonly __typename?: 'AttendeeGoogleAccount', readonly id: any }> };
+
+export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery = { readonly __typename?: 'query_root', readonly job_queues_UploadYouTubeVideoJob: ReadonlyArray<(
+    { readonly __typename?: 'job_queues_UploadYouTubeVideoJob' }
+    & UploadYouTubeVideos_UploadYouTubeVideoJobFragment
+  )> };
+
+export type UploadYouTubeVideos_UploadYouTubeVideoJobFragment = { readonly __typename?: 'job_queues_UploadYouTubeVideoJob', readonly id: any, readonly jobStatusName: JobStatus_Enum, readonly contentItem: { readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly contentGroup: { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string } } };
+
+export type UploadYouTubeVideos_GetAttendeeGoogleAccountsQueryVariables = Exact<{
+  attendeeId: Scalars['uuid'];
+}>;
+
+
+export type UploadYouTubeVideos_GetAttendeeGoogleAccountsQuery = { readonly __typename?: 'query_root', readonly AttendeeGoogleAccount: ReadonlyArray<{ readonly __typename?: 'AttendeeGoogleAccount', readonly id: any, readonly googleAccountEmail: string, readonly youTubeData?: Maybe<any> }> };
+
+export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutationVariables = Exact<{
+  objects: ReadonlyArray<Job_Queues_UploadYouTubeVideoJob_Insert_Input> | Job_Queues_UploadYouTubeVideoJob_Insert_Input;
+}>;
+
+
+export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation = { readonly __typename?: 'mutation_root', readonly insert_job_queues_UploadYouTubeVideoJob?: Maybe<{ readonly __typename?: 'job_queues_UploadYouTubeVideoJob_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'job_queues_UploadYouTubeVideoJob', readonly id: any }> }> };
+
+export type UploadYouTubeVideos_GetContentItemsQueryVariables = Exact<{
+  contentItemIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+}>;
+
+
+export type UploadYouTubeVideos_GetContentItemsQuery = { readonly __typename?: 'query_root', readonly ContentItem: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly contentGroup: { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string } }> };
+
+export type UploadYouTubeVideos_GetTemplateDataQueryVariables = Exact<{
+  contentItemIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+}>;
+
+
+export type UploadYouTubeVideos_GetTemplateDataQuery = { readonly __typename?: 'query_root', readonly ContentItem: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly contentGroup: { readonly __typename?: 'ContentGroup', readonly id: any, readonly shortTitle?: Maybe<string>, readonly title: string, readonly contentItems: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly youTubeUploads: ReadonlyArray<{ readonly __typename?: 'YouTubeUpload', readonly id: any, readonly videoTitle: string, readonly videoId: string }> }>, readonly abstractContentItems: ReadonlyArray<(
+        { readonly __typename?: 'ContentItem' }
+        & UploadYouTubeVideos_ContentItemFragment
+      )>, readonly paperLinkContentItems: ReadonlyArray<(
+        { readonly __typename?: 'ContentItem' }
+        & UploadYouTubeVideos_ContentItemFragment
+      )>, readonly paperUrlContentItems: ReadonlyArray<(
+        { readonly __typename?: 'ContentItem' }
+        & UploadYouTubeVideos_ContentItemFragment
+      )> } }> };
+
+export type UploadYouTubeVideos_ContentItemFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly data: any };
+
+export type UploadYouTubeVideos_RefreshYouTubeDataMutationVariables = Exact<{
+  attendeeGoogleAccountId: Scalars['uuid'];
+}>;
+
+
+export type UploadYouTubeVideos_RefreshYouTubeDataMutation = { readonly __typename?: 'mutation_root', readonly refreshYouTubeData?: Maybe<{ readonly __typename?: 'RefreshYouTubeDataOutput', readonly message?: Maybe<string>, readonly success: boolean }> };
+
+export type UploadYouTubeVideos_GetYouTubeUploadsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type UploadYouTubeVideos_GetYouTubeUploadsQuery = { readonly __typename?: 'query_root', readonly YouTubeUpload: ReadonlyArray<(
+    { readonly __typename?: 'YouTubeUpload' }
+    & UploadYouTubeVideos_YouTubeUploadFragment
+  )> };
+
+export type UploadYouTubeVideos_YouTubeUploadFragment = { readonly __typename?: 'YouTubeUpload', readonly id: any, readonly videoId: string, readonly videoPrivacyStatus: string, readonly videoStatus: string, readonly videoTitle: string, readonly contentItem?: Maybe<{ readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly contentGroup: { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string } }> };
+
 export type ImportAttendeesMutationVariables = Exact<{
-  insertAttendees: ReadonlyArray<Attendee_Insert_Input>;
-  insertInvitations: ReadonlyArray<Invitation_Insert_Input>;
+  insertAttendees: ReadonlyArray<Attendee_Insert_Input> | Attendee_Insert_Input;
+  insertInvitations: ReadonlyArray<Invitation_Insert_Input> | Invitation_Insert_Input;
 }>;
 
 
@@ -30164,8 +32097,8 @@ export type SelectAllGroupsQueryVariables = Exact<{
 export type SelectAllGroupsQuery = { readonly __typename?: 'query_root', readonly Group: ReadonlyArray<{ readonly __typename?: 'Group', readonly conferenceId: any, readonly enabled: boolean, readonly id: any, readonly includeUnauthenticated: boolean, readonly name: string, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any }> }> };
 
 export type CreateDeleteGroupsMutationVariables = Exact<{
-  deleteGroupIds?: Maybe<ReadonlyArray<Scalars['uuid']>>;
-  insertGroups: ReadonlyArray<Group_Insert_Input>;
+  deleteGroupIds?: Maybe<ReadonlyArray<Scalars['uuid']> | Scalars['uuid']>;
+  insertGroups: ReadonlyArray<Group_Insert_Input> | Group_Insert_Input;
 }>;
 
 
@@ -30176,8 +32109,8 @@ export type UpdateGroupMutationVariables = Exact<{
   groupName: Scalars['String'];
   enabled: Scalars['Boolean'];
   includeUnauthenticated: Scalars['Boolean'];
-  insertRoles: ReadonlyArray<GroupRole_Insert_Input>;
-  deleteRoleIds?: Maybe<ReadonlyArray<Scalars['uuid']>>;
+  insertRoles: ReadonlyArray<GroupRole_Insert_Input> | GroupRole_Insert_Input;
+  deleteRoleIds?: Maybe<ReadonlyArray<Scalars['uuid']> | Scalars['uuid']>;
 }>;
 
 
@@ -30206,9 +32139,9 @@ export type SelectAllAttendeesQuery = { readonly __typename?: 'query_root', read
   )> };
 
 export type CreateDeleteAttendeesMutationVariables = Exact<{
-  deleteAttendeeIds?: Maybe<ReadonlyArray<Scalars['uuid']>>;
-  insertAttendees: ReadonlyArray<Attendee_Insert_Input>;
-  insertInvitations: ReadonlyArray<Invitation_Insert_Input>;
+  deleteAttendeeIds?: Maybe<ReadonlyArray<Scalars['uuid']> | Scalars['uuid']>;
+  insertAttendees: ReadonlyArray<Attendee_Insert_Input> | Attendee_Insert_Input;
+  insertInvitations: ReadonlyArray<Invitation_Insert_Input> | Invitation_Insert_Input;
 }>;
 
 
@@ -30220,8 +32153,8 @@ export type CreateDeleteAttendeesMutation = { readonly __typename?: 'mutation_ro
 export type UpdateAttendeeMutationVariables = Exact<{
   attendeeId: Scalars['uuid'];
   attendeeName: Scalars['String'];
-  insertGroups: ReadonlyArray<GroupAttendee_Insert_Input>;
-  deleteGroupIds?: Maybe<ReadonlyArray<Scalars['uuid']>>;
+  insertGroups: ReadonlyArray<GroupAttendee_Insert_Input> | GroupAttendee_Insert_Input;
+  deleteGroupIds?: Maybe<ReadonlyArray<Scalars['uuid']> | Scalars['uuid']>;
 }>;
 
 
@@ -30252,8 +32185,8 @@ export type SelectAllRolesQueryVariables = Exact<{
 export type SelectAllRolesQuery = { readonly __typename?: 'query_root', readonly Role: ReadonlyArray<{ readonly __typename?: 'Role', readonly conferenceId: any, readonly id: any, readonly name: string, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly id: any, readonly permissionName: Permission_Enum, readonly roleId: any }> }> };
 
 export type CreateDeleteRolesMutationVariables = Exact<{
-  deleteRoleIds?: Maybe<ReadonlyArray<Scalars['uuid']>>;
-  insertRoles: ReadonlyArray<Role_Insert_Input>;
+  deleteRoleIds?: Maybe<ReadonlyArray<Scalars['uuid']> | Scalars['uuid']>;
+  insertRoles: ReadonlyArray<Role_Insert_Input> | Role_Insert_Input;
 }>;
 
 
@@ -30262,8 +32195,8 @@ export type CreateDeleteRolesMutation = { readonly __typename?: 'mutation_root',
 export type UpdateRoleMutationVariables = Exact<{
   roleId: Scalars['uuid'];
   roleName: Scalars['String'];
-  insertPermissions: ReadonlyArray<RolePermission_Insert_Input>;
-  deletePermissionNames?: Maybe<ReadonlyArray<Permission_Enum>>;
+  insertPermissions: ReadonlyArray<RolePermission_Insert_Input> | RolePermission_Insert_Input;
+  deletePermissionNames?: Maybe<ReadonlyArray<Permission_Enum> | Permission_Enum>;
 }>;
 
 
@@ -30271,7 +32204,7 @@ export type UpdateRoleMutation = { readonly __typename?: 'mutation_root', readon
 
 export type RoomParticipantWithAttendeeInfoFragment = { readonly __typename?: 'RoomParticipant', readonly id: any, readonly conferenceId: any, readonly attendeeId: any, readonly roomId: any, readonly attendee: { readonly __typename?: 'Attendee', readonly displayName: string } };
 
-export type RoomWithParticipantInfoFragment = { readonly __typename?: 'Room', readonly id: any, readonly conferenceId: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly capacity?: Maybe<number>, readonly priority: number, readonly participants: ReadonlyArray<(
+export type RoomWithParticipantInfoFragment = { readonly __typename?: 'Room', readonly id: any, readonly conferenceId: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly capacity?: Maybe<number>, readonly priority: number, readonly originatingEventId?: Maybe<any>, readonly originatingContentGroupId?: Maybe<any>, readonly roomPrivacyName: RoomPrivacy_Enum, readonly participants: ReadonlyArray<(
     { readonly __typename?: 'RoomParticipant' }
     & RoomParticipantWithAttendeeInfoFragment
   )>, readonly originatingData?: Maybe<(
@@ -30348,7 +32281,7 @@ export type UpdateEventInfoMutation = { readonly __typename?: 'mutation_root', r
   )> };
 
 export type DeleteEventInfosMutationVariables = Exact<{
-  eventIds: ReadonlyArray<Scalars['uuid']>;
+  eventIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
@@ -30365,7 +32298,7 @@ export type InsertEventPersonMutation = { readonly __typename?: 'mutation_root',
   )> };
 
 export type DeleteEventPersonsMutationVariables = Exact<{
-  deleteEventPeopleIds: ReadonlyArray<Scalars['uuid']>;
+  deleteEventPeopleIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
@@ -30386,7 +32319,7 @@ export type UpdateEventPersonInfoMutation = { readonly __typename?: 'mutation_ro
     & EventPersonInfoFragment
   )> };
 
-export type RoomInfoFragment = { readonly __typename?: 'Room', readonly capacity?: Maybe<number>, readonly conferenceId: any, readonly currentModeName: RoomMode_Enum, readonly id: any, readonly name: string, readonly priority: number, readonly originatingDataId?: Maybe<any>, readonly originatingData?: Maybe<(
+export type RoomInfoFragment = { readonly __typename?: 'Room', readonly capacity?: Maybe<number>, readonly conferenceId: any, readonly currentModeName: RoomMode_Enum, readonly id: any, readonly name: string, readonly priority: number, readonly originatingDataId?: Maybe<any>, readonly originatingEventId?: Maybe<any>, readonly originatingContentGroupId?: Maybe<any>, readonly roomPrivacyName: RoomPrivacy_Enum, readonly originatingData?: Maybe<(
     { readonly __typename?: 'OriginatingData' }
     & OriginatingDataInfoFragment
   )>, readonly participants: ReadonlyArray<(
@@ -30436,7 +32369,7 @@ export type SelectWholeScheduleQuery = { readonly __typename?: 'query_root', rea
   )> };
 
 export type InsertRoomsMutationVariables = Exact<{
-  newRooms: ReadonlyArray<Room_Insert_Input>;
+  newRooms: ReadonlyArray<Room_Insert_Input> | Room_Insert_Input;
 }>;
 
 
@@ -30446,7 +32379,7 @@ export type InsertRoomsMutation = { readonly __typename?: 'mutation_root', reado
     )> }> };
 
 export type DeleteRoomsMutationVariables = Exact<{
-  deleteRoomIds: ReadonlyArray<Scalars['uuid']>;
+  deleteRoomIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
@@ -30467,7 +32400,7 @@ export type UpdateRoomMutation = { readonly __typename?: 'mutation_root', readon
   )> };
 
 export type DeleteEventsMutationVariables = Exact<{
-  deleteEventIds: ReadonlyArray<Scalars['uuid']>;
+  deleteEventIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
@@ -30492,10 +32425,10 @@ export type UpdateEventMutationVariables = Exact<{
   startTime: Scalars['timestamptz'];
   durationSeconds: Scalars['Int'];
   contentGroupId?: Maybe<Scalars['uuid']>;
-  newEventTags: ReadonlyArray<EventTag_Insert_Input>;
-  deleteEventTagIds: ReadonlyArray<Scalars['uuid']>;
-  newEventPeople: ReadonlyArray<EventPerson_Insert_Input>;
-  deleteEventPeopleIds: ReadonlyArray<Scalars['uuid']>;
+  newEventTags: ReadonlyArray<EventTag_Insert_Input> | EventTag_Insert_Input;
+  deleteEventTagIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+  newEventPeople: ReadonlyArray<EventPerson_Insert_Input> | EventPerson_Insert_Input;
+  deleteEventPeopleIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
@@ -30524,6 +32457,85 @@ export type UpdateEventPersonMutation = { readonly __typename?: 'mutation_root',
     { readonly __typename?: 'EventPerson' }
     & EventPersonInfoFragment
   )> };
+
+export type AddSponsorContentMenu_CreateContentItemMutationVariables = Exact<{
+  object: ContentItem_Insert_Input;
+}>;
+
+
+export type AddSponsorContentMenu_CreateContentItemMutation = { readonly __typename?: 'mutation_root', readonly insert_ContentItem_one?: Maybe<{ readonly __typename?: 'ContentItem', readonly id: any }> };
+
+export type EditableSponsorsTable_GetAllSponsorsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type EditableSponsorsTable_GetAllSponsorsQuery = { readonly __typename?: 'query_root', readonly ContentGroup: ReadonlyArray<(
+    { readonly __typename?: 'ContentGroup' }
+    & EditableSponsorsTable_ContentGroupInfoFragment
+  )> };
+
+export type EditableSponsorsTable_InsertSponsorMutationVariables = Exact<{
+  contentGroup: ContentGroup_Insert_Input;
+}>;
+
+
+export type EditableSponsorsTable_InsertSponsorMutation = { readonly __typename?: 'mutation_root', readonly insert_ContentGroup_one?: Maybe<(
+    { readonly __typename?: 'ContentGroup' }
+    & EditableSponsorsTable_ContentGroupInfoFragment
+  )> };
+
+export type EditableSponsorsTable_UpdateSponsorMutationVariables = Exact<{
+  contentGroupId: Scalars['uuid'];
+  object: ContentGroup_Set_Input;
+}>;
+
+
+export type EditableSponsorsTable_UpdateSponsorMutation = { readonly __typename?: 'mutation_root', readonly update_ContentGroup_by_pk?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any }> };
+
+export type EditableSponsorsTable_DeleteSponsorMutationVariables = Exact<{
+  contentGroupIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+}>;
+
+
+export type EditableSponsorsTable_DeleteSponsorMutation = { readonly __typename?: 'mutation_root', readonly delete_ContentGroup?: Maybe<{ readonly __typename?: 'ContentGroup_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any }> }> };
+
+export type EditableSponsorsTable_ContentGroupInfoFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string> };
+
+export type SponsorSecondaryEditor_GetSponsorContentItemsQueryVariables = Exact<{
+  contentGroupId: Scalars['uuid'];
+}>;
+
+
+export type SponsorSecondaryEditor_GetSponsorContentItemsQuery = { readonly __typename?: 'query_root', readonly ContentItem: ReadonlyArray<(
+    { readonly __typename?: 'ContentItem' }
+    & SponsorSecondaryEditor_ContentItemFragment
+  )> };
+
+export type SponsorSecondaryEditor_ContentItemFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly contentTypeName: ContentType_Enum, readonly data: any, readonly layoutData?: Maybe<any>, readonly isHidden: boolean, readonly updatedAt: any };
+
+export type SponsorContentItem_DeleteContentItemMutationVariables = Exact<{
+  contentItemId: Scalars['uuid'];
+}>;
+
+
+export type SponsorContentItem_DeleteContentItemMutation = { readonly __typename?: 'mutation_root', readonly delete_ContentItem_by_pk?: Maybe<{ readonly __typename?: 'ContentItem', readonly id: any }> };
+
+export type SponsorContentItem_SetContentItemIsHiddenMutationVariables = Exact<{
+  contentItemId: Scalars['uuid'];
+  isHidden: Scalars['Boolean'];
+}>;
+
+
+export type SponsorContentItem_SetContentItemIsHiddenMutation = { readonly __typename?: 'mutation_root', readonly update_ContentItem_by_pk?: Maybe<{ readonly __typename?: 'ContentItem', readonly id: any }> };
+
+export type SponsorContentItemInner_UpdateContentItemMutationVariables = Exact<{
+  contentItemId: Scalars['uuid'];
+  contentItem: ContentItem_Set_Input;
+}>;
+
+
+export type SponsorContentItemInner_UpdateContentItemMutation = { readonly __typename?: 'mutation_root', readonly update_ContentItem_by_pk?: Maybe<{ readonly __typename?: 'ContentItem', readonly id: any }> };
 
 export type ConferenceTakenQueryVariables = Exact<{
   name: Scalars['String'];
@@ -30688,6 +32700,14 @@ export type UserEventRolesSubscription = { readonly __typename?: 'subscription_r
     )> }> };
 
 export type EventPersonDetailsFragment = { readonly __typename?: 'EventPerson', readonly id: any, readonly name: string, readonly roleName: EventPersonRole_Enum, readonly eventId: any, readonly attendeeId?: Maybe<any> };
+
+export type GoogleOAuth_SubmitGoogleOAuthCodeMutationVariables = Exact<{
+  code: Scalars['String'];
+  state: Scalars['String'];
+}>;
+
+
+export type GoogleOAuth_SubmitGoogleOAuthCodeMutation = { readonly __typename?: 'mutation_root', readonly submitGoogleOAuthCode?: Maybe<{ readonly __typename?: 'SubmitGoogleOAuthCodeOutput', readonly message?: Maybe<string>, readonly success: boolean }> };
 
 export type SelectInvitationForAcceptQueryVariables = Exact<{
   inviteCode: Scalars['uuid'];
@@ -31243,7 +33263,7 @@ export const RoomPage_RoomDetailsFragmentDoc = gql`
     id
     contentGroupTypeName
     contentItems(
-      where: {contentTypeName: {_eq: IMAGE_URL}, layoutData: {_contains: {isLogo: true}}}
+      where: {contentTypeName: {_in: [IMAGE_URL, IMAGE_FILE]}, layoutData: {_contains: {isLogo: true}}}
       limit: 1
       order_by: {updatedAt: desc}
     ) {
@@ -31266,6 +33286,7 @@ export const RoomSponsorContent_ContentItemDataFragmentDoc = gql`
     fragment RoomSponsorContent_ContentItemData on ContentItem {
   id
   name
+  isHidden
   contentTypeName
   data
   layoutData
@@ -31500,6 +33521,49 @@ export const HallwayInfoFragmentDoc = gql`
   priority
 }
     `;
+export const ManageConferenceExportPage_AttendeeGoogleAccountFragmentDoc = gql`
+    fragment ManageConferenceExportPage_AttendeeGoogleAccount on AttendeeGoogleAccount {
+  id
+  googleAccountEmail
+}
+    `;
+export const UploadYouTubeVideos_UploadYouTubeVideoJobFragmentDoc = gql`
+    fragment UploadYouTubeVideos_UploadYouTubeVideoJob on job_queues_UploadYouTubeVideoJob {
+  id
+  jobStatusName
+  contentItem {
+    id
+    contentGroup {
+      id
+      title
+    }
+    name
+  }
+}
+    `;
+export const UploadYouTubeVideos_ContentItemFragmentDoc = gql`
+    fragment UploadYouTubeVideos_ContentItem on ContentItem {
+  id
+  data
+}
+    `;
+export const UploadYouTubeVideos_YouTubeUploadFragmentDoc = gql`
+    fragment UploadYouTubeVideos_YouTubeUpload on YouTubeUpload {
+  id
+  videoId
+  videoPrivacyStatus
+  videoStatus
+  videoTitle
+  contentItem {
+    id
+    name
+    contentGroup {
+      id
+      title
+    }
+  }
+}
+    `;
 export const AttendeePartsFragmentDoc = gql`
     fragment AttendeeParts on Attendee {
   conferenceId
@@ -31553,6 +33617,9 @@ export const RoomWithParticipantInfoFragmentDoc = gql`
   currentModeName
   capacity
   priority
+  originatingEventId
+  originatingContentGroupId
+  roomPrivacyName
   participants {
     ...RoomParticipantWithAttendeeInfo
   }
@@ -31579,6 +33646,9 @@ export const RoomInfoFragmentDoc = gql`
   name
   priority
   originatingDataId
+  originatingEventId
+  originatingContentGroupId
+  roomPrivacyName
   originatingData {
     ...OriginatingDataInfo
   }
@@ -31638,6 +33708,24 @@ export const AttendeeInfoFragmentDoc = gql`
     fragment AttendeeInfo on Attendee {
   id
   displayName
+}
+    `;
+export const EditableSponsorsTable_ContentGroupInfoFragmentDoc = gql`
+    fragment EditableSponsorsTable_ContentGroupInfo on ContentGroup {
+  id
+  title
+  shortTitle
+}
+    `;
+export const SponsorSecondaryEditor_ContentItemFragmentDoc = gql`
+    fragment SponsorSecondaryEditor_ContentItem on ContentItem {
+  id
+  name
+  contentTypeName
+  data
+  layoutData
+  isHidden
+  updatedAt
 }
     `;
 export const GroupDataFragmentDoc = gql`
@@ -31782,7 +33870,7 @@ export const MainMenuSponsors_ContentGroupDataFragmentDoc = gql`
     id
   }
   logo: contentItems(
-    where: {contentTypeName: {_eq: IMAGE_URL}, layoutData: {_contains: {isLogo: true}}}
+    where: {contentTypeName: {_in: [IMAGE_URL, IMAGE_FILE]}, layoutData: {_contains: {isLogo: true}}}
     order_by: {updatedAt: desc}
     limit: 1
   ) {
@@ -33836,7 +35924,7 @@ export type Timeline_SelectEventQueryResult = Apollo.QueryResult<Timeline_Select
 export const Timeline_SelectRoomsDocument = gql`
     query Timeline_SelectRooms($conferenceId: uuid!) {
   Room(
-    where: {conferenceId: {_eq: $conferenceId}, roomPrivacyName: {_eq: PUBLIC}, events: {id: {_is_null: false}}}
+    where: {conferenceId: {_eq: $conferenceId}, roomPrivacyName: {_eq: PUBLIC}, events: {}}
   ) {
     ...Timeline_Room
   }
@@ -33910,6 +35998,78 @@ export function useAttendeesByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type AttendeesByIdQueryHookResult = ReturnType<typeof useAttendeesByIdQuery>;
 export type AttendeesByIdLazyQueryHookResult = ReturnType<typeof useAttendeesByIdLazyQuery>;
 export type AttendeesByIdQueryResult = Apollo.QueryResult<AttendeesByIdQuery, AttendeesByIdQueryVariables>;
+export const CombineVideosModal_CreateCombineVideosJobDocument = gql`
+    mutation CombineVideosModal_CreateCombineVideosJob($conferenceId: uuid!, $createdByAttendeeId: uuid!, $outputName: String!, $data: jsonb!) {
+  insert_job_queues_CombineVideosJob_one(
+    object: {conferenceId: $conferenceId, createdByAttendeeId: $createdByAttendeeId, outputName: $outputName, data: $data}
+  ) {
+    id
+  }
+}
+    `;
+export type CombineVideosModal_CreateCombineVideosJobMutationFn = Apollo.MutationFunction<CombineVideosModal_CreateCombineVideosJobMutation, CombineVideosModal_CreateCombineVideosJobMutationVariables>;
+
+/**
+ * __useCombineVideosModal_CreateCombineVideosJobMutation__
+ *
+ * To run a mutation, you first call `useCombineVideosModal_CreateCombineVideosJobMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCombineVideosModal_CreateCombineVideosJobMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [combineVideosModalCreateCombineVideosJobMutation, { data, loading, error }] = useCombineVideosModal_CreateCombineVideosJobMutation({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      createdByAttendeeId: // value for 'createdByAttendeeId'
+ *      outputName: // value for 'outputName'
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useCombineVideosModal_CreateCombineVideosJobMutation(baseOptions?: Apollo.MutationHookOptions<CombineVideosModal_CreateCombineVideosJobMutation, CombineVideosModal_CreateCombineVideosJobMutationVariables>) {
+        return Apollo.useMutation<CombineVideosModal_CreateCombineVideosJobMutation, CombineVideosModal_CreateCombineVideosJobMutationVariables>(CombineVideosModal_CreateCombineVideosJobDocument, baseOptions);
+      }
+export type CombineVideosModal_CreateCombineVideosJobMutationHookResult = ReturnType<typeof useCombineVideosModal_CreateCombineVideosJobMutation>;
+export type CombineVideosModal_CreateCombineVideosJobMutationResult = Apollo.MutationResult<CombineVideosModal_CreateCombineVideosJobMutation>;
+export type CombineVideosModal_CreateCombineVideosJobMutationOptions = Apollo.BaseMutationOptions<CombineVideosModal_CreateCombineVideosJobMutation, CombineVideosModal_CreateCombineVideosJobMutationVariables>;
+export const CombineVideosModal_GetCombineVideosJobDocument = gql`
+    query CombineVideosModal_GetCombineVideosJob($id: uuid!) {
+  job_queues_CombineVideosJob_by_pk(id: $id) {
+    id
+    message
+    jobStatusName
+  }
+}
+    `;
+
+/**
+ * __useCombineVideosModal_GetCombineVideosJobQuery__
+ *
+ * To run a query within a React component, call `useCombineVideosModal_GetCombineVideosJobQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCombineVideosModal_GetCombineVideosJobQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCombineVideosModal_GetCombineVideosJobQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useCombineVideosModal_GetCombineVideosJobQuery(baseOptions: Apollo.QueryHookOptions<CombineVideosModal_GetCombineVideosJobQuery, CombineVideosModal_GetCombineVideosJobQueryVariables>) {
+        return Apollo.useQuery<CombineVideosModal_GetCombineVideosJobQuery, CombineVideosModal_GetCombineVideosJobQueryVariables>(CombineVideosModal_GetCombineVideosJobDocument, baseOptions);
+      }
+export function useCombineVideosModal_GetCombineVideosJobLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CombineVideosModal_GetCombineVideosJobQuery, CombineVideosModal_GetCombineVideosJobQueryVariables>) {
+          return Apollo.useLazyQuery<CombineVideosModal_GetCombineVideosJobQuery, CombineVideosModal_GetCombineVideosJobQueryVariables>(CombineVideosModal_GetCombineVideosJobDocument, baseOptions);
+        }
+export type CombineVideosModal_GetCombineVideosJobQueryHookResult = ReturnType<typeof useCombineVideosModal_GetCombineVideosJobQuery>;
+export type CombineVideosModal_GetCombineVideosJobLazyQueryHookResult = ReturnType<typeof useCombineVideosModal_GetCombineVideosJobLazyQuery>;
+export type CombineVideosModal_GetCombineVideosJobQueryResult = Apollo.QueryResult<CombineVideosModal_GetCombineVideosJobQuery, CombineVideosModal_GetCombineVideosJobQueryVariables>;
 export const InsertSubmissionRequestEmailJobsDocument = gql`
     mutation InsertSubmissionRequestEmailJobs($objs: [job_queues_SubmissionRequestEmailJob_insert_input!]!) {
   insert_job_queues_SubmissionRequestEmailJob(objects: $objs) {
@@ -34725,6 +36885,522 @@ export function useUpdateHallwayMutation(baseOptions?: Apollo.MutationHookOption
 export type UpdateHallwayMutationHookResult = ReturnType<typeof useUpdateHallwayMutation>;
 export type UpdateHallwayMutationResult = Apollo.MutationResult<UpdateHallwayMutation>;
 export type UpdateHallwayMutationOptions = Apollo.BaseMutationOptions<UpdateHallwayMutation, UpdateHallwayMutationVariables>;
+export const ChooseContentItemByTagModal_GetTagsDocument = gql`
+    query ChooseContentItemByTagModal_GetTags($conferenceId: uuid!) {
+  Tag(where: {conferenceId: {_eq: $conferenceId}}, order_by: {name: asc}) {
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useChooseContentItemByTagModal_GetTagsQuery__
+ *
+ * To run a query within a React component, call `useChooseContentItemByTagModal_GetTagsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useChooseContentItemByTagModal_GetTagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useChooseContentItemByTagModal_GetTagsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useChooseContentItemByTagModal_GetTagsQuery(baseOptions: Apollo.QueryHookOptions<ChooseContentItemByTagModal_GetTagsQuery, ChooseContentItemByTagModal_GetTagsQueryVariables>) {
+        return Apollo.useQuery<ChooseContentItemByTagModal_GetTagsQuery, ChooseContentItemByTagModal_GetTagsQueryVariables>(ChooseContentItemByTagModal_GetTagsDocument, baseOptions);
+      }
+export function useChooseContentItemByTagModal_GetTagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ChooseContentItemByTagModal_GetTagsQuery, ChooseContentItemByTagModal_GetTagsQueryVariables>) {
+          return Apollo.useLazyQuery<ChooseContentItemByTagModal_GetTagsQuery, ChooseContentItemByTagModal_GetTagsQueryVariables>(ChooseContentItemByTagModal_GetTagsDocument, baseOptions);
+        }
+export type ChooseContentItemByTagModal_GetTagsQueryHookResult = ReturnType<typeof useChooseContentItemByTagModal_GetTagsQuery>;
+export type ChooseContentItemByTagModal_GetTagsLazyQueryHookResult = ReturnType<typeof useChooseContentItemByTagModal_GetTagsLazyQuery>;
+export type ChooseContentItemByTagModal_GetTagsQueryResult = Apollo.QueryResult<ChooseContentItemByTagModal_GetTagsQuery, ChooseContentItemByTagModal_GetTagsQueryVariables>;
+export const ChooseContentItemByTagModal_GetVideoContentItemsDocument = gql`
+    query ChooseContentItemByTagModal_GetVideoContentItems($tagId: uuid!, $name: String!) {
+  ContentItem(
+    where: {contentTypeName: {_in: [VIDEO_FILE, VIDEO_BROADCAST, VIDEO_PREPUBLISH]}, contentGroup: {contentGroupTags: {tag: {id: {_eq: $tagId}}}}, name: {_ilike: $name}}
+    order_by: {contentGroup: {title: asc}, name: asc}
+  ) {
+    id
+    name
+    contentGroup {
+      id
+      title
+    }
+  }
+}
+    `;
+
+/**
+ * __useChooseContentItemByTagModal_GetVideoContentItemsQuery__
+ *
+ * To run a query within a React component, call `useChooseContentItemByTagModal_GetVideoContentItemsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useChooseContentItemByTagModal_GetVideoContentItemsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useChooseContentItemByTagModal_GetVideoContentItemsQuery({
+ *   variables: {
+ *      tagId: // value for 'tagId'
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useChooseContentItemByTagModal_GetVideoContentItemsQuery(baseOptions: Apollo.QueryHookOptions<ChooseContentItemByTagModal_GetVideoContentItemsQuery, ChooseContentItemByTagModal_GetVideoContentItemsQueryVariables>) {
+        return Apollo.useQuery<ChooseContentItemByTagModal_GetVideoContentItemsQuery, ChooseContentItemByTagModal_GetVideoContentItemsQueryVariables>(ChooseContentItemByTagModal_GetVideoContentItemsDocument, baseOptions);
+      }
+export function useChooseContentItemByTagModal_GetVideoContentItemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ChooseContentItemByTagModal_GetVideoContentItemsQuery, ChooseContentItemByTagModal_GetVideoContentItemsQueryVariables>) {
+          return Apollo.useLazyQuery<ChooseContentItemByTagModal_GetVideoContentItemsQuery, ChooseContentItemByTagModal_GetVideoContentItemsQueryVariables>(ChooseContentItemByTagModal_GetVideoContentItemsDocument, baseOptions);
+        }
+export type ChooseContentItemByTagModal_GetVideoContentItemsQueryHookResult = ReturnType<typeof useChooseContentItemByTagModal_GetVideoContentItemsQuery>;
+export type ChooseContentItemByTagModal_GetVideoContentItemsLazyQueryHookResult = ReturnType<typeof useChooseContentItemByTagModal_GetVideoContentItemsLazyQuery>;
+export type ChooseContentItemByTagModal_GetVideoContentItemsQueryResult = Apollo.QueryResult<ChooseContentItemByTagModal_GetVideoContentItemsQuery, ChooseContentItemByTagModal_GetVideoContentItemsQueryVariables>;
+export const ChooseContentItemModal_GetContentGroupsDocument = gql`
+    query ChooseContentItemModal_GetContentGroups($conferenceId: uuid!) {
+  ContentGroup(
+    where: {conferenceId: {_eq: $conferenceId}}
+    order_by: {title: asc}
+  ) {
+    id
+    title
+  }
+}
+    `;
+
+/**
+ * __useChooseContentItemModal_GetContentGroupsQuery__
+ *
+ * To run a query within a React component, call `useChooseContentItemModal_GetContentGroupsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useChooseContentItemModal_GetContentGroupsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useChooseContentItemModal_GetContentGroupsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useChooseContentItemModal_GetContentGroupsQuery(baseOptions: Apollo.QueryHookOptions<ChooseContentItemModal_GetContentGroupsQuery, ChooseContentItemModal_GetContentGroupsQueryVariables>) {
+        return Apollo.useQuery<ChooseContentItemModal_GetContentGroupsQuery, ChooseContentItemModal_GetContentGroupsQueryVariables>(ChooseContentItemModal_GetContentGroupsDocument, baseOptions);
+      }
+export function useChooseContentItemModal_GetContentGroupsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ChooseContentItemModal_GetContentGroupsQuery, ChooseContentItemModal_GetContentGroupsQueryVariables>) {
+          return Apollo.useLazyQuery<ChooseContentItemModal_GetContentGroupsQuery, ChooseContentItemModal_GetContentGroupsQueryVariables>(ChooseContentItemModal_GetContentGroupsDocument, baseOptions);
+        }
+export type ChooseContentItemModal_GetContentGroupsQueryHookResult = ReturnType<typeof useChooseContentItemModal_GetContentGroupsQuery>;
+export type ChooseContentItemModal_GetContentGroupsLazyQueryHookResult = ReturnType<typeof useChooseContentItemModal_GetContentGroupsLazyQuery>;
+export type ChooseContentItemModal_GetContentGroupsQueryResult = Apollo.QueryResult<ChooseContentItemModal_GetContentGroupsQuery, ChooseContentItemModal_GetContentGroupsQueryVariables>;
+export const ChooseContentItemModal_GetVideoContentItemsDocument = gql`
+    query ChooseContentItemModal_GetVideoContentItems($contentGroupId: uuid) {
+  ContentItem(
+    where: {contentGroupId: {_eq: $contentGroupId}, contentTypeName: {_in: [VIDEO_FILE, VIDEO_BROADCAST, VIDEO_PREPUBLISH]}}
+    order_by: {name: asc}
+  ) {
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useChooseContentItemModal_GetVideoContentItemsQuery__
+ *
+ * To run a query within a React component, call `useChooseContentItemModal_GetVideoContentItemsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useChooseContentItemModal_GetVideoContentItemsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useChooseContentItemModal_GetVideoContentItemsQuery({
+ *   variables: {
+ *      contentGroupId: // value for 'contentGroupId'
+ *   },
+ * });
+ */
+export function useChooseContentItemModal_GetVideoContentItemsQuery(baseOptions?: Apollo.QueryHookOptions<ChooseContentItemModal_GetVideoContentItemsQuery, ChooseContentItemModal_GetVideoContentItemsQueryVariables>) {
+        return Apollo.useQuery<ChooseContentItemModal_GetVideoContentItemsQuery, ChooseContentItemModal_GetVideoContentItemsQueryVariables>(ChooseContentItemModal_GetVideoContentItemsDocument, baseOptions);
+      }
+export function useChooseContentItemModal_GetVideoContentItemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ChooseContentItemModal_GetVideoContentItemsQuery, ChooseContentItemModal_GetVideoContentItemsQueryVariables>) {
+          return Apollo.useLazyQuery<ChooseContentItemModal_GetVideoContentItemsQuery, ChooseContentItemModal_GetVideoContentItemsQueryVariables>(ChooseContentItemModal_GetVideoContentItemsDocument, baseOptions);
+        }
+export type ChooseContentItemModal_GetVideoContentItemsQueryHookResult = ReturnType<typeof useChooseContentItemModal_GetVideoContentItemsQuery>;
+export type ChooseContentItemModal_GetVideoContentItemsLazyQueryHookResult = ReturnType<typeof useChooseContentItemModal_GetVideoContentItemsLazyQuery>;
+export type ChooseContentItemModal_GetVideoContentItemsQueryResult = Apollo.QueryResult<ChooseContentItemModal_GetVideoContentItemsQuery, ChooseContentItemModal_GetVideoContentItemsQueryVariables>;
+export const ManageConferenceExportPage_GetGoogleOAuthUrlDocument = gql`
+    mutation ManageConferenceExportPage_GetGoogleOAuthUrl($scopes: [String!]!) {
+  getGoogleOAuthUrl(scopes: $scopes) {
+    url
+  }
+}
+    `;
+export type ManageConferenceExportPage_GetGoogleOAuthUrlMutationFn = Apollo.MutationFunction<ManageConferenceExportPage_GetGoogleOAuthUrlMutation, ManageConferenceExportPage_GetGoogleOAuthUrlMutationVariables>;
+
+/**
+ * __useManageConferenceExportPage_GetGoogleOAuthUrlMutation__
+ *
+ * To run a mutation, you first call `useManageConferenceExportPage_GetGoogleOAuthUrlMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageConferenceExportPage_GetGoogleOAuthUrlMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageConferenceExportPageGetGoogleOAuthUrlMutation, { data, loading, error }] = useManageConferenceExportPage_GetGoogleOAuthUrlMutation({
+ *   variables: {
+ *      scopes: // value for 'scopes'
+ *   },
+ * });
+ */
+export function useManageConferenceExportPage_GetGoogleOAuthUrlMutation(baseOptions?: Apollo.MutationHookOptions<ManageConferenceExportPage_GetGoogleOAuthUrlMutation, ManageConferenceExportPage_GetGoogleOAuthUrlMutationVariables>) {
+        return Apollo.useMutation<ManageConferenceExportPage_GetGoogleOAuthUrlMutation, ManageConferenceExportPage_GetGoogleOAuthUrlMutationVariables>(ManageConferenceExportPage_GetGoogleOAuthUrlDocument, baseOptions);
+      }
+export type ManageConferenceExportPage_GetGoogleOAuthUrlMutationHookResult = ReturnType<typeof useManageConferenceExportPage_GetGoogleOAuthUrlMutation>;
+export type ManageConferenceExportPage_GetGoogleOAuthUrlMutationResult = Apollo.MutationResult<ManageConferenceExportPage_GetGoogleOAuthUrlMutation>;
+export type ManageConferenceExportPage_GetGoogleOAuthUrlMutationOptions = Apollo.BaseMutationOptions<ManageConferenceExportPage_GetGoogleOAuthUrlMutation, ManageConferenceExportPage_GetGoogleOAuthUrlMutationVariables>;
+export const ManageConferenceExportPage_GetAttendeeGoogleAccountsDocument = gql`
+    query ManageConferenceExportPage_GetAttendeeGoogleAccounts($attendeeId: uuid!) {
+  AttendeeGoogleAccount(where: {attendeeId: {_eq: $attendeeId}}) {
+    ...ManageConferenceExportPage_AttendeeGoogleAccount
+  }
+}
+    ${ManageConferenceExportPage_AttendeeGoogleAccountFragmentDoc}`;
+
+/**
+ * __useManageConferenceExportPage_GetAttendeeGoogleAccountsQuery__
+ *
+ * To run a query within a React component, call `useManageConferenceExportPage_GetAttendeeGoogleAccountsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useManageConferenceExportPage_GetAttendeeGoogleAccountsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useManageConferenceExportPage_GetAttendeeGoogleAccountsQuery({
+ *   variables: {
+ *      attendeeId: // value for 'attendeeId'
+ *   },
+ * });
+ */
+export function useManageConferenceExportPage_GetAttendeeGoogleAccountsQuery(baseOptions: Apollo.QueryHookOptions<ManageConferenceExportPage_GetAttendeeGoogleAccountsQuery, ManageConferenceExportPage_GetAttendeeGoogleAccountsQueryVariables>) {
+        return Apollo.useQuery<ManageConferenceExportPage_GetAttendeeGoogleAccountsQuery, ManageConferenceExportPage_GetAttendeeGoogleAccountsQueryVariables>(ManageConferenceExportPage_GetAttendeeGoogleAccountsDocument, baseOptions);
+      }
+export function useManageConferenceExportPage_GetAttendeeGoogleAccountsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageConferenceExportPage_GetAttendeeGoogleAccountsQuery, ManageConferenceExportPage_GetAttendeeGoogleAccountsQueryVariables>) {
+          return Apollo.useLazyQuery<ManageConferenceExportPage_GetAttendeeGoogleAccountsQuery, ManageConferenceExportPage_GetAttendeeGoogleAccountsQueryVariables>(ManageConferenceExportPage_GetAttendeeGoogleAccountsDocument, baseOptions);
+        }
+export type ManageConferenceExportPage_GetAttendeeGoogleAccountsQueryHookResult = ReturnType<typeof useManageConferenceExportPage_GetAttendeeGoogleAccountsQuery>;
+export type ManageConferenceExportPage_GetAttendeeGoogleAccountsLazyQueryHookResult = ReturnType<typeof useManageConferenceExportPage_GetAttendeeGoogleAccountsLazyQuery>;
+export type ManageConferenceExportPage_GetAttendeeGoogleAccountsQueryResult = Apollo.QueryResult<ManageConferenceExportPage_GetAttendeeGoogleAccountsQuery, ManageConferenceExportPage_GetAttendeeGoogleAccountsQueryVariables>;
+export const ManageConferenceExportPage_DeleteAttendeeGoogleAccountDocument = gql`
+    mutation ManageConferenceExportPage_DeleteAttendeeGoogleAccount($attendeeGoogleAccountId: uuid!) {
+  delete_AttendeeGoogleAccount_by_pk(id: $attendeeGoogleAccountId) {
+    id
+  }
+}
+    `;
+export type ManageConferenceExportPage_DeleteAttendeeGoogleAccountMutationFn = Apollo.MutationFunction<ManageConferenceExportPage_DeleteAttendeeGoogleAccountMutation, ManageConferenceExportPage_DeleteAttendeeGoogleAccountMutationVariables>;
+
+/**
+ * __useManageConferenceExportPage_DeleteAttendeeGoogleAccountMutation__
+ *
+ * To run a mutation, you first call `useManageConferenceExportPage_DeleteAttendeeGoogleAccountMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageConferenceExportPage_DeleteAttendeeGoogleAccountMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageConferenceExportPageDeleteAttendeeGoogleAccountMutation, { data, loading, error }] = useManageConferenceExportPage_DeleteAttendeeGoogleAccountMutation({
+ *   variables: {
+ *      attendeeGoogleAccountId: // value for 'attendeeGoogleAccountId'
+ *   },
+ * });
+ */
+export function useManageConferenceExportPage_DeleteAttendeeGoogleAccountMutation(baseOptions?: Apollo.MutationHookOptions<ManageConferenceExportPage_DeleteAttendeeGoogleAccountMutation, ManageConferenceExportPage_DeleteAttendeeGoogleAccountMutationVariables>) {
+        return Apollo.useMutation<ManageConferenceExportPage_DeleteAttendeeGoogleAccountMutation, ManageConferenceExportPage_DeleteAttendeeGoogleAccountMutationVariables>(ManageConferenceExportPage_DeleteAttendeeGoogleAccountDocument, baseOptions);
+      }
+export type ManageConferenceExportPage_DeleteAttendeeGoogleAccountMutationHookResult = ReturnType<typeof useManageConferenceExportPage_DeleteAttendeeGoogleAccountMutation>;
+export type ManageConferenceExportPage_DeleteAttendeeGoogleAccountMutationResult = Apollo.MutationResult<ManageConferenceExportPage_DeleteAttendeeGoogleAccountMutation>;
+export type ManageConferenceExportPage_DeleteAttendeeGoogleAccountMutationOptions = Apollo.BaseMutationOptions<ManageConferenceExportPage_DeleteAttendeeGoogleAccountMutation, ManageConferenceExportPage_DeleteAttendeeGoogleAccountMutationVariables>;
+export const UploadYouTubeVideos_GetUploadYouTubeVideoJobsDocument = gql`
+    query UploadYouTubeVideos_GetUploadYouTubeVideoJobs($conferenceId: uuid!) {
+  job_queues_UploadYouTubeVideoJob(
+    where: {conferenceId: {_eq: $conferenceId}, jobStatusName: {_neq: COMPLETED}}
+    order_by: {createdAt: desc}
+  ) {
+    ...UploadYouTubeVideos_UploadYouTubeVideoJob
+  }
+}
+    ${UploadYouTubeVideos_UploadYouTubeVideoJobFragmentDoc}`;
+
+/**
+ * __useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery__
+ *
+ * To run a query within a React component, call `useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery(baseOptions: Apollo.QueryHookOptions<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery, UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables>) {
+        return Apollo.useQuery<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery, UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables>(UploadYouTubeVideos_GetUploadYouTubeVideoJobsDocument, baseOptions);
+      }
+export function useUploadYouTubeVideos_GetUploadYouTubeVideoJobsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery, UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables>) {
+          return Apollo.useLazyQuery<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery, UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables>(UploadYouTubeVideos_GetUploadYouTubeVideoJobsDocument, baseOptions);
+        }
+export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery>;
+export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsLazyQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetUploadYouTubeVideoJobsLazyQuery>;
+export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryResult = Apollo.QueryResult<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery, UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables>;
+export const UploadYouTubeVideos_GetAttendeeGoogleAccountsDocument = gql`
+    query UploadYouTubeVideos_GetAttendeeGoogleAccounts($attendeeId: uuid!) {
+  AttendeeGoogleAccount(where: {attendeeId: {_eq: $attendeeId}}) {
+    id
+    googleAccountEmail
+    youTubeData
+  }
+}
+    `;
+
+/**
+ * __useUploadYouTubeVideos_GetAttendeeGoogleAccountsQuery__
+ *
+ * To run a query within a React component, call `useUploadYouTubeVideos_GetAttendeeGoogleAccountsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUploadYouTubeVideos_GetAttendeeGoogleAccountsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUploadYouTubeVideos_GetAttendeeGoogleAccountsQuery({
+ *   variables: {
+ *      attendeeId: // value for 'attendeeId'
+ *   },
+ * });
+ */
+export function useUploadYouTubeVideos_GetAttendeeGoogleAccountsQuery(baseOptions: Apollo.QueryHookOptions<UploadYouTubeVideos_GetAttendeeGoogleAccountsQuery, UploadYouTubeVideos_GetAttendeeGoogleAccountsQueryVariables>) {
+        return Apollo.useQuery<UploadYouTubeVideos_GetAttendeeGoogleAccountsQuery, UploadYouTubeVideos_GetAttendeeGoogleAccountsQueryVariables>(UploadYouTubeVideos_GetAttendeeGoogleAccountsDocument, baseOptions);
+      }
+export function useUploadYouTubeVideos_GetAttendeeGoogleAccountsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UploadYouTubeVideos_GetAttendeeGoogleAccountsQuery, UploadYouTubeVideos_GetAttendeeGoogleAccountsQueryVariables>) {
+          return Apollo.useLazyQuery<UploadYouTubeVideos_GetAttendeeGoogleAccountsQuery, UploadYouTubeVideos_GetAttendeeGoogleAccountsQueryVariables>(UploadYouTubeVideos_GetAttendeeGoogleAccountsDocument, baseOptions);
+        }
+export type UploadYouTubeVideos_GetAttendeeGoogleAccountsQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetAttendeeGoogleAccountsQuery>;
+export type UploadYouTubeVideos_GetAttendeeGoogleAccountsLazyQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetAttendeeGoogleAccountsLazyQuery>;
+export type UploadYouTubeVideos_GetAttendeeGoogleAccountsQueryResult = Apollo.QueryResult<UploadYouTubeVideos_GetAttendeeGoogleAccountsQuery, UploadYouTubeVideos_GetAttendeeGoogleAccountsQueryVariables>;
+export const UploadYouTubeVideos_CreateUploadYouTubeVideoJobsDocument = gql`
+    mutation UploadYouTubeVideos_CreateUploadYouTubeVideoJobs($objects: [job_queues_UploadYouTubeVideoJob_insert_input!]!) {
+  insert_job_queues_UploadYouTubeVideoJob(objects: $objects) {
+    returning {
+      id
+    }
+  }
+}
+    `;
+export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutationFn = Apollo.MutationFunction<UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation, UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutationVariables>;
+
+/**
+ * __useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation__
+ *
+ * To run a mutation, you first call `useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uploadYouTubeVideosCreateUploadYouTubeVideoJobsMutation, { data, loading, error }] = useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation({
+ *   variables: {
+ *      objects: // value for 'objects'
+ *   },
+ * });
+ */
+export function useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation(baseOptions?: Apollo.MutationHookOptions<UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation, UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutationVariables>) {
+        return Apollo.useMutation<UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation, UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutationVariables>(UploadYouTubeVideos_CreateUploadYouTubeVideoJobsDocument, baseOptions);
+      }
+export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutationHookResult = ReturnType<typeof useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation>;
+export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutationResult = Apollo.MutationResult<UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation>;
+export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutationOptions = Apollo.BaseMutationOptions<UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation, UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutationVariables>;
+export const UploadYouTubeVideos_GetContentItemsDocument = gql`
+    query UploadYouTubeVideos_GetContentItems($contentItemIds: [uuid!]!) {
+  ContentItem(where: {id: {_in: $contentItemIds}}) {
+    id
+    name
+    contentGroup {
+      id
+      title
+    }
+  }
+}
+    `;
+
+/**
+ * __useUploadYouTubeVideos_GetContentItemsQuery__
+ *
+ * To run a query within a React component, call `useUploadYouTubeVideos_GetContentItemsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUploadYouTubeVideos_GetContentItemsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUploadYouTubeVideos_GetContentItemsQuery({
+ *   variables: {
+ *      contentItemIds: // value for 'contentItemIds'
+ *   },
+ * });
+ */
+export function useUploadYouTubeVideos_GetContentItemsQuery(baseOptions: Apollo.QueryHookOptions<UploadYouTubeVideos_GetContentItemsQuery, UploadYouTubeVideos_GetContentItemsQueryVariables>) {
+        return Apollo.useQuery<UploadYouTubeVideos_GetContentItemsQuery, UploadYouTubeVideos_GetContentItemsQueryVariables>(UploadYouTubeVideos_GetContentItemsDocument, baseOptions);
+      }
+export function useUploadYouTubeVideos_GetContentItemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UploadYouTubeVideos_GetContentItemsQuery, UploadYouTubeVideos_GetContentItemsQueryVariables>) {
+          return Apollo.useLazyQuery<UploadYouTubeVideos_GetContentItemsQuery, UploadYouTubeVideos_GetContentItemsQueryVariables>(UploadYouTubeVideos_GetContentItemsDocument, baseOptions);
+        }
+export type UploadYouTubeVideos_GetContentItemsQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetContentItemsQuery>;
+export type UploadYouTubeVideos_GetContentItemsLazyQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetContentItemsLazyQuery>;
+export type UploadYouTubeVideos_GetContentItemsQueryResult = Apollo.QueryResult<UploadYouTubeVideos_GetContentItemsQuery, UploadYouTubeVideos_GetContentItemsQueryVariables>;
+export const UploadYouTubeVideos_GetTemplateDataDocument = gql`
+    query UploadYouTubeVideos_GetTemplateData($contentItemIds: [uuid!]!) {
+  ContentItem(where: {id: {_in: $contentItemIds}}) {
+    id
+    name
+    contentGroup {
+      id
+      shortTitle
+      title
+      contentItems {
+        id
+        youTubeUploads {
+          id
+          videoTitle
+          videoId
+        }
+      }
+      abstractContentItems: contentItems(
+        where: {contentTypeName: {_eq: ABSTRACT}}
+        order_by: {updatedAt: desc}
+        limit: 1
+      ) {
+        ...UploadYouTubeVideos_ContentItem
+      }
+      paperLinkContentItems: contentItems(where: {contentTypeName: {_eq: PAPER_LINK}}) {
+        ...UploadYouTubeVideos_ContentItem
+      }
+      paperUrlContentItems: contentItems(where: {contentTypeName: {_eq: PAPER_URL}}) {
+        ...UploadYouTubeVideos_ContentItem
+      }
+    }
+  }
+}
+    ${UploadYouTubeVideos_ContentItemFragmentDoc}`;
+
+/**
+ * __useUploadYouTubeVideos_GetTemplateDataQuery__
+ *
+ * To run a query within a React component, call `useUploadYouTubeVideos_GetTemplateDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUploadYouTubeVideos_GetTemplateDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUploadYouTubeVideos_GetTemplateDataQuery({
+ *   variables: {
+ *      contentItemIds: // value for 'contentItemIds'
+ *   },
+ * });
+ */
+export function useUploadYouTubeVideos_GetTemplateDataQuery(baseOptions: Apollo.QueryHookOptions<UploadYouTubeVideos_GetTemplateDataQuery, UploadYouTubeVideos_GetTemplateDataQueryVariables>) {
+        return Apollo.useQuery<UploadYouTubeVideos_GetTemplateDataQuery, UploadYouTubeVideos_GetTemplateDataQueryVariables>(UploadYouTubeVideos_GetTemplateDataDocument, baseOptions);
+      }
+export function useUploadYouTubeVideos_GetTemplateDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UploadYouTubeVideos_GetTemplateDataQuery, UploadYouTubeVideos_GetTemplateDataQueryVariables>) {
+          return Apollo.useLazyQuery<UploadYouTubeVideos_GetTemplateDataQuery, UploadYouTubeVideos_GetTemplateDataQueryVariables>(UploadYouTubeVideos_GetTemplateDataDocument, baseOptions);
+        }
+export type UploadYouTubeVideos_GetTemplateDataQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetTemplateDataQuery>;
+export type UploadYouTubeVideos_GetTemplateDataLazyQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetTemplateDataLazyQuery>;
+export type UploadYouTubeVideos_GetTemplateDataQueryResult = Apollo.QueryResult<UploadYouTubeVideos_GetTemplateDataQuery, UploadYouTubeVideos_GetTemplateDataQueryVariables>;
+export const UploadYouTubeVideos_RefreshYouTubeDataDocument = gql`
+    mutation UploadYouTubeVideos_RefreshYouTubeData($attendeeGoogleAccountId: uuid!) {
+  refreshYouTubeData(attendeeGoogleAccountId: $attendeeGoogleAccountId) {
+    message
+    success
+  }
+}
+    `;
+export type UploadYouTubeVideos_RefreshYouTubeDataMutationFn = Apollo.MutationFunction<UploadYouTubeVideos_RefreshYouTubeDataMutation, UploadYouTubeVideos_RefreshYouTubeDataMutationVariables>;
+
+/**
+ * __useUploadYouTubeVideos_RefreshYouTubeDataMutation__
+ *
+ * To run a mutation, you first call `useUploadYouTubeVideos_RefreshYouTubeDataMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadYouTubeVideos_RefreshYouTubeDataMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uploadYouTubeVideosRefreshYouTubeDataMutation, { data, loading, error }] = useUploadYouTubeVideos_RefreshYouTubeDataMutation({
+ *   variables: {
+ *      attendeeGoogleAccountId: // value for 'attendeeGoogleAccountId'
+ *   },
+ * });
+ */
+export function useUploadYouTubeVideos_RefreshYouTubeDataMutation(baseOptions?: Apollo.MutationHookOptions<UploadYouTubeVideos_RefreshYouTubeDataMutation, UploadYouTubeVideos_RefreshYouTubeDataMutationVariables>) {
+        return Apollo.useMutation<UploadYouTubeVideos_RefreshYouTubeDataMutation, UploadYouTubeVideos_RefreshYouTubeDataMutationVariables>(UploadYouTubeVideos_RefreshYouTubeDataDocument, baseOptions);
+      }
+export type UploadYouTubeVideos_RefreshYouTubeDataMutationHookResult = ReturnType<typeof useUploadYouTubeVideos_RefreshYouTubeDataMutation>;
+export type UploadYouTubeVideos_RefreshYouTubeDataMutationResult = Apollo.MutationResult<UploadYouTubeVideos_RefreshYouTubeDataMutation>;
+export type UploadYouTubeVideos_RefreshYouTubeDataMutationOptions = Apollo.BaseMutationOptions<UploadYouTubeVideos_RefreshYouTubeDataMutation, UploadYouTubeVideos_RefreshYouTubeDataMutationVariables>;
+export const UploadYouTubeVideos_GetYouTubeUploadsDocument = gql`
+    query UploadYouTubeVideos_GetYouTubeUploads($conferenceId: uuid!) {
+  YouTubeUpload(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...UploadYouTubeVideos_YouTubeUpload
+  }
+}
+    ${UploadYouTubeVideos_YouTubeUploadFragmentDoc}`;
+
+/**
+ * __useUploadYouTubeVideos_GetYouTubeUploadsQuery__
+ *
+ * To run a query within a React component, call `useUploadYouTubeVideos_GetYouTubeUploadsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUploadYouTubeVideos_GetYouTubeUploadsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUploadYouTubeVideos_GetYouTubeUploadsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useUploadYouTubeVideos_GetYouTubeUploadsQuery(baseOptions: Apollo.QueryHookOptions<UploadYouTubeVideos_GetYouTubeUploadsQuery, UploadYouTubeVideos_GetYouTubeUploadsQueryVariables>) {
+        return Apollo.useQuery<UploadYouTubeVideos_GetYouTubeUploadsQuery, UploadYouTubeVideos_GetYouTubeUploadsQueryVariables>(UploadYouTubeVideos_GetYouTubeUploadsDocument, baseOptions);
+      }
+export function useUploadYouTubeVideos_GetYouTubeUploadsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UploadYouTubeVideos_GetYouTubeUploadsQuery, UploadYouTubeVideos_GetYouTubeUploadsQueryVariables>) {
+          return Apollo.useLazyQuery<UploadYouTubeVideos_GetYouTubeUploadsQuery, UploadYouTubeVideos_GetYouTubeUploadsQueryVariables>(UploadYouTubeVideos_GetYouTubeUploadsDocument, baseOptions);
+        }
+export type UploadYouTubeVideos_GetYouTubeUploadsQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetYouTubeUploadsQuery>;
+export type UploadYouTubeVideos_GetYouTubeUploadsLazyQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetYouTubeUploadsLazyQuery>;
+export type UploadYouTubeVideos_GetYouTubeUploadsQueryResult = Apollo.QueryResult<UploadYouTubeVideos_GetYouTubeUploadsQuery, UploadYouTubeVideos_GetYouTubeUploadsQueryVariables>;
 export const ImportAttendeesDocument = gql`
     mutation ImportAttendees($insertAttendees: [Attendee_insert_input!]!, $insertInvitations: [Invitation_insert_input!]!) {
   insert_Attendee(objects: $insertAttendees) {
@@ -36148,6 +38824,306 @@ export function useUpdateEventPersonMutation(baseOptions?: Apollo.MutationHookOp
 export type UpdateEventPersonMutationHookResult = ReturnType<typeof useUpdateEventPersonMutation>;
 export type UpdateEventPersonMutationResult = Apollo.MutationResult<UpdateEventPersonMutation>;
 export type UpdateEventPersonMutationOptions = Apollo.BaseMutationOptions<UpdateEventPersonMutation, UpdateEventPersonMutationVariables>;
+export const AddSponsorContentMenu_CreateContentItemDocument = gql`
+    mutation AddSponsorContentMenu_CreateContentItem($object: ContentItem_insert_input!) {
+  insert_ContentItem_one(object: $object) {
+    id
+  }
+}
+    `;
+export type AddSponsorContentMenu_CreateContentItemMutationFn = Apollo.MutationFunction<AddSponsorContentMenu_CreateContentItemMutation, AddSponsorContentMenu_CreateContentItemMutationVariables>;
+
+/**
+ * __useAddSponsorContentMenu_CreateContentItemMutation__
+ *
+ * To run a mutation, you first call `useAddSponsorContentMenu_CreateContentItemMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddSponsorContentMenu_CreateContentItemMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addSponsorContentMenuCreateContentItemMutation, { data, loading, error }] = useAddSponsorContentMenu_CreateContentItemMutation({
+ *   variables: {
+ *      object: // value for 'object'
+ *   },
+ * });
+ */
+export function useAddSponsorContentMenu_CreateContentItemMutation(baseOptions?: Apollo.MutationHookOptions<AddSponsorContentMenu_CreateContentItemMutation, AddSponsorContentMenu_CreateContentItemMutationVariables>) {
+        return Apollo.useMutation<AddSponsorContentMenu_CreateContentItemMutation, AddSponsorContentMenu_CreateContentItemMutationVariables>(AddSponsorContentMenu_CreateContentItemDocument, baseOptions);
+      }
+export type AddSponsorContentMenu_CreateContentItemMutationHookResult = ReturnType<typeof useAddSponsorContentMenu_CreateContentItemMutation>;
+export type AddSponsorContentMenu_CreateContentItemMutationResult = Apollo.MutationResult<AddSponsorContentMenu_CreateContentItemMutation>;
+export type AddSponsorContentMenu_CreateContentItemMutationOptions = Apollo.BaseMutationOptions<AddSponsorContentMenu_CreateContentItemMutation, AddSponsorContentMenu_CreateContentItemMutationVariables>;
+export const EditableSponsorsTable_GetAllSponsorsDocument = gql`
+    query EditableSponsorsTable_GetAllSponsors($conferenceId: uuid!) {
+  ContentGroup(
+    where: {contentGroupTypeName: {_eq: SPONSOR}, conferenceId: {_eq: $conferenceId}}
+  ) {
+    ...EditableSponsorsTable_ContentGroupInfo
+  }
+}
+    ${EditableSponsorsTable_ContentGroupInfoFragmentDoc}`;
+
+/**
+ * __useEditableSponsorsTable_GetAllSponsorsQuery__
+ *
+ * To run a query within a React component, call `useEditableSponsorsTable_GetAllSponsorsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEditableSponsorsTable_GetAllSponsorsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useEditableSponsorsTable_GetAllSponsorsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useEditableSponsorsTable_GetAllSponsorsQuery(baseOptions: Apollo.QueryHookOptions<EditableSponsorsTable_GetAllSponsorsQuery, EditableSponsorsTable_GetAllSponsorsQueryVariables>) {
+        return Apollo.useQuery<EditableSponsorsTable_GetAllSponsorsQuery, EditableSponsorsTable_GetAllSponsorsQueryVariables>(EditableSponsorsTable_GetAllSponsorsDocument, baseOptions);
+      }
+export function useEditableSponsorsTable_GetAllSponsorsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EditableSponsorsTable_GetAllSponsorsQuery, EditableSponsorsTable_GetAllSponsorsQueryVariables>) {
+          return Apollo.useLazyQuery<EditableSponsorsTable_GetAllSponsorsQuery, EditableSponsorsTable_GetAllSponsorsQueryVariables>(EditableSponsorsTable_GetAllSponsorsDocument, baseOptions);
+        }
+export type EditableSponsorsTable_GetAllSponsorsQueryHookResult = ReturnType<typeof useEditableSponsorsTable_GetAllSponsorsQuery>;
+export type EditableSponsorsTable_GetAllSponsorsLazyQueryHookResult = ReturnType<typeof useEditableSponsorsTable_GetAllSponsorsLazyQuery>;
+export type EditableSponsorsTable_GetAllSponsorsQueryResult = Apollo.QueryResult<EditableSponsorsTable_GetAllSponsorsQuery, EditableSponsorsTable_GetAllSponsorsQueryVariables>;
+export const EditableSponsorsTable_InsertSponsorDocument = gql`
+    mutation EditableSponsorsTable_InsertSponsor($contentGroup: ContentGroup_insert_input!) {
+  insert_ContentGroup_one(object: $contentGroup) {
+    ...EditableSponsorsTable_ContentGroupInfo
+  }
+}
+    ${EditableSponsorsTable_ContentGroupInfoFragmentDoc}`;
+export type EditableSponsorsTable_InsertSponsorMutationFn = Apollo.MutationFunction<EditableSponsorsTable_InsertSponsorMutation, EditableSponsorsTable_InsertSponsorMutationVariables>;
+
+/**
+ * __useEditableSponsorsTable_InsertSponsorMutation__
+ *
+ * To run a mutation, you first call `useEditableSponsorsTable_InsertSponsorMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditableSponsorsTable_InsertSponsorMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editableSponsorsTableInsertSponsorMutation, { data, loading, error }] = useEditableSponsorsTable_InsertSponsorMutation({
+ *   variables: {
+ *      contentGroup: // value for 'contentGroup'
+ *   },
+ * });
+ */
+export function useEditableSponsorsTable_InsertSponsorMutation(baseOptions?: Apollo.MutationHookOptions<EditableSponsorsTable_InsertSponsorMutation, EditableSponsorsTable_InsertSponsorMutationVariables>) {
+        return Apollo.useMutation<EditableSponsorsTable_InsertSponsorMutation, EditableSponsorsTable_InsertSponsorMutationVariables>(EditableSponsorsTable_InsertSponsorDocument, baseOptions);
+      }
+export type EditableSponsorsTable_InsertSponsorMutationHookResult = ReturnType<typeof useEditableSponsorsTable_InsertSponsorMutation>;
+export type EditableSponsorsTable_InsertSponsorMutationResult = Apollo.MutationResult<EditableSponsorsTable_InsertSponsorMutation>;
+export type EditableSponsorsTable_InsertSponsorMutationOptions = Apollo.BaseMutationOptions<EditableSponsorsTable_InsertSponsorMutation, EditableSponsorsTable_InsertSponsorMutationVariables>;
+export const EditableSponsorsTable_UpdateSponsorDocument = gql`
+    mutation EditableSponsorsTable_UpdateSponsor($contentGroupId: uuid!, $object: ContentGroup_set_input!) {
+  update_ContentGroup_by_pk(pk_columns: {id: $contentGroupId}, _set: $object) {
+    id
+  }
+}
+    `;
+export type EditableSponsorsTable_UpdateSponsorMutationFn = Apollo.MutationFunction<EditableSponsorsTable_UpdateSponsorMutation, EditableSponsorsTable_UpdateSponsorMutationVariables>;
+
+/**
+ * __useEditableSponsorsTable_UpdateSponsorMutation__
+ *
+ * To run a mutation, you first call `useEditableSponsorsTable_UpdateSponsorMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditableSponsorsTable_UpdateSponsorMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editableSponsorsTableUpdateSponsorMutation, { data, loading, error }] = useEditableSponsorsTable_UpdateSponsorMutation({
+ *   variables: {
+ *      contentGroupId: // value for 'contentGroupId'
+ *      object: // value for 'object'
+ *   },
+ * });
+ */
+export function useEditableSponsorsTable_UpdateSponsorMutation(baseOptions?: Apollo.MutationHookOptions<EditableSponsorsTable_UpdateSponsorMutation, EditableSponsorsTable_UpdateSponsorMutationVariables>) {
+        return Apollo.useMutation<EditableSponsorsTable_UpdateSponsorMutation, EditableSponsorsTable_UpdateSponsorMutationVariables>(EditableSponsorsTable_UpdateSponsorDocument, baseOptions);
+      }
+export type EditableSponsorsTable_UpdateSponsorMutationHookResult = ReturnType<typeof useEditableSponsorsTable_UpdateSponsorMutation>;
+export type EditableSponsorsTable_UpdateSponsorMutationResult = Apollo.MutationResult<EditableSponsorsTable_UpdateSponsorMutation>;
+export type EditableSponsorsTable_UpdateSponsorMutationOptions = Apollo.BaseMutationOptions<EditableSponsorsTable_UpdateSponsorMutation, EditableSponsorsTable_UpdateSponsorMutationVariables>;
+export const EditableSponsorsTable_DeleteSponsorDocument = gql`
+    mutation EditableSponsorsTable_DeleteSponsor($contentGroupIds: [uuid!]!) {
+  delete_ContentGroup(where: {id: {_in: $contentGroupIds}}) {
+    returning {
+      id
+    }
+  }
+}
+    `;
+export type EditableSponsorsTable_DeleteSponsorMutationFn = Apollo.MutationFunction<EditableSponsorsTable_DeleteSponsorMutation, EditableSponsorsTable_DeleteSponsorMutationVariables>;
+
+/**
+ * __useEditableSponsorsTable_DeleteSponsorMutation__
+ *
+ * To run a mutation, you first call `useEditableSponsorsTable_DeleteSponsorMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditableSponsorsTable_DeleteSponsorMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editableSponsorsTableDeleteSponsorMutation, { data, loading, error }] = useEditableSponsorsTable_DeleteSponsorMutation({
+ *   variables: {
+ *      contentGroupIds: // value for 'contentGroupIds'
+ *   },
+ * });
+ */
+export function useEditableSponsorsTable_DeleteSponsorMutation(baseOptions?: Apollo.MutationHookOptions<EditableSponsorsTable_DeleteSponsorMutation, EditableSponsorsTable_DeleteSponsorMutationVariables>) {
+        return Apollo.useMutation<EditableSponsorsTable_DeleteSponsorMutation, EditableSponsorsTable_DeleteSponsorMutationVariables>(EditableSponsorsTable_DeleteSponsorDocument, baseOptions);
+      }
+export type EditableSponsorsTable_DeleteSponsorMutationHookResult = ReturnType<typeof useEditableSponsorsTable_DeleteSponsorMutation>;
+export type EditableSponsorsTable_DeleteSponsorMutationResult = Apollo.MutationResult<EditableSponsorsTable_DeleteSponsorMutation>;
+export type EditableSponsorsTable_DeleteSponsorMutationOptions = Apollo.BaseMutationOptions<EditableSponsorsTable_DeleteSponsorMutation, EditableSponsorsTable_DeleteSponsorMutationVariables>;
+export const SponsorSecondaryEditor_GetSponsorContentItemsDocument = gql`
+    query SponsorSecondaryEditor_GetSponsorContentItems($contentGroupId: uuid!) {
+  ContentItem(where: {contentGroupId: {_eq: $contentGroupId}}) {
+    ...SponsorSecondaryEditor_ContentItem
+  }
+}
+    ${SponsorSecondaryEditor_ContentItemFragmentDoc}`;
+
+/**
+ * __useSponsorSecondaryEditor_GetSponsorContentItemsQuery__
+ *
+ * To run a query within a React component, call `useSponsorSecondaryEditor_GetSponsorContentItemsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSponsorSecondaryEditor_GetSponsorContentItemsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSponsorSecondaryEditor_GetSponsorContentItemsQuery({
+ *   variables: {
+ *      contentGroupId: // value for 'contentGroupId'
+ *   },
+ * });
+ */
+export function useSponsorSecondaryEditor_GetSponsorContentItemsQuery(baseOptions: Apollo.QueryHookOptions<SponsorSecondaryEditor_GetSponsorContentItemsQuery, SponsorSecondaryEditor_GetSponsorContentItemsQueryVariables>) {
+        return Apollo.useQuery<SponsorSecondaryEditor_GetSponsorContentItemsQuery, SponsorSecondaryEditor_GetSponsorContentItemsQueryVariables>(SponsorSecondaryEditor_GetSponsorContentItemsDocument, baseOptions);
+      }
+export function useSponsorSecondaryEditor_GetSponsorContentItemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SponsorSecondaryEditor_GetSponsorContentItemsQuery, SponsorSecondaryEditor_GetSponsorContentItemsQueryVariables>) {
+          return Apollo.useLazyQuery<SponsorSecondaryEditor_GetSponsorContentItemsQuery, SponsorSecondaryEditor_GetSponsorContentItemsQueryVariables>(SponsorSecondaryEditor_GetSponsorContentItemsDocument, baseOptions);
+        }
+export type SponsorSecondaryEditor_GetSponsorContentItemsQueryHookResult = ReturnType<typeof useSponsorSecondaryEditor_GetSponsorContentItemsQuery>;
+export type SponsorSecondaryEditor_GetSponsorContentItemsLazyQueryHookResult = ReturnType<typeof useSponsorSecondaryEditor_GetSponsorContentItemsLazyQuery>;
+export type SponsorSecondaryEditor_GetSponsorContentItemsQueryResult = Apollo.QueryResult<SponsorSecondaryEditor_GetSponsorContentItemsQuery, SponsorSecondaryEditor_GetSponsorContentItemsQueryVariables>;
+export const SponsorContentItem_DeleteContentItemDocument = gql`
+    mutation SponsorContentItem_DeleteContentItem($contentItemId: uuid!) {
+  delete_ContentItem_by_pk(id: $contentItemId) {
+    id
+  }
+}
+    `;
+export type SponsorContentItem_DeleteContentItemMutationFn = Apollo.MutationFunction<SponsorContentItem_DeleteContentItemMutation, SponsorContentItem_DeleteContentItemMutationVariables>;
+
+/**
+ * __useSponsorContentItem_DeleteContentItemMutation__
+ *
+ * To run a mutation, you first call `useSponsorContentItem_DeleteContentItemMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSponsorContentItem_DeleteContentItemMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sponsorContentItemDeleteContentItemMutation, { data, loading, error }] = useSponsorContentItem_DeleteContentItemMutation({
+ *   variables: {
+ *      contentItemId: // value for 'contentItemId'
+ *   },
+ * });
+ */
+export function useSponsorContentItem_DeleteContentItemMutation(baseOptions?: Apollo.MutationHookOptions<SponsorContentItem_DeleteContentItemMutation, SponsorContentItem_DeleteContentItemMutationVariables>) {
+        return Apollo.useMutation<SponsorContentItem_DeleteContentItemMutation, SponsorContentItem_DeleteContentItemMutationVariables>(SponsorContentItem_DeleteContentItemDocument, baseOptions);
+      }
+export type SponsorContentItem_DeleteContentItemMutationHookResult = ReturnType<typeof useSponsorContentItem_DeleteContentItemMutation>;
+export type SponsorContentItem_DeleteContentItemMutationResult = Apollo.MutationResult<SponsorContentItem_DeleteContentItemMutation>;
+export type SponsorContentItem_DeleteContentItemMutationOptions = Apollo.BaseMutationOptions<SponsorContentItem_DeleteContentItemMutation, SponsorContentItem_DeleteContentItemMutationVariables>;
+export const SponsorContentItem_SetContentItemIsHiddenDocument = gql`
+    mutation SponsorContentItem_SetContentItemIsHidden($contentItemId: uuid!, $isHidden: Boolean!) {
+  update_ContentItem_by_pk(
+    pk_columns: {id: $contentItemId}
+    _set: {isHidden: $isHidden}
+  ) {
+    id
+  }
+}
+    `;
+export type SponsorContentItem_SetContentItemIsHiddenMutationFn = Apollo.MutationFunction<SponsorContentItem_SetContentItemIsHiddenMutation, SponsorContentItem_SetContentItemIsHiddenMutationVariables>;
+
+/**
+ * __useSponsorContentItem_SetContentItemIsHiddenMutation__
+ *
+ * To run a mutation, you first call `useSponsorContentItem_SetContentItemIsHiddenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSponsorContentItem_SetContentItemIsHiddenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sponsorContentItemSetContentItemIsHiddenMutation, { data, loading, error }] = useSponsorContentItem_SetContentItemIsHiddenMutation({
+ *   variables: {
+ *      contentItemId: // value for 'contentItemId'
+ *      isHidden: // value for 'isHidden'
+ *   },
+ * });
+ */
+export function useSponsorContentItem_SetContentItemIsHiddenMutation(baseOptions?: Apollo.MutationHookOptions<SponsorContentItem_SetContentItemIsHiddenMutation, SponsorContentItem_SetContentItemIsHiddenMutationVariables>) {
+        return Apollo.useMutation<SponsorContentItem_SetContentItemIsHiddenMutation, SponsorContentItem_SetContentItemIsHiddenMutationVariables>(SponsorContentItem_SetContentItemIsHiddenDocument, baseOptions);
+      }
+export type SponsorContentItem_SetContentItemIsHiddenMutationHookResult = ReturnType<typeof useSponsorContentItem_SetContentItemIsHiddenMutation>;
+export type SponsorContentItem_SetContentItemIsHiddenMutationResult = Apollo.MutationResult<SponsorContentItem_SetContentItemIsHiddenMutation>;
+export type SponsorContentItem_SetContentItemIsHiddenMutationOptions = Apollo.BaseMutationOptions<SponsorContentItem_SetContentItemIsHiddenMutation, SponsorContentItem_SetContentItemIsHiddenMutationVariables>;
+export const SponsorContentItemInner_UpdateContentItemDocument = gql`
+    mutation SponsorContentItemInner_UpdateContentItem($contentItemId: uuid!, $contentItem: ContentItem_set_input!) {
+  update_ContentItem_by_pk(pk_columns: {id: $contentItemId}, _set: $contentItem) {
+    id
+  }
+}
+    `;
+export type SponsorContentItemInner_UpdateContentItemMutationFn = Apollo.MutationFunction<SponsorContentItemInner_UpdateContentItemMutation, SponsorContentItemInner_UpdateContentItemMutationVariables>;
+
+/**
+ * __useSponsorContentItemInner_UpdateContentItemMutation__
+ *
+ * To run a mutation, you first call `useSponsorContentItemInner_UpdateContentItemMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSponsorContentItemInner_UpdateContentItemMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sponsorContentItemInnerUpdateContentItemMutation, { data, loading, error }] = useSponsorContentItemInner_UpdateContentItemMutation({
+ *   variables: {
+ *      contentItemId: // value for 'contentItemId'
+ *      contentItem: // value for 'contentItem'
+ *   },
+ * });
+ */
+export function useSponsorContentItemInner_UpdateContentItemMutation(baseOptions?: Apollo.MutationHookOptions<SponsorContentItemInner_UpdateContentItemMutation, SponsorContentItemInner_UpdateContentItemMutationVariables>) {
+        return Apollo.useMutation<SponsorContentItemInner_UpdateContentItemMutation, SponsorContentItemInner_UpdateContentItemMutationVariables>(SponsorContentItemInner_UpdateContentItemDocument, baseOptions);
+      }
+export type SponsorContentItemInner_UpdateContentItemMutationHookResult = ReturnType<typeof useSponsorContentItemInner_UpdateContentItemMutation>;
+export type SponsorContentItemInner_UpdateContentItemMutationResult = Apollo.MutationResult<SponsorContentItemInner_UpdateContentItemMutation>;
+export type SponsorContentItemInner_UpdateContentItemMutationOptions = Apollo.BaseMutationOptions<SponsorContentItemInner_UpdateContentItemMutation, SponsorContentItemInner_UpdateContentItemMutationVariables>;
 export const ConferenceTakenDocument = gql`
     query ConferenceTaken($name: String!, $shortName: String!, $slug: String!) {
   Conference(
@@ -36267,7 +39243,7 @@ export const CreateNewConferenceMetaStructureDocument = gql`
     }
   }
   insert_ContentGroup(
-    objects: {conferenceId: $conferenceId, contentGroupTypeName: LANDING_PAGE, contentItems: {data: [{conferenceId: $conferenceId, contentTypeName: ABSTRACT, data: $abstractData, isHidden: false, layoutData: {}, name: "Welcome text"}, {conferenceId: $conferenceId, contentTypeName: CONTENT_GROUP_LIST, data: $contentGroupListData, isHidden: false, layoutData: {}, name: "Content group list"}]}, shortTitle: "Landing", title: "Landing page"}
+    objects: {conferenceId: $conferenceId, contentGroupTypeName: LANDING_PAGE, contentItems: {data: [{conferenceId: $conferenceId, contentTypeName: ABSTRACT, data: $abstractData, isHidden: false, layoutData: null, name: "Welcome text"}, {conferenceId: $conferenceId, contentTypeName: CONTENT_GROUP_LIST, data: $contentGroupListData, isHidden: false, layoutData: null, name: "Content group list"}]}, shortTitle: "Landing", title: "Landing page"}
   ) {
     returning {
       ...ContentGroupData
@@ -36775,6 +39751,40 @@ export function useUserEventRolesSubscription(baseOptions: Apollo.SubscriptionHo
       }
 export type UserEventRolesSubscriptionHookResult = ReturnType<typeof useUserEventRolesSubscription>;
 export type UserEventRolesSubscriptionResult = Apollo.SubscriptionResult<UserEventRolesSubscription>;
+export const GoogleOAuth_SubmitGoogleOAuthCodeDocument = gql`
+    mutation GoogleOAuth_SubmitGoogleOAuthCode($code: String!, $state: String!) {
+  submitGoogleOAuthCode(code: $code, state: $state) {
+    message
+    success
+  }
+}
+    `;
+export type GoogleOAuth_SubmitGoogleOAuthCodeMutationFn = Apollo.MutationFunction<GoogleOAuth_SubmitGoogleOAuthCodeMutation, GoogleOAuth_SubmitGoogleOAuthCodeMutationVariables>;
+
+/**
+ * __useGoogleOAuth_SubmitGoogleOAuthCodeMutation__
+ *
+ * To run a mutation, you first call `useGoogleOAuth_SubmitGoogleOAuthCodeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGoogleOAuth_SubmitGoogleOAuthCodeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [googleOAuthSubmitGoogleOAuthCodeMutation, { data, loading, error }] = useGoogleOAuth_SubmitGoogleOAuthCodeMutation({
+ *   variables: {
+ *      code: // value for 'code'
+ *      state: // value for 'state'
+ *   },
+ * });
+ */
+export function useGoogleOAuth_SubmitGoogleOAuthCodeMutation(baseOptions?: Apollo.MutationHookOptions<GoogleOAuth_SubmitGoogleOAuthCodeMutation, GoogleOAuth_SubmitGoogleOAuthCodeMutationVariables>) {
+        return Apollo.useMutation<GoogleOAuth_SubmitGoogleOAuthCodeMutation, GoogleOAuth_SubmitGoogleOAuthCodeMutationVariables>(GoogleOAuth_SubmitGoogleOAuthCodeDocument, baseOptions);
+      }
+export type GoogleOAuth_SubmitGoogleOAuthCodeMutationHookResult = ReturnType<typeof useGoogleOAuth_SubmitGoogleOAuthCodeMutation>;
+export type GoogleOAuth_SubmitGoogleOAuthCodeMutationResult = Apollo.MutationResult<GoogleOAuth_SubmitGoogleOAuthCodeMutation>;
+export type GoogleOAuth_SubmitGoogleOAuthCodeMutationOptions = Apollo.BaseMutationOptions<GoogleOAuth_SubmitGoogleOAuthCodeMutation, GoogleOAuth_SubmitGoogleOAuthCodeMutationVariables>;
 export const SelectInvitationForAcceptDocument = gql`
     query SelectInvitationForAccept($inviteCode: uuid!) {
   Invitation(where: {inviteCode: {_eq: $inviteCode}}) {

@@ -30,7 +30,7 @@ function createDefaultVideo(
 
 export const VideoItemTemplate: ItemBaseTemplate = {
     supported: true,
-    createDefault: (group, type, required) => {
+    createDefault: (type, required) => {
         assert(
             type === ContentType_Enum.VideoBroadcast ||
                 type === ContentType_Enum.VideoCountdown ||
@@ -78,7 +78,7 @@ export const VideoItemTemplate: ItemBaseTemplate = {
                     typeName: type,
                     isHidden: false,
                     data: [],
-                    layoutData: {},
+                    layoutData: null,
                 },
             };
         }

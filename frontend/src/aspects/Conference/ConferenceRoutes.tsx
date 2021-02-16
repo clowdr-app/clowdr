@@ -20,6 +20,7 @@ import ConferenceTimeline from "./Attend/Schedule/ConferenceTimeline";
 import AttendeesContextProvider from "./AttendeesContext";
 import ManageConferenceBroadcastPage from "./Manage/ManageConferenceBroadcastPage";
 import ManageConferenceContentPage from "./Manage/ManageConferenceContentPage";
+import ManageConferenceExportPage from "./Manage/ManageConferenceExportPage";
 import ManageConferenceGroupsPage from "./Manage/ManageConferenceGroupsPage";
 import ManageConferenceImportPage from "./Manage/ManageConferenceImportPage";
 import ManageConferenceNamePage from "./Manage/ManageConferenceNamePage";
@@ -27,6 +28,7 @@ import ManageConferencePeoplePage from "./Manage/ManageConferencePeoplePage";
 import ManageConferenceRolesPage from "./Manage/ManageConferenceRolesPage";
 import ManageConferenceRoomsPage from "./Manage/ManageConferenceRoomsPage";
 import ManageConferenceSchedulePage from "./Manage/ManageConferenceSchedulePage";
+import { ManageConferenceSponsorsPage } from "./Manage/ManageConferenceSponsorsPage";
 import ManagerLandingPage from "./Manage/ManagerLandingPage";
 import RequireAtLeastOnePermissionWrapper from "./RequireAtLeastOnePermissionWrapper";
 import ConferenceProvider, { useConference } from "./useConference";
@@ -106,7 +108,7 @@ function ConferenceRoutesInner({ rootUrl }: { rootUrl: string }): JSX.Element {
             </Route>
 
             <Route path={`${rootUrl}/manage/export`}>
-                <PageNotImplemented />
+                <ManageConferenceExportPage />
             </Route>
             <Route path={`${rootUrl}/manage/schedule`}>
                 <ManageConferenceSchedulePage />
@@ -115,7 +117,7 @@ function ConferenceRoutesInner({ rootUrl }: { rootUrl: string }): JSX.Element {
                 <PageNotImplemented />
             </Route>
             <Route path={`${rootUrl}/manage/sponsors`}>
-                <PageNotImplemented />
+                <ManageConferenceSponsorsPage />
             </Route>
             <Route path={`${rootUrl}/manage/analytics`}>
                 <PageNotImplemented />

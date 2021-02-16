@@ -5,6 +5,10 @@ import {
     AccordionIcon,
     AccordionItem,
     AccordionPanel,
+    Alert,
+    AlertDescription,
+    AlertIcon,
+    AlertTitle,
     Box,
     Button,
     Center,
@@ -36,6 +40,7 @@ import {
     Permission_Enum,
     RoomInfoFragment,
     RoomMode_Enum,
+    RoomPrivacy_Enum,
     useDeleteEventInfosMutation,
     useInsertEventInfoMutation,
     useSelectWholeScheduleQuery,
@@ -150,6 +155,10 @@ function isOngoing(now: number, startLeeway: number, endLeeway: number, start: n
     return start - startLeeway <= now && now <= end + endLeeway;
 }
 
+function areOverlapping(start1: number, end1: number, start2: number, end2: number) {
+    return start1 < end2 && start2 < end1;
+}
+
 const liveStreamRoomModes: RoomMode_Enum[] = [
     RoomMode_Enum.Prerecorded,
     RoomMode_Enum.Presentation,
@@ -171,6 +180,13 @@ function EditableScheduleTable(): JSX.Element {
         () =>
             wholeSchedule.data?.Room
                 ? [...wholeSchedule.data.Room]
+                      .filter(
+                          (room) =>
+                              !room.originatingContentGroupId &&
+                              !room.originatingEventId &&
+                              room.roomPrivacyName !== RoomPrivacy_Enum.Dm &&
+                              room.roomPrivacyName !== RoomPrivacy_Enum.Managed
+                      )
                       .sort((x, y) => x.name.localeCompare(y.name))
                       .map((room) => {
                           return (
@@ -238,7 +254,6 @@ function EditableScheduleTable(): JSX.Element {
                 },
                 get: (record) => (record.startTime ? new Date(record.startTime) : new Date()),
                 set: (record, v: Date) => {
-                    // TODO: Make this match updateMyData
                     record.startTime = v.toISOString() as any;
                 },
                 filterFn: dateTimeFilterFn(["startTime"]),
@@ -246,21 +261,28 @@ function EditableScheduleTable(): JSX.Element {
                 sort: (x: Date, y: Date) => x.getTime() - y.getTime(),
                 cell: function StartTimeCell(props: CellProps<Partial<EventInfoFragment>, Date | undefined>) {
                     const now = useRealTime(10000);
-                    const start = props.value?.getTime() ?? Date.now();
-                    const ongoing = isOngoing(
-                        now,
-                        1 * 60 * 1000,
-                        1 * 60 * 1000,
-                        start,
-                        start + 1000 * (props.staleRecord.durationSeconds ?? 300)
-                    );
+                    const start = props.staleRecord.startTime ? Date.parse(props.staleRecord.startTime) : Date.now();
+                    const end = start + 1000 * (props.staleRecord.durationSeconds ?? 300);
+                    const startLeeway = 10 * 60 * 1000;
+                    const endLeeway = 1 * 60 * 1000;
+                    const ongoing = isOngoing(now, startLeeway, endLeeway, start, end);
+                    const past = end < now - endLeeway;
+                    const isLivestream = props.staleRecord.intendedRoomModeName
+                        ? liveStreamRoomModes.includes(props.staleRecord.intendedRoomModeName)
+                        : false;
 
                     return (
                         <HStack>
-                            {ongoing &&
+                            {!props.isInCreate &&
+                            ongoing &&
                             props.staleRecord.intendedRoomModeName &&
                             liveStreamRoomModes.includes(props.staleRecord.intendedRoomModeName) ? (
                                 <Tooltip label="You cannot edit the start time of an ongoing live-stream event.">
+                                    <FAIcon color={"blue.400"} iconStyle="s" icon="info-circle" />
+                                </Tooltip>
+                            ) : undefined}
+                            {!props.isInCreate && (ongoing || past) && isLivestream ? (
+                                <Tooltip label="You cannot edit the start time of an ongoing or past livestream event.">
                                     <FAIcon color={"blue.400"} iconStyle="s" icon="info-circle" />
                                 </Tooltip>
                             ) : undefined}
@@ -268,12 +290,8 @@ function EditableScheduleTable(): JSX.Element {
                                 size="sm"
                                 value={props.value}
                                 onChange={(v: Date) => props.onChange?.(v)}
-                                onBlur={() => props.onBlur?.()}
-                                isDisabled={
-                                    ongoing &&
-                                    props.staleRecord.intendedRoomModeName &&
-                                    liveStreamRoomModes.includes(props.staleRecord.intendedRoomModeName)
-                                }
+                                onBlur={props.onBlur}
+                                isDisabled={!props.isInCreate && (past || ongoing) && isLivestream}
                             />
                         </HStack>
                     );
@@ -296,7 +314,6 @@ function EditableScheduleTable(): JSX.Element {
                         ? new Date(Date.parse(record.startTime) + 1000 * (record.durationSeconds ?? 300))
                         : new Date(Date.now() + 1000 * (record.durationSeconds ?? 300)),
                 set: (record, v: Date) => {
-                    // TODO: Make this match updateMyData
                     const start = record.startTime ? Date.parse((record.startTime as unknown) as string) : Date.now();
                     record.durationSeconds = Math.max(60, Math.round((v.getTime() - start) / 1000));
                 },
@@ -305,20 +322,28 @@ function EditableScheduleTable(): JSX.Element {
                 sort: (x: Date, y: Date) => x.getTime() - y.getTime(),
                 cell: function EndTimeCell(props: CellProps<Partial<EventInfoFragment>, Date>) {
                     const now = useRealTime(10000);
-                    const ongoing = isOngoing(
-                        now,
-                        1 * 60 * 1000,
-                        1 * 60 * 1000,
-                        Date.parse(props.staleRecord.startTime),
-                        props.value.getTime()
-                    );
+                    const start = props.staleRecord.startTime ? Date.parse(props.staleRecord.startTime) : Date.now();
+                    const end = start + 1000 * (props.staleRecord.durationSeconds ?? 300);
+                    const startLeeway = 10 * 60 * 1000;
+                    const endLeeway = 1 * 60 * 1000;
+                    const ongoing = isOngoing(now, startLeeway, endLeeway, start, end);
+                    const past = end < now - endLeeway;
+                    const isLivestream = props.staleRecord.intendedRoomModeName
+                        ? liveStreamRoomModes.includes(props.staleRecord.intendedRoomModeName)
+                        : false;
 
                     return (
                         <HStack>
-                            {ongoing &&
+                            {!props.isInCreate &&
+                            ongoing &&
                             props.staleRecord.intendedRoomModeName &&
                             liveStreamRoomModes.includes(props.staleRecord.intendedRoomModeName) ? (
                                 <Tooltip label="You cannot edit the end time of an ongoing live-stream event.">
+                                    <FAIcon color={"blue.400"} iconStyle="s" icon="info-circle" />
+                                </Tooltip>
+                            ) : undefined}
+                            {!props.isInCreate && (ongoing || past) && isLivestream ? (
+                                <Tooltip label="You cannot edit the end time of an ongoing or past livestream event.">
                                     <FAIcon color={"blue.400"} iconStyle="s" icon="info-circle" />
                                 </Tooltip>
                             ) : undefined}
@@ -326,12 +351,8 @@ function EditableScheduleTable(): JSX.Element {
                                 size="sm"
                                 value={props.value}
                                 onChange={(v: Date) => props.onChange?.(v)}
-                                onBlur={() => props.onBlur?.()}
-                                isDisabled={
-                                    ongoing &&
-                                    props.staleRecord.intendedRoomModeName &&
-                                    liveStreamRoomModes.includes(props.staleRecord.intendedRoomModeName)
-                                }
+                                onBlur={props.onBlur}
+                                isDisabled={!props.isInCreate && (past || ongoing) && isLivestream}
                             />
                         </HStack>
                     );
@@ -351,7 +372,6 @@ function EditableScheduleTable(): JSX.Element {
                 },
                 get: (data) => wholeSchedule.data?.Room.find((room) => room.id === data.roomId),
                 set: (record, v: RoomInfoFragment | undefined) => {
-                    // TODO: Make this match updateMyData
                     record.roomId = v?.id;
                 },
                 sort: (x: RoomInfoFragment | undefined, y: RoomInfoFragment | undefined) => {
@@ -368,6 +388,17 @@ function EditableScheduleTable(): JSX.Element {
                 },
                 filterEl: TextColumnFilter,
                 cell: function RoomCell(props: CellProps<Partial<EventInfoFragment>, RoomInfoFragment | undefined>) {
+                    const now = useRealTime(10000);
+                    const start = props.staleRecord.startTime ? Date.parse(props.staleRecord.startTime) : Date.now();
+                    const end = start + 1000 * (props.staleRecord.durationSeconds ?? 300);
+                    const startLeeway = 10 * 60 * 1000;
+                    const endLeeway = 1 * 60 * 1000;
+                    const ongoing = isOngoing(now, startLeeway, endLeeway, start, end);
+                    const past = end < now - endLeeway;
+                    const isLivestream = props.staleRecord.intendedRoomModeName
+                        ? liveStreamRoomModes.includes(props.staleRecord.intendedRoomModeName)
+                        : false;
+
                     return (
                         <HStack>
                             {props.value ? (
@@ -382,6 +413,11 @@ function EditableScheduleTable(): JSX.Element {
                                     </Tooltip>
                                 </LinkButton>
                             ) : undefined}
+                            {!props.isInCreate && (ongoing || past) && isLivestream ? (
+                                <Tooltip label="You cannot edit the room of an ongoing or past livestream event.">
+                                    <FAIcon color={"blue.400"} iconStyle="s" icon="info-circle" />
+                                </Tooltip>
+                            ) : undefined}
                             <Select
                                 value={props.value?.id ?? ""}
                                 onChange={(ev) =>
@@ -390,6 +426,7 @@ function EditableScheduleTable(): JSX.Element {
                                     )
                                 }
                                 onBlur={props.onBlur}
+                                isDisabled={!props.isInCreate && (ongoing || past) && isLivestream}
                             >
                                 {roomOptions}
                             </Select>
@@ -410,7 +447,6 @@ function EditableScheduleTable(): JSX.Element {
                 },
                 get: (data) => data.intendedRoomModeName,
                 set: (record, v: RoomMode_Enum) => {
-                    // TODO: Make this match updateMyData
                     record.intendedRoomModeName = v;
                 },
                 filterFn: (rows, v: RoomMode_Enum) => rows.filter((r) => r.intendedRoomModeName === v),
@@ -418,19 +454,25 @@ function EditableScheduleTable(): JSX.Element {
                 sort: (x: RoomMode_Enum, y: RoomMode_Enum) => x.localeCompare(y),
                 cell: function RoomModeCell(props: CellProps<Partial<EventInfoFragment>, RoomMode_Enum | undefined>) {
                     const now = useRealTime(10000);
-                    const start = Date.parse(props.staleRecord.startTime);
-                    const ongoing = isOngoing(
-                        now,
-                        5 * 60 * 1000,
-                        1 * 60 * 1000,
-                        start,
-                        start + 1000 * (props.staleRecord.durationSeconds ?? 300)
-                    );
+                    const start = props.staleRecord.startTime ? Date.parse(props.staleRecord.startTime) : Date.now();
+                    const end = start + 1000 * (props.staleRecord.durationSeconds ?? 300);
+                    const startLeeway = 10 * 60 * 1000;
+                    const endLeeway = 1 * 60 * 1000;
+                    const ongoing = isOngoing(now, startLeeway, endLeeway, start, end);
+                    const past = end < now - endLeeway;
+                    const isLivestream = props.staleRecord.intendedRoomModeName
+                        ? liveStreamRoomModes.includes(props.staleRecord.intendedRoomModeName)
+                        : false;
 
                     return (
                         <HStack>
-                            {ongoing ? (
+                            {now < start ? (
                                 <Tooltip label="Live-stream modes must be set at least 10 minutes in advance of an event.">
+                                    <FAIcon color={"blue.400"} iconStyle="s" icon="info-circle" />
+                                </Tooltip>
+                            ) : undefined}
+                            {!props.isInCreate && (ongoing || past) && isLivestream ? (
+                                <Tooltip label="You cannot edit the mode of an ongoing or past livestream event.">
                                     <FAIcon color={"blue.400"} iconStyle="s" icon="info-circle" />
                                 </Tooltip>
                             ) : undefined}
@@ -438,6 +480,7 @@ function EditableScheduleTable(): JSX.Element {
                                 value={props.value ?? ""}
                                 onChange={(ev) => props.onChange?.(ev.target.value as RoomMode_Enum)}
                                 onBlur={props.onBlur}
+                                isDisabled={!props.isInCreate && (ongoing || past) && isLivestream}
                             >
                                 {roomModeOptions.map((option) => {
                                     return (
@@ -528,6 +571,17 @@ function EditableScheduleTable(): JSX.Element {
                 cell: function ContentCell(
                     props: CellProps<Partial<EventInfoFragment>, ContentGroupFullNestedInfoFragment | undefined>
                 ) {
+                    const now = useRealTime(10000);
+                    const start = props.staleRecord.startTime ? Date.parse(props.staleRecord.startTime) : Date.now();
+                    const end = start + 1000 * (props.staleRecord.durationSeconds ?? 300);
+                    const startLeeway = 10 * 60 * 1000;
+                    const endLeeway = 1 * 60 * 1000;
+                    const ongoing = isOngoing(now, startLeeway, endLeeway, start, end);
+                    const past = end < now - endLeeway;
+                    const isLivestream = props.staleRecord.intendedRoomModeName
+                        ? liveStreamRoomModes.includes(props.staleRecord.intendedRoomModeName)
+                        : false;
+
                     return (
                         <HStack>
                             {props.value ? (
@@ -542,6 +596,11 @@ function EditableScheduleTable(): JSX.Element {
                                     </Tooltip>
                                 </LinkButton>
                             ) : undefined}
+                            {!props.isInCreate && (ongoing || past) && isLivestream ? (
+                                <Tooltip label="You cannot edit the content of an ongoing or past livestream event.">
+                                    <FAIcon color={"blue.400"} iconStyle="s" icon="info-circle" />
+                                </Tooltip>
+                            ) : undefined}
                             <Select
                                 value={props.value?.id ?? ""}
                                 onChange={(ev) =>
@@ -550,6 +609,7 @@ function EditableScheduleTable(): JSX.Element {
                                     )
                                 }
                                 onBlur={props.onBlur}
+                                isDisabled={!props.isInCreate && (ongoing || past) && isLivestream}
                             >
                                 <option value={""}>{"<None selected>"}</option>
                                 {contentGroupOptions}
@@ -569,217 +629,78 @@ function EditableScheduleTable(): JSX.Element {
         ]
     );
 
-    // const updateMyData = (rowIndex: number, columnId: ColumnId, value: any) => {
-    //     let finalValue = value;
-    //     if (wholeSchedule.data) {
-    //         const original = wholeSchedule.data.Event[rowIndex];
-    //         const updated = { ...original };
-    //         let hasChanged = false;
-    //         switch (columnId) {
-    //             case ColumnId.StartTime:
-    //                 {
-    //                     const originalStart = Date.parse(original.startTime);
-    //                     const originalEnd = originalStart + 1000 * original.durationSeconds;
-    //                     updated.startTime = new Date(value).toISOString();
-    //                     if (value < originalEnd) {
-    //                         updated.durationSeconds = Math.max(Math.round((originalEnd - value) / 1000), 30);
-    //                     }
-    //                     // Make sure we're comparing numeric timestamp, because
-    //                     // string formats differ between client side and server side.
-    //                     hasChanged = value !== originalStart;
-    //                 }
-    //                 break;
-    //             case ColumnId.EndTime:
-    //                 {
-    //                     const origStartTime = Date.parse(updated.startTime);
-    //                     let startTime = origStartTime;
-    //                     if (value < startTime) {
-    //                         startTime = value - 1000 * updated.durationSeconds;
-    //                         updated.startTime = new Date(startTime).toISOString();
-    //                     } else {
-    //                         updated.durationSeconds = Math.max(Math.round((value - startTime) / 1000), 30);
-    //                     }
-    //                     hasChanged =
-    //                         updated.durationSeconds !== original.durationSeconds || origStartTime !== startTime;
-    //                     finalValue = startTime + 1000 * updated.durationSeconds;
-    //                 }
-    //                 break;
-    //         }
-    //     }
-    // };
-
-    // return (
-    //     <>
-    //         {wholeSchedule.error ? (
-    //             <Alert status="error">
-    //                 <AlertTitle>Error</AlertTitle>
-    //                 <AlertDescription>
-    //                     <Text>Error loading data.</Text>
-    //                     <Code>{wholeSchedule.error.message}</Code>
-    //                 </AlertDescription>
-    //             </Alert>
-    //         ) : undefined}
-    //         {insertEventResponse.error ? (
-    //             <Alert status="error">
-    //                 <AlertTitle>Error</AlertTitle>
-    //                 <AlertDescription>
-    //                     <Text>Error creating event.</Text>
-    //                     <Code>{insertEventResponse.error.message}</Code>
-    //                 </AlertDescription>
-    //             </Alert>
-    //         ) : undefined}
-    //         {updateEventResponse.error ? (
-    //             <Alert status="error">
-    //                 <AlertTitle>Error</AlertTitle>
-    //                 <AlertDescription>
-    //                     <Text>Error saving changes.</Text>
-    //                     <Code>{updateEventResponse.error.message}</Code>
-    //                 </AlertDescription>
-    //             </Alert>
-    //         ) : undefined}
-    //         {deleteEventResponse.error ? (
-    //             <Alert status="error">
-    //                 <AlertTitle>Error</AlertTitle>
-    //                 <AlertDescription>
-    //                     <Text>Error deleting event.</Text>
-    //                     <Code>{deleteEventResponse.error.message}</Code>
-    //                 </AlertDescription>
-    //             </Alert>
-    //         ) : undefined}
-    //         {deleteEventsResponse.error ? (
-    //             <Alert status="error">
-    //                 <AlertTitle>Error</AlertTitle>
-    //                 <AlertDescription>
-    //                     <Text>Error deleting events.</Text>
-    //                     <Code>{deleteEventsResponse.error.message}</Code>
-    //                 </AlertDescription>
-    //             </Alert>
-    //         ) : undefined}
-    //         <HStack>
-    //             <Center borderStyle="solid" borderWidth={1} borderColor={grey} borderRadius={5} p={2}>
-    //                 <FAIcon icon="clock" iconStyle="s" mr={2} />
-    //                 <Text as="span">Timezone: {localTimeZone}</Text>
-    //             </Center>
-    //             <LinkButton
-    //                 linkProps={{ m: "3px" }}
-    //                 to={`/conference/${conference.slug}/manage/rooms`}
-    //                 colorScheme="yellow"
-    //             >
-    //                 Manage Rooms
-    //             </LinkButton>
-    //         </HStack>
-    //         <VisuallyHidden>Timezone is {localTimeZone}</VisuallyHidden>
-    //         <Table
-    //             {...tableProps}
-    //             display="block"
-    //             maxWidth="100%"
-    //             width="auto"
-    //             size="sm"
-    //             variant="striped"
-    //             overflow="auto"
-    //         >
-    //             <Thead>
-    //                 {headerGroups.map((headerGroup) => (
-    //                     // eslint-disable-next-line react/jsx-key
-    //                     <Tr {...headerGroup.getHeaderGroupProps()}>
-    //                         {headerGroup.headers.map((column) => (
-    //                             // eslint-disable-next-line react/jsx-key
-    //                             <Th
-    //                             >
-    //                                 <VStack alignItems="flex-start" h="100%">
-    //                                     <HStack
-    //                                         h="100%"
-    //                                         w="100%"
-    //                                         spacing={2}
-    //                                         alignItems="center"
-    //                                     >
-    //                                         {column.canGroupBy ? (
-    //                                             // If the column can be grouped, let's add a toggle
-    //                                             <Box {...column.getGroupByToggleProps()}>
-    //                                                 {column.isGrouped ? (
-    //                                                     <FAIcon iconStyle="s" icon="object-ungroup" />
-    //                                                 ) : (
-    //                                                     <FAIcon iconStyle="s" icon="object-group" />
-    //                                                 )}
-    //                                             </Box>
-    //                                         ) : null}
-    //                                         {/* Use column.getResizerProps to hook up the events correctly */}
-    //                                         {column.canResize && (
-    //                                             <>
-    //                                                 <Spacer />
-    //                                                 <Box
-    //                                                     {...column.getResizerProps()}
-    //                                                     style={{ touchAction: "none" }}
-    //                                                     userSelect="none"
-    //                                                     cursor="pointer"
-    //                                                     color={column.isResizing ? "blue.400" : undefined}
-    //                                                 >
-    //                                                     <FAIcon iconStyle="s" icon="arrows-alt-h" />
-    //                                                 </Box>
-    //                                             </>
-    //                                         )}
-    //                                     </HStack>
-    //                                 </VStack>
-    //                             </Th>
-    //                         ))}
-    //                     </Tr>
-    //                 ))}
-    //             </Thead>
-    //             <Tbody>
-    //                 {page.map((row) => {
-    //                     return (
-    //                         // eslint-disable-next-line react/jsx-key
-    //                         <Tr {...row.getRowProps()}>
-    //                             {row.cells.map((cell) => {
-    //                                 const bgColour = rowWarning(row) ? yellow : undefined;
-    //                                 const cellProps = cell.getCellProps();
-    //                                 if (bgColour) {
-    //                                     cellProps.style = {
-    //                                         ...(cellProps.style ?? {}),
-    //                                         backgroundColor: bgColour ?? cellProps.style?.backgroundColor,
-    //                                     };
-    //                                 }
-    //                                 return (
-    //                                     // eslint-disable-next-line react/jsx-key
-    //                                     <Td
-    //                                         {...cellProps}
-    //                                     >
-    //                                         {cell.isGrouped ? (
-    //                                             // If it's a grouped cell, add an expander and row count
-    //                                             <HStack>
-    //                                                 <chakra.span minW="min-content">({row.subRows.length})</chakra.span>
-    //                                                 <chakra.span {...row.getToggleRowExpandedProps()}>
-    //                                                     {row.isExpanded ? (
-    //                                                         <FAIcon iconStyle="s" icon="caret-down" />
-    //                                                     ) : (
-    //                                                         <FAIcon iconStyle="s" icon="caret-right" />
-    //                                                     )}
-    //                                                 </chakra.span>{" "}
-    //                                                 {cell.render("Cell", { editable: false })}
-    //                                             </HStack>
-    //                                         ) : cell.isAggregated ? (
-    //                                             // If the cell is aggregated, use the Aggregated
-    //                                             // renderer for cell
-    //                                             cell.render("Aggregated")
-    //                                         ) : cell.isPlaceholder ? null : ( // For cells with repeated values, render null
-    //                                             // Otherwise, just render the regular cell
-    //                                             cell.render("Cell", { editable: true })
-    //                                         )}
-    //                                     </Td>
-    //                                 );
-    //                             })}
-    //                         </Tr>
-    //                     );
-    //                 })}
-    //             </Tbody>
-    //         </Table>
-
     const yellow = useColorModeValue("yellow.300", "yellow.700");
     const row: RowSpecification<EventInfoFragment> = useMemo(
         () => ({
             getKey: (record) => record.id,
             colour: (record) => (rowWarning(record) ? yellow : undefined),
-            canSelect: (_record) => true,
+            warning: (record) => rowWarning(record),
+            invalid: (record, isNew, dependentData) => {
+                const start = record.startTime ? Date.parse(record.startTime) : Date.now();
+                const end = start + 1000 * (record.durationSeconds ?? 300);
+                const now = Date.now();
+                const startLeeway = 10 * 60 * 1000;
+                const endLeeway = 1 * 60 * 1000;
+                const ongoing = isOngoing(now, startLeeway, endLeeway, start, end);
+                const past = end < now - endLeeway;
+                const isLivestream = record.intendedRoomModeName
+                    ? liveStreamRoomModes.includes(record.intendedRoomModeName)
+                    : false;
+                if (isNew && isLivestream && (ongoing || past)) {
+                    return "Cannot create a livestream event that is already ongoing or in the past.";
+                }
+
+                if (!record.name && !record.contentGroupId) {
+                    return "Event must have a name or content.";
+                }
+
+                if (record.roomId) {
+                    const eventsInSameRoom = [...dependentData.entries()].filter(
+                        ([id, x]) => x[ColumnId.Room]?.id === record.roomId && id !== record.id
+                    );
+                    if (
+                        eventsInSameRoom.some(([_, event]) => {
+                            const startE = event.startTime ? Date.parse(event.startTime) : Date.now();
+                            const endE = startE + 1000 * (event.durationSeconds ?? 300);
+                            return areOverlapping(start, end, startE, endE);
+                        })
+                    ) {
+                        return "Events in a room cannot overlap.";
+                    }
+                }
+
+                return false;
+            },
+            canSelect: (record) => {
+                const start = record.startTime ? Date.parse(record.startTime) : Date.now();
+                const end = start + 1000 * (record.durationSeconds ?? 300);
+                const now = Date.now();
+                const startLeeway = 10 * 60 * 1000;
+                const endLeeway = 1 * 60 * 1000;
+                const ongoing = isOngoing(now, startLeeway, endLeeway, start, end);
+                const past = end < now - endLeeway;
+                const isLivestream = record.intendedRoomModeName
+                    ? liveStreamRoomModes.includes(record.intendedRoomModeName)
+                    : false;
+                return !((ongoing || past) && isLivestream)
+                    ? true
+                    : "Cannot delete an ongoing or past livestream event.";
+            },
+            canDelete: (record) => {
+                const start = record.startTime ? Date.parse(record.startTime) : Date.now();
+                const end = start + 1000 * (record.durationSeconds ?? 300);
+                const now = Date.now();
+                const startLeeway = 10 * 60 * 1000;
+                const endLeeway = 1 * 60 * 1000;
+                const ongoing = isOngoing(now, startLeeway, endLeeway, start, end);
+                const past = end < now - endLeeway;
+                const isLivestream = record.intendedRoomModeName
+                    ? liveStreamRoomModes.includes(record.intendedRoomModeName)
+                    : false;
+                return !((ongoing || past) && isLivestream)
+                    ? true
+                    : "Cannot delete an ongoing or past livestream event.";
+            },
             pages: {
                 defaultToLast: false,
             },
@@ -802,6 +723,183 @@ function EditableScheduleTable(): JSX.Element {
         }
     }, [deleteEventsResponse.error, insertEventResponse.error, updateEventResponse.error]);
 
+    const edit:
+        | {
+              open: (key: string) => void;
+          }
+        | undefined = useMemo(
+        () => ({
+            open: (key) => {
+                const idx = wholeSchedule.data?.Event.findIndex((event) => event.id === key);
+                const newIdx = idx !== undefined && idx !== -1 ? idx : null;
+                setEditingIndex(newIdx);
+                if (newIdx !== null) {
+                    onSecondaryPanelOpen();
+                } else {
+                    onSecondaryPanelClose();
+                }
+            },
+        }),
+        [onSecondaryPanelClose, onSecondaryPanelOpen, wholeSchedule.data?.Event]
+    );
+
+    const insert:
+        | {
+              generateDefaults: () => Partial<EventInfoFragment>;
+              makeWhole: (partialRecord: Partial<EventInfoFragment>) => EventInfoFragment | undefined;
+              start: (record: EventInfoFragment) => void;
+              ongoing: boolean;
+          }
+        | undefined = useMemo(
+        () =>
+            wholeSchedule.data?.Room && wholeSchedule.data.Room.length > 0
+                ? {
+                      ongoing: insertEventResponse.loading,
+                      generateDefaults: () => ({
+                          id: uuidv4(),
+                          durationSeconds: 300,
+                          conferenceId: conference.id,
+                          intendedRoomModeName: RoomMode_Enum.Breakout,
+                          name: "Innominate event",
+                          roomId: wholeSchedule.data?.Room[0].id,
+                          startTime: DateTime.local()
+                              .plus({
+                                  minutes: 10,
+                              })
+                              .endOf("hour")
+                              .plus({
+                                  milliseconds: 1,
+                              })
+                              .toISO(),
+                          contentGroupId: null,
+                          originatingDataId: null,
+                      }),
+                      makeWhole: (d) => d as EventInfoFragment,
+                      start: (record) => {
+                          insertEvent({
+                              variables: record,
+                              update: (cache, { data: _data }) => {
+                                  if (_data?.insert_Event_one) {
+                                      const data = _data.insert_Event_one;
+                                      cache.modify({
+                                          fields: {
+                                              Event(existingRefs: Reference[] = [], { readField }) {
+                                                  const newRef = cache.writeFragment({
+                                                      data: {
+                                                          ...data,
+                                                          endTime: new Date(
+                                                              Date.parse(data.startTime) + 1000 * data.durationSeconds
+                                                          ).toISOString(),
+                                                      },
+                                                      fragment: EventInfoFragmentDoc,
+                                                      fragmentName: "EventInfo",
+                                                  });
+                                                  if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
+                                                      return existingRefs;
+                                                  }
+
+                                                  return [...existingRefs, newRef];
+                                              },
+                                          },
+                                      });
+                                  }
+                              },
+                          });
+                      },
+                  }
+                : undefined,
+        [conference.id, insertEvent, insertEventResponse.loading, wholeSchedule.data?.Room]
+    );
+
+    const update:
+        | {
+              start: (record: EventInfoFragment) => void;
+              ongoing: boolean;
+          }
+        | undefined = useMemo(
+        () => ({
+            ongoing: updateEventResponse.loading,
+            start: (record) => {
+                const variables: any = {
+                    ...record,
+                    eventId: record.id,
+                };
+                delete variables.id;
+                delete variables.endTime;
+                delete variables.eventPeople;
+                delete variables.eventTags;
+                delete variables.conferenceId;
+                delete variables.__typename;
+                updateEvent({
+                    variables,
+                    optimisticResponse: {
+                        update_Event_by_pk: record,
+                    },
+                    update: (cache, { data: _data }) => {
+                        if (_data?.update_Event_by_pk) {
+                            const data = _data.update_Event_by_pk;
+                            cache.modify({
+                                fields: {
+                                    Event(existingRefs: Reference[] = [], { readField }) {
+                                        const newRef = cache.writeFragment({
+                                            data,
+                                            fragment: EventInfoFragmentDoc,
+                                            fragmentName: "EventInfo",
+                                        });
+                                        if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
+                                            return existingRefs;
+                                        }
+                                        return [...existingRefs, newRef];
+                                    },
+                                },
+                            });
+                        }
+                    },
+                });
+            },
+        }),
+        [updateEvent, updateEventResponse.loading]
+    );
+
+    const deleteProps:
+        | {
+              start: (keys: string[]) => void;
+              ongoing: boolean;
+          }
+        | undefined = useMemo(
+        () => ({
+            ongoing: deleteEventsResponse.loading,
+            start: (keys) => {
+                deleteEvents({
+                    variables: {
+                        eventIds: keys,
+                    },
+                    update: (cache, { data: _data }) => {
+                        if (_data?.delete_Event) {
+                            const data = _data.delete_Event;
+                            const deletedIds = data.returning.map((x) => x.id);
+                            cache.modify({
+                                fields: {
+                                    Event(existingRefs: Reference[] = [], { readField }) {
+                                        deletedIds.forEach((x) => {
+                                            cache.evict({
+                                                id: x.id,
+                                                fieldName: "EventInfo",
+                                                broadcast: true,
+                                            });
+                                        });
+                                        return existingRefs.filter((ref) => !deletedIds.includes(readField("id", ref)));
+                                    },
+                                },
+                            });
+                        }
+                    },
+                });
+            },
+        }),
+        [deleteEvents, deleteEventsResponse.loading]
+    );
+
     return (
         <>
             <HStack>
@@ -818,150 +916,22 @@ function EditableScheduleTable(): JSX.Element {
                 </LinkButton>
             </HStack>
             <VisuallyHidden>Timezone is {localTimeZone}</VisuallyHidden>
+            {wholeSchedule.data?.Room && wholeSchedule.data.Room.length === 0 ? (
+                <Alert status="warning">
+                    <AlertIcon />
+                    <AlertTitle>No rooms</AlertTitle>
+                    <AlertDescription>Please create a room first.</AlertDescription>
+                </Alert>
+            ) : undefined}
             <CRUDTable
                 tableUniqueName="ManageConferenceSchedule"
                 data={!wholeSchedule.loading && (wholeSchedule.data?.Event ? data : null)}
                 columns={columns}
                 row={row}
-                edit={{
-                    open: (key) => {
-                        const idx = wholeSchedule.data?.Event.findIndex((event) => event.id === key);
-                        const newIdx = idx !== undefined && idx !== -1 ? idx : null;
-                        setEditingIndex(newIdx);
-                        if (newIdx !== null) {
-                            onSecondaryPanelOpen();
-                        } else {
-                            onSecondaryPanelClose();
-                        }
-                    },
-                }}
-                insert={{
-                    ongoing: insertEventResponse.loading,
-                    generateDefaults: () => ({
-                        id: uuidv4(),
-                        durationSeconds: 300,
-                        conferenceId: conference.id,
-                        intendedRoomModeName: RoomMode_Enum.Breakout,
-                        name: "Innominate event",
-                        roomId: wholeSchedule.data?.Room[0].id,
-                        startTime: DateTime.local()
-                            .plus({
-                                minutes: 10,
-                            })
-                            .endOf("hour")
-                            .plus({
-                                milliseconds: 1,
-                            })
-                            .toISO(),
-                        contentGroupId: null,
-                        originatingDataId: null,
-                    }),
-                    makeWhole: (d) => d as EventInfoFragment,
-                    start: (record) => {
-                        insertEvent({
-                            variables: record,
-                            update: (cache, { data: _data }) => {
-                                if (_data?.insert_Event_one) {
-                                    const data = _data.insert_Event_one;
-                                    cache.modify({
-                                        fields: {
-                                            Event(existingRefs: Reference[] = [], { readField }) {
-                                                const newRef = cache.writeFragment({
-                                                    data: {
-                                                        ...data,
-                                                        endTime: new Date(
-                                                            Date.parse(data.startTime) + 1000 * data.durationSeconds
-                                                        ).toISOString(),
-                                                    },
-                                                    fragment: EventInfoFragmentDoc,
-                                                    fragmentName: "EventInfo",
-                                                });
-                                                if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
-                                                    return existingRefs;
-                                                }
-
-                                                return [...existingRefs, newRef];
-                                            },
-                                        },
-                                    });
-                                }
-                            },
-                        });
-                    },
-                }}
-                update={{
-                    ongoing: updateEventResponse.loading,
-                    start: (record) => {
-                        const variables: any = {
-                            ...record,
-                            eventId: record.id,
-                        };
-                        delete variables.id;
-                        delete variables.endTime;
-                        delete variables.eventPeople;
-                        delete variables.eventTags;
-                        delete variables.conferenceId;
-                        delete variables.__typename;
-                        updateEvent({
-                            variables,
-                            optimisticResponse: {
-                                update_Event_by_pk: record,
-                            },
-                            update: (cache, { data: _data }) => {
-                                if (_data?.update_Event_by_pk) {
-                                    const data = _data.update_Event_by_pk;
-                                    cache.modify({
-                                        fields: {
-                                            Event(existingRefs: Reference[] = [], { readField }) {
-                                                const newRef = cache.writeFragment({
-                                                    data,
-                                                    fragment: EventInfoFragmentDoc,
-                                                    fragmentName: "EventInfo",
-                                                });
-                                                if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
-                                                    return existingRefs;
-                                                }
-                                                return [...existingRefs, newRef];
-                                            },
-                                        },
-                                    });
-                                }
-                            },
-                        });
-                    },
-                }}
-                delete={{
-                    ongoing: deleteEventsResponse.loading,
-                    start: (keys) => {
-                        deleteEvents({
-                            variables: {
-                                eventIds: keys,
-                            },
-                            update: (cache, { data: _data }) => {
-                                if (_data?.delete_Event) {
-                                    const data = _data.delete_Event;
-                                    const deletedIds = data.returning.map((x) => x.id);
-                                    cache.modify({
-                                        fields: {
-                                            Event(existingRefs: Reference[] = [], { readField }) {
-                                                deletedIds.forEach((x) => {
-                                                    cache.evict({
-                                                        id: x.id,
-                                                        fieldName: "EventInfo",
-                                                        broadcast: true,
-                                                    });
-                                                });
-                                                return existingRefs.filter(
-                                                    (ref) => !deletedIds.includes(readField("id", ref))
-                                                );
-                                            },
-                                        },
-                                    });
-                                }
-                            },
-                        });
-                    },
-                }}
+                edit={edit}
+                insert={insert}
+                update={update}
+                delete={deleteProps}
                 alert={
                     insertEventResponse.error || updateEventResponse.error || deleteEventsResponse.error
                         ? {
@@ -986,6 +956,7 @@ function EditableScheduleTable(): JSX.Element {
                 onSecondaryPanelClose={() => {
                     onSecondaryPanelClose();
                     setEditingIndex(null);
+                    forceReloadRef.current?.();
                 }}
             />
         </>
@@ -1003,10 +974,10 @@ export default function ManageConferenceSchedulePage(): JSX.Element {
             componentIfDenied={<PageNotFound />}
         >
             {title}
-            <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
+            <Heading as="h1" fontSize="4xl">
                 Manage {conference.shortName}
             </Heading>
-            <Heading as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
+            <Heading as="h2" fontSize="2xl" fontStyle="italic">
                 Events
             </Heading>
             <EditableScheduleTable />

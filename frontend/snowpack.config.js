@@ -10,19 +10,11 @@ module.exports = {
         "@snowpack/plugin-typescript",
         "@snowpack/plugin-webpack",
     ],
-    install: [
-        /* ... */
-    ],
-    installOptions: {
-        /* ... */
-    },
     devOptions: {
         port: 3000,
     },
     buildOptions: {
         /* ... */
     },
-    proxy: {
-        /* ... */
-    },
+    routes: [{ match: "routes", src: ".*", dest: "/index.html" }],
 };

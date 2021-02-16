@@ -35,8 +35,8 @@ import type { TimelineEvent } from "./DayList";
 import { useTimelineParameters } from "./useTimelineParameters";
 
 function EventBoxPopover({
-    leftPc,
-    widthPc,
+    topPc,
+    heightPc: heightPc,
     eventStartMs,
     durationSeconds,
     roomName,
@@ -45,8 +45,8 @@ function EventBoxPopover({
     isOpen,
     onClose,
 }: {
-    leftPc: number;
-    widthPc: number;
+    topPc: number;
+    heightPc: number;
     eventStartMs: number;
     durationSeconds: number;
     roomName: string;
@@ -104,7 +104,7 @@ function EventBoxPopover({
             variant="responsive"
             closeOnEsc={true}
             trigger="click"
-            placement="auto"
+            placement="right-start"
             isOpen={isOpen}
             onClose={onClose}
             returnFocusOnClose={false}
@@ -116,10 +116,10 @@ function EventBoxPopover({
                         visibility: "hidden",
                         zIndex: 0,
                         position: "absolute",
-                        left: leftPc + "%",
-                        width: widthPc + "%",
-                        height: "100%",
-                        top: 0,
+                        top: topPc + "%",
+                        height: heightPc + "%",
+                        width: "100%",
+                        left: 0,
                         transition: "none",
                     }}
                 ></div>
@@ -134,8 +134,8 @@ function EventBoxPopover({
                     onMouseMove={(ev) => {
                         ev.stopPropagation();
                     }}
-                    maxH="30vh"
-                    width={Math.min(window.innerWidth * 0.8, 500)}
+                    maxH="70vh"
+                    // width={Math.min(window.innerWidth * 0.7, Math.min(window.innerWidth - 200, 900))}
                 >
                     {fullEvent ? (
                         <>
@@ -243,8 +243,8 @@ export default function EventBox({
 
     const offsetMs = eventStartMs - timelineParams.earliestMs;
     const offsetSeconds = offsetMs / 1000;
-    const leftPc = (100 * offsetSeconds) / timelineParams.fullTimeSpanSeconds;
-    const widthPc = (100 * durationSeconds) / timelineParams.fullTimeSpanSeconds;
+    const topPc = (100 * offsetSeconds) / timelineParams.fullTimeSpanSeconds;
+    const heightPc = (100 * durationSeconds) / timelineParams.fullTimeSpanSeconds;
 
     const eventTitle = event.contentGroup
         ? sortedEvents.length > 1
@@ -253,7 +253,7 @@ export default function EventBox({
         : event.name;
     const buttonContents = useMemo(() => {
         return (
-            <Box overflow="hidden" w="100%" textOverflow="ellipsis" maxH="100%" whiteSpace="normal" noOfLines={2}>
+            <Box overflow="hidden" w="100%" textOverflow="ellipsis" maxH="100%" whiteSpace="normal">
                 {eventTitle}
             </Box>
         );
@@ -265,8 +265,8 @@ export default function EventBox({
     const scrollToEvent = useCallback(() => {
         eventFocusRef.current?.scrollIntoView({
             behavior: "smooth",
-            block: "center",
-            inline: "start",
+            block: "start",
+            inline: "center",
         });
     }, []);
 
@@ -293,10 +293,10 @@ export default function EventBox({
                 zIndex={1}
                 cursor="pointer"
                 position="absolute"
-                left={leftPc + "%"}
-                width={widthPc + "%"}
-                height="100%"
-                top={0}
+                top={topPc + "%"}
+                height={heightPc + "%"}
+                width="100%"
+                left={0}
                 borderColor={borderColour}
                 borderWidth={1}
                 borderRadius={0}
@@ -325,13 +325,15 @@ export default function EventBox({
                         hour: "numeric",
                         minute: "numeric",
                     })} and lasts ${Math.round(durationSeconds / 60)} minutes.`}
+                justifyContent="flex-start"
+                alignItems="flex-start"
             >
                 {buttonContents}
             </Button>
             {isOpen ? (
                 <EventBoxPopover
-                    leftPc={leftPc}
-                    widthPc={widthPc}
+                    topPc={topPc}
+                    heightPc={heightPc}
                     eventStartMs={eventStartMs}
                     durationSeconds={durationSeconds}
                     roomName={roomName}

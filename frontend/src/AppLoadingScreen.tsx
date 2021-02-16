@@ -5,7 +5,7 @@ import React from "react";
 const browser = detect();
 const browserOK = !(
     !browser ||
-    browser.name.includes("safari") ||
+    (browser.name.includes("safari") && browser.version && parseInt(browser.version, 10) < 14) ||
     browser.name === "ios" ||
     browser.name === "ios-webview"
 );

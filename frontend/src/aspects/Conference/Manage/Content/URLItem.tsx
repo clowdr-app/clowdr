@@ -27,7 +27,7 @@ function createDefaultURL(
 
 export const URLItemTemplate: ItemBaseTemplate = {
     supported: true,
-    createDefault: (group, type, required) => {
+    createDefault: (type, required) => {
         assert(
             type === ContentType_Enum.ImageUrl ||
                 type === ContentType_Enum.PaperUrl ||
@@ -69,7 +69,7 @@ export const URLItemTemplate: ItemBaseTemplate = {
                     typeName: type,
                     isHidden: false,
                     data: [],
-                    layoutData: {},
+                    layoutData: null,
                 },
             };
         }

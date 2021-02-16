@@ -55,14 +55,14 @@ function RoomTimelineInner({
     room,
     hideTimeZoomButtons = true,
     useScroller = false,
-    height = 50,
+    width = 50,
     backgroundColor,
     setScrollToEvent,
 }: {
     room: TimelineRoom;
     hideTimeZoomButtons?: boolean;
     useScroller?: boolean;
-    height?: number;
+    width?: number;
     backgroundColor?: string;
     setScrollToEvent?: (f: (event: TimelineEvent) => void) => void;
 }): JSX.Element {
@@ -101,14 +101,14 @@ function RoomTimelineInner({
     return (
         <Box
             pos="relative"
-            w="100%"
-            h={height + "px"}
+            h="100%"
+            w={width + "px"}
             backgroundColor={backgroundColor}
             role="region"
             aria-label={`${room.name} room schedule.`}
         >
             {useScroller ? (
-                <Scroller height={height}>
+                <Scroller width={width}>
                     <RoomTimelineContents
                         groupedEvents={groupedEvents}
                         room={room}
@@ -131,7 +131,7 @@ function RoomTimelineFetchWrapper({
     room,
     hideTimeZoomButtons = false,
     useScroller = true,
-    height,
+    width,
     backgroundColor,
     setScrollToEvent,
     events,
@@ -140,7 +140,7 @@ function RoomTimelineFetchWrapper({
     room: Timeline_RoomFragment;
     hideTimeZoomButtons?: boolean;
     useScroller?: boolean;
-    height?: number;
+    width?: number;
     backgroundColor?: string;
     setScrollToEvent?: (f: (event: TimelineEvent) => void) => void;
     events: ReadonlyArray<Timeline_EventFragment>;
@@ -172,7 +172,7 @@ function RoomTimelineFetchWrapper({
             }}
             hideTimeZoomButtons={hideTimeZoomButtons}
             useScroller={useScroller}
-            height={height}
+            width={width}
             backgroundColor={backgroundColor}
             setScrollToEvent={setScrollToEvent}
         />
@@ -186,7 +186,7 @@ type Props = {
     hideTimeShiftButtons?: boolean;
     hideTimeZoomButtons?: boolean;
     useScroller?: boolean;
-    height?: number;
+    width?: number;
     setScrollToEvent?: (f: (event: TimelineEvent) => void) => void;
     events: ReadonlyArray<Timeline_EventFragment>;
     contentGroups: ReadonlyArray<Timeline_ContentGroup_PartialInfoFragment>;

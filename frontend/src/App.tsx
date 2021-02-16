@@ -1,6 +1,6 @@
 import { Box, Flex, useBreakpointValue, VStack } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
-import { Route, RouteComponentProps } from "react-router-dom";
+import { Route, RouteComponentProps, Switch } from "react-router-dom";
 import "./App.css";
 import Routing from "./AppRouting";
 import EmojiMartProvider from "./aspects/Emoji/EmojiMartContext";
@@ -10,9 +10,30 @@ import RightSidebar from "./aspects/Menu/RightSidebar";
 import CurrentUserProvider from "./aspects/Users/CurrentUser/CurrentUserProvider";
 // import LastSeenProvider from "./aspects/Users/CurrentUser/OnlineStatus/LastSeenProvider";
 
-interface AppProps {}
+interface AppProps {
+    confSlug: string | undefined;
+    rootUrl: string;
+}
 
-function App(_props: AppProps): JSX.Element {
+export default function App(): JSX.Element {
+    return (
+        <Switch>
+            <Route
+                path="/conference/:confSlug"
+                component={(
+                    props: RouteComponentProps<{
+                        confSlug: string;
+                    }>
+                ) => <AppInner rootUrl={props.match.url} confSlug={props.match.params.confSlug} />}
+            />
+            <Route path="/">
+                <AppInner rootUrl={""} confSlug={undefined} />
+            </Route>
+        </Switch>
+    );
+}
+
+function AppInner({ confSlug, rootUrl }: AppProps): JSX.Element {
     const leftSidebarWidthPc = 20;
     const rightSidebarWidthPc = 20;
     const contentWidthPc = 100 - leftSidebarWidthPc - rightSidebarWidthPc;
@@ -46,24 +67,15 @@ function App(_props: AppProps): JSX.Element {
         }
     }, [rightDefaultVisible, rightOpen]);
 
-    const centerVisible = centerAlwaysVisible || (!leftVisible && !rightVisible);
+    const centerVisible = !confSlug || centerAlwaysVisible || (!leftVisible && !rightVisible);
 
-    const left = useMemo(
-        () => (
-            <Route
-                path="/conference/:confSlug"
-                component={(
-                    props: RouteComponentProps<{
-                        confSlug: string;
-                    }>
-                ) => <LeftSidebar rootUrl={props.match.url} confSlug={props.match.params.confSlug} />}
-            />
-        ),
-        []
-    );
+    const left = useMemo(() => (confSlug ? <LeftSidebar rootUrl={rootUrl} confSlug={confSlug} /> : undefined), [
+        confSlug,
+        rootUrl,
+    ]);
     const leftBar = useMemo(
-        () => (
-            <Route path="/conference">
+        () =>
+            confSlug ? (
                 <Box
                     overflow="hidden"
                     height="100%"
@@ -75,27 +87,17 @@ function App(_props: AppProps): JSX.Element {
                 >
                     {left}
                 </Box>
-            </Route>
-        ),
-        [centerVisible, left, leftVisible]
+            ) : undefined,
+        [centerVisible, confSlug, left, leftVisible]
     );
 
-    const right = useMemo(
-        () => (
-            <Route
-                path="/conference/:confSlug"
-                component={(
-                    props: RouteComponentProps<{
-                        confSlug: string;
-                    }>
-                ) => <RightSidebar rootUrl={props.match.url} confSlug={props.match.params.confSlug} />}
-            />
-        ),
-        []
-    );
+    const right = useMemo(() => (confSlug ? <RightSidebar rootUrl={rootUrl} confSlug={confSlug} /> : undefined), [
+        confSlug,
+        rootUrl,
+    ]);
     const rightBar = useMemo(
-        () => (
-            <Route path="/conference">
+        () =>
+            confSlug ? (
                 <Box
                     overflow="hidden"
                     height="100%"
@@ -108,9 +110,8 @@ function App(_props: AppProps): JSX.Element {
                 >
                     {right}
                 </Box>
-            </Route>
-        ),
-        [centerVisible, right, rightVisible]
+            ) : undefined,
+        [centerVisible, confSlug, right, rightVisible]
     );
 
     const center = useMemo(() => <Routing />, []);
@@ -185,5 +186,3 @@ function App(_props: AppProps): JSX.Element {
         </EmojiMartProvider>
     );
 }
-
-export default App;

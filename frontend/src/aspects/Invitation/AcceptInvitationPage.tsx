@@ -168,7 +168,7 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
     const { user, loading } = useMaybeCurrentUser();
     useNoPrimaryMenuButtons();
 
-    const { loading: inviteLoading, error: inviteError, data: inviteData } = useSelectInvitationForAcceptQuery({
+    const { loading: inviteLoading, data: inviteData } = useSelectInvitationForAcceptQuery({
         context: {
             headers: {
                 "SEND-WITHOUT-AUTH": true,

@@ -10,6 +10,7 @@ import {
     MenuList,
     Spacer,
     Stack,
+    Tooltip,
     useBreakpointValue,
     useColorModeValue,
 } from "@chakra-ui/react";
@@ -64,23 +65,25 @@ function MenuBar(): JSX.Element {
             backgroundColor={"gray.900"}
         >
             <Route path="/conference">
-                <Button
-                    onClick={mainMenu.isLeftBarOpen ? mainMenu.onLeftBarClose : mainMenu.onLeftBarOpen}
-                    size="sm"
-                    aria-label={mainMenu.isLeftBarOpen ? "Close main menu" : "Open main menu"}
-                    aria-haspopup="menu"
-                    aria-expanded={mainMenu.isLeftBarOpen ? true : undefined}
-                    aria-controls="left-bar"
-                    colorScheme={leftColorScheme}
-                    backgroundColor={leftBackgroundColour}
-                    color={leftForegroundColour}
-                >
-                    {mainMenu.isLeftBarOpen ? (
-                        <FAIcon iconStyle="s" icon="times" aria-hidden />
-                    ) : (
-                        <FAIcon iconStyle="s" icon="bars" aria-hidden />
-                    )}
-                </Button>
+                <Tooltip label={mainMenu.isLeftBarOpen ? "Close navigation" : "Open navigation"}>
+                    <Button
+                        onClick={mainMenu.isLeftBarOpen ? mainMenu.onLeftBarClose : mainMenu.onLeftBarOpen}
+                        size="sm"
+                        aria-label={mainMenu.isLeftBarOpen ? "Close navigation menu" : "Open navigation menu"}
+                        aria-haspopup="menu"
+                        aria-expanded={mainMenu.isLeftBarOpen ? true : undefined}
+                        aria-controls="left-bar"
+                        colorScheme={leftColorScheme}
+                        backgroundColor={leftBackgroundColour}
+                        color={leftForegroundColour}
+                    >
+                        {mainMenu.isLeftBarOpen ? (
+                            <FAIcon iconStyle="s" icon="times" aria-hidden />
+                        ) : (
+                            <FAIcon iconStyle="s" icon="bars" aria-hidden />
+                        )}
+                    </Button>
+                </Tooltip>
             </Route>
             <Switch>
                 <Route
@@ -147,7 +150,17 @@ function MenuBar(): JSX.Element {
                                                 history.push("/user");
                                             }}
                                         >
-                                            My Conferences
+                                            <FAIcon
+                                                display="inline"
+                                                verticalAlign="middle"
+                                                iconStyle="s"
+                                                icon="list"
+                                                mr={2}
+                                                aria-hidden={true}
+                                            />
+                                            <chakra.span display="inline" verticalAlign="middle">
+                                                My conferences
+                                            </chakra.span>
                                         </MenuItem>
                                     ) : undefined}
                                     {user && user.attendees.length > 0 ? (
@@ -258,8 +271,10 @@ function MenuBar(): JSX.Element {
                         <Route path="/">
                             <Box marginRight="auto" display="block" />
                             {user && user.attendees.length > 0 ? (
-                                <LinkButton to="/user" size="sm" role="menuitem">
-                                    My Conferences
+                                <LinkButton to="/user" size="sm" role="menuitem" aria-label="My conferences">
+                                    <Tooltip label="My conferences">
+                                        <FAIcon iconStyle="s" icon="list" aria-hidden={true} />
+                                    </Tooltip>
                                 </LinkButton>
                             ) : undefined}
                             {user && user.attendees.length > 0 ? (
@@ -282,25 +297,27 @@ function MenuBar(): JSX.Element {
                                                 p={0}
                                                 aria-label="My profile"
                                             >
-                                                {attendee && attendee.profile && attendee.profile.photoURL_50x50 ? (
-                                                    <Image
-                                                        borderRadius={5}
-                                                        w="100%"
-                                                        h="auto"
-                                                        objectFit="cover"
-                                                        objectPosition="center"
-                                                        src={attendee.profile.photoURL_50x50}
-                                                        aria-hidden={true}
-                                                        overflow="hidden"
-                                                    />
-                                                ) : (
-                                                    <FAIcon
-                                                        iconStyle="s"
-                                                        icon="cat"
-                                                        fontSize="23px"
-                                                        aria-hidden={true}
-                                                    />
-                                                )}
+                                                <Tooltip label="My profile">
+                                                    {attendee && attendee.profile && attendee.profile.photoURL_50x50 ? (
+                                                        <Image
+                                                            borderRadius={5}
+                                                            w="100%"
+                                                            h="auto"
+                                                            objectFit="cover"
+                                                            objectPosition="center"
+                                                            src={attendee.profile.photoURL_50x50}
+                                                            aria-hidden={true}
+                                                            overflow="hidden"
+                                                        />
+                                                    ) : (
+                                                        <FAIcon
+                                                            iconStyle="s"
+                                                            icon="cat"
+                                                            fontSize="23px"
+                                                            aria-hidden={true}
+                                                        />
+                                                    )}
+                                                </Tooltip>
                                             </LinkButton>
                                         );
                                     }}
@@ -314,23 +331,25 @@ function MenuBar(): JSX.Element {
             )}
             <ColorModeButton />
             <Route path="/conference">
-                <Button
-                    onClick={mainMenu.isRightBarOpen ? mainMenu.onRightBarClose : mainMenu.onRightBarOpen}
-                    size="sm"
-                    aria-label={mainMenu.isRightBarOpen ? "Close chats" : "Open chats"}
-                    aria-haspopup="menu"
-                    aria-expanded={mainMenu.isRightBarOpen ? true : undefined}
-                    aria-controls="right-bar"
-                    colorScheme={rightColorScheme}
-                    backgroundColor={rightBackgroundColour}
-                    color={rightForegroundColour}
-                >
-                    {mainMenu.isRightBarOpen ? (
-                        <FAIcon iconStyle="s" icon="comment-slash" aria-hidden />
-                    ) : (
-                        <FAIcon iconStyle="s" icon="comment" aria-hidden />
-                    )}
-                </Button>
+                <Tooltip label={mainMenu.isRightBarOpen ? "Close chats" : "Open chats"}>
+                    <Button
+                        onClick={mainMenu.isRightBarOpen ? mainMenu.onRightBarClose : mainMenu.onRightBarOpen}
+                        size="sm"
+                        aria-label={mainMenu.isRightBarOpen ? "Close chats" : "Open chats"}
+                        aria-haspopup="menu"
+                        aria-expanded={mainMenu.isRightBarOpen ? true : undefined}
+                        aria-controls="right-bar"
+                        colorScheme={rightColorScheme}
+                        backgroundColor={rightBackgroundColour}
+                        color={rightForegroundColour}
+                    >
+                        {mainMenu.isRightBarOpen ? (
+                            <FAIcon iconStyle="s" icon="comment-slash" aria-hidden />
+                        ) : (
+                            <FAIcon iconStyle="s" icon="comment" aria-hidden />
+                        )}
+                    </Button>
+                </Tooltip>
             </Route>
         </Stack>
     );

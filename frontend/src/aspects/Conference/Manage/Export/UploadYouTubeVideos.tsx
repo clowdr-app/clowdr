@@ -104,6 +104,14 @@ gql`
                 id
                 shortTitle
                 title
+                contentItems {
+                    id
+                    youTubeUploads {
+                        id
+                        videoTitle
+                        videoId
+                    }
+                }
                 abstractContentItems: contentItems(
                     where: { contentTypeName: { _eq: ABSTRACT } }
                     order_by: { updatedAt: desc }
@@ -317,6 +325,15 @@ export function UploadYouTubeVideos(): JSX.Element {
                     })
                 );
 
+                const youTubeUploads = R.flatten(
+                    contentItem.contentGroup.contentItems.map((item) =>
+                        item.youTubeUploads.map((upload) => ({
+                            title: upload.videoTitle,
+                            url: `https://www.youtube.com/watch?v=${upload.videoId}`,
+                        }))
+                    )
+                );
+
                 const view = {
                     fileId: contentItemId,
                     fileName,
@@ -326,6 +343,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                     itemShortTitle,
                     paperUrls,
                     paperLinks,
+                    youTubeUploads,
                 };
 
                 return [

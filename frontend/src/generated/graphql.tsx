@@ -4489,6 +4489,10 @@ export type ContentItem = {
   /** An object relationship */
   readonly requiredContentItem?: Maybe<RequiredContentItem>;
   readonly updatedAt: Scalars['timestamptz'];
+  /** An array relationship */
+  readonly youTubeUploads: ReadonlyArray<YouTubeUpload>;
+  /** An aggregated array relationship */
+  readonly youTubeUploads_aggregate: YouTubeUpload_Aggregate;
 };
 
 
@@ -4501,6 +4505,26 @@ export type ContentItemDataArgs = {
 /** columns and relationships of "ContentItem" */
 export type ContentItemLayoutDataArgs = {
   path?: Maybe<Scalars['String']>;
+};
+
+
+/** columns and relationships of "ContentItem" */
+export type ContentItemYouTubeUploadsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<YouTubeUpload_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<YouTubeUpload_Order_By>>;
+  where?: Maybe<YouTubeUpload_Bool_Exp>;
+};
+
+
+/** columns and relationships of "ContentItem" */
+export type ContentItemYouTubeUploads_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<YouTubeUpload_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<YouTubeUpload_Order_By>>;
+  where?: Maybe<YouTubeUpload_Bool_Exp>;
 };
 
 /** aggregated selection of "ContentItem" */
@@ -4567,6 +4591,7 @@ export type ContentItem_Bool_Exp = {
   readonly requiredContentId?: Maybe<Uuid_Comparison_Exp>;
   readonly requiredContentItem?: Maybe<RequiredContentItem_Bool_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly youTubeUploads?: Maybe<YouTubeUpload_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "ContentItem" */
@@ -4615,6 +4640,7 @@ export type ContentItem_Insert_Input = {
   readonly requiredContentId?: Maybe<Scalars['uuid']>;
   readonly requiredContentItem?: Maybe<RequiredContentItem_Obj_Rel_Insert_Input>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly youTubeUploads?: Maybe<YouTubeUpload_Arr_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -4709,6 +4735,7 @@ export type ContentItem_Order_By = {
   readonly requiredContentId?: Maybe<Order_By>;
   readonly requiredContentItem?: Maybe<RequiredContentItem_Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
+  readonly youTubeUploads_aggregate?: Maybe<YouTubeUpload_Aggregate_Order_By>;
 };
 
 /** primary key columns input for table: "ContentItem" */
@@ -18266,7 +18293,9 @@ export type Chat_ReadUpToIndex_Bool_Exp = {
 /** unique or primary key constraints on table "chat.ReadUpToIndex" */
 export enum Chat_ReadUpToIndex_Constraint {
   /** unique or primary key constraint */
-  ReadUpToIndexPkey = 'ReadUpToIndex_pkey'
+  ReadUpToIndexPkey = 'ReadUpToIndex_pkey',
+  /** unique or primary key constraint */
+  ChatReadUpToIndexPkIndex = 'chat_ReadUpToIndex_pk_index'
 }
 
 /** input type for incrementing integer column in table "chat.ReadUpToIndex" */
@@ -31985,7 +32014,7 @@ export type UploadYouTubeVideos_GetTemplateDataQueryVariables = Exact<{
 }>;
 
 
-export type UploadYouTubeVideos_GetTemplateDataQuery = { readonly __typename?: 'query_root', readonly ContentItem: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly contentGroup: { readonly __typename?: 'ContentGroup', readonly id: any, readonly shortTitle?: Maybe<string>, readonly title: string, readonly abstractContentItems: ReadonlyArray<(
+export type UploadYouTubeVideos_GetTemplateDataQuery = { readonly __typename?: 'query_root', readonly ContentItem: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly contentGroup: { readonly __typename?: 'ContentGroup', readonly id: any, readonly shortTitle?: Maybe<string>, readonly title: string, readonly contentItems: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly youTubeUploads: ReadonlyArray<{ readonly __typename?: 'YouTubeUpload', readonly id: any, readonly videoTitle: string, readonly videoId: string }> }>, readonly abstractContentItems: ReadonlyArray<(
         { readonly __typename?: 'ContentItem' }
         & UploadYouTubeVideos_ContentItemFragment
       )>, readonly paperLinkContentItems: ReadonlyArray<(
@@ -37255,6 +37284,13 @@ export const UploadYouTubeVideos_GetTemplateDataDocument = gql`
       id
       shortTitle
       title
+      contentItems {
+        youTubeUploads {
+          id
+          videoTitle
+          videoId
+        }
+      }
       abstractContentItems: contentItems(
         where: {contentTypeName: {_eq: ABSTRACT}}
         order_by: {updatedAt: desc}

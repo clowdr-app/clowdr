@@ -3117,6 +3117,14 @@
   - name: requiredContentItem
     using:
       foreign_key_constraint_on: requiredContentId
+  array_relationships:
+  - name: youTubeUploads
+    using:
+      foreign_key_constraint_on:
+        column: contentItemId
+        table:
+          schema: public
+          name: YouTubeUpload
   insert_permissions:
   - role: user
     permission:

@@ -13,18 +13,18 @@ If you want to contribute to Clowdr, please read our [contribution guidelines](C
 | services         | Micro-services                                                   |                                           |
 | services/actions | At the moment, a "general" service for handling any/all actions. | [ReadMe here](services/actions/README.md) |
 
-# Quick Setup 
+# Quick Setup
 
 For contributors that _only_ want to play with the user interface, the
 following abbreviated instructions should get you a minimal working setup.
 
-
+XXXXXXX
 
 # Full Setup
 
 To run your own conferences on Clowdr and/or test changes that affect other
 parts of the platform, here are the steps to bring up a fully functional
-local instance. 
+local instance.
 
 ## Pre-requisites
 
@@ -40,8 +40,10 @@ local instance.
 
 1. Clone this repository
 1. Initialise/update submodules
-BCP: How do I do that??
-1. Enter and build `react-transcript-editor`:
+   BCP: How do I do that??
+1. Build `react-transcript-editor` as follows:
+   BCP: Should this be slate-transcript-editor??
+   1. `cd slate-transcript-editor`
    1. Run `npm install`
    1. Run `npm run build:component`
    1. You should see the `dist` folder created.
@@ -61,6 +63,7 @@ BCP: How do I do that??
 1. Follow the Frontend setup: [Clowdr Frontend
    ReadMe](frontend/README.md#Setting-up)
 1. Follow the Auth0 setup below
+   BCP: Can I reorder these steps so that there is an initial prefix that can be shared with the Quick Setup??
 
 ### Auth0 Setup
 
@@ -74,11 +77,16 @@ considered for merging._**
 
 #### 1. Create Application
 
-1. Create an _Application_ in Auth0
+1. Visit [auth0.com](https://auth0.com)
+1. Click `Sign up` and create an account
+1. On the "Welcome to Auth0" screen, just click `Next`
+1. Fill in company name if appropriate and click `Next`
+1. Click `Applications` in the left sidebar and then `Create application`
    - Name it anything you like (e.g. Clowdr Test)
-   - When asked, select `Single Page Web Applications`
-1. Make a note of the following configuration parameters. They will be used
-   later in these instructions.
+   - Choose `Single Page Web Applications`
+   - Click `Create`
+1. Click `Settings` in the middle of the page and make a note of the
+   following configuration parameters:
    - Domain
    - Client ID
 
@@ -89,41 +97,64 @@ Now, configure the application in the _Settings_ tab.
 1. Configure `Allowed Callback URLs` (comma-separated)
    (The format/suffix of these urls should not be altered.)
 
-   For example, you should include `localhost` and optionally your Netlify app url(s), if you have set up Netlify:
+   You should include `localhost`. Also, you can optionally include your
+   Netlify app url(s), if you have set up Netlify.
+   BCP: What is netlify, and why would I set it up?
+   BCP: Which of these are mandatory for a quick setup? Do the non-mandatory
+   ones hurt anything?  
+   BCP: Is the order critical (aside from the first)?
+   BCP: Should I choose port 3000 for localhost?  
+   BCP: Is it OK to indent these? (I reformatted to facilitate cut/paste)
+   BCP: Is there any actual reason I'd include others? (Why not just say "Make
+   it look like this"?)
 
-   - `http://localhost:3000/auth0/`
-   - `https://<netlify-subdomain>.netlify.app/auth0/`
-   - `http://localhost:3000/auth0/logged-in`
-   - `https://<netlify-subdomain>.netlify.app/auth0/logged-in`
-   - `http://localhost:3000/auth0/email-verification/result`
-   - `https://<netlify-subdomain>.netlify.app/auth0/email-verification/result`
+```
+http://localhost:3000/auth0/
+https://<netlify-subdomain>.netlify.app/auth0/
+http://localhost:3000/auth0/logged-in
+https://<netlify-subdomain>.netlify.app/auth0/logged-in
+http://localhost:3000/auth0/email-verification/result
+https://<netlify-subdomain>.netlify.app/auth0/email-verification/result
+```
 
-   FOR PRODUCTION: The first URL MUST be the `auth0` address
-   (See [the auth0 documentation on Email Templates / Redirect URLs](https://auth0.com/docs/auth0-email-services/customize-email-templates#configuring-the-redirect-to-url)).
+FOR PRODUCTION: The first URL MUST be the `auth0` address
+(See [the auth0 documentation on Email Templates / Redirect URLs](https://auth0.com/docs/auth0-email-services/customize-email-templates#configuring-the-redirect-to-url)).
+
+BCP: Is there a reason I'd do it another way if this is not FOR PRODUCTION?
+If not, maybe this comment is more detail than needed (and we can just
+specify which one needs to be first). If the comment _is_ critical for
+people to understand, perhaps it can be demoted to a "More details" section
+later, or some such?
 
 1. Configure `Allowed Logout URLs` (comma-separated)
    (The format/suffix of these urls should not be altered.)
 
    E.g.
 
-   - `http://localhost:3000/auth0/logged-out`
-   - `http://localhost:3000/auth0/email-verification/required/no-redirect`
-   - `https://<netlify-subdomain>.netlify.app/auth0/logged-out`
-   - `https://<netlify-subdomain>.netlify.app/auth0/email-verification/required/no-redirect`
+```
+http://localhost:3000/auth0/logged-out,
+http://localhost:3000/auth0/email-verification/required/no-redirect,
+https://<netlify-subdomain>.netlify.app/auth0/logged-out,
+https://<netlify-subdomain>.netlify.app/auth0/email-verification/required/no-redirect
+```
 
 1. Configure `Allowed Web Origins` (comma-separated)
 
    E.g.
 
-   - `http://localhost:3000`
-   - `https://<netlify-subdomain>.netlify.app`
+```
+http://localhost:3000
+https://<netlify-subdomain>.netlify.app
+```
 
 1. **Don't forget to `Save changes`**
 
 #### 3. Create API
 
-1. Create an _API_
+1. Create an Auth0 _API_
 
+   - Click `APIs` in the sidebar
+   - Click `Create API`
    - `Name` it anything you like e.g. Clowdr Test API
    - Set the `Identifier` to `hasura`
    - `Signing Algorithm`: `RS256`
@@ -137,48 +168,14 @@ Order of the rules matters.
 
 1. Create a new _Rule_
 
+   - Click `Rules` in the sidebar, then `Create Rule`
    - Select `Empty rule`
    - `Name` it something like `Setup isNew app metadata`
-   - Replace the `Script` with the code from `Setup isNew app metadata` below
+     BCP: Why "something like"?
+   - Replace the `Script` with the code below
    - Don't forget to `Save changes`
 
-   This rule sets up the tracking of new user accounts so we only insert them into the db once.
-
-1. Create a new _Rule_
-
-   - Select `Empty rule`
-   - `Name` it something like `Force Verified Email Before Login`
-   - Replace the `Script` with the code from `Force Verified Email Before Login Rule` below
-   - Don't forget to `Save changes`
-
-   This rule prevents users from logging in before they have verified their account.
-
-1. Create a new _Rule_
-
-   - Select `Empty rule`
-   - `Name` it something like `Hasura JWT`
-   - Replace the `Script` with the code from `Hasura JWT Rule` below
-   - Don't forget to `Save changes`
-
-   This rule upgrades the access token to give it relevant roles which are then
-   recognised by Clowdr's Hasura instance.
-
-1. Create a new _Rule_
-
-   - Select `Empty rule`
-   - `Name` it something like `Hasura User Sync`
-   - Replace the `Script` with the code from `Hasura User Sync Rule` below
-   - Don't forget to `Save changes`
-
-   This rule creates users in Clowdr's DB via Hasura using the Admin Secret to
-   directly access the `user` table. It also sets the `lastLoggedInAt` field
-   every time a user logs in.
-
-   _Note: `lastLoggedInAt` defaults to `now()` hence why updating it with a
-   blank value when there is a constraint conflict results in it reflecting the
-   last logged in time._
-
-##### Setup isNew app metadata
+   (This rule sets up the tracking of new user accounts so we only insert them into the db once.)
 
 ```js
 function (user, context, callback) {
@@ -199,7 +196,20 @@ function (user, context, callback) {
 }
 ```
 
-##### Force Verified Email Before Login Rule
+BCP: Is this feedback expected?
+Heads up! If you are trying to access a service behind a firewall, make
+sure to open the right ports and allow inbound connections from these IP
+addresses:18.232.225.224,34.233.19.82,52.204.128.250,
+3.132.201.78,3.19.44.88,3.20.244.231
+
+1. Create another new _Rule_
+
+   - Select `Empty rule`
+   - `Name` it something like `Force Verified Email Before Login`
+   - Replace the `Script` with the code below
+   - Don't forget to `Save changes`
+
+   This rule prevents users from logging in before they have verified their account.
 
 ```js
 function emailVerified(user, context, callback) {
@@ -211,7 +221,15 @@ function emailVerified(user, context, callback) {
 }
 ```
 
-##### Hasura JWT Rule
+1. Create another new _Rule_
+
+   - Select `Empty rule`
+   - `Name` it something like `Hasura JWT`
+   - Replace the `Script` with the code below
+   - Don't forget to `Save changes`
+
+   This rule upgrades the access token to give it relevant roles which are then
+   recognised by Clowdr's Hasura instance.
 
 ```js
 function (user, context, callback) {
@@ -231,7 +249,20 @@ function (user, context, callback) {
 }
 ```
 
-##### Hasura User Sync Rule
+1. Create another new _Rule_
+
+   - Select `Empty rule`
+   - `Name` it something like `Hasura User Sync`
+   - Replace the `Script` with the code below
+   - Don't forget to `Save changes`
+
+   This rule creates users in Clowdr's DB via Hasura using the Admin Secret to
+   directly access the `user` table. It also sets the `lastLoggedInAt` field
+   every time a user logs in.
+
+   _Note: `lastLoggedInAt` defaults to `now()` hence why updating it with a
+   blank value when there is a constraint conflict results in it reflecting the
+   last logged in time._
 
 ```js
 function (user, context, callback) {
@@ -288,13 +319,18 @@ function (user, context, callback) {
 
 #### 5. Configure Rules
 
-Under _Rule Settings_ add the following key-value pairs:
+Under _Settings_ on the `Rules` page, add the following key-value pairs:
 
 | Key                 | Value                                                                                       | Notes                                                                                                                                                     |
 | ------------------- | ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | HASURA_NAMESPACE    | `https://hasura.io/jwt/claims`                                                              | For Hasura, this value must always be this URL.                                                                                                           |
 | HASURA_ADMIN_SECRET | The Hasura Admin Secret                                                                     | For local testing, see Hasura Environment Variables.                                                                                                      |
 | HASURA_URL          | The full URL to the Hasura GraphQL API. E.g. `http://<ngrok-subdomain>.ngrok.io/v1/graphql` | Use Ngrok to make a `localhost` server accessible by Auth0: command `ngrok http 8080`. Hint: The Hasura Service _not_ the Hasura Console URL/port number! |
+
+BCP: I haven't done anything with Hasura yet, so I don't know what the admin
+secret might be. Something seems out of order.
+BCP: Not sure where to look to "see Hasura Environment Variables"
+BCP: No idea what the third row means. :-(
 
 You can optionally use `HASURA_ADMIN_SECRET_LOCAL` and `HASURA_URL_LOCAL` in addition to the non-local versions to have
 user records pushed to both services simultaneously (useful in testing environments).

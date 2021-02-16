@@ -2,15 +2,24 @@ import { gql } from "@apollo/client";
 import {
     Box,
     Button,
+    Code,
     FormControl,
     FormErrorMessage,
     FormLabel,
     Heading,
     HStack,
     Input,
+    Link,
     List,
     ListIcon,
     ListItem,
+    Popover,
+    PopoverArrow,
+    PopoverBody,
+    PopoverCloseButton,
+    PopoverContent,
+    PopoverHeader,
+    PopoverTrigger,
     Select,
     Spinner,
     Text,
@@ -104,6 +113,14 @@ gql`
                 id
                 shortTitle
                 title
+                contentItems {
+                    id
+                    youTubeUploads {
+                        id
+                        videoTitle
+                        videoId
+                    }
+                }
                 abstractContentItems: contentItems(
                     where: { contentTypeName: { _eq: ABSTRACT } }
                     order_by: { updatedAt: desc }
@@ -317,6 +334,15 @@ export function UploadYouTubeVideos(): JSX.Element {
                     })
                 );
 
+                const youTubeUploads = R.flatten(
+                    contentItem.contentGroup.contentItems.map((item) =>
+                        item.youTubeUploads.map((upload) => ({
+                            title: upload.videoTitle,
+                            url: `https://www.youtube.com/watch?v=${upload.videoId}`,
+                        }))
+                    )
+                );
+
                 const view = {
                     fileId: contentItemId,
                     fileName,
@@ -326,6 +352,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                     itemShortTitle,
                     paperUrls,
                     paperLinks,
+                    youTubeUploads,
                 };
 
                 return [
@@ -566,6 +593,68 @@ export function UploadYouTubeVideos(): JSX.Element {
                                     <Heading as="h2" size="md" textAlign="left" my={4}>
                                         Set video titles and descriptions
                                     </Heading>
+                                    <Popover>
+                                        <PopoverTrigger>
+                                            <Button>
+                                                <FAIcon icon="question-circle" iconStyle="s" mr={2} />
+                                                Help
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent>
+                                            <PopoverArrow />
+                                            <PopoverCloseButton />
+                                            <PopoverHeader>Title and description templates</PopoverHeader>
+                                            <PopoverBody>
+                                                <Text mb={2}>
+                                                    Titles and descriptions for uploaded YouTube videos are defined
+                                                    using <Link href="https://mustache.github.io/">Mustache</Link>{" "}
+                                                    templates. The following fields are available:
+                                                </Text>
+                                                <List fontSize="sm">
+                                                    <ListItem>
+                                                        <Code>fileName</Code>: name of the file
+                                                    </ListItem>
+                                                    <ListItem>
+                                                        <Code>itemTitle</Code>: title of the content item this video
+                                                        belongs to
+                                                    </ListItem>
+                                                    <ListItem>
+                                                        <Code>itemShortTitle</Code>: short title of the content item
+                                                        this video belongs to
+                                                    </ListItem>
+                                                    <ListItem>
+                                                        <Code>abstract</Code>: the abstract text for the content item
+                                                    </ListItem>
+                                                    <ListItem>
+                                                        <Code>paperUrls</Code>: list of URLs to papers
+                                                    </ListItem>
+                                                    <ListItem>
+                                                        <Code>paperLinks</Code>: list of links to papers. Properties are{" "}
+                                                        <Code>url</Code>, <Code>text</Code>.
+                                                    </ListItem>
+                                                    <ListItem>
+                                                        <Code>youTubeUploads</Code>: list of previously uploaded YouTube
+                                                        videos for this content item. Properties are <Code>url</Code>,{" "}
+                                                        <Code>title</Code>.
+                                                    </ListItem>
+                                                    <ListItem>
+                                                        <Code>fileId</Code>: unique ID of the file
+                                                    </ListItem>
+                                                    <ListItem>
+                                                        <Code>itemId</Code>: unique ID of the item that contains this
+                                                        file
+                                                    </ListItem>
+                                                </List>
+                                                <Text mt={2}>Example:</Text>
+                                                <Code display="block" whiteSpace="pre">
+                                                    {`{{abstract}}
+{{#youTubeUploads}}
+    * {{title}}: {{{url}}}
+{{/youTubeUploads}}`}
+                                                </Code>
+                                            </PopoverBody>
+                                        </PopoverContent>
+                                    </Popover>
                                     <Field name="titleTemplate">
                                         {({ field, form }: FieldProps<string>) => (
                                             <FormControl

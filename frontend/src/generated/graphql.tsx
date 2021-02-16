@@ -32014,7 +32014,7 @@ export type UploadYouTubeVideos_GetTemplateDataQueryVariables = Exact<{
 }>;
 
 
-export type UploadYouTubeVideos_GetTemplateDataQuery = { readonly __typename?: 'query_root', readonly ContentItem: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly contentGroup: { readonly __typename?: 'ContentGroup', readonly id: any, readonly shortTitle?: Maybe<string>, readonly title: string, readonly contentItems: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly youTubeUploads: ReadonlyArray<{ readonly __typename?: 'YouTubeUpload', readonly id: any, readonly videoTitle: string, readonly videoId: string }> }>, readonly abstractContentItems: ReadonlyArray<(
+export type UploadYouTubeVideos_GetTemplateDataQuery = { readonly __typename?: 'query_root', readonly ContentItem: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly contentGroup: { readonly __typename?: 'ContentGroup', readonly id: any, readonly shortTitle?: Maybe<string>, readonly title: string, readonly contentItems: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly youTubeUploads: ReadonlyArray<{ readonly __typename?: 'YouTubeUpload', readonly id: any, readonly videoTitle: string, readonly videoId: string }> }>, readonly abstractContentItems: ReadonlyArray<(
         { readonly __typename?: 'ContentItem' }
         & UploadYouTubeVideos_ContentItemFragment
       )>, readonly paperLinkContentItems: ReadonlyArray<(
@@ -37285,6 +37285,7 @@ export const UploadYouTubeVideos_GetTemplateDataDocument = gql`
       shortTitle
       title
       contentItems {
+        id
         youTubeUploads {
           id
           videoTitle

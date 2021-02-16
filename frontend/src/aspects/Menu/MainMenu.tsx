@@ -133,6 +133,9 @@ function MenuBar(): JSX.Element {
                                 </MenuItem>
                             ))}
                             <Switch>
+                                <Route path="/invitation/accept/">
+                                    <Box marginRight="auto" display="block" />
+                                </Route>
                                 <Route exact path="/user">
                                     <AuthenticationButton asMenuItem />
                                     <SignupButton asMenuItem />
@@ -242,6 +245,9 @@ function MenuBar(): JSX.Element {
                     )}
                     <Switch>
                         <Route exact path="/">
+                            <Box marginRight="auto" display="block" />
+                        </Route>
+                        <Route path="/invitation/accept/">
                             <Box marginRight="auto" display="block" />
                         </Route>
                         <Route exact path="/user">

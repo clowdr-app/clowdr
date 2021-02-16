@@ -32712,7 +32712,7 @@ export type SelectInvitationForAcceptQueryVariables = Exact<{
 }>;
 
 
-export type SelectInvitationForAcceptQuery = { readonly __typename?: 'query_root', readonly Invitation: ReadonlyArray<{ readonly __typename?: 'Invitation', readonly hash?: Maybe<string> }> };
+export type SelectInvitationForAcceptQuery = { readonly __typename?: 'query_root', readonly Invitation: ReadonlyArray<{ readonly __typename?: 'Invitation', readonly id: any, readonly invitedEmailAddress: string }> };
 
 export type Invitation_ConfirmCurrentMutationVariables = Exact<{
   inviteCode: Scalars['uuid'];
@@ -39790,7 +39790,8 @@ export type GoogleOAuth_SubmitGoogleOAuthCodeMutationOptions = Apollo.BaseMutati
 export const SelectInvitationForAcceptDocument = gql`
     query SelectInvitationForAccept($inviteCode: uuid!) {
   Invitation(where: {inviteCode: {_eq: $inviteCode}}) {
-    hash
+    id
+    invitedEmailAddress
   }
 }
     `;

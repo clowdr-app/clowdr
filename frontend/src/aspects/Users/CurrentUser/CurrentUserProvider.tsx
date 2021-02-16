@@ -13,6 +13,10 @@ gql`
         displayName
         createdAt
         updatedAt
+        profile {
+            attendeeId
+            photoURL_50x50
+        }
         conference {
             id
             name

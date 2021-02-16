@@ -34,12 +34,6 @@ function ViewProfilePageInner({ attendee }: { attendee: Attendee }): JSX.Element
         ) {
             setPrimaryMenuButtons([
                 {
-                    key: "conference-home",
-                    action: `/conference/${conference.slug}`,
-                    text: conference.shortName,
-                    label: conference.shortName,
-                },
-                {
                     key: "edit-profile",
                     action: `/conference/${conference.slug}/profile/edit${
                         maybeCurrentUser.user && attendee.userId === maybeCurrentUser.user.id ? "" : `/${attendee.id}`
@@ -50,14 +44,7 @@ function ViewProfilePageInner({ attendee }: { attendee: Attendee }): JSX.Element
                 },
             ]);
         } else {
-            setPrimaryMenuButtons([
-                {
-                    key: "conference-home",
-                    action: `/conference/${conference.slug}`,
-                    text: conference.shortName,
-                    label: conference.shortName,
-                },
-            ]);
+            setPrimaryMenuButtons([]);
         }
     }, [
         activePermissions,

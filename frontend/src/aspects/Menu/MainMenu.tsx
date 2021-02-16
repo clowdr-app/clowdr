@@ -2,6 +2,8 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Box,
     Button,
+    chakra,
+    Image,
     Menu,
     MenuButton,
     MenuItem,
@@ -9,7 +11,7 @@ import {
     Spacer,
     Stack,
     useBreakpointValue,
-    useDisclosure,
+    useColorModeValue,
 } from "@chakra-ui/react";
 import React from "react";
 import { Route, RouteComponentProps, Switch, useHistory } from "react-router-dom";
@@ -19,21 +21,31 @@ import ColorModeButton from "../Chakra/ColorModeButton";
 import { LinkButton } from "../Chakra/LinkButton";
 import FAIcon from "../Icons/FAIcon";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
-import MainMenuDrawer from "./MainMenuDrawer";
-import { MenuStateContext, useMainMenu } from "./MainMenuState";
+import { MenuState, MenuStateContext, useMainMenu } from "./MainMenuState";
 import usePrimaryMenuButtons, { PrimaryMenuButtonsProvider } from "./usePrimaryMenuButtons";
 
 interface Props {
     children: React.ReactNode | React.ReactNodeArray;
+    isLeftBarOpen: boolean;
+    onLeftBarOpen: () => void;
+    onLeftBarClose: () => void;
 }
 
-function MenuBar({ isOpen }: { isOpen?: boolean }): JSX.Element {
+function MenuBar(): JSX.Element {
     const { buttons: primaryButtons } = usePrimaryMenuButtons();
     const { user } = useMaybeCurrentUser();
     const mainMenu = useMainMenu();
 
     const mergeItems = useBreakpointValue({ base: true, md: false });
     const history = useHistory();
+
+    const leftColorScheme = "blue";
+    const leftBackgroundColour = useColorModeValue(`${leftColorScheme}.200`, `${leftColorScheme}.600`);
+    const leftForegroundColour = useColorModeValue("black", "white");
+
+    const rightColorScheme = "purple";
+    const rightBackgroundColour = useColorModeValue(`${rightColorScheme}.200`, `${rightColorScheme}.600`);
+    const rightForegroundColour = useColorModeValue("black", "white");
 
     return (
         <Stack
@@ -46,18 +58,56 @@ function MenuBar({ isOpen }: { isOpen?: boolean }): JSX.Element {
             width="100%"
             gridRowGap={[0, 2]}
             flex="0 0 auto"
-            mb="auto"
+            mb={0}
+            px="0.4em"
+            py="0.4em"
+            backgroundColor={"gray.900"}
         >
-            <Button
-                onClick={mainMenu.onOpen}
-                size="sm"
-                aria-label="Open main menu"
-                aria-haspopup="menu"
-                aria-expanded={isOpen ? true : undefined}
-                aria-controls="main-menu"
-            >
-                <FAIcon iconStyle="s" icon="bars" aria-hidden />
-            </Button>
+            <Route path="/conference">
+                <Button
+                    onClick={mainMenu.isLeftBarOpen ? mainMenu.onLeftBarClose : mainMenu.onLeftBarOpen}
+                    size="sm"
+                    aria-label={mainMenu.isLeftBarOpen ? "Close main menu" : "Open main menu"}
+                    aria-haspopup="menu"
+                    aria-expanded={mainMenu.isLeftBarOpen ? true : undefined}
+                    aria-controls="left-bar"
+                    colorScheme={leftColorScheme}
+                    backgroundColor={leftBackgroundColour}
+                    color={leftForegroundColour}
+                >
+                    {mainMenu.isLeftBarOpen ? (
+                        <FAIcon iconStyle="s" icon="times" aria-hidden />
+                    ) : (
+                        <FAIcon iconStyle="s" icon="bars" aria-hidden />
+                    )}
+                </Button>
+            </Route>
+            <Switch>
+                <Route
+                    path="/conference/:confSlug"
+                    component={(
+                        props: RouteComponentProps<{
+                            confSlug: string;
+                        }>
+                    ) => (
+                        <LinkButton
+                            to={`/conference/${props.match.params.confSlug}`}
+                            size="sm"
+                            w="3ex"
+                            aria-label="Conference home"
+                            p={0}
+                        >
+                            <Image src="/android-chrome-192x192.png" objectFit="contain" />
+                        </LinkButton>
+                    )}
+                />
+                <Route path="/">
+                    <LinkButton to="/" size="sm" w="3ex" aria-label="Clowdr home" p={0}>
+                        <Image src="/android-chrome-192x192.png" objectFit="contain" />
+                    </LinkButton>
+                </Route>
+            </Switch>
+
             {mergeItems ? (
                 <>
                     <Spacer />
@@ -104,17 +154,54 @@ function MenuBar({ isOpen }: { isOpen?: boolean }): JSX.Element {
                                                 props: RouteComponentProps<{
                                                     confSlug: string;
                                                 }>
-                                            ) => (
-                                                <MenuItem
-                                                    onClick={() => {
-                                                        history.push(
-                                                            `/conference/${props.match.params.confSlug}/profile`
-                                                        );
-                                                    }}
-                                                >
-                                                    My Profile
-                                                </MenuItem>
-                                            )}
+                                            ) => {
+                                                const attendee = user.attendees.find(
+                                                    (x) => x.conference.slug === props.match.params.confSlug
+                                                );
+                                                return (
+                                                    <MenuItem
+                                                        onClick={() => {
+                                                            history.push(
+                                                                `/conference/${props.match.params.confSlug}/profile`
+                                                            );
+                                                        }}
+                                                        display="block"
+                                                    >
+                                                        {attendee &&
+                                                        attendee.profile &&
+                                                        attendee.profile.photoURL_50x50 ? (
+                                                            <Image
+                                                                borderRadius={5}
+                                                                w="100%"
+                                                                h="auto"
+                                                                objectFit="cover"
+                                                                objectPosition="center"
+                                                                src={attendee.profile.photoURL_50x50}
+                                                                aria-hidden={true}
+                                                                overflow="hidden"
+                                                                maxW="3ex"
+                                                                mr={2}
+                                                                my={0}
+                                                                verticalAlign="middle"
+                                                                display="inline"
+                                                            />
+                                                        ) : (
+                                                            <FAIcon
+                                                                display="inline"
+                                                                verticalAlign="middle"
+                                                                iconStyle="s"
+                                                                icon="cat"
+                                                                fontSize="25px"
+                                                                mr={2}
+                                                                aria-hidden={true}
+                                                            />
+                                                        )}
+                                                        <chakra.span display="inline" verticalAlign="middle">
+                                                            Profile
+                                                        </chakra.span>
+                                                    </MenuItem>
+                                                );
+                                            }}
                                         />
                                     ) : undefined}
                                     <AuthenticationButton asMenuItem />
@@ -176,15 +263,41 @@ function MenuBar({ isOpen }: { isOpen?: boolean }): JSX.Element {
                                         props: RouteComponentProps<{
                                             confSlug: string;
                                         }>
-                                    ) => (
-                                        <LinkButton
-                                            to={`/conference/${props.match.params.confSlug}/profile`}
-                                            size="sm"
-                                            role="menuitem"
-                                        >
-                                            My Profile
-                                        </LinkButton>
-                                    )}
+                                    ) => {
+                                        const attendee = user.attendees.find(
+                                            (x) => x.conference.slug === props.match.params.confSlug
+                                        );
+                                        return (
+                                            <LinkButton
+                                                to={`/conference/${props.match.params.confSlug}/profile`}
+                                                size="sm"
+                                                role="menuitem"
+                                                w="3ex"
+                                                p={0}
+                                                aria-label="My profile"
+                                            >
+                                                {attendee && attendee.profile && attendee.profile.photoURL_50x50 ? (
+                                                    <Image
+                                                        borderRadius={5}
+                                                        w="100%"
+                                                        h="auto"
+                                                        objectFit="cover"
+                                                        objectPosition="center"
+                                                        src={attendee.profile.photoURL_50x50}
+                                                        aria-hidden={true}
+                                                        overflow="hidden"
+                                                    />
+                                                ) : (
+                                                    <FAIcon
+                                                        iconStyle="s"
+                                                        icon="cat"
+                                                        fontSize="23px"
+                                                        aria-hidden={true}
+                                                    />
+                                                )}
+                                            </LinkButton>
+                                        );
+                                    }}
                                 />
                             ) : undefined}
                             <AuthenticationButton />
@@ -194,51 +307,36 @@ function MenuBar({ isOpen }: { isOpen?: boolean }): JSX.Element {
                 </>
             )}
             <ColorModeButton />
+            <Route path="/conference">
+                <Button
+                    onClick={mainMenu.isRightBarOpen ? mainMenu.onRightBarClose : mainMenu.onRightBarOpen}
+                    size="sm"
+                    aria-label={mainMenu.isRightBarOpen ? "Close chats" : "Open chats"}
+                    aria-haspopup="menu"
+                    aria-expanded={mainMenu.isRightBarOpen ? true : undefined}
+                    aria-controls="right-bar"
+                    colorScheme={rightColorScheme}
+                    backgroundColor={rightBackgroundColour}
+                    color={rightForegroundColour}
+                >
+                    {mainMenu.isRightBarOpen ? (
+                        <FAIcon iconStyle="s" icon="comment-slash" aria-hidden />
+                    ) : (
+                        <FAIcon iconStyle="s" icon="comment" aria-hidden />
+                    )}
+                </Button>
+            </Route>
         </Stack>
     );
 }
 
-export default function MainMenu({ children }: Props): JSX.Element {
-    const { isOpen, onOpen, onClose, onToggle } = useDisclosure();
-
-    // const sidebarContentsPortal = useMemo(() => createHtmlPortalNode(), []);
-
-    // const sidebarContents = useMemo(
-    //     () => (
-    //         <VStack align="stretch" spacing={0}>
-    //             <Route
-    //                 path="/conference/:confSlug"
-    //                 component={(
-    //                     props: RouteComponentProps<{
-    //                         confSlug: string;
-    //                     }>
-    //                 ) => (
-    //                     <MainMenuConferenceSections
-    //                         rootUrl={props.match.url}
-    //                         confSlug={props.match.params.confSlug}
-    //                         onClose={onClose}
-    //                     />
-    //                 )}
-    //             />
-    //         </VStack>
-    //     ),
-    //     [onClose]
-    // );
-
+export default function MainMenu({ children, ...props }: Props & MenuState): JSX.Element {
     return (
-        <MenuStateContext.Provider
-            value={{
-                onOpen,
-                onClose,
-                onToggle,
-            }}
-        >
+        <MenuStateContext.Provider value={props}>
             <PrimaryMenuButtonsProvider>
                 {children}
-                <MenuBar isOpen={isOpen} />
+                <MenuBar />
             </PrimaryMenuButtonsProvider>
-            <MainMenuDrawer isOpen={isOpen} /* portalNode={sidebarContentsPortal} */ />
-            {/* <InPortal node={sidebarContentsPortal}>{sidebarContents}</InPortal> */}
         </MenuStateContext.Provider>
     );
 }

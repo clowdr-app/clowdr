@@ -32864,7 +32864,7 @@ export type GetShuffleRoomsParticipantsCountQueryVariables = Exact<{
 
 export type GetShuffleRoomsParticipantsCountQuery = { readonly __typename?: 'query_root', readonly RoomParticipant_aggregate: { readonly __typename?: 'RoomParticipant_aggregate', readonly aggregate?: Maybe<{ readonly __typename?: 'RoomParticipant_aggregate_fields', readonly count?: Maybe<number> }> } };
 
-export type AttendeeFieldsFragment = { readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly conferenceId: any, readonly displayName: string, readonly createdAt: any, readonly updatedAt: any, readonly conference: { readonly __typename?: 'Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string }, readonly groupAttendees: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly id: any, readonly group: { readonly __typename?: 'Group', readonly id: any, readonly enabled: boolean, readonly name: string, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly role: { readonly __typename?: 'Role', readonly id: any, readonly name: string, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly id: any, readonly permissionName: Permission_Enum }> } }> } }> };
+export type AttendeeFieldsFragment = { readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly conferenceId: any, readonly displayName: string, readonly createdAt: any, readonly updatedAt: any, readonly profile?: Maybe<{ readonly __typename?: 'AttendeeProfile', readonly attendeeId: any, readonly photoURL_50x50?: Maybe<string> }>, readonly conference: { readonly __typename?: 'Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string }, readonly groupAttendees: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly id: any, readonly group: { readonly __typename?: 'Group', readonly id: any, readonly enabled: boolean, readonly name: string, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly role: { readonly __typename?: 'Role', readonly id: any, readonly name: string, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly id: any, readonly permissionName: Permission_Enum }> } }> } }> };
 
 export type SelectCurrentUserQueryVariables = Exact<{
   userId: Scalars['String'];
@@ -33911,6 +33911,10 @@ export const AttendeeFieldsFragmentDoc = gql`
   displayName
   createdAt
   updatedAt
+  profile {
+    attendeeId
+    photoURL_50x50
+  }
   conference {
     id
     name

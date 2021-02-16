@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 import { Box, Button, Flex, Heading, HStack, useBreakpointValue, useToast, VStack } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useHistory } from "react-router-dom";
 import {
     ContentGroupDataFragment,
@@ -13,7 +13,7 @@ import {
 import { Chat } from "../../../Chat/Chat";
 import PageNotFound from "../../../Errors/PageNotFound";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
-import usePrimaryMenuButtons from "../../../Menu/usePrimaryMenuButtons";
+import { useNoPrimaryMenuButtons } from "../../../Menu/usePrimaryMenuButtons";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../useConference";
@@ -95,17 +95,7 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
     const toast = useToast();
     const history = useHistory();
 
-    const { setPrimaryMenuButtons } = usePrimaryMenuButtons();
-    useEffect(() => {
-        setPrimaryMenuButtons([
-            {
-                key: "conference-home",
-                action: `/conference/${conference.slug}`,
-                text: conference.shortName,
-                label: conference.shortName,
-            },
-        ]);
-    }, [conference.shortName, conference.slug, setPrimaryMenuButtons]);
+    useNoPrimaryMenuButtons();
 
     const [createBreakoutMutation] = useContentGroup_CreateRoomMutation();
     const [creatingBreakout, setCreatingBreakout] = useState<boolean>(false);

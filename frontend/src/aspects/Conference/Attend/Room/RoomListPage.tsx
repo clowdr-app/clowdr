@@ -1,10 +1,10 @@
 import { gql } from "@apollo/client";
 import { Button, Heading, useDisclosure } from "@chakra-ui/react";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback } from "react";
 import { Permission_Enum, RoomListRoomDetailsFragment, useGetAllRoomsQuery } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
-import usePrimaryMenuButtons from "../../../Menu/usePrimaryMenuButtons";
+import { useNoPrimaryMenuButtons } from "../../../Menu/usePrimaryMenuButtons";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../useConference";
@@ -32,17 +32,7 @@ gql`
 
 export default function RoomListPage(): JSX.Element {
     const conference = useConference();
-    const { setPrimaryMenuButtons } = usePrimaryMenuButtons();
-    useEffect(() => {
-        setPrimaryMenuButtons([
-            {
-                key: "conference-home",
-                action: `/conference/${conference.slug}`,
-                text: conference.shortName,
-                label: conference.shortName,
-            },
-        ]);
-    }, [conference.shortName, conference.slug, setPrimaryMenuButtons]);
+    useNoPrimaryMenuButtons();
 
     const title = useTitle(`Rooms - ${conference.shortName}`);
 

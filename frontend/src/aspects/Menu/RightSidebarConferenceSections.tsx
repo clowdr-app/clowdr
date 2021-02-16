@@ -1,46 +1,22 @@
 import { gql } from "@apollo/client";
 import { AtSignIcon, ChatIcon, LockIcon } from "@chakra-ui/icons";
-import {
-    Accordion,
-    AccordionButton,
-    AccordionIcon,
-    AccordionItem,
-    AccordionPanel,
-    Box,
-    Button,
-    Flex,
-    HStack,
-    Link,
-    List,
-    ListIcon,
-    ListItem,
-    Text,
-    useDisclosure,
-} from "@chakra-ui/react";
+import { Button, HStack, Link, List, ListIcon, ListItem, Text, useDisclosure } from "@chakra-ui/react";
 import React from "react";
 import { Link as ReactLink, useHistory } from "react-router-dom";
 import {
     AttendeeFieldsFragment,
-    RoomListRoomDetailsFragment,
     RoomPrivacy_Enum,
     SidebarChatInfoFragment,
-    useGetAllRoomsQuery,
     usePinnedChatsWithUnreadCountsQuery,
 } from "../../generated/graphql";
-import { LinkButton } from "../Chakra/LinkButton";
 import { CreateDmModal } from "../Conference/Attend/Room/CreateDmModal";
 import { CreateRoomModal } from "../Conference/Attend/Room/CreateRoomModal";
-import { RoomList } from "../Conference/Attend/Room/RoomList";
 import AttendeesContextProvider from "../Conference/AttendeesContext";
-import ConferenceProvider, { useConference } from "../Conference/useConference";
-import ApolloQueryWrapper from "../GQL/ApolloQueryWrapper";
+import ConferenceProvider from "../Conference/useConference";
 import { FAIcon } from "../Icons/FAIcon";
 import PresenceCountProvider from "../Presence/PresenceCountProvider";
 import RoomParticipantsProvider from "../Room/RoomParticipantsProvider";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
-import useLazyRenderAndRetain from "./LazyRenderAndRetain";
-import { MainMenuProgram } from "./MainMenuProgram";
-import { MainMenuSponsors } from "./MainMenuSponsors";
 
 gql`
     fragment SidebarChatInfo on chat_Chat {
@@ -105,12 +81,10 @@ function ChatListItem({
     chat,
     attendeeId,
     confSlug,
-    onClose,
 }: {
     chat: SidebarChatInfoFragment;
     attendeeId: string;
     confSlug: string;
-    onClose: () => void;
 }): JSX.Element {
     const chatName = computeChatName(chat, attendeeId);
     const chatPath = chat
@@ -131,7 +105,7 @@ function ChatListItem({
 
     return (
         <ListItem key={chat.id} fontWeight={unreadCount ? "bold" : undefined}>
-            <Link as={ReactLink} to={`/conference/${confSlug}${chatPath}`} onClick={onClose} textDecoration="none">
+            <Link as={ReactLink} to={`/conference/${confSlug}${chatPath}`} textDecoration="none">
                 <HStack alignItems="flex-start">
                     <ListIcon mt="0.7ex" as={isDM ? AtSignIcon : isPrivate ? LockIcon : ChatIcon} />{" "}
                     <Text as="span">
@@ -172,15 +146,7 @@ function sortChats(attendeeId: string, x: SidebarChatInfoFragment, y: SidebarCha
     }
 }
 
-function ChatsPanel({
-    attendeeId,
-    onClose,
-    confSlug,
-}: {
-    attendeeId: string;
-    onClose: () => void;
-    confSlug: string;
-}): JSX.Element {
+function ChatsPanel({ attendeeId, confSlug }: { attendeeId: string; confSlug: string }): JSX.Element {
     const pinnedChats = usePinnedChatsWithUnreadCountsQuery({
         variables: {
             attendeeId,
@@ -194,7 +160,7 @@ function ChatsPanel({
     const history = useHistory();
 
     return (
-        <AccordionPanel pb={4} px={"3px"}>
+        <>
             <HStack justifyContent="flex-end">
                 <Button onClick={onCreateRoomOpen} colorScheme="green" size="sm">
                     <FAIcon icon="plus-square" iconStyle="s" mr={3} /> New room
@@ -210,7 +176,6 @@ function ChatsPanel({
                     // Wait, because Vonage session creation is not instantaneous
                     setTimeout(() => {
                         history.push(`/conference/${confSlug}/room/${id}`);
-                        onClose();
                     }, 2000);
                 }}
             />
@@ -221,7 +186,6 @@ function ChatsPanel({
                     // Wait, because Vonage session creation is not instantaneous
                     setTimeout(() => {
                         history.push(`/conference/${confSlug}/room/${id}`);
-                        onClose();
                     }, 2000);
                 }}
             />
@@ -235,7 +199,6 @@ function ChatsPanel({
                             chat={chatPin.chat}
                             attendeeId={attendeeId}
                             confSlug={confSlug}
-                            onClose={onClose}
                         />
                     ))}
             </List>
@@ -249,98 +212,15 @@ function ChatsPanel({
                             chat={chatPin.chat}
                             attendeeId={attendeeId}
                             confSlug={confSlug}
-                            onClose={onClose}
                         />
                     ))}
                 {!pinnedChats.data || pinnedChats.data.chat_Pin.length < 1 ? <>No pinned chats.</> : <></>}
             </List>
-        </AccordionPanel>
+        </>
     );
 }
 
-function LazyChatsPanel({
-    isExpanded,
-    attendeeId,
-    onClose,
-    confSlug,
-}: {
-    isExpanded: boolean;
-    attendeeId: string;
-    onClose: () => void;
-    confSlug: string;
-}): JSX.Element {
-    return useLazyRenderAndRetain(
-        () => <ChatsPanel attendeeId={attendeeId} onClose={onClose} confSlug={confSlug} />,
-        isExpanded
-    );
-}
-
-function RoomsPanel({ onClose, confSlug }: { onClose: () => void; confSlug: string }): JSX.Element {
-    const conference = useConference();
-
-    const result = useGetAllRoomsQuery({
-        variables: {
-            conferenceId: conference.id,
-        },
-    });
-
-    return (
-        <AccordionPanel pb={4} px={"3px"}>
-            <ApolloQueryWrapper getter={(data) => data.Room} queryResult={result}>
-                {(rooms: readonly RoomListRoomDetailsFragment[]) => (
-                    <RoomList rooms={rooms} layout="list" limit={5} onClick={onClose} />
-                )}
-            </ApolloQueryWrapper>
-            <LinkButton
-                onClick={onClose}
-                to={`/conference/${confSlug}/rooms`}
-                colorScheme="green"
-                linkProps={{ mt: 4, width: "100%" }}
-                w="100%"
-            >
-                View all rooms
-            </LinkButton>
-        </AccordionPanel>
-    );
-}
-
-function LazyRoomsPanel({
-    isExpanded,
-    onClose,
-    confSlug,
-}: {
-    isExpanded: boolean;
-    onClose: () => void;
-    confSlug: string;
-}): JSX.Element {
-    return useLazyRenderAndRetain(() => <RoomsPanel onClose={onClose} confSlug={confSlug} />, isExpanded);
-}
-
-function SchedulePanel(): JSX.Element {
-    return (
-        <AccordionPanel pb={4} px={"3px"}>
-            <MainMenuProgram />
-        </AccordionPanel>
-    );
-}
-
-function LazySchedulePanel({ isExpanded }: { isExpanded: boolean }): JSX.Element {
-    return useLazyRenderAndRetain(() => <SchedulePanel />, isExpanded);
-}
-
-function SponsorsPanel(): JSX.Element {
-    return (
-        <AccordionPanel pb={4} px={"3px"}>
-            <MainMenuSponsors />
-        </AccordionPanel>
-    );
-}
-
-function LazySponsorsPanel({ isExpanded }: { isExpanded: boolean }): JSX.Element {
-    return useLazyRenderAndRetain(() => <SponsorsPanel />, isExpanded);
-}
-
-export function MainMenuConferenceSections_Inner({
+export function RightSidebarConferenceSections_Inner({
     confSlug,
     attendee,
     onClose,
@@ -350,127 +230,10 @@ export function MainMenuConferenceSections_Inner({
     attendee: AttendeeFieldsFragment;
     onClose: () => void;
 }): JSX.Element {
-    return (
-        <>
-            <Flex my={4} justifyContent="space-evenly" alignItems="center" flexWrap="wrap" gridGap={2}>
-                <LinkButton
-                    linkProps={{ flexBasis: ["40%", "40%", "min-content"], flexGrow: 0, flexShrink: [0, 1] }}
-                    size="sm"
-                    onClick={onClose}
-                    to={`/conference/${confSlug}`}
-                    width="100%"
-                >
-                    <FAIcon icon="home" iconStyle="s" mr={3} />
-                    Home
-                </LinkButton>
-                <LinkButton
-                    linkProps={{ flexBasis: ["40%", "40%", "min-content"], flexGrow: 0, flexShrink: [0, 1] }}
-                    size="sm"
-                    onClick={onClose}
-                    to={`/conference/${confSlug}/schedule`}
-                    width="100%"
-                >
-                    <FAIcon icon="calendar" iconStyle="r" mr={3} />
-                    Schedule
-                </LinkButton>
-                <LinkButton
-                    linkProps={{ flexBasis: ["40%", "40%", "min-content"], flexGrow: 0, flexShrink: [0, 1] }}
-                    size="sm"
-                    onClick={onClose}
-                    to={`/conference/${confSlug}/attendees`}
-                    width="100%"
-                >
-                    <FAIcon icon="cat" iconStyle="s" mr={3} />
-                    Attendees
-                </LinkButton>
-                <LinkButton
-                    linkProps={{ flexBasis: ["40%", "40%", "min-content"], flexGrow: 0, flexShrink: [0, 1] }}
-                    size="sm"
-                    onClick={onClose}
-                    to={`/conference/${confSlug}/rooms`}
-                    width="100%"
-                >
-                    <FAIcon icon="mug-hot" iconStyle="s" mr={3} />
-                    Rooms
-                </LinkButton>
-                <LinkButton
-                    linkProps={{ flexBasis: ["40%", "40%", "min-content"], flexGrow: 0, flexShrink: [0, 1] }}
-                    size="sm"
-                    onClick={onClose}
-                    to={`/conference/${confSlug}/shuffle`}
-                    width="100%"
-                >
-                    <FAIcon icon="mug-hot" iconStyle="s" mr={3} />
-                    Shuffle Rooms
-                </LinkButton>
-            </Flex>
-            <Accordion defaultIndex={[0, 3]} allowMultiple allowToggle>
-                <AccordionItem>
-                    {({ isExpanded }) => (
-                        <>
-                            <AccordionButton>
-                                <Box flex="1" textAlign="left">
-                                    Chats
-                                </Box>
-                                <AccordionIcon />
-                            </AccordionButton>
-                            <LazyChatsPanel
-                                isExpanded={isExpanded}
-                                attendeeId={attendee.id}
-                                onClose={onClose}
-                                confSlug={confSlug}
-                            />
-                        </>
-                    )}
-                </AccordionItem>
-
-                <AccordionItem>
-                    {({ isExpanded }) => (
-                        <>
-                            <AccordionButton>
-                                <Box flex="1" textAlign="left">
-                                    Rooms
-                                </Box>
-                                <AccordionIcon />
-                            </AccordionButton>
-                            <LazyRoomsPanel isExpanded={isExpanded} onClose={onClose} confSlug={confSlug} />
-                        </>
-                    )}
-                </AccordionItem>
-
-                <AccordionItem>
-                    {({ isExpanded }) => (
-                        <>
-                            <AccordionButton>
-                                <Box flex="1" textAlign="left">
-                                    Schedule
-                                </Box>
-                                <AccordionIcon />
-                            </AccordionButton>
-                            <LazySchedulePanel isExpanded={isExpanded} />
-                        </>
-                    )}
-                </AccordionItem>
-
-                <AccordionItem>
-                    {({ isExpanded }) => (
-                        <>
-                            <AccordionButton>
-                                <Box flex="1" textAlign="left">
-                                    Sponsors
-                                </Box>
-                                <AccordionIcon />
-                            </AccordionButton>
-                            <LazySponsorsPanel isExpanded={isExpanded} />
-                        </>
-                    )}
-                </AccordionItem>
-            </Accordion>
-        </>
-    );
+    return <ChatsPanel attendeeId={attendee.id} confSlug={confSlug} />;
 }
 
-export default function MainMenuConferenceSections({
+export default function RightSidebarConferenceSections({
     rootUrl,
     confSlug,
     onClose,
@@ -488,7 +251,7 @@ export default function MainMenuConferenceSections({
                     <PresenceCountProvider>
                         <AttendeesContextProvider>
                             <RoomParticipantsProvider>
-                                <MainMenuConferenceSections_Inner
+                                <RightSidebarConferenceSections_Inner
                                     rootUrl={rootUrl}
                                     confSlug={confSlug}
                                     attendee={attendee}

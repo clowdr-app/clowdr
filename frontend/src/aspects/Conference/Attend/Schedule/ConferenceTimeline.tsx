@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 import { Box, Flex, Heading, useColorModeValue } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import ScrollContainer from "react-indiana-drag-scroll";
 import {
     Permission_Enum,
@@ -12,7 +12,7 @@ import {
 } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
-import usePrimaryMenuButtons from "../../../Menu/usePrimaryMenuButtons";
+import { useNoPrimaryMenuButtons } from "../../../Menu/usePrimaryMenuButtons";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../useConference";
@@ -128,17 +128,7 @@ function ConferenceTimelineInner({
     contentGroups: ReadonlyArray<Timeline_ContentGroup_PartialInfoFragment>;
 }): JSX.Element {
     const conference = useConference();
-    const { setPrimaryMenuButtons } = usePrimaryMenuButtons();
-    useEffect(() => {
-        setPrimaryMenuButtons([
-            {
-                key: "conference-home",
-                action: `/conference/${conference.slug}`,
-                text: conference.shortName,
-                label: conference.shortName,
-            },
-        ]);
-    }, [conference.shortName, conference.slug, setPrimaryMenuButtons]);
+    useNoPrimaryMenuButtons();
 
     const rooms = useMemo(() => {
         return [...unsortedRooms].sort((x, y) => x.name.localeCompare(y.name)).sort((x, y) => x.priority - y.priority);

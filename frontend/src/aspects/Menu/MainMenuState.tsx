@@ -1,9 +1,13 @@
 import React from "react";
 
-interface MenuState {
-    onOpen: () => void;
-    onClose: () => void;
-    onToggle: () => void;
+export interface MenuState {
+    isLeftBarOpen: boolean;
+    onLeftBarOpen: () => void;
+    onLeftBarClose: () => void;
+
+    isRightBarOpen: boolean;
+    onRightBarOpen: () => void;
+    onRightBarClose: () => void;
 }
 
 export const MenuStateContext = React.createContext<MenuState | undefined>(undefined);

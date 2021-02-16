@@ -226,6 +226,9 @@ async function createApolloClient(
             chat_ReadUpToIndex: {
                 keyFields: ["chatId"],
             },
+            AttendeeProfile: {
+                keyFields: ["attendeeId"],
+            },
         },
     });
 

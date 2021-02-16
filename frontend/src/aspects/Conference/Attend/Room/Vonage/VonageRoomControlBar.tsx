@@ -206,9 +206,9 @@ export function VonageRoomControlBar({
                                 </Button>
                             ) : (
                                 <Button
-                                    colorScheme="green"
-                                    w="10em"
-                                    h="6ex"
+                                    colorScheme="red"
+                                    w="12em"
+                                    h="8ex"
                                     fontSize="xl"
                                     onClick={onJoinRoom}
                                     isLoading={joining}

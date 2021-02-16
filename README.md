@@ -1,6 +1,6 @@
-# clowdr
+# Clowdr virtual conference platform
 
-Version 3 of Clowdr - this time it's scalable.
+This is version 3 of Clowdr - more functional, more robust, more scalable!
 
 If you want to contribute to Clowdr, please read our [contribution guidelines](CONTRIBUTING).
 
@@ -12,6 +12,19 @@ If you want to contribute to Clowdr, please read our [contribution guidelines](C
 | hasura           | The Hasura GraphQL configuration, actions and seed data.         | [ReadMe here](hasura/README.md)           |
 | services         | Micro-services                                                   |                                           |
 | services/actions | At the moment, a "general" service for handling any/all actions. | [ReadMe here](services/actions/README.md) |
+
+# Quick Setup 
+
+For contributors that _only_ want to play with the user interface, the
+following abbreviated instructions should get you a minimal working setup.
+
+
+
+# Full Setup
+
+To run your own conferences on Clowdr and/or test changes that affect other
+parts of the platform, here are the steps to bring up a fully functional
+local instance. 
 
 ## Pre-requisites
 
@@ -27,7 +40,8 @@ If you want to contribute to Clowdr, please read our [contribution guidelines](C
 
 1. Clone this repository
 1. Initialise/update submodules
-1. Enter and build `react-transcript-editor`
+BCP: How do I do that??
+1. Enter and build `react-transcript-editor`:
    1. Run `npm install`
    1. Run `npm run build:component`
    1. You should see the `dist` folder created.

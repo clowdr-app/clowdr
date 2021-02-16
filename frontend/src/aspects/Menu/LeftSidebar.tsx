@@ -9,7 +9,16 @@ export default function LeftSidebar({ rootUrl, confSlug }: { rootUrl: string; co
     const backgroundColour = useColorModeValue("blue.100", "blue.900");
 
     return (
-        <VStack align="stretch" spacing={0} backgroundColor={backgroundColour} w="100%" id="left-bar">
+        <VStack
+            id="left-bar"
+            align="stretch"
+            spacing={0}
+            backgroundColor={backgroundColour}
+            w="100%"
+            h="100%"
+            overflowX="hidden"
+            overflowY="auto"
+        >
             <Sections rootUrl={rootUrl} confSlug={confSlug} onClose={onLeftBarClose} />
         </VStack>
     );

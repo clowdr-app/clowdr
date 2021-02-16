@@ -23,7 +23,7 @@ function App(_props: AppProps): JSX.Element {
     });
     const rightDefaultVisible = useBreakpointValue({
         base: false,
-        "2xl": true,
+        xl: true,
     });
     const centerAlwaysVisible = useBreakpointValue({
         base: false,
@@ -65,8 +65,7 @@ function App(_props: AppProps): JSX.Element {
         () => (
             <Route path="/conference">
                 <Box
-                    overflowX="hidden"
-                    overflowY="auto"
+                    overflow="hidden"
                     height="100%"
                     width={centerVisible ? leftSidebarWidthPc + "%" : "100%"}
                     maxWidth={centerVisible ? "350px" : undefined}
@@ -98,11 +97,10 @@ function App(_props: AppProps): JSX.Element {
         () => (
             <Route path="/conference">
                 <Box
-                    overflowX="hidden"
-                    overflowY="auto"
+                    overflow="hidden"
                     height="100%"
                     width={centerVisible ? rightSidebarWidthPc + "%" : "100%"}
-                    maxWidth={centerVisible ? "500px" : undefined}
+                    maxWidth={centerVisible ? "350px" : undefined}
                     flex="1 0 300px"
                     mb="auto"
                     ml="auto"

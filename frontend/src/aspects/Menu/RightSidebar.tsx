@@ -9,7 +9,16 @@ export default function RightSidebar({ rootUrl, confSlug }: { rootUrl: string; c
     const backgroundColour = useColorModeValue("purple.100", "purple.900");
 
     return (
-        <VStack align="stretch" spacing={0} backgroundColor={backgroundColour} w="100%" id="right-bar">
+        <VStack
+            id="right-bar"
+            align="stretch"
+            spacing={0}
+            backgroundColor={backgroundColour}
+            w="100%"
+            h="100%"
+            overflowX="hidden"
+            overflowY="auto"
+        >
             <Sections rootUrl={rootUrl} confSlug={confSlug} onClose={onRightBarClose} />
         </VStack>
     );

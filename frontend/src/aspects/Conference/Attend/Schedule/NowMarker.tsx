@@ -21,8 +21,8 @@ export default function NowMarker({
         if (offsetSeconds >= 0 && offsetSeconds < timelineParams.fullTimeSpanSeconds) {
             ref.current?.scrollIntoView({
                 behavior: "smooth",
-                block: "end",
-                inline: "center",
+                block: "center",
+                inline: "start",
             });
         }
     }, [offsetSeconds, timelineParams.fullTimeSpanSeconds]);
@@ -41,19 +41,17 @@ export default function NowMarker({
                 style={{
                     zIndex: 10,
                     position: "absolute",
-                    left: percent + "%",
+                    top: percent + "%",
                     width: "auto",
                     height: "auto",
-                    top: "7px",
-                    borderLeftColor: "#ff3333",
-                    borderLeftWidth: "2px",
-                    borderLeftStyle: "solid",
+                    left: "20px",
+                    borderTopColor: "#ff3333",
+                    borderTopWidth: "2px",
+                    borderTopStyle: "solid",
                     background: "#ff3333",
-                    borderTopRightRadius: "1000px",
-                    borderBottomRightRadius: "1000px",
-                    padding: "0.2em",
-                    paddingTop: "0",
-                    paddingRight: "0.6em",
+                    borderTopLeftRadius: "1000px",
+                    borderBottomLeftRadius: "1000px",
+                    padding: "0.1em 0.3em 0.3em 0.6em",
                     fontSize: "80%",
                     color: "white",
                 }}
@@ -68,13 +66,13 @@ export default function NowMarker({
                 style={{
                     zIndex: 2,
                     position: "absolute",
-                    left: percent + "%",
-                    width: "1px",
-                    height: "calc(100% - 7px)",
-                    bottom: 0,
-                    borderLeftColor: "#ff3333",
-                    borderLeftWidth: "2px",
-                    borderLeftStyle: "solid",
+                    top: percent + "%",
+                    height: "1px",
+                    width: "calc(100% - 20px - 2em)",
+                    right: 0,
+                    borderTopColor: "#ff3333",
+                    borderTopWidth: "2px",
+                    borderTopStyle: "solid",
                 }}
             ></div>
         );

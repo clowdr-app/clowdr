@@ -322,7 +322,7 @@ export default function MessageBox({ message }: { message: ChatMessageDataFragme
     const isAnswer = message.type === Chat_MessageType_Enum.Answer;
     const bgColour = useColorModeValue(
         isQuestion ? "blue.100" : isAnswer ? "orange.100" : "white",
-        isQuestion ? "blue.700" : isAnswer ? "green.800" : "gray.800"
+        isQuestion ? "blue.700" : isAnswer ? "green.800" : "gray.900"
     );
 
     const createdAt = new Date(message.created_at);

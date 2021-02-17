@@ -63,7 +63,14 @@ functional local instance.
 1. Follow the Frontend setup: [Clowdr Frontend
    ReadMe](frontend/README.md#Setting-up)
 1. Follow the Auth0 setup below
-   BCP: Can I reorder these steps so that there is an initial prefix that can be shared with the Quick Setup??
+
+BCP: Can I reorder these steps so that there is an initial prefix that can
+be shared with the Quick Setup??
+
+ANSWER FROM ED: It's probably ok to bypass step 5 by simply looking at the
+AWS README and setting all the environment variables listed to Xs. The
+other steps you'll need to do at least something for -- but whether there
+are nested steps that can be skipped for minimal frontend dev I'm not sure.
 
 ### Auth0 Setup
 
@@ -97,9 +104,7 @@ Now, configure the application in the _Settings_ tab.
 1. Configure `Allowed Callback URLs` (comma-separated)
    (The format/suffix of these urls should not be altered.)
 
-   You should include `localhost`. Also, you can optionally include your
-   Netlify app url(s), if you have set up Netlify.
-   BCP: What is netlify, and why would I set it up?
+   You should include `localhost`.
    BCP: Which of these are mandatory for a quick setup? Do the non-mandatory
    ones hurt anything?  
    BCP: Is the order critical (aside from the first)?
@@ -109,12 +114,9 @@ Now, configure the application in the _Settings_ tab.
    it look like this"?)
 
 ```
-http://localhost:3000/auth0/
-https://<netlify-subdomain>.netlify.app/auth0/
-http://localhost:3000/auth0/logged-in
-https://<netlify-subdomain>.netlify.app/auth0/logged-in
-http://localhost:3000/auth0/email-verification/result
-https://<netlify-subdomain>.netlify.app/auth0/email-verification/result
+http://localhost:3000/auth0/,
+http://localhost:3000/auth0/logged-in,
+http://localhost:3000/auth0/email-verification/result,
 ```
 
 FOR PRODUCTION: The first URL MUST be the `auth0` address
@@ -126,6 +128,20 @@ specify which one needs to be first). If the comment _is_ critical for
 people to understand, perhaps it can be demoted to a "More details" section
 later, or some such?
 
+**Full Setup**: if you have set up Netlify, you can optionally include your
+Netlify app url(s) in the Allowed Callback URLs (at the end). Netlify is a
+platform for hosting static websites. It takes our latest React site from
+git, builds it and deploys it to a CDN automatically. It's not required for
+most users - you could host the static part of the app wherever you
+want. For the local development case, you're just using a server on your
+local machine and maybe exposing it through a tunnel.
+
+```
+https://<netlify-subdomain>.netlify.app/auth0/
+https://<netlify-subdomain>.netlify.app/auth0/logged-in
+https://<netlify-subdomain>.netlify.app/auth0/email-verification/result
+```
+
 1. Configure `Allowed Logout URLs` (comma-separated)
    (The format/suffix of these urls should not be altered.)
 
@@ -134,6 +150,11 @@ later, or some such?
 ```
 http://localhost:3000/auth0/logged-out,
 http://localhost:3000/auth0/email-verification/required/no-redirect,
+```
+
+**Full Setup**: If using netlify, add these:
+
+```
 https://<netlify-subdomain>.netlify.app/auth0/logged-out,
 https://<netlify-subdomain>.netlify.app/auth0/email-verification/required/no-redirect
 ```
@@ -144,6 +165,11 @@ https://<netlify-subdomain>.netlify.app/auth0/email-verification/required/no-red
 
 ```
 http://localhost:3000
+```
+
+**Full Setup**: If using netlify, add this:
+
+```
 https://<netlify-subdomain>.netlify.app
 ```
 

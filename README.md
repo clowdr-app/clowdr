@@ -327,6 +327,15 @@ function (user, context, callback) {
 
 #### 5. Configure Rules
 
+BCP: General comment: I dislike these super-wide tables, which make it
+really difficult to manage my screen real estate; also, they limit the size
+of the comments about what things are and where to find them. 80 columns
+(or not too much wider) is much nicer in both ways. I.e., can we format
+them as bulleted lists or code blocks with comments or something?
+
+BCP: HASURA_ADMIN_SECRET must be the same as HASURA_ADMIN_SECRET in
+services/actions/.env, right? Or only sometimes?
+
 Under _Settings_ on the `Rules` page, add the following key-value pairs:
 
 | Key                 | Value                                                                                       | Notes                                                                                                                                                     |
@@ -335,17 +344,25 @@ Under _Settings_ on the `Rules` page, add the following key-value pairs:
 | HASURA_ADMIN_SECRET | The Hasura Admin Secret                                                                     | For local testing, see Hasura Environment Variables.                                                                                                      |
 | HASURA_URL          | The full URL to the Hasura GraphQL API. E.g. `http://<ngrok-subdomain>.ngrok.io/v1/graphql` | Use Ngrok to make a `localhost` server accessible by Auth0: command `ngrok http 8080`. Hint: The Hasura Service _not_ the Hasura Console URL/port number! |
 
-BCP: The first time through, I had no idea what the third row meant.
-Hopefully I'll understand better when I've done the earlier steps in the
-right order.
+BCP: The first time through, I had no idea what the third row meant. The
+second time, I was a little less confused, but the comment is still pretty
+opaque; it would be nicer to spell out the steps. (I see there is some more
+information involving ngrok below; is that what I need here? But the
+command is different.)
 
-You can optionally use `HASURA_ADMIN_SECRET_LOCAL` and `HASURA_URL_LOCAL` in addition to the non-local versions to have
-user records pushed to both services simultaneously (useful in testing environments).
+You can optionally use `HASURA_ADMIN_SECRET_LOCAL` and `HASURA_URL_LOCAL` in
+addition to the non-local versions to have user records pushed to both
+services simultaneously (useful in testing environments).
+
+BCP: Huh?
 
 #### 6. Turn on live logging
 
-This is useful for debugging. Go to _Extensions_ and install `Real-time Webtask Logs`. After installing, click it and authenticate it when asked. To see some
-useful logs, uncomment `console.log` statements in the _Rules_ we created above.
+BCP: Full Setup only??
+
+This is useful for debugging. Go to _Extensions_ and install `Real-time Webtask Logs`. After installing, click it and authenticate it when asked. To
+see some useful logs, uncomment `console.log` statements in the _Rules_ we
+created above.
 
 #### 7. Configure Hasura
 
@@ -356,11 +373,17 @@ useful logs, uncomment `console.log` statements in the _Rules_ we created above.
 1. Copy your key into your local `hasura/.env.local` file
    - e.g. `HASURA_GRAPHQL_JWT_SECRET='your key goes in here'`
    - **Don't forget the wrapping single quotes!**
-1. Uncomment the `HASURA_GRAPHQL_JWT_SECRET: ${HASURA_GRAPHQL_JWT_SECRET}` line in `hasura/docker-compose.yaml`
-   - Don't forget to restart the `Hasura Console -- Local Development` task!
+     BCP: Do I copy the whole contents of the "JWT Config" box after clicking
+     Generate Config? Or just the part between BEGIN CERTIFICATE and END
+     CERTIFICATE? Or do I need to include the BEGIN and END parts too?
+1. Uncomment the `HASURA_GRAPHQL_JWT_SECRET: ${HASURA_GRAPHQL_JWT_SECRET}`
+   line in `hasura/docker-compose.yaml`
+   - Don't forget to restart the `Hasura Console -- Local Development` task
+     in VSCode!
 1. Optionally: Copy your key into Hasura Cloud Environment configuration
    - No need for the wrapping single quotes - Hasura's UI will handle that for
      you.
+     BCP: Full setup only, I assume? Or not even, for most people doing that?
 
 #### 8. Use ngrok for online (local) testing
 
@@ -369,6 +392,8 @@ start ngrok (`ngrok start --config=ngrok.yaml auth actions`) and copy the auth U
 (`http://<ngrok-subdomain>.ngrok.io/v1/graphql`) into the `HASURA_URL` Auth0
 _Rule Configuration_ as shown in step 5.
 
+BCP: I don't see `ngrok.yaml`...
+
 You will also need to set the actions URL
 (`http://<ngrok-subdomain>.ngrok.io/vonage/sessionMonitoring/<VONAGE_WEBHOOK_SECRET>`)
 into the Vonage Session Monitoring URL. You can find this in the _Project
@@ -376,19 +401,24 @@ Settings_ for your Vonage Video API project. (You can choose
 `VONAGE_WEBHOOK_SECRET` arbitrarily as long as it matches the setting in
 your env file.)
 
-If you have a paid ngrok account, you can create a persistent public URL and avoid having to do this.
+If you have a paid ngrok account, you can create a persistent public URL and
+avoid having to do all this every time.
 
 #### 9. Configure "new UI experience"
 
 Under _Universal Login_ settings, set the _default look and feel_ to _**New**_.
 
-#### 9. (Optional) Customising the login page
+BCP: This seems to be the default. Maybe this step can be skipped?
+
+#### 10. (Optional) Customising the login page
 
 To customise what the Auth0 login page looks like, go to _Universal Login_ and
 have fun. (Note: Always use the _**New**_ 'look and feel' for Clowdr to work
 properly.)
 
-#### 10. Configure your environment
+#### 11. Configure your environment
+
+STOPPED HERE
 
 You can now resume the frontend setup by configuring your [Frontend environment
 variables](/frontend/README.md#frontend-configuration).
@@ -406,12 +436,16 @@ variables](/frontend/README.md#frontend-configuration).
 This repository uses Prettier for auto-formatting and checks for both pushes and
 PRs.
 
+BCP: Is this something I need to do?
+
 ## Notes
 
 - The `Procfile` is used by Heroku to determine what services to run. We can add
   more microservices to it in future.
 
 ## GitHub Actions Configuration (/Secrets)
+
+BCP: Is this something I need to do?
 
 | Secret                       | Value                                                                     |
 | ---------------------------- | ------------------------------------------------------------------------- |

@@ -64,6 +64,9 @@ We use a Google Cloud project to provide access to the YouTube Data API with OAu
      deployment. **Quick setup**: Set all the environment variables related
      to AWS to `XXXX`.
 
+BCP: Why not put the table here? (Or, better, put all the information in
+the table into comments in the example .env file.)
+
 BCP: Not clear whether I am supposed to continue on to do the rest of the
 file or whether I stop here and return to the main README... The convention
 in some other READMEs is to explicitly mention which of the later sections
@@ -148,6 +151,8 @@ BCP: I think this is the first time I'm seeing the word OpenShot...
 
 BCP: I think the HOST_DOMAIN Value explanation is the first time that ngrok
 has been mentioned.
+
+BCP: Is OPENTOK_API_KEY what Vonage calls "Project API key"?
 
 | Key                                              | Value                                                                                                                         | From CDK |
 | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- | -------- |

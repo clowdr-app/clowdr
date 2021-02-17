@@ -16,6 +16,8 @@ and all of our backend services.
 BCP: Why not comment them out in the example file?
    1. You won't be able to configure the `HASURA_GRAPHQL_JWT_SECRET` yet. Replace it with `XXXXX` for now.
 BCP: Why not just make the value be XXX in the example file?
+BCP: And anyway, why are we fiddling with it at all at this point?  If we're
+going to find out the correct value later, why not just fill it in then?
    1. In `hasura/docker-compose.yaml`, comment out the line `HASURA_GRAPHQL_JWT_SECRET: ${HASURA_GRAPHQL_JWT_SECRET}`. We'll re-enable it once we have a JWT secret.
 BCP: Should the previous line be outdented?
 BCP: Is # the comment syntax for YAML?

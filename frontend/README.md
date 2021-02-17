@@ -12,6 +12,7 @@ React web app that forms the main Clowdr frontend.
 ## Setting up
 
 1. Follow the root ReadMe instructions for configuring Auth0. Then come back here.
+   BCP: Why not just swap steps 8 and 9 inthe top-level setup?
 1. Copy the `frontend/.env.example` to a new `frontend/.env` file.
 1. Configure your `.env` file according to the [Frontend Configuration](#frontend-configuration) section below.
 1. Build and test the system locally (see _[Local Development](#local-development)_).

@@ -29,7 +29,7 @@ export function InsertEmojiButton({
     const emojiMart = useEmojiMart();
 
     return (
-        <Popover isOpen={isOpen} isLazy onClose={onClose} autoFocus={false}>
+        <Popover isOpen={isOpen} isLazy onClose={onClose} autoFocus={false} placement="top-end">
             <PopoverTrigger>
                 <Button
                     aria-label="Open emoji picker"

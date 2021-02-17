@@ -44,14 +44,7 @@ export function ChatFrame({ ...rest }: BoxProps): JSX.Element {
                 <ChatProfileModalProvider>
                     <ReactionsProvider>
                         <EmojiPickerProvider>
-                            <Box
-                                role="region"
-                                aria-label="Messages"
-                                flex="0 1 100%"
-                                pos="relative"
-                                overflow="hidden"
-                                minH="400px"
-                            >
+                            <Box role="region" aria-label="Messages" flex="0 1 100%" pos="relative" overflow="hidden">
                                 {"chatId" in config.sources ? (
                                     <ReceiveMessageQueriesProvider
                                         chatId={config.sources.chatId}

@@ -422,7 +422,7 @@ function RightSidebarConferenceSections_Inner({
             index={tabIndex}
             overflow="hidden"
             display="flex"
-            flexDir="column"
+            flexFlow="column"
             width="100%"
             height="100%"
             onChange={(index) => {
@@ -450,14 +450,14 @@ function RightSidebarConferenceSections_Inner({
                 }
             }}
         >
-            <TabList pt={2}>
+            <TabList py={2}>
                 {roomId && <Tab>Room</Tab>}
                 {itemId && <Tab>Item</Tab>}
                 <Tab>Chats</Tab>
                 <Tab>Who&apos;s here</Tab>
             </TabList>
 
-            <TabPanels textAlign="left" display="flex" flexDir="row" h="100%">
+            <TabPanels textAlign="left" display="flex" flexDir="row" flex="1" overflow="hidden">
                 {roomPanel && (
                     <TabPanel p={0} w="100%" h="100%">
                         {roomPanel}

@@ -333,7 +333,9 @@ export default function MessageBox({ message }: { message: ChatMessageDataFragme
         };
     }, [attendees, message.senderId]);
 
-    return (
+    return message.type === Chat_MessageType_Enum.DuplicationMarker ? (
+        <></>
+    ) : (
         <HStack
             role="listitem"
             mr="1px"

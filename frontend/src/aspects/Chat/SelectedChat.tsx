@@ -3,7 +3,7 @@ import { useChatConfiguration } from "./Configuration";
 
 interface SelectedChat {
     id: string;
-    label: string;
+    label: string | undefined;
     title: string;
     selectedSide: "L" | "R";
     setSelectedSide: Dispatch<SetStateAction<"L" | "R">>;

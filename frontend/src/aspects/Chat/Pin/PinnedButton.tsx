@@ -21,7 +21,7 @@ export function PinnedButton(props: ButtonProps): JSX.Element {
     return pinnedQ.data?.allowedToUnpin &&
         ((config.permissions.canPin && !isPinned) || (config.permissions.canUnpin && isPinned)) ? (
         <Tooltip label={label} fontSize={config.fontSizeRange.value}>
-            <Box minH={"2.6em"}>
+            <Box>
                 <Button
                     aria-label={label}
                     onClick={() => {
@@ -35,7 +35,6 @@ export function PinnedButton(props: ButtonProps): JSX.Element {
                         opacity: 0.4,
                         cursor: "progress",
                     }}
-                    size="sm"
                 >
                     {hasError ? (
                         <FAIcon iconStyle="s" icon="exclamation-triangle" />

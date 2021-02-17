@@ -250,6 +250,9 @@ export default function ReceiveMessageQueriesProvider({
     // }, [liveMessages.msgs, nextReactionsSub]);
     // usePolling(pollCb, 5000, true);
     useEffect(() => {
+        setLiveMessages({ msgs: new Map(), maxId: -1 });
+    }, [chatId]);
+    useEffect(() => {
         setRefetchMsg(null);
         setLiveMessages((prevLiveMessages) => {
             const newLiveMessages = new Map(prevLiveMessages.msgs.entries());

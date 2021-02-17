@@ -11,7 +11,7 @@ export enum ChatSpacing {
 export type ChatSources =
     | {
           chatId: string;
-          chatLabel: string;
+          chatLabel?: string;
           chatTitle: string;
       }
     | {
@@ -93,6 +93,8 @@ export interface ChatPollConfiguration {
 }
 
 export interface ChatConfiguration {
+    customHeadingElements?: React.ReactNodeArray;
+
     sources: ChatSources;
     useTypingIndicators: Maybe<boolean>; // TODO
     permissions: ChatPermissions; // TODO

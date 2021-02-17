@@ -5,8 +5,9 @@ import {
     AlertDescription,
     AlertIcon,
     AlertTitle,
+    Button,
+    Divider,
     HStack,
-    Link,
     List,
     ListIcon,
     ListItem,
@@ -17,9 +18,10 @@ import {
     TabPanels,
     Tabs,
     Text,
+    Tooltip,
 } from "@chakra-ui/react";
-import React, { useMemo } from "react";
-import { Link as ReactLink, useRouteMatch } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
+import { useHistory, useRouteMatch } from "react-router-dom";
 import {
     AttendeeFieldsFragment,
     RoomPrivacy_Enum,
@@ -32,6 +34,7 @@ import { Chat } from "../Chat/Chat";
 import { ChatNotificationsProvider } from "../Chat/ChatNotifications";
 import type { ChatSources } from "../Chat/Configuration";
 import { useRestorableState } from "../Generic/useRestorableState";
+import FAIcon from "../Icons/FAIcon";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 
 gql`
@@ -97,21 +100,14 @@ function ChatListItem({
     chat,
     attendeeId,
     confSlug,
+    onClick,
 }: {
     chat: SidebarChatInfoFragment;
     attendeeId: string;
     confSlug: string;
+    onClick: () => void;
 }): JSX.Element {
     const chatName = computeChatName(chat, attendeeId);
-    const chatPath = chat
-        ? chat.contentGroup.length > 0
-            ? `/item/${chat.contentGroup[0].id}`
-            : chat.nonDMRoom.length > 0
-            ? `/room/${chat.nonDMRoom[0].id}`
-            : chat.DMRoom.length > 0
-            ? `/room/${chat.DMRoom[0].id}`
-            : undefined
-        : undefined;
     const unreadCount =
         chat && chat.readUpToIndices && chat.readUpToIndices.length > 0
             ? chat.readUpToIndices[0].unreadCount ?? undefined
@@ -120,13 +116,13 @@ function ChatListItem({
     const isPrivate = chat && chat.nonDMRoom.length && chat.nonDMRoom[0].roomPrivacyName !== RoomPrivacy_Enum.Public;
 
     return (
-        <ListItem key={chat.id} fontWeight={unreadCount ? "bold" : undefined}>
-            <Link as={ReactLink} to={`/conference/${confSlug}${chatPath}`} textDecoration="none">
-                <ListIcon mt="0.7ex" as={isDM ? AtSignIcon : isPrivate ? LockIcon : ChatIcon} />{" "}
+        <ListItem key={chat.id} fontWeight={unreadCount ? "bold" : undefined} display="flex">
+            <ListIcon mt="0.7ex" as={isDM ? AtSignIcon : isPrivate ? LockIcon : ChatIcon} />
+            <Button onClick={onClick} size="xs" background="none" whiteSpace="normal" textAlign="left" h="auto" p={1}>
                 <Text as="span">
                     {unreadCount ? `(${unreadCount})` : undefined} {chatName}
                 </Text>
-            </Link>
+            </Button>
         </ListItem>
     );
 }
@@ -168,12 +164,113 @@ function ChatsPanel({ attendeeId, confSlug }: { attendeeId: string; confSlug: st
         pollInterval: 30000,
     });
 
+    const [currentChat, setCurrentChat] = useState<{ id: string; title: string; roomId: string | undefined } | null>(
+        null
+    );
+
+    const sources: ChatSources | undefined = useMemo(
+        () =>
+            currentChat
+                ? {
+                      chatId: currentChat.id,
+                      chatLabel: currentChat.title,
+                      chatTitle: currentChat.title,
+                  }
+                : undefined,
+        [currentChat]
+    );
+
+    const history = useHistory();
+
+    if (sources) {
+        return (
+            <>
+                <Chat
+                    customHeadingElements={[
+                        <Tooltip key="back-button" label="Back to chats list">
+                            <Button size="xs" colorScheme="purple" onClick={() => setCurrentChat(null)}>
+                                <FAIcon iconStyle="s" icon="chevron-left" />
+                            </Button>
+                        </Tooltip>,
+                        currentChat?.roomId ? (
+                            <Tooltip key="back-button" label="Go to video room">
+                                <Button
+                                    key="room-button"
+                                    size="xs"
+                                    colorScheme="blue"
+                                    onClick={() => history.push(`/conference/${confSlug}/room/${currentChat.roomId}`)}
+                                >
+                                    <FAIcon iconStyle="s" icon="video" />
+                                </Button>
+                            </Tooltip>
+                        ) : undefined,
+                    ]}
+                    sources={sources}
+                />
+            </>
+        );
+    } else {
+        return (
+            <>
+                <List m={0} mb={2} ml={4}>
+                    {pinnedChats.data?.chat_Pin
+                        .filter((chatPin) => chatPin.chat?.enableMandatoryPin)
+                        .sort((x, y) => sortChats(attendeeId, x.chat, y.chat))
+                        .map((chatPin) => (
+                            <ChatListItem
+                                key={chatPin.chatId}
+                                chat={chatPin.chat}
+                                attendeeId={attendeeId}
+                                confSlug={confSlug}
+                                onClick={() =>
+                                    setCurrentChat({
+                                        id: chatPin.chatId,
+                                        title: computeChatName(chatPin.chat, attendeeId) ?? "Unknown chat",
+                                        roomId:
+                                            chatPin.chat.nonDMRoom.length > 0
+                                                ? chatPin.chat.nonDMRoom[0].id
+                                                : chatPin.chat.DMRoom.length > 0
+                                                ? chatPin.chat.DMRoom[0].id
+                                                : undefined,
+                                    })
+                                }
+                            />
+                        ))}
+                </List>
+                <Divider />
+                <List mt={1} ml={4}>
+                    {pinnedChats.data?.chat_Pin
+                        .filter((chatPin) => !chatPin.chat?.enableMandatoryPin)
+                        .sort((x, y) => sortChats(attendeeId, x.chat, y.chat))
+                        .map((chatPin) => (
+                            <ChatListItem
+                                key={chatPin.chatId}
+                                chat={chatPin.chat}
+                                attendeeId={attendeeId}
+                                confSlug={confSlug}
+                                onClick={() =>
+                                    setCurrentChat({
+                                        id: chatPin.chatId,
+                                        title: computeChatName(chatPin.chat, attendeeId) ?? "Unknown chat",
+                                        roomId:
+                                            chatPin.chat.nonDMRoom.length > 0
+                                                ? chatPin.chat.nonDMRoom[0].id
+                                                : chatPin.chat.DMRoom.length > 0
+                                                ? chatPin.chat.DMRoom[0].id
+                                                : undefined,
+                                    })
+                                }
+                            />
+                        ))}
+                    {!pinnedChats.data || pinnedChats.data.chat_Pin.length < 1 ? <>No pinned chats.</> : <></>}
+                </List>
+            </>
+        );
+    }
+
     // const { isOpen: isCreateDmOpen, onClose: onCreateDmClose, onOpen: onCreateDmOpen } = useDisclosure();
     // const history = useHistory();
-
-    return (
-        <>
-            {/* <HStack justifyContent="flex-end">
+    /* <HStack justifyContent="flex-end">
                 <Button onClick={onCreateDmOpen} colorScheme="green" size="sm">
                     <FAIcon icon="plus-square" iconStyle="s" mr={3} /> DM
                 </Button>
@@ -187,36 +284,7 @@ function ChatsPanel({ attendeeId, confSlug }: { attendeeId: string; confSlug: st
                         history.push(`/conference/${confSlug}/room/${id}`);
                     }, 2000);
                 }}
-            /> */}
-            <List m={0} ml={4}>
-                {pinnedChats.data?.chat_Pin
-                    .filter((chatPin) => chatPin.chat?.enableMandatoryPin)
-                    .sort((x, y) => sortChats(attendeeId, x.chat, y.chat))
-                    .map((chatPin) => (
-                        <ChatListItem
-                            key={chatPin.chatId}
-                            chat={chatPin.chat}
-                            attendeeId={attendeeId}
-                            confSlug={confSlug}
-                        />
-                    ))}
-            </List>
-            <List my={4} ml={4}>
-                {pinnedChats.data?.chat_Pin
-                    .filter((chatPin) => !chatPin.chat?.enableMandatoryPin)
-                    .sort((x, y) => sortChats(attendeeId, x.chat, y.chat))
-                    .map((chatPin) => (
-                        <ChatListItem
-                            key={chatPin.chatId}
-                            chat={chatPin.chat}
-                            attendeeId={attendeeId}
-                            confSlug={confSlug}
-                        />
-                    ))}
-                {!pinnedChats.data || pinnedChats.data.chat_Pin.length < 1 ? <>No pinned chats.</> : <></>}
-            </List>
-        </>
-    );
+            /> */
 }
 
 enum RightSidebarTabs {
@@ -230,6 +298,7 @@ gql`
         Room_by_pk(id: $roomId) {
             id
             chatId
+            name
         }
     }
 `;
@@ -238,7 +307,13 @@ gql`
     query GetContentGroupChatId($itemId: uuid!) {
         ContentGroup_by_pk(id: $itemId) {
             id
-            chatId
+            title
+            chat {
+                id
+                room {
+                    id
+                }
+            }
         }
     }
 `;
@@ -254,9 +329,9 @@ function RoomChatPanel({ roomId }: { roomId: string }): JSX.Element {
         () =>
             data?.Room_by_pk
                 ? {
-                      chatId: data?.Room_by_pk?.chatId,
-                      chatLabel: "Unused label",
-                      chatTitle: "Unused title",
+                      chatId: data.Room_by_pk.chatId,
+                      chatLabel: data.Room_by_pk.name,
+                      chatTitle: data.Room_by_pk.name,
                   }
                 : undefined,
         [data?.Room_by_pk]
@@ -306,7 +381,7 @@ function RoomChatPanel({ roomId }: { roomId: string }): JSX.Element {
     return <Chat sources={sources} />;
 }
 
-function ItemChatPanel({ itemId }: { itemId: string }): JSX.Element {
+function ItemChatPanel({ itemId, confSlug }: { itemId: string; confSlug: string }): JSX.Element {
     const { loading, error, data } = useGetContentGroupChatIdQuery({
         variables: {
             itemId,
@@ -315,15 +390,17 @@ function ItemChatPanel({ itemId }: { itemId: string }): JSX.Element {
 
     const sources: ChatSources | undefined = useMemo(
         () =>
-            data?.ContentGroup_by_pk
+            data?.ContentGroup_by_pk && data.ContentGroup_by_pk.chat
                 ? {
-                      chatId: data?.ContentGroup_by_pk?.chatId,
-                      chatLabel: "Unused label",
-                      chatTitle: "Unused title",
+                      chatId: data.ContentGroup_by_pk.chat.id,
+                      chatLabel: data.ContentGroup_by_pk.title,
+                      chatTitle: data.ContentGroup_by_pk.title,
                   }
                 : undefined,
         [data?.ContentGroup_by_pk]
     );
+
+    const history = useHistory();
 
     if (loading) {
         return <Spinner label="Loading room chat" />;
@@ -348,7 +425,7 @@ function ItemChatPanel({ itemId }: { itemId: string }): JSX.Element {
         );
     }
 
-    if (!sources) {
+    if (!sources || !data?.ContentGroup_by_pk?.chat) {
         return (
             <Alert
                 status="info"
@@ -366,7 +443,27 @@ function ItemChatPanel({ itemId }: { itemId: string }): JSX.Element {
         );
     }
 
-    return <Chat sources={sources} />;
+    const chat = data.ContentGroup_by_pk.chat;
+
+    return (
+        <Chat
+            customHeadingElements={[
+                chat.room.length > 0 ? (
+                    <Tooltip key="back-button" label="Go to video room">
+                        <Button
+                            key="room-button"
+                            size="xs"
+                            colorScheme="blue"
+                            onClick={() => history.push(`/conference/${confSlug}/room/${chat.room[0].id}`)}
+                        >
+                            <FAIcon iconStyle="s" icon="video" />
+                        </Button>
+                    </Tooltip>
+                ) : undefined,
+            ]}
+            sources={sources}
+        />
+    );
 }
 
 function RightSidebarConferenceSections_Inner({
@@ -392,6 +489,13 @@ function RightSidebarConferenceSections_Inner({
         (x) => parseInt(x, 10)
     );
 
+    useEffect(() => {
+        if (roomId || itemId) {
+            setCurrentTab(RightSidebarTabs.PageChat);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [itemId, roomId]);
+
     const tabIndex =
         currentTab === RightSidebarTabs.PageChat
             ? 0
@@ -406,7 +510,10 @@ function RightSidebarConferenceSections_Inner({
             : -2;
 
     const roomPanel = useMemo(() => roomId && <RoomChatPanel roomId={roomId} />, [roomId]);
-    const itemPanel = useMemo(() => itemId && <ItemChatPanel itemId={itemId} />, [itemId]);
+    const itemPanel = useMemo(() => itemId && <ItemChatPanel itemId={itemId} confSlug={confSlug} />, [
+        confSlug,
+        itemId,
+    ]);
     const chatsPanel = useMemo(() => <ChatsPanel attendeeId={attendee.id} confSlug={confSlug} />, [
         attendee.id,
         confSlug,
@@ -468,7 +575,7 @@ function RightSidebarConferenceSections_Inner({
                         {itemPanel}
                     </TabPanel>
                 )}
-                <TabPanel overflowY="auto" w="100%" h="100%">
+                <TabPanel p={0} overflowY="auto" w="100%" h="100%">
                     {chatsPanel}
                 </TabPanel>
                 <TabPanel overflowY="auto" w="100%" h="100%">
@@ -477,7 +584,6 @@ function RightSidebarConferenceSections_Inner({
             </TabPanels>
         </Tabs>
     );
-    // return <ChatsPanel attendeeId={attendee.id} confSlug={confSlug} />;
 }
 
 export default function RightSidebarConferenceSections({

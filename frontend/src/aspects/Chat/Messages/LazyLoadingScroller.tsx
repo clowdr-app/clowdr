@@ -1,7 +1,7 @@
 import { Box, Button, Center, Flex, FlexProps, Heading, Spinner, useColorModeValue, useToken } from "@chakra-ui/react";
 import Observer from "@researchgate/react-intersection-observer";
 import "intersection-observer"; // optional polyfill
-import React, { useEffect, useMemo, useReducer, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useReducer, useState } from "react";
 import { useReadUpToIndex } from "./ReadUpToIndexProvider";
 
 interface LazyLoadingScrollerProps<T> {
@@ -10,6 +10,7 @@ interface LazyLoadingScrollerProps<T> {
         index: number | null,
         count: number
     ) => Promise<{ nextIndex: number | null; newItems: Map<number, T> } | false>;
+    clear: React.MutableRefObject<(() => void) | null>;
     isEqual: (x: T, y: T) => boolean;
     renderItem: (item: T) => React.ReactNode;
     monitoredItems: Map<number, T> | null;
@@ -27,6 +28,7 @@ interface ReducerState<T> {
 
 type ReducerActions<T> =
     | { name: "start-load" }
+    | { name: "clear" }
     | {
           name: "render-items";
           newItems: Map<number, T>;
@@ -118,6 +120,15 @@ function reduce<T>(oldState: ReducerState<T>, action: ReducerActions<T>) {
                 newState.renderedItems.delete(key);
             });
         }
+    } else if (action.name === "clear") {
+        return {
+            stateName: "loading",
+            loadOnIdle: false,
+            nextIndex: null,
+            items: null,
+            lastError: null,
+            renderedItems: new Map(),
+        } as ReducerState<T>;
     }
 
     if (newState.stateName === "idle" && newState.loadOnIdle) {
@@ -131,6 +142,7 @@ function reduce<T>(oldState: ReducerState<T>, action: ReducerActions<T>) {
 export default function LazyLoadingScroller<T>({
     fixedBatchSize,
     load,
+    clear: clearRef,
     isEqual,
     renderItem,
     monitoredItems,
@@ -153,6 +165,13 @@ export default function LazyLoadingScroller<T>({
     });
 
     const readUpToIndex = useReadUpToIndex();
+
+    const clear = useCallback(() => {
+        act({
+            name: "clear",
+        });
+    }, []);
+    clearRef.current = clear;
 
     useEffect(() => {
         if (state.stateName === "loading" && !runningStateRef.current.isRunning) {

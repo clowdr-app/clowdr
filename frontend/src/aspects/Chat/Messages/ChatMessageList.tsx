@@ -1,5 +1,5 @@
 import { Box, BoxProps } from "@chakra-ui/react";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { ChatMessageDataFragment, ChatReactionDataFragment, Chat_MessageType_Enum } from "../../../generated/graphql";
 import { useChatConfiguration } from "../Configuration";
 import type {
@@ -101,7 +101,7 @@ function areMessagesEqual(x: ChatMessageDataFragment, y: ChatMessageDataFragment
     );
 }
 
-export function ChatMessageList({ chatId: _chatId, ...rest }: ChatMessageListProps & BoxProps): JSX.Element {
+export function ChatMessageList({ chatId, ...rest }: ChatMessageListProps & BoxProps): JSX.Element {
     const config = useChatConfiguration();
     const messages = useReceiveMessageQueries();
 
@@ -111,11 +111,17 @@ export function ChatMessageList({ chatId: _chatId, ...rest }: ChatMessageListPro
         []
     );
 
+    const clear = React.useRef<(() => void) | null>(null);
+    useEffect(() => {
+        clear.current?.();
+    }, [chatId]);
+
     return (
         <Box {...rest}>
             <LazyLoadingScroller<ChatMessageDataFragment>
                 fixedBatchSize={config.messageBatchSize ?? 30}
                 load={messages.load}
+                clear={clear}
                 isEqual={areMessagesEqual}
                 renderItem={renderItem}
                 monitoredItems={messages.liveMessages}

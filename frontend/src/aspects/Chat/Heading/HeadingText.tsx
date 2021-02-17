@@ -1,10 +1,8 @@
 import { Alert, AlertIcon, AlertTitle, Heading, SkeletonText } from "@chakra-ui/react";
 import React from "react";
-import { useChatConfiguration } from "../Configuration";
 import { useChatTitleQuery } from "./TitleQuery";
 
 export function HeadingText(): JSX.Element {
-    const config = useChatConfiguration();
     const titleQ = useChatTitleQuery();
 
     if (titleQ.loading) {
@@ -21,7 +19,7 @@ export function HeadingText(): JSX.Element {
     }
 
     return (
-        <Heading as="h1" fontSize="1.2em" fontWeight="600" p={config.spacing}>
+        <Heading as="h1" fontSize="sm" textAlign="left" fontWeight="600" p={1} flex="1">
             {titleQ.data}
         </Heading>
     );

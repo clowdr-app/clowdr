@@ -1,7 +1,7 @@
 import { Text, VStack } from "@chakra-ui/react";
 import { formatRelative } from "date-fns";
 import * as R from "ramda";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
     ContentGroupDataFragment,
     ContentGroupEventFragment,
@@ -10,7 +10,6 @@ import {
 } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import usePolling from "../../../Generic/usePolling";
-import PageCountText from "../../../Presence/PageCountText";
 import { useConference } from "../../useConference";
 
 function eventType(eventType: RoomMode_Enum): string {
@@ -53,13 +52,13 @@ export function ContentGroupLive({
     usePolling(computeLiveEvent, 5000, true);
     useEffect(() => computeLiveEvent(), [computeLiveEvent]);
 
-    const currentRoom = useMemo(
-        () =>
-            contentGroupData.chat?.room && contentGroupData.chat?.room.length > 0
-                ? contentGroupData.chat?.room[0]
-                : undefined,
-        [contentGroupData.chat?.room]
-    );
+    // const currentRoom = useMemo(
+    //     () =>
+    //         contentGroupData.chat?.room && contentGroupData.chat?.room.length > 0
+    //             ? contentGroupData.chat?.room[0]
+    //             : undefined,
+    //     [contentGroupData.chat?.room]
+    // );
 
     const conference = useConference();
 
@@ -102,7 +101,7 @@ export function ContentGroupLive({
             ) : (
                 <></>
             )}
-            {(!liveEvents || liveEvents.length === 0) && currentRoom ? (
+            {/* {(!liveEvents || liveEvents.length === 0) && currentRoom ? (
                 <LinkButton
                     width="100%"
                     to={`/conference/${conference.slug}/room/${currentRoom.id}`}
@@ -119,7 +118,7 @@ export function ContentGroupLive({
                         <PageCountText path={`/conference/${conference.slug}/room/${currentRoom.id}`} />
                     </VStack>
                 </LinkButton>
-            ) : undefined}
+            ) : undefined} */}
         </VStack>
     );
 }

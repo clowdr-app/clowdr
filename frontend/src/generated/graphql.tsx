@@ -32805,14 +32805,14 @@ export type GetRoomChatIdQueryVariables = Exact<{
 }>;
 
 
-export type GetRoomChatIdQuery = { readonly __typename?: 'query_root', readonly Room_by_pk?: Maybe<{ readonly __typename?: 'Room', readonly id: any, readonly chatId?: Maybe<any> }> };
+export type GetRoomChatIdQuery = { readonly __typename?: 'query_root', readonly Room_by_pk?: Maybe<{ readonly __typename?: 'Room', readonly id: any, readonly chatId?: Maybe<any>, readonly name: string }> };
 
 export type GetContentGroupChatIdQueryVariables = Exact<{
   itemId: Scalars['uuid'];
 }>;
 
 
-export type GetContentGroupChatIdQuery = { readonly __typename?: 'query_root', readonly ContentGroup_by_pk?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly chatId?: Maybe<any> }> };
+export type GetContentGroupChatIdQuery = { readonly __typename?: 'query_root', readonly ContentGroup_by_pk?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly id: any, readonly room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string }> }> }> };
 
 export type GetRoomMembersSubscriptionVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -40126,6 +40126,7 @@ export const GetRoomChatIdDocument = gql`
   Room_by_pk(id: $roomId) {
     id
     chatId
+    name
   }
 }
     `;
@@ -40159,7 +40160,14 @@ export const GetContentGroupChatIdDocument = gql`
     query GetContentGroupChatId($itemId: uuid!) {
   ContentGroup_by_pk(id: $itemId) {
     id
-    chatId
+    title
+    chat {
+      id
+      room {
+        id
+        name
+      }
+    }
   }
 }
     `;

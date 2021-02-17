@@ -1,13 +1,10 @@
 import { Box, BoxProps, ButtonGroup, HStack, Spacer } from "@chakra-ui/react";
 import React from "react";
-import PageCountBox from "../../Presence/PageCountBox";
 import { useChatConfiguration } from "../Configuration";
 import { PinnedButton } from "../Pin/PinnedButton";
 import { ChatPinnedQueryProvider } from "../Pin/PinnedQuery";
 import { SubscribedButton } from "../Subscribe/SubscribedButton";
 import { ChatSubscribedQueryProvider } from "../Subscribe/SubscribedQuery";
-import { HeadingText } from "./HeadingText";
-import { ChatTitleQueryProvider } from "./TitleQuery";
 
 export function ChatHeading({ ...rest }: BoxProps): JSX.Element {
     const config = useChatConfiguration();
@@ -15,11 +12,11 @@ export function ChatHeading({ ...rest }: BoxProps): JSX.Element {
     return (
         <Box {...rest}>
             <HStack spacing={config.spacing}>
-                <ChatTitleQueryProvider>
+                {/* <ChatTitleQueryProvider>
                     <HeadingText />
-                </ChatTitleQueryProvider>
+                </ChatTitleQueryProvider> */}
                 <Spacer />
-                <PageCountBox />
+                {/* <PageCountBox /> */}
                 {config.currentAttendeeId ? (
                     <>
                         <Spacer />

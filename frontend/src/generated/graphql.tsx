@@ -31237,7 +31237,7 @@ export type GetContentGroupQuery = { readonly __typename?: 'query_root', readonl
     & ContentGroupPage_ContentGroupRoomsFragment
   )> };
 
-export type ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string }> }>, readonly contentItems: ReadonlyArray<(
+export type ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly contentItems: ReadonlyArray<(
     { readonly __typename?: 'ContentItem' }
     & ContentItemDataFragment
   )>, readonly people: ReadonlyArray<(
@@ -32800,6 +32800,20 @@ export type PinnedChatsWithUnreadCountsQuery = { readonly __typename?: 'query_ro
       & SidebarChatInfoFragment
     ) }> };
 
+export type GetRoomChatIdQueryVariables = Exact<{
+  roomId: Scalars['uuid'];
+}>;
+
+
+export type GetRoomChatIdQuery = { readonly __typename?: 'query_root', readonly Room_by_pk?: Maybe<{ readonly __typename?: 'Room', readonly id: any, readonly chatId?: Maybe<any> }> };
+
+export type GetContentGroupChatIdQueryVariables = Exact<{
+  itemId: Scalars['uuid'];
+}>;
+
+
+export type GetContentGroupChatIdQuery = { readonly __typename?: 'query_root', readonly ContentGroup_by_pk?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly chatId?: Maybe<any> }> };
+
 export type GetRoomMembersSubscriptionVariables = Exact<{
   roomId: Scalars['uuid'];
 }>;
@@ -33088,13 +33102,6 @@ export const ContentGroupDataFragmentDoc = gql`
   id
   title
   contentGroupTypeName
-  chatId
-  chat {
-    room {
-      id
-      name
-    }
-  }
   contentItems(where: {isHidden: {_eq: false}}) {
     ...ContentItemData
   }
@@ -40114,6 +40121,74 @@ export function usePinnedChatsWithUnreadCountsLazyQuery(baseOptions?: Apollo.Laz
 export type PinnedChatsWithUnreadCountsQueryHookResult = ReturnType<typeof usePinnedChatsWithUnreadCountsQuery>;
 export type PinnedChatsWithUnreadCountsLazyQueryHookResult = ReturnType<typeof usePinnedChatsWithUnreadCountsLazyQuery>;
 export type PinnedChatsWithUnreadCountsQueryResult = Apollo.QueryResult<PinnedChatsWithUnreadCountsQuery, PinnedChatsWithUnreadCountsQueryVariables>;
+export const GetRoomChatIdDocument = gql`
+    query GetRoomChatId($roomId: uuid!) {
+  Room_by_pk(id: $roomId) {
+    id
+    chatId
+  }
+}
+    `;
+
+/**
+ * __useGetRoomChatIdQuery__
+ *
+ * To run a query within a React component, call `useGetRoomChatIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRoomChatIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRoomChatIdQuery({
+ *   variables: {
+ *      roomId: // value for 'roomId'
+ *   },
+ * });
+ */
+export function useGetRoomChatIdQuery(baseOptions: Apollo.QueryHookOptions<GetRoomChatIdQuery, GetRoomChatIdQueryVariables>) {
+        return Apollo.useQuery<GetRoomChatIdQuery, GetRoomChatIdQueryVariables>(GetRoomChatIdDocument, baseOptions);
+      }
+export function useGetRoomChatIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRoomChatIdQuery, GetRoomChatIdQueryVariables>) {
+          return Apollo.useLazyQuery<GetRoomChatIdQuery, GetRoomChatIdQueryVariables>(GetRoomChatIdDocument, baseOptions);
+        }
+export type GetRoomChatIdQueryHookResult = ReturnType<typeof useGetRoomChatIdQuery>;
+export type GetRoomChatIdLazyQueryHookResult = ReturnType<typeof useGetRoomChatIdLazyQuery>;
+export type GetRoomChatIdQueryResult = Apollo.QueryResult<GetRoomChatIdQuery, GetRoomChatIdQueryVariables>;
+export const GetContentGroupChatIdDocument = gql`
+    query GetContentGroupChatId($itemId: uuid!) {
+  ContentGroup_by_pk(id: $itemId) {
+    id
+    chatId
+  }
+}
+    `;
+
+/**
+ * __useGetContentGroupChatIdQuery__
+ *
+ * To run a query within a React component, call `useGetContentGroupChatIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetContentGroupChatIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetContentGroupChatIdQuery({
+ *   variables: {
+ *      itemId: // value for 'itemId'
+ *   },
+ * });
+ */
+export function useGetContentGroupChatIdQuery(baseOptions: Apollo.QueryHookOptions<GetContentGroupChatIdQuery, GetContentGroupChatIdQueryVariables>) {
+        return Apollo.useQuery<GetContentGroupChatIdQuery, GetContentGroupChatIdQueryVariables>(GetContentGroupChatIdDocument, baseOptions);
+      }
+export function useGetContentGroupChatIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetContentGroupChatIdQuery, GetContentGroupChatIdQueryVariables>) {
+          return Apollo.useLazyQuery<GetContentGroupChatIdQuery, GetContentGroupChatIdQueryVariables>(GetContentGroupChatIdDocument, baseOptions);
+        }
+export type GetContentGroupChatIdQueryHookResult = ReturnType<typeof useGetContentGroupChatIdQuery>;
+export type GetContentGroupChatIdLazyQueryHookResult = ReturnType<typeof useGetContentGroupChatIdLazyQuery>;
+export type GetContentGroupChatIdQueryResult = Apollo.QueryResult<GetContentGroupChatIdQuery, GetContentGroupChatIdQueryVariables>;
 export const GetRoomMembersDocument = gql`
     subscription GetRoomMembers($roomId: uuid!) {
   RoomPerson(where: {roomId: {_eq: $roomId}}) {

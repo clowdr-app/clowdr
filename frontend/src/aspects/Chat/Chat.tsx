@@ -6,7 +6,6 @@ import { useMaybeCurrentAttendee } from "../Conference/useCurrentAttendee";
 import { useRestorableState } from "../Generic/useRestorableState";
 import { ChatConfiguration, ChatConfigurationProvider, ChatSources, ChatSpacing } from "./Configuration";
 import { ChatFrame } from "./Frame/ChatFrame";
-import ReflectionInfoModalProvider from "./ReflectionInfoModal";
 import { SelectedChatProvider } from "./SelectedChat";
 import type { EmoteMessageData } from "./Types/Messages";
 
@@ -158,13 +157,13 @@ export function Chat({ sources, onProfileModalOpened, onEmoteReceived, ...rest }
 
     return (
         <RequireAtLeastOnePermissionWrapper permissions={[Permission_Enum.ConferenceViewAttendees]}>
-            <ReflectionInfoModalProvider>
-                <ChatConfigurationProvider config={config}>
-                    <SelectedChatProvider>
-                        <ChatFrame {...rest} />
-                    </SelectedChatProvider>
-                </ChatConfigurationProvider>
-            </ReflectionInfoModalProvider>
+            {/* <ReflectionInfoModalProvider> */}
+            <ChatConfigurationProvider config={config}>
+                <SelectedChatProvider>
+                    <ChatFrame {...rest} />
+                </SelectedChatProvider>
+            </ChatConfigurationProvider>
+            {/* </ReflectionInfoModalProvider> */}
         </RequireAtLeastOnePermissionWrapper>
     );
 }

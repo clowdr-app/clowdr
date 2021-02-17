@@ -1,14 +1,24 @@
-import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Flex } from "@chakra-ui/react";
+import {
+    Accordion,
+    AccordionButton,
+    AccordionIcon,
+    AccordionItem,
+    AccordionPanel,
+    Box,
+    Button,
+    Flex,
+    HStack,
+    useDisclosure,
+} from "@chakra-ui/react";
 import React from "react";
+import { useHistory } from "react-router-dom";
 import { AttendeeFieldsFragment, RoomListRoomDetailsFragment, useGetAllRoomsQuery } from "../../generated/graphql";
 import { LinkButton } from "../Chakra/LinkButton";
+import { CreateRoomModal } from "../Conference/Attend/Room/CreateRoomModal";
 import { RoomList } from "../Conference/Attend/Room/RoomList";
-import AttendeesContextProvider from "../Conference/AttendeesContext";
-import ConferenceProvider, { useConference } from "../Conference/useConference";
+import { useConference } from "../Conference/useConference";
 import ApolloQueryWrapper from "../GQL/ApolloQueryWrapper";
 import { FAIcon } from "../Icons/FAIcon";
-import PresenceCountProvider from "../Presence/PresenceCountProvider";
-import RoomParticipantsProvider from "../Room/RoomParticipantsProvider";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import useLazyRenderAndRetain from "./LazyRenderAndRetain";
 import { MainMenuProgram } from "./MainMenuProgram";
@@ -23,20 +33,37 @@ function RoomsPanel({ confSlug }: { confSlug: string }): JSX.Element {
         },
     });
 
+    const { isOpen: isCreateRoomOpen, onClose: onCreateRoomClose, onOpen: onCreateRoomOpen } = useDisclosure();
+    const history = useHistory();
+
     return (
-        <AccordionPanel pb={4} px={"3px"}>
-            <ApolloQueryWrapper getter={(data) => data.Room} queryResult={result}>
-                {(rooms: readonly RoomListRoomDetailsFragment[]) => <RoomList rooms={rooms} layout="list" limit={5} />}
-            </ApolloQueryWrapper>
-            <LinkButton
-                to={`/conference/${confSlug}/rooms`}
-                colorScheme="green"
-                linkProps={{ mt: 4, width: "100%" }}
-                w="100%"
-            >
-                View all rooms
-            </LinkButton>
-        </AccordionPanel>
+        <>
+            <AccordionPanel pb={4} px={"3px"}>
+                <ApolloQueryWrapper getter={(data) => data.Room} queryResult={result}>
+                    {(rooms: readonly RoomListRoomDetailsFragment[]) => (
+                        <RoomList rooms={rooms} layout="list" limit={5} />
+                    )}
+                </ApolloQueryWrapper>
+                <HStack justifyContent="center" mt={2}>
+                    <Button onClick={onCreateRoomOpen} colorScheme="green" size="sm">
+                        <FAIcon icon="plus-square" iconStyle="s" mr={3} /> New room
+                    </Button>
+                    <LinkButton to={`/conference/${confSlug}/rooms`} colorScheme="blue" size="sm">
+                        View all rooms
+                    </LinkButton>
+                </HStack>
+            </AccordionPanel>
+            <CreateRoomModal
+                isOpen={isCreateRoomOpen}
+                onClose={onCreateRoomClose}
+                onCreated={async (id: string) => {
+                    // Wait, because Vonage session creation is not instantaneous
+                    setTimeout(() => {
+                        history.push(`/conference/${confSlug}/room/${id}`);
+                    }, 2000);
+                }}
+            />
+        </>
     );
 }
 
@@ -179,20 +206,12 @@ export default function LeftSidebarConferenceSections({
         const attendee = user.user.attendees.find((x) => x.conference.slug === confSlug);
         if (attendee) {
             return (
-                <ConferenceProvider confSlug={confSlug}>
-                    <PresenceCountProvider>
-                        <AttendeesContextProvider>
-                            <RoomParticipantsProvider>
-                                <LeftSidebarConferenceSections_Inner
-                                    rootUrl={rootUrl}
-                                    confSlug={confSlug}
-                                    attendee={attendee}
-                                    onClose={onClose}
-                                />
-                            </RoomParticipantsProvider>
-                        </AttendeesContextProvider>
-                    </PresenceCountProvider>
-                </ConferenceProvider>
+                <LeftSidebarConferenceSections_Inner
+                    rootUrl={rootUrl}
+                    confSlug={confSlug}
+                    attendee={attendee}
+                    onClose={onClose}
+                />
             );
         }
     }

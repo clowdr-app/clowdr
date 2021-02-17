@@ -1,21 +1,37 @@
 import { gql } from "@apollo/client";
 import { AtSignIcon, ChatIcon, LockIcon } from "@chakra-ui/icons";
-import { Button, HStack, Link, List, ListIcon, ListItem, Text, useDisclosure } from "@chakra-ui/react";
-import React from "react";
-import { Link as ReactLink, useHistory } from "react-router-dom";
+import {
+    Alert,
+    AlertDescription,
+    AlertIcon,
+    AlertTitle,
+    HStack,
+    Link,
+    List,
+    ListIcon,
+    ListItem,
+    Spinner,
+    Tab,
+    TabList,
+    TabPanel,
+    TabPanels,
+    Tabs,
+    Text,
+} from "@chakra-ui/react";
+import React, { useMemo } from "react";
+import { Link as ReactLink, useRouteMatch } from "react-router-dom";
 import {
     AttendeeFieldsFragment,
     RoomPrivacy_Enum,
     SidebarChatInfoFragment,
+    useGetContentGroupChatIdQuery,
+    useGetRoomChatIdQuery,
     usePinnedChatsWithUnreadCountsQuery,
 } from "../../generated/graphql";
-import { CreateDmModal } from "../Conference/Attend/Room/CreateDmModal";
-import { CreateRoomModal } from "../Conference/Attend/Room/CreateRoomModal";
-import AttendeesContextProvider from "../Conference/AttendeesContext";
-import ConferenceProvider from "../Conference/useConference";
-import { FAIcon } from "../Icons/FAIcon";
-import PresenceCountProvider from "../Presence/PresenceCountProvider";
-import RoomParticipantsProvider from "../Room/RoomParticipantsProvider";
+import { Chat } from "../Chat/Chat";
+import { ChatNotificationsProvider } from "../Chat/ChatNotifications";
+import type { ChatSources } from "../Chat/Configuration";
+import { useRestorableState } from "../Generic/useRestorableState";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 
 gql`
@@ -106,12 +122,10 @@ function ChatListItem({
     return (
         <ListItem key={chat.id} fontWeight={unreadCount ? "bold" : undefined}>
             <Link as={ReactLink} to={`/conference/${confSlug}${chatPath}`} textDecoration="none">
-                <HStack alignItems="flex-start">
-                    <ListIcon mt="0.7ex" as={isDM ? AtSignIcon : isPrivate ? LockIcon : ChatIcon} />{" "}
-                    <Text as="span">
-                        {unreadCount ? `(${unreadCount})` : undefined} {chatName}
-                    </Text>
-                </HStack>
+                <ListIcon mt="0.7ex" as={isDM ? AtSignIcon : isPrivate ? LockIcon : ChatIcon} />{" "}
+                <Text as="span">
+                    {unreadCount ? `(${unreadCount})` : undefined} {chatName}
+                </Text>
             </Link>
         </ListItem>
     );
@@ -154,31 +168,16 @@ function ChatsPanel({ attendeeId, confSlug }: { attendeeId: string; confSlug: st
         pollInterval: 30000,
     });
 
-    const { isOpen: isCreateRoomOpen, onClose: onCreateRoomClose, onOpen: onCreateRoomOpen } = useDisclosure();
-    const { isOpen: isCreateDmOpen, onClose: onCreateDmClose, onOpen: onCreateDmOpen } = useDisclosure();
-
-    const history = useHistory();
+    // const { isOpen: isCreateDmOpen, onClose: onCreateDmClose, onOpen: onCreateDmOpen } = useDisclosure();
+    // const history = useHistory();
 
     return (
         <>
-            <HStack justifyContent="flex-end">
-                <Button onClick={onCreateRoomOpen} colorScheme="green" size="sm">
-                    <FAIcon icon="plus-square" iconStyle="s" mr={3} /> New room
-                </Button>
+            {/* <HStack justifyContent="flex-end">
                 <Button onClick={onCreateDmOpen} colorScheme="green" size="sm">
                     <FAIcon icon="plus-square" iconStyle="s" mr={3} /> DM
                 </Button>
             </HStack>
-            <CreateRoomModal
-                isOpen={isCreateRoomOpen}
-                onClose={onCreateRoomClose}
-                onCreated={async (id: string) => {
-                    // Wait, because Vonage session creation is not instantaneous
-                    setTimeout(() => {
-                        history.push(`/conference/${confSlug}/room/${id}`);
-                    }, 2000);
-                }}
-            />
             <CreateDmModal
                 isOpen={isCreateDmOpen}
                 onClose={onCreateDmClose}
@@ -188,7 +187,7 @@ function ChatsPanel({ attendeeId, confSlug }: { attendeeId: string; confSlug: st
                         history.push(`/conference/${confSlug}/room/${id}`);
                     }, 2000);
                 }}
-            />
+            /> */}
             <List m={0} ml={4}>
                 {pinnedChats.data?.chat_Pin
                     .filter((chatPin) => chatPin.chat?.enableMandatoryPin)
@@ -220,7 +219,158 @@ function ChatsPanel({ attendeeId, confSlug }: { attendeeId: string; confSlug: st
     );
 }
 
-export function RightSidebarConferenceSections_Inner({
+enum RightSidebarTabs {
+    PageChat = 1,
+    Chats = 2,
+    Presence = 3,
+}
+
+gql`
+    query GetRoomChatId($roomId: uuid!) {
+        Room_by_pk(id: $roomId) {
+            id
+            chatId
+        }
+    }
+`;
+
+gql`
+    query GetContentGroupChatId($itemId: uuid!) {
+        ContentGroup_by_pk(id: $itemId) {
+            id
+            chatId
+        }
+    }
+`;
+
+function RoomChatPanel({ roomId }: { roomId: string }): JSX.Element {
+    const { loading, error, data } = useGetRoomChatIdQuery({
+        variables: {
+            roomId,
+        },
+    });
+
+    const sources: ChatSources | undefined = useMemo(
+        () =>
+            data?.Room_by_pk
+                ? {
+                      chatId: data?.Room_by_pk?.chatId,
+                      chatLabel: "Unused label",
+                      chatTitle: "Unused title",
+                  }
+                : undefined,
+        [data?.Room_by_pk]
+    );
+
+    if (loading) {
+        return <Spinner label="Loading room chat" />;
+    }
+
+    if (error) {
+        return (
+            <Alert
+                status="error"
+                variant="top-accent"
+                flexDirection="column"
+                justifyContent="flex-start"
+                alignItems="flex-start"
+                textAlign="left"
+            >
+                <HStack my={2}>
+                    <AlertIcon />
+                    <AlertTitle>Error loading room chat</AlertTitle>
+                </HStack>
+                <AlertDescription>{error.message}</AlertDescription>
+            </Alert>
+        );
+    }
+
+    if (!sources) {
+        return (
+            <Alert
+                status="info"
+                variant="top-accent"
+                flexDirection="column"
+                justifyContent="flex-start"
+                alignItems="flex-start"
+                textAlign="left"
+            >
+                <HStack my={2}>
+                    <AlertIcon />
+                    <AlertTitle>This room does not have a chat.</AlertTitle>
+                </HStack>
+            </Alert>
+        );
+    }
+
+    return <Chat sources={sources} />;
+}
+
+function ItemChatPanel({ itemId }: { itemId: string }): JSX.Element {
+    const { loading, error, data } = useGetContentGroupChatIdQuery({
+        variables: {
+            itemId,
+        },
+    });
+
+    const sources: ChatSources | undefined = useMemo(
+        () =>
+            data?.ContentGroup_by_pk
+                ? {
+                      chatId: data?.ContentGroup_by_pk?.chatId,
+                      chatLabel: "Unused label",
+                      chatTitle: "Unused title",
+                  }
+                : undefined,
+        [data?.ContentGroup_by_pk]
+    );
+
+    if (loading) {
+        return <Spinner label="Loading room chat" />;
+    }
+
+    if (error) {
+        return (
+            <Alert
+                status="error"
+                variant="top-accent"
+                flexDirection="column"
+                justifyContent="flex-start"
+                alignItems="flex-start"
+                textAlign="left"
+            >
+                <HStack my={2}>
+                    <AlertIcon />
+                    <AlertTitle>Error loading item chat</AlertTitle>
+                </HStack>
+                <AlertDescription>{error.message}</AlertDescription>
+            </Alert>
+        );
+    }
+
+    if (!sources) {
+        return (
+            <Alert
+                status="info"
+                variant="top-accent"
+                flexDirection="column"
+                justifyContent="flex-start"
+                alignItems="flex-start"
+                textAlign="left"
+            >
+                <HStack my={2}>
+                    <AlertIcon />
+                    <AlertTitle>This item does not have a chat.</AlertTitle>
+                </HStack>
+            </Alert>
+        );
+    }
+
+    return <Chat sources={sources} />;
+}
+
+function RightSidebarConferenceSections_Inner({
+    rootUrl,
     confSlug,
     attendee,
     onClose,
@@ -230,7 +380,104 @@ export function RightSidebarConferenceSections_Inner({
     attendee: AttendeeFieldsFragment;
     onClose: () => void;
 }): JSX.Element {
-    return <ChatsPanel attendeeId={attendee.id} confSlug={confSlug} />;
+    const roomMatch = useRouteMatch<{ roomId: string }>(`${rootUrl}/room/:roomId`);
+    const itemMatch = useRouteMatch<{ itemId: string }>(`${rootUrl}/item/:itemId`);
+    const roomId = roomMatch?.params?.roomId;
+    const itemId = itemMatch?.params?.itemId;
+
+    const [currentTab, setCurrentTab] = useRestorableState<RightSidebarTabs>(
+        "RightSideBar_CurrentTab",
+        RightSidebarTabs.Chats,
+        (x) => x.toString(),
+        (x) => parseInt(x, 10)
+    );
+
+    const tabIndex =
+        currentTab === RightSidebarTabs.PageChat
+            ? 0
+            : currentTab === RightSidebarTabs.Chats
+            ? roomId || itemId
+                ? 1
+                : 0
+            : currentTab === RightSidebarTabs.Presence
+            ? roomId || itemId
+                ? 2
+                : 1
+            : -2;
+
+    const roomPanel = useMemo(() => roomId && <RoomChatPanel roomId={roomId} />, [roomId]);
+    const itemPanel = useMemo(() => itemId && <ItemChatPanel itemId={itemId} />, [itemId]);
+    const chatsPanel = useMemo(() => <ChatsPanel attendeeId={attendee.id} confSlug={confSlug} />, [
+        attendee.id,
+        confSlug,
+    ]);
+    const presencePanel = useMemo(() => <>Presence</>, []);
+
+    return (
+        <Tabs
+            variant="solid-rounded"
+            align="center"
+            size="sm"
+            colorScheme="purple"
+            index={tabIndex}
+            overflow="hidden"
+            display="flex"
+            flexDir="column"
+            width="100%"
+            height="100%"
+            onChange={(index) => {
+                if (roomId || itemId) {
+                    switch (index) {
+                        case 0:
+                            setCurrentTab(RightSidebarTabs.PageChat);
+                            break;
+                        case 1:
+                            setCurrentTab(RightSidebarTabs.Chats);
+                            break;
+                        case 2:
+                            setCurrentTab(RightSidebarTabs.Presence);
+                            break;
+                    }
+                } else {
+                    switch (index) {
+                        case 0:
+                            setCurrentTab(RightSidebarTabs.Chats);
+                            break;
+                        case 1:
+                            setCurrentTab(RightSidebarTabs.Presence);
+                            break;
+                    }
+                }
+            }}
+        >
+            <TabList pt={2}>
+                {roomId && <Tab>Room</Tab>}
+                {itemId && <Tab>Item</Tab>}
+                <Tab>Chats</Tab>
+                <Tab>Who&apos;s here</Tab>
+            </TabList>
+
+            <TabPanels textAlign="left" display="flex" flexDir="row" h="100%">
+                {roomPanel && (
+                    <TabPanel p={0} w="100%" h="100%">
+                        {roomPanel}
+                    </TabPanel>
+                )}
+                {itemPanel && (
+                    <TabPanel p={0} w="100%" h="100%">
+                        {itemPanel}
+                    </TabPanel>
+                )}
+                <TabPanel overflowY="auto" w="100%" h="100%">
+                    {chatsPanel}
+                </TabPanel>
+                <TabPanel overflowY="auto" w="100%" h="100%">
+                    {presencePanel}
+                </TabPanel>
+            </TabPanels>
+        </Tabs>
+    );
+    // return <ChatsPanel attendeeId={attendee.id} confSlug={confSlug} />;
 }
 
 export default function RightSidebarConferenceSections({
@@ -247,20 +494,14 @@ export default function RightSidebarConferenceSections({
         const attendee = user.user.attendees.find((x) => x.conference.slug === confSlug);
         if (attendee) {
             return (
-                <ConferenceProvider confSlug={confSlug}>
-                    <PresenceCountProvider>
-                        <AttendeesContextProvider>
-                            <RoomParticipantsProvider>
-                                <RightSidebarConferenceSections_Inner
-                                    rootUrl={rootUrl}
-                                    confSlug={confSlug}
-                                    attendee={attendee}
-                                    onClose={onClose}
-                                />
-                            </RoomParticipantsProvider>
-                        </AttendeesContextProvider>
-                    </PresenceCountProvider>
-                </ConferenceProvider>
+                <ChatNotificationsProvider>
+                    <RightSidebarConferenceSections_Inner
+                        rootUrl={rootUrl}
+                        confSlug={confSlug}
+                        attendee={attendee}
+                        onClose={onClose}
+                    />
+                </ChatNotificationsProvider>
             );
         }
     }

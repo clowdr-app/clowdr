@@ -6,7 +6,6 @@ import SendMessageQueriesProvider from "../Compose/SendMessageQueries";
 import { useChatConfiguration } from "../Configuration";
 import { ChatConfigurationControls } from "../Heading/ChatConfigurationControl";
 import { ChatHeading } from "../Heading/ChatHeading";
-import { ChatSelector } from "../Heading/ChatSelector";
 import { ChatMessageList } from "../Messages/ChatMessageList";
 import EmojiPickerProvider from "../Messages/EmojiPickerProvider";
 import ReactionsProvider from "../Messages/ReactionsProvider";
@@ -29,7 +28,7 @@ export function ChatFrame({ ...rest }: BoxProps): JSX.Element {
     });
 
     return (
-        <Box h="100%" w="100%" maxH="90vh" pos="relative" m={0} p={0} {...rest}>
+        <Box h="100%" w="100%" pos="relative" m={0} p={0} {...rest}>
             <VStack
                 minH="100%"
                 h="100%"
@@ -41,7 +40,7 @@ export function ChatFrame({ ...rest }: BoxProps): JSX.Element {
                 fontSize={config.fontSizeRange.value + "px" ?? "1rem"}
             >
                 <ChatHeading role="region" aria-label="Chat controls" flex="0 0 auto" />
-                <ChatSelector flex="0 0 auto" />
+                {/* <ChatSelector flex="0 0 auto" /> */}
                 <ChatProfileModalProvider>
                     <ReactionsProvider>
                         <EmojiPickerProvider>

@@ -1,22 +1,18 @@
 import { gql } from "@apollo/client";
-import { Box, Button, Flex, Heading, HStack, useBreakpointValue, useToast, VStack } from "@chakra-ui/react";
-import React, { useCallback, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { Box, Flex, Heading, HStack, useBreakpointValue, VStack } from "@chakra-ui/react";
+import React from "react";
 import {
     ContentGroupDataFragment,
     ContentGroupEventsFragment,
     ContentGroupPage_ContentGroupRoomsFragment,
     Permission_Enum,
-    useContentGroup_CreateRoomMutation,
     useGetContentGroupQuery,
 } from "../../../../generated/graphql";
-import { Chat } from "../../../Chat/Chat";
 import PageNotFound from "../../../Errors/PageNotFound";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import { useNoPrimaryMenuButtons } from "../../../Menu/usePrimaryMenuButtons";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
-import { useConference } from "../../useConference";
 import { ContentGroupEvents } from "./ContentGroupEvents";
 import { ContentGroupLive } from "./ContentGroupLive";
 import { ContentGroupSummary } from "./ContentGroupSummary";
@@ -35,13 +31,6 @@ gql`
         id
         title
         contentGroupTypeName
-        chatId
-        chat {
-            room {
-                id
-                name
-            }
-        }
         contentItems(where: { isHidden: { _eq: false } }) {
             ...ContentItemData
         }
@@ -90,50 +79,59 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
         },
     });
     const stackColumns = useBreakpointValue({ base: true, lg: false });
-    const conference = useConference();
     const title = useTitle(result.data?.ContentGroup_by_pk?.title ?? "Unknown content item");
-    const toast = useToast();
-    const history = useHistory();
 
     useNoPrimaryMenuButtons();
 
-    const [createBreakoutMutation] = useContentGroup_CreateRoomMutation();
-    const [creatingBreakout, setCreatingBreakout] = useState<boolean>(false);
+    // TODO: Move into admin interface
+    // const conference = useConference();
+    // const toast = useToast();
+    // const history = useHistory();
+    // const [createBreakoutMutation] = useContentGroup_CreateRoomMutation();
+    // const [creatingBreakout, setCreatingBreakout] = useState<boolean>(false);
+    // const createBreakout = useCallback(async () => {
+    //     if (!result.data?.ContentGroup_by_pk) {
+    //         return;
+    //     }
 
-    const createBreakout = useCallback(async () => {
-        if (!result.data?.ContentGroup_by_pk) {
-            return;
-        }
+    //     const contentGroup = result.data.ContentGroup_by_pk;
 
-        const contentGroup = result.data.ContentGroup_by_pk;
+    //     try {
+    //         setCreatingBreakout(true);
+    //         const { data } = await createBreakoutMutation({
+    //             variables: {
+    //                 conferenceId: conference.id,
+    //                 contentGroupId: contentGroup.id,
+    //             },
+    //         });
 
-        try {
-            setCreatingBreakout(true);
-            const { data } = await createBreakoutMutation({
-                variables: {
-                    conferenceId: conference.id,
-                    contentGroupId: contentGroup.id,
-                },
-            });
+    //         if (!data?.createContentGroupRoom || !data.createContentGroupRoom.roomId) {
+    //             throw new Error(`No data returned: ${data?.createContentGroupRoom?.message}`);
+    //         }
 
-            if (!data?.createContentGroupRoom || !data.createContentGroupRoom.roomId) {
-                throw new Error(`No data returned: ${data?.createContentGroupRoom?.message}`);
-            }
+    //         const roomId = data.createContentGroupRoom.roomId;
 
-            const roomId = data.createContentGroupRoom.roomId;
-
-            // Wait so that breakout session has a chance to be created
-            setTimeout(() => history.push(`/conference/${conference.slug}/room/${roomId}`), 2000);
-        } catch (e) {
-            toast({
-                status: "error",
-                title: "Failed to create room.",
-                description: e?.message,
-            });
-        } finally {
-            setCreatingBreakout(false);
-        }
-    }, [conference.id, conference.slug, createBreakoutMutation, history, result.data?.ContentGroup_by_pk, toast]);
+    //         // Wait so that breakout session has a chance to be created
+    //         setTimeout(() => history.push(`/conference/${conference.slug}/room/${roomId}`), 2000);
+    //     } catch (e) {
+    //         toast({
+    //             status: "error",
+    //             title: "Failed to create room.",
+    //             description: e?.message,
+    //         });
+    //     } finally {
+    //         setCreatingBreakout(false);
+    //     }
+    // }, [conference.id, conference.slug, createBreakoutMutation, history, result.data?.ContentGroup_by_pk, toast]);{contentGroupData.rooms.length === 0 ? (
+    // <Button
+    //     colorScheme="green"
+    //     isLoading={creatingBreakout}
+    //     onClick={createBreakout}
+    //     width="100%"
+    //     mt={2}
+    // >
+    //     Create breakout room
+    // </Button>
 
     return (
         <RequireAtLeastOnePermissionWrapper
@@ -178,19 +176,6 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
                                                     right="1rem"
                                                 >
                                                     <ContentGroupLive contentGroupData={contentGroupData} />
-                                                    {contentGroupData.rooms.length === 0 ? (
-                                                        <Button
-                                                            colorScheme="green"
-                                                            isLoading={creatingBreakout}
-                                                            onClick={createBreakout}
-                                                            width="100%"
-                                                            mt={2}
-                                                        >
-                                                            Create breakout room
-                                                        </Button>
-                                                    ) : (
-                                                        <></>
-                                                    )}
                                                 </Box>
                                             </RequireAtLeastOnePermissionWrapper>
                                         </Box>
@@ -204,25 +189,6 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
                                     </Box>
                                 </Flex>
                             </VStack>
-                            {contentGroupData.chatId ? (
-                                <VStack
-                                    flexGrow={1}
-                                    flexBasis={0}
-                                    minW={["90%", "90%", "90%", "300px"]}
-                                    maxHeight={["80vh", "80vh", "80vh", "850px"]}
-                                >
-                                    <Chat
-                                        sources={{
-                                            chatId: contentGroupData.chatId,
-                                            chatLabel: "Discussion",
-                                            chatTitle: contentGroupData.title,
-                                        }}
-                                        height="100%"
-                                    />
-                                </VStack>
-                            ) : (
-                                <></>
-                            )}
                         </HStack>
                     );
                 }}

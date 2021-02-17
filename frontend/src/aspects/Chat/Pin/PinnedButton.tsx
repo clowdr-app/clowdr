@@ -35,6 +35,7 @@ export function PinnedButton(props: ButtonProps): JSX.Element {
                         opacity: 0.4,
                         cursor: "progress",
                     }}
+                    size="sm"
                 >
                     {hasError ? (
                         <FAIcon iconStyle="s" icon="exclamation-triangle" />

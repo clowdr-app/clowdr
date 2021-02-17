@@ -3,16 +3,24 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Route, RouteComponentProps, Switch } from "react-router-dom";
 import "./App.css";
 import Routing from "./AppRouting";
+import AttendeesContextProvider from "./aspects/Conference/AttendeesContext";
+import ConferenceProvider from "./aspects/Conference/useConference";
+import ConferenceCurrentUserActivePermissionsProvider from "./aspects/Conference/useConferenceCurrentUserActivePermissions";
+import CurrentUserGroupsRolesPermissionsProvider from "./aspects/Conference/useConferenceCurrentUserGroups";
+import { CurrentAttendeeProvider } from "./aspects/Conference/useCurrentAttendee";
 import EmojiMartProvider from "./aspects/Emoji/EmojiMartContext";
 import LeftSidebar from "./aspects/Menu/LeftSidebar";
 import MainMenu from "./aspects/Menu/MainMenu";
 import RightSidebar from "./aspects/Menu/RightSidebar";
+import PresenceCountProvider from "./aspects/Presence/PresenceCountProvider";
+import RoomParticipantsProvider from "./aspects/Room/RoomParticipantsProvider";
+import { SharedRoomContextProvider } from "./aspects/Room/SharedRoomContextProvider";
 import CurrentUserProvider from "./aspects/Users/CurrentUser/CurrentUserProvider";
 // import LastSeenProvider from "./aspects/Users/CurrentUser/OnlineStatus/LastSeenProvider";
 
 interface AppProps {
     confSlug: string | undefined;
-    rootUrl: string;
+    rootUrl: string | undefined;
 }
 
 export default function App(): JSX.Element {
@@ -27,13 +35,45 @@ export default function App(): JSX.Element {
                 ) => <AppInner rootUrl={props.match.url} confSlug={props.match.params.confSlug} />}
             />
             <Route path="/">
-                <AppInner rootUrl={""} confSlug={undefined} />
+                <AppInner rootUrl={undefined} confSlug={undefined} />
             </Route>
         </Switch>
     );
 }
 
 function AppInner({ confSlug, rootUrl }: AppProps): JSX.Element {
+    const page = <AppPage confSlug={confSlug} rootUrl={rootUrl} />;
+
+    return (
+        <EmojiMartProvider>
+            {/* <LastSeenProvider /> */}
+            <CurrentUserProvider>
+                {confSlug ? (
+                    <ConferenceProvider confSlug={confSlug}>
+                        <CurrentUserGroupsRolesPermissionsProvider>
+                            <ConferenceCurrentUserActivePermissionsProvider>
+                                <CurrentAttendeeProvider>
+                                    <PresenceCountProvider>
+                                        <AttendeesContextProvider>
+                                            <RoomParticipantsProvider>
+                                                {/* <ShuffleRoomsQueueMonitor /> */}
+                                                <SharedRoomContextProvider>{page}</SharedRoomContextProvider>
+                                            </RoomParticipantsProvider>
+                                        </AttendeesContextProvider>
+                                    </PresenceCountProvider>
+                                </CurrentAttendeeProvider>
+                            </ConferenceCurrentUserActivePermissionsProvider>
+                        </CurrentUserGroupsRolesPermissionsProvider>
+                    </ConferenceProvider>
+                ) : (
+                    page
+                )}
+            </CurrentUserProvider>
+        </EmojiMartProvider>
+    );
+}
+
+function AppPage({ confSlug, rootUrl }: AppProps) {
     const leftSidebarWidthPc = 20;
     const rightSidebarWidthPc = 20;
     const contentWidthPc = 100 - leftSidebarWidthPc - rightSidebarWidthPc;
@@ -71,15 +111,15 @@ function AppInner({ confSlug, rootUrl }: AppProps): JSX.Element {
 
     const centerVisible = !confSlug || centerAlwaysVisible || (!leftVisible && !rightVisible);
 
-    const left = useMemo(() => (confSlug ? <LeftSidebar rootUrl={rootUrl} confSlug={confSlug} /> : undefined), [
-        confSlug,
-        rootUrl,
-    ]);
-    const right = useMemo(() => (confSlug ? <RightSidebar rootUrl={rootUrl} confSlug={confSlug} /> : undefined), [
-        confSlug,
-        rootUrl,
-    ]);
-    const center = useMemo(() => <Routing />, []);
+    const left = useMemo(
+        () => (confSlug && rootUrl ? <LeftSidebar rootUrl={rootUrl} confSlug={confSlug} /> : undefined),
+        [confSlug, rootUrl]
+    );
+    const right = useMemo(
+        () => (confSlug && rootUrl ? <RightSidebar rootUrl={rootUrl} confSlug={confSlug} /> : undefined),
+        [confSlug, rootUrl]
+    );
+    const center = useMemo(() => <Routing rootUrl={rootUrl} />, [rootUrl]);
 
     const mainMenuProps = useMemo(
         () => ({
@@ -100,93 +140,74 @@ function AppInner({ confSlug, rootUrl }: AppProps): JSX.Element {
         [leftVisible, rightDefaultVisible, rightVisible]
     );
 
-    const page = useMemo(() => {
-        const leftBar = confSlug ? (
-            <Box
-                overflow="hidden"
-                height="100%"
-                width={centerVisible ? leftSidebarWidthPc + "%" : "100%"}
-                maxWidth={centerVisible ? "350px" : undefined}
-                flex="1 0 300px"
-                mb="auto"
-                display={leftVisible ? "flex" : "none"}
-            >
-                {left}
-            </Box>
-        ) : undefined;
-        const rightBar = confSlug ? (
-            <Box
-                overflow="hidden"
-                height="100%"
-                width={centerVisible ? rightSidebarWidthPc + "%" : "100%"}
-                maxWidth={centerVisible ? "350px" : undefined}
-                flex="1 0 300px"
-                mb="auto"
-                ml="auto"
-                display={rightVisible ? "flex" : "none"}
-            >
-                {right}
-            </Box>
-        ) : undefined;
-        const centerBar = (
-            <Box
-                overflowX="hidden"
-                overflowY="auto"
-                height="100%"
-                width={contentWidthPc + "%"}
-                flex="1 0 300px"
-                mb="auto"
-                position={centerVisible ? "relative" : "fixed"}
-                top={centerVisible ? undefined : "100%"}
-            >
-                <VStack spacing={5} width="100%">
-                    {center}
-                    <Box h="40px" display="inline-block" flex="0 0 40px">
-                        &nbsp;
-                    </Box>
-                </VStack>
-            </Box>
-        );
-        return (
-            <Flex
-                as="main"
-                height="100%"
-                width="100%"
-                minWidth="300px"
-                overflow="hidden"
-                // Column-reverse allows us to put the menu last so screen
-                // readers see the page content before the menu
-                direction="column-reverse"
-                justifyContent="center"
-                alignItems="center"
-                backgroundColor={bgColour}
-            >
-                <MainMenu {...mainMenuProps}>
-                    <Flex w="100%" h="100%" overflow="hidden">
-                        {leftBar}
-                        {centerBar}
-                        {rightBar}
-                    </Flex>
-                </MainMenu>
-            </Flex>
-        );
-    }, [
-        bgColour,
-        center,
-        centerVisible,
-        confSlug,
-        contentWidthPc,
-        left,
-        leftVisible,
-        mainMenuProps,
-        right,
-        rightVisible,
-    ]);
+    const leftBar = confSlug ? (
+        <Box
+            overflow="hidden"
+            height="100%"
+            width={centerVisible ? leftSidebarWidthPc + "%" : "100%"}
+            maxWidth={centerVisible ? "350px" : undefined}
+            flex="1 0 300px"
+            mb="auto"
+            display={leftVisible ? "flex" : "none"}
+        >
+            {left}
+        </Box>
+    ) : undefined;
+    const rightBar = confSlug ? (
+        <Box
+            overflow="hidden"
+            height="100%"
+            width={centerVisible ? rightSidebarWidthPc + "%" : "100%"}
+            maxWidth={centerVisible ? "350px" : undefined}
+            flex="1 0 300px"
+            mb="auto"
+            ml="auto"
+            display={rightVisible ? "flex" : "none"}
+        >
+            {right}
+        </Box>
+    ) : undefined;
+    const centerBar = (
+        <Box
+            overflowX="hidden"
+            overflowY="auto"
+            height="100%"
+            width={contentWidthPc + "%"}
+            flex="1 0 300px"
+            mb="auto"
+            position={centerVisible ? "relative" : "fixed"}
+            top={centerVisible ? undefined : "100%"}
+        >
+            <VStack spacing={5} width="100%">
+                {center}
+                <Box h="40px" display="inline-block" flex="0 0 40px">
+                    &nbsp;
+                </Box>
+            </VStack>
+        </Box>
+    );
 
     return (
-        <EmojiMartProvider>
-            {/* <LastSeenProvider /> */}
-            <CurrentUserProvider>{page}</CurrentUserProvider>
-        </EmojiMartProvider>
+        <Flex
+            as="main"
+            height="100%"
+            width="100%"
+            minWidth="300px"
+            overflow="hidden"
+            // Column-reverse allows us to put the menu last so screen
+            // readers see the page content before the menu
+            direction="column-reverse"
+            justifyContent="center"
+            alignItems="center"
+            backgroundColor={bgColour}
+        >
+            <MainMenu {...mainMenuProps}>
+                <Flex w="100%" h="100%" overflow="hidden">
+                    {leftBar}
+                    {centerBar}
+                    {rightBar}
+                </Flex>
+            </MainMenu>
+        </Flex>
     );
 }

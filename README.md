@@ -370,16 +370,15 @@ created above.
    https://hasura.io/jwt-config/](https://hasura.io/jwt-config/)
    - Select Auth0
    - Enter your Auth0 Domain
-1. Copy your key into your local `hasura/.env.local` file
+1. Copy your key (the whole JSON object that is generated in the JWT Config
+   box) into your local `hasura/.env.local` file
    - e.g. `HASURA_GRAPHQL_JWT_SECRET='your key goes in here'`
    - **Don't forget the wrapping single quotes!**
-     BCP: Do I copy the whole contents of the "JWT Config" box after clicking
-     Generate Config? Or just the part between BEGIN CERTIFICATE and END
-     CERTIFICATE? Or do I need to include the BEGIN and END parts too?
 1. Uncomment the `HASURA_GRAPHQL_JWT_SECRET: ${HASURA_GRAPHQL_JWT_SECRET}`
    line in `hasura/docker-compose.yaml`
    - Don't forget to restart the `Hasura Console -- Local Development` task
      in VSCode!
+     BCP: STOPPED HERE
 1. Optionally: Copy your key into Hasura Cloud Environment configuration
    - No need for the wrapping single quotes - Hasura's UI will handle that for
      you.
@@ -418,12 +417,16 @@ properly.)
 
 #### 11. Configure your environment
 
-STOPPED HERE
+BCP: STOPPED HERE
 
 You can now resume the frontend setup by configuring your [Frontend environment
 variables](/frontend/README.md#frontend-configuration).
 
 ## Local Development
+
+BCP: I'm confused where this fits in the task hierarchy -- are we done
+setting up Auth0 now? And is this then another top-level task that should
+then be listed in the Setup section at the top?
 
 1. Run the VSCode task "Run All -- Local Development"
    - If you followed the setup, this should start everything you need.

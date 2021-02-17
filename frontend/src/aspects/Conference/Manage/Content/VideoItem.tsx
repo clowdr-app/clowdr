@@ -1,3 +1,4 @@
+import { Heading } from "@chakra-ui/react";
 import { ContentBaseType, ContentItemVersionData } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
 import React from "react";
@@ -5,6 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import { ContentType_Enum } from "../../../../generated/graphql";
 import { ContentGroupVideo } from "../../Attend/Content/ContentGroupVideos";
 import type { ItemBaseTemplate, RenderEditorProps } from "./Types";
+import UploadFileForm_ContentItem from "./UploadFileForm_ContentItem";
 
 function createDefaultVideo(
     type:
@@ -117,6 +119,21 @@ export const VideoItemTemplate: ItemBaseTemplate = {
             return (
                 <>
                     <ContentGroupVideo title={data.item.name} videoContentItemData={latestVersion.data} />
+                    <Heading as="h3" fontSize="lg" mb={4}>
+                        Upload new video
+                    </Heading>
+                    <UploadFileForm_ContentItem
+                        allowedFileTypes={["video/mp4", "video/webm"]}
+                        item={data.item}
+                        onItemChange={(newItem) => {
+                            const newData = {
+                                ...data,
+                                item: newItem,
+                            };
+                            update(newData);
+                        }}
+                        contentBaseType={ContentBaseType.Video}
+                    />
                 </>
             );
         }

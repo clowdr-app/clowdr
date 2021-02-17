@@ -18,10 +18,12 @@ export default function UploadFileForm_ContentItem({
     item,
     allowedFileTypes,
     onItemChange,
+    contentBaseType,
 }: {
     item: ContentItemDescriptor;
     allowedFileTypes: string[];
     onItemChange?: (newItem: ContentItemDescriptor) => void;
+    contentBaseType: ContentBaseType.File | ContentBaseType.Video;
 }): JSX.Element {
     const toast = useToast();
     const [files, setFiles] = useState<Uppy.UppyFile[]>([]);
@@ -120,21 +122,40 @@ export default function UploadFileForm_ContentItem({
                         uppy.reset();
 
                         if (onItemChange) {
-                            onItemChange({
-                                ...item,
-                                data: [
-                                    ...item.data,
-                                    {
-                                        createdAt: Date.now(),
-                                        createdBy: "user",
-                                        data: {
-                                            baseType: ContentBaseType.File,
-                                            s3Url: `s3://${bucket}/${key}`,
-                                            type: item.typeName as any,
+                            if (contentBaseType === ContentBaseType.Video) {
+                                onItemChange({
+                                    ...item,
+                                    data: [
+                                        ...item.data,
+                                        {
+                                            createdAt: Date.now(),
+                                            createdBy: "user",
+                                            data: {
+                                                baseType: ContentBaseType.Video,
+                                                s3Url: `s3://${bucket}/${key}`,
+                                                type: item.typeName as any,
+                                                subtitles: {},
+                                            },
                                         },
-                                    },
-                                ],
-                            });
+                                    ],
+                                });
+                            } else if (contentBaseType === ContentBaseType.File) {
+                                onItemChange({
+                                    ...item,
+                                    data: [
+                                        ...item.data,
+                                        {
+                                            createdAt: Date.now(),
+                                            createdBy: "user",
+                                            data: {
+                                                baseType: ContentBaseType.File,
+                                                s3Url: `s3://${bucket}/${key}`,
+                                                type: item.typeName as any,
+                                            },
+                                        },
+                                    ],
+                                });
+                            }
                         }
                     } catch (e) {
                         console.error("Failed to submit item", e);

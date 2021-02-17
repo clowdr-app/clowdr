@@ -151,6 +151,7 @@ export const FileItemTemplate: ItemBaseTemplate = {
                             };
                             update(newData);
                         }}
+                        contentBaseType={ContentBaseType.File}
                     />
                 </>
             );

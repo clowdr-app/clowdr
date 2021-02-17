@@ -1,4 +1,5 @@
 import {
+    Button,
     FormControl,
     FormHelperText,
     FormLabel,
@@ -90,24 +91,36 @@ export function LayoutEditor({
             </FormControl>
             <FormControl>
                 <FormLabel>Order</FormLabel>
-                <NumberInput
-                    value={priority ?? layoutData.priority}
-                    onChange={(_, value) => setPriority(value)}
-                    onBlur={() => {
-                        if (priority !== null && priority !== layoutData.priority) {
+                {layoutDataBlob ? (
+                    <NumberInput
+                        value={priority ?? layoutData.priority}
+                        onChange={(_, value) => setPriority(value)}
+                        onBlur={() => {
+                            if (priority !== null && priority !== layoutData.priority) {
+                                update({
+                                    ...layoutData,
+                                    priority: priority,
+                                });
+                            }
+                        }}
+                    >
+                        <NumberInputField />
+                        <NumberInputStepper>
+                            <NumberIncrementStepper />
+                            <NumberDecrementStepper />
+                        </NumberInputStepper>
+                    </NumberInput>
+                ) : (
+                    <Button
+                        onClick={() => {
                             update({
                                 ...layoutData,
-                                priority: priority,
                             });
-                        }
-                    }}
-                >
-                    <NumberInputField />
-                    <NumberInputStepper>
-                        <NumberIncrementStepper />
-                        <NumberDecrementStepper />
-                    </NumberInputStepper>
-                </NumberInput>
+                        }}
+                    >
+                        Add to page
+                    </Button>
+                )}
                 <FormHelperText>The order in which to display this content (lower numbers come first).</FormHelperText>
             </FormControl>
         </HStack>

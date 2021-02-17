@@ -1,22 +1,15 @@
 import { Optional } from "@ahanapediatrics/ahana-fp";
 import { VmShape, VolumeMeter } from "@ahanapediatrics/react-volume-meter";
-import { Alert, AlertIcon, Box, CloseButton, useToast, VStack } from "@chakra-ui/react";
+import { Box, Center, Heading, useToast, VStack } from "@chakra-ui/react";
 import React, { useEffect } from "react";
-import { useRestorableState } from "../../../Generic/useRestorableState";
+import { backgroundImage } from "../../../Vonage/resources";
 import { useVonageRoom } from "../../../Vonage/useVonageRoom";
-import PlaceholderImage from "./PlaceholderImage";
 
 export const AudioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
 
 export function PreJoin({ cameraPreviewRef }: { cameraPreviewRef: React.RefObject<HTMLVideoElement> }): JSX.Element {
     const { state } = useVonageRoom();
     const toast = useToast();
-    const [dismissHelpMessage, setDismissHelpMessage] = useRestorableState<boolean>(
-        "clowdr-dismissCameraPreviewMessage",
-        false,
-        (x) => JSON.stringify(x),
-        (x) => JSON.parse(x)
-    );
 
     useEffect(() => {
         if (cameraPreviewRef.current) {
@@ -28,8 +21,26 @@ export function PreJoin({ cameraPreviewRef }: { cameraPreviewRef: React.RefObjec
 
     return (
         <VStack>
+            <Heading fontSize="3xl">Preview</Heading>
             <Box position="relative">
-                <PlaceholderImage />
+                <Box position="absolute" width="100%" height="100%">
+                    <Box
+                        position="absolute"
+                        width="100%"
+                        height="100%"
+                        bgColor="black"
+                        bgImage={backgroundImage}
+                        bgRepeat="no-repeat"
+                        bgSize="auto 76%"
+                        bgPos="center bottom"
+                        opacity="0.25"
+                    />
+                    <Center position="absolute" w="100%" h="100%" t="0" l="0">
+                        <Box bgColor="rgba(0,0,0,0.5)" p={4} fontSize="lg" color="white" whiteSpace="normal">
+                            Your camera is not switched on.
+                        </Box>
+                    </Center>
+                </Box>
                 <video
                     ref={cameraPreviewRef}
                     autoPlay={true}
@@ -55,20 +66,6 @@ export function PreJoin({ cameraPreviewRef }: { cameraPreviewRef: React.RefObjec
                     )}
                 </Box>
             </Box>
-            {!dismissHelpMessage ? (
-                <Alert status="info" maxW="300px" borderRadius="md" pr={8} position="relative">
-                    <AlertIcon />
-                    Preview your camera here before joining! 🤳
-                    <CloseButton
-                        position="absolute"
-                        right="8px"
-                        top="8px"
-                        onClick={() => setDismissHelpMessage(true)}
-                    />
-                </Alert>
-            ) : (
-                <></>
-            )}
         </VStack>
     );
 }

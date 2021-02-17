@@ -57,6 +57,7 @@ parts of the platform, follow all the steps below.
 4. Run `npm i` to install npm packages. This will also install dependencies in subdirectories.
 5. **Full setup**: Follow the [Clowdr AWS ReadMe](aws/README.md#Setting-up)
 6. Follow the Hasura setup: [Clowdr Hasura ReadMe](hasura/README.md#Setting-up)
+   BCP: Is there a good reason for splitting the instructions in this file into separate Pre-Requisites and Setup steps? This creates a lot of bouncing around between README files and adds to the sense of overwhelm.
 7. Follow the Actions Service setup: [Clowdr Actions Service
    ReadMe](services/actions/README.md#Setting-up)
 8. Follow the Frontend setup: [Clowdr Frontend

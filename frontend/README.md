@@ -7,6 +7,7 @@ React web app that forms the main Clowdr frontend.
 ## Pre-requisites
 
 1. `serve` tool (for testing production builds): `npm i -g serve`
+   BCP: Maybe this is full setup only?
 
 ## Setting up
 

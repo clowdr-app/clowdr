@@ -6,18 +6,22 @@ Eventually this may be split into multiple microservices.
 ## Pre-requisities
 
 1. [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
-2. **Full Setup**: Follow the AWS setup instructions in [aws/README.md](../../aws/README.md)
+2. **Full Setup**: Follow the AWS setup instructions in
+   [aws/README.md](../../aws/README.md)
    **Quick Setup**: Copy `services/actions/.env.example` to
    `services/actions/.env`, edit the latter and set all variables starting
-   with `AWS` to `XXX`.  
+   with `AWS` to `XXX`.
    BCP: This will not actually work right now, but let's give it a try this way and see how much further we can get.
-3. **Full Setup**: Create a [SendGrid](https://www.sendgrid.com) account and an API key for it.
+3. **Full Setup**: Create a [SendGrid](https://www.sendgrid.com) account and
+   an API key for it.
 4. Create a free [Vonage Video
-   API](https://www.vonage.co.uk/communications-apis/video/) account; go to
-   `Projects > Create New Project`, choose "Custom", and make a note of the
-   API key that is generated.
-5. **\*Full Setup**: Deploy the AWS [Image Handler](#deploying-the-image-handler) stack.
-6. **Full Setup**: Create a [Google Cloud](#creating-a-google-cloud-project) project.
+   API](https://www.vonage.co.uk/communications-apis/video/) account; then
+   go to `Projects > Create New Project`, choose "Custom", and make a note
+   of the API key that is generated.
+5. **Full Setup**: Deploy the AWS Image
+   Handler as described [below](#deploying-the-image-handler).
+6. **Full Setup**: Create a Google Cloud project as described
+   [below](#creating-a-google-cloud-project).
 
 ## Deploying the image handler
 
@@ -42,7 +46,7 @@ We use the AWS `serverless-image-handler` template for processing uploaded profi
 1. Deploy the stack and wait for creation to copmlete.
 1. Make a note of the `ApiEndpoint` output.
 
-# Creating a Google Cloud project
+## Creating a Google Cloud project
 
 We use a Google Cloud project to provide access to the YouTube Data API with OAuth2.
 
@@ -51,14 +55,19 @@ We use a Google Cloud project to provide access to the YouTube Data API with OAu
 1. Set the _Authorised JavaScript origins_ `URIs` to the URI at which the frontend is hosted.
 1. Set _Authorised redirect URIs_ `URIs` to the `<frontend uri>/googleoauth`.
 
-## Setting Up
+# Setting Up
 
 1. Copy the `services/actions/.env.example` to `services/actions/.env`
 1. Configure your `.env` according to the [Actions Service
    Configuration](#actions-service-configuration) table below
-   - You will need the outputs from running the AWS CDK deployment.
-     (**Quick setup**: Set all the environment variables related to AWS to
-     `XXXX`.)
+   - **Full Setup**: You will need the outputs from running the AWS CDK
+     deployment. **Quick setup**: Set all the environment variables related
+     to AWS to `XXXX`.
+
+BCP: Not clear whether I am supposed to continue on to do the rest of the
+file or whether I stop here and return to the main README... The convention
+in some other READMEs is to explicitly mention which of the later sections
+to look at, in the top-level list.
 
 ## Local Development
 
@@ -111,6 +120,15 @@ variables according to [the table below](#actions-service-configuration).
 ## Actions Service Configuration
 
 Note: `AWS_` values come from the outputs of your AWS deployment. See [`aws/README.md`](../../aws/README.md)
+
+BCP:
+
+- These tables seem to use both | and / for column separators. Is there a strong
+  reason for that? At least in emacs, it looks funny.
+- If I haven't done the Auth0 step yet, what should I do with `<auth0-subdomain>`?
+- How do I find "Hasura admin secret"
+- In general, many of these are puzzling if you don't know what they are /
+  how to find them. The Value is no more informative than the Key.
 
 | Key                                              | Value                                                                                                                         | From CDK |
 | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- | -------- |

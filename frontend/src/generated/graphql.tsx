@@ -31604,6 +31604,61 @@ export type AttendeesByIdQuery = { readonly __typename?: 'query_root', readonly 
     & AttendeeDataFragment
   )> };
 
+export type GetMediaLiveChannelsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type GetMediaLiveChannelsQuery = { readonly __typename?: 'query_root', readonly Room: ReadonlyArray<{ readonly __typename?: 'Room', readonly name: string, readonly id: any, readonly mediaLiveChannel?: Maybe<{ readonly __typename?: 'MediaLiveChannel', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly id: any }> }> };
+
+export type ConferenceConfiguration_GetConferenceConfigurationsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type ConferenceConfiguration_GetConferenceConfigurationsQuery = { readonly __typename?: 'query_root', readonly ConferenceConfiguration: ReadonlyArray<(
+    { readonly __typename?: 'ConferenceConfiguration' }
+    & ConferenceConfiguration_ConferenceConfigurationsFragment
+  )> };
+
+export type ConferenceConfiguration_ConferenceConfigurationsFragment = { readonly __typename?: 'ConferenceConfiguration', readonly id: any, readonly key: string, readonly value: any };
+
+export type ConferenceConfiguration_UpdateConferenceConfigurationsMutationVariables = Exact<{
+  conferenceConfigurationId: Scalars['uuid'];
+  value: Scalars['jsonb'];
+}>;
+
+
+export type ConferenceConfiguration_UpdateConferenceConfigurationsMutation = { readonly __typename?: 'mutation_root', readonly update_ConferenceConfiguration_by_pk?: Maybe<{ readonly __typename?: 'ConferenceConfiguration', readonly id: any }> };
+
+export type EventVonageControls_GetEventsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type EventVonageControls_GetEventsQuery = { readonly __typename?: 'query_root', readonly Event: ReadonlyArray<{ readonly __typename?: 'Event', readonly id: any, readonly name: string, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string }> }> };
+
+export type EventVonageControls_StopEventBroadcastMutationVariables = Exact<{
+  eventId: Scalars['uuid'];
+}>;
+
+
+export type EventVonageControls_StopEventBroadcastMutation = { readonly __typename?: 'mutation_root', readonly stopEventBroadcast?: Maybe<{ readonly __typename?: 'StopEventBroadcastOutput', readonly broadcastsStopped: number }> };
+
+export type CreateConferencePrepareJobMutationVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type CreateConferencePrepareJobMutation = { readonly __typename?: 'mutation_root', readonly insert_ConferencePrepareJob_one?: Maybe<{ readonly __typename?: 'ConferencePrepareJob', readonly id: any, readonly conferenceId: any }> };
+
+export type ConferencePrepareJobSubscriptionSubscriptionVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type ConferencePrepareJobSubscriptionSubscription = { readonly __typename?: 'subscription_root', readonly ConferencePrepareJob: ReadonlyArray<{ readonly __typename?: 'ConferencePrepareJob', readonly id: any, readonly jobStatusName: JobStatus_Enum, readonly message?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly videoRenderJobs: ReadonlyArray<{ readonly __typename?: 'VideoRenderJob', readonly id: any, readonly jobStatusName: JobStatus_Enum, readonly updated_at: any, readonly created_at: any }> }> };
+
 export type CombineVideosModal_CreateCombineVideosJobMutationVariables = Exact<{
   conferenceId: Scalars['uuid'];
   createdByAttendeeId: Scalars['uuid'];
@@ -32053,41 +32108,6 @@ export type ImportAttendeesMutationVariables = Exact<{
 
 
 export type ImportAttendeesMutation = { readonly __typename?: 'mutation_root', readonly insert_Attendee?: Maybe<{ readonly __typename?: 'Attendee_mutation_response', readonly affected_rows: number }>, readonly insert_Invitation?: Maybe<{ readonly __typename?: 'Invitation_mutation_response', readonly affected_rows: number }> };
-
-export type CreateConferencePrepareJobMutationVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-}>;
-
-
-export type CreateConferencePrepareJobMutation = { readonly __typename?: 'mutation_root', readonly insert_ConferencePrepareJob_one?: Maybe<{ readonly __typename?: 'ConferencePrepareJob', readonly id: any, readonly conferenceId: any }> };
-
-export type ConferencePrepareJobSubscriptionSubscriptionVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-}>;
-
-
-export type ConferencePrepareJobSubscriptionSubscription = { readonly __typename?: 'subscription_root', readonly ConferencePrepareJob: ReadonlyArray<{ readonly __typename?: 'ConferencePrepareJob', readonly id: any, readonly jobStatusName: JobStatus_Enum, readonly message?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly videoRenderJobs: ReadonlyArray<{ readonly __typename?: 'VideoRenderJob', readonly id: any, readonly jobStatusName: JobStatus_Enum, readonly updated_at: any, readonly created_at: any }> }> };
-
-export type GetMediaLiveChannelsQueryVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-}>;
-
-
-export type GetMediaLiveChannelsQuery = { readonly __typename?: 'query_root', readonly Room: ReadonlyArray<{ readonly __typename?: 'Room', readonly name: string, readonly id: any, readonly mediaLiveChannel?: Maybe<{ readonly __typename?: 'MediaLiveChannel', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly id: any }> }> };
-
-export type EventVonageControls_GetEventsQueryVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-}>;
-
-
-export type EventVonageControls_GetEventsQuery = { readonly __typename?: 'query_root', readonly Event: ReadonlyArray<{ readonly __typename?: 'Event', readonly id: any, readonly name: string, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string }> }> };
-
-export type EventVonageControls_StopEventBroadcastMutationVariables = Exact<{
-  eventId: Scalars['uuid'];
-}>;
-
-
-export type EventVonageControls_StopEventBroadcastMutation = { readonly __typename?: 'mutation_root', readonly stopEventBroadcast?: Maybe<{ readonly __typename?: 'StopEventBroadcastOutput', readonly broadcastsStopped: number }> };
 
 export type SelectAllGroupsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -33398,6 +33418,13 @@ export const Timeline_EventTagFragmentDoc = gql`
   }
 }
     ${Timeline_TagFragmentDoc}`;
+export const ConferenceConfiguration_ConferenceConfigurationsFragmentDoc = gql`
+    fragment ConferenceConfiguration_ConferenceConfigurations on ConferenceConfiguration {
+  id
+  key
+  value
+}
+    `;
 export const ContentPersonInfoFragmentDoc = gql`
     fragment ContentPersonInfo on ContentPerson {
   id
@@ -35998,6 +36025,262 @@ export function useAttendeesByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type AttendeesByIdQueryHookResult = ReturnType<typeof useAttendeesByIdQuery>;
 export type AttendeesByIdLazyQueryHookResult = ReturnType<typeof useAttendeesByIdLazyQuery>;
 export type AttendeesByIdQueryResult = Apollo.QueryResult<AttendeesByIdQuery, AttendeesByIdQueryVariables>;
+export const GetMediaLiveChannelsDocument = gql`
+    query GetMediaLiveChannels($conferenceId: uuid!) {
+  Room(where: {mediaLiveChannel: {}, conferenceId: {_eq: $conferenceId}}) {
+    mediaLiveChannel {
+      cloudFrontDomain
+      endpointUri
+      id
+    }
+    name
+    id
+  }
+}
+    `;
+
+/**
+ * __useGetMediaLiveChannelsQuery__
+ *
+ * To run a query within a React component, call `useGetMediaLiveChannelsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMediaLiveChannelsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMediaLiveChannelsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useGetMediaLiveChannelsQuery(baseOptions: Apollo.QueryHookOptions<GetMediaLiveChannelsQuery, GetMediaLiveChannelsQueryVariables>) {
+        return Apollo.useQuery<GetMediaLiveChannelsQuery, GetMediaLiveChannelsQueryVariables>(GetMediaLiveChannelsDocument, baseOptions);
+      }
+export function useGetMediaLiveChannelsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMediaLiveChannelsQuery, GetMediaLiveChannelsQueryVariables>) {
+          return Apollo.useLazyQuery<GetMediaLiveChannelsQuery, GetMediaLiveChannelsQueryVariables>(GetMediaLiveChannelsDocument, baseOptions);
+        }
+export type GetMediaLiveChannelsQueryHookResult = ReturnType<typeof useGetMediaLiveChannelsQuery>;
+export type GetMediaLiveChannelsLazyQueryHookResult = ReturnType<typeof useGetMediaLiveChannelsLazyQuery>;
+export type GetMediaLiveChannelsQueryResult = Apollo.QueryResult<GetMediaLiveChannelsQuery, GetMediaLiveChannelsQueryVariables>;
+export const ConferenceConfiguration_GetConferenceConfigurationsDocument = gql`
+    query ConferenceConfiguration_GetConferenceConfigurations($conferenceId: uuid!) {
+  ConferenceConfiguration(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...ConferenceConfiguration_ConferenceConfigurations
+  }
+}
+    ${ConferenceConfiguration_ConferenceConfigurationsFragmentDoc}`;
+
+/**
+ * __useConferenceConfiguration_GetConferenceConfigurationsQuery__
+ *
+ * To run a query within a React component, call `useConferenceConfiguration_GetConferenceConfigurationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useConferenceConfiguration_GetConferenceConfigurationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useConferenceConfiguration_GetConferenceConfigurationsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useConferenceConfiguration_GetConferenceConfigurationsQuery(baseOptions: Apollo.QueryHookOptions<ConferenceConfiguration_GetConferenceConfigurationsQuery, ConferenceConfiguration_GetConferenceConfigurationsQueryVariables>) {
+        return Apollo.useQuery<ConferenceConfiguration_GetConferenceConfigurationsQuery, ConferenceConfiguration_GetConferenceConfigurationsQueryVariables>(ConferenceConfiguration_GetConferenceConfigurationsDocument, baseOptions);
+      }
+export function useConferenceConfiguration_GetConferenceConfigurationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ConferenceConfiguration_GetConferenceConfigurationsQuery, ConferenceConfiguration_GetConferenceConfigurationsQueryVariables>) {
+          return Apollo.useLazyQuery<ConferenceConfiguration_GetConferenceConfigurationsQuery, ConferenceConfiguration_GetConferenceConfigurationsQueryVariables>(ConferenceConfiguration_GetConferenceConfigurationsDocument, baseOptions);
+        }
+export type ConferenceConfiguration_GetConferenceConfigurationsQueryHookResult = ReturnType<typeof useConferenceConfiguration_GetConferenceConfigurationsQuery>;
+export type ConferenceConfiguration_GetConferenceConfigurationsLazyQueryHookResult = ReturnType<typeof useConferenceConfiguration_GetConferenceConfigurationsLazyQuery>;
+export type ConferenceConfiguration_GetConferenceConfigurationsQueryResult = Apollo.QueryResult<ConferenceConfiguration_GetConferenceConfigurationsQuery, ConferenceConfiguration_GetConferenceConfigurationsQueryVariables>;
+export const ConferenceConfiguration_UpdateConferenceConfigurationsDocument = gql`
+    mutation ConferenceConfiguration_UpdateConferenceConfigurations($conferenceConfigurationId: uuid!, $value: jsonb!) {
+  update_ConferenceConfiguration_by_pk(
+    pk_columns: {id: $conferenceConfigurationId}
+    _set: {value: $value}
+  ) {
+    id
+  }
+}
+    `;
+export type ConferenceConfiguration_UpdateConferenceConfigurationsMutationFn = Apollo.MutationFunction<ConferenceConfiguration_UpdateConferenceConfigurationsMutation, ConferenceConfiguration_UpdateConferenceConfigurationsMutationVariables>;
+
+/**
+ * __useConferenceConfiguration_UpdateConferenceConfigurationsMutation__
+ *
+ * To run a mutation, you first call `useConferenceConfiguration_UpdateConferenceConfigurationsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useConferenceConfiguration_UpdateConferenceConfigurationsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [conferenceConfigurationUpdateConferenceConfigurationsMutation, { data, loading, error }] = useConferenceConfiguration_UpdateConferenceConfigurationsMutation({
+ *   variables: {
+ *      conferenceConfigurationId: // value for 'conferenceConfigurationId'
+ *      value: // value for 'value'
+ *   },
+ * });
+ */
+export function useConferenceConfiguration_UpdateConferenceConfigurationsMutation(baseOptions?: Apollo.MutationHookOptions<ConferenceConfiguration_UpdateConferenceConfigurationsMutation, ConferenceConfiguration_UpdateConferenceConfigurationsMutationVariables>) {
+        return Apollo.useMutation<ConferenceConfiguration_UpdateConferenceConfigurationsMutation, ConferenceConfiguration_UpdateConferenceConfigurationsMutationVariables>(ConferenceConfiguration_UpdateConferenceConfigurationsDocument, baseOptions);
+      }
+export type ConferenceConfiguration_UpdateConferenceConfigurationsMutationHookResult = ReturnType<typeof useConferenceConfiguration_UpdateConferenceConfigurationsMutation>;
+export type ConferenceConfiguration_UpdateConferenceConfigurationsMutationResult = Apollo.MutationResult<ConferenceConfiguration_UpdateConferenceConfigurationsMutation>;
+export type ConferenceConfiguration_UpdateConferenceConfigurationsMutationOptions = Apollo.BaseMutationOptions<ConferenceConfiguration_UpdateConferenceConfigurationsMutation, ConferenceConfiguration_UpdateConferenceConfigurationsMutationVariables>;
+export const EventVonageControls_GetEventsDocument = gql`
+    query EventVonageControls_GetEvents($conferenceId: uuid!) {
+  Event(
+    where: {conferenceId: {_eq: $conferenceId}, intendedRoomModeName: {_in: [Q_AND_A, PRESENTATION]}}
+  ) {
+    id
+    name
+    contentGroup {
+      id
+      title
+    }
+  }
+}
+    `;
+
+/**
+ * __useEventVonageControls_GetEventsQuery__
+ *
+ * To run a query within a React component, call `useEventVonageControls_GetEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEventVonageControls_GetEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useEventVonageControls_GetEventsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useEventVonageControls_GetEventsQuery(baseOptions: Apollo.QueryHookOptions<EventVonageControls_GetEventsQuery, EventVonageControls_GetEventsQueryVariables>) {
+        return Apollo.useQuery<EventVonageControls_GetEventsQuery, EventVonageControls_GetEventsQueryVariables>(EventVonageControls_GetEventsDocument, baseOptions);
+      }
+export function useEventVonageControls_GetEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EventVonageControls_GetEventsQuery, EventVonageControls_GetEventsQueryVariables>) {
+          return Apollo.useLazyQuery<EventVonageControls_GetEventsQuery, EventVonageControls_GetEventsQueryVariables>(EventVonageControls_GetEventsDocument, baseOptions);
+        }
+export type EventVonageControls_GetEventsQueryHookResult = ReturnType<typeof useEventVonageControls_GetEventsQuery>;
+export type EventVonageControls_GetEventsLazyQueryHookResult = ReturnType<typeof useEventVonageControls_GetEventsLazyQuery>;
+export type EventVonageControls_GetEventsQueryResult = Apollo.QueryResult<EventVonageControls_GetEventsQuery, EventVonageControls_GetEventsQueryVariables>;
+export const EventVonageControls_StopEventBroadcastDocument = gql`
+    mutation EventVonageControls_StopEventBroadcast($eventId: uuid!) {
+  stopEventBroadcast(eventId: $eventId) {
+    broadcastsStopped
+  }
+}
+    `;
+export type EventVonageControls_StopEventBroadcastMutationFn = Apollo.MutationFunction<EventVonageControls_StopEventBroadcastMutation, EventVonageControls_StopEventBroadcastMutationVariables>;
+
+/**
+ * __useEventVonageControls_StopEventBroadcastMutation__
+ *
+ * To run a mutation, you first call `useEventVonageControls_StopEventBroadcastMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEventVonageControls_StopEventBroadcastMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [eventVonageControlsStopEventBroadcastMutation, { data, loading, error }] = useEventVonageControls_StopEventBroadcastMutation({
+ *   variables: {
+ *      eventId: // value for 'eventId'
+ *   },
+ * });
+ */
+export function useEventVonageControls_StopEventBroadcastMutation(baseOptions?: Apollo.MutationHookOptions<EventVonageControls_StopEventBroadcastMutation, EventVonageControls_StopEventBroadcastMutationVariables>) {
+        return Apollo.useMutation<EventVonageControls_StopEventBroadcastMutation, EventVonageControls_StopEventBroadcastMutationVariables>(EventVonageControls_StopEventBroadcastDocument, baseOptions);
+      }
+export type EventVonageControls_StopEventBroadcastMutationHookResult = ReturnType<typeof useEventVonageControls_StopEventBroadcastMutation>;
+export type EventVonageControls_StopEventBroadcastMutationResult = Apollo.MutationResult<EventVonageControls_StopEventBroadcastMutation>;
+export type EventVonageControls_StopEventBroadcastMutationOptions = Apollo.BaseMutationOptions<EventVonageControls_StopEventBroadcastMutation, EventVonageControls_StopEventBroadcastMutationVariables>;
+export const CreateConferencePrepareJobDocument = gql`
+    mutation CreateConferencePrepareJob($conferenceId: uuid!) {
+  insert_ConferencePrepareJob_one(object: {conferenceId: $conferenceId}) {
+    id
+    conferenceId
+  }
+}
+    `;
+export type CreateConferencePrepareJobMutationFn = Apollo.MutationFunction<CreateConferencePrepareJobMutation, CreateConferencePrepareJobMutationVariables>;
+
+/**
+ * __useCreateConferencePrepareJobMutation__
+ *
+ * To run a mutation, you first call `useCreateConferencePrepareJobMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateConferencePrepareJobMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createConferencePrepareJobMutation, { data, loading, error }] = useCreateConferencePrepareJobMutation({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useCreateConferencePrepareJobMutation(baseOptions?: Apollo.MutationHookOptions<CreateConferencePrepareJobMutation, CreateConferencePrepareJobMutationVariables>) {
+        return Apollo.useMutation<CreateConferencePrepareJobMutation, CreateConferencePrepareJobMutationVariables>(CreateConferencePrepareJobDocument, baseOptions);
+      }
+export type CreateConferencePrepareJobMutationHookResult = ReturnType<typeof useCreateConferencePrepareJobMutation>;
+export type CreateConferencePrepareJobMutationResult = Apollo.MutationResult<CreateConferencePrepareJobMutation>;
+export type CreateConferencePrepareJobMutationOptions = Apollo.BaseMutationOptions<CreateConferencePrepareJobMutation, CreateConferencePrepareJobMutationVariables>;
+export const ConferencePrepareJobSubscriptionDocument = gql`
+    subscription ConferencePrepareJobSubscription($conferenceId: uuid!) {
+  ConferencePrepareJob(
+    where: {conferenceId: {_eq: $conferenceId}}
+    order_by: {createdAt: desc}
+    limit: 10
+  ) {
+    id
+    jobStatusName
+    message
+    updatedAt
+    createdAt
+    videoRenderJobs {
+      id
+      jobStatusName
+      updated_at
+      created_at
+    }
+  }
+}
+    `;
+
+/**
+ * __useConferencePrepareJobSubscriptionSubscription__
+ *
+ * To run a query within a React component, call `useConferencePrepareJobSubscriptionSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useConferencePrepareJobSubscriptionSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useConferencePrepareJobSubscriptionSubscription({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useConferencePrepareJobSubscriptionSubscription(baseOptions: Apollo.SubscriptionHookOptions<ConferencePrepareJobSubscriptionSubscription, ConferencePrepareJobSubscriptionSubscriptionVariables>) {
+        return Apollo.useSubscription<ConferencePrepareJobSubscriptionSubscription, ConferencePrepareJobSubscriptionSubscriptionVariables>(ConferencePrepareJobSubscriptionDocument, baseOptions);
+      }
+export type ConferencePrepareJobSubscriptionSubscriptionHookResult = ReturnType<typeof useConferencePrepareJobSubscriptionSubscription>;
+export type ConferencePrepareJobSubscriptionSubscriptionResult = Apollo.SubscriptionResult<ConferencePrepareJobSubscriptionSubscription>;
 export const CombineVideosModal_CreateCombineVideosJobDocument = gql`
     mutation CombineVideosModal_CreateCombineVideosJob($conferenceId: uuid!, $createdByAttendeeId: uuid!, $outputName: String!, $data: jsonb!) {
   insert_job_queues_CombineVideosJob_one(
@@ -37437,193 +37720,6 @@ export function useImportAttendeesMutation(baseOptions?: Apollo.MutationHookOpti
 export type ImportAttendeesMutationHookResult = ReturnType<typeof useImportAttendeesMutation>;
 export type ImportAttendeesMutationResult = Apollo.MutationResult<ImportAttendeesMutation>;
 export type ImportAttendeesMutationOptions = Apollo.BaseMutationOptions<ImportAttendeesMutation, ImportAttendeesMutationVariables>;
-export const CreateConferencePrepareJobDocument = gql`
-    mutation CreateConferencePrepareJob($conferenceId: uuid!) {
-  insert_ConferencePrepareJob_one(object: {conferenceId: $conferenceId}) {
-    id
-    conferenceId
-  }
-}
-    `;
-export type CreateConferencePrepareJobMutationFn = Apollo.MutationFunction<CreateConferencePrepareJobMutation, CreateConferencePrepareJobMutationVariables>;
-
-/**
- * __useCreateConferencePrepareJobMutation__
- *
- * To run a mutation, you first call `useCreateConferencePrepareJobMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateConferencePrepareJobMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createConferencePrepareJobMutation, { data, loading, error }] = useCreateConferencePrepareJobMutation({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useCreateConferencePrepareJobMutation(baseOptions?: Apollo.MutationHookOptions<CreateConferencePrepareJobMutation, CreateConferencePrepareJobMutationVariables>) {
-        return Apollo.useMutation<CreateConferencePrepareJobMutation, CreateConferencePrepareJobMutationVariables>(CreateConferencePrepareJobDocument, baseOptions);
-      }
-export type CreateConferencePrepareJobMutationHookResult = ReturnType<typeof useCreateConferencePrepareJobMutation>;
-export type CreateConferencePrepareJobMutationResult = Apollo.MutationResult<CreateConferencePrepareJobMutation>;
-export type CreateConferencePrepareJobMutationOptions = Apollo.BaseMutationOptions<CreateConferencePrepareJobMutation, CreateConferencePrepareJobMutationVariables>;
-export const ConferencePrepareJobSubscriptionDocument = gql`
-    subscription ConferencePrepareJobSubscription($conferenceId: uuid!) {
-  ConferencePrepareJob(
-    where: {conferenceId: {_eq: $conferenceId}}
-    order_by: {createdAt: desc}
-    limit: 10
-  ) {
-    id
-    jobStatusName
-    message
-    updatedAt
-    createdAt
-    videoRenderJobs {
-      id
-      jobStatusName
-      updated_at
-      created_at
-    }
-  }
-}
-    `;
-
-/**
- * __useConferencePrepareJobSubscriptionSubscription__
- *
- * To run a query within a React component, call `useConferencePrepareJobSubscriptionSubscription` and pass it any options that fit your needs.
- * When your component renders, `useConferencePrepareJobSubscriptionSubscription` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useConferencePrepareJobSubscriptionSubscription({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useConferencePrepareJobSubscriptionSubscription(baseOptions: Apollo.SubscriptionHookOptions<ConferencePrepareJobSubscriptionSubscription, ConferencePrepareJobSubscriptionSubscriptionVariables>) {
-        return Apollo.useSubscription<ConferencePrepareJobSubscriptionSubscription, ConferencePrepareJobSubscriptionSubscriptionVariables>(ConferencePrepareJobSubscriptionDocument, baseOptions);
-      }
-export type ConferencePrepareJobSubscriptionSubscriptionHookResult = ReturnType<typeof useConferencePrepareJobSubscriptionSubscription>;
-export type ConferencePrepareJobSubscriptionSubscriptionResult = Apollo.SubscriptionResult<ConferencePrepareJobSubscriptionSubscription>;
-export const GetMediaLiveChannelsDocument = gql`
-    query GetMediaLiveChannels($conferenceId: uuid!) {
-  Room(where: {mediaLiveChannel: {}, conferenceId: {_eq: $conferenceId}}) {
-    mediaLiveChannel {
-      cloudFrontDomain
-      endpointUri
-      id
-    }
-    name
-    id
-  }
-}
-    `;
-
-/**
- * __useGetMediaLiveChannelsQuery__
- *
- * To run a query within a React component, call `useGetMediaLiveChannelsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetMediaLiveChannelsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetMediaLiveChannelsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useGetMediaLiveChannelsQuery(baseOptions: Apollo.QueryHookOptions<GetMediaLiveChannelsQuery, GetMediaLiveChannelsQueryVariables>) {
-        return Apollo.useQuery<GetMediaLiveChannelsQuery, GetMediaLiveChannelsQueryVariables>(GetMediaLiveChannelsDocument, baseOptions);
-      }
-export function useGetMediaLiveChannelsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMediaLiveChannelsQuery, GetMediaLiveChannelsQueryVariables>) {
-          return Apollo.useLazyQuery<GetMediaLiveChannelsQuery, GetMediaLiveChannelsQueryVariables>(GetMediaLiveChannelsDocument, baseOptions);
-        }
-export type GetMediaLiveChannelsQueryHookResult = ReturnType<typeof useGetMediaLiveChannelsQuery>;
-export type GetMediaLiveChannelsLazyQueryHookResult = ReturnType<typeof useGetMediaLiveChannelsLazyQuery>;
-export type GetMediaLiveChannelsQueryResult = Apollo.QueryResult<GetMediaLiveChannelsQuery, GetMediaLiveChannelsQueryVariables>;
-export const EventVonageControls_GetEventsDocument = gql`
-    query EventVonageControls_GetEvents($conferenceId: uuid!) {
-  Event(
-    where: {conferenceId: {_eq: $conferenceId}, intendedRoomModeName: {_in: [Q_AND_A, PRESENTATION]}}
-  ) {
-    id
-    name
-    contentGroup {
-      id
-      title
-    }
-  }
-}
-    `;
-
-/**
- * __useEventVonageControls_GetEventsQuery__
- *
- * To run a query within a React component, call `useEventVonageControls_GetEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useEventVonageControls_GetEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useEventVonageControls_GetEventsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useEventVonageControls_GetEventsQuery(baseOptions: Apollo.QueryHookOptions<EventVonageControls_GetEventsQuery, EventVonageControls_GetEventsQueryVariables>) {
-        return Apollo.useQuery<EventVonageControls_GetEventsQuery, EventVonageControls_GetEventsQueryVariables>(EventVonageControls_GetEventsDocument, baseOptions);
-      }
-export function useEventVonageControls_GetEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EventVonageControls_GetEventsQuery, EventVonageControls_GetEventsQueryVariables>) {
-          return Apollo.useLazyQuery<EventVonageControls_GetEventsQuery, EventVonageControls_GetEventsQueryVariables>(EventVonageControls_GetEventsDocument, baseOptions);
-        }
-export type EventVonageControls_GetEventsQueryHookResult = ReturnType<typeof useEventVonageControls_GetEventsQuery>;
-export type EventVonageControls_GetEventsLazyQueryHookResult = ReturnType<typeof useEventVonageControls_GetEventsLazyQuery>;
-export type EventVonageControls_GetEventsQueryResult = Apollo.QueryResult<EventVonageControls_GetEventsQuery, EventVonageControls_GetEventsQueryVariables>;
-export const EventVonageControls_StopEventBroadcastDocument = gql`
-    mutation EventVonageControls_StopEventBroadcast($eventId: uuid!) {
-  stopEventBroadcast(eventId: $eventId) {
-    broadcastsStopped
-  }
-}
-    `;
-export type EventVonageControls_StopEventBroadcastMutationFn = Apollo.MutationFunction<EventVonageControls_StopEventBroadcastMutation, EventVonageControls_StopEventBroadcastMutationVariables>;
-
-/**
- * __useEventVonageControls_StopEventBroadcastMutation__
- *
- * To run a mutation, you first call `useEventVonageControls_StopEventBroadcastMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useEventVonageControls_StopEventBroadcastMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [eventVonageControlsStopEventBroadcastMutation, { data, loading, error }] = useEventVonageControls_StopEventBroadcastMutation({
- *   variables: {
- *      eventId: // value for 'eventId'
- *   },
- * });
- */
-export function useEventVonageControls_StopEventBroadcastMutation(baseOptions?: Apollo.MutationHookOptions<EventVonageControls_StopEventBroadcastMutation, EventVonageControls_StopEventBroadcastMutationVariables>) {
-        return Apollo.useMutation<EventVonageControls_StopEventBroadcastMutation, EventVonageControls_StopEventBroadcastMutationVariables>(EventVonageControls_StopEventBroadcastDocument, baseOptions);
-      }
-export type EventVonageControls_StopEventBroadcastMutationHookResult = ReturnType<typeof useEventVonageControls_StopEventBroadcastMutation>;
-export type EventVonageControls_StopEventBroadcastMutationResult = Apollo.MutationResult<EventVonageControls_StopEventBroadcastMutation>;
-export type EventVonageControls_StopEventBroadcastMutationOptions = Apollo.BaseMutationOptions<EventVonageControls_StopEventBroadcastMutation, EventVonageControls_StopEventBroadcastMutationVariables>;
 export const SelectAllGroupsDocument = gql`
     query SelectAllGroups($conferenceId: uuid!) {
   Group(where: {conferenceId: {_eq: $conferenceId}}) {

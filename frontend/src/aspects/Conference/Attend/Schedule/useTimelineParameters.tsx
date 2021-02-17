@@ -1,5 +1,5 @@
 import { DateTime, Zone } from "luxon";
-import React, { createContext, useContext } from "react";
+import React, { createContext, useContext, useMemo } from "react";
 
 export interface TimelineParameters {
     earliestMs: number;
@@ -31,18 +31,17 @@ export function TimelineParameters({
     // const timezone = FixedOffsetZone.instance(-1 * 60);
     const earliestMs = DateTime.fromMillis(earliestEventStart).setZone(timezone).startOf("hour").toMillis();
     const latestMs = DateTime.fromMillis(latestEventEnd).setZone(timezone).endOf("hour").toMillis();
-    return (
-        <TimelineContext.Provider
-            value={{
-                earliestMs,
-                latestMs,
-                fullTimeSpanSeconds: Math.max(1000, latestMs - earliestMs) / 1000,
-                timezone,
-            }}
-        >
-            {children}
-        </TimelineContext.Provider>
+    const ctx = useMemo(
+        () => ({
+            earliestMs,
+            latestMs,
+            fullTimeSpanSeconds: Math.max(1000, latestMs - earliestMs) / 1000,
+            timezone,
+        }),
+        [earliestMs, latestMs, timezone]
     );
+
+    return <TimelineContext.Provider value={ctx}>{children}</TimelineContext.Provider>;
 }
 
 export function useTimelineParameters(): TimelineParameters {

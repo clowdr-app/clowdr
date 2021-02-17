@@ -1,5 +1,5 @@
 import { useDisclosure } from "@chakra-ui/react";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import ProfileModal from "../../Conference/Attend/Attendee/ProfileModal";
 import type { Attendee } from "../../Conference/useCurrentAttendee";
 
@@ -33,17 +33,19 @@ export default function ChatProfileModalProvider({
         },
         [onOpen]
     );
+    const ctx = useMemo(
+        () => ({
+            open,
+            close: () => {
+                onClose();
+                setAttendee(null);
+            },
+        }),
+        [onClose, open]
+    );
 
     return (
-        <ChatProfileModalContext.Provider
-            value={{
-                open,
-                close: () => {
-                    onClose();
-                    setAttendee(null);
-                },
-            }}
-        >
+        <ChatProfileModalContext.Provider value={ctx}>
             {children}
             <ProfileModal attendee={attendee} isOpen={isOpen} onClose={onClose} />
         </ChatProfileModalContext.Provider>

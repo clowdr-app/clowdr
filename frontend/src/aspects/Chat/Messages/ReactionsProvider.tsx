@@ -1,6 +1,6 @@
 import { ApolloError, gql } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
-import React from "react";
+import React, { useMemo } from "react";
 import {
     Chat_Reaction_Insert_Input,
     useAddReactionMutation,
@@ -47,52 +47,50 @@ export default function ReactionsProvider({
 
     const [addReaction] = useAddReactionMutation();
     const [deleteReaction] = useDeleteReactionMutation();
-
-    return (
-        <ReactionsContext.Provider
-            value={{
-                addReaction: async (reaction) => {
-                    try {
-                        await addReaction({
-                            variables: {
-                                reaction: {
-                                    ...reaction,
-                                    senderId: config.currentAttendeeId,
-                                },
+    const ctx: ReactionsCtx = useMemo(
+        () => ({
+            addReaction: async (reaction) => {
+                try {
+                    await addReaction({
+                        variables: {
+                            reaction: {
+                                ...reaction,
+                                senderId: config.currentAttendeeId,
                             },
-                        });
-                    } catch (e) {
-                        if (!(e instanceof ApolloError) || !e.message.includes("uniqueness violation")) {
-                            toast({
-                                description: e.message ?? e.toString(),
-                                isClosable: true,
-                                position: "bottom-right",
-                                status: "error",
-                                title: "Failed to add reaction",
-                            });
-                        }
-                    }
-                },
-                deleteReaction: async (reactionId) => {
-                    try {
-                        await deleteReaction({
-                            variables: {
-                                reactionId,
-                            },
-                        });
-                    } catch (e) {
+                        },
+                    });
+                } catch (e) {
+                    if (!(e instanceof ApolloError) || !e.message.includes("uniqueness violation")) {
                         toast({
                             description: e.message ?? e.toString(),
                             isClosable: true,
                             position: "bottom-right",
                             status: "error",
-                            title: "Failed to delete reaction",
+                            title: "Failed to add reaction",
                         });
                     }
-                },
-            }}
-        >
-            {children}
-        </ReactionsContext.Provider>
+                }
+            },
+            deleteReaction: async (reactionId) => {
+                try {
+                    await deleteReaction({
+                        variables: {
+                            reactionId,
+                        },
+                    });
+                } catch (e) {
+                    toast({
+                        description: e.message ?? e.toString(),
+                        isClosable: true,
+                        position: "bottom-right",
+                        status: "error",
+                        title: "Failed to delete reaction",
+                    });
+                }
+            },
+        }),
+        [addReaction, config.currentAttendeeId, deleteReaction, toast]
     );
+
+    return <ReactionsContext.Provider value={ctx}>{children}</ReactionsContext.Provider>;
 }

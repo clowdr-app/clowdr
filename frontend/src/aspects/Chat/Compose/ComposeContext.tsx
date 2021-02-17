@@ -263,20 +263,19 @@ export function ComposeContextProvider({
             newMessageData,
             newMessageType,
             selectedChat.id,
+            selectedChat.title,
             sendError,
             sendQueries,
             setAnsweringQuestionId,
         ]
     );
-
-    return (
-        <ComposeContext.Provider
-            value={{
-                ...ctx,
-                readyToSend: blockedReason === undefined && (!lockoutTimeMs || now - lastSendTime > lockoutTimeMs),
-            }}
-        >
-            {children}
-        </ComposeContext.Provider>
+    const ctxOut = useMemo(
+        () => ({
+            ...ctx,
+            readyToSend: blockedReason === undefined && (!lockoutTimeMs || now - lastSendTime > lockoutTimeMs),
+        }),
+        [blockedReason, ctx, lastSendTime, lockoutTimeMs, now]
     );
+
+    return <ComposeContext.Provider value={ctxOut}>{children}</ComposeContext.Provider>;
 }

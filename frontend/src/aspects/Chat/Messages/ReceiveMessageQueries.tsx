@@ -1,5 +1,5 @@
 import { ApolloQueryResult, gql } from "@apollo/client";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
     ChatMessageDataFragment,
     SelectFirstMessagesPageQuery,
@@ -300,17 +300,20 @@ export default function ReceiveMessageQueriesProvider({
         });
     }, [liveReactions.data?.chat_Reaction, nextMessageSub.data?.chat_Message, refetchMsg]);
 
+    const ctx = useMemo(
+        () => ({
+            load,
+            refetch,
+            delete: deleteMsg,
+            liveMessages: liveMessages.msgs,
+            deletedItems,
+            setAnsweringQuestionId,
+        }),
+        [deleteMsg, deletedItems, liveMessages.msgs, load, refetch, setAnsweringQuestionId]
+    );
+
     return (
-        <ReceiveMessageQueriesContext.Provider
-            value={{
-                load,
-                refetch,
-                delete: deleteMsg,
-                liveMessages: liveMessages.msgs,
-                deletedItems,
-                setAnsweringQuestionId,
-            }}
-        >
+        <ReceiveMessageQueriesContext.Provider value={ctx}>
             <ReadUpToIndexProvider chatId={chatId}>{children}</ReadUpToIndexProvider>
         </ReceiveMessageQueriesContext.Provider>
     );

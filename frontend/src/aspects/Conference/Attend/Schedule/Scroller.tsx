@@ -1,5 +1,5 @@
 import { Box } from "@chakra-ui/react";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import ScrollContainer from "react-indiana-drag-scroll";
 import { useTimelineParameters } from "./useTimelineParameters";
 
@@ -29,17 +29,15 @@ export function ScrollerProvider({ children }: { children: React.ReactNode | Rea
         },
         [timelineParams.latestMs, timelineParams.earliestMs]
     );
-
-    return (
-        <ScrollerContext.Provider
-            value={{
-                visibleTimeSpanSeconds,
-                zoomTo,
-            }}
-        >
-            {children}
-        </ScrollerContext.Provider>
+    const ctx = useMemo(
+        () => ({
+            visibleTimeSpanSeconds,
+            zoomTo,
+        }),
+        [visibleTimeSpanSeconds, zoomTo]
     );
+
+    return <ScrollerContext.Provider value={ctx}>{children}</ScrollerContext.Provider>;
 }
 
 export default function Scroller({

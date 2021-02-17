@@ -105,18 +105,17 @@ export function ReadUpToIndexProvider_NoUser({
 }: {
     children: React.ReactNode | React.ReactNodeArray;
 }): JSX.Element {
-    return (
-        <ReadUpToIndexContext.Provider
-            value={{
-                readUpToId: undefined,
-                readUpToMarkerSeen: () => {
-                    /* EMPTY */
-                },
-            }}
-        >
-            {children}
-        </ReadUpToIndexContext.Provider>
+    const ctx = useMemo(
+        () => ({
+            readUpToId: undefined,
+            readUpToMarkerSeen: () => {
+                /* EMPTY */
+            },
+        }),
+        []
     );
+
+    return <ReadUpToIndexContext.Provider value={ctx}>{children}</ReadUpToIndexContext.Provider>;
 }
 
 export default function ReadUpToIndexProvider({

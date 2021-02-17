@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import {
     Chat_MessageType_Enum,
     useSendChatAnswerMutation,
@@ -115,14 +115,12 @@ export default function SendMessageQueriesProvider({
         },
         [sendAnswer, sendMessageMutation]
     );
-
-    return (
-        <SendMessageQueriesContext.Provider
-            value={{
-                send,
-            }}
-        >
-            {children}
-        </SendMessageQueriesContext.Provider>
+    const ctx = useMemo(
+        () => ({
+            send,
+        }),
+        [send]
     );
+
+    return <SendMessageQueriesContext.Provider value={ctx}>{children}</SendMessageQueriesContext.Provider>;
 }

@@ -1,5 +1,5 @@
 import { EmojiData, Picker } from "emoji-mart";
-import React, { Component, useState } from "react";
+import React, { Component, useMemo, useState } from "react";
 import { createHtmlPortalNode, HtmlPortalNode, InPortal } from "react-reverse-portal";
 
 interface EmojiMartCtx {
@@ -28,14 +28,16 @@ export default function EmojiMartProvider({
 }): JSX.Element {
     const portalNode = React.useMemo(() => createHtmlPortalNode(), []);
     const [onSelect, setOnSelect] = useState<{ f: (data: EmojiData) => void } | null>(null);
+    const ctx = useMemo(
+        () => ({
+            portalNode,
+            setOnSelect,
+        }),
+        [portalNode]
+    );
 
     return (
-        <EmojiMartContext.Provider
-            value={{
-                portalNode,
-                setOnSelect,
-            }}
-        >
+        <EmojiMartContext.Provider value={ctx}>
             {children}
             <InPortal node={portalNode}>
                 <Picker

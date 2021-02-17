@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { AttendeeDataFragment, useAttendeesByIdQuery } from "../../generated/graphql";
 import { useConference } from "./useConference";
 
@@ -146,14 +146,13 @@ export default function AttendeesContextProvider({
         };
     }, [attendeesByIdQ, checkInterval, conference.id, fullRefetchInterval]);
 
-    return (
-        <AttendeesContext.Provider
-            value={{
-                subscribe,
-                unsubscribe,
-            }}
-        >
-            {children}
-        </AttendeesContext.Provider>
+    const ctx = useMemo(
+        () => ({
+            subscribe,
+            unsubscribe,
+        }),
+        [subscribe, unsubscribe]
     );
+
+    return <AttendeesContext.Provider value={ctx}>{children}</AttendeesContext.Provider>;
 }

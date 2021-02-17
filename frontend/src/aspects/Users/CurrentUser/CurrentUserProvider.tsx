@@ -1,9 +1,9 @@
 import { gql } from "@apollo/client";
-import React from "react";
+import React, { useMemo } from "react";
 import { useSelectCurrentUserQuery } from "../../../generated/graphql";
 import useUserId from "../../Auth/useUserId";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
-import { CurrentUserContext, defaultCurrentUserContext } from "./useMaybeCurrentUser";
+import { CurrentUserContext, defaultCurrentUserContext, UserInfo } from "./useMaybeCurrentUser";
 
 gql`
     fragment AttendeeFields on Attendee {
@@ -67,17 +67,19 @@ export default function CurrentUserProvider({
     if (userId) {
         return <CurrentUserProvider_IsAuthenticated userId={userId}>{children}</CurrentUserProvider_IsAuthenticated>;
     } else {
-        return (
-            <CurrentUserContext.Provider
-                value={{
-                    ...defaultCurrentUserContext,
-                    loading: false,
-                }}
-            >
-                {children}
-            </CurrentUserContext.Provider>
-        );
+        return <CurrentUserProvider_NotAuthenticated>{children}</CurrentUserProvider_NotAuthenticated>;
     }
+}
+
+function CurrentUserProvider_NotAuthenticated({ children }: { children: string | JSX.Element | Array<JSX.Element> }) {
+    const ctx = useMemo(
+        () => ({
+            ...defaultCurrentUserContext,
+            loading: false,
+        }),
+        []
+    );
+    return <CurrentUserContext.Provider value={ctx}>{children}</CurrentUserContext.Provider>;
 }
 
 function CurrentUserProvider_IsAuthenticated({
@@ -96,16 +98,14 @@ function CurrentUserProvider_IsAuthenticated({
     useQueryErrorToast(error, false, "useSelectCurrentUserQuery");
 
     const value = loading ? undefined : error ? false : data;
-
-    return (
-        <CurrentUserContext.Provider
-            value={{
-                loading,
-                user: value ? value?.User_by_pk ?? false : value,
-                refetchUser: refetch,
-            }}
-        >
-            {children}
-        </CurrentUserContext.Provider>
+    const ctx: UserInfo = useMemo(
+        () => ({
+            loading,
+            user: value ? value?.User_by_pk ?? false : value,
+            refetchUser: refetch,
+        }),
+        [loading, refetch, value]
     );
+
+    return <CurrentUserContext.Provider value={ctx}>{children}</CurrentUserContext.Provider>;
 }

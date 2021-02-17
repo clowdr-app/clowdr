@@ -1,4 +1,4 @@
-import { Box, Flex, useBreakpointValue, VStack } from "@chakra-ui/react";
+import { Box, Flex, useBreakpointValue, useColorModeValue, VStack } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
 import { Route, RouteComponentProps, Switch } from "react-router-dom";
 import "./App.css";
@@ -37,6 +37,8 @@ function AppInner({ confSlug, rootUrl }: AppProps): JSX.Element {
     const leftSidebarWidthPc = 20;
     const rightSidebarWidthPc = 20;
     const contentWidthPc = 100 - leftSidebarWidthPc - rightSidebarWidthPc;
+
+    const bgColour = useColorModeValue("gray.50", "gray.900");
 
     const leftDefaultVisible = useBreakpointValue({
         base: false,
@@ -134,8 +136,6 @@ function AppInner({ confSlug, rootUrl }: AppProps): JSX.Element {
                 width={contentWidthPc + "%"}
                 flex="1 0 300px"
                 mb="auto"
-                mt="0.4em"
-                px="0.4em"
                 position={centerVisible ? "relative" : "fixed"}
                 top={centerVisible ? undefined : "100%"}
             >
@@ -159,6 +159,7 @@ function AppInner({ confSlug, rootUrl }: AppProps): JSX.Element {
                 direction="column-reverse"
                 justifyContent="center"
                 alignItems="center"
+                backgroundColor={bgColour}
             >
                 <MainMenu {...mainMenuProps}>
                     <Flex w="100%" h="100%" overflow="hidden">
@@ -169,7 +170,18 @@ function AppInner({ confSlug, rootUrl }: AppProps): JSX.Element {
                 </MainMenu>
             </Flex>
         );
-    }, [center, centerVisible, confSlug, contentWidthPc, left, leftVisible, mainMenuProps, right, rightVisible]);
+    }, [
+        bgColour,
+        center,
+        centerVisible,
+        confSlug,
+        contentWidthPc,
+        left,
+        leftVisible,
+        mainMenuProps,
+        right,
+        rightVisible,
+    ]);
 
     return (
         <EmojiMartProvider>

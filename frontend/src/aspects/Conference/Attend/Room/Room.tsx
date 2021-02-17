@@ -9,7 +9,6 @@ import {
     Text,
     useColorModeValue,
     useToast,
-    useToken,
     VStack,
 } from "@chakra-ui/react";
 import type { ContentItemDataBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
@@ -29,16 +28,12 @@ import {
     useRoom_GetEventsQuery,
 } from "../../../../generated/graphql";
 import { ExternalLinkButton } from "../../../Chakra/LinkButton";
-import { Chat } from "../../../Chat/Chat";
-import type { ChatSources } from "../../../Chat/Configuration";
 import usePolling from "../../../Generic/usePolling";
 import { useRealTime } from "../../../Generic/useRealTime";
-import RoomParticipantsProvider from "../../../Room/RoomParticipantsProvider";
 import { useConference } from "../../useConference";
 import { ContentGroupSummaryWrapper } from "../Content/ContentGroupSummary";
 import { BreakoutVonageRoom } from "./BreakoutVonageRoom";
 import { RoomBackstage } from "./RoomBackstage";
-import { RoomControlBar } from "./RoomControlBar";
 import { RoomTitle } from "./RoomTitle";
 import { RoomSponsorContent } from "./Sponsor/RoomSponsorContent";
 import { useCurrentRoomEvent } from "./useCurrentRoomEvent";
@@ -126,14 +121,8 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
 
     const now = useRealTime(5000);
 
-    const [green100, green700, gray100, gray800] = useToken("colors", [
-        "green.100",
-        "green.700",
-        "gray.100",
-        "gray.900",
-    ]);
-    const nextBgColour = useColorModeValue(green100, green700);
-    const bgColour = useColorModeValue(gray100, gray800);
+    const nextBgColour = useColorModeValue("green.100", "green.700");
+    const bgColour = useColorModeValue("gray.100", "gray.800");
 
     const hlsUri = useMemo(() => {
         if (!roomDetails.mediaLiveChannel) {
@@ -146,7 +135,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
 
     const [intendPlayStream, setIntendPlayStream] = useState<boolean>(true);
 
-    const [backstage, setBackstage] = useState<boolean>(false);
+    const [backstage, _setBackstage] = useState<boolean>(false);
 
     const secondsUntilNonBreakoutEvent = useMemo(() => Math.min(secondsUntilBroadcastEvent, secondsUntilZoomEvent), [
         secondsUntilBroadcastEvent,
@@ -198,56 +187,22 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
         }
     }, [currentEventData?.contentGroup?.contentItems]);
 
-    const chatSources = useMemo((): ChatSources | undefined => {
-        if (currentEventData?.contentGroup) {
-            return {
-                chatId: roomDetails.chatId ?? undefined,
-                chatLabel: "Room",
-                chatTitle: roomDetails.name,
-            };
-        } else if (roomDetails.chatId) {
-            return {
-                chatId: roomDetails.chatId,
-                chatLabel: "Room",
-                chatTitle: roomDetails.name,
-            };
-        } else {
-            return undefined;
-        }
-    }, [currentEventData?.contentGroup, roomDetails.chatId, roomDetails.name]);
-
-    const chatEl = useMemo(
-        () =>
-            chatSources ? (
-                <Chat
-                    sources={{ ...chatSources }}
-                    flexBasis={0}
-                    flexGrow={1}
-                    mr={4}
-                    maxHeight={["80vh", "80vh", "80vh", "850px"]}
-                />
-            ) : (
-                <>No chat found for this room.</>
-            ),
-        [chatSources]
-    );
-
-    const controlBarEl = useMemo(
-        () => (
-            <RoomParticipantsProvider roomId={roomDetails.id}>
-                <RoomControlBar
-                    roomDetails={roomDetails}
-                    onSetBackstage={setBackstage}
-                    backstage={backstage}
-                    hasBackstage={!!hlsUri}
-                    breakoutRoomEnabled={
-                        secondsUntilNonBreakoutEvent > 180 && !withinThreeMinutesOfBroadcastEvent && !backstage
-                    }
-                />
-            </RoomParticipantsProvider>
-        ),
-        [backstage, hlsUri, roomDetails, secondsUntilNonBreakoutEvent, withinThreeMinutesOfBroadcastEvent]
-    );
+    // const controlBarEl = useMemo(
+    //     () => (
+    //         <RoomParticipantsProvider roomId={roomDetails.id}>
+    //             <RoomControlBar
+    //                 roomDetails={roomDetails}
+    //                 onSetBackstage={setBackstage}
+    //                 backstage={backstage}
+    //                 hasBackstage={!!hlsUri}
+    //                 breakoutRoomEnabled={
+    //                     secondsUntilNonBreakoutEvent > 180 && !withinThreeMinutesOfBroadcastEvent && !backstage
+    //                 }
+    //             />
+    //         </RoomParticipantsProvider>
+    //     ),
+    //     [backstage, hlsUri, roomDetails, secondsUntilNonBreakoutEvent, withinThreeMinutesOfBroadcastEvent]
+    // );
 
     const backStageEl = useMemo(
         () => (
@@ -453,14 +408,13 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
         <HStack width="100%" flexWrap="wrap" alignItems="stretch">
             <VStack
                 textAlign="left"
-                p={2}
                 flexGrow={2.5}
                 alignItems="stretch"
                 flexBasis={0}
                 minW={["100%", "100%", "100%", "700px"]}
                 maxW="100%"
             >
-                {controlBarEl}
+                {/* {controlBarEl} */}
                 {backStageEl}
 
                 {secondsUntilNonBreakoutEvent >= 180 && secondsUntilNonBreakoutEvent <= 300 ? (
@@ -509,7 +463,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                 {playerEl}
 
                 {secondsUntilNonBreakoutEvent > 180 && !withinThreeMinutesOfBroadcastEvent && !backstage ? (
-                    <Box display={backstage ? "none" : "block"} bgColor={bgColour} p={2} pt={5} borderRadius="md">
+                    <Box display={backstage ? "none" : "block"} bgColor={bgColour}>
                         {breakoutVonageRoomEl}
                     </Box>
                 ) : (
@@ -517,9 +471,6 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                 )}
 
                 {contentEl}
-            </VStack>
-            <VStack flexGrow={1} flexBasis={0} minW={["100%", "100%", "100%", "40vw"]}>
-                {chatEl}
             </VStack>
         </HStack>
     );

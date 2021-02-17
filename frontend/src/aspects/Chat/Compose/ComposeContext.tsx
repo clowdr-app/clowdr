@@ -151,9 +151,9 @@ export function ComposeContextProvider({
             ? `Minimum length ${minLength} character${minLength !== 1 ? "s" : ""}`
             : maxLength !== undefined && newMessageComparisonV.length > maxLength
             ? `${newMessageComparisonV.length} / ${maxLength} character${maxLength !== 1 ? "s" : ""}`
-            : newMessageType === Chat_MessageType_Enum.Question && !newMessageComparisonV.includes("?")
-            ? "Question mark required."
-            : newMessageType === Chat_MessageType_Enum.Answer && !("questionMessagesIds" in newMessageData)
+            : // : newMessageType === Chat_MessageType_Enum.Question && !newMessageComparisonV.includes("?")
+            // ? "Question mark required."
+            newMessageType === Chat_MessageType_Enum.Answer && !("questionMessagesIds" in newMessageData)
             ? "Please select the question you are answering."
             : undefined;
 

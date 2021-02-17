@@ -186,40 +186,43 @@ function SponsorContentItemInner({
 
     const editor = useMemo(() => {
         return itemTemplate.supported ? (
-            itemTemplate.renderEditor({ type: "item-only", item: descriptor }, (updated) => {
-                if (updated.type === "item-only") {
-                    const updatedItem = {
-                        data: updated.item.data,
-                        layoutData: updated.item.layoutData,
-                    };
-                    updateContentItem({
-                        variables: {
-                            contentItemId: updated.item.id,
-                            contentItem: updatedItem,
-                        },
-                        update: (cache, { data: _data }) => {
-                            if (_data?.update_ContentItem_by_pk) {
-                                const data = _data.update_ContentItem_by_pk;
-                                cache.modify({
-                                    fields: {
-                                        ContentItem(existingRefs: Reference[] = [], { readField }) {
-                                            const newRef = cache.writeFragment({
-                                                data: updated.item,
-                                                fragment: SponsorSecondaryEditor_ContentItemFragmentDoc,
-                                                fragmentName: "SponsorSecondaryEditor_ContentItem",
-                                            });
-                                            if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
-                                                return existingRefs;
-                                            }
-                                            return [...existingRefs, newRef];
+            <itemTemplate.renderEditor
+                data={{ type: "item-only", item: descriptor }}
+                update={(updated) => {
+                    if (updated.type === "item-only") {
+                        const updatedItem = {
+                            data: updated.item.data,
+                            layoutData: updated.item.layoutData,
+                        };
+                        updateContentItem({
+                            variables: {
+                                contentItemId: updated.item.id,
+                                contentItem: updatedItem,
+                            },
+                            update: (cache, { data: _data }) => {
+                                if (_data?.update_ContentItem_by_pk) {
+                                    const data = _data.update_ContentItem_by_pk;
+                                    cache.modify({
+                                        fields: {
+                                            ContentItem(existingRefs: Reference[] = [], { readField }) {
+                                                const newRef = cache.writeFragment({
+                                                    data: updated.item,
+                                                    fragment: SponsorSecondaryEditor_ContentItemFragmentDoc,
+                                                    fragmentName: "SponsorSecondaryEditor_ContentItem",
+                                                });
+                                                if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
+                                                    return existingRefs;
+                                                }
+                                                return [...existingRefs, newRef];
+                                            },
                                         },
-                                    },
-                                });
-                            }
-                        },
-                    });
-                }
-            })
+                                    });
+                                }
+                            },
+                        });
+                    }
+                }}
+            />
         ) : (
             <Text>Cannot edit {itemType} items.</Text>
         );

@@ -4,7 +4,7 @@ import React from "react";
 import { v4 as uuidv4 } from "uuid";
 import { ContentType_Enum } from "../../../../generated/graphql";
 import { ContentGroupVideo } from "../../Attend/Content/ContentGroupVideos";
-import type { ItemBaseTemplate } from "./Types";
+import type { ItemBaseTemplate, RenderEditorProps } from "./Types";
 
 function createDefaultVideo(
     type:
@@ -83,7 +83,7 @@ export const VideoItemTemplate: ItemBaseTemplate = {
             };
         }
     },
-    renderEditor: function VideoItemEditor(data, update) {
+    renderEditor: function VideoItemEditor({ data, update }: RenderEditorProps) {
         if (data.type === "item-only" || data.type === "required-and-item") {
             assert(
                 data.item.typeName === ContentType_Enum.VideoBroadcast ||

@@ -6,7 +6,7 @@ import React from "react";
 import { v4 as uuidv4 } from "uuid";
 import { ContentType_Enum } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
-import type { ItemBaseTemplate } from "./Types";
+import type { ItemBaseTemplate, RenderEditorProps } from "./Types";
 import UploadFileForm_ContentItem from "./UploadFileForm_ContentItem";
 
 function createDefaultFile(
@@ -68,7 +68,7 @@ export const FileItemTemplate: ItemBaseTemplate = {
             };
         }
     },
-    renderEditor: function FileItemEditor(data, update) {
+    renderEditor: function FileItemEditor({ data, update }: RenderEditorProps) {
         if (data.type === "item-only" || data.type === "required-and-item") {
             assert(
                 data.item.typeName === ContentType_Enum.ImageFile ||

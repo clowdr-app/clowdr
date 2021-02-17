@@ -277,27 +277,32 @@ export function ContentGroupSecondaryEditor(
                         }
 
                         accordianTitle = itemTemplate.renderEditorHeading(itemDesc);
-                        accordianContents = itemTemplate.renderEditor(itemDesc, (updatedDesc) => {
-                            markDirty();
+                        accordianContents = (
+                            <itemTemplate.renderEditor
+                                data={itemDesc}
+                                update={(updatedDesc) => {
+                                    markDirty();
 
-                            assert(updatedDesc.type === "item-only");
+                                    assert(updatedDesc.type === "item-only");
 
-                            setAllContentGroupsMap((oldGroups) => {
-                                assert(oldGroups);
-                                const newGroups = new Map(oldGroups);
+                                    setAllContentGroupsMap((oldGroups) => {
+                                        assert(oldGroups);
+                                        const newGroups = new Map(oldGroups);
 
-                                const existingGroup = newGroups.get(group.id);
-                                assert(existingGroup);
-                                newGroups.set(group.id, {
-                                    ...existingGroup,
-                                    items: existingGroup.items.map((cItem) => {
-                                        return itemDesc.item.id === cItem.id ? updatedDesc.item : cItem;
-                                    }),
-                                });
+                                        const existingGroup = newGroups.get(group.id);
+                                        assert(existingGroup);
+                                        newGroups.set(group.id, {
+                                            ...existingGroup,
+                                            items: existingGroup.items.map((cItem) => {
+                                                return itemDesc.item.id === cItem.id ? updatedDesc.item : cItem;
+                                            }),
+                                        });
 
-                                return newGroups;
-                            });
-                        });
+                                        return newGroups;
+                                    });
+                                }}
+                            />
+                        );
                     }
 
                     itemElements.push(

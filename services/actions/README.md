@@ -6,11 +6,18 @@ Eventually this may be split into multiple microservices.
 ## Pre-requisities
 
 1. [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
-1. You have followed the AWS setup instructions in [aws/README.md](../../aws/README.md)
-1. You have created a [SendGrid](https://www.sendgrid.com) account and an API key for it.
-1. You have create a [Vonage Video API](https://www.vonage.co.uk/communications-apis/video/) account and an API key for it.
-1. You have deployed the [Image Handler](#deploying-the-image-handler) stack.
-1. You have created a [Google Cloud](#creating-a-google-cloud-project) project.
+2. **Full Setup**: Follow the AWS setup instructions in [aws/README.md](../../aws/README.md)
+   **Quick Setup**: Copy `services/actions/.env.example` to
+   `services/actions/.env`, edit the latter and set all variables starting
+   with `AWS` to `XXX`.  
+   BCP: This will not actually work right now, but let's give it a try this way and see how much further we can get.
+3. **Full Setup**: Create a [SendGrid](https://www.sendgrid.com) account and an API key for it.
+4. Create a free [Vonage Video
+   API](https://www.vonage.co.uk/communications-apis/video/) account; go to
+   `Projects > Create New Project`, choose "Custom", and make a note of the
+   API key that is generated.
+5. **\*Full Setup**: Deploy the AWS [Image Handler](#deploying-the-image-handler) stack.
+6. **Full Setup**: Create a [Google Cloud](#creating-a-google-cloud-project) project.
 
 ## Deploying the image handler
 

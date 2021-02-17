@@ -1,12 +1,11 @@
 # Clowdr: Hasura
 
-We use the Hasura GraphQL engine to power the interface between the frontend and
-all of our backend services.
+We use the Hasura GraphQL engine to power the interface between the frontend
+and all of our backend services.
 
 ## Pre-requisites
 
 1. [Docker Compose](https://docs.docker.com/compose/)
-BCP: Do people need to do anything besides install it?
 1. [Hasura CLI](https://hasura.io/docs/1.0/graphql/core/hasura-cli/install-hasura-cli.html)
 
 ## Setting Up

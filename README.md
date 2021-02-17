@@ -368,9 +368,12 @@ start ngrok (`ngrok start --config=ngrok.yaml auth actions`) and copy the auth U
 (`http://<ngrok-subdomain>.ngrok.io/v1/graphql`) into the `HASURA_URL` Auth0
 _Rule Configuration_ as shown in step 5.
 
-You will also need to set the actions URL (`http://<ngrok-subdomain>.ngrok.io/vonage/sessionMonitoring/<VONAGE_WEBHOOK_SECRET>`)
-into the Vonage Session Monitoring URL. You can find this in the _Project Settings_ for your Vonage Video
-API project.
+You will also need to set the actions URL
+(`http://<ngrok-subdomain>.ngrok.io/vonage/sessionMonitoring/<VONAGE_WEBHOOK_SECRET>`)
+into the Vonage Session Monitoring URL. You can find this in the _Project
+Settings_ for your Vonage Video API project. (You can choose
+`VONAGE_WEBHOOK_SECRET` arbitrarily as long as it matches the setting in
+your env file.)
 
 If you have a paid ngrok account, you can create a persistent public URL and avoid having to do this.
 

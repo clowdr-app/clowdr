@@ -13,24 +13,23 @@ If you want to contribute to Clowdr, please read our [contribution guidelines](C
 | services         | Micro-services                                                   |                                           |
 | services/actions | At the moment, a "general" service for handling any/all actions. | [ReadMe here](services/actions/README.md) |
 
-# Quick Setup
+## Quick vs. Full Setup
 
 For contributors that _only_ want to play with the user interface, the
-following abbreviated instructions should get you a minimal working setup.
-
-XXXXXXX
-
-# Full Setup
+"Quick" version of the following instructions should get you a minimal
+working setup. Just skip over the steps marked "Full Setup".
 
 To run your own conferences on Clowdr and/or test changes that affect other
-parts of the platform, here are the steps to bring up a fully functional
-local instance.
+parts of the platform, follow all the steps below to bring up a fully
+functional local instance.
 
 ## Pre-requisites
 
 1. [VSCode](https://code.visualstudio.com/)
    - We also recommend you install the "recommended extensions" listed in the
      `.vscode/extensions` folder.
+     BCP: Will VSCode automatically offer to install them? Or do people need
+     to do something special / manual?
 1. [Node.js](https://nodejs.org/en/) (and NPM)
 1. [Hasura pre-requisites](hasura/README.md#Pre-requisites)
 1. [Actions Service pre-requsities](services/actions/README.md#Pre-requisites)
@@ -42,7 +41,8 @@ local instance.
 1. Initialise/update submodules
    BCP: How do I do that??
 1. Build `react-transcript-editor` as follows:
-   BCP: Should this be slate-transcript-editor??
+   BCP: Should this be slate-transcript-editor?? (Answer: Ross is working
+   on this bit, but for now I can just skip.)
    1. `cd slate-transcript-editor`
    1. Run `npm install`
    1. Run `npm run build:component`

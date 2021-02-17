@@ -123,12 +123,31 @@ Note: `AWS_` values come from the outputs of your AWS deployment. See [`aws/READ
 
 BCP:
 
-- These tables seem to use both | and / for column separators. Is there a strong
-  reason for that? At least in emacs, it looks funny.
-- If I haven't done the Auth0 step yet, what should I do with `<auth0-subdomain>`?
-- How do I find "Hasura admin secret"
+- If I haven't done the Auth0 step yet, what should I do with
+  `<auth0-subdomain>`? (Ross says I will know this information later.
+  But then there is an ordering problem in the instructions: I reached
+  this point before I had done the Auth0 setup.)
 - In general, many of these are puzzling if you don't know what they are /
   how to find them. The Value is no more informative than the Key.
+- And wouldn't it be cleaner and easier to document all of these in the
+  .env example file?
+
+BCP (Ross): "HASURA_ADMIN_SECRET is self-defined - easiest to keep it to
+XXXXX for a dev machine"
+
+BCP (Ross): "Should EVENT_SECRET also be left as XXX? Yes, it probably
+should. Actually, the event secret is also arbitrary, but you should
+probably choose something like XXXY for development. (It's useful if it's
+different from the admin secret)"  
+BCP: Again, this should be the default in the example file.
+
+BCP: Also, it would be great to reorganize the example file to put all "Full
+Setup only" stuff at the end.
+
+BCP: I think this is the first time I'm seeing the word OpenShot...
+
+BCP: I think the HOST_DOMAIN Value explanation is the first time that ngrok
+has been mentioned.
 
 | Key                                              | Value                                                                                                                         | From CDK |
 | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- | -------- |

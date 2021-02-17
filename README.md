@@ -1,6 +1,7 @@
 # Clowdr virtual conference platform
 
-This is version 3 of Clowdr - more functional, more robust, more scalable!
+This is version 3 of Clowdr - more functional, more robust, more scalable,
+and 100% open source!
 
 If you want to contribute to Clowdr, please read our [contribution guidelines](CONTRIBUTING).
 
@@ -19,9 +20,8 @@ For contributors that _only_ want to play with the user interface, the
 "Quick" version of the following instructions should get you a minimal
 working setup. Just skip over the steps marked "Full Setup".
 
-To run your own conferences on Clowdr and/or test changes that affect other
-parts of the platform, follow all the steps below to bring up a fully
-functional local instance.
+To run your own conference on Clowdr and/or test changes that affect other
+parts of the platform, follow all the steps below.
 
 ## Pre-requisites
 
@@ -29,48 +29,39 @@ functional local instance.
    - We also recommend you install the "recommended extensions" listed in the
      `.vscode/extensions` folder.
      BCP: Will VSCode automatically offer to install them? Or do people need
-     to do something special / manual?
-1. [Node.js](https://nodejs.org/en/) (and NPM)
-1. [Hasura pre-requisites](hasura/README.md#Pre-requisites)
-1. [Actions Service pre-requsities](services/actions/README.md#Pre-requisites)
-1. [Frontend pre-requsities](frontend/README.md#Pre-requisites)
+     to do something special / manual? (I see I have them installed, but
+     I don't think I did anything except maybe say yes to a question.)
+2. [Node.js](https://nodejs.org/en/) (and NPM)
+3. [Hasura pre-requisites](hasura/README.md#Pre-requisites)
+4. [Actions Service pre-requsities](services/actions/README.md#Pre-requisites)
+5. [Frontend pre-requsities](frontend/README.md#Pre-requisites)
 
 ## Setting Up
 
 1. Clone this repository
-1. Initialise/update submodules
-   BCP: How do I do that??
-1. Build `react-transcript-editor` as follows:
+2. Initialise and update submodules:
+
+```
+      git submodule init
+      git submodule update
+```
+
+3. Build `react-transcript-editor` as follows:
    BCP: Should this be slate-transcript-editor?? (Answer: Ross is working
-   on this bit, but for now I can just skip.)
+   on this bit; for now, just skip.)
    1. `cd slate-transcript-editor`
    1. Run `npm install`
    1. Run `npm run build:component`
    1. You should see the `dist` folder created.
    1. You will not need to do this again (hopefully)
-1. Install npm packages.
-
-   This will also install dependencies in subdirectories.
-
-   ```
-   clowdr> npm i
-   ```
-
-1. Follow the AWS setup: [Clowdr AWS ReadMe](aws/README.md#Setting-up)
-1. Follow the Hasura setup: [Clowdr Hasura ReadMe](hasura/README.md#Setting-up)
-1. Follow the Actions Service setup: [Clowdr Actions Service
+4. Run `npm i` to install npm packages. This will also install dependencies in subdirectories.
+5. **Full setup**: Follow the [Clowdr AWS ReadMe](aws/README.md#Setting-up)
+6. Follow the Hasura setup: [Clowdr Hasura ReadMe](hasura/README.md#Setting-up)
+7. Follow the Actions Service setup: [Clowdr Actions Service
    ReadMe](services/actions/README.md#Setting-up)
-1. Follow the Frontend setup: [Clowdr Frontend
+8. Follow the Frontend setup: [Clowdr Frontend
    ReadMe](frontend/README.md#Setting-up)
-1. Follow the Auth0 setup below
-
-BCP: Can I reorder these steps so that there is an initial prefix that can
-be shared with the Quick Setup??
-
-ANSWER FROM ED: It's probably ok to bypass step 5 by simply looking at the
-AWS README and setting all the environment variables listed to Xs. The
-other steps you'll need to do at least something for -- but whether there
-are nested steps that can be skipped for minimal frontend dev I'm not sure.
+9. Follow the instructions below for Auth0 setup.
 
 ### Auth0 Setup
 
@@ -105,13 +96,10 @@ Now, configure the application in the _Settings_ tab.
    (The format/suffix of these urls should not be altered.)
 
    You should include `localhost`.
-   BCP: Which of these are mandatory for a quick setup? Do the non-mandatory
-   ones hurt anything?  
-   BCP: Is the order critical (aside from the first)?
-   BCP: Should I choose port 3000 for localhost?  
-   BCP: Is it OK to indent these? (I reformatted to facilitate cut/paste)
-   BCP: Is there any actual reason I'd include others? (Why not just say "Make
-   it look like this"?)
+   BCP: Is it OK to indent these? (I assume yes, but I don't want to break
+   anything. I reformatted to facilitate cut/paste,
+   and I added commas, on the assumption that a trailing comma on the last
+   one won't hurt anything)
 
 ```
 http://localhost:3000/auth0/,
@@ -119,16 +107,11 @@ http://localhost:3000/auth0/logged-in,
 http://localhost:3000/auth0/email-verification/result,
 ```
 
-FOR PRODUCTION: The first URL MUST be the `auth0` address
-(See [the auth0 documentation on Email Templates / Redirect URLs](https://auth0.com/docs/auth0-email-services/customize-email-templates#configuring-the-redirect-to-url)).
+(Note that, for production, the first URL _must_ be the `auth0` address; see
+[the auth0 documentation on Email Templates / Redirect
+URLs](https://auth0.com/docs/auth0-email-services/customize-email-templates#configuring-the-redirect-to-url)).
 
-BCP: Is there a reason I'd do it another way if this is not FOR PRODUCTION?
-If not, maybe this comment is more detail than needed (and we can just
-specify which one needs to be first). If the comment _is_ critical for
-people to understand, perhaps it can be demoted to a "More details" section
-later, or some such?
-
-**Full Setup**: if you have set up Netlify, you can optionally include your
+**Full Setup**: If you have set up Netlify, you can optionally include your
 Netlify app url(s) in the Allowed Callback URLs (at the end). Netlify is a
 platform for hosting static websites. It takes our latest React site from
 git, builds it and deploys it to a CDN automatically. It's not required for
@@ -137,8 +120,8 @@ want. For the local development case, you're just using a server on your
 local machine and maybe exposing it through a tunnel.
 
 ```
-https://<netlify-subdomain>.netlify.app/auth0/
-https://<netlify-subdomain>.netlify.app/auth0/logged-in
+https://<netlify-subdomain>.netlify.app/auth0/,
+https://<netlify-subdomain>.netlify.app/auth0/logged-in,
 https://<netlify-subdomain>.netlify.app/auth0/email-verification/result
 ```
 
@@ -164,7 +147,7 @@ https://<netlify-subdomain>.netlify.app/auth0/email-verification/required/no-red
    E.g.
 
 ```
-http://localhost:3000
+http://localhost:3000,
 ```
 
 **Full Setup**: If using netlify, add this:
@@ -181,9 +164,9 @@ https://<netlify-subdomain>.netlify.app
 
    - Click `APIs` in the sidebar
    - Click `Create API`
-   - `Name` it anything you like e.g. Clowdr Test API
+   - `Name` it anything you like -- e.g., `Clowdr Test API`
    - Set the `Identifier` to `hasura`
-   - `Signing Algorithm`: `RS256`
+   - For `Signing Algorithm` choose `RS256`
 
    This may also have created another Machine-to-Machine _Application_ - this is
    okay, don't delete it.
@@ -196,8 +179,7 @@ Order of the rules matters.
 
    - Click `Rules` in the sidebar, then `Create Rule`
    - Select `Empty rule`
-   - `Name` it something like `Setup isNew app metadata`
-     BCP: Why "something like"?
+   - `Name` it `Setup isNew app metadata` (or anything else, if you prefer)
    - Replace the `Script` with the code below
    - Don't forget to `Save changes`
 
@@ -222,11 +204,7 @@ function (user, context, callback) {
 }
 ```
 
-BCP: Is this feedback expected?
-Heads up! If you are trying to access a service behind a firewall, make
-sure to open the right ports and allow inbound connections from these IP
-addresses:18.232.225.224,34.233.19.82,52.204.128.250,
-3.132.201.78,3.19.44.88,3.20.244.231
+(If you see a warning like `Heads up! If you are trying to access a service behind a firewall...` you can ignore it.)
 
 1. Create another new _Rule_
 
@@ -289,6 +267,9 @@ function (user, context, callback) {
    _Note: `lastLoggedInAt` defaults to `now()` hence why updating it with a
    blank value when there is a constraint conflict results in it reflecting the
    last logged in time._
+
+BCP: Ed said, "It occurs to me that this note is already out of date, as is
+the paragraph above it."
 
 ```js
 function (user, context, callback) {
@@ -353,10 +334,9 @@ Under _Settings_ on the `Rules` page, add the following key-value pairs:
 | HASURA_ADMIN_SECRET | The Hasura Admin Secret                                                                     | For local testing, see Hasura Environment Variables.                                                                                                      |
 | HASURA_URL          | The full URL to the Hasura GraphQL API. E.g. `http://<ngrok-subdomain>.ngrok.io/v1/graphql` | Use Ngrok to make a `localhost` server accessible by Auth0: command `ngrok http 8080`. Hint: The Hasura Service _not_ the Hasura Console URL/port number! |
 
-BCP: I haven't done anything with Hasura yet, so I don't know what the admin
-secret might be. Something seems out of order.
-BCP: Not sure where to look to "see Hasura Environment Variables"
-BCP: No idea what the third row means. :-(
+BCP: The first time through, I had no idea what the third row meant.
+Hopefully I'll understand better when I've done the earlier steps in the
+right order.
 
 You can optionally use `HASURA_ADMIN_SECRET_LOCAL` and `HASURA_URL_LOCAL` in addition to the non-local versions to have
 user records pushed to both services simultaneously (useful in testing environments).

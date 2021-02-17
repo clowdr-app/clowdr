@@ -1,6 +1,6 @@
 # Clowdr: Actions Service
 
-Express server designed to run on Heroku and serves action calls from Hasura.
+Express server designed to run on Heroku and serve action calls from Hasura.
 Eventually this may be split into multiple microservices.
 
 ## Pre-requisities
@@ -49,7 +49,9 @@ We use a Google Cloud project to provide access to the YouTube Data API with OAu
 1. Copy the `services/actions/.env.example` to `services/actions/.env`
 1. Configure your `.env` according to the [Actions Service
    Configuration](#actions-service-configuration) table below
-   - You will need the outputs from running the AWS CDK deployment
+   - You will need the outputs from running the AWS CDK deployment.
+     (**Quick setup**: Set all the environment variables related to AWS to
+     `XXXX`.)
 
 ## Local Development
 

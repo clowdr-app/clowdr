@@ -73,50 +73,60 @@ function AppInner({ confSlug, rootUrl }: AppProps): JSX.Element {
         confSlug,
         rootUrl,
     ]);
-    const leftBar = useMemo(
-        () =>
-            confSlug ? (
-                <Box
-                    overflow="hidden"
-                    height="100%"
-                    width={centerVisible ? leftSidebarWidthPc + "%" : "100%"}
-                    maxWidth={centerVisible ? "350px" : undefined}
-                    flex="1 0 300px"
-                    mb="auto"
-                    display={leftVisible ? "flex" : "none"}
-                >
-                    {left}
-                </Box>
-            ) : undefined,
-        [centerVisible, confSlug, left, leftVisible]
-    );
-
     const right = useMemo(() => (confSlug ? <RightSidebar rootUrl={rootUrl} confSlug={confSlug} /> : undefined), [
         confSlug,
         rootUrl,
     ]);
-    const rightBar = useMemo(
-        () =>
-            confSlug ? (
-                <Box
-                    overflow="hidden"
-                    height="100%"
-                    width={centerVisible ? rightSidebarWidthPc + "%" : "100%"}
-                    maxWidth={centerVisible ? "350px" : undefined}
-                    flex="1 0 300px"
-                    mb="auto"
-                    ml="auto"
-                    display={rightVisible ? "flex" : "none"}
-                >
-                    {right}
-                </Box>
-            ) : undefined,
-        [centerVisible, confSlug, right, rightVisible]
+    const center = useMemo(() => <Routing />, []);
+
+    const mainMenuProps = useMemo(
+        () => ({
+            isLeftBarOpen: leftVisible ?? false,
+            onLeftBarClose: () => setLeftOpen(false),
+            onLeftBarOpen: () => setLeftOpen(true),
+            isRightBarOpen: rightVisible ?? false,
+            onRightBarClose: () => {
+                setRightOpen(false);
+            },
+            onRightBarOpen: () => {
+                if (!rightDefaultVisible) {
+                    setLeftOpen(false);
+                }
+                setRightOpen(true);
+            },
+        }),
+        [leftVisible, rightDefaultVisible, rightVisible]
     );
 
-    const center = useMemo(() => <Routing />, []);
-    const centerBar = useMemo(
-        () => (
+    const page = useMemo(() => {
+        const leftBar = confSlug ? (
+            <Box
+                overflow="hidden"
+                height="100%"
+                width={centerVisible ? leftSidebarWidthPc + "%" : "100%"}
+                maxWidth={centerVisible ? "350px" : undefined}
+                flex="1 0 300px"
+                mb="auto"
+                display={leftVisible ? "flex" : "none"}
+            >
+                {left}
+            </Box>
+        ) : undefined;
+        const rightBar = confSlug ? (
+            <Box
+                overflow="hidden"
+                height="100%"
+                width={centerVisible ? rightSidebarWidthPc + "%" : "100%"}
+                maxWidth={centerVisible ? "350px" : undefined}
+                flex="1 0 300px"
+                mb="auto"
+                ml="auto"
+                display={rightVisible ? "flex" : "none"}
+            >
+                {right}
+            </Box>
+        ) : undefined;
+        const centerBar = (
             <Box
                 overflowX="hidden"
                 overflowY="auto"
@@ -136,12 +146,8 @@ function AppInner({ confSlug, rootUrl }: AppProps): JSX.Element {
                     </Box>
                 </VStack>
             </Box>
-        ),
-        [contentWidthPc, centerVisible, center]
-    );
-
-    const page = useMemo(
-        () => (
+        );
+        return (
             <Flex
                 as="main"
                 height="100%"
@@ -154,21 +160,7 @@ function AppInner({ confSlug, rootUrl }: AppProps): JSX.Element {
                 justifyContent="center"
                 alignItems="center"
             >
-                <MainMenu
-                    isLeftBarOpen={leftVisible ?? false}
-                    onLeftBarClose={() => setLeftOpen(false)}
-                    onLeftBarOpen={() => setLeftOpen(true)}
-                    isRightBarOpen={rightVisible ?? false}
-                    onRightBarClose={() => {
-                        setRightOpen(false);
-                    }}
-                    onRightBarOpen={() => {
-                        if (!rightDefaultVisible) {
-                            setLeftOpen(false);
-                        }
-                        setRightOpen(true);
-                    }}
-                >
+                <MainMenu {...mainMenuProps}>
                     <Flex w="100%" h="100%" overflow="hidden">
                         {leftBar}
                         {centerBar}
@@ -176,9 +168,9 @@ function AppInner({ confSlug, rootUrl }: AppProps): JSX.Element {
                     </Flex>
                 </MainMenu>
             </Flex>
-        ),
-        [centerBar, leftBar, leftVisible, rightBar, rightDefaultVisible, rightVisible]
-    );
+        );
+    }, [center, centerVisible, confSlug, contentWidthPc, left, leftVisible, mainMenuProps, right, rightVisible]);
+
     return (
         <EmojiMartProvider>
             {/* <LastSeenProvider /> */}

@@ -14,7 +14,7 @@ import {
     useBreakpointValue,
     useColorModeValue,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useMemo } from "react";
 import { Route, RouteComponentProps, Switch, useHistory } from "react-router-dom";
 import AuthenticationButton from "../Auth/Buttons/AuthenticationButton";
 import SignupButton from "../Auth/Buttons/SignUpButton";
@@ -48,22 +48,8 @@ function MenuBar(): JSX.Element {
     const rightBackgroundColour = useColorModeValue(`${rightColorScheme}.200`, `${rightColorScheme}.600`);
     const rightForegroundColour = useColorModeValue("black", "white");
 
-    return (
-        <Stack
-            direction="row"
-            spacing={2}
-            justify="flex-start"
-            align={["flex-start", "center"]}
-            wrap="wrap"
-            role={mergeItems ? undefined : "menu"}
-            width="100%"
-            gridRowGap={[0, 2]}
-            flex="0 0 auto"
-            mb={0}
-            px="0.4em"
-            py="0.4em"
-            backgroundColor={"gray.900"}
-        >
+    const navButton = useMemo(
+        () => (
             <Route path="/conference">
                 <Tooltip label={mainMenu.isLeftBarOpen ? "Close navigation" : "Open navigation"}>
                     <Button
@@ -85,6 +71,51 @@ function MenuBar(): JSX.Element {
                     </Button>
                 </Tooltip>
             </Route>
+        ),
+        [
+            leftBackgroundColour,
+            leftForegroundColour,
+            mainMenu.isLeftBarOpen,
+            mainMenu.onLeftBarClose,
+            mainMenu.onLeftBarOpen,
+        ]
+    );
+
+    const chatButton = useMemo(
+        () => (
+            <Route path="/conference">
+                <Tooltip label={mainMenu.isRightBarOpen ? "Close chats" : "Open chats"}>
+                    <Button
+                        onClick={mainMenu.isRightBarOpen ? mainMenu.onRightBarClose : mainMenu.onRightBarOpen}
+                        size="sm"
+                        aria-label={mainMenu.isRightBarOpen ? "Close chats" : "Open chats"}
+                        aria-haspopup="menu"
+                        aria-expanded={mainMenu.isRightBarOpen ? true : undefined}
+                        aria-controls="right-bar"
+                        colorScheme={rightColorScheme}
+                        backgroundColor={rightBackgroundColour}
+                        color={rightForegroundColour}
+                    >
+                        {mainMenu.isRightBarOpen ? (
+                            <FAIcon iconStyle="s" icon="comment-slash" aria-hidden />
+                        ) : (
+                            <FAIcon iconStyle="s" icon="comment" aria-hidden />
+                        )}
+                    </Button>
+                </Tooltip>
+            </Route>
+        ),
+        [
+            mainMenu.isRightBarOpen,
+            mainMenu.onRightBarClose,
+            mainMenu.onRightBarOpen,
+            rightBackgroundColour,
+            rightForegroundColour,
+        ]
+    );
+
+    const homeButton = useMemo(
+        () => (
             <Switch>
                 <Route
                     path="/conference/:confSlug"
@@ -110,8 +141,13 @@ function MenuBar(): JSX.Element {
                     </LinkButton>
                 </Route>
             </Switch>
+        ),
+        []
+    );
 
-            {mergeItems ? (
+    const primaryMenuButtons = useMemo(
+        () =>
+            mergeItems ? (
                 <>
                     <Spacer />
                     <Menu>
@@ -328,29 +364,32 @@ function MenuBar(): JSX.Element {
                         </Route>
                     </Switch>
                 </>
-            )}
+            ),
+        [history, mergeItems, primaryButtons, user]
+    );
+
+    return (
+        <Stack
+            direction="row"
+            spacing={2}
+            justify="flex-start"
+            align={["flex-start", "center"]}
+            wrap="wrap"
+            role={mergeItems ? undefined : "menu"}
+            width="100%"
+            gridRowGap={[0, 2]}
+            flex="0 0 auto"
+            mb={0}
+            px="0.4em"
+            py="0.4em"
+            backgroundColor={"gray.900"}
+        >
+            {navButton}
+            {homeButton}
+            {primaryMenuButtons}
+
             <ColorModeButton />
-            <Route path="/conference">
-                <Tooltip label={mainMenu.isRightBarOpen ? "Close chats" : "Open chats"}>
-                    <Button
-                        onClick={mainMenu.isRightBarOpen ? mainMenu.onRightBarClose : mainMenu.onRightBarOpen}
-                        size="sm"
-                        aria-label={mainMenu.isRightBarOpen ? "Close chats" : "Open chats"}
-                        aria-haspopup="menu"
-                        aria-expanded={mainMenu.isRightBarOpen ? true : undefined}
-                        aria-controls="right-bar"
-                        colorScheme={rightColorScheme}
-                        backgroundColor={rightBackgroundColour}
-                        color={rightForegroundColour}
-                    >
-                        {mainMenu.isRightBarOpen ? (
-                            <FAIcon iconStyle="s" icon="comment-slash" aria-hidden />
-                        ) : (
-                            <FAIcon iconStyle="s" icon="comment" aria-hidden />
-                        )}
-                    </Button>
-                </Tooltip>
-            </Route>
+            {chatButton}
         </Stack>
     );
 }

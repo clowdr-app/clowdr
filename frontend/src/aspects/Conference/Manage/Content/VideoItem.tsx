@@ -85,16 +85,19 @@ export const VideoItemTemplate: ItemBaseTemplate = {
     },
     renderEditor: function VideoItemEditor({ data, update }: RenderEditorProps) {
         if (data.type === "item-only" || data.type === "required-and-item") {
-            assert(
-                data.item.typeName === ContentType_Enum.VideoBroadcast ||
+            if (
+                !(
+                    data.item.typeName === ContentType_Enum.VideoBroadcast ||
                     data.item.typeName === ContentType_Enum.VideoCountdown ||
                     data.item.typeName === ContentType_Enum.VideoFile ||
                     data.item.typeName === ContentType_Enum.VideoFiller ||
                     data.item.typeName === ContentType_Enum.VideoPrepublish ||
                     data.item.typeName === ContentType_Enum.VideoSponsorsFiller ||
-                    data.item.typeName === ContentType_Enum.VideoTitles,
-                `Video Item Template mistakenly used for type ${data.type}.`
-            );
+                    data.item.typeName === ContentType_Enum.VideoTitles
+                )
+            ) {
+                return <>Video Item Template mistakenly used for type {data.type}.</>;
+            }
 
             if (data.item.data.length === 0) {
                 data = {
@@ -108,10 +111,9 @@ export const VideoItemTemplate: ItemBaseTemplate = {
             }
 
             const latestVersion = data.item.data[data.item.data.length - 1];
-            assert(
-                latestVersion.data.baseType === ContentBaseType.Video,
-                `Video Item Template mistakenly used for base type ${latestVersion.data.baseType}.`
-            );
+            if (latestVersion.data.baseType !== ContentBaseType.Video) {
+                return <>Video Item Template mistakenly used for base type {latestVersion.data.baseType}.</>;
+            }
             return (
                 <>
                     <ContentGroupVideo title={data.item.name} videoContentItemData={latestVersion.data} />

@@ -86,13 +86,16 @@ export const LinkItemTemplate: ItemBaseTemplate = {
         const [url, setUrl] = useState<string | null>(null);
 
         if (data.type === "item-only" || data.type === "required-and-item") {
-            assert(
-                data.item.typeName === ContentType_Enum.Link ||
+            if (
+                !(
+                    data.item.typeName === ContentType_Enum.Link ||
                     data.item.typeName === ContentType_Enum.LinkButton ||
                     data.item.typeName === ContentType_Enum.PaperLink ||
-                    data.item.typeName === ContentType_Enum.VideoLink,
-                `Link Item Template mistakenly used for type ${data.type}.`
-            );
+                    data.item.typeName === ContentType_Enum.VideoLink
+                )
+            ) {
+                return <>Link Item Template mistakenly used for type {data.type}.</>;
+            }
 
             const textPlaceholder =
                 data.item.typeName === ContentType_Enum.LinkButton
@@ -126,10 +129,9 @@ export const LinkItemTemplate: ItemBaseTemplate = {
             }
 
             const latestVersion = data.item.data[data.item.data.length - 1] as LinkItemVersionData;
-            assert(
-                latestVersion.data.baseType === ContentBaseType.Link,
-                `Link Item Template mistakenly used for base type ${latestVersion.data.baseType}.`
-            );
+            if (latestVersion.data.baseType !== ContentBaseType.Link) {
+                return <>Link Item Template mistakenly used for base type {latestVersion.data.baseType}.</>;
+            }
             return (
                 <>
                     <FormControl>

@@ -93,14 +93,17 @@ export const URLItemTemplate: ItemBaseTemplate = {
         const [url, setUrl] = useState<string | null>(null);
 
         if (data.type === "item-only" || data.type === "required-and-item") {
-            assert(
-                data.item.typeName === ContentType_Enum.ImageUrl ||
+            if (
+                !(
+                    data.item.typeName === ContentType_Enum.ImageUrl ||
                     data.item.typeName === ContentType_Enum.PaperUrl ||
                     data.item.typeName === ContentType_Enum.VideoUrl ||
                     data.item.typeName === ContentType_Enum.PosterUrl ||
-                    data.item.typeName === ContentType_Enum.Zoom,
-                `URL Item Template mistakenly used for type ${data.type}.`
-            );
+                    data.item.typeName === ContentType_Enum.Zoom
+                )
+            ) {
+                return <>URL Item Template mistakenly used for type {data.type}.</>;
+            }
 
             const urlLabel = "URL";
             const urlPlaceholder =
@@ -126,10 +129,9 @@ export const URLItemTemplate: ItemBaseTemplate = {
             }
 
             const latestVersion = data.item.data[data.item.data.length - 1] as UrlItemVersionData;
-            assert(
-                latestVersion.data.baseType === ContentBaseType.URL,
-                `URL Item Template mistakenly used for base type ${latestVersion.data.baseType}.`
-            );
+            if (latestVersion.data.baseType !== ContentBaseType.URL) {
+                return <>URL Item Template mistakenly used for base type {latestVersion.data.baseType}.</>;
+            }
             return (
                 <>
                     <FormControl>

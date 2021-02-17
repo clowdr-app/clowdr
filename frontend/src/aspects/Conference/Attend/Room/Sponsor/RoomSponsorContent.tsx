@@ -62,7 +62,10 @@ export function RoomSponsorContent({ contentGroupId }: { contentGroupId: string 
                 return { item, layoutBlob, blob };
             });
 
-        const sortedItems = R.sortWith([R.descend((item) => item.layoutBlob.priority)], items);
+        const sortedItems = R.sortWith(
+            [R.ascend((item) => item.layoutBlob.priority), R.ascend((item) => item.item.name)],
+            items
+        );
 
         return sortedItems;
     }, [data?.ContentGroup]);

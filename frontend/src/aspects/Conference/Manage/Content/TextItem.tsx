@@ -72,10 +72,9 @@ export const TextItemTemplate: ItemBaseTemplate = {
         const [text, setText] = useState<string | null>(null);
 
         if (data.type === "item-only" || data.type === "required-and-item") {
-            assert(
-                data.item.typeName === ContentType_Enum.Abstract || data.item.typeName === ContentType_Enum.Text,
-                `Text Item Template mistakenly used for type ${data.type}.`
-            );
+            if (!(data.item.typeName === ContentType_Enum.Abstract || data.item.typeName === ContentType_Enum.Text)) {
+                return <>Text Item Template mistakenly used for type {data.type}.</>;
+            }
 
             const placeholder = data.item.typeName === ContentType_Enum.Abstract ? "Abstract" : "Text";
 
@@ -91,10 +90,9 @@ export const TextItemTemplate: ItemBaseTemplate = {
             }
 
             const latestVersion = data.item.data[data.item.data.length - 1] as TextItemVersionData;
-            assert(
-                latestVersion.data.baseType === ContentBaseType.Text,
-                `Text Item Template mistakenly used for base type ${latestVersion.data.baseType}.`
-            );
+            if (latestVersion.data.baseType !== ContentBaseType.Text) {
+                return <>Text Item Template mistakenly used for base type {latestVersion.data.baseType}.</>;
+            }
             return (
                 <Textarea
                     transition="none"

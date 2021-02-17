@@ -70,12 +70,15 @@ export const FileItemTemplate: ItemBaseTemplate = {
     },
     renderEditor: function FileItemEditor({ data, update }: RenderEditorProps) {
         if (data.type === "item-only" || data.type === "required-and-item") {
-            assert(
-                data.item.typeName === ContentType_Enum.ImageFile ||
+            if (
+                !(
+                    data.item.typeName === ContentType_Enum.ImageFile ||
                     data.item.typeName === ContentType_Enum.PosterFile ||
-                    data.item.typeName === ContentType_Enum.PaperFile,
-                `File Item Template mistakenly used for type ${data.type}.`
-            );
+                    data.item.typeName === ContentType_Enum.PaperFile
+                )
+            ) {
+                return <>File Item Template mistakenly used for type {data.type}.</>;
+            }
 
             if (data.item.data.length === 0) {
                 data = {
@@ -89,10 +92,9 @@ export const FileItemTemplate: ItemBaseTemplate = {
             }
 
             const latestVersion = data.item.data[data.item.data.length - 1];
-            assert(
-                latestVersion.data.baseType === ContentBaseType.File,
-                `File Item Template mistakenly used for base type ${latestVersion.data.baseType}.`
-            );
+            if (latestVersion.data.baseType !== ContentBaseType.File) {
+                return <>File Item Template mistakenly used for base type {latestVersion.data.baseType}.</>;
+            }
             let imageSrc = undefined;
             if (
                 latestVersion &&

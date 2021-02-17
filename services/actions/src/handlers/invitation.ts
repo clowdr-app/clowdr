@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client/core";
 import assert from "assert";
 import crypto from "crypto";
+import { htmlToText } from "html-to-text";
 import { v4 as uuidv4 } from "uuid";
 import {
     AttendeeWithInvitePartsFragment,
@@ -165,20 +166,6 @@ async function sendInviteEmails(
         if (!attendee.userId && attendee.invitation) {
             const sendType = shouldSend(attendee);
             if (sendType) {
-                const plainTextContents = `Dear ${attendee.displayName},
-
-You are invited to attend ${attendee.conference.name} on Clowdr: the virtual
-conferencing platform. Please use the link and invite code below to create
-your profile and access the conference.
-
-Invitation code: ${attendee.invitation.inviteCode}
-Use your invite code at: ${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/
-
-We hope you enjoy your conference,
-The Clowdr team
-
-This is an automated email sent on behalf of Clowdr CIC. If you believe you have
-received this email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}`;
                 const htmlContents = `<p>Dear ${attendee.displayName},</p>
 
 <p>You are invited to attend ${attendee.conference.name} on Clowdr: the virtual
@@ -186,15 +173,19 @@ conferencing platform. Please use the link and invite code below to create
 your profile and access the conference.</p>
 
 <p>
-<a href="${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/invitation/accept/${attendee.invitation.inviteCode}">Click here to use your invitation code: ${attendee.invitation.inviteCode}</a><br />
-Or enter it on the Clowdr home page at ${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}
-</p>
+<a href="${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/invitation/accept/${attendee.invitation.inviteCode}">Click here to accept your invitation</a></p>
+
+<p>If you are asked for an invitation code, enter ${attendee.invitation.inviteCode}</p>
 
 <p>We hope you enjoy your conference,<br />
 The Clowdr team</p>
 
 <p>This is an automated email sent on behalf of Clowdr CIC. If you believe you have
 received this email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}</p>`;
+                // Or enter it on the Clowdr home page at ${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}
+
+                const plainTextContents = htmlToText(htmlContents);
+
                 emailsToSend.set(attendee.id, {
                     emailAddress: attendee.invitation.invitedEmailAddress,
                     invitationId: attendee.invitation.id,
@@ -402,24 +393,7 @@ The Clowdr team</p>
 <p>This is an automated email sent on behalf of Clowdr CIC. If you believe you have
 received this email in error, please contact us via <a href="mailto:${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}">${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}</a></p>`;
 
-    const plainTextContents = `Dear ${invitation.attendee.displayName},
-
-A user is trying to accept your invitation to ${invitation.attendee.conference.name}
-using the email address ${user.email}. If this was you, and you would like to use the
-email address shown (instead of your invitation address: ${invitation.invitedEmailAddress}),
-please enter the confirmation code shown below. If this was not you, please
-contact your conference organiser.
-
-Confirmation code: ${externalConfirmationCode}
-Page to enter the code: ${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/invitation/accept/${invitation.inviteCode}
-
-(You will need to be logged in as ${user.email} in order to enter the confirmation code.)
-
-We hope you enjoy your conference,
-The Clowdr team
-
-This is an automated email sent on behalf of Clowdr CIC. If you believe you have
-received this email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}`;
+    const plainTextContents = htmlToText(htmlContents);
     return {
         htmlContents,
         plainTextContents,

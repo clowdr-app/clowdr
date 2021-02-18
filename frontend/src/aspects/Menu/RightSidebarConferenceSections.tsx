@@ -385,11 +385,43 @@ function ChatsPanel({ attendeeId, confSlug }: { attendeeId: string; confSlug: st
         [attendeeId, confSlug, pinnedChats.data?.chat_Pin]
     );
 
-    const otherPinnedChats = useMemo(
+    const dmPinnedChats = useMemo(
         () => (
-            <List mt={1} ml={4} mb={2}>
+            <List my={2} ml={4}>
                 {pinnedChats.data?.chat_Pin
-                    .filter((chatPin) => !chatPin.chat?.enableMandatoryPin)
+                    .filter((chatPin) => !chatPin.chat?.enableMandatoryPin && chatPin.chat.DMRoom.length)
+                    .sort((x, y) => sortChats(attendeeId, x.chat, y.chat))
+                    .map((chatPin) => (
+                        <ChatListItem
+                            key={chatPin.chatId}
+                            chat={chatPin.chat}
+                            attendeeId={attendeeId}
+                            confSlug={confSlug}
+                            onClick={() =>
+                                setCurrentChat({
+                                    id: chatPin.chatId,
+                                    title: computeChatName(chatPin.chat, attendeeId) ?? "Unknown chat",
+                                    roomId:
+                                        chatPin.chat.nonDMRoom.length > 0
+                                            ? chatPin.chat.nonDMRoom[0].id
+                                            : chatPin.chat.DMRoom.length > 0
+                                            ? chatPin.chat.DMRoom[0].id
+                                            : undefined,
+                                })
+                            }
+                        />
+                    ))}
+                {!pinnedChats.data || pinnedChats.data.chat_Pin.length < 1 ? <>No pinned chats.</> : <></>}
+            </List>
+        ),
+        [attendeeId, confSlug, pinnedChats.data]
+    );
+
+    const nonDMPinnedChats = useMemo(
+        () => (
+            <List my={2} ml={4}>
+                {pinnedChats.data?.chat_Pin
+                    .filter((chatPin) => !chatPin.chat?.enableMandatoryPin && !chatPin.chat.DMRoom.length)
                     .sort((x, y) => sortChats(attendeeId, x.chat, y.chat))
                     .map((chatPin) => (
                         <ChatListItem
@@ -498,7 +530,9 @@ function ChatsPanel({ attendeeId, confSlug }: { attendeeId: string; confSlug: st
             <>
                 {mandatoryPinnedChats}
                 <Divider />
-                {otherPinnedChats}
+                {dmPinnedChats}
+                <Divider />
+                {nonDMPinnedChats}
                 <Divider />
                 {peopleSearch}
             </>

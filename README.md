@@ -378,7 +378,8 @@ created above.
    line in `hasura/docker-compose.yaml`
    - Don't forget to restart the `Hasura Console -- Local Development` task
      in VSCode!
-     BCP: STOPPED HERE
+     (Again, if you get an error message about `version check: failed to get version from server: failed making version api call...` try running the
+     task again -- this could be due to a race condition.)
 1. Optionally: Copy your key into Hasura Cloud Environment configuration
    - No need for the wrapping single quotes - Hasura's UI will handle that for
      you.
@@ -386,12 +387,22 @@ created above.
 
 #### 8. Use ngrok for online (local) testing
 
-**_Every time_** you start up for online (local) development, you will need to
-start ngrok (`ngrok start --config=ngrok.yaml auth actions`) and copy the auth URL
-(`http://<ngrok-subdomain>.ngrok.io/v1/graphql`) into the `HASURA_URL` Auth0
-_Rule Configuration_ as shown in step 5.
+First, `cp ngrok.example.yml ngrok.yml`.
 
-BCP: I don't see `ngrok.yaml`...
+If you are using the free ngrok plan, remove the `hostname` lines from
+`ngrok.yml`. If you have a paid ngrok account, you'll need to fill out the
+`authtoken` with your personal auth token and the hostname fields with
+something appropriate.
+
+Then:
+
+1. Start ngrok: `ngrok start --config=ngrok.yaml auth actions`
+2. Copy the auth URL (`http://<ngrok-subdomain>.ngrok.io/v1/graphql`) into
+   the `HASURA_URL` _Rule Configuration_ in Auth0 as shown in the "Configure
+   Rules" step above.
+
+**_Every time_** you start up for online (local) development, you will need
+to repeat these steps.
 
 You will also need to set the actions URL
 (`http://<ngrok-subdomain>.ngrok.io/vonage/sessionMonitoring/<VONAGE_WEBHOOK_SECRET>`)

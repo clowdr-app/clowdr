@@ -23,10 +23,13 @@ BCP: Should the previous line be outdented?
 BCP: Is # the comment syntax for YAML?
 BCP: Maybe it would be simpler to provide an `.example` for this instead of
 editing what's there (and potentially committing the edit to the main repo!)
-1. Run the `Hasura Console -- Local Development` task within VSCode
-   (`Terminal > Run Task`)
+1. Run the `Hasura Console -- Local Development` task within VSCode:
+   `Terminal > Run Task`.
 1. Check that the Docker Compose task ran successfully in the Task Output
 1. Check that the Hasura Console task ran successfully in the Task Output
+    - If you get an error message about `version check: failed to get
+      version from server: failed making version api call...` try running
+      the task again -- there is a race condition that can cause this.
 1. Your browser should have opened a tab to the Hasura console
 
 BCP: Not clear whether I am supposed to continue on to do the rest of the

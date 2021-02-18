@@ -204,6 +204,20 @@
             },
             "args": ["start", "-config", "./ngrok.yml", "--all"]
         },
+        // Packetriot
+        {
+            "label": "Packetriot",
+            "type": "shell",
+            "command": "pktriot",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": ["start", "--config", "pktriot.json"]
+        },
         // Run All -- Local Development
         {
             "label": "Run All -- Local Development",
@@ -211,8 +225,7 @@
                 "Hasura Console -- Local Development",
                 "Actions Service -- Local Development",
                 "Presence Service -- Local Development",
-                "Frontend -- Local Development",
-                "Ngrok"
+                "Frontend -- Local Development"
             ],
             "dependsOrder": "parallel",
             "isBackground": true,

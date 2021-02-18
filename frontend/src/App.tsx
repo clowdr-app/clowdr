@@ -158,7 +158,7 @@ function AppPage({ confSlug, rootUrl }: AppProps) {
             overflow="hidden"
             height="100%"
             width={centerVisible ? rightSidebarWidthPc + "%" : "100%"}
-            maxWidth={centerVisible ? "350px" : undefined}
+            maxWidth={centerVisible ? "450px" : undefined}
             flex="1 0 300px"
             mb="auto"
             ml="auto"

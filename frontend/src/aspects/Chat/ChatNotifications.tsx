@@ -46,12 +46,16 @@ gql`
     }
 `;
 
-export function ChatNotificationsProvider_WithAttendee({
-    children,
+function ChatNotificationsProvider_WithAttendee({
     attendeeId,
+    suppressChatId,
+    openChat,
 }: {
-    children: React.ReactNode | React.ReactNodeArray;
     attendeeId: string;
+    suppressChatId: React.MutableRefObject<string | null>;
+    openChat: React.MutableRefObject<
+        ((chat: { id: string; title: string; roomId: string | undefined }) => void) | null
+    >;
 }): JSX.Element {
     const currentAttendee = useCurrentAttendee();
     const subscriptionsQ = useSubscribedChatsQuery({
@@ -62,27 +66,31 @@ export function ChatNotificationsProvider_WithAttendee({
     });
 
     if (!subscriptionsQ.data) {
-        return <>{children}</>;
+        return <></>;
     }
 
     return (
         <ChatNotificationsProvider_WithAttendeeInner
             attendeeId={attendeeId}
             chatIds={subscriptionsQ.data.chat_Subscription.map((x) => x.chatId)}
-        >
-            {children}
-        </ChatNotificationsProvider_WithAttendeeInner>
+            suppressChatId={suppressChatId}
+            openChat={openChat}
+        />
     );
 }
 
-export function ChatNotificationsProvider_WithAttendeeInner({
-    children,
+function ChatNotificationsProvider_WithAttendeeInner({
     attendeeId,
     chatIds,
+    suppressChatId,
+    openChat,
 }: {
-    children: React.ReactNode | React.ReactNodeArray;
     attendeeId: string;
     chatIds: string[];
+    suppressChatId: React.MutableRefObject<string | null>;
+    openChat: React.MutableRefObject<
+        ((chat: { id: string; title: string; roomId: string | undefined }) => void) | null
+    >;
 }): JSX.Element {
     const currentAttendee = useCurrentAttendee();
     const subscription = useSubdMessages_2021_01_21T08_24Subscription({
@@ -122,7 +130,7 @@ export function ChatNotificationsProvider_WithAttendeeInner({
 
                             if (
                                 currentAttendee.id !== latestMessage.senderId &&
-                                (!chatPath || !location.pathname.endsWith(chatPath)) &&
+                                latestMessage.chatId !== suppressChatId.current &&
                                 latestMessage.type !== Chat_MessageType_Enum.DuplicationMarker &&
                                 latestMessage.type !== Chat_MessageType_Enum.Emote
                             ) {
@@ -196,7 +204,11 @@ export function ChatNotificationsProvider_WithAttendeeInner({
                                                             variant="outline"
                                                             onClick={() => {
                                                                 props.onClose();
-                                                                history.push(chatPath);
+                                                                openChat.current?.({
+                                                                    id: latestMessage.chatId,
+                                                                    title: latestMessage.chatTitle,
+                                                                    roomId: undefined,
+                                                                });
                                                             }}
                                                         >
                                                             Go to chat
@@ -242,26 +254,33 @@ export function ChatNotificationsProvider_WithAttendeeInner({
         location.pathname,
         setNotifiedUpTo,
         subscription.data?.chat_Message,
+        suppressChatId,
         toast,
     ]);
 
-    return <>{children}</>;
+    return <></>;
 }
 
 export function ChatNotificationsProvider({
-    children,
+    suppressChatId,
+    openChat,
 }: {
-    children: React.ReactNode | React.ReactNodeArray;
+    suppressChatId: React.MutableRefObject<string | null>;
+    openChat: React.MutableRefObject<
+        ((chat: { id: string; title: string; roomId: string | undefined }) => void) | null
+    >;
 }): JSX.Element {
     const attendee = useMaybeCurrentAttendee();
 
     if (attendee) {
         return (
-            <ChatNotificationsProvider_WithAttendee attendeeId={attendee.id}>
-                {children}
-            </ChatNotificationsProvider_WithAttendee>
+            <ChatNotificationsProvider_WithAttendee
+                attendeeId={attendee.id}
+                suppressChatId={suppressChatId}
+                openChat={openChat}
+            />
         );
     } else {
-        return <>{children}</>;
+        return <></>;
     }
 }

@@ -32,7 +32,7 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import {
     AttendeeFieldsFragment,
@@ -328,13 +328,19 @@ function PeopleSearch({ createDM }: { createDM: (attendeeId: string, attendeeNam
 function ChatsPanel({
     attendeeId,
     confSlug,
+    onChatIdChange,
     pageChatId,
     switchToPageChat,
+    openChat,
 }: {
     attendeeId: string;
     confSlug: string;
+    onChatIdChange: (id: string | null) => void;
     pageChatId: string | null;
     switchToPageChat: () => void;
+    openChat: React.MutableRefObject<
+        ((chat: { id: string; title: string; roomId: string | undefined }) => void) | null
+    >;
 }): JSX.Element {
     const conference = useConference();
     const toast = useToast();
@@ -350,6 +356,17 @@ function ChatsPanel({
         null
     );
 
+    openChat.current = useCallback(
+        (chat) => {
+            setCurrentChat(chat);
+
+            if (chat.id === pageChatId) {
+                switchToPageChat();
+            }
+        },
+        [pageChatId, switchToPageChat]
+    );
+
     const sources: ChatSources | undefined = useMemo(
         () =>
             currentChat
@@ -361,6 +378,10 @@ function ChatsPanel({
                 : undefined,
         [currentChat]
     );
+
+    useEffect(() => {
+        onChatIdChange(sources?.chatId ?? null);
+    }, [onChatIdChange, sources?.chatId]);
 
     const history = useHistory();
 
@@ -776,17 +797,24 @@ function RightSidebarConferenceSections_Inner({
     confSlug,
     attendee,
     onClose,
+    suppressChatId,
+    openChat,
 }: {
     rootUrl: string;
     confSlug: string;
     attendee: AttendeeFieldsFragment;
     onClose: () => void;
+    suppressChatId: React.MutableRefObject<string | null>;
+    openChat: React.MutableRefObject<
+        ((chat: { id: string; title: string; roomId: string | undefined }) => void) | null
+    >;
 }): JSX.Element {
     const roomMatch = useRouteMatch<{ roomId: string }>(`${rootUrl}/room/:roomId`);
     const itemMatch = useRouteMatch<{ itemId: string }>(`${rootUrl}/item/:itemId`);
     const roomId = roomMatch?.params?.roomId;
     const itemId = itemMatch?.params?.itemId;
     const [pageChatId, setPageChatId] = useState<string | null>(null);
+    const [nonPageChatId, setNonPageChatId] = useState<string | null>(null);
 
     const [currentTab, setCurrentTab] = useRestorableState<RightSidebarTabs>(
         "RightSideBar_CurrentTab",
@@ -794,6 +822,20 @@ function RightSidebarConferenceSections_Inner({
         (x) => x.toString(),
         (x) => parseInt(x, 10)
     );
+
+    useEffect(() => {
+        switch (currentTab) {
+            case RightSidebarTabs.PageChat:
+                suppressChatId.current = pageChatId;
+                break;
+            case RightSidebarTabs.Chats:
+                suppressChatId.current = nonPageChatId;
+                break;
+            case RightSidebarTabs.Presence:
+                suppressChatId.current = null;
+                break;
+        }
+    }, [currentTab, nonPageChatId, pageChatId, suppressChatId]);
 
     useEffect(() => {
         if (roomId || itemId) {
@@ -817,6 +859,15 @@ function RightSidebarConferenceSections_Inner({
                 : 1
             : -2;
 
+    const openChatCb = useRef<((chat: { id: string; title: string; roomId: string | undefined }) => void) | null>(null);
+    openChat.current = useCallback(
+        (chat) => {
+            setCurrentTab(RightSidebarTabs.Chats);
+            openChatCb.current?.(chat);
+        },
+        [setCurrentTab]
+    );
+
     const roomPanel = useMemo(() => roomId && <RoomChatPanel roomId={roomId} onChatIdLoaded={setPageChatId} />, [
         roomId,
     ]);
@@ -829,10 +880,12 @@ function RightSidebarConferenceSections_Inner({
             <ChatsPanel
                 attendeeId={attendee.id}
                 confSlug={confSlug}
+                onChatIdChange={setNonPageChatId}
                 pageChatId={pageChatId}
                 switchToPageChat={() => {
                     setCurrentTab(RightSidebarTabs.PageChat);
                 }}
+                openChat={openChatCb}
             />
         ),
         [attendee.id, confSlug, pageChatId, setCurrentTab]
@@ -915,18 +968,23 @@ export default function RightSidebarConferenceSections({
     onClose: () => void;
 }): JSX.Element {
     const user = useMaybeCurrentUser();
+    const suppressChatId = useRef<string | null>(null);
+    const openChat = useRef<((chat: { id: string; title: string; roomId: string | undefined }) => void) | null>(null);
     if (user.user && user.user.attendees.length > 0) {
         const attendee = user.user.attendees.find((x) => x.conference.slug === confSlug);
         if (attendee) {
             return (
-                <ChatNotificationsProvider>
+                <>
+                    <ChatNotificationsProvider suppressChatId={suppressChatId} openChat={openChat} />
                     <RightSidebarConferenceSections_Inner
                         rootUrl={rootUrl}
                         confSlug={confSlug}
                         attendee={attendee}
                         onClose={onClose}
+                        suppressChatId={suppressChatId}
+                        openChat={openChat}
                     />
-                </ChatNotificationsProvider>
+                </>
             );
         }
     }

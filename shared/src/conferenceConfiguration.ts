@@ -1,0 +1,20 @@
+import { assertType, is } from "typescript-is";
+
+export interface EmailTemplate_BaseConfig {
+    subjectTemplate: string | null;
+    htmlBodyTemplate: string | null;
+}
+
+export enum ConferenceConfigurationKey {
+    EmailTemplate_SubtitlesGenerated = "EMAIL_TEMPLATE_SUBTITLES_GENERATED",
+}
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export function isEmailTemplate_BaseConfig(data: any): boolean {
+    return is<EmailTemplate_BaseConfig>(data);
+}
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export function assertIsEmailTemplate_BaseConfig(data: any): asserts data is EmailTemplate_BaseConfig {
+    assertType<EmailTemplate_BaseConfig>(data);
+}

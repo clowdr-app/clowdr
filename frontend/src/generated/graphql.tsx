@@ -31975,6 +31975,27 @@ export type UpdateHallwayMutation = { readonly __typename?: 'mutation_root', rea
     & HallwayInfoFragment
   )> };
 
+export type ConfigureEmailTemplates_GetConferenceConfigurationsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type ConfigureEmailTemplates_GetConferenceConfigurationsQuery = { readonly __typename?: 'query_root', readonly ConferenceConfiguration: ReadonlyArray<(
+    { readonly __typename?: 'ConferenceConfiguration' }
+    & ConfigureEmailTemplates_ConferenceConfigurationFragment
+  )> };
+
+export type ConfigureEmailTemplates_ConferenceConfigurationFragment = { readonly __typename?: 'ConferenceConfiguration', readonly id: any, readonly conferenceId: any, readonly key: string, readonly value: any };
+
+export type ConfigureEmailTemplates_UpdateConferenceConfigurationMutationVariables = Exact<{
+  value: Scalars['jsonb'];
+  conferenceId: Scalars['uuid'];
+  key: Scalars['String'];
+}>;
+
+
+export type ConfigureEmailTemplates_UpdateConferenceConfigurationMutation = { readonly __typename?: 'mutation_root', readonly insert_ConferenceConfiguration_one?: Maybe<{ readonly __typename?: 'ConferenceConfiguration', readonly id: any }> };
+
 export type ChooseContentItemByTagModal_GetTagsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
@@ -33567,6 +33588,14 @@ export const HallwayInfoFragmentDoc = gql`
   colour
   name
   priority
+}
+    `;
+export const ConfigureEmailTemplates_ConferenceConfigurationFragmentDoc = gql`
+    fragment ConfigureEmailTemplates_ConferenceConfiguration on ConferenceConfiguration {
+  id
+  conferenceId
+  key
+  value
 }
     `;
 export const ManageConferenceExportPage_AttendeeGoogleAccountFragmentDoc = gql`
@@ -37194,6 +37223,76 @@ export function useUpdateHallwayMutation(baseOptions?: Apollo.MutationHookOption
 export type UpdateHallwayMutationHookResult = ReturnType<typeof useUpdateHallwayMutation>;
 export type UpdateHallwayMutationResult = Apollo.MutationResult<UpdateHallwayMutation>;
 export type UpdateHallwayMutationOptions = Apollo.BaseMutationOptions<UpdateHallwayMutation, UpdateHallwayMutationVariables>;
+export const ConfigureEmailTemplates_GetConferenceConfigurationsDocument = gql`
+    query ConfigureEmailTemplates_GetConferenceConfigurations($conferenceId: uuid!) {
+  ConferenceConfiguration(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...ConfigureEmailTemplates_ConferenceConfiguration
+  }
+}
+    ${ConfigureEmailTemplates_ConferenceConfigurationFragmentDoc}`;
+
+/**
+ * __useConfigureEmailTemplates_GetConferenceConfigurationsQuery__
+ *
+ * To run a query within a React component, call `useConfigureEmailTemplates_GetConferenceConfigurationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useConfigureEmailTemplates_GetConferenceConfigurationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useConfigureEmailTemplates_GetConferenceConfigurationsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useConfigureEmailTemplates_GetConferenceConfigurationsQuery(baseOptions: Apollo.QueryHookOptions<ConfigureEmailTemplates_GetConferenceConfigurationsQuery, ConfigureEmailTemplates_GetConferenceConfigurationsQueryVariables>) {
+        return Apollo.useQuery<ConfigureEmailTemplates_GetConferenceConfigurationsQuery, ConfigureEmailTemplates_GetConferenceConfigurationsQueryVariables>(ConfigureEmailTemplates_GetConferenceConfigurationsDocument, baseOptions);
+      }
+export function useConfigureEmailTemplates_GetConferenceConfigurationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ConfigureEmailTemplates_GetConferenceConfigurationsQuery, ConfigureEmailTemplates_GetConferenceConfigurationsQueryVariables>) {
+          return Apollo.useLazyQuery<ConfigureEmailTemplates_GetConferenceConfigurationsQuery, ConfigureEmailTemplates_GetConferenceConfigurationsQueryVariables>(ConfigureEmailTemplates_GetConferenceConfigurationsDocument, baseOptions);
+        }
+export type ConfigureEmailTemplates_GetConferenceConfigurationsQueryHookResult = ReturnType<typeof useConfigureEmailTemplates_GetConferenceConfigurationsQuery>;
+export type ConfigureEmailTemplates_GetConferenceConfigurationsLazyQueryHookResult = ReturnType<typeof useConfigureEmailTemplates_GetConferenceConfigurationsLazyQuery>;
+export type ConfigureEmailTemplates_GetConferenceConfigurationsQueryResult = Apollo.QueryResult<ConfigureEmailTemplates_GetConferenceConfigurationsQuery, ConfigureEmailTemplates_GetConferenceConfigurationsQueryVariables>;
+export const ConfigureEmailTemplates_UpdateConferenceConfigurationDocument = gql`
+    mutation ConfigureEmailTemplates_UpdateConferenceConfiguration($value: jsonb!, $conferenceId: uuid!, $key: String!) {
+  insert_ConferenceConfiguration_one(
+    object: {value: $value, conferenceId: $conferenceId, key: $key}
+    on_conflict: {constraint: ConferenceConfiguration_conferenceId_key_key, update_columns: value}
+  ) {
+    id
+  }
+}
+    `;
+export type ConfigureEmailTemplates_UpdateConferenceConfigurationMutationFn = Apollo.MutationFunction<ConfigureEmailTemplates_UpdateConferenceConfigurationMutation, ConfigureEmailTemplates_UpdateConferenceConfigurationMutationVariables>;
+
+/**
+ * __useConfigureEmailTemplates_UpdateConferenceConfigurationMutation__
+ *
+ * To run a mutation, you first call `useConfigureEmailTemplates_UpdateConferenceConfigurationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useConfigureEmailTemplates_UpdateConferenceConfigurationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [configureEmailTemplatesUpdateConferenceConfigurationMutation, { data, loading, error }] = useConfigureEmailTemplates_UpdateConferenceConfigurationMutation({
+ *   variables: {
+ *      value: // value for 'value'
+ *      conferenceId: // value for 'conferenceId'
+ *      key: // value for 'key'
+ *   },
+ * });
+ */
+export function useConfigureEmailTemplates_UpdateConferenceConfigurationMutation(baseOptions?: Apollo.MutationHookOptions<ConfigureEmailTemplates_UpdateConferenceConfigurationMutation, ConfigureEmailTemplates_UpdateConferenceConfigurationMutationVariables>) {
+        return Apollo.useMutation<ConfigureEmailTemplates_UpdateConferenceConfigurationMutation, ConfigureEmailTemplates_UpdateConferenceConfigurationMutationVariables>(ConfigureEmailTemplates_UpdateConferenceConfigurationDocument, baseOptions);
+      }
+export type ConfigureEmailTemplates_UpdateConferenceConfigurationMutationHookResult = ReturnType<typeof useConfigureEmailTemplates_UpdateConferenceConfigurationMutation>;
+export type ConfigureEmailTemplates_UpdateConferenceConfigurationMutationResult = Apollo.MutationResult<ConfigureEmailTemplates_UpdateConferenceConfigurationMutation>;
+export type ConfigureEmailTemplates_UpdateConferenceConfigurationMutationOptions = Apollo.BaseMutationOptions<ConfigureEmailTemplates_UpdateConferenceConfigurationMutation, ConfigureEmailTemplates_UpdateConferenceConfigurationMutationVariables>;
 export const ChooseContentItemByTagModal_GetTagsDocument = gql`
     query ChooseContentItemByTagModal_GetTags($conferenceId: uuid!) {
   Tag(where: {conferenceId: {_eq: $conferenceId}}, order_by: {name: asc}) {

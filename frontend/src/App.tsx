@@ -171,6 +171,9 @@ function AppPage({ rootUrl }: AppProps) {
             {right}
         </Box>
     ) : undefined;
+
+    const centerBgColour = useColorModeValue("gray.100", "gray.800");
+    const borderColour = useColorModeValue("gray.200", "gray.600");
     const centerBar = (
         <Box
             overflowX="hidden"
@@ -179,8 +182,13 @@ function AppPage({ rootUrl }: AppProps) {
             width={contentWidthPc + "%"}
             flex="1 0 300px"
             mb="auto"
+            p={2}
             position={centerVisible ? "relative" : "fixed"}
             top={centerVisible ? undefined : "100%"}
+            bgColor={centerBgColour}
+            borderX="1px solid"
+            borderLeftColor={borderColour}
+            borderRightColor={borderColour}
         >
             <VStack spacing={5} width="100%">
                 {center}

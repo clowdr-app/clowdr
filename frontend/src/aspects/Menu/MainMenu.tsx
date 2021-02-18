@@ -374,6 +374,7 @@ function MenuBar(): JSX.Element {
         [history, mergeItems, primaryButtons, user]
     );
 
+    const borderColour = useColorModeValue("gray.200", "gray.600");
     return (
         <Stack
             direction="row"
@@ -388,7 +389,8 @@ function MenuBar(): JSX.Element {
             mb={0}
             px="0.4em"
             py="0.4em"
-            backgroundColor={"gray.900"}
+            borderBottom="1px solid"
+            borderBottomColor={borderColour}
         >
             {navButton}
             {homeButton}

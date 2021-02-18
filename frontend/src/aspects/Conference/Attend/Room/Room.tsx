@@ -129,8 +129,8 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
 
     const now = useRealTime(5000);
 
-    const nextBgColour = useColorModeValue("green.100", "green.700");
-    const bgColour = useColorModeValue("gray.100", "gray.800");
+    const nextBgColour = useColorModeValue("green.300", "green.600");
+    const bgColour = useColorModeValue("gray.200", "gray.700");
 
     const hlsUri = useMemo(() => {
         if (!roomDetails.mediaLiveChannel) {
@@ -311,7 +311,11 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                     <></>
                 )}
 
-                {!currentRoomEvent && !nextRoomEvent ? <Text p={5}>No current event in this room.</Text> : <></>}
+                {!currentRoomEvent && !nextRoomEvent && roomEvents.length > 0 ? (
+                    <Text p={5}>No current event in this room.</Text>
+                ) : (
+                    <></>
+                )}
 
                 {roomDetails.originatingContentGroup?.id &&
                 roomDetails.originatingContentGroup.contentGroupTypeName !== ContentGroupType_Enum.Sponsor ? (

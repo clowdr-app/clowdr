@@ -20,6 +20,7 @@ import AuthenticationButton from "../Auth/Buttons/AuthenticationButton";
 import SignupButton from "../Auth/Buttons/SignUpButton";
 import ColorModeButton from "../Chakra/ColorModeButton";
 import { LinkButton } from "../Chakra/LinkButton";
+import { useMaybeCurrentAttendee } from "../Conference/useCurrentAttendee";
 import FAIcon from "../Icons/FAIcon";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import { MenuState, MenuStateContext, useMainMenu } from "./MainMenuState";
@@ -35,6 +36,7 @@ interface Props {
 function MenuBar(): JSX.Element {
     const { buttons: primaryButtons } = usePrimaryMenuButtons();
     const { user } = useMaybeCurrentUser();
+    const attendee = useMaybeCurrentAttendee();
     const mainMenu = useMainMenu();
 
     const mergeItems = useBreakpointValue({ base: true, md: false });
@@ -49,30 +51,32 @@ function MenuBar(): JSX.Element {
     const rightForegroundColour = useColorModeValue("black", "white");
 
     const navButton = useMemo(
-        () => (
-            <Route path="/conference">
-                <Tooltip label={mainMenu.isLeftBarOpen ? "Close navigation" : "Open navigation"}>
-                    <Button
-                        onClick={mainMenu.isLeftBarOpen ? mainMenu.onLeftBarClose : mainMenu.onLeftBarOpen}
-                        size="sm"
-                        aria-label={mainMenu.isLeftBarOpen ? "Close navigation menu" : "Open navigation menu"}
-                        aria-haspopup="menu"
-                        aria-expanded={mainMenu.isLeftBarOpen ? true : undefined}
-                        aria-controls="left-bar"
-                        colorScheme={leftColorScheme}
-                        backgroundColor={leftBackgroundColour}
-                        color={leftForegroundColour}
-                    >
-                        {mainMenu.isLeftBarOpen ? (
-                            <FAIcon iconStyle="s" icon="times" aria-hidden />
-                        ) : (
-                            <FAIcon iconStyle="s" icon="bars" aria-hidden />
-                        )}
-                    </Button>
-                </Tooltip>
-            </Route>
-        ),
+        () =>
+            attendee && (
+                <Route path="/conference">
+                    <Tooltip label={mainMenu.isLeftBarOpen ? "Close navigation" : "Open navigation"}>
+                        <Button
+                            onClick={mainMenu.isLeftBarOpen ? mainMenu.onLeftBarClose : mainMenu.onLeftBarOpen}
+                            size="sm"
+                            aria-label={mainMenu.isLeftBarOpen ? "Close navigation menu" : "Open navigation menu"}
+                            aria-haspopup="menu"
+                            aria-expanded={mainMenu.isLeftBarOpen ? true : undefined}
+                            aria-controls="left-bar"
+                            colorScheme={leftColorScheme}
+                            backgroundColor={leftBackgroundColour}
+                            color={leftForegroundColour}
+                        >
+                            {mainMenu.isLeftBarOpen ? (
+                                <FAIcon iconStyle="s" icon="times" aria-hidden />
+                            ) : (
+                                <FAIcon iconStyle="s" icon="bars" aria-hidden />
+                            )}
+                        </Button>
+                    </Tooltip>
+                </Route>
+            ),
         [
+            attendee,
             leftBackgroundColour,
             leftForegroundColour,
             mainMenu.isLeftBarOpen,
@@ -82,30 +86,32 @@ function MenuBar(): JSX.Element {
     );
 
     const chatButton = useMemo(
-        () => (
-            <Route path="/conference">
-                <Tooltip label={mainMenu.isRightBarOpen ? "Close chats" : "Open chats"}>
-                    <Button
-                        onClick={mainMenu.isRightBarOpen ? mainMenu.onRightBarClose : mainMenu.onRightBarOpen}
-                        size="sm"
-                        aria-label={mainMenu.isRightBarOpen ? "Close chats" : "Open chats"}
-                        aria-haspopup="menu"
-                        aria-expanded={mainMenu.isRightBarOpen ? true : undefined}
-                        aria-controls="right-bar"
-                        colorScheme={rightColorScheme}
-                        backgroundColor={rightBackgroundColour}
-                        color={rightForegroundColour}
-                    >
-                        {mainMenu.isRightBarOpen ? (
-                            <FAIcon iconStyle="s" icon="comment-slash" aria-hidden />
-                        ) : (
-                            <FAIcon iconStyle="s" icon="comment" aria-hidden />
-                        )}
-                    </Button>
-                </Tooltip>
-            </Route>
-        ),
+        () =>
+            attendee && (
+                <Route path="/conference">
+                    <Tooltip label={mainMenu.isRightBarOpen ? "Close chats" : "Open chats"}>
+                        <Button
+                            onClick={mainMenu.isRightBarOpen ? mainMenu.onRightBarClose : mainMenu.onRightBarOpen}
+                            size="sm"
+                            aria-label={mainMenu.isRightBarOpen ? "Close chats" : "Open chats"}
+                            aria-haspopup="menu"
+                            aria-expanded={mainMenu.isRightBarOpen ? true : undefined}
+                            aria-controls="right-bar"
+                            colorScheme={rightColorScheme}
+                            backgroundColor={rightBackgroundColour}
+                            color={rightForegroundColour}
+                        >
+                            {mainMenu.isRightBarOpen ? (
+                                <FAIcon iconStyle="s" icon="comment-slash" aria-hidden />
+                            ) : (
+                                <FAIcon iconStyle="s" icon="comment" aria-hidden />
+                            )}
+                        </Button>
+                    </Tooltip>
+                </Route>
+            ),
         [
+            attendee,
             mainMenu.isRightBarOpen,
             mainMenu.onRightBarClose,
             mainMenu.onRightBarOpen,

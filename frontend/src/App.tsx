@@ -4,10 +4,10 @@ import { Route, RouteComponentProps, Switch } from "react-router-dom";
 import "./App.css";
 import Routing from "./AppRouting";
 import AttendeesContextProvider from "./aspects/Conference/AttendeesContext";
-import ConferenceProvider from "./aspects/Conference/useConference";
+import ConferenceProvider, { useMaybeConference } from "./aspects/Conference/useConference";
 import ConferenceCurrentUserActivePermissionsProvider from "./aspects/Conference/useConferenceCurrentUserActivePermissions";
 import CurrentUserGroupsRolesPermissionsProvider from "./aspects/Conference/useConferenceCurrentUserGroups";
-import { CurrentAttendeeProvider } from "./aspects/Conference/useCurrentAttendee";
+import { CurrentAttendeeProvider, useMaybeCurrentAttendee } from "./aspects/Conference/useCurrentAttendee";
 import EmojiMartProvider from "./aspects/Emoji/EmojiMartContext";
 import LeftSidebar from "./aspects/Menu/LeftSidebar";
 import MainMenu from "./aspects/Menu/MainMenu";
@@ -73,7 +73,11 @@ function AppInner({ confSlug, rootUrl }: AppProps): JSX.Element {
     );
 }
 
-function AppPage({ confSlug, rootUrl }: AppProps) {
+function AppPage({ rootUrl }: AppProps) {
+    const conference = useMaybeConference();
+    const confSlug = conference?.slug;
+    const attendee = useMaybeCurrentAttendee();
+
     const leftSidebarWidthPc = 20;
     const rightSidebarWidthPc = 20;
     const contentWidthPc = 100 - leftSidebarWidthPc - rightSidebarWidthPc;
@@ -94,8 +98,8 @@ function AppPage({ confSlug, rootUrl }: AppProps) {
     });
     const [leftOpen, setLeftOpen] = useState<boolean | null>(null);
     const [rightOpen, setRightOpen] = useState<boolean | null>(null);
-    const leftVisible = !!leftOpen;
-    const rightVisible = rightOpen && (rightDefaultVisible || !leftVisible);
+    const leftVisible = attendee && !!leftOpen;
+    const rightVisible = attendee && rightOpen && (rightDefaultVisible || !leftVisible);
 
     useEffect(() => {
         if (leftOpen === null && leftDefaultVisible !== undefined) {

@@ -385,34 +385,125 @@ created above.
      you.
      BCP: Full setup only, I assume? Or not even, for most people doing that?
 
-#### 8. Use ngrok for online (local) testing
+#### 8. Expose local services at a public URL
 
-First, `cp ngrok.example.yml ngrok.yml`.
+When you run Clowdr locally, many parts of the system rely on exposing local
+services at a public URL. For example:
 
-If you are using the free ngrok plan, remove the `hostname` lines from
-`ngrok.yml`. If you have a paid ngrok account, you'll need to fill out the
-`authtoken` with your personal auth token and the hostname fields with
-something appropriate.
+- The actions service needs to receive SNS notifications from AWS and
+  webhooks from Vonage.
+- The Hasura service needs to receive GraphQL queries from Auth0.
+- The frontend much prefers to be served over HTTPS.
 
-Then:
+Whenever your public URLs change, you will need to do the following:
 
-1. Start ngrok: `ngrok start --config=ngrok.yaml auth actions`
-2. Copy the auth URL (`http://<ngrok-subdomain>.ngrok.io/v1/graphql`) into
-   the `HASURA_URL` _Rule Configuration_ in Auth0 as shown in the "Configure
-   Rules" step above.
+1. Copy the auth URL (`http://<hasura-domain>/v1/graphql`) into the
+   `HASURA_URL` Auth0 _Rule Configuration_ as shown in step 5.
+1. You will also need to set the actions URL
+   (`http://<actions-domain>/vonage/sessionMonitoring/<VONAGE_WEBHOOK_SECRET>`)
+   into the Vonage Session Monitoring URL. You can find this in the _Project
+   Settings_ for your Vonage Video API project.
+1. Reconfigure any local environment variables that point at the URL or
+   domain of the frontend, actions service or Hasura service.
 
-**_Every time_** you start up for online (local) development, you will need
-to repeat these steps.
+There are a couple of services that make it easy to do this: Packetriot and
+Ngrok. You only need one of them. We recommend Packetriot unless you have
+a particular reason to use ngrok.
 
-You will also need to set the actions URL
-(`http://<ngrok-subdomain>.ngrok.io/vonage/sessionMonitoring/<VONAGE_WEBHOOK_SECRET>`)
-into the Vonage Session Monitoring URL. You can find this in the _Project
-Settings_ for your Vonage Video API project. (You can choose
-`VONAGE_WEBHOOK_SECRET` arbitrarily as long as it matches the setting in
-your env file.)
+##### [Packetriot](https://packetriot.com)
 
-If you have a paid ngrok account, you can create a persistent public URL and
-avoid having to do all this every time.
+Packetriot costs $5 per month. This gets you five tunnels that support five
+ports each - i.e. five users. You can configure a custom domain, so Google
+OAuth will work.
+
+###### Packetriot Setup (administrator)
+
+1. Create a Packetriot account
+1. [Download the client](https://packetriot.com/downloads) and ensure it is on your `PATH`.
+1. Follow the Packetriot instructions to verify your domain and set up an appropriate A/CNAME record.
+1. In the root of the repository, run `pktriot --config pktriot.json configure --url`. Follow the instructions to authenticate and create a new tunnel. This will create a `pktriot.json` file with the credentials for a tunnel.
+1. Add the following property to the JSON object, substituting your desired credentials.
+   ```json
+   "https": [
+         {
+               "domain": "<custom-frontend-subdomain>.<custom-domain>",
+               "secure": true,
+               "destination": "127.0.0.1",
+               "port": 3000,
+               "useLetsEnc": true,
+               "redirect": true,
+               "upstreamURL": ""
+         },
+         {
+               "domain": "<custom-hasura-subdomain>.<custom-domain>",
+               "secure": true,
+               "destination": "127.0.0.1",
+               "port": 8080,
+               "useLetsEnc": true,
+               "redirect": true,
+               "upstreamURL": ""
+         },
+         {
+               "domain": "<custom-actions-subdomain>.<custom-domain>",
+               "secure": true,
+               "destination": "127.0.0.1",
+               "port": 3001,
+               "useLetsEnc": true,
+               "redirect": true,
+               "upstreamURL": ""
+         }
+      ]
+   ```
+1. Run `pktriot start --config pktriot.json` to start the tunnel.
+1. Configure Auth0 and Vonage using your custom domain
+
+To create a (persistent) tunnel for one of your team members, repeat the penultimate two steps (with a different filename) and send the generated JSON config to the team member.
+
+###### Packetriot Setup (team member)
+
+1. Request a pre-configured file from your Packetriot administrator.
+1. Rename it to `pktriot.json` and place it in the root of the repository.
+1. Launch by running the _Packetriot_ task or running `pktriot start --config pktriot.json`
+
+Note: it may take a little while for Packetriot to acquire certificates initially.
+
+##### [ngrok](https://ngrok.com)
+
+The second alternative is ngrok.  
+Ngrok is either free (with random, ephemeral subdomains) or $8.25 per user
+per month (with custom domains).
+
+If you use the free version, you will have to perform some reconfiguration
+each time you relaunch ngrok. Additionally, Google OAuth (for YouTube
+integration) will not work properly, since it requires a verified domain.
+
+We have found that ngrok can be quite flaky.
+
+###### Ngrok Setup (paid)
+
+TODO
+
+###### Ngrok Setup (free)
+
+1. Create an ngrok account and note your auth token.
+1. Copy `ngrok.example.yml` to `ngrok.yml`.
+1. Set the `authtoken` and `region` (`us`, `eu`, `ap`, `au`, `sa`, `jp`, `in`)
+1. Remove the `hostname` line from each tunnel configuration - you will let ngrok pick random subdomains instead.
+1. Start ngrok (`ngrok start -config=./ngrok.yaml auth actions`)
+
+**_Every time_** you start up for online (local) development, you will need to reconfigure Auth0 and Vonage as specified earlier. The domain format is `<ngrok-subdomain>.ngrok.io`.
+
+Additionally, ensure that the following env vars are set to use localhost-based, rather than public, URLs:
+
+- frontend
+  - `SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN`
+  - `SNOWPACK_PUBLIC_COMPANION_BASE_URL`
+- services/actions
+  - `FRONTEND_DOMAIN`
+- services/presence
+  - `CORS_ORIGIN`
+
+When using free ngrok, access the frontend via its localhost URL (`http://localhost:3000`) rather than launching an ngrok tunnel for it. You could also launch the frontend tunnel, but you would need to update all the above environment variable each time the tunnel was restarted.
 
 #### 9. Configure "new UI experience"
 

@@ -315,6 +315,14 @@ For example:
 - The Hasura service needs to receive GraphQL queries from Auth0
 - The frontend much prefers to be served over HTTPS
 
+Whenever your public URLs change, you will need to do the following:
+
+1. Copy the auth URL (`http://<hasura-domain>/v1/graphql`) into the `HASURA_URL` Auth0 _Rule Configuration_ as shown in step 5.
+1. You will also need to set the actions URL (`http://<actions-domain>/vonage/sessionMonitoring/<VONAGE_WEBHOOK_SECRET>`)
+   into the Vonage Session Monitoring URL. You can find this in the _Project Settings_ for your Vonage Video
+   API project.
+1. Reconfigure any local environment variables that point at the URL or domain of the frontend, actions service or Hasura service.
+
 There are a couple of services that make it easy to do this:
 
 ##### [Packetriot](https://packetriot.com)
@@ -362,6 +370,7 @@ Packetriot is $5 per month. This gets you five tunnels that support five ports e
       ]
    ```
 1. Run `pktriot start --config pktriot.json` to start the tunnel.
+1. Configure Auth0 and Vonage using your custom domain
 
 To create a (persistent) tunnel for one of your team members, repeat the penultimate two steps (with a different filename) and send the generated JSON config to the team member.
 
@@ -393,14 +402,9 @@ TODO
 1. Copy `ngrok.example.yml` to `ngrok.yml`.
 1. Set the `authtoken` and `region` (`us`, `eu`, `ap`, `au`, `sa`, `jp`, `in`)
 1. Remove the `hostname` line from each tunnel configuration - you will let ngrok pick random subdomains instead.
-
-**_Every time_** you start up for online (local) development, you will need to:
-
 1. Start ngrok (`ngrok start -config=./ngrok.yaml auth actions`)
-1. Copy the auth URL (`http://<ngrok-subdomain>.ngrok.io/v1/graphql`) into the `HASURA_URL` Auth0 _Rule Configuration_ as shown in step 5.
-1. You will also need to set the actions URL (`http://<ngrok-subdomain>.ngrok.io/vonage/sessionMonitoring/<VONAGE_WEBHOOK_SECRET>`)
-   into the Vonage Session Monitoring URL. You can find this in the _Project Settings_ for your Vonage Video
-   API project.
+
+**_Every time_** you start up for online (local) development, you will need to reconfigure Auth0 and Vonage as specified earlier. The domain format is `<ngrok-subdomain>.ngrok.io`.
 
 Additionally, ensure that the following env vars are set to use localhost-based, rather than public, URLs:
 

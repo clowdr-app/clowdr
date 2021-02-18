@@ -8,28 +8,12 @@ import {
     ContentGroupEventsFragment,
     ContentGroupPage_ContentGroupRoomsFragment,
     ContentGroupType_Enum,
-    RoomMode_Enum,
 } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import usePolling from "../../../Generic/usePolling";
 import FAIcon from "../../../Icons/FAIcon";
 import PageCountText from "../../../Presence/PageCountText";
 import { useConference } from "../../useConference";
-
-function eventType(eventType: RoomMode_Enum): string {
-    switch (eventType) {
-        case RoomMode_Enum.Breakout:
-            return "breakout";
-        case RoomMode_Enum.Prerecorded:
-            return "pre-recorded video";
-        case RoomMode_Enum.Presentation:
-            return "presentation";
-        case RoomMode_Enum.QAndA:
-            return "Q&A session";
-        case RoomMode_Enum.Zoom:
-            return "Zoom meeting";
-    }
-}
 
 export function ContentGroupLive({
     contentGroupData,

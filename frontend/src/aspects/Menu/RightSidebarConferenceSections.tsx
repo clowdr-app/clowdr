@@ -12,6 +12,7 @@ import {
     FormControl,
     FormHelperText,
     FormLabel,
+    Heading,
     HStack,
     Image,
     Input,
@@ -47,11 +48,14 @@ import {
 import { Chat } from "../Chat/Chat";
 import { ChatNotificationsProvider } from "../Chat/ChatNotifications";
 import type { ChatSources } from "../Chat/Configuration";
+import { useAttendee } from "../Conference/AttendeesContext";
 import { useConference } from "../Conference/useConference";
 import type { Attendee } from "../Conference/useCurrentAttendee";
 import { useRestorableState } from "../Generic/useRestorableState";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
 import FAIcon from "../Icons/FAIcon";
+import RoomParticipantsProvider from "../Room/RoomParticipantsProvider";
+import useRoomParticipants from "../Room/useRoomParticipants";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 
 gql`
@@ -796,6 +800,73 @@ function ItemChatPanel({
     );
 }
 
+function PresencePanel_WithoutConnectedParticipants(): JSX.Element {
+    return (
+        <Text fontSize="sm" fontStyle="italic">
+            Coming soon!
+        </Text>
+    );
+}
+
+function ParticipantListItem({ attendeeId }: { attendeeId: string }): JSX.Element {
+    const attendee = useAttendee(attendeeId);
+    return (
+        <ListItem fontWeight="light">
+            <FAIcon icon="circle" iconStyle="s" fontSize="0.5rem" color="green.400" mr={2} mb={1} />
+            {attendee?.displayName ?? "Loading"}
+        </ListItem>
+    );
+}
+
+function RoomParticipantsList({ roomId }: { roomId: string }): JSX.Element {
+    const roomParticipants = useRoomParticipants();
+
+    const thisRoomParticipants = useMemo(
+        () => (roomParticipants ? roomParticipants.filter((participant) => participant.roomId === roomId) : []),
+        [roomId, roomParticipants]
+    );
+
+    return roomParticipants && roomParticipants.length > 0 ? (
+        <List fontSize="sm" maxH="3rem" overflowY="hidden" columns={3} columnGap={3} width="100%">
+            {thisRoomParticipants.map((participant) => (
+                <ParticipantListItem key={participant.id} attendeeId={participant.attendeeId} />
+            ))}
+        </List>
+    ) : (
+        <Text fontSize="sm" fontStyle="italic">
+            Nobody is connected to this room at the moment.
+        </Text>
+    );
+}
+
+function PresencePanel_WithConnectedParticipants({ roomId }: { roomId: string }): JSX.Element {
+    return (
+        <>
+            <Heading as="h3" fontSize="sm" textAlign="left" mb={2}>
+                Connected to this room
+            </Heading>
+            <RoomParticipantsList roomId={roomId} />
+            <Divider my={4} />
+            <Heading as="h3" fontSize="sm" textAlign="left" mb={2}>
+                Here with you
+            </Heading>
+            <PresencePanel_WithoutConnectedParticipants />
+        </>
+    );
+}
+
+function PresencePanel({ roomId }: { roomId?: string }): JSX.Element {
+    if (roomId) {
+        return (
+            <RoomParticipantsProvider roomId={roomId}>
+                <PresencePanel_WithConnectedParticipants roomId={roomId} />
+            </RoomParticipantsProvider>
+        );
+    } else {
+        return <PresencePanel_WithoutConnectedParticipants />;
+    }
+}
+
 function RightSidebarConferenceSections_Inner({
     rootUrl,
     confSlug,
@@ -894,7 +965,7 @@ function RightSidebarConferenceSections_Inner({
         ),
         [attendee.id, confSlug, pageChatId, setCurrentTab]
     );
-    const presencePanel = useMemo(() => <>Presence</>, []);
+    const presencePanel = useMemo(() => <PresencePanel roomId={roomId} />, [roomId]);
 
     return (
         <Tabs

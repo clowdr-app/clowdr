@@ -105,20 +105,20 @@ export function RoomBackstage({
                         key={event.id}
                         border={`1px ${borderColour} solid`}
                         width="max-content"
+                        maxW="100%"
                         p={4}
                         alignItems="center"
                         borderRadius="md"
-                        flexWrap="wrap"
                     >
-                        <Heading as="h3" size="md" width="min-content" textAlign="right" mr={8}>
+                        <Heading as="h3" size="md" width="min-content" textAlign="right" mr={8} whiteSpace="normal">
                             {category}
                         </Heading>
                         <VStack px={8} alignItems="left">
-                            <Heading as="h4" size="md" textAlign="left" mt={2} mb={1}>
+                            <Heading as="h4" size="md" textAlign="left" mt={2} mb={1} whiteSpace="normal">
                                 {title}
                             </Heading>
 
-                            <Text my={2} fontStyle="italic">
+                            <Text my={2} fontStyle="italic" whiteSpace="normal">
                                 {formatRelative(Date.parse(event.startTime), now)}
                             </Text>
                         </VStack>
@@ -127,8 +127,11 @@ export function RoomBackstage({
                             onClick={() => (isSelected ? setSelectedEventId(null) : setSelectedEventId(event.id))}
                             height="min-content"
                             py={4}
+                            whiteSpace="normal"
                         >
-                            <Text fontSize="lg">{isSelected ? "Close this area" : "Open this area"}</Text>
+                            <Text fontSize="lg" whiteSpace="normal">
+                                {isSelected ? "Close this area" : "Open this area"}
+                            </Text>
                         </Button>
                     </HStack>
 

@@ -2283,14 +2283,89 @@
   - role: user
     permission:
       check:
-        conference:
-          createdBy:
-            _eq: X-Hasura-User-Id
+        _or:
+        - _and:
+          - conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
+          - _exists:
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _eq: CONFERENCE_MANAGE_CONTENT
+              _table:
+                schema: public
+                name: FlatUserPermission
+        - conference:
+            createdBy:
+              _eq: X-Hasura-User-Id
       columns:
       - conferenceId
       - key
       - value
       backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - conferenceId
+      - created_at
+      - id
+      - key
+      - updated_at
+      - value
+      filter:
+        _or:
+        - _and:
+          - conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
+          - _exists:
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _eq: CONFERENCE_MANAGE_CONTENT
+              _table:
+                schema: public
+                name: FlatUserPermission
+        - conference:
+            createdBy:
+              _eq: X-Hasura-User-Id
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - value
+      filter:
+        _or:
+        - _and:
+          - conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
+          - _exists:
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _eq: CONFERENCE_MANAGE_CONTENT
+              _table:
+                schema: public
+                name: FlatUserPermission
+        - conference:
+            createdBy:
+              _eq: X-Hasura-User-Id
+      check: null
 - table:
     schema: public
     name: ConferenceDemoCode

@@ -1,10 +1,15 @@
-import { Textarea } from "@chakra-ui/react";
-import { ContentBaseType, ContentItemVersionData } from "@clowdr-app/shared-types/build/content";
+import { Textarea, useToast } from "@chakra-ui/react";
+import {
+    AbstractBlob,
+    ContentBaseType,
+    ContentItemVersionData,
+    TextBlob,
+} from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
-import React from "react";
+import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { ContentType_Enum } from "../../../../generated/graphql";
-import type { ItemBaseTemplate } from "./Types";
+import type { ItemBaseTemplate, RenderEditorProps } from "./Types";
 
 // TODO: Use Markdown editor instead of textarea
 
@@ -18,6 +23,12 @@ function createDefaultText(type: ContentType_Enum.Abstract | ContentType_Enum.Te
             text: "",
         },
     };
+}
+
+interface TextItemVersionData {
+    createdAt: number;
+    createdBy: string;
+    data: AbstractBlob | TextBlob;
 }
 
 export const TextItemTemplate: ItemBaseTemplate = {
@@ -56,12 +67,14 @@ export const TextItemTemplate: ItemBaseTemplate = {
             };
         }
     },
-    renderEditor: function TextItemEditor(data, update) {
+    renderEditor: function TextItemEditor({ data, update }: RenderEditorProps) {
+        const toast = useToast();
+        const [text, setText] = useState<string | null>(null);
+
         if (data.type === "item-only" || data.type === "required-and-item") {
-            assert(
-                data.item.typeName === ContentType_Enum.Abstract || data.item.typeName === ContentType_Enum.Text,
-                `Text Item Template mistakenly used for type ${data.type}.`
-            );
+            if (!(data.item.typeName === ContentType_Enum.Abstract || data.item.typeName === ContentType_Enum.Text)) {
+                return <>Text Item Template mistakenly used for type {data.type}.</>;
+            }
 
             const placeholder = data.item.typeName === ContentType_Enum.Abstract ? "Abstract" : "Text";
 
@@ -76,37 +89,52 @@ export const TextItemTemplate: ItemBaseTemplate = {
                 setTimeout(() => update(data), 0);
             }
 
-            const latestVersion = data.item.data[data.item.data.length - 1];
-            assert(
-                latestVersion.data.baseType === ContentBaseType.Text,
-                `Text Item Template mistakenly used for base type ${latestVersion.data.baseType}.`
-            );
+            const latestVersion = data.item.data[data.item.data.length - 1] as TextItemVersionData;
+            if (latestVersion.data.baseType !== ContentBaseType.Text) {
+                return <>Text Item Template mistakenly used for base type {latestVersion.data.baseType}.</>;
+            }
             return (
                 <Textarea
                     transition="none"
                     placeholder={placeholder}
-                    value={latestVersion.data.text}
+                    value={text ?? latestVersion.data.text}
                     onChange={(ev) => {
-                        assert(data.type !== "required-only");
-                        const oldItemIdx = data.item.data.indexOf(latestVersion);
-                        const newData = {
-                            ...data,
-                            item: {
-                                ...data.item,
-                                data: data.item.data.map((version, idx) => {
-                                    return idx === oldItemIdx
-                                        ? {
-                                              ...version,
-                                              data: {
-                                                  ...version.data,
-                                                  text: ev.target.value,
-                                              },
-                                          }
-                                        : version;
-                                }),
-                            },
-                        };
-                        update(newData);
+                        setText(ev.target.value);
+                    }}
+                    onBlur={(ev) => {
+                        try {
+                            assert(data.type !== "required-only");
+                            if (ev.target.value === latestVersion.data.text) {
+                                return;
+                            }
+                            const oldItemIdx = data.item.data.indexOf(latestVersion);
+                            const newData = {
+                                ...data,
+                                item: {
+                                    ...data.item,
+                                    data: data.item.data.map((version, idx) => {
+                                        return idx === oldItemIdx
+                                            ? {
+                                                  ...version,
+                                                  data: {
+                                                      ...version.data,
+                                                      text: ev.target.value,
+                                                  },
+                                              }
+                                            : version;
+                                    }),
+                                },
+                            };
+                            update(newData);
+                            setText(null);
+                        } catch (e) {
+                            console.error("Error saving text", e);
+                            toast({
+                                status: "error",
+                                title: "Error saving text",
+                                description: e.message,
+                            });
+                        }
                     }}
                 />
             );

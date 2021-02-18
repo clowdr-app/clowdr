@@ -113,6 +113,9 @@ export type ContentGroupDescriptor = {
     people: ContentGroupPersonDescriptor[];
     hallways: ContentGroupHallwayDescriptor[];
     originatingDataId?: string;
+    rooms: {
+        id: string;
+    }[];
 };
 
 export type ItemBaseTemplate =

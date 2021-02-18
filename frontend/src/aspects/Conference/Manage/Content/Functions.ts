@@ -115,6 +115,7 @@ export function convertContentGroupToDescriptor(group: ContentGroupFullNestedInf
             priority: groupHallway.priority,
         })),
         originatingDataId: group.originatingDataId,
+        rooms: [...group.rooms],
     };
 }
 
@@ -167,5 +168,6 @@ export function deepCloneContentGroupDescriptor(group: ContentGroupDescriptor): 
         typeName: group.typeName,
         tagIds: new Set(group.tagIds),
         originatingDataId: group.originatingDataId,
+        rooms: [...group.rooms],
     };
 }

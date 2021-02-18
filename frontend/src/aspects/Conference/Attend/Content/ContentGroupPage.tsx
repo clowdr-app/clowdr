@@ -40,7 +40,7 @@ gql`
     }
 
     fragment ContentGroupPage_ContentGroupRooms on ContentGroup {
-        rooms(where: { name: { _like: "Breakout:%" } }, order_by: { created_at: asc }) {
+        rooms(where: { originatingEventId: { _is_null: true } }, limit: 1, order_by: { created_at: asc }) {
             id
         }
     }
@@ -63,13 +63,6 @@ gql`
         name
         intendedRoomModeName
     }
-
-    mutation ContentGroup_CreateRoom($conferenceId: uuid!, $contentGroupId: uuid!) {
-        createContentGroupRoom(conferenceId: $conferenceId, contentGroupId: $contentGroupId) {
-            roomId
-            message
-        }
-    }
 `;
 
 export default function ContentGroupPage({ contentGroupId }: { contentGroupId: string }): JSX.Element {
@@ -82,56 +75,6 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
     const title = useTitle(result.data?.ContentGroup_by_pk?.title ?? "Unknown content item");
 
     useNoPrimaryMenuButtons();
-
-    // TODO: Move into admin interface
-    // const conference = useConference();
-    // const toast = useToast();
-    // const history = useHistory();
-    // const [createBreakoutMutation] = useContentGroup_CreateRoomMutation();
-    // const [creatingBreakout, setCreatingBreakout] = useState<boolean>(false);
-    // const createBreakout = useCallback(async () => {
-    //     if (!result.data?.ContentGroup_by_pk) {
-    //         return;
-    //     }
-
-    //     const contentGroup = result.data.ContentGroup_by_pk;
-
-    //     try {
-    //         setCreatingBreakout(true);
-    //         const { data } = await createBreakoutMutation({
-    //             variables: {
-    //                 conferenceId: conference.id,
-    //                 contentGroupId: contentGroup.id,
-    //             },
-    //         });
-
-    //         if (!data?.createContentGroupRoom || !data.createContentGroupRoom.roomId) {
-    //             throw new Error(`No data returned: ${data?.createContentGroupRoom?.message}`);
-    //         }
-
-    //         const roomId = data.createContentGroupRoom.roomId;
-
-    //         // Wait so that breakout session has a chance to be created
-    //         setTimeout(() => history.push(`/conference/${conference.slug}/room/${roomId}`), 2000);
-    //     } catch (e) {
-    //         toast({
-    //             status: "error",
-    //             title: "Failed to create room.",
-    //             description: e?.message,
-    //         });
-    //     } finally {
-    //         setCreatingBreakout(false);
-    //     }
-    // }, [conference.id, conference.slug, createBreakoutMutation, history, result.data?.ContentGroup_by_pk, toast]);{contentGroupData.rooms.length === 0 ? (
-    // <Button
-    //     colorScheme="green"
-    //     isLoading={creatingBreakout}
-    //     onClick={createBreakout}
-    //     width="100%"
-    //     mt={2}
-    // >
-    //     Create breakout room
-    // </Button>
 
     return (
         <RequireAtLeastOnePermissionWrapper
@@ -164,23 +107,17 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
                                     maxW="100%"
                                 >
                                     <Box maxW="100%" textAlign="center" flexGrow={1} style={{ scrollbarWidth: "thin" }}>
-                                        <Box position="relative">
+                                        <Box>
                                             <ContentGroupVideos contentGroupData={contentGroupData} />
-                                            <RequireAtLeastOnePermissionWrapper
-                                                permissions={[Permission_Enum.ConferenceViewAttendees]}
-                                            >
-                                                <Box
-                                                    position={["static", "static", "absolute"]}
-                                                    mt={[2, 2, 0]}
-                                                    top="1rem"
-                                                    right="1rem"
-                                                >
-                                                    <ContentGroupLive contentGroupData={contentGroupData} />
-                                                </Box>
-                                            </RequireAtLeastOnePermissionWrapper>
                                         </Box>
                                         <Box ml={5} maxW="100%">
-                                            <ContentGroupSummary contentGroupData={contentGroupData} />
+                                            <ContentGroupSummary contentGroupData={contentGroupData}>
+                                                <RequireAtLeastOnePermissionWrapper
+                                                    permissions={[Permission_Enum.ConferenceViewAttendees]}
+                                                >
+                                                    <ContentGroupLive contentGroupData={contentGroupData} />
+                                                </RequireAtLeastOnePermissionWrapper>
+                                            </ContentGroupSummary>
                                             <Heading as="h3" size="lg" textAlign="left">
                                                 Events
                                             </Heading>

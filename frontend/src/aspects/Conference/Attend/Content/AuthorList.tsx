@@ -41,35 +41,78 @@ export function AuthorList({
     hideRole?: boolean;
     hiddenRoles?: string[];
 }): JSX.Element {
-    const authorElements = useMemo(() => {
+    const [authorEls, chairEls, othersEls] = useMemo(() => {
         const data =
             hiddenRoles && hiddenRoles.length > 0
                 ? contentPeopleData.filter((x) => !hiddenRoles.includes(x.roleName.toLowerCase()))
-                : contentPeopleData;
-        return [...data].sort(sortAuthors).map((contentPersonData) => {
+                : [...contentPeopleData];
+        const authors = data.filter((x) => x.roleName.toUpperCase() === "AUTHOR");
+        const chairs = data.filter((x) => x.roleName.toUpperCase() === "CHAIR");
+        const others = data.filter(
+            (x) => x.roleName.toUpperCase() !== "AUTHOR" && x.roleName.toUpperCase() !== "CHAIR"
+        );
+
+        const createEl = (contentPersonData: ContentPersonDataFragment) => {
             return <Author contentPersonData={contentPersonData} key={contentPersonData.id} hideRole={hideRole} />;
-        });
+        };
+
+        return [
+            authors.sort(sortAuthors).map(createEl),
+            chairs.sort(sortAuthors).map(createEl),
+            others.sort(sortAuthors).map(createEl),
+        ];
     }, [contentPeopleData, hiddenRoles, hideRole]);
 
     return (
-        <HStack spacing="0" gridGap="8" wrap="wrap">
-            {authorElements}
-        </HStack>
+        <>
+            {authorEls.length > 0 ? (
+                <HStack spacing="0" gridGap="8" wrap="wrap">
+                    {authorEls}
+                </HStack>
+            ) : undefined}
+            {chairEls.length > 0 ? (
+                <HStack spacing="0" gridGap="8" wrap="wrap" mt={authorEls.length > 0 ? 8 : undefined}>
+                    {chairEls}
+                </HStack>
+            ) : undefined}
+            {othersEls.length > 0 ? (
+                <HStack
+                    spacing="0"
+                    gridGap="8"
+                    wrap="wrap"
+                    mt={chairEls.length > 0 || authorEls.length > 0 ? 8 : undefined}
+                >
+                    {othersEls}
+                </HStack>
+            ) : undefined}
+        </>
     );
 }
 
 export function Author({
     contentPersonData,
     hideRole,
+    badgeColour,
 }: {
     contentPersonData: ContentPersonDataFragment;
     hideRole?: boolean;
+    badgeColour?: string;
 }): JSX.Element {
     return (
         <VStack textAlign="left" justifyContent="flex-start" alignItems="flex-start">
             <Text fontWeight="bold">{contentPersonData.person.name}</Text>
             {!hideRole ? (
-                <Badge ml="2" colorScheme="green" verticalAlign="initial">
+                <Badge
+                    ml="2"
+                    colorScheme={
+                        badgeColour ?? contentPersonData.roleName.toUpperCase() === "AUTHOR"
+                            ? "green"
+                            : contentPersonData.roleName.toUpperCase() === "CHAIR"
+                            ? "yellow"
+                            : "red"
+                    }
+                    verticalAlign="initial"
+                >
                     {contentPersonData.roleName}
                 </Badge>
             ) : undefined}

@@ -1,15 +1,18 @@
 import { Text, VStack } from "@chakra-ui/react";
 import { formatRelative } from "date-fns";
 import * as R from "ramda";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
     ContentGroupDataFragment,
     ContentGroupEventFragment,
     ContentGroupEventsFragment,
+    ContentGroupPage_ContentGroupRoomsFragment,
+    ContentGroupType_Enum,
     RoomMode_Enum,
 } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import usePolling from "../../../Generic/usePolling";
+import PageCountText from "../../../Presence/PageCountText";
 import { useConference } from "../../useConference";
 
 function eventType(eventType: RoomMode_Enum): string {
@@ -30,7 +33,9 @@ function eventType(eventType: RoomMode_Enum): string {
 export function ContentGroupLive({
     contentGroupData,
 }: {
-    contentGroupData: ContentGroupDataFragment & ContentGroupEventsFragment;
+    contentGroupData: ContentGroupDataFragment &
+        ContentGroupEventsFragment &
+        ContentGroupPage_ContentGroupRoomsFragment;
 }): JSX.Element {
     const [liveEvents, setLiveEvents] = useState<ContentGroupEventFragment[] | null>(null);
     const [nextEvent, setNextEvent] = useState<ContentGroupEventFragment | null>(null);
@@ -52,18 +57,14 @@ export function ContentGroupLive({
     usePolling(computeLiveEvent, 5000, true);
     useEffect(() => computeLiveEvent(), [computeLiveEvent]);
 
-    // const currentRoom = useMemo(
-    //     () =>
-    //         contentGroupData.chat?.room && contentGroupData.chat?.room.length > 0
-    //             ? contentGroupData.chat?.room[0]
-    //             : undefined,
-    //     [contentGroupData.chat?.room]
-    // );
+    const currentRoom = useMemo(() => (contentGroupData.rooms.length > 0 ? contentGroupData.rooms[0] : undefined), [
+        contentGroupData.rooms,
+    ]);
 
     const conference = useConference();
 
     return (
-        <VStack alignItems="stretch">
+        <VStack alignItems="stretch" width="min-content">
             {liveEvents?.map((event) => (
                 <LinkButton
                     width="100%"
@@ -101,7 +102,7 @@ export function ContentGroupLive({
             ) : (
                 <></>
             )}
-            {/* {(!liveEvents || liveEvents.length === 0) && currentRoom ? (
+            {currentRoom ? (
                 <LinkButton
                     width="100%"
                     to={`/conference/${conference.slug}/room/${currentRoom.id}`}
@@ -111,14 +112,15 @@ export function ContentGroupLive({
                     py={2}
                 >
                     <VStack spacing={0}>
-                        <Text>Ongoing breakout room</Text>
-                        <Text mt={0} fontSize="sm">
-                            {currentRoom.name}
+                        <Text>
+                            {contentGroupData.contentGroupTypeName === ContentGroupType_Enum.Sponsor
+                                ? "Go to booth"
+                                : "Go to discussion room"}
                         </Text>
                         <PageCountText path={`/conference/${conference.slug}/room/${currentRoom.id}`} />
                     </VStack>
                 </LinkButton>
-            ) : undefined} */}
+            ) : undefined}
         </VStack>
     );
 }

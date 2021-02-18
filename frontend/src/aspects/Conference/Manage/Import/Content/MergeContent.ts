@@ -539,6 +539,7 @@ function convertGroup(
         people: [],
         requiredItems: [],
         tagIds: new Set(),
+        rooms: [],
     } as ContentGroupDescriptor;
 
     const origDataIdx = findExistingOriginatingData(context, context.originatingDatas, item);

@@ -792,7 +792,7 @@ export function GroupPeopleEditorModal({
     isDirty: boolean;
     markDirty: () => void;
     setAllContentGroupsMap: React.Dispatch<React.SetStateAction<Map<string, ContentGroupDescriptor> | undefined>>;
-}) {
+}): JSX.Element {
     const { isOpen: isUploadersOpen, onOpen: onUploadersOpen, onClose: onUploadersClose } = useDisclosure();
     const accordianContents = (
         <>
@@ -872,7 +872,7 @@ export function GroupHallwaysEditorModal({
     isDirty: boolean;
     markDirty: () => void;
     setAllContentGroupsMap: React.Dispatch<React.SetStateAction<Map<string, ContentGroupDescriptor> | undefined>>;
-}) {
+}): JSX.Element {
     const { isOpen: isUploadersOpen, onOpen: onUploadersOpen, onClose: onUploadersClose } = useDisclosure();
     const accordianContents = (
         <>
@@ -969,7 +969,7 @@ export function RequiredItemEditorModal({
               requiredItem: RequiredContentItemDescriptor;
               item: ContentItemDescriptor;
           };
-}) {
+}): JSX.Element {
     const reqItemEditorContents = itemTemplate.renderEditor(itemDesc, (updatedDesc) => {
         assert(updatedDesc.type !== "item-only");
         markDirty();

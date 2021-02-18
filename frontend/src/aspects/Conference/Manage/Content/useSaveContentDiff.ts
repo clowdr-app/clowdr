@@ -149,6 +149,9 @@ gql`
             ...ContentGroupPersonInfo
         }
         originatingDataId
+        rooms(where: { originatingEventId: { _is_null: true } }, limit: 1, order_by: { created_at: asc }) {
+            id
+        }
     }
 
     fragment TagInfo on Tag {

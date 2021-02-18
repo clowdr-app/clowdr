@@ -48,7 +48,7 @@ export function ContentGroupVideos({ contentGroupData }: { contentGroupData: Con
                                 ]}
                                 flexBasis={0}
                                 mx={5}
-                                my={3}
+                                mb={5}
                                 visibility={[
                                     "visible",
                                     "visible",
@@ -82,8 +82,7 @@ export function ContentGroupVideos({ contentGroupData }: { contentGroupData: Con
             alignItems="center"
             background="gray.900"
             borderRadius={5}
-            py={5}
-            minH={["0", "0", "80vh"]}
+            pb={5}
             flexDir={["column", "column", "row"]}
         >
             {videoContentItems}
@@ -186,7 +185,7 @@ export function ContentGroupVideo({
 
     return (
         <>
-            <Heading as="h3" fontSize={24} mb={4} color="gray.50">
+            <Heading as="h3" fontSize="2xl" mb={2} color="gray.50">
                 {title === "Livestream broadcast video"
                     ? "Lightning talk"
                     : title === "Pre-published video"

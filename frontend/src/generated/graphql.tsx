@@ -31661,7 +31661,7 @@ export type ContentGroupFullNestedInfoFragment = { readonly __typename?: 'Conten
   )>, readonly people: ReadonlyArray<(
     { readonly __typename?: 'ContentGroupPerson' }
     & ContentGroupPersonInfoFragment
-  )> };
+  )>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }> };
 
 export type TagInfoFragment = { readonly __typename?: 'Tag', readonly id: any, readonly conferenceId: any, readonly colour: string, readonly name: string, readonly originatingDataId?: Maybe<any> };
 
@@ -33114,7 +33114,11 @@ export const ContentGroupDataFragmentDoc = gql`
 ${ContentPersonDataFragmentDoc}`;
 export const ContentGroupPage_ContentGroupRoomsFragmentDoc = gql`
     fragment ContentGroupPage_ContentGroupRooms on ContentGroup {
-  rooms(where: {name: {_like: "Breakout:%"}}, order_by: {created_at: asc}) {
+  rooms(
+    where: {originatingEventId: {_is_null: true}}
+    limit: 1
+    order_by: {created_at: asc}
+  ) {
     id
   }
 }
@@ -33507,6 +33511,13 @@ export const ContentGroupFullNestedInfoFragmentDoc = gql`
     ...ContentGroupPersonInfo
   }
   originatingDataId
+  rooms(
+    where: {originatingEventId: {_is_null: true}}
+    limit: 1
+    order_by: {created_at: asc}
+  ) {
+    id
+  }
 }
     ${RequiredContentItemInfoFragmentDoc}
 ${ContentItemInfoFragmentDoc}

@@ -176,11 +176,9 @@ export function ConfigureEmailTemplatesInner({
 
 function EmailTemplateForm({
     templateConfig,
-    view,
     update,
 }: {
     templateConfig: EmailTemplate_BaseConfig | null;
-    view: any;
     update: (_templateConfig: EmailTemplate_BaseConfig) => void;
 }) {
     const [subjectTemplate, setSubjectTemplate] = useState<string | null>(null);

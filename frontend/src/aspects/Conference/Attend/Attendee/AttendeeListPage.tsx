@@ -81,12 +81,7 @@ export default function AttendeeListPage(): JSX.Element {
             return [];
         }
 
-        return dataAttendees?.Attendee.map((attendee) => {
-            if (attendee.profile) {
-                return attendee;
-            }
-            return undefined;
-        }).filter((x) => !!x) as Attendee[];
+        return dataAttendees?.Attendee.filter((x) => !!x.profile && !!x.userId) as Attendee[];
     }, [dataAttendees, errorAttendees, loadingAttendees]);
 
     const [attendees, setAttendees] = useState<Attendee[] | null>(null);
@@ -101,7 +96,7 @@ export default function AttendeeListPage(): JSX.Element {
     useEffect(() => {
         setSearched(allSearched?.slice(0, loadedCount) ?? null);
         setIsLoadingMore(false);
-    }, [allAttendees, allSearched, loadedCount]);
+    }, [allSearched, loadedCount]);
 
     useEffect(() => {
         function doSearch() {
@@ -113,26 +108,28 @@ export default function AttendeeListPage(): JSX.Element {
                 return undefined;
             }
 
-            return dataSearch?.Attendee.map((attendee) => {
-                if (attendee.profile) {
-                    return attendee;
-                }
-                return undefined;
-            }).filter((x) => !!x) as Attendee[];
+            return dataSearch?.Attendee.filter((x) => !!x.profile && !!x.userId) as Attendee[];
         }
 
         setLoadedCount(30);
         setAllSearched((oldSearched) => doSearch() ?? oldSearched ?? null);
-    }, [dataSearch, errorSearch, loadingSearch]);
+        // We need `search` in the sensitivity list because Apollo cache may not
+        // change the data/error/loading state if the result comes straight from
+        // the cache of the last run the search query
+    }, [dataSearch, errorSearch, loadingSearch, search]);
 
     useEffect(() => {
         const tId = setTimeout(() => {
-            searchQuery({
-                variables: {
-                    conferenceId: conference.id,
-                    search: `%${search}%`,
-                },
-            });
+            if (search.length >= 3) {
+                searchQuery({
+                    variables: {
+                        conferenceId: conference.id,
+                        search: `%${search}%`,
+                    },
+                });
+            } else {
+                setAllSearched(null);
+            }
         }, 750);
         return () => {
             clearTimeout(tId);
@@ -158,7 +155,7 @@ export default function AttendeeListPage(): JSX.Element {
                         {loadingSearch ? <Spinner /> : <FAIcon iconStyle="s" icon="search" />}
                     </InputRightElement>
                 </InputGroup>
-                <FormHelperText>Search names, affiliations and bios.</FormHelperText>
+                <FormHelperText>Search names, affiliations and bios. (Min length 3)</FormHelperText>
             </FormControl>
             <AttendeesList
                 allAttendees={attendees ?? undefined}

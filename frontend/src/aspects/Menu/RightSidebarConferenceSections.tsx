@@ -5,9 +5,19 @@ import {
     AlertDescription,
     AlertIcon,
     AlertTitle,
+    Box,
     Button,
+    Center,
     Divider,
+    FormControl,
+    FormHelperText,
+    FormLabel,
     HStack,
+    Image,
+    Input,
+    InputGroup,
+    InputLeftAddon,
+    InputRightElement,
     List,
     ListIcon,
     ListItem,
@@ -19,6 +29,8 @@ import {
     Tabs,
     Text,
     Tooltip,
+    useToast,
+    VStack,
 } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
@@ -26,14 +38,19 @@ import {
     AttendeeFieldsFragment,
     RoomPrivacy_Enum,
     SidebarChatInfoFragment,
+    useCreateDmMutation,
     useGetContentGroupChatIdQuery,
     useGetRoomChatIdQuery,
     usePinnedChatsWithUnreadCountsQuery,
+    useSearchAttendeesLazyQuery,
 } from "../../generated/graphql";
 import { Chat } from "../Chat/Chat";
 import { ChatNotificationsProvider } from "../Chat/ChatNotifications";
 import type { ChatSources } from "../Chat/Configuration";
+import { useConference } from "../Conference/useConference";
+import type { Attendee } from "../Conference/useCurrentAttendee";
 import { useRestorableState } from "../Generic/useRestorableState";
+import useQueryErrorToast from "../GQL/useQueryErrorToast";
 import FAIcon from "../Icons/FAIcon";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 
@@ -107,7 +124,7 @@ function ChatListItem({
     confSlug: string;
     onClick: () => void;
 }): JSX.Element {
-    const chatName = computeChatName(chat, attendeeId);
+    const chatName = computeChatName(chat, attendeeId) ?? "<Unknown chat>";
     const unreadCount =
         chat && chat.readUpToIndices && chat.readUpToIndices.length > 0
             ? chat.readUpToIndices[0].unreadCount ?? undefined
@@ -117,8 +134,8 @@ function ChatListItem({
 
     return (
         <ListItem key={chat.id} fontWeight={unreadCount ? "bold" : undefined} display="flex">
-            <ListIcon mt="0.7ex" as={isDM ? AtSignIcon : isPrivate ? LockIcon : ChatIcon} />
-            <Button onClick={onClick} size="xs" background="none" whiteSpace="normal" textAlign="left" h="auto" p={1}>
+            <ListIcon mt="0.7ex" fontSize="sm" as={isDM ? AtSignIcon : isPrivate ? LockIcon : ChatIcon} />
+            <Button onClick={onClick} size="sm" variant="ghost" whiteSpace="normal" textAlign="left" h="auto" p={1}>
                 <Text as="span">
                     {unreadCount ? `(${unreadCount})` : undefined} {chatName}
                 </Text>
@@ -156,13 +173,168 @@ function sortChats(attendeeId: string, x: SidebarChatInfoFragment, y: SidebarCha
     }
 }
 
+function AttendeeTile({ attendee, onClick }: { attendee: Attendee; onClick: () => void }): JSX.Element {
+    return (
+        <Button
+            variant="ghost"
+            borderRadius={0}
+            p={0}
+            w="100%"
+            h="auto"
+            minH="25px"
+            justifyContent="flex-start"
+            onClick={onClick}
+            overflow="hidden"
+        >
+            {attendee.profile.photoURL_50x50 ? (
+                <Image
+                    w="25px"
+                    h="25px"
+                    ml={2}
+                    aria-describedby={`attendee-trigger-${attendee.id}`}
+                    src={attendee.profile.photoURL_50x50}
+                />
+            ) : (
+                <Center w="25px" h="25px" flex="0 0 25px" ml={2}>
+                    <FAIcon iconStyle="s" icon="cat" />
+                </Center>
+            )}
+            <Center maxH="100%" flex="0 1 auto" py={0} mx={2} overflow="hidden">
+                <Text
+                    my={2}
+                    as="span"
+                    id={`attendee-trigger-${attendee.id}`}
+                    maxW="100%"
+                    whiteSpace="normal"
+                    overflowWrap="anywhere"
+                    fontSize="sm"
+                >
+                    {attendee.displayName}
+                </Text>
+            </Center>
+        </Button>
+    );
+}
+
+function AttendeesList({
+    searchedAttendees,
+    createDM,
+}: {
+    searchedAttendees?: Attendee[];
+    createDM: (attendeeId: string, attendeeName: string) => void;
+}): JSX.Element {
+    return (
+        <List>
+            {searchedAttendees?.map((attendee, idx) => (
+                <ListItem key={attendee.id + "-search-" + idx}>
+                    <AttendeeTile
+                        attendee={attendee}
+                        onClick={() => {
+                            createDM(attendee.id, attendee.displayName);
+                        }}
+                    />
+                </ListItem>
+            ))}
+        </List>
+    );
+}
+
+function PeopleSearch({ createDM }: { createDM: (attendeeId: string, attendeeName: string) => void }): JSX.Element {
+    const [search, setSearch] = useState<string>("");
+
+    const conference = useConference();
+
+    const [
+        searchQuery,
+        { loading: loadingSearch, error: errorSearch, data: dataSearch },
+    ] = useSearchAttendeesLazyQuery();
+    useQueryErrorToast(errorSearch, false, "RightSidebarConferenceSections.tsx -- search attendees");
+
+    const [loadedCount, setLoadedCount] = useState<number>(30);
+
+    const [searched, setSearched] = useState<Attendee[] | null>(null);
+    const [allSearched, setAllSearched] = useState<Attendee[] | null>(null);
+
+    useEffect(() => {
+        setSearched(allSearched?.slice(0, loadedCount) ?? null);
+    }, [allSearched, loadedCount]);
+
+    useEffect(() => {
+        function doSearch() {
+            if ((loadingSearch && !dataSearch) || errorSearch) {
+                return undefined;
+            }
+
+            if (!dataSearch) {
+                return undefined;
+            }
+
+            return dataSearch?.Attendee.filter((x) => !!x.profile && !!x.userId) as Attendee[];
+        }
+
+        setLoadedCount(30);
+        setAllSearched((oldSearched) => doSearch() ?? oldSearched ?? null);
+        // We need `search` in the sensitivity list because Apollo cache may not
+        // change the data/error/loading state if the result comes straight from
+        // the cache of the last run of the search query
+    }, [dataSearch, errorSearch, loadingSearch, search]);
+
+    useEffect(() => {
+        const tId = setTimeout(() => {
+            if (search.length >= 3) {
+                searchQuery({
+                    variables: {
+                        conferenceId: conference.id,
+                        search: `%${search}%`,
+                    },
+                });
+            } else {
+                setAllSearched(null);
+            }
+        }, 750);
+        return () => {
+            clearTimeout(tId);
+        };
+    }, [conference.id, search, searchQuery]);
+
+    return (
+        <>
+            <FormControl my={2} px={2}>
+                <FormLabel fontSize="sm">Search for people to start a chat</FormLabel>
+                <InputGroup size="sm">
+                    <InputLeftAddon as="label" id="attendees-search">
+                        Search
+                    </InputLeftAddon>
+                    <Input
+                        aria-labelledby="attendees-search"
+                        value={search}
+                        onChange={(ev) => setSearch(ev.target.value)}
+                        placeholder="Type to search"
+                    />
+                    <InputRightElement>
+                        {loadingSearch ? <Spinner /> : <FAIcon iconStyle="s" icon="search" />}
+                    </InputRightElement>
+                </InputGroup>
+                <FormHelperText>Search names, affiliations and bios. (Min length 3)</FormHelperText>
+            </FormControl>
+            <AttendeesList
+                createDM={createDM}
+                searchedAttendees={searched && search.length > 0 ? searched : undefined}
+            />
+        </>
+    );
+}
+
 function ChatsPanel({ attendeeId, confSlug }: { attendeeId: string; confSlug: string }): JSX.Element {
+    const conference = useConference();
+    const toast = useToast();
     const pinnedChats = usePinnedChatsWithUnreadCountsQuery({
         variables: {
             attendeeId,
         },
-        pollInterval: 30000,
+        pollInterval: 10000,
     });
+    const [createDmMutation, createDMMutationResponse] = useCreateDmMutation();
 
     const [currentChat, setCurrentChat] = useState<{ id: string; title: string; roomId: string | undefined } | null>(
         null
@@ -182,7 +354,119 @@ function ChatsPanel({ attendeeId, confSlug }: { attendeeId: string; confSlug: st
 
     const history = useHistory();
 
-    if (sources) {
+    const mandatoryPinnedChats = useMemo(
+        () => (
+            <List m={0} mb={2} ml={4}>
+                {pinnedChats.data?.chat_Pin
+                    .filter((chatPin) => chatPin.chat?.enableMandatoryPin)
+                    .sort((x, y) => sortChats(attendeeId, x.chat, y.chat))
+                    .map((chatPin) => (
+                        <ChatListItem
+                            key={chatPin.chatId}
+                            chat={chatPin.chat}
+                            attendeeId={attendeeId}
+                            confSlug={confSlug}
+                            onClick={() =>
+                                setCurrentChat({
+                                    id: chatPin.chatId,
+                                    title: computeChatName(chatPin.chat, attendeeId) ?? "Unknown chat",
+                                    roomId:
+                                        chatPin.chat.nonDMRoom.length > 0
+                                            ? chatPin.chat.nonDMRoom[0].id
+                                            : chatPin.chat.DMRoom.length > 0
+                                            ? chatPin.chat.DMRoom[0].id
+                                            : undefined,
+                                })
+                            }
+                        />
+                    ))}
+            </List>
+        ),
+        [attendeeId, confSlug, pinnedChats.data?.chat_Pin]
+    );
+
+    const otherPinnedChats = useMemo(
+        () => (
+            <List mt={1} ml={4} mb={2}>
+                {pinnedChats.data?.chat_Pin
+                    .filter((chatPin) => !chatPin.chat?.enableMandatoryPin)
+                    .sort((x, y) => sortChats(attendeeId, x.chat, y.chat))
+                    .map((chatPin) => (
+                        <ChatListItem
+                            key={chatPin.chatId}
+                            chat={chatPin.chat}
+                            attendeeId={attendeeId}
+                            confSlug={confSlug}
+                            onClick={() =>
+                                setCurrentChat({
+                                    id: chatPin.chatId,
+                                    title: computeChatName(chatPin.chat, attendeeId) ?? "Unknown chat",
+                                    roomId:
+                                        chatPin.chat.nonDMRoom.length > 0
+                                            ? chatPin.chat.nonDMRoom[0].id
+                                            : chatPin.chat.DMRoom.length > 0
+                                            ? chatPin.chat.DMRoom[0].id
+                                            : undefined,
+                                })
+                            }
+                        />
+                    ))}
+                {!pinnedChats.data || pinnedChats.data.chat_Pin.length < 1 ? <>No pinned chats.</> : <></>}
+            </List>
+        ),
+        [attendeeId, confSlug, pinnedChats.data]
+    );
+
+    const peopleSearch = useMemo(
+        () => (
+            <PeopleSearch
+                createDM={async (attendeeId, attendeeName) => {
+                    if (!createDMMutationResponse.loading) {
+                        try {
+                            const result = await createDmMutation({
+                                variables: {
+                                    attendeeIds: [attendeeId],
+                                    conferenceId: conference.id,
+                                },
+                            });
+                            if (
+                                result.errors ||
+                                !result.data?.createRoomDm?.roomId ||
+                                !result.data?.createRoomDm?.chatId
+                            ) {
+                                console.error("Failed to create DM", result.errors);
+                                throw new Error("Failed to create DM");
+                            } else {
+                                setCurrentChat({
+                                    id: result.data.createRoomDm.chatId,
+                                    roomId: result.data.createRoomDm.roomId,
+                                    title: attendeeName,
+                                });
+                            }
+                        } catch (e) {
+                            toast({
+                                title: "Could not create DM",
+                                status: "error",
+                            });
+                            console.error("Could not create DM", e);
+                        }
+                    }
+                }}
+            />
+        ),
+        [conference.id, createDMMutationResponse.loading, createDmMutation, toast]
+    );
+
+    if (createDMMutationResponse.loading) {
+        return (
+            <VStack alignItems="center">
+                <Text>Setting up chat...</Text>
+                <Box>
+                    <Spinner />
+                </Box>
+            </VStack>
+        );
+    } else if (sources) {
         return (
             <>
                 <Chat
@@ -212,79 +496,14 @@ function ChatsPanel({ attendeeId, confSlug }: { attendeeId: string; confSlug: st
     } else {
         return (
             <>
-                <List m={0} mb={2} ml={4}>
-                    {pinnedChats.data?.chat_Pin
-                        .filter((chatPin) => chatPin.chat?.enableMandatoryPin)
-                        .sort((x, y) => sortChats(attendeeId, x.chat, y.chat))
-                        .map((chatPin) => (
-                            <ChatListItem
-                                key={chatPin.chatId}
-                                chat={chatPin.chat}
-                                attendeeId={attendeeId}
-                                confSlug={confSlug}
-                                onClick={() =>
-                                    setCurrentChat({
-                                        id: chatPin.chatId,
-                                        title: computeChatName(chatPin.chat, attendeeId) ?? "Unknown chat",
-                                        roomId:
-                                            chatPin.chat.nonDMRoom.length > 0
-                                                ? chatPin.chat.nonDMRoom[0].id
-                                                : chatPin.chat.DMRoom.length > 0
-                                                ? chatPin.chat.DMRoom[0].id
-                                                : undefined,
-                                    })
-                                }
-                            />
-                        ))}
-                </List>
+                {mandatoryPinnedChats}
                 <Divider />
-                <List mt={1} ml={4}>
-                    {pinnedChats.data?.chat_Pin
-                        .filter((chatPin) => !chatPin.chat?.enableMandatoryPin)
-                        .sort((x, y) => sortChats(attendeeId, x.chat, y.chat))
-                        .map((chatPin) => (
-                            <ChatListItem
-                                key={chatPin.chatId}
-                                chat={chatPin.chat}
-                                attendeeId={attendeeId}
-                                confSlug={confSlug}
-                                onClick={() =>
-                                    setCurrentChat({
-                                        id: chatPin.chatId,
-                                        title: computeChatName(chatPin.chat, attendeeId) ?? "Unknown chat",
-                                        roomId:
-                                            chatPin.chat.nonDMRoom.length > 0
-                                                ? chatPin.chat.nonDMRoom[0].id
-                                                : chatPin.chat.DMRoom.length > 0
-                                                ? chatPin.chat.DMRoom[0].id
-                                                : undefined,
-                                    })
-                                }
-                            />
-                        ))}
-                    {!pinnedChats.data || pinnedChats.data.chat_Pin.length < 1 ? <>No pinned chats.</> : <></>}
-                </List>
+                {otherPinnedChats}
+                <Divider />
+                {peopleSearch}
             </>
         );
     }
-
-    // const { isOpen: isCreateDmOpen, onClose: onCreateDmClose, onOpen: onCreateDmOpen } = useDisclosure();
-    // const history = useHistory();
-    /* <HStack justifyContent="flex-end">
-                <Button onClick={onCreateDmOpen} colorScheme="green" size="sm">
-                    <FAIcon icon="plus-square" iconStyle="s" mr={3} /> DM
-                </Button>
-            </HStack>
-            <CreateDmModal
-                isOpen={isCreateDmOpen}
-                onClose={onCreateDmClose}
-                onCreated={async (id: string) => {
-                    // Wait, because Vonage session creation is not instantaneous
-                    setTimeout(() => {
-                        history.push(`/conference/${confSlug}/room/${id}`);
-                    }, 2000);
-                }}
-            /> */
 }
 
 enum RightSidebarTabs {

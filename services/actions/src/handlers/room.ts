@@ -169,6 +169,7 @@ export async function handleCreateDmRoom(params: createRoomDmArgs, userId: strin
                 }
             ) {
                 id
+                chatId
                 roomPeople {
                     attendeeId
                     id
@@ -198,6 +199,7 @@ export async function handleCreateDmRoom(params: createRoomDmArgs, userId: strin
         return {
             message: "DM already exists",
             roomId: fullMatch.id,
+            chatId: fullMatch.chatId,
         };
     }
 
@@ -220,6 +222,7 @@ export async function handleCreateDmRoom(params: createRoomDmArgs, userId: strin
                 }
             ) {
                 id
+                chatId
             }
         }
     `;
@@ -249,6 +252,7 @@ export async function handleCreateDmRoom(params: createRoomDmArgs, userId: strin
 
     return {
         roomId: result.data.insert_Room_one.id,
+        chatId: result.data.insert_Room_one.chatId,
         message: "Created new DM",
     };
 }

@@ -5339,6 +5339,7 @@ export type CreateContentGroupRoomOutput = {
 
 export type CreateRoomDmOutput = {
   readonly __typename?: 'CreateRoomDmOutput';
+  readonly chatId?: Maybe<Scalars['uuid']>;
   readonly message?: Maybe<Scalars['String']>;
   readonly room?: Maybe<Room>;
   readonly roomId?: Maybe<Scalars['uuid']>;
@@ -31321,7 +31322,7 @@ export type CreateDmMutationVariables = Exact<{
 }>;
 
 
-export type CreateDmMutation = { readonly __typename?: 'mutation_root', readonly createRoomDm?: Maybe<{ readonly __typename?: 'CreateRoomDmOutput', readonly message?: Maybe<string>, readonly roomId?: Maybe<any> }> };
+export type CreateDmMutation = { readonly __typename?: 'mutation_root', readonly createRoomDm?: Maybe<{ readonly __typename?: 'CreateRoomDmOutput', readonly message?: Maybe<string>, readonly roomId?: Maybe<any>, readonly chatId?: Maybe<any> }> };
 
 export type AttendeeCreateRoomMutationVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -32812,7 +32813,7 @@ export type GetContentGroupChatIdQueryVariables = Exact<{
 }>;
 
 
-export type GetContentGroupChatIdQuery = { readonly __typename?: 'query_root', readonly ContentGroup_by_pk?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly id: any, readonly room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string }> }> }> };
+export type GetContentGroupChatIdQuery = { readonly __typename?: 'query_root', readonly ContentGroup_by_pk?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly id: any, readonly room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }> }> }> };
 
 export type GetRoomMembersSubscriptionVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -35192,6 +35193,7 @@ export const CreateDmDocument = gql`
   createRoomDm(attendeeIds: $attendeeIds, conferenceId: $conferenceId) {
     message
     roomId
+    chatId
   }
 }
     `;
@@ -40165,7 +40167,6 @@ export const GetContentGroupChatIdDocument = gql`
       id
       room {
         id
-        name
       }
     }
   }

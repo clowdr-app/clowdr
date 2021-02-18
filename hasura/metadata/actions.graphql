@@ -246,6 +246,7 @@ type UpdateProfilePhotoResponse {
 
 type CreateRoomDmOutput {
   roomId : uuid
+  chatId : uuid
   message : String
 }
 

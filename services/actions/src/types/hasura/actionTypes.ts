@@ -82,6 +82,7 @@ type UpdateProfilePhotoResponse = {
 
 type CreateRoomDmOutput = {
     roomId?: Maybe<uuid>;
+    chatId?: Maybe<uuid>;
     message?: Maybe<string>;
 };
 

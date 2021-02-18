@@ -4,7 +4,7 @@ import FAIcon from "../../../Icons/FAIcon";
 import type { Attendee } from "../../useCurrentAttendee";
 import ProfileModal from "./ProfileModal";
 
-function AttendeeTile({ attendee, onClick }: { attendee: Attendee; onClick: () => void }): JSX.Element {
+export function AttendeeTile({ attendee, onClick }: { attendee: Attendee; onClick: () => void }): JSX.Element {
     return (
         <Button
             variant="outline"

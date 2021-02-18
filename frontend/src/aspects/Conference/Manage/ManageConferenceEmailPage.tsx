@@ -6,9 +6,11 @@ import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
 import { ConfigureEmailTemplates } from "./Email/ConfigureEmailTemplates";
+import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
 export function ManageConferenceEmailPage(): JSX.Element {
     const conference = useConference();
+    useDashboardPrimaryMenuButtons();
     const title = useTitle(`Manage email settings for ${conference.shortName}`);
 
     return (

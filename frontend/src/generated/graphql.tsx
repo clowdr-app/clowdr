@@ -18294,7 +18294,9 @@ export type Chat_ReadUpToIndex_Bool_Exp = {
 /** unique or primary key constraints on table "chat.ReadUpToIndex" */
 export enum Chat_ReadUpToIndex_Constraint {
   /** unique or primary key constraint */
-  ReadUpToIndexPkey = 'ReadUpToIndex_pkey'
+  ReadUpToIndexPkey = 'ReadUpToIndex_pkey',
+  /** unique or primary key constraint */
+  ChatReadUpToIndexPkIndex = 'chat_ReadUpToIndex_pk_index'
 }
 
 /** input type for incrementing integer column in table "chat.ReadUpToIndex" */
@@ -36442,7 +36444,9 @@ export type InsertSubmissionRequestEmailJobsMutationResult = Apollo.MutationResu
 export type InsertSubmissionRequestEmailJobsMutationOptions = Apollo.BaseMutationOptions<InsertSubmissionRequestEmailJobsMutation, InsertSubmissionRequestEmailJobsMutationVariables>;
 export const SelectAllContentDocument = gql`
     query SelectAllContent($conferenceId: uuid!) {
-  ContentGroup(where: {conferenceId: {_eq: $conferenceId}}) {
+  ContentGroup(
+    where: {conferenceId: {_eq: $conferenceId}, contentGroupTypeName: {_neq: SPONSOR}}
+  ) {
     ...ContentGroupFullNestedInfo
   }
   ContentPerson(where: {conferenceId: {_eq: $conferenceId}}) {

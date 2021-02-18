@@ -18,10 +18,7 @@ import {
     EmailTemplate_BaseConfig,
     isEmailTemplate_BaseConfig,
 } from "@clowdr-app/shared-types/build/conferenceConfiguration";
-import {
-    EMAIL_TEMPLATE_BODY_SUBTITLES_GENERATED,
-    EMAIL_TEMPLATE_SUBJECT_SUBTITLES_GENERATED,
-} from "@clowdr-app/shared-types/build/email";
+import { EMAIL_TEMPLATE_SUBTITLES_GENERATED } from "@clowdr-app/shared-types/build/email";
 import React, { useEffect, useMemo, useState } from "react";
 import {
     ConfigureEmailTemplates_ConferenceConfigurationFragment,
@@ -123,7 +120,6 @@ export function ConfigureEmailTemplatesInner({
                     <AccordionPanel>
                         <EmailTemplateForm
                             templateConfig={emailTemplateConfig_SubtitlesGenerated}
-                            view={{}}
                             update={(newValue) => {
                                 updateConferenceConfiguration({
                                     variables: {
@@ -185,11 +181,12 @@ function EmailTemplateForm({
     const [htmlBodyTemplate, setHtmlBodyTemplate] = useState<string | null>(null);
 
     const subjectTemplateValue = useMemo(
-        () => subjectTemplate ?? templateConfig?.subjectTemplate ?? EMAIL_TEMPLATE_SUBJECT_SUBTITLES_GENERATED,
+        () => subjectTemplate ?? templateConfig?.subjectTemplate ?? EMAIL_TEMPLATE_SUBTITLES_GENERATED.subjectTemplate,
         [subjectTemplate, templateConfig?.subjectTemplate]
     );
     const htmlBodyTemplateValue = useMemo(
-        () => htmlBodyTemplate ?? templateConfig?.htmlBodyTemplate ?? EMAIL_TEMPLATE_BODY_SUBTITLES_GENERATED,
+        () =>
+            htmlBodyTemplate ?? templateConfig?.htmlBodyTemplate ?? EMAIL_TEMPLATE_SUBTITLES_GENERATED.htmlBodyTemplate,
         [htmlBodyTemplate, templateConfig?.htmlBodyTemplate]
     );
 

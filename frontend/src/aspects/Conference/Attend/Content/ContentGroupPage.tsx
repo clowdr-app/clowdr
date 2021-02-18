@@ -95,7 +95,7 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
                                 flexGrow={2.5}
                                 alignItems="stretch"
                                 flexBasis={0}
-                                minW={["100%", "100%", "100%", "700px"]}
+                                minW="100%"
                                 maxW="100%"
                             >
                                 {title}

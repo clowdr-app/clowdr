@@ -183,7 +183,7 @@ export function ContentGroupSummary({
                 </>
             )}
             {children}
-            {<AuthorList contentPeopleData={contentGroupData.people ?? []} />}
+            <AuthorList contentPeopleData={contentGroupData.people ?? []} />
             <HStack alignItems="flex-start" flexWrap="wrap" mt={5}>
                 <RequireAtLeastOnePermissionWrapper permissions={[Permission_Enum.ConferenceViewAttendees]}>
                     {maybeZoomDetails ? (

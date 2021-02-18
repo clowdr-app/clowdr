@@ -432,14 +432,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
         <Spinner label="Loading events" />
     ) : (
         <HStack width="100%" flexWrap="wrap" alignItems="stretch">
-            <VStack
-                textAlign="left"
-                flexGrow={2.5}
-                alignItems="stretch"
-                flexBasis={0}
-                minW={["100%", "100%", "100%", "700px"]}
-                maxW="100%"
-            >
+            <VStack textAlign="left" flexGrow={2.5} alignItems="stretch" flexBasis={0} minW="100%" maxW="100%">
                 {controlBarEl}
 
                 {showDefaultBreakoutRoom &&

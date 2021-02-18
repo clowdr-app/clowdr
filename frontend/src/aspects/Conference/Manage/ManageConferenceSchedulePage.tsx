@@ -273,14 +273,6 @@ function EditableScheduleTable(): JSX.Element {
 
                     return (
                         <HStack>
-                            {!props.isInCreate &&
-                            ongoing &&
-                            props.staleRecord.intendedRoomModeName &&
-                            liveStreamRoomModes.includes(props.staleRecord.intendedRoomModeName) ? (
-                                <Tooltip label="You cannot edit the start time of an ongoing live-stream event.">
-                                    <FAIcon color={"blue.400"} iconStyle="s" icon="info-circle" />
-                                </Tooltip>
-                            ) : undefined}
                             {!props.isInCreate && (ongoing || past) && isLivestream ? (
                                 <Tooltip label="You cannot edit the start time of an ongoing or past livestream event.">
                                     <FAIcon color={"blue.400"} iconStyle="s" icon="info-circle" />
@@ -334,14 +326,6 @@ function EditableScheduleTable(): JSX.Element {
 
                     return (
                         <HStack>
-                            {!props.isInCreate &&
-                            ongoing &&
-                            props.staleRecord.intendedRoomModeName &&
-                            liveStreamRoomModes.includes(props.staleRecord.intendedRoomModeName) ? (
-                                <Tooltip label="You cannot edit the end time of an ongoing live-stream event.">
-                                    <FAIcon color={"blue.400"} iconStyle="s" icon="info-circle" />
-                                </Tooltip>
-                            ) : undefined}
                             {!props.isInCreate && (ongoing || past) && isLivestream ? (
                                 <Tooltip label="You cannot edit the end time of an ongoing or past livestream event.">
                                     <FAIcon color={"blue.400"} iconStyle="s" icon="info-circle" />
@@ -429,6 +413,12 @@ function EditableScheduleTable(): JSX.Element {
                                 isDisabled={!props.isInCreate && (ongoing || past) && isLivestream}
                             >
                                 {roomOptions}
+                                {props.value &&
+                                !roomOptions?.some((option) => option.props.value === props.value?.id) ? (
+                                    <option key={props.value.id} value={props.value.id}>
+                                        {wholeSchedule.data?.Room.find((x) => x.id === props.value?.id)?.name}
+                                    </option>
+                                ) : undefined}
                             </Select>
                         </HStack>
                     );
@@ -752,7 +742,7 @@ function EditableScheduleTable(): JSX.Element {
           }
         | undefined = useMemo(
         () =>
-            wholeSchedule.data?.Room && wholeSchedule.data.Room.length > 0
+            roomOptions && roomOptions.length > 0
                 ? {
                       ongoing: insertEventResponse.loading,
                       generateDefaults: () => ({
@@ -761,7 +751,7 @@ function EditableScheduleTable(): JSX.Element {
                           conferenceId: conference.id,
                           intendedRoomModeName: RoomMode_Enum.Breakout,
                           name: "Innominate event",
-                          roomId: wholeSchedule.data?.Room[0].id,
+                          roomId: roomOptions[0].props.value,
                           startTime: DateTime.local()
                               .plus({
                                   minutes: 10,
@@ -808,7 +798,7 @@ function EditableScheduleTable(): JSX.Element {
                       },
                   }
                 : undefined,
-        [conference.id, insertEvent, insertEventResponse.loading, wholeSchedule.data?.Room]
+        [conference.id, insertEvent, insertEventResponse.loading, roomOptions]
     );
 
     const update:

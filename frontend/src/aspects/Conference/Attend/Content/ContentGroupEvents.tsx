@@ -45,7 +45,7 @@ function Event({ contentGroupEvent }: { contentGroupEvent: ContentGroupEventFrag
         return now < endMillis && now > startMillis - 5 * 60 * 1000;
     }, [endMillis, now, startMillis]);
 
-    return (
+    return contentGroupEvent.room ? (
         <Box
             maxW="sm"
             borderWidth="1px"
@@ -73,5 +73,7 @@ function Event({ contentGroupEvent }: { contentGroupEvent: ContentGroupEventFrag
                 </Box>
             </HStack>
         </Box>
+    ) : (
+        <></>
     );
 }

@@ -424,7 +424,9 @@ function ChatsPanel({
         () => (
             <List my={2} ml={4}>
                 {pinnedChats.data?.chat_Pin
-                    .filter((chatPin) => !chatPin.chat?.enableMandatoryPin && chatPin.chat.DMRoom.length)
+                    .filter(
+                        (chatPin) => !!chatPin.chat && !chatPin.chat?.enableMandatoryPin && chatPin.chat?.DMRoom.length
+                    )
                     .sort((x, y) => sortChats(attendeeId, x.chat, y.chat))
                     .map((chatPin) => (
                         <ChatListItem
@@ -460,7 +462,9 @@ function ChatsPanel({
         () => (
             <List my={2} ml={4}>
                 {pinnedChats.data?.chat_Pin
-                    .filter((chatPin) => !chatPin.chat?.enableMandatoryPin && !chatPin.chat.DMRoom.length)
+                    .filter(
+                        (chatPin) => !!chatPin.chat && !chatPin.chat?.enableMandatoryPin && !chatPin.chat?.DMRoom.length
+                    )
                     .sort((x, y) => sortChats(attendeeId, x.chat, y.chat))
                     .map((chatPin) => (
                         <ChatListItem

@@ -31446,7 +31446,7 @@ export type Room_GetEventsQuery = { readonly __typename?: 'query_root', readonly
     & Room_EventSummaryFragment
   )> };
 
-export type Room_EventSummaryFragment = { readonly __typename?: 'Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum, readonly contentGroupId?: Maybe<any>, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string }> };
+export type Room_EventSummaryFragment = { readonly __typename?: 'Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum, readonly contentGroupId?: Maybe<any>, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'EventPerson', readonly id: any, readonly attendeeId?: Maybe<any> }> };
 
 export type RoomBackstage_GetEventBreakoutRoomQueryVariables = Exact<{
   originatingEventId: Scalars['uuid'];
@@ -33232,6 +33232,10 @@ export const Room_EventSummaryFragmentDoc = gql`
   contentGroup {
     id
     title
+  }
+  eventPeople {
+    id
+    attendeeId
   }
 }
     `;
@@ -35935,7 +35939,7 @@ export type Timeline_SelectEventQueryResult = Apollo.QueryResult<Timeline_Select
 export const Timeline_SelectRoomsDocument = gql`
     query Timeline_SelectRooms($conferenceId: uuid!) {
   Room(
-    where: {conferenceId: {_eq: $conferenceId}, roomPrivacyName: {_eq: PUBLIC}, events: {}}
+    where: {conferenceId: {_eq: $conferenceId}, roomPrivacyName: {_in: [PUBLIC, PRIVATE]}, events: {}}
   ) {
     ...Timeline_Room
   }

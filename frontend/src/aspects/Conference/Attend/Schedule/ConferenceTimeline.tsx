@@ -106,7 +106,7 @@ gql`
     }
 
     query Timeline_SelectRooms($conferenceId: uuid!) {
-        Room(where: { conferenceId: { _eq: $conferenceId }, roomPrivacyName: { _eq: PUBLIC }, events: {} }) {
+        Room(where: { conferenceId: { _eq: $conferenceId }, roomPrivacyName: { _in: [PUBLIC, PRIVATE] }, events: {} }) {
             ...Timeline_Room
         }
         Event(where: { conferenceId: { _eq: $conferenceId } }) {

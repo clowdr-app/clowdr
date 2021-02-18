@@ -1,10 +1,17 @@
-import { FormControl, FormLabel, Input } from "@chakra-ui/react";
-import { ContentBaseType, ContentItemVersionData } from "@clowdr-app/shared-types/build/content";
+import { FormControl, FormLabel, Input, useToast } from "@chakra-ui/react";
+import {
+    ContentBaseType,
+    ContentItemVersionData,
+    LinkBlob,
+    LinkButtonBlob,
+    PaperLinkBlob,
+    VideoLinkBlob,
+} from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
-import React from "react";
+import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { ContentType_Enum } from "../../../../generated/graphql";
-import type { ItemBaseTemplate } from "./Types";
+import type { ItemBaseTemplate, RenderEditorProps } from "./Types";
 
 function createDefaultLink(
     type: ContentType_Enum.Link | ContentType_Enum.LinkButton | ContentType_Enum.PaperLink | ContentType_Enum.VideoLink
@@ -19,6 +26,12 @@ function createDefaultLink(
             url: "",
         },
     };
+}
+
+interface LinkItemVersionData {
+    createdAt: number;
+    createdBy: string;
+    data: LinkBlob | LinkButtonBlob | PaperLinkBlob | VideoLinkBlob;
 }
 
 export const LinkItemTemplate: ItemBaseTemplate = {
@@ -67,15 +80,22 @@ export const LinkItemTemplate: ItemBaseTemplate = {
             };
         }
     },
-    renderEditor: function LinkItemEditor(data, update) {
+    renderEditor: function LinkItemEditor({ data, update }: RenderEditorProps) {
+        const toast = useToast();
+        const [text, setText] = useState<string | null>(null);
+        const [url, setUrl] = useState<string | null>(null);
+
         if (data.type === "item-only" || data.type === "required-and-item") {
-            assert(
-                data.item.typeName === ContentType_Enum.Link ||
+            if (
+                !(
+                    data.item.typeName === ContentType_Enum.Link ||
                     data.item.typeName === ContentType_Enum.LinkButton ||
                     data.item.typeName === ContentType_Enum.PaperLink ||
-                    data.item.typeName === ContentType_Enum.VideoLink,
-                `Link Item Template mistakenly used for type ${data.type}.`
-            );
+                    data.item.typeName === ContentType_Enum.VideoLink
+                )
+            ) {
+                return <>Link Item Template mistakenly used for type {data.type}.</>;
+            }
 
             const textPlaceholder =
                 data.item.typeName === ContentType_Enum.LinkButton
@@ -108,11 +128,10 @@ export const LinkItemTemplate: ItemBaseTemplate = {
                 setTimeout(() => update(data), 0);
             }
 
-            const latestVersion = data.item.data[data.item.data.length - 1];
-            assert(
-                latestVersion.data.baseType === ContentBaseType.Link,
-                `Link Item Template mistakenly used for base type ${latestVersion.data.baseType}.`
-            );
+            const latestVersion = data.item.data[data.item.data.length - 1] as LinkItemVersionData;
+            if (latestVersion.data.baseType !== ContentBaseType.Link) {
+                return <>Link Item Template mistakenly used for base type {latestVersion.data.baseType}.</>;
+            }
             return (
                 <>
                     <FormControl>
@@ -120,28 +139,44 @@ export const LinkItemTemplate: ItemBaseTemplate = {
                         <Input
                             type="text"
                             placeholder={textPlaceholder}
-                            value={latestVersion.data.text}
+                            value={text ?? latestVersion.data.text}
                             onChange={(ev) => {
-                                assert(data.type !== "required-only");
-                                const oldItemIdx = data.item.data.indexOf(latestVersion);
-                                const newData = {
-                                    ...data,
-                                    item: {
-                                        ...data.item,
-                                        data: data.item.data.map((version, idx) => {
-                                            return idx === oldItemIdx
-                                                ? {
-                                                      ...version,
-                                                      data: {
-                                                          ...version.data,
-                                                          text: ev.target.value,
-                                                      },
-                                                  }
-                                                : version;
-                                        }),
-                                    },
-                                };
-                                update(newData);
+                                setText(ev.target.value);
+                            }}
+                            onBlur={(ev) => {
+                                try {
+                                    assert(data.type !== "required-only");
+                                    if (ev.target.value === latestVersion.data.text) {
+                                        return;
+                                    }
+                                    const oldItemIdx = data.item.data.indexOf(latestVersion);
+                                    const newData = {
+                                        ...data,
+                                        item: {
+                                            ...data.item,
+                                            data: data.item.data.map((version, idx) => {
+                                                return idx === oldItemIdx
+                                                    ? {
+                                                          ...version,
+                                                          data: {
+                                                              ...version.data,
+                                                              text: ev.target.value,
+                                                          },
+                                                      }
+                                                    : version;
+                                            }),
+                                        },
+                                    };
+                                    update(newData);
+                                    setText(null);
+                                } catch (e) {
+                                    console.error("Error saving link text", e);
+                                    toast({
+                                        status: "error",
+                                        title: "Error saving link text",
+                                        description: e.message,
+                                    });
+                                }
                             }}
                         />
                     </FormControl>
@@ -150,28 +185,44 @@ export const LinkItemTemplate: ItemBaseTemplate = {
                         <Input
                             type="url"
                             placeholder={urlPlaceholder}
-                            value={latestVersion.data.url}
+                            value={url ?? latestVersion.data.url}
                             onChange={(ev) => {
-                                assert(data.type !== "required-only");
-                                const oldItemIdx = data.item.data.indexOf(latestVersion);
-                                const newData = {
-                                    ...data,
-                                    item: {
-                                        ...data.item,
-                                        data: data.item.data.map((version, idx) => {
-                                            return idx === oldItemIdx
-                                                ? {
-                                                      ...version,
-                                                      data: {
-                                                          ...version.data,
-                                                          url: ev.target.value,
-                                                      },
-                                                  }
-                                                : version;
-                                        }),
-                                    },
-                                };
-                                update(newData);
+                                setUrl(ev.target.value);
+                            }}
+                            onBlur={(ev) => {
+                                try {
+                                    assert(data.type !== "required-only");
+                                    if (ev.target.value === latestVersion.data.url) {
+                                        return;
+                                    }
+                                    const oldItemIdx = data.item.data.indexOf(latestVersion);
+                                    const newData = {
+                                        ...data,
+                                        item: {
+                                            ...data.item,
+                                            data: data.item.data.map((version, idx) => {
+                                                return idx === oldItemIdx
+                                                    ? {
+                                                          ...version,
+                                                          data: {
+                                                              ...version.data,
+                                                              url: ev.target.value,
+                                                          },
+                                                      }
+                                                    : version;
+                                            }),
+                                        },
+                                    };
+                                    update(newData);
+                                    setUrl(null);
+                                } catch (e) {
+                                    console.error("Error saving link URL", e);
+                                    toast({
+                                        status: "error",
+                                        title: "Error saving link URL",
+                                        description: e.message,
+                                    });
+                                }
                             }}
                         />
                     </FormControl>

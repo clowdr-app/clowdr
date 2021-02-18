@@ -10,6 +10,7 @@ import {
     AlertIcon,
     AlertTitle,
     Box,
+    Divider,
     Drawer,
     DrawerBody,
     DrawerCloseButton,
@@ -27,7 +28,6 @@ import {
     useToast,
 } from "@chakra-ui/react";
 import { ItemBaseTypes } from "@clowdr-app/shared-types/build/content";
-import * as R from "ramda";
 import React, { useMemo } from "react";
 import {
     SponsorSecondaryEditor_ContentItemFragment,
@@ -113,9 +113,30 @@ export function SponsorContentItems({
 }: {
     contentItems: readonly SponsorSecondaryEditor_ContentItemFragment[];
 }): JSX.Element {
+    const sortedContentItems = useMemo(() => {
+        const sortedContentItems = [...contentItems];
+
+        sortedContentItems.sort((a, b) => {
+            if ((!a.layoutData || !("priority" in a.layoutData)) && (!b.layoutData || !("priority" in b.layoutData))) {
+                return a.name.localeCompare(b.name);
+            }
+            if (!a.layoutData || !("priority" in a.layoutData)) {
+                return 1;
+            }
+            if (!b.layoutData || !("priority" in b.layoutData)) {
+                return -1;
+            }
+            const priorityOrder = a.layoutData.priority - b.layoutData.priority;
+
+            return priorityOrder === 0 ? a.name.localeCompare(b.name) : priorityOrder;
+        });
+
+        return sortedContentItems;
+    }, [contentItems]);
+
     return (
         <Accordion allowToggle allowMultiple>
-            {R.sortBy((x) => x.name, contentItems).map((item) => (
+            {sortedContentItems.map((item) => (
                 <SponsorContentItem key={item.id} contentItem={item} />
             ))}
         </Accordion>
@@ -186,40 +207,43 @@ function SponsorContentItemInner({
 
     const editor = useMemo(() => {
         return itemTemplate.supported ? (
-            itemTemplate.renderEditor({ type: "item-only", item: descriptor }, (updated) => {
-                if (updated.type === "item-only") {
-                    const updatedItem = {
-                        data: updated.item.data,
-                        layoutData: updated.item.layoutData,
-                    };
-                    updateContentItem({
-                        variables: {
-                            contentItemId: updated.item.id,
-                            contentItem: updatedItem,
-                        },
-                        update: (cache, { data: _data }) => {
-                            if (_data?.update_ContentItem_by_pk) {
-                                const data = _data.update_ContentItem_by_pk;
-                                cache.modify({
-                                    fields: {
-                                        ContentItem(existingRefs: Reference[] = [], { readField }) {
-                                            const newRef = cache.writeFragment({
-                                                data: updated.item,
-                                                fragment: SponsorSecondaryEditor_ContentItemFragmentDoc,
-                                                fragmentName: "SponsorSecondaryEditor_ContentItem",
-                                            });
-                                            if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
-                                                return existingRefs;
-                                            }
-                                            return [...existingRefs, newRef];
+            <itemTemplate.renderEditor
+                data={{ type: "item-only", item: descriptor }}
+                update={(updated) => {
+                    if (updated.type === "item-only") {
+                        const updatedItem = {
+                            data: updated.item.data,
+                            layoutData: updated.item.layoutData,
+                        };
+                        updateContentItem({
+                            variables: {
+                                contentItemId: updated.item.id,
+                                contentItem: updatedItem,
+                            },
+                            update: (cache, { data: _data }) => {
+                                if (_data?.update_ContentItem_by_pk) {
+                                    const data = _data.update_ContentItem_by_pk;
+                                    cache.modify({
+                                        fields: {
+                                            ContentItem(existingRefs: Reference[] = [], { readField }) {
+                                                const newRef = cache.writeFragment({
+                                                    data: updated.item,
+                                                    fragment: SponsorSecondaryEditor_ContentItemFragmentDoc,
+                                                    fragmentName: "SponsorSecondaryEditor_ContentItem",
+                                                });
+                                                if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
+                                                    return existingRefs;
+                                                }
+                                                return [...existingRefs, newRef];
+                                            },
                                         },
-                                    },
-                                });
-                            }
-                        },
-                    });
-                }
-            })
+                                    });
+                                }
+                            },
+                        });
+                    }
+                }}
+            />
         ) : (
             <Text>Cannot edit {itemType} items.</Text>
         );
@@ -227,7 +251,6 @@ function SponsorContentItemInner({
 
     return (
         <>
-            {updateContentItemResponse.loading ? <Spinner label="Saving changes" /> : undefined}
             {updateContentItemResponse.error ? (
                 <Alert status="error">
                     <AlertIcon />
@@ -235,7 +258,6 @@ function SponsorContentItemInner({
                     <AlertDescription>{updateContentItemResponse.error.message}</AlertDescription>
                 </Alert>
             ) : undefined}
-            {setIsHiddenResponse.loading ? <Spinner label="Saving changes" /> : undefined}
             {setIsHiddenResponse.error ? (
                 <Alert status="error">
                     <AlertIcon />
@@ -243,7 +265,7 @@ function SponsorContentItemInner({
                     <AlertDescription>{setIsHiddenResponse.error.message}</AlertDescription>
                 </Alert>
             ) : undefined}
-            <HStack pb={4} justifyContent="flex-end">
+            <HStack justifyContent="flex-end">
                 <FormControl display="flex" flexDir="row" alignItems="flex-start" justifyContent="flex-start">
                     <FormLabel m={0} p={0} fontSize="0.9em">
                         Hidden?
@@ -293,6 +315,8 @@ function SponsorContentItemInner({
                         Enable to hide this content from attendees.
                     </FormHelperText>
                 </FormControl>
+                {updateContentItemResponse.loading ? <Spinner label="Saving changes" /> : undefined}
+                {setIsHiddenResponse.loading ? <Spinner label="Saving changes" /> : undefined}
                 <Box>
                     <IconButton
                         colorScheme="red"
@@ -335,7 +359,9 @@ function SponsorContentItemInner({
                     />
                 </Box>
             </HStack>
+            <Divider my={2} />
             {editor}
+            <Divider my={2} />
             <LayoutEditor
                 layoutDataBlob={descriptor.layoutData}
                 contentItemType={contentItem.contentTypeName}

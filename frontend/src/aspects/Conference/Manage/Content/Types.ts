@@ -118,13 +118,20 @@ export type ContentGroupDescriptor = {
     }[];
 };
 
+export type RenderEditorProps = {
+    data: ContentDescriptor;
+    update: (updated: ContentDescriptor) => void;
+};
+
 export type ItemBaseTemplate =
     | {
           supported: false;
       }
-    | {
-          supported: true;
-          createDefault: (itemType: ContentType_Enum, required: boolean) => ContentDescriptor;
-          renderEditorHeading: (data: ContentDescriptor) => JSX.Element;
-          renderEditor: (data: ContentDescriptor, update: (updated: ContentDescriptor) => void) => JSX.Element;
-      };
+    | SupportedItemBaseTemplate;
+
+export type SupportedItemBaseTemplate = {
+    supported: true;
+    createDefault: (itemType: ContentType_Enum, required: boolean) => ContentDescriptor;
+    renderEditorHeading: (data: ContentDescriptor) => JSX.Element;
+    renderEditor: (props: RenderEditorProps) => JSX.Element;
+};

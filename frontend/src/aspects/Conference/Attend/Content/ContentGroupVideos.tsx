@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, Spinner } from "@chakra-ui/react";
+import { Box, Flex, Heading, Spinner, Text } from "@chakra-ui/react";
 import { assertIsContentItemDataBlob, VideoContentBlob } from "@clowdr-app/shared-types/build/content";
 import { WebVTTConverter } from "@clowdr-app/srt-webvtt";
 import AmazonS3URI from "amazon-s3-uri";
@@ -166,9 +166,7 @@ export function ContentGroupVideo({
     const player = useMemo(() => {
         // Only render the player once both the video URL and the subtitles config are available
         // react-player memoizes internally and only re-renders if the url or key props change.
-        return !previewTranscodeUrl || !subtitlesConfig ? (
-            <Spinner />
-        ) : (
+        return !previewTranscodeUrl || !subtitlesConfig ? undefined : (
             <ReactPlayer
                 url={previewTranscodeUrl}
                 controls={true}
@@ -192,6 +190,12 @@ export function ContentGroupVideo({
                     ? "Presentation"
                     : title}
             </Heading>
+            {videoContentItemData.s3Url && (!previewTranscodeUrl || !subtitlesConfig) ? (
+                <>
+                    <Spinner />
+                    <Text mb={2}>Video is still being processed.</Text>
+                </>
+            ) : undefined}
             {player}
         </>
     );

@@ -4,7 +4,6 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
     ContentGroupType_Enum,
-    ContentType_Enum,
     Permission_Enum,
     useInsertSubmissionRequestEmailJobsMutation,
 } from "../../../generated/graphql";
@@ -33,12 +32,12 @@ import ManageTagsModal from "./Content/ManageTagsModal";
 // import PublishVideosModal from "./Content/PublishVideosModal";
 import { fitGroupToTemplate, GroupTemplates } from "./Content/Templates";
 import type {
-    ContentDescriptor,
     ContentGroupDescriptor,
     ContentItemDescriptor,
     ContentPersonDescriptor,
     HallwayDescriptor,
     RequiredContentItemDescriptor,
+    SupportedItemBaseTemplate,
 } from "./Content/Types";
 import UploadersModal from "./Content/UploadersModal";
 import { useSaveContentDiff } from "./Content/useSaveContentDiff";
@@ -950,12 +949,7 @@ export function RequiredItemEditorModal({
     itemDesc,
 }: {
     group: ContentGroupDescriptor;
-    itemTemplate: {
-        supported: true;
-        createDefault: (itemType: ContentType_Enum, required: boolean) => ContentDescriptor;
-        renderEditorHeading: (data: ContentDescriptor) => JSX.Element;
-        renderEditor: (data: ContentDescriptor, update: (updated: ContentDescriptor) => void) => JSX.Element;
-    };
+    itemTemplate: SupportedItemBaseTemplate;
     isDirty: boolean;
     markDirty: () => void;
     setAllContentGroupsMap: React.Dispatch<React.SetStateAction<Map<string, ContentGroupDescriptor> | undefined>>;
@@ -970,36 +964,41 @@ export function RequiredItemEditorModal({
               item: ContentItemDescriptor;
           };
 }): JSX.Element {
-    const reqItemEditorContents = itemTemplate.renderEditor(itemDesc, (updatedDesc) => {
-        assert(updatedDesc.type !== "item-only");
-        markDirty();
+    const reqItemEditorContents = (
+        <itemTemplate.renderEditor
+            data={itemDesc}
+            update={(updatedDesc) => {
+                assert(updatedDesc.type !== "item-only");
+                markDirty();
 
-        setAllContentGroupsMap((oldGroups) => {
-            assert(oldGroups);
-            const newGroups = new Map(oldGroups);
+                setAllContentGroupsMap((oldGroups) => {
+                    assert(oldGroups);
+                    const newGroups = new Map(oldGroups);
 
-            const existingGroup = newGroups.get(group.id);
-            assert(existingGroup);
-            newGroups.set(group.id, {
-                ...existingGroup,
-                items:
-                    itemDesc.type === "required-and-item" && updatedDesc.type === "required-and-item"
-                        ? existingGroup.items.map((cItem) => {
-                              return itemDesc.item.id === cItem.id ? updatedDesc.item : cItem;
-                          })
-                        : itemDesc.type === "required-only" && updatedDesc.type === "required-and-item"
-                        ? [...existingGroup.items, updatedDesc.item]
-                        : itemDesc.type === "required-and-item" && updatedDesc.type === "required-only"
-                        ? existingGroup.items.filter((x) => x.id !== itemDesc.item.id)
-                        : existingGroup.items,
-                requiredItems: existingGroup.requiredItems.map((x) =>
-                    x.id === itemDesc.requiredItem.id ? updatedDesc.requiredItem : x
-                ),
-            });
+                    const existingGroup = newGroups.get(group.id);
+                    assert(existingGroup);
+                    newGroups.set(group.id, {
+                        ...existingGroup,
+                        items:
+                            itemDesc.type === "required-and-item" && updatedDesc.type === "required-and-item"
+                                ? existingGroup.items.map((cItem) => {
+                                      return itemDesc.item.id === cItem.id ? updatedDesc.item : cItem;
+                                  })
+                                : itemDesc.type === "required-only" && updatedDesc.type === "required-and-item"
+                                ? [...existingGroup.items, updatedDesc.item]
+                                : itemDesc.type === "required-and-item" && updatedDesc.type === "required-only"
+                                ? existingGroup.items.filter((x) => x.id !== itemDesc.item.id)
+                                : existingGroup.items,
+                        requiredItems: existingGroup.requiredItems.map((x) =>
+                            x.id === itemDesc.requiredItem.id ? updatedDesc.requiredItem : x
+                        ),
+                    });
 
-            return newGroups;
-        });
-    });
+                    return newGroups;
+                });
+            }}
+        />
+    );
 
     const { isOpen: isUploadersOpen, onOpen: onUploadersOpen, onClose: onUploadersClose } = useDisclosure();
     const accordianContents = (

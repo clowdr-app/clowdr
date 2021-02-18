@@ -6,7 +6,7 @@ import React from "react";
 import { v4 as uuidv4 } from "uuid";
 import { ContentType_Enum } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
-import type { ItemBaseTemplate } from "./Types";
+import type { ItemBaseTemplate, RenderEditorProps } from "./Types";
 import UploadFileForm_ContentItem from "./UploadFileForm_ContentItem";
 
 function createDefaultFile(
@@ -68,14 +68,17 @@ export const FileItemTemplate: ItemBaseTemplate = {
             };
         }
     },
-    renderEditor: function FileItemEditor(data, update) {
+    renderEditor: function FileItemEditor({ data, update }: RenderEditorProps) {
         if (data.type === "item-only" || data.type === "required-and-item") {
-            assert(
-                data.item.typeName === ContentType_Enum.ImageFile ||
+            if (
+                !(
+                    data.item.typeName === ContentType_Enum.ImageFile ||
                     data.item.typeName === ContentType_Enum.PosterFile ||
-                    data.item.typeName === ContentType_Enum.PaperFile,
-                `File Item Template mistakenly used for type ${data.type}.`
-            );
+                    data.item.typeName === ContentType_Enum.PaperFile
+                )
+            ) {
+                return <>File Item Template mistakenly used for type {data.type}.</>;
+            }
 
             if (data.item.data.length === 0) {
                 data = {
@@ -89,10 +92,9 @@ export const FileItemTemplate: ItemBaseTemplate = {
             }
 
             const latestVersion = data.item.data[data.item.data.length - 1];
-            assert(
-                latestVersion.data.baseType === ContentBaseType.File,
-                `File Item Template mistakenly used for base type ${latestVersion.data.baseType}.`
-            );
+            if (latestVersion.data.baseType !== ContentBaseType.File) {
+                return <>File Item Template mistakenly used for base type {latestVersion.data.baseType}.</>;
+            }
             let imageSrc = undefined;
             if (
                 latestVersion &&
@@ -149,6 +151,7 @@ export const FileItemTemplate: ItemBaseTemplate = {
                             };
                             update(newData);
                         }}
+                        contentBaseType={ContentBaseType.File}
                     />
                 </>
             );

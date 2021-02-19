@@ -22,6 +22,7 @@ import assert from "assert";
 import React, { useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
+    GroupAttendee_Insert_Input,
     useImportAttendeesMutation,
     useSelectAllAttendeesQuery,
     useSelectAllGroupsQuery,
@@ -34,11 +35,15 @@ gql`
     mutation ImportAttendees(
         $insertAttendees: [Attendee_insert_input!]!
         $insertInvitations: [Invitation_insert_input!]!
+        $insertGroupAttendees: [GroupAttendee_insert_input!]!
     ) {
         insert_Attendee(objects: $insertAttendees) {
             affected_rows
         }
         insert_Invitation(objects: $insertInvitations) {
+            affected_rows
+        }
+        insert_GroupAttendee(objects: $insertGroupAttendees) {
             affected_rows
         }
     }
@@ -54,6 +59,7 @@ interface AttendeeFinalData {
               id: string;
               name: string;
           };
+    isNew: boolean;
 }
 
 export default function ImportPanel({
@@ -114,19 +120,46 @@ export default function ImportPanel({
                         email: row.email.trim().toLowerCase(),
                     }))
                     // Remove duplicates as compared to the existing data
-                    .filter(
-                        (row) =>
+                    .reduce<AttendeeFinalData[]>((acc, row) => {
+                        const group = groupsData?.Group.find((g) => g.name.toLowerCase() === row.group.toLowerCase());
+                        if (!group) {
+                            return acc;
+                        }
+
+                        const existingAttendee =
                             attendeesData?.Attendee &&
-                            attendeesData.Attendee.every(
-                                (x) => !x.invitation || x.invitation.invitedEmailAddress !== row.email
-                            )
-                    )
-                    .map((row) => ({
-                        name: row.name,
-                        email: row.email,
-                        id: uuidv4(),
-                        group: groupsData?.Group.find((group) => group.name.toLowerCase() === row.group.toLowerCase()),
-                    })),
+                            attendeesData.Attendee.find((x) => {
+                                return x.invitation && x.invitation.invitedEmailAddress === row.email;
+                            });
+
+                        if (existingAttendee) {
+                            if (!existingAttendee.groupAttendees.some((ga) => ga.groupId === group.id)) {
+                                return [
+                                    ...acc,
+                                    {
+                                        name: row.name,
+                                        email: row.email,
+                                        id: existingAttendee.id,
+                                        group,
+                                        isNew: false,
+                                    },
+                                ];
+                            } else {
+                                return acc;
+                            }
+                        } else {
+                            return [
+                                ...acc,
+                                {
+                                    name: row.name,
+                                    email: row.email,
+                                    id: uuidv4(),
+                                    group,
+                                    isNew: true,
+                                },
+                            ];
+                        }
+                    }, []),
             ],
             [] as AttendeeFinalData[]
         );
@@ -173,9 +206,17 @@ export default function ImportPanel({
                     isDisabled={!!groupsError || !!attendeesError || noName || noEmail || noGroup}
                     isLoading={groupsLoading || importLoading || attendeesLoading}
                     onClick={() => {
+                        const newAttendees = finalData.filter((x) => x.isNew);
+                        const newGroupAttendees: GroupAttendee_Insert_Input[] = finalData
+                            .filter((x) => !x.isNew)
+                            .map((x) => ({
+                                attendeeId: x.id,
+                                groupId: x.group?.id,
+                            }));
+
                         importMutation({
                             variables: {
-                                insertAttendees: finalData.map((x) => {
+                                insertAttendees: newAttendees.map((x) => {
                                     assert(x.group);
                                     return {
                                         id: x.id,
@@ -190,10 +231,11 @@ export default function ImportPanel({
                                         },
                                     };
                                 }),
-                                insertInvitations: finalData.map((x) => ({
+                                insertInvitations: newAttendees.map((x) => ({
                                     attendeeId: x.id,
                                     invitedEmailAddress: x.email,
                                 })),
+                                insertGroupAttendees: newGroupAttendees,
                             },
                         });
                         setHasImported(true);

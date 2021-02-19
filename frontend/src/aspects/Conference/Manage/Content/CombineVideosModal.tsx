@@ -98,13 +98,10 @@ export function CombineVideosModal({
 
     const [currentJobId, setCurrentJobId] = useState<string | null>(null);
     const { data, startPolling, stopPolling } = useCombineVideosModal_GetCombineVideosJobQuery({
-        ...(currentJobId
-            ? {
-                  variables: {
-                      id: currentJobId,
-                  },
-              }
-            : {}),
+        variables: {
+            id: currentJobId,
+        },
+        skip: !currentJobId,
     });
     useEffect(() => {
         if (currentJobId) {

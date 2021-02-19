@@ -3,6 +3,7 @@ import { ContentBaseType, ContentItemDataBlob } from "@clowdr-app/shared-types/b
 import AmazonS3Uri from "amazon-s3-uri";
 import React from "react";
 import ReactPlayer from "react-player";
+import { ExternalLinkButton } from "../Chakra/LinkButton";
 import FAIcon from "../Icons/FAIcon";
 
 export default function RenderContentItem({ data }: { data: ContentItemDataBlob }): JSX.Element {
@@ -21,12 +22,18 @@ export default function RenderContentItem({ data }: { data: ContentItemDataBlob 
         switch (latestVersion.data.baseType) {
             case ContentBaseType.File:
                 return (
-                    <VStack>
-                        <a href={s3UrlToHttpUrl(latestVersion.data.s3Url)}>
+                    <ExternalLinkButton
+                        to={s3UrlToHttpUrl(latestVersion.data.s3Url)}
+                        isExternal={true}
+                        size="lg"
+                        height="auto"
+                        aria-label="Download previously uploaded file"
+                    >
+                        <VStack m={4}>
                             <FAIcon iconStyle="s" icon="download" />
-                        </a>
-                        <a href={s3UrlToHttpUrl(latestVersion.data.s3Url)}>File</a>
-                    </VStack>
+                            <Text>Previously uploaded file</Text>
+                        </VStack>
+                    </ExternalLinkButton>
                 );
             case ContentBaseType.Link:
                 return (

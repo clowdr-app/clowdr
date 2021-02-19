@@ -74,7 +74,7 @@ gql`
         $contentTypeName: ContentType_enum!
         $data: jsonb!
         $isHidden: Boolean!
-        $layoutData: jsonb!
+        $layoutData: jsonb = null
         $name: String!
         $requiredContentId: uuid!
     ) {

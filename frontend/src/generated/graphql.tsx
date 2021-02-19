@@ -18294,9 +18294,7 @@ export type Chat_ReadUpToIndex_Bool_Exp = {
 /** unique or primary key constraints on table "chat.ReadUpToIndex" */
 export enum Chat_ReadUpToIndex_Constraint {
   /** unique or primary key constraint */
-  ReadUpToIndexPkey = 'ReadUpToIndex_pkey',
-  /** unique or primary key constraint */
-  ChatReadUpToIndexPkIndex = 'chat_ReadUpToIndex_pk_index'
+  ReadUpToIndexPkey = 'ReadUpToIndex_pkey'
 }
 
 /** input type for incrementing integer column in table "chat.ReadUpToIndex" */
@@ -30965,7 +30963,10 @@ export type SendChatMessageMutationVariables = Exact<{
 }>;
 
 
-export type SendChatMessageMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Message_one?: Maybe<{ readonly __typename?: 'chat_Message', readonly id: number, readonly duplicatedMessageId?: Maybe<number> }> };
+export type SendChatMessageMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Message_one?: Maybe<(
+    { readonly __typename?: 'chat_Message' }
+    & SubscribedChatMessageDataFragment
+  )> };
 
 export type SendChatAnswerMutationVariables = Exact<{
   data: Scalars['jsonb'];
@@ -34201,11 +34202,10 @@ export const SendChatMessageDocument = gql`
   insert_chat_Message_one(
     object: {chatId: $chatId, data: $data, isPinned: $isPinned, message: $message, senderId: $senderId, type: $type, chatTitle: $chatTitle, senderName: $senderName}
   ) {
-    id
-    duplicatedMessageId
+    ...SubscribedChatMessageData
   }
 }
-    `;
+    ${SubscribedChatMessageDataFragmentDoc}`;
 export type SendChatMessageMutationFn = Apollo.MutationFunction<SendChatMessageMutation, SendChatMessageMutationVariables>;
 
 /**

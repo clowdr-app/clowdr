@@ -1,22 +1,21 @@
 import { gql } from "@apollo/client";
-import { Box, Flex, Heading, Spinner } from "@chakra-ui/react";
+import { Box, Heading, Spinner } from "@chakra-ui/react";
 import {
     assertIsContentItemDataBlob,
     ContentBaseType,
     ContentItemDataBlob,
 } from "@clowdr-app/shared-types/build/content";
 import React, { useMemo } from "react";
+import ReactPlayer from "react-player";
 import {
     ContentGroupDataFragment,
     ContentType_Enum,
     Permission_Enum,
     useConferenceLandingPageContentGroupQuery,
 } from "../../../generated/graphql";
-import { LinkButton } from "../../Chakra/LinkButton";
 import PageFailedToLoad from "../../Errors/PageFailedToLoad";
 import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
-import FAIcon from "../../Icons/FAIcon";
 import { useNoPrimaryMenuButtons } from "../../Menu/usePrimaryMenuButtons";
 import { Markdown } from "../../Text/Markdown";
 import { useTitle } from "../../Utils/useTitle";
@@ -36,32 +35,65 @@ gql`
 `;
 
 function ConferenceLandingContent({ group }: { group: ContentGroupDataFragment }): JSX.Element {
-    const elements: JSX.Element[] = [];
+    let elements: { el: JSX.Element; type: ContentType_Enum }[] = [];
+    const conferenceLandingContentSortOrder = [
+        ContentType_Enum.Abstract,
+        ContentType_Enum.VideoUrl,
+        ContentType_Enum.ContentGroupList,
+    ];
     for (const item of group.contentItems) {
         switch (item.contentTypeName) {
             case ContentType_Enum.Abstract:
                 {
                     assertIsContentItemDataBlob(item.data);
                     const latestVersion = item.data[item.data.length - 1];
-                    elements.splice(
-                        0,
-                        0,
-                        <Box key={"item-" + item.id} mt={5} maxW={600} display="inline-block">
-                            <Markdown>
-                                {latestVersion?.data.baseType === ContentBaseType.Text ? latestVersion.data.text : ""}
-                            </Markdown>
-                        </Box>
-                    );
+                    elements.push({
+                        el: (
+                            <Box key={"item-" + item.id} mt={5} maxW={600} display="inline-block">
+                                <Markdown>
+                                    {latestVersion?.data.baseType === ContentBaseType.Text
+                                        ? latestVersion.data.text
+                                        : ""}
+                                </Markdown>
+                            </Box>
+                        ),
+                        type: item.contentTypeName,
+                    });
+                }
+                break;
+            case ContentType_Enum.VideoUrl:
+                {
+                    assertIsContentItemDataBlob(item.data);
+                    const latestVersion = item.data[item.data.length - 1];
+                    elements.push({
+                        el: (
+                            <Box maxW="100%">
+                                <ReactPlayer
+                                    style={{ maxWidth: "100%" }}
+                                    url={
+                                        latestVersion.data.baseType === ContentBaseType.URL
+                                            ? latestVersion.data.url
+                                            : ""
+                                    }
+                                    controls={true}
+                                />
+                            </Box>
+                        ),
+                        type: item.contentTypeName,
+                    });
                 }
                 break;
             case ContentType_Enum.ContentGroupList:
                 {
-                    elements.push(<ContentGroupList key={"item-" + item.id} />);
+                    elements.push({ el: <ContentGroupList key={"item-" + item.id} />, type: item.contentTypeName });
                 }
                 break;
         }
     }
-    return <>{elements}</>;
+    elements = elements.sort(
+        (x, y) => conferenceLandingContentSortOrder.indexOf(x.type) - conferenceLandingContentSortOrder.indexOf(y.type)
+    );
+    return <>{elements.map((x) => x.el)}</>;
 }
 
 function ConferenceLandingPageInner(): JSX.Element {
@@ -128,63 +160,6 @@ function ConferenceLandingPageInner(): JSX.Element {
         <>
             {title}
             {!hasAbstract ? <Heading as="h1">{conference.shortName}</Heading> : undefined}
-            <Flex flexWrap="wrap" justifyContent="center">
-                <LinkButton
-                    mx={2}
-                    mb={[2, 2, 4]}
-                    to={`/conference/${conference.slug}/schedule`}
-                    variant="outline"
-                    size="lg"
-                >
-                    <FAIcon iconStyle="r" icon="calendar" mr={2} /> Schedule
-                </LinkButton>
-                {[
-                    Permission_Enum.ConferenceViewAttendees,
-                    Permission_Enum.ConferenceManageAttendees,
-                    Permission_Enum.ConferenceManageGroups,
-                    Permission_Enum.ConferenceManageRoles,
-                ].some((permission) => activePermissions.has(permission)) ? (
-                    <LinkButton
-                        mx={2}
-                        mb={[2, 2, 4]}
-                        to={`/conference/${conference.slug}/attendees`}
-                        variant="outline"
-                        size="lg"
-                    >
-                        <FAIcon iconStyle="s" icon="users" mr={2} /> Attendees
-                    </LinkButton>
-                ) : undefined}
-                {[
-                    Permission_Enum.ConferenceViewAttendees,
-                    Permission_Enum.ConferenceManageSchedule,
-                ].some((permission) => activePermissions.has(permission)) ? (
-                    <LinkButton
-                        mx={2}
-                        mb={[2, 2, 4]}
-                        to={`/conference/${conference.slug}/rooms`}
-                        variant="outline"
-                        size="lg"
-                    >
-                        <FAIcon iconStyle="s" icon="mug-hot" mr={2} /> Rooms
-                    </LinkButton>
-                ) : undefined}
-                {[
-                    Permission_Enum.ConferenceViewAttendees,
-                    Permission_Enum.ConferenceManageSchedule,
-                    Permission_Enum.ConferenceModerateAttendees,
-                    Permission_Enum.ConferenceManageAttendees,
-                ].some((permission) => activePermissions.has(permission)) ? (
-                    <LinkButton
-                        mx={2}
-                        mb={[2, 2, 4]}
-                        to={`/conference/${conference.slug}/shuffle`}
-                        variant="outline"
-                        size="lg"
-                    >
-                        <FAIcon iconStyle="s" icon="mug-hot" mr={2} /> Shuffle Rooms
-                    </LinkButton>
-                ) : undefined}
-            </Flex>
             <ConferenceLandingContent group={group} />
         </>
     );

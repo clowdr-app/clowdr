@@ -281,7 +281,7 @@ export default function ContentGroupList(): JSX.Element {
     }
 
     return (
-        <VStack px={4} spacing={4}>
+        <VStack px={4} pt="6ex" spacing={4}>
             <Center flexDirection="column">
                 <SimpleGrid
                     aria-describedby="content-groups-accordion-header"

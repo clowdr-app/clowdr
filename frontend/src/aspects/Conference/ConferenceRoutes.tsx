@@ -16,6 +16,7 @@ import RoomPage from "./Attend/Room/RoomPage";
 import ConferenceTimeline from "./Attend/Schedule/ConferenceTimeline";
 import ManageConferenceBroadcastPage from "./Manage/ManageConferenceBroadcastPage";
 import ManageConferenceContentPage from "./Manage/ManageConferenceContentPage";
+import { ManageConferenceEmailPage } from "./Manage/ManageConferenceEmailPage";
 import ManageConferenceExportPage from "./Manage/ManageConferenceExportPage";
 import ManageConferenceGroupsPage from "./Manage/ManageConferenceGroupsPage";
 import ManageConferenceImportPage from "./Manage/ManageConferenceImportPage";
@@ -109,6 +110,9 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
             </Route>
             <Route path={`${rootUrl}/manage/chats`}>
                 <PageNotImplemented />
+            </Route>
+            <Route path={`${rootUrl}/manage/email`}>
+                <ManageConferenceEmailPage />
             </Route>
             <Route path={`${rootUrl}/manage/sponsors`}>
                 <ManageConferenceSponsorsPage />

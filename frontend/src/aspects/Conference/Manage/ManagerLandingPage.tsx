@@ -131,6 +131,14 @@ export default function ManagerLandingPage(): JSX.Element {
                     colorScheme="yellow"
                 />
                 <RestrictedDashboardButton
+                    to="email"
+                    name="Email"
+                    icon="envelope-open-text"
+                    description="Manage email templates that will be sent to attendees and authors."
+                    permissions={[Permission_Enum.ConferenceManageContent]}
+                    colorScheme="yellow"
+                />
+                <RestrictedDashboardButton
                     to="broadcasts"
                     name="Broadcasts"
                     icon="video"

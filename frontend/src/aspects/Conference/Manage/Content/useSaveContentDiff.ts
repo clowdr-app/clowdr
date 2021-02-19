@@ -171,7 +171,7 @@ gql`
     }
 
     query SelectAllContent($conferenceId: uuid!) {
-        ContentGroup(where: { conferenceId: { _eq: $conferenceId } }) {
+        ContentGroup(where: { conferenceId: { _eq: $conferenceId }, contentGroupTypeName: { _neq: SPONSOR } }) {
             ...ContentGroupFullNestedInfo
         }
         ContentPerson(where: { conferenceId: { _eq: $conferenceId } }) {

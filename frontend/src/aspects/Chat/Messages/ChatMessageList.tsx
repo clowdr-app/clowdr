@@ -41,6 +41,17 @@ gql`
         }
     }
 
+    fragment SubscribedChatMessageData on chat_Message {
+        created_at
+        data
+        duplicatedMessageId
+        id
+        message
+        senderId
+        type
+        chatId
+    }
+
     subscription NewMessages($chatId: uuid!) {
         chat_Message(order_by: { id: desc }, where: { chatId: { _eq: $chatId } }, limit: 5) {
             ...SubscribedChatMessageData
@@ -193,50 +204,79 @@ function MessageList({
                     <MessageBox
                         key={msg.id}
                         message={msg}
-                        subscribeToReactions={idx >= nonDuplicates.length - reactionsBoundary}
+                        subscribeToReactions={(areNew || !oldEls) && idx < reactionsBoundary}
                     />
                 ));
-            let newEls;
-            if (oldEls && newMessageElements.length > 0 && areNew) {
-                const replacementCount = Math.min(
-                    oldEls.length,
-                    Math.min(newMessageElements.length, reactionsBoundary)
-                );
-                const elementsToReplace = oldEls?.slice(0, replacementCount);
-                const replacementMessageElements = elementsToReplace.map((el) => (
-                    <MessageBox key={el.key} message={el.props.message} subscribeToReactions={false} />
-                ));
-                newEls = [...newMessageElements, ...replacementMessageElements, ...oldEls.slice(replacementCount)];
+            let output;
+            if (oldEls) {
+                if (areNew) {
+                    output = [
+                        ...newMessageElements,
+                        ...oldEls.map((el, idx) => {
+                            // Yes, double equals not triple - React does something weird to the keys which changes their type
+                            const newMsgIdx = duplicates.findIndex((x) => x.id == el.key);
+
+                            if (newMsgIdx !== -1) {
+                                const newMsg = duplicates[newMsgIdx];
+                                duplicates.splice(newMsgIdx, 1);
+                                return (
+                                    <MessageBox
+                                        key={el.key}
+                                        message={newMsg}
+                                        subscribeToReactions={idx + newMessageElements.length < reactionsBoundary}
+                                    />
+                                );
+                            } else if (
+                                idx < reactionsBoundary &&
+                                idx + newMessageElements.length >= reactionsBoundary
+                            ) {
+                                return (
+                                    <MessageBox key={el.key} message={el.props.message} subscribeToReactions={false} />
+                                );
+                            } else {
+                                return el;
+                            }
+                        }),
+                    ];
+                } else {
+                    output = [
+                        ...oldEls.map((el, idx) => {
+                            // Yes, double equals not triple - React does something weird to the keys which changes their type
+                            const newMsgIdx = duplicates.findIndex((x) => x.id == el.key);
+
+                            if (newMsgIdx !== -1) {
+                                const newMsg = duplicates[newMsgIdx];
+                                duplicates.splice(newMsgIdx, 1);
+                                return (
+                                    <MessageBox
+                                        key={el.key}
+                                        message={newMsg}
+                                        subscribeToReactions={idx < reactionsBoundary}
+                                    />
+                                );
+                            } else {
+                                return el;
+                            }
+                        }),
+                        ...newMessageElements,
+                    ];
+                }
             } else {
-                if (oldEls) {
-                    if (areNew) {
-                        newEls = [...newMessageElements, ...oldEls];
+                output = newMessageElements.map((el, idx) => {
+                    // Yes, double equals not triple - React does something weird to the keys which changes their type
+                    const newMsgIdx = duplicates.findIndex((x) => x.id == el.key);
+
+                    if (newMsgIdx !== -1) {
+                        const newMsg = duplicates[newMsgIdx];
+                        duplicates.splice(newMsgIdx, 1);
+                        return (
+                            <MessageBox key={el.key} message={newMsg} subscribeToReactions={idx < reactionsBoundary} />
+                        );
                     } else {
-                        newEls = [...oldEls, ...newMessageElements];
+                        return el;
                     }
-                } else {
-                    newEls = newMessageElements;
-                }
+                });
             }
-
-            const output = newEls.map((el, idx) => {
-                // Yes, double equals not triple - React does something weird to the keys which changes their type
-                const newMsgIdx = duplicates.findIndex((x) => x.id == el.key);
-
-                if (newMsgIdx !== -1) {
-                    const newMsg = duplicates[newMsgIdx];
-                    duplicates.splice(newMsgIdx, 1);
-                    return (
-                        <MessageBox
-                            key={el.key}
-                            message={newMsg}
-                            subscribeToReactions={idx >= newEls.length - reactionsBoundary}
-                        />
-                    );
-                } else {
-                    return el;
-                }
-            });
 
             if (shouldAutoScroll.current) {
                 ref.current?.scroll({

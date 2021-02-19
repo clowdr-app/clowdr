@@ -38,26 +38,6 @@ gql`
         chatId
     }
 
-    fragment SubscribedChatReactionData on chat_Reaction {
-        data
-        id
-        senderId
-        symbol
-        type
-        messageId
-    }
-
-    fragment SubscribedChatMessageData on chat_Message {
-        created_at
-        data
-        duplicatedMessageId
-        id
-        message
-        senderId
-        type
-        chatId
-    }
-
     query SelectSingleMessage($id: Int!) {
         chat_Message_by_pk(id: $id) {
             ...ChatMessageData
@@ -67,12 +47,6 @@ gql`
     mutation DeleteMessage($id: Int!) {
         delete_chat_Message_by_pk(id: $id) {
             id
-        }
-    }
-
-    subscription NextReactions($messageIds: [Int!]!) {
-        chat_Reaction(where: { messageId: { _in: $messageIds } }) {
-            ...SubscribedChatReactionData
         }
     }
 `;

@@ -1,11 +1,72 @@
+import { gql } from "@apollo/client";
 import { Box, BoxProps } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import { ChatReactionDataFragment, Chat_ReactionType_Enum } from "../../../generated/graphql";
+import {
+    ChatReactionDataFragment,
+    Chat_ReactionType_Enum,
+    useMessageReactionsSubscription,
+} from "../../../generated/graphql";
 import ReactionBadge from "./ReactionBadge";
 import { useReactions } from "./ReactionsProvider";
 import { useReceiveMessageQueries } from "./ReceiveMessageQueries";
 
 export default function ReactionsList({
+    subscribeToReactions,
+    ...rest
+}: {
+    currentAttendeeId?: string;
+    messageId: number;
+    reactions: readonly ChatReactionDataFragment[];
+    subscribeToReactions: boolean;
+} & BoxProps): JSX.Element {
+    if (subscribeToReactions) {
+        return <ReactionsListSubscriptionWrapper {...rest} />;
+    } else {
+        return <ReactionsListInner {...rest} />;
+    }
+}
+
+gql`
+    fragment SubscribedChatReactionData on chat_Reaction {
+        data
+        id
+        senderId
+        symbol
+        type
+        messageId
+    }
+
+    subscription MessageReactions($messageId: Int!) {
+        chat_Reaction(where: { messageId: { _eq: $messageId } }) {
+            ...SubscribedChatReactionData
+        }
+    }
+`;
+
+function ReactionsListSubscriptionWrapper({
+    reactions: initialReactions,
+    messageId,
+    ...rest
+}: {
+    currentAttendeeId?: string;
+    messageId: number;
+    reactions: readonly ChatReactionDataFragment[];
+} & BoxProps): JSX.Element {
+    const reactions = useMessageReactionsSubscription({
+        variables: {
+            messageId,
+        },
+    });
+    return (
+        <ReactionsListInner
+            reactions={reactions.data?.chat_Reaction ?? initialReactions}
+            messageId={messageId}
+            {...rest}
+        />
+    );
+}
+
+function ReactionsListInner({
     reactions,
     currentAttendeeId,
     messageId,
@@ -17,6 +78,7 @@ export default function ReactionsList({
 } & BoxProps): JSX.Element {
     const reactionQs = useReactions();
     const messageQs = useReceiveMessageQueries();
+
     const reactionsGrouped: Array<[
         string,
         { count: number; attendeeSentThisReactionId: number | false }
@@ -41,6 +103,7 @@ export default function ReactionsList({
                 .entries(),
         ];
     }, [currentAttendeeId, reactions]);
+
     return (
         <Box display="block" w="100%" {...rest}>
             {reactionsGrouped.map(([reaction, info]) => (

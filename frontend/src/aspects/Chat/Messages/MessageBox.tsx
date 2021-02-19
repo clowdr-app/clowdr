@@ -64,9 +64,11 @@ import { useReceiveMessageQueries } from "./ReceiveMessageQueries";
 function MessageBody({
     message,
     attendee,
+    subscribeToReactions,
 }: {
     message: ChatMessageDataFragment;
     attendee: AttendeeDataFragment | null;
+    subscribeToReactions: boolean;
 }): JSX.Element {
     const config = useChatConfiguration();
     const messages = useReceiveMessageQueries();
@@ -200,9 +202,10 @@ function MessageBody({
                 currentAttendeeId={config.currentAttendeeId}
                 messageId={message.id}
                 fontSize={smallFontSize}
+                subscribeToReactions={subscribeToReactions}
             />
         ),
-        [config.currentAttendeeId, message.id, message.reactions, smallFontSize]
+        [config.currentAttendeeId, message.id, message.reactions, smallFontSize, subscribeToReactions]
     );
 
     const question = useMemo(
@@ -365,6 +368,7 @@ function MessageBody({
 
 export default function MessageBox({
     message,
+    subscribeToReactions,
 }: {
     message: ChatMessageDataFragment;
     subscribeToReactions: boolean;
@@ -418,7 +422,7 @@ export default function MessageBox({
                 attendee?.displayName ?? "<Loading name>"
             }. ${message.message}`}
         >
-            <MessageBody attendee={attendee} message={message} />
+            <MessageBody subscribeToReactions={subscribeToReactions} attendee={attendee} message={message} />
         </HStack>
     );
 }

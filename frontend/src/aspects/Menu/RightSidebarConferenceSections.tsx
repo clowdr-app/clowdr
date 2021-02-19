@@ -357,7 +357,7 @@ function ChatsPanel({
         variables: {
             attendeeId,
         },
-        // pollInterval: 10000,
+        pollInterval: 30000,
     });
     const [createDmMutation, createDMMutationResponse] = useCreateDmMutation();
 

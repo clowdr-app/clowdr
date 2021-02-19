@@ -19981,12 +19981,19 @@ export enum Job_Queues_PublishVideoJob_Update_Column {
 export type Job_Queues_SubmissionRequestEmailJob = {
   readonly __typename?: 'job_queues_SubmissionRequestEmailJob';
   readonly created_at: Scalars['timestamptz'];
+  readonly emailTemplate?: Maybe<Scalars['jsonb']>;
   readonly id: Scalars['uuid'];
   readonly processed: Scalars['Boolean'];
   readonly updated_at: Scalars['timestamptz'];
   /** An object relationship */
   readonly uploader: Uploader;
   readonly uploaderId: Scalars['uuid'];
+};
+
+
+/** columns and relationships of "job_queues.SubmissionRequestEmailJob" */
+export type Job_Queues_SubmissionRequestEmailJobEmailTemplateArgs = {
+  path?: Maybe<Scalars['String']>;
 };
 
 /** aggregated selection of "job_queues.SubmissionRequestEmailJob" */
@@ -20018,6 +20025,11 @@ export type Job_Queues_SubmissionRequestEmailJob_Aggregate_Order_By = {
   readonly min?: Maybe<Job_Queues_SubmissionRequestEmailJob_Min_Order_By>;
 };
 
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Job_Queues_SubmissionRequestEmailJob_Append_Input = {
+  readonly emailTemplate?: Maybe<Scalars['jsonb']>;
+};
+
 /** input type for inserting array relation for remote table "job_queues.SubmissionRequestEmailJob" */
 export type Job_Queues_SubmissionRequestEmailJob_Arr_Rel_Insert_Input = {
   readonly data: ReadonlyArray<Job_Queues_SubmissionRequestEmailJob_Insert_Input>;
@@ -20030,6 +20042,7 @@ export type Job_Queues_SubmissionRequestEmailJob_Bool_Exp = {
   readonly _not?: Maybe<Job_Queues_SubmissionRequestEmailJob_Bool_Exp>;
   readonly _or?: Maybe<ReadonlyArray<Maybe<Job_Queues_SubmissionRequestEmailJob_Bool_Exp>>>;
   readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly emailTemplate?: Maybe<Jsonb_Comparison_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly processed?: Maybe<Boolean_Comparison_Exp>;
   readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
@@ -20043,9 +20056,25 @@ export enum Job_Queues_SubmissionRequestEmailJob_Constraint {
   SubmissionRequestEmailJobPkey = 'SubmissionRequestEmailJob_pkey'
 }
 
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Job_Queues_SubmissionRequestEmailJob_Delete_At_Path_Input = {
+  readonly emailTemplate?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Job_Queues_SubmissionRequestEmailJob_Delete_Elem_Input = {
+  readonly emailTemplate?: Maybe<Scalars['Int']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Job_Queues_SubmissionRequestEmailJob_Delete_Key_Input = {
+  readonly emailTemplate?: Maybe<Scalars['String']>;
+};
+
 /** input type for inserting data into table "job_queues.SubmissionRequestEmailJob" */
 export type Job_Queues_SubmissionRequestEmailJob_Insert_Input = {
   readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly emailTemplate?: Maybe<Scalars['jsonb']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly processed?: Maybe<Scalars['Boolean']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
@@ -20112,6 +20141,7 @@ export type Job_Queues_SubmissionRequestEmailJob_On_Conflict = {
 /** ordering options when selecting data from "job_queues.SubmissionRequestEmailJob" */
 export type Job_Queues_SubmissionRequestEmailJob_Order_By = {
   readonly created_at?: Maybe<Order_By>;
+  readonly emailTemplate?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly processed?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
@@ -20124,10 +20154,17 @@ export type Job_Queues_SubmissionRequestEmailJob_Pk_Columns_Input = {
   readonly id: Scalars['uuid'];
 };
 
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Job_Queues_SubmissionRequestEmailJob_Prepend_Input = {
+  readonly emailTemplate?: Maybe<Scalars['jsonb']>;
+};
+
 /** select columns of table "job_queues.SubmissionRequestEmailJob" */
 export enum Job_Queues_SubmissionRequestEmailJob_Select_Column {
   /** column name */
   CreatedAt = 'created_at',
+  /** column name */
+  EmailTemplate = 'emailTemplate',
   /** column name */
   Id = 'id',
   /** column name */
@@ -20141,6 +20178,7 @@ export enum Job_Queues_SubmissionRequestEmailJob_Select_Column {
 /** input type for updating data in table "job_queues.SubmissionRequestEmailJob" */
 export type Job_Queues_SubmissionRequestEmailJob_Set_Input = {
   readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly emailTemplate?: Maybe<Scalars['jsonb']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly processed?: Maybe<Scalars['Boolean']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
@@ -20151,6 +20189,8 @@ export type Job_Queues_SubmissionRequestEmailJob_Set_Input = {
 export enum Job_Queues_SubmissionRequestEmailJob_Update_Column {
   /** column name */
   CreatedAt = 'created_at',
+  /** column name */
+  EmailTemplate = 'emailTemplate',
   /** column name */
   Id = 'id',
   /** column name */
@@ -24677,6 +24717,11 @@ export type Mutation_RootUpdate_Job_Queues_PublishVideoJob_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_Job_Queues_SubmissionRequestEmailJobArgs = {
+  _append?: Maybe<Job_Queues_SubmissionRequestEmailJob_Append_Input>;
+  _delete_at_path?: Maybe<Job_Queues_SubmissionRequestEmailJob_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<Job_Queues_SubmissionRequestEmailJob_Delete_Elem_Input>;
+  _delete_key?: Maybe<Job_Queues_SubmissionRequestEmailJob_Delete_Key_Input>;
+  _prepend?: Maybe<Job_Queues_SubmissionRequestEmailJob_Prepend_Input>;
   _set?: Maybe<Job_Queues_SubmissionRequestEmailJob_Set_Input>;
   where: Job_Queues_SubmissionRequestEmailJob_Bool_Exp;
 };
@@ -24684,6 +24729,11 @@ export type Mutation_RootUpdate_Job_Queues_SubmissionRequestEmailJobArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_Job_Queues_SubmissionRequestEmailJob_By_PkArgs = {
+  _append?: Maybe<Job_Queues_SubmissionRequestEmailJob_Append_Input>;
+  _delete_at_path?: Maybe<Job_Queues_SubmissionRequestEmailJob_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<Job_Queues_SubmissionRequestEmailJob_Delete_Elem_Input>;
+  _delete_key?: Maybe<Job_Queues_SubmissionRequestEmailJob_Delete_Key_Input>;
+  _prepend?: Maybe<Job_Queues_SubmissionRequestEmailJob_Prepend_Input>;
   _set?: Maybe<Job_Queues_SubmissionRequestEmailJob_Set_Input>;
   pk_columns: Job_Queues_SubmissionRequestEmailJob_Pk_Columns_Input;
 };
@@ -31677,6 +31727,18 @@ export type ContentGroup_CreateRoomMutationVariables = Exact<{
 
 export type ContentGroup_CreateRoomMutation = { readonly __typename?: 'mutation_root', readonly createContentGroupRoom?: Maybe<{ readonly __typename?: 'CreateContentGroupRoomOutput', readonly roomId?: Maybe<string>, readonly message?: Maybe<string> }> };
 
+export type SubmissionRequestsModal_GetConferenceConfigurationsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type SubmissionRequestsModal_GetConferenceConfigurationsQuery = { readonly __typename?: 'query_root', readonly ConferenceConfiguration: ReadonlyArray<(
+    { readonly __typename?: 'ConferenceConfiguration' }
+    & ConfigureEmailTemplates_ConferenceConfigurationFragment
+  )> };
+
+export type SubmissionRequestsModal_ConferenceConfigurationFragment = { readonly __typename?: 'ConferenceConfiguration', readonly id: any, readonly conferenceId: any, readonly key: string, readonly value: any };
+
 export type InsertSubmissionRequestEmailJobsMutationVariables = Exact<{
   objs: ReadonlyArray<Job_Queues_SubmissionRequestEmailJob_Insert_Input> | Job_Queues_SubmissionRequestEmailJob_Insert_Input;
 }>;
@@ -33458,6 +33520,14 @@ export const Timeline_EventTagFragmentDoc = gql`
 export const ConferenceConfiguration_ConferenceConfigurationsFragmentDoc = gql`
     fragment ConferenceConfiguration_ConferenceConfigurations on ConferenceConfiguration {
   id
+  key
+  value
+}
+    `;
+export const SubmissionRequestsModal_ConferenceConfigurationFragmentDoc = gql`
+    fragment SubmissionRequestsModal_ConferenceConfiguration on ConferenceConfiguration {
+  id
+  conferenceId
   key
   value
 }
@@ -36402,6 +36472,39 @@ export function useContentGroup_CreateRoomMutation(baseOptions?: Apollo.Mutation
 export type ContentGroup_CreateRoomMutationHookResult = ReturnType<typeof useContentGroup_CreateRoomMutation>;
 export type ContentGroup_CreateRoomMutationResult = Apollo.MutationResult<ContentGroup_CreateRoomMutation>;
 export type ContentGroup_CreateRoomMutationOptions = Apollo.BaseMutationOptions<ContentGroup_CreateRoomMutation, ContentGroup_CreateRoomMutationVariables>;
+export const SubmissionRequestsModal_GetConferenceConfigurationsDocument = gql`
+    query SubmissionRequestsModal_GetConferenceConfigurations($conferenceId: uuid!) {
+  ConferenceConfiguration(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...ConfigureEmailTemplates_ConferenceConfiguration
+  }
+}
+    ${ConfigureEmailTemplates_ConferenceConfigurationFragmentDoc}`;
+
+/**
+ * __useSubmissionRequestsModal_GetConferenceConfigurationsQuery__
+ *
+ * To run a query within a React component, call `useSubmissionRequestsModal_GetConferenceConfigurationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubmissionRequestsModal_GetConferenceConfigurationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubmissionRequestsModal_GetConferenceConfigurationsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useSubmissionRequestsModal_GetConferenceConfigurationsQuery(baseOptions: Apollo.QueryHookOptions<SubmissionRequestsModal_GetConferenceConfigurationsQuery, SubmissionRequestsModal_GetConferenceConfigurationsQueryVariables>) {
+        return Apollo.useQuery<SubmissionRequestsModal_GetConferenceConfigurationsQuery, SubmissionRequestsModal_GetConferenceConfigurationsQueryVariables>(SubmissionRequestsModal_GetConferenceConfigurationsDocument, baseOptions);
+      }
+export function useSubmissionRequestsModal_GetConferenceConfigurationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubmissionRequestsModal_GetConferenceConfigurationsQuery, SubmissionRequestsModal_GetConferenceConfigurationsQueryVariables>) {
+          return Apollo.useLazyQuery<SubmissionRequestsModal_GetConferenceConfigurationsQuery, SubmissionRequestsModal_GetConferenceConfigurationsQueryVariables>(SubmissionRequestsModal_GetConferenceConfigurationsDocument, baseOptions);
+        }
+export type SubmissionRequestsModal_GetConferenceConfigurationsQueryHookResult = ReturnType<typeof useSubmissionRequestsModal_GetConferenceConfigurationsQuery>;
+export type SubmissionRequestsModal_GetConferenceConfigurationsLazyQueryHookResult = ReturnType<typeof useSubmissionRequestsModal_GetConferenceConfigurationsLazyQuery>;
+export type SubmissionRequestsModal_GetConferenceConfigurationsQueryResult = Apollo.QueryResult<SubmissionRequestsModal_GetConferenceConfigurationsQuery, SubmissionRequestsModal_GetConferenceConfigurationsQueryVariables>;
 export const InsertSubmissionRequestEmailJobsDocument = gql`
     mutation InsertSubmissionRequestEmailJobs($objs: [job_queues_SubmissionRequestEmailJob_insert_input!]!) {
   insert_job_queues_SubmissionRequestEmailJob(objects: $objs) {

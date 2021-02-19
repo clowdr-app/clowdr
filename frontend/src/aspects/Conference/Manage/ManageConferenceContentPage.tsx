@@ -1,4 +1,5 @@
 import { Heading, Spinner, useDisclosure, useToast } from "@chakra-ui/react";
+import type { EmailTemplate_BaseConfig } from "@clowdr-app/shared-types/build/conferenceConfiguration";
 import assert from "assert";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -29,6 +30,7 @@ import { deepCloneContentGroupDescriptor } from "./Content/Functions";
 import ManageHallwaysModal from "./Content/ManageHallwaysModal";
 import ManagePeopleModal from "./Content/ManagePeopleModal";
 import ManageTagsModal from "./Content/ManageTagsModal";
+import { SendSubmissionRequestsModal } from "./Content/SubmissionRequestsModal";
 // import PublishVideosModal from "./Content/PublishVideosModal";
 import { fitGroupToTemplate, GroupTemplates } from "./Content/Templates";
 import type {
@@ -306,6 +308,9 @@ export default function ManageConferenceContentPage(): JSX.Element {
     const { isOpen: hallwaysModalOpen, onOpen: onHallwaysModalOpen, onClose: onHallwaysModalClose } = useDisclosure();
     const [editedHallwaysIds, setEditedHallwaysIds] = useState<Set<string>>(new Set());
 
+    const sendSubmissionRequestsModal = useDisclosure();
+    const [submissionRequestContentGroups, setSubmissionRequestContentGroups] = useState<ContentGroupDescriptor[]>([]);
+
     // const {
     //     isOpen: publishVideosModalOpen,
     //     onOpen: onPublishVideosModalOpen,
@@ -542,30 +547,14 @@ export default function ManageConferenceContentPage(): JSX.Element {
                     },
                     {
                         action: async (groupKeys) => {
-                            await sendSubmissionRequests({
-                                variables: {
-                                    objs: Array.from(groupKeys.values()).reduce((acc1, groupId) => {
-                                        const group = allGroupsMap?.get(groupId);
-                                        assert(group);
-                                        return [
-                                            ...acc1,
-                                            ...group.requiredItems.reduce(
-                                                (acc, item) => [
-                                                    ...acc,
-                                                    ...item.uploaders.map((x) => ({ uploaderId: x.id })),
-                                                ],
-                                                [] as { uploaderId: string }[]
-                                            ),
-                                        ];
-                                    }, [] as { uploaderId: string }[]),
-                                },
-                            });
-                            toast({
-                                title: "Requests sent",
-                                duration: 3000,
-                                isClosable: true,
-                                status: "success",
-                            });
+                            if (!allGroupsMap) {
+                                return;
+                            }
+                            const contentGroups = Array.from(allGroupsMap.entries())
+                                .filter((entry) => groupKeys.has(entry[0]))
+                                .map((entry) => entry[1]);
+                            setSubmissionRequestContentGroups(contentGroups);
+                            sendSubmissionRequestsModal.onOpen();
                         },
                         enabledWhenNothingSelected: false,
                         enabledWhenDirty: false,
@@ -591,6 +580,24 @@ export default function ManageConferenceContentPage(): JSX.Element {
                     //     text: "Publish videos",
                     // },
                 ]}
+            />
+            <SendSubmissionRequestsModal
+                contentGroups={submissionRequestContentGroups}
+                isOpen={sendSubmissionRequestsModal.isOpen}
+                onClose={sendSubmissionRequestsModal.onClose}
+                send={async (uploaderIds: string[], emailTemplate: EmailTemplate_BaseConfig) => {
+                    await sendSubmissionRequests({
+                        variables: {
+                            objs: uploaderIds.map((id) => ({ uploaderId: id, emailTemplate })),
+                        },
+                    });
+                    toast({
+                        title: "Requests sent",
+                        duration: 3000,
+                        isClosable: true,
+                        status: "success",
+                    });
+                }}
             />
             <ManageTagsModal
                 tags={allTagsMap ?? new Map()}

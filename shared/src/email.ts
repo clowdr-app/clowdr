@@ -70,7 +70,7 @@ export const EMAIL_TEMPLATE_SUBMISSION_REQUEST: EmailTemplate_Defaults = {
 The Clowdr team
 </p>`,
     subjectTemplate:
-        "Clowdr: You are requested to submit {{file.name}} ({{file.typeName}}) for {{item.title}} at {{conference.name}}",
+        "Clowdr: You are requested to submit {{file.name}} [{{file.typeName}}] for {{item.title}} at {{conference.name}}",
 };
 
 /**

@@ -11,25 +11,37 @@ React web app that forms the main Clowdr frontend.
 
 ## Setting up
 
-1. Follow the root ReadMe instructions for configuring Auth0. Then come back here.
-   BCP: Why not just swap steps 8 and 9 inthe top-level setup?
-1. Copy the `frontend/.env.example` to a new `frontend/.env` file.
-1. Configure your `.env` file according to the [Frontend Configuration](#frontend-configuration) section below.
-1. Build and test the system locally (see _[Local Development](#local-development)_).
-1. Once you have set up Hasura Cloud, create a Netlify account and follow the steps below.
-1. In Netlify, create a new site from Git.
+1. Follow the root README instructions for configuring Auth0. Then come back here.
+   BCP: Why not just swap steps 8 and 9 in the top-level setup?
+2. Copy the `frontend/.env.example` to a new `frontend/.env` file.
+3. Configure your `.env` file according to the [Frontend
+   Configuration](#frontend-configuration) section below.
+4. Build and test the system locally (see [Local Development](#local-development)
+   below).
+5. **Full Setup**: If using Netlify, then:
+   - Once you have set up Hasura Cloud, create a Netlify account and
+     follow the steps below.
+   - in Netlify, create a new site from Git.
 
-- If you're not part of the core Clowdr team, create and use a fork of this (`clowdr-app/clowdr`) repository.
+BCP: I don't understand the formatting (bulleting and indentation) of the
+rest of this subsection.
+
+- If you're not part of the core Clowdr team, create and use a fork of this
+  (`clowdr-app/clowdr`) repository.
+  BCP: Should that step not be part of the top-level "clone clowdr repo" step?
 - See _[Deployment to Netlify](#deployment-to-netlify)_ for instructions.
 
-1. Go back to Auth0 and add the Netlify app url(s) to the application configuration (see instructions in root ReadMe)
+1. If using Netlify, go back to Auth0 and add the Netlify app url(s) to the
+   application configuration (see instructions in root README).
 
-## UI Components, Theming and Icons
+## UI Components, Theming, and Icons
 
 We use [Chakra UI](https://chakra-ui.com/) to build accessible, consistent UIs
 with [theming](@chakra-ui/theme-tools). Chakra also provides
 [icons](https://chakra-ui.com/docs/components/icon) and a system for [custom
 components](@chakra-ui/theme-tools).
+
+BCP: In there something to install here? Or is this jut FYI?
 
 ## GraphQL
 
@@ -39,7 +51,8 @@ need to regenerate the GraphQL code. You can do this using the VSCode Task
 
 ## Local Development
 
-See root ReadMe _Local Development_ instructions for local development for which tasks to run.
+See root README _Local Development_ instructions for local development for
+which tasks to run.
 
 If the environment configuration changes, or for example, the `package.json`
 commands change, then you will need to restart tasks for this frontend.
@@ -118,6 +131,11 @@ If you need to build a new version, run `npm run build:transcript-editor` and co
 variables in the build which start with `SNOWPACK_PUBLIC_`.
 
 **_Note:_** Pay attention to the _Netlify?_ column when configuring Netlify.
+BCP: Don't understand the semantics of No, Yes, and Only!
+
+BCP: Again, the explanations in the Value column are not very helpful (they
+don't tell me where to find things), and anyway I would rather see all this
+in comments in the .example file.
 
 | Env Var                                      | Value                                                                                | Netlify? |
 | -------------------------------------------- | ------------------------------------------------------------------------------------ | -------- |

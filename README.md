@@ -20,10 +20,37 @@ For contributors that _only_ want to play with the user interface, the
 "Quick" version of the following instructions should get you a minimal
 working setup. Just skip over the steps marked "Full Setup".
 
+**Warning**: The Quick Setup instructions are still being debugged and may
+or may not work yet!!
+
+**Caveat**: The word "Quick" should be taken with a grain of salt. Even
+this streamlined path is likely to take you a day or two.
+
 To run your own conference on Clowdr and/or test changes that affect other
 parts of the platform, follow all the steps below.
 
 ## Pre-requisites
+
+BCP: General comments about the READMEs:
+
+- Separating Pre-Requisites from Setup as separate "phases" seems
+  unnecessarily heavy.
+- Most of the README files begin with a sort of "Table of Contents" that
+  makes subroutine calls to various sections of the rest of the document.
+  This requires quite a bit of remembering state on the part of readers
+  (especially since the whole README file is itself generally a subroutine
+  call from the main README) and contributes to a feeling of overwhelm.
+  Moreover, there is not very much material in any of the files _besides_
+  the sections describing what to do.
+- So my suggestion would be to
+  1. Coalesce the pre-requisites and setup sections of every document
+     into a single list
+  2. Inline all the subroutine calls within individual README documents
+     -- i.e., make the whole document be a list of ## sections each
+     describing a major step of installation.
+  3. For the few sections that contain miscellaneous notes and useful
+     information, rather than setup instructions, just mark them clearly
+     as "Notes" so the reader knows to skip over them on a first pass.
 
 1. [VSCode](https://code.visualstudio.com/)
    - We also recommend you install the "recommended extensions" listed in the
@@ -36,15 +63,19 @@ parts of the platform, follow all the steps below.
 4. [Actions Service pre-requsities](services/actions/README.md#Pre-requisites)
 5. [Frontend pre-requsities](frontend/README.md#Pre-requisites)
 
+BCP: Probably also need: `npm install -g snowpack`
+
 ## Setting Up
+
+BCP: To fix: Once the Hasura console is running, we need to run the `Actions service - GraphQL Codegen` task.
 
 1. Clone this repository
 2. Initialise and update submodules:
 
-```
-      git submodule init
-      git submodule update
-```
+   ```
+         git submodule init
+         git submodule update
+   ```
 
 3. Build `react-transcript-editor` as follows:
    BCP: Should this be slate-transcript-editor?? (Answer: Ross is working
@@ -54,7 +85,28 @@ parts of the platform, follow all the steps below.
    1. Run `npm run build:component`
    1. You should see the `dist` folder created.
    1. You will not need to do this again (hopefully)
-4. Run `npm i` to install npm packages. This will also install dependencies in subdirectories.
+4. Install npm packages:
+   ```
+   npm i
+   cd frontend
+     npm i
+     cd ..
+   cd services/actions
+     npm i
+     cd ../..
+   cd services/presence
+     npm i
+     cd ../..
+   cd shared
+     npm i
+     cd ..
+   ```
+   **Full Setup**: Also this one:
+   ```
+   cd aws
+     npm i
+     cd ..
+   ```
 5. **Full setup**: Follow the [Clowdr AWS ReadMe](aws/README.md#Setting-up)
 6. Follow the Hasura setup: [Clowdr Hasura ReadMe](hasura/README.md#Setting-up)
    BCP: Is there a good reason for splitting the instructions in this file into separate Pre-Requisites and Setup steps? This creates a lot of bouncing around between README files and adds to the sense of overwhelm.
@@ -94,19 +146,14 @@ considered for merging._**
 Now, configure the application in the _Settings_ tab.
 
 1. Configure `Allowed Callback URLs` (comma-separated)
-   (The format/suffix of these urls should not be altered.)
+   (The format/suffix of these urls should not be altered. They should
+   include `localhost`.)
 
-   You should include `localhost`.
-   BCP: Is it OK to indent these? (I assume yes, but I don't want to break
-   anything. I reformatted to facilitate cut/paste,
-   and I added commas, on the assumption that a trailing comma on the last
-   one won't hurt anything)
-
-```
-http://localhost:3000/auth0/,
-http://localhost:3000/auth0/logged-in,
-http://localhost:3000/auth0/email-verification/result,
-```
+   ```
+   http://localhost:3000/auth0/,
+   http://localhost:3000/auth0/logged-in,
+   http://localhost:3000/auth0/email-verification/result,
+   ```
 
 (Note that, for production, the first URL _must_ be the `auth0` address; see
 [the auth0 documentation on Email Templates / Redirect
@@ -120,42 +167,42 @@ most users - you could host the static part of the app wherever you
 want. For the local development case, you're just using a server on your
 local machine and maybe exposing it through a tunnel.
 
-```
-https://<netlify-subdomain>.netlify.app/auth0/,
-https://<netlify-subdomain>.netlify.app/auth0/logged-in,
-https://<netlify-subdomain>.netlify.app/auth0/email-verification/result
-```
+    ```
+    https://<netlify-subdomain>.netlify.app/auth0/,
+    https://<netlify-subdomain>.netlify.app/auth0/logged-in,
+    https://<netlify-subdomain>.netlify.app/auth0/email-verification/result
+    ```
 
 1. Configure `Allowed Logout URLs` (comma-separated)
    (The format/suffix of these urls should not be altered.)
 
    E.g.
 
-```
-http://localhost:3000/auth0/logged-out,
-http://localhost:3000/auth0/email-verification/required/no-redirect,
-```
+   ```
+   http://localhost:3000/auth0/logged-out,
+   http://localhost:3000/auth0/email-verification/required/no-redirect,
+   ```
 
 **Full Setup**: If using netlify, add these:
 
-```
-https://<netlify-subdomain>.netlify.app/auth0/logged-out,
-https://<netlify-subdomain>.netlify.app/auth0/email-verification/required/no-redirect
-```
+    ```
+    https://<netlify-subdomain>.netlify.app/auth0/logged-out,
+    https://<netlify-subdomain>.netlify.app/auth0/email-verification/required/no-redirect
+    ```
 
 1. Configure `Allowed Web Origins` (comma-separated)
 
    E.g.
 
-```
-http://localhost:3000,
-```
+   ```
+   http://localhost:3000,
+   ```
 
 **Full Setup**: If using netlify, add this:
 
-```
-https://<netlify-subdomain>.netlify.app
-```
+    ```
+    https://<netlify-subdomain>.netlify.app
+    ```
 
 1. **Don't forget to `Save changes`**
 
@@ -186,24 +233,24 @@ Order of the rules matters.
 
    (This rule sets up the tracking of new user accounts so we only insert them into the db once.)
 
-```js
-function (user, context, callback) {
-  user.app_metadata = user.app_metadata || {};
-  if (!("isNew" in user.app_metadata)) {
-    user.app_metadata.isNew = true;
-    auth0.users.updateAppMetadata(user.user_id, user.app_metadata)
-        .then(function(){
-          callback(null, user, context);
-        })
-        .catch(function(err){
-          callback(err);
-        });
-  }
-  else {
-    callback(null, user, context);
-  }
-}
-```
+   ```js
+   function (user, context, callback) {
+     user.app_metadata = user.app_metadata || {};
+     if (!("isNew" in user.app_metadata)) {
+       user.app_metadata.isNew = true;
+       auth0.users.updateAppMetadata(user.user_id, user.app_metadata)
+           .then(function(){
+             callback(null, user, context);
+           })
+           .catch(function(err){
+             callback(err);
+           });
+     }
+     else {
+       callback(null, user, context);
+     }
+   }
+   ```
 
 (If you see a warning like `Heads up! If you are trying to access a service behind a firewall...` you can ignore it.)
 
@@ -216,15 +263,15 @@ function (user, context, callback) {
 
    This rule prevents users from logging in before they have verified their account.
 
-```js
-function emailVerified(user, context, callback) {
-  if (!user.email_verified) {
-    return callback(new UnauthorizedError("Please verify your email before logging in."));
-  } else {
-    return callback(null, user, context);
-  }
-}
-```
+   ```js
+   function emailVerified(user, context, callback) {
+     if (!user.email_verified) {
+       return callback(new UnauthorizedError("Please verify your email before logging in."));
+     } else {
+       return callback(null, user, context);
+     }
+   }
+   ```
 
 1. Create another new _Rule_
 
@@ -236,23 +283,23 @@ function emailVerified(user, context, callback) {
    This rule upgrades the access token to give it relevant roles which are then
    recognised by Clowdr's Hasura instance.
 
-```js
-function (user, context, callback) {
-  const namespace = configuration.HASURA_NAMESPACE;
-  console.log(`Upgrading access token for ${user.user_id}`);
-  const magicToken = context.request && context.request.query && context.request.query["magic-token"];
-  const confSlug = context.request && context.request.query && context.request.query["conference-slug"];
-  context.accessToken[namespace] =
-    {
-      'x-hasura-default-role': 'user',
-      'x-hasura-allowed-roles': ['user'],
-      'x-hasura-user-id': user.user_id,
-      'x-hasura-magic-token': magicToken,
-      'x-hasura-conference-slug': confSlug,
-    };
-  callback(null, user, context);
-}
-```
+   ```js
+   function (user, context, callback) {
+     const namespace = configuration.HASURA_NAMESPACE;
+     console.log(`Upgrading access token for ${user.user_id}`);
+     const magicToken = context.request && context.request.query && context.request.query["magic-token"];
+     const confSlug = context.request && context.request.query && context.request.query["conference-slug"];
+     context.accessToken[namespace] =
+       {
+         'x-hasura-default-role': 'user',
+         'x-hasura-allowed-roles': ['user'],
+         'x-hasura-user-id': user.user_id,
+         'x-hasura-magic-token': magicToken,
+         'x-hasura-conference-slug': confSlug,
+       };
+     callback(null, user, context);
+   }
+   ```
 
 1. Create another new _Rule_
 
@@ -272,58 +319,58 @@ function (user, context, callback) {
 BCP: Ed said, "It occurs to me that this note is already out of date, as is
 the paragraph above it."
 
-```js
-function (user, context, callback) {
-    if (user.app_metadata.isNew) {
-        console.log("Inserting new user");
-        const userId = user.user_id;
-        const given_name = user.given_name && user.given_name.length > 0 ? user.given_name : "<Unknown>";
-        const family_name = user.family_name && user.family_name.length > 0 ? user.family_name : "<Unknown>";
-        const email = user.email;
-        const upsertUserQuery = `mutation Auth0_CreateUser($userId: String!, $firstName: String!, $lastName: String!, $email: String!) {
-        insert_User(objects: {id: $userId, firstName: $firstName, lastName: $lastName, email: $email}, on_conflict: {constraint: user_pkey, update_columns: []}) {
-            affected_rows
-        }
-        }`;
-        const graphqlReq = { "query": upsertUserQuery, "variables": { "userId": userId, "firstName": given_name, "lastName": family_name, "email": email } };
+    ```js
+    function (user, context, callback) {
+        if (user.app_metadata.isNew) {
+            console.log("Inserting new user");
+            const userId = user.user_id;
+            const given_name = user.given_name && user.given_name.length > 0 ? user.given_name : "<Unknown>";
+            const family_name = user.family_name && user.family_name.length > 0 ? user.family_name : "<Unknown>";
+            const email = user.email;
+            const upsertUserQuery = `mutation Auth0_CreateUser($userId: String!, $firstName: String!, $lastName: String!, $email: String!) {
+            insert_User(objects: {id: $userId, firstName: $firstName, lastName: $lastName, email: $email}, on_conflict: {constraint: user_pkey, update_columns: []}) {
+                affected_rows
+            }
+            }`;
+            const graphqlReq = { "query": upsertUserQuery, "variables": { "userId": userId, "firstName": given_name, "lastName": family_name, "email": email } };
 
-        // console.log("url", url);
-        // console.log("graphqlReq", JSON.stringify(graphqlReq, null, 2));
+            // console.log("url", url);
+            // console.log("graphqlReq", JSON.stringify(graphqlReq, null, 2));
 
-        const sendRequest = (url, adminSecret) => {
-            request.post({
-                headers: {'content-type' : 'application/json', 'x-hasura-admin-secret': adminSecret},
-                url:   url,
-                body:  JSON.stringify(graphqlReq)
-            }, function(error, response, body){
-                console.log(body);
-                if (!error) {
-                  user.app_metadata.isNew = false;
-                  auth0.users.updateAppMetadata(user.user_id, user.app_metadata)
-                      .then(function(){
+            const sendRequest = (url, adminSecret) => {
+                request.post({
+                    headers: {'content-type' : 'application/json', 'x-hasura-admin-secret': adminSecret},
+                    url:   url,
+                    body:  JSON.stringify(graphqlReq)
+                }, function(error, response, body){
+                    console.log(body);
+                    if (!error) {
+                      user.app_metadata.isNew = false;
+                      auth0.users.updateAppMetadata(user.user_id, user.app_metadata)
+                          .then(function(){
+                            callback(null, user, context);
+                          })
+                          .catch(function(err){
+                            callback(err);
+                          });
+                    }
+                    else {
                         callback(null, user, context);
-                      })
-                      .catch(function(err){
-                        callback(err);
-                      });
-                }
-                else {
-                    callback(null, user, context);
-                }
-            });
-        };
+                    }
+                });
+            };
 
-        sendRequest(configuration.HASURA_URL, configuration.HASURA_ADMIN_SECRET);
-        if (configuration.HASURA_URL_LOCAL && configuration.HASURA_ADMIN_SECRET_LOCAL) {
-            sendRequest(configuration.HASURA_URL_LOCAL, configuration.HASURA_ADMIN_SECRET_LOCAL);
+            sendRequest(configuration.HASURA_URL, configuration.HASURA_ADMIN_SECRET);
+            if (configuration.HASURA_URL_LOCAL && configuration.HASURA_ADMIN_SECRET_LOCAL) {
+                sendRequest(configuration.HASURA_URL_LOCAL, configuration.HASURA_ADMIN_SECRET_LOCAL);
+            }
+        }
+        else {
+            console.log("Ignoring existing new user");
+            callback(null, user, context);
         }
     }
-    else {
-        console.log("Ignoring existing new user");
-        callback(null, user, context);
-    }
-}
-```
+    ```
 
 #### 5. Configure Rules
 
@@ -377,12 +424,11 @@ created above.
 1. Uncomment the `HASURA_GRAPHQL_JWT_SECRET: ${HASURA_GRAPHQL_JWT_SECRET}`
    line in `hasura/docker-compose.yaml`
    - Don't forget to restart the `Hasura Console -- Local Development` task
-     in VSCode!
-     (Again, if you get an error message about `version check: failed to get version from server: failed making version api call...` try running the
-     task again -- this could be due to a race condition.)
+     in VSCode! (Again, if you get an error message about `version check: failed to get version from server: failed making version api call...`
+     try running the task again -- this could be due to a race condition.)
 1. Optionally: Copy your key into Hasura Cloud Environment configuration
-   - No need for the wrapping single quotes - Hasura's UI will handle that for
-     you.
+   - No need for the wrapping single quotes - Hasura's UI will handle that
+     for you.
      BCP: Full setup only, I assume? Or not even, for most people doing that?
 
 #### 8. Expose local services at a public URL
@@ -419,51 +465,31 @@ OAuth will work.
 ###### Packetriot Setup (administrator)
 
 1. Create a Packetriot account
-1. [Download the client](https://packetriot.com/downloads) and ensure it is on your `PATH`.
-1. Follow the Packetriot instructions to verify your domain and set up an appropriate A/CNAME record.
-1. In the root of the repository, run `pktriot --config pktriot.json configure --url`. Follow the instructions to authenticate and create a new tunnel. This will create a `pktriot.json` file with the credentials for a tunnel.
-1. Add the following property to the JSON object, substituting your desired credentials.
-   ```json
-   "https": [
-         {
-               "domain": "<custom-frontend-subdomain>.<custom-domain>",
-               "secure": true,
-               "destination": "127.0.0.1",
-               "port": 3000,
-               "useLetsEnc": true,
-               "redirect": true,
-               "upstreamURL": ""
-         },
-         {
-               "domain": "<custom-hasura-subdomain>.<custom-domain>",
-               "secure": true,
-               "destination": "127.0.0.1",
-               "port": 8080,
-               "useLetsEnc": true,
-               "redirect": true,
-               "upstreamURL": ""
-         },
-         {
-               "domain": "<custom-actions-subdomain>.<custom-domain>",
-               "secure": true,
-               "destination": "127.0.0.1",
-               "port": 3001,
-               "useLetsEnc": true,
-               "redirect": true,
-               "upstreamURL": ""
-         }
-      ]
-   ```
+1. [Download the client](https://docs.packetriot.com/quickstart/) and ensure it is
+   on your `PATH`.
+1. Follow the Packetriot instructions to verify your domain and set up an
+   appropriate A/CNAME record.
+1. In the root of the repository, run `pktriot --config pktriot.json configure --url`. Follow the instructions to authenticate and create a
+   new tunnel. This will create a `pktriot.json` file with the credentials
+   for a tunnel.
+1. Add the following property to the JSON object, substituting your desired
+   credentials.
+   `json "https": [ { "domain": "<custom-frontend-subdomain>.<custom-domain>", "secure": true, "destination": "127.0.0.1", "port": 3000, "useLetsEnc": true, "redirect": true, "upstreamURL": "" }, { "domain": "<custom-hasura-subdomain>.<custom-domain>", "secure": true, "destination": "127.0.0.1", "port": 8080, "useLetsEnc": true, "redirect": true, "upstreamURL": "" }, { "domain": "<custom-actions-subdomain>.<custom-domain>", "secure": true, "destination": "127.0.0.1", "port": 3001, "useLetsEnc": true, "redirect": true, "upstreamURL": "" } ] `
 1. Run `pktriot start --config pktriot.json` to start the tunnel.
 1. Configure Auth0 and Vonage using your custom domain
 
-To create a (persistent) tunnel for one of your team members, repeat the penultimate two steps (with a different filename) and send the generated JSON config to the team member.
+To create a (persistent) tunnel for one of your team members, repeat the
+penultimate two steps (with a different filename) and send the generated
+JSON config to the team member.
 
 ###### Packetriot Setup (team member)
 
-1. Request a pre-configured file from your Packetriot administrator.
-1. Rename it to `pktriot.json` and place it in the root of the repository.
-1. Launch by running the _Packetriot_ task or running `pktriot start --config pktriot.json`
+1. Download the [pktriot client](https://docs.packetriot.com/quickstart/) and
+   ensure it is on your `PATH`.
+1. Request configuration file from your Packetriot administrator.
+1. Put it in a file called `pktriot.json` in the root of the repository.
+1. Launch by running the _Packetriot_ task or running
+   `pktriot start --config pktriot.json`
 
 Note: it may take a little while for Packetriot to acquire certificates initially.
 
@@ -488,12 +514,16 @@ TODO
 1. Create an ngrok account and note your auth token.
 1. Copy `ngrok.example.yml` to `ngrok.yml`.
 1. Set the `authtoken` and `region` (`us`, `eu`, `ap`, `au`, `sa`, `jp`, `in`)
-1. Remove the `hostname` line from each tunnel configuration - you will let ngrok pick random subdomains instead.
+1. Remove the `hostname` line from each tunnel configuration - you will let
+   ngrok pick random subdomains instead.
 1. Start ngrok (`ngrok start -config=./ngrok.yaml auth actions`)
 
-**_Every time_** you start up for online (local) development, you will need to reconfigure Auth0 and Vonage as specified earlier. The domain format is `<ngrok-subdomain>.ngrok.io`.
+**_Every time_** you start up for online (local) development, you will need
+to reconfigure Auth0 and Vonage as specified earlier. The domain format is
+`<ngrok-subdomain>.ngrok.io`.
 
-Additionally, ensure that the following env vars are set to use localhost-based, rather than public, URLs:
+Additionally, ensure that the following env vars are set to use
+localhost-based, rather than public, URLs:
 
 - frontend
   - `SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN`
@@ -503,7 +533,10 @@ Additionally, ensure that the following env vars are set to use localhost-based,
 - services/presence
   - `CORS_ORIGIN`
 
-When using free ngrok, access the frontend via its localhost URL (`http://localhost:3000`) rather than launching an ngrok tunnel for it. You could also launch the frontend tunnel, but you would need to update all the above environment variable each time the tunnel was restarted.
+When using free ngrok, access the frontend via its localhost URL
+(`http://localhost:3000`) rather than launching an ngrok tunnel for it. You
+could also launch the frontend tunnel, but you would need to update all the
+above environment variable each time the tunnel was restarted.
 
 #### 9. Configure "new UI experience"
 
@@ -518,8 +551,6 @@ have fun. (Note: Always use the _**New**_ 'look and feel' for Clowdr to work
 properly.)
 
 #### 11. Configure your environment
-
-BCP: STOPPED HERE
 
 You can now resume the frontend setup by configuring your [Frontend environment
 variables](/frontend/README.md#frontend-configuration).

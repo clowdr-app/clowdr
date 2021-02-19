@@ -32339,6 +32339,27 @@ export type SelectAllRoomsWithParticipantsQuery = { readonly __typename?: 'query
     & RoomWithParticipantInfoFragment
   )> };
 
+export type ManageRooms_SelectGroupsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type ManageRooms_SelectGroupsQuery = { readonly __typename?: 'query_root', readonly Group: ReadonlyArray<{ readonly __typename?: 'Group', readonly id: any, readonly name: string }> };
+
+export type ManageRooms_SelectGroupAttendeesQueryVariables = Exact<{
+  groupId: Scalars['uuid'];
+}>;
+
+
+export type ManageRooms_SelectGroupAttendeesQuery = { readonly __typename?: 'query_root', readonly GroupAttendee: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly id: any, readonly groupId: any, readonly attendeeId: any }> };
+
+export type ManageRooms_SelectRoomPeopleQueryVariables = Exact<{
+  roomId: Scalars['uuid'];
+}>;
+
+
+export type ManageRooms_SelectRoomPeopleQuery = { readonly __typename?: 'query_root', readonly RoomPerson: ReadonlyArray<{ readonly __typename?: 'RoomPerson', readonly id: any, readonly roomPersonRoleName: RoomPersonRole_Enum, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } }> };
+
 export type CreateRoomMutationVariables = Exact<{
   room: Room_Insert_Input;
 }>;
@@ -32361,6 +32382,13 @@ export type UpdateRoomsWithParticipantsMutation = { readonly __typename?: 'mutat
     { readonly __typename?: 'Room' }
     & RoomWithParticipantInfoFragment
   )> };
+
+export type InsertRoomPeopleMutationVariables = Exact<{
+  people: ReadonlyArray<RoomPerson_Insert_Input> | RoomPerson_Insert_Input;
+}>;
+
+
+export type InsertRoomPeopleMutation = { readonly __typename?: 'mutation_root', readonly insert_RoomPerson?: Maybe<{ readonly __typename?: 'RoomPerson_mutation_response', readonly affected_rows: number }> };
 
 export type InsertEventInfoMutationVariables = Exact<{
   id: Scalars['uuid'];
@@ -38581,6 +38609,113 @@ export function useSelectAllRoomsWithParticipantsLazyQuery(baseOptions?: Apollo.
 export type SelectAllRoomsWithParticipantsQueryHookResult = ReturnType<typeof useSelectAllRoomsWithParticipantsQuery>;
 export type SelectAllRoomsWithParticipantsLazyQueryHookResult = ReturnType<typeof useSelectAllRoomsWithParticipantsLazyQuery>;
 export type SelectAllRoomsWithParticipantsQueryResult = Apollo.QueryResult<SelectAllRoomsWithParticipantsQuery, SelectAllRoomsWithParticipantsQueryVariables>;
+export const ManageRooms_SelectGroupsDocument = gql`
+    query ManageRooms_SelectGroups($conferenceId: uuid!) {
+  Group(where: {conferenceId: {_eq: $conferenceId}}) {
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useManageRooms_SelectGroupsQuery__
+ *
+ * To run a query within a React component, call `useManageRooms_SelectGroupsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useManageRooms_SelectGroupsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useManageRooms_SelectGroupsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useManageRooms_SelectGroupsQuery(baseOptions: Apollo.QueryHookOptions<ManageRooms_SelectGroupsQuery, ManageRooms_SelectGroupsQueryVariables>) {
+        return Apollo.useQuery<ManageRooms_SelectGroupsQuery, ManageRooms_SelectGroupsQueryVariables>(ManageRooms_SelectGroupsDocument, baseOptions);
+      }
+export function useManageRooms_SelectGroupsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageRooms_SelectGroupsQuery, ManageRooms_SelectGroupsQueryVariables>) {
+          return Apollo.useLazyQuery<ManageRooms_SelectGroupsQuery, ManageRooms_SelectGroupsQueryVariables>(ManageRooms_SelectGroupsDocument, baseOptions);
+        }
+export type ManageRooms_SelectGroupsQueryHookResult = ReturnType<typeof useManageRooms_SelectGroupsQuery>;
+export type ManageRooms_SelectGroupsLazyQueryHookResult = ReturnType<typeof useManageRooms_SelectGroupsLazyQuery>;
+export type ManageRooms_SelectGroupsQueryResult = Apollo.QueryResult<ManageRooms_SelectGroupsQuery, ManageRooms_SelectGroupsQueryVariables>;
+export const ManageRooms_SelectGroupAttendeesDocument = gql`
+    query ManageRooms_SelectGroupAttendees($groupId: uuid!) {
+  GroupAttendee(where: {groupId: {_eq: $groupId}}) {
+    id
+    groupId
+    attendeeId
+  }
+}
+    `;
+
+/**
+ * __useManageRooms_SelectGroupAttendeesQuery__
+ *
+ * To run a query within a React component, call `useManageRooms_SelectGroupAttendeesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useManageRooms_SelectGroupAttendeesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useManageRooms_SelectGroupAttendeesQuery({
+ *   variables: {
+ *      groupId: // value for 'groupId'
+ *   },
+ * });
+ */
+export function useManageRooms_SelectGroupAttendeesQuery(baseOptions: Apollo.QueryHookOptions<ManageRooms_SelectGroupAttendeesQuery, ManageRooms_SelectGroupAttendeesQueryVariables>) {
+        return Apollo.useQuery<ManageRooms_SelectGroupAttendeesQuery, ManageRooms_SelectGroupAttendeesQueryVariables>(ManageRooms_SelectGroupAttendeesDocument, baseOptions);
+      }
+export function useManageRooms_SelectGroupAttendeesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageRooms_SelectGroupAttendeesQuery, ManageRooms_SelectGroupAttendeesQueryVariables>) {
+          return Apollo.useLazyQuery<ManageRooms_SelectGroupAttendeesQuery, ManageRooms_SelectGroupAttendeesQueryVariables>(ManageRooms_SelectGroupAttendeesDocument, baseOptions);
+        }
+export type ManageRooms_SelectGroupAttendeesQueryHookResult = ReturnType<typeof useManageRooms_SelectGroupAttendeesQuery>;
+export type ManageRooms_SelectGroupAttendeesLazyQueryHookResult = ReturnType<typeof useManageRooms_SelectGroupAttendeesLazyQuery>;
+export type ManageRooms_SelectGroupAttendeesQueryResult = Apollo.QueryResult<ManageRooms_SelectGroupAttendeesQuery, ManageRooms_SelectGroupAttendeesQueryVariables>;
+export const ManageRooms_SelectRoomPeopleDocument = gql`
+    query ManageRooms_SelectRoomPeople($roomId: uuid!) {
+  RoomPerson(where: {roomId: {_eq: $roomId}}) {
+    id
+    attendee {
+      id
+      displayName
+    }
+    roomPersonRoleName
+  }
+}
+    `;
+
+/**
+ * __useManageRooms_SelectRoomPeopleQuery__
+ *
+ * To run a query within a React component, call `useManageRooms_SelectRoomPeopleQuery` and pass it any options that fit your needs.
+ * When your component renders, `useManageRooms_SelectRoomPeopleQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useManageRooms_SelectRoomPeopleQuery({
+ *   variables: {
+ *      roomId: // value for 'roomId'
+ *   },
+ * });
+ */
+export function useManageRooms_SelectRoomPeopleQuery(baseOptions: Apollo.QueryHookOptions<ManageRooms_SelectRoomPeopleQuery, ManageRooms_SelectRoomPeopleQueryVariables>) {
+        return Apollo.useQuery<ManageRooms_SelectRoomPeopleQuery, ManageRooms_SelectRoomPeopleQueryVariables>(ManageRooms_SelectRoomPeopleDocument, baseOptions);
+      }
+export function useManageRooms_SelectRoomPeopleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageRooms_SelectRoomPeopleQuery, ManageRooms_SelectRoomPeopleQueryVariables>) {
+          return Apollo.useLazyQuery<ManageRooms_SelectRoomPeopleQuery, ManageRooms_SelectRoomPeopleQueryVariables>(ManageRooms_SelectRoomPeopleDocument, baseOptions);
+        }
+export type ManageRooms_SelectRoomPeopleQueryHookResult = ReturnType<typeof useManageRooms_SelectRoomPeopleQuery>;
+export type ManageRooms_SelectRoomPeopleLazyQueryHookResult = ReturnType<typeof useManageRooms_SelectRoomPeopleLazyQuery>;
+export type ManageRooms_SelectRoomPeopleQueryResult = Apollo.QueryResult<ManageRooms_SelectRoomPeopleQuery, ManageRooms_SelectRoomPeopleQueryVariables>;
 export const CreateRoomDocument = gql`
     mutation CreateRoom($room: Room_insert_input!) {
   insert_Room_one(object: $room) {
@@ -38651,6 +38786,41 @@ export function useUpdateRoomsWithParticipantsMutation(baseOptions?: Apollo.Muta
 export type UpdateRoomsWithParticipantsMutationHookResult = ReturnType<typeof useUpdateRoomsWithParticipantsMutation>;
 export type UpdateRoomsWithParticipantsMutationResult = Apollo.MutationResult<UpdateRoomsWithParticipantsMutation>;
 export type UpdateRoomsWithParticipantsMutationOptions = Apollo.BaseMutationOptions<UpdateRoomsWithParticipantsMutation, UpdateRoomsWithParticipantsMutationVariables>;
+export const InsertRoomPeopleDocument = gql`
+    mutation InsertRoomPeople($people: [RoomPerson_insert_input!]!) {
+  insert_RoomPerson(
+    objects: $people
+    on_conflict: {constraint: RoomPerson_attendeeId_roomId_key, update_columns: []}
+  ) {
+    affected_rows
+  }
+}
+    `;
+export type InsertRoomPeopleMutationFn = Apollo.MutationFunction<InsertRoomPeopleMutation, InsertRoomPeopleMutationVariables>;
+
+/**
+ * __useInsertRoomPeopleMutation__
+ *
+ * To run a mutation, you first call `useInsertRoomPeopleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInsertRoomPeopleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [insertRoomPeopleMutation, { data, loading, error }] = useInsertRoomPeopleMutation({
+ *   variables: {
+ *      people: // value for 'people'
+ *   },
+ * });
+ */
+export function useInsertRoomPeopleMutation(baseOptions?: Apollo.MutationHookOptions<InsertRoomPeopleMutation, InsertRoomPeopleMutationVariables>) {
+        return Apollo.useMutation<InsertRoomPeopleMutation, InsertRoomPeopleMutationVariables>(InsertRoomPeopleDocument, baseOptions);
+      }
+export type InsertRoomPeopleMutationHookResult = ReturnType<typeof useInsertRoomPeopleMutation>;
+export type InsertRoomPeopleMutationResult = Apollo.MutationResult<InsertRoomPeopleMutation>;
+export type InsertRoomPeopleMutationOptions = Apollo.BaseMutationOptions<InsertRoomPeopleMutation, InsertRoomPeopleMutationVariables>;
 export const InsertEventInfoDocument = gql`
     mutation InsertEventInfo($id: uuid!, $roomId: uuid!, $conferenceId: uuid!, $intendedRoomModeName: RoomMode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $contentGroupId: uuid = null) {
   insert_Event_one(

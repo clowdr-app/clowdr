@@ -7,6 +7,7 @@ import {
     AccordionPanel,
     Box,
     Button,
+    ButtonGroup,
     Code,
     Drawer,
     DrawerBody,
@@ -18,6 +19,10 @@ import {
     Heading,
     Input,
     ListItem,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuList,
     NumberDecrementStepper,
     NumberIncrementStepper,
     NumberInput,
@@ -27,15 +32,21 @@ import {
     UnorderedList,
     useDisclosure,
 } from "@chakra-ui/react";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
     Permission_Enum,
     RoomMode_Enum,
+    RoomPersonRole_Enum,
+    RoomPrivacy_Enum,
     RoomWithParticipantInfoFragment,
     RoomWithParticipantInfoFragmentDoc,
     useCreateRoomMutation,
     useDeleteRoomsMutation,
+    useInsertRoomPeopleMutation,
+    useManageRooms_SelectGroupAttendeesQuery,
+    useManageRooms_SelectGroupsQuery,
+    useManageRooms_SelectRoomPeopleQuery,
     useSelectAllRoomsWithParticipantsQuery,
     useUpdateRoomMutation,
 } from "../../../generated/graphql";
@@ -49,6 +60,7 @@ import CRUDTable, {
     SortDirection,
 } from "../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../Errors/PageNotFound";
+import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import FAIcon from "../../Icons/FAIcon";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
@@ -91,6 +103,32 @@ gql`
         }
     }
 
+    query ManageRooms_SelectGroups($conferenceId: uuid!) {
+        Group(where: { conferenceId: { _eq: $conferenceId } }) {
+            id
+            name
+        }
+    }
+
+    query ManageRooms_SelectGroupAttendees($groupId: uuid!) {
+        GroupAttendee(where: { groupId: { _eq: $groupId } }) {
+            id
+            groupId
+            attendeeId
+        }
+    }
+
+    query ManageRooms_SelectRoomPeople($roomId: uuid!) {
+        RoomPerson(where: { roomId: { _eq: $roomId } }) {
+            id
+            attendee {
+                id
+                displayName
+            }
+            roomPersonRoleName
+        }
+    }
+
     mutation CreateRoom($room: Room_insert_input!) {
         insert_Room_one(object: $room) {
             ...RoomWithParticipantInfo
@@ -100,6 +138,15 @@ gql`
     mutation UpdateRoomsWithParticipants($id: uuid!, $name: String!, $capacity: Int!, $priority: Int!) {
         update_Room_by_pk(pk_columns: { id: $id }, _set: { name: $name, capacity: $capacity, priority: $priority }) {
             ...RoomWithParticipantInfo
+        }
+    }
+
+    mutation InsertRoomPeople($people: [RoomPerson_insert_input!]!) {
+        insert_RoomPerson(
+            objects: $people
+            on_conflict: { constraint: RoomPerson_attendeeId_roomId_key, update_columns: [] }
+        ) {
+            affected_rows
         }
     }
 `;
@@ -114,6 +161,49 @@ function RoomSecondaryEditor({
     onSecondaryPanelClose: () => void;
 }): JSX.Element {
     const conference = useConference();
+    const groups = useManageRooms_SelectGroupsQuery({
+        variables: {
+            conferenceId: conference.id,
+        },
+    });
+    const people = useManageRooms_SelectRoomPeopleQuery({
+        variables: {
+            roomId: room?.id ?? "",
+        },
+    });
+    const groupAttendeesQ = useManageRooms_SelectGroupAttendeesQuery({
+        skip: true,
+    });
+    const [insertRoomPeople, insertRoomPeopleResponse] = useInsertRoomPeopleMutation();
+    useQueryErrorToast(groupAttendeesQ.error, false, "ManaheConferenceRoomsPage: ManageRooms_SelectGroupAttendees");
+    useQueryErrorToast(insertRoomPeopleResponse.error, false, "ManaheConferenceRoomsPage: InsertRoomPeople (mutation)");
+
+    const addUsersFromGroup = useCallback(
+        async (groupId: string) => {
+            if (room) {
+                try {
+                    const result = await groupAttendeesQ.refetch({
+                        groupId,
+                    });
+                    if (!result.error && result.data) {
+                        insertRoomPeople({
+                            variables: {
+                                people: result.data.GroupAttendee.map((x) => ({
+                                    attendeeId: x.attendeeId,
+                                    roomId: room.id,
+                                    roomPersonRoleName: RoomPersonRole_Enum.Participant,
+                                })),
+                            },
+                        });
+                    }
+                } catch (e) {
+                    console.error("Error inserting room people", e);
+                }
+            }
+        },
+        [groupAttendeesQ, insertRoomPeople, room]
+    );
+
     return (
         <Drawer
             isOpen={isSecondaryPanelOpen}
@@ -130,17 +220,40 @@ function RoomSecondaryEditor({
                     <DrawerBody>
                         {room ? (
                             <>
-                                <LinkButton
-                                    to={`/conference/${conference.slug}/room/${room.id}`}
-                                    colorScheme="green"
-                                    mb={4}
-                                    isExternal={true}
-                                    aria-label={`View ${room.name} as an attendee`}
-                                    title={`View ${room.name} as an attendee`}
-                                >
-                                    <FAIcon icon="external-link-alt" iconStyle="s" mr={3} />
-                                    View room
-                                </LinkButton>
+                                <ButtonGroup>
+                                    <LinkButton
+                                        to={`/conference/${conference.slug}/room/${room.id}`}
+                                        colorScheme="green"
+                                        mb={4}
+                                        isExternal={true}
+                                        aria-label={`View ${room.name} as an attendee`}
+                                        title={`View ${room.name} as an attendee`}
+                                    >
+                                        <FAIcon icon="external-link-alt" iconStyle="s" mr={3} />
+                                        View room
+                                    </LinkButton>
+                                    {room.roomPrivacyName === RoomPrivacy_Enum.Private ? (
+                                        <Menu>
+                                            <MenuButton
+                                                as={Button}
+                                                isLoading={groupAttendeesQ.loading || insertRoomPeopleResponse.loading}
+                                            >
+                                                <FAIcon iconStyle="s" icon="user-plus" mr={2} />
+                                                Add people from group
+                                            </MenuButton>
+                                            <MenuList>
+                                                {groups.data?.Group.map((group) => (
+                                                    <MenuItem
+                                                        key={group.id}
+                                                        onClick={() => addUsersFromGroup(group.id)}
+                                                    >
+                                                        {group.name}
+                                                    </MenuItem>
+                                                ))}
+                                            </MenuList>
+                                        </Menu>
+                                    ) : undefined}
+                                </ButtonGroup>
                                 <Accordion>
                                     <AccordionItem>
                                         <AccordionButton>
@@ -206,6 +319,30 @@ function RoomSecondaryEditor({
                                                         </Code>
                                                     </Text>
                                                 </>
+                                            </AccordionPanel>
+                                        </AccordionItem>
+                                    ) : undefined}
+
+                                    {room && people.data && room.roomPrivacyName !== RoomPrivacy_Enum.Public ? (
+                                        <AccordionItem>
+                                            <AccordionButton>
+                                                <Box flex="1" textAlign="left">
+                                                    Members
+                                                </Box>
+                                                <AccordionIcon />
+                                            </AccordionButton>
+                                            <AccordionPanel pt={4} pb={4}>
+                                                {people.data.RoomPerson.length === 0 ? (
+                                                    "Room has no members."
+                                                ) : (
+                                                    <UnorderedList>
+                                                        {people.data.RoomPerson.map((member) => (
+                                                            <ListItem key={member.id}>
+                                                                {member.attendee.displayName}
+                                                            </ListItem>
+                                                        ))}
+                                                    </UnorderedList>
+                                                )}
                                             </AccordionPanel>
                                         </AccordionItem>
                                     ) : undefined}

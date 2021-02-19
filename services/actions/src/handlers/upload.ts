@@ -675,6 +675,7 @@ gql`
         update_job_queues_SubmissionRequestEmailJob(where: { processed: { _eq: false } }, _set: { processed: true }) {
             returning {
                 id
+                emailTemplate
                 uploader {
                     ...UploaderParts
                 }
@@ -731,13 +732,21 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
             uploadLink,
         };
 
+        const overrideEmailTemplate: EmailTemplate_BaseConfig | null = isEmailTemplate_BaseConfig(job.emailTemplate)
+            ? job.emailTemplate
+            : null;
+
         const htmlBody = Mustache.render(
-            emailTemplates?.htmlBodyTemplate ?? EMAIL_TEMPLATE_SUBMISSION_REQUEST.htmlBodyTemplate,
+            overrideEmailTemplate?.htmlBodyTemplate ??
+                emailTemplates?.htmlBodyTemplate ??
+                EMAIL_TEMPLATE_SUBMISSION_REQUEST.htmlBodyTemplate,
             view
         );
 
         const subject = Mustache.render(
-            emailTemplates?.subjectTemplate ?? EMAIL_TEMPLATE_SUBMISSION_REQUEST.subjectTemplate,
+            overrideEmailTemplate?.subjectTemplate ??
+                emailTemplates?.subjectTemplate ??
+                EMAIL_TEMPLATE_SUBMISSION_REQUEST.subjectTemplate,
             view
         );
 

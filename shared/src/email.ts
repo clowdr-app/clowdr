@@ -57,10 +57,6 @@ export const EMAIL_TEMPLATE_SUBMISSION_REQUEST: EmailTemplate_Defaults = {
     Please <a href="https://youtu.be/l0SqCISybqk">watch this 6 minute instructional video</a> to learn how to use Clowdr's content upload system. This video also shows how to edit subtitles.
 </p>
 <p>
-    You should have received two emails (including this one) for the two separate videos you should
-    upload. These are the <b>Broadcast video</b> and the <b>Pre-publication video</b>.
-</p>
-<p>
     Please do not leave submitting to the last moment - this can be risky! If we are unable to automatically process your upload, it may not be possible to prepare it in time for the conference.
 </p>
 <p>

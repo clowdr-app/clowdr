@@ -28,6 +28,7 @@ import {
     NumberInput,
     NumberInputField,
     NumberInputStepper,
+    Select,
     Text,
     UnorderedList,
     useDisclosure,
@@ -48,7 +49,7 @@ import {
     useManageRooms_SelectGroupsQuery,
     useManageRooms_SelectRoomPeopleQuery,
     useSelectAllRoomsWithParticipantsQuery,
-    useUpdateRoomMutation,
+    useUpdateRoomsWithParticipantsMutation,
 } from "../../../generated/graphql";
 import { LinkButton } from "../../Chakra/LinkButton";
 import { NumberRangeColumnFilter, SelectColumnFilter, TextColumnFilter } from "../../CRUDTable2/CRUDComponents";
@@ -98,7 +99,7 @@ gql`
     }
 
     query SelectAllRoomsWithParticipants($conferenceId: uuid!) {
-        Room(where: { conferenceId: { _eq: $conferenceId } }) {
+        Room(where: { conferenceId: { _eq: $conferenceId }, roomPrivacyName: { _in: [PUBLIC, PRIVATE] } }) {
             ...RoomWithParticipantInfo
         }
     }
@@ -118,14 +119,18 @@ gql`
         }
     }
 
+    fragment RoomPersonInfo on RoomPerson {
+        id
+        attendee {
+            id
+            displayName
+        }
+        roomPersonRoleName
+    }
+
     query ManageRooms_SelectRoomPeople($roomId: uuid!) {
         RoomPerson(where: { roomId: { _eq: $roomId } }) {
-            id
-            attendee {
-                id
-                displayName
-            }
-            roomPersonRoleName
+            ...RoomPersonInfo
         }
     }
 
@@ -135,8 +140,17 @@ gql`
         }
     }
 
-    mutation UpdateRoomsWithParticipants($id: uuid!, $name: String!, $capacity: Int!, $priority: Int!) {
-        update_Room_by_pk(pk_columns: { id: $id }, _set: { name: $name, capacity: $capacity, priority: $priority }) {
+    mutation UpdateRoomsWithParticipants(
+        $id: uuid!
+        $name: String!
+        $capacity: Int
+        $priority: Int!
+        $roomPrivacyName: RoomPrivacy_enum!
+    ) {
+        update_Room_by_pk(
+            pk_columns: { id: $id }
+            _set: { name: $name, capacity: $capacity, priority: $priority, roomPrivacyName: $roomPrivacyName }
+        ) {
             ...RoomWithParticipantInfo
         }
     }
@@ -146,7 +160,9 @@ gql`
             objects: $people
             on_conflict: { constraint: RoomPerson_attendeeId_roomId_key, update_columns: [] }
         ) {
-            affected_rows
+            returning {
+                ...RoomPersonInfo
+            }
         }
     }
 `;
@@ -362,7 +378,7 @@ function EditableRoomsCRUDTable() {
     const conference = useConference();
     const [insertRoom, insertRoomResponse] = useCreateRoomMutation();
     const [deleteRooms, deleteRoomsResponse] = useDeleteRoomsMutation();
-    const [updateRoom, updateRoomResponse] = useUpdateRoomMutation();
+    const [updateRoom, updateRoomResponse] = useUpdateRoomsWithParticipantsMutation();
 
     const selectAllRoomsResult = useSelectAllRoomsWithParticipantsQuery({
         variables: {
@@ -542,6 +558,42 @@ function EditableRoomsCRUDTable() {
                     return <Text>{props.value}</Text>;
                 },
             },
+            {
+                id: "privacy",
+                header: function ModeHeader(props: ColumnHeaderProps<RoomWithParticipantInfoFragment>) {
+                    return props.isInCreate ? (
+                        <FormLabel>Privacy</FormLabel>
+                    ) : (
+                        <Button size="xs" onClick={props.onClick}>
+                            Privacy{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        </Button>
+                    );
+                },
+                get: (data) => data.roomPrivacyName,
+                set: (row, value) => {
+                    row.roomPrivacyName = value;
+                },
+                sort: (x: string, y: string) => x.localeCompare(y),
+                filterFn: (rows, v: RoomPrivacy_Enum) => rows.filter((r) => r.roomPrivacyName === v),
+                filterEl: SelectColumnFilter(Object.values(RoomPrivacy_Enum)),
+                cell: function EventNameCell(props: CellProps<Partial<RoomWithParticipantInfoFragment>>) {
+                    if (props.value !== RoomPrivacy_Enum.Private && props.value !== RoomPrivacy_Enum.Public) {
+                        return <Text>{props.value}</Text>;
+                    } else {
+                        return (
+                            <Select
+                                value={props.value ?? ""}
+                                onChange={(ev) => props.onChange?.(ev.target.value as RoomPrivacy_Enum)}
+                                onBlur={props.onBlur}
+                            >
+                                <option value="">&lt;Error&gt;</option>
+                                <option value={RoomPrivacy_Enum.Public}>Public</option>
+                                <option value={RoomPrivacy_Enum.Private}>Private</option>
+                            </Select>
+                        );
+                    }
+                },
+            },
         ],
         []
     );
@@ -579,6 +631,7 @@ function EditableRoomsCRUDTable() {
                         currentModeName: RoomMode_Enum.Breakout,
                         name: "New room " + (data.length + 1),
                         participants: [],
+                        roomPrivacyName: RoomPrivacy_Enum.Public,
                     }),
                     makeWhole: (d) => d as RoomWithParticipantInfoFragment,
                     start: (record) => {
@@ -591,6 +644,7 @@ function EditableRoomsCRUDTable() {
                                     priority: record.priority,
                                     currentModeName: record.currentModeName,
                                     name: record.name,
+                                    roomPrivacyName: record.roomPrivacyName,
                                 },
                             },
                             update: (cache, { data: _data }) => {
@@ -615,6 +669,7 @@ function EditableRoomsCRUDTable() {
                                 name: record.name,
                                 priority: record.priority,
                                 capacity: record.capacity,
+                                roomPrivacyName: record.roomPrivacyName,
                             },
                             optimisticResponse: {
                                 update_Room_by_pk: record,

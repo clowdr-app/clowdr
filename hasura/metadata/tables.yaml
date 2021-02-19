@@ -6348,26 +6348,24 @@
       - originatingContentGroupId
       filter:
         _and:
-        - _and:
-          - conference:
-              slug:
-                _eq: X-Hasura-Conference-Slug
-          - _or:
-            - _exists:
-                _where:
-                  _and:
-                  - user_id:
-                      _eq: X-Hasura-User-Id
-                  - slug:
-                      _eq: X-Hasura-Conference-Slug
-                  - permission_name:
-                      _in:
-                      - CONFERENCE_VIEW
-                      - CONFERENCE_MANAGE_SCHEDULE
-                      - CONFERENCE_VIEW_ATTENDEES
-                _table:
-                  schema: public
-                  name: FlatUserPermission
+        - conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+        - _or:
+          - _exists:
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _in:
+                    - CONFERENCE_MANAGE_SCHEDULE
+              _table:
+                schema: public
+                name: FlatUserPermission
+          - _and:
             - _exists:
                 _where:
                   _and:
@@ -6378,13 +6376,13 @@
                 _table:
                   schema: public
                   name: FlatUnauthPermission
-        - _or:
-          - roomPrivacyName:
-              _eq: PUBLIC
-          - roomPeople:
-              attendee:
-                userId:
-                  _eq: X-Hasura-User-Id
+            - _or:
+              - roomPrivacyName:
+                  _eq: PUBLIC
+              - roomPeople:
+                  attendee:
+                    userId:
+                      _eq: X-Hasura-User-Id
   update_permissions:
   - role: user
     permission:
@@ -6393,6 +6391,7 @@
       - name
       - originatingDataId
       - priority
+      - roomPrivacyName
       filter:
         _and:
         - conference:
@@ -6614,9 +6613,6 @@
     permission:
       check:
         _and:
-        - attendee:
-            userId:
-              _is_null: false
         - _or:
           - room:
               _and:
@@ -6679,9 +6675,6 @@
       - updated_at
       filter:
         _and:
-        - attendee:
-            userId:
-              _is_null: false
         - _or:
           - room:
               _and:
@@ -6731,9 +6724,6 @@
       - roomPersonRoleName
       filter:
         _and:
-        - attendee:
-            userId:
-              _is_null: false
         - _or:
           - room:
               _and:
@@ -6785,9 +6775,6 @@
     permission:
       filter:
         _and:
-        - attendee:
-            userId:
-              _is_null: false
         - _or:
           - room:
               _and:

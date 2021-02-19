@@ -32353,12 +32353,17 @@ export type ManageRooms_SelectGroupAttendeesQueryVariables = Exact<{
 
 export type ManageRooms_SelectGroupAttendeesQuery = { readonly __typename?: 'query_root', readonly GroupAttendee: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly id: any, readonly groupId: any, readonly attendeeId: any }> };
 
+export type RoomPersonInfoFragment = { readonly __typename?: 'RoomPerson', readonly id: any, readonly roomPersonRoleName: RoomPersonRole_Enum, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } };
+
 export type ManageRooms_SelectRoomPeopleQueryVariables = Exact<{
   roomId: Scalars['uuid'];
 }>;
 
 
-export type ManageRooms_SelectRoomPeopleQuery = { readonly __typename?: 'query_root', readonly RoomPerson: ReadonlyArray<{ readonly __typename?: 'RoomPerson', readonly id: any, readonly roomPersonRoleName: RoomPersonRole_Enum, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } }> };
+export type ManageRooms_SelectRoomPeopleQuery = { readonly __typename?: 'query_root', readonly RoomPerson: ReadonlyArray<(
+    { readonly __typename?: 'RoomPerson' }
+    & RoomPersonInfoFragment
+  )> };
 
 export type CreateRoomMutationVariables = Exact<{
   room: Room_Insert_Input;
@@ -32373,8 +32378,9 @@ export type CreateRoomMutation = { readonly __typename?: 'mutation_root', readon
 export type UpdateRoomsWithParticipantsMutationVariables = Exact<{
   id: Scalars['uuid'];
   name: Scalars['String'];
-  capacity: Scalars['Int'];
+  capacity?: Maybe<Scalars['Int']>;
   priority: Scalars['Int'];
+  roomPrivacyName: RoomPrivacy_Enum;
 }>;
 
 
@@ -32388,7 +32394,10 @@ export type InsertRoomPeopleMutationVariables = Exact<{
 }>;
 
 
-export type InsertRoomPeopleMutation = { readonly __typename?: 'mutation_root', readonly insert_RoomPerson?: Maybe<{ readonly __typename?: 'RoomPerson_mutation_response', readonly affected_rows: number }> };
+export type InsertRoomPeopleMutation = { readonly __typename?: 'mutation_root', readonly insert_RoomPerson?: Maybe<{ readonly __typename?: 'RoomPerson_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'RoomPerson' }
+      & RoomPersonInfoFragment
+    )> }> };
 
 export type InsertEventInfoMutationVariables = Exact<{
   id: Scalars['uuid'];
@@ -33824,6 +33833,16 @@ export const RoomWithParticipantInfoFragmentDoc = gql`
 }
     ${RoomParticipantWithAttendeeInfoFragmentDoc}
 ${OriginatingDataInfoFragmentDoc}`;
+export const RoomPersonInfoFragmentDoc = gql`
+    fragment RoomPersonInfo on RoomPerson {
+  id
+  attendee {
+    id
+    displayName
+  }
+  roomPersonRoleName
+}
+    `;
 export const RoomParticipantInfoFragmentDoc = gql`
     fragment RoomParticipantInfo on RoomParticipant {
   attendeeId
@@ -38578,7 +38597,9 @@ export type UpdateRoleMutationResult = Apollo.MutationResult<UpdateRoleMutation>
 export type UpdateRoleMutationOptions = Apollo.BaseMutationOptions<UpdateRoleMutation, UpdateRoleMutationVariables>;
 export const SelectAllRoomsWithParticipantsDocument = gql`
     query SelectAllRoomsWithParticipants($conferenceId: uuid!) {
-  Room(where: {conferenceId: {_eq: $conferenceId}}) {
+  Room(
+    where: {conferenceId: {_eq: $conferenceId}, roomPrivacyName: {_in: [PUBLIC, PRIVATE]}}
+  ) {
     ...RoomWithParticipantInfo
   }
 }
@@ -38681,15 +38702,10 @@ export type ManageRooms_SelectGroupAttendeesQueryResult = Apollo.QueryResult<Man
 export const ManageRooms_SelectRoomPeopleDocument = gql`
     query ManageRooms_SelectRoomPeople($roomId: uuid!) {
   RoomPerson(where: {roomId: {_eq: $roomId}}) {
-    id
-    attendee {
-      id
-      displayName
-    }
-    roomPersonRoleName
+    ...RoomPersonInfo
   }
 }
-    `;
+    ${RoomPersonInfoFragmentDoc}`;
 
 /**
  * __useManageRooms_SelectRoomPeopleQuery__
@@ -38749,10 +38765,10 @@ export type CreateRoomMutationHookResult = ReturnType<typeof useCreateRoomMutati
 export type CreateRoomMutationResult = Apollo.MutationResult<CreateRoomMutation>;
 export type CreateRoomMutationOptions = Apollo.BaseMutationOptions<CreateRoomMutation, CreateRoomMutationVariables>;
 export const UpdateRoomsWithParticipantsDocument = gql`
-    mutation UpdateRoomsWithParticipants($id: uuid!, $name: String!, $capacity: Int!, $priority: Int!) {
+    mutation UpdateRoomsWithParticipants($id: uuid!, $name: String!, $capacity: Int, $priority: Int!, $roomPrivacyName: RoomPrivacy_enum!) {
   update_Room_by_pk(
     pk_columns: {id: $id}
-    _set: {name: $name, capacity: $capacity, priority: $priority}
+    _set: {name: $name, capacity: $capacity, priority: $priority, roomPrivacyName: $roomPrivacyName}
   ) {
     ...RoomWithParticipantInfo
   }
@@ -38777,6 +38793,7 @@ export type UpdateRoomsWithParticipantsMutationFn = Apollo.MutationFunction<Upda
  *      name: // value for 'name'
  *      capacity: // value for 'capacity'
  *      priority: // value for 'priority'
+ *      roomPrivacyName: // value for 'roomPrivacyName'
  *   },
  * });
  */
@@ -38792,10 +38809,12 @@ export const InsertRoomPeopleDocument = gql`
     objects: $people
     on_conflict: {constraint: RoomPerson_attendeeId_roomId_key, update_columns: []}
   ) {
-    affected_rows
+    returning {
+      ...RoomPersonInfo
+    }
   }
 }
-    `;
+    ${RoomPersonInfoFragmentDoc}`;
 export type InsertRoomPeopleMutationFn = Apollo.MutationFunction<InsertRoomPeopleMutation, InsertRoomPeopleMutationVariables>;
 
 /**

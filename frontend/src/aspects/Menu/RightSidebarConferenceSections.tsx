@@ -564,7 +564,7 @@ function ChatsPanel({
                             </Button>
                         </Tooltip>,
                         currentChat?.roomId ? (
-                            <Tooltip key="back-button" label="Go to video room">
+                            <Tooltip key="video-room-button" label="Go to video room">
                                 <Button
                                     key="room-button"
                                     size="xs"

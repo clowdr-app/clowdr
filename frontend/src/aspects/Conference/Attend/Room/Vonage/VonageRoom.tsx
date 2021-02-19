@@ -245,7 +245,12 @@ function VonageRoomInner({
                     {streams
                         .filter((stream) => stream.videoType === "screen")
                         .map((stream) => (
-                            <VonageSubscriber key={stream.streamId} stream={stream} enableVideo={true} />
+                            <VonageSubscriber
+                                key={stream.streamId}
+                                stream={stream}
+                                enableVideo={true}
+                                lowRes={!!receivingScreenShare}
+                            />
                         ))}
                 </Box>
 
@@ -312,6 +317,7 @@ function VonageRoomInner({
                                 stream={stream}
                                 onChangeActivity={(activity) => setStreamActivity(stream.streamId, activity)}
                                 enableVideo={!enableStreams || !!enableStreams.includes(stream.streamId)}
+                                lowRes={!!receivingScreenShare}
                             />
                         </Box>
                     ))}

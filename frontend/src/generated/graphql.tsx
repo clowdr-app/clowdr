@@ -32200,10 +32200,11 @@ export type UploadYouTubeVideos_YouTubeUploadFragment = { readonly __typename?: 
 export type ImportAttendeesMutationVariables = Exact<{
   insertAttendees: ReadonlyArray<Attendee_Insert_Input> | Attendee_Insert_Input;
   insertInvitations: ReadonlyArray<Invitation_Insert_Input> | Invitation_Insert_Input;
+  insertGroupAttendees: ReadonlyArray<GroupAttendee_Insert_Input> | GroupAttendee_Insert_Input;
 }>;
 
 
-export type ImportAttendeesMutation = { readonly __typename?: 'mutation_root', readonly insert_Attendee?: Maybe<{ readonly __typename?: 'Attendee_mutation_response', readonly affected_rows: number }>, readonly insert_Invitation?: Maybe<{ readonly __typename?: 'Invitation_mutation_response', readonly affected_rows: number }> };
+export type ImportAttendeesMutation = { readonly __typename?: 'mutation_root', readonly insert_Attendee?: Maybe<{ readonly __typename?: 'Attendee_mutation_response', readonly affected_rows: number }>, readonly insert_Invitation?: Maybe<{ readonly __typename?: 'Invitation_mutation_response', readonly affected_rows: number }>, readonly insert_GroupAttendee?: Maybe<{ readonly __typename?: 'GroupAttendee_mutation_response', readonly affected_rows: number }> };
 
 export type SelectAllGroupsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -37972,11 +37973,14 @@ export type UploadYouTubeVideos_GetYouTubeUploadsQueryHookResult = ReturnType<ty
 export type UploadYouTubeVideos_GetYouTubeUploadsLazyQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetYouTubeUploadsLazyQuery>;
 export type UploadYouTubeVideos_GetYouTubeUploadsQueryResult = Apollo.QueryResult<UploadYouTubeVideos_GetYouTubeUploadsQuery, UploadYouTubeVideos_GetYouTubeUploadsQueryVariables>;
 export const ImportAttendeesDocument = gql`
-    mutation ImportAttendees($insertAttendees: [Attendee_insert_input!]!, $insertInvitations: [Invitation_insert_input!]!) {
+    mutation ImportAttendees($insertAttendees: [Attendee_insert_input!]!, $insertInvitations: [Invitation_insert_input!]!, $insertGroupAttendees: [GroupAttendee_insert_input!]!) {
   insert_Attendee(objects: $insertAttendees) {
     affected_rows
   }
   insert_Invitation(objects: $insertInvitations) {
+    affected_rows
+  }
+  insert_GroupAttendee(objects: $insertGroupAttendees) {
     affected_rows
   }
 }
@@ -37998,6 +38002,7 @@ export type ImportAttendeesMutationFn = Apollo.MutationFunction<ImportAttendeesM
  *   variables: {
  *      insertAttendees: // value for 'insertAttendees'
  *      insertInvitations: // value for 'insertInvitations'
+ *      insertGroupAttendees: // value for 'insertGroupAttendees'
  *   },
  * });
  */

@@ -269,10 +269,10 @@ export function SendSubmissionRequestsModalInner({
                                             isInvalid={!!form.errors.subjectTemplate && !!form.touched.subjectTemplate}
                                         >
                                             <FormLabel htmlFor="subjectTemplate" mt={2}>
-                                                Email body
+                                                Subject line
                                             </FormLabel>
                                             <FormHelperText>
-                                                The template for the submission request email body.
+                                                The template for the submission request email subject line.
                                             </FormHelperText>
                                             <Input {...field} id="subjectTemplate" mt={2} />
                                             <FormErrorMessage>{form.errors.subjectTemplate}</FormErrorMessage>
@@ -287,10 +287,10 @@ export function SendSubmissionRequestsModalInner({
                                             }
                                         >
                                             <FormLabel htmlFor="htmlBodyTemplate" mt={2}>
-                                                Subject line
+                                                Email body
                                             </FormLabel>
                                             <FormHelperText>
-                                                The template for the submission request email subject line.
+                                                The template for the submission request email body.
                                             </FormHelperText>
                                             <Textarea
                                                 fontFamily="monospace"

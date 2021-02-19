@@ -114,7 +114,7 @@ function ChatNotificationsProvider_WithAttendeeInner({
                     for (const subscription of data) {
                         const latestMessage = subscription;
                         const latestIndex = latestIndices.current?.get(subscription.chatId);
-                        if (!latestIndex || latestIndex !== latestMessage.id) {
+                        if (!latestIndex || latestIndex < latestMessage.id) {
                             setTimeout(() => {
                                 setNotifiedUpTo({
                                     variables: {

@@ -1,4 +1,4 @@
-import { gql, Reference } from "@apollo/client";
+import { gql } from "@apollo/client";
 import {
     Accordion,
     AccordionButton,
@@ -137,20 +137,10 @@ export function ConfigureEmailTemplatesInner({
                             __typename: "ConferenceConfiguration",
                             value: newValue,
                         };
-                        cache.modify({
-                            fields: {
-                                ConferenceConfiguration(existingRefs: Reference[] = [], { readField }) {
-                                    const newRef = cache.writeFragment({
-                                        data: item,
-                                        fragment: ConfigureEmailTemplates_ConferenceConfigurationFragmentDoc,
-                                        fragmentName: "ConfigureEmailTemplates_ConferenceConfiguration",
-                                    });
-                                    if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
-                                        return existingRefs;
-                                    }
-                                    return [...existingRefs, newRef];
-                                },
-                            },
+                        cache.writeFragment({
+                            data: item,
+                            fragment: ConfigureEmailTemplates_ConferenceConfigurationFragmentDoc,
+                            fragmentName: "ConfigureEmailTemplates_ConferenceConfiguration",
                         });
                     }
                 },

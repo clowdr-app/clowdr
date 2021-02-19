@@ -868,19 +868,12 @@ function EditableScheduleTable(): JSX.Element {
                         if (_data?.delete_Event) {
                             const data = _data.delete_Event;
                             const deletedIds = data.returning.map((x) => x.id);
-                            cache.modify({
-                                fields: {
-                                    Event(existingRefs: Reference[] = [], { readField }) {
-                                        deletedIds.forEach((x) => {
-                                            cache.evict({
-                                                id: x.id,
-                                                fieldName: "EventInfo",
-                                                broadcast: true,
-                                            });
-                                        });
-                                        return existingRefs.filter((ref) => !deletedIds.includes(readField("id", ref)));
-                                    },
-                                },
+                            deletedIds.forEach((x) => {
+                                cache.evict({
+                                    id: x.id,
+                                    fieldName: "EventInfo",
+                                    broadcast: true,
+                                });
                             });
                         }
                     },

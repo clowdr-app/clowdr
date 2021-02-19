@@ -459,23 +459,10 @@ function EditableRoomsCRUDTable() {
                             update: (cache, { data: _data }) => {
                                 if (_data?.insert_Room_one) {
                                     const data = _data.insert_Room_one;
-                                    cache.modify({
-                                        fields: {
-                                            Room(existingRefs: Reference[] = [], { readField }) {
-                                                const newRef = cache.writeFragment({
-                                                    data: {
-                                                        ...data,
-                                                    },
-                                                    fragment: RoomWithParticipantInfoFragmentDoc,
-                                                    fragmentName: "RoomWithParticipantInfo",
-                                                });
-                                                if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
-                                                    return existingRefs;
-                                                }
-
-                                                return [...existingRefs, newRef];
-                                            },
-                                        },
+                                    cache.writeFragment({
+                                        data,
+                                        fragment: RoomWithParticipantInfoFragmentDoc,
+                                        fragmentName: "RoomWithParticipantInfo",
                                     });
                                 }
                             },
@@ -498,20 +485,10 @@ function EditableRoomsCRUDTable() {
                             update: (cache, { data: _data }) => {
                                 if (_data?.update_Room_by_pk) {
                                     const data = _data.update_Room_by_pk;
-                                    cache.modify({
-                                        fields: {
-                                            Room(existingRefs: Reference[] = [], { readField }) {
-                                                const newRef = cache.writeFragment({
-                                                    data,
-                                                    fragment: RoomWithParticipantInfoFragmentDoc,
-                                                    fragmentName: "RoomWithParticipantInfo",
-                                                });
-                                                if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
-                                                    return existingRefs;
-                                                }
-                                                return [...existingRefs, newRef];
-                                            },
-                                        },
+                                    cache.writeFragment({
+                                        data,
+                                        fragment: RoomWithParticipantInfoFragmentDoc,
+                                        fragmentName: "RoomWithParticipantInfo",
                                     });
                                 }
                             },

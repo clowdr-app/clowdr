@@ -7,6 +7,7 @@ export interface EmailTemplate_BaseConfig {
 
 export enum ConferenceConfigurationKey {
     EmailTemplate_SubtitlesGenerated = "EMAIL_TEMPLATE_SUBTITLES_GENERATED",
+    EmailTemplate_SubmissionRequest = "EMAIL_TEMPLATE_SUBMISSION_REQUEST",
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types

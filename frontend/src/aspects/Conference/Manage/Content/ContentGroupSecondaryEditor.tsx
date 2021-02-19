@@ -381,7 +381,7 @@ export function ContentGroupSecondaryEditor(
                     }
 
                     itemElements.push(
-                        <AccordionItem key={`row-${itemType}`}>
+                        <AccordionItem key={`row-${item.id}`}>
                             <AccordionButton>
                                 <Box flex="1" textAlign="left">
                                     {accordianTitle}
@@ -517,7 +517,7 @@ export function ContentGroupSecondaryEditor(
                 }
 
                 itemElements.push(
-                    <AccordionItem key={`row-${itemType}`}>
+                    <AccordionItem key={`row-${item?.id ?? requiredItem.id}`}>
                         <AccordionButton>
                             <Box flex="1" textAlign="left">
                                 (Uploadable) {accordianTitle}

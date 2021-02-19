@@ -33,24 +33,32 @@ parts of the platform, follow all the steps below.
 
 BCP: General comments about the READMEs:
 
-- Separating Pre-Requisites from Setup as separate "phases" seems
-  unnecessarily heavy.
-- Most of the README files begin with a sort of "Table of Contents" that
-  makes subroutine calls to various sections of the rest of the document.
-  This requires quite a bit of remembering state on the part of readers
-  (especially since the whole README file is itself generally a subroutine
-  call from the main README) and contributes to a feeling of overwhelm.
-  Moreover, there is not very much material in any of the files _besides_
-  the sections describing what to do.
-- So my suggestion would be to
-  1. Coalesce the pre-requisites and setup sections of every document
-     into a single list
-  2. Inline all the subroutine calls within individual README documents
-     -- i.e., make the whole document be a list of ## sections each
-     describing a major step of installation.
-  3. For the few sections that contain miscellaneous notes and useful
-     information, rather than setup instructions, just mark them clearly
-     as "Notes" so the reader knows to skip over them on a first pass.
+- Overall flow...
+  - Separating Pre-Requisites from Setup as separate "phases" seems
+    unnecessarily heavy.
+  - Most of the README files begin with a sort of "Table of Contents" that
+    makes subroutine calls to various sections of the rest of the document.
+    This requires quite a bit of remembering state on the part of readers
+    (especially since the whole README file is itself generally a subroutine
+    call from the main README) and contributes to a feeling of overwhelm.
+    Moreover, there is not very much material in any of the files _besides_
+    the sections describing what to do.
+  - So my suggestion for overall flow would be to
+    1. Coalesce the pre-requisites and setup sections of every document
+       into a single list
+    2. Inline all the subroutine calls within individual README documents
+       -- i.e., make the whole document be a list of ## sections each
+       describing a major step of installation.
+    3. For the few sections that contain miscellaneous notes and useful
+       information, rather than setup instructions, just mark them clearly
+       as "Notes" so the reader knows to skip over them on a first pass.
+- Big tables at bottoms of files: Please let's just put the instructions
+  for env variables directly in the `.example` files! There are many
+  advantages to this:
+  - documentation right next to where you need it
+  - avoids a subroutine call to a different part of the README
+  - no width restriction --> encouragement to document things more
+    verbosely --> good
 
 1. [VSCode](https://code.visualstudio.com/)
    - We also recommend you install the "recommended extensions" listed in the
@@ -109,7 +117,6 @@ BCP: To fix: Once the Hasura console is running, we need to run the `Actions ser
    ```
 5. **Full setup**: Follow the [Clowdr AWS ReadMe](aws/README.md#Setting-up)
 6. Follow the Hasura setup: [Clowdr Hasura ReadMe](hasura/README.md#Setting-up)
-   BCP: Is there a good reason for splitting the instructions in this file into separate Pre-Requisites and Setup steps? This creates a lot of bouncing around between README files and adds to the sense of overwhelm.
 7. Follow the Actions Service setup: [Clowdr Actions Service
    ReadMe](services/actions/README.md#Setting-up)
 8. Follow the Frontend setup: [Clowdr Frontend
@@ -312,12 +319,12 @@ Order of the rules matters.
    directly access the `user` table. It also sets the `lastLoggedInAt` field
    every time a user logs in.
 
-   _Note: `lastLoggedInAt` defaults to `now()` hence why updating it with a
-   blank value when there is a constraint conflict results in it reflecting the
-   last logged in time._
-
 BCP: Ed said, "It occurs to me that this note is already out of date, as is
 the paragraph above it."
+
+_Note: `lastLoggedInAt` defaults to `now()` hence why updating it with a
+blank value when there is a constraint conflict results in it reflecting the
+last logged in time._
 
     ```js
     function (user, context, callback) {
@@ -374,12 +381,6 @@ the paragraph above it."
 
 #### 5. Configure Rules
 
-BCP: General comment: I dislike these super-wide tables, which make it
-really difficult to manage my screen real estate; also, they limit the size
-of the comments about what things are and where to find them. 80 columns
-(or not too much wider) is much nicer in both ways. I.e., can we format
-them as bulleted lists or code blocks with comments or something?
-
 BCP: HASURA_ADMIN_SECRET must be the same as HASURA_ADMIN_SECRET in
 services/actions/.env, right? Or only sometimes?
 
@@ -393,9 +394,9 @@ Under _Settings_ on the `Rules` page, add the following key-value pairs:
 
 BCP: The first time through, I had no idea what the third row meant. The
 second time, I was a little less confused, but the comment is still pretty
-opaque; it would be nicer to spell out the steps. (I see there is some more
-information involving ngrok below; is that what I need here? But the
-command is different.)
+opaque; it would be nicer to spell out the steps. (There is more
+information involving ngrok below, but it seems out of order, and anyway
+those instructions have been updated; this seems out of date.)
 
 You can optionally use `HASURA_ADMIN_SECRET_LOCAL` and `HASURA_URL_LOCAL` in
 addition to the non-local versions to have user records pushed to both

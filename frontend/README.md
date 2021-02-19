@@ -41,7 +41,7 @@ with [theming](@chakra-ui/theme-tools). Chakra also provides
 [icons](https://chakra-ui.com/docs/components/icon) and a system for [custom
 components](@chakra-ui/theme-tools).
 
-BCP: In there something to install here? Or is this jut FYI?
+BCP: In there something to install here? Or is this just FYI?
 
 ## GraphQL
 
@@ -135,7 +135,7 @@ BCP: Don't understand the semantics of No, Yes, and Only!
 
 BCP: Again, the explanations in the Value column are not very helpful (they
 don't tell me where to find things), and anyway I would rather see all this
-in comments in the .example file.
+in comments in the .example file!
 
 | Env Var                                      | Value                                                                                | Netlify? |
 | -------------------------------------------- | ------------------------------------------------------------------------------------ | -------- |

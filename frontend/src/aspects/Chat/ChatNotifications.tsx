@@ -5,6 +5,7 @@ import React, { useEffect, useRef } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import {
     Chat_MessageType_Enum,
+    SidebarReadUpToIndexFragmentDoc,
     useSetNotifiedUpToIndexMutation,
     useSubdMessages_2021_01_21T08_24Subscription,
     useSubscribedChatsQuery,
@@ -23,7 +24,7 @@ gql`
     }
 
     subscription SubdMessages_2021_01_21T08_24($chatIds: [uuid!]!) {
-        chat_Message(limit: 1, order_by: { id: desc }, where: { chatId: { _in: $chatIds } }) {
+        chat_Message(limit: 5, order_by: { id: desc }, where: { chatId: { _in: $chatIds } }) {
             id
             chatId
             message
@@ -41,6 +42,7 @@ gql`
         ) {
             chatId
             attendeeId
+            unreadCount
             notifiedUpToMessageId
         }
     }
@@ -115,12 +117,25 @@ function ChatNotificationsProvider_WithAttendeeInner({
                         const latestMessage = subscription;
                         const latestIndex = latestIndices.current?.get(subscription.chatId);
                         if (!latestIndex || latestIndex < latestMessage.id) {
+                            latestIndices.current?.set(subscription.chatId, latestMessage.id);
+
                             setTimeout(() => {
                                 setNotifiedUpTo({
                                     variables: {
                                         attendeeId,
                                         chatId: latestMessage.chatId,
                                         msgId: latestMessage.id,
+                                    },
+                                    update: (cache, { data: _data }) => {
+                                        if (_data?.insert_chat_ReadUpToIndex_one) {
+                                            const data = _data.insert_chat_ReadUpToIndex_one;
+                                            cache.writeFragment({
+                                                data,
+                                                id: cache.identify(data),
+                                                fragment: SidebarReadUpToIndexFragmentDoc,
+                                                fragmentName: "SidebarReadUpToIndex",
+                                            });
+                                        }
                                     },
                                 });
                             }, Math.random() * 2500);
@@ -143,7 +158,7 @@ function ChatNotificationsProvider_WithAttendeeInner({
                                         return (
                                             <VStack
                                                 alignItems="flex-start"
-                                                background="black"
+                                                background="purple.700"
                                                 color="gray.50"
                                                 w="auto"
                                                 h="auto"
@@ -201,7 +216,6 @@ function ChatNotificationsProvider_WithAttendeeInner({
                                                     {chatPath ? (
                                                         <Button
                                                             colorScheme="green"
-                                                            variant="outline"
                                                             onClick={() => {
                                                                 props.onClose();
                                                                 openChat.current?.({
@@ -217,7 +231,6 @@ function ChatNotificationsProvider_WithAttendeeInner({
                                                     {chatPath ? (
                                                         <Button
                                                             colorScheme="blue"
-                                                            variant="outline"
                                                             onClick={() => {
                                                                 props.onClose();
                                                                 window.open(chatPath, "_blank");
@@ -234,16 +247,9 @@ function ChatNotificationsProvider_WithAttendeeInner({
                             }
                         }
                     }
-                }
-
-                if (!latestIndices.current) {
+                } else {
                     latestIndices.current = new Map();
                 }
-                data.forEach((x) => {
-                    if (x) {
-                        latestIndices.current?.set(x.chatId, x.id);
-                    }
-                });
             }
         })();
     }, [
@@ -252,6 +258,7 @@ function ChatNotificationsProvider_WithAttendeeInner({
         currentAttendee.id,
         history,
         location.pathname,
+        openChat,
         setNotifiedUpTo,
         subscription.data?.chat_Message,
         suppressChatId,

@@ -59,6 +59,13 @@ import useRoomParticipants from "../Room/useRoomParticipants";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 
 gql`
+    fragment SidebarReadUpToIndex on chat_ReadUpToIndex {
+        attendeeId
+        chatId
+        messageId
+        unreadCount
+    }
+
     fragment SidebarChatInfo on chat_Chat {
         id
         contentGroup {
@@ -88,9 +95,7 @@ gql`
         enableMandatoryPin
         enableMandatorySubscribe
         readUpToIndices(where: { attendeeId: { _eq: $attendeeId } }) {
-            attendeeId
-            chatId
-            unreadCount
+            ...SidebarReadUpToIndex
         }
     }
 
@@ -352,7 +357,7 @@ function ChatsPanel({
         variables: {
             attendeeId,
         },
-        pollInterval: 10000,
+        // pollInterval: 10000,
     });
     const [createDmMutation, createDMMutationResponse] = useCreateDmMutation();
 

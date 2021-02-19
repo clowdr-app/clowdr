@@ -10,6 +10,7 @@ import {
 } from "../../../generated/graphql";
 import { useChatConfiguration } from "../Configuration";
 import MessageBox from "./MessageBox";
+import { useReadUpToIndex } from "./ReadUpToIndexProvider";
 
 interface ChatMessageListProps {
     chatId: string;
@@ -368,6 +369,16 @@ function MessageList({
             </Observer>
         );
     }, []);
+
+    const readUpTo = useReadUpToIndex();
+    useEffect(() => {
+        if (messageElements && messageElements.length > 0) {
+            const latestId = messageElements[0].props.message.id;
+            if (readUpTo.readUpToId === undefined || readUpTo.readUpToId < latestId) {
+                readUpTo.setReadUpTo(latestId);
+            }
+        }
+    }, [messageElements, readUpTo]);
 
     return (
         <Box {...rest}>

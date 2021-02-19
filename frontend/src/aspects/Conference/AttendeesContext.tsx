@@ -11,7 +11,7 @@ gql`
     }
 `;
 
-type NotificationCallback = (data: AttendeeDataFragment) => void;
+type NotificationCallback = (data: AttendeeDataFragment, subscriptionId: number) => void;
 
 interface AttendeesCtx {
     subscribe: (attendeeId: string, notify: NotificationCallback) => { id: number; attendee?: AttendeeDataFragment };
@@ -35,7 +35,10 @@ export function useAttendee(id: string | null | undefined): AttendeeDataFragment
     useEffect(() => {
         let sub: { id: number; attendee?: AttendeeDataFragment | undefined } | undefined;
         if (id) {
-            sub = attendees.subscribe(id, setAttendee);
+            sub = attendees.subscribe(id, (x, subId) => {
+                setAttendee(x);
+                attendees.unsubscribe(subId);
+            });
             if (sub.attendee) {
                 setAttendee(sub.attendee);
             } else {
@@ -79,7 +82,7 @@ export default function AttendeesContextProvider({
     const subscriptions = React.useRef<Map<number, Subscription>>(new Map());
     const subscriptionIdGen = React.useRef<number>(1);
 
-    const subscribe = useCallback((attendeeId: string, cb: (data: AttendeeDataFragment) => void) => {
+    const subscribe = useCallback((attendeeId: string, cb: NotificationCallback) => {
         const subId = subscriptionIdGen.current++;
         subscriptions.current.set(subId, { attendeeId, notify: cb, lastNotifiedAt: -1 });
         const attendee = attendees.current.get(attendeeId);
@@ -127,11 +130,11 @@ export default function AttendeesContextProvider({
                 console.error("Could not fetch attendees for chat!", e);
             }
 
-            subscriptions.current.forEach((sub) => {
+            subscriptions.current.forEach((sub, key) => {
                 if (sub.lastNotifiedAt < now - fullRefetchInterval) {
                     const attendee = attendees.current.get(sub.attendeeId);
                     if (attendee) {
-                        sub.notify(attendee.attendee);
+                        sub.notify(attendee.attendee, key);
                     }
                 }
             });

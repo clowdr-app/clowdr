@@ -1,8 +1,7 @@
 import { gql } from "@apollo/client";
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
-import { useSelectReadUpToIndexQuery, useSetReadUpToIndexMutation } from "../../../generated/graphql";
+import React, { useCallback, useMemo } from "react";
+import { useSelectReadUpToIndexQuery } from "../../../generated/graphql";
 import { useChatConfiguration } from "../Configuration";
-import { useReceiveMessageQueries } from "./ReceiveMessageQueries";
 
 gql`
     query SelectReadUpToIndex($chatId: uuid!, $attendeeId: uuid!) {
@@ -55,24 +54,26 @@ function ReadUpToIndexProvider_UserExists({
         pollInterval: 20000,
         fetchPolicy: "cache-and-network",
     });
-    const [setUnread] = useSetReadUpToIndexMutation();
-    const messages = useReceiveMessageQueries();
-    const lastUnreadId = useRef<number | null>(null);
-    useEffect(() => {
-        if (messages.liveMessages && messages.liveMessages.size > 0) {
-            const nextUnreadId = [...messages.liveMessages.keys()].sort((x, y) => y - x)[0];
-            if (lastUnreadId.current !== nextUnreadId) {
-                lastUnreadId.current = nextUnreadId;
-                setUnread({
-                    variables: {
-                        attendeeId,
-                        chatId,
-                        messageId: nextUnreadId,
-                    },
-                });
-            }
-        }
-    }, [attendeeId, chatId, messages.liveMessages, setUnread]);
+
+    // const [setUnread] = useSetReadUpToIndexMutation();
+    // const messages = useReceiveMessageQueries();
+    // const lastUnreadId = useRef<number | null>(null);
+
+    // useEffect(() => {
+    //     if (messages.liveMessages && messages.liveMessages.size > 0) {
+    //         const nextUnreadId = [...messages.liveMessages.keys()].sort((x, y) => y - x)[0];
+    //         if (lastUnreadId.current !== nextUnreadId) {
+    //             lastUnreadId.current = nextUnreadId;
+    //             setUnread({
+    //                 variables: {
+    //                     attendeeId,
+    //                     chatId,
+    //                     messageId: nextUnreadId,
+    //                 },
+    //             });
+    //         }
+    //     }
+    // }, [attendeeId, chatId, messages.liveMessages, setUnread]);
 
     const readUpToMarkerSeen = useCallback(() => {
         /* EMPTY */

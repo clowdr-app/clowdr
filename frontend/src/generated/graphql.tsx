@@ -30963,7 +30963,7 @@ export type SendChatMessageMutationVariables = Exact<{
 }>;
 
 
-export type SendChatMessageMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Message?: Maybe<{ readonly __typename?: 'chat_Message_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'chat_Message', readonly id: number, readonly duplicatedMessageId?: Maybe<number> }> }> };
+export type SendChatMessageMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Message_one?: Maybe<{ readonly __typename?: 'chat_Message', readonly id: number, readonly duplicatedMessageId?: Maybe<number> }> };
 
 export type SendChatAnswerMutationVariables = Exact<{
   data: Scalars['jsonb'];
@@ -30972,7 +30972,40 @@ export type SendChatAnswerMutationVariables = Exact<{
 }>;
 
 
-export type SendChatAnswerMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Reaction?: Maybe<{ readonly __typename?: 'chat_Reaction_mutation_response', readonly affected_rows: number }> };
+export type SendChatAnswerMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Reaction_one?: Maybe<{ readonly __typename?: 'chat_Reaction', readonly id: number }> };
+
+export type SelectFirstMessagesPageQueryVariables = Exact<{
+  chatId: Scalars['uuid'];
+  maxCount: Scalars['Int'];
+}>;
+
+
+export type SelectFirstMessagesPageQuery = { readonly __typename?: 'query_root', readonly chat_Message: ReadonlyArray<(
+    { readonly __typename?: 'chat_Message' }
+    & ChatMessageDataFragment
+  )> };
+
+export type SelectMessagesPageQueryVariables = Exact<{
+  chatId: Scalars['uuid'];
+  startAtIndex: Scalars['Int'];
+  maxCount: Scalars['Int'];
+}>;
+
+
+export type SelectMessagesPageQuery = { readonly __typename?: 'query_root', readonly chat_Message: ReadonlyArray<(
+    { readonly __typename?: 'chat_Message' }
+    & ChatMessageDataFragment
+  )> };
+
+export type NewMessagesSubscriptionVariables = Exact<{
+  chatId: Scalars['uuid'];
+}>;
+
+
+export type NewMessagesSubscription = { readonly __typename?: 'subscription_root', readonly chat_Message: ReadonlyArray<(
+    { readonly __typename?: 'chat_Message' }
+    & SubscribedChatMessageDataFragment
+  )> };
 
 export type AddReactionMutationVariables = Exact<{
   reaction: Chat_Reaction_Insert_Input;
@@ -31018,29 +31051,6 @@ export type SubscribedChatReactionDataFragment = { readonly __typename?: 'chat_R
 
 export type SubscribedChatMessageDataFragment = { readonly __typename?: 'chat_Message', readonly created_at: any, readonly data: any, readonly duplicatedMessageId?: Maybe<number>, readonly id: number, readonly message: string, readonly senderId?: Maybe<any>, readonly type: Chat_MessageType_Enum, readonly chatId: any };
 
-export type SelectFirstMessagesPageQueryVariables = Exact<{
-  chatId: Scalars['uuid'];
-  maxCount: Scalars['Int'];
-}>;
-
-
-export type SelectFirstMessagesPageQuery = { readonly __typename?: 'query_root', readonly chat_Message: ReadonlyArray<(
-    { readonly __typename?: 'chat_Message' }
-    & ChatMessageDataFragment
-  )> };
-
-export type SelectMessagesPageQueryVariables = Exact<{
-  chatId: Scalars['uuid'];
-  startAtIndex: Scalars['Int'];
-  maxCount: Scalars['Int'];
-}>;
-
-
-export type SelectMessagesPageQuery = { readonly __typename?: 'query_root', readonly chat_Message: ReadonlyArray<(
-    { readonly __typename?: 'chat_Message' }
-    & ChatMessageDataFragment
-  )> };
-
 export type SelectSingleMessageQueryVariables = Exact<{
   id: Scalars['Int'];
 }>;
@@ -31057,17 +31067,6 @@ export type DeleteMessageMutationVariables = Exact<{
 
 
 export type DeleteMessageMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Message_by_pk?: Maybe<{ readonly __typename?: 'chat_Message', readonly id: number }> };
-
-export type NextMessageSubscriptionVariables = Exact<{
-  prevId: Scalars['Int'];
-  chatId: Scalars['uuid'];
-}>;
-
-
-export type NextMessageSubscription = { readonly __typename?: 'subscription_root', readonly chat_Message: ReadonlyArray<(
-    { readonly __typename?: 'chat_Message' }
-    & SubscribedChatMessageDataFragment
-  )> };
 
 export type NextReactionsSubscriptionVariables = Exact<{
   messageIds: ReadonlyArray<Scalars['Int']> | Scalars['Int'];
@@ -34168,13 +34167,11 @@ export type GetChatPathLazyQueryHookResult = ReturnType<typeof useGetChatPathLaz
 export type GetChatPathQueryResult = Apollo.QueryResult<GetChatPathQuery, GetChatPathQueryVariables>;
 export const SendChatMessageDocument = gql`
     mutation SendChatMessage($chatId: uuid!, $senderId: uuid!, $type: chat_MessageType_enum!, $message: String!, $data: jsonb = {}, $isPinned: Boolean = false, $chatTitle: String = " ", $senderName: String = " ") {
-  insert_chat_Message(
-    objects: {chatId: $chatId, data: $data, isPinned: $isPinned, message: $message, senderId: $senderId, type: $type, chatTitle: $chatTitle, senderName: $senderName}
+  insert_chat_Message_one(
+    object: {chatId: $chatId, data: $data, isPinned: $isPinned, message: $message, senderId: $senderId, type: $type, chatTitle: $chatTitle, senderName: $senderName}
   ) {
-    returning {
-      id
-      duplicatedMessageId
-    }
+    id
+    duplicatedMessageId
   }
 }
     `;
@@ -34212,10 +34209,10 @@ export type SendChatMessageMutationResult = Apollo.MutationResult<SendChatMessag
 export type SendChatMessageMutationOptions = Apollo.BaseMutationOptions<SendChatMessageMutation, SendChatMessageMutationVariables>;
 export const SendChatAnswerDocument = gql`
     mutation SendChatAnswer($data: jsonb!, $senderId: uuid!, $answeringId: Int!) {
-  insert_chat_Reaction(
-    objects: {messageId: $answeringId, senderId: $senderId, symbol: "ANSWER", type: ANSWER, data: $data}
+  insert_chat_Reaction_one(
+    object: {messageId: $answeringId, senderId: $senderId, symbol: "ANSWER", type: ANSWER, data: $data}
   ) {
-    affected_rows
+    id
   }
 }
     `;
@@ -34246,6 +34243,112 @@ export function useSendChatAnswerMutation(baseOptions?: Apollo.MutationHookOptio
 export type SendChatAnswerMutationHookResult = ReturnType<typeof useSendChatAnswerMutation>;
 export type SendChatAnswerMutationResult = Apollo.MutationResult<SendChatAnswerMutation>;
 export type SendChatAnswerMutationOptions = Apollo.BaseMutationOptions<SendChatAnswerMutation, SendChatAnswerMutationVariables>;
+export const SelectFirstMessagesPageDocument = gql`
+    query SelectFirstMessagesPage($chatId: uuid!, $maxCount: Int!) {
+  chat_Message(
+    order_by: {id: desc}
+    where: {chatId: {_eq: $chatId}}
+    limit: $maxCount
+  ) {
+    ...ChatMessageData
+  }
+}
+    ${ChatMessageDataFragmentDoc}`;
+
+/**
+ * __useSelectFirstMessagesPageQuery__
+ *
+ * To run a query within a React component, call `useSelectFirstMessagesPageQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectFirstMessagesPageQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectFirstMessagesPageQuery({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *      maxCount: // value for 'maxCount'
+ *   },
+ * });
+ */
+export function useSelectFirstMessagesPageQuery(baseOptions: Apollo.QueryHookOptions<SelectFirstMessagesPageQuery, SelectFirstMessagesPageQueryVariables>) {
+        return Apollo.useQuery<SelectFirstMessagesPageQuery, SelectFirstMessagesPageQueryVariables>(SelectFirstMessagesPageDocument, baseOptions);
+      }
+export function useSelectFirstMessagesPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectFirstMessagesPageQuery, SelectFirstMessagesPageQueryVariables>) {
+          return Apollo.useLazyQuery<SelectFirstMessagesPageQuery, SelectFirstMessagesPageQueryVariables>(SelectFirstMessagesPageDocument, baseOptions);
+        }
+export type SelectFirstMessagesPageQueryHookResult = ReturnType<typeof useSelectFirstMessagesPageQuery>;
+export type SelectFirstMessagesPageLazyQueryHookResult = ReturnType<typeof useSelectFirstMessagesPageLazyQuery>;
+export type SelectFirstMessagesPageQueryResult = Apollo.QueryResult<SelectFirstMessagesPageQuery, SelectFirstMessagesPageQueryVariables>;
+export const SelectMessagesPageDocument = gql`
+    query SelectMessagesPage($chatId: uuid!, $startAtIndex: Int!, $maxCount: Int!) {
+  chat_Message(
+    order_by: {id: desc}
+    where: {chatId: {_eq: $chatId}, id: {_lte: $startAtIndex}}
+    limit: $maxCount
+  ) {
+    ...ChatMessageData
+  }
+}
+    ${ChatMessageDataFragmentDoc}`;
+
+/**
+ * __useSelectMessagesPageQuery__
+ *
+ * To run a query within a React component, call `useSelectMessagesPageQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectMessagesPageQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectMessagesPageQuery({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *      startAtIndex: // value for 'startAtIndex'
+ *      maxCount: // value for 'maxCount'
+ *   },
+ * });
+ */
+export function useSelectMessagesPageQuery(baseOptions: Apollo.QueryHookOptions<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>) {
+        return Apollo.useQuery<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>(SelectMessagesPageDocument, baseOptions);
+      }
+export function useSelectMessagesPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>) {
+          return Apollo.useLazyQuery<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>(SelectMessagesPageDocument, baseOptions);
+        }
+export type SelectMessagesPageQueryHookResult = ReturnType<typeof useSelectMessagesPageQuery>;
+export type SelectMessagesPageLazyQueryHookResult = ReturnType<typeof useSelectMessagesPageLazyQuery>;
+export type SelectMessagesPageQueryResult = Apollo.QueryResult<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>;
+export const NewMessagesDocument = gql`
+    subscription NewMessages($chatId: uuid!) {
+  chat_Message(order_by: {id: desc}, where: {chatId: {_eq: $chatId}}, limit: 5) {
+    ...SubscribedChatMessageData
+  }
+}
+    ${SubscribedChatMessageDataFragmentDoc}`;
+
+/**
+ * __useNewMessagesSubscription__
+ *
+ * To run a query within a React component, call `useNewMessagesSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useNewMessagesSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNewMessagesSubscription({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *   },
+ * });
+ */
+export function useNewMessagesSubscription(baseOptions: Apollo.SubscriptionHookOptions<NewMessagesSubscription, NewMessagesSubscriptionVariables>) {
+        return Apollo.useSubscription<NewMessagesSubscription, NewMessagesSubscriptionVariables>(NewMessagesDocument, baseOptions);
+      }
+export type NewMessagesSubscriptionHookResult = ReturnType<typeof useNewMessagesSubscription>;
+export type NewMessagesSubscriptionResult = Apollo.SubscriptionResult<NewMessagesSubscription>;
 export const AddReactionDocument = gql`
     mutation AddReaction($reaction: chat_Reaction_insert_input!) {
   insert_chat_Reaction(objects: [$reaction]) {
@@ -34383,83 +34486,6 @@ export function useSetReadUpToIndexMutation(baseOptions?: Apollo.MutationHookOpt
 export type SetReadUpToIndexMutationHookResult = ReturnType<typeof useSetReadUpToIndexMutation>;
 export type SetReadUpToIndexMutationResult = Apollo.MutationResult<SetReadUpToIndexMutation>;
 export type SetReadUpToIndexMutationOptions = Apollo.BaseMutationOptions<SetReadUpToIndexMutation, SetReadUpToIndexMutationVariables>;
-export const SelectFirstMessagesPageDocument = gql`
-    query SelectFirstMessagesPage($chatId: uuid!, $maxCount: Int!) {
-  chat_Message(
-    order_by: {id: desc}
-    where: {chatId: {_eq: $chatId}}
-    limit: $maxCount
-  ) {
-    ...ChatMessageData
-  }
-}
-    ${ChatMessageDataFragmentDoc}`;
-
-/**
- * __useSelectFirstMessagesPageQuery__
- *
- * To run a query within a React component, call `useSelectFirstMessagesPageQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectFirstMessagesPageQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectFirstMessagesPageQuery({
- *   variables: {
- *      chatId: // value for 'chatId'
- *      maxCount: // value for 'maxCount'
- *   },
- * });
- */
-export function useSelectFirstMessagesPageQuery(baseOptions: Apollo.QueryHookOptions<SelectFirstMessagesPageQuery, SelectFirstMessagesPageQueryVariables>) {
-        return Apollo.useQuery<SelectFirstMessagesPageQuery, SelectFirstMessagesPageQueryVariables>(SelectFirstMessagesPageDocument, baseOptions);
-      }
-export function useSelectFirstMessagesPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectFirstMessagesPageQuery, SelectFirstMessagesPageQueryVariables>) {
-          return Apollo.useLazyQuery<SelectFirstMessagesPageQuery, SelectFirstMessagesPageQueryVariables>(SelectFirstMessagesPageDocument, baseOptions);
-        }
-export type SelectFirstMessagesPageQueryHookResult = ReturnType<typeof useSelectFirstMessagesPageQuery>;
-export type SelectFirstMessagesPageLazyQueryHookResult = ReturnType<typeof useSelectFirstMessagesPageLazyQuery>;
-export type SelectFirstMessagesPageQueryResult = Apollo.QueryResult<SelectFirstMessagesPageQuery, SelectFirstMessagesPageQueryVariables>;
-export const SelectMessagesPageDocument = gql`
-    query SelectMessagesPage($chatId: uuid!, $startAtIndex: Int!, $maxCount: Int!) {
-  chat_Message(
-    order_by: {id: desc}
-    where: {chatId: {_eq: $chatId}, id: {_lte: $startAtIndex}}
-    limit: $maxCount
-  ) {
-    ...ChatMessageData
-  }
-}
-    ${ChatMessageDataFragmentDoc}`;
-
-/**
- * __useSelectMessagesPageQuery__
- *
- * To run a query within a React component, call `useSelectMessagesPageQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectMessagesPageQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectMessagesPageQuery({
- *   variables: {
- *      chatId: // value for 'chatId'
- *      startAtIndex: // value for 'startAtIndex'
- *      maxCount: // value for 'maxCount'
- *   },
- * });
- */
-export function useSelectMessagesPageQuery(baseOptions: Apollo.QueryHookOptions<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>) {
-        return Apollo.useQuery<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>(SelectMessagesPageDocument, baseOptions);
-      }
-export function useSelectMessagesPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>) {
-          return Apollo.useLazyQuery<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>(SelectMessagesPageDocument, baseOptions);
-        }
-export type SelectMessagesPageQueryHookResult = ReturnType<typeof useSelectMessagesPageQuery>;
-export type SelectMessagesPageLazyQueryHookResult = ReturnType<typeof useSelectMessagesPageLazyQuery>;
-export type SelectMessagesPageQueryResult = Apollo.QueryResult<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>;
 export const SelectSingleMessageDocument = gql`
     query SelectSingleMessage($id: Int!) {
   chat_Message_by_pk(id: $id) {
@@ -34525,40 +34551,6 @@ export function useDeleteMessageMutation(baseOptions?: Apollo.MutationHookOption
 export type DeleteMessageMutationHookResult = ReturnType<typeof useDeleteMessageMutation>;
 export type DeleteMessageMutationResult = Apollo.MutationResult<DeleteMessageMutation>;
 export type DeleteMessageMutationOptions = Apollo.BaseMutationOptions<DeleteMessageMutation, DeleteMessageMutationVariables>;
-export const NextMessageDocument = gql`
-    subscription NextMessage($prevId: Int!, $chatId: uuid!) {
-  chat_Message(
-    order_by: {id: desc}
-    where: {id: {_gt: $prevId}, chatId: {_eq: $chatId}}
-    limit: 1
-  ) {
-    ...SubscribedChatMessageData
-  }
-}
-    ${SubscribedChatMessageDataFragmentDoc}`;
-
-/**
- * __useNextMessageSubscription__
- *
- * To run a query within a React component, call `useNextMessageSubscription` and pass it any options that fit your needs.
- * When your component renders, `useNextMessageSubscription` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useNextMessageSubscription({
- *   variables: {
- *      prevId: // value for 'prevId'
- *      chatId: // value for 'chatId'
- *   },
- * });
- */
-export function useNextMessageSubscription(baseOptions: Apollo.SubscriptionHookOptions<NextMessageSubscription, NextMessageSubscriptionVariables>) {
-        return Apollo.useSubscription<NextMessageSubscription, NextMessageSubscriptionVariables>(NextMessageDocument, baseOptions);
-      }
-export type NextMessageSubscriptionHookResult = ReturnType<typeof useNextMessageSubscription>;
-export type NextMessageSubscriptionResult = Apollo.SubscriptionResult<NextMessageSubscription>;
 export const NextReactionsDocument = gql`
     subscription NextReactions($messageIds: [Int!]!) {
   chat_Reaction(where: {messageId: {_in: $messageIds}}) {

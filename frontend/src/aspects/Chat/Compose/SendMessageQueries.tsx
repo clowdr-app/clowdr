@@ -1,7 +1,8 @@
-import { gql } from "@apollo/client";
+import { gql, Reference } from "@apollo/client";
 import React, { useCallback, useMemo } from "react";
 import {
     Chat_MessageType_Enum,
+    SubscribedChatMessageDataFragmentDoc,
     useSendChatAnswerMutation,
     useSendChatMessageMutation,
 } from "../../../generated/graphql";
@@ -18,8 +19,8 @@ gql`
         $chatTitle: String = " "
         $senderName: String = " "
     ) {
-        insert_chat_Message(
-            objects: {
+        insert_chat_Message_one(
+            object: {
                 chatId: $chatId
                 data: $data
                 isPinned: $isPinned
@@ -30,18 +31,15 @@ gql`
                 senderName: $senderName
             }
         ) {
-            returning {
-                id
-                duplicatedMessageId
-            }
+            ...SubscribedChatMessageData
         }
     }
 
     mutation SendChatAnswer($data: jsonb!, $senderId: uuid!, $answeringId: Int!) {
-        insert_chat_Reaction(
-            objects: { messageId: $answeringId, senderId: $senderId, symbol: "ANSWER", type: ANSWER, data: $data }
+        insert_chat_Reaction_one(
+            object: { messageId: $answeringId, senderId: $senderId, symbol: "ANSWER", type: ANSWER, data: $data }
         ) {
-            affected_rows
+            id
         }
     }
 `;
@@ -59,6 +57,8 @@ type SendMesasageCallback = (
 
 interface SendMessageQueriesCtx {
     send: SendMesasageCallback;
+    isSending: boolean;
+    sendError: string | null;
 }
 
 const SendMessageQueriesContext = React.createContext<SendMessageQueriesCtx | undefined>(undefined);
@@ -76,8 +76,8 @@ export default function SendMessageQueriesProvider({
 }: {
     children: React.ReactNode | React.ReactNodeArray;
 }): JSX.Element {
-    const [sendMessageMutation] = useSendChatMessageMutation();
-    const [sendAnswer] = useSendChatAnswerMutation();
+    const [sendMessageMutation, sendMessageMutationResponse] = useSendChatMessageMutation();
+    const [sendAnswer, sendAnswerResponse] = useSendChatAnswerMutation();
 
     const send: SendMesasageCallback = useCallback(
         async (chatId, senderId, senderName, type, message, data, isPinned, chatTitle) => {
@@ -93,8 +93,29 @@ export default function SendMessageQueriesProvider({
                         senderName,
                         chatTitle,
                     },
+                    update: (cache, { data: _data }) => {
+                        if (_data?.insert_chat_Message_one) {
+                            const data = _data.insert_chat_Message_one;
+                            cache.modify({
+                                fields: {
+                                    chat_Message(existingRefs: Reference[] = [], { readField }) {
+                                        const newRef = cache.writeFragment({
+                                            data,
+                                            fragment: SubscribedChatMessageDataFragmentDoc,
+                                            fragmentName: "SubscribedChatMessageData",
+                                        });
+                                        if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
+                                            return existingRefs;
+                                        }
+
+                                        return [newRef, ...existingRefs];
+                                    },
+                                },
+                            });
+                        }
+                    },
                 })
-            ).data?.insert_chat_Message?.returning[0];
+            ).data?.insert_chat_Message_one;
 
             if (type === Chat_MessageType_Enum.Answer && newMsg) {
                 const answeringIds = (data as AnswerMessageData).questionMessagesIds;
@@ -103,7 +124,7 @@ export default function SendMessageQueriesProvider({
                         answerMessageId: newMsg.id,
                         duplicateAnswerMessageId: newMsg.duplicatedMessageId ?? undefined,
                     };
-                    await sendAnswer({
+                    sendAnswer({
                         variables: {
                             answeringId: answeringIds[0],
                             data: reactionData,
@@ -118,8 +139,16 @@ export default function SendMessageQueriesProvider({
     const ctx = useMemo(
         () => ({
             send,
+            isSending: sendMessageMutationResponse.loading || sendAnswerResponse.loading,
+            sendError: sendMessageMutationResponse.error?.message ?? sendAnswerResponse.error?.message ?? null,
         }),
-        [send]
+        [
+            send,
+            sendAnswerResponse.error?.message,
+            sendAnswerResponse.loading,
+            sendMessageMutationResponse.error?.message,
+            sendMessageMutationResponse.loading,
+        ]
     );
 
     return <SendMessageQueriesContext.Provider value={ctx}>{children}</SendMessageQueriesContext.Provider>;

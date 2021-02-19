@@ -41,7 +41,7 @@ export function SendMessageButton({ sendFailed, ...props }: { sendFailed: boolea
             _active={{}}
             p={config.spacing}
             w="100%"
-            h="100%"
+            h="3ex"
             isDisabled={props.isDisabled || wasJustClicked}
             fontSize={config.fontSizeRange.value}
             {...props}

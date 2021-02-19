@@ -64,7 +64,6 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
                 title: "Failed to send",
             });
             setSendFailed(toastId ?? null);
-            composeCtx.clearSendError();
             setTimeout(() => {
                 setSendFailed(null);
             }, 1000);

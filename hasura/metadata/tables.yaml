@@ -555,7 +555,7 @@
       - isPinned
       - message
       filter:
-        _and:
+        _or:
         - sender:
             userId:
               _eq: X-Hasura-User-Id
@@ -630,7 +630,7 @@
   - role: user
     permission:
       filter:
-        _and:
+        _or:
         - sender:
             userId:
               _eq: X-Hasura-User-Id
@@ -883,7 +883,7 @@
   - role: user
     permission:
       filter:
-        _and:
+        _or:
         - sender:
             userId:
               _eq: X-Hasura-User-Id
@@ -1473,6 +1473,7 @@
                       userId:
                         _eq: X-Hasura-User-Id
       columns:
+      - emailTemplate
       - uploaderId
       backend_only: false
 - table:

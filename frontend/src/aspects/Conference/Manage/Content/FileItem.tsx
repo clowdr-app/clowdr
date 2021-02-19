@@ -5,7 +5,7 @@ import assert from "assert";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
 import { ContentType_Enum } from "../../../../generated/graphql";
-import { LinkButton } from "../../../Chakra/LinkButton";
+import { ExternalLinkButton } from "../../../Chakra/LinkButton";
 import type { ItemBaseTemplate, RenderEditorProps } from "./Types";
 import UploadFileForm_ContentItem from "./UploadFileForm_ContentItem";
 
@@ -126,9 +126,9 @@ export const FileItemTemplate: ItemBaseTemplate = {
                                         </Center>
                                     </>
                                 ) : (
-                                    <LinkButton to={imageSrc} isExternal>
+                                    <ExternalLinkButton to={imageSrc} isExternal>
                                         Current file
-                                    </LinkButton>
+                                    </ExternalLinkButton>
                                 )}
                             </Box>
                         </>

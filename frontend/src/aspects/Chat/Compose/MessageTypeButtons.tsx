@@ -58,7 +58,7 @@ export function MessageTypeButtons({ isDisabled, ...props }: StackProps & { isDi
                     }}
                 />
             ) : undefined}
-            {config.permissions.canAnswer ? (
+            {/* {config.permissions.canAnswer ? (
                 <MessageTypeButton
                     isDisabled={isDisabled}
                     messageType={Chat_MessageType_Enum.Answer}
@@ -70,7 +70,7 @@ export function MessageTypeButtons({ isDisabled, ...props }: StackProps & { isDi
                         }
                     }}
                 />
-            ) : undefined}
+            ) : undefined} */}
             {config.permissions.canPoll ? (
                 <MessageTypeButton
                     isDisabled={isDisabled}

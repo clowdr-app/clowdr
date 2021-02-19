@@ -100,15 +100,22 @@ export function defaultBooleanFilter(item: boolean, search?: boolean): boolean {
 
 export function defaultSelectFilter(
     itemOptions: SelectOption | Array<SelectOption>,
-    searchValues?: Array<string>
+    searchValues?: Array<string> | string
 ): boolean {
-    if (searchValues === undefined) {
+    if (!searchValues) {
         return true;
     }
 
-    return searchValues.some((key) =>
-        itemOptions instanceof Array ? itemOptions.some((x) => x.value === key) : itemOptions.value === key
-    );
+    if (typeof searchValues === "string") {
+        const lSearchValue = searchValues.toLowerCase();
+        return itemOptions instanceof Array
+            ? itemOptions.some((x) => x.label.toLowerCase().includes(lSearchValue))
+            : itemOptions.label.toLowerCase().includes(lSearchValue);
+    } else {
+        return searchValues.some((key) =>
+            itemOptions instanceof Array ? itemOptions.some((x) => x.value === key) : itemOptions.value === key
+        );
+    }
 }
 
 export function defaultDateTimeFilter(item: Date, search?: string): boolean {
@@ -677,6 +684,8 @@ function FilterInput({
 }) {
     switch (fieldType) {
         case FieldType.string:
+            return <StringFilterInput {...props} />;
+        case FieldType.select:
             return <StringFilterInput {...props} />;
         default:
             return <></>;

@@ -72,9 +72,7 @@ gql`
     mutation StartChatDuplication(
         $chatId1: uuid!
         $chatId2: uuid!
-        $data: jsonb!
-        $message: String!
-        $systemId1: String!
+        $data: jsonb! # $message: String! # $systemId1: String!
     ) {
         update_chat1: update_chat_Chat_by_pk(pk_columns: { id: $chatId1 }, _set: { duplicateToId: $chatId2 }) {
             id
@@ -82,63 +80,61 @@ gql`
         update_chat2: update_chat_Chat_by_pk(pk_columns: { id: $chatId2 }, _set: { duplicateToId: $chatId1 }) {
             id
         }
-        insert_chat_Message(
-            objects: [
-                {
-                    chatId: $chatId1
-                    data: $data
-                    isPinned: false
-                    message: $message
-                    senderId: null
-                    type: DUPLICATION_MARKER
-                    systemId: $systemId1
-                }
-            ]
-            on_conflict: { constraint: Message_systemId_key, update_columns: [] }
-        ) {
-            affected_rows
-        }
+        # insert_chat_Message(
+        #     objects: [
+        #         {
+        #             chatId: $chatId1
+        #             data: $data
+        #             isPinned: false
+        #             message: $message
+        #             senderId: null
+        #             type: DUPLICATION_MARKER
+        #             systemId: $systemId1
+        #         }
+        #     ]
+        #     on_conflict: { constraint: Message_systemId_key, update_columns: [] }
+        # ) {
+        #     affected_rows
+        # }
     }
 
     mutation EndChatDuplication(
         $chatId1: uuid!
-        $chatId2: uuid!
-        $data: jsonb!
-        $message: String!
-        $systemId1: String!
-        $systemId2: String!
-    ) {
+        $chatId2: uuid! # $data: jsonb! # $message: String!
+    ) # $systemId1: String!
+    # $systemId2: String!
+    {
         update_chat1: update_chat_Chat_by_pk(pk_columns: { id: $chatId1 }, _set: { duplicateToId: null }) {
             id
         }
         update_chat2: update_chat_Chat_by_pk(pk_columns: { id: $chatId2 }, _set: { duplicateToId: null }) {
             id
         }
-        insert_chat_Message(
-            objects: [
-                {
-                    chatId: $chatId1
-                    data: $data
-                    isPinned: false
-                    message: $message
-                    senderId: null
-                    type: DUPLICATION_MARKER
-                    systemId: $systemId1
-                }
-                {
-                    chatId: $chatId2
-                    data: $data
-                    isPinned: false
-                    message: $message
-                    senderId: null
-                    type: DUPLICATION_MARKER
-                    systemId: $systemId2
-                }
-            ]
-            on_conflict: { constraint: Message_systemId_key, update_columns: [] }
-        ) {
-            affected_rows
-        }
+        # insert_chat_Message(
+        #     objects: [
+        #         {
+        #             chatId: $chatId1
+        #             data: $data
+        #             isPinned: false
+        #             message: $message
+        #             senderId: null
+        #             type: DUPLICATION_MARKER
+        #             systemId: $systemId1
+        #         }
+        #         {
+        #             chatId: $chatId2
+        #             data: $data
+        #             isPinned: false
+        #             message: $message
+        #             senderId: null
+        #             type: DUPLICATION_MARKER
+        #             systemId: $systemId2
+        #         }
+        #     ]
+        #     on_conflict: { constraint: Message_systemId_key, update_columns: [] }
+        # ) {
+        #     affected_rows
+        # }
     }
 `;
 

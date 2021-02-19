@@ -30,7 +30,7 @@ import { ConferenceInfo, useConference } from "../Conference/useConference";
 import useCurrentAttendee from "../Conference/useCurrentAttendee";
 import { useRealTime } from "../Generic/useRealTime";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
-import usePrimaryMenuButtons from "../Menu/usePrimaryMenuButtons";
+import { useNoPrimaryMenuButtons } from "../Menu/usePrimaryMenuButtons";
 
 gql`
     fragment ShufflePeriodData on room_ShufflePeriod {
@@ -409,17 +409,7 @@ export default function WaitingPage(): JSX.Element {
         periods.data?.room_ShufflePeriod,
     ]);
 
-    const { setPrimaryMenuButtons } = usePrimaryMenuButtons();
-    useEffect(() => {
-        setPrimaryMenuButtons([
-            {
-                key: "conference-home",
-                action: `/conference/${conference.slug}`,
-                text: conference.shortName,
-                label: conference.shortName,
-            },
-        ]);
-    }, [conference.shortName, conference.slug, setPrimaryMenuButtons]);
+    useNoPrimaryMenuButtons();
 
     return periods.loading && !periods.data ? (
         <Spinner label="Loading shuffle room times" />

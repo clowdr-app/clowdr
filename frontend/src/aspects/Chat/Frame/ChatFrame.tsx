@@ -6,10 +6,10 @@ import SendMessageQueriesProvider from "../Compose/SendMessageQueries";
 import { useChatConfiguration } from "../Configuration";
 import { ChatConfigurationControls } from "../Heading/ChatConfigurationControl";
 import { ChatHeading } from "../Heading/ChatHeading";
-import { ChatSelector } from "../Heading/ChatSelector";
 import { ChatMessageList } from "../Messages/ChatMessageList";
 import EmojiPickerProvider from "../Messages/EmojiPickerProvider";
 import ReactionsProvider from "../Messages/ReactionsProvider";
+import ReadUpToIndexProvider from "../Messages/ReadUpToIndexProvider";
 import ReceiveMessageQueriesProvider from "../Messages/ReceiveMessageQueries";
 import { useSelectedChat } from "../SelectedChat";
 import ChatProfileModalProvider from "./ChatProfileModalProvider";
@@ -29,7 +29,7 @@ export function ChatFrame({ ...rest }: BoxProps): JSX.Element {
     });
 
     return (
-        <Box h="100%" w="100%" maxH="90vh" pos="relative" m={0} p={0} {...rest}>
+        <Box h="100%" w="100%" pos="relative" m={0} p={0} {...rest}>
             <VStack
                 minH="100%"
                 h="100%"
@@ -41,68 +41,64 @@ export function ChatFrame({ ...rest }: BoxProps): JSX.Element {
                 fontSize={config.fontSizeRange.value + "px" ?? "1rem"}
             >
                 <ChatHeading role="region" aria-label="Chat controls" flex="0 0 auto" />
-                <ChatSelector flex="0 0 auto" />
+                {/* <ChatSelector flex="0 0 auto" /> */}
                 <ChatProfileModalProvider>
                     <ReactionsProvider>
                         <EmojiPickerProvider>
-                            <Box
-                                role="region"
-                                aria-label="Messages"
-                                flex="0 1 100%"
-                                pos="relative"
-                                overflow="hidden"
-                                minH="400px"
-                            >
-                                {"chatId" in config.sources ? (
-                                    <ReceiveMessageQueriesProvider
-                                        chatId={config.sources.chatId}
-                                        setAnsweringQuestionId={setAnsweringQuestionIdRef}
-                                    >
-                                        <ChatMessageList
-                                            chatId={config.sources.chatId}
-                                            pos="relative"
-                                            h="100%"
-                                            zIndex={1}
-                                        />
-                                    </ReceiveMessageQueriesProvider>
-                                ) : (
-                                    <>
-                                        <ReceiveMessageQueriesProvider
-                                            chatId={config.sources.chatIdL}
-                                            setAnsweringQuestionId={setAnsweringQuestionIdRef}
-                                        >
+                            <ReceiveMessageQueriesProvider setAnsweringQuestionId={setAnsweringQuestionIdRef}>
+                                <Box
+                                    role="region"
+                                    aria-label="Messages"
+                                    flex="0 1 100%"
+                                    pos="relative"
+                                    overflow="hidden"
+                                >
+                                    {"chatId" in config.sources ? (
+                                        <ReadUpToIndexProvider chatId={config.sources.chatId}>
                                             <ChatMessageList
-                                                chatId={config.sources.chatIdL}
-                                                pos="absolute"
-                                                top="0"
-                                                left={selectedChat.selectedSide === "L" ? "0%" : "-100%"}
-                                                w="100%"
+                                                chatId={config.sources.chatId}
+                                                pos="relative"
                                                 h="100%"
                                                 zIndex={1}
-                                                transition="left 0.2s linear"
-                                                visibility={selectedChat.selectedSide === "L" ? "visible" : "hidden"}
                                             />
-                                        </ReceiveMessageQueriesProvider>
-                                        <ReceiveMessageQueriesProvider
-                                            chatId={config.sources.chatIdR}
-                                            setAnsweringQuestionId={setAnsweringQuestionIdRef}
-                                        >
-                                            <ChatMessageList
-                                                chatId={config.sources.chatIdR}
-                                                pos="absolute"
-                                                top="0"
-                                                left={selectedChat.selectedSide === "R" ? "0%" : "100%"}
-                                                w="100%"
-                                                h="100%"
-                                                zIndex={1}
-                                                transition="left 0.2s linear"
-                                                visibility={selectedChat.selectedSide === "R" ? "visible" : "hidden"}
-                                            />
-                                        </ReceiveMessageQueriesProvider>
-                                    </>
-                                )}
-                                <ChatConfigurationControls pos="absolute" top="0" left="0" w="100%" zIndex={2} />
-                            </Box>
+                                        </ReadUpToIndexProvider>
+                                    ) : (
+                                        <>
+                                            <ReadUpToIndexProvider chatId={config.sources.chatIdL}>
+                                                <ChatMessageList
+                                                    chatId={config.sources.chatIdL}
+                                                    pos="absolute"
+                                                    top="0"
+                                                    left={selectedChat.selectedSide === "L" ? "0%" : "-100%"}
+                                                    w="100%"
+                                                    h="100%"
+                                                    zIndex={1}
+                                                    transition="left 0.2s linear"
+                                                    visibility={
+                                                        selectedChat.selectedSide === "L" ? "visible" : "hidden"
+                                                    }
+                                                />
+                                            </ReadUpToIndexProvider>
+                                            <ReadUpToIndexProvider chatId={config.sources.chatIdR}>
+                                                <ChatMessageList
+                                                    chatId={config.sources.chatIdR}
+                                                    pos="absolute"
+                                                    top="0"
+                                                    left={selectedChat.selectedSide === "R" ? "0%" : "100%"}
+                                                    w="100%"
+                                                    h="100%"
+                                                    zIndex={1}
+                                                    transition="left 0.2s linear"
+                                                    visibility={
+                                                        selectedChat.selectedSide === "R" ? "visible" : "hidden"
+                                                    }
+                                                />
+                                            </ReadUpToIndexProvider>
+                                        </>
+                                    )}
+                                    <ChatConfigurationControls pos="absolute" top="0" left="0" w="100%" zIndex={2} />
+                                </Box>
+                            </ReceiveMessageQueriesProvider>
                         </EmojiPickerProvider>
                     </ReactionsProvider>
                 </ChatProfileModalProvider>

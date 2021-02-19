@@ -394,7 +394,9 @@ export function VonageRoomStateProvider({
         };
     }, [cameraTrack, microphoneTrack]);
 
-    return <VonageContext.Provider value={{ state, dispatch, computedState }}>{children}</VonageContext.Provider>;
+    const ctx = useMemo(() => ({ state, dispatch, computedState }), [computedState, state]);
+
+    return <VonageContext.Provider value={ctx}>{children}</VonageContext.Provider>;
 }
 
 export function useVonageRoom(): VonageRoomContext {

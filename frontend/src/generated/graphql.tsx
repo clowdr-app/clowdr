@@ -5339,6 +5339,7 @@ export type CreateContentGroupRoomOutput = {
 
 export type CreateRoomDmOutput = {
   readonly __typename?: 'CreateRoomDmOutput';
+  readonly chatId?: Maybe<Scalars['uuid']>;
   readonly message?: Maybe<Scalars['String']>;
   readonly room?: Maybe<Room>;
   readonly roomId?: Maybe<Scalars['uuid']>;
@@ -18293,9 +18294,7 @@ export type Chat_ReadUpToIndex_Bool_Exp = {
 /** unique or primary key constraints on table "chat.ReadUpToIndex" */
 export enum Chat_ReadUpToIndex_Constraint {
   /** unique or primary key constraint */
-  ReadUpToIndexPkey = 'ReadUpToIndex_pkey',
-  /** unique or primary key constraint */
-  ChatReadUpToIndexPkIndex = 'chat_ReadUpToIndex_pk_index'
+  ReadUpToIndexPkey = 'ReadUpToIndex_pkey'
 }
 
 /** input type for incrementing integer column in table "chat.ReadUpToIndex" */
@@ -19982,12 +19981,19 @@ export enum Job_Queues_PublishVideoJob_Update_Column {
 export type Job_Queues_SubmissionRequestEmailJob = {
   readonly __typename?: 'job_queues_SubmissionRequestEmailJob';
   readonly created_at: Scalars['timestamptz'];
+  readonly emailTemplate?: Maybe<Scalars['jsonb']>;
   readonly id: Scalars['uuid'];
   readonly processed: Scalars['Boolean'];
   readonly updated_at: Scalars['timestamptz'];
   /** An object relationship */
   readonly uploader: Uploader;
   readonly uploaderId: Scalars['uuid'];
+};
+
+
+/** columns and relationships of "job_queues.SubmissionRequestEmailJob" */
+export type Job_Queues_SubmissionRequestEmailJobEmailTemplateArgs = {
+  path?: Maybe<Scalars['String']>;
 };
 
 /** aggregated selection of "job_queues.SubmissionRequestEmailJob" */
@@ -20019,6 +20025,11 @@ export type Job_Queues_SubmissionRequestEmailJob_Aggregate_Order_By = {
   readonly min?: Maybe<Job_Queues_SubmissionRequestEmailJob_Min_Order_By>;
 };
 
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Job_Queues_SubmissionRequestEmailJob_Append_Input = {
+  readonly emailTemplate?: Maybe<Scalars['jsonb']>;
+};
+
 /** input type for inserting array relation for remote table "job_queues.SubmissionRequestEmailJob" */
 export type Job_Queues_SubmissionRequestEmailJob_Arr_Rel_Insert_Input = {
   readonly data: ReadonlyArray<Job_Queues_SubmissionRequestEmailJob_Insert_Input>;
@@ -20031,6 +20042,7 @@ export type Job_Queues_SubmissionRequestEmailJob_Bool_Exp = {
   readonly _not?: Maybe<Job_Queues_SubmissionRequestEmailJob_Bool_Exp>;
   readonly _or?: Maybe<ReadonlyArray<Maybe<Job_Queues_SubmissionRequestEmailJob_Bool_Exp>>>;
   readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly emailTemplate?: Maybe<Jsonb_Comparison_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly processed?: Maybe<Boolean_Comparison_Exp>;
   readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
@@ -20044,9 +20056,25 @@ export enum Job_Queues_SubmissionRequestEmailJob_Constraint {
   SubmissionRequestEmailJobPkey = 'SubmissionRequestEmailJob_pkey'
 }
 
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Job_Queues_SubmissionRequestEmailJob_Delete_At_Path_Input = {
+  readonly emailTemplate?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Job_Queues_SubmissionRequestEmailJob_Delete_Elem_Input = {
+  readonly emailTemplate?: Maybe<Scalars['Int']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Job_Queues_SubmissionRequestEmailJob_Delete_Key_Input = {
+  readonly emailTemplate?: Maybe<Scalars['String']>;
+};
+
 /** input type for inserting data into table "job_queues.SubmissionRequestEmailJob" */
 export type Job_Queues_SubmissionRequestEmailJob_Insert_Input = {
   readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly emailTemplate?: Maybe<Scalars['jsonb']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly processed?: Maybe<Scalars['Boolean']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
@@ -20113,6 +20141,7 @@ export type Job_Queues_SubmissionRequestEmailJob_On_Conflict = {
 /** ordering options when selecting data from "job_queues.SubmissionRequestEmailJob" */
 export type Job_Queues_SubmissionRequestEmailJob_Order_By = {
   readonly created_at?: Maybe<Order_By>;
+  readonly emailTemplate?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly processed?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
@@ -20125,10 +20154,17 @@ export type Job_Queues_SubmissionRequestEmailJob_Pk_Columns_Input = {
   readonly id: Scalars['uuid'];
 };
 
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Job_Queues_SubmissionRequestEmailJob_Prepend_Input = {
+  readonly emailTemplate?: Maybe<Scalars['jsonb']>;
+};
+
 /** select columns of table "job_queues.SubmissionRequestEmailJob" */
 export enum Job_Queues_SubmissionRequestEmailJob_Select_Column {
   /** column name */
   CreatedAt = 'created_at',
+  /** column name */
+  EmailTemplate = 'emailTemplate',
   /** column name */
   Id = 'id',
   /** column name */
@@ -20142,6 +20178,7 @@ export enum Job_Queues_SubmissionRequestEmailJob_Select_Column {
 /** input type for updating data in table "job_queues.SubmissionRequestEmailJob" */
 export type Job_Queues_SubmissionRequestEmailJob_Set_Input = {
   readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly emailTemplate?: Maybe<Scalars['jsonb']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly processed?: Maybe<Scalars['Boolean']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
@@ -20152,6 +20189,8 @@ export type Job_Queues_SubmissionRequestEmailJob_Set_Input = {
 export enum Job_Queues_SubmissionRequestEmailJob_Update_Column {
   /** column name */
   CreatedAt = 'created_at',
+  /** column name */
+  EmailTemplate = 'emailTemplate',
   /** column name */
   Id = 'id',
   /** column name */
@@ -24678,6 +24717,11 @@ export type Mutation_RootUpdate_Job_Queues_PublishVideoJob_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_Job_Queues_SubmissionRequestEmailJobArgs = {
+  _append?: Maybe<Job_Queues_SubmissionRequestEmailJob_Append_Input>;
+  _delete_at_path?: Maybe<Job_Queues_SubmissionRequestEmailJob_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<Job_Queues_SubmissionRequestEmailJob_Delete_Elem_Input>;
+  _delete_key?: Maybe<Job_Queues_SubmissionRequestEmailJob_Delete_Key_Input>;
+  _prepend?: Maybe<Job_Queues_SubmissionRequestEmailJob_Prepend_Input>;
   _set?: Maybe<Job_Queues_SubmissionRequestEmailJob_Set_Input>;
   where: Job_Queues_SubmissionRequestEmailJob_Bool_Exp;
 };
@@ -24685,6 +24729,11 @@ export type Mutation_RootUpdate_Job_Queues_SubmissionRequestEmailJobArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_Job_Queues_SubmissionRequestEmailJob_By_PkArgs = {
+  _append?: Maybe<Job_Queues_SubmissionRequestEmailJob_Append_Input>;
+  _delete_at_path?: Maybe<Job_Queues_SubmissionRequestEmailJob_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<Job_Queues_SubmissionRequestEmailJob_Delete_Elem_Input>;
+  _delete_key?: Maybe<Job_Queues_SubmissionRequestEmailJob_Delete_Key_Input>;
+  _prepend?: Maybe<Job_Queues_SubmissionRequestEmailJob_Prepend_Input>;
   _set?: Maybe<Job_Queues_SubmissionRequestEmailJob_Set_Input>;
   pk_columns: Job_Queues_SubmissionRequestEmailJob_Pk_Columns_Input;
 };
@@ -30943,7 +30992,7 @@ export type SetNotifiedUpToIndexMutationVariables = Exact<{
 }>;
 
 
-export type SetNotifiedUpToIndexMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_ReadUpToIndex_one?: Maybe<{ readonly __typename?: 'chat_ReadUpToIndex', readonly chatId: any, readonly attendeeId: any, readonly notifiedUpToMessageId: number }> };
+export type SetNotifiedUpToIndexMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_ReadUpToIndex_one?: Maybe<{ readonly __typename?: 'chat_ReadUpToIndex', readonly chatId: any, readonly attendeeId: any, readonly unreadCount?: Maybe<number>, readonly notifiedUpToMessageId: number }> };
 
 export type GetChatPathQueryVariables = Exact<{
   chatId: Scalars['uuid'];
@@ -30964,7 +31013,10 @@ export type SendChatMessageMutationVariables = Exact<{
 }>;
 
 
-export type SendChatMessageMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Message?: Maybe<{ readonly __typename?: 'chat_Message_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'chat_Message', readonly id: number, readonly duplicatedMessageId?: Maybe<number> }> }> };
+export type SendChatMessageMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Message_one?: Maybe<(
+    { readonly __typename?: 'chat_Message' }
+    & SubscribedChatMessageDataFragment
+  )> };
 
 export type SendChatAnswerMutationVariables = Exact<{
   data: Scalars['jsonb'];
@@ -30973,51 +31025,7 @@ export type SendChatAnswerMutationVariables = Exact<{
 }>;
 
 
-export type SendChatAnswerMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Reaction?: Maybe<{ readonly __typename?: 'chat_Reaction_mutation_response', readonly affected_rows: number }> };
-
-export type AddReactionMutationVariables = Exact<{
-  reaction: Chat_Reaction_Insert_Input;
-}>;
-
-
-export type AddReactionMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Reaction?: Maybe<{ readonly __typename?: 'chat_Reaction_mutation_response', readonly affected_rows: number }> };
-
-export type DeleteReactionMutationVariables = Exact<{
-  reactionId: Scalars['Int'];
-}>;
-
-
-export type DeleteReactionMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Reaction_by_pk?: Maybe<{ readonly __typename?: 'chat_Reaction', readonly id: number }> };
-
-export type SelectReadUpToIndexQueryVariables = Exact<{
-  chatId: Scalars['uuid'];
-  attendeeId: Scalars['uuid'];
-}>;
-
-
-export type SelectReadUpToIndexQuery = { readonly __typename?: 'query_root', readonly chat_ReadUpToIndex_by_pk?: Maybe<{ readonly __typename?: 'chat_ReadUpToIndex', readonly chatId: any, readonly attendeeId: any, readonly messageId: number }> };
-
-export type SetReadUpToIndexMutationVariables = Exact<{
-  chatId: Scalars['uuid'];
-  attendeeId: Scalars['uuid'];
-  messageId: Scalars['Int'];
-}>;
-
-
-export type SetReadUpToIndexMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_ReadUpToIndex?: Maybe<{ readonly __typename?: 'chat_ReadUpToIndex_mutation_response', readonly affected_rows: number }> };
-
-export type ChatFlagDataFragment = { readonly __typename?: 'chat_Flag', readonly discussionChatId?: Maybe<any>, readonly flaggedById?: Maybe<any>, readonly id: number, readonly messageId: number, readonly notes?: Maybe<string>, readonly resolution?: Maybe<string>, readonly resolved_at?: Maybe<any>, readonly type: Chat_FlagType_Enum, readonly updated_at: any, readonly created_at: any };
-
-export type ChatReactionDataFragment = { readonly __typename?: 'chat_Reaction', readonly data: any, readonly id: number, readonly senderId: any, readonly symbol: string, readonly type: Chat_ReactionType_Enum };
-
-export type ChatMessageDataFragment = { readonly __typename?: 'chat_Message', readonly created_at: any, readonly data: any, readonly duplicatedMessageId?: Maybe<number>, readonly id: number, readonly message: string, readonly senderId?: Maybe<any>, readonly type: Chat_MessageType_Enum, readonly chatId: any, readonly reactions: ReadonlyArray<(
-    { readonly __typename?: 'chat_Reaction' }
-    & ChatReactionDataFragment
-  )> };
-
-export type SubscribedChatReactionDataFragment = { readonly __typename?: 'chat_Reaction', readonly data: any, readonly id: number, readonly senderId: any, readonly symbol: string, readonly type: Chat_ReactionType_Enum, readonly messageId: number };
-
-export type SubscribedChatMessageDataFragment = { readonly __typename?: 'chat_Message', readonly created_at: any, readonly data: any, readonly duplicatedMessageId?: Maybe<number>, readonly id: number, readonly message: string, readonly senderId?: Maybe<any>, readonly type: Chat_MessageType_Enum, readonly chatId: any };
+export type SendChatAnswerMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Reaction_one?: Maybe<{ readonly __typename?: 'chat_Reaction', readonly id: number }> };
 
 export type SelectFirstMessagesPageQueryVariables = Exact<{
   chatId: Scalars['uuid'];
@@ -31042,6 +31050,82 @@ export type SelectMessagesPageQuery = { readonly __typename?: 'query_root', read
     & ChatMessageDataFragment
   )> };
 
+export type SubscribedChatMessageDataFragment = { readonly __typename?: 'chat_Message', readonly created_at: any, readonly data: any, readonly duplicatedMessageId?: Maybe<number>, readonly id: number, readonly message: string, readonly senderId?: Maybe<any>, readonly type: Chat_MessageType_Enum, readonly chatId: any };
+
+export type NewMessagesSubscriptionVariables = Exact<{
+  chatId: Scalars['uuid'];
+}>;
+
+
+export type NewMessagesSubscription = { readonly __typename?: 'subscription_root', readonly chat_Message: ReadonlyArray<(
+    { readonly __typename?: 'chat_Message' }
+    & SubscribedChatMessageDataFragment
+  )> };
+
+export type SubscribedChatReactionDataFragment = { readonly __typename?: 'chat_Reaction', readonly data: any, readonly id: number, readonly senderId: any, readonly symbol: string, readonly type: Chat_ReactionType_Enum, readonly messageId: number };
+
+export type MessageReactionsSubscriptionVariables = Exact<{
+  messageId: Scalars['Int'];
+}>;
+
+
+export type MessageReactionsSubscription = { readonly __typename?: 'subscription_root', readonly chat_Reaction: ReadonlyArray<(
+    { readonly __typename?: 'chat_Reaction' }
+    & SubscribedChatReactionDataFragment
+  )> };
+
+export type AddReactionMutationVariables = Exact<{
+  reaction: Chat_Reaction_Insert_Input;
+}>;
+
+
+export type AddReactionMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Reaction?: Maybe<{ readonly __typename?: 'chat_Reaction_mutation_response', readonly affected_rows: number }> };
+
+export type DeleteReactionMutationVariables = Exact<{
+  reactionId: Scalars['Int'];
+}>;
+
+
+export type DeleteReactionMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Reaction_by_pk?: Maybe<{ readonly __typename?: 'chat_Reaction', readonly id: number }> };
+
+export type SelectReadUpToIndexQueryVariables = Exact<{
+  chatId: Scalars['uuid'];
+  attendeeId: Scalars['uuid'];
+}>;
+
+
+export type SelectReadUpToIndexQuery = { readonly __typename?: 'query_root', readonly chat_ReadUpToIndex_by_pk?: Maybe<(
+    { readonly __typename?: 'chat_ReadUpToIndex' }
+    & SidebarReadUpToIndexFragment
+  )> };
+
+export type InsertReadUpToIndexMutationVariables = Exact<{
+  chatId: Scalars['uuid'];
+  attendeeId: Scalars['uuid'];
+  messageId: Scalars['Int'];
+}>;
+
+
+export type InsertReadUpToIndexMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_ReadUpToIndex_one?: Maybe<{ readonly __typename?: 'chat_ReadUpToIndex', readonly attendeeId: any, readonly chatId: any, readonly messageId: number }> };
+
+export type UpdateReadUpToIndexMutationVariables = Exact<{
+  chatId: Scalars['uuid'];
+  attendeeId: Scalars['uuid'];
+  messageId: Scalars['Int'];
+}>;
+
+
+export type UpdateReadUpToIndexMutation = { readonly __typename?: 'mutation_root', readonly update_chat_ReadUpToIndex_by_pk?: Maybe<{ readonly __typename?: 'chat_ReadUpToIndex', readonly attendeeId: any, readonly chatId: any, readonly messageId: number }> };
+
+export type ChatFlagDataFragment = { readonly __typename?: 'chat_Flag', readonly discussionChatId?: Maybe<any>, readonly flaggedById?: Maybe<any>, readonly id: number, readonly messageId: number, readonly notes?: Maybe<string>, readonly resolution?: Maybe<string>, readonly resolved_at?: Maybe<any>, readonly type: Chat_FlagType_Enum, readonly updated_at: any, readonly created_at: any };
+
+export type ChatReactionDataFragment = { readonly __typename?: 'chat_Reaction', readonly data: any, readonly id: number, readonly senderId: any, readonly symbol: string, readonly type: Chat_ReactionType_Enum };
+
+export type ChatMessageDataFragment = { readonly __typename?: 'chat_Message', readonly created_at: any, readonly data: any, readonly duplicatedMessageId?: Maybe<number>, readonly id: number, readonly message: string, readonly senderId?: Maybe<any>, readonly type: Chat_MessageType_Enum, readonly chatId: any, readonly reactions: ReadonlyArray<(
+    { readonly __typename?: 'chat_Reaction' }
+    & ChatReactionDataFragment
+  )> };
+
 export type SelectSingleMessageQueryVariables = Exact<{
   id: Scalars['Int'];
 }>;
@@ -31058,27 +31142,6 @@ export type DeleteMessageMutationVariables = Exact<{
 
 
 export type DeleteMessageMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Message_by_pk?: Maybe<{ readonly __typename?: 'chat_Message', readonly id: number }> };
-
-export type NextMessageSubscriptionVariables = Exact<{
-  prevId: Scalars['Int'];
-  chatId: Scalars['uuid'];
-}>;
-
-
-export type NextMessageSubscription = { readonly __typename?: 'subscription_root', readonly chat_Message: ReadonlyArray<(
-    { readonly __typename?: 'chat_Message' }
-    & SubscribedChatMessageDataFragment
-  )> };
-
-export type NextReactionsSubscriptionVariables = Exact<{
-  messageIds: ReadonlyArray<Scalars['Int']> | Scalars['Int'];
-}>;
-
-
-export type NextReactionsSubscription = { readonly __typename?: 'subscription_root', readonly chat_Reaction: ReadonlyArray<(
-    { readonly __typename?: 'chat_Reaction' }
-    & SubscribedChatReactionDataFragment
-  )> };
 
 export type PinDataFragment = { readonly __typename?: 'chat_Pin', readonly chatId: any, readonly attendeeId: any, readonly wasManuallyPinned: boolean };
 
@@ -31239,7 +31302,7 @@ export type GetContentGroupQuery = { readonly __typename?: 'query_root', readonl
     & ContentGroupPage_ContentGroupRoomsFragment
   )> };
 
-export type ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string }> }>, readonly contentItems: ReadonlyArray<(
+export type ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly contentItems: ReadonlyArray<(
     { readonly __typename?: 'ContentItem' }
     & ContentItemDataFragment
   )>, readonly people: ReadonlyArray<(
@@ -31255,14 +31318,6 @@ export type ContentGroupEventsFragment = { readonly __typename?: 'ContentGroup',
   )> };
 
 export type ContentGroupEventFragment = { readonly __typename?: 'Event', readonly startTime: any, readonly id: any, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly name: string, readonly intendedRoomModeName: RoomMode_Enum, readonly room: { readonly __typename?: 'Room', readonly name: string, readonly id: any } };
-
-export type ContentGroup_CreateRoomMutationVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-  contentGroupId: Scalars['uuid'];
-}>;
-
-
-export type ContentGroup_CreateRoomMutation = { readonly __typename?: 'mutation_root', readonly createContentGroupRoom?: Maybe<{ readonly __typename?: 'CreateContentGroupRoomOutput', readonly roomId?: Maybe<string>, readonly message?: Maybe<string> }> };
 
 export type ContentGroupSummary_GetContentGroupQueryVariables = Exact<{
   contentGroupId: Scalars['uuid'];
@@ -31323,7 +31378,7 @@ export type CreateDmMutationVariables = Exact<{
 }>;
 
 
-export type CreateDmMutation = { readonly __typename?: 'mutation_root', readonly createRoomDm?: Maybe<{ readonly __typename?: 'CreateRoomDmOutput', readonly message?: Maybe<string>, readonly roomId?: Maybe<any> }> };
+export type CreateDmMutation = { readonly __typename?: 'mutation_root', readonly createRoomDm?: Maybe<{ readonly __typename?: 'CreateRoomDmOutput', readonly message?: Maybe<string>, readonly roomId?: Maybe<any>, readonly chatId?: Maybe<any> }> };
 
 export type AttendeeCreateRoomMutationVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -31447,7 +31502,7 @@ export type Room_GetEventsQuery = { readonly __typename?: 'query_root', readonly
     & Room_EventSummaryFragment
   )> };
 
-export type Room_EventSummaryFragment = { readonly __typename?: 'Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum, readonly contentGroupId?: Maybe<any>, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string }> };
+export type Room_EventSummaryFragment = { readonly __typename?: 'Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum, readonly contentGroupId?: Maybe<any>, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'EventPerson', readonly id: any, readonly attendeeId?: Maybe<any> }> };
 
 export type RoomBackstage_GetEventBreakoutRoomQueryVariables = Exact<{
   originatingEventId: Scalars['uuid'];
@@ -31676,6 +31731,26 @@ export type CombineVideosModal_GetCombineVideosJobQueryVariables = Exact<{
 
 export type CombineVideosModal_GetCombineVideosJobQuery = { readonly __typename?: 'query_root', readonly job_queues_CombineVideosJob_by_pk?: Maybe<{ readonly __typename?: 'job_queues_CombineVideosJob', readonly id: any, readonly message?: Maybe<string>, readonly jobStatusName: JobStatus_Enum }> };
 
+export type ContentGroup_CreateRoomMutationVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  contentGroupId: Scalars['uuid'];
+}>;
+
+
+export type ContentGroup_CreateRoomMutation = { readonly __typename?: 'mutation_root', readonly createContentGroupRoom?: Maybe<{ readonly __typename?: 'CreateContentGroupRoomOutput', readonly roomId?: Maybe<string>, readonly message?: Maybe<string> }> };
+
+export type SubmissionRequestsModal_GetConferenceConfigurationsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type SubmissionRequestsModal_GetConferenceConfigurationsQuery = { readonly __typename?: 'query_root', readonly ConferenceConfiguration: ReadonlyArray<(
+    { readonly __typename?: 'ConferenceConfiguration' }
+    & ConfigureEmailTemplates_ConferenceConfigurationFragment
+  )> };
+
+export type SubmissionRequestsModal_ConferenceConfigurationFragment = { readonly __typename?: 'ConferenceConfiguration', readonly id: any, readonly conferenceId: any, readonly key: string, readonly value: any };
+
 export type InsertSubmissionRequestEmailJobsMutationVariables = Exact<{
   objs: ReadonlyArray<Job_Queues_SubmissionRequestEmailJob_Insert_Input> | Job_Queues_SubmissionRequestEmailJob_Insert_Input;
 }>;
@@ -31717,7 +31792,7 @@ export type ContentGroupFullNestedInfoFragment = { readonly __typename?: 'Conten
   )>, readonly people: ReadonlyArray<(
     { readonly __typename?: 'ContentGroupPerson' }
     & ContentGroupPersonInfoFragment
-  )> };
+  )>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }> };
 
 export type TagInfoFragment = { readonly __typename?: 'Tag', readonly id: any, readonly conferenceId: any, readonly colour: string, readonly name: string, readonly originatingDataId?: Maybe<any> };
 
@@ -31975,6 +32050,27 @@ export type UpdateHallwayMutation = { readonly __typename?: 'mutation_root', rea
     { readonly __typename?: 'Hallway' }
     & HallwayInfoFragment
   )> };
+
+export type ConfigureEmailTemplates_GetConferenceConfigurationsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type ConfigureEmailTemplates_GetConferenceConfigurationsQuery = { readonly __typename?: 'query_root', readonly ConferenceConfiguration: ReadonlyArray<(
+    { readonly __typename?: 'ConferenceConfiguration' }
+    & ConfigureEmailTemplates_ConferenceConfigurationFragment
+  )> };
+
+export type ConfigureEmailTemplates_ConferenceConfigurationFragment = { readonly __typename?: 'ConferenceConfiguration', readonly id: any, readonly conferenceId: any, readonly key: string, readonly value: any };
+
+export type ConfigureEmailTemplates_UpdateConferenceConfigurationMutationVariables = Exact<{
+  value: Scalars['jsonb'];
+  conferenceId: Scalars['uuid'];
+  key: Scalars['String'];
+}>;
+
+
+export type ConfigureEmailTemplates_UpdateConferenceConfigurationMutation = { readonly __typename?: 'mutation_root', readonly insert_ConferenceConfiguration_one?: Maybe<{ readonly __typename?: 'ConferenceConfiguration', readonly id: any }> };
 
 export type ChooseContentItemByTagModal_GetTagsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -32734,7 +32830,7 @@ export type SelectInvitationForAcceptQueryVariables = Exact<{
 }>;
 
 
-export type SelectInvitationForAcceptQuery = { readonly __typename?: 'query_root', readonly Invitation: ReadonlyArray<{ readonly __typename?: 'Invitation', readonly hash?: Maybe<string> }> };
+export type SelectInvitationForAcceptQuery = { readonly __typename?: 'query_root', readonly Invitation: ReadonlyArray<{ readonly __typename?: 'Invitation', readonly id: any, readonly invitedEmailAddress: string }> };
 
 export type Invitation_ConfirmCurrentMutationVariables = Exact<{
   inviteCode: Scalars['uuid'];
@@ -32764,18 +32860,6 @@ export type SendRepeatConfirmationEmailMutationVariables = Exact<{
 
 
 export type SendRepeatConfirmationEmailMutation = { readonly __typename?: 'mutation_root', readonly invitationConfirmSendRepeatEmail?: Maybe<{ readonly __typename?: 'InvitationConfirmationEmailOutput', readonly sent: boolean }> };
-
-export type SidebarChatInfoFragment = { readonly __typename?: 'chat_Chat', readonly id: any, readonly enableAutoPin: boolean, readonly enableAutoSubscribe: boolean, readonly enableMandatoryPin: boolean, readonly enableMandatorySubscribe: boolean, readonly contentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string> }>, readonly nonDMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly priority: number, readonly roomPrivacyName: RoomPrivacy_Enum }>, readonly DMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly roomPeople: ReadonlyArray<{ readonly __typename?: 'RoomPerson', readonly id: any, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } }> }>, readonly readUpToIndices: ReadonlyArray<{ readonly __typename?: 'chat_ReadUpToIndex', readonly attendeeId: any, readonly chatId: any, readonly unreadCount?: Maybe<number> }> };
-
-export type PinnedChatsWithUnreadCountsQueryVariables = Exact<{
-  attendeeId: Scalars['uuid'];
-}>;
-
-
-export type PinnedChatsWithUnreadCountsQuery = { readonly __typename?: 'query_root', readonly chat_Pin: ReadonlyArray<{ readonly __typename?: 'chat_Pin', readonly attendeeId: any, readonly chatId: any, readonly chat: (
-      { readonly __typename?: 'chat_Chat' }
-      & SidebarChatInfoFragment
-    ) }> };
 
 export type MenuScheduleQueryVariables = Exact<{
   now: Scalars['timestamptz'];
@@ -32821,6 +32905,37 @@ export type MainMenuSponsors_GetSponsorsQuery = { readonly __typename?: 'query_r
   )> };
 
 export type MainMenuSponsors_ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly rooms: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }>, readonly logo: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly data: any }> };
+
+export type SidebarReadUpToIndexFragment = { readonly __typename?: 'chat_ReadUpToIndex', readonly attendeeId: any, readonly chatId: any, readonly messageId: number, readonly unreadCount?: Maybe<number> };
+
+export type SidebarChatInfoFragment = { readonly __typename?: 'chat_Chat', readonly id: any, readonly enableAutoPin: boolean, readonly enableAutoSubscribe: boolean, readonly enableMandatoryPin: boolean, readonly enableMandatorySubscribe: boolean, readonly contentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string> }>, readonly nonDMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly priority: number, readonly roomPrivacyName: RoomPrivacy_Enum }>, readonly DMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly roomPeople: ReadonlyArray<{ readonly __typename?: 'RoomPerson', readonly id: any, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } }> }>, readonly readUpToIndices: ReadonlyArray<(
+    { readonly __typename?: 'chat_ReadUpToIndex' }
+    & SidebarReadUpToIndexFragment
+  )> };
+
+export type PinnedChatsWithUnreadCountsQueryVariables = Exact<{
+  attendeeId: Scalars['uuid'];
+}>;
+
+
+export type PinnedChatsWithUnreadCountsQuery = { readonly __typename?: 'query_root', readonly chat_Pin: ReadonlyArray<{ readonly __typename?: 'chat_Pin', readonly attendeeId: any, readonly chatId: any, readonly chat: (
+      { readonly __typename?: 'chat_Chat' }
+      & SidebarChatInfoFragment
+    ) }> };
+
+export type GetRoomChatIdQueryVariables = Exact<{
+  roomId: Scalars['uuid'];
+}>;
+
+
+export type GetRoomChatIdQuery = { readonly __typename?: 'query_root', readonly Room_by_pk?: Maybe<{ readonly __typename?: 'Room', readonly id: any, readonly chatId?: Maybe<any>, readonly name: string }> };
+
+export type GetContentGroupChatIdQueryVariables = Exact<{
+  itemId: Scalars['uuid'];
+}>;
+
+
+export type GetContentGroupChatIdQuery = { readonly __typename?: 'query_root', readonly ContentGroup_by_pk?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly id: any, readonly room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }> }> }> };
 
 export type GetRoomMembersSubscriptionVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -32913,7 +33028,7 @@ export type GetShuffleRoomsParticipantsCountQueryVariables = Exact<{
 
 export type GetShuffleRoomsParticipantsCountQuery = { readonly __typename?: 'query_root', readonly RoomParticipant_aggregate: { readonly __typename?: 'RoomParticipant_aggregate', readonly aggregate?: Maybe<{ readonly __typename?: 'RoomParticipant_aggregate_fields', readonly count?: Maybe<number> }> } };
 
-export type AttendeeFieldsFragment = { readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly conferenceId: any, readonly displayName: string, readonly createdAt: any, readonly updatedAt: any, readonly conference: { readonly __typename?: 'Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string }, readonly groupAttendees: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly id: any, readonly group: { readonly __typename?: 'Group', readonly id: any, readonly enabled: boolean, readonly name: string, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly role: { readonly __typename?: 'Role', readonly id: any, readonly name: string, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly id: any, readonly permissionName: Permission_Enum }> } }> } }> };
+export type AttendeeFieldsFragment = { readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly conferenceId: any, readonly displayName: string, readonly createdAt: any, readonly updatedAt: any, readonly profile?: Maybe<{ readonly __typename?: 'AttendeeProfile', readonly attendeeId: any, readonly photoURL_50x50?: Maybe<string> }>, readonly conference: { readonly __typename?: 'Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string }, readonly groupAttendees: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly id: any, readonly group: { readonly __typename?: 'Group', readonly id: any, readonly enabled: boolean, readonly name: string, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly role: { readonly __typename?: 'Role', readonly id: any, readonly name: string, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly id: any, readonly permissionName: Permission_Enum }> } }> } }> };
 
 export type SelectCurrentUserQueryVariables = Exact<{
   userId: Scalars['String'];
@@ -32962,6 +33077,28 @@ export type UpdateCurrentUserLastSeenMutationVariables = Exact<{
 
 export type UpdateCurrentUserLastSeenMutation = { readonly __typename?: 'mutation_root', readonly update_OnlineStatus?: Maybe<{ readonly __typename?: 'OnlineStatus_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'OnlineStatus', readonly id: any, readonly lastSeen: any }> }> };
 
+export const SubscribedChatMessageDataFragmentDoc = gql`
+    fragment SubscribedChatMessageData on chat_Message {
+  created_at
+  data
+  duplicatedMessageId
+  id
+  message
+  senderId
+  type
+  chatId
+}
+    `;
+export const SubscribedChatReactionDataFragmentDoc = gql`
+    fragment SubscribedChatReactionData on chat_Reaction {
+  data
+  id
+  senderId
+  symbol
+  type
+  messageId
+}
+    `;
 export const ChatFlagDataFragmentDoc = gql`
     fragment ChatFlagData on chat_Flag {
   discussionChatId
@@ -33000,28 +33137,6 @@ export const ChatMessageDataFragmentDoc = gql`
   chatId
 }
     ${ChatReactionDataFragmentDoc}`;
-export const SubscribedChatReactionDataFragmentDoc = gql`
-    fragment SubscribedChatReactionData on chat_Reaction {
-  data
-  id
-  senderId
-  symbol
-  type
-  messageId
-}
-    `;
-export const SubscribedChatMessageDataFragmentDoc = gql`
-    fragment SubscribedChatMessageData on chat_Message {
-  created_at
-  data
-  duplicatedMessageId
-  id
-  message
-  senderId
-  type
-  chatId
-}
-    `;
 export const PinDataFragmentDoc = gql`
     fragment PinData on chat_Pin {
   chatId
@@ -33110,13 +33225,6 @@ export const ContentGroupDataFragmentDoc = gql`
   id
   title
   contentGroupTypeName
-  chatId
-  chat {
-    room {
-      id
-      name
-    }
-  }
   contentItems(where: {isHidden: {_eq: false}}) {
     ...ContentItemData
   }
@@ -33128,7 +33236,11 @@ export const ContentGroupDataFragmentDoc = gql`
 ${ContentPersonDataFragmentDoc}`;
 export const ContentGroupPage_ContentGroupRoomsFragmentDoc = gql`
     fragment ContentGroupPage_ContentGroupRooms on ContentGroup {
-  rooms(where: {name: {_like: "Breakout:%"}}, order_by: {created_at: asc}) {
+  rooms(
+    where: {originatingEventId: {_is_null: true}}
+    limit: 1
+    order_by: {created_at: asc}
+  ) {
     id
   }
 }
@@ -33246,6 +33358,10 @@ export const Room_EventSummaryFragmentDoc = gql`
   contentGroup {
     id
     title
+  }
+  eventPeople {
+    id
+    attendeeId
   }
 }
     `;
@@ -33425,6 +33541,14 @@ export const ConferenceConfiguration_ConferenceConfigurationsFragmentDoc = gql`
   value
 }
     `;
+export const SubmissionRequestsModal_ConferenceConfigurationFragmentDoc = gql`
+    fragment SubmissionRequestsModal_ConferenceConfiguration on ConferenceConfiguration {
+  id
+  conferenceId
+  key
+  value
+}
+    `;
 export const ContentPersonInfoFragmentDoc = gql`
     fragment ContentPersonInfo on ContentPerson {
   id
@@ -33524,6 +33648,13 @@ export const ContentGroupFullNestedInfoFragmentDoc = gql`
     ...ContentGroupPersonInfo
   }
   originatingDataId
+  rooms(
+    where: {originatingEventId: {_is_null: true}}
+    limit: 1
+    order_by: {created_at: asc}
+  ) {
+    id
+  }
 }
     ${RequiredContentItemInfoFragmentDoc}
 ${ContentItemInfoFragmentDoc}
@@ -33546,6 +33677,14 @@ export const HallwayInfoFragmentDoc = gql`
   colour
   name
   priority
+}
+    `;
+export const ConfigureEmailTemplates_ConferenceConfigurationFragmentDoc = gql`
+    fragment ConfigureEmailTemplates_ConferenceConfiguration on ConferenceConfiguration {
+  id
+  conferenceId
+  key
+  value
 }
     `;
 export const ManageConferenceExportPage_AttendeeGoogleAccountFragmentDoc = gql`
@@ -33829,42 +33968,6 @@ export const EventPersonDetailsFragmentDoc = gql`
   attendeeId
 }
     `;
-export const SidebarChatInfoFragmentDoc = gql`
-    fragment SidebarChatInfo on chat_Chat {
-  id
-  contentGroup {
-    id
-    title
-    shortTitle
-  }
-  nonDMRoom: room(where: {roomPrivacyName: {_neq: DM}}) {
-    id
-    name
-    priority
-    roomPrivacyName
-  }
-  DMRoom: room(where: {roomPrivacyName: {_eq: DM}}) {
-    id
-    name
-    roomPeople {
-      id
-      attendee {
-        id
-        displayName
-      }
-    }
-  }
-  enableAutoPin
-  enableAutoSubscribe
-  enableMandatoryPin
-  enableMandatorySubscribe
-  readUpToIndices(where: {attendeeId: {_eq: $attendeeId}}) {
-    attendeeId
-    chatId
-    unreadCount
-  }
-}
-    `;
 export const MenuSchedule_EventFragmentDoc = gql`
     fragment MenuSchedule_Event on Event {
   id
@@ -33907,6 +34010,48 @@ export const MainMenuSponsors_ContentGroupDataFragmentDoc = gql`
   title
 }
     `;
+export const SidebarReadUpToIndexFragmentDoc = gql`
+    fragment SidebarReadUpToIndex on chat_ReadUpToIndex {
+  attendeeId
+  chatId
+  messageId
+  unreadCount
+}
+    `;
+export const SidebarChatInfoFragmentDoc = gql`
+    fragment SidebarChatInfo on chat_Chat {
+  id
+  contentGroup {
+    id
+    title
+    shortTitle
+  }
+  nonDMRoom: room(where: {roomPrivacyName: {_neq: DM}}) {
+    id
+    name
+    priority
+    roomPrivacyName
+  }
+  DMRoom: room(where: {roomPrivacyName: {_eq: DM}}) {
+    id
+    name
+    roomPeople {
+      id
+      attendee {
+        id
+        displayName
+      }
+    }
+  }
+  enableAutoPin
+  enableAutoSubscribe
+  enableMandatoryPin
+  enableMandatorySubscribe
+  readUpToIndices(where: {attendeeId: {_eq: $attendeeId}}) {
+    ...SidebarReadUpToIndex
+  }
+}
+    ${SidebarReadUpToIndexFragmentDoc}`;
 export const RoomMemberFragmentDoc = gql`
     fragment RoomMember on RoomPerson {
   id
@@ -33967,6 +34112,10 @@ export const AttendeeFieldsFragmentDoc = gql`
   displayName
   createdAt
   updatedAt
+  profile {
+    attendeeId
+    photoURL_50x50
+  }
   conference {
     id
     name
@@ -34030,7 +34179,7 @@ export type SubscribedChatsLazyQueryHookResult = ReturnType<typeof useSubscribed
 export type SubscribedChatsQueryResult = Apollo.QueryResult<SubscribedChatsQuery, SubscribedChatsQueryVariables>;
 export const SubdMessages_2021_01_21T08_24Document = gql`
     subscription SubdMessages_2021_01_21T08_24($chatIds: [uuid!]!) {
-  chat_Message(limit: 1, order_by: {id: desc}, where: {chatId: {_in: $chatIds}}) {
+  chat_Message(limit: 5, order_by: {id: desc}, where: {chatId: {_in: $chatIds}}) {
     id
     chatId
     message
@@ -34071,6 +34220,7 @@ export const SetNotifiedUpToIndexDocument = gql`
   ) {
     chatId
     attendeeId
+    unreadCount
     notifiedUpToMessageId
   }
 }
@@ -34143,16 +34293,13 @@ export type GetChatPathLazyQueryHookResult = ReturnType<typeof useGetChatPathLaz
 export type GetChatPathQueryResult = Apollo.QueryResult<GetChatPathQuery, GetChatPathQueryVariables>;
 export const SendChatMessageDocument = gql`
     mutation SendChatMessage($chatId: uuid!, $senderId: uuid!, $type: chat_MessageType_enum!, $message: String!, $data: jsonb = {}, $isPinned: Boolean = false, $chatTitle: String = " ", $senderName: String = " ") {
-  insert_chat_Message(
-    objects: {chatId: $chatId, data: $data, isPinned: $isPinned, message: $message, senderId: $senderId, type: $type, chatTitle: $chatTitle, senderName: $senderName}
+  insert_chat_Message_one(
+    object: {chatId: $chatId, data: $data, isPinned: $isPinned, message: $message, senderId: $senderId, type: $type, chatTitle: $chatTitle, senderName: $senderName}
   ) {
-    returning {
-      id
-      duplicatedMessageId
-    }
+    ...SubscribedChatMessageData
   }
 }
-    `;
+    ${SubscribedChatMessageDataFragmentDoc}`;
 export type SendChatMessageMutationFn = Apollo.MutationFunction<SendChatMessageMutation, SendChatMessageMutationVariables>;
 
 /**
@@ -34187,10 +34334,10 @@ export type SendChatMessageMutationResult = Apollo.MutationResult<SendChatMessag
 export type SendChatMessageMutationOptions = Apollo.BaseMutationOptions<SendChatMessageMutation, SendChatMessageMutationVariables>;
 export const SendChatAnswerDocument = gql`
     mutation SendChatAnswer($data: jsonb!, $senderId: uuid!, $answeringId: Int!) {
-  insert_chat_Reaction(
-    objects: {messageId: $answeringId, senderId: $senderId, symbol: "ANSWER", type: ANSWER, data: $data}
+  insert_chat_Reaction_one(
+    object: {messageId: $answeringId, senderId: $senderId, symbol: "ANSWER", type: ANSWER, data: $data}
   ) {
-    affected_rows
+    id
   }
 }
     `;
@@ -34221,143 +34368,6 @@ export function useSendChatAnswerMutation(baseOptions?: Apollo.MutationHookOptio
 export type SendChatAnswerMutationHookResult = ReturnType<typeof useSendChatAnswerMutation>;
 export type SendChatAnswerMutationResult = Apollo.MutationResult<SendChatAnswerMutation>;
 export type SendChatAnswerMutationOptions = Apollo.BaseMutationOptions<SendChatAnswerMutation, SendChatAnswerMutationVariables>;
-export const AddReactionDocument = gql`
-    mutation AddReaction($reaction: chat_Reaction_insert_input!) {
-  insert_chat_Reaction(objects: [$reaction]) {
-    affected_rows
-  }
-}
-    `;
-export type AddReactionMutationFn = Apollo.MutationFunction<AddReactionMutation, AddReactionMutationVariables>;
-
-/**
- * __useAddReactionMutation__
- *
- * To run a mutation, you first call `useAddReactionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAddReactionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [addReactionMutation, { data, loading, error }] = useAddReactionMutation({
- *   variables: {
- *      reaction: // value for 'reaction'
- *   },
- * });
- */
-export function useAddReactionMutation(baseOptions?: Apollo.MutationHookOptions<AddReactionMutation, AddReactionMutationVariables>) {
-        return Apollo.useMutation<AddReactionMutation, AddReactionMutationVariables>(AddReactionDocument, baseOptions);
-      }
-export type AddReactionMutationHookResult = ReturnType<typeof useAddReactionMutation>;
-export type AddReactionMutationResult = Apollo.MutationResult<AddReactionMutation>;
-export type AddReactionMutationOptions = Apollo.BaseMutationOptions<AddReactionMutation, AddReactionMutationVariables>;
-export const DeleteReactionDocument = gql`
-    mutation DeleteReaction($reactionId: Int!) {
-  delete_chat_Reaction_by_pk(id: $reactionId) {
-    id
-  }
-}
-    `;
-export type DeleteReactionMutationFn = Apollo.MutationFunction<DeleteReactionMutation, DeleteReactionMutationVariables>;
-
-/**
- * __useDeleteReactionMutation__
- *
- * To run a mutation, you first call `useDeleteReactionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteReactionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteReactionMutation, { data, loading, error }] = useDeleteReactionMutation({
- *   variables: {
- *      reactionId: // value for 'reactionId'
- *   },
- * });
- */
-export function useDeleteReactionMutation(baseOptions?: Apollo.MutationHookOptions<DeleteReactionMutation, DeleteReactionMutationVariables>) {
-        return Apollo.useMutation<DeleteReactionMutation, DeleteReactionMutationVariables>(DeleteReactionDocument, baseOptions);
-      }
-export type DeleteReactionMutationHookResult = ReturnType<typeof useDeleteReactionMutation>;
-export type DeleteReactionMutationResult = Apollo.MutationResult<DeleteReactionMutation>;
-export type DeleteReactionMutationOptions = Apollo.BaseMutationOptions<DeleteReactionMutation, DeleteReactionMutationVariables>;
-export const SelectReadUpToIndexDocument = gql`
-    query SelectReadUpToIndex($chatId: uuid!, $attendeeId: uuid!) {
-  chat_ReadUpToIndex_by_pk(chatId: $chatId, attendeeId: $attendeeId) {
-    chatId
-    attendeeId
-    messageId
-  }
-}
-    `;
-
-/**
- * __useSelectReadUpToIndexQuery__
- *
- * To run a query within a React component, call `useSelectReadUpToIndexQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectReadUpToIndexQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectReadUpToIndexQuery({
- *   variables: {
- *      chatId: // value for 'chatId'
- *      attendeeId: // value for 'attendeeId'
- *   },
- * });
- */
-export function useSelectReadUpToIndexQuery(baseOptions: Apollo.QueryHookOptions<SelectReadUpToIndexQuery, SelectReadUpToIndexQueryVariables>) {
-        return Apollo.useQuery<SelectReadUpToIndexQuery, SelectReadUpToIndexQueryVariables>(SelectReadUpToIndexDocument, baseOptions);
-      }
-export function useSelectReadUpToIndexLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectReadUpToIndexQuery, SelectReadUpToIndexQueryVariables>) {
-          return Apollo.useLazyQuery<SelectReadUpToIndexQuery, SelectReadUpToIndexQueryVariables>(SelectReadUpToIndexDocument, baseOptions);
-        }
-export type SelectReadUpToIndexQueryHookResult = ReturnType<typeof useSelectReadUpToIndexQuery>;
-export type SelectReadUpToIndexLazyQueryHookResult = ReturnType<typeof useSelectReadUpToIndexLazyQuery>;
-export type SelectReadUpToIndexQueryResult = Apollo.QueryResult<SelectReadUpToIndexQuery, SelectReadUpToIndexQueryVariables>;
-export const SetReadUpToIndexDocument = gql`
-    mutation SetReadUpToIndex($chatId: uuid!, $attendeeId: uuid!, $messageId: Int!) {
-  insert_chat_ReadUpToIndex(
-    objects: {attendeeId: $attendeeId, chatId: $chatId, messageId: $messageId}
-    on_conflict: {constraint: ReadUpToIndex_pkey, update_columns: [messageId]}
-  ) {
-    affected_rows
-  }
-}
-    `;
-export type SetReadUpToIndexMutationFn = Apollo.MutationFunction<SetReadUpToIndexMutation, SetReadUpToIndexMutationVariables>;
-
-/**
- * __useSetReadUpToIndexMutation__
- *
- * To run a mutation, you first call `useSetReadUpToIndexMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSetReadUpToIndexMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [setReadUpToIndexMutation, { data, loading, error }] = useSetReadUpToIndexMutation({
- *   variables: {
- *      chatId: // value for 'chatId'
- *      attendeeId: // value for 'attendeeId'
- *      messageId: // value for 'messageId'
- *   },
- * });
- */
-export function useSetReadUpToIndexMutation(baseOptions?: Apollo.MutationHookOptions<SetReadUpToIndexMutation, SetReadUpToIndexMutationVariables>) {
-        return Apollo.useMutation<SetReadUpToIndexMutation, SetReadUpToIndexMutationVariables>(SetReadUpToIndexDocument, baseOptions);
-      }
-export type SetReadUpToIndexMutationHookResult = ReturnType<typeof useSetReadUpToIndexMutation>;
-export type SetReadUpToIndexMutationResult = Apollo.MutationResult<SetReadUpToIndexMutation>;
-export type SetReadUpToIndexMutationOptions = Apollo.BaseMutationOptions<SetReadUpToIndexMutation, SetReadUpToIndexMutationVariables>;
 export const SelectFirstMessagesPageDocument = gql`
     query SelectFirstMessagesPage($chatId: uuid!, $maxCount: Int!) {
   chat_Message(
@@ -34435,6 +34445,240 @@ export function useSelectMessagesPageLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type SelectMessagesPageQueryHookResult = ReturnType<typeof useSelectMessagesPageQuery>;
 export type SelectMessagesPageLazyQueryHookResult = ReturnType<typeof useSelectMessagesPageLazyQuery>;
 export type SelectMessagesPageQueryResult = Apollo.QueryResult<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>;
+export const NewMessagesDocument = gql`
+    subscription NewMessages($chatId: uuid!) {
+  chat_Message(order_by: {id: desc}, where: {chatId: {_eq: $chatId}}, limit: 5) {
+    ...SubscribedChatMessageData
+  }
+}
+    ${SubscribedChatMessageDataFragmentDoc}`;
+
+/**
+ * __useNewMessagesSubscription__
+ *
+ * To run a query within a React component, call `useNewMessagesSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useNewMessagesSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNewMessagesSubscription({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *   },
+ * });
+ */
+export function useNewMessagesSubscription(baseOptions: Apollo.SubscriptionHookOptions<NewMessagesSubscription, NewMessagesSubscriptionVariables>) {
+        return Apollo.useSubscription<NewMessagesSubscription, NewMessagesSubscriptionVariables>(NewMessagesDocument, baseOptions);
+      }
+export type NewMessagesSubscriptionHookResult = ReturnType<typeof useNewMessagesSubscription>;
+export type NewMessagesSubscriptionResult = Apollo.SubscriptionResult<NewMessagesSubscription>;
+export const MessageReactionsDocument = gql`
+    subscription MessageReactions($messageId: Int!) {
+  chat_Reaction(where: {messageId: {_eq: $messageId}}) {
+    ...SubscribedChatReactionData
+  }
+}
+    ${SubscribedChatReactionDataFragmentDoc}`;
+
+/**
+ * __useMessageReactionsSubscription__
+ *
+ * To run a query within a React component, call `useMessageReactionsSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useMessageReactionsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMessageReactionsSubscription({
+ *   variables: {
+ *      messageId: // value for 'messageId'
+ *   },
+ * });
+ */
+export function useMessageReactionsSubscription(baseOptions: Apollo.SubscriptionHookOptions<MessageReactionsSubscription, MessageReactionsSubscriptionVariables>) {
+        return Apollo.useSubscription<MessageReactionsSubscription, MessageReactionsSubscriptionVariables>(MessageReactionsDocument, baseOptions);
+      }
+export type MessageReactionsSubscriptionHookResult = ReturnType<typeof useMessageReactionsSubscription>;
+export type MessageReactionsSubscriptionResult = Apollo.SubscriptionResult<MessageReactionsSubscription>;
+export const AddReactionDocument = gql`
+    mutation AddReaction($reaction: chat_Reaction_insert_input!) {
+  insert_chat_Reaction(objects: [$reaction]) {
+    affected_rows
+  }
+}
+    `;
+export type AddReactionMutationFn = Apollo.MutationFunction<AddReactionMutation, AddReactionMutationVariables>;
+
+/**
+ * __useAddReactionMutation__
+ *
+ * To run a mutation, you first call `useAddReactionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddReactionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addReactionMutation, { data, loading, error }] = useAddReactionMutation({
+ *   variables: {
+ *      reaction: // value for 'reaction'
+ *   },
+ * });
+ */
+export function useAddReactionMutation(baseOptions?: Apollo.MutationHookOptions<AddReactionMutation, AddReactionMutationVariables>) {
+        return Apollo.useMutation<AddReactionMutation, AddReactionMutationVariables>(AddReactionDocument, baseOptions);
+      }
+export type AddReactionMutationHookResult = ReturnType<typeof useAddReactionMutation>;
+export type AddReactionMutationResult = Apollo.MutationResult<AddReactionMutation>;
+export type AddReactionMutationOptions = Apollo.BaseMutationOptions<AddReactionMutation, AddReactionMutationVariables>;
+export const DeleteReactionDocument = gql`
+    mutation DeleteReaction($reactionId: Int!) {
+  delete_chat_Reaction_by_pk(id: $reactionId) {
+    id
+  }
+}
+    `;
+export type DeleteReactionMutationFn = Apollo.MutationFunction<DeleteReactionMutation, DeleteReactionMutationVariables>;
+
+/**
+ * __useDeleteReactionMutation__
+ *
+ * To run a mutation, you first call `useDeleteReactionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteReactionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteReactionMutation, { data, loading, error }] = useDeleteReactionMutation({
+ *   variables: {
+ *      reactionId: // value for 'reactionId'
+ *   },
+ * });
+ */
+export function useDeleteReactionMutation(baseOptions?: Apollo.MutationHookOptions<DeleteReactionMutation, DeleteReactionMutationVariables>) {
+        return Apollo.useMutation<DeleteReactionMutation, DeleteReactionMutationVariables>(DeleteReactionDocument, baseOptions);
+      }
+export type DeleteReactionMutationHookResult = ReturnType<typeof useDeleteReactionMutation>;
+export type DeleteReactionMutationResult = Apollo.MutationResult<DeleteReactionMutation>;
+export type DeleteReactionMutationOptions = Apollo.BaseMutationOptions<DeleteReactionMutation, DeleteReactionMutationVariables>;
+export const SelectReadUpToIndexDocument = gql`
+    query SelectReadUpToIndex($chatId: uuid!, $attendeeId: uuid!) {
+  chat_ReadUpToIndex_by_pk(chatId: $chatId, attendeeId: $attendeeId) {
+    ...SidebarReadUpToIndex
+  }
+}
+    ${SidebarReadUpToIndexFragmentDoc}`;
+
+/**
+ * __useSelectReadUpToIndexQuery__
+ *
+ * To run a query within a React component, call `useSelectReadUpToIndexQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectReadUpToIndexQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectReadUpToIndexQuery({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *      attendeeId: // value for 'attendeeId'
+ *   },
+ * });
+ */
+export function useSelectReadUpToIndexQuery(baseOptions: Apollo.QueryHookOptions<SelectReadUpToIndexQuery, SelectReadUpToIndexQueryVariables>) {
+        return Apollo.useQuery<SelectReadUpToIndexQuery, SelectReadUpToIndexQueryVariables>(SelectReadUpToIndexDocument, baseOptions);
+      }
+export function useSelectReadUpToIndexLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectReadUpToIndexQuery, SelectReadUpToIndexQueryVariables>) {
+          return Apollo.useLazyQuery<SelectReadUpToIndexQuery, SelectReadUpToIndexQueryVariables>(SelectReadUpToIndexDocument, baseOptions);
+        }
+export type SelectReadUpToIndexQueryHookResult = ReturnType<typeof useSelectReadUpToIndexQuery>;
+export type SelectReadUpToIndexLazyQueryHookResult = ReturnType<typeof useSelectReadUpToIndexLazyQuery>;
+export type SelectReadUpToIndexQueryResult = Apollo.QueryResult<SelectReadUpToIndexQuery, SelectReadUpToIndexQueryVariables>;
+export const InsertReadUpToIndexDocument = gql`
+    mutation InsertReadUpToIndex($chatId: uuid!, $attendeeId: uuid!, $messageId: Int!) {
+  insert_chat_ReadUpToIndex_one(
+    object: {attendeeId: $attendeeId, chatId: $chatId, messageId: $messageId}
+    on_conflict: {constraint: ReadUpToIndex_pkey, update_columns: [messageId]}
+  ) {
+    attendeeId
+    chatId
+    messageId
+  }
+}
+    `;
+export type InsertReadUpToIndexMutationFn = Apollo.MutationFunction<InsertReadUpToIndexMutation, InsertReadUpToIndexMutationVariables>;
+
+/**
+ * __useInsertReadUpToIndexMutation__
+ *
+ * To run a mutation, you first call `useInsertReadUpToIndexMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInsertReadUpToIndexMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [insertReadUpToIndexMutation, { data, loading, error }] = useInsertReadUpToIndexMutation({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *      attendeeId: // value for 'attendeeId'
+ *      messageId: // value for 'messageId'
+ *   },
+ * });
+ */
+export function useInsertReadUpToIndexMutation(baseOptions?: Apollo.MutationHookOptions<InsertReadUpToIndexMutation, InsertReadUpToIndexMutationVariables>) {
+        return Apollo.useMutation<InsertReadUpToIndexMutation, InsertReadUpToIndexMutationVariables>(InsertReadUpToIndexDocument, baseOptions);
+      }
+export type InsertReadUpToIndexMutationHookResult = ReturnType<typeof useInsertReadUpToIndexMutation>;
+export type InsertReadUpToIndexMutationResult = Apollo.MutationResult<InsertReadUpToIndexMutation>;
+export type InsertReadUpToIndexMutationOptions = Apollo.BaseMutationOptions<InsertReadUpToIndexMutation, InsertReadUpToIndexMutationVariables>;
+export const UpdateReadUpToIndexDocument = gql`
+    mutation UpdateReadUpToIndex($chatId: uuid!, $attendeeId: uuid!, $messageId: Int!) {
+  update_chat_ReadUpToIndex_by_pk(
+    pk_columns: {attendeeId: $attendeeId, chatId: $chatId}
+    _set: {messageId: $messageId}
+  ) {
+    attendeeId
+    chatId
+    messageId
+  }
+}
+    `;
+export type UpdateReadUpToIndexMutationFn = Apollo.MutationFunction<UpdateReadUpToIndexMutation, UpdateReadUpToIndexMutationVariables>;
+
+/**
+ * __useUpdateReadUpToIndexMutation__
+ *
+ * To run a mutation, you first call `useUpdateReadUpToIndexMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateReadUpToIndexMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateReadUpToIndexMutation, { data, loading, error }] = useUpdateReadUpToIndexMutation({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *      attendeeId: // value for 'attendeeId'
+ *      messageId: // value for 'messageId'
+ *   },
+ * });
+ */
+export function useUpdateReadUpToIndexMutation(baseOptions?: Apollo.MutationHookOptions<UpdateReadUpToIndexMutation, UpdateReadUpToIndexMutationVariables>) {
+        return Apollo.useMutation<UpdateReadUpToIndexMutation, UpdateReadUpToIndexMutationVariables>(UpdateReadUpToIndexDocument, baseOptions);
+      }
+export type UpdateReadUpToIndexMutationHookResult = ReturnType<typeof useUpdateReadUpToIndexMutation>;
+export type UpdateReadUpToIndexMutationResult = Apollo.MutationResult<UpdateReadUpToIndexMutation>;
+export type UpdateReadUpToIndexMutationOptions = Apollo.BaseMutationOptions<UpdateReadUpToIndexMutation, UpdateReadUpToIndexMutationVariables>;
 export const SelectSingleMessageDocument = gql`
     query SelectSingleMessage($id: Int!) {
   chat_Message_by_pk(id: $id) {
@@ -34500,69 +34744,6 @@ export function useDeleteMessageMutation(baseOptions?: Apollo.MutationHookOption
 export type DeleteMessageMutationHookResult = ReturnType<typeof useDeleteMessageMutation>;
 export type DeleteMessageMutationResult = Apollo.MutationResult<DeleteMessageMutation>;
 export type DeleteMessageMutationOptions = Apollo.BaseMutationOptions<DeleteMessageMutation, DeleteMessageMutationVariables>;
-export const NextMessageDocument = gql`
-    subscription NextMessage($prevId: Int!, $chatId: uuid!) {
-  chat_Message(
-    order_by: {id: desc}
-    where: {id: {_gt: $prevId}, chatId: {_eq: $chatId}}
-    limit: 1
-  ) {
-    ...SubscribedChatMessageData
-  }
-}
-    ${SubscribedChatMessageDataFragmentDoc}`;
-
-/**
- * __useNextMessageSubscription__
- *
- * To run a query within a React component, call `useNextMessageSubscription` and pass it any options that fit your needs.
- * When your component renders, `useNextMessageSubscription` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useNextMessageSubscription({
- *   variables: {
- *      prevId: // value for 'prevId'
- *      chatId: // value for 'chatId'
- *   },
- * });
- */
-export function useNextMessageSubscription(baseOptions: Apollo.SubscriptionHookOptions<NextMessageSubscription, NextMessageSubscriptionVariables>) {
-        return Apollo.useSubscription<NextMessageSubscription, NextMessageSubscriptionVariables>(NextMessageDocument, baseOptions);
-      }
-export type NextMessageSubscriptionHookResult = ReturnType<typeof useNextMessageSubscription>;
-export type NextMessageSubscriptionResult = Apollo.SubscriptionResult<NextMessageSubscription>;
-export const NextReactionsDocument = gql`
-    subscription NextReactions($messageIds: [Int!]!) {
-  chat_Reaction(where: {messageId: {_in: $messageIds}}) {
-    ...SubscribedChatReactionData
-  }
-}
-    ${SubscribedChatReactionDataFragmentDoc}`;
-
-/**
- * __useNextReactionsSubscription__
- *
- * To run a query within a React component, call `useNextReactionsSubscription` and pass it any options that fit your needs.
- * When your component renders, `useNextReactionsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useNextReactionsSubscription({
- *   variables: {
- *      messageIds: // value for 'messageIds'
- *   },
- * });
- */
-export function useNextReactionsSubscription(baseOptions: Apollo.SubscriptionHookOptions<NextReactionsSubscription, NextReactionsSubscriptionVariables>) {
-        return Apollo.useSubscription<NextReactionsSubscription, NextReactionsSubscriptionVariables>(NextReactionsDocument, baseOptions);
-      }
-export type NextReactionsSubscriptionHookResult = ReturnType<typeof useNextReactionsSubscription>;
-export type NextReactionsSubscriptionResult = Apollo.SubscriptionResult<NextReactionsSubscription>;
 export const SelectPinDocument = gql`
     query SelectPin($chatId: uuid!, $attendeeId: uuid!) {
   chat_Chat_by_pk(id: $chatId) {
@@ -35000,43 +35181,6 @@ export function useGetContentGroupLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type GetContentGroupQueryHookResult = ReturnType<typeof useGetContentGroupQuery>;
 export type GetContentGroupLazyQueryHookResult = ReturnType<typeof useGetContentGroupLazyQuery>;
 export type GetContentGroupQueryResult = Apollo.QueryResult<GetContentGroupQuery, GetContentGroupQueryVariables>;
-export const ContentGroup_CreateRoomDocument = gql`
-    mutation ContentGroup_CreateRoom($conferenceId: uuid!, $contentGroupId: uuid!) {
-  createContentGroupRoom(
-    conferenceId: $conferenceId
-    contentGroupId: $contentGroupId
-  ) {
-    roomId
-    message
-  }
-}
-    `;
-export type ContentGroup_CreateRoomMutationFn = Apollo.MutationFunction<ContentGroup_CreateRoomMutation, ContentGroup_CreateRoomMutationVariables>;
-
-/**
- * __useContentGroup_CreateRoomMutation__
- *
- * To run a mutation, you first call `useContentGroup_CreateRoomMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useContentGroup_CreateRoomMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [contentGroupCreateRoomMutation, { data, loading, error }] = useContentGroup_CreateRoomMutation({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      contentGroupId: // value for 'contentGroupId'
- *   },
- * });
- */
-export function useContentGroup_CreateRoomMutation(baseOptions?: Apollo.MutationHookOptions<ContentGroup_CreateRoomMutation, ContentGroup_CreateRoomMutationVariables>) {
-        return Apollo.useMutation<ContentGroup_CreateRoomMutation, ContentGroup_CreateRoomMutationVariables>(ContentGroup_CreateRoomDocument, baseOptions);
-      }
-export type ContentGroup_CreateRoomMutationHookResult = ReturnType<typeof useContentGroup_CreateRoomMutation>;
-export type ContentGroup_CreateRoomMutationResult = Apollo.MutationResult<ContentGroup_CreateRoomMutation>;
-export type ContentGroup_CreateRoomMutationOptions = Apollo.BaseMutationOptions<ContentGroup_CreateRoomMutation, ContentGroup_CreateRoomMutationVariables>;
 export const ContentGroupSummary_GetContentGroupDocument = gql`
     query ContentGroupSummary_GetContentGroup($contentGroupId: uuid!) {
   ContentGroup_by_pk(id: $contentGroupId) {
@@ -35210,6 +35354,7 @@ export const CreateDmDocument = gql`
   createRoomDm(attendeeIds: $attendeeIds, conferenceId: $conferenceId) {
     message
     roomId
+    chatId
   }
 }
     `;
@@ -35951,7 +36096,7 @@ export type Timeline_SelectEventQueryResult = Apollo.QueryResult<Timeline_Select
 export const Timeline_SelectRoomsDocument = gql`
     query Timeline_SelectRooms($conferenceId: uuid!) {
   Room(
-    where: {conferenceId: {_eq: $conferenceId}, roomPrivacyName: {_eq: PUBLIC}, events: {}}
+    where: {conferenceId: {_eq: $conferenceId}, roomPrivacyName: {_in: [PUBLIC, PRIVATE]}, events: {}}
   ) {
     ...Timeline_Room
   }
@@ -36353,6 +36498,76 @@ export function useCombineVideosModal_GetCombineVideosJobLazyQuery(baseOptions?:
 export type CombineVideosModal_GetCombineVideosJobQueryHookResult = ReturnType<typeof useCombineVideosModal_GetCombineVideosJobQuery>;
 export type CombineVideosModal_GetCombineVideosJobLazyQueryHookResult = ReturnType<typeof useCombineVideosModal_GetCombineVideosJobLazyQuery>;
 export type CombineVideosModal_GetCombineVideosJobQueryResult = Apollo.QueryResult<CombineVideosModal_GetCombineVideosJobQuery, CombineVideosModal_GetCombineVideosJobQueryVariables>;
+export const ContentGroup_CreateRoomDocument = gql`
+    mutation ContentGroup_CreateRoom($conferenceId: uuid!, $contentGroupId: uuid!) {
+  createContentGroupRoom(
+    conferenceId: $conferenceId
+    contentGroupId: $contentGroupId
+  ) {
+    roomId
+    message
+  }
+}
+    `;
+export type ContentGroup_CreateRoomMutationFn = Apollo.MutationFunction<ContentGroup_CreateRoomMutation, ContentGroup_CreateRoomMutationVariables>;
+
+/**
+ * __useContentGroup_CreateRoomMutation__
+ *
+ * To run a mutation, you first call `useContentGroup_CreateRoomMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useContentGroup_CreateRoomMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [contentGroupCreateRoomMutation, { data, loading, error }] = useContentGroup_CreateRoomMutation({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      contentGroupId: // value for 'contentGroupId'
+ *   },
+ * });
+ */
+export function useContentGroup_CreateRoomMutation(baseOptions?: Apollo.MutationHookOptions<ContentGroup_CreateRoomMutation, ContentGroup_CreateRoomMutationVariables>) {
+        return Apollo.useMutation<ContentGroup_CreateRoomMutation, ContentGroup_CreateRoomMutationVariables>(ContentGroup_CreateRoomDocument, baseOptions);
+      }
+export type ContentGroup_CreateRoomMutationHookResult = ReturnType<typeof useContentGroup_CreateRoomMutation>;
+export type ContentGroup_CreateRoomMutationResult = Apollo.MutationResult<ContentGroup_CreateRoomMutation>;
+export type ContentGroup_CreateRoomMutationOptions = Apollo.BaseMutationOptions<ContentGroup_CreateRoomMutation, ContentGroup_CreateRoomMutationVariables>;
+export const SubmissionRequestsModal_GetConferenceConfigurationsDocument = gql`
+    query SubmissionRequestsModal_GetConferenceConfigurations($conferenceId: uuid!) {
+  ConferenceConfiguration(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...ConfigureEmailTemplates_ConferenceConfiguration
+  }
+}
+    ${ConfigureEmailTemplates_ConferenceConfigurationFragmentDoc}`;
+
+/**
+ * __useSubmissionRequestsModal_GetConferenceConfigurationsQuery__
+ *
+ * To run a query within a React component, call `useSubmissionRequestsModal_GetConferenceConfigurationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubmissionRequestsModal_GetConferenceConfigurationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubmissionRequestsModal_GetConferenceConfigurationsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useSubmissionRequestsModal_GetConferenceConfigurationsQuery(baseOptions: Apollo.QueryHookOptions<SubmissionRequestsModal_GetConferenceConfigurationsQuery, SubmissionRequestsModal_GetConferenceConfigurationsQueryVariables>) {
+        return Apollo.useQuery<SubmissionRequestsModal_GetConferenceConfigurationsQuery, SubmissionRequestsModal_GetConferenceConfigurationsQueryVariables>(SubmissionRequestsModal_GetConferenceConfigurationsDocument, baseOptions);
+      }
+export function useSubmissionRequestsModal_GetConferenceConfigurationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubmissionRequestsModal_GetConferenceConfigurationsQuery, SubmissionRequestsModal_GetConferenceConfigurationsQueryVariables>) {
+          return Apollo.useLazyQuery<SubmissionRequestsModal_GetConferenceConfigurationsQuery, SubmissionRequestsModal_GetConferenceConfigurationsQueryVariables>(SubmissionRequestsModal_GetConferenceConfigurationsDocument, baseOptions);
+        }
+export type SubmissionRequestsModal_GetConferenceConfigurationsQueryHookResult = ReturnType<typeof useSubmissionRequestsModal_GetConferenceConfigurationsQuery>;
+export type SubmissionRequestsModal_GetConferenceConfigurationsLazyQueryHookResult = ReturnType<typeof useSubmissionRequestsModal_GetConferenceConfigurationsLazyQuery>;
+export type SubmissionRequestsModal_GetConferenceConfigurationsQueryResult = Apollo.QueryResult<SubmissionRequestsModal_GetConferenceConfigurationsQuery, SubmissionRequestsModal_GetConferenceConfigurationsQueryVariables>;
 export const InsertSubmissionRequestEmailJobsDocument = gql`
     mutation InsertSubmissionRequestEmailJobs($objs: [job_queues_SubmissionRequestEmailJob_insert_input!]!) {
   insert_job_queues_SubmissionRequestEmailJob(objects: $objs) {
@@ -36387,7 +36602,9 @@ export type InsertSubmissionRequestEmailJobsMutationResult = Apollo.MutationResu
 export type InsertSubmissionRequestEmailJobsMutationOptions = Apollo.BaseMutationOptions<InsertSubmissionRequestEmailJobsMutation, InsertSubmissionRequestEmailJobsMutationVariables>;
 export const SelectAllContentDocument = gql`
     query SelectAllContent($conferenceId: uuid!) {
-  ContentGroup(where: {conferenceId: {_eq: $conferenceId}}) {
+  ContentGroup(
+    where: {conferenceId: {_eq: $conferenceId}, contentGroupTypeName: {_neq: SPONSOR}}
+  ) {
     ...ContentGroupFullNestedInfo
   }
   ContentPerson(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -37168,6 +37385,76 @@ export function useUpdateHallwayMutation(baseOptions?: Apollo.MutationHookOption
 export type UpdateHallwayMutationHookResult = ReturnType<typeof useUpdateHallwayMutation>;
 export type UpdateHallwayMutationResult = Apollo.MutationResult<UpdateHallwayMutation>;
 export type UpdateHallwayMutationOptions = Apollo.BaseMutationOptions<UpdateHallwayMutation, UpdateHallwayMutationVariables>;
+export const ConfigureEmailTemplates_GetConferenceConfigurationsDocument = gql`
+    query ConfigureEmailTemplates_GetConferenceConfigurations($conferenceId: uuid!) {
+  ConferenceConfiguration(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...ConfigureEmailTemplates_ConferenceConfiguration
+  }
+}
+    ${ConfigureEmailTemplates_ConferenceConfigurationFragmentDoc}`;
+
+/**
+ * __useConfigureEmailTemplates_GetConferenceConfigurationsQuery__
+ *
+ * To run a query within a React component, call `useConfigureEmailTemplates_GetConferenceConfigurationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useConfigureEmailTemplates_GetConferenceConfigurationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useConfigureEmailTemplates_GetConferenceConfigurationsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useConfigureEmailTemplates_GetConferenceConfigurationsQuery(baseOptions: Apollo.QueryHookOptions<ConfigureEmailTemplates_GetConferenceConfigurationsQuery, ConfigureEmailTemplates_GetConferenceConfigurationsQueryVariables>) {
+        return Apollo.useQuery<ConfigureEmailTemplates_GetConferenceConfigurationsQuery, ConfigureEmailTemplates_GetConferenceConfigurationsQueryVariables>(ConfigureEmailTemplates_GetConferenceConfigurationsDocument, baseOptions);
+      }
+export function useConfigureEmailTemplates_GetConferenceConfigurationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ConfigureEmailTemplates_GetConferenceConfigurationsQuery, ConfigureEmailTemplates_GetConferenceConfigurationsQueryVariables>) {
+          return Apollo.useLazyQuery<ConfigureEmailTemplates_GetConferenceConfigurationsQuery, ConfigureEmailTemplates_GetConferenceConfigurationsQueryVariables>(ConfigureEmailTemplates_GetConferenceConfigurationsDocument, baseOptions);
+        }
+export type ConfigureEmailTemplates_GetConferenceConfigurationsQueryHookResult = ReturnType<typeof useConfigureEmailTemplates_GetConferenceConfigurationsQuery>;
+export type ConfigureEmailTemplates_GetConferenceConfigurationsLazyQueryHookResult = ReturnType<typeof useConfigureEmailTemplates_GetConferenceConfigurationsLazyQuery>;
+export type ConfigureEmailTemplates_GetConferenceConfigurationsQueryResult = Apollo.QueryResult<ConfigureEmailTemplates_GetConferenceConfigurationsQuery, ConfigureEmailTemplates_GetConferenceConfigurationsQueryVariables>;
+export const ConfigureEmailTemplates_UpdateConferenceConfigurationDocument = gql`
+    mutation ConfigureEmailTemplates_UpdateConferenceConfiguration($value: jsonb!, $conferenceId: uuid!, $key: String!) {
+  insert_ConferenceConfiguration_one(
+    object: {value: $value, conferenceId: $conferenceId, key: $key}
+    on_conflict: {constraint: ConferenceConfiguration_conferenceId_key_key, update_columns: value}
+  ) {
+    id
+  }
+}
+    `;
+export type ConfigureEmailTemplates_UpdateConferenceConfigurationMutationFn = Apollo.MutationFunction<ConfigureEmailTemplates_UpdateConferenceConfigurationMutation, ConfigureEmailTemplates_UpdateConferenceConfigurationMutationVariables>;
+
+/**
+ * __useConfigureEmailTemplates_UpdateConferenceConfigurationMutation__
+ *
+ * To run a mutation, you first call `useConfigureEmailTemplates_UpdateConferenceConfigurationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useConfigureEmailTemplates_UpdateConferenceConfigurationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [configureEmailTemplatesUpdateConferenceConfigurationMutation, { data, loading, error }] = useConfigureEmailTemplates_UpdateConferenceConfigurationMutation({
+ *   variables: {
+ *      value: // value for 'value'
+ *      conferenceId: // value for 'conferenceId'
+ *      key: // value for 'key'
+ *   },
+ * });
+ */
+export function useConfigureEmailTemplates_UpdateConferenceConfigurationMutation(baseOptions?: Apollo.MutationHookOptions<ConfigureEmailTemplates_UpdateConferenceConfigurationMutation, ConfigureEmailTemplates_UpdateConferenceConfigurationMutationVariables>) {
+        return Apollo.useMutation<ConfigureEmailTemplates_UpdateConferenceConfigurationMutation, ConfigureEmailTemplates_UpdateConferenceConfigurationMutationVariables>(ConfigureEmailTemplates_UpdateConferenceConfigurationDocument, baseOptions);
+      }
+export type ConfigureEmailTemplates_UpdateConferenceConfigurationMutationHookResult = ReturnType<typeof useConfigureEmailTemplates_UpdateConferenceConfigurationMutation>;
+export type ConfigureEmailTemplates_UpdateConferenceConfigurationMutationResult = Apollo.MutationResult<ConfigureEmailTemplates_UpdateConferenceConfigurationMutation>;
+export type ConfigureEmailTemplates_UpdateConferenceConfigurationMutationOptions = Apollo.BaseMutationOptions<ConfigureEmailTemplates_UpdateConferenceConfigurationMutation, ConfigureEmailTemplates_UpdateConferenceConfigurationMutationVariables>;
 export const ChooseContentItemByTagModal_GetTagsDocument = gql`
     query ChooseContentItemByTagModal_GetTags($conferenceId: uuid!) {
   Tag(where: {conferenceId: {_eq: $conferenceId}}, order_by: {name: asc}) {
@@ -39884,7 +40171,8 @@ export type GoogleOAuth_SubmitGoogleOAuthCodeMutationOptions = Apollo.BaseMutati
 export const SelectInvitationForAcceptDocument = gql`
     query SelectInvitationForAccept($inviteCode: uuid!) {
   Invitation(where: {inviteCode: {_eq: $inviteCode}}) {
-    hash
+    id
+    invitedEmailAddress
   }
 }
     `;
@@ -40047,43 +40335,6 @@ export function useSendRepeatConfirmationEmailMutation(baseOptions?: Apollo.Muta
 export type SendRepeatConfirmationEmailMutationHookResult = ReturnType<typeof useSendRepeatConfirmationEmailMutation>;
 export type SendRepeatConfirmationEmailMutationResult = Apollo.MutationResult<SendRepeatConfirmationEmailMutation>;
 export type SendRepeatConfirmationEmailMutationOptions = Apollo.BaseMutationOptions<SendRepeatConfirmationEmailMutation, SendRepeatConfirmationEmailMutationVariables>;
-export const PinnedChatsWithUnreadCountsDocument = gql`
-    query PinnedChatsWithUnreadCounts($attendeeId: uuid!) {
-  chat_Pin(where: {attendeeId: {_eq: $attendeeId}}) {
-    attendeeId
-    chatId
-    chat {
-      ...SidebarChatInfo
-    }
-  }
-}
-    ${SidebarChatInfoFragmentDoc}`;
-
-/**
- * __usePinnedChatsWithUnreadCountsQuery__
- *
- * To run a query within a React component, call `usePinnedChatsWithUnreadCountsQuery` and pass it any options that fit your needs.
- * When your component renders, `usePinnedChatsWithUnreadCountsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = usePinnedChatsWithUnreadCountsQuery({
- *   variables: {
- *      attendeeId: // value for 'attendeeId'
- *   },
- * });
- */
-export function usePinnedChatsWithUnreadCountsQuery(baseOptions: Apollo.QueryHookOptions<PinnedChatsWithUnreadCountsQuery, PinnedChatsWithUnreadCountsQueryVariables>) {
-        return Apollo.useQuery<PinnedChatsWithUnreadCountsQuery, PinnedChatsWithUnreadCountsQueryVariables>(PinnedChatsWithUnreadCountsDocument, baseOptions);
-      }
-export function usePinnedChatsWithUnreadCountsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PinnedChatsWithUnreadCountsQuery, PinnedChatsWithUnreadCountsQueryVariables>) {
-          return Apollo.useLazyQuery<PinnedChatsWithUnreadCountsQuery, PinnedChatsWithUnreadCountsQueryVariables>(PinnedChatsWithUnreadCountsDocument, baseOptions);
-        }
-export type PinnedChatsWithUnreadCountsQueryHookResult = ReturnType<typeof usePinnedChatsWithUnreadCountsQuery>;
-export type PinnedChatsWithUnreadCountsLazyQueryHookResult = ReturnType<typeof usePinnedChatsWithUnreadCountsLazyQuery>;
-export type PinnedChatsWithUnreadCountsQueryResult = Apollo.QueryResult<PinnedChatsWithUnreadCountsQuery, PinnedChatsWithUnreadCountsQueryVariables>;
 export const MenuScheduleDocument = gql`
     query MenuSchedule($now: timestamptz!, $inThreeMinutes: timestamptz!, $in30Minutes: timestamptz!, $inOneHour: timestamptz!, $conferenceId: uuid!) {
   eventsNow: Event(
@@ -40207,6 +40458,118 @@ export function useMainMenuSponsors_GetSponsorsLazyQuery(baseOptions?: Apollo.La
 export type MainMenuSponsors_GetSponsorsQueryHookResult = ReturnType<typeof useMainMenuSponsors_GetSponsorsQuery>;
 export type MainMenuSponsors_GetSponsorsLazyQueryHookResult = ReturnType<typeof useMainMenuSponsors_GetSponsorsLazyQuery>;
 export type MainMenuSponsors_GetSponsorsQueryResult = Apollo.QueryResult<MainMenuSponsors_GetSponsorsQuery, MainMenuSponsors_GetSponsorsQueryVariables>;
+export const PinnedChatsWithUnreadCountsDocument = gql`
+    query PinnedChatsWithUnreadCounts($attendeeId: uuid!) {
+  chat_Pin(where: {attendeeId: {_eq: $attendeeId}}) {
+    attendeeId
+    chatId
+    chat {
+      ...SidebarChatInfo
+    }
+  }
+}
+    ${SidebarChatInfoFragmentDoc}`;
+
+/**
+ * __usePinnedChatsWithUnreadCountsQuery__
+ *
+ * To run a query within a React component, call `usePinnedChatsWithUnreadCountsQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePinnedChatsWithUnreadCountsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePinnedChatsWithUnreadCountsQuery({
+ *   variables: {
+ *      attendeeId: // value for 'attendeeId'
+ *   },
+ * });
+ */
+export function usePinnedChatsWithUnreadCountsQuery(baseOptions: Apollo.QueryHookOptions<PinnedChatsWithUnreadCountsQuery, PinnedChatsWithUnreadCountsQueryVariables>) {
+        return Apollo.useQuery<PinnedChatsWithUnreadCountsQuery, PinnedChatsWithUnreadCountsQueryVariables>(PinnedChatsWithUnreadCountsDocument, baseOptions);
+      }
+export function usePinnedChatsWithUnreadCountsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PinnedChatsWithUnreadCountsQuery, PinnedChatsWithUnreadCountsQueryVariables>) {
+          return Apollo.useLazyQuery<PinnedChatsWithUnreadCountsQuery, PinnedChatsWithUnreadCountsQueryVariables>(PinnedChatsWithUnreadCountsDocument, baseOptions);
+        }
+export type PinnedChatsWithUnreadCountsQueryHookResult = ReturnType<typeof usePinnedChatsWithUnreadCountsQuery>;
+export type PinnedChatsWithUnreadCountsLazyQueryHookResult = ReturnType<typeof usePinnedChatsWithUnreadCountsLazyQuery>;
+export type PinnedChatsWithUnreadCountsQueryResult = Apollo.QueryResult<PinnedChatsWithUnreadCountsQuery, PinnedChatsWithUnreadCountsQueryVariables>;
+export const GetRoomChatIdDocument = gql`
+    query GetRoomChatId($roomId: uuid!) {
+  Room_by_pk(id: $roomId) {
+    id
+    chatId
+    name
+  }
+}
+    `;
+
+/**
+ * __useGetRoomChatIdQuery__
+ *
+ * To run a query within a React component, call `useGetRoomChatIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRoomChatIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRoomChatIdQuery({
+ *   variables: {
+ *      roomId: // value for 'roomId'
+ *   },
+ * });
+ */
+export function useGetRoomChatIdQuery(baseOptions: Apollo.QueryHookOptions<GetRoomChatIdQuery, GetRoomChatIdQueryVariables>) {
+        return Apollo.useQuery<GetRoomChatIdQuery, GetRoomChatIdQueryVariables>(GetRoomChatIdDocument, baseOptions);
+      }
+export function useGetRoomChatIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRoomChatIdQuery, GetRoomChatIdQueryVariables>) {
+          return Apollo.useLazyQuery<GetRoomChatIdQuery, GetRoomChatIdQueryVariables>(GetRoomChatIdDocument, baseOptions);
+        }
+export type GetRoomChatIdQueryHookResult = ReturnType<typeof useGetRoomChatIdQuery>;
+export type GetRoomChatIdLazyQueryHookResult = ReturnType<typeof useGetRoomChatIdLazyQuery>;
+export type GetRoomChatIdQueryResult = Apollo.QueryResult<GetRoomChatIdQuery, GetRoomChatIdQueryVariables>;
+export const GetContentGroupChatIdDocument = gql`
+    query GetContentGroupChatId($itemId: uuid!) {
+  ContentGroup_by_pk(id: $itemId) {
+    id
+    title
+    chat {
+      id
+      room {
+        id
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetContentGroupChatIdQuery__
+ *
+ * To run a query within a React component, call `useGetContentGroupChatIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetContentGroupChatIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetContentGroupChatIdQuery({
+ *   variables: {
+ *      itemId: // value for 'itemId'
+ *   },
+ * });
+ */
+export function useGetContentGroupChatIdQuery(baseOptions: Apollo.QueryHookOptions<GetContentGroupChatIdQuery, GetContentGroupChatIdQueryVariables>) {
+        return Apollo.useQuery<GetContentGroupChatIdQuery, GetContentGroupChatIdQueryVariables>(GetContentGroupChatIdDocument, baseOptions);
+      }
+export function useGetContentGroupChatIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetContentGroupChatIdQuery, GetContentGroupChatIdQueryVariables>) {
+          return Apollo.useLazyQuery<GetContentGroupChatIdQuery, GetContentGroupChatIdQueryVariables>(GetContentGroupChatIdDocument, baseOptions);
+        }
+export type GetContentGroupChatIdQueryHookResult = ReturnType<typeof useGetContentGroupChatIdQuery>;
+export type GetContentGroupChatIdLazyQueryHookResult = ReturnType<typeof useGetContentGroupChatIdLazyQuery>;
+export type GetContentGroupChatIdQueryResult = Apollo.QueryResult<GetContentGroupChatIdQuery, GetContentGroupChatIdQueryVariables>;
 export const GetRoomMembersDocument = gql`
     subscription GetRoomMembers($roomId: uuid!) {
   RoomPerson(where: {roomId: {_eq: $roomId}}) {

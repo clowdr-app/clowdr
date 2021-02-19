@@ -112,12 +112,6 @@ function EditProfilePageInner({ attendee }: { attendee: AttendeeContextT }): JSX
     useEffect(() => {
         setPrimaryMenuButtons([
             {
-                key: "conference-home",
-                action: `/conference/${conference.slug}`,
-                text: conference.shortName,
-                label: conference.shortName,
-            },
-            {
                 key: "view-profile",
                 action:
                     attendee.userId === currentUser.user.id

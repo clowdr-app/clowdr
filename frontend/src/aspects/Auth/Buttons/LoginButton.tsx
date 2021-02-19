@@ -7,10 +7,14 @@ export default function LoginButton({
     asMenuItem,
     redirectTo,
     size,
+    emailHint,
+    isLoading,
 }: {
     size?: string;
     asMenuItem?: boolean;
     redirectTo?: string;
+    emailHint?: string;
+    isLoading?: boolean;
 }): JSX.Element {
     const { loginWithRedirect } = useAuth0();
     const location = useLocation();
@@ -18,6 +22,7 @@ export default function LoginButton({
     const redirectUri = import.meta.env.SNOWPACK_PUBLIC_AUTH_CALLBACK_URL + "/logged-in";
     const opts = {
         redirectUri,
+        login_hint: emailHint,
         appState: {
             returnTo: redirectTo ?? location.pathname.startsWith("/logged-out") ? "/user" : location.pathname,
         },
@@ -28,7 +33,13 @@ export default function LoginButton({
             Log In
         </MenuItem>
     ) : (
-        <Button size={size ?? "sm"} onClick={() => loginWithRedirect(opts)} colorScheme="green" role="menuitem">
+        <Button
+            isLoading={isLoading}
+            size={size ?? "sm"}
+            onClick={() => loginWithRedirect(opts)}
+            colorScheme="green"
+            role="menuitem"
+        >
             Log In
         </Button>
     );

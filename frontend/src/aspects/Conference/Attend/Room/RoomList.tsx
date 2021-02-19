@@ -17,7 +17,6 @@ import { RoomListRoomDetailsFragment, RoomPrivacy_Enum } from "../../../../gener
 import { LinkButton } from "../../../Chakra/LinkButton";
 import FAIcon from "../../../Icons/FAIcon";
 import PageCountText from "../../../Presence/PageCountText";
-import RoomParticipantsProvider from "../../../Room/RoomParticipantsProvider";
 import useRoomParticipants from "../../../Room/useRoomParticipants";
 import { useConference } from "../../useConference";
 import { RoomParticipants } from "./RoomParticipants";
@@ -29,15 +28,7 @@ interface Props {
     onClick?: () => void;
 }
 
-export function RoomList(props: Props): JSX.Element {
-    return (
-        <RoomParticipantsProvider>
-            <RoomListInner {...props} />
-        </RoomParticipantsProvider>
-    );
-}
-
-function RoomListInner({ rooms, layout, limit, onClick }: Props): JSX.Element {
+export function RoomList({ rooms, layout, limit, onClick }: Props): JSX.Element {
     const conference = useConference();
     const roomParticipants = useRoomParticipants();
 

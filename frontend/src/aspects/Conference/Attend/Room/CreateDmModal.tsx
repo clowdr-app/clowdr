@@ -22,6 +22,7 @@ gql`
         createRoomDm(attendeeIds: $attendeeIds, conferenceId: $conferenceId) {
             message
             roomId
+            chatId
         }
     }
 `;

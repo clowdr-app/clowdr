@@ -1,22 +1,18 @@
 import { gql } from "@apollo/client";
-import { Box, Button, Flex, Heading, HStack, useBreakpointValue, useToast, VStack } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { Box, Flex, Heading, HStack, useBreakpointValue, VStack } from "@chakra-ui/react";
+import React from "react";
 import {
     ContentGroupDataFragment,
     ContentGroupEventsFragment,
     ContentGroupPage_ContentGroupRoomsFragment,
     Permission_Enum,
-    useContentGroup_CreateRoomMutation,
     useGetContentGroupQuery,
 } from "../../../../generated/graphql";
-import { Chat } from "../../../Chat/Chat";
 import PageNotFound from "../../../Errors/PageNotFound";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
-import usePrimaryMenuButtons from "../../../Menu/usePrimaryMenuButtons";
+import { useNoPrimaryMenuButtons } from "../../../Menu/usePrimaryMenuButtons";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
-import { useConference } from "../../useConference";
 import { ContentGroupEvents } from "./ContentGroupEvents";
 import { ContentGroupLive } from "./ContentGroupLive";
 import { ContentGroupSummary } from "./ContentGroupSummary";
@@ -35,13 +31,6 @@ gql`
         id
         title
         contentGroupTypeName
-        chatId
-        chat {
-            room {
-                id
-                name
-            }
-        }
         contentItems(where: { isHidden: { _eq: false } }) {
             ...ContentItemData
         }
@@ -51,7 +40,7 @@ gql`
     }
 
     fragment ContentGroupPage_ContentGroupRooms on ContentGroup {
-        rooms(where: { name: { _like: "Breakout:%" } }, order_by: { created_at: asc }) {
+        rooms(where: { originatingEventId: { _is_null: true } }, limit: 1, order_by: { created_at: asc }) {
             id
         }
     }
@@ -74,13 +63,6 @@ gql`
         name
         intendedRoomModeName
     }
-
-    mutation ContentGroup_CreateRoom($conferenceId: uuid!, $contentGroupId: uuid!) {
-        createContentGroupRoom(conferenceId: $conferenceId, contentGroupId: $contentGroupId) {
-            roomId
-            message
-        }
-    }
 `;
 
 export default function ContentGroupPage({ contentGroupId }: { contentGroupId: string }): JSX.Element {
@@ -90,60 +72,9 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
         },
     });
     const stackColumns = useBreakpointValue({ base: true, lg: false });
-    const conference = useConference();
     const title = useTitle(result.data?.ContentGroup_by_pk?.title ?? "Unknown content item");
-    const toast = useToast();
-    const history = useHistory();
 
-    const { setPrimaryMenuButtons } = usePrimaryMenuButtons();
-    useEffect(() => {
-        setPrimaryMenuButtons([
-            {
-                key: "conference-home",
-                action: `/conference/${conference.slug}`,
-                text: conference.shortName,
-                label: conference.shortName,
-            },
-        ]);
-    }, [conference.shortName, conference.slug, setPrimaryMenuButtons]);
-
-    const [createBreakoutMutation] = useContentGroup_CreateRoomMutation();
-    const [creatingBreakout, setCreatingBreakout] = useState<boolean>(false);
-
-    const createBreakout = useCallback(async () => {
-        if (!result.data?.ContentGroup_by_pk) {
-            return;
-        }
-
-        const contentGroup = result.data.ContentGroup_by_pk;
-
-        try {
-            setCreatingBreakout(true);
-            const { data } = await createBreakoutMutation({
-                variables: {
-                    conferenceId: conference.id,
-                    contentGroupId: contentGroup.id,
-                },
-            });
-
-            if (!data?.createContentGroupRoom || !data.createContentGroupRoom.roomId) {
-                throw new Error(`No data returned: ${data?.createContentGroupRoom?.message}`);
-            }
-
-            const roomId = data.createContentGroupRoom.roomId;
-
-            // Wait so that breakout session has a chance to be created
-            setTimeout(() => history.push(`/conference/${conference.slug}/room/${roomId}`), 2000);
-        } catch (e) {
-            toast({
-                status: "error",
-                title: "Failed to create room.",
-                description: e?.message,
-            });
-        } finally {
-            setCreatingBreakout(false);
-        }
-    }, [conference.id, conference.slug, createBreakoutMutation, history, result.data?.ContentGroup_by_pk, toast]);
+    useNoPrimaryMenuButtons();
 
     return (
         <RequireAtLeastOnePermissionWrapper
@@ -164,7 +95,7 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
                                 flexGrow={2.5}
                                 alignItems="stretch"
                                 flexBasis={0}
-                                minW={["100%", "100%", "100%", "700px"]}
+                                minW="100%"
                                 maxW="100%"
                             >
                                 {title}
@@ -176,36 +107,17 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
                                     maxW="100%"
                                 >
                                     <Box maxW="100%" textAlign="center" flexGrow={1} style={{ scrollbarWidth: "thin" }}>
-                                        <Box position="relative">
+                                        <Box>
                                             <ContentGroupVideos contentGroupData={contentGroupData} />
-                                            <RequireAtLeastOnePermissionWrapper
-                                                permissions={[Permission_Enum.ConferenceViewAttendees]}
-                                            >
-                                                <Box
-                                                    position={["static", "static", "absolute"]}
-                                                    mt={[2, 2, 0]}
-                                                    top="1rem"
-                                                    right="1rem"
-                                                >
-                                                    <ContentGroupLive contentGroupData={contentGroupData} />
-                                                    {contentGroupData.rooms.length === 0 ? (
-                                                        <Button
-                                                            colorScheme="green"
-                                                            isLoading={creatingBreakout}
-                                                            onClick={createBreakout}
-                                                            width="100%"
-                                                            mt={2}
-                                                        >
-                                                            Create breakout room
-                                                        </Button>
-                                                    ) : (
-                                                        <></>
-                                                    )}
-                                                </Box>
-                                            </RequireAtLeastOnePermissionWrapper>
                                         </Box>
                                         <Box ml={5} maxW="100%">
-                                            <ContentGroupSummary contentGroupData={contentGroupData} />
+                                            <ContentGroupSummary contentGroupData={contentGroupData}>
+                                                <RequireAtLeastOnePermissionWrapper
+                                                    permissions={[Permission_Enum.ConferenceViewAttendees]}
+                                                >
+                                                    <ContentGroupLive contentGroupData={contentGroupData} />
+                                                </RequireAtLeastOnePermissionWrapper>
+                                            </ContentGroupSummary>
                                             <Heading as="h3" size="lg" textAlign="left">
                                                 Events
                                             </Heading>
@@ -214,25 +126,6 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
                                     </Box>
                                 </Flex>
                             </VStack>
-                            {contentGroupData.chatId ? (
-                                <VStack
-                                    flexGrow={1}
-                                    flexBasis={0}
-                                    minW={["90%", "90%", "90%", "300px"]}
-                                    maxHeight={["80vh", "80vh", "80vh", "850px"]}
-                                >
-                                    <Chat
-                                        sources={{
-                                            chatId: contentGroupData.chatId,
-                                            chatLabel: "Discussion",
-                                            chatTitle: contentGroupData.title,
-                                        }}
-                                        height="100%"
-                                    />
-                                </VStack>
-                            ) : (
-                                <></>
-                            )}
                         </HStack>
                     );
                 }}

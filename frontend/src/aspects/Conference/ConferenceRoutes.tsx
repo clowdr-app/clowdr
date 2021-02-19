@@ -1,12 +1,9 @@
 import React from "react";
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import { Permission_Enum } from "../../generated/graphql";
-import { ChatNotificationsProvider } from "../Chat/ChatNotifications";
 import ChatRedirectPage from "../Chat/ChatRedirectPage";
 import PageNotFound from "../Errors/PageNotFound";
 import PageNotImplemented from "../Errors/PageNotImplemented";
-import PresenceCountProvider from "../Presence/PresenceCountProvider";
-import { SharedRoomContextProvider } from "../Room/SharedRoomContextProvider";
 import WaitingPage from "../ShuffleRooms/WaitingPage";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import AttendeeListPage from "./Attend/Attendee/AttendeeListPage";
@@ -17,9 +14,9 @@ import ViewProfilePage from "./Attend/Profile/ViewProfilePage";
 import RoomListPage from "./Attend/Room/RoomListPage";
 import RoomPage from "./Attend/Room/RoomPage";
 import ConferenceTimeline from "./Attend/Schedule/ConferenceTimeline";
-import AttendeesContextProvider from "./AttendeesContext";
 import ManageConferenceBroadcastPage from "./Manage/ManageConferenceBroadcastPage";
 import ManageConferenceContentPage from "./Manage/ManageConferenceContentPage";
+import { ManageConferenceEmailPage } from "./Manage/ManageConferenceEmailPage";
 import ManageConferenceExportPage from "./Manage/ManageConferenceExportPage";
 import ManageConferenceGroupsPage from "./Manage/ManageConferenceGroupsPage";
 import ManageConferenceImportPage from "./Manage/ManageConferenceImportPage";
@@ -31,12 +28,10 @@ import ManageConferenceSchedulePage from "./Manage/ManageConferenceSchedulePage"
 import { ManageConferenceSponsorsPage } from "./Manage/ManageConferenceSponsorsPage";
 import ManagerLandingPage from "./Manage/ManagerLandingPage";
 import RequireAtLeastOnePermissionWrapper from "./RequireAtLeastOnePermissionWrapper";
-import ConferenceProvider, { useConference } from "./useConference";
-import ConferenceCurrentUserActivePermissionsProvider from "./useConferenceCurrentUserActivePermissions";
-import CurrentUserGroupsRolesPermissionsProvider from "./useConferenceCurrentUserGroups";
-import { CurrentAttendeeProvider, useMaybeCurrentAttendee } from "./useCurrentAttendee";
+import { useConference } from "./useConference";
+import { useMaybeCurrentAttendee } from "./useCurrentAttendee";
 
-function ConferenceRoutesInner({ rootUrl }: { rootUrl: string }): JSX.Element {
+export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.Element {
     const conference = useConference();
     const mUser = useMaybeCurrentUser();
     const mAttendee = useMaybeCurrentAttendee();
@@ -115,6 +110,9 @@ function ConferenceRoutesInner({ rootUrl }: { rootUrl: string }): JSX.Element {
             </Route>
             <Route path={`${rootUrl}/manage/chats`}>
                 <PageNotImplemented />
+            </Route>
+            <Route path={`${rootUrl}/manage/email`}>
+                <ManageConferenceEmailPage />
             </Route>
             <Route path={`${rootUrl}/manage/sponsors`}>
                 <ManageConferenceSponsorsPage />
@@ -272,26 +270,3 @@ function ConferenceRoutesInner({ rootUrl }: { rootUrl: string }): JSX.Element {
 
 //     return <></>;
 // }
-
-export default function ConferenceRoutes({ confSlug, rootUrl }: { confSlug: string; rootUrl: string }): JSX.Element {
-    return (
-        <ConferenceProvider confSlug={confSlug}>
-            <CurrentUserGroupsRolesPermissionsProvider>
-                <ConferenceCurrentUserActivePermissionsProvider>
-                    <CurrentAttendeeProvider>
-                        <PresenceCountProvider>
-                            <AttendeesContextProvider>
-                                {/* <ShuffleRoomsQueueMonitor /> */}
-                                <ChatNotificationsProvider>
-                                    <SharedRoomContextProvider>
-                                        <ConferenceRoutesInner rootUrl={rootUrl} />
-                                    </SharedRoomContextProvider>
-                                </ChatNotificationsProvider>
-                            </AttendeesContextProvider>
-                        </PresenceCountProvider>
-                    </CurrentAttendeeProvider>
-                </ConferenceCurrentUserActivePermissionsProvider>
-            </CurrentUserGroupsRolesPermissionsProvider>
-        </ConferenceProvider>
-    );
-}

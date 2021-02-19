@@ -6,10 +6,10 @@ import {
     Button,
     Heading,
     HStack,
+    Spinner,
     Text,
     useColorModeValue,
     useToast,
-    useToken,
     VStack,
 } from "@chakra-ui/react";
 import type { ContentItemDataBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
@@ -22,6 +22,7 @@ import {
     ContentGroupType_Enum,
     RoomMode_Enum,
     RoomPage_RoomDetailsFragment,
+    RoomPrivacy_Enum,
     Room_CurrentEventSummaryFragment,
     Room_EventSummaryFragment,
     useRoomBackstage_GetEventBreakoutRoomQuery,
@@ -29,12 +30,10 @@ import {
     useRoom_GetEventsQuery,
 } from "../../../../generated/graphql";
 import { ExternalLinkButton } from "../../../Chakra/LinkButton";
-import { Chat } from "../../../Chat/Chat";
-import type { ChatSources } from "../../../Chat/Configuration";
 import usePolling from "../../../Generic/usePolling";
 import { useRealTime } from "../../../Generic/useRealTime";
-import RoomParticipantsProvider from "../../../Room/RoomParticipantsProvider";
 import { useConference } from "../../useConference";
+import useCurrentAttendee from "../../useCurrentAttendee";
 import { ContentGroupSummaryWrapper } from "../Content/ContentGroupSummary";
 import { BreakoutVonageRoom } from "./BreakoutVonageRoom";
 import { RoomBackstage } from "./RoomBackstage";
@@ -82,6 +81,10 @@ gql`
             id
             title
         }
+        eventPeople {
+            id
+            attendeeId
+        }
     }
 `;
 
@@ -103,17 +106,17 @@ function isShuffleRoomEndingSoon(
 
 export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragment }): JSX.Element {
     const [roomEvents, setRoomEvents] = useState<readonly Room_EventSummaryFragment[]>([]);
-    const { data, refetch } = useRoom_GetEventsQuery({
+    const { loading: loadingEvents, data, refetch } = useRoom_GetEventsQuery({
         variables: {
             roomId: roomDetails.id,
         },
     });
 
     useEffect(() => {
-        if (data) {
+        if (data?.Event) {
             setRoomEvents(data.Event);
         }
-    }, [data]);
+    }, [data?.Event]);
     usePolling(refetch, 120000, true);
 
     const {
@@ -126,14 +129,8 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
 
     const now = useRealTime(5000);
 
-    const [green100, green700, gray100, gray800] = useToken("colors", [
-        "green.100",
-        "green.700",
-        "gray.100",
-        "gray.900",
-    ]);
-    const nextBgColour = useColorModeValue(green100, green700);
-    const bgColour = useColorModeValue(gray100, gray800);
+    const nextBgColour = useColorModeValue("green.300", "green.600");
+    const bgColour = useColorModeValue("gray.200", "gray.700");
 
     const hlsUri = useMemo(() => {
         if (!roomDetails.mediaLiveChannel) {
@@ -146,12 +143,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
 
     const [intendPlayStream, setIntendPlayStream] = useState<boolean>(true);
 
-    const [backstage, setBackstage] = useState<boolean>(false);
-
-    const secondsUntilNonBreakoutEvent = useMemo(() => Math.min(secondsUntilBroadcastEvent, secondsUntilZoomEvent), [
-        secondsUntilBroadcastEvent,
-        secondsUntilZoomEvent,
-    ]);
+    const secondsUntilNonBreakoutEvent = Math.min(secondsUntilBroadcastEvent, secondsUntilZoomEvent);
 
     const [currentEventData, setCurrentEventData] = useState<Room_CurrentEventSummaryFragment | null>(null);
     const { refetch: refetchCurrentEventData } = useRoom_GetCurrentEventQuery({
@@ -161,7 +153,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
 
     useEffect(() => {
         async function fn() {
-            if (currentRoomEvent) {
+            if (currentRoomEvent?.id) {
                 try {
                     const { data } = await refetchCurrentEventData({
                         currentEventId: currentRoomEvent.id,
@@ -179,7 +171,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
         }
         fn();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentRoomEvent]);
+    }, [currentRoomEvent?.id]);
 
     const maybeCurrentEventZoomDetails = useMemo(() => {
         try {
@@ -198,73 +190,57 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
         }
     }, [currentEventData?.contentGroup?.contentItems]);
 
-    const chatSources = useMemo((): ChatSources | undefined => {
-        if (currentEventData?.contentGroup) {
-            return {
-                chatId: roomDetails.chatId ?? undefined,
-                chatLabel: "Room",
-                chatTitle: roomDetails.name,
-            };
-        } else if (roomDetails.chatId) {
-            return {
-                chatId: roomDetails.chatId,
-                chatLabel: "Room",
-                chatTitle: roomDetails.name,
-            };
-        } else {
-            return undefined;
-        }
-    }, [currentEventData?.contentGroup, roomDetails.chatId, roomDetails.name]);
-
-    const chatEl = useMemo(
-        () =>
-            chatSources ? (
-                <Chat
-                    sources={{ ...chatSources }}
-                    flexBasis={0}
-                    flexGrow={1}
-                    mr={4}
-                    maxHeight={["80vh", "80vh", "80vh", "850px"]}
-                />
-            ) : (
-                <>No chat found for this room.</>
-            ),
-        [chatSources]
-    );
+    const currentAttendee = useCurrentAttendee();
+    // Used to allow the user to explicitly select to watch the stream rather
+    // than entering the backstage area
+    const [watchStreamForEventId, setWatchStreamForEventId] = useState<string | null>(null);
+    const showDefaultBreakoutRoom =
+        roomEvents.length === 0 || currentRoomEvent?.intendedRoomModeName === RoomMode_Enum.Breakout;
+    const hasBackstage = !!hlsUri;
+    const isPresenterOfCurrentEvent =
+        currentRoomEvent !== null &&
+        currentRoomEvent.eventPeople.some((person) => person.attendeeId === currentAttendee.id);
+    const isPresenterOfNextEvent =
+        nextRoomEvent !== null && nextRoomEvent.eventPeople.some((person) => person.attendeeId === currentAttendee.id);
+    const shouldBeBackstage =
+        isPresenterOfCurrentEvent || (withinThreeMinutesOfBroadcastEvent && isPresenterOfNextEvent);
+    const showBackstage =
+        hasBackstage &&
+        shouldBeBackstage &&
+        watchStreamForEventId !== currentRoomEvent?.id &&
+        watchStreamForEventId !== nextRoomEvent?.id;
 
     const controlBarEl = useMemo(
-        () => (
-            <RoomParticipantsProvider roomId={roomDetails.id}>
-                <RoomControlBar
-                    roomDetails={roomDetails}
-                    onSetBackstage={setBackstage}
-                    backstage={backstage}
-                    hasBackstage={!!hlsUri}
-                    breakoutRoomEnabled={
-                        secondsUntilNonBreakoutEvent > 180 && !withinThreeMinutesOfBroadcastEvent && !backstage
-                    }
-                />
-            </RoomParticipantsProvider>
-        ),
-        [backstage, hlsUri, roomDetails, secondsUntilNonBreakoutEvent, withinThreeMinutesOfBroadcastEvent]
+        () =>
+            !showBackstage && roomDetails.roomPrivacyName !== RoomPrivacy_Enum.Public ? (
+                <RoomControlBar roomDetails={roomDetails} />
+            ) : undefined,
+        [roomDetails, showBackstage]
     );
 
+    const roomEventsForCurrentAttendde = useMemo(
+        () =>
+            roomEvents.filter((event) => event.eventPeople.some((person) => person.attendeeId === currentAttendee.id)),
+        [currentAttendee.id, roomEvents]
+    );
     const backStageEl = useMemo(
         () => (
             <RoomBackstage
-                backstage={backstage}
+                showBackstage={showBackstage}
                 roomName={roomDetails.name}
-                roomEvents={roomEvents}
+                roomEvents={roomEventsForCurrentAttendde}
                 currentRoomEventId={currentRoomEvent?.id}
+                setWatchStreamForEventId={setWatchStreamForEventId}
             />
         ),
-        [backstage, currentRoomEvent?.id, roomDetails.name, roomEvents]
+        [currentRoomEvent?.id, roomDetails.name, roomEventsForCurrentAttendde, showBackstage]
     );
 
+    const muteStream = shouldBeBackstage;
     const playerEl = useMemo(
         () =>
             hlsUri && withinThreeMinutesOfBroadcastEvent ? (
-                <Box display={backstage ? "none" : "block"}>
+                <Box display={showBackstage ? "none" : "block"}>
                     <ReactPlayer
                         width="100%"
                         height="auto"
@@ -275,8 +251,11 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                             },
                         }}
                         playing={
-                            (withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent) && !backstage && intendPlayStream
+                            (withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent) &&
+                            !showBackstage &&
+                            intendPlayStream
                         }
+                        muted={muteStream}
                         controls={true}
                         onPause={() => setIntendPlayStream(false)}
                         onPlay={() => setIntendPlayStream(true)}
@@ -285,7 +264,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
             ) : (
                 <></>
             ),
-        [backstage, currentRoomEvent, hlsUri, intendPlayStream, withinThreeMinutesOfBroadcastEvent]
+        [hlsUri, withinThreeMinutesOfBroadcastEvent, showBackstage, currentRoomEvent, intendPlayStream, muteStream]
     );
 
     const breakoutVonageRoomEl = useMemo(() => <BreakoutVonageRoom room={roomDetails} />, [roomDetails]);
@@ -332,7 +311,11 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                     <></>
                 )}
 
-                {!currentRoomEvent && !nextRoomEvent ? <Text p={5}>No current event in this room.</Text> : <></>}
+                {!currentRoomEvent && !nextRoomEvent && roomEvents.length > 0 ? (
+                    <Text p={5}>No current event in this room.</Text>
+                ) : (
+                    <></>
+                )}
 
                 {roomDetails.originatingContentGroup?.id &&
                 roomDetails.originatingContentGroup.contentGroupTypeName !== ContentGroupType_Enum.Sponsor ? (
@@ -391,7 +374,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
         async function fn() {
             try {
                 if (
-                    !backstage &&
+                    !showBackstage &&
                     existingCurrentRoomEvent &&
                     (existingCurrentRoomEvent.intendedRoomModeName === RoomMode_Enum.Presentation ||
                         existingCurrentRoomEvent.intendedRoomModeName === RoomMode_Enum.QAndA) &&
@@ -449,21 +432,16 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                 !roomDetails.shuffleRooms[0].reshuffleUponEnd ? "/ended" : ""
             }`}
         />
+    ) : loadingEvents && !data ? (
+        <Spinner label="Loading events" />
     ) : (
         <HStack width="100%" flexWrap="wrap" alignItems="stretch">
-            <VStack
-                textAlign="left"
-                p={2}
-                flexGrow={2.5}
-                alignItems="stretch"
-                flexBasis={0}
-                minW={["100%", "100%", "100%", "700px"]}
-                maxW="100%"
-            >
+            <VStack textAlign="left" flexGrow={2.5} alignItems="stretch" flexBasis={0} minW="100%" maxW="100%">
                 {controlBarEl}
-                {backStageEl}
 
-                {secondsUntilNonBreakoutEvent >= 180 && secondsUntilNonBreakoutEvent <= 300 ? (
+                {showDefaultBreakoutRoom &&
+                secondsUntilNonBreakoutEvent >= 180 &&
+                secondsUntilNonBreakoutEvent <= 300 ? (
                     <Alert status="warning">
                         <AlertIcon />
                         Event starting soon. Breakout room closes in {Math.round(
@@ -475,7 +453,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                     <></>
                 )}
 
-                {secondsUntilBroadcastEvent > 0 && secondsUntilBroadcastEvent < 180 ? (
+                {!showBackstage && secondsUntilBroadcastEvent > 0 && secondsUntilBroadcastEvent < 180 ? (
                     <Alert status="info">
                         <AlertIcon />
                         Event starting in {Math.round(secondsUntilBroadcastEvent)} seconds
@@ -506,20 +484,17 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                     <></>
                 )}
 
-                {playerEl}
+                {showBackstage ? backStageEl : playerEl}
 
-                {secondsUntilNonBreakoutEvent > 180 && !withinThreeMinutesOfBroadcastEvent && !backstage ? (
-                    <Box display={backstage ? "none" : "block"} bgColor={bgColour} p={2} pt={5} borderRadius="md">
+                {showDefaultBreakoutRoom ? (
+                    <Box display={showBackstage ? "none" : "block"} bgColor={bgColour}>
                         {breakoutVonageRoomEl}
                     </Box>
                 ) : (
                     <></>
                 )}
 
-                {contentEl}
-            </VStack>
-            <VStack flexGrow={1} flexBasis={0} minW={["100%", "100%", "100%", "40vw"]}>
-                {chatEl}
+                {!showBackstage ? contentEl : <></>}
             </VStack>
         </HStack>
     );

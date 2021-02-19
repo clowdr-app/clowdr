@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import usePolling from "../Generic/usePolling";
 import { usePresenceState } from "./PresenceStateProvider";
 
@@ -53,16 +53,15 @@ export default function PresenceCountProvider({
         [presenceState]
     );
 
-    return (
-        <PresenceCountContext.Provider
-            value={{
-                pageCount,
-                pageCounts,
-                observePageCount,
-                unobservePageCount,
-            }}
-        >
-            {children}
-        </PresenceCountContext.Provider>
+    const ctx = useMemo(
+        () => ({
+            pageCount,
+            pageCounts,
+            observePageCount,
+            unobservePageCount,
+        }),
+        [observePageCount, pageCount, pageCounts, unobservePageCount]
     );
+
+    return <PresenceCountContext.Provider value={ctx}>{children}</PresenceCountContext.Provider>;
 }

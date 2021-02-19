@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Box, Spinner } from "@chakra-ui/react";
+import { Box, Spinner, VStack } from "@chakra-ui/react";
 import assert from "assert";
 import React from "react";
 import { Conference, useConferenceBySlugQuery } from "../../generated/graphql";
@@ -26,6 +26,10 @@ export function useConference(): ConferenceInfo {
     return conf;
 }
 
+export function useMaybeConference(): ConferenceInfo | undefined {
+    return React.useContext(ConferenceContext);
+}
+
 export default function ConferenceProvider({
     confSlug,
     children,
@@ -48,11 +52,19 @@ export default function ConferenceProvider({
     }
 
     if (error) {
-        return <PageNotFound />;
+        return (
+            <VStack>
+                <PageNotFound />
+            </VStack>
+        );
     }
 
     if (!data || data.Conference.length === 0) {
-        return <PageNotFound />;
+        return (
+            <VStack>
+                <PageNotFound />
+            </VStack>
+        );
     }
 
     return <ConferenceContext.Provider value={data.Conference[0]}>{children}</ConferenceContext.Provider>;

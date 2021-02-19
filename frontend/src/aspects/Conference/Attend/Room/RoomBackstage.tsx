@@ -6,10 +6,13 @@ import {
     AlertTitle,
     Box,
     Button,
-    Divider,
+    Center,
     Heading,
     HStack,
+    ListItem,
     Text,
+    Tooltip,
+    UnorderedList,
     useColorModeValue,
     useToast,
     useToken,
@@ -39,15 +42,17 @@ gql`
 `;
 
 export function RoomBackstage({
-    backstage,
+    showBackstage,
     roomName,
     roomEvents,
     currentRoomEventId,
+    setWatchStreamForEventId,
 }: {
-    backstage: boolean;
+    showBackstage: boolean;
     roomName: string;
     roomEvents: readonly Room_EventSummaryFragment[];
     currentRoomEventId: string | null;
+    setWatchStreamForEventId: (eventId: string | null) => void;
 }): JSX.Element {
     const [gray100, gray900] = useToken("colors", ["gray.100", "gray.900"]);
     const backgroundColour = useColorModeValue(gray100, gray900);
@@ -100,37 +105,34 @@ export function RoomBackstage({
                         key={event.id}
                         border={`1px ${borderColour} solid`}
                         width="max-content"
+                        maxW="100%"
                         p={4}
                         alignItems="center"
                         borderRadius="md"
-                        flexWrap="wrap"
                     >
-                        <Heading as="h3" size="md" width="min-content" textAlign="right" mr={8}>
+                        <Heading as="h3" size="md" width="min-content" textAlign="right" mr={8} whiteSpace="normal">
                             {category}
                         </Heading>
+                        <VStack px={8} alignItems="left">
+                            <Heading as="h4" size="md" textAlign="left" mt={2} mb={1} whiteSpace="normal">
+                                {title}
+                            </Heading>
+
+                            <Text my={2} fontStyle="italic" whiteSpace="normal">
+                                {formatRelative(Date.parse(event.startTime), now)}
+                            </Text>
+                        </VStack>
                         <Button
                             colorScheme={isSelected ? "red" : "green"}
                             onClick={() => (isSelected ? setSelectedEventId(null) : setSelectedEventId(event.id))}
                             height="min-content"
                             py={4}
+                            whiteSpace="normal"
                         >
-                            <VStack>
-                                <Text fontSize="lg">
-                                    {isSelected ? "Leave streaming room" : "Reveal streaming room"}
-                                </Text>
-                                <Text>{title}</Text>
-                            </VStack>
-                        </Button>
-
-                        <VStack px={8} alignItems="left">
-                            <Heading as="h4" size="md" textAlign="left" mt={2} mb={1}>
-                                {title}
-                            </Heading>
-
-                            <Text my={2} fontStyle="italic">
-                                {formatRelative(Date.parse(event.startTime), now)}
+                            <Text fontSize="lg" whiteSpace="normal">
+                                {isSelected ? "Close this area" : "Open this area"}
                             </Text>
-                        </VStack>
+                        </Button>
                     </HStack>
 
                     {selectedEventId === event.id ? (
@@ -154,24 +156,17 @@ export function RoomBackstage({
             <Box mt={4}>
                 {sortedEvents.map((x) =>
                     isEventNow(x) ? (
-                        <Box key={x.id}>
-                            {makeEventEl(x, "Happening now")}
-                            <Divider my={4} borderColor={borderColour} />
-                        </Box>
+                        <Box key={x.id}>{makeEventEl(x, "Happening now")}</Box>
                     ) : isEventSoon(x) ? (
-                        <Box key={x.id}>
-                            {makeEventEl(x, "Starting soon")}
-                            <Divider my={4} borderColor={borderColour} />
-                        </Box>
+                        <Box key={x.id}>{makeEventEl(x, "Starting soon")}</Box>
                     ) : x.id === selectedEventId ? (
                         <Box key={x.id}>
-                            {makeEventEl(x, "Already joined")}
+                            {makeEventEl(x, "Ongoing")}
                             <Alert status="warning" mb={8}>
                                 <AlertIcon />
                                 This event has now finished. Once you close this room, you will not be able to rejoin
                                 it.
                             </Alert>
-                            <Divider my={4} borderColor={borderColour} />
                         </Box>
                     ) : (
                         <></>
@@ -186,7 +181,7 @@ export function RoomBackstage({
                 ) : undefined}
             </Box>
         ),
-        [borderColour, isEventNow, isEventSoon, makeEventEl, selectedEventId, sortedEvents]
+        [isEventNow, isEventSoon, makeEventEl, selectedEventId, sortedEvents]
     );
 
     const { refetch } = useRoomBackstage_GetEventBreakoutRoomQuery({
@@ -203,7 +198,7 @@ export function RoomBackstage({
         async function fn() {
             try {
                 if (
-                    backstage &&
+                    showBackstage &&
                     selectedEventId &&
                     selectedEventId === existingCurrentRoomEventId &&
                     existingCurrentRoomEventId !== currentRoomEventId
@@ -235,22 +230,24 @@ export function RoomBackstage({
 
     const sharedRoomContext = useSharedRoomContext();
 
-    return backstage ? (
-        <Box display={backstage ? "block" : "none"} background={backgroundColour} p={5}>
+    return showBackstage ? (
+        <Box display={showBackstage ? "block" : "none"} background={backgroundColour} p={5}>
             <Heading as="h3" size="lg">
-                {roomName}: Live stream
+                {roomName}: Speakers&apos; Areas
             </Heading>
             <Alert status="info" my={4}>
                 <AlertIcon />
                 <Box flex="1">
-                    <AlertTitle>Welcome to the live-stream area for {roomName}</AlertTitle>
+                    <AlertTitle>Welcome to the speakers&apos; area for {roomName}</AlertTitle>
                     <AlertDescription display="block">
-                        <p>You can join a room here to ask and answer questions live on air.</p>
-                        <p>
-                            If you are a presenter, author or session chair, keep an eye on the chat to see any
-                            questions that are asked!
-                        </p>
-                        <p>Event rooms become available to join ten minutes before the event itself starts.</p>
+                        <UnorderedList>
+                            <ListItem>Each event in this room has a speakers&apos; area.</ListItem>
+                            <ListItem>
+                                Each speakers&apos; area becomes available to join ten minutes before the associated
+                                event starts.
+                            </ListItem>
+                            <ListItem>Keep an eye on the chat for questions!</ListItem>
+                        </UnorderedList>
                     </AlertDescription>
                 </Box>
             </Alert>
@@ -265,6 +262,20 @@ export function RoomBackstage({
                     />
                 </Box>
             ) : undefined}
+            {!selectedEventId && (
+                <Center my={4}>
+                    <Tooltip label="Watching the stream while speaking is strongly discouraged. The stream lag can cause a lot of confusion. Please stay in the speakers' area. Please do not use a second device to watch the stream while you are active in the speakers' area.">
+                        <Button
+                            variant="outline"
+                            borderColor="red.600"
+                            color="red.600"
+                            onClick={() => setWatchStreamForEventId(currentRoomEventId)}
+                        >
+                            Watch stream
+                        </Button>
+                    </Tooltip>
+                </Center>
+            )}
         </Box>
     ) : (
         <></>

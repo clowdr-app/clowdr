@@ -1,4 +1,15 @@
-import { Box, BoxProps, Code, Flex, Text, Textarea, Tooltip, useToast, VStack } from "@chakra-ui/react";
+import {
+    Box,
+    BoxProps,
+    Code,
+    Flex,
+    Text,
+    Textarea,
+    Tooltip,
+    useColorModeValue,
+    useToast,
+    VStack,
+} from "@chakra-ui/react";
 import React, { useEffect, useRef, useState } from "react";
 import { Chat_MessageType_Enum } from "../../../generated/graphql";
 import { ChatSpacing, useChatConfiguration } from "../Configuration";
@@ -53,7 +64,6 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
                 title: "Failed to send",
             });
             setSendFailed(toastId ?? null);
-            composeCtx.clearSendError();
             setTimeout(() => {
                 setSendFailed(null);
             }, 1000);
@@ -82,8 +92,18 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
         setWasSending(composeCtx.isSending);
     }, [composeCtx.isSending, wasSending]);
 
+    const borderColour = useColorModeValue("black", "white");
     return (
-        <VStack spacing={0} justifyContent="center" alignItems="flex-start" pos="relative" p="1px" {...rest}>
+        <VStack
+            spacing={0}
+            justifyContent="center"
+            alignItems="flex-start"
+            pos="relative"
+            p="1px"
+            borderTop="1px solid"
+            borderColor={borderColour}
+            {...rest}
+        >
             <Box pos="relative" w="100%" h="auto">
                 <Textarea
                     ref={composeBoxRef}

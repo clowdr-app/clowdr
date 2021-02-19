@@ -11,61 +11,6 @@ interface Result {
     secondsUntilZoomEvent: number;
 }
 
-// gql`
-//     query CurrentRoomData_GetEvents() {
-//         Event {
-//         ...CurrentRoomData_RoomEventSummary
-//         }
-//     }
-
-//     fragment CurrentRoomData_RoomEventSummary on Event {
-//         id
-//         conferenceId
-//         startTime
-//         name
-//         endTime
-//         intendedRoomModeName
-//         eventPeople {
-//             id
-//             roleName
-//             attendee {
-//                 displayName
-//                 id
-//                 userId
-//             }
-//         }
-//         contentGroup {
-//             ...Room_ContentGroupData
-//         }
-//     }
-
-//     fragment CurrentRoomEvent_ContentGroupData on ContentGroup {
-//         id
-//         title
-//         contentGroupTypeName
-//         chatId
-//         chat {
-//             room {
-//                 id
-//                 name
-//             }
-//         }
-//         contentItems(where: { isHidden: { _eq: false } }) {
-//             ...Room_ContentItemData
-//         }
-//         people(order_by: { priority: asc }) {
-//             ...ContentPersonData
-//         }
-//     }
-
-//     fragment CurrentRoomEvent_ContentItemData on ContentItem {
-//         id
-//         name
-//         contentTypeName
-//         data
-//     }
-// `;
-
 export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragment[]): Result {
     const broadcastEvents = useMemo(
         () =>

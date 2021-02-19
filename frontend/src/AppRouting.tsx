@@ -18,7 +18,7 @@ import CurrentUserPage from "./aspects/Users/CurrentUser/CurrentUserPage";
 import ExistingUserLandingPage from "./aspects/Users/ExistingUser/LandingPage";
 import NewUserLandingPage from "./aspects/Users/NewUser/LandingPage";
 
-export default function Routing(): JSX.Element {
+export default function Routing({ rootUrl }: { rootUrl?: string }): JSX.Element {
     return (
         <Switch>
             {/* <Route path="/">
@@ -132,14 +132,7 @@ export default function Routing(): JSX.Element {
 
             <ProtectedRoute altIfNotAuthed={<Redirect to="/" />} exact path="/googleoauth2" component={GoogleOAuth} />
 
-            <Route
-                path="/conference/:confSlug"
-                component={(
-                    props: RouteComponentProps<{
-                        confSlug: string;
-                    }>
-                ) => <ConferenceRoutes rootUrl={props.match.url} confSlug={props.match.params.confSlug} />}
-            />
+            {rootUrl && <ConferenceRoutes rootUrl={rootUrl} />}
 
             <Route
                 path="/upload/:id/:token"

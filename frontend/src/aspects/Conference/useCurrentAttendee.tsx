@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Box, Spinner } from "@chakra-ui/react";
+import { Box, Spinner, VStack } from "@chakra-ui/react";
 import assert from "assert";
 import React, { ReactNode, ReactNodeArray } from "react";
 import { Maybe, useAttendeeByUserIdConferenceIdQuery } from "../../generated/graphql";
@@ -106,14 +106,20 @@ function CurrentAttendeeProviderInner({
 
     if (loading && !data) {
         return (
-            <Box>
-                <Spinner />
-            </Box>
+            <VStack>
+                <Box>
+                    <Spinner />
+                </Box>
+            </VStack>
         );
     }
 
     if (error) {
-        return <PageNotFound />;
+        return (
+            <VStack>
+                <PageNotFound />
+            </VStack>
+        );
     }
 
     return (

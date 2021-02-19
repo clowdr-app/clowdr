@@ -5,6 +5,7 @@ import React, { useEffect, useRef } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import {
     Chat_MessageType_Enum,
+    SidebarReadUpToIndexFragmentDoc,
     useSetNotifiedUpToIndexMutation,
     useSubdMessages_2021_01_21T08_24Subscription,
     useSubscribedChatsQuery,
@@ -23,7 +24,7 @@ gql`
     }
 
     subscription SubdMessages_2021_01_21T08_24($chatIds: [uuid!]!) {
-        chat_Message(limit: 1, order_by: { id: desc }, where: { chatId: { _in: $chatIds } }) {
+        chat_Message(limit: 5, order_by: { id: desc }, where: { chatId: { _in: $chatIds } }) {
             id
             chatId
             message
@@ -41,17 +42,22 @@ gql`
         ) {
             chatId
             attendeeId
+            unreadCount
             notifiedUpToMessageId
         }
     }
 `;
 
-export function ChatNotificationsProvider_WithAttendee({
-    children,
+function ChatNotificationsProvider_WithAttendee({
     attendeeId,
+    suppressChatId,
+    openChat,
 }: {
-    children: React.ReactNode | React.ReactNodeArray;
     attendeeId: string;
+    suppressChatId: React.MutableRefObject<string | null>;
+    openChat: React.MutableRefObject<
+        ((chat: { id: string; title: string; roomId: string | undefined }) => void) | null
+    >;
 }): JSX.Element {
     const currentAttendee = useCurrentAttendee();
     const subscriptionsQ = useSubscribedChatsQuery({
@@ -62,27 +68,31 @@ export function ChatNotificationsProvider_WithAttendee({
     });
 
     if (!subscriptionsQ.data) {
-        return <>{children}</>;
+        return <></>;
     }
 
     return (
         <ChatNotificationsProvider_WithAttendeeInner
             attendeeId={attendeeId}
             chatIds={subscriptionsQ.data.chat_Subscription.map((x) => x.chatId)}
-        >
-            {children}
-        </ChatNotificationsProvider_WithAttendeeInner>
+            suppressChatId={suppressChatId}
+            openChat={openChat}
+        />
     );
 }
 
-export function ChatNotificationsProvider_WithAttendeeInner({
-    children,
+function ChatNotificationsProvider_WithAttendeeInner({
     attendeeId,
     chatIds,
+    suppressChatId,
+    openChat,
 }: {
-    children: React.ReactNode | React.ReactNodeArray;
     attendeeId: string;
     chatIds: string[];
+    suppressChatId: React.MutableRefObject<string | null>;
+    openChat: React.MutableRefObject<
+        ((chat: { id: string; title: string; roomId: string | undefined }) => void) | null
+    >;
 }): JSX.Element {
     const currentAttendee = useCurrentAttendee();
     const subscription = useSubdMessages_2021_01_21T08_24Subscription({
@@ -106,13 +116,26 @@ export function ChatNotificationsProvider_WithAttendeeInner({
                     for (const subscription of data) {
                         const latestMessage = subscription;
                         const latestIndex = latestIndices.current?.get(subscription.chatId);
-                        if (!latestIndex || latestIndex !== latestMessage.id) {
+                        if (!latestIndex || latestIndex < latestMessage.id) {
+                            latestIndices.current?.set(subscription.chatId, latestMessage.id);
+
                             setTimeout(() => {
                                 setNotifiedUpTo({
                                     variables: {
                                         attendeeId,
                                         chatId: latestMessage.chatId,
                                         msgId: latestMessage.id,
+                                    },
+                                    update: (cache, { data: _data }) => {
+                                        if (_data?.insert_chat_ReadUpToIndex_one) {
+                                            const data = _data.insert_chat_ReadUpToIndex_one;
+                                            cache.writeFragment({
+                                                data,
+                                                id: cache.identify(data),
+                                                fragment: SidebarReadUpToIndexFragmentDoc,
+                                                fragmentName: "SidebarReadUpToIndex",
+                                            });
+                                        }
                                     },
                                 });
                             }, Math.random() * 2500);
@@ -122,7 +145,7 @@ export function ChatNotificationsProvider_WithAttendeeInner({
 
                             if (
                                 currentAttendee.id !== latestMessage.senderId &&
-                                (!chatPath || !location.pathname.endsWith(chatPath)) &&
+                                latestMessage.chatId !== suppressChatId.current &&
                                 latestMessage.type !== Chat_MessageType_Enum.DuplicationMarker &&
                                 latestMessage.type !== Chat_MessageType_Enum.Emote
                             ) {
@@ -135,7 +158,7 @@ export function ChatNotificationsProvider_WithAttendeeInner({
                                         return (
                                             <VStack
                                                 alignItems="flex-start"
-                                                background="black"
+                                                background="purple.700"
                                                 color="gray.50"
                                                 w="auto"
                                                 h="auto"
@@ -193,10 +216,13 @@ export function ChatNotificationsProvider_WithAttendeeInner({
                                                     {chatPath ? (
                                                         <Button
                                                             colorScheme="green"
-                                                            variant="outline"
                                                             onClick={() => {
                                                                 props.onClose();
-                                                                history.push(chatPath);
+                                                                openChat.current?.({
+                                                                    id: latestMessage.chatId,
+                                                                    title: latestMessage.chatTitle,
+                                                                    roomId: undefined,
+                                                                });
                                                             }}
                                                         >
                                                             Go to chat
@@ -205,7 +231,6 @@ export function ChatNotificationsProvider_WithAttendeeInner({
                                                     {chatPath ? (
                                                         <Button
                                                             colorScheme="blue"
-                                                            variant="outline"
                                                             onClick={() => {
                                                                 props.onClose();
                                                                 window.open(chatPath, "_blank");
@@ -222,16 +247,9 @@ export function ChatNotificationsProvider_WithAttendeeInner({
                             }
                         }
                     }
-                }
-
-                if (!latestIndices.current) {
+                } else {
                     latestIndices.current = new Map();
                 }
-                data.forEach((x) => {
-                    if (x) {
-                        latestIndices.current?.set(x.chatId, x.id);
-                    }
-                });
             }
         })();
     }, [
@@ -240,28 +258,36 @@ export function ChatNotificationsProvider_WithAttendeeInner({
         currentAttendee.id,
         history,
         location.pathname,
+        openChat,
         setNotifiedUpTo,
         subscription.data?.chat_Message,
+        suppressChatId,
         toast,
     ]);
 
-    return <>{children}</>;
+    return <></>;
 }
 
 export function ChatNotificationsProvider({
-    children,
+    suppressChatId,
+    openChat,
 }: {
-    children: React.ReactNode | React.ReactNodeArray;
+    suppressChatId: React.MutableRefObject<string | null>;
+    openChat: React.MutableRefObject<
+        ((chat: { id: string; title: string; roomId: string | undefined }) => void) | null
+    >;
 }): JSX.Element {
     const attendee = useMaybeCurrentAttendee();
 
     if (attendee) {
         return (
-            <ChatNotificationsProvider_WithAttendee attendeeId={attendee.id}>
-                {children}
-            </ChatNotificationsProvider_WithAttendee>
+            <ChatNotificationsProvider_WithAttendee
+                attendeeId={attendee.id}
+                suppressChatId={suppressChatId}
+                openChat={openChat}
+            />
         );
     } else {
-        return <>{children}</>;
+        return <></>;
     }
 }

@@ -1,4 +1,4 @@
-import { Text, VStack } from "@chakra-ui/react";
+import { chakra, Flex, HStack, Text, VStack } from "@chakra-ui/react";
 import { formatRelative } from "date-fns";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
@@ -6,32 +6,21 @@ import {
     ContentGroupDataFragment,
     ContentGroupEventFragment,
     ContentGroupEventsFragment,
-    RoomMode_Enum,
+    ContentGroupPage_ContentGroupRoomsFragment,
+    ContentGroupType_Enum,
 } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import usePolling from "../../../Generic/usePolling";
+import FAIcon from "../../../Icons/FAIcon";
 import PageCountText from "../../../Presence/PageCountText";
 import { useConference } from "../../useConference";
-
-function eventType(eventType: RoomMode_Enum): string {
-    switch (eventType) {
-        case RoomMode_Enum.Breakout:
-            return "breakout";
-        case RoomMode_Enum.Prerecorded:
-            return "pre-recorded video";
-        case RoomMode_Enum.Presentation:
-            return "presentation";
-        case RoomMode_Enum.QAndA:
-            return "Q&A session";
-        case RoomMode_Enum.Zoom:
-            return "Zoom meeting";
-    }
-}
 
 export function ContentGroupLive({
     contentGroupData,
 }: {
-    contentGroupData: ContentGroupDataFragment & ContentGroupEventsFragment;
+    contentGroupData: ContentGroupDataFragment &
+        ContentGroupEventsFragment &
+        ContentGroupPage_ContentGroupRoomsFragment;
 }): JSX.Element {
     const [liveEvents, setLiveEvents] = useState<ContentGroupEventFragment[] | null>(null);
     const [nextEvent, setNextEvent] = useState<ContentGroupEventFragment | null>(null);
@@ -53,18 +42,47 @@ export function ContentGroupLive({
     usePolling(computeLiveEvent, 5000, true);
     useEffect(() => computeLiveEvent(), [computeLiveEvent]);
 
-    const currentRoom = useMemo(
-        () =>
-            contentGroupData.chat?.room && contentGroupData.chat?.room.length > 0
-                ? contentGroupData.chat?.room[0]
-                : undefined,
-        [contentGroupData.chat?.room]
-    );
+    const currentRoom = useMemo(() => (contentGroupData.rooms.length > 0 ? contentGroupData.rooms[0] : undefined), [
+        contentGroupData.rooms,
+    ]);
 
     const conference = useConference();
 
     return (
-        <VStack alignItems="stretch">
+        <Flex mb={2} flexWrap="wrap">
+            {currentRoom ? (
+                <LinkButton
+                    width="100%"
+                    to={`/conference/${conference.slug}/room/${currentRoom.id}`}
+                    size="lg"
+                    colorScheme="blue"
+                    height="auto"
+                    py={2}
+                    mb={2}
+                    linkProps={{ mr: 2 }}
+                >
+                    <VStack spacing={0}>
+                        <Text>
+                            {contentGroupData.contentGroupTypeName === ContentGroupType_Enum.Sponsor ? (
+                                <>
+                                    <FAIcon iconStyle="s" icon="video" mr={2} fontSize="90%" verticalAlign="middle" />{" "}
+                                    <chakra.span verticalAlign="middle" pb={0.7}>
+                                        Booth
+                                    </chakra.span>
+                                </>
+                            ) : (
+                                <>
+                                    <FAIcon iconStyle="s" icon="video" mr={2} fontSize="90%" verticalAlign="middle" />{" "}
+                                    <chakra.span verticalAlign="middle" pb={0.7}>
+                                        Discussion room
+                                    </chakra.span>
+                                </>
+                            )}
+                        </Text>
+                        <PageCountText path={`/conference/${conference.slug}/room/${currentRoom.id}`} />
+                    </VStack>
+                </LinkButton>
+            ) : undefined}
             {liveEvents?.map((event) => (
                 <LinkButton
                     width="100%"
@@ -74,12 +92,14 @@ export function ContentGroupLive({
                     colorScheme="red"
                     height="auto"
                     py={2}
+                    mb={2}
+                    linkProps={{ mr: 2 }}
                 >
                     <VStack spacing={0}>
-                        <Text>Live now ({eventType(event.intendedRoomModeName)})</Text>
-                        <Text mt={0} fontSize="sm">
-                            {event.room.name}
-                        </Text>
+                        <FAIcon iconStyle="s" icon="calendar" mr={2} fontSize="90%" verticalAlign="middle" />{" "}
+                        <chakra.span verticalAlign="middle" pb={0.7}>
+                            Live now
+                        </chakra.span>
                     </VStack>
                 </LinkButton>
             ))}
@@ -91,35 +111,21 @@ export function ContentGroupLive({
                     colorScheme="teal"
                     height="auto"
                     py={2}
+                    mb={2}
                 >
-                    <VStack spacing={0}>
-                        <Text>Next event ({eventType(nextEvent.intendedRoomModeName)})</Text>
-                        <Text mt={0} fontSize="sm">
-                            {formatRelative(Date.parse(nextEvent.startTime), now)}
-                        </Text>
-                    </VStack>
+                    <HStack spacing={2}>
+                        <FAIcon iconStyle="s" icon="calendar" mr={2} fontSize="90%" verticalAlign="middle" />{" "}
+                        <chakra.span verticalAlign="middle" pb={0.7}>
+                            Next event
+                        </chakra.span>
+                        <chakra.span verticalAlign="middle" pb={0.7} fontSize="sm" fontStyle="italic">
+                            ({formatRelative(Date.parse(nextEvent.startTime), now)})
+                        </chakra.span>
+                    </HStack>
                 </LinkButton>
             ) : (
                 <></>
             )}
-            {(!liveEvents || liveEvents.length === 0) && currentRoom ? (
-                <LinkButton
-                    width="100%"
-                    to={`/conference/${conference.slug}/room/${currentRoom.id}`}
-                    size="lg"
-                    colorScheme="blue"
-                    height="auto"
-                    py={2}
-                >
-                    <VStack spacing={0}>
-                        <Text>Ongoing breakout room</Text>
-                        <Text mt={0} fontSize="sm">
-                            {currentRoom.name}
-                        </Text>
-                        <PageCountText path={`/conference/${conference.slug}/room/${currentRoom.id}`} />
-                    </VStack>
-                </LinkButton>
-            ) : undefined}
-        </VStack>
+        </Flex>
     );
 }

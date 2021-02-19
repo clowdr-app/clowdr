@@ -1,3 +1,4 @@
+import { gql } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Accordion,
@@ -7,8 +8,8 @@ import {
     AccordionPanel,
     Box,
     Button,
+    ButtonGroup,
     Code,
-    Flex,
     FormControl,
     FormHelperText,
     FormLabel,
@@ -20,14 +21,17 @@ import {
     MenuList,
     Switch,
     Text,
+    useToast,
 } from "@chakra-ui/react";
 import { ItemBaseTypes } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
-import React from "react";
-import { ContentType_Enum } from "../../../../generated/graphql";
+import React, { useCallback, useState } from "react";
+import { useHistory } from "react-router-dom";
+import { ContentType_Enum, useContentGroup_CreateRoomMutation } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import type { SecondaryEditorComponents, SecondaryEditorFooterButton } from "../../../CRUDTable/CRUDTable";
 import FAIcon from "../../../Icons/FAIcon";
+import { useConference } from "../../useConference";
 import {
     GroupHallwaysEditorModal,
     GroupPeopleEditorModal,
@@ -36,6 +40,60 @@ import {
 import type { OriginatingDataDescriptor } from "../Shared/Types";
 import { GroupTemplates, ItemBaseTemplates } from "./Templates";
 import type { ContentDescriptor, ContentGroupDescriptor, ContentPersonDescriptor, HallwayDescriptor } from "./Types";
+
+gql`
+    mutation ContentGroup_CreateRoom($conferenceId: uuid!, $contentGroupId: uuid!) {
+        createContentGroupRoom(conferenceId: $conferenceId, contentGroupId: $contentGroupId) {
+            roomId
+            message
+        }
+    }
+`;
+
+function CreateRoomButton({ group }: { group: ContentGroupDescriptor | undefined }) {
+    const conference = useConference();
+    const toast = useToast();
+    const history = useHistory();
+    const [createBreakoutMutation] = useContentGroup_CreateRoomMutation();
+    const [creatingBreakout, setCreatingBreakout] = useState<boolean>(false);
+    const createBreakout = useCallback(async () => {
+        if (!group?.id) {
+            return;
+        }
+
+        try {
+            setCreatingBreakout(true);
+            const { data } = await createBreakoutMutation({
+                variables: {
+                    conferenceId: conference.id,
+                    contentGroupId: group.id,
+                },
+            });
+
+            if (!data?.createContentGroupRoom || !data.createContentGroupRoom.roomId) {
+                throw new Error(`No data returned: ${data?.createContentGroupRoom?.message}`);
+            }
+
+            const roomId = data.createContentGroupRoom.roomId;
+
+            // Wait so that breakout session has a chance to be created
+            setTimeout(() => history.push(`/conference/${conference.slug}/room/${roomId}`), 2000);
+        } catch (e) {
+            toast({
+                status: "error",
+                title: "Failed to create room.",
+                description: e?.message,
+            });
+            setCreatingBreakout(false);
+        }
+    }, [conference.id, conference.slug, createBreakoutMutation, group?.id, history, toast]);
+
+    return (
+        <Button isLoading={creatingBreakout} onClick={createBreakout}>
+            Create discussion room
+        </Button>
+    );
+}
 
 export function ContentGroupSecondaryEditor(
     allGroupsMap: Map<string, ContentGroupDescriptor>,
@@ -79,7 +137,7 @@ export function ContentGroupSecondaryEditor(
         const addContentMenu = (
             <>
                 <Menu size="sm">
-                    <MenuButton m={1} flex="0 0 auto" as={Button} rightIcon={<ChevronDownIcon />}>
+                    <MenuButton size="sm" my={0} flex="0 0 auto" as={Button} rightIcon={<ChevronDownIcon />}>
                         Add content
                     </MenuButton>
                     <MenuList maxH="20vh" overflowY="auto">
@@ -117,7 +175,7 @@ export function ContentGroupSecondaryEditor(
                     </MenuList>
                 </Menu>
                 <Menu size="sm">
-                    <MenuButton m={1} flex="0 0 auto" as={Button} rightIcon={<ChevronDownIcon />}>
+                    <MenuButton size="sm" my={0} flex="0 0 auto" as={Button} rightIcon={<ChevronDownIcon />}>
                         Add uploadable
                     </MenuButton>
                     <MenuList maxH="20vh" overflowY="auto">
@@ -167,24 +225,41 @@ export function ContentGroupSecondaryEditor(
             </>
         );
         const menu = (
-            <Flex flexWrap="wrap">
+            <ButtonGroup flexWrap="wrap" size="sm" mb={2}>
                 <LinkButton
+                    size="sm"
                     to={`/conference/${conferenceSlug}/item/${group.id}`}
                     colorScheme="green"
-                    mb={4}
                     isExternal={true}
                     aria-label={`View ${group.title} in the attendee view`}
                     title={`View ${group.title} in the attendee view`}
                     linkProps={{
                         flex: "0 0 auto",
-                        margin: 1,
                     }}
                 >
                     <FAIcon icon="link" iconStyle="s" mr={3} />
                     View item
                 </LinkButton>
+                {group.rooms.length === 0 ? (
+                    <CreateRoomButton group={group} />
+                ) : (
+                    <LinkButton
+                        size="sm"
+                        to={`/conference/${conferenceSlug}/room/${group.rooms[0].id}`}
+                        colorScheme="green"
+                        isExternal={true}
+                        aria-label={"View discussion room in the attendee view"}
+                        title={"View discussion room in the attendee view"}
+                        linkProps={{
+                            flex: "0 0 auto",
+                        }}
+                    >
+                        <FAIcon icon="link" iconStyle="s" mr={3} />
+                        View discussion room
+                    </LinkButton>
+                )}
                 {addContentMenu}
-            </Flex>
+            </ButtonGroup>
         );
 
         const groupTemplate = GroupTemplates[group.typeName];
@@ -306,7 +381,7 @@ export function ContentGroupSecondaryEditor(
                     }
 
                     itemElements.push(
-                        <AccordionItem key={`row-${itemType}`}>
+                        <AccordionItem key={`row-${item.id}`}>
                             <AccordionButton>
                                 <Box flex="1" textAlign="left">
                                     {accordianTitle}
@@ -442,7 +517,7 @@ export function ContentGroupSecondaryEditor(
                 }
 
                 itemElements.push(
-                    <AccordionItem key={`row-${itemType}`}>
+                    <AccordionItem key={`row-${item?.id ?? requiredItem.id}`}>
                         <AccordionButton>
                             <Box flex="1" textAlign="left">
                                 (Uploadable) {accordianTitle}

@@ -6,18 +6,24 @@ import { useMaybeCurrentAttendee } from "../Conference/useCurrentAttendee";
 import { useRestorableState } from "../Generic/useRestorableState";
 import { ChatConfiguration, ChatConfigurationProvider, ChatSources, ChatSpacing } from "./Configuration";
 import { ChatFrame } from "./Frame/ChatFrame";
-import ReflectionInfoModalProvider from "./ReflectionInfoModal";
 import { SelectedChatProvider } from "./SelectedChat";
 import type { EmoteMessageData } from "./Types/Messages";
 
 export interface ChatProps {
+    customHeadingElements?: React.ReactNodeArray;
     sources: ChatSources;
 
     onProfileModalOpened?: (attendeeId: string, close: () => void) => void;
     onEmoteReceived?: (emote: EmoteMessageData) => void;
 }
 
-export function Chat({ sources, onProfileModalOpened, onEmoteReceived, ...rest }: ChatProps & BoxProps): JSX.Element {
+export function Chat({
+    customHeadingElements,
+    sources,
+    onProfileModalOpened,
+    onEmoteReceived,
+    ...rest
+}: ChatProps & BoxProps): JSX.Element {
     const currentAttendee = useMaybeCurrentAttendee();
     const [spacing, setSpacing] = useRestorableState<ChatSpacing>(
         "clowdr-chatSpacing",
@@ -35,6 +41,8 @@ export function Chat({ sources, onProfileModalOpened, onEmoteReceived, ...rest }
     const fontSizeMax = 28;
     const config = useMemo<ChatConfiguration>(
         () => ({
+            customHeadingElements,
+
             sources,
             fontSizeRange: {
                 min: fontSizeMin,
@@ -82,14 +90,14 @@ export function Chat({ sources, onProfileModalOpened, onEmoteReceived, ...rest }
                     min: 1,
                     max: 1120,
                 },
-                sendCooloffPeriodMs: 2000,
+                sendCooloffPeriodMs: 0,
                 editTimeoutSeconds: 60, // Allow 60s to start editing a sent message before locking out
                 showProfilePictures: true,
                 showPlaceholderProfilePictures: true,
                 enableProfileModal: true,
             },
             emoteConfig: {
-                sendCooloffPeriodMs: 10000,
+                sendCooloffPeriodMs: 3000,
                 editTimeoutSeconds: 0, // Once an emote is sent, don't allow it to be edited
             },
             reactionConfig: {
@@ -103,7 +111,7 @@ export function Chat({ sources, onProfileModalOpened, onEmoteReceived, ...rest }
                     min: 10,
                     max: 1120,
                 },
-                sendCooloffPeriodMs: 10000,
+                sendCooloffPeriodMs: 5000,
                 editTimeoutSeconds: 30, // Allow 30s to start editing a sent message before locking out
             },
             answerConfig: {
@@ -115,7 +123,7 @@ export function Chat({ sources, onProfileModalOpened, onEmoteReceived, ...rest }
                 editTimeoutSeconds: 0, // Do not allow editing of answers
             },
             pollConfig: {
-                sendCooloffPeriodMs: 20000,
+                sendCooloffPeriodMs: 10000,
                 editTimeoutSeconds: 60, // Allow 60s to start editing a sent message before locking out
                 questionLength: {
                     min: 10,
@@ -146,6 +154,7 @@ export function Chat({ sources, onProfileModalOpened, onEmoteReceived, ...rest }
         [
             currentAttendee?.displayName,
             currentAttendee?.id,
+            customHeadingElements,
             fontSize,
             onEmoteReceived,
             onProfileModalOpened,
@@ -158,13 +167,13 @@ export function Chat({ sources, onProfileModalOpened, onEmoteReceived, ...rest }
 
     return (
         <RequireAtLeastOnePermissionWrapper permissions={[Permission_Enum.ConferenceViewAttendees]}>
-            <ReflectionInfoModalProvider>
-                <ChatConfigurationProvider config={config}>
-                    <SelectedChatProvider>
-                        <ChatFrame {...rest} />
-                    </SelectedChatProvider>
-                </ChatConfigurationProvider>
-            </ReflectionInfoModalProvider>
+            {/* <ReflectionInfoModalProvider> */}
+            <ChatConfigurationProvider config={config}>
+                <SelectedChatProvider>
+                    <ChatFrame {...rest} />
+                </SelectedChatProvider>
+            </ChatConfigurationProvider>
+            {/* </ReflectionInfoModalProvider> */}
         </RequireAtLeastOnePermissionWrapper>
     );
 }

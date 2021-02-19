@@ -4,7 +4,7 @@ import { getMainDefinition } from "@apollo/client/utilities";
 import { setContext } from "@apollo/link-context";
 import { useAuth0 } from "@auth0/auth0-react";
 import { Mutex } from "async-mutex";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import AppLoadingScreen from "../../AppLoadingScreen";
 import { PresenceStateProvider } from "../Presence/PresenceStateProvider";
@@ -226,6 +226,9 @@ async function createApolloClient(
             chat_ReadUpToIndex: {
                 keyFields: ["chatId"],
             },
+            AttendeeProfile: {
+                keyFields: ["attendeeId"],
+            },
         },
     });
 
@@ -338,13 +341,19 @@ function ApolloCustomProviderInner({
         },
         [connect]
     );
+    const ctx: ApolloCustomCtx = useMemo(
+        () => ({
+            reconnect,
+        }),
+        [reconnect]
+    );
 
     if (!client) {
         return <AppLoadingScreen />;
     }
 
     return (
-        <ApolloCustomContext.Provider value={{ reconnect }}>
+        <ApolloCustomContext.Provider value={ctx}>
             {presenceToken ? (
                 <PresenceStateProvider token={presenceToken}>
                     <ApolloProvider client={client}>{children}</ApolloProvider>

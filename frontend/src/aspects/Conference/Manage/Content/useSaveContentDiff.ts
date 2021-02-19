@@ -149,6 +149,9 @@ gql`
             ...ContentGroupPersonInfo
         }
         originatingDataId
+        rooms(where: { originatingEventId: { _is_null: true } }, limit: 1, order_by: { created_at: asc }) {
+            id
+        }
     }
 
     fragment TagInfo on Tag {
@@ -168,7 +171,7 @@ gql`
     }
 
     query SelectAllContent($conferenceId: uuid!) {
-        ContentGroup(where: { conferenceId: { _eq: $conferenceId } }) {
+        ContentGroup(where: { conferenceId: { _eq: $conferenceId }, contentGroupTypeName: { _neq: SPONSOR } }) {
             ...ContentGroupFullNestedInfo
         }
         ContentPerson(where: { conferenceId: { _eq: $conferenceId } }) {

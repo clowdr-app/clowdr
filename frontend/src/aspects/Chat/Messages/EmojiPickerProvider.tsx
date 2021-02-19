@@ -1,6 +1,6 @@
 import { Modal, ModalBody, ModalContent, ModalOverlay, Portal, useDisclosure } from "@chakra-ui/react";
 import type { EmojiData } from "emoji-mart";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { OutPortal } from "react-reverse-portal";
 import { useEmojiMart } from "../../Emoji/EmojiMartContext";
 
@@ -37,9 +37,10 @@ export default function EmojiPickerProvider({
         },
         [emojiMart, onClose, onOpen]
     );
+    const ctx = useMemo(() => ({ open }), [open]);
 
     return (
-        <EmojiPickerContext.Provider value={{ open }}>
+        <EmojiPickerContext.Provider value={ctx}>
             {children}
             <Portal>
                 <Modal

@@ -1,17 +1,5 @@
-import {
-    Box,
-    Button,
-    Center,
-    chakra,
-    Divider,
-    Flex,
-    HStack,
-    Tag,
-    Text,
-    useColorModeValue,
-    VStack,
-} from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import { Button, Center, Flex, HStack, Text, useColorModeValue, VStack } from "@chakra-ui/react";
+import React, { useMemo } from "react";
 import { Twemoji } from "react-emoji-render";
 import {
     AttendeeDataFragment,
@@ -19,76 +7,72 @@ import {
     Chat_MessageType_Enum,
     Chat_ReactionType_Enum,
 } from "../../../generated/graphql";
-import { defaultOutline_AsBoxShadow } from "../../Chakra/ChakraCustomProvider";
-import { LinkButton } from "../../Chakra/LinkButton";
-import { useAttendeesContext } from "../../Conference/AttendeesContext";
-import { useConference } from "../../Conference/useConference";
+import { useAttendee } from "../../Conference/AttendeesContext";
 import { roundUpToNearest } from "../../Generic/MathUtils";
-import FAIcon from "../../Icons/FAIcon";
 import { Markdown } from "../../Text/Markdown";
 import { MessageTypeIndicator } from "../Compose/MessageTypeIndicator";
 import { ChatSpacing, useChatConfiguration } from "../Configuration";
-import { useReflectionInfoModal } from "../ReflectionInfoModal";
-import type { DuplicationMarkerMessageData } from "../Types/Messages";
 import MessageControls from "./MessageControls";
 import PollOptions from "./PollOptions";
 import ProfileBox from "./ProfileBox";
 import ReactionsList from "./ReactionsList";
 import { useReceiveMessageQueries } from "./ReceiveMessageQueries";
 
-function ReflectionButton({ children }: { children: React.ReactNode | React.ReactNodeArray }): JSX.Element {
-    const infoModal = useReflectionInfoModal();
-    return (
-        <Button
-            spacing={0}
-            alignItems="stretch"
-            fontSize="inherit"
-            p={0}
-            m={0}
-            h="auto"
-            minH="unset"
-            minW="unset"
-            opacity={0.7}
-            _hover={{
-                opacity: 1,
-            }}
-            _focus={{
-                opacity: 1,
-                boxShadow: defaultOutline_AsBoxShadow,
-            }}
-            _active={{
-                opacity: 1,
-                boxShadow: defaultOutline_AsBoxShadow,
-            }}
-            onClick={infoModal}
-        >
-            <Tag colorScheme="orange" variant="solid" borderRightRadius={0} fontSize="inherit">
-                {children}
-            </Tag>
-            <Tag
-                aria-label="Find out about chat reflection"
-                color="white"
-                backgroundColor="blue.700"
-                borderLeftRadius={0}
-                fontSize="inherit"
-                py={2}
-            >
-                <FAIcon iconStyle="s" icon="info-circle" />
-            </Tag>
-        </Button>
-    );
-}
+// function ReflectionButton({ children }: { children: React.ReactNode | React.ReactNodeArray }): JSX.Element {
+//     const infoModal = useReflectionInfoModal();
+//     return (
+//         <Button
+//             spacing={0}
+//             alignItems="stretch"
+//             fontSize="inherit"
+//             p={0}
+//             m={0}
+//             h="auto"
+//             minH="unset"
+//             minW="unset"
+//             opacity={0.7}
+//             _hover={{
+//                 opacity: 1,
+//             }}
+//             _focus={{
+//                 opacity: 1,
+//                 boxShadow: defaultOutline_AsBoxShadow,
+//             }}
+//             _active={{
+//                 opacity: 1,
+//                 boxShadow: defaultOutline_AsBoxShadow,
+//             }}
+//             onClick={infoModal}
+//         >
+//             <Tag colorScheme="orange" variant="solid" borderRightRadius={0} fontSize="inherit">
+//                 {children}
+//             </Tag>
+//             <Tag
+//                 aria-label="Find out about chat reflection"
+//                 color="white"
+//                 backgroundColor="blue.700"
+//                 borderLeftRadius={0}
+//                 fontSize="inherit"
+//                 py={2}
+//             >
+//                 <FAIcon iconStyle="s" icon="info-circle" />
+//             </Tag>
+//         </Button>
+//     );
+// }
 
 function MessageBody({
     message,
     attendee,
+    subscribeToReactions,
 }: {
     message: ChatMessageDataFragment;
     attendee: AttendeeDataFragment | null;
+    subscribeToReactions: boolean;
 }): JSX.Element {
     const config = useChatConfiguration();
     const messages = useReceiveMessageQueries();
-    const conference = useConference();
+    // const conference = useConference();
 
     const scaleFactor = config.spacing / ChatSpacing.RELAXED;
 
@@ -97,88 +81,21 @@ function MessageBody({
     const pictureSizeRange = pictureSizeMaxPx - pictureSizeMinPx;
     const pictureSize = Math.round(pictureSizeMinPx + pictureSizeRange * scaleFactor);
 
-    const createdAt = new Date(message.created_at);
+    const createdAt = useMemo(() => new Date(message.created_at), [message.created_at]);
     const timeColour = useColorModeValue("gray.600", "gray.400");
-    const timeFormat: Intl.DateTimeFormatOptions = {
-        weekday: "short",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-    };
+    const timeFormat: Intl.DateTimeFormatOptions = useMemo(
+        () => ({
+            weekday: "short",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+        }),
+        []
+    );
     const smallFontSize = Math.max(config.fontSizeRange.value * 0.7, 10);
 
-    if (message.type === Chat_MessageType_Enum.DuplicationMarker) {
-        const data = message.data as DuplicationMarkerMessageData;
-        return (
-            <Flex
-                w="100%"
-                spacing={0}
-                fontSize={smallFontSize * 1.1}
-                flexDir={data.type === "start" ? "column" : "column-reverse"}
-                alignItems="center"
-            >
-                <Divider my={config.spacing} borderColor="orange.400" w="100%" height="1px" />
-                {data.type === "start" ? (
-                    <ReflectionButton>Reflection started</ReflectionButton>
-                ) : (
-                    <ReflectionButton>Reflection ended</ReflectionButton>
-                )}
-                <HStack alignItems="stretch" justifyContent="center" py={0} px={1} my={2} opacity={0.8}>
-                    <LinkButton
-                        flex="0 0 min-content"
-                        backgroundColor="gray.700"
-                        p={0}
-                        m={0}
-                        minH={0}
-                        h="100%"
-                        borderRadius={5}
-                        fontFamily="monospace"
-                        noOfLines={1}
-                        to={`/conference/${conference.slug}/room/${data.room.id}`}
-                        fontSize="inherit"
-                        linkProps={{
-                            p: 0,
-                            m: 0,
-                        }}
-                        color="white"
-                    >
-                        <chakra.span mx={2}>{data.room.name}</chakra.span>
-                    </LinkButton>
-                    <Box>
-                        <FAIcon iconStyle="s" icon="arrows-alt-h" aria-label="reflected with" />
-                    </Box>
-                    <LinkButton
-                        p={0}
-                        m={0}
-                        minH={0}
-                        h="100%"
-                        to={`/conference/${conference.slug}/item/${data.contentGroup.id}`}
-                        fontSize="inherit"
-                        linkProps={{
-                            p: 0,
-                            m: 0,
-                        }}
-                        flex="0 1 auto"
-                        backgroundColor="gray.700"
-                        borderRadius={5}
-                        fontFamily="monospace"
-                        noOfLines={1}
-                        color="white"
-                    >
-                        <chakra.span mx={2}>{data.contentGroup.title}</chakra.span>
-                    </LinkButton>
-                </HStack>
-                {data.type === "start" ? (
-                    <FAIcon iconStyle="s" icon="angle-double-down" color="orange.400" aria-hidden />
-                ) : (
-                    <FAIcon iconStyle="s" icon="angle-double-up" color="orange.400" aria-hidden />
-                )}
-            </Flex>
-        );
-    }
-
-    return (
-        <>
+    const profileEl = useMemo(
+        () => (
             <VStack
                 alignItems="center"
                 spacing={roundUpToNearest(config.spacing * 0.5, 1) + "px"}
@@ -195,6 +112,161 @@ function MessageBody({
                     <ProfileBox attendee={attendee} w={pictureSize} />
                 ) : undefined}
             </VStack>
+        ),
+        [
+            attendee,
+            config.spacing,
+            createdAt,
+            message.senderId,
+            message.type,
+            pictureSize,
+            smallFontSize,
+            timeColour,
+            timeFormat,
+        ]
+    );
+
+    const attendeeNameEl = useMemo(
+        () =>
+            message.type !== Chat_MessageType_Enum.Emote ? (
+                <Text as="span" fontSize={smallFontSize} color={timeColour}>
+                    {attendee?.displayName ?? " "}
+                </Text>
+            ) : undefined,
+        [attendee?.displayName, message.type, smallFontSize, timeColour]
+    );
+
+    const controls = useMemo(
+        () => (
+            <Flex flexDir="row" w="100%">
+                {attendeeNameEl}
+                {/* TODO: Permissions */}
+                <MessageControls
+                    hideReactions={message.type === Chat_MessageType_Enum.Emote}
+                    fontSize={smallFontSize}
+                    ml="auto"
+                    isOwnMessage={!!config.currentAttendeeId && message.senderId === config.currentAttendeeId}
+                    messageId={message.id}
+                    usedReactions={message.reactions.reduce((acc, reaction) => {
+                        if (
+                            config.currentAttendeeId &&
+                            reaction.type === Chat_ReactionType_Enum.Emoji &&
+                            reaction.senderId === config.currentAttendeeId
+                        ) {
+                            return [...acc, reaction.symbol];
+                        }
+                        return acc;
+                    }, [] as string[])}
+                    isPollOpen={
+                        message.type === Chat_MessageType_Enum.Poll
+                            ? !message.reactions.some((reaction) => reaction.type === Chat_ReactionType_Enum.PollClosed)
+                            : undefined
+                    }
+                    isPollIncomplete={
+                        message.type === Chat_MessageType_Enum.Poll
+                            ? !message.reactions.some(
+                                  (reaction) => reaction.type === Chat_ReactionType_Enum.PollComplete
+                              )
+                            : undefined
+                    }
+                />
+            </Flex>
+        ),
+        [
+            attendeeNameEl,
+            config.currentAttendeeId,
+            message.id,
+            message.reactions,
+            message.senderId,
+            message.type,
+            smallFontSize,
+        ]
+    );
+
+    const emote = useMemo(
+        () =>
+            message.type === Chat_MessageType_Enum.Emote ? (
+                <Center fontSize={pictureSize} w="100%" pt={config.spacing}>
+                    <Twemoji className="twemoji" text={message.message} />
+                </Center>
+            ) : (
+                <Markdown restrictHeadingSize>{message.message}</Markdown>
+            ),
+        [config.spacing, message.message, message.type, pictureSize]
+    );
+
+    const reactions = useMemo(
+        () => (
+            <ReactionsList
+                reactions={message.reactions}
+                currentAttendeeId={config.currentAttendeeId}
+                messageId={message.id}
+                fontSize={smallFontSize}
+                subscribeToReactions={subscribeToReactions}
+            />
+        ),
+        [config.currentAttendeeId, message.id, message.reactions, smallFontSize, subscribeToReactions]
+    );
+
+    const question = useMemo(
+        () =>
+            message.type === Chat_MessageType_Enum.Question ? (
+                message.reactions.some((x) => x.type === Chat_ReactionType_Enum.Answer) ? (
+                    <Button
+                        fontSize={smallFontSize}
+                        p={config.spacing}
+                        m={config.spacing}
+                        colorScheme="green"
+                        w="auto"
+                        h="auto"
+                        onClick={() => {
+                            if (message.duplicatedMessageId) {
+                                messages.setAnsweringQuestionId.current?.f([message.id, message.duplicatedMessageId]);
+                            } else {
+                                messages.setAnsweringQuestionId.current?.f([message.id]);
+                            }
+                        }}
+                    >
+                        Answered! (Answer again?)
+                    </Button>
+                ) : (
+                    <Button
+                        fontSize={smallFontSize}
+                        p={config.spacing}
+                        m={config.spacing}
+                        colorScheme="blue"
+                        w="auto"
+                        h="auto"
+                        onClick={() => {
+                            if (message.duplicatedMessageId) {
+                                messages.setAnsweringQuestionId.current?.f([message.id, message.duplicatedMessageId]);
+                            } else {
+                                messages.setAnsweringQuestionId.current?.f([message.id]);
+                            }
+                        }}
+                    >
+                        Answer this question
+                    </Button>
+                )
+            ) : undefined,
+        [
+            config.spacing,
+            message.duplicatedMessageId,
+            message.id,
+            message.reactions,
+            message.type,
+            messages.setAnsweringQuestionId,
+            smallFontSize,
+        ]
+    );
+
+    const poll = useMemo(
+        () => (message.type === Chat_MessageType_Enum.Poll ? <PollOptions message={message} /> : undefined),
+        [message]
+    );
+
+    const msgBody = useMemo(
+        () => (
             <VStack
                 justifyContent={message.type === Chat_MessageType_Enum.Emote ? "center" : undefined}
                 alignItems="flex-start"
@@ -205,112 +277,103 @@ function MessageBody({
                 w="100%"
                 h={message.type === Chat_MessageType_Enum.Emote ? "100%" : "auto"}
             >
-                <Flex flexDir="row" w="100%">
-                    {message.type !== Chat_MessageType_Enum.Emote ? (
-                        <Text as="span" fontSize={smallFontSize} color={timeColour}>
-                            {attendee?.displayName ?? " "}
-                        </Text>
-                    ) : undefined}
-                    {/* TODO: Permissions */}
-                    <MessageControls
-                        hideReactions={message.type === Chat_MessageType_Enum.Emote}
-                        fontSize={smallFontSize}
-                        ml="auto"
-                        isOwnMessage={!!config.currentAttendeeId && message.senderId === config.currentAttendeeId}
-                        messageId={message.id}
-                        usedReactions={message.reactions.reduce((acc, reaction) => {
-                            if (
-                                config.currentAttendeeId &&
-                                reaction.type === Chat_ReactionType_Enum.Emoji &&
-                                reaction.senderId === config.currentAttendeeId
-                            ) {
-                                return [...acc, reaction.symbol];
-                            }
-                            return acc;
-                        }, [] as string[])}
-                        isPollOpen={
-                            message.type === Chat_MessageType_Enum.Poll
-                                ? !message.reactions.some(
-                                      (reaction) => reaction.type === Chat_ReactionType_Enum.PollClosed
-                                  )
-                                : undefined
-                        }
-                        isPollIncomplete={
-                            message.type === Chat_MessageType_Enum.Poll
-                                ? !message.reactions.some(
-                                      (reaction) => reaction.type === Chat_ReactionType_Enum.PollComplete
-                                  )
-                                : undefined
-                        }
-                    />
-                </Flex>
-                {message.type === Chat_MessageType_Enum.Emote ? (
-                    <Center fontSize={pictureSize} w="100%" pt={config.spacing}>
-                        <Twemoji className="twemoji" text={message.message} />
-                    </Center>
-                ) : (
-                    <Markdown restrictHeadingSize>{message.message}</Markdown>
-                )}
-                <ReactionsList
-                    reactions={message.reactions}
-                    currentAttendeeId={config.currentAttendeeId}
-                    messageId={message.id}
-                    fontSize={smallFontSize}
-                />
-                {message.type === Chat_MessageType_Enum.Question ? (
-                    message.reactions.some((x) => x.type === Chat_ReactionType_Enum.Answer) ? (
-                        <Button
-                            fontSize={smallFontSize}
-                            p={config.spacing}
-                            m={config.spacing}
-                            colorScheme="green"
-                            w="auto"
-                            h="auto"
-                            onClick={() => {
-                                if (message.duplicatedMessageId) {
-                                    messages.setAnsweringQuestionId.current?.f([
-                                        message.id,
-                                        message.duplicatedMessageId,
-                                    ]);
-                                } else {
-                                    messages.setAnsweringQuestionId.current?.f([message.id]);
-                                }
-                            }}
-                        >
-                            Answered! (Answer again?)
-                        </Button>
-                    ) : (
-                        <Button
-                            fontSize={smallFontSize}
-                            p={config.spacing}
-                            m={config.spacing}
-                            colorScheme="blue"
-                            w="auto"
-                            h="auto"
-                            onClick={() => {
-                                if (message.duplicatedMessageId) {
-                                    messages.setAnsweringQuestionId.current?.f([
-                                        message.id,
-                                        message.duplicatedMessageId,
-                                    ]);
-                                } else {
-                                    messages.setAnsweringQuestionId.current?.f([message.id]);
-                                }
-                            }}
-                        >
-                            Answer this question
-                        </Button>
-                    )
-                ) : undefined}
-                {message.type === Chat_MessageType_Enum.Poll ? <PollOptions message={message} /> : undefined}
+                {controls}
+                {emote}
+                {reactions}
+                {question}
+                {poll}
             </VStack>
+        ),
+        [config.spacing, controls, emote, message.type, poll, question, reactions]
+    );
+
+    if (message.type === Chat_MessageType_Enum.DuplicationMarker) {
+        return <></>;
+        // const data = message.data as DuplicationMarkerMessageData;
+        // return (
+        //     <Flex
+        //         w="100%"
+        //         spacing={0}
+        //         fontSize={smallFontSize * 1.1}
+        //         flexDir={data.type === "start" ? "column" : "column-reverse"}
+        //         alignItems="center"
+        //     >
+        //         <Divider my={config.spacing} borderColor="orange.400" w="100%" height="1px" />
+        //         {data.type === "start" ? (
+        //             <ReflectionButton>Reflection started</ReflectionButton>
+        //         ) : (
+        //             <ReflectionButton>Reflection ended</ReflectionButton>
+        //         )}
+        //         <HStack alignItems="stretch" justifyContent="center" py={0} px={1} my={2} opacity={0.8}>
+        //             <LinkButton
+        //                 flex="0 0 min-content"
+        //                 backgroundColor="gray.700"
+        //                 p={0}
+        //                 m={0}
+        //                 minH={0}
+        //                 h="100%"
+        //                 borderRadius={5}
+        //                 fontFamily="monospace"
+        //                 noOfLines={1}
+        //                 to={`/conference/${conference.slug}/room/${data.room.id}`}
+        //                 fontSize="inherit"
+        //                 linkProps={{
+        //                     p: 0,
+        //                     m: 0,
+        //                 }}
+        //                 color="white"
+        //             >
+        //                 <chakra.span mx={2}>{data.room.name}</chakra.span>
+        //             </LinkButton>
+        //             <Box>
+        //                 <FAIcon iconStyle="s" icon="arrows-alt-h" aria-label="reflected with" />
+        //             </Box>
+        //             <LinkButton
+        //                 p={0}
+        //                 m={0}
+        //                 minH={0}
+        //                 h="100%"
+        //                 to={`/conference/${conference.slug}/item/${data.contentGroup.id}`}
+        //                 fontSize="inherit"
+        //                 linkProps={{
+        //                     p: 0,
+        //                     m: 0,
+        //                 }}
+        //                 flex="0 1 auto"
+        //                 backgroundColor="gray.700"
+        //                 borderRadius={5}
+        //                 fontFamily="monospace"
+        //                 noOfLines={1}
+        //                 color="white"
+        //             >
+        //                 <chakra.span mx={2}>{data.contentGroup.title}</chakra.span>
+        //             </LinkButton>
+        //         </HStack>
+        //         {data.type === "start" ? (
+        //             <FAIcon iconStyle="s" icon="angle-double-down" color="orange.400" aria-hidden />
+        //         ) : (
+        //             <FAIcon iconStyle="s" icon="angle-double-up" color="orange.400" aria-hidden />
+        //         )}
+        //     </Flex>
+        // );
+    }
+
+    return (
+        <>
+            {profileEl}
+            {msgBody}
         </>
     );
 }
 
-export default function MessageBox({ message }: { message: ChatMessageDataFragment }): JSX.Element {
+export default function MessageBox({
+    message,
+    subscribeToReactions,
+}: {
+    message: ChatMessageDataFragment;
+    subscribeToReactions: boolean;
+}): JSX.Element {
     const config = useChatConfiguration();
-
     const scaleFactor = config.spacing / ChatSpacing.RELAXED;
 
     const lineHeightMin = 2.3;
@@ -322,35 +385,25 @@ export default function MessageBox({ message }: { message: ChatMessageDataFragme
     const isAnswer = message.type === Chat_MessageType_Enum.Answer;
     const bgColour = useColorModeValue(
         isQuestion ? "blue.100" : isAnswer ? "orange.100" : "white",
-        isQuestion ? "blue.700" : isAnswer ? "green.800" : "gray.800"
+        isQuestion ? "blue.700" : isAnswer ? "green.800" : "gray.900"
     );
 
-    const createdAt = new Date(message.created_at);
-    const timeFormat: Intl.DateTimeFormatOptions = {
-        weekday: "short",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-    };
+    const createdAt = useMemo(() => new Date(message.created_at), [message.created_at]);
+    const timeFormat: Intl.DateTimeFormatOptions = useMemo(
+        () => ({
+            weekday: "short",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+        }),
+        []
+    );
 
-    const [attendee, setAttendee] = useState<AttendeeDataFragment | null>(null);
-    const attendees = useAttendeesContext();
-    useEffect(() => {
-        let sub: any;
-        if (message.senderId) {
-            sub = attendees.subscribe(message.senderId, setAttendee);
-            if (sub.attendee) {
-                setAttendee(sub.attendee);
-            }
-        }
-        return () => {
-            if (sub) {
-                attendees.unsubscribe(sub.id);
-            }
-        };
-    }, [attendees, message.senderId]);
+    const attendee = useAttendee(message.senderId);
 
-    return (
+    return message.type === Chat_MessageType_Enum.DuplicationMarker ? (
+        <></>
+    ) : (
         <HStack
             role="listitem"
             mr="1px"
@@ -369,7 +422,7 @@ export default function MessageBox({ message }: { message: ChatMessageDataFragme
                 attendee?.displayName ?? "<Loading name>"
             }. ${message.message}`}
         >
-            <MessageBody attendee={attendee} message={message} />
+            <MessageBody subscribeToReactions={subscribeToReactions} attendee={attendee} message={message} />
         </HStack>
     );
 }

@@ -1,31 +1,46 @@
 import { gql } from "@apollo/client";
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
-import { useSelectReadUpToIndexQuery, useSetReadUpToIndexMutation } from "../../../generated/graphql";
+import React, { useCallback, useMemo } from "react";
+import {
+    SidebarReadUpToIndexFragmentDoc,
+    useInsertReadUpToIndexMutation,
+    useSelectReadUpToIndexQuery,
+    useUpdateReadUpToIndexMutation,
+} from "../../../generated/graphql";
 import { useChatConfiguration } from "../Configuration";
-import { useReceiveMessageQueries } from "./ReceiveMessageQueries";
 
 gql`
     query SelectReadUpToIndex($chatId: uuid!, $attendeeId: uuid!) {
         chat_ReadUpToIndex_by_pk(chatId: $chatId, attendeeId: $attendeeId) {
-            chatId
+            ...SidebarReadUpToIndex
+        }
+    }
+
+    mutation InsertReadUpToIndex($chatId: uuid!, $attendeeId: uuid!, $messageId: Int!) {
+        insert_chat_ReadUpToIndex_one(
+            object: { attendeeId: $attendeeId, chatId: $chatId, messageId: $messageId }
+            on_conflict: { constraint: ReadUpToIndex_pkey, update_columns: [messageId] }
+        ) {
             attendeeId
+            chatId
             messageId
         }
     }
 
-    mutation SetReadUpToIndex($chatId: uuid!, $attendeeId: uuid!, $messageId: Int!) {
-        insert_chat_ReadUpToIndex(
-            objects: { attendeeId: $attendeeId, chatId: $chatId, messageId: $messageId }
-            on_conflict: { constraint: ReadUpToIndex_pkey, update_columns: [messageId] }
+    mutation UpdateReadUpToIndex($chatId: uuid!, $attendeeId: uuid!, $messageId: Int!) {
+        update_chat_ReadUpToIndex_by_pk(
+            pk_columns: { attendeeId: $attendeeId, chatId: $chatId }
+            _set: { messageId: $messageId }
         ) {
-            affected_rows
+            attendeeId
+            chatId
+            messageId
         }
     }
 `;
 
 interface ReadUpToIndexCtx {
     readUpToId: number | undefined;
-    readUpToMarkerSeen: () => void;
+    setReadUpTo: (messageId: number) => void;
 }
 
 const ReadUpToIndexContext = React.createContext<ReadUpToIndexCtx | undefined>(undefined);
@@ -52,49 +67,84 @@ function ReadUpToIndexProvider_UserExists({
             attendeeId,
             chatId,
         },
-        pollInterval: 20000,
-        fetchPolicy: "cache-and-network",
     });
-    const [setUnread] = useSetReadUpToIndexMutation();
-    const messages = useReceiveMessageQueries();
-    const lastUnreadId = useRef<number | null>(null);
-    useEffect(() => {
-        if (messages.liveMessages && messages.liveMessages.size > 0) {
-            const nextUnreadId = [...messages.liveMessages.keys()].sort((x, y) => y - x)[0];
-            if (lastUnreadId.current !== nextUnreadId) {
-                lastUnreadId.current = nextUnreadId;
-                setUnread({
+
+    const [insertUnread] = useInsertReadUpToIndexMutation();
+    const [updateUnread] = useUpdateReadUpToIndexMutation();
+
+    const setReadUpTo = useCallback(
+        (messageId: number) => {
+            if (unreadQ.data?.chat_ReadUpToIndex_by_pk) {
+                updateUnread({
                     variables: {
                         attendeeId,
                         chatId,
-                        messageId: nextUnreadId,
+                        messageId,
+                    },
+                    optimisticResponse: {
+                        update_chat_ReadUpToIndex_by_pk: {
+                            __typename: "chat_ReadUpToIndex",
+                            attendeeId,
+                            chatId,
+                            messageId,
+                        },
+                    },
+                    update: (cache, { data: _data }) => {
+                        if (_data?.update_chat_ReadUpToIndex_by_pk) {
+                            const data = _data.update_chat_ReadUpToIndex_by_pk;
+                            cache.writeFragment({
+                                data: {
+                                    ...data,
+                                    unreadCount: 0,
+                                },
+                                id: cache.identify(data),
+                                fragment: SidebarReadUpToIndexFragmentDoc,
+                                fragmentName: "SidebarReadUpToIndex",
+                            });
+                        }
+                    },
+                });
+            } else {
+                insertUnread({
+                    variables: {
+                        attendeeId,
+                        chatId,
+                        messageId,
+                    },
+                    optimisticResponse: {
+                        insert_chat_ReadUpToIndex_one: {
+                            __typename: "chat_ReadUpToIndex",
+                            attendeeId,
+                            chatId,
+                            messageId,
+                        },
+                    },
+                    update: (cache, { data: _data }) => {
+                        if (_data?.insert_chat_ReadUpToIndex_one) {
+                            const data = _data.insert_chat_ReadUpToIndex_one;
+                            cache.writeFragment({
+                                data: {
+                                    ...data,
+                                    unreadCount: 0,
+                                },
+                                id: cache.identify(data),
+                                fragment: SidebarReadUpToIndexFragmentDoc,
+                                fragmentName: "SidebarReadUpToIndex",
+                            });
+                        }
                     },
                 });
             }
-        }
-    }, [attendeeId, chatId, messages.liveMessages, setUnread]);
-
-    const readUpToMarkerSeen = useCallback(() => {
-        /* EMPTY */
-    }, []);
-    // const readUpToMarkerSeen = useCallback(() => {
-    //     if (messages.liveMessages && messages.liveMessages.size > 0) {
-    //         setUnread({
-    //             variables: {
-    //                 attendeeId,
-    //                 chatId,
-    //                 messageId: [...messages.liveMessages.keys()].sort((x, y) => y - x)[0],
-    //             },
-    //         });
-    //     }
-    // }, [attendeeId, chatId, messages.liveMessages, setUnread]);
+        },
+        [attendeeId, chatId, insertUnread, unreadQ.data?.chat_ReadUpToIndex_by_pk, updateUnread]
+    );
 
     const st = useMemo(
         () => ({
             readUpToId: unreadQ.data?.chat_ReadUpToIndex_by_pk?.messageId,
-            readUpToMarkerSeen,
+            setReadUpTo,
         }),
-        [readUpToMarkerSeen, unreadQ.data?.chat_ReadUpToIndex_by_pk?.messageId]
+        [unreadQ.data?.chat_ReadUpToIndex_by_pk?.messageId, setReadUpTo]
     );
 
     return <ReadUpToIndexContext.Provider value={st}>{children}</ReadUpToIndexContext.Provider>;
@@ -105,18 +155,17 @@ export function ReadUpToIndexProvider_NoUser({
 }: {
     children: React.ReactNode | React.ReactNodeArray;
 }): JSX.Element {
-    return (
-        <ReadUpToIndexContext.Provider
-            value={{
-                readUpToId: undefined,
-                readUpToMarkerSeen: () => {
-                    /* EMPTY */
-                },
-            }}
-        >
-            {children}
-        </ReadUpToIndexContext.Provider>
+    const ctx = useMemo(
+        () => ({
+            readUpToId: undefined,
+            setReadUpTo: () => {
+                /* EMPTY */
+            },
+        }),
+        []
     );
+
+    return <ReadUpToIndexContext.Provider value={ctx}>{children}</ReadUpToIndexContext.Provider>;
 }
 
 export default function ReadUpToIndexProvider({

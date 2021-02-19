@@ -1,5 +1,10 @@
 import { gql } from "@apollo/client/core";
 import {
+    ConferenceConfigurationKey,
+    EmailTemplate_BaseConfig,
+    isEmailTemplate_BaseConfig,
+} from "@clowdr-app/shared-types/build/conferenceConfiguration";
+import {
     AWSJobStatus,
     ContentBaseType,
     ContentBlob,
@@ -8,9 +13,11 @@ import {
     ContentType_Enum,
     VideoContentBlob,
 } from "@clowdr-app/shared-types/build/content";
+import { EmailView_SubmissionRequest, EMAIL_TEMPLATE_SUBMISSION_REQUEST } from "@clowdr-app/shared-types/build/email";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
 import { htmlToText } from "html-to-text";
+import Mustache from "mustache";
 import R from "ramda";
 import { is } from "typescript-is";
 import { v4 as uuidv4 } from "uuid";
@@ -29,6 +36,7 @@ import {
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { S3 } from "../lib/aws/awsClient";
+import { getConferenceConfiguration } from "../lib/conferenceConfiguration";
 import { getLatestVersion } from "../lib/contentItem";
 import { callWithRetry } from "../utils";
 import { insertEmails } from "./email";
@@ -74,7 +82,7 @@ gql`
         $contentTypeName: ContentType_enum!
         $data: jsonb!
         $isHidden: Boolean!
-        $layoutData: jsonb!
+        $layoutData: jsonb = null
         $name: String!
         $requiredContentId: uuid!
     ) {
@@ -667,6 +675,7 @@ gql`
         update_job_queues_SubmissionRequestEmailJob(where: { processed: { _eq: false } }, _set: { processed: true }) {
             returning {
                 id
+                emailTemplate
                 uploader {
                     ...UploaderParts
                 }
@@ -691,20 +700,67 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
     const emails: Email_Insert_Input[] = [];
     const uploaderIds: string[] = [];
     for (const job of jobsToProcess.data.update_job_queues_SubmissionRequestEmailJob.returning) {
-        const { htmlContents, plainTextContents } = generateEmailContents(job.uploader);
         const contentTypeFriendlyName = generateContentTypeFriendlyName(
             job.uploader.requiredContentItem.contentTypeName
         );
+
+        let emailTemplates: EmailTemplate_BaseConfig | null = await getConferenceConfiguration(
+            job.uploader.conference.id,
+            ConferenceConfigurationKey.EmailTemplate_SubmissionRequest
+        );
+
+        if (!isEmailTemplate_BaseConfig(emailTemplates)) {
+            emailTemplates = null;
+        }
+
+        const uploadLink = `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/upload/${job.uploader.requiredContentItem.id}/${job.uploader.requiredContentItem.accessToken}`;
+
+        const view: EmailView_SubmissionRequest = {
+            uploader: {
+                name: job.uploader.name,
+            },
+            file: {
+                name: job.uploader.requiredContentItem.name,
+                typeName: contentTypeFriendlyName,
+            },
+            conference: {
+                name: job.uploader.conference.name,
+            },
+            item: {
+                title: job.uploader.requiredContentItem.contentGroup.title,
+            },
+            uploadLink,
+        };
+
+        const overrideEmailTemplate: EmailTemplate_BaseConfig | null = isEmailTemplate_BaseConfig(job.emailTemplate)
+            ? job.emailTemplate
+            : null;
+
+        const htmlBody = Mustache.render(
+            overrideEmailTemplate?.htmlBodyTemplate ??
+                emailTemplates?.htmlBodyTemplate ??
+                EMAIL_TEMPLATE_SUBMISSION_REQUEST.htmlBodyTemplate,
+            view
+        );
+
+        const subject = Mustache.render(
+            overrideEmailTemplate?.subjectTemplate ??
+                emailTemplates?.subjectTemplate ??
+                EMAIL_TEMPLATE_SUBMISSION_REQUEST.subjectTemplate,
+            view
+        );
+
+        const htmlContents = `${htmlBody}
+<p>You are receiving this email because you are listed as an uploader for this item.
+This is an automated email sent on behalf of Clowdr CIC. If you believe you have received this
+email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}.</p>`;
+
         const newEmail: Email_Insert_Input = {
             emailAddress: job.uploader.email,
             htmlContents,
-            plainTextContents,
+            plainTextContents: htmlToText(htmlContents),
             reason: "upload-request",
-            subject: `#${
-                job.uploader.requiredContentItem.contentTypeName === "VIDEO_BROADCAST" ? "1" : "2"
-            } of 2, Clowdr submission request: ${contentTypeFriendlyName} for ${
-                job.uploader.requiredContentItem.contentGroup.title
-            }`,
+            subject,
         };
         emails.push(newEmail);
         uploaderIds.push(job.uploader.id);

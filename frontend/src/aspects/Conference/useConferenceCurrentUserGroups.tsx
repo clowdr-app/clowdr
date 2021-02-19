@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Box, Spinner } from "@chakra-ui/react";
+import { Box, Spinner, VStack } from "@chakra-ui/react";
 import assert from "assert";
 import React from "react";
 import {
@@ -108,18 +108,28 @@ function PublicUserGroupsRolesPermissionsProvider({
 
     if (loading && !data) {
         return (
-            <Box>
-                <Spinner />
-            </Box>
+            <VStack>
+                <Box>
+                    <Spinner />
+                </Box>
+            </VStack>
         );
     }
 
     if (error) {
-        return <PageNotFound />;
+        return (
+            <VStack>
+                <PageNotFound />
+            </VStack>
+        );
     }
 
     if (!data || !data.publicGroups.length) {
-        return <PageNotFound />;
+        return (
+            <VStack>
+                <PageNotFound />
+            </VStack>
+        );
     }
 
     return (
@@ -153,7 +163,11 @@ function AuthedUserGroupsRolesPermissionsProvider({
     }
 
     if (error) {
-        return <PageNotFound />;
+        return (
+            <VStack>
+                <PageNotFound />
+            </VStack>
+        );
     }
 
     if (
@@ -165,7 +179,11 @@ function AuthedUserGroupsRolesPermissionsProvider({
             data.User[0].conferencesCreated.length == 0 &&
             !data.publicGroups.length)
     ) {
-        return <PageNotFound />;
+        return (
+            <VStack>
+                <PageNotFound />
+            </VStack>
+        );
     }
 
     return (

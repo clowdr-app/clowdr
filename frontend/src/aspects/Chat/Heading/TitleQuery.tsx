@@ -2,7 +2,7 @@ import React, { createContext, useMemo } from "react";
 import { useSelectedChat } from "../SelectedChat";
 import type { Query } from "../Types/Queries";
 
-export interface TitleQuery extends Query<string> {}
+export interface TitleQuery extends Query<string | undefined> {}
 
 const QueryContext = createContext<TitleQuery | undefined>(undefined);
 

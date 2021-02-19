@@ -116,10 +116,7 @@ frontend/x.env.local
 *.local
 services/presence/build/
 
-# pktriot
+# Packetriot
 pktriot.json
-
-# BCP: ???
 certs
-
 

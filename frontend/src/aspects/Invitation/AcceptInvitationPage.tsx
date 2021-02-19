@@ -18,7 +18,7 @@ import {
 import assert from "assert";
 import React, { useEffect } from "react";
 import { Redirect, useHistory } from "react-router-dom";
-import { useInvitation_ConfirmCurrentMutation } from "../../generated/graphql";
+import { useInvitation_ConfirmCurrentMutation, useSelectInvitationForAcceptQuery } from "../../generated/graphql";
 import LoginButton from "../Auth/Buttons/LoginButton";
 import SignupButton from "../Auth/Buttons/SignUpButton";
 import FAIcon from "../Icons/FAIcon";
@@ -34,7 +34,8 @@ interface Props {
 gql`
     query SelectInvitationForAccept($inviteCode: uuid!) {
         Invitation(where: { inviteCode: { _eq: $inviteCode } }) {
-            hash
+            id
+            invitedEmailAddress
         }
     }
 
@@ -167,6 +168,19 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
     const { user, loading } = useMaybeCurrentUser();
     useNoPrimaryMenuButtons();
 
+    const { loading: inviteLoading, data: inviteData } = useSelectInvitationForAcceptQuery({
+        context: {
+            headers: {
+                "SEND-WITHOUT-AUTH": true,
+                "x-hasura-invite-code": inviteCode,
+            },
+        },
+        variables: {
+            inviteCode,
+        },
+        fetchPolicy: "network-only",
+    });
+
     if (loading) {
         return (
             <Box>
@@ -260,8 +274,20 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
                     </ListItem>
                 </List>
                 <HStack pt={5} maxW={650} spacing={4}>
-                    <SignupButton size="lg" />
-                    <LoginButton size="lg" />
+                    <SignupButton
+                        size="lg"
+                        isLoading={inviteLoading}
+                        emailHint={
+                            inviteData?.Invitation.length ? inviteData.Invitation[0].invitedEmailAddress : undefined
+                        }
+                    />
+                    <LoginButton
+                        size="lg"
+                        isLoading={inviteLoading}
+                        emailHint={
+                            inviteData?.Invitation.length ? inviteData.Invitation[0].invitedEmailAddress : undefined
+                        }
+                    />
                 </HStack>
             </>
         );

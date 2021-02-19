@@ -466,8 +466,8 @@ OAuth will work.
 ###### Packetriot Setup (administrator)
 
 1. Create a Packetriot account
-1. [Download the client](https://docs.packetriot.com/quickstart/) and ensure it is
-   on your `PATH`.
+1. [Download the client](https://docs.packetriot.com/quickstart/) and ensure
+   it is on your `PATH`.
 1. Follow the Packetriot instructions to verify your domain and set up an
    appropriate A/CNAME record.
 1. In the root of the repository, run `pktriot --config pktriot.json configure --url`. Follow the instructions to authenticate and create a
@@ -475,7 +475,37 @@ OAuth will work.
    for a tunnel.
 1. Add the following property to the JSON object, substituting your desired
    credentials.
-   `json "https": [ { "domain": "<custom-frontend-subdomain>.<custom-domain>", "secure": true, "destination": "127.0.0.1", "port": 3000, "useLetsEnc": true, "redirect": true, "upstreamURL": "" }, { "domain": "<custom-hasura-subdomain>.<custom-domain>", "secure": true, "destination": "127.0.0.1", "port": 8080, "useLetsEnc": true, "redirect": true, "upstreamURL": "" }, { "domain": "<custom-actions-subdomain>.<custom-domain>", "secure": true, "destination": "127.0.0.1", "port": 3001, "useLetsEnc": true, "redirect": true, "upstreamURL": "" } ] `
+   ```json
+   "https": [
+         {
+               "domain": "<custom-frontend-subdomain>.<custom-domain>",
+               "secure": true,
+               "destination": "127.0.0.1",
+               "port": 3000,
+               "useLetsEnc": true,
+               "redirect": true,
+               "upstreamURL": ""
+         },
+         {
+               "domain": "<custom-hasura-subdomain>.<custom-domain>",
+               "secure": true,
+               "destination": "127.0.0.1",
+               "port": 8080,
+               "useLetsEnc": true,
+               "redirect": true,
+               "upstreamURL": ""
+         },
+         {
+               "domain": "<custom-actions-subdomain>.<custom-domain>",
+               "secure": true,
+               "destination": "127.0.0.1",
+               "port": 3001,
+               "useLetsEnc": true,
+               "redirect": true,
+               "upstreamURL": ""
+         }
+      ]
+   ```
 1. Run `pktriot start --config pktriot.json` to start the tunnel.
 1. Configure Auth0 and Vonage using your custom domain
 
@@ -485,8 +515,8 @@ JSON config to the team member.
 
 ###### Packetriot Setup (team member)
 
-1. Download the [pktriot client](https://docs.packetriot.com/quickstart/) and
-   ensure it is on your `PATH`.
+1. Download the [pktriot client](https://docs.packetriot.com/quickstart/)
+   and ensure it is on your `PATH`.
 1. Request configuration file from your Packetriot administrator.
 1. Put it in a file called `pktriot.json` in the root of the repository.
 1. Launch by running the _Packetriot_ task or running

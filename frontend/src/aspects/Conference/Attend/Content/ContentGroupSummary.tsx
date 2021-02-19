@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Box, Container, Heading, Text, VStack } from "@chakra-ui/react";
+import { Box, Container, Heading, HStack, Text, VStack } from "@chakra-ui/react";
 import {
     assertIsContentItemDataBlob,
     ContentBaseType,
@@ -77,9 +77,11 @@ export function ContentGroupSummaryWrapper({
 export function ContentGroupSummary({
     contentGroupData,
     linkToItem,
+    children,
 }: {
     contentGroupData: ContentGroupSummary_ContentGroupDataFragment;
     linkToItem?: boolean;
+    children?: React.ReactNode | React.ReactNodeArray;
 }): JSX.Element {
     const abstractContentItem = useMemo(() => {
         const abstractItem = contentGroupData.contentItems.find(
@@ -148,7 +150,7 @@ export function ContentGroupSummary({
     }, [contentGroupData.contentItems]);
 
     return (
-        <Box alignItems="left" textAlign="left" my={5} maxW="100%" overflow="hidden">
+        <Box textAlign="left" my={5} maxW="100%" overflow="hidden">
             {linkToItem ? (
                 <LinkButton
                     to={`/conference/${conference.slug}/item/${contentGroupData.id}`}
@@ -158,7 +160,7 @@ export function ContentGroupSummary({
                     linkProps={{ mb: 5, maxW: "100%" }}
                     maxW="100%"
                 >
-                    <VStack alignItems="left" maxW="100%">
+                    <VStack alignItems="flex-start" maxW="100%">
                         <Text colorScheme="green">{contentGroupData.contentGroupTypeName}</Text>
                         <Heading
                             as="h2"
@@ -180,16 +182,12 @@ export function ContentGroupSummary({
                     </Heading>
                 </>
             )}
-            {<AuthorList contentPeopleData={contentGroupData.people ?? []} />}
-            <VStack w="auto" alignItems="flex-start">
+            {children}
+            <AuthorList contentPeopleData={contentGroupData.people ?? []} />
+            <HStack alignItems="flex-start" flexWrap="wrap" mt={5}>
                 <RequireAtLeastOnePermissionWrapper permissions={[Permission_Enum.ConferenceViewAttendees]}>
                     {maybeZoomDetails ? (
-                        <ExternalLinkButton
-                            to={maybeZoomDetails}
-                            isExternal={true}
-                            colorScheme="green"
-                            linkProps={{ mt: 5 }}
-                        >
+                        <ExternalLinkButton to={maybeZoomDetails} isExternal={true} colorScheme="green">
                             Go to Zoom
                         </ExternalLinkButton>
                     ) : (
@@ -197,19 +195,14 @@ export function ContentGroupSummary({
                     )}
                 </RequireAtLeastOnePermissionWrapper>
                 {maybePaperURL ? (
-                    <ExternalLinkButton to={maybePaperURL} isExternal={true} colorScheme="red" linkProps={{ mt: 5 }}>
+                    <ExternalLinkButton to={maybePaperURL} isExternal={true} colorScheme="red">
                         Read the PDF
                     </ExternalLinkButton>
                 ) : (
                     <></>
                 )}
                 {maybePaperLink ? (
-                    <ExternalLinkButton
-                        to={maybePaperLink.url}
-                        isExternal={true}
-                        colorScheme="blue"
-                        linkProps={{ mt: 5 }}
-                    >
+                    <ExternalLinkButton to={maybePaperLink.url} isExternal={true} colorScheme="blue">
                         {maybePaperLink.text}
                     </ExternalLinkButton>
                 ) : (
@@ -220,8 +213,8 @@ export function ContentGroupSummary({
                         <ReactPlayer style={{ maxWidth: "100%" }} url={maybeVideoURL.url} controls={true} />
                     </Box>
                 ) : undefined}
-            </VStack>
-            <Container width="100%" mt={5} ml={0} pl={0}>
+            </HStack>
+            <Container width="100%" mt={5} ml={0} pl={0} maxW="100%">
                 {abstractContentItem}
             </Container>
         </Box>

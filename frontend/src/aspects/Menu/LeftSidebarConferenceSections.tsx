@@ -8,6 +8,7 @@ import {
     Button,
     Flex,
     HStack,
+    useColorModeValue,
     useDisclosure,
 } from "@chakra-ui/react";
 import React from "react";
@@ -36,6 +37,9 @@ function RoomsPanel({ confSlug }: { confSlug: string }): JSX.Element {
     const { isOpen: isCreateRoomOpen, onClose: onCreateRoomClose, onOpen: onCreateRoomOpen } = useDisclosure();
     const history = useHistory();
 
+    const blueButtonColors = useColorModeValue("bluebuttonlight", "bluebuttondark");
+    const greenButtonColors = useColorModeValue("greenbuttonlight", "greenbuttondark");
+
     return (
         <>
             <AccordionPanel pb={4} px={"3px"}>
@@ -45,10 +49,10 @@ function RoomsPanel({ confSlug }: { confSlug: string }): JSX.Element {
                     )}
                 </ApolloQueryWrapper>
                 <HStack justifyContent="center" mt={2}>
-                    <Button onClick={onCreateRoomOpen} colorScheme="green" size="sm">
+                    <Button onClick={onCreateRoomOpen} backgroundColor={greenButtonColors} size="sm">
                         <FAIcon icon="plus-square" iconStyle="s" mr={3} /> New room
                     </Button>
-                    <LinkButton to={`/conference/${confSlug}/rooms`} colorScheme="blue" size="sm">
+                    <LinkButton to={`/conference/${confSlug}/rooms`} backgroundColor={blueButtonColors} size="sm">
                         View all rooms
                     </LinkButton>
                 </HStack>

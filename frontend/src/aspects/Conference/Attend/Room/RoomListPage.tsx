@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Button, Heading, useDisclosure } from "@chakra-ui/react";
+import { Button, Heading, useColorModeValue, useDisclosure } from "@chakra-ui/react";
 import React, { useCallback } from "react";
 import { Permission_Enum, RoomListRoomDetailsFragment, useGetAllRoomsQuery } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
@@ -48,6 +48,8 @@ export default function RoomListPage(): JSX.Element {
         await result.refetch();
     }, [result]);
 
+    const greenButtonColors = useColorModeValue("greenbuttonlight", "greenbuttondark");
+
     return (
         <RequireAtLeastOnePermissionWrapper
             componentIfDenied={<PageNotFound />}
@@ -62,7 +64,7 @@ export default function RoomListPage(): JSX.Element {
                 {(rooms: readonly RoomListRoomDetailsFragment[]) => (
                     <>
                         <Heading as="h2">Rooms</Heading>
-                        <Button onClick={onOpen} colorScheme="green">
+                        <Button onClick={onOpen} backgroundColor={greenButtonColors}>
                             Create new room
                         </Button>
                         <RoomList rooms={rooms} layout="grid" />

@@ -115,3 +115,11 @@ ngrok.yml
 frontend/x.env.local
 *.local
 services/presence/build/
+
+# pktriot
+pktriot.json
+
+# BCP: ???
+certs
+
+

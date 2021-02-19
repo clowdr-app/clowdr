@@ -45,12 +45,15 @@ export function ChatFrame({ ...rest }: BoxProps): JSX.Element {
                 <ChatProfileModalProvider>
                     <ReactionsProvider>
                         <EmojiPickerProvider>
-                            <Box role="region" aria-label="Messages" flex="0 1 100%" pos="relative" overflow="hidden">
-                                {"chatId" in config.sources ? (
-                                    <ReceiveMessageQueriesProvider
-                                        chatId={config.sources.chatId}
-                                        setAnsweringQuestionId={setAnsweringQuestionIdRef}
-                                    >
+                            <ReceiveMessageQueriesProvider setAnsweringQuestionId={setAnsweringQuestionIdRef}>
+                                <Box
+                                    role="region"
+                                    aria-label="Messages"
+                                    flex="0 1 100%"
+                                    pos="relative"
+                                    overflow="hidden"
+                                >
+                                    {"chatId" in config.sources ? (
                                         <ReadUpToIndexProvider chatId={config.sources.chatId}>
                                             <ChatMessageList
                                                 chatId={config.sources.chatId}
@@ -59,13 +62,8 @@ export function ChatFrame({ ...rest }: BoxProps): JSX.Element {
                                                 zIndex={1}
                                             />
                                         </ReadUpToIndexProvider>
-                                    </ReceiveMessageQueriesProvider>
-                                ) : (
-                                    <>
-                                        <ReceiveMessageQueriesProvider
-                                            chatId={config.sources.chatIdL}
-                                            setAnsweringQuestionId={setAnsweringQuestionIdRef}
-                                        >
+                                    ) : (
+                                        <>
                                             <ReadUpToIndexProvider chatId={config.sources.chatIdL}>
                                                 <ChatMessageList
                                                     chatId={config.sources.chatIdL}
@@ -81,11 +79,6 @@ export function ChatFrame({ ...rest }: BoxProps): JSX.Element {
                                                     }
                                                 />
                                             </ReadUpToIndexProvider>
-                                        </ReceiveMessageQueriesProvider>
-                                        <ReceiveMessageQueriesProvider
-                                            chatId={config.sources.chatIdR}
-                                            setAnsweringQuestionId={setAnsweringQuestionIdRef}
-                                        >
                                             <ReadUpToIndexProvider chatId={config.sources.chatIdR}>
                                                 <ChatMessageList
                                                     chatId={config.sources.chatIdR}
@@ -101,11 +94,11 @@ export function ChatFrame({ ...rest }: BoxProps): JSX.Element {
                                                     }
                                                 />
                                             </ReadUpToIndexProvider>
-                                        </ReceiveMessageQueriesProvider>
-                                    </>
-                                )}
-                                <ChatConfigurationControls pos="absolute" top="0" left="0" w="100%" zIndex={2} />
-                            </Box>
+                                        </>
+                                    )}
+                                    <ChatConfigurationControls pos="absolute" top="0" left="0" w="100%" zIndex={2} />
+                                </Box>
+                            </ReceiveMessageQueriesProvider>
                         </EmojiPickerProvider>
                     </ReactionsProvider>
                 </ChatProfileModalProvider>

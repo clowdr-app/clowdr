@@ -11,6 +11,7 @@ import {
 import { useChatConfiguration } from "../Configuration";
 import MessageBox from "./MessageBox";
 import { useReadUpToIndex } from "./ReadUpToIndexProvider";
+import { useReceiveMessageQueries } from "./ReceiveMessageQueries";
 
 interface ChatMessageListProps {
     chatId: string;
@@ -156,6 +157,11 @@ export function ChatMessageList({ chatId, ...rest }: ChatMessageListProps & BoxP
         }
     }, [nextMessageSub.data]);
 
+    const receiveMessageQueries = useReceiveMessageQueries();
+    useEffect(() => {
+        deleteMessages.current?.([...receiveMessageQueries.deletedItems.values()]);
+    }, [receiveMessageQueries.deletedItems]);
+
     return (
         <MessageList
             chatId={chatId}
@@ -293,7 +299,8 @@ function MessageList({
     const deleteMessages = useCallback((messageIds: number[]) => {
         setMessageElements((oldEls) => {
             if (oldEls) {
-                return oldEls.filter((el) => !messageIds.includes(el.key as number));
+                const ids = messageIds.map((x) => x.toString());
+                return oldEls.filter((el) => !ids.includes(el.key as string));
             }
             return null;
         });

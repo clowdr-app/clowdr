@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { useDeleteMessageMutation, useSelectSingleMessageQuery } from "../../../generated/graphql";
 
 gql`
@@ -58,10 +58,10 @@ gql`
 
 interface ReceiveMessageQueriesCtx {
     // load: LoadF;
-    refetch: (id: number) => Promise<void>;
-    delete: (id: number) => Promise<void>;
+    refetch: (id: number) => void;
+    delete: (id: number) => void;
     // liveMessages: Map<number, ChatMessageDataFragment> | null;
-    // deletedItems: Set<number>;
+    deletedItems: Set<number>;
     setAnsweringQuestionId: React.RefObject<{ f: (ids: number[] | null) => void; answeringIds: number[] | null }>;
 }
 
@@ -77,11 +77,9 @@ export function useReceiveMessageQueries(): ReceiveMessageQueriesCtx {
 
 export default function ReceiveMessageQueriesProvider({
     children,
-    chatId,
     setAnsweringQuestionId,
 }: {
     children: React.ReactNode | React.ReactNodeArray;
-    chatId: string;
     setAnsweringQuestionId: React.RefObject<{ f: (ids: number[] | null) => void; answeringIds: number[] | null }>;
 }): JSX.Element {
     const refetchSingleMessageQ = useSelectSingleMessageQuery({
@@ -90,33 +88,36 @@ export default function ReceiveMessageQueriesProvider({
     });
     const [deleteMessage] = useDeleteMessageMutation();
 
-    // const [refetchMsg, setRefetchMsg] = useState<ChatMessageDataFragment | null>(null);
     const refetch = useCallback(
-        async (id: number) => {
-            const msg = await refetchSingleMessageQ.refetch({
+        (id: number) => {
+            refetchSingleMessageQ.refetch({
                 id,
             });
-            if (msg.data.chat_Message_by_pk?.chatId === chatId) {
-                // TODO: setRefetchMsg(msg.data.chat_Message_by_pk ?? null);
-            }
         },
-        [chatId, refetchSingleMessageQ]
+        [refetchSingleMessageQ]
     );
 
+    const [deletedItems, setDeletedItems] = useState<Set<number>>(new Set());
     const deleteMsg = useCallback(
-        async (id: number) => {
-            await deleteMessage({
+        (id: number) => {
+            deleteMessage({
                 variables: {
                     id,
                 },
+                update: (cache, data) => {
+                    if (data.data?.delete_chat_Message_by_pk?.id) {
+                        const _data = data.data.delete_chat_Message_by_pk;
+                        cache.evict({
+                            id: cache.identify(_data),
+                        });
+                    }
+                },
             });
-
-            // TODO
-            // setDeletedItems((old) => {
-            //     const newS = new Set(old);
-            //     newS.add(id);
-            //     return newS;
-            // });
+            setDeletedItems((old) => {
+                const newItems = new Set(old);
+                newItems.add(id);
+                return newItems;
+            });
         },
         [deleteMessage]
     );
@@ -126,8 +127,9 @@ export default function ReceiveMessageQueriesProvider({
             refetch,
             delete: deleteMsg,
             setAnsweringQuestionId,
+            deletedItems,
         }),
-        [deleteMsg, refetch, setAnsweringQuestionId]
+        [deleteMsg, deletedItems, refetch, setAnsweringQuestionId]
     );
 
     return <ReceiveMessageQueriesContext.Provider value={ctx}>{children}</ReceiveMessageQueriesContext.Provider>;

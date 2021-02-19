@@ -124,7 +124,7 @@ export default function MessageControls({
             {isOwnMessage || canDelete
                 ? buttonF("Delete message", "trash-alt", "red.400", async () => {
                       try {
-                          await messages.delete(messageId);
+                          messages.delete(messageId);
                           toast({
                               title: "Deleted",
                               status: "success",

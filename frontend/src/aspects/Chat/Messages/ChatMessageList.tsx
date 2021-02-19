@@ -70,6 +70,7 @@ export function ChatMessageList({ chatId, ...rest }: ChatMessageListProps & BoxP
     const [selectFirstMessagesPage, selectFirstMessagesPageResponse] = useSelectFirstMessagesPageLazyQuery();
 
     const config = useChatConfiguration();
+    const batchSize = config.messageBatchSize ?? 30;
 
     const lastMessageId = React.useRef<number>(-1);
     const prevLastMessageId = React.useRef<number>(-2);
@@ -94,7 +95,7 @@ export function ChatMessageList({ chatId, ...rest }: ChatMessageListProps & BoxP
                 selectFirstMessagesPage({
                     variables: {
                         chatId,
-                        maxCount: config.messageBatchSize ?? 30,
+                        maxCount: batchSize,
                     },
                 });
             }
@@ -104,13 +105,13 @@ export function ChatMessageList({ chatId, ...rest }: ChatMessageListProps & BoxP
                 selectMessagesPage({
                     variables: {
                         chatId,
-                        maxCount: config.messageBatchSize ?? 30,
+                        maxCount: batchSize,
                         startAtIndex: lastMessageId.current,
                     },
                 });
             }
         }
-    }, [chatId, config.messageBatchSize, selectFirstMessagesPage, selectMessagesPage]);
+    }, [batchSize, chatId, selectFirstMessagesPage, selectMessagesPage]);
 
     useEffect(() => {
         if (selectMessagesPageResponse.data) {
@@ -142,8 +143,12 @@ export function ChatMessageList({ chatId, ...rest }: ChatMessageListProps & BoxP
                 !requestedFirstPage.current
             );
             requestedFirstPage.current = false;
+
+            if (selectFirstMessagesPageResponse.data.chat_Message.length < batchSize && setHasReachedEnd.current) {
+                setHasReachedEnd.current(true);
+            }
         }
-    }, [selectFirstMessagesPageResponse.data]);
+    }, [batchSize, selectFirstMessagesPageResponse.data]);
 
     useEffect(() => {
         if (nextMessageSub.data) {

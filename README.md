@@ -598,6 +598,9 @@ then be listed in the Setup section at the top?
    environment config, Docker Compose config, etc then all tasks must be
    restarted.
 
+BCP: More instructions needed: If I make changes to the code, what do I need
+to do to kick the system to reload / restart appropriately?
+
 ## Formatting
 
 This repository uses Prettier for auto-formatting and checks for both pushes and
@@ -612,7 +615,7 @@ BCP: Is this something I need to do?
 
 ## GitHub Actions Configuration (/Secrets)
 
-BCP: Is this something I need to do?
+BCP: Is this a setup task, or just for GitHub owners?
 
 | Secret                       | Value                                                                     |
 | ---------------------------- | ------------------------------------------------------------------------- |

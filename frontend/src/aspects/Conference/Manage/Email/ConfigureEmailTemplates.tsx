@@ -6,11 +6,14 @@ import {
     AccordionItem,
     AccordionPanel,
     Box,
+    Button,
     FormControl,
     FormLabel,
     Heading,
+    HStack,
     Input,
     Spinner,
+    Text,
     Textarea,
 } from "@chakra-ui/react";
 import {
@@ -200,6 +203,21 @@ function EmailTemplateForm({
 
     return (
         <>
+            <HStack justifyContent="space-between" alignItems="center" my={4}>
+                <Text>
+                    This email is sent to uploaders automatically once subtitles have been generated for one of their
+                    items.
+                </Text>
+                {templateConfig?.htmlBodyTemplate || templateConfig?.subjectTemplate ? (
+                    <Button
+                        size="sm"
+                        aria-label="Reset email text and subject line to defaults"
+                        onClick={() => update({ subjectTemplate: null, htmlBodyTemplate: null })}
+                    >
+                        Reset to default
+                    </Button>
+                ) : undefined}
+            </HStack>
             <FormControl>
                 <FormLabel>Subject</FormLabel>
                 <Input

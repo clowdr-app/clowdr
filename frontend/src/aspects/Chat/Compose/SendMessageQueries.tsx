@@ -1,4 +1,4 @@
-import { gql, Reference } from "@apollo/client";
+import { gql } from "@apollo/client";
 import React, { useCallback, useMemo } from "react";
 import {
     Chat_MessageType_Enum,
@@ -96,21 +96,10 @@ export default function SendMessageQueriesProvider({
                     update: (cache, { data: _data }) => {
                         if (_data?.insert_chat_Message_one) {
                             const data = _data.insert_chat_Message_one;
-                            cache.modify({
-                                fields: {
-                                    chat_Message(existingRefs: Reference[] = [], { readField }) {
-                                        const newRef = cache.writeFragment({
-                                            data,
-                                            fragment: SubscribedChatMessageDataFragmentDoc,
-                                            fragmentName: "SubscribedChatMessageData",
-                                        });
-                                        if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
-                                            return existingRefs;
-                                        }
-
-                                        return [newRef, ...existingRefs];
-                                    },
-                                },
+                            cache.writeFragment({
+                                data,
+                                fragment: SubscribedChatMessageDataFragmentDoc,
+                                fragmentName: "SubscribedChatMessageData",
                             });
                         }
                     },

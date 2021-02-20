@@ -580,13 +580,16 @@ function EditableRoomsCRUDTable() {
                     if (props.value !== RoomPrivacy_Enum.Private && props.value !== RoomPrivacy_Enum.Public) {
                         return <Text>{props.value}</Text>;
                     } else {
+                        const v = props.value ?? "";
                         return (
                             <Select
-                                value={props.value ?? ""}
+                                value={v}
                                 onChange={(ev) => props.onChange?.(ev.target.value as RoomPrivacy_Enum)}
                                 onBlur={props.onBlur}
                             >
-                                <option value="">&lt;Error&gt;</option>
+                                {v === "" || (v !== RoomPrivacy_Enum.Public && v !== RoomPrivacy_Enum.Private) ? (
+                                    <option value="">&lt;Error&gt;</option>
+                                ) : undefined}
                                 <option value={RoomPrivacy_Enum.Public}>Public</option>
                                 <option value={RoomPrivacy_Enum.Private}>Private</option>
                             </Select>

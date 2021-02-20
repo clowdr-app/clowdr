@@ -113,11 +113,10 @@ function ChatNotificationsProvider_WithAttendeeInner({
             if (subscription.data?.chat_Message) {
                 const data = subscription.data.chat_Message;
                 if (latestIndices.current) {
-                    for (const subscription of data) {
-                        const latestMessage = subscription;
-                        const latestIndex = latestIndices.current?.get(subscription.chatId);
+                    for (const latestMessage of data) {
+                        const latestIndex = latestIndices.current?.get(latestMessage.chatId);
                         if (!latestIndex || latestIndex < latestMessage.id) {
-                            latestIndices.current?.set(subscription.chatId, latestMessage.id);
+                            latestIndices.current?.set(latestMessage.chatId, latestMessage.id);
 
                             setTimeout(() => {
                                 setNotifiedUpTo({
@@ -249,6 +248,9 @@ function ChatNotificationsProvider_WithAttendeeInner({
                     }
                 } else {
                     latestIndices.current = new Map();
+                    for (const latestMessage of data) {
+                        latestIndices.current?.set(latestMessage.chatId, latestMessage.id);
+                    }
                 }
             }
         })();

@@ -6371,11 +6371,15 @@
                   _and:
                   - slug:
                       _eq: X-Hasura-Conference-Slug
+                  - user_id:
+                      _eq: X-Hasura-User-Id
                   - permission_name:
-                      _eq: CONFERENCE_VIEW
+                      _in:
+                      - CONFERENCE_MANAGE_SCHEDULE
+                      - CONFERENCE_VIEW
                 _table:
                   schema: public
-                  name: FlatUnauthPermission
+                  name: FlatUserPermission
             - _or:
               - roomPrivacyName:
                   _eq: PUBLIC
@@ -6383,6 +6387,19 @@
                   attendee:
                     userId:
                       _eq: X-Hasura-User-Id
+          - _and:
+            - _exists:
+                _where:
+                  _and:
+                  - slug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permission_name:
+                      _eq: CONFERENCE_VIEW
+                _table:
+                  schema: public
+                  name: FlatUnauthPermission
+            - roomPrivacyName:
+                _eq: PUBLIC
   update_permissions:
   - role: user
     permission:

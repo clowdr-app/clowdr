@@ -30,6 +30,7 @@ import {
     Tabs,
     Text,
     Tooltip,
+    useColorModeValue,
     useToast,
     VStack,
 } from "@chakra-ui/react";
@@ -972,6 +973,10 @@ function RightSidebarConferenceSections_Inner({
     );
     const presencePanel = useMemo(() => <PresencePanel roomId={roomId} />, [roomId]);
 
+    // BCP: This doesn't seem to work at the moment!
+    const chatButtonColor = useColorModeValue("purplebuttonlight", "purplebuttondark");
+    const chatButtonText = useColorModeValue("black", "white");
+
     return (
         <Tabs
             variant="solid-rounded"
@@ -1010,9 +1015,11 @@ function RightSidebarConferenceSections_Inner({
             }}
         >
             <TabList py={2}>
-                {roomId && <Tab>Room</Tab>}
-                {itemId && <Tab>Item</Tab>}
-                <Tab>Chats</Tab>
+                {roomId && <Tab>Room Chat</Tab>}
+                {itemId && <Tab>Item Chat</Tab>}
+                <Tab color={chatButtonText} backgroundColor={chatButtonColor}>
+                    More Chats
+                </Tab>
                 <Tab>Who&apos;s here</Tab>
             </TabList>
 

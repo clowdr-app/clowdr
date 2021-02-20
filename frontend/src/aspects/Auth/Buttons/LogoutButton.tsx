@@ -1,11 +1,13 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { Button, MenuItem, Tooltip } from "@chakra-ui/react";
+import { Button, MenuItem, Tooltip, useColorModeValue } from "@chakra-ui/react";
 import React from "react";
 import FAIcon from "../../Icons/FAIcon";
 
 export default function LogoutButton({ asMenuItem }: { asMenuItem?: boolean }): JSX.Element {
     const { logout } = useAuth0();
     const returnTo = import.meta.env.SNOWPACK_PUBLIC_AUTH_CALLBACK_URL + "/logged-out";
+
+    const bg = useColorModeValue("redbuttonlight", "redbuttondark");
 
     return asMenuItem ? (
         <MenuItem size="sm" onClick={() => logout({ returnTo })} colorScheme="red">
@@ -16,7 +18,7 @@ export default function LogoutButton({ asMenuItem }: { asMenuItem?: boolean }): 
             <Button
                 size="sm"
                 onClick={() => logout({ returnTo })}
-                colorScheme="red"
+                backgroundColor={bg}
                 role="menuitem"
                 aria-label="Log out"
             >

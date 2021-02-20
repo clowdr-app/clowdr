@@ -269,7 +269,7 @@ function ConferenceTimelineInner({
     const innerHeightPx = (1920 * fullTimeSpanSeconds) / visibleTimeSpanSeconds;
 
     return (
-        <Box h="calc(100vh - 150px)" w="100%" maxW={totalW}>
+        <Box h="calc(100vh - 60px)" w="100%" maxW={totalW}>
             {title}
             <Flex w="100%" h="100%" flexDir="column" p={2}>
                 <Flex w="100%" direction="row" justify="center" alignItems="center">

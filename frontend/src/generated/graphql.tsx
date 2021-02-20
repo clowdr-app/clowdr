@@ -30971,19 +30971,12 @@ export type Uuid_Comparison_Exp = {
   readonly _nin?: Maybe<ReadonlyArray<Scalars['uuid']>>;
 };
 
-export type SubscribedChatsQueryVariables = Exact<{
+export type SubdMessages_2021_02_20T21_08SubscriptionVariables = Exact<{
   attendeeId: Scalars['uuid'];
 }>;
 
 
-export type SubscribedChatsQuery = { readonly __typename?: 'query_root', readonly chat_Subscription: ReadonlyArray<{ readonly __typename?: 'chat_Subscription', readonly attendeeId: any, readonly chatId: any }> };
-
-export type SubdMessages_2021_01_21T08_24SubscriptionVariables = Exact<{
-  chatIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
-}>;
-
-
-export type SubdMessages_2021_01_21T08_24Subscription = { readonly __typename?: 'subscription_root', readonly chat_Message: ReadonlyArray<{ readonly __typename?: 'chat_Message', readonly id: number, readonly chatId: any, readonly message: string, readonly type: Chat_MessageType_Enum, readonly senderId?: Maybe<any>, readonly senderName: string, readonly chatTitle: string }> };
+export type SubdMessages_2021_02_20T21_08Subscription = { readonly __typename?: 'subscription_root', readonly chat_Subscription: ReadonlyArray<{ readonly __typename?: 'chat_Subscription', readonly chatId: any, readonly attendeeId: any, readonly chat: { readonly __typename?: 'chat_Chat', readonly id: any, readonly messages: ReadonlyArray<{ readonly __typename?: 'chat_Message', readonly id: number, readonly chatId: any, readonly message: string, readonly type: Chat_MessageType_Enum, readonly senderId?: Maybe<any>, readonly senderName: string, readonly chatTitle: string }> } }> };
 
 export type SetNotifiedUpToIndexMutationVariables = Exact<{
   attendeeId: Scalars['uuid'];
@@ -34191,75 +34184,48 @@ export const AttendeeFieldsFragmentDoc = gql`
   }
 }
     `;
-export const SubscribedChatsDocument = gql`
-    query SubscribedChats($attendeeId: uuid!) {
+export const SubdMessages_2021_02_20T21_08Document = gql`
+    subscription SubdMessages_2021_02_20T21_08($attendeeId: uuid!) {
   chat_Subscription(where: {attendeeId: {_eq: $attendeeId}}) {
+    chatId
     attendeeId
-    chatId
-  }
-}
-    `;
-
-/**
- * __useSubscribedChatsQuery__
- *
- * To run a query within a React component, call `useSubscribedChatsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubscribedChatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSubscribedChatsQuery({
- *   variables: {
- *      attendeeId: // value for 'attendeeId'
- *   },
- * });
- */
-export function useSubscribedChatsQuery(baseOptions: Apollo.QueryHookOptions<SubscribedChatsQuery, SubscribedChatsQueryVariables>) {
-        return Apollo.useQuery<SubscribedChatsQuery, SubscribedChatsQueryVariables>(SubscribedChatsDocument, baseOptions);
+    chat {
+      id
+      messages(limit: 1, order_by: {id: desc}) {
+        id
+        chatId
+        message
+        type
+        senderId
+        senderName
+        chatTitle
       }
-export function useSubscribedChatsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubscribedChatsQuery, SubscribedChatsQueryVariables>) {
-          return Apollo.useLazyQuery<SubscribedChatsQuery, SubscribedChatsQueryVariables>(SubscribedChatsDocument, baseOptions);
-        }
-export type SubscribedChatsQueryHookResult = ReturnType<typeof useSubscribedChatsQuery>;
-export type SubscribedChatsLazyQueryHookResult = ReturnType<typeof useSubscribedChatsLazyQuery>;
-export type SubscribedChatsQueryResult = Apollo.QueryResult<SubscribedChatsQuery, SubscribedChatsQueryVariables>;
-export const SubdMessages_2021_01_21T08_24Document = gql`
-    subscription SubdMessages_2021_01_21T08_24($chatIds: [uuid!]!) {
-  chat_Message(limit: 5, order_by: {id: desc}, where: {chatId: {_in: $chatIds}}) {
-    id
-    chatId
-    message
-    type
-    senderId
-    senderName
-    chatTitle
+    }
   }
 }
     `;
 
 /**
- * __useSubdMessages_2021_01_21T08_24Subscription__
+ * __useSubdMessages_2021_02_20T21_08Subscription__
  *
- * To run a query within a React component, call `useSubdMessages_2021_01_21T08_24Subscription` and pass it any options that fit your needs.
- * When your component renders, `useSubdMessages_2021_01_21T08_24Subscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useSubdMessages_2021_02_20T21_08Subscription` and pass it any options that fit your needs.
+ * When your component renders, `useSubdMessages_2021_02_20T21_08Subscription` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useSubdMessages_2021_01_21T08_24Subscription({
+ * const { data, loading, error } = useSubdMessages_2021_02_20T21_08Subscription({
  *   variables: {
- *      chatIds: // value for 'chatIds'
+ *      attendeeId: // value for 'attendeeId'
  *   },
  * });
  */
-export function useSubdMessages_2021_01_21T08_24Subscription(baseOptions: Apollo.SubscriptionHookOptions<SubdMessages_2021_01_21T08_24Subscription, SubdMessages_2021_01_21T08_24SubscriptionVariables>) {
-        return Apollo.useSubscription<SubdMessages_2021_01_21T08_24Subscription, SubdMessages_2021_01_21T08_24SubscriptionVariables>(SubdMessages_2021_01_21T08_24Document, baseOptions);
+export function useSubdMessages_2021_02_20T21_08Subscription(baseOptions: Apollo.SubscriptionHookOptions<SubdMessages_2021_02_20T21_08Subscription, SubdMessages_2021_02_20T21_08SubscriptionVariables>) {
+        return Apollo.useSubscription<SubdMessages_2021_02_20T21_08Subscription, SubdMessages_2021_02_20T21_08SubscriptionVariables>(SubdMessages_2021_02_20T21_08Document, baseOptions);
       }
-export type SubdMessages_2021_01_21T08_24SubscriptionHookResult = ReturnType<typeof useSubdMessages_2021_01_21T08_24Subscription>;
-export type SubdMessages_2021_01_21T08_24SubscriptionResult = Apollo.SubscriptionResult<SubdMessages_2021_01_21T08_24Subscription>;
+export type SubdMessages_2021_02_20T21_08SubscriptionHookResult = ReturnType<typeof useSubdMessages_2021_02_20T21_08Subscription>;
+export type SubdMessages_2021_02_20T21_08SubscriptionResult = Apollo.SubscriptionResult<SubdMessages_2021_02_20T21_08Subscription>;
 export const SetNotifiedUpToIndexDocument = gql`
     mutation SetNotifiedUpToIndex($attendeeId: uuid!, $chatId: uuid!, $msgId: Int!) {
   insert_chat_ReadUpToIndex_one(

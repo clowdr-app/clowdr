@@ -4,6 +4,7 @@ import { ContentItemDataBlob, ContentType_Enum, isContentItemDataBlob } from "@c
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
 import React, { useMemo } from "react";
+import { Twemoji } from "react-emoji-render";
 import {
     MainMenuSponsors_ContentGroupDataFragment,
     useMainMenuSponsors_GetSponsorsQuery,
@@ -117,7 +118,9 @@ export function MainMenuSponsors(): JSX.Element {
                                                 alignItems="center"
                                                 justifyContent="space-between"
                                             >
-                                                <Text fontSize="lg">{sponsorContentGroup.title}</Text>
+                                                <Text fontSize="lg">
+                                                    <Twemoji className="twemoji" text={sponsorContentGroup.title} />
+                                                </Text>
                                                 <PageCountText width="10%" path={url} />
                                             </GridItem>
                                         </Grid>

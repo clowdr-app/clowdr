@@ -3,6 +3,7 @@ import { ContentItemDataBlob, ContentType_Enum, isContentItemDataBlob } from "@c
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
 import React, { useMemo } from "react";
+import { Twemoji } from "react-emoji-render";
 import type { RoomPage_RoomDetailsFragment } from "../../../../generated/graphql";
 
 export function RoomTitle({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragment }): JSX.Element {
@@ -51,7 +52,7 @@ export function RoomTitle({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFr
                 <></>
             )}
             <Heading as="h2" textAlign="left" mt={5} ml={5}>
-                {roomDetails.originatingContentGroup.title}
+                <Twemoji className="twemoji" text={roomDetails.originatingContentGroup.title} />
             </Heading>
         </>
     ) : (

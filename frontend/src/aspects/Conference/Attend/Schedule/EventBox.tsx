@@ -19,6 +19,7 @@ import {
 import { ContentBaseType, ContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
 import { DateTime } from "luxon";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import { Twemoji } from "react-emoji-render";
 import { Link as ReactLink } from "react-router-dom";
 import {
     ContentType_Enum,
@@ -143,7 +144,7 @@ function EventBoxPopover({
                                 <Flex direction="row">
                                     <Text>
                                         <Link ref={ref} as={ReactLink} to={eventUrl} textDecoration="none">
-                                            {eventTitle}
+                                            <Twemoji className="twemoji" text={eventTitle} />
                                         </Link>
                                     </Text>
                                     <Flex direction="row" justifyContent="flex-end" alignItems="start" ml="auto">
@@ -254,7 +255,7 @@ export default function EventBox({
     const buttonContents = useMemo(() => {
         return (
             <Box overflow="hidden" w="100%" textOverflow="ellipsis" maxH="100%" whiteSpace="normal">
-                {eventTitle}
+                <Twemoji className="twemoji" text={eventTitle} />
             </Box>
         );
     }, [eventTitle]);

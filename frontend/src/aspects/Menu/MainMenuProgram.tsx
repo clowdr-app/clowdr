@@ -18,6 +18,7 @@ import {
 import { formatRelative } from "date-fns";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useState } from "react";
+import { Twemoji } from "react-emoji-render";
 import {
     MenuSchedule_EventFragment,
     useMenuScheduleQuery,
@@ -108,6 +109,7 @@ gql`
             }
         }
         contentGroup {
+            id
             title
         }
     }
@@ -190,7 +192,12 @@ export function MainMenuProgram(): JSX.Element {
                 <>
                     <ApolloQueryWrapper getter={(data) => data.Event} queryResult={searchResult}>
                         {(events: readonly MenuSchedule_EventFragment[]) => (
-                            <MainMenuProgramInner events={events} title="Search results" showTime={true} />
+                            <MainMenuProgramInner
+                                linkToRoom={false}
+                                events={events}
+                                title="Search results"
+                                showTime={true}
+                            />
                         )}
                     </ApolloQueryWrapper>
                 </>
@@ -198,17 +205,25 @@ export function MainMenuProgram(): JSX.Element {
                 <>
                     <ApolloQueryWrapper getter={(data) => data.eventsNow} queryResult={scheduleResult}>
                         {(events: readonly MenuSchedule_EventFragment[]) => (
-                            <MainMenuProgramInner events={events} title="Happening now" />
+                            <MainMenuProgramInner linkToRoom={true} events={events} title="Happening now" />
                         )}
                     </ApolloQueryWrapper>
                     <ApolloQueryWrapper getter={(data) => data.eventsIn30mins} queryResult={scheduleResult}>
                         {(events: readonly MenuSchedule_EventFragment[]) => (
-                            <MainMenuProgramInner events={events} title="Starting in the next 30 minutes" />
+                            <MainMenuProgramInner
+                                linkToRoom={false}
+                                events={events}
+                                title="Starting in the next 30 minutes"
+                            />
                         )}
                     </ApolloQueryWrapper>
                     <ApolloQueryWrapper getter={(data) => data.eventsIn1Hour} queryResult={scheduleResult}>
                         {(events: readonly MenuSchedule_EventFragment[]) => (
-                            <MainMenuProgramInner events={events} title="Starting in the next hour" />
+                            <MainMenuProgramInner
+                                linkToRoom={false}
+                                events={events}
+                                title="Starting in the next hour"
+                            />
                         )}
                     </ApolloQueryWrapper>
                 </>
@@ -221,10 +236,12 @@ export function MainMenuProgramInner({
     events,
     title,
     showTime,
+    linkToRoom,
 }: {
     events: readonly MenuSchedule_EventFragment[];
     title: string;
     showTime?: boolean;
+    linkToRoom: boolean;
 }): JSX.Element {
     const conference = useConference();
 
@@ -251,7 +268,13 @@ export function MainMenuProgramInner({
                                     </Text>
                                 ) : undefined}
                                 <LinkButton
-                                    to={`/conference/${conference.slug}/room/${event.room.id}`}
+                                    to={
+                                        linkToRoom
+                                            ? `/conference/${conference.slug}/room/${event.room.id}`
+                                            : event.contentGroup
+                                            ? `/conference/${conference.slug}/item/${event.contentGroup.id}`
+                                            : `/conference/${conference.slug}/room/${event.room.id}`
+                                    }
                                     width="100%"
                                     linkProps={{ width: "100%" }}
                                     h="auto"
@@ -260,7 +283,7 @@ export function MainMenuProgramInner({
                                 >
                                     <HStack width="100%" justifyContent="space-between">
                                         <Text flex="0 1 1" overflow="hidden" title={eventName} whiteSpace="normal">
-                                            {eventName}
+                                            <Twemoji className="twemoji" text={eventName} />
                                         </Text>
                                         <Text flex="0 1 1">
                                             {event.eventTags.map((tag) => (

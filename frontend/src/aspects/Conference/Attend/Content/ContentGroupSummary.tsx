@@ -15,6 +15,7 @@ import { notEmpty } from "@clowdr-app/shared-types/build/utils";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
 import React, { useMemo } from "react";
+import { Twemoji } from "react-emoji-render";
 import ReactPlayer from "react-player";
 import {
     ContentGroupSummary_ContentGroupDataFragment,
@@ -203,7 +204,7 @@ export function ContentGroupSummary({
                             overflowWrap="break-word"
                             whiteSpace="normal"
                         >
-                            {contentGroupData.title}
+                            <Twemoji className="twemoji" text={contentGroupData.title} />
                         </Heading>
                     </VStack>
                 </LinkButton>
@@ -211,7 +212,7 @@ export function ContentGroupSummary({
                 <>
                     <Text colorScheme="green">{contentGroupData.contentGroupTypeName}</Text>
                     <Heading as="h2" size="md" mb={5} textAlign="left">
-                        {contentGroupData.title}
+                        <Twemoji className="twemoji" text={contentGroupData.title} />
                     </Heading>
                 </>
             )}

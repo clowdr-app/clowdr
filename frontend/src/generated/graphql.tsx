@@ -32926,7 +32926,7 @@ export type MenuSchedule_SearchEventsQuery = { readonly __typename?: 'query_root
     & MenuSchedule_EventFragment
   )> };
 
-export type MenuSchedule_EventFragment = { readonly __typename?: 'Event', readonly id: any, readonly name: string, readonly startTime: any, readonly room: { readonly __typename?: 'Room', readonly id: any, readonly name: string }, readonly eventTags: ReadonlyArray<{ readonly __typename?: 'EventTag', readonly tag: { readonly __typename?: 'Tag', readonly id: any, readonly colour: string, readonly name: string } }>, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly title: string }> };
+export type MenuSchedule_EventFragment = { readonly __typename?: 'Event', readonly id: any, readonly name: string, readonly startTime: any, readonly room: { readonly __typename?: 'Room', readonly id: any, readonly name: string }, readonly eventTags: ReadonlyArray<{ readonly __typename?: 'EventTag', readonly tag: { readonly __typename?: 'Tag', readonly id: any, readonly colour: string, readonly name: string } }>, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string }> };
 
 export type MainMenuSponsors_GetSponsorsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -34029,6 +34029,7 @@ export const MenuSchedule_EventFragmentDoc = gql`
     }
   }
   contentGroup {
+    id
     title
   }
 }

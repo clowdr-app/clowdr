@@ -107,7 +107,7 @@ export function ContentGroupLive({
                 <LinkButton
                     width="100%"
                     to={`/conference/${conference.slug}/room/${nextEvent.room.id}`}
-                    size="lg"
+                    size="sm"
                     colorScheme="teal"
                     height="auto"
                     py={2}
@@ -116,7 +116,7 @@ export function ContentGroupLive({
                     <HStack spacing={2}>
                         <FAIcon iconStyle="s" icon="calendar" mr={2} fontSize="90%" verticalAlign="middle" />{" "}
                         <chakra.span verticalAlign="middle" pb={0.7}>
-                            Next event
+                            Room {nextEvent.room.name}
                         </chakra.span>
                         <chakra.span verticalAlign="middle" pb={0.7} fontSize="sm" fontStyle="italic">
                             ({formatRelative(Date.parse(nextEvent.startTime), now)})

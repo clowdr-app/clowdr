@@ -236,7 +236,12 @@ export function MainMenuProgramInner({
             {events.length > 0 ? (
                 <List>
                     {R.sortBy((e) => e.startTime, events).map((event) => {
-                        const eventName = event.name + (event.contentGroup ? ": " + event.contentGroup.title : "");
+                        const eventName =
+                            event.name.length > 0 && event.contentGroup
+                                ? event.name + ": " + event.contentGroup.title
+                                : event.contentGroup
+                                ? event.contentGroup.title
+                                : event.name;
 
                         return (
                             <ListItem key={event.id} width="100%" my={2}>

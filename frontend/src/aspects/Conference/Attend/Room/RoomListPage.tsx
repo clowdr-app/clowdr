@@ -16,7 +16,7 @@ gql`
         socialRooms: Room(
             where: {
                 conferenceId: { _eq: $conferenceId }
-                _not: { events: {} }
+                _not: { _or: [{ events: {} }, { chat: { enableMandatoryPin: { _eq: true } } }] }
                 roomPrivacyName: { _in: [PUBLIC, PRIVATE] }
             }
             order_by: { name: asc }

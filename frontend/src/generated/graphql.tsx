@@ -35907,7 +35907,7 @@ export type AddParticipantToRoomMutationOptions = Apollo.BaseMutationOptions<Add
 export const GetAllRoomsDocument = gql`
     query GetAllRooms($conferenceId: uuid!) {
   socialRooms: Room(
-    where: {conferenceId: {_eq: $conferenceId}, _not: {events: {}}, roomPrivacyName: {_in: [PUBLIC, PRIVATE]}}
+    where: {conferenceId: {_eq: $conferenceId}, _not: {_or: [{events: {}}, {chat: {enableMandatoryPin: {_eq: true}}}]}, roomPrivacyName: {_in: [PUBLIC, PRIVATE]}}
     order_by: {name: asc}
   ) {
     ...RoomListRoomDetails

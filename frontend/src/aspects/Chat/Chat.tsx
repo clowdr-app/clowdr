@@ -162,6 +162,7 @@ export function Chat({
             onEmoteReceived,
         }),
         [
+            canCompose,
             currentAttendee?.displayName,
             currentAttendee?.id,
             customHeadingElements,

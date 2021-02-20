@@ -341,6 +341,7 @@ function ChatsPanel({
     pageChatId,
     switchToPageChat,
     openChat,
+    closeChat,
 }: {
     attendeeId: string;
     confSlug: string;
@@ -350,6 +351,7 @@ function ChatsPanel({
     openChat: React.MutableRefObject<
         ((chat: { id: string; title: string; roomId: string | undefined }) => void) | null
     >;
+    closeChat: React.MutableRefObject<(() => void) | null>;
 }): JSX.Element {
     const conference = useConference();
     const toast = useToast();
@@ -375,6 +377,9 @@ function ChatsPanel({
         },
         [pageChatId, switchToPageChat]
     );
+    closeChat.current = useCallback(() => {
+        setCurrentChat(null);
+    }, []);
 
     const sources: ChatSources | undefined = useMemo(
         () =>
@@ -947,6 +952,7 @@ function RightSidebarConferenceSections_Inner({
         },
         [setCurrentTab]
     );
+    const closeChatCb = useRef<(() => void) | null>(null);
 
     const roomPanel = useMemo(() => roomId && <RoomChatPanel roomId={roomId} onChatIdLoaded={setPageChatId} />, [
         roomId,
@@ -966,11 +972,41 @@ function RightSidebarConferenceSections_Inner({
                     setCurrentTab(RightSidebarTabs.PageChat);
                 }}
                 openChat={openChatCb}
+                closeChat={closeChatCb}
             />
         ),
         [attendee.id, confSlug, pageChatId, setCurrentTab]
     );
     const presencePanel = useMemo(() => <PresencePanel roomId={roomId} />, [roomId]);
+
+    const onChangeTab = useCallback(
+        (index) => {
+            if (roomId || itemId) {
+                switch (index) {
+                    case 0:
+                        setCurrentTab(RightSidebarTabs.PageChat);
+                        break;
+                    case 1:
+                        setCurrentTab(RightSidebarTabs.Chats);
+                        break;
+                    case 2:
+                        setCurrentTab(RightSidebarTabs.Presence);
+                        break;
+                }
+            } else {
+                switch (index) {
+                    case 0:
+                        setCurrentTab(RightSidebarTabs.Chats);
+                        break;
+                    case 1:
+                        setCurrentTab(RightSidebarTabs.Presence);
+                        break;
+                }
+            }
+        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [itemId, roomId]
+    );
 
     return (
         <Tabs
@@ -984,30 +1020,7 @@ function RightSidebarConferenceSections_Inner({
             flexFlow="column"
             width="100%"
             height="100%"
-            onChange={(index) => {
-                if (roomId || itemId) {
-                    switch (index) {
-                        case 0:
-                            setCurrentTab(RightSidebarTabs.PageChat);
-                            break;
-                        case 1:
-                            setCurrentTab(RightSidebarTabs.Chats);
-                            break;
-                        case 2:
-                            setCurrentTab(RightSidebarTabs.Presence);
-                            break;
-                    }
-                } else {
-                    switch (index) {
-                        case 0:
-                            setCurrentTab(RightSidebarTabs.Chats);
-                            break;
-                        case 1:
-                            setCurrentTab(RightSidebarTabs.Presence);
-                            break;
-                    }
-                }
-            }}
+            onChange={onChangeTab}
         >
             <TabList py={2}>
                 {roomId && <Tab>Room</Tab>}

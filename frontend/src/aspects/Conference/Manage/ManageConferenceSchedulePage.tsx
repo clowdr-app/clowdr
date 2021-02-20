@@ -668,13 +668,10 @@ function EditableScheduleTable(): JSX.Element {
                 const startLeeway = 10 * 60 * 1000;
                 const endLeeway = 1 * 60 * 1000;
                 const ongoing = isOngoing(now, startLeeway, endLeeway, start, end);
-                const past = end < now - endLeeway;
                 const isLivestream = record.intendedRoomModeName
                     ? liveStreamRoomModes.includes(record.intendedRoomModeName)
                     : false;
-                return !((ongoing || past) && isLivestream)
-                    ? true
-                    : "Cannot delete an ongoing or past livestream event.";
+                return !(ongoing && isLivestream) ? true : "Cannot delete an ongoing livestream event.";
             },
             canDelete: (record) => {
                 const start = record.startTime ? Date.parse(record.startTime) : Date.now();
@@ -683,13 +680,10 @@ function EditableScheduleTable(): JSX.Element {
                 const startLeeway = 10 * 60 * 1000;
                 const endLeeway = 1 * 60 * 1000;
                 const ongoing = isOngoing(now, startLeeway, endLeeway, start, end);
-                const past = end < now - endLeeway;
                 const isLivestream = record.intendedRoomModeName
                     ? liveStreamRoomModes.includes(record.intendedRoomModeName)
                     : false;
-                return !((ongoing || past) && isLivestream)
-                    ? true
-                    : "Cannot delete an ongoing or past livestream event.";
+                return !(ongoing && isLivestream) ? true : "Cannot delete an ongoing livestream event.";
             },
             pages: {
                 defaultToLast: false,

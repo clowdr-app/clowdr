@@ -1,4 +1,4 @@
-import { Button, Center, Flex, HStack, Text, useColorModeValue, VStack } from "@chakra-ui/react";
+import { Box, Button, Center, Flex, HStack, Text, useColorModeValue, VStack } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { Twemoji } from "react-emoji-render";
 import {
@@ -129,11 +129,29 @@ function MessageBody({
     const attendeeNameEl = useMemo(
         () =>
             message.type !== Chat_MessageType_Enum.Emote ? (
-                <Text as="span" fontSize={smallFontSize} color={timeColour}>
-                    {attendee?.displayName ?? " "}
-                </Text>
+                <HStack>
+                    <Text as="span" fontSize={smallFontSize} color={timeColour}>
+                        {attendee?.displayName ?? " "}
+                    </Text>
+                    {attendee?.profile?.badges ? (
+                        <Box
+                            fontSize={smallFontSize}
+                            color={attendee.profile.badges[0].colour}
+                            border="1px solid"
+                            borderRadius="3px"
+                            borderColor={attendee.profile.badges[0].colour}
+                            lineHeight="3.5ex"
+                            py={0}
+                            px={1}
+                            m={0}
+                            ml={2}
+                        >
+                            {attendee.profile.badges[0].name}
+                        </Box>
+                    ) : undefined}
+                </HStack>
             ) : undefined,
-        [attendee?.displayName, message.type, smallFontSize, timeColour]
+        [attendee?.displayName, attendee?.profile?.badges, message.type, smallFontSize, timeColour]
     );
 
     const controls = useMemo(

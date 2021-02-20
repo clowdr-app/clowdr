@@ -336,7 +336,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                 )}
             </Box>
         ),
-        [bgColour, currentRoomEvent, nextBgColour, nextRoomEvent, now, roomDetails]
+        [bgColour, currentRoomEvent, nextBgColour, nextRoomEvent, now, roomDetails, roomEvents.length]
     );
 
     const [sendShuffleRoomNotification, setSendShuffleRoomNotification] = useState<boolean>(false);

@@ -97,7 +97,7 @@ export function MainMenuSponsors(): JSX.Element {
                                         linkProps={{ h: "100%", w: "100%" }}
                                         border={`1px solid ${borderColour}`}
                                     >
-                                        <Grid templateColumns="25% 75%" columnGap={4} h="100%" w="100%" pr={4}>
+                                        <Grid templateColumns="25% 75%" gridColumnGap={4} h="100%" w="100%" pr={4}>
                                             <GridItem minH="0" py={2} px={4} bgColor="white">
                                                 {sponsorLogos[sponsorContentGroup.id] ? (
                                                     <Image

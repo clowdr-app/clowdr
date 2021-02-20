@@ -1,4 +1,4 @@
-import { GridItem, SimpleGrid } from "@chakra-ui/react";
+import { GridItem, HStack, SimpleGrid, Text } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import FAIcon from "../../../Icons/FAIcon";
 import useRoomParticipants from "../../../Room/useRoomParticipants";
@@ -15,7 +15,7 @@ export function RoomParticipants({ roomId }: { roomId: string }): JSX.Element {
     );
 
     return roomParticipants ? (
-        <SimpleGrid fontSize="sm" maxH="3rem" overflowY="hidden" columns={3} columnGap={3} width="100%">
+        <SimpleGrid fontSize="sm" columns={2} gridColumnGap={2} width="100%">
             {thisRoomParticipants.slice(0, Math.min(thisRoomParticipants.length, numberToShow)).map((participant) => (
                 <ParticipantGridItem key={participant.id} attendeeId={participant.attendeeId} />
             ))}
@@ -33,9 +33,11 @@ export function RoomParticipants({ roomId }: { roomId: string }): JSX.Element {
 function ParticipantGridItem({ attendeeId }: { attendeeId: string }): JSX.Element {
     const attendee = useAttendee(attendeeId);
     return (
-        <GridItem fontWeight="light">
-            <FAIcon icon="circle" iconStyle="s" fontSize="0.5rem" color="green.400" mr={2} mb={1} />
-            {attendee?.displayName ?? "Loading"}
+        <GridItem fontWeight="light" fontSize="xs">
+            <HStack alignItems="flex-start">
+                <FAIcon icon="circle" iconStyle="s" fontSize="0.5rem" color="green.400" mr={2} mb={1} />
+                <Text whiteSpace="normal">{attendee?.displayName ?? "Loading"}</Text>
+            </HStack>
         </GridItem>
     );
 }

@@ -1,16 +1,4 @@
-import {
-    Center,
-    FormControl,
-    FormHelperText,
-    FormLabel,
-    HStack,
-    Input,
-    InputGroup,
-    InputLeftAddon,
-    InputRightElement,
-    SimpleGrid,
-    Text,
-} from "@chakra-ui/react";
+import { Center, HStack, SimpleGrid, Spacer, Text, VStack } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { RoomListRoomDetailsFragment, RoomPrivacy_Enum } from "../../../../generated/graphql";
@@ -51,7 +39,7 @@ export function RoomList({ rooms, layout, limit, onClick }: Props): JSX.Element 
             if (layout === "grid") {
                 return (
                     <>
-                        <Center flexWrap="wrap" my={2} mx={2}>
+                        <Center flexWrap="wrap" mt={1} mb={2} mx={2}>
                             {room.roomPrivacyName === RoomPrivacy_Enum.Private ? (
                                 <FAIcon icon="lock" iconStyle="s" textAlign="center" />
                             ) : room.roomPrivacyName === RoomPrivacy_Enum.Dm ? (
@@ -60,7 +48,7 @@ export function RoomList({ rooms, layout, limit, onClick }: Props): JSX.Element 
                                 <FAIcon icon="mug-hot" iconStyle="s" textAlign="center" />
                             )}
                             <Text
-                                p={5}
+                                px={5}
                                 textAlign="left"
                                 textOverflow="ellipsis"
                                 whiteSpace="normal"
@@ -76,28 +64,29 @@ export function RoomList({ rooms, layout, limit, onClick }: Props): JSX.Element 
                 );
             } else {
                 return (
-                    <HStack flexWrap="wrap" width="100%">
-                        {room.roomPrivacyName === RoomPrivacy_Enum.Private ? (
-                            <FAIcon icon="lock" iconStyle="s" textAlign="center" width="10%" />
-                        ) : room.roomPrivacyName === RoomPrivacy_Enum.Dm ? (
-                            <FAIcon icon="envelope" iconStyle="s" textAlign="center" width="10%" />
-                        ) : (
-                            <FAIcon icon="mug-hot" iconStyle="s" textAlign="center" width="10%" />
-                        )}
-                        <Text
-                            p={2}
-                            textAlign="left"
-                            textOverflow="ellipsis"
-                            whiteSpace="normal"
-                            overflow="hidden"
-                            title={room.name}
-                            width="70%"
-                        >
-                            {room.name}
-                        </Text>
-                        <PageCountText width="10%" path={`/conference/${conference.slug}/room/${room.id}`} />
+                    <VStack spacing={1} width="100%" px={2}>
+                        <HStack width="100%" fontSize="sm" my={1}>
+                            {room.roomPrivacyName === RoomPrivacy_Enum.Private ? (
+                                <FAIcon icon="lock" iconStyle="s" textAlign="center" />
+                            ) : room.roomPrivacyName === RoomPrivacy_Enum.Dm ? (
+                                <FAIcon icon="envelope" iconStyle="s" textAlign="center" />
+                            ) : (
+                                <FAIcon icon="mug-hot" iconStyle="s" textAlign="center" />
+                            )}
+                            <Text
+                                textAlign="left"
+                                textOverflow="ellipsis"
+                                whiteSpace="normal"
+                                overflow="hidden"
+                                title={room.name}
+                            >
+                                {room.name}
+                            </Text>
+                            <Spacer />
+                            <PageCountText path={`/conference/${conference.slug}/room/${room.id}`} />
+                        </HStack>
                         <RoomParticipants roomId={room.id} />
-                    </HStack>
+                    </VStack>
                 );
             }
         },
@@ -116,7 +105,7 @@ export function RoomList({ rooms, layout, limit, onClick }: Props): JSX.Element 
                     <LinkButton
                         key={room.id}
                         to={`/conference/${conference.slug}/room/${room.id}`}
-                        p={layout === "grid" ? [2, 4] : 1}
+                        p={layout === "grid" ? 2 : 1}
                         alignItems="center"
                         justifyContent="center"
                         flexDir="column"
@@ -124,6 +113,7 @@ export function RoomList({ rooms, layout, limit, onClick }: Props): JSX.Element 
                         height="100%"
                         linkProps={{ m: "3px" }}
                         onClick={onClick}
+                        size="sm"
                     >
                         {toButtonContents(room)}
                     </LinkButton>
@@ -158,7 +148,7 @@ export function RoomList({ rooms, layout, limit, onClick }: Props): JSX.Element 
 
     return (
         <>
-            <FormControl mb={4} maxW={400}>
+            {/* <FormControl mb={4} maxW={400}>
                 <FormLabel mt={4} textAlign="center">
                     {resultCountStr}
                 </FormLabel>
@@ -180,7 +170,7 @@ export function RoomList({ rooms, layout, limit, onClick }: Props): JSX.Element 
                 <FormHelperText>
                     Only key rooms are shown by default. Enter a search term to search all rooms.
                 </FormHelperText>
-            </FormControl>
+            </FormControl> */}
             <SimpleGrid
                 columns={layout === "grid" ? [1, Math.min(2, rooms.length), Math.min(3, rooms.length)] : 1}
                 autoRows="min-content"

@@ -31517,7 +31517,10 @@ export type GetAllRoomsQueryVariables = Exact<{
 }>;
 
 
-export type GetAllRoomsQuery = { readonly __typename?: 'query_root', readonly Room: ReadonlyArray<(
+export type GetAllRoomsQuery = { readonly __typename?: 'query_root', readonly socialRooms: ReadonlyArray<(
+    { readonly __typename?: 'Room' }
+    & RoomListRoomDetailsFragment
+  )>, readonly programRooms: ReadonlyArray<(
     { readonly __typename?: 'Room' }
     & RoomListRoomDetailsFragment
   )> };
@@ -35902,8 +35905,14 @@ export type AddParticipantToRoomMutationResult = Apollo.MutationResult<AddPartic
 export type AddParticipantToRoomMutationOptions = Apollo.BaseMutationOptions<AddParticipantToRoomMutation, AddParticipantToRoomMutationVariables>;
 export const GetAllRoomsDocument = gql`
     query GetAllRooms($conferenceId: uuid!) {
-  Room(
-    where: {conferenceId: {_eq: $conferenceId}, roomPrivacyName: {_neq: MANAGED}}
+  socialRooms: Room(
+    where: {conferenceId: {_eq: $conferenceId}, _not: {events: {}}, roomPrivacyName: {_in: [PUBLIC, PRIVATE]}}
+    order_by: {name: asc}
+  ) {
+    ...RoomListRoomDetails
+  }
+  programRooms: Room(
+    where: {conferenceId: {_eq: $conferenceId}, events: {}, roomPrivacyName: {_in: [PUBLIC, PRIVATE]}}
     order_by: {name: asc}
   ) {
     ...RoomListRoomDetails

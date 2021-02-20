@@ -150,7 +150,7 @@ export function MainMenuProgram(): JSX.Element {
         if (debouncedSearch.length) performSearch();
     }, [debouncedSearch, performSearch]);
 
-    const resultCountStr = `showing ${
+    const resultCountStr = `Showing ${
         debouncedSearch.length > 0 ? searchResult.data?.Event.length ?? 0 : "upcoming"
     } events`;
     const [ariaSearchResultStr, setAriaSearchResultStr] = useState<string>(resultCountStr);
@@ -166,10 +166,10 @@ export function MainMenuProgram(): JSX.Element {
     return (
         <>
             <FormControl mb={4} maxW={400}>
-                <FormLabel mt={4} textAlign="center">
+                <FormLabel textAlign="center" fontSize="sm">
                     {resultCountStr}
                 </FormLabel>
-                <InputGroup>
+                <InputGroup size="sm">
                     <InputLeftAddon aria-hidden>Search</InputLeftAddon>
                     <Input
                         aria-label={"Search found " + ariaSearchResultStr}
@@ -230,7 +230,7 @@ export function MainMenuProgramInner({
 
     return (
         <Box width="100%">
-            <Heading as="h4" size="sm" mt={4} mb={2} textAlign="left">
+            <Heading as="h4" size="sm" mt={4} mb={2} textAlign="left" fontSize="sm">
                 {title}
             </Heading>
             {events.length > 0 ? (
@@ -251,6 +251,7 @@ export function MainMenuProgramInner({
                                     linkProps={{ width: "100%" }}
                                     h="auto"
                                     py={2}
+                                    size="sm"
                                 >
                                     <HStack width="100%" justifyContent="space-between">
                                         <Text flex="0 1 1" overflow="hidden" title={eventName} whiteSpace="normal">

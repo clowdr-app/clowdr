@@ -837,7 +837,7 @@ function RoomParticipantsList({ roomId }: { roomId: string }): JSX.Element {
     );
 
     return roomParticipants && roomParticipants.length > 0 ? (
-        <List fontSize="sm" maxH="3rem" overflowY="hidden" columns={3} columnGap={3} width="100%">
+        <List fontSize="sm" width="100%">
             {thisRoomParticipants.map((participant) => (
                 <ParticipantListItem key={participant.id} attendeeId={participant.attendeeId} />
             ))}

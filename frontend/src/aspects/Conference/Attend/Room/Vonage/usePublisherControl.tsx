@@ -3,10 +3,12 @@ import React, { useCallback, useEffect, useRef } from "react";
 import { useOpenTok } from "../../../../Vonage/useOpenTok";
 import useSessionEventHandler, { EventMap } from "../../../../Vonage/useSessionEventHandler";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
+import type { CameraResolutions } from "./VonageGlobalState";
 
 export function usePublisherControl(
     cameraPublishContainerRef: React.RefObject<HTMLDivElement>,
-    screenPublishContainerRef: React.RefObject<HTMLDivElement>
+    screenPublishContainerRef: React.RefObject<HTMLDivElement>,
+    cameraResolution: CameraResolutions
 ): void {
     const { state, computedState, dispatch } = useVonageRoom();
     const [openTokProps, openTokMethods] = useOpenTok();
@@ -99,16 +101,17 @@ export function usePublisherControl(
                 facingMode: "user",
                 height: "100%",
                 width: "100%",
-                resolution: "1280x720",
+                resolution: cameraResolution,
             },
         });
     }, [
-        computedState.audioTrack,
-        computedState.videoTrack,
-        openTokMethods,
-        state.cameraIntendedEnabled,
-        state.microphoneIntendedEnabled,
         cameraPublishContainerRef,
+        openTokMethods,
+        computedState.videoTrack,
+        computedState.audioTrack,
+        state.microphoneIntendedEnabled,
+        state.cameraIntendedEnabled,
+        cameraResolution,
     ]);
 
     useEffect(() => {
@@ -172,7 +175,7 @@ export function usePublisherControl(
                             },
                             height: "100%",
                             width: "100%",
-                            resolution: "1280x720",
+                            resolution: cameraResolution,
                         },
                     });
                 }

@@ -260,6 +260,7 @@ export function RoomBackstage({
                         vonageSessionId=""
                         getAccessToken={() => ""}
                         disable={true}
+                        isBackstageRoom={true}
                     />
                 </Box>
             ) : undefined}

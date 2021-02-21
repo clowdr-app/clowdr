@@ -74,6 +74,7 @@ export function EventVonageRoom({ eventId }: { eventId: string }): JSX.Element {
                                 vonageSessionId={event.eventVonageSession.sessionId}
                                 getAccessToken={getAccessToken}
                                 disable={false}
+                                isBackstageRoom={true}
                             />
                         ) : (
                             <>No room session available.</>

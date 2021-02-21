@@ -18,10 +18,12 @@ export function VonageRoom({
     vonageSessionId,
     getAccessToken,
     disable,
+    isBackstageRoom,
 }: {
     vonageSessionId: string;
     getAccessToken: () => Promise<string>;
     disable: boolean;
+    isBackstageRoom: boolean;
 }): JSX.Element {
     const mAttendee = useMaybeCurrentAttendee();
 
@@ -40,6 +42,7 @@ export function VonageRoom({
                         vonageSessionId={vonageSessionId}
                         stop={!roomCouldBeInUse || disable}
                         getAccessToken={getAccessToken}
+                        isBackstageRoom={isBackstageRoom}
                     />
                 ) : undefined}
             </ChatProfileModalProvider>
@@ -51,12 +54,13 @@ function VonageRoomInner({
     vonageSessionId,
     getAccessToken,
     stop,
+    isBackstageRoom,
 }: {
     vonageSessionId: string;
     getAccessToken: () => Promise<string>;
     stop: boolean;
+    isBackstageRoom: boolean;
 }): JSX.Element {
-    const maxVideoStreams = 10;
     const { state, dispatch } = useVonageRoom();
     const { vonage, connected, connections, streams, screen, camera } = useVonageComputedState(
         getAccessToken,
@@ -73,6 +77,12 @@ function VonageRoomInner({
 
     const [joining, setJoining] = useState<boolean>(false);
 
+    const receivingScreenShare = useMemo(() => streams.find((s) => s.videoType === "screen"), [streams]);
+    const maxVideoStreams = receivingScreenShare ? 4 : 10;
+    const screenSharingActive = receivingScreenShare || screen;
+    const cameraResolution = screenSharingActive || connections.length >= 10 ? "low" : "normal";
+    const participantWidth = cameraResolution === "low" ? 150 : 300;
+
     const joinRoom = useCallback(async () => {
         console.log("Joining room");
         setJoining(true);
@@ -82,7 +92,8 @@ function VonageRoomInner({
             await vonage.publishCamera(
                 cameraPublishContainerRef.current as HTMLElement,
                 state.cameraIntendedEnabled ? state.preferredCameraId : null,
-                state.microphoneIntendedEnabled ? state.preferredMicrophoneId : null
+                state.microphoneIntendedEnabled ? state.preferredMicrophoneId : null,
+                isBackstageRoom ? "1280x720" : "640x480"
             );
         } catch (e) {
             console.error("Failed to join room", e);
@@ -99,6 +110,7 @@ function VonageRoomInner({
         state.preferredCameraId,
         state.microphoneIntendedEnabled,
         state.preferredMicrophoneId,
+        isBackstageRoom,
         toast,
     ]);
 
@@ -160,8 +172,6 @@ function VonageRoomInner({
         fn();
     }, [connected, screen, state.screenShareIntendedEnabled, vonage]);
 
-    const receivingScreenShare = useMemo(() => streams.find((s) => s.videoType === "screen"), [streams]);
-
     const [streamLastActive, setStreamLastActive] = useState<{ [streamId: string]: number }>({});
     const setStreamActivity = useCallback((streamId: string, activity: boolean) => {
         if (activity) {
@@ -179,42 +189,107 @@ function VonageRoomInner({
         } else {
             const activeStreams = R.sortWith(
                 [R.descend((pair) => pair[1]), R.ascend((pair) => pair[0])],
-                R.toPairs(streamLastActive)
+                R.toPairs(streamLastActive) as [string, number][]
             ).map((pair) => pair[0]);
             const selectedActiveStreams = activeStreams.slice(0, Math.min(activeStreams.length, maxVideoStreams));
 
-            // todo: fill up rest of the available video slots with inactive streams
+            setEnableStreams((oldEnabledStreams) => {
+                if (!oldEnabledStreams) {
+                    return selectedActiveStreams;
+                }
 
-            console.log("Enabled streams", selectedActiveStreams);
-
-            setEnableStreams(selectedActiveStreams);
+                if (
+                    selectedActiveStreams.length !== oldEnabledStreams.length ||
+                    oldEnabledStreams.some((x) => !selectedActiveStreams.includes(x)) ||
+                    selectedActiveStreams.some((x) => !oldEnabledStreams.includes(x))
+                ) {
+                    return selectedActiveStreams;
+                } else {
+                    return oldEnabledStreams;
+                }
+            });
         }
-    }, [streams, streamLastActive]);
+    }, [streams, maxVideoStreams, streamLastActive]);
     useEffect(() => {
         updateEnabledStreams();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     usePolling(updateEnabledStreams, 3000, true);
 
-    const screenSharingActive = receivingScreenShare || screen;
-    const participantWidth = screenSharingActive ? 150 : 300;
-
-    return (
-        <Box>
-            <VonageRoomControlBar onJoinRoom={joinRoom} onLeaveRoom={leaveRoom} joining={joining} />
-            <Box position="relative" mb={8} width="100%">
+    const viewPublishedScreenShareEl = useMemo(
+        () => (
+            <Box position="relative" maxH="80vh" hidden={!screen} height={"70vh"} width="100%" mb={2} overflow="hidden">
+                <Box ref={screenPublishContainerRef} position="absolute" left="0" top="0" height="100%" width="100%" />
                 <Box
-                    position="relative"
-                    maxH="80vh"
-                    hidden={!screen}
-                    height={"70vh"}
+                    position="absolute"
+                    zIndex="200"
+                    left="0"
+                    top="0"
+                    height="100%"
                     width="100%"
-                    mb={2}
-                    overflow="hidden"
-                >
+                    pointerEvents="none"
+                />
+                <Box position="absolute" left="0.4rem" bottom="0.35rem" zIndex="200" width="100%">
+                    <VonageOverlay connectionData={JSON.stringify({ attendeeId: attendee.id })} />
+                </Box>
+            </Box>
+        ),
+        [attendee.id, screen]
+    );
+
+    const viewSubscribedScreenShare = useMemo(
+        () => (
+            <Box
+                maxH="80vh"
+                height={receivingScreenShare ? "70vh" : undefined}
+                width="100%"
+                mb={2}
+                zIndex={300}
+                hidden={!receivingScreenShare}
+            >
+                {streams
+                    .filter((stream) => stream.videoType === "screen")
+                    .map((stream) => (
+                        <VonageSubscriber
+                            key={stream.streamId}
+                            stream={stream}
+                            enableVideo={true}
+                            resolution={"high"}
+                        />
+                    ))}
+            </Box>
+        ),
+        [receivingScreenShare, streams]
+    );
+
+    const viewPublishedPlaceholder = useMemo(
+        () =>
+            connected && !camera ? (
+                <Box position="relative" flex={`0 0 ${participantWidth}px`} w={participantWidth} h={participantWidth}>
+                    <Box position="absolute" left="0" bottom="0" zIndex="200" width="100%" overflow="hidden">
+                        <VonageOverlay connectionData={JSON.stringify({ attendeeId: attendee.id })} />
+                    </Box>
+                    <PlaceholderImage />
+                </Box>
+            ) : (
+                <></>
+            ),
+        [attendee.id, camera, connected, participantWidth]
+    );
+
+    const viewPublishedCamera = useMemo(
+        () => (
+            <Box
+                flex={`0 0 ${participantWidth}px`}
+                w={participantWidth}
+                h={participantWidth}
+                display={connected && camera ? "block" : "none"}
+            >
+                <Box position="relative" height="100%" width="100%" overflow="hidden">
                     <Box
-                        ref={screenPublishContainerRef}
+                        ref={cameraPublishContainerRef}
                         position="absolute"
+                        zIndex="100"
                         left="0"
                         top="0"
                         height="100%"
@@ -229,30 +304,101 @@ function VonageRoomInner({
                         width="100%"
                         pointerEvents="none"
                     />
-                    <Box position="absolute" left="0.4rem" bottom="0.35rem" zIndex="200" width="100%">
+                    <Box position="absolute" left="0.4rem" bottom="0.2rem" zIndex="200" width="100%" overflow="hidden">
                         <VonageOverlay connectionData={JSON.stringify({ attendeeId: attendee.id })} />
                     </Box>
                 </Box>
+            </Box>
+        ),
+        [attendee.id, camera, connected, participantWidth]
+    );
 
-                <Box
-                    maxH="80vh"
-                    height={receivingScreenShare ? "70vh" : undefined}
-                    width="100%"
-                    mb={2}
-                    zIndex={300}
-                    hidden={!receivingScreenShare}
-                >
-                    {streams
-                        .filter((stream) => stream.videoType === "screen")
-                        .map((stream) => (
-                            <VonageSubscriber
-                                key={stream.streamId}
-                                stream={stream}
-                                enableVideo={true}
-                                lowRes={!!receivingScreenShare}
-                            />
-                        ))}
+    const preJoin = useMemo(
+        () =>
+            joining || connected ? (
+                <></>
+            ) : (
+                <VStack justifyContent="center" height="100%" width="100%">
+                    <PreJoin cameraPreviewRef={cameraPreviewRef} />
+                </VStack>
+            ),
+        [connected, joining]
+    );
+
+    const nobodyElseAlert = useMemo(
+        () =>
+            connected && connections.length <= 1 ? (
+                <Alert status="info">
+                    <AlertIcon />
+                    <AlertTitle>Nobody else has joined the room at the moment</AlertTitle>
+                </Alert>
+            ) : (
+                <></>
+            ),
+        [connected, connections.length]
+    );
+
+    const othersCameraStreams = useMemo(() => streams.filter((s) => s.videoType === "camera" || !s.videoType), [
+        streams,
+    ]);
+
+    const sortedStreams = useMemo(() => R.sortWith([R.ascend(R.prop("creationTime"))], othersCameraStreams), [
+        othersCameraStreams,
+    ]);
+
+    const otherStreams = useMemo(
+        () =>
+            sortedStreams.map((stream) => (
+                <Box key={stream.streamId} flex={`0 0 ${participantWidth}px`} w={participantWidth} h={participantWidth}>
+                    <VonageSubscriber
+                        stream={stream}
+                        onChangeActivity={(activity) => setStreamActivity(stream.streamId, activity)}
+                        enableVideo={!enableStreams || !!enableStreams.includes(stream.streamId)}
+                        resolution={cameraResolution}
+                    />
                 </Box>
+            )),
+        [enableStreams, cameraResolution, participantWidth, setStreamActivity, sortedStreams]
+    );
+
+    const otherUnpublishedConnections = useMemo(
+        () =>
+            (connected ? connections : []).filter(
+                (connection) =>
+                    userId &&
+                    !connection.data.includes(userId) &&
+                    !streams.find((stream) => stream.connection.connectionId === connection.connectionId)
+            ),
+        [connected, connections, streams, userId]
+    );
+
+    const otherPlaceholders = useMemo(
+        () =>
+            otherUnpublishedConnections.map((connection) => (
+                <Box
+                    key={connection.connectionId}
+                    position="relative"
+                    flex={`0 0 ${participantWidth}px`}
+                    w={participantWidth}
+                    h={participantWidth}
+                >
+                    <Box position="absolute" left="0.4rem" bottom="0.2rem" zIndex="200" width="100%" overflow="hidden">
+                        <VonageOverlay connectionData={connection.data} />
+                    </Box>
+                    <PlaceholderImage />
+                </Box>
+            )),
+        [otherUnpublishedConnections, participantWidth]
+    );
+
+    return (
+        <Box>
+            {/* Use memo'ing the control bar causes the screenshare button to not update properly 🤔 */}
+            <VonageRoomControlBar onJoinRoom={joinRoom} onLeaveRoom={leaveRoom} joining={joining} />
+            <Box position="relative" mb={8} width="100%">
+                {viewPublishedScreenShareEl}
+
+                {viewSubscribedScreenShare}
 
                 <Flex
                     width="100%"
@@ -261,126 +407,18 @@ function VonageRoomInner({
                     overflowX={screenSharingActive ? "auto" : "hidden"}
                     overflowY={screenSharingActive ? "hidden" : "auto"}
                 >
-                    {connected && !camera ? (
-                        <Box
-                            position="relative"
-                            flex={`0 0 ${participantWidth}px`}
-                            w={participantWidth}
-                            h={participantWidth}
-                        >
-                            <Box position="absolute" left="0" bottom="0" zIndex="200" width="100%" overflow="hidden">
-                                <VonageOverlay connectionData={JSON.stringify({ attendeeId: attendee.id })} />
-                            </Box>
-                            <PlaceholderImage />
-                        </Box>
-                    ) : (
-                        <></>
-                    )}
+                    {viewPublishedPlaceholder}
 
-                    <Box
-                        flex={`0 0 ${participantWidth}px`}
-                        w={participantWidth}
-                        h={participantWidth}
-                        display={connected && camera ? "block" : "none"}
-                    >
-                        <Box position="relative" height="100%" width="100%" overflow="hidden">
-                            <Box
-                                ref={cameraPublishContainerRef}
-                                position="absolute"
-                                zIndex="100"
-                                left="0"
-                                top="0"
-                                height="100%"
-                                width="100%"
-                            />
-                            <Box
-                                position="absolute"
-                                zIndex="200"
-                                left="0"
-                                top="0"
-                                height="100%"
-                                width="100%"
-                                pointerEvents="none"
-                            />
-                            <Box
-                                position="absolute"
-                                left="0.4rem"
-                                bottom="0.2rem"
-                                zIndex="200"
-                                width="100%"
-                                overflow="hidden"
-                            >
-                                <VonageOverlay connectionData={JSON.stringify({ attendeeId: attendee.id })} />
-                            </Box>
-                        </Box>
-                    </Box>
+                    {viewPublishedCamera}
 
-                    {R.sortWith(
-                        [
-                            R.descend((stream) => !enableStreams || !!enableStreams.includes(stream.streamId)),
-                            R.ascend(R.prop("creationTime")),
-                        ],
-                        streams.filter((s) => s.videoType === "camera" || !s.videoType)
-                    ).map((stream) => (
-                        <Box
-                            key={stream.streamId}
-                            flex={`0 0 ${participantWidth}px`}
-                            w={participantWidth}
-                            h={participantWidth}
-                        >
-                            <VonageSubscriber
-                                stream={stream}
-                                onChangeActivity={(activity) => setStreamActivity(stream.streamId, activity)}
-                                enableVideo={!enableStreams || !!enableStreams.includes(stream.streamId)}
-                                lowRes={!!receivingScreenShare}
-                            />
-                        </Box>
-                    ))}
-                    {(connected ? connections : [])
-                        .filter(
-                            (connection) =>
-                                userId &&
-                                !connection.data.includes(userId) &&
-                                !streams.find((stream) => stream.connection.connectionId === connection.connectionId)
-                        )
-                        .map((connection) => (
-                            <Box
-                                key={connection.connectionId}
-                                position="relative"
-                                flex={`0 0 ${participantWidth}px`}
-                                w={participantWidth}
-                                h={participantWidth}
-                            >
-                                <Box
-                                    position="absolute"
-                                    left="0.4rem"
-                                    bottom="0.2rem"
-                                    zIndex="200"
-                                    width="100%"
-                                    overflow="hidden"
-                                >
-                                    <VonageOverlay connectionData={connection.data} />
-                                </Box>
-                                <PlaceholderImage />
-                            </Box>
-                        ))}
+                    {otherStreams}
+
+                    {otherPlaceholders}
                 </Flex>
-                {connected && connections.length <= 1 ? (
-                    <Alert status="info">
-                        <AlertIcon />
-                        <AlertTitle>Nobody else has joined the room at the moment</AlertTitle>
-                    </Alert>
-                ) : (
-                    <></>
-                )}
 
-                {joining || connected ? (
-                    <></>
-                ) : (
-                    <VStack justifyContent="center" height="100%" width="100%">
-                        <PreJoin cameraPreviewRef={cameraPreviewRef} />
-                    </VStack>
-                )}
+                {nobodyElseAlert}
+
+                {preJoin}
             </Box>
         </Box>
     );

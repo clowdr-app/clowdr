@@ -35,6 +35,7 @@ export function BreakoutVonageRoom({ room }: { room: RoomPage_RoomDetailsFragmen
             node={sharedRoomContext.portalNode}
             vonageSessionId={room.publicVonageSessionId}
             getAccessToken={getAccessToken}
+            isBackstageRoom={false}
         />
     ) : (
         <>No breakout session exists </>

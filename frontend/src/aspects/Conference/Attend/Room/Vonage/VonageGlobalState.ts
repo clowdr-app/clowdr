@@ -2,6 +2,8 @@ import OT from "@opentok/client";
 import { Mutex } from "async-mutex";
 import * as R from "ramda";
 
+export type CameraResolutions = "640x480" | "1280x720";
+
 export enum StateType {
     Uninitialised,
     Initialised,
@@ -146,8 +148,11 @@ export class VonageGlobalState {
     public async publishCamera(
         targetElement: string | HTMLElement,
         videoDeviceId: string | null,
-        audioDeviceId: string | null
+        audioDeviceId: string | null,
+        resolution: CameraResolutions = "640x480"
     ): Promise<void> {
+        const frameRate = resolution === "1280x720" ? 30 : 15;
+
         const release = await this.mutex.acquire();
         let _publisher: OT.Publisher | undefined;
         try {
@@ -190,7 +195,8 @@ export class VonageGlobalState {
                         publishVideo: !!videoDeviceId,
                         audioSource: audioDeviceId,
                         videoSource: videoDeviceId,
-                        resolution: "1280x720",
+                        resolution,
+                        frameRate,
                         width: "100%",
                         height: "100%",
                         insertMode: "append",
@@ -256,7 +262,8 @@ export class VonageGlobalState {
                     publishVideo: !!videoDeviceId,
                     audioSource: audioDeviceId,
                     videoSource: videoDeviceId,
-                    resolution: "1280x720",
+                    resolution,
+                    frameRate,
                     width: "100%",
                     height: "100%",
                     insertMode: "append",

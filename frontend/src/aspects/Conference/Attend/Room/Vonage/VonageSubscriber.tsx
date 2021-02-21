@@ -9,17 +9,21 @@ export function VonageSubscriber({
     stream,
     onChangeActivity,
     enableVideo,
-    lowRes,
+    resolution,
 }: {
     stream: OT.Stream;
     onChangeActivity?: (active: boolean) => void;
     enableVideo: boolean;
-    lowRes: boolean;
+    resolution: "low" | "normal" | "high";
 }): JSX.Element {
     const ref = useRef<HTMLDivElement>(null);
 
-    const smallDimensions = useMemo<OT.Dimensions>(() => ({ width: 320, height: 240 }), []);
-    const normalDimensions = useMemo<OT.Dimensions>(() => ({ width: 640, height: 480 }), []);
+    const smallDimensions = useMemo<OT.Dimensions>(() => ({ width: 160, height: 120 }), []);
+    const normalDimensions = useMemo<OT.Dimensions>(() => ({ width: 480, height: 360 }), []);
+    const highResDimensions = useMemo<OT.Dimensions>(() => ({ width: 1280, height: 720 }), []);
+    const lowFrameRate = 1;
+    const normalFrameRate = 15;
+    const highFrameRate = 30;
 
     const vonage = useVonageGlobalState();
     const [talking, setTalking] = useState<boolean>(false);
@@ -39,8 +43,13 @@ export function VonageSubscriber({
     }, [enableVideo, subscriber]);
 
     useEffect(() => {
-        subscriber?.setPreferredResolution(lowRes ? smallDimensions : normalDimensions);
-    }, [lowRes, normalDimensions, smallDimensions, subscriber]);
+        subscriber?.setPreferredResolution(
+            resolution === "low" ? smallDimensions : resolution === "high" ? highResDimensions : normalDimensions
+        );
+        subscriber?.setPreferredFrameRate(
+            resolution === "low" ? lowFrameRate : resolution === "high" ? highFrameRate : normalFrameRate
+        );
+    }, [highResDimensions, normalDimensions, resolution, smallDimensions, subscriber]);
 
     useEffect(() => {
         if (!ref.current) {
@@ -57,7 +66,10 @@ export function VonageSubscriber({
             insertMode: "append",
             height: "100%",
             width: "100%",
-            preferredResolution: lowRes ? smallDimensions : normalDimensions,
+            preferredResolution:
+                resolution === "low" ? smallDimensions : resolution === "high" ? highResDimensions : normalDimensions,
+            preferredFrameRate:
+                resolution === "low" ? lowFrameRate : resolution === "high" ? highFrameRate : normalFrameRate,
         });
 
         setSubscriber(subscriber);

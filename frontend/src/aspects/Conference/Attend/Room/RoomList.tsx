@@ -40,6 +40,7 @@ export function RoomList({ rooms, layout, limit, onClick }: Props): JSX.Element 
         () =>
             R.sortWith(
                 [
+                    R.ascend((room) => room.priority),
                     R.descend((room) => !roomParticipants || !!roomParticipants?.find((p) => p.roomId === room.id)),
                     R.ascend((room) => room.name),
                 ],

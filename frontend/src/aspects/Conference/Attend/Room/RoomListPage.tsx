@@ -34,6 +34,7 @@ gql`
     fragment RoomListRoomDetails on Room {
         id
         name
+        priority
         roomPrivacyName
         originatingContentGroupId
         originatingEventId

@@ -6666,9 +6666,6 @@
     permission:
       check:
         _and:
-        - attendee:
-            userId:
-              _is_null: false
         - _or:
           - room:
               _and:
@@ -6731,9 +6728,6 @@
       - updated_at
       filter:
         _and:
-        - attendee:
-            userId:
-              _is_null: false
         - _or:
           - room:
               _and:
@@ -6783,9 +6777,6 @@
       - roomPersonRoleName
       filter:
         _and:
-        - attendee:
-            userId:
-              _is_null: false
         - _or:
           - room:
               _and:
@@ -6837,9 +6828,6 @@
     permission:
       filter:
         _and:
-        - attendee:
-            userId:
-              _is_null: false
         - _or:
           - room:
               _and:

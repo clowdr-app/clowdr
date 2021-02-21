@@ -262,7 +262,12 @@ function VonageRoomInner({
                     overflowY={screenSharingActive ? "hidden" : "auto"}
                 >
                     {connected && !camera ? (
-                        <Box position="relative" w={participantWidth} h={participantWidth}>
+                        <Box
+                            position="relative"
+                            flex={`0 0 ${participantWidth}px`}
+                            w={participantWidth}
+                            h={participantWidth}
+                        >
                             <Box position="absolute" left="0" bottom="0" zIndex="200" width="100%" overflow="hidden">
                                 <VonageOverlay connectionData={JSON.stringify({ attendeeId: attendee.id })} />
                             </Box>
@@ -272,7 +277,12 @@ function VonageRoomInner({
                         <></>
                     )}
 
-                    <Box w={participantWidth} h={participantWidth} display={connected && camera ? "block" : "none"}>
+                    <Box
+                        flex={`0 0 ${participantWidth}px`}
+                        w={participantWidth}
+                        h={participantWidth}
+                        display={connected && camera ? "block" : "none"}
+                    >
                         <Box position="relative" height="100%" width="100%" overflow="hidden">
                             <Box
                                 ref={cameraPublishContainerRef}
@@ -312,7 +322,12 @@ function VonageRoomInner({
                         ],
                         streams.filter((s) => s.videoType === "camera" || !s.videoType)
                     ).map((stream) => (
-                        <Box key={stream.streamId} w={participantWidth} h={participantWidth}>
+                        <Box
+                            key={stream.streamId}
+                            flex={`0 0 ${participantWidth}px`}
+                            w={participantWidth}
+                            h={participantWidth}
+                        >
                             <VonageSubscriber
                                 stream={stream}
                                 onChangeActivity={(activity) => setStreamActivity(stream.streamId, activity)}
@@ -332,6 +347,7 @@ function VonageRoomInner({
                             <Box
                                 key={connection.connectionId}
                                 position="relative"
+                                flex={`0 0 ${participantWidth}px`}
                                 w={participantWidth}
                                 h={participantWidth}
                             >

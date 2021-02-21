@@ -101,8 +101,7 @@ gql`
     mutation EndChatDuplication(
         $chatId1: uuid!
         $chatId2: uuid! # $data: jsonb! # $message: String!
-    ) # $systemId1: String!
-    # $systemId2: String!
+     ) # $systemId1: String!
     {
         update_chat1: update_chat_Chat_by_pk(pk_columns: { id: $chatId1 }, _set: { duplicateToId: null }) {
             id

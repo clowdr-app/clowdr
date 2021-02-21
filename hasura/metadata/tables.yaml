@@ -5398,6 +5398,7 @@
     permission:
       columns:
       - id
+      - inviteCode
       - invitedEmailAddress
       filter:
         inviteCode:

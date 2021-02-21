@@ -48,6 +48,7 @@ export function ContentGroupVideos({ contentGroupData }: { contentGroupData: Con
                                 ]}
                                 flexBasis={0}
                                 mx={5}
+                                mt={3}
                                 mb={5}
                                 visibility={[
                                     "visible",

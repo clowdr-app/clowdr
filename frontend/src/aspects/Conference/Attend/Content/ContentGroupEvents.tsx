@@ -21,6 +21,7 @@ import {
 import { formatDistanceStrict } from "date-fns";
 import * as R from "ramda";
 import React, { useMemo } from "react";
+import { Twemoji } from "react-emoji-render";
 import type {
     ContentGroupEventFragment,
     ContentGroupEventsFragment,
@@ -79,7 +80,7 @@ export function ContentGroupEvents({
             <Text mt={3} w="auto" textAlign="left" p={0}>
                 Times are shown in your local timezone.
             </Text>
-            <Flex mt={2} flexWrap="wrap" alignItems="flex-start" gridColumnGap="2%" overflowX="auto">
+            <Flex pt={2} flexWrap="wrap" alignItems="flex-start" gridColumnGap="2%" overflowX="auto">
                 <VStack mt={2} mb={4} flex="1 1 49%" alignItems="flex-start" maxW="max-content">
                     <Heading as="h4" fontSize="md" textAlign="left" w="100%">
                         All times for this item
@@ -291,10 +292,11 @@ function Event({
                             size="sm"
                             maxH="unset"
                             h="auto"
+                            py={1}
                             colorScheme="blue"
                             linkProps={{ maxH: "unset" }}
                         >
-                            {contentGroupEvent.room.name}
+                            <Twemoji className="twemoji" text={contentGroupEvent.room.name} />
                         </LinkButton>
                     </Td>
                 ) : (
@@ -313,14 +315,15 @@ function Event({
                                 size="sm"
                                 maxH="unset"
                                 h="auto"
+                                py={1}
                                 colorScheme="blue"
                                 linkProps={{ maxH: "unset" }}
                             >
-                                {contentGroupEvent.contentGroup.title}
+                                <Twemoji className="twemoji" text={contentGroupEvent.contentGroup.title} />
                             </LinkButton>
                         ) : (
                             <chakra.span fontWeight="bold" fontStyle="italic">
-                                {contentGroupEvent.contentGroup.title}
+                                <Twemoji className="twemoji" text={contentGroupEvent.contentGroup.title} />
                             </chakra.span>
                         )}
                     </Td>

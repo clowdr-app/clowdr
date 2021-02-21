@@ -79,9 +79,10 @@ function ReactionsListInner({
     const reactionQs = useReactions();
     const messageQs = useReceiveMessageQueries();
 
-    const reactionsGrouped: Array<
-        [string, { count: number; attendeeSentThisReactionId: number | false }]
-    > = useMemo(() => {
+    const reactionsGrouped: Array<[
+        string,
+        { count: number; attendeeSentThisReactionId: number | false }
+    ]> = useMemo(() => {
         return [
             ...reactions
                 .reduce((acc, reaction) => {

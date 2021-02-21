@@ -1,5 +1,6 @@
 import { gql, useQuery } from "@apollo/client";
 import {
+    chakra,
     Flex,
     Heading,
     Spinner,
@@ -318,7 +319,9 @@ function Event({
                                 {contentGroupEvent.contentGroup.title}
                             </LinkButton>
                         ) : (
-                            contentGroupEvent.contentGroup.title
+                            <chakra.span fontWeight="bold" fontStyle="italic">
+                                {contentGroupEvent.contentGroup.title}
+                            </chakra.span>
                         )}
                     </Td>
                 ) : (

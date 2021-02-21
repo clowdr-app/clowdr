@@ -1,4 +1,18 @@
-import { Center, HStack, SimpleGrid, Spacer, Text, VStack } from "@chakra-ui/react";
+import {
+    Center,
+    FormControl,
+    FormHelperText,
+    FormLabel,
+    HStack,
+    Input,
+    InputGroup,
+    InputLeftAddon,
+    InputRightElement,
+    SimpleGrid,
+    Spacer,
+    Text,
+    VStack,
+} from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { RoomListRoomDetailsFragment, RoomPrivacy_Enum } from "../../../../generated/graphql";
@@ -129,9 +143,8 @@ export function RoomList({ rooms, layout, limit, onClick }: Props): JSX.Element 
           })
         : roomElements.filter((e) => e.showByDefault);
 
-    const limitedElements = limit
-        ? filteredElements.slice(0, Math.min(limit, filteredElements.length))
-        : filteredElements;
+    const limitedElements =
+        limit && !s.length ? filteredElements.slice(0, Math.min(limit, filteredElements.length)) : filteredElements;
 
     const resultCountStr = `showing ${Math.min(limit ?? Number.MAX_SAFE_INTEGER, filteredElements.length)} of ${
         sortedRooms.length
@@ -148,29 +161,31 @@ export function RoomList({ rooms, layout, limit, onClick }: Props): JSX.Element 
 
     return (
         <>
-            {/* <FormControl mb={4} maxW={400}>
-                <FormLabel mt={4} textAlign="center">
-                    {resultCountStr}
-                </FormLabel>
-                <InputGroup>
-                    <InputLeftAddon aria-hidden>Search</InputLeftAddon>
-                    <Input
-                        aria-label={"Search found " + ariaSearchResultStr}
-                        type="text"
-                        placeholder="Search"
-                        value={search}
-                        onChange={(ev) => {
-                            setSearch(ev.target.value);
-                        }}
-                    />
-                    <InputRightElement>
-                        <FAIcon iconStyle="s" icon="search" />
-                    </InputRightElement>
-                </InputGroup>
-                <FormHelperText>
-                    Only key rooms are shown by default. Enter a search term to search all rooms.
-                </FormHelperText>
-            </FormControl> */}
+            {layout === "grid" ? (
+                <FormControl mb={4} maxW={400}>
+                    <FormLabel mt={4} textAlign="center">
+                        {resultCountStr}
+                    </FormLabel>
+                    <InputGroup>
+                        <InputLeftAddon aria-hidden>Search</InputLeftAddon>
+                        <Input
+                            aria-label={"Search found " + ariaSearchResultStr}
+                            type="text"
+                            placeholder="Search"
+                            value={search}
+                            onChange={(ev) => {
+                                setSearch(ev.target.value);
+                            }}
+                        />
+                        <InputRightElement>
+                            <FAIcon iconStyle="s" icon="search" />
+                        </InputRightElement>
+                    </InputGroup>
+                    <FormHelperText>
+                        Only key rooms are shown by default. Enter a search term to search all rooms.
+                    </FormHelperText>
+                </FormControl>
+            ) : undefined}
             <SimpleGrid
                 columns={layout === "grid" ? [1, Math.min(2, rooms.length), Math.min(3, rooms.length)] : 1}
                 autoRows="min-content"

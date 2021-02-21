@@ -85,7 +85,7 @@ export default function RoomListPage(): JSX.Element {
                         <Heading as="h2" my={5}>
                             Social Rooms
                         </Heading>
-                        <Button onClick={onOpen} colorScheme="green" mb={5}>
+                        <Button onClick={onOpen} colorScheme="green" mb={2}>
                             Create new room
                         </Button>
                         <RoomList rooms={rooms} layout="grid" />

@@ -41,23 +41,6 @@ function RoomsPanel({ confSlug }: { confSlug: string }): JSX.Element {
         <>
             <AccordionPanel pb={4} px={"3px"}>
                 <Heading as="h3" fontWeight="normal" fontStyle="italic" fontSize="md" mb={2} textAlign="left" ml={1}>
-                    Program rooms
-                </Heading>
-                <ApolloQueryWrapper getter={(data) => data.programRooms} queryResult={result}>
-                    {(rooms: readonly RoomListRoomDetailsFragment[]) => (
-                        <RoomList rooms={rooms} layout="list" limit={5} />
-                    )}
-                </ApolloQueryWrapper>
-                <Heading
-                    as="h3"
-                    fontWeight="normal"
-                    fontStyle="italic"
-                    fontSize="md"
-                    mb={2}
-                    mt={4}
-                    textAlign="left"
-                    ml={1}
-                >
                     Social rooms
                 </Heading>
                 <ApolloQueryWrapper getter={(data) => data.socialRooms} queryResult={result}>
@@ -73,6 +56,21 @@ function RoomsPanel({ confSlug }: { confSlug: string }): JSX.Element {
                         View all rooms
                     </LinkButton>
                 </HStack>
+                <Heading
+                    as="h3"
+                    fontWeight="normal"
+                    fontStyle="italic"
+                    fontSize="md"
+                    mb={2}
+                    textAlign="left"
+                    mt={4}
+                    ml={1}
+                >
+                    Program rooms
+                </Heading>
+                <ApolloQueryWrapper getter={(data) => data.programRooms} queryResult={result}>
+                    {(rooms: readonly RoomListRoomDetailsFragment[]) => <RoomList rooms={rooms} layout="list" />}
+                </ApolloQueryWrapper>
             </AccordionPanel>
             <CreateRoomModal
                 isOpen={isCreateRoomOpen}

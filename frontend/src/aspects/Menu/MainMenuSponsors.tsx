@@ -39,6 +39,7 @@ gql`
             data
         }
         title
+        shortTitle
     }
 `;
 
@@ -119,7 +120,14 @@ export function MainMenuSponsors(): JSX.Element {
                                                 justifyContent="space-between"
                                             >
                                                 <Text fontSize="lg">
-                                                    <Twemoji className="twemoji" text={sponsorContentGroup.title} />
+                                                    <Twemoji
+                                                        className="twemoji"
+                                                        text={
+                                                            sponsorContentGroup.shortTitle
+                                                                ? sponsorContentGroup.shortTitle
+                                                                : sponsorContentGroup.title
+                                                        }
+                                                    />
                                                 </Text>
                                                 <PageCountText width="10%" path={url} />
                                             </GridItem>

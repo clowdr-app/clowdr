@@ -32938,7 +32938,7 @@ export type MainMenuSponsors_GetSponsorsQuery = { readonly __typename?: 'query_r
     & MainMenuSponsors_ContentGroupDataFragment
   )> };
 
-export type MainMenuSponsors_ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly rooms: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }>, readonly logo: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly data: any }> };
+export type MainMenuSponsors_ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }>, readonly logo: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly data: any }> };
 
 export type SidebarReadUpToIndexFragment = { readonly __typename?: 'chat_ReadUpToIndex', readonly attendeeId: any, readonly chatId: any, readonly messageId: number, readonly unreadCount?: Maybe<number> };
 
@@ -34053,6 +34053,7 @@ export const MainMenuSponsors_ContentGroupDataFragmentDoc = gql`
     data
   }
   title
+  shortTitle
 }
     `;
 export const SidebarReadUpToIndexFragmentDoc = gql`

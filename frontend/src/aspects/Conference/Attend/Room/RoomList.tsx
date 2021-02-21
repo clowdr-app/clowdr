@@ -146,7 +146,7 @@ export function RoomList({ rooms, layout, limit, onClick }: Props): JSX.Element 
     const limitedElements =
         limit && !s.length ? filteredElements.slice(0, Math.min(limit, filteredElements.length)) : filteredElements;
 
-    const resultCountStr = `showing ${Math.min(limit ?? Number.MAX_SAFE_INTEGER, filteredElements.length)} of ${
+    const resultCountStr = `Showing ${Math.min(limit ?? Number.MAX_SAFE_INTEGER, filteredElements.length)} of ${
         sortedRooms.length
     } ${sortedRooms.length !== 1 ? "rooms" : "room"}`;
     const [ariaSearchResultStr, setAriaSearchResultStr] = useState<string>(resultCountStr);

@@ -14,8 +14,9 @@ import {
 } from "@chakra-ui/react";
 import type { ContentItemDataBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
 import { formatRelative } from "date-fns";
+import type Hls from "hls.js";
 import * as R from "ramda";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 import { Redirect, useHistory } from "react-router-dom";
 import {
@@ -237,6 +238,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
     );
 
     const muteStream = shouldBeBackstage;
+    const playerRef = useRef<ReactPlayer | null>(null);
     const playerEl = useMemo(
         () =>
             hlsUri && withinThreeMinutesOfBroadcastEvent ? (
@@ -247,8 +249,14 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                         url={hlsUri}
                         config={{
                             file: {
-                                hlsOptions: {},
+                                hlsVersion: "1.0.0-beta.6",
                             },
+                        }}
+                        ref={playerRef}
+                        onReady={() => {
+                            const hlsPlayer = playerRef.current?.getInternalPlayer("hls") as Hls;
+
+                            hlsPlayer.subtitleDisplay = false;
                         }}
                         playing={
                             (withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent) &&

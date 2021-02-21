@@ -1,5 +1,6 @@
 import { Alert, AlertIcon, AlertTitle, Heading, SkeletonText } from "@chakra-ui/react";
 import React from "react";
+import { Twemoji } from "react-emoji-render";
 import { useChatTitleQuery } from "./TitleQuery";
 
 export function HeadingText(): JSX.Element {
@@ -20,7 +21,7 @@ export function HeadingText(): JSX.Element {
 
     return (
         <Heading as="h1" fontSize="sm" textAlign="left" fontWeight="600" p={1} flex="1">
-            {titleQ.data}
+            <Twemoji className="twemoji" text={titleQ.data} />
         </Heading>
     );
 }

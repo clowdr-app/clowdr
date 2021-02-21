@@ -34,6 +34,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Twemoji } from "react-emoji-render";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import {
     AttendeeFieldsFragment,
@@ -146,7 +147,7 @@ function ChatListItem({
             <ListIcon mt="0.7ex" fontSize="sm" as={isDM ? AtSignIcon : isPrivate ? LockIcon : ChatIcon} />
             <Button onClick={onClick} size="sm" variant="ghost" whiteSpace="normal" textAlign="left" h="auto" p={1}>
                 <Text as="span">
-                    {unreadCount ? `(${unreadCount})` : undefined} {chatName}
+                    <Twemoji className="twemoji" text={`${unreadCount ? `(${unreadCount})` : ""} ${chatName}`} />
                 </Text>
             </Button>
         </ListItem>

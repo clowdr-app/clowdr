@@ -133,7 +133,7 @@ function MessageBody({
                     <Text as="span" fontSize={smallFontSize} color={timeColour}>
                         {attendee?.displayName ?? " "}
                     </Text>
-                    {attendee?.profile?.badges ? (
+                    {attendee?.profile?.badges && attendee.profile.badges.length > 0 ? (
                         <Box
                             fontSize={smallFontSize}
                             color={attendee.profile.badges[0].colour}

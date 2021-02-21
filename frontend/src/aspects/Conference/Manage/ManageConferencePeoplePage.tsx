@@ -1,5 +1,5 @@
 import { FetchResult, gql } from "@apollo/client";
-import { Heading, Spinner, useToast } from "@chakra-ui/react";
+import { Heading, Spinner, useDisclosure, useToast } from "@chakra-ui/react";
 import assert from "assert";
 import React, { useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -9,6 +9,7 @@ import {
     UpdateAttendeeMutation,
     useCreateDeleteAttendeesMutation,
     useInsertInvitationEmailJobsMutation,
+    useManageConferencePeoplePage_InsertCustomEmailJobMutation,
     useSelectAllAttendeesQuery,
     useSelectAllGroupsQuery,
     useUpdateAttendeeMutation,
@@ -30,6 +31,7 @@ import isValidUUID from "../../Utils/isValidUUID";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
+import { SendEmailModal } from "./People/SendEmailModal";
 import type { AttendeeDescriptor } from "./People/Types";
 import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
@@ -111,6 +113,19 @@ gql`
     mutation InsertInvitationEmailJobs($attendeeIds: jsonb!, $conferenceId: uuid!, $sendRepeat: Boolean!) {
         insert_job_queues_InvitationEmailJob(
             objects: [{ attendeeIds: $attendeeIds, conferenceId: $conferenceId, sendRepeat: $sendRepeat }]
+        ) {
+            affected_rows
+        }
+    }
+
+    mutation ManageConferencePeoplePage_InsertCustomEmailJob(
+        $htmlBody: String!
+        $subject: String!
+        $conferenceId: uuid!
+        $attendeeIds: jsonb!
+    ) {
+        insert_job_queues_CustomEmailJob(
+            objects: { htmlBody: $htmlBody, subject: $subject, conferenceId: $conferenceId, attendeeIds: $attendeeIds }
         ) {
             affected_rows
         }
@@ -332,6 +347,12 @@ export default function ManageConferencePeoplePage(): JSX.Element {
         insertInvitationEmailJobsMutation,
         { loading: insertInvitationEmailJobsLoading },
     ] = useInsertInvitationEmailJobsMutation();
+    const [
+        insertCustomEmailJobMutation,
+        insertCustomEmailJobResult,
+    ] = useManageConferencePeoplePage_InsertCustomEmailJobMutation();
+    const [sendCustomEmailAttendees, setSendCustomEmailAttendees] = useState<AttendeeDescriptor[]>([]);
+    const sendCustomEmailModal = useDisclosure();
 
     const toast = useToast();
 
@@ -708,7 +729,46 @@ export default function ManageConferencePeoplePage(): JSX.Element {
                         },
                         isRunning: insertInvitationEmailJobsLoading,
                     },
+                    {
+                        text: "Send custom email",
+                        label: "Send custom email",
+                        colorScheme: "purple",
+                        enabledWhenNothingSelected: false,
+                        enabledWhenDirty: false,
+                        tooltipWhenDisabled: "Save changes to enable sending a custom email",
+                        tooltipWhenEnabled: "Sends a custom email to all selected attendees.",
+                        action: async (keys) => {
+                            if (!allAttendeesMap) {
+                                return;
+                            }
+                            const attendees = Array.from(allAttendeesMap.entries())
+                                .filter((entry) => keys.has(entry[0]))
+                                .map((entry) => entry[1]);
+                            setSendCustomEmailAttendees(attendees);
+                            sendCustomEmailModal.onOpen();
+                        },
+                        isRunning: insertCustomEmailJobResult.loading,
+                    },
                 ]}
+            />
+            <SendEmailModal
+                isOpen={sendCustomEmailModal.isOpen}
+                onClose={sendCustomEmailModal.onClose}
+                attendees={sendCustomEmailAttendees}
+                send={async (attendeeIds: string[], htmlBody: string, subject: string) => {
+                    const result = await insertCustomEmailJobMutation({
+                        variables: {
+                            attendeeIds,
+                            conferenceId: conference.id,
+                            htmlBody,
+                            subject,
+                        },
+                    });
+                    if (result?.errors && result.errors.length > 0) {
+                        console.error("Failed to insert CustomEmailJob", result.errors);
+                        throw new Error("Error submitting query");
+                    }
+                }}
             />
         </RequireAtLeastOnePermissionWrapper>
     );

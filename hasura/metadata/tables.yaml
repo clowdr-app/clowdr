@@ -555,7 +555,7 @@
       - isPinned
       - message
       filter:
-        _or:
+        _and:
         - sender:
             userId:
               _eq: X-Hasura-User-Id
@@ -630,7 +630,7 @@
   - role: user
     permission:
       filter:
-        _or:
+        _and:
         - sender:
             userId:
               _eq: X-Hasura-User-Id
@@ -883,7 +883,7 @@
   - role: user
     permission:
       filter:
-        _or:
+        _and:
         - sender:
             userId:
               _eq: X-Hasura-User-Id
@@ -1281,6 +1281,48 @@
     headers:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
+- table:
+    schema: job_queues
+    name: CustomEmailJob
+  object_relationships:
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        conference:
+          _and:
+          - _or:
+            - createdBy:
+                _eq: X-Hasura-User-Id
+            - groups:
+                _and:
+                - enabled:
+                    _eq: true
+                - groupRoles:
+                    role:
+                      rolePermissions:
+                        _or:
+                        - permissionName:
+                            _eq: CONFERENCE_MANAGE_ROLES
+                        - permissionName:
+                            _eq: CONFERENCE_MANAGE_GROUPS
+                        - permissionName:
+                            _eq: CONFERENCE_MANAGE_ATTENDEES
+                - groupAttendees:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
+          - slug:
+              _eq: X-Hasura-Conference-Slug
+      columns:
+      - attendeeIds
+      - conferenceId
+      - htmlBody
+      - subject
+      backend_only: false
 - table:
     schema: job_queues
     name: InvitationEmailJob
@@ -6348,46 +6390,26 @@
       - originatingContentGroupId
       filter:
         _and:
-        - conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
-        - _or:
-          - _exists:
-              _where:
-                _and:
-                - user_id:
-                    _eq: X-Hasura-User-Id
-                - slug:
-                    _eq: X-Hasura-Conference-Slug
-                - permission_name:
-                    _in:
-                    - CONFERENCE_MANAGE_SCHEDULE
-              _table:
-                schema: public
-                name: FlatUserPermission
-          - _and:
+        - _and:
+          - conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
+          - _or:
             - _exists:
                 _where:
                   _and:
-                  - slug:
-                      _eq: X-Hasura-Conference-Slug
                   - user_id:
                       _eq: X-Hasura-User-Id
+                  - slug:
+                      _eq: X-Hasura-Conference-Slug
                   - permission_name:
                       _in:
-                      - CONFERENCE_MANAGE_SCHEDULE
                       - CONFERENCE_VIEW
+                      - CONFERENCE_MANAGE_SCHEDULE
+                      - CONFERENCE_VIEW_ATTENDEES
                 _table:
                   schema: public
                   name: FlatUserPermission
-            - _or:
-              - roomPrivacyName:
-                  _eq: PUBLIC
-              - roomPeople:
-                  attendee:
-                    userId:
-                      _eq: X-Hasura-User-Id
-          - _and:
             - _exists:
                 _where:
                   _and:
@@ -6398,8 +6420,13 @@
                 _table:
                   schema: public
                   name: FlatUnauthPermission
-            - roomPrivacyName:
-                _eq: PUBLIC
+        - _or:
+          - roomPrivacyName:
+              _eq: PUBLIC
+          - roomPeople:
+              attendee:
+                userId:
+                  _eq: X-Hasura-User-Id
   update_permissions:
   - role: user
     permission:
@@ -6408,7 +6435,6 @@
       - name
       - originatingDataId
       - priority
-      - roomPrivacyName
       filter:
         _and:
         - conference:
@@ -6630,6 +6656,9 @@
     permission:
       check:
         _and:
+        - attendee:
+            userId:
+              _is_null: false
         - _or:
           - room:
               _and:
@@ -6692,6 +6721,9 @@
       - updated_at
       filter:
         _and:
+        - attendee:
+            userId:
+              _is_null: false
         - _or:
           - room:
               _and:
@@ -6741,6 +6773,9 @@
       - roomPersonRoleName
       filter:
         _and:
+        - attendee:
+            userId:
+              _is_null: false
         - _or:
           - room:
               _and:
@@ -6792,6 +6827,9 @@
     permission:
       filter:
         _and:
+        - attendee:
+            userId:
+              _is_null: false
         - _or:
           - room:
               _and:

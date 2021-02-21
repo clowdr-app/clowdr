@@ -4,16 +4,13 @@ import bodyParser from "body-parser";
 import express, { Request, Response } from "express";
 import { AuthenticatedRequest } from "./checkScopes";
 import handlerEcho from "./handlers/echo";
-import { processEmailsJobQueue } from "./handlers/email";
 import {
     invitationConfirmCurrentHandler,
     invitationConfirmSendInitialEmailHandler,
     invitationConfirmSendRepeatEmailHandler,
     invitationConfirmWithCodeHandler,
-    processInvitationEmailsQueue,
 } from "./handlers/invitation";
 import protectedEchoHandler from "./handlers/protectedEcho";
-import { processSendSubmissionRequestsJobQueue } from "./handlers/upload";
 import { initialiseAwsClient } from "./lib/aws/awsClient";
 import { checkEventSecret } from "./middlewares/checkEventSecret";
 import { checkJwt } from "./middlewares/checkJwt";
@@ -39,6 +36,7 @@ import { router as mediaPackageRouter } from "./router/mediaPackage";
 import { router as mediaPackageHarvestJobRouter } from "./router/mediaPackageHarvestJob";
 import { router as openshotRouter } from "./router/openshot";
 import { router as profileRouter } from "./router/profile";
+import { router as queuesRouter } from "./router/queues";
 import { router as roomRouter } from "./router/room";
 import { router as shuffleRoomsRouter } from "./router/shuffleRooms";
 import { router as videoRenderJobRouter } from "./router/videoRenderJob";
@@ -101,6 +99,8 @@ app.use("/profile", profileRouter);
 app.use("/shuffle", shuffleRoomsRouter);
 app.use("/chat", chatRouter);
 
+app.use("/queues", queuesRouter);
+
 app.get("/", function (_req, res) {
     res.send("Clowdr");
 });
@@ -122,39 +122,6 @@ app.post("/echo", jsonParser, async (req: Request, res: Response) => {
     console.log(`Echoing "${params.message}"`);
     const result = handlerEcho(params);
     return res.json(result);
-});
-
-app.post("/queues/processEmailsJobQueue", jsonParser, async (_req: Request, res: Response) => {
-    try {
-        await processEmailsJobQueue();
-    } catch (e) {
-        console.error("Failure while processing emails job queue", e);
-        res.status(500).json("Failure");
-        return;
-    }
-    res.status(200).json("OK");
-});
-
-app.post("/queues/processSendSubmissionRequestsJobQueue", jsonParser, async (_req: Request, res: Response) => {
-    try {
-        await processSendSubmissionRequestsJobQueue();
-    } catch (e) {
-        console.error("Failure while processing send submission requests job queue", e);
-        res.status(500).json("Failure");
-        return;
-    }
-    res.status(200).json("OK");
-});
-
-app.post("/queues/processInvitationEmailsQueue", jsonParser, async (_req: Request, res: Response) => {
-    try {
-        await processInvitationEmailsQueue();
-    } catch (e) {
-        console.error("Failure while processing invitations emails job queue", e);
-        res.status(500).json("Failure");
-        return;
-    }
-    res.status(200).json("OK");
 });
 
 app.post("/invitation/confirm/current", jsonParser, checkJwt, checkUserScopes, async (_req: Request, res: Response) => {

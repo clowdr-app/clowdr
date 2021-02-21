@@ -586,17 +586,15 @@ export default function ManageConferenceContentPage(): JSX.Element {
                 isOpen={sendSubmissionRequestsModal.isOpen}
                 onClose={sendSubmissionRequestsModal.onClose}
                 send={async (uploaderIds: string[], emailTemplate: EmailTemplate_BaseConfig) => {
-                    await sendSubmissionRequests({
+                    const result = await sendSubmissionRequests({
                         variables: {
                             objs: uploaderIds.map((id) => ({ uploaderId: id, emailTemplate })),
                         },
                     });
-                    toast({
-                        title: "Requests sent",
-                        duration: 3000,
-                        isClosable: true,
-                        status: "success",
-                    });
+                    if (result?.errors && result.errors.length > 0) {
+                        console.error("Failed to insert SubmissionRequestEmailJob", result.errors);
+                        throw new Error("Error submitting query");
+                    }
                 }}
             />
             <ManageTagsModal

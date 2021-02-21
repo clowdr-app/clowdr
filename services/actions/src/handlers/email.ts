@@ -20,6 +20,7 @@ gql`
 `;
 
 export async function insertEmails(emails: Email_Insert_Input[]): Promise<number | undefined> {
+    console.log(`Queuing ${emails.length} emails to send`);
     const r = await apolloClient.mutate({
         mutation: InsertEmailsDocument,
         variables: {

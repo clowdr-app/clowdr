@@ -225,7 +225,7 @@ export async function processInvitationEmailsQueue(): Promise<void> {
                 return false;
             });
         } catch (e) {
-            console.error(`Failed to process send invite emails job: ${job.id}`);
+            console.error("Failed to process send invite emails job", job.id);
             failedJobIds.push(job.id);
         }
     }

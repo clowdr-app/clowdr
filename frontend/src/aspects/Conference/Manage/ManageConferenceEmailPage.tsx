@@ -1,4 +1,4 @@
-import { Heading } from "@chakra-ui/react";
+import { Box, Heading } from "@chakra-ui/react";
 import React from "react";
 import { Permission_Enum } from "../../../generated/graphql";
 import PageNotFound from "../../Errors/PageNotFound";
@@ -18,14 +18,16 @@ export function ManageConferenceEmailPage(): JSX.Element {
             permissions={[Permission_Enum.ConferenceManageContent]}
             componentIfDenied={<PageNotFound />}
         >
-            {title}
-            <Heading as="h1" size="xl">
-                Manage {conference.shortName}
-            </Heading>
-            <Heading as="h2" size="lg" fontStyle="italic">
-                Email
-            </Heading>
-            <ConfigureEmailTemplates />
+            <Box w="100%">
+                {title}
+                <Heading as="h1" size="xl">
+                    Manage {conference.shortName}
+                </Heading>
+                <Heading as="h2" size="lg" fontStyle="italic">
+                    Email
+                </Heading>
+                <ConfigureEmailTemplates />
+            </Box>
         </RequireAtLeastOnePermissionWrapper>
     );
 }

@@ -18294,7 +18294,9 @@ export type Chat_ReadUpToIndex_Bool_Exp = {
 /** unique or primary key constraints on table "chat.ReadUpToIndex" */
 export enum Chat_ReadUpToIndex_Constraint {
   /** unique or primary key constraint */
-  ReadUpToIndexPkey = 'ReadUpToIndex_pkey'
+  ReadUpToIndexPkey = 'ReadUpToIndex_pkey',
+  /** unique or primary key constraint */
+  ChatReadUpToIndexPkIndex = 'chat_ReadUpToIndex_pk_index'
 }
 
 /** input type for incrementing integer column in table "chat.ReadUpToIndex" */
@@ -19286,6 +19288,256 @@ export enum Job_Queues_CombineVideosJob_Update_Column {
   Message = 'message',
   /** column name */
   OutputName = 'outputName',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** columns and relationships of "job_queues.CustomEmailJob" */
+export type Job_Queues_CustomEmailJob = {
+  readonly __typename?: 'job_queues_CustomEmailJob';
+  readonly attendeeIds: Scalars['jsonb'];
+  /** An object relationship */
+  readonly conference: Conference;
+  readonly conferenceId: Scalars['uuid'];
+  readonly created_at: Scalars['timestamptz'];
+  readonly htmlBody: Scalars['String'];
+  readonly id: Scalars['uuid'];
+  readonly processed: Scalars['Boolean'];
+  readonly subject: Scalars['String'];
+  readonly updated_at: Scalars['timestamptz'];
+};
+
+
+/** columns and relationships of "job_queues.CustomEmailJob" */
+export type Job_Queues_CustomEmailJobAttendeeIdsArgs = {
+  path?: Maybe<Scalars['String']>;
+};
+
+/** aggregated selection of "job_queues.CustomEmailJob" */
+export type Job_Queues_CustomEmailJob_Aggregate = {
+  readonly __typename?: 'job_queues_CustomEmailJob_aggregate';
+  readonly aggregate?: Maybe<Job_Queues_CustomEmailJob_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Job_Queues_CustomEmailJob>;
+};
+
+/** aggregate fields of "job_queues.CustomEmailJob" */
+export type Job_Queues_CustomEmailJob_Aggregate_Fields = {
+  readonly __typename?: 'job_queues_CustomEmailJob_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Job_Queues_CustomEmailJob_Max_Fields>;
+  readonly min?: Maybe<Job_Queues_CustomEmailJob_Min_Fields>;
+};
+
+
+/** aggregate fields of "job_queues.CustomEmailJob" */
+export type Job_Queues_CustomEmailJob_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Job_Queues_CustomEmailJob_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "job_queues.CustomEmailJob" */
+export type Job_Queues_CustomEmailJob_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Job_Queues_CustomEmailJob_Max_Order_By>;
+  readonly min?: Maybe<Job_Queues_CustomEmailJob_Min_Order_By>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Job_Queues_CustomEmailJob_Append_Input = {
+  readonly attendeeIds?: Maybe<Scalars['jsonb']>;
+};
+
+/** input type for inserting array relation for remote table "job_queues.CustomEmailJob" */
+export type Job_Queues_CustomEmailJob_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Job_Queues_CustomEmailJob_Insert_Input>;
+  readonly on_conflict?: Maybe<Job_Queues_CustomEmailJob_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "job_queues.CustomEmailJob". All fields are combined with a logical 'AND'. */
+export type Job_Queues_CustomEmailJob_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Job_Queues_CustomEmailJob_Bool_Exp>>>;
+  readonly _not?: Maybe<Job_Queues_CustomEmailJob_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Job_Queues_CustomEmailJob_Bool_Exp>>>;
+  readonly attendeeIds?: Maybe<Jsonb_Comparison_Exp>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly htmlBody?: Maybe<String_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly processed?: Maybe<Boolean_Comparison_Exp>;
+  readonly subject?: Maybe<String_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "job_queues.CustomEmailJob" */
+export enum Job_Queues_CustomEmailJob_Constraint {
+  /** unique or primary key constraint */
+  CustomEmailJobPkey = 'CustomEmailJob_pkey'
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Job_Queues_CustomEmailJob_Delete_At_Path_Input = {
+  readonly attendeeIds?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Job_Queues_CustomEmailJob_Delete_Elem_Input = {
+  readonly attendeeIds?: Maybe<Scalars['Int']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Job_Queues_CustomEmailJob_Delete_Key_Input = {
+  readonly attendeeIds?: Maybe<Scalars['String']>;
+};
+
+/** input type for inserting data into table "job_queues.CustomEmailJob" */
+export type Job_Queues_CustomEmailJob_Insert_Input = {
+  readonly attendeeIds?: Maybe<Scalars['jsonb']>;
+  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly htmlBody?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly processed?: Maybe<Scalars['Boolean']>;
+  readonly subject?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Job_Queues_CustomEmailJob_Max_Fields = {
+  readonly __typename?: 'job_queues_CustomEmailJob_max_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly htmlBody?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly subject?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "job_queues.CustomEmailJob" */
+export type Job_Queues_CustomEmailJob_Max_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly htmlBody?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly subject?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Job_Queues_CustomEmailJob_Min_Fields = {
+  readonly __typename?: 'job_queues_CustomEmailJob_min_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly htmlBody?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly subject?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "job_queues.CustomEmailJob" */
+export type Job_Queues_CustomEmailJob_Min_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly htmlBody?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly subject?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "job_queues.CustomEmailJob" */
+export type Job_Queues_CustomEmailJob_Mutation_Response = {
+  readonly __typename?: 'job_queues_CustomEmailJob_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Job_Queues_CustomEmailJob>;
+};
+
+/** input type for inserting object relation for remote table "job_queues.CustomEmailJob" */
+export type Job_Queues_CustomEmailJob_Obj_Rel_Insert_Input = {
+  readonly data: Job_Queues_CustomEmailJob_Insert_Input;
+  readonly on_conflict?: Maybe<Job_Queues_CustomEmailJob_On_Conflict>;
+};
+
+/** on conflict condition type for table "job_queues.CustomEmailJob" */
+export type Job_Queues_CustomEmailJob_On_Conflict = {
+  readonly constraint: Job_Queues_CustomEmailJob_Constraint;
+  readonly update_columns: ReadonlyArray<Job_Queues_CustomEmailJob_Update_Column>;
+  readonly where?: Maybe<Job_Queues_CustomEmailJob_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "job_queues.CustomEmailJob" */
+export type Job_Queues_CustomEmailJob_Order_By = {
+  readonly attendeeIds?: Maybe<Order_By>;
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly htmlBody?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly processed?: Maybe<Order_By>;
+  readonly subject?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "job_queues.CustomEmailJob" */
+export type Job_Queues_CustomEmailJob_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Job_Queues_CustomEmailJob_Prepend_Input = {
+  readonly attendeeIds?: Maybe<Scalars['jsonb']>;
+};
+
+/** select columns of table "job_queues.CustomEmailJob" */
+export enum Job_Queues_CustomEmailJob_Select_Column {
+  /** column name */
+  AttendeeIds = 'attendeeIds',
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  HtmlBody = 'htmlBody',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Processed = 'processed',
+  /** column name */
+  Subject = 'subject',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "job_queues.CustomEmailJob" */
+export type Job_Queues_CustomEmailJob_Set_Input = {
+  readonly attendeeIds?: Maybe<Scalars['jsonb']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly htmlBody?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly processed?: Maybe<Scalars['Boolean']>;
+  readonly subject?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "job_queues.CustomEmailJob" */
+export enum Job_Queues_CustomEmailJob_Update_Column {
+  /** column name */
+  AttendeeIds = 'attendeeIds',
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  HtmlBody = 'htmlBody',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Processed = 'processed',
+  /** column name */
+  Subject = 'subject',
   /** column name */
   UpdatedAt = 'updated_at'
 }
@@ -20920,6 +21172,10 @@ export type Mutation_Root = {
   readonly delete_job_queues_CombineVideosJob?: Maybe<Job_Queues_CombineVideosJob_Mutation_Response>;
   /** delete single row from the table: "job_queues.CombineVideosJob" */
   readonly delete_job_queues_CombineVideosJob_by_pk?: Maybe<Job_Queues_CombineVideosJob>;
+  /** delete data from the table: "job_queues.CustomEmailJob" */
+  readonly delete_job_queues_CustomEmailJob?: Maybe<Job_Queues_CustomEmailJob_Mutation_Response>;
+  /** delete single row from the table: "job_queues.CustomEmailJob" */
+  readonly delete_job_queues_CustomEmailJob_by_pk?: Maybe<Job_Queues_CustomEmailJob>;
   /** delete data from the table: "job_queues.InvitationEmailJob" */
   readonly delete_job_queues_InvitationEmailJob?: Maybe<Job_Queues_InvitationEmailJob_Mutation_Response>;
   /** delete single row from the table: "job_queues.InvitationEmailJob" */
@@ -21218,6 +21474,10 @@ export type Mutation_Root = {
   readonly insert_job_queues_CombineVideosJob?: Maybe<Job_Queues_CombineVideosJob_Mutation_Response>;
   /** insert a single row into the table: "job_queues.CombineVideosJob" */
   readonly insert_job_queues_CombineVideosJob_one?: Maybe<Job_Queues_CombineVideosJob>;
+  /** insert data into the table: "job_queues.CustomEmailJob" */
+  readonly insert_job_queues_CustomEmailJob?: Maybe<Job_Queues_CustomEmailJob_Mutation_Response>;
+  /** insert a single row into the table: "job_queues.CustomEmailJob" */
+  readonly insert_job_queues_CustomEmailJob_one?: Maybe<Job_Queues_CustomEmailJob>;
   /** insert data into the table: "job_queues.InvitationEmailJob" */
   readonly insert_job_queues_InvitationEmailJob?: Maybe<Job_Queues_InvitationEmailJob_Mutation_Response>;
   /** insert a single row into the table: "job_queues.InvitationEmailJob" */
@@ -21536,6 +21796,10 @@ export type Mutation_Root = {
   readonly update_job_queues_CombineVideosJob?: Maybe<Job_Queues_CombineVideosJob_Mutation_Response>;
   /** update single row of the table: "job_queues.CombineVideosJob" */
   readonly update_job_queues_CombineVideosJob_by_pk?: Maybe<Job_Queues_CombineVideosJob>;
+  /** update data of the table: "job_queues.CustomEmailJob" */
+  readonly update_job_queues_CustomEmailJob?: Maybe<Job_Queues_CustomEmailJob_Mutation_Response>;
+  /** update single row of the table: "job_queues.CustomEmailJob" */
+  readonly update_job_queues_CustomEmailJob_by_pk?: Maybe<Job_Queues_CustomEmailJob>;
   /** update data of the table: "job_queues.InvitationEmailJob" */
   readonly update_job_queues_InvitationEmailJob?: Maybe<Job_Queues_InvitationEmailJob_Mutation_Response>;
   /** update single row of the table: "job_queues.InvitationEmailJob" */
@@ -22371,6 +22635,18 @@ export type Mutation_RootDelete_Job_Queues_CombineVideosJobArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Job_Queues_CombineVideosJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Job_Queues_CustomEmailJobArgs = {
+  where: Job_Queues_CustomEmailJob_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Job_Queues_CustomEmailJob_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -23396,6 +23672,20 @@ export type Mutation_RootInsert_Job_Queues_CombineVideosJobArgs = {
 export type Mutation_RootInsert_Job_Queues_CombineVideosJob_OneArgs = {
   object: Job_Queues_CombineVideosJob_Insert_Input;
   on_conflict?: Maybe<Job_Queues_CombineVideosJob_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Job_Queues_CustomEmailJobArgs = {
+  objects: ReadonlyArray<Job_Queues_CustomEmailJob_Insert_Input>;
+  on_conflict?: Maybe<Job_Queues_CustomEmailJob_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Job_Queues_CustomEmailJob_OneArgs = {
+  object: Job_Queues_CustomEmailJob_Insert_Input;
+  on_conflict?: Maybe<Job_Queues_CustomEmailJob_On_Conflict>;
 };
 
 
@@ -24664,6 +24954,30 @@ export type Mutation_RootUpdate_Job_Queues_CombineVideosJob_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_Job_Queues_CustomEmailJobArgs = {
+  _append?: Maybe<Job_Queues_CustomEmailJob_Append_Input>;
+  _delete_at_path?: Maybe<Job_Queues_CustomEmailJob_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<Job_Queues_CustomEmailJob_Delete_Elem_Input>;
+  _delete_key?: Maybe<Job_Queues_CustomEmailJob_Delete_Key_Input>;
+  _prepend?: Maybe<Job_Queues_CustomEmailJob_Prepend_Input>;
+  _set?: Maybe<Job_Queues_CustomEmailJob_Set_Input>;
+  where: Job_Queues_CustomEmailJob_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Job_Queues_CustomEmailJob_By_PkArgs = {
+  _append?: Maybe<Job_Queues_CustomEmailJob_Append_Input>;
+  _delete_at_path?: Maybe<Job_Queues_CustomEmailJob_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<Job_Queues_CustomEmailJob_Delete_Elem_Input>;
+  _delete_key?: Maybe<Job_Queues_CustomEmailJob_Delete_Key_Input>;
+  _prepend?: Maybe<Job_Queues_CustomEmailJob_Prepend_Input>;
+  _set?: Maybe<Job_Queues_CustomEmailJob_Set_Input>;
+  pk_columns: Job_Queues_CustomEmailJob_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_Job_Queues_InvitationEmailJobArgs = {
   _append?: Maybe<Job_Queues_InvitationEmailJob_Append_Input>;
   _delete_at_path?: Maybe<Job_Queues_InvitationEmailJob_Delete_At_Path_Input>;
@@ -25229,6 +25543,12 @@ export type Query_Root = {
   readonly job_queues_CombineVideosJob_aggregate: Job_Queues_CombineVideosJob_Aggregate;
   /** fetch data from the table: "job_queues.CombineVideosJob" using primary key columns */
   readonly job_queues_CombineVideosJob_by_pk?: Maybe<Job_Queues_CombineVideosJob>;
+  /** fetch data from the table: "job_queues.CustomEmailJob" */
+  readonly job_queues_CustomEmailJob: ReadonlyArray<Job_Queues_CustomEmailJob>;
+  /** fetch aggregated fields from the table: "job_queues.CustomEmailJob" */
+  readonly job_queues_CustomEmailJob_aggregate: Job_Queues_CustomEmailJob_Aggregate;
+  /** fetch data from the table: "job_queues.CustomEmailJob" using primary key columns */
+  readonly job_queues_CustomEmailJob_by_pk?: Maybe<Job_Queues_CustomEmailJob>;
   /** fetch data from the table: "job_queues.InvitationEmailJob" */
   readonly job_queues_InvitationEmailJob: ReadonlyArray<Job_Queues_InvitationEmailJob>;
   /** fetch aggregated fields from the table: "job_queues.InvitationEmailJob" */
@@ -27050,6 +27370,32 @@ export type Query_RootJob_Queues_CombineVideosJob_AggregateArgs = {
 
 /** query root */
 export type Query_RootJob_Queues_CombineVideosJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
+export type Query_RootJob_Queues_CustomEmailJobArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_CustomEmailJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_CustomEmailJob_Order_By>>;
+  where?: Maybe<Job_Queues_CustomEmailJob_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootJob_Queues_CustomEmailJob_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_CustomEmailJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_CustomEmailJob_Order_By>>;
+  where?: Maybe<Job_Queues_CustomEmailJob_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootJob_Queues_CustomEmailJob_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -28905,6 +29251,12 @@ export type Subscription_Root = {
   readonly job_queues_CombineVideosJob_aggregate: Job_Queues_CombineVideosJob_Aggregate;
   /** fetch data from the table: "job_queues.CombineVideosJob" using primary key columns */
   readonly job_queues_CombineVideosJob_by_pk?: Maybe<Job_Queues_CombineVideosJob>;
+  /** fetch data from the table: "job_queues.CustomEmailJob" */
+  readonly job_queues_CustomEmailJob: ReadonlyArray<Job_Queues_CustomEmailJob>;
+  /** fetch aggregated fields from the table: "job_queues.CustomEmailJob" */
+  readonly job_queues_CustomEmailJob_aggregate: Job_Queues_CustomEmailJob_Aggregate;
+  /** fetch data from the table: "job_queues.CustomEmailJob" using primary key columns */
+  readonly job_queues_CustomEmailJob_by_pk?: Maybe<Job_Queues_CustomEmailJob>;
   /** fetch data from the table: "job_queues.InvitationEmailJob" */
   readonly job_queues_InvitationEmailJob: ReadonlyArray<Job_Queues_InvitationEmailJob>;
   /** fetch aggregated fields from the table: "job_queues.InvitationEmailJob" */
@@ -30731,6 +31083,32 @@ export type Subscription_RootJob_Queues_CombineVideosJob_By_PkArgs = {
 
 
 /** subscription root */
+export type Subscription_RootJob_Queues_CustomEmailJobArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_CustomEmailJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_CustomEmailJob_Order_By>>;
+  where?: Maybe<Job_Queues_CustomEmailJob_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootJob_Queues_CustomEmailJob_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_CustomEmailJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_CustomEmailJob_Order_By>>;
+  where?: Maybe<Job_Queues_CustomEmailJob_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootJob_Queues_CustomEmailJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
 export type Subscription_RootJob_Queues_InvitationEmailJobArgs = {
   distinct_on?: Maybe<ReadonlyArray<Job_Queues_InvitationEmailJob_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -32285,6 +32663,16 @@ export type InsertInvitationEmailJobsMutationVariables = Exact<{
 
 export type InsertInvitationEmailJobsMutation = { readonly __typename?: 'mutation_root', readonly insert_job_queues_InvitationEmailJob?: Maybe<{ readonly __typename?: 'job_queues_InvitationEmailJob_mutation_response', readonly affected_rows: number }> };
 
+export type ManageConferencePeoplePage_InsertCustomEmailJobMutationVariables = Exact<{
+  htmlBody: Scalars['String'];
+  subject: Scalars['String'];
+  conferenceId: Scalars['uuid'];
+  attendeeIds: Scalars['jsonb'];
+}>;
+
+
+export type ManageConferencePeoplePage_InsertCustomEmailJobMutation = { readonly __typename?: 'mutation_root', readonly insert_job_queues_CustomEmailJob?: Maybe<{ readonly __typename?: 'job_queues_CustomEmailJob_mutation_response', readonly affected_rows: number }> };
+
 export type SelectAllPermissionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -32436,6 +32824,13 @@ export type DeleteEventInfosMutationVariables = Exact<{
 
 
 export type DeleteEventInfosMutation = { readonly __typename?: 'mutation_root', readonly delete_Event?: Maybe<{ readonly __typename?: 'Event_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Event', readonly id: any }> }> };
+
+export type SendEmail_GetAllGroupsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type SendEmail_GetAllGroupsQuery = { readonly __typename?: 'query_root', readonly Group: ReadonlyArray<{ readonly __typename?: 'Group', readonly id: any, readonly enabled: boolean, readonly name: string }> };
 
 export type InsertEventPersonMutationVariables = Exact<{
   newEventPerson: EventPerson_Insert_Input;
@@ -38396,6 +38791,43 @@ export function useInsertInvitationEmailJobsMutation(baseOptions?: Apollo.Mutati
 export type InsertInvitationEmailJobsMutationHookResult = ReturnType<typeof useInsertInvitationEmailJobsMutation>;
 export type InsertInvitationEmailJobsMutationResult = Apollo.MutationResult<InsertInvitationEmailJobsMutation>;
 export type InsertInvitationEmailJobsMutationOptions = Apollo.BaseMutationOptions<InsertInvitationEmailJobsMutation, InsertInvitationEmailJobsMutationVariables>;
+export const ManageConferencePeoplePage_InsertCustomEmailJobDocument = gql`
+    mutation ManageConferencePeoplePage_InsertCustomEmailJob($htmlBody: String!, $subject: String!, $conferenceId: uuid!, $attendeeIds: jsonb!) {
+  insert_job_queues_CustomEmailJob(
+    objects: {htmlBody: $htmlBody, subject: $subject, conferenceId: $conferenceId, attendeeIds: $attendeeIds}
+  ) {
+    affected_rows
+  }
+}
+    `;
+export type ManageConferencePeoplePage_InsertCustomEmailJobMutationFn = Apollo.MutationFunction<ManageConferencePeoplePage_InsertCustomEmailJobMutation, ManageConferencePeoplePage_InsertCustomEmailJobMutationVariables>;
+
+/**
+ * __useManageConferencePeoplePage_InsertCustomEmailJobMutation__
+ *
+ * To run a mutation, you first call `useManageConferencePeoplePage_InsertCustomEmailJobMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageConferencePeoplePage_InsertCustomEmailJobMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageConferencePeoplePageInsertCustomEmailJobMutation, { data, loading, error }] = useManageConferencePeoplePage_InsertCustomEmailJobMutation({
+ *   variables: {
+ *      htmlBody: // value for 'htmlBody'
+ *      subject: // value for 'subject'
+ *      conferenceId: // value for 'conferenceId'
+ *      attendeeIds: // value for 'attendeeIds'
+ *   },
+ * });
+ */
+export function useManageConferencePeoplePage_InsertCustomEmailJobMutation(baseOptions?: Apollo.MutationHookOptions<ManageConferencePeoplePage_InsertCustomEmailJobMutation, ManageConferencePeoplePage_InsertCustomEmailJobMutationVariables>) {
+        return Apollo.useMutation<ManageConferencePeoplePage_InsertCustomEmailJobMutation, ManageConferencePeoplePage_InsertCustomEmailJobMutationVariables>(ManageConferencePeoplePage_InsertCustomEmailJobDocument, baseOptions);
+      }
+export type ManageConferencePeoplePage_InsertCustomEmailJobMutationHookResult = ReturnType<typeof useManageConferencePeoplePage_InsertCustomEmailJobMutation>;
+export type ManageConferencePeoplePage_InsertCustomEmailJobMutationResult = Apollo.MutationResult<ManageConferencePeoplePage_InsertCustomEmailJobMutation>;
+export type ManageConferencePeoplePage_InsertCustomEmailJobMutationOptions = Apollo.BaseMutationOptions<ManageConferencePeoplePage_InsertCustomEmailJobMutation, ManageConferencePeoplePage_InsertCustomEmailJobMutationVariables>;
 export const SelectAllPermissionsDocument = gql`
     query SelectAllPermissions {
   Permission {
@@ -38935,6 +39367,41 @@ export function useDeleteEventInfosMutation(baseOptions?: Apollo.MutationHookOpt
 export type DeleteEventInfosMutationHookResult = ReturnType<typeof useDeleteEventInfosMutation>;
 export type DeleteEventInfosMutationResult = Apollo.MutationResult<DeleteEventInfosMutation>;
 export type DeleteEventInfosMutationOptions = Apollo.BaseMutationOptions<DeleteEventInfosMutation, DeleteEventInfosMutationVariables>;
+export const SendEmail_GetAllGroupsDocument = gql`
+    query SendEmail_GetAllGroups($conferenceId: uuid!) {
+  Group(where: {conferenceId: {_eq: $conferenceId}}) {
+    id
+    enabled
+    name
+  }
+}
+    `;
+
+/**
+ * __useSendEmail_GetAllGroupsQuery__
+ *
+ * To run a query within a React component, call `useSendEmail_GetAllGroupsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSendEmail_GetAllGroupsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSendEmail_GetAllGroupsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useSendEmail_GetAllGroupsQuery(baseOptions: Apollo.QueryHookOptions<SendEmail_GetAllGroupsQuery, SendEmail_GetAllGroupsQueryVariables>) {
+        return Apollo.useQuery<SendEmail_GetAllGroupsQuery, SendEmail_GetAllGroupsQueryVariables>(SendEmail_GetAllGroupsDocument, baseOptions);
+      }
+export function useSendEmail_GetAllGroupsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SendEmail_GetAllGroupsQuery, SendEmail_GetAllGroupsQueryVariables>) {
+          return Apollo.useLazyQuery<SendEmail_GetAllGroupsQuery, SendEmail_GetAllGroupsQueryVariables>(SendEmail_GetAllGroupsDocument, baseOptions);
+        }
+export type SendEmail_GetAllGroupsQueryHookResult = ReturnType<typeof useSendEmail_GetAllGroupsQuery>;
+export type SendEmail_GetAllGroupsLazyQueryHookResult = ReturnType<typeof useSendEmail_GetAllGroupsLazyQuery>;
+export type SendEmail_GetAllGroupsQueryResult = Apollo.QueryResult<SendEmail_GetAllGroupsQuery, SendEmail_GetAllGroupsQueryVariables>;
 export const InsertEventPersonDocument = gql`
     mutation InsertEventPerson($newEventPerson: EventPerson_insert_input!) {
   insert_EventPerson_one(object: $newEventPerson) {

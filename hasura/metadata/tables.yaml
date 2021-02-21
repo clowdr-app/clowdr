@@ -6435,6 +6435,7 @@
       - name
       - originatingDataId
       - priority
+      - roomPrivacyName
       filter:
         _and:
         - conference:

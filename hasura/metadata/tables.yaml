@@ -6399,43 +6399,57 @@
       - originatingContentGroupId
       filter:
         _and:
-        - _and:
-          - conference:
-              slug:
-                _eq: X-Hasura-Conference-Slug
-          - _or:
-            - _exists:
-                _where:
-                  _and:
-                  - user_id:
-                      _eq: X-Hasura-User-Id
-                  - slug:
-                      _eq: X-Hasura-Conference-Slug
-                  - permission_name:
-                      _in:
-                      - CONFERENCE_VIEW
-                      - CONFERENCE_MANAGE_SCHEDULE
-                      - CONFERENCE_VIEW_ATTENDEES
-                _table:
-                  schema: public
-                  name: FlatUserPermission
-            - _exists:
-                _where:
-                  _and:
-                  - slug:
-                      _eq: X-Hasura-Conference-Slug
-                  - permission_name:
-                      _eq: CONFERENCE_VIEW
-                _table:
-                  schema: public
-                  name: FlatUnauthPermission
+        - conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
         - _or:
-          - roomPrivacyName:
-              _eq: PUBLIC
-          - roomPeople:
-              attendee:
-                userId:
-                  _eq: X-Hasura-User-Id
+          - _exists:
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _in:
+                    - CONFERENCE_MANAGE_SCHEDULE
+              _table:
+                schema: public
+                name: FlatUserPermission
+          - _and:
+            - _or:
+              - _exists:
+                  _where:
+                    _and:
+                    - slug:
+                        _eq: X-Hasura-Conference-Slug
+                    - permission_name:
+                        _eq: CONFERENCE_VIEW
+                  _table:
+                    schema: public
+                    name: FlatUnauthPermission
+              - _exists:
+                  _where:
+                    _and:
+                    - user_id:
+                        _eq: X-Hasura-User-Id
+                    - slug:
+                        _eq: X-Hasura-Conference-Slug
+                    - permission_name:
+                        _in:
+                        - CONFERENCE_VIEW
+                        - CONFERENCE_VIEW_ATTENDEES
+                        - CONFERENCE_MANAGE_SCHEDULE
+                  _table:
+                    schema: public
+                    name: FlatUserPermission
+            - _or:
+              - roomPrivacyName:
+                  _eq: PUBLIC
+              - roomPeople:
+                  attendee:
+                    userId:
+                      _eq: X-Hasura-User-Id
   update_permissions:
   - role: user
     permission:

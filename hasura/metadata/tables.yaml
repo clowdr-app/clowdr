@@ -5394,6 +5394,14 @@
       - invitedEmailAddress
       backend_only: false
   select_permissions:
+  - role: unauthenticated
+    permission:
+      columns:
+      - id
+      - invitedEmailAddress
+      filter:
+        inviteCode:
+          _eq: X-Hasura-Invite-Code
   - role: user
     permission:
       columns:

@@ -121,7 +121,10 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
                                             <Heading as="h3" size="lg" textAlign="left">
                                                 Events
                                             </Heading>
-                                            <ContentGroupEvents contentGroupEvents={contentGroupData} />
+                                            <ContentGroupEvents
+                                                contentGroupEvents={contentGroupData}
+                                                itemId={contentGroupId}
+                                            />
                                         </Box>
                                     </Box>
                                 </Flex>

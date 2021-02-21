@@ -1,6 +1,4 @@
-import { chakra, Flex, HStack, Text, VStack } from "@chakra-ui/react";
-import { formatRelative } from "date-fns";
-import * as R from "ramda";
+import { chakra, Flex, Text, VStack } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
     ContentGroupDataFragment,
@@ -23,23 +21,23 @@ export function ContentGroupLive({
         ContentGroupPage_ContentGroupRoomsFragment;
 }): JSX.Element {
     const [liveEvents, setLiveEvents] = useState<ContentGroupEventFragment[] | null>(null);
-    const [nextEvent, setNextEvent] = useState<ContentGroupEventFragment | null>(null);
-    const [now, setNow] = useState<number>(Date.now());
+    // const [nextEvent, setNextEvent] = useState<ContentGroupEventFragment | null>(null);
+    // const [now, setNow] = useState<number>(Date.now());
     const computeLiveEvent = useCallback(() => {
         const now = Date.now();
         const currentEvents = contentGroupData.events.filter(
-            (event) => Date.parse(event.startTime) <= now && now <= Date.parse(event.endTime)
+            (event) => Date.parse(event.startTime) <= now + 60000 && now <= Date.parse(event.endTime)
         );
         setLiveEvents(currentEvents);
 
-        const nextEvent = R.sortWith(
-            [R.ascend(R.prop("startTime"))],
-            contentGroupData.events.filter((event) => Date.parse(event.startTime) > now)
-        );
-        setNextEvent(nextEvent.length > 0 ? nextEvent[0] : null);
-        setNow(now);
+        // const nextEvent = R.sortWith(
+        //     [R.ascend(R.prop("startTime"))],
+        //     contentGroupData.events.filter((event) => Date.parse(event.startTime) > now)
+        // );
+        // setNextEvent(nextEvent.length > 0 ? nextEvent[0] : null);
+        // setNow(now);
     }, [contentGroupData.events]);
-    usePolling(computeLiveEvent, 5000, true);
+    usePolling(computeLiveEvent, 30000, true);
     useEffect(() => computeLiveEvent(), [computeLiveEvent]);
 
     const currentRoom = useMemo(() => (contentGroupData.rooms.length > 0 ? contentGroupData.rooms[0] : undefined), [
@@ -103,7 +101,7 @@ export function ContentGroupLive({
                     </VStack>
                 </LinkButton>
             ))}
-            {nextEvent ? (
+            {/* {nextEvent ? (
                 <LinkButton
                     width="100%"
                     to={`/conference/${conference.slug}/room/${nextEvent.room.id}`}
@@ -125,7 +123,7 @@ export function ContentGroupLive({
                 </LinkButton>
             ) : (
                 <></>
-            )}
+            )} */}
         </Flex>
     );
 }

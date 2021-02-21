@@ -18294,9 +18294,7 @@ export type Chat_ReadUpToIndex_Bool_Exp = {
 /** unique or primary key constraints on table "chat.ReadUpToIndex" */
 export enum Chat_ReadUpToIndex_Constraint {
   /** unique or primary key constraint */
-  ReadUpToIndexPkey = 'ReadUpToIndex_pkey',
-  /** unique or primary key constraint */
-  ChatReadUpToIndexPkIndex = 'chat_ReadUpToIndex_pk_index'
+  ReadUpToIndexPkey = 'ReadUpToIndex_pkey'
 }
 
 /** input type for incrementing integer column in table "chat.ReadUpToIndex" */
@@ -31627,6 +31625,19 @@ export type ConferenceLandingPageContentGroupQuery = { readonly __typename?: 'qu
 
 export type ContentPersonDataFragment = { readonly __typename?: 'ContentGroupPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'ContentPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string> } };
 
+export type ContentGroupRoomEventFragment = { readonly __typename?: 'Event', readonly startTime: any, readonly id: any, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly name: string, readonly intendedRoomModeName: RoomMode_Enum, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string }> };
+
+export type ContentGroupEvents_RoomLocalisedScheduleQueryVariables = Exact<{
+  roomId: Scalars['uuid'];
+  conditions: Event_Bool_Exp;
+}>;
+
+
+export type ContentGroupEvents_RoomLocalisedScheduleQuery = { readonly __typename?: 'query_root', readonly Event: ReadonlyArray<(
+    { readonly __typename?: 'Event' }
+    & ContentGroupRoomEventFragment
+  )> };
+
 export type ContentGroupList_ContentPersonDataFragment = { readonly __typename?: 'ContentGroupPerson', readonly id: any, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'ContentPerson', readonly id: any, readonly affiliation?: Maybe<string>, readonly name: string } };
 
 export type ContentGroupList_ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly people: ReadonlyArray<(
@@ -33594,6 +33605,20 @@ export const ChatSubscriptionConfigFragmentDoc = gql`
   enableMandatorySubscribe
 }
     `;
+export const ContentGroupRoomEventFragmentDoc = gql`
+    fragment ContentGroupRoomEvent on Event {
+  startTime
+  contentGroup {
+    id
+    title
+  }
+  id
+  durationSeconds
+  endTime
+  name
+  intendedRoomModeName
+}
+    `;
 export const ContentGroupList_ContentPersonDataFragmentDoc = gql`
     fragment ContentGroupList_ContentPersonData on ContentGroupPerson {
   id
@@ -35492,6 +35517,40 @@ export function useConferenceLandingPageContentGroupLazyQuery(baseOptions?: Apol
 export type ConferenceLandingPageContentGroupQueryHookResult = ReturnType<typeof useConferenceLandingPageContentGroupQuery>;
 export type ConferenceLandingPageContentGroupLazyQueryHookResult = ReturnType<typeof useConferenceLandingPageContentGroupLazyQuery>;
 export type ConferenceLandingPageContentGroupQueryResult = Apollo.QueryResult<ConferenceLandingPageContentGroupQuery, ConferenceLandingPageContentGroupQueryVariables>;
+export const ContentGroupEvents_RoomLocalisedScheduleDocument = gql`
+    query ContentGroupEvents_RoomLocalisedSchedule($roomId: uuid!, $conditions: Event_bool_exp!) {
+  Event(where: {_and: [{roomId: {_eq: $roomId}}, $conditions]}) {
+    ...ContentGroupRoomEvent
+  }
+}
+    ${ContentGroupRoomEventFragmentDoc}`;
+
+/**
+ * __useContentGroupEvents_RoomLocalisedScheduleQuery__
+ *
+ * To run a query within a React component, call `useContentGroupEvents_RoomLocalisedScheduleQuery` and pass it any options that fit your needs.
+ * When your component renders, `useContentGroupEvents_RoomLocalisedScheduleQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useContentGroupEvents_RoomLocalisedScheduleQuery({
+ *   variables: {
+ *      roomId: // value for 'roomId'
+ *      conditions: // value for 'conditions'
+ *   },
+ * });
+ */
+export function useContentGroupEvents_RoomLocalisedScheduleQuery(baseOptions: Apollo.QueryHookOptions<ContentGroupEvents_RoomLocalisedScheduleQuery, ContentGroupEvents_RoomLocalisedScheduleQueryVariables>) {
+        return Apollo.useQuery<ContentGroupEvents_RoomLocalisedScheduleQuery, ContentGroupEvents_RoomLocalisedScheduleQueryVariables>(ContentGroupEvents_RoomLocalisedScheduleDocument, baseOptions);
+      }
+export function useContentGroupEvents_RoomLocalisedScheduleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ContentGroupEvents_RoomLocalisedScheduleQuery, ContentGroupEvents_RoomLocalisedScheduleQueryVariables>) {
+          return Apollo.useLazyQuery<ContentGroupEvents_RoomLocalisedScheduleQuery, ContentGroupEvents_RoomLocalisedScheduleQueryVariables>(ContentGroupEvents_RoomLocalisedScheduleDocument, baseOptions);
+        }
+export type ContentGroupEvents_RoomLocalisedScheduleQueryHookResult = ReturnType<typeof useContentGroupEvents_RoomLocalisedScheduleQuery>;
+export type ContentGroupEvents_RoomLocalisedScheduleLazyQueryHookResult = ReturnType<typeof useContentGroupEvents_RoomLocalisedScheduleLazyQuery>;
+export type ContentGroupEvents_RoomLocalisedScheduleQueryResult = Apollo.QueryResult<ContentGroupEvents_RoomLocalisedScheduleQuery, ContentGroupEvents_RoomLocalisedScheduleQueryVariables>;
 export const ContentOfTagDocument = gql`
     query ContentOfTag($id: uuid!) {
   ContentGroupTag(where: {tagId: {_eq: $id}}) {

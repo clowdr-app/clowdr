@@ -78,7 +78,7 @@ export function ContentGroupEvents({
             <Text mt={3} w="auto" textAlign="left" p={0}>
                 Times are shown in your local timezone.
             </Text>
-            <Flex mt={2} flexWrap="wrap" alignItems="flex-start" gridColumnGap="2%">
+            <Flex mt={2} flexWrap="wrap" alignItems="flex-start" gridColumnGap="2%" overflowX="auto">
                 <VStack mt={2} mb={4} flex="1 1 49%" alignItems="flex-start" maxW="max-content">
                     <Heading as="h4" fontSize="md" textAlign="left" w="100%">
                         All times for this item

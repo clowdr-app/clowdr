@@ -4,8 +4,7 @@ import assert from "assert";
 import bodyParser from "body-parser";
 import crypto from "crypto";
 import express, { Request, Response } from "express";
-import { is } from "typescript-is";
-import { AuthenticatedRequest } from "../checkScopes";
+import { assertType } from "typescript-is";
 import { UpdateProfilePhotoDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { S3 } from "../lib/aws/awsClient";
@@ -142,15 +141,24 @@ async function handleUpdateProfilePhoto(
     };
 }
 
-router.use("/photo/update", async (_req: Request, res: Response) => {
-    const req = _req as AuthenticatedRequest;
-    const params = req.body.input;
-    if (is<updateProfilePhotoArgs>(params)) {
-        console.log(`${req.path}: Profile photo upload requested`);
-        const result = await handleUpdateProfilePhoto(req.userId, params.attendeeId, params.s3URL);
+router.post("/photo/update", async (req: Request, res: Response) => {
+    const params: updateProfilePhotoArgs = req.body.input;
+    try {
+        assertType<updateProfilePhotoArgs>(params);
+    } catch (e) {
+        console.error(`${req.originalUrl}: invalid request`, params);
+        return res.status(200).json({
+            ok: false,
+        });
+    }
+
+    try {
+        console.log(`${req.originalUrl}: profile photo upload requested`);
+        const userId = req.body.session_variables["x-hasura-user-id"];
+        const result = await handleUpdateProfilePhoto(userId, params.attendeeId, params.s3URL);
         return res.status(200).json(result);
-    } else {
-        console.error(`${req.path}: Invalid request:`, req.body.input);
+    } catch (e) {
+        console.error(`${req.originalUrl}: profile photo upload failed`);
         return res.status(200).json({
             ok: false,
         });

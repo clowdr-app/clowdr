@@ -192,6 +192,7 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
             },
         });
 
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         youtubeClient.videos
             .insert({
                 media: {
@@ -211,15 +212,19 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
             })
             .catch(async (error) => {
                 console.error("YouTube upload failed", job.id, error);
-                await callWithRetry(async () => {
-                    await apolloClient.mutate({
-                        mutation: FailUploadYouTubeVideoJobDocument,
-                        variables: {
-                            id: job.id,
-                            message: JSON.stringify(error),
-                        },
+                try {
+                    await callWithRetry(async () => {
+                        await apolloClient.mutate({
+                            mutation: FailUploadYouTubeVideoJobDocument,
+                            variables: {
+                                id: job.id,
+                                message: JSON.stringify(error),
+                            },
+                        });
                     });
-                });
+                } catch (e) {
+                    console.error("Failure while recording failure of YouTube upload job", e);
+                }
             })
             .then(async (result) => {
                 try {
@@ -318,15 +323,19 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
                     }
                 } catch (e) {
                     console.error("Failure while recording completion of YouTube upload", job.id, e);
-                    await callWithRetry(async () => {
-                        await apolloClient.mutate({
-                            mutation: FailUploadYouTubeVideoJobDocument,
-                            variables: {
-                                id: job.id,
-                                message: `Failure while recording completion of YouTube upload: ${e}`,
-                            },
+                    try {
+                        await callWithRetry(async () => {
+                            await apolloClient.mutate({
+                                mutation: FailUploadYouTubeVideoJobDocument,
+                                variables: {
+                                    id: job.id,
+                                    message: `Failure while recording completion of YouTube upload: ${e}`,
+                                },
+                            });
                         });
-                    });
+                    } catch (e) {
+                        console.error("Failure while recording failure to complete YouTube upload", e);
+                    }
                 }
             });
     } catch (e) {

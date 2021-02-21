@@ -290,7 +290,7 @@ export async function handleProcessVideoRenderJobQueue(): Promise<void> {
                     await snooze(Math.floor(Math.random() * 5 * 1000));
                     await callWithRetry(async () => {
                         const data = await startVideoRenderJob(job);
-                        updateVideoRenderJob(job.id, data);
+                        await updateVideoRenderJob(job.id, data);
                     });
                 }
             } catch (e) {

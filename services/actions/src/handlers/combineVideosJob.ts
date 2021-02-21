@@ -169,7 +169,7 @@ export async function handleCombineVideosJobInserted(payload: Payload<CombineVid
             `Failed to create MediaConvert job for CombineVideosJob, ${newRow.id}`
         );
 
-        startCombineVideosJob(newRow.id, mediaConvertJobResult.Job.Id);
+        await startCombineVideosJob(newRow.id, mediaConvertJobResult.Job.Id);
 
         console.log("Started CombineVideosJob MediaConvert job", newRow.id, mediaConvertJobResult.Job.Id);
     } catch (e) {
@@ -191,14 +191,15 @@ gql`
 
 export async function failCombineVideosJob(combineVideosJobId: string, message: string): Promise<void> {
     console.log("Recording CombineVideosJob as failed", combineVideosJobId, message);
-    await callWithRetry(async () =>
-        apolloClient.mutate({
-            mutation: CombineVideosJob_FailJobDocument,
-            variables: {
-                combineVideosJobId,
-                message,
-            },
-        })
+    await callWithRetry(
+        async () =>
+            await apolloClient.mutate({
+                mutation: CombineVideosJob_FailJobDocument,
+                variables: {
+                    combineVideosJobId,
+                    message,
+                },
+            })
     );
 }
 
@@ -346,6 +347,6 @@ export async function completeCombineVideosJob(
                 })
         );
     } catch (e) {
-        failCombineVideosJob(combineVideosJobId, e.message);
+        await failCombineVideosJob(combineVideosJobId, e.message);
     }
 }

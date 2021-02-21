@@ -103,12 +103,16 @@ export async function ensureUpcomingChannelsCreated(holdOffOnCreatingChannel: {
                 ].includes(channelState)
             ) {
                 console.log("Removing old/broken channel from room", room.id, room.mediaLiveChannel.id, channelState);
-                await apolloClient.mutate({
-                    mutation: DeleteMediaLiveChannelDocument,
-                    variables: {
-                        id: room.mediaLiveChannel.id,
-                    },
-                });
+                try {
+                    await apolloClient.mutate({
+                        mutation: DeleteMediaLiveChannelDocument,
+                        variables: {
+                            id: room.mediaLiveChannel.id,
+                        },
+                    });
+                } catch (e) {
+                    console.error("Failed to delete MediaLive channel record", e);
+                }
 
                 needToCreateChannel = true;
             }

@@ -100,10 +100,8 @@ gql`
 
     mutation EndChatDuplication(
         $chatId1: uuid!
-        $chatId2: uuid! # $data: jsonb!
-    ) # $message: String!
-    # $systemId1: String!
-    # $systemId2: String!
+        $chatId2: uuid! # $data: jsonb! # $message: String! # $systemId1: String!
+    ) # $systemId2: String!
     {
         update_chat1: update_chat_Chat_by_pk(pk_columns: { id: $chatId1 }, _set: { duplicateToId: null }) {
             id
@@ -243,7 +241,7 @@ export async function handleEventStartNotification(eventId: string, startTime: s
 
         setTimeout(async () => {
             try {
-                insertChatDuplicationMarkers(eventId, true);
+                await insertChatDuplicationMarkers(eventId, true);
             } catch (e) {
                 console.error("Failed to insert chat duplication start markers", eventId, e);
             }
@@ -284,7 +282,7 @@ export async function handleEventEndNotification(eventId: string, endTime: strin
 
         setTimeout(async () => {
             try {
-                insertChatDuplicationMarkers(eventId, false);
+                await insertChatDuplicationMarkers(eventId, false);
             } catch (e) {
                 console.error("Failed to insert chat duplication end markers", eventId, e);
             }

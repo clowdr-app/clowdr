@@ -56,7 +56,11 @@ router.post(
             await handleOpenShotExportNotification(body, req.params.videoRenderJobId);
         } catch (e) {
             console.error(`${req.originalUrl}: failure while handling OpenShot export webhook`, e);
-            await failVideoRenderJob(req.params.videoRenderJobId, body.json.detail);
+            try {
+                await failVideoRenderJob(req.params.videoRenderJobId, body.json.detail);
+            } catch (e) {
+                console.error("Failure while recording failure of video render job", e);
+            }
             // await failConferencePrepareJob();
             res.status(500).json("Failure while handling webhook");
             return;

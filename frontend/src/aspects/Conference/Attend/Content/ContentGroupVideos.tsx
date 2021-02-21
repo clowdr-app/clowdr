@@ -153,7 +153,7 @@ export function ContentGroupVideo({
             kind: "subtitles",
             src: subtitlesUrl,
             srcLang: "en",
-            default: true,
+            default: false,
             label: "English",
         };
         return {

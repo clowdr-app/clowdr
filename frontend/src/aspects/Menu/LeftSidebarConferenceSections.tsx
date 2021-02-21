@@ -7,6 +7,7 @@ import {
     Box,
     Button,
     Flex,
+    Heading,
     HStack,
     useDisclosure,
 } from "@chakra-ui/react";
@@ -39,12 +40,15 @@ function RoomsPanel({ confSlug }: { confSlug: string }): JSX.Element {
     return (
         <>
             <AccordionPanel pb={4} px={"3px"}>
-                <ApolloQueryWrapper getter={(data) => data.Room} queryResult={result}>
+                <Heading as="h3" fontWeight="normal" fontStyle="italic" fontSize="md" mb={2} textAlign="left" ml={1}>
+                    Social rooms
+                </Heading>
+                <ApolloQueryWrapper getter={(data) => data.socialRooms} queryResult={result}>
                     {(rooms: readonly RoomListRoomDetailsFragment[]) => (
                         <RoomList rooms={rooms} layout="list" limit={5} />
                     )}
                 </ApolloQueryWrapper>
-                <HStack justifyContent="center" mt={2}>
+                <HStack justifyContent="center" mt={4}>
                     <Button onClick={onCreateRoomOpen} colorScheme="green" size="sm">
                         <FAIcon icon="plus-square" iconStyle="s" mr={3} /> New room
                     </Button>
@@ -52,6 +56,21 @@ function RoomsPanel({ confSlug }: { confSlug: string }): JSX.Element {
                         View all rooms
                     </LinkButton>
                 </HStack>
+                <Heading
+                    as="h3"
+                    fontWeight="normal"
+                    fontStyle="italic"
+                    fontSize="md"
+                    mb={2}
+                    textAlign="left"
+                    mt={4}
+                    ml={1}
+                >
+                    Program rooms
+                </Heading>
+                <ApolloQueryWrapper getter={(data) => data.programRooms} queryResult={result}>
+                    {(rooms: readonly RoomListRoomDetailsFragment[]) => <RoomList rooms={rooms} layout="list" />}
+                </ApolloQueryWrapper>
             </AccordionPanel>
             <CreateRoomModal
                 isOpen={isCreateRoomOpen}
@@ -73,7 +92,7 @@ function LazyRoomsPanel({ isExpanded, confSlug }: { isExpanded: boolean; confSlu
 
 function SchedulePanel(): JSX.Element {
     return (
-        <AccordionPanel pb={4} px={"3px"}>
+        <AccordionPanel pb={4} px={"3px"} pt={"3px"}>
             <MainMenuProgram />
         </AccordionPanel>
     );

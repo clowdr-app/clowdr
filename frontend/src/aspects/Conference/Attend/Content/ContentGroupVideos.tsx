@@ -48,6 +48,7 @@ export function ContentGroupVideos({ contentGroupData }: { contentGroupData: Con
                                 ]}
                                 flexBasis={0}
                                 mx={5}
+                                mt={3}
                                 mb={5}
                                 visibility={[
                                     "visible",
@@ -153,7 +154,7 @@ export function ContentGroupVideo({
             kind: "subtitles",
             src: subtitlesUrl,
             srcLang: "en",
-            default: true,
+            default: false,
             label: "English",
         };
         return {

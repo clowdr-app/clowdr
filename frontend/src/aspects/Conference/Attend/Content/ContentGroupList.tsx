@@ -18,6 +18,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
+import { Twemoji } from "react-emoji-render";
 import {
     ContentGroupList_ContentGroupDataFragment,
     ContentGroupList_ContentGroupTagDataFragment,
@@ -129,7 +130,7 @@ function ContentGroupButton({ group }: { group: ContentGroupList_ContentGroupDat
             height="100%"
         >
             <Text as="p" whiteSpace="normal" fontSize="1.2em" fontWeight="600" textAlign="left" mb={4}>
-                {group.title}
+                <Twemoji className="twemoji" text={group.title} />
             </Text>
             <Text as="p" fontSize="0.9em" textColor={textColour} whiteSpace="normal" lineHeight="3ex">
                 {[...group.people]

@@ -34,6 +34,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Twemoji } from "react-emoji-render";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import {
     AttendeeFieldsFragment,
@@ -146,7 +147,7 @@ function ChatListItem({
             <ListIcon mt="0.7ex" fontSize="sm" as={isDM ? AtSignIcon : isPrivate ? LockIcon : ChatIcon} />
             <Button onClick={onClick} size="sm" variant="ghost" whiteSpace="normal" textAlign="left" h="auto" p={1}>
                 <Text as="span">
-                    {unreadCount ? `(${unreadCount})` : undefined} {chatName}
+                    <Twemoji className="twemoji" text={`${unreadCount ? `(${unreadCount})` : ""} ${chatName}`} />
                 </Text>
             </Button>
         </ListItem>
@@ -341,6 +342,7 @@ function ChatsPanel({
     pageChatId,
     switchToPageChat,
     openChat,
+    closeChat,
 }: {
     attendeeId: string;
     confSlug: string;
@@ -350,6 +352,7 @@ function ChatsPanel({
     openChat: React.MutableRefObject<
         ((chat: { id: string; title: string; roomId: string | undefined }) => void) | null
     >;
+    closeChat: React.MutableRefObject<(() => void) | null>;
 }): JSX.Element {
     const conference = useConference();
     const toast = useToast();
@@ -375,6 +378,9 @@ function ChatsPanel({
         },
         [pageChatId, switchToPageChat]
     );
+    closeChat.current = useCallback(() => {
+        setCurrentChat(null);
+    }, []);
 
     const sources: ChatSources | undefined = useMemo(
         () =>
@@ -832,7 +838,7 @@ function RoomParticipantsList({ roomId }: { roomId: string }): JSX.Element {
     );
 
     return roomParticipants && roomParticipants.length > 0 ? (
-        <List fontSize="sm" maxH="3rem" overflowY="hidden" columns={3} columnGap={3} width="100%">
+        <List fontSize="sm" width="100%">
             {thisRoomParticipants.map((participant) => (
                 <ParticipantListItem key={participant.id} attendeeId={participant.attendeeId} />
             ))}
@@ -947,6 +953,7 @@ function RightSidebarConferenceSections_Inner({
         },
         [setCurrentTab]
     );
+    const closeChatCb = useRef<(() => void) | null>(null);
 
     const roomPanel = useMemo(() => roomId && <RoomChatPanel roomId={roomId} onChatIdLoaded={setPageChatId} />, [
         roomId,
@@ -966,11 +973,41 @@ function RightSidebarConferenceSections_Inner({
                     setCurrentTab(RightSidebarTabs.PageChat);
                 }}
                 openChat={openChatCb}
+                closeChat={closeChatCb}
             />
         ),
         [attendee.id, confSlug, pageChatId, setCurrentTab]
     );
     const presencePanel = useMemo(() => <PresencePanel roomId={roomId} />, [roomId]);
+
+    const onChangeTab = useCallback(
+        (index) => {
+            if (roomId || itemId) {
+                switch (index) {
+                    case 0:
+                        setCurrentTab(RightSidebarTabs.PageChat);
+                        break;
+                    case 1:
+                        setCurrentTab(RightSidebarTabs.Chats);
+                        break;
+                    case 2:
+                        setCurrentTab(RightSidebarTabs.Presence);
+                        break;
+                }
+            } else {
+                switch (index) {
+                    case 0:
+                        setCurrentTab(RightSidebarTabs.Chats);
+                        break;
+                    case 1:
+                        setCurrentTab(RightSidebarTabs.Presence);
+                        break;
+                }
+            }
+        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [itemId, roomId]
+    );
 
     return (
         <Tabs
@@ -984,30 +1021,7 @@ function RightSidebarConferenceSections_Inner({
             flexFlow="column"
             width="100%"
             height="100%"
-            onChange={(index) => {
-                if (roomId || itemId) {
-                    switch (index) {
-                        case 0:
-                            setCurrentTab(RightSidebarTabs.PageChat);
-                            break;
-                        case 1:
-                            setCurrentTab(RightSidebarTabs.Chats);
-                            break;
-                        case 2:
-                            setCurrentTab(RightSidebarTabs.Presence);
-                            break;
-                    }
-                } else {
-                    switch (index) {
-                        case 0:
-                            setCurrentTab(RightSidebarTabs.Chats);
-                            break;
-                        case 1:
-                            setCurrentTab(RightSidebarTabs.Presence);
-                            break;
-                    }
-                }
-            }}
+            onChange={onChangeTab}
         >
             <TabList py={2}>
                 {roomId && <Tab>Room</Tab>}

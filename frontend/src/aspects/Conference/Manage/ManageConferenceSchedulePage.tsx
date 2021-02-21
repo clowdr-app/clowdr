@@ -668,13 +668,10 @@ function EditableScheduleTable(): JSX.Element {
                 const startLeeway = 10 * 60 * 1000;
                 const endLeeway = 1 * 60 * 1000;
                 const ongoing = isOngoing(now, startLeeway, endLeeway, start, end);
-                const past = end < now - endLeeway;
                 const isLivestream = record.intendedRoomModeName
                     ? liveStreamRoomModes.includes(record.intendedRoomModeName)
                     : false;
-                return !((ongoing || past) && isLivestream)
-                    ? true
-                    : "Cannot delete an ongoing or past livestream event.";
+                return !(ongoing && isLivestream) ? true : "Cannot delete an ongoing livestream event.";
             },
             canDelete: (record) => {
                 const start = record.startTime ? Date.parse(record.startTime) : Date.now();
@@ -683,13 +680,10 @@ function EditableScheduleTable(): JSX.Element {
                 const startLeeway = 10 * 60 * 1000;
                 const endLeeway = 1 * 60 * 1000;
                 const ongoing = isOngoing(now, startLeeway, endLeeway, start, end);
-                const past = end < now - endLeeway;
                 const isLivestream = record.intendedRoomModeName
                     ? liveStreamRoomModes.includes(record.intendedRoomModeName)
                     : false;
-                return !((ongoing || past) && isLivestream)
-                    ? true
-                    : "Cannot delete an ongoing or past livestream event.";
+                return !(ongoing && isLivestream) ? true : "Cannot delete an ongoing livestream event.";
             },
             pages: {
                 defaultToLast: false,
@@ -868,19 +862,12 @@ function EditableScheduleTable(): JSX.Element {
                         if (_data?.delete_Event) {
                             const data = _data.delete_Event;
                             const deletedIds = data.returning.map((x) => x.id);
-                            cache.modify({
-                                fields: {
-                                    Event(existingRefs: Reference[] = [], { readField }) {
-                                        deletedIds.forEach((x) => {
-                                            cache.evict({
-                                                id: x.id,
-                                                fieldName: "EventInfo",
-                                                broadcast: true,
-                                            });
-                                        });
-                                        return existingRefs.filter((ref) => !deletedIds.includes(readField("id", ref)));
-                                    },
-                                },
+                            deletedIds.forEach((x) => {
+                                cache.evict({
+                                    id: x.id,
+                                    fieldName: "EventInfo",
+                                    broadcast: true,
+                                });
                             });
                         }
                     },

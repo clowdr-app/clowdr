@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Button, Heading, useDisclosure } from "@chakra-ui/react";
+import { Button, Heading, useDisclosure, VStack } from "@chakra-ui/react";
 import React, { useCallback } from "react";
 import { Permission_Enum, RoomListRoomDetailsFragment, useGetAllRoomsQuery } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
@@ -13,8 +13,18 @@ import { RoomList } from "./RoomList";
 
 gql`
     query GetAllRooms($conferenceId: uuid!) {
-        Room(
-            where: { conferenceId: { _eq: $conferenceId }, roomPrivacyName: { _neq: MANAGED } }
+        socialRooms: Room(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                _not: { _or: [{ events: {} }, { chat: { enableMandatoryPin: { _eq: true } } }] }
+                roomPrivacyName: { _in: [PUBLIC, PRIVATE] }
+            }
+            order_by: { name: asc }
+        ) {
+            ...RoomListRoomDetails
+        }
+        programRooms: Room(
+            where: { conferenceId: { _eq: $conferenceId }, events: {}, roomPrivacyName: { _in: [PUBLIC, PRIVATE] } }
             order_by: { name: asc }
         ) {
             ...RoomListRoomDetails
@@ -24,6 +34,7 @@ gql`
     fragment RoomListRoomDetails on Room {
         id
         name
+        priority
         roomPrivacyName
         originatingContentGroupId
         originatingEventId
@@ -58,16 +69,29 @@ export default function RoomListPage(): JSX.Element {
             ]}
         >
             {title}
-            <ApolloQueryWrapper getter={(data) => data.Room} queryResult={result}>
+            <ApolloQueryWrapper getter={(data) => data.programRooms} queryResult={result}>
                 {(rooms: readonly RoomListRoomDetailsFragment[]) => (
-                    <>
-                        <Heading as="h2">Rooms</Heading>
-                        <Button onClick={onOpen} colorScheme="green">
+                    <VStack>
+                        <Heading as="h2" mb={5} mt={5}>
+                            Program Rooms
+                        </Heading>
+                        <RoomList rooms={rooms} layout="grid" />
+                        <CreateRoomModal isOpen={isOpen} onClose={onClose} onCreated={refetch} />
+                    </VStack>
+                )}
+            </ApolloQueryWrapper>
+            <ApolloQueryWrapper getter={(data) => data.socialRooms} queryResult={result}>
+                {(rooms: readonly RoomListRoomDetailsFragment[]) => (
+                    <VStack>
+                        <Heading as="h2" my={5}>
+                            Social Rooms
+                        </Heading>
+                        <Button onClick={onOpen} colorScheme="green" mb={2}>
                             Create new room
                         </Button>
                         <RoomList rooms={rooms} layout="grid" />
                         <CreateRoomModal isOpen={isOpen} onClose={onClose} onCreated={refetch} />
-                    </>
+                    </VStack>
                 )}
             </ApolloQueryWrapper>
         </RequireAtLeastOnePermissionWrapper>

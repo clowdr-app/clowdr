@@ -21,6 +21,7 @@ import {
 import { formatRelative } from "date-fns";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Twemoji } from "react-emoji-render";
 import * as portals from "react-reverse-portal";
 import { useHistory } from "react-router-dom";
 import {
@@ -115,7 +116,7 @@ export function RoomBackstage({
                         </Heading>
                         <VStack px={8} alignItems="left">
                             <Heading as="h4" size="md" textAlign="left" mt={2} mb={1} whiteSpace="normal">
-                                {title}
+                                <Twemoji className="twemoji" text={title} />
                             </Heading>
 
                             <Text my={2} fontStyle="italic" whiteSpace="normal">

@@ -1,6 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import type OT from "@opentok/client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { StateType } from "./VonageGlobalState";
 import { useVonageGlobalState } from "./VonageGlobalStateProvider";
 import { VonageOverlay } from "./VonageOverlay";
@@ -9,12 +9,17 @@ export function VonageSubscriber({
     stream,
     onChangeActivity,
     enableVideo,
+    lowRes,
 }: {
     stream: OT.Stream;
     onChangeActivity?: (active: boolean) => void;
     enableVideo: boolean;
+    lowRes: boolean;
 }): JSX.Element {
     const ref = useRef<HTMLDivElement>(null);
+
+    const smallDimensions = useMemo<OT.Dimensions>(() => ({ width: 320, height: 240 }), []);
+    const normalDimensions = useMemo<OT.Dimensions>(() => ({ width: 640, height: 480 }), []);
 
     const vonage = useVonageGlobalState();
     const [talking, setTalking] = useState<boolean>(false);
@@ -34,6 +39,10 @@ export function VonageSubscriber({
     }, [enableVideo, subscriber]);
 
     useEffect(() => {
+        subscriber?.setPreferredResolution(lowRes ? smallDimensions : normalDimensions);
+    }, [lowRes, normalDimensions, smallDimensions, subscriber]);
+
+    useEffect(() => {
         if (!ref.current) {
             console.error("No element to inject stream into", stream.streamId);
             return;
@@ -48,6 +57,7 @@ export function VonageSubscriber({
             insertMode: "append",
             height: "100%",
             width: "100%",
+            preferredResolution: lowRes ? smallDimensions : normalDimensions,
         });
 
         setSubscriber(subscriber);

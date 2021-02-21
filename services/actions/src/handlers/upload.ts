@@ -528,6 +528,7 @@ gql`
         conference {
             id
             name
+            shortName
         }
         email
         emailsSentCount
@@ -725,6 +726,7 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
             },
             conference: {
                 name: job.uploader.conference.name,
+                shortName: job.uploader.conference.shortName,
             },
             item: {
                 title: job.uploader.requiredContentItem.contentGroup.title,

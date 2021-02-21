@@ -2,6 +2,7 @@ import type { BoxProps } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { Permission_Enum } from "../../generated/graphql";
 import RequireAtLeastOnePermissionWrapper from "../Conference/RequireAtLeastOnePermissionWrapper";
+import { useConferenceCurrentUserActivePermissions } from "../Conference/useConferenceCurrentUserActivePermissions";
 import { useMaybeCurrentAttendee } from "../Conference/useCurrentAttendee";
 import { useRestorableState } from "../Generic/useRestorableState";
 import { ChatConfiguration, ChatConfigurationProvider, ChatSources, ChatSpacing } from "./Configuration";
@@ -25,6 +26,7 @@ export function Chat({
     ...rest
 }: ChatProps & BoxProps): JSX.Element {
     const currentAttendee = useMaybeCurrentAttendee();
+    const currentPermissions = useConferenceCurrentUserActivePermissions();
     const [spacing, setSpacing] = useRestorableState<ChatSpacing>(
         "clowdr-chatSpacing",
         ChatSpacing.COMFORTABLE,
@@ -39,6 +41,14 @@ export function Chat({
     );
     const fontSizeMin = 10;
     const fontSizeMax = 28;
+    // TODO: This is a temporary hack
+    const canCompose =
+        "chatId" in sources
+            ? sources.chatTitle !== "Announcements" ||
+              currentPermissions.has(Permission_Enum.ConferenceManageAttendees) ||
+              currentPermissions.has(Permission_Enum.ConferenceModerateAttendees) ||
+              currentPermissions.has(Permission_Enum.ConferenceManageSchedule)
+            : true;
     const config = useMemo<ChatConfiguration>(
         () => ({
             customHeadingElements,
@@ -55,13 +65,13 @@ export function Chat({
                 // TODO: Disable certain permissions for during broadcast
                 // TODO: Enable certain permissions only if creator or admin
 
-                canMessage: true, // TODO
-                canEmote: true, // TODO
-                canReact: true, // TODO
-                canQuestion: true, // TODO
-                canAnswer: true, // TODO
-                canPoll: true, // TODO
-                canAnswerPoll: true, // TODO
+                canMessage: canCompose, // TODO
+                canEmote: canCompose, // TODO
+                canReact: canCompose, // TODO
+                canQuestion: canCompose, // TODO
+                canAnswer: canCompose, // TODO
+                canPoll: canCompose, // TODO
+                canAnswerPoll: canCompose, // TODO
 
                 canPin: true,
                 canUnpin: true,
@@ -152,6 +162,7 @@ export function Chat({
             onEmoteReceived,
         }),
         [
+            canCompose,
             currentAttendee?.displayName,
             currentAttendee?.id,
             customHeadingElements,

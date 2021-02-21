@@ -21,6 +21,7 @@ import {
     Select,
     Text,
     Textarea,
+    useToast,
     VStack,
 } from "@chakra-ui/react";
 import {
@@ -221,6 +222,8 @@ export function SendSubmissionRequestsModalInner({
         [requiredItems]
     );
 
+    const toast = useToast();
+
     return (
         <Modal isOpen={isOpen} onClose={onClose} size="lg">
             <Formik<{ htmlBodyTemplate: string; subjectTemplate: string }>
@@ -230,13 +233,27 @@ export function SendSubmissionRequestsModalInner({
                     subjectTemplate:
                         existingTemplate.subjectTemplate ?? EMAIL_TEMPLATE_SUBMISSION_REQUEST.subjectTemplate,
                 }}
-                onSubmit={(values, actions) => {
-                    send(uploaderIds, {
-                        htmlBodyTemplate: values.htmlBodyTemplate,
-                        subjectTemplate: values.subjectTemplate,
-                    });
-                    actions.resetForm();
-                    onClose();
+                onSubmit={async (values, actions) => {
+                    try {
+                        await send(uploaderIds, {
+                            htmlBodyTemplate: values.htmlBodyTemplate,
+                            subjectTemplate: values.subjectTemplate,
+                        });
+                        actions.resetForm();
+                        onClose();
+                        toast({
+                            title: "Requests sent",
+                            duration: 3000,
+                            isClosable: true,
+                            status: "success",
+                        });
+                    } catch (e) {
+                        toast({
+                            status: "error",
+                            title: "Could not send emails",
+                            description: e.message,
+                        });
+                    }
                 }}
             >
                 {({ isSubmitting, isValid }) => (
@@ -313,7 +330,7 @@ export function SendSubmissionRequestsModalInner({
                                     mt={4}
                                     colorScheme="green"
                                 >
-                                    Send {uploaderIds.length} requests
+                                    Send {uploaderIds.length} emails
                                 </Button>
                             </ModalFooter>
                         </ModalContent>

@@ -555,7 +555,7 @@
       - isPinned
       - message
       filter:
-        _or:
+        _and:
         - sender:
             userId:
               _eq: X-Hasura-User-Id
@@ -630,7 +630,7 @@
   - role: user
     permission:
       filter:
-        _or:
+        _and:
         - sender:
             userId:
               _eq: X-Hasura-User-Id
@@ -883,7 +883,7 @@
   - role: user
     permission:
       filter:
-        _or:
+        _and:
         - sender:
             userId:
               _eq: X-Hasura-User-Id
@@ -1281,6 +1281,48 @@
     headers:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
+- table:
+    schema: job_queues
+    name: CustomEmailJob
+  object_relationships:
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        conference:
+          _and:
+          - _or:
+            - createdBy:
+                _eq: X-Hasura-User-Id
+            - groups:
+                _and:
+                - enabled:
+                    _eq: true
+                - groupRoles:
+                    role:
+                      rolePermissions:
+                        _or:
+                        - permissionName:
+                            _eq: CONFERENCE_MANAGE_ROLES
+                        - permissionName:
+                            _eq: CONFERENCE_MANAGE_GROUPS
+                        - permissionName:
+                            _eq: CONFERENCE_MANAGE_ATTENDEES
+                - groupAttendees:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
+          - slug:
+              _eq: X-Hasura-Conference-Slug
+      columns:
+      - attendeeIds
+      - conferenceId
+      - htmlBody
+      - subject
+      backend_only: false
 - table:
     schema: job_queues
     name: InvitationEmailJob
@@ -5352,6 +5394,15 @@
       - invitedEmailAddress
       backend_only: false
   select_permissions:
+  - role: unauthenticated
+    permission:
+      columns:
+      - id
+      - inviteCode
+      - invitedEmailAddress
+      filter:
+        inviteCode:
+          _eq: X-Hasura-Invite-Code
   - role: user
     permission:
       columns:
@@ -6393,6 +6444,7 @@
       - name
       - originatingDataId
       - priority
+      - roomPrivacyName
       filter:
         _and:
         - conference:

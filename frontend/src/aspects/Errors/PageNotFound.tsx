@@ -15,6 +15,7 @@ export default function PageNotFound(): JSX.Element {
         }
         return undefined;
     }, [location.pathname]);
+    // conferenceSlug ? `/conference/${conferenceSlug}` :
 
     return (
         <GenericErrorPage heading="Sorry, we couldn't find that page.">
@@ -41,7 +42,7 @@ export default function PageNotFound(): JSX.Element {
                         .
                     </Text>
                 )}
-                <LinkButton to={conferenceSlug ? `/conference/${conferenceSlug}` : "/"}>Go to home page</LinkButton>
+                <LinkButton to="/">Go to home page</LinkButton>
             </>
         </GenericErrorPage>
     );

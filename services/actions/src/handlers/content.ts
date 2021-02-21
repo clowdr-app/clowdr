@@ -147,6 +147,7 @@ gql`
             conference {
                 id
                 name
+                shortName
             }
             contentGroup {
                 id
@@ -226,6 +227,7 @@ async function trySendTranscriptionEmail(contentItemId: string) {
                 },
                 conference: {
                     name: contentItem.conference.name,
+                    shortName: contentItem.conference.shortName,
                 },
                 item: {
                     title: contentItem.contentGroup.title,

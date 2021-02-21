@@ -4,13 +4,18 @@ import {
     assertIsContentItemDataBlob,
     ContentBaseType,
     ContentItemDataBlob,
+    isContentItemDataBlob,
+    PaperFileBlob,
     PaperLinkBlob,
     PaperUrlBlob,
     VideoUrlBlob,
     ZoomBlob,
 } from "@clowdr-app/shared-types/build/content";
+import { notEmpty } from "@clowdr-app/shared-types/build/utils";
+import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
 import React, { useMemo } from "react";
+import { Twemoji } from "react-emoji-render";
 import ReactPlayer from "react-player";
 import {
     ContentGroupSummary_ContentGroupDataFragment,
@@ -138,6 +143,35 @@ export function ContentGroupSummary({
         return R.last(versions)?.data as PaperLinkBlob;
     }, [contentGroupData.contentItems]);
 
+    const paperFiles = useMemo<{ id: string; url: string; name: string }[]>(() => {
+        return contentGroupData.contentItems
+            .filter((contentItem) => contentItem.contentTypeName === ContentType_Enum.PaperFile)
+            .map((item) => {
+                if (isContentItemDataBlob(item.data)) {
+                    const blob = item.data as ContentItemDataBlob;
+                    const currentVersion = R.last(blob)?.data;
+                    if (!currentVersion || currentVersion.type !== ContentType_Enum.PaperFile) {
+                        return null;
+                    }
+                    const paperFile = currentVersion as PaperFileBlob;
+                    try {
+                        const { bucket, key } = new AmazonS3URI(paperFile.s3Url);
+                        return {
+                            id: item.id,
+                            name: "Slides",
+                            url: `https://s3.${
+                                import.meta.env.SNOWPACK_PUBLIC_AWS_REGION
+                            }.amazonaws.com/${bucket}/${key}`,
+                        };
+                    } catch (e) {
+                        return null;
+                    }
+                }
+                return null;
+            })
+            .filter(notEmpty);
+    }, [contentGroupData.contentItems]);
+
     const maybeVideoURL = useMemo(() => {
         const item = contentGroupData.contentItems.find(
             (contentItem) => contentItem.contentTypeName === ContentType_Enum.VideoUrl
@@ -170,7 +204,7 @@ export function ContentGroupSummary({
                             overflowWrap="break-word"
                             whiteSpace="normal"
                         >
-                            {contentGroupData.title}
+                            <Twemoji className="twemoji" text={contentGroupData.title} />
                         </Heading>
                     </VStack>
                 </LinkButton>
@@ -178,7 +212,7 @@ export function ContentGroupSummary({
                 <>
                     <Text colorScheme="green">{contentGroupData.contentGroupTypeName}</Text>
                     <Heading as="h2" size="md" mb={5} textAlign="left">
-                        {contentGroupData.title}
+                        <Twemoji className="twemoji" text={contentGroupData.title} />
                     </Heading>
                 </>
             )}
@@ -208,6 +242,11 @@ export function ContentGroupSummary({
                 ) : (
                     <></>
                 )}
+                {paperFiles.map((paperFile) => (
+                    <ExternalLinkButton key={paperFile.id} to={paperFile.url} isExternal={true} colorScheme="blue">
+                        {paperFile.name}
+                    </ExternalLinkButton>
+                ))}
                 {maybeVideoURL ? (
                     <Box maxW="100%">
                         <ReactPlayer style={{ maxWidth: "100%" }} url={maybeVideoURL.url} controls={true} />

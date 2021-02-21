@@ -32,6 +32,7 @@ export interface EmailView_SubtitlesGenerated {
     };
     conference: {
         name: string;
+        shortName: string;
     };
     uploadLink: string;
 }
@@ -85,6 +86,7 @@ export interface EmailView_SubmissionRequest {
     };
     conference: {
         name: string;
+        shortName: string;
     };
     uploadLink: string;
 }

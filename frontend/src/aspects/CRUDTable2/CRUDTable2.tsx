@@ -785,10 +785,12 @@ function RenderedCRUDTable<T>({
         <>
             <Table display="block" maxWidth="100%" width="auto" size="sm" variant="striped" overflow="auto">
                 <Thead>
-                    {selectColumnEl}
-                    {editColumnEl}
-                    {deleteColumnEl}
-                    {columnEls}
+                    <Tr>
+                        {selectColumnEl}
+                        {editColumnEl}
+                        {deleteColumnEl}
+                        {columnEls}
+                    </Tr>
                 </Thead>
                 <Tbody>
                     {rowEls}

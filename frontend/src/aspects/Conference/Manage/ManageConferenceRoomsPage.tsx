@@ -7,6 +7,7 @@ import {
     AccordionPanel,
     Box,
     Button,
+    ButtonGroup,
     Code,
     Drawer,
     DrawerBody,
@@ -18,26 +19,37 @@ import {
     Heading,
     Input,
     ListItem,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuList,
     NumberDecrementStepper,
     NumberIncrementStepper,
     NumberInput,
     NumberInputField,
     NumberInputStepper,
+    Select,
     Text,
     UnorderedList,
     useDisclosure,
 } from "@chakra-ui/react";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
     Permission_Enum,
     RoomMode_Enum,
+    RoomPersonRole_Enum,
+    RoomPrivacy_Enum,
     RoomWithParticipantInfoFragment,
     RoomWithParticipantInfoFragmentDoc,
     useCreateRoomMutation,
     useDeleteRoomsMutation,
+    useInsertRoomPeopleMutation,
+    useManageRooms_SelectGroupAttendeesQuery,
+    useManageRooms_SelectGroupsQuery,
+    useManageRooms_SelectRoomPeopleQuery,
     useSelectAllRoomsWithParticipantsQuery,
-    useUpdateRoomMutation,
+    useUpdateRoomsWithParticipantsMutation,
 } from "../../../generated/graphql";
 import { LinkButton } from "../../Chakra/LinkButton";
 import { NumberRangeColumnFilter, SelectColumnFilter, TextColumnFilter } from "../../CRUDTable2/CRUDComponents";
@@ -49,6 +61,7 @@ import CRUDTable, {
     SortDirection,
 } from "../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../Errors/PageNotFound";
+import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import FAIcon from "../../Icons/FAIcon";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
@@ -86,8 +99,38 @@ gql`
     }
 
     query SelectAllRoomsWithParticipants($conferenceId: uuid!) {
-        Room(where: { conferenceId: { _eq: $conferenceId } }) {
+        Room(where: { conferenceId: { _eq: $conferenceId }, roomPrivacyName: { _in: [PUBLIC, PRIVATE] } }) {
             ...RoomWithParticipantInfo
+        }
+    }
+
+    query ManageRooms_SelectGroups($conferenceId: uuid!) {
+        Group(where: { conferenceId: { _eq: $conferenceId } }) {
+            id
+            name
+        }
+    }
+
+    query ManageRooms_SelectGroupAttendees($groupId: uuid!) {
+        GroupAttendee(where: { groupId: { _eq: $groupId } }) {
+            id
+            groupId
+            attendeeId
+        }
+    }
+
+    fragment RoomPersonInfo on RoomPerson {
+        id
+        attendee {
+            id
+            displayName
+        }
+        roomPersonRoleName
+    }
+
+    query ManageRooms_SelectRoomPeople($roomId: uuid!) {
+        RoomPerson(where: { roomId: { _eq: $roomId } }) {
+            ...RoomPersonInfo
         }
     }
 
@@ -97,9 +140,29 @@ gql`
         }
     }
 
-    mutation UpdateRoomsWithParticipants($id: uuid!, $name: String!, $capacity: Int!, $priority: Int!) {
-        update_Room_by_pk(pk_columns: { id: $id }, _set: { name: $name, capacity: $capacity, priority: $priority }) {
+    mutation UpdateRoomsWithParticipants(
+        $id: uuid!
+        $name: String!
+        $capacity: Int
+        $priority: Int!
+        $roomPrivacyName: RoomPrivacy_enum!
+    ) {
+        update_Room_by_pk(
+            pk_columns: { id: $id }
+            _set: { name: $name, capacity: $capacity, priority: $priority, roomPrivacyName: $roomPrivacyName }
+        ) {
             ...RoomWithParticipantInfo
+        }
+    }
+
+    mutation InsertRoomPeople($people: [RoomPerson_insert_input!]!) {
+        insert_RoomPerson(
+            objects: $people
+            on_conflict: { constraint: RoomPerson_attendeeId_roomId_key, update_columns: [] }
+        ) {
+            returning {
+                ...RoomPersonInfo
+            }
         }
     }
 `;
@@ -114,6 +177,49 @@ function RoomSecondaryEditor({
     onSecondaryPanelClose: () => void;
 }): JSX.Element {
     const conference = useConference();
+    const groups = useManageRooms_SelectGroupsQuery({
+        variables: {
+            conferenceId: conference.id,
+        },
+    });
+    const people = useManageRooms_SelectRoomPeopleQuery({
+        variables: {
+            roomId: room?.id ?? "",
+        },
+    });
+    const groupAttendeesQ = useManageRooms_SelectGroupAttendeesQuery({
+        skip: true,
+    });
+    const [insertRoomPeople, insertRoomPeopleResponse] = useInsertRoomPeopleMutation();
+    useQueryErrorToast(groupAttendeesQ.error, false, "ManaheConferenceRoomsPage: ManageRooms_SelectGroupAttendees");
+    useQueryErrorToast(insertRoomPeopleResponse.error, false, "ManaheConferenceRoomsPage: InsertRoomPeople (mutation)");
+
+    const addUsersFromGroup = useCallback(
+        async (groupId: string) => {
+            if (room) {
+                try {
+                    const result = await groupAttendeesQ.refetch({
+                        groupId,
+                    });
+                    if (!result.error && result.data) {
+                        insertRoomPeople({
+                            variables: {
+                                people: result.data.GroupAttendee.map((x) => ({
+                                    attendeeId: x.attendeeId,
+                                    roomId: room.id,
+                                    roomPersonRoleName: RoomPersonRole_Enum.Participant,
+                                })),
+                            },
+                        });
+                    }
+                } catch (e) {
+                    console.error("Error inserting room people", e);
+                }
+            }
+        },
+        [groupAttendeesQ, insertRoomPeople, room]
+    );
+
     return (
         <Drawer
             isOpen={isSecondaryPanelOpen}
@@ -130,17 +236,40 @@ function RoomSecondaryEditor({
                     <DrawerBody>
                         {room ? (
                             <>
-                                <LinkButton
-                                    to={`/conference/${conference.slug}/room/${room.id}`}
-                                    colorScheme="green"
-                                    mb={4}
-                                    isExternal={true}
-                                    aria-label={`View ${room.name} as an attendee`}
-                                    title={`View ${room.name} as an attendee`}
-                                >
-                                    <FAIcon icon="external-link-alt" iconStyle="s" mr={3} />
-                                    View room
-                                </LinkButton>
+                                <ButtonGroup>
+                                    <LinkButton
+                                        to={`/conference/${conference.slug}/room/${room.id}`}
+                                        colorScheme="green"
+                                        mb={4}
+                                        isExternal={true}
+                                        aria-label={`View ${room.name} as an attendee`}
+                                        title={`View ${room.name} as an attendee`}
+                                    >
+                                        <FAIcon icon="external-link-alt" iconStyle="s" mr={3} />
+                                        View room
+                                    </LinkButton>
+                                    {room.roomPrivacyName === RoomPrivacy_Enum.Private ? (
+                                        <Menu>
+                                            <MenuButton
+                                                as={Button}
+                                                isLoading={groupAttendeesQ.loading || insertRoomPeopleResponse.loading}
+                                            >
+                                                <FAIcon iconStyle="s" icon="user-plus" mr={2} />
+                                                Add people from group
+                                            </MenuButton>
+                                            <MenuList>
+                                                {groups.data?.Group.map((group) => (
+                                                    <MenuItem
+                                                        key={group.id}
+                                                        onClick={() => addUsersFromGroup(group.id)}
+                                                    >
+                                                        {group.name}
+                                                    </MenuItem>
+                                                ))}
+                                            </MenuList>
+                                        </Menu>
+                                    ) : undefined}
+                                </ButtonGroup>
                                 <Accordion>
                                     <AccordionItem>
                                         <AccordionButton>
@@ -209,6 +338,30 @@ function RoomSecondaryEditor({
                                             </AccordionPanel>
                                         </AccordionItem>
                                     ) : undefined}
+
+                                    {room && people.data && room.roomPrivacyName !== RoomPrivacy_Enum.Public ? (
+                                        <AccordionItem>
+                                            <AccordionButton>
+                                                <Box flex="1" textAlign="left">
+                                                    Members
+                                                </Box>
+                                                <AccordionIcon />
+                                            </AccordionButton>
+                                            <AccordionPanel pt={4} pb={4}>
+                                                {people.data.RoomPerson.length === 0 ? (
+                                                    "Room has no members."
+                                                ) : (
+                                                    <UnorderedList>
+                                                        {people.data.RoomPerson.map((member) => (
+                                                            <ListItem key={member.id}>
+                                                                {member.attendee.displayName}
+                                                            </ListItem>
+                                                        ))}
+                                                    </UnorderedList>
+                                                )}
+                                            </AccordionPanel>
+                                        </AccordionItem>
+                                    ) : undefined}
                                 </Accordion>
                             </>
                         ) : (
@@ -225,7 +378,7 @@ function EditableRoomsCRUDTable() {
     const conference = useConference();
     const [insertRoom, insertRoomResponse] = useCreateRoomMutation();
     const [deleteRooms, deleteRoomsResponse] = useDeleteRoomsMutation();
-    const [updateRoom, updateRoomResponse] = useUpdateRoomMutation();
+    const [updateRoom, updateRoomResponse] = useUpdateRoomsWithParticipantsMutation();
 
     const selectAllRoomsResult = useSelectAllRoomsWithParticipantsQuery({
         variables: {
@@ -405,6 +558,45 @@ function EditableRoomsCRUDTable() {
                     return <Text>{props.value}</Text>;
                 },
             },
+            {
+                id: "privacy",
+                header: function ModeHeader(props: ColumnHeaderProps<RoomWithParticipantInfoFragment>) {
+                    return props.isInCreate ? (
+                        <FormLabel>Privacy</FormLabel>
+                    ) : (
+                        <Button size="xs" onClick={props.onClick}>
+                            Privacy{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        </Button>
+                    );
+                },
+                get: (data) => data.roomPrivacyName,
+                set: (row, value) => {
+                    row.roomPrivacyName = value;
+                },
+                sort: (x: string, y: string) => x.localeCompare(y),
+                filterFn: (rows, v: RoomPrivacy_Enum) => rows.filter((r) => r.roomPrivacyName === v),
+                filterEl: SelectColumnFilter(Object.values(RoomPrivacy_Enum)),
+                cell: function EventNameCell(props: CellProps<Partial<RoomWithParticipantInfoFragment>>) {
+                    if (props.value !== RoomPrivacy_Enum.Private && props.value !== RoomPrivacy_Enum.Public) {
+                        return <Text>{props.value}</Text>;
+                    } else {
+                        const v = props.value ?? "";
+                        return (
+                            <Select
+                                value={v}
+                                onChange={(ev) => props.onChange?.(ev.target.value as RoomPrivacy_Enum)}
+                                onBlur={props.onBlur}
+                            >
+                                {v === "" || (v !== RoomPrivacy_Enum.Public && v !== RoomPrivacy_Enum.Private) ? (
+                                    <option value="">&lt;Error&gt;</option>
+                                ) : undefined}
+                                <option value={RoomPrivacy_Enum.Public}>Public</option>
+                                <option value={RoomPrivacy_Enum.Private}>Private</option>
+                            </Select>
+                        );
+                    }
+                },
+            },
         ],
         []
     );
@@ -442,6 +634,7 @@ function EditableRoomsCRUDTable() {
                         currentModeName: RoomMode_Enum.Breakout,
                         name: "New room " + (data.length + 1),
                         participants: [],
+                        roomPrivacyName: RoomPrivacy_Enum.Public,
                     }),
                     makeWhole: (d) => d as RoomWithParticipantInfoFragment,
                     start: (record) => {
@@ -454,28 +647,16 @@ function EditableRoomsCRUDTable() {
                                     priority: record.priority,
                                     currentModeName: record.currentModeName,
                                     name: record.name,
+                                    roomPrivacyName: record.roomPrivacyName,
                                 },
                             },
                             update: (cache, { data: _data }) => {
                                 if (_data?.insert_Room_one) {
                                     const data = _data.insert_Room_one;
-                                    cache.modify({
-                                        fields: {
-                                            Room(existingRefs: Reference[] = [], { readField }) {
-                                                const newRef = cache.writeFragment({
-                                                    data: {
-                                                        ...data,
-                                                    },
-                                                    fragment: RoomWithParticipantInfoFragmentDoc,
-                                                    fragmentName: "RoomWithParticipantInfo",
-                                                });
-                                                if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
-                                                    return existingRefs;
-                                                }
-
-                                                return [...existingRefs, newRef];
-                                            },
-                                        },
+                                    cache.writeFragment({
+                                        data,
+                                        fragment: RoomWithParticipantInfoFragmentDoc,
+                                        fragmentName: "RoomWithParticipantInfo",
                                     });
                                 }
                             },
@@ -491,6 +672,7 @@ function EditableRoomsCRUDTable() {
                                 name: record.name,
                                 priority: record.priority,
                                 capacity: record.capacity,
+                                roomPrivacyName: record.roomPrivacyName,
                             },
                             optimisticResponse: {
                                 update_Room_by_pk: record,
@@ -498,20 +680,10 @@ function EditableRoomsCRUDTable() {
                             update: (cache, { data: _data }) => {
                                 if (_data?.update_Room_by_pk) {
                                     const data = _data.update_Room_by_pk;
-                                    cache.modify({
-                                        fields: {
-                                            Room(existingRefs: Reference[] = [], { readField }) {
-                                                const newRef = cache.writeFragment({
-                                                    data,
-                                                    fragment: RoomWithParticipantInfoFragmentDoc,
-                                                    fragmentName: "RoomWithParticipantInfo",
-                                                });
-                                                if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
-                                                    return existingRefs;
-                                                }
-                                                return [...existingRefs, newRef];
-                                            },
-                                        },
+                                    cache.writeFragment({
+                                        data,
+                                        fragment: RoomWithParticipantInfoFragmentDoc,
+                                        fragmentName: "RoomWithParticipantInfo",
                                     });
                                 }
                             },

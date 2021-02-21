@@ -4,6 +4,7 @@ import { ContentItemDataBlob, ContentType_Enum, isContentItemDataBlob } from "@c
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
 import React, { useMemo } from "react";
+import { Twemoji } from "react-emoji-render";
 import {
     MainMenuSponsors_ContentGroupDataFragment,
     useMainMenuSponsors_GetSponsorsQuery,
@@ -38,6 +39,7 @@ gql`
             data
         }
         title
+        shortTitle
     }
 `;
 
@@ -97,7 +99,7 @@ export function MainMenuSponsors(): JSX.Element {
                                         linkProps={{ h: "100%", w: "100%" }}
                                         border={`1px solid ${borderColour}`}
                                     >
-                                        <Grid templateColumns="25% 75%" columnGap={4} h="100%" w="100%" pr={4}>
+                                        <Grid templateColumns="25% 75%" gridColumnGap={4} h="100%" w="100%" pr={4}>
                                             <GridItem minH="0" py={2} px={4} bgColor="white">
                                                 {sponsorLogos[sponsorContentGroup.id] ? (
                                                     <Image
@@ -117,7 +119,16 @@ export function MainMenuSponsors(): JSX.Element {
                                                 alignItems="center"
                                                 justifyContent="space-between"
                                             >
-                                                <Text fontSize="lg">{sponsorContentGroup.title}</Text>
+                                                <Text fontSize="lg">
+                                                    <Twemoji
+                                                        className="twemoji"
+                                                        text={
+                                                            sponsorContentGroup.shortTitle
+                                                                ? sponsorContentGroup.shortTitle
+                                                                : sponsorContentGroup.title
+                                                        }
+                                                    />
+                                                </Text>
                                                 <PageCountText width="10%" path={url} />
                                             </GridItem>
                                         </Grid>

@@ -129,9 +129,10 @@ export function VonageSubscriber({
                     if (vonage.state.session.connection) {
                         vonage.state.session.unsubscribe(subscriber);
                     }
-                    setSubscriber(null);
                 } catch (e) {
                     console.log("Could not unsubscribe from stream");
+                } finally {
+                    setSubscriber(null);
                 }
             };
         } catch (e) {

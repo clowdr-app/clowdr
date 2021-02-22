@@ -40797,7 +40797,7 @@ export type UserEventRolesSubscriptionResult = Apollo.SubscriptionResult<UserEve
 export const GetForceUserRefreshConfigDocument = gql`
     query GetForceUserRefreshConfig($conferenceId: uuid!) {
   ConferenceConfiguration(
-    where: {conferenceId: {_eq: $conferenceId}, key: {_eq: "FORCE_REFRESH_TIME"}}
+    where: {conferenceId: {_eq: $conferenceId}, key: {_eq: "CLOWDR_APP_VERSION"}}
   ) {
     id
     conferenceId

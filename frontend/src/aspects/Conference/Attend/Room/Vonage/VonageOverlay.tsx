@@ -40,7 +40,7 @@ export function VonageOverlay({ connectionData }: { connectionData: string }): J
             h="auto"
             p={0}
             m="3px"
-            size="sm"
+            size="xs"
             maxW="calc(100% - 6px - 0.8rem)"
             background="none"
             borderRadius={5}

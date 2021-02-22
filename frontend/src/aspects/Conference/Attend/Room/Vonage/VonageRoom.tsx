@@ -5,7 +5,6 @@ import { FullScreen, useFullScreenHandle } from "react-full-screen";
 import { useLocation } from "react-router-dom";
 import useUserId from "../../../../Auth/useUserId";
 import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";
-import usePolling from "../../../../Generic/usePolling";
 import { useVonageRoom, VonageRoomStateActionType, VonageRoomStateProvider } from "../../../../Vonage/useVonageRoom";
 import useCurrentAttendee, { useMaybeCurrentAttendee } from "../../../useCurrentAttendee";
 import PlaceholderImage from "../PlaceholderImage";
@@ -187,20 +186,29 @@ function VonageRoomInner({
             }));
         }
     }, []);
+    const othersCameraStreams = useMemo(() => streams.filter((s) => s.videoType === "camera" || !s.videoType), [
+        streams,
+    ]);
+    const sortedStreams = useMemo(() => R.sortWith([R.ascend(R.prop("creationTime"))], othersCameraStreams), [
+        othersCameraStreams,
+    ]);
 
     const [enableStreams, setEnableStreams] = useState<string[] | null>(null);
-    const updateEnabledStreams = useCallback(() => {
-        if (streams.filter((stream) => stream.videoType === "camera").length <= maxVideoStreams) {
+    useEffect(() => {
+        if (othersCameraStreams.length <= maxVideoStreams) {
             setEnableStreams(null);
         } else {
+            const streamTimestamps = R.toPairs(streamLastActive) as [string, number][];
+            // console.log(`${new Date().toISOString()}: Proceeding with computing enabled streams`, streamTimestamps);
             const activeStreams = R.sortWith(
                 [R.descend((pair) => pair[1]), R.ascend((pair) => pair[0])],
-                R.toPairs(streamLastActive) as [string, number][]
+                streamTimestamps
             ).map((pair) => pair[0]);
             const selectedActiveStreams = activeStreams.slice(0, Math.min(activeStreams.length, maxVideoStreams));
 
             setEnableStreams((oldEnabledStreams) => {
                 if (!oldEnabledStreams) {
+                    // console.log("Active speakers changed (1)");
                     return selectedActiveStreams;
                 }
 
@@ -209,18 +217,14 @@ function VonageRoomInner({
                     oldEnabledStreams.some((x) => !selectedActiveStreams.includes(x)) ||
                     selectedActiveStreams.some((x) => !oldEnabledStreams.includes(x))
                 ) {
+                    // console.log("Active speakers changed (2)");
                     return selectedActiveStreams;
                 } else {
                     return oldEnabledStreams;
                 }
             });
         }
-    }, [streams, maxVideoStreams, streamLastActive]);
-    useEffect(() => {
-        updateEnabledStreams();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [screenSharingActive]);
-    usePolling(updateEnabledStreams, 3000, true);
+    }, [maxVideoStreams, othersCameraStreams.length, screenSharingActive, streamLastActive]);
 
     const viewPublishedScreenShareEl = useMemo(
         () => (
@@ -358,14 +362,6 @@ function VonageRoomInner({
             ),
         [connected, connections.length]
     );
-
-    const othersCameraStreams = useMemo(() => streams.filter((s) => s.videoType === "camera" || !s.videoType), [
-        streams,
-    ]);
-
-    const sortedStreams = useMemo(() => R.sortWith([R.ascend(R.prop("creationTime"))], othersCameraStreams), [
-        othersCameraStreams,
-    ]);
 
     const otherStreams = useMemo(
         () =>

@@ -1,6 +1,7 @@
 import { Box } from "@chakra-ui/react";
 import type OT from "@opentok/client";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import usePolling from "../../../../Generic/usePolling";
 import { StateType } from "./VonageGlobalState";
 import { useVonageGlobalState } from "./VonageGlobalStateProvider";
 import { VonageOverlay } from "./VonageOverlay";
@@ -26,15 +27,20 @@ export function VonageSubscriber({
     const highFrameRate = 30;
 
     const vonage = useVonageGlobalState();
-    const [talking, setTalking] = useState<boolean>(false);
     const [subscriber, setSubscriber] = useState<OT.Subscriber | null>(null);
+    const acitivityRef = React.useRef<null | { timestamp: number; talking: boolean }>(null);
+    const lastTalking = React.useRef<boolean>(false);
+    const [talking, setTalking] = useState<boolean>(false);
+    const pollCb = useCallback(() => {
+        const isTalking = acitivityRef.current?.talking ?? false;
+        if (lastTalking.current !== isTalking) {
+            lastTalking.current = isTalking;
 
-    useEffect(() => {
-        if (onChangeActivity) {
-            onChangeActivity(talking);
+            setTalking(isTalking);
+            onChangeActivity?.(isTalking);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [talking]);
+    }, [onChangeActivity]);
+    usePolling(pollCb, 1500, true);
 
     useEffect(() => {
         if (subscriber) {
@@ -74,26 +80,25 @@ export function VonageSubscriber({
 
         setSubscriber(subscriber);
 
-        let activity: null | { timestamp: number; talking: boolean } = null;
         subscriber.on("audioLevelUpdated", (event) => {
             const now = Date.now();
-            if (event.audioLevel > 0.2) {
-                if (!activity) {
-                    activity = { timestamp: now, talking: false };
+            // console.log("Audio level", event.audioLevel);
+            const activity = acitivityRef.current;
+            if (event.audioLevel > 0.05) {
+                if (!activity || now - activity.timestamp > 3000) {
+                    // was either not previously talking or last spoke a long time ago
+                    acitivityRef.current = { timestamp: now, talking: false };
                 } else if (activity.talking) {
                     activity.timestamp = now;
-                } else if (now - activity.timestamp > 1000) {
+                } else if (now - activity.timestamp > 500) {
                     // detected audio activity for more than 1s
                     // for the first time.
                     activity.talking = true;
-                    setTalking(true);
                 }
-            } else if (activity && now - activity.timestamp > 3000) {
-                // detected low audio activity for more than 3s
-                if (activity.talking) {
-                    setTalking(false);
-                }
-                activity = null;
+            } else if (acitivityRef.current && activity && now - activity.timestamp > 3000) {
+                // this event never seems to fire with an audioLevel of 0 but this
+                // code is here just in case some browsers behave differently.
+                acitivityRef.current.talking = false;
             }
         });
 
@@ -113,9 +118,23 @@ export function VonageSubscriber({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    const videoBox = useMemo(
+        () => <Box ref={ref} position="absolute" zIndex="100" left="0" top="0" height="100%" width="100%" />,
+        []
+    );
+    const overlayBox = useMemo(
+        () => (
+            <Box position="absolute" left="0.4rem" bottom="0.35rem" zIndex="200" width="100%">
+                <VonageOverlay connectionData={stream.connection.data} />
+            </Box>
+        ),
+        [stream.connection.data]
+    );
+
     return (
         <Box position="relative" height="100%" width="100%" overflow="hidden">
-            <Box ref={ref} position="absolute" zIndex="100" left="0" top="0" height="100%" width="100%" />
+            {videoBox}
+            {overlayBox}
             <Box
                 position="absolute"
                 zIndex="200"
@@ -126,9 +145,6 @@ export function VonageSubscriber({
                 pointerEvents="none"
                 border={talking ? "3px solid green" : "0 none"}
             />
-            <Box position="absolute" left="0.4rem" bottom="0.35rem" zIndex="200" width="100%">
-                <VonageOverlay connectionData={stream.connection.data} />
-            </Box>
         </Box>
     );
 }

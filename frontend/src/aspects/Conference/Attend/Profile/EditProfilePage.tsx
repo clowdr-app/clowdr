@@ -255,16 +255,18 @@ function EditProfilePageInner({ attendee }: { attendee: AttendeeContextT }): JSX
                                 max={type === "timezone" ? +12 : undefined}
                                 precision={1}
                                 allowMouseWheel
-                                value={(v as number | undefined)?.toFixed(1) ?? 0}
+                                value={(v as number | undefined)?.toFixed(1) ?? ""}
                                 step={0.5}
-                                onChange={(_vvv, v) => {
-                                    setEditingAttendee({
-                                        ...editingAttendee,
-                                        profile: {
-                                            ...editingAttendee.profile,
-                                            [fieldName]: type === "timezone" ? Math.round(v * 2) / 2 : v,
-                                        },
-                                    });
+                                onChange={(vvv, v) => {
+                                    if (vvv !== "") {
+                                        setEditingAttendee({
+                                            ...editingAttendee,
+                                            profile: {
+                                                ...editingAttendee.profile,
+                                                [fieldName]: type === "timezone" ? Math.round(v * 2) / 2 : v,
+                                            },
+                                        });
+                                    }
                                 }}
                                 pattern="-?[0-9]*(.[0-9]+)?"
                             >

@@ -213,7 +213,7 @@ function VonageRoomInner({
     useEffect(() => {
         updateEnabledStreams();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [screenSharingActive]);
     usePolling(updateEnabledStreams, 3000, true);
 
     const viewPublishedScreenShareEl = useMemo(

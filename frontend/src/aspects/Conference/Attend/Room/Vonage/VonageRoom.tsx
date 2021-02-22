@@ -1,4 +1,4 @@
-import { Alert, AlertIcon, AlertTitle, Box, Flex, useToast, VStack } from "@chakra-ui/react";
+import { Alert, AlertIcon, AlertTitle, Box, Flex, useBreakpointValue, useToast, VStack } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -77,10 +77,15 @@ function VonageRoomInner({
 
     const [joining, setJoining] = useState<boolean>(false);
 
+    const resolutionBP = useBreakpointValue<"low" | "normal" | "high">({
+        base: "low",
+        lg: "normal",
+    });
     const receivingScreenShare = useMemo(() => streams.find((s) => s.videoType === "screen"), [streams]);
     const maxVideoStreams = receivingScreenShare ? 4 : 10;
     const screenSharingActive = receivingScreenShare || screen;
-    const cameraResolution = screenSharingActive || connections.length >= 10 ? "low" : "normal";
+    const cameraResolution =
+        screenSharingActive || connections.length >= maxVideoStreams ? "low" : resolutionBP ?? "normal";
     const participantWidth = cameraResolution === "low" ? 150 : 300;
 
     const joinRoom = useCallback(async () => {

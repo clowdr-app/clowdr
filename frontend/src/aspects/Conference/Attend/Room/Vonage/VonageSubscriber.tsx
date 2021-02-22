@@ -21,7 +21,7 @@ export function VonageSubscriber({
     const smallDimensions = useMemo<OT.Dimensions>(() => ({ width: 160, height: 120 }), []);
     const normalDimensions = useMemo<OT.Dimensions>(() => ({ width: 480, height: 360 }), []);
     const highResDimensions = useMemo<OT.Dimensions>(() => ({ width: 1280, height: 720 }), []);
-    const lowFrameRate = 1;
+    const lowFrameRate = 7;
     const normalFrameRate = 15;
     const highFrameRate = 30;
 

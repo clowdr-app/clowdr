@@ -1,4 +1,4 @@
-import { HStack, Image, Link } from "@chakra-ui/react";
+import { Box, HStack, Image, Link } from "@chakra-ui/react";
 import { ContentItemDataBlob, ContentType_Enum } from "@clowdr-app/shared-types/build/content";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
@@ -22,13 +22,16 @@ export function ContentItem({ blob }: { blob: ContentItemDataBlob }): JSX.Elemen
                 return <Markdown>{latestVersion.data.text}</Markdown>;
             case ContentType_Enum.VideoUrl:
                 return (
-                    <ReactPlayer
-                        url={latestVersion.data.url}
-                        style={{ maxWidth: "100%" }}
-                        width="100%"
-                        height="auto"
-                        controls={true}
-                    />
+                    // https://stackoverflow.com/questions/49393838/how-to-make-reactplayer-scale-with-height-and-width
+                    <Box maxWidth="100%" width="100%" height="0" paddingTop="56.25%" position="relative">
+                        <ReactPlayer
+                            url={latestVersion.data.url}
+                            style={{ maxWidth: "100%", position: "absolute", top: 0, left: 0 }}
+                            width="100%"
+                            height="100%"
+                            controls={true}
+                        />
+                    </Box>
                 );
             case ContentType_Enum.ImageUrl:
                 return <Image src={latestVersion.data.url} style={{ maxWidth: "100%" }} />;
@@ -65,13 +68,18 @@ export function ContentItem({ blob }: { blob: ContentItemDataBlob }): JSX.Elemen
                         throw new Error("Missing S3 URI component");
                     }
                     return (
-                        <ReactPlayer
-                            url={`https://${bucket}.s3-${
-                                import.meta.env.SNOWPACK_PUBLIC_AWS_REGION
-                            }.amazonaws.com/${key}`}
-                            style={{ maxWidth: "100%" }}
-                            controls={true}
-                        />
+                        // https://stackoverflow.com/questions/49393838/how-to-make-reactplayer-scale-with-height-and-width
+                        <Box maxWidth="100%" width="100%" height="0" paddingTop="56.25%" position="relative">
+                            <ReactPlayer
+                                url={`https://${bucket}.s3-${
+                                    import.meta.env.SNOWPACK_PUBLIC_AWS_REGION
+                                }.amazonaws.com/${key}`}
+                                style={{ maxWidth: "100%", position: "absolute", top: 0, left: 0 }}
+                                width="100%"
+                                height="100%"
+                                controls={true}
+                            />
+                        </Box>
                     );
                 } catch (e) {
                     return <>Invalid image URL.</>;

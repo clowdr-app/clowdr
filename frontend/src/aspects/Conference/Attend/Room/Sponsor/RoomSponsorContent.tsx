@@ -74,7 +74,7 @@ export function RoomSponsorContent({ contentGroupId }: { contentGroupId: string 
         <>
             <Divider mb={6} />
             {loading ? <Spinner /> : error ? <>An error occurred loading in data.</> : undefined}
-            <Grid gridTemplateColumns="50% 50%" ml={5} gridColumnGap={5}>
+            <Grid gridTemplateColumns="50% 50%" ml={0} mr={3} gridColumnGap={5}>
                 {contentItems ? (
                     contentItems.map((contentItem) =>
                         contentItem.layoutBlob.hidden ? (

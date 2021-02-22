@@ -158,6 +158,7 @@ function VonageRoomInner({
                         state.microphoneIntendedEnabled ? state.preferredMicrophoneId : null
                     );
                 } catch (e) {
+                    console.error("Failed to publish camera", e);
                     toast({
                         status: "error",
                         title: "Failed to publish camera",

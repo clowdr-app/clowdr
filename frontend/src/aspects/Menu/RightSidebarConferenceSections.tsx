@@ -571,7 +571,7 @@ function ChatsPanel({
                     customHeadingElements={[
                         <Tooltip key="back-button" label="Back to chats list">
                             <Button size="xs" colorScheme="purple" onClick={() => setCurrentChat(null)}>
-                                <FAIcon iconStyle="s" icon="chevron-left" />
+                                <FAIcon iconStyle="s" icon="chevron-left" mr={1} /> All chats
                             </Button>
                         </Tooltip>,
                         currentChat?.roomId ? (

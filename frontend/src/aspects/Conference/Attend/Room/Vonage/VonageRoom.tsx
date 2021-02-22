@@ -277,6 +277,12 @@ function VonageRoomInner({
 
     const fullScreenHandle = useFullScreenHandle();
 
+    useEffect(() => {
+        if (!receivingScreenShare && fullScreenHandle.active) {
+            fullScreenHandle.exit().catch((e) => console.error("Failed to exit full screen", e));
+        }
+    }, [fullScreenHandle, receivingScreenShare]);
+
     const viewSubscribedScreenShare = useMemo(
         () => (
             <FullScreen handle={fullScreenHandle}>
@@ -284,7 +290,7 @@ function VonageRoomInner({
                     onClick={async () => {
                         try {
                             if (fullScreenHandle.active) {
-                                fullScreenHandle.exit();
+                                await fullScreenHandle.exit();
                             } else {
                                 await fullScreenHandle.enter();
                             }

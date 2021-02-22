@@ -84,7 +84,7 @@ export function RoomSponsorContent({ contentGroupId }: { contentGroupId: string 
                                 minW={0}
                                 overflowX="auto"
                                 key={contentItem.item.id}
-                                colSpan={contentItem.layoutBlob.wide ? [1, 1, 2] : [1]}
+                                colSpan={contentItem.layoutBlob.wide ? [2] : [2, 2, 1]}
                                 p={4}
                             >
                                 <ContentItem blob={contentItem.blob} />

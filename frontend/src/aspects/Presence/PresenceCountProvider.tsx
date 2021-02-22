@@ -30,14 +30,11 @@ export default function PresenceCountProvider({
 
     const [pageCount, setPageCount] = useState<number>(presenceState.getPresenceCount());
     const [pageCounts, setPageCounts] = useState(presenceState.getAllPresenceCounts());
-    usePolling(
-        () => {
-            setPageCount(presenceState.getPresenceCount());
-            setPageCounts(presenceState.getAllPresenceCounts());
-        },
-        5000,
-        true
-    );
+    const poll = useCallback(() => {
+        setPageCount(presenceState.getPresenceCount());
+        setPageCounts(presenceState.getAllPresenceCounts());
+    }, [presenceState]);
+    usePolling(poll, 5000, true);
 
     const observePageCount = useCallback(
         (path: string) => {

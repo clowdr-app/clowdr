@@ -1,10 +1,10 @@
-import { authorize } from "@thream/socketio-jwt";
 import assert from "assert";
 import crypto from "crypto";
 import express from "express";
 import jwksRsa from "jwks-rsa";
 import socketIO, { Socket } from "socket.io";
 import redis from "socket.io-redis";
+import { authorize } from "./authorize";
 
 assert(process.env.REDIS_URL, "REDIS_URL env var not defined.");
 assert(process.env.REDIS_KEY, "REDIS_KEY env var not defined.");
@@ -30,6 +30,7 @@ const io = new socketIO.Server(server, {
         origin: process.env.CORS_ORIGIN,
         methods: ["GET", "POST"],
     },
+    transports: ["websocket"],
 });
 io.adapter(redis.createAdapter(process.env.REDIS_URL, { key: process.env.REDIS_KEY }));
 

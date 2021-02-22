@@ -1,4 +1,5 @@
 import { Mutex } from "async-mutex";
+import io from "socket.io-client";
 
 export class PresenceState {
     private socket: SocketIOClient.Socket | undefined;
@@ -16,10 +17,11 @@ export class PresenceState {
 
             const url = import.meta.env.SNOWPACK_PUBLIC_PRESENCE_SERVICE_URL;
             this.socket = io(url, {
-                transportOptions: {
-                    polling: { extraHeaders: { Authorization: `Bearer ${token}` } },
+                transports: ["websocket"],
+                auth: {
+                    token,
                 },
-            });
+            } as any);
 
             this.socket.on("connect", this.onConnect.bind(this));
             this.socket.on("disconnect", this.onDisconnect.bind(this));
@@ -49,7 +51,7 @@ export class PresenceState {
                 }
 
                 for (const path in this.presences) {
-                    const cutoff = Date.now() - 1.03 * PresenceState.PERIOD_MS;
+                    const cutoff = Date.now() - 0.9 * PresenceState.PERIOD_MS;
                     if (!this.presences[path]) {
                         this.presences[path] = [];
                     }
@@ -106,7 +108,7 @@ export class PresenceState {
 
     private onPresent(data: { utcMillis: number; path: string }) {
         // console.log(`Presence received ${data.utcMillis} for ${data.path}`);
-        const cutoff = Date.now() - 1.03 * PresenceState.PERIOD_MS;
+        const cutoff = Date.now() - 0.9 * PresenceState.PERIOD_MS;
         this.presences[data.path] = [...(this.presences[data.path] ?? []).filter((x) => x >= cutoff), data.utcMillis];
     }
 

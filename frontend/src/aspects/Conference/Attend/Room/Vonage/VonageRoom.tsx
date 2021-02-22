@@ -82,8 +82,8 @@ function VonageRoomInner({
         lg: "normal",
     });
     const receivingScreenShare = useMemo(() => streams.find((s) => s.videoType === "screen"), [streams]);
-    const maxVideoStreams = receivingScreenShare ? 4 : 10;
     const screenSharingActive = receivingScreenShare || screen;
+    const maxVideoStreams = screenSharingActive ? 4 : 10;
     const cameraResolution =
         screenSharingActive || connections.length >= maxVideoStreams ? "low" : resolutionBP ?? "normal";
     const participantWidth = cameraResolution === "low" ? 150 : 300;

@@ -467,7 +467,7 @@ function ChatsPanel({
                             }}
                         />
                     ))}
-                {!pinnedChats.data || pinnedChats.data.chat_Pin.length < 1 ? <>No pinned chats.</> : <></>}
+                {!pinnedChats.data || pinnedChats.data.chat_Pin.length < 1 ? <>No pinned DMs</> : <></>}
             </List>
         ),
         [attendeeId, confSlug, pageChatId, pinnedChats.data, switchToPageChat]
@@ -505,7 +505,7 @@ function ChatsPanel({
                             }}
                         />
                     ))}
-                {!pinnedChats.data || pinnedChats.data.chat_Pin.length < 1 ? <>No pinned chats.</> : <></>}
+                {!pinnedChats.data || pinnedChats.data.chat_Pin.length < 1 ? <>No pinned chats</> : <></>}
             </List>
         ),
         [attendeeId, confSlug, pageChatId, pinnedChats.data, switchToPageChat]

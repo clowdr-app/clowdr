@@ -1,5 +1,5 @@
 import { GridItem, HStack, SimpleGrid, Text } from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import FAIcon from "../../../Icons/FAIcon";
 import useRoomParticipants from "../../../Room/useRoomParticipants";
 import { useAttendee } from "../../AttendeesContext";
@@ -7,7 +7,10 @@ import { useAttendee } from "../../AttendeesContext";
 export function RoomParticipants({ roomId }: { roomId: string }): JSX.Element {
     const roomParticipants = useRoomParticipants();
 
-    const numberToShow = 5;
+    const columns = 2;
+    const rows = 3;
+    const defaultNumberToShow = columns * rows;
+    const [numberToShow, setNumberToShow] = useState<number>(defaultNumberToShow);
 
     const thisRoomParticipants = useMemo(
         () => (roomParticipants ? roomParticipants.filter((participant) => participant.roomId === roomId) : []),
@@ -15,12 +18,25 @@ export function RoomParticipants({ roomId }: { roomId: string }): JSX.Element {
     );
 
     return roomParticipants ? (
-        <SimpleGrid fontSize="sm" columns={2} gridColumnGap={2} width="100%">
-            {thisRoomParticipants.slice(0, Math.min(thisRoomParticipants.length, numberToShow)).map((participant) => (
-                <ParticipantGridItem key={participant.id} attendeeId={participant.attendeeId} />
-            ))}
+        <SimpleGrid
+            fontSize="sm"
+            columns={columns}
+            gridColumnGap={2}
+            width="100%"
+            onMouseOver={() => {
+                setNumberToShow(Number.MAX_SAFE_INTEGER);
+            }}
+            onMouseLeave={() => {
+                setNumberToShow(defaultNumberToShow);
+            }}
+        >
+            {thisRoomParticipants
+                .slice(0, Math.min(thisRoomParticipants.length, numberToShow - 1))
+                .map((participant) => (
+                    <ParticipantGridItem key={participant.id} attendeeId={participant.attendeeId} />
+                ))}
             {thisRoomParticipants.length > numberToShow ? (
-                <GridItem fontWeight="light">plus {thisRoomParticipants.length - numberToShow} more</GridItem>
+                <GridItem fontWeight="light">+ {thisRoomParticipants.length - numberToShow + 1} more</GridItem>
             ) : (
                 <></>
             )}

@@ -9,6 +9,7 @@ import ConferenceCurrentUserActivePermissionsProvider from "./aspects/Conference
 import CurrentUserGroupsRolesPermissionsProvider from "./aspects/Conference/useConferenceCurrentUserGroups";
 import { CurrentAttendeeProvider, useMaybeCurrentAttendee } from "./aspects/Conference/useCurrentAttendee";
 import EmojiMartProvider from "./aspects/Emoji/EmojiMartContext";
+import ForceUserRefresh from "./aspects/ForceUserRefresh/ForceUserRefresh";
 import LeftSidebar from "./aspects/Menu/LeftSidebar";
 import MainMenu from "./aspects/Menu/MainMenu";
 import RightSidebar from "./aspects/Menu/RightSidebar";
@@ -50,6 +51,7 @@ function AppInner({ confSlug, rootUrl }: AppProps): JSX.Element {
             <CurrentUserProvider>
                 {confSlug ? (
                     <ConferenceProvider confSlug={confSlug}>
+                        <ForceUserRefresh />
                         <CurrentUserGroupsRolesPermissionsProvider>
                             <ConferenceCurrentUserActivePermissionsProvider>
                                 <CurrentAttendeeProvider>

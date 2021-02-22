@@ -33246,6 +33246,13 @@ export type UserEventRolesSubscription = { readonly __typename?: 'subscription_r
 
 export type EventPersonDetailsFragment = { readonly __typename?: 'EventPerson', readonly id: any, readonly name: string, readonly roleName: EventPersonRole_Enum, readonly eventId: any, readonly attendeeId?: Maybe<any> };
 
+export type GetForceUserRefreshConfigQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type GetForceUserRefreshConfigQuery = { readonly __typename?: 'query_root', readonly ConferenceConfiguration: ReadonlyArray<{ readonly __typename?: 'ConferenceConfiguration', readonly id: any, readonly conferenceId: any, readonly key: string, readonly value: any }> };
+
 export type GoogleOAuth_SubmitGoogleOAuthCodeMutationVariables = Exact<{
   code: Scalars['String'];
   state: Scalars['String'];
@@ -40787,6 +40794,44 @@ export function useUserEventRolesSubscription(baseOptions: Apollo.SubscriptionHo
       }
 export type UserEventRolesSubscriptionHookResult = ReturnType<typeof useUserEventRolesSubscription>;
 export type UserEventRolesSubscriptionResult = Apollo.SubscriptionResult<UserEventRolesSubscription>;
+export const GetForceUserRefreshConfigDocument = gql`
+    query GetForceUserRefreshConfig($conferenceId: uuid!) {
+  ConferenceConfiguration(
+    where: {conferenceId: {_eq: $conferenceId}, key: {_eq: "FORCE_REFRESH_TIME"}}
+  ) {
+    id
+    conferenceId
+    key
+    value
+  }
+}
+    `;
+
+/**
+ * __useGetForceUserRefreshConfigQuery__
+ *
+ * To run a query within a React component, call `useGetForceUserRefreshConfigQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetForceUserRefreshConfigQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetForceUserRefreshConfigQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useGetForceUserRefreshConfigQuery(baseOptions: Apollo.QueryHookOptions<GetForceUserRefreshConfigQuery, GetForceUserRefreshConfigQueryVariables>) {
+        return Apollo.useQuery<GetForceUserRefreshConfigQuery, GetForceUserRefreshConfigQueryVariables>(GetForceUserRefreshConfigDocument, baseOptions);
+      }
+export function useGetForceUserRefreshConfigLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetForceUserRefreshConfigQuery, GetForceUserRefreshConfigQueryVariables>) {
+          return Apollo.useLazyQuery<GetForceUserRefreshConfigQuery, GetForceUserRefreshConfigQueryVariables>(GetForceUserRefreshConfigDocument, baseOptions);
+        }
+export type GetForceUserRefreshConfigQueryHookResult = ReturnType<typeof useGetForceUserRefreshConfigQuery>;
+export type GetForceUserRefreshConfigLazyQueryHookResult = ReturnType<typeof useGetForceUserRefreshConfigLazyQuery>;
+export type GetForceUserRefreshConfigQueryResult = Apollo.QueryResult<GetForceUserRefreshConfigQuery, GetForceUserRefreshConfigQueryVariables>;
 export const GoogleOAuth_SubmitGoogleOAuthCodeDocument = gql`
     mutation GoogleOAuth_SubmitGoogleOAuthCode($code: String!, $state: String!) {
   submitGoogleOAuthCode(code: $code, state: $state) {

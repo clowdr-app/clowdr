@@ -2352,6 +2352,16 @@
       - value
       backend_only: false
   select_permissions:
+  - role: unauthenticated
+    permission:
+      columns:
+      - conferenceId
+      - id
+      - key
+      - value
+      filter:
+        key:
+          _eq: CLOWDR_APP_VERSION
   - role: user
     permission:
       columns:

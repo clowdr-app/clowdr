@@ -83,7 +83,7 @@ function VonageRoomInner({
     });
     const receivingScreenShare = useMemo(() => streams.find((s) => s.videoType === "screen"), [streams]);
     const screenSharingActive = receivingScreenShare || screen;
-    const maxVideoStreams = screenSharingActive ? 4 : 10;
+    const maxVideoStreams = screenSharingActive ? 2 : 10;
     const cameraResolution =
         screenSharingActive || connections.length >= maxVideoStreams ? "low" : resolutionBP ?? "normal";
     const participantWidth = cameraResolution === "low" ? 150 : 300;
@@ -218,9 +218,6 @@ function VonageRoomInner({
     const othersCameraStreams = useMemo(() => streams.filter((s) => s.videoType === "camera" || !s.videoType), [
         streams,
     ]);
-    const sortedStreams = useMemo(() => R.sortWith([R.ascend(R.prop("creationTime"))], othersCameraStreams), [
-        othersCameraStreams,
-    ]);
 
     const [enableStreams, setEnableStreams] = useState<string[] | null>(null);
     useEffect(() => {
@@ -254,6 +251,29 @@ function VonageRoomInner({
             });
         }
     }, [maxVideoStreams, othersCameraStreams.length, screenSharingActive, streamLastActive]);
+
+    const sliceAndDice = useCallback(
+        (streams: OT.Stream[]): OT.Stream[] => {
+            const active = R.sortWith(
+                [R.descend((x) => streamLastActive[x.streamId])],
+                streams.filter((x) => enableStreams?.includes(x.streamId))
+            );
+            const rest = R.sortWith(
+                [R.ascend(R.prop("creationTime"))],
+                streams.filter((x) => !enableStreams?.includes(x.streamId))
+            );
+            return active.concat(rest);
+        },
+        [enableStreams, streamLastActive]
+    );
+
+    const sortedStreams = useMemo(
+        () =>
+            screenSharingActive
+                ? sliceAndDice(othersCameraStreams)
+                : R.sortWith([R.ascend(R.prop("creationTime"))], othersCameraStreams),
+        [othersCameraStreams, screenSharingActive, sliceAndDice]
+    );
 
     const viewPublishedScreenShareEl = useMemo(
         () => (

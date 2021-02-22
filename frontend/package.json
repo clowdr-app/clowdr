@@ -80,6 +80,7 @@
         "react-draggable": "^4.4.3",
         "react-dropzone": "^11.3.1",
         "react-emoji-render": "^1.2.4",
+        "react-full-screen": "^1.0.1",
         "react-helmet-async": "^1.0.7",
         "react-indiana-drag-scroll": "^1.8.0",
         "react-markdown": "^5.0.3",

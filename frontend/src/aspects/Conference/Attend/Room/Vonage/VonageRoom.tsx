@@ -1,6 +1,7 @@
 import { Alert, AlertIcon, AlertTitle, Box, Flex, useBreakpointValue, useToast, VStack } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { FullScreen, useFullScreenHandle } from "react-full-screen";
 import { useLocation } from "react-router-dom";
 import useUserId from "../../../../Auth/useUserId";
 import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";
@@ -242,29 +243,44 @@ function VonageRoomInner({
         [attendee.id, screen]
     );
 
+    const fullScreenHandle = useFullScreenHandle();
+
     const viewSubscribedScreenShare = useMemo(
         () => (
-            <Box
-                maxH="80vh"
-                height={receivingScreenShare ? "70vh" : undefined}
-                width="100%"
-                mb={2}
-                zIndex={300}
-                hidden={!receivingScreenShare}
-            >
-                {streams
-                    .filter((stream) => stream.videoType === "screen")
-                    .map((stream) => (
-                        <VonageSubscriber
-                            key={stream.streamId}
-                            stream={stream}
-                            enableVideo={true}
-                            resolution={"high"}
-                        />
-                    ))}
-            </Box>
+            <FullScreen handle={fullScreenHandle}>
+                <Box
+                    onClick={async () => {
+                        try {
+                            if (fullScreenHandle.active) {
+                                fullScreenHandle.exit();
+                            } else {
+                                await fullScreenHandle.enter();
+                            }
+                        } catch (e) {
+                            console.error("Could not enter full screen", e);
+                        }
+                    }}
+                    maxH={fullScreenHandle.active ? "100%" : "80vh"}
+                    height={fullScreenHandle.active ? "100%" : receivingScreenShare ? "70vh" : undefined}
+                    width="100%"
+                    mb={2}
+                    zIndex={300}
+                    hidden={!receivingScreenShare}
+                >
+                    {streams
+                        .filter((stream) => stream.videoType === "screen")
+                        .map((stream) => (
+                            <VonageSubscriber
+                                key={stream.streamId}
+                                stream={stream}
+                                enableVideo={true}
+                                resolution={"high"}
+                            />
+                        ))}
+                </Box>
+            </FullScreen>
         ),
-        [receivingScreenShare, streams]
+        [fullScreenHandle, receivingScreenShare, streams]
     );
 
     const viewPublishedPlaceholder = useMemo(

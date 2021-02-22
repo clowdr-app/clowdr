@@ -119,12 +119,16 @@ function VonageRoomInner({
         toast,
     ]);
 
-    const leaveRoom = useCallback(() => {
+    const leaveRoom = useCallback(async () => {
         if (connected) {
             try {
-                vonage.disconnect();
+                await vonage.disconnect();
             } catch (e) {
                 console.warn("Failed to leave room", e);
+                toast({
+                    status: "error",
+                    title: "Failed to leave room",
+                });
             }
         }
         setJoining(false);
@@ -136,22 +140,29 @@ function VonageRoomInner({
             type: VonageRoomStateActionType.SetCameraIntendedState,
             cameraEnabled: false,
         });
-    }, [connected, dispatch, vonage]);
+    }, [connected, dispatch, toast, vonage]);
 
     useEffect(() => {
         if (stop) {
-            leaveRoom();
+            leaveRoom().catch((e) => console.error("Failed to leave room", e));
         }
     }, [leaveRoom, stop]);
 
     useEffect(() => {
         async function fn() {
             if (connected) {
-                vonage.publishCamera(
-                    cameraPublishContainerRef.current as HTMLElement,
-                    state.cameraIntendedEnabled ? state.preferredCameraId : null,
-                    state.microphoneIntendedEnabled ? state.preferredMicrophoneId : null
-                );
+                try {
+                    await vonage.publishCamera(
+                        cameraPublishContainerRef.current as HTMLElement,
+                        state.cameraIntendedEnabled ? state.preferredCameraId : null,
+                        state.microphoneIntendedEnabled ? state.preferredMicrophoneId : null
+                    );
+                } catch (e) {
+                    toast({
+                        status: "error",
+                        title: "Failed to publish camera",
+                    });
+                }
             }
         }
         fn();
@@ -161,6 +172,7 @@ function VonageRoomInner({
         state.microphoneIntendedEnabled,
         state.preferredCameraId,
         state.preferredMicrophoneId,
+        toast,
         vonage,
     ]);
 
@@ -168,14 +180,30 @@ function VonageRoomInner({
         async function fn() {
             if (connected) {
                 if (state.screenShareIntendedEnabled && !screen) {
-                    vonage.publishScreen(screenPublishContainerRef.current as HTMLElement);
+                    try {
+                        await vonage.publishScreen(screenPublishContainerRef.current as HTMLElement);
+                    } catch (e) {
+                        console.error("Failed to publish screen", e);
+                        toast({
+                            status: "error",
+                            title: "Failed to share screen",
+                        });
+                    }
                 } else if (!state.screenShareIntendedEnabled && screen) {
-                    vonage.unpublishScreen();
+                    try {
+                        await vonage.unpublishScreen();
+                    } catch (e) {
+                        console.error("Failed to unpublish screen", e);
+                        toast({
+                            status: "error",
+                            title: "Failed to unshare screen",
+                        });
+                    }
                 }
             }
         }
         fn();
-    }, [connected, screen, state.screenShareIntendedEnabled, vonage]);
+    }, [connected, screen, state.screenShareIntendedEnabled, toast, vonage]);
 
     const [streamLastActive, setStreamLastActive] = useState<{ [streamId: string]: number }>({});
     const setStreamActivity = useCallback((streamId: string, activity: boolean) => {

@@ -134,7 +134,6 @@ gql`
             objects: { chatId: $chatId, attendeeId: $attendeeId }
             on_conflict: { constraint: Subscription_pkey, update_columns: wasManuallySubscribed }
         ) {
-            affected_rows
             returning {
                 chatId
                 attendeeId
@@ -150,6 +149,27 @@ gql`
 
     mutation UnsubscribeChat($chatId: uuid!, $attendeeId: uuid!) {
         delete_chat_Subscription_by_pk(chatId: $chatId, attendeeId: $attendeeId) {
+            attendeeId
+            chatId
+        }
+    }
+`;
+
+gql`
+    mutation PinChat($chatId: uuid!, $attendeeId: uuid!) {
+        insert_chat_Pin(
+            objects: { chatId: $chatId, attendeeId: $attendeeId }
+            on_conflict: { constraint: ChatPin_pkey, update_columns: wasManuallyPinned }
+        ) {
+            returning {
+                chatId
+                attendeeId
+            }
+        }
+    }
+
+    mutation UnpinChat($chatId: uuid!, $attendeeId: uuid!) {
+        delete_chat_Pin_by_pk(chatId: $chatId, attendeeId: $attendeeId) {
             attendeeId
             chatId
         }
@@ -229,6 +249,69 @@ export class ChatState {
     public get IsPinned(): Observable<boolean> {
         return this.isPinnedObs;
     }
+    private isTogglingPinned = false;
+    public get IsTogglingPinned(): boolean {
+        return this.isTogglingPinned;
+    }
+    public async togglePinned(): Promise<void> {
+        const isPind = this.isPinned;
+        this.isPinned = !this.isPinned;
+        this.isPinnedObs.publish(this.isPinned);
+
+        const release = await this.mutex.acquire();
+        this.isTogglingPinned = true;
+
+        try {
+            if (isPind) {
+                if (!this.EnableMandatorySubscribe) {
+                    try {
+                        await this.globalState.apolloClient.mutate<
+                            UnsubscribeChatMutation,
+                            UnsubscribeChatMutationVariables
+                        >({
+                            mutation: UnsubscribeChatDocument,
+                            variables: {
+                                attendeeId: this.globalState.attendee.id,
+                                chatId: this.Id,
+                            },
+                        });
+                    } catch (e) {
+                        this.isPinned = isPind;
+                        throw e;
+                    }
+                }
+            } else {
+                try {
+                    const result = await this.globalState.apolloClient.mutate<
+                        SubscribeChatMutation,
+                        SubscribeChatMutationVariables
+                    >({
+                        mutation: SubscribeChatDocument,
+                        variables: {
+                            attendeeId: this.globalState.attendee.id,
+                            chatId: this.Id,
+                        },
+                    });
+                    this.isPinned =
+                        !!result.data?.insert_chat_Subscription && !!result.data.insert_chat_Subscription.returning;
+                } catch (e) {
+                    if (!(e instanceof ApolloError) || !e.message.includes("uniqueness violation")) {
+                        this.isPinned = isPind;
+                        throw e;
+                    } else {
+                        this.isPinned = true;
+                    }
+                }
+            }
+        } catch (e) {
+            console.error(`Error toggling chat pin: ${this.Id}`, e);
+        } finally {
+            this.isTogglingPinned = false;
+            release();
+
+            this.isPinnedObs.publish(this.isPinned);
+        }
+    }
 
     private isSubscribed: boolean;
     private isSubscribedObs = new Observable<boolean>((observer) => {
@@ -292,7 +375,7 @@ export class ChatState {
                 }
             }
         } catch (e) {
-            console.error(`Error toggle chat subscription status: ${this.Id}`, e);
+            console.error(`Error toggling chat subscription: ${this.Id}`, e);
         } finally {
             this.isTogglingSubscribed = false;
             release();

@@ -42,6 +42,8 @@ export function VonageSubscriber({
     }, [onChangeActivity]);
     usePolling(pollCb, 1500, true);
 
+    const [microphoneEnabled, setMicrophoneEnabled] = useState<boolean>(false);
+
     useEffect(() => {
         if (subscriber) {
             try {
@@ -121,6 +123,16 @@ export function VonageSubscriber({
                 }
             });
 
+            const streamPropertyChangedHandler = (event: any) => {
+                if (event.changedProperty === "hasAudio" && event.stream.streamId === stream.streamId) {
+                    console.log("hasAudio", event.newValue, event.stream.streamId);
+                    setMicrophoneEnabled(event.newValue);
+                }
+            };
+
+            setMicrophoneEnabled(stream.hasAudio);
+            vonage.state.session.on("streamPropertyChanged", streamPropertyChangedHandler);
+
             return () => {
                 try {
                     if (vonage.state.type !== StateType.Connected) {
@@ -129,6 +141,7 @@ export function VonageSubscriber({
                     if (vonage.state.session.connection) {
                         vonage.state.session.unsubscribe(subscriber);
                     }
+                    vonage.state.session.off("streamPropertyChanged", streamPropertyChangedHandler);
                 } catch (e) {
                     console.log("Could not unsubscribe from stream");
                 } finally {
@@ -148,10 +161,10 @@ export function VonageSubscriber({
     const overlayBox = useMemo(
         () => (
             <Box position="absolute" left="0.4rem" bottom="0.35rem" zIndex="200" width="100%">
-                <VonageOverlay connectionData={stream.connection.data} />
+                <VonageOverlay connectionData={stream.connection.data} microphoneEnabled={microphoneEnabled} />
             </Box>
         ),
-        [stream.connection.data]
+        [stream.connection.data, microphoneEnabled]
     );
 
     return (

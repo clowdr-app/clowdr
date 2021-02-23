@@ -4,7 +4,13 @@ import { useChatProfileModal } from "../../../../Chat/Frame/ChatProfileModalProv
 import { FAIcon } from "../../../../Icons/FAIcon";
 import { useAttendee } from "../../../AttendeesContext";
 
-export function VonageOverlay({ connectionData }: { connectionData: string }): JSX.Element {
+export function VonageOverlay({
+    connectionData,
+    microphoneEnabled,
+}: {
+    connectionData: string;
+    microphoneEnabled?: boolean;
+}): JSX.Element {
     const attendeeId = useMemo(() => {
         try {
             const data = JSON.parse(connectionData);
@@ -67,6 +73,13 @@ export function VonageOverlay({ connectionData }: { connectionData: string }): J
                 <Text display="block" color={"gray.100"} noOfLines={1} width="100%">
                     {attendee?.displayName ?? "<Loading name>"}
                 </Text>
+                {microphoneEnabled !== undefined ? (
+                    microphoneEnabled ? (
+                        <FAIcon ml={1} iconStyle="s" icon="microphone" />
+                    ) : (
+                        <FAIcon ml={1} iconStyle="s" icon="microphone-slash" color="red.600" />
+                    )
+                ) : undefined}
             </HStack>
         </Button>
     );

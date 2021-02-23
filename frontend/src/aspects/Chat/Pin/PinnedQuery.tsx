@@ -3,7 +3,6 @@ import React, { createContext, useEffect, useMemo } from "react";
 import { usePinChatMutation, useSelectPinQuery, useUnpinChatMutation } from "../../../generated/graphql";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import { useChatConfiguration } from "../Configuration";
-import { useSelectedChat } from "../SelectedChat";
 import type { MutableQuery } from "../Types/Queries";
 
 export interface PinnedQuery
@@ -63,33 +62,32 @@ export function ChatPinnedQueryProvider({
     children: React.ReactNode | React.ReactNodeArray;
 }): JSX.Element {
     const config = useChatConfiguration();
-    const selectedChat = useSelectedChat();
     const pinQ = useSelectPinQuery({
         variables: {
             attendeeId: config.currentAttendeeId,
-            chatId: selectedChat.id,
+            chatId: config.state.Id,
         },
     });
 
     useEffect(() => {
-        if (pinQ.variables?.chatId !== selectedChat.id) {
+        if (pinQ.variables?.chatId !== config.state.Id) {
             pinQ.refetch({
                 attendeeId: config.currentAttendeeId,
-                chatId: selectedChat.id,
+                chatId: config.state.Id,
             });
         }
-    }, [config.currentAttendeeId, pinQ, selectedChat.id]);
+    }, [config.currentAttendeeId, pinQ, config.state.Id]);
 
     const [pinChat, { loading: pinChatLoading }] = usePinChatMutation({
         variables: {
             attendeeId: config.currentAttendeeId,
-            chatId: selectedChat.id,
+            chatId: config.state.Id,
         },
     });
     const [unpinChat, { loading: unpinChatLoading, error: unpinChatError }] = useUnpinChatMutation({
         variables: {
             attendeeId: config.currentAttendeeId,
-            chatId: selectedChat.id,
+            chatId: config.state.Id,
         },
     });
 

@@ -6,7 +6,6 @@ import { ChatPinnedQueryProvider } from "../Pin/PinnedQuery";
 import { SubscribedButton } from "../Subscribe/SubscribedButton";
 import { ChatSubscribedQueryProvider } from "../Subscribe/SubscribedQuery";
 import { HeadingText } from "./HeadingText";
-import { ChatTitleQueryProvider } from "./TitleQuery";
 
 export function ChatHeading({ ...rest }: BoxProps): JSX.Element {
     const config = useChatConfiguration();
@@ -15,9 +14,7 @@ export function ChatHeading({ ...rest }: BoxProps): JSX.Element {
         <Box p="5px" {...rest}>
             <HStack spacing={config.spacing} overflow="hidden" alignItems="flex-start">
                 {config.customHeadingElements}
-                <ChatTitleQueryProvider>
-                    <HeadingText />
-                </ChatTitleQueryProvider>
+                <HeadingText />
                 {/* <Spacer /> */}
                 {/* <PageCountBox /> */}
                 {config.currentAttendeeId ? (

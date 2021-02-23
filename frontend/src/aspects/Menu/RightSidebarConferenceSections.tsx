@@ -45,7 +45,6 @@ import {
 import { Chat } from "../Chat/Chat";
 import { ChatState } from "../Chat/ChatGlobalState";
 import { ChatNotificationsProvider } from "../Chat/ChatNotifications";
-import type { ChatSources } from "../Chat/Configuration";
 import { useGlobalChatState } from "../Chat/GlobalChatStateProvider";
 import { useAttendee } from "../Conference/AttendeesContext";
 import { useConference } from "../Conference/useConference";
@@ -318,21 +317,9 @@ function ChatsPanel({
         setCurrentChatId(null);
     }, []);
 
-    const sources: ChatSources | undefined = useMemo(
-        () =>
-            currentChat
-                ? {
-                      chatId: currentChat.Id,
-                      chatLabel: currentChat.Name,
-                      chatTitle: currentChat.Name,
-                  }
-                : undefined,
-        [currentChat]
-    );
-
     useEffect(() => {
-        onChatIdChange(sources?.chatId ?? null);
-    }, [onChatIdChange, sources?.chatId]);
+        onChatIdChange(currentChat?.Id ?? null);
+    }, [onChatIdChange, currentChat?.Id]);
 
     const history = useHistory();
 
@@ -464,7 +451,7 @@ function ChatsPanel({
                 </Box>
             </VStack>
         );
-    } else if (sources && sources.chatId !== pageChatId) {
+    } else if (currentChat && currentChat.Id !== pageChatId) {
         return (
             <>
                 <Chat
@@ -487,7 +474,7 @@ function ChatsPanel({
                             </Tooltip>
                         ) : undefined,
                     ]}
-                    sources={sources}
+                    chat={currentChat}
                 />
             </>
         );
@@ -551,12 +538,7 @@ gql`
         ContentGroup_by_pk(id: $itemId) {
             id
             title
-            chat {
-                id
-                room {
-                    id
-                }
-            }
+            chatId
         }
     }
 `;
@@ -574,23 +556,25 @@ function RoomChatPanel({
         },
     });
 
-    const sources: ChatSources | undefined = useMemo(
-        () =>
-            data?.Room_by_pk
-                ? {
-                      chatId: data.Room_by_pk.chatId,
-                      chatLabel: data.Room_by_pk.name,
-                      chatTitle: data.Room_by_pk.name,
-                  }
-                : undefined,
-        [data?.Room_by_pk]
-    );
+    const globalChatState = useGlobalChatState();
+    const [chat, setChat] = useState<ChatState | null>(null);
+    useEffect(() => {
+        let unsubscribe: undefined | (() => void);
+        if (data?.Room_by_pk?.chatId) {
+            unsubscribe = globalChatState.observeChatId(data?.Room_by_pk?.chatId, setChat);
+        } else {
+            setChat(null);
+        }
+        return () => {
+            unsubscribe?.();
+        };
+    }, [data?.Room_by_pk?.chatId, globalChatState]);
 
     useEffect(() => {
-        if (sources?.chatId) {
-            onChatIdLoaded(sources.chatId);
+        if (chat?.Id) {
+            onChatIdLoaded(chat.Id);
         }
-    }, [onChatIdLoaded, sources?.chatId]);
+    }, [onChatIdLoaded, chat?.Id]);
 
     if (loading) {
         return <Spinner label="Loading room chat" />;
@@ -615,7 +599,7 @@ function RoomChatPanel({
         );
     }
 
-    if (!sources) {
+    if (!chat) {
         return (
             <Alert
                 status="info"
@@ -633,7 +617,7 @@ function RoomChatPanel({
         );
     }
 
-    return <Chat sources={sources} />;
+    return <Chat chat={chat} />;
 }
 
 function ItemChatPanel({
@@ -651,23 +635,25 @@ function ItemChatPanel({
         },
     });
 
-    const sources: ChatSources | undefined = useMemo(
-        () =>
-            data?.ContentGroup_by_pk && data.ContentGroup_by_pk.chat
-                ? {
-                      chatId: data.ContentGroup_by_pk.chat.id,
-                      chatLabel: data.ContentGroup_by_pk.title,
-                      chatTitle: data.ContentGroup_by_pk.title,
-                  }
-                : undefined,
-        [data?.ContentGroup_by_pk]
-    );
+    const globalChatState = useGlobalChatState();
+    const [chat, setChat] = useState<ChatState | null>(null);
+    useEffect(() => {
+        let unsubscribe: undefined | (() => void);
+        if (data?.ContentGroup_by_pk?.chatId) {
+            unsubscribe = globalChatState.observeChatId(data.ContentGroup_by_pk.chatId, setChat);
+        } else {
+            setChat(null);
+        }
+        return () => {
+            unsubscribe?.();
+        };
+    }, [data?.ContentGroup_by_pk?.chatId, globalChatState]);
 
     useEffect(() => {
-        if (sources?.chatId) {
-            onChatIdLoaded(sources.chatId);
+        if (chat?.Id) {
+            onChatIdLoaded(chat.Id);
         }
-    }, [onChatIdLoaded, sources?.chatId]);
+    }, [onChatIdLoaded, chat?.Id]);
 
     const history = useHistory();
 
@@ -694,7 +680,7 @@ function ItemChatPanel({
         );
     }
 
-    if (!sources || !data?.ContentGroup_by_pk?.chat) {
+    if (!chat) {
         return (
             <Alert
                 status="info"
@@ -712,25 +698,23 @@ function ItemChatPanel({
         );
     }
 
-    const chat = data.ContentGroup_by_pk.chat;
-
     return (
         <Chat
             customHeadingElements={[
-                chat.room.length > 0 ? (
+                chat.RoomId ? (
                     <Tooltip key="back-button" label="Go to video room">
                         <Button
                             key="room-button"
                             size="xs"
                             colorScheme="blue"
-                            onClick={() => history.push(`/conference/${confSlug}/room/${chat.room[0].id}`)}
+                            onClick={() => history.push(`/conference/${confSlug}/room/${chat.RoomId}`)}
                         >
                             <FAIcon iconStyle="s" icon="video" />
                         </Button>
                     </Tooltip>
                 ) : undefined,
             ]}
-            sources={sources}
+            chat={chat}
         />
     );
 }

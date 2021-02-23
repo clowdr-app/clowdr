@@ -2,7 +2,6 @@ import assert from "assert";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Chat_MessageType_Enum } from "../../../generated/graphql";
 import { ChatConfiguration, useChatConfiguration } from "../Configuration";
-import { useSelectedChat } from "../SelectedChat";
 import type { MinMax } from "../Types/Base";
 import type { AnswerMessageData, MessageData, OrdinaryMessageData } from "../Types/Messages";
 import { useSendMessageQueries } from "./SendMessageQueries";
@@ -73,7 +72,6 @@ export function ComposeContextProvider({
     const [lastSendTime, setLastSendTime] = useState<number>(0);
     // const now = useRealTime(250);
     const sendQueries = useSendMessageQueries();
-    const selectedChat = useSelectedChat();
 
     const minLength =
         useMemo(() => {
@@ -194,7 +192,7 @@ export function ComposeContextProvider({
                 try {
                     const isEmote = /^\p{Emoji}$/iu.test(newMessage);
                     sendQueries.send(
-                        selectedChat.id,
+                        config.state.Id,
                         config.currentAttendeeId,
                         config.currentAttendeeName,
                         newMessageType === Chat_MessageType_Enum.Message && isEmote
@@ -203,7 +201,7 @@ export function ComposeContextProvider({
                         newMessage,
                         data ?? newMessageData,
                         false,
-                        selectedChat.title
+                        config.state.Name
                     );
 
                     setNewMessage("");
@@ -226,8 +224,8 @@ export function ComposeContextProvider({
             newMessage,
             newMessageData,
             newMessageType,
-            selectedChat.id,
-            selectedChat.title,
+            config.state.Id,
+            config.state.Name,
             sendQueries,
         ]
     );

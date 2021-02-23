@@ -33358,7 +33358,7 @@ export type GetContentGroupChatIdQueryVariables = Exact<{
 }>;
 
 
-export type GetContentGroupChatIdQuery = { readonly __typename?: 'query_root', readonly ContentGroup_by_pk?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly id: any, readonly room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }> }> }> };
+export type GetContentGroupChatIdQuery = { readonly __typename?: 'query_root', readonly ContentGroup_by_pk?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly chatId?: Maybe<any> }> };
 
 export type GetRoomMembersSubscriptionVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -41165,12 +41165,7 @@ export const GetContentGroupChatIdDocument = gql`
   ContentGroup_by_pk(id: $itemId) {
     id
     title
-    chat {
-      id
-      room {
-        id
-      }
-    }
+    chatId
   }
 }
     `;

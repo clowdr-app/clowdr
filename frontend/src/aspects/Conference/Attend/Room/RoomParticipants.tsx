@@ -22,6 +22,7 @@ export function RoomParticipants({ roomId }: { roomId: string }): JSX.Element {
             fontSize="sm"
             columns={columns}
             gridColumnGap={2}
+            gridRowGap={1}
             width="100%"
             onMouseOver={() => {
                 setNumberToShow(Number.MAX_SAFE_INTEGER);
@@ -50,8 +51,8 @@ function ParticipantGridItem({ attendeeId }: { attendeeId: string }): JSX.Elemen
     const attendee = useAttendee(attendeeId);
     return (
         <GridItem fontWeight="light" fontSize="xs">
-            <HStack alignItems="flex-start">
-                <FAIcon icon="circle" iconStyle="s" fontSize="0.5rem" color="green.400" mr={2} mb={1} />
+            <HStack alignItems="center">
+                <FAIcon icon="video" iconStyle="s" fontSize="0.5rem" color="green.400" mr={1} />
                 <Text whiteSpace="normal">{attendee?.displayName ?? "Loading"}</Text>
             </HStack>
         </GridItem>

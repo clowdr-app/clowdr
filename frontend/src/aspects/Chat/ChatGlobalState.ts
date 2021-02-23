@@ -334,10 +334,6 @@ export class MessageState {
         private readonly initialState: ChatMessageDataFragment | SubscribedChatMessageDataFragment
     ) {}
 
-    public get Id(): number {
-        return this.initialState.id;
-    }
-
     public get created_at(): string {
         return this.initialState.created_at;
     }
@@ -364,12 +360,12 @@ export class MessageState {
     }
 
     public get reactions(): ReadonlyArray<ChatReactionDataFragment> {
-        // CHAT_TODO: Make reactions work
-        return [];
+        // CHAT_TODO: Make reactions work via this global state using observables
+        return "reactions" in this.initialState ? this.initialState.reactions : [];
     }
 
     public updateFrom(msg: SubscribedChatMessageDataFragment): void {
-        // CHAT_TODO
+        // CHAT_TODO: Apply changes to duplicatedMessageId and reactions list
     }
 }
 
@@ -683,9 +679,9 @@ export class ChatState {
                         .map((message) => new MessageState(this.globalState, this, message));
                     if (newMessageStates.length > 0) {
                         this.lastHistoricallyFetchedMessageId =
-                            result.data.chat_Message.length < pageSize ? -1 : newMessageStates[0].Id;
+                            result.data.chat_Message.length < pageSize ? -1 : newMessageStates[0].id;
                         newMessageStates.forEach((state) => {
-                            this.messages.set(state.Id, state);
+                            this.messages.set(state.id, state);
                         });
                     }
                 }
@@ -742,7 +738,7 @@ export class ChatState {
                                 .filter((msg) => !this.messages.has(msg.id))
                                 .map((message) => new MessageState(this.globalState, this, message));
                             newMessageStates.forEach((msg) => {
-                                this.messages.set(msg.Id, msg);
+                                this.messages.set(msg.id, msg);
                             });
                         }
                     } catch (e) {

@@ -259,7 +259,7 @@ export function ComposeContextProvider({
             blockedReason,
 
             isSending: sendQueries.isSending,
-            sendError: sendQueries.sendError ?? undefined,
+            sendError: undefined,
             send,
 
             setAnsweringQuestionId,
@@ -274,7 +274,6 @@ export function ComposeContextProvider({
             newMessageType,
             send,
             sendQueries.isSending,
-            sendQueries.sendError,
             setAnsweringQuestionId,
             setNewMessageTypeF,
         ]

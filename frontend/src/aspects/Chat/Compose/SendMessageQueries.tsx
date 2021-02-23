@@ -1,48 +1,7 @@
-import { gql } from "@apollo/client";
-import React, { useCallback, useMemo } from "react";
-import {
-    Chat_MessageType_Enum,
-    SubscribedChatMessageDataFragmentDoc,
-    useSendChatAnswerMutation,
-    useSendChatMessageMutation,
-} from "../../../generated/graphql";
-import type { AnswerMessageData, AnswerReactionData, MessageData } from "../Types/Messages";
-
-gql`
-    mutation SendChatMessage(
-        $chatId: uuid!
-        $senderId: uuid!
-        $type: chat_MessageType_enum!
-        $message: String!
-        $data: jsonb = {}
-        $isPinned: Boolean = false
-        $chatTitle: String = " "
-        $senderName: String = " "
-    ) {
-        insert_chat_Message_one(
-            object: {
-                chatId: $chatId
-                data: $data
-                isPinned: $isPinned
-                message: $message
-                senderId: $senderId
-                type: $type
-                chatTitle: $chatTitle
-                senderName: $senderName
-            }
-        ) {
-            ...SubscribedChatMessageData
-        }
-    }
-
-    mutation SendChatAnswer($data: jsonb!, $senderId: uuid!, $answeringId: Int!) {
-        insert_chat_Reaction_one(
-            object: { messageId: $answeringId, senderId: $senderId, symbol: "ANSWER", type: ANSWER, data: $data }
-        ) {
-            id
-        }
-    }
-`;
+import React, { useEffect, useMemo, useState } from "react";
+import type { Chat_MessageType_Enum } from "../../../generated/graphql";
+import { useChatConfiguration } from "../Configuration";
+import type { MessageData } from "../Types/Messages";
 
 type SendMesasageCallback = (
     chatId: string,
@@ -58,7 +17,6 @@ type SendMesasageCallback = (
 interface SendMessageQueriesCtx {
     send: SendMesasageCallback;
     isSending: boolean;
-    sendError: string | null;
 }
 
 const SendMessageQueriesContext = React.createContext<SendMessageQueriesCtx | undefined>(undefined);
@@ -76,68 +34,19 @@ export default function SendMessageQueriesProvider({
 }: {
     children: React.ReactNode | React.ReactNodeArray;
 }): JSX.Element {
-    const [sendMessageMutation, sendMessageMutationResponse] = useSendChatMessageMutation();
-    const [sendAnswer, sendAnswerResponse] = useSendChatAnswerMutation();
-
-    const send: SendMesasageCallback = useCallback(
-        async (chatId, senderId, senderName, type, message, data, isPinned, chatTitle) => {
-            const newMsg = (
-                await sendMessageMutation({
-                    variables: {
-                        chatId,
-                        message,
-                        senderId,
-                        type,
-                        data,
-                        isPinned,
-                        senderName,
-                        chatTitle,
-                    },
-                    update: (cache, { data: _data }) => {
-                        if (_data?.insert_chat_Message_one) {
-                            const data = _data.insert_chat_Message_one;
-                            cache.writeFragment({
-                                data,
-                                fragment: SubscribedChatMessageDataFragmentDoc,
-                                fragmentName: "SubscribedChatMessageData",
-                            });
-                        }
-                    },
-                })
-            ).data?.insert_chat_Message_one;
-
-            if (type === Chat_MessageType_Enum.Answer && newMsg) {
-                const answeringIds = (data as AnswerMessageData).questionMessagesIds;
-                if (answeringIds.length > 0) {
-                    const reactionData: AnswerReactionData = {
-                        answerMessageId: newMsg.id,
-                        duplicateAnswerMessageId: newMsg.duplicatedMessageId ?? undefined,
-                    };
-                    sendAnswer({
-                        variables: {
-                            answeringId: answeringIds[0],
-                            data: reactionData,
-                            senderId,
-                        },
-                    });
-                }
-            }
-        },
-        [sendAnswer, sendMessageMutation]
-    );
+    const config = useChatConfiguration();
+    const [isSending, setIsSending] = useState<boolean>(false);
+    useEffect(() => {
+        return config.state.IsSending.subscribe((v) => {
+            setIsSending(v);
+        });
+    }, [config.state.IsSending]);
     const ctx = useMemo(
         () => ({
-            send,
-            isSending: sendMessageMutationResponse.loading || sendAnswerResponse.loading,
-            sendError: sendMessageMutationResponse.error?.message ?? sendAnswerResponse.error?.message ?? null,
+            send: config.state.send.bind(config.state),
+            isSending,
         }),
-        [
-            send,
-            sendAnswerResponse.error?.message,
-            sendAnswerResponse.loading,
-            sendMessageMutationResponse.error?.message,
-            sendMessageMutationResponse.loading,
-        ]
+        [config.state, isSending]
     );
 
     return <SendMessageQueriesContext.Provider value={ctx}>{children}</SendMessageQueriesContext.Provider>;

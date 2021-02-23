@@ -11,7 +11,7 @@ export default function PageCountBox(): JSX.Element {
         <Box color="white" background="black" px={4} py={2} borderRadius={10}>
             <Tooltip label={pageCountLabel}>
                 <chakra.span fontSize="1.2rem">
-                    <FAIcon aria-label={pageCountLabel} iconStyle="s" icon="users" verticalAlign="middle" />
+                    <FAIcon aria-label={pageCountLabel} iconStyle="s" icon="eye" verticalAlign="middle" />
                     <chakra.span verticalAlign="middle" ml={2} fontWeight="bold">
                         {pageCount}
                     </chakra.span>

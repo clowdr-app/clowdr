@@ -18,6 +18,12 @@ import {
     SelectMessagesPageDocument,
     SelectMessagesPageQuery,
     SelectMessagesPageQueryVariables,
+    SendChatAnswerDocument,
+    SendChatAnswerMutation,
+    SendChatAnswerMutationVariables,
+    SendChatMessageDocument,
+    SendChatMessageMutation,
+    SendChatMessageMutationVariables,
     SubscribeChatDocument,
     SubscribeChatMutation,
     SubscribeChatMutationVariables,
@@ -27,6 +33,7 @@ import {
     UnsubscribeChatMutationVariables,
 } from "../../generated/graphql";
 import type { Attendee } from "../Conference/useCurrentAttendee";
+import type { AnswerMessageData, AnswerReactionData, MessageData } from "./Types/Messages";
 
 type Observer<V> = (v: V) => true | void;
 
@@ -237,6 +244,42 @@ gql`
     }
 `;
 
+gql`
+    mutation SendChatMessage(
+        $chatId: uuid!
+        $senderId: uuid!
+        $type: chat_MessageType_enum!
+        $message: String!
+        $data: jsonb = {}
+        $isPinned: Boolean = false
+        $chatTitle: String = " "
+        $senderName: String = " "
+    ) {
+        insert_chat_Message_one(
+            object: {
+                chatId: $chatId
+                data: $data
+                isPinned: $isPinned
+                message: $message
+                senderId: $senderId
+                type: $type
+                chatTitle: $chatTitle
+                senderName: $senderName
+            }
+        ) {
+            ...SubscribedChatMessageData
+        }
+    }
+
+    mutation SendChatAnswer($data: jsonb!, $senderId: uuid!, $answeringId: Int!) {
+        insert_chat_Reaction_one(
+            object: { messageId: $answeringId, senderId: $senderId, symbol: "ANSWER", type: ANSWER, data: $data }
+        ) {
+            id
+        }
+    }
+`;
+
 export class MessageState {
     constructor(
         private readonly globalState: GlobalChatState,
@@ -307,6 +350,7 @@ export class ChatState {
     private pinSubMutex = new Mutex();
     private messagesMutex = new Mutex();
     private initSubscriptionMutex = new Mutex();
+    private sendMutex = new Mutex();
 
     constructor(
         private readonly globalState: GlobalChatState,
@@ -681,6 +725,75 @@ export class ChatState {
             console.error(`Error unsubscribing from new messages: ${this.Id}`, e);
         } finally {
             release();
+        }
+    }
+
+    private isSending = false;
+    private isSendingObs = new Observable<boolean>((observer) => {
+        observer(this.isSending);
+    });
+    public get IsSending(): Observable<boolean> {
+        return this.isSendingObs;
+    }
+    public async send(
+        chatId: string,
+        senderId: string,
+        senderName: string,
+        type: Chat_MessageType_Enum,
+        message: string,
+        data: MessageData,
+        isPinned: boolean,
+        chatTitle: string
+    ): Promise<void> {
+        const release = await this.sendMutex.acquire();
+
+        this.isSending = true;
+        this.isSendingObs.publish(this.isSending);
+        try {
+            const newMsg = (
+                await this.globalState.apolloClient.mutate<SendChatMessageMutation, SendChatMessageMutationVariables>({
+                    mutation: SendChatMessageDocument,
+                    variables: {
+                        chatId,
+                        message,
+                        senderId,
+                        type,
+                        data,
+                        isPinned,
+                        senderName,
+                        chatTitle,
+                    },
+                })
+            ).data?.insert_chat_Message_one;
+
+            if (type === Chat_MessageType_Enum.Answer && newMsg) {
+                const answeringIds = (data as AnswerMessageData).questionMessagesIds;
+                if (answeringIds.length > 0) {
+                    const reactionData: AnswerReactionData = {
+                        answerMessageId: newMsg.id,
+                        duplicateAnswerMessageId: newMsg.duplicatedMessageId ?? undefined,
+                    };
+                    const newReaction = await this.globalState.apolloClient.mutate<
+                        SendChatAnswerMutation,
+                        SendChatAnswerMutationVariables
+                    >({
+                        mutation: SendChatAnswerDocument,
+                        variables: {
+                            answeringId: answeringIds[0],
+                            data: reactionData,
+                            senderId,
+                        },
+                    });
+                    // TODO: Update the target message
+                }
+            }
+        } catch (e) {
+            console.error(`Failed to send message: ${this.Id}`, e);
+        } finally {
+            this.isSending = false;
+            release();
+
+            this.isSendingObs.publish(this.isSending);
         }
     }
 

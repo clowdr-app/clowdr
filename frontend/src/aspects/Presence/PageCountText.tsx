@@ -30,7 +30,7 @@ export default function PageCountText({ path, ...props }: { path: string } & Tex
     return pageCountLabel ? (
         <Tooltip label={pageCountLabel}>
             <chakra.span fontSize="1rem" {...props}>
-                <FAIcon aria-label={pageCountLabel} iconStyle="s" icon="users" verticalAlign="middle" />
+                <FAIcon aria-label={pageCountLabel} iconStyle="s" icon="eye" verticalAlign="middle" />
                 <chakra.span verticalAlign="middle" ml={2} fontWeight="bold">
                     {pageCount}
                 </chakra.span>

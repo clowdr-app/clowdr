@@ -31380,6 +31380,22 @@ export type SelectInitialChatStateQuery = { readonly __typename?: 'query_root', 
     & InitialChatState_ChatFragment
   )> };
 
+export type SubscribeChatMutationVariables = Exact<{
+  chatId: Scalars['uuid'];
+  attendeeId: Scalars['uuid'];
+}>;
+
+
+export type SubscribeChatMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Subscription?: Maybe<{ readonly __typename?: 'chat_Subscription_mutation_response', readonly affected_rows: number, readonly returning: ReadonlyArray<{ readonly __typename?: 'chat_Subscription', readonly chatId: any, readonly attendeeId: any }> }>, readonly insert_chat_ReadUpToIndex?: Maybe<{ readonly __typename?: 'chat_ReadUpToIndex_mutation_response', readonly affected_rows: number }> };
+
+export type UnsubscribeChatMutationVariables = Exact<{
+  chatId: Scalars['uuid'];
+  attendeeId: Scalars['uuid'];
+}>;
+
+
+export type UnsubscribeChatMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Subscription_by_pk?: Maybe<{ readonly __typename?: 'chat_Subscription', readonly attendeeId: any, readonly chatId: any }> };
+
 export type SubdMessages_2021_02_20T21_08SubscriptionVariables = Exact<{
   attendeeId: Scalars['uuid'];
 }>;
@@ -31554,46 +31570,6 @@ export type UnpinChatMutationVariables = Exact<{
 export type UnpinChatMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Pin_by_pk?: Maybe<(
     { readonly __typename?: 'chat_Pin' }
     & PinDataFragment
-  )> };
-
-export type SubscriptionDataFragment = { readonly __typename?: 'chat_Subscription', readonly chatId: any, readonly attendeeId: any, readonly wasManuallySubscribed: boolean };
-
-export type ChatSubscriptionConfigFragment = { readonly __typename?: 'chat_Chat', readonly id: any, readonly enableAutoSubscribe: boolean, readonly enableMandatorySubscribe: boolean };
-
-export type SelectSubscriptionQueryVariables = Exact<{
-  chatId: Scalars['uuid'];
-  attendeeId: Scalars['uuid'];
-}>;
-
-
-export type SelectSubscriptionQuery = { readonly __typename?: 'query_root', readonly chat_Chat_by_pk?: Maybe<(
-    { readonly __typename?: 'chat_Chat' }
-    & ChatSubscriptionConfigFragment
-  )>, readonly chat_Subscription: ReadonlyArray<(
-    { readonly __typename?: 'chat_Subscription' }
-    & SubscriptionDataFragment
-  )> };
-
-export type SubscribeChatMutationVariables = Exact<{
-  chatId: Scalars['uuid'];
-  attendeeId: Scalars['uuid'];
-}>;
-
-
-export type SubscribeChatMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Subscription?: Maybe<{ readonly __typename?: 'chat_Subscription_mutation_response', readonly returning: ReadonlyArray<(
-      { readonly __typename?: 'chat_Subscription' }
-      & SubscriptionDataFragment
-    )> }>, readonly insert_chat_ReadUpToIndex?: Maybe<{ readonly __typename?: 'chat_ReadUpToIndex_mutation_response', readonly affected_rows: number }> };
-
-export type UnsubscribeChatMutationVariables = Exact<{
-  chatId: Scalars['uuid'];
-  attendeeId: Scalars['uuid'];
-}>;
-
-
-export type UnsubscribeChatMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Subscription_by_pk?: Maybe<(
-    { readonly __typename?: 'chat_Subscription' }
-    & SubscriptionDataFragment
   )> };
 
 export type SelectAttendeesQueryVariables = Exact<{
@@ -33641,20 +33617,6 @@ export const ChatPinConfigFragmentDoc = gql`
   enableMandatoryPin
 }
     `;
-export const SubscriptionDataFragmentDoc = gql`
-    fragment SubscriptionData on chat_Subscription {
-  chatId
-  attendeeId
-  wasManuallySubscribed
-}
-    `;
-export const ChatSubscriptionConfigFragmentDoc = gql`
-    fragment ChatSubscriptionConfig on chat_Chat {
-  id
-  enableAutoSubscribe
-  enableMandatorySubscribe
-}
-    `;
 export const ContentGroupRoomEventFragmentDoc = gql`
     fragment ContentGroupRoomEvent on Event {
   startTime
@@ -34687,6 +34649,86 @@ export function useSelectInitialChatStateLazyQuery(baseOptions?: Apollo.LazyQuer
 export type SelectInitialChatStateQueryHookResult = ReturnType<typeof useSelectInitialChatStateQuery>;
 export type SelectInitialChatStateLazyQueryHookResult = ReturnType<typeof useSelectInitialChatStateLazyQuery>;
 export type SelectInitialChatStateQueryResult = Apollo.QueryResult<SelectInitialChatStateQuery, SelectInitialChatStateQueryVariables>;
+export const SubscribeChatDocument = gql`
+    mutation SubscribeChat($chatId: uuid!, $attendeeId: uuid!) {
+  insert_chat_Subscription(
+    objects: {chatId: $chatId, attendeeId: $attendeeId}
+    on_conflict: {constraint: Subscription_pkey, update_columns: wasManuallySubscribed}
+  ) {
+    affected_rows
+    returning {
+      chatId
+      attendeeId
+    }
+  }
+  insert_chat_ReadUpToIndex(
+    objects: {chatId: $chatId, attendeeId: $attendeeId, messageId: -1}
+    on_conflict: {constraint: ReadUpToIndex_pkey, update_columns: []}
+  ) {
+    affected_rows
+  }
+}
+    `;
+export type SubscribeChatMutationFn = Apollo.MutationFunction<SubscribeChatMutation, SubscribeChatMutationVariables>;
+
+/**
+ * __useSubscribeChatMutation__
+ *
+ * To run a mutation, you first call `useSubscribeChatMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSubscribeChatMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [subscribeChatMutation, { data, loading, error }] = useSubscribeChatMutation({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *      attendeeId: // value for 'attendeeId'
+ *   },
+ * });
+ */
+export function useSubscribeChatMutation(baseOptions?: Apollo.MutationHookOptions<SubscribeChatMutation, SubscribeChatMutationVariables>) {
+        return Apollo.useMutation<SubscribeChatMutation, SubscribeChatMutationVariables>(SubscribeChatDocument, baseOptions);
+      }
+export type SubscribeChatMutationHookResult = ReturnType<typeof useSubscribeChatMutation>;
+export type SubscribeChatMutationResult = Apollo.MutationResult<SubscribeChatMutation>;
+export type SubscribeChatMutationOptions = Apollo.BaseMutationOptions<SubscribeChatMutation, SubscribeChatMutationVariables>;
+export const UnsubscribeChatDocument = gql`
+    mutation UnsubscribeChat($chatId: uuid!, $attendeeId: uuid!) {
+  delete_chat_Subscription_by_pk(chatId: $chatId, attendeeId: $attendeeId) {
+    attendeeId
+    chatId
+  }
+}
+    `;
+export type UnsubscribeChatMutationFn = Apollo.MutationFunction<UnsubscribeChatMutation, UnsubscribeChatMutationVariables>;
+
+/**
+ * __useUnsubscribeChatMutation__
+ *
+ * To run a mutation, you first call `useUnsubscribeChatMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnsubscribeChatMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unsubscribeChatMutation, { data, loading, error }] = useUnsubscribeChatMutation({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *      attendeeId: // value for 'attendeeId'
+ *   },
+ * });
+ */
+export function useUnsubscribeChatMutation(baseOptions?: Apollo.MutationHookOptions<UnsubscribeChatMutation, UnsubscribeChatMutationVariables>) {
+        return Apollo.useMutation<UnsubscribeChatMutation, UnsubscribeChatMutationVariables>(UnsubscribeChatDocument, baseOptions);
+      }
+export type UnsubscribeChatMutationHookResult = ReturnType<typeof useUnsubscribeChatMutation>;
+export type UnsubscribeChatMutationResult = Apollo.MutationResult<UnsubscribeChatMutation>;
+export type UnsubscribeChatMutationOptions = Apollo.BaseMutationOptions<UnsubscribeChatMutation, UnsubscribeChatMutationVariables>;
 export const SubdMessages_2021_02_20T21_08Document = gql`
     subscription SubdMessages_2021_02_20T21_08($attendeeId: uuid!) {
   chat_Subscription(where: {attendeeId: {_eq: $attendeeId}}) {
@@ -35258,123 +35300,6 @@ export function useUnpinChatMutation(baseOptions?: Apollo.MutationHookOptions<Un
 export type UnpinChatMutationHookResult = ReturnType<typeof useUnpinChatMutation>;
 export type UnpinChatMutationResult = Apollo.MutationResult<UnpinChatMutation>;
 export type UnpinChatMutationOptions = Apollo.BaseMutationOptions<UnpinChatMutation, UnpinChatMutationVariables>;
-export const SelectSubscriptionDocument = gql`
-    query SelectSubscription($chatId: uuid!, $attendeeId: uuid!) {
-  chat_Chat_by_pk(id: $chatId) {
-    ...ChatSubscriptionConfig
-  }
-  chat_Subscription(
-    where: {chatId: {_eq: $chatId}, attendeeId: {_eq: $attendeeId}}
-  ) {
-    ...SubscriptionData
-  }
-}
-    ${ChatSubscriptionConfigFragmentDoc}
-${SubscriptionDataFragmentDoc}`;
-
-/**
- * __useSelectSubscriptionQuery__
- *
- * To run a query within a React component, call `useSelectSubscriptionQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectSubscriptionQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectSubscriptionQuery({
- *   variables: {
- *      chatId: // value for 'chatId'
- *      attendeeId: // value for 'attendeeId'
- *   },
- * });
- */
-export function useSelectSubscriptionQuery(baseOptions: Apollo.QueryHookOptions<SelectSubscriptionQuery, SelectSubscriptionQueryVariables>) {
-        return Apollo.useQuery<SelectSubscriptionQuery, SelectSubscriptionQueryVariables>(SelectSubscriptionDocument, baseOptions);
-      }
-export function useSelectSubscriptionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectSubscriptionQuery, SelectSubscriptionQueryVariables>) {
-          return Apollo.useLazyQuery<SelectSubscriptionQuery, SelectSubscriptionQueryVariables>(SelectSubscriptionDocument, baseOptions);
-        }
-export type SelectSubscriptionQueryHookResult = ReturnType<typeof useSelectSubscriptionQuery>;
-export type SelectSubscriptionLazyQueryHookResult = ReturnType<typeof useSelectSubscriptionLazyQuery>;
-export type SelectSubscriptionQueryResult = Apollo.QueryResult<SelectSubscriptionQuery, SelectSubscriptionQueryVariables>;
-export const SubscribeChatDocument = gql`
-    mutation SubscribeChat($chatId: uuid!, $attendeeId: uuid!) {
-  insert_chat_Subscription(
-    objects: {chatId: $chatId, attendeeId: $attendeeId}
-    on_conflict: {constraint: Subscription_pkey, update_columns: wasManuallySubscribed}
-  ) {
-    returning {
-      ...SubscriptionData
-    }
-  }
-  insert_chat_ReadUpToIndex(
-    objects: {chatId: $chatId, attendeeId: $attendeeId, messageId: -1}
-    on_conflict: {constraint: ReadUpToIndex_pkey, update_columns: []}
-  ) {
-    affected_rows
-  }
-}
-    ${SubscriptionDataFragmentDoc}`;
-export type SubscribeChatMutationFn = Apollo.MutationFunction<SubscribeChatMutation, SubscribeChatMutationVariables>;
-
-/**
- * __useSubscribeChatMutation__
- *
- * To run a mutation, you first call `useSubscribeChatMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSubscribeChatMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [subscribeChatMutation, { data, loading, error }] = useSubscribeChatMutation({
- *   variables: {
- *      chatId: // value for 'chatId'
- *      attendeeId: // value for 'attendeeId'
- *   },
- * });
- */
-export function useSubscribeChatMutation(baseOptions?: Apollo.MutationHookOptions<SubscribeChatMutation, SubscribeChatMutationVariables>) {
-        return Apollo.useMutation<SubscribeChatMutation, SubscribeChatMutationVariables>(SubscribeChatDocument, baseOptions);
-      }
-export type SubscribeChatMutationHookResult = ReturnType<typeof useSubscribeChatMutation>;
-export type SubscribeChatMutationResult = Apollo.MutationResult<SubscribeChatMutation>;
-export type SubscribeChatMutationOptions = Apollo.BaseMutationOptions<SubscribeChatMutation, SubscribeChatMutationVariables>;
-export const UnsubscribeChatDocument = gql`
-    mutation UnsubscribeChat($chatId: uuid!, $attendeeId: uuid!) {
-  delete_chat_Subscription_by_pk(chatId: $chatId, attendeeId: $attendeeId) {
-    ...SubscriptionData
-  }
-}
-    ${SubscriptionDataFragmentDoc}`;
-export type UnsubscribeChatMutationFn = Apollo.MutationFunction<UnsubscribeChatMutation, UnsubscribeChatMutationVariables>;
-
-/**
- * __useUnsubscribeChatMutation__
- *
- * To run a mutation, you first call `useUnsubscribeChatMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUnsubscribeChatMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [unsubscribeChatMutation, { data, loading, error }] = useUnsubscribeChatMutation({
- *   variables: {
- *      chatId: // value for 'chatId'
- *      attendeeId: // value for 'attendeeId'
- *   },
- * });
- */
-export function useUnsubscribeChatMutation(baseOptions?: Apollo.MutationHookOptions<UnsubscribeChatMutation, UnsubscribeChatMutationVariables>) {
-        return Apollo.useMutation<UnsubscribeChatMutation, UnsubscribeChatMutationVariables>(UnsubscribeChatDocument, baseOptions);
-      }
-export type UnsubscribeChatMutationHookResult = ReturnType<typeof useUnsubscribeChatMutation>;
-export type UnsubscribeChatMutationResult = Apollo.MutationResult<UnsubscribeChatMutation>;
-export type UnsubscribeChatMutationOptions = Apollo.BaseMutationOptions<UnsubscribeChatMutation, UnsubscribeChatMutationVariables>;
 export const SelectAttendeesDocument = gql`
     query SelectAttendees($conferenceId: uuid!) {
   Attendee(

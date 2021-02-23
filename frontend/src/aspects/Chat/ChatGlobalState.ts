@@ -1,4 +1,4 @@
-import { ApolloClient, gql } from "@apollo/client";
+import { ApolloClient, ApolloError, gql } from "@apollo/client";
 import { Mutex } from "async-mutex";
 import {
     InitialChatStateDocument,
@@ -9,6 +9,12 @@ import {
     SelectInitialChatStateDocument,
     SelectInitialChatStateQuery,
     SelectInitialChatStateQueryVariables,
+    SubscribeChatDocument,
+    SubscribeChatMutation,
+    SubscribeChatMutationVariables,
+    UnsubscribeChatDocument,
+    UnsubscribeChatMutation,
+    UnsubscribeChatMutationVariables,
 } from "../../generated/graphql";
 import type { Attendee } from "../Conference/useCurrentAttendee";
 
@@ -122,8 +128,36 @@ gql`
     }
 `;
 
+gql`
+    mutation SubscribeChat($chatId: uuid!, $attendeeId: uuid!) {
+        insert_chat_Subscription(
+            objects: { chatId: $chatId, attendeeId: $attendeeId }
+            on_conflict: { constraint: Subscription_pkey, update_columns: wasManuallySubscribed }
+        ) {
+            affected_rows
+            returning {
+                chatId
+                attendeeId
+            }
+        }
+        insert_chat_ReadUpToIndex(
+            objects: { chatId: $chatId, attendeeId: $attendeeId, messageId: -1 }
+            on_conflict: { constraint: ReadUpToIndex_pkey, update_columns: [] }
+        ) {
+            affected_rows
+        }
+    }
+
+    mutation UnsubscribeChat($chatId: uuid!, $attendeeId: uuid!) {
+        delete_chat_Subscription_by_pk(chatId: $chatId, attendeeId: $attendeeId) {
+            attendeeId
+            chatId
+        }
+    }
+`;
+
 export class ChatState {
-    private name: string;
+    private mutex = new Mutex();
 
     constructor(private globalState: GlobalChatState, private initialInfo: InitialChatState_ChatFragment) {
         this.name =
@@ -137,6 +171,7 @@ export class ChatState {
                 : undefined) ?? "<No name available>";
 
         this.isPinned = initialInfo.pins.length > 0;
+        this.isSubscribed = initialInfo.subscriptions.length > 0;
         this.unreadCount = initialInfo.readUpToIndices.length > 0 ? initialInfo.readUpToIndices[0].unreadCount ?? 0 : 0;
     }
 
@@ -144,12 +179,17 @@ export class ChatState {
         return this.initialInfo.id;
     }
 
+    private name: string;
     public get Name(): string {
         return this.name;
     }
 
     public get EnableMandatoryPin(): boolean {
         return this.initialInfo.enableMandatoryPin;
+    }
+
+    public get EnableMandatorySubscribe(): boolean {
+        return this.initialInfo.enableMandatorySubscribe;
     }
 
     public get IsDM(): boolean {
@@ -188,6 +228,77 @@ export class ChatState {
     });
     public get IsPinned(): Observable<boolean> {
         return this.isPinnedObs;
+    }
+
+    private isSubscribed: boolean;
+    private isSubscribedObs = new Observable<boolean>((observer) => {
+        observer(this.isSubscribed);
+    });
+    public get IsSubscribed(): Observable<boolean> {
+        return this.isSubscribedObs;
+    }
+    private isTogglingSubscribed = false;
+    public get IsTogglingSubscribed(): boolean {
+        return this.isTogglingSubscribed;
+    }
+    public async toggleSubscribed(): Promise<void> {
+        const isSubd = this.isSubscribed;
+        this.isSubscribed = !this.isSubscribed;
+        this.isSubscribedObs.publish(this.isSubscribed);
+
+        const release = await this.mutex.acquire();
+        this.isTogglingSubscribed = true;
+
+        try {
+            if (isSubd) {
+                if (!this.EnableMandatorySubscribe) {
+                    try {
+                        await this.globalState.apolloClient.mutate<
+                            UnsubscribeChatMutation,
+                            UnsubscribeChatMutationVariables
+                        >({
+                            mutation: UnsubscribeChatDocument,
+                            variables: {
+                                attendeeId: this.globalState.attendee.id,
+                                chatId: this.Id,
+                            },
+                        });
+                    } catch (e) {
+                        this.isSubscribed = isSubd;
+                        throw e;
+                    }
+                }
+            } else {
+                try {
+                    const result = await this.globalState.apolloClient.mutate<
+                        SubscribeChatMutation,
+                        SubscribeChatMutationVariables
+                    >({
+                        mutation: SubscribeChatDocument,
+                        variables: {
+                            attendeeId: this.globalState.attendee.id,
+                            chatId: this.Id,
+                        },
+                    });
+                    this.isSubscribed =
+                        !!result.data?.insert_chat_Subscription && !!result.data.insert_chat_Subscription.returning;
+                } catch (e) {
+                    if (!(e instanceof ApolloError) || !e.message.includes("uniqueness violation")) {
+                        this.isSubscribed = isSubd;
+                        throw e;
+                    } else {
+                        this.isSubscribed = true;
+                    }
+                }
+            }
+        } catch (e) {
+            console.error(`Error toggle chat subscription status: ${this.Id}`, e);
+        } finally {
+            this.isTogglingSubscribed = false;
+            release();
+
+            this.isSubscribedObs.publish(this.isSubscribed);
+        }
     }
 
     private unreadCount: number;

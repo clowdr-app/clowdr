@@ -254,27 +254,31 @@ function ChatsPanel({
         const unsubscribeIsPinned = new Map<string, () => void>();
 
         const unsubscribeChatStates = globalChatState.Chats.subscribe((chatStates) => {
-            chatStates.forEach((chatState) => {
-                if (!unsubscribeIsPinned.has(chatState.Id)) {
-                    unsubscribeIsPinned.set(
-                        chatState.Id,
-                        chatState.IsPinned.subscribe((isPinned) => {
-                            setPinnedChatsMap((oldPinnedChats) => {
-                                if (isPinned && !oldPinnedChats?.has(chatState.Id)) {
-                                    const newPinnedChats = new Map(oldPinnedChats ?? []);
-                                    newPinnedChats.set(chatState.Id, chatState);
-                                    return newPinnedChats;
-                                } else if (!isPinned && oldPinnedChats?.has(chatState.Id)) {
-                                    const newPinnedChats = new Map(oldPinnedChats ?? []);
-                                    newPinnedChats.delete(chatState.Id);
-                                    return newPinnedChats;
-                                }
-                                return oldPinnedChats;
-                            });
-                        })
-                    );
-                }
-            });
+            if (chatStates.size > 0) {
+                chatStates.forEach((chatState) => {
+                    if (!unsubscribeIsPinned.has(chatState.Id)) {
+                        unsubscribeIsPinned.set(
+                            chatState.Id,
+                            chatState.IsPinned.subscribe((isPinned) => {
+                                setPinnedChatsMap((oldPinnedChats) => {
+                                    if (isPinned && !oldPinnedChats?.has(chatState.Id)) {
+                                        const newPinnedChats = new Map(oldPinnedChats ?? []);
+                                        newPinnedChats.set(chatState.Id, chatState);
+                                        return newPinnedChats;
+                                    } else if (!isPinned && oldPinnedChats?.has(chatState.Id)) {
+                                        const newPinnedChats = new Map(oldPinnedChats ?? []);
+                                        newPinnedChats.delete(chatState.Id);
+                                        return newPinnedChats;
+                                    }
+                                    return oldPinnedChats;
+                                });
+                            })
+                        );
+                    }
+                });
+            } else {
+                setPinnedChatsMap(new Map());
+            }
         });
 
         return () => {
@@ -513,7 +517,7 @@ function ChatsPanel({
                         <Divider />
                     </>
                 )}
-                {!pinnedChats ? (
+                {pinnedChats === undefined ? (
                     <>
                         <Spinner label="Loading pinned chats" />
                         <Divider />

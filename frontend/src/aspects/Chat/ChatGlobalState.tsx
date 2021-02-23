@@ -38,6 +38,9 @@ import {
     SelectMessagesPageDocument,
     SelectMessagesPageQuery,
     SelectMessagesPageQueryVariables,
+    SelectReadUpToIndexDocument,
+    SelectReadUpToIndexQuery,
+    SelectReadUpToIndexQueryVariables,
     SendChatAnswerDocument,
     SendChatAnswerMutation,
     SendChatAnswerMutationVariables,
@@ -380,7 +383,7 @@ export class MessageState {
     }
 
     public updateFrom(msg: SubscribedChatMessageDataFragment): void {
-        // CHAT_TODO: Apply changes to duplicatedMessageId and reactions list
+        // CHAT_TODO: Apply changes to reactions list
     }
 }
 
@@ -409,6 +412,8 @@ export class ChatState {
     private messagesMutex = new Mutex();
     private initSubscriptionMutex = new Mutex();
     private sendMutex = new Mutex();
+    private unreadCountPollMutex = new Mutex();
+    private unreadCountMutex = new Mutex();
 
     constructor(
         private readonly globalState: GlobalChatState,
@@ -437,15 +442,18 @@ export class ChatState {
             this.subscribeToMoreMessages();
         }
 
-        // CHAT_TODO: Setup polling for unread count
+        if (this.isPinned) {
+            this.setupUnreadCountPolling();
+        }
     }
 
     public async teardown(): Promise<void> {
         await this.unsubscribeFromMoreMessages(true);
         if (this.readUpTo_TimeoutId) {
             clearTimeout(this.readUpTo_TimeoutId);
-            this.saveReadUpToIndex();
+            await this.saveReadUpToIndex();
         }
+        await this.teardownUnreadCountPolling();
     }
 
     public get Id(): string {
@@ -511,6 +519,10 @@ export class ChatState {
         this.isPinned = !this.isPinned;
         this.isPinnedObs.publish(this.isPinned);
 
+        if (!this.isPinned) {
+            await this.teardownUnreadCountPolling();
+        }
+
         const release = await this.pinSubMutex.acquire();
         this.isTogglingPinned = true;
 
@@ -563,6 +575,10 @@ export class ChatState {
             release();
 
             this.isPinnedObs.publish(this.isPinned);
+        }
+
+        if (this.isPinned) {
+            await this.setupUnreadCountPolling();
         }
     }
 
@@ -645,6 +661,77 @@ export class ChatState {
     });
     public get UnreadCount(): Observable<number> {
         return this.unreadCountObs;
+    }
+    private unreadCount_IntervalId: number | undefined;
+    private async setupUnreadCountPolling() {
+        const release = await this.unreadCountPollMutex.acquire();
+
+        try {
+            if (this.unreadCount_IntervalId === undefined) {
+                this.unreadCount_IntervalId = setInterval(
+                    (() => {
+                        this.pollUnreadCount();
+                    }) as TimerHandler,
+                    30 * 1000
+                );
+            }
+        } catch (e) {
+            console.error(`Failed to setup polling unread count: ${this.Id}`, e);
+        } finally {
+            release();
+        }
+    }
+    private async teardownUnreadCountPolling() {
+        const release = await this.unreadCountPollMutex.acquire();
+
+        try {
+            if (this.unreadCount_IntervalId === undefined) {
+                clearInterval(this.unreadCount_IntervalId);
+            }
+        } catch (e) {
+            console.error(`Failed to tear down polling unread count: ${this.Id}`, e);
+        } finally {
+            release();
+        }
+    }
+    private async pollUnreadCount() {
+        const release = await this.unreadCountMutex.acquire();
+
+        let newData: { count: number; latestNotifiedIndex: number; readUpToMsgId: number } | undefined;
+        try {
+            const result = await this.globalState.apolloClient.query<
+                SelectReadUpToIndexQuery,
+                SelectReadUpToIndexQueryVariables
+            >({
+                query: SelectReadUpToIndexDocument,
+                variables: {
+                    attendeeId: this.globalState.attendee.id,
+                    chatId: this.Id,
+                },
+            });
+            if (result.data.chat_ReadUpToIndex_by_pk) {
+                newData = {
+                    count: result.data.chat_ReadUpToIndex_by_pk.unreadCount ?? this.unreadCount,
+                    latestNotifiedIndex: result.data.chat_ReadUpToIndex_by_pk.notifiedUpToMessageId,
+                    readUpToMsgId: result.data.chat_ReadUpToIndex_by_pk.messageId,
+                };
+            }
+        } catch (e) {
+            console.error(`Failed to fetch unread count for: ${this.Id}`, e);
+        } finally {
+            release();
+
+            if (newData !== undefined) {
+                this.latestNotifiedIndex = Math.max(this.latestNotifiedIndex, newData.latestNotifiedIndex);
+                if (this.readUpToMsgId < newData.readUpToMsgId) {
+                    this.readUpToMsgId = newData.readUpToMsgId;
+                    if (this.unreadCount !== newData.count) {
+                        this.unreadCount = newData.count;
+                        this.unreadCountObs.publish(this.unreadCount);
+                    }
+                }
+            }
+        }
     }
 
     private messages = new Map<number, MessageState>();
@@ -804,6 +891,11 @@ export class ChatState {
     private latestNotifiedIndex: number;
     private computeNotifications(message: MessageState) {
         if (this.latestNotifiedIndex < message.id) {
+            if (this.readUpToMsgId < message.id) {
+                this.unreadCount++;
+                this.unreadCountObs.publish(this.unreadCount);
+            }
+
             this.latestNotifiedIndex = message.id;
             this.saveReadUpToIndex_SetupTimeout();
 
@@ -1049,13 +1141,14 @@ export class ChatState {
 
     static compare(x: ChatState, y: ChatState): number {
         const nameComparison = x.Name.localeCompare(y.Name);
-        if (x.unreadCount && y.unreadCount) {
-            return nameComparison;
-        } else if (x.unreadCount) {
-            return -1;
-        } else if (y.unreadCount) {
-            return 1;
-        }
+        // TODO: Right side bar would need to monitor all unread counts of pinned chats to reapply sorting
+        // if (x.unreadCount && y.unreadCount) {
+        //     return nameComparison;
+        // } else if (x.unreadCount) {
+        //     return -1;
+        // } else if (y.unreadCount) {
+        //     return 1;
+        // }
         return nameComparison;
     }
 }
@@ -1078,7 +1171,7 @@ export class GlobalChatState {
     private chatStates: Map<string, ChatState> | undefined;
 
     private chatStatesObs = new Observable<Map<string, ChatState>>((observer) => {
-        if (this.chatStates) {
+        if (this.chatStates !== undefined) {
             observer(this.chatStates);
         }
     });

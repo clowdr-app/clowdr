@@ -69,7 +69,7 @@ export default function MessageControls({
             justifyContent="flex-end"
             transition="opacity 0.2s ease-in-out"
             {...props}
-            opacity={0.2}
+            opacity={0.8}
             _hover={{
                 opacity: 1,
             }}

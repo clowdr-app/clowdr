@@ -5,7 +5,6 @@ import React, { useEffect, useRef } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import {
     Chat_MessageType_Enum,
-    SidebarReadUpToIndexFragmentDoc,
     useSetNotifiedUpToIndexMutation,
     useSubdMessages_2021_02_20T21_08Subscription,
 } from "../../generated/graphql";
@@ -84,26 +83,27 @@ function ChatNotificationsProvider_WithAttendee({
                             if (!latestIndex || latestIndex < message.id) {
                                 latestIndices.current?.set(message.chatId, message.id);
 
-                                setTimeout(() => {
-                                    setNotifiedUpTo({
-                                        variables: {
-                                            attendeeId,
-                                            chatId: message.chatId,
-                                            msgId: message.id,
-                                        },
-                                        update: (cache, { data: _data }) => {
-                                            if (_data?.insert_chat_ReadUpToIndex_one) {
-                                                const data = _data.insert_chat_ReadUpToIndex_one;
-                                                cache.writeFragment({
-                                                    data,
-                                                    id: cache.identify(data),
-                                                    fragment: SidebarReadUpToIndexFragmentDoc,
-                                                    fragmentName: "SidebarReadUpToIndex",
-                                                });
-                                            }
-                                        },
-                                    });
-                                }, Math.random() * 2500);
+                                // CHAT_TODO
+                                // setTimeout(() => {
+                                //     setNotifiedUpTo({
+                                //         variables: {
+                                //             attendeeId,
+                                //             chatId: message.chatId,
+                                //             msgId: message.id,
+                                //         },
+                                //         update: (cache, { data: _data }) => {
+                                //             if (_data?.insert_chat_ReadUpToIndex_one) {
+                                //                 const data = _data.insert_chat_ReadUpToIndex_one;
+                                //                 cache.writeFragment({
+                                //                     data,
+                                //                     id: cache.identify(data),
+                                //                     fragment: SidebarReadUpToIndexFragmentDoc,
+                                //                     fragmentName: "SidebarReadUpToIndex",
+                                //                 });
+                                //             }
+                                //         },
+                                //     });
+                                // }, Math.random() * 2500);
 
                                 const chatName = message.chatTitle;
                                 const chatPath = `/conference/${conference.slug}/chat/${message.chatId}`;

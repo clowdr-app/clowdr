@@ -31347,6 +31347,39 @@ export type Uuid_Comparison_Exp = {
   readonly _nin?: Maybe<ReadonlyArray<Scalars['uuid']>>;
 };
 
+export type InitialChatState_ReadUpToIndexFragment = { readonly __typename?: 'chat_ReadUpToIndex', readonly attendeeId: any, readonly chatId: any, readonly messageId: number, readonly notifiedUpToMessageId: number, readonly unreadCount?: Maybe<number> };
+
+export type ChatState_SubdMessageFragment = { readonly __typename?: 'chat_Message', readonly id: number, readonly chatId: any, readonly message: string, readonly type: Chat_MessageType_Enum, readonly senderId?: Maybe<any>, readonly senderName: string };
+
+export type InitialChatState_ChatFragment = { readonly __typename?: 'chat_Chat', readonly id: any, readonly enableAutoPin: boolean, readonly enableAutoSubscribe: boolean, readonly enableMandatoryPin: boolean, readonly enableMandatorySubscribe: boolean, readonly contentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string> }>, readonly nonDMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly priority: number, readonly roomPrivacyName: RoomPrivacy_Enum }>, readonly DMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly roomPeople: ReadonlyArray<{ readonly __typename?: 'RoomPerson', readonly id: any, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } }> }>, readonly readUpToIndices: ReadonlyArray<(
+    { readonly __typename?: 'chat_ReadUpToIndex' }
+    & InitialChatState_ReadUpToIndexFragment
+  )>, readonly messages: ReadonlyArray<(
+    { readonly __typename?: 'chat_Message' }
+    & ChatState_SubdMessageFragment
+  )>, readonly pins: ReadonlyArray<{ readonly __typename?: 'chat_Pin', readonly attendeeId: any, readonly chatId: any, readonly wasManuallyPinned: boolean }>, readonly subscriptions: ReadonlyArray<{ readonly __typename?: 'chat_Subscription', readonly attendeeId: any, readonly chatId: any, readonly wasManuallySubscribed: boolean }> };
+
+export type InitialChatStateQueryVariables = Exact<{
+  attendeeId: Scalars['uuid'];
+}>;
+
+
+export type InitialChatStateQuery = { readonly __typename?: 'query_root', readonly chat_Chat: ReadonlyArray<(
+    { readonly __typename?: 'chat_Chat' }
+    & InitialChatState_ChatFragment
+  )> };
+
+export type SelectInitialChatStateQueryVariables = Exact<{
+  chatId: Scalars['uuid'];
+  attendeeId: Scalars['uuid'];
+}>;
+
+
+export type SelectInitialChatStateQuery = { readonly __typename?: 'query_root', readonly chat_Chat_by_pk?: Maybe<(
+    { readonly __typename?: 'chat_Chat' }
+    & InitialChatState_ChatFragment
+  )> };
+
 export type SubdMessages_2021_02_20T21_08SubscriptionVariables = Exact<{
   attendeeId: Scalars['uuid'];
 }>;
@@ -31456,35 +31489,6 @@ export type DeleteReactionMutationVariables = Exact<{
 
 
 export type DeleteReactionMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Reaction_by_pk?: Maybe<{ readonly __typename?: 'chat_Reaction', readonly id: number }> };
-
-export type SelectReadUpToIndexQueryVariables = Exact<{
-  chatId: Scalars['uuid'];
-  attendeeId: Scalars['uuid'];
-}>;
-
-
-export type SelectReadUpToIndexQuery = { readonly __typename?: 'query_root', readonly chat_ReadUpToIndex_by_pk?: Maybe<(
-    { readonly __typename?: 'chat_ReadUpToIndex' }
-    & SidebarReadUpToIndexFragment
-  )> };
-
-export type InsertReadUpToIndexMutationVariables = Exact<{
-  chatId: Scalars['uuid'];
-  attendeeId: Scalars['uuid'];
-  messageId: Scalars['Int'];
-}>;
-
-
-export type InsertReadUpToIndexMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_ReadUpToIndex_one?: Maybe<{ readonly __typename?: 'chat_ReadUpToIndex', readonly attendeeId: any, readonly chatId: any, readonly messageId: number }> };
-
-export type UpdateReadUpToIndexMutationVariables = Exact<{
-  chatId: Scalars['uuid'];
-  attendeeId: Scalars['uuid'];
-  messageId: Scalars['Int'];
-}>;
-
-
-export type UpdateReadUpToIndexMutation = { readonly __typename?: 'mutation_root', readonly update_chat_ReadUpToIndex_by_pk?: Maybe<{ readonly __typename?: 'chat_ReadUpToIndex', readonly attendeeId: any, readonly chatId: any, readonly messageId: number }> };
 
 export type ChatFlagDataFragment = { readonly __typename?: 'chat_Flag', readonly discussionChatId?: Maybe<any>, readonly flaggedById?: Maybe<any>, readonly id: number, readonly messageId: number, readonly notes?: Maybe<string>, readonly resolution?: Maybe<string>, readonly resolved_at?: Maybe<any>, readonly type: Chat_FlagType_Enum, readonly updated_at: any, readonly created_at: any };
 
@@ -33342,23 +33346,6 @@ export type MainMenuSponsors_GetSponsorsQuery = { readonly __typename?: 'query_r
 
 export type MainMenuSponsors_ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }>, readonly logo: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly data: any }> };
 
-export type SidebarReadUpToIndexFragment = { readonly __typename?: 'chat_ReadUpToIndex', readonly attendeeId: any, readonly chatId: any, readonly messageId: number, readonly unreadCount?: Maybe<number> };
-
-export type SidebarChatInfoFragment = { readonly __typename?: 'chat_Chat', readonly id: any, readonly enableAutoPin: boolean, readonly enableAutoSubscribe: boolean, readonly enableMandatoryPin: boolean, readonly enableMandatorySubscribe: boolean, readonly contentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string> }>, readonly nonDMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly priority: number, readonly roomPrivacyName: RoomPrivacy_Enum }>, readonly DMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly roomPeople: ReadonlyArray<{ readonly __typename?: 'RoomPerson', readonly id: any, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } }> }>, readonly readUpToIndices: ReadonlyArray<(
-    { readonly __typename?: 'chat_ReadUpToIndex' }
-    & SidebarReadUpToIndexFragment
-  )> };
-
-export type PinnedChatsWithUnreadCountsQueryVariables = Exact<{
-  attendeeId: Scalars['uuid'];
-}>;
-
-
-export type PinnedChatsWithUnreadCountsQuery = { readonly __typename?: 'query_root', readonly chat_Pin: ReadonlyArray<{ readonly __typename?: 'chat_Pin', readonly attendeeId: any, readonly chatId: any, readonly chat: (
-      { readonly __typename?: 'chat_Chat' }
-      & SidebarChatInfoFragment
-    ) }> };
-
 export type GetRoomChatIdQueryVariables = Exact<{
   roomId: Scalars['uuid'];
 }>;
@@ -33513,6 +33500,73 @@ export type UpdateCurrentUserLastSeenMutationVariables = Exact<{
 
 export type UpdateCurrentUserLastSeenMutation = { readonly __typename?: 'mutation_root', readonly update_OnlineStatus?: Maybe<{ readonly __typename?: 'OnlineStatus_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'OnlineStatus', readonly id: any, readonly lastSeen: any }> }> };
 
+export const InitialChatState_ReadUpToIndexFragmentDoc = gql`
+    fragment InitialChatState_ReadUpToIndex on chat_ReadUpToIndex {
+  attendeeId
+  chatId
+  messageId
+  notifiedUpToMessageId
+  unreadCount
+}
+    `;
+export const ChatState_SubdMessageFragmentDoc = gql`
+    fragment ChatState_SubdMessage on chat_Message {
+  id
+  chatId
+  message
+  type
+  senderId
+  senderName
+}
+    `;
+export const InitialChatState_ChatFragmentDoc = gql`
+    fragment InitialChatState_Chat on chat_Chat {
+  id
+  contentGroup {
+    id
+    title
+    shortTitle
+  }
+  nonDMRoom: room(where: {roomPrivacyName: {_neq: DM}}) {
+    id
+    name
+    priority
+    roomPrivacyName
+  }
+  DMRoom: room(where: {roomPrivacyName: {_eq: DM}}) {
+    id
+    name
+    roomPeople {
+      id
+      attendee {
+        id
+        displayName
+      }
+    }
+  }
+  enableAutoPin
+  enableAutoSubscribe
+  enableMandatoryPin
+  enableMandatorySubscribe
+  readUpToIndices(where: {attendeeId: {_eq: $attendeeId}}) {
+    ...InitialChatState_ReadUpToIndex
+  }
+  messages(limit: 1, order_by: {id: desc}) {
+    ...ChatState_SubdMessage
+  }
+  pins(where: {attendeeId: {_eq: $attendeeId}}) {
+    attendeeId
+    chatId
+    wasManuallyPinned
+  }
+  subscriptions(where: {attendeeId: {_eq: $attendeeId}}) {
+    attendeeId
+    chatId
+    wasManuallySubscribed
+  }
+}
+    ${InitialChatState_ReadUpToIndexFragmentDoc}
+${ChatState_SubdMessageFragmentDoc}`;
 export const SubscribedChatMessageDataFragmentDoc = gql`
     fragment SubscribedChatMessageData on chat_Message {
   created_at
@@ -34473,48 +34527,6 @@ export const MainMenuSponsors_ContentGroupDataFragmentDoc = gql`
   shortTitle
 }
     `;
-export const SidebarReadUpToIndexFragmentDoc = gql`
-    fragment SidebarReadUpToIndex on chat_ReadUpToIndex {
-  attendeeId
-  chatId
-  messageId
-  unreadCount
-}
-    `;
-export const SidebarChatInfoFragmentDoc = gql`
-    fragment SidebarChatInfo on chat_Chat {
-  id
-  contentGroup {
-    id
-    title
-    shortTitle
-  }
-  nonDMRoom: room(where: {roomPrivacyName: {_neq: DM}}) {
-    id
-    name
-    priority
-    roomPrivacyName
-  }
-  DMRoom: room(where: {roomPrivacyName: {_eq: DM}}) {
-    id
-    name
-    roomPeople {
-      id
-      attendee {
-        id
-        displayName
-      }
-    }
-  }
-  enableAutoPin
-  enableAutoSubscribe
-  enableMandatoryPin
-  enableMandatorySubscribe
-  readUpToIndices(where: {attendeeId: {_eq: $attendeeId}}) {
-    ...SidebarReadUpToIndex
-  }
-}
-    ${SidebarReadUpToIndexFragmentDoc}`;
 export const RoomMemberFragmentDoc = gql`
     fragment RoomMember on RoomPerson {
   id
@@ -34606,6 +34618,75 @@ export const AttendeeFieldsFragmentDoc = gql`
   }
 }
     `;
+export const InitialChatStateDocument = gql`
+    query InitialChatState($attendeeId: uuid!) {
+  chat_Chat(
+    where: {_or: [{pins: {attendeeId: {_eq: $attendeeId}}}, {subscriptions: {attendeeId: {_eq: $attendeeId}}}]}
+  ) {
+    ...InitialChatState_Chat
+  }
+}
+    ${InitialChatState_ChatFragmentDoc}`;
+
+/**
+ * __useInitialChatStateQuery__
+ *
+ * To run a query within a React component, call `useInitialChatStateQuery` and pass it any options that fit your needs.
+ * When your component renders, `useInitialChatStateQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useInitialChatStateQuery({
+ *   variables: {
+ *      attendeeId: // value for 'attendeeId'
+ *   },
+ * });
+ */
+export function useInitialChatStateQuery(baseOptions: Apollo.QueryHookOptions<InitialChatStateQuery, InitialChatStateQueryVariables>) {
+        return Apollo.useQuery<InitialChatStateQuery, InitialChatStateQueryVariables>(InitialChatStateDocument, baseOptions);
+      }
+export function useInitialChatStateLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<InitialChatStateQuery, InitialChatStateQueryVariables>) {
+          return Apollo.useLazyQuery<InitialChatStateQuery, InitialChatStateQueryVariables>(InitialChatStateDocument, baseOptions);
+        }
+export type InitialChatStateQueryHookResult = ReturnType<typeof useInitialChatStateQuery>;
+export type InitialChatStateLazyQueryHookResult = ReturnType<typeof useInitialChatStateLazyQuery>;
+export type InitialChatStateQueryResult = Apollo.QueryResult<InitialChatStateQuery, InitialChatStateQueryVariables>;
+export const SelectInitialChatStateDocument = gql`
+    query SelectInitialChatState($chatId: uuid!, $attendeeId: uuid!) {
+  chat_Chat_by_pk(id: $chatId) {
+    ...InitialChatState_Chat
+  }
+}
+    ${InitialChatState_ChatFragmentDoc}`;
+
+/**
+ * __useSelectInitialChatStateQuery__
+ *
+ * To run a query within a React component, call `useSelectInitialChatStateQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectInitialChatStateQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectInitialChatStateQuery({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *      attendeeId: // value for 'attendeeId'
+ *   },
+ * });
+ */
+export function useSelectInitialChatStateQuery(baseOptions: Apollo.QueryHookOptions<SelectInitialChatStateQuery, SelectInitialChatStateQueryVariables>) {
+        return Apollo.useQuery<SelectInitialChatStateQuery, SelectInitialChatStateQueryVariables>(SelectInitialChatStateDocument, baseOptions);
+      }
+export function useSelectInitialChatStateLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectInitialChatStateQuery, SelectInitialChatStateQueryVariables>) {
+          return Apollo.useLazyQuery<SelectInitialChatStateQuery, SelectInitialChatStateQueryVariables>(SelectInitialChatStateDocument, baseOptions);
+        }
+export type SelectInitialChatStateQueryHookResult = ReturnType<typeof useSelectInitialChatStateQuery>;
+export type SelectInitialChatStateLazyQueryHookResult = ReturnType<typeof useSelectInitialChatStateLazyQuery>;
+export type SelectInitialChatStateQueryResult = Apollo.QueryResult<SelectInitialChatStateQuery, SelectInitialChatStateQueryVariables>;
 export const SubdMessages_2021_02_20T21_08Document = gql`
     subscription SubdMessages_2021_02_20T21_08($attendeeId: uuid!) {
   chat_Subscription(where: {attendeeId: {_eq: $attendeeId}}) {
@@ -35003,118 +35084,6 @@ export function useDeleteReactionMutation(baseOptions?: Apollo.MutationHookOptio
 export type DeleteReactionMutationHookResult = ReturnType<typeof useDeleteReactionMutation>;
 export type DeleteReactionMutationResult = Apollo.MutationResult<DeleteReactionMutation>;
 export type DeleteReactionMutationOptions = Apollo.BaseMutationOptions<DeleteReactionMutation, DeleteReactionMutationVariables>;
-export const SelectReadUpToIndexDocument = gql`
-    query SelectReadUpToIndex($chatId: uuid!, $attendeeId: uuid!) {
-  chat_ReadUpToIndex_by_pk(chatId: $chatId, attendeeId: $attendeeId) {
-    ...SidebarReadUpToIndex
-  }
-}
-    ${SidebarReadUpToIndexFragmentDoc}`;
-
-/**
- * __useSelectReadUpToIndexQuery__
- *
- * To run a query within a React component, call `useSelectReadUpToIndexQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectReadUpToIndexQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectReadUpToIndexQuery({
- *   variables: {
- *      chatId: // value for 'chatId'
- *      attendeeId: // value for 'attendeeId'
- *   },
- * });
- */
-export function useSelectReadUpToIndexQuery(baseOptions: Apollo.QueryHookOptions<SelectReadUpToIndexQuery, SelectReadUpToIndexQueryVariables>) {
-        return Apollo.useQuery<SelectReadUpToIndexQuery, SelectReadUpToIndexQueryVariables>(SelectReadUpToIndexDocument, baseOptions);
-      }
-export function useSelectReadUpToIndexLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectReadUpToIndexQuery, SelectReadUpToIndexQueryVariables>) {
-          return Apollo.useLazyQuery<SelectReadUpToIndexQuery, SelectReadUpToIndexQueryVariables>(SelectReadUpToIndexDocument, baseOptions);
-        }
-export type SelectReadUpToIndexQueryHookResult = ReturnType<typeof useSelectReadUpToIndexQuery>;
-export type SelectReadUpToIndexLazyQueryHookResult = ReturnType<typeof useSelectReadUpToIndexLazyQuery>;
-export type SelectReadUpToIndexQueryResult = Apollo.QueryResult<SelectReadUpToIndexQuery, SelectReadUpToIndexQueryVariables>;
-export const InsertReadUpToIndexDocument = gql`
-    mutation InsertReadUpToIndex($chatId: uuid!, $attendeeId: uuid!, $messageId: Int!) {
-  insert_chat_ReadUpToIndex_one(
-    object: {attendeeId: $attendeeId, chatId: $chatId, messageId: $messageId}
-    on_conflict: {constraint: ReadUpToIndex_pkey, update_columns: [messageId]}
-  ) {
-    attendeeId
-    chatId
-    messageId
-  }
-}
-    `;
-export type InsertReadUpToIndexMutationFn = Apollo.MutationFunction<InsertReadUpToIndexMutation, InsertReadUpToIndexMutationVariables>;
-
-/**
- * __useInsertReadUpToIndexMutation__
- *
- * To run a mutation, you first call `useInsertReadUpToIndexMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInsertReadUpToIndexMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [insertReadUpToIndexMutation, { data, loading, error }] = useInsertReadUpToIndexMutation({
- *   variables: {
- *      chatId: // value for 'chatId'
- *      attendeeId: // value for 'attendeeId'
- *      messageId: // value for 'messageId'
- *   },
- * });
- */
-export function useInsertReadUpToIndexMutation(baseOptions?: Apollo.MutationHookOptions<InsertReadUpToIndexMutation, InsertReadUpToIndexMutationVariables>) {
-        return Apollo.useMutation<InsertReadUpToIndexMutation, InsertReadUpToIndexMutationVariables>(InsertReadUpToIndexDocument, baseOptions);
-      }
-export type InsertReadUpToIndexMutationHookResult = ReturnType<typeof useInsertReadUpToIndexMutation>;
-export type InsertReadUpToIndexMutationResult = Apollo.MutationResult<InsertReadUpToIndexMutation>;
-export type InsertReadUpToIndexMutationOptions = Apollo.BaseMutationOptions<InsertReadUpToIndexMutation, InsertReadUpToIndexMutationVariables>;
-export const UpdateReadUpToIndexDocument = gql`
-    mutation UpdateReadUpToIndex($chatId: uuid!, $attendeeId: uuid!, $messageId: Int!) {
-  update_chat_ReadUpToIndex_by_pk(
-    pk_columns: {attendeeId: $attendeeId, chatId: $chatId}
-    _set: {messageId: $messageId}
-  ) {
-    attendeeId
-    chatId
-    messageId
-  }
-}
-    `;
-export type UpdateReadUpToIndexMutationFn = Apollo.MutationFunction<UpdateReadUpToIndexMutation, UpdateReadUpToIndexMutationVariables>;
-
-/**
- * __useUpdateReadUpToIndexMutation__
- *
- * To run a mutation, you first call `useUpdateReadUpToIndexMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateReadUpToIndexMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateReadUpToIndexMutation, { data, loading, error }] = useUpdateReadUpToIndexMutation({
- *   variables: {
- *      chatId: // value for 'chatId'
- *      attendeeId: // value for 'attendeeId'
- *      messageId: // value for 'messageId'
- *   },
- * });
- */
-export function useUpdateReadUpToIndexMutation(baseOptions?: Apollo.MutationHookOptions<UpdateReadUpToIndexMutation, UpdateReadUpToIndexMutationVariables>) {
-        return Apollo.useMutation<UpdateReadUpToIndexMutation, UpdateReadUpToIndexMutationVariables>(UpdateReadUpToIndexDocument, baseOptions);
-      }
-export type UpdateReadUpToIndexMutationHookResult = ReturnType<typeof useUpdateReadUpToIndexMutation>;
-export type UpdateReadUpToIndexMutationResult = Apollo.MutationResult<UpdateReadUpToIndexMutation>;
-export type UpdateReadUpToIndexMutationOptions = Apollo.BaseMutationOptions<UpdateReadUpToIndexMutation, UpdateReadUpToIndexMutationVariables>;
 export const SelectSingleMessageDocument = gql`
     query SelectSingleMessage($id: Int!) {
   chat_Message_by_pk(id: $id) {
@@ -41156,43 +41125,6 @@ export function useMainMenuSponsors_GetSponsorsLazyQuery(baseOptions?: Apollo.La
 export type MainMenuSponsors_GetSponsorsQueryHookResult = ReturnType<typeof useMainMenuSponsors_GetSponsorsQuery>;
 export type MainMenuSponsors_GetSponsorsLazyQueryHookResult = ReturnType<typeof useMainMenuSponsors_GetSponsorsLazyQuery>;
 export type MainMenuSponsors_GetSponsorsQueryResult = Apollo.QueryResult<MainMenuSponsors_GetSponsorsQuery, MainMenuSponsors_GetSponsorsQueryVariables>;
-export const PinnedChatsWithUnreadCountsDocument = gql`
-    query PinnedChatsWithUnreadCounts($attendeeId: uuid!) {
-  chat_Pin(where: {attendeeId: {_eq: $attendeeId}}) {
-    attendeeId
-    chatId
-    chat {
-      ...SidebarChatInfo
-    }
-  }
-}
-    ${SidebarChatInfoFragmentDoc}`;
-
-/**
- * __usePinnedChatsWithUnreadCountsQuery__
- *
- * To run a query within a React component, call `usePinnedChatsWithUnreadCountsQuery` and pass it any options that fit your needs.
- * When your component renders, `usePinnedChatsWithUnreadCountsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = usePinnedChatsWithUnreadCountsQuery({
- *   variables: {
- *      attendeeId: // value for 'attendeeId'
- *   },
- * });
- */
-export function usePinnedChatsWithUnreadCountsQuery(baseOptions: Apollo.QueryHookOptions<PinnedChatsWithUnreadCountsQuery, PinnedChatsWithUnreadCountsQueryVariables>) {
-        return Apollo.useQuery<PinnedChatsWithUnreadCountsQuery, PinnedChatsWithUnreadCountsQueryVariables>(PinnedChatsWithUnreadCountsDocument, baseOptions);
-      }
-export function usePinnedChatsWithUnreadCountsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PinnedChatsWithUnreadCountsQuery, PinnedChatsWithUnreadCountsQueryVariables>) {
-          return Apollo.useLazyQuery<PinnedChatsWithUnreadCountsQuery, PinnedChatsWithUnreadCountsQueryVariables>(PinnedChatsWithUnreadCountsDocument, baseOptions);
-        }
-export type PinnedChatsWithUnreadCountsQueryHookResult = ReturnType<typeof usePinnedChatsWithUnreadCountsQuery>;
-export type PinnedChatsWithUnreadCountsLazyQueryHookResult = ReturnType<typeof usePinnedChatsWithUnreadCountsLazyQuery>;
-export type PinnedChatsWithUnreadCountsQueryResult = Apollo.QueryResult<PinnedChatsWithUnreadCountsQuery, PinnedChatsWithUnreadCountsQueryVariables>;
 export const GetRoomChatIdDocument = gql`
     query GetRoomChatId($roomId: uuid!) {
   Room_by_pk(id: $roomId) {

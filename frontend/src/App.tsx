@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Route, RouteComponentProps, Switch } from "react-router-dom";
 import "./App.css";
 import Routing from "./AppRouting";
+import { GlobalChatStateProvider } from "./aspects/Chat/GlobalChatStateProvider";
 import AttendeesContextProvider from "./aspects/Conference/AttendeesContext";
 import ConferenceProvider, { useMaybeConference } from "./aspects/Conference/useConference";
 import ConferenceCurrentUserActivePermissionsProvider from "./aspects/Conference/useConferenceCurrentUserActivePermissions";
@@ -56,12 +57,14 @@ function AppInner({ confSlug, rootUrl }: AppProps): JSX.Element {
                             <ConferenceCurrentUserActivePermissionsProvider>
                                 <CurrentAttendeeProvider>
                                     <PresenceCountProvider>
-                                        <AttendeesContextProvider>
-                                            <RoomParticipantsProvider>
-                                                {/* <ShuffleRoomsQueueMonitor /> */}
-                                                <SharedRoomContextProvider>{page}</SharedRoomContextProvider>
-                                            </RoomParticipantsProvider>
-                                        </AttendeesContextProvider>
+                                        <GlobalChatStateProvider>
+                                            <AttendeesContextProvider>
+                                                <RoomParticipantsProvider>
+                                                    {/* <ShuffleRoomsQueueMonitor /> */}
+                                                    <SharedRoomContextProvider>{page}</SharedRoomContextProvider>
+                                                </RoomParticipantsProvider>
+                                            </AttendeesContextProvider>
+                                        </GlobalChatStateProvider>
                                     </PresenceCountProvider>
                                 </CurrentAttendeeProvider>
                             </ConferenceCurrentUserActivePermissionsProvider>

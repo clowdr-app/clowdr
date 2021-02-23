@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client";
-import React, { useCallback, useMemo, useState } from "react";
-import { useDeleteMessageMutation, useSelectSingleMessageQuery } from "../../../generated/graphql";
+import React, { useCallback, useMemo } from "react";
+import { useSelectSingleMessageQuery } from "../../../generated/graphql";
+import { useChatConfiguration } from "../Configuration";
 
 gql`
     fragment ChatFlagData on chat_Flag {
@@ -21,12 +22,6 @@ gql`
             ...ChatMessageData
         }
     }
-
-    mutation DeleteMessage($id: Int!) {
-        delete_chat_Message_by_pk(id: $id) {
-            id
-        }
-    }
 `;
 
 // type LoadF = (
@@ -35,11 +30,8 @@ gql`
 // ) => Promise<{ nextIndex: number | null; newItems: Map<number, ChatMessageDataFragment> } | false>;
 
 interface ReceiveMessageQueriesCtx {
-    // load: LoadF;
     refetch: (id: number) => void;
-    delete: (id: number) => void;
-    // liveMessages: Map<number, ChatMessageDataFragment> | null;
-    deletedItems: Set<number>;
+    delete: (id: number) => Promise<void>;
     setAnsweringQuestionId: React.RefObject<{ f: (ids: number[] | null) => void; answeringIds: number[] | null }>;
 }
 
@@ -60,11 +52,11 @@ export default function ReceiveMessageQueriesProvider({
     children: React.ReactNode | React.ReactNodeArray;
     setAnsweringQuestionId: React.RefObject<{ f: (ids: number[] | null) => void; answeringIds: number[] | null }>;
 }): JSX.Element {
+    const config = useChatConfiguration();
     const refetchSingleMessageQ = useSelectSingleMessageQuery({
         skip: true,
         fetchPolicy: "network-only",
     });
-    const [deleteMessage] = useDeleteMessageMutation();
 
     const refetch = useCallback(
         (id: number) => {
@@ -75,39 +67,13 @@ export default function ReceiveMessageQueriesProvider({
         [refetchSingleMessageQ]
     );
 
-    const [deletedItems, setDeletedItems] = useState<Set<number>>(new Set());
-    const deleteMsg = useCallback(
-        (id: number) => {
-            deleteMessage({
-                variables: {
-                    id,
-                },
-                update: (cache, data) => {
-                    if (data.data?.delete_chat_Message_by_pk?.id) {
-                        const _data = data.data.delete_chat_Message_by_pk;
-                        cache.evict({
-                            id: cache.identify(_data),
-                        });
-                    }
-                },
-            });
-            setDeletedItems((old) => {
-                const newItems = new Set(old);
-                newItems.add(id);
-                return newItems;
-            });
-        },
-        [deleteMessage]
-    );
-
     const ctx = useMemo(
         () => ({
             refetch,
-            delete: deleteMsg,
+            delete: config.state.deleteMessage.bind(config.state),
             setAnsweringQuestionId,
-            deletedItems,
         }),
-        [deleteMsg, deletedItems, refetch, setAnsweringQuestionId]
+        [config.state, refetch, setAnsweringQuestionId]
     );
 
     return <ReceiveMessageQueriesContext.Provider value={ctx}>{children}</ReceiveMessageQueriesContext.Provider>;

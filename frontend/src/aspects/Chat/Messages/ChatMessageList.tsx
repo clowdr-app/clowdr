@@ -5,7 +5,6 @@ import type { MessageState } from "../ChatGlobalState";
 import { Observable } from "../ChatGlobalState";
 import { useChatConfiguration } from "../Configuration";
 import MessageBox from "./MessageBox";
-import { useReceiveMessageQueries } from "./ReceiveMessageQueries";
 
 interface MessageListProps {
     chatId: string;
@@ -38,11 +37,6 @@ export function ChatMessageList(props: BoxProps): JSX.Element {
     const fetchMore = useCallback(() => {
         config.state.loadMoreMessages(pageSize);
     }, [config.state, pageSize]);
-
-    const receiveMessageQueries = useReceiveMessageQueries();
-    useEffect(() => {
-        deleteMessages.current?.([...receiveMessageQueries.deletedItems.values()]);
-    }, [receiveMessageQueries.deletedItems]);
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     useEffect(() => {

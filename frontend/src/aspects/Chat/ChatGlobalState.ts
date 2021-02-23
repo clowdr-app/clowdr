@@ -4,6 +4,9 @@ import {
     ChatMessageDataFragment,
     ChatReactionDataFragment,
     Chat_MessageType_Enum,
+    DeleteMessageDocument,
+    DeleteMessageMutation,
+    DeleteMessageMutationVariables,
     InitialChatStateDocument,
     InitialChatStateQuery,
     InitialChatStateQueryVariables,
@@ -316,6 +319,14 @@ gql`
     }
 `;
 
+gql`
+    mutation DeleteMessage($id: Int!) {
+        delete_chat_Message_by_pk(id: $id) {
+            id
+        }
+    }
+`;
+
 export class MessageState {
     constructor(
         private readonly globalState: GlobalChatState,
@@ -352,13 +363,13 @@ export class MessageState {
         return this.initialState.chatId;
     }
 
-    // TODO: Make this observable
     public get reactions(): ReadonlyArray<ChatReactionDataFragment> {
+        // CHAT_TODO: Make reactions work
         return [];
     }
 
     public updateFrom(msg: SubscribedChatMessageDataFragment): void {
-        // TODO
+        // CHAT_TODO
     }
 }
 
@@ -831,7 +842,7 @@ export class ChatState {
                             senderId,
                         },
                     });
-                    // TODO: Update the target message
+                    // CHAT_TODO: Update the target message
                 }
             }
         } catch (e) {
@@ -841,6 +852,28 @@ export class ChatState {
             release();
 
             this.isSendingObs.publish(this.isSending);
+        }
+    }
+
+    public async deleteMessage(messageId: number): Promise<void> {
+        const release = await this.messagesMutex.acquire();
+
+        try {
+            await this.globalState.apolloClient.mutate<DeleteMessageMutation, DeleteMessageMutationVariables>({
+                mutation: DeleteMessageDocument,
+                variables: {
+                    id: messageId,
+                },
+            });
+            this.messagesObs.publish({
+                op: "deleted",
+                messageIds: [messageId],
+            });
+        } catch (e) {
+            console.error(`Error deleting message: ${this.Id} @ ${messageId}`, e);
+            throw e;
+        } finally {
+            release();
         }
     }
 

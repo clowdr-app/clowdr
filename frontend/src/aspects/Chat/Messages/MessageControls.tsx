@@ -1,4 +1,4 @@
-import { Button, HStack, StackProps, Tooltip, useToast } from "@chakra-ui/react";
+import { Button, Code, HStack, StackProps, Text, Tooltip, useToast, VStack } from "@chakra-ui/react";
 import React from "react";
 import { Chat_ReactionType_Enum } from "../../../generated/graphql";
 import FAIcon from "../../Icons/FAIcon";
@@ -118,13 +118,13 @@ export default function MessageControls({
                 : undefined}
             {/* {isOwnMessage || canEdit
                 ? buttonF("Edit message", "edit", "blue.400", () => {
-                      alert("TODO"); // CHAT_TODO
+                      alert("TODO"); // TODO
                   })
                 : undefined} */}
-            {/* CHAT_TODO {isOwnMessage || canDelete
+            {isOwnMessage || canDelete
                 ? buttonF("Delete message", "trash-alt", "red.400", async () => {
                       try {
-                          messages.delete(messageId);
+                          await messages.delete(messageId);
                           toast({
                               title: "Deleted",
                               status: "success",
@@ -151,7 +151,7 @@ export default function MessageControls({
                           });
                       }
                   })
-                : undefined} */}
+                : undefined}
             {!isOwnMessage && canFlag
                 ? buttonF("Report message", "flag", "purple.400", () => {
                       alert("TODO"); // TODO

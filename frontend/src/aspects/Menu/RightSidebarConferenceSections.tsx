@@ -451,33 +451,39 @@ function ChatsPanel({
                 </Box>
             </VStack>
         );
-    } else if (currentChat && currentChat.Id !== pageChatId) {
-        return (
-            <>
-                <Chat
-                    customHeadingElements={[
-                        <Tooltip key="back-button" label="Back to chats list">
-                            <Button size="xs" colorScheme="purple" onClick={() => setCurrentChatId(null)}>
-                                <FAIcon iconStyle="s" icon="chevron-left" mr={1} /> All chats
-                            </Button>
-                        </Tooltip>,
-                        currentChat && currentChat.RoomId ? (
-                            <Tooltip key="video-room-button" label="Go to video room">
-                                <Button
-                                    key="room-button"
-                                    size="xs"
-                                    colorScheme="blue"
-                                    onClick={() => history.push(`/conference/${confSlug}/room/${currentChat.RoomId}`)}
-                                >
-                                    <FAIcon iconStyle="s" icon="video" />
+    } else if (currentChatId) {
+        if (currentChat && currentChat.Id !== pageChatId) {
+            return (
+                <>
+                    <Chat
+                        customHeadingElements={[
+                            <Tooltip key="back-button" label="Back to chats list">
+                                <Button size="xs" colorScheme="purple" onClick={() => setCurrentChatId(null)}>
+                                    <FAIcon iconStyle="s" icon="chevron-left" mr={1} /> All chats
                                 </Button>
-                            </Tooltip>
-                        ) : undefined,
-                    ]}
-                    chat={currentChat}
-                />
-            </>
-        );
+                            </Tooltip>,
+                            currentChat && currentChat.RoomId ? (
+                                <Tooltip key="video-room-button" label="Go to video room">
+                                    <Button
+                                        key="room-button"
+                                        size="xs"
+                                        colorScheme="blue"
+                                        onClick={() =>
+                                            history.push(`/conference/${confSlug}/room/${currentChat.RoomId}`)
+                                        }
+                                    >
+                                        <FAIcon iconStyle="s" icon="video" />
+                                    </Button>
+                                </Tooltip>
+                            ) : undefined,
+                        ]}
+                        chat={currentChat}
+                    />
+                </>
+            );
+        } else {
+            return <Spinner label="Loading selected chat" />;
+        }
     } else {
         return (
             <>
@@ -557,18 +563,20 @@ function RoomChatPanel({
     });
 
     const globalChatState = useGlobalChatState();
-    const [chat, setChat] = useState<ChatState | null>(null);
+    const [chat, setChat] = useState<ChatState | null | undefined>();
     useEffect(() => {
         let unsubscribe: undefined | (() => void);
-        if (data?.Room_by_pk?.chatId) {
-            unsubscribe = globalChatState.observeChatId(data?.Room_by_pk?.chatId, setChat);
-        } else {
-            setChat(null);
+        if (!loading) {
+            if (data?.Room_by_pk?.chatId) {
+                unsubscribe = globalChatState.observeChatId(data?.Room_by_pk?.chatId, setChat);
+            } else {
+                setChat(null);
+            }
         }
         return () => {
             unsubscribe?.();
         };
-    }, [data?.Room_by_pk?.chatId, globalChatState]);
+    }, [data?.Room_by_pk?.chatId, globalChatState, loading]);
 
     useEffect(() => {
         if (chat?.Id) {
@@ -576,7 +584,7 @@ function RoomChatPanel({
         }
     }, [onChatIdLoaded, chat?.Id]);
 
-    if (loading) {
+    if (loading || chat === undefined) {
         return <Spinner label="Loading room chat" />;
     }
 
@@ -599,7 +607,7 @@ function RoomChatPanel({
         );
     }
 
-    if (!chat) {
+    if (chat === null) {
         return (
             <Alert
                 status="info"
@@ -636,18 +644,20 @@ function ItemChatPanel({
     });
 
     const globalChatState = useGlobalChatState();
-    const [chat, setChat] = useState<ChatState | null>(null);
+    const [chat, setChat] = useState<ChatState | null | undefined>();
     useEffect(() => {
         let unsubscribe: undefined | (() => void);
-        if (data?.ContentGroup_by_pk?.chatId) {
-            unsubscribe = globalChatState.observeChatId(data.ContentGroup_by_pk.chatId, setChat);
-        } else {
-            setChat(null);
+        if (!loading) {
+            if (data?.ContentGroup_by_pk?.chatId) {
+                unsubscribe = globalChatState.observeChatId(data.ContentGroup_by_pk.chatId, setChat);
+            } else {
+                setChat(null);
+            }
         }
         return () => {
             unsubscribe?.();
         };
-    }, [data?.ContentGroup_by_pk?.chatId, globalChatState]);
+    }, [data?.ContentGroup_by_pk?.chatId, globalChatState, loading]);
 
     useEffect(() => {
         if (chat?.Id) {
@@ -657,7 +667,7 @@ function ItemChatPanel({
 
     const history = useHistory();
 
-    if (loading) {
+    if (loading || chat === undefined) {
         return <Spinner label="Loading room chat" />;
     }
 
@@ -680,7 +690,7 @@ function ItemChatPanel({
         );
     }
 
-    if (!chat) {
+    if (chat === null) {
         return (
             <Alert
                 status="info"

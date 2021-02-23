@@ -35,9 +35,9 @@ import {
 import type { Attendee } from "../Conference/useCurrentAttendee";
 import type { AnswerMessageData, AnswerReactionData, MessageData } from "./Types/Messages";
 
-type Observer<V> = (v: V) => true | void;
+export type Observer<V> = (v: V) => true | void;
 
-class Observable<V> {
+export class Observable<V> {
     observers = new Map<number, Observer<V>>();
     idGenerator = 1;
 

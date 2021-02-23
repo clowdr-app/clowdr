@@ -442,6 +442,44 @@ function ChatsPanel({
         [conference.id, createDMMutationResponse.loading, createDmMutation, pageChatId, switchToPageChat, toast]
     );
 
+    const chatEl = useMemo(() => {
+        if (currentChatId) {
+            if (currentChat && currentChat.Id !== pageChatId) {
+                return (
+                    <>
+                        <Chat
+                            customHeadingElements={[
+                                <Tooltip key="back-button" label="Back to chats list">
+                                    <Button size="xs" colorScheme="purple" onClick={() => setCurrentChatId(null)}>
+                                        <FAIcon iconStyle="s" icon="chevron-left" mr={1} /> All chats
+                                    </Button>
+                                </Tooltip>,
+                                currentChat && currentChat.RoomId ? (
+                                    <Tooltip key="video-room-button" label="Go to video room">
+                                        <Button
+                                            key="room-button"
+                                            size="xs"
+                                            colorScheme="blue"
+                                            onClick={() =>
+                                                history.push(`/conference/${confSlug}/room/${currentChat.RoomId}`)
+                                            }
+                                        >
+                                            <FAIcon iconStyle="s" icon="video" />
+                                        </Button>
+                                    </Tooltip>
+                                ) : undefined,
+                            ]}
+                            chat={currentChat}
+                        />
+                    </>
+                );
+            } else {
+                return <Spinner label="Loading selected chat" />;
+            }
+        }
+        return undefined;
+    }, [confSlug, currentChat, currentChatId, history, pageChatId]);
+
     if (createDMMutationResponse.loading) {
         return (
             <VStack alignItems="center">
@@ -451,39 +489,8 @@ function ChatsPanel({
                 </Box>
             </VStack>
         );
-    } else if (currentChatId) {
-        if (currentChat && currentChat.Id !== pageChatId) {
-            return (
-                <>
-                    <Chat
-                        customHeadingElements={[
-                            <Tooltip key="back-button" label="Back to chats list">
-                                <Button size="xs" colorScheme="purple" onClick={() => setCurrentChatId(null)}>
-                                    <FAIcon iconStyle="s" icon="chevron-left" mr={1} /> All chats
-                                </Button>
-                            </Tooltip>,
-                            currentChat && currentChat.RoomId ? (
-                                <Tooltip key="video-room-button" label="Go to video room">
-                                    <Button
-                                        key="room-button"
-                                        size="xs"
-                                        colorScheme="blue"
-                                        onClick={() =>
-                                            history.push(`/conference/${confSlug}/room/${currentChat.RoomId}`)
-                                        }
-                                    >
-                                        <FAIcon iconStyle="s" icon="video" />
-                                    </Button>
-                                </Tooltip>
-                            ) : undefined,
-                        ]}
-                        chat={currentChat}
-                    />
-                </>
-            );
-        } else {
-            return <Spinner label="Loading selected chat" />;
-        }
+    } else if (chatEl) {
+        return chatEl;
     } else {
         return (
             <>

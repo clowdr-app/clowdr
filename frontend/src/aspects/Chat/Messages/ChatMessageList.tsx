@@ -2,6 +2,7 @@ import { Box, BoxProps, Button, Center, Flex, Heading, Spinner, useColorModeValu
 import Observer from "@researchgate/react-intersection-observer";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import type { MessageState } from "../ChatGlobalState";
+import { Observable } from "../ChatGlobalState";
 import { useChatConfiguration } from "../Configuration";
 import MessageBox from "./MessageBox";
 import { useReceiveMessageQueries } from "./ReceiveMessageQueries";
@@ -37,18 +38,6 @@ export function ChatMessageList(props: BoxProps): JSX.Element {
     const fetchMore = useCallback(() => {
         config.state.loadMoreMessages(pageSize);
     }, [config.state, pageSize]);
-
-    // useEffect(() => {
-    //     if (nextMessageSub.data) {
-    //         insertMessages.current?.(
-    //             nextMessageSub.data.chat_Message.map((msg) => ({
-    //                 ...msg,
-    //                 reactions: [],
-    //             })),
-    //             true
-    //         );
-    //     }
-    // }, [nextMessageSub.data]);
 
     const receiveMessageQueries = useReceiveMessageQueries();
     useEffect(() => {
@@ -97,8 +86,6 @@ export function ChatMessageList(props: BoxProps): JSX.Element {
     );
 }
 
-const reactionsBoundary = 5;
-
 function MessageList({
     chatId,
     isLoading,
@@ -110,11 +97,14 @@ function MessageList({
     ...rest
 }: MessageListProps & BoxProps): JSX.Element {
     const [hasReachedEnd, setHasReachedEnd] = useState<boolean>(false);
-    const [messageElements, setMessageElements] = useState<JSX.Element[] | null>(null);
+    const [lastRenderTime, setLastRenderTime] = useState<number>(-1);
+    const messageElements = React.useRef<JSX.Element[] | null>(null);
+    const positionObservables = React.useRef<Map<number, Observable<number>>>(new Map());
 
     useEffect(() => {
         setHasReachedEnd(false);
-        setMessageElements(null);
+        messageElements.current = null;
+        setLastRenderTime(-1);
     }, [chatId]);
 
     const scrollbarColour = useColorModeValue("gray.500", "gray.200");
@@ -125,41 +115,66 @@ function MessageList({
 
     const initMessages = useCallback((messages: MessageState[]) => {
         setHasReachedEnd(false);
-        setMessageElements(messages.map((msg) => <MessageBox key={msg.id} message={msg} />));
+        positionObservables.current = new Map();
+        messageElements.current = [];
+        messages.forEach((msg) => {
+            const obs = new Observable<number>((observer) => {
+                const idx = messageElements.current?.findIndex((el) => (el.key as string) === msg.id.toString());
+                if (idx !== undefined && idx !== -1) {
+                    observer(idx);
+                }
+            });
+            positionObservables.current.set(msg.id, obs);
+            messageElements.current?.push(<MessageBox key={msg.id} message={msg} positionObservable={obs} />);
+        });
+        setLastRenderTime(Date.now());
     }, []);
     const insertMessages = useCallback((messages: MessageState[], areNew: boolean) => {
-        setMessageElements((oldEls) => {
-            const newMessageElements = messages.map((msg) => <MessageBox key={msg.id} message={msg} />);
-            let output;
-            if (oldEls) {
-                if (areNew) {
-                    output = [...newMessageElements, ...oldEls];
-                } else {
-                    output = [...oldEls, ...newMessageElements];
+        const newMessageElements: JSX.Element[] = [];
+        messages.forEach((msg) => {
+            const obs = new Observable<number>((observer) => {
+                const idx = messageElements.current?.findIndex((el) => (el.key as string) === msg.id.toString());
+                if (idx !== undefined && idx !== -1) {
+                    observer(idx);
                 }
-            } else {
-                output = newMessageElements;
-            }
-
-            if (shouldAutoScroll.current) {
-                ref.current?.scroll({
-                    behavior: "smooth",
-                    top: 0,
-                });
-            }
-
-            return output;
+            });
+            positionObservables.current.set(msg.id, obs);
+            newMessageElements.push(<MessageBox key={msg.id} message={msg} positionObservable={obs} />);
         });
+
+        if (messageElements.current) {
+            if (areNew) {
+                messageElements.current = [...newMessageElements, ...messageElements.current];
+            } else {
+                messageElements.current = [...messageElements.current, ...newMessageElements];
+            }
+        } else {
+            messageElements.current = newMessageElements;
+        }
+        positionObservables.current.forEach((observable, k) => {
+            const kStr = k.toString();
+            const idx = messageElements.current?.findIndex((el) => el.key === kStr);
+            if (idx !== undefined && idx !== -1) {
+                observable.publish(idx);
+            }
+        });
+
+        if (shouldAutoScroll.current) {
+            ref.current?.scroll({
+                behavior: "smooth",
+                top: 0,
+            });
+        }
+
+        setLastRenderTime(Date.now());
     }, []);
 
     const deleteMessages = useCallback((messageIds: number[]) => {
-        setMessageElements((oldEls) => {
-            if (oldEls) {
-                const ids = messageIds.map((x) => x.toString());
-                return oldEls.filter((el) => !ids.includes(el.key as string));
-            }
-            return null;
-        });
+        if (messageElements.current) {
+            const ids = messageIds.map((id) => id.toString());
+            messageElements.current = messageElements.current.filter((el) => !ids.includes(el.key as string));
+            setLastRenderTime(Date.now());
+        }
     }, []);
 
     initMessagesRef.current = initMessages;
@@ -247,7 +262,7 @@ function MessageList({
 
     return (
         <Box {...rest}>
-            {messageElements === null ? (
+            {messageElements.current === null ? (
                 <Center h="100%">
                     <Box>
                         <Spinner aria-label="Loading messages" />
@@ -270,8 +285,9 @@ function MessageList({
                         ref={ref}
                     >
                         {bottomEl}
-                        {messageElements}
+                        {messageElements.current}
                         {topEl}
+                        {/* <Box hidden={true}>{lastRenderTime}</Box> */}
                     </Flex>
                 </Flex>
             )}

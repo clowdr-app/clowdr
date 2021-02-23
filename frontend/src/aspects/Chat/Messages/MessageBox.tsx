@@ -1,11 +1,11 @@
 import { Box, Button, Center, Flex, HStack, Text, useColorModeValue, VStack } from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
 import { AttendeeDataFragment, Chat_MessageType_Enum, Chat_ReactionType_Enum } from "../../../generated/graphql";
 import { useAttendee } from "../../Conference/AttendeesContext";
 import { roundUpToNearest } from "../../Generic/MathUtils";
 import { Markdown } from "../../Text/Markdown";
-import type { MessageState } from "../ChatGlobalState";
+import type { MessageState, Observable } from "../ChatGlobalState";
 import { MessageTypeIndicator } from "../Compose/MessageTypeIndicator";
 import { ChatSpacing, useChatConfiguration } from "../Configuration";
 import MessageControls from "./MessageControls";
@@ -380,7 +380,13 @@ function MessageBody({
     );
 }
 
-export default function MessageBox({ message }: { message: MessageState }): JSX.Element {
+export default function MessageBox({
+    message,
+    positionObservable,
+}: {
+    message: MessageState;
+    positionObservable: Observable<number>;
+}): JSX.Element {
     const config = useChatConfiguration();
     const scaleFactor = config.spacing / ChatSpacing.RELAXED;
 
@@ -409,7 +415,12 @@ export default function MessageBox({ message }: { message: MessageState }): JSX.
 
     const attendee = useAttendee(message.senderId);
 
-    const subscribeToReactions = false; // TODO: Observe the position of this in the list of messages
+    const [subscribeToReactions, setSubscribeToReactions] = useState<boolean>(false);
+    useEffect(() => {
+        return positionObservable.subscribe((v) => {
+            setSubscribeToReactions(v < 10);
+        });
+    }, [positionObservable]);
 
     return message.type === Chat_MessageType_Enum.DuplicationMarker ? (
         <></>

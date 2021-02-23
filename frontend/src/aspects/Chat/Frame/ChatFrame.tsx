@@ -51,8 +51,8 @@ export function ChatFrame({ ...rest }: BoxProps): JSX.Element {
                                     pos="relative"
                                     overflow="hidden"
                                 >
-                                    <ReadUpToIndexProvider chatId={config.state.Id}>
-                                        <ChatMessageList chatId={config.state.Id} pos="relative" h="100%" zIndex={1} />
+                                    <ReadUpToIndexProvider>
+                                        <ChatMessageList pos="relative" h="100%" zIndex={1} />
                                     </ReadUpToIndexProvider>
                                     <ChatConfigurationControls pos="absolute" top="0" left="0" w="100%" zIndex={2} />
                                 </Box>

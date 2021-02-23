@@ -1,5 +1,4 @@
 import React, { useCallback, useMemo } from "react";
-import { useChatConfiguration } from "../Configuration";
 
 // gql`
 //     query SelectReadUpToIndex($chatId: uuid!, $attendeeId: uuid!) {
@@ -46,14 +45,10 @@ export function useReadUpToIndex(): ReadUpToIndexCtx {
     return ctx;
 }
 
-function ReadUpToIndexProvider_UserExists({
+export default function ReadUpToIndexProvider({
     children,
-    attendeeId,
-    chatId,
 }: {
     children: React.ReactNode | React.ReactNodeArray;
-    attendeeId: string;
-    chatId: string;
 }): JSX.Element {
     // const unreadQ = useSelectReadUpToIndexQuery({
     //     variables: {
@@ -139,42 +134,4 @@ function ReadUpToIndexProvider_UserExists({
     );
 
     return <ReadUpToIndexContext.Provider value={st}>{children}</ReadUpToIndexContext.Provider>;
-}
-
-export function ReadUpToIndexProvider_NoUser({
-    children,
-}: {
-    children: React.ReactNode | React.ReactNodeArray;
-}): JSX.Element {
-    const ctx = useMemo(
-        () => ({
-            readUpToId: undefined,
-            setReadUpTo: () => {
-                /* EMPTY */
-            },
-        }),
-        []
-    );
-
-    return <ReadUpToIndexContext.Provider value={ctx}>{children}</ReadUpToIndexContext.Provider>;
-}
-
-export default function ReadUpToIndexProvider({
-    children,
-    chatId,
-}: {
-    children: React.ReactNode | React.ReactNodeArray;
-    chatId: string;
-}): JSX.Element {
-    const config = useChatConfiguration();
-
-    if (config.currentAttendeeId) {
-        return (
-            <ReadUpToIndexProvider_UserExists chatId={chatId} attendeeId={config.currentAttendeeId}>
-                {children}
-            </ReadUpToIndexProvider_UserExists>
-        );
-    } else {
-        return <ReadUpToIndexProvider_NoUser>{children}</ReadUpToIndexProvider_NoUser>;
-    }
 }

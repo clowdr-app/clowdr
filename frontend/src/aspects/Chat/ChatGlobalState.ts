@@ -1,6 +1,10 @@
 import { ApolloClient, ApolloError, gql } from "@apollo/client";
 import { Mutex } from "async-mutex";
+import * as R from "ramda";
 import {
+    ChatMessageDataFragment,
+    ChatReactionDataFragment,
+    Chat_MessageType_Enum,
     InitialChatStateDocument,
     InitialChatStateQuery,
     InitialChatStateQueryVariables,
@@ -9,6 +13,9 @@ import {
     SelectInitialChatStateDocument,
     SelectInitialChatStateQuery,
     SelectInitialChatStateQueryVariables,
+    SelectMessagesPageDocument,
+    SelectMessagesPageQuery,
+    SelectMessagesPageQueryVariables,
     SubscribeChatDocument,
     SubscribeChatMutation,
     SubscribeChatMutationVariables,
@@ -176,27 +183,145 @@ gql`
     }
 `;
 
-export class ChatState {
-    private mutex = new Mutex();
+gql`
+    fragment ChatReactionData on chat_Reaction {
+        data
+        id
+        senderId
+        symbol
+        type
+    }
 
-    constructor(private globalState: GlobalChatState, private initialInfo: InitialChatState_ChatFragment) {
+    fragment ChatMessageData on chat_Message {
+        created_at
+        data
+        duplicatedMessageId
+        id
+        message
+        reactions {
+            ...ChatReactionData
+        }
+        senderId
+        type
+        chatId
+    }
+
+    query SelectMessagesPage($chatId: uuid!, $startAtIndex: Int!, $maxCount: Int!) {
+        chat_Message(
+            order_by: { id: desc }
+            where: { chatId: { _eq: $chatId }, id: { _lte: $startAtIndex } }
+            limit: $maxCount
+        ) {
+            ...ChatMessageData
+        }
+    }
+
+    fragment SubscribedChatMessageData on chat_Message {
+        created_at
+        data
+        duplicatedMessageId
+        id
+        message
+        senderId
+        type
+        chatId
+    }
+
+    subscription NewMessages($chatId: uuid!) {
+        chat_Message(order_by: { id: desc }, where: { chatId: { _eq: $chatId } }, limit: 5) {
+            ...SubscribedChatMessageData
+        }
+    }
+`;
+
+export class MessageState {
+    constructor(
+        private readonly globalState: GlobalChatState,
+        private readonly chatState: ChatState,
+        private readonly initialState: ChatMessageDataFragment
+    ) {}
+
+    public get Id(): number {
+        return this.initialState.id;
+    }
+
+    public get created_at(): string {
+        return this.initialState.created_at;
+    }
+    public get data(): any {
+        return this.initialState.data;
+    }
+    public get duplicatedMessageId(): number | null | undefined {
+        return this.initialState.duplicatedMessageId;
+    }
+    public get id(): number {
+        return this.initialState.id;
+    }
+    public get message(): string {
+        return this.initialState.message;
+    }
+    public get senderId(): string | null | undefined {
+        return this.initialState.senderId;
+    }
+    public get type(): Chat_MessageType_Enum {
+        return this.initialState.type;
+    }
+    public get chatId(): string {
+        return this.initialState.chatId;
+    }
+
+    // TODO: Make this observable
+    public get reactions(): ReadonlyArray<ChatReactionDataFragment> {
+        return [];
+    }
+}
+
+type MessageUpdate =
+    | {
+          op: "initial";
+          messages: MessageState[];
+      }
+    | {
+          op: "loaded_historic";
+          messages: MessageState[];
+      }
+    | {
+          op: "loaded_new";
+          messages: MessageState[];
+      }
+    | {
+          op: "deleted";
+          messageIds: number[];
+      };
+
+export class ChatState {
+    private static readonly DefaultPageSize = 30;
+
+    private pinSubMutex = new Mutex();
+    private messagesMutex = new Mutex();
+
+    constructor(
+        private readonly globalState: GlobalChatState,
+        private readonly initialState: InitialChatState_ChatFragment
+    ) {
         this.name =
-            (initialInfo.contentGroup.length > 0
-                ? initialInfo.contentGroup[0].shortTitle ?? initialInfo.contentGroup[0].title
-                : initialInfo.nonDMRoom.length > 0
-                ? initialInfo.nonDMRoom[0].name
-                : initialInfo.DMRoom.length > 0
-                ? initialInfo.DMRoom[0].roomPeople.find((x) => x?.attendee?.id !== globalState.attendee.id)?.attendee
+            (initialState.contentGroup.length > 0
+                ? initialState.contentGroup[0].shortTitle ?? initialState.contentGroup[0].title
+                : initialState.nonDMRoom.length > 0
+                ? initialState.nonDMRoom[0].name
+                : initialState.DMRoom.length > 0
+                ? initialState.DMRoom[0].roomPeople.find((x) => x?.attendee?.id !== globalState.attendee.id)?.attendee
                       ?.displayName
                 : undefined) ?? "<No name available>";
 
-        this.isPinned = initialInfo.pins.length > 0;
-        this.isSubscribed = initialInfo.subscriptions.length > 0;
-        this.unreadCount = initialInfo.readUpToIndices.length > 0 ? initialInfo.readUpToIndices[0].unreadCount ?? 0 : 0;
+        this.isPinned = initialState.pins.length > 0;
+        this.isSubscribed = initialState.subscriptions.length > 0;
+        this.unreadCount =
+            initialState.readUpToIndices.length > 0 ? initialState.readUpToIndices[0].unreadCount ?? 0 : 0;
     }
 
     public get Id(): string {
-        return this.initialInfo.id;
+        return this.initialState.id;
     }
 
     private name: string;
@@ -205,11 +330,11 @@ export class ChatState {
     }
 
     public get EnableMandatoryPin(): boolean {
-        return this.initialInfo.enableMandatoryPin;
+        return this.initialState.enableMandatoryPin;
     }
 
     public get EnableMandatorySubscribe(): boolean {
-        return this.initialInfo.enableMandatorySubscribe;
+        return this.initialState.enableMandatorySubscribe;
     }
 
     public get IsDM(): boolean {
@@ -219,21 +344,21 @@ export class ChatState {
     public get IsPrivate(): boolean {
         return (
             this.IsDM ||
-            (this.initialInfo.nonDMRoom.length > 0 &&
-                this.initialInfo.nonDMRoom[0].roomPrivacyName !== RoomPrivacy_Enum.Public)
+            (this.initialState.nonDMRoom.length > 0 &&
+                this.initialState.nonDMRoom[0].roomPrivacyName !== RoomPrivacy_Enum.Public)
         );
     }
 
     public get DMRoomId(): string | undefined {
-        if (this.initialInfo.DMRoom.length > 0) {
-            return this.initialInfo.DMRoom[0].id;
+        if (this.initialState.DMRoom.length > 0) {
+            return this.initialState.DMRoom[0].id;
         }
         return undefined;
     }
 
     public get NonDMRoomId(): string | undefined {
-        if (this.initialInfo.nonDMRoom.length > 0) {
-            return this.initialInfo.nonDMRoom[0].id;
+        if (this.initialState.nonDMRoom.length > 0) {
+            return this.initialState.nonDMRoom[0].id;
         }
         return undefined;
     }
@@ -258,7 +383,7 @@ export class ChatState {
         this.isPinned = !this.isPinned;
         this.isPinnedObs.publish(this.isPinned);
 
-        const release = await this.mutex.acquire();
+        const release = await this.pinSubMutex.acquire();
         this.isTogglingPinned = true;
 
         try {
@@ -329,7 +454,7 @@ export class ChatState {
         this.isSubscribed = !this.isSubscribed;
         this.isSubscribedObs.publish(this.isSubscribed);
 
-        const release = await this.mutex.acquire();
+        const release = await this.pinSubMutex.acquire();
         this.isTogglingSubscribed = true;
 
         try {
@@ -390,6 +515,86 @@ export class ChatState {
     });
     public get UnreadCount(): Observable<number> {
         return this.unreadCountObs;
+    }
+
+    private messages = new Map<number, MessageState>();
+    private lastHistoricallyFetchedMessageId = Math.pow(2, 31) - 1;
+    private messagesObs = new Observable<MessageUpdate>((observer) => {
+        observer({
+            op: "initial",
+            messages: [...this.messages.values()],
+        });
+    });
+    private mightHaveMoreMessagesObs = new Observable<boolean>((observer) => {
+        observer(this.lastHistoricallyFetchedMessageId !== -1);
+    });
+    public get MightHaveMoreMessages(): Observable<boolean> {
+        return this.mightHaveMoreMessagesObs;
+    }
+    public get Messages(): Observable<MessageUpdate> {
+        return this.messagesObs;
+    }
+    private isLoadingMessages = false;
+    private isLoadingMessagesObs = new Observable<boolean>((observer) => {
+        observer(this.isLoadingMessages);
+    });
+    public get IsLoadingMessages(): Observable<boolean> {
+        return this.isLoadingMessagesObs;
+    }
+    public async loadMoreMessages(pageSize: number = ChatState.DefaultPageSize): Promise<void> {
+        const release = await this.messagesMutex.acquire();
+        this.isLoadingMessages = true;
+        this.isLoadingMessagesObs.publish(this.isLoadingMessages);
+
+        let newMessageStates: MessageState[] | undefined;
+
+        try {
+            if (this.lastHistoricallyFetchedMessageId !== -1) {
+                const result = await this.globalState.apolloClient.query<
+                    SelectMessagesPageQuery,
+                    SelectMessagesPageQueryVariables
+                >({
+                    query: SelectMessagesPageDocument,
+                    variables: {
+                        chatId: this.Id,
+                        maxCount: pageSize,
+                        startAtIndex: this.lastHistoricallyFetchedMessageId,
+                    },
+                });
+                if (result.data.chat_Message.length > 0) {
+                    // TODO: This shouldn't ever overlap, so I don't think we need to handle updates here
+                    newMessageStates = R.reverse(
+                        result.data.chat_Message
+                            .filter((msg) => !this.messages.has(msg.id))
+                            .map((message) => new MessageState(this.globalState, this, message))
+                    );
+                    if (newMessageStates.length > 0) {
+                        this.lastHistoricallyFetchedMessageId =
+                            result.data.chat_Message.length < pageSize ? -1 : newMessageStates[0].Id;
+                        newMessageStates.forEach((state) => {
+                            this.messages.set(state.Id, state);
+                        });
+                    }
+                }
+            }
+        } catch (e) {
+            console.error(`Error loading more messages: ${this.Id}`, e);
+        } finally {
+            this.isLoadingMessages = false;
+            release();
+
+            this.isLoadingMessagesObs.publish(this.isLoadingMessages);
+
+            if (newMessageStates && newMessageStates.length > 0) {
+                this.messagesObs.publish({
+                    op: "loaded_historic",
+                    messages: newMessageStates,
+                });
+                this.mightHaveMoreMessagesObs.publish(this.lastHistoricallyFetchedMessageId !== -1);
+            } else if (this.lastHistoricallyFetchedMessageId !== -1) {
+                this.mightHaveMoreMessagesObs.publish(false);
+            }
+        }
     }
 
     static compare(x: ChatState, y: ChatState): number {

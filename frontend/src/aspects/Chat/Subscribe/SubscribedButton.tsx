@@ -7,12 +7,9 @@ import { useChatSubscribedQuery } from "./SubscribedQuery";
 export function SubscribedButton(props: ButtonProps): JSX.Element {
     const config = useChatConfiguration();
     const subscribedQ = useChatSubscribedQuery();
-    const hasError = !!subscribedQ.error;
     const isLoading = subscribedQ.loading;
     const isSubscribed = !!subscribedQ.data?.isSubscribed;
-    const label = hasError
-        ? "Error in subscribed status"
-        : isLoading
+    const label = isLoading
         ? "Loading subscribed status"
         : isSubscribed
         ? "Unsubscribe from notifications for this chat"
@@ -29,17 +26,12 @@ export function SubscribedButton(props: ButtonProps): JSX.Element {
                         subscribedQ.mutate?.(!isSubscribed);
                     }}
                     isLoading={isLoading}
-                    isDisabled={hasError}
                     _disabled={{
                         opacity: 0.4,
                         cursor: "progress",
                     }}
                 >
-                    {hasError ? (
-                        <FAIcon iconStyle="s" icon="exclamation-triangle" />
-                    ) : (
-                        <FAIcon iconStyle={isSubscribed ? "s" : "r"} icon="bell" />
-                    )}
+                    <FAIcon iconStyle={isSubscribed ? "s" : "r"} icon="bell" />
                 </Button>
             </Box>
         </Tooltip>

@@ -16,28 +16,6 @@ gql`
         created_at
     }
 
-    fragment ChatReactionData on chat_Reaction {
-        data
-        id
-        senderId
-        symbol
-        type
-    }
-
-    fragment ChatMessageData on chat_Message {
-        created_at
-        data
-        duplicatedMessageId
-        id
-        message
-        reactions {
-            ...ChatReactionData
-        }
-        senderId
-        type
-        chatId
-    }
-
     query SelectSingleMessage($id: Int!) {
         chat_Message_by_pk(id: $id) {
             ...ChatMessageData

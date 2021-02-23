@@ -7,12 +7,9 @@ import { useChatPinnedQuery } from "./PinnedQuery";
 export function PinnedButton(props: ButtonProps): JSX.Element {
     const config = useChatConfiguration();
     const pinnedQ = useChatPinnedQuery();
-    const hasError = !!pinnedQ.error;
     const isLoading = pinnedQ.loading;
     const isPinned = !!pinnedQ.data?.isPinned;
-    const label = hasError
-        ? "Error in pinned status"
-        : isLoading
+    const label = isLoading
         ? "Loading pinned status"
         : isPinned
         ? "Unpin this chat from the sidebar"
@@ -28,7 +25,6 @@ export function PinnedButton(props: ButtonProps): JSX.Element {
                         pinnedQ.mutate?.(!isPinned);
                     }}
                     isLoading={isLoading}
-                    isDisabled={hasError}
                     h="100%"
                     {...props}
                     _disabled={{
@@ -36,16 +32,12 @@ export function PinnedButton(props: ButtonProps): JSX.Element {
                         cursor: "progress",
                     }}
                 >
-                    {hasError ? (
-                        <FAIcon iconStyle="s" icon="exclamation-triangle" />
-                    ) : (
-                        <FAIcon
-                            iconStyle="s"
-                            icon="thumbtack"
-                            transform={isPinned ? "" : "rotate(180deg)"}
-                            transition="transform 0.3s linear"
-                        />
-                    )}
+                    <FAIcon
+                        iconStyle="s"
+                        icon="thumbtack"
+                        transform={isPinned ? "" : "rotate(180deg)"}
+                        transition="transform 0.3s linear"
+                    />
                 </Button>
             </Box>
         </Tooltip>

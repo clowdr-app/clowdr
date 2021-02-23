@@ -1,15 +1,11 @@
 import { Box, Button, Center, Flex, HStack, Text, useColorModeValue, VStack } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { Twemoji } from "react-emoji-render";
-import {
-    AttendeeDataFragment,
-    ChatMessageDataFragment,
-    Chat_MessageType_Enum,
-    Chat_ReactionType_Enum,
-} from "../../../generated/graphql";
+import { AttendeeDataFragment, Chat_MessageType_Enum, Chat_ReactionType_Enum } from "../../../generated/graphql";
 import { useAttendee } from "../../Conference/AttendeesContext";
 import { roundUpToNearest } from "../../Generic/MathUtils";
 import { Markdown } from "../../Text/Markdown";
+import type { MessageState } from "../ChatGlobalState";
 import { MessageTypeIndicator } from "../Compose/MessageTypeIndicator";
 import { ChatSpacing, useChatConfiguration } from "../Configuration";
 import MessageControls from "./MessageControls";
@@ -66,7 +62,7 @@ function MessageBody({
     attendee,
     subscribeToReactions,
 }: {
-    message: ChatMessageDataFragment;
+    message: MessageState;
     attendee: AttendeeDataFragment | null;
     subscribeToReactions: boolean;
 }): JSX.Element {
@@ -388,7 +384,7 @@ export default function MessageBox({
     message,
     subscribeToReactions,
 }: {
-    message: ChatMessageDataFragment;
+    message: MessageState;
     subscribeToReactions: boolean;
 }): JSX.Element {
     const config = useChatConfiguration();

@@ -83,7 +83,7 @@ function VonageRoomInner({
     });
     const receivingScreenShare = useMemo(() => streams.find((s) => s.videoType === "screen"), [streams]);
     const screenSharingActive = receivingScreenShare || screen;
-    const maxVideoStreams = screenSharingActive ? 2 : 10;
+    const maxVideoStreams = screenSharingActive ? 4 : 10;
     const cameraResolution =
         screenSharingActive || connections.length >= maxVideoStreams ? "low" : resolutionBP ?? "normal";
     const participantWidth = cameraResolution === "low" ? 150 : 300;
@@ -252,27 +252,41 @@ function VonageRoomInner({
         }
     }, [maxVideoStreams, othersCameraStreams.length, screenSharingActive, streamLastActive]);
 
+    const [sortedStreams, setSortedStreams] = useState<OT.Stream[]>([]);
     const sliceAndDice = useCallback(
-        (streams: OT.Stream[]): OT.Stream[] => {
-            const active = R.sortWith(
-                [R.descend((x) => streamLastActive[x.streamId])],
-                streams.filter((x) => enableStreams?.includes(x.streamId))
+        (streams: OT.Stream[], enableStreams: string[] | null, maxVideoStreams: number): OT.Stream[] => {
+            console.log("Slicing and dicing");
+            const currentStreamIds = streams.map((x) => x.streamId);
+            const existingActiveStreams = sortedStreams
+                .slice(0, maxVideoStreams)
+                .filter((x) => currentStreamIds.includes(x.streamId) && enableStreams?.includes(x.streamId));
+            const existingActiveStreamIds = existingActiveStreams.map((x) => x.streamId);
+            const newlyActiveStreams = streams.filter(
+                (x) => enableStreams?.includes(x.streamId) && !existingActiveStreamIds.includes(x.streamId)
+            );
+
+            const sortedNewlyActiveStreams = R.sortWith(
+                [R.ascend((x) => streamLastActive[x.streamId])],
+                newlyActiveStreams
             );
             const rest = R.sortWith(
                 [R.ascend(R.prop("creationTime"))],
                 streams.filter((x) => !enableStreams?.includes(x.streamId))
             );
-            return active.concat(rest);
+            return existingActiveStreams.concat(sortedNewlyActiveStreams).concat(rest);
         },
-        [enableStreams, streamLastActive]
+        [sortedStreams, streamLastActive]
     );
 
-    const sortedStreams = useMemo(
+    useEffect(
         () =>
-            screenSharingActive
-                ? sliceAndDice(othersCameraStreams)
-                : R.sortWith([R.ascend(R.prop("creationTime"))], othersCameraStreams),
-        [othersCameraStreams, screenSharingActive, sliceAndDice]
+            setSortedStreams(
+                screenSharingActive
+                    ? sliceAndDice(othersCameraStreams, enableStreams, maxVideoStreams)
+                    : R.sortWith([R.ascend(R.prop("creationTime"))], othersCameraStreams)
+            ),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [othersCameraStreams, screenSharingActive, enableStreams, maxVideoStreams]
     );
 
     const viewPublishedScreenShareEl = useMemo(

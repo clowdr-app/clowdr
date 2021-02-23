@@ -6,12 +6,10 @@ import type { MessageData } from "../Types/Messages";
 type SendMesasageCallback = (
     chatId: string,
     senderId: string,
-    senderName: string,
     type: Chat_MessageType_Enum,
     message: string,
     data: MessageData,
-    isPinned: boolean,
-    chatTitle: string
+    isPinned: boolean
 ) => Promise<void>;
 
 interface SendMessageQueriesCtx {

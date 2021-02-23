@@ -44,7 +44,6 @@ import {
 } from "../../generated/graphql";
 import { Chat } from "../Chat/Chat";
 import { ChatState } from "../Chat/ChatGlobalState";
-import { ChatNotificationsProvider } from "../Chat/ChatNotifications";
 import { useGlobalChatState } from "../Chat/GlobalChatStateProvider";
 import { useAttendee } from "../Conference/AttendeesContext";
 import { useConference } from "../Conference/useConference";
@@ -242,9 +241,7 @@ function ChatsPanel({
     onChatIdChange: (id: string | null) => void;
     pageChatId: string | null;
     switchToPageChat: () => void;
-    openChat: React.MutableRefObject<
-        ((chat: { id: string; title: string; roomId: string | undefined }) => void) | null
-    >;
+    openChat: React.MutableRefObject<((chatId: string) => void) | null>;
     closeChat: React.MutableRefObject<(() => void) | null>;
 }): JSX.Element {
     const conference = useConference();
@@ -302,10 +299,10 @@ function ChatsPanel({
     }, [currentChatId, globalChatState]);
 
     openChat.current = useCallback(
-        (chat) => {
-            setCurrentChatId(chat);
+        (chatId: string) => {
+            setCurrentChatId(chatId);
 
-            if (chat.id === pageChatId) {
+            if (chatId === pageChatId) {
                 switchToPageChat();
             }
         },
@@ -804,15 +801,9 @@ function PresencePanel({ roomId }: { roomId?: string }): JSX.Element {
 function RightSidebarConferenceSections_Inner({
     rootUrl,
     confSlug,
-    suppressChatId,
-    openChat,
 }: {
     rootUrl: string;
     confSlug: string;
-    suppressChatId: React.MutableRefObject<string | null>;
-    openChat: React.MutableRefObject<
-        ((chat: { id: string; title: string; roomId: string | undefined }) => void) | null
-    >;
 }): JSX.Element {
     const roomMatch = useRouteMatch<{ roomId: string }>(`${rootUrl}/room/:roomId`);
     const itemMatch = useRouteMatch<{ itemId: string }>(`${rootUrl}/item/:itemId`);
@@ -828,19 +819,21 @@ function RightSidebarConferenceSections_Inner({
         (x) => parseInt(x, 10)
     );
 
+    const chatState = useGlobalChatState();
+
     useEffect(() => {
         switch (currentTab) {
             case RightSidebarTabs.PageChat:
-                suppressChatId.current = pageChatId;
+                chatState.suppressNotificationsForChatId = pageChatId;
                 break;
             case RightSidebarTabs.Chats:
-                suppressChatId.current = nonPageChatId;
+                chatState.suppressNotificationsForChatId = nonPageChatId;
                 break;
             case RightSidebarTabs.Presence:
-                suppressChatId.current = null;
+                chatState.suppressNotificationsForChatId = null;
                 break;
         }
-    }, [currentTab, nonPageChatId, pageChatId, suppressChatId]);
+    }, [chatState, currentTab, nonPageChatId, pageChatId]);
 
     useEffect(() => {
         if (roomId || itemId) {
@@ -864,11 +857,11 @@ function RightSidebarConferenceSections_Inner({
                 : 1
             : -2;
 
-    const openChatCb = useRef<((chat: { id: string; title: string; roomId: string | undefined }) => void) | null>(null);
-    openChat.current = useCallback(
-        (chat) => {
+    const openChatCb = useRef<((chatId: string) => void) | null>(null);
+    chatState.openChatInSidebar = useCallback(
+        (chatId: string) => {
             setCurrentTab(RightSidebarTabs.Chats);
-            openChatCb.current?.(chat);
+            openChatCb.current?.(chatId);
         },
         [setCurrentTab]
     );
@@ -979,22 +972,10 @@ export default function RightSidebarConferenceSections({
     onClose: () => void;
 }): JSX.Element {
     const user = useMaybeCurrentUser();
-    const suppressChatId = useRef<string | null>(null);
-    const openChat = useRef<((chat: { id: string; title: string; roomId: string | undefined }) => void) | null>(null);
     if (user.user && user.user.attendees.length > 0) {
         const attendee = user.user.attendees.find((x) => x.conference.slug === confSlug);
         if (attendee) {
-            return (
-                <>
-                    <ChatNotificationsProvider suppressChatId={suppressChatId} openChat={openChat} />
-                    <RightSidebarConferenceSections_Inner
-                        rootUrl={rootUrl}
-                        confSlug={confSlug}
-                        suppressChatId={suppressChatId}
-                        openChat={openChat}
-                    />
-                </>
-            );
+            return <RightSidebarConferenceSections_Inner rootUrl={rootUrl} confSlug={confSlug} />;
         }
     }
     return <></>;

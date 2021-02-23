@@ -185,7 +185,7 @@ export function ComposeContextProvider({
     const send = useCallback(
         (data?: MessageData) => {
             (async () => {
-                if (!config.currentAttendeeId || !config.currentAttendeeName) {
+                if (!config.currentAttendeeId) {
                     throw new Error("Not authorized.");
                 }
 
@@ -194,14 +194,12 @@ export function ComposeContextProvider({
                     sendQueries.send(
                         config.state.Id,
                         config.currentAttendeeId,
-                        config.currentAttendeeName,
                         newMessageType === Chat_MessageType_Enum.Message && isEmote
                             ? Chat_MessageType_Enum.Emote
                             : newMessageType,
                         newMessage,
                         data ?? newMessageData,
-                        false,
-                        config.state.Name
+                        false
                     );
 
                     setNewMessage("");
@@ -218,16 +216,7 @@ export function ComposeContextProvider({
                 }
             })();
         },
-        [
-            config.currentAttendeeId,
-            config.currentAttendeeName,
-            newMessage,
-            newMessageData,
-            newMessageType,
-            config.state.Id,
-            config.state.Name,
-            sendQueries,
-        ]
+        [config.currentAttendeeId, newMessage, newMessageData, newMessageType, config.state.Id, sendQueries]
     );
     const messageLengthRange = useMemo(
         () => ({

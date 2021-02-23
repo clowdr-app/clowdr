@@ -40,7 +40,6 @@ export function ChatSubscribedQueryProvider({
     const value: SubscribedQuery = useMemo(
         () => ({
             data,
-            error: undefined,
             loading: isSubscribed === null || config.state.IsTogglingSubscribed,
             mutate,
         }),

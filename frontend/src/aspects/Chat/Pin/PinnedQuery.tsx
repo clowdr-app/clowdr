@@ -40,7 +40,6 @@ export function ChatPinnedQueryProvider({
     const value: PinnedQuery = useMemo(
         () => ({
             data,
-            error: undefined,
             loading: isPinned === null || config.state.IsTogglingPinned,
             mutate,
         }),

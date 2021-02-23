@@ -60,9 +60,7 @@ function ChatListItem({ chat, onClick }: { chat: ChatState; onClick: () => void 
     const chatName = chat.Name;
     const [unreadCount, setUnreadCount] = useState<number>(0);
     useEffect(() => {
-        return chat.UnreadCount.subscribe((count) => {
-            setUnreadCount(count);
-        });
+        return chat.UnreadCount.subscribe(setUnreadCount);
     }, [chat.UnreadCount]);
 
     const isDM = chat.IsDM;

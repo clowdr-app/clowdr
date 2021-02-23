@@ -8,6 +8,9 @@ import {
     InitialChatStateQuery,
     InitialChatStateQueryVariables,
     InitialChatState_ChatFragment,
+    InsertReadUpToIndexDocument,
+    InsertReadUpToIndexMutation,
+    InsertReadUpToIndexMutationVariables,
     NewMessagesDocument,
     NewMessagesSubscription,
     NewMessagesSubscriptionVariables,
@@ -31,6 +34,9 @@ import {
     UnsubscribeChatDocument,
     UnsubscribeChatMutation,
     UnsubscribeChatMutationVariables,
+    UpdateReadUpToIndexDocument,
+    UpdateReadUpToIndexMutation,
+    UpdateReadUpToIndexMutationVariables,
 } from "../../generated/graphql";
 import type { Attendee } from "../Conference/useCurrentAttendee";
 import type { AnswerMessageData, AnswerReactionData, MessageData } from "./Types/Messages";
@@ -280,6 +286,36 @@ gql`
     }
 `;
 
+gql`
+    query SelectReadUpToIndex($chatId: uuid!, $attendeeId: uuid!) {
+        chat_ReadUpToIndex_by_pk(chatId: $chatId, attendeeId: $attendeeId) {
+            ...InitialChatState_ReadUpToIndex
+        }
+    }
+
+    mutation InsertReadUpToIndex($chatId: uuid!, $attendeeId: uuid!, $messageId: Int!) {
+        insert_chat_ReadUpToIndex_one(
+            object: { attendeeId: $attendeeId, chatId: $chatId, messageId: $messageId }
+            on_conflict: { constraint: ReadUpToIndex_pkey, update_columns: [messageId] }
+        ) {
+            attendeeId
+            chatId
+            messageId
+        }
+    }
+
+    mutation UpdateReadUpToIndex($chatId: uuid!, $attendeeId: uuid!, $messageId: Int!) {
+        update_chat_ReadUpToIndex_by_pk(
+            pk_columns: { attendeeId: $attendeeId, chatId: $chatId }
+            _set: { messageId: $messageId }
+        ) {
+            attendeeId
+            chatId
+            messageId
+        }
+    }
+`;
+
 export class MessageState {
     constructor(
         private readonly globalState: GlobalChatState,
@@ -370,6 +406,8 @@ export class ChatState {
         this.isSubscribed = initialState.subscriptions.length > 0;
         this.unreadCount =
             initialState.readUpToIndices.length > 0 ? initialState.readUpToIndices[0].unreadCount ?? 0 : 0;
+        this.readUpToMsgId = initialState.readUpToIndices.length > 0 ? initialState.readUpToIndices[0].messageId : -1;
+        this.readUpTo_ExistsInDb = initialState.readUpToIndices.length > 0;
 
         if (this.isSubscribed) {
             this.subscribeToMoreMessages();
@@ -378,6 +416,10 @@ export class ChatState {
 
     public async teardown(): Promise<void> {
         await this.unsubscribeFromMoreMessages(true);
+        if (this.readUpTo_TimeoutId) {
+            clearTimeout(this.readUpTo_TimeoutId);
+            this.saveReadUpToIndex();
+        }
     }
 
     public get Id(): string {
@@ -550,12 +592,14 @@ export class ChatState {
                     });
                     this.isSubscribed =
                         !!result.data?.insert_chat_Subscription && !!result.data.insert_chat_Subscription.returning;
+                    this.readUpTo_ExistsInDb = true;
                 } catch (e) {
                     if (!(e instanceof ApolloError) || !e.message.includes("uniqueness violation")) {
                         this.isSubscribed = isSubd;
                         throw e;
                     } else {
                         this.isSubscribed = true;
+                        this.readUpTo_ExistsInDb = true;
                     }
                 }
             }
@@ -747,6 +791,9 @@ export class ChatState {
     ): Promise<void> {
         const release = await this.sendMutex.acquire();
 
+        this.unreadCount = 0;
+        this.unreadCountObs.publish(0);
+
         this.isSending = true;
         this.isSendingObs.publish(this.isSending);
         try {
@@ -794,6 +841,61 @@ export class ChatState {
             release();
 
             this.isSendingObs.publish(this.isSending);
+        }
+    }
+
+    private readUpToMsgId: number;
+    private readUpTo_ExistsInDb: boolean;
+    private readUpTo_TimeoutId: number | undefined;
+    public get ReadUpToMsgId(): number {
+        return this.readUpToMsgId;
+    }
+    public setReadUpToMsgId(messageId: number): void {
+        this.readUpToMsgId = messageId;
+        this.unreadCount = 0;
+        this.unreadCountObs.publish(0);
+
+        if (!this.readUpTo_TimeoutId) {
+            this.readUpTo_TimeoutId = setTimeout(
+                (async () => {
+                    this.readUpTo_TimeoutId = undefined;
+                    await this.saveReadUpToIndex();
+                }) as TimerHandler,
+                (3 + Math.random() * 5) * 1000
+            );
+        }
+    }
+    private async saveReadUpToIndex() {
+        const messageId = this.readUpToMsgId;
+        try {
+            if (this.readUpTo_ExistsInDb) {
+                await this.globalState.apolloClient.mutate<
+                    UpdateReadUpToIndexMutation,
+                    UpdateReadUpToIndexMutationVariables
+                >({
+                    mutation: UpdateReadUpToIndexDocument,
+                    variables: {
+                        attendeeId: this.globalState.attendee.id,
+                        chatId: this.Id,
+                        messageId,
+                    },
+                });
+            } else {
+                await this.globalState.apolloClient.mutate<
+                    InsertReadUpToIndexMutation,
+                    InsertReadUpToIndexMutationVariables
+                >({
+                    mutation: InsertReadUpToIndexDocument,
+                    variables: {
+                        attendeeId: this.globalState.attendee.id,
+                        chatId: this.Id,
+                        messageId,
+                    },
+                });
+                this.readUpTo_ExistsInDb = true;
+            }
+        } catch (e) {
+            console.error(`Error saving read up to index: ${this.Id} @ ${messageId}`, e);
         }
     }
 

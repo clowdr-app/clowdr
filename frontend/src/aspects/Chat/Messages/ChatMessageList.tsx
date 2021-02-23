@@ -97,9 +97,11 @@ function MessageList({
     ...rest
 }: MessageListProps & BoxProps): JSX.Element {
     const [hasReachedEnd, setHasReachedEnd] = useState<boolean>(false);
-    const [lastRenderTime, setLastRenderTime] = useState<number>(-1);
+    const [_lastRenderTime, setLastRenderTime] = useState<number>(-1);
     const messageElements = React.useRef<JSX.Element[] | null>(null);
     const positionObservables = React.useRef<Map<number, Observable<number>>>(new Map());
+
+    const config = useChatConfiguration();
 
     useEffect(() => {
         setHasReachedEnd(false);
@@ -113,61 +115,79 @@ function MessageList({
     const ref = React.useRef<HTMLDivElement | null>(null);
     const shouldAutoScroll = React.useRef<boolean>(true);
 
-    const initMessages = useCallback((messages: MessageState[]) => {
-        setHasReachedEnd(false);
-        positionObservables.current = new Map();
-        messageElements.current = [];
-        messages.forEach((msg) => {
-            const obs = new Observable<number>((observer) => {
-                const idx = messageElements.current?.findIndex((el) => (el.key as string) === msg.id.toString());
-                if (idx !== undefined && idx !== -1) {
-                    observer(idx);
-                }
+    const initMessages = useCallback(
+        (messages: MessageState[]) => {
+            setHasReachedEnd(false);
+            positionObservables.current = new Map();
+            messageElements.current = [];
+            messages.forEach((msg) => {
+                const obs = new Observable<number>((observer) => {
+                    const idx = messageElements.current?.findIndex((el) => (el.key as string) === msg.id.toString());
+                    if (idx !== undefined && idx !== -1) {
+                        observer(idx);
+                    }
+                });
+                positionObservables.current.set(msg.id, obs);
+                messageElements.current?.push(<MessageBox key={msg.id} message={msg} positionObservable={obs} />);
             });
-            positionObservables.current.set(msg.id, obs);
-            messageElements.current?.push(<MessageBox key={msg.id} message={msg} positionObservable={obs} />);
-        });
-        setLastRenderTime(Date.now());
-    }, []);
-    const insertMessages = useCallback((messages: MessageState[], areNew: boolean) => {
-        const newMessageElements: JSX.Element[] = [];
-        messages.forEach((msg) => {
-            const obs = new Observable<number>((observer) => {
-                const idx = messageElements.current?.findIndex((el) => (el.key as string) === msg.id.toString());
-                if (idx !== undefined && idx !== -1) {
-                    observer(idx);
+            if (messageElements.current.length > 0) {
+                const latestId = messageElements.current[0].props.message.id;
+                if (config.state.ReadUpToMsgId < latestId) {
+                    config.state.setReadUpToMsgId(latestId);
                 }
+            }
+            setLastRenderTime(Date.now());
+        },
+        [config.state]
+    );
+    const insertMessages = useCallback(
+        (messages: MessageState[], areNew: boolean) => {
+            const newMessageElements: JSX.Element[] = [];
+            messages.forEach((msg) => {
+                const obs = new Observable<number>((observer) => {
+                    const idx = messageElements.current?.findIndex((el) => (el.key as string) === msg.id.toString());
+                    if (idx !== undefined && idx !== -1) {
+                        observer(idx);
+                    }
+                });
+                positionObservables.current.set(msg.id, obs);
+                newMessageElements.push(<MessageBox key={msg.id} message={msg} positionObservable={obs} />);
             });
-            positionObservables.current.set(msg.id, obs);
-            newMessageElements.push(<MessageBox key={msg.id} message={msg} positionObservable={obs} />);
-        });
 
-        if (messageElements.current) {
-            if (areNew) {
-                messageElements.current = [...newMessageElements, ...messageElements.current];
+            if (messageElements.current) {
+                if (areNew) {
+                    messageElements.current = [...newMessageElements, ...messageElements.current];
+                } else {
+                    messageElements.current = [...messageElements.current, ...newMessageElements];
+                }
             } else {
-                messageElements.current = [...messageElements.current, ...newMessageElements];
+                messageElements.current = newMessageElements;
             }
-        } else {
-            messageElements.current = newMessageElements;
-        }
-        positionObservables.current.forEach((observable, k) => {
-            const kStr = k.toString();
-            const idx = messageElements.current?.findIndex((el) => el.key === kStr);
-            if (idx !== undefined && idx !== -1) {
-                observable.publish(idx);
-            }
-        });
-
-        if (shouldAutoScroll.current) {
-            ref.current?.scroll({
-                behavior: "smooth",
-                top: 0,
+            positionObservables.current.forEach((observable, k) => {
+                const kStr = k.toString();
+                const idx = messageElements.current?.findIndex((el) => el.key === kStr);
+                if (idx !== undefined && idx !== -1) {
+                    observable.publish(idx);
+                }
             });
-        }
+            if (messageElements.current.length > 0) {
+                const latestId = messageElements.current[0].props.message.id;
+                if (config.state.ReadUpToMsgId < latestId) {
+                    config.state.setReadUpToMsgId(latestId);
+                }
+            }
 
-        setLastRenderTime(Date.now());
-    }, []);
+            if (shouldAutoScroll.current) {
+                ref.current?.scroll({
+                    behavior: "smooth",
+                    top: 0,
+                });
+            }
+
+            setLastRenderTime(Date.now());
+        },
+        [config.state]
+    );
 
     const deleteMessages = useCallback((messageIds: number[]) => {
         if (messageElements.current) {
@@ -248,17 +268,6 @@ function MessageList({
             </Observer>
         );
     }, []);
-
-    // CHAT_TODO
-    // const readUpTo = useReadUpToIndex();
-    // useEffect(() => {
-    //     if (messageElements && messageElements.length > 0) {
-    //         const latestId = messageElements[0].props.message.id;
-    //         if (readUpTo.readUpToId === undefined || readUpTo.readUpToId < latestId) {
-    //             readUpTo.setReadUpTo(latestId);
-    //         }
-    //     }
-    // }, [messageElements, readUpTo]);
 
     return (
         <Box {...rest}>

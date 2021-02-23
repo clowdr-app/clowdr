@@ -9,7 +9,6 @@ import { ChatHeading } from "../Heading/ChatHeading";
 import { ChatMessageList } from "../Messages/ChatMessageList";
 import EmojiPickerProvider from "../Messages/EmojiPickerProvider";
 import ReactionsProvider from "../Messages/ReactionsProvider";
-import ReadUpToIndexProvider from "../Messages/ReadUpToIndexProvider";
 import ReceiveMessageQueriesProvider from "../Messages/ReceiveMessageQueries";
 import ChatProfileModalProvider from "./ChatProfileModalProvider";
 import { ChatTypingIndicators } from "./ChatTypingIndicators";
@@ -51,9 +50,7 @@ export function ChatFrame({ ...rest }: BoxProps): JSX.Element {
                                     pos="relative"
                                     overflow="hidden"
                                 >
-                                    <ReadUpToIndexProvider>
-                                        <ChatMessageList pos="relative" h="100%" zIndex={1} />
-                                    </ReadUpToIndexProvider>
+                                    <ChatMessageList pos="relative" h="100%" zIndex={1} />
                                     <ChatConfigurationControls pos="absolute" top="0" left="0" w="100%" zIndex={2} />
                                 </Box>
                             </ReceiveMessageQueriesProvider>

@@ -288,7 +288,7 @@ function ChatsPanel({
     }, [globalChatState]);
     const pinnedChats = useMemo(() => (pinnedChatsMap ? [...pinnedChatsMap.values()] : undefined), [pinnedChatsMap]);
 
-    const [currentChatId, setCurrentChatId] = useState<string | null>(null);
+    const [currentChatId, _setCurrentChatId] = useState<string | null>(null);
     const [currentChat, setCurrentChat] = useState<ChatState | null>(null);
     useEffect(() => {
         let unsubscribe: undefined | (() => void);
@@ -301,6 +301,10 @@ function ChatsPanel({
             unsubscribe?.();
         };
     }, [currentChatId, globalChatState]);
+    const setCurrentChatId = useCallback((v: string | null) => {
+        setCurrentChat(null);
+        _setCurrentChatId(v);
+    }, []);
 
     openChat.current = useCallback(
         (chatId: string) => {
@@ -310,11 +314,11 @@ function ChatsPanel({
                 switchToPageChat();
             }
         },
-        [pageChatId, switchToPageChat]
+        [pageChatId, setCurrentChatId, switchToPageChat]
     );
     closeChat.current = useCallback(() => {
         setCurrentChatId(null);
-    }, []);
+    }, [setCurrentChatId]);
 
     useEffect(() => {
         onChatIdChange(currentChat?.Id ?? null);
@@ -346,7 +350,7 @@ function ChatsPanel({
             }
         }
         return undefined;
-    }, [pageChatId, pinnedChats, switchToPageChat]);
+    }, [pageChatId, pinnedChats, setCurrentChatId, switchToPageChat]);
 
     const dmPinnedChats = useMemo(() => {
         if (pinnedChats) {
@@ -372,7 +376,7 @@ function ChatsPanel({
             }
         }
         return undefined;
-    }, [pageChatId, pinnedChats, switchToPageChat]);
+    }, [pageChatId, pinnedChats, setCurrentChatId, switchToPageChat]);
 
     const nonDMPinnedChats = useMemo(() => {
         if (pinnedChats) {
@@ -398,7 +402,7 @@ function ChatsPanel({
             }
         }
         return undefined;
-    }, [pageChatId, pinnedChats, switchToPageChat]);
+    }, [pageChatId, pinnedChats, setCurrentChatId, switchToPageChat]);
 
     const peopleSearch = useMemo(
         () => (
@@ -438,12 +442,20 @@ function ChatsPanel({
                 }}
             />
         ),
-        [conference.id, createDMMutationResponse.loading, createDmMutation, pageChatId, switchToPageChat, toast]
+        [
+            conference.id,
+            createDMMutationResponse.loading,
+            createDmMutation,
+            pageChatId,
+            setCurrentChatId,
+            switchToPageChat,
+            toast,
+        ]
     );
 
     const chatEl = useMemo(() => {
-        if (currentChatId) {
-            if (currentChat && currentChat.Id !== pageChatId) {
+        if (currentChatId && currentChatId !== pageChatId) {
+            if (currentChat) {
                 return (
                     <>
                         <Chat
@@ -477,21 +489,10 @@ function ChatsPanel({
             }
         }
         return undefined;
-    }, [confSlug, currentChat, currentChatId, history, pageChatId]);
+    }, [confSlug, currentChat, currentChatId, history, pageChatId, setCurrentChatId]);
 
-    if (createDMMutationResponse.loading) {
-        return (
-            <VStack alignItems="center">
-                <Text>Setting up chat...</Text>
-                <Box>
-                    <Spinner />
-                </Box>
-            </VStack>
-        );
-    } else if (chatEl) {
-        return chatEl;
-    } else {
-        return (
+    const chatLists = useMemo(
+        () => (
             <>
                 {mandatoryPinnedChats && (
                     <>
@@ -525,7 +526,23 @@ function ChatsPanel({
                 ) : undefined}
                 {peopleSearch}
             </>
+        ),
+        [dmPinnedChats, mandatoryPinnedChats, nonDMPinnedChats, peopleSearch, pinnedChats]
+    );
+
+    if (createDMMutationResponse.loading) {
+        return (
+            <VStack alignItems="center">
+                <Text>Setting up chat...</Text>
+                <Box>
+                    <Spinner />
+                </Box>
+            </VStack>
         );
+    } else if (chatEl) {
+        return chatEl;
+    } else {
+        return chatLists;
     }
 }
 
@@ -878,20 +895,22 @@ function RightSidebarConferenceSections_Inner({
         () => itemId && <ItemChatPanel itemId={itemId} onChatIdLoaded={setPageChatId} confSlug={confSlug} />,
         [confSlug, itemId]
     );
+    const switchToPageChat = useCallback(() => {
+        setCurrentTab(RightSidebarTabs.PageChat);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
     const chatsPanel = useMemo(
         () => (
             <ChatsPanel
                 confSlug={confSlug}
                 onChatIdChange={setNonPageChatId}
                 pageChatId={pageChatId}
-                switchToPageChat={() => {
-                    setCurrentTab(RightSidebarTabs.PageChat);
-                }}
+                switchToPageChat={switchToPageChat}
                 openChat={openChatCb}
                 closeChat={closeChatCb}
             />
         ),
-        [confSlug, pageChatId, setCurrentTab]
+        [confSlug, pageChatId, switchToPageChat]
     );
     const presencePanel = useMemo(() => <PresencePanel roomId={roomId} />, [roomId]);
 

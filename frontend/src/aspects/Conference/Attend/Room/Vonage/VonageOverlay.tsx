@@ -1,17 +1,8 @@
-import { gql } from "@apollo/client";
 import { Button, HStack, Image, Text, useToast } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import { useVonageSubscriber_GetAttendeeQuery } from "../../../../../generated/graphql";
 import { useChatProfileModal } from "../../../../Chat/Frame/ChatProfileModalProvider";
 import { FAIcon } from "../../../../Icons/FAIcon";
-
-gql`
-    query VonageSubscriber_GetAttendee($id: uuid!) {
-        Attendee_by_pk(id: $id) {
-            ...AttendeeData
-        }
-    }
-`;
+import { useAttendee } from "../../../AttendeesContext";
 
 export function VonageOverlay({ connectionData }: { connectionData: string }): JSX.Element {
     const attendeeId = useMemo(() => {
@@ -24,12 +15,7 @@ export function VonageOverlay({ connectionData }: { connectionData: string }): J
         }
     }, [connectionData]);
 
-    const { data } = useVonageSubscriber_GetAttendeeQuery({
-        variables: {
-            id: attendeeId,
-        },
-        fetchPolicy: "network-only",
-    });
+    const attendee = useAttendee(attendeeId);
     const profileModal = useChatProfileModal();
     const toast = useToast();
 
@@ -46,12 +32,12 @@ export function VonageOverlay({ connectionData }: { connectionData: string }): J
             borderRadius={5}
             overflow="hidden"
             display="block"
-            aria-label={`View ${data?.Attendee_by_pk?.displayName ?? "<Loading name>"}'s profile`}
+            aria-label={`View ${attendee?.displayName ?? "<Loading name>"}'s profile`}
             onClick={() => {
-                if (data?.Attendee_by_pk?.profile) {
+                if (attendee && attendee.profile) {
                     profileModal.open({
-                        ...data.Attendee_by_pk,
-                        profile: data.Attendee_by_pk.profile,
+                        ...attendee,
+                        profile: attendee.profile,
                     });
                 } else {
                     toast({
@@ -63,23 +49,23 @@ export function VonageOverlay({ connectionData }: { connectionData: string }): J
             }}
         >
             <HStack pr={2} bgColor="rgba(0,0,0,0.6)" borderRadius="sm">
-                {data?.Attendee_by_pk?.profile?.photoURL_50x50 ? (
+                {attendee?.profile?.photoURL_50x50 ? (
                     <Image
                         borderRadius={5}
                         w="2rem"
                         h="auto"
                         objectFit="cover"
                         objectPosition="center"
-                        src={data.Attendee_by_pk.profile.photoURL_50x50}
-                        alt={`Profile picture of ${data.Attendee_by_pk.displayName}`}
+                        src={attendee?.profile.photoURL_50x50}
+                        alt={`Profile picture of ${attendee?.displayName}`}
                     />
-                ) : data?.Attendee_by_pk ? (
+                ) : attendee ? (
                     <FAIcon ml={1} iconStyle="s" icon="cat" fontSize={"22px"} />
                 ) : (
                     <></>
                 )}
                 <Text display="block" color={"gray.100"} noOfLines={1} width="100%">
-                    {data?.Attendee_by_pk?.displayName ?? "<Loading name>"}
+                    {attendee?.displayName ?? "<Loading name>"}
                 </Text>
             </HStack>
         </Button>

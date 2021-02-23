@@ -22,59 +22,21 @@ export function ChatMessageList(props: BoxProps): JSX.Element {
     const deleteMessages = React.useRef<((messageIds: number[]) => void) | null>(null);
     const setHasReachedEnd = React.useRef<((value: boolean) => void) | null>(null);
 
-    // const [selectMessagesPage, selectMessagesPageResponse] = useSelectMessagesPageLazyQuery();
-    // const [selectFirstMessagesPage, selectFirstMessagesPageResponse] = useSelectFirstMessagesPageLazyQuery();
-
     const config = useChatConfiguration();
     const chatId = config.state.Id;
     const pageSize = config.messageBatchSize ?? 30;
 
-    // const nextMessageSub = useNewMessagesSubscription({
-    //     variables: {
-    //         chatId,
-    //     },
-    // });
+    useEffect(() => {
+        config.state.subscribeToMoreMessages();
+
+        return () => {
+            config.state.unsubscribeFromMoreMessages();
+        };
+    }, [config.state]);
 
     const fetchMore = useCallback(() => {
         config.state.loadMoreMessages(pageSize);
     }, [config.state, pageSize]);
-
-    // useEffect(() => {
-    //     if (selectMessagesPageResponse.data) {
-    //         prevLastMessageId.current = lastMessageId.current;
-    //         lastMessageId.current = Math.min(
-    //             lastMessageId.current,
-    //             selectMessagesPageResponse.data.chat_Message[selectMessagesPageResponse.data.chat_Message.length - 1]
-    //                 ?.id ?? -1
-    //         );
-    //         if (prevLastMessageId.current === lastMessageId.current && setHasReachedEnd.current) {
-    //             setHasReachedEnd.current(true);
-    //         }
-    //         insertMessages.current?.([...selectMessagesPageResponse.data.chat_Message], !requestedNextPage.current);
-    //         requestedNextPage.current = false;
-    //     }
-    // }, [selectMessagesPageResponse.data]);
-
-    // useEffect(() => {
-    //     if (selectFirstMessagesPageResponse.data) {
-    //         prevLastMessageId.current = lastMessageId.current;
-    //         lastMessageId.current = Math.min(
-    //             lastMessageId.current,
-    //             selectFirstMessagesPageResponse.data.chat_Message[
-    //                 selectFirstMessagesPageResponse.data.chat_Message.length - 1
-    //             ]?.id ?? -1
-    //         );
-    //         insertMessages.current?.(
-    //             [...selectFirstMessagesPageResponse.data.chat_Message],
-    //             !requestedFirstPage.current
-    //         );
-    //         requestedFirstPage.current = false;
-
-    //         if (selectFirstMessagesPageResponse.data.chat_Message.length < batchSize && setHasReachedEnd.current) {
-    //             setHasReachedEnd.current(true);
-    //         }
-    //     }
-    // }, [batchSize, selectFirstMessagesPageResponse.data]);
 
     // useEffect(() => {
     //     if (nextMessageSub.data) {
@@ -163,96 +125,20 @@ function MessageList({
 
     const initMessages = useCallback((messages: MessageState[]) => {
         setHasReachedEnd(false);
-        setMessageElements(
-            messages.map((msg, idx) => (
-                <MessageBox key={msg.id} message={msg} subscribeToReactions={idx < reactionsBoundary} />
-            ))
-        );
+        setMessageElements(messages.map((msg) => <MessageBox key={msg.id} message={msg} />));
     }, []);
     const insertMessages = useCallback((messages: MessageState[], areNew: boolean) => {
         setMessageElements((oldEls) => {
-            // Yes, double equals not triple - React does something weird to the keys which changes their type
-            const nonDuplicates = messages.filter((msg) => !oldEls?.some((el) => el.key == msg.id));
-            // Yes, double equals not triple - React does something weird to the keys which changes their type
-            const duplicates = messages.filter((msg) => !nonDuplicates?.some((msg2) => msg2.id == msg.id));
-            const newMessageElements = nonDuplicates
-                .sort((x, y) => y.Id - x.Id)
-                .map((msg, idx) => (
-                    <MessageBox
-                        key={msg.id}
-                        message={msg}
-                        subscribeToReactions={(areNew || !oldEls) && idx < reactionsBoundary}
-                    />
-                ));
+            const newMessageElements = messages.map((msg) => <MessageBox key={msg.id} message={msg} />);
             let output;
             if (oldEls) {
                 if (areNew) {
-                    output = [
-                        ...newMessageElements,
-                        ...oldEls.map((el, idx) => {
-                            // Yes, double equals not triple - React does something weird to the keys which changes their type
-                            const newMsgIdx = duplicates.findIndex((x) => x.id == el.key);
-
-                            if (newMsgIdx !== -1) {
-                                const newMsg = duplicates[newMsgIdx];
-                                duplicates.splice(newMsgIdx, 1);
-                                return (
-                                    <MessageBox
-                                        key={el.key}
-                                        message={newMsg}
-                                        subscribeToReactions={idx + newMessageElements.length < reactionsBoundary}
-                                    />
-                                );
-                            } else if (
-                                idx < reactionsBoundary &&
-                                idx + newMessageElements.length >= reactionsBoundary
-                            ) {
-                                return (
-                                    <MessageBox key={el.key} message={el.props.message} subscribeToReactions={false} />
-                                );
-                            } else {
-                                return el;
-                            }
-                        }),
-                    ];
+                    output = [...newMessageElements, ...oldEls];
                 } else {
-                    output = [
-                        ...oldEls.map((el, idx) => {
-                            // Yes, double equals not triple - React does something weird to the keys which changes their type
-                            const newMsgIdx = duplicates.findIndex((x) => x.id == el.key);
-
-                            if (newMsgIdx !== -1) {
-                                const newMsg = duplicates[newMsgIdx];
-                                duplicates.splice(newMsgIdx, 1);
-                                return (
-                                    <MessageBox
-                                        key={el.key}
-                                        message={newMsg}
-                                        subscribeToReactions={idx < reactionsBoundary}
-                                    />
-                                );
-                            } else {
-                                return el;
-                            }
-                        }),
-                        ...newMessageElements,
-                    ];
+                    output = [...oldEls, ...newMessageElements];
                 }
             } else {
-                output = newMessageElements.map((el, idx) => {
-                    // Yes, double equals not triple - React does something weird to the keys which changes their type
-                    const newMsgIdx = duplicates.findIndex((x) => x.id == el.key);
-
-                    if (newMsgIdx !== -1) {
-                        const newMsg = duplicates[newMsgIdx];
-                        duplicates.splice(newMsgIdx, 1);
-                        return (
-                            <MessageBox key={el.key} message={newMsg} subscribeToReactions={idx < reactionsBoundary} />
-                        );
-                    } else {
-                        return el;
-                    }
-                });
+                output = newMessageElements;
             }
 
             if (shouldAutoScroll.current) {
@@ -343,7 +229,7 @@ function MessageList({
                     shouldAutoScroll.current = ev.intersectionRatio > 0;
                 }}
             >
-                <Box m={0} p={0} h={0} w="100%"></Box>
+                <Box m={0} p={0} h="1px" w="100%"></Box>
             </Observer>
         );
     }, []);

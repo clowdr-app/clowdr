@@ -1,6 +1,5 @@
 import { ApolloClient, ApolloError, gql } from "@apollo/client";
 import { Mutex } from "async-mutex";
-import * as R from "ramda";
 import {
     ChatMessageDataFragment,
     ChatReactionDataFragment,
@@ -9,6 +8,9 @@ import {
     InitialChatStateQuery,
     InitialChatStateQueryVariables,
     InitialChatState_ChatFragment,
+    NewMessagesDocument,
+    NewMessagesSubscription,
+    NewMessagesSubscriptionVariables,
     RoomPrivacy_Enum,
     SelectInitialChatStateDocument,
     SelectInitialChatStateQuery,
@@ -19,6 +21,7 @@ import {
     SubscribeChatDocument,
     SubscribeChatMutation,
     SubscribeChatMutationVariables,
+    SubscribedChatMessageDataFragment,
     UnsubscribeChatDocument,
     UnsubscribeChatMutation,
     UnsubscribeChatMutationVariables,
@@ -238,7 +241,7 @@ export class MessageState {
     constructor(
         private readonly globalState: GlobalChatState,
         private readonly chatState: ChatState,
-        private readonly initialState: ChatMessageDataFragment
+        private readonly initialState: ChatMessageDataFragment | SubscribedChatMessageDataFragment
     ) {}
 
     public get Id(): number {
@@ -274,6 +277,10 @@ export class MessageState {
     public get reactions(): ReadonlyArray<ChatReactionDataFragment> {
         return [];
     }
+
+    public updateFrom(msg: SubscribedChatMessageDataFragment): void {
+        // TODO
+    }
 }
 
 type MessageUpdate =
@@ -299,6 +306,7 @@ export class ChatState {
 
     private pinSubMutex = new Mutex();
     private messagesMutex = new Mutex();
+    private initSubscriptionMutex = new Mutex();
 
     constructor(
         private readonly globalState: GlobalChatState,
@@ -318,6 +326,14 @@ export class ChatState {
         this.isSubscribed = initialState.subscriptions.length > 0;
         this.unreadCount =
             initialState.readUpToIndices.length > 0 ? initialState.readUpToIndices[0].unreadCount ?? 0 : 0;
+
+        if (this.isSubscribed) {
+            this.subscribeToMoreMessages();
+        }
+    }
+
+    public async teardown(): Promise<void> {
+        await this.unsubscribeFromMoreMessages(true);
     }
 
     public get Id(): string {
@@ -563,11 +579,9 @@ export class ChatState {
                 });
                 if (result.data.chat_Message.length > 0) {
                     // TODO: This shouldn't ever overlap, so I don't think we need to handle updates here
-                    newMessageStates = R.reverse(
-                        result.data.chat_Message
-                            .filter((msg) => !this.messages.has(msg.id))
-                            .map((message) => new MessageState(this.globalState, this, message))
-                    );
+                    newMessageStates = result.data.chat_Message
+                        .filter((msg) => !this.messages.has(msg.id))
+                        .map((message) => new MessageState(this.globalState, this, message));
                     if (newMessageStates.length > 0) {
                         this.lastHistoricallyFetchedMessageId =
                             result.data.chat_Message.length < pageSize ? -1 : newMessageStates[0].Id;
@@ -594,6 +608,79 @@ export class ChatState {
             } else if (this.lastHistoricallyFetchedMessageId !== -1) {
                 this.mightHaveMoreMessagesObs.publish(false);
             }
+        }
+    }
+    private subscribedToMoreMessages: ZenObservable.Subscription | null = null;
+    public async subscribeToMoreMessages(): Promise<void> {
+        const release = await this.initSubscriptionMutex.acquire();
+
+        try {
+            if (!this.subscribedToMoreMessages || this.subscribedToMoreMessages.closed) {
+                const subscription = this.globalState.apolloClient.subscribe<
+                    NewMessagesSubscription,
+                    NewMessagesSubscriptionVariables
+                >({
+                    query: NewMessagesDocument,
+                    variables: {
+                        chatId: this.Id,
+                    },
+                });
+                this.subscribedToMoreMessages = subscription.subscribe(async ({ data }) => {
+                    const release = await this.messagesMutex.acquire();
+
+                    let newMessageStates: MessageState[] | undefined;
+
+                    try {
+                        if (data) {
+                            const updatedMessages = data.chat_Message.filter((msg) => this.messages.has(msg.id));
+                            updatedMessages.forEach((msg) => {
+                                const msgSt = this.messages.get(msg.id);
+                                if (msgSt) {
+                                    msgSt.updateFrom(msg);
+                                }
+                            });
+                            newMessageStates = data.chat_Message
+                                .filter((msg) => !this.messages.has(msg.id))
+                                .map((message) => new MessageState(this.globalState, this, message));
+                            newMessageStates.forEach((msg) => {
+                                this.messages.set(msg.Id, msg);
+                            });
+                        }
+                    } catch (e) {
+                        console.error(`Error processing new messages from subscription: ${this.Id}`, e);
+                    } finally {
+                        release();
+
+                        if (newMessageStates && newMessageStates.length > 0) {
+                            this.messagesObs.publish({
+                                op: "loaded_new",
+                                messages: newMessageStates,
+                            });
+                        }
+                    }
+                });
+            }
+        } catch (e) {
+            console.error(`Error subscribing to new messages: ${this.Id}`, e);
+        } finally {
+            release();
+        }
+    }
+    public async unsubscribeFromMoreMessages(force = false): Promise<void> {
+        const release = await this.initSubscriptionMutex.acquire();
+
+        try {
+            if (
+                (force || !this.isSubscribed) &&
+                this.subscribedToMoreMessages &&
+                !this.subscribedToMoreMessages.closed
+            ) {
+                this.subscribedToMoreMessages.unsubscribe();
+            }
+        } catch (e) {
+            console.error(`Error unsubscribing from new messages: ${this.Id}`, e);
+        } finally {
+            release();
         }
     }
 
@@ -689,7 +776,13 @@ export class GlobalChatState {
         const release = await this.mutex.acquire();
 
         try {
-            // TODO: Destroy observers, subscriptions, etc
+            if (this.chatStates) {
+                await Promise.all(
+                    [...this.chatStates.values()].map(async (st) => {
+                        await st.teardown();
+                    })
+                );
+            }
         } finally {
             release();
         }

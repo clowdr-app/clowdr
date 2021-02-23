@@ -380,13 +380,7 @@ function MessageBody({
     );
 }
 
-export default function MessageBox({
-    message,
-    subscribeToReactions,
-}: {
-    message: MessageState;
-    subscribeToReactions: boolean;
-}): JSX.Element {
+export default function MessageBox({ message }: { message: MessageState }): JSX.Element {
     const config = useChatConfiguration();
     const scaleFactor = config.spacing / ChatSpacing.RELAXED;
 
@@ -414,6 +408,8 @@ export default function MessageBox({
     );
 
     const attendee = useAttendee(message.senderId);
+
+    const subscribeToReactions = false; // TODO: Observe the position of this in the list of messages
 
     return message.type === Chat_MessageType_Enum.DuplicationMarker ? (
         <></>

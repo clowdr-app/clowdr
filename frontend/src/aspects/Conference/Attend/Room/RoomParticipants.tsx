@@ -32,7 +32,7 @@ export function RoomParticipants({ roomId }: { roomId: string }): JSX.Element {
             }}
         >
             {thisRoomParticipants
-                .slice(0, Math.min(thisRoomParticipants.length, numberToShow - 1))
+                .slice(0, thisRoomParticipants.length > numberToShow ? numberToShow - 1 : thisRoomParticipants.length)
                 .map((participant) => (
                     <ParticipantGridItem key={participant.id} attendeeId={participant.attendeeId} />
                 ))}

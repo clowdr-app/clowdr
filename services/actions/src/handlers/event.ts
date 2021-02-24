@@ -71,8 +71,7 @@ gql`
 
     mutation StartChatDuplication(
         $chatId1: uuid!
-        $chatId2: uuid!
-        $data: jsonb! # $message: String! # $systemId1: String!
+        $chatId2: uuid! # $data: jsonb! # $message: String! # $systemId1: String!
     ) {
         update_chat1: update_chat_Chat_by_pk(pk_columns: { id: $chatId1 }, _set: { duplicateToId: $chatId2 }) {
             id
@@ -100,9 +99,8 @@ gql`
 
     mutation EndChatDuplication(
         $chatId1: uuid!
-        $chatId2: uuid! # $data: jsonb! # $message: String! # $systemId1: String!
-    ) # $systemId2: String!
-    {
+        $chatId2: uuid! # $data: jsonb! # $message: String! # $systemId1: String! # $systemId2: String!
+    ) {
         update_chat1: update_chat_Chat_by_pk(pk_columns: { id: $chatId1 }, _set: { duplicateToId: null }) {
             id
         }
@@ -155,40 +153,40 @@ async function insertChatDuplicationMarkers(eventId: string, isStart: boolean): 
                     variables: {
                         chatId1,
                         chatId2,
-                        systemId1:
-                            chatId1 +
-                            "::" +
-                            (isStart ? "start" : "end") +
-                            "::" +
-                            (Date.parse(chatInfo.data.Event_by_pk.startTime) +
-                                (isStart ? 0 : chatInfo.data.Event_by_pk.durationSeconds)),
-                        systemId2: !isStart
-                            ? chatId2 +
-                              "::" +
-                              (isStart ? "start" : "end") +
-                              "::" +
-                              (Date.parse(chatInfo.data.Event_by_pk.startTime) +
-                                  (isStart ? 0 : chatInfo.data.Event_by_pk.durationSeconds))
-                            : undefined,
-                        message: "<<<Duplication marker>>>",
-                        data: {
-                            type: isStart ? "start" : "end",
-                            event: {
-                                id: eventId,
-                                startTime: Date.parse(chatInfo.data.Event_by_pk.startTime),
-                                durationSeconds: chatInfo.data.Event_by_pk.durationSeconds,
-                            },
-                            room: {
-                                id: chatInfo.data.Event_by_pk.room.id,
-                                name: chatInfo.data.Event_by_pk.room.name,
-                                chatId: chatInfo.data.Event_by_pk.room.chatId,
-                            },
-                            contentGroup: {
-                                id: chatInfo.data.Event_by_pk.contentGroup.id,
-                                title: chatInfo.data.Event_by_pk.contentGroup.title,
-                                chatId: chatInfo.data.Event_by_pk.contentGroup.chatId,
-                            },
-                        },
+                        // systemId1:
+                        //     chatId1 +
+                        //     "::" +
+                        //     (isStart ? "start" : "end") +
+                        //     "::" +
+                        //     (Date.parse(chatInfo.data.Event_by_pk.startTime) +
+                        //         (isStart ? 0 : chatInfo.data.Event_by_pk.durationSeconds)),
+                        // systemId2: !isStart
+                        //     ? chatId2 +
+                        //       "::" +
+                        //       (isStart ? "start" : "end") +
+                        //       "::" +
+                        //       (Date.parse(chatInfo.data.Event_by_pk.startTime) +
+                        //           (isStart ? 0 : chatInfo.data.Event_by_pk.durationSeconds))
+                        //     : undefined,
+                        // message: "<<<Duplication marker>>>",
+                        // data: {
+                        //     type: isStart ? "start" : "end",
+                        //     event: {
+                        //         id: eventId,
+                        //         startTime: Date.parse(chatInfo.data.Event_by_pk.startTime),
+                        //         durationSeconds: chatInfo.data.Event_by_pk.durationSeconds,
+                        //     },
+                        //     room: {
+                        //         id: chatInfo.data.Event_by_pk.room.id,
+                        //         name: chatInfo.data.Event_by_pk.room.name,
+                        //         chatId: chatInfo.data.Event_by_pk.room.chatId,
+                        //     },
+                        //     contentGroup: {
+                        //         id: chatInfo.data.Event_by_pk.contentGroup.id,
+                        //         title: chatInfo.data.Event_by_pk.contentGroup.title,
+                        //         chatId: chatInfo.data.Event_by_pk.contentGroup.chatId,
+                        //     },
+                        // },
                     } as StartChatDuplicationMutationVariables | EndChatDuplicationMutationVariables,
                 });
             }

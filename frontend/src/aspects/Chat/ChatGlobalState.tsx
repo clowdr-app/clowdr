@@ -466,10 +466,7 @@ export class MessageState {
     }
     public async deleteReaction(reactionId: number): Promise<void> {
         try {
-            const result = await this.globalState.apolloClient.mutate<
-                DeleteReactionMutation,
-                DeleteReactionMutationVariables
-            >({
+            await this.globalState.apolloClient.mutate<DeleteReactionMutation, DeleteReactionMutationVariables>({
                 mutation: DeleteReactionDocument,
                 variables: {
                     reactionId,
@@ -562,8 +559,8 @@ export class ChatState {
 
     public async teardown(): Promise<void> {
         await this.unsubscribeFromMoreMessages(true);
-        if (this.readUpTo_TimeoutId) {
-            clearTimeout(this.readUpTo_TimeoutId);
+        if (this.readUpTo_Timeout) {
+            clearTimeout(this.readUpTo_Timeout.id);
             await this.saveReadUpToIndex();
         }
         await this.teardownUnreadCountPolling();
@@ -1209,7 +1206,7 @@ export class ChatState {
 
     private readUpToMsgId: number;
     private readUpTo_ExistsInDb: boolean;
-    private readUpTo_TimeoutId: number | undefined;
+    private readUpTo_Timeout: { id: number; period: number } | undefined;
     public get ReadUpToMsgId(): number {
         return this.readUpToMsgId;
     }
@@ -1221,14 +1218,33 @@ export class ChatState {
         this.saveReadUpToIndex_SetupTimeout();
     }
     private async saveReadUpToIndex_SetupTimeout() {
-        if (!this.readUpTo_TimeoutId) {
-            this.readUpTo_TimeoutId = setTimeout(
-                (async () => {
-                    this.readUpTo_TimeoutId = undefined;
-                    await this.saveReadUpToIndex();
-                }) as TimerHandler,
-                (3 + Math.random() * 5) * 1000
-            );
+        if (!this.readUpTo_Timeout) {
+            const period = (3 + Math.random() * 2) * 1000;
+            this.readUpTo_Timeout = {
+                id: setTimeout(
+                    (async () => {
+                        this.readUpTo_Timeout = undefined;
+                        await this.saveReadUpToIndex();
+                    }) as TimerHandler,
+                    period
+                ),
+                period,
+            };
+            // Backoff the frequency of updates if lots of messages are being sent
+        } else if (this.readUpTo_Timeout.period < 20000) {
+            const dist = 20000 - this.readUpTo_Timeout.period;
+            const period = this.readUpTo_Timeout.period + Math.round(dist / 2);
+            clearTimeout(this.readUpTo_Timeout.id);
+            this.readUpTo_Timeout = {
+                id: setTimeout(
+                    (async () => {
+                        this.readUpTo_Timeout = undefined;
+                        await this.saveReadUpToIndex();
+                    }) as TimerHandler,
+                    period
+                ),
+                period,
+            };
         }
     }
     private async saveReadUpToIndex() {

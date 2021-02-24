@@ -46,6 +46,7 @@ import {
     useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery,
     useUploadYouTubeVideos_RefreshYouTubeDataMutation,
 } from "../../../../generated/graphql";
+import { useRestorableState } from "../../../Generic/useRestorableState";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";
@@ -402,6 +403,19 @@ export function UploadYouTubeVideos(): JSX.Element {
         return errors.join(" ");
     }, []);
 
+    const [youTubeTitleTemplate, setYouTubeTitleTemplate] = useRestorableState(
+        "clowdr-youTubeTitleTemplate",
+        "{{fileName}}",
+        (x) => x,
+        (x) => x
+    );
+    const [youTubeDescriptionTemplate, setYouTubeDescriptionTemplate] = useRestorableState(
+        "clowdr-youTubeDescriptionTemplate",
+        "{{abstract}}",
+        (x) => x,
+        (x) => x
+    );
+
     return (
         <>
             <HStack alignItems="flex-start">
@@ -420,8 +434,8 @@ export function UploadYouTubeVideos(): JSX.Element {
                         initialValues={{
                             contentItemIds: [],
                             attendeeGoogleAccountId: null,
-                            titleTemplate: "{{fileName}}",
-                            descriptionTemplate: "{{abstract}}",
+                            titleTemplate: youTubeTitleTemplate,
+                            descriptionTemplate: youTubeDescriptionTemplate,
                             channelId: null,
                             playlistId: null,
                             videoPrivacyStatus: "unlisted",
@@ -497,6 +511,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                                     title: "Starting upload to YouTube",
                                 });
                                 actions.resetForm();
+                                setAttendeeGoogleAccountId(null);
                                 await existingJobsResult.refetch();
                             } catch (e) {
                                 console.error("Error while creating YouTube upload jobs", e);
@@ -508,7 +523,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                             }
                         }}
                     >
-                        {({ isSubmitting, values }) => {
+                        {({ isSubmitting, isValid, values, touched }) => {
                             if (!R.isEmpty(R.symmetricDifference(values.contentItemIds, contentItemIds))) {
                                 setContentItemIds(values.contentItemIds);
                             }
@@ -724,6 +739,10 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                     id="titleTemplate"
                                                     placeholder="{{fileName}}"
                                                     mt={2}
+                                                    onChange={(event) => {
+                                                        setYouTubeTitleTemplate(event.target.value);
+                                                        field.onChange(event);
+                                                    }}
                                                 />
                                                 <FormErrorMessage>{form.errors.titleTemplate}</FormErrorMessage>
                                             </FormControl>
@@ -746,6 +765,10 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                     id="descriptionTemplate"
                                                     placeholder="{{abstract}}"
                                                     mt={2}
+                                                    onChange={(event) => {
+                                                        setYouTubeDescriptionTemplate(event.target.value);
+                                                        field.onChange(event);
+                                                    }}
                                                 />
                                                 <FormErrorMessage>{form.errors.descriptionTemplate}</FormErrorMessage>
                                             </FormControl>
@@ -1017,7 +1040,13 @@ export function UploadYouTubeVideos(): JSX.Element {
                                         }
                                     />
 
-                                    <Button type="submit" isLoading={isSubmitting} mt={4} colorScheme="green">
+                                    <Button
+                                        type="submit"
+                                        isLoading={isSubmitting}
+                                        isDisabled={!isValid || !touched}
+                                        mt={4}
+                                        colorScheme="green"
+                                    >
                                         Upload videos
                                     </Button>
                                 </Form>

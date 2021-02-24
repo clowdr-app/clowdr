@@ -817,7 +817,9 @@ export class ChatState {
                         .map((message) => new MessageState(this.globalState, this, message));
                     if (newMessageStates.length > 0) {
                         this.lastHistoricallyFetchedMessageId =
-                            result.data.chat_Message.length < pageSize ? -1 : newMessageStates[0].id;
+                            result.data.chat_Message.length === 0
+                                ? -1
+                                : newMessageStates[newMessageStates.length - 1].id;
                         newMessageStates.forEach((state) => {
                             this.messages.set(state.id, state);
                         });

@@ -47,7 +47,7 @@ import { ChatState } from "../Chat/ChatGlobalState";
 import { useGlobalChatState } from "../Chat/GlobalChatStateProvider";
 import { useAttendee } from "../Conference/AttendeesContext";
 import { useConference } from "../Conference/useConference";
-import type { Attendee } from "../Conference/useCurrentAttendee";
+import { Attendee, useMaybeCurrentAttendee } from "../Conference/useCurrentAttendee";
 import { useRestorableState } from "../Generic/useRestorableState";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
 import FAIcon from "../Icons/FAIcon";
@@ -147,6 +147,7 @@ function PeopleSearch({ createDM }: { createDM: (attendeeId: string) => void }):
     const [search, setSearch] = useState<string>("");
 
     const conference = useConference();
+    const attendee = useMaybeCurrentAttendee();
 
     const [
         searchQuery,
@@ -223,7 +224,9 @@ function PeopleSearch({ createDM }: { createDM: (attendeeId: string) => void }):
             </FormControl>
             <AttendeesList
                 createDM={createDM}
-                searchedAttendees={searched && search.length > 0 ? searched : undefined}
+                searchedAttendees={
+                    searched && search.length > 0 ? searched.filter((x) => x.id !== attendee?.id) : undefined
+                }
             />
         </>
     );

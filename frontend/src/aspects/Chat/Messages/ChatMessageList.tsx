@@ -124,6 +124,9 @@ function MessageList({
                 positionObservables.current.set(msg.id, obs);
                 messageElements.current?.push(<MessageBox key={msg.id} message={msg} positionObservable={obs} />);
             });
+            // CHAT_TODO: Only set read up to index if that chat is actually selected in the sidebar (i.e. is visible)
+            // However, this also means updating the read up to index when the chat becomes visible, which this code
+            // wouldn't currently achieve
             if (messageElements.current.length > 0) {
                 const latestId = messageElements.current[0].props.message.id;
                 if (config.state.ReadUpToMsgId < latestId) {
@@ -164,6 +167,9 @@ function MessageList({
                     observable.publish(idx);
                 }
             });
+            // CHAT_TODO: Only set read up to index if that chat is actually selected in the sidebar (i.e. is visible)
+            // However, this also means updating the read up to index when the chat becomes visible, which this code
+            // wouldn't currently achieve
             if (messageElements.current.length > 0) {
                 const latestId = messageElements.current[0].props.message.id;
                 if (config.state.ReadUpToMsgId < latestId) {

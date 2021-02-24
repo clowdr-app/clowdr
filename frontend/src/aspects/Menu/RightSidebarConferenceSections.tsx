@@ -236,6 +236,7 @@ function ChatsPanel({
     switchToPageChat,
     openChat,
     closeChat,
+    setUnread,
 }: {
     confSlug: string;
     onChatIdChange: (id: string | null) => void;
@@ -243,11 +244,32 @@ function ChatsPanel({
     switchToPageChat: () => void;
     openChat: React.MutableRefObject<((chatId: string) => void) | null>;
     closeChat: React.MutableRefObject<(() => void) | null>;
+    setUnread: (v: number) => void;
 }): JSX.Element {
     const conference = useConference();
     const toast = useToast();
     const [pinnedChatsMap, setPinnedChatsMap] = useState<Map<string, ChatState> | null>(null);
+    const unreadCountsRef = React.useRef<Map<string, number>>(new Map());
     const [createDmMutation, createDMMutationResponse] = useCreateDmMutation();
+
+    useEffect(() => {
+        let unsubs: (() => void)[] = [];
+
+        if (pinnedChatsMap) {
+            unsubs = [...pinnedChatsMap.values()].map((chat) =>
+                chat.UnreadCount.subscribe((count) => {
+                    unreadCountsRef.current.set(chat.Id, count);
+
+                    const total = [...unreadCountsRef.current.values()].reduce((acc, x) => acc + x);
+                    setUnread(total);
+                })
+            );
+        }
+
+        return () => {
+            unsubs.forEach((unsub) => unsub());
+        };
+    }, [pinnedChatsMap, setUnread]);
 
     const globalChatState = useGlobalChatState();
     useEffect(() => {
@@ -575,9 +597,11 @@ gql`
 function RoomChatPanel({
     roomId,
     onChatIdLoaded,
+    setUnread,
 }: {
     roomId: string;
     onChatIdLoaded: (chatId: string) => void;
+    setUnread: (v: number) => void;
 }): JSX.Element {
     const { loading, error, data } = useGetRoomChatIdQuery({
         variables: {
@@ -606,6 +630,16 @@ function RoomChatPanel({
             onChatIdLoaded(chat.Id);
         }
     }, [onChatIdLoaded, chat?.Id]);
+
+    useEffect(() => {
+        let unsubscribe: (() => void) | undefined;
+        if (chat) {
+            unsubscribe = chat.UnreadCount.subscribe(setUnread);
+        }
+        return () => {
+            unsubscribe?.();
+        };
+    }, [chat, setUnread]);
 
     if (loading || chat === undefined) {
         return <Spinner label="Loading room chat" />;
@@ -655,10 +689,12 @@ function ItemChatPanel({
     itemId,
     confSlug,
     onChatIdLoaded,
+    setUnread,
 }: {
     itemId: string;
     confSlug: string;
     onChatIdLoaded: (chatId: string) => void;
+    setUnread: (v: number) => void;
 }): JSX.Element {
     const { loading, error, data } = useGetContentGroupChatIdQuery({
         variables: {
@@ -687,6 +723,16 @@ function ItemChatPanel({
             onChatIdLoaded(chat.Id);
         }
     }, [onChatIdLoaded, chat?.Id]);
+
+    useEffect(() => {
+        let unsubscribe: (() => void) | undefined;
+        if (chat) {
+            unsubscribe = chat.UnreadCount.subscribe(setUnread);
+        }
+        return () => {
+            unsubscribe?.();
+        };
+    }, [chat, setUnread]);
 
     const history = useHistory();
 
@@ -888,11 +934,23 @@ function RightSidebarConferenceSections_Inner({
     );
     const closeChatCb = useRef<(() => void) | null>(null);
 
-    const roomPanel = useMemo(() => roomId && <RoomChatPanel roomId={roomId} onChatIdLoaded={setPageChatId} />, [
-        roomId,
-    ]);
+    const [pageChatUnread, setPageChatUnread] = useState<number>(0);
+    const [chatsUnread, setChatsUnread] = useState<number>(0);
+
+    const roomPanel = useMemo(
+        () => roomId && <RoomChatPanel roomId={roomId} onChatIdLoaded={setPageChatId} setUnread={setPageChatUnread} />,
+        [roomId]
+    );
     const itemPanel = useMemo(
-        () => itemId && <ItemChatPanel itemId={itemId} onChatIdLoaded={setPageChatId} confSlug={confSlug} />,
+        () =>
+            itemId && (
+                <ItemChatPanel
+                    itemId={itemId}
+                    onChatIdLoaded={setPageChatId}
+                    confSlug={confSlug}
+                    setUnread={setPageChatUnread}
+                />
+            ),
         [confSlug, itemId]
     );
     const switchToPageChat = useCallback(() => {
@@ -908,6 +966,7 @@ function RightSidebarConferenceSections_Inner({
                 switchToPageChat={switchToPageChat}
                 openChat={openChatCb}
                 closeChat={closeChatCb}
+                setUnread={setChatsUnread}
             />
         ),
         [confSlug, pageChatId, switchToPageChat]
@@ -958,9 +1017,9 @@ function RightSidebarConferenceSections_Inner({
             onChange={onChangeTab}
         >
             <TabList py={2}>
-                {roomId && <Tab>Room</Tab>}
-                {itemId && <Tab>Item</Tab>}
-                <Tab>Chats</Tab>
+                {roomId && <Tab>Room{pageChatUnread > 0 ? ` (${pageChatUnread})` : ""}</Tab>}
+                {itemId && <Tab>Item{pageChatUnread > 0 ? ` (${pageChatUnread})` : ""}</Tab>}
+                <Tab>Chats{chatsUnread > 0 ? ` (${chatsUnread})` : ""}</Tab>
                 <Tab>Who&apos;s here</Tab>
             </TabList>
 

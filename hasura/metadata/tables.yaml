@@ -2389,6 +2389,8 @@
         - conference:
             createdBy:
               _eq: X-Hasura-User-Id
+        - key:
+            _eq: CLOWDR_APP_VERSION
   update_permissions:
   - role: user
     permission:

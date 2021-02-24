@@ -35,6 +35,9 @@ import {
     InsertReadUpToIndexDocument,
     InsertReadUpToIndexMutation,
     InsertReadUpToIndexMutationVariables,
+    MessageReactionsDocument,
+    MessageReactionsSubscription,
+    MessageReactionsSubscriptionVariables,
     NewMessagesDocument,
     NewMessagesSubscription,
     NewMessagesSubscriptionVariables,
@@ -45,9 +48,9 @@ import {
     SelectMessagesPageDocument,
     SelectMessagesPageQuery,
     SelectMessagesPageQueryVariables,
-    SelectReadUpToIndexDocument,
-    SelectReadUpToIndexQuery,
-    SelectReadUpToIndexQueryVariables,
+    SelectReadUpToIndicesDocument,
+    SelectReadUpToIndicesQuery,
+    SelectReadUpToIndicesQueryVariables,
     SendChatMessageDocument,
     SendChatMessageMutation,
     SendChatMessageMutationVariables,
@@ -230,6 +233,7 @@ gql`
         senderId
         symbol
         type
+        messageId
     }
 
     fragment ChatMessageData on chat_Message {
@@ -307,8 +311,8 @@ gql`
 `;
 
 gql`
-    query SelectReadUpToIndex($chatId: uuid!, $attendeeId: uuid!) {
-        chat_ReadUpToIndex_by_pk(chatId: $chatId, attendeeId: $attendeeId) {
+    query SelectReadUpToIndices($chatIds: [uuid!]!, $attendeeId: uuid!) {
+        chat_ReadUpToIndex(where: { chatId: { _in: $chatIds }, attendeeId: { _eq: $attendeeId } }) {
             ...InitialChatState_ReadUpToIndex
         }
     }
@@ -364,18 +368,9 @@ gql`
 `;
 
 gql`
-    fragment SubscribedChatReactionData on chat_Reaction {
-        data
-        id
-        senderId
-        symbol
-        type
-        messageId
-    }
-
     subscription MessageReactions($messageIds: [Int!]!) {
         chat_Reaction(where: { messageId: { _in: $messageIds } }) {
-            ...SubscribedChatReactionData
+            ...ChatReactionData
         }
     }
 `;
@@ -436,7 +431,7 @@ export class MessageState {
 
     private reactions: ChatReactionDataFragment[];
     private reactionsObs = new Observable<ChatReactionDataFragment[]>((observer) => {
-        observer(this.reactions);
+        observer([...this.reactions]);
     });
     public async addReaction(reaction: Chat_Reaction_Insert_Input): Promise<void> {
         try {
@@ -486,15 +481,16 @@ export class MessageState {
     }
 
     public async startReactionsSubscription(): Promise<void> {
-        // CHAT_TODO
+        await this.globalState.addMessageIdForReactionSubscription(this);
     }
     public async endReactionsSubscription(): Promise<void> {
-        // CHAT_TODO
+        await this.globalState.addMessageIdForReactionSubscription(this);
     }
 
-    // public updateFrom(msg: SubscribedChatMessageDataFragment): void {
-    //     // CHAT_TODO: Apply changes
-    // }
+    public updateReactions(reactions: ChatReactionDataFragment[]): void {
+        this.reactions = reactions;
+        this.reactionsObs.publish([...this.reactions]);
+    }
 }
 
 type MessageUpdate =
@@ -522,8 +518,6 @@ export class ChatState {
     private messagesMutex = new Mutex();
     private initSubscriptionMutex = new Mutex();
     private sendMutex = new Mutex();
-    private unreadCountPollMutex = new Mutex();
-    private unreadCountMutex = new Mutex();
 
     constructor(
         private readonly globalState: GlobalChatState,
@@ -551,10 +545,6 @@ export class ChatState {
         if (this.isSubscribed) {
             this.subscribeToMoreMessages();
         }
-
-        if (this.isPinned) {
-            this.setupUnreadCountPolling();
-        }
     }
 
     public async teardown(): Promise<void> {
@@ -563,7 +553,6 @@ export class ChatState {
             clearTimeout(this.readUpTo_Timeout.id);
             await this.saveReadUpToIndex();
         }
-        await this.teardownUnreadCountPolling();
     }
 
     public get Id(): string {
@@ -629,10 +618,6 @@ export class ChatState {
         this.isPinned = !this.isPinned;
         this.isPinnedObs.publish(this.isPinned);
 
-        if (!this.isPinned) {
-            await this.teardownUnreadCountPolling();
-        }
-
         const release = await this.pinSubMutex.acquire();
         this.isTogglingPinned = true;
 
@@ -686,10 +671,10 @@ export class ChatState {
 
             this.isPinnedObs.publish(this.isPinned);
         }
+    }
 
-        if (this.isPinned) {
-            await this.setupUnreadCountPolling();
-        }
+    public get isPinned_InternalUseOnly(): boolean {
+        return this.isPinned;
     }
 
     private isSubscribed: boolean;
@@ -772,77 +757,6 @@ export class ChatState {
     public get UnreadCount(): Observable<number> {
         return this.unreadCountObs;
     }
-    private unreadCount_IntervalId: number | undefined;
-    private async setupUnreadCountPolling() {
-        const release = await this.unreadCountPollMutex.acquire();
-
-        try {
-            if (this.unreadCount_IntervalId === undefined) {
-                this.unreadCount_IntervalId = setInterval(
-                    (() => {
-                        this.pollUnreadCount();
-                    }) as TimerHandler,
-                    30 * 1000
-                );
-            }
-        } catch (e) {
-            console.error(`Failed to setup polling unread count: ${this.Id}`, e);
-        } finally {
-            release();
-        }
-    }
-    private async teardownUnreadCountPolling() {
-        const release = await this.unreadCountPollMutex.acquire();
-
-        try {
-            if (this.unreadCount_IntervalId === undefined) {
-                clearInterval(this.unreadCount_IntervalId);
-            }
-        } catch (e) {
-            console.error(`Failed to tear down polling unread count: ${this.Id}`, e);
-        } finally {
-            release();
-        }
-    }
-    private async pollUnreadCount() {
-        const release = await this.unreadCountMutex.acquire();
-
-        let newData: { count: number; latestNotifiedIndex: number; readUpToMsgId: number } | undefined;
-        try {
-            const result = await this.globalState.apolloClient.query<
-                SelectReadUpToIndexQuery,
-                SelectReadUpToIndexQueryVariables
-            >({
-                query: SelectReadUpToIndexDocument,
-                variables: {
-                    attendeeId: this.globalState.attendee.id,
-                    chatId: this.Id,
-                },
-            });
-            if (result.data.chat_ReadUpToIndex_by_pk) {
-                newData = {
-                    count: result.data.chat_ReadUpToIndex_by_pk.unreadCount ?? this.unreadCount,
-                    latestNotifiedIndex: result.data.chat_ReadUpToIndex_by_pk.notifiedUpToMessageId,
-                    readUpToMsgId: result.data.chat_ReadUpToIndex_by_pk.messageId,
-                };
-            }
-        } catch (e) {
-            console.error(`Failed to fetch unread count for: ${this.Id}`, e);
-        } finally {
-            release();
-
-            if (newData !== undefined) {
-                this.latestNotifiedIndex = Math.max(this.latestNotifiedIndex, newData.latestNotifiedIndex);
-                if (this.readUpToMsgId < newData.readUpToMsgId) {
-                    this.readUpToMsgId = newData.readUpToMsgId;
-                    if (this.unreadCount !== newData.count) {
-                        this.unreadCount = newData.count;
-                        this.unreadCountObs.publish(this.unreadCount);
-                    }
-                }
-            }
-        }
-    }
 
     private messages = new Map<number, MessageState>();
     private lastHistoricallyFetchedMessageId = Math.pow(2, 31) - 1;
@@ -889,7 +803,15 @@ export class ChatState {
                     },
                 });
                 if (result.data.chat_Message.length > 0) {
-                    // TODO: This shouldn't ever overlap, so I don't think we need to handle updates here
+                    result.data.chat_Message.forEach((msg) => {
+                        const existing = this.messages.get(msg.id);
+                        if (existing) {
+                            // This mostly only happens when the subscription initially
+                            // pulls in data faster than selecting the first page does
+                            existing.updateReactions([...msg.reactions]);
+                        }
+                    });
+
                     newMessageStates = result.data.chat_Message
                         .filter((msg) => !this.messages.has(msg.id))
                         .map((message) => new MessageState(this.globalState, this, message));
@@ -990,6 +912,7 @@ export class ChatState {
                 !this.subscribedToMoreMessages.closed
             ) {
                 this.subscribedToMoreMessages.unsubscribe();
+                this.subscribedToMoreMessages = null;
             }
         } catch (e) {
             console.error(`Error unsubscribing from new messages: ${this.Id}`, e);
@@ -1206,7 +1129,7 @@ export class ChatState {
 
     private readUpToMsgId: number;
     private readUpTo_ExistsInDb: boolean;
-    private readUpTo_Timeout: { id: number; period: number } | undefined;
+    private readUpTo_Timeout: { id: number; firstTimestampMs: number } | undefined;
     public get ReadUpToMsgId(): number {
         return this.readUpToMsgId;
     }
@@ -1228,12 +1151,12 @@ export class ChatState {
                     }) as TimerHandler,
                     period
                 ),
-                period,
+                firstTimestampMs: Date.now(),
             };
             // Backoff the frequency of updates if lots of messages are being sent
-        } else if (this.readUpTo_Timeout.period < 20000) {
-            const dist = 20000 - this.readUpTo_Timeout.period;
-            const period = this.readUpTo_Timeout.period + Math.round(dist / 2);
+        } else if (Date.now() - this.readUpTo_Timeout.firstTimestampMs < 20000) {
+            const dist = 20000 - (Date.now() - this.readUpTo_Timeout.firstTimestampMs);
+            const period = Math.max(2, Math.round(dist / 2));
             clearTimeout(this.readUpTo_Timeout.id);
             this.readUpTo_Timeout = {
                 id: setTimeout(
@@ -1243,7 +1166,7 @@ export class ChatState {
                     }) as TimerHandler,
                     period
                 ),
-                period,
+                firstTimestampMs: this.readUpTo_Timeout.firstTimestampMs,
             };
         }
     }
@@ -1281,6 +1204,20 @@ export class ChatState {
             }
         } catch (e) {
             console.error(`Error saving read up to index: ${this.Id} @ ${messageId} / ${notifiedUpToMessageId}`, e);
+        }
+    }
+    public updateReadUpToIdx(newData: {
+        count: number | undefined;
+        latestNotifiedIndex: number;
+        readUpToMsgId: number;
+    }): void {
+        this.latestNotifiedIndex = Math.max(this.latestNotifiedIndex, newData.latestNotifiedIndex);
+        if (this.readUpToMsgId < newData.readUpToMsgId) {
+            this.readUpToMsgId = newData.readUpToMsgId;
+            if (newData.count !== undefined && this.unreadCount !== newData.count) {
+                this.unreadCount = newData.count;
+                this.unreadCountObs.publish(this.unreadCount);
+            }
         }
     }
 
@@ -1369,6 +1306,9 @@ export class GlobalChatState {
             });
 
             this.chatStatesObs.publish(this.chatStates);
+
+            await this.setupUnreadCountPolling();
+            await this.setupReactionsSubscription();
         } catch (e) {
             console.error("Failed to initialise chat state", e);
         } finally {
@@ -1380,6 +1320,9 @@ export class GlobalChatState {
         const release = await this.mutex.acquire();
 
         try {
+            await this.teardownReactionsSubscription();
+            await this.teardownUnreadCountPolling();
+
             if (this.chatStates) {
                 await Promise.all(
                     [...this.chatStates.values()].map(async (st) => {
@@ -1424,6 +1367,197 @@ export class GlobalChatState {
             }
         } catch (e) {
             console.error(`Failed to fetch chat: ${chatId}`, e);
+        }
+    }
+
+    private unreadCountPollMutex = new Mutex();
+    private unreadCountMutex = new Mutex();
+    private unreadCount_IntervalId: number | undefined;
+    private async setupUnreadCountPolling() {
+        const release = await this.unreadCountPollMutex.acquire();
+
+        try {
+            if (this.unreadCount_IntervalId === undefined) {
+                this.unreadCount_IntervalId = setInterval(
+                    (() => {
+                        this.pollUnreadCount();
+                    }) as TimerHandler,
+                    30 * 1000
+                );
+            }
+        } catch (e) {
+            console.error("Failed to setup polling unread count", e);
+        } finally {
+            release();
+        }
+    }
+    private async teardownUnreadCountPolling() {
+        const release = await this.unreadCountPollMutex.acquire();
+
+        try {
+            if (this.unreadCount_IntervalId === undefined) {
+                clearInterval(this.unreadCount_IntervalId);
+            }
+        } catch (e) {
+            console.error("Failed to tear down polling unread count", e);
+        } finally {
+            release();
+        }
+    }
+    private async pollUnreadCount() {
+        const release = await this.unreadCountMutex.acquire();
+
+        const newDatas = new Map<
+            string,
+            { count: number | undefined; latestNotifiedIndex: number; readUpToMsgId: number }
+        >();
+        try {
+            if (this.chatStates) {
+                const chatIds = [...this.chatStates.values()]
+                    .filter((x) => x.isPinned_InternalUseOnly)
+                    .map((x) => x.Id);
+                if (chatIds.length > 0) {
+                    const result = await this.apolloClient.query<
+                        SelectReadUpToIndicesQuery,
+                        SelectReadUpToIndicesQueryVariables
+                    >({
+                        query: SelectReadUpToIndicesDocument,
+                        variables: {
+                            attendeeId: this.attendee.id,
+                            chatIds,
+                        },
+                    });
+                    if (result.data.chat_ReadUpToIndex) {
+                        for (const index of result.data.chat_ReadUpToIndex) {
+                            const chatState = this.chatStates.get(index.chatId);
+                            if (chatState) {
+                                newDatas.set(index.chatId, {
+                                    count: index.unreadCount ?? undefined,
+                                    latestNotifiedIndex: index.notifiedUpToMessageId,
+                                    readUpToMsgId: index.messageId,
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (e) {
+            console.error("Failed to fetch unread counts", e);
+        } finally {
+            release();
+
+            for (const [chatId, newData] of newDatas) {
+                const chatState = this.chatStates?.get(chatId);
+                if (chatState) {
+                    chatState.updateReadUpToIdx(newData);
+                }
+            }
+        }
+    }
+
+    private reactionsSubscription_MessagesMutex = new Mutex();
+    private reactionsSubscription_SetupMutex = new Mutex();
+    private reactionsSubscription_Messages = new Map<number, MessageState>();
+    private reactionsSubscription_ReconfigureTimeoutId: number | undefined;
+    private reactionsSubscription: ZenObservable.Subscription | null = null;
+
+    public async addMessageIdForReactionSubscription(msg: MessageState): Promise<void> {
+        const release = await this.reactionsSubscription_MessagesMutex.acquire();
+
+        try {
+            this.reactionsSubscription_Messages.set(msg.id, msg);
+            await this.reconfigureReactionsSubscription();
+        } catch (e) {
+            console.error(`Failed to add message to reactions subscription: ${msg.id}`, e);
+        } finally {
+            release();
+        }
+    }
+    public async removeMessageIdForReactionSubscription(msg: MessageState): Promise<void> {
+        const release = await this.reactionsSubscription_MessagesMutex.acquire();
+
+        try {
+            this.reactionsSubscription_Messages.delete(msg.id);
+            await this.reconfigureReactionsSubscription();
+        } catch (e) {
+            console.error(`Failed to remove message from reactions subscription: ${msg.id}`, e);
+        } finally {
+            release();
+        }
+    }
+    private async reconfigureReactionsSubscription(): Promise<void> {
+        if (this.reactionsSubscription_ReconfigureTimeoutId !== undefined) {
+            clearTimeout(this.reactionsSubscription_ReconfigureTimeoutId);
+        }
+
+        this.reactionsSubscription_ReconfigureTimeoutId = setTimeout(
+            (async () => {
+                await this.teardownReactionsSubscription();
+                await this.setupReactionsSubscription();
+            }) as TimerHandler,
+            1500
+        );
+    }
+    private async setupReactionsSubscription(): Promise<void> {
+        const release = await this.reactionsSubscription_SetupMutex.acquire();
+
+        try {
+            if (!this.reactionsSubscription) {
+                const messageIds = [...this.reactionsSubscription_Messages.values()].map((x) => x.id);
+                if (messageIds.length > 0) {
+                    const sub = this.apolloClient.subscribe<
+                        MessageReactionsSubscription,
+                        MessageReactionsSubscriptionVariables
+                    >({
+                        query: MessageReactionsDocument,
+                        variables: {
+                            messageIds,
+                        },
+                    });
+                    this.reactionsSubscription = sub.subscribe(({ data }) => {
+                        try {
+                            if (data?.chat_Reaction) {
+                                const messageReactions = new Map<number, ChatReactionDataFragment[]>();
+                                for (const reaction of data.chat_Reaction) {
+                                    let existing = messageReactions.get(reaction.messageId);
+                                    if (!existing) {
+                                        existing = [];
+                                        messageReactions.set(reaction.messageId, existing);
+                                    }
+                                    existing.push(reaction);
+                                }
+
+                                for (const [msgId, reactions] of messageReactions) {
+                                    const msg = this.reactionsSubscription_Messages.get(msgId);
+                                    if (msg) {
+                                        msg.updateReactions(reactions);
+                                    }
+                                }
+                            }
+                        } catch (e) {
+                            console.error("Error updating reactions", e);
+                        }
+                    });
+                }
+            }
+        } catch (e) {
+            console.error("Failed to setup reactions subscriptions", e);
+        } finally {
+            release();
+        }
+    }
+    private async teardownReactionsSubscription(): Promise<void> {
+        const release = await this.reactionsSubscription_SetupMutex.acquire();
+
+        try {
+            if (this.reactionsSubscription) {
+                this.reactionsSubscription.unsubscribe();
+                this.reactionsSubscription = null;
+            }
+        } catch (e) {
+            console.error("Failed to teardown reactions subscriptions", e);
+        } finally {
+            release();
         }
     }
 }

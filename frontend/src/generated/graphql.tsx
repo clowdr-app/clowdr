@@ -31386,7 +31386,7 @@ export type UnpinChatMutationVariables = Exact<{
 
 export type UnpinChatMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Pin_by_pk?: Maybe<{ readonly __typename?: 'chat_Pin', readonly attendeeId: any, readonly chatId: any }> };
 
-export type ChatReactionDataFragment = { readonly __typename?: 'chat_Reaction', readonly data: any, readonly id: number, readonly senderId: any, readonly symbol: string, readonly type: Chat_ReactionType_Enum };
+export type ChatReactionDataFragment = { readonly __typename?: 'chat_Reaction', readonly data: any, readonly id: number, readonly senderId: any, readonly symbol: string, readonly type: Chat_ReactionType_Enum, readonly messageId: number };
 
 export type ChatMessageDataFragment = { readonly __typename?: 'chat_Message', readonly created_at: any, readonly data: any, readonly duplicatedMessageId?: Maybe<number>, readonly id: number, readonly message: string, readonly senderId?: Maybe<any>, readonly type: Chat_MessageType_Enum, readonly chatId: any, readonly reactions: ReadonlyArray<(
     { readonly __typename?: 'chat_Reaction' }
@@ -31441,13 +31441,13 @@ export type SendChatAnswerMutationVariables = Exact<{
 
 export type SendChatAnswerMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Reaction_one?: Maybe<{ readonly __typename?: 'chat_Reaction', readonly id: number }> };
 
-export type SelectReadUpToIndexQueryVariables = Exact<{
-  chatId: Scalars['uuid'];
+export type SelectReadUpToIndicesQueryVariables = Exact<{
+  chatIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
   attendeeId: Scalars['uuid'];
 }>;
 
 
-export type SelectReadUpToIndexQuery = { readonly __typename?: 'query_root', readonly chat_ReadUpToIndex_by_pk?: Maybe<(
+export type SelectReadUpToIndicesQuery = { readonly __typename?: 'query_root', readonly chat_ReadUpToIndex: ReadonlyArray<(
     { readonly __typename?: 'chat_ReadUpToIndex' }
     & InitialChatState_ReadUpToIndexFragment
   )> };
@@ -31496,8 +31496,6 @@ export type DeleteReactionMutationVariables = Exact<{
 
 export type DeleteReactionMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Reaction_by_pk?: Maybe<{ readonly __typename?: 'chat_Reaction', readonly id: number }> };
 
-export type SubscribedChatReactionDataFragment = { readonly __typename?: 'chat_Reaction', readonly data: any, readonly id: number, readonly senderId: any, readonly symbol: string, readonly type: Chat_ReactionType_Enum, readonly messageId: number };
-
 export type MessageReactionsSubscriptionVariables = Exact<{
   messageIds: ReadonlyArray<Scalars['Int']> | Scalars['Int'];
 }>;
@@ -31505,7 +31503,7 @@ export type MessageReactionsSubscriptionVariables = Exact<{
 
 export type MessageReactionsSubscription = { readonly __typename?: 'subscription_root', readonly chat_Reaction: ReadonlyArray<(
     { readonly __typename?: 'chat_Reaction' }
-    & SubscribedChatReactionDataFragment
+    & ChatReactionDataFragment
   )> };
 
 export type GetChatPathQueryVariables = Exact<{
@@ -33482,6 +33480,7 @@ export const ChatReactionDataFragmentDoc = gql`
   senderId
   symbol
   type
+  messageId
 }
     `;
 export const ChatMessageDataFragmentDoc = gql`
@@ -33509,16 +33508,6 @@ export const SubscribedChatMessageDataFragmentDoc = gql`
   senderId
   type
   chatId
-}
-    `;
-export const SubscribedChatReactionDataFragmentDoc = gql`
-    fragment SubscribedChatReactionData on chat_Reaction {
-  data
-  id
-  senderId
-  symbol
-  type
-  messageId
 }
     `;
 export const ContentGroupRoomEventFragmentDoc = gql`
@@ -34848,40 +34837,42 @@ export function useSendChatAnswerMutation(baseOptions?: Apollo.MutationHookOptio
 export type SendChatAnswerMutationHookResult = ReturnType<typeof useSendChatAnswerMutation>;
 export type SendChatAnswerMutationResult = Apollo.MutationResult<SendChatAnswerMutation>;
 export type SendChatAnswerMutationOptions = Apollo.BaseMutationOptions<SendChatAnswerMutation, SendChatAnswerMutationVariables>;
-export const SelectReadUpToIndexDocument = gql`
-    query SelectReadUpToIndex($chatId: uuid!, $attendeeId: uuid!) {
-  chat_ReadUpToIndex_by_pk(chatId: $chatId, attendeeId: $attendeeId) {
+export const SelectReadUpToIndicesDocument = gql`
+    query SelectReadUpToIndices($chatIds: [uuid!]!, $attendeeId: uuid!) {
+  chat_ReadUpToIndex(
+    where: {chatId: {_in: $chatIds}, attendeeId: {_eq: $attendeeId}}
+  ) {
     ...InitialChatState_ReadUpToIndex
   }
 }
     ${InitialChatState_ReadUpToIndexFragmentDoc}`;
 
 /**
- * __useSelectReadUpToIndexQuery__
+ * __useSelectReadUpToIndicesQuery__
  *
- * To run a query within a React component, call `useSelectReadUpToIndexQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectReadUpToIndexQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useSelectReadUpToIndicesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectReadUpToIndicesQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useSelectReadUpToIndexQuery({
+ * const { data, loading, error } = useSelectReadUpToIndicesQuery({
  *   variables: {
- *      chatId: // value for 'chatId'
+ *      chatIds: // value for 'chatIds'
  *      attendeeId: // value for 'attendeeId'
  *   },
  * });
  */
-export function useSelectReadUpToIndexQuery(baseOptions: Apollo.QueryHookOptions<SelectReadUpToIndexQuery, SelectReadUpToIndexQueryVariables>) {
-        return Apollo.useQuery<SelectReadUpToIndexQuery, SelectReadUpToIndexQueryVariables>(SelectReadUpToIndexDocument, baseOptions);
+export function useSelectReadUpToIndicesQuery(baseOptions: Apollo.QueryHookOptions<SelectReadUpToIndicesQuery, SelectReadUpToIndicesQueryVariables>) {
+        return Apollo.useQuery<SelectReadUpToIndicesQuery, SelectReadUpToIndicesQueryVariables>(SelectReadUpToIndicesDocument, baseOptions);
       }
-export function useSelectReadUpToIndexLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectReadUpToIndexQuery, SelectReadUpToIndexQueryVariables>) {
-          return Apollo.useLazyQuery<SelectReadUpToIndexQuery, SelectReadUpToIndexQueryVariables>(SelectReadUpToIndexDocument, baseOptions);
+export function useSelectReadUpToIndicesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectReadUpToIndicesQuery, SelectReadUpToIndicesQueryVariables>) {
+          return Apollo.useLazyQuery<SelectReadUpToIndicesQuery, SelectReadUpToIndicesQueryVariables>(SelectReadUpToIndicesDocument, baseOptions);
         }
-export type SelectReadUpToIndexQueryHookResult = ReturnType<typeof useSelectReadUpToIndexQuery>;
-export type SelectReadUpToIndexLazyQueryHookResult = ReturnType<typeof useSelectReadUpToIndexLazyQuery>;
-export type SelectReadUpToIndexQueryResult = Apollo.QueryResult<SelectReadUpToIndexQuery, SelectReadUpToIndexQueryVariables>;
+export type SelectReadUpToIndicesQueryHookResult = ReturnType<typeof useSelectReadUpToIndicesQuery>;
+export type SelectReadUpToIndicesLazyQueryHookResult = ReturnType<typeof useSelectReadUpToIndicesLazyQuery>;
+export type SelectReadUpToIndicesQueryResult = Apollo.QueryResult<SelectReadUpToIndicesQuery, SelectReadUpToIndicesQueryVariables>;
 export const InsertReadUpToIndexDocument = gql`
     mutation InsertReadUpToIndex($chatId: uuid!, $attendeeId: uuid!, $messageId: Int!, $notifiedUpToMessageId: Int!) {
   insert_chat_ReadUpToIndex_one(
@@ -35061,10 +35052,10 @@ export type DeleteReactionMutationOptions = Apollo.BaseMutationOptions<DeleteRea
 export const MessageReactionsDocument = gql`
     subscription MessageReactions($messageIds: [Int!]!) {
   chat_Reaction(where: {messageId: {_in: $messageIds}}) {
-    ...SubscribedChatReactionData
+    ...ChatReactionData
   }
 }
-    ${SubscribedChatReactionDataFragmentDoc}`;
+    ${ChatReactionDataFragmentDoc}`;
 
 /**
  * __useMessageReactionsSubscription__

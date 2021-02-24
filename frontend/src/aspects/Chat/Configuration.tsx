@@ -100,7 +100,6 @@ export interface ChatConfiguration {
     setSpacing: Dispatch<SetStateAction<ChatSpacing>>;
 
     messageBatchSize: number | undefined;
-    messageLiveBatchSize: number | undefined;
 
     onProfileModalOpened: Maybe<(attendeeId: string, close: () => void) => void>; // TODO
     onEmoteReceived: Maybe<(emote: EmoteMessageData) => void>; // TODO

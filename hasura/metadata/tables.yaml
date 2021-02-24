@@ -911,6 +911,7 @@
                         _in:
                         - CONFERENCE_MANAGE_ATTENDEES
                         - CONFERENCE_MODERATE_ATTENDEES
+                        - CONFERENCE_VIEW_ATTENDEES
                   _table:
                     schema: public
                     name: FlatUserPermission

@@ -1,4 +1,5 @@
 import { Box, BoxProps } from "@chakra-ui/react";
+import * as R from "ramda";
 import React, { useEffect, useMemo } from "react";
 import { ChatReactionDataFragment, Chat_ReactionType_Enum } from "../../../generated/graphql";
 import type { MessageState } from "../ChatGlobalState";
@@ -53,25 +54,28 @@ function ReactionsListInner({
         string,
         { count: number; attendeeSentThisReactionId: number | false }
     ]> = useMemo(() => {
-        return [
-            ...reactions
-                .reduce((acc, reaction) => {
-                    if (reaction.type === Chat_ReactionType_Enum.Emoji) {
-                        const info = acc.get(reaction.symbol) ?? { count: 0, attendeeSentThisReactionId: false };
-                        acc.set(reaction.symbol, {
-                            count: info.count + 1,
-                            attendeeSentThisReactionId:
-                                info.attendeeSentThisReactionId !== false
-                                    ? info.attendeeSentThisReactionId
-                                    : currentAttendeeId && reaction.senderId === currentAttendeeId
-                                    ? reaction.id
-                                    : false,
-                        });
-                    }
-                    return acc;
-                }, new Map<string, { count: number; attendeeSentThisReactionId: number | false }>())
-                .entries(),
-        ];
+        return R.sortWith(
+            [(x, y) => y[1].count - x[1].count, (x, y) => x[0].localeCompare(y[0])],
+            [
+                ...reactions
+                    .reduce((acc, reaction) => {
+                        if (reaction.type === Chat_ReactionType_Enum.Emoji) {
+                            const info = acc.get(reaction.symbol) ?? { count: 0, attendeeSentThisReactionId: false };
+                            acc.set(reaction.symbol, {
+                                count: info.count + 1,
+                                attendeeSentThisReactionId:
+                                    info.attendeeSentThisReactionId !== false
+                                        ? info.attendeeSentThisReactionId
+                                        : currentAttendeeId && reaction.senderId === currentAttendeeId
+                                        ? reaction.id
+                                        : false,
+                            });
+                        }
+                        return acc;
+                    }, new Map<string, { count: number; attendeeSentThisReactionId: number | false }>())
+                    .entries(),
+            ]
+        );
     }, [currentAttendeeId, reactions]);
 
     return (

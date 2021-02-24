@@ -17,7 +17,7 @@ import {
 } from "@chakra-ui/react";
 import { formatRelative } from "date-fns";
 import * as R from "ramda";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
 import {
     MenuSchedule_EventFragment,
@@ -32,31 +32,9 @@ import ApolloQueryWrapper from "../GQL/ApolloQueryWrapper";
 import { FAIcon } from "../Icons/FAIcon";
 
 gql`
-    query MenuSchedule(
-        $now: timestamptz!
-        $inThreeMinutes: timestamptz!
-        $in30Minutes: timestamptz!
-        $inOneHour: timestamptz!
-        $conferenceId: uuid!
-    ) {
-        eventsNow: Event(
-            where: {
-                startTime: { _lte: $inThreeMinutes }
-                endTime: { _gte: $now }
-                conferenceId: { _eq: $conferenceId }
-            }
-        ) {
-            ...MenuSchedule_Event
-        }
-
-        eventsIn30mins: Event(
-            where: { startTime: { _gt: $inThreeMinutes, _lte: $in30Minutes }, conferenceId: { _eq: $conferenceId } }
-        ) {
-            ...MenuSchedule_Event
-        }
-
-        eventsIn1Hour: Event(
-            where: { startTime: { _gt: $in30Minutes, _lte: $inOneHour }, conferenceId: { _eq: $conferenceId } }
+    query MenuSchedule($now: timestamptz!, $inOneHour: timestamptz!, $conferenceId: uuid!) {
+        Event(
+            where: { startTime: { _lte: $inOneHour }, endTime: { _gte: $now }, conferenceId: { _eq: $conferenceId } }
         ) {
             ...MenuSchedule_Event
         }
@@ -97,6 +75,7 @@ gql`
         id
         name
         startTime
+        endTime
         room {
             id
             name
@@ -115,29 +94,54 @@ gql`
     }
 `;
 
+type FilterTimes = {
+    now: Date;
+    inThreeMinutes: Date;
+    in30Minutes: Date;
+    inOneHour: Date;
+};
+
+type Times = {
+    now: Date;
+    inOneHour: Date;
+};
+
+function makeFilterTimes(): FilterTimes {
+    return {
+        now: new Date(),
+        inThreeMinutes: new Date(Date.now() + 3 * 60 * 1000),
+        in30Minutes: new Date(Date.now() + 30 * 60 * 1000),
+        inOneHour: new Date(Date.now() + 60 * 60 * 1000),
+    };
+}
+
+function makeTimes(): Times {
+    return {
+        now: new Date(Date.now()),
+        inOneHour: new Date(Date.now() + 60 * 60 * 1000),
+    };
+}
+
 export function MainMenuProgram(): JSX.Element {
     const conference = useConference();
-    const [now, setNow] = useState<Date>(new Date());
-    const [inThreeMinutes, setInThreeMinutes] = useState<Date>(new Date(Date.now() + 3 * 60 * 1000));
-    const [in30Minutes, setIn30Minutes] = useState<Date>(new Date(Date.now() + 30 * 60 * 1000));
-    const [inOneHour, setInOneHour] = useState<Date>(new Date(Date.now() + 60 * 60 * 1000));
-    const updateTimes = useCallback(() => {
-        setNow(new Date());
-        setInThreeMinutes(new Date(Date.now() + 3 * 60 * 1000));
-        setIn30Minutes(new Date(Date.now() + 30 * 60 * 1000));
-        setInOneHour(new Date(Date.now() + 60 * 60 * 1000));
-    }, []);
-    usePolling(updateTimes, 60000, true);
+
+    const [times, setTimes] = useState<Times>(makeTimes());
+    const updateTimes = useCallback(() => setTimes(makeTimes()), [setTimes]);
+    usePolling(updateTimes, 180000, true);
 
     const scheduleResult = useMenuScheduleQuery({
         variables: {
             conferenceId: conference.id,
-            now,
-            inThreeMinutes,
-            in30Minutes,
-            inOneHour,
+            now: times.now,
+            inOneHour: times.inOneHour,
         },
     });
+
+    const [filterTimes, setFilterTimes] = useState<FilterTimes>(makeFilterTimes());
+    const updateFilterTimes = useCallback(() => {
+        setFilterTimes(makeFilterTimes());
+    }, [setFilterTimes]);
+    usePolling(updateFilterTimes, 10000, true);
 
     const [search, debouncedSearch, setSearch] = useDebouncedState<string>("", 1000);
 
@@ -195,6 +199,8 @@ export function MainMenuProgram(): JSX.Element {
                             <MainMenuProgramInner
                                 linkToRoom={false}
                                 events={events}
+                                fromMillis={0}
+                                toMillis={Number.MAX_SAFE_INTEGER}
                                 title="Search results"
                                 showTime={true}
                             />
@@ -203,27 +209,31 @@ export function MainMenuProgram(): JSX.Element {
                 </>
             ) : (
                 <>
-                    <ApolloQueryWrapper getter={(data) => data.eventsNow} queryResult={scheduleResult}>
+                    <ApolloQueryWrapper getter={(data) => data.Event} queryResult={scheduleResult}>
                         {(events: readonly MenuSchedule_EventFragment[]) => (
-                            <MainMenuProgramInner linkToRoom={true} events={events} title="Happening now" />
-                        )}
-                    </ApolloQueryWrapper>
-                    <ApolloQueryWrapper getter={(data) => data.eventsIn30mins} queryResult={scheduleResult}>
-                        {(events: readonly MenuSchedule_EventFragment[]) => (
-                            <MainMenuProgramInner
-                                linkToRoom={false}
-                                events={events}
-                                title="Starting in the next 30 minutes"
-                            />
-                        )}
-                    </ApolloQueryWrapper>
-                    <ApolloQueryWrapper getter={(data) => data.eventsIn1Hour} queryResult={scheduleResult}>
-                        {(events: readonly MenuSchedule_EventFragment[]) => (
-                            <MainMenuProgramInner
-                                linkToRoom={false}
-                                events={events}
-                                title="Starting in the next hour"
-                            />
+                            <>
+                                <MainMenuProgramInner
+                                    linkToRoom={true}
+                                    fromMillis={filterTimes.now.getTime()}
+                                    toMillis={filterTimes.inThreeMinutes.getTime()}
+                                    events={events}
+                                    title="Happening now"
+                                />
+                                <MainMenuProgramInner
+                                    linkToRoom={false}
+                                    fromMillis={filterTimes.inThreeMinutes.getTime()}
+                                    toMillis={filterTimes.in30Minutes.getTime()}
+                                    events={events}
+                                    title="Starting in the next 30 minutes"
+                                />
+                                <MainMenuProgramInner
+                                    linkToRoom={false}
+                                    fromMillis={filterTimes.in30Minutes.getTime()}
+                                    toMillis={filterTimes.inThreeMinutes.getTime()}
+                                    events={events}
+                                    title="Starting in the next hour"
+                                />
+                            </>
                         )}
                     </ApolloQueryWrapper>
                 </>
@@ -235,6 +245,8 @@ export function MainMenuProgram(): JSX.Element {
 export function MainMenuProgramInner({
     events,
     title,
+    fromMillis,
+    toMillis,
     showTime,
     linkToRoom,
 }: {
@@ -242,24 +254,33 @@ export function MainMenuProgramInner({
     title: string;
     showTime?: boolean;
     linkToRoom: boolean;
+    fromMillis: number;
+    toMillis: number;
 }): JSX.Element {
     const conference = useConference();
+
+    const filteredEvents = useMemo(
+        () =>
+            R.sortBy((e) => e.startTime, events).filter(
+                (event) => Date.parse(event.startTime) <= toMillis && Date.parse(event.endTime) > fromMillis
+            ),
+        [events, fromMillis, toMillis]
+    );
 
     return (
         <Box width="100%">
             <Heading as="h4" size="sm" mt={4} mb={2} textAlign="left" fontSize="sm">
                 {title}
             </Heading>
-            {events.length > 0 ? (
+            {filteredEvents.length > 0 ? (
                 <List>
-                    {R.sortBy((e) => e.startTime, events).map((event) => {
+                    {filteredEvents.map((event) => {
                         const eventName =
                             event.name.length > 0 && event.contentGroup
                                 ? event.name + ": " + event.contentGroup.title
                                 : event.contentGroup
                                 ? event.contentGroup.title
                                 : event.name;
-
                         return (
                             <ListItem key={event.id} width="100%" my={2}>
                                 {showTime ? (

@@ -33210,20 +33210,12 @@ export type SendRepeatConfirmationEmailMutation = { readonly __typename?: 'mutat
 
 export type MenuScheduleQueryVariables = Exact<{
   now: Scalars['timestamptz'];
-  inThreeMinutes: Scalars['timestamptz'];
-  in30Minutes: Scalars['timestamptz'];
   inOneHour: Scalars['timestamptz'];
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type MenuScheduleQuery = { readonly __typename?: 'query_root', readonly eventsNow: ReadonlyArray<(
-    { readonly __typename?: 'Event' }
-    & MenuSchedule_EventFragment
-  )>, readonly eventsIn30mins: ReadonlyArray<(
-    { readonly __typename?: 'Event' }
-    & MenuSchedule_EventFragment
-  )>, readonly eventsIn1Hour: ReadonlyArray<(
+export type MenuScheduleQuery = { readonly __typename?: 'query_root', readonly Event: ReadonlyArray<(
     { readonly __typename?: 'Event' }
     & MenuSchedule_EventFragment
   )> };
@@ -33239,7 +33231,7 @@ export type MenuSchedule_SearchEventsQuery = { readonly __typename?: 'query_root
     & MenuSchedule_EventFragment
   )> };
 
-export type MenuSchedule_EventFragment = { readonly __typename?: 'Event', readonly id: any, readonly name: string, readonly startTime: any, readonly room: { readonly __typename?: 'Room', readonly id: any, readonly name: string }, readonly eventTags: ReadonlyArray<{ readonly __typename?: 'EventTag', readonly tag: { readonly __typename?: 'Tag', readonly id: any, readonly colour: string, readonly name: string } }>, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string }> };
+export type MenuSchedule_EventFragment = { readonly __typename?: 'Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'Room', readonly id: any, readonly name: string }, readonly eventTags: ReadonlyArray<{ readonly __typename?: 'EventTag', readonly tag: { readonly __typename?: 'Tag', readonly id: any, readonly colour: string, readonly name: string } }>, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string }> };
 
 export type MainMenuSponsors_GetSponsorsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -34343,6 +34335,7 @@ export const MenuSchedule_EventFragmentDoc = gql`
   id
   name
   startTime
+  endTime
   room {
     id
     name
@@ -40720,19 +40713,9 @@ export type SendRepeatConfirmationEmailMutationHookResult = ReturnType<typeof us
 export type SendRepeatConfirmationEmailMutationResult = Apollo.MutationResult<SendRepeatConfirmationEmailMutation>;
 export type SendRepeatConfirmationEmailMutationOptions = Apollo.BaseMutationOptions<SendRepeatConfirmationEmailMutation, SendRepeatConfirmationEmailMutationVariables>;
 export const MenuScheduleDocument = gql`
-    query MenuSchedule($now: timestamptz!, $inThreeMinutes: timestamptz!, $in30Minutes: timestamptz!, $inOneHour: timestamptz!, $conferenceId: uuid!) {
-  eventsNow: Event(
-    where: {startTime: {_lte: $inThreeMinutes}, endTime: {_gte: $now}, conferenceId: {_eq: $conferenceId}}
-  ) {
-    ...MenuSchedule_Event
-  }
-  eventsIn30mins: Event(
-    where: {startTime: {_gt: $inThreeMinutes, _lte: $in30Minutes}, conferenceId: {_eq: $conferenceId}}
-  ) {
-    ...MenuSchedule_Event
-  }
-  eventsIn1Hour: Event(
-    where: {startTime: {_gt: $in30Minutes, _lte: $inOneHour}, conferenceId: {_eq: $conferenceId}}
+    query MenuSchedule($now: timestamptz!, $inOneHour: timestamptz!, $conferenceId: uuid!) {
+  Event(
+    where: {startTime: {_lte: $inOneHour}, endTime: {_gte: $now}, conferenceId: {_eq: $conferenceId}}
   ) {
     ...MenuSchedule_Event
   }
@@ -40752,8 +40735,6 @@ export const MenuScheduleDocument = gql`
  * const { data, loading, error } = useMenuScheduleQuery({
  *   variables: {
  *      now: // value for 'now'
- *      inThreeMinutes: // value for 'inThreeMinutes'
- *      in30Minutes: // value for 'in30Minutes'
  *      inOneHour: // value for 'inOneHour'
  *      conferenceId: // value for 'conferenceId'
  *   },

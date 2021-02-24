@@ -339,7 +339,11 @@ function MenuBar(): JSX.Element {
                                                 p={0}
                                                 aria-label="My profile"
                                             >
-                                                <Tooltip label="My profile">
+                                                <Tooltip
+                                                    label={`My profile${
+                                                        attendee?.displayName ? ` (${attendee.displayName})` : ""
+                                                    }`}
+                                                >
                                                     {attendee && attendee.profile && attendee.profile.photoURL_50x50 ? (
                                                         <Image
                                                             borderRadius={5}

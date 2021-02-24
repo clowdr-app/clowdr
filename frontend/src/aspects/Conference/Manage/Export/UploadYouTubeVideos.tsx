@@ -135,6 +135,14 @@ gql`
                 paperUrlContentItems: contentItems(where: { contentTypeName: { _eq: PAPER_URL } }) {
                     ...UploadYouTubeVideos_ContentItem
                 }
+                authors: people(where: { roleName: { _eq: "AUTHOR" } }) {
+                    id
+                    person {
+                        id
+                        name
+                        affiliation
+                    }
+                }
             }
         }
     }
@@ -258,7 +266,7 @@ export function UploadYouTubeVideos(): JSX.Element {
         ): Promise<{ [contentItemId: string]: { title: string; description: string } }> => {
             const result = await refetchTemplateData({ contentItemIds });
 
-            if (!result.data) {
+            if (!result || !result.data) {
                 console.error("Could not retrieve data for content item templates", result.error, result.errors);
                 throw new Error("Could not retrieve data for content item templates");
             }
@@ -344,6 +352,11 @@ export function UploadYouTubeVideos(): JSX.Element {
                     )
                 );
 
+                const authors = contentItem.contentGroup.authors.map((author) => ({
+                    name: author.person.name,
+                    affiliation: author.person.affiliation ?? "",
+                }));
+
                 const view = {
                     fileId: contentItemId,
                     fileName,
@@ -354,6 +367,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                     paperUrls,
                     paperLinks,
                     youTubeUploads,
+                    authors,
                 };
 
                 return [
@@ -511,6 +525,8 @@ export function UploadYouTubeVideos(): JSX.Element {
                                     title: "Starting upload to YouTube",
                                 });
                                 actions.resetForm();
+                                actions.setFieldValue("titleTemplate", youTubeTitleTemplate);
+                                actions.setFieldValue("descriptionTemplate", youTubeDescriptionTemplate);
                                 setAttendeeGoogleAccountId(null);
                                 await existingJobsResult.refetch();
                             } catch (e) {
@@ -701,6 +717,10 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                     <ListItem>
                                                         <Code>paperLinks</Code>: list of links to papers. Properties are{" "}
                                                         <Code>url</Code>, <Code>text</Code>.
+                                                    </ListItem>
+                                                    <ListItem>
+                                                        <Code>authors</Code>: list of authors. Properties are{" "}
+                                                        <Code>name</Code>, <Code>affiliation</Code>.
                                                     </ListItem>
                                                     <ListItem>
                                                         <Code>youTubeUploads</Code>: list of previously uploaded YouTube

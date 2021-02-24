@@ -32540,7 +32540,7 @@ export type UploadYouTubeVideos_GetTemplateDataQuery = { readonly __typename?: '
       )>, readonly paperUrlContentItems: ReadonlyArray<(
         { readonly __typename?: 'ContentItem' }
         & UploadYouTubeVideos_ContentItemFragment
-      )> } }> };
+      )>, readonly authors: ReadonlyArray<{ readonly __typename?: 'ContentGroupPerson', readonly id: any, readonly person: { readonly __typename?: 'ContentPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string> } }> } }> };
 
 export type UploadYouTubeVideos_ContentItemFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly data: any };
 
@@ -38275,6 +38275,14 @@ export const UploadYouTubeVideos_GetTemplateDataDocument = gql`
       }
       paperUrlContentItems: contentItems(where: {contentTypeName: {_eq: PAPER_URL}}) {
         ...UploadYouTubeVideos_ContentItem
+      }
+      authors: people(where: {roleName: {_eq: "AUTHOR"}}) {
+        id
+        person {
+          id
+          name
+          affiliation
+        }
       }
     }
   }

@@ -1289,30 +1289,40 @@ export class GlobalChatState {
     }
 
     private mutex = new Mutex();
+    private hasInitialised = false;
+    private hasTorndown = false;
     public async init(): Promise<void> {
         const release = await this.mutex.acquire();
 
         try {
-            const initialData = await this.apolloClient.query<InitialChatStateQuery, InitialChatStateQueryVariables>({
-                query: InitialChatStateDocument,
-                variables: {
-                    attendeeId: this.attendee.id,
-                },
-            });
+            if (!this.hasInitialised) {
+                this.hasInitialised = true;
+                if (!this.hasTorndown) {
+                    const initialData = await this.apolloClient.query<
+                        InitialChatStateQuery,
+                        InitialChatStateQueryVariables
+                    >({
+                        query: InitialChatStateDocument,
+                        variables: {
+                            attendeeId: this.attendee.id,
+                        },
+                    });
 
-            console.log("Initial chat data", initialData);
+                    console.log("Initial chat data", initialData);
 
-            if (!this.chatStates) {
-                this.chatStates = new Map();
+                    if (!this.chatStates) {
+                        this.chatStates = new Map();
+                    }
+                    initialData.data.chat_Chat.forEach((chat) => {
+                        this.chatStates?.set(chat.id, new ChatState(this, chat));
+                    });
+
+                    this.chatStatesObs.publish(this.chatStates);
+
+                    await this.setupUnreadCountPolling();
+                    await this.setupReactionsSubscription();
+                }
             }
-            initialData.data.chat_Chat.forEach((chat) => {
-                this.chatStates?.set(chat.id, new ChatState(this, chat));
-            });
-
-            this.chatStatesObs.publish(this.chatStates);
-
-            await this.setupUnreadCountPolling();
-            await this.setupReactionsSubscription();
         } catch (e) {
             console.error("Failed to initialise chat state", e);
         } finally {
@@ -1324,15 +1334,20 @@ export class GlobalChatState {
         const release = await this.mutex.acquire();
 
         try {
-            await this.teardownReactionsSubscription();
-            await this.teardownUnreadCountPolling();
+            if (!this.hasTorndown) {
+                this.hasTorndown = true;
+                if (this.hasInitialised) {
+                    await this.teardownReactionsSubscription();
+                    await this.teardownUnreadCountPolling();
 
-            if (this.chatStates) {
-                await Promise.all(
-                    [...this.chatStates.values()].map(async (st) => {
-                        await st.teardown();
-                    })
-                );
+                    if (this.chatStates) {
+                        await Promise.all(
+                            [...this.chatStates.values()].map(async (st) => {
+                                await st.teardown();
+                            })
+                        );
+                    }
+                }
             }
         } finally {
             release();

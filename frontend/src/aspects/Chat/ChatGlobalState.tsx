@@ -996,6 +996,7 @@ export class ChatState {
                                                 onClick={() => {
                                                     props.onClose();
                                                     globalState.openChatInSidebar?.(message.chatId);
+                                                    globalState.showSidebar?.();
                                                 }}
                                             >
                                                 Go to chat
@@ -1238,6 +1239,7 @@ export class ChatState {
 export class GlobalChatState {
     public suppressNotificationsForChatId: string | null = null;
     public openChatInSidebar: ((chatId: string) => void) | null = null;
+    public showSidebar: (() => void) | null = null;
 
     constructor(
         public readonly conference: {

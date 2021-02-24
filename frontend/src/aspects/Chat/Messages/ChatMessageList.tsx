@@ -1,181 +1,81 @@
-import { gql } from "@apollo/client";
 import { Box, BoxProps, Button, Center, Flex, Heading, Spinner, useColorModeValue } from "@chakra-ui/react";
 import Observer from "@researchgate/react-intersection-observer";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import {
-    ChatMessageDataFragment,
-    useNewMessagesSubscription,
-    useSelectFirstMessagesPageLazyQuery,
-    useSelectMessagesPageLazyQuery,
-} from "../../../generated/graphql";
+import type { MessageState } from "../ChatGlobalState";
+import { Observable } from "../ChatGlobalState";
 import { useChatConfiguration } from "../Configuration";
 import MessageBox from "./MessageBox";
-import { useReadUpToIndex } from "./ReadUpToIndexProvider";
-import { useReceiveMessageQueries } from "./ReceiveMessageQueries";
-
-interface ChatMessageListProps {
-    chatId: string;
-}
 
 interface MessageListProps {
     chatId: string;
     isLoading: boolean;
     fetchMore: () => void;
-    insertMessagesRef: React.MutableRefObject<((messages: ChatMessageDataFragment[], areNew: boolean) => void) | null>;
+    initMessagesRef: React.MutableRefObject<((messages: MessageState[]) => void) | null>;
+    insertMessagesRef: React.MutableRefObject<((messages: MessageState[], areNew: boolean) => void) | null>;
     deleteMessagesRef: React.MutableRefObject<((messageIds: number[]) => void) | null>;
     setHasReachedEndRef: React.MutableRefObject<((value: boolean) => void) | null>;
 }
 
-gql`
-    query SelectFirstMessagesPage($chatId: uuid!, $maxCount: Int!) {
-        chat_Message(order_by: { id: desc }, where: { chatId: { _eq: $chatId } }, limit: $maxCount) {
-            ...ChatMessageData
-        }
-    }
-
-    query SelectMessagesPage($chatId: uuid!, $startAtIndex: Int!, $maxCount: Int!) {
-        chat_Message(
-            order_by: { id: desc }
-            where: { chatId: { _eq: $chatId }, id: { _lte: $startAtIndex } }
-            limit: $maxCount
-        ) {
-            ...ChatMessageData
-        }
-    }
-
-    fragment SubscribedChatMessageData on chat_Message {
-        created_at
-        data
-        duplicatedMessageId
-        id
-        message
-        senderId
-        type
-        chatId
-    }
-
-    subscription NewMessages($chatId: uuid!) {
-        chat_Message(order_by: { id: desc }, where: { chatId: { _eq: $chatId } }, limit: 5) {
-            ...SubscribedChatMessageData
-        }
-    }
-`;
-
-export function ChatMessageList({ chatId, ...rest }: ChatMessageListProps & BoxProps): JSX.Element {
-    const insertMessages = React.useRef<((messages: ChatMessageDataFragment[], areNew: boolean) => void) | null>(null);
+export function ChatMessageList(props: BoxProps): JSX.Element {
+    const initMessages = React.useRef<((messages: MessageState[]) => void) | null>(null);
+    const insertMessages = React.useRef<((messages: MessageState[], areNew: boolean) => void) | null>(null);
     const deleteMessages = React.useRef<((messageIds: number[]) => void) | null>(null);
     const setHasReachedEnd = React.useRef<((value: boolean) => void) | null>(null);
 
-    const [selectMessagesPage, selectMessagesPageResponse] = useSelectMessagesPageLazyQuery();
-    const [selectFirstMessagesPage, selectFirstMessagesPageResponse] = useSelectFirstMessagesPageLazyQuery();
-
     const config = useChatConfiguration();
-    const batchSize = config.messageBatchSize ?? 30;
-
-    const lastMessageId = React.useRef<number>(-1);
-    const prevLastMessageId = React.useRef<number>(-2);
-
-    const nextMessageSub = useNewMessagesSubscription({
-        variables: {
-            chatId,
-        },
-    });
-
-    const requestedNextPage = React.useRef<boolean>(false);
-    const requestedFirstPage = React.useRef<boolean>(false);
+    const chatId = config.state.Id;
+    const pageSize = config.messageBatchSize ?? 30;
 
     useEffect(() => {
-        lastMessageId.current = Number.MAX_SAFE_INTEGER;
-        prevLastMessageId.current = Number.POSITIVE_INFINITY;
-    }, [chatId]);
+        config.state.subscribeToMoreMessages();
+
+        return () => {
+            config.state.unsubscribeFromMoreMessages();
+        };
+    }, [config.state]);
+
     const fetchMore = useCallback(() => {
-        if (lastMessageId.current === Number.MAX_SAFE_INTEGER) {
-            if (!requestedFirstPage.current) {
-                requestedFirstPage.current = true;
-                selectFirstMessagesPage({
-                    variables: {
-                        chatId,
-                        maxCount: batchSize,
-                    },
-                });
-            }
-        } else {
-            if (!requestedNextPage.current) {
-                requestedNextPage.current = true;
-                selectMessagesPage({
-                    variables: {
-                        chatId,
-                        maxCount: batchSize,
-                        startAtIndex: lastMessageId.current,
-                    },
-                });
-            }
-        }
-    }, [batchSize, chatId, selectFirstMessagesPage, selectMessagesPage]);
+        config.state.loadMoreMessages(pageSize);
+    }, [config.state, pageSize]);
 
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     useEffect(() => {
-        if (selectMessagesPageResponse.data) {
-            prevLastMessageId.current = lastMessageId.current;
-            lastMessageId.current = Math.min(
-                lastMessageId.current,
-                selectMessagesPageResponse.data.chat_Message[selectMessagesPageResponse.data.chat_Message.length - 1]
-                    ?.id ?? -1
-            );
-            if (prevLastMessageId.current === lastMessageId.current && setHasReachedEnd.current) {
-                setHasReachedEnd.current(true);
+        return config.state.IsLoadingMessages.subscribe(setIsLoading);
+    }, [config.state.IsLoadingMessages]);
+    useEffect(() => {
+        return config.state.MightHaveMoreMessages.subscribe((v) => {
+            setHasReachedEnd.current?.(!v);
+        });
+    }, [config.state.MightHaveMoreMessages]);
+    useEffect(() => {
+        return config.state.Messages.subscribe((update) => {
+            switch (update.op) {
+                case "initial":
+                    initMessages.current?.(update.messages);
+                    break;
+                case "loaded_historic":
+                    insertMessages.current?.(update.messages, false);
+                    break;
+                case "loaded_new":
+                    insertMessages.current?.(update.messages, true);
+                    break;
+                case "deleted":
+                    deleteMessages.current?.(update.messageIds);
+                    break;
             }
-            insertMessages.current?.([...selectMessagesPageResponse.data.chat_Message], !requestedNextPage.current);
-            requestedNextPage.current = false;
-        }
-    }, [selectMessagesPageResponse.data]);
-
-    useEffect(() => {
-        if (selectFirstMessagesPageResponse.data) {
-            prevLastMessageId.current = lastMessageId.current;
-            lastMessageId.current = Math.min(
-                lastMessageId.current,
-                selectFirstMessagesPageResponse.data.chat_Message[
-                    selectFirstMessagesPageResponse.data.chat_Message.length - 1
-                ]?.id ?? -1
-            );
-            insertMessages.current?.(
-                [...selectFirstMessagesPageResponse.data.chat_Message],
-                !requestedFirstPage.current
-            );
-            requestedFirstPage.current = false;
-
-            if (selectFirstMessagesPageResponse.data.chat_Message.length < batchSize && setHasReachedEnd.current) {
-                setHasReachedEnd.current(true);
-            }
-        }
-    }, [batchSize, selectFirstMessagesPageResponse.data]);
-
-    useEffect(() => {
-        if (nextMessageSub.data) {
-            insertMessages.current?.(
-                nextMessageSub.data.chat_Message.map((msg) => ({
-                    ...msg,
-                    reactions: [],
-                })),
-                true
-            );
-        }
-    }, [nextMessageSub.data]);
-
-    const receiveMessageQueries = useReceiveMessageQueries();
-    useEffect(() => {
-        deleteMessages.current?.([...receiveMessageQueries.deletedItems.values()]);
-    }, [receiveMessageQueries.deletedItems]);
+        });
+    }, [config.state.Messages]);
 
     return (
         <MessageList
             chatId={chatId}
+            initMessagesRef={initMessages}
             insertMessagesRef={insertMessages}
             deleteMessagesRef={deleteMessages}
             setHasReachedEndRef={setHasReachedEnd}
-            isLoading={selectMessagesPageResponse.loading}
+            isLoading={isLoading}
             fetchMore={fetchMore}
-            {...rest}
+            {...props}
         />
     );
 }
@@ -183,6 +83,7 @@ export function ChatMessageList({ chatId, ...rest }: ChatMessageListProps & BoxP
 function MessageList({
     chatId,
     isLoading,
+    initMessagesRef,
     insertMessagesRef,
     deleteMessagesRef,
     setHasReachedEndRef,
@@ -190,11 +91,16 @@ function MessageList({
     ...rest
 }: MessageListProps & BoxProps): JSX.Element {
     const [hasReachedEnd, setHasReachedEnd] = useState<boolean>(false);
-    const [messageElements, setMessageElements] = useState<JSX.Element[] | null>(null);
+    const [_lastRenderTime, setLastRenderTime] = useState<number>(-1);
+    const messageElements = React.useRef<JSX.Element[] | null>(null);
+    const positionObservables = React.useRef<Map<number, Observable<number>>>(new Map());
+
+    const config = useChatConfiguration();
 
     useEffect(() => {
         setHasReachedEnd(false);
-        setMessageElements(null);
+        messageElements.current = null;
+        setLastRenderTime(-1);
     }, [chatId]);
 
     const scrollbarColour = useColorModeValue("gray.500", "gray.200");
@@ -203,91 +109,72 @@ function MessageList({
     const ref = React.useRef<HTMLDivElement | null>(null);
     const shouldAutoScroll = React.useRef<boolean>(true);
 
-    const insertMessages = useCallback((messages: ChatMessageDataFragment[], areNew: boolean) => {
-        setMessageElements((oldEls) => {
-            const reactionsBoundary = 5;
-            // Yes, double equals not triple - React does something weird to the keys which changes their type
-            const nonDuplicates = messages.filter((msg) => !oldEls?.some((el) => el.key == msg.id));
-            // Yes, double equals not triple - React does something weird to the keys which changes their type
-            const duplicates = messages.filter((msg) => !nonDuplicates?.some((msg2) => msg2.id == msg.id));
-            const newMessageElements = nonDuplicates
-                .sort((x, y) => y.id - x.id)
-                .map((msg, idx) => (
-                    <MessageBox
-                        key={msg.id}
-                        message={msg}
-                        subscribeToReactions={(areNew || !oldEls) && idx < reactionsBoundary}
-                    />
-                ));
-            let output;
-            if (oldEls) {
-                if (areNew) {
-                    output = [
-                        ...newMessageElements,
-                        ...oldEls.map((el, idx) => {
-                            // Yes, double equals not triple - React does something weird to the keys which changes their type
-                            const newMsgIdx = duplicates.findIndex((x) => x.id == el.key);
-
-                            if (newMsgIdx !== -1) {
-                                const newMsg = duplicates[newMsgIdx];
-                                duplicates.splice(newMsgIdx, 1);
-                                return (
-                                    <MessageBox
-                                        key={el.key}
-                                        message={newMsg}
-                                        subscribeToReactions={idx + newMessageElements.length < reactionsBoundary}
-                                    />
-                                );
-                            } else if (
-                                idx < reactionsBoundary &&
-                                idx + newMessageElements.length >= reactionsBoundary
-                            ) {
-                                return (
-                                    <MessageBox key={el.key} message={el.props.message} subscribeToReactions={false} />
-                                );
-                            } else {
-                                return el;
-                            }
-                        }),
-                    ];
-                } else {
-                    output = [
-                        ...oldEls.map((el, idx) => {
-                            // Yes, double equals not triple - React does something weird to the keys which changes their type
-                            const newMsgIdx = duplicates.findIndex((x) => x.id == el.key);
-
-                            if (newMsgIdx !== -1) {
-                                const newMsg = duplicates[newMsgIdx];
-                                duplicates.splice(newMsgIdx, 1);
-                                return (
-                                    <MessageBox
-                                        key={el.key}
-                                        message={newMsg}
-                                        subscribeToReactions={idx < reactionsBoundary}
-                                    />
-                                );
-                            } else {
-                                return el;
-                            }
-                        }),
-                        ...newMessageElements,
-                    ];
-                }
-            } else {
-                output = newMessageElements.map((el, idx) => {
-                    // Yes, double equals not triple - React does something weird to the keys which changes their type
-                    const newMsgIdx = duplicates.findIndex((x) => x.id == el.key);
-
-                    if (newMsgIdx !== -1) {
-                        const newMsg = duplicates[newMsgIdx];
-                        duplicates.splice(newMsgIdx, 1);
-                        return (
-                            <MessageBox key={el.key} message={newMsg} subscribeToReactions={idx < reactionsBoundary} />
-                        );
-                    } else {
-                        return el;
+    const initMessages = useCallback(
+        (messages: MessageState[]) => {
+            setHasReachedEnd(false);
+            positionObservables.current = new Map();
+            messageElements.current = [];
+            messages.forEach((msg) => {
+                const obs = new Observable<number>((observer) => {
+                    const idx = messageElements.current?.findIndex((el) => (el.key as string) === msg.id.toString());
+                    if (idx !== undefined && idx !== -1) {
+                        observer(idx);
                     }
                 });
+                positionObservables.current.set(msg.id, obs);
+                messageElements.current?.push(<MessageBox key={msg.id} message={msg} positionObservable={obs} />);
+            });
+            // CHAT_TODO: Only set read up to index if that chat is actually selected in the sidebar (i.e. is visible)
+            // However, this also means updating the read up to index when the chat becomes visible, which this code
+            // wouldn't currently achieve
+            if (messageElements.current.length > 0) {
+                const latestId = messageElements.current[0].props.message.id;
+                if (config.state.ReadUpToMsgId < latestId) {
+                    config.state.setReadUpToMsgId(latestId);
+                }
+            }
+            setLastRenderTime(Date.now());
+        },
+        [config.state]
+    );
+    const insertMessages = useCallback(
+        (messages: MessageState[], areNew: boolean) => {
+            const newMessageElements: JSX.Element[] = [];
+            messages.forEach((msg) => {
+                const obs = new Observable<number>((observer) => {
+                    const idx = messageElements.current?.findIndex((el) => (el.key as string) === msg.id.toString());
+                    if (idx !== undefined && idx !== -1) {
+                        observer(idx);
+                    }
+                });
+                positionObservables.current.set(msg.id, obs);
+                newMessageElements.push(<MessageBox key={msg.id} message={msg} positionObservable={obs} />);
+            });
+
+            if (messageElements.current) {
+                if (areNew) {
+                    messageElements.current = [...newMessageElements, ...messageElements.current];
+                } else {
+                    messageElements.current = [...messageElements.current, ...newMessageElements];
+                }
+            } else {
+                messageElements.current = newMessageElements;
+            }
+            positionObservables.current.forEach((observable, k) => {
+                const kStr = k.toString();
+                const idx = messageElements.current?.findIndex((el) => el.key === kStr);
+                if (idx !== undefined && idx !== -1) {
+                    observable.publish(idx);
+                }
+            });
+            // CHAT_TODO: Only set read up to index if that chat is actually selected in the sidebar (i.e. is visible)
+            // However, this also means updating the read up to index when the chat becomes visible, which this code
+            // wouldn't currently achieve
+            if (messageElements.current.length > 0) {
+                const latestId = messageElements.current[0].props.message.id;
+                if (config.state.ReadUpToMsgId < latestId) {
+                    config.state.setReadUpToMsgId(latestId);
+                }
             }
 
             if (shouldAutoScroll.current) {
@@ -297,20 +184,20 @@ function MessageList({
                 });
             }
 
-            return output;
-        });
-    }, []);
+            setLastRenderTime(Date.now());
+        },
+        [config.state]
+    );
 
     const deleteMessages = useCallback((messageIds: number[]) => {
-        setMessageElements((oldEls) => {
-            if (oldEls) {
-                const ids = messageIds.map((x) => x.toString());
-                return oldEls.filter((el) => !ids.includes(el.key as string));
-            }
-            return null;
-        });
+        if (messageElements.current) {
+            const ids = messageIds.map((id) => id.toString());
+            messageElements.current = messageElements.current.filter((el) => !ids.includes(el.key as string));
+            setLastRenderTime(Date.now());
+        }
     }, []);
 
+    initMessagesRef.current = initMessages;
     insertMessagesRef.current = insertMessages;
     deleteMessagesRef.current = deleteMessages;
     setHasReachedEndRef.current = setHasReachedEnd;
@@ -377,24 +264,14 @@ function MessageList({
                     shouldAutoScroll.current = ev.intersectionRatio > 0;
                 }}
             >
-                <Box m={0} p={0} h={0} w="100%"></Box>
+                <Box m={0} p={0} h="1px" w="100%"></Box>
             </Observer>
         );
     }, []);
 
-    const readUpTo = useReadUpToIndex();
-    useEffect(() => {
-        if (messageElements && messageElements.length > 0) {
-            const latestId = messageElements[0].props.message.id;
-            if (readUpTo.readUpToId === undefined || readUpTo.readUpToId < latestId) {
-                readUpTo.setReadUpTo(latestId);
-            }
-        }
-    }, [messageElements, readUpTo]);
-
     return (
         <Box {...rest}>
-            {messageElements === null ? (
+            {messageElements.current === null ? (
                 <Center h="100%">
                     <Box>
                         <Spinner aria-label="Loading messages" />
@@ -417,8 +294,9 @@ function MessageList({
                         ref={ref}
                     >
                         {bottomEl}
-                        {messageElements}
+                        {messageElements.current}
                         {topEl}
+                        {/* <Box hidden={true}>{lastRenderTime}</Box> */}
                     </Flex>
                 </Flex>
             )}

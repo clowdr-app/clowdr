@@ -2,7 +2,6 @@ import assert from "assert";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Chat_MessageType_Enum } from "../../../generated/graphql";
 import { ChatConfiguration, useChatConfiguration } from "../Configuration";
-import { useSelectedChat } from "../SelectedChat";
 import type { MinMax } from "../Types/Base";
 import type { AnswerMessageData, MessageData, OrdinaryMessageData } from "../Types/Messages";
 import { useSendMessageQueries } from "./SendMessageQueries";
@@ -73,7 +72,6 @@ export function ComposeContextProvider({
     const [lastSendTime, setLastSendTime] = useState<number>(0);
     // const now = useRealTime(250);
     const sendQueries = useSendMessageQueries();
-    const selectedChat = useSelectedChat();
 
     const minLength =
         useMemo(() => {
@@ -187,23 +185,21 @@ export function ComposeContextProvider({
     const send = useCallback(
         (data?: MessageData) => {
             (async () => {
-                if (!config.currentAttendeeId || !config.currentAttendeeName) {
+                if (!config.currentAttendeeId) {
                     throw new Error("Not authorized.");
                 }
 
                 try {
                     const isEmote = /^\p{Emoji}$/iu.test(newMessage);
                     sendQueries.send(
-                        selectedChat.id,
+                        config.state.Id,
                         config.currentAttendeeId,
-                        config.currentAttendeeName,
                         newMessageType === Chat_MessageType_Enum.Message && isEmote
                             ? Chat_MessageType_Enum.Emote
                             : newMessageType,
                         newMessage,
                         data ?? newMessageData,
-                        false,
-                        selectedChat.title
+                        false
                     );
 
                     setNewMessage("");
@@ -220,16 +216,7 @@ export function ComposeContextProvider({
                 }
             })();
         },
-        [
-            config.currentAttendeeId,
-            config.currentAttendeeName,
-            newMessage,
-            newMessageData,
-            newMessageType,
-            selectedChat.id,
-            selectedChat.title,
-            sendQueries,
-        ]
+        [config.currentAttendeeId, newMessage, newMessageData, newMessageType, config.state.Id, sendQueries]
     );
     const messageLengthRange = useMemo(
         () => ({
@@ -261,7 +248,7 @@ export function ComposeContextProvider({
             blockedReason,
 
             isSending: sendQueries.isSending,
-            sendError: sendQueries.sendError ?? undefined,
+            sendError: undefined,
             send,
 
             setAnsweringQuestionId,
@@ -276,7 +263,6 @@ export function ComposeContextProvider({
             newMessageType,
             send,
             sendQueries.isSending,
-            sendQueries.sendError,
             setAnsweringQuestionId,
             setNewMessageTypeF,
         ]

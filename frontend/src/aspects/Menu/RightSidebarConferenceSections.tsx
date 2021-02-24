@@ -37,21 +37,17 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Twemoji } from "react-emoji-render";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import {
-    AttendeeFieldsFragment,
-    RoomPrivacy_Enum,
-    SidebarChatInfoFragment,
     useCreateDmMutation,
     useGetContentGroupChatIdQuery,
     useGetRoomChatIdQuery,
-    usePinnedChatsWithUnreadCountsQuery,
     useSearchAttendeesLazyQuery,
 } from "../../generated/graphql";
 import { Chat } from "../Chat/Chat";
-import { ChatNotificationsProvider } from "../Chat/ChatNotifications";
-import type { ChatSources } from "../Chat/Configuration";
+import { ChatState } from "../Chat/ChatGlobalState";
+import { useGlobalChatState } from "../Chat/GlobalChatStateProvider";
 import { useAttendee } from "../Conference/AttendeesContext";
 import { useConference } from "../Conference/useConference";
-import type { Attendee } from "../Conference/useCurrentAttendee";
+import { Attendee, useMaybeCurrentAttendee } from "../Conference/useCurrentAttendee";
 import { useRestorableState } from "../Generic/useRestorableState";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
 import FAIcon from "../Icons/FAIcon";
@@ -59,91 +55,18 @@ import RoomParticipantsProvider from "../Room/RoomParticipantsProvider";
 import useRoomParticipants from "../Room/useRoomParticipants";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 
-gql`
-    fragment SidebarReadUpToIndex on chat_ReadUpToIndex {
-        attendeeId
-        chatId
-        messageId
-        unreadCount
-    }
+function ChatListItem({ chat, onClick }: { chat: ChatState; onClick: () => void }): JSX.Element {
+    const chatName = chat.Name;
+    const [unreadCount, setUnreadCount] = useState<number>(0);
+    useEffect(() => {
+        return chat.UnreadCount.subscribe(setUnreadCount);
+    }, [chat.UnreadCount]);
 
-    fragment SidebarChatInfo on chat_Chat {
-        id
-        contentGroup {
-            id
-            title
-            shortTitle
-        }
-        nonDMRoom: room(where: { roomPrivacyName: { _neq: DM } }) {
-            id
-            name
-            priority
-            roomPrivacyName
-        }
-        DMRoom: room(where: { roomPrivacyName: { _eq: DM } }) {
-            id
-            name
-            roomPeople {
-                id
-                attendee {
-                    id
-                    displayName
-                }
-            }
-        }
-        enableAutoPin
-        enableAutoSubscribe
-        enableMandatoryPin
-        enableMandatorySubscribe
-        readUpToIndices(where: { attendeeId: { _eq: $attendeeId } }) {
-            ...SidebarReadUpToIndex
-        }
-    }
-
-    query PinnedChatsWithUnreadCounts($attendeeId: uuid!) {
-        chat_Pin(where: { attendeeId: { _eq: $attendeeId } }) {
-            attendeeId
-            chatId
-            chat {
-                ...SidebarChatInfo
-            }
-        }
-    }
-`;
-
-function computeChatName(chat: SidebarChatInfoFragment, attendeeId: string): string | undefined {
-    return chat
-        ? chat.contentGroup.length > 0
-            ? chat.contentGroup[0].shortTitle ?? chat.contentGroup[0].title
-            : chat.nonDMRoom.length > 0
-            ? chat.nonDMRoom[0].name
-            : chat.DMRoom.length > 0
-            ? chat.DMRoom[0].roomPeople.find((x) => x?.attendee?.id !== attendeeId)?.attendee?.displayName
-            : undefined
-        : undefined;
-}
-
-function ChatListItem({
-    chat,
-    attendeeId,
-    confSlug,
-    onClick,
-}: {
-    chat: SidebarChatInfoFragment;
-    attendeeId: string;
-    confSlug: string;
-    onClick: () => void;
-}): JSX.Element {
-    const chatName = computeChatName(chat, attendeeId) ?? "<Unknown chat>";
-    const unreadCount =
-        chat && chat.readUpToIndices && chat.readUpToIndices.length > 0
-            ? chat.readUpToIndices[0].unreadCount ?? undefined
-            : undefined;
-    const isDM = chat && chat.DMRoom.length;
-    const isPrivate = chat && chat.nonDMRoom.length && chat.nonDMRoom[0].roomPrivacyName !== RoomPrivacy_Enum.Public;
+    const isDM = chat.IsDM;
+    const isPrivate = chat.IsPrivate;
 
     return (
-        <ListItem key={chat.id} fontWeight={unreadCount ? "bold" : undefined} display="flex">
+        <ListItem key={chat.Id} fontWeight={unreadCount ? "bold" : undefined} display="flex">
             <ListIcon mt="0.7ex" fontSize="sm" as={isDM ? AtSignIcon : isPrivate ? LockIcon : ChatIcon} />
             <Button onClick={onClick} size="sm" variant="ghost" whiteSpace="normal" textAlign="left" h="auto" p={1}>
                 <Text as="span">
@@ -152,35 +75,6 @@ function ChatListItem({
             </Button>
         </ListItem>
     );
-}
-
-function sortChats(attendeeId: string, x: SidebarChatInfoFragment, y: SidebarChatInfoFragment): number {
-    function compareNames() {
-        const chatNameX = computeChatName(x, attendeeId);
-        const chatNameY = computeChatName(y, attendeeId);
-        if (chatNameX) {
-            if (chatNameY) {
-                return chatNameX.localeCompare(chatNameY);
-            } else {
-                return -1;
-            }
-        } else if (chatNameY) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
-    if (x && x.readUpToIndices?.length && x.readUpToIndices[0].unreadCount) {
-        if (y && y.readUpToIndices?.length && y.readUpToIndices[0].unreadCount) {
-            return compareNames();
-        } else {
-            return -1;
-        }
-    } else if (y && y.readUpToIndices?.length && y.readUpToIndices[0].unreadCount) {
-        return 1;
-    } else {
-        return compareNames();
-    }
 }
 
 function AttendeeTile({ attendee, onClick }: { attendee: Attendee; onClick: () => void }): JSX.Element {
@@ -249,10 +143,11 @@ function AttendeesList({
     );
 }
 
-function PeopleSearch({ createDM }: { createDM: (attendeeId: string, attendeeName: string) => void }): JSX.Element {
+function PeopleSearch({ createDM }: { createDM: (attendeeId: string) => void }): JSX.Element {
     const [search, setSearch] = useState<string>("");
 
     const conference = useConference();
+    const attendee = useMaybeCurrentAttendee();
 
     const [
         searchQuery,
@@ -329,192 +224,216 @@ function PeopleSearch({ createDM }: { createDM: (attendeeId: string, attendeeNam
             </FormControl>
             <AttendeesList
                 createDM={createDM}
-                searchedAttendees={searched && search.length > 0 ? searched : undefined}
+                searchedAttendees={
+                    searched && search.length > 0 ? searched.filter((x) => x.id !== attendee?.id) : undefined
+                }
             />
         </>
     );
 }
 
 function ChatsPanel({
-    attendeeId,
     confSlug,
     onChatIdChange,
     pageChatId,
     switchToPageChat,
     openChat,
     closeChat,
+    setUnread,
 }: {
-    attendeeId: string;
     confSlug: string;
     onChatIdChange: (id: string | null) => void;
     pageChatId: string | null;
     switchToPageChat: () => void;
-    openChat: React.MutableRefObject<
-        ((chat: { id: string; title: string; roomId: string | undefined }) => void) | null
-    >;
+    openChat: React.MutableRefObject<((chatId: string) => void) | null>;
     closeChat: React.MutableRefObject<(() => void) | null>;
+    setUnread: (v: number) => void;
 }): JSX.Element {
     const conference = useConference();
     const toast = useToast();
-    const pinnedChats = usePinnedChatsWithUnreadCountsQuery({
-        variables: {
-            attendeeId,
-        },
-        pollInterval: 30000,
-    });
+    const [pinnedChatsMap, setPinnedChatsMap] = useState<Map<string, ChatState> | null>(null);
+    const unreadCountsRef = React.useRef<Map<string, number>>(new Map());
     const [createDmMutation, createDMMutationResponse] = useCreateDmMutation();
 
-    const [currentChat, setCurrentChat] = useState<{ id: string; title: string; roomId: string | undefined } | null>(
-        null
-    );
+    useEffect(() => {
+        let unsubs: (() => void)[] = [];
+
+        if (pinnedChatsMap) {
+            unsubs = [...pinnedChatsMap.values()].map((chat) =>
+                chat.UnreadCount.subscribe((count) => {
+                    unreadCountsRef.current.set(chat.Id, count);
+
+                    const total = [...unreadCountsRef.current.values()].reduce((acc, x) => acc + x);
+                    setUnread(total);
+                })
+            );
+        }
+
+        return () => {
+            unsubs.forEach((unsub) => unsub());
+        };
+    }, [pinnedChatsMap, setUnread]);
+
+    const globalChatState = useGlobalChatState();
+    useEffect(() => {
+        const unsubscribeIsPinned = new Map<string, () => void>();
+
+        const unsubscribeChatStates = globalChatState.Chats.subscribe((chatStates) => {
+            if (chatStates.size > 0) {
+                chatStates.forEach((chatState) => {
+                    if (!unsubscribeIsPinned.has(chatState.Id)) {
+                        unsubscribeIsPinned.set(
+                            chatState.Id,
+                            chatState.IsPinned.subscribe((isPinned) => {
+                                setPinnedChatsMap((oldPinnedChats) => {
+                                    if (isPinned && !oldPinnedChats?.has(chatState.Id)) {
+                                        const newPinnedChats = new Map(oldPinnedChats ?? []);
+                                        newPinnedChats.set(chatState.Id, chatState);
+                                        return newPinnedChats;
+                                    } else if (!isPinned && oldPinnedChats?.has(chatState.Id)) {
+                                        const newPinnedChats = new Map(oldPinnedChats ?? []);
+                                        newPinnedChats.delete(chatState.Id);
+                                        return newPinnedChats;
+                                    }
+                                    return oldPinnedChats;
+                                });
+                            })
+                        );
+                    }
+                });
+            } else {
+                setPinnedChatsMap(new Map());
+            }
+        });
+
+        return () => {
+            unsubscribeIsPinned.forEach((unsubscribe) => unsubscribe());
+            unsubscribeChatStates();
+        };
+    }, [globalChatState]);
+    const pinnedChats = useMemo(() => (pinnedChatsMap ? [...pinnedChatsMap.values()] : undefined), [pinnedChatsMap]);
+
+    const [currentChatId, _setCurrentChatId] = useState<string | null>(null);
+    const [currentChat, setCurrentChat] = useState<ChatState | null>(null);
+    useEffect(() => {
+        let unsubscribe: undefined | (() => void);
+        if (currentChatId) {
+            unsubscribe = globalChatState.observeChatId(currentChatId, setCurrentChat);
+        } else {
+            setCurrentChat(null);
+        }
+        return () => {
+            unsubscribe?.();
+        };
+    }, [currentChatId, globalChatState]);
+    const setCurrentChatId = useCallback((v: string | null) => {
+        setCurrentChat(null);
+        _setCurrentChatId(v);
+    }, []);
 
     openChat.current = useCallback(
-        (chat) => {
-            setCurrentChat(chat);
+        (chatId: string) => {
+            setCurrentChatId(chatId);
 
-            if (chat.id === pageChatId) {
+            if (chatId === pageChatId) {
                 switchToPageChat();
             }
         },
-        [pageChatId, switchToPageChat]
+        [pageChatId, setCurrentChatId, switchToPageChat]
     );
     closeChat.current = useCallback(() => {
-        setCurrentChat(null);
-    }, []);
-
-    const sources: ChatSources | undefined = useMemo(
-        () =>
-            currentChat
-                ? {
-                      chatId: currentChat.id,
-                      chatLabel: currentChat.title,
-                      chatTitle: currentChat.title,
-                  }
-                : undefined,
-        [currentChat]
-    );
+        setCurrentChatId(null);
+    }, [setCurrentChatId]);
 
     useEffect(() => {
-        onChatIdChange(sources?.chatId ?? null);
-    }, [onChatIdChange, sources?.chatId]);
+        onChatIdChange(currentChat?.Id ?? null);
+    }, [onChatIdChange, currentChat?.Id]);
 
     const history = useHistory();
 
-    const mandatoryPinnedChats = useMemo(
-        () => (
-            <List m={0} mb={2} ml={4}>
-                {pinnedChats.data?.chat_Pin
-                    .filter((chatPin) => chatPin.chat?.enableMandatoryPin)
-                    .sort((x, y) => sortChats(attendeeId, x.chat, y.chat))
-                    .map((chatPin) => (
-                        <ChatListItem
-                            key={chatPin.chatId}
-                            chat={chatPin.chat}
-                            attendeeId={attendeeId}
-                            confSlug={confSlug}
-                            onClick={() => {
-                                setCurrentChat({
-                                    id: chatPin.chatId,
-                                    title: computeChatName(chatPin.chat, attendeeId) ?? "Unknown chat",
-                                    roomId:
-                                        chatPin.chat.nonDMRoom.length > 0
-                                            ? chatPin.chat.nonDMRoom[0].id
-                                            : chatPin.chat.DMRoom.length > 0
-                                            ? chatPin.chat.DMRoom[0].id
-                                            : undefined,
-                                });
+    const mandatoryPinnedChats = useMemo(() => {
+        if (pinnedChats) {
+            const chats = pinnedChats.filter((chat) => chat.EnableMandatoryPin);
+            if (chats.length > 0) {
+                return (
+                    <List m={0} mb={2} ml={4}>
+                        {chats.sort(ChatState.compare).map((chat) => (
+                            <ChatListItem
+                                key={chat.Id}
+                                chat={chat}
+                                onClick={() => {
+                                    setCurrentChatId(chat.Id);
 
-                                if (chatPin.chatId === pageChatId) {
-                                    switchToPageChat();
-                                }
-                            }}
-                        />
-                    ))}
-            </List>
-        ),
-        [attendeeId, confSlug, pageChatId, pinnedChats.data?.chat_Pin, switchToPageChat]
-    );
+                                    if (chat.Id === pageChatId) {
+                                        switchToPageChat();
+                                    }
+                                }}
+                            />
+                        ))}
+                    </List>
+                );
+            }
+        }
+        return undefined;
+    }, [pageChatId, pinnedChats, setCurrentChatId, switchToPageChat]);
 
-    const dmPinnedChats = useMemo(
-        () => (
-            <List my={2} ml={4}>
-                {pinnedChats.data?.chat_Pin
-                    .filter(
-                        (chatPin) => !!chatPin.chat && !chatPin.chat?.enableMandatoryPin && chatPin.chat?.DMRoom.length
-                    )
-                    .sort((x, y) => sortChats(attendeeId, x.chat, y.chat))
-                    .map((chatPin) => (
-                        <ChatListItem
-                            key={chatPin.chatId}
-                            chat={chatPin.chat}
-                            attendeeId={attendeeId}
-                            confSlug={confSlug}
-                            onClick={() => {
-                                setCurrentChat({
-                                    id: chatPin.chatId,
-                                    title: computeChatName(chatPin.chat, attendeeId) ?? "Unknown chat",
-                                    roomId:
-                                        chatPin.chat.nonDMRoom.length > 0
-                                            ? chatPin.chat.nonDMRoom[0].id
-                                            : chatPin.chat.DMRoom.length > 0
-                                            ? chatPin.chat.DMRoom[0].id
-                                            : undefined,
-                                });
+    const dmPinnedChats = useMemo(() => {
+        if (pinnedChats) {
+            const chats = pinnedChats.filter((chat) => !chat.EnableMandatoryPin && chat.IsDM);
+            if (chats) {
+                return (
+                    <List my={2} ml={4}>
+                        {chats.sort(ChatState.compare).map((chat) => (
+                            <ChatListItem
+                                key={chat.Id}
+                                chat={chat}
+                                onClick={() => {
+                                    setCurrentChatId(chat.Id);
 
-                                if (chatPin.chatId === pageChatId) {
-                                    switchToPageChat();
-                                }
-                            }}
-                        />
-                    ))}
-                {!pinnedChats.data || pinnedChats.data.chat_Pin.length < 1 ? <>No pinned DMs</> : <></>}
-            </List>
-        ),
-        [attendeeId, confSlug, pageChatId, pinnedChats.data, switchToPageChat]
-    );
+                                    if (chat.Id === pageChatId) {
+                                        switchToPageChat();
+                                    }
+                                }}
+                            />
+                        ))}
+                    </List>
+                );
+            }
+        }
+        return undefined;
+    }, [pageChatId, pinnedChats, setCurrentChatId, switchToPageChat]);
 
-    const nonDMPinnedChats = useMemo(
-        () => (
-            <List my={2} ml={4}>
-                {pinnedChats.data?.chat_Pin
-                    .filter(
-                        (chatPin) => !!chatPin.chat && !chatPin.chat?.enableMandatoryPin && !chatPin.chat?.DMRoom.length
-                    )
-                    .sort((x, y) => sortChats(attendeeId, x.chat, y.chat))
-                    .map((chatPin) => (
-                        <ChatListItem
-                            key={chatPin.chatId}
-                            chat={chatPin.chat}
-                            attendeeId={attendeeId}
-                            confSlug={confSlug}
-                            onClick={() => {
-                                setCurrentChat({
-                                    id: chatPin.chatId,
-                                    title: computeChatName(chatPin.chat, attendeeId) ?? "Unknown chat",
-                                    roomId:
-                                        chatPin.chat.nonDMRoom.length > 0
-                                            ? chatPin.chat.nonDMRoom[0].id
-                                            : chatPin.chat.DMRoom.length > 0
-                                            ? chatPin.chat.DMRoom[0].id
-                                            : undefined,
-                                });
+    const nonDMPinnedChats = useMemo(() => {
+        if (pinnedChats) {
+            const chats = pinnedChats.filter((chat) => !chat.EnableMandatoryPin && !chat.IsDM);
+            if (chats.length > 0) {
+                return (
+                    <List my={2} ml={4}>
+                        {chats.sort(ChatState.compare).map((chat) => (
+                            <ChatListItem
+                                key={chat.Id}
+                                chat={chat}
+                                onClick={() => {
+                                    setCurrentChatId(chat.Id);
 
-                                if (chatPin.chatId === pageChatId) {
-                                    switchToPageChat();
-                                }
-                            }}
-                        />
-                    ))}
-                {!pinnedChats.data || pinnedChats.data.chat_Pin.length < 1 ? <>No pinned chats</> : <></>}
-            </List>
-        ),
-        [attendeeId, confSlug, pageChatId, pinnedChats.data, switchToPageChat]
-    );
+                                    if (chat.Id === pageChatId) {
+                                        switchToPageChat();
+                                    }
+                                }}
+                            />
+                        ))}
+                    </List>
+                );
+            }
+        }
+        return undefined;
+    }, [pageChatId, pinnedChats, setCurrentChatId, switchToPageChat]);
 
     const peopleSearch = useMemo(
         () => (
+            // TODO: Push createDM through the global chats state class?
             <PeopleSearch
-                createDM={async (attendeeId, attendeeName) => {
+                createDM={async (attendeeId) => {
                     if (!createDMMutationResponse.loading) {
                         try {
                             const result = await createDmMutation({
@@ -531,11 +450,7 @@ function ChatsPanel({
                                 console.error("Failed to create DM", result.errors);
                                 throw new Error("Failed to create DM");
                             } else {
-                                setCurrentChat({
-                                    id: result.data.createRoomDm.chatId,
-                                    roomId: result.data.createRoomDm.roomId,
-                                    title: attendeeName,
-                                });
+                                setCurrentChatId(result.data.createRoomDm.chatId);
 
                                 if (result.data.createRoomDm.chatId === pageChatId) {
                                     switchToPageChat();
@@ -552,7 +467,92 @@ function ChatsPanel({
                 }}
             />
         ),
-        [conference.id, createDMMutationResponse.loading, createDmMutation, pageChatId, switchToPageChat, toast]
+        [
+            conference.id,
+            createDMMutationResponse.loading,
+            createDmMutation,
+            pageChatId,
+            setCurrentChatId,
+            switchToPageChat,
+            toast,
+        ]
+    );
+
+    const chatEl = useMemo(() => {
+        if (currentChatId && currentChatId !== pageChatId) {
+            if (currentChat) {
+                return (
+                    <>
+                        <Chat
+                            customHeadingElements={[
+                                <Tooltip key="back-button" label="Back to chats list">
+                                    <Button size="xs" colorScheme="purple" onClick={() => setCurrentChatId(null)}>
+                                        <FAIcon iconStyle="s" icon="chevron-left" mr={1} /> All chats
+                                    </Button>
+                                </Tooltip>,
+                                currentChat && currentChat.RoomId ? (
+                                    <Tooltip key="video-room-button" label="Go to video room">
+                                        <Button
+                                            key="room-button"
+                                            size="xs"
+                                            colorScheme="blue"
+                                            onClick={() =>
+                                                history.push(`/conference/${confSlug}/room/${currentChat.RoomId}`)
+                                            }
+                                        >
+                                            <FAIcon iconStyle="s" icon="video" />
+                                        </Button>
+                                    </Tooltip>
+                                ) : undefined,
+                            ]}
+                            chat={currentChat}
+                        />
+                    </>
+                );
+            } else {
+                return <Spinner label="Loading selected chat" />;
+            }
+        }
+        return undefined;
+    }, [confSlug, currentChat, currentChatId, history, pageChatId, setCurrentChatId]);
+
+    const chatLists = useMemo(
+        () => (
+            <>
+                {mandatoryPinnedChats && (
+                    <>
+                        {mandatoryPinnedChats}
+                        <Divider />
+                    </>
+                )}
+                {dmPinnedChats && (
+                    <>
+                        {dmPinnedChats}
+                        <Divider />
+                    </>
+                )}
+                {nonDMPinnedChats && (
+                    <>
+                        {nonDMPinnedChats}
+                        <Divider />
+                    </>
+                )}
+                {pinnedChats && !mandatoryPinnedChats && !dmPinnedChats && !nonDMPinnedChats && (
+                    <>
+                        No pinned chats.
+                        <Divider />
+                    </>
+                )}
+                {pinnedChats === undefined ? (
+                    <>
+                        <Spinner label="Loading pinned chats" />
+                        <Divider />
+                    </>
+                ) : undefined}
+                {peopleSearch}
+            </>
+        ),
+        [dmPinnedChats, mandatoryPinnedChats, nonDMPinnedChats, peopleSearch, pinnedChats]
     );
 
     if (createDMMutationResponse.loading) {
@@ -564,45 +564,10 @@ function ChatsPanel({
                 </Box>
             </VStack>
         );
-    } else if (sources && sources.chatId !== pageChatId) {
-        return (
-            <>
-                <Chat
-                    customHeadingElements={[
-                        <Tooltip key="back-button" label="Back to chats list">
-                            <Button size="xs" colorScheme="purple" onClick={() => setCurrentChat(null)}>
-                                <FAIcon iconStyle="s" icon="chevron-left" mr={1} /> All chats
-                            </Button>
-                        </Tooltip>,
-                        currentChat?.roomId ? (
-                            <Tooltip key="video-room-button" label="Go to video room">
-                                <Button
-                                    key="room-button"
-                                    size="xs"
-                                    colorScheme="blue"
-                                    onClick={() => history.push(`/conference/${confSlug}/room/${currentChat.roomId}`)}
-                                >
-                                    <FAIcon iconStyle="s" icon="video" />
-                                </Button>
-                            </Tooltip>
-                        ) : undefined,
-                    ]}
-                    sources={sources}
-                />
-            </>
-        );
+    } else if (chatEl) {
+        return chatEl;
     } else {
-        return (
-            <>
-                {mandatoryPinnedChats}
-                <Divider />
-                {dmPinnedChats}
-                <Divider />
-                {nonDMPinnedChats}
-                <Divider />
-                {peopleSearch}
-            </>
-        );
+        return chatLists;
     }
 }
 
@@ -627,12 +592,7 @@ gql`
         ContentGroup_by_pk(id: $itemId) {
             id
             title
-            chat {
-                id
-                room {
-                    id
-                }
-            }
+            chatId
         }
     }
 `;
@@ -640,9 +600,11 @@ gql`
 function RoomChatPanel({
     roomId,
     onChatIdLoaded,
+    setUnread,
 }: {
     roomId: string;
     onChatIdLoaded: (chatId: string) => void;
+    setUnread: (v: number) => void;
 }): JSX.Element {
     const { loading, error, data } = useGetRoomChatIdQuery({
         variables: {
@@ -650,25 +612,39 @@ function RoomChatPanel({
         },
     });
 
-    const sources: ChatSources | undefined = useMemo(
-        () =>
-            data?.Room_by_pk
-                ? {
-                      chatId: data.Room_by_pk.chatId,
-                      chatLabel: data.Room_by_pk.name,
-                      chatTitle: data.Room_by_pk.name,
-                  }
-                : undefined,
-        [data?.Room_by_pk]
-    );
+    const globalChatState = useGlobalChatState();
+    const [chat, setChat] = useState<ChatState | null | undefined>();
+    useEffect(() => {
+        let unsubscribe: undefined | (() => void);
+        if (!loading) {
+            if (data?.Room_by_pk?.chatId) {
+                unsubscribe = globalChatState.observeChatId(data?.Room_by_pk?.chatId, setChat);
+            } else {
+                setChat(null);
+            }
+        }
+        return () => {
+            unsubscribe?.();
+        };
+    }, [data?.Room_by_pk?.chatId, globalChatState, loading]);
 
     useEffect(() => {
-        if (sources?.chatId) {
-            onChatIdLoaded(sources.chatId);
+        if (chat?.Id) {
+            onChatIdLoaded(chat.Id);
         }
-    }, [onChatIdLoaded, sources?.chatId]);
+    }, [onChatIdLoaded, chat?.Id]);
 
-    if (loading) {
+    useEffect(() => {
+        let unsubscribe: (() => void) | undefined;
+        if (chat) {
+            unsubscribe = chat.UnreadCount.subscribe(setUnread);
+        }
+        return () => {
+            unsubscribe?.();
+        };
+    }, [chat, setUnread]);
+
+    if (loading || chat === undefined) {
         return <Spinner label="Loading room chat" />;
     }
 
@@ -691,7 +667,7 @@ function RoomChatPanel({
         );
     }
 
-    if (!sources) {
+    if (chat === null) {
         return (
             <Alert
                 status="info"
@@ -709,17 +685,19 @@ function RoomChatPanel({
         );
     }
 
-    return <Chat sources={sources} />;
+    return <Chat chat={chat} />;
 }
 
 function ItemChatPanel({
     itemId,
     confSlug,
     onChatIdLoaded,
+    setUnread,
 }: {
     itemId: string;
     confSlug: string;
     onChatIdLoaded: (chatId: string) => void;
+    setUnread: (v: number) => void;
 }): JSX.Element {
     const { loading, error, data } = useGetContentGroupChatIdQuery({
         variables: {
@@ -727,27 +705,41 @@ function ItemChatPanel({
         },
     });
 
-    const sources: ChatSources | undefined = useMemo(
-        () =>
-            data?.ContentGroup_by_pk && data.ContentGroup_by_pk.chat
-                ? {
-                      chatId: data.ContentGroup_by_pk.chat.id,
-                      chatLabel: data.ContentGroup_by_pk.title,
-                      chatTitle: data.ContentGroup_by_pk.title,
-                  }
-                : undefined,
-        [data?.ContentGroup_by_pk]
-    );
+    const globalChatState = useGlobalChatState();
+    const [chat, setChat] = useState<ChatState | null | undefined>();
+    useEffect(() => {
+        let unsubscribe: undefined | (() => void);
+        if (!loading) {
+            if (data?.ContentGroup_by_pk?.chatId) {
+                unsubscribe = globalChatState.observeChatId(data.ContentGroup_by_pk.chatId, setChat);
+            } else {
+                setChat(null);
+            }
+        }
+        return () => {
+            unsubscribe?.();
+        };
+    }, [data?.ContentGroup_by_pk?.chatId, globalChatState, loading]);
 
     useEffect(() => {
-        if (sources?.chatId) {
-            onChatIdLoaded(sources.chatId);
+        if (chat?.Id) {
+            onChatIdLoaded(chat.Id);
         }
-    }, [onChatIdLoaded, sources?.chatId]);
+    }, [onChatIdLoaded, chat?.Id]);
+
+    useEffect(() => {
+        let unsubscribe: (() => void) | undefined;
+        if (chat) {
+            unsubscribe = chat.UnreadCount.subscribe(setUnread);
+        }
+        return () => {
+            unsubscribe?.();
+        };
+    }, [chat, setUnread]);
 
     const history = useHistory();
 
-    if (loading) {
+    if (loading || chat === undefined) {
         return <Spinner label="Loading room chat" />;
     }
 
@@ -770,7 +762,7 @@ function ItemChatPanel({
         );
     }
 
-    if (!sources || !data?.ContentGroup_by_pk?.chat) {
+    if (chat === null) {
         return (
             <Alert
                 status="info"
@@ -788,25 +780,23 @@ function ItemChatPanel({
         );
     }
 
-    const chat = data.ContentGroup_by_pk.chat;
-
     return (
         <Chat
             customHeadingElements={[
-                chat.room.length > 0 ? (
+                chat.RoomId ? (
                     <Tooltip key="back-button" label="Go to video room">
                         <Button
                             key="room-button"
                             size="xs"
                             colorScheme="blue"
-                            onClick={() => history.push(`/conference/${confSlug}/room/${chat.room[0].id}`)}
+                            onClick={() => history.push(`/conference/${confSlug}/room/${chat.RoomId}`)}
                         >
                             <FAIcon iconStyle="s" icon="video" />
                         </Button>
                     </Tooltip>
                 ) : undefined,
             ]}
-            sources={sources}
+            chat={chat}
         />
     );
 }
@@ -881,19 +871,9 @@ function PresencePanel({ roomId }: { roomId?: string }): JSX.Element {
 function RightSidebarConferenceSections_Inner({
     rootUrl,
     confSlug,
-    attendee,
-    onClose,
-    suppressChatId,
-    openChat,
 }: {
     rootUrl: string;
     confSlug: string;
-    attendee: AttendeeFieldsFragment;
-    onClose: () => void;
-    suppressChatId: React.MutableRefObject<string | null>;
-    openChat: React.MutableRefObject<
-        ((chat: { id: string; title: string; roomId: string | undefined }) => void) | null
-    >;
 }): JSX.Element {
     const roomMatch = useRouteMatch<{ roomId: string }>(`${rootUrl}/room/:roomId`);
     const itemMatch = useRouteMatch<{ itemId: string }>(`${rootUrl}/item/:itemId`);
@@ -909,19 +889,21 @@ function RightSidebarConferenceSections_Inner({
         (x) => parseInt(x, 10)
     );
 
+    const chatState = useGlobalChatState();
+
     useEffect(() => {
         switch (currentTab) {
             case RightSidebarTabs.PageChat:
-                suppressChatId.current = pageChatId;
+                chatState.suppressNotificationsForChatId = pageChatId;
                 break;
             case RightSidebarTabs.Chats:
-                suppressChatId.current = nonPageChatId;
+                chatState.suppressNotificationsForChatId = nonPageChatId;
                 break;
             case RightSidebarTabs.Presence:
-                suppressChatId.current = null;
+                chatState.suppressNotificationsForChatId = null;
                 break;
         }
-    }, [currentTab, nonPageChatId, pageChatId, suppressChatId]);
+    }, [chatState, currentTab, nonPageChatId, pageChatId]);
 
     useEffect(() => {
         if (roomId || itemId) {
@@ -945,38 +927,52 @@ function RightSidebarConferenceSections_Inner({
                 : 1
             : -2;
 
-    const openChatCb = useRef<((chat: { id: string; title: string; roomId: string | undefined }) => void) | null>(null);
-    openChat.current = useCallback(
-        (chat) => {
+    const openChatCb = useRef<((chatId: string) => void) | null>(null);
+    chatState.openChatInSidebar = useCallback(
+        (chatId: string) => {
             setCurrentTab(RightSidebarTabs.Chats);
-            openChatCb.current?.(chat);
+            openChatCb.current?.(chatId);
         },
         [setCurrentTab]
     );
     const closeChatCb = useRef<(() => void) | null>(null);
 
-    const roomPanel = useMemo(() => roomId && <RoomChatPanel roomId={roomId} onChatIdLoaded={setPageChatId} />, [
-        roomId,
-    ]);
+    const [pageChatUnread, setPageChatUnread] = useState<number>(0);
+    const [chatsUnread, setChatsUnread] = useState<number>(0);
+
+    const roomPanel = useMemo(
+        () => roomId && <RoomChatPanel roomId={roomId} onChatIdLoaded={setPageChatId} setUnread={setPageChatUnread} />,
+        [roomId]
+    );
     const itemPanel = useMemo(
-        () => itemId && <ItemChatPanel itemId={itemId} onChatIdLoaded={setPageChatId} confSlug={confSlug} />,
+        () =>
+            itemId && (
+                <ItemChatPanel
+                    itemId={itemId}
+                    onChatIdLoaded={setPageChatId}
+                    confSlug={confSlug}
+                    setUnread={setPageChatUnread}
+                />
+            ),
         [confSlug, itemId]
     );
+    const switchToPageChat = useCallback(() => {
+        setCurrentTab(RightSidebarTabs.PageChat);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
     const chatsPanel = useMemo(
         () => (
             <ChatsPanel
-                attendeeId={attendee.id}
                 confSlug={confSlug}
                 onChatIdChange={setNonPageChatId}
                 pageChatId={pageChatId}
-                switchToPageChat={() => {
-                    setCurrentTab(RightSidebarTabs.PageChat);
-                }}
+                switchToPageChat={switchToPageChat}
                 openChat={openChatCb}
                 closeChat={closeChatCb}
+                setUnread={setChatsUnread}
             />
         ),
-        [attendee.id, confSlug, pageChatId, setCurrentTab]
+        [confSlug, pageChatId, switchToPageChat]
     );
     const presencePanel = useMemo(() => <PresencePanel roomId={roomId} />, [roomId]);
 
@@ -1024,9 +1020,9 @@ function RightSidebarConferenceSections_Inner({
             onChange={onChangeTab}
         >
             <TabList py={2}>
-                {roomId && <Tab>Room</Tab>}
-                {itemId && <Tab>Item</Tab>}
-                <Tab>Chats</Tab>
+                {roomId && <Tab>Room{pageChatUnread > 0 ? ` (${pageChatUnread})` : ""}</Tab>}
+                {itemId && <Tab>Item{pageChatUnread > 0 ? ` (${pageChatUnread})` : ""}</Tab>}
+                <Tab>Chats{chatsUnread > 0 ? ` (${chatsUnread})` : ""}</Tab>
                 <Tab>Who&apos;s here</Tab>
             </TabList>
 
@@ -1041,7 +1037,7 @@ function RightSidebarConferenceSections_Inner({
                         {itemPanel}
                     </TabPanel>
                 )}
-                <TabPanel p={0} overflowY="auto" w="100%" h="100%">
+                <TabPanel p={0} pt="4px" overflowY="auto" w="100%" h="100%">
                     {chatsPanel}
                 </TabPanel>
                 <TabPanel overflowY="auto" w="100%" h="100%">
@@ -1055,31 +1051,16 @@ function RightSidebarConferenceSections_Inner({
 export default function RightSidebarConferenceSections({
     rootUrl,
     confSlug,
-    onClose,
 }: {
     rootUrl: string;
     confSlug: string;
     onClose: () => void;
 }): JSX.Element {
     const user = useMaybeCurrentUser();
-    const suppressChatId = useRef<string | null>(null);
-    const openChat = useRef<((chat: { id: string; title: string; roomId: string | undefined }) => void) | null>(null);
     if (user.user && user.user.attendees.length > 0) {
         const attendee = user.user.attendees.find((x) => x.conference.slug === confSlug);
         if (attendee) {
-            return (
-                <>
-                    <ChatNotificationsProvider suppressChatId={suppressChatId} openChat={openChat} />
-                    <RightSidebarConferenceSections_Inner
-                        rootUrl={rootUrl}
-                        confSlug={confSlug}
-                        attendee={attendee}
-                        onClose={onClose}
-                        suppressChatId={suppressChatId}
-                        openChat={openChat}
-                    />
-                </>
-            );
+            return <RightSidebarConferenceSections_Inner rootUrl={rootUrl} confSlug={confSlug} />;
         }
     }
     return <></>;

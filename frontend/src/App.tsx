@@ -1,8 +1,9 @@
 import { Box, Flex, useBreakpointValue, useColorModeValue, VStack } from "@chakra-ui/react";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Route, RouteComponentProps, Switch } from "react-router-dom";
 import "./App.css";
 import Routing from "./AppRouting";
+import { GlobalChatStateContext, GlobalChatStateProvider } from "./aspects/Chat/GlobalChatStateProvider";
 import AttendeesContextProvider from "./aspects/Conference/AttendeesContext";
 import ConferenceProvider, { useMaybeConference } from "./aspects/Conference/useConference";
 import ConferenceCurrentUserActivePermissionsProvider from "./aspects/Conference/useConferenceCurrentUserActivePermissions";
@@ -56,12 +57,14 @@ function AppInner({ confSlug, rootUrl }: AppProps): JSX.Element {
                             <ConferenceCurrentUserActivePermissionsProvider>
                                 <CurrentAttendeeProvider>
                                     <PresenceCountProvider>
-                                        <AttendeesContextProvider>
-                                            <RoomParticipantsProvider>
-                                                {/* <ShuffleRoomsQueueMonitor /> */}
-                                                <SharedRoomContextProvider>{page}</SharedRoomContextProvider>
-                                            </RoomParticipantsProvider>
-                                        </AttendeesContextProvider>
+                                        <GlobalChatStateProvider>
+                                            <AttendeesContextProvider>
+                                                <RoomParticipantsProvider>
+                                                    {/* <ShuffleRoomsQueueMonitor /> */}
+                                                    <SharedRoomContextProvider>{page}</SharedRoomContextProvider>
+                                                </RoomParticipantsProvider>
+                                            </AttendeesContextProvider>
+                                        </GlobalChatStateProvider>
                                     </PresenceCountProvider>
                                 </CurrentAttendeeProvider>
                             </ConferenceCurrentUserActivePermissionsProvider>
@@ -127,6 +130,19 @@ function AppPage({ rootUrl }: AppProps) {
     );
     const center = useMemo(() => <Routing rootUrl={rootUrl} />, [rootUrl]);
 
+    const onRightBarOpen = useCallback(() => {
+        if (!rightDefaultVisible) {
+            setLeftOpen(false);
+        }
+        setRightOpen(true);
+    }, [rightDefaultVisible]);
+    const chatCtx = React.useContext(GlobalChatStateContext);
+    useEffect(() => {
+        if (chatCtx) {
+            chatCtx.showSidebar = onRightBarOpen;
+        }
+    }, [chatCtx, onRightBarOpen]);
+
     const mainMenuProps = useMemo(
         () => ({
             isLeftBarOpen: leftVisible ?? false,
@@ -136,14 +152,9 @@ function AppPage({ rootUrl }: AppProps) {
             onRightBarClose: () => {
                 setRightOpen(false);
             },
-            onRightBarOpen: () => {
-                if (!rightDefaultVisible) {
-                    setLeftOpen(false);
-                }
-                setRightOpen(true);
-            },
+            onRightBarOpen,
         }),
-        [leftVisible, rightDefaultVisible, rightVisible]
+        [leftVisible, onRightBarOpen, rightVisible]
     );
 
     const leftBar = confSlug ? (

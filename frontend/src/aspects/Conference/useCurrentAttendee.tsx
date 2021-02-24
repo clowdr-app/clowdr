@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 import { Box, Spinner, VStack } from "@chakra-ui/react";
 import assert from "assert";
-import React, { ReactNode, ReactNodeArray } from "react";
+import React, { ReactNode, ReactNodeArray, useMemo } from "react";
 import { Maybe, useAttendeeByUserIdConferenceIdQuery } from "../../generated/graphql";
 import type { BadgeData } from "../Badges/ProfileBadge";
 import PageNotFound from "../Errors/PageNotFound";
@@ -104,6 +104,20 @@ function CurrentAttendeeProviderInner({
         },
     });
 
+    const ctx = useMemo(
+        () =>
+            data?.Attendee[0] && data.Attendee[0].profile
+                ? {
+                      ...data.Attendee[0],
+                      profile: data.Attendee[0].profile,
+                      refetch: async () => {
+                          await refetch();
+                      },
+                  }
+                : undefined,
+        [data?.Attendee, refetch]
+    );
+
     if (loading && !data) {
         return (
             <VStack>
@@ -122,23 +136,7 @@ function CurrentAttendeeProviderInner({
         );
     }
 
-    return (
-        <CurrentAttendeeContext.Provider
-            value={
-                data?.Attendee[0] && data.Attendee[0].profile
-                    ? {
-                          ...data.Attendee[0],
-                          profile: data.Attendee[0].profile,
-                          refetch: async () => {
-                              await refetch();
-                          },
-                      }
-                    : undefined
-            }
-        >
-            {children}
-        </CurrentAttendeeContext.Provider>
-    );
+    return <CurrentAttendeeContext.Provider value={ctx}>{children}</CurrentAttendeeContext.Provider>;
 }
 
 export function CurrentAttendeeProvider({ children }: { children: ReactNode | ReactNodeArray }): JSX.Element {

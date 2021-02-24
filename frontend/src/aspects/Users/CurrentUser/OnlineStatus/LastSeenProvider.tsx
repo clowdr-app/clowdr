@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import {
     useGetCurrentUserLastSeenQuery,
     useInsertCurrentUserOnlineStatusMutation,
@@ -110,6 +110,6 @@ function LastSeenProvider_UserIdExists({
     }, [updateCurrentUserLastSeenMutation, userId]);
     usePolling(updateCb, 60 * 1000);
 
-    const value = lastSeen && (loading ? undefined : new Date(lastSeen));
+    const value = useMemo(() => lastSeen && (loading ? undefined : new Date(lastSeen)), [lastSeen, loading]);
     return <LastSeenContext.Provider value={value}>{children}</LastSeenContext.Provider>;
 }

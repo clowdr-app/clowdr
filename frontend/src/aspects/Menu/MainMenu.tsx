@@ -28,9 +28,7 @@ import usePrimaryMenuButtons, { PrimaryMenuButtonsProvider } from "./usePrimaryM
 
 interface Props {
     children: React.ReactNode | React.ReactNodeArray;
-    isLeftBarOpen: boolean;
-    onLeftBarOpen: () => void;
-    onLeftBarClose: () => void;
+    state: MenuState;
 }
 
 function MenuBar(): JSX.Element {
@@ -406,9 +404,9 @@ function MenuBar(): JSX.Element {
     );
 }
 
-export default function MainMenu({ children, ...props }: Props & MenuState): JSX.Element {
+export default function MainMenu({ children, state }: Props): JSX.Element {
     return (
-        <MenuStateContext.Provider value={props}>
+        <MenuStateContext.Provider value={state}>
             <PrimaryMenuButtonsProvider>
                 {children}
                 <MenuBar />

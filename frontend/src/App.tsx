@@ -143,7 +143,7 @@ function AppPage({ rootUrl }: AppProps) {
         }
     }, [chatCtx, onRightBarOpen]);
 
-    const mainMenuProps = useMemo(
+    const mainMenuState = useMemo(
         () => ({
             isLeftBarOpen: leftVisible ?? false,
             onLeftBarClose: () => setLeftOpen(false),
@@ -226,7 +226,7 @@ function AppPage({ rootUrl }: AppProps) {
             alignItems="center"
             backgroundColor={bgColour}
         >
-            <MainMenu {...mainMenuProps}>
+            <MainMenu state={mainMenuState}>
                 <Flex w="100%" h="100%" overflow="hidden">
                     {leftBar}
                     {centerBar}

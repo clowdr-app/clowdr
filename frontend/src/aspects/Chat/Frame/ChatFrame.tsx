@@ -8,7 +8,6 @@ import { ChatConfigurationControls } from "../Heading/ChatConfigurationControl";
 import { ChatHeading } from "../Heading/ChatHeading";
 import { ChatMessageList } from "../Messages/ChatMessageList";
 import EmojiPickerProvider from "../Messages/EmojiPickerProvider";
-import ReactionsProvider from "../Messages/ReactionsProvider";
 import ReceiveMessageQueriesProvider from "../Messages/ReceiveMessageQueries";
 import ChatProfileModalProvider from "./ChatProfileModalProvider";
 import { ChatTypingIndicators } from "./ChatTypingIndicators";
@@ -40,22 +39,14 @@ export function ChatFrame({ ...rest }: BoxProps): JSX.Element {
                 <ChatHeading role="region" aria-label="Chat controls" flex="0 0 auto" />
                 {/* <ChatSelector flex="0 0 auto" /> */}
                 <ChatProfileModalProvider>
-                    <ReactionsProvider>
-                        <EmojiPickerProvider>
-                            <ReceiveMessageQueriesProvider setAnsweringQuestionId={setAnsweringQuestionIdRef}>
-                                <Box
-                                    role="region"
-                                    aria-label="Messages"
-                                    flex="0 1 100%"
-                                    pos="relative"
-                                    overflow="hidden"
-                                >
-                                    <ChatMessageList pos="relative" h="100%" zIndex={1} />
-                                    <ChatConfigurationControls pos="absolute" top="0" left="0" w="100%" zIndex={2} />
-                                </Box>
-                            </ReceiveMessageQueriesProvider>
-                        </EmojiPickerProvider>
-                    </ReactionsProvider>
+                    <EmojiPickerProvider>
+                        <ReceiveMessageQueriesProvider setAnsweringQuestionId={setAnsweringQuestionIdRef}>
+                            <Box role="region" aria-label="Messages" flex="0 1 100%" pos="relative" overflow="hidden">
+                                <ChatMessageList pos="relative" h="100%" zIndex={1} />
+                                <ChatConfigurationControls pos="absolute" top="0" left="0" w="100%" zIndex={2} />
+                            </Box>
+                        </ReceiveMessageQueriesProvider>
+                    </EmojiPickerProvider>
                 </ChatProfileModalProvider>
                 {config.currentAttendeeId &&
                 (config.permissions.canMessage ||

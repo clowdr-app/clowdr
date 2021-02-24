@@ -2,13 +2,13 @@ import { Button, Code, HStack, StackProps, Text, Tooltip, useToast, VStack } fro
 import React from "react";
 import { Chat_ReactionType_Enum } from "../../../generated/graphql";
 import FAIcon from "../../Icons/FAIcon";
+import type { MessageState } from "../ChatGlobalState";
 import { useEmojiPickerContext } from "./EmojiPickerProvider";
-import { useReactions } from "./ReactionsProvider";
 import { useReceiveMessageQueries } from "./ReceiveMessageQueries";
 
 export default function MessageControls({
     hideReactions,
-    messageId,
+    message,
     isOwnMessage,
     canEdit,
     canDelete,
@@ -18,7 +18,7 @@ export default function MessageControls({
     usedReactions,
     ...props
 }: StackProps & {
-    messageId: number;
+    message: MessageState;
     isOwnMessage: boolean;
     canEdit?: boolean;
     canDelete?: boolean;
@@ -29,7 +29,6 @@ export default function MessageControls({
     usedReactions: string[];
 }): JSX.Element {
     const emojiPicker = useEmojiPickerContext();
-    const reactions = useReactions();
     const messages = useReceiveMessageQueries();
     const toast = useToast();
 
@@ -79,24 +78,20 @@ export default function MessageControls({
         >
             {(isOwnMessage || canEdit) && isPollOpen
                 ? buttonF("Close poll to new votes", "vote-yea", "cyan.400", async () => {
-                      await reactions.addReaction({
+                      await message.addReaction({
                           data: {},
-                          messageId,
                           symbol: "<Poll Closed>",
                           type: Chat_ReactionType_Enum.PollClosed,
                       });
-                      messages.refetch(messageId);
                   })
                 : undefined}
             {(isOwnMessage || canEdit) && !isPollOpen && isPollIncomplete
                 ? buttonF("Complete poll to reveal results", "poll", "cyan.400", async () => {
-                      await reactions.addReaction({
+                      await message.addReaction({
                           data: {},
-                          messageId,
                           symbol: "<Poll Complete>",
                           type: Chat_ReactionType_Enum.PollComplete,
                       });
-                      messages.refetch(messageId);
                       // TODO: Publish results as a message
                   })
                 : undefined}
@@ -105,13 +100,11 @@ export default function MessageControls({
                       emojiPicker.open(async (data) => {
                           const emoji = (data as any).native as string;
                           if (!usedReactions.includes(emoji)) {
-                              await reactions.addReaction({
+                              await message.addReaction({
                                   data: {},
-                                  messageId,
                                   symbol: emoji,
                                   type: Chat_ReactionType_Enum.Emoji,
                               });
-                              messages.refetch(messageId);
                           }
                       });
                   })
@@ -124,7 +117,7 @@ export default function MessageControls({
             {isOwnMessage || canDelete
                 ? buttonF("Delete message", "trash-alt", "red.400", async () => {
                       try {
-                          await messages.delete(messageId);
+                          await messages.delete(message.id);
                           toast({
                               title: "Deleted",
                               status: "success",

@@ -15,12 +15,19 @@ import { Mutex } from "async-mutex";
 import * as R from "ramda";
 import React from "react";
 import {
+    AddReactionDocument,
+    AddReactionMutation,
+    AddReactionMutationVariables,
     ChatMessageDataFragment,
     ChatReactionDataFragment,
     Chat_MessageType_Enum,
+    Chat_Reaction_Insert_Input,
     DeleteMessageDocument,
     DeleteMessageMutation,
     DeleteMessageMutationVariables,
+    DeleteReactionDocument,
+    DeleteReactionMutation,
+    DeleteReactionMutationVariables,
     InitialChatStateDocument,
     InitialChatStateQuery,
     InitialChatStateQueryVariables,
@@ -41,9 +48,6 @@ import {
     SelectReadUpToIndexDocument,
     SelectReadUpToIndexQuery,
     SelectReadUpToIndexQueryVariables,
-    SendChatAnswerDocument,
-    SendChatAnswerMutation,
-    SendChatAnswerMutationVariables,
     SendChatMessageDocument,
     SendChatMessageMutation,
     SendChatMessageMutationVariables,
@@ -345,12 +349,65 @@ gql`
     }
 `;
 
+gql`
+    mutation AddReaction($reaction: chat_Reaction_insert_input!) {
+        insert_chat_Reaction_one(object: $reaction) {
+            ...ChatReactionData
+        }
+    }
+
+    mutation DeleteReaction($reactionId: Int!) {
+        delete_chat_Reaction_by_pk(id: $reactionId) {
+            id
+        }
+    }
+`;
+
+gql`
+    fragment SubscribedChatReactionData on chat_Reaction {
+        data
+        id
+        senderId
+        symbol
+        type
+        messageId
+    }
+
+    subscription MessageReactions($messageIds: [Int!]!) {
+        chat_Reaction(where: { messageId: { _in: $messageIds } }) {
+            ...SubscribedChatReactionData
+        }
+    }
+`;
+
+// CHAT_TODO
+// gql`
+//     fragment ChatFlagData on chat_Flag {
+//         discussionChatId
+//         flaggedById
+//         id
+//         messageId
+//         notes
+//         resolution
+//         resolved_at
+//         type
+//         updated_at
+//         created_at
+//     }
+// `;
+
 export class MessageState {
     constructor(
         private readonly globalState: GlobalChatState,
         private readonly chatState: ChatState,
         private readonly initialState: ChatMessageDataFragment | SubscribedChatMessageDataFragment
-    ) {}
+    ) {
+        if ("reactions" in initialState) {
+            this.reactions = [...initialState.reactions];
+        } else {
+            this.reactions = [];
+        }
+    }
 
     public get created_at(): string {
         return this.initialState.created_at;
@@ -377,14 +434,70 @@ export class MessageState {
         return this.initialState.chatId;
     }
 
-    public get reactions(): ReadonlyArray<ChatReactionDataFragment> {
-        // CHAT_TODO: Make reactions work via this global state using observables
-        return "reactions" in this.initialState ? this.initialState.reactions : [];
+    private reactions: ChatReactionDataFragment[];
+    private reactionsObs = new Observable<ChatReactionDataFragment[]>((observer) => {
+        observer(this.reactions);
+    });
+    public async addReaction(reaction: Chat_Reaction_Insert_Input): Promise<void> {
+        try {
+            const result = await this.globalState.apolloClient.mutate<
+                AddReactionMutation,
+                AddReactionMutationVariables
+            >({
+                mutation: AddReactionDocument,
+                variables: {
+                    reaction: {
+                        ...reaction,
+                        senderId: this.globalState.attendee.id,
+                        messageId: this.id,
+                    },
+                },
+            });
+
+            if (result.data?.insert_chat_Reaction_one) {
+                this.reactions.push(result.data.insert_chat_Reaction_one);
+                this.reactionsObs.publish([...this.reactions]);
+            }
+        } catch (e) {
+            if (!(e instanceof ApolloError) || !e.message.includes("uniqueness violation")) {
+                console.error(`Error adding reaction: ${this.id} / ${reaction.symbol}`, e);
+            }
+        }
+    }
+    public async deleteReaction(reactionId: number): Promise<void> {
+        try {
+            const result = await this.globalState.apolloClient.mutate<
+                DeleteReactionMutation,
+                DeleteReactionMutationVariables
+            >({
+                mutation: DeleteReactionDocument,
+                variables: {
+                    reactionId,
+                },
+            });
+
+            this.reactions = this.reactions.filter((x) => x.id !== reactionId);
+            this.reactionsObs.publish([...this.reactions]);
+        } catch (e) {
+            if (!(e instanceof ApolloError) || !e.message.includes("uniqueness violation")) {
+                console.error(`Error adding reaction: ${this.id} / ${reactionId}`, e);
+            }
+        }
+    }
+    public get Reactions(): Observable<ChatReactionDataFragment[]> {
+        return this.reactionsObs;
     }
 
-    public updateFrom(msg: SubscribedChatMessageDataFragment): void {
-        // CHAT_TODO: Apply changes to reactions list
+    public async startReactionsSubscription(): Promise<void> {
+        // CHAT_TODO
     }
+    public async endReactionsSubscription(): Promise<void> {
+        // CHAT_TODO
+    }
+
+    // public updateFrom(msg: SubscribedChatMessageDataFragment): void {
+    //     // CHAT_TODO: Apply changes
+    // }
 }
 
 type MessageUpdate =
@@ -833,14 +946,15 @@ export class ChatState {
 
                     try {
                         if (data) {
-                            const sortedData = R.sortBy((x) => x.id, data.chat_Message);
-                            const updatedMessages = sortedData.filter((msg) => this.messages.has(msg.id));
-                            updatedMessages.forEach((msg) => {
-                                const msgSt = this.messages.get(msg.id);
-                                if (msgSt) {
-                                    msgSt.updateFrom(msg);
-                                }
-                            });
+                            // CHAT_TODO: Do we really need this?
+                            // const sortedData = R.sortBy((x) => x.id, data.chat_Message);
+                            // const updatedMessages = sortedData.filter((msg) => this.messages.has(msg.id));
+                            // updatedMessages.forEach((msg) => {
+                            //     const msgSt = this.messages.get(msg.id);
+                            //     if (msgSt) {
+                            //         msgSt.updateFrom(msg);
+                            //     }
+                            // });
                             newMessageStates = data.chat_Message
                                 .filter((msg) => !this.messages.has(msg.id))
                                 .map((message) => new MessageState(this.globalState, this, message));
@@ -1025,26 +1139,41 @@ export class ChatState {
                 })
             ).data?.insert_chat_Message_one;
 
-            if (type === Chat_MessageType_Enum.Answer && newMsg) {
-                const answeringIds = (data as AnswerMessageData).questionMessagesIds;
-                if (answeringIds.length > 0) {
-                    const reactionData: AnswerReactionData = {
-                        answerMessageId: newMsg.id,
-                        duplicateAnswerMessageId: newMsg.duplicatedMessageId ?? undefined,
-                    };
-                    const newReaction = await this.globalState.apolloClient.mutate<
-                        SendChatAnswerMutation,
-                        SendChatAnswerMutationVariables
-                    >({
-                        mutation: SendChatAnswerDocument,
-                        variables: {
-                            answeringId: answeringIds[0],
-                            data: reactionData,
-                            senderId,
-                        },
+            if (newMsg) {
+                const release2 = await this.messagesMutex.acquire();
+                const newMsgState = new MessageState(this.globalState, this, newMsg);
+                try {
+                    if (!this.messages.has(newMsg.id)) {
+                        this.messages.set(newMsg.id, newMsgState);
+                    }
+                } finally {
+                    release2();
+
+                    this.messagesObs.publish({
+                        op: "loaded_new",
+                        messages: [newMsgState],
                     });
-                    // CHAT_TODO: Update the target message
                 }
+
+                if (type === Chat_MessageType_Enum.Answer && newMsg) {
+                    const answeringIds = (data as AnswerMessageData).questionMessagesIds;
+                    if (answeringIds.length > 0) {
+                        const answeringId = answeringIds[0];
+                        const reactionData: AnswerReactionData = {
+                            answerMessageId: newMsg.id,
+                            duplicateAnswerMessageId: newMsg.duplicatedMessageId ?? undefined,
+                        };
+                        const targetMsg = this.messages.get(answeringId);
+                        if (targetMsg) {
+                            await targetMsg.addReaction({
+                                data: reactionData,
+                                senderId,
+                            });
+                        }
+                    }
+                }
+            } else {
+                throw new Error("New message mutation returned null or undefined");
             }
         } catch (e) {
             console.error(`Failed to send message: ${this.Id}`, e);

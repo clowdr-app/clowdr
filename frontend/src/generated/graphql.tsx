@@ -31479,31 +31479,15 @@ export type DeleteMessageMutationVariables = Exact<{
 
 export type DeleteMessageMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Message_by_pk?: Maybe<{ readonly __typename?: 'chat_Message', readonly id: number }> };
 
-export type GetChatPathQueryVariables = Exact<{
-  chatId: Scalars['uuid'];
-}>;
-
-
-export type GetChatPathQuery = { readonly __typename?: 'query_root', readonly chat_Chat_by_pk?: Maybe<{ readonly __typename?: 'chat_Chat', readonly id: any, readonly room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }>, readonly contentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any }> }> };
-
-export type SubscribedChatReactionDataFragment = { readonly __typename?: 'chat_Reaction', readonly data: any, readonly id: number, readonly senderId: any, readonly symbol: string, readonly type: Chat_ReactionType_Enum, readonly messageId: number };
-
-export type MessageReactionsSubscriptionVariables = Exact<{
-  messageId: Scalars['Int'];
-}>;
-
-
-export type MessageReactionsSubscription = { readonly __typename?: 'subscription_root', readonly chat_Reaction: ReadonlyArray<(
-    { readonly __typename?: 'chat_Reaction' }
-    & SubscribedChatReactionDataFragment
-  )> };
-
 export type AddReactionMutationVariables = Exact<{
   reaction: Chat_Reaction_Insert_Input;
 }>;
 
 
-export type AddReactionMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Reaction?: Maybe<{ readonly __typename?: 'chat_Reaction_mutation_response', readonly affected_rows: number }> };
+export type AddReactionMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Reaction_one?: Maybe<(
+    { readonly __typename?: 'chat_Reaction' }
+    & ChatReactionDataFragment
+  )> };
 
 export type DeleteReactionMutationVariables = Exact<{
   reactionId: Scalars['Int'];
@@ -31512,17 +31496,24 @@ export type DeleteReactionMutationVariables = Exact<{
 
 export type DeleteReactionMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Reaction_by_pk?: Maybe<{ readonly __typename?: 'chat_Reaction', readonly id: number }> };
 
-export type ChatFlagDataFragment = { readonly __typename?: 'chat_Flag', readonly discussionChatId?: Maybe<any>, readonly flaggedById?: Maybe<any>, readonly id: number, readonly messageId: number, readonly notes?: Maybe<string>, readonly resolution?: Maybe<string>, readonly resolved_at?: Maybe<any>, readonly type: Chat_FlagType_Enum, readonly updated_at: any, readonly created_at: any };
+export type SubscribedChatReactionDataFragment = { readonly __typename?: 'chat_Reaction', readonly data: any, readonly id: number, readonly senderId: any, readonly symbol: string, readonly type: Chat_ReactionType_Enum, readonly messageId: number };
 
-export type SelectSingleMessageQueryVariables = Exact<{
-  id: Scalars['Int'];
+export type MessageReactionsSubscriptionVariables = Exact<{
+  messageIds: ReadonlyArray<Scalars['Int']> | Scalars['Int'];
 }>;
 
 
-export type SelectSingleMessageQuery = { readonly __typename?: 'query_root', readonly chat_Message_by_pk?: Maybe<(
-    { readonly __typename?: 'chat_Message' }
-    & ChatMessageDataFragment
+export type MessageReactionsSubscription = { readonly __typename?: 'subscription_root', readonly chat_Reaction: ReadonlyArray<(
+    { readonly __typename?: 'chat_Reaction' }
+    & SubscribedChatReactionDataFragment
   )> };
+
+export type GetChatPathQueryVariables = Exact<{
+  chatId: Scalars['uuid'];
+}>;
+
+
+export type GetChatPathQuery = { readonly __typename?: 'query_root', readonly chat_Chat_by_pk?: Maybe<{ readonly __typename?: 'chat_Chat', readonly id: any, readonly room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }>, readonly contentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any }> }> };
 
 export type SelectAttendeesQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -33530,20 +33521,6 @@ export const SubscribedChatReactionDataFragmentDoc = gql`
   messageId
 }
     `;
-export const ChatFlagDataFragmentDoc = gql`
-    fragment ChatFlagData on chat_Flag {
-  discussionChatId
-  flaggedById
-  id
-  messageId
-  notes
-  resolution
-  resolved_at
-  type
-  updated_at
-  created_at
-}
-    `;
 export const ContentGroupRoomEventFragmentDoc = gql`
     fragment ContentGroupRoomEvent on Event {
   startTime
@@ -35017,81 +34994,13 @@ export function useDeleteMessageMutation(baseOptions?: Apollo.MutationHookOption
 export type DeleteMessageMutationHookResult = ReturnType<typeof useDeleteMessageMutation>;
 export type DeleteMessageMutationResult = Apollo.MutationResult<DeleteMessageMutation>;
 export type DeleteMessageMutationOptions = Apollo.BaseMutationOptions<DeleteMessageMutation, DeleteMessageMutationVariables>;
-export const GetChatPathDocument = gql`
-    query GetChatPath($chatId: uuid!) {
-  chat_Chat_by_pk(id: $chatId) {
-    id
-    room {
-      id
-    }
-    contentGroup {
-      id
-    }
-  }
-}
-    `;
-
-/**
- * __useGetChatPathQuery__
- *
- * To run a query within a React component, call `useGetChatPathQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetChatPathQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetChatPathQuery({
- *   variables: {
- *      chatId: // value for 'chatId'
- *   },
- * });
- */
-export function useGetChatPathQuery(baseOptions: Apollo.QueryHookOptions<GetChatPathQuery, GetChatPathQueryVariables>) {
-        return Apollo.useQuery<GetChatPathQuery, GetChatPathQueryVariables>(GetChatPathDocument, baseOptions);
-      }
-export function useGetChatPathLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetChatPathQuery, GetChatPathQueryVariables>) {
-          return Apollo.useLazyQuery<GetChatPathQuery, GetChatPathQueryVariables>(GetChatPathDocument, baseOptions);
-        }
-export type GetChatPathQueryHookResult = ReturnType<typeof useGetChatPathQuery>;
-export type GetChatPathLazyQueryHookResult = ReturnType<typeof useGetChatPathLazyQuery>;
-export type GetChatPathQueryResult = Apollo.QueryResult<GetChatPathQuery, GetChatPathQueryVariables>;
-export const MessageReactionsDocument = gql`
-    subscription MessageReactions($messageId: Int!) {
-  chat_Reaction(where: {messageId: {_eq: $messageId}}) {
-    ...SubscribedChatReactionData
-  }
-}
-    ${SubscribedChatReactionDataFragmentDoc}`;
-
-/**
- * __useMessageReactionsSubscription__
- *
- * To run a query within a React component, call `useMessageReactionsSubscription` and pass it any options that fit your needs.
- * When your component renders, `useMessageReactionsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useMessageReactionsSubscription({
- *   variables: {
- *      messageId: // value for 'messageId'
- *   },
- * });
- */
-export function useMessageReactionsSubscription(baseOptions: Apollo.SubscriptionHookOptions<MessageReactionsSubscription, MessageReactionsSubscriptionVariables>) {
-        return Apollo.useSubscription<MessageReactionsSubscription, MessageReactionsSubscriptionVariables>(MessageReactionsDocument, baseOptions);
-      }
-export type MessageReactionsSubscriptionHookResult = ReturnType<typeof useMessageReactionsSubscription>;
-export type MessageReactionsSubscriptionResult = Apollo.SubscriptionResult<MessageReactionsSubscription>;
 export const AddReactionDocument = gql`
     mutation AddReaction($reaction: chat_Reaction_insert_input!) {
-  insert_chat_Reaction(objects: [$reaction]) {
-    affected_rows
+  insert_chat_Reaction_one(object: $reaction) {
+    ...ChatReactionData
   }
 }
-    `;
+    ${ChatReactionDataFragmentDoc}`;
 export type AddReactionMutationFn = Apollo.MutationFunction<AddReactionMutation, AddReactionMutationVariables>;
 
 /**
@@ -35149,39 +35058,74 @@ export function useDeleteReactionMutation(baseOptions?: Apollo.MutationHookOptio
 export type DeleteReactionMutationHookResult = ReturnType<typeof useDeleteReactionMutation>;
 export type DeleteReactionMutationResult = Apollo.MutationResult<DeleteReactionMutation>;
 export type DeleteReactionMutationOptions = Apollo.BaseMutationOptions<DeleteReactionMutation, DeleteReactionMutationVariables>;
-export const SelectSingleMessageDocument = gql`
-    query SelectSingleMessage($id: Int!) {
-  chat_Message_by_pk(id: $id) {
-    ...ChatMessageData
+export const MessageReactionsDocument = gql`
+    subscription MessageReactions($messageIds: [Int!]!) {
+  chat_Reaction(where: {messageId: {_in: $messageIds}}) {
+    ...SubscribedChatReactionData
   }
 }
-    ${ChatMessageDataFragmentDoc}`;
+    ${SubscribedChatReactionDataFragmentDoc}`;
 
 /**
- * __useSelectSingleMessageQuery__
+ * __useMessageReactionsSubscription__
  *
- * To run a query within a React component, call `useSelectSingleMessageQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectSingleMessageQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useMessageReactionsSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useMessageReactionsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMessageReactionsSubscription({
+ *   variables: {
+ *      messageIds: // value for 'messageIds'
+ *   },
+ * });
+ */
+export function useMessageReactionsSubscription(baseOptions: Apollo.SubscriptionHookOptions<MessageReactionsSubscription, MessageReactionsSubscriptionVariables>) {
+        return Apollo.useSubscription<MessageReactionsSubscription, MessageReactionsSubscriptionVariables>(MessageReactionsDocument, baseOptions);
+      }
+export type MessageReactionsSubscriptionHookResult = ReturnType<typeof useMessageReactionsSubscription>;
+export type MessageReactionsSubscriptionResult = Apollo.SubscriptionResult<MessageReactionsSubscription>;
+export const GetChatPathDocument = gql`
+    query GetChatPath($chatId: uuid!) {
+  chat_Chat_by_pk(id: $chatId) {
+    id
+    room {
+      id
+    }
+    contentGroup {
+      id
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetChatPathQuery__
+ *
+ * To run a query within a React component, call `useGetChatPathQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetChatPathQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useSelectSingleMessageQuery({
+ * const { data, loading, error } = useGetChatPathQuery({
  *   variables: {
- *      id: // value for 'id'
+ *      chatId: // value for 'chatId'
  *   },
  * });
  */
-export function useSelectSingleMessageQuery(baseOptions: Apollo.QueryHookOptions<SelectSingleMessageQuery, SelectSingleMessageQueryVariables>) {
-        return Apollo.useQuery<SelectSingleMessageQuery, SelectSingleMessageQueryVariables>(SelectSingleMessageDocument, baseOptions);
+export function useGetChatPathQuery(baseOptions: Apollo.QueryHookOptions<GetChatPathQuery, GetChatPathQueryVariables>) {
+        return Apollo.useQuery<GetChatPathQuery, GetChatPathQueryVariables>(GetChatPathDocument, baseOptions);
       }
-export function useSelectSingleMessageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectSingleMessageQuery, SelectSingleMessageQueryVariables>) {
-          return Apollo.useLazyQuery<SelectSingleMessageQuery, SelectSingleMessageQueryVariables>(SelectSingleMessageDocument, baseOptions);
+export function useGetChatPathLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetChatPathQuery, GetChatPathQueryVariables>) {
+          return Apollo.useLazyQuery<GetChatPathQuery, GetChatPathQueryVariables>(GetChatPathDocument, baseOptions);
         }
-export type SelectSingleMessageQueryHookResult = ReturnType<typeof useSelectSingleMessageQuery>;
-export type SelectSingleMessageLazyQueryHookResult = ReturnType<typeof useSelectSingleMessageLazyQuery>;
-export type SelectSingleMessageQueryResult = Apollo.QueryResult<SelectSingleMessageQuery, SelectSingleMessageQueryVariables>;
+export type GetChatPathQueryHookResult = ReturnType<typeof useGetChatPathQuery>;
+export type GetChatPathLazyQueryHookResult = ReturnType<typeof useGetChatPathLazyQuery>;
+export type GetChatPathQueryResult = Apollo.QueryResult<GetChatPathQuery, GetChatPathQueryVariables>;
 export const SelectAttendeesDocument = gql`
     query SelectAttendees($conferenceId: uuid!) {
   Attendee(

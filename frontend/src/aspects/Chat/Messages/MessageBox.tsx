@@ -1,7 +1,12 @@
 import { Box, Button, Center, Flex, HStack, Text, useColorModeValue, VStack } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
-import { AttendeeDataFragment, Chat_MessageType_Enum, Chat_ReactionType_Enum } from "../../../generated/graphql";
+import {
+    AttendeeDataFragment,
+    ChatReactionDataFragment,
+    Chat_MessageType_Enum,
+    Chat_ReactionType_Enum,
+} from "../../../generated/graphql";
 import { useAttendee } from "../../Conference/AttendeesContext";
 import { roundUpToNearest } from "../../Generic/MathUtils";
 import { Markdown } from "../../Text/Markdown";
@@ -68,7 +73,10 @@ function MessageBody({
 }): JSX.Element {
     const config = useChatConfiguration();
     const messages = useReceiveMessageQueries();
-    // const conference = useConference();
+    const [reactions, setReactions] = useState<ChatReactionDataFragment[]>([]);
+    useEffect(() => {
+        return message.Reactions.subscribe(setReactions);
+    }, [message.Reactions]);
 
     const scaleFactor = config.spacing / ChatSpacing.RELAXED;
 
@@ -160,8 +168,8 @@ function MessageBody({
                     fontSize={smallFontSize}
                     ml="auto"
                     isOwnMessage={!!config.currentAttendeeId && message.senderId === config.currentAttendeeId}
-                    messageId={message.id}
-                    usedReactions={message.reactions.reduce((acc, reaction) => {
+                    message={message}
+                    usedReactions={reactions.reduce((acc, reaction) => {
                         if (
                             config.currentAttendeeId &&
                             reaction.type === Chat_ReactionType_Enum.Emoji &&
@@ -173,28 +181,18 @@ function MessageBody({
                     }, [] as string[])}
                     isPollOpen={
                         message.type === Chat_MessageType_Enum.Poll
-                            ? !message.reactions.some((reaction) => reaction.type === Chat_ReactionType_Enum.PollClosed)
+                            ? !reactions.some((reaction) => reaction.type === Chat_ReactionType_Enum.PollClosed)
                             : undefined
                     }
                     isPollIncomplete={
                         message.type === Chat_MessageType_Enum.Poll
-                            ? !message.reactions.some(
-                                  (reaction) => reaction.type === Chat_ReactionType_Enum.PollComplete
-                              )
+                            ? !reactions.some((reaction) => reaction.type === Chat_ReactionType_Enum.PollComplete)
                             : undefined
                     }
                 />
             </Flex>
         ),
-        [
-            attendeeNameEl,
-            config.currentAttendeeId,
-            message.id,
-            message.reactions,
-            message.senderId,
-            message.type,
-            smallFontSize,
-        ]
+        [attendeeNameEl, message, smallFontSize, config.currentAttendeeId, reactions]
     );
 
     const emote = useMemo(
@@ -209,23 +207,23 @@ function MessageBody({
         [config.spacing, message.message, message.type, pictureSize]
     );
 
-    const reactions = useMemo(
+    const reactionEls = useMemo(
         () => (
             <ReactionsList
-                reactions={message.reactions}
+                reactions={reactions}
                 currentAttendeeId={config.currentAttendeeId}
-                messageId={message.id}
+                message={message}
                 fontSize={smallFontSize}
                 subscribeToReactions={subscribeToReactions}
             />
         ),
-        [config.currentAttendeeId, message.id, message.reactions, smallFontSize, subscribeToReactions]
+        [config.currentAttendeeId, message, reactions, smallFontSize, subscribeToReactions]
     );
 
     const question = useMemo(
         () =>
             message.type === Chat_MessageType_Enum.Question ? (
-                message.reactions.some((x) => x.type === Chat_ReactionType_Enum.Answer) ? (
+                reactions.some((x) => x.type === Chat_ReactionType_Enum.Answer) ? (
                     <Button
                         fontSize={smallFontSize}
                         p={config.spacing}
@@ -267,7 +265,7 @@ function MessageBody({
             config.spacing,
             message.duplicatedMessageId,
             message.id,
-            message.reactions,
+            reactions,
             message.type,
             messages.setAnsweringQuestionId,
             smallFontSize,
@@ -275,8 +273,11 @@ function MessageBody({
     );
 
     const poll = useMemo(
-        () => (message.type === Chat_MessageType_Enum.Poll ? <PollOptions message={message} /> : undefined),
-        [message]
+        () =>
+            message.type === Chat_MessageType_Enum.Poll ? (
+                <PollOptions message={message} reactions={reactions} />
+            ) : undefined,
+        [message, reactions]
     );
 
     const msgBody = useMemo(
@@ -293,12 +294,12 @@ function MessageBody({
             >
                 {controls}
                 {emote}
-                {reactions}
+                {reactionEls}
                 {question}
                 {poll}
             </VStack>
         ),
-        [config.spacing, controls, emote, message.type, poll, question, reactions]
+        [config.spacing, controls, emote, message.type, poll, question, reactionEls]
     );
 
     if (message.type === Chat_MessageType_Enum.DuplicationMarker) {

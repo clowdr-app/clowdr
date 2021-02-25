@@ -17560,6 +17560,99 @@ export enum Chat_Pin_Update_Column {
   WasManuallyPinned = 'wasManuallyPinned'
 }
 
+/** columns and relationships of "chat.PinnedOrSubscribed" */
+export type Chat_PinnedOrSubscribed = {
+  readonly __typename?: 'chat_PinnedOrSubscribed';
+  /** An object relationship */
+  readonly attendee?: Maybe<Attendee>;
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  /** An object relationship */
+  readonly chat?: Maybe<Chat_Chat>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+};
+
+/** aggregated selection of "chat.PinnedOrSubscribed" */
+export type Chat_PinnedOrSubscribed_Aggregate = {
+  readonly __typename?: 'chat_PinnedOrSubscribed_aggregate';
+  readonly aggregate?: Maybe<Chat_PinnedOrSubscribed_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Chat_PinnedOrSubscribed>;
+};
+
+/** aggregate fields of "chat.PinnedOrSubscribed" */
+export type Chat_PinnedOrSubscribed_Aggregate_Fields = {
+  readonly __typename?: 'chat_PinnedOrSubscribed_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Chat_PinnedOrSubscribed_Max_Fields>;
+  readonly min?: Maybe<Chat_PinnedOrSubscribed_Min_Fields>;
+};
+
+
+/** aggregate fields of "chat.PinnedOrSubscribed" */
+export type Chat_PinnedOrSubscribed_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Chat_PinnedOrSubscribed_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "chat.PinnedOrSubscribed" */
+export type Chat_PinnedOrSubscribed_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Chat_PinnedOrSubscribed_Max_Order_By>;
+  readonly min?: Maybe<Chat_PinnedOrSubscribed_Min_Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "chat.PinnedOrSubscribed". All fields are combined with a logical 'AND'. */
+export type Chat_PinnedOrSubscribed_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Chat_PinnedOrSubscribed_Bool_Exp>>>;
+  readonly _not?: Maybe<Chat_PinnedOrSubscribed_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Chat_PinnedOrSubscribed_Bool_Exp>>>;
+  readonly attendee?: Maybe<Attendee_Bool_Exp>;
+  readonly attendeeId?: Maybe<Uuid_Comparison_Exp>;
+  readonly chat?: Maybe<Chat_Chat_Bool_Exp>;
+  readonly chatId?: Maybe<Uuid_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Chat_PinnedOrSubscribed_Max_Fields = {
+  readonly __typename?: 'chat_PinnedOrSubscribed_max_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+};
+
+/** order by max() on columns of table "chat.PinnedOrSubscribed" */
+export type Chat_PinnedOrSubscribed_Max_Order_By = {
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Chat_PinnedOrSubscribed_Min_Fields = {
+  readonly __typename?: 'chat_PinnedOrSubscribed_min_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+};
+
+/** order by min() on columns of table "chat.PinnedOrSubscribed" */
+export type Chat_PinnedOrSubscribed_Min_Order_By = {
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+};
+
+/** ordering options when selecting data from "chat.PinnedOrSubscribed" */
+export type Chat_PinnedOrSubscribed_Order_By = {
+  readonly attendee?: Maybe<Attendee_Order_By>;
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly chat?: Maybe<Chat_Chat_Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+};
+
+/** select columns of table "chat.PinnedOrSubscribed" */
+export enum Chat_PinnedOrSubscribed_Select_Column {
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  ChatId = 'chatId'
+}
+
 /** columns and relationships of "chat.Reaction" */
 export type Chat_Reaction = {
   readonly __typename?: 'chat_Reaction';
@@ -25469,6 +25562,10 @@ export type Query_Root = {
   readonly chat_Pin_aggregate: Chat_Pin_Aggregate;
   /** fetch data from the table: "chat.Pin" using primary key columns */
   readonly chat_Pin_by_pk?: Maybe<Chat_Pin>;
+  /** fetch data from the table: "chat.PinnedOrSubscribed" */
+  readonly chat_PinnedOrSubscribed: ReadonlyArray<Chat_PinnedOrSubscribed>;
+  /** fetch aggregated fields from the table: "chat.PinnedOrSubscribed" */
+  readonly chat_PinnedOrSubscribed_aggregate: Chat_PinnedOrSubscribed_Aggregate;
   /** fetch data from the table: "chat.Reaction" */
   readonly chat_Reaction: ReadonlyArray<Chat_Reaction>;
   /** fetch data from the table: "chat.ReactionType" */
@@ -27146,6 +27243,26 @@ export type Query_RootChat_Pin_AggregateArgs = {
 export type Query_RootChat_Pin_By_PkArgs = {
   attendeeId: Scalars['uuid'];
   chatId: Scalars['uuid'];
+};
+
+
+/** query root */
+export type Query_RootChat_PinnedOrSubscribedArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_PinnedOrSubscribed_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_PinnedOrSubscribed_Order_By>>;
+  where?: Maybe<Chat_PinnedOrSubscribed_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootChat_PinnedOrSubscribed_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_PinnedOrSubscribed_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_PinnedOrSubscribed_Order_By>>;
+  where?: Maybe<Chat_PinnedOrSubscribed_Bool_Exp>;
 };
 
 
@@ -29177,6 +29294,10 @@ export type Subscription_Root = {
   readonly chat_Pin_aggregate: Chat_Pin_Aggregate;
   /** fetch data from the table: "chat.Pin" using primary key columns */
   readonly chat_Pin_by_pk?: Maybe<Chat_Pin>;
+  /** fetch data from the table: "chat.PinnedOrSubscribed" */
+  readonly chat_PinnedOrSubscribed: ReadonlyArray<Chat_PinnedOrSubscribed>;
+  /** fetch aggregated fields from the table: "chat.PinnedOrSubscribed" */
+  readonly chat_PinnedOrSubscribed_aggregate: Chat_PinnedOrSubscribed_Aggregate;
   /** fetch data from the table: "chat.Reaction" */
   readonly chat_Reaction: ReadonlyArray<Chat_Reaction>;
   /** fetch data from the table: "chat.ReactionType" */
@@ -30858,6 +30979,26 @@ export type Subscription_RootChat_Pin_By_PkArgs = {
 
 
 /** subscription root */
+export type Subscription_RootChat_PinnedOrSubscribedArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_PinnedOrSubscribed_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_PinnedOrSubscribed_Order_By>>;
+  where?: Maybe<Chat_PinnedOrSubscribed_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_PinnedOrSubscribed_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_PinnedOrSubscribed_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_PinnedOrSubscribed_Order_By>>;
+  where?: Maybe<Chat_PinnedOrSubscribed_Bool_Exp>;
+};
+
+
+/** subscription root */
 export type Subscription_RootChat_ReactionArgs = {
   distinct_on?: Maybe<ReadonlyArray<Chat_Reaction_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -31338,10 +31479,10 @@ export type InitialChatStateQueryVariables = Exact<{
 }>;
 
 
-export type InitialChatStateQuery = { readonly __typename?: 'query_root', readonly chat_Chat: ReadonlyArray<(
-    { readonly __typename?: 'chat_Chat' }
-    & InitialChatState_ChatFragment
-  )> };
+export type InitialChatStateQuery = { readonly __typename?: 'query_root', readonly chat_PinnedOrSubscribed: ReadonlyArray<{ readonly __typename?: 'chat_PinnedOrSubscribed', readonly chat?: Maybe<(
+      { readonly __typename?: 'chat_Chat' }
+      & InitialChatState_ChatFragment
+    )> }> };
 
 export type SelectInitialChatStateQueryVariables = Exact<{
   chatId: Scalars['uuid'];
@@ -34468,10 +34609,10 @@ export const AttendeeFieldsFragmentDoc = gql`
     `;
 export const InitialChatStateDocument = gql`
     query InitialChatState($attendeeId: uuid!) {
-  chat_Chat(
-    where: {_or: [{pins: {attendeeId: {_eq: $attendeeId}}}, {subscriptions: {attendeeId: {_eq: $attendeeId}}}]}
-  ) {
-    ...InitialChatState_Chat
+  chat_PinnedOrSubscribed(where: {attendeeId: {_eq: $attendeeId}}) {
+    chat {
+      ...InitialChatState_Chat
+    }
   }
 }
     ${InitialChatState_ChatFragmentDoc}`;

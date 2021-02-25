@@ -159,15 +159,10 @@ gql`
     }
 
     query InitialChatState($attendeeId: uuid!) {
-        chat_Chat(
-            where: {
-                _or: [
-                    { pins: { attendeeId: { _eq: $attendeeId } } }
-                    { subscriptions: { attendeeId: { _eq: $attendeeId } } }
-                ]
+        chat_PinnedOrSubscribed(where: { attendeeId: { _eq: $attendeeId } }) {
+            chat {
+                ...InitialChatState_Chat
             }
-        ) {
-            ...InitialChatState_Chat
         }
     }
 
@@ -1313,8 +1308,10 @@ export class GlobalChatState {
                     if (!this.chatStates) {
                         this.chatStates = new Map();
                     }
-                    initialData.data.chat_Chat.forEach((chat) => {
-                        this.chatStates?.set(chat.id, new ChatState(this, chat));
+                    initialData.data.chat_PinnedOrSubscribed.forEach((item) => {
+                        if (item.chat) {
+                            this.chatStates?.set(item.chat.id, new ChatState(this, item.chat));
+                        }
                     });
 
                     this.chatStatesObs.publish(this.chatStates);

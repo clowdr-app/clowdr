@@ -752,7 +752,6 @@
         - systemId
         - type
         - created_at
-        - updated_at
         - chatId
         - senderId
     retry_conf:
@@ -1052,7 +1051,6 @@
         - symbol
         - type
         - created_at
-        - updated_at
         - senderId
     retry_conf:
       num_retries: 0

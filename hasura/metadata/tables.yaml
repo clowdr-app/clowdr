@@ -763,6 +763,36 @@
             _eq: X-Hasura-User-Id
 - table:
     schema: chat
+    name: PinnedOrSubscribed
+  object_relationships:
+  - name: attendee
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Attendee
+        column_mapping:
+          attendeeId: id
+  - name: chat
+    using:
+      manual_configuration:
+        remote_table:
+          schema: chat
+          name: Chat
+        column_mapping:
+          chatId: id
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - attendeeId
+      - chatId
+      filter:
+        attendee:
+          userId:
+            _eq: X-Hasura-User-Id
+- table:
+    schema: chat
     name: Reaction
   object_relationships:
   - name: duplicate

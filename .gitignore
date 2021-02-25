@@ -117,3 +117,4 @@ frontend/x.env.local
 services/presence/build/
 pktriot.json
 certs
+frontend/.env.production.x

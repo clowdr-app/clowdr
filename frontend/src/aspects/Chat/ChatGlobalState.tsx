@@ -15,9 +15,6 @@ import assert from "assert";
 import { Mutex } from "async-mutex";
 import * as R from "ramda";
 import React from "react";
-import Client, * as Twilio from "twilio-chat";
-import type { Channel } from "twilio-chat/lib/channel";
-import type { Message as TwilioMessage } from "twilio-chat/lib/message";
 import {
     AddReactionDocument,
     AddReactionMutation,
@@ -887,8 +884,8 @@ export class ChatState {
                             remoteChat.lastMessage.index,
                             "backwards"
                         );
-                        msgs?.items.forEach((msg) => {
-                            msg.on("messageUpdated", (...args) => console.log("Message updated", ...args));
+                        msgs?.items.forEach((msg: any) => {
+                            msg.on("messageUpdated", (...args: any[]) => console.log("Message updated", ...args));
                         });
                     }
                 }
@@ -1327,7 +1324,7 @@ export class GlobalChatState {
     public showSidebar: (() => void) | null = null;
 
     private remoteServiceToken: string | null = null;
-    public remoteServiceClient: Promise<Client | null> | null = null;
+    public remoteServiceClient: Promise<Twilio.Chat.Client | null> | null = null;
 
     constructor(
         public readonly conference: {
@@ -1413,7 +1410,7 @@ export class GlobalChatState {
 
                                 try {
                                     // TODO: Increase log level if debugger enabled?
-                                    const result = await Twilio.Client.create(this.remoteServiceToken);
+                                    const result = await Twilio.Chat.Client.create(this.remoteServiceToken);
                                     resolve(result);
                                     resolved = true;
                                     console.info("Created RemoteService client.");

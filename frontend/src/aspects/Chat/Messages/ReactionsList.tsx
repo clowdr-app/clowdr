@@ -1,6 +1,6 @@
 import { Box, BoxProps } from "@chakra-ui/react";
 import * as R from "ramda";
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { ChatReactionDataFragment, Chat_ReactionType_Enum } from "../../../generated/graphql";
 import type { MessageState } from "../ChatGlobalState";
 import ReactionBadge from "./ReactionBadge";
@@ -30,13 +30,13 @@ function ReactionsListSubscriptionWrapper({
     message: MessageState;
     reactions: readonly ChatReactionDataFragment[];
 } & BoxProps): JSX.Element {
-    useEffect(() => {
-        message.startReactionsSubscription();
+    // useEffect(() => {
+    //     message.startReactionsSubscription();
 
-        return () => {
-            message.endReactionsSubscription();
-        };
-    }, [message]);
+    //     return () => {
+    //         message.endReactionsSubscription();
+    //     };
+    // }, [message]);
     return <ReactionsListInner reactions={reactions} message={message} {...rest} />;
 }
 

@@ -21,6 +21,13 @@ type Query {
 }
 
 
+type Mutation {
+  generateChatRemoteToken (
+    attendeeId: uuid!
+  ): ChatRemoteToken
+}
+
+
 type Query {
   getContentItem (
     magicToken: String!
@@ -276,5 +283,10 @@ type SubmitGoogleOAuthCodeOutput {
 type RefreshYouTubeDataOutput {
   success : Boolean!
   message : String
+}
+
+type ChatRemoteToken {
+  jwt : String!
+  expiry : Int!
 }
 

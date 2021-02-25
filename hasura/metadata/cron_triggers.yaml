@@ -1,3 +1,19 @@
+- name: GenerateChatRemoteUserIds
+  webhook: '{{ACTION_BASE_URL}}/chat/generateRemoteUserIds'
+  schedule: '*/5 * * * *'
+  include_in_metadata: true
+  payload: {}
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
+- name: GenerateChatRemoteServiceIds
+  webhook: '{{ACTION_BASE_URL}}/chat/generateRemoteServiceIds'
+  schedule: '* * * * *'
+  include_in_metadata: true
+  payload: {}
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
 - name: ProcessSendSubmissionRequestsJobQueue
   webhook: '{{ACTION_BASE_URL}}/queues/processSendSubmissionRequestsJobQueue'
   schedule: '* * * * *'

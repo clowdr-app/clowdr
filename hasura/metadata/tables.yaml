@@ -88,6 +88,7 @@
       - enableMandatoryPin
       - enableMandatorySubscribe
       - id
+      - remoteServiceId
       - restrictToAdmins
       - updated_at
       filter:
@@ -173,6 +174,20 @@
             _table:
               schema: public
               name: FlatUserPermission
+  event_triggers:
+  - name: ChatInserted
+    definition:
+      enable_manual: false
+      insert:
+        columns: '*'
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{ACTION_BASE_URL}}/chat/chatInserted'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - table:
     schema: chat
     name: Flag
@@ -506,6 +521,7 @@
       - id
       - isPinned
       - message
+      - remoteServiceId
       - senderId
       - systemId
       - type
@@ -696,6 +712,57 @@
                             _eq: X-Hasura-User-Id
                 - _not:
                     room: {}
+  event_triggers:
+  - name: MessageDeleted
+    definition:
+      enable_manual: false
+      delete:
+        columns: '*'
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{ACTION_BASE_URL}}/chat/messageDeleted'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+  - name: MessageInserted
+    definition:
+      enable_manual: false
+      insert:
+        columns: '*'
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{ACTION_BASE_URL}}/chat/messageInserted'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+  - name: MessageUpdated
+    definition:
+      enable_manual: false
+      update:
+        columns:
+        - isPinned
+        - duplicatedMessageId
+        - id
+        - data
+        - message
+        - systemId
+        - type
+        - created_at
+        - updated_at
+        - chatId
+        - senderId
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{ACTION_BASE_URL}}/chat/messageUpdated'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - table:
     schema: chat
     name: MessageType
@@ -864,14 +931,15 @@
   - role: user
     permission:
       columns:
+      - created_at
+      - data
       - id
       - messageId
-      - data
+      - remoteServiceId
+      - senderId
       - symbol
       - type
-      - created_at
       - updated_at
-      - senderId
       filter:
         message:
           chat:
@@ -945,6 +1013,55 @@
                   _table:
                     schema: public
                     name: FlatUserPermission
+  event_triggers:
+  - name: ReactionDeleted
+    definition:
+      enable_manual: false
+      delete:
+        columns: '*'
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{ACTION_BASE_URL}}/chat/reactionDeleted'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+  - name: ReactionInserted
+    definition:
+      enable_manual: false
+      insert:
+        columns: '*'
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{ACTION_BASE_URL}}/chat/reactionInserted'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+  - name: ReactionUpdated
+    definition:
+      enable_manual: false
+      update:
+        columns:
+        - duplicateId
+        - id
+        - messageId
+        - data
+        - symbol
+        - type
+        - created_at
+        - updated_at
+        - senderId
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{ACTION_BASE_URL}}/chat/reactionUpdated'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - table:
     schema: chat
     name: ReactionType
@@ -1856,6 +1973,20 @@
               _table:
                 schema: public
                 name: FlatUserPermission
+  event_triggers:
+  - name: AttendeeCreated_GenerateChatRemoteUserId
+    definition:
+      enable_manual: false
+      insert:
+        columns: '*'
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{ACTION_BASE_URL}}/chat/generateRemoteUserId'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - table:
     schema: public
     name: AttendeeGoogleAccount

@@ -29,6 +29,16 @@ actions:
   permissions:
   - role: unauthenticated
   - role: user
+- name: generateChatRemoteToken
+  definition:
+    kind: synchronous
+    handler: '{{ACTION_BASE_URL}}/chat/generateRemoteToken'
+    forward_client_headers: true
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+  permissions:
+  - role: user
 - name: getContentItem
   definition:
     kind: ""
@@ -242,4 +252,5 @@ custom_types:
   - name: SubmitGoogleOAuthTokenOutput
   - name: SubmitGoogleOAuthCodeOutput
   - name: RefreshYouTubeDataOutput
+  - name: ChatRemoteToken
   scalars: []

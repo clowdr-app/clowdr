@@ -11,9 +11,13 @@ import {
     RenderProps,
     VStack,
 } from "@chakra-ui/react";
+import assert from "assert";
 import { Mutex } from "async-mutex";
 import * as R from "ramda";
 import React from "react";
+import * as Twilio from "twilio-chat";
+import type { Channel } from "twilio-chat/lib/channel";
+import type { Message as TwilioMessage } from "twilio-chat/lib/message";
 import {
     AddReactionDocument,
     AddReactionMutation,
@@ -28,6 +32,9 @@ import {
     DeleteReactionDocument,
     DeleteReactionMutation,
     DeleteReactionMutationVariables,
+    GetRemoteChatServiceTokenDocument,
+    GetRemoteChatServiceTokenMutation,
+    GetRemoteChatServiceTokenMutationVariables,
     InitialChatStateDocument,
     InitialChatStateQuery,
     InitialChatStateQueryVariables,
@@ -35,12 +42,6 @@ import {
     InsertReadUpToIndexDocument,
     InsertReadUpToIndexMutation,
     InsertReadUpToIndexMutationVariables,
-    MessageReactionsDocument,
-    MessageReactionsSubscription,
-    MessageReactionsSubscriptionVariables,
-    NewMessagesDocument,
-    NewMessagesSubscription,
-    NewMessagesSubscriptionVariables,
     RoomPrivacy_Enum,
     SelectInitialChatStateDocument,
     SelectInitialChatStateQuery,
@@ -54,10 +55,10 @@ import {
     SendChatMessageDocument,
     SendChatMessageMutation,
     SendChatMessageMutationVariables,
+    ShortChatMessageDataFragment,
     SubscribeChatDocument,
     SubscribeChatMutation,
     SubscribeChatMutationVariables,
-    SubscribedChatMessageDataFragment,
     UnsubscribeChatDocument,
     UnsubscribeChatMutation,
     UnsubscribeChatMutationVariables,
@@ -110,10 +111,12 @@ gql`
         message
         type
         senderId
+        remoteServiceId
     }
 
     fragment InitialChatState_Chat on chat_Chat {
         id
+        remoteServiceId
         contentGroup {
             id
             title
@@ -142,9 +145,6 @@ gql`
         enableMandatorySubscribe
         readUpToIndices(where: { attendeeId: { _eq: $attendeeId } }) {
             ...InitialChatState_ReadUpToIndex
-        }
-        messages(limit: 1, order_by: { id: desc }) {
-            ...ChatState_SubdMessage
         }
         pins(where: { attendeeId: { _eq: $attendeeId } }) {
             attendeeId
@@ -229,6 +229,7 @@ gql`
         symbol
         type
         messageId
+        remoteServiceId
     }
 
     fragment ChatMessageData on chat_Message {
@@ -243,6 +244,7 @@ gql`
         senderId
         type
         chatId
+        remoteServiceId
     }
 
     query SelectMessagesPage($chatId: uuid!, $startAtIndex: Int!, $maxCount: Int!) {
@@ -255,7 +257,15 @@ gql`
         }
     }
 
-    fragment SubscribedChatMessageData on chat_Message {
+    # subscription NewMessages($chatId: uuid!) {
+    #     chat_Message(order_by: { id: desc }, where: { chatId: { _eq: $chatId } }, limit: 5) {
+    #         ...SubscribedChatMessageData
+    #     }
+    # }
+`;
+
+gql`
+    fragment ShortChatMessageData on chat_Message {
         created_at
         data
         duplicatedMessageId
@@ -264,16 +274,9 @@ gql`
         senderId
         type
         chatId
+        remoteServiceId
     }
 
-    subscription NewMessages($chatId: uuid!) {
-        chat_Message(order_by: { id: desc }, where: { chatId: { _eq: $chatId } }, limit: 5) {
-            ...SubscribedChatMessageData
-        }
-    }
-`;
-
-gql`
     mutation SendChatMessage(
         $chatId: uuid!
         $senderId: uuid!
@@ -292,7 +295,7 @@ gql`
                 type: $type
             }
         ) {
-            ...SubscribedChatMessageData
+            ...ShortChatMessageData
         }
     }
 
@@ -363,12 +366,21 @@ gql`
 `;
 
 gql`
-    subscription MessageReactions($messageIds: [Int!]!) {
-        chat_Reaction(where: { messageId: { _in: $messageIds } }) {
-            ...ChatReactionData
+    mutation GetRemoteChatServiceToken($attendeeId: uuid!) {
+        generateChatRemoteToken(attendeeId: $attendeeId) {
+            expiry
+            jwt
         }
     }
 `;
+
+// gql`
+//     subscription MessageReactions($messageIds: [Int!]!) {
+//         chat_Reaction(where: { messageId: { _in: $messageIds } }) {
+//             ...ChatReactionData
+//         }
+//     }
+// `;
 
 // CHAT_TODO
 // gql`
@@ -390,7 +402,7 @@ export class MessageState {
     constructor(
         private readonly globalState: GlobalChatState,
         private readonly chatState: ChatState,
-        private readonly initialState: ChatMessageDataFragment | SubscribedChatMessageDataFragment
+        private readonly initialState: ChatMessageDataFragment | ShortChatMessageDataFragment
     ) {
         if ("reactions" in initialState) {
             this.reactions = [...initialState.reactions];
@@ -475,12 +487,12 @@ export class MessageState {
         return this.reactionsObs;
     }
 
-    public async startReactionsSubscription(): Promise<void> {
-        await this.globalState.addMessageIdForReactionSubscription(this);
-    }
-    public async endReactionsSubscription(): Promise<void> {
-        await this.globalState.addMessageIdForReactionSubscription(this);
-    }
+    // public async startReactionsSubscription(): Promise<void> {
+    //     await this.globalState.addMessageIdForReactionSubscription(this);
+    // }
+    // public async endReactionsSubscription(): Promise<void> {
+    //     await this.globalState.addMessageIdForReactionSubscription(this);
+    // }
 
     public updateReactions(reactions: ChatReactionDataFragment[]): void {
         this.reactions = reactions;
@@ -514,6 +526,8 @@ export class ChatState {
     private initSubscriptionMutex = new Mutex();
     private sendMutex = new Mutex();
 
+    private remoteChat: Promise<Channel> | null;
+
     constructor(
         private readonly globalState: GlobalChatState,
         private readonly initialState: InitialChatState_ChatFragment
@@ -536,6 +550,8 @@ export class ChatState {
         this.readUpTo_ExistsInDb = initialState.readUpToIndices.length > 0;
         this.latestNotifiedIndex =
             initialState.readUpToIndices.length > 0 ? initialState.readUpToIndices[0].notifiedUpToMessageId : -1;
+
+        this.remoteChat = null;
 
         if (this.isSubscribed) {
             this.subscribeToMoreMessages();
@@ -840,58 +856,33 @@ export class ChatState {
             }
         }
     }
-    private subscribedToMoreMessages: ZenObservable.Subscription | null = null;
+    private subscribedToMoreMessages = false;
     public async subscribeToMoreMessages(): Promise<void> {
         const release = await this.initSubscriptionMutex.acquire();
 
         try {
-            if (!this.subscribedToMoreMessages || this.subscribedToMoreMessages.closed) {
-                const subscription = this.globalState.apolloClient.subscribe<
-                    NewMessagesSubscription,
-                    NewMessagesSubscriptionVariables
-                >({
-                    query: NewMessagesDocument,
-                    variables: {
-                        chatId: this.Id,
-                    },
-                });
-                this.subscribedToMoreMessages = subscription.subscribe(async ({ data }) => {
-                    const release = await this.messagesMutex.acquire();
+            if (this.initialState.remoteServiceId && !this.subscribedToMoreMessages) {
+                this.subscribedToMoreMessages = true;
 
-                    let newMessageStates: MessageState[] | undefined;
-
-                    try {
-                        if (data) {
-                            // CHAT_TODO: Do we really need this?
-                            // const sortedData = R.sortBy((x) => x.id, data.chat_Message);
-                            // const updatedMessages = sortedData.filter((msg) => this.messages.has(msg.id));
-                            // updatedMessages.forEach((msg) => {
-                            //     const msgSt = this.messages.get(msg.id);
-                            //     if (msgSt) {
-                            //         msgSt.updateFrom(msg);
-                            //     }
-                            // });
-                            newMessageStates = data.chat_Message
-                                .filter((msg) => !this.messages.has(msg.id))
-                                .map((message) => new MessageState(this.globalState, this, message));
-                            newMessageStates.forEach((msg) => {
-                                this.messages.set(msg.id, msg);
-                            });
-                        }
-                    } catch (e) {
-                        console.error(`Error processing new messages from subscription: ${this.Id}`, e);
-                    } finally {
-                        release();
-
-                        if (newMessageStates && newMessageStates.length > 0) {
-                            this.messagesObs.publish({
-                                op: "loaded_new",
-                                messages: newMessageStates,
-                            });
-                            this.computeNotifications(newMessageStates[0]);
-                        }
+                const remoteServiceClient = await this.globalState.remoteServiceClient;
+                this.remoteChat = remoteServiceClient?.getChannelBySid(this.initialState.remoteServiceId) ?? null;
+                const remoteChat = await this.remoteChat;
+                try {
+                    if (remoteChat?.status !== "joined") {
+                        await remoteChat?.join();
+                    } else {
+                        await remoteChat._subscribeStreams();
                     }
-                });
+                } catch (e) {
+                    console.error(`Error joining remote service for chat: ${this.Id}`, e);
+                }
+                remoteChat?.on("messageAdded", this.messageAddedListener.bind(this));
+                remoteChat?.on("messageRemoved", this.messageRemovedListener.bind(this));
+                remoteChat?.on("messageUpdated", this.messageUpdatedListener.bind(this));
+            } else {
+                console.warn(
+                    `Live messages and reactions unavailable for chat ${this.initialState.id} because the remote service has not been set up for this chat yet.`
+                );
             }
         } catch (e) {
             console.error(`Error subscribing to new messages: ${this.Id}`, e);
@@ -903,16 +894,100 @@ export class ChatState {
         const release = await this.initSubscriptionMutex.acquire();
 
         try {
-            if (
-                (force || !this.isSubscribed) &&
-                this.subscribedToMoreMessages &&
-                !this.subscribedToMoreMessages.closed
-            ) {
-                this.subscribedToMoreMessages.unsubscribe();
-                this.subscribedToMoreMessages = null;
+            if (force || !this.IsSubscribed) {
+                const remoteChat = await this.remoteChat;
+                remoteChat?.off("messageAdded", this.messageAddedListener);
+                remoteChat?.off("messageRemoved", this.messageRemovedListener);
+                remoteChat?.off("messageUpdated", this.messageUpdatedListener);
             }
         } catch (e) {
             console.error(`Error unsubscribing from new messages: ${this.Id}`, e);
+        } finally {
+            release();
+        }
+    }
+
+    private async messageAddedListener(ev: TwilioMessage) {
+        const release = await this.messagesMutex.acquire();
+        let newMessageStates: MessageState[] | undefined;
+        try {
+            const attrs = ev.attributes as Record<string, any>;
+            if (!this.messages.has(attrs.id)) {
+                let senderId = null;
+                try {
+                    const member = await ev.getMember();
+                    senderId = member.identity;
+                } catch {
+                    // Ignore - maybe system sent the message
+                }
+                newMessageStates = [
+                    new MessageState(this.globalState, this, {
+                        id: attrs.id,
+                        data: attrs.data,
+                        type: attrs.type,
+                        chatId: this.Id,
+                        message: ev.body,
+                        created_at: ev.dateCreated.toISOString(),
+                        senderId,
+                    }),
+                ];
+                newMessageStates.forEach((msg) => {
+                    this.messages.set(msg.id, msg);
+                });
+            }
+        } catch (e) {
+            console.error(`Error processing new messages from remote service: ${this.Id}`, e);
+        } finally {
+            release();
+            if (newMessageStates && newMessageStates.length > 0) {
+                this.messagesObs.publish({
+                    op: "loaded_new",
+                    messages: newMessageStates,
+                });
+                this.computeNotifications(newMessageStates[0]);
+            }
+        }
+    }
+
+    private async messageRemovedListener(ev: TwilioMessage) {
+        const release = await this.messagesMutex.acquire();
+        let deletedId: number | undefined;
+        try {
+            const attrs = ev.attributes as Record<string, any>;
+            if (this.messages.delete(attrs.id)) {
+                deletedId = attrs.id;
+            }
+        } catch (e) {
+            console.error(`Error processing removed messages from remote service: ${this.Id}`, e);
+        } finally {
+            release();
+            if (deletedId) {
+                this.messagesObs.publish({
+                    op: "deleted",
+                    messageIds: [deletedId],
+                });
+            }
+        }
+    }
+
+    private async messageUpdatedListener({
+        message: ev,
+        updateReasons,
+    }: {
+        message: TwilioMessage;
+        updateReasons: Array<TwilioMessage.UpdateReason>;
+    }) {
+        const release = await this.messagesMutex.acquire();
+        try {
+            if (updateReasons && updateReasons.includes("attributes")) {
+                const attrs = ev.attributes as Record<string, any>;
+                const existingMsg = this.messages.get(attrs.id);
+                if (existingMsg) {
+                    existingMsg.updateReactions(attrs.reactions);
+                }
+            }
+        } catch (e) {
+            console.error(`Error processing updated messages from remote service: ${this.Id}`, e);
         } finally {
             release();
         }
@@ -1238,6 +1313,9 @@ export class GlobalChatState {
     public openChatInSidebar: ((chatId: string) => void) | null = null;
     public showSidebar: (() => void) | null = null;
 
+    private remoteServiceToken: string | null = null;
+    public remoteServiceClient: Promise<Twilio.Client | null> | null = null;
+
     constructor(
         public readonly conference: {
             id: string;
@@ -1317,7 +1395,73 @@ export class GlobalChatState {
                     this.chatStatesObs.publish(this.chatStates);
 
                     await this.setupUnreadCountPolling();
-                    await this.setupReactionsSubscription();
+                    // await this.setupReactionsSubscription();
+
+                    // eslint-disable-next-line no-async-promise-executor
+                    this.remoteServiceClient = new Promise(async (resolve, reject) => {
+                        let resolved = false;
+
+                        try {
+                            let retry: boolean;
+                            let attempCount = 0;
+
+                            do {
+                                retry = false;
+                                attempCount++;
+
+                                if (!this.remoteServiceToken) {
+                                    const { token } = await this.fetchFreshToken();
+                                    if (token) {
+                                        this.remoteServiceToken = token;
+                                        console.info("RemoteService token obtained.");
+                                    } else {
+                                        this.remoteServiceToken = null;
+
+                                        console.warn("RemoteService token not obtained.");
+                                        throw new Error("RemoteService token not obtained.");
+                                    }
+                                }
+
+                                assert(this.remoteServiceToken);
+
+                                try {
+                                    // TODO: Increase log level if debugger enabled?
+                                    const result = await (Twilio.default as any).Client.create(this.remoteServiceToken);
+                                    resolve(result);
+                                    resolved = true;
+                                    console.info("Created RemoteService client.");
+
+                                    // Enable underlying service features
+                                    this.enableAutoRenewConnection();
+
+                                    // TODO: Attach to events
+                                } catch (e) {
+                                    if (e.toString().includes("expired")) {
+                                        console.info("RemoteService token (probably) expired.");
+
+                                        this.remoteServiceToken = null;
+
+                                        if (attempCount < 2) {
+                                            retry = true;
+                                        }
+                                    }
+
+                                    if (!retry) {
+                                        console.error("Could not create RemoteService client!", e);
+                                        throw e;
+                                    }
+                                }
+                            } while (retry);
+
+                            if (!resolved) {
+                                resolve(null);
+                            }
+                        } catch (e) {
+                            if (!resolved) {
+                                reject(e);
+                            }
+                        }
+                    });
                 }
             }
         } catch (e) {
@@ -1327,6 +1471,48 @@ export class GlobalChatState {
         }
     }
 
+    private async fetchFreshToken(): Promise<{
+        token: string | null;
+        expiry: Date | null;
+    }> {
+        console.info(
+            `Fetching fresh chat token for ${this.attendee.displayName} (${this.attendee.id}), ${this.conference.name} (${this.conference.id})`
+        );
+
+        const result = await this.apolloClient.mutate<
+            GetRemoteChatServiceTokenMutation,
+            GetRemoteChatServiceTokenMutationVariables
+        >({
+            mutation: GetRemoteChatServiceTokenDocument,
+            variables: {
+                attendeeId: this.attendee.id,
+            },
+        });
+        return {
+            token: result.data?.generateChatRemoteToken?.jwt ?? "Unknown token",
+            expiry: new Date(result.data?.generateChatRemoteToken?.expiry ?? 0),
+        };
+    }
+
+    async enableAutoRenewConnection(): Promise<void> {
+        console.info("Enabling auto-renew connection.");
+        (await this.remoteServiceClient)?.on("tokenAboutToExpire", async () => {
+            console.info("Token about to expire");
+
+            const { token } = await this.fetchFreshToken();
+            if (token) {
+                this.remoteServiceToken = token;
+                console.info("Twilio token for renewal obtained.");
+
+                await (await this.remoteServiceClient)?.updateToken(token);
+            } else {
+                this.remoteServiceToken = null;
+                console.warn("Twilio token for renewal not obtained.");
+                throw new Error("Twilio token for renewal not obtained.");
+            }
+        });
+    }
+
     public async teardown(): Promise<void> {
         const release = await this.mutex.acquire();
 
@@ -1334,7 +1520,7 @@ export class GlobalChatState {
             if (!this.hasTorndown) {
                 this.hasTorndown = true;
                 if (this.hasInitialised) {
-                    await this.teardownReactionsSubscription();
+                    // await this.teardownReactionsSubscription();
                     await this.teardownUnreadCountPolling();
 
                     if (this.chatStates) {
@@ -1471,109 +1657,109 @@ export class GlobalChatState {
         }
     }
 
-    private reactionsSubscription_MessagesMutex = new Mutex();
-    private reactionsSubscription_SetupMutex = new Mutex();
-    private reactionsSubscription_Messages = new Map<number, MessageState>();
-    private reactionsSubscription_ReconfigureTimeoutId: number | undefined;
-    private reactionsSubscription: ZenObservable.Subscription | null = null;
+    // private reactionsSubscription_MessagesMutex = new Mutex();
+    // private reactionsSubscription_SetupMutex = new Mutex();
+    // private reactionsSubscription_Messages = new Map<number, MessageState>();
+    // private reactionsSubscription_ReconfigureTimeoutId: number | undefined;
+    // private reactionsSubscription: ZenObservable.Subscription | null = null;
 
-    public async addMessageIdForReactionSubscription(msg: MessageState): Promise<void> {
-        const release = await this.reactionsSubscription_MessagesMutex.acquire();
+    // public async addMessageIdForReactionSubscription(msg: MessageState): Promise<void> {
+    //     const release = await this.reactionsSubscription_MessagesMutex.acquire();
 
-        try {
-            this.reactionsSubscription_Messages.set(msg.id, msg);
-            await this.reconfigureReactionsSubscription();
-        } catch (e) {
-            console.error(`Failed to add message to reactions subscription: ${msg.id}`, e);
-        } finally {
-            release();
-        }
-    }
-    public async removeMessageIdForReactionSubscription(msg: MessageState): Promise<void> {
-        const release = await this.reactionsSubscription_MessagesMutex.acquire();
+    //     try {
+    //         this.reactionsSubscription_Messages.set(msg.id, msg);
+    //         await this.reconfigureReactionsSubscription();
+    //     } catch (e) {
+    //         console.error(`Failed to add message to reactions subscription: ${msg.id}`, e);
+    //     } finally {
+    //         release();
+    //     }
+    // }
+    // public async removeMessageIdForReactionSubscription(msg: MessageState): Promise<void> {
+    //     const release = await this.reactionsSubscription_MessagesMutex.acquire();
 
-        try {
-            this.reactionsSubscription_Messages.delete(msg.id);
-            await this.reconfigureReactionsSubscription();
-        } catch (e) {
-            console.error(`Failed to remove message from reactions subscription: ${msg.id}`, e);
-        } finally {
-            release();
-        }
-    }
-    private async reconfigureReactionsSubscription(): Promise<void> {
-        if (this.reactionsSubscription_ReconfigureTimeoutId !== undefined) {
-            clearTimeout(this.reactionsSubscription_ReconfigureTimeoutId);
-        }
+    //     try {
+    //         this.reactionsSubscription_Messages.delete(msg.id);
+    //         await this.reconfigureReactionsSubscription();
+    //     } catch (e) {
+    //         console.error(`Failed to remove message from reactions subscription: ${msg.id}`, e);
+    //     } finally {
+    //         release();
+    //     }
+    // }
+    // private async reconfigureReactionsSubscription(): Promise<void> {
+    //     if (this.reactionsSubscription_ReconfigureTimeoutId !== undefined) {
+    //         clearTimeout(this.reactionsSubscription_ReconfigureTimeoutId);
+    //     }
 
-        this.reactionsSubscription_ReconfigureTimeoutId = setTimeout(
-            (async () => {
-                await this.teardownReactionsSubscription();
-                await this.setupReactionsSubscription();
-            }) as TimerHandler,
-            1500
-        );
-    }
-    private async setupReactionsSubscription(): Promise<void> {
-        const release = await this.reactionsSubscription_SetupMutex.acquire();
+    //     this.reactionsSubscription_ReconfigureTimeoutId = setTimeout(
+    //         (async () => {
+    //             await this.teardownReactionsSubscription();
+    //             await this.setupReactionsSubscription();
+    //         }) as TimerHandler,
+    //         1500
+    //     );
+    // }
+    // private async setupReactionsSubscription(): Promise<void> {
+    //     const release = await this.reactionsSubscription_SetupMutex.acquire();
 
-        try {
-            if (!this.reactionsSubscription) {
-                const messageIds = [...this.reactionsSubscription_Messages.values()].map((x) => x.id);
-                if (messageIds.length > 0) {
-                    const sub = this.apolloClient.subscribe<
-                        MessageReactionsSubscription,
-                        MessageReactionsSubscriptionVariables
-                    >({
-                        query: MessageReactionsDocument,
-                        variables: {
-                            messageIds,
-                        },
-                    });
-                    this.reactionsSubscription = sub.subscribe(({ data }) => {
-                        try {
-                            if (data?.chat_Reaction) {
-                                const messageReactions = new Map<number, ChatReactionDataFragment[]>();
-                                for (const reaction of data.chat_Reaction) {
-                                    let existing = messageReactions.get(reaction.messageId);
-                                    if (!existing) {
-                                        existing = [];
-                                        messageReactions.set(reaction.messageId, existing);
-                                    }
-                                    existing.push(reaction);
-                                }
+    //     try {
+    //         if (!this.reactionsSubscription) {
+    //             const messageIds = [...this.reactionsSubscription_Messages.values()].map((x) => x.id);
+    //             if (messageIds.length > 0) {
+    //                 const sub = this.apolloClient.subscribe<
+    //                     MessageReactionsSubscription,
+    //                     MessageReactionsSubscriptionVariables
+    //                 >({
+    //                     query: MessageReactionsDocument,
+    //                     variables: {
+    //                         messageIds,
+    //                     },
+    //                 });
+    //                 this.reactionsSubscription = sub.subscribe(({ data }) => {
+    //                     try {
+    //                         if (data?.chat_Reaction) {
+    //                             const messageReactions = new Map<number, ChatReactionDataFragment[]>();
+    //                             for (const reaction of data.chat_Reaction) {
+    //                                 let existing = messageReactions.get(reaction.messageId);
+    //                                 if (!existing) {
+    //                                     existing = [];
+    //                                     messageReactions.set(reaction.messageId, existing);
+    //                                 }
+    //                                 existing.push(reaction);
+    //                             }
 
-                                for (const [msgId, reactions] of messageReactions) {
-                                    const msg = this.reactionsSubscription_Messages.get(msgId);
-                                    if (msg) {
-                                        msg.updateReactions(reactions);
-                                    }
-                                }
-                            }
-                        } catch (e) {
-                            console.error("Error updating reactions", e);
-                        }
-                    });
-                }
-            }
-        } catch (e) {
-            console.error("Failed to setup reactions subscriptions", e);
-        } finally {
-            release();
-        }
-    }
-    private async teardownReactionsSubscription(): Promise<void> {
-        const release = await this.reactionsSubscription_SetupMutex.acquire();
+    //                             for (const [msgId, reactions] of messageReactions) {
+    //                                 const msg = this.reactionsSubscription_Messages.get(msgId);
+    //                                 if (msg) {
+    //                                     msg.updateReactions(reactions);
+    //                                 }
+    //                             }
+    //                         }
+    //                     } catch (e) {
+    //                         console.error("Error updating reactions", e);
+    //                     }
+    //                 });
+    //             }
+    //         }
+    //     } catch (e) {
+    //         console.error("Failed to setup reactions subscriptions", e);
+    //     } finally {
+    //         release();
+    //     }
+    // }
+    // private async teardownReactionsSubscription(): Promise<void> {
+    //     const release = await this.reactionsSubscription_SetupMutex.acquire();
 
-        try {
-            if (this.reactionsSubscription) {
-                this.reactionsSubscription.unsubscribe();
-                this.reactionsSubscription = null;
-            }
-        } catch (e) {
-            console.error("Failed to teardown reactions subscriptions", e);
-        } finally {
-            release();
-        }
-    }
+    //     try {
+    //         if (this.reactionsSubscription) {
+    //             this.reactionsSubscription.unsubscribe();
+    //             this.reactionsSubscription = null;
+    //         }
+    //     } catch (e) {
+    //         console.error("Failed to teardown reactions subscriptions", e);
+    //     } finally {
+    //         release();
+    //     }
+    // }
 }

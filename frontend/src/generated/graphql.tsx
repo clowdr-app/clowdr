@@ -1747,6 +1747,12 @@ export enum Broadcast_Update_Column {
   UpdatedAt = 'updatedAt'
 }
 
+export type ChatRemoteToken = {
+  readonly __typename?: 'ChatRemoteToken';
+  readonly expiry: Scalars['Int'];
+  readonly jwt: Scalars['String'];
+};
+
 /** columns and relationships of "Conference" */
 export type Conference = {
   readonly __typename?: 'Conference';
@@ -15719,6 +15725,7 @@ export type Chat_Chat = {
   readonly readUpToIndices: ReadonlyArray<Chat_ReadUpToIndex>;
   /** An aggregated array relationship */
   readonly readUpToIndices_aggregate: Chat_ReadUpToIndex_Aggregate;
+  readonly remoteServiceId?: Maybe<Scalars['String']>;
   readonly restrictToAdmins: Scalars['Boolean'];
   /** An array relationship */
   readonly room: ReadonlyArray<Room>;
@@ -15971,6 +15978,7 @@ export type Chat_Chat_Bool_Exp = {
   readonly messages?: Maybe<Chat_Message_Bool_Exp>;
   readonly pins?: Maybe<Chat_Pin_Bool_Exp>;
   readonly readUpToIndices?: Maybe<Chat_ReadUpToIndex_Bool_Exp>;
+  readonly remoteServiceId?: Maybe<String_Comparison_Exp>;
   readonly restrictToAdmins?: Maybe<Boolean_Comparison_Exp>;
   readonly room?: Maybe<Room_Bool_Exp>;
   readonly subscriptions?: Maybe<Chat_Subscription_Bool_Exp>;
@@ -16002,6 +16010,7 @@ export type Chat_Chat_Insert_Input = {
   readonly messages?: Maybe<Chat_Message_Arr_Rel_Insert_Input>;
   readonly pins?: Maybe<Chat_Pin_Arr_Rel_Insert_Input>;
   readonly readUpToIndices?: Maybe<Chat_ReadUpToIndex_Arr_Rel_Insert_Input>;
+  readonly remoteServiceId?: Maybe<Scalars['String']>;
   readonly restrictToAdmins?: Maybe<Scalars['Boolean']>;
   readonly room?: Maybe<Room_Arr_Rel_Insert_Input>;
   readonly subscriptions?: Maybe<Chat_Subscription_Arr_Rel_Insert_Input>;
@@ -16016,6 +16025,7 @@ export type Chat_Chat_Max_Fields = {
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly duplicateToId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly remoteServiceId?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -16025,6 +16035,7 @@ export type Chat_Chat_Max_Order_By = {
   readonly created_at?: Maybe<Order_By>;
   readonly duplicateToId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
+  readonly remoteServiceId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
 
@@ -16035,6 +16046,7 @@ export type Chat_Chat_Min_Fields = {
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly duplicateToId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly remoteServiceId?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -16044,6 +16056,7 @@ export type Chat_Chat_Min_Order_By = {
   readonly created_at?: Maybe<Order_By>;
   readonly duplicateToId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
+  readonly remoteServiceId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
 
@@ -16087,6 +16100,7 @@ export type Chat_Chat_Order_By = {
   readonly messages_aggregate?: Maybe<Chat_Message_Aggregate_Order_By>;
   readonly pins_aggregate?: Maybe<Chat_Pin_Aggregate_Order_By>;
   readonly readUpToIndices_aggregate?: Maybe<Chat_ReadUpToIndex_Aggregate_Order_By>;
+  readonly remoteServiceId?: Maybe<Order_By>;
   readonly restrictToAdmins?: Maybe<Order_By>;
   readonly room_aggregate?: Maybe<Room_Aggregate_Order_By>;
   readonly subscriptions_aggregate?: Maybe<Chat_Subscription_Aggregate_Order_By>;
@@ -16118,6 +16132,8 @@ export enum Chat_Chat_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
+  RemoteServiceId = 'remoteServiceId',
+  /** column name */
   RestrictToAdmins = 'restrictToAdmins',
   /** column name */
   UpdatedAt = 'updated_at'
@@ -16133,6 +16149,7 @@ export type Chat_Chat_Set_Input = {
   readonly enableMandatoryPin?: Maybe<Scalars['Boolean']>;
   readonly enableMandatorySubscribe?: Maybe<Scalars['Boolean']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly remoteServiceId?: Maybe<Scalars['String']>;
   readonly restrictToAdmins?: Maybe<Scalars['Boolean']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -16155,6 +16172,8 @@ export enum Chat_Chat_Update_Column {
   EnableMandatorySubscribe = 'enableMandatorySubscribe',
   /** column name */
   Id = 'id',
+  /** column name */
+  RemoteServiceId = 'remoteServiceId',
   /** column name */
   RestrictToAdmins = 'restrictToAdmins',
   /** column name */
@@ -16743,6 +16762,7 @@ export type Chat_Message = {
   readonly reactions: ReadonlyArray<Chat_Reaction>;
   /** An aggregated array relationship */
   readonly reactions_aggregate: Chat_Reaction_Aggregate;
+  readonly remoteServiceId?: Maybe<Scalars['String']>;
   /** An object relationship */
   readonly sender?: Maybe<Attendee>;
   readonly senderId?: Maybe<Scalars['uuid']>;
@@ -17058,6 +17078,7 @@ export type Chat_Message_Bool_Exp = {
   readonly isPinned?: Maybe<Boolean_Comparison_Exp>;
   readonly message?: Maybe<String_Comparison_Exp>;
   readonly reactions?: Maybe<Chat_Reaction_Bool_Exp>;
+  readonly remoteServiceId?: Maybe<String_Comparison_Exp>;
   readonly sender?: Maybe<Attendee_Bool_Exp>;
   readonly senderId?: Maybe<Uuid_Comparison_Exp>;
   readonly systemId?: Maybe<String_Comparison_Exp>;
@@ -17110,6 +17131,7 @@ export type Chat_Message_Insert_Input = {
   readonly isPinned?: Maybe<Scalars['Boolean']>;
   readonly message?: Maybe<Scalars['String']>;
   readonly reactions?: Maybe<Chat_Reaction_Arr_Rel_Insert_Input>;
+  readonly remoteServiceId?: Maybe<Scalars['String']>;
   readonly sender?: Maybe<Attendee_Obj_Rel_Insert_Input>;
   readonly senderId?: Maybe<Scalars['uuid']>;
   readonly systemId?: Maybe<Scalars['String']>;
@@ -17125,6 +17147,7 @@ export type Chat_Message_Max_Fields = {
   readonly duplicatedMessageId?: Maybe<Scalars['Int']>;
   readonly id?: Maybe<Scalars['Int']>;
   readonly message?: Maybe<Scalars['String']>;
+  readonly remoteServiceId?: Maybe<Scalars['String']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
   readonly systemId?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
@@ -17137,6 +17160,7 @@ export type Chat_Message_Max_Order_By = {
   readonly duplicatedMessageId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly message?: Maybe<Order_By>;
+  readonly remoteServiceId?: Maybe<Order_By>;
   readonly senderId?: Maybe<Order_By>;
   readonly systemId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
@@ -17150,6 +17174,7 @@ export type Chat_Message_Min_Fields = {
   readonly duplicatedMessageId?: Maybe<Scalars['Int']>;
   readonly id?: Maybe<Scalars['Int']>;
   readonly message?: Maybe<Scalars['String']>;
+  readonly remoteServiceId?: Maybe<Scalars['String']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
   readonly systemId?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
@@ -17162,6 +17187,7 @@ export type Chat_Message_Min_Order_By = {
   readonly duplicatedMessageId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly message?: Maybe<Order_By>;
+  readonly remoteServiceId?: Maybe<Order_By>;
   readonly senderId?: Maybe<Order_By>;
   readonly systemId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
@@ -17203,6 +17229,7 @@ export type Chat_Message_Order_By = {
   readonly isPinned?: Maybe<Order_By>;
   readonly message?: Maybe<Order_By>;
   readonly reactions_aggregate?: Maybe<Chat_Reaction_Aggregate_Order_By>;
+  readonly remoteServiceId?: Maybe<Order_By>;
   readonly sender?: Maybe<Attendee_Order_By>;
   readonly senderId?: Maybe<Order_By>;
   readonly systemId?: Maybe<Order_By>;
@@ -17237,6 +17264,8 @@ export enum Chat_Message_Select_Column {
   /** column name */
   Message = 'message',
   /** column name */
+  RemoteServiceId = 'remoteServiceId',
+  /** column name */
   SenderId = 'senderId',
   /** column name */
   SystemId = 'systemId',
@@ -17255,6 +17284,7 @@ export type Chat_Message_Set_Input = {
   readonly id?: Maybe<Scalars['Int']>;
   readonly isPinned?: Maybe<Scalars['Boolean']>;
   readonly message?: Maybe<Scalars['String']>;
+  readonly remoteServiceId?: Maybe<Scalars['String']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
   readonly systemId?: Maybe<Scalars['String']>;
   readonly type?: Maybe<Chat_MessageType_Enum>;
@@ -17329,6 +17359,8 @@ export enum Chat_Message_Update_Column {
   IsPinned = 'isPinned',
   /** column name */
   Message = 'message',
+  /** column name */
+  RemoteServiceId = 'remoteServiceId',
   /** column name */
   SenderId = 'senderId',
   /** column name */
@@ -17669,6 +17701,7 @@ export type Chat_Reaction = {
   /** An object relationship */
   readonly message: Chat_Message;
   readonly messageId: Scalars['Int'];
+  readonly remoteServiceId?: Maybe<Scalars['String']>;
   /** An object relationship */
   readonly sender: Attendee;
   readonly senderId: Scalars['uuid'];
@@ -17953,6 +17986,7 @@ export type Chat_Reaction_Bool_Exp = {
   readonly id?: Maybe<Int_Comparison_Exp>;
   readonly message?: Maybe<Chat_Message_Bool_Exp>;
   readonly messageId?: Maybe<Int_Comparison_Exp>;
+  readonly remoteServiceId?: Maybe<String_Comparison_Exp>;
   readonly sender?: Maybe<Attendee_Bool_Exp>;
   readonly senderId?: Maybe<Uuid_Comparison_Exp>;
   readonly symbol?: Maybe<String_Comparison_Exp>;
@@ -17998,6 +18032,7 @@ export type Chat_Reaction_Insert_Input = {
   readonly id?: Maybe<Scalars['Int']>;
   readonly message?: Maybe<Chat_Message_Obj_Rel_Insert_Input>;
   readonly messageId?: Maybe<Scalars['Int']>;
+  readonly remoteServiceId?: Maybe<Scalars['String']>;
   readonly sender?: Maybe<Attendee_Obj_Rel_Insert_Input>;
   readonly senderId?: Maybe<Scalars['uuid']>;
   readonly symbol?: Maybe<Scalars['String']>;
@@ -18012,6 +18047,7 @@ export type Chat_Reaction_Max_Fields = {
   readonly duplicateId?: Maybe<Scalars['Int']>;
   readonly id?: Maybe<Scalars['Int']>;
   readonly messageId?: Maybe<Scalars['Int']>;
+  readonly remoteServiceId?: Maybe<Scalars['String']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
   readonly symbol?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
@@ -18023,6 +18059,7 @@ export type Chat_Reaction_Max_Order_By = {
   readonly duplicateId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly messageId?: Maybe<Order_By>;
+  readonly remoteServiceId?: Maybe<Order_By>;
   readonly senderId?: Maybe<Order_By>;
   readonly symbol?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
@@ -18035,6 +18072,7 @@ export type Chat_Reaction_Min_Fields = {
   readonly duplicateId?: Maybe<Scalars['Int']>;
   readonly id?: Maybe<Scalars['Int']>;
   readonly messageId?: Maybe<Scalars['Int']>;
+  readonly remoteServiceId?: Maybe<Scalars['String']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
   readonly symbol?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
@@ -18046,6 +18084,7 @@ export type Chat_Reaction_Min_Order_By = {
   readonly duplicateId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly messageId?: Maybe<Order_By>;
+  readonly remoteServiceId?: Maybe<Order_By>;
   readonly senderId?: Maybe<Order_By>;
   readonly symbol?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
@@ -18083,6 +18122,7 @@ export type Chat_Reaction_Order_By = {
   readonly id?: Maybe<Order_By>;
   readonly message?: Maybe<Chat_Message_Order_By>;
   readonly messageId?: Maybe<Order_By>;
+  readonly remoteServiceId?: Maybe<Order_By>;
   readonly sender?: Maybe<Attendee_Order_By>;
   readonly senderId?: Maybe<Order_By>;
   readonly symbol?: Maybe<Order_By>;
@@ -18113,6 +18153,8 @@ export enum Chat_Reaction_Select_Column {
   /** column name */
   MessageId = 'messageId',
   /** column name */
+  RemoteServiceId = 'remoteServiceId',
+  /** column name */
   SenderId = 'senderId',
   /** column name */
   Symbol = 'symbol',
@@ -18129,6 +18171,7 @@ export type Chat_Reaction_Set_Input = {
   readonly duplicateId?: Maybe<Scalars['Int']>;
   readonly id?: Maybe<Scalars['Int']>;
   readonly messageId?: Maybe<Scalars['Int']>;
+  readonly remoteServiceId?: Maybe<Scalars['String']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
   readonly symbol?: Maybe<Scalars['String']>;
   readonly type?: Maybe<Chat_ReactionType_Enum>;
@@ -18207,6 +18250,8 @@ export enum Chat_Reaction_Update_Column {
   Id = 'id',
   /** column name */
   MessageId = 'messageId',
+  /** column name */
+  RemoteServiceId = 'remoteServiceId',
   /** column name */
   SenderId = 'senderId',
   /** column name */
@@ -21273,6 +21318,8 @@ export type Mutation_Root = {
   readonly delete_room_ShuffleRoom?: Maybe<Room_ShuffleRoom_Mutation_Response>;
   /** delete single row from the table: "room.ShuffleRoom" */
   readonly delete_room_ShuffleRoom_by_pk?: Maybe<Room_ShuffleRoom>;
+  /** perform the action: "generateChatRemoteToken" */
+  readonly generateChatRemoteToken?: Maybe<ChatRemoteToken>;
   /** perform the action: "getGoogleOAuthUrl" */
   readonly getGoogleOAuthUrl?: Maybe<GetGoogleOAuthUrlOutput>;
   /** insert data into the table: "Attendee" */
@@ -22809,6 +22856,12 @@ export type Mutation_RootDelete_Room_ShuffleRoomArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Room_ShuffleRoom_By_PkArgs = {
   id: Scalars['bigint'];
+};
+
+
+/** mutation root */
+export type Mutation_RootGenerateChatRemoteTokenArgs = {
+  attendeeId: Scalars['uuid'];
 };
 
 
@@ -31464,14 +31517,11 @@ export type Uuid_Comparison_Exp = {
 
 export type InitialChatState_ReadUpToIndexFragment = { readonly __typename?: 'chat_ReadUpToIndex', readonly attendeeId: any, readonly chatId: any, readonly messageId: number, readonly notifiedUpToMessageId: number, readonly unreadCount?: Maybe<number> };
 
-export type ChatState_SubdMessageFragment = { readonly __typename?: 'chat_Message', readonly id: number, readonly chatId: any, readonly message: string, readonly type: Chat_MessageType_Enum, readonly senderId?: Maybe<any> };
+export type ChatState_SubdMessageFragment = { readonly __typename?: 'chat_Message', readonly id: number, readonly chatId: any, readonly message: string, readonly type: Chat_MessageType_Enum, readonly senderId?: Maybe<any>, readonly remoteServiceId?: Maybe<string> };
 
-export type InitialChatState_ChatFragment = { readonly __typename?: 'chat_Chat', readonly id: any, readonly enableAutoPin: boolean, readonly enableAutoSubscribe: boolean, readonly enableMandatoryPin: boolean, readonly enableMandatorySubscribe: boolean, readonly contentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string> }>, readonly nonDMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly priority: number, readonly roomPrivacyName: RoomPrivacy_Enum }>, readonly DMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly roomPeople: ReadonlyArray<{ readonly __typename?: 'RoomPerson', readonly id: any, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } }> }>, readonly readUpToIndices: ReadonlyArray<(
+export type InitialChatState_ChatFragment = { readonly __typename?: 'chat_Chat', readonly id: any, readonly remoteServiceId?: Maybe<string>, readonly enableAutoPin: boolean, readonly enableAutoSubscribe: boolean, readonly enableMandatoryPin: boolean, readonly enableMandatorySubscribe: boolean, readonly contentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string> }>, readonly nonDMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly priority: number, readonly roomPrivacyName: RoomPrivacy_Enum }>, readonly DMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly roomPeople: ReadonlyArray<{ readonly __typename?: 'RoomPerson', readonly id: any, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } }> }>, readonly readUpToIndices: ReadonlyArray<(
     { readonly __typename?: 'chat_ReadUpToIndex' }
     & InitialChatState_ReadUpToIndexFragment
-  )>, readonly messages: ReadonlyArray<(
-    { readonly __typename?: 'chat_Message' }
-    & ChatState_SubdMessageFragment
   )>, readonly pins: ReadonlyArray<{ readonly __typename?: 'chat_Pin', readonly attendeeId: any, readonly chatId: any, readonly wasManuallyPinned: boolean }>, readonly subscriptions: ReadonlyArray<{ readonly __typename?: 'chat_Subscription', readonly attendeeId: any, readonly chatId: any, readonly wasManuallySubscribed: boolean }> };
 
 export type InitialChatStateQueryVariables = Exact<{
@@ -31527,9 +31577,9 @@ export type UnpinChatMutationVariables = Exact<{
 
 export type UnpinChatMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Pin_by_pk?: Maybe<{ readonly __typename?: 'chat_Pin', readonly attendeeId: any, readonly chatId: any }> };
 
-export type ChatReactionDataFragment = { readonly __typename?: 'chat_Reaction', readonly data: any, readonly id: number, readonly senderId: any, readonly symbol: string, readonly type: Chat_ReactionType_Enum, readonly messageId: number };
+export type ChatReactionDataFragment = { readonly __typename?: 'chat_Reaction', readonly data: any, readonly id: number, readonly senderId: any, readonly symbol: string, readonly type: Chat_ReactionType_Enum, readonly messageId: number, readonly remoteServiceId?: Maybe<string> };
 
-export type ChatMessageDataFragment = { readonly __typename?: 'chat_Message', readonly created_at: any, readonly data: any, readonly duplicatedMessageId?: Maybe<number>, readonly id: number, readonly message: string, readonly senderId?: Maybe<any>, readonly type: Chat_MessageType_Enum, readonly chatId: any, readonly reactions: ReadonlyArray<(
+export type ChatMessageDataFragment = { readonly __typename?: 'chat_Message', readonly created_at: any, readonly data: any, readonly duplicatedMessageId?: Maybe<number>, readonly id: number, readonly message: string, readonly senderId?: Maybe<any>, readonly type: Chat_MessageType_Enum, readonly chatId: any, readonly remoteServiceId?: Maybe<string>, readonly reactions: ReadonlyArray<(
     { readonly __typename?: 'chat_Reaction' }
     & ChatReactionDataFragment
   )> };
@@ -31546,17 +31596,7 @@ export type SelectMessagesPageQuery = { readonly __typename?: 'query_root', read
     & ChatMessageDataFragment
   )> };
 
-export type SubscribedChatMessageDataFragment = { readonly __typename?: 'chat_Message', readonly created_at: any, readonly data: any, readonly duplicatedMessageId?: Maybe<number>, readonly id: number, readonly message: string, readonly senderId?: Maybe<any>, readonly type: Chat_MessageType_Enum, readonly chatId: any };
-
-export type NewMessagesSubscriptionVariables = Exact<{
-  chatId: Scalars['uuid'];
-}>;
-
-
-export type NewMessagesSubscription = { readonly __typename?: 'subscription_root', readonly chat_Message: ReadonlyArray<(
-    { readonly __typename?: 'chat_Message' }
-    & SubscribedChatMessageDataFragment
-  )> };
+export type ShortChatMessageDataFragment = { readonly __typename?: 'chat_Message', readonly created_at: any, readonly data: any, readonly duplicatedMessageId?: Maybe<number>, readonly id: number, readonly message: string, readonly senderId?: Maybe<any>, readonly type: Chat_MessageType_Enum, readonly chatId: any, readonly remoteServiceId?: Maybe<string> };
 
 export type SendChatMessageMutationVariables = Exact<{
   chatId: Scalars['uuid'];
@@ -31570,7 +31610,7 @@ export type SendChatMessageMutationVariables = Exact<{
 
 export type SendChatMessageMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Message_one?: Maybe<(
     { readonly __typename?: 'chat_Message' }
-    & SubscribedChatMessageDataFragment
+    & ShortChatMessageDataFragment
   )> };
 
 export type SendChatAnswerMutationVariables = Exact<{
@@ -31637,15 +31677,12 @@ export type DeleteReactionMutationVariables = Exact<{
 
 export type DeleteReactionMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Reaction_by_pk?: Maybe<{ readonly __typename?: 'chat_Reaction', readonly id: number }> };
 
-export type MessageReactionsSubscriptionVariables = Exact<{
-  messageIds: ReadonlyArray<Scalars['Int']> | Scalars['Int'];
+export type GetRemoteChatServiceTokenMutationVariables = Exact<{
+  attendeeId: Scalars['uuid'];
 }>;
 
 
-export type MessageReactionsSubscription = { readonly __typename?: 'subscription_root', readonly chat_Reaction: ReadonlyArray<(
-    { readonly __typename?: 'chat_Reaction' }
-    & ChatReactionDataFragment
-  )> };
+export type GetRemoteChatServiceTokenMutation = { readonly __typename?: 'mutation_root', readonly generateChatRemoteToken?: Maybe<{ readonly __typename?: 'ChatRemoteToken', readonly expiry: number, readonly jwt: string }> };
 
 export type GetChatPathQueryVariables = Exact<{
   chatId: Scalars['uuid'];
@@ -33540,6 +33577,16 @@ export type UpdateCurrentUserLastSeenMutationVariables = Exact<{
 
 export type UpdateCurrentUserLastSeenMutation = { readonly __typename?: 'mutation_root', readonly update_OnlineStatus?: Maybe<{ readonly __typename?: 'OnlineStatus_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'OnlineStatus', readonly id: any, readonly lastSeen: any }> }> };
 
+export const ChatState_SubdMessageFragmentDoc = gql`
+    fragment ChatState_SubdMessage on chat_Message {
+  id
+  chatId
+  message
+  type
+  senderId
+  remoteServiceId
+}
+    `;
 export const InitialChatState_ReadUpToIndexFragmentDoc = gql`
     fragment InitialChatState_ReadUpToIndex on chat_ReadUpToIndex {
   attendeeId
@@ -33549,18 +33596,10 @@ export const InitialChatState_ReadUpToIndexFragmentDoc = gql`
   unreadCount
 }
     `;
-export const ChatState_SubdMessageFragmentDoc = gql`
-    fragment ChatState_SubdMessage on chat_Message {
-  id
-  chatId
-  message
-  type
-  senderId
-}
-    `;
 export const InitialChatState_ChatFragmentDoc = gql`
     fragment InitialChatState_Chat on chat_Chat {
   id
+  remoteServiceId
   contentGroup {
     id
     title
@@ -33590,9 +33629,6 @@ export const InitialChatState_ChatFragmentDoc = gql`
   readUpToIndices(where: {attendeeId: {_eq: $attendeeId}}) {
     ...InitialChatState_ReadUpToIndex
   }
-  messages(limit: 1, order_by: {id: desc}) {
-    ...ChatState_SubdMessage
-  }
   pins(where: {attendeeId: {_eq: $attendeeId}}) {
     attendeeId
     chatId
@@ -33604,8 +33640,7 @@ export const InitialChatState_ChatFragmentDoc = gql`
     wasManuallySubscribed
   }
 }
-    ${InitialChatState_ReadUpToIndexFragmentDoc}
-${ChatState_SubdMessageFragmentDoc}`;
+    ${InitialChatState_ReadUpToIndexFragmentDoc}`;
 export const ChatReactionDataFragmentDoc = gql`
     fragment ChatReactionData on chat_Reaction {
   data
@@ -33614,6 +33649,7 @@ export const ChatReactionDataFragmentDoc = gql`
   symbol
   type
   messageId
+  remoteServiceId
 }
     `;
 export const ChatMessageDataFragmentDoc = gql`
@@ -33629,10 +33665,11 @@ export const ChatMessageDataFragmentDoc = gql`
   senderId
   type
   chatId
+  remoteServiceId
 }
     ${ChatReactionDataFragmentDoc}`;
-export const SubscribedChatMessageDataFragmentDoc = gql`
-    fragment SubscribedChatMessageData on chat_Message {
+export const ShortChatMessageDataFragmentDoc = gql`
+    fragment ShortChatMessageData on chat_Message {
   created_at
   data
   duplicatedMessageId
@@ -33641,6 +33678,7 @@ export const SubscribedChatMessageDataFragmentDoc = gql`
   senderId
   type
   chatId
+  remoteServiceId
 }
     `;
 export const ContentGroupRoomEventFragmentDoc = gql`
@@ -34867,44 +34905,15 @@ export function useSelectMessagesPageLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type SelectMessagesPageQueryHookResult = ReturnType<typeof useSelectMessagesPageQuery>;
 export type SelectMessagesPageLazyQueryHookResult = ReturnType<typeof useSelectMessagesPageLazyQuery>;
 export type SelectMessagesPageQueryResult = Apollo.QueryResult<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>;
-export const NewMessagesDocument = gql`
-    subscription NewMessages($chatId: uuid!) {
-  chat_Message(order_by: {id: desc}, where: {chatId: {_eq: $chatId}}, limit: 5) {
-    ...SubscribedChatMessageData
-  }
-}
-    ${SubscribedChatMessageDataFragmentDoc}`;
-
-/**
- * __useNewMessagesSubscription__
- *
- * To run a query within a React component, call `useNewMessagesSubscription` and pass it any options that fit your needs.
- * When your component renders, `useNewMessagesSubscription` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useNewMessagesSubscription({
- *   variables: {
- *      chatId: // value for 'chatId'
- *   },
- * });
- */
-export function useNewMessagesSubscription(baseOptions: Apollo.SubscriptionHookOptions<NewMessagesSubscription, NewMessagesSubscriptionVariables>) {
-        return Apollo.useSubscription<NewMessagesSubscription, NewMessagesSubscriptionVariables>(NewMessagesDocument, baseOptions);
-      }
-export type NewMessagesSubscriptionHookResult = ReturnType<typeof useNewMessagesSubscription>;
-export type NewMessagesSubscriptionResult = Apollo.SubscriptionResult<NewMessagesSubscription>;
 export const SendChatMessageDocument = gql`
     mutation SendChatMessage($chatId: uuid!, $senderId: uuid!, $type: chat_MessageType_enum!, $message: String!, $data: jsonb = {}, $isPinned: Boolean = false) {
   insert_chat_Message_one(
     object: {chatId: $chatId, data: $data, isPinned: $isPinned, message: $message, senderId: $senderId, type: $type}
   ) {
-    ...SubscribedChatMessageData
+    ...ShortChatMessageData
   }
 }
-    ${SubscribedChatMessageDataFragmentDoc}`;
+    ${ShortChatMessageDataFragmentDoc}`;
 export type SendChatMessageMutationFn = Apollo.MutationFunction<SendChatMessageMutation, SendChatMessageMutationVariables>;
 
 /**
@@ -35183,35 +35192,39 @@ export function useDeleteReactionMutation(baseOptions?: Apollo.MutationHookOptio
 export type DeleteReactionMutationHookResult = ReturnType<typeof useDeleteReactionMutation>;
 export type DeleteReactionMutationResult = Apollo.MutationResult<DeleteReactionMutation>;
 export type DeleteReactionMutationOptions = Apollo.BaseMutationOptions<DeleteReactionMutation, DeleteReactionMutationVariables>;
-export const MessageReactionsDocument = gql`
-    subscription MessageReactions($messageIds: [Int!]!) {
-  chat_Reaction(where: {messageId: {_in: $messageIds}}) {
-    ...ChatReactionData
+export const GetRemoteChatServiceTokenDocument = gql`
+    mutation GetRemoteChatServiceToken($attendeeId: uuid!) {
+  generateChatRemoteToken(attendeeId: $attendeeId) {
+    expiry
+    jwt
   }
 }
-    ${ChatReactionDataFragmentDoc}`;
+    `;
+export type GetRemoteChatServiceTokenMutationFn = Apollo.MutationFunction<GetRemoteChatServiceTokenMutation, GetRemoteChatServiceTokenMutationVariables>;
 
 /**
- * __useMessageReactionsSubscription__
+ * __useGetRemoteChatServiceTokenMutation__
  *
- * To run a query within a React component, call `useMessageReactionsSubscription` and pass it any options that fit your needs.
- * When your component renders, `useMessageReactionsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
+ * To run a mutation, you first call `useGetRemoteChatServiceTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGetRemoteChatServiceTokenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
  *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const { data, loading, error } = useMessageReactionsSubscription({
+ * const [getRemoteChatServiceTokenMutation, { data, loading, error }] = useGetRemoteChatServiceTokenMutation({
  *   variables: {
- *      messageIds: // value for 'messageIds'
+ *      attendeeId: // value for 'attendeeId'
  *   },
  * });
  */
-export function useMessageReactionsSubscription(baseOptions: Apollo.SubscriptionHookOptions<MessageReactionsSubscription, MessageReactionsSubscriptionVariables>) {
-        return Apollo.useSubscription<MessageReactionsSubscription, MessageReactionsSubscriptionVariables>(MessageReactionsDocument, baseOptions);
+export function useGetRemoteChatServiceTokenMutation(baseOptions?: Apollo.MutationHookOptions<GetRemoteChatServiceTokenMutation, GetRemoteChatServiceTokenMutationVariables>) {
+        return Apollo.useMutation<GetRemoteChatServiceTokenMutation, GetRemoteChatServiceTokenMutationVariables>(GetRemoteChatServiceTokenDocument, baseOptions);
       }
-export type MessageReactionsSubscriptionHookResult = ReturnType<typeof useMessageReactionsSubscription>;
-export type MessageReactionsSubscriptionResult = Apollo.SubscriptionResult<MessageReactionsSubscription>;
+export type GetRemoteChatServiceTokenMutationHookResult = ReturnType<typeof useGetRemoteChatServiceTokenMutation>;
+export type GetRemoteChatServiceTokenMutationResult = Apollo.MutationResult<GetRemoteChatServiceTokenMutation>;
+export type GetRemoteChatServiceTokenMutationOptions = Apollo.BaseMutationOptions<GetRemoteChatServiceTokenMutation, GetRemoteChatServiceTokenMutationVariables>;
 export const GetChatPathDocument = gql`
     query GetChatPath($chatId: uuid!) {
   chat_Chat_by_pk(id: $chatId) {

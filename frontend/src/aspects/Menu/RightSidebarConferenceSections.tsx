@@ -856,16 +856,42 @@ function PresencePanel_WithConnectedParticipants({ roomId }: { roomId: string })
     );
 }
 
-function PresencePanel({ roomId }: { roomId?: string }): JSX.Element {
-    if (roomId) {
-        return (
-            <RoomParticipantsProvider roomId={roomId}>
-                <PresencePanel_WithConnectedParticipants roomId={roomId} />
-            </RoomParticipantsProvider>
-        );
-    } else {
-        return <PresencePanel_WithoutConnectedParticipants />;
-    }
+function PresencePanel({ roomId, isOpen }: { roomId?: string; isOpen: boolean }): JSX.Element {
+    const [panelContents, setPanelContents] = useState<{
+        roomId: string;
+        element: JSX.Element;
+    } | null>(null);
+    useEffect(() => {
+        if (isOpen && roomId && roomId !== panelContents?.roomId) {
+            setPanelContents({
+                roomId,
+                element: (
+                    <RoomParticipantsProvider roomId={roomId}>
+                        <PresencePanel_WithConnectedParticipants roomId={roomId} />
+                    </RoomParticipantsProvider>
+                ),
+            });
+        }
+    }, [isOpen, roomId, panelContents]);
+
+    useEffect(() => {
+        let timeoutId: number | undefined;
+        if (!isOpen) {
+            timeoutId = setTimeout(
+                (() => {
+                    setPanelContents(null);
+                }) as TimerHandler,
+                5000
+            );
+        }
+        return () => {
+            if (timeoutId !== undefined) {
+                clearTimeout(timeoutId);
+            }
+        };
+    }, [isOpen]);
+
+    return panelContents?.element ?? (isOpen ? <PresencePanel_WithoutConnectedParticipants /> : <></>);
 }
 
 function RightSidebarConferenceSections_Inner({
@@ -974,7 +1000,10 @@ function RightSidebarConferenceSections_Inner({
         ),
         [confSlug, pageChatId, switchToPageChat]
     );
-    const presencePanel = useMemo(() => <PresencePanel roomId={roomId} />, [roomId]);
+    const presencePanel = useMemo(
+        () => <PresencePanel roomId={roomId} isOpen={currentTab === RightSidebarTabs.Presence} />,
+        [currentTab, roomId]
+    );
 
     const onChangeTab = useCallback(
         (index) => {

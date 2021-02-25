@@ -861,24 +861,37 @@ export class ChatState {
         const release = await this.initSubscriptionMutex.acquire();
 
         try {
-            if (this.initialState.remoteServiceId && !this.subscribedToMoreMessages) {
-                this.subscribedToMoreMessages = true;
+            if (this.initialState.remoteServiceId) {
+                if (!this.subscribedToMoreMessages) {
+                    this.subscribedToMoreMessages = true;
 
-                const remoteServiceClient = await this.globalState.remoteServiceClient;
-                this.remoteChat = remoteServiceClient?.getChannelBySid(this.initialState.remoteServiceId) ?? null;
-                const remoteChat = await this.remoteChat;
-                try {
-                    if (remoteChat?.status !== "joined") {
-                        await remoteChat?.join();
-                    } else {
-                        await remoteChat._subscribeStreams();
+                    const remoteServiceClient = await this.globalState.remoteServiceClient;
+                    this.remoteChat = remoteServiceClient?.getChannelBySid(this.initialState.remoteServiceId) ?? null;
+                    const remoteChat = await this.remoteChat;
+                    try {
+                        if (remoteChat?.status !== "joined") {
+                            await remoteChat?.join();
+                        } else {
+                            await remoteChat?._subscribe();
+                        }
+                    } catch (e) {
+                        console.error(`Error joining remote service for chat: ${this.Id}`, e);
                     }
-                } catch (e) {
-                    console.error(`Error joining remote service for chat: ${this.Id}`, e);
+                    remoteChat?.on("messageAdded", this.messageAddedListener.bind(this));
+                    remoteChat?.on("messageRemoved", this.messageRemovedListener.bind(this));
+                    remoteChat?.on("messageUpdated", this.messageUpdatedListener.bind(this));
+
+                    if (remoteChat?.lastMessage) {
+                        const msgs = await remoteChat?.getMessages(
+                            ChatState.DefaultPageSize,
+                            remoteChat.lastMessage.index,
+                            "backwards"
+                        );
+                        msgs?.items.forEach((msg) => {
+                            msg.on("messageUpdated", (...args) => console.log("Message updated", ...args));
+                        });
+                    }
                 }
-                remoteChat?.on("messageAdded", this.messageAddedListener.bind(this));
-                remoteChat?.on("messageRemoved", this.messageRemovedListener.bind(this));
-                remoteChat?.on("messageUpdated", this.messageUpdatedListener.bind(this));
             } else {
                 console.warn(
                     `Live messages and reactions unavailable for chat ${this.initialState.id} because the remote service has not been set up for this chat yet.`
@@ -907,15 +920,15 @@ export class ChatState {
         }
     }
 
-    private async messageAddedListener(ev: TwilioMessage) {
+    private async messageAddedListener(msg: TwilioMessage) {
         const release = await this.messagesMutex.acquire();
         let newMessageStates: MessageState[] | undefined;
         try {
-            const attrs = ev.attributes as Record<string, any>;
+            const attrs = msg.attributes as Record<string, any>;
             if (!this.messages.has(attrs.id)) {
                 let senderId = null;
                 try {
-                    const member = await ev.getMember();
+                    const member = await msg.getMember();
                     senderId = member.identity;
                 } catch {
                     // Ignore - maybe system sent the message
@@ -926,8 +939,8 @@ export class ChatState {
                         data: attrs.data,
                         type: attrs.type,
                         chatId: this.Id,
-                        message: ev.body,
-                        created_at: ev.dateCreated.toISOString(),
+                        message: msg.body,
+                        created_at: msg.dateCreated.toISOString(),
                         senderId,
                     }),
                 ];
@@ -949,11 +962,11 @@ export class ChatState {
         }
     }
 
-    private async messageRemovedListener(ev: TwilioMessage) {
+    private async messageRemovedListener(msg: TwilioMessage) {
         const release = await this.messagesMutex.acquire();
         let deletedId: number | undefined;
         try {
-            const attrs = ev.attributes as Record<string, any>;
+            const attrs = msg.attributes as Record<string, any>;
             if (this.messages.delete(attrs.id)) {
                 deletedId = attrs.id;
             }
@@ -1371,32 +1384,6 @@ export class GlobalChatState {
             if (!this.hasInitialised) {
                 this.hasInitialised = true;
                 if (!this.hasTorndown) {
-                    const initialData = await this.apolloClient.query<
-                        InitialChatStateQuery,
-                        InitialChatStateQueryVariables
-                    >({
-                        query: InitialChatStateDocument,
-                        variables: {
-                            attendeeId: this.attendee.id,
-                        },
-                    });
-
-                    console.log("Initial chat data", initialData);
-
-                    if (!this.chatStates) {
-                        this.chatStates = new Map();
-                    }
-                    initialData.data.chat_PinnedOrSubscribed.forEach((item) => {
-                        if (item.chat) {
-                            this.chatStates?.set(item.chat.id, new ChatState(this, item.chat));
-                        }
-                    });
-
-                    this.chatStatesObs.publish(this.chatStates);
-
-                    await this.setupUnreadCountPolling();
-                    // await this.setupReactionsSubscription();
-
                     // eslint-disable-next-line no-async-promise-executor
                     this.remoteServiceClient = new Promise(async (resolve, reject) => {
                         let resolved = false;
@@ -1462,6 +1449,36 @@ export class GlobalChatState {
                             }
                         }
                     });
+
+                    const initialData = await this.apolloClient.query<
+                        InitialChatStateQuery,
+                        InitialChatStateQueryVariables
+                    >({
+                        query: InitialChatStateDocument,
+                        variables: {
+                            attendeeId: this.attendee.id,
+                        },
+                    });
+
+                    console.info("Initial chat data", initialData);
+
+                    await this.remoteServiceClient;
+
+                    console.info("Remote service client configured.", initialData);
+
+                    if (!this.chatStates) {
+                        this.chatStates = new Map();
+                    }
+                    initialData.data.chat_PinnedOrSubscribed.forEach((item) => {
+                        if (item.chat) {
+                            this.chatStates?.set(item.chat.id, new ChatState(this, item.chat));
+                        }
+                    });
+
+                    this.chatStatesObs.publish(this.chatStates);
+
+                    await this.setupUnreadCountPolling();
+                    // await this.setupReactionsSubscription();
                 }
             }
         } catch (e) {

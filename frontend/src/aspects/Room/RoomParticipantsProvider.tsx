@@ -19,7 +19,6 @@ gql`
     }
 
     fragment RoomParticipantDetails on RoomParticipant {
-        attendeeId
         conferenceId
         id
         roomId

@@ -33470,7 +33470,7 @@ export type GetAllRoomParticipantsQuery = { readonly __typename?: 'query_root', 
     & RoomParticipantDetailsFragment
   )> };
 
-export type RoomParticipantDetailsFragment = { readonly __typename?: 'RoomParticipant', readonly attendeeId: any, readonly conferenceId: any, readonly id: any, readonly roomId: any };
+export type RoomParticipantDetailsFragment = { readonly __typename?: 'RoomParticipant', readonly conferenceId: any, readonly id: any, readonly roomId: any, readonly attendeeId: any };
 
 export type ShufflePeriodDataFragment = { readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly conferenceId: any, readonly endAt: any, readonly maxAttendeesPerRoom: number, readonly name: string, readonly roomDurationMinutes: number, readonly startAt: any, readonly targetAttendeesPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly queueEntries: ReadonlyArray<(
     { readonly __typename?: 'room_ShuffleQueueEntry' }
@@ -34563,7 +34563,6 @@ export const RoomMemberFragmentDoc = gql`
     `;
 export const RoomParticipantDetailsFragmentDoc = gql`
     fragment RoomParticipantDetails on RoomParticipant {
-  attendeeId
   conferenceId
   id
   roomId

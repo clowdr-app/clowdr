@@ -15,7 +15,7 @@ import assert from "assert";
 import { Mutex } from "async-mutex";
 import * as R from "ramda";
 import React from "react";
-import * as Twilio from "twilio-chat";
+import Client, * as Twilio from "twilio-chat";
 import type { Channel } from "twilio-chat/lib/channel";
 import type { Message as TwilioMessage } from "twilio-chat/lib/message";
 import {
@@ -1327,7 +1327,7 @@ export class GlobalChatState {
     public showSidebar: (() => void) | null = null;
 
     private remoteServiceToken: string | null = null;
-    public remoteServiceClient: Promise<Twilio.Client | null> | null = null;
+    public remoteServiceClient: Promise<Client | null> | null = null;
 
     constructor(
         public readonly conference: {
@@ -1413,7 +1413,7 @@ export class GlobalChatState {
 
                                 try {
                                     // TODO: Increase log level if debugger enabled?
-                                    const result = await (Twilio.default as any).Client.create(this.remoteServiceToken);
+                                    const result = await Twilio.Client.create(this.remoteServiceToken);
                                     resolve(result);
                                     resolved = true;
                                     console.info("Created RemoteService client.");

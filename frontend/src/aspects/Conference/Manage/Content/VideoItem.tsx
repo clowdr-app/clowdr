@@ -7,6 +7,7 @@ import { ContentType_Enum } from "../../../../generated/graphql";
 import { ContentGroupVideo } from "../../Attend/Content/ContentGroupVideos";
 import type { ItemBaseTemplate, RenderEditorProps } from "./Types";
 import UploadFileForm_ContentItem from "./UploadFileForm_ContentItem";
+import UploadFileForm_Subtitles from "./UploadFileForm_Subtitles";
 
 function createDefaultVideo(
     type:
@@ -124,6 +125,17 @@ export const VideoItemTemplate: ItemBaseTemplate = {
                     </Heading>
                     <UploadFileForm_ContentItem
                         allowedFileTypes={["video/mp4", "video/webm"]}
+                        item={data.item}
+                        onItemChange={(newItem) => {
+                            const newData = {
+                                ...data,
+                                item: newItem,
+                            };
+                            update(newData);
+                        }}
+                        contentBaseType={ContentBaseType.Video}
+                    />
+                    <UploadFileForm_Subtitles
                         item={data.item}
                         onItemChange={(newItem) => {
                             const newData = {

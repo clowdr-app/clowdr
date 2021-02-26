@@ -232,6 +232,14 @@ function VonageRoomInner({
             ).map((pair) => pair[0]);
             const selectedActiveStreams = activeStreams.slice(0, Math.min(activeStreams.length, maxVideoStreams));
 
+            const remainingSlots = maxVideoStreams - selectedActiveStreams.length;
+            const topUpStreams = R.sortWith(
+                [R.ascend((s) => s.connection.creationTime)],
+                othersCameraStreams.filter((s) => !selectedActiveStreams.includes(s.streamId))
+            ).map((s) => s.streamId);
+            const selectedTopUpStreams = topUpStreams.slice(0, Math.min(topUpStreams.length, remainingSlots));
+            selectedActiveStreams.push(...selectedTopUpStreams);
+
             setEnableStreams((oldEnabledStreams) => {
                 if (!oldEnabledStreams) {
                     // console.log("Active speakers changed (1)");
@@ -250,7 +258,7 @@ function VonageRoomInner({
                 }
             });
         }
-    }, [maxVideoStreams, othersCameraStreams.length, screenSharingActive, streamLastActive]);
+    }, [maxVideoStreams, othersCameraStreams, othersCameraStreams.length, screenSharingActive, streamLastActive]);
 
     const [sortedStreams, setSortedStreams] = useState<OT.Stream[]>([]);
     const sliceAndDice = useCallback(
@@ -261,7 +269,7 @@ function VonageRoomInner({
                     .filter((stream) => stream.videoType === "screen")
                     .map((x) => x.connection.connectionId);
                 const screenCameraStreams = R.sortWith(
-                    [R.ascend(R.prop("creationTime"))],
+                    [R.ascend((s) => s.connection.creationTime)],
                     cameraStreams.filter((x) => screenConnections.includes(x.connection.connectionId))
                 );
                 const screenCameraStreamIds = screenCameraStreams.map((x) => x.streamId);
@@ -291,7 +299,7 @@ function VonageRoomInner({
                 );
                 const nasCount = sortedNewlyActiveStreams.length;
                 const rest = R.sortWith(
-                    [R.ascend(R.prop("creationTime"))],
+                    [R.ascend((s) => s.connection.creationTime)],
                     cameraStreams.filter(
                         (x) => !enableStreams?.includes(x.streamId) && !screenCameraStreamIds.includes(x.streamId)
                     )
@@ -300,7 +308,7 @@ function VonageRoomInner({
                 console.log(`scs: ${scsCount}, eas: ${easCount}, nas: ${nasCount}, rest: ${restCount}`);
                 return screenCameraStreams.concat(sortedNewlyActiveStreams).concat(existingActiveStreams).concat(rest);
             } else {
-                return R.sortWith([R.ascend(R.prop("creationTime"))], cameraStreams);
+                return R.sortWith([R.ascend((s) => s.connection.creationTime)], cameraStreams);
             }
         },
         [sortedStreams, streamLastActive, streams]
@@ -311,7 +319,7 @@ function VonageRoomInner({
             setSortedStreams(
                 screenSharingActive
                     ? sliceAndDice(othersCameraStreams, enableStreams, maxVideoStreams)
-                    : R.sortWith([R.ascend(R.prop("creationTime"))], othersCameraStreams)
+                    : R.sortWith([R.ascend((s) => s.connection.creationTime)], othersCameraStreams)
             ),
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [othersCameraStreams, screenSharingActive, enableStreams, maxVideoStreams]

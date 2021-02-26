@@ -26,8 +26,8 @@ import {
     RoomPrivacy_Enum,
     Room_CurrentEventSummaryFragment,
     Room_EventSummaryFragment,
-    useRoomBackstage_GetEventBreakoutRoomQuery,
     useRoom_GetCurrentEventQuery,
+    useRoom_GetEventBreakoutRoomQuery,
     useRoom_GetEventsQuery,
 } from "../../../../generated/graphql";
 import { ExternalLinkButton } from "../../../Chakra/LinkButton";
@@ -85,6 +85,16 @@ gql`
         eventPeople {
             id
             attendeeId
+        }
+    }
+
+    query Room_GetEventBreakoutRoom($originatingContentGroupId: uuid!) {
+        Room(
+            where: { name: { _like: "Breakout:%" }, originatingContentGroupId: { _eq: $originatingContentGroupId } }
+            order_by: { created_at: asc }
+            limit: 1
+        ) {
+            id
         }
     }
 `;
@@ -373,7 +383,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
         currentRoomEvent
     );
     const conference = useConference();
-    const { refetch: refetchBreakout } = useRoomBackstage_GetEventBreakoutRoomQuery({
+    const { refetch: refetchBreakout } = useRoom_GetEventBreakoutRoomQuery({
         skip: true,
         fetchPolicy: "network-only",
     });
@@ -382,14 +392,15 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
         async function fn() {
             try {
                 if (
-                    !showBackstage &&
-                    existingCurrentRoomEvent &&
+                    existingCurrentRoomEvent?.contentGroupId &&
                     (existingCurrentRoomEvent.intendedRoomModeName === RoomMode_Enum.Presentation ||
                         existingCurrentRoomEvent.intendedRoomModeName === RoomMode_Enum.QAndA) &&
                     existingCurrentRoomEvent.id !== currentRoomEvent?.id
                 ) {
                     try {
-                        const breakoutRoom = await refetchBreakout({ originatingEventId: existingCurrentRoomEvent.id });
+                        const breakoutRoom = await refetchBreakout({
+                            originatingContentGroupId: existingCurrentRoomEvent.contentGroupId,
+                        });
 
                         if (!breakoutRoom.data || !breakoutRoom.data.Room || breakoutRoom.data.Room.length < 1) {
                             throw new Error("No matching room found");

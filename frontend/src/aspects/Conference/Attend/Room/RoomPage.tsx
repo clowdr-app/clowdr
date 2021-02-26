@@ -9,7 +9,6 @@ import PageNotFound from "../../../Errors/PageNotFound";
 import usePolling from "../../../Generic/usePolling";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import { useNoPrimaryMenuButtons } from "../../../Menu/usePrimaryMenuButtons";
-import RoomMembersProvider from "../../../Room/RoomMembersProvider";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { Room } from "./Room";
@@ -94,11 +93,9 @@ function RoomPageInner({ roomId }: { roomId: string }): JSX.Element {
     return (
         <>
             {title}
-            <RoomMembersProvider roomId={roomId}>
-                <ApolloQueryWrapper getter={(data) => data.Room_by_pk} queryResult={result}>
-                    {(room: RoomPage_RoomDetailsFragment) => <Room roomDetails={room} />}
-                </ApolloQueryWrapper>
-            </RoomMembersProvider>
+            <ApolloQueryWrapper getter={(data) => data.Room_by_pk} queryResult={result}>
+                {(room: RoomPage_RoomDetailsFragment) => <Room roomDetails={room} />}
+            </ApolloQueryWrapper>
         </>
     );
 }

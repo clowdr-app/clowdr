@@ -327,7 +327,7 @@ function ChatsPanel({
         };
     }, [currentChatId, globalChatState]);
     const setCurrentChatId = useCallback((v: string | null) => {
-        setCurrentChat(null);
+        setCurrentChat((old) => (old?.Id !== v ? null : old));
         _setCurrentChatId(v);
     }, []);
 

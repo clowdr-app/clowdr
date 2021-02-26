@@ -9,7 +9,7 @@ export async function createContentGroupBreakoutRoom(contentGroupId: string, con
                 id
                 chatId
                 conferenceId
-                rooms(where: { name: { _like: "Breakout:%" } }, order_by: { created_at: asc }, limit: 1) {
+                rooms(where: { originatingEventId: { _is_null: true } }, order_by: { created_at: asc }, limit: 1) {
                     id
                 }
                 title
@@ -61,7 +61,7 @@ export async function createContentGroupBreakoutRoom(contentGroupId: string, con
         mutation: ContentGroup_CreateRoomDocument,
         variables: {
             conferenceId: conferenceId,
-            name: `Breakout: ${contentGroupResult.data.ContentGroup_by_pk.title}`,
+            name: `${contentGroupResult.data.ContentGroup_by_pk.title}`,
             originatingContentGroupId: contentGroupId,
             chatId: contentGroupResult.data.ContentGroup_by_pk.chatId,
         },

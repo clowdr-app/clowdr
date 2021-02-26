@@ -90,7 +90,10 @@ gql`
 
     query Room_GetEventBreakoutRoom($originatingContentGroupId: uuid!) {
         Room(
-            where: { name: { _like: "Breakout:%" }, originatingContentGroupId: { _eq: $originatingContentGroupId } }
+            where: {
+                originatingEventId: { _is_null: true }
+                originatingContentGroupId: { _eq: $originatingContentGroupId }
+            }
             order_by: { created_at: asc }
             limit: 1
         ) {

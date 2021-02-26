@@ -184,8 +184,9 @@ function RoomSecondaryEditor({
     });
     const people = useManageRooms_SelectRoomPeopleQuery({
         variables: {
-            roomId: room?.id ?? "",
+            roomId: room?.id,
         },
+        skip: !room,
     });
     const groupAttendeesQ = useManageRooms_SelectGroupAttendeesQuery({
         skip: true,

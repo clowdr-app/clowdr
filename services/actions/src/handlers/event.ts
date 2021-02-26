@@ -10,8 +10,9 @@ import {
     StartChatDuplicationMutationVariables,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { createEventBreakoutRoom, createEventEndTrigger, createEventStartTrigger } from "../lib/event";
+import { createEventEndTrigger, createEventStartTrigger } from "../lib/event";
 import { sendFailureEmail } from "../lib/logging/failureEmails";
+import { createContentGroupBreakoutRoom } from "../lib/room";
 import Vonage from "../lib/vonage/vonageClient";
 import { startEventBroadcast, stopEventBroadcasts } from "../lib/vonage/vonageTools";
 import { EventData, Payload } from "../types/hasura/event";
@@ -251,6 +252,20 @@ export async function handleEventStartNotification(eventId: string, startTime: s
 
             await startEventBroadcast(eventId);
         }, waitForMillis);
+
+        if (
+            [RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(intendedRoomModeName) &&
+            result.data.Event_by_pk.contentGroup
+        ) {
+            try {
+                await createContentGroupBreakoutRoom(
+                    result.data.Event_by_pk.contentGroup.id,
+                    result.data.Event_by_pk.conferenceId
+                );
+            } catch (e) {
+                console.error("Failed to create content group breakout room", eventId, e);
+            }
+        }
     } else {
         console.log("Event start notification did not match current event start time, skipping.", eventId, startTime);
     }
@@ -305,27 +320,6 @@ export async function handleEventEndNotification(eventId: string, endTime: strin
                 console.error("Failed to create MediaPackage harvest job", eventId, e);
             }
         }, harvestJobWaitForMillis);
-
-        try {
-            if ([RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(intendedRoomModeName)) {
-                const event = result.data.Event_by_pk;
-                if (!event.eventVonageSession) {
-                    throw new Error("Missing event Vonage session");
-                }
-                await createEventBreakoutRoom(
-                    event.conferenceId,
-                    event.id,
-                    event.name,
-                    event.startTime,
-                    event.eventVonageSession.sessionId,
-                    event.contentGroup?.id,
-                    event.contentGroup?.title,
-                    event.contentGroup?.chatId
-                );
-            }
-        } catch (e) {
-            console.error("Failed to create breakout room at end of event", eventId, e);
-        }
     } else {
         console.log("Event stop notification did not match current event end time, skipping.", eventId, endTime);
     }

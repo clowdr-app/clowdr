@@ -3,8 +3,6 @@ import assert from "assert";
 import * as R from "ramda";
 import {
     AddAttendeeToRoomPeopleDocument,
-    ContentGroup_CreateRoomDocument,
-    CreateContentGroupRoom_GetContentGroupDocument,
     CreateDmRoomDocument,
     CreateDmRoom_GetAttendeesDocument,
     CreateDmRoom_GetExistingRoomsDocument,
@@ -14,6 +12,7 @@ import {
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { getAttendee } from "../lib/authorisation";
+import { createContentGroupBreakoutRoom } from "../lib/room";
 import Vonage from "../lib/vonage/vonageClient";
 import { Payload, RoomData } from "../types/hasura/event";
 
@@ -264,75 +263,20 @@ export async function handleCreateForContentGroup(
     try {
         // todo: verify user role here. It's not critically important though.
         getAttendee(userId, params.conferenceId);
-
-        gql`
-            query CreateContentGroupRoom_GetContentGroup($id: uuid!) {
-                ContentGroup_by_pk(id: $id) {
-                    id
-                    chatId
-                    conferenceId
-                    rooms(where: { name: { _like: "Breakout:%" } }, order_by: { created_at: asc }, limit: 1) {
-                        id
-                    }
-                    title
-                }
-            }
-        `;
-
-        const contentGroupResult = await apolloClient.query({
-            query: CreateContentGroupRoom_GetContentGroupDocument,
-            variables: {
-                id: params.contentGroupId,
-            },
-        });
-
-        if (contentGroupResult.data.ContentGroup_by_pk?.conferenceId !== params.conferenceId) {
-            throw new Error("Could not find specified content group in the conference");
-        }
-
-        if (contentGroupResult.data.ContentGroup_by_pk.rooms.length > 0) {
-            return { roomId: contentGroupResult.data.ContentGroup_by_pk.rooms[0].id };
-        }
-
-        gql`
-            mutation ContentGroup_CreateRoom(
-                $chatId: uuid = null
-                $conferenceId: uuid!
-                $name: String!
-                $originatingContentGroupId: uuid!
-            ) {
-                insert_Room_one(
-                    object: {
-                        capacity: 50
-                        chatId: $chatId
-                        conferenceId: $conferenceId
-                        currentModeName: BREAKOUT
-                        name: $name
-                        originatingContentGroupId: $originatingContentGroupId
-                        roomPrivacyName: PUBLIC
-                    }
-                ) {
-                    id
-                }
-            }
-        `;
-
-        console.log("Creating new breakout room for content group", params.contentGroupId, params.conferenceId);
-
-        const createResult = await apolloClient.mutate({
-            mutation: ContentGroup_CreateRoomDocument,
-            variables: {
-                conferenceId: params.conferenceId,
-                name: `Breakout: ${contentGroupResult.data.ContentGroup_by_pk.title}`,
-                originatingContentGroupId: params.contentGroupId,
-                chatId: contentGroupResult.data.ContentGroup_by_pk.chatId,
-            },
-        });
+    } catch (e) {
+        console.error("Could not find attendee at conference when creating breakout room", e);
         return {
-            roomId: createResult.data?.insert_Room_one?.id,
+            message: "Attendee is not a member of the conference",
+        };
+    }
+
+    try {
+        const roomId = await createContentGroupBreakoutRoom(params.contentGroupId, params.conferenceId);
+        return {
+            roomId,
         };
     } catch (e) {
-        console.error("Failed to create room for content group", params.conferenceId, params.contentGroupId, e);
+        console.error("Failed to create content group breakout room", e);
         return {
             message: "Could not create room",
         };

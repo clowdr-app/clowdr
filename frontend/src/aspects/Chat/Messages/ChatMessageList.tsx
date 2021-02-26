@@ -124,15 +124,12 @@ function MessageList({
                 positionObservables.current.set(msg.id, obs);
                 messageElements.current?.push(<MessageBox key={msg.id} message={msg} positionObservable={obs} />);
             });
-            // CHAT_TODO: Only set read up to index if that chat is actually selected in the sidebar (i.e. is visible)
-            // However, this also means updating the read up to index when the chat becomes visible, which this code
-            // wouldn't currently achieve
+
             if (messageElements.current.length > 0) {
-                const latestId = messageElements.current[0].props.message.id;
-                if (config.state.ReadUpToMsgId < latestId) {
-                    config.state.setReadUpToMsgId(latestId);
-                }
+                const latest = messageElements.current[0].props.message as MessageState;
+                config.state.setReadUpToMsgId(latest.id, latest.remoteMsgId);
             }
+
             setLastRenderTime(Date.now());
         },
         [config.state]
@@ -167,21 +164,17 @@ function MessageList({
                     observable.publish(idx);
                 }
             });
-            // CHAT_TODO: Only set read up to index if that chat is actually selected in the sidebar (i.e. is visible)
-            // However, this also means updating the read up to index when the chat becomes visible, which this code
-            // wouldn't currently achieve
-            if (messageElements.current.length > 0) {
-                const latestId = messageElements.current[0].props.message.id;
-                if (config.state.ReadUpToMsgId < latestId) {
-                    config.state.setReadUpToMsgId(latestId);
-                }
-            }
 
             if (shouldAutoScroll.current) {
                 ref.current?.scroll({
                     behavior: "smooth",
                     top: 0,
                 });
+
+                if (messageElements.current && messageElements.current.length > 0) {
+                    const latest = messageElements.current[0].props.message as MessageState;
+                    config.state.setReadUpToMsgId(latest.id, latest.remoteMsgId);
+                }
             }
 
             setLastRenderTime(Date.now());
@@ -262,12 +255,17 @@ function MessageList({
             <Observer
                 onChange={(ev) => {
                     shouldAutoScroll.current = ev.intersectionRatio > 0;
+
+                    if (messageElements.current && messageElements.current.length > 0) {
+                        const latest = messageElements.current[0].props.message as MessageState;
+                        config.state.setReadUpToMsgId(latest.id, latest.remoteMsgId);
+                    }
                 }}
             >
-                <Box m={0} p={0} h="1px" w="100%"></Box>
+                <Box position="absolute" bottom="100px" l={0} m={0} p={0} h="1px" w="100%"></Box>
             </Observer>
         );
-    }, []);
+    }, [config.state]);
 
     return (
         <Box {...rest}>
@@ -292,6 +290,7 @@ function MessageList({
                             ["scrollbarColor"]: `${scrollbarColour} ${scrollbarBackground}`,
                         }}
                         ref={ref}
+                        pos="relative"
                     >
                         {bottomEl}
                         {messageElements.current}

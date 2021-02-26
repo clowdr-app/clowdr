@@ -31529,7 +31529,7 @@ export type InitialChatStateQueryVariables = Exact<{
 }>;
 
 
-export type InitialChatStateQuery = { readonly __typename?: 'query_root', readonly chat_PinnedOrSubscribed: ReadonlyArray<{ readonly __typename?: 'chat_PinnedOrSubscribed', readonly chat?: Maybe<(
+export type InitialChatStateQuery = { readonly __typename?: 'query_root', readonly chat_PinnedOrSubscribed: ReadonlyArray<{ readonly __typename?: 'chat_PinnedOrSubscribed', readonly chatId?: Maybe<any>, readonly attendeeId?: Maybe<any>, readonly chat?: Maybe<(
       { readonly __typename?: 'chat_Chat' }
       & InitialChatState_ChatFragment
     )> }> };
@@ -31544,6 +31544,24 @@ export type SelectInitialChatStateQuery = { readonly __typename?: 'query_root', 
     { readonly __typename?: 'chat_Chat' }
     & InitialChatState_ChatFragment
   )> };
+
+export type SelectInitialChatStatesQueryVariables = Exact<{
+  chatIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+  attendeeId: Scalars['uuid'];
+}>;
+
+
+export type SelectInitialChatStatesQuery = { readonly __typename?: 'query_root', readonly chat_Chat: ReadonlyArray<(
+    { readonly __typename?: 'chat_Chat' }
+    & InitialChatState_ChatFragment
+  )> };
+
+export type SelectPinnedOrSubscribedQueryVariables = Exact<{
+  attendeeId: Scalars['uuid'];
+}>;
+
+
+export type SelectPinnedOrSubscribedQuery = { readonly __typename?: 'query_root', readonly chat_PinnedOrSubscribed: ReadonlyArray<{ readonly __typename?: 'chat_PinnedOrSubscribed', readonly chatId?: Maybe<any>, readonly attendeeId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly id: any, readonly pins: ReadonlyArray<{ readonly __typename?: 'chat_Pin', readonly attendeeId: any, readonly chatId: any, readonly wasManuallyPinned: boolean }>, readonly subscriptions: ReadonlyArray<{ readonly __typename?: 'chat_Subscription', readonly attendeeId: any, readonly chatId: any, readonly wasManuallySubscribed: boolean }> }> }> };
 
 export type SubscribeChatMutationVariables = Exact<{
   chatId: Scalars['uuid'];
@@ -31651,7 +31669,7 @@ export type UpdateReadUpToIndexMutationVariables = Exact<{
 }>;
 
 
-export type UpdateReadUpToIndexMutation = { readonly __typename?: 'mutation_root', readonly update_chat_ReadUpToIndex_by_pk?: Maybe<{ readonly __typename?: 'chat_ReadUpToIndex', readonly attendeeId: any, readonly chatId: any, readonly messageId: number }> };
+export type UpdateReadUpToIndexMutation = { readonly __typename?: 'mutation_root', readonly update_chat_ReadUpToIndex?: Maybe<{ readonly __typename?: 'chat_ReadUpToIndex_mutation_response', readonly affected_rows: number }> };
 
 export type DeleteMessageMutationVariables = Exact<{
   id: Scalars['Int'];
@@ -34647,6 +34665,8 @@ export const AttendeeFieldsFragmentDoc = gql`
 export const InitialChatStateDocument = gql`
     query InitialChatState($attendeeId: uuid!) {
   chat_PinnedOrSubscribed(where: {attendeeId: {_eq: $attendeeId}}) {
+    chatId
+    attendeeId
     chat {
       ...InitialChatState_Chat
     }
@@ -34713,6 +34733,87 @@ export function useSelectInitialChatStateLazyQuery(baseOptions?: Apollo.LazyQuer
 export type SelectInitialChatStateQueryHookResult = ReturnType<typeof useSelectInitialChatStateQuery>;
 export type SelectInitialChatStateLazyQueryHookResult = ReturnType<typeof useSelectInitialChatStateLazyQuery>;
 export type SelectInitialChatStateQueryResult = Apollo.QueryResult<SelectInitialChatStateQuery, SelectInitialChatStateQueryVariables>;
+export const SelectInitialChatStatesDocument = gql`
+    query SelectInitialChatStates($chatIds: [uuid!]!, $attendeeId: uuid!) {
+  chat_Chat(where: {id: {_in: $chatIds}}) {
+    ...InitialChatState_Chat
+  }
+}
+    ${InitialChatState_ChatFragmentDoc}`;
+
+/**
+ * __useSelectInitialChatStatesQuery__
+ *
+ * To run a query within a React component, call `useSelectInitialChatStatesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectInitialChatStatesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectInitialChatStatesQuery({
+ *   variables: {
+ *      chatIds: // value for 'chatIds'
+ *      attendeeId: // value for 'attendeeId'
+ *   },
+ * });
+ */
+export function useSelectInitialChatStatesQuery(baseOptions: Apollo.QueryHookOptions<SelectInitialChatStatesQuery, SelectInitialChatStatesQueryVariables>) {
+        return Apollo.useQuery<SelectInitialChatStatesQuery, SelectInitialChatStatesQueryVariables>(SelectInitialChatStatesDocument, baseOptions);
+      }
+export function useSelectInitialChatStatesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectInitialChatStatesQuery, SelectInitialChatStatesQueryVariables>) {
+          return Apollo.useLazyQuery<SelectInitialChatStatesQuery, SelectInitialChatStatesQueryVariables>(SelectInitialChatStatesDocument, baseOptions);
+        }
+export type SelectInitialChatStatesQueryHookResult = ReturnType<typeof useSelectInitialChatStatesQuery>;
+export type SelectInitialChatStatesLazyQueryHookResult = ReturnType<typeof useSelectInitialChatStatesLazyQuery>;
+export type SelectInitialChatStatesQueryResult = Apollo.QueryResult<SelectInitialChatStatesQuery, SelectInitialChatStatesQueryVariables>;
+export const SelectPinnedOrSubscribedDocument = gql`
+    query SelectPinnedOrSubscribed($attendeeId: uuid!) {
+  chat_PinnedOrSubscribed(where: {attendeeId: {_eq: $attendeeId}}) {
+    chatId
+    attendeeId
+    chat {
+      id
+      pins(where: {attendeeId: {_eq: $attendeeId}}) {
+        attendeeId
+        chatId
+        wasManuallyPinned
+      }
+      subscriptions(where: {attendeeId: {_eq: $attendeeId}}) {
+        attendeeId
+        chatId
+        wasManuallySubscribed
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useSelectPinnedOrSubscribedQuery__
+ *
+ * To run a query within a React component, call `useSelectPinnedOrSubscribedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectPinnedOrSubscribedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectPinnedOrSubscribedQuery({
+ *   variables: {
+ *      attendeeId: // value for 'attendeeId'
+ *   },
+ * });
+ */
+export function useSelectPinnedOrSubscribedQuery(baseOptions: Apollo.QueryHookOptions<SelectPinnedOrSubscribedQuery, SelectPinnedOrSubscribedQueryVariables>) {
+        return Apollo.useQuery<SelectPinnedOrSubscribedQuery, SelectPinnedOrSubscribedQueryVariables>(SelectPinnedOrSubscribedDocument, baseOptions);
+      }
+export function useSelectPinnedOrSubscribedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectPinnedOrSubscribedQuery, SelectPinnedOrSubscribedQueryVariables>) {
+          return Apollo.useLazyQuery<SelectPinnedOrSubscribedQuery, SelectPinnedOrSubscribedQueryVariables>(SelectPinnedOrSubscribedDocument, baseOptions);
+        }
+export type SelectPinnedOrSubscribedQueryHookResult = ReturnType<typeof useSelectPinnedOrSubscribedQuery>;
+export type SelectPinnedOrSubscribedLazyQueryHookResult = ReturnType<typeof useSelectPinnedOrSubscribedLazyQuery>;
+export type SelectPinnedOrSubscribedQueryResult = Apollo.QueryResult<SelectPinnedOrSubscribedQuery, SelectPinnedOrSubscribedQueryVariables>;
 export const SubscribeChatDocument = gql`
     mutation SubscribeChat($chatId: uuid!, $attendeeId: uuid!) {
   insert_chat_Subscription(
@@ -35057,13 +35158,11 @@ export type InsertReadUpToIndexMutationResult = Apollo.MutationResult<InsertRead
 export type InsertReadUpToIndexMutationOptions = Apollo.BaseMutationOptions<InsertReadUpToIndexMutation, InsertReadUpToIndexMutationVariables>;
 export const UpdateReadUpToIndexDocument = gql`
     mutation UpdateReadUpToIndex($chatId: uuid!, $attendeeId: uuid!, $messageId: Int!, $notifiedUpToMessageId: Int!) {
-  update_chat_ReadUpToIndex_by_pk(
-    pk_columns: {attendeeId: $attendeeId, chatId: $chatId}
+  update_chat_ReadUpToIndex(
+    where: {attendeeId: {_eq: $attendeeId}, chatId: {_eq: $chatId}, messageId: {_lte: $messageId}, notifiedUpToMessageId: {_lte: $notifiedUpToMessageId}}
     _set: {messageId: $messageId, notifiedUpToMessageId: $notifiedUpToMessageId}
   ) {
-    attendeeId
-    chatId
-    messageId
+    affected_rows
   }
 }
     `;

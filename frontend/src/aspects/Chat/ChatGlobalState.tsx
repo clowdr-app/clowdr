@@ -39,13 +39,22 @@ import {
     InsertReadUpToIndexDocument,
     InsertReadUpToIndexMutation,
     InsertReadUpToIndexMutationVariables,
+    PinChatDocument,
+    PinChatMutation,
+    PinChatMutationVariables,
     RoomPrivacy_Enum,
     SelectInitialChatStateDocument,
     SelectInitialChatStateQuery,
     SelectInitialChatStateQueryVariables,
+    SelectInitialChatStatesDocument,
+    SelectInitialChatStatesQuery,
+    SelectInitialChatStatesQueryVariables,
     SelectMessagesPageDocument,
     SelectMessagesPageQuery,
     SelectMessagesPageQueryVariables,
+    SelectPinnedOrSubscribedDocument,
+    SelectPinnedOrSubscribedQuery,
+    SelectPinnedOrSubscribedQueryVariables,
     SelectReadUpToIndicesDocument,
     SelectReadUpToIndicesQuery,
     SelectReadUpToIndicesQueryVariables,
@@ -56,6 +65,9 @@ import {
     SubscribeChatDocument,
     SubscribeChatMutation,
     SubscribeChatMutationVariables,
+    UnpinChatDocument,
+    UnpinChatMutation,
+    UnpinChatMutationVariables,
     UnsubscribeChatDocument,
     UnsubscribeChatMutation,
     UnsubscribeChatMutationVariables,
@@ -157,6 +169,8 @@ gql`
 
     query InitialChatState($attendeeId: uuid!) {
         chat_PinnedOrSubscribed(where: { attendeeId: { _eq: $attendeeId } }) {
+            chatId
+            attendeeId
             chat {
                 ...InitialChatState_Chat
             }
@@ -166,6 +180,32 @@ gql`
     query SelectInitialChatState($chatId: uuid!, $attendeeId: uuid!) {
         chat_Chat_by_pk(id: $chatId) {
             ...InitialChatState_Chat
+        }
+    }
+
+    query SelectInitialChatStates($chatIds: [uuid!]!, $attendeeId: uuid!) {
+        chat_Chat(where: { id: { _in: $chatIds } }) {
+            ...InitialChatState_Chat
+        }
+    }
+
+    query SelectPinnedOrSubscribed($attendeeId: uuid!) {
+        chat_PinnedOrSubscribed(where: { attendeeId: { _eq: $attendeeId } }) {
+            chatId
+            attendeeId
+            chat {
+                id
+                pins(where: { attendeeId: { _eq: $attendeeId } }) {
+                    attendeeId
+                    chatId
+                    wasManuallyPinned
+                }
+                subscriptions(where: { attendeeId: { _eq: $attendeeId } }) {
+                    attendeeId
+                    chatId
+                    wasManuallySubscribed
+                }
+            }
         }
     }
 `;
@@ -329,13 +369,16 @@ gql`
     }
 
     mutation UpdateReadUpToIndex($chatId: uuid!, $attendeeId: uuid!, $messageId: Int!, $notifiedUpToMessageId: Int!) {
-        update_chat_ReadUpToIndex_by_pk(
-            pk_columns: { attendeeId: $attendeeId, chatId: $chatId }
+        update_chat_ReadUpToIndex(
+            where: {
+                attendeeId: { _eq: $attendeeId }
+                chatId: { _eq: $chatId }
+                messageId: { _lte: $messageId }
+                notifiedUpToMessageId: { _lte: $notifiedUpToMessageId }
+            }
             _set: { messageId: $messageId, notifiedUpToMessageId: $notifiedUpToMessageId }
         ) {
-            attendeeId
-            chatId
-            messageId
+            affected_rows
         }
     }
 `;
@@ -398,8 +441,8 @@ gql`
 export class MessageState {
     constructor(
         private readonly globalState: GlobalChatState,
-        private readonly chatState: ChatState,
-        private readonly initialState: ChatMessageDataFragment | ShortChatMessageDataFragment
+        private readonly initialState: ChatMessageDataFragment | ShortChatMessageDataFragment,
+        public remoteMsgId?: number
     ) {
         if ("reactions" in initialState) {
             this.reactions = [...initialState.reactions];
@@ -520,7 +563,7 @@ export class ChatState {
 
     private pinSubMutex = new Mutex();
     private messagesMutex = new Mutex();
-    private initSubscriptionMutex = new Mutex();
+    private remoteChatMutex = new Mutex();
     private sendMutex = new Mutex();
 
     private remoteChat: Promise<Channel> | null;
@@ -550,7 +593,7 @@ export class ChatState {
 
         this.remoteChat = null;
 
-        if (this.isSubscribed) {
+        if (this.isSubscribed || this.isPinned) {
             this.subscribeToMoreMessages();
         }
     }
@@ -626,6 +669,10 @@ export class ChatState {
         this.isPinned = !this.isPinned;
         this.isPinnedObs.publish(this.isPinned);
 
+        if (this.isPinned) {
+            await this.subscribeToMoreMessages();
+        }
+
         const release = await this.pinSubMutex.acquire();
         this.isTogglingPinned = true;
 
@@ -633,11 +680,8 @@ export class ChatState {
             if (isPind) {
                 if (!this.EnableMandatorySubscribe) {
                     try {
-                        await this.globalState.apolloClient.mutate<
-                            UnsubscribeChatMutation,
-                            UnsubscribeChatMutationVariables
-                        >({
-                            mutation: UnsubscribeChatDocument,
+                        await this.globalState.apolloClient.mutate<UnpinChatMutation, UnpinChatMutationVariables>({
+                            mutation: UnpinChatDocument,
                             variables: {
                                 attendeeId: this.globalState.attendee.id,
                                 chatId: this.Id,
@@ -651,17 +695,16 @@ export class ChatState {
             } else {
                 try {
                     const result = await this.globalState.apolloClient.mutate<
-                        SubscribeChatMutation,
-                        SubscribeChatMutationVariables
+                        PinChatMutation,
+                        PinChatMutationVariables
                     >({
-                        mutation: SubscribeChatDocument,
+                        mutation: PinChatDocument,
                         variables: {
                             attendeeId: this.globalState.attendee.id,
                             chatId: this.Id,
                         },
                     });
-                    this.isPinned =
-                        !!result.data?.insert_chat_Subscription && !!result.data.insert_chat_Subscription.returning;
+                    this.isPinned = !!result.data?.insert_chat_Pin && !!result.data.insert_chat_Pin.returning;
                 } catch (e) {
                     if (!(e instanceof ApolloError) || !e.message.includes("uniqueness violation")) {
                         this.isPinned = isPind;
@@ -678,6 +721,11 @@ export class ChatState {
             release();
 
             this.isPinnedObs.publish(this.isPinned);
+        }
+    }
+    public async setIsPinned(value: boolean): Promise<void> {
+        if (value !== this.isPinned) {
+            await this.togglePinned();
         }
     }
 
@@ -703,6 +751,10 @@ export class ChatState {
 
         const release = await this.pinSubMutex.acquire();
         this.isTogglingSubscribed = true;
+
+        if (this.isSubscribed) {
+            await this.subscribeToMoreMessages();
+        }
 
         try {
             if (isSubd) {
@@ -755,6 +807,11 @@ export class ChatState {
             release();
 
             this.isSubscribedObs.publish(this.isSubscribed);
+        }
+    }
+    public async setIsSubscribed(value: boolean): Promise<void> {
+        if (value !== this.isSubscribed) {
+            await this.toggleSubscribed();
         }
     }
 
@@ -822,7 +879,7 @@ export class ChatState {
 
                     newMessageStates = result.data.chat_Message
                         .filter((msg) => !this.messages.has(msg.id))
-                        .map((message) => new MessageState(this.globalState, this, message));
+                        .map((message) => new MessageState(this.globalState, message));
                     if (newMessageStates.length > 0) {
                         this.lastHistoricallyFetchedMessageId =
                             result.data.chat_Message.length === 0
@@ -855,7 +912,7 @@ export class ChatState {
     }
     private subscribedToMoreMessages = false;
     public async subscribeToMoreMessages(): Promise<void> {
-        const release = await this.initSubscriptionMutex.acquire();
+        const release = await this.remoteChatMutex.acquire();
 
         try {
             if (this.initialState.remoteServiceId) {
@@ -879,14 +936,11 @@ export class ChatState {
                     remoteChat?.on("messageUpdated", this.messageUpdatedListener.bind(this));
 
                     if (remoteChat?.lastMessage) {
-                        const msgs = await remoteChat?.getMessages(
+                        await remoteChat?.getMessages(
                             ChatState.DefaultPageSize,
                             remoteChat.lastMessage.index,
                             "backwards"
                         );
-                        msgs?.items.forEach((msg: any) => {
-                            msg.on("messageUpdated", (...args: any[]) => console.log("Message updated", ...args));
-                        });
                     }
                 }
             } else {
@@ -901,10 +955,10 @@ export class ChatState {
         }
     }
     public async unsubscribeFromMoreMessages(force = false): Promise<void> {
-        const release = await this.initSubscriptionMutex.acquire();
+        const release = await this.remoteChatMutex.acquire();
 
         try {
-            if (force || !this.IsSubscribed) {
+            if (force || (!this.isSubscribed && !this.isPinned)) {
                 const remoteChat = await this.remoteChat;
                 remoteChat?.off("messageAdded", this.messageAddedListener);
                 remoteChat?.off("messageRemoved", this.messageRemovedListener);
@@ -922,7 +976,8 @@ export class ChatState {
         let newMessageStates: MessageState[] | undefined;
         try {
             const attrs = msg.attributes as Record<string, any>;
-            if (!this.messages.has(attrs.id)) {
+            const existing = this.messages.get(attrs.id);
+            if (!existing) {
                 let senderId = null;
                 try {
                     const member = await msg.getMember();
@@ -931,19 +986,25 @@ export class ChatState {
                     // Ignore - maybe system sent the message
                 }
                 newMessageStates = [
-                    new MessageState(this.globalState, this, {
-                        id: attrs.id,
-                        data: attrs.data,
-                        type: attrs.type,
-                        chatId: this.Id,
-                        message: msg.body,
-                        created_at: msg.dateCreated.toISOString(),
-                        senderId,
-                    }),
+                    new MessageState(
+                        this.globalState,
+                        {
+                            id: attrs.id,
+                            data: attrs.data,
+                            type: attrs.type,
+                            chatId: this.Id,
+                            message: msg.body,
+                            created_at: msg.dateCreated.toISOString(),
+                            senderId,
+                        },
+                        msg.index
+                    ),
                 ];
                 newMessageStates.forEach((msg) => {
                     this.messages.set(msg.id, msg);
                 });
+            } else {
+                existing.remoteMsgId = msg.index;
             }
         } catch (e) {
             console.error(`Error processing new messages from remote service: ${this.Id}`, e);
@@ -954,7 +1015,7 @@ export class ChatState {
                     op: "loaded_new",
                     messages: newMessageStates,
                 });
-                this.computeNotifications(newMessageStates[0]);
+                await this.computeNotifications(newMessageStates[0]);
             }
         }
     }
@@ -1005,17 +1066,25 @@ export class ChatState {
 
     private readonly toast = createStandaloneToast();
     private latestNotifiedIndex: number;
-    private computeNotifications(message: MessageState) {
+    private async computeNotifications(message: MessageState) {
         if (this.latestNotifiedIndex < message.id) {
             if (this.readUpToMsgId < message.id) {
-                this.unreadCount++;
-                this.unreadCountObs.publish(this.unreadCount);
+                const remoteChat = await this.remoteChat;
+                const remoteUnreadCount =
+                    message.senderId === this.globalState.attendee.id
+                        ? 0
+                        : (await remoteChat?.getUnconsumedMessagesCount()) ?? Number.POSITIVE_INFINITY;
+                const newCount = Math.min(this.unreadCount + 1, remoteUnreadCount);
+                if (this.unreadCount !== newCount) {
+                    this.unreadCount = newCount;
+                    this.unreadCountObs.publish(this.unreadCount);
+                }
             }
 
             this.latestNotifiedIndex = message.id;
             this.saveReadUpToIndex_SetupTimeout();
 
-            if (this.readUpToMsgId < message.id) {
+            if (this.readUpToMsgId < message.id && this.isSubscribed) {
                 if (
                     this.globalState.attendee.id !== message.senderId &&
                     message.chatId !== this.globalState.suppressNotificationsForChatId &&
@@ -1144,7 +1213,7 @@ export class ChatState {
 
             if (newMsg) {
                 const release2 = await this.messagesMutex.acquire();
-                const newMsgState = new MessageState(this.globalState, this, newMsg);
+                const newMsgState = new MessageState(this.globalState, newMsg);
                 try {
                     if (!this.messages.has(newMsg.id)) {
                         this.messages.set(newMsg.id, newMsgState);
@@ -1216,14 +1285,22 @@ export class ChatState {
     public get ReadUpToMsgId(): number {
         return this.readUpToMsgId;
     }
-    public setReadUpToMsgId(messageId: number): void {
-        this.readUpToMsgId = messageId;
+    public setReadUpToMsgId(messageId: number, remoteMessageId: number | undefined): void {
+        this.readUpToMsgId = Math.max(messageId, this.readUpToMsgId);
+        this.latestNotifiedIndex = Math.max(messageId, this.latestNotifiedIndex);
         this.unreadCount = 0;
         this.unreadCountObs.publish(0);
 
         this.saveReadUpToIndex_SetupTimeout();
+
+        if (remoteMessageId !== undefined) {
+            (async () => {
+                const remoteChat = await this.remoteChat;
+                await remoteChat?.updateLastConsumedMessageIndex(remoteMessageId);
+            })();
+        }
     }
-    private async saveReadUpToIndex_SetupTimeout() {
+    private saveReadUpToIndex_SetupTimeout() {
         if (!this.readUpTo_Timeout) {
             const period = (3 + Math.random() * 2) * 1000;
             this.readUpTo_Timeout = {
@@ -1237,7 +1314,7 @@ export class ChatState {
                 firstTimestampMs: Date.now(),
             };
             // Backoff the frequency of updates if lots of messages are being sent
-        } else if (Date.now() - this.readUpTo_Timeout.firstTimestampMs < 20000) {
+        } else if (Date.now() - this.readUpTo_Timeout.firstTimestampMs < 5000) {
             const dist = 20000 - (Date.now() - this.readUpTo_Timeout.firstTimestampMs);
             const period = Math.max(2, Math.round(dist / 2));
             clearTimeout(this.readUpTo_Timeout.id);
@@ -1289,18 +1366,20 @@ export class ChatState {
             console.error(`Error saving read up to index: ${this.Id} @ ${messageId} / ${notifiedUpToMessageId}`, e);
         }
     }
-    public updateReadUpToIdx(newData: {
+    public async updateReadUpToIdx(newData: {
         count: number | undefined;
         latestNotifiedIndex: number;
         readUpToMsgId: number;
-    }): void {
+    }): Promise<void> {
         this.latestNotifiedIndex = Math.max(this.latestNotifiedIndex, newData.latestNotifiedIndex);
-        if (this.readUpToMsgId < newData.readUpToMsgId) {
-            this.readUpToMsgId = newData.readUpToMsgId;
-            if (newData.count !== undefined && this.unreadCount !== newData.count) {
-                this.unreadCount = newData.count;
-                this.unreadCountObs.publish(this.unreadCount);
-            }
+        this.readUpToMsgId = Math.max(this.readUpToMsgId, newData.readUpToMsgId);
+
+        const remoteChat = await this.remoteChat;
+        const remoteUnreadCount = (await remoteChat?.getUnconsumedMessagesCount()) ?? Number.POSITIVE_INFINITY;
+        const newCount = Math.min(newData.count ?? this.unreadCount, remoteUnreadCount);
+        if (this.unreadCount !== newCount) {
+            this.unreadCount = newCount;
+            this.unreadCountObs.publish(this.unreadCount);
         }
     }
 
@@ -1409,7 +1488,6 @@ export class GlobalChatState {
                                 assert(this.remoteServiceToken);
 
                                 try {
-                                    // TODO: Increase log level if debugger enabled?
                                     const result = await Twilio.Chat.Client.create(this.remoteServiceToken);
                                     resolve(result);
                                     resolved = true;
@@ -1475,6 +1553,7 @@ export class GlobalChatState {
                     this.chatStatesObs.publish(this.chatStates);
 
                     await this.setupUnreadCountPolling();
+                    await this.setupPinsSubsPolling();
                     // await this.setupReactionsSubscription();
                 }
             }
@@ -1535,6 +1614,7 @@ export class GlobalChatState {
                 this.hasTorndown = true;
                 if (this.hasInitialised) {
                     // await this.teardownReactionsSubscription();
+                    await this.teardownPinsSubsPolling();
                     await this.teardownUnreadCountPolling();
 
                     if (this.chatStates) {
@@ -1665,9 +1745,98 @@ export class GlobalChatState {
             for (const [chatId, newData] of newDatas) {
                 const chatState = this.chatStates?.get(chatId);
                 if (chatState) {
-                    chatState.updateReadUpToIdx(newData);
+                    await chatState.updateReadUpToIdx(newData);
                 }
             }
+        }
+    }
+
+    private pinsSubsPollMutex = new Mutex();
+    private pinsSubsMutex = new Mutex();
+    private pinsSubs_IntervalId: number | undefined;
+    private async setupPinsSubsPolling() {
+        const release = await this.pinsSubsPollMutex.acquire();
+
+        try {
+            if (this.pinsSubs_IntervalId === undefined) {
+                this.pinsSubs_IntervalId = setInterval(
+                    (() => {
+                        this.pollPinsSubs();
+                    }) as TimerHandler,
+                    30 * 1000
+                );
+            }
+        } catch (e) {
+            console.error("Failed to setup polling unread count", e);
+        } finally {
+            release();
+        }
+    }
+    private async teardownPinsSubsPolling() {
+        const release = await this.pinsSubsPollMutex.acquire();
+
+        try {
+            if (this.pinsSubs_IntervalId === undefined) {
+                clearInterval(this.pinsSubs_IntervalId);
+            }
+        } catch (e) {
+            console.error("Failed to tear down polling unread count", e);
+        } finally {
+            release();
+        }
+    }
+    private async pollPinsSubs() {
+        const release = await this.pinsSubsMutex.acquire();
+
+        try {
+            if (this.chatStates) {
+                const allPinsSubs = await this.apolloClient.query<
+                    SelectPinnedOrSubscribedQuery,
+                    SelectPinnedOrSubscribedQueryVariables
+                >({
+                    query: SelectPinnedOrSubscribedDocument,
+                    variables: {
+                        attendeeId: this.attendee.id,
+                    },
+                    fetchPolicy: "network-only",
+                });
+                const newlyPinSubIds: string[] = [];
+                for (const pinSub of allPinsSubs.data.chat_PinnedOrSubscribed) {
+                    if (pinSub.chat) {
+                        const isPinned = pinSub.chat.pins.length > 0;
+                        const isSubscribed = pinSub.chat.subscriptions.length > 0;
+
+                        const existing = this.chatStates.get(pinSub.chatId);
+                        if (existing) {
+                            existing.setIsPinned(isPinned);
+                            existing.setIsSubscribed(isSubscribed);
+                        } else {
+                            newlyPinSubIds.push(pinSub.chatId);
+                        }
+                    }
+                }
+                if (newlyPinSubIds.length > 0) {
+                    const newlyPinSubChats = await this.apolloClient.query<
+                        SelectInitialChatStatesQuery,
+                        SelectInitialChatStatesQueryVariables
+                    >({
+                        query: SelectInitialChatStatesDocument,
+                        variables: {
+                            attendeeId: this.attendee.id,
+                            chatIds: newlyPinSubIds,
+                        },
+                        fetchPolicy: "network-only",
+                    });
+                    for (const pinSubChat of newlyPinSubChats.data.chat_Chat) {
+                        this.chatStates.set(pinSubChat.id, new ChatState(this, pinSubChat));
+                    }
+                    this.chatStatesObs.publish(this.chatStates);
+                }
+            }
+        } catch (e) {
+            console.error("Failed to fetch unread counts", e);
+        } finally {
+            release();
         }
     }
 

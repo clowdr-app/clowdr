@@ -168,7 +168,7 @@ function MessageList({
             if (shouldAutoScroll.current) {
                 ref.current?.scroll({
                     behavior: "smooth",
-                    top: 0,
+                    top: 200,
                 });
 
                 if (messageElements.current && messageElements.current.length > 0) {

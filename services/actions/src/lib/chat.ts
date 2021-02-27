@@ -277,6 +277,8 @@ export async function generateRemoteServiceId(chatId: string): Promise<void> {
 }
 
 export async function generateRemoteUserIds(): Promise<void> {
+    console.log("Chat: Generating some remote user ids");
+
     const remoteChatService = createRemoteChatServiceClient();
     const existingRemoteUsers = (await remoteChatService.users.list())
         .map((x) => x.identity)

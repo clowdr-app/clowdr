@@ -44,7 +44,7 @@ router.post("/generateRemoteServiceIds", async (_req: Request, res: Response) =>
         res.status(500).json("Failure");
         return;
     }
-    res.status(200).json("OK");
+    res.status(200).json({});
 });
 
 router.post("/chatInserted", bodyParser.json(), async (req: Request, res: Response) => {
@@ -74,7 +74,7 @@ router.post("/generateRemoteUserIds", async (_req: Request, res: Response) => {
         res.status(500).json("Failure");
         return;
     }
-    res.status(200).json("OK");
+    res.status(200).json({});
 });
 
 router.post("/generateRemoteUserId", bodyParser.json(), async (req: Request, res: Response) => {

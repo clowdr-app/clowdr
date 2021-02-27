@@ -22,9 +22,19 @@ type Query {
 
 
 type Mutation {
+  generateChatRemoteServiceIds : GenerateChatRemoteServiceIdsOutput
+}
+
+
+type Mutation {
   generateChatRemoteToken (
     attendeeId: uuid!
   ): ChatRemoteToken
+}
+
+
+type Mutation {
+  generateChatRemoteUserIds : GenerateChatRemoteUserIdsOutput
 }
 
 
@@ -288,5 +298,13 @@ type RefreshYouTubeDataOutput {
 type ChatRemoteToken {
   jwt : String!
   expiry : Int!
+}
+
+type GenerateChatRemoteServiceIdsOutput {
+  error : String
+}
+
+type GenerateChatRemoteUserIdsOutput {
+  error : String
 }
 
